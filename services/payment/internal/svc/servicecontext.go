@@ -16,7 +16,7 @@ type ServiceContext struct {
 	Config                     config.Config
 	DB                         sqlx.SqlConn
 	Redis                      *redis.Redis
-	AssetCli                   asset.AssetInternalClient
+	AssetCli                   asset.InternalClient
 	MQPublisher                *mq.Publisher
 	PayPlatformModel           models.TPayPlatformModel
 	PayProductModel            models.TPayProductModel
@@ -41,7 +41,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:                     c,
 		DB:                         conn,
 		Redis:                      redis.MustNewRedis(c.Redis.RedisConf),
-		AssetCli:                   asset.NewAssetInternalClient(assetCli.Conn()),
+		AssetCli:                   asset.NewInternalClient(assetCli.Conn()),
 		MQPublisher:                mq.MustNewPublisher(mq.ForService(c.MQ, c.Name)),
 		PayPlatformModel:           models.NewTPayPlatformModel(conn, c.CacheRedis),
 		PayProductModel:            models.NewTPayProductModel(conn, c.CacheRedis),

@@ -19,38 +19,38 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UserApp_Register_FullMethodName              = "/user.UserApp/Register"
-	UserApp_Login_FullMethodName                 = "/user.UserApp/Login"
-	UserApp_GuestLogin_FullMethodName            = "/user.UserApp/GuestLogin"
-	UserApp_CreateGuestTransfer_FullMethodName   = "/user.UserApp/CreateGuestTransfer"
-	UserApp_ExchangeGuestTransfer_FullMethodName = "/user.UserApp/ExchangeGuestTransfer"
-	UserApp_Logout_FullMethodName                = "/user.UserApp/Logout"
-	UserApp_RefreshToken_FullMethodName          = "/user.UserApp/RefreshToken"
-	UserApp_GetProfile_FullMethodName            = "/user.UserApp/GetProfile"
-	UserApp_UpdateProfile_FullMethodName         = "/user.UserApp/UpdateProfile"
-	UserApp_ChangeLoginPassword_FullMethodName   = "/user.UserApp/ChangeLoginPassword"
-	UserApp_GetIdentity_FullMethodName           = "/user.UserApp/GetIdentity"
-	UserApp_SubmitIdentity_FullMethodName        = "/user.UserApp/SubmitIdentity"
-	UserApp_UpdateIdentity_FullMethodName        = "/user.UserApp/UpdateIdentity"
-	UserApp_GetSecurity_FullMethodName           = "/user.UserApp/GetSecurity"
-	UserApp_SetPayPassword_FullMethodName        = "/user.UserApp/SetPayPassword"
-	UserApp_ChangePayPassword_FullMethodName     = "/user.UserApp/ChangePayPassword"
-	UserApp_InitGoogle2FA_FullMethodName         = "/user.UserApp/InitGoogle2FA"
-	UserApp_EnableGoogle2FA_FullMethodName       = "/user.UserApp/EnableGoogle2FA"
-	UserApp_DisableGoogle2FA_FullMethodName      = "/user.UserApp/DisableGoogle2FA"
-	UserApp_ListBanks_FullMethodName             = "/user.UserApp/ListBanks"
-	UserApp_AddBank_FullMethodName               = "/user.UserApp/AddBank"
-	UserApp_UpdateBank_FullMethodName            = "/user.UserApp/UpdateBank"
-	UserApp_DeleteBank_FullMethodName            = "/user.UserApp/DeleteBank"
-	UserApp_SetDefaultBank_FullMethodName        = "/user.UserApp/SetDefaultBank"
+	App_Register_FullMethodName              = "/user.App/Register"
+	App_Login_FullMethodName                 = "/user.App/Login"
+	App_GuestLogin_FullMethodName            = "/user.App/GuestLogin"
+	App_CreateGuestTransfer_FullMethodName   = "/user.App/CreateGuestTransfer"
+	App_ExchangeGuestTransfer_FullMethodName = "/user.App/ExchangeGuestTransfer"
+	App_Logout_FullMethodName                = "/user.App/Logout"
+	App_RefreshToken_FullMethodName          = "/user.App/RefreshToken"
+	App_GetProfile_FullMethodName            = "/user.App/GetProfile"
+	App_UpdateProfile_FullMethodName         = "/user.App/UpdateProfile"
+	App_ChangeLoginPassword_FullMethodName   = "/user.App/ChangeLoginPassword"
+	App_GetIdentity_FullMethodName           = "/user.App/GetIdentity"
+	App_SubmitIdentity_FullMethodName        = "/user.App/SubmitIdentity"
+	App_UpdateIdentity_FullMethodName        = "/user.App/UpdateIdentity"
+	App_GetSecurity_FullMethodName           = "/user.App/GetSecurity"
+	App_SetPayPassword_FullMethodName        = "/user.App/SetPayPassword"
+	App_ChangePayPassword_FullMethodName     = "/user.App/ChangePayPassword"
+	App_InitGoogle2FA_FullMethodName         = "/user.App/InitGoogle2FA"
+	App_EnableGoogle2FA_FullMethodName       = "/user.App/EnableGoogle2FA"
+	App_DisableGoogle2FA_FullMethodName      = "/user.App/DisableGoogle2FA"
+	App_ListBanks_FullMethodName             = "/user.App/ListBanks"
+	App_AddBank_FullMethodName               = "/user.App/AddBank"
+	App_UpdateBank_FullMethodName            = "/user.App/UpdateBank"
+	App_DeleteBank_FullMethodName            = "/user.App/DeleteBank"
+	App_SetDefaultBank_FullMethodName        = "/user.App/SetDefaultBank"
 )
 
-// UserAppClient is the client API for UserApp service.
+// AppClient is the client API for App service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // APP端接口
-type UserAppClient interface {
+type AppClient interface {
 	// 用户注册
 	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
 	// 用户登录
@@ -101,260 +101,260 @@ type UserAppClient interface {
 	SetDefaultBank(ctx context.Context, in *SetDefaultBankReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 }
 
-type userAppClient struct {
+type appClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewUserAppClient(cc grpc.ClientConnInterface) UserAppClient {
-	return &userAppClient{cc}
+func NewAppClient(cc grpc.ClientConnInterface) AppClient {
+	return &appClient{cc}
 }
 
-func (c *userAppClient) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error) {
+func (c *appClient) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RegisterResp)
-	err := c.cc.Invoke(ctx, UserApp_Register_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_Register_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error) {
+func (c *appClient) Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LoginResp)
-	err := c.cc.Invoke(ctx, UserApp_Login_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_Login_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) GuestLogin(ctx context.Context, in *GuestLoginReq, opts ...grpc.CallOption) (*GuestLoginResp, error) {
+func (c *appClient) GuestLogin(ctx context.Context, in *GuestLoginReq, opts ...grpc.CallOption) (*GuestLoginResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GuestLoginResp)
-	err := c.cc.Invoke(ctx, UserApp_GuestLogin_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GuestLogin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) CreateGuestTransfer(ctx context.Context, in *CreateGuestTransferReq, opts ...grpc.CallOption) (*CreateGuestTransferResp, error) {
+func (c *appClient) CreateGuestTransfer(ctx context.Context, in *CreateGuestTransferReq, opts ...grpc.CallOption) (*CreateGuestTransferResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateGuestTransferResp)
-	err := c.cc.Invoke(ctx, UserApp_CreateGuestTransfer_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_CreateGuestTransfer_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) ExchangeGuestTransfer(ctx context.Context, in *ExchangeGuestTransferReq, opts ...grpc.CallOption) (*ExchangeGuestTransferResp, error) {
+func (c *appClient) ExchangeGuestTransfer(ctx context.Context, in *ExchangeGuestTransferReq, opts ...grpc.CallOption) (*ExchangeGuestTransferResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ExchangeGuestTransferResp)
-	err := c.cc.Invoke(ctx, UserApp_ExchangeGuestTransfer_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ExchangeGuestTransfer_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
+func (c *appClient) Logout(ctx context.Context, in *LogoutReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserCommonResp)
-	err := c.cc.Invoke(ctx, UserApp_Logout_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_Logout_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) RefreshToken(ctx context.Context, in *RefreshTokenReq, opts ...grpc.CallOption) (*RefreshTokenResp, error) {
+func (c *appClient) RefreshToken(ctx context.Context, in *RefreshTokenReq, opts ...grpc.CallOption) (*RefreshTokenResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RefreshTokenResp)
-	err := c.cc.Invoke(ctx, UserApp_RefreshToken_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_RefreshToken_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) GetProfile(ctx context.Context, in *GetProfileReq, opts ...grpc.CallOption) (*GetProfileResp, error) {
+func (c *appClient) GetProfile(ctx context.Context, in *GetProfileReq, opts ...grpc.CallOption) (*GetProfileResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetProfileResp)
-	err := c.cc.Invoke(ctx, UserApp_GetProfile_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetProfile_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*UpdateProfileResp, error) {
+func (c *appClient) UpdateProfile(ctx context.Context, in *UpdateProfileReq, opts ...grpc.CallOption) (*UpdateProfileResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UpdateProfileResp)
-	err := c.cc.Invoke(ctx, UserApp_UpdateProfile_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_UpdateProfile_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) ChangeLoginPassword(ctx context.Context, in *ChangeLoginPasswordReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
+func (c *appClient) ChangeLoginPassword(ctx context.Context, in *ChangeLoginPasswordReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserCommonResp)
-	err := c.cc.Invoke(ctx, UserApp_ChangeLoginPassword_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ChangeLoginPassword_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) GetIdentity(ctx context.Context, in *GetIdentityReq, opts ...grpc.CallOption) (*GetIdentityResp, error) {
+func (c *appClient) GetIdentity(ctx context.Context, in *GetIdentityReq, opts ...grpc.CallOption) (*GetIdentityResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetIdentityResp)
-	err := c.cc.Invoke(ctx, UserApp_GetIdentity_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetIdentity_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) SubmitIdentity(ctx context.Context, in *SubmitIdentityReq, opts ...grpc.CallOption) (*SubmitIdentityResp, error) {
+func (c *appClient) SubmitIdentity(ctx context.Context, in *SubmitIdentityReq, opts ...grpc.CallOption) (*SubmitIdentityResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SubmitIdentityResp)
-	err := c.cc.Invoke(ctx, UserApp_SubmitIdentity_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_SubmitIdentity_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) UpdateIdentity(ctx context.Context, in *UpdateIdentityReq, opts ...grpc.CallOption) (*UpdateIdentityResp, error) {
+func (c *appClient) UpdateIdentity(ctx context.Context, in *UpdateIdentityReq, opts ...grpc.CallOption) (*UpdateIdentityResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UpdateIdentityResp)
-	err := c.cc.Invoke(ctx, UserApp_UpdateIdentity_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_UpdateIdentity_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) GetSecurity(ctx context.Context, in *GetSecurityReq, opts ...grpc.CallOption) (*GetSecurityResp, error) {
+func (c *appClient) GetSecurity(ctx context.Context, in *GetSecurityReq, opts ...grpc.CallOption) (*GetSecurityResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSecurityResp)
-	err := c.cc.Invoke(ctx, UserApp_GetSecurity_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetSecurity_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) SetPayPassword(ctx context.Context, in *SetPayPasswordReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
+func (c *appClient) SetPayPassword(ctx context.Context, in *SetPayPasswordReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserCommonResp)
-	err := c.cc.Invoke(ctx, UserApp_SetPayPassword_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_SetPayPassword_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) ChangePayPassword(ctx context.Context, in *ChangePayPasswordReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
+func (c *appClient) ChangePayPassword(ctx context.Context, in *ChangePayPasswordReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserCommonResp)
-	err := c.cc.Invoke(ctx, UserApp_ChangePayPassword_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ChangePayPassword_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) InitGoogle2FA(ctx context.Context, in *InitGoogle2FAReq, opts ...grpc.CallOption) (*InitGoogle2FAResp, error) {
+func (c *appClient) InitGoogle2FA(ctx context.Context, in *InitGoogle2FAReq, opts ...grpc.CallOption) (*InitGoogle2FAResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(InitGoogle2FAResp)
-	err := c.cc.Invoke(ctx, UserApp_InitGoogle2FA_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_InitGoogle2FA_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) EnableGoogle2FA(ctx context.Context, in *EnableGoogle2FAReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
+func (c *appClient) EnableGoogle2FA(ctx context.Context, in *EnableGoogle2FAReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserCommonResp)
-	err := c.cc.Invoke(ctx, UserApp_EnableGoogle2FA_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_EnableGoogle2FA_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) DisableGoogle2FA(ctx context.Context, in *DisableGoogle2FAReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
+func (c *appClient) DisableGoogle2FA(ctx context.Context, in *DisableGoogle2FAReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserCommonResp)
-	err := c.cc.Invoke(ctx, UserApp_DisableGoogle2FA_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_DisableGoogle2FA_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) ListBanks(ctx context.Context, in *ListBanksReq, opts ...grpc.CallOption) (*ListBanksResp, error) {
+func (c *appClient) ListBanks(ctx context.Context, in *ListBanksReq, opts ...grpc.CallOption) (*ListBanksResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListBanksResp)
-	err := c.cc.Invoke(ctx, UserApp_ListBanks_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListBanks_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) AddBank(ctx context.Context, in *AddBankReq, opts ...grpc.CallOption) (*AddBankResp, error) {
+func (c *appClient) AddBank(ctx context.Context, in *AddBankReq, opts ...grpc.CallOption) (*AddBankResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AddBankResp)
-	err := c.cc.Invoke(ctx, UserApp_AddBank_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_AddBank_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) UpdateBank(ctx context.Context, in *UpdateBankReq, opts ...grpc.CallOption) (*UpdateBankResp, error) {
+func (c *appClient) UpdateBank(ctx context.Context, in *UpdateBankReq, opts ...grpc.CallOption) (*UpdateBankResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UpdateBankResp)
-	err := c.cc.Invoke(ctx, UserApp_UpdateBank_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_UpdateBank_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) DeleteBank(ctx context.Context, in *DeleteBankReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
+func (c *appClient) DeleteBank(ctx context.Context, in *DeleteBankReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserCommonResp)
-	err := c.cc.Invoke(ctx, UserApp_DeleteBank_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_DeleteBank_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAppClient) SetDefaultBank(ctx context.Context, in *SetDefaultBankReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
+func (c *appClient) SetDefaultBank(ctx context.Context, in *SetDefaultBankReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserCommonResp)
-	err := c.cc.Invoke(ctx, UserApp_SetDefaultBank_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_SetDefaultBank_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// UserAppServer is the server API for UserApp service.
-// All implementations must embed UnimplementedUserAppServer
+// AppServer is the server API for App service.
+// All implementations must embed UnimplementedAppServer
 // for forward compatibility.
 //
 // APP端接口
-type UserAppServer interface {
+type AppServer interface {
 	// 用户注册
 	Register(context.Context, *RegisterReq) (*RegisterResp, error)
 	// 用户登录
@@ -403,643 +403,643 @@ type UserAppServer interface {
 	DeleteBank(context.Context, *DeleteBankReq) (*UserCommonResp, error)
 	// 设置默认银行卡
 	SetDefaultBank(context.Context, *SetDefaultBankReq) (*UserCommonResp, error)
-	mustEmbedUnimplementedUserAppServer()
+	mustEmbedUnimplementedAppServer()
 }
 
-// UnimplementedUserAppServer must be embedded to have
+// UnimplementedAppServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedUserAppServer struct{}
+type UnimplementedAppServer struct{}
 
-func (UnimplementedUserAppServer) Register(context.Context, *RegisterReq) (*RegisterResp, error) {
+func (UnimplementedAppServer) Register(context.Context, *RegisterReq) (*RegisterResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method Register not implemented")
 }
-func (UnimplementedUserAppServer) Login(context.Context, *LoginReq) (*LoginResp, error) {
+func (UnimplementedAppServer) Login(context.Context, *LoginReq) (*LoginResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedUserAppServer) GuestLogin(context.Context, *GuestLoginReq) (*GuestLoginResp, error) {
+func (UnimplementedAppServer) GuestLogin(context.Context, *GuestLoginReq) (*GuestLoginResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GuestLogin not implemented")
 }
-func (UnimplementedUserAppServer) CreateGuestTransfer(context.Context, *CreateGuestTransferReq) (*CreateGuestTransferResp, error) {
+func (UnimplementedAppServer) CreateGuestTransfer(context.Context, *CreateGuestTransferReq) (*CreateGuestTransferResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateGuestTransfer not implemented")
 }
-func (UnimplementedUserAppServer) ExchangeGuestTransfer(context.Context, *ExchangeGuestTransferReq) (*ExchangeGuestTransferResp, error) {
+func (UnimplementedAppServer) ExchangeGuestTransfer(context.Context, *ExchangeGuestTransferReq) (*ExchangeGuestTransferResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ExchangeGuestTransfer not implemented")
 }
-func (UnimplementedUserAppServer) Logout(context.Context, *LogoutReq) (*UserCommonResp, error) {
+func (UnimplementedAppServer) Logout(context.Context, *LogoutReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method Logout not implemented")
 }
-func (UnimplementedUserAppServer) RefreshToken(context.Context, *RefreshTokenReq) (*RefreshTokenResp, error) {
+func (UnimplementedAppServer) RefreshToken(context.Context, *RefreshTokenReq) (*RefreshTokenResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RefreshToken not implemented")
 }
-func (UnimplementedUserAppServer) GetProfile(context.Context, *GetProfileReq) (*GetProfileResp, error) {
+func (UnimplementedAppServer) GetProfile(context.Context, *GetProfileReq) (*GetProfileResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetProfile not implemented")
 }
-func (UnimplementedUserAppServer) UpdateProfile(context.Context, *UpdateProfileReq) (*UpdateProfileResp, error) {
+func (UnimplementedAppServer) UpdateProfile(context.Context, *UpdateProfileReq) (*UpdateProfileResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateProfile not implemented")
 }
-func (UnimplementedUserAppServer) ChangeLoginPassword(context.Context, *ChangeLoginPasswordReq) (*UserCommonResp, error) {
+func (UnimplementedAppServer) ChangeLoginPassword(context.Context, *ChangeLoginPasswordReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ChangeLoginPassword not implemented")
 }
-func (UnimplementedUserAppServer) GetIdentity(context.Context, *GetIdentityReq) (*GetIdentityResp, error) {
+func (UnimplementedAppServer) GetIdentity(context.Context, *GetIdentityReq) (*GetIdentityResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetIdentity not implemented")
 }
-func (UnimplementedUserAppServer) SubmitIdentity(context.Context, *SubmitIdentityReq) (*SubmitIdentityResp, error) {
+func (UnimplementedAppServer) SubmitIdentity(context.Context, *SubmitIdentityReq) (*SubmitIdentityResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SubmitIdentity not implemented")
 }
-func (UnimplementedUserAppServer) UpdateIdentity(context.Context, *UpdateIdentityReq) (*UpdateIdentityResp, error) {
+func (UnimplementedAppServer) UpdateIdentity(context.Context, *UpdateIdentityReq) (*UpdateIdentityResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateIdentity not implemented")
 }
-func (UnimplementedUserAppServer) GetSecurity(context.Context, *GetSecurityReq) (*GetSecurityResp, error) {
+func (UnimplementedAppServer) GetSecurity(context.Context, *GetSecurityReq) (*GetSecurityResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSecurity not implemented")
 }
-func (UnimplementedUserAppServer) SetPayPassword(context.Context, *SetPayPasswordReq) (*UserCommonResp, error) {
+func (UnimplementedAppServer) SetPayPassword(context.Context, *SetPayPasswordReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetPayPassword not implemented")
 }
-func (UnimplementedUserAppServer) ChangePayPassword(context.Context, *ChangePayPasswordReq) (*UserCommonResp, error) {
+func (UnimplementedAppServer) ChangePayPassword(context.Context, *ChangePayPasswordReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ChangePayPassword not implemented")
 }
-func (UnimplementedUserAppServer) InitGoogle2FA(context.Context, *InitGoogle2FAReq) (*InitGoogle2FAResp, error) {
+func (UnimplementedAppServer) InitGoogle2FA(context.Context, *InitGoogle2FAReq) (*InitGoogle2FAResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method InitGoogle2FA not implemented")
 }
-func (UnimplementedUserAppServer) EnableGoogle2FA(context.Context, *EnableGoogle2FAReq) (*UserCommonResp, error) {
+func (UnimplementedAppServer) EnableGoogle2FA(context.Context, *EnableGoogle2FAReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method EnableGoogle2FA not implemented")
 }
-func (UnimplementedUserAppServer) DisableGoogle2FA(context.Context, *DisableGoogle2FAReq) (*UserCommonResp, error) {
+func (UnimplementedAppServer) DisableGoogle2FA(context.Context, *DisableGoogle2FAReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method DisableGoogle2FA not implemented")
 }
-func (UnimplementedUserAppServer) ListBanks(context.Context, *ListBanksReq) (*ListBanksResp, error) {
+func (UnimplementedAppServer) ListBanks(context.Context, *ListBanksReq) (*ListBanksResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListBanks not implemented")
 }
-func (UnimplementedUserAppServer) AddBank(context.Context, *AddBankReq) (*AddBankResp, error) {
+func (UnimplementedAppServer) AddBank(context.Context, *AddBankReq) (*AddBankResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddBank not implemented")
 }
-func (UnimplementedUserAppServer) UpdateBank(context.Context, *UpdateBankReq) (*UpdateBankResp, error) {
+func (UnimplementedAppServer) UpdateBank(context.Context, *UpdateBankReq) (*UpdateBankResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateBank not implemented")
 }
-func (UnimplementedUserAppServer) DeleteBank(context.Context, *DeleteBankReq) (*UserCommonResp, error) {
+func (UnimplementedAppServer) DeleteBank(context.Context, *DeleteBankReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteBank not implemented")
 }
-func (UnimplementedUserAppServer) SetDefaultBank(context.Context, *SetDefaultBankReq) (*UserCommonResp, error) {
+func (UnimplementedAppServer) SetDefaultBank(context.Context, *SetDefaultBankReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetDefaultBank not implemented")
 }
-func (UnimplementedUserAppServer) mustEmbedUnimplementedUserAppServer() {}
-func (UnimplementedUserAppServer) testEmbeddedByValue()                 {}
+func (UnimplementedAppServer) mustEmbedUnimplementedAppServer() {}
+func (UnimplementedAppServer) testEmbeddedByValue()             {}
 
-// UnsafeUserAppServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to UserAppServer will
+// UnsafeAppServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AppServer will
 // result in compilation errors.
-type UnsafeUserAppServer interface {
-	mustEmbedUnimplementedUserAppServer()
+type UnsafeAppServer interface {
+	mustEmbedUnimplementedAppServer()
 }
 
-func RegisterUserAppServer(s grpc.ServiceRegistrar, srv UserAppServer) {
-	// If the following call panics, it indicates UnimplementedUserAppServer was
+func RegisterAppServer(s grpc.ServiceRegistrar, srv AppServer) {
+	// If the following call panics, it indicates UnimplementedAppServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&UserApp_ServiceDesc, srv)
+	s.RegisterService(&App_ServiceDesc, srv)
 }
 
-func _UserApp_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RegisterReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).Register(ctx, in)
+		return srv.(AppServer).Register(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_Register_FullMethodName,
+		FullMethod: App_Register_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).Register(ctx, req.(*RegisterReq))
+		return srv.(AppServer).Register(ctx, req.(*RegisterReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LoginReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).Login(ctx, in)
+		return srv.(AppServer).Login(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_Login_FullMethodName,
+		FullMethod: App_Login_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).Login(ctx, req.(*LoginReq))
+		return srv.(AppServer).Login(ctx, req.(*LoginReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_GuestLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GuestLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GuestLoginReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).GuestLogin(ctx, in)
+		return srv.(AppServer).GuestLogin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_GuestLogin_FullMethodName,
+		FullMethod: App_GuestLogin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).GuestLogin(ctx, req.(*GuestLoginReq))
+		return srv.(AppServer).GuestLogin(ctx, req.(*GuestLoginReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_CreateGuestTransfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_CreateGuestTransfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateGuestTransferReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).CreateGuestTransfer(ctx, in)
+		return srv.(AppServer).CreateGuestTransfer(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_CreateGuestTransfer_FullMethodName,
+		FullMethod: App_CreateGuestTransfer_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).CreateGuestTransfer(ctx, req.(*CreateGuestTransferReq))
+		return srv.(AppServer).CreateGuestTransfer(ctx, req.(*CreateGuestTransferReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_ExchangeGuestTransfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ExchangeGuestTransfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ExchangeGuestTransferReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).ExchangeGuestTransfer(ctx, in)
+		return srv.(AppServer).ExchangeGuestTransfer(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_ExchangeGuestTransfer_FullMethodName,
+		FullMethod: App_ExchangeGuestTransfer_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).ExchangeGuestTransfer(ctx, req.(*ExchangeGuestTransferReq))
+		return srv.(AppServer).ExchangeGuestTransfer(ctx, req.(*ExchangeGuestTransferReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LogoutReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).Logout(ctx, in)
+		return srv.(AppServer).Logout(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_Logout_FullMethodName,
+		FullMethod: App_Logout_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).Logout(ctx, req.(*LogoutReq))
+		return srv.(AppServer).Logout(ctx, req.(*LogoutReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_RefreshToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_RefreshToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RefreshTokenReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).RefreshToken(ctx, in)
+		return srv.(AppServer).RefreshToken(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_RefreshToken_FullMethodName,
+		FullMethod: App_RefreshToken_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).RefreshToken(ctx, req.(*RefreshTokenReq))
+		return srv.(AppServer).RefreshToken(ctx, req.(*RefreshTokenReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_GetProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetProfileReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).GetProfile(ctx, in)
+		return srv.(AppServer).GetProfile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_GetProfile_FullMethodName,
+		FullMethod: App_GetProfile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).GetProfile(ctx, req.(*GetProfileReq))
+		return srv.(AppServer).GetProfile(ctx, req.(*GetProfileReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_UpdateProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_UpdateProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateProfileReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).UpdateProfile(ctx, in)
+		return srv.(AppServer).UpdateProfile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_UpdateProfile_FullMethodName,
+		FullMethod: App_UpdateProfile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).UpdateProfile(ctx, req.(*UpdateProfileReq))
+		return srv.(AppServer).UpdateProfile(ctx, req.(*UpdateProfileReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_ChangeLoginPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ChangeLoginPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ChangeLoginPasswordReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).ChangeLoginPassword(ctx, in)
+		return srv.(AppServer).ChangeLoginPassword(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_ChangeLoginPassword_FullMethodName,
+		FullMethod: App_ChangeLoginPassword_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).ChangeLoginPassword(ctx, req.(*ChangeLoginPasswordReq))
+		return srv.(AppServer).ChangeLoginPassword(ctx, req.(*ChangeLoginPasswordReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_GetIdentity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetIdentity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetIdentityReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).GetIdentity(ctx, in)
+		return srv.(AppServer).GetIdentity(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_GetIdentity_FullMethodName,
+		FullMethod: App_GetIdentity_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).GetIdentity(ctx, req.(*GetIdentityReq))
+		return srv.(AppServer).GetIdentity(ctx, req.(*GetIdentityReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_SubmitIdentity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_SubmitIdentity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SubmitIdentityReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).SubmitIdentity(ctx, in)
+		return srv.(AppServer).SubmitIdentity(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_SubmitIdentity_FullMethodName,
+		FullMethod: App_SubmitIdentity_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).SubmitIdentity(ctx, req.(*SubmitIdentityReq))
+		return srv.(AppServer).SubmitIdentity(ctx, req.(*SubmitIdentityReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_UpdateIdentity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_UpdateIdentity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateIdentityReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).UpdateIdentity(ctx, in)
+		return srv.(AppServer).UpdateIdentity(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_UpdateIdentity_FullMethodName,
+		FullMethod: App_UpdateIdentity_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).UpdateIdentity(ctx, req.(*UpdateIdentityReq))
+		return srv.(AppServer).UpdateIdentity(ctx, req.(*UpdateIdentityReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_GetSecurity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetSecurity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSecurityReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).GetSecurity(ctx, in)
+		return srv.(AppServer).GetSecurity(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_GetSecurity_FullMethodName,
+		FullMethod: App_GetSecurity_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).GetSecurity(ctx, req.(*GetSecurityReq))
+		return srv.(AppServer).GetSecurity(ctx, req.(*GetSecurityReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_SetPayPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_SetPayPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetPayPasswordReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).SetPayPassword(ctx, in)
+		return srv.(AppServer).SetPayPassword(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_SetPayPassword_FullMethodName,
+		FullMethod: App_SetPayPassword_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).SetPayPassword(ctx, req.(*SetPayPasswordReq))
+		return srv.(AppServer).SetPayPassword(ctx, req.(*SetPayPasswordReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_ChangePayPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ChangePayPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ChangePayPasswordReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).ChangePayPassword(ctx, in)
+		return srv.(AppServer).ChangePayPassword(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_ChangePayPassword_FullMethodName,
+		FullMethod: App_ChangePayPassword_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).ChangePayPassword(ctx, req.(*ChangePayPasswordReq))
+		return srv.(AppServer).ChangePayPassword(ctx, req.(*ChangePayPasswordReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_InitGoogle2FA_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_InitGoogle2FA_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(InitGoogle2FAReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).InitGoogle2FA(ctx, in)
+		return srv.(AppServer).InitGoogle2FA(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_InitGoogle2FA_FullMethodName,
+		FullMethod: App_InitGoogle2FA_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).InitGoogle2FA(ctx, req.(*InitGoogle2FAReq))
+		return srv.(AppServer).InitGoogle2FA(ctx, req.(*InitGoogle2FAReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_EnableGoogle2FA_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_EnableGoogle2FA_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EnableGoogle2FAReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).EnableGoogle2FA(ctx, in)
+		return srv.(AppServer).EnableGoogle2FA(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_EnableGoogle2FA_FullMethodName,
+		FullMethod: App_EnableGoogle2FA_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).EnableGoogle2FA(ctx, req.(*EnableGoogle2FAReq))
+		return srv.(AppServer).EnableGoogle2FA(ctx, req.(*EnableGoogle2FAReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_DisableGoogle2FA_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_DisableGoogle2FA_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DisableGoogle2FAReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).DisableGoogle2FA(ctx, in)
+		return srv.(AppServer).DisableGoogle2FA(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_DisableGoogle2FA_FullMethodName,
+		FullMethod: App_DisableGoogle2FA_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).DisableGoogle2FA(ctx, req.(*DisableGoogle2FAReq))
+		return srv.(AppServer).DisableGoogle2FA(ctx, req.(*DisableGoogle2FAReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_ListBanks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListBanks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListBanksReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).ListBanks(ctx, in)
+		return srv.(AppServer).ListBanks(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_ListBanks_FullMethodName,
+		FullMethod: App_ListBanks_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).ListBanks(ctx, req.(*ListBanksReq))
+		return srv.(AppServer).ListBanks(ctx, req.(*ListBanksReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_AddBank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_AddBank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddBankReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).AddBank(ctx, in)
+		return srv.(AppServer).AddBank(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_AddBank_FullMethodName,
+		FullMethod: App_AddBank_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).AddBank(ctx, req.(*AddBankReq))
+		return srv.(AppServer).AddBank(ctx, req.(*AddBankReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_UpdateBank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_UpdateBank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateBankReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).UpdateBank(ctx, in)
+		return srv.(AppServer).UpdateBank(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_UpdateBank_FullMethodName,
+		FullMethod: App_UpdateBank_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).UpdateBank(ctx, req.(*UpdateBankReq))
+		return srv.(AppServer).UpdateBank(ctx, req.(*UpdateBankReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_DeleteBank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_DeleteBank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteBankReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).DeleteBank(ctx, in)
+		return srv.(AppServer).DeleteBank(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_DeleteBank_FullMethodName,
+		FullMethod: App_DeleteBank_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).DeleteBank(ctx, req.(*DeleteBankReq))
+		return srv.(AppServer).DeleteBank(ctx, req.(*DeleteBankReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserApp_SetDefaultBank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_SetDefaultBank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetDefaultBankReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAppServer).SetDefaultBank(ctx, in)
+		return srv.(AppServer).SetDefaultBank(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserApp_SetDefaultBank_FullMethodName,
+		FullMethod: App_SetDefaultBank_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAppServer).SetDefaultBank(ctx, req.(*SetDefaultBankReq))
+		return srv.(AppServer).SetDefaultBank(ctx, req.(*SetDefaultBankReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// UserApp_ServiceDesc is the grpc.ServiceDesc for UserApp service.
+// App_ServiceDesc is the grpc.ServiceDesc for App service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var UserApp_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "user.UserApp",
-	HandlerType: (*UserAppServer)(nil),
+var App_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "user.App",
+	HandlerType: (*AppServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Register",
-			Handler:    _UserApp_Register_Handler,
+			Handler:    _App_Register_Handler,
 		},
 		{
 			MethodName: "Login",
-			Handler:    _UserApp_Login_Handler,
+			Handler:    _App_Login_Handler,
 		},
 		{
 			MethodName: "GuestLogin",
-			Handler:    _UserApp_GuestLogin_Handler,
+			Handler:    _App_GuestLogin_Handler,
 		},
 		{
 			MethodName: "CreateGuestTransfer",
-			Handler:    _UserApp_CreateGuestTransfer_Handler,
+			Handler:    _App_CreateGuestTransfer_Handler,
 		},
 		{
 			MethodName: "ExchangeGuestTransfer",
-			Handler:    _UserApp_ExchangeGuestTransfer_Handler,
+			Handler:    _App_ExchangeGuestTransfer_Handler,
 		},
 		{
 			MethodName: "Logout",
-			Handler:    _UserApp_Logout_Handler,
+			Handler:    _App_Logout_Handler,
 		},
 		{
 			MethodName: "RefreshToken",
-			Handler:    _UserApp_RefreshToken_Handler,
+			Handler:    _App_RefreshToken_Handler,
 		},
 		{
 			MethodName: "GetProfile",
-			Handler:    _UserApp_GetProfile_Handler,
+			Handler:    _App_GetProfile_Handler,
 		},
 		{
 			MethodName: "UpdateProfile",
-			Handler:    _UserApp_UpdateProfile_Handler,
+			Handler:    _App_UpdateProfile_Handler,
 		},
 		{
 			MethodName: "ChangeLoginPassword",
-			Handler:    _UserApp_ChangeLoginPassword_Handler,
+			Handler:    _App_ChangeLoginPassword_Handler,
 		},
 		{
 			MethodName: "GetIdentity",
-			Handler:    _UserApp_GetIdentity_Handler,
+			Handler:    _App_GetIdentity_Handler,
 		},
 		{
 			MethodName: "SubmitIdentity",
-			Handler:    _UserApp_SubmitIdentity_Handler,
+			Handler:    _App_SubmitIdentity_Handler,
 		},
 		{
 			MethodName: "UpdateIdentity",
-			Handler:    _UserApp_UpdateIdentity_Handler,
+			Handler:    _App_UpdateIdentity_Handler,
 		},
 		{
 			MethodName: "GetSecurity",
-			Handler:    _UserApp_GetSecurity_Handler,
+			Handler:    _App_GetSecurity_Handler,
 		},
 		{
 			MethodName: "SetPayPassword",
-			Handler:    _UserApp_SetPayPassword_Handler,
+			Handler:    _App_SetPayPassword_Handler,
 		},
 		{
 			MethodName: "ChangePayPassword",
-			Handler:    _UserApp_ChangePayPassword_Handler,
+			Handler:    _App_ChangePayPassword_Handler,
 		},
 		{
 			MethodName: "InitGoogle2FA",
-			Handler:    _UserApp_InitGoogle2FA_Handler,
+			Handler:    _App_InitGoogle2FA_Handler,
 		},
 		{
 			MethodName: "EnableGoogle2FA",
-			Handler:    _UserApp_EnableGoogle2FA_Handler,
+			Handler:    _App_EnableGoogle2FA_Handler,
 		},
 		{
 			MethodName: "DisableGoogle2FA",
-			Handler:    _UserApp_DisableGoogle2FA_Handler,
+			Handler:    _App_DisableGoogle2FA_Handler,
 		},
 		{
 			MethodName: "ListBanks",
-			Handler:    _UserApp_ListBanks_Handler,
+			Handler:    _App_ListBanks_Handler,
 		},
 		{
 			MethodName: "AddBank",
-			Handler:    _UserApp_AddBank_Handler,
+			Handler:    _App_AddBank_Handler,
 		},
 		{
 			MethodName: "UpdateBank",
-			Handler:    _UserApp_UpdateBank_Handler,
+			Handler:    _App_UpdateBank_Handler,
 		},
 		{
 			MethodName: "DeleteBank",
-			Handler:    _UserApp_DeleteBank_Handler,
+			Handler:    _App_DeleteBank_Handler,
 		},
 		{
 			MethodName: "SetDefaultBank",
-			Handler:    _UserApp_SetDefaultBank_Handler,
+			Handler:    _App_SetDefaultBank_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1047,37 +1047,37 @@ var UserApp_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	UserAdmin_GuestDomainMigrationStats_FullMethodName = "/user.UserAdmin/GuestDomainMigrationStats"
-	UserAdmin_CreateUser_FullMethodName                = "/user.UserAdmin/CreateUser"
-	UserAdmin_GetUserDetail_FullMethodName             = "/user.UserAdmin/GetUserDetail"
-	UserAdmin_ListUsers_FullMethodName                 = "/user.UserAdmin/ListUsers"
-	UserAdmin_UpdateUserBase_FullMethodName            = "/user.UserAdmin/UpdateUserBase"
-	UserAdmin_UpdateUserStatus_FullMethodName          = "/user.UserAdmin/UpdateUserStatus"
-	UserAdmin_UpdateUserLevel_FullMethodName           = "/user.UserAdmin/UpdateUserLevel"
-	UserAdmin_ResetLoginPassword_FullMethodName        = "/user.UserAdmin/ResetLoginPassword"
-	UserAdmin_ResetPayPassword_FullMethodName          = "/user.UserAdmin/ResetPayPassword"
-	UserAdmin_UnlockUser_FullMethodName                = "/user.UserAdmin/UnlockUser"
-	UserAdmin_UpdateRiskLevel_FullMethodName           = "/user.UserAdmin/UpdateRiskLevel"
-	UserAdmin_DeleteUser_FullMethodName                = "/user.UserAdmin/DeleteUser"
-	UserAdmin_GetUserSecurity_FullMethodName           = "/user.UserAdmin/GetUserSecurity"
-	UserAdmin_ResetUserGoogle2FA_FullMethodName        = "/user.UserAdmin/ResetUserGoogle2FA"
-	UserAdmin_ListUserIdentities_FullMethodName        = "/user.UserAdmin/ListUserIdentities"
-	UserAdmin_ReviewUserIdentity_FullMethodName        = "/user.UserAdmin/ReviewUserIdentity"
-	UserAdmin_ListUserBanks_FullMethodName             = "/user.UserAdmin/ListUserBanks"
-	UserAdmin_GetUserBank_FullMethodName               = "/user.UserAdmin/GetUserBank"
-	UserAdmin_AddUserBank_FullMethodName               = "/user.UserAdmin/AddUserBank"
-	UserAdmin_UpdateUserBank_FullMethodName            = "/user.UserAdmin/UpdateUserBank"
-	UserAdmin_DeleteUserBank_FullMethodName            = "/user.UserAdmin/DeleteUserBank"
-	UserAdmin_UpdateUserBankStatus_FullMethodName      = "/user.UserAdmin/UpdateUserBankStatus"
-	UserAdmin_SetDefaultUserBank_FullMethodName        = "/user.UserAdmin/SetDefaultUserBank"
+	Admin_GuestDomainMigrationStats_FullMethodName = "/user.Admin/GuestDomainMigrationStats"
+	Admin_CreateUser_FullMethodName                = "/user.Admin/CreateUser"
+	Admin_GetUserDetail_FullMethodName             = "/user.Admin/GetUserDetail"
+	Admin_ListUsers_FullMethodName                 = "/user.Admin/ListUsers"
+	Admin_UpdateUserBase_FullMethodName            = "/user.Admin/UpdateUserBase"
+	Admin_UpdateUserStatus_FullMethodName          = "/user.Admin/UpdateUserStatus"
+	Admin_UpdateUserLevel_FullMethodName           = "/user.Admin/UpdateUserLevel"
+	Admin_ResetLoginPassword_FullMethodName        = "/user.Admin/ResetLoginPassword"
+	Admin_ResetPayPassword_FullMethodName          = "/user.Admin/ResetPayPassword"
+	Admin_UnlockUser_FullMethodName                = "/user.Admin/UnlockUser"
+	Admin_UpdateRiskLevel_FullMethodName           = "/user.Admin/UpdateRiskLevel"
+	Admin_DeleteUser_FullMethodName                = "/user.Admin/DeleteUser"
+	Admin_GetUserSecurity_FullMethodName           = "/user.Admin/GetUserSecurity"
+	Admin_ResetUserGoogle2FA_FullMethodName        = "/user.Admin/ResetUserGoogle2FA"
+	Admin_ListUserIdentities_FullMethodName        = "/user.Admin/ListUserIdentities"
+	Admin_ReviewUserIdentity_FullMethodName        = "/user.Admin/ReviewUserIdentity"
+	Admin_ListUserBanks_FullMethodName             = "/user.Admin/ListUserBanks"
+	Admin_GetUserBank_FullMethodName               = "/user.Admin/GetUserBank"
+	Admin_AddUserBank_FullMethodName               = "/user.Admin/AddUserBank"
+	Admin_UpdateUserBank_FullMethodName            = "/user.Admin/UpdateUserBank"
+	Admin_DeleteUserBank_FullMethodName            = "/user.Admin/DeleteUserBank"
+	Admin_UpdateUserBankStatus_FullMethodName      = "/user.Admin/UpdateUserBankStatus"
+	Admin_SetDefaultUserBank_FullMethodName        = "/user.Admin/SetDefaultUserBank"
 )
 
-// UserAdminClient is the client API for UserAdmin service.
+// AdminClient is the client API for Admin service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // 管理后台接口
-type UserAdminClient interface {
+type AdminClient interface {
 	// 退役域名未迁移游客及活跃分布统计
 	GuestDomainMigrationStats(ctx context.Context, in *GuestDomainMigrationStatsReq, opts ...grpc.CallOption) (*GuestDomainMigrationStatsResp, error)
 	// 创建用户
@@ -1126,250 +1126,250 @@ type UserAdminClient interface {
 	SetDefaultUserBank(ctx context.Context, in *SetDefaultUserBankReq, opts ...grpc.CallOption) (*CommonResp, error)
 }
 
-type userAdminClient struct {
+type adminClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewUserAdminClient(cc grpc.ClientConnInterface) UserAdminClient {
-	return &userAdminClient{cc}
+func NewAdminClient(cc grpc.ClientConnInterface) AdminClient {
+	return &adminClient{cc}
 }
 
-func (c *userAdminClient) GuestDomainMigrationStats(ctx context.Context, in *GuestDomainMigrationStatsReq, opts ...grpc.CallOption) (*GuestDomainMigrationStatsResp, error) {
+func (c *adminClient) GuestDomainMigrationStats(ctx context.Context, in *GuestDomainMigrationStatsReq, opts ...grpc.CallOption) (*GuestDomainMigrationStatsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GuestDomainMigrationStatsResp)
-	err := c.cc.Invoke(ctx, UserAdmin_GuestDomainMigrationStats_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GuestDomainMigrationStats_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) CreateUser(ctx context.Context, in *CreateUserReq, opts ...grpc.CallOption) (*CreateUserResp, error) {
+func (c *adminClient) CreateUser(ctx context.Context, in *CreateUserReq, opts ...grpc.CallOption) (*CreateUserResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateUserResp)
-	err := c.cc.Invoke(ctx, UserAdmin_CreateUser_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_CreateUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) GetUserDetail(ctx context.Context, in *GetUserDetailReq, opts ...grpc.CallOption) (*GetUserDetailResp, error) {
+func (c *adminClient) GetUserDetail(ctx context.Context, in *GetUserDetailReq, opts ...grpc.CallOption) (*GetUserDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetUserDetailResp)
-	err := c.cc.Invoke(ctx, UserAdmin_GetUserDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetUserDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) ListUsers(ctx context.Context, in *ListUsersReq, opts ...grpc.CallOption) (*ListUsersResp, error) {
+func (c *adminClient) ListUsers(ctx context.Context, in *ListUsersReq, opts ...grpc.CallOption) (*ListUsersResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListUsersResp)
-	err := c.cc.Invoke(ctx, UserAdmin_ListUsers_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListUsers_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) UpdateUserBase(ctx context.Context, in *UpdateUserBaseReq, opts ...grpc.CallOption) (*UpdateUserBaseResp, error) {
+func (c *adminClient) UpdateUserBase(ctx context.Context, in *UpdateUserBaseReq, opts ...grpc.CallOption) (*UpdateUserBaseResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UpdateUserBaseResp)
-	err := c.cc.Invoke(ctx, UserAdmin_UpdateUserBase_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateUserBase_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) UpdateUserStatus(ctx context.Context, in *UpdateUserStatusReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdateUserStatus(ctx context.Context, in *UpdateUserStatusReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, UserAdmin_UpdateUserStatus_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateUserStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) UpdateUserLevel(ctx context.Context, in *UpdateUserLevelReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdateUserLevel(ctx context.Context, in *UpdateUserLevelReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, UserAdmin_UpdateUserLevel_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateUserLevel_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) ResetLoginPassword(ctx context.Context, in *ResetLoginPasswordReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) ResetLoginPassword(ctx context.Context, in *ResetLoginPasswordReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, UserAdmin_ResetLoginPassword_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ResetLoginPassword_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) ResetPayPassword(ctx context.Context, in *ResetPayPasswordReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) ResetPayPassword(ctx context.Context, in *ResetPayPasswordReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, UserAdmin_ResetPayPassword_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ResetPayPassword_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) UnlockUser(ctx context.Context, in *UnlockUserReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UnlockUser(ctx context.Context, in *UnlockUserReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, UserAdmin_UnlockUser_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UnlockUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) UpdateRiskLevel(ctx context.Context, in *UpdateRiskLevelReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdateRiskLevel(ctx context.Context, in *UpdateRiskLevelReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, UserAdmin_UpdateRiskLevel_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateRiskLevel_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) DeleteUser(ctx context.Context, in *DeleteUserReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) DeleteUser(ctx context.Context, in *DeleteUserReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, UserAdmin_DeleteUser_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_DeleteUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) GetUserSecurity(ctx context.Context, in *GetUserSecurityReq, opts ...grpc.CallOption) (*GetUserSecurityResp, error) {
+func (c *adminClient) GetUserSecurity(ctx context.Context, in *GetUserSecurityReq, opts ...grpc.CallOption) (*GetUserSecurityResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetUserSecurityResp)
-	err := c.cc.Invoke(ctx, UserAdmin_GetUserSecurity_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetUserSecurity_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) ResetUserGoogle2FA(ctx context.Context, in *ResetUserGoogle2FAReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) ResetUserGoogle2FA(ctx context.Context, in *ResetUserGoogle2FAReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, UserAdmin_ResetUserGoogle2FA_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ResetUserGoogle2FA_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) ListUserIdentities(ctx context.Context, in *ListUserIdentitiesReq, opts ...grpc.CallOption) (*ListUserIdentitiesResp, error) {
+func (c *adminClient) ListUserIdentities(ctx context.Context, in *ListUserIdentitiesReq, opts ...grpc.CallOption) (*ListUserIdentitiesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListUserIdentitiesResp)
-	err := c.cc.Invoke(ctx, UserAdmin_ListUserIdentities_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListUserIdentities_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) ReviewUserIdentity(ctx context.Context, in *ReviewUserIdentityReq, opts ...grpc.CallOption) (*ReviewUserIdentityResp, error) {
+func (c *adminClient) ReviewUserIdentity(ctx context.Context, in *ReviewUserIdentityReq, opts ...grpc.CallOption) (*ReviewUserIdentityResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ReviewUserIdentityResp)
-	err := c.cc.Invoke(ctx, UserAdmin_ReviewUserIdentity_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ReviewUserIdentity_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) ListUserBanks(ctx context.Context, in *ListUserBanksReq, opts ...grpc.CallOption) (*ListUserBanksResp, error) {
+func (c *adminClient) ListUserBanks(ctx context.Context, in *ListUserBanksReq, opts ...grpc.CallOption) (*ListUserBanksResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListUserBanksResp)
-	err := c.cc.Invoke(ctx, UserAdmin_ListUserBanks_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListUserBanks_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) GetUserBank(ctx context.Context, in *GetUserBankReq, opts ...grpc.CallOption) (*GetUserBankResp, error) {
+func (c *adminClient) GetUserBank(ctx context.Context, in *GetUserBankReq, opts ...grpc.CallOption) (*GetUserBankResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetUserBankResp)
-	err := c.cc.Invoke(ctx, UserAdmin_GetUserBank_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetUserBank_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) AddUserBank(ctx context.Context, in *AddUserBankReq, opts ...grpc.CallOption) (*AddUserBankResp, error) {
+func (c *adminClient) AddUserBank(ctx context.Context, in *AddUserBankReq, opts ...grpc.CallOption) (*AddUserBankResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AddUserBankResp)
-	err := c.cc.Invoke(ctx, UserAdmin_AddUserBank_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_AddUserBank_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) UpdateUserBank(ctx context.Context, in *UpdateUserBankReq, opts ...grpc.CallOption) (*UpdateUserBankResp, error) {
+func (c *adminClient) UpdateUserBank(ctx context.Context, in *UpdateUserBankReq, opts ...grpc.CallOption) (*UpdateUserBankResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UpdateUserBankResp)
-	err := c.cc.Invoke(ctx, UserAdmin_UpdateUserBank_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateUserBank_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) DeleteUserBank(ctx context.Context, in *DeleteUserBankReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) DeleteUserBank(ctx context.Context, in *DeleteUserBankReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, UserAdmin_DeleteUserBank_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_DeleteUserBank_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) UpdateUserBankStatus(ctx context.Context, in *UpdateUserBankStatusReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdateUserBankStatus(ctx context.Context, in *UpdateUserBankStatusReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, UserAdmin_UpdateUserBankStatus_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateUserBankStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userAdminClient) SetDefaultUserBank(ctx context.Context, in *SetDefaultUserBankReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) SetDefaultUserBank(ctx context.Context, in *SetDefaultUserBankReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, UserAdmin_SetDefaultUserBank_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_SetDefaultUserBank_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// UserAdminServer is the server API for UserAdmin service.
-// All implementations must embed UnimplementedUserAdminServer
+// AdminServer is the server API for Admin service.
+// All implementations must embed UnimplementedAdminServer
 // for forward compatibility.
 //
 // 管理后台接口
-type UserAdminServer interface {
+type AdminServer interface {
 	// 退役域名未迁移游客及活跃分布统计
 	GuestDomainMigrationStats(context.Context, *GuestDomainMigrationStatsReq) (*GuestDomainMigrationStatsResp, error)
 	// 创建用户
@@ -1416,618 +1416,618 @@ type UserAdminServer interface {
 	UpdateUserBankStatus(context.Context, *UpdateUserBankStatusReq) (*CommonResp, error)
 	// 设置默认用户银行卡
 	SetDefaultUserBank(context.Context, *SetDefaultUserBankReq) (*CommonResp, error)
-	mustEmbedUnimplementedUserAdminServer()
+	mustEmbedUnimplementedAdminServer()
 }
 
-// UnimplementedUserAdminServer must be embedded to have
+// UnimplementedAdminServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedUserAdminServer struct{}
+type UnimplementedAdminServer struct{}
 
-func (UnimplementedUserAdminServer) GuestDomainMigrationStats(context.Context, *GuestDomainMigrationStatsReq) (*GuestDomainMigrationStatsResp, error) {
+func (UnimplementedAdminServer) GuestDomainMigrationStats(context.Context, *GuestDomainMigrationStatsReq) (*GuestDomainMigrationStatsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GuestDomainMigrationStats not implemented")
 }
-func (UnimplementedUserAdminServer) CreateUser(context.Context, *CreateUserReq) (*CreateUserResp, error) {
+func (UnimplementedAdminServer) CreateUser(context.Context, *CreateUserReq) (*CreateUserResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateUser not implemented")
 }
-func (UnimplementedUserAdminServer) GetUserDetail(context.Context, *GetUserDetailReq) (*GetUserDetailResp, error) {
+func (UnimplementedAdminServer) GetUserDetail(context.Context, *GetUserDetailReq) (*GetUserDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserDetail not implemented")
 }
-func (UnimplementedUserAdminServer) ListUsers(context.Context, *ListUsersReq) (*ListUsersResp, error) {
+func (UnimplementedAdminServer) ListUsers(context.Context, *ListUsersReq) (*ListUsersResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListUsers not implemented")
 }
-func (UnimplementedUserAdminServer) UpdateUserBase(context.Context, *UpdateUserBaseReq) (*UpdateUserBaseResp, error) {
+func (UnimplementedAdminServer) UpdateUserBase(context.Context, *UpdateUserBaseReq) (*UpdateUserBaseResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUserBase not implemented")
 }
-func (UnimplementedUserAdminServer) UpdateUserStatus(context.Context, *UpdateUserStatusReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdateUserStatus(context.Context, *UpdateUserStatusReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUserStatus not implemented")
 }
-func (UnimplementedUserAdminServer) UpdateUserLevel(context.Context, *UpdateUserLevelReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdateUserLevel(context.Context, *UpdateUserLevelReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUserLevel not implemented")
 }
-func (UnimplementedUserAdminServer) ResetLoginPassword(context.Context, *ResetLoginPasswordReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) ResetLoginPassword(context.Context, *ResetLoginPasswordReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ResetLoginPassword not implemented")
 }
-func (UnimplementedUserAdminServer) ResetPayPassword(context.Context, *ResetPayPasswordReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) ResetPayPassword(context.Context, *ResetPayPasswordReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ResetPayPassword not implemented")
 }
-func (UnimplementedUserAdminServer) UnlockUser(context.Context, *UnlockUserReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UnlockUser(context.Context, *UnlockUserReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UnlockUser not implemented")
 }
-func (UnimplementedUserAdminServer) UpdateRiskLevel(context.Context, *UpdateRiskLevelReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdateRiskLevel(context.Context, *UpdateRiskLevelReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateRiskLevel not implemented")
 }
-func (UnimplementedUserAdminServer) DeleteUser(context.Context, *DeleteUserReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) DeleteUser(context.Context, *DeleteUserReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteUser not implemented")
 }
-func (UnimplementedUserAdminServer) GetUserSecurity(context.Context, *GetUserSecurityReq) (*GetUserSecurityResp, error) {
+func (UnimplementedAdminServer) GetUserSecurity(context.Context, *GetUserSecurityReq) (*GetUserSecurityResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserSecurity not implemented")
 }
-func (UnimplementedUserAdminServer) ResetUserGoogle2FA(context.Context, *ResetUserGoogle2FAReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) ResetUserGoogle2FA(context.Context, *ResetUserGoogle2FAReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ResetUserGoogle2FA not implemented")
 }
-func (UnimplementedUserAdminServer) ListUserIdentities(context.Context, *ListUserIdentitiesReq) (*ListUserIdentitiesResp, error) {
+func (UnimplementedAdminServer) ListUserIdentities(context.Context, *ListUserIdentitiesReq) (*ListUserIdentitiesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListUserIdentities not implemented")
 }
-func (UnimplementedUserAdminServer) ReviewUserIdentity(context.Context, *ReviewUserIdentityReq) (*ReviewUserIdentityResp, error) {
+func (UnimplementedAdminServer) ReviewUserIdentity(context.Context, *ReviewUserIdentityReq) (*ReviewUserIdentityResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ReviewUserIdentity not implemented")
 }
-func (UnimplementedUserAdminServer) ListUserBanks(context.Context, *ListUserBanksReq) (*ListUserBanksResp, error) {
+func (UnimplementedAdminServer) ListUserBanks(context.Context, *ListUserBanksReq) (*ListUserBanksResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListUserBanks not implemented")
 }
-func (UnimplementedUserAdminServer) GetUserBank(context.Context, *GetUserBankReq) (*GetUserBankResp, error) {
+func (UnimplementedAdminServer) GetUserBank(context.Context, *GetUserBankReq) (*GetUserBankResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserBank not implemented")
 }
-func (UnimplementedUserAdminServer) AddUserBank(context.Context, *AddUserBankReq) (*AddUserBankResp, error) {
+func (UnimplementedAdminServer) AddUserBank(context.Context, *AddUserBankReq) (*AddUserBankResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddUserBank not implemented")
 }
-func (UnimplementedUserAdminServer) UpdateUserBank(context.Context, *UpdateUserBankReq) (*UpdateUserBankResp, error) {
+func (UnimplementedAdminServer) UpdateUserBank(context.Context, *UpdateUserBankReq) (*UpdateUserBankResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUserBank not implemented")
 }
-func (UnimplementedUserAdminServer) DeleteUserBank(context.Context, *DeleteUserBankReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) DeleteUserBank(context.Context, *DeleteUserBankReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteUserBank not implemented")
 }
-func (UnimplementedUserAdminServer) UpdateUserBankStatus(context.Context, *UpdateUserBankStatusReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdateUserBankStatus(context.Context, *UpdateUserBankStatusReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateUserBankStatus not implemented")
 }
-func (UnimplementedUserAdminServer) SetDefaultUserBank(context.Context, *SetDefaultUserBankReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) SetDefaultUserBank(context.Context, *SetDefaultUserBankReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetDefaultUserBank not implemented")
 }
-func (UnimplementedUserAdminServer) mustEmbedUnimplementedUserAdminServer() {}
-func (UnimplementedUserAdminServer) testEmbeddedByValue()                   {}
+func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
+func (UnimplementedAdminServer) testEmbeddedByValue()               {}
 
-// UnsafeUserAdminServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to UserAdminServer will
+// UnsafeAdminServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AdminServer will
 // result in compilation errors.
-type UnsafeUserAdminServer interface {
-	mustEmbedUnimplementedUserAdminServer()
+type UnsafeAdminServer interface {
+	mustEmbedUnimplementedAdminServer()
 }
 
-func RegisterUserAdminServer(s grpc.ServiceRegistrar, srv UserAdminServer) {
-	// If the following call panics, it indicates UnimplementedUserAdminServer was
+func RegisterAdminServer(s grpc.ServiceRegistrar, srv AdminServer) {
+	// If the following call panics, it indicates UnimplementedAdminServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&UserAdmin_ServiceDesc, srv)
+	s.RegisterService(&Admin_ServiceDesc, srv)
 }
 
-func _UserAdmin_GuestDomainMigrationStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GuestDomainMigrationStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GuestDomainMigrationStatsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).GuestDomainMigrationStats(ctx, in)
+		return srv.(AdminServer).GuestDomainMigrationStats(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_GuestDomainMigrationStats_FullMethodName,
+		FullMethod: Admin_GuestDomainMigrationStats_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).GuestDomainMigrationStats(ctx, req.(*GuestDomainMigrationStatsReq))
+		return srv.(AdminServer).GuestDomainMigrationStats(ctx, req.(*GuestDomainMigrationStatsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateUserReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).CreateUser(ctx, in)
+		return srv.(AdminServer).CreateUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_CreateUser_FullMethodName,
+		FullMethod: Admin_CreateUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).CreateUser(ctx, req.(*CreateUserReq))
+		return srv.(AdminServer).CreateUser(ctx, req.(*CreateUserReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_GetUserDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetUserDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).GetUserDetail(ctx, in)
+		return srv.(AdminServer).GetUserDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_GetUserDetail_FullMethodName,
+		FullMethod: Admin_GetUserDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).GetUserDetail(ctx, req.(*GetUserDetailReq))
+		return srv.(AdminServer).GetUserDetail(ctx, req.(*GetUserDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_ListUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListUsersReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).ListUsers(ctx, in)
+		return srv.(AdminServer).ListUsers(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_ListUsers_FullMethodName,
+		FullMethod: Admin_ListUsers_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).ListUsers(ctx, req.(*ListUsersReq))
+		return srv.(AdminServer).ListUsers(ctx, req.(*ListUsersReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_UpdateUserBase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateUserBase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateUserBaseReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).UpdateUserBase(ctx, in)
+		return srv.(AdminServer).UpdateUserBase(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_UpdateUserBase_FullMethodName,
+		FullMethod: Admin_UpdateUserBase_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).UpdateUserBase(ctx, req.(*UpdateUserBaseReq))
+		return srv.(AdminServer).UpdateUserBase(ctx, req.(*UpdateUserBaseReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_UpdateUserStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateUserStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateUserStatusReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).UpdateUserStatus(ctx, in)
+		return srv.(AdminServer).UpdateUserStatus(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_UpdateUserStatus_FullMethodName,
+		FullMethod: Admin_UpdateUserStatus_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).UpdateUserStatus(ctx, req.(*UpdateUserStatusReq))
+		return srv.(AdminServer).UpdateUserStatus(ctx, req.(*UpdateUserStatusReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_UpdateUserLevel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateUserLevel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateUserLevelReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).UpdateUserLevel(ctx, in)
+		return srv.(AdminServer).UpdateUserLevel(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_UpdateUserLevel_FullMethodName,
+		FullMethod: Admin_UpdateUserLevel_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).UpdateUserLevel(ctx, req.(*UpdateUserLevelReq))
+		return srv.(AdminServer).UpdateUserLevel(ctx, req.(*UpdateUserLevelReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_ResetLoginPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ResetLoginPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ResetLoginPasswordReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).ResetLoginPassword(ctx, in)
+		return srv.(AdminServer).ResetLoginPassword(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_ResetLoginPassword_FullMethodName,
+		FullMethod: Admin_ResetLoginPassword_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).ResetLoginPassword(ctx, req.(*ResetLoginPasswordReq))
+		return srv.(AdminServer).ResetLoginPassword(ctx, req.(*ResetLoginPasswordReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_ResetPayPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ResetPayPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ResetPayPasswordReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).ResetPayPassword(ctx, in)
+		return srv.(AdminServer).ResetPayPassword(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_ResetPayPassword_FullMethodName,
+		FullMethod: Admin_ResetPayPassword_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).ResetPayPassword(ctx, req.(*ResetPayPasswordReq))
+		return srv.(AdminServer).ResetPayPassword(ctx, req.(*ResetPayPasswordReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_UnlockUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UnlockUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UnlockUserReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).UnlockUser(ctx, in)
+		return srv.(AdminServer).UnlockUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_UnlockUser_FullMethodName,
+		FullMethod: Admin_UnlockUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).UnlockUser(ctx, req.(*UnlockUserReq))
+		return srv.(AdminServer).UnlockUser(ctx, req.(*UnlockUserReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_UpdateRiskLevel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateRiskLevel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateRiskLevelReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).UpdateRiskLevel(ctx, in)
+		return srv.(AdminServer).UpdateRiskLevel(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_UpdateRiskLevel_FullMethodName,
+		FullMethod: Admin_UpdateRiskLevel_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).UpdateRiskLevel(ctx, req.(*UpdateRiskLevelReq))
+		return srv.(AdminServer).UpdateRiskLevel(ctx, req.(*UpdateRiskLevelReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteUserReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).DeleteUser(ctx, in)
+		return srv.(AdminServer).DeleteUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_DeleteUser_FullMethodName,
+		FullMethod: Admin_DeleteUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).DeleteUser(ctx, req.(*DeleteUserReq))
+		return srv.(AdminServer).DeleteUser(ctx, req.(*DeleteUserReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_GetUserSecurity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetUserSecurity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserSecurityReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).GetUserSecurity(ctx, in)
+		return srv.(AdminServer).GetUserSecurity(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_GetUserSecurity_FullMethodName,
+		FullMethod: Admin_GetUserSecurity_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).GetUserSecurity(ctx, req.(*GetUserSecurityReq))
+		return srv.(AdminServer).GetUserSecurity(ctx, req.(*GetUserSecurityReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_ResetUserGoogle2FA_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ResetUserGoogle2FA_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ResetUserGoogle2FAReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).ResetUserGoogle2FA(ctx, in)
+		return srv.(AdminServer).ResetUserGoogle2FA(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_ResetUserGoogle2FA_FullMethodName,
+		FullMethod: Admin_ResetUserGoogle2FA_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).ResetUserGoogle2FA(ctx, req.(*ResetUserGoogle2FAReq))
+		return srv.(AdminServer).ResetUserGoogle2FA(ctx, req.(*ResetUserGoogle2FAReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_ListUserIdentities_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListUserIdentities_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListUserIdentitiesReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).ListUserIdentities(ctx, in)
+		return srv.(AdminServer).ListUserIdentities(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_ListUserIdentities_FullMethodName,
+		FullMethod: Admin_ListUserIdentities_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).ListUserIdentities(ctx, req.(*ListUserIdentitiesReq))
+		return srv.(AdminServer).ListUserIdentities(ctx, req.(*ListUserIdentitiesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_ReviewUserIdentity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ReviewUserIdentity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ReviewUserIdentityReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).ReviewUserIdentity(ctx, in)
+		return srv.(AdminServer).ReviewUserIdentity(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_ReviewUserIdentity_FullMethodName,
+		FullMethod: Admin_ReviewUserIdentity_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).ReviewUserIdentity(ctx, req.(*ReviewUserIdentityReq))
+		return srv.(AdminServer).ReviewUserIdentity(ctx, req.(*ReviewUserIdentityReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_ListUserBanks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListUserBanks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListUserBanksReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).ListUserBanks(ctx, in)
+		return srv.(AdminServer).ListUserBanks(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_ListUserBanks_FullMethodName,
+		FullMethod: Admin_ListUserBanks_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).ListUserBanks(ctx, req.(*ListUserBanksReq))
+		return srv.(AdminServer).ListUserBanks(ctx, req.(*ListUserBanksReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_GetUserBank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetUserBank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserBankReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).GetUserBank(ctx, in)
+		return srv.(AdminServer).GetUserBank(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_GetUserBank_FullMethodName,
+		FullMethod: Admin_GetUserBank_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).GetUserBank(ctx, req.(*GetUserBankReq))
+		return srv.(AdminServer).GetUserBank(ctx, req.(*GetUserBankReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_AddUserBank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_AddUserBank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddUserBankReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).AddUserBank(ctx, in)
+		return srv.(AdminServer).AddUserBank(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_AddUserBank_FullMethodName,
+		FullMethod: Admin_AddUserBank_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).AddUserBank(ctx, req.(*AddUserBankReq))
+		return srv.(AdminServer).AddUserBank(ctx, req.(*AddUserBankReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_UpdateUserBank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateUserBank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateUserBankReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).UpdateUserBank(ctx, in)
+		return srv.(AdminServer).UpdateUserBank(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_UpdateUserBank_FullMethodName,
+		FullMethod: Admin_UpdateUserBank_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).UpdateUserBank(ctx, req.(*UpdateUserBankReq))
+		return srv.(AdminServer).UpdateUserBank(ctx, req.(*UpdateUserBankReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_DeleteUserBank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_DeleteUserBank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteUserBankReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).DeleteUserBank(ctx, in)
+		return srv.(AdminServer).DeleteUserBank(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_DeleteUserBank_FullMethodName,
+		FullMethod: Admin_DeleteUserBank_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).DeleteUserBank(ctx, req.(*DeleteUserBankReq))
+		return srv.(AdminServer).DeleteUserBank(ctx, req.(*DeleteUserBankReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_UpdateUserBankStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateUserBankStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateUserBankStatusReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).UpdateUserBankStatus(ctx, in)
+		return srv.(AdminServer).UpdateUserBankStatus(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_UpdateUserBankStatus_FullMethodName,
+		FullMethod: Admin_UpdateUserBankStatus_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).UpdateUserBankStatus(ctx, req.(*UpdateUserBankStatusReq))
+		return srv.(AdminServer).UpdateUserBankStatus(ctx, req.(*UpdateUserBankStatusReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserAdmin_SetDefaultUserBank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_SetDefaultUserBank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetDefaultUserBankReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserAdminServer).SetDefaultUserBank(ctx, in)
+		return srv.(AdminServer).SetDefaultUserBank(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UserAdmin_SetDefaultUserBank_FullMethodName,
+		FullMethod: Admin_SetDefaultUserBank_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserAdminServer).SetDefaultUserBank(ctx, req.(*SetDefaultUserBankReq))
+		return srv.(AdminServer).SetDefaultUserBank(ctx, req.(*SetDefaultUserBankReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// UserAdmin_ServiceDesc is the grpc.ServiceDesc for UserAdmin service.
+// Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var UserAdmin_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "user.UserAdmin",
-	HandlerType: (*UserAdminServer)(nil),
+var Admin_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "user.Admin",
+	HandlerType: (*AdminServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GuestDomainMigrationStats",
-			Handler:    _UserAdmin_GuestDomainMigrationStats_Handler,
+			Handler:    _Admin_GuestDomainMigrationStats_Handler,
 		},
 		{
 			MethodName: "CreateUser",
-			Handler:    _UserAdmin_CreateUser_Handler,
+			Handler:    _Admin_CreateUser_Handler,
 		},
 		{
 			MethodName: "GetUserDetail",
-			Handler:    _UserAdmin_GetUserDetail_Handler,
+			Handler:    _Admin_GetUserDetail_Handler,
 		},
 		{
 			MethodName: "ListUsers",
-			Handler:    _UserAdmin_ListUsers_Handler,
+			Handler:    _Admin_ListUsers_Handler,
 		},
 		{
 			MethodName: "UpdateUserBase",
-			Handler:    _UserAdmin_UpdateUserBase_Handler,
+			Handler:    _Admin_UpdateUserBase_Handler,
 		},
 		{
 			MethodName: "UpdateUserStatus",
-			Handler:    _UserAdmin_UpdateUserStatus_Handler,
+			Handler:    _Admin_UpdateUserStatus_Handler,
 		},
 		{
 			MethodName: "UpdateUserLevel",
-			Handler:    _UserAdmin_UpdateUserLevel_Handler,
+			Handler:    _Admin_UpdateUserLevel_Handler,
 		},
 		{
 			MethodName: "ResetLoginPassword",
-			Handler:    _UserAdmin_ResetLoginPassword_Handler,
+			Handler:    _Admin_ResetLoginPassword_Handler,
 		},
 		{
 			MethodName: "ResetPayPassword",
-			Handler:    _UserAdmin_ResetPayPassword_Handler,
+			Handler:    _Admin_ResetPayPassword_Handler,
 		},
 		{
 			MethodName: "UnlockUser",
-			Handler:    _UserAdmin_UnlockUser_Handler,
+			Handler:    _Admin_UnlockUser_Handler,
 		},
 		{
 			MethodName: "UpdateRiskLevel",
-			Handler:    _UserAdmin_UpdateRiskLevel_Handler,
+			Handler:    _Admin_UpdateRiskLevel_Handler,
 		},
 		{
 			MethodName: "DeleteUser",
-			Handler:    _UserAdmin_DeleteUser_Handler,
+			Handler:    _Admin_DeleteUser_Handler,
 		},
 		{
 			MethodName: "GetUserSecurity",
-			Handler:    _UserAdmin_GetUserSecurity_Handler,
+			Handler:    _Admin_GetUserSecurity_Handler,
 		},
 		{
 			MethodName: "ResetUserGoogle2FA",
-			Handler:    _UserAdmin_ResetUserGoogle2FA_Handler,
+			Handler:    _Admin_ResetUserGoogle2FA_Handler,
 		},
 		{
 			MethodName: "ListUserIdentities",
-			Handler:    _UserAdmin_ListUserIdentities_Handler,
+			Handler:    _Admin_ListUserIdentities_Handler,
 		},
 		{
 			MethodName: "ReviewUserIdentity",
-			Handler:    _UserAdmin_ReviewUserIdentity_Handler,
+			Handler:    _Admin_ReviewUserIdentity_Handler,
 		},
 		{
 			MethodName: "ListUserBanks",
-			Handler:    _UserAdmin_ListUserBanks_Handler,
+			Handler:    _Admin_ListUserBanks_Handler,
 		},
 		{
 			MethodName: "GetUserBank",
-			Handler:    _UserAdmin_GetUserBank_Handler,
+			Handler:    _Admin_GetUserBank_Handler,
 		},
 		{
 			MethodName: "AddUserBank",
-			Handler:    _UserAdmin_AddUserBank_Handler,
+			Handler:    _Admin_AddUserBank_Handler,
 		},
 		{
 			MethodName: "UpdateUserBank",
-			Handler:    _UserAdmin_UpdateUserBank_Handler,
+			Handler:    _Admin_UpdateUserBank_Handler,
 		},
 		{
 			MethodName: "DeleteUserBank",
-			Handler:    _UserAdmin_DeleteUserBank_Handler,
+			Handler:    _Admin_DeleteUserBank_Handler,
 		},
 		{
 			MethodName: "UpdateUserBankStatus",
-			Handler:    _UserAdmin_UpdateUserBankStatus_Handler,
+			Handler:    _Admin_UpdateUserBankStatus_Handler,
 		},
 		{
 			MethodName: "SetDefaultUserBank",
-			Handler:    _UserAdmin_SetDefaultUserBank_Handler,
+			Handler:    _Admin_SetDefaultUserBank_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

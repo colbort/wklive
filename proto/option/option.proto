@@ -9,7 +9,7 @@ import "proto/option/model.proto";
 option go_package = "wklive/proto/option;option";
 
 // 期权 APP 端服务
-service OptionApp {
+service App {
   // 获取可交易期权合约列表
   rpc ListContracts(UserListContractsReq) returns (UserListContractsResp);
 
@@ -228,7 +228,7 @@ message UserListBillsResp {
 }
 
 // 期权管理后台服务
-service OptionAdmin {
+service Admin {
   // 创建期权合约
   rpc CreateContract(CreateContractReq) returns (CreateContractResp);
 
@@ -625,7 +625,7 @@ message InternalCommonResp {
   common.RespBase base = 1;
 }
 
-service OptionInternal {
+service Internal {
   // 同步标的行情，更新对应期权合约行情和快照。
   rpc SyncMarketQuote(SyncMarketQuoteReq) returns (InternalCommonResp);
 }
@@ -641,7 +641,7 @@ message OptionTaskResp {
 // ====================
 // 定时任务
 // ====================
-service OptionTask {
+service Task {
   // 期权合约生命周期处理（状态流转/订单过期/自动行权/到期结算）
   rpc ProcessContractLifecycle(OptionTaskReq) returns (OptionTaskResp);
   // 期权行情快照归档/清理

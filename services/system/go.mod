@@ -14,7 +14,6 @@ require (
 	wklive/proto/chat v0.0.0-00010101000000-000000000000
 	wklive/proto/common v0.0.0-00010101000000-000000000000
 	wklive/proto/system v0.0.0-20251105000000-000000000000
-	wklive/services/chat v0.0.0-00010101000000-000000000000
 )
 
 require (

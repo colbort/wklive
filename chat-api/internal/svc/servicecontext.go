@@ -23,7 +23,7 @@ type ServiceContext struct {
 	Config         config.Config
 	UserRateLimit  rest.Middleware
 	HeaderIdentity rest.Middleware
-	ChatAppCli     chat.ChatAppClient
+	ChatAppCli     chat.AppClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -56,6 +56,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:         c,
 		UserRateLimit:  middleware.NewUserRateLimitMiddleware().Handle,
 		HeaderIdentity: common.NewHeaderMiddleware().Handle,
-		ChatAppCli:     chat.NewChatAppClient(chatCli.Conn()),
+		ChatAppCli:     chat.NewAppClient(chatCli.Conn()),
 	}
 }

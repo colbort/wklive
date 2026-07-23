@@ -6159,8 +6159,8 @@ const file_proto_asset_asset_proto_rawDesc = "" +
 	"\x0eliquidation_no\x18\x02 \x01(\tR\rliquidationNo\x12\x1f\n" +
 	"\vreversal_no\x18\x03 \x01(\tR\n" +
 	"reversalNo\x12\x16\n" +
-	"\x06remark\x18\x04 \x01(\tR\x06remark2\xc8\x04\n" +
-	"\bAssetApp\x12W\n" +
+	"\x06remark\x18\x04 \x01(\tR\x06remark2\xc3\x04\n" +
+	"\x03App\x12W\n" +
 	"\x14ListAssetCoinConfigs\x12\x1e.asset.ListAssetCoinConfigsReq\x1a\x1f.asset.ListAssetCoinConfigsResp\x12N\n" +
 	"\x11GetMyAssetSummary\x12\x1b.asset.GetMyAssetSummaryReq\x1a\x1c.asset.GetMyAssetSummaryResp\x12?\n" +
 	"\fListMyAssets\x12\x16.asset.ListMyAssetsReq\x1a\x17.asset.ListMyAssetsResp\x129\n" +
@@ -6169,9 +6169,8 @@ const file_proto_asset_asset_proto_rawDesc = "" +
 	"\x10ListMyAssetFlows\x12\x1a.asset.ListMyAssetFlowsReq\x1a\x1b.asset.ListMyAssetFlowsResp\x12B\n" +
 	"\rListMyFreezes\x12\x17.asset.ListMyFreezesReq\x1a\x18.asset.ListMyFreezesResp\x12<\n" +
 	"\vListMyLocks\x12\x15.asset.ListMyLocksReq\x1a\x16.asset.ListMyLocksResp\x12H\n" +
-	"\x0fTransferMyAsset\x12\x19.asset.TransferMyAssetReq\x1a\x1a.asset.TransferMyAssetResp2\xcc\v\n" +
-	"\n" +
-	"AssetAdmin\x12T\n" +
+	"\x0fTransferMyAsset\x12\x19.asset.TransferMyAssetReq\x1a\x1a.asset.TransferMyAssetResp2\xc7\v\n" +
+	"\x05Admin\x12T\n" +
 	"\x15CreateAssetCoinConfig\x12\x1f.asset.CreateAssetCoinConfigReq\x1a\x1a.asset.AssetCoinConfigResp\x12T\n" +
 	"\x15UpdateAssetCoinConfig\x12\x1f.asset.UpdateAssetCoinConfigReq\x1a\x1a.asset.AssetCoinConfigResp\x12Z\n" +
 	"\x15DeleteAssetCoinConfig\x12\x1f.asset.DeleteAssetCoinConfigReq\x1a .asset.DeleteAssetCoinConfigResp\x12N\n" +
@@ -6190,8 +6189,8 @@ const file_proto_asset_asset_proto_rawDesc = "" +
 	"\vUnlockAsset\x12\x1b.asset.ManualUnlockAssetReq\x1a\x1c.asset.ManualChangeAssetResp\x12N\n" +
 	"\x12SetPlatformAccount\x12\x1c.asset.SetPlatformAccountReq\x1a\x1a.asset.PlatformAccountResp\x12N\n" +
 	"\x12GetPlatformAccount\x12\x1c.asset.GetPlatformAccountReq\x1a\x1a.asset.PlatformAccountResp\x12T\n" +
-	"\x15AdjustPlatformAccount\x12\x1f.asset.AdjustPlatformAccountReq\x1a\x1a.asset.PlatformAccountResp2\xd7\b\n" +
-	"\rAssetInternal\x12>\n" +
+	"\x15AdjustPlatformAccount\x12\x1f.asset.AdjustPlatformAccountReq\x1a\x1a.asset.PlatformAccountResp2\xd2\b\n" +
+	"\bInternal\x12>\n" +
 	"\fAddAvailable\x12\x16.asset.AddAvailableReq\x1a\x16.asset.ChangeAssetResp\x12>\n" +
 	"\fSubAvailable\x12\x16.asset.SubAvailableReq\x1a\x16.asset.ChangeAssetResp\x12<\n" +
 	"\vFreezeAsset\x12\x15.asset.FreezeAssetReq\x1a\x16.asset.FreezeAssetResp\x12@\n" +
@@ -6469,90 +6468,90 @@ var file_proto_asset_asset_proto_depIdxs = []int32{
 	68,  // 151: asset.ChangeAssetResp.data:type_name -> asset.ChangeAssetData
 	78,  // 152: asset.ChangeAssetData.asset:type_name -> asset.UserAsset
 	75,  // 153: asset.CoverInsuranceDeficitResp.base:type_name -> common.RespBase
-	0,   // 154: asset.AssetApp.ListAssetCoinConfigs:input_type -> asset.ListAssetCoinConfigsReq
-	2,   // 155: asset.AssetApp.GetMyAssetSummary:input_type -> asset.GetMyAssetSummaryReq
-	4,   // 156: asset.AssetApp.ListMyAssets:input_type -> asset.ListMyAssetsReq
-	6,   // 157: asset.AssetApp.GetMyAsset:input_type -> asset.GetMyAssetReq
-	8,   // 158: asset.AssetApp.ListMyAssetFlows:input_type -> asset.ListMyAssetFlowsReq
-	10,  // 159: asset.AssetApp.ListMyFreezes:input_type -> asset.ListMyFreezesReq
-	12,  // 160: asset.AssetApp.ListMyLocks:input_type -> asset.ListMyLocksReq
-	14,  // 161: asset.AssetApp.TransferMyAsset:input_type -> asset.TransferMyAssetReq
-	22,  // 162: asset.AssetAdmin.CreateAssetCoinConfig:input_type -> asset.CreateAssetCoinConfigReq
-	23,  // 163: asset.AssetAdmin.UpdateAssetCoinConfig:input_type -> asset.UpdateAssetCoinConfigReq
-	24,  // 164: asset.AssetAdmin.DeleteAssetCoinConfig:input_type -> asset.DeleteAssetCoinConfigReq
-	25,  // 165: asset.AssetAdmin.GetAssetCoinConfig:input_type -> asset.GetAssetCoinConfigReq
-	26,  // 166: asset.AssetAdmin.PageAssetCoinConfigs:input_type -> asset.PageAssetCoinConfigsReq
-	30,  // 167: asset.AssetAdmin.PageUserAssets:input_type -> asset.PageUserAssetsReq
-	32,  // 168: asset.AssetAdmin.GetUserAssetDetail:input_type -> asset.GetUserAssetDetailReq
-	34,  // 169: asset.AssetAdmin.PageAssetFlows:input_type -> asset.PageAssetFlowsReq
-	36,  // 170: asset.AssetAdmin.PageAssetFreezes:input_type -> asset.PageAssetFreezesReq
-	38,  // 171: asset.AssetAdmin.PageAssetLocks:input_type -> asset.PageAssetLocksReq
-	40,  // 172: asset.AssetAdmin.AddAsset:input_type -> asset.AddAssetReq
-	41,  // 173: asset.AssetAdmin.SubAsset:input_type -> asset.SubAssetReq
-	42,  // 174: asset.AssetAdmin.FreezeAsset:input_type -> asset.ManualFreezeAssetReq
-	43,  // 175: asset.AssetAdmin.UnfreezeAsset:input_type -> asset.ManualUnfreezeAssetReq
-	44,  // 176: asset.AssetAdmin.LockAsset:input_type -> asset.ManualLockAssetReq
-	45,  // 177: asset.AssetAdmin.UnlockAsset:input_type -> asset.ManualUnlockAssetReq
-	18,  // 178: asset.AssetAdmin.SetPlatformAccount:input_type -> asset.SetPlatformAccountReq
-	19,  // 179: asset.AssetAdmin.GetPlatformAccount:input_type -> asset.GetPlatformAccountReq
-	20,  // 180: asset.AssetAdmin.AdjustPlatformAccount:input_type -> asset.AdjustPlatformAccountReq
-	48,  // 181: asset.AssetInternal.AddAvailable:input_type -> asset.AddAvailableReq
-	49,  // 182: asset.AssetInternal.SubAvailable:input_type -> asset.SubAvailableReq
-	50,  // 183: asset.AssetInternal.FreezeAsset:input_type -> asset.FreezeAssetReq
-	53,  // 184: asset.AssetInternal.UnfreezeAsset:input_type -> asset.UnfreezeAssetReq
-	54,  // 185: asset.AssetInternal.UnfreezeAssetByBizNo:input_type -> asset.UnfreezeAssetByBizNoReq
-	55,  // 186: asset.AssetInternal.DeductFrozenAsset:input_type -> asset.DeductFrozenAssetReq
-	56,  // 187: asset.AssetInternal.DeductFrozenAssetByBizNo:input_type -> asset.DeductFrozenAssetByBizNoReq
-	57,  // 188: asset.AssetInternal.LockAsset:input_type -> asset.LockAssetReq
-	60,  // 189: asset.AssetInternal.UnlockAsset:input_type -> asset.UnlockAssetReq
-	61,  // 190: asset.AssetInternal.UnlockAssetByBizNo:input_type -> asset.UnlockAssetByBizNoReq
-	62,  // 191: asset.AssetInternal.DeductLockedAsset:input_type -> asset.DeductLockedAssetReq
-	63,  // 192: asset.AssetInternal.DeductLockedAssetByBizNo:input_type -> asset.DeductLockedAssetByBizNoReq
-	64,  // 193: asset.AssetInternal.TransferAsset:input_type -> asset.TransferAssetReq
-	69,  // 194: asset.AssetInternal.CoverInsuranceDeficit:input_type -> asset.CoverInsuranceDeficitReq
-	71,  // 195: asset.AssetInternal.ReverseInsuranceCover:input_type -> asset.ReverseInsuranceCoverReq
-	1,   // 196: asset.AssetApp.ListAssetCoinConfigs:output_type -> asset.ListAssetCoinConfigsResp
-	3,   // 197: asset.AssetApp.GetMyAssetSummary:output_type -> asset.GetMyAssetSummaryResp
-	5,   // 198: asset.AssetApp.ListMyAssets:output_type -> asset.ListMyAssetsResp
-	7,   // 199: asset.AssetApp.GetMyAsset:output_type -> asset.GetMyAssetResp
-	9,   // 200: asset.AssetApp.ListMyAssetFlows:output_type -> asset.ListMyAssetFlowsResp
-	11,  // 201: asset.AssetApp.ListMyFreezes:output_type -> asset.ListMyFreezesResp
-	13,  // 202: asset.AssetApp.ListMyLocks:output_type -> asset.ListMyLocksResp
-	15,  // 203: asset.AssetApp.TransferMyAsset:output_type -> asset.TransferMyAssetResp
-	27,  // 204: asset.AssetAdmin.CreateAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
-	27,  // 205: asset.AssetAdmin.UpdateAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
-	29,  // 206: asset.AssetAdmin.DeleteAssetCoinConfig:output_type -> asset.DeleteAssetCoinConfigResp
-	27,  // 207: asset.AssetAdmin.GetAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
-	28,  // 208: asset.AssetAdmin.PageAssetCoinConfigs:output_type -> asset.PageAssetCoinConfigsResp
-	31,  // 209: asset.AssetAdmin.PageUserAssets:output_type -> asset.PageUserAssetsResp
-	33,  // 210: asset.AssetAdmin.GetUserAssetDetail:output_type -> asset.GetUserAssetDetailResp
-	35,  // 211: asset.AssetAdmin.PageAssetFlows:output_type -> asset.PageAssetFlowsResp
-	37,  // 212: asset.AssetAdmin.PageAssetFreezes:output_type -> asset.PageAssetFreezesResp
-	39,  // 213: asset.AssetAdmin.PageAssetLocks:output_type -> asset.PageAssetLocksResp
-	46,  // 214: asset.AssetAdmin.AddAsset:output_type -> asset.ManualChangeAssetResp
-	46,  // 215: asset.AssetAdmin.SubAsset:output_type -> asset.ManualChangeAssetResp
-	46,  // 216: asset.AssetAdmin.FreezeAsset:output_type -> asset.ManualChangeAssetResp
-	46,  // 217: asset.AssetAdmin.UnfreezeAsset:output_type -> asset.ManualChangeAssetResp
-	46,  // 218: asset.AssetAdmin.LockAsset:output_type -> asset.ManualChangeAssetResp
-	46,  // 219: asset.AssetAdmin.UnlockAsset:output_type -> asset.ManualChangeAssetResp
-	21,  // 220: asset.AssetAdmin.SetPlatformAccount:output_type -> asset.PlatformAccountResp
-	21,  // 221: asset.AssetAdmin.GetPlatformAccount:output_type -> asset.PlatformAccountResp
-	21,  // 222: asset.AssetAdmin.AdjustPlatformAccount:output_type -> asset.PlatformAccountResp
-	67,  // 223: asset.AssetInternal.AddAvailable:output_type -> asset.ChangeAssetResp
-	67,  // 224: asset.AssetInternal.SubAvailable:output_type -> asset.ChangeAssetResp
-	51,  // 225: asset.AssetInternal.FreezeAsset:output_type -> asset.FreezeAssetResp
-	67,  // 226: asset.AssetInternal.UnfreezeAsset:output_type -> asset.ChangeAssetResp
-	67,  // 227: asset.AssetInternal.UnfreezeAssetByBizNo:output_type -> asset.ChangeAssetResp
-	67,  // 228: asset.AssetInternal.DeductFrozenAsset:output_type -> asset.ChangeAssetResp
-	67,  // 229: asset.AssetInternal.DeductFrozenAssetByBizNo:output_type -> asset.ChangeAssetResp
-	58,  // 230: asset.AssetInternal.LockAsset:output_type -> asset.LockAssetResp
-	67,  // 231: asset.AssetInternal.UnlockAsset:output_type -> asset.ChangeAssetResp
-	67,  // 232: asset.AssetInternal.UnlockAssetByBizNo:output_type -> asset.ChangeAssetResp
-	67,  // 233: asset.AssetInternal.DeductLockedAsset:output_type -> asset.ChangeAssetResp
-	67,  // 234: asset.AssetInternal.DeductLockedAssetByBizNo:output_type -> asset.ChangeAssetResp
-	65,  // 235: asset.AssetInternal.TransferAsset:output_type -> asset.TransferAssetResp
-	70,  // 236: asset.AssetInternal.CoverInsuranceDeficit:output_type -> asset.CoverInsuranceDeficitResp
-	67,  // 237: asset.AssetInternal.ReverseInsuranceCover:output_type -> asset.ChangeAssetResp
+	0,   // 154: asset.App.ListAssetCoinConfigs:input_type -> asset.ListAssetCoinConfigsReq
+	2,   // 155: asset.App.GetMyAssetSummary:input_type -> asset.GetMyAssetSummaryReq
+	4,   // 156: asset.App.ListMyAssets:input_type -> asset.ListMyAssetsReq
+	6,   // 157: asset.App.GetMyAsset:input_type -> asset.GetMyAssetReq
+	8,   // 158: asset.App.ListMyAssetFlows:input_type -> asset.ListMyAssetFlowsReq
+	10,  // 159: asset.App.ListMyFreezes:input_type -> asset.ListMyFreezesReq
+	12,  // 160: asset.App.ListMyLocks:input_type -> asset.ListMyLocksReq
+	14,  // 161: asset.App.TransferMyAsset:input_type -> asset.TransferMyAssetReq
+	22,  // 162: asset.Admin.CreateAssetCoinConfig:input_type -> asset.CreateAssetCoinConfigReq
+	23,  // 163: asset.Admin.UpdateAssetCoinConfig:input_type -> asset.UpdateAssetCoinConfigReq
+	24,  // 164: asset.Admin.DeleteAssetCoinConfig:input_type -> asset.DeleteAssetCoinConfigReq
+	25,  // 165: asset.Admin.GetAssetCoinConfig:input_type -> asset.GetAssetCoinConfigReq
+	26,  // 166: asset.Admin.PageAssetCoinConfigs:input_type -> asset.PageAssetCoinConfigsReq
+	30,  // 167: asset.Admin.PageUserAssets:input_type -> asset.PageUserAssetsReq
+	32,  // 168: asset.Admin.GetUserAssetDetail:input_type -> asset.GetUserAssetDetailReq
+	34,  // 169: asset.Admin.PageAssetFlows:input_type -> asset.PageAssetFlowsReq
+	36,  // 170: asset.Admin.PageAssetFreezes:input_type -> asset.PageAssetFreezesReq
+	38,  // 171: asset.Admin.PageAssetLocks:input_type -> asset.PageAssetLocksReq
+	40,  // 172: asset.Admin.AddAsset:input_type -> asset.AddAssetReq
+	41,  // 173: asset.Admin.SubAsset:input_type -> asset.SubAssetReq
+	42,  // 174: asset.Admin.FreezeAsset:input_type -> asset.ManualFreezeAssetReq
+	43,  // 175: asset.Admin.UnfreezeAsset:input_type -> asset.ManualUnfreezeAssetReq
+	44,  // 176: asset.Admin.LockAsset:input_type -> asset.ManualLockAssetReq
+	45,  // 177: asset.Admin.UnlockAsset:input_type -> asset.ManualUnlockAssetReq
+	18,  // 178: asset.Admin.SetPlatformAccount:input_type -> asset.SetPlatformAccountReq
+	19,  // 179: asset.Admin.GetPlatformAccount:input_type -> asset.GetPlatformAccountReq
+	20,  // 180: asset.Admin.AdjustPlatformAccount:input_type -> asset.AdjustPlatformAccountReq
+	48,  // 181: asset.Internal.AddAvailable:input_type -> asset.AddAvailableReq
+	49,  // 182: asset.Internal.SubAvailable:input_type -> asset.SubAvailableReq
+	50,  // 183: asset.Internal.FreezeAsset:input_type -> asset.FreezeAssetReq
+	53,  // 184: asset.Internal.UnfreezeAsset:input_type -> asset.UnfreezeAssetReq
+	54,  // 185: asset.Internal.UnfreezeAssetByBizNo:input_type -> asset.UnfreezeAssetByBizNoReq
+	55,  // 186: asset.Internal.DeductFrozenAsset:input_type -> asset.DeductFrozenAssetReq
+	56,  // 187: asset.Internal.DeductFrozenAssetByBizNo:input_type -> asset.DeductFrozenAssetByBizNoReq
+	57,  // 188: asset.Internal.LockAsset:input_type -> asset.LockAssetReq
+	60,  // 189: asset.Internal.UnlockAsset:input_type -> asset.UnlockAssetReq
+	61,  // 190: asset.Internal.UnlockAssetByBizNo:input_type -> asset.UnlockAssetByBizNoReq
+	62,  // 191: asset.Internal.DeductLockedAsset:input_type -> asset.DeductLockedAssetReq
+	63,  // 192: asset.Internal.DeductLockedAssetByBizNo:input_type -> asset.DeductLockedAssetByBizNoReq
+	64,  // 193: asset.Internal.TransferAsset:input_type -> asset.TransferAssetReq
+	69,  // 194: asset.Internal.CoverInsuranceDeficit:input_type -> asset.CoverInsuranceDeficitReq
+	71,  // 195: asset.Internal.ReverseInsuranceCover:input_type -> asset.ReverseInsuranceCoverReq
+	1,   // 196: asset.App.ListAssetCoinConfigs:output_type -> asset.ListAssetCoinConfigsResp
+	3,   // 197: asset.App.GetMyAssetSummary:output_type -> asset.GetMyAssetSummaryResp
+	5,   // 198: asset.App.ListMyAssets:output_type -> asset.ListMyAssetsResp
+	7,   // 199: asset.App.GetMyAsset:output_type -> asset.GetMyAssetResp
+	9,   // 200: asset.App.ListMyAssetFlows:output_type -> asset.ListMyAssetFlowsResp
+	11,  // 201: asset.App.ListMyFreezes:output_type -> asset.ListMyFreezesResp
+	13,  // 202: asset.App.ListMyLocks:output_type -> asset.ListMyLocksResp
+	15,  // 203: asset.App.TransferMyAsset:output_type -> asset.TransferMyAssetResp
+	27,  // 204: asset.Admin.CreateAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
+	27,  // 205: asset.Admin.UpdateAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
+	29,  // 206: asset.Admin.DeleteAssetCoinConfig:output_type -> asset.DeleteAssetCoinConfigResp
+	27,  // 207: asset.Admin.GetAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
+	28,  // 208: asset.Admin.PageAssetCoinConfigs:output_type -> asset.PageAssetCoinConfigsResp
+	31,  // 209: asset.Admin.PageUserAssets:output_type -> asset.PageUserAssetsResp
+	33,  // 210: asset.Admin.GetUserAssetDetail:output_type -> asset.GetUserAssetDetailResp
+	35,  // 211: asset.Admin.PageAssetFlows:output_type -> asset.PageAssetFlowsResp
+	37,  // 212: asset.Admin.PageAssetFreezes:output_type -> asset.PageAssetFreezesResp
+	39,  // 213: asset.Admin.PageAssetLocks:output_type -> asset.PageAssetLocksResp
+	46,  // 214: asset.Admin.AddAsset:output_type -> asset.ManualChangeAssetResp
+	46,  // 215: asset.Admin.SubAsset:output_type -> asset.ManualChangeAssetResp
+	46,  // 216: asset.Admin.FreezeAsset:output_type -> asset.ManualChangeAssetResp
+	46,  // 217: asset.Admin.UnfreezeAsset:output_type -> asset.ManualChangeAssetResp
+	46,  // 218: asset.Admin.LockAsset:output_type -> asset.ManualChangeAssetResp
+	46,  // 219: asset.Admin.UnlockAsset:output_type -> asset.ManualChangeAssetResp
+	21,  // 220: asset.Admin.SetPlatformAccount:output_type -> asset.PlatformAccountResp
+	21,  // 221: asset.Admin.GetPlatformAccount:output_type -> asset.PlatformAccountResp
+	21,  // 222: asset.Admin.AdjustPlatformAccount:output_type -> asset.PlatformAccountResp
+	67,  // 223: asset.Internal.AddAvailable:output_type -> asset.ChangeAssetResp
+	67,  // 224: asset.Internal.SubAvailable:output_type -> asset.ChangeAssetResp
+	51,  // 225: asset.Internal.FreezeAsset:output_type -> asset.FreezeAssetResp
+	67,  // 226: asset.Internal.UnfreezeAsset:output_type -> asset.ChangeAssetResp
+	67,  // 227: asset.Internal.UnfreezeAssetByBizNo:output_type -> asset.ChangeAssetResp
+	67,  // 228: asset.Internal.DeductFrozenAsset:output_type -> asset.ChangeAssetResp
+	67,  // 229: asset.Internal.DeductFrozenAssetByBizNo:output_type -> asset.ChangeAssetResp
+	58,  // 230: asset.Internal.LockAsset:output_type -> asset.LockAssetResp
+	67,  // 231: asset.Internal.UnlockAsset:output_type -> asset.ChangeAssetResp
+	67,  // 232: asset.Internal.UnlockAssetByBizNo:output_type -> asset.ChangeAssetResp
+	67,  // 233: asset.Internal.DeductLockedAsset:output_type -> asset.ChangeAssetResp
+	67,  // 234: asset.Internal.DeductLockedAssetByBizNo:output_type -> asset.ChangeAssetResp
+	65,  // 235: asset.Internal.TransferAsset:output_type -> asset.TransferAssetResp
+	70,  // 236: asset.Internal.CoverInsuranceDeficit:output_type -> asset.CoverInsuranceDeficitResp
+	67,  // 237: asset.Internal.ReverseInsuranceCover:output_type -> asset.ChangeAssetResp
 	196, // [196:238] is the sub-list for method output_type
 	154, // [154:196] is the sub-list for method input_type
 	154, // [154:154] is the sub-list for extension type_name

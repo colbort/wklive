@@ -9,7 +9,7 @@ import "proto/trade/model.proto";
 option go_package = "wklive/proto/trade;trade";
 
 // APP 交易服务接口
-service TradeApp {
+service App {
   // 获取交易对列表
   rpc GetSymbolList(GetSymbolListReq) returns (GetSymbolListResp);
 
@@ -211,7 +211,7 @@ message SetLeverageReq {
 }
 
 // 交易服务管理后台接口
-service TradeAdmin {
+service Admin {
   // 创建交易对
   rpc CreateSymbol(CreateSymbolReq) returns (CommonResp);
 
@@ -1208,7 +1208,7 @@ message RetrySettlementInstructionReq {
 }
 
 // 交易服务内部接口
-service TradeInternal {
+service Internal {
   // 记录持仓历史信息
   rpc RecordPositionHistory(RecordPositionHistoryReq) returns (InternalCommonResp);
 
@@ -1265,7 +1265,7 @@ message TradeTaskResp {
 // ====================
 // 定时任务
 // ====================
-service TradeTask {
+service Task {
   // 订单撮合
   rpc ProcessOrderMatching(TradeTaskReq) returns (TradeTaskResp);
   // 仓位处理（标记价格刷新/强平扫描/普通平仓）

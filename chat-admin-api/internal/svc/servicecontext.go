@@ -21,7 +21,7 @@ import (
 type ServiceContext struct {
 	Config         config.Config
 	AdminRateLimit rest.Middleware
-	ChatAdminCli   chat.ChatAdminClient
+	ChatAdminCli   chat.AdminClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -53,6 +53,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:         c,
 		AdminRateLimit: middleware.NewAdminRateLimitMiddleware().Handle,
-		ChatAdminCli:   chat.NewChatAdminClient(chatCli.Conn()),
+		ChatAdminCli:   chat.NewAdminClient(chatCli.Conn()),
 	}
 }

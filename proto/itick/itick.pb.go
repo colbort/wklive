@@ -5533,8 +5533,8 @@ const file_proto_itick_itick_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\x0f\n" +
 	"\rSyncKlinesReq\"6\n" +
 	"\x0eSyncKlinesResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base2\xcd\x04\n" +
-	"\bItickApp\x12Z\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base2\xc8\x04\n" +
+	"\x03App\x12Z\n" +
 	"\x15ListVisibleCategories\x12\x1f.itick.ListVisibleCategoriesReq\x1a .itick.ListVisibleCategoriesResp\x12T\n" +
 	"\x13ListVisibleProducts\x12\x1d.itick.ListVisibleProductsReq\x1a\x1e.itick.ListVisibleProductsResp\x123\n" +
 	"\bGetKline\x12\x12.itick.GetKlineReq\x1a\x13.itick.GetKlineResp\x123\n" +
@@ -5542,11 +5542,10 @@ const file_proto_itick_itick_proto_rawDesc = "" +
 	"\rBatchGetQuote\x12\x17.itick.BatchGetQuoteReq\x1a\x18.itick.BatchGetQuoteResp\x12c\n" +
 	"\x18GetAuthoritativeSnapshot\x12\".itick.GetAuthoritativeSnapshotReq\x1a#.itick.GetAuthoritativeSnapshotResp\x12>\n" +
 	"\x0fSubscribeStream\x12\x17.itick.SubscribeRequest\x1a\x10.itick.PushReply0\x01\x12<\n" +
-	"\x11GetKlineIntervals\x12\f.itick.Empty\x1a\x19.itick.KlineIntervalsResp2t\n" +
-	"\rItickInternal\x12c\n" +
-	"\x18GetAuthoritativeSnapshot\x12\".itick.GetAuthoritativeSnapshotReq\x1a#.itick.GetAuthoritativeSnapshotResp2\x81\x12\n" +
-	"\n" +
-	"ItickAdmin\x12E\n" +
+	"\x11GetKlineIntervals\x12\f.itick.Empty\x1a\x19.itick.KlineIntervalsResp2o\n" +
+	"\bInternal\x12c\n" +
+	"\x18GetAuthoritativeSnapshot\x12\".itick.GetAuthoritativeSnapshotReq\x1a#.itick.GetAuthoritativeSnapshotResp2\xfc\x11\n" +
+	"\x05Admin\x12E\n" +
 	"\x0eListCategories\x12\x18.itick.ListCategoriesReq\x1a\x19.itick.ListCategoriesResp\x12=\n" +
 	"\x0eCreateCategory\x12\x18.itick.CreateCategoryReq\x1a\x11.itick.CommonResp\x12=\n" +
 	"\x0eUpdateCategory\x12\x18.itick.UpdateCategoryReq\x1a\x11.itick.CommonResp\x12<\n" +
@@ -5577,8 +5576,8 @@ const file_proto_itick_itick_proto_rawDesc = "" +
 	"\x18ChangePriceFormulaStatus\x12\".itick.ChangePriceFormulaStatusReq\x1a\x11.itick.CommonResp\x12Q\n" +
 	"\x12ListSnapshotOutbox\x12\x1c.itick.ListSnapshotOutboxReq\x1a\x1d.itick.ListSnapshotOutboxResp\x12G\n" +
 	"\x13RetrySnapshotOutbox\x12\x1d.itick.RetrySnapshotOutboxReq\x1a\x11.itick.CommonResp\x12W\n" +
-	"\x1bRevokeAuthoritativeSnapshot\x12%.itick.RevokeAuthoritativeSnapshotReq\x1a\x11.itick.CommonResp2\x87\x01\n" +
-	"\tItickTask\x12?\n" +
+	"\x1bRevokeAuthoritativeSnapshot\x12%.itick.RevokeAuthoritativeSnapshotReq\x1a\x11.itick.CommonResp2\x82\x01\n" +
+	"\x04Task\x12?\n" +
 	"\fSyncProducts\x12\x16.itick.SyncProductsReq\x1a\x17.itick.SyncProductsResp\x129\n" +
 	"\n" +
 	"SyncKlines\x12\x14.itick.SyncKlinesReq\x1a\x15.itick.SyncKlinesRespB\x1aZ\x18wklive/proto/itick;itickb\x06proto3"
@@ -5797,88 +5796,88 @@ var file_proto_itick_itick_proto_depIdxs = []int32{
 	70,  // 102: itick.ListSnapshotOutboxResp.data:type_name -> itick.SnapshotOutboxData
 	78,  // 103: itick.SyncProductsResp.base:type_name -> common.RespBase
 	78,  // 104: itick.SyncKlinesResp.base:type_name -> common.RespBase
-	2,   // 105: itick.ItickApp.ListVisibleCategories:input_type -> itick.ListVisibleCategoriesReq
-	4,   // 106: itick.ItickApp.ListVisibleProducts:input_type -> itick.ListVisibleProductsReq
-	6,   // 107: itick.ItickApp.GetKline:input_type -> itick.GetKlineReq
-	8,   // 108: itick.ItickApp.GetQuote:input_type -> itick.GetQuoteReq
-	11,  // 109: itick.ItickApp.BatchGetQuote:input_type -> itick.BatchGetQuoteReq
-	13,  // 110: itick.ItickApp.GetAuthoritativeSnapshot:input_type -> itick.GetAuthoritativeSnapshotReq
-	15,  // 111: itick.ItickApp.SubscribeStream:input_type -> itick.SubscribeRequest
-	0,   // 112: itick.ItickApp.GetKlineIntervals:input_type -> itick.Empty
-	13,  // 113: itick.ItickInternal.GetAuthoritativeSnapshot:input_type -> itick.GetAuthoritativeSnapshotReq
-	25,  // 114: itick.ItickAdmin.ListCategories:input_type -> itick.ListCategoriesReq
-	21,  // 115: itick.ItickAdmin.CreateCategory:input_type -> itick.CreateCategoryReq
-	22,  // 116: itick.ItickAdmin.UpdateCategory:input_type -> itick.UpdateCategoryReq
-	23,  // 117: itick.ItickAdmin.GetCategory:input_type -> itick.GetCategoryReq
-	27,  // 118: itick.ItickAdmin.SyncCategoryProducts:input_type -> itick.SyncCategoryProductsReq
-	29,  // 119: itick.ItickAdmin.GetSyncTaskStatus:input_type -> itick.GetSyncTaskStatusReq
-	36,  // 120: itick.ItickAdmin.ListProducts:input_type -> itick.ListProductsReq
-	32,  // 121: itick.ItickAdmin.CreateProduct:input_type -> itick.CreateProductReq
-	33,  // 122: itick.ItickAdmin.UpdateProduct:input_type -> itick.UpdateProductReq
-	34,  // 123: itick.ItickAdmin.GetProduct:input_type -> itick.GetProductReq
-	38,  // 124: itick.ItickAdmin.GetProductKline:input_type -> itick.GetProductKlineReq
-	40,  // 125: itick.ItickAdmin.SyncProductKlineHistory:input_type -> itick.SyncProductKlineHistoryReq
-	48,  // 126: itick.ItickAdmin.ListTenantCategories:input_type -> itick.ListTenantCategoriesReq
-	42,  // 127: itick.ItickAdmin.CreateTenantCategory:input_type -> itick.CreateTenantCategoryReq
-	43,  // 128: itick.ItickAdmin.UpdateTenantCategory:input_type -> itick.UpdateTenantCategoryReq
-	44,  // 129: itick.ItickAdmin.BatchUpsertTenantCategories:input_type -> itick.BatchUpsertTenantCategoriesReq
-	46,  // 130: itick.ItickAdmin.GetTenantCategory:input_type -> itick.GetTenantCategoryReq
-	56,  // 131: itick.ItickAdmin.ListTenantProducts:input_type -> itick.ListTenantProductsReq
-	50,  // 132: itick.ItickAdmin.CreateTenantProduct:input_type -> itick.CreateTenantProductReq
-	51,  // 133: itick.ItickAdmin.UpdateTenantProduct:input_type -> itick.UpdateTenantProductReq
-	52,  // 134: itick.ItickAdmin.BatchUpsertTenantProducts:input_type -> itick.BatchUpsertTenantProductsReq
-	54,  // 135: itick.ItickAdmin.GetTenantProduct:input_type -> itick.GetTenantProductReq
-	58,  // 136: itick.ItickAdmin.InitTenantItickDisplay:input_type -> itick.InitTenantItickDisplayReq
-	62,  // 137: itick.ItickAdmin.CreatePriceFormula:input_type -> itick.CreatePriceFormulaReq
-	63,  // 138: itick.ItickAdmin.GetPriceFormula:input_type -> itick.PriceFormulaReq
-	65,  // 139: itick.ItickAdmin.ListPriceFormulas:input_type -> itick.ListPriceFormulasReq
-	64,  // 140: itick.ItickAdmin.ChangePriceFormulaStatus:input_type -> itick.ChangePriceFormulaStatusReq
-	69,  // 141: itick.ItickAdmin.ListSnapshotOutbox:input_type -> itick.ListSnapshotOutboxReq
-	72,  // 142: itick.ItickAdmin.RetrySnapshotOutbox:input_type -> itick.RetrySnapshotOutboxReq
-	73,  // 143: itick.ItickAdmin.RevokeAuthoritativeSnapshot:input_type -> itick.RevokeAuthoritativeSnapshotReq
-	74,  // 144: itick.ItickTask.SyncProducts:input_type -> itick.SyncProductsReq
-	76,  // 145: itick.ItickTask.SyncKlines:input_type -> itick.SyncKlinesReq
-	3,   // 146: itick.ItickApp.ListVisibleCategories:output_type -> itick.ListVisibleCategoriesResp
-	5,   // 147: itick.ItickApp.ListVisibleProducts:output_type -> itick.ListVisibleProductsResp
-	7,   // 148: itick.ItickApp.GetKline:output_type -> itick.GetKlineResp
-	9,   // 149: itick.ItickApp.GetQuote:output_type -> itick.GetQuoteResp
-	12,  // 150: itick.ItickApp.BatchGetQuote:output_type -> itick.BatchGetQuoteResp
-	14,  // 151: itick.ItickApp.GetAuthoritativeSnapshot:output_type -> itick.GetAuthoritativeSnapshotResp
-	17,  // 152: itick.ItickApp.SubscribeStream:output_type -> itick.PushReply
-	19,  // 153: itick.ItickApp.GetKlineIntervals:output_type -> itick.KlineIntervalsResp
-	14,  // 154: itick.ItickInternal.GetAuthoritativeSnapshot:output_type -> itick.GetAuthoritativeSnapshotResp
-	26,  // 155: itick.ItickAdmin.ListCategories:output_type -> itick.ListCategoriesResp
-	20,  // 156: itick.ItickAdmin.CreateCategory:output_type -> itick.CommonResp
-	20,  // 157: itick.ItickAdmin.UpdateCategory:output_type -> itick.CommonResp
-	24,  // 158: itick.ItickAdmin.GetCategory:output_type -> itick.GetCategoryResp
-	28,  // 159: itick.ItickAdmin.SyncCategoryProducts:output_type -> itick.SyncCategoryProductsResp
-	30,  // 160: itick.ItickAdmin.GetSyncTaskStatus:output_type -> itick.GetSyncTaskStatusResp
-	37,  // 161: itick.ItickAdmin.ListProducts:output_type -> itick.ListProductsResp
-	20,  // 162: itick.ItickAdmin.CreateProduct:output_type -> itick.CommonResp
-	20,  // 163: itick.ItickAdmin.UpdateProduct:output_type -> itick.CommonResp
-	35,  // 164: itick.ItickAdmin.GetProduct:output_type -> itick.GetProductResp
-	39,  // 165: itick.ItickAdmin.GetProductKline:output_type -> itick.GetProductKlineResp
-	41,  // 166: itick.ItickAdmin.SyncProductKlineHistory:output_type -> itick.SyncProductKlineHistoryResp
-	49,  // 167: itick.ItickAdmin.ListTenantCategories:output_type -> itick.ListTenantCategoriesResp
-	20,  // 168: itick.ItickAdmin.CreateTenantCategory:output_type -> itick.CommonResp
-	20,  // 169: itick.ItickAdmin.UpdateTenantCategory:output_type -> itick.CommonResp
-	20,  // 170: itick.ItickAdmin.BatchUpsertTenantCategories:output_type -> itick.CommonResp
-	47,  // 171: itick.ItickAdmin.GetTenantCategory:output_type -> itick.GetTenantCategoryResp
-	57,  // 172: itick.ItickAdmin.ListTenantProducts:output_type -> itick.ListTenantProductsResp
-	20,  // 173: itick.ItickAdmin.CreateTenantProduct:output_type -> itick.CommonResp
-	20,  // 174: itick.ItickAdmin.UpdateTenantProduct:output_type -> itick.CommonResp
-	20,  // 175: itick.ItickAdmin.BatchUpsertTenantProducts:output_type -> itick.CommonResp
-	55,  // 176: itick.ItickAdmin.GetTenantProduct:output_type -> itick.GetTenantProductResp
-	59,  // 177: itick.ItickAdmin.InitTenantItickDisplay:output_type -> itick.InitTenantItickDisplayResp
-	67,  // 178: itick.ItickAdmin.CreatePriceFormula:output_type -> itick.PriceFormulaResp
-	67,  // 179: itick.ItickAdmin.GetPriceFormula:output_type -> itick.PriceFormulaResp
-	68,  // 180: itick.ItickAdmin.ListPriceFormulas:output_type -> itick.ListPriceFormulasResp
-	20,  // 181: itick.ItickAdmin.ChangePriceFormulaStatus:output_type -> itick.CommonResp
-	71,  // 182: itick.ItickAdmin.ListSnapshotOutbox:output_type -> itick.ListSnapshotOutboxResp
-	20,  // 183: itick.ItickAdmin.RetrySnapshotOutbox:output_type -> itick.CommonResp
-	20,  // 184: itick.ItickAdmin.RevokeAuthoritativeSnapshot:output_type -> itick.CommonResp
-	75,  // 185: itick.ItickTask.SyncProducts:output_type -> itick.SyncProductsResp
-	77,  // 186: itick.ItickTask.SyncKlines:output_type -> itick.SyncKlinesResp
+	2,   // 105: itick.App.ListVisibleCategories:input_type -> itick.ListVisibleCategoriesReq
+	4,   // 106: itick.App.ListVisibleProducts:input_type -> itick.ListVisibleProductsReq
+	6,   // 107: itick.App.GetKline:input_type -> itick.GetKlineReq
+	8,   // 108: itick.App.GetQuote:input_type -> itick.GetQuoteReq
+	11,  // 109: itick.App.BatchGetQuote:input_type -> itick.BatchGetQuoteReq
+	13,  // 110: itick.App.GetAuthoritativeSnapshot:input_type -> itick.GetAuthoritativeSnapshotReq
+	15,  // 111: itick.App.SubscribeStream:input_type -> itick.SubscribeRequest
+	0,   // 112: itick.App.GetKlineIntervals:input_type -> itick.Empty
+	13,  // 113: itick.Internal.GetAuthoritativeSnapshot:input_type -> itick.GetAuthoritativeSnapshotReq
+	25,  // 114: itick.Admin.ListCategories:input_type -> itick.ListCategoriesReq
+	21,  // 115: itick.Admin.CreateCategory:input_type -> itick.CreateCategoryReq
+	22,  // 116: itick.Admin.UpdateCategory:input_type -> itick.UpdateCategoryReq
+	23,  // 117: itick.Admin.GetCategory:input_type -> itick.GetCategoryReq
+	27,  // 118: itick.Admin.SyncCategoryProducts:input_type -> itick.SyncCategoryProductsReq
+	29,  // 119: itick.Admin.GetSyncTaskStatus:input_type -> itick.GetSyncTaskStatusReq
+	36,  // 120: itick.Admin.ListProducts:input_type -> itick.ListProductsReq
+	32,  // 121: itick.Admin.CreateProduct:input_type -> itick.CreateProductReq
+	33,  // 122: itick.Admin.UpdateProduct:input_type -> itick.UpdateProductReq
+	34,  // 123: itick.Admin.GetProduct:input_type -> itick.GetProductReq
+	38,  // 124: itick.Admin.GetProductKline:input_type -> itick.GetProductKlineReq
+	40,  // 125: itick.Admin.SyncProductKlineHistory:input_type -> itick.SyncProductKlineHistoryReq
+	48,  // 126: itick.Admin.ListTenantCategories:input_type -> itick.ListTenantCategoriesReq
+	42,  // 127: itick.Admin.CreateTenantCategory:input_type -> itick.CreateTenantCategoryReq
+	43,  // 128: itick.Admin.UpdateTenantCategory:input_type -> itick.UpdateTenantCategoryReq
+	44,  // 129: itick.Admin.BatchUpsertTenantCategories:input_type -> itick.BatchUpsertTenantCategoriesReq
+	46,  // 130: itick.Admin.GetTenantCategory:input_type -> itick.GetTenantCategoryReq
+	56,  // 131: itick.Admin.ListTenantProducts:input_type -> itick.ListTenantProductsReq
+	50,  // 132: itick.Admin.CreateTenantProduct:input_type -> itick.CreateTenantProductReq
+	51,  // 133: itick.Admin.UpdateTenantProduct:input_type -> itick.UpdateTenantProductReq
+	52,  // 134: itick.Admin.BatchUpsertTenantProducts:input_type -> itick.BatchUpsertTenantProductsReq
+	54,  // 135: itick.Admin.GetTenantProduct:input_type -> itick.GetTenantProductReq
+	58,  // 136: itick.Admin.InitTenantItickDisplay:input_type -> itick.InitTenantItickDisplayReq
+	62,  // 137: itick.Admin.CreatePriceFormula:input_type -> itick.CreatePriceFormulaReq
+	63,  // 138: itick.Admin.GetPriceFormula:input_type -> itick.PriceFormulaReq
+	65,  // 139: itick.Admin.ListPriceFormulas:input_type -> itick.ListPriceFormulasReq
+	64,  // 140: itick.Admin.ChangePriceFormulaStatus:input_type -> itick.ChangePriceFormulaStatusReq
+	69,  // 141: itick.Admin.ListSnapshotOutbox:input_type -> itick.ListSnapshotOutboxReq
+	72,  // 142: itick.Admin.RetrySnapshotOutbox:input_type -> itick.RetrySnapshotOutboxReq
+	73,  // 143: itick.Admin.RevokeAuthoritativeSnapshot:input_type -> itick.RevokeAuthoritativeSnapshotReq
+	74,  // 144: itick.Task.SyncProducts:input_type -> itick.SyncProductsReq
+	76,  // 145: itick.Task.SyncKlines:input_type -> itick.SyncKlinesReq
+	3,   // 146: itick.App.ListVisibleCategories:output_type -> itick.ListVisibleCategoriesResp
+	5,   // 147: itick.App.ListVisibleProducts:output_type -> itick.ListVisibleProductsResp
+	7,   // 148: itick.App.GetKline:output_type -> itick.GetKlineResp
+	9,   // 149: itick.App.GetQuote:output_type -> itick.GetQuoteResp
+	12,  // 150: itick.App.BatchGetQuote:output_type -> itick.BatchGetQuoteResp
+	14,  // 151: itick.App.GetAuthoritativeSnapshot:output_type -> itick.GetAuthoritativeSnapshotResp
+	17,  // 152: itick.App.SubscribeStream:output_type -> itick.PushReply
+	19,  // 153: itick.App.GetKlineIntervals:output_type -> itick.KlineIntervalsResp
+	14,  // 154: itick.Internal.GetAuthoritativeSnapshot:output_type -> itick.GetAuthoritativeSnapshotResp
+	26,  // 155: itick.Admin.ListCategories:output_type -> itick.ListCategoriesResp
+	20,  // 156: itick.Admin.CreateCategory:output_type -> itick.CommonResp
+	20,  // 157: itick.Admin.UpdateCategory:output_type -> itick.CommonResp
+	24,  // 158: itick.Admin.GetCategory:output_type -> itick.GetCategoryResp
+	28,  // 159: itick.Admin.SyncCategoryProducts:output_type -> itick.SyncCategoryProductsResp
+	30,  // 160: itick.Admin.GetSyncTaskStatus:output_type -> itick.GetSyncTaskStatusResp
+	37,  // 161: itick.Admin.ListProducts:output_type -> itick.ListProductsResp
+	20,  // 162: itick.Admin.CreateProduct:output_type -> itick.CommonResp
+	20,  // 163: itick.Admin.UpdateProduct:output_type -> itick.CommonResp
+	35,  // 164: itick.Admin.GetProduct:output_type -> itick.GetProductResp
+	39,  // 165: itick.Admin.GetProductKline:output_type -> itick.GetProductKlineResp
+	41,  // 166: itick.Admin.SyncProductKlineHistory:output_type -> itick.SyncProductKlineHistoryResp
+	49,  // 167: itick.Admin.ListTenantCategories:output_type -> itick.ListTenantCategoriesResp
+	20,  // 168: itick.Admin.CreateTenantCategory:output_type -> itick.CommonResp
+	20,  // 169: itick.Admin.UpdateTenantCategory:output_type -> itick.CommonResp
+	20,  // 170: itick.Admin.BatchUpsertTenantCategories:output_type -> itick.CommonResp
+	47,  // 171: itick.Admin.GetTenantCategory:output_type -> itick.GetTenantCategoryResp
+	57,  // 172: itick.Admin.ListTenantProducts:output_type -> itick.ListTenantProductsResp
+	20,  // 173: itick.Admin.CreateTenantProduct:output_type -> itick.CommonResp
+	20,  // 174: itick.Admin.UpdateTenantProduct:output_type -> itick.CommonResp
+	20,  // 175: itick.Admin.BatchUpsertTenantProducts:output_type -> itick.CommonResp
+	55,  // 176: itick.Admin.GetTenantProduct:output_type -> itick.GetTenantProductResp
+	59,  // 177: itick.Admin.InitTenantItickDisplay:output_type -> itick.InitTenantItickDisplayResp
+	67,  // 178: itick.Admin.CreatePriceFormula:output_type -> itick.PriceFormulaResp
+	67,  // 179: itick.Admin.GetPriceFormula:output_type -> itick.PriceFormulaResp
+	68,  // 180: itick.Admin.ListPriceFormulas:output_type -> itick.ListPriceFormulasResp
+	20,  // 181: itick.Admin.ChangePriceFormulaStatus:output_type -> itick.CommonResp
+	71,  // 182: itick.Admin.ListSnapshotOutbox:output_type -> itick.ListSnapshotOutboxResp
+	20,  // 183: itick.Admin.RetrySnapshotOutbox:output_type -> itick.CommonResp
+	20,  // 184: itick.Admin.RevokeAuthoritativeSnapshot:output_type -> itick.CommonResp
+	75,  // 185: itick.Task.SyncProducts:output_type -> itick.SyncProductsResp
+	77,  // 186: itick.Task.SyncKlines:output_type -> itick.SyncKlinesResp
 	146, // [146:187] is the sub-list for method output_type
 	105, // [105:146] is the sub-list for method input_type
 	105, // [105:105] is the sub-list for extension type_name

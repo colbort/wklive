@@ -19,29 +19,29 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PaymentApp_GetMyRechargeStat_FullMethodName             = "/payment.PaymentApp/GetMyRechargeStat"
-	PaymentApp_ListAvailableRechargeChannels_FullMethodName = "/payment.PaymentApp/ListAvailableRechargeChannels"
-	PaymentApp_CreateRechargeOrder_FullMethodName           = "/payment.PaymentApp/CreateRechargeOrder"
-	PaymentApp_CreateCryptoRechargeOrder_FullMethodName     = "/payment.PaymentApp/CreateCryptoRechargeOrder"
-	PaymentApp_GetMyRechargeOrder_FullMethodName            = "/payment.PaymentApp/GetMyRechargeOrder"
-	PaymentApp_ListMyRechargeOrders_FullMethodName          = "/payment.PaymentApp/ListMyRechargeOrders"
-	PaymentApp_CancelMyRechargeOrder_FullMethodName         = "/payment.PaymentApp/CancelMyRechargeOrder"
-	PaymentApp_QueryMyRechargeOrderStatus_FullMethodName    = "/payment.PaymentApp/QueryMyRechargeOrderStatus"
-	PaymentApp_CreateWithdrawOrder_FullMethodName           = "/payment.PaymentApp/CreateWithdrawOrder"
-	PaymentApp_ListMyWithdrawOrders_FullMethodName          = "/payment.PaymentApp/ListMyWithdrawOrders"
-	PaymentApp_GetMyWithdrawOrder_FullMethodName            = "/payment.PaymentApp/GetMyWithdrawOrder"
-	PaymentApp_GetMyCryptoRechargeAddress_FullMethodName    = "/payment.PaymentApp/GetMyCryptoRechargeAddress"
-	PaymentApp_ListMyCryptoRechargeAddresses_FullMethodName = "/payment.PaymentApp/ListMyCryptoRechargeAddresses"
-	PaymentApp_ListMyCryptoRechargeTxs_FullMethodName       = "/payment.PaymentApp/ListMyCryptoRechargeTxs"
-	PaymentApp_GetMyCryptoRechargeTx_FullMethodName         = "/payment.PaymentApp/GetMyCryptoRechargeTx"
+	App_GetMyRechargeStat_FullMethodName             = "/payment.App/GetMyRechargeStat"
+	App_ListAvailableRechargeChannels_FullMethodName = "/payment.App/ListAvailableRechargeChannels"
+	App_CreateRechargeOrder_FullMethodName           = "/payment.App/CreateRechargeOrder"
+	App_CreateCryptoRechargeOrder_FullMethodName     = "/payment.App/CreateCryptoRechargeOrder"
+	App_GetMyRechargeOrder_FullMethodName            = "/payment.App/GetMyRechargeOrder"
+	App_ListMyRechargeOrders_FullMethodName          = "/payment.App/ListMyRechargeOrders"
+	App_CancelMyRechargeOrder_FullMethodName         = "/payment.App/CancelMyRechargeOrder"
+	App_QueryMyRechargeOrderStatus_FullMethodName    = "/payment.App/QueryMyRechargeOrderStatus"
+	App_CreateWithdrawOrder_FullMethodName           = "/payment.App/CreateWithdrawOrder"
+	App_ListMyWithdrawOrders_FullMethodName          = "/payment.App/ListMyWithdrawOrders"
+	App_GetMyWithdrawOrder_FullMethodName            = "/payment.App/GetMyWithdrawOrder"
+	App_GetMyCryptoRechargeAddress_FullMethodName    = "/payment.App/GetMyCryptoRechargeAddress"
+	App_ListMyCryptoRechargeAddresses_FullMethodName = "/payment.App/ListMyCryptoRechargeAddresses"
+	App_ListMyCryptoRechargeTxs_FullMethodName       = "/payment.App/ListMyCryptoRechargeTxs"
+	App_GetMyCryptoRechargeTx_FullMethodName         = "/payment.App/GetMyCryptoRechargeTx"
 )
 
-// PaymentAppClient is the client API for PaymentApp service.
+// AppClient is the client API for App service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // APP端接口
-type PaymentAppClient interface {
+type AppClient interface {
 	// 当前用户累计充值统计（展示用）
 	GetMyRechargeStat(ctx context.Context, in *GetMyRechargeStatReq, opts ...grpc.CallOption) (*GetMyRechargeStatResp, error)
 	// 获取当前登录用户在指定充值金额下可用的充值通道
@@ -74,170 +74,170 @@ type PaymentAppClient interface {
 	GetMyCryptoRechargeTx(ctx context.Context, in *GetMyCryptoRechargeTxReq, opts ...grpc.CallOption) (*GetMyCryptoRechargeTxResp, error)
 }
 
-type paymentAppClient struct {
+type appClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewPaymentAppClient(cc grpc.ClientConnInterface) PaymentAppClient {
-	return &paymentAppClient{cc}
+func NewAppClient(cc grpc.ClientConnInterface) AppClient {
+	return &appClient{cc}
 }
 
-func (c *paymentAppClient) GetMyRechargeStat(ctx context.Context, in *GetMyRechargeStatReq, opts ...grpc.CallOption) (*GetMyRechargeStatResp, error) {
+func (c *appClient) GetMyRechargeStat(ctx context.Context, in *GetMyRechargeStatReq, opts ...grpc.CallOption) (*GetMyRechargeStatResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetMyRechargeStatResp)
-	err := c.cc.Invoke(ctx, PaymentApp_GetMyRechargeStat_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetMyRechargeStat_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAppClient) ListAvailableRechargeChannels(ctx context.Context, in *ListAvailableRechargeChannelsReq, opts ...grpc.CallOption) (*ListAvailableRechargeChannelsResp, error) {
+func (c *appClient) ListAvailableRechargeChannels(ctx context.Context, in *ListAvailableRechargeChannelsReq, opts ...grpc.CallOption) (*ListAvailableRechargeChannelsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListAvailableRechargeChannelsResp)
-	err := c.cc.Invoke(ctx, PaymentApp_ListAvailableRechargeChannels_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListAvailableRechargeChannels_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAppClient) CreateRechargeOrder(ctx context.Context, in *CreateRechargeOrderReq, opts ...grpc.CallOption) (*CreateRechargeOrderResp, error) {
+func (c *appClient) CreateRechargeOrder(ctx context.Context, in *CreateRechargeOrderReq, opts ...grpc.CallOption) (*CreateRechargeOrderResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateRechargeOrderResp)
-	err := c.cc.Invoke(ctx, PaymentApp_CreateRechargeOrder_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_CreateRechargeOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAppClient) CreateCryptoRechargeOrder(ctx context.Context, in *CreateCryptoRechargeOrderReq, opts ...grpc.CallOption) (*CreateCryptoRechargeOrderResp, error) {
+func (c *appClient) CreateCryptoRechargeOrder(ctx context.Context, in *CreateCryptoRechargeOrderReq, opts ...grpc.CallOption) (*CreateCryptoRechargeOrderResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateCryptoRechargeOrderResp)
-	err := c.cc.Invoke(ctx, PaymentApp_CreateCryptoRechargeOrder_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_CreateCryptoRechargeOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAppClient) GetMyRechargeOrder(ctx context.Context, in *GetMyRechargeOrderReq, opts ...grpc.CallOption) (*GetMyRechargeOrderResp, error) {
+func (c *appClient) GetMyRechargeOrder(ctx context.Context, in *GetMyRechargeOrderReq, opts ...grpc.CallOption) (*GetMyRechargeOrderResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetMyRechargeOrderResp)
-	err := c.cc.Invoke(ctx, PaymentApp_GetMyRechargeOrder_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetMyRechargeOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAppClient) ListMyRechargeOrders(ctx context.Context, in *ListMyRechargeOrdersReq, opts ...grpc.CallOption) (*ListMyRechargeOrdersResp, error) {
+func (c *appClient) ListMyRechargeOrders(ctx context.Context, in *ListMyRechargeOrdersReq, opts ...grpc.CallOption) (*ListMyRechargeOrdersResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListMyRechargeOrdersResp)
-	err := c.cc.Invoke(ctx, PaymentApp_ListMyRechargeOrders_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListMyRechargeOrders_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAppClient) CancelMyRechargeOrder(ctx context.Context, in *CancelMyRechargeOrderReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
+func (c *appClient) CancelMyRechargeOrder(ctx context.Context, in *CancelMyRechargeOrderReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserCommonResp)
-	err := c.cc.Invoke(ctx, PaymentApp_CancelMyRechargeOrder_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_CancelMyRechargeOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAppClient) QueryMyRechargeOrderStatus(ctx context.Context, in *QueryMyRechargeOrderStatusReq, opts ...grpc.CallOption) (*QueryMyRechargeOrderStatusResp, error) {
+func (c *appClient) QueryMyRechargeOrderStatus(ctx context.Context, in *QueryMyRechargeOrderStatusReq, opts ...grpc.CallOption) (*QueryMyRechargeOrderStatusResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(QueryMyRechargeOrderStatusResp)
-	err := c.cc.Invoke(ctx, PaymentApp_QueryMyRechargeOrderStatus_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_QueryMyRechargeOrderStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAppClient) CreateWithdrawOrder(ctx context.Context, in *CreateWithdrawOrderReq, opts ...grpc.CallOption) (*CreateWithdrawOrderResp, error) {
+func (c *appClient) CreateWithdrawOrder(ctx context.Context, in *CreateWithdrawOrderReq, opts ...grpc.CallOption) (*CreateWithdrawOrderResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateWithdrawOrderResp)
-	err := c.cc.Invoke(ctx, PaymentApp_CreateWithdrawOrder_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_CreateWithdrawOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAppClient) ListMyWithdrawOrders(ctx context.Context, in *ListMyWithdrawOrdersReq, opts ...grpc.CallOption) (*ListMyWithdrawOrdersResp, error) {
+func (c *appClient) ListMyWithdrawOrders(ctx context.Context, in *ListMyWithdrawOrdersReq, opts ...grpc.CallOption) (*ListMyWithdrawOrdersResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListMyWithdrawOrdersResp)
-	err := c.cc.Invoke(ctx, PaymentApp_ListMyWithdrawOrders_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListMyWithdrawOrders_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAppClient) GetMyWithdrawOrder(ctx context.Context, in *GetMyWithdrawOrderReq, opts ...grpc.CallOption) (*GetMyWithdrawOrderResp, error) {
+func (c *appClient) GetMyWithdrawOrder(ctx context.Context, in *GetMyWithdrawOrderReq, opts ...grpc.CallOption) (*GetMyWithdrawOrderResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetMyWithdrawOrderResp)
-	err := c.cc.Invoke(ctx, PaymentApp_GetMyWithdrawOrder_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetMyWithdrawOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAppClient) GetMyCryptoRechargeAddress(ctx context.Context, in *GetMyCryptoRechargeAddressReq, opts ...grpc.CallOption) (*GetMyCryptoRechargeAddressResp, error) {
+func (c *appClient) GetMyCryptoRechargeAddress(ctx context.Context, in *GetMyCryptoRechargeAddressReq, opts ...grpc.CallOption) (*GetMyCryptoRechargeAddressResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetMyCryptoRechargeAddressResp)
-	err := c.cc.Invoke(ctx, PaymentApp_GetMyCryptoRechargeAddress_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetMyCryptoRechargeAddress_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAppClient) ListMyCryptoRechargeAddresses(ctx context.Context, in *ListMyCryptoRechargeAddressesReq, opts ...grpc.CallOption) (*ListMyCryptoRechargeAddressesResp, error) {
+func (c *appClient) ListMyCryptoRechargeAddresses(ctx context.Context, in *ListMyCryptoRechargeAddressesReq, opts ...grpc.CallOption) (*ListMyCryptoRechargeAddressesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListMyCryptoRechargeAddressesResp)
-	err := c.cc.Invoke(ctx, PaymentApp_ListMyCryptoRechargeAddresses_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListMyCryptoRechargeAddresses_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAppClient) ListMyCryptoRechargeTxs(ctx context.Context, in *ListMyCryptoRechargeTxsReq, opts ...grpc.CallOption) (*ListMyCryptoRechargeTxsResp, error) {
+func (c *appClient) ListMyCryptoRechargeTxs(ctx context.Context, in *ListMyCryptoRechargeTxsReq, opts ...grpc.CallOption) (*ListMyCryptoRechargeTxsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListMyCryptoRechargeTxsResp)
-	err := c.cc.Invoke(ctx, PaymentApp_ListMyCryptoRechargeTxs_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListMyCryptoRechargeTxs_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAppClient) GetMyCryptoRechargeTx(ctx context.Context, in *GetMyCryptoRechargeTxReq, opts ...grpc.CallOption) (*GetMyCryptoRechargeTxResp, error) {
+func (c *appClient) GetMyCryptoRechargeTx(ctx context.Context, in *GetMyCryptoRechargeTxReq, opts ...grpc.CallOption) (*GetMyCryptoRechargeTxResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetMyCryptoRechargeTxResp)
-	err := c.cc.Invoke(ctx, PaymentApp_GetMyCryptoRechargeTx_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetMyCryptoRechargeTx_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// PaymentAppServer is the server API for PaymentApp service.
-// All implementations must embed UnimplementedPaymentAppServer
+// AppServer is the server API for App service.
+// All implementations must embed UnimplementedAppServer
 // for forward compatibility.
 //
 // APP端接口
-type PaymentAppServer interface {
+type AppServer interface {
 	// 当前用户累计充值统计（展示用）
 	GetMyRechargeStat(context.Context, *GetMyRechargeStatReq) (*GetMyRechargeStatResp, error)
 	// 获取当前登录用户在指定充值金额下可用的充值通道
@@ -268,418 +268,418 @@ type PaymentAppServer interface {
 	ListMyCryptoRechargeTxs(context.Context, *ListMyCryptoRechargeTxsReq) (*ListMyCryptoRechargeTxsResp, error)
 	// 我的链上充值交易详情
 	GetMyCryptoRechargeTx(context.Context, *GetMyCryptoRechargeTxReq) (*GetMyCryptoRechargeTxResp, error)
-	mustEmbedUnimplementedPaymentAppServer()
+	mustEmbedUnimplementedAppServer()
 }
 
-// UnimplementedPaymentAppServer must be embedded to have
+// UnimplementedAppServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedPaymentAppServer struct{}
+type UnimplementedAppServer struct{}
 
-func (UnimplementedPaymentAppServer) GetMyRechargeStat(context.Context, *GetMyRechargeStatReq) (*GetMyRechargeStatResp, error) {
+func (UnimplementedAppServer) GetMyRechargeStat(context.Context, *GetMyRechargeStatReq) (*GetMyRechargeStatResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMyRechargeStat not implemented")
 }
-func (UnimplementedPaymentAppServer) ListAvailableRechargeChannels(context.Context, *ListAvailableRechargeChannelsReq) (*ListAvailableRechargeChannelsResp, error) {
+func (UnimplementedAppServer) ListAvailableRechargeChannels(context.Context, *ListAvailableRechargeChannelsReq) (*ListAvailableRechargeChannelsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListAvailableRechargeChannels not implemented")
 }
-func (UnimplementedPaymentAppServer) CreateRechargeOrder(context.Context, *CreateRechargeOrderReq) (*CreateRechargeOrderResp, error) {
+func (UnimplementedAppServer) CreateRechargeOrder(context.Context, *CreateRechargeOrderReq) (*CreateRechargeOrderResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateRechargeOrder not implemented")
 }
-func (UnimplementedPaymentAppServer) CreateCryptoRechargeOrder(context.Context, *CreateCryptoRechargeOrderReq) (*CreateCryptoRechargeOrderResp, error) {
+func (UnimplementedAppServer) CreateCryptoRechargeOrder(context.Context, *CreateCryptoRechargeOrderReq) (*CreateCryptoRechargeOrderResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateCryptoRechargeOrder not implemented")
 }
-func (UnimplementedPaymentAppServer) GetMyRechargeOrder(context.Context, *GetMyRechargeOrderReq) (*GetMyRechargeOrderResp, error) {
+func (UnimplementedAppServer) GetMyRechargeOrder(context.Context, *GetMyRechargeOrderReq) (*GetMyRechargeOrderResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMyRechargeOrder not implemented")
 }
-func (UnimplementedPaymentAppServer) ListMyRechargeOrders(context.Context, *ListMyRechargeOrdersReq) (*ListMyRechargeOrdersResp, error) {
+func (UnimplementedAppServer) ListMyRechargeOrders(context.Context, *ListMyRechargeOrdersReq) (*ListMyRechargeOrdersResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMyRechargeOrders not implemented")
 }
-func (UnimplementedPaymentAppServer) CancelMyRechargeOrder(context.Context, *CancelMyRechargeOrderReq) (*UserCommonResp, error) {
+func (UnimplementedAppServer) CancelMyRechargeOrder(context.Context, *CancelMyRechargeOrderReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CancelMyRechargeOrder not implemented")
 }
-func (UnimplementedPaymentAppServer) QueryMyRechargeOrderStatus(context.Context, *QueryMyRechargeOrderStatusReq) (*QueryMyRechargeOrderStatusResp, error) {
+func (UnimplementedAppServer) QueryMyRechargeOrderStatus(context.Context, *QueryMyRechargeOrderStatusReq) (*QueryMyRechargeOrderStatusResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method QueryMyRechargeOrderStatus not implemented")
 }
-func (UnimplementedPaymentAppServer) CreateWithdrawOrder(context.Context, *CreateWithdrawOrderReq) (*CreateWithdrawOrderResp, error) {
+func (UnimplementedAppServer) CreateWithdrawOrder(context.Context, *CreateWithdrawOrderReq) (*CreateWithdrawOrderResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateWithdrawOrder not implemented")
 }
-func (UnimplementedPaymentAppServer) ListMyWithdrawOrders(context.Context, *ListMyWithdrawOrdersReq) (*ListMyWithdrawOrdersResp, error) {
+func (UnimplementedAppServer) ListMyWithdrawOrders(context.Context, *ListMyWithdrawOrdersReq) (*ListMyWithdrawOrdersResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMyWithdrawOrders not implemented")
 }
-func (UnimplementedPaymentAppServer) GetMyWithdrawOrder(context.Context, *GetMyWithdrawOrderReq) (*GetMyWithdrawOrderResp, error) {
+func (UnimplementedAppServer) GetMyWithdrawOrder(context.Context, *GetMyWithdrawOrderReq) (*GetMyWithdrawOrderResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMyWithdrawOrder not implemented")
 }
-func (UnimplementedPaymentAppServer) GetMyCryptoRechargeAddress(context.Context, *GetMyCryptoRechargeAddressReq) (*GetMyCryptoRechargeAddressResp, error) {
+func (UnimplementedAppServer) GetMyCryptoRechargeAddress(context.Context, *GetMyCryptoRechargeAddressReq) (*GetMyCryptoRechargeAddressResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMyCryptoRechargeAddress not implemented")
 }
-func (UnimplementedPaymentAppServer) ListMyCryptoRechargeAddresses(context.Context, *ListMyCryptoRechargeAddressesReq) (*ListMyCryptoRechargeAddressesResp, error) {
+func (UnimplementedAppServer) ListMyCryptoRechargeAddresses(context.Context, *ListMyCryptoRechargeAddressesReq) (*ListMyCryptoRechargeAddressesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMyCryptoRechargeAddresses not implemented")
 }
-func (UnimplementedPaymentAppServer) ListMyCryptoRechargeTxs(context.Context, *ListMyCryptoRechargeTxsReq) (*ListMyCryptoRechargeTxsResp, error) {
+func (UnimplementedAppServer) ListMyCryptoRechargeTxs(context.Context, *ListMyCryptoRechargeTxsReq) (*ListMyCryptoRechargeTxsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMyCryptoRechargeTxs not implemented")
 }
-func (UnimplementedPaymentAppServer) GetMyCryptoRechargeTx(context.Context, *GetMyCryptoRechargeTxReq) (*GetMyCryptoRechargeTxResp, error) {
+func (UnimplementedAppServer) GetMyCryptoRechargeTx(context.Context, *GetMyCryptoRechargeTxReq) (*GetMyCryptoRechargeTxResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMyCryptoRechargeTx not implemented")
 }
-func (UnimplementedPaymentAppServer) mustEmbedUnimplementedPaymentAppServer() {}
-func (UnimplementedPaymentAppServer) testEmbeddedByValue()                    {}
+func (UnimplementedAppServer) mustEmbedUnimplementedAppServer() {}
+func (UnimplementedAppServer) testEmbeddedByValue()             {}
 
-// UnsafePaymentAppServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to PaymentAppServer will
+// UnsafeAppServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AppServer will
 // result in compilation errors.
-type UnsafePaymentAppServer interface {
-	mustEmbedUnimplementedPaymentAppServer()
+type UnsafeAppServer interface {
+	mustEmbedUnimplementedAppServer()
 }
 
-func RegisterPaymentAppServer(s grpc.ServiceRegistrar, srv PaymentAppServer) {
-	// If the following call panics, it indicates UnimplementedPaymentAppServer was
+func RegisterAppServer(s grpc.ServiceRegistrar, srv AppServer) {
+	// If the following call panics, it indicates UnimplementedAppServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&PaymentApp_ServiceDesc, srv)
+	s.RegisterService(&App_ServiceDesc, srv)
 }
 
-func _PaymentApp_GetMyRechargeStat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetMyRechargeStat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMyRechargeStatReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).GetMyRechargeStat(ctx, in)
+		return srv.(AppServer).GetMyRechargeStat(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_GetMyRechargeStat_FullMethodName,
+		FullMethod: App_GetMyRechargeStat_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).GetMyRechargeStat(ctx, req.(*GetMyRechargeStatReq))
+		return srv.(AppServer).GetMyRechargeStat(ctx, req.(*GetMyRechargeStatReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentApp_ListAvailableRechargeChannels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListAvailableRechargeChannels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListAvailableRechargeChannelsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).ListAvailableRechargeChannels(ctx, in)
+		return srv.(AppServer).ListAvailableRechargeChannels(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_ListAvailableRechargeChannels_FullMethodName,
+		FullMethod: App_ListAvailableRechargeChannels_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).ListAvailableRechargeChannels(ctx, req.(*ListAvailableRechargeChannelsReq))
+		return srv.(AppServer).ListAvailableRechargeChannels(ctx, req.(*ListAvailableRechargeChannelsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentApp_CreateRechargeOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_CreateRechargeOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateRechargeOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).CreateRechargeOrder(ctx, in)
+		return srv.(AppServer).CreateRechargeOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_CreateRechargeOrder_FullMethodName,
+		FullMethod: App_CreateRechargeOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).CreateRechargeOrder(ctx, req.(*CreateRechargeOrderReq))
+		return srv.(AppServer).CreateRechargeOrder(ctx, req.(*CreateRechargeOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentApp_CreateCryptoRechargeOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_CreateCryptoRechargeOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateCryptoRechargeOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).CreateCryptoRechargeOrder(ctx, in)
+		return srv.(AppServer).CreateCryptoRechargeOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_CreateCryptoRechargeOrder_FullMethodName,
+		FullMethod: App_CreateCryptoRechargeOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).CreateCryptoRechargeOrder(ctx, req.(*CreateCryptoRechargeOrderReq))
+		return srv.(AppServer).CreateCryptoRechargeOrder(ctx, req.(*CreateCryptoRechargeOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentApp_GetMyRechargeOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetMyRechargeOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMyRechargeOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).GetMyRechargeOrder(ctx, in)
+		return srv.(AppServer).GetMyRechargeOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_GetMyRechargeOrder_FullMethodName,
+		FullMethod: App_GetMyRechargeOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).GetMyRechargeOrder(ctx, req.(*GetMyRechargeOrderReq))
+		return srv.(AppServer).GetMyRechargeOrder(ctx, req.(*GetMyRechargeOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentApp_ListMyRechargeOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListMyRechargeOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListMyRechargeOrdersReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).ListMyRechargeOrders(ctx, in)
+		return srv.(AppServer).ListMyRechargeOrders(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_ListMyRechargeOrders_FullMethodName,
+		FullMethod: App_ListMyRechargeOrders_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).ListMyRechargeOrders(ctx, req.(*ListMyRechargeOrdersReq))
+		return srv.(AppServer).ListMyRechargeOrders(ctx, req.(*ListMyRechargeOrdersReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentApp_CancelMyRechargeOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_CancelMyRechargeOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CancelMyRechargeOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).CancelMyRechargeOrder(ctx, in)
+		return srv.(AppServer).CancelMyRechargeOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_CancelMyRechargeOrder_FullMethodName,
+		FullMethod: App_CancelMyRechargeOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).CancelMyRechargeOrder(ctx, req.(*CancelMyRechargeOrderReq))
+		return srv.(AppServer).CancelMyRechargeOrder(ctx, req.(*CancelMyRechargeOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentApp_QueryMyRechargeOrderStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_QueryMyRechargeOrderStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryMyRechargeOrderStatusReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).QueryMyRechargeOrderStatus(ctx, in)
+		return srv.(AppServer).QueryMyRechargeOrderStatus(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_QueryMyRechargeOrderStatus_FullMethodName,
+		FullMethod: App_QueryMyRechargeOrderStatus_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).QueryMyRechargeOrderStatus(ctx, req.(*QueryMyRechargeOrderStatusReq))
+		return srv.(AppServer).QueryMyRechargeOrderStatus(ctx, req.(*QueryMyRechargeOrderStatusReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentApp_CreateWithdrawOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_CreateWithdrawOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateWithdrawOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).CreateWithdrawOrder(ctx, in)
+		return srv.(AppServer).CreateWithdrawOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_CreateWithdrawOrder_FullMethodName,
+		FullMethod: App_CreateWithdrawOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).CreateWithdrawOrder(ctx, req.(*CreateWithdrawOrderReq))
+		return srv.(AppServer).CreateWithdrawOrder(ctx, req.(*CreateWithdrawOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentApp_ListMyWithdrawOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListMyWithdrawOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListMyWithdrawOrdersReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).ListMyWithdrawOrders(ctx, in)
+		return srv.(AppServer).ListMyWithdrawOrders(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_ListMyWithdrawOrders_FullMethodName,
+		FullMethod: App_ListMyWithdrawOrders_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).ListMyWithdrawOrders(ctx, req.(*ListMyWithdrawOrdersReq))
+		return srv.(AppServer).ListMyWithdrawOrders(ctx, req.(*ListMyWithdrawOrdersReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentApp_GetMyWithdrawOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetMyWithdrawOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMyWithdrawOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).GetMyWithdrawOrder(ctx, in)
+		return srv.(AppServer).GetMyWithdrawOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_GetMyWithdrawOrder_FullMethodName,
+		FullMethod: App_GetMyWithdrawOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).GetMyWithdrawOrder(ctx, req.(*GetMyWithdrawOrderReq))
+		return srv.(AppServer).GetMyWithdrawOrder(ctx, req.(*GetMyWithdrawOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentApp_GetMyCryptoRechargeAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetMyCryptoRechargeAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMyCryptoRechargeAddressReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).GetMyCryptoRechargeAddress(ctx, in)
+		return srv.(AppServer).GetMyCryptoRechargeAddress(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_GetMyCryptoRechargeAddress_FullMethodName,
+		FullMethod: App_GetMyCryptoRechargeAddress_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).GetMyCryptoRechargeAddress(ctx, req.(*GetMyCryptoRechargeAddressReq))
+		return srv.(AppServer).GetMyCryptoRechargeAddress(ctx, req.(*GetMyCryptoRechargeAddressReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentApp_ListMyCryptoRechargeAddresses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListMyCryptoRechargeAddresses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListMyCryptoRechargeAddressesReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).ListMyCryptoRechargeAddresses(ctx, in)
+		return srv.(AppServer).ListMyCryptoRechargeAddresses(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_ListMyCryptoRechargeAddresses_FullMethodName,
+		FullMethod: App_ListMyCryptoRechargeAddresses_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).ListMyCryptoRechargeAddresses(ctx, req.(*ListMyCryptoRechargeAddressesReq))
+		return srv.(AppServer).ListMyCryptoRechargeAddresses(ctx, req.(*ListMyCryptoRechargeAddressesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentApp_ListMyCryptoRechargeTxs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListMyCryptoRechargeTxs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListMyCryptoRechargeTxsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).ListMyCryptoRechargeTxs(ctx, in)
+		return srv.(AppServer).ListMyCryptoRechargeTxs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_ListMyCryptoRechargeTxs_FullMethodName,
+		FullMethod: App_ListMyCryptoRechargeTxs_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).ListMyCryptoRechargeTxs(ctx, req.(*ListMyCryptoRechargeTxsReq))
+		return srv.(AppServer).ListMyCryptoRechargeTxs(ctx, req.(*ListMyCryptoRechargeTxsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentApp_GetMyCryptoRechargeTx_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetMyCryptoRechargeTx_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMyCryptoRechargeTxReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAppServer).GetMyCryptoRechargeTx(ctx, in)
+		return srv.(AppServer).GetMyCryptoRechargeTx(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentApp_GetMyCryptoRechargeTx_FullMethodName,
+		FullMethod: App_GetMyCryptoRechargeTx_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAppServer).GetMyCryptoRechargeTx(ctx, req.(*GetMyCryptoRechargeTxReq))
+		return srv.(AppServer).GetMyCryptoRechargeTx(ctx, req.(*GetMyCryptoRechargeTxReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// PaymentApp_ServiceDesc is the grpc.ServiceDesc for PaymentApp service.
+// App_ServiceDesc is the grpc.ServiceDesc for App service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var PaymentApp_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "payment.PaymentApp",
-	HandlerType: (*PaymentAppServer)(nil),
+var App_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "payment.App",
+	HandlerType: (*AppServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetMyRechargeStat",
-			Handler:    _PaymentApp_GetMyRechargeStat_Handler,
+			Handler:    _App_GetMyRechargeStat_Handler,
 		},
 		{
 			MethodName: "ListAvailableRechargeChannels",
-			Handler:    _PaymentApp_ListAvailableRechargeChannels_Handler,
+			Handler:    _App_ListAvailableRechargeChannels_Handler,
 		},
 		{
 			MethodName: "CreateRechargeOrder",
-			Handler:    _PaymentApp_CreateRechargeOrder_Handler,
+			Handler:    _App_CreateRechargeOrder_Handler,
 		},
 		{
 			MethodName: "CreateCryptoRechargeOrder",
-			Handler:    _PaymentApp_CreateCryptoRechargeOrder_Handler,
+			Handler:    _App_CreateCryptoRechargeOrder_Handler,
 		},
 		{
 			MethodName: "GetMyRechargeOrder",
-			Handler:    _PaymentApp_GetMyRechargeOrder_Handler,
+			Handler:    _App_GetMyRechargeOrder_Handler,
 		},
 		{
 			MethodName: "ListMyRechargeOrders",
-			Handler:    _PaymentApp_ListMyRechargeOrders_Handler,
+			Handler:    _App_ListMyRechargeOrders_Handler,
 		},
 		{
 			MethodName: "CancelMyRechargeOrder",
-			Handler:    _PaymentApp_CancelMyRechargeOrder_Handler,
+			Handler:    _App_CancelMyRechargeOrder_Handler,
 		},
 		{
 			MethodName: "QueryMyRechargeOrderStatus",
-			Handler:    _PaymentApp_QueryMyRechargeOrderStatus_Handler,
+			Handler:    _App_QueryMyRechargeOrderStatus_Handler,
 		},
 		{
 			MethodName: "CreateWithdrawOrder",
-			Handler:    _PaymentApp_CreateWithdrawOrder_Handler,
+			Handler:    _App_CreateWithdrawOrder_Handler,
 		},
 		{
 			MethodName: "ListMyWithdrawOrders",
-			Handler:    _PaymentApp_ListMyWithdrawOrders_Handler,
+			Handler:    _App_ListMyWithdrawOrders_Handler,
 		},
 		{
 			MethodName: "GetMyWithdrawOrder",
-			Handler:    _PaymentApp_GetMyWithdrawOrder_Handler,
+			Handler:    _App_GetMyWithdrawOrder_Handler,
 		},
 		{
 			MethodName: "GetMyCryptoRechargeAddress",
-			Handler:    _PaymentApp_GetMyCryptoRechargeAddress_Handler,
+			Handler:    _App_GetMyCryptoRechargeAddress_Handler,
 		},
 		{
 			MethodName: "ListMyCryptoRechargeAddresses",
-			Handler:    _PaymentApp_ListMyCryptoRechargeAddresses_Handler,
+			Handler:    _App_ListMyCryptoRechargeAddresses_Handler,
 		},
 		{
 			MethodName: "ListMyCryptoRechargeTxs",
-			Handler:    _PaymentApp_ListMyCryptoRechargeTxs_Handler,
+			Handler:    _App_ListMyCryptoRechargeTxs_Handler,
 		},
 		{
 			MethodName: "GetMyCryptoRechargeTx",
-			Handler:    _PaymentApp_GetMyCryptoRechargeTx_Handler,
+			Handler:    _App_GetMyCryptoRechargeTx_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -687,65 +687,65 @@ var PaymentApp_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	PaymentAdmin_GetPayPlatforms_FullMethodName                = "/payment.PaymentAdmin/GetPayPlatforms"
-	PaymentAdmin_CreatePayPlatform_FullMethodName              = "/payment.PaymentAdmin/CreatePayPlatform"
-	PaymentAdmin_UpdatePayPlatform_FullMethodName              = "/payment.PaymentAdmin/UpdatePayPlatform"
-	PaymentAdmin_GetPayPlatform_FullMethodName                 = "/payment.PaymentAdmin/GetPayPlatform"
-	PaymentAdmin_ListPayPlatforms_FullMethodName               = "/payment.PaymentAdmin/ListPayPlatforms"
-	PaymentAdmin_CreatePayProduct_FullMethodName               = "/payment.PaymentAdmin/CreatePayProduct"
-	PaymentAdmin_UpdatePayProduct_FullMethodName               = "/payment.PaymentAdmin/UpdatePayProduct"
-	PaymentAdmin_GetPayProduct_FullMethodName                  = "/payment.PaymentAdmin/GetPayProduct"
-	PaymentAdmin_ListPayProducts_FullMethodName                = "/payment.PaymentAdmin/ListPayProducts"
-	PaymentAdmin_OpenTenantPayPlatform_FullMethodName          = "/payment.PaymentAdmin/OpenTenantPayPlatform"
-	PaymentAdmin_UpdateTenantPayPlatform_FullMethodName        = "/payment.PaymentAdmin/UpdateTenantPayPlatform"
-	PaymentAdmin_GetTenantPayPlatform_FullMethodName           = "/payment.PaymentAdmin/GetTenantPayPlatform"
-	PaymentAdmin_ListTenantPayPlatforms_FullMethodName         = "/payment.PaymentAdmin/ListTenantPayPlatforms"
-	PaymentAdmin_CreateTenantPayAccount_FullMethodName         = "/payment.PaymentAdmin/CreateTenantPayAccount"
-	PaymentAdmin_UpdateTenantPayAccount_FullMethodName         = "/payment.PaymentAdmin/UpdateTenantPayAccount"
-	PaymentAdmin_GetTenantPayAccount_FullMethodName            = "/payment.PaymentAdmin/GetTenantPayAccount"
-	PaymentAdmin_ListTenantPayAccounts_FullMethodName          = "/payment.PaymentAdmin/ListTenantPayAccounts"
-	PaymentAdmin_CreateTenantPayChannel_FullMethodName         = "/payment.PaymentAdmin/CreateTenantPayChannel"
-	PaymentAdmin_UpdateTenantPayChannel_FullMethodName         = "/payment.PaymentAdmin/UpdateTenantPayChannel"
-	PaymentAdmin_GetTenantPayChannel_FullMethodName            = "/payment.PaymentAdmin/GetTenantPayChannel"
-	PaymentAdmin_ListTenantPayChannels_FullMethodName          = "/payment.PaymentAdmin/ListTenantPayChannels"
-	PaymentAdmin_CreateTenantPayChannelRule_FullMethodName     = "/payment.PaymentAdmin/CreateTenantPayChannelRule"
-	PaymentAdmin_UpdateTenantPayChannelRule_FullMethodName     = "/payment.PaymentAdmin/UpdateTenantPayChannelRule"
-	PaymentAdmin_GetTenantPayChannelRule_FullMethodName        = "/payment.PaymentAdmin/GetTenantPayChannelRule"
-	PaymentAdmin_ListTenantPayChannelRules_FullMethodName      = "/payment.PaymentAdmin/ListTenantPayChannelRules"
-	PaymentAdmin_GetUserRechargeStat_FullMethodName            = "/payment.PaymentAdmin/GetUserRechargeStat"
-	PaymentAdmin_ListUserRechargeStats_FullMethodName          = "/payment.PaymentAdmin/ListUserRechargeStats"
-	PaymentAdmin_ListRechargeOrders_FullMethodName             = "/payment.PaymentAdmin/ListRechargeOrders"
-	PaymentAdmin_GetRechargeOrder_FullMethodName               = "/payment.PaymentAdmin/GetRechargeOrder"
-	PaymentAdmin_CloseRechargeOrder_FullMethodName             = "/payment.PaymentAdmin/CloseRechargeOrder"
-	PaymentAdmin_ManualMarkRechargeOrderSuccess_FullMethodName = "/payment.PaymentAdmin/ManualMarkRechargeOrderSuccess"
-	PaymentAdmin_RetryNotify_FullMethodName                    = "/payment.PaymentAdmin/RetryNotify"
-	PaymentAdmin_ListRechargeNotifyLogs_FullMethodName         = "/payment.PaymentAdmin/ListRechargeNotifyLogs"
-	PaymentAdmin_GetRechargeNotifyLog_FullMethodName           = "/payment.PaymentAdmin/GetRechargeNotifyLog"
-	PaymentAdmin_ListWithdrawOrders_FullMethodName             = "/payment.PaymentAdmin/ListWithdrawOrders"
-	PaymentAdmin_GetWithdrawOrder_FullMethodName               = "/payment.PaymentAdmin/GetWithdrawOrder"
-	PaymentAdmin_AuditWithdrawOrder_FullMethodName             = "/payment.PaymentAdmin/AuditWithdrawOrder"
-	PaymentAdmin_ListWithdrawNotifyLogs_FullMethodName         = "/payment.PaymentAdmin/ListWithdrawNotifyLogs"
-	PaymentAdmin_GetWithdrawNotifyLog_FullMethodName           = "/payment.PaymentAdmin/GetWithdrawNotifyLog"
-	PaymentAdmin_CreateCryptoRechargeAddress_FullMethodName    = "/payment.PaymentAdmin/CreateCryptoRechargeAddress"
-	PaymentAdmin_UpdateCryptoRechargeAddress_FullMethodName    = "/payment.PaymentAdmin/UpdateCryptoRechargeAddress"
-	PaymentAdmin_GetCryptoRechargeAddress_FullMethodName       = "/payment.PaymentAdmin/GetCryptoRechargeAddress"
-	PaymentAdmin_ListCryptoRechargeAddresses_FullMethodName    = "/payment.PaymentAdmin/ListCryptoRechargeAddresses"
-	PaymentAdmin_CreateCryptoWalletAccount_FullMethodName      = "/payment.PaymentAdmin/CreateCryptoWalletAccount"
-	PaymentAdmin_UpdateCryptoWalletAccount_FullMethodName      = "/payment.PaymentAdmin/UpdateCryptoWalletAccount"
-	PaymentAdmin_GetCryptoWalletAccount_FullMethodName         = "/payment.PaymentAdmin/GetCryptoWalletAccount"
-	PaymentAdmin_ListCryptoWalletAccounts_FullMethodName       = "/payment.PaymentAdmin/ListCryptoWalletAccounts"
-	PaymentAdmin_CreateCryptoRechargeTx_FullMethodName         = "/payment.PaymentAdmin/CreateCryptoRechargeTx"
-	PaymentAdmin_UpdateCryptoRechargeTx_FullMethodName         = "/payment.PaymentAdmin/UpdateCryptoRechargeTx"
-	PaymentAdmin_GetCryptoRechargeTx_FullMethodName            = "/payment.PaymentAdmin/GetCryptoRechargeTx"
-	PaymentAdmin_ListCryptoRechargeTxs_FullMethodName          = "/payment.PaymentAdmin/ListCryptoRechargeTxs"
+	Admin_GetPayPlatforms_FullMethodName                = "/payment.Admin/GetPayPlatforms"
+	Admin_CreatePayPlatform_FullMethodName              = "/payment.Admin/CreatePayPlatform"
+	Admin_UpdatePayPlatform_FullMethodName              = "/payment.Admin/UpdatePayPlatform"
+	Admin_GetPayPlatform_FullMethodName                 = "/payment.Admin/GetPayPlatform"
+	Admin_ListPayPlatforms_FullMethodName               = "/payment.Admin/ListPayPlatforms"
+	Admin_CreatePayProduct_FullMethodName               = "/payment.Admin/CreatePayProduct"
+	Admin_UpdatePayProduct_FullMethodName               = "/payment.Admin/UpdatePayProduct"
+	Admin_GetPayProduct_FullMethodName                  = "/payment.Admin/GetPayProduct"
+	Admin_ListPayProducts_FullMethodName                = "/payment.Admin/ListPayProducts"
+	Admin_OpenTenantPayPlatform_FullMethodName          = "/payment.Admin/OpenTenantPayPlatform"
+	Admin_UpdateTenantPayPlatform_FullMethodName        = "/payment.Admin/UpdateTenantPayPlatform"
+	Admin_GetTenantPayPlatform_FullMethodName           = "/payment.Admin/GetTenantPayPlatform"
+	Admin_ListTenantPayPlatforms_FullMethodName         = "/payment.Admin/ListTenantPayPlatforms"
+	Admin_CreateTenantPayAccount_FullMethodName         = "/payment.Admin/CreateTenantPayAccount"
+	Admin_UpdateTenantPayAccount_FullMethodName         = "/payment.Admin/UpdateTenantPayAccount"
+	Admin_GetTenantPayAccount_FullMethodName            = "/payment.Admin/GetTenantPayAccount"
+	Admin_ListTenantPayAccounts_FullMethodName          = "/payment.Admin/ListTenantPayAccounts"
+	Admin_CreateTenantPayChannel_FullMethodName         = "/payment.Admin/CreateTenantPayChannel"
+	Admin_UpdateTenantPayChannel_FullMethodName         = "/payment.Admin/UpdateTenantPayChannel"
+	Admin_GetTenantPayChannel_FullMethodName            = "/payment.Admin/GetTenantPayChannel"
+	Admin_ListTenantPayChannels_FullMethodName          = "/payment.Admin/ListTenantPayChannels"
+	Admin_CreateTenantPayChannelRule_FullMethodName     = "/payment.Admin/CreateTenantPayChannelRule"
+	Admin_UpdateTenantPayChannelRule_FullMethodName     = "/payment.Admin/UpdateTenantPayChannelRule"
+	Admin_GetTenantPayChannelRule_FullMethodName        = "/payment.Admin/GetTenantPayChannelRule"
+	Admin_ListTenantPayChannelRules_FullMethodName      = "/payment.Admin/ListTenantPayChannelRules"
+	Admin_GetUserRechargeStat_FullMethodName            = "/payment.Admin/GetUserRechargeStat"
+	Admin_ListUserRechargeStats_FullMethodName          = "/payment.Admin/ListUserRechargeStats"
+	Admin_ListRechargeOrders_FullMethodName             = "/payment.Admin/ListRechargeOrders"
+	Admin_GetRechargeOrder_FullMethodName               = "/payment.Admin/GetRechargeOrder"
+	Admin_CloseRechargeOrder_FullMethodName             = "/payment.Admin/CloseRechargeOrder"
+	Admin_ManualMarkRechargeOrderSuccess_FullMethodName = "/payment.Admin/ManualMarkRechargeOrderSuccess"
+	Admin_RetryNotify_FullMethodName                    = "/payment.Admin/RetryNotify"
+	Admin_ListRechargeNotifyLogs_FullMethodName         = "/payment.Admin/ListRechargeNotifyLogs"
+	Admin_GetRechargeNotifyLog_FullMethodName           = "/payment.Admin/GetRechargeNotifyLog"
+	Admin_ListWithdrawOrders_FullMethodName             = "/payment.Admin/ListWithdrawOrders"
+	Admin_GetWithdrawOrder_FullMethodName               = "/payment.Admin/GetWithdrawOrder"
+	Admin_AuditWithdrawOrder_FullMethodName             = "/payment.Admin/AuditWithdrawOrder"
+	Admin_ListWithdrawNotifyLogs_FullMethodName         = "/payment.Admin/ListWithdrawNotifyLogs"
+	Admin_GetWithdrawNotifyLog_FullMethodName           = "/payment.Admin/GetWithdrawNotifyLog"
+	Admin_CreateCryptoRechargeAddress_FullMethodName    = "/payment.Admin/CreateCryptoRechargeAddress"
+	Admin_UpdateCryptoRechargeAddress_FullMethodName    = "/payment.Admin/UpdateCryptoRechargeAddress"
+	Admin_GetCryptoRechargeAddress_FullMethodName       = "/payment.Admin/GetCryptoRechargeAddress"
+	Admin_ListCryptoRechargeAddresses_FullMethodName    = "/payment.Admin/ListCryptoRechargeAddresses"
+	Admin_CreateCryptoWalletAccount_FullMethodName      = "/payment.Admin/CreateCryptoWalletAccount"
+	Admin_UpdateCryptoWalletAccount_FullMethodName      = "/payment.Admin/UpdateCryptoWalletAccount"
+	Admin_GetCryptoWalletAccount_FullMethodName         = "/payment.Admin/GetCryptoWalletAccount"
+	Admin_ListCryptoWalletAccounts_FullMethodName       = "/payment.Admin/ListCryptoWalletAccounts"
+	Admin_CreateCryptoRechargeTx_FullMethodName         = "/payment.Admin/CreateCryptoRechargeTx"
+	Admin_UpdateCryptoRechargeTx_FullMethodName         = "/payment.Admin/UpdateCryptoRechargeTx"
+	Admin_GetCryptoRechargeTx_FullMethodName            = "/payment.Admin/GetCryptoRechargeTx"
+	Admin_ListCryptoRechargeTxs_FullMethodName          = "/payment.Admin/ListCryptoRechargeTxs"
 )
 
-// PaymentAdminClient is the client API for PaymentAdmin service.
+// AdminClient is the client API for Admin service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // Admin 接口
-type PaymentAdminClient interface {
+type AdminClient interface {
 	// 获取系统支持的平台
 	GetPayPlatforms(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PayPlatformsResp, error)
 	// 创建平台
@@ -850,530 +850,530 @@ type PaymentAdminClient interface {
 	ListCryptoRechargeTxs(ctx context.Context, in *ListCryptoRechargeTxsReq, opts ...grpc.CallOption) (*ListCryptoRechargeTxsResp, error)
 }
 
-type paymentAdminClient struct {
+type adminClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewPaymentAdminClient(cc grpc.ClientConnInterface) PaymentAdminClient {
-	return &paymentAdminClient{cc}
+func NewAdminClient(cc grpc.ClientConnInterface) AdminClient {
+	return &adminClient{cc}
 }
 
-func (c *paymentAdminClient) GetPayPlatforms(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PayPlatformsResp, error) {
+func (c *adminClient) GetPayPlatforms(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*PayPlatformsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PayPlatformsResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_GetPayPlatforms_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetPayPlatforms_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) CreatePayPlatform(ctx context.Context, in *CreatePayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) CreatePayPlatform(ctx context.Context, in *CreatePayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_CreatePayPlatform_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_CreatePayPlatform_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) UpdatePayPlatform(ctx context.Context, in *UpdatePayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdatePayPlatform(ctx context.Context, in *UpdatePayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_UpdatePayPlatform_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdatePayPlatform_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) GetPayPlatform(ctx context.Context, in *GetPayPlatformReq, opts ...grpc.CallOption) (*GetPayPlatformResp, error) {
+func (c *adminClient) GetPayPlatform(ctx context.Context, in *GetPayPlatformReq, opts ...grpc.CallOption) (*GetPayPlatformResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetPayPlatformResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_GetPayPlatform_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetPayPlatform_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) ListPayPlatforms(ctx context.Context, in *ListPayPlatformsReq, opts ...grpc.CallOption) (*ListPayPlatformsResp, error) {
+func (c *adminClient) ListPayPlatforms(ctx context.Context, in *ListPayPlatformsReq, opts ...grpc.CallOption) (*ListPayPlatformsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListPayPlatformsResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_ListPayPlatforms_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListPayPlatforms_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) CreatePayProduct(ctx context.Context, in *CreatePayProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) CreatePayProduct(ctx context.Context, in *CreatePayProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_CreatePayProduct_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_CreatePayProduct_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) UpdatePayProduct(ctx context.Context, in *UpdatePayProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdatePayProduct(ctx context.Context, in *UpdatePayProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_UpdatePayProduct_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdatePayProduct_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) GetPayProduct(ctx context.Context, in *GetPayProductReq, opts ...grpc.CallOption) (*GetPayProductResp, error) {
+func (c *adminClient) GetPayProduct(ctx context.Context, in *GetPayProductReq, opts ...grpc.CallOption) (*GetPayProductResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetPayProductResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_GetPayProduct_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetPayProduct_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) ListPayProducts(ctx context.Context, in *ListPayProductsReq, opts ...grpc.CallOption) (*ListPayProductsResp, error) {
+func (c *adminClient) ListPayProducts(ctx context.Context, in *ListPayProductsReq, opts ...grpc.CallOption) (*ListPayProductsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListPayProductsResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_ListPayProducts_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListPayProducts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) OpenTenantPayPlatform(ctx context.Context, in *OpenTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) OpenTenantPayPlatform(ctx context.Context, in *OpenTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_OpenTenantPayPlatform_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_OpenTenantPayPlatform_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) UpdateTenantPayPlatform(ctx context.Context, in *UpdateTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdateTenantPayPlatform(ctx context.Context, in *UpdateTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_UpdateTenantPayPlatform_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateTenantPayPlatform_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) GetTenantPayPlatform(ctx context.Context, in *GetTenantPayPlatformReq, opts ...grpc.CallOption) (*GetTenantPayPlatformResp, error) {
+func (c *adminClient) GetTenantPayPlatform(ctx context.Context, in *GetTenantPayPlatformReq, opts ...grpc.CallOption) (*GetTenantPayPlatformResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetTenantPayPlatformResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_GetTenantPayPlatform_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetTenantPayPlatform_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) ListTenantPayPlatforms(ctx context.Context, in *ListTenantPayPlatformsReq, opts ...grpc.CallOption) (*ListTenantPayPlatformsResp, error) {
+func (c *adminClient) ListTenantPayPlatforms(ctx context.Context, in *ListTenantPayPlatformsReq, opts ...grpc.CallOption) (*ListTenantPayPlatformsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListTenantPayPlatformsResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_ListTenantPayPlatforms_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListTenantPayPlatforms_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) CreateTenantPayAccount(ctx context.Context, in *CreateTenantPayAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) CreateTenantPayAccount(ctx context.Context, in *CreateTenantPayAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_CreateTenantPayAccount_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_CreateTenantPayAccount_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) UpdateTenantPayAccount(ctx context.Context, in *UpdateTenantPayAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdateTenantPayAccount(ctx context.Context, in *UpdateTenantPayAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_UpdateTenantPayAccount_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateTenantPayAccount_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) GetTenantPayAccount(ctx context.Context, in *GetTenantPayAccountReq, opts ...grpc.CallOption) (*GetTenantPayAccountResp, error) {
+func (c *adminClient) GetTenantPayAccount(ctx context.Context, in *GetTenantPayAccountReq, opts ...grpc.CallOption) (*GetTenantPayAccountResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetTenantPayAccountResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_GetTenantPayAccount_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetTenantPayAccount_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) ListTenantPayAccounts(ctx context.Context, in *ListTenantPayAccountsReq, opts ...grpc.CallOption) (*ListTenantPayAccountsResp, error) {
+func (c *adminClient) ListTenantPayAccounts(ctx context.Context, in *ListTenantPayAccountsReq, opts ...grpc.CallOption) (*ListTenantPayAccountsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListTenantPayAccountsResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_ListTenantPayAccounts_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListTenantPayAccounts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) CreateTenantPayChannel(ctx context.Context, in *CreateTenantPayChannelReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) CreateTenantPayChannel(ctx context.Context, in *CreateTenantPayChannelReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_CreateTenantPayChannel_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_CreateTenantPayChannel_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) UpdateTenantPayChannel(ctx context.Context, in *UpdateTenantPayChannelReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdateTenantPayChannel(ctx context.Context, in *UpdateTenantPayChannelReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_UpdateTenantPayChannel_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateTenantPayChannel_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) GetTenantPayChannel(ctx context.Context, in *GetTenantPayChannelReq, opts ...grpc.CallOption) (*GetTenantPayChannelResp, error) {
+func (c *adminClient) GetTenantPayChannel(ctx context.Context, in *GetTenantPayChannelReq, opts ...grpc.CallOption) (*GetTenantPayChannelResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetTenantPayChannelResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_GetTenantPayChannel_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetTenantPayChannel_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) ListTenantPayChannels(ctx context.Context, in *ListTenantPayChannelsReq, opts ...grpc.CallOption) (*ListTenantPayChannelsResp, error) {
+func (c *adminClient) ListTenantPayChannels(ctx context.Context, in *ListTenantPayChannelsReq, opts ...grpc.CallOption) (*ListTenantPayChannelsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListTenantPayChannelsResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_ListTenantPayChannels_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListTenantPayChannels_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) CreateTenantPayChannelRule(ctx context.Context, in *CreateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) CreateTenantPayChannelRule(ctx context.Context, in *CreateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_CreateTenantPayChannelRule_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_CreateTenantPayChannelRule_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) UpdateTenantPayChannelRule(ctx context.Context, in *UpdateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdateTenantPayChannelRule(ctx context.Context, in *UpdateTenantPayChannelRuleReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_UpdateTenantPayChannelRule_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateTenantPayChannelRule_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) GetTenantPayChannelRule(ctx context.Context, in *GetTenantPayChannelRuleReq, opts ...grpc.CallOption) (*GetTenantPayChannelRuleResp, error) {
+func (c *adminClient) GetTenantPayChannelRule(ctx context.Context, in *GetTenantPayChannelRuleReq, opts ...grpc.CallOption) (*GetTenantPayChannelRuleResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetTenantPayChannelRuleResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_GetTenantPayChannelRule_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetTenantPayChannelRule_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) ListTenantPayChannelRules(ctx context.Context, in *ListTenantPayChannelRulesReq, opts ...grpc.CallOption) (*ListTenantPayChannelRulesResp, error) {
+func (c *adminClient) ListTenantPayChannelRules(ctx context.Context, in *ListTenantPayChannelRulesReq, opts ...grpc.CallOption) (*ListTenantPayChannelRulesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListTenantPayChannelRulesResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_ListTenantPayChannelRules_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListTenantPayChannelRules_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) GetUserRechargeStat(ctx context.Context, in *GetUserRechargeStatReq, opts ...grpc.CallOption) (*GetUserRechargeStatResp, error) {
+func (c *adminClient) GetUserRechargeStat(ctx context.Context, in *GetUserRechargeStatReq, opts ...grpc.CallOption) (*GetUserRechargeStatResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetUserRechargeStatResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_GetUserRechargeStat_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetUserRechargeStat_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) ListUserRechargeStats(ctx context.Context, in *ListUserRechargeStatsReq, opts ...grpc.CallOption) (*ListUserRechargeStatsResp, error) {
+func (c *adminClient) ListUserRechargeStats(ctx context.Context, in *ListUserRechargeStatsReq, opts ...grpc.CallOption) (*ListUserRechargeStatsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListUserRechargeStatsResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_ListUserRechargeStats_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListUserRechargeStats_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) ListRechargeOrders(ctx context.Context, in *ListRechargeOrdersReq, opts ...grpc.CallOption) (*ListRechargeOrdersResp, error) {
+func (c *adminClient) ListRechargeOrders(ctx context.Context, in *ListRechargeOrdersReq, opts ...grpc.CallOption) (*ListRechargeOrdersResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListRechargeOrdersResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_ListRechargeOrders_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListRechargeOrders_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) GetRechargeOrder(ctx context.Context, in *GetRechargeOrderReq, opts ...grpc.CallOption) (*GetRechargeOrderResp, error) {
+func (c *adminClient) GetRechargeOrder(ctx context.Context, in *GetRechargeOrderReq, opts ...grpc.CallOption) (*GetRechargeOrderResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetRechargeOrderResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_GetRechargeOrder_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetRechargeOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) CloseRechargeOrder(ctx context.Context, in *CloseRechargeOrderReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) CloseRechargeOrder(ctx context.Context, in *CloseRechargeOrderReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_CloseRechargeOrder_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_CloseRechargeOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) ManualMarkRechargeOrderSuccess(ctx context.Context, in *ManualMarkRechargeOrderSuccessReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) ManualMarkRechargeOrderSuccess(ctx context.Context, in *ManualMarkRechargeOrderSuccessReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_ManualMarkRechargeOrderSuccess_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ManualMarkRechargeOrderSuccess_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) RetryNotify(ctx context.Context, in *RetryNotifyReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) RetryNotify(ctx context.Context, in *RetryNotifyReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_RetryNotify_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_RetryNotify_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) ListRechargeNotifyLogs(ctx context.Context, in *ListRechargeNotifyLogsReq, opts ...grpc.CallOption) (*ListRechargeNotifyLogsResp, error) {
+func (c *adminClient) ListRechargeNotifyLogs(ctx context.Context, in *ListRechargeNotifyLogsReq, opts ...grpc.CallOption) (*ListRechargeNotifyLogsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListRechargeNotifyLogsResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_ListRechargeNotifyLogs_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListRechargeNotifyLogs_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) GetRechargeNotifyLog(ctx context.Context, in *GetRechargeNotifyLogReq, opts ...grpc.CallOption) (*GetRechargeNotifyLogResp, error) {
+func (c *adminClient) GetRechargeNotifyLog(ctx context.Context, in *GetRechargeNotifyLogReq, opts ...grpc.CallOption) (*GetRechargeNotifyLogResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetRechargeNotifyLogResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_GetRechargeNotifyLog_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetRechargeNotifyLog_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) ListWithdrawOrders(ctx context.Context, in *ListWithdrawOrdersReq, opts ...grpc.CallOption) (*ListWithdrawOrdersResp, error) {
+func (c *adminClient) ListWithdrawOrders(ctx context.Context, in *ListWithdrawOrdersReq, opts ...grpc.CallOption) (*ListWithdrawOrdersResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListWithdrawOrdersResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_ListWithdrawOrders_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListWithdrawOrders_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) GetWithdrawOrder(ctx context.Context, in *GetWithdrawOrderReq, opts ...grpc.CallOption) (*GetWithdrawOrderResp, error) {
+func (c *adminClient) GetWithdrawOrder(ctx context.Context, in *GetWithdrawOrderReq, opts ...grpc.CallOption) (*GetWithdrawOrderResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetWithdrawOrderResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_GetWithdrawOrder_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetWithdrawOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) AuditWithdrawOrder(ctx context.Context, in *AuditWithdrawOrderReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) AuditWithdrawOrder(ctx context.Context, in *AuditWithdrawOrderReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_AuditWithdrawOrder_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_AuditWithdrawOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) ListWithdrawNotifyLogs(ctx context.Context, in *ListWithdrawNotifyLogsReq, opts ...grpc.CallOption) (*ListWithdrawNotifyLogsResp, error) {
+func (c *adminClient) ListWithdrawNotifyLogs(ctx context.Context, in *ListWithdrawNotifyLogsReq, opts ...grpc.CallOption) (*ListWithdrawNotifyLogsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListWithdrawNotifyLogsResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_ListWithdrawNotifyLogs_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListWithdrawNotifyLogs_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) GetWithdrawNotifyLog(ctx context.Context, in *GetWithdrawNotifyLogReq, opts ...grpc.CallOption) (*GetWithdrawNotifyLogResp, error) {
+func (c *adminClient) GetWithdrawNotifyLog(ctx context.Context, in *GetWithdrawNotifyLogReq, opts ...grpc.CallOption) (*GetWithdrawNotifyLogResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetWithdrawNotifyLogResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_GetWithdrawNotifyLog_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetWithdrawNotifyLog_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) CreateCryptoRechargeAddress(ctx context.Context, in *CreateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) CreateCryptoRechargeAddress(ctx context.Context, in *CreateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_CreateCryptoRechargeAddress_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_CreateCryptoRechargeAddress_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) UpdateCryptoRechargeAddress(ctx context.Context, in *UpdateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdateCryptoRechargeAddress(ctx context.Context, in *UpdateCryptoRechargeAddressReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_UpdateCryptoRechargeAddress_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateCryptoRechargeAddress_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) GetCryptoRechargeAddress(ctx context.Context, in *GetCryptoRechargeAddressReq, opts ...grpc.CallOption) (*GetCryptoRechargeAddressResp, error) {
+func (c *adminClient) GetCryptoRechargeAddress(ctx context.Context, in *GetCryptoRechargeAddressReq, opts ...grpc.CallOption) (*GetCryptoRechargeAddressResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetCryptoRechargeAddressResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_GetCryptoRechargeAddress_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetCryptoRechargeAddress_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) ListCryptoRechargeAddresses(ctx context.Context, in *ListCryptoRechargeAddressesReq, opts ...grpc.CallOption) (*ListCryptoRechargeAddressesResp, error) {
+func (c *adminClient) ListCryptoRechargeAddresses(ctx context.Context, in *ListCryptoRechargeAddressesReq, opts ...grpc.CallOption) (*ListCryptoRechargeAddressesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListCryptoRechargeAddressesResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_ListCryptoRechargeAddresses_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListCryptoRechargeAddresses_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) CreateCryptoWalletAccount(ctx context.Context, in *CreateCryptoWalletAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) CreateCryptoWalletAccount(ctx context.Context, in *CreateCryptoWalletAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_CreateCryptoWalletAccount_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_CreateCryptoWalletAccount_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) UpdateCryptoWalletAccount(ctx context.Context, in *UpdateCryptoWalletAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdateCryptoWalletAccount(ctx context.Context, in *UpdateCryptoWalletAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_UpdateCryptoWalletAccount_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateCryptoWalletAccount_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) GetCryptoWalletAccount(ctx context.Context, in *GetCryptoWalletAccountReq, opts ...grpc.CallOption) (*GetCryptoWalletAccountResp, error) {
+func (c *adminClient) GetCryptoWalletAccount(ctx context.Context, in *GetCryptoWalletAccountReq, opts ...grpc.CallOption) (*GetCryptoWalletAccountResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetCryptoWalletAccountResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_GetCryptoWalletAccount_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetCryptoWalletAccount_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) ListCryptoWalletAccounts(ctx context.Context, in *ListCryptoWalletAccountsReq, opts ...grpc.CallOption) (*ListCryptoWalletAccountsResp, error) {
+func (c *adminClient) ListCryptoWalletAccounts(ctx context.Context, in *ListCryptoWalletAccountsReq, opts ...grpc.CallOption) (*ListCryptoWalletAccountsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListCryptoWalletAccountsResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_ListCryptoWalletAccounts_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListCryptoWalletAccounts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) CreateCryptoRechargeTx(ctx context.Context, in *CreateCryptoRechargeTxReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) CreateCryptoRechargeTx(ctx context.Context, in *CreateCryptoRechargeTxReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_CreateCryptoRechargeTx_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_CreateCryptoRechargeTx_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) UpdateCryptoRechargeTx(ctx context.Context, in *UpdateCryptoRechargeTxReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdateCryptoRechargeTx(ctx context.Context, in *UpdateCryptoRechargeTxReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_UpdateCryptoRechargeTx_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateCryptoRechargeTx_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) GetCryptoRechargeTx(ctx context.Context, in *GetCryptoRechargeTxReq, opts ...grpc.CallOption) (*GetCryptoRechargeTxResp, error) {
+func (c *adminClient) GetCryptoRechargeTx(ctx context.Context, in *GetCryptoRechargeTxReq, opts ...grpc.CallOption) (*GetCryptoRechargeTxResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetCryptoRechargeTxResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_GetCryptoRechargeTx_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetCryptoRechargeTx_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *paymentAdminClient) ListCryptoRechargeTxs(ctx context.Context, in *ListCryptoRechargeTxsReq, opts ...grpc.CallOption) (*ListCryptoRechargeTxsResp, error) {
+func (c *adminClient) ListCryptoRechargeTxs(ctx context.Context, in *ListCryptoRechargeTxsReq, opts ...grpc.CallOption) (*ListCryptoRechargeTxsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListCryptoRechargeTxsResp)
-	err := c.cc.Invoke(ctx, PaymentAdmin_ListCryptoRechargeTxs_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListCryptoRechargeTxs_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// PaymentAdminServer is the server API for PaymentAdmin service.
-// All implementations must embed UnimplementedPaymentAdminServer
+// AdminServer is the server API for Admin service.
+// All implementations must embed UnimplementedAdminServer
 // for forward compatibility.
 //
 // Admin 接口
-type PaymentAdminServer interface {
+type AdminServer interface {
 	// 获取系统支持的平台
 	GetPayPlatforms(context.Context, *Empty) (*PayPlatformsResp, error)
 	// 创建平台
@@ -1476,1318 +1476,1318 @@ type PaymentAdminServer interface {
 	GetCryptoRechargeTx(context.Context, *GetCryptoRechargeTxReq) (*GetCryptoRechargeTxResp, error)
 	// 链上充值交易列表
 	ListCryptoRechargeTxs(context.Context, *ListCryptoRechargeTxsReq) (*ListCryptoRechargeTxsResp, error)
-	mustEmbedUnimplementedPaymentAdminServer()
+	mustEmbedUnimplementedAdminServer()
 }
 
-// UnimplementedPaymentAdminServer must be embedded to have
+// UnimplementedAdminServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedPaymentAdminServer struct{}
+type UnimplementedAdminServer struct{}
 
-func (UnimplementedPaymentAdminServer) GetPayPlatforms(context.Context, *Empty) (*PayPlatformsResp, error) {
+func (UnimplementedAdminServer) GetPayPlatforms(context.Context, *Empty) (*PayPlatformsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPayPlatforms not implemented")
 }
-func (UnimplementedPaymentAdminServer) CreatePayPlatform(context.Context, *CreatePayPlatformReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) CreatePayPlatform(context.Context, *CreatePayPlatformReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreatePayPlatform not implemented")
 }
-func (UnimplementedPaymentAdminServer) UpdatePayPlatform(context.Context, *UpdatePayPlatformReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdatePayPlatform(context.Context, *UpdatePayPlatformReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdatePayPlatform not implemented")
 }
-func (UnimplementedPaymentAdminServer) GetPayPlatform(context.Context, *GetPayPlatformReq) (*GetPayPlatformResp, error) {
+func (UnimplementedAdminServer) GetPayPlatform(context.Context, *GetPayPlatformReq) (*GetPayPlatformResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPayPlatform not implemented")
 }
-func (UnimplementedPaymentAdminServer) ListPayPlatforms(context.Context, *ListPayPlatformsReq) (*ListPayPlatformsResp, error) {
+func (UnimplementedAdminServer) ListPayPlatforms(context.Context, *ListPayPlatformsReq) (*ListPayPlatformsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListPayPlatforms not implemented")
 }
-func (UnimplementedPaymentAdminServer) CreatePayProduct(context.Context, *CreatePayProductReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) CreatePayProduct(context.Context, *CreatePayProductReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreatePayProduct not implemented")
 }
-func (UnimplementedPaymentAdminServer) UpdatePayProduct(context.Context, *UpdatePayProductReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdatePayProduct(context.Context, *UpdatePayProductReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdatePayProduct not implemented")
 }
-func (UnimplementedPaymentAdminServer) GetPayProduct(context.Context, *GetPayProductReq) (*GetPayProductResp, error) {
+func (UnimplementedAdminServer) GetPayProduct(context.Context, *GetPayProductReq) (*GetPayProductResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPayProduct not implemented")
 }
-func (UnimplementedPaymentAdminServer) ListPayProducts(context.Context, *ListPayProductsReq) (*ListPayProductsResp, error) {
+func (UnimplementedAdminServer) ListPayProducts(context.Context, *ListPayProductsReq) (*ListPayProductsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListPayProducts not implemented")
 }
-func (UnimplementedPaymentAdminServer) OpenTenantPayPlatform(context.Context, *OpenTenantPayPlatformReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) OpenTenantPayPlatform(context.Context, *OpenTenantPayPlatformReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method OpenTenantPayPlatform not implemented")
 }
-func (UnimplementedPaymentAdminServer) UpdateTenantPayPlatform(context.Context, *UpdateTenantPayPlatformReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdateTenantPayPlatform(context.Context, *UpdateTenantPayPlatformReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateTenantPayPlatform not implemented")
 }
-func (UnimplementedPaymentAdminServer) GetTenantPayPlatform(context.Context, *GetTenantPayPlatformReq) (*GetTenantPayPlatformResp, error) {
+func (UnimplementedAdminServer) GetTenantPayPlatform(context.Context, *GetTenantPayPlatformReq) (*GetTenantPayPlatformResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTenantPayPlatform not implemented")
 }
-func (UnimplementedPaymentAdminServer) ListTenantPayPlatforms(context.Context, *ListTenantPayPlatformsReq) (*ListTenantPayPlatformsResp, error) {
+func (UnimplementedAdminServer) ListTenantPayPlatforms(context.Context, *ListTenantPayPlatformsReq) (*ListTenantPayPlatformsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListTenantPayPlatforms not implemented")
 }
-func (UnimplementedPaymentAdminServer) CreateTenantPayAccount(context.Context, *CreateTenantPayAccountReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) CreateTenantPayAccount(context.Context, *CreateTenantPayAccountReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateTenantPayAccount not implemented")
 }
-func (UnimplementedPaymentAdminServer) UpdateTenantPayAccount(context.Context, *UpdateTenantPayAccountReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdateTenantPayAccount(context.Context, *UpdateTenantPayAccountReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateTenantPayAccount not implemented")
 }
-func (UnimplementedPaymentAdminServer) GetTenantPayAccount(context.Context, *GetTenantPayAccountReq) (*GetTenantPayAccountResp, error) {
+func (UnimplementedAdminServer) GetTenantPayAccount(context.Context, *GetTenantPayAccountReq) (*GetTenantPayAccountResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTenantPayAccount not implemented")
 }
-func (UnimplementedPaymentAdminServer) ListTenantPayAccounts(context.Context, *ListTenantPayAccountsReq) (*ListTenantPayAccountsResp, error) {
+func (UnimplementedAdminServer) ListTenantPayAccounts(context.Context, *ListTenantPayAccountsReq) (*ListTenantPayAccountsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListTenantPayAccounts not implemented")
 }
-func (UnimplementedPaymentAdminServer) CreateTenantPayChannel(context.Context, *CreateTenantPayChannelReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) CreateTenantPayChannel(context.Context, *CreateTenantPayChannelReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateTenantPayChannel not implemented")
 }
-func (UnimplementedPaymentAdminServer) UpdateTenantPayChannel(context.Context, *UpdateTenantPayChannelReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdateTenantPayChannel(context.Context, *UpdateTenantPayChannelReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateTenantPayChannel not implemented")
 }
-func (UnimplementedPaymentAdminServer) GetTenantPayChannel(context.Context, *GetTenantPayChannelReq) (*GetTenantPayChannelResp, error) {
+func (UnimplementedAdminServer) GetTenantPayChannel(context.Context, *GetTenantPayChannelReq) (*GetTenantPayChannelResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTenantPayChannel not implemented")
 }
-func (UnimplementedPaymentAdminServer) ListTenantPayChannels(context.Context, *ListTenantPayChannelsReq) (*ListTenantPayChannelsResp, error) {
+func (UnimplementedAdminServer) ListTenantPayChannels(context.Context, *ListTenantPayChannelsReq) (*ListTenantPayChannelsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListTenantPayChannels not implemented")
 }
-func (UnimplementedPaymentAdminServer) CreateTenantPayChannelRule(context.Context, *CreateTenantPayChannelRuleReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) CreateTenantPayChannelRule(context.Context, *CreateTenantPayChannelRuleReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateTenantPayChannelRule not implemented")
 }
-func (UnimplementedPaymentAdminServer) UpdateTenantPayChannelRule(context.Context, *UpdateTenantPayChannelRuleReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdateTenantPayChannelRule(context.Context, *UpdateTenantPayChannelRuleReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateTenantPayChannelRule not implemented")
 }
-func (UnimplementedPaymentAdminServer) GetTenantPayChannelRule(context.Context, *GetTenantPayChannelRuleReq) (*GetTenantPayChannelRuleResp, error) {
+func (UnimplementedAdminServer) GetTenantPayChannelRule(context.Context, *GetTenantPayChannelRuleReq) (*GetTenantPayChannelRuleResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTenantPayChannelRule not implemented")
 }
-func (UnimplementedPaymentAdminServer) ListTenantPayChannelRules(context.Context, *ListTenantPayChannelRulesReq) (*ListTenantPayChannelRulesResp, error) {
+func (UnimplementedAdminServer) ListTenantPayChannelRules(context.Context, *ListTenantPayChannelRulesReq) (*ListTenantPayChannelRulesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListTenantPayChannelRules not implemented")
 }
-func (UnimplementedPaymentAdminServer) GetUserRechargeStat(context.Context, *GetUserRechargeStatReq) (*GetUserRechargeStatResp, error) {
+func (UnimplementedAdminServer) GetUserRechargeStat(context.Context, *GetUserRechargeStatReq) (*GetUserRechargeStatResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserRechargeStat not implemented")
 }
-func (UnimplementedPaymentAdminServer) ListUserRechargeStats(context.Context, *ListUserRechargeStatsReq) (*ListUserRechargeStatsResp, error) {
+func (UnimplementedAdminServer) ListUserRechargeStats(context.Context, *ListUserRechargeStatsReq) (*ListUserRechargeStatsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListUserRechargeStats not implemented")
 }
-func (UnimplementedPaymentAdminServer) ListRechargeOrders(context.Context, *ListRechargeOrdersReq) (*ListRechargeOrdersResp, error) {
+func (UnimplementedAdminServer) ListRechargeOrders(context.Context, *ListRechargeOrdersReq) (*ListRechargeOrdersResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListRechargeOrders not implemented")
 }
-func (UnimplementedPaymentAdminServer) GetRechargeOrder(context.Context, *GetRechargeOrderReq) (*GetRechargeOrderResp, error) {
+func (UnimplementedAdminServer) GetRechargeOrder(context.Context, *GetRechargeOrderReq) (*GetRechargeOrderResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetRechargeOrder not implemented")
 }
-func (UnimplementedPaymentAdminServer) CloseRechargeOrder(context.Context, *CloseRechargeOrderReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) CloseRechargeOrder(context.Context, *CloseRechargeOrderReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CloseRechargeOrder not implemented")
 }
-func (UnimplementedPaymentAdminServer) ManualMarkRechargeOrderSuccess(context.Context, *ManualMarkRechargeOrderSuccessReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) ManualMarkRechargeOrderSuccess(context.Context, *ManualMarkRechargeOrderSuccessReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ManualMarkRechargeOrderSuccess not implemented")
 }
-func (UnimplementedPaymentAdminServer) RetryNotify(context.Context, *RetryNotifyReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) RetryNotify(context.Context, *RetryNotifyReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RetryNotify not implemented")
 }
-func (UnimplementedPaymentAdminServer) ListRechargeNotifyLogs(context.Context, *ListRechargeNotifyLogsReq) (*ListRechargeNotifyLogsResp, error) {
+func (UnimplementedAdminServer) ListRechargeNotifyLogs(context.Context, *ListRechargeNotifyLogsReq) (*ListRechargeNotifyLogsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListRechargeNotifyLogs not implemented")
 }
-func (UnimplementedPaymentAdminServer) GetRechargeNotifyLog(context.Context, *GetRechargeNotifyLogReq) (*GetRechargeNotifyLogResp, error) {
+func (UnimplementedAdminServer) GetRechargeNotifyLog(context.Context, *GetRechargeNotifyLogReq) (*GetRechargeNotifyLogResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetRechargeNotifyLog not implemented")
 }
-func (UnimplementedPaymentAdminServer) ListWithdrawOrders(context.Context, *ListWithdrawOrdersReq) (*ListWithdrawOrdersResp, error) {
+func (UnimplementedAdminServer) ListWithdrawOrders(context.Context, *ListWithdrawOrdersReq) (*ListWithdrawOrdersResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListWithdrawOrders not implemented")
 }
-func (UnimplementedPaymentAdminServer) GetWithdrawOrder(context.Context, *GetWithdrawOrderReq) (*GetWithdrawOrderResp, error) {
+func (UnimplementedAdminServer) GetWithdrawOrder(context.Context, *GetWithdrawOrderReq) (*GetWithdrawOrderResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetWithdrawOrder not implemented")
 }
-func (UnimplementedPaymentAdminServer) AuditWithdrawOrder(context.Context, *AuditWithdrawOrderReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) AuditWithdrawOrder(context.Context, *AuditWithdrawOrderReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AuditWithdrawOrder not implemented")
 }
-func (UnimplementedPaymentAdminServer) ListWithdrawNotifyLogs(context.Context, *ListWithdrawNotifyLogsReq) (*ListWithdrawNotifyLogsResp, error) {
+func (UnimplementedAdminServer) ListWithdrawNotifyLogs(context.Context, *ListWithdrawNotifyLogsReq) (*ListWithdrawNotifyLogsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListWithdrawNotifyLogs not implemented")
 }
-func (UnimplementedPaymentAdminServer) GetWithdrawNotifyLog(context.Context, *GetWithdrawNotifyLogReq) (*GetWithdrawNotifyLogResp, error) {
+func (UnimplementedAdminServer) GetWithdrawNotifyLog(context.Context, *GetWithdrawNotifyLogReq) (*GetWithdrawNotifyLogResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetWithdrawNotifyLog not implemented")
 }
-func (UnimplementedPaymentAdminServer) CreateCryptoRechargeAddress(context.Context, *CreateCryptoRechargeAddressReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) CreateCryptoRechargeAddress(context.Context, *CreateCryptoRechargeAddressReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateCryptoRechargeAddress not implemented")
 }
-func (UnimplementedPaymentAdminServer) UpdateCryptoRechargeAddress(context.Context, *UpdateCryptoRechargeAddressReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdateCryptoRechargeAddress(context.Context, *UpdateCryptoRechargeAddressReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateCryptoRechargeAddress not implemented")
 }
-func (UnimplementedPaymentAdminServer) GetCryptoRechargeAddress(context.Context, *GetCryptoRechargeAddressReq) (*GetCryptoRechargeAddressResp, error) {
+func (UnimplementedAdminServer) GetCryptoRechargeAddress(context.Context, *GetCryptoRechargeAddressReq) (*GetCryptoRechargeAddressResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCryptoRechargeAddress not implemented")
 }
-func (UnimplementedPaymentAdminServer) ListCryptoRechargeAddresses(context.Context, *ListCryptoRechargeAddressesReq) (*ListCryptoRechargeAddressesResp, error) {
+func (UnimplementedAdminServer) ListCryptoRechargeAddresses(context.Context, *ListCryptoRechargeAddressesReq) (*ListCryptoRechargeAddressesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListCryptoRechargeAddresses not implemented")
 }
-func (UnimplementedPaymentAdminServer) CreateCryptoWalletAccount(context.Context, *CreateCryptoWalletAccountReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) CreateCryptoWalletAccount(context.Context, *CreateCryptoWalletAccountReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateCryptoWalletAccount not implemented")
 }
-func (UnimplementedPaymentAdminServer) UpdateCryptoWalletAccount(context.Context, *UpdateCryptoWalletAccountReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdateCryptoWalletAccount(context.Context, *UpdateCryptoWalletAccountReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateCryptoWalletAccount not implemented")
 }
-func (UnimplementedPaymentAdminServer) GetCryptoWalletAccount(context.Context, *GetCryptoWalletAccountReq) (*GetCryptoWalletAccountResp, error) {
+func (UnimplementedAdminServer) GetCryptoWalletAccount(context.Context, *GetCryptoWalletAccountReq) (*GetCryptoWalletAccountResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCryptoWalletAccount not implemented")
 }
-func (UnimplementedPaymentAdminServer) ListCryptoWalletAccounts(context.Context, *ListCryptoWalletAccountsReq) (*ListCryptoWalletAccountsResp, error) {
+func (UnimplementedAdminServer) ListCryptoWalletAccounts(context.Context, *ListCryptoWalletAccountsReq) (*ListCryptoWalletAccountsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListCryptoWalletAccounts not implemented")
 }
-func (UnimplementedPaymentAdminServer) CreateCryptoRechargeTx(context.Context, *CreateCryptoRechargeTxReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) CreateCryptoRechargeTx(context.Context, *CreateCryptoRechargeTxReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateCryptoRechargeTx not implemented")
 }
-func (UnimplementedPaymentAdminServer) UpdateCryptoRechargeTx(context.Context, *UpdateCryptoRechargeTxReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdateCryptoRechargeTx(context.Context, *UpdateCryptoRechargeTxReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateCryptoRechargeTx not implemented")
 }
-func (UnimplementedPaymentAdminServer) GetCryptoRechargeTx(context.Context, *GetCryptoRechargeTxReq) (*GetCryptoRechargeTxResp, error) {
+func (UnimplementedAdminServer) GetCryptoRechargeTx(context.Context, *GetCryptoRechargeTxReq) (*GetCryptoRechargeTxResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCryptoRechargeTx not implemented")
 }
-func (UnimplementedPaymentAdminServer) ListCryptoRechargeTxs(context.Context, *ListCryptoRechargeTxsReq) (*ListCryptoRechargeTxsResp, error) {
+func (UnimplementedAdminServer) ListCryptoRechargeTxs(context.Context, *ListCryptoRechargeTxsReq) (*ListCryptoRechargeTxsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListCryptoRechargeTxs not implemented")
 }
-func (UnimplementedPaymentAdminServer) mustEmbedUnimplementedPaymentAdminServer() {}
-func (UnimplementedPaymentAdminServer) testEmbeddedByValue()                      {}
+func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
+func (UnimplementedAdminServer) testEmbeddedByValue()               {}
 
-// UnsafePaymentAdminServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to PaymentAdminServer will
+// UnsafeAdminServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AdminServer will
 // result in compilation errors.
-type UnsafePaymentAdminServer interface {
-	mustEmbedUnimplementedPaymentAdminServer()
+type UnsafeAdminServer interface {
+	mustEmbedUnimplementedAdminServer()
 }
 
-func RegisterPaymentAdminServer(s grpc.ServiceRegistrar, srv PaymentAdminServer) {
-	// If the following call panics, it indicates UnimplementedPaymentAdminServer was
+func RegisterAdminServer(s grpc.ServiceRegistrar, srv AdminServer) {
+	// If the following call panics, it indicates UnimplementedAdminServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&PaymentAdmin_ServiceDesc, srv)
+	s.RegisterService(&Admin_ServiceDesc, srv)
 }
 
-func _PaymentAdmin_GetPayPlatforms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetPayPlatforms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).GetPayPlatforms(ctx, in)
+		return srv.(AdminServer).GetPayPlatforms(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_GetPayPlatforms_FullMethodName,
+		FullMethod: Admin_GetPayPlatforms_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).GetPayPlatforms(ctx, req.(*Empty))
+		return srv.(AdminServer).GetPayPlatforms(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_CreatePayPlatform_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_CreatePayPlatform_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreatePayPlatformReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).CreatePayPlatform(ctx, in)
+		return srv.(AdminServer).CreatePayPlatform(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_CreatePayPlatform_FullMethodName,
+		FullMethod: Admin_CreatePayPlatform_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).CreatePayPlatform(ctx, req.(*CreatePayPlatformReq))
+		return srv.(AdminServer).CreatePayPlatform(ctx, req.(*CreatePayPlatformReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_UpdatePayPlatform_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdatePayPlatform_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdatePayPlatformReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).UpdatePayPlatform(ctx, in)
+		return srv.(AdminServer).UpdatePayPlatform(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_UpdatePayPlatform_FullMethodName,
+		FullMethod: Admin_UpdatePayPlatform_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).UpdatePayPlatform(ctx, req.(*UpdatePayPlatformReq))
+		return srv.(AdminServer).UpdatePayPlatform(ctx, req.(*UpdatePayPlatformReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_GetPayPlatform_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetPayPlatform_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPayPlatformReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).GetPayPlatform(ctx, in)
+		return srv.(AdminServer).GetPayPlatform(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_GetPayPlatform_FullMethodName,
+		FullMethod: Admin_GetPayPlatform_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).GetPayPlatform(ctx, req.(*GetPayPlatformReq))
+		return srv.(AdminServer).GetPayPlatform(ctx, req.(*GetPayPlatformReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_ListPayPlatforms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListPayPlatforms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListPayPlatformsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).ListPayPlatforms(ctx, in)
+		return srv.(AdminServer).ListPayPlatforms(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_ListPayPlatforms_FullMethodName,
+		FullMethod: Admin_ListPayPlatforms_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).ListPayPlatforms(ctx, req.(*ListPayPlatformsReq))
+		return srv.(AdminServer).ListPayPlatforms(ctx, req.(*ListPayPlatformsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_CreatePayProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_CreatePayProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreatePayProductReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).CreatePayProduct(ctx, in)
+		return srv.(AdminServer).CreatePayProduct(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_CreatePayProduct_FullMethodName,
+		FullMethod: Admin_CreatePayProduct_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).CreatePayProduct(ctx, req.(*CreatePayProductReq))
+		return srv.(AdminServer).CreatePayProduct(ctx, req.(*CreatePayProductReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_UpdatePayProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdatePayProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdatePayProductReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).UpdatePayProduct(ctx, in)
+		return srv.(AdminServer).UpdatePayProduct(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_UpdatePayProduct_FullMethodName,
+		FullMethod: Admin_UpdatePayProduct_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).UpdatePayProduct(ctx, req.(*UpdatePayProductReq))
+		return srv.(AdminServer).UpdatePayProduct(ctx, req.(*UpdatePayProductReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_GetPayProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetPayProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPayProductReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).GetPayProduct(ctx, in)
+		return srv.(AdminServer).GetPayProduct(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_GetPayProduct_FullMethodName,
+		FullMethod: Admin_GetPayProduct_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).GetPayProduct(ctx, req.(*GetPayProductReq))
+		return srv.(AdminServer).GetPayProduct(ctx, req.(*GetPayProductReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_ListPayProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListPayProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListPayProductsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).ListPayProducts(ctx, in)
+		return srv.(AdminServer).ListPayProducts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_ListPayProducts_FullMethodName,
+		FullMethod: Admin_ListPayProducts_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).ListPayProducts(ctx, req.(*ListPayProductsReq))
+		return srv.(AdminServer).ListPayProducts(ctx, req.(*ListPayProductsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_OpenTenantPayPlatform_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_OpenTenantPayPlatform_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OpenTenantPayPlatformReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).OpenTenantPayPlatform(ctx, in)
+		return srv.(AdminServer).OpenTenantPayPlatform(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_OpenTenantPayPlatform_FullMethodName,
+		FullMethod: Admin_OpenTenantPayPlatform_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).OpenTenantPayPlatform(ctx, req.(*OpenTenantPayPlatformReq))
+		return srv.(AdminServer).OpenTenantPayPlatform(ctx, req.(*OpenTenantPayPlatformReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_UpdateTenantPayPlatform_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateTenantPayPlatform_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateTenantPayPlatformReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).UpdateTenantPayPlatform(ctx, in)
+		return srv.(AdminServer).UpdateTenantPayPlatform(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_UpdateTenantPayPlatform_FullMethodName,
+		FullMethod: Admin_UpdateTenantPayPlatform_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).UpdateTenantPayPlatform(ctx, req.(*UpdateTenantPayPlatformReq))
+		return srv.(AdminServer).UpdateTenantPayPlatform(ctx, req.(*UpdateTenantPayPlatformReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_GetTenantPayPlatform_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetTenantPayPlatform_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTenantPayPlatformReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).GetTenantPayPlatform(ctx, in)
+		return srv.(AdminServer).GetTenantPayPlatform(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_GetTenantPayPlatform_FullMethodName,
+		FullMethod: Admin_GetTenantPayPlatform_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).GetTenantPayPlatform(ctx, req.(*GetTenantPayPlatformReq))
+		return srv.(AdminServer).GetTenantPayPlatform(ctx, req.(*GetTenantPayPlatformReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_ListTenantPayPlatforms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListTenantPayPlatforms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListTenantPayPlatformsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).ListTenantPayPlatforms(ctx, in)
+		return srv.(AdminServer).ListTenantPayPlatforms(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_ListTenantPayPlatforms_FullMethodName,
+		FullMethod: Admin_ListTenantPayPlatforms_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).ListTenantPayPlatforms(ctx, req.(*ListTenantPayPlatformsReq))
+		return srv.(AdminServer).ListTenantPayPlatforms(ctx, req.(*ListTenantPayPlatformsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_CreateTenantPayAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_CreateTenantPayAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateTenantPayAccountReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).CreateTenantPayAccount(ctx, in)
+		return srv.(AdminServer).CreateTenantPayAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_CreateTenantPayAccount_FullMethodName,
+		FullMethod: Admin_CreateTenantPayAccount_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).CreateTenantPayAccount(ctx, req.(*CreateTenantPayAccountReq))
+		return srv.(AdminServer).CreateTenantPayAccount(ctx, req.(*CreateTenantPayAccountReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_UpdateTenantPayAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateTenantPayAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateTenantPayAccountReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).UpdateTenantPayAccount(ctx, in)
+		return srv.(AdminServer).UpdateTenantPayAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_UpdateTenantPayAccount_FullMethodName,
+		FullMethod: Admin_UpdateTenantPayAccount_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).UpdateTenantPayAccount(ctx, req.(*UpdateTenantPayAccountReq))
+		return srv.(AdminServer).UpdateTenantPayAccount(ctx, req.(*UpdateTenantPayAccountReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_GetTenantPayAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetTenantPayAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTenantPayAccountReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).GetTenantPayAccount(ctx, in)
+		return srv.(AdminServer).GetTenantPayAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_GetTenantPayAccount_FullMethodName,
+		FullMethod: Admin_GetTenantPayAccount_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).GetTenantPayAccount(ctx, req.(*GetTenantPayAccountReq))
+		return srv.(AdminServer).GetTenantPayAccount(ctx, req.(*GetTenantPayAccountReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_ListTenantPayAccounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListTenantPayAccounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListTenantPayAccountsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).ListTenantPayAccounts(ctx, in)
+		return srv.(AdminServer).ListTenantPayAccounts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_ListTenantPayAccounts_FullMethodName,
+		FullMethod: Admin_ListTenantPayAccounts_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).ListTenantPayAccounts(ctx, req.(*ListTenantPayAccountsReq))
+		return srv.(AdminServer).ListTenantPayAccounts(ctx, req.(*ListTenantPayAccountsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_CreateTenantPayChannel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_CreateTenantPayChannel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateTenantPayChannelReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).CreateTenantPayChannel(ctx, in)
+		return srv.(AdminServer).CreateTenantPayChannel(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_CreateTenantPayChannel_FullMethodName,
+		FullMethod: Admin_CreateTenantPayChannel_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).CreateTenantPayChannel(ctx, req.(*CreateTenantPayChannelReq))
+		return srv.(AdminServer).CreateTenantPayChannel(ctx, req.(*CreateTenantPayChannelReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_UpdateTenantPayChannel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateTenantPayChannel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateTenantPayChannelReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).UpdateTenantPayChannel(ctx, in)
+		return srv.(AdminServer).UpdateTenantPayChannel(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_UpdateTenantPayChannel_FullMethodName,
+		FullMethod: Admin_UpdateTenantPayChannel_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).UpdateTenantPayChannel(ctx, req.(*UpdateTenantPayChannelReq))
+		return srv.(AdminServer).UpdateTenantPayChannel(ctx, req.(*UpdateTenantPayChannelReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_GetTenantPayChannel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetTenantPayChannel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTenantPayChannelReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).GetTenantPayChannel(ctx, in)
+		return srv.(AdminServer).GetTenantPayChannel(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_GetTenantPayChannel_FullMethodName,
+		FullMethod: Admin_GetTenantPayChannel_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).GetTenantPayChannel(ctx, req.(*GetTenantPayChannelReq))
+		return srv.(AdminServer).GetTenantPayChannel(ctx, req.(*GetTenantPayChannelReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_ListTenantPayChannels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListTenantPayChannels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListTenantPayChannelsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).ListTenantPayChannels(ctx, in)
+		return srv.(AdminServer).ListTenantPayChannels(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_ListTenantPayChannels_FullMethodName,
+		FullMethod: Admin_ListTenantPayChannels_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).ListTenantPayChannels(ctx, req.(*ListTenantPayChannelsReq))
+		return srv.(AdminServer).ListTenantPayChannels(ctx, req.(*ListTenantPayChannelsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_CreateTenantPayChannelRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_CreateTenantPayChannelRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateTenantPayChannelRuleReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).CreateTenantPayChannelRule(ctx, in)
+		return srv.(AdminServer).CreateTenantPayChannelRule(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_CreateTenantPayChannelRule_FullMethodName,
+		FullMethod: Admin_CreateTenantPayChannelRule_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).CreateTenantPayChannelRule(ctx, req.(*CreateTenantPayChannelRuleReq))
+		return srv.(AdminServer).CreateTenantPayChannelRule(ctx, req.(*CreateTenantPayChannelRuleReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_UpdateTenantPayChannelRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateTenantPayChannelRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateTenantPayChannelRuleReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).UpdateTenantPayChannelRule(ctx, in)
+		return srv.(AdminServer).UpdateTenantPayChannelRule(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_UpdateTenantPayChannelRule_FullMethodName,
+		FullMethod: Admin_UpdateTenantPayChannelRule_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).UpdateTenantPayChannelRule(ctx, req.(*UpdateTenantPayChannelRuleReq))
+		return srv.(AdminServer).UpdateTenantPayChannelRule(ctx, req.(*UpdateTenantPayChannelRuleReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_GetTenantPayChannelRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetTenantPayChannelRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTenantPayChannelRuleReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).GetTenantPayChannelRule(ctx, in)
+		return srv.(AdminServer).GetTenantPayChannelRule(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_GetTenantPayChannelRule_FullMethodName,
+		FullMethod: Admin_GetTenantPayChannelRule_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).GetTenantPayChannelRule(ctx, req.(*GetTenantPayChannelRuleReq))
+		return srv.(AdminServer).GetTenantPayChannelRule(ctx, req.(*GetTenantPayChannelRuleReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_ListTenantPayChannelRules_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListTenantPayChannelRules_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListTenantPayChannelRulesReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).ListTenantPayChannelRules(ctx, in)
+		return srv.(AdminServer).ListTenantPayChannelRules(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_ListTenantPayChannelRules_FullMethodName,
+		FullMethod: Admin_ListTenantPayChannelRules_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).ListTenantPayChannelRules(ctx, req.(*ListTenantPayChannelRulesReq))
+		return srv.(AdminServer).ListTenantPayChannelRules(ctx, req.(*ListTenantPayChannelRulesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_GetUserRechargeStat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetUserRechargeStat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserRechargeStatReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).GetUserRechargeStat(ctx, in)
+		return srv.(AdminServer).GetUserRechargeStat(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_GetUserRechargeStat_FullMethodName,
+		FullMethod: Admin_GetUserRechargeStat_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).GetUserRechargeStat(ctx, req.(*GetUserRechargeStatReq))
+		return srv.(AdminServer).GetUserRechargeStat(ctx, req.(*GetUserRechargeStatReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_ListUserRechargeStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListUserRechargeStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListUserRechargeStatsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).ListUserRechargeStats(ctx, in)
+		return srv.(AdminServer).ListUserRechargeStats(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_ListUserRechargeStats_FullMethodName,
+		FullMethod: Admin_ListUserRechargeStats_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).ListUserRechargeStats(ctx, req.(*ListUserRechargeStatsReq))
+		return srv.(AdminServer).ListUserRechargeStats(ctx, req.(*ListUserRechargeStatsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_ListRechargeOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListRechargeOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListRechargeOrdersReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).ListRechargeOrders(ctx, in)
+		return srv.(AdminServer).ListRechargeOrders(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_ListRechargeOrders_FullMethodName,
+		FullMethod: Admin_ListRechargeOrders_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).ListRechargeOrders(ctx, req.(*ListRechargeOrdersReq))
+		return srv.(AdminServer).ListRechargeOrders(ctx, req.(*ListRechargeOrdersReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_GetRechargeOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetRechargeOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRechargeOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).GetRechargeOrder(ctx, in)
+		return srv.(AdminServer).GetRechargeOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_GetRechargeOrder_FullMethodName,
+		FullMethod: Admin_GetRechargeOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).GetRechargeOrder(ctx, req.(*GetRechargeOrderReq))
+		return srv.(AdminServer).GetRechargeOrder(ctx, req.(*GetRechargeOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_CloseRechargeOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_CloseRechargeOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CloseRechargeOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).CloseRechargeOrder(ctx, in)
+		return srv.(AdminServer).CloseRechargeOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_CloseRechargeOrder_FullMethodName,
+		FullMethod: Admin_CloseRechargeOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).CloseRechargeOrder(ctx, req.(*CloseRechargeOrderReq))
+		return srv.(AdminServer).CloseRechargeOrder(ctx, req.(*CloseRechargeOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_ManualMarkRechargeOrderSuccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ManualMarkRechargeOrderSuccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ManualMarkRechargeOrderSuccessReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).ManualMarkRechargeOrderSuccess(ctx, in)
+		return srv.(AdminServer).ManualMarkRechargeOrderSuccess(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_ManualMarkRechargeOrderSuccess_FullMethodName,
+		FullMethod: Admin_ManualMarkRechargeOrderSuccess_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).ManualMarkRechargeOrderSuccess(ctx, req.(*ManualMarkRechargeOrderSuccessReq))
+		return srv.(AdminServer).ManualMarkRechargeOrderSuccess(ctx, req.(*ManualMarkRechargeOrderSuccessReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_RetryNotify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_RetryNotify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RetryNotifyReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).RetryNotify(ctx, in)
+		return srv.(AdminServer).RetryNotify(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_RetryNotify_FullMethodName,
+		FullMethod: Admin_RetryNotify_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).RetryNotify(ctx, req.(*RetryNotifyReq))
+		return srv.(AdminServer).RetryNotify(ctx, req.(*RetryNotifyReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_ListRechargeNotifyLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListRechargeNotifyLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListRechargeNotifyLogsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).ListRechargeNotifyLogs(ctx, in)
+		return srv.(AdminServer).ListRechargeNotifyLogs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_ListRechargeNotifyLogs_FullMethodName,
+		FullMethod: Admin_ListRechargeNotifyLogs_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).ListRechargeNotifyLogs(ctx, req.(*ListRechargeNotifyLogsReq))
+		return srv.(AdminServer).ListRechargeNotifyLogs(ctx, req.(*ListRechargeNotifyLogsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_GetRechargeNotifyLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetRechargeNotifyLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRechargeNotifyLogReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).GetRechargeNotifyLog(ctx, in)
+		return srv.(AdminServer).GetRechargeNotifyLog(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_GetRechargeNotifyLog_FullMethodName,
+		FullMethod: Admin_GetRechargeNotifyLog_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).GetRechargeNotifyLog(ctx, req.(*GetRechargeNotifyLogReq))
+		return srv.(AdminServer).GetRechargeNotifyLog(ctx, req.(*GetRechargeNotifyLogReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_ListWithdrawOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListWithdrawOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListWithdrawOrdersReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).ListWithdrawOrders(ctx, in)
+		return srv.(AdminServer).ListWithdrawOrders(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_ListWithdrawOrders_FullMethodName,
+		FullMethod: Admin_ListWithdrawOrders_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).ListWithdrawOrders(ctx, req.(*ListWithdrawOrdersReq))
+		return srv.(AdminServer).ListWithdrawOrders(ctx, req.(*ListWithdrawOrdersReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_GetWithdrawOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetWithdrawOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetWithdrawOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).GetWithdrawOrder(ctx, in)
+		return srv.(AdminServer).GetWithdrawOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_GetWithdrawOrder_FullMethodName,
+		FullMethod: Admin_GetWithdrawOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).GetWithdrawOrder(ctx, req.(*GetWithdrawOrderReq))
+		return srv.(AdminServer).GetWithdrawOrder(ctx, req.(*GetWithdrawOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_AuditWithdrawOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_AuditWithdrawOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AuditWithdrawOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).AuditWithdrawOrder(ctx, in)
+		return srv.(AdminServer).AuditWithdrawOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_AuditWithdrawOrder_FullMethodName,
+		FullMethod: Admin_AuditWithdrawOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).AuditWithdrawOrder(ctx, req.(*AuditWithdrawOrderReq))
+		return srv.(AdminServer).AuditWithdrawOrder(ctx, req.(*AuditWithdrawOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_ListWithdrawNotifyLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListWithdrawNotifyLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListWithdrawNotifyLogsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).ListWithdrawNotifyLogs(ctx, in)
+		return srv.(AdminServer).ListWithdrawNotifyLogs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_ListWithdrawNotifyLogs_FullMethodName,
+		FullMethod: Admin_ListWithdrawNotifyLogs_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).ListWithdrawNotifyLogs(ctx, req.(*ListWithdrawNotifyLogsReq))
+		return srv.(AdminServer).ListWithdrawNotifyLogs(ctx, req.(*ListWithdrawNotifyLogsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_GetWithdrawNotifyLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetWithdrawNotifyLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetWithdrawNotifyLogReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).GetWithdrawNotifyLog(ctx, in)
+		return srv.(AdminServer).GetWithdrawNotifyLog(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_GetWithdrawNotifyLog_FullMethodName,
+		FullMethod: Admin_GetWithdrawNotifyLog_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).GetWithdrawNotifyLog(ctx, req.(*GetWithdrawNotifyLogReq))
+		return srv.(AdminServer).GetWithdrawNotifyLog(ctx, req.(*GetWithdrawNotifyLogReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_CreateCryptoRechargeAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_CreateCryptoRechargeAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateCryptoRechargeAddressReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).CreateCryptoRechargeAddress(ctx, in)
+		return srv.(AdminServer).CreateCryptoRechargeAddress(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_CreateCryptoRechargeAddress_FullMethodName,
+		FullMethod: Admin_CreateCryptoRechargeAddress_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).CreateCryptoRechargeAddress(ctx, req.(*CreateCryptoRechargeAddressReq))
+		return srv.(AdminServer).CreateCryptoRechargeAddress(ctx, req.(*CreateCryptoRechargeAddressReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_UpdateCryptoRechargeAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateCryptoRechargeAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateCryptoRechargeAddressReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).UpdateCryptoRechargeAddress(ctx, in)
+		return srv.(AdminServer).UpdateCryptoRechargeAddress(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_UpdateCryptoRechargeAddress_FullMethodName,
+		FullMethod: Admin_UpdateCryptoRechargeAddress_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).UpdateCryptoRechargeAddress(ctx, req.(*UpdateCryptoRechargeAddressReq))
+		return srv.(AdminServer).UpdateCryptoRechargeAddress(ctx, req.(*UpdateCryptoRechargeAddressReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_GetCryptoRechargeAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetCryptoRechargeAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetCryptoRechargeAddressReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).GetCryptoRechargeAddress(ctx, in)
+		return srv.(AdminServer).GetCryptoRechargeAddress(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_GetCryptoRechargeAddress_FullMethodName,
+		FullMethod: Admin_GetCryptoRechargeAddress_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).GetCryptoRechargeAddress(ctx, req.(*GetCryptoRechargeAddressReq))
+		return srv.(AdminServer).GetCryptoRechargeAddress(ctx, req.(*GetCryptoRechargeAddressReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_ListCryptoRechargeAddresses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListCryptoRechargeAddresses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListCryptoRechargeAddressesReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).ListCryptoRechargeAddresses(ctx, in)
+		return srv.(AdminServer).ListCryptoRechargeAddresses(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_ListCryptoRechargeAddresses_FullMethodName,
+		FullMethod: Admin_ListCryptoRechargeAddresses_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).ListCryptoRechargeAddresses(ctx, req.(*ListCryptoRechargeAddressesReq))
+		return srv.(AdminServer).ListCryptoRechargeAddresses(ctx, req.(*ListCryptoRechargeAddressesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_CreateCryptoWalletAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_CreateCryptoWalletAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateCryptoWalletAccountReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).CreateCryptoWalletAccount(ctx, in)
+		return srv.(AdminServer).CreateCryptoWalletAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_CreateCryptoWalletAccount_FullMethodName,
+		FullMethod: Admin_CreateCryptoWalletAccount_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).CreateCryptoWalletAccount(ctx, req.(*CreateCryptoWalletAccountReq))
+		return srv.(AdminServer).CreateCryptoWalletAccount(ctx, req.(*CreateCryptoWalletAccountReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_UpdateCryptoWalletAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateCryptoWalletAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateCryptoWalletAccountReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).UpdateCryptoWalletAccount(ctx, in)
+		return srv.(AdminServer).UpdateCryptoWalletAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_UpdateCryptoWalletAccount_FullMethodName,
+		FullMethod: Admin_UpdateCryptoWalletAccount_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).UpdateCryptoWalletAccount(ctx, req.(*UpdateCryptoWalletAccountReq))
+		return srv.(AdminServer).UpdateCryptoWalletAccount(ctx, req.(*UpdateCryptoWalletAccountReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_GetCryptoWalletAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetCryptoWalletAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetCryptoWalletAccountReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).GetCryptoWalletAccount(ctx, in)
+		return srv.(AdminServer).GetCryptoWalletAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_GetCryptoWalletAccount_FullMethodName,
+		FullMethod: Admin_GetCryptoWalletAccount_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).GetCryptoWalletAccount(ctx, req.(*GetCryptoWalletAccountReq))
+		return srv.(AdminServer).GetCryptoWalletAccount(ctx, req.(*GetCryptoWalletAccountReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_ListCryptoWalletAccounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListCryptoWalletAccounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListCryptoWalletAccountsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).ListCryptoWalletAccounts(ctx, in)
+		return srv.(AdminServer).ListCryptoWalletAccounts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_ListCryptoWalletAccounts_FullMethodName,
+		FullMethod: Admin_ListCryptoWalletAccounts_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).ListCryptoWalletAccounts(ctx, req.(*ListCryptoWalletAccountsReq))
+		return srv.(AdminServer).ListCryptoWalletAccounts(ctx, req.(*ListCryptoWalletAccountsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_CreateCryptoRechargeTx_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_CreateCryptoRechargeTx_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateCryptoRechargeTxReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).CreateCryptoRechargeTx(ctx, in)
+		return srv.(AdminServer).CreateCryptoRechargeTx(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_CreateCryptoRechargeTx_FullMethodName,
+		FullMethod: Admin_CreateCryptoRechargeTx_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).CreateCryptoRechargeTx(ctx, req.(*CreateCryptoRechargeTxReq))
+		return srv.(AdminServer).CreateCryptoRechargeTx(ctx, req.(*CreateCryptoRechargeTxReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_UpdateCryptoRechargeTx_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateCryptoRechargeTx_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateCryptoRechargeTxReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).UpdateCryptoRechargeTx(ctx, in)
+		return srv.(AdminServer).UpdateCryptoRechargeTx(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_UpdateCryptoRechargeTx_FullMethodName,
+		FullMethod: Admin_UpdateCryptoRechargeTx_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).UpdateCryptoRechargeTx(ctx, req.(*UpdateCryptoRechargeTxReq))
+		return srv.(AdminServer).UpdateCryptoRechargeTx(ctx, req.(*UpdateCryptoRechargeTxReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_GetCryptoRechargeTx_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetCryptoRechargeTx_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetCryptoRechargeTxReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).GetCryptoRechargeTx(ctx, in)
+		return srv.(AdminServer).GetCryptoRechargeTx(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_GetCryptoRechargeTx_FullMethodName,
+		FullMethod: Admin_GetCryptoRechargeTx_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).GetCryptoRechargeTx(ctx, req.(*GetCryptoRechargeTxReq))
+		return srv.(AdminServer).GetCryptoRechargeTx(ctx, req.(*GetCryptoRechargeTxReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentAdmin_ListCryptoRechargeTxs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListCryptoRechargeTxs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListCryptoRechargeTxsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PaymentAdminServer).ListCryptoRechargeTxs(ctx, in)
+		return srv.(AdminServer).ListCryptoRechargeTxs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PaymentAdmin_ListCryptoRechargeTxs_FullMethodName,
+		FullMethod: Admin_ListCryptoRechargeTxs_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentAdminServer).ListCryptoRechargeTxs(ctx, req.(*ListCryptoRechargeTxsReq))
+		return srv.(AdminServer).ListCryptoRechargeTxs(ctx, req.(*ListCryptoRechargeTxsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// PaymentAdmin_ServiceDesc is the grpc.ServiceDesc for PaymentAdmin service.
+// Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var PaymentAdmin_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "payment.PaymentAdmin",
-	HandlerType: (*PaymentAdminServer)(nil),
+var Admin_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "payment.Admin",
+	HandlerType: (*AdminServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetPayPlatforms",
-			Handler:    _PaymentAdmin_GetPayPlatforms_Handler,
+			Handler:    _Admin_GetPayPlatforms_Handler,
 		},
 		{
 			MethodName: "CreatePayPlatform",
-			Handler:    _PaymentAdmin_CreatePayPlatform_Handler,
+			Handler:    _Admin_CreatePayPlatform_Handler,
 		},
 		{
 			MethodName: "UpdatePayPlatform",
-			Handler:    _PaymentAdmin_UpdatePayPlatform_Handler,
+			Handler:    _Admin_UpdatePayPlatform_Handler,
 		},
 		{
 			MethodName: "GetPayPlatform",
-			Handler:    _PaymentAdmin_GetPayPlatform_Handler,
+			Handler:    _Admin_GetPayPlatform_Handler,
 		},
 		{
 			MethodName: "ListPayPlatforms",
-			Handler:    _PaymentAdmin_ListPayPlatforms_Handler,
+			Handler:    _Admin_ListPayPlatforms_Handler,
 		},
 		{
 			MethodName: "CreatePayProduct",
-			Handler:    _PaymentAdmin_CreatePayProduct_Handler,
+			Handler:    _Admin_CreatePayProduct_Handler,
 		},
 		{
 			MethodName: "UpdatePayProduct",
-			Handler:    _PaymentAdmin_UpdatePayProduct_Handler,
+			Handler:    _Admin_UpdatePayProduct_Handler,
 		},
 		{
 			MethodName: "GetPayProduct",
-			Handler:    _PaymentAdmin_GetPayProduct_Handler,
+			Handler:    _Admin_GetPayProduct_Handler,
 		},
 		{
 			MethodName: "ListPayProducts",
-			Handler:    _PaymentAdmin_ListPayProducts_Handler,
+			Handler:    _Admin_ListPayProducts_Handler,
 		},
 		{
 			MethodName: "OpenTenantPayPlatform",
-			Handler:    _PaymentAdmin_OpenTenantPayPlatform_Handler,
+			Handler:    _Admin_OpenTenantPayPlatform_Handler,
 		},
 		{
 			MethodName: "UpdateTenantPayPlatform",
-			Handler:    _PaymentAdmin_UpdateTenantPayPlatform_Handler,
+			Handler:    _Admin_UpdateTenantPayPlatform_Handler,
 		},
 		{
 			MethodName: "GetTenantPayPlatform",
-			Handler:    _PaymentAdmin_GetTenantPayPlatform_Handler,
+			Handler:    _Admin_GetTenantPayPlatform_Handler,
 		},
 		{
 			MethodName: "ListTenantPayPlatforms",
-			Handler:    _PaymentAdmin_ListTenantPayPlatforms_Handler,
+			Handler:    _Admin_ListTenantPayPlatforms_Handler,
 		},
 		{
 			MethodName: "CreateTenantPayAccount",
-			Handler:    _PaymentAdmin_CreateTenantPayAccount_Handler,
+			Handler:    _Admin_CreateTenantPayAccount_Handler,
 		},
 		{
 			MethodName: "UpdateTenantPayAccount",
-			Handler:    _PaymentAdmin_UpdateTenantPayAccount_Handler,
+			Handler:    _Admin_UpdateTenantPayAccount_Handler,
 		},
 		{
 			MethodName: "GetTenantPayAccount",
-			Handler:    _PaymentAdmin_GetTenantPayAccount_Handler,
+			Handler:    _Admin_GetTenantPayAccount_Handler,
 		},
 		{
 			MethodName: "ListTenantPayAccounts",
-			Handler:    _PaymentAdmin_ListTenantPayAccounts_Handler,
+			Handler:    _Admin_ListTenantPayAccounts_Handler,
 		},
 		{
 			MethodName: "CreateTenantPayChannel",
-			Handler:    _PaymentAdmin_CreateTenantPayChannel_Handler,
+			Handler:    _Admin_CreateTenantPayChannel_Handler,
 		},
 		{
 			MethodName: "UpdateTenantPayChannel",
-			Handler:    _PaymentAdmin_UpdateTenantPayChannel_Handler,
+			Handler:    _Admin_UpdateTenantPayChannel_Handler,
 		},
 		{
 			MethodName: "GetTenantPayChannel",
-			Handler:    _PaymentAdmin_GetTenantPayChannel_Handler,
+			Handler:    _Admin_GetTenantPayChannel_Handler,
 		},
 		{
 			MethodName: "ListTenantPayChannels",
-			Handler:    _PaymentAdmin_ListTenantPayChannels_Handler,
+			Handler:    _Admin_ListTenantPayChannels_Handler,
 		},
 		{
 			MethodName: "CreateTenantPayChannelRule",
-			Handler:    _PaymentAdmin_CreateTenantPayChannelRule_Handler,
+			Handler:    _Admin_CreateTenantPayChannelRule_Handler,
 		},
 		{
 			MethodName: "UpdateTenantPayChannelRule",
-			Handler:    _PaymentAdmin_UpdateTenantPayChannelRule_Handler,
+			Handler:    _Admin_UpdateTenantPayChannelRule_Handler,
 		},
 		{
 			MethodName: "GetTenantPayChannelRule",
-			Handler:    _PaymentAdmin_GetTenantPayChannelRule_Handler,
+			Handler:    _Admin_GetTenantPayChannelRule_Handler,
 		},
 		{
 			MethodName: "ListTenantPayChannelRules",
-			Handler:    _PaymentAdmin_ListTenantPayChannelRules_Handler,
+			Handler:    _Admin_ListTenantPayChannelRules_Handler,
 		},
 		{
 			MethodName: "GetUserRechargeStat",
-			Handler:    _PaymentAdmin_GetUserRechargeStat_Handler,
+			Handler:    _Admin_GetUserRechargeStat_Handler,
 		},
 		{
 			MethodName: "ListUserRechargeStats",
-			Handler:    _PaymentAdmin_ListUserRechargeStats_Handler,
+			Handler:    _Admin_ListUserRechargeStats_Handler,
 		},
 		{
 			MethodName: "ListRechargeOrders",
-			Handler:    _PaymentAdmin_ListRechargeOrders_Handler,
+			Handler:    _Admin_ListRechargeOrders_Handler,
 		},
 		{
 			MethodName: "GetRechargeOrder",
-			Handler:    _PaymentAdmin_GetRechargeOrder_Handler,
+			Handler:    _Admin_GetRechargeOrder_Handler,
 		},
 		{
 			MethodName: "CloseRechargeOrder",
-			Handler:    _PaymentAdmin_CloseRechargeOrder_Handler,
+			Handler:    _Admin_CloseRechargeOrder_Handler,
 		},
 		{
 			MethodName: "ManualMarkRechargeOrderSuccess",
-			Handler:    _PaymentAdmin_ManualMarkRechargeOrderSuccess_Handler,
+			Handler:    _Admin_ManualMarkRechargeOrderSuccess_Handler,
 		},
 		{
 			MethodName: "RetryNotify",
-			Handler:    _PaymentAdmin_RetryNotify_Handler,
+			Handler:    _Admin_RetryNotify_Handler,
 		},
 		{
 			MethodName: "ListRechargeNotifyLogs",
-			Handler:    _PaymentAdmin_ListRechargeNotifyLogs_Handler,
+			Handler:    _Admin_ListRechargeNotifyLogs_Handler,
 		},
 		{
 			MethodName: "GetRechargeNotifyLog",
-			Handler:    _PaymentAdmin_GetRechargeNotifyLog_Handler,
+			Handler:    _Admin_GetRechargeNotifyLog_Handler,
 		},
 		{
 			MethodName: "ListWithdrawOrders",
-			Handler:    _PaymentAdmin_ListWithdrawOrders_Handler,
+			Handler:    _Admin_ListWithdrawOrders_Handler,
 		},
 		{
 			MethodName: "GetWithdrawOrder",
-			Handler:    _PaymentAdmin_GetWithdrawOrder_Handler,
+			Handler:    _Admin_GetWithdrawOrder_Handler,
 		},
 		{
 			MethodName: "AuditWithdrawOrder",
-			Handler:    _PaymentAdmin_AuditWithdrawOrder_Handler,
+			Handler:    _Admin_AuditWithdrawOrder_Handler,
 		},
 		{
 			MethodName: "ListWithdrawNotifyLogs",
-			Handler:    _PaymentAdmin_ListWithdrawNotifyLogs_Handler,
+			Handler:    _Admin_ListWithdrawNotifyLogs_Handler,
 		},
 		{
 			MethodName: "GetWithdrawNotifyLog",
-			Handler:    _PaymentAdmin_GetWithdrawNotifyLog_Handler,
+			Handler:    _Admin_GetWithdrawNotifyLog_Handler,
 		},
 		{
 			MethodName: "CreateCryptoRechargeAddress",
-			Handler:    _PaymentAdmin_CreateCryptoRechargeAddress_Handler,
+			Handler:    _Admin_CreateCryptoRechargeAddress_Handler,
 		},
 		{
 			MethodName: "UpdateCryptoRechargeAddress",
-			Handler:    _PaymentAdmin_UpdateCryptoRechargeAddress_Handler,
+			Handler:    _Admin_UpdateCryptoRechargeAddress_Handler,
 		},
 		{
 			MethodName: "GetCryptoRechargeAddress",
-			Handler:    _PaymentAdmin_GetCryptoRechargeAddress_Handler,
+			Handler:    _Admin_GetCryptoRechargeAddress_Handler,
 		},
 		{
 			MethodName: "ListCryptoRechargeAddresses",
-			Handler:    _PaymentAdmin_ListCryptoRechargeAddresses_Handler,
+			Handler:    _Admin_ListCryptoRechargeAddresses_Handler,
 		},
 		{
 			MethodName: "CreateCryptoWalletAccount",
-			Handler:    _PaymentAdmin_CreateCryptoWalletAccount_Handler,
+			Handler:    _Admin_CreateCryptoWalletAccount_Handler,
 		},
 		{
 			MethodName: "UpdateCryptoWalletAccount",
-			Handler:    _PaymentAdmin_UpdateCryptoWalletAccount_Handler,
+			Handler:    _Admin_UpdateCryptoWalletAccount_Handler,
 		},
 		{
 			MethodName: "GetCryptoWalletAccount",
-			Handler:    _PaymentAdmin_GetCryptoWalletAccount_Handler,
+			Handler:    _Admin_GetCryptoWalletAccount_Handler,
 		},
 		{
 			MethodName: "ListCryptoWalletAccounts",
-			Handler:    _PaymentAdmin_ListCryptoWalletAccounts_Handler,
+			Handler:    _Admin_ListCryptoWalletAccounts_Handler,
 		},
 		{
 			MethodName: "CreateCryptoRechargeTx",
-			Handler:    _PaymentAdmin_CreateCryptoRechargeTx_Handler,
+			Handler:    _Admin_CreateCryptoRechargeTx_Handler,
 		},
 		{
 			MethodName: "UpdateCryptoRechargeTx",
-			Handler:    _PaymentAdmin_UpdateCryptoRechargeTx_Handler,
+			Handler:    _Admin_UpdateCryptoRechargeTx_Handler,
 		},
 		{
 			MethodName: "GetCryptoRechargeTx",
-			Handler:    _PaymentAdmin_GetCryptoRechargeTx_Handler,
+			Handler:    _Admin_GetCryptoRechargeTx_Handler,
 		},
 		{
 			MethodName: "ListCryptoRechargeTxs",
-			Handler:    _PaymentAdmin_ListCryptoRechargeTxs_Handler,
+			Handler:    _Admin_ListCryptoRechargeTxs_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

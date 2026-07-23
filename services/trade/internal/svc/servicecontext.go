@@ -62,8 +62,8 @@ type ServiceContext struct {
 	TradeEventInboxModel        models.TTradeEventInboxModel
 	TradeAssetReservationModel  models.TTradeAssetReservationModel
 	TradeSettlementInstrModel   models.TTradeSettlementInstructionModel
-	AssetClient                 asset.AssetInternalClient
-	ItickClient                 itick.ItickInternalClient
+	AssetClient                 asset.InternalClient
+	ItickClient                 itick.InternalClient
 	MarketDataCache             *cache.MarketDataCache
 	TradeMarketSnapshotModel    models.TTradeMarketSnapshotModel
 }
@@ -123,8 +123,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		TradeEventInboxModel:        models.NewTTradeEventInboxModel(conn, c.CacheRedis),
 		TradeAssetReservationModel:  models.NewTTradeAssetReservationModel(conn, c.CacheRedis),
 		TradeSettlementInstrModel:   models.NewTTradeSettlementInstructionModel(conn, c.CacheRedis),
-		AssetClient:                 asset.NewAssetInternalClient(assetCli.Conn()),
-		ItickClient:                 itick.NewItickInternalClient(itickCli.Conn()),
+		AssetClient:                 asset.NewInternalClient(assetCli.Conn()),
+		ItickClient:                 itick.NewInternalClient(itickCli.Conn()),
 		MarketDataCache:             cache.NewMarketDataCache(marketRedis),
 		TradeMarketSnapshotModel:    models.NewTTradeMarketSnapshotModel(conn, c.CacheRedis),
 	}

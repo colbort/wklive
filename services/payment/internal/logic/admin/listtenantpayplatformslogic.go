@@ -1,0 +1,66 @@
+package adminlogic
+
+import (
+	"context"
+	"errors"
+
+	"wklive/common/pageutil"
+	"wklive/common/utils"
+	"wklive/proto/payment"
+	"wklive/services/payment/internal/svc"
+	"wklive/services/payment/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type ListTenantPayPlatformsLogic struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+}
+
+func NewListTenantPayPlatformsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListTenantPayPlatformsLogic {
+	return &ListTenantPayPlatformsLogic{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+	}
+}
+
+// 租户开通平台列表
+func (l *ListTenantPayPlatformsLogic) ListTenantPayPlatforms(in *payment.ListTenantPayPlatformsReq) (*payment.ListTenantPayPlatformsResp, error) {
+	if in.TenantId <= 0 {
+		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
+			in.TenantId = tenantId
+		}
+	}
+	tenantPlatforms, total, err := l.svcCtx.TenantPayPlatformModel.FindPage(
+		l.ctx,
+		models.TenantPayPlatformPageFilter{
+			TenantId:   in.TenantId,
+			PlatformId: in.PlatformId,
+			Enabled:    int64(in.Enabled),
+			OpenStatus: int64(in.OpenStatus),
+		},
+		in.Page.Cursor,
+		in.Page.Limit,
+	)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
+
+	lastID := int64(0)
+	if len(tenantPlatforms) > 0 {
+		lastID = tenantPlatforms[len(tenantPlatforms)-1].Id
+	}
+
+	data := make([]*payment.TenantPayPlatform, 0, len(tenantPlatforms))
+	for _, p := range tenantPlatforms {
+		data = append(data, toTenantPayPlatformProto(p))
+	}
+
+	return &payment.ListTenantPayPlatformsResp{
+		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(tenantPlatforms), total, lastID),
+		Data: data,
+	}, nil
+}

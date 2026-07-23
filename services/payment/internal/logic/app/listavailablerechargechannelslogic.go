@@ -1,0 +1,53 @@
+package applogic
+
+import (
+	"context"
+	"errors"
+
+	"wklive/common/helper"
+	"wklive/common/utils"
+	"wklive/proto/payment"
+	"wklive/services/payment/internal/svc"
+	"wklive/services/payment/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type ListAvailableRechargeChannelsLogic struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+}
+
+func NewListAvailableRechargeChannelsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListAvailableRechargeChannelsLogic {
+	return &ListAvailableRechargeChannelsLogic{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+	}
+}
+
+// 获取当前登录用户在指定充值金额下可用的充值通道
+func (l *ListAvailableRechargeChannelsLogic) ListAvailableRechargeChannels(in *payment.ListAvailableRechargeChannelsReq) (*payment.ListAvailableRechargeChannelsResp, error) {
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	channels, _, err := l.svcCtx.TenantPayChannelModel.FindPage(l.ctx, models.TenantPayChannelPageFilter{
+		TenantId: tenantId,
+		Enabled:  1,
+	}, 0, 0)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
+
+	data := make([]*payment.VisiblePayChannel, 0)
+	for _, ch := range channels {
+		data = append(data, toVisiblePayChannelProto(ch))
+	}
+
+	return &payment.ListAvailableRechargeChannelsResp{
+		Base: helper.OkResp(),
+		Data: data,
+	}, nil
+}

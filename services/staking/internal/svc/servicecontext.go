@@ -20,7 +20,7 @@ type ServiceContext struct {
 	StakeProductModel   models.TStakeProductModel
 	StakeRedeemLogModel models.TStakeRedeemLogModel
 	StakeRewardLogModel models.TStakeRewardLogModel
-	AssetClient         asset.AssetInternalClient
+	AssetClient         asset.InternalClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -37,6 +37,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		StakeProductModel:   models.NewTStakeProductModel(conn, c.CacheRedis),
 		StakeRedeemLogModel: models.NewTStakeRedeemLogModel(conn, c.CacheRedis),
 		StakeRewardLogModel: models.NewTStakeRewardLogModel(conn, c.CacheRedis),
-		AssetClient:         asset.NewAssetInternalClient(assetCli.Conn()),
+		AssetClient:         asset.NewInternalClient(assetCli.Conn()),
 	}
 }

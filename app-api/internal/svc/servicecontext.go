@@ -33,14 +33,14 @@ type ServiceContext struct {
 	UserRateLimit           rest.Middleware
 	SensitiveRateLimit      rest.Middleware
 	RefreshTokenRateLimit   rest.Middleware
-	SystemCli               system.SystemAppClient
-	UserCli                 user.UserAppClient
-	PaymentCli              payment.PaymentAppClient
-	ItickCli                itick.ItickAppClient
-	AssetCli                asset.AssetAppClient
-	OptionCli               option.OptionAppClient
-	StakingCli              staking.StakingAppClient
-	TradeCli                trade.TradeAppClient
+	SystemCli               system.AppClient
+	UserCli                 user.AppClient
+	PaymentCli              payment.AppClient
+	ItickCli                itick.AppClient
+	AssetCli                asset.AppClient
+	OptionCli               option.AppClient
+	StakingCli              staking.AppClient
+	TradeCli                trade.AppClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -89,13 +89,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		UserRateLimit:           middleware.NewUserRateLimitMiddleware(rds).Handle,
 		SensitiveRateLimit:      middleware.NewSensitiveRateLimitMiddleware(rds).Handle,
 		RefreshTokenRateLimit:   middleware.NewRefreshTokenRateLimitMiddleware(rds).Handle,
-		SystemCli:               system.NewSystemAppClient(systemCli.Conn()),
-		UserCli:                 user.NewUserAppClient(userCli.Conn()),
-		PaymentCli:              payment.NewPaymentAppClient(paymentCli.Conn()),
-		ItickCli:                itick.NewItickAppClient(itickCli.Conn()),
-		AssetCli:                asset.NewAssetAppClient(assetCli.Conn()),
-		OptionCli:               option.NewOptionAppClient(optionCli.Conn()),
-		StakingCli:              staking.NewStakingAppClient(stakingCli.Conn()),
-		TradeCli:                trade.NewTradeAppClient(tradeCli.Conn()),
+		SystemCli:               system.NewAppClient(systemCli.Conn()),
+		UserCli:                 user.NewAppClient(userCli.Conn()),
+		PaymentCli:              payment.NewAppClient(paymentCli.Conn()),
+		ItickCli:                itick.NewAppClient(itickCli.Conn()),
+		AssetCli:                asset.NewAppClient(assetCli.Conn()),
+		OptionCli:               option.NewAppClient(optionCli.Conn()),
+		StakingCli:              staking.NewAppClient(stakingCli.Conn()),
+		TradeCli:                trade.NewAppClient(tradeCli.Conn()),
 	}
 }

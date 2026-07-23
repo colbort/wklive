@@ -9,11 +9,11 @@ import (
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/config"
 	"wklive/services/trade/internal/events"
-	logic "wklive/services/trade/internal/logic/tradetask"
-	admin "wklive/services/trade/internal/server/tradeadmin"
-	app "wklive/services/trade/internal/server/tradeapp"
-	internal "wklive/services/trade/internal/server/tradeinternal"
-	task "wklive/services/trade/internal/server/tradetask"
+	logic "wklive/services/trade/internal/logic/task"
+	admin "wklive/services/trade/internal/server/admin"
+	app "wklive/services/trade/internal/server/app"
+	internal "wklive/services/trade/internal/server/internal"
+	task "wklive/services/trade/internal/server/task"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/internal/tasks"
 
@@ -55,10 +55,10 @@ func main() {
 	events.StartSubscriber(ctx, svcCtx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		trade.RegisterTradeAdminServer(grpcServer, admin.NewTradeAdminServer(svcCtx))
-		trade.RegisterTradeAppServer(grpcServer, app.NewTradeAppServer(svcCtx))
-		trade.RegisterTradeInternalServer(grpcServer, internal.NewTradeInternalServer(svcCtx))
-		trade.RegisterTradeTaskServer(grpcServer, task.NewTradeTaskServer(svcCtx))
+		trade.RegisterAdminServer(grpcServer, admin.NewAdminServer(svcCtx))
+		trade.RegisterAppServer(grpcServer, app.NewAppServer(svcCtx))
+		trade.RegisterInternalServer(grpcServer, internal.NewInternalServer(svcCtx))
+		trade.RegisterTaskServer(grpcServer, task.NewTaskServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

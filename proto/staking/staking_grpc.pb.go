@@ -19,20 +19,20 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	StakingApp_ProductList_FullMethodName     = "/staking.StakingApp/ProductList"
-	StakingApp_ProductDetail_FullMethodName   = "/staking.StakingApp/ProductDetail"
-	StakingApp_CreateOrder_FullMethodName     = "/staking.StakingApp/CreateOrder"
-	StakingApp_MyOrderList_FullMethodName     = "/staking.StakingApp/MyOrderList"
-	StakingApp_MyOrderDetail_FullMethodName   = "/staking.StakingApp/MyOrderDetail"
-	StakingApp_MyRewardLogList_FullMethodName = "/staking.StakingApp/MyRewardLogList"
-	StakingApp_Redeem_FullMethodName          = "/staking.StakingApp/Redeem"
-	StakingApp_MyRedeemLogList_FullMethodName = "/staking.StakingApp/MyRedeemLogList"
+	App_ProductList_FullMethodName     = "/staking.App/ProductList"
+	App_ProductDetail_FullMethodName   = "/staking.App/ProductDetail"
+	App_CreateOrder_FullMethodName     = "/staking.App/CreateOrder"
+	App_MyOrderList_FullMethodName     = "/staking.App/MyOrderList"
+	App_MyOrderDetail_FullMethodName   = "/staking.App/MyOrderDetail"
+	App_MyRewardLogList_FullMethodName = "/staking.App/MyRewardLogList"
+	App_Redeem_FullMethodName          = "/staking.App/Redeem"
+	App_MyRedeemLogList_FullMethodName = "/staking.App/MyRedeemLogList"
 )
 
-// StakingAppClient is the client API for StakingApp service.
+// AppClient is the client API for App service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type StakingAppClient interface {
+type AppClient interface {
 	// 获取质押产品列表
 	// 用户端查询可参与的质押产品，支持按产品类型、币种筛选。
 	ProductList(ctx context.Context, in *UserProductListReq, opts ...grpc.CallOption) (*UserProductListResp, error)
@@ -59,98 +59,98 @@ type StakingAppClient interface {
 	MyRedeemLogList(ctx context.Context, in *MyRedeemLogListReq, opts ...grpc.CallOption) (*MyRedeemLogListResp, error)
 }
 
-type stakingAppClient struct {
+type appClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewStakingAppClient(cc grpc.ClientConnInterface) StakingAppClient {
-	return &stakingAppClient{cc}
+func NewAppClient(cc grpc.ClientConnInterface) AppClient {
+	return &appClient{cc}
 }
 
-func (c *stakingAppClient) ProductList(ctx context.Context, in *UserProductListReq, opts ...grpc.CallOption) (*UserProductListResp, error) {
+func (c *appClient) ProductList(ctx context.Context, in *UserProductListReq, opts ...grpc.CallOption) (*UserProductListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserProductListResp)
-	err := c.cc.Invoke(ctx, StakingApp_ProductList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ProductList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stakingAppClient) ProductDetail(ctx context.Context, in *UserProductDetailReq, opts ...grpc.CallOption) (*UserProductDetailResp, error) {
+func (c *appClient) ProductDetail(ctx context.Context, in *UserProductDetailReq, opts ...grpc.CallOption) (*UserProductDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserProductDetailResp)
-	err := c.cc.Invoke(ctx, StakingApp_ProductDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ProductDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stakingAppClient) CreateOrder(ctx context.Context, in *CreateOrderReq, opts ...grpc.CallOption) (*CreateOrderResp, error) {
+func (c *appClient) CreateOrder(ctx context.Context, in *CreateOrderReq, opts ...grpc.CallOption) (*CreateOrderResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateOrderResp)
-	err := c.cc.Invoke(ctx, StakingApp_CreateOrder_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_CreateOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stakingAppClient) MyOrderList(ctx context.Context, in *MyOrderListReq, opts ...grpc.CallOption) (*MyOrderListResp, error) {
+func (c *appClient) MyOrderList(ctx context.Context, in *MyOrderListReq, opts ...grpc.CallOption) (*MyOrderListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(MyOrderListResp)
-	err := c.cc.Invoke(ctx, StakingApp_MyOrderList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_MyOrderList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stakingAppClient) MyOrderDetail(ctx context.Context, in *MyOrderDetailReq, opts ...grpc.CallOption) (*MyOrderDetailResp, error) {
+func (c *appClient) MyOrderDetail(ctx context.Context, in *MyOrderDetailReq, opts ...grpc.CallOption) (*MyOrderDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(MyOrderDetailResp)
-	err := c.cc.Invoke(ctx, StakingApp_MyOrderDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_MyOrderDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stakingAppClient) MyRewardLogList(ctx context.Context, in *MyRewardLogListReq, opts ...grpc.CallOption) (*MyRewardLogListResp, error) {
+func (c *appClient) MyRewardLogList(ctx context.Context, in *MyRewardLogListReq, opts ...grpc.CallOption) (*MyRewardLogListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(MyRewardLogListResp)
-	err := c.cc.Invoke(ctx, StakingApp_MyRewardLogList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_MyRewardLogList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stakingAppClient) Redeem(ctx context.Context, in *RedeemReq, opts ...grpc.CallOption) (*RedeemResp, error) {
+func (c *appClient) Redeem(ctx context.Context, in *RedeemReq, opts ...grpc.CallOption) (*RedeemResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RedeemResp)
-	err := c.cc.Invoke(ctx, StakingApp_Redeem_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_Redeem_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stakingAppClient) MyRedeemLogList(ctx context.Context, in *MyRedeemLogListReq, opts ...grpc.CallOption) (*MyRedeemLogListResp, error) {
+func (c *appClient) MyRedeemLogList(ctx context.Context, in *MyRedeemLogListReq, opts ...grpc.CallOption) (*MyRedeemLogListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(MyRedeemLogListResp)
-	err := c.cc.Invoke(ctx, StakingApp_MyRedeemLogList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_MyRedeemLogList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// StakingAppServer is the server API for StakingApp service.
-// All implementations must embed UnimplementedStakingAppServer
+// AppServer is the server API for App service.
+// All implementations must embed UnimplementedAppServer
 // for forward compatibility.
-type StakingAppServer interface {
+type AppServer interface {
 	// 获取质押产品列表
 	// 用户端查询可参与的质押产品，支持按产品类型、币种筛选。
 	ProductList(context.Context, *UserProductListReq) (*UserProductListResp, error)
@@ -175,243 +175,243 @@ type StakingAppServer interface {
 	// 获取我的赎回记录列表
 	// 查询当前用户的赎回记录，可按订单ID筛选。
 	MyRedeemLogList(context.Context, *MyRedeemLogListReq) (*MyRedeemLogListResp, error)
-	mustEmbedUnimplementedStakingAppServer()
+	mustEmbedUnimplementedAppServer()
 }
 
-// UnimplementedStakingAppServer must be embedded to have
+// UnimplementedAppServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedStakingAppServer struct{}
+type UnimplementedAppServer struct{}
 
-func (UnimplementedStakingAppServer) ProductList(context.Context, *UserProductListReq) (*UserProductListResp, error) {
+func (UnimplementedAppServer) ProductList(context.Context, *UserProductListReq) (*UserProductListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProductList not implemented")
 }
-func (UnimplementedStakingAppServer) ProductDetail(context.Context, *UserProductDetailReq) (*UserProductDetailResp, error) {
+func (UnimplementedAppServer) ProductDetail(context.Context, *UserProductDetailReq) (*UserProductDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProductDetail not implemented")
 }
-func (UnimplementedStakingAppServer) CreateOrder(context.Context, *CreateOrderReq) (*CreateOrderResp, error) {
+func (UnimplementedAppServer) CreateOrder(context.Context, *CreateOrderReq) (*CreateOrderResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateOrder not implemented")
 }
-func (UnimplementedStakingAppServer) MyOrderList(context.Context, *MyOrderListReq) (*MyOrderListResp, error) {
+func (UnimplementedAppServer) MyOrderList(context.Context, *MyOrderListReq) (*MyOrderListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method MyOrderList not implemented")
 }
-func (UnimplementedStakingAppServer) MyOrderDetail(context.Context, *MyOrderDetailReq) (*MyOrderDetailResp, error) {
+func (UnimplementedAppServer) MyOrderDetail(context.Context, *MyOrderDetailReq) (*MyOrderDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method MyOrderDetail not implemented")
 }
-func (UnimplementedStakingAppServer) MyRewardLogList(context.Context, *MyRewardLogListReq) (*MyRewardLogListResp, error) {
+func (UnimplementedAppServer) MyRewardLogList(context.Context, *MyRewardLogListReq) (*MyRewardLogListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method MyRewardLogList not implemented")
 }
-func (UnimplementedStakingAppServer) Redeem(context.Context, *RedeemReq) (*RedeemResp, error) {
+func (UnimplementedAppServer) Redeem(context.Context, *RedeemReq) (*RedeemResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method Redeem not implemented")
 }
-func (UnimplementedStakingAppServer) MyRedeemLogList(context.Context, *MyRedeemLogListReq) (*MyRedeemLogListResp, error) {
+func (UnimplementedAppServer) MyRedeemLogList(context.Context, *MyRedeemLogListReq) (*MyRedeemLogListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method MyRedeemLogList not implemented")
 }
-func (UnimplementedStakingAppServer) mustEmbedUnimplementedStakingAppServer() {}
-func (UnimplementedStakingAppServer) testEmbeddedByValue()                    {}
+func (UnimplementedAppServer) mustEmbedUnimplementedAppServer() {}
+func (UnimplementedAppServer) testEmbeddedByValue()             {}
 
-// UnsafeStakingAppServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to StakingAppServer will
+// UnsafeAppServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AppServer will
 // result in compilation errors.
-type UnsafeStakingAppServer interface {
-	mustEmbedUnimplementedStakingAppServer()
+type UnsafeAppServer interface {
+	mustEmbedUnimplementedAppServer()
 }
 
-func RegisterStakingAppServer(s grpc.ServiceRegistrar, srv StakingAppServer) {
-	// If the following call panics, it indicates UnimplementedStakingAppServer was
+func RegisterAppServer(s grpc.ServiceRegistrar, srv AppServer) {
+	// If the following call panics, it indicates UnimplementedAppServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&StakingApp_ServiceDesc, srv)
+	s.RegisterService(&App_ServiceDesc, srv)
 }
 
-func _StakingApp_ProductList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ProductList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserProductListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingAppServer).ProductList(ctx, in)
+		return srv.(AppServer).ProductList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingApp_ProductList_FullMethodName,
+		FullMethod: App_ProductList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingAppServer).ProductList(ctx, req.(*UserProductListReq))
+		return srv.(AppServer).ProductList(ctx, req.(*UserProductListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StakingApp_ProductDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ProductDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserProductDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingAppServer).ProductDetail(ctx, in)
+		return srv.(AppServer).ProductDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingApp_ProductDetail_FullMethodName,
+		FullMethod: App_ProductDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingAppServer).ProductDetail(ctx, req.(*UserProductDetailReq))
+		return srv.(AppServer).ProductDetail(ctx, req.(*UserProductDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StakingApp_CreateOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_CreateOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingAppServer).CreateOrder(ctx, in)
+		return srv.(AppServer).CreateOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingApp_CreateOrder_FullMethodName,
+		FullMethod: App_CreateOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingAppServer).CreateOrder(ctx, req.(*CreateOrderReq))
+		return srv.(AppServer).CreateOrder(ctx, req.(*CreateOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StakingApp_MyOrderList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_MyOrderList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MyOrderListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingAppServer).MyOrderList(ctx, in)
+		return srv.(AppServer).MyOrderList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingApp_MyOrderList_FullMethodName,
+		FullMethod: App_MyOrderList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingAppServer).MyOrderList(ctx, req.(*MyOrderListReq))
+		return srv.(AppServer).MyOrderList(ctx, req.(*MyOrderListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StakingApp_MyOrderDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_MyOrderDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MyOrderDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingAppServer).MyOrderDetail(ctx, in)
+		return srv.(AppServer).MyOrderDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingApp_MyOrderDetail_FullMethodName,
+		FullMethod: App_MyOrderDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingAppServer).MyOrderDetail(ctx, req.(*MyOrderDetailReq))
+		return srv.(AppServer).MyOrderDetail(ctx, req.(*MyOrderDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StakingApp_MyRewardLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_MyRewardLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MyRewardLogListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingAppServer).MyRewardLogList(ctx, in)
+		return srv.(AppServer).MyRewardLogList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingApp_MyRewardLogList_FullMethodName,
+		FullMethod: App_MyRewardLogList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingAppServer).MyRewardLogList(ctx, req.(*MyRewardLogListReq))
+		return srv.(AppServer).MyRewardLogList(ctx, req.(*MyRewardLogListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StakingApp_Redeem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_Redeem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RedeemReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingAppServer).Redeem(ctx, in)
+		return srv.(AppServer).Redeem(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingApp_Redeem_FullMethodName,
+		FullMethod: App_Redeem_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingAppServer).Redeem(ctx, req.(*RedeemReq))
+		return srv.(AppServer).Redeem(ctx, req.(*RedeemReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StakingApp_MyRedeemLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_MyRedeemLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MyRedeemLogListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingAppServer).MyRedeemLogList(ctx, in)
+		return srv.(AppServer).MyRedeemLogList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingApp_MyRedeemLogList_FullMethodName,
+		FullMethod: App_MyRedeemLogList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingAppServer).MyRedeemLogList(ctx, req.(*MyRedeemLogListReq))
+		return srv.(AppServer).MyRedeemLogList(ctx, req.(*MyRedeemLogListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// StakingApp_ServiceDesc is the grpc.ServiceDesc for StakingApp service.
+// App_ServiceDesc is the grpc.ServiceDesc for App service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var StakingApp_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "staking.StakingApp",
-	HandlerType: (*StakingAppServer)(nil),
+var App_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "staking.App",
+	HandlerType: (*AppServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "ProductList",
-			Handler:    _StakingApp_ProductList_Handler,
+			Handler:    _App_ProductList_Handler,
 		},
 		{
 			MethodName: "ProductDetail",
-			Handler:    _StakingApp_ProductDetail_Handler,
+			Handler:    _App_ProductDetail_Handler,
 		},
 		{
 			MethodName: "CreateOrder",
-			Handler:    _StakingApp_CreateOrder_Handler,
+			Handler:    _App_CreateOrder_Handler,
 		},
 		{
 			MethodName: "MyOrderList",
-			Handler:    _StakingApp_MyOrderList_Handler,
+			Handler:    _App_MyOrderList_Handler,
 		},
 		{
 			MethodName: "MyOrderDetail",
-			Handler:    _StakingApp_MyOrderDetail_Handler,
+			Handler:    _App_MyOrderDetail_Handler,
 		},
 		{
 			MethodName: "MyRewardLogList",
-			Handler:    _StakingApp_MyRewardLogList_Handler,
+			Handler:    _App_MyRewardLogList_Handler,
 		},
 		{
 			MethodName: "Redeem",
-			Handler:    _StakingApp_Redeem_Handler,
+			Handler:    _App_Redeem_Handler,
 		},
 		{
 			MethodName: "MyRedeemLogList",
-			Handler:    _StakingApp_MyRedeemLogList_Handler,
+			Handler:    _App_MyRedeemLogList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -419,23 +419,23 @@ var StakingApp_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	StakingAdmin_ProductList_FullMethodName         = "/staking.StakingAdmin/ProductList"
-	StakingAdmin_ProductDetail_FullMethodName       = "/staking.StakingAdmin/ProductDetail"
-	StakingAdmin_ProductCreate_FullMethodName       = "/staking.StakingAdmin/ProductCreate"
-	StakingAdmin_ProductUpdate_FullMethodName       = "/staking.StakingAdmin/ProductUpdate"
-	StakingAdmin_ProductChangeStatus_FullMethodName = "/staking.StakingAdmin/ProductChangeStatus"
-	StakingAdmin_OrderList_FullMethodName           = "/staking.StakingAdmin/OrderList"
-	StakingAdmin_OrderDetail_FullMethodName         = "/staking.StakingAdmin/OrderDetail"
-	StakingAdmin_RewardLogList_FullMethodName       = "/staking.StakingAdmin/RewardLogList"
-	StakingAdmin_RedeemLogList_FullMethodName       = "/staking.StakingAdmin/RedeemLogList"
-	StakingAdmin_ManualReward_FullMethodName        = "/staking.StakingAdmin/ManualReward"
-	StakingAdmin_ManualRedeem_FullMethodName        = "/staking.StakingAdmin/ManualRedeem"
+	Admin_ProductList_FullMethodName         = "/staking.Admin/ProductList"
+	Admin_ProductDetail_FullMethodName       = "/staking.Admin/ProductDetail"
+	Admin_ProductCreate_FullMethodName       = "/staking.Admin/ProductCreate"
+	Admin_ProductUpdate_FullMethodName       = "/staking.Admin/ProductUpdate"
+	Admin_ProductChangeStatus_FullMethodName = "/staking.Admin/ProductChangeStatus"
+	Admin_OrderList_FullMethodName           = "/staking.Admin/OrderList"
+	Admin_OrderDetail_FullMethodName         = "/staking.Admin/OrderDetail"
+	Admin_RewardLogList_FullMethodName       = "/staking.Admin/RewardLogList"
+	Admin_RedeemLogList_FullMethodName       = "/staking.Admin/RedeemLogList"
+	Admin_ManualReward_FullMethodName        = "/staking.Admin/ManualReward"
+	Admin_ManualRedeem_FullMethodName        = "/staking.Admin/ManualRedeem"
 )
 
-// StakingAdminClient is the client API for StakingAdmin service.
+// AdminClient is the client API for Admin service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type StakingAdminClient interface {
+type AdminClient interface {
 	// 获取质押产品列表
 	// 后台分页查询质押产品，支持按产品编号、产品名称、币种、产品类型、状态筛选。
 	ProductList(ctx context.Context, in *ProductListReq, opts ...grpc.CallOption) (*ProductListResp, error)
@@ -471,128 +471,128 @@ type StakingAdminClient interface {
 	ManualRedeem(ctx context.Context, in *ManualRedeemReq, opts ...grpc.CallOption) (*ManualRedeemResp, error)
 }
 
-type stakingAdminClient struct {
+type adminClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewStakingAdminClient(cc grpc.ClientConnInterface) StakingAdminClient {
-	return &stakingAdminClient{cc}
+func NewAdminClient(cc grpc.ClientConnInterface) AdminClient {
+	return &adminClient{cc}
 }
 
-func (c *stakingAdminClient) ProductList(ctx context.Context, in *ProductListReq, opts ...grpc.CallOption) (*ProductListResp, error) {
+func (c *adminClient) ProductList(ctx context.Context, in *ProductListReq, opts ...grpc.CallOption) (*ProductListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProductListResp)
-	err := c.cc.Invoke(ctx, StakingAdmin_ProductList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ProductList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stakingAdminClient) ProductDetail(ctx context.Context, in *ProductDetailReq, opts ...grpc.CallOption) (*ProductDetailResp, error) {
+func (c *adminClient) ProductDetail(ctx context.Context, in *ProductDetailReq, opts ...grpc.CallOption) (*ProductDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProductDetailResp)
-	err := c.cc.Invoke(ctx, StakingAdmin_ProductDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ProductDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stakingAdminClient) ProductCreate(ctx context.Context, in *ProductCreateReq, opts ...grpc.CallOption) (*ProductCreateResp, error) {
+func (c *adminClient) ProductCreate(ctx context.Context, in *ProductCreateReq, opts ...grpc.CallOption) (*ProductCreateResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProductCreateResp)
-	err := c.cc.Invoke(ctx, StakingAdmin_ProductCreate_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ProductCreate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stakingAdminClient) ProductUpdate(ctx context.Context, in *ProductUpdateReq, opts ...grpc.CallOption) (*ProductUpdateResp, error) {
+func (c *adminClient) ProductUpdate(ctx context.Context, in *ProductUpdateReq, opts ...grpc.CallOption) (*ProductUpdateResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProductUpdateResp)
-	err := c.cc.Invoke(ctx, StakingAdmin_ProductUpdate_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ProductUpdate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stakingAdminClient) ProductChangeStatus(ctx context.Context, in *ProductChangeStatusReq, opts ...grpc.CallOption) (*ProductChangeStatusResp, error) {
+func (c *adminClient) ProductChangeStatus(ctx context.Context, in *ProductChangeStatusReq, opts ...grpc.CallOption) (*ProductChangeStatusResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProductChangeStatusResp)
-	err := c.cc.Invoke(ctx, StakingAdmin_ProductChangeStatus_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ProductChangeStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stakingAdminClient) OrderList(ctx context.Context, in *OrderListReq, opts ...grpc.CallOption) (*OrderListResp, error) {
+func (c *adminClient) OrderList(ctx context.Context, in *OrderListReq, opts ...grpc.CallOption) (*OrderListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(OrderListResp)
-	err := c.cc.Invoke(ctx, StakingAdmin_OrderList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_OrderList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stakingAdminClient) OrderDetail(ctx context.Context, in *OrderDetailReq, opts ...grpc.CallOption) (*OrderDetailResp, error) {
+func (c *adminClient) OrderDetail(ctx context.Context, in *OrderDetailReq, opts ...grpc.CallOption) (*OrderDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(OrderDetailResp)
-	err := c.cc.Invoke(ctx, StakingAdmin_OrderDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_OrderDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stakingAdminClient) RewardLogList(ctx context.Context, in *RewardLogListReq, opts ...grpc.CallOption) (*RewardLogListResp, error) {
+func (c *adminClient) RewardLogList(ctx context.Context, in *RewardLogListReq, opts ...grpc.CallOption) (*RewardLogListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RewardLogListResp)
-	err := c.cc.Invoke(ctx, StakingAdmin_RewardLogList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_RewardLogList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stakingAdminClient) RedeemLogList(ctx context.Context, in *RedeemLogListReq, opts ...grpc.CallOption) (*RedeemLogListResp, error) {
+func (c *adminClient) RedeemLogList(ctx context.Context, in *RedeemLogListReq, opts ...grpc.CallOption) (*RedeemLogListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RedeemLogListResp)
-	err := c.cc.Invoke(ctx, StakingAdmin_RedeemLogList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_RedeemLogList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stakingAdminClient) ManualReward(ctx context.Context, in *ManualRewardReq, opts ...grpc.CallOption) (*ManualRewardResp, error) {
+func (c *adminClient) ManualReward(ctx context.Context, in *ManualRewardReq, opts ...grpc.CallOption) (*ManualRewardResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ManualRewardResp)
-	err := c.cc.Invoke(ctx, StakingAdmin_ManualReward_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ManualReward_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *stakingAdminClient) ManualRedeem(ctx context.Context, in *ManualRedeemReq, opts ...grpc.CallOption) (*ManualRedeemResp, error) {
+func (c *adminClient) ManualRedeem(ctx context.Context, in *ManualRedeemReq, opts ...grpc.CallOption) (*ManualRedeemResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ManualRedeemResp)
-	err := c.cc.Invoke(ctx, StakingAdmin_ManualRedeem_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ManualRedeem_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// StakingAdminServer is the server API for StakingAdmin service.
-// All implementations must embed UnimplementedStakingAdminServer
+// AdminServer is the server API for Admin service.
+// All implementations must embed UnimplementedAdminServer
 // for forward compatibility.
-type StakingAdminServer interface {
+type AdminServer interface {
 	// 获取质押产品列表
 	// 后台分页查询质押产品，支持按产品编号、产品名称、币种、产品类型、状态筛选。
 	ProductList(context.Context, *ProductListReq) (*ProductListResp, error)
@@ -626,318 +626,318 @@ type StakingAdminServer interface {
 	// 手动赎回
 	// 后台对指定质押订单执行手动赎回操作。
 	ManualRedeem(context.Context, *ManualRedeemReq) (*ManualRedeemResp, error)
-	mustEmbedUnimplementedStakingAdminServer()
+	mustEmbedUnimplementedAdminServer()
 }
 
-// UnimplementedStakingAdminServer must be embedded to have
+// UnimplementedAdminServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedStakingAdminServer struct{}
+type UnimplementedAdminServer struct{}
 
-func (UnimplementedStakingAdminServer) ProductList(context.Context, *ProductListReq) (*ProductListResp, error) {
+func (UnimplementedAdminServer) ProductList(context.Context, *ProductListReq) (*ProductListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProductList not implemented")
 }
-func (UnimplementedStakingAdminServer) ProductDetail(context.Context, *ProductDetailReq) (*ProductDetailResp, error) {
+func (UnimplementedAdminServer) ProductDetail(context.Context, *ProductDetailReq) (*ProductDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProductDetail not implemented")
 }
-func (UnimplementedStakingAdminServer) ProductCreate(context.Context, *ProductCreateReq) (*ProductCreateResp, error) {
+func (UnimplementedAdminServer) ProductCreate(context.Context, *ProductCreateReq) (*ProductCreateResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProductCreate not implemented")
 }
-func (UnimplementedStakingAdminServer) ProductUpdate(context.Context, *ProductUpdateReq) (*ProductUpdateResp, error) {
+func (UnimplementedAdminServer) ProductUpdate(context.Context, *ProductUpdateReq) (*ProductUpdateResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProductUpdate not implemented")
 }
-func (UnimplementedStakingAdminServer) ProductChangeStatus(context.Context, *ProductChangeStatusReq) (*ProductChangeStatusResp, error) {
+func (UnimplementedAdminServer) ProductChangeStatus(context.Context, *ProductChangeStatusReq) (*ProductChangeStatusResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProductChangeStatus not implemented")
 }
-func (UnimplementedStakingAdminServer) OrderList(context.Context, *OrderListReq) (*OrderListResp, error) {
+func (UnimplementedAdminServer) OrderList(context.Context, *OrderListReq) (*OrderListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method OrderList not implemented")
 }
-func (UnimplementedStakingAdminServer) OrderDetail(context.Context, *OrderDetailReq) (*OrderDetailResp, error) {
+func (UnimplementedAdminServer) OrderDetail(context.Context, *OrderDetailReq) (*OrderDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method OrderDetail not implemented")
 }
-func (UnimplementedStakingAdminServer) RewardLogList(context.Context, *RewardLogListReq) (*RewardLogListResp, error) {
+func (UnimplementedAdminServer) RewardLogList(context.Context, *RewardLogListReq) (*RewardLogListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RewardLogList not implemented")
 }
-func (UnimplementedStakingAdminServer) RedeemLogList(context.Context, *RedeemLogListReq) (*RedeemLogListResp, error) {
+func (UnimplementedAdminServer) RedeemLogList(context.Context, *RedeemLogListReq) (*RedeemLogListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RedeemLogList not implemented")
 }
-func (UnimplementedStakingAdminServer) ManualReward(context.Context, *ManualRewardReq) (*ManualRewardResp, error) {
+func (UnimplementedAdminServer) ManualReward(context.Context, *ManualRewardReq) (*ManualRewardResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ManualReward not implemented")
 }
-func (UnimplementedStakingAdminServer) ManualRedeem(context.Context, *ManualRedeemReq) (*ManualRedeemResp, error) {
+func (UnimplementedAdminServer) ManualRedeem(context.Context, *ManualRedeemReq) (*ManualRedeemResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ManualRedeem not implemented")
 }
-func (UnimplementedStakingAdminServer) mustEmbedUnimplementedStakingAdminServer() {}
-func (UnimplementedStakingAdminServer) testEmbeddedByValue()                      {}
+func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
+func (UnimplementedAdminServer) testEmbeddedByValue()               {}
 
-// UnsafeStakingAdminServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to StakingAdminServer will
+// UnsafeAdminServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AdminServer will
 // result in compilation errors.
-type UnsafeStakingAdminServer interface {
-	mustEmbedUnimplementedStakingAdminServer()
+type UnsafeAdminServer interface {
+	mustEmbedUnimplementedAdminServer()
 }
 
-func RegisterStakingAdminServer(s grpc.ServiceRegistrar, srv StakingAdminServer) {
-	// If the following call panics, it indicates UnimplementedStakingAdminServer was
+func RegisterAdminServer(s grpc.ServiceRegistrar, srv AdminServer) {
+	// If the following call panics, it indicates UnimplementedAdminServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&StakingAdmin_ServiceDesc, srv)
+	s.RegisterService(&Admin_ServiceDesc, srv)
 }
 
-func _StakingAdmin_ProductList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ProductList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ProductListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingAdminServer).ProductList(ctx, in)
+		return srv.(AdminServer).ProductList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingAdmin_ProductList_FullMethodName,
+		FullMethod: Admin_ProductList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingAdminServer).ProductList(ctx, req.(*ProductListReq))
+		return srv.(AdminServer).ProductList(ctx, req.(*ProductListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StakingAdmin_ProductDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ProductDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ProductDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingAdminServer).ProductDetail(ctx, in)
+		return srv.(AdminServer).ProductDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingAdmin_ProductDetail_FullMethodName,
+		FullMethod: Admin_ProductDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingAdminServer).ProductDetail(ctx, req.(*ProductDetailReq))
+		return srv.(AdminServer).ProductDetail(ctx, req.(*ProductDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StakingAdmin_ProductCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ProductCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ProductCreateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingAdminServer).ProductCreate(ctx, in)
+		return srv.(AdminServer).ProductCreate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingAdmin_ProductCreate_FullMethodName,
+		FullMethod: Admin_ProductCreate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingAdminServer).ProductCreate(ctx, req.(*ProductCreateReq))
+		return srv.(AdminServer).ProductCreate(ctx, req.(*ProductCreateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StakingAdmin_ProductUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ProductUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ProductUpdateReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingAdminServer).ProductUpdate(ctx, in)
+		return srv.(AdminServer).ProductUpdate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingAdmin_ProductUpdate_FullMethodName,
+		FullMethod: Admin_ProductUpdate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingAdminServer).ProductUpdate(ctx, req.(*ProductUpdateReq))
+		return srv.(AdminServer).ProductUpdate(ctx, req.(*ProductUpdateReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StakingAdmin_ProductChangeStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ProductChangeStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ProductChangeStatusReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingAdminServer).ProductChangeStatus(ctx, in)
+		return srv.(AdminServer).ProductChangeStatus(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingAdmin_ProductChangeStatus_FullMethodName,
+		FullMethod: Admin_ProductChangeStatus_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingAdminServer).ProductChangeStatus(ctx, req.(*ProductChangeStatusReq))
+		return srv.(AdminServer).ProductChangeStatus(ctx, req.(*ProductChangeStatusReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StakingAdmin_OrderList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_OrderList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OrderListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingAdminServer).OrderList(ctx, in)
+		return srv.(AdminServer).OrderList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingAdmin_OrderList_FullMethodName,
+		FullMethod: Admin_OrderList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingAdminServer).OrderList(ctx, req.(*OrderListReq))
+		return srv.(AdminServer).OrderList(ctx, req.(*OrderListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StakingAdmin_OrderDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_OrderDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OrderDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingAdminServer).OrderDetail(ctx, in)
+		return srv.(AdminServer).OrderDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingAdmin_OrderDetail_FullMethodName,
+		FullMethod: Admin_OrderDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingAdminServer).OrderDetail(ctx, req.(*OrderDetailReq))
+		return srv.(AdminServer).OrderDetail(ctx, req.(*OrderDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StakingAdmin_RewardLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_RewardLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RewardLogListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingAdminServer).RewardLogList(ctx, in)
+		return srv.(AdminServer).RewardLogList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingAdmin_RewardLogList_FullMethodName,
+		FullMethod: Admin_RewardLogList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingAdminServer).RewardLogList(ctx, req.(*RewardLogListReq))
+		return srv.(AdminServer).RewardLogList(ctx, req.(*RewardLogListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StakingAdmin_RedeemLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_RedeemLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RedeemLogListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingAdminServer).RedeemLogList(ctx, in)
+		return srv.(AdminServer).RedeemLogList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingAdmin_RedeemLogList_FullMethodName,
+		FullMethod: Admin_RedeemLogList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingAdminServer).RedeemLogList(ctx, req.(*RedeemLogListReq))
+		return srv.(AdminServer).RedeemLogList(ctx, req.(*RedeemLogListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StakingAdmin_ManualReward_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ManualReward_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ManualRewardReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingAdminServer).ManualReward(ctx, in)
+		return srv.(AdminServer).ManualReward(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingAdmin_ManualReward_FullMethodName,
+		FullMethod: Admin_ManualReward_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingAdminServer).ManualReward(ctx, req.(*ManualRewardReq))
+		return srv.(AdminServer).ManualReward(ctx, req.(*ManualRewardReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StakingAdmin_ManualRedeem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ManualRedeem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ManualRedeemReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingAdminServer).ManualRedeem(ctx, in)
+		return srv.(AdminServer).ManualRedeem(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingAdmin_ManualRedeem_FullMethodName,
+		FullMethod: Admin_ManualRedeem_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingAdminServer).ManualRedeem(ctx, req.(*ManualRedeemReq))
+		return srv.(AdminServer).ManualRedeem(ctx, req.(*ManualRedeemReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// StakingAdmin_ServiceDesc is the grpc.ServiceDesc for StakingAdmin service.
+// Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var StakingAdmin_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "staking.StakingAdmin",
-	HandlerType: (*StakingAdminServer)(nil),
+var Admin_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "staking.Admin",
+	HandlerType: (*AdminServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "ProductList",
-			Handler:    _StakingAdmin_ProductList_Handler,
+			Handler:    _Admin_ProductList_Handler,
 		},
 		{
 			MethodName: "ProductDetail",
-			Handler:    _StakingAdmin_ProductDetail_Handler,
+			Handler:    _Admin_ProductDetail_Handler,
 		},
 		{
 			MethodName: "ProductCreate",
-			Handler:    _StakingAdmin_ProductCreate_Handler,
+			Handler:    _Admin_ProductCreate_Handler,
 		},
 		{
 			MethodName: "ProductUpdate",
-			Handler:    _StakingAdmin_ProductUpdate_Handler,
+			Handler:    _Admin_ProductUpdate_Handler,
 		},
 		{
 			MethodName: "ProductChangeStatus",
-			Handler:    _StakingAdmin_ProductChangeStatus_Handler,
+			Handler:    _Admin_ProductChangeStatus_Handler,
 		},
 		{
 			MethodName: "OrderList",
-			Handler:    _StakingAdmin_OrderList_Handler,
+			Handler:    _Admin_OrderList_Handler,
 		},
 		{
 			MethodName: "OrderDetail",
-			Handler:    _StakingAdmin_OrderDetail_Handler,
+			Handler:    _Admin_OrderDetail_Handler,
 		},
 		{
 			MethodName: "RewardLogList",
-			Handler:    _StakingAdmin_RewardLogList_Handler,
+			Handler:    _Admin_RewardLogList_Handler,
 		},
 		{
 			MethodName: "RedeemLogList",
-			Handler:    _StakingAdmin_RedeemLogList_Handler,
+			Handler:    _Admin_RedeemLogList_Handler,
 		},
 		{
 			MethodName: "ManualReward",
-			Handler:    _StakingAdmin_ManualReward_Handler,
+			Handler:    _Admin_ManualReward_Handler,
 		},
 		{
 			MethodName: "ManualRedeem",
-			Handler:    _StakingAdmin_ManualRedeem_Handler,
+			Handler:    _Admin_ManualRedeem_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -945,111 +945,111 @@ var StakingAdmin_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	StakingTask_ProcessRewardsAndSettleOrders_FullMethodName = "/staking.StakingTask/ProcessRewardsAndSettleOrders"
+	Task_ProcessRewardsAndSettleOrders_FullMethodName = "/staking.Task/ProcessRewardsAndSettleOrders"
 )
 
-// StakingTaskClient is the client API for StakingTask service.
+// TaskClient is the client API for Task service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // ====================
 // 定时任务
 // ====================
-type StakingTaskClient interface {
+type TaskClient interface {
 	// 质押收益发放/到期结算
 	ProcessRewardsAndSettleOrders(ctx context.Context, in *StakingTaskReq, opts ...grpc.CallOption) (*StakingTaskResp, error)
 }
 
-type stakingTaskClient struct {
+type taskClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewStakingTaskClient(cc grpc.ClientConnInterface) StakingTaskClient {
-	return &stakingTaskClient{cc}
+func NewTaskClient(cc grpc.ClientConnInterface) TaskClient {
+	return &taskClient{cc}
 }
 
-func (c *stakingTaskClient) ProcessRewardsAndSettleOrders(ctx context.Context, in *StakingTaskReq, opts ...grpc.CallOption) (*StakingTaskResp, error) {
+func (c *taskClient) ProcessRewardsAndSettleOrders(ctx context.Context, in *StakingTaskReq, opts ...grpc.CallOption) (*StakingTaskResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(StakingTaskResp)
-	err := c.cc.Invoke(ctx, StakingTask_ProcessRewardsAndSettleOrders_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Task_ProcessRewardsAndSettleOrders_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// StakingTaskServer is the server API for StakingTask service.
-// All implementations must embed UnimplementedStakingTaskServer
+// TaskServer is the server API for Task service.
+// All implementations must embed UnimplementedTaskServer
 // for forward compatibility.
 //
 // ====================
 // 定时任务
 // ====================
-type StakingTaskServer interface {
+type TaskServer interface {
 	// 质押收益发放/到期结算
 	ProcessRewardsAndSettleOrders(context.Context, *StakingTaskReq) (*StakingTaskResp, error)
-	mustEmbedUnimplementedStakingTaskServer()
+	mustEmbedUnimplementedTaskServer()
 }
 
-// UnimplementedStakingTaskServer must be embedded to have
+// UnimplementedTaskServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedStakingTaskServer struct{}
+type UnimplementedTaskServer struct{}
 
-func (UnimplementedStakingTaskServer) ProcessRewardsAndSettleOrders(context.Context, *StakingTaskReq) (*StakingTaskResp, error) {
+func (UnimplementedTaskServer) ProcessRewardsAndSettleOrders(context.Context, *StakingTaskReq) (*StakingTaskResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProcessRewardsAndSettleOrders not implemented")
 }
-func (UnimplementedStakingTaskServer) mustEmbedUnimplementedStakingTaskServer() {}
-func (UnimplementedStakingTaskServer) testEmbeddedByValue()                     {}
+func (UnimplementedTaskServer) mustEmbedUnimplementedTaskServer() {}
+func (UnimplementedTaskServer) testEmbeddedByValue()              {}
 
-// UnsafeStakingTaskServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to StakingTaskServer will
+// UnsafeTaskServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TaskServer will
 // result in compilation errors.
-type UnsafeStakingTaskServer interface {
-	mustEmbedUnimplementedStakingTaskServer()
+type UnsafeTaskServer interface {
+	mustEmbedUnimplementedTaskServer()
 }
 
-func RegisterStakingTaskServer(s grpc.ServiceRegistrar, srv StakingTaskServer) {
-	// If the following call panics, it indicates UnimplementedStakingTaskServer was
+func RegisterTaskServer(s grpc.ServiceRegistrar, srv TaskServer) {
+	// If the following call panics, it indicates UnimplementedTaskServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&StakingTask_ServiceDesc, srv)
+	s.RegisterService(&Task_ServiceDesc, srv)
 }
 
-func _StakingTask_ProcessRewardsAndSettleOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Task_ProcessRewardsAndSettleOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(StakingTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StakingTaskServer).ProcessRewardsAndSettleOrders(ctx, in)
+		return srv.(TaskServer).ProcessRewardsAndSettleOrders(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StakingTask_ProcessRewardsAndSettleOrders_FullMethodName,
+		FullMethod: Task_ProcessRewardsAndSettleOrders_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StakingTaskServer).ProcessRewardsAndSettleOrders(ctx, req.(*StakingTaskReq))
+		return srv.(TaskServer).ProcessRewardsAndSettleOrders(ctx, req.(*StakingTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// StakingTask_ServiceDesc is the grpc.ServiceDesc for StakingTask service.
+// Task_ServiceDesc is the grpc.ServiceDesc for Task service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var StakingTask_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "staking.StakingTask",
-	HandlerType: (*StakingTaskServer)(nil),
+var Task_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "staking.Task",
+	HandlerType: (*TaskServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "ProcessRewardsAndSettleOrders",
-			Handler:    _StakingTask_ProcessRewardsAndSettleOrders_Handler,
+			Handler:    _Task_ProcessRewardsAndSettleOrders_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

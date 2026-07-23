@@ -1,0 +1,79 @@
+package applogic
+
+import (
+	"context"
+	"errors"
+	"wklive/common/helper"
+	"wklive/common/i18n"
+	"wklive/common/utils"
+	"wklive/proto/payment"
+	"wklive/services/payment/internal/svc"
+	"wklive/services/payment/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type CancelMyRechargeOrderLogic struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+}
+
+func NewCancelMyRechargeOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CancelMyRechargeOrderLogic {
+	return &CancelMyRechargeOrderLogic{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+	}
+}
+
+// 取消未支付订单
+func (l *CancelMyRechargeOrderLogic) CancelMyRechargeOrder(in *payment.CancelMyRechargeOrderReq) (*payment.UserCommonResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	order, err := l.svcCtx.RechargeOrderModel.FindOneByOrderNo(l.ctx, in.OrderNo)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
+
+	if order == nil {
+		return &payment.UserCommonResp{
+			Base: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx)),
+		}, nil
+	}
+
+	// Check permission
+	if order.UserId != userId || order.TenantId != tenantId {
+		return &payment.UserCommonResp{
+			Base: helper.ErrResp(i18n.NoPermissionCancelOrder, i18n.Translate(i18n.NoPermissionCancelOrder, l.ctx)),
+		}, nil
+	}
+
+	// Can only cancel unpaid orders
+	if order.Status != int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) {
+		return &payment.UserCommonResp{
+			Base: helper.ErrResp(i18n.OnlyPendingPaymentOrdersCanCancel, i18n.Translate(i18n.OnlyPendingPaymentOrdersCanCancel, l.ctx)),
+		}, nil
+	}
+
+	// Update order status to cancelled
+	order.Status = int64(payment.PayOrderStatus_PAY_ORDER_STATUS_CLOSED)
+	order.UpdateTimes = utils.NowMillis()
+
+	err = l.svcCtx.RechargeOrderModel.Update(l.ctx, order)
+	if err != nil {
+		return nil, err
+	}
+
+	l.Logger.Infof("Cancel recharge order success: %s, user_id: %d", in.OrderNo, userId)
+
+	return &payment.UserCommonResp{
+		Base: helper.OkResp(),
+	}, nil
+}

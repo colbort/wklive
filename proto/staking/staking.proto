@@ -9,7 +9,7 @@ import "proto/staking/model.proto";
 option go_package = "wklive/proto/staking;staking";
 
 //
-service StakingApp {
+service App {
   // 获取质押产品列表
   // 用户端查询可参与的质押产品，支持按产品类型、币种筛选。
   rpc ProductList(UserProductListReq) returns (UserProductListResp);
@@ -146,7 +146,7 @@ message MyRedeemLogListResp {
 }
 
 //
-service StakingAdmin {
+service Admin {
   // 获取质押产品列表
   // 后台分页查询质押产品，支持按产品编号、产品名称、币种、产品类型、状态筛选。
   rpc ProductList(ProductListReq) returns (ProductListResp);
@@ -412,7 +412,7 @@ message StakingTaskResp {
 // ====================
 // 定时任务
 // ====================
-service StakingTask {
+service Task {
   // 质押收益发放/到期结算
   rpc ProcessRewardsAndSettleOrders(StakingTaskReq) returns (StakingTaskResp);
 }

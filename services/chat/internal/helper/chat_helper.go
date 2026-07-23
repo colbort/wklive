@@ -31,7 +31,7 @@ func MerchantIDFromMetadata(ctx context.Context) (int64, error) {
 	return merchantID, nil
 }
 
-func ChatAppIdentityFromMetadata(ctx context.Context) (int64, int64, error) {
+func AppIdentityFromMetadata(ctx context.Context) (int64, int64, error) {
 	merchantID, err := MerchantIDFromMetadata(ctx)
 	if err != nil {
 		return 0, 0, err

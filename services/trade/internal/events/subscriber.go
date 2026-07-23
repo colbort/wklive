@@ -8,7 +8,7 @@ import (
 
 	"wklive/common/mq/kafka"
 	"wklive/common/utils"
-	logic "wklive/services/trade/internal/logic/tradetask"
+	logic "wklive/services/trade/internal/logic/task"
 	"wklive/services/trade/internal/realtime"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"

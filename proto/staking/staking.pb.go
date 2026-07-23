@@ -3199,9 +3199,8 @@ const file_proto_staking_staking_proto_rawDesc = "" +
 	"\x0eStakingTaskReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\"7\n" +
 	"\x0fStakingTaskResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base2\xc1\x04\n" +
-	"\n" +
-	"StakingApp\x12H\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base2\xba\x04\n" +
+	"\x03App\x12H\n" +
 	"\vProductList\x12\x1b.staking.UserProductListReq\x1a\x1c.staking.UserProductListResp\x12N\n" +
 	"\rProductDetail\x12\x1d.staking.UserProductDetailReq\x1a\x1e.staking.UserProductDetailResp\x12@\n" +
 	"\vCreateOrder\x12\x17.staking.CreateOrderReq\x1a\x18.staking.CreateOrderResp\x12@\n" +
@@ -3209,8 +3208,8 @@ const file_proto_staking_staking_proto_rawDesc = "" +
 	"\rMyOrderDetail\x12\x19.staking.MyOrderDetailReq\x1a\x1a.staking.MyOrderDetailResp\x12L\n" +
 	"\x0fMyRewardLogList\x12\x1b.staking.MyRewardLogListReq\x1a\x1c.staking.MyRewardLogListResp\x121\n" +
 	"\x06Redeem\x12\x12.staking.RedeemReq\x1a\x13.staking.RedeemResp\x12L\n" +
-	"\x0fMyRedeemLogList\x12\x1b.staking.MyRedeemLogListReq\x1a\x1c.staking.MyRedeemLogListResp2\x9a\x06\n" +
-	"\fStakingAdmin\x12@\n" +
+	"\x0fMyRedeemLogList\x12\x1b.staking.MyRedeemLogListReq\x1a\x1c.staking.MyRedeemLogListResp2\x93\x06\n" +
+	"\x05Admin\x12@\n" +
 	"\vProductList\x12\x17.staking.ProductListReq\x1a\x18.staking.ProductListResp\x12F\n" +
 	"\rProductDetail\x12\x19.staking.ProductDetailReq\x1a\x1a.staking.ProductDetailResp\x12F\n" +
 	"\rProductCreate\x12\x19.staking.ProductCreateReq\x1a\x1a.staking.ProductCreateResp\x12F\n" +
@@ -3221,8 +3220,8 @@ const file_proto_staking_staking_proto_rawDesc = "" +
 	"\rRewardLogList\x12\x19.staking.RewardLogListReq\x1a\x1a.staking.RewardLogListResp\x12F\n" +
 	"\rRedeemLogList\x12\x19.staking.RedeemLogListReq\x1a\x1a.staking.RedeemLogListResp\x12C\n" +
 	"\fManualReward\x12\x18.staking.ManualRewardReq\x1a\x19.staking.ManualRewardResp\x12C\n" +
-	"\fManualRedeem\x12\x18.staking.ManualRedeemReq\x1a\x19.staking.ManualRedeemResp2a\n" +
-	"\vStakingTask\x12R\n" +
+	"\fManualRedeem\x12\x18.staking.ManualRedeemReq\x1a\x19.staking.ManualRedeemResp2Z\n" +
+	"\x04Task\x12R\n" +
 	"\x1dProcessRewardsAndSettleOrders\x12\x17.staking.StakingTaskReq\x1a\x18.staking.StakingTaskRespB\x1eZ\x1cwklive/proto/staking;stakingb\x06proto3"
 
 var (
@@ -3370,46 +3369,46 @@ var file_proto_staking_staking_proto_depIdxs = []int32{
 	48, // 67: staking.ManualRedeemReq.redeem_type:type_name -> staking.RedeemType
 	44, // 68: staking.ManualRedeemResp.page:type_name -> common.RespBase
 	44, // 69: staking.StakingTaskResp.base:type_name -> common.RespBase
-	0,  // 70: staking.StakingApp.ProductList:input_type -> staking.UserProductListReq
-	2,  // 71: staking.StakingApp.ProductDetail:input_type -> staking.UserProductDetailReq
-	4,  // 72: staking.StakingApp.CreateOrder:input_type -> staking.CreateOrderReq
-	7,  // 73: staking.StakingApp.MyOrderList:input_type -> staking.MyOrderListReq
-	9,  // 74: staking.StakingApp.MyOrderDetail:input_type -> staking.MyOrderDetailReq
-	11, // 75: staking.StakingApp.MyRewardLogList:input_type -> staking.MyRewardLogListReq
-	13, // 76: staking.StakingApp.Redeem:input_type -> staking.RedeemReq
-	16, // 77: staking.StakingApp.MyRedeemLogList:input_type -> staking.MyRedeemLogListReq
-	18, // 78: staking.StakingAdmin.ProductList:input_type -> staking.ProductListReq
-	20, // 79: staking.StakingAdmin.ProductDetail:input_type -> staking.ProductDetailReq
-	22, // 80: staking.StakingAdmin.ProductCreate:input_type -> staking.ProductCreateReq
-	24, // 81: staking.StakingAdmin.ProductUpdate:input_type -> staking.ProductUpdateReq
-	26, // 82: staking.StakingAdmin.ProductChangeStatus:input_type -> staking.ProductChangeStatusReq
-	28, // 83: staking.StakingAdmin.OrderList:input_type -> staking.OrderListReq
-	30, // 84: staking.StakingAdmin.OrderDetail:input_type -> staking.OrderDetailReq
-	32, // 85: staking.StakingAdmin.RewardLogList:input_type -> staking.RewardLogListReq
-	34, // 86: staking.StakingAdmin.RedeemLogList:input_type -> staking.RedeemLogListReq
-	36, // 87: staking.StakingAdmin.ManualReward:input_type -> staking.ManualRewardReq
-	38, // 88: staking.StakingAdmin.ManualRedeem:input_type -> staking.ManualRedeemReq
-	40, // 89: staking.StakingTask.ProcessRewardsAndSettleOrders:input_type -> staking.StakingTaskReq
-	1,  // 90: staking.StakingApp.ProductList:output_type -> staking.UserProductListResp
-	3,  // 91: staking.StakingApp.ProductDetail:output_type -> staking.UserProductDetailResp
-	5,  // 92: staking.StakingApp.CreateOrder:output_type -> staking.CreateOrderResp
-	8,  // 93: staking.StakingApp.MyOrderList:output_type -> staking.MyOrderListResp
-	10, // 94: staking.StakingApp.MyOrderDetail:output_type -> staking.MyOrderDetailResp
-	12, // 95: staking.StakingApp.MyRewardLogList:output_type -> staking.MyRewardLogListResp
-	14, // 96: staking.StakingApp.Redeem:output_type -> staking.RedeemResp
-	17, // 97: staking.StakingApp.MyRedeemLogList:output_type -> staking.MyRedeemLogListResp
-	19, // 98: staking.StakingAdmin.ProductList:output_type -> staking.ProductListResp
-	21, // 99: staking.StakingAdmin.ProductDetail:output_type -> staking.ProductDetailResp
-	23, // 100: staking.StakingAdmin.ProductCreate:output_type -> staking.ProductCreateResp
-	25, // 101: staking.StakingAdmin.ProductUpdate:output_type -> staking.ProductUpdateResp
-	27, // 102: staking.StakingAdmin.ProductChangeStatus:output_type -> staking.ProductChangeStatusResp
-	29, // 103: staking.StakingAdmin.OrderList:output_type -> staking.OrderListResp
-	31, // 104: staking.StakingAdmin.OrderDetail:output_type -> staking.OrderDetailResp
-	33, // 105: staking.StakingAdmin.RewardLogList:output_type -> staking.RewardLogListResp
-	35, // 106: staking.StakingAdmin.RedeemLogList:output_type -> staking.RedeemLogListResp
-	37, // 107: staking.StakingAdmin.ManualReward:output_type -> staking.ManualRewardResp
-	39, // 108: staking.StakingAdmin.ManualRedeem:output_type -> staking.ManualRedeemResp
-	41, // 109: staking.StakingTask.ProcessRewardsAndSettleOrders:output_type -> staking.StakingTaskResp
+	0,  // 70: staking.App.ProductList:input_type -> staking.UserProductListReq
+	2,  // 71: staking.App.ProductDetail:input_type -> staking.UserProductDetailReq
+	4,  // 72: staking.App.CreateOrder:input_type -> staking.CreateOrderReq
+	7,  // 73: staking.App.MyOrderList:input_type -> staking.MyOrderListReq
+	9,  // 74: staking.App.MyOrderDetail:input_type -> staking.MyOrderDetailReq
+	11, // 75: staking.App.MyRewardLogList:input_type -> staking.MyRewardLogListReq
+	13, // 76: staking.App.Redeem:input_type -> staking.RedeemReq
+	16, // 77: staking.App.MyRedeemLogList:input_type -> staking.MyRedeemLogListReq
+	18, // 78: staking.Admin.ProductList:input_type -> staking.ProductListReq
+	20, // 79: staking.Admin.ProductDetail:input_type -> staking.ProductDetailReq
+	22, // 80: staking.Admin.ProductCreate:input_type -> staking.ProductCreateReq
+	24, // 81: staking.Admin.ProductUpdate:input_type -> staking.ProductUpdateReq
+	26, // 82: staking.Admin.ProductChangeStatus:input_type -> staking.ProductChangeStatusReq
+	28, // 83: staking.Admin.OrderList:input_type -> staking.OrderListReq
+	30, // 84: staking.Admin.OrderDetail:input_type -> staking.OrderDetailReq
+	32, // 85: staking.Admin.RewardLogList:input_type -> staking.RewardLogListReq
+	34, // 86: staking.Admin.RedeemLogList:input_type -> staking.RedeemLogListReq
+	36, // 87: staking.Admin.ManualReward:input_type -> staking.ManualRewardReq
+	38, // 88: staking.Admin.ManualRedeem:input_type -> staking.ManualRedeemReq
+	40, // 89: staking.Task.ProcessRewardsAndSettleOrders:input_type -> staking.StakingTaskReq
+	1,  // 90: staking.App.ProductList:output_type -> staking.UserProductListResp
+	3,  // 91: staking.App.ProductDetail:output_type -> staking.UserProductDetailResp
+	5,  // 92: staking.App.CreateOrder:output_type -> staking.CreateOrderResp
+	8,  // 93: staking.App.MyOrderList:output_type -> staking.MyOrderListResp
+	10, // 94: staking.App.MyOrderDetail:output_type -> staking.MyOrderDetailResp
+	12, // 95: staking.App.MyRewardLogList:output_type -> staking.MyRewardLogListResp
+	14, // 96: staking.App.Redeem:output_type -> staking.RedeemResp
+	17, // 97: staking.App.MyRedeemLogList:output_type -> staking.MyRedeemLogListResp
+	19, // 98: staking.Admin.ProductList:output_type -> staking.ProductListResp
+	21, // 99: staking.Admin.ProductDetail:output_type -> staking.ProductDetailResp
+	23, // 100: staking.Admin.ProductCreate:output_type -> staking.ProductCreateResp
+	25, // 101: staking.Admin.ProductUpdate:output_type -> staking.ProductUpdateResp
+	27, // 102: staking.Admin.ProductChangeStatus:output_type -> staking.ProductChangeStatusResp
+	29, // 103: staking.Admin.OrderList:output_type -> staking.OrderListResp
+	31, // 104: staking.Admin.OrderDetail:output_type -> staking.OrderDetailResp
+	33, // 105: staking.Admin.RewardLogList:output_type -> staking.RewardLogListResp
+	35, // 106: staking.Admin.RedeemLogList:output_type -> staking.RedeemLogListResp
+	37, // 107: staking.Admin.ManualReward:output_type -> staking.ManualRewardResp
+	39, // 108: staking.Admin.ManualRedeem:output_type -> staking.ManualRedeemResp
+	41, // 109: staking.Task.ProcessRewardsAndSettleOrders:output_type -> staking.StakingTaskResp
 	90, // [90:110] is the sub-list for method output_type
 	70, // [70:90] is the sub-list for method input_type
 	70, // [70:70] is the sub-list for extension type_name

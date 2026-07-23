@@ -19,26 +19,26 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TradeApp_GetSymbolList_FullMethodName         = "/trade.TradeApp/GetSymbolList"
-	TradeApp_GetSymbolDetail_FullMethodName       = "/trade.TradeApp/GetSymbolDetail"
-	TradeApp_PlaceOrder_FullMethodName            = "/trade.TradeApp/PlaceOrder"
-	TradeApp_CancelOrder_FullMethodName           = "/trade.TradeApp/CancelOrder"
-	TradeApp_CancelAllOrders_FullMethodName       = "/trade.TradeApp/CancelAllOrders"
-	TradeApp_GetOrderList_FullMethodName          = "/trade.TradeApp/GetOrderList"
-	TradeApp_GetOrderDetail_FullMethodName        = "/trade.TradeApp/GetOrderDetail"
-	TradeApp_GetFillList_FullMethodName           = "/trade.TradeApp/GetFillList"
-	TradeApp_GetPositionList_FullMethodName       = "/trade.TradeApp/GetPositionList"
-	TradeApp_GetMarginSnapshotList_FullMethodName = "/trade.TradeApp/GetMarginSnapshotList"
-	TradeApp_GetLeverageConfig_FullMethodName     = "/trade.TradeApp/GetLeverageConfig"
-	TradeApp_SetLeverage_FullMethodName           = "/trade.TradeApp/SetLeverage"
+	App_GetSymbolList_FullMethodName         = "/trade.App/GetSymbolList"
+	App_GetSymbolDetail_FullMethodName       = "/trade.App/GetSymbolDetail"
+	App_PlaceOrder_FullMethodName            = "/trade.App/PlaceOrder"
+	App_CancelOrder_FullMethodName           = "/trade.App/CancelOrder"
+	App_CancelAllOrders_FullMethodName       = "/trade.App/CancelAllOrders"
+	App_GetOrderList_FullMethodName          = "/trade.App/GetOrderList"
+	App_GetOrderDetail_FullMethodName        = "/trade.App/GetOrderDetail"
+	App_GetFillList_FullMethodName           = "/trade.App/GetFillList"
+	App_GetPositionList_FullMethodName       = "/trade.App/GetPositionList"
+	App_GetMarginSnapshotList_FullMethodName = "/trade.App/GetMarginSnapshotList"
+	App_GetLeverageConfig_FullMethodName     = "/trade.App/GetLeverageConfig"
+	App_SetLeverage_FullMethodName           = "/trade.App/SetLeverage"
 )
 
-// TradeAppClient is the client API for TradeApp service.
+// AppClient is the client API for App service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // APP 交易服务接口
-type TradeAppClient interface {
+type AppClient interface {
 	// 获取交易对列表
 	GetSymbolList(ctx context.Context, in *GetSymbolListReq, opts ...grpc.CallOption) (*GetSymbolListResp, error)
 	// 获取指定交易对详情
@@ -65,140 +65,140 @@ type TradeAppClient interface {
 	SetLeverage(ctx context.Context, in *SetLeverageReq, opts ...grpc.CallOption) (*UserCommonResp, error)
 }
 
-type tradeAppClient struct {
+type appClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewTradeAppClient(cc grpc.ClientConnInterface) TradeAppClient {
-	return &tradeAppClient{cc}
+func NewAppClient(cc grpc.ClientConnInterface) AppClient {
+	return &appClient{cc}
 }
 
-func (c *tradeAppClient) GetSymbolList(ctx context.Context, in *GetSymbolListReq, opts ...grpc.CallOption) (*GetSymbolListResp, error) {
+func (c *appClient) GetSymbolList(ctx context.Context, in *GetSymbolListReq, opts ...grpc.CallOption) (*GetSymbolListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSymbolListResp)
-	err := c.cc.Invoke(ctx, TradeApp_GetSymbolList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetSymbolList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAppClient) GetSymbolDetail(ctx context.Context, in *GetSymbolDetailReq, opts ...grpc.CallOption) (*GetSymbolDetailResp, error) {
+func (c *appClient) GetSymbolDetail(ctx context.Context, in *GetSymbolDetailReq, opts ...grpc.CallOption) (*GetSymbolDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSymbolDetailResp)
-	err := c.cc.Invoke(ctx, TradeApp_GetSymbolDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetSymbolDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAppClient) PlaceOrder(ctx context.Context, in *PlaceOrderReq, opts ...grpc.CallOption) (*PlaceOrderResp, error) {
+func (c *appClient) PlaceOrder(ctx context.Context, in *PlaceOrderReq, opts ...grpc.CallOption) (*PlaceOrderResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PlaceOrderResp)
-	err := c.cc.Invoke(ctx, TradeApp_PlaceOrder_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_PlaceOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAppClient) CancelOrder(ctx context.Context, in *CancelOrderReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
+func (c *appClient) CancelOrder(ctx context.Context, in *CancelOrderReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserCommonResp)
-	err := c.cc.Invoke(ctx, TradeApp_CancelOrder_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_CancelOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAppClient) CancelAllOrders(ctx context.Context, in *CancelAllOrdersReq, opts ...grpc.CallOption) (*CancelAllOrdersResp, error) {
+func (c *appClient) CancelAllOrders(ctx context.Context, in *CancelAllOrdersReq, opts ...grpc.CallOption) (*CancelAllOrdersResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CancelAllOrdersResp)
-	err := c.cc.Invoke(ctx, TradeApp_CancelAllOrders_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_CancelAllOrders_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAppClient) GetOrderList(ctx context.Context, in *GetOrderListReq, opts ...grpc.CallOption) (*GetOrderListResp, error) {
+func (c *appClient) GetOrderList(ctx context.Context, in *GetOrderListReq, opts ...grpc.CallOption) (*GetOrderListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetOrderListResp)
-	err := c.cc.Invoke(ctx, TradeApp_GetOrderList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetOrderList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAppClient) GetOrderDetail(ctx context.Context, in *GetOrderDetailReq, opts ...grpc.CallOption) (*GetOrderDetailResp, error) {
+func (c *appClient) GetOrderDetail(ctx context.Context, in *GetOrderDetailReq, opts ...grpc.CallOption) (*GetOrderDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetOrderDetailResp)
-	err := c.cc.Invoke(ctx, TradeApp_GetOrderDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetOrderDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAppClient) GetFillList(ctx context.Context, in *GetFillListReq, opts ...grpc.CallOption) (*GetFillListResp, error) {
+func (c *appClient) GetFillList(ctx context.Context, in *GetFillListReq, opts ...grpc.CallOption) (*GetFillListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetFillListResp)
-	err := c.cc.Invoke(ctx, TradeApp_GetFillList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetFillList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAppClient) GetPositionList(ctx context.Context, in *GetPositionListReq, opts ...grpc.CallOption) (*GetPositionListResp, error) {
+func (c *appClient) GetPositionList(ctx context.Context, in *GetPositionListReq, opts ...grpc.CallOption) (*GetPositionListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetPositionListResp)
-	err := c.cc.Invoke(ctx, TradeApp_GetPositionList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetPositionList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAppClient) GetMarginSnapshotList(ctx context.Context, in *GetMarginSnapshotListReq, opts ...grpc.CallOption) (*GetMarginSnapshotListResp, error) {
+func (c *appClient) GetMarginSnapshotList(ctx context.Context, in *GetMarginSnapshotListReq, opts ...grpc.CallOption) (*GetMarginSnapshotListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetMarginSnapshotListResp)
-	err := c.cc.Invoke(ctx, TradeApp_GetMarginSnapshotList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetMarginSnapshotList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAppClient) GetLeverageConfig(ctx context.Context, in *GetLeverageConfigReq, opts ...grpc.CallOption) (*GetLeverageConfigResp, error) {
+func (c *appClient) GetLeverageConfig(ctx context.Context, in *GetLeverageConfigReq, opts ...grpc.CallOption) (*GetLeverageConfigResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetLeverageConfigResp)
-	err := c.cc.Invoke(ctx, TradeApp_GetLeverageConfig_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetLeverageConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAppClient) SetLeverage(ctx context.Context, in *SetLeverageReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
+func (c *appClient) SetLeverage(ctx context.Context, in *SetLeverageReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserCommonResp)
-	err := c.cc.Invoke(ctx, TradeApp_SetLeverage_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_SetLeverage_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// TradeAppServer is the server API for TradeApp service.
-// All implementations must embed UnimplementedTradeAppServer
+// AppServer is the server API for App service.
+// All implementations must embed UnimplementedAppServer
 // for forward compatibility.
 //
 // APP 交易服务接口
-type TradeAppServer interface {
+type AppServer interface {
 	// 获取交易对列表
 	GetSymbolList(context.Context, *GetSymbolListReq) (*GetSymbolListResp, error)
 	// 获取指定交易对详情
@@ -223,343 +223,343 @@ type TradeAppServer interface {
 	GetLeverageConfig(context.Context, *GetLeverageConfigReq) (*GetLeverageConfigResp, error)
 	// 设置杠杆倍数
 	SetLeverage(context.Context, *SetLeverageReq) (*UserCommonResp, error)
-	mustEmbedUnimplementedTradeAppServer()
+	mustEmbedUnimplementedAppServer()
 }
 
-// UnimplementedTradeAppServer must be embedded to have
+// UnimplementedAppServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedTradeAppServer struct{}
+type UnimplementedAppServer struct{}
 
-func (UnimplementedTradeAppServer) GetSymbolList(context.Context, *GetSymbolListReq) (*GetSymbolListResp, error) {
+func (UnimplementedAppServer) GetSymbolList(context.Context, *GetSymbolListReq) (*GetSymbolListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSymbolList not implemented")
 }
-func (UnimplementedTradeAppServer) GetSymbolDetail(context.Context, *GetSymbolDetailReq) (*GetSymbolDetailResp, error) {
+func (UnimplementedAppServer) GetSymbolDetail(context.Context, *GetSymbolDetailReq) (*GetSymbolDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSymbolDetail not implemented")
 }
-func (UnimplementedTradeAppServer) PlaceOrder(context.Context, *PlaceOrderReq) (*PlaceOrderResp, error) {
+func (UnimplementedAppServer) PlaceOrder(context.Context, *PlaceOrderReq) (*PlaceOrderResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method PlaceOrder not implemented")
 }
-func (UnimplementedTradeAppServer) CancelOrder(context.Context, *CancelOrderReq) (*UserCommonResp, error) {
+func (UnimplementedAppServer) CancelOrder(context.Context, *CancelOrderReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CancelOrder not implemented")
 }
-func (UnimplementedTradeAppServer) CancelAllOrders(context.Context, *CancelAllOrdersReq) (*CancelAllOrdersResp, error) {
+func (UnimplementedAppServer) CancelAllOrders(context.Context, *CancelAllOrdersReq) (*CancelAllOrdersResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CancelAllOrders not implemented")
 }
-func (UnimplementedTradeAppServer) GetOrderList(context.Context, *GetOrderListReq) (*GetOrderListResp, error) {
+func (UnimplementedAppServer) GetOrderList(context.Context, *GetOrderListReq) (*GetOrderListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetOrderList not implemented")
 }
-func (UnimplementedTradeAppServer) GetOrderDetail(context.Context, *GetOrderDetailReq) (*GetOrderDetailResp, error) {
+func (UnimplementedAppServer) GetOrderDetail(context.Context, *GetOrderDetailReq) (*GetOrderDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetOrderDetail not implemented")
 }
-func (UnimplementedTradeAppServer) GetFillList(context.Context, *GetFillListReq) (*GetFillListResp, error) {
+func (UnimplementedAppServer) GetFillList(context.Context, *GetFillListReq) (*GetFillListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetFillList not implemented")
 }
-func (UnimplementedTradeAppServer) GetPositionList(context.Context, *GetPositionListReq) (*GetPositionListResp, error) {
+func (UnimplementedAppServer) GetPositionList(context.Context, *GetPositionListReq) (*GetPositionListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPositionList not implemented")
 }
-func (UnimplementedTradeAppServer) GetMarginSnapshotList(context.Context, *GetMarginSnapshotListReq) (*GetMarginSnapshotListResp, error) {
+func (UnimplementedAppServer) GetMarginSnapshotList(context.Context, *GetMarginSnapshotListReq) (*GetMarginSnapshotListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMarginSnapshotList not implemented")
 }
-func (UnimplementedTradeAppServer) GetLeverageConfig(context.Context, *GetLeverageConfigReq) (*GetLeverageConfigResp, error) {
+func (UnimplementedAppServer) GetLeverageConfig(context.Context, *GetLeverageConfigReq) (*GetLeverageConfigResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetLeverageConfig not implemented")
 }
-func (UnimplementedTradeAppServer) SetLeverage(context.Context, *SetLeverageReq) (*UserCommonResp, error) {
+func (UnimplementedAppServer) SetLeverage(context.Context, *SetLeverageReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetLeverage not implemented")
 }
-func (UnimplementedTradeAppServer) mustEmbedUnimplementedTradeAppServer() {}
-func (UnimplementedTradeAppServer) testEmbeddedByValue()                  {}
+func (UnimplementedAppServer) mustEmbedUnimplementedAppServer() {}
+func (UnimplementedAppServer) testEmbeddedByValue()             {}
 
-// UnsafeTradeAppServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to TradeAppServer will
+// UnsafeAppServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AppServer will
 // result in compilation errors.
-type UnsafeTradeAppServer interface {
-	mustEmbedUnimplementedTradeAppServer()
+type UnsafeAppServer interface {
+	mustEmbedUnimplementedAppServer()
 }
 
-func RegisterTradeAppServer(s grpc.ServiceRegistrar, srv TradeAppServer) {
-	// If the following call panics, it indicates UnimplementedTradeAppServer was
+func RegisterAppServer(s grpc.ServiceRegistrar, srv AppServer) {
+	// If the following call panics, it indicates UnimplementedAppServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&TradeApp_ServiceDesc, srv)
+	s.RegisterService(&App_ServiceDesc, srv)
 }
 
-func _TradeApp_GetSymbolList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetSymbolList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSymbolListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAppServer).GetSymbolList(ctx, in)
+		return srv.(AppServer).GetSymbolList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeApp_GetSymbolList_FullMethodName,
+		FullMethod: App_GetSymbolList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAppServer).GetSymbolList(ctx, req.(*GetSymbolListReq))
+		return srv.(AppServer).GetSymbolList(ctx, req.(*GetSymbolListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeApp_GetSymbolDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetSymbolDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSymbolDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAppServer).GetSymbolDetail(ctx, in)
+		return srv.(AppServer).GetSymbolDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeApp_GetSymbolDetail_FullMethodName,
+		FullMethod: App_GetSymbolDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAppServer).GetSymbolDetail(ctx, req.(*GetSymbolDetailReq))
+		return srv.(AppServer).GetSymbolDetail(ctx, req.(*GetSymbolDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeApp_PlaceOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_PlaceOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PlaceOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAppServer).PlaceOrder(ctx, in)
+		return srv.(AppServer).PlaceOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeApp_PlaceOrder_FullMethodName,
+		FullMethod: App_PlaceOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAppServer).PlaceOrder(ctx, req.(*PlaceOrderReq))
+		return srv.(AppServer).PlaceOrder(ctx, req.(*PlaceOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeApp_CancelOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_CancelOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CancelOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAppServer).CancelOrder(ctx, in)
+		return srv.(AppServer).CancelOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeApp_CancelOrder_FullMethodName,
+		FullMethod: App_CancelOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAppServer).CancelOrder(ctx, req.(*CancelOrderReq))
+		return srv.(AppServer).CancelOrder(ctx, req.(*CancelOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeApp_CancelAllOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_CancelAllOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CancelAllOrdersReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAppServer).CancelAllOrders(ctx, in)
+		return srv.(AppServer).CancelAllOrders(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeApp_CancelAllOrders_FullMethodName,
+		FullMethod: App_CancelAllOrders_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAppServer).CancelAllOrders(ctx, req.(*CancelAllOrdersReq))
+		return srv.(AppServer).CancelAllOrders(ctx, req.(*CancelAllOrdersReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeApp_GetOrderList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetOrderList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetOrderListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAppServer).GetOrderList(ctx, in)
+		return srv.(AppServer).GetOrderList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeApp_GetOrderList_FullMethodName,
+		FullMethod: App_GetOrderList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAppServer).GetOrderList(ctx, req.(*GetOrderListReq))
+		return srv.(AppServer).GetOrderList(ctx, req.(*GetOrderListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeApp_GetOrderDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetOrderDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetOrderDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAppServer).GetOrderDetail(ctx, in)
+		return srv.(AppServer).GetOrderDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeApp_GetOrderDetail_FullMethodName,
+		FullMethod: App_GetOrderDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAppServer).GetOrderDetail(ctx, req.(*GetOrderDetailReq))
+		return srv.(AppServer).GetOrderDetail(ctx, req.(*GetOrderDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeApp_GetFillList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetFillList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetFillListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAppServer).GetFillList(ctx, in)
+		return srv.(AppServer).GetFillList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeApp_GetFillList_FullMethodName,
+		FullMethod: App_GetFillList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAppServer).GetFillList(ctx, req.(*GetFillListReq))
+		return srv.(AppServer).GetFillList(ctx, req.(*GetFillListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeApp_GetPositionList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetPositionList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPositionListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAppServer).GetPositionList(ctx, in)
+		return srv.(AppServer).GetPositionList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeApp_GetPositionList_FullMethodName,
+		FullMethod: App_GetPositionList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAppServer).GetPositionList(ctx, req.(*GetPositionListReq))
+		return srv.(AppServer).GetPositionList(ctx, req.(*GetPositionListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeApp_GetMarginSnapshotList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetMarginSnapshotList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMarginSnapshotListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAppServer).GetMarginSnapshotList(ctx, in)
+		return srv.(AppServer).GetMarginSnapshotList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeApp_GetMarginSnapshotList_FullMethodName,
+		FullMethod: App_GetMarginSnapshotList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAppServer).GetMarginSnapshotList(ctx, req.(*GetMarginSnapshotListReq))
+		return srv.(AppServer).GetMarginSnapshotList(ctx, req.(*GetMarginSnapshotListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeApp_GetLeverageConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetLeverageConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetLeverageConfigReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAppServer).GetLeverageConfig(ctx, in)
+		return srv.(AppServer).GetLeverageConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeApp_GetLeverageConfig_FullMethodName,
+		FullMethod: App_GetLeverageConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAppServer).GetLeverageConfig(ctx, req.(*GetLeverageConfigReq))
+		return srv.(AppServer).GetLeverageConfig(ctx, req.(*GetLeverageConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeApp_SetLeverage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_SetLeverage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetLeverageReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAppServer).SetLeverage(ctx, in)
+		return srv.(AppServer).SetLeverage(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeApp_SetLeverage_FullMethodName,
+		FullMethod: App_SetLeverage_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAppServer).SetLeverage(ctx, req.(*SetLeverageReq))
+		return srv.(AppServer).SetLeverage(ctx, req.(*SetLeverageReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// TradeApp_ServiceDesc is the grpc.ServiceDesc for TradeApp service.
+// App_ServiceDesc is the grpc.ServiceDesc for App service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var TradeApp_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "trade.TradeApp",
-	HandlerType: (*TradeAppServer)(nil),
+var App_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "trade.App",
+	HandlerType: (*AppServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetSymbolList",
-			Handler:    _TradeApp_GetSymbolList_Handler,
+			Handler:    _App_GetSymbolList_Handler,
 		},
 		{
 			MethodName: "GetSymbolDetail",
-			Handler:    _TradeApp_GetSymbolDetail_Handler,
+			Handler:    _App_GetSymbolDetail_Handler,
 		},
 		{
 			MethodName: "PlaceOrder",
-			Handler:    _TradeApp_PlaceOrder_Handler,
+			Handler:    _App_PlaceOrder_Handler,
 		},
 		{
 			MethodName: "CancelOrder",
-			Handler:    _TradeApp_CancelOrder_Handler,
+			Handler:    _App_CancelOrder_Handler,
 		},
 		{
 			MethodName: "CancelAllOrders",
-			Handler:    _TradeApp_CancelAllOrders_Handler,
+			Handler:    _App_CancelAllOrders_Handler,
 		},
 		{
 			MethodName: "GetOrderList",
-			Handler:    _TradeApp_GetOrderList_Handler,
+			Handler:    _App_GetOrderList_Handler,
 		},
 		{
 			MethodName: "GetOrderDetail",
-			Handler:    _TradeApp_GetOrderDetail_Handler,
+			Handler:    _App_GetOrderDetail_Handler,
 		},
 		{
 			MethodName: "GetFillList",
-			Handler:    _TradeApp_GetFillList_Handler,
+			Handler:    _App_GetFillList_Handler,
 		},
 		{
 			MethodName: "GetPositionList",
-			Handler:    _TradeApp_GetPositionList_Handler,
+			Handler:    _App_GetPositionList_Handler,
 		},
 		{
 			MethodName: "GetMarginSnapshotList",
-			Handler:    _TradeApp_GetMarginSnapshotList_Handler,
+			Handler:    _App_GetMarginSnapshotList_Handler,
 		},
 		{
 			MethodName: "GetLeverageConfig",
-			Handler:    _TradeApp_GetLeverageConfig_Handler,
+			Handler:    _App_GetLeverageConfig_Handler,
 		},
 		{
 			MethodName: "SetLeverage",
-			Handler:    _TradeApp_SetLeverage_Handler,
+			Handler:    _App_SetLeverage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -567,62 +567,62 @@ var TradeApp_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	TradeAdmin_CreateSymbol_FullMethodName                 = "/trade.TradeAdmin/CreateSymbol"
-	TradeAdmin_UpdateSymbol_FullMethodName                 = "/trade.TradeAdmin/UpdateSymbol"
-	TradeAdmin_GetSymbolListAdmin_FullMethodName           = "/trade.TradeAdmin/GetSymbolListAdmin"
-	TradeAdmin_GetSymbolDetailAdmin_FullMethodName         = "/trade.TradeAdmin/GetSymbolDetailAdmin"
-	TradeAdmin_SetSpotSymbolConfig_FullMethodName          = "/trade.TradeAdmin/SetSpotSymbolConfig"
-	TradeAdmin_SetContractSymbolConfig_FullMethodName      = "/trade.TradeAdmin/SetContractSymbolConfig"
-	TradeAdmin_SetSecondsSymbolConfig_FullMethodName       = "/trade.TradeAdmin/SetSecondsSymbolConfig"
-	TradeAdmin_SetSymbolSession_FullMethodName             = "/trade.TradeAdmin/SetSymbolSession"
-	TradeAdmin_SetSymbolLeverageConfig_FullMethodName      = "/trade.TradeAdmin/SetSymbolLeverageConfig"
-	TradeAdmin_GetSymbolLeverageConfig_FullMethodName      = "/trade.TradeAdmin/GetSymbolLeverageConfig"
-	TradeAdmin_GetSymbolLeverageConfigList_FullMethodName  = "/trade.TradeAdmin/GetSymbolLeverageConfigList"
-	TradeAdmin_GetOrderListAdmin_FullMethodName            = "/trade.TradeAdmin/GetOrderListAdmin"
-	TradeAdmin_GetOrderDetailAdmin_FullMethodName          = "/trade.TradeAdmin/GetOrderDetailAdmin"
-	TradeAdmin_GetFillListAdmin_FullMethodName             = "/trade.TradeAdmin/GetFillListAdmin"
-	TradeAdmin_GetFillDetailAdmin_FullMethodName           = "/trade.TradeAdmin/GetFillDetailAdmin"
-	TradeAdmin_GetPositionListAdmin_FullMethodName         = "/trade.TradeAdmin/GetPositionListAdmin"
-	TradeAdmin_GetPositionDetailAdmin_FullMethodName       = "/trade.TradeAdmin/GetPositionDetailAdmin"
-	TradeAdmin_GetPositionHistoryListAdmin_FullMethodName  = "/trade.TradeAdmin/GetPositionHistoryListAdmin"
-	TradeAdmin_GetMarginSnapshotListAdmin_FullMethodName   = "/trade.TradeAdmin/GetMarginSnapshotListAdmin"
-	TradeAdmin_GetCancelLogListAdmin_FullMethodName        = "/trade.TradeAdmin/GetCancelLogListAdmin"
-	TradeAdmin_SetUserTradeLimit_FullMethodName            = "/trade.TradeAdmin/SetUserTradeLimit"
-	TradeAdmin_SetUserSymbolLimit_FullMethodName           = "/trade.TradeAdmin/SetUserSymbolLimit"
-	TradeAdmin_GetUserTradeLimit_FullMethodName            = "/trade.TradeAdmin/GetUserTradeLimit"
-	TradeAdmin_GetUserSymbolLimit_FullMethodName           = "/trade.TradeAdmin/GetUserSymbolLimit"
-	TradeAdmin_SetUserTradeConfig_FullMethodName           = "/trade.TradeAdmin/SetUserTradeConfig"
-	TradeAdmin_GetUserTradeConfig_FullMethodName           = "/trade.TradeAdmin/GetUserTradeConfig"
-	TradeAdmin_SetContractUserConfig_FullMethodName        = "/trade.TradeAdmin/SetContractUserConfig"
-	TradeAdmin_GetContractUserConfig_FullMethodName        = "/trade.TradeAdmin/GetContractUserConfig"
-	TradeAdmin_GetRiskOrderCheckLogList_FullMethodName     = "/trade.TradeAdmin/GetRiskOrderCheckLogList"
-	TradeAdmin_SetUserLeverageConfig_FullMethodName        = "/trade.TradeAdmin/SetUserLeverageConfig"
-	TradeAdmin_GetUserLeverageConfig_FullMethodName        = "/trade.TradeAdmin/GetUserLeverageConfig"
-	TradeAdmin_GetTradeEventList_FullMethodName            = "/trade.TradeAdmin/GetTradeEventList"
-	TradeAdmin_GetTradeEventDetail_FullMethodName          = "/trade.TradeAdmin/GetTradeEventDetail"
-	TradeAdmin_RetryTradeEvent_FullMethodName              = "/trade.TradeAdmin/RetryTradeEvent"
-	TradeAdmin_SetContractRiskLimitTier_FullMethodName     = "/trade.TradeAdmin/SetContractRiskLimitTier"
-	TradeAdmin_GetContractRiskLimitTierList_FullMethodName = "/trade.TradeAdmin/GetContractRiskLimitTierList"
-	TradeAdmin_GetFundingBatchList_FullMethodName          = "/trade.TradeAdmin/GetFundingBatchList"
-	TradeAdmin_GetFundingSettlementList_FullMethodName     = "/trade.TradeAdmin/GetFundingSettlementList"
-	TradeAdmin_GetDeliveryBatchList_FullMethodName         = "/trade.TradeAdmin/GetDeliveryBatchList"
-	TradeAdmin_GetDeliverySettlementList_FullMethodName    = "/trade.TradeAdmin/GetDeliverySettlementList"
-	TradeAdmin_GetLiquidationList_FullMethodName           = "/trade.TradeAdmin/GetLiquidationList"
-	TradeAdmin_GetSecondsPriceSnapshotList_FullMethodName  = "/trade.TradeAdmin/GetSecondsPriceSnapshotList"
-	TradeAdmin_GetAssetReservationList_FullMethodName      = "/trade.TradeAdmin/GetAssetReservationList"
-	TradeAdmin_GetSettlementInstructionList_FullMethodName = "/trade.TradeAdmin/GetSettlementInstructionList"
-	TradeAdmin_RetrySettlementInstruction_FullMethodName   = "/trade.TradeAdmin/RetrySettlementInstruction"
-	TradeAdmin_SetInsuranceFundAccount_FullMethodName      = "/trade.TradeAdmin/SetInsuranceFundAccount"
-	TradeAdmin_GetInsuranceFundAccountList_FullMethodName  = "/trade.TradeAdmin/GetInsuranceFundAccountList"
-	TradeAdmin_GetMarketSnapshotList_FullMethodName        = "/trade.TradeAdmin/GetMarketSnapshotList"
+	Admin_CreateSymbol_FullMethodName                 = "/trade.Admin/CreateSymbol"
+	Admin_UpdateSymbol_FullMethodName                 = "/trade.Admin/UpdateSymbol"
+	Admin_GetSymbolListAdmin_FullMethodName           = "/trade.Admin/GetSymbolListAdmin"
+	Admin_GetSymbolDetailAdmin_FullMethodName         = "/trade.Admin/GetSymbolDetailAdmin"
+	Admin_SetSpotSymbolConfig_FullMethodName          = "/trade.Admin/SetSpotSymbolConfig"
+	Admin_SetContractSymbolConfig_FullMethodName      = "/trade.Admin/SetContractSymbolConfig"
+	Admin_SetSecondsSymbolConfig_FullMethodName       = "/trade.Admin/SetSecondsSymbolConfig"
+	Admin_SetSymbolSession_FullMethodName             = "/trade.Admin/SetSymbolSession"
+	Admin_SetSymbolLeverageConfig_FullMethodName      = "/trade.Admin/SetSymbolLeverageConfig"
+	Admin_GetSymbolLeverageConfig_FullMethodName      = "/trade.Admin/GetSymbolLeverageConfig"
+	Admin_GetSymbolLeverageConfigList_FullMethodName  = "/trade.Admin/GetSymbolLeverageConfigList"
+	Admin_GetOrderListAdmin_FullMethodName            = "/trade.Admin/GetOrderListAdmin"
+	Admin_GetOrderDetailAdmin_FullMethodName          = "/trade.Admin/GetOrderDetailAdmin"
+	Admin_GetFillListAdmin_FullMethodName             = "/trade.Admin/GetFillListAdmin"
+	Admin_GetFillDetailAdmin_FullMethodName           = "/trade.Admin/GetFillDetailAdmin"
+	Admin_GetPositionListAdmin_FullMethodName         = "/trade.Admin/GetPositionListAdmin"
+	Admin_GetPositionDetailAdmin_FullMethodName       = "/trade.Admin/GetPositionDetailAdmin"
+	Admin_GetPositionHistoryListAdmin_FullMethodName  = "/trade.Admin/GetPositionHistoryListAdmin"
+	Admin_GetMarginSnapshotListAdmin_FullMethodName   = "/trade.Admin/GetMarginSnapshotListAdmin"
+	Admin_GetCancelLogListAdmin_FullMethodName        = "/trade.Admin/GetCancelLogListAdmin"
+	Admin_SetUserTradeLimit_FullMethodName            = "/trade.Admin/SetUserTradeLimit"
+	Admin_SetUserSymbolLimit_FullMethodName           = "/trade.Admin/SetUserSymbolLimit"
+	Admin_GetUserTradeLimit_FullMethodName            = "/trade.Admin/GetUserTradeLimit"
+	Admin_GetUserSymbolLimit_FullMethodName           = "/trade.Admin/GetUserSymbolLimit"
+	Admin_SetUserTradeConfig_FullMethodName           = "/trade.Admin/SetUserTradeConfig"
+	Admin_GetUserTradeConfig_FullMethodName           = "/trade.Admin/GetUserTradeConfig"
+	Admin_SetContractUserConfig_FullMethodName        = "/trade.Admin/SetContractUserConfig"
+	Admin_GetContractUserConfig_FullMethodName        = "/trade.Admin/GetContractUserConfig"
+	Admin_GetRiskOrderCheckLogList_FullMethodName     = "/trade.Admin/GetRiskOrderCheckLogList"
+	Admin_SetUserLeverageConfig_FullMethodName        = "/trade.Admin/SetUserLeverageConfig"
+	Admin_GetUserLeverageConfig_FullMethodName        = "/trade.Admin/GetUserLeverageConfig"
+	Admin_GetTradeEventList_FullMethodName            = "/trade.Admin/GetTradeEventList"
+	Admin_GetTradeEventDetail_FullMethodName          = "/trade.Admin/GetTradeEventDetail"
+	Admin_RetryTradeEvent_FullMethodName              = "/trade.Admin/RetryTradeEvent"
+	Admin_SetContractRiskLimitTier_FullMethodName     = "/trade.Admin/SetContractRiskLimitTier"
+	Admin_GetContractRiskLimitTierList_FullMethodName = "/trade.Admin/GetContractRiskLimitTierList"
+	Admin_GetFundingBatchList_FullMethodName          = "/trade.Admin/GetFundingBatchList"
+	Admin_GetFundingSettlementList_FullMethodName     = "/trade.Admin/GetFundingSettlementList"
+	Admin_GetDeliveryBatchList_FullMethodName         = "/trade.Admin/GetDeliveryBatchList"
+	Admin_GetDeliverySettlementList_FullMethodName    = "/trade.Admin/GetDeliverySettlementList"
+	Admin_GetLiquidationList_FullMethodName           = "/trade.Admin/GetLiquidationList"
+	Admin_GetSecondsPriceSnapshotList_FullMethodName  = "/trade.Admin/GetSecondsPriceSnapshotList"
+	Admin_GetAssetReservationList_FullMethodName      = "/trade.Admin/GetAssetReservationList"
+	Admin_GetSettlementInstructionList_FullMethodName = "/trade.Admin/GetSettlementInstructionList"
+	Admin_RetrySettlementInstruction_FullMethodName   = "/trade.Admin/RetrySettlementInstruction"
+	Admin_SetInsuranceFundAccount_FullMethodName      = "/trade.Admin/SetInsuranceFundAccount"
+	Admin_GetInsuranceFundAccountList_FullMethodName  = "/trade.Admin/GetInsuranceFundAccountList"
+	Admin_GetMarketSnapshotList_FullMethodName        = "/trade.Admin/GetMarketSnapshotList"
 )
 
-// TradeAdminClient is the client API for TradeAdmin service.
+// AdminClient is the client API for Admin service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // 交易服务管理后台接口
-type TradeAdminClient interface {
+type AdminClient interface {
 	// 创建交易对
 	CreateSymbol(ctx context.Context, in *CreateSymbolReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 更新交易对信息
@@ -713,500 +713,500 @@ type TradeAdminClient interface {
 	GetMarketSnapshotList(ctx context.Context, in *GetMarketSnapshotListReq, opts ...grpc.CallOption) (*GetMarketSnapshotListResp, error)
 }
 
-type tradeAdminClient struct {
+type adminClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewTradeAdminClient(cc grpc.ClientConnInterface) TradeAdminClient {
-	return &tradeAdminClient{cc}
+func NewAdminClient(cc grpc.ClientConnInterface) AdminClient {
+	return &adminClient{cc}
 }
 
-func (c *tradeAdminClient) CreateSymbol(ctx context.Context, in *CreateSymbolReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) CreateSymbol(ctx context.Context, in *CreateSymbolReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_CreateSymbol_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_CreateSymbol_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) UpdateSymbol(ctx context.Context, in *UpdateSymbolReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdateSymbol(ctx context.Context, in *UpdateSymbolReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_UpdateSymbol_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateSymbol_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetSymbolListAdmin(ctx context.Context, in *GetSymbolListAdminReq, opts ...grpc.CallOption) (*GetSymbolListAdminResp, error) {
+func (c *adminClient) GetSymbolListAdmin(ctx context.Context, in *GetSymbolListAdminReq, opts ...grpc.CallOption) (*GetSymbolListAdminResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSymbolListAdminResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetSymbolListAdmin_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetSymbolListAdmin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetSymbolDetailAdmin(ctx context.Context, in *GetSymbolDetailAdminReq, opts ...grpc.CallOption) (*GetSymbolDetailAdminResp, error) {
+func (c *adminClient) GetSymbolDetailAdmin(ctx context.Context, in *GetSymbolDetailAdminReq, opts ...grpc.CallOption) (*GetSymbolDetailAdminResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSymbolDetailAdminResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetSymbolDetailAdmin_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetSymbolDetailAdmin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetSpotSymbolConfig(ctx context.Context, in *SetSpotSymbolConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) SetSpotSymbolConfig(ctx context.Context, in *SetSpotSymbolConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_SetSpotSymbolConfig_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_SetSpotSymbolConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetContractSymbolConfig(ctx context.Context, in *SetContractSymbolConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) SetContractSymbolConfig(ctx context.Context, in *SetContractSymbolConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_SetContractSymbolConfig_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_SetContractSymbolConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetSecondsSymbolConfig(ctx context.Context, in *SetSecondsSymbolConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) SetSecondsSymbolConfig(ctx context.Context, in *SetSecondsSymbolConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_SetSecondsSymbolConfig_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_SetSecondsSymbolConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetSymbolSession(ctx context.Context, in *SetSymbolSessionReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) SetSymbolSession(ctx context.Context, in *SetSymbolSessionReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_SetSymbolSession_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_SetSymbolSession_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetSymbolLeverageConfig(ctx context.Context, in *SetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) SetSymbolLeverageConfig(ctx context.Context, in *SetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_SetSymbolLeverageConfig_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_SetSymbolLeverageConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetSymbolLeverageConfig(ctx context.Context, in *GetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*GetSymbolLeverageConfigResp, error) {
+func (c *adminClient) GetSymbolLeverageConfig(ctx context.Context, in *GetSymbolLeverageConfigReq, opts ...grpc.CallOption) (*GetSymbolLeverageConfigResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSymbolLeverageConfigResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetSymbolLeverageConfig_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetSymbolLeverageConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetSymbolLeverageConfigList(ctx context.Context, in *GetSymbolLeverageConfigListReq, opts ...grpc.CallOption) (*GetSymbolLeverageConfigListResp, error) {
+func (c *adminClient) GetSymbolLeverageConfigList(ctx context.Context, in *GetSymbolLeverageConfigListReq, opts ...grpc.CallOption) (*GetSymbolLeverageConfigListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSymbolLeverageConfigListResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetSymbolLeverageConfigList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetSymbolLeverageConfigList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetOrderListAdmin(ctx context.Context, in *GetOrderListAdminReq, opts ...grpc.CallOption) (*GetOrderListAdminResp, error) {
+func (c *adminClient) GetOrderListAdmin(ctx context.Context, in *GetOrderListAdminReq, opts ...grpc.CallOption) (*GetOrderListAdminResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetOrderListAdminResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetOrderListAdmin_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetOrderListAdmin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetOrderDetailAdmin(ctx context.Context, in *GetOrderDetailAdminReq, opts ...grpc.CallOption) (*GetOrderDetailAdminResp, error) {
+func (c *adminClient) GetOrderDetailAdmin(ctx context.Context, in *GetOrderDetailAdminReq, opts ...grpc.CallOption) (*GetOrderDetailAdminResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetOrderDetailAdminResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetOrderDetailAdmin_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetOrderDetailAdmin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetFillListAdmin(ctx context.Context, in *GetFillListAdminReq, opts ...grpc.CallOption) (*GetFillListAdminResp, error) {
+func (c *adminClient) GetFillListAdmin(ctx context.Context, in *GetFillListAdminReq, opts ...grpc.CallOption) (*GetFillListAdminResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetFillListAdminResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetFillListAdmin_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetFillListAdmin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetFillDetailAdmin(ctx context.Context, in *GetFillDetailAdminReq, opts ...grpc.CallOption) (*GetFillDetailAdminResp, error) {
+func (c *adminClient) GetFillDetailAdmin(ctx context.Context, in *GetFillDetailAdminReq, opts ...grpc.CallOption) (*GetFillDetailAdminResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetFillDetailAdminResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetFillDetailAdmin_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetFillDetailAdmin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetPositionListAdmin(ctx context.Context, in *GetPositionListAdminReq, opts ...grpc.CallOption) (*GetPositionListAdminResp, error) {
+func (c *adminClient) GetPositionListAdmin(ctx context.Context, in *GetPositionListAdminReq, opts ...grpc.CallOption) (*GetPositionListAdminResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetPositionListAdminResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetPositionListAdmin_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetPositionListAdmin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetPositionDetailAdmin(ctx context.Context, in *GetPositionDetailAdminReq, opts ...grpc.CallOption) (*GetPositionDetailAdminResp, error) {
+func (c *adminClient) GetPositionDetailAdmin(ctx context.Context, in *GetPositionDetailAdminReq, opts ...grpc.CallOption) (*GetPositionDetailAdminResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetPositionDetailAdminResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetPositionDetailAdmin_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetPositionDetailAdmin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetPositionHistoryListAdmin(ctx context.Context, in *GetPositionHistoryListAdminReq, opts ...grpc.CallOption) (*GetPositionHistoryListAdminResp, error) {
+func (c *adminClient) GetPositionHistoryListAdmin(ctx context.Context, in *GetPositionHistoryListAdminReq, opts ...grpc.CallOption) (*GetPositionHistoryListAdminResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetPositionHistoryListAdminResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetPositionHistoryListAdmin_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetPositionHistoryListAdmin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetMarginSnapshotListAdmin(ctx context.Context, in *GetMarginSnapshotListAdminReq, opts ...grpc.CallOption) (*GetMarginSnapshotListAdminResp, error) {
+func (c *adminClient) GetMarginSnapshotListAdmin(ctx context.Context, in *GetMarginSnapshotListAdminReq, opts ...grpc.CallOption) (*GetMarginSnapshotListAdminResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetMarginSnapshotListAdminResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetMarginSnapshotListAdmin_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetMarginSnapshotListAdmin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetCancelLogListAdmin(ctx context.Context, in *GetCancelLogListAdminReq, opts ...grpc.CallOption) (*GetCancelLogListAdminResp, error) {
+func (c *adminClient) GetCancelLogListAdmin(ctx context.Context, in *GetCancelLogListAdminReq, opts ...grpc.CallOption) (*GetCancelLogListAdminResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetCancelLogListAdminResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetCancelLogListAdmin_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetCancelLogListAdmin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetUserTradeLimit(ctx context.Context, in *SetUserTradeLimitReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) SetUserTradeLimit(ctx context.Context, in *SetUserTradeLimitReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_SetUserTradeLimit_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_SetUserTradeLimit_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetUserSymbolLimit(ctx context.Context, in *SetUserSymbolLimitReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) SetUserSymbolLimit(ctx context.Context, in *SetUserSymbolLimitReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_SetUserSymbolLimit_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_SetUserSymbolLimit_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetUserTradeLimit(ctx context.Context, in *GetUserTradeLimitReq, opts ...grpc.CallOption) (*GetUserTradeLimitResp, error) {
+func (c *adminClient) GetUserTradeLimit(ctx context.Context, in *GetUserTradeLimitReq, opts ...grpc.CallOption) (*GetUserTradeLimitResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetUserTradeLimitResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetUserTradeLimit_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetUserTradeLimit_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetUserSymbolLimit(ctx context.Context, in *GetUserSymbolLimitReq, opts ...grpc.CallOption) (*GetUserSymbolLimitResp, error) {
+func (c *adminClient) GetUserSymbolLimit(ctx context.Context, in *GetUserSymbolLimitReq, opts ...grpc.CallOption) (*GetUserSymbolLimitResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetUserSymbolLimitResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetUserSymbolLimit_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetUserSymbolLimit_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_SetUserTradeConfig_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_SetUserTradeConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetUserTradeConfig(ctx context.Context, in *GetUserTradeConfigReq, opts ...grpc.CallOption) (*GetUserTradeConfigResp, error) {
+func (c *adminClient) GetUserTradeConfig(ctx context.Context, in *GetUserTradeConfigReq, opts ...grpc.CallOption) (*GetUserTradeConfigResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetUserTradeConfigResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetUserTradeConfig_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetUserTradeConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetContractUserConfig(ctx context.Context, in *SetContractUserConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) SetContractUserConfig(ctx context.Context, in *SetContractUserConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_SetContractUserConfig_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_SetContractUserConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetContractUserConfig(ctx context.Context, in *GetContractUserConfigReq, opts ...grpc.CallOption) (*GetContractUserConfigResp, error) {
+func (c *adminClient) GetContractUserConfig(ctx context.Context, in *GetContractUserConfigReq, opts ...grpc.CallOption) (*GetContractUserConfigResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetContractUserConfigResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetContractUserConfig_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetContractUserConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetRiskOrderCheckLogList(ctx context.Context, in *GetRiskOrderCheckLogListReq, opts ...grpc.CallOption) (*GetRiskOrderCheckLogListResp, error) {
+func (c *adminClient) GetRiskOrderCheckLogList(ctx context.Context, in *GetRiskOrderCheckLogListReq, opts ...grpc.CallOption) (*GetRiskOrderCheckLogListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetRiskOrderCheckLogListResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetRiskOrderCheckLogList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetRiskOrderCheckLogList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetUserLeverageConfig(ctx context.Context, in *SetUserLeverageConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) SetUserLeverageConfig(ctx context.Context, in *SetUserLeverageConfigReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_SetUserLeverageConfig_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_SetUserLeverageConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetUserLeverageConfig(ctx context.Context, in *GetUserLeverageConfigReq, opts ...grpc.CallOption) (*GetUserLeverageConfigResp, error) {
+func (c *adminClient) GetUserLeverageConfig(ctx context.Context, in *GetUserLeverageConfigReq, opts ...grpc.CallOption) (*GetUserLeverageConfigResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetUserLeverageConfigResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetUserLeverageConfig_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetUserLeverageConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetTradeEventList(ctx context.Context, in *GetTradeEventListReq, opts ...grpc.CallOption) (*GetTradeEventListResp, error) {
+func (c *adminClient) GetTradeEventList(ctx context.Context, in *GetTradeEventListReq, opts ...grpc.CallOption) (*GetTradeEventListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetTradeEventListResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetTradeEventList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetTradeEventList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetTradeEventDetail(ctx context.Context, in *GetTradeEventDetailReq, opts ...grpc.CallOption) (*GetTradeEventDetailResp, error) {
+func (c *adminClient) GetTradeEventDetail(ctx context.Context, in *GetTradeEventDetailReq, opts ...grpc.CallOption) (*GetTradeEventDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetTradeEventDetailResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetTradeEventDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetTradeEventDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_RetryTradeEvent_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_RetryTradeEvent_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetContractRiskLimitTier(ctx context.Context, in *SetContractRiskLimitTierReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) SetContractRiskLimitTier(ctx context.Context, in *SetContractRiskLimitTierReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_SetContractRiskLimitTier_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_SetContractRiskLimitTier_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetContractRiskLimitTierList(ctx context.Context, in *GetContractRiskLimitTierListReq, opts ...grpc.CallOption) (*GetContractRiskLimitTierListResp, error) {
+func (c *adminClient) GetContractRiskLimitTierList(ctx context.Context, in *GetContractRiskLimitTierListReq, opts ...grpc.CallOption) (*GetContractRiskLimitTierListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetContractRiskLimitTierListResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetContractRiskLimitTierList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetContractRiskLimitTierList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetFundingBatchList(ctx context.Context, in *GetFundingBatchListReq, opts ...grpc.CallOption) (*GetFundingBatchListResp, error) {
+func (c *adminClient) GetFundingBatchList(ctx context.Context, in *GetFundingBatchListReq, opts ...grpc.CallOption) (*GetFundingBatchListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetFundingBatchListResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetFundingBatchList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetFundingBatchList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetFundingSettlementList(ctx context.Context, in *GetFundingSettlementListReq, opts ...grpc.CallOption) (*GetFundingSettlementListResp, error) {
+func (c *adminClient) GetFundingSettlementList(ctx context.Context, in *GetFundingSettlementListReq, opts ...grpc.CallOption) (*GetFundingSettlementListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetFundingSettlementListResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetFundingSettlementList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetFundingSettlementList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetDeliveryBatchList(ctx context.Context, in *GetDeliveryBatchListReq, opts ...grpc.CallOption) (*GetDeliveryBatchListResp, error) {
+func (c *adminClient) GetDeliveryBatchList(ctx context.Context, in *GetDeliveryBatchListReq, opts ...grpc.CallOption) (*GetDeliveryBatchListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetDeliveryBatchListResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetDeliveryBatchList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetDeliveryBatchList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetDeliverySettlementList(ctx context.Context, in *GetDeliverySettlementListReq, opts ...grpc.CallOption) (*GetDeliverySettlementListResp, error) {
+func (c *adminClient) GetDeliverySettlementList(ctx context.Context, in *GetDeliverySettlementListReq, opts ...grpc.CallOption) (*GetDeliverySettlementListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetDeliverySettlementListResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetDeliverySettlementList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetDeliverySettlementList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetLiquidationList(ctx context.Context, in *GetLiquidationListReq, opts ...grpc.CallOption) (*GetLiquidationListResp, error) {
+func (c *adminClient) GetLiquidationList(ctx context.Context, in *GetLiquidationListReq, opts ...grpc.CallOption) (*GetLiquidationListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetLiquidationListResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetLiquidationList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetLiquidationList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetSecondsPriceSnapshotList(ctx context.Context, in *GetSecondsPriceSnapshotListReq, opts ...grpc.CallOption) (*GetSecondsPriceSnapshotListResp, error) {
+func (c *adminClient) GetSecondsPriceSnapshotList(ctx context.Context, in *GetSecondsPriceSnapshotListReq, opts ...grpc.CallOption) (*GetSecondsPriceSnapshotListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSecondsPriceSnapshotListResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetSecondsPriceSnapshotList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetSecondsPriceSnapshotList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetAssetReservationList(ctx context.Context, in *GetAssetReservationListReq, opts ...grpc.CallOption) (*GetAssetReservationListResp, error) {
+func (c *adminClient) GetAssetReservationList(ctx context.Context, in *GetAssetReservationListReq, opts ...grpc.CallOption) (*GetAssetReservationListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetAssetReservationListResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetAssetReservationList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetAssetReservationList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetSettlementInstructionList(ctx context.Context, in *GetSettlementInstructionListReq, opts ...grpc.CallOption) (*GetSettlementInstructionListResp, error) {
+func (c *adminClient) GetSettlementInstructionList(ctx context.Context, in *GetSettlementInstructionListReq, opts ...grpc.CallOption) (*GetSettlementInstructionListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSettlementInstructionListResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetSettlementInstructionList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetSettlementInstructionList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_RetrySettlementInstruction_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_RetrySettlementInstruction_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) SetInsuranceFundAccount(ctx context.Context, in *SetInsuranceFundAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) SetInsuranceFundAccount(ctx context.Context, in *SetInsuranceFundAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_SetInsuranceFundAccount_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_SetInsuranceFundAccount_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetInsuranceFundAccountList(ctx context.Context, in *GetInsuranceFundAccountListReq, opts ...grpc.CallOption) (*GetInsuranceFundAccountListResp, error) {
+func (c *adminClient) GetInsuranceFundAccountList(ctx context.Context, in *GetInsuranceFundAccountListReq, opts ...grpc.CallOption) (*GetInsuranceFundAccountListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetInsuranceFundAccountListResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetInsuranceFundAccountList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetInsuranceFundAccountList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeAdminClient) GetMarketSnapshotList(ctx context.Context, in *GetMarketSnapshotListReq, opts ...grpc.CallOption) (*GetMarketSnapshotListResp, error) {
+func (c *adminClient) GetMarketSnapshotList(ctx context.Context, in *GetMarketSnapshotListReq, opts ...grpc.CallOption) (*GetMarketSnapshotListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetMarketSnapshotListResp)
-	err := c.cc.Invoke(ctx, TradeAdmin_GetMarketSnapshotList_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetMarketSnapshotList_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// TradeAdminServer is the server API for TradeAdmin service.
-// All implementations must embed UnimplementedTradeAdminServer
+// AdminServer is the server API for Admin service.
+// All implementations must embed UnimplementedAdminServer
 // for forward compatibility.
 //
 // 交易服务管理后台接口
-type TradeAdminServer interface {
+type AdminServer interface {
 	// 创建交易对
 	CreateSymbol(context.Context, *CreateSymbolReq) (*CommonResp, error)
 	// 更新交易对信息
@@ -1295,1243 +1295,1243 @@ type TradeAdminServer interface {
 	SetInsuranceFundAccount(context.Context, *SetInsuranceFundAccountReq) (*CommonResp, error)
 	GetInsuranceFundAccountList(context.Context, *GetInsuranceFundAccountListReq) (*GetInsuranceFundAccountListResp, error)
 	GetMarketSnapshotList(context.Context, *GetMarketSnapshotListReq) (*GetMarketSnapshotListResp, error)
-	mustEmbedUnimplementedTradeAdminServer()
+	mustEmbedUnimplementedAdminServer()
 }
 
-// UnimplementedTradeAdminServer must be embedded to have
+// UnimplementedAdminServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedTradeAdminServer struct{}
+type UnimplementedAdminServer struct{}
 
-func (UnimplementedTradeAdminServer) CreateSymbol(context.Context, *CreateSymbolReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) CreateSymbol(context.Context, *CreateSymbolReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateSymbol not implemented")
 }
-func (UnimplementedTradeAdminServer) UpdateSymbol(context.Context, *UpdateSymbolReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdateSymbol(context.Context, *UpdateSymbolReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateSymbol not implemented")
 }
-func (UnimplementedTradeAdminServer) GetSymbolListAdmin(context.Context, *GetSymbolListAdminReq) (*GetSymbolListAdminResp, error) {
+func (UnimplementedAdminServer) GetSymbolListAdmin(context.Context, *GetSymbolListAdminReq) (*GetSymbolListAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSymbolListAdmin not implemented")
 }
-func (UnimplementedTradeAdminServer) GetSymbolDetailAdmin(context.Context, *GetSymbolDetailAdminReq) (*GetSymbolDetailAdminResp, error) {
+func (UnimplementedAdminServer) GetSymbolDetailAdmin(context.Context, *GetSymbolDetailAdminReq) (*GetSymbolDetailAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSymbolDetailAdmin not implemented")
 }
-func (UnimplementedTradeAdminServer) SetSpotSymbolConfig(context.Context, *SetSpotSymbolConfigReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) SetSpotSymbolConfig(context.Context, *SetSpotSymbolConfigReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetSpotSymbolConfig not implemented")
 }
-func (UnimplementedTradeAdminServer) SetContractSymbolConfig(context.Context, *SetContractSymbolConfigReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) SetContractSymbolConfig(context.Context, *SetContractSymbolConfigReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetContractSymbolConfig not implemented")
 }
-func (UnimplementedTradeAdminServer) SetSecondsSymbolConfig(context.Context, *SetSecondsSymbolConfigReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) SetSecondsSymbolConfig(context.Context, *SetSecondsSymbolConfigReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetSecondsSymbolConfig not implemented")
 }
-func (UnimplementedTradeAdminServer) SetSymbolSession(context.Context, *SetSymbolSessionReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) SetSymbolSession(context.Context, *SetSymbolSessionReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetSymbolSession not implemented")
 }
-func (UnimplementedTradeAdminServer) SetSymbolLeverageConfig(context.Context, *SetSymbolLeverageConfigReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) SetSymbolLeverageConfig(context.Context, *SetSymbolLeverageConfigReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetSymbolLeverageConfig not implemented")
 }
-func (UnimplementedTradeAdminServer) GetSymbolLeverageConfig(context.Context, *GetSymbolLeverageConfigReq) (*GetSymbolLeverageConfigResp, error) {
+func (UnimplementedAdminServer) GetSymbolLeverageConfig(context.Context, *GetSymbolLeverageConfigReq) (*GetSymbolLeverageConfigResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSymbolLeverageConfig not implemented")
 }
-func (UnimplementedTradeAdminServer) GetSymbolLeverageConfigList(context.Context, *GetSymbolLeverageConfigListReq) (*GetSymbolLeverageConfigListResp, error) {
+func (UnimplementedAdminServer) GetSymbolLeverageConfigList(context.Context, *GetSymbolLeverageConfigListReq) (*GetSymbolLeverageConfigListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSymbolLeverageConfigList not implemented")
 }
-func (UnimplementedTradeAdminServer) GetOrderListAdmin(context.Context, *GetOrderListAdminReq) (*GetOrderListAdminResp, error) {
+func (UnimplementedAdminServer) GetOrderListAdmin(context.Context, *GetOrderListAdminReq) (*GetOrderListAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetOrderListAdmin not implemented")
 }
-func (UnimplementedTradeAdminServer) GetOrderDetailAdmin(context.Context, *GetOrderDetailAdminReq) (*GetOrderDetailAdminResp, error) {
+func (UnimplementedAdminServer) GetOrderDetailAdmin(context.Context, *GetOrderDetailAdminReq) (*GetOrderDetailAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetOrderDetailAdmin not implemented")
 }
-func (UnimplementedTradeAdminServer) GetFillListAdmin(context.Context, *GetFillListAdminReq) (*GetFillListAdminResp, error) {
+func (UnimplementedAdminServer) GetFillListAdmin(context.Context, *GetFillListAdminReq) (*GetFillListAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetFillListAdmin not implemented")
 }
-func (UnimplementedTradeAdminServer) GetFillDetailAdmin(context.Context, *GetFillDetailAdminReq) (*GetFillDetailAdminResp, error) {
+func (UnimplementedAdminServer) GetFillDetailAdmin(context.Context, *GetFillDetailAdminReq) (*GetFillDetailAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetFillDetailAdmin not implemented")
 }
-func (UnimplementedTradeAdminServer) GetPositionListAdmin(context.Context, *GetPositionListAdminReq) (*GetPositionListAdminResp, error) {
+func (UnimplementedAdminServer) GetPositionListAdmin(context.Context, *GetPositionListAdminReq) (*GetPositionListAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPositionListAdmin not implemented")
 }
-func (UnimplementedTradeAdminServer) GetPositionDetailAdmin(context.Context, *GetPositionDetailAdminReq) (*GetPositionDetailAdminResp, error) {
+func (UnimplementedAdminServer) GetPositionDetailAdmin(context.Context, *GetPositionDetailAdminReq) (*GetPositionDetailAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPositionDetailAdmin not implemented")
 }
-func (UnimplementedTradeAdminServer) GetPositionHistoryListAdmin(context.Context, *GetPositionHistoryListAdminReq) (*GetPositionHistoryListAdminResp, error) {
+func (UnimplementedAdminServer) GetPositionHistoryListAdmin(context.Context, *GetPositionHistoryListAdminReq) (*GetPositionHistoryListAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPositionHistoryListAdmin not implemented")
 }
-func (UnimplementedTradeAdminServer) GetMarginSnapshotListAdmin(context.Context, *GetMarginSnapshotListAdminReq) (*GetMarginSnapshotListAdminResp, error) {
+func (UnimplementedAdminServer) GetMarginSnapshotListAdmin(context.Context, *GetMarginSnapshotListAdminReq) (*GetMarginSnapshotListAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMarginSnapshotListAdmin not implemented")
 }
-func (UnimplementedTradeAdminServer) GetCancelLogListAdmin(context.Context, *GetCancelLogListAdminReq) (*GetCancelLogListAdminResp, error) {
+func (UnimplementedAdminServer) GetCancelLogListAdmin(context.Context, *GetCancelLogListAdminReq) (*GetCancelLogListAdminResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCancelLogListAdmin not implemented")
 }
-func (UnimplementedTradeAdminServer) SetUserTradeLimit(context.Context, *SetUserTradeLimitReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) SetUserTradeLimit(context.Context, *SetUserTradeLimitReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetUserTradeLimit not implemented")
 }
-func (UnimplementedTradeAdminServer) SetUserSymbolLimit(context.Context, *SetUserSymbolLimitReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) SetUserSymbolLimit(context.Context, *SetUserSymbolLimitReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetUserSymbolLimit not implemented")
 }
-func (UnimplementedTradeAdminServer) GetUserTradeLimit(context.Context, *GetUserTradeLimitReq) (*GetUserTradeLimitResp, error) {
+func (UnimplementedAdminServer) GetUserTradeLimit(context.Context, *GetUserTradeLimitReq) (*GetUserTradeLimitResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserTradeLimit not implemented")
 }
-func (UnimplementedTradeAdminServer) GetUserSymbolLimit(context.Context, *GetUserSymbolLimitReq) (*GetUserSymbolLimitResp, error) {
+func (UnimplementedAdminServer) GetUserSymbolLimit(context.Context, *GetUserSymbolLimitReq) (*GetUserSymbolLimitResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserSymbolLimit not implemented")
 }
-func (UnimplementedTradeAdminServer) SetUserTradeConfig(context.Context, *SetUserTradeConfigReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) SetUserTradeConfig(context.Context, *SetUserTradeConfigReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetUserTradeConfig not implemented")
 }
-func (UnimplementedTradeAdminServer) GetUserTradeConfig(context.Context, *GetUserTradeConfigReq) (*GetUserTradeConfigResp, error) {
+func (UnimplementedAdminServer) GetUserTradeConfig(context.Context, *GetUserTradeConfigReq) (*GetUserTradeConfigResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserTradeConfig not implemented")
 }
-func (UnimplementedTradeAdminServer) SetContractUserConfig(context.Context, *SetContractUserConfigReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) SetContractUserConfig(context.Context, *SetContractUserConfigReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetContractUserConfig not implemented")
 }
-func (UnimplementedTradeAdminServer) GetContractUserConfig(context.Context, *GetContractUserConfigReq) (*GetContractUserConfigResp, error) {
+func (UnimplementedAdminServer) GetContractUserConfig(context.Context, *GetContractUserConfigReq) (*GetContractUserConfigResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetContractUserConfig not implemented")
 }
-func (UnimplementedTradeAdminServer) GetRiskOrderCheckLogList(context.Context, *GetRiskOrderCheckLogListReq) (*GetRiskOrderCheckLogListResp, error) {
+func (UnimplementedAdminServer) GetRiskOrderCheckLogList(context.Context, *GetRiskOrderCheckLogListReq) (*GetRiskOrderCheckLogListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetRiskOrderCheckLogList not implemented")
 }
-func (UnimplementedTradeAdminServer) SetUserLeverageConfig(context.Context, *SetUserLeverageConfigReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) SetUserLeverageConfig(context.Context, *SetUserLeverageConfigReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetUserLeverageConfig not implemented")
 }
-func (UnimplementedTradeAdminServer) GetUserLeverageConfig(context.Context, *GetUserLeverageConfigReq) (*GetUserLeverageConfigResp, error) {
+func (UnimplementedAdminServer) GetUserLeverageConfig(context.Context, *GetUserLeverageConfigReq) (*GetUserLeverageConfigResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserLeverageConfig not implemented")
 }
-func (UnimplementedTradeAdminServer) GetTradeEventList(context.Context, *GetTradeEventListReq) (*GetTradeEventListResp, error) {
+func (UnimplementedAdminServer) GetTradeEventList(context.Context, *GetTradeEventListReq) (*GetTradeEventListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTradeEventList not implemented")
 }
-func (UnimplementedTradeAdminServer) GetTradeEventDetail(context.Context, *GetTradeEventDetailReq) (*GetTradeEventDetailResp, error) {
+func (UnimplementedAdminServer) GetTradeEventDetail(context.Context, *GetTradeEventDetailReq) (*GetTradeEventDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTradeEventDetail not implemented")
 }
-func (UnimplementedTradeAdminServer) RetryTradeEvent(context.Context, *RetryTradeEventReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) RetryTradeEvent(context.Context, *RetryTradeEventReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RetryTradeEvent not implemented")
 }
-func (UnimplementedTradeAdminServer) SetContractRiskLimitTier(context.Context, *SetContractRiskLimitTierReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) SetContractRiskLimitTier(context.Context, *SetContractRiskLimitTierReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetContractRiskLimitTier not implemented")
 }
-func (UnimplementedTradeAdminServer) GetContractRiskLimitTierList(context.Context, *GetContractRiskLimitTierListReq) (*GetContractRiskLimitTierListResp, error) {
+func (UnimplementedAdminServer) GetContractRiskLimitTierList(context.Context, *GetContractRiskLimitTierListReq) (*GetContractRiskLimitTierListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetContractRiskLimitTierList not implemented")
 }
-func (UnimplementedTradeAdminServer) GetFundingBatchList(context.Context, *GetFundingBatchListReq) (*GetFundingBatchListResp, error) {
+func (UnimplementedAdminServer) GetFundingBatchList(context.Context, *GetFundingBatchListReq) (*GetFundingBatchListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetFundingBatchList not implemented")
 }
-func (UnimplementedTradeAdminServer) GetFundingSettlementList(context.Context, *GetFundingSettlementListReq) (*GetFundingSettlementListResp, error) {
+func (UnimplementedAdminServer) GetFundingSettlementList(context.Context, *GetFundingSettlementListReq) (*GetFundingSettlementListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetFundingSettlementList not implemented")
 }
-func (UnimplementedTradeAdminServer) GetDeliveryBatchList(context.Context, *GetDeliveryBatchListReq) (*GetDeliveryBatchListResp, error) {
+func (UnimplementedAdminServer) GetDeliveryBatchList(context.Context, *GetDeliveryBatchListReq) (*GetDeliveryBatchListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetDeliveryBatchList not implemented")
 }
-func (UnimplementedTradeAdminServer) GetDeliverySettlementList(context.Context, *GetDeliverySettlementListReq) (*GetDeliverySettlementListResp, error) {
+func (UnimplementedAdminServer) GetDeliverySettlementList(context.Context, *GetDeliverySettlementListReq) (*GetDeliverySettlementListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetDeliverySettlementList not implemented")
 }
-func (UnimplementedTradeAdminServer) GetLiquidationList(context.Context, *GetLiquidationListReq) (*GetLiquidationListResp, error) {
+func (UnimplementedAdminServer) GetLiquidationList(context.Context, *GetLiquidationListReq) (*GetLiquidationListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetLiquidationList not implemented")
 }
-func (UnimplementedTradeAdminServer) GetSecondsPriceSnapshotList(context.Context, *GetSecondsPriceSnapshotListReq) (*GetSecondsPriceSnapshotListResp, error) {
+func (UnimplementedAdminServer) GetSecondsPriceSnapshotList(context.Context, *GetSecondsPriceSnapshotListReq) (*GetSecondsPriceSnapshotListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSecondsPriceSnapshotList not implemented")
 }
-func (UnimplementedTradeAdminServer) GetAssetReservationList(context.Context, *GetAssetReservationListReq) (*GetAssetReservationListResp, error) {
+func (UnimplementedAdminServer) GetAssetReservationList(context.Context, *GetAssetReservationListReq) (*GetAssetReservationListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetAssetReservationList not implemented")
 }
-func (UnimplementedTradeAdminServer) GetSettlementInstructionList(context.Context, *GetSettlementInstructionListReq) (*GetSettlementInstructionListResp, error) {
+func (UnimplementedAdminServer) GetSettlementInstructionList(context.Context, *GetSettlementInstructionListReq) (*GetSettlementInstructionListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSettlementInstructionList not implemented")
 }
-func (UnimplementedTradeAdminServer) RetrySettlementInstruction(context.Context, *RetrySettlementInstructionReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) RetrySettlementInstruction(context.Context, *RetrySettlementInstructionReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RetrySettlementInstruction not implemented")
 }
-func (UnimplementedTradeAdminServer) SetInsuranceFundAccount(context.Context, *SetInsuranceFundAccountReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) SetInsuranceFundAccount(context.Context, *SetInsuranceFundAccountReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetInsuranceFundAccount not implemented")
 }
-func (UnimplementedTradeAdminServer) GetInsuranceFundAccountList(context.Context, *GetInsuranceFundAccountListReq) (*GetInsuranceFundAccountListResp, error) {
+func (UnimplementedAdminServer) GetInsuranceFundAccountList(context.Context, *GetInsuranceFundAccountListReq) (*GetInsuranceFundAccountListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetInsuranceFundAccountList not implemented")
 }
-func (UnimplementedTradeAdminServer) GetMarketSnapshotList(context.Context, *GetMarketSnapshotListReq) (*GetMarketSnapshotListResp, error) {
+func (UnimplementedAdminServer) GetMarketSnapshotList(context.Context, *GetMarketSnapshotListReq) (*GetMarketSnapshotListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMarketSnapshotList not implemented")
 }
-func (UnimplementedTradeAdminServer) mustEmbedUnimplementedTradeAdminServer() {}
-func (UnimplementedTradeAdminServer) testEmbeddedByValue()                    {}
+func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
+func (UnimplementedAdminServer) testEmbeddedByValue()               {}
 
-// UnsafeTradeAdminServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to TradeAdminServer will
+// UnsafeAdminServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AdminServer will
 // result in compilation errors.
-type UnsafeTradeAdminServer interface {
-	mustEmbedUnimplementedTradeAdminServer()
+type UnsafeAdminServer interface {
+	mustEmbedUnimplementedAdminServer()
 }
 
-func RegisterTradeAdminServer(s grpc.ServiceRegistrar, srv TradeAdminServer) {
-	// If the following call panics, it indicates UnimplementedTradeAdminServer was
+func RegisterAdminServer(s grpc.ServiceRegistrar, srv AdminServer) {
+	// If the following call panics, it indicates UnimplementedAdminServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&TradeAdmin_ServiceDesc, srv)
+	s.RegisterService(&Admin_ServiceDesc, srv)
 }
 
-func _TradeAdmin_CreateSymbol_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_CreateSymbol_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateSymbolReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).CreateSymbol(ctx, in)
+		return srv.(AdminServer).CreateSymbol(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_CreateSymbol_FullMethodName,
+		FullMethod: Admin_CreateSymbol_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).CreateSymbol(ctx, req.(*CreateSymbolReq))
+		return srv.(AdminServer).CreateSymbol(ctx, req.(*CreateSymbolReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_UpdateSymbol_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateSymbol_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateSymbolReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).UpdateSymbol(ctx, in)
+		return srv.(AdminServer).UpdateSymbol(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_UpdateSymbol_FullMethodName,
+		FullMethod: Admin_UpdateSymbol_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).UpdateSymbol(ctx, req.(*UpdateSymbolReq))
+		return srv.(AdminServer).UpdateSymbol(ctx, req.(*UpdateSymbolReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetSymbolListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetSymbolListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSymbolListAdminReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetSymbolListAdmin(ctx, in)
+		return srv.(AdminServer).GetSymbolListAdmin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetSymbolListAdmin_FullMethodName,
+		FullMethod: Admin_GetSymbolListAdmin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetSymbolListAdmin(ctx, req.(*GetSymbolListAdminReq))
+		return srv.(AdminServer).GetSymbolListAdmin(ctx, req.(*GetSymbolListAdminReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetSymbolDetailAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetSymbolDetailAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSymbolDetailAdminReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetSymbolDetailAdmin(ctx, in)
+		return srv.(AdminServer).GetSymbolDetailAdmin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetSymbolDetailAdmin_FullMethodName,
+		FullMethod: Admin_GetSymbolDetailAdmin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetSymbolDetailAdmin(ctx, req.(*GetSymbolDetailAdminReq))
+		return srv.(AdminServer).GetSymbolDetailAdmin(ctx, req.(*GetSymbolDetailAdminReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_SetSpotSymbolConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_SetSpotSymbolConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetSpotSymbolConfigReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).SetSpotSymbolConfig(ctx, in)
+		return srv.(AdminServer).SetSpotSymbolConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_SetSpotSymbolConfig_FullMethodName,
+		FullMethod: Admin_SetSpotSymbolConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).SetSpotSymbolConfig(ctx, req.(*SetSpotSymbolConfigReq))
+		return srv.(AdminServer).SetSpotSymbolConfig(ctx, req.(*SetSpotSymbolConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_SetContractSymbolConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_SetContractSymbolConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetContractSymbolConfigReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).SetContractSymbolConfig(ctx, in)
+		return srv.(AdminServer).SetContractSymbolConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_SetContractSymbolConfig_FullMethodName,
+		FullMethod: Admin_SetContractSymbolConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).SetContractSymbolConfig(ctx, req.(*SetContractSymbolConfigReq))
+		return srv.(AdminServer).SetContractSymbolConfig(ctx, req.(*SetContractSymbolConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_SetSecondsSymbolConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_SetSecondsSymbolConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetSecondsSymbolConfigReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).SetSecondsSymbolConfig(ctx, in)
+		return srv.(AdminServer).SetSecondsSymbolConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_SetSecondsSymbolConfig_FullMethodName,
+		FullMethod: Admin_SetSecondsSymbolConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).SetSecondsSymbolConfig(ctx, req.(*SetSecondsSymbolConfigReq))
+		return srv.(AdminServer).SetSecondsSymbolConfig(ctx, req.(*SetSecondsSymbolConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_SetSymbolSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_SetSymbolSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetSymbolSessionReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).SetSymbolSession(ctx, in)
+		return srv.(AdminServer).SetSymbolSession(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_SetSymbolSession_FullMethodName,
+		FullMethod: Admin_SetSymbolSession_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).SetSymbolSession(ctx, req.(*SetSymbolSessionReq))
+		return srv.(AdminServer).SetSymbolSession(ctx, req.(*SetSymbolSessionReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_SetSymbolLeverageConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_SetSymbolLeverageConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetSymbolLeverageConfigReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).SetSymbolLeverageConfig(ctx, in)
+		return srv.(AdminServer).SetSymbolLeverageConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_SetSymbolLeverageConfig_FullMethodName,
+		FullMethod: Admin_SetSymbolLeverageConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).SetSymbolLeverageConfig(ctx, req.(*SetSymbolLeverageConfigReq))
+		return srv.(AdminServer).SetSymbolLeverageConfig(ctx, req.(*SetSymbolLeverageConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetSymbolLeverageConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetSymbolLeverageConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSymbolLeverageConfigReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetSymbolLeverageConfig(ctx, in)
+		return srv.(AdminServer).GetSymbolLeverageConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetSymbolLeverageConfig_FullMethodName,
+		FullMethod: Admin_GetSymbolLeverageConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetSymbolLeverageConfig(ctx, req.(*GetSymbolLeverageConfigReq))
+		return srv.(AdminServer).GetSymbolLeverageConfig(ctx, req.(*GetSymbolLeverageConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetSymbolLeverageConfigList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetSymbolLeverageConfigList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSymbolLeverageConfigListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetSymbolLeverageConfigList(ctx, in)
+		return srv.(AdminServer).GetSymbolLeverageConfigList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetSymbolLeverageConfigList_FullMethodName,
+		FullMethod: Admin_GetSymbolLeverageConfigList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetSymbolLeverageConfigList(ctx, req.(*GetSymbolLeverageConfigListReq))
+		return srv.(AdminServer).GetSymbolLeverageConfigList(ctx, req.(*GetSymbolLeverageConfigListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetOrderListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetOrderListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetOrderListAdminReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetOrderListAdmin(ctx, in)
+		return srv.(AdminServer).GetOrderListAdmin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetOrderListAdmin_FullMethodName,
+		FullMethod: Admin_GetOrderListAdmin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetOrderListAdmin(ctx, req.(*GetOrderListAdminReq))
+		return srv.(AdminServer).GetOrderListAdmin(ctx, req.(*GetOrderListAdminReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetOrderDetailAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetOrderDetailAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetOrderDetailAdminReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetOrderDetailAdmin(ctx, in)
+		return srv.(AdminServer).GetOrderDetailAdmin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetOrderDetailAdmin_FullMethodName,
+		FullMethod: Admin_GetOrderDetailAdmin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetOrderDetailAdmin(ctx, req.(*GetOrderDetailAdminReq))
+		return srv.(AdminServer).GetOrderDetailAdmin(ctx, req.(*GetOrderDetailAdminReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetFillListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetFillListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetFillListAdminReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetFillListAdmin(ctx, in)
+		return srv.(AdminServer).GetFillListAdmin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetFillListAdmin_FullMethodName,
+		FullMethod: Admin_GetFillListAdmin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetFillListAdmin(ctx, req.(*GetFillListAdminReq))
+		return srv.(AdminServer).GetFillListAdmin(ctx, req.(*GetFillListAdminReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetFillDetailAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetFillDetailAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetFillDetailAdminReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetFillDetailAdmin(ctx, in)
+		return srv.(AdminServer).GetFillDetailAdmin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetFillDetailAdmin_FullMethodName,
+		FullMethod: Admin_GetFillDetailAdmin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetFillDetailAdmin(ctx, req.(*GetFillDetailAdminReq))
+		return srv.(AdminServer).GetFillDetailAdmin(ctx, req.(*GetFillDetailAdminReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetPositionListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetPositionListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPositionListAdminReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetPositionListAdmin(ctx, in)
+		return srv.(AdminServer).GetPositionListAdmin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetPositionListAdmin_FullMethodName,
+		FullMethod: Admin_GetPositionListAdmin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetPositionListAdmin(ctx, req.(*GetPositionListAdminReq))
+		return srv.(AdminServer).GetPositionListAdmin(ctx, req.(*GetPositionListAdminReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetPositionDetailAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetPositionDetailAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPositionDetailAdminReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetPositionDetailAdmin(ctx, in)
+		return srv.(AdminServer).GetPositionDetailAdmin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetPositionDetailAdmin_FullMethodName,
+		FullMethod: Admin_GetPositionDetailAdmin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetPositionDetailAdmin(ctx, req.(*GetPositionDetailAdminReq))
+		return srv.(AdminServer).GetPositionDetailAdmin(ctx, req.(*GetPositionDetailAdminReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetPositionHistoryListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetPositionHistoryListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPositionHistoryListAdminReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetPositionHistoryListAdmin(ctx, in)
+		return srv.(AdminServer).GetPositionHistoryListAdmin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetPositionHistoryListAdmin_FullMethodName,
+		FullMethod: Admin_GetPositionHistoryListAdmin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetPositionHistoryListAdmin(ctx, req.(*GetPositionHistoryListAdminReq))
+		return srv.(AdminServer).GetPositionHistoryListAdmin(ctx, req.(*GetPositionHistoryListAdminReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetMarginSnapshotListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetMarginSnapshotListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMarginSnapshotListAdminReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetMarginSnapshotListAdmin(ctx, in)
+		return srv.(AdminServer).GetMarginSnapshotListAdmin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetMarginSnapshotListAdmin_FullMethodName,
+		FullMethod: Admin_GetMarginSnapshotListAdmin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetMarginSnapshotListAdmin(ctx, req.(*GetMarginSnapshotListAdminReq))
+		return srv.(AdminServer).GetMarginSnapshotListAdmin(ctx, req.(*GetMarginSnapshotListAdminReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetCancelLogListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetCancelLogListAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetCancelLogListAdminReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetCancelLogListAdmin(ctx, in)
+		return srv.(AdminServer).GetCancelLogListAdmin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetCancelLogListAdmin_FullMethodName,
+		FullMethod: Admin_GetCancelLogListAdmin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetCancelLogListAdmin(ctx, req.(*GetCancelLogListAdminReq))
+		return srv.(AdminServer).GetCancelLogListAdmin(ctx, req.(*GetCancelLogListAdminReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_SetUserTradeLimit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_SetUserTradeLimit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetUserTradeLimitReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).SetUserTradeLimit(ctx, in)
+		return srv.(AdminServer).SetUserTradeLimit(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_SetUserTradeLimit_FullMethodName,
+		FullMethod: Admin_SetUserTradeLimit_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).SetUserTradeLimit(ctx, req.(*SetUserTradeLimitReq))
+		return srv.(AdminServer).SetUserTradeLimit(ctx, req.(*SetUserTradeLimitReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_SetUserSymbolLimit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_SetUserSymbolLimit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetUserSymbolLimitReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).SetUserSymbolLimit(ctx, in)
+		return srv.(AdminServer).SetUserSymbolLimit(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_SetUserSymbolLimit_FullMethodName,
+		FullMethod: Admin_SetUserSymbolLimit_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).SetUserSymbolLimit(ctx, req.(*SetUserSymbolLimitReq))
+		return srv.(AdminServer).SetUserSymbolLimit(ctx, req.(*SetUserSymbolLimitReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetUserTradeLimit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetUserTradeLimit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserTradeLimitReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetUserTradeLimit(ctx, in)
+		return srv.(AdminServer).GetUserTradeLimit(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetUserTradeLimit_FullMethodName,
+		FullMethod: Admin_GetUserTradeLimit_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetUserTradeLimit(ctx, req.(*GetUserTradeLimitReq))
+		return srv.(AdminServer).GetUserTradeLimit(ctx, req.(*GetUserTradeLimitReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetUserSymbolLimit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetUserSymbolLimit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserSymbolLimitReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetUserSymbolLimit(ctx, in)
+		return srv.(AdminServer).GetUserSymbolLimit(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetUserSymbolLimit_FullMethodName,
+		FullMethod: Admin_GetUserSymbolLimit_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetUserSymbolLimit(ctx, req.(*GetUserSymbolLimitReq))
+		return srv.(AdminServer).GetUserSymbolLimit(ctx, req.(*GetUserSymbolLimitReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_SetUserTradeConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_SetUserTradeConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetUserTradeConfigReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).SetUserTradeConfig(ctx, in)
+		return srv.(AdminServer).SetUserTradeConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_SetUserTradeConfig_FullMethodName,
+		FullMethod: Admin_SetUserTradeConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).SetUserTradeConfig(ctx, req.(*SetUserTradeConfigReq))
+		return srv.(AdminServer).SetUserTradeConfig(ctx, req.(*SetUserTradeConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetUserTradeConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetUserTradeConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserTradeConfigReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetUserTradeConfig(ctx, in)
+		return srv.(AdminServer).GetUserTradeConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetUserTradeConfig_FullMethodName,
+		FullMethod: Admin_GetUserTradeConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetUserTradeConfig(ctx, req.(*GetUserTradeConfigReq))
+		return srv.(AdminServer).GetUserTradeConfig(ctx, req.(*GetUserTradeConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_SetContractUserConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_SetContractUserConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetContractUserConfigReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).SetContractUserConfig(ctx, in)
+		return srv.(AdminServer).SetContractUserConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_SetContractUserConfig_FullMethodName,
+		FullMethod: Admin_SetContractUserConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).SetContractUserConfig(ctx, req.(*SetContractUserConfigReq))
+		return srv.(AdminServer).SetContractUserConfig(ctx, req.(*SetContractUserConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetContractUserConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetContractUserConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetContractUserConfigReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetContractUserConfig(ctx, in)
+		return srv.(AdminServer).GetContractUserConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetContractUserConfig_FullMethodName,
+		FullMethod: Admin_GetContractUserConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetContractUserConfig(ctx, req.(*GetContractUserConfigReq))
+		return srv.(AdminServer).GetContractUserConfig(ctx, req.(*GetContractUserConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetRiskOrderCheckLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetRiskOrderCheckLogList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRiskOrderCheckLogListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetRiskOrderCheckLogList(ctx, in)
+		return srv.(AdminServer).GetRiskOrderCheckLogList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetRiskOrderCheckLogList_FullMethodName,
+		FullMethod: Admin_GetRiskOrderCheckLogList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetRiskOrderCheckLogList(ctx, req.(*GetRiskOrderCheckLogListReq))
+		return srv.(AdminServer).GetRiskOrderCheckLogList(ctx, req.(*GetRiskOrderCheckLogListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_SetUserLeverageConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_SetUserLeverageConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetUserLeverageConfigReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).SetUserLeverageConfig(ctx, in)
+		return srv.(AdminServer).SetUserLeverageConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_SetUserLeverageConfig_FullMethodName,
+		FullMethod: Admin_SetUserLeverageConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).SetUserLeverageConfig(ctx, req.(*SetUserLeverageConfigReq))
+		return srv.(AdminServer).SetUserLeverageConfig(ctx, req.(*SetUserLeverageConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetUserLeverageConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetUserLeverageConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserLeverageConfigReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetUserLeverageConfig(ctx, in)
+		return srv.(AdminServer).GetUserLeverageConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetUserLeverageConfig_FullMethodName,
+		FullMethod: Admin_GetUserLeverageConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetUserLeverageConfig(ctx, req.(*GetUserLeverageConfigReq))
+		return srv.(AdminServer).GetUserLeverageConfig(ctx, req.(*GetUserLeverageConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetTradeEventList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetTradeEventList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTradeEventListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetTradeEventList(ctx, in)
+		return srv.(AdminServer).GetTradeEventList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetTradeEventList_FullMethodName,
+		FullMethod: Admin_GetTradeEventList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetTradeEventList(ctx, req.(*GetTradeEventListReq))
+		return srv.(AdminServer).GetTradeEventList(ctx, req.(*GetTradeEventListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetTradeEventDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetTradeEventDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTradeEventDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetTradeEventDetail(ctx, in)
+		return srv.(AdminServer).GetTradeEventDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetTradeEventDetail_FullMethodName,
+		FullMethod: Admin_GetTradeEventDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetTradeEventDetail(ctx, req.(*GetTradeEventDetailReq))
+		return srv.(AdminServer).GetTradeEventDetail(ctx, req.(*GetTradeEventDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_RetryTradeEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_RetryTradeEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RetryTradeEventReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).RetryTradeEvent(ctx, in)
+		return srv.(AdminServer).RetryTradeEvent(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_RetryTradeEvent_FullMethodName,
+		FullMethod: Admin_RetryTradeEvent_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).RetryTradeEvent(ctx, req.(*RetryTradeEventReq))
+		return srv.(AdminServer).RetryTradeEvent(ctx, req.(*RetryTradeEventReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_SetContractRiskLimitTier_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_SetContractRiskLimitTier_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetContractRiskLimitTierReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).SetContractRiskLimitTier(ctx, in)
+		return srv.(AdminServer).SetContractRiskLimitTier(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_SetContractRiskLimitTier_FullMethodName,
+		FullMethod: Admin_SetContractRiskLimitTier_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).SetContractRiskLimitTier(ctx, req.(*SetContractRiskLimitTierReq))
+		return srv.(AdminServer).SetContractRiskLimitTier(ctx, req.(*SetContractRiskLimitTierReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetContractRiskLimitTierList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetContractRiskLimitTierList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetContractRiskLimitTierListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetContractRiskLimitTierList(ctx, in)
+		return srv.(AdminServer).GetContractRiskLimitTierList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetContractRiskLimitTierList_FullMethodName,
+		FullMethod: Admin_GetContractRiskLimitTierList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetContractRiskLimitTierList(ctx, req.(*GetContractRiskLimitTierListReq))
+		return srv.(AdminServer).GetContractRiskLimitTierList(ctx, req.(*GetContractRiskLimitTierListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetFundingBatchList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetFundingBatchList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetFundingBatchListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetFundingBatchList(ctx, in)
+		return srv.(AdminServer).GetFundingBatchList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetFundingBatchList_FullMethodName,
+		FullMethod: Admin_GetFundingBatchList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetFundingBatchList(ctx, req.(*GetFundingBatchListReq))
+		return srv.(AdminServer).GetFundingBatchList(ctx, req.(*GetFundingBatchListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetFundingSettlementList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetFundingSettlementList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetFundingSettlementListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetFundingSettlementList(ctx, in)
+		return srv.(AdminServer).GetFundingSettlementList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetFundingSettlementList_FullMethodName,
+		FullMethod: Admin_GetFundingSettlementList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetFundingSettlementList(ctx, req.(*GetFundingSettlementListReq))
+		return srv.(AdminServer).GetFundingSettlementList(ctx, req.(*GetFundingSettlementListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetDeliveryBatchList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetDeliveryBatchList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetDeliveryBatchListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetDeliveryBatchList(ctx, in)
+		return srv.(AdminServer).GetDeliveryBatchList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetDeliveryBatchList_FullMethodName,
+		FullMethod: Admin_GetDeliveryBatchList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetDeliveryBatchList(ctx, req.(*GetDeliveryBatchListReq))
+		return srv.(AdminServer).GetDeliveryBatchList(ctx, req.(*GetDeliveryBatchListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetDeliverySettlementList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetDeliverySettlementList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetDeliverySettlementListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetDeliverySettlementList(ctx, in)
+		return srv.(AdminServer).GetDeliverySettlementList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetDeliverySettlementList_FullMethodName,
+		FullMethod: Admin_GetDeliverySettlementList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetDeliverySettlementList(ctx, req.(*GetDeliverySettlementListReq))
+		return srv.(AdminServer).GetDeliverySettlementList(ctx, req.(*GetDeliverySettlementListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetLiquidationList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetLiquidationList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetLiquidationListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetLiquidationList(ctx, in)
+		return srv.(AdminServer).GetLiquidationList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetLiquidationList_FullMethodName,
+		FullMethod: Admin_GetLiquidationList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetLiquidationList(ctx, req.(*GetLiquidationListReq))
+		return srv.(AdminServer).GetLiquidationList(ctx, req.(*GetLiquidationListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetSecondsPriceSnapshotList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetSecondsPriceSnapshotList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSecondsPriceSnapshotListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetSecondsPriceSnapshotList(ctx, in)
+		return srv.(AdminServer).GetSecondsPriceSnapshotList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetSecondsPriceSnapshotList_FullMethodName,
+		FullMethod: Admin_GetSecondsPriceSnapshotList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetSecondsPriceSnapshotList(ctx, req.(*GetSecondsPriceSnapshotListReq))
+		return srv.(AdminServer).GetSecondsPriceSnapshotList(ctx, req.(*GetSecondsPriceSnapshotListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetAssetReservationList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetAssetReservationList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAssetReservationListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetAssetReservationList(ctx, in)
+		return srv.(AdminServer).GetAssetReservationList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetAssetReservationList_FullMethodName,
+		FullMethod: Admin_GetAssetReservationList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetAssetReservationList(ctx, req.(*GetAssetReservationListReq))
+		return srv.(AdminServer).GetAssetReservationList(ctx, req.(*GetAssetReservationListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetSettlementInstructionList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetSettlementInstructionList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSettlementInstructionListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetSettlementInstructionList(ctx, in)
+		return srv.(AdminServer).GetSettlementInstructionList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetSettlementInstructionList_FullMethodName,
+		FullMethod: Admin_GetSettlementInstructionList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetSettlementInstructionList(ctx, req.(*GetSettlementInstructionListReq))
+		return srv.(AdminServer).GetSettlementInstructionList(ctx, req.(*GetSettlementInstructionListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_RetrySettlementInstruction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_RetrySettlementInstruction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RetrySettlementInstructionReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).RetrySettlementInstruction(ctx, in)
+		return srv.(AdminServer).RetrySettlementInstruction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_RetrySettlementInstruction_FullMethodName,
+		FullMethod: Admin_RetrySettlementInstruction_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).RetrySettlementInstruction(ctx, req.(*RetrySettlementInstructionReq))
+		return srv.(AdminServer).RetrySettlementInstruction(ctx, req.(*RetrySettlementInstructionReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_SetInsuranceFundAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_SetInsuranceFundAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetInsuranceFundAccountReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).SetInsuranceFundAccount(ctx, in)
+		return srv.(AdminServer).SetInsuranceFundAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_SetInsuranceFundAccount_FullMethodName,
+		FullMethod: Admin_SetInsuranceFundAccount_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).SetInsuranceFundAccount(ctx, req.(*SetInsuranceFundAccountReq))
+		return srv.(AdminServer).SetInsuranceFundAccount(ctx, req.(*SetInsuranceFundAccountReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetInsuranceFundAccountList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetInsuranceFundAccountList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetInsuranceFundAccountListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetInsuranceFundAccountList(ctx, in)
+		return srv.(AdminServer).GetInsuranceFundAccountList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetInsuranceFundAccountList_FullMethodName,
+		FullMethod: Admin_GetInsuranceFundAccountList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetInsuranceFundAccountList(ctx, req.(*GetInsuranceFundAccountListReq))
+		return srv.(AdminServer).GetInsuranceFundAccountList(ctx, req.(*GetInsuranceFundAccountListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeAdmin_GetMarketSnapshotList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetMarketSnapshotList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMarketSnapshotListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeAdminServer).GetMarketSnapshotList(ctx, in)
+		return srv.(AdminServer).GetMarketSnapshotList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeAdmin_GetMarketSnapshotList_FullMethodName,
+		FullMethod: Admin_GetMarketSnapshotList_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeAdminServer).GetMarketSnapshotList(ctx, req.(*GetMarketSnapshotListReq))
+		return srv.(AdminServer).GetMarketSnapshotList(ctx, req.(*GetMarketSnapshotListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// TradeAdmin_ServiceDesc is the grpc.ServiceDesc for TradeAdmin service.
+// Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var TradeAdmin_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "trade.TradeAdmin",
-	HandlerType: (*TradeAdminServer)(nil),
+var Admin_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "trade.Admin",
+	HandlerType: (*AdminServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateSymbol",
-			Handler:    _TradeAdmin_CreateSymbol_Handler,
+			Handler:    _Admin_CreateSymbol_Handler,
 		},
 		{
 			MethodName: "UpdateSymbol",
-			Handler:    _TradeAdmin_UpdateSymbol_Handler,
+			Handler:    _Admin_UpdateSymbol_Handler,
 		},
 		{
 			MethodName: "GetSymbolListAdmin",
-			Handler:    _TradeAdmin_GetSymbolListAdmin_Handler,
+			Handler:    _Admin_GetSymbolListAdmin_Handler,
 		},
 		{
 			MethodName: "GetSymbolDetailAdmin",
-			Handler:    _TradeAdmin_GetSymbolDetailAdmin_Handler,
+			Handler:    _Admin_GetSymbolDetailAdmin_Handler,
 		},
 		{
 			MethodName: "SetSpotSymbolConfig",
-			Handler:    _TradeAdmin_SetSpotSymbolConfig_Handler,
+			Handler:    _Admin_SetSpotSymbolConfig_Handler,
 		},
 		{
 			MethodName: "SetContractSymbolConfig",
-			Handler:    _TradeAdmin_SetContractSymbolConfig_Handler,
+			Handler:    _Admin_SetContractSymbolConfig_Handler,
 		},
 		{
 			MethodName: "SetSecondsSymbolConfig",
-			Handler:    _TradeAdmin_SetSecondsSymbolConfig_Handler,
+			Handler:    _Admin_SetSecondsSymbolConfig_Handler,
 		},
 		{
 			MethodName: "SetSymbolSession",
-			Handler:    _TradeAdmin_SetSymbolSession_Handler,
+			Handler:    _Admin_SetSymbolSession_Handler,
 		},
 		{
 			MethodName: "SetSymbolLeverageConfig",
-			Handler:    _TradeAdmin_SetSymbolLeverageConfig_Handler,
+			Handler:    _Admin_SetSymbolLeverageConfig_Handler,
 		},
 		{
 			MethodName: "GetSymbolLeverageConfig",
-			Handler:    _TradeAdmin_GetSymbolLeverageConfig_Handler,
+			Handler:    _Admin_GetSymbolLeverageConfig_Handler,
 		},
 		{
 			MethodName: "GetSymbolLeverageConfigList",
-			Handler:    _TradeAdmin_GetSymbolLeverageConfigList_Handler,
+			Handler:    _Admin_GetSymbolLeverageConfigList_Handler,
 		},
 		{
 			MethodName: "GetOrderListAdmin",
-			Handler:    _TradeAdmin_GetOrderListAdmin_Handler,
+			Handler:    _Admin_GetOrderListAdmin_Handler,
 		},
 		{
 			MethodName: "GetOrderDetailAdmin",
-			Handler:    _TradeAdmin_GetOrderDetailAdmin_Handler,
+			Handler:    _Admin_GetOrderDetailAdmin_Handler,
 		},
 		{
 			MethodName: "GetFillListAdmin",
-			Handler:    _TradeAdmin_GetFillListAdmin_Handler,
+			Handler:    _Admin_GetFillListAdmin_Handler,
 		},
 		{
 			MethodName: "GetFillDetailAdmin",
-			Handler:    _TradeAdmin_GetFillDetailAdmin_Handler,
+			Handler:    _Admin_GetFillDetailAdmin_Handler,
 		},
 		{
 			MethodName: "GetPositionListAdmin",
-			Handler:    _TradeAdmin_GetPositionListAdmin_Handler,
+			Handler:    _Admin_GetPositionListAdmin_Handler,
 		},
 		{
 			MethodName: "GetPositionDetailAdmin",
-			Handler:    _TradeAdmin_GetPositionDetailAdmin_Handler,
+			Handler:    _Admin_GetPositionDetailAdmin_Handler,
 		},
 		{
 			MethodName: "GetPositionHistoryListAdmin",
-			Handler:    _TradeAdmin_GetPositionHistoryListAdmin_Handler,
+			Handler:    _Admin_GetPositionHistoryListAdmin_Handler,
 		},
 		{
 			MethodName: "GetMarginSnapshotListAdmin",
-			Handler:    _TradeAdmin_GetMarginSnapshotListAdmin_Handler,
+			Handler:    _Admin_GetMarginSnapshotListAdmin_Handler,
 		},
 		{
 			MethodName: "GetCancelLogListAdmin",
-			Handler:    _TradeAdmin_GetCancelLogListAdmin_Handler,
+			Handler:    _Admin_GetCancelLogListAdmin_Handler,
 		},
 		{
 			MethodName: "SetUserTradeLimit",
-			Handler:    _TradeAdmin_SetUserTradeLimit_Handler,
+			Handler:    _Admin_SetUserTradeLimit_Handler,
 		},
 		{
 			MethodName: "SetUserSymbolLimit",
-			Handler:    _TradeAdmin_SetUserSymbolLimit_Handler,
+			Handler:    _Admin_SetUserSymbolLimit_Handler,
 		},
 		{
 			MethodName: "GetUserTradeLimit",
-			Handler:    _TradeAdmin_GetUserTradeLimit_Handler,
+			Handler:    _Admin_GetUserTradeLimit_Handler,
 		},
 		{
 			MethodName: "GetUserSymbolLimit",
-			Handler:    _TradeAdmin_GetUserSymbolLimit_Handler,
+			Handler:    _Admin_GetUserSymbolLimit_Handler,
 		},
 		{
 			MethodName: "SetUserTradeConfig",
-			Handler:    _TradeAdmin_SetUserTradeConfig_Handler,
+			Handler:    _Admin_SetUserTradeConfig_Handler,
 		},
 		{
 			MethodName: "GetUserTradeConfig",
-			Handler:    _TradeAdmin_GetUserTradeConfig_Handler,
+			Handler:    _Admin_GetUserTradeConfig_Handler,
 		},
 		{
 			MethodName: "SetContractUserConfig",
-			Handler:    _TradeAdmin_SetContractUserConfig_Handler,
+			Handler:    _Admin_SetContractUserConfig_Handler,
 		},
 		{
 			MethodName: "GetContractUserConfig",
-			Handler:    _TradeAdmin_GetContractUserConfig_Handler,
+			Handler:    _Admin_GetContractUserConfig_Handler,
 		},
 		{
 			MethodName: "GetRiskOrderCheckLogList",
-			Handler:    _TradeAdmin_GetRiskOrderCheckLogList_Handler,
+			Handler:    _Admin_GetRiskOrderCheckLogList_Handler,
 		},
 		{
 			MethodName: "SetUserLeverageConfig",
-			Handler:    _TradeAdmin_SetUserLeverageConfig_Handler,
+			Handler:    _Admin_SetUserLeverageConfig_Handler,
 		},
 		{
 			MethodName: "GetUserLeverageConfig",
-			Handler:    _TradeAdmin_GetUserLeverageConfig_Handler,
+			Handler:    _Admin_GetUserLeverageConfig_Handler,
 		},
 		{
 			MethodName: "GetTradeEventList",
-			Handler:    _TradeAdmin_GetTradeEventList_Handler,
+			Handler:    _Admin_GetTradeEventList_Handler,
 		},
 		{
 			MethodName: "GetTradeEventDetail",
-			Handler:    _TradeAdmin_GetTradeEventDetail_Handler,
+			Handler:    _Admin_GetTradeEventDetail_Handler,
 		},
 		{
 			MethodName: "RetryTradeEvent",
-			Handler:    _TradeAdmin_RetryTradeEvent_Handler,
+			Handler:    _Admin_RetryTradeEvent_Handler,
 		},
 		{
 			MethodName: "SetContractRiskLimitTier",
-			Handler:    _TradeAdmin_SetContractRiskLimitTier_Handler,
+			Handler:    _Admin_SetContractRiskLimitTier_Handler,
 		},
 		{
 			MethodName: "GetContractRiskLimitTierList",
-			Handler:    _TradeAdmin_GetContractRiskLimitTierList_Handler,
+			Handler:    _Admin_GetContractRiskLimitTierList_Handler,
 		},
 		{
 			MethodName: "GetFundingBatchList",
-			Handler:    _TradeAdmin_GetFundingBatchList_Handler,
+			Handler:    _Admin_GetFundingBatchList_Handler,
 		},
 		{
 			MethodName: "GetFundingSettlementList",
-			Handler:    _TradeAdmin_GetFundingSettlementList_Handler,
+			Handler:    _Admin_GetFundingSettlementList_Handler,
 		},
 		{
 			MethodName: "GetDeliveryBatchList",
-			Handler:    _TradeAdmin_GetDeliveryBatchList_Handler,
+			Handler:    _Admin_GetDeliveryBatchList_Handler,
 		},
 		{
 			MethodName: "GetDeliverySettlementList",
-			Handler:    _TradeAdmin_GetDeliverySettlementList_Handler,
+			Handler:    _Admin_GetDeliverySettlementList_Handler,
 		},
 		{
 			MethodName: "GetLiquidationList",
-			Handler:    _TradeAdmin_GetLiquidationList_Handler,
+			Handler:    _Admin_GetLiquidationList_Handler,
 		},
 		{
 			MethodName: "GetSecondsPriceSnapshotList",
-			Handler:    _TradeAdmin_GetSecondsPriceSnapshotList_Handler,
+			Handler:    _Admin_GetSecondsPriceSnapshotList_Handler,
 		},
 		{
 			MethodName: "GetAssetReservationList",
-			Handler:    _TradeAdmin_GetAssetReservationList_Handler,
+			Handler:    _Admin_GetAssetReservationList_Handler,
 		},
 		{
 			MethodName: "GetSettlementInstructionList",
-			Handler:    _TradeAdmin_GetSettlementInstructionList_Handler,
+			Handler:    _Admin_GetSettlementInstructionList_Handler,
 		},
 		{
 			MethodName: "RetrySettlementInstruction",
-			Handler:    _TradeAdmin_RetrySettlementInstruction_Handler,
+			Handler:    _Admin_RetrySettlementInstruction_Handler,
 		},
 		{
 			MethodName: "SetInsuranceFundAccount",
-			Handler:    _TradeAdmin_SetInsuranceFundAccount_Handler,
+			Handler:    _Admin_SetInsuranceFundAccount_Handler,
 		},
 		{
 			MethodName: "GetInsuranceFundAccountList",
-			Handler:    _TradeAdmin_GetInsuranceFundAccountList_Handler,
+			Handler:    _Admin_GetInsuranceFundAccountList_Handler,
 		},
 		{
 			MethodName: "GetMarketSnapshotList",
-			Handler:    _TradeAdmin_GetMarketSnapshotList_Handler,
+			Handler:    _Admin_GetMarketSnapshotList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -2539,17 +2539,17 @@ var TradeAdmin_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	TradeInternal_RecordPositionHistory_FullMethodName = "/trade.TradeInternal/RecordPositionHistory"
-	TradeInternal_CreateTradeEvent_FullMethodName      = "/trade.TradeInternal/CreateTradeEvent"
-	TradeInternal_CheckOrderRisk_FullMethodName        = "/trade.TradeInternal/CheckOrderRisk"
+	Internal_RecordPositionHistory_FullMethodName = "/trade.Internal/RecordPositionHistory"
+	Internal_CreateTradeEvent_FullMethodName      = "/trade.Internal/CreateTradeEvent"
+	Internal_CheckOrderRisk_FullMethodName        = "/trade.Internal/CheckOrderRisk"
 )
 
-// TradeInternalClient is the client API for TradeInternal service.
+// InternalClient is the client API for Internal service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // 交易服务内部接口
-type TradeInternalClient interface {
+type InternalClient interface {
 	// 记录持仓历史信息
 	RecordPositionHistory(ctx context.Context, in *RecordPositionHistoryReq, opts ...grpc.CallOption) (*InternalCommonResp, error)
 	// 创建交易事件
@@ -2558,168 +2558,168 @@ type TradeInternalClient interface {
 	CheckOrderRisk(ctx context.Context, in *CheckOrderRiskReq, opts ...grpc.CallOption) (*CheckOrderRiskResp, error)
 }
 
-type tradeInternalClient struct {
+type internalClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewTradeInternalClient(cc grpc.ClientConnInterface) TradeInternalClient {
-	return &tradeInternalClient{cc}
+func NewInternalClient(cc grpc.ClientConnInterface) InternalClient {
+	return &internalClient{cc}
 }
 
-func (c *tradeInternalClient) RecordPositionHistory(ctx context.Context, in *RecordPositionHistoryReq, opts ...grpc.CallOption) (*InternalCommonResp, error) {
+func (c *internalClient) RecordPositionHistory(ctx context.Context, in *RecordPositionHistoryReq, opts ...grpc.CallOption) (*InternalCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(InternalCommonResp)
-	err := c.cc.Invoke(ctx, TradeInternal_RecordPositionHistory_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_RecordPositionHistory_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeInternalClient) CreateTradeEvent(ctx context.Context, in *CreateTradeEventReq, opts ...grpc.CallOption) (*InternalCommonResp, error) {
+func (c *internalClient) CreateTradeEvent(ctx context.Context, in *CreateTradeEventReq, opts ...grpc.CallOption) (*InternalCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(InternalCommonResp)
-	err := c.cc.Invoke(ctx, TradeInternal_CreateTradeEvent_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_CreateTradeEvent_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeInternalClient) CheckOrderRisk(ctx context.Context, in *CheckOrderRiskReq, opts ...grpc.CallOption) (*CheckOrderRiskResp, error) {
+func (c *internalClient) CheckOrderRisk(ctx context.Context, in *CheckOrderRiskReq, opts ...grpc.CallOption) (*CheckOrderRiskResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CheckOrderRiskResp)
-	err := c.cc.Invoke(ctx, TradeInternal_CheckOrderRisk_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_CheckOrderRisk_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// TradeInternalServer is the server API for TradeInternal service.
-// All implementations must embed UnimplementedTradeInternalServer
+// InternalServer is the server API for Internal service.
+// All implementations must embed UnimplementedInternalServer
 // for forward compatibility.
 //
 // 交易服务内部接口
-type TradeInternalServer interface {
+type InternalServer interface {
 	// 记录持仓历史信息
 	RecordPositionHistory(context.Context, *RecordPositionHistoryReq) (*InternalCommonResp, error)
 	// 创建交易事件
 	CreateTradeEvent(context.Context, *CreateTradeEventReq) (*InternalCommonResp, error)
 	// 校验订单风控
 	CheckOrderRisk(context.Context, *CheckOrderRiskReq) (*CheckOrderRiskResp, error)
-	mustEmbedUnimplementedTradeInternalServer()
+	mustEmbedUnimplementedInternalServer()
 }
 
-// UnimplementedTradeInternalServer must be embedded to have
+// UnimplementedInternalServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedTradeInternalServer struct{}
+type UnimplementedInternalServer struct{}
 
-func (UnimplementedTradeInternalServer) RecordPositionHistory(context.Context, *RecordPositionHistoryReq) (*InternalCommonResp, error) {
+func (UnimplementedInternalServer) RecordPositionHistory(context.Context, *RecordPositionHistoryReq) (*InternalCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RecordPositionHistory not implemented")
 }
-func (UnimplementedTradeInternalServer) CreateTradeEvent(context.Context, *CreateTradeEventReq) (*InternalCommonResp, error) {
+func (UnimplementedInternalServer) CreateTradeEvent(context.Context, *CreateTradeEventReq) (*InternalCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateTradeEvent not implemented")
 }
-func (UnimplementedTradeInternalServer) CheckOrderRisk(context.Context, *CheckOrderRiskReq) (*CheckOrderRiskResp, error) {
+func (UnimplementedInternalServer) CheckOrderRisk(context.Context, *CheckOrderRiskReq) (*CheckOrderRiskResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CheckOrderRisk not implemented")
 }
-func (UnimplementedTradeInternalServer) mustEmbedUnimplementedTradeInternalServer() {}
-func (UnimplementedTradeInternalServer) testEmbeddedByValue()                       {}
+func (UnimplementedInternalServer) mustEmbedUnimplementedInternalServer() {}
+func (UnimplementedInternalServer) testEmbeddedByValue()                  {}
 
-// UnsafeTradeInternalServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to TradeInternalServer will
+// UnsafeInternalServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to InternalServer will
 // result in compilation errors.
-type UnsafeTradeInternalServer interface {
-	mustEmbedUnimplementedTradeInternalServer()
+type UnsafeInternalServer interface {
+	mustEmbedUnimplementedInternalServer()
 }
 
-func RegisterTradeInternalServer(s grpc.ServiceRegistrar, srv TradeInternalServer) {
-	// If the following call panics, it indicates UnimplementedTradeInternalServer was
+func RegisterInternalServer(s grpc.ServiceRegistrar, srv InternalServer) {
+	// If the following call panics, it indicates UnimplementedInternalServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&TradeInternal_ServiceDesc, srv)
+	s.RegisterService(&Internal_ServiceDesc, srv)
 }
 
-func _TradeInternal_RecordPositionHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_RecordPositionHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RecordPositionHistoryReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeInternalServer).RecordPositionHistory(ctx, in)
+		return srv.(InternalServer).RecordPositionHistory(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeInternal_RecordPositionHistory_FullMethodName,
+		FullMethod: Internal_RecordPositionHistory_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeInternalServer).RecordPositionHistory(ctx, req.(*RecordPositionHistoryReq))
+		return srv.(InternalServer).RecordPositionHistory(ctx, req.(*RecordPositionHistoryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeInternal_CreateTradeEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_CreateTradeEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateTradeEventReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeInternalServer).CreateTradeEvent(ctx, in)
+		return srv.(InternalServer).CreateTradeEvent(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeInternal_CreateTradeEvent_FullMethodName,
+		FullMethod: Internal_CreateTradeEvent_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeInternalServer).CreateTradeEvent(ctx, req.(*CreateTradeEventReq))
+		return srv.(InternalServer).CreateTradeEvent(ctx, req.(*CreateTradeEventReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeInternal_CheckOrderRisk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_CheckOrderRisk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CheckOrderRiskReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeInternalServer).CheckOrderRisk(ctx, in)
+		return srv.(InternalServer).CheckOrderRisk(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeInternal_CheckOrderRisk_FullMethodName,
+		FullMethod: Internal_CheckOrderRisk_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeInternalServer).CheckOrderRisk(ctx, req.(*CheckOrderRiskReq))
+		return srv.(InternalServer).CheckOrderRisk(ctx, req.(*CheckOrderRiskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// TradeInternal_ServiceDesc is the grpc.ServiceDesc for TradeInternal service.
+// Internal_ServiceDesc is the grpc.ServiceDesc for Internal service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var TradeInternal_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "trade.TradeInternal",
-	HandlerType: (*TradeInternalServer)(nil),
+var Internal_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "trade.Internal",
+	HandlerType: (*InternalServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "RecordPositionHistory",
-			Handler:    _TradeInternal_RecordPositionHistory_Handler,
+			Handler:    _Internal_RecordPositionHistory_Handler,
 		},
 		{
 			MethodName: "CreateTradeEvent",
-			Handler:    _TradeInternal_CreateTradeEvent_Handler,
+			Handler:    _Internal_CreateTradeEvent_Handler,
 		},
 		{
 			MethodName: "CheckOrderRisk",
-			Handler:    _TradeInternal_CheckOrderRisk_Handler,
+			Handler:    _Internal_CheckOrderRisk_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -2727,21 +2727,21 @@ var TradeInternal_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	TradeTask_ProcessOrderMatching_FullMethodName       = "/trade.TradeTask/ProcessOrderMatching"
-	TradeTask_ProcessPositions_FullMethodName           = "/trade.TradeTask/ProcessPositions"
-	TradeTask_ProcessContractSettlements_FullMethodName = "/trade.TradeTask/ProcessContractSettlements"
-	TradeTask_ProcessTradeEvents_FullMethodName         = "/trade.TradeTask/ProcessTradeEvents"
-	TradeTask_ExpireRiskLimits_FullMethodName           = "/trade.TradeTask/ExpireRiskLimits"
+	Task_ProcessOrderMatching_FullMethodName       = "/trade.Task/ProcessOrderMatching"
+	Task_ProcessPositions_FullMethodName           = "/trade.Task/ProcessPositions"
+	Task_ProcessContractSettlements_FullMethodName = "/trade.Task/ProcessContractSettlements"
+	Task_ProcessTradeEvents_FullMethodName         = "/trade.Task/ProcessTradeEvents"
+	Task_ExpireRiskLimits_FullMethodName           = "/trade.Task/ExpireRiskLimits"
 )
 
-// TradeTaskClient is the client API for TradeTask service.
+// TaskClient is the client API for Task service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // ====================
 // 定时任务
 // ====================
-type TradeTaskClient interface {
+type TaskClient interface {
 	// 订单撮合
 	ProcessOrderMatching(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
 	// 仓位处理（标记价格刷新/强平扫描/普通平仓）
@@ -2754,72 +2754,72 @@ type TradeTaskClient interface {
 	ExpireRiskLimits(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
 }
 
-type tradeTaskClient struct {
+type taskClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewTradeTaskClient(cc grpc.ClientConnInterface) TradeTaskClient {
-	return &tradeTaskClient{cc}
+func NewTaskClient(cc grpc.ClientConnInterface) TaskClient {
+	return &taskClient{cc}
 }
 
-func (c *tradeTaskClient) ProcessOrderMatching(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
+func (c *taskClient) ProcessOrderMatching(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TradeTaskResp)
-	err := c.cc.Invoke(ctx, TradeTask_ProcessOrderMatching_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Task_ProcessOrderMatching_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeTaskClient) ProcessPositions(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
+func (c *taskClient) ProcessPositions(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TradeTaskResp)
-	err := c.cc.Invoke(ctx, TradeTask_ProcessPositions_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Task_ProcessPositions_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeTaskClient) ProcessContractSettlements(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
+func (c *taskClient) ProcessContractSettlements(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TradeTaskResp)
-	err := c.cc.Invoke(ctx, TradeTask_ProcessContractSettlements_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Task_ProcessContractSettlements_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeTaskClient) ProcessTradeEvents(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
+func (c *taskClient) ProcessTradeEvents(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TradeTaskResp)
-	err := c.cc.Invoke(ctx, TradeTask_ProcessTradeEvents_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Task_ProcessTradeEvents_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *tradeTaskClient) ExpireRiskLimits(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
+func (c *taskClient) ExpireRiskLimits(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TradeTaskResp)
-	err := c.cc.Invoke(ctx, TradeTask_ExpireRiskLimits_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Task_ExpireRiskLimits_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// TradeTaskServer is the server API for TradeTask service.
-// All implementations must embed UnimplementedTradeTaskServer
+// TaskServer is the server API for Task service.
+// All implementations must embed UnimplementedTaskServer
 // for forward compatibility.
 //
 // ====================
 // 定时任务
 // ====================
-type TradeTaskServer interface {
+type TaskServer interface {
 	// 订单撮合
 	ProcessOrderMatching(context.Context, *TradeTaskReq) (*TradeTaskResp, error)
 	// 仓位处理（标记价格刷新/强平扫描/普通平仓）
@@ -2830,168 +2830,168 @@ type TradeTaskServer interface {
 	ProcessTradeEvents(context.Context, *TradeTaskReq) (*TradeTaskResp, error)
 	// 风控限制过期恢复
 	ExpireRiskLimits(context.Context, *TradeTaskReq) (*TradeTaskResp, error)
-	mustEmbedUnimplementedTradeTaskServer()
+	mustEmbedUnimplementedTaskServer()
 }
 
-// UnimplementedTradeTaskServer must be embedded to have
+// UnimplementedTaskServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedTradeTaskServer struct{}
+type UnimplementedTaskServer struct{}
 
-func (UnimplementedTradeTaskServer) ProcessOrderMatching(context.Context, *TradeTaskReq) (*TradeTaskResp, error) {
+func (UnimplementedTaskServer) ProcessOrderMatching(context.Context, *TradeTaskReq) (*TradeTaskResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProcessOrderMatching not implemented")
 }
-func (UnimplementedTradeTaskServer) ProcessPositions(context.Context, *TradeTaskReq) (*TradeTaskResp, error) {
+func (UnimplementedTaskServer) ProcessPositions(context.Context, *TradeTaskReq) (*TradeTaskResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProcessPositions not implemented")
 }
-func (UnimplementedTradeTaskServer) ProcessContractSettlements(context.Context, *TradeTaskReq) (*TradeTaskResp, error) {
+func (UnimplementedTaskServer) ProcessContractSettlements(context.Context, *TradeTaskReq) (*TradeTaskResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProcessContractSettlements not implemented")
 }
-func (UnimplementedTradeTaskServer) ProcessTradeEvents(context.Context, *TradeTaskReq) (*TradeTaskResp, error) {
+func (UnimplementedTaskServer) ProcessTradeEvents(context.Context, *TradeTaskReq) (*TradeTaskResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProcessTradeEvents not implemented")
 }
-func (UnimplementedTradeTaskServer) ExpireRiskLimits(context.Context, *TradeTaskReq) (*TradeTaskResp, error) {
+func (UnimplementedTaskServer) ExpireRiskLimits(context.Context, *TradeTaskReq) (*TradeTaskResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ExpireRiskLimits not implemented")
 }
-func (UnimplementedTradeTaskServer) mustEmbedUnimplementedTradeTaskServer() {}
-func (UnimplementedTradeTaskServer) testEmbeddedByValue()                   {}
+func (UnimplementedTaskServer) mustEmbedUnimplementedTaskServer() {}
+func (UnimplementedTaskServer) testEmbeddedByValue()              {}
 
-// UnsafeTradeTaskServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to TradeTaskServer will
+// UnsafeTaskServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TaskServer will
 // result in compilation errors.
-type UnsafeTradeTaskServer interface {
-	mustEmbedUnimplementedTradeTaskServer()
+type UnsafeTaskServer interface {
+	mustEmbedUnimplementedTaskServer()
 }
 
-func RegisterTradeTaskServer(s grpc.ServiceRegistrar, srv TradeTaskServer) {
-	// If the following call panics, it indicates UnimplementedTradeTaskServer was
+func RegisterTaskServer(s grpc.ServiceRegistrar, srv TaskServer) {
+	// If the following call panics, it indicates UnimplementedTaskServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&TradeTask_ServiceDesc, srv)
+	s.RegisterService(&Task_ServiceDesc, srv)
 }
 
-func _TradeTask_ProcessOrderMatching_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Task_ProcessOrderMatching_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TradeTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeTaskServer).ProcessOrderMatching(ctx, in)
+		return srv.(TaskServer).ProcessOrderMatching(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeTask_ProcessOrderMatching_FullMethodName,
+		FullMethod: Task_ProcessOrderMatching_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeTaskServer).ProcessOrderMatching(ctx, req.(*TradeTaskReq))
+		return srv.(TaskServer).ProcessOrderMatching(ctx, req.(*TradeTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeTask_ProcessPositions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Task_ProcessPositions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TradeTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeTaskServer).ProcessPositions(ctx, in)
+		return srv.(TaskServer).ProcessPositions(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeTask_ProcessPositions_FullMethodName,
+		FullMethod: Task_ProcessPositions_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeTaskServer).ProcessPositions(ctx, req.(*TradeTaskReq))
+		return srv.(TaskServer).ProcessPositions(ctx, req.(*TradeTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeTask_ProcessContractSettlements_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Task_ProcessContractSettlements_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TradeTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeTaskServer).ProcessContractSettlements(ctx, in)
+		return srv.(TaskServer).ProcessContractSettlements(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeTask_ProcessContractSettlements_FullMethodName,
+		FullMethod: Task_ProcessContractSettlements_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeTaskServer).ProcessContractSettlements(ctx, req.(*TradeTaskReq))
+		return srv.(TaskServer).ProcessContractSettlements(ctx, req.(*TradeTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeTask_ProcessTradeEvents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Task_ProcessTradeEvents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TradeTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeTaskServer).ProcessTradeEvents(ctx, in)
+		return srv.(TaskServer).ProcessTradeEvents(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeTask_ProcessTradeEvents_FullMethodName,
+		FullMethod: Task_ProcessTradeEvents_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeTaskServer).ProcessTradeEvents(ctx, req.(*TradeTaskReq))
+		return srv.(TaskServer).ProcessTradeEvents(ctx, req.(*TradeTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TradeTask_ExpireRiskLimits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Task_ExpireRiskLimits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TradeTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TradeTaskServer).ExpireRiskLimits(ctx, in)
+		return srv.(TaskServer).ExpireRiskLimits(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TradeTask_ExpireRiskLimits_FullMethodName,
+		FullMethod: Task_ExpireRiskLimits_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TradeTaskServer).ExpireRiskLimits(ctx, req.(*TradeTaskReq))
+		return srv.(TaskServer).ExpireRiskLimits(ctx, req.(*TradeTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// TradeTask_ServiceDesc is the grpc.ServiceDesc for TradeTask service.
+// Task_ServiceDesc is the grpc.ServiceDesc for Task service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var TradeTask_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "trade.TradeTask",
-	HandlerType: (*TradeTaskServer)(nil),
+var Task_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "trade.Task",
+	HandlerType: (*TaskServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "ProcessOrderMatching",
-			Handler:    _TradeTask_ProcessOrderMatching_Handler,
+			Handler:    _Task_ProcessOrderMatching_Handler,
 		},
 		{
 			MethodName: "ProcessPositions",
-			Handler:    _TradeTask_ProcessPositions_Handler,
+			Handler:    _Task_ProcessPositions_Handler,
 		},
 		{
 			MethodName: "ProcessContractSettlements",
-			Handler:    _TradeTask_ProcessContractSettlements_Handler,
+			Handler:    _Task_ProcessContractSettlements_Handler,
 		},
 		{
 			MethodName: "ProcessTradeEvents",
-			Handler:    _TradeTask_ProcessTradeEvents_Handler,
+			Handler:    _Task_ProcessTradeEvents_Handler,
 		},
 		{
 			MethodName: "ExpireRiskLimits",
-			Handler:    _TradeTask_ExpireRiskLimits_Handler,
+			Handler:    _Task_ExpireRiskLimits_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

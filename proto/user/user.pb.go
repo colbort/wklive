@@ -5799,8 +5799,8 @@ const file_proto_user_user_proto_rawDesc = "" +
 	"\x1binactive_over_quarter_count\x18\x05 \x01(\x03R\x18inactiveOverQuarterCount\"~\n" +
 	"\x1dGuestDomainMigrationStatsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x127\n" +
-	"\x04data\x18\x02 \x01(\v2#.user.GuestDomainMigrationStatsDataR\x04data2\xf0\v\n" +
-	"\aUserApp\x121\n" +
+	"\x04data\x18\x02 \x01(\v2#.user.GuestDomainMigrationStatsDataR\x04data2\xec\v\n" +
+	"\x03App\x121\n" +
 	"\bRegister\x12\x11.user.RegisterReq\x1a\x12.user.RegisterResp\x12(\n" +
 	"\x05Login\x12\x0e.user.LoginReq\x1a\x0f.user.LoginResp\x127\n" +
 	"\n" +
@@ -5828,8 +5828,8 @@ const file_proto_user_user_proto_rawDesc = "" +
 	"UpdateBank\x12\x13.user.UpdateBankReq\x1a\x14.user.UpdateBankResp\x127\n" +
 	"\n" +
 	"DeleteBank\x12\x13.user.DeleteBankReq\x1a\x14.user.UserCommonResp\x12?\n" +
-	"\x0eSetDefaultBank\x12\x17.user.SetDefaultBankReq\x1a\x14.user.UserCommonResp2\x8f\f\n" +
-	"\tUserAdmin\x12d\n" +
+	"\x0eSetDefaultBank\x12\x17.user.SetDefaultBankReq\x1a\x14.user.UserCommonResp2\x8b\f\n" +
+	"\x05Admin\x12d\n" +
 	"\x19GuestDomainMigrationStats\x12\".user.GuestDomainMigrationStatsReq\x1a#.user.GuestDomainMigrationStatsResp\x127\n" +
 	"\n" +
 	"CreateUser\x12\x13.user.CreateUserReq\x1a\x14.user.CreateUserResp\x12@\n" +
@@ -6067,100 +6067,100 @@ var file_proto_user_user_proto_depIdxs = []int32{
 	103, // 87: user.UpdateUserBankStatusReq.enabled:type_name -> common.Enable
 	84,  // 88: user.GuestDomainMigrationStatsResp.base:type_name -> common.RespBase
 	82,  // 89: user.GuestDomainMigrationStatsResp.data:type_name -> user.GuestDomainMigrationStatsData
-	1,   // 90: user.UserApp.Register:input_type -> user.RegisterReq
-	4,   // 91: user.UserApp.Login:input_type -> user.LoginReq
-	7,   // 92: user.UserApp.GuestLogin:input_type -> user.GuestLoginReq
-	10,  // 93: user.UserApp.CreateGuestTransfer:input_type -> user.CreateGuestTransferReq
-	13,  // 94: user.UserApp.ExchangeGuestTransfer:input_type -> user.ExchangeGuestTransferReq
-	16,  // 95: user.UserApp.Logout:input_type -> user.LogoutReq
-	17,  // 96: user.UserApp.RefreshToken:input_type -> user.RefreshTokenReq
-	19,  // 97: user.UserApp.GetProfile:input_type -> user.GetProfileReq
-	21,  // 98: user.UserApp.UpdateProfile:input_type -> user.UpdateProfileReq
-	23,  // 99: user.UserApp.ChangeLoginPassword:input_type -> user.ChangeLoginPasswordReq
-	24,  // 100: user.UserApp.GetIdentity:input_type -> user.GetIdentityReq
-	26,  // 101: user.UserApp.SubmitIdentity:input_type -> user.SubmitIdentityReq
-	28,  // 102: user.UserApp.UpdateIdentity:input_type -> user.UpdateIdentityReq
-	30,  // 103: user.UserApp.GetSecurity:input_type -> user.GetSecurityReq
-	32,  // 104: user.UserApp.SetPayPassword:input_type -> user.SetPayPasswordReq
-	33,  // 105: user.UserApp.ChangePayPassword:input_type -> user.ChangePayPasswordReq
-	34,  // 106: user.UserApp.InitGoogle2FA:input_type -> user.InitGoogle2FAReq
-	37,  // 107: user.UserApp.EnableGoogle2FA:input_type -> user.EnableGoogle2FAReq
-	38,  // 108: user.UserApp.DisableGoogle2FA:input_type -> user.DisableGoogle2FAReq
-	39,  // 109: user.UserApp.ListBanks:input_type -> user.ListBanksReq
-	41,  // 110: user.UserApp.AddBank:input_type -> user.AddBankReq
-	43,  // 111: user.UserApp.UpdateBank:input_type -> user.UpdateBankReq
-	45,  // 112: user.UserApp.DeleteBank:input_type -> user.DeleteBankReq
-	46,  // 113: user.UserApp.SetDefaultBank:input_type -> user.SetDefaultBankReq
-	81,  // 114: user.UserAdmin.GuestDomainMigrationStats:input_type -> user.GuestDomainMigrationStatsReq
-	48,  // 115: user.UserAdmin.CreateUser:input_type -> user.CreateUserReq
-	50,  // 116: user.UserAdmin.GetUserDetail:input_type -> user.GetUserDetailReq
-	52,  // 117: user.UserAdmin.ListUsers:input_type -> user.ListUsersReq
-	54,  // 118: user.UserAdmin.UpdateUserBase:input_type -> user.UpdateUserBaseReq
-	56,  // 119: user.UserAdmin.UpdateUserStatus:input_type -> user.UpdateUserStatusReq
-	57,  // 120: user.UserAdmin.UpdateUserLevel:input_type -> user.UpdateUserLevelReq
-	58,  // 121: user.UserAdmin.ResetLoginPassword:input_type -> user.ResetLoginPasswordReq
-	59,  // 122: user.UserAdmin.ResetPayPassword:input_type -> user.ResetPayPasswordReq
-	60,  // 123: user.UserAdmin.UnlockUser:input_type -> user.UnlockUserReq
-	61,  // 124: user.UserAdmin.UpdateRiskLevel:input_type -> user.UpdateRiskLevelReq
-	62,  // 125: user.UserAdmin.DeleteUser:input_type -> user.DeleteUserReq
-	63,  // 126: user.UserAdmin.GetUserSecurity:input_type -> user.GetUserSecurityReq
-	65,  // 127: user.UserAdmin.ResetUserGoogle2FA:input_type -> user.ResetUserGoogle2FAReq
-	66,  // 128: user.UserAdmin.ListUserIdentities:input_type -> user.ListUserIdentitiesReq
-	68,  // 129: user.UserAdmin.ReviewUserIdentity:input_type -> user.ReviewUserIdentityReq
-	70,  // 130: user.UserAdmin.ListUserBanks:input_type -> user.ListUserBanksReq
-	72,  // 131: user.UserAdmin.GetUserBank:input_type -> user.GetUserBankReq
-	74,  // 132: user.UserAdmin.AddUserBank:input_type -> user.AddUserBankReq
-	76,  // 133: user.UserAdmin.UpdateUserBank:input_type -> user.UpdateUserBankReq
-	78,  // 134: user.UserAdmin.DeleteUserBank:input_type -> user.DeleteUserBankReq
-	79,  // 135: user.UserAdmin.UpdateUserBankStatus:input_type -> user.UpdateUserBankStatusReq
-	80,  // 136: user.UserAdmin.SetDefaultUserBank:input_type -> user.SetDefaultUserBankReq
-	2,   // 137: user.UserApp.Register:output_type -> user.RegisterResp
-	5,   // 138: user.UserApp.Login:output_type -> user.LoginResp
-	9,   // 139: user.UserApp.GuestLogin:output_type -> user.GuestLoginResp
-	12,  // 140: user.UserApp.CreateGuestTransfer:output_type -> user.CreateGuestTransferResp
-	15,  // 141: user.UserApp.ExchangeGuestTransfer:output_type -> user.ExchangeGuestTransferResp
-	0,   // 142: user.UserApp.Logout:output_type -> user.UserCommonResp
-	18,  // 143: user.UserApp.RefreshToken:output_type -> user.RefreshTokenResp
-	20,  // 144: user.UserApp.GetProfile:output_type -> user.GetProfileResp
-	22,  // 145: user.UserApp.UpdateProfile:output_type -> user.UpdateProfileResp
-	0,   // 146: user.UserApp.ChangeLoginPassword:output_type -> user.UserCommonResp
-	25,  // 147: user.UserApp.GetIdentity:output_type -> user.GetIdentityResp
-	27,  // 148: user.UserApp.SubmitIdentity:output_type -> user.SubmitIdentityResp
-	29,  // 149: user.UserApp.UpdateIdentity:output_type -> user.UpdateIdentityResp
-	31,  // 150: user.UserApp.GetSecurity:output_type -> user.GetSecurityResp
-	0,   // 151: user.UserApp.SetPayPassword:output_type -> user.UserCommonResp
-	0,   // 152: user.UserApp.ChangePayPassword:output_type -> user.UserCommonResp
-	35,  // 153: user.UserApp.InitGoogle2FA:output_type -> user.InitGoogle2FAResp
-	0,   // 154: user.UserApp.EnableGoogle2FA:output_type -> user.UserCommonResp
-	0,   // 155: user.UserApp.DisableGoogle2FA:output_type -> user.UserCommonResp
-	40,  // 156: user.UserApp.ListBanks:output_type -> user.ListBanksResp
-	42,  // 157: user.UserApp.AddBank:output_type -> user.AddBankResp
-	44,  // 158: user.UserApp.UpdateBank:output_type -> user.UpdateBankResp
-	0,   // 159: user.UserApp.DeleteBank:output_type -> user.UserCommonResp
-	0,   // 160: user.UserApp.SetDefaultBank:output_type -> user.UserCommonResp
-	83,  // 161: user.UserAdmin.GuestDomainMigrationStats:output_type -> user.GuestDomainMigrationStatsResp
-	49,  // 162: user.UserAdmin.CreateUser:output_type -> user.CreateUserResp
-	51,  // 163: user.UserAdmin.GetUserDetail:output_type -> user.GetUserDetailResp
-	53,  // 164: user.UserAdmin.ListUsers:output_type -> user.ListUsersResp
-	55,  // 165: user.UserAdmin.UpdateUserBase:output_type -> user.UpdateUserBaseResp
-	47,  // 166: user.UserAdmin.UpdateUserStatus:output_type -> user.CommonResp
-	47,  // 167: user.UserAdmin.UpdateUserLevel:output_type -> user.CommonResp
-	47,  // 168: user.UserAdmin.ResetLoginPassword:output_type -> user.CommonResp
-	47,  // 169: user.UserAdmin.ResetPayPassword:output_type -> user.CommonResp
-	47,  // 170: user.UserAdmin.UnlockUser:output_type -> user.CommonResp
-	47,  // 171: user.UserAdmin.UpdateRiskLevel:output_type -> user.CommonResp
-	47,  // 172: user.UserAdmin.DeleteUser:output_type -> user.CommonResp
-	64,  // 173: user.UserAdmin.GetUserSecurity:output_type -> user.GetUserSecurityResp
-	47,  // 174: user.UserAdmin.ResetUserGoogle2FA:output_type -> user.CommonResp
-	67,  // 175: user.UserAdmin.ListUserIdentities:output_type -> user.ListUserIdentitiesResp
-	69,  // 176: user.UserAdmin.ReviewUserIdentity:output_type -> user.ReviewUserIdentityResp
-	71,  // 177: user.UserAdmin.ListUserBanks:output_type -> user.ListUserBanksResp
-	73,  // 178: user.UserAdmin.GetUserBank:output_type -> user.GetUserBankResp
-	75,  // 179: user.UserAdmin.AddUserBank:output_type -> user.AddUserBankResp
-	77,  // 180: user.UserAdmin.UpdateUserBank:output_type -> user.UpdateUserBankResp
-	47,  // 181: user.UserAdmin.DeleteUserBank:output_type -> user.CommonResp
-	47,  // 182: user.UserAdmin.UpdateUserBankStatus:output_type -> user.CommonResp
-	47,  // 183: user.UserAdmin.SetDefaultUserBank:output_type -> user.CommonResp
+	1,   // 90: user.App.Register:input_type -> user.RegisterReq
+	4,   // 91: user.App.Login:input_type -> user.LoginReq
+	7,   // 92: user.App.GuestLogin:input_type -> user.GuestLoginReq
+	10,  // 93: user.App.CreateGuestTransfer:input_type -> user.CreateGuestTransferReq
+	13,  // 94: user.App.ExchangeGuestTransfer:input_type -> user.ExchangeGuestTransferReq
+	16,  // 95: user.App.Logout:input_type -> user.LogoutReq
+	17,  // 96: user.App.RefreshToken:input_type -> user.RefreshTokenReq
+	19,  // 97: user.App.GetProfile:input_type -> user.GetProfileReq
+	21,  // 98: user.App.UpdateProfile:input_type -> user.UpdateProfileReq
+	23,  // 99: user.App.ChangeLoginPassword:input_type -> user.ChangeLoginPasswordReq
+	24,  // 100: user.App.GetIdentity:input_type -> user.GetIdentityReq
+	26,  // 101: user.App.SubmitIdentity:input_type -> user.SubmitIdentityReq
+	28,  // 102: user.App.UpdateIdentity:input_type -> user.UpdateIdentityReq
+	30,  // 103: user.App.GetSecurity:input_type -> user.GetSecurityReq
+	32,  // 104: user.App.SetPayPassword:input_type -> user.SetPayPasswordReq
+	33,  // 105: user.App.ChangePayPassword:input_type -> user.ChangePayPasswordReq
+	34,  // 106: user.App.InitGoogle2FA:input_type -> user.InitGoogle2FAReq
+	37,  // 107: user.App.EnableGoogle2FA:input_type -> user.EnableGoogle2FAReq
+	38,  // 108: user.App.DisableGoogle2FA:input_type -> user.DisableGoogle2FAReq
+	39,  // 109: user.App.ListBanks:input_type -> user.ListBanksReq
+	41,  // 110: user.App.AddBank:input_type -> user.AddBankReq
+	43,  // 111: user.App.UpdateBank:input_type -> user.UpdateBankReq
+	45,  // 112: user.App.DeleteBank:input_type -> user.DeleteBankReq
+	46,  // 113: user.App.SetDefaultBank:input_type -> user.SetDefaultBankReq
+	81,  // 114: user.Admin.GuestDomainMigrationStats:input_type -> user.GuestDomainMigrationStatsReq
+	48,  // 115: user.Admin.CreateUser:input_type -> user.CreateUserReq
+	50,  // 116: user.Admin.GetUserDetail:input_type -> user.GetUserDetailReq
+	52,  // 117: user.Admin.ListUsers:input_type -> user.ListUsersReq
+	54,  // 118: user.Admin.UpdateUserBase:input_type -> user.UpdateUserBaseReq
+	56,  // 119: user.Admin.UpdateUserStatus:input_type -> user.UpdateUserStatusReq
+	57,  // 120: user.Admin.UpdateUserLevel:input_type -> user.UpdateUserLevelReq
+	58,  // 121: user.Admin.ResetLoginPassword:input_type -> user.ResetLoginPasswordReq
+	59,  // 122: user.Admin.ResetPayPassword:input_type -> user.ResetPayPasswordReq
+	60,  // 123: user.Admin.UnlockUser:input_type -> user.UnlockUserReq
+	61,  // 124: user.Admin.UpdateRiskLevel:input_type -> user.UpdateRiskLevelReq
+	62,  // 125: user.Admin.DeleteUser:input_type -> user.DeleteUserReq
+	63,  // 126: user.Admin.GetUserSecurity:input_type -> user.GetUserSecurityReq
+	65,  // 127: user.Admin.ResetUserGoogle2FA:input_type -> user.ResetUserGoogle2FAReq
+	66,  // 128: user.Admin.ListUserIdentities:input_type -> user.ListUserIdentitiesReq
+	68,  // 129: user.Admin.ReviewUserIdentity:input_type -> user.ReviewUserIdentityReq
+	70,  // 130: user.Admin.ListUserBanks:input_type -> user.ListUserBanksReq
+	72,  // 131: user.Admin.GetUserBank:input_type -> user.GetUserBankReq
+	74,  // 132: user.Admin.AddUserBank:input_type -> user.AddUserBankReq
+	76,  // 133: user.Admin.UpdateUserBank:input_type -> user.UpdateUserBankReq
+	78,  // 134: user.Admin.DeleteUserBank:input_type -> user.DeleteUserBankReq
+	79,  // 135: user.Admin.UpdateUserBankStatus:input_type -> user.UpdateUserBankStatusReq
+	80,  // 136: user.Admin.SetDefaultUserBank:input_type -> user.SetDefaultUserBankReq
+	2,   // 137: user.App.Register:output_type -> user.RegisterResp
+	5,   // 138: user.App.Login:output_type -> user.LoginResp
+	9,   // 139: user.App.GuestLogin:output_type -> user.GuestLoginResp
+	12,  // 140: user.App.CreateGuestTransfer:output_type -> user.CreateGuestTransferResp
+	15,  // 141: user.App.ExchangeGuestTransfer:output_type -> user.ExchangeGuestTransferResp
+	0,   // 142: user.App.Logout:output_type -> user.UserCommonResp
+	18,  // 143: user.App.RefreshToken:output_type -> user.RefreshTokenResp
+	20,  // 144: user.App.GetProfile:output_type -> user.GetProfileResp
+	22,  // 145: user.App.UpdateProfile:output_type -> user.UpdateProfileResp
+	0,   // 146: user.App.ChangeLoginPassword:output_type -> user.UserCommonResp
+	25,  // 147: user.App.GetIdentity:output_type -> user.GetIdentityResp
+	27,  // 148: user.App.SubmitIdentity:output_type -> user.SubmitIdentityResp
+	29,  // 149: user.App.UpdateIdentity:output_type -> user.UpdateIdentityResp
+	31,  // 150: user.App.GetSecurity:output_type -> user.GetSecurityResp
+	0,   // 151: user.App.SetPayPassword:output_type -> user.UserCommonResp
+	0,   // 152: user.App.ChangePayPassword:output_type -> user.UserCommonResp
+	35,  // 153: user.App.InitGoogle2FA:output_type -> user.InitGoogle2FAResp
+	0,   // 154: user.App.EnableGoogle2FA:output_type -> user.UserCommonResp
+	0,   // 155: user.App.DisableGoogle2FA:output_type -> user.UserCommonResp
+	40,  // 156: user.App.ListBanks:output_type -> user.ListBanksResp
+	42,  // 157: user.App.AddBank:output_type -> user.AddBankResp
+	44,  // 158: user.App.UpdateBank:output_type -> user.UpdateBankResp
+	0,   // 159: user.App.DeleteBank:output_type -> user.UserCommonResp
+	0,   // 160: user.App.SetDefaultBank:output_type -> user.UserCommonResp
+	83,  // 161: user.Admin.GuestDomainMigrationStats:output_type -> user.GuestDomainMigrationStatsResp
+	49,  // 162: user.Admin.CreateUser:output_type -> user.CreateUserResp
+	51,  // 163: user.Admin.GetUserDetail:output_type -> user.GetUserDetailResp
+	53,  // 164: user.Admin.ListUsers:output_type -> user.ListUsersResp
+	55,  // 165: user.Admin.UpdateUserBase:output_type -> user.UpdateUserBaseResp
+	47,  // 166: user.Admin.UpdateUserStatus:output_type -> user.CommonResp
+	47,  // 167: user.Admin.UpdateUserLevel:output_type -> user.CommonResp
+	47,  // 168: user.Admin.ResetLoginPassword:output_type -> user.CommonResp
+	47,  // 169: user.Admin.ResetPayPassword:output_type -> user.CommonResp
+	47,  // 170: user.Admin.UnlockUser:output_type -> user.CommonResp
+	47,  // 171: user.Admin.UpdateRiskLevel:output_type -> user.CommonResp
+	47,  // 172: user.Admin.DeleteUser:output_type -> user.CommonResp
+	64,  // 173: user.Admin.GetUserSecurity:output_type -> user.GetUserSecurityResp
+	47,  // 174: user.Admin.ResetUserGoogle2FA:output_type -> user.CommonResp
+	67,  // 175: user.Admin.ListUserIdentities:output_type -> user.ListUserIdentitiesResp
+	69,  // 176: user.Admin.ReviewUserIdentity:output_type -> user.ReviewUserIdentityResp
+	71,  // 177: user.Admin.ListUserBanks:output_type -> user.ListUserBanksResp
+	73,  // 178: user.Admin.GetUserBank:output_type -> user.GetUserBankResp
+	75,  // 179: user.Admin.AddUserBank:output_type -> user.AddUserBankResp
+	77,  // 180: user.Admin.UpdateUserBank:output_type -> user.UpdateUserBankResp
+	47,  // 181: user.Admin.DeleteUserBank:output_type -> user.CommonResp
+	47,  // 182: user.Admin.UpdateUserBankStatus:output_type -> user.CommonResp
+	47,  // 183: user.Admin.SetDefaultUserBank:output_type -> user.CommonResp
 	137, // [137:184] is the sub-list for method output_type
 	90,  // [90:137] is the sub-list for method input_type
 	90,  // [90:90] is the sub-list for extension type_name

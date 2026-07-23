@@ -19,28 +19,28 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	OptionApp_ListContracts_FullMethodName     = "/option.OptionApp/ListContracts"
-	OptionApp_GetContractDetail_FullMethodName = "/option.OptionApp/GetContractDetail"
-	OptionApp_PlaceOrder_FullMethodName        = "/option.OptionApp/PlaceOrder"
-	OptionApp_CancelOrder_FullMethodName       = "/option.OptionApp/CancelOrder"
-	OptionApp_GetOrderDetail_FullMethodName    = "/option.OptionApp/GetOrderDetail"
-	OptionApp_ListCurrentOrders_FullMethodName = "/option.OptionApp/ListCurrentOrders"
-	OptionApp_ListHistoryOrders_FullMethodName = "/option.OptionApp/ListHistoryOrders"
-	OptionApp_ListTrades_FullMethodName        = "/option.OptionApp/ListTrades"
-	OptionApp_ListPositions_FullMethodName     = "/option.OptionApp/ListPositions"
-	OptionApp_GetPositionDetail_FullMethodName = "/option.OptionApp/GetPositionDetail"
-	OptionApp_Exercise_FullMethodName          = "/option.OptionApp/Exercise"
-	OptionApp_ListExercises_FullMethodName     = "/option.OptionApp/ListExercises"
-	OptionApp_ListAccounts_FullMethodName      = "/option.OptionApp/ListAccounts"
-	OptionApp_ListBills_FullMethodName         = "/option.OptionApp/ListBills"
+	App_ListContracts_FullMethodName     = "/option.App/ListContracts"
+	App_GetContractDetail_FullMethodName = "/option.App/GetContractDetail"
+	App_PlaceOrder_FullMethodName        = "/option.App/PlaceOrder"
+	App_CancelOrder_FullMethodName       = "/option.App/CancelOrder"
+	App_GetOrderDetail_FullMethodName    = "/option.App/GetOrderDetail"
+	App_ListCurrentOrders_FullMethodName = "/option.App/ListCurrentOrders"
+	App_ListHistoryOrders_FullMethodName = "/option.App/ListHistoryOrders"
+	App_ListTrades_FullMethodName        = "/option.App/ListTrades"
+	App_ListPositions_FullMethodName     = "/option.App/ListPositions"
+	App_GetPositionDetail_FullMethodName = "/option.App/GetPositionDetail"
+	App_Exercise_FullMethodName          = "/option.App/Exercise"
+	App_ListExercises_FullMethodName     = "/option.App/ListExercises"
+	App_ListAccounts_FullMethodName      = "/option.App/ListAccounts"
+	App_ListBills_FullMethodName         = "/option.App/ListBills"
 )
 
-// OptionAppClient is the client API for OptionApp service.
+// AppClient is the client API for App service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // 期权 APP 端服务
-type OptionAppClient interface {
+type AppClient interface {
 	// 获取可交易期权合约列表
 	ListContracts(ctx context.Context, in *UserListContractsReq, opts ...grpc.CallOption) (*UserListContractsResp, error)
 	// 获取期权合约详情
@@ -71,160 +71,160 @@ type OptionAppClient interface {
 	ListBills(ctx context.Context, in *UserListBillsReq, opts ...grpc.CallOption) (*UserListBillsResp, error)
 }
 
-type optionAppClient struct {
+type appClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewOptionAppClient(cc grpc.ClientConnInterface) OptionAppClient {
-	return &optionAppClient{cc}
+func NewAppClient(cc grpc.ClientConnInterface) AppClient {
+	return &appClient{cc}
 }
 
-func (c *optionAppClient) ListContracts(ctx context.Context, in *UserListContractsReq, opts ...grpc.CallOption) (*UserListContractsResp, error) {
+func (c *appClient) ListContracts(ctx context.Context, in *UserListContractsReq, opts ...grpc.CallOption) (*UserListContractsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserListContractsResp)
-	err := c.cc.Invoke(ctx, OptionApp_ListContracts_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListContracts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAppClient) GetContractDetail(ctx context.Context, in *GetContractDetailReq, opts ...grpc.CallOption) (*GetContractDetailResp, error) {
+func (c *appClient) GetContractDetail(ctx context.Context, in *GetContractDetailReq, opts ...grpc.CallOption) (*GetContractDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetContractDetailResp)
-	err := c.cc.Invoke(ctx, OptionApp_GetContractDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetContractDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAppClient) PlaceOrder(ctx context.Context, in *PlaceOrderReq, opts ...grpc.CallOption) (*PlaceOrderResp, error) {
+func (c *appClient) PlaceOrder(ctx context.Context, in *PlaceOrderReq, opts ...grpc.CallOption) (*PlaceOrderResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PlaceOrderResp)
-	err := c.cc.Invoke(ctx, OptionApp_PlaceOrder_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_PlaceOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAppClient) CancelOrder(ctx context.Context, in *CancelOrderReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
+func (c *appClient) CancelOrder(ctx context.Context, in *CancelOrderReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserCommonResp)
-	err := c.cc.Invoke(ctx, OptionApp_CancelOrder_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_CancelOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAppClient) GetOrderDetail(ctx context.Context, in *GetOrderDetailReq, opts ...grpc.CallOption) (*GetOrderDetailResp, error) {
+func (c *appClient) GetOrderDetail(ctx context.Context, in *GetOrderDetailReq, opts ...grpc.CallOption) (*GetOrderDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetOrderDetailResp)
-	err := c.cc.Invoke(ctx, OptionApp_GetOrderDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetOrderDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAppClient) ListCurrentOrders(ctx context.Context, in *ListCurrentOrdersReq, opts ...grpc.CallOption) (*ListCurrentOrdersResp, error) {
+func (c *appClient) ListCurrentOrders(ctx context.Context, in *ListCurrentOrdersReq, opts ...grpc.CallOption) (*ListCurrentOrdersResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListCurrentOrdersResp)
-	err := c.cc.Invoke(ctx, OptionApp_ListCurrentOrders_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListCurrentOrders_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAppClient) ListHistoryOrders(ctx context.Context, in *ListHistoryOrdersReq, opts ...grpc.CallOption) (*ListHistoryOrdersResp, error) {
+func (c *appClient) ListHistoryOrders(ctx context.Context, in *ListHistoryOrdersReq, opts ...grpc.CallOption) (*ListHistoryOrdersResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListHistoryOrdersResp)
-	err := c.cc.Invoke(ctx, OptionApp_ListHistoryOrders_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListHistoryOrders_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAppClient) ListTrades(ctx context.Context, in *UserListTradesReq, opts ...grpc.CallOption) (*UserListTradesResp, error) {
+func (c *appClient) ListTrades(ctx context.Context, in *UserListTradesReq, opts ...grpc.CallOption) (*UserListTradesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserListTradesResp)
-	err := c.cc.Invoke(ctx, OptionApp_ListTrades_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListTrades_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAppClient) ListPositions(ctx context.Context, in *UserListPositionsReq, opts ...grpc.CallOption) (*UserListPositionsResp, error) {
+func (c *appClient) ListPositions(ctx context.Context, in *UserListPositionsReq, opts ...grpc.CallOption) (*UserListPositionsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserListPositionsResp)
-	err := c.cc.Invoke(ctx, OptionApp_ListPositions_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListPositions_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAppClient) GetPositionDetail(ctx context.Context, in *GetPositionDetailReq, opts ...grpc.CallOption) (*GetPositionDetailResp, error) {
+func (c *appClient) GetPositionDetail(ctx context.Context, in *GetPositionDetailReq, opts ...grpc.CallOption) (*GetPositionDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetPositionDetailResp)
-	err := c.cc.Invoke(ctx, OptionApp_GetPositionDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetPositionDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAppClient) Exercise(ctx context.Context, in *ExerciseReq, opts ...grpc.CallOption) (*ExerciseResp, error) {
+func (c *appClient) Exercise(ctx context.Context, in *ExerciseReq, opts ...grpc.CallOption) (*ExerciseResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ExerciseResp)
-	err := c.cc.Invoke(ctx, OptionApp_Exercise_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_Exercise_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAppClient) ListExercises(ctx context.Context, in *UserListExercisesReq, opts ...grpc.CallOption) (*UserListExercisesResp, error) {
+func (c *appClient) ListExercises(ctx context.Context, in *UserListExercisesReq, opts ...grpc.CallOption) (*UserListExercisesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserListExercisesResp)
-	err := c.cc.Invoke(ctx, OptionApp_ListExercises_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListExercises_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAppClient) ListAccounts(ctx context.Context, in *UserListAccountsReq, opts ...grpc.CallOption) (*UserListAccountsResp, error) {
+func (c *appClient) ListAccounts(ctx context.Context, in *UserListAccountsReq, opts ...grpc.CallOption) (*UserListAccountsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserListAccountsResp)
-	err := c.cc.Invoke(ctx, OptionApp_ListAccounts_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListAccounts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAppClient) ListBills(ctx context.Context, in *UserListBillsReq, opts ...grpc.CallOption) (*UserListBillsResp, error) {
+func (c *appClient) ListBills(ctx context.Context, in *UserListBillsReq, opts ...grpc.CallOption) (*UserListBillsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserListBillsResp)
-	err := c.cc.Invoke(ctx, OptionApp_ListBills_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListBills_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// OptionAppServer is the server API for OptionApp service.
-// All implementations must embed UnimplementedOptionAppServer
+// AppServer is the server API for App service.
+// All implementations must embed UnimplementedAppServer
 // for forward compatibility.
 //
 // 期权 APP 端服务
-type OptionAppServer interface {
+type AppServer interface {
 	// 获取可交易期权合约列表
 	ListContracts(context.Context, *UserListContractsReq) (*UserListContractsResp, error)
 	// 获取期权合约详情
@@ -253,393 +253,393 @@ type OptionAppServer interface {
 	ListAccounts(context.Context, *UserListAccountsReq) (*UserListAccountsResp, error)
 	// 获取资金流水列表
 	ListBills(context.Context, *UserListBillsReq) (*UserListBillsResp, error)
-	mustEmbedUnimplementedOptionAppServer()
+	mustEmbedUnimplementedAppServer()
 }
 
-// UnimplementedOptionAppServer must be embedded to have
+// UnimplementedAppServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedOptionAppServer struct{}
+type UnimplementedAppServer struct{}
 
-func (UnimplementedOptionAppServer) ListContracts(context.Context, *UserListContractsReq) (*UserListContractsResp, error) {
+func (UnimplementedAppServer) ListContracts(context.Context, *UserListContractsReq) (*UserListContractsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListContracts not implemented")
 }
-func (UnimplementedOptionAppServer) GetContractDetail(context.Context, *GetContractDetailReq) (*GetContractDetailResp, error) {
+func (UnimplementedAppServer) GetContractDetail(context.Context, *GetContractDetailReq) (*GetContractDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetContractDetail not implemented")
 }
-func (UnimplementedOptionAppServer) PlaceOrder(context.Context, *PlaceOrderReq) (*PlaceOrderResp, error) {
+func (UnimplementedAppServer) PlaceOrder(context.Context, *PlaceOrderReq) (*PlaceOrderResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method PlaceOrder not implemented")
 }
-func (UnimplementedOptionAppServer) CancelOrder(context.Context, *CancelOrderReq) (*UserCommonResp, error) {
+func (UnimplementedAppServer) CancelOrder(context.Context, *CancelOrderReq) (*UserCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CancelOrder not implemented")
 }
-func (UnimplementedOptionAppServer) GetOrderDetail(context.Context, *GetOrderDetailReq) (*GetOrderDetailResp, error) {
+func (UnimplementedAppServer) GetOrderDetail(context.Context, *GetOrderDetailReq) (*GetOrderDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetOrderDetail not implemented")
 }
-func (UnimplementedOptionAppServer) ListCurrentOrders(context.Context, *ListCurrentOrdersReq) (*ListCurrentOrdersResp, error) {
+func (UnimplementedAppServer) ListCurrentOrders(context.Context, *ListCurrentOrdersReq) (*ListCurrentOrdersResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListCurrentOrders not implemented")
 }
-func (UnimplementedOptionAppServer) ListHistoryOrders(context.Context, *ListHistoryOrdersReq) (*ListHistoryOrdersResp, error) {
+func (UnimplementedAppServer) ListHistoryOrders(context.Context, *ListHistoryOrdersReq) (*ListHistoryOrdersResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListHistoryOrders not implemented")
 }
-func (UnimplementedOptionAppServer) ListTrades(context.Context, *UserListTradesReq) (*UserListTradesResp, error) {
+func (UnimplementedAppServer) ListTrades(context.Context, *UserListTradesReq) (*UserListTradesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListTrades not implemented")
 }
-func (UnimplementedOptionAppServer) ListPositions(context.Context, *UserListPositionsReq) (*UserListPositionsResp, error) {
+func (UnimplementedAppServer) ListPositions(context.Context, *UserListPositionsReq) (*UserListPositionsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListPositions not implemented")
 }
-func (UnimplementedOptionAppServer) GetPositionDetail(context.Context, *GetPositionDetailReq) (*GetPositionDetailResp, error) {
+func (UnimplementedAppServer) GetPositionDetail(context.Context, *GetPositionDetailReq) (*GetPositionDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPositionDetail not implemented")
 }
-func (UnimplementedOptionAppServer) Exercise(context.Context, *ExerciseReq) (*ExerciseResp, error) {
+func (UnimplementedAppServer) Exercise(context.Context, *ExerciseReq) (*ExerciseResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method Exercise not implemented")
 }
-func (UnimplementedOptionAppServer) ListExercises(context.Context, *UserListExercisesReq) (*UserListExercisesResp, error) {
+func (UnimplementedAppServer) ListExercises(context.Context, *UserListExercisesReq) (*UserListExercisesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListExercises not implemented")
 }
-func (UnimplementedOptionAppServer) ListAccounts(context.Context, *UserListAccountsReq) (*UserListAccountsResp, error) {
+func (UnimplementedAppServer) ListAccounts(context.Context, *UserListAccountsReq) (*UserListAccountsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListAccounts not implemented")
 }
-func (UnimplementedOptionAppServer) ListBills(context.Context, *UserListBillsReq) (*UserListBillsResp, error) {
+func (UnimplementedAppServer) ListBills(context.Context, *UserListBillsReq) (*UserListBillsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListBills not implemented")
 }
-func (UnimplementedOptionAppServer) mustEmbedUnimplementedOptionAppServer() {}
-func (UnimplementedOptionAppServer) testEmbeddedByValue()                   {}
+func (UnimplementedAppServer) mustEmbedUnimplementedAppServer() {}
+func (UnimplementedAppServer) testEmbeddedByValue()             {}
 
-// UnsafeOptionAppServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to OptionAppServer will
+// UnsafeAppServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AppServer will
 // result in compilation errors.
-type UnsafeOptionAppServer interface {
-	mustEmbedUnimplementedOptionAppServer()
+type UnsafeAppServer interface {
+	mustEmbedUnimplementedAppServer()
 }
 
-func RegisterOptionAppServer(s grpc.ServiceRegistrar, srv OptionAppServer) {
-	// If the following call panics, it indicates UnimplementedOptionAppServer was
+func RegisterAppServer(s grpc.ServiceRegistrar, srv AppServer) {
+	// If the following call panics, it indicates UnimplementedAppServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&OptionApp_ServiceDesc, srv)
+	s.RegisterService(&App_ServiceDesc, srv)
 }
 
-func _OptionApp_ListContracts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListContracts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserListContractsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAppServer).ListContracts(ctx, in)
+		return srv.(AppServer).ListContracts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionApp_ListContracts_FullMethodName,
+		FullMethod: App_ListContracts_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAppServer).ListContracts(ctx, req.(*UserListContractsReq))
+		return srv.(AppServer).ListContracts(ctx, req.(*UserListContractsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionApp_GetContractDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetContractDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetContractDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAppServer).GetContractDetail(ctx, in)
+		return srv.(AppServer).GetContractDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionApp_GetContractDetail_FullMethodName,
+		FullMethod: App_GetContractDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAppServer).GetContractDetail(ctx, req.(*GetContractDetailReq))
+		return srv.(AppServer).GetContractDetail(ctx, req.(*GetContractDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionApp_PlaceOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_PlaceOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PlaceOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAppServer).PlaceOrder(ctx, in)
+		return srv.(AppServer).PlaceOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionApp_PlaceOrder_FullMethodName,
+		FullMethod: App_PlaceOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAppServer).PlaceOrder(ctx, req.(*PlaceOrderReq))
+		return srv.(AppServer).PlaceOrder(ctx, req.(*PlaceOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionApp_CancelOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_CancelOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CancelOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAppServer).CancelOrder(ctx, in)
+		return srv.(AppServer).CancelOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionApp_CancelOrder_FullMethodName,
+		FullMethod: App_CancelOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAppServer).CancelOrder(ctx, req.(*CancelOrderReq))
+		return srv.(AppServer).CancelOrder(ctx, req.(*CancelOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionApp_GetOrderDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetOrderDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetOrderDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAppServer).GetOrderDetail(ctx, in)
+		return srv.(AppServer).GetOrderDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionApp_GetOrderDetail_FullMethodName,
+		FullMethod: App_GetOrderDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAppServer).GetOrderDetail(ctx, req.(*GetOrderDetailReq))
+		return srv.(AppServer).GetOrderDetail(ctx, req.(*GetOrderDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionApp_ListCurrentOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListCurrentOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListCurrentOrdersReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAppServer).ListCurrentOrders(ctx, in)
+		return srv.(AppServer).ListCurrentOrders(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionApp_ListCurrentOrders_FullMethodName,
+		FullMethod: App_ListCurrentOrders_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAppServer).ListCurrentOrders(ctx, req.(*ListCurrentOrdersReq))
+		return srv.(AppServer).ListCurrentOrders(ctx, req.(*ListCurrentOrdersReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionApp_ListHistoryOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListHistoryOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListHistoryOrdersReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAppServer).ListHistoryOrders(ctx, in)
+		return srv.(AppServer).ListHistoryOrders(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionApp_ListHistoryOrders_FullMethodName,
+		FullMethod: App_ListHistoryOrders_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAppServer).ListHistoryOrders(ctx, req.(*ListHistoryOrdersReq))
+		return srv.(AppServer).ListHistoryOrders(ctx, req.(*ListHistoryOrdersReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionApp_ListTrades_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListTrades_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserListTradesReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAppServer).ListTrades(ctx, in)
+		return srv.(AppServer).ListTrades(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionApp_ListTrades_FullMethodName,
+		FullMethod: App_ListTrades_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAppServer).ListTrades(ctx, req.(*UserListTradesReq))
+		return srv.(AppServer).ListTrades(ctx, req.(*UserListTradesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionApp_ListPositions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListPositions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserListPositionsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAppServer).ListPositions(ctx, in)
+		return srv.(AppServer).ListPositions(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionApp_ListPositions_FullMethodName,
+		FullMethod: App_ListPositions_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAppServer).ListPositions(ctx, req.(*UserListPositionsReq))
+		return srv.(AppServer).ListPositions(ctx, req.(*UserListPositionsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionApp_GetPositionDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetPositionDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPositionDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAppServer).GetPositionDetail(ctx, in)
+		return srv.(AppServer).GetPositionDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionApp_GetPositionDetail_FullMethodName,
+		FullMethod: App_GetPositionDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAppServer).GetPositionDetail(ctx, req.(*GetPositionDetailReq))
+		return srv.(AppServer).GetPositionDetail(ctx, req.(*GetPositionDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionApp_Exercise_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_Exercise_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ExerciseReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAppServer).Exercise(ctx, in)
+		return srv.(AppServer).Exercise(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionApp_Exercise_FullMethodName,
+		FullMethod: App_Exercise_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAppServer).Exercise(ctx, req.(*ExerciseReq))
+		return srv.(AppServer).Exercise(ctx, req.(*ExerciseReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionApp_ListExercises_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListExercises_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserListExercisesReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAppServer).ListExercises(ctx, in)
+		return srv.(AppServer).ListExercises(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionApp_ListExercises_FullMethodName,
+		FullMethod: App_ListExercises_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAppServer).ListExercises(ctx, req.(*UserListExercisesReq))
+		return srv.(AppServer).ListExercises(ctx, req.(*UserListExercisesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionApp_ListAccounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListAccounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserListAccountsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAppServer).ListAccounts(ctx, in)
+		return srv.(AppServer).ListAccounts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionApp_ListAccounts_FullMethodName,
+		FullMethod: App_ListAccounts_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAppServer).ListAccounts(ctx, req.(*UserListAccountsReq))
+		return srv.(AppServer).ListAccounts(ctx, req.(*UserListAccountsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionApp_ListBills_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListBills_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserListBillsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAppServer).ListBills(ctx, in)
+		return srv.(AppServer).ListBills(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionApp_ListBills_FullMethodName,
+		FullMethod: App_ListBills_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAppServer).ListBills(ctx, req.(*UserListBillsReq))
+		return srv.(AppServer).ListBills(ctx, req.(*UserListBillsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// OptionApp_ServiceDesc is the grpc.ServiceDesc for OptionApp service.
+// App_ServiceDesc is the grpc.ServiceDesc for App service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var OptionApp_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "option.OptionApp",
-	HandlerType: (*OptionAppServer)(nil),
+var App_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "option.App",
+	HandlerType: (*AppServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "ListContracts",
-			Handler:    _OptionApp_ListContracts_Handler,
+			Handler:    _App_ListContracts_Handler,
 		},
 		{
 			MethodName: "GetContractDetail",
-			Handler:    _OptionApp_GetContractDetail_Handler,
+			Handler:    _App_GetContractDetail_Handler,
 		},
 		{
 			MethodName: "PlaceOrder",
-			Handler:    _OptionApp_PlaceOrder_Handler,
+			Handler:    _App_PlaceOrder_Handler,
 		},
 		{
 			MethodName: "CancelOrder",
-			Handler:    _OptionApp_CancelOrder_Handler,
+			Handler:    _App_CancelOrder_Handler,
 		},
 		{
 			MethodName: "GetOrderDetail",
-			Handler:    _OptionApp_GetOrderDetail_Handler,
+			Handler:    _App_GetOrderDetail_Handler,
 		},
 		{
 			MethodName: "ListCurrentOrders",
-			Handler:    _OptionApp_ListCurrentOrders_Handler,
+			Handler:    _App_ListCurrentOrders_Handler,
 		},
 		{
 			MethodName: "ListHistoryOrders",
-			Handler:    _OptionApp_ListHistoryOrders_Handler,
+			Handler:    _App_ListHistoryOrders_Handler,
 		},
 		{
 			MethodName: "ListTrades",
-			Handler:    _OptionApp_ListTrades_Handler,
+			Handler:    _App_ListTrades_Handler,
 		},
 		{
 			MethodName: "ListPositions",
-			Handler:    _OptionApp_ListPositions_Handler,
+			Handler:    _App_ListPositions_Handler,
 		},
 		{
 			MethodName: "GetPositionDetail",
-			Handler:    _OptionApp_GetPositionDetail_Handler,
+			Handler:    _App_GetPositionDetail_Handler,
 		},
 		{
 			MethodName: "Exercise",
-			Handler:    _OptionApp_Exercise_Handler,
+			Handler:    _App_Exercise_Handler,
 		},
 		{
 			MethodName: "ListExercises",
-			Handler:    _OptionApp_ListExercises_Handler,
+			Handler:    _App_ListExercises_Handler,
 		},
 		{
 			MethodName: "ListAccounts",
-			Handler:    _OptionApp_ListAccounts_Handler,
+			Handler:    _App_ListAccounts_Handler,
 		},
 		{
 			MethodName: "ListBills",
-			Handler:    _OptionApp_ListBills_Handler,
+			Handler:    _App_ListBills_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -647,35 +647,35 @@ var OptionApp_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	OptionAdmin_CreateContract_FullMethodName      = "/option.OptionAdmin/CreateContract"
-	OptionAdmin_UpdateContract_FullMethodName      = "/option.OptionAdmin/UpdateContract"
-	OptionAdmin_GetContract_FullMethodName         = "/option.OptionAdmin/GetContract"
-	OptionAdmin_ListContracts_FullMethodName       = "/option.OptionAdmin/ListContracts"
-	OptionAdmin_UpdateMarket_FullMethodName        = "/option.OptionAdmin/UpdateMarket"
-	OptionAdmin_GetMarket_FullMethodName           = "/option.OptionAdmin/GetMarket"
-	OptionAdmin_ListMarketSnapshots_FullMethodName = "/option.OptionAdmin/ListMarketSnapshots"
-	OptionAdmin_GetOrder_FullMethodName            = "/option.OptionAdmin/GetOrder"
-	OptionAdmin_ListOrders_FullMethodName          = "/option.OptionAdmin/ListOrders"
-	OptionAdmin_GetTrade_FullMethodName            = "/option.OptionAdmin/GetTrade"
-	OptionAdmin_ListTrades_FullMethodName          = "/option.OptionAdmin/ListTrades"
-	OptionAdmin_GetPosition_FullMethodName         = "/option.OptionAdmin/GetPosition"
-	OptionAdmin_ListPositions_FullMethodName       = "/option.OptionAdmin/ListPositions"
-	OptionAdmin_GetExercise_FullMethodName         = "/option.OptionAdmin/GetExercise"
-	OptionAdmin_ListExercises_FullMethodName       = "/option.OptionAdmin/ListExercises"
-	OptionAdmin_GetSettlement_FullMethodName       = "/option.OptionAdmin/GetSettlement"
-	OptionAdmin_ListSettlements_FullMethodName     = "/option.OptionAdmin/ListSettlements"
-	OptionAdmin_GetAccount_FullMethodName          = "/option.OptionAdmin/GetAccount"
-	OptionAdmin_ListAccounts_FullMethodName        = "/option.OptionAdmin/ListAccounts"
-	OptionAdmin_GetBill_FullMethodName             = "/option.OptionAdmin/GetBill"
-	OptionAdmin_ListBills_FullMethodName           = "/option.OptionAdmin/ListBills"
+	Admin_CreateContract_FullMethodName      = "/option.Admin/CreateContract"
+	Admin_UpdateContract_FullMethodName      = "/option.Admin/UpdateContract"
+	Admin_GetContract_FullMethodName         = "/option.Admin/GetContract"
+	Admin_ListContracts_FullMethodName       = "/option.Admin/ListContracts"
+	Admin_UpdateMarket_FullMethodName        = "/option.Admin/UpdateMarket"
+	Admin_GetMarket_FullMethodName           = "/option.Admin/GetMarket"
+	Admin_ListMarketSnapshots_FullMethodName = "/option.Admin/ListMarketSnapshots"
+	Admin_GetOrder_FullMethodName            = "/option.Admin/GetOrder"
+	Admin_ListOrders_FullMethodName          = "/option.Admin/ListOrders"
+	Admin_GetTrade_FullMethodName            = "/option.Admin/GetTrade"
+	Admin_ListTrades_FullMethodName          = "/option.Admin/ListTrades"
+	Admin_GetPosition_FullMethodName         = "/option.Admin/GetPosition"
+	Admin_ListPositions_FullMethodName       = "/option.Admin/ListPositions"
+	Admin_GetExercise_FullMethodName         = "/option.Admin/GetExercise"
+	Admin_ListExercises_FullMethodName       = "/option.Admin/ListExercises"
+	Admin_GetSettlement_FullMethodName       = "/option.Admin/GetSettlement"
+	Admin_ListSettlements_FullMethodName     = "/option.Admin/ListSettlements"
+	Admin_GetAccount_FullMethodName          = "/option.Admin/GetAccount"
+	Admin_ListAccounts_FullMethodName        = "/option.Admin/ListAccounts"
+	Admin_GetBill_FullMethodName             = "/option.Admin/GetBill"
+	Admin_ListBills_FullMethodName           = "/option.Admin/ListBills"
 )
 
-// OptionAdminClient is the client API for OptionAdmin service.
+// AdminClient is the client API for Admin service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // 期权管理后台服务
-type OptionAdminClient interface {
+type AdminClient interface {
 	// 创建期权合约
 	CreateContract(ctx context.Context, in *CreateContractReq, opts ...grpc.CallOption) (*CreateContractResp, error)
 	// 更新期权合约
@@ -720,230 +720,230 @@ type OptionAdminClient interface {
 	ListBills(ctx context.Context, in *ListBillsReq, opts ...grpc.CallOption) (*ListBillsResp, error)
 }
 
-type optionAdminClient struct {
+type adminClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewOptionAdminClient(cc grpc.ClientConnInterface) OptionAdminClient {
-	return &optionAdminClient{cc}
+func NewAdminClient(cc grpc.ClientConnInterface) AdminClient {
+	return &adminClient{cc}
 }
 
-func (c *optionAdminClient) CreateContract(ctx context.Context, in *CreateContractReq, opts ...grpc.CallOption) (*CreateContractResp, error) {
+func (c *adminClient) CreateContract(ctx context.Context, in *CreateContractReq, opts ...grpc.CallOption) (*CreateContractResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateContractResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_CreateContract_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_CreateContract_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) UpdateContract(ctx context.Context, in *UpdateContractReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdateContract(ctx context.Context, in *UpdateContractReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_UpdateContract_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateContract_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) GetContract(ctx context.Context, in *GetContractReq, opts ...grpc.CallOption) (*GetContractResp, error) {
+func (c *adminClient) GetContract(ctx context.Context, in *GetContractReq, opts ...grpc.CallOption) (*GetContractResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetContractResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_GetContract_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetContract_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) ListContracts(ctx context.Context, in *ListContractsReq, opts ...grpc.CallOption) (*ListContractsResp, error) {
+func (c *adminClient) ListContracts(ctx context.Context, in *ListContractsReq, opts ...grpc.CallOption) (*ListContractsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListContractsResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_ListContracts_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListContracts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) UpdateMarket(ctx context.Context, in *UpdateMarketReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdateMarket(ctx context.Context, in *UpdateMarketReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_UpdateMarket_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateMarket_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) GetMarket(ctx context.Context, in *GetMarketReq, opts ...grpc.CallOption) (*GetMarketResp, error) {
+func (c *adminClient) GetMarket(ctx context.Context, in *GetMarketReq, opts ...grpc.CallOption) (*GetMarketResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetMarketResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_GetMarket_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetMarket_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) ListMarketSnapshots(ctx context.Context, in *ListMarketSnapshotsReq, opts ...grpc.CallOption) (*ListMarketSnapshotsResp, error) {
+func (c *adminClient) ListMarketSnapshots(ctx context.Context, in *ListMarketSnapshotsReq, opts ...grpc.CallOption) (*ListMarketSnapshotsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListMarketSnapshotsResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_ListMarketSnapshots_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListMarketSnapshots_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) GetOrder(ctx context.Context, in *GetOrderReq, opts ...grpc.CallOption) (*GetOrderResp, error) {
+func (c *adminClient) GetOrder(ctx context.Context, in *GetOrderReq, opts ...grpc.CallOption) (*GetOrderResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetOrderResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_GetOrder_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetOrder_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) ListOrders(ctx context.Context, in *ListOrdersReq, opts ...grpc.CallOption) (*ListOrdersResp, error) {
+func (c *adminClient) ListOrders(ctx context.Context, in *ListOrdersReq, opts ...grpc.CallOption) (*ListOrdersResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListOrdersResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_ListOrders_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListOrders_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) GetTrade(ctx context.Context, in *GetTradeReq, opts ...grpc.CallOption) (*GetTradeResp, error) {
+func (c *adminClient) GetTrade(ctx context.Context, in *GetTradeReq, opts ...grpc.CallOption) (*GetTradeResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetTradeResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_GetTrade_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetTrade_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) ListTrades(ctx context.Context, in *ListTradesReq, opts ...grpc.CallOption) (*ListTradesResp, error) {
+func (c *adminClient) ListTrades(ctx context.Context, in *ListTradesReq, opts ...grpc.CallOption) (*ListTradesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListTradesResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_ListTrades_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListTrades_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) GetPosition(ctx context.Context, in *GetPositionReq, opts ...grpc.CallOption) (*GetPositionResp, error) {
+func (c *adminClient) GetPosition(ctx context.Context, in *GetPositionReq, opts ...grpc.CallOption) (*GetPositionResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetPositionResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_GetPosition_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetPosition_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) ListPositions(ctx context.Context, in *ListPositionsReq, opts ...grpc.CallOption) (*ListPositionsResp, error) {
+func (c *adminClient) ListPositions(ctx context.Context, in *ListPositionsReq, opts ...grpc.CallOption) (*ListPositionsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListPositionsResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_ListPositions_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListPositions_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) GetExercise(ctx context.Context, in *GetExerciseReq, opts ...grpc.CallOption) (*GetExerciseResp, error) {
+func (c *adminClient) GetExercise(ctx context.Context, in *GetExerciseReq, opts ...grpc.CallOption) (*GetExerciseResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetExerciseResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_GetExercise_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetExercise_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) ListExercises(ctx context.Context, in *ListExercisesReq, opts ...grpc.CallOption) (*ListExercisesResp, error) {
+func (c *adminClient) ListExercises(ctx context.Context, in *ListExercisesReq, opts ...grpc.CallOption) (*ListExercisesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListExercisesResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_ListExercises_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListExercises_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) GetSettlement(ctx context.Context, in *GetSettlementReq, opts ...grpc.CallOption) (*GetSettlementResp, error) {
+func (c *adminClient) GetSettlement(ctx context.Context, in *GetSettlementReq, opts ...grpc.CallOption) (*GetSettlementResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSettlementResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_GetSettlement_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetSettlement_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) ListSettlements(ctx context.Context, in *ListSettlementsReq, opts ...grpc.CallOption) (*ListSettlementsResp, error) {
+func (c *adminClient) ListSettlements(ctx context.Context, in *ListSettlementsReq, opts ...grpc.CallOption) (*ListSettlementsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListSettlementsResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_ListSettlements_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListSettlements_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) GetAccount(ctx context.Context, in *GetAccountReq, opts ...grpc.CallOption) (*GetAccountResp, error) {
+func (c *adminClient) GetAccount(ctx context.Context, in *GetAccountReq, opts ...grpc.CallOption) (*GetAccountResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetAccountResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_GetAccount_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetAccount_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) ListAccounts(ctx context.Context, in *ListAccountsReq, opts ...grpc.CallOption) (*ListAccountsResp, error) {
+func (c *adminClient) ListAccounts(ctx context.Context, in *ListAccountsReq, opts ...grpc.CallOption) (*ListAccountsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListAccountsResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_ListAccounts_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListAccounts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) GetBill(ctx context.Context, in *GetBillReq, opts ...grpc.CallOption) (*GetBillResp, error) {
+func (c *adminClient) GetBill(ctx context.Context, in *GetBillReq, opts ...grpc.CallOption) (*GetBillResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetBillResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_GetBill_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetBill_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionAdminClient) ListBills(ctx context.Context, in *ListBillsReq, opts ...grpc.CallOption) (*ListBillsResp, error) {
+func (c *adminClient) ListBills(ctx context.Context, in *ListBillsReq, opts ...grpc.CallOption) (*ListBillsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListBillsResp)
-	err := c.cc.Invoke(ctx, OptionAdmin_ListBills_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListBills_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// OptionAdminServer is the server API for OptionAdmin service.
-// All implementations must embed UnimplementedOptionAdminServer
+// AdminServer is the server API for Admin service.
+// All implementations must embed UnimplementedAdminServer
 // for forward compatibility.
 //
 // 期权管理后台服务
-type OptionAdminServer interface {
+type AdminServer interface {
 	// 创建期权合约
 	CreateContract(context.Context, *CreateContractReq) (*CreateContractResp, error)
 	// 更新期权合约
@@ -986,568 +986,568 @@ type OptionAdminServer interface {
 	GetBill(context.Context, *GetBillReq) (*GetBillResp, error)
 	// 分页查询资金流水列表
 	ListBills(context.Context, *ListBillsReq) (*ListBillsResp, error)
-	mustEmbedUnimplementedOptionAdminServer()
+	mustEmbedUnimplementedAdminServer()
 }
 
-// UnimplementedOptionAdminServer must be embedded to have
+// UnimplementedAdminServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedOptionAdminServer struct{}
+type UnimplementedAdminServer struct{}
 
-func (UnimplementedOptionAdminServer) CreateContract(context.Context, *CreateContractReq) (*CreateContractResp, error) {
+func (UnimplementedAdminServer) CreateContract(context.Context, *CreateContractReq) (*CreateContractResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateContract not implemented")
 }
-func (UnimplementedOptionAdminServer) UpdateContract(context.Context, *UpdateContractReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdateContract(context.Context, *UpdateContractReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateContract not implemented")
 }
-func (UnimplementedOptionAdminServer) GetContract(context.Context, *GetContractReq) (*GetContractResp, error) {
+func (UnimplementedAdminServer) GetContract(context.Context, *GetContractReq) (*GetContractResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetContract not implemented")
 }
-func (UnimplementedOptionAdminServer) ListContracts(context.Context, *ListContractsReq) (*ListContractsResp, error) {
+func (UnimplementedAdminServer) ListContracts(context.Context, *ListContractsReq) (*ListContractsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListContracts not implemented")
 }
-func (UnimplementedOptionAdminServer) UpdateMarket(context.Context, *UpdateMarketReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdateMarket(context.Context, *UpdateMarketReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateMarket not implemented")
 }
-func (UnimplementedOptionAdminServer) GetMarket(context.Context, *GetMarketReq) (*GetMarketResp, error) {
+func (UnimplementedAdminServer) GetMarket(context.Context, *GetMarketReq) (*GetMarketResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMarket not implemented")
 }
-func (UnimplementedOptionAdminServer) ListMarketSnapshots(context.Context, *ListMarketSnapshotsReq) (*ListMarketSnapshotsResp, error) {
+func (UnimplementedAdminServer) ListMarketSnapshots(context.Context, *ListMarketSnapshotsReq) (*ListMarketSnapshotsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMarketSnapshots not implemented")
 }
-func (UnimplementedOptionAdminServer) GetOrder(context.Context, *GetOrderReq) (*GetOrderResp, error) {
+func (UnimplementedAdminServer) GetOrder(context.Context, *GetOrderReq) (*GetOrderResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetOrder not implemented")
 }
-func (UnimplementedOptionAdminServer) ListOrders(context.Context, *ListOrdersReq) (*ListOrdersResp, error) {
+func (UnimplementedAdminServer) ListOrders(context.Context, *ListOrdersReq) (*ListOrdersResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListOrders not implemented")
 }
-func (UnimplementedOptionAdminServer) GetTrade(context.Context, *GetTradeReq) (*GetTradeResp, error) {
+func (UnimplementedAdminServer) GetTrade(context.Context, *GetTradeReq) (*GetTradeResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTrade not implemented")
 }
-func (UnimplementedOptionAdminServer) ListTrades(context.Context, *ListTradesReq) (*ListTradesResp, error) {
+func (UnimplementedAdminServer) ListTrades(context.Context, *ListTradesReq) (*ListTradesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListTrades not implemented")
 }
-func (UnimplementedOptionAdminServer) GetPosition(context.Context, *GetPositionReq) (*GetPositionResp, error) {
+func (UnimplementedAdminServer) GetPosition(context.Context, *GetPositionReq) (*GetPositionResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPosition not implemented")
 }
-func (UnimplementedOptionAdminServer) ListPositions(context.Context, *ListPositionsReq) (*ListPositionsResp, error) {
+func (UnimplementedAdminServer) ListPositions(context.Context, *ListPositionsReq) (*ListPositionsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListPositions not implemented")
 }
-func (UnimplementedOptionAdminServer) GetExercise(context.Context, *GetExerciseReq) (*GetExerciseResp, error) {
+func (UnimplementedAdminServer) GetExercise(context.Context, *GetExerciseReq) (*GetExerciseResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetExercise not implemented")
 }
-func (UnimplementedOptionAdminServer) ListExercises(context.Context, *ListExercisesReq) (*ListExercisesResp, error) {
+func (UnimplementedAdminServer) ListExercises(context.Context, *ListExercisesReq) (*ListExercisesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListExercises not implemented")
 }
-func (UnimplementedOptionAdminServer) GetSettlement(context.Context, *GetSettlementReq) (*GetSettlementResp, error) {
+func (UnimplementedAdminServer) GetSettlement(context.Context, *GetSettlementReq) (*GetSettlementResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSettlement not implemented")
 }
-func (UnimplementedOptionAdminServer) ListSettlements(context.Context, *ListSettlementsReq) (*ListSettlementsResp, error) {
+func (UnimplementedAdminServer) ListSettlements(context.Context, *ListSettlementsReq) (*ListSettlementsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListSettlements not implemented")
 }
-func (UnimplementedOptionAdminServer) GetAccount(context.Context, *GetAccountReq) (*GetAccountResp, error) {
+func (UnimplementedAdminServer) GetAccount(context.Context, *GetAccountReq) (*GetAccountResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetAccount not implemented")
 }
-func (UnimplementedOptionAdminServer) ListAccounts(context.Context, *ListAccountsReq) (*ListAccountsResp, error) {
+func (UnimplementedAdminServer) ListAccounts(context.Context, *ListAccountsReq) (*ListAccountsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListAccounts not implemented")
 }
-func (UnimplementedOptionAdminServer) GetBill(context.Context, *GetBillReq) (*GetBillResp, error) {
+func (UnimplementedAdminServer) GetBill(context.Context, *GetBillReq) (*GetBillResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetBill not implemented")
 }
-func (UnimplementedOptionAdminServer) ListBills(context.Context, *ListBillsReq) (*ListBillsResp, error) {
+func (UnimplementedAdminServer) ListBills(context.Context, *ListBillsReq) (*ListBillsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListBills not implemented")
 }
-func (UnimplementedOptionAdminServer) mustEmbedUnimplementedOptionAdminServer() {}
-func (UnimplementedOptionAdminServer) testEmbeddedByValue()                     {}
+func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
+func (UnimplementedAdminServer) testEmbeddedByValue()               {}
 
-// UnsafeOptionAdminServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to OptionAdminServer will
+// UnsafeAdminServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AdminServer will
 // result in compilation errors.
-type UnsafeOptionAdminServer interface {
-	mustEmbedUnimplementedOptionAdminServer()
+type UnsafeAdminServer interface {
+	mustEmbedUnimplementedAdminServer()
 }
 
-func RegisterOptionAdminServer(s grpc.ServiceRegistrar, srv OptionAdminServer) {
-	// If the following call panics, it indicates UnimplementedOptionAdminServer was
+func RegisterAdminServer(s grpc.ServiceRegistrar, srv AdminServer) {
+	// If the following call panics, it indicates UnimplementedAdminServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&OptionAdmin_ServiceDesc, srv)
+	s.RegisterService(&Admin_ServiceDesc, srv)
 }
 
-func _OptionAdmin_CreateContract_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_CreateContract_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateContractReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).CreateContract(ctx, in)
+		return srv.(AdminServer).CreateContract(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_CreateContract_FullMethodName,
+		FullMethod: Admin_CreateContract_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).CreateContract(ctx, req.(*CreateContractReq))
+		return srv.(AdminServer).CreateContract(ctx, req.(*CreateContractReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_UpdateContract_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateContract_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateContractReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).UpdateContract(ctx, in)
+		return srv.(AdminServer).UpdateContract(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_UpdateContract_FullMethodName,
+		FullMethod: Admin_UpdateContract_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).UpdateContract(ctx, req.(*UpdateContractReq))
+		return srv.(AdminServer).UpdateContract(ctx, req.(*UpdateContractReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_GetContract_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetContract_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetContractReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).GetContract(ctx, in)
+		return srv.(AdminServer).GetContract(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_GetContract_FullMethodName,
+		FullMethod: Admin_GetContract_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).GetContract(ctx, req.(*GetContractReq))
+		return srv.(AdminServer).GetContract(ctx, req.(*GetContractReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_ListContracts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListContracts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListContractsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).ListContracts(ctx, in)
+		return srv.(AdminServer).ListContracts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_ListContracts_FullMethodName,
+		FullMethod: Admin_ListContracts_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).ListContracts(ctx, req.(*ListContractsReq))
+		return srv.(AdminServer).ListContracts(ctx, req.(*ListContractsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_UpdateMarket_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateMarket_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateMarketReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).UpdateMarket(ctx, in)
+		return srv.(AdminServer).UpdateMarket(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_UpdateMarket_FullMethodName,
+		FullMethod: Admin_UpdateMarket_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).UpdateMarket(ctx, req.(*UpdateMarketReq))
+		return srv.(AdminServer).UpdateMarket(ctx, req.(*UpdateMarketReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_GetMarket_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetMarket_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMarketReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).GetMarket(ctx, in)
+		return srv.(AdminServer).GetMarket(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_GetMarket_FullMethodName,
+		FullMethod: Admin_GetMarket_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).GetMarket(ctx, req.(*GetMarketReq))
+		return srv.(AdminServer).GetMarket(ctx, req.(*GetMarketReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_ListMarketSnapshots_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListMarketSnapshots_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListMarketSnapshotsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).ListMarketSnapshots(ctx, in)
+		return srv.(AdminServer).ListMarketSnapshots(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_ListMarketSnapshots_FullMethodName,
+		FullMethod: Admin_ListMarketSnapshots_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).ListMarketSnapshots(ctx, req.(*ListMarketSnapshotsReq))
+		return srv.(AdminServer).ListMarketSnapshots(ctx, req.(*ListMarketSnapshotsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_GetOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetOrderReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).GetOrder(ctx, in)
+		return srv.(AdminServer).GetOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_GetOrder_FullMethodName,
+		FullMethod: Admin_GetOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).GetOrder(ctx, req.(*GetOrderReq))
+		return srv.(AdminServer).GetOrder(ctx, req.(*GetOrderReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_ListOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListOrdersReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).ListOrders(ctx, in)
+		return srv.(AdminServer).ListOrders(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_ListOrders_FullMethodName,
+		FullMethod: Admin_ListOrders_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).ListOrders(ctx, req.(*ListOrdersReq))
+		return srv.(AdminServer).ListOrders(ctx, req.(*ListOrdersReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_GetTrade_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetTrade_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTradeReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).GetTrade(ctx, in)
+		return srv.(AdminServer).GetTrade(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_GetTrade_FullMethodName,
+		FullMethod: Admin_GetTrade_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).GetTrade(ctx, req.(*GetTradeReq))
+		return srv.(AdminServer).GetTrade(ctx, req.(*GetTradeReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_ListTrades_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListTrades_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListTradesReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).ListTrades(ctx, in)
+		return srv.(AdminServer).ListTrades(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_ListTrades_FullMethodName,
+		FullMethod: Admin_ListTrades_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).ListTrades(ctx, req.(*ListTradesReq))
+		return srv.(AdminServer).ListTrades(ctx, req.(*ListTradesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_GetPosition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetPosition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPositionReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).GetPosition(ctx, in)
+		return srv.(AdminServer).GetPosition(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_GetPosition_FullMethodName,
+		FullMethod: Admin_GetPosition_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).GetPosition(ctx, req.(*GetPositionReq))
+		return srv.(AdminServer).GetPosition(ctx, req.(*GetPositionReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_ListPositions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListPositions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListPositionsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).ListPositions(ctx, in)
+		return srv.(AdminServer).ListPositions(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_ListPositions_FullMethodName,
+		FullMethod: Admin_ListPositions_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).ListPositions(ctx, req.(*ListPositionsReq))
+		return srv.(AdminServer).ListPositions(ctx, req.(*ListPositionsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_GetExercise_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetExercise_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetExerciseReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).GetExercise(ctx, in)
+		return srv.(AdminServer).GetExercise(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_GetExercise_FullMethodName,
+		FullMethod: Admin_GetExercise_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).GetExercise(ctx, req.(*GetExerciseReq))
+		return srv.(AdminServer).GetExercise(ctx, req.(*GetExerciseReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_ListExercises_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListExercises_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListExercisesReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).ListExercises(ctx, in)
+		return srv.(AdminServer).ListExercises(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_ListExercises_FullMethodName,
+		FullMethod: Admin_ListExercises_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).ListExercises(ctx, req.(*ListExercisesReq))
+		return srv.(AdminServer).ListExercises(ctx, req.(*ListExercisesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_GetSettlement_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetSettlement_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSettlementReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).GetSettlement(ctx, in)
+		return srv.(AdminServer).GetSettlement(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_GetSettlement_FullMethodName,
+		FullMethod: Admin_GetSettlement_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).GetSettlement(ctx, req.(*GetSettlementReq))
+		return srv.(AdminServer).GetSettlement(ctx, req.(*GetSettlementReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_ListSettlements_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListSettlements_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListSettlementsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).ListSettlements(ctx, in)
+		return srv.(AdminServer).ListSettlements(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_ListSettlements_FullMethodName,
+		FullMethod: Admin_ListSettlements_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).ListSettlements(ctx, req.(*ListSettlementsReq))
+		return srv.(AdminServer).ListSettlements(ctx, req.(*ListSettlementsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_GetAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAccountReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).GetAccount(ctx, in)
+		return srv.(AdminServer).GetAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_GetAccount_FullMethodName,
+		FullMethod: Admin_GetAccount_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).GetAccount(ctx, req.(*GetAccountReq))
+		return srv.(AdminServer).GetAccount(ctx, req.(*GetAccountReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_ListAccounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListAccounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListAccountsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).ListAccounts(ctx, in)
+		return srv.(AdminServer).ListAccounts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_ListAccounts_FullMethodName,
+		FullMethod: Admin_ListAccounts_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).ListAccounts(ctx, req.(*ListAccountsReq))
+		return srv.(AdminServer).ListAccounts(ctx, req.(*ListAccountsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_GetBill_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetBill_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetBillReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).GetBill(ctx, in)
+		return srv.(AdminServer).GetBill(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_GetBill_FullMethodName,
+		FullMethod: Admin_GetBill_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).GetBill(ctx, req.(*GetBillReq))
+		return srv.(AdminServer).GetBill(ctx, req.(*GetBillReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionAdmin_ListBills_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListBills_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListBillsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionAdminServer).ListBills(ctx, in)
+		return srv.(AdminServer).ListBills(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionAdmin_ListBills_FullMethodName,
+		FullMethod: Admin_ListBills_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionAdminServer).ListBills(ctx, req.(*ListBillsReq))
+		return srv.(AdminServer).ListBills(ctx, req.(*ListBillsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// OptionAdmin_ServiceDesc is the grpc.ServiceDesc for OptionAdmin service.
+// Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var OptionAdmin_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "option.OptionAdmin",
-	HandlerType: (*OptionAdminServer)(nil),
+var Admin_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "option.Admin",
+	HandlerType: (*AdminServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateContract",
-			Handler:    _OptionAdmin_CreateContract_Handler,
+			Handler:    _Admin_CreateContract_Handler,
 		},
 		{
 			MethodName: "UpdateContract",
-			Handler:    _OptionAdmin_UpdateContract_Handler,
+			Handler:    _Admin_UpdateContract_Handler,
 		},
 		{
 			MethodName: "GetContract",
-			Handler:    _OptionAdmin_GetContract_Handler,
+			Handler:    _Admin_GetContract_Handler,
 		},
 		{
 			MethodName: "ListContracts",
-			Handler:    _OptionAdmin_ListContracts_Handler,
+			Handler:    _Admin_ListContracts_Handler,
 		},
 		{
 			MethodName: "UpdateMarket",
-			Handler:    _OptionAdmin_UpdateMarket_Handler,
+			Handler:    _Admin_UpdateMarket_Handler,
 		},
 		{
 			MethodName: "GetMarket",
-			Handler:    _OptionAdmin_GetMarket_Handler,
+			Handler:    _Admin_GetMarket_Handler,
 		},
 		{
 			MethodName: "ListMarketSnapshots",
-			Handler:    _OptionAdmin_ListMarketSnapshots_Handler,
+			Handler:    _Admin_ListMarketSnapshots_Handler,
 		},
 		{
 			MethodName: "GetOrder",
-			Handler:    _OptionAdmin_GetOrder_Handler,
+			Handler:    _Admin_GetOrder_Handler,
 		},
 		{
 			MethodName: "ListOrders",
-			Handler:    _OptionAdmin_ListOrders_Handler,
+			Handler:    _Admin_ListOrders_Handler,
 		},
 		{
 			MethodName: "GetTrade",
-			Handler:    _OptionAdmin_GetTrade_Handler,
+			Handler:    _Admin_GetTrade_Handler,
 		},
 		{
 			MethodName: "ListTrades",
-			Handler:    _OptionAdmin_ListTrades_Handler,
+			Handler:    _Admin_ListTrades_Handler,
 		},
 		{
 			MethodName: "GetPosition",
-			Handler:    _OptionAdmin_GetPosition_Handler,
+			Handler:    _Admin_GetPosition_Handler,
 		},
 		{
 			MethodName: "ListPositions",
-			Handler:    _OptionAdmin_ListPositions_Handler,
+			Handler:    _Admin_ListPositions_Handler,
 		},
 		{
 			MethodName: "GetExercise",
-			Handler:    _OptionAdmin_GetExercise_Handler,
+			Handler:    _Admin_GetExercise_Handler,
 		},
 		{
 			MethodName: "ListExercises",
-			Handler:    _OptionAdmin_ListExercises_Handler,
+			Handler:    _Admin_ListExercises_Handler,
 		},
 		{
 			MethodName: "GetSettlement",
-			Handler:    _OptionAdmin_GetSettlement_Handler,
+			Handler:    _Admin_GetSettlement_Handler,
 		},
 		{
 			MethodName: "ListSettlements",
-			Handler:    _OptionAdmin_ListSettlements_Handler,
+			Handler:    _Admin_ListSettlements_Handler,
 		},
 		{
 			MethodName: "GetAccount",
-			Handler:    _OptionAdmin_GetAccount_Handler,
+			Handler:    _Admin_GetAccount_Handler,
 		},
 		{
 			MethodName: "ListAccounts",
-			Handler:    _OptionAdmin_ListAccounts_Handler,
+			Handler:    _Admin_ListAccounts_Handler,
 		},
 		{
 			MethodName: "GetBill",
-			Handler:    _OptionAdmin_GetBill_Handler,
+			Handler:    _Admin_GetBill_Handler,
 		},
 		{
 			MethodName: "ListBills",
-			Handler:    _OptionAdmin_ListBills_Handler,
+			Handler:    _Admin_ListBills_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1555,103 +1555,103 @@ var OptionAdmin_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	OptionInternal_SyncMarketQuote_FullMethodName = "/option.OptionInternal/SyncMarketQuote"
+	Internal_SyncMarketQuote_FullMethodName = "/option.Internal/SyncMarketQuote"
 )
 
-// OptionInternalClient is the client API for OptionInternal service.
+// InternalClient is the client API for Internal service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type OptionInternalClient interface {
+type InternalClient interface {
 	// 同步标的行情，更新对应期权合约行情和快照。
 	SyncMarketQuote(ctx context.Context, in *SyncMarketQuoteReq, opts ...grpc.CallOption) (*InternalCommonResp, error)
 }
 
-type optionInternalClient struct {
+type internalClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewOptionInternalClient(cc grpc.ClientConnInterface) OptionInternalClient {
-	return &optionInternalClient{cc}
+func NewInternalClient(cc grpc.ClientConnInterface) InternalClient {
+	return &internalClient{cc}
 }
 
-func (c *optionInternalClient) SyncMarketQuote(ctx context.Context, in *SyncMarketQuoteReq, opts ...grpc.CallOption) (*InternalCommonResp, error) {
+func (c *internalClient) SyncMarketQuote(ctx context.Context, in *SyncMarketQuoteReq, opts ...grpc.CallOption) (*InternalCommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(InternalCommonResp)
-	err := c.cc.Invoke(ctx, OptionInternal_SyncMarketQuote_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_SyncMarketQuote_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// OptionInternalServer is the server API for OptionInternal service.
-// All implementations must embed UnimplementedOptionInternalServer
+// InternalServer is the server API for Internal service.
+// All implementations must embed UnimplementedInternalServer
 // for forward compatibility.
-type OptionInternalServer interface {
+type InternalServer interface {
 	// 同步标的行情，更新对应期权合约行情和快照。
 	SyncMarketQuote(context.Context, *SyncMarketQuoteReq) (*InternalCommonResp, error)
-	mustEmbedUnimplementedOptionInternalServer()
+	mustEmbedUnimplementedInternalServer()
 }
 
-// UnimplementedOptionInternalServer must be embedded to have
+// UnimplementedInternalServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedOptionInternalServer struct{}
+type UnimplementedInternalServer struct{}
 
-func (UnimplementedOptionInternalServer) SyncMarketQuote(context.Context, *SyncMarketQuoteReq) (*InternalCommonResp, error) {
+func (UnimplementedInternalServer) SyncMarketQuote(context.Context, *SyncMarketQuoteReq) (*InternalCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SyncMarketQuote not implemented")
 }
-func (UnimplementedOptionInternalServer) mustEmbedUnimplementedOptionInternalServer() {}
-func (UnimplementedOptionInternalServer) testEmbeddedByValue()                        {}
+func (UnimplementedInternalServer) mustEmbedUnimplementedInternalServer() {}
+func (UnimplementedInternalServer) testEmbeddedByValue()                  {}
 
-// UnsafeOptionInternalServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to OptionInternalServer will
+// UnsafeInternalServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to InternalServer will
 // result in compilation errors.
-type UnsafeOptionInternalServer interface {
-	mustEmbedUnimplementedOptionInternalServer()
+type UnsafeInternalServer interface {
+	mustEmbedUnimplementedInternalServer()
 }
 
-func RegisterOptionInternalServer(s grpc.ServiceRegistrar, srv OptionInternalServer) {
-	// If the following call panics, it indicates UnimplementedOptionInternalServer was
+func RegisterInternalServer(s grpc.ServiceRegistrar, srv InternalServer) {
+	// If the following call panics, it indicates UnimplementedInternalServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&OptionInternal_ServiceDesc, srv)
+	s.RegisterService(&Internal_ServiceDesc, srv)
 }
 
-func _OptionInternal_SyncMarketQuote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_SyncMarketQuote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SyncMarketQuoteReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionInternalServer).SyncMarketQuote(ctx, in)
+		return srv.(InternalServer).SyncMarketQuote(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionInternal_SyncMarketQuote_FullMethodName,
+		FullMethod: Internal_SyncMarketQuote_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionInternalServer).SyncMarketQuote(ctx, req.(*SyncMarketQuoteReq))
+		return srv.(InternalServer).SyncMarketQuote(ctx, req.(*SyncMarketQuoteReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// OptionInternal_ServiceDesc is the grpc.ServiceDesc for OptionInternal service.
+// Internal_ServiceDesc is the grpc.ServiceDesc for Internal service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var OptionInternal_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "option.OptionInternal",
-	HandlerType: (*OptionInternalServer)(nil),
+var Internal_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "option.Internal",
+	HandlerType: (*InternalServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "SyncMarketQuote",
-			Handler:    _OptionInternal_SyncMarketQuote_Handler,
+			Handler:    _Internal_SyncMarketQuote_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1659,151 +1659,151 @@ var OptionInternal_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	OptionTask_ProcessContractLifecycle_FullMethodName = "/option.OptionTask/ProcessContractLifecycle"
-	OptionTask_CleanMarketSnapshots_FullMethodName     = "/option.OptionTask/CleanMarketSnapshots"
+	Task_ProcessContractLifecycle_FullMethodName = "/option.Task/ProcessContractLifecycle"
+	Task_CleanMarketSnapshots_FullMethodName     = "/option.Task/CleanMarketSnapshots"
 )
 
-// OptionTaskClient is the client API for OptionTask service.
+// TaskClient is the client API for Task service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // ====================
 // 定时任务
 // ====================
-type OptionTaskClient interface {
+type TaskClient interface {
 	// 期权合约生命周期处理（状态流转/订单过期/自动行权/到期结算）
 	ProcessContractLifecycle(ctx context.Context, in *OptionTaskReq, opts ...grpc.CallOption) (*OptionTaskResp, error)
 	// 期权行情快照归档/清理
 	CleanMarketSnapshots(ctx context.Context, in *OptionTaskReq, opts ...grpc.CallOption) (*OptionTaskResp, error)
 }
 
-type optionTaskClient struct {
+type taskClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewOptionTaskClient(cc grpc.ClientConnInterface) OptionTaskClient {
-	return &optionTaskClient{cc}
+func NewTaskClient(cc grpc.ClientConnInterface) TaskClient {
+	return &taskClient{cc}
 }
 
-func (c *optionTaskClient) ProcessContractLifecycle(ctx context.Context, in *OptionTaskReq, opts ...grpc.CallOption) (*OptionTaskResp, error) {
+func (c *taskClient) ProcessContractLifecycle(ctx context.Context, in *OptionTaskReq, opts ...grpc.CallOption) (*OptionTaskResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(OptionTaskResp)
-	err := c.cc.Invoke(ctx, OptionTask_ProcessContractLifecycle_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Task_ProcessContractLifecycle_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *optionTaskClient) CleanMarketSnapshots(ctx context.Context, in *OptionTaskReq, opts ...grpc.CallOption) (*OptionTaskResp, error) {
+func (c *taskClient) CleanMarketSnapshots(ctx context.Context, in *OptionTaskReq, opts ...grpc.CallOption) (*OptionTaskResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(OptionTaskResp)
-	err := c.cc.Invoke(ctx, OptionTask_CleanMarketSnapshots_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Task_CleanMarketSnapshots_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// OptionTaskServer is the server API for OptionTask service.
-// All implementations must embed UnimplementedOptionTaskServer
+// TaskServer is the server API for Task service.
+// All implementations must embed UnimplementedTaskServer
 // for forward compatibility.
 //
 // ====================
 // 定时任务
 // ====================
-type OptionTaskServer interface {
+type TaskServer interface {
 	// 期权合约生命周期处理（状态流转/订单过期/自动行权/到期结算）
 	ProcessContractLifecycle(context.Context, *OptionTaskReq) (*OptionTaskResp, error)
 	// 期权行情快照归档/清理
 	CleanMarketSnapshots(context.Context, *OptionTaskReq) (*OptionTaskResp, error)
-	mustEmbedUnimplementedOptionTaskServer()
+	mustEmbedUnimplementedTaskServer()
 }
 
-// UnimplementedOptionTaskServer must be embedded to have
+// UnimplementedTaskServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedOptionTaskServer struct{}
+type UnimplementedTaskServer struct{}
 
-func (UnimplementedOptionTaskServer) ProcessContractLifecycle(context.Context, *OptionTaskReq) (*OptionTaskResp, error) {
+func (UnimplementedTaskServer) ProcessContractLifecycle(context.Context, *OptionTaskReq) (*OptionTaskResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProcessContractLifecycle not implemented")
 }
-func (UnimplementedOptionTaskServer) CleanMarketSnapshots(context.Context, *OptionTaskReq) (*OptionTaskResp, error) {
+func (UnimplementedTaskServer) CleanMarketSnapshots(context.Context, *OptionTaskReq) (*OptionTaskResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CleanMarketSnapshots not implemented")
 }
-func (UnimplementedOptionTaskServer) mustEmbedUnimplementedOptionTaskServer() {}
-func (UnimplementedOptionTaskServer) testEmbeddedByValue()                    {}
+func (UnimplementedTaskServer) mustEmbedUnimplementedTaskServer() {}
+func (UnimplementedTaskServer) testEmbeddedByValue()              {}
 
-// UnsafeOptionTaskServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to OptionTaskServer will
+// UnsafeTaskServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TaskServer will
 // result in compilation errors.
-type UnsafeOptionTaskServer interface {
-	mustEmbedUnimplementedOptionTaskServer()
+type UnsafeTaskServer interface {
+	mustEmbedUnimplementedTaskServer()
 }
 
-func RegisterOptionTaskServer(s grpc.ServiceRegistrar, srv OptionTaskServer) {
-	// If the following call panics, it indicates UnimplementedOptionTaskServer was
+func RegisterTaskServer(s grpc.ServiceRegistrar, srv TaskServer) {
+	// If the following call panics, it indicates UnimplementedTaskServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&OptionTask_ServiceDesc, srv)
+	s.RegisterService(&Task_ServiceDesc, srv)
 }
 
-func _OptionTask_ProcessContractLifecycle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Task_ProcessContractLifecycle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OptionTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionTaskServer).ProcessContractLifecycle(ctx, in)
+		return srv.(TaskServer).ProcessContractLifecycle(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionTask_ProcessContractLifecycle_FullMethodName,
+		FullMethod: Task_ProcessContractLifecycle_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionTaskServer).ProcessContractLifecycle(ctx, req.(*OptionTaskReq))
+		return srv.(TaskServer).ProcessContractLifecycle(ctx, req.(*OptionTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OptionTask_CleanMarketSnapshots_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Task_CleanMarketSnapshots_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OptionTaskReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OptionTaskServer).CleanMarketSnapshots(ctx, in)
+		return srv.(TaskServer).CleanMarketSnapshots(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OptionTask_CleanMarketSnapshots_FullMethodName,
+		FullMethod: Task_CleanMarketSnapshots_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OptionTaskServer).CleanMarketSnapshots(ctx, req.(*OptionTaskReq))
+		return srv.(TaskServer).CleanMarketSnapshots(ctx, req.(*OptionTaskReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// OptionTask_ServiceDesc is the grpc.ServiceDesc for OptionTask service.
+// Task_ServiceDesc is the grpc.ServiceDesc for Task service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var OptionTask_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "option.OptionTask",
-	HandlerType: (*OptionTaskServer)(nil),
+var Task_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "option.Task",
+	HandlerType: (*TaskServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "ProcessContractLifecycle",
-			Handler:    _OptionTask_ProcessContractLifecycle_Handler,
+			Handler:    _Task_ProcessContractLifecycle_Handler,
 		},
 		{
 			MethodName: "CleanMarketSnapshots",
-			Handler:    _OptionTask_CleanMarketSnapshots_Handler,
+			Handler:    _Task_CleanMarketSnapshots_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

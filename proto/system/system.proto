@@ -794,7 +794,7 @@ message SysChatMerchantDetailResp {
 //////////////////////
 // Service
 //////////////////////
-service SystemAdmin {
+service Admin {
   rpc Login(LoginReq) returns (LoginResp);
   rpc GetProfile(Empty) returns (ProfileResp);
   rpc UpdateProfile(UpdateProfileReq) returns (RespBase);
@@ -859,13 +859,13 @@ service SystemAdmin {
   rpc SysChatMerchantDetail(SysChatMerchantDetailReq) returns (SysChatMerchantDetailResp);
 }
 
-service SystemApp {
+service App {
   rpc SysConfigDetail(SysConfigDetailReq) returns (SysConfigDetailResp);
   rpc SendVerificationCode(SendVerificationCodeReq) returns (RespBase);
   rpc SysTenantDetail(SysTenantDetailReq) returns (SysTenantDetailResp);
 }
 
-service SystemInternal {
+service Internal {
   rpc SysConfigDetail(SysConfigDetailReq) returns (SysConfigDetailResp);
   rpc SysConfigByKeys(SysConfigByKeysReq) returns (SysConfigByKeysResp);
   rpc SysTenantList(SysTenantListReq) returns (SysTenantListResp);

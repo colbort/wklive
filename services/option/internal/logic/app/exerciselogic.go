@@ -1,0 +1,167 @@
+package applogic
+
+import (
+	"context"
+	"errors"
+	"time"
+	"wklive/common/conv"
+	"wklive/common/generate"
+	"wklive/common/helper"
+	"wklive/common/i18n"
+	"wklive/common/utils"
+	"wklive/proto/common"
+	"wklive/proto/option"
+	"wklive/services/option/internal/svc"
+	"wklive/services/option/models"
+
+	"github.com/shopspring/decimal"
+	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
+)
+
+type ExerciseLogic struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+}
+
+func NewExerciseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ExerciseLogic {
+	return &ExerciseLogic{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+	}
+}
+
+// 发起行权
+func (l *ExerciseLogic) Exercise(in *option.ExerciseReq) (*option.ExerciseResp, error) {
+	userId, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	tenantId, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	position, err := l.svcCtx.OptionPositionModel.FindOne(l.ctx, in.PositionId)
+	if err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			return &option.ExerciseResp{Base: helper.ErrResp(i18n.PositionNotFound, i18n.Translate(i18n.PositionNotFound, l.ctx))}, nil
+		}
+		return nil, err
+	}
+	if position.TenantId != tenantId || position.UserId != userId || position.AccountId != in.AccountId {
+		return &option.ExerciseResp{Base: helper.ErrResp(i18n.NoPermissionOperatePosition, i18n.Translate(i18n.NoPermissionOperatePosition, l.ctx))}, nil
+	}
+	if position.Side != int64(common.PositionSide_POSITION_SIDE_LONG) || position.Status != int64(option.PositionStatus_POSITION_STATUS_HOLDING) {
+		return &option.ExerciseResp{Base: helper.ErrResp(i18n.NoPermissionOperatePosition, i18n.Translate(i18n.NoPermissionOperatePosition, l.ctx))}, nil
+	}
+	if in.ContractId != 0 && position.ContractId != in.ContractId {
+		return &option.ExerciseResp{Base: helper.ErrResp(i18n.ContractPositionMismatch, i18n.Translate(i18n.ContractPositionMismatch, l.ctx))}, nil
+	}
+
+	contract, err := l.svcCtx.OptionContractModel.FindOne(l.ctx, position.ContractId)
+	if err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			return &option.ExerciseResp{Base: helper.ErrResp(i18n.ContractNotFound, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
+		}
+		return nil, err
+	}
+
+	exerciseQty, err := conv.ParseDecimalField(in.ExerciseQty)
+	if err != nil || !exerciseQty.IsPositive() {
+		return &option.ExerciseResp{Base: helper.ErrResp(i18n.ExerciseQuantityFormatError, i18n.Translate(i18n.ExerciseQuantityFormatError, l.ctx))}, nil
+	}
+	if position.ExerciseableQty.LessThan(exerciseQty) {
+		return &option.ExerciseResp{Base: helper.ErrResp(i18n.ExercisableQuantityExceeded, i18n.Translate(i18n.ExercisableQuantityExceeded, l.ctx))}, nil
+	}
+	if position.AvailableQty.LessThan(exerciseQty) {
+		return &option.ExerciseResp{Base: helper.ErrResp(i18n.ExercisableQuantityExceeded, i18n.Translate(i18n.ExercisableQuantityExceeded, l.ctx))}, nil
+	}
+	now := time.Now().Unix()
+	if contract.ExerciseStyle == int64(option.ExerciseStyle_EXERCISE_STYLE_EUROPEAN) && now < contract.ExpireTime {
+		return &option.ExerciseResp{Base: helper.ErrResp(i18n.EuropeanOptionNotExpired, i18n.Translate(i18n.EuropeanOptionNotExpired, l.ctx))}, nil
+	}
+	market, err := l.svcCtx.OptionMarketModel.FindOneByTenantIdContractId(l.ctx, tenantId, contract.Id)
+	if err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			return &option.ExerciseResp{Base: helper.ErrResp(i18n.MarketNotFound, i18n.Translate(i18n.MarketNotFound, l.ctx))}, nil
+		}
+		return nil, err
+	}
+	settlementPrice := market.UnderlyingPrice
+	profitAmount := optionSettlementPayoff(contract, settlementPrice, exerciseQty)
+	if !profitAmount.IsPositive() {
+		return &option.ExerciseResp{Base: helper.ErrResp(i18n.OptionNotInTheMoney, i18n.Translate(i18n.OptionNotInTheMoney, l.ctx))}, nil
+	}
+
+	exerciseNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "EX", "")
+	if err != nil {
+		return nil, err
+	}
+
+	item := &models.TOptionExercise{
+		TenantId:        tenantId,
+		ExerciseNo:      exerciseNo,
+		UserId:          userId,
+		AccountId:       in.AccountId,
+		ContractId:      position.ContractId,
+		PositionId:      position.Id,
+		ExerciseType:    int64(option.ExerciseType_EXERCISE_TYPE_USER),
+		ExerciseQty:     exerciseQty,
+		StrikePrice:     contract.StrikePrice,
+		SettlementPrice: settlementPrice,
+		ExerciseAmount:  optionExerciseAmount(contract, exerciseQty),
+		ProfitAmount:    profitAmount,
+		Fee:             decimal.Zero,
+		FeeCoin:         contract.SettleCoin,
+		Status:          int64(option.ExerciseStatus_EXERCISE_STATUS_DONE),
+		ExerciseTime:    now,
+		FinishTime:      now,
+		CreateTimes:     now,
+		UpdateTimes:     now,
+	}
+	var id int64
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		exerciseModel := models.NewTOptionExerciseModel(conn, l.svcCtx.Config.CacheRedis)
+		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis)
+		accountModel := models.NewTOptionAccountModel(conn, l.svcCtx.Config.CacheRedis)
+		billModel := models.NewTOptionBillModel(conn, l.svcCtx.Config.CacheRedis)
+
+		result, err := exerciseModel.Insert(ctx, item)
+		if err != nil {
+			return err
+		}
+		id, err = result.LastInsertId()
+		if err != nil {
+			return err
+		}
+		item.Id = id
+
+		position.PositionQty = decimal.Max(position.PositionQty.Sub(exerciseQty), decimal.Zero)
+		position.AvailableQty = decimal.Max(position.AvailableQty.Sub(exerciseQty), decimal.Zero)
+		position.ExerciseableQty = decimal.Max(position.ExerciseableQty.Sub(exerciseQty), decimal.Zero)
+		position.PositionValue = position.MarkPrice.Mul(position.PositionQty).Mul(optionMultiplier(contract))
+		position.RealizedPnl = position.RealizedPnl.Add(profitAmount)
+		position.UpdateTimes = now
+		if !position.PositionQty.IsPositive() {
+			position.PositionQty = decimal.Zero
+			position.AvailableQty = decimal.Zero
+			position.FrozenQty = decimal.Zero
+			position.ExerciseableQty = decimal.Zero
+			position.PositionValue = decimal.Zero
+			position.UnrealizedPnl = decimal.Zero
+			position.Status = int64(option.PositionStatus_POSITION_STATUS_EXERCISED)
+		}
+		if err := positionModel.Update(ctx, position); err != nil {
+			return err
+		}
+		return applyOptionAccountDelta(ctx, accountModel, billModel, tenantId, userId, in.AccountId, contract.SettleCoin, profitAmount, int64(option.BillRefType_BILL_REF_TYPE_EXERCISE), id, item.ExerciseNo, "option exercise profit", true, now)
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &option.ExerciseResp{Base: helper.OkResp(), Data: &option.ExerciseData{ExerciseNo: item.ExerciseNo, ExerciseId: id}}, nil
+}

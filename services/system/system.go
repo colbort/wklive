@@ -8,9 +8,9 @@ import (
 	"wklive/proto/system"
 	"wklive/services/system/internal/bootstrap"
 	"wklive/services/system/internal/config"
-	admin "wklive/services/system/internal/server/systemadmin"
-	app "wklive/services/system/internal/server/systemapp"
-	internal "wklive/services/system/internal/server/systeminternal"
+	admin "wklive/services/system/internal/server/admin"
+	app "wklive/services/system/internal/server/app"
+	internal "wklive/services/system/internal/server/internal"
 	"wklive/services/system/internal/svc"
 
 	"wklive/common/etcd"
@@ -46,9 +46,9 @@ func main() {
 	}
 
 	server := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		system.RegisterSystemAdminServer(grpcServer, admin.NewSystemAdminServer(ctx))
-		system.RegisterSystemAppServer(grpcServer, app.NewSystemAppServer(ctx))
-		system.RegisterSystemInternalServer(grpcServer, internal.NewSystemInternalServer(ctx))
+		system.RegisterAdminServer(grpcServer, admin.NewAdminServer(ctx))
+		system.RegisterAppServer(grpcServer, app.NewAppServer(ctx))
+		system.RegisterInternalServer(grpcServer, internal.NewInternalServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

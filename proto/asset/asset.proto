@@ -9,7 +9,7 @@ import "proto/common/common.proto";
 option go_package = "wklive/proto/asset;asset";
 
 // 用户端资产服务
-service AssetApp {
+service App {
   // 查询APP资产操作页币种配置
   rpc ListAssetCoinConfigs(ListAssetCoinConfigsReq) returns (ListAssetCoinConfigsResp);
 
@@ -131,7 +131,7 @@ message TransferMyAssetData {
 }
 
 // 后台资产服务
-service AssetAdmin {
+service Admin {
   // 创建APP资产操作币种显示配置
   rpc CreateAssetCoinConfig(CreateAssetCoinConfigReq) returns (AssetCoinConfigResp);
 
@@ -460,7 +460,7 @@ message ManualChangeAssetData {
 }
 
 // 内部资产服务
-service AssetInternal {
+service Internal {
   // 增加可用余额
   rpc AddAvailable(AddAvailableReq) returns (ChangeAssetResp);
 

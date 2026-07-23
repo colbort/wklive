@@ -195,7 +195,7 @@ message GetMyCryptoRechargeTxResp {
 }
 
 // APP端接口
-service PaymentApp {
+service App {
   // 当前用户累计充值统计（展示用）
   rpc GetMyRechargeStat(GetMyRechargeStatReq) returns (GetMyRechargeStatResp);
 
@@ -913,7 +913,7 @@ message PayPlatformsResp {
 }
 
 // Admin 接口
-service PaymentAdmin {
+service Admin {
   // 获取系统支持的平台
   rpc GetPayPlatforms(Empty) returns (PayPlatformsResp);
   // 创建平台

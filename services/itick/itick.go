@@ -16,10 +16,10 @@ import (
 	"wklive/services/itick/internal/market/kline"
 	"wklive/services/itick/internal/pkg/bootstrap"
 	"wklive/services/itick/internal/pkg/utils"
-	admin "wklive/services/itick/internal/server/itickadmin"
-	app "wklive/services/itick/internal/server/itickapp"
-	internal "wklive/services/itick/internal/server/itickinternal"
-	task "wklive/services/itick/internal/server/iticktask"
+	admin "wklive/services/itick/internal/server/admin"
+	app "wklive/services/itick/internal/server/app"
+	internal "wklive/services/itick/internal/server/internal"
+	task "wklive/services/itick/internal/server/task"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/internal/tasks"
 
@@ -124,10 +124,10 @@ func main() {
 	}
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		itick.RegisterItickAdminServer(grpcServer, admin.NewItickAdminServer(svcCtx))
-		itick.RegisterItickAppServer(grpcServer, app.NewItickAppServer(svcCtx))
-		itick.RegisterItickInternalServer(grpcServer, internal.NewItickInternalServer(svcCtx))
-		itick.RegisterItickTaskServer(grpcServer, task.NewItickTaskServer(svcCtx))
+		itick.RegisterAdminServer(grpcServer, admin.NewAdminServer(svcCtx))
+		itick.RegisterAppServer(grpcServer, app.NewAppServer(svcCtx))
+		itick.RegisterInternalServer(grpcServer, internal.NewInternalServer(svcCtx))
+		itick.RegisterTaskServer(grpcServer, task.NewTaskServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)
@@ -139,7 +139,7 @@ func main() {
 	s.Start()
 }
 
-func loadItickRuntimeConfig(ctx context.Context, cli system.SystemInternalClient) *system.ItickConfig {
+func loadItickRuntimeConfig(ctx context.Context, cli system.InternalClient) *system.ItickConfig {
 	config := &system.ItickConfig{ReconcileIntervalMinutes: 5, ReconcileWindowBars: 30,
 		GapScanIntervalMinutes: 60, RepairBatchSize: 10, BuildingBucketTtlMinutes: 120, WsKlineStaleSeconds: 30}
 	key := system.SysConfigType_ITICK_CONFIG

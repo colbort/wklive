@@ -279,7 +279,7 @@ message SetDefaultBankReq {
 }
 
 // APP端接口
-service UserApp {
+service App {
   // 用户注册
   rpc Register(RegisterReq) returns (RegisterResp);
   // 用户登录
@@ -604,7 +604,7 @@ message GuestDomainMigrationStatsResp {
 }
 
 // 管理后台接口
-service UserAdmin {
+service Admin {
   // 退役域名未迁移游客及活跃分布统计
   rpc GuestDomainMigrationStats(GuestDomainMigrationStatsReq) returns (GuestDomainMigrationStatsResp);
   // 创建用户

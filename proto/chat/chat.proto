@@ -10,7 +10,7 @@ option go_package = "wklive/proto/chat;chat";
 
 // 用户端客服服务
 // 面向 chat-ui/chat-api。merchant_id/user_id 从 token/context 获取，不允许前端自己传。
-service ChatApp {
+service App {
   // 商户接入鉴权
   rpc AuthChatMerchant(AuthChatMerchantReq) returns (AuthChatMerchantResp);
 
@@ -206,7 +206,7 @@ message ChatSatisfactionResp {
 }
 
 // 后台客服服务
-service ChatAdmin {
+service Admin {
   // 登录
   rpc Login(ChatAdminLoginReq) returns (ChatAdminLoginResp);
 
@@ -798,7 +798,7 @@ message ChatWorkOrderResp {
 
 // 内部客服服务
 // 面向业务系统/任务系统；不直接暴露给 chat-ui/chat-admin-ui。
-service ChatInternal {
+service Internal {
   // 同步客服商户主账号
   rpc SyncChatMerchantUser(SyncChatMerchantUserReq) returns (SyncChatMerchantUserResp);
 }

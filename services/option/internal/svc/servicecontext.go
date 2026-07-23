@@ -26,7 +26,7 @@ type ServiceContext struct {
 	OptionSettlementModel     models.TOptionSettlementModel
 	OptionAccountModel        models.TOptionAccountModel
 	OptionBillModel           models.TOptionBillModel
-	AssetClient               asset.AssetInternalClient
+	AssetClient               asset.InternalClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -49,6 +49,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		OptionSettlementModel:     models.NewTOptionSettlementModel(conn, c.CacheRedis),
 		OptionAccountModel:        models.NewTOptionAccountModel(conn, c.CacheRedis),
 		OptionBillModel:           models.NewTOptionBillModel(conn, c.CacheRedis),
-		AssetClient:               asset.NewAssetInternalClient(assetCli.Conn()),
+		AssetClient:               asset.NewInternalClient(assetCli.Conn()),
 	}
 }

@@ -8746,9 +8746,8 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\rplatform_name\x18\x02 \x01(\tR\fplatformName\"f\n" +
 	"\x10PayPlatformsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12,\n" +
-	"\x04data\x18\x02 \x03(\v2\x18.payment.PayPlatformItemR\x04data2\xd1\v\n" +
-	"\n" +
-	"PaymentApp\x12R\n" +
+	"\x04data\x18\x02 \x03(\v2\x18.payment.PayPlatformItemR\x04data2\xca\v\n" +
+	"\x03App\x12R\n" +
 	"\x11GetMyRechargeStat\x12\x1d.payment.GetMyRechargeStatReq\x1a\x1e.payment.GetMyRechargeStatResp\x12v\n" +
 	"\x1dListAvailableRechargeChannels\x12).payment.ListAvailableRechargeChannelsReq\x1a*.payment.ListAvailableRechargeChannelsResp\x12X\n" +
 	"\x13CreateRechargeOrder\x12\x1f.payment.CreateRechargeOrderReq\x1a .payment.CreateRechargeOrderResp\x12j\n" +
@@ -8763,8 +8762,8 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\x1aGetMyCryptoRechargeAddress\x12&.payment.GetMyCryptoRechargeAddressReq\x1a'.payment.GetMyCryptoRechargeAddressResp\x12v\n" +
 	"\x1dListMyCryptoRechargeAddresses\x12).payment.ListMyCryptoRechargeAddressesReq\x1a*.payment.ListMyCryptoRechargeAddressesResp\x12d\n" +
 	"\x17ListMyCryptoRechargeTxs\x12#.payment.ListMyCryptoRechargeTxsReq\x1a$.payment.ListMyCryptoRechargeTxsResp\x12^\n" +
-	"\x15GetMyCryptoRechargeTx\x12!.payment.GetMyCryptoRechargeTxReq\x1a\".payment.GetMyCryptoRechargeTxResp2\xff\"\n" +
-	"\fPaymentAdmin\x12<\n" +
+	"\x15GetMyCryptoRechargeTx\x12!.payment.GetMyCryptoRechargeTxReq\x1a\".payment.GetMyCryptoRechargeTxResp2\xf8\"\n" +
+	"\x05Admin\x12<\n" +
 	"\x0fGetPayPlatforms\x12\x0e.payment.Empty\x1a\x19.payment.PayPlatformsResp\x12G\n" +
 	"\x11CreatePayPlatform\x12\x1d.payment.CreatePayPlatformReq\x1a\x13.payment.CommonResp\x12G\n" +
 	"\x11UpdatePayPlatform\x12\x1d.payment.UpdatePayPlatformReq\x1a\x13.payment.CommonResp\x12I\n" +
@@ -9167,138 +9166,138 @@ var file_proto_payment_payment_proto_depIdxs = []int32{
 	125, // 184: payment.ListCryptoRechargeTxsResp.data:type_name -> payment.CryptoRechargeTx
 	113, // 185: payment.PayPlatformsResp.base:type_name -> common.RespBase
 	111, // 186: payment.PayPlatformsResp.data:type_name -> payment.PayPlatformItem
-	1,   // 187: payment.PaymentApp.GetMyRechargeStat:input_type -> payment.GetMyRechargeStatReq
-	3,   // 188: payment.PaymentApp.ListAvailableRechargeChannels:input_type -> payment.ListAvailableRechargeChannelsReq
-	5,   // 189: payment.PaymentApp.CreateRechargeOrder:input_type -> payment.CreateRechargeOrderReq
-	7,   // 190: payment.PaymentApp.CreateCryptoRechargeOrder:input_type -> payment.CreateCryptoRechargeOrderReq
-	10,  // 191: payment.PaymentApp.GetMyRechargeOrder:input_type -> payment.GetMyRechargeOrderReq
-	12,  // 192: payment.PaymentApp.ListMyRechargeOrders:input_type -> payment.ListMyRechargeOrdersReq
-	14,  // 193: payment.PaymentApp.CancelMyRechargeOrder:input_type -> payment.CancelMyRechargeOrderReq
-	15,  // 194: payment.PaymentApp.QueryMyRechargeOrderStatus:input_type -> payment.QueryMyRechargeOrderStatusReq
-	17,  // 195: payment.PaymentApp.CreateWithdrawOrder:input_type -> payment.CreateWithdrawOrderReq
-	19,  // 196: payment.PaymentApp.ListMyWithdrawOrders:input_type -> payment.ListMyWithdrawOrdersReq
-	21,  // 197: payment.PaymentApp.GetMyWithdrawOrder:input_type -> payment.GetMyWithdrawOrderReq
-	23,  // 198: payment.PaymentApp.GetMyCryptoRechargeAddress:input_type -> payment.GetMyCryptoRechargeAddressReq
-	25,  // 199: payment.PaymentApp.ListMyCryptoRechargeAddresses:input_type -> payment.ListMyCryptoRechargeAddressesReq
-	27,  // 200: payment.PaymentApp.ListMyCryptoRechargeTxs:input_type -> payment.ListMyCryptoRechargeTxsReq
-	29,  // 201: payment.PaymentApp.GetMyCryptoRechargeTx:input_type -> payment.GetMyCryptoRechargeTxReq
-	110, // 202: payment.PaymentAdmin.GetPayPlatforms:input_type -> payment.Empty
-	32,  // 203: payment.PaymentAdmin.CreatePayPlatform:input_type -> payment.CreatePayPlatformReq
-	33,  // 204: payment.PaymentAdmin.UpdatePayPlatform:input_type -> payment.UpdatePayPlatformReq
-	34,  // 205: payment.PaymentAdmin.GetPayPlatform:input_type -> payment.GetPayPlatformReq
-	36,  // 206: payment.PaymentAdmin.ListPayPlatforms:input_type -> payment.ListPayPlatformsReq
-	38,  // 207: payment.PaymentAdmin.CreatePayProduct:input_type -> payment.CreatePayProductReq
-	39,  // 208: payment.PaymentAdmin.UpdatePayProduct:input_type -> payment.UpdatePayProductReq
-	40,  // 209: payment.PaymentAdmin.GetPayProduct:input_type -> payment.GetPayProductReq
-	42,  // 210: payment.PaymentAdmin.ListPayProducts:input_type -> payment.ListPayProductsReq
-	44,  // 211: payment.PaymentAdmin.OpenTenantPayPlatform:input_type -> payment.OpenTenantPayPlatformReq
-	45,  // 212: payment.PaymentAdmin.UpdateTenantPayPlatform:input_type -> payment.UpdateTenantPayPlatformReq
-	46,  // 213: payment.PaymentAdmin.GetTenantPayPlatform:input_type -> payment.GetTenantPayPlatformReq
-	48,  // 214: payment.PaymentAdmin.ListTenantPayPlatforms:input_type -> payment.ListTenantPayPlatformsReq
-	50,  // 215: payment.PaymentAdmin.CreateTenantPayAccount:input_type -> payment.CreateTenantPayAccountReq
-	51,  // 216: payment.PaymentAdmin.UpdateTenantPayAccount:input_type -> payment.UpdateTenantPayAccountReq
-	52,  // 217: payment.PaymentAdmin.GetTenantPayAccount:input_type -> payment.GetTenantPayAccountReq
-	54,  // 218: payment.PaymentAdmin.ListTenantPayAccounts:input_type -> payment.ListTenantPayAccountsReq
-	56,  // 219: payment.PaymentAdmin.CreateTenantPayChannel:input_type -> payment.CreateTenantPayChannelReq
-	57,  // 220: payment.PaymentAdmin.UpdateTenantPayChannel:input_type -> payment.UpdateTenantPayChannelReq
-	58,  // 221: payment.PaymentAdmin.GetTenantPayChannel:input_type -> payment.GetTenantPayChannelReq
-	60,  // 222: payment.PaymentAdmin.ListTenantPayChannels:input_type -> payment.ListTenantPayChannelsReq
-	62,  // 223: payment.PaymentAdmin.CreateTenantPayChannelRule:input_type -> payment.CreateTenantPayChannelRuleReq
-	63,  // 224: payment.PaymentAdmin.UpdateTenantPayChannelRule:input_type -> payment.UpdateTenantPayChannelRuleReq
-	64,  // 225: payment.PaymentAdmin.GetTenantPayChannelRule:input_type -> payment.GetTenantPayChannelRuleReq
-	66,  // 226: payment.PaymentAdmin.ListTenantPayChannelRules:input_type -> payment.ListTenantPayChannelRulesReq
-	68,  // 227: payment.PaymentAdmin.GetUserRechargeStat:input_type -> payment.GetUserRechargeStatReq
-	70,  // 228: payment.PaymentAdmin.ListUserRechargeStats:input_type -> payment.ListUserRechargeStatsReq
-	74,  // 229: payment.PaymentAdmin.ListRechargeOrders:input_type -> payment.ListRechargeOrdersReq
-	72,  // 230: payment.PaymentAdmin.GetRechargeOrder:input_type -> payment.GetRechargeOrderReq
-	76,  // 231: payment.PaymentAdmin.CloseRechargeOrder:input_type -> payment.CloseRechargeOrderReq
-	77,  // 232: payment.PaymentAdmin.ManualMarkRechargeOrderSuccess:input_type -> payment.ManualMarkRechargeOrderSuccessReq
-	78,  // 233: payment.PaymentAdmin.RetryNotify:input_type -> payment.RetryNotifyReq
-	81,  // 234: payment.PaymentAdmin.ListRechargeNotifyLogs:input_type -> payment.ListRechargeNotifyLogsReq
-	79,  // 235: payment.PaymentAdmin.GetRechargeNotifyLog:input_type -> payment.GetRechargeNotifyLogReq
-	83,  // 236: payment.PaymentAdmin.ListWithdrawOrders:input_type -> payment.ListWithdrawOrdersReq
-	85,  // 237: payment.PaymentAdmin.GetWithdrawOrder:input_type -> payment.GetWithdrawOrderReq
-	87,  // 238: payment.PaymentAdmin.AuditWithdrawOrder:input_type -> payment.AuditWithdrawOrderReq
-	88,  // 239: payment.PaymentAdmin.ListWithdrawNotifyLogs:input_type -> payment.ListWithdrawNotifyLogsReq
-	90,  // 240: payment.PaymentAdmin.GetWithdrawNotifyLog:input_type -> payment.GetWithdrawNotifyLogReq
-	92,  // 241: payment.PaymentAdmin.CreateCryptoRechargeAddress:input_type -> payment.CreateCryptoRechargeAddressReq
-	93,  // 242: payment.PaymentAdmin.UpdateCryptoRechargeAddress:input_type -> payment.UpdateCryptoRechargeAddressReq
-	94,  // 243: payment.PaymentAdmin.GetCryptoRechargeAddress:input_type -> payment.GetCryptoRechargeAddressReq
-	96,  // 244: payment.PaymentAdmin.ListCryptoRechargeAddresses:input_type -> payment.ListCryptoRechargeAddressesReq
-	98,  // 245: payment.PaymentAdmin.CreateCryptoWalletAccount:input_type -> payment.CreateCryptoWalletAccountReq
-	99,  // 246: payment.PaymentAdmin.UpdateCryptoWalletAccount:input_type -> payment.UpdateCryptoWalletAccountReq
-	100, // 247: payment.PaymentAdmin.GetCryptoWalletAccount:input_type -> payment.GetCryptoWalletAccountReq
-	102, // 248: payment.PaymentAdmin.ListCryptoWalletAccounts:input_type -> payment.ListCryptoWalletAccountsReq
-	104, // 249: payment.PaymentAdmin.CreateCryptoRechargeTx:input_type -> payment.CreateCryptoRechargeTxReq
-	105, // 250: payment.PaymentAdmin.UpdateCryptoRechargeTx:input_type -> payment.UpdateCryptoRechargeTxReq
-	106, // 251: payment.PaymentAdmin.GetCryptoRechargeTx:input_type -> payment.GetCryptoRechargeTxReq
-	108, // 252: payment.PaymentAdmin.ListCryptoRechargeTxs:input_type -> payment.ListCryptoRechargeTxsReq
-	2,   // 253: payment.PaymentApp.GetMyRechargeStat:output_type -> payment.GetMyRechargeStatResp
-	4,   // 254: payment.PaymentApp.ListAvailableRechargeChannels:output_type -> payment.ListAvailableRechargeChannelsResp
-	6,   // 255: payment.PaymentApp.CreateRechargeOrder:output_type -> payment.CreateRechargeOrderResp
-	8,   // 256: payment.PaymentApp.CreateCryptoRechargeOrder:output_type -> payment.CreateCryptoRechargeOrderResp
-	11,  // 257: payment.PaymentApp.GetMyRechargeOrder:output_type -> payment.GetMyRechargeOrderResp
-	13,  // 258: payment.PaymentApp.ListMyRechargeOrders:output_type -> payment.ListMyRechargeOrdersResp
-	0,   // 259: payment.PaymentApp.CancelMyRechargeOrder:output_type -> payment.UserCommonResp
-	16,  // 260: payment.PaymentApp.QueryMyRechargeOrderStatus:output_type -> payment.QueryMyRechargeOrderStatusResp
-	18,  // 261: payment.PaymentApp.CreateWithdrawOrder:output_type -> payment.CreateWithdrawOrderResp
-	20,  // 262: payment.PaymentApp.ListMyWithdrawOrders:output_type -> payment.ListMyWithdrawOrdersResp
-	22,  // 263: payment.PaymentApp.GetMyWithdrawOrder:output_type -> payment.GetMyWithdrawOrderResp
-	24,  // 264: payment.PaymentApp.GetMyCryptoRechargeAddress:output_type -> payment.GetMyCryptoRechargeAddressResp
-	26,  // 265: payment.PaymentApp.ListMyCryptoRechargeAddresses:output_type -> payment.ListMyCryptoRechargeAddressesResp
-	28,  // 266: payment.PaymentApp.ListMyCryptoRechargeTxs:output_type -> payment.ListMyCryptoRechargeTxsResp
-	30,  // 267: payment.PaymentApp.GetMyCryptoRechargeTx:output_type -> payment.GetMyCryptoRechargeTxResp
-	112, // 268: payment.PaymentAdmin.GetPayPlatforms:output_type -> payment.PayPlatformsResp
-	31,  // 269: payment.PaymentAdmin.CreatePayPlatform:output_type -> payment.CommonResp
-	31,  // 270: payment.PaymentAdmin.UpdatePayPlatform:output_type -> payment.CommonResp
-	35,  // 271: payment.PaymentAdmin.GetPayPlatform:output_type -> payment.GetPayPlatformResp
-	37,  // 272: payment.PaymentAdmin.ListPayPlatforms:output_type -> payment.ListPayPlatformsResp
-	31,  // 273: payment.PaymentAdmin.CreatePayProduct:output_type -> payment.CommonResp
-	31,  // 274: payment.PaymentAdmin.UpdatePayProduct:output_type -> payment.CommonResp
-	41,  // 275: payment.PaymentAdmin.GetPayProduct:output_type -> payment.GetPayProductResp
-	43,  // 276: payment.PaymentAdmin.ListPayProducts:output_type -> payment.ListPayProductsResp
-	31,  // 277: payment.PaymentAdmin.OpenTenantPayPlatform:output_type -> payment.CommonResp
-	31,  // 278: payment.PaymentAdmin.UpdateTenantPayPlatform:output_type -> payment.CommonResp
-	47,  // 279: payment.PaymentAdmin.GetTenantPayPlatform:output_type -> payment.GetTenantPayPlatformResp
-	49,  // 280: payment.PaymentAdmin.ListTenantPayPlatforms:output_type -> payment.ListTenantPayPlatformsResp
-	31,  // 281: payment.PaymentAdmin.CreateTenantPayAccount:output_type -> payment.CommonResp
-	31,  // 282: payment.PaymentAdmin.UpdateTenantPayAccount:output_type -> payment.CommonResp
-	53,  // 283: payment.PaymentAdmin.GetTenantPayAccount:output_type -> payment.GetTenantPayAccountResp
-	55,  // 284: payment.PaymentAdmin.ListTenantPayAccounts:output_type -> payment.ListTenantPayAccountsResp
-	31,  // 285: payment.PaymentAdmin.CreateTenantPayChannel:output_type -> payment.CommonResp
-	31,  // 286: payment.PaymentAdmin.UpdateTenantPayChannel:output_type -> payment.CommonResp
-	59,  // 287: payment.PaymentAdmin.GetTenantPayChannel:output_type -> payment.GetTenantPayChannelResp
-	61,  // 288: payment.PaymentAdmin.ListTenantPayChannels:output_type -> payment.ListTenantPayChannelsResp
-	31,  // 289: payment.PaymentAdmin.CreateTenantPayChannelRule:output_type -> payment.CommonResp
-	31,  // 290: payment.PaymentAdmin.UpdateTenantPayChannelRule:output_type -> payment.CommonResp
-	65,  // 291: payment.PaymentAdmin.GetTenantPayChannelRule:output_type -> payment.GetTenantPayChannelRuleResp
-	67,  // 292: payment.PaymentAdmin.ListTenantPayChannelRules:output_type -> payment.ListTenantPayChannelRulesResp
-	69,  // 293: payment.PaymentAdmin.GetUserRechargeStat:output_type -> payment.GetUserRechargeStatResp
-	71,  // 294: payment.PaymentAdmin.ListUserRechargeStats:output_type -> payment.ListUserRechargeStatsResp
-	75,  // 295: payment.PaymentAdmin.ListRechargeOrders:output_type -> payment.ListRechargeOrdersResp
-	73,  // 296: payment.PaymentAdmin.GetRechargeOrder:output_type -> payment.GetRechargeOrderResp
-	31,  // 297: payment.PaymentAdmin.CloseRechargeOrder:output_type -> payment.CommonResp
-	31,  // 298: payment.PaymentAdmin.ManualMarkRechargeOrderSuccess:output_type -> payment.CommonResp
-	31,  // 299: payment.PaymentAdmin.RetryNotify:output_type -> payment.CommonResp
-	82,  // 300: payment.PaymentAdmin.ListRechargeNotifyLogs:output_type -> payment.ListRechargeNotifyLogsResp
-	80,  // 301: payment.PaymentAdmin.GetRechargeNotifyLog:output_type -> payment.GetRechargeNotifyLogResp
-	84,  // 302: payment.PaymentAdmin.ListWithdrawOrders:output_type -> payment.ListWithdrawOrdersResp
-	86,  // 303: payment.PaymentAdmin.GetWithdrawOrder:output_type -> payment.GetWithdrawOrderResp
-	31,  // 304: payment.PaymentAdmin.AuditWithdrawOrder:output_type -> payment.CommonResp
-	89,  // 305: payment.PaymentAdmin.ListWithdrawNotifyLogs:output_type -> payment.ListWithdrawNotifyLogsResp
-	91,  // 306: payment.PaymentAdmin.GetWithdrawNotifyLog:output_type -> payment.GetWithdrawNotifyLogResp
-	31,  // 307: payment.PaymentAdmin.CreateCryptoRechargeAddress:output_type -> payment.CommonResp
-	31,  // 308: payment.PaymentAdmin.UpdateCryptoRechargeAddress:output_type -> payment.CommonResp
-	95,  // 309: payment.PaymentAdmin.GetCryptoRechargeAddress:output_type -> payment.GetCryptoRechargeAddressResp
-	97,  // 310: payment.PaymentAdmin.ListCryptoRechargeAddresses:output_type -> payment.ListCryptoRechargeAddressesResp
-	31,  // 311: payment.PaymentAdmin.CreateCryptoWalletAccount:output_type -> payment.CommonResp
-	31,  // 312: payment.PaymentAdmin.UpdateCryptoWalletAccount:output_type -> payment.CommonResp
-	101, // 313: payment.PaymentAdmin.GetCryptoWalletAccount:output_type -> payment.GetCryptoWalletAccountResp
-	103, // 314: payment.PaymentAdmin.ListCryptoWalletAccounts:output_type -> payment.ListCryptoWalletAccountsResp
-	31,  // 315: payment.PaymentAdmin.CreateCryptoRechargeTx:output_type -> payment.CommonResp
-	31,  // 316: payment.PaymentAdmin.UpdateCryptoRechargeTx:output_type -> payment.CommonResp
-	107, // 317: payment.PaymentAdmin.GetCryptoRechargeTx:output_type -> payment.GetCryptoRechargeTxResp
-	109, // 318: payment.PaymentAdmin.ListCryptoRechargeTxs:output_type -> payment.ListCryptoRechargeTxsResp
+	1,   // 187: payment.App.GetMyRechargeStat:input_type -> payment.GetMyRechargeStatReq
+	3,   // 188: payment.App.ListAvailableRechargeChannels:input_type -> payment.ListAvailableRechargeChannelsReq
+	5,   // 189: payment.App.CreateRechargeOrder:input_type -> payment.CreateRechargeOrderReq
+	7,   // 190: payment.App.CreateCryptoRechargeOrder:input_type -> payment.CreateCryptoRechargeOrderReq
+	10,  // 191: payment.App.GetMyRechargeOrder:input_type -> payment.GetMyRechargeOrderReq
+	12,  // 192: payment.App.ListMyRechargeOrders:input_type -> payment.ListMyRechargeOrdersReq
+	14,  // 193: payment.App.CancelMyRechargeOrder:input_type -> payment.CancelMyRechargeOrderReq
+	15,  // 194: payment.App.QueryMyRechargeOrderStatus:input_type -> payment.QueryMyRechargeOrderStatusReq
+	17,  // 195: payment.App.CreateWithdrawOrder:input_type -> payment.CreateWithdrawOrderReq
+	19,  // 196: payment.App.ListMyWithdrawOrders:input_type -> payment.ListMyWithdrawOrdersReq
+	21,  // 197: payment.App.GetMyWithdrawOrder:input_type -> payment.GetMyWithdrawOrderReq
+	23,  // 198: payment.App.GetMyCryptoRechargeAddress:input_type -> payment.GetMyCryptoRechargeAddressReq
+	25,  // 199: payment.App.ListMyCryptoRechargeAddresses:input_type -> payment.ListMyCryptoRechargeAddressesReq
+	27,  // 200: payment.App.ListMyCryptoRechargeTxs:input_type -> payment.ListMyCryptoRechargeTxsReq
+	29,  // 201: payment.App.GetMyCryptoRechargeTx:input_type -> payment.GetMyCryptoRechargeTxReq
+	110, // 202: payment.Admin.GetPayPlatforms:input_type -> payment.Empty
+	32,  // 203: payment.Admin.CreatePayPlatform:input_type -> payment.CreatePayPlatformReq
+	33,  // 204: payment.Admin.UpdatePayPlatform:input_type -> payment.UpdatePayPlatformReq
+	34,  // 205: payment.Admin.GetPayPlatform:input_type -> payment.GetPayPlatformReq
+	36,  // 206: payment.Admin.ListPayPlatforms:input_type -> payment.ListPayPlatformsReq
+	38,  // 207: payment.Admin.CreatePayProduct:input_type -> payment.CreatePayProductReq
+	39,  // 208: payment.Admin.UpdatePayProduct:input_type -> payment.UpdatePayProductReq
+	40,  // 209: payment.Admin.GetPayProduct:input_type -> payment.GetPayProductReq
+	42,  // 210: payment.Admin.ListPayProducts:input_type -> payment.ListPayProductsReq
+	44,  // 211: payment.Admin.OpenTenantPayPlatform:input_type -> payment.OpenTenantPayPlatformReq
+	45,  // 212: payment.Admin.UpdateTenantPayPlatform:input_type -> payment.UpdateTenantPayPlatformReq
+	46,  // 213: payment.Admin.GetTenantPayPlatform:input_type -> payment.GetTenantPayPlatformReq
+	48,  // 214: payment.Admin.ListTenantPayPlatforms:input_type -> payment.ListTenantPayPlatformsReq
+	50,  // 215: payment.Admin.CreateTenantPayAccount:input_type -> payment.CreateTenantPayAccountReq
+	51,  // 216: payment.Admin.UpdateTenantPayAccount:input_type -> payment.UpdateTenantPayAccountReq
+	52,  // 217: payment.Admin.GetTenantPayAccount:input_type -> payment.GetTenantPayAccountReq
+	54,  // 218: payment.Admin.ListTenantPayAccounts:input_type -> payment.ListTenantPayAccountsReq
+	56,  // 219: payment.Admin.CreateTenantPayChannel:input_type -> payment.CreateTenantPayChannelReq
+	57,  // 220: payment.Admin.UpdateTenantPayChannel:input_type -> payment.UpdateTenantPayChannelReq
+	58,  // 221: payment.Admin.GetTenantPayChannel:input_type -> payment.GetTenantPayChannelReq
+	60,  // 222: payment.Admin.ListTenantPayChannels:input_type -> payment.ListTenantPayChannelsReq
+	62,  // 223: payment.Admin.CreateTenantPayChannelRule:input_type -> payment.CreateTenantPayChannelRuleReq
+	63,  // 224: payment.Admin.UpdateTenantPayChannelRule:input_type -> payment.UpdateTenantPayChannelRuleReq
+	64,  // 225: payment.Admin.GetTenantPayChannelRule:input_type -> payment.GetTenantPayChannelRuleReq
+	66,  // 226: payment.Admin.ListTenantPayChannelRules:input_type -> payment.ListTenantPayChannelRulesReq
+	68,  // 227: payment.Admin.GetUserRechargeStat:input_type -> payment.GetUserRechargeStatReq
+	70,  // 228: payment.Admin.ListUserRechargeStats:input_type -> payment.ListUserRechargeStatsReq
+	74,  // 229: payment.Admin.ListRechargeOrders:input_type -> payment.ListRechargeOrdersReq
+	72,  // 230: payment.Admin.GetRechargeOrder:input_type -> payment.GetRechargeOrderReq
+	76,  // 231: payment.Admin.CloseRechargeOrder:input_type -> payment.CloseRechargeOrderReq
+	77,  // 232: payment.Admin.ManualMarkRechargeOrderSuccess:input_type -> payment.ManualMarkRechargeOrderSuccessReq
+	78,  // 233: payment.Admin.RetryNotify:input_type -> payment.RetryNotifyReq
+	81,  // 234: payment.Admin.ListRechargeNotifyLogs:input_type -> payment.ListRechargeNotifyLogsReq
+	79,  // 235: payment.Admin.GetRechargeNotifyLog:input_type -> payment.GetRechargeNotifyLogReq
+	83,  // 236: payment.Admin.ListWithdrawOrders:input_type -> payment.ListWithdrawOrdersReq
+	85,  // 237: payment.Admin.GetWithdrawOrder:input_type -> payment.GetWithdrawOrderReq
+	87,  // 238: payment.Admin.AuditWithdrawOrder:input_type -> payment.AuditWithdrawOrderReq
+	88,  // 239: payment.Admin.ListWithdrawNotifyLogs:input_type -> payment.ListWithdrawNotifyLogsReq
+	90,  // 240: payment.Admin.GetWithdrawNotifyLog:input_type -> payment.GetWithdrawNotifyLogReq
+	92,  // 241: payment.Admin.CreateCryptoRechargeAddress:input_type -> payment.CreateCryptoRechargeAddressReq
+	93,  // 242: payment.Admin.UpdateCryptoRechargeAddress:input_type -> payment.UpdateCryptoRechargeAddressReq
+	94,  // 243: payment.Admin.GetCryptoRechargeAddress:input_type -> payment.GetCryptoRechargeAddressReq
+	96,  // 244: payment.Admin.ListCryptoRechargeAddresses:input_type -> payment.ListCryptoRechargeAddressesReq
+	98,  // 245: payment.Admin.CreateCryptoWalletAccount:input_type -> payment.CreateCryptoWalletAccountReq
+	99,  // 246: payment.Admin.UpdateCryptoWalletAccount:input_type -> payment.UpdateCryptoWalletAccountReq
+	100, // 247: payment.Admin.GetCryptoWalletAccount:input_type -> payment.GetCryptoWalletAccountReq
+	102, // 248: payment.Admin.ListCryptoWalletAccounts:input_type -> payment.ListCryptoWalletAccountsReq
+	104, // 249: payment.Admin.CreateCryptoRechargeTx:input_type -> payment.CreateCryptoRechargeTxReq
+	105, // 250: payment.Admin.UpdateCryptoRechargeTx:input_type -> payment.UpdateCryptoRechargeTxReq
+	106, // 251: payment.Admin.GetCryptoRechargeTx:input_type -> payment.GetCryptoRechargeTxReq
+	108, // 252: payment.Admin.ListCryptoRechargeTxs:input_type -> payment.ListCryptoRechargeTxsReq
+	2,   // 253: payment.App.GetMyRechargeStat:output_type -> payment.GetMyRechargeStatResp
+	4,   // 254: payment.App.ListAvailableRechargeChannels:output_type -> payment.ListAvailableRechargeChannelsResp
+	6,   // 255: payment.App.CreateRechargeOrder:output_type -> payment.CreateRechargeOrderResp
+	8,   // 256: payment.App.CreateCryptoRechargeOrder:output_type -> payment.CreateCryptoRechargeOrderResp
+	11,  // 257: payment.App.GetMyRechargeOrder:output_type -> payment.GetMyRechargeOrderResp
+	13,  // 258: payment.App.ListMyRechargeOrders:output_type -> payment.ListMyRechargeOrdersResp
+	0,   // 259: payment.App.CancelMyRechargeOrder:output_type -> payment.UserCommonResp
+	16,  // 260: payment.App.QueryMyRechargeOrderStatus:output_type -> payment.QueryMyRechargeOrderStatusResp
+	18,  // 261: payment.App.CreateWithdrawOrder:output_type -> payment.CreateWithdrawOrderResp
+	20,  // 262: payment.App.ListMyWithdrawOrders:output_type -> payment.ListMyWithdrawOrdersResp
+	22,  // 263: payment.App.GetMyWithdrawOrder:output_type -> payment.GetMyWithdrawOrderResp
+	24,  // 264: payment.App.GetMyCryptoRechargeAddress:output_type -> payment.GetMyCryptoRechargeAddressResp
+	26,  // 265: payment.App.ListMyCryptoRechargeAddresses:output_type -> payment.ListMyCryptoRechargeAddressesResp
+	28,  // 266: payment.App.ListMyCryptoRechargeTxs:output_type -> payment.ListMyCryptoRechargeTxsResp
+	30,  // 267: payment.App.GetMyCryptoRechargeTx:output_type -> payment.GetMyCryptoRechargeTxResp
+	112, // 268: payment.Admin.GetPayPlatforms:output_type -> payment.PayPlatformsResp
+	31,  // 269: payment.Admin.CreatePayPlatform:output_type -> payment.CommonResp
+	31,  // 270: payment.Admin.UpdatePayPlatform:output_type -> payment.CommonResp
+	35,  // 271: payment.Admin.GetPayPlatform:output_type -> payment.GetPayPlatformResp
+	37,  // 272: payment.Admin.ListPayPlatforms:output_type -> payment.ListPayPlatformsResp
+	31,  // 273: payment.Admin.CreatePayProduct:output_type -> payment.CommonResp
+	31,  // 274: payment.Admin.UpdatePayProduct:output_type -> payment.CommonResp
+	41,  // 275: payment.Admin.GetPayProduct:output_type -> payment.GetPayProductResp
+	43,  // 276: payment.Admin.ListPayProducts:output_type -> payment.ListPayProductsResp
+	31,  // 277: payment.Admin.OpenTenantPayPlatform:output_type -> payment.CommonResp
+	31,  // 278: payment.Admin.UpdateTenantPayPlatform:output_type -> payment.CommonResp
+	47,  // 279: payment.Admin.GetTenantPayPlatform:output_type -> payment.GetTenantPayPlatformResp
+	49,  // 280: payment.Admin.ListTenantPayPlatforms:output_type -> payment.ListTenantPayPlatformsResp
+	31,  // 281: payment.Admin.CreateTenantPayAccount:output_type -> payment.CommonResp
+	31,  // 282: payment.Admin.UpdateTenantPayAccount:output_type -> payment.CommonResp
+	53,  // 283: payment.Admin.GetTenantPayAccount:output_type -> payment.GetTenantPayAccountResp
+	55,  // 284: payment.Admin.ListTenantPayAccounts:output_type -> payment.ListTenantPayAccountsResp
+	31,  // 285: payment.Admin.CreateTenantPayChannel:output_type -> payment.CommonResp
+	31,  // 286: payment.Admin.UpdateTenantPayChannel:output_type -> payment.CommonResp
+	59,  // 287: payment.Admin.GetTenantPayChannel:output_type -> payment.GetTenantPayChannelResp
+	61,  // 288: payment.Admin.ListTenantPayChannels:output_type -> payment.ListTenantPayChannelsResp
+	31,  // 289: payment.Admin.CreateTenantPayChannelRule:output_type -> payment.CommonResp
+	31,  // 290: payment.Admin.UpdateTenantPayChannelRule:output_type -> payment.CommonResp
+	65,  // 291: payment.Admin.GetTenantPayChannelRule:output_type -> payment.GetTenantPayChannelRuleResp
+	67,  // 292: payment.Admin.ListTenantPayChannelRules:output_type -> payment.ListTenantPayChannelRulesResp
+	69,  // 293: payment.Admin.GetUserRechargeStat:output_type -> payment.GetUserRechargeStatResp
+	71,  // 294: payment.Admin.ListUserRechargeStats:output_type -> payment.ListUserRechargeStatsResp
+	75,  // 295: payment.Admin.ListRechargeOrders:output_type -> payment.ListRechargeOrdersResp
+	73,  // 296: payment.Admin.GetRechargeOrder:output_type -> payment.GetRechargeOrderResp
+	31,  // 297: payment.Admin.CloseRechargeOrder:output_type -> payment.CommonResp
+	31,  // 298: payment.Admin.ManualMarkRechargeOrderSuccess:output_type -> payment.CommonResp
+	31,  // 299: payment.Admin.RetryNotify:output_type -> payment.CommonResp
+	82,  // 300: payment.Admin.ListRechargeNotifyLogs:output_type -> payment.ListRechargeNotifyLogsResp
+	80,  // 301: payment.Admin.GetRechargeNotifyLog:output_type -> payment.GetRechargeNotifyLogResp
+	84,  // 302: payment.Admin.ListWithdrawOrders:output_type -> payment.ListWithdrawOrdersResp
+	86,  // 303: payment.Admin.GetWithdrawOrder:output_type -> payment.GetWithdrawOrderResp
+	31,  // 304: payment.Admin.AuditWithdrawOrder:output_type -> payment.CommonResp
+	89,  // 305: payment.Admin.ListWithdrawNotifyLogs:output_type -> payment.ListWithdrawNotifyLogsResp
+	91,  // 306: payment.Admin.GetWithdrawNotifyLog:output_type -> payment.GetWithdrawNotifyLogResp
+	31,  // 307: payment.Admin.CreateCryptoRechargeAddress:output_type -> payment.CommonResp
+	31,  // 308: payment.Admin.UpdateCryptoRechargeAddress:output_type -> payment.CommonResp
+	95,  // 309: payment.Admin.GetCryptoRechargeAddress:output_type -> payment.GetCryptoRechargeAddressResp
+	97,  // 310: payment.Admin.ListCryptoRechargeAddresses:output_type -> payment.ListCryptoRechargeAddressesResp
+	31,  // 311: payment.Admin.CreateCryptoWalletAccount:output_type -> payment.CommonResp
+	31,  // 312: payment.Admin.UpdateCryptoWalletAccount:output_type -> payment.CommonResp
+	101, // 313: payment.Admin.GetCryptoWalletAccount:output_type -> payment.GetCryptoWalletAccountResp
+	103, // 314: payment.Admin.ListCryptoWalletAccounts:output_type -> payment.ListCryptoWalletAccountsResp
+	31,  // 315: payment.Admin.CreateCryptoRechargeTx:output_type -> payment.CommonResp
+	31,  // 316: payment.Admin.UpdateCryptoRechargeTx:output_type -> payment.CommonResp
+	107, // 317: payment.Admin.GetCryptoRechargeTx:output_type -> payment.GetCryptoRechargeTxResp
+	109, // 318: payment.Admin.ListCryptoRechargeTxs:output_type -> payment.ListCryptoRechargeTxsResp
 	253, // [253:319] is the sub-list for method output_type
 	187, // [187:253] is the sub-list for method input_type
 	187, // [187:187] is the sub-list for extension type_name

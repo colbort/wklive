@@ -19,22 +19,22 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AssetApp_ListAssetCoinConfigs_FullMethodName = "/asset.AssetApp/ListAssetCoinConfigs"
-	AssetApp_GetMyAssetSummary_FullMethodName    = "/asset.AssetApp/GetMyAssetSummary"
-	AssetApp_ListMyAssets_FullMethodName         = "/asset.AssetApp/ListMyAssets"
-	AssetApp_GetMyAsset_FullMethodName           = "/asset.AssetApp/GetMyAsset"
-	AssetApp_ListMyAssetFlows_FullMethodName     = "/asset.AssetApp/ListMyAssetFlows"
-	AssetApp_ListMyFreezes_FullMethodName        = "/asset.AssetApp/ListMyFreezes"
-	AssetApp_ListMyLocks_FullMethodName          = "/asset.AssetApp/ListMyLocks"
-	AssetApp_TransferMyAsset_FullMethodName      = "/asset.AssetApp/TransferMyAsset"
+	App_ListAssetCoinConfigs_FullMethodName = "/asset.App/ListAssetCoinConfigs"
+	App_GetMyAssetSummary_FullMethodName    = "/asset.App/GetMyAssetSummary"
+	App_ListMyAssets_FullMethodName         = "/asset.App/ListMyAssets"
+	App_GetMyAsset_FullMethodName           = "/asset.App/GetMyAsset"
+	App_ListMyAssetFlows_FullMethodName     = "/asset.App/ListMyAssetFlows"
+	App_ListMyFreezes_FullMethodName        = "/asset.App/ListMyFreezes"
+	App_ListMyLocks_FullMethodName          = "/asset.App/ListMyLocks"
+	App_TransferMyAsset_FullMethodName      = "/asset.App/TransferMyAsset"
 )
 
-// AssetAppClient is the client API for AssetApp service.
+// AppClient is the client API for App service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // 用户端资产服务
-type AssetAppClient interface {
+type AppClient interface {
 	// 查询APP资产操作页币种配置
 	ListAssetCoinConfigs(ctx context.Context, in *ListAssetCoinConfigsReq, opts ...grpc.CallOption) (*ListAssetCoinConfigsResp, error)
 	// 查询我的资产汇总
@@ -53,100 +53,100 @@ type AssetAppClient interface {
 	TransferMyAsset(ctx context.Context, in *TransferMyAssetReq, opts ...grpc.CallOption) (*TransferMyAssetResp, error)
 }
 
-type assetAppClient struct {
+type appClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewAssetAppClient(cc grpc.ClientConnInterface) AssetAppClient {
-	return &assetAppClient{cc}
+func NewAppClient(cc grpc.ClientConnInterface) AppClient {
+	return &appClient{cc}
 }
 
-func (c *assetAppClient) ListAssetCoinConfigs(ctx context.Context, in *ListAssetCoinConfigsReq, opts ...grpc.CallOption) (*ListAssetCoinConfigsResp, error) {
+func (c *appClient) ListAssetCoinConfigs(ctx context.Context, in *ListAssetCoinConfigsReq, opts ...grpc.CallOption) (*ListAssetCoinConfigsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListAssetCoinConfigsResp)
-	err := c.cc.Invoke(ctx, AssetApp_ListAssetCoinConfigs_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListAssetCoinConfigs_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAppClient) GetMyAssetSummary(ctx context.Context, in *GetMyAssetSummaryReq, opts ...grpc.CallOption) (*GetMyAssetSummaryResp, error) {
+func (c *appClient) GetMyAssetSummary(ctx context.Context, in *GetMyAssetSummaryReq, opts ...grpc.CallOption) (*GetMyAssetSummaryResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetMyAssetSummaryResp)
-	err := c.cc.Invoke(ctx, AssetApp_GetMyAssetSummary_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetMyAssetSummary_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAppClient) ListMyAssets(ctx context.Context, in *ListMyAssetsReq, opts ...grpc.CallOption) (*ListMyAssetsResp, error) {
+func (c *appClient) ListMyAssets(ctx context.Context, in *ListMyAssetsReq, opts ...grpc.CallOption) (*ListMyAssetsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListMyAssetsResp)
-	err := c.cc.Invoke(ctx, AssetApp_ListMyAssets_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListMyAssets_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAppClient) GetMyAsset(ctx context.Context, in *GetMyAssetReq, opts ...grpc.CallOption) (*GetMyAssetResp, error) {
+func (c *appClient) GetMyAsset(ctx context.Context, in *GetMyAssetReq, opts ...grpc.CallOption) (*GetMyAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetMyAssetResp)
-	err := c.cc.Invoke(ctx, AssetApp_GetMyAsset_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetMyAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAppClient) ListMyAssetFlows(ctx context.Context, in *ListMyAssetFlowsReq, opts ...grpc.CallOption) (*ListMyAssetFlowsResp, error) {
+func (c *appClient) ListMyAssetFlows(ctx context.Context, in *ListMyAssetFlowsReq, opts ...grpc.CallOption) (*ListMyAssetFlowsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListMyAssetFlowsResp)
-	err := c.cc.Invoke(ctx, AssetApp_ListMyAssetFlows_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListMyAssetFlows_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAppClient) ListMyFreezes(ctx context.Context, in *ListMyFreezesReq, opts ...grpc.CallOption) (*ListMyFreezesResp, error) {
+func (c *appClient) ListMyFreezes(ctx context.Context, in *ListMyFreezesReq, opts ...grpc.CallOption) (*ListMyFreezesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListMyFreezesResp)
-	err := c.cc.Invoke(ctx, AssetApp_ListMyFreezes_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListMyFreezes_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAppClient) ListMyLocks(ctx context.Context, in *ListMyLocksReq, opts ...grpc.CallOption) (*ListMyLocksResp, error) {
+func (c *appClient) ListMyLocks(ctx context.Context, in *ListMyLocksReq, opts ...grpc.CallOption) (*ListMyLocksResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListMyLocksResp)
-	err := c.cc.Invoke(ctx, AssetApp_ListMyLocks_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListMyLocks_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAppClient) TransferMyAsset(ctx context.Context, in *TransferMyAssetReq, opts ...grpc.CallOption) (*TransferMyAssetResp, error) {
+func (c *appClient) TransferMyAsset(ctx context.Context, in *TransferMyAssetReq, opts ...grpc.CallOption) (*TransferMyAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TransferMyAssetResp)
-	err := c.cc.Invoke(ctx, AssetApp_TransferMyAsset_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_TransferMyAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// AssetAppServer is the server API for AssetApp service.
-// All implementations must embed UnimplementedAssetAppServer
+// AppServer is the server API for App service.
+// All implementations must embed UnimplementedAppServer
 // for forward compatibility.
 //
 // 用户端资产服务
-type AssetAppServer interface {
+type AppServer interface {
 	// 查询APP资产操作页币种配置
 	ListAssetCoinConfigs(context.Context, *ListAssetCoinConfigsReq) (*ListAssetCoinConfigsResp, error)
 	// 查询我的资产汇总
@@ -163,243 +163,243 @@ type AssetAppServer interface {
 	ListMyLocks(context.Context, *ListMyLocksReq) (*ListMyLocksResp, error)
 	// 我的账户划转
 	TransferMyAsset(context.Context, *TransferMyAssetReq) (*TransferMyAssetResp, error)
-	mustEmbedUnimplementedAssetAppServer()
+	mustEmbedUnimplementedAppServer()
 }
 
-// UnimplementedAssetAppServer must be embedded to have
+// UnimplementedAppServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedAssetAppServer struct{}
+type UnimplementedAppServer struct{}
 
-func (UnimplementedAssetAppServer) ListAssetCoinConfigs(context.Context, *ListAssetCoinConfigsReq) (*ListAssetCoinConfigsResp, error) {
+func (UnimplementedAppServer) ListAssetCoinConfigs(context.Context, *ListAssetCoinConfigsReq) (*ListAssetCoinConfigsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListAssetCoinConfigs not implemented")
 }
-func (UnimplementedAssetAppServer) GetMyAssetSummary(context.Context, *GetMyAssetSummaryReq) (*GetMyAssetSummaryResp, error) {
+func (UnimplementedAppServer) GetMyAssetSummary(context.Context, *GetMyAssetSummaryReq) (*GetMyAssetSummaryResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMyAssetSummary not implemented")
 }
-func (UnimplementedAssetAppServer) ListMyAssets(context.Context, *ListMyAssetsReq) (*ListMyAssetsResp, error) {
+func (UnimplementedAppServer) ListMyAssets(context.Context, *ListMyAssetsReq) (*ListMyAssetsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMyAssets not implemented")
 }
-func (UnimplementedAssetAppServer) GetMyAsset(context.Context, *GetMyAssetReq) (*GetMyAssetResp, error) {
+func (UnimplementedAppServer) GetMyAsset(context.Context, *GetMyAssetReq) (*GetMyAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMyAsset not implemented")
 }
-func (UnimplementedAssetAppServer) ListMyAssetFlows(context.Context, *ListMyAssetFlowsReq) (*ListMyAssetFlowsResp, error) {
+func (UnimplementedAppServer) ListMyAssetFlows(context.Context, *ListMyAssetFlowsReq) (*ListMyAssetFlowsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMyAssetFlows not implemented")
 }
-func (UnimplementedAssetAppServer) ListMyFreezes(context.Context, *ListMyFreezesReq) (*ListMyFreezesResp, error) {
+func (UnimplementedAppServer) ListMyFreezes(context.Context, *ListMyFreezesReq) (*ListMyFreezesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMyFreezes not implemented")
 }
-func (UnimplementedAssetAppServer) ListMyLocks(context.Context, *ListMyLocksReq) (*ListMyLocksResp, error) {
+func (UnimplementedAppServer) ListMyLocks(context.Context, *ListMyLocksReq) (*ListMyLocksResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMyLocks not implemented")
 }
-func (UnimplementedAssetAppServer) TransferMyAsset(context.Context, *TransferMyAssetReq) (*TransferMyAssetResp, error) {
+func (UnimplementedAppServer) TransferMyAsset(context.Context, *TransferMyAssetReq) (*TransferMyAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method TransferMyAsset not implemented")
 }
-func (UnimplementedAssetAppServer) mustEmbedUnimplementedAssetAppServer() {}
-func (UnimplementedAssetAppServer) testEmbeddedByValue()                  {}
+func (UnimplementedAppServer) mustEmbedUnimplementedAppServer() {}
+func (UnimplementedAppServer) testEmbeddedByValue()             {}
 
-// UnsafeAssetAppServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to AssetAppServer will
+// UnsafeAppServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AppServer will
 // result in compilation errors.
-type UnsafeAssetAppServer interface {
-	mustEmbedUnimplementedAssetAppServer()
+type UnsafeAppServer interface {
+	mustEmbedUnimplementedAppServer()
 }
 
-func RegisterAssetAppServer(s grpc.ServiceRegistrar, srv AssetAppServer) {
-	// If the following call panics, it indicates UnimplementedAssetAppServer was
+func RegisterAppServer(s grpc.ServiceRegistrar, srv AppServer) {
+	// If the following call panics, it indicates UnimplementedAppServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&AssetApp_ServiceDesc, srv)
+	s.RegisterService(&App_ServiceDesc, srv)
 }
 
-func _AssetApp_ListAssetCoinConfigs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListAssetCoinConfigs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListAssetCoinConfigsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAppServer).ListAssetCoinConfigs(ctx, in)
+		return srv.(AppServer).ListAssetCoinConfigs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetApp_ListAssetCoinConfigs_FullMethodName,
+		FullMethod: App_ListAssetCoinConfigs_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAppServer).ListAssetCoinConfigs(ctx, req.(*ListAssetCoinConfigsReq))
+		return srv.(AppServer).ListAssetCoinConfigs(ctx, req.(*ListAssetCoinConfigsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetApp_GetMyAssetSummary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetMyAssetSummary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMyAssetSummaryReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAppServer).GetMyAssetSummary(ctx, in)
+		return srv.(AppServer).GetMyAssetSummary(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetApp_GetMyAssetSummary_FullMethodName,
+		FullMethod: App_GetMyAssetSummary_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAppServer).GetMyAssetSummary(ctx, req.(*GetMyAssetSummaryReq))
+		return srv.(AppServer).GetMyAssetSummary(ctx, req.(*GetMyAssetSummaryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetApp_ListMyAssets_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListMyAssets_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListMyAssetsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAppServer).ListMyAssets(ctx, in)
+		return srv.(AppServer).ListMyAssets(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetApp_ListMyAssets_FullMethodName,
+		FullMethod: App_ListMyAssets_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAppServer).ListMyAssets(ctx, req.(*ListMyAssetsReq))
+		return srv.(AppServer).ListMyAssets(ctx, req.(*ListMyAssetsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetApp_GetMyAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetMyAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMyAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAppServer).GetMyAsset(ctx, in)
+		return srv.(AppServer).GetMyAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetApp_GetMyAsset_FullMethodName,
+		FullMethod: App_GetMyAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAppServer).GetMyAsset(ctx, req.(*GetMyAssetReq))
+		return srv.(AppServer).GetMyAsset(ctx, req.(*GetMyAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetApp_ListMyAssetFlows_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListMyAssetFlows_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListMyAssetFlowsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAppServer).ListMyAssetFlows(ctx, in)
+		return srv.(AppServer).ListMyAssetFlows(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetApp_ListMyAssetFlows_FullMethodName,
+		FullMethod: App_ListMyAssetFlows_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAppServer).ListMyAssetFlows(ctx, req.(*ListMyAssetFlowsReq))
+		return srv.(AppServer).ListMyAssetFlows(ctx, req.(*ListMyAssetFlowsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetApp_ListMyFreezes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListMyFreezes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListMyFreezesReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAppServer).ListMyFreezes(ctx, in)
+		return srv.(AppServer).ListMyFreezes(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetApp_ListMyFreezes_FullMethodName,
+		FullMethod: App_ListMyFreezes_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAppServer).ListMyFreezes(ctx, req.(*ListMyFreezesReq))
+		return srv.(AppServer).ListMyFreezes(ctx, req.(*ListMyFreezesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetApp_ListMyLocks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListMyLocks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListMyLocksReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAppServer).ListMyLocks(ctx, in)
+		return srv.(AppServer).ListMyLocks(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetApp_ListMyLocks_FullMethodName,
+		FullMethod: App_ListMyLocks_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAppServer).ListMyLocks(ctx, req.(*ListMyLocksReq))
+		return srv.(AppServer).ListMyLocks(ctx, req.(*ListMyLocksReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetApp_TransferMyAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_TransferMyAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TransferMyAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAppServer).TransferMyAsset(ctx, in)
+		return srv.(AppServer).TransferMyAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetApp_TransferMyAsset_FullMethodName,
+		FullMethod: App_TransferMyAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAppServer).TransferMyAsset(ctx, req.(*TransferMyAssetReq))
+		return srv.(AppServer).TransferMyAsset(ctx, req.(*TransferMyAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// AssetApp_ServiceDesc is the grpc.ServiceDesc for AssetApp service.
+// App_ServiceDesc is the grpc.ServiceDesc for App service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var AssetApp_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "asset.AssetApp",
-	HandlerType: (*AssetAppServer)(nil),
+var App_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "asset.App",
+	HandlerType: (*AppServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "ListAssetCoinConfigs",
-			Handler:    _AssetApp_ListAssetCoinConfigs_Handler,
+			Handler:    _App_ListAssetCoinConfigs_Handler,
 		},
 		{
 			MethodName: "GetMyAssetSummary",
-			Handler:    _AssetApp_GetMyAssetSummary_Handler,
+			Handler:    _App_GetMyAssetSummary_Handler,
 		},
 		{
 			MethodName: "ListMyAssets",
-			Handler:    _AssetApp_ListMyAssets_Handler,
+			Handler:    _App_ListMyAssets_Handler,
 		},
 		{
 			MethodName: "GetMyAsset",
-			Handler:    _AssetApp_GetMyAsset_Handler,
+			Handler:    _App_GetMyAsset_Handler,
 		},
 		{
 			MethodName: "ListMyAssetFlows",
-			Handler:    _AssetApp_ListMyAssetFlows_Handler,
+			Handler:    _App_ListMyAssetFlows_Handler,
 		},
 		{
 			MethodName: "ListMyFreezes",
-			Handler:    _AssetApp_ListMyFreezes_Handler,
+			Handler:    _App_ListMyFreezes_Handler,
 		},
 		{
 			MethodName: "ListMyLocks",
-			Handler:    _AssetApp_ListMyLocks_Handler,
+			Handler:    _App_ListMyLocks_Handler,
 		},
 		{
 			MethodName: "TransferMyAsset",
-			Handler:    _AssetApp_TransferMyAsset_Handler,
+			Handler:    _App_TransferMyAsset_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -407,33 +407,33 @@ var AssetApp_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	AssetAdmin_CreateAssetCoinConfig_FullMethodName = "/asset.AssetAdmin/CreateAssetCoinConfig"
-	AssetAdmin_UpdateAssetCoinConfig_FullMethodName = "/asset.AssetAdmin/UpdateAssetCoinConfig"
-	AssetAdmin_DeleteAssetCoinConfig_FullMethodName = "/asset.AssetAdmin/DeleteAssetCoinConfig"
-	AssetAdmin_GetAssetCoinConfig_FullMethodName    = "/asset.AssetAdmin/GetAssetCoinConfig"
-	AssetAdmin_PageAssetCoinConfigs_FullMethodName  = "/asset.AssetAdmin/PageAssetCoinConfigs"
-	AssetAdmin_PageUserAssets_FullMethodName        = "/asset.AssetAdmin/PageUserAssets"
-	AssetAdmin_GetUserAssetDetail_FullMethodName    = "/asset.AssetAdmin/GetUserAssetDetail"
-	AssetAdmin_PageAssetFlows_FullMethodName        = "/asset.AssetAdmin/PageAssetFlows"
-	AssetAdmin_PageAssetFreezes_FullMethodName      = "/asset.AssetAdmin/PageAssetFreezes"
-	AssetAdmin_PageAssetLocks_FullMethodName        = "/asset.AssetAdmin/PageAssetLocks"
-	AssetAdmin_AddAsset_FullMethodName              = "/asset.AssetAdmin/AddAsset"
-	AssetAdmin_SubAsset_FullMethodName              = "/asset.AssetAdmin/SubAsset"
-	AssetAdmin_FreezeAsset_FullMethodName           = "/asset.AssetAdmin/FreezeAsset"
-	AssetAdmin_UnfreezeAsset_FullMethodName         = "/asset.AssetAdmin/UnfreezeAsset"
-	AssetAdmin_LockAsset_FullMethodName             = "/asset.AssetAdmin/LockAsset"
-	AssetAdmin_UnlockAsset_FullMethodName           = "/asset.AssetAdmin/UnlockAsset"
-	AssetAdmin_SetPlatformAccount_FullMethodName    = "/asset.AssetAdmin/SetPlatformAccount"
-	AssetAdmin_GetPlatformAccount_FullMethodName    = "/asset.AssetAdmin/GetPlatformAccount"
-	AssetAdmin_AdjustPlatformAccount_FullMethodName = "/asset.AssetAdmin/AdjustPlatformAccount"
+	Admin_CreateAssetCoinConfig_FullMethodName = "/asset.Admin/CreateAssetCoinConfig"
+	Admin_UpdateAssetCoinConfig_FullMethodName = "/asset.Admin/UpdateAssetCoinConfig"
+	Admin_DeleteAssetCoinConfig_FullMethodName = "/asset.Admin/DeleteAssetCoinConfig"
+	Admin_GetAssetCoinConfig_FullMethodName    = "/asset.Admin/GetAssetCoinConfig"
+	Admin_PageAssetCoinConfigs_FullMethodName  = "/asset.Admin/PageAssetCoinConfigs"
+	Admin_PageUserAssets_FullMethodName        = "/asset.Admin/PageUserAssets"
+	Admin_GetUserAssetDetail_FullMethodName    = "/asset.Admin/GetUserAssetDetail"
+	Admin_PageAssetFlows_FullMethodName        = "/asset.Admin/PageAssetFlows"
+	Admin_PageAssetFreezes_FullMethodName      = "/asset.Admin/PageAssetFreezes"
+	Admin_PageAssetLocks_FullMethodName        = "/asset.Admin/PageAssetLocks"
+	Admin_AddAsset_FullMethodName              = "/asset.Admin/AddAsset"
+	Admin_SubAsset_FullMethodName              = "/asset.Admin/SubAsset"
+	Admin_FreezeAsset_FullMethodName           = "/asset.Admin/FreezeAsset"
+	Admin_UnfreezeAsset_FullMethodName         = "/asset.Admin/UnfreezeAsset"
+	Admin_LockAsset_FullMethodName             = "/asset.Admin/LockAsset"
+	Admin_UnlockAsset_FullMethodName           = "/asset.Admin/UnlockAsset"
+	Admin_SetPlatformAccount_FullMethodName    = "/asset.Admin/SetPlatformAccount"
+	Admin_GetPlatformAccount_FullMethodName    = "/asset.Admin/GetPlatformAccount"
+	Admin_AdjustPlatformAccount_FullMethodName = "/asset.Admin/AdjustPlatformAccount"
 )
 
-// AssetAdminClient is the client API for AssetAdmin service.
+// AdminClient is the client API for Admin service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // 后台资产服务
-type AssetAdminClient interface {
+type AdminClient interface {
 	// 创建APP资产操作币种显示配置
 	CreateAssetCoinConfig(ctx context.Context, in *CreateAssetCoinConfigReq, opts ...grpc.CallOption) (*AssetCoinConfigResp, error)
 	// 更新APP资产操作币种显示配置
@@ -474,210 +474,210 @@ type AssetAdminClient interface {
 	AdjustPlatformAccount(ctx context.Context, in *AdjustPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error)
 }
 
-type assetAdminClient struct {
+type adminClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewAssetAdminClient(cc grpc.ClientConnInterface) AssetAdminClient {
-	return &assetAdminClient{cc}
+func NewAdminClient(cc grpc.ClientConnInterface) AdminClient {
+	return &adminClient{cc}
 }
 
-func (c *assetAdminClient) CreateAssetCoinConfig(ctx context.Context, in *CreateAssetCoinConfigReq, opts ...grpc.CallOption) (*AssetCoinConfigResp, error) {
+func (c *adminClient) CreateAssetCoinConfig(ctx context.Context, in *CreateAssetCoinConfigReq, opts ...grpc.CallOption) (*AssetCoinConfigResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AssetCoinConfigResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_CreateAssetCoinConfig_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_CreateAssetCoinConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) UpdateAssetCoinConfig(ctx context.Context, in *UpdateAssetCoinConfigReq, opts ...grpc.CallOption) (*AssetCoinConfigResp, error) {
+func (c *adminClient) UpdateAssetCoinConfig(ctx context.Context, in *UpdateAssetCoinConfigReq, opts ...grpc.CallOption) (*AssetCoinConfigResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AssetCoinConfigResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_UpdateAssetCoinConfig_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateAssetCoinConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) DeleteAssetCoinConfig(ctx context.Context, in *DeleteAssetCoinConfigReq, opts ...grpc.CallOption) (*DeleteAssetCoinConfigResp, error) {
+func (c *adminClient) DeleteAssetCoinConfig(ctx context.Context, in *DeleteAssetCoinConfigReq, opts ...grpc.CallOption) (*DeleteAssetCoinConfigResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteAssetCoinConfigResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_DeleteAssetCoinConfig_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_DeleteAssetCoinConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) GetAssetCoinConfig(ctx context.Context, in *GetAssetCoinConfigReq, opts ...grpc.CallOption) (*AssetCoinConfigResp, error) {
+func (c *adminClient) GetAssetCoinConfig(ctx context.Context, in *GetAssetCoinConfigReq, opts ...grpc.CallOption) (*AssetCoinConfigResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AssetCoinConfigResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_GetAssetCoinConfig_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetAssetCoinConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) PageAssetCoinConfigs(ctx context.Context, in *PageAssetCoinConfigsReq, opts ...grpc.CallOption) (*PageAssetCoinConfigsResp, error) {
+func (c *adminClient) PageAssetCoinConfigs(ctx context.Context, in *PageAssetCoinConfigsReq, opts ...grpc.CallOption) (*PageAssetCoinConfigsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PageAssetCoinConfigsResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_PageAssetCoinConfigs_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_PageAssetCoinConfigs_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) PageUserAssets(ctx context.Context, in *PageUserAssetsReq, opts ...grpc.CallOption) (*PageUserAssetsResp, error) {
+func (c *adminClient) PageUserAssets(ctx context.Context, in *PageUserAssetsReq, opts ...grpc.CallOption) (*PageUserAssetsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PageUserAssetsResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_PageUserAssets_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_PageUserAssets_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) GetUserAssetDetail(ctx context.Context, in *GetUserAssetDetailReq, opts ...grpc.CallOption) (*GetUserAssetDetailResp, error) {
+func (c *adminClient) GetUserAssetDetail(ctx context.Context, in *GetUserAssetDetailReq, opts ...grpc.CallOption) (*GetUserAssetDetailResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetUserAssetDetailResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_GetUserAssetDetail_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetUserAssetDetail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) PageAssetFlows(ctx context.Context, in *PageAssetFlowsReq, opts ...grpc.CallOption) (*PageAssetFlowsResp, error) {
+func (c *adminClient) PageAssetFlows(ctx context.Context, in *PageAssetFlowsReq, opts ...grpc.CallOption) (*PageAssetFlowsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PageAssetFlowsResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_PageAssetFlows_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_PageAssetFlows_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) PageAssetFreezes(ctx context.Context, in *PageAssetFreezesReq, opts ...grpc.CallOption) (*PageAssetFreezesResp, error) {
+func (c *adminClient) PageAssetFreezes(ctx context.Context, in *PageAssetFreezesReq, opts ...grpc.CallOption) (*PageAssetFreezesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PageAssetFreezesResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_PageAssetFreezes_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_PageAssetFreezes_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) PageAssetLocks(ctx context.Context, in *PageAssetLocksReq, opts ...grpc.CallOption) (*PageAssetLocksResp, error) {
+func (c *adminClient) PageAssetLocks(ctx context.Context, in *PageAssetLocksReq, opts ...grpc.CallOption) (*PageAssetLocksResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PageAssetLocksResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_PageAssetLocks_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_PageAssetLocks_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) AddAsset(ctx context.Context, in *AddAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
+func (c *adminClient) AddAsset(ctx context.Context, in *AddAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ManualChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_AddAsset_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_AddAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) SubAsset(ctx context.Context, in *SubAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
+func (c *adminClient) SubAsset(ctx context.Context, in *SubAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ManualChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_SubAsset_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_SubAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) FreezeAsset(ctx context.Context, in *ManualFreezeAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
+func (c *adminClient) FreezeAsset(ctx context.Context, in *ManualFreezeAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ManualChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_FreezeAsset_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_FreezeAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) UnfreezeAsset(ctx context.Context, in *ManualUnfreezeAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
+func (c *adminClient) UnfreezeAsset(ctx context.Context, in *ManualUnfreezeAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ManualChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_UnfreezeAsset_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UnfreezeAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) LockAsset(ctx context.Context, in *ManualLockAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
+func (c *adminClient) LockAsset(ctx context.Context, in *ManualLockAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ManualChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_LockAsset_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_LockAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) UnlockAsset(ctx context.Context, in *ManualUnlockAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
+func (c *adminClient) UnlockAsset(ctx context.Context, in *ManualUnlockAssetReq, opts ...grpc.CallOption) (*ManualChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ManualChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_UnlockAsset_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UnlockAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) SetPlatformAccount(ctx context.Context, in *SetPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error) {
+func (c *adminClient) SetPlatformAccount(ctx context.Context, in *SetPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PlatformAccountResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_SetPlatformAccount_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_SetPlatformAccount_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) GetPlatformAccount(ctx context.Context, in *GetPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error) {
+func (c *adminClient) GetPlatformAccount(ctx context.Context, in *GetPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PlatformAccountResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_GetPlatformAccount_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetPlatformAccount_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetAdminClient) AdjustPlatformAccount(ctx context.Context, in *AdjustPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error) {
+func (c *adminClient) AdjustPlatformAccount(ctx context.Context, in *AdjustPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PlatformAccountResp)
-	err := c.cc.Invoke(ctx, AssetAdmin_AdjustPlatformAccount_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_AdjustPlatformAccount_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// AssetAdminServer is the server API for AssetAdmin service.
-// All implementations must embed UnimplementedAssetAdminServer
+// AdminServer is the server API for Admin service.
+// All implementations must embed UnimplementedAdminServer
 // for forward compatibility.
 //
 // 后台资产服务
-type AssetAdminServer interface {
+type AdminServer interface {
 	// 创建APP资产操作币种显示配置
 	CreateAssetCoinConfig(context.Context, *CreateAssetCoinConfigReq) (*AssetCoinConfigResp, error)
 	// 更新APP资产操作币种显示配置
@@ -716,518 +716,518 @@ type AssetAdminServer interface {
 	GetPlatformAccount(context.Context, *GetPlatformAccountReq) (*PlatformAccountResp, error)
 	// 幂等调整平台账户余额
 	AdjustPlatformAccount(context.Context, *AdjustPlatformAccountReq) (*PlatformAccountResp, error)
-	mustEmbedUnimplementedAssetAdminServer()
+	mustEmbedUnimplementedAdminServer()
 }
 
-// UnimplementedAssetAdminServer must be embedded to have
+// UnimplementedAdminServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedAssetAdminServer struct{}
+type UnimplementedAdminServer struct{}
 
-func (UnimplementedAssetAdminServer) CreateAssetCoinConfig(context.Context, *CreateAssetCoinConfigReq) (*AssetCoinConfigResp, error) {
+func (UnimplementedAdminServer) CreateAssetCoinConfig(context.Context, *CreateAssetCoinConfigReq) (*AssetCoinConfigResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateAssetCoinConfig not implemented")
 }
-func (UnimplementedAssetAdminServer) UpdateAssetCoinConfig(context.Context, *UpdateAssetCoinConfigReq) (*AssetCoinConfigResp, error) {
+func (UnimplementedAdminServer) UpdateAssetCoinConfig(context.Context, *UpdateAssetCoinConfigReq) (*AssetCoinConfigResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateAssetCoinConfig not implemented")
 }
-func (UnimplementedAssetAdminServer) DeleteAssetCoinConfig(context.Context, *DeleteAssetCoinConfigReq) (*DeleteAssetCoinConfigResp, error) {
+func (UnimplementedAdminServer) DeleteAssetCoinConfig(context.Context, *DeleteAssetCoinConfigReq) (*DeleteAssetCoinConfigResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteAssetCoinConfig not implemented")
 }
-func (UnimplementedAssetAdminServer) GetAssetCoinConfig(context.Context, *GetAssetCoinConfigReq) (*AssetCoinConfigResp, error) {
+func (UnimplementedAdminServer) GetAssetCoinConfig(context.Context, *GetAssetCoinConfigReq) (*AssetCoinConfigResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetAssetCoinConfig not implemented")
 }
-func (UnimplementedAssetAdminServer) PageAssetCoinConfigs(context.Context, *PageAssetCoinConfigsReq) (*PageAssetCoinConfigsResp, error) {
+func (UnimplementedAdminServer) PageAssetCoinConfigs(context.Context, *PageAssetCoinConfigsReq) (*PageAssetCoinConfigsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method PageAssetCoinConfigs not implemented")
 }
-func (UnimplementedAssetAdminServer) PageUserAssets(context.Context, *PageUserAssetsReq) (*PageUserAssetsResp, error) {
+func (UnimplementedAdminServer) PageUserAssets(context.Context, *PageUserAssetsReq) (*PageUserAssetsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method PageUserAssets not implemented")
 }
-func (UnimplementedAssetAdminServer) GetUserAssetDetail(context.Context, *GetUserAssetDetailReq) (*GetUserAssetDetailResp, error) {
+func (UnimplementedAdminServer) GetUserAssetDetail(context.Context, *GetUserAssetDetailReq) (*GetUserAssetDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserAssetDetail not implemented")
 }
-func (UnimplementedAssetAdminServer) PageAssetFlows(context.Context, *PageAssetFlowsReq) (*PageAssetFlowsResp, error) {
+func (UnimplementedAdminServer) PageAssetFlows(context.Context, *PageAssetFlowsReq) (*PageAssetFlowsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method PageAssetFlows not implemented")
 }
-func (UnimplementedAssetAdminServer) PageAssetFreezes(context.Context, *PageAssetFreezesReq) (*PageAssetFreezesResp, error) {
+func (UnimplementedAdminServer) PageAssetFreezes(context.Context, *PageAssetFreezesReq) (*PageAssetFreezesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method PageAssetFreezes not implemented")
 }
-func (UnimplementedAssetAdminServer) PageAssetLocks(context.Context, *PageAssetLocksReq) (*PageAssetLocksResp, error) {
+func (UnimplementedAdminServer) PageAssetLocks(context.Context, *PageAssetLocksReq) (*PageAssetLocksResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method PageAssetLocks not implemented")
 }
-func (UnimplementedAssetAdminServer) AddAsset(context.Context, *AddAssetReq) (*ManualChangeAssetResp, error) {
+func (UnimplementedAdminServer) AddAsset(context.Context, *AddAssetReq) (*ManualChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddAsset not implemented")
 }
-func (UnimplementedAssetAdminServer) SubAsset(context.Context, *SubAssetReq) (*ManualChangeAssetResp, error) {
+func (UnimplementedAdminServer) SubAsset(context.Context, *SubAssetReq) (*ManualChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SubAsset not implemented")
 }
-func (UnimplementedAssetAdminServer) FreezeAsset(context.Context, *ManualFreezeAssetReq) (*ManualChangeAssetResp, error) {
+func (UnimplementedAdminServer) FreezeAsset(context.Context, *ManualFreezeAssetReq) (*ManualChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method FreezeAsset not implemented")
 }
-func (UnimplementedAssetAdminServer) UnfreezeAsset(context.Context, *ManualUnfreezeAssetReq) (*ManualChangeAssetResp, error) {
+func (UnimplementedAdminServer) UnfreezeAsset(context.Context, *ManualUnfreezeAssetReq) (*ManualChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UnfreezeAsset not implemented")
 }
-func (UnimplementedAssetAdminServer) LockAsset(context.Context, *ManualLockAssetReq) (*ManualChangeAssetResp, error) {
+func (UnimplementedAdminServer) LockAsset(context.Context, *ManualLockAssetReq) (*ManualChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method LockAsset not implemented")
 }
-func (UnimplementedAssetAdminServer) UnlockAsset(context.Context, *ManualUnlockAssetReq) (*ManualChangeAssetResp, error) {
+func (UnimplementedAdminServer) UnlockAsset(context.Context, *ManualUnlockAssetReq) (*ManualChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UnlockAsset not implemented")
 }
-func (UnimplementedAssetAdminServer) SetPlatformAccount(context.Context, *SetPlatformAccountReq) (*PlatformAccountResp, error) {
+func (UnimplementedAdminServer) SetPlatformAccount(context.Context, *SetPlatformAccountReq) (*PlatformAccountResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetPlatformAccount not implemented")
 }
-func (UnimplementedAssetAdminServer) GetPlatformAccount(context.Context, *GetPlatformAccountReq) (*PlatformAccountResp, error) {
+func (UnimplementedAdminServer) GetPlatformAccount(context.Context, *GetPlatformAccountReq) (*PlatformAccountResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPlatformAccount not implemented")
 }
-func (UnimplementedAssetAdminServer) AdjustPlatformAccount(context.Context, *AdjustPlatformAccountReq) (*PlatformAccountResp, error) {
+func (UnimplementedAdminServer) AdjustPlatformAccount(context.Context, *AdjustPlatformAccountReq) (*PlatformAccountResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AdjustPlatformAccount not implemented")
 }
-func (UnimplementedAssetAdminServer) mustEmbedUnimplementedAssetAdminServer() {}
-func (UnimplementedAssetAdminServer) testEmbeddedByValue()                    {}
+func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
+func (UnimplementedAdminServer) testEmbeddedByValue()               {}
 
-// UnsafeAssetAdminServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to AssetAdminServer will
+// UnsafeAdminServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AdminServer will
 // result in compilation errors.
-type UnsafeAssetAdminServer interface {
-	mustEmbedUnimplementedAssetAdminServer()
+type UnsafeAdminServer interface {
+	mustEmbedUnimplementedAdminServer()
 }
 
-func RegisterAssetAdminServer(s grpc.ServiceRegistrar, srv AssetAdminServer) {
-	// If the following call panics, it indicates UnimplementedAssetAdminServer was
+func RegisterAdminServer(s grpc.ServiceRegistrar, srv AdminServer) {
+	// If the following call panics, it indicates UnimplementedAdminServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&AssetAdmin_ServiceDesc, srv)
+	s.RegisterService(&Admin_ServiceDesc, srv)
 }
 
-func _AssetAdmin_CreateAssetCoinConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_CreateAssetCoinConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateAssetCoinConfigReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).CreateAssetCoinConfig(ctx, in)
+		return srv.(AdminServer).CreateAssetCoinConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_CreateAssetCoinConfig_FullMethodName,
+		FullMethod: Admin_CreateAssetCoinConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).CreateAssetCoinConfig(ctx, req.(*CreateAssetCoinConfigReq))
+		return srv.(AdminServer).CreateAssetCoinConfig(ctx, req.(*CreateAssetCoinConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_UpdateAssetCoinConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateAssetCoinConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateAssetCoinConfigReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).UpdateAssetCoinConfig(ctx, in)
+		return srv.(AdminServer).UpdateAssetCoinConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_UpdateAssetCoinConfig_FullMethodName,
+		FullMethod: Admin_UpdateAssetCoinConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).UpdateAssetCoinConfig(ctx, req.(*UpdateAssetCoinConfigReq))
+		return srv.(AdminServer).UpdateAssetCoinConfig(ctx, req.(*UpdateAssetCoinConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_DeleteAssetCoinConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_DeleteAssetCoinConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteAssetCoinConfigReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).DeleteAssetCoinConfig(ctx, in)
+		return srv.(AdminServer).DeleteAssetCoinConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_DeleteAssetCoinConfig_FullMethodName,
+		FullMethod: Admin_DeleteAssetCoinConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).DeleteAssetCoinConfig(ctx, req.(*DeleteAssetCoinConfigReq))
+		return srv.(AdminServer).DeleteAssetCoinConfig(ctx, req.(*DeleteAssetCoinConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_GetAssetCoinConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetAssetCoinConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAssetCoinConfigReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).GetAssetCoinConfig(ctx, in)
+		return srv.(AdminServer).GetAssetCoinConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_GetAssetCoinConfig_FullMethodName,
+		FullMethod: Admin_GetAssetCoinConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).GetAssetCoinConfig(ctx, req.(*GetAssetCoinConfigReq))
+		return srv.(AdminServer).GetAssetCoinConfig(ctx, req.(*GetAssetCoinConfigReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_PageAssetCoinConfigs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_PageAssetCoinConfigs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PageAssetCoinConfigsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).PageAssetCoinConfigs(ctx, in)
+		return srv.(AdminServer).PageAssetCoinConfigs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_PageAssetCoinConfigs_FullMethodName,
+		FullMethod: Admin_PageAssetCoinConfigs_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).PageAssetCoinConfigs(ctx, req.(*PageAssetCoinConfigsReq))
+		return srv.(AdminServer).PageAssetCoinConfigs(ctx, req.(*PageAssetCoinConfigsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_PageUserAssets_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_PageUserAssets_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PageUserAssetsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).PageUserAssets(ctx, in)
+		return srv.(AdminServer).PageUserAssets(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_PageUserAssets_FullMethodName,
+		FullMethod: Admin_PageUserAssets_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).PageUserAssets(ctx, req.(*PageUserAssetsReq))
+		return srv.(AdminServer).PageUserAssets(ctx, req.(*PageUserAssetsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_GetUserAssetDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetUserAssetDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserAssetDetailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).GetUserAssetDetail(ctx, in)
+		return srv.(AdminServer).GetUserAssetDetail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_GetUserAssetDetail_FullMethodName,
+		FullMethod: Admin_GetUserAssetDetail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).GetUserAssetDetail(ctx, req.(*GetUserAssetDetailReq))
+		return srv.(AdminServer).GetUserAssetDetail(ctx, req.(*GetUserAssetDetailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_PageAssetFlows_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_PageAssetFlows_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PageAssetFlowsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).PageAssetFlows(ctx, in)
+		return srv.(AdminServer).PageAssetFlows(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_PageAssetFlows_FullMethodName,
+		FullMethod: Admin_PageAssetFlows_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).PageAssetFlows(ctx, req.(*PageAssetFlowsReq))
+		return srv.(AdminServer).PageAssetFlows(ctx, req.(*PageAssetFlowsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_PageAssetFreezes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_PageAssetFreezes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PageAssetFreezesReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).PageAssetFreezes(ctx, in)
+		return srv.(AdminServer).PageAssetFreezes(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_PageAssetFreezes_FullMethodName,
+		FullMethod: Admin_PageAssetFreezes_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).PageAssetFreezes(ctx, req.(*PageAssetFreezesReq))
+		return srv.(AdminServer).PageAssetFreezes(ctx, req.(*PageAssetFreezesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_PageAssetLocks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_PageAssetLocks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PageAssetLocksReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).PageAssetLocks(ctx, in)
+		return srv.(AdminServer).PageAssetLocks(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_PageAssetLocks_FullMethodName,
+		FullMethod: Admin_PageAssetLocks_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).PageAssetLocks(ctx, req.(*PageAssetLocksReq))
+		return srv.(AdminServer).PageAssetLocks(ctx, req.(*PageAssetLocksReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_AddAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_AddAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).AddAsset(ctx, in)
+		return srv.(AdminServer).AddAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_AddAsset_FullMethodName,
+		FullMethod: Admin_AddAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).AddAsset(ctx, req.(*AddAssetReq))
+		return srv.(AdminServer).AddAsset(ctx, req.(*AddAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_SubAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_SubAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SubAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).SubAsset(ctx, in)
+		return srv.(AdminServer).SubAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_SubAsset_FullMethodName,
+		FullMethod: Admin_SubAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).SubAsset(ctx, req.(*SubAssetReq))
+		return srv.(AdminServer).SubAsset(ctx, req.(*SubAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_FreezeAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_FreezeAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ManualFreezeAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).FreezeAsset(ctx, in)
+		return srv.(AdminServer).FreezeAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_FreezeAsset_FullMethodName,
+		FullMethod: Admin_FreezeAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).FreezeAsset(ctx, req.(*ManualFreezeAssetReq))
+		return srv.(AdminServer).FreezeAsset(ctx, req.(*ManualFreezeAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_UnfreezeAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UnfreezeAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ManualUnfreezeAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).UnfreezeAsset(ctx, in)
+		return srv.(AdminServer).UnfreezeAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_UnfreezeAsset_FullMethodName,
+		FullMethod: Admin_UnfreezeAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).UnfreezeAsset(ctx, req.(*ManualUnfreezeAssetReq))
+		return srv.(AdminServer).UnfreezeAsset(ctx, req.(*ManualUnfreezeAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_LockAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_LockAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ManualLockAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).LockAsset(ctx, in)
+		return srv.(AdminServer).LockAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_LockAsset_FullMethodName,
+		FullMethod: Admin_LockAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).LockAsset(ctx, req.(*ManualLockAssetReq))
+		return srv.(AdminServer).LockAsset(ctx, req.(*ManualLockAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_UnlockAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UnlockAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ManualUnlockAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).UnlockAsset(ctx, in)
+		return srv.(AdminServer).UnlockAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_UnlockAsset_FullMethodName,
+		FullMethod: Admin_UnlockAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).UnlockAsset(ctx, req.(*ManualUnlockAssetReq))
+		return srv.(AdminServer).UnlockAsset(ctx, req.(*ManualUnlockAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_SetPlatformAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_SetPlatformAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetPlatformAccountReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).SetPlatformAccount(ctx, in)
+		return srv.(AdminServer).SetPlatformAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_SetPlatformAccount_FullMethodName,
+		FullMethod: Admin_SetPlatformAccount_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).SetPlatformAccount(ctx, req.(*SetPlatformAccountReq))
+		return srv.(AdminServer).SetPlatformAccount(ctx, req.(*SetPlatformAccountReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_GetPlatformAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetPlatformAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPlatformAccountReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).GetPlatformAccount(ctx, in)
+		return srv.(AdminServer).GetPlatformAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_GetPlatformAccount_FullMethodName,
+		FullMethod: Admin_GetPlatformAccount_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).GetPlatformAccount(ctx, req.(*GetPlatformAccountReq))
+		return srv.(AdminServer).GetPlatformAccount(ctx, req.(*GetPlatformAccountReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetAdmin_AdjustPlatformAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_AdjustPlatformAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AdjustPlatformAccountReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetAdminServer).AdjustPlatformAccount(ctx, in)
+		return srv.(AdminServer).AdjustPlatformAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetAdmin_AdjustPlatformAccount_FullMethodName,
+		FullMethod: Admin_AdjustPlatformAccount_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetAdminServer).AdjustPlatformAccount(ctx, req.(*AdjustPlatformAccountReq))
+		return srv.(AdminServer).AdjustPlatformAccount(ctx, req.(*AdjustPlatformAccountReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// AssetAdmin_ServiceDesc is the grpc.ServiceDesc for AssetAdmin service.
+// Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var AssetAdmin_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "asset.AssetAdmin",
-	HandlerType: (*AssetAdminServer)(nil),
+var Admin_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "asset.Admin",
+	HandlerType: (*AdminServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateAssetCoinConfig",
-			Handler:    _AssetAdmin_CreateAssetCoinConfig_Handler,
+			Handler:    _Admin_CreateAssetCoinConfig_Handler,
 		},
 		{
 			MethodName: "UpdateAssetCoinConfig",
-			Handler:    _AssetAdmin_UpdateAssetCoinConfig_Handler,
+			Handler:    _Admin_UpdateAssetCoinConfig_Handler,
 		},
 		{
 			MethodName: "DeleteAssetCoinConfig",
-			Handler:    _AssetAdmin_DeleteAssetCoinConfig_Handler,
+			Handler:    _Admin_DeleteAssetCoinConfig_Handler,
 		},
 		{
 			MethodName: "GetAssetCoinConfig",
-			Handler:    _AssetAdmin_GetAssetCoinConfig_Handler,
+			Handler:    _Admin_GetAssetCoinConfig_Handler,
 		},
 		{
 			MethodName: "PageAssetCoinConfigs",
-			Handler:    _AssetAdmin_PageAssetCoinConfigs_Handler,
+			Handler:    _Admin_PageAssetCoinConfigs_Handler,
 		},
 		{
 			MethodName: "PageUserAssets",
-			Handler:    _AssetAdmin_PageUserAssets_Handler,
+			Handler:    _Admin_PageUserAssets_Handler,
 		},
 		{
 			MethodName: "GetUserAssetDetail",
-			Handler:    _AssetAdmin_GetUserAssetDetail_Handler,
+			Handler:    _Admin_GetUserAssetDetail_Handler,
 		},
 		{
 			MethodName: "PageAssetFlows",
-			Handler:    _AssetAdmin_PageAssetFlows_Handler,
+			Handler:    _Admin_PageAssetFlows_Handler,
 		},
 		{
 			MethodName: "PageAssetFreezes",
-			Handler:    _AssetAdmin_PageAssetFreezes_Handler,
+			Handler:    _Admin_PageAssetFreezes_Handler,
 		},
 		{
 			MethodName: "PageAssetLocks",
-			Handler:    _AssetAdmin_PageAssetLocks_Handler,
+			Handler:    _Admin_PageAssetLocks_Handler,
 		},
 		{
 			MethodName: "AddAsset",
-			Handler:    _AssetAdmin_AddAsset_Handler,
+			Handler:    _Admin_AddAsset_Handler,
 		},
 		{
 			MethodName: "SubAsset",
-			Handler:    _AssetAdmin_SubAsset_Handler,
+			Handler:    _Admin_SubAsset_Handler,
 		},
 		{
 			MethodName: "FreezeAsset",
-			Handler:    _AssetAdmin_FreezeAsset_Handler,
+			Handler:    _Admin_FreezeAsset_Handler,
 		},
 		{
 			MethodName: "UnfreezeAsset",
-			Handler:    _AssetAdmin_UnfreezeAsset_Handler,
+			Handler:    _Admin_UnfreezeAsset_Handler,
 		},
 		{
 			MethodName: "LockAsset",
-			Handler:    _AssetAdmin_LockAsset_Handler,
+			Handler:    _Admin_LockAsset_Handler,
 		},
 		{
 			MethodName: "UnlockAsset",
-			Handler:    _AssetAdmin_UnlockAsset_Handler,
+			Handler:    _Admin_UnlockAsset_Handler,
 		},
 		{
 			MethodName: "SetPlatformAccount",
-			Handler:    _AssetAdmin_SetPlatformAccount_Handler,
+			Handler:    _Admin_SetPlatformAccount_Handler,
 		},
 		{
 			MethodName: "GetPlatformAccount",
-			Handler:    _AssetAdmin_GetPlatformAccount_Handler,
+			Handler:    _Admin_GetPlatformAccount_Handler,
 		},
 		{
 			MethodName: "AdjustPlatformAccount",
-			Handler:    _AssetAdmin_AdjustPlatformAccount_Handler,
+			Handler:    _Admin_AdjustPlatformAccount_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1235,29 +1235,29 @@ var AssetAdmin_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	AssetInternal_AddAvailable_FullMethodName             = "/asset.AssetInternal/AddAvailable"
-	AssetInternal_SubAvailable_FullMethodName             = "/asset.AssetInternal/SubAvailable"
-	AssetInternal_FreezeAsset_FullMethodName              = "/asset.AssetInternal/FreezeAsset"
-	AssetInternal_UnfreezeAsset_FullMethodName            = "/asset.AssetInternal/UnfreezeAsset"
-	AssetInternal_UnfreezeAssetByBizNo_FullMethodName     = "/asset.AssetInternal/UnfreezeAssetByBizNo"
-	AssetInternal_DeductFrozenAsset_FullMethodName        = "/asset.AssetInternal/DeductFrozenAsset"
-	AssetInternal_DeductFrozenAssetByBizNo_FullMethodName = "/asset.AssetInternal/DeductFrozenAssetByBizNo"
-	AssetInternal_LockAsset_FullMethodName                = "/asset.AssetInternal/LockAsset"
-	AssetInternal_UnlockAsset_FullMethodName              = "/asset.AssetInternal/UnlockAsset"
-	AssetInternal_UnlockAssetByBizNo_FullMethodName       = "/asset.AssetInternal/UnlockAssetByBizNo"
-	AssetInternal_DeductLockedAsset_FullMethodName        = "/asset.AssetInternal/DeductLockedAsset"
-	AssetInternal_DeductLockedAssetByBizNo_FullMethodName = "/asset.AssetInternal/DeductLockedAssetByBizNo"
-	AssetInternal_TransferAsset_FullMethodName            = "/asset.AssetInternal/TransferAsset"
-	AssetInternal_CoverInsuranceDeficit_FullMethodName    = "/asset.AssetInternal/CoverInsuranceDeficit"
-	AssetInternal_ReverseInsuranceCover_FullMethodName    = "/asset.AssetInternal/ReverseInsuranceCover"
+	Internal_AddAvailable_FullMethodName             = "/asset.Internal/AddAvailable"
+	Internal_SubAvailable_FullMethodName             = "/asset.Internal/SubAvailable"
+	Internal_FreezeAsset_FullMethodName              = "/asset.Internal/FreezeAsset"
+	Internal_UnfreezeAsset_FullMethodName            = "/asset.Internal/UnfreezeAsset"
+	Internal_UnfreezeAssetByBizNo_FullMethodName     = "/asset.Internal/UnfreezeAssetByBizNo"
+	Internal_DeductFrozenAsset_FullMethodName        = "/asset.Internal/DeductFrozenAsset"
+	Internal_DeductFrozenAssetByBizNo_FullMethodName = "/asset.Internal/DeductFrozenAssetByBizNo"
+	Internal_LockAsset_FullMethodName                = "/asset.Internal/LockAsset"
+	Internal_UnlockAsset_FullMethodName              = "/asset.Internal/UnlockAsset"
+	Internal_UnlockAssetByBizNo_FullMethodName       = "/asset.Internal/UnlockAssetByBizNo"
+	Internal_DeductLockedAsset_FullMethodName        = "/asset.Internal/DeductLockedAsset"
+	Internal_DeductLockedAssetByBizNo_FullMethodName = "/asset.Internal/DeductLockedAssetByBizNo"
+	Internal_TransferAsset_FullMethodName            = "/asset.Internal/TransferAsset"
+	Internal_CoverInsuranceDeficit_FullMethodName    = "/asset.Internal/CoverInsuranceDeficit"
+	Internal_ReverseInsuranceCover_FullMethodName    = "/asset.Internal/ReverseInsuranceCover"
 )
 
-// AssetInternalClient is the client API for AssetInternal service.
+// InternalClient is the client API for Internal service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // 内部资产服务
-type AssetInternalClient interface {
+type InternalClient interface {
 	// 增加可用余额
 	AddAvailable(ctx context.Context, in *AddAvailableReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 	// 扣减可用余额
@@ -1289,170 +1289,170 @@ type AssetInternalClient interface {
 	ReverseInsuranceCover(ctx context.Context, in *ReverseInsuranceCoverReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 }
 
-type assetInternalClient struct {
+type internalClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewAssetInternalClient(cc grpc.ClientConnInterface) AssetInternalClient {
-	return &assetInternalClient{cc}
+func NewInternalClient(cc grpc.ClientConnInterface) InternalClient {
+	return &internalClient{cc}
 }
 
-func (c *assetInternalClient) AddAvailable(ctx context.Context, in *AddAvailableReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+func (c *internalClient) AddAvailable(ctx context.Context, in *AddAvailableReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetInternal_AddAvailable_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_AddAvailable_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetInternalClient) SubAvailable(ctx context.Context, in *SubAvailableReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+func (c *internalClient) SubAvailable(ctx context.Context, in *SubAvailableReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetInternal_SubAvailable_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_SubAvailable_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetInternalClient) FreezeAsset(ctx context.Context, in *FreezeAssetReq, opts ...grpc.CallOption) (*FreezeAssetResp, error) {
+func (c *internalClient) FreezeAsset(ctx context.Context, in *FreezeAssetReq, opts ...grpc.CallOption) (*FreezeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(FreezeAssetResp)
-	err := c.cc.Invoke(ctx, AssetInternal_FreezeAsset_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_FreezeAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetInternalClient) UnfreezeAsset(ctx context.Context, in *UnfreezeAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+func (c *internalClient) UnfreezeAsset(ctx context.Context, in *UnfreezeAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetInternal_UnfreezeAsset_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_UnfreezeAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetInternalClient) UnfreezeAssetByBizNo(ctx context.Context, in *UnfreezeAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+func (c *internalClient) UnfreezeAssetByBizNo(ctx context.Context, in *UnfreezeAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetInternal_UnfreezeAssetByBizNo_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_UnfreezeAssetByBizNo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetInternalClient) DeductFrozenAsset(ctx context.Context, in *DeductFrozenAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+func (c *internalClient) DeductFrozenAsset(ctx context.Context, in *DeductFrozenAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetInternal_DeductFrozenAsset_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_DeductFrozenAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetInternalClient) DeductFrozenAssetByBizNo(ctx context.Context, in *DeductFrozenAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+func (c *internalClient) DeductFrozenAssetByBizNo(ctx context.Context, in *DeductFrozenAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetInternal_DeductFrozenAssetByBizNo_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_DeductFrozenAssetByBizNo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetInternalClient) LockAsset(ctx context.Context, in *LockAssetReq, opts ...grpc.CallOption) (*LockAssetResp, error) {
+func (c *internalClient) LockAsset(ctx context.Context, in *LockAssetReq, opts ...grpc.CallOption) (*LockAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LockAssetResp)
-	err := c.cc.Invoke(ctx, AssetInternal_LockAsset_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_LockAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetInternalClient) UnlockAsset(ctx context.Context, in *UnlockAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+func (c *internalClient) UnlockAsset(ctx context.Context, in *UnlockAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetInternal_UnlockAsset_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_UnlockAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetInternalClient) UnlockAssetByBizNo(ctx context.Context, in *UnlockAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+func (c *internalClient) UnlockAssetByBizNo(ctx context.Context, in *UnlockAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetInternal_UnlockAssetByBizNo_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_UnlockAssetByBizNo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetInternalClient) DeductLockedAsset(ctx context.Context, in *DeductLockedAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+func (c *internalClient) DeductLockedAsset(ctx context.Context, in *DeductLockedAssetReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetInternal_DeductLockedAsset_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_DeductLockedAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetInternalClient) DeductLockedAssetByBizNo(ctx context.Context, in *DeductLockedAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+func (c *internalClient) DeductLockedAssetByBizNo(ctx context.Context, in *DeductLockedAssetByBizNoReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetInternal_DeductLockedAssetByBizNo_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_DeductLockedAssetByBizNo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetInternalClient) TransferAsset(ctx context.Context, in *TransferAssetReq, opts ...grpc.CallOption) (*TransferAssetResp, error) {
+func (c *internalClient) TransferAsset(ctx context.Context, in *TransferAssetReq, opts ...grpc.CallOption) (*TransferAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TransferAssetResp)
-	err := c.cc.Invoke(ctx, AssetInternal_TransferAsset_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_TransferAsset_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetInternalClient) CoverInsuranceDeficit(ctx context.Context, in *CoverInsuranceDeficitReq, opts ...grpc.CallOption) (*CoverInsuranceDeficitResp, error) {
+func (c *internalClient) CoverInsuranceDeficit(ctx context.Context, in *CoverInsuranceDeficitReq, opts ...grpc.CallOption) (*CoverInsuranceDeficitResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CoverInsuranceDeficitResp)
-	err := c.cc.Invoke(ctx, AssetInternal_CoverInsuranceDeficit_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_CoverInsuranceDeficit_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *assetInternalClient) ReverseInsuranceCover(ctx context.Context, in *ReverseInsuranceCoverReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
+func (c *internalClient) ReverseInsuranceCover(ctx context.Context, in *ReverseInsuranceCoverReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ChangeAssetResp)
-	err := c.cc.Invoke(ctx, AssetInternal_ReverseInsuranceCover_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_ReverseInsuranceCover_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// AssetInternalServer is the server API for AssetInternal service.
-// All implementations must embed UnimplementedAssetInternalServer
+// InternalServer is the server API for Internal service.
+// All implementations must embed UnimplementedInternalServer
 // for forward compatibility.
 //
 // 内部资产服务
-type AssetInternalServer interface {
+type InternalServer interface {
 	// 增加可用余额
 	AddAvailable(context.Context, *AddAvailableReq) (*ChangeAssetResp, error)
 	// 扣减可用余额
@@ -1482,418 +1482,418 @@ type AssetInternalServer interface {
 	// 从租户保险基金账户原子扣减，余额不足时允许部分赔付。
 	CoverInsuranceDeficit(context.Context, *CoverInsuranceDeficitReq) (*CoverInsuranceDeficitResp, error)
 	ReverseInsuranceCover(context.Context, *ReverseInsuranceCoverReq) (*ChangeAssetResp, error)
-	mustEmbedUnimplementedAssetInternalServer()
+	mustEmbedUnimplementedInternalServer()
 }
 
-// UnimplementedAssetInternalServer must be embedded to have
+// UnimplementedInternalServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedAssetInternalServer struct{}
+type UnimplementedInternalServer struct{}
 
-func (UnimplementedAssetInternalServer) AddAvailable(context.Context, *AddAvailableReq) (*ChangeAssetResp, error) {
+func (UnimplementedInternalServer) AddAvailable(context.Context, *AddAvailableReq) (*ChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddAvailable not implemented")
 }
-func (UnimplementedAssetInternalServer) SubAvailable(context.Context, *SubAvailableReq) (*ChangeAssetResp, error) {
+func (UnimplementedInternalServer) SubAvailable(context.Context, *SubAvailableReq) (*ChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SubAvailable not implemented")
 }
-func (UnimplementedAssetInternalServer) FreezeAsset(context.Context, *FreezeAssetReq) (*FreezeAssetResp, error) {
+func (UnimplementedInternalServer) FreezeAsset(context.Context, *FreezeAssetReq) (*FreezeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method FreezeAsset not implemented")
 }
-func (UnimplementedAssetInternalServer) UnfreezeAsset(context.Context, *UnfreezeAssetReq) (*ChangeAssetResp, error) {
+func (UnimplementedInternalServer) UnfreezeAsset(context.Context, *UnfreezeAssetReq) (*ChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UnfreezeAsset not implemented")
 }
-func (UnimplementedAssetInternalServer) UnfreezeAssetByBizNo(context.Context, *UnfreezeAssetByBizNoReq) (*ChangeAssetResp, error) {
+func (UnimplementedInternalServer) UnfreezeAssetByBizNo(context.Context, *UnfreezeAssetByBizNoReq) (*ChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UnfreezeAssetByBizNo not implemented")
 }
-func (UnimplementedAssetInternalServer) DeductFrozenAsset(context.Context, *DeductFrozenAssetReq) (*ChangeAssetResp, error) {
+func (UnimplementedInternalServer) DeductFrozenAsset(context.Context, *DeductFrozenAssetReq) (*ChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeductFrozenAsset not implemented")
 }
-func (UnimplementedAssetInternalServer) DeductFrozenAssetByBizNo(context.Context, *DeductFrozenAssetByBizNoReq) (*ChangeAssetResp, error) {
+func (UnimplementedInternalServer) DeductFrozenAssetByBizNo(context.Context, *DeductFrozenAssetByBizNoReq) (*ChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeductFrozenAssetByBizNo not implemented")
 }
-func (UnimplementedAssetInternalServer) LockAsset(context.Context, *LockAssetReq) (*LockAssetResp, error) {
+func (UnimplementedInternalServer) LockAsset(context.Context, *LockAssetReq) (*LockAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method LockAsset not implemented")
 }
-func (UnimplementedAssetInternalServer) UnlockAsset(context.Context, *UnlockAssetReq) (*ChangeAssetResp, error) {
+func (UnimplementedInternalServer) UnlockAsset(context.Context, *UnlockAssetReq) (*ChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UnlockAsset not implemented")
 }
-func (UnimplementedAssetInternalServer) UnlockAssetByBizNo(context.Context, *UnlockAssetByBizNoReq) (*ChangeAssetResp, error) {
+func (UnimplementedInternalServer) UnlockAssetByBizNo(context.Context, *UnlockAssetByBizNoReq) (*ChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UnlockAssetByBizNo not implemented")
 }
-func (UnimplementedAssetInternalServer) DeductLockedAsset(context.Context, *DeductLockedAssetReq) (*ChangeAssetResp, error) {
+func (UnimplementedInternalServer) DeductLockedAsset(context.Context, *DeductLockedAssetReq) (*ChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeductLockedAsset not implemented")
 }
-func (UnimplementedAssetInternalServer) DeductLockedAssetByBizNo(context.Context, *DeductLockedAssetByBizNoReq) (*ChangeAssetResp, error) {
+func (UnimplementedInternalServer) DeductLockedAssetByBizNo(context.Context, *DeductLockedAssetByBizNoReq) (*ChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeductLockedAssetByBizNo not implemented")
 }
-func (UnimplementedAssetInternalServer) TransferAsset(context.Context, *TransferAssetReq) (*TransferAssetResp, error) {
+func (UnimplementedInternalServer) TransferAsset(context.Context, *TransferAssetReq) (*TransferAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method TransferAsset not implemented")
 }
-func (UnimplementedAssetInternalServer) CoverInsuranceDeficit(context.Context, *CoverInsuranceDeficitReq) (*CoverInsuranceDeficitResp, error) {
+func (UnimplementedInternalServer) CoverInsuranceDeficit(context.Context, *CoverInsuranceDeficitReq) (*CoverInsuranceDeficitResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CoverInsuranceDeficit not implemented")
 }
-func (UnimplementedAssetInternalServer) ReverseInsuranceCover(context.Context, *ReverseInsuranceCoverReq) (*ChangeAssetResp, error) {
+func (UnimplementedInternalServer) ReverseInsuranceCover(context.Context, *ReverseInsuranceCoverReq) (*ChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ReverseInsuranceCover not implemented")
 }
-func (UnimplementedAssetInternalServer) mustEmbedUnimplementedAssetInternalServer() {}
-func (UnimplementedAssetInternalServer) testEmbeddedByValue()                       {}
+func (UnimplementedInternalServer) mustEmbedUnimplementedInternalServer() {}
+func (UnimplementedInternalServer) testEmbeddedByValue()                  {}
 
-// UnsafeAssetInternalServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to AssetInternalServer will
+// UnsafeInternalServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to InternalServer will
 // result in compilation errors.
-type UnsafeAssetInternalServer interface {
-	mustEmbedUnimplementedAssetInternalServer()
+type UnsafeInternalServer interface {
+	mustEmbedUnimplementedInternalServer()
 }
 
-func RegisterAssetInternalServer(s grpc.ServiceRegistrar, srv AssetInternalServer) {
-	// If the following call panics, it indicates UnimplementedAssetInternalServer was
+func RegisterInternalServer(s grpc.ServiceRegistrar, srv InternalServer) {
+	// If the following call panics, it indicates UnimplementedInternalServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&AssetInternal_ServiceDesc, srv)
+	s.RegisterService(&Internal_ServiceDesc, srv)
 }
 
-func _AssetInternal_AddAvailable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_AddAvailable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddAvailableReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetInternalServer).AddAvailable(ctx, in)
+		return srv.(InternalServer).AddAvailable(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetInternal_AddAvailable_FullMethodName,
+		FullMethod: Internal_AddAvailable_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetInternalServer).AddAvailable(ctx, req.(*AddAvailableReq))
+		return srv.(InternalServer).AddAvailable(ctx, req.(*AddAvailableReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetInternal_SubAvailable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_SubAvailable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SubAvailableReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetInternalServer).SubAvailable(ctx, in)
+		return srv.(InternalServer).SubAvailable(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetInternal_SubAvailable_FullMethodName,
+		FullMethod: Internal_SubAvailable_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetInternalServer).SubAvailable(ctx, req.(*SubAvailableReq))
+		return srv.(InternalServer).SubAvailable(ctx, req.(*SubAvailableReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetInternal_FreezeAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_FreezeAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(FreezeAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetInternalServer).FreezeAsset(ctx, in)
+		return srv.(InternalServer).FreezeAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetInternal_FreezeAsset_FullMethodName,
+		FullMethod: Internal_FreezeAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetInternalServer).FreezeAsset(ctx, req.(*FreezeAssetReq))
+		return srv.(InternalServer).FreezeAsset(ctx, req.(*FreezeAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetInternal_UnfreezeAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_UnfreezeAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UnfreezeAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetInternalServer).UnfreezeAsset(ctx, in)
+		return srv.(InternalServer).UnfreezeAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetInternal_UnfreezeAsset_FullMethodName,
+		FullMethod: Internal_UnfreezeAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetInternalServer).UnfreezeAsset(ctx, req.(*UnfreezeAssetReq))
+		return srv.(InternalServer).UnfreezeAsset(ctx, req.(*UnfreezeAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetInternal_UnfreezeAssetByBizNo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_UnfreezeAssetByBizNo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UnfreezeAssetByBizNoReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetInternalServer).UnfreezeAssetByBizNo(ctx, in)
+		return srv.(InternalServer).UnfreezeAssetByBizNo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetInternal_UnfreezeAssetByBizNo_FullMethodName,
+		FullMethod: Internal_UnfreezeAssetByBizNo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetInternalServer).UnfreezeAssetByBizNo(ctx, req.(*UnfreezeAssetByBizNoReq))
+		return srv.(InternalServer).UnfreezeAssetByBizNo(ctx, req.(*UnfreezeAssetByBizNoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetInternal_DeductFrozenAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_DeductFrozenAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeductFrozenAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetInternalServer).DeductFrozenAsset(ctx, in)
+		return srv.(InternalServer).DeductFrozenAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetInternal_DeductFrozenAsset_FullMethodName,
+		FullMethod: Internal_DeductFrozenAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetInternalServer).DeductFrozenAsset(ctx, req.(*DeductFrozenAssetReq))
+		return srv.(InternalServer).DeductFrozenAsset(ctx, req.(*DeductFrozenAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetInternal_DeductFrozenAssetByBizNo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_DeductFrozenAssetByBizNo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeductFrozenAssetByBizNoReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetInternalServer).DeductFrozenAssetByBizNo(ctx, in)
+		return srv.(InternalServer).DeductFrozenAssetByBizNo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetInternal_DeductFrozenAssetByBizNo_FullMethodName,
+		FullMethod: Internal_DeductFrozenAssetByBizNo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetInternalServer).DeductFrozenAssetByBizNo(ctx, req.(*DeductFrozenAssetByBizNoReq))
+		return srv.(InternalServer).DeductFrozenAssetByBizNo(ctx, req.(*DeductFrozenAssetByBizNoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetInternal_LockAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_LockAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LockAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetInternalServer).LockAsset(ctx, in)
+		return srv.(InternalServer).LockAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetInternal_LockAsset_FullMethodName,
+		FullMethod: Internal_LockAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetInternalServer).LockAsset(ctx, req.(*LockAssetReq))
+		return srv.(InternalServer).LockAsset(ctx, req.(*LockAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetInternal_UnlockAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_UnlockAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UnlockAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetInternalServer).UnlockAsset(ctx, in)
+		return srv.(InternalServer).UnlockAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetInternal_UnlockAsset_FullMethodName,
+		FullMethod: Internal_UnlockAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetInternalServer).UnlockAsset(ctx, req.(*UnlockAssetReq))
+		return srv.(InternalServer).UnlockAsset(ctx, req.(*UnlockAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetInternal_UnlockAssetByBizNo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_UnlockAssetByBizNo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UnlockAssetByBizNoReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetInternalServer).UnlockAssetByBizNo(ctx, in)
+		return srv.(InternalServer).UnlockAssetByBizNo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetInternal_UnlockAssetByBizNo_FullMethodName,
+		FullMethod: Internal_UnlockAssetByBizNo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetInternalServer).UnlockAssetByBizNo(ctx, req.(*UnlockAssetByBizNoReq))
+		return srv.(InternalServer).UnlockAssetByBizNo(ctx, req.(*UnlockAssetByBizNoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetInternal_DeductLockedAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_DeductLockedAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeductLockedAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetInternalServer).DeductLockedAsset(ctx, in)
+		return srv.(InternalServer).DeductLockedAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetInternal_DeductLockedAsset_FullMethodName,
+		FullMethod: Internal_DeductLockedAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetInternalServer).DeductLockedAsset(ctx, req.(*DeductLockedAssetReq))
+		return srv.(InternalServer).DeductLockedAsset(ctx, req.(*DeductLockedAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetInternal_DeductLockedAssetByBizNo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_DeductLockedAssetByBizNo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeductLockedAssetByBizNoReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetInternalServer).DeductLockedAssetByBizNo(ctx, in)
+		return srv.(InternalServer).DeductLockedAssetByBizNo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetInternal_DeductLockedAssetByBizNo_FullMethodName,
+		FullMethod: Internal_DeductLockedAssetByBizNo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetInternalServer).DeductLockedAssetByBizNo(ctx, req.(*DeductLockedAssetByBizNoReq))
+		return srv.(InternalServer).DeductLockedAssetByBizNo(ctx, req.(*DeductLockedAssetByBizNoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetInternal_TransferAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_TransferAsset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TransferAssetReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetInternalServer).TransferAsset(ctx, in)
+		return srv.(InternalServer).TransferAsset(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetInternal_TransferAsset_FullMethodName,
+		FullMethod: Internal_TransferAsset_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetInternalServer).TransferAsset(ctx, req.(*TransferAssetReq))
+		return srv.(InternalServer).TransferAsset(ctx, req.(*TransferAssetReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetInternal_CoverInsuranceDeficit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_CoverInsuranceDeficit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CoverInsuranceDeficitReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetInternalServer).CoverInsuranceDeficit(ctx, in)
+		return srv.(InternalServer).CoverInsuranceDeficit(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetInternal_CoverInsuranceDeficit_FullMethodName,
+		FullMethod: Internal_CoverInsuranceDeficit_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetInternalServer).CoverInsuranceDeficit(ctx, req.(*CoverInsuranceDeficitReq))
+		return srv.(InternalServer).CoverInsuranceDeficit(ctx, req.(*CoverInsuranceDeficitReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AssetInternal_ReverseInsuranceCover_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_ReverseInsuranceCover_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ReverseInsuranceCoverReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AssetInternalServer).ReverseInsuranceCover(ctx, in)
+		return srv.(InternalServer).ReverseInsuranceCover(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AssetInternal_ReverseInsuranceCover_FullMethodName,
+		FullMethod: Internal_ReverseInsuranceCover_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AssetInternalServer).ReverseInsuranceCover(ctx, req.(*ReverseInsuranceCoverReq))
+		return srv.(InternalServer).ReverseInsuranceCover(ctx, req.(*ReverseInsuranceCoverReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// AssetInternal_ServiceDesc is the grpc.ServiceDesc for AssetInternal service.
+// Internal_ServiceDesc is the grpc.ServiceDesc for Internal service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var AssetInternal_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "asset.AssetInternal",
-	HandlerType: (*AssetInternalServer)(nil),
+var Internal_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "asset.Internal",
+	HandlerType: (*InternalServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "AddAvailable",
-			Handler:    _AssetInternal_AddAvailable_Handler,
+			Handler:    _Internal_AddAvailable_Handler,
 		},
 		{
 			MethodName: "SubAvailable",
-			Handler:    _AssetInternal_SubAvailable_Handler,
+			Handler:    _Internal_SubAvailable_Handler,
 		},
 		{
 			MethodName: "FreezeAsset",
-			Handler:    _AssetInternal_FreezeAsset_Handler,
+			Handler:    _Internal_FreezeAsset_Handler,
 		},
 		{
 			MethodName: "UnfreezeAsset",
-			Handler:    _AssetInternal_UnfreezeAsset_Handler,
+			Handler:    _Internal_UnfreezeAsset_Handler,
 		},
 		{
 			MethodName: "UnfreezeAssetByBizNo",
-			Handler:    _AssetInternal_UnfreezeAssetByBizNo_Handler,
+			Handler:    _Internal_UnfreezeAssetByBizNo_Handler,
 		},
 		{
 			MethodName: "DeductFrozenAsset",
-			Handler:    _AssetInternal_DeductFrozenAsset_Handler,
+			Handler:    _Internal_DeductFrozenAsset_Handler,
 		},
 		{
 			MethodName: "DeductFrozenAssetByBizNo",
-			Handler:    _AssetInternal_DeductFrozenAssetByBizNo_Handler,
+			Handler:    _Internal_DeductFrozenAssetByBizNo_Handler,
 		},
 		{
 			MethodName: "LockAsset",
-			Handler:    _AssetInternal_LockAsset_Handler,
+			Handler:    _Internal_LockAsset_Handler,
 		},
 		{
 			MethodName: "UnlockAsset",
-			Handler:    _AssetInternal_UnlockAsset_Handler,
+			Handler:    _Internal_UnlockAsset_Handler,
 		},
 		{
 			MethodName: "UnlockAssetByBizNo",
-			Handler:    _AssetInternal_UnlockAssetByBizNo_Handler,
+			Handler:    _Internal_UnlockAssetByBizNo_Handler,
 		},
 		{
 			MethodName: "DeductLockedAsset",
-			Handler:    _AssetInternal_DeductLockedAsset_Handler,
+			Handler:    _Internal_DeductLockedAsset_Handler,
 		},
 		{
 			MethodName: "DeductLockedAssetByBizNo",
-			Handler:    _AssetInternal_DeductLockedAssetByBizNo_Handler,
+			Handler:    _Internal_DeductLockedAssetByBizNo_Handler,
 		},
 		{
 			MethodName: "TransferAsset",
-			Handler:    _AssetInternal_TransferAsset_Handler,
+			Handler:    _Internal_TransferAsset_Handler,
 		},
 		{
 			MethodName: "CoverInsuranceDeficit",
-			Handler:    _AssetInternal_CoverInsuranceDeficit_Handler,
+			Handler:    _Internal_CoverInsuranceDeficit_Handler,
 		},
 		{
 			MethodName: "ReverseInsuranceCover",
-			Handler:    _AssetInternal_ReverseInsuranceCover_Handler,
+			Handler:    _Internal_ReverseInsuranceCover_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

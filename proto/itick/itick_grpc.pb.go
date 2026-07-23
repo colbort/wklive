@@ -19,24 +19,24 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ItickApp_ListVisibleCategories_FullMethodName    = "/itick.ItickApp/ListVisibleCategories"
-	ItickApp_ListVisibleProducts_FullMethodName      = "/itick.ItickApp/ListVisibleProducts"
-	ItickApp_GetKline_FullMethodName                 = "/itick.ItickApp/GetKline"
-	ItickApp_GetQuote_FullMethodName                 = "/itick.ItickApp/GetQuote"
-	ItickApp_BatchGetQuote_FullMethodName            = "/itick.ItickApp/BatchGetQuote"
-	ItickApp_GetAuthoritativeSnapshot_FullMethodName = "/itick.ItickApp/GetAuthoritativeSnapshot"
-	ItickApp_SubscribeStream_FullMethodName          = "/itick.ItickApp/SubscribeStream"
-	ItickApp_GetKlineIntervals_FullMethodName        = "/itick.ItickApp/GetKlineIntervals"
+	App_ListVisibleCategories_FullMethodName    = "/itick.App/ListVisibleCategories"
+	App_ListVisibleProducts_FullMethodName      = "/itick.App/ListVisibleProducts"
+	App_GetKline_FullMethodName                 = "/itick.App/GetKline"
+	App_GetQuote_FullMethodName                 = "/itick.App/GetQuote"
+	App_BatchGetQuote_FullMethodName            = "/itick.App/BatchGetQuote"
+	App_GetAuthoritativeSnapshot_FullMethodName = "/itick.App/GetAuthoritativeSnapshot"
+	App_SubscribeStream_FullMethodName          = "/itick.App/SubscribeStream"
+	App_GetKlineIntervals_FullMethodName        = "/itick.App/GetKlineIntervals"
 )
 
-// ItickAppClient is the client API for ItickApp service.
+// AppClient is the client API for App service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // ====================
 // app service
 // ====================
-type ItickAppClient interface {
+type AppClient interface {
 	// 获取允许显示的产品类型
 	ListVisibleCategories(ctx context.Context, in *ListVisibleCategoriesReq, opts ...grpc.CallOption) (*ListVisibleCategoriesResp, error)
 	// 获取允许显示的产品
@@ -55,77 +55,77 @@ type ItickAppClient interface {
 	GetKlineIntervals(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*KlineIntervalsResp, error)
 }
 
-type itickAppClient struct {
+type appClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewItickAppClient(cc grpc.ClientConnInterface) ItickAppClient {
-	return &itickAppClient{cc}
+func NewAppClient(cc grpc.ClientConnInterface) AppClient {
+	return &appClient{cc}
 }
 
-func (c *itickAppClient) ListVisibleCategories(ctx context.Context, in *ListVisibleCategoriesReq, opts ...grpc.CallOption) (*ListVisibleCategoriesResp, error) {
+func (c *appClient) ListVisibleCategories(ctx context.Context, in *ListVisibleCategoriesReq, opts ...grpc.CallOption) (*ListVisibleCategoriesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListVisibleCategoriesResp)
-	err := c.cc.Invoke(ctx, ItickApp_ListVisibleCategories_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListVisibleCategories_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAppClient) ListVisibleProducts(ctx context.Context, in *ListVisibleProductsReq, opts ...grpc.CallOption) (*ListVisibleProductsResp, error) {
+func (c *appClient) ListVisibleProducts(ctx context.Context, in *ListVisibleProductsReq, opts ...grpc.CallOption) (*ListVisibleProductsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListVisibleProductsResp)
-	err := c.cc.Invoke(ctx, ItickApp_ListVisibleProducts_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_ListVisibleProducts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAppClient) GetKline(ctx context.Context, in *GetKlineReq, opts ...grpc.CallOption) (*GetKlineResp, error) {
+func (c *appClient) GetKline(ctx context.Context, in *GetKlineReq, opts ...grpc.CallOption) (*GetKlineResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetKlineResp)
-	err := c.cc.Invoke(ctx, ItickApp_GetKline_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetKline_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAppClient) GetQuote(ctx context.Context, in *GetQuoteReq, opts ...grpc.CallOption) (*GetQuoteResp, error) {
+func (c *appClient) GetQuote(ctx context.Context, in *GetQuoteReq, opts ...grpc.CallOption) (*GetQuoteResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetQuoteResp)
-	err := c.cc.Invoke(ctx, ItickApp_GetQuote_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetQuote_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAppClient) BatchGetQuote(ctx context.Context, in *BatchGetQuoteReq, opts ...grpc.CallOption) (*BatchGetQuoteResp, error) {
+func (c *appClient) BatchGetQuote(ctx context.Context, in *BatchGetQuoteReq, opts ...grpc.CallOption) (*BatchGetQuoteResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(BatchGetQuoteResp)
-	err := c.cc.Invoke(ctx, ItickApp_BatchGetQuote_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_BatchGetQuote_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAppClient) GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error) {
+func (c *appClient) GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetAuthoritativeSnapshotResp)
-	err := c.cc.Invoke(ctx, ItickApp_GetAuthoritativeSnapshot_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetAuthoritativeSnapshot_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAppClient) SubscribeStream(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[PushReply], error) {
+func (c *appClient) SubscribeStream(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[PushReply], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &ItickApp_ServiceDesc.Streams[0], ItickApp_SubscribeStream_FullMethodName, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &App_ServiceDesc.Streams[0], App_SubscribeStream_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -140,26 +140,26 @@ func (c *itickAppClient) SubscribeStream(ctx context.Context, in *SubscribeReque
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type ItickApp_SubscribeStreamClient = grpc.ServerStreamingClient[PushReply]
+type App_SubscribeStreamClient = grpc.ServerStreamingClient[PushReply]
 
-func (c *itickAppClient) GetKlineIntervals(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*KlineIntervalsResp, error) {
+func (c *appClient) GetKlineIntervals(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*KlineIntervalsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(KlineIntervalsResp)
-	err := c.cc.Invoke(ctx, ItickApp_GetKlineIntervals_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_GetKlineIntervals_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ItickAppServer is the server API for ItickApp service.
-// All implementations must embed UnimplementedItickAppServer
+// AppServer is the server API for App service.
+// All implementations must embed UnimplementedAppServer
 // for forward compatibility.
 //
 // ====================
 // app service
 // ====================
-type ItickAppServer interface {
+type AppServer interface {
 	// 获取允许显示的产品类型
 	ListVisibleCategories(context.Context, *ListVisibleCategoriesReq) (*ListVisibleCategoriesResp, error)
 	// 获取允许显示的产品
@@ -176,238 +176,238 @@ type ItickAppServer interface {
 	SubscribeStream(*SubscribeRequest, grpc.ServerStreamingServer[PushReply]) error
 	// 获取 kline 粒度
 	GetKlineIntervals(context.Context, *Empty) (*KlineIntervalsResp, error)
-	mustEmbedUnimplementedItickAppServer()
+	mustEmbedUnimplementedAppServer()
 }
 
-// UnimplementedItickAppServer must be embedded to have
+// UnimplementedAppServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedItickAppServer struct{}
+type UnimplementedAppServer struct{}
 
-func (UnimplementedItickAppServer) ListVisibleCategories(context.Context, *ListVisibleCategoriesReq) (*ListVisibleCategoriesResp, error) {
+func (UnimplementedAppServer) ListVisibleCategories(context.Context, *ListVisibleCategoriesReq) (*ListVisibleCategoriesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListVisibleCategories not implemented")
 }
-func (UnimplementedItickAppServer) ListVisibleProducts(context.Context, *ListVisibleProductsReq) (*ListVisibleProductsResp, error) {
+func (UnimplementedAppServer) ListVisibleProducts(context.Context, *ListVisibleProductsReq) (*ListVisibleProductsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListVisibleProducts not implemented")
 }
-func (UnimplementedItickAppServer) GetKline(context.Context, *GetKlineReq) (*GetKlineResp, error) {
+func (UnimplementedAppServer) GetKline(context.Context, *GetKlineReq) (*GetKlineResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetKline not implemented")
 }
-func (UnimplementedItickAppServer) GetQuote(context.Context, *GetQuoteReq) (*GetQuoteResp, error) {
+func (UnimplementedAppServer) GetQuote(context.Context, *GetQuoteReq) (*GetQuoteResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetQuote not implemented")
 }
-func (UnimplementedItickAppServer) BatchGetQuote(context.Context, *BatchGetQuoteReq) (*BatchGetQuoteResp, error) {
+func (UnimplementedAppServer) BatchGetQuote(context.Context, *BatchGetQuoteReq) (*BatchGetQuoteResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method BatchGetQuote not implemented")
 }
-func (UnimplementedItickAppServer) GetAuthoritativeSnapshot(context.Context, *GetAuthoritativeSnapshotReq) (*GetAuthoritativeSnapshotResp, error) {
+func (UnimplementedAppServer) GetAuthoritativeSnapshot(context.Context, *GetAuthoritativeSnapshotReq) (*GetAuthoritativeSnapshotResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetAuthoritativeSnapshot not implemented")
 }
-func (UnimplementedItickAppServer) SubscribeStream(*SubscribeRequest, grpc.ServerStreamingServer[PushReply]) error {
+func (UnimplementedAppServer) SubscribeStream(*SubscribeRequest, grpc.ServerStreamingServer[PushReply]) error {
 	return status.Error(codes.Unimplemented, "method SubscribeStream not implemented")
 }
-func (UnimplementedItickAppServer) GetKlineIntervals(context.Context, *Empty) (*KlineIntervalsResp, error) {
+func (UnimplementedAppServer) GetKlineIntervals(context.Context, *Empty) (*KlineIntervalsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetKlineIntervals not implemented")
 }
-func (UnimplementedItickAppServer) mustEmbedUnimplementedItickAppServer() {}
-func (UnimplementedItickAppServer) testEmbeddedByValue()                  {}
+func (UnimplementedAppServer) mustEmbedUnimplementedAppServer() {}
+func (UnimplementedAppServer) testEmbeddedByValue()             {}
 
-// UnsafeItickAppServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ItickAppServer will
+// UnsafeAppServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AppServer will
 // result in compilation errors.
-type UnsafeItickAppServer interface {
-	mustEmbedUnimplementedItickAppServer()
+type UnsafeAppServer interface {
+	mustEmbedUnimplementedAppServer()
 }
 
-func RegisterItickAppServer(s grpc.ServiceRegistrar, srv ItickAppServer) {
-	// If the following call panics, it indicates UnimplementedItickAppServer was
+func RegisterAppServer(s grpc.ServiceRegistrar, srv AppServer) {
+	// If the following call panics, it indicates UnimplementedAppServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&ItickApp_ServiceDesc, srv)
+	s.RegisterService(&App_ServiceDesc, srv)
 }
 
-func _ItickApp_ListVisibleCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListVisibleCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListVisibleCategoriesReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAppServer).ListVisibleCategories(ctx, in)
+		return srv.(AppServer).ListVisibleCategories(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickApp_ListVisibleCategories_FullMethodName,
+		FullMethod: App_ListVisibleCategories_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAppServer).ListVisibleCategories(ctx, req.(*ListVisibleCategoriesReq))
+		return srv.(AppServer).ListVisibleCategories(ctx, req.(*ListVisibleCategoriesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickApp_ListVisibleProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_ListVisibleProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListVisibleProductsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAppServer).ListVisibleProducts(ctx, in)
+		return srv.(AppServer).ListVisibleProducts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickApp_ListVisibleProducts_FullMethodName,
+		FullMethod: App_ListVisibleProducts_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAppServer).ListVisibleProducts(ctx, req.(*ListVisibleProductsReq))
+		return srv.(AppServer).ListVisibleProducts(ctx, req.(*ListVisibleProductsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickApp_GetKline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetKline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetKlineReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAppServer).GetKline(ctx, in)
+		return srv.(AppServer).GetKline(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickApp_GetKline_FullMethodName,
+		FullMethod: App_GetKline_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAppServer).GetKline(ctx, req.(*GetKlineReq))
+		return srv.(AppServer).GetKline(ctx, req.(*GetKlineReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickApp_GetQuote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetQuote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetQuoteReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAppServer).GetQuote(ctx, in)
+		return srv.(AppServer).GetQuote(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickApp_GetQuote_FullMethodName,
+		FullMethod: App_GetQuote_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAppServer).GetQuote(ctx, req.(*GetQuoteReq))
+		return srv.(AppServer).GetQuote(ctx, req.(*GetQuoteReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickApp_BatchGetQuote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_BatchGetQuote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BatchGetQuoteReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAppServer).BatchGetQuote(ctx, in)
+		return srv.(AppServer).BatchGetQuote(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickApp_BatchGetQuote_FullMethodName,
+		FullMethod: App_BatchGetQuote_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAppServer).BatchGetQuote(ctx, req.(*BatchGetQuoteReq))
+		return srv.(AppServer).BatchGetQuote(ctx, req.(*BatchGetQuoteReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickApp_GetAuthoritativeSnapshot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetAuthoritativeSnapshot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAuthoritativeSnapshotReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAppServer).GetAuthoritativeSnapshot(ctx, in)
+		return srv.(AppServer).GetAuthoritativeSnapshot(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickApp_GetAuthoritativeSnapshot_FullMethodName,
+		FullMethod: App_GetAuthoritativeSnapshot_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAppServer).GetAuthoritativeSnapshot(ctx, req.(*GetAuthoritativeSnapshotReq))
+		return srv.(AppServer).GetAuthoritativeSnapshot(ctx, req.(*GetAuthoritativeSnapshotReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickApp_SubscribeStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _App_SubscribeStream_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(SubscribeRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(ItickAppServer).SubscribeStream(m, &grpc.GenericServerStream[SubscribeRequest, PushReply]{ServerStream: stream})
+	return srv.(AppServer).SubscribeStream(m, &grpc.GenericServerStream[SubscribeRequest, PushReply]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type ItickApp_SubscribeStreamServer = grpc.ServerStreamingServer[PushReply]
+type App_SubscribeStreamServer = grpc.ServerStreamingServer[PushReply]
 
-func _ItickApp_GetKlineIntervals_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_GetKlineIntervals_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAppServer).GetKlineIntervals(ctx, in)
+		return srv.(AppServer).GetKlineIntervals(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickApp_GetKlineIntervals_FullMethodName,
+		FullMethod: App_GetKlineIntervals_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAppServer).GetKlineIntervals(ctx, req.(*Empty))
+		return srv.(AppServer).GetKlineIntervals(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// ItickApp_ServiceDesc is the grpc.ServiceDesc for ItickApp service.
+// App_ServiceDesc is the grpc.ServiceDesc for App service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var ItickApp_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "itick.ItickApp",
-	HandlerType: (*ItickAppServer)(nil),
+var App_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "itick.App",
+	HandlerType: (*AppServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "ListVisibleCategories",
-			Handler:    _ItickApp_ListVisibleCategories_Handler,
+			Handler:    _App_ListVisibleCategories_Handler,
 		},
 		{
 			MethodName: "ListVisibleProducts",
-			Handler:    _ItickApp_ListVisibleProducts_Handler,
+			Handler:    _App_ListVisibleProducts_Handler,
 		},
 		{
 			MethodName: "GetKline",
-			Handler:    _ItickApp_GetKline_Handler,
+			Handler:    _App_GetKline_Handler,
 		},
 		{
 			MethodName: "GetQuote",
-			Handler:    _ItickApp_GetQuote_Handler,
+			Handler:    _App_GetQuote_Handler,
 		},
 		{
 			MethodName: "BatchGetQuote",
-			Handler:    _ItickApp_BatchGetQuote_Handler,
+			Handler:    _App_BatchGetQuote_Handler,
 		},
 		{
 			MethodName: "GetAuthoritativeSnapshot",
-			Handler:    _ItickApp_GetAuthoritativeSnapshot_Handler,
+			Handler:    _App_GetAuthoritativeSnapshot_Handler,
 		},
 		{
 			MethodName: "GetKlineIntervals",
-			Handler:    _ItickApp_GetKlineIntervals_Handler,
+			Handler:    _App_GetKlineIntervals_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "SubscribeStream",
-			Handler:       _ItickApp_SubscribeStream_Handler,
+			Handler:       _App_SubscribeStream_Handler,
 			ServerStreams: true,
 		},
 	},
@@ -415,111 +415,111 @@ var ItickApp_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	ItickInternal_GetAuthoritativeSnapshot_FullMethodName = "/itick.ItickInternal/GetAuthoritativeSnapshot"
+	Internal_GetAuthoritativeSnapshot_FullMethodName = "/itick.Internal/GetAuthoritativeSnapshot"
 )
 
-// ItickInternalClient is the client API for ItickInternal service.
+// InternalClient is the client API for Internal service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // ItickInternal exposes service-to-service market-data capabilities. Public
 // API gateways should continue to use ItickApp.
-type ItickInternalClient interface {
+type InternalClient interface {
 	// Reads an authoritative snapshot from the permanent archive at or before
 	// the requested business timestamp.
 	GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error)
 }
 
-type itickInternalClient struct {
+type internalClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewItickInternalClient(cc grpc.ClientConnInterface) ItickInternalClient {
-	return &itickInternalClient{cc}
+func NewInternalClient(cc grpc.ClientConnInterface) InternalClient {
+	return &internalClient{cc}
 }
 
-func (c *itickInternalClient) GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error) {
+func (c *internalClient) GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetAuthoritativeSnapshotResp)
-	err := c.cc.Invoke(ctx, ItickInternal_GetAuthoritativeSnapshot_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Internal_GetAuthoritativeSnapshot_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ItickInternalServer is the server API for ItickInternal service.
-// All implementations must embed UnimplementedItickInternalServer
+// InternalServer is the server API for Internal service.
+// All implementations must embed UnimplementedInternalServer
 // for forward compatibility.
 //
 // ItickInternal exposes service-to-service market-data capabilities. Public
 // API gateways should continue to use ItickApp.
-type ItickInternalServer interface {
+type InternalServer interface {
 	// Reads an authoritative snapshot from the permanent archive at or before
 	// the requested business timestamp.
 	GetAuthoritativeSnapshot(context.Context, *GetAuthoritativeSnapshotReq) (*GetAuthoritativeSnapshotResp, error)
-	mustEmbedUnimplementedItickInternalServer()
+	mustEmbedUnimplementedInternalServer()
 }
 
-// UnimplementedItickInternalServer must be embedded to have
+// UnimplementedInternalServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedItickInternalServer struct{}
+type UnimplementedInternalServer struct{}
 
-func (UnimplementedItickInternalServer) GetAuthoritativeSnapshot(context.Context, *GetAuthoritativeSnapshotReq) (*GetAuthoritativeSnapshotResp, error) {
+func (UnimplementedInternalServer) GetAuthoritativeSnapshot(context.Context, *GetAuthoritativeSnapshotReq) (*GetAuthoritativeSnapshotResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetAuthoritativeSnapshot not implemented")
 }
-func (UnimplementedItickInternalServer) mustEmbedUnimplementedItickInternalServer() {}
-func (UnimplementedItickInternalServer) testEmbeddedByValue()                       {}
+func (UnimplementedInternalServer) mustEmbedUnimplementedInternalServer() {}
+func (UnimplementedInternalServer) testEmbeddedByValue()                  {}
 
-// UnsafeItickInternalServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ItickInternalServer will
+// UnsafeInternalServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to InternalServer will
 // result in compilation errors.
-type UnsafeItickInternalServer interface {
-	mustEmbedUnimplementedItickInternalServer()
+type UnsafeInternalServer interface {
+	mustEmbedUnimplementedInternalServer()
 }
 
-func RegisterItickInternalServer(s grpc.ServiceRegistrar, srv ItickInternalServer) {
-	// If the following call panics, it indicates UnimplementedItickInternalServer was
+func RegisterInternalServer(s grpc.ServiceRegistrar, srv InternalServer) {
+	// If the following call panics, it indicates UnimplementedInternalServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&ItickInternal_ServiceDesc, srv)
+	s.RegisterService(&Internal_ServiceDesc, srv)
 }
 
-func _ItickInternal_GetAuthoritativeSnapshot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Internal_GetAuthoritativeSnapshot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAuthoritativeSnapshotReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickInternalServer).GetAuthoritativeSnapshot(ctx, in)
+		return srv.(InternalServer).GetAuthoritativeSnapshot(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickInternal_GetAuthoritativeSnapshot_FullMethodName,
+		FullMethod: Internal_GetAuthoritativeSnapshot_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickInternalServer).GetAuthoritativeSnapshot(ctx, req.(*GetAuthoritativeSnapshotReq))
+		return srv.(InternalServer).GetAuthoritativeSnapshot(ctx, req.(*GetAuthoritativeSnapshotReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// ItickInternal_ServiceDesc is the grpc.ServiceDesc for ItickInternal service.
+// Internal_ServiceDesc is the grpc.ServiceDesc for Internal service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var ItickInternal_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "itick.ItickInternal",
-	HandlerType: (*ItickInternalServer)(nil),
+var Internal_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "itick.Internal",
+	HandlerType: (*InternalServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetAuthoritativeSnapshot",
-			Handler:    _ItickInternal_GetAuthoritativeSnapshot_Handler,
+			Handler:    _Internal_GetAuthoritativeSnapshot_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -527,46 +527,46 @@ var ItickInternal_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	ItickAdmin_ListCategories_FullMethodName              = "/itick.ItickAdmin/ListCategories"
-	ItickAdmin_CreateCategory_FullMethodName              = "/itick.ItickAdmin/CreateCategory"
-	ItickAdmin_UpdateCategory_FullMethodName              = "/itick.ItickAdmin/UpdateCategory"
-	ItickAdmin_GetCategory_FullMethodName                 = "/itick.ItickAdmin/GetCategory"
-	ItickAdmin_SyncCategoryProducts_FullMethodName        = "/itick.ItickAdmin/SyncCategoryProducts"
-	ItickAdmin_GetSyncTaskStatus_FullMethodName           = "/itick.ItickAdmin/GetSyncTaskStatus"
-	ItickAdmin_ListProducts_FullMethodName                = "/itick.ItickAdmin/ListProducts"
-	ItickAdmin_CreateProduct_FullMethodName               = "/itick.ItickAdmin/CreateProduct"
-	ItickAdmin_UpdateProduct_FullMethodName               = "/itick.ItickAdmin/UpdateProduct"
-	ItickAdmin_GetProduct_FullMethodName                  = "/itick.ItickAdmin/GetProduct"
-	ItickAdmin_GetProductKline_FullMethodName             = "/itick.ItickAdmin/GetProductKline"
-	ItickAdmin_SyncProductKlineHistory_FullMethodName     = "/itick.ItickAdmin/SyncProductKlineHistory"
-	ItickAdmin_ListTenantCategories_FullMethodName        = "/itick.ItickAdmin/ListTenantCategories"
-	ItickAdmin_CreateTenantCategory_FullMethodName        = "/itick.ItickAdmin/CreateTenantCategory"
-	ItickAdmin_UpdateTenantCategory_FullMethodName        = "/itick.ItickAdmin/UpdateTenantCategory"
-	ItickAdmin_BatchUpsertTenantCategories_FullMethodName = "/itick.ItickAdmin/BatchUpsertTenantCategories"
-	ItickAdmin_GetTenantCategory_FullMethodName           = "/itick.ItickAdmin/GetTenantCategory"
-	ItickAdmin_ListTenantProducts_FullMethodName          = "/itick.ItickAdmin/ListTenantProducts"
-	ItickAdmin_CreateTenantProduct_FullMethodName         = "/itick.ItickAdmin/CreateTenantProduct"
-	ItickAdmin_UpdateTenantProduct_FullMethodName         = "/itick.ItickAdmin/UpdateTenantProduct"
-	ItickAdmin_BatchUpsertTenantProducts_FullMethodName   = "/itick.ItickAdmin/BatchUpsertTenantProducts"
-	ItickAdmin_GetTenantProduct_FullMethodName            = "/itick.ItickAdmin/GetTenantProduct"
-	ItickAdmin_InitTenantItickDisplay_FullMethodName      = "/itick.ItickAdmin/InitTenantItickDisplay"
-	ItickAdmin_CreatePriceFormula_FullMethodName          = "/itick.ItickAdmin/CreatePriceFormula"
-	ItickAdmin_GetPriceFormula_FullMethodName             = "/itick.ItickAdmin/GetPriceFormula"
-	ItickAdmin_ListPriceFormulas_FullMethodName           = "/itick.ItickAdmin/ListPriceFormulas"
-	ItickAdmin_ChangePriceFormulaStatus_FullMethodName    = "/itick.ItickAdmin/ChangePriceFormulaStatus"
-	ItickAdmin_ListSnapshotOutbox_FullMethodName          = "/itick.ItickAdmin/ListSnapshotOutbox"
-	ItickAdmin_RetrySnapshotOutbox_FullMethodName         = "/itick.ItickAdmin/RetrySnapshotOutbox"
-	ItickAdmin_RevokeAuthoritativeSnapshot_FullMethodName = "/itick.ItickAdmin/RevokeAuthoritativeSnapshot"
+	Admin_ListCategories_FullMethodName              = "/itick.Admin/ListCategories"
+	Admin_CreateCategory_FullMethodName              = "/itick.Admin/CreateCategory"
+	Admin_UpdateCategory_FullMethodName              = "/itick.Admin/UpdateCategory"
+	Admin_GetCategory_FullMethodName                 = "/itick.Admin/GetCategory"
+	Admin_SyncCategoryProducts_FullMethodName        = "/itick.Admin/SyncCategoryProducts"
+	Admin_GetSyncTaskStatus_FullMethodName           = "/itick.Admin/GetSyncTaskStatus"
+	Admin_ListProducts_FullMethodName                = "/itick.Admin/ListProducts"
+	Admin_CreateProduct_FullMethodName               = "/itick.Admin/CreateProduct"
+	Admin_UpdateProduct_FullMethodName               = "/itick.Admin/UpdateProduct"
+	Admin_GetProduct_FullMethodName                  = "/itick.Admin/GetProduct"
+	Admin_GetProductKline_FullMethodName             = "/itick.Admin/GetProductKline"
+	Admin_SyncProductKlineHistory_FullMethodName     = "/itick.Admin/SyncProductKlineHistory"
+	Admin_ListTenantCategories_FullMethodName        = "/itick.Admin/ListTenantCategories"
+	Admin_CreateTenantCategory_FullMethodName        = "/itick.Admin/CreateTenantCategory"
+	Admin_UpdateTenantCategory_FullMethodName        = "/itick.Admin/UpdateTenantCategory"
+	Admin_BatchUpsertTenantCategories_FullMethodName = "/itick.Admin/BatchUpsertTenantCategories"
+	Admin_GetTenantCategory_FullMethodName           = "/itick.Admin/GetTenantCategory"
+	Admin_ListTenantProducts_FullMethodName          = "/itick.Admin/ListTenantProducts"
+	Admin_CreateTenantProduct_FullMethodName         = "/itick.Admin/CreateTenantProduct"
+	Admin_UpdateTenantProduct_FullMethodName         = "/itick.Admin/UpdateTenantProduct"
+	Admin_BatchUpsertTenantProducts_FullMethodName   = "/itick.Admin/BatchUpsertTenantProducts"
+	Admin_GetTenantProduct_FullMethodName            = "/itick.Admin/GetTenantProduct"
+	Admin_InitTenantItickDisplay_FullMethodName      = "/itick.Admin/InitTenantItickDisplay"
+	Admin_CreatePriceFormula_FullMethodName          = "/itick.Admin/CreatePriceFormula"
+	Admin_GetPriceFormula_FullMethodName             = "/itick.Admin/GetPriceFormula"
+	Admin_ListPriceFormulas_FullMethodName           = "/itick.Admin/ListPriceFormulas"
+	Admin_ChangePriceFormulaStatus_FullMethodName    = "/itick.Admin/ChangePriceFormulaStatus"
+	Admin_ListSnapshotOutbox_FullMethodName          = "/itick.Admin/ListSnapshotOutbox"
+	Admin_RetrySnapshotOutbox_FullMethodName         = "/itick.Admin/RetrySnapshotOutbox"
+	Admin_RevokeAuthoritativeSnapshot_FullMethodName = "/itick.Admin/RevokeAuthoritativeSnapshot"
 )
 
-// ItickAdminClient is the client API for ItickAdmin service.
+// AdminClient is the client API for Admin service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // ====================
 // admin service
 // ====================
-type ItickAdminClient interface {
+type AdminClient interface {
 	// 产品类型列表
 	ListCategories(ctx context.Context, in *ListCategoriesReq, opts ...grpc.CallOption) (*ListCategoriesResp, error)
 	// 产品类型
@@ -623,322 +623,322 @@ type ItickAdminClient interface {
 	RevokeAuthoritativeSnapshot(ctx context.Context, in *RevokeAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*CommonResp, error)
 }
 
-type itickAdminClient struct {
+type adminClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewItickAdminClient(cc grpc.ClientConnInterface) ItickAdminClient {
-	return &itickAdminClient{cc}
+func NewAdminClient(cc grpc.ClientConnInterface) AdminClient {
+	return &adminClient{cc}
 }
 
-func (c *itickAdminClient) ListCategories(ctx context.Context, in *ListCategoriesReq, opts ...grpc.CallOption) (*ListCategoriesResp, error) {
+func (c *adminClient) ListCategories(ctx context.Context, in *ListCategoriesReq, opts ...grpc.CallOption) (*ListCategoriesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListCategoriesResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_ListCategories_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListCategories_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) CreateCategory(ctx context.Context, in *CreateCategoryReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) CreateCategory(ctx context.Context, in *CreateCategoryReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_CreateCategory_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_CreateCategory_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) UpdateCategory(ctx context.Context, in *UpdateCategoryReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdateCategory(ctx context.Context, in *UpdateCategoryReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_UpdateCategory_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateCategory_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) GetCategory(ctx context.Context, in *GetCategoryReq, opts ...grpc.CallOption) (*GetCategoryResp, error) {
+func (c *adminClient) GetCategory(ctx context.Context, in *GetCategoryReq, opts ...grpc.CallOption) (*GetCategoryResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetCategoryResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_GetCategory_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetCategory_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) SyncCategoryProducts(ctx context.Context, in *SyncCategoryProductsReq, opts ...grpc.CallOption) (*SyncCategoryProductsResp, error) {
+func (c *adminClient) SyncCategoryProducts(ctx context.Context, in *SyncCategoryProductsReq, opts ...grpc.CallOption) (*SyncCategoryProductsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SyncCategoryProductsResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_SyncCategoryProducts_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_SyncCategoryProducts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) GetSyncTaskStatus(ctx context.Context, in *GetSyncTaskStatusReq, opts ...grpc.CallOption) (*GetSyncTaskStatusResp, error) {
+func (c *adminClient) GetSyncTaskStatus(ctx context.Context, in *GetSyncTaskStatusReq, opts ...grpc.CallOption) (*GetSyncTaskStatusResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSyncTaskStatusResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_GetSyncTaskStatus_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetSyncTaskStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) ListProducts(ctx context.Context, in *ListProductsReq, opts ...grpc.CallOption) (*ListProductsResp, error) {
+func (c *adminClient) ListProducts(ctx context.Context, in *ListProductsReq, opts ...grpc.CallOption) (*ListProductsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListProductsResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_ListProducts_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListProducts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) CreateProduct(ctx context.Context, in *CreateProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) CreateProduct(ctx context.Context, in *CreateProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_CreateProduct_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_CreateProduct_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) UpdateProduct(ctx context.Context, in *UpdateProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdateProduct(ctx context.Context, in *UpdateProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_UpdateProduct_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateProduct_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) GetProduct(ctx context.Context, in *GetProductReq, opts ...grpc.CallOption) (*GetProductResp, error) {
+func (c *adminClient) GetProduct(ctx context.Context, in *GetProductReq, opts ...grpc.CallOption) (*GetProductResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetProductResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_GetProduct_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetProduct_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) GetProductKline(ctx context.Context, in *GetProductKlineReq, opts ...grpc.CallOption) (*GetProductKlineResp, error) {
+func (c *adminClient) GetProductKline(ctx context.Context, in *GetProductKlineReq, opts ...grpc.CallOption) (*GetProductKlineResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetProductKlineResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_GetProductKline_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetProductKline_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) SyncProductKlineHistory(ctx context.Context, in *SyncProductKlineHistoryReq, opts ...grpc.CallOption) (*SyncProductKlineHistoryResp, error) {
+func (c *adminClient) SyncProductKlineHistory(ctx context.Context, in *SyncProductKlineHistoryReq, opts ...grpc.CallOption) (*SyncProductKlineHistoryResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SyncProductKlineHistoryResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_SyncProductKlineHistory_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_SyncProductKlineHistory_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) ListTenantCategories(ctx context.Context, in *ListTenantCategoriesReq, opts ...grpc.CallOption) (*ListTenantCategoriesResp, error) {
+func (c *adminClient) ListTenantCategories(ctx context.Context, in *ListTenantCategoriesReq, opts ...grpc.CallOption) (*ListTenantCategoriesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListTenantCategoriesResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_ListTenantCategories_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListTenantCategories_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) CreateTenantCategory(ctx context.Context, in *CreateTenantCategoryReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) CreateTenantCategory(ctx context.Context, in *CreateTenantCategoryReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_CreateTenantCategory_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_CreateTenantCategory_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) UpdateTenantCategory(ctx context.Context, in *UpdateTenantCategoryReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdateTenantCategory(ctx context.Context, in *UpdateTenantCategoryReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_UpdateTenantCategory_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateTenantCategory_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) BatchUpsertTenantCategories(ctx context.Context, in *BatchUpsertTenantCategoriesReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) BatchUpsertTenantCategories(ctx context.Context, in *BatchUpsertTenantCategoriesReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_BatchUpsertTenantCategories_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_BatchUpsertTenantCategories_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) GetTenantCategory(ctx context.Context, in *GetTenantCategoryReq, opts ...grpc.CallOption) (*GetTenantCategoryResp, error) {
+func (c *adminClient) GetTenantCategory(ctx context.Context, in *GetTenantCategoryReq, opts ...grpc.CallOption) (*GetTenantCategoryResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetTenantCategoryResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_GetTenantCategory_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetTenantCategory_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) ListTenantProducts(ctx context.Context, in *ListTenantProductsReq, opts ...grpc.CallOption) (*ListTenantProductsResp, error) {
+func (c *adminClient) ListTenantProducts(ctx context.Context, in *ListTenantProductsReq, opts ...grpc.CallOption) (*ListTenantProductsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListTenantProductsResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_ListTenantProducts_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListTenantProducts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) CreateTenantProduct(ctx context.Context, in *CreateTenantProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) CreateTenantProduct(ctx context.Context, in *CreateTenantProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_CreateTenantProduct_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_CreateTenantProduct_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) UpdateTenantProduct(ctx context.Context, in *UpdateTenantProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) UpdateTenantProduct(ctx context.Context, in *UpdateTenantProductReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_UpdateTenantProduct_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_UpdateTenantProduct_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) BatchUpsertTenantProducts(ctx context.Context, in *BatchUpsertTenantProductsReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) BatchUpsertTenantProducts(ctx context.Context, in *BatchUpsertTenantProductsReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_BatchUpsertTenantProducts_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_BatchUpsertTenantProducts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) GetTenantProduct(ctx context.Context, in *GetTenantProductReq, opts ...grpc.CallOption) (*GetTenantProductResp, error) {
+func (c *adminClient) GetTenantProduct(ctx context.Context, in *GetTenantProductReq, opts ...grpc.CallOption) (*GetTenantProductResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetTenantProductResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_GetTenantProduct_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetTenantProduct_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) InitTenantItickDisplay(ctx context.Context, in *InitTenantItickDisplayReq, opts ...grpc.CallOption) (*InitTenantItickDisplayResp, error) {
+func (c *adminClient) InitTenantItickDisplay(ctx context.Context, in *InitTenantItickDisplayReq, opts ...grpc.CallOption) (*InitTenantItickDisplayResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(InitTenantItickDisplayResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_InitTenantItickDisplay_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_InitTenantItickDisplay_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) CreatePriceFormula(ctx context.Context, in *CreatePriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error) {
+func (c *adminClient) CreatePriceFormula(ctx context.Context, in *CreatePriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PriceFormulaResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_CreatePriceFormula_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_CreatePriceFormula_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) GetPriceFormula(ctx context.Context, in *PriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error) {
+func (c *adminClient) GetPriceFormula(ctx context.Context, in *PriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PriceFormulaResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_GetPriceFormula_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_GetPriceFormula_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) ListPriceFormulas(ctx context.Context, in *ListPriceFormulasReq, opts ...grpc.CallOption) (*ListPriceFormulasResp, error) {
+func (c *adminClient) ListPriceFormulas(ctx context.Context, in *ListPriceFormulasReq, opts ...grpc.CallOption) (*ListPriceFormulasResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListPriceFormulasResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_ListPriceFormulas_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListPriceFormulas_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) ChangePriceFormulaStatus(ctx context.Context, in *ChangePriceFormulaStatusReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) ChangePriceFormulaStatus(ctx context.Context, in *ChangePriceFormulaStatusReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_ChangePriceFormulaStatus_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ChangePriceFormulaStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) ListSnapshotOutbox(ctx context.Context, in *ListSnapshotOutboxReq, opts ...grpc.CallOption) (*ListSnapshotOutboxResp, error) {
+func (c *adminClient) ListSnapshotOutbox(ctx context.Context, in *ListSnapshotOutboxReq, opts ...grpc.CallOption) (*ListSnapshotOutboxResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListSnapshotOutboxResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_ListSnapshotOutbox_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_ListSnapshotOutbox_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) RetrySnapshotOutbox(ctx context.Context, in *RetrySnapshotOutboxReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) RetrySnapshotOutbox(ctx context.Context, in *RetrySnapshotOutboxReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_RetrySnapshotOutbox_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_RetrySnapshotOutbox_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickAdminClient) RevokeAuthoritativeSnapshot(ctx context.Context, in *RevokeAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*CommonResp, error) {
+func (c *adminClient) RevokeAuthoritativeSnapshot(ctx context.Context, in *RevokeAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, ItickAdmin_RevokeAuthoritativeSnapshot_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Admin_RevokeAuthoritativeSnapshot_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ItickAdminServer is the server API for ItickAdmin service.
-// All implementations must embed UnimplementedItickAdminServer
+// AdminServer is the server API for Admin service.
+// All implementations must embed UnimplementedAdminServer
 // for forward compatibility.
 //
 // ====================
 // admin service
 // ====================
-type ItickAdminServer interface {
+type AdminServer interface {
 	// 产品类型列表
 	ListCategories(context.Context, *ListCategoriesReq) (*ListCategoriesResp, error)
 	// 产品类型
@@ -993,793 +993,793 @@ type ItickAdminServer interface {
 	ListSnapshotOutbox(context.Context, *ListSnapshotOutboxReq) (*ListSnapshotOutboxResp, error)
 	RetrySnapshotOutbox(context.Context, *RetrySnapshotOutboxReq) (*CommonResp, error)
 	RevokeAuthoritativeSnapshot(context.Context, *RevokeAuthoritativeSnapshotReq) (*CommonResp, error)
-	mustEmbedUnimplementedItickAdminServer()
+	mustEmbedUnimplementedAdminServer()
 }
 
-// UnimplementedItickAdminServer must be embedded to have
+// UnimplementedAdminServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedItickAdminServer struct{}
+type UnimplementedAdminServer struct{}
 
-func (UnimplementedItickAdminServer) ListCategories(context.Context, *ListCategoriesReq) (*ListCategoriesResp, error) {
+func (UnimplementedAdminServer) ListCategories(context.Context, *ListCategoriesReq) (*ListCategoriesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListCategories not implemented")
 }
-func (UnimplementedItickAdminServer) CreateCategory(context.Context, *CreateCategoryReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) CreateCategory(context.Context, *CreateCategoryReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateCategory not implemented")
 }
-func (UnimplementedItickAdminServer) UpdateCategory(context.Context, *UpdateCategoryReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdateCategory(context.Context, *UpdateCategoryReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateCategory not implemented")
 }
-func (UnimplementedItickAdminServer) GetCategory(context.Context, *GetCategoryReq) (*GetCategoryResp, error) {
+func (UnimplementedAdminServer) GetCategory(context.Context, *GetCategoryReq) (*GetCategoryResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCategory not implemented")
 }
-func (UnimplementedItickAdminServer) SyncCategoryProducts(context.Context, *SyncCategoryProductsReq) (*SyncCategoryProductsResp, error) {
+func (UnimplementedAdminServer) SyncCategoryProducts(context.Context, *SyncCategoryProductsReq) (*SyncCategoryProductsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SyncCategoryProducts not implemented")
 }
-func (UnimplementedItickAdminServer) GetSyncTaskStatus(context.Context, *GetSyncTaskStatusReq) (*GetSyncTaskStatusResp, error) {
+func (UnimplementedAdminServer) GetSyncTaskStatus(context.Context, *GetSyncTaskStatusReq) (*GetSyncTaskStatusResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSyncTaskStatus not implemented")
 }
-func (UnimplementedItickAdminServer) ListProducts(context.Context, *ListProductsReq) (*ListProductsResp, error) {
+func (UnimplementedAdminServer) ListProducts(context.Context, *ListProductsReq) (*ListProductsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListProducts not implemented")
 }
-func (UnimplementedItickAdminServer) CreateProduct(context.Context, *CreateProductReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) CreateProduct(context.Context, *CreateProductReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateProduct not implemented")
 }
-func (UnimplementedItickAdminServer) UpdateProduct(context.Context, *UpdateProductReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdateProduct(context.Context, *UpdateProductReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateProduct not implemented")
 }
-func (UnimplementedItickAdminServer) GetProduct(context.Context, *GetProductReq) (*GetProductResp, error) {
+func (UnimplementedAdminServer) GetProduct(context.Context, *GetProductReq) (*GetProductResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetProduct not implemented")
 }
-func (UnimplementedItickAdminServer) GetProductKline(context.Context, *GetProductKlineReq) (*GetProductKlineResp, error) {
+func (UnimplementedAdminServer) GetProductKline(context.Context, *GetProductKlineReq) (*GetProductKlineResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetProductKline not implemented")
 }
-func (UnimplementedItickAdminServer) SyncProductKlineHistory(context.Context, *SyncProductKlineHistoryReq) (*SyncProductKlineHistoryResp, error) {
+func (UnimplementedAdminServer) SyncProductKlineHistory(context.Context, *SyncProductKlineHistoryReq) (*SyncProductKlineHistoryResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SyncProductKlineHistory not implemented")
 }
-func (UnimplementedItickAdminServer) ListTenantCategories(context.Context, *ListTenantCategoriesReq) (*ListTenantCategoriesResp, error) {
+func (UnimplementedAdminServer) ListTenantCategories(context.Context, *ListTenantCategoriesReq) (*ListTenantCategoriesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListTenantCategories not implemented")
 }
-func (UnimplementedItickAdminServer) CreateTenantCategory(context.Context, *CreateTenantCategoryReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) CreateTenantCategory(context.Context, *CreateTenantCategoryReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateTenantCategory not implemented")
 }
-func (UnimplementedItickAdminServer) UpdateTenantCategory(context.Context, *UpdateTenantCategoryReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdateTenantCategory(context.Context, *UpdateTenantCategoryReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateTenantCategory not implemented")
 }
-func (UnimplementedItickAdminServer) BatchUpsertTenantCategories(context.Context, *BatchUpsertTenantCategoriesReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) BatchUpsertTenantCategories(context.Context, *BatchUpsertTenantCategoriesReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method BatchUpsertTenantCategories not implemented")
 }
-func (UnimplementedItickAdminServer) GetTenantCategory(context.Context, *GetTenantCategoryReq) (*GetTenantCategoryResp, error) {
+func (UnimplementedAdminServer) GetTenantCategory(context.Context, *GetTenantCategoryReq) (*GetTenantCategoryResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTenantCategory not implemented")
 }
-func (UnimplementedItickAdminServer) ListTenantProducts(context.Context, *ListTenantProductsReq) (*ListTenantProductsResp, error) {
+func (UnimplementedAdminServer) ListTenantProducts(context.Context, *ListTenantProductsReq) (*ListTenantProductsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListTenantProducts not implemented")
 }
-func (UnimplementedItickAdminServer) CreateTenantProduct(context.Context, *CreateTenantProductReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) CreateTenantProduct(context.Context, *CreateTenantProductReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateTenantProduct not implemented")
 }
-func (UnimplementedItickAdminServer) UpdateTenantProduct(context.Context, *UpdateTenantProductReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) UpdateTenantProduct(context.Context, *UpdateTenantProductReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateTenantProduct not implemented")
 }
-func (UnimplementedItickAdminServer) BatchUpsertTenantProducts(context.Context, *BatchUpsertTenantProductsReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) BatchUpsertTenantProducts(context.Context, *BatchUpsertTenantProductsReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method BatchUpsertTenantProducts not implemented")
 }
-func (UnimplementedItickAdminServer) GetTenantProduct(context.Context, *GetTenantProductReq) (*GetTenantProductResp, error) {
+func (UnimplementedAdminServer) GetTenantProduct(context.Context, *GetTenantProductReq) (*GetTenantProductResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTenantProduct not implemented")
 }
-func (UnimplementedItickAdminServer) InitTenantItickDisplay(context.Context, *InitTenantItickDisplayReq) (*InitTenantItickDisplayResp, error) {
+func (UnimplementedAdminServer) InitTenantItickDisplay(context.Context, *InitTenantItickDisplayReq) (*InitTenantItickDisplayResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method InitTenantItickDisplay not implemented")
 }
-func (UnimplementedItickAdminServer) CreatePriceFormula(context.Context, *CreatePriceFormulaReq) (*PriceFormulaResp, error) {
+func (UnimplementedAdminServer) CreatePriceFormula(context.Context, *CreatePriceFormulaReq) (*PriceFormulaResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreatePriceFormula not implemented")
 }
-func (UnimplementedItickAdminServer) GetPriceFormula(context.Context, *PriceFormulaReq) (*PriceFormulaResp, error) {
+func (UnimplementedAdminServer) GetPriceFormula(context.Context, *PriceFormulaReq) (*PriceFormulaResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPriceFormula not implemented")
 }
-func (UnimplementedItickAdminServer) ListPriceFormulas(context.Context, *ListPriceFormulasReq) (*ListPriceFormulasResp, error) {
+func (UnimplementedAdminServer) ListPriceFormulas(context.Context, *ListPriceFormulasReq) (*ListPriceFormulasResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListPriceFormulas not implemented")
 }
-func (UnimplementedItickAdminServer) ChangePriceFormulaStatus(context.Context, *ChangePriceFormulaStatusReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) ChangePriceFormulaStatus(context.Context, *ChangePriceFormulaStatusReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ChangePriceFormulaStatus not implemented")
 }
-func (UnimplementedItickAdminServer) ListSnapshotOutbox(context.Context, *ListSnapshotOutboxReq) (*ListSnapshotOutboxResp, error) {
+func (UnimplementedAdminServer) ListSnapshotOutbox(context.Context, *ListSnapshotOutboxReq) (*ListSnapshotOutboxResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListSnapshotOutbox not implemented")
 }
-func (UnimplementedItickAdminServer) RetrySnapshotOutbox(context.Context, *RetrySnapshotOutboxReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) RetrySnapshotOutbox(context.Context, *RetrySnapshotOutboxReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RetrySnapshotOutbox not implemented")
 }
-func (UnimplementedItickAdminServer) RevokeAuthoritativeSnapshot(context.Context, *RevokeAuthoritativeSnapshotReq) (*CommonResp, error) {
+func (UnimplementedAdminServer) RevokeAuthoritativeSnapshot(context.Context, *RevokeAuthoritativeSnapshotReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RevokeAuthoritativeSnapshot not implemented")
 }
-func (UnimplementedItickAdminServer) mustEmbedUnimplementedItickAdminServer() {}
-func (UnimplementedItickAdminServer) testEmbeddedByValue()                    {}
+func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
+func (UnimplementedAdminServer) testEmbeddedByValue()               {}
 
-// UnsafeItickAdminServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ItickAdminServer will
+// UnsafeAdminServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AdminServer will
 // result in compilation errors.
-type UnsafeItickAdminServer interface {
-	mustEmbedUnimplementedItickAdminServer()
+type UnsafeAdminServer interface {
+	mustEmbedUnimplementedAdminServer()
 }
 
-func RegisterItickAdminServer(s grpc.ServiceRegistrar, srv ItickAdminServer) {
-	// If the following call panics, it indicates UnimplementedItickAdminServer was
+func RegisterAdminServer(s grpc.ServiceRegistrar, srv AdminServer) {
+	// If the following call panics, it indicates UnimplementedAdminServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&ItickAdmin_ServiceDesc, srv)
+	s.RegisterService(&Admin_ServiceDesc, srv)
 }
 
-func _ItickAdmin_ListCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListCategoriesReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).ListCategories(ctx, in)
+		return srv.(AdminServer).ListCategories(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_ListCategories_FullMethodName,
+		FullMethod: Admin_ListCategories_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).ListCategories(ctx, req.(*ListCategoriesReq))
+		return srv.(AdminServer).ListCategories(ctx, req.(*ListCategoriesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_CreateCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_CreateCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateCategoryReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).CreateCategory(ctx, in)
+		return srv.(AdminServer).CreateCategory(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_CreateCategory_FullMethodName,
+		FullMethod: Admin_CreateCategory_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).CreateCategory(ctx, req.(*CreateCategoryReq))
+		return srv.(AdminServer).CreateCategory(ctx, req.(*CreateCategoryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_UpdateCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateCategoryReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).UpdateCategory(ctx, in)
+		return srv.(AdminServer).UpdateCategory(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_UpdateCategory_FullMethodName,
+		FullMethod: Admin_UpdateCategory_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).UpdateCategory(ctx, req.(*UpdateCategoryReq))
+		return srv.(AdminServer).UpdateCategory(ctx, req.(*UpdateCategoryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_GetCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetCategoryReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).GetCategory(ctx, in)
+		return srv.(AdminServer).GetCategory(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_GetCategory_FullMethodName,
+		FullMethod: Admin_GetCategory_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).GetCategory(ctx, req.(*GetCategoryReq))
+		return srv.(AdminServer).GetCategory(ctx, req.(*GetCategoryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_SyncCategoryProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_SyncCategoryProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SyncCategoryProductsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).SyncCategoryProducts(ctx, in)
+		return srv.(AdminServer).SyncCategoryProducts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_SyncCategoryProducts_FullMethodName,
+		FullMethod: Admin_SyncCategoryProducts_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).SyncCategoryProducts(ctx, req.(*SyncCategoryProductsReq))
+		return srv.(AdminServer).SyncCategoryProducts(ctx, req.(*SyncCategoryProductsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_GetSyncTaskStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetSyncTaskStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSyncTaskStatusReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).GetSyncTaskStatus(ctx, in)
+		return srv.(AdminServer).GetSyncTaskStatus(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_GetSyncTaskStatus_FullMethodName,
+		FullMethod: Admin_GetSyncTaskStatus_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).GetSyncTaskStatus(ctx, req.(*GetSyncTaskStatusReq))
+		return srv.(AdminServer).GetSyncTaskStatus(ctx, req.(*GetSyncTaskStatusReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_ListProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListProductsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).ListProducts(ctx, in)
+		return srv.(AdminServer).ListProducts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_ListProducts_FullMethodName,
+		FullMethod: Admin_ListProducts_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).ListProducts(ctx, req.(*ListProductsReq))
+		return srv.(AdminServer).ListProducts(ctx, req.(*ListProductsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_CreateProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_CreateProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateProductReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).CreateProduct(ctx, in)
+		return srv.(AdminServer).CreateProduct(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_CreateProduct_FullMethodName,
+		FullMethod: Admin_CreateProduct_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).CreateProduct(ctx, req.(*CreateProductReq))
+		return srv.(AdminServer).CreateProduct(ctx, req.(*CreateProductReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_UpdateProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateProductReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).UpdateProduct(ctx, in)
+		return srv.(AdminServer).UpdateProduct(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_UpdateProduct_FullMethodName,
+		FullMethod: Admin_UpdateProduct_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).UpdateProduct(ctx, req.(*UpdateProductReq))
+		return srv.(AdminServer).UpdateProduct(ctx, req.(*UpdateProductReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_GetProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetProductReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).GetProduct(ctx, in)
+		return srv.(AdminServer).GetProduct(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_GetProduct_FullMethodName,
+		FullMethod: Admin_GetProduct_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).GetProduct(ctx, req.(*GetProductReq))
+		return srv.(AdminServer).GetProduct(ctx, req.(*GetProductReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_GetProductKline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetProductKline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetProductKlineReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).GetProductKline(ctx, in)
+		return srv.(AdminServer).GetProductKline(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_GetProductKline_FullMethodName,
+		FullMethod: Admin_GetProductKline_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).GetProductKline(ctx, req.(*GetProductKlineReq))
+		return srv.(AdminServer).GetProductKline(ctx, req.(*GetProductKlineReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_SyncProductKlineHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_SyncProductKlineHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SyncProductKlineHistoryReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).SyncProductKlineHistory(ctx, in)
+		return srv.(AdminServer).SyncProductKlineHistory(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_SyncProductKlineHistory_FullMethodName,
+		FullMethod: Admin_SyncProductKlineHistory_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).SyncProductKlineHistory(ctx, req.(*SyncProductKlineHistoryReq))
+		return srv.(AdminServer).SyncProductKlineHistory(ctx, req.(*SyncProductKlineHistoryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_ListTenantCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListTenantCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListTenantCategoriesReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).ListTenantCategories(ctx, in)
+		return srv.(AdminServer).ListTenantCategories(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_ListTenantCategories_FullMethodName,
+		FullMethod: Admin_ListTenantCategories_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).ListTenantCategories(ctx, req.(*ListTenantCategoriesReq))
+		return srv.(AdminServer).ListTenantCategories(ctx, req.(*ListTenantCategoriesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_CreateTenantCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_CreateTenantCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateTenantCategoryReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).CreateTenantCategory(ctx, in)
+		return srv.(AdminServer).CreateTenantCategory(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_CreateTenantCategory_FullMethodName,
+		FullMethod: Admin_CreateTenantCategory_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).CreateTenantCategory(ctx, req.(*CreateTenantCategoryReq))
+		return srv.(AdminServer).CreateTenantCategory(ctx, req.(*CreateTenantCategoryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_UpdateTenantCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateTenantCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateTenantCategoryReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).UpdateTenantCategory(ctx, in)
+		return srv.(AdminServer).UpdateTenantCategory(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_UpdateTenantCategory_FullMethodName,
+		FullMethod: Admin_UpdateTenantCategory_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).UpdateTenantCategory(ctx, req.(*UpdateTenantCategoryReq))
+		return srv.(AdminServer).UpdateTenantCategory(ctx, req.(*UpdateTenantCategoryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_BatchUpsertTenantCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_BatchUpsertTenantCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BatchUpsertTenantCategoriesReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).BatchUpsertTenantCategories(ctx, in)
+		return srv.(AdminServer).BatchUpsertTenantCategories(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_BatchUpsertTenantCategories_FullMethodName,
+		FullMethod: Admin_BatchUpsertTenantCategories_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).BatchUpsertTenantCategories(ctx, req.(*BatchUpsertTenantCategoriesReq))
+		return srv.(AdminServer).BatchUpsertTenantCategories(ctx, req.(*BatchUpsertTenantCategoriesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_GetTenantCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetTenantCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTenantCategoryReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).GetTenantCategory(ctx, in)
+		return srv.(AdminServer).GetTenantCategory(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_GetTenantCategory_FullMethodName,
+		FullMethod: Admin_GetTenantCategory_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).GetTenantCategory(ctx, req.(*GetTenantCategoryReq))
+		return srv.(AdminServer).GetTenantCategory(ctx, req.(*GetTenantCategoryReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_ListTenantProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListTenantProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListTenantProductsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).ListTenantProducts(ctx, in)
+		return srv.(AdminServer).ListTenantProducts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_ListTenantProducts_FullMethodName,
+		FullMethod: Admin_ListTenantProducts_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).ListTenantProducts(ctx, req.(*ListTenantProductsReq))
+		return srv.(AdminServer).ListTenantProducts(ctx, req.(*ListTenantProductsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_CreateTenantProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_CreateTenantProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateTenantProductReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).CreateTenantProduct(ctx, in)
+		return srv.(AdminServer).CreateTenantProduct(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_CreateTenantProduct_FullMethodName,
+		FullMethod: Admin_CreateTenantProduct_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).CreateTenantProduct(ctx, req.(*CreateTenantProductReq))
+		return srv.(AdminServer).CreateTenantProduct(ctx, req.(*CreateTenantProductReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_UpdateTenantProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_UpdateTenantProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateTenantProductReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).UpdateTenantProduct(ctx, in)
+		return srv.(AdminServer).UpdateTenantProduct(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_UpdateTenantProduct_FullMethodName,
+		FullMethod: Admin_UpdateTenantProduct_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).UpdateTenantProduct(ctx, req.(*UpdateTenantProductReq))
+		return srv.(AdminServer).UpdateTenantProduct(ctx, req.(*UpdateTenantProductReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_BatchUpsertTenantProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_BatchUpsertTenantProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BatchUpsertTenantProductsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).BatchUpsertTenantProducts(ctx, in)
+		return srv.(AdminServer).BatchUpsertTenantProducts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_BatchUpsertTenantProducts_FullMethodName,
+		FullMethod: Admin_BatchUpsertTenantProducts_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).BatchUpsertTenantProducts(ctx, req.(*BatchUpsertTenantProductsReq))
+		return srv.(AdminServer).BatchUpsertTenantProducts(ctx, req.(*BatchUpsertTenantProductsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_GetTenantProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetTenantProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTenantProductReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).GetTenantProduct(ctx, in)
+		return srv.(AdminServer).GetTenantProduct(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_GetTenantProduct_FullMethodName,
+		FullMethod: Admin_GetTenantProduct_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).GetTenantProduct(ctx, req.(*GetTenantProductReq))
+		return srv.(AdminServer).GetTenantProduct(ctx, req.(*GetTenantProductReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_InitTenantItickDisplay_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_InitTenantItickDisplay_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(InitTenantItickDisplayReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).InitTenantItickDisplay(ctx, in)
+		return srv.(AdminServer).InitTenantItickDisplay(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_InitTenantItickDisplay_FullMethodName,
+		FullMethod: Admin_InitTenantItickDisplay_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).InitTenantItickDisplay(ctx, req.(*InitTenantItickDisplayReq))
+		return srv.(AdminServer).InitTenantItickDisplay(ctx, req.(*InitTenantItickDisplayReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_CreatePriceFormula_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_CreatePriceFormula_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreatePriceFormulaReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).CreatePriceFormula(ctx, in)
+		return srv.(AdminServer).CreatePriceFormula(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_CreatePriceFormula_FullMethodName,
+		FullMethod: Admin_CreatePriceFormula_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).CreatePriceFormula(ctx, req.(*CreatePriceFormulaReq))
+		return srv.(AdminServer).CreatePriceFormula(ctx, req.(*CreatePriceFormulaReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_GetPriceFormula_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_GetPriceFormula_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PriceFormulaReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).GetPriceFormula(ctx, in)
+		return srv.(AdminServer).GetPriceFormula(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_GetPriceFormula_FullMethodName,
+		FullMethod: Admin_GetPriceFormula_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).GetPriceFormula(ctx, req.(*PriceFormulaReq))
+		return srv.(AdminServer).GetPriceFormula(ctx, req.(*PriceFormulaReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_ListPriceFormulas_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListPriceFormulas_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListPriceFormulasReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).ListPriceFormulas(ctx, in)
+		return srv.(AdminServer).ListPriceFormulas(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_ListPriceFormulas_FullMethodName,
+		FullMethod: Admin_ListPriceFormulas_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).ListPriceFormulas(ctx, req.(*ListPriceFormulasReq))
+		return srv.(AdminServer).ListPriceFormulas(ctx, req.(*ListPriceFormulasReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_ChangePriceFormulaStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ChangePriceFormulaStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ChangePriceFormulaStatusReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).ChangePriceFormulaStatus(ctx, in)
+		return srv.(AdminServer).ChangePriceFormulaStatus(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_ChangePriceFormulaStatus_FullMethodName,
+		FullMethod: Admin_ChangePriceFormulaStatus_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).ChangePriceFormulaStatus(ctx, req.(*ChangePriceFormulaStatusReq))
+		return srv.(AdminServer).ChangePriceFormulaStatus(ctx, req.(*ChangePriceFormulaStatusReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_ListSnapshotOutbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_ListSnapshotOutbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListSnapshotOutboxReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).ListSnapshotOutbox(ctx, in)
+		return srv.(AdminServer).ListSnapshotOutbox(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_ListSnapshotOutbox_FullMethodName,
+		FullMethod: Admin_ListSnapshotOutbox_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).ListSnapshotOutbox(ctx, req.(*ListSnapshotOutboxReq))
+		return srv.(AdminServer).ListSnapshotOutbox(ctx, req.(*ListSnapshotOutboxReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_RetrySnapshotOutbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_RetrySnapshotOutbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RetrySnapshotOutboxReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).RetrySnapshotOutbox(ctx, in)
+		return srv.(AdminServer).RetrySnapshotOutbox(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_RetrySnapshotOutbox_FullMethodName,
+		FullMethod: Admin_RetrySnapshotOutbox_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).RetrySnapshotOutbox(ctx, req.(*RetrySnapshotOutboxReq))
+		return srv.(AdminServer).RetrySnapshotOutbox(ctx, req.(*RetrySnapshotOutboxReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickAdmin_RevokeAuthoritativeSnapshot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Admin_RevokeAuthoritativeSnapshot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RevokeAuthoritativeSnapshotReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickAdminServer).RevokeAuthoritativeSnapshot(ctx, in)
+		return srv.(AdminServer).RevokeAuthoritativeSnapshot(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickAdmin_RevokeAuthoritativeSnapshot_FullMethodName,
+		FullMethod: Admin_RevokeAuthoritativeSnapshot_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickAdminServer).RevokeAuthoritativeSnapshot(ctx, req.(*RevokeAuthoritativeSnapshotReq))
+		return srv.(AdminServer).RevokeAuthoritativeSnapshot(ctx, req.(*RevokeAuthoritativeSnapshotReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// ItickAdmin_ServiceDesc is the grpc.ServiceDesc for ItickAdmin service.
+// Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var ItickAdmin_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "itick.ItickAdmin",
-	HandlerType: (*ItickAdminServer)(nil),
+var Admin_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "itick.Admin",
+	HandlerType: (*AdminServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "ListCategories",
-			Handler:    _ItickAdmin_ListCategories_Handler,
+			Handler:    _Admin_ListCategories_Handler,
 		},
 		{
 			MethodName: "CreateCategory",
-			Handler:    _ItickAdmin_CreateCategory_Handler,
+			Handler:    _Admin_CreateCategory_Handler,
 		},
 		{
 			MethodName: "UpdateCategory",
-			Handler:    _ItickAdmin_UpdateCategory_Handler,
+			Handler:    _Admin_UpdateCategory_Handler,
 		},
 		{
 			MethodName: "GetCategory",
-			Handler:    _ItickAdmin_GetCategory_Handler,
+			Handler:    _Admin_GetCategory_Handler,
 		},
 		{
 			MethodName: "SyncCategoryProducts",
-			Handler:    _ItickAdmin_SyncCategoryProducts_Handler,
+			Handler:    _Admin_SyncCategoryProducts_Handler,
 		},
 		{
 			MethodName: "GetSyncTaskStatus",
-			Handler:    _ItickAdmin_GetSyncTaskStatus_Handler,
+			Handler:    _Admin_GetSyncTaskStatus_Handler,
 		},
 		{
 			MethodName: "ListProducts",
-			Handler:    _ItickAdmin_ListProducts_Handler,
+			Handler:    _Admin_ListProducts_Handler,
 		},
 		{
 			MethodName: "CreateProduct",
-			Handler:    _ItickAdmin_CreateProduct_Handler,
+			Handler:    _Admin_CreateProduct_Handler,
 		},
 		{
 			MethodName: "UpdateProduct",
-			Handler:    _ItickAdmin_UpdateProduct_Handler,
+			Handler:    _Admin_UpdateProduct_Handler,
 		},
 		{
 			MethodName: "GetProduct",
-			Handler:    _ItickAdmin_GetProduct_Handler,
+			Handler:    _Admin_GetProduct_Handler,
 		},
 		{
 			MethodName: "GetProductKline",
-			Handler:    _ItickAdmin_GetProductKline_Handler,
+			Handler:    _Admin_GetProductKline_Handler,
 		},
 		{
 			MethodName: "SyncProductKlineHistory",
-			Handler:    _ItickAdmin_SyncProductKlineHistory_Handler,
+			Handler:    _Admin_SyncProductKlineHistory_Handler,
 		},
 		{
 			MethodName: "ListTenantCategories",
-			Handler:    _ItickAdmin_ListTenantCategories_Handler,
+			Handler:    _Admin_ListTenantCategories_Handler,
 		},
 		{
 			MethodName: "CreateTenantCategory",
-			Handler:    _ItickAdmin_CreateTenantCategory_Handler,
+			Handler:    _Admin_CreateTenantCategory_Handler,
 		},
 		{
 			MethodName: "UpdateTenantCategory",
-			Handler:    _ItickAdmin_UpdateTenantCategory_Handler,
+			Handler:    _Admin_UpdateTenantCategory_Handler,
 		},
 		{
 			MethodName: "BatchUpsertTenantCategories",
-			Handler:    _ItickAdmin_BatchUpsertTenantCategories_Handler,
+			Handler:    _Admin_BatchUpsertTenantCategories_Handler,
 		},
 		{
 			MethodName: "GetTenantCategory",
-			Handler:    _ItickAdmin_GetTenantCategory_Handler,
+			Handler:    _Admin_GetTenantCategory_Handler,
 		},
 		{
 			MethodName: "ListTenantProducts",
-			Handler:    _ItickAdmin_ListTenantProducts_Handler,
+			Handler:    _Admin_ListTenantProducts_Handler,
 		},
 		{
 			MethodName: "CreateTenantProduct",
-			Handler:    _ItickAdmin_CreateTenantProduct_Handler,
+			Handler:    _Admin_CreateTenantProduct_Handler,
 		},
 		{
 			MethodName: "UpdateTenantProduct",
-			Handler:    _ItickAdmin_UpdateTenantProduct_Handler,
+			Handler:    _Admin_UpdateTenantProduct_Handler,
 		},
 		{
 			MethodName: "BatchUpsertTenantProducts",
-			Handler:    _ItickAdmin_BatchUpsertTenantProducts_Handler,
+			Handler:    _Admin_BatchUpsertTenantProducts_Handler,
 		},
 		{
 			MethodName: "GetTenantProduct",
-			Handler:    _ItickAdmin_GetTenantProduct_Handler,
+			Handler:    _Admin_GetTenantProduct_Handler,
 		},
 		{
 			MethodName: "InitTenantItickDisplay",
-			Handler:    _ItickAdmin_InitTenantItickDisplay_Handler,
+			Handler:    _Admin_InitTenantItickDisplay_Handler,
 		},
 		{
 			MethodName: "CreatePriceFormula",
-			Handler:    _ItickAdmin_CreatePriceFormula_Handler,
+			Handler:    _Admin_CreatePriceFormula_Handler,
 		},
 		{
 			MethodName: "GetPriceFormula",
-			Handler:    _ItickAdmin_GetPriceFormula_Handler,
+			Handler:    _Admin_GetPriceFormula_Handler,
 		},
 		{
 			MethodName: "ListPriceFormulas",
-			Handler:    _ItickAdmin_ListPriceFormulas_Handler,
+			Handler:    _Admin_ListPriceFormulas_Handler,
 		},
 		{
 			MethodName: "ChangePriceFormulaStatus",
-			Handler:    _ItickAdmin_ChangePriceFormulaStatus_Handler,
+			Handler:    _Admin_ChangePriceFormulaStatus_Handler,
 		},
 		{
 			MethodName: "ListSnapshotOutbox",
-			Handler:    _ItickAdmin_ListSnapshotOutbox_Handler,
+			Handler:    _Admin_ListSnapshotOutbox_Handler,
 		},
 		{
 			MethodName: "RetrySnapshotOutbox",
-			Handler:    _ItickAdmin_RetrySnapshotOutbox_Handler,
+			Handler:    _Admin_RetrySnapshotOutbox_Handler,
 		},
 		{
 			MethodName: "RevokeAuthoritativeSnapshot",
-			Handler:    _ItickAdmin_RevokeAuthoritativeSnapshot_Handler,
+			Handler:    _Admin_RevokeAuthoritativeSnapshot_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1787,151 +1787,151 @@ var ItickAdmin_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	ItickTask_SyncProducts_FullMethodName = "/itick.ItickTask/SyncProducts"
-	ItickTask_SyncKlines_FullMethodName   = "/itick.ItickTask/SyncKlines"
+	Task_SyncProducts_FullMethodName = "/itick.Task/SyncProducts"
+	Task_SyncKlines_FullMethodName   = "/itick.Task/SyncKlines"
 )
 
-// ItickTaskClient is the client API for ItickTask service.
+// TaskClient is the client API for Task service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // ====================
 // 定时任务
 // ====================
-type ItickTaskClient interface {
+type TaskClient interface {
 	// 同步产品列表
 	SyncProducts(ctx context.Context, in *SyncProductsReq, opts ...grpc.CallOption) (*SyncProductsResp, error)
 	// 同步K线数据
 	SyncKlines(ctx context.Context, in *SyncKlinesReq, opts ...grpc.CallOption) (*SyncKlinesResp, error)
 }
 
-type itickTaskClient struct {
+type taskClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewItickTaskClient(cc grpc.ClientConnInterface) ItickTaskClient {
-	return &itickTaskClient{cc}
+func NewTaskClient(cc grpc.ClientConnInterface) TaskClient {
+	return &taskClient{cc}
 }
 
-func (c *itickTaskClient) SyncProducts(ctx context.Context, in *SyncProductsReq, opts ...grpc.CallOption) (*SyncProductsResp, error) {
+func (c *taskClient) SyncProducts(ctx context.Context, in *SyncProductsReq, opts ...grpc.CallOption) (*SyncProductsResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SyncProductsResp)
-	err := c.cc.Invoke(ctx, ItickTask_SyncProducts_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Task_SyncProducts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itickTaskClient) SyncKlines(ctx context.Context, in *SyncKlinesReq, opts ...grpc.CallOption) (*SyncKlinesResp, error) {
+func (c *taskClient) SyncKlines(ctx context.Context, in *SyncKlinesReq, opts ...grpc.CallOption) (*SyncKlinesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SyncKlinesResp)
-	err := c.cc.Invoke(ctx, ItickTask_SyncKlines_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Task_SyncKlines_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ItickTaskServer is the server API for ItickTask service.
-// All implementations must embed UnimplementedItickTaskServer
+// TaskServer is the server API for Task service.
+// All implementations must embed UnimplementedTaskServer
 // for forward compatibility.
 //
 // ====================
 // 定时任务
 // ====================
-type ItickTaskServer interface {
+type TaskServer interface {
 	// 同步产品列表
 	SyncProducts(context.Context, *SyncProductsReq) (*SyncProductsResp, error)
 	// 同步K线数据
 	SyncKlines(context.Context, *SyncKlinesReq) (*SyncKlinesResp, error)
-	mustEmbedUnimplementedItickTaskServer()
+	mustEmbedUnimplementedTaskServer()
 }
 
-// UnimplementedItickTaskServer must be embedded to have
+// UnimplementedTaskServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedItickTaskServer struct{}
+type UnimplementedTaskServer struct{}
 
-func (UnimplementedItickTaskServer) SyncProducts(context.Context, *SyncProductsReq) (*SyncProductsResp, error) {
+func (UnimplementedTaskServer) SyncProducts(context.Context, *SyncProductsReq) (*SyncProductsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SyncProducts not implemented")
 }
-func (UnimplementedItickTaskServer) SyncKlines(context.Context, *SyncKlinesReq) (*SyncKlinesResp, error) {
+func (UnimplementedTaskServer) SyncKlines(context.Context, *SyncKlinesReq) (*SyncKlinesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SyncKlines not implemented")
 }
-func (UnimplementedItickTaskServer) mustEmbedUnimplementedItickTaskServer() {}
-func (UnimplementedItickTaskServer) testEmbeddedByValue()                   {}
+func (UnimplementedTaskServer) mustEmbedUnimplementedTaskServer() {}
+func (UnimplementedTaskServer) testEmbeddedByValue()              {}
 
-// UnsafeItickTaskServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ItickTaskServer will
+// UnsafeTaskServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TaskServer will
 // result in compilation errors.
-type UnsafeItickTaskServer interface {
-	mustEmbedUnimplementedItickTaskServer()
+type UnsafeTaskServer interface {
+	mustEmbedUnimplementedTaskServer()
 }
 
-func RegisterItickTaskServer(s grpc.ServiceRegistrar, srv ItickTaskServer) {
-	// If the following call panics, it indicates UnimplementedItickTaskServer was
+func RegisterTaskServer(s grpc.ServiceRegistrar, srv TaskServer) {
+	// If the following call panics, it indicates UnimplementedTaskServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&ItickTask_ServiceDesc, srv)
+	s.RegisterService(&Task_ServiceDesc, srv)
 }
 
-func _ItickTask_SyncProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Task_SyncProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SyncProductsReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickTaskServer).SyncProducts(ctx, in)
+		return srv.(TaskServer).SyncProducts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickTask_SyncProducts_FullMethodName,
+		FullMethod: Task_SyncProducts_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickTaskServer).SyncProducts(ctx, req.(*SyncProductsReq))
+		return srv.(TaskServer).SyncProducts(ctx, req.(*SyncProductsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItickTask_SyncKlines_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Task_SyncKlines_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SyncKlinesReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItickTaskServer).SyncKlines(ctx, in)
+		return srv.(TaskServer).SyncKlines(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItickTask_SyncKlines_FullMethodName,
+		FullMethod: Task_SyncKlines_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItickTaskServer).SyncKlines(ctx, req.(*SyncKlinesReq))
+		return srv.(TaskServer).SyncKlines(ctx, req.(*SyncKlinesReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// ItickTask_ServiceDesc is the grpc.ServiceDesc for ItickTask service.
+// Task_ServiceDesc is the grpc.ServiceDesc for Task service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var ItickTask_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "itick.ItickTask",
-	HandlerType: (*ItickTaskServer)(nil),
+var Task_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "itick.Task",
+	HandlerType: (*TaskServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "SyncProducts",
-			Handler:    _ItickTask_SyncProducts_Handler,
+			Handler:    _Task_SyncProducts_Handler,
 		},
 		{
 			MethodName: "SyncKlines",
-			Handler:    _ItickTask_SyncKlines_Handler,
+			Handler:    _Task_SyncKlines_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

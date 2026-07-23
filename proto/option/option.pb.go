@@ -5475,8 +5475,8 @@ const file_proto_option_option_proto_rawDesc = "" +
 	"\rOptionTaskReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\"6\n" +
 	"\x0eOptionTaskResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base2\x8b\b\n" +
-	"\tOptionApp\x12L\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base2\x85\b\n" +
+	"\x03App\x12L\n" +
 	"\rListContracts\x12\x1c.option.UserListContractsReq\x1a\x1d.option.UserListContractsResp\x12P\n" +
 	"\x11GetContractDetail\x12\x1c.option.GetContractDetailReq\x1a\x1d.option.GetContractDetailResp\x12;\n" +
 	"\n" +
@@ -5492,9 +5492,9 @@ const file_proto_option_option_proto_rawDesc = "" +
 	"\bExercise\x12\x13.option.ExerciseReq\x1a\x14.option.ExerciseResp\x12L\n" +
 	"\rListExercises\x12\x1c.option.UserListExercisesReq\x1a\x1d.option.UserListExercisesResp\x12I\n" +
 	"\fListAccounts\x12\x1b.option.UserListAccountsReq\x1a\x1c.option.UserListAccountsResp\x12@\n" +
-	"\tListBills\x12\x18.option.UserListBillsReq\x1a\x19.option.UserListBillsResp2\xe0\n" +
+	"\tListBills\x12\x18.option.UserListBillsReq\x1a\x19.option.UserListBillsResp2\xda\n" +
 	"\n" +
-	"\vOptionAdmin\x12G\n" +
+	"\x05Admin\x12G\n" +
 	"\x0eCreateContract\x12\x19.option.CreateContractReq\x1a\x1a.option.CreateContractResp\x12?\n" +
 	"\x0eUpdateContract\x12\x19.option.UpdateContractReq\x1a\x12.option.CommonResp\x12>\n" +
 	"\vGetContract\x12\x16.option.GetContractReq\x1a\x17.option.GetContractResp\x12D\n" +
@@ -5518,11 +5518,10 @@ const file_proto_option_option_proto_rawDesc = "" +
 	"GetAccount\x12\x15.option.GetAccountReq\x1a\x16.option.GetAccountResp\x12A\n" +
 	"\fListAccounts\x12\x17.option.ListAccountsReq\x1a\x18.option.ListAccountsResp\x122\n" +
 	"\aGetBill\x12\x12.option.GetBillReq\x1a\x13.option.GetBillResp\x128\n" +
-	"\tListBills\x12\x14.option.ListBillsReq\x1a\x15.option.ListBillsResp2[\n" +
-	"\x0eOptionInternal\x12I\n" +
-	"\x0fSyncMarketQuote\x12\x1a.option.SyncMarketQuoteReq\x1a\x1a.option.InternalCommonResp2\x9e\x01\n" +
-	"\n" +
-	"OptionTask\x12I\n" +
+	"\tListBills\x12\x14.option.ListBillsReq\x1a\x15.option.ListBillsResp2U\n" +
+	"\bInternal\x12I\n" +
+	"\x0fSyncMarketQuote\x12\x1a.option.SyncMarketQuoteReq\x1a\x1a.option.InternalCommonResp2\x98\x01\n" +
+	"\x04Task\x12I\n" +
 	"\x18ProcessContractLifecycle\x12\x15.option.OptionTaskReq\x1a\x16.option.OptionTaskResp\x12E\n" +
 	"\x14CleanMarketSnapshots\x12\x15.option.OptionTaskReq\x1a\x16.option.OptionTaskRespB\x1cZ\x1awklive/proto/option;optionb\x06proto3"
 
@@ -5777,82 +5776,82 @@ var file_proto_option_option_proto_depIdxs = []int32{
 	94,  // 128: option.ListBillsResp.data:type_name -> option.OptionBill
 	75,  // 129: option.InternalCommonResp.base:type_name -> common.RespBase
 	75,  // 130: option.OptionTaskResp.base:type_name -> common.RespBase
-	1,   // 131: option.OptionApp.ListContracts:input_type -> option.UserListContractsReq
-	3,   // 132: option.OptionApp.GetContractDetail:input_type -> option.GetContractDetailReq
-	5,   // 133: option.OptionApp.PlaceOrder:input_type -> option.PlaceOrderReq
-	8,   // 134: option.OptionApp.CancelOrder:input_type -> option.CancelOrderReq
-	9,   // 135: option.OptionApp.GetOrderDetail:input_type -> option.GetOrderDetailReq
-	11,  // 136: option.OptionApp.ListCurrentOrders:input_type -> option.ListCurrentOrdersReq
-	13,  // 137: option.OptionApp.ListHistoryOrders:input_type -> option.ListHistoryOrdersReq
-	15,  // 138: option.OptionApp.ListTrades:input_type -> option.UserListTradesReq
-	17,  // 139: option.OptionApp.ListPositions:input_type -> option.UserListPositionsReq
-	19,  // 140: option.OptionApp.GetPositionDetail:input_type -> option.GetPositionDetailReq
-	21,  // 141: option.OptionApp.Exercise:input_type -> option.ExerciseReq
-	24,  // 142: option.OptionApp.ListExercises:input_type -> option.UserListExercisesReq
-	26,  // 143: option.OptionApp.ListAccounts:input_type -> option.UserListAccountsReq
-	28,  // 144: option.OptionApp.ListBills:input_type -> option.UserListBillsReq
-	31,  // 145: option.OptionAdmin.CreateContract:input_type -> option.CreateContractReq
-	33,  // 146: option.OptionAdmin.UpdateContract:input_type -> option.UpdateContractReq
-	34,  // 147: option.OptionAdmin.GetContract:input_type -> option.GetContractReq
-	36,  // 148: option.OptionAdmin.ListContracts:input_type -> option.ListContractsReq
-	38,  // 149: option.OptionAdmin.UpdateMarket:input_type -> option.UpdateMarketReq
-	39,  // 150: option.OptionAdmin.GetMarket:input_type -> option.GetMarketReq
-	41,  // 151: option.OptionAdmin.ListMarketSnapshots:input_type -> option.ListMarketSnapshotsReq
-	43,  // 152: option.OptionAdmin.GetOrder:input_type -> option.GetOrderReq
-	45,  // 153: option.OptionAdmin.ListOrders:input_type -> option.ListOrdersReq
-	47,  // 154: option.OptionAdmin.GetTrade:input_type -> option.GetTradeReq
-	49,  // 155: option.OptionAdmin.ListTrades:input_type -> option.ListTradesReq
-	51,  // 156: option.OptionAdmin.GetPosition:input_type -> option.GetPositionReq
-	53,  // 157: option.OptionAdmin.ListPositions:input_type -> option.ListPositionsReq
-	55,  // 158: option.OptionAdmin.GetExercise:input_type -> option.GetExerciseReq
-	57,  // 159: option.OptionAdmin.ListExercises:input_type -> option.ListExercisesReq
-	59,  // 160: option.OptionAdmin.GetSettlement:input_type -> option.GetSettlementReq
-	61,  // 161: option.OptionAdmin.ListSettlements:input_type -> option.ListSettlementsReq
-	63,  // 162: option.OptionAdmin.GetAccount:input_type -> option.GetAccountReq
-	65,  // 163: option.OptionAdmin.ListAccounts:input_type -> option.ListAccountsReq
-	67,  // 164: option.OptionAdmin.GetBill:input_type -> option.GetBillReq
-	69,  // 165: option.OptionAdmin.ListBills:input_type -> option.ListBillsReq
-	71,  // 166: option.OptionInternal.SyncMarketQuote:input_type -> option.SyncMarketQuoteReq
-	73,  // 167: option.OptionTask.ProcessContractLifecycle:input_type -> option.OptionTaskReq
-	73,  // 168: option.OptionTask.CleanMarketSnapshots:input_type -> option.OptionTaskReq
-	2,   // 169: option.OptionApp.ListContracts:output_type -> option.UserListContractsResp
-	4,   // 170: option.OptionApp.GetContractDetail:output_type -> option.GetContractDetailResp
-	6,   // 171: option.OptionApp.PlaceOrder:output_type -> option.PlaceOrderResp
-	0,   // 172: option.OptionApp.CancelOrder:output_type -> option.UserCommonResp
-	10,  // 173: option.OptionApp.GetOrderDetail:output_type -> option.GetOrderDetailResp
-	12,  // 174: option.OptionApp.ListCurrentOrders:output_type -> option.ListCurrentOrdersResp
-	14,  // 175: option.OptionApp.ListHistoryOrders:output_type -> option.ListHistoryOrdersResp
-	16,  // 176: option.OptionApp.ListTrades:output_type -> option.UserListTradesResp
-	18,  // 177: option.OptionApp.ListPositions:output_type -> option.UserListPositionsResp
-	20,  // 178: option.OptionApp.GetPositionDetail:output_type -> option.GetPositionDetailResp
-	22,  // 179: option.OptionApp.Exercise:output_type -> option.ExerciseResp
-	25,  // 180: option.OptionApp.ListExercises:output_type -> option.UserListExercisesResp
-	27,  // 181: option.OptionApp.ListAccounts:output_type -> option.UserListAccountsResp
-	29,  // 182: option.OptionApp.ListBills:output_type -> option.UserListBillsResp
-	32,  // 183: option.OptionAdmin.CreateContract:output_type -> option.CreateContractResp
-	30,  // 184: option.OptionAdmin.UpdateContract:output_type -> option.CommonResp
-	35,  // 185: option.OptionAdmin.GetContract:output_type -> option.GetContractResp
-	37,  // 186: option.OptionAdmin.ListContracts:output_type -> option.ListContractsResp
-	30,  // 187: option.OptionAdmin.UpdateMarket:output_type -> option.CommonResp
-	40,  // 188: option.OptionAdmin.GetMarket:output_type -> option.GetMarketResp
-	42,  // 189: option.OptionAdmin.ListMarketSnapshots:output_type -> option.ListMarketSnapshotsResp
-	44,  // 190: option.OptionAdmin.GetOrder:output_type -> option.GetOrderResp
-	46,  // 191: option.OptionAdmin.ListOrders:output_type -> option.ListOrdersResp
-	48,  // 192: option.OptionAdmin.GetTrade:output_type -> option.GetTradeResp
-	50,  // 193: option.OptionAdmin.ListTrades:output_type -> option.ListTradesResp
-	52,  // 194: option.OptionAdmin.GetPosition:output_type -> option.GetPositionResp
-	54,  // 195: option.OptionAdmin.ListPositions:output_type -> option.ListPositionsResp
-	56,  // 196: option.OptionAdmin.GetExercise:output_type -> option.GetExerciseResp
-	58,  // 197: option.OptionAdmin.ListExercises:output_type -> option.ListExercisesResp
-	60,  // 198: option.OptionAdmin.GetSettlement:output_type -> option.GetSettlementResp
-	62,  // 199: option.OptionAdmin.ListSettlements:output_type -> option.ListSettlementsResp
-	64,  // 200: option.OptionAdmin.GetAccount:output_type -> option.GetAccountResp
-	66,  // 201: option.OptionAdmin.ListAccounts:output_type -> option.ListAccountsResp
-	68,  // 202: option.OptionAdmin.GetBill:output_type -> option.GetBillResp
-	70,  // 203: option.OptionAdmin.ListBills:output_type -> option.ListBillsResp
-	72,  // 204: option.OptionInternal.SyncMarketQuote:output_type -> option.InternalCommonResp
-	74,  // 205: option.OptionTask.ProcessContractLifecycle:output_type -> option.OptionTaskResp
-	74,  // 206: option.OptionTask.CleanMarketSnapshots:output_type -> option.OptionTaskResp
+	1,   // 131: option.App.ListContracts:input_type -> option.UserListContractsReq
+	3,   // 132: option.App.GetContractDetail:input_type -> option.GetContractDetailReq
+	5,   // 133: option.App.PlaceOrder:input_type -> option.PlaceOrderReq
+	8,   // 134: option.App.CancelOrder:input_type -> option.CancelOrderReq
+	9,   // 135: option.App.GetOrderDetail:input_type -> option.GetOrderDetailReq
+	11,  // 136: option.App.ListCurrentOrders:input_type -> option.ListCurrentOrdersReq
+	13,  // 137: option.App.ListHistoryOrders:input_type -> option.ListHistoryOrdersReq
+	15,  // 138: option.App.ListTrades:input_type -> option.UserListTradesReq
+	17,  // 139: option.App.ListPositions:input_type -> option.UserListPositionsReq
+	19,  // 140: option.App.GetPositionDetail:input_type -> option.GetPositionDetailReq
+	21,  // 141: option.App.Exercise:input_type -> option.ExerciseReq
+	24,  // 142: option.App.ListExercises:input_type -> option.UserListExercisesReq
+	26,  // 143: option.App.ListAccounts:input_type -> option.UserListAccountsReq
+	28,  // 144: option.App.ListBills:input_type -> option.UserListBillsReq
+	31,  // 145: option.Admin.CreateContract:input_type -> option.CreateContractReq
+	33,  // 146: option.Admin.UpdateContract:input_type -> option.UpdateContractReq
+	34,  // 147: option.Admin.GetContract:input_type -> option.GetContractReq
+	36,  // 148: option.Admin.ListContracts:input_type -> option.ListContractsReq
+	38,  // 149: option.Admin.UpdateMarket:input_type -> option.UpdateMarketReq
+	39,  // 150: option.Admin.GetMarket:input_type -> option.GetMarketReq
+	41,  // 151: option.Admin.ListMarketSnapshots:input_type -> option.ListMarketSnapshotsReq
+	43,  // 152: option.Admin.GetOrder:input_type -> option.GetOrderReq
+	45,  // 153: option.Admin.ListOrders:input_type -> option.ListOrdersReq
+	47,  // 154: option.Admin.GetTrade:input_type -> option.GetTradeReq
+	49,  // 155: option.Admin.ListTrades:input_type -> option.ListTradesReq
+	51,  // 156: option.Admin.GetPosition:input_type -> option.GetPositionReq
+	53,  // 157: option.Admin.ListPositions:input_type -> option.ListPositionsReq
+	55,  // 158: option.Admin.GetExercise:input_type -> option.GetExerciseReq
+	57,  // 159: option.Admin.ListExercises:input_type -> option.ListExercisesReq
+	59,  // 160: option.Admin.GetSettlement:input_type -> option.GetSettlementReq
+	61,  // 161: option.Admin.ListSettlements:input_type -> option.ListSettlementsReq
+	63,  // 162: option.Admin.GetAccount:input_type -> option.GetAccountReq
+	65,  // 163: option.Admin.ListAccounts:input_type -> option.ListAccountsReq
+	67,  // 164: option.Admin.GetBill:input_type -> option.GetBillReq
+	69,  // 165: option.Admin.ListBills:input_type -> option.ListBillsReq
+	71,  // 166: option.Internal.SyncMarketQuote:input_type -> option.SyncMarketQuoteReq
+	73,  // 167: option.Task.ProcessContractLifecycle:input_type -> option.OptionTaskReq
+	73,  // 168: option.Task.CleanMarketSnapshots:input_type -> option.OptionTaskReq
+	2,   // 169: option.App.ListContracts:output_type -> option.UserListContractsResp
+	4,   // 170: option.App.GetContractDetail:output_type -> option.GetContractDetailResp
+	6,   // 171: option.App.PlaceOrder:output_type -> option.PlaceOrderResp
+	0,   // 172: option.App.CancelOrder:output_type -> option.UserCommonResp
+	10,  // 173: option.App.GetOrderDetail:output_type -> option.GetOrderDetailResp
+	12,  // 174: option.App.ListCurrentOrders:output_type -> option.ListCurrentOrdersResp
+	14,  // 175: option.App.ListHistoryOrders:output_type -> option.ListHistoryOrdersResp
+	16,  // 176: option.App.ListTrades:output_type -> option.UserListTradesResp
+	18,  // 177: option.App.ListPositions:output_type -> option.UserListPositionsResp
+	20,  // 178: option.App.GetPositionDetail:output_type -> option.GetPositionDetailResp
+	22,  // 179: option.App.Exercise:output_type -> option.ExerciseResp
+	25,  // 180: option.App.ListExercises:output_type -> option.UserListExercisesResp
+	27,  // 181: option.App.ListAccounts:output_type -> option.UserListAccountsResp
+	29,  // 182: option.App.ListBills:output_type -> option.UserListBillsResp
+	32,  // 183: option.Admin.CreateContract:output_type -> option.CreateContractResp
+	30,  // 184: option.Admin.UpdateContract:output_type -> option.CommonResp
+	35,  // 185: option.Admin.GetContract:output_type -> option.GetContractResp
+	37,  // 186: option.Admin.ListContracts:output_type -> option.ListContractsResp
+	30,  // 187: option.Admin.UpdateMarket:output_type -> option.CommonResp
+	40,  // 188: option.Admin.GetMarket:output_type -> option.GetMarketResp
+	42,  // 189: option.Admin.ListMarketSnapshots:output_type -> option.ListMarketSnapshotsResp
+	44,  // 190: option.Admin.GetOrder:output_type -> option.GetOrderResp
+	46,  // 191: option.Admin.ListOrders:output_type -> option.ListOrdersResp
+	48,  // 192: option.Admin.GetTrade:output_type -> option.GetTradeResp
+	50,  // 193: option.Admin.ListTrades:output_type -> option.ListTradesResp
+	52,  // 194: option.Admin.GetPosition:output_type -> option.GetPositionResp
+	54,  // 195: option.Admin.ListPositions:output_type -> option.ListPositionsResp
+	56,  // 196: option.Admin.GetExercise:output_type -> option.GetExerciseResp
+	58,  // 197: option.Admin.ListExercises:output_type -> option.ListExercisesResp
+	60,  // 198: option.Admin.GetSettlement:output_type -> option.GetSettlementResp
+	62,  // 199: option.Admin.ListSettlements:output_type -> option.ListSettlementsResp
+	64,  // 200: option.Admin.GetAccount:output_type -> option.GetAccountResp
+	66,  // 201: option.Admin.ListAccounts:output_type -> option.ListAccountsResp
+	68,  // 202: option.Admin.GetBill:output_type -> option.GetBillResp
+	70,  // 203: option.Admin.ListBills:output_type -> option.ListBillsResp
+	72,  // 204: option.Internal.SyncMarketQuote:output_type -> option.InternalCommonResp
+	74,  // 205: option.Task.ProcessContractLifecycle:output_type -> option.OptionTaskResp
+	74,  // 206: option.Task.CleanMarketSnapshots:output_type -> option.OptionTaskResp
 	169, // [169:207] is the sub-list for method output_type
 	131, // [131:169] is the sub-list for method input_type
 	131, // [131:131] is the sub-list for extension type_name

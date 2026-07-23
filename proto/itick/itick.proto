@@ -137,7 +137,7 @@ message KlineIntervalsResp {
 // ====================
 // app service
 // ====================
-service ItickApp {
+service App {
   // 获取允许显示的产品类型
   rpc ListVisibleCategories(ListVisibleCategoriesReq) returns (ListVisibleCategoriesResp);
 
@@ -165,7 +165,7 @@ service ItickApp {
 
 // ItickInternal exposes service-to-service market-data capabilities. Public
 // API gateways should continue to use ItickApp.
-service ItickInternal {
+service Internal {
   // Reads an authoritative snapshot from the permanent archive at or before
   // the requested business timestamp.
   rpc GetAuthoritativeSnapshot(GetAuthoritativeSnapshotReq) returns (GetAuthoritativeSnapshotResp);
@@ -594,7 +594,7 @@ message RevokeAuthoritativeSnapshotReq {
 // ====================
 // admin service
 // ====================
-service ItickAdmin {
+service Admin {
   // 产品类型列表
   rpc ListCategories(ListCategoriesReq) returns (ListCategoriesResp);
   // 产品类型
@@ -671,7 +671,7 @@ message SyncKlinesResp {
 // ====================
 // 定时任务
 // ====================
-service ItickTask {
+service Task {
   // 同步产品列表
   rpc SyncProducts(SyncProductsReq) returns (SyncProductsResp);
   // 同步K线数据

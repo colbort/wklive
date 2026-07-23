@@ -30,14 +30,14 @@ import (
 
 type ServiceContext struct {
 	Config            config.Config
-	SystemCli         system.SystemAdminClient
-	UserCli           user.UserAdminClient
-	PaymentCli        payment.PaymentAdminClient
-	ItickCli          itick.ItickAdminClient
-	AssetCli          asset.AssetAdminClient
-	OptionCli         option.OptionAdminClient
-	StakingCli        staking.StakingAdminClient
-	TradeCli          trade.TradeAdminClient
+	SystemCli         system.AdminClient
+	UserCli           user.AdminClient
+	PaymentCli        payment.AdminClient
+	ItickCli          itick.AdminClient
+	AssetCli          asset.AdminClient
+	OptionCli         option.AdminClient
+	StakingCli        staking.AdminClient
+	TradeCli          trade.AdminClient
 	NotificationHub   *ws.Hub
 	RequestEncryption *reqenc.Service
 }
@@ -92,14 +92,14 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 	return &ServiceContext{
 		Config:          c,
-		SystemCli:       system.NewSystemAdminClient(systemCli.Conn()),
-		UserCli:         user.NewUserAdminClient(userCli.Conn()),
-		PaymentCli:      payment.NewPaymentAdminClient(paymentCli.Conn()),
-		ItickCli:        itick.NewItickAdminClient(itickCli.Conn()),
-		AssetCli:        asset.NewAssetAdminClient(assetCli.Conn()),
-		OptionCli:       option.NewOptionAdminClient(optionCli.Conn()),
-		StakingCli:      staking.NewStakingAdminClient(stakingCli.Conn()),
-		TradeCli:        trade.NewTradeAdminClient(tradeCli.Conn()),
+		SystemCli:       system.NewAdminClient(systemCli.Conn()),
+		UserCli:         user.NewAdminClient(userCli.Conn()),
+		PaymentCli:      payment.NewAdminClient(paymentCli.Conn()),
+		ItickCli:        itick.NewAdminClient(itickCli.Conn()),
+		AssetCli:        asset.NewAdminClient(assetCli.Conn()),
+		OptionCli:       option.NewAdminClient(optionCli.Conn()),
+		StakingCli:      staking.NewAdminClient(stakingCli.Conn()),
+		TradeCli:        trade.NewAdminClient(tradeCli.Conn()),
 		NotificationHub: notificationHub,
 	}
 }

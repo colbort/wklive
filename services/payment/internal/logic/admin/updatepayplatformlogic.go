@@ -1,0 +1,90 @@
+package adminlogic
+
+import (
+	"context"
+	"database/sql"
+	"wklive/common/helper"
+	"wklive/common/i18n"
+	"wklive/common/utils"
+	"wklive/proto/payment"
+	"wklive/services/payment/internal/svc"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type UpdatePayPlatformLogic struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+}
+
+func NewUpdatePayPlatformLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdatePayPlatformLogic {
+	return &UpdatePayPlatformLogic{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+	}
+}
+
+// 更新平台
+func (l *UpdatePayPlatformLogic) UpdatePayPlatform(in *payment.UpdatePayPlatformReq) (*payment.CommonResp, error) {
+	var (
+		errLogic = "UpdatePayPlatform"
+	)
+	if base, err := systemAdminWriteScopeResp(l.ctx); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &payment.CommonResp{
+			Base: base,
+		}, nil
+	}
+
+	// 査询平台是否存在
+	platform, err := l.svcCtx.PayPlatformModel.FindOne(l.ctx, in.Id)
+	if err != nil {
+		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
+		return nil, err
+	}
+
+	if platform == nil {
+		return &payment.CommonResp{
+			Base: helper.ErrResp(i18n.PlatformNotFound, i18n.Translate(i18n.PlatformNotFound, l.ctx)),
+		}, nil
+	}
+
+	now := utils.NowMillis()
+	if in.PlatformName != "" {
+		platform.PlatformName = in.PlatformName
+	}
+	if in.PlatformType != 0 {
+		platform.PlatformType = int64(in.PlatformType)
+	}
+	if in.NotifyUrl != "" {
+		platform.NotifyUrl = sql.NullString{String: in.NotifyUrl, Valid: true}
+	}
+	if in.ReturnUrl != "" {
+		platform.ReturnUrl = sql.NullString{String: in.ReturnUrl, Valid: true}
+	}
+	if in.Icon != "" {
+		platform.Icon = sql.NullString{String: in.Icon, Valid: true}
+	}
+	if in.Enabled != 0 {
+		platform.Enabled = int64(in.Enabled)
+	}
+	if in.Remark != "" {
+		platform.Remark = sql.NullString{String: in.Remark, Valid: true}
+	}
+	platform.UpdateTimes = now
+
+	err = l.svcCtx.PayPlatformModel.Update(l.ctx, platform)
+	if err != nil {
+		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
+		return nil, err
+	}
+
+	l.Logger.Infof("Update pay platform success: %d", in.Id)
+
+	return &payment.CommonResp{
+		Base: helper.OkResp(),
+	}, nil
+}
