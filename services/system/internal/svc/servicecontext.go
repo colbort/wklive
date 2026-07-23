@@ -1,8 +1,8 @@
 package svc
 
 import (
-	"wklive/common/mq/kafka"
-	chatclient "wklive/services/chat/client/chat"
+	mq "wklive/common/mq/kafka"
+	chat "wklive/services/chat/client/chat"
 	"wklive/services/system/internal/config"
 	"wklive/services/system/internal/plugins/cronx"
 	"wklive/services/system/internal/tasks"
@@ -35,7 +35,7 @@ type ServiceContext struct {
 	TenantMode                  models.SysTenantModel
 	TenantDomainModel           models.SysTenantDomainModel
 	ChatMerchantModel           models.SysChatMerchantModel
-	Chat                        chatclient.Chat
+	ChatCli                     chat.Chat
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -69,6 +69,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		TenantMode:                  models.NewSysTenantModel(conn, c.CacheRedis),
 		TenantDomainModel:           models.NewSysTenantDomainModel(conn),
 		ChatMerchantModel:           models.NewSysChatMerchantModel(conn, c.CacheRedis),
-		Chat:                        chatclient.NewChat(zrpc.MustNewClient(c.InternalRpc)),
+		ChatCli:                     chat.NewChat(zrpc.MustNewClient(c.ChatRpc)),
 	}
 }

@@ -13,7 +13,7 @@ func syncChatMerchantUser(ctx context.Context, svcCtx *svc.ServiceContext, actio
 	if merchant == nil {
 		return nil
 	}
-	resp, err := svcCtx.Chat.SyncChatMerchantUser(ctx, &chat.SyncChatMerchantUserReq{
+	resp, err := svcCtx.ChatCli.SyncChatMerchantUser(ctx, &chat.SyncChatMerchantUserReq{
 		Action:       action,
 		MerchantId:   merchant.Id,
 		MerchantCode: merchant.MerchantCode,
