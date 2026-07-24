@@ -3,10 +3,10 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { getAccessToken } from '@/api/http'
+import { apiGetMyAssetSummary } from '@/api/asset'
 import {
   apiTradeCancelOrder,
   apiTradeGetLeverageConfig,
-  apiTradeGetMarginSnapshotList,
   apiTradeGetOrderList,
   apiTradeGetPositionList,
   apiTradeGetSymbolDetail,
@@ -20,7 +20,6 @@ import { useTradingDesk } from '@/composables/useTradingDesk'
 import { t } from '@/i18n'
 import type {
   ContractLeverageConfig,
-  ContractMarginSnapshot,
   ContractPosition,
   TradePlaceOrderReq,
   TradeOrder,
@@ -30,6 +29,8 @@ import type {
   TradeSymbolSeconds,
   TradeSymbolSpot,
 } from '@/types/trade'
+import type { AssetUserAsset } from '@/types/asset'
+import { formatAssetMinorAmount } from '@/utils/assetAmount'
 import { marketCategoryLabel } from '@/utils/marketCategory'
 
 type SubmitSide = 'buy' | 'sell'
@@ -82,7 +83,7 @@ const tradeSymbolDetail = ref<TradeSymbolDetail | null>(null)
 const userLeverageConfig = ref<ContractLeverageConfig | null>(null)
 const tradeOrders = ref<TradeOrder[]>([])
 const tradePositions = ref<ContractPosition[]>([])
-const marginAccounts = ref<ContractMarginSnapshot[]>([])
+const userAssets = ref<AssetUserAsset[]>([])
 const loadingTradeSymbols = ref(false)
 const loadingTradeDetail = ref(false)
 const loadingTradeAccount = ref(false)
@@ -179,28 +180,48 @@ const displaySelectedTradeSymbol = computed(() => {
     minNotional: symbol.minNotional,
   }
 })
-const selectedMarginAccount = computed(() => {
-  const settleAsset = selectedTradeSettleAsset.value.toUpperCase()
-  return (
-    marginAccounts.value.find((account) => account.marginAsset.toUpperCase() === settleAsset) ||
-    marginAccounts.value[0] ||
-    null
+const walletAvailableBalance = (walletType: number, coin: string, decimalPlaces: number) => {
+  const asset = userAssets.value.find(
+    (item) => item.walletType === walletType && item.coin.toUpperCase() === coin.toUpperCase(),
   )
+  return formatAssetMinorAmount(asset?.availableAmount || '0', decimalPlaces)
+}
+const availableBalance = computed(() => {
+  const symbol = selectedTradeSymbol.value
+  if (!symbol) return '0'
+  if (symbol.productType === PRODUCT_TYPE_SPOT) {
+    return walletAvailableBalance(1, symbol.quoteAsset, 4)
+  }
+  return walletAvailableBalance(3, selectedTradeSettleAsset.value, 4)
 })
-const availableBalance = computed(() => selectedMarginAccount.value?.availableBalance || '0')
 const longPositionQty = computed(() => {
+  if (selectedTradeSymbol.value?.productType === PRODUCT_TYPE_SPOT) {
+    const quoteBalance = Number(availableBalance.value)
+    const price = Number(selectedQuote.value?.lastPrice || placeholderPrice.value)
+    if (!Number.isFinite(quoteBalance) || !Number.isFinite(price) || price <= 0) return '0'
+    return (quoteBalance / price).toFixed(selectedTradeSymbol.value.qtyScale)
+  }
   const position = tradePositions.value.find((item) => item.positionSide === POSITION_SIDE_LONG)
   return position?.availQty || position?.qty || '0'
 })
 const shortPositionQty = computed(() => {
+  if (selectedTradeSymbol.value?.productType === PRODUCT_TYPE_SPOT) {
+    return walletAvailableBalance(
+      1,
+      selectedTradeSymbol.value.baseAsset,
+      selectedTradeSymbol.value.qtyScale,
+    )
+  }
   const position = tradePositions.value.find((item) => item.positionSide === POSITION_SIDE_SHORT)
   return position?.availQty || position?.qty || '0'
 })
 const activeLeverageConfig = computed(() => {
   if (!selectedTradeSymbol.value) return null
-  return (tradeSymbolDetail.value?.leverageConfigs || []).find((config) => {
-    return config.enabled === 1 && config.marginMode === marginMode.value
-  }) || null
+  return (
+    (tradeSymbolDetail.value?.leverageConfigs || []).find((config) => {
+      return config.enabled === 1 && config.marginMode === marginMode.value
+    }) || null
+  )
 })
 const configuredLeverageValues = computed(() => {
   const values = (tradeSymbolDetail.value?.leverageConfigs || [])
@@ -211,10 +232,7 @@ const configuredLeverageValues = computed(() => {
   ).sort((left, right) => left - right)
 })
 const maxTradeLeverage = computed(() => {
-  return Math.max(
-    1,
-    configuredLeverageValues.value[configuredLeverageValues.value.length - 1] || 0,
-  )
+  return Math.max(1, configuredLeverageValues.value[configuredLeverageValues.value.length - 1] || 0)
 })
 const tradeLeverageValues = computed(() => {
   if (configuredLeverageValues.value.length) return configuredLeverageValues.value
@@ -269,7 +287,7 @@ watch(
     userLeverageConfig.value = null
     tradeOrders.value = []
     tradePositions.value = []
-    marginAccounts.value = []
+    userAssets.value = []
 
     if (!symbolId) return
     void loadTradeSymbolDetail(symbolId)
@@ -586,7 +604,7 @@ async function refreshTradeAccount() {
   if (!isLoggedIn.value || !symbol) {
     tradeOrders.value = []
     tradePositions.value = []
-    marginAccounts.value = []
+    userAssets.value = []
     loadingTradeAccount.value = false
     loadingTradeOrders.value = false
     return
@@ -603,15 +621,13 @@ async function refreshTradeAccount() {
   }
 
   try {
-    const [ordersResult, positionsResult, accountsResult] = await Promise.allSettled([
+    const [ordersResult, positionsResult, assetsResult] = await Promise.allSettled([
       apiTradeGetOrderList(orderParams),
       apiTradeGetPositionList({
         contractType: symbol.contractType,
         symbolId: symbol.id,
       }),
-      apiTradeGetMarginSnapshotList({
-        marginAsset: selectedTradeSettleAsset.value,
-      }),
+      apiGetMyAssetSummary({}),
     ])
 
     if (accountRequestId !== tradeAccountRequestId) return
@@ -634,10 +650,10 @@ async function refreshTradeAccount() {
       tradePositions.value = []
     }
 
-    if (accountsResult.status === 'fulfilled' && isSuccessCode(accountsResult.value.code)) {
-      marginAccounts.value = accountsResult.value.data || []
+    if (assetsResult.status === 'fulfilled' && isSuccessCode(assetsResult.value.code)) {
+      userAssets.value = assetsResult.value.data?.assets || []
     } else {
-      marginAccounts.value = []
+      userAssets.value = []
     }
   } catch (error) {
     console.warn('refresh trade account failed', error)
@@ -647,7 +663,7 @@ async function refreshTradeAccount() {
         ordersError.value = t('trade.ordersLoadFailed')
       }
       tradePositions.value = []
-      marginAccounts.value = []
+      userAssets.value = []
     }
   } finally {
     if (accountRequestId === tradeAccountRequestId) {
@@ -726,8 +742,7 @@ async function submitTradeOrder(side: SubmitSide) {
     return
   }
 
-  const isLimitOrder =
-    symbol.productType !== PRODUCT_TYPE_SECONDS && orderMode.value === 'limit'
+  const isLimitOrder = symbol.productType !== PRODUCT_TYPE_SECONDS && orderMode.value === 'limit'
   const price = tradePrice.value.trim()
   if (isLimitOrder && !isPositiveDecimal(price)) {
     tradeError.value = t('trade.inputValidPrice')

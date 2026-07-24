@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"wklive/common/generate"
@@ -819,6 +820,17 @@ func (l *PlaceOrderLogic) bestOppositePrice(tenantID int64, symbol *models.TTrad
 			}
 		}
 	}
+	if symbol.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SPOT) {
+		if source := l.spotReferencePriceSource(symbol); source != "" {
+			quote, quoteErr := NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).getValidQuoteKind("FINAL_QUOTE", source, symbol.Id, maxReferencePriceAge)
+			if quoteErr == nil {
+				price := mustParseFloat(quote.LastPrice)
+				if price.IsPositive() {
+					return price, nil
+				}
+			}
+		}
+	}
 
 	snapshot, snapshotErr := l.svcCtx.TradeMarketSnapshotModel.FindLatestConfirmed(l.ctx, tenantID, symbol.Id, nowMillis()-maxReferencePriceAge)
 	if snapshotErr != nil {
@@ -837,4 +849,38 @@ func (l *PlaceOrderLogic) bestOppositePrice(tenantID int64, symbol *models.TTrad
 		return snapshot.IndexPrice, nil
 	}
 	return decimal.Zero, errors.New("no valid reference price for market order")
+}
+
+func (l *PlaceOrderLogic) spotReferencePriceSource(symbol *models.TTradeSymbol) string {
+	secondsSymbol, err := l.svcCtx.TradeSymbolModel.FindOneByTenantIdSymbolProductTypeContractTypeContractValueType(
+		l.ctx, symbol.TenantId, symbol.Symbol, int64(trade.ProductType_PRODUCT_TYPE_SECONDS), 0, 0,
+	)
+	if err == nil {
+		configs, configErr := l.svcCtx.TradeSymbolSecondsModel.FindAllByTenantIdSymbolId(l.ctx, symbol.TenantId, secondsSymbol.Id)
+		if configErr == nil {
+			for _, config := range configs {
+				if source := strings.TrimSpace(config.StartPriceSource); source != "" {
+					return source
+				}
+				if source := strings.TrimSpace(config.SettlementPriceSource); source != "" {
+					return source
+				}
+			}
+		}
+	}
+	for _, variant := range [][2]int64{{1, 1}, {1, 2}, {2, 1}, {2, 2}} {
+		contractSymbol, findErr := l.svcCtx.TradeSymbolModel.FindOneByTenantIdSymbolProductTypeContractTypeContractValueType(
+			l.ctx, symbol.TenantId, symbol.Symbol, int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE), variant[0], variant[1],
+		)
+		if findErr != nil {
+			continue
+		}
+		config, configErr := l.svcCtx.TradeSymbolContractModel.FindOneByTenantIdSymbolId(l.ctx, symbol.TenantId, contractSymbol.Id)
+		if configErr == nil {
+			if source := strings.TrimSpace(config.MarkPriceSource); source != "" {
+				return source
+			}
+		}
+	}
+	return ""
 }
