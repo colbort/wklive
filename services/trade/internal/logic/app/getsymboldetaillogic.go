@@ -35,9 +35,15 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 	if err != nil {
 		return nil, err
 	}
-	item, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
+	return QuerySymbolDetail(l.ctx, l.svcCtx, tenantId, in.SymbolId)
+}
+
+// QuerySymbolDetail is shared by the user-facing App service and trusted
+// service-to-service callers. The caller must resolve and validate tenantId.
+func QuerySymbolDetail(ctx context.Context, svcCtx *svc.ServiceContext, tenantId, symbolId int64) (*trade.GetSymbolDetailResp, error) {
+	item, err := svcCtx.TradeSymbolModel.FindOne(ctx, symbolId)
 	if errors.Is(err, models.ErrNotFound) || (err == nil && item.TenantId != tenantId) {
-		return &trade.GetSymbolDetailResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
+		return &trade.GetSymbolDetailResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, ctx))}, nil
 	}
 	if err != nil {
 		return nil, err
@@ -58,7 +64,7 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 	err = mr.Finish(
 		func() error {
 			var queryErr error
-			spot, queryErr = l.svcCtx.TradeSymbolSpotModel.FindOneByTenantIdSymbolId(l.ctx, configTenantId, in.SymbolId)
+			spot, queryErr = svcCtx.TradeSymbolSpotModel.FindOneByTenantIdSymbolId(ctx, configTenantId, symbolId)
 			if errors.Is(queryErr, models.ErrNotFound) {
 				return nil
 			}
@@ -66,7 +72,7 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 		},
 		func() error {
 			var queryErr error
-			contractCfg, queryErr = l.svcCtx.TradeSymbolContractModel.FindOneByTenantIdSymbolId(l.ctx, configTenantId, in.SymbolId)
+			contractCfg, queryErr = svcCtx.TradeSymbolContractModel.FindOneByTenantIdSymbolId(ctx, configTenantId, symbolId)
 			if errors.Is(queryErr, models.ErrNotFound) {
 				return nil
 			}
@@ -74,8 +80,8 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 		},
 		func() error {
 			var queryErr error
-			configs, _, queryErr = l.svcCtx.SymbolLeverageCfgModel.FindPage(l.ctx, models.TradeSymbolLeverageConfigPageFilter{
-				TenantId: configTenantId, SymbolId: in.SymbolId, Enabled: 1,
+			configs, _, queryErr = svcCtx.SymbolLeverageCfgModel.FindPage(ctx, models.TradeSymbolLeverageConfigPageFilter{
+				TenantId: configTenantId, SymbolId: symbolId, Enabled: 1,
 			}, 0, 100)
 			if errors.Is(queryErr, models.ErrNotFound) {
 				return nil
@@ -84,7 +90,7 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 		},
 		func() error {
 			var queryErr error
-			secondsConfigs, queryErr = l.svcCtx.TradeSymbolSecondsModel.FindAllByTenantIdSymbolId(l.ctx, configTenantId, in.SymbolId)
+			secondsConfigs, queryErr = svcCtx.TradeSymbolSecondsModel.FindAllByTenantIdSymbolId(ctx, configTenantId, symbolId)
 			if errors.Is(queryErr, models.ErrNotFound) {
 				return nil
 			}
@@ -92,7 +98,7 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 		},
 		func() error {
 			var queryErr error
-			sessions, queryErr = l.svcCtx.TradeSymbolSessionModel.FindAllByTenantIdSymbolId(l.ctx, configTenantId, in.SymbolId)
+			sessions, queryErr = svcCtx.TradeSymbolSessionModel.FindAllByTenantIdSymbolId(ctx, configTenantId, symbolId)
 			if errors.Is(queryErr, models.ErrNotFound) {
 				return nil
 			}
@@ -109,7 +115,7 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 		resp.Data.Contract = contractSymbolToProto(contractCfg)
 	}
 	for _, cfg := range configs {
-		defaultLeverage, findErr := findDefaultLeverage(l.ctx, l.svcCtx.SymbolLeverageDefaultModel, cfg.TenantId, cfg.SymbolId, cfg.MarginMode)
+		defaultLeverage, findErr := findDefaultLeverage(ctx, svcCtx.SymbolLeverageDefaultModel, cfg.TenantId, cfg.SymbolId, cfg.MarginMode)
 		if findErr != nil {
 			return nil, findErr
 		}

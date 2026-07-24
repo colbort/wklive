@@ -24,7 +24,5 @@ func NewGetQuoteOrderListLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *GetQuoteOrderListLogic) GetQuoteOrderList(in *liquidity.GetQuoteOrderListReq) (*liquidity.GetQuoteOrderListResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &liquidity.GetQuoteOrderListResp{}, nil
+	return listQuoteOrders(l.ctx, l.svcCtx, in)
 }

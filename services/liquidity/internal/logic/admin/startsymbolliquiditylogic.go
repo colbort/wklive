@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 
+	"wklive/common/helper"
 	"wklive/proto/liquidity"
 	"wklive/services/liquidity/internal/svc"
 
@@ -24,7 +25,8 @@ func NewStartSymbolLiquidityLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *StartSymbolLiquidityLogic) StartSymbolLiquidity(in *liquidity.SymbolActionReq) (*liquidity.CommonResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &liquidity.CommonResp{}, nil
+	if err := changeSymbolStatus(l.ctx, l.svcCtx, in, liquidity.SymbolLiquidityStatus_SYMBOL_LIQUIDITY_STATUS_RUNNING); err != nil {
+		return nil, err
+	}
+	return &liquidity.CommonResp{Base: helper.OkResp()}, nil
 }

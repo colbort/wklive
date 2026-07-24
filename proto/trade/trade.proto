@@ -63,6 +63,8 @@ message GetSymbolListResp {
 
 message GetSymbolDetailReq {
   int64 symbol_id = 1;
+  // 内部服务调用时显式传租户；App 接口仍从可信元数据读取租户。
+  int64 tenant_id = 2;
 }
 
 message GetSymbolDetailResp {
@@ -1209,6 +1211,9 @@ message RetrySettlementInstructionReq {
 
 // 交易服务内部接口
 service Trade {
+  // 内部服务获取指定交易对配置，不依赖用户端登录上下文。
+  rpc GetSymbolDetail(GetSymbolDetailReq) returns (GetSymbolDetailResp);
+
   // 记录持仓历史信息
   rpc RecordPositionHistory(RecordPositionHistoryReq) returns (InternalCommonResp);
 

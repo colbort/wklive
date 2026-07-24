@@ -24,7 +24,5 @@ func NewGetInventorySnapshotListLogic(ctx context.Context, svcCtx *svc.ServiceCo
 }
 
 func (l *GetInventorySnapshotListLogic) GetInventorySnapshotList(in *liquidity.GetInventorySnapshotListReq) (*liquidity.GetInventorySnapshotListResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &liquidity.GetInventorySnapshotListResp{}, nil
+	return listInventories(l.ctx, l.svcCtx, in)
 }

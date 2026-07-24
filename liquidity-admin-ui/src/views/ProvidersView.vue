@@ -16,7 +16,7 @@ const providerType = (v:number) => v===1?"内部做市":"外部流动性";
 <template>
   <div class="page-head"><div><h1>流动性提供方</h1><p>管理内部做市账户与外部交易所通道</p></div><el-button type="primary" @click="dialog=true">＋ 新建提供方</el-button></div>
   <section class="panel">
-    <div class="toolbar"><el-input v-model="query.keyword" placeholder="名称 / 编码 / 场所" clearable style="width:260px"/><el-select v-model="query.status" placeholder="全部状态" clearable style="width:150px"><el-option label="已启用" :value="1"/><el-option label="已停用" :value="2"/></el-select><el-button @click="load">查询</el-button></div>
+    <div class="toolbar"><el-input v-model="query.keyword" placeholder="名称 / 编码 / 场所" clearable style="width:260px"/><el-select v-model="query.status" placeholder="全部状态" clearable style="width:150px"><el-option label="已启用" :value="1"/><el-option label="已停用" :value="2"/></el-select><el-button class="search-button" type="primary" @click="load">查询</el-button></div>
     <div class="table-wrap"><el-table :data="rows" v-loading="loading">
       <el-table-column prop="providerCode" label="提供方编码" width="170"><template #default="{row}"><span class="mono">{{ row.providerCode }}</span></template></el-table-column>
       <el-table-column prop="providerName" label="名称" min-width="170"/><el-table-column label="类型" width="130"><template #default="{row}">{{ providerType(row.providerType) }}</template></el-table-column>

@@ -2,8 +2,13 @@ package adminlogic
 
 import (
 	"context"
+	"fmt"
+	"strings"
+	"time"
 
+	"wklive/common/helper"
 	"wklive/proto/liquidity"
+	"wklive/services/liquidity/internal/logic/helpers"
 	"wklive/services/liquidity/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -24,7 +29,36 @@ func NewUpdateProviderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Up
 }
 
 func (l *UpdateProviderLogic) UpdateProvider(in *liquidity.UpdateProviderReq) (*liquidity.ProviderResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &liquidity.ProviderResp{}, nil
+	if err := helpers.RequireTenant(in.TenantId); err != nil {
+		return nil, err
+	}
+	row, err := l.svcCtx.ProviderModel.FindOne(l.ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
+	if row.TenantId != in.TenantId {
+		return nil, fmt.Errorf("provider not found")
+	}
+	if row.Version != in.Version {
+		return nil, fmt.Errorf("provider version conflict")
+	}
+	if strings.TrimSpace(in.ProviderName) == "" {
+		return nil, fmt.Errorf("provider_name is required")
+	}
+	row.ProviderName = strings.TrimSpace(in.ProviderName)
+	row.TradeUserId = in.TradeUserId
+	row.VenueCode = strings.TrimSpace(in.VenueCode)
+	row.Environment = int64(in.Environment)
+	if strings.TrimSpace(in.CredentialRef) != "" {
+		row.CredentialRef = strings.TrimSpace(in.CredentialRef)
+	}
+	row.AccountRef = strings.TrimSpace(in.AccountRef)
+	row.RateLimitPerSecond = int64(in.RateLimitPerSecond)
+	row.Remark = strings.TrimSpace(in.Remark)
+	row.Version++
+	row.UpdateTimes = time.Now().UnixMilli()
+	if err := l.svcCtx.ProviderModel.Update(l.ctx, row); err != nil {
+		return nil, err
+	}
+	return &liquidity.ProviderResp{Base: helper.OkResp(), Data: helpers.ProviderToProto(row)}, nil
 }

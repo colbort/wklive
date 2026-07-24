@@ -24,7 +24,5 @@ func NewGetQuoteCycleListLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *GetQuoteCycleListLogic) GetQuoteCycleList(in *liquidity.GetQuoteCycleListReq) (*liquidity.GetQuoteCycleListResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &liquidity.GetQuoteCycleListResp{}, nil
+	return listQuoteCycles(l.ctx, l.svcCtx, in)
 }

@@ -24,7 +24,5 @@ func NewGetExternalFillListLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *GetExternalFillListLogic) GetExternalFillList(in *liquidity.GetExternalFillListReq) (*liquidity.GetExternalFillListResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &liquidity.GetExternalFillListResp{}, nil
+	return listExternalFills(l.ctx, l.svcCtx, in)
 }

@@ -24,7 +24,5 @@ func NewGetHedgeTaskListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *GetHedgeTaskListLogic) GetHedgeTaskList(in *liquidity.GetHedgeTaskListReq) (*liquidity.GetHedgeTaskListResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &liquidity.GetHedgeTaskListResp{}, nil
+	return listHedgeTasks(l.ctx, l.svcCtx, in)
 }

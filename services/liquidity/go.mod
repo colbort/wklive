@@ -6,7 +6,9 @@ require (
 	github.com/zeromicro/go-zero v1.10.2
 	google.golang.org/grpc v1.81.1
 	wklive/common v0.0.0-00010101000000-000000000000
+	wklive/proto/common v0.0.0-00010101000000-000000000000
 	wklive/proto/liquidity v0.0.0-00010101000000-000000000000
+	wklive/proto/trade v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -101,7 +103,6 @@ require (
 	sigs.k8s.io/randfill v1.0.0 // indirect
 	sigs.k8s.io/structured-merge-diff/v6 v6.3.0 // indirect
 	sigs.k8s.io/yaml v1.6.0 // indirect
-	wklive/proto/common v0.0.0-00010101000000-000000000000 // indirect
 )
 
 replace wklive/common => ../../common
@@ -109,3 +110,5 @@ replace wklive/common => ../../common
 replace wklive/proto/common => ../../proto/common
 
 replace wklive/proto/liquidity => ../../proto/liquidity
+
+replace wklive/proto/trade => ../../proto/trade

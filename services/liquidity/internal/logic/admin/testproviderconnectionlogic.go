@@ -2,8 +2,12 @@ package adminlogic
 
 import (
 	"context"
+	"fmt"
+	"time"
 
+	"wklive/common/helper"
 	"wklive/proto/liquidity"
+	"wklive/services/liquidity/internal/logic/helpers"
 	"wklive/services/liquidity/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -24,7 +28,42 @@ func NewTestProviderConnectionLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 func (l *TestProviderConnectionLogic) TestProviderConnection(in *liquidity.TestProviderConnectionReq) (*liquidity.ProviderHealthResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &liquidity.ProviderHealthResp{}, nil
+	if err := helpers.RequireTenant(in.TenantId); err != nil {
+		return nil, err
+	}
+	row, err := l.svcCtx.ProviderModel.FindOne(l.ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
+	if row.TenantId != in.TenantId {
+		return nil, fmt.Errorf("provider not found")
+	}
+	now := time.Now().UnixMilli()
+	health := liquidity.HealthStatus_HEALTH_STATUS_HEALTHY
+	message := "internal provider configuration is valid"
+	if liquidity.ProviderType(row.ProviderType) == liquidity.ProviderType_PROVIDER_TYPE_EXTERNAL {
+		adapter, adapterErr := l.svcCtx.ProviderAdapters.Get(row.VenueCode)
+		if adapterErr != nil {
+			health = liquidity.HealthStatus_HEALTH_STATUS_UNHEALTHY
+			message = adapterErr.Error()
+		} else if healthErr := adapter.Health(l.ctx, row); healthErr != nil {
+			health = liquidity.HealthStatus_HEALTH_STATUS_UNHEALTHY
+			message = healthErr.Error()
+		} else {
+			message = "external provider connection is healthy"
+		}
+	}
+	row.LastHealthStatus, row.LastHealthAt, row.UpdateTimes = int64(health), now, now
+	if health == liquidity.HealthStatus_HEALTH_STATUS_HEALTHY {
+		row.LastErrorMsg = ""
+	} else {
+		row.LastErrorMsg = message
+	}
+	row.Version++
+	if err := l.svcCtx.ProviderModel.Update(l.ctx, row); err != nil {
+		return nil, err
+	}
+	return &liquidity.ProviderHealthResp{
+		Base: helper.OkResp(), HealthStatus: health, CheckedAt: now, Message: message,
+	}, nil
 }

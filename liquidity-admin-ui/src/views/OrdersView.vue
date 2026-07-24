@@ -11,7 +11,7 @@ const text=(row:Record<string,unknown>,...keys:string[])=>String(keys.map(k=>row
   <div class="page-head"><div><h1>订单与成交</h1><p>追踪内部报价单与路由至外部场所的订单</p></div></div>
   <section class="panel">
     <el-tabs v-model="tab" class="tabs"><el-tab-pane label="内部报价订单" name="quotes"/><el-tab-pane label="外部路由订单" name="external"/></el-tabs>
-    <div class="toolbar"><el-input v-model="query.keyword" placeholder="订单号 / Client Order ID" clearable style="width:280px"/><el-input v-model="query.status" placeholder="状态值" style="width:130px"/><el-button @click="load">查询</el-button></div>
+    <div class="toolbar"><el-input v-model="query.keyword" placeholder="订单号 / Client Order ID" clearable style="width:280px"/><el-input v-model="query.status" placeholder="状态值" style="width:130px"/><el-button class="search-button" type="primary" @click="load">查询</el-button></div>
     <div class="table-wrap"><el-table :data="rows" v-loading="loading">
       <el-table-column label="订单号" min-width="190"><template #default="{row}"><span class="mono">{{ text(row,"quoteNo","orderNo") }}</span></template></el-table-column>
       <el-table-column label="交易对ID" width="105"><template #default="{row}">{{ text(row,"symbolId") }}</template></el-table-column>

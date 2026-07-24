@@ -23,6 +23,12 @@ func NewTradeServer(svcCtx *svc.ServiceContext) *TradeServer {
 	}
 }
 
+// 内部服务获取指定交易对配置，不依赖用户端登录上下文。
+func (s *TradeServer) GetSymbolDetail(ctx context.Context, in *trade.GetSymbolDetailReq) (*trade.GetSymbolDetailResp, error) {
+	l := tradelogic.NewGetSymbolDetailLogic(ctx, s.svcCtx)
+	return l.GetSymbolDetail(in)
+}
+
 // 记录持仓历史信息
 func (s *TradeServer) RecordPositionHistory(ctx context.Context, in *trade.RecordPositionHistoryReq) (*trade.InternalCommonResp, error) {
 	l := tradelogic.NewRecordPositionHistoryLogic(ctx, s.svcCtx)

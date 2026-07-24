@@ -2539,6 +2539,7 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
+	Trade_GetSymbolDetail_FullMethodName       = "/trade.Trade/GetSymbolDetail"
 	Trade_RecordPositionHistory_FullMethodName = "/trade.Trade/RecordPositionHistory"
 	Trade_CreateTradeEvent_FullMethodName      = "/trade.Trade/CreateTradeEvent"
 	Trade_CheckOrderRisk_FullMethodName        = "/trade.Trade/CheckOrderRisk"
@@ -2550,6 +2551,8 @@ const (
 //
 // 交易服务内部接口
 type TradeClient interface {
+	// 内部服务获取指定交易对配置，不依赖用户端登录上下文。
+	GetSymbolDetail(ctx context.Context, in *GetSymbolDetailReq, opts ...grpc.CallOption) (*GetSymbolDetailResp, error)
 	// 记录持仓历史信息
 	RecordPositionHistory(ctx context.Context, in *RecordPositionHistoryReq, opts ...grpc.CallOption) (*InternalCommonResp, error)
 	// 创建交易事件
@@ -2564,6 +2567,16 @@ type tradeClient struct {
 
 func NewTradeClient(cc grpc.ClientConnInterface) TradeClient {
 	return &tradeClient{cc}
+}
+
+func (c *tradeClient) GetSymbolDetail(ctx context.Context, in *GetSymbolDetailReq, opts ...grpc.CallOption) (*GetSymbolDetailResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSymbolDetailResp)
+	err := c.cc.Invoke(ctx, Trade_GetSymbolDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *tradeClient) RecordPositionHistory(ctx context.Context, in *RecordPositionHistoryReq, opts ...grpc.CallOption) (*InternalCommonResp, error) {
@@ -2602,6 +2615,8 @@ func (c *tradeClient) CheckOrderRisk(ctx context.Context, in *CheckOrderRiskReq,
 //
 // 交易服务内部接口
 type TradeServer interface {
+	// 内部服务获取指定交易对配置，不依赖用户端登录上下文。
+	GetSymbolDetail(context.Context, *GetSymbolDetailReq) (*GetSymbolDetailResp, error)
 	// 记录持仓历史信息
 	RecordPositionHistory(context.Context, *RecordPositionHistoryReq) (*InternalCommonResp, error)
 	// 创建交易事件
@@ -2618,6 +2633,9 @@ type TradeServer interface {
 // pointer dereference when methods are called.
 type UnimplementedTradeServer struct{}
 
+func (UnimplementedTradeServer) GetSymbolDetail(context.Context, *GetSymbolDetailReq) (*GetSymbolDetailResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSymbolDetail not implemented")
+}
 func (UnimplementedTradeServer) RecordPositionHistory(context.Context, *RecordPositionHistoryReq) (*InternalCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RecordPositionHistory not implemented")
 }
@@ -2646,6 +2664,24 @@ func RegisterTradeServer(s grpc.ServiceRegistrar, srv TradeServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&Trade_ServiceDesc, srv)
+}
+
+func _Trade_GetSymbolDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSymbolDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeServer).GetSymbolDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Trade_GetSymbolDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeServer).GetSymbolDetail(ctx, req.(*GetSymbolDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Trade_RecordPositionHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -2709,6 +2745,10 @@ var Trade_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "trade.Trade",
 	HandlerType: (*TradeServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetSymbolDetail",
+			Handler:    _Trade_GetSymbolDetail_Handler,
+		},
 		{
 			MethodName: "RecordPositionHistory",
 			Handler:    _Trade_RecordPositionHistory_Handler,

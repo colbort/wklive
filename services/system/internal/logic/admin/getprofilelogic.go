@@ -64,7 +64,9 @@ func (l *GetProfileLogic) GetProfile(in *system.Empty) (*system.ProfileResp, err
 	}
 
 	// 4) menus flat
-	menus, err := l.svcCtx.MenuModel.FindByIds(l.ctx, menuIds, 1, 1)
+	// 查询全部已启用的授权记录：visible=2 的按钮不展示在菜单树中，
+	// 但必须参与 perms 构建，否则前端和 RBAC 都拿不到操作权限。
+	menus, err := l.svcCtx.MenuModel.FindByIds(l.ctx, menuIds, 0, 1)
 	if err != nil {
 		return nil, err
 	}
@@ -110,11 +112,15 @@ func buildMenuTreeAndPerms(rows []*models.SysMenu) ([]*system.SysMenuNode, []str
 
 	// 1. 创建节点；按钮只收集 perms，不放入 tree
 	for _, r := range rows {
-		// 收集按钮权限
+		// 页面、接口和按钮都可能配置权限标识，统一加入权限集合。
+		if r.Perms != "" {
+			permsSet[r.Perms] = struct{}{}
+		}
+		// 按钮只参与权限判断，不放入菜单树。
 		if r.MenuType == int64(system.MenuType_MENU_TYPE_BUTTON) {
-			if r.Perms != "" {
-				permsSet[r.Perms] = struct{}{}
-			}
+			continue
+		}
+		if r.Visible != int64(common.Switch_SWITCH_ON) {
 			continue
 		}
 

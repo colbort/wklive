@@ -24,7 +24,5 @@ func NewGetReconcileBatchListLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *GetReconcileBatchListLogic) GetReconcileBatchList(in *liquidity.GetReconcileBatchListReq) (*liquidity.GetReconcileBatchListResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &liquidity.GetReconcileBatchListResp{}, nil
+	return listReconcileBatches(l.ctx, l.svcCtx, in)
 }

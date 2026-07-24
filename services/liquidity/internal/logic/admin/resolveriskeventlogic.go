@@ -2,7 +2,11 @@ package adminlogic
 
 import (
 	"context"
+	"fmt"
+	"strings"
+	"time"
 
+	"wklive/common/helper"
 	"wklive/proto/liquidity"
 	"wklive/services/liquidity/internal/svc"
 
@@ -24,7 +28,32 @@ func NewResolveRiskEventLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *ResolveRiskEventLogic) ResolveRiskEvent(in *liquidity.ResolveRiskEventReq) (*liquidity.CommonResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &liquidity.CommonResp{}, nil
+	row, err := l.svcCtx.RiskEventModel.FindOne(l.ctx, in.RiskEventId)
+	if err != nil {
+		return nil, err
+	}
+	if row.TenantId != in.TenantId {
+		return nil, fmt.Errorf("risk event not found")
+	}
+	if in.Status != liquidity.RiskEventStatus_RISK_EVENT_STATUS_RECOVERED &&
+		in.Status != liquidity.RiskEventStatus_RISK_EVENT_STATUS_CLOSED {
+		return nil, fmt.Errorf("risk event can only be recovered or closed")
+	}
+	if row.Status == int64(liquidity.RiskEventStatus_RISK_EVENT_STATUS_CLOSED) {
+		return nil, fmt.Errorf("risk event is already closed")
+	}
+	now := time.Now().UnixMilli()
+	row.Status, row.OperatorId, row.UpdateTimes = int64(in.Status), in.OperatorId, now
+	if in.Status == liquidity.RiskEventStatus_RISK_EVENT_STATUS_RECOVERED {
+		row.RecoveredAt = now
+	} else {
+		row.ClosedAt = now
+	}
+	if resolution := strings.TrimSpace(in.Resolution); resolution != "" {
+		row.Message = row.Message + " | resolution: " + resolution
+	}
+	if err := l.svcCtx.RiskEventModel.Update(l.ctx, row); err != nil {
+		return nil, err
+	}
+	return &liquidity.CommonResp{Base: helper.OkResp()}, nil
 }

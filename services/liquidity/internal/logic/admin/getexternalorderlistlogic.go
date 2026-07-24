@@ -24,7 +24,5 @@ func NewGetExternalOrderListLogic(ctx context.Context, svcCtx *svc.ServiceContex
 }
 
 func (l *GetExternalOrderListLogic) GetExternalOrderList(in *liquidity.GetExternalOrderListReq) (*liquidity.GetExternalOrderListResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &liquidity.GetExternalOrderListResp{}, nil
+	return listExternalOrders(l.ctx, l.svcCtx, in)
 }

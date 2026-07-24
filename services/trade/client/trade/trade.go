@@ -142,6 +142,8 @@ type (
 	UserCommonResp                   = trade.UserCommonResp
 
 	Trade interface {
+		// 内部服务获取指定交易对配置，不依赖用户端登录上下文。
+		GetSymbolDetail(ctx context.Context, in *GetSymbolDetailReq, opts ...grpc.CallOption) (*GetSymbolDetailResp, error)
 		// 记录持仓历史信息
 		RecordPositionHistory(ctx context.Context, in *RecordPositionHistoryReq, opts ...grpc.CallOption) (*InternalCommonResp, error)
 		// 创建交易事件
@@ -159,6 +161,12 @@ func NewTrade(cli zrpc.Client) Trade {
 	return &defaultTrade{
 		cli: cli,
 	}
+}
+
+// 内部服务获取指定交易对配置，不依赖用户端登录上下文。
+func (m *defaultTrade) GetSymbolDetail(ctx context.Context, in *GetSymbolDetailReq, opts ...grpc.CallOption) (*GetSymbolDetailResp, error) {
+	client := trade.NewTradeClient(m.cli.Conn())
+	return client.GetSymbolDetail(ctx, in, opts...)
 }
 
 // 记录持仓历史信息

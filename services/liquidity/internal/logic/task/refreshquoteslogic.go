@@ -24,7 +24,8 @@ func NewRefreshQuotesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ref
 }
 
 func (l *RefreshQuotesLogic) RefreshQuotes(in *liquidity.LiquidityTaskReq) (*liquidity.LiquidityTaskResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &liquidity.LiquidityTaskResp{}, nil
+	if err := validateTask(in); err != nil {
+		return nil, err
+	}
+	return taskDependencyUnavailable("quote refresh"), nil
 }

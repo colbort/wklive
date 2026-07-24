@@ -24,7 +24,5 @@ func NewGetReconcileDetailListLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 func (l *GetReconcileDetailListLogic) GetReconcileDetailList(in *liquidity.GetReconcileDetailListReq) (*liquidity.GetReconcileDetailListResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &liquidity.GetReconcileDetailListResp{}, nil
+	return listReconcileDetails(l.ctx, l.svcCtx, in)
 }

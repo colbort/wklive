@@ -24,7 +24,8 @@ func NewPublishOutboxEventsLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *PublishOutboxEventsLogic) PublishOutboxEvents(in *liquidity.LiquidityTaskReq) (*liquidity.LiquidityTaskResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &liquidity.LiquidityTaskResp{}, nil
+	if err := validateTask(in); err != nil {
+		return nil, err
+	}
+	return taskDependencyUnavailable("outbox publisher"), nil
 }

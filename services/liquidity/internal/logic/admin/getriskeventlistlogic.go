@@ -24,7 +24,5 @@ func NewGetRiskEventListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *GetRiskEventListLogic) GetRiskEventList(in *liquidity.GetRiskEventListReq) (*liquidity.GetRiskEventListResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &liquidity.GetRiskEventListResp{}, nil
+	return listRiskEvents(l.ctx, l.svcCtx, in)
 }
