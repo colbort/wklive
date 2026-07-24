@@ -7,15 +7,23 @@ const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
 const title = computed(() => String(route.meta.title || "流动性管理"));
-const menus = [
-  ["/dashboard", "◫", "运行总览"],
-  ["/providers", "⬡", "流动性提供方"],
-  ["/symbols", "⌁", "交易对策略"],
-  ["/orders", "⇄", "订单与成交"],
-  ["/hedges", "⟲", "对冲任务"],
-  ["/risks", "△", "风险事件"],
-  ["/reconcile", "≋", "外部对账"],
+const allMenus = [
+  { path: "/dashboard", icon: "◫", label: "运行总览", perms: ["liquidity:dashboard:view"] },
+  { path: "/providers", icon: "⬡", label: "流动性提供方", perms: ["liquidity:provider:list"] },
+  { path: "/symbols", icon: "⌁", label: "交易对策略", perms: ["liquidity:strategy:list"] },
+  {
+    path: "/orders",
+    icon: "⇄",
+    label: "订单与成交",
+    perms: ["liquidity:quote:list", "liquidity:external-order:list"],
+  },
+  { path: "/hedges", icon: "⟲", label: "对冲任务", perms: ["liquidity:hedge:list"] },
+  { path: "/risks", icon: "△", label: "风险事件", perms: ["liquidity:risk:list"] },
+  { path: "/reconcile", icon: "≋", label: "外部对账", perms: ["liquidity:reconcile:list"] },
 ];
+const menus = computed(() =>
+  allMenus.filter((menu) => menu.perms.some((perm) => auth.hasPerm(perm))),
+);
 function logout() { auth.logout(); router.replace("/login"); }
 </script>
 
@@ -25,8 +33,8 @@ function logout() { auth.logout(); router.replace("/login"); }
       <div class="brand"><span class="brand-mark">LQ</span><div><b>LIQUIDITY</b><small>CONTROL CENTER</small></div></div>
       <div class="section-label">运营控制台</div>
       <nav>
-        <RouterLink v-for="[path, icon, label] in menus" :key="path" :to="path">
-          <span class="nav-icon">{{ icon }}</span><span>{{ label }}</span>
+        <RouterLink v-for="menu in menus" :key="menu.path" :to="menu.path">
+          <span class="nav-icon">{{ menu.icon }}</span><span>{{ menu.label }}</span>
         </RouterLink>
       </nav>
       <div class="side-foot"><span class="pulse"></span>系统连接正常</div>

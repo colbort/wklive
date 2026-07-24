@@ -1,16 +1,11 @@
 Name: liquidity.rpc
-ListenOn: 0.0.0.0:8091
+ListenOn: 0.0.0.0:8089
 Mode: dev
 
 Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: liquidity.rpc
-
-MQ:
-  Brokers:
-  - 127.0.0.1:9092
-  MaxAttempts: 5
 
 TradeRpc:
   rpcType: zrpc

@@ -1,25 +1,11 @@
 Name: admin
 Host: 0.0.0.0
 Port: 8888
-# Historical K-line synchronization performs paginated REST reads and MongoDB
-# writes synchronously, so the default 3-second HTTP deadline is too short.
 Timeout: 120000
 
-Jwt:
-  AccessSecret: "your_access_secret"
-  AccessExpire: 3600
-
-MQ:
-  Brokers: [kafka:9092]
-  ClientID: admin-api
-  MaxAttempts: 5
-
-# 请求体加密。admin-ui 根据 /admin/security/encryption-config 返回的 enabled
-# 判断是否加密；灰度阶段使用 OPTIONAL，前端全部上线后可改为 REQUIRED。
 RequestEncryption:
   Scope: admin-api
-  Mode: REQUIRED # DISABLED / OPTIONAL / REQUIRED
-  # OPTIONAL 模式下仅这些接口前缀强制加密；REQUIRED 模式下所有 /admin/ 接口强制加密。
+  Mode: DISABLED
   ProtectedPrefixes:
     - "/admin/asset/"
     - "/admin/itick/"
@@ -31,7 +17,7 @@ RequestEncryption:
     - "/admin/trade/"
   RSAKid: "admin-api-20260718"
   RSAPrivateKeyPath: "/Users/sky/local/go/src/wklive/secrets/admin-api-private.pem"
-  SessionWrapKey: "0@29odn4s*dP@tcMZ=U_sQHppG4Av114" # 启用时必须由密钥管理系统注入恰好 32 字节的密钥
+  SessionWrapKey: "0@29odn4s*dP@tcMZ=U_sQHppG4Av114"
   SessionTTLSeconds: 960
   RotateBeforeSeconds: 180
   ClockSkewSeconds: 120
@@ -43,28 +29,55 @@ SystemRpc:
   rpcType: zrpc
   Etcd:
     Hosts:
-      - "127.0.0.1:2379"
+    - "127.0.0.1:2379"
     Key: system.rpc
+
 
 UserRpc:
   rpcType: zrpc
   Etcd:
     Hosts:
-      - "127.0.0.1:2379"
+    - "127.0.0.1:2379"
     Key: user.rpc
 
 PaymentRpc:
   rpcType: zrpc
   Etcd:
     Hosts:
-      - "127.0.0.1:2379"
+    - "127.0.0.1:2379"
     Key: payment.rpc
 
 ItickRpc:
   rpcType: zrpc
-  # Must cover the long-running SyncProductKlineHistory RPC.
-  Timeout: 120000
   Etcd:
     Hosts:
-      - "127.0.0.1:2379"
+    - "127.0.0.1:2379"
     Key: itick.rpc
+
+AssetRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: asset.rpc   
+
+OptionRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: option.rpc   
+
+StakingRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: staking.rpc   
+
+TradeRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: trade.rpc   

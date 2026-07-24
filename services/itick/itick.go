@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"wklive/proto/itick"
+	pb "wklive/proto/itick"
 	"wklive/proto/system"
 	"wklive/services/itick/internal/config"
 	"wklive/services/itick/internal/market/calendar"
@@ -18,7 +18,7 @@ import (
 	"wklive/services/itick/internal/pkg/utils"
 	admin "wklive/services/itick/internal/server/admin"
 	app "wklive/services/itick/internal/server/app"
-	iticks "wklive/services/itick/internal/server/itick"
+	itick "wklive/services/itick/internal/server/itick"
 	task "wklive/services/itick/internal/server/task"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/internal/tasks"
@@ -124,10 +124,10 @@ func main() {
 	}
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		itick.RegisterAdminServer(grpcServer, admin.NewAdminServer(svcCtx))
-		itick.RegisterAppServer(grpcServer, app.NewAppServer(svcCtx))
-		itick.RegisterItickServer(grpcServer, iticks.NewItickServer(svcCtx))
-		itick.RegisterTaskServer(grpcServer, task.NewTaskServer(svcCtx))
+		pb.RegisterAdminServer(grpcServer, admin.NewAdminServer(svcCtx))
+		pb.RegisterAppServer(grpcServer, app.NewAppServer(svcCtx))
+		pb.RegisterItickServer(grpcServer, itick.NewItickServer(svcCtx))
+		pb.RegisterTaskServer(grpcServer, task.NewTaskServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

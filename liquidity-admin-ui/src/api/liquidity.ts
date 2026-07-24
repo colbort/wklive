@@ -1,9 +1,59 @@
 import { request } from "./request";
 import type { ListResponse, PageQuery } from "@/types/liquidity";
 
+export type ApiResponse<T> = {
+  code: number;
+  msg?: string;
+  data?: T;
+};
+
+export type LoginData = {
+  token: string;
+  exp: number;
+  userId: number;
+  nickname: string;
+  tenantId: number;
+  appScope: number;
+};
+
+export type ProfileUser = {
+  id: number;
+  username: string;
+  nickname?: string;
+  avatar?: string;
+  tenantId: number;
+  userType: number;
+  isOwner: number;
+  google2FaEnabled: number;
+  appScope: number;
+};
+
+export type MenuNode = {
+  id: number;
+  parentId: number;
+  name: string;
+  menuType: number;
+  path?: string;
+  component?: string;
+  icon?: string;
+  sort: number;
+  visible: number;
+  enabled: number;
+  perms?: string;
+  children?: MenuNode[];
+};
+
+export type ProfileData = {
+  user: ProfileUser;
+  menus: MenuNode[];
+  perms: string[];
+  roleIds: number[];
+};
+
 export const liquidityApi = {
-  login: (data: { username: string; password: string }) =>
-    request.post<unknown, { token: string; name?: string }>("/auth/login", data),
+  login: (data: { username: string; password: string; googleCode?: string }) =>
+    request.post<unknown, ApiResponse<LoginData>>("/auth/login", data),
+  profile: () => request.get<unknown, ApiResponse<ProfileData>>("/auth/profile"),
   dashboard: () => request.get("/dashboard"),
   providers: (params: PageQuery) =>
     request.get<unknown, ListResponse>("/providers", { params }),

@@ -1,9 +1,7 @@
 Name: liquidityAdmin
 Host: 0.0.0.0
-Port: 8890
-Jwt:
-  AccessSecret: "your_access_secret"
-  AccessExpire: 3600
+Port: 9999
+
 SystemRpc:
   rpcType: zrpc
   Etcd:

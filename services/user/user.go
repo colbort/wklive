@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"wklive/proto/user"
+	pb "wklive/proto/user"
 	"wklive/services/user/internal/config"
 	admin "wklive/services/user/internal/server/admin"
 	app "wklive/services/user/internal/server/app"
@@ -44,8 +44,8 @@ func main() {
 	ctx := svc.NewServiceContext(c)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		user.RegisterAdminServer(grpcServer, admin.NewAdminServer(ctx))
-		user.RegisterAppServer(grpcServer, app.NewAppServer(ctx))
+		pb.RegisterAdminServer(grpcServer, admin.NewAdminServer(ctx))
+		pb.RegisterAppServer(grpcServer, app.NewAppServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

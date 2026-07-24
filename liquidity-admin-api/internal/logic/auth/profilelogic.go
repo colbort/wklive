@@ -46,7 +46,10 @@ func liquidityMenus(menus []types.MenuNode) []types.MenuNode {
 	for _, menu := range menus {
 		menu.Children = liquidityMenus(menu.Children)
 		path := strings.TrimSpace(menu.Path)
-		if path == "/liquidity" || strings.HasPrefix(path, "/liquidity/") || len(menu.Children) > 0 {
+		if path == "/liquidity" ||
+			strings.HasPrefix(path, "/liquidity/") ||
+			strings.HasPrefix(path, "/admin/liquidity/") ||
+			len(menu.Children) > 0 {
 			result = append(result, menu)
 		}
 	}

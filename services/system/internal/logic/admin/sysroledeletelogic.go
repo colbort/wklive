@@ -33,7 +33,9 @@ func (l *SysRoleDeleteLogic) SysRoleDelete(in *system.SysRoleDeleteReq) (*system
 	if role == nil {
 		return nil, i18n.StatusError(l.ctx, i18n.RoleNotFound)
 	}
-	if role.Code == "super_admin" || role.Code == "tenant_super_admin" {
+	if role.Code == "super_admin" ||
+		role.Code == "tenant_super_admin" ||
+		role.Code == "liquidity_admin" {
 		return nil, i18n.StatusError(l.ctx, i18n.SuperAdminDeleteForbidden)
 	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, role.TenantId, i18n.RoleNotFound); err != nil {

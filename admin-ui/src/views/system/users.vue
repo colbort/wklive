@@ -133,6 +133,17 @@ const selectableRoles = computed(() =>
 )
 const { loading: editFormLoading, withLoading: withEditLoading } = useLoading()
 
+function handleApplicationScopeChange(scope: number | string | boolean | undefined) {
+  editForm.roleIds = []
+  if (Number(scope) !== 2) return
+  const liquidityAdminRole = roles.value.find(
+    (role) => role.appScope === 2 && role.code === 'liquidity_admin',
+  )
+  if (liquidityAdminRole) {
+    editForm.roleIds = [liquidityAdminRole.id]
+  }
+}
+
 function openCreate() {
   editMode.value = 'create'
   editForm.id = 0
@@ -632,6 +643,16 @@ onMounted(async () => {
             />
           </el-select>
         </el-form-item>
+        <el-form-item :label="t('common.applicationScope')">
+          <el-radio-group
+            v-model="editForm.appScope"
+            :disabled="editMode === 'update'"
+            @change="handleApplicationScopeChange"
+          >
+            <el-radio :value="1">{{ t('common.adminBackend') }}</el-radio>
+            <el-radio :value="2">{{ t('common.liquidityAdmin') }}</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item :label="t('common.role')">
           <el-select
             v-model="editForm.roleIds"
@@ -639,6 +660,7 @@ onMounted(async () => {
             filterable
             style="width: 100%"
             :loading="roleLoading"
+            :no-data-text="t('common.noData')"
           >
             <el-option
               v-for="r in selectableRoles"
@@ -647,16 +669,6 @@ onMounted(async () => {
               :value="r.id"
             />
           </el-select>
-        </el-form-item>
-        <el-form-item :label="t('common.applicationScope')">
-          <el-radio-group
-            v-model="editForm.appScope"
-            :disabled="editMode === 'update'"
-            @change="editForm.roleIds = []"
-          >
-            <el-radio :value="1">{{ t('common.adminBackend') }}</el-radio>
-            <el-radio :value="2">{{ t('common.liquidityAdmin') }}</el-radio>
-          </el-radio-group>
         </el-form-item>
       </el-form>
 

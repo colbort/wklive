@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"wklive/proto/asset"
+	pb "wklive/proto/asset"
 	"wklive/services/asset/internal/config"
 	"wklive/services/asset/internal/svc"
 
@@ -13,7 +13,7 @@ import (
 
 	admin "wklive/services/asset/internal/server/admin"
 	app "wklive/services/asset/internal/server/app"
-	assets "wklive/services/asset/internal/server/asset"
+	asset "wklive/services/asset/internal/server/asset"
 
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -40,9 +40,9 @@ func main() {
 	svcCtx := svc.NewServiceContext(c)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		asset.RegisterAdminServer(grpcServer, admin.NewAdminServer(svcCtx))
-		asset.RegisterAppServer(grpcServer, app.NewAppServer(svcCtx))
-		asset.RegisterAssetServer(grpcServer, assets.NewAssetServer(svcCtx))
+		pb.RegisterAdminServer(grpcServer, admin.NewAdminServer(svcCtx))
+		pb.RegisterAppServer(grpcServer, app.NewAppServer(svcCtx))
+		pb.RegisterAssetServer(grpcServer, asset.NewAssetServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

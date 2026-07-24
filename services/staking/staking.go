@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"wklive/proto/staking"
+	pb "wklive/proto/staking"
 	"wklive/services/staking/internal/config"
 	logic "wklive/services/staking/internal/logic/task"
 	admin "wklive/services/staking/internal/server/admin"
@@ -46,9 +46,9 @@ func main() {
 	logic.StartDelayQueue(ctx, svcCtx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		staking.RegisterAdminServer(grpcServer, admin.NewAdminServer(svcCtx))
-		staking.RegisterAppServer(grpcServer, app.NewAppServer(svcCtx))
-		staking.RegisterTaskServer(grpcServer, task.NewTaskServer(svcCtx))
+		pb.RegisterAdminServer(grpcServer, admin.NewAdminServer(svcCtx))
+		pb.RegisterAppServer(grpcServer, app.NewAppServer(svcCtx))
+		pb.RegisterTaskServer(grpcServer, task.NewTaskServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

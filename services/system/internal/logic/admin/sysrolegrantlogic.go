@@ -49,7 +49,9 @@ func (l *SysRoleGrantLogic) SysRoleGrant(in *system.SysRoleGrantReq) (*system.Re
 		return nil, i18n.StatusError(l.ctx, i18n.RoleNotFound)
 	}
 
-	if role.Code == "super_admin" || role.Code == "tenant_super_admin" {
+	if role.Code == "super_admin" ||
+		role.Code == "tenant_super_admin" ||
+		role.Code == "liquidity_admin" {
 		return nil, i18n.StatusError(l.ctx, i18n.SuperAdminUpdateForbidden)
 	}
 

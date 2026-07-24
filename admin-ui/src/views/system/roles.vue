@@ -59,12 +59,20 @@ function isSuperRole(r: SysRole | null | undefined) {
   )
 }
 
+function isLiquidityAdminRole(r: SysRole | null | undefined) {
+  return r?.code === 'liquidity_admin'
+}
+
+function isProtectedRole(r: SysRole | null | undefined) {
+  return isSuperRole(r) || isLiquidityAdminRole(r)
+}
+
 function isTenantOwnerRole(r: SysRole | null | undefined) {
   return r?.code === 'tenant_owner'
 }
 
 function isReadonlyRole(r: SysRole | null | undefined) {
-  if (isSuperRole(r)) return true
+  if (isProtectedRole(r)) return true
   return auth.isTenantUser && isTenantOwnerRole(r)
 }
 
@@ -202,7 +210,7 @@ function openCreate() {
   editVisible.value = true
 }
 function openUpdate(row: SysRole) {
-  if (isSuperRole(row)) return
+  if (isProtectedRole(row)) return
   editForm.id = row.id
   editForm.tenantId = row.tenantId
   editForm.name = row.name
@@ -235,7 +243,7 @@ async function submitEdit() {
 }
 
 async function onDelete(row: SysRole) {
-  if (isSuperRole(row)) return
+  if (isProtectedRole(row)) return
   try {
     await confirm(t('common.confirmDelete'), { type: 'warning' })
     const resp = await roleService.delete(row.id)
@@ -508,6 +516,13 @@ onMounted(async () => {
 
             <el-tag v-if="isSuperRole(row)" type="warning" style="margin-left: 8px">
               {{ t('system.superAdmin') }}
+            </el-tag>
+            <el-tag
+              v-else-if="isLiquidityAdminRole(row)"
+              type="success"
+              style="margin-left: 8px"
+            >
+              {{ t('common.liquidityAdmin') }}
             </el-tag>
           </template>
         </el-table-column>

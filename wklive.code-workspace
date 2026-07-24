@@ -271,6 +271,18 @@
         "program": "${workspaceFolder:chat-admin-api}/"
       },
       {
+        "name": "liquidity-admin-api",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "env": {
+          "DEBUG": "true",
+          "VSCODE": "true",
+          "test": "test"
+        },
+        "program": "${workspaceFolder:liquidity-admin-api}/"
+      },
+      {
         "name": "system",
         "type": "go",
         "request": "launch",
@@ -377,6 +389,18 @@
           "test": "test"
         },
         "program": "${workspaceFolder:services}/trade/"
+      },
+      {
+        "name": "liquidity",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "env": {
+          "DEBUG": "true",
+          "VSCODE": "true",
+          "test": "test"
+        },
+        "program": "${workspaceFolder:services}/liquidity/"
       }
     ],
     "compounds": [
@@ -391,7 +415,8 @@
           "staking",
           "user",
           "itick",
-          "trade"
+          "trade",
+          "liquidity"
         ],
         "stopAll": true
       },
@@ -401,7 +426,8 @@
           "chat-api",
           "app-api",
           "chat-admin-api",
-          "admin-api"
+          "admin-api",
+          "liquidity-admin-api"
         ],
         "stopAll": true
       }

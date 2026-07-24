@@ -2,8 +2,8 @@ import axios from "axios";
 import { ElMessage } from "element-plus";
 
 export const request = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "/liquidity/admin",
-  timeout: 15_000,
+  baseURL: import.meta.env.VITE_API_BASE_URL || "/admin/liquidity",
+  timeout: Number(import.meta.env.VITE_API_TIMEOUT) || 15_000,
 });
 
 request.interceptors.request.use((config) => {

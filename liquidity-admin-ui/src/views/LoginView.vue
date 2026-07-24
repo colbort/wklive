@@ -2,12 +2,15 @@
 import { reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
-const form = reactive({ username: "", password: "" });
+const form = reactive({ username: "", password: "", googleCode: "" });
 const loading = ref(false);
 const auth = useAuthStore(), router = useRouter(), route = useRoute();
 async function submit() {
   loading.value = true;
-  try { await auth.login(form.username, form.password); await router.replace(String(route.query.redirect || "/")); }
+  try {
+    await auth.login(form.username, form.password, form.googleCode || undefined);
+    await router.replace(String(route.query.redirect || "/"));
+  }
   finally { loading.value = false; }
 }
 </script>
@@ -20,6 +23,7 @@ async function submit() {
       <el-form @submit.prevent="submit">
         <label>管理员账号</label><el-input v-model="form.username" size="large" placeholder="请输入账号" />
         <label>登录密码</label><el-input v-model="form.password" size="large" type="password" show-password placeholder="请输入密码" @keyup.enter="submit" />
+        <label>Google 验证码</label><el-input v-model="form.googleCode" size="large" maxlength="6" placeholder="如已启用 2FA，请输入验证码" @keyup.enter="submit" />
         <el-button type="primary" size="large" :loading="loading" @click="submit">进入控制台</el-button>
       </el-form>
       <p class="hint">访问行为将记录至安全审计日志</p>

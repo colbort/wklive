@@ -23,8 +23,20 @@ export const router = createRouter({
   ],
 });
 
-router.beforeEach((to) => {
-  if (to.meta.public) return true;
-  if (!useAuthStore().isLoggedIn) return { path: "/login", query: { redirect: to.fullPath } };
+router.beforeEach(async (to) => {
+  const auth = useAuthStore();
+  if (to.meta.public) {
+    if (to.path === "/login" && auth.isLoggedIn) return { path: "/" };
+    return true;
+  }
+  if (!auth.isLoggedIn) return { path: "/login", query: { redirect: to.fullPath } };
+  if (!auth.isProfileLoaded) {
+    try {
+      await auth.fetchProfile();
+    } catch {
+      auth.logout();
+      return { path: "/login", query: { redirect: to.fullPath } };
+    }
+  }
   return true;
 });

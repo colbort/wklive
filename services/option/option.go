@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"strings"
 
-	"wklive/proto/option"
+	pb "wklive/proto/option"
 	"wklive/services/option/internal/config"
 	logic "wklive/services/option/internal/logic/task"
 	admin "wklive/services/option/internal/server/admin"
 	app "wklive/services/option/internal/server/app"
-	options "wklive/services/option/internal/server/option"
+	option "wklive/services/option/internal/server/option"
 	task "wklive/services/option/internal/server/task"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/internal/tasks"
@@ -47,10 +47,10 @@ func main() {
 	logic.StartDelayQueue(ctx, svcCtx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		option.RegisterAdminServer(grpcServer, admin.NewAdminServer(svcCtx))
-		option.RegisterAppServer(grpcServer, app.NewAppServer(svcCtx))
-		option.RegisterOptionServer(grpcServer, options.NewOptionServer(svcCtx))
-		option.RegisterTaskServer(grpcServer, task.NewTaskServer(svcCtx))
+		pb.RegisterAdminServer(grpcServer, admin.NewAdminServer(svcCtx))
+		pb.RegisterAppServer(grpcServer, app.NewAppServer(svcCtx))
+		pb.RegisterOptionServer(grpcServer, option.NewOptionServer(svcCtx))
+		pb.RegisterTaskServer(grpcServer, task.NewTaskServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

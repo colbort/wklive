@@ -6,14 +6,16 @@ import (
 	"strings"
 
 	"wklive/common/etcd"
+	pb "wklive/proto/liquidity"
 	"wklive/services/liquidity/internal/config"
+	admin "wklive/services/liquidity/internal/server/admin"
+	liquidity "wklive/services/liquidity/internal/server/liquidity"
+	task "wklive/services/liquidity/internal/server/task"
 	"wklive/services/liquidity/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/health"
-	v1 "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -31,11 +33,11 @@ func main() {
 		panic(err)
 	}
 
-	_ = svc.NewServiceContext(c)
+	svcCtx := svc.NewServiceContext(c)
 	server := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		healthServer := health.NewServer()
-		healthServer.SetServingStatus(c.Name, v1.HealthCheckResponse_SERVING)
-		v1.RegisterHealthServer(grpcServer, healthServer)
+		pb.RegisterAdminServer(grpcServer, admin.NewAdminServer(svcCtx))
+		pb.RegisterLiquidityServer(grpcServer, liquidity.NewLiquidityServer(svcCtx))
+		pb.RegisterTaskServer(grpcServer, task.NewTaskServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

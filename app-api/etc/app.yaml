@@ -1,7 +1,59 @@
 Name: app
 Host: 0.0.0.0
-Port: 8888
+Port: 5555
 
-Jwt:
-  AccessSecret: "your_access_secret"
-  AccessExpire: 3600
+SystemRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: system.rpc
+
+UserRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: user.rpc
+
+PaymentRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: payment.rpc
+
+ItickRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: itick.rpc
+
+AssetRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: asset.rpc   
+
+OptionRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: option.rpc   
+
+StakingRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: staking.rpc   
+
+TradeRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: trade.rpc  

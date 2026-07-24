@@ -11,7 +11,7 @@ func TestLiquidityProfileFiltering(t *testing.T) {
 	menus := []types.MenuNode{
 		{Id: 1, Path: "/system/users"},
 		{Id: 2, Path: "/liquidity", Children: []types.MenuNode{
-			{Id: 3, Path: "/liquidity/admin/providers"},
+			{Id: 3, Path: "/admin/liquidity/providers"},
 		}},
 	}
 	gotMenus := liquidityMenus(menus)
