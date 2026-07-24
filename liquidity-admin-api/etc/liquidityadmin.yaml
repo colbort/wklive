@@ -1,0 +1,18 @@
+Name: liquidityAdmin
+Host: 0.0.0.0
+Port: 8890
+Jwt:
+  AccessSecret: "your_access_secret"
+  AccessExpire: 3600
+SystemRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - 127.0.0.1:2379
+    Key: system.rpc
+LiquidityRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - 127.0.0.1:2379
+    Key: liquidity.rpc

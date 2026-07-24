@@ -163,7 +163,7 @@ func (l *ProcessLiquidationsLogic) cancelRiskIncreasingOrders(position *models.T
 	cursor := int64(0)
 	for {
 		statuses := append(matchableOrderStatuses(), int64(trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING))
-		orders, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{TenantId: position.TenantId, UserId: position.UserId, SymbolId: position.SymbolId, ProductType: int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE), Statuses: statuses}, cursor, 100)
+		orders, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{TenantId: position.TenantId, UserId: position.UserId, SymbolId: position.SymbolId, ProductType: int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE), Statuses: statuses}, cursor, 100)
 		if err != nil {
 			return err
 		}
@@ -636,7 +636,7 @@ func (l *ProcessLiquidationsLogic) completeLiquidation(position *models.TContrac
 		if err := lm.Update(ctx, liq); err != nil {
 			return err
 		}
-		_, err = em.Insert(ctx, &models.TBizTradeEvent{TenantId: liq.TenantId, EventNo: liq.LiquidationNo + "-COMPLETED", EventType: "LIQUIDATION_COMPLETED", BizId: liq.LiquidationNo, BizType: "liquidation", UserId: liq.UserId, SymbolId: liq.SymbolId, ProductType: int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE), Source: int64(trade.SourceType_SOURCE_TYPE_TASK), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: "{}", CreateTimes: now, UpdateTimes: now})
+		_, err = em.Insert(ctx, &models.TBizTradeEvent{TenantId: liq.TenantId, EventNo: liq.LiquidationNo + "-COMPLETED", EventType: "LIQUIDATION_COMPLETED", BizId: liq.LiquidationNo, BizType: "liquidation", UserId: liq.UserId, SymbolId: liq.SymbolId, ProductType: int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE), Source: int64(trade.SourceType_SOURCE_TYPE_TASK), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: "{}", CreateTimes: now, UpdateTimes: now})
 		return err
 	})
 }

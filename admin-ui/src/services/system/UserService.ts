@@ -24,6 +24,7 @@ export type SysUserItem = {
   nickname: string
   enabled: number // 启用状态：1启用 2禁用
   roleIds: number[]
+  appScope: number
   createTimes: number
   google2FaEnabled: number // Google 2FA 是否启用：1启用 2禁用
   tenantId: number
@@ -49,17 +50,20 @@ export interface CreateUserRequest {
   nickname?: string
   enabled?: number // 启用状态：1启用 2禁用
   roleIds?: number[]
+  appScope: number
 }
 
 export interface UpdateUserRequest {
   nickname?: string
   enabled?: number // 启用状态：1启用 2禁用
   roleIds?: number[]
+  appScope?: number
 }
 
 export interface UserQueryParams {
   keyword?: string
   enabled?: number // 启用状态：1启用 2禁用
+  appScope?: number
   cursor?: number
   limit?: number
 }

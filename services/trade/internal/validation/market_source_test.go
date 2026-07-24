@@ -3,7 +3,7 @@ package validation
 import (
 	"testing"
 
-	"wklive/proto/trade"
+	"wklive/proto/common"
 )
 
 func TestAuthoritativeQuoteSources(t *testing.T) {
@@ -23,13 +23,13 @@ func TestAuthoritativeQuoteSources(t *testing.T) {
 }
 
 func TestFundingRateSource(t *testing.T) {
-	if err := FundingRateSource(int64(trade.ContractType_CONTRACT_TYPE_PERPETUAL), "premium-v1"); err != nil {
+	if err := FundingRateSource(int64(common.ContractType_CONTRACT_TYPE_PERPETUAL), "premium-v1"); err != nil {
 		t.Fatalf("perpetual premium-v1 error: %v", err)
 	}
-	if err := FundingRateSource(int64(trade.ContractType_CONTRACT_TYPE_PERPETUAL), "funding-v1"); err == nil {
+	if err := FundingRateSource(int64(common.ContractType_CONTRACT_TYPE_PERPETUAL), "funding-v1"); err == nil {
 		t.Fatal("perpetual funding-v1 unexpectedly succeeded")
 	}
-	if err := FundingRateSource(int64(trade.ContractType_CONTRACT_TYPE_DELIVERY), ""); err != nil {
+	if err := FundingRateSource(int64(common.ContractType_CONTRACT_TYPE_DELIVERY), ""); err != nil {
 		t.Fatalf("delivery empty funding source error: %v", err)
 	}
 }

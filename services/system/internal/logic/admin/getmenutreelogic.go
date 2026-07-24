@@ -34,22 +34,9 @@ func (l *GetMenuTreeLogic) GetMenuTree(in *system.SysMenuTreeReq) (*system.SysMe
 	if err != nil {
 		return nil, err
 	}
-	roleId := int64(1)
-	if role.TenantId > 0 || role.Code == "tenant_super_admin" || role.Code == "tenant_owner" {
-		roleId = 2
-	}
-	mm := make(map[int64]bool, len(menus))
-	roleMenus, err := l.svcCtx.RoleMenuModel.ListByRoleId(l.ctx, roleId)
-	if err != nil {
-		return nil, err
-	}
-	for _, v := range roleMenus {
-		mm[v.MenuId] = true
-	}
-
 	data := make([]*system.SysMenuItem, 0, len(menus))
 	for _, m := range menus {
-		if !mm[m.Id] {
+		if m.AppScope != role.AppScope {
 			continue
 		}
 		item := &system.SysMenuItem{
@@ -64,6 +51,7 @@ func (l *GetMenuTreeLogic) GetMenuTree(in *system.SysMenuTreeReq) (*system.SysMe
 			Visible:   visibleStatusToProto(m.Visible),
 			Enabled:   commonStatusToProto(m.Enabled),
 			Perms:     m.Perms,
+			AppScope:  system.ApplicationScope(m.AppScope),
 		}
 		data = append(data, item)
 	}

@@ -52,7 +52,7 @@ message UserCommonResp {
 }
 
 message GetSymbolListReq {
-  ProductType product_type = 1;
+  common.ProductType product_type = 1;
   SymbolStatus status = 2;
 }
 
@@ -116,7 +116,7 @@ message CancelOrderReq {
 }
 
 message CancelAllOrdersReq {
-  ProductType product_type = 1;
+  common.ProductType product_type = 1;
   int64 symbol_id = 2;
   common.Side side = 3; // 买卖方向
   PositionSide position_side = 4;
@@ -129,7 +129,7 @@ message CancelAllOrdersResp {
 
 message GetOrderListReq {
   common.PageReq page = 1;
-  ProductType product_type = 2;
+  common.ProductType product_type = 2;
   int64 symbol_id = 3;
   OrderStatus status = 4;
   common.Side side = 5; // 买卖方向
@@ -160,7 +160,7 @@ message GetOrderDetailData {
 
 message GetFillListReq {
   common.PageReq page = 1;
-  ProductType product_type = 2;
+  common.ProductType product_type = 2;
   int64 symbol_id = 3;
   TimeRange time_range = 4;
 }
@@ -171,7 +171,7 @@ message GetFillListResp {
 }
 
 message GetPositionListReq {
-  ContractType contract_type = 1;
+  common.ContractType contract_type = 1;
   int64 symbol_id = 2;
 }
 
@@ -344,11 +344,11 @@ message CreateSymbolReq {
   int64 tenant_id = 1;
   string symbol = 2;
   string display_symbol = 3;
-  ProductType product_type = 4;
+  common.ProductType product_type = 4;
   string base_asset = 5;
   string quote_asset = 6;
   string settle_asset = 7;
-  ContractType contract_type = 8;
+  common.ContractType contract_type = 8;
   ContractValueType contract_value_type = 24;
   string margin_asset = 25;
   SymbolStatus status = 9;
@@ -394,7 +394,7 @@ message UpdateSymbolReq {
 message GetSymbolListAdminReq {
   int64 tenant_id = 1;
   common.PageReq page = 2;
-  ProductType product_type = 3;
+  common.ProductType product_type = 3;
   SymbolStatus status = 4;
   string keyword = 5;
 }
@@ -536,7 +536,7 @@ message GetOrderListAdminReq {
   int64 tenant_id = 1;
   common.PageReq page = 2;
   int64 user_id = 3;
-  ProductType product_type = 4;
+  common.ProductType product_type = 4;
   int64 symbol_id = 5;
   OrderStatus status = 6;
   string keyword = 7;
@@ -562,7 +562,7 @@ message GetFillListAdminReq {
   int64 tenant_id = 1;
   common.PageReq page = 2;
   int64 user_id = 3;
-  ProductType product_type = 4;
+  common.ProductType product_type = 4;
   int64 symbol_id = 5;
   TimeRange time_range = 6;
 }
@@ -586,7 +586,7 @@ message GetPositionListAdminReq {
   int64 tenant_id = 1;
   common.PageReq page = 2;
   int64 user_id = 3;
-  ContractType contract_type = 4;
+  common.ContractType contract_type = 4;
   int64 symbol_id = 5;
 }
 
@@ -610,7 +610,7 @@ message GetPositionHistoryListAdminReq {
   common.PageReq page = 2;
   int64 user_id = 3;
   int64 symbol_id = 4;
-  ContractType contract_type = 5;
+  common.ContractType contract_type = 5;
   int64 position_id = 6;
   PositionActionType action_type = 7;
   TimeRange time_range = 8;
@@ -652,7 +652,7 @@ message GetCancelLogListAdminResp {
 message SetUserTradeLimitReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  ProductType product_type = 3;
+  common.ProductType product_type = 3;
   int64 can_open = 4;
   int64 can_close = 5;
   int64 can_cancel = 6;
@@ -700,7 +700,7 @@ message SetUserSymbolLimitReq {
 message GetUserTradeLimitReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  ProductType product_type = 3;
+  common.ProductType product_type = 3;
 }
 
 message GetUserTradeLimitResp {
@@ -723,7 +723,7 @@ message GetUserSymbolLimitResp {
 message SetUserTradeConfigReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  ProductType product_type = 3;
+  common.ProductType product_type = 3;
   int64 symbol_id = 4; // 0 表示该市场下的全局配置
   common.Enable trade_enabled = 8; // 状态,0表示全部，1表示启用，2表示禁用
   reserved 5, 6, 7, 9;
@@ -732,7 +732,7 @@ message SetUserTradeConfigReq {
 message GetUserTradeConfigReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
-  ProductType product_type = 3;
+  common.ProductType product_type = 3;
   int64 symbol_id = 4; // 0 表示该市场下的全局配置
 }
 
@@ -767,7 +767,7 @@ message GetRiskOrderCheckLogListReq {
   common.PageReq page = 2;
   int64 user_id = 3;
   int64 symbol_id = 4;
-  ProductType product_type = 5;
+  common.ProductType product_type = 5;
   RiskCheckType check_type = 6;
   RiskCheckResult check_result = 7;
   TimeRange time_range = 8;

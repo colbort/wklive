@@ -63,6 +63,9 @@ func loadPermissionRules(ctx context.Context, svcCtx *svc.ServiceContext) ([]Per
 	if result != nil {
 		rules = make([]PermissionRule, 0, len(result.Data))
 		for _, item := range result.Data {
+			if item.AppScope != system.ApplicationScope_APPLICATION_SCOPE_ADMIN {
+				continue
+			}
 			pattern, staticSegs, err := compilePathPattern(item.Path)
 			if err != nil {
 				logx.Errorf("compile path pattern failed: method=%s path=%s err=%v", item.Method, item.Path, err)

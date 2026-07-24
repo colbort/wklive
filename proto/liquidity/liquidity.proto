@@ -1,0 +1,561 @@
+syntax = "proto3";
+
+package liquidity;
+
+import "proto/common/common.proto";
+import "proto/liquidity/enum.proto";
+import "proto/liquidity/model.proto";
+
+option go_package = "wklive/proto/liquidity;liquidity";
+
+message CommonResp {
+  common.RespBase base = 1;
+}
+
+// 做市运营、外部渠道、风控和对账管理接口。
+service Admin {
+  rpc CreateProvider(CreateProviderReq) returns (ProviderResp);
+  rpc UpdateProvider(UpdateProviderReq) returns (ProviderResp);
+  rpc SetProviderStatus(SetProviderStatusReq) returns (CommonResp);
+  rpc TestProviderConnection(TestProviderConnectionReq) returns (ProviderHealthResp);
+  rpc GetProviderList(GetProviderListReq) returns (GetProviderListResp);
+  rpc GetProviderDetail(GetProviderDetailReq) returns (ProviderResp);
+
+  rpc CreateSymbolConfig(SaveSymbolConfigReq) returns (SymbolConfigResp);
+  rpc UpdateSymbolConfig(SaveSymbolConfigReq) returns (SymbolConfigResp);
+  rpc GetSymbolConfigList(GetSymbolConfigListReq) returns (GetSymbolConfigListResp);
+  rpc GetSymbolConfigDetail(GetSymbolConfigDetailReq) returns (GetSymbolConfigDetailResp);
+  rpc SetStrategyLevels(SetStrategyLevelsReq) returns (CommonResp);
+  rpc StartSymbolLiquidity(SymbolActionReq) returns (CommonResp);
+  rpc PauseSymbolLiquidity(SymbolActionReq) returns (CommonResp);
+  rpc StopSymbolLiquidity(SymbolActionReq) returns (CommonResp);
+  rpc CancelAllQuoteOrders(SymbolActionReq) returns (CommonResp);
+
+  rpc GetQuoteCycleList(GetQuoteCycleListReq) returns (GetQuoteCycleListResp);
+  rpc GetQuoteOrderList(GetQuoteOrderListReq) returns (GetQuoteOrderListResp);
+  rpc GetExternalOrderList(GetExternalOrderListReq) returns (GetExternalOrderListResp);
+  rpc GetExternalFillList(GetExternalFillListReq) returns (GetExternalFillListResp);
+  rpc CancelExternalOrder(CancelExternalOrderReq) returns (CommonResp);
+
+  rpc CreateManualHedge(CreateManualHedgeReq) returns (HedgeTaskResp);
+  rpc CancelHedgeTask(CancelHedgeTaskReq) returns (CommonResp);
+  rpc RetryHedgeTask(RetryHedgeTaskReq) returns (CommonResp);
+  rpc GetHedgeTaskList(GetHedgeTaskListReq) returns (GetHedgeTaskListResp);
+
+  rpc GetInventorySnapshotList(GetInventorySnapshotListReq) returns (GetInventorySnapshotListResp);
+  rpc GetLatestInventory(GetLatestInventoryReq) returns (InventorySnapshotResp);
+  rpc GetRiskEventList(GetRiskEventListReq) returns (GetRiskEventListResp);
+  rpc ResolveRiskEvent(ResolveRiskEventReq) returns (CommonResp);
+
+  rpc RunReconcile(RunReconcileReq) returns (ReconcileBatchResp);
+  rpc GetReconcileBatchList(GetReconcileBatchListReq) returns (GetReconcileBatchListResp);
+  rpc GetReconcileDetailList(GetReconcileDetailListReq) returns (GetReconcileDetailListResp);
+  rpc ResolveReconcileDifference(ResolveReconcileDifferenceReq) returns (CommonResp);
+}
+
+// trade.rpc 和内部事件消费者使用的接口，不向管理端暴露。
+service Liquidity {
+  rpc GetActiveSymbolConfig(GetActiveSymbolConfigReq) returns (GetSymbolConfigDetailResp);
+  rpc RouteExternalOrder(RouteExternalOrderReq) returns (ExternalOrderResp);
+  rpc CancelRoutedOrder(CancelRoutedOrderReq) returns (CommonResp);
+  rpc ReportTradeFill(ReportTradeFillReq) returns (CommonResp);
+  rpc ReportQuoteOrderState(ReportQuoteOrderStateReq) returns (CommonResp);
+}
+
+// 定时任务与恢复任务接口。
+service Task {
+  rpc RefreshQuotes(LiquidityTaskReq) returns (LiquidityTaskResp);
+  rpc RecoverQuoteOrders(LiquidityTaskReq) returns (LiquidityTaskResp);
+  rpc ProcessHedgeTasks(LiquidityTaskReq) returns (LiquidityTaskResp);
+  rpc SyncExternalOrders(LiquidityTaskReq) returns (LiquidityTaskResp);
+  rpc SettleExternalFills(LiquidityTaskReq) returns (LiquidityTaskResp);
+  rpc SnapshotInventories(LiquidityTaskReq) returns (LiquidityTaskResp);
+  rpc ScanLiquidityRisks(LiquidityTaskReq) returns (LiquidityTaskResp);
+  rpc ProcessReconciliations(LiquidityTaskReq) returns (LiquidityTaskResp);
+  rpc PublishOutboxEvents(LiquidityTaskReq) returns (LiquidityTaskResp);
+}
+
+message CreateProviderReq {
+  int64 tenant_id = 1;
+  string provider_code = 2;
+  string provider_name = 3;
+  ProviderType provider_type = 4;
+  int64 trade_user_id = 5;
+  string venue_code = 6;
+  ProviderEnvironment environment = 7;
+  string credential_ref = 8;
+  string account_ref = 9;
+  int32 rate_limit_per_second = 10;
+  ProviderStatus status = 11;
+  string remark = 12;
+  int64 operator_id = 13;
+}
+
+message UpdateProviderReq {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string provider_name = 3;
+  int64 trade_user_id = 4;
+  string venue_code = 5;
+  ProviderEnvironment environment = 6;
+  string credential_ref = 7;
+  string account_ref = 8;
+  int32 rate_limit_per_second = 9;
+  string remark = 10;
+  int64 version = 11;
+  int64 operator_id = 12;
+}
+
+message SetProviderStatusReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  ProviderStatus status = 3;
+  int64 version = 4;
+  int64 operator_id = 5;
+  string remark = 6;
+}
+
+message TestProviderConnectionReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  int64 operator_id = 3;
+}
+
+message GetProviderListReq {
+  int64 tenant_id = 1;
+  ProviderType provider_type = 2;
+  ProviderStatus status = 3;
+  string keyword = 4;
+  int64 cursor = 5;
+  int32 limit = 6;
+}
+
+message GetProviderDetailReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+}
+
+message ProviderResp {
+  common.RespBase base = 1;
+  LiquidityProvider data = 2;
+}
+
+message ProviderHealthResp {
+  common.RespBase base = 1;
+  HealthStatus health_status = 2;
+  int64 checked_at = 3;
+  string message = 4;
+}
+
+message GetProviderListResp {
+  common.RespBase base = 1;
+  repeated LiquidityProvider data = 2;
+  PageMeta page = 3;
+}
+
+message SaveSymbolConfigReq {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 symbol_id = 3;
+  LiquidityMode liquidity_mode = 4;
+  int64 internal_provider_id = 5;
+  int64 external_provider_id = 6;
+  string external_symbol = 7;
+  string reference_price_source = 8;
+  string reference_price_kind = 9;
+  int32 quote_validity_ms = 10;
+  int32 refresh_interval_ms = 11;
+  int32 quote_ttl_ms = 12;
+  string reprice_threshold_bps = 13;
+  string base_spread_bps = 14;
+  string max_spread_bps = 15;
+  string max_price_deviation_bps = 16;
+  string min_quote_qty = 17;
+  string max_quote_qty = 18;
+  string max_quote_notional = 19;
+  string target_base_inventory = 20;
+  string min_base_inventory = 21;
+  string max_base_inventory = 22;
+  string max_net_exposure = 23;
+  string max_daily_notional = 24;
+  string inventory_skew_bps = 25;
+  string hedge_threshold = 26;
+  string hedge_ratio = 27;
+  common.YesNo self_trade_prevention = 28;
+  int64 version = 29;
+  int64 operator_id = 30;
+}
+
+message GetSymbolConfigListReq {
+  int64 tenant_id = 1;
+  int64 symbol_id = 2;
+  common.ProductType product_type = 3;
+  common.ContractType contract_type = 4;
+  LiquidityMode liquidity_mode = 5;
+  SymbolLiquidityStatus status = 6;
+  string keyword = 7;
+  int64 cursor = 8;
+  int32 limit = 9;
+}
+
+message GetSymbolConfigDetailReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  int64 symbol_id = 3;
+}
+
+message SymbolConfigResp {
+  common.RespBase base = 1;
+  LiquiditySymbolConfig data = 2;
+}
+
+message GetSymbolConfigListResp {
+  common.RespBase base = 1;
+  repeated LiquiditySymbolConfig data = 2;
+  PageMeta page = 3;
+}
+
+message GetSymbolConfigDetailResp {
+  common.RespBase base = 1;
+  LiquiditySymbolConfig data = 2;
+  repeated LiquidityStrategyLevel levels = 3;
+  LiquidityInventorySnapshot latest_inventory = 4;
+}
+
+message SetStrategyLevelsReq {
+  int64 tenant_id = 1;
+  int64 config_id = 2;
+  repeated StrategyLevelInput levels = 3;
+  int64 config_version = 4;
+  int64 operator_id = 5;
+}
+
+message StrategyLevelInput {
+  int32 level_no = 1;
+  string bid_spread_bps = 2;
+  string ask_spread_bps = 3;
+  string bid_qty = 4;
+  string ask_qty = 5;
+  common.Enable enabled = 6;
+}
+
+message SymbolActionReq {
+  int64 tenant_id = 1;
+  int64 config_id = 2;
+  int64 version = 3;
+  int64 operator_id = 4;
+  string reason = 5;
+}
+
+message GetQuoteCycleListReq {
+  int64 tenant_id = 1;
+  int64 config_id = 2;
+  int64 symbol_id = 3;
+  QuoteCycleStatus status = 4;
+  int64 start_time = 5;
+  int64 end_time = 6;
+  int64 cursor = 7;
+  int32 limit = 8;
+}
+
+message GetQuoteCycleListResp {
+  common.RespBase base = 1;
+  repeated LiquidityQuoteCycle data = 2;
+  PageMeta page = 3;
+}
+
+message GetQuoteOrderListReq {
+  int64 tenant_id = 1;
+  int64 config_id = 2;
+  int64 provider_id = 3;
+  int64 symbol_id = 4;
+  common.Side side = 5;
+  QuoteOrderStatus status = 6;
+  string keyword = 7;
+  int64 start_time = 8;
+  int64 end_time = 9;
+  int64 cursor = 10;
+  int32 limit = 11;
+}
+
+message GetQuoteOrderListResp {
+  common.RespBase base = 1;
+  repeated LiquidityQuoteOrder data = 2;
+  PageMeta page = 3;
+}
+
+message GetExternalOrderListReq {
+  int64 tenant_id = 1;
+  int64 provider_id = 2;
+  int64 config_id = 3;
+  int64 symbol_id = 4;
+  ExternalOrderPurpose purpose = 5;
+  common.Side side = 6;
+  ExternalOrderStatus status = 7;
+  string keyword = 8;
+  int64 start_time = 9;
+  int64 end_time = 10;
+  int64 cursor = 11;
+  int32 limit = 12;
+}
+
+message GetExternalOrderListResp {
+  common.RespBase base = 1;
+  repeated LiquidityExternalOrder data = 2;
+  PageMeta page = 3;
+}
+
+message GetExternalFillListReq {
+  int64 tenant_id = 1;
+  int64 provider_id = 2;
+  int64 external_order_id = 3;
+  ExternalFillSettlementStatus settlement_status = 4;
+  int64 start_time = 5;
+  int64 end_time = 6;
+  int64 cursor = 7;
+  int32 limit = 8;
+}
+
+message GetExternalFillListResp {
+  common.RespBase base = 1;
+  repeated LiquidityExternalFill data = 2;
+  PageMeta page = 3;
+}
+
+message CancelExternalOrderReq {
+  int64 tenant_id = 1;
+  int64 order_id = 2;
+  int64 version = 3;
+  int64 operator_id = 4;
+  string reason = 5;
+}
+
+message CreateManualHedgeReq {
+  int64 tenant_id = 1;
+  int64 config_id = 2;
+  int64 provider_id = 3;
+  common.Side side = 4;
+  string qty = 5;
+  string target_exposure = 6;
+  int64 operator_id = 7;
+  string remark = 8;
+}
+
+message CancelHedgeTaskReq {
+  int64 tenant_id = 1;
+  int64 hedge_task_id = 2;
+  int64 version = 3;
+  int64 operator_id = 4;
+  string reason = 5;
+}
+
+message RetryHedgeTaskReq {
+  int64 tenant_id = 1;
+  int64 hedge_task_id = 2;
+  int64 version = 3;
+  int64 operator_id = 4;
+}
+
+message HedgeTaskResp {
+  common.RespBase base = 1;
+  LiquidityHedgeTask data = 2;
+}
+
+message GetHedgeTaskListReq {
+  int64 tenant_id = 1;
+  int64 config_id = 2;
+  int64 provider_id = 3;
+  HedgeStatus status = 4;
+  int64 start_time = 5;
+  int64 end_time = 6;
+  int64 cursor = 7;
+  int32 limit = 8;
+}
+
+message GetHedgeTaskListResp {
+  common.RespBase base = 1;
+  repeated LiquidityHedgeTask data = 2;
+  PageMeta page = 3;
+}
+
+message GetInventorySnapshotListReq {
+  int64 tenant_id = 1;
+  int64 config_id = 2;
+  int64 provider_id = 3;
+  InventorySource source = 4;
+  int64 start_time = 5;
+  int64 end_time = 6;
+  int64 cursor = 7;
+  int32 limit = 8;
+}
+
+message GetInventorySnapshotListResp {
+  common.RespBase base = 1;
+  repeated LiquidityInventorySnapshot data = 2;
+  PageMeta page = 3;
+}
+
+message GetLatestInventoryReq {
+  int64 tenant_id = 1;
+  int64 config_id = 2;
+  int64 provider_id = 3;
+  InventorySource source = 4;
+}
+
+message InventorySnapshotResp {
+  common.RespBase base = 1;
+  LiquidityInventorySnapshot data = 2;
+}
+
+message GetRiskEventListReq {
+  int64 tenant_id = 1;
+  int64 config_id = 2;
+  int64 provider_id = 3;
+  string risk_type = 4;
+  RiskLevel risk_level = 5;
+  RiskEventStatus status = 6;
+  int64 start_time = 7;
+  int64 end_time = 8;
+  int64 cursor = 9;
+  int32 limit = 10;
+}
+
+message GetRiskEventListResp {
+  common.RespBase base = 1;
+  repeated LiquidityRiskEvent data = 2;
+  PageMeta page = 3;
+}
+
+message ResolveRiskEventReq {
+  int64 tenant_id = 1;
+  int64 risk_event_id = 2;
+  RiskEventStatus status = 3;
+  int64 operator_id = 4;
+  string resolution = 5;
+}
+
+message RunReconcileReq {
+  int64 tenant_id = 1;
+  int64 provider_id = 2;
+  ReconcileType reconcile_type = 3;
+  int64 window_start = 4;
+  int64 window_end = 5;
+  int64 operator_id = 6;
+}
+
+message ReconcileBatchResp {
+  common.RespBase base = 1;
+  LiquidityReconcileBatch data = 2;
+}
+
+message GetReconcileBatchListReq {
+  int64 tenant_id = 1;
+  int64 provider_id = 2;
+  ReconcileType reconcile_type = 3;
+  ReconcileStatus status = 4;
+  int64 start_time = 5;
+  int64 end_time = 6;
+  int64 cursor = 7;
+  int32 limit = 8;
+}
+
+message GetReconcileBatchListResp {
+  common.RespBase base = 1;
+  repeated LiquidityReconcileBatch data = 2;
+  PageMeta page = 3;
+}
+
+message GetReconcileDetailListReq {
+  int64 tenant_id = 1;
+  int64 batch_id = 2;
+  ReconcileDifferenceType difference_type = 3;
+  ReconcileDifferenceStatus status = 4;
+  int64 cursor = 5;
+  int32 limit = 6;
+}
+
+message GetReconcileDetailListResp {
+  common.RespBase base = 1;
+  repeated LiquidityReconcileDetail data = 2;
+  PageMeta page = 3;
+}
+
+message ResolveReconcileDifferenceReq {
+  int64 tenant_id = 1;
+  int64 difference_id = 2;
+  ReconcileDifferenceStatus status = 3;
+  int64 operator_id = 4;
+  string resolution = 5;
+}
+
+message GetActiveSymbolConfigReq {
+  int64 tenant_id = 1;
+  int64 symbol_id = 2;
+}
+
+message RouteExternalOrderReq {
+  int64 tenant_id = 1;
+  string request_no = 2;
+  int64 symbol_id = 3;
+  ExternalOrderPurpose purpose = 4;
+  string reference_type = 5;
+  int64 reference_id = 6;
+  common.Side side = 7;
+  ExternalOrderType order_type = 8;
+  ExternalTimeInForce time_in_force = 9;
+  string price = 10;
+  string qty = 11;
+}
+
+message ExternalOrderResp {
+  common.RespBase base = 1;
+  LiquidityExternalOrder data = 2;
+}
+
+message CancelRoutedOrderReq {
+  int64 tenant_id = 1;
+  string request_no = 2;
+  int64 external_order_id = 3;
+  string reason = 4;
+}
+
+message ReportTradeFillReq {
+  int64 tenant_id = 1;
+  string event_no = 2;
+  int64 symbol_id = 3;
+  int64 order_id = 4;
+  string order_no = 5;
+  int64 user_id = 6;
+  common.Side side = 7;
+  string price = 8;
+  string qty = 9;
+  string amount = 10;
+  int64 fill_time = 11;
+}
+
+message ReportQuoteOrderStateReq {
+  int64 tenant_id = 1;
+  string event_no = 2;
+  int64 internal_order_id = 3;
+  string internal_order_no = 4;
+  string client_order_id = 5;
+  int32 order_status = 6;
+  string filled_qty = 7;
+  string reason = 8;
+  int64 event_time = 9;
+}
+
+message LiquidityTaskReq {
+  int64 tenant_id = 1;
+  int64 config_id = 2;
+  int64 provider_id = 3;
+  int32 batch_size = 4;
+  int64 now = 5;
+}
+
+message LiquidityTaskResp {
+  common.RespBase base = 1;
+  int64 scanned_count = 2;
+  int64 success_count = 3;
+  int64 failed_count = 4;
+}

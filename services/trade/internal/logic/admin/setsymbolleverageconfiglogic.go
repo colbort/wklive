@@ -45,7 +45,7 @@ func (l *SetSymbolLeverageConfigLogic) SetSymbolLeverageConfig(in *trade.SetSymb
 	} else if base != nil {
 		return &trade.CommonResp{Base: base}, nil
 	}
-	if symbol.ProductType != int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) {
+	if symbol.ProductType != int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) {
 		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 

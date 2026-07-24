@@ -23,15 +23,15 @@ var (
 	sysUserRowsExpectAutoSet   = strings.Join(stringx.Remove(sysUserFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	sysUserRowsWithPlaceHolder = strings.Join(stringx.Remove(sysUserFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheSysUserIdPrefix               = "cache:sysUser:id:"
-	cacheSysUserTenantIdUsernamePrefix = "cache:sysUser:tenantId:username:"
+	cacheSysUserIdPrefix                       = "cache:sysUser:id:"
+	cacheSysUserTenantIdAppScopeUsernamePrefix = "cache:sysUser:tenantId:appScope:username:"
 )
 
 type (
 	sysUserModel interface {
 		Insert(ctx context.Context, data *SysUser) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*SysUser, error)
-		FindOneByTenantIdUsername(ctx context.Context, tenantId int64, username string) (*SysUser, error)
+		FindOneByTenantIdAppScopeUsername(ctx context.Context, tenantId int64, appScope int64, username string) (*SysUser, error)
 		Update(ctx context.Context, data *SysUser) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -44,6 +44,7 @@ type (
 	SysUser struct {
 		Id            int64  `db:"id"`             // 用户ID
 		TenantId      int64  `db:"tenant_id"`      // 所属租户ID：0=系统侧，>0=租户ID
+		AppScope      int64  `db:"app_scope"`      // 应用范围：1综合管理后台 2做市管理后台
 		UserType      int64  `db:"user_type"`      // 用户类型：1系统管理员 2租户主账号 3租户管理员
 		IsOwner       int64  `db:"is_owner"`       // 是否租户主账号：1是 2否
 		Username      string `db:"username"`       // 登录账号
@@ -76,11 +77,11 @@ func (m *defaultSysUserModel) Delete(ctx context.Context, id int64) error {
 	}
 
 	sysUserIdKey := fmt.Sprintf("%s%v", cacheSysUserIdPrefix, id)
-	sysUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheSysUserTenantIdUsernamePrefix, data.TenantId, data.Username)
+	sysUserTenantIdAppScopeUsernameKey := fmt.Sprintf("%s%v:%v:%v", cacheSysUserTenantIdAppScopeUsernamePrefix, data.TenantId, data.AppScope, data.Username)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, sysUserIdKey, sysUserTenantIdUsernameKey)
+	}, sysUserIdKey, sysUserTenantIdAppScopeUsernameKey)
 	return err
 }
 
@@ -101,12 +102,12 @@ func (m *defaultSysUserModel) FindOne(ctx context.Context, id int64) (*SysUser, 
 	}
 }
 
-func (m *defaultSysUserModel) FindOneByTenantIdUsername(ctx context.Context, tenantId int64, username string) (*SysUser, error) {
-	sysUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheSysUserTenantIdUsernamePrefix, tenantId, username)
+func (m *defaultSysUserModel) FindOneByTenantIdAppScopeUsername(ctx context.Context, tenantId int64, appScope int64, username string) (*SysUser, error) {
+	sysUserTenantIdAppScopeUsernameKey := fmt.Sprintf("%s%v:%v:%v", cacheSysUserTenantIdAppScopeUsernamePrefix, tenantId, appScope, username)
 	var resp SysUser
-	err := m.QueryRowIndexCtx(ctx, &resp, sysUserTenantIdUsernameKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `username` = ? limit 1", sysUserRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, username); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, sysUserTenantIdAppScopeUsernameKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `app_scope` = ? and `username` = ? limit 1", sysUserRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, appScope, username); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -123,11 +124,11 @@ func (m *defaultSysUserModel) FindOneByTenantIdUsername(ctx context.Context, ten
 
 func (m *defaultSysUserModel) Insert(ctx context.Context, data *SysUser) (sql.Result, error) {
 	sysUserIdKey := fmt.Sprintf("%s%v", cacheSysUserIdPrefix, data.Id)
-	sysUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheSysUserTenantIdUsernamePrefix, data.TenantId, data.Username)
+	sysUserTenantIdAppScopeUsernameKey := fmt.Sprintf("%s%v:%v:%v", cacheSysUserTenantIdAppScopeUsernamePrefix, data.TenantId, data.AppScope, data.Username)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysUserRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserType, data.IsOwner, data.Username, data.Password, data.Nickname, data.Avatar, data.Enabled, data.GoogleSecret, data.GoogleEnabled, data.PermsVer, data.LastLoginIp, data.LastLoginAt, data.CreateBy, data.CreateTimes, data.UpdateTimes)
-	}, sysUserIdKey, sysUserTenantIdUsernameKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysUserRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.AppScope, data.UserType, data.IsOwner, data.Username, data.Password, data.Nickname, data.Avatar, data.Enabled, data.GoogleSecret, data.GoogleEnabled, data.PermsVer, data.LastLoginIp, data.LastLoginAt, data.CreateBy, data.CreateTimes, data.UpdateTimes)
+	}, sysUserIdKey, sysUserTenantIdAppScopeUsernameKey)
 	return ret, err
 }
 
@@ -138,11 +139,11 @@ func (m *defaultSysUserModel) Update(ctx context.Context, newData *SysUser) erro
 	}
 
 	sysUserIdKey := fmt.Sprintf("%s%v", cacheSysUserIdPrefix, data.Id)
-	sysUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheSysUserTenantIdUsernamePrefix, data.TenantId, data.Username)
+	sysUserTenantIdAppScopeUsernameKey := fmt.Sprintf("%s%v:%v:%v", cacheSysUserTenantIdAppScopeUsernamePrefix, data.TenantId, data.AppScope, data.Username)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysUserRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserType, newData.IsOwner, newData.Username, newData.Password, newData.Nickname, newData.Avatar, newData.Enabled, newData.GoogleSecret, newData.GoogleEnabled, newData.PermsVer, newData.LastLoginIp, newData.LastLoginAt, newData.CreateBy, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, sysUserIdKey, sysUserTenantIdUsernameKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.AppScope, newData.UserType, newData.IsOwner, newData.Username, newData.Password, newData.Nickname, newData.Avatar, newData.Enabled, newData.GoogleSecret, newData.GoogleEnabled, newData.PermsVer, newData.LastLoginIp, newData.LastLoginAt, newData.CreateBy, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, sysUserIdKey, sysUserTenantIdAppScopeUsernameKey)
 	return err
 }
 

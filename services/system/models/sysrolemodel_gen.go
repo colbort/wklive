@@ -23,17 +23,17 @@ var (
 	sysRoleRowsExpectAutoSet   = strings.Join(stringx.Remove(sysRoleFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	sysRoleRowsWithPlaceHolder = strings.Join(stringx.Remove(sysRoleFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheSysRoleIdPrefix           = "cache:sysRole:id:"
-	cacheSysRoleTenantIdCodePrefix = "cache:sysRole:tenantId:code:"
-	cacheSysRoleTenantIdNamePrefix = "cache:sysRole:tenantId:name:"
+	cacheSysRoleIdPrefix                   = "cache:sysRole:id:"
+	cacheSysRoleTenantIdAppScopeCodePrefix = "cache:sysRole:tenantId:appScope:code:"
+	cacheSysRoleTenantIdAppScopeNamePrefix = "cache:sysRole:tenantId:appScope:name:"
 )
 
 type (
 	sysRoleModel interface {
 		Insert(ctx context.Context, data *SysRole) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*SysRole, error)
-		FindOneByTenantIdCode(ctx context.Context, tenantId int64, code string) (*SysRole, error)
-		FindOneByTenantIdName(ctx context.Context, tenantId int64, name string) (*SysRole, error)
+		FindOneByTenantIdAppScopeCode(ctx context.Context, tenantId int64, appScope int64, code string) (*SysRole, error)
+		FindOneByTenantIdAppScopeName(ctx context.Context, tenantId int64, appScope int64, name string) (*SysRole, error)
 		Update(ctx context.Context, data *SysRole) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -46,6 +46,7 @@ type (
 	SysRole struct {
 		Id          int64  `db:"id"`        // 角色ID
 		TenantId    int64  `db:"tenant_id"` // 所属租户ID：0=系统角色，>0=租户角色
+		AppScope    int64  `db:"app_scope"` // 应用范围：1综合管理后台 2做市管理后台
 		Name        string `db:"name"`      // 角色名称
 		Code        string `db:"code"`      // 角色标识(如admin)
 		Enabled     int64  `db:"enabled"`   // 启用开关：1启用 2禁用
@@ -69,12 +70,12 @@ func (m *defaultSysRoleModel) Delete(ctx context.Context, id int64) error {
 	}
 
 	sysRoleIdKey := fmt.Sprintf("%s%v", cacheSysRoleIdPrefix, id)
-	sysRoleTenantIdCodeKey := fmt.Sprintf("%s%v:%v", cacheSysRoleTenantIdCodePrefix, data.TenantId, data.Code)
-	sysRoleTenantIdNameKey := fmt.Sprintf("%s%v:%v", cacheSysRoleTenantIdNamePrefix, data.TenantId, data.Name)
+	sysRoleTenantIdAppScopeCodeKey := fmt.Sprintf("%s%v:%v:%v", cacheSysRoleTenantIdAppScopeCodePrefix, data.TenantId, data.AppScope, data.Code)
+	sysRoleTenantIdAppScopeNameKey := fmt.Sprintf("%s%v:%v:%v", cacheSysRoleTenantIdAppScopeNamePrefix, data.TenantId, data.AppScope, data.Name)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, sysRoleIdKey, sysRoleTenantIdCodeKey, sysRoleTenantIdNameKey)
+	}, sysRoleIdKey, sysRoleTenantIdAppScopeCodeKey, sysRoleTenantIdAppScopeNameKey)
 	return err
 }
 
@@ -95,12 +96,12 @@ func (m *defaultSysRoleModel) FindOne(ctx context.Context, id int64) (*SysRole, 
 	}
 }
 
-func (m *defaultSysRoleModel) FindOneByTenantIdCode(ctx context.Context, tenantId int64, code string) (*SysRole, error) {
-	sysRoleTenantIdCodeKey := fmt.Sprintf("%s%v:%v", cacheSysRoleTenantIdCodePrefix, tenantId, code)
+func (m *defaultSysRoleModel) FindOneByTenantIdAppScopeCode(ctx context.Context, tenantId int64, appScope int64, code string) (*SysRole, error) {
+	sysRoleTenantIdAppScopeCodeKey := fmt.Sprintf("%s%v:%v:%v", cacheSysRoleTenantIdAppScopeCodePrefix, tenantId, appScope, code)
 	var resp SysRole
-	err := m.QueryRowIndexCtx(ctx, &resp, sysRoleTenantIdCodeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `code` = ? limit 1", sysRoleRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, code); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, sysRoleTenantIdAppScopeCodeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `app_scope` = ? and `code` = ? limit 1", sysRoleRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, appScope, code); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -115,12 +116,12 @@ func (m *defaultSysRoleModel) FindOneByTenantIdCode(ctx context.Context, tenantI
 	}
 }
 
-func (m *defaultSysRoleModel) FindOneByTenantIdName(ctx context.Context, tenantId int64, name string) (*SysRole, error) {
-	sysRoleTenantIdNameKey := fmt.Sprintf("%s%v:%v", cacheSysRoleTenantIdNamePrefix, tenantId, name)
+func (m *defaultSysRoleModel) FindOneByTenantIdAppScopeName(ctx context.Context, tenantId int64, appScope int64, name string) (*SysRole, error) {
+	sysRoleTenantIdAppScopeNameKey := fmt.Sprintf("%s%v:%v:%v", cacheSysRoleTenantIdAppScopeNamePrefix, tenantId, appScope, name)
 	var resp SysRole
-	err := m.QueryRowIndexCtx(ctx, &resp, sysRoleTenantIdNameKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `name` = ? limit 1", sysRoleRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, name); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, sysRoleTenantIdAppScopeNameKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `app_scope` = ? and `name` = ? limit 1", sysRoleRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, appScope, name); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -137,12 +138,12 @@ func (m *defaultSysRoleModel) FindOneByTenantIdName(ctx context.Context, tenantI
 
 func (m *defaultSysRoleModel) Insert(ctx context.Context, data *SysRole) (sql.Result, error) {
 	sysRoleIdKey := fmt.Sprintf("%s%v", cacheSysRoleIdPrefix, data.Id)
-	sysRoleTenantIdCodeKey := fmt.Sprintf("%s%v:%v", cacheSysRoleTenantIdCodePrefix, data.TenantId, data.Code)
-	sysRoleTenantIdNameKey := fmt.Sprintf("%s%v:%v", cacheSysRoleTenantIdNamePrefix, data.TenantId, data.Name)
+	sysRoleTenantIdAppScopeCodeKey := fmt.Sprintf("%s%v:%v:%v", cacheSysRoleTenantIdAppScopeCodePrefix, data.TenantId, data.AppScope, data.Code)
+	sysRoleTenantIdAppScopeNameKey := fmt.Sprintf("%s%v:%v:%v", cacheSysRoleTenantIdAppScopeNamePrefix, data.TenantId, data.AppScope, data.Name)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, sysRoleRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.Name, data.Code, data.Enabled, data.Remark, data.CreateTimes, data.UpdateTimes)
-	}, sysRoleIdKey, sysRoleTenantIdCodeKey, sysRoleTenantIdNameKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysRoleRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.AppScope, data.Name, data.Code, data.Enabled, data.Remark, data.CreateTimes, data.UpdateTimes)
+	}, sysRoleIdKey, sysRoleTenantIdAppScopeCodeKey, sysRoleTenantIdAppScopeNameKey)
 	return ret, err
 }
 
@@ -153,12 +154,12 @@ func (m *defaultSysRoleModel) Update(ctx context.Context, newData *SysRole) erro
 	}
 
 	sysRoleIdKey := fmt.Sprintf("%s%v", cacheSysRoleIdPrefix, data.Id)
-	sysRoleTenantIdCodeKey := fmt.Sprintf("%s%v:%v", cacheSysRoleTenantIdCodePrefix, data.TenantId, data.Code)
-	sysRoleTenantIdNameKey := fmt.Sprintf("%s%v:%v", cacheSysRoleTenantIdNamePrefix, data.TenantId, data.Name)
+	sysRoleTenantIdAppScopeCodeKey := fmt.Sprintf("%s%v:%v:%v", cacheSysRoleTenantIdAppScopeCodePrefix, data.TenantId, data.AppScope, data.Code)
+	sysRoleTenantIdAppScopeNameKey := fmt.Sprintf("%s%v:%v:%v", cacheSysRoleTenantIdAppScopeNamePrefix, data.TenantId, data.AppScope, data.Name)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysRoleRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.Name, newData.Code, newData.Enabled, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, sysRoleIdKey, sysRoleTenantIdCodeKey, sysRoleTenantIdNameKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.AppScope, newData.Name, newData.Code, newData.Enabled, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, sysRoleIdKey, sysRoleTenantIdAppScopeCodeKey, sysRoleTenantIdAppScopeNameKey)
 	return err
 }
 

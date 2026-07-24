@@ -34,6 +34,7 @@ func (l *SysRoleListLogic) SysRoleList(in *system.SysRoleListReq) (*system.SysRo
 		Keyword:  in.Keyword,
 		TenantId: tenantId,
 		Enabled:  commonStatusToModel(in.Enabled),
+		AppScope: int64(in.AppScope),
 	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
@@ -55,6 +56,8 @@ func (l *SysRoleListLogic) SysRoleList(in *system.SysRoleListReq) (*system.SysRo
 			TenantId:    r.TenantId,
 			Remark:      r.Remark,
 			CreateTimes: r.CreateTimes,
+			UpdateTimes: r.UpdateTimes,
+			AppScope:    system.ApplicationScope(r.AppScope),
 		})
 	}
 

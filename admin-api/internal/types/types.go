@@ -3978,6 +3978,7 @@ type SysMenuCreateReq struct {
 	Visible   int64  `json:"visible,optional"`
 	Enabled   int64  `json:"enabled,optional"`
 	Perms     string `json:"perms,optional"`
+	AppScope  int64  `json:"appScope"`
 }
 
 type SysMenuDeleteReq struct {
@@ -3997,6 +3998,7 @@ type SysMenuItem struct {
 	Visible   int64  `json:"visible"`
 	Enabled   int64  `json:"enabled"`
 	Perms     string `json:"perms,optional"`
+	AppScope  int64  `json:"appScope"`
 }
 
 type SysMenuListReq struct {
@@ -4005,6 +4007,7 @@ type SysMenuListReq struct {
 	Enabled  int64  `form:"enabled,optional"`  // 0未知 1启用 2禁用
 	Visible  int64  `form:"visible,optional"`  // 0/1
 	MenuType int64  `form:"menuType,optional"` // 1/2/3
+	AppScope int64  `form:"appScope,optional"`
 }
 
 type SysMenuListResp struct {
@@ -4034,11 +4037,13 @@ type SysMenuUpdateReq struct {
 	Visible   int64  `json:"visible,optional"`
 	Enabled   int64  `json:"enabled,optional"`
 	Perms     string `json:"perms,optional"`
+	AppScope  int64  `json:"appScope,optional"`
 }
 
 type SysPermItem struct {
-	PermKey string `json:"key"`  // 唯一权限标识（如 sys:role:add）
-	Name    string `json:"name"` // 展示名称（如 新增角色）
+	PermKey  string `json:"key"`  // 唯一权限标识（如 sys:role:add）
+	Name     string `json:"name"` // 展示名称（如 新增角色）
+	AppScope int64  `json:"appScope"`
 }
 
 type SysPermListResp struct {
@@ -4052,6 +4057,7 @@ type SysRoleCreateReq struct {
 	Code     string `json:"code"`
 	Enabled  int64  `json:"enabled,optional"`
 	Remark   string `json:"remark,optional"`
+	AppScope int64  `json:"appScope"`
 }
 
 type SysRoleDeleteReq struct {
@@ -4086,12 +4092,14 @@ type SysRoleItem struct {
 	Remark      string `json:"remark,optional"`
 	TenantId    int64  `json:"tenantId"`
 	CreateTimes int64  `json:"createTimes"`
+	AppScope    int64  `json:"appScope"`
 }
 
 type SysRoleListReq struct {
 	PageReq
-	Keyword string `form:"keyword,optional"`
-	Enabled int64  `form:"enabled,optional"`
+	Keyword  string `form:"keyword,optional"`
+	Enabled  int64  `form:"enabled,optional"`
+	AppScope int64  `form:"appScope,optional"`
 }
 
 type SysRoleListResp struct {
@@ -4105,6 +4113,7 @@ type SysRoleUpdateReq struct {
 	Name     string `json:"name,optional"`
 	Enabled  int64  `json:"enabled,optional"`
 	Remark   string `json:"remark,optional"`
+	AppScope int64  `json:"appScope,optional"`
 }
 
 type SysTenantCreateReq struct {
@@ -4232,6 +4241,7 @@ type SysUserCreateReq struct {
 	Nickname string  `json:"nickname,optional"`
 	Enabled  int64   `json:"enabled,optional"` // 0未知 1启用 2禁用
 	RoleIds  []int64 `json:"roleIds,optional"`
+	AppScope int64   `json:"appScope"`
 }
 
 type SysUserDeleteReq struct {
@@ -4260,12 +4270,14 @@ type SysUserItem struct {
 	LastLoginAt      int64   `json:"lastLoginAt"`
 	CreateBy         int64   `json:"createBy"`
 	UpdateTimes      int64   `json:"updateTimes"`
+	AppScope         int64   `json:"appScope"`
 }
 
 type SysUserListReq struct {
 	PageReq
-	Keyword string `form:"keyword,optional"`
-	Enabled int64  `form:"enabled,optional"`
+	Keyword  string `form:"keyword,optional"`
+	Enabled  int64  `form:"enabled,optional"`
+	AppScope int64  `form:"appScope,optional"`
 }
 
 type SysUserListResp struct {
@@ -4278,6 +4290,7 @@ type SysUserUpdateReq struct {
 	Nickname string  `json:"nickname,optional"`
 	Enabled  int64   `json:"enabled,optional"`
 	RoleIds  []int64 `json:"roleIds,optional"`
+	AppScope int64   `json:"appScope,optional"`
 }
 
 type TenantCategoryItem struct {

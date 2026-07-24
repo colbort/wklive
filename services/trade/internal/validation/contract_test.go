@@ -2,6 +2,7 @@ package validation
 
 import (
 	"testing"
+	"wklive/proto/common"
 
 	"wklive/proto/trade"
 	"wklive/services/trade/models"
@@ -22,7 +23,7 @@ func TestValidateSymbolTradingTimeline(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := SymbolTradingTimeline(trade.ProductType_PRODUCT_TYPE_DERIVATIVE, trade.ContractType_CONTRACT_TYPE_DELIVERY, tt.listing, tt.start, tt.end)
+			err := SymbolTradingTimeline(common.ProductType_PRODUCT_TYPE_DERIVATIVE, common.ContractType_CONTRACT_TYPE_DELIVERY, tt.listing, tt.start, tt.end)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("validateSymbolTradingTimeline() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -32,8 +33,8 @@ func TestValidateSymbolTradingTimeline(t *testing.T) {
 
 func TestValidateContractTradingTimeline(t *testing.T) {
 	symbol := &models.TTradeSymbol{
-		ProductType:      int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE),
-		ContractType:     int64(trade.ContractType_CONTRACT_TYPE_DELIVERY),
+		ProductType:      int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE),
+		ContractType:     int64(common.ContractType_CONTRACT_TYPE_DELIVERY),
 		ListingTime:      100,
 		TradingStartTime: 200,
 		TradingEndTime:   500,

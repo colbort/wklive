@@ -15,6 +15,7 @@ type (
 		Keyword  string
 		TenantId int64
 		Enabled  int64
+		AppScope int64
 	}
 
 	// SysRoleModel is an interface to be customized, add more methods here,
@@ -55,6 +56,7 @@ func (m *defaultSysRoleModel) FindPage(
 	}
 	builder.EqInt64("enabled", filter.Enabled)
 	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("app_scope", filter.AppScope)
 
 	where := builder.Where()
 	args := builder.Args()

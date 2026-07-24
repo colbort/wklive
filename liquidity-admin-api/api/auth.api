@@ -1,0 +1,77 @@
+type LoginReq {
+	username string `json:"username"`
+	password string `json:"password"`
+	googleCode string `json:"googleCode,optional"`
+}
+
+type LoginData {
+	token string `json:"token"`
+	exp int64 `json:"exp"`
+	userId int64 `json:"userId"`
+	nickname string `json:"nickname"`
+	tenantId int64 `json:"tenantId"`
+	appScope int32 `json:"appScope"`
+}
+
+type LoginResp {
+	RespBase
+	data LoginData `json:"data"`
+}
+
+type ProfileUser {
+	id int64 `json:"id"`
+	username string `json:"username"`
+	nickname string `json:"nickname,optional"`
+	avatar string `json:"avatar,optional"`
+	tenantId int64 `json:"tenantId"`
+	userType int32 `json:"userType"`
+	isOwner int32 `json:"isOwner"`
+	google2FaEnabled int32 `json:"google2FaEnabled"`
+	appScope int32 `json:"appScope"`
+}
+
+type MenuNode {
+	id int64 `json:"id"`
+	parentId int64 `json:"parentId"`
+	name string `json:"name"`
+	menuType int32 `json:"menuType"`
+	path string `json:"path,optional"`
+	component string `json:"component,optional"`
+	icon string `json:"icon,optional"`
+	sort int64 `json:"sort"`
+	visible int32 `json:"visible"`
+	enabled int32 `json:"enabled"`
+	perms string `json:"perms,optional"`
+	children []MenuNode `json:"children,optional"`
+}
+
+type ProfileData {
+	user ProfileUser `json:"user"`
+	menus []MenuNode `json:"menus"`
+	perms []string `json:"perms"`
+	roleIds []int64 `json:"roleIds"`
+}
+
+type ProfileResp {
+	RespBase
+	data ProfileData `json:"data"`
+}
+
+@server (
+	prefix: /admin/liquidity
+	group: auth
+)
+service liquidityAdmin {
+	@handler Login
+	post /auth/login (LoginReq) returns (LoginResp)
+}
+
+@server (
+	prefix: /admin/liquidity
+	group: auth
+	jwt: Jwt
+)
+service liquidityAdmin {
+	@handler Profile
+	get /auth/profile returns (ProfileResp)
+}

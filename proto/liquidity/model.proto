@@ -1,0 +1,312 @@
+syntax = "proto3";
+
+package liquidity;
+
+import "proto/common/common.proto";
+import "proto/liquidity/enum.proto";
+
+option go_package = "wklive/proto/liquidity;liquidity";
+
+message PageMeta {
+  int64 next_cursor = 1;
+  int64 total = 2;
+  bool has_more = 3;
+}
+
+message LiquidityProvider {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string provider_code = 3;
+  string provider_name = 4;
+  ProviderType provider_type = 5;
+  int64 trade_user_id = 6;
+  string venue_code = 7;
+  ProviderEnvironment environment = 8;
+  reserved 9; // credential_ref 不允许通过查询接口回传
+  string account_ref = 10;
+  int32 rate_limit_per_second = 11;
+  ProviderStatus status = 12;
+  HealthStatus last_health_status = 13;
+  int64 last_health_at = 14;
+  string last_error_msg = 15;
+  int64 version = 16;
+  string remark = 17;
+  int64 create_times = 18;
+  int64 update_times = 19;
+  bool credential_configured = 20;
+}
+
+message LiquiditySymbolConfig {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 symbol_id = 3;
+  string symbol = 4;
+  common.ProductType product_type = 5;
+  common.ContractType contract_type = 6;
+  LiquidityMode liquidity_mode = 7;
+  int64 internal_provider_id = 8;
+  int64 external_provider_id = 9;
+  string external_symbol = 10;
+  string reference_price_source = 11;
+  string reference_price_kind = 12;
+  int32 quote_validity_ms = 13;
+  int32 refresh_interval_ms = 14;
+  int32 quote_ttl_ms = 15;
+  string reprice_threshold_bps = 16;
+  string base_spread_bps = 17;
+  string max_spread_bps = 18;
+  string max_price_deviation_bps = 19;
+  string price_tick = 20;
+  string qty_step = 21;
+  string min_quote_qty = 22;
+  string max_quote_qty = 23;
+  string max_quote_notional = 24;
+  string target_base_inventory = 25;
+  string min_base_inventory = 26;
+  string max_base_inventory = 27;
+  string max_net_exposure = 28;
+  string max_daily_notional = 29;
+  string inventory_skew_bps = 30;
+  string hedge_threshold = 31;
+  string hedge_ratio = 32;
+  common.YesNo self_trade_prevention = 33;
+  SymbolLiquidityStatus status = 34;
+  string pause_reason = 35;
+  int64 version = 36;
+  int64 create_times = 37;
+  int64 update_times = 38;
+}
+
+message LiquidityStrategyLevel {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 config_id = 3;
+  int32 level_no = 4;
+  string bid_spread_bps = 5;
+  string ask_spread_bps = 6;
+  string bid_qty = 7;
+  string ask_qty = 8;
+  common.Enable enabled = 9;
+  int64 version = 10;
+  int64 create_times = 11;
+  int64 update_times = 12;
+}
+
+message LiquidityQuoteCycle {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string cycle_no = 3;
+  int64 config_id = 4;
+  int64 symbol_id = 5;
+  string reference_price = 6;
+  string reference_source = 7;
+  string reference_snapshot_id = 8;
+  int64 reference_time = 9;
+  int32 target_bid_count = 10;
+  int32 target_ask_count = 11;
+  int32 placed_bid_count = 12;
+  int32 placed_ask_count = 13;
+  QuoteCycleStatus status = 14;
+  string last_error_msg = 15;
+  int64 started_at = 16;
+  int64 finished_at = 17;
+  int64 create_times = 18;
+  int64 update_times = 19;
+}
+
+message LiquidityQuoteOrder {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string quote_no = 3;
+  int64 cycle_id = 4;
+  int64 config_id = 5;
+  int64 provider_id = 6;
+  int64 symbol_id = 7;
+  common.Side side = 8;
+  int32 level_no = 9;
+  string price = 10;
+  string qty = 11;
+  string filled_qty = 12;
+  int64 internal_order_id = 13;
+  string internal_order_no = 14;
+  string client_order_id = 15;
+  QuoteOrderStatus status = 16;
+  int64 expire_at = 17;
+  string cancel_reason = 18;
+  string last_error_msg = 19;
+  int64 version = 20;
+  int64 create_times = 21;
+  int64 update_times = 22;
+}
+
+message LiquidityExternalOrder {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string order_no = 3;
+  string request_no = 4;
+  int64 provider_id = 5;
+  int64 config_id = 6;
+  int64 symbol_id = 7;
+  string external_symbol = 8;
+  ExternalOrderPurpose purpose = 9;
+  string reference_type = 10;
+  int64 reference_id = 11;
+  common.Side side = 12;
+  ExternalOrderType order_type = 13;
+  ExternalTimeInForce time_in_force = 14;
+  string price = 15;
+  string qty = 16;
+  string filled_qty = 17;
+  string avg_price = 18;
+  string fee_amount = 19;
+  string fee_asset = 20;
+  string external_order_id = 21;
+  string external_client_order_id = 22;
+  ExternalOrderStatus status = 23;
+  int64 submitted_at = 24;
+  int64 finished_at = 25;
+  int32 retry_count = 26;
+  int64 next_retry_at = 27;
+  string last_error_code = 28;
+  string last_error_msg = 29;
+  string raw_response = 30;
+  int64 version = 31;
+  int64 create_times = 32;
+  int64 update_times = 33;
+}
+
+message LiquidityExternalFill {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 provider_id = 3;
+  int64 external_order_id = 4;
+  string fill_no = 5;
+  string external_trade_id = 6;
+  common.Side side = 7;
+  string price = 8;
+  string qty = 9;
+  string amount = 10;
+  string fee_amount = 11;
+  string fee_asset = 12;
+  int32 liquidity_type = 13;
+  int64 trade_time = 14;
+  ExternalFillSettlementStatus settlement_status = 15;
+  int32 retry_count = 16;
+  int64 next_retry_at = 17;
+  string last_error_msg = 18;
+  string raw_payload = 19;
+  int64 create_times = 20;
+  int64 update_times = 21;
+}
+
+message LiquidityHedgeTask {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string hedge_no = 3;
+  int64 config_id = 4;
+  int64 provider_id = 5;
+  int64 symbol_id = 6;
+  HedgeTriggerType trigger_type = 7;
+  string exposure_before = 8;
+  string target_exposure = 9;
+  common.Side side = 10;
+  string target_qty = 11;
+  string executed_qty = 12;
+  string avg_price = 13;
+  HedgeStatus status = 14;
+  int32 retry_count = 15;
+  int64 next_retry_at = 16;
+  string last_error_msg = 17;
+  int64 version = 18;
+  int64 create_times = 19;
+  int64 update_times = 20;
+}
+
+message LiquidityInventorySnapshot {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string snapshot_no = 3;
+  int64 config_id = 4;
+  int64 provider_id = 5;
+  int64 symbol_id = 6;
+  string base_asset = 7;
+  string quote_asset = 8;
+  string base_total = 9;
+  string base_available = 10;
+  string base_frozen = 11;
+  string quote_total = 12;
+  string quote_available = 13;
+  string quote_frozen = 14;
+  string position_qty = 15;
+  string pending_buy_qty = 16;
+  string pending_sell_qty = 17;
+  string net_exposure = 18;
+  string reference_price = 19;
+  string exposure_notional = 20;
+  InventorySource source = 21;
+  int64 snapshot_time = 22;
+  string raw_payload = 23;
+  int64 create_times = 24;
+}
+
+message LiquidityRiskEvent {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string event_no = 3;
+  int64 config_id = 4;
+  int64 provider_id = 5;
+  int64 symbol_id = 6;
+  string risk_type = 7;
+  RiskLevel risk_level = 8;
+  string metric_value = 9;
+  string threshold_value = 10;
+  RiskActionType action_type = 11;
+  RiskEventStatus status = 12;
+  string message = 13;
+  string context_json = 14;
+  int64 triggered_at = 15;
+  int64 recovered_at = 16;
+  int64 closed_at = 17;
+  int64 operator_id = 18;
+  int64 create_times = 19;
+  int64 update_times = 20;
+}
+
+message LiquidityReconcileBatch {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string batch_no = 3;
+  int64 provider_id = 4;
+  ReconcileType reconcile_type = 5;
+  int64 window_start = 6;
+  int64 window_end = 7;
+  int64 local_count = 8;
+  int64 external_count = 9;
+  int64 matched_count = 10;
+  int64 difference_count = 11;
+  ReconcileStatus status = 12;
+  string last_error_msg = 13;
+  int64 started_at = 14;
+  int64 finished_at = 15;
+  int64 create_times = 16;
+  int64 update_times = 17;
+}
+
+message LiquidityReconcileDetail {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 batch_id = 3;
+  string difference_no = 4;
+  ReconcileDifferenceType difference_type = 5;
+  string business_type = 6;
+  string local_reference = 7;
+  string external_reference = 8;
+  string local_value = 9;
+  string external_value = 10;
+  ReconcileDifferenceStatus status = 11;
+  string resolution = 12;
+  int64 operator_id = 13;
+  int64 resolved_at = 14;
+  int64 create_times = 15;
+  int64 update_times = 16;
+}

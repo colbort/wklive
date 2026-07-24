@@ -14,7 +14,7 @@ GOCTL ?= $(shell go env GOPATH)/bin/goctl
 
 .PHONY: gen gen-rpc fix-imports tidy fmt clean-gen gen-model print-protos clean-main install-goctl
 
-gen: check-goctl gen-rpc fix-imports fmt tidy clean-gen clean-main
+gen: check-goctl gen-rpc
 
 check-goctl:
 	@$(GOCTL) --version | grep "1.9.2" >/dev/null || \
@@ -41,6 +41,8 @@ gen-rpc:
 		--style=gozero
 	@$(MAKE) fix-imports
 	@$(MAKE) fmt
+	@$(MAKE) clean-gen
+	@$(MAKE) clean-main
 	@$(MAKE) tidy
 	@echo "✅ [services/trade] gen-rpc done"
 

@@ -27,6 +27,10 @@ func NewSysRoleGrantDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 获取角色授权详情
 func (l *SysRoleGrantDetailLogic) SysRoleGrantDetail(in *system.SysRoleGrantDetailReq) (*system.SysRoleGrantDetailResp, error) {
+	role, err := l.svcCtx.RoleModel.FindOne(l.ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
 	roleMenus, err := l.svcCtx.RoleMenuModel.ListByRoleId(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
@@ -34,7 +38,13 @@ func (l *SysRoleGrantDetailLogic) SysRoleGrantDetail(in *system.SysRoleGrantDeta
 
 	menuIds := make([]int64, 0, len(roleMenus))
 	for _, rm := range roleMenus {
-		menuIds = append(menuIds, rm.MenuId)
+		menu, findErr := l.svcCtx.MenuModel.FindOne(l.ctx, rm.MenuId)
+		if findErr != nil {
+			return nil, findErr
+		}
+		if menu.AppScope == role.AppScope {
+			menuIds = append(menuIds, rm.MenuId)
+		}
 	}
 
 	permKeys, err := l.permKeysFromMenuIds(menuIds)

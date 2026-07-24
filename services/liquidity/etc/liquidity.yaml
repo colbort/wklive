@@ -1,0 +1,37 @@
+Name: liquidity.rpc
+ListenOn: 0.0.0.0:8091
+Mode: dev
+
+Etcd:
+  Hosts:
+  - 127.0.0.1:2379
+  Key: liquidity.rpc
+
+MQ:
+  Brokers:
+  - 127.0.0.1:9092
+  MaxAttempts: 5
+
+TradeRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - 127.0.0.1:2379
+    Key: trade.rpc
+
+AssetRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - 127.0.0.1:2379
+    Key: asset.rpc
+
+ItickRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - 127.0.0.1:2379
+    Key: itick.rpc
+
+MarketAuthority: itick-ws
+PriceEngineAuthority: price-engine

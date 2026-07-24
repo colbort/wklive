@@ -43,6 +43,13 @@
         </el-select>
       </el-form-item>
 
+      <el-form-item :label="t('common.applicationScope')">
+        <el-select v-model="queryForm.appScope" clearable :placeholder="t('common.all')">
+          <el-option :label="t('common.adminBackend')" :value="1" />
+          <el-option :label="t('common.liquidityAdmin')" :value="2" />
+        </el-select>
+      </el-form-item>
+
       <template #actions>
         <el-button v-perm="'sys:menu:add'" type="primary" @click="handleAdd(0)">
           {{ t('common.add') }}
@@ -68,6 +75,13 @@
           <template #default="{ row }">
             <el-tag type="info">
               {{ getOptionValueLabel(optionGroups, 'menuType', row.menuType, t) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('common.applicationScope')" width="150">
+          <template #default="{ row }">
+            <el-tag :type="row.appScope === 2 ? 'success' : 'primary'">
+              {{ row.appScope === 2 ? t('common.liquidityAdmin') : t('common.adminBackend') }}
             </el-tag>
           </template>
         </el-table-column>
@@ -175,6 +189,17 @@
         :rules="rules"
         label-width="100px"
       >
+        <el-form-item :label="t('common.applicationScope')" prop="appScope">
+          <el-radio-group
+            v-model="formData.appScope"
+            :disabled="dialogType === 'edit'"
+            @change="formData.parentId = 0"
+          >
+            <el-radio :value="1">{{ t('common.adminBackend') }}</el-radio>
+            <el-radio :value="2">{{ t('common.liquidityAdmin') }}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+
         <el-form-item :label="t('system.parentMenu')" prop="parentId">
           <el-tree-select
             v-model="formData.parentId"
@@ -379,6 +404,7 @@ type MenuFormData = {
   visible: number
   enabled: number
   perms: string
+  appScope: number
 }
 
 type QueryFormData = {
@@ -386,6 +412,7 @@ type QueryFormData = {
   menuType: number | undefined
   enabled: number | undefined
   visible: number | undefined
+  appScope: number | undefined
 }
 
 const iconMap = ElementPlusIconsVue as Record<string, Component>
@@ -441,6 +468,7 @@ const { form: queryForm } = useForm<QueryFormData>({
     menuType: undefined,
     enabled: undefined,
     visible: undefined,
+    appScope: undefined,
   },
 })
 const { confirm } = useConfirm()
@@ -469,6 +497,7 @@ const createDefaultForm = (): MenuFormData => ({
   visible: 1,
   enabled: 1,
   perms: '',
+  appScope: 1,
 })
 
 const { form: formData } = useForm<MenuFormData>({
@@ -513,7 +542,10 @@ const parentTreeOptions = computed(() => {
 
   const filterNodes = (nodes: SysMenuTreeItem[]): SysMenuTreeItem[] => {
     return nodes
-      .filter((node) => node.menuType !== 3 && !excludeIds.has(node.id))
+      .filter(
+        (node) =>
+          node.appScope === formData.appScope && node.menuType !== 3 && !excludeIds.has(node.id),
+      )
       .map((node) => ({
         ...node,
         children: filterNodes(node.children || []),
@@ -697,6 +729,7 @@ async function getList() {
         menuType: queryForm.menuType ?? 0,
         enabled: queryForm.enabled ?? 0,
         visible: queryForm.visible ?? 0,
+        appScope: queryForm.appScope,
       })
 
       if (res.code != 200) {
@@ -728,6 +761,7 @@ function resetQuery() {
   queryForm.menuType = undefined
   queryForm.enabled = undefined
   queryForm.visible = undefined
+  queryForm.appScope = undefined
   queryPage.cursor = undefined
   queryPage.limit = 20
   getList()
@@ -763,6 +797,7 @@ function handleEdit(row: SysMenuItem) {
     visible: row.visible,
     enabled: row.enabled,
     perms: row.perms,
+    appScope: row.appScope || 1,
   })
 
   dialogVisible.value = true
@@ -810,6 +845,7 @@ async function handleSubmit() {
           visible: formData.visible,
           enabled: formData.enabled,
           perms: formData.perms.trim(),
+          appScope: formData.appScope,
         }
 
         const res = await menuService.create(payload)
@@ -829,6 +865,7 @@ async function handleSubmit() {
           visible: formData.visible,
           enabled: formData.enabled,
           perms: formData.perms.trim(),
+          appScope: formData.appScope,
         }
 
         const res = await menuService.update(formData.id!, payload)

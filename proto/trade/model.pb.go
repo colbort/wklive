@@ -316,11 +316,11 @@ type TradeSymbol struct {
 	TenantId          int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	Symbol            string                 `protobuf:"bytes,3,opt,name=symbol,proto3" json:"symbol,omitempty"`
 	DisplaySymbol     string                 `protobuf:"bytes,4,opt,name=display_symbol,json=displaySymbol,proto3" json:"display_symbol,omitempty"`
-	ProductType       ProductType            `protobuf:"varint,5,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType       common.ProductType     `protobuf:"varint,5,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	BaseAsset         string                 `protobuf:"bytes,6,opt,name=base_asset,json=baseAsset,proto3" json:"base_asset,omitempty"`
 	QuoteAsset        string                 `protobuf:"bytes,7,opt,name=quote_asset,json=quoteAsset,proto3" json:"quote_asset,omitempty"`
 	SettleAsset       string                 `protobuf:"bytes,8,opt,name=settle_asset,json=settleAsset,proto3" json:"settle_asset,omitempty"`
-	ContractType      ContractType           `protobuf:"varint,9,opt,name=contract_type,json=contractType,proto3,enum=trade.ContractType" json:"contract_type,omitempty"`
+	ContractType      common.ContractType    `protobuf:"varint,9,opt,name=contract_type,json=contractType,proto3,enum=common.ContractType" json:"contract_type,omitempty"`
 	ContractValueType ContractValueType      `protobuf:"varint,27,opt,name=contract_value_type,json=contractValueType,proto3,enum=trade.ContractValueType" json:"contract_value_type,omitempty"`
 	MarginAsset       string                 `protobuf:"bytes,28,opt,name=margin_asset,json=marginAsset,proto3" json:"margin_asset,omitempty"`
 	Status            SymbolStatus           `protobuf:"varint,10,opt,name=status,proto3,enum=trade.SymbolStatus" json:"status,omitempty"`
@@ -403,11 +403,11 @@ func (x *TradeSymbol) GetDisplaySymbol() string {
 	return ""
 }
 
-func (x *TradeSymbol) GetProductType() ProductType {
+func (x *TradeSymbol) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 func (x *TradeSymbol) GetBaseAsset() string {
@@ -431,11 +431,11 @@ func (x *TradeSymbol) GetSettleAsset() string {
 	return ""
 }
 
-func (x *TradeSymbol) GetContractType() ContractType {
+func (x *TradeSymbol) GetContractType() common.ContractType {
 	if x != nil {
 		return x.ContractType
 	}
-	return ContractType_CONTRACT_TYPE_NOT_APPLICABLE
+	return common.ContractType(0)
 }
 
 func (x *TradeSymbol) GetContractValueType() ContractValueType {
@@ -1271,7 +1271,7 @@ type TradeUserConfig struct {
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	ProductType   ProductType            `protobuf:"varint,4,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType   common.ProductType     `protobuf:"varint,4,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,5,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	TradeEnabled  common.Enable          `protobuf:"varint,9,opt,name=trade_enabled,json=tradeEnabled,proto3,enum=common.Enable" json:"trade_enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	CreateTimes   int64                  `protobuf:"varint,11,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
@@ -1331,11 +1331,11 @@ func (x *TradeUserConfig) GetUserId() int64 {
 	return 0
 }
 
-func (x *TradeUserConfig) GetProductType() ProductType {
+func (x *TradeUserConfig) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 func (x *TradeUserConfig) GetSymbolId() int64 {
@@ -1482,7 +1482,7 @@ type TradeOrder struct {
 	ClientOrderId     string                 `protobuf:"bytes,4,opt,name=client_order_id,json=clientOrderId,proto3" json:"client_order_id,omitempty"`
 	UserId            int64                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	SymbolId          int64                  `protobuf:"varint,6,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
-	ProductType       ProductType            `protobuf:"varint,7,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType       common.ProductType     `protobuf:"varint,7,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	Side              common.Side            `protobuf:"varint,8,opt,name=side,proto3,enum=common.Side" json:"side,omitempty"` // 买卖方向
 	PositionSide      PositionSide           `protobuf:"varint,9,opt,name=position_side,json=positionSide,proto3,enum=trade.PositionSide" json:"position_side,omitempty"`
 	OrderType         OrderType              `protobuf:"varint,10,opt,name=order_type,json=orderType,proto3,enum=trade.OrderType" json:"order_type,omitempty"`
@@ -1505,7 +1505,7 @@ type TradeOrder struct {
 	CreateTimes       int64                  `protobuf:"varint,28,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes       int64                  `protobuf:"varint,29,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
 	TriggerKind       TriggerKind            `protobuf:"varint,30,opt,name=trigger_kind,json=triggerKind,proto3,enum=trade.TriggerKind" json:"trigger_kind,omitempty"`
-	ContractType      ContractType           `protobuf:"varint,31,opt,name=contract_type,json=contractType,proto3,enum=trade.ContractType" json:"contract_type,omitempty"`
+	ContractType      common.ContractType    `protobuf:"varint,31,opt,name=contract_type,json=contractType,proto3,enum=common.ContractType" json:"contract_type,omitempty"`
 	ContractValueType ContractValueType      `protobuf:"varint,32,opt,name=contract_value_type,json=contractValueType,proto3,enum=trade.ContractValueType" json:"contract_value_type,omitempty"`
 	RequestHash       string                 `protobuf:"bytes,33,opt,name=request_hash,json=requestHash,proto3" json:"request_hash,omitempty"`
 	CanceledQty       string                 `protobuf:"bytes,34,opt,name=canceled_qty,json=canceledQty,proto3" json:"canceled_qty,omitempty"`
@@ -1594,11 +1594,11 @@ func (x *TradeOrder) GetSymbolId() int64 {
 	return 0
 }
 
-func (x *TradeOrder) GetProductType() ProductType {
+func (x *TradeOrder) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 func (x *TradeOrder) GetSide() common.Side {
@@ -1755,11 +1755,11 @@ func (x *TradeOrder) GetTriggerKind() TriggerKind {
 	return TriggerKind_TRIGGER_KIND_NONE
 }
 
-func (x *TradeOrder) GetContractType() ContractType {
+func (x *TradeOrder) GetContractType() common.ContractType {
 	if x != nil {
 		return x.ContractType
 	}
-	return ContractType_CONTRACT_TYPE_NOT_APPLICABLE
+	return common.ContractType(0)
 }
 
 func (x *TradeOrder) GetContractValueType() ContractValueType {
@@ -2403,7 +2403,7 @@ type TradeFill struct {
 	OrderNo              string                 `protobuf:"bytes,5,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
 	UserId               int64                  `protobuf:"varint,6,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	SymbolId             int64                  `protobuf:"varint,7,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
-	ProductType          ProductType            `protobuf:"varint,8,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType          common.ProductType     `protobuf:"varint,8,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	Side                 common.Side            `protobuf:"varint,9,opt,name=side,proto3,enum=common.Side" json:"side,omitempty"` // 买卖方向
 	PositionSide         PositionSide           `protobuf:"varint,10,opt,name=position_side,json=positionSide,proto3,enum=trade.PositionSide" json:"position_side,omitempty"`
 	Price                string                 `protobuf:"bytes,11,opt,name=price,proto3" json:"price,omitempty"`
@@ -2416,7 +2416,7 @@ type TradeFill struct {
 	MatchTime            int64                  `protobuf:"varint,18,opt,name=match_time,json=matchTime,proto3" json:"match_time,omitempty"`
 	CreateTimes          int64                  `protobuf:"varint,19,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	MatchNo              string                 `protobuf:"bytes,20,opt,name=match_no,json=matchNo,proto3" json:"match_no,omitempty"`
-	ContractType         ContractType           `protobuf:"varint,21,opt,name=contract_type,json=contractType,proto3,enum=trade.ContractType" json:"contract_type,omitempty"`
+	ContractType         common.ContractType    `protobuf:"varint,21,opt,name=contract_type,json=contractType,proto3,enum=common.ContractType" json:"contract_type,omitempty"`
 	ContractValueType    ContractValueType      `protobuf:"varint,22,opt,name=contract_value_type,json=contractValueType,proto3,enum=trade.ContractValueType" json:"contract_value_type,omitempty"`
 	SettlementStatus     FillSettlementStatus   `protobuf:"varint,23,opt,name=settlement_status,json=settlementStatus,proto3,enum=trade.FillSettlementStatus" json:"settlement_status,omitempty"`
 	SettlementRetryCount int64                  `protobuf:"varint,24,opt,name=settlement_retry_count,json=settlementRetryCount,proto3" json:"settlement_retry_count,omitempty"`
@@ -2504,11 +2504,11 @@ func (x *TradeFill) GetSymbolId() int64 {
 	return 0
 }
 
-func (x *TradeFill) GetProductType() ProductType {
+func (x *TradeFill) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 func (x *TradeFill) GetSide() common.Side {
@@ -2595,11 +2595,11 @@ func (x *TradeFill) GetMatchNo() string {
 	return ""
 }
 
-func (x *TradeFill) GetContractType() ContractType {
+func (x *TradeFill) GetContractType() common.ContractType {
 	if x != nil {
 		return x.ContractType
 	}
-	return ContractType_CONTRACT_TYPE_NOT_APPLICABLE
+	return common.ContractType(0)
 }
 
 func (x *TradeFill) GetContractValueType() ContractValueType {
@@ -2736,7 +2736,7 @@ type ContractPosition struct {
 	TenantId          int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId            int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	SymbolId          int64                  `protobuf:"varint,4,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
-	ContractType      ContractType           `protobuf:"varint,5,opt,name=contract_type,json=contractType,proto3,enum=trade.ContractType" json:"contract_type,omitempty"`
+	ContractType      common.ContractType    `protobuf:"varint,5,opt,name=contract_type,json=contractType,proto3,enum=common.ContractType" json:"contract_type,omitempty"`
 	PositionSide      PositionSide           `protobuf:"varint,6,opt,name=position_side,json=positionSide,proto3,enum=trade.PositionSide" json:"position_side,omitempty"`
 	MarginMode        MarginMode             `protobuf:"varint,7,opt,name=margin_mode,json=marginMode,proto3,enum=trade.MarginMode" json:"margin_mode,omitempty"`
 	Leverage          int64                  `protobuf:"varint,8,opt,name=leverage,proto3" json:"leverage,omitempty"`
@@ -2825,11 +2825,11 @@ func (x *ContractPosition) GetSymbolId() int64 {
 	return 0
 }
 
-func (x *ContractPosition) GetContractType() ContractType {
+func (x *ContractPosition) GetContractType() common.ContractType {
 	if x != nil {
 		return x.ContractType
 	}
-	return ContractType_CONTRACT_TYPE_NOT_APPLICABLE
+	return common.ContractType(0)
 }
 
 func (x *ContractPosition) GetPositionSide() PositionSide {
@@ -3021,7 +3021,7 @@ type ContractPositionHistory struct {
 	PositionId           int64                  `protobuf:"varint,3,opt,name=position_id,json=positionId,proto3" json:"position_id,omitempty"`
 	UserId               int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	SymbolId             int64                  `protobuf:"varint,5,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
-	ContractType         ContractType           `protobuf:"varint,6,opt,name=contract_type,json=contractType,proto3,enum=trade.ContractType" json:"contract_type,omitempty"`
+	ContractType         common.ContractType    `protobuf:"varint,6,opt,name=contract_type,json=contractType,proto3,enum=common.ContractType" json:"contract_type,omitempty"`
 	PositionSide         PositionSide           `protobuf:"varint,7,opt,name=position_side,json=positionSide,proto3,enum=trade.PositionSide" json:"position_side,omitempty"`
 	ActionType           PositionActionType     `protobuf:"varint,8,opt,name=action_type,json=actionType,proto3,enum=trade.PositionActionType" json:"action_type,omitempty"`
 	BeforeQty            string                 `protobuf:"bytes,9,opt,name=before_qty,json=beforeQty,proto3" json:"before_qty,omitempty"`
@@ -3118,11 +3118,11 @@ func (x *ContractPositionHistory) GetSymbolId() int64 {
 	return 0
 }
 
-func (x *ContractPositionHistory) GetContractType() ContractType {
+func (x *ContractPositionHistory) GetContractType() common.ContractType {
 	if x != nil {
 		return x.ContractType
 	}
-	return ContractType_CONTRACT_TYPE_NOT_APPLICABLE
+	return common.ContractType(0)
 }
 
 func (x *ContractPositionHistory) GetPositionSide() PositionSide {
@@ -3747,7 +3747,7 @@ type RiskUserTradeLimit struct {
 	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TenantId             int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId               int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	ProductType          ProductType            `protobuf:"varint,4,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType          common.ProductType     `protobuf:"varint,4,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	CanOpen              int64                  `protobuf:"varint,5,opt,name=can_open,json=canOpen,proto3" json:"can_open,omitempty"`
 	CanClose             int64                  `protobuf:"varint,6,opt,name=can_close,json=canClose,proto3" json:"can_close,omitempty"`
 	CanCancel            int64                  `protobuf:"varint,7,opt,name=can_cancel,json=canCancel,proto3" json:"can_cancel,omitempty"`
@@ -3824,11 +3824,11 @@ func (x *RiskUserTradeLimit) GetUserId() int64 {
 	return 0
 }
 
-func (x *RiskUserTradeLimit) GetProductType() ProductType {
+func (x *RiskUserTradeLimit) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 func (x *RiskUserTradeLimit) GetCanOpen() int64 {
@@ -4198,7 +4198,7 @@ type RiskOrderCheckLog struct {
 	ClientOrderId string                 `protobuf:"bytes,4,opt,name=client_order_id,json=clientOrderId,proto3" json:"client_order_id,omitempty"`
 	UserId        int64                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,6,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
-	ProductType   ProductType            `protobuf:"varint,7,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType   common.ProductType     `protobuf:"varint,7,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	CheckType     RiskCheckType          `protobuf:"varint,8,opt,name=check_type,json=checkType,proto3,enum=trade.RiskCheckType" json:"check_type,omitempty"`
 	CheckResult   RiskCheckResult        `protobuf:"varint,9,opt,name=check_result,json=checkResult,proto3,enum=trade.RiskCheckResult" json:"check_result,omitempty"`
 	RejectCode    string                 `protobuf:"bytes,10,opt,name=reject_code,json=rejectCode,proto3" json:"reject_code,omitempty"`
@@ -4286,11 +4286,11 @@ func (x *RiskOrderCheckLog) GetSymbolId() int64 {
 	return 0
 }
 
-func (x *RiskOrderCheckLog) GetProductType() ProductType {
+func (x *RiskOrderCheckLog) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 func (x *RiskOrderCheckLog) GetCheckType() RiskCheckType {
@@ -4380,7 +4380,7 @@ type BizTradeEvent struct {
 	BizType        string                 `protobuf:"bytes,6,opt,name=biz_type,json=bizType,proto3" json:"biz_type,omitempty"`
 	UserId         int64                  `protobuf:"varint,7,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	SymbolId       int64                  `protobuf:"varint,8,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
-	ProductType    ProductType            `protobuf:"varint,9,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType    common.ProductType     `protobuf:"varint,9,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	OperatorId     int64                  `protobuf:"varint,10,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`
 	Source         SourceType             `protobuf:"varint,11,opt,name=source,proto3,enum=trade.SourceType" json:"source,omitempty"`
 	EventStatus    EventStatus            `protobuf:"varint,12,opt,name=event_status,json=eventStatus,proto3,enum=trade.EventStatus" json:"event_status,omitempty"`
@@ -4487,11 +4487,11 @@ func (x *BizTradeEvent) GetSymbolId() int64 {
 	return 0
 }
 
-func (x *BizTradeEvent) GetProductType() ProductType {
+func (x *BizTradeEvent) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 func (x *BizTradeEvent) GetOperatorId() int64 {
@@ -4626,19 +4626,19 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\fStringValues\x12\x16\n" +
 	"\x06values\x18\x01 \x03(\tR\x06values\"&\n" +
 	"\fUint64Values\x12\x16\n" +
-	"\x06values\x18\x01 \x03(\x03R\x06values\"\xfe\a\n" +
+	"\x06values\x18\x01 \x03(\x03R\x06values\"\x80\b\n" +
 	"\vTradeSymbol\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x16\n" +
 	"\x06symbol\x18\x03 \x01(\tR\x06symbol\x12%\n" +
-	"\x0edisplay_symbol\x18\x04 \x01(\tR\rdisplaySymbol\x125\n" +
-	"\fproduct_type\x18\x05 \x01(\x0e2\x12.trade.ProductTypeR\vproductType\x12\x1d\n" +
+	"\x0edisplay_symbol\x18\x04 \x01(\tR\rdisplaySymbol\x126\n" +
+	"\fproduct_type\x18\x05 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12\x1d\n" +
 	"\n" +
 	"base_asset\x18\x06 \x01(\tR\tbaseAsset\x12\x1f\n" +
 	"\vquote_asset\x18\a \x01(\tR\n" +
 	"quoteAsset\x12!\n" +
-	"\fsettle_asset\x18\b \x01(\tR\vsettleAsset\x128\n" +
-	"\rcontract_type\x18\t \x01(\x0e2\x13.trade.ContractTypeR\fcontractType\x12H\n" +
+	"\fsettle_asset\x18\b \x01(\tR\vsettleAsset\x129\n" +
+	"\rcontract_type\x18\t \x01(\x0e2\x14.common.ContractTypeR\fcontractType\x12H\n" +
 	"\x13contract_value_type\x18\x1b \x01(\x0e2\x18.trade.ContractValueTypeR\x11contractValueType\x12!\n" +
 	"\fmargin_asset\x18\x1c \x01(\tR\vmarginAsset\x12+\n" +
 	"\x06status\x18\n" +
@@ -4741,12 +4741,12 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\n" +
 	"end_second\x18\x06 \x01(\x03R\tendSecond\x12\x1a\n" +
 	"\btimezone\x18\a \x01(\tR\btimezone\x12(\n" +
-	"\aenabled\x18\b \x01(\x0e2\x0e.common.EnableR\aenabled\"\xbe\x02\n" +
+	"\aenabled\x18\b \x01(\x0e2\x0e.common.EnableR\aenabled\"\xbf\x02\n" +
 	"\x0fTradeUserConfig\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\x125\n" +
-	"\fproduct_type\x18\x04 \x01(\x0e2\x12.trade.ProductTypeR\vproductType\x12\x1b\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x126\n" +
+	"\fproduct_type\x18\x04 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12\x1b\n" +
 	"\tsymbol_id\x18\x05 \x01(\x03R\bsymbolId\x123\n" +
 	"\rtrade_enabled\x18\t \x01(\x0e2\x0e.common.EnableR\ftradeEnabled\x12!\n" +
 	"\fcreate_times\x18\v \x01(\x03R\vcreateTimes\x12!\n" +
@@ -4763,7 +4763,7 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\x10default_leverage\x18\a \x01(\x03R\x0fdefaultLeverage\x12!\n" +
 	"\fcreate_times\x18\t \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\n" +
-	" \x01(\x03R\vupdateTimesJ\x04\b\b\x10\t\"\x8d\r\n" +
+	" \x01(\x03R\vupdateTimesJ\x04\b\b\x10\t\"\x8f\r\n" +
 	"\n" +
 	"TradeOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
@@ -4771,8 +4771,8 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\border_no\x18\x03 \x01(\tR\aorderNo\x12&\n" +
 	"\x0fclient_order_id\x18\x04 \x01(\tR\rclientOrderId\x12\x17\n" +
 	"\auser_id\x18\x05 \x01(\x03R\x06userId\x12\x1b\n" +
-	"\tsymbol_id\x18\x06 \x01(\x03R\bsymbolId\x125\n" +
-	"\fproduct_type\x18\a \x01(\x0e2\x12.trade.ProductTypeR\vproductType\x12 \n" +
+	"\tsymbol_id\x18\x06 \x01(\x03R\bsymbolId\x126\n" +
+	"\fproduct_type\x18\a \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12 \n" +
 	"\x04side\x18\b \x01(\x0e2\f.common.SideR\x04side\x128\n" +
 	"\rposition_side\x18\t \x01(\x0e2\x13.trade.PositionSideR\fpositionSide\x12/\n" +
 	"\n" +
@@ -4797,8 +4797,8 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\abiz_ext\x18\x1b \x01(\tR\x06bizExt\x12!\n" +
 	"\fcreate_times\x18\x1c \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\x1d \x01(\x03R\vupdateTimes\x125\n" +
-	"\ftrigger_kind\x18\x1e \x01(\x0e2\x12.trade.TriggerKindR\vtriggerKind\x128\n" +
-	"\rcontract_type\x18\x1f \x01(\x0e2\x13.trade.ContractTypeR\fcontractType\x12H\n" +
+	"\ftrigger_kind\x18\x1e \x01(\x0e2\x12.trade.TriggerKindR\vtriggerKind\x129\n" +
+	"\rcontract_type\x18\x1f \x01(\x0e2\x14.common.ContractTypeR\fcontractType\x12H\n" +
 	"\x13contract_value_type\x18  \x01(\x0e2\x18.trade.ContractValueTypeR\x11contractValueType\x12!\n" +
 	"\frequest_hash\x18! \x01(\tR\vrequestHash\x12!\n" +
 	"\fcanceled_qty\x18\" \x01(\tR\vcanceledQty\x129\n" +
@@ -4880,7 +4880,7 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\x11settlement_reason\x18\x1c \x01(\tR\x10settlementReason\x12\x1d\n" +
 	"\n" +
 	"settled_at\x18\x1d \x01(\x03R\tsettledAt\x12\x18\n" +
-	"\aversion\x18\x1e \x01(\x03R\aversion\"\x9f\a\n" +
+	"\aversion\x18\x1e \x01(\x03R\aversion\"\xa1\a\n" +
 	"\tTradeFill\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -4888,8 +4888,8 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\border_id\x18\x04 \x01(\x03R\aorderId\x12\x19\n" +
 	"\border_no\x18\x05 \x01(\tR\aorderNo\x12\x17\n" +
 	"\auser_id\x18\x06 \x01(\x03R\x06userId\x12\x1b\n" +
-	"\tsymbol_id\x18\a \x01(\x03R\bsymbolId\x125\n" +
-	"\fproduct_type\x18\b \x01(\x0e2\x12.trade.ProductTypeR\vproductType\x12 \n" +
+	"\tsymbol_id\x18\a \x01(\x03R\bsymbolId\x126\n" +
+	"\fproduct_type\x18\b \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12 \n" +
 	"\x04side\x18\t \x01(\x0e2\f.common.SideR\x04side\x128\n" +
 	"\rposition_side\x18\n" +
 	" \x01(\x0e2\x13.trade.PositionSideR\fpositionSide\x12\x14\n" +
@@ -4903,8 +4903,8 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\n" +
 	"match_time\x18\x12 \x01(\x03R\tmatchTime\x12!\n" +
 	"\fcreate_times\x18\x13 \x01(\x03R\vcreateTimes\x12\x19\n" +
-	"\bmatch_no\x18\x14 \x01(\tR\amatchNo\x128\n" +
-	"\rcontract_type\x18\x15 \x01(\x0e2\x13.trade.ContractTypeR\fcontractType\x12H\n" +
+	"\bmatch_no\x18\x14 \x01(\tR\amatchNo\x129\n" +
+	"\rcontract_type\x18\x15 \x01(\x0e2\x14.common.ContractTypeR\fcontractType\x12H\n" +
 	"\x13contract_value_type\x18\x16 \x01(\x0e2\x18.trade.ContractValueTypeR\x11contractValueType\x12H\n" +
 	"\x11settlement_status\x18\x17 \x01(\x0e2\x1b.trade.FillSettlementStatusR\x10settlementStatus\x124\n" +
 	"\x16settlement_retry_count\x18\x18 \x01(\x03R\x14settlementRetryCount\x12\x1d\n" +
@@ -4918,13 +4918,13 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\auser_id\x18\x05 \x01(\x03R\x06userId\x128\n" +
 	"\rcancel_source\x18\x06 \x01(\x0e2\x13.trade.CancelSourceR\fcancelSource\x12#\n" +
 	"\rcancel_reason\x18\a \x01(\tR\fcancelReason\x12!\n" +
-	"\fcreate_times\x18\b \x01(\x03R\vcreateTimes\"\x96\t\n" +
+	"\fcreate_times\x18\b \x01(\x03R\vcreateTimes\"\x97\t\n" +
 	"\x10ContractPosition\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1b\n" +
-	"\tsymbol_id\x18\x04 \x01(\x03R\bsymbolId\x128\n" +
-	"\rcontract_type\x18\x05 \x01(\x0e2\x13.trade.ContractTypeR\fcontractType\x128\n" +
+	"\tsymbol_id\x18\x04 \x01(\x03R\bsymbolId\x129\n" +
+	"\rcontract_type\x18\x05 \x01(\x0e2\x14.common.ContractTypeR\fcontractType\x128\n" +
 	"\rposition_side\x18\x06 \x01(\x0e2\x13.trade.PositionSideR\fpositionSide\x122\n" +
 	"\vmargin_mode\x18\a \x01(\x0e2\x11.trade.MarginModeR\n" +
 	"marginMode\x12\x1a\n" +
@@ -4954,7 +4954,7 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\trisk_rate\x18\x1c \x01(\tR\briskRate\x12*\n" +
 	"\x11last_funding_time\x18\x1d \x01(\x03R\x0flastFundingTime\x12\x1b\n" +
 	"\tclosed_at\x18\x1e \x01(\x03R\bclosedAt\x12(\n" +
-	"\x10mark_snapshot_id\x18\x1f \x01(\tR\x0emarkSnapshotId\"\xe9\n" +
+	"\x10mark_snapshot_id\x18\x1f \x01(\tR\x0emarkSnapshotId\"\xea\n" +
 	"\n" +
 	"\x17ContractPositionHistory\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
@@ -4962,8 +4962,8 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\vposition_id\x18\x03 \x01(\x03R\n" +
 	"positionId\x12\x17\n" +
 	"\auser_id\x18\x04 \x01(\x03R\x06userId\x12\x1b\n" +
-	"\tsymbol_id\x18\x05 \x01(\x03R\bsymbolId\x128\n" +
-	"\rcontract_type\x18\x06 \x01(\x0e2\x13.trade.ContractTypeR\fcontractType\x128\n" +
+	"\tsymbol_id\x18\x05 \x01(\x03R\bsymbolId\x129\n" +
+	"\rcontract_type\x18\x06 \x01(\x0e2\x14.common.ContractTypeR\fcontractType\x128\n" +
 	"\rposition_side\x18\a \x01(\x0e2\x13.trade.PositionSideR\fpositionSide\x12:\n" +
 	"\vaction_type\x18\b \x01(\x0e2\x19.trade.PositionActionTypeR\n" +
 	"actionType\x12\x1d\n" +
@@ -5045,12 +5045,12 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\fcreate_times\x18\f \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\r \x01(\x03R\vupdateTimes\x12'\n" +
 	"\x0fleverage_values\x18\x0e \x03(\x03R\x0eleverageValues\x12)\n" +
-	"\x10default_leverage\x18\x0f \x01(\x03R\x0fdefaultLeverageJ\x04\b\x04\x10\x05J\x04\b\x06\x10\aJ\x04\b\a\x10\bJ\x04\b\b\x10\t\"\x8b\b\n" +
+	"\x10default_leverage\x18\x0f \x01(\x03R\x0fdefaultLeverageJ\x04\b\x04\x10\x05J\x04\b\x06\x10\aJ\x04\b\a\x10\bJ\x04\b\b\x10\t\"\x8c\b\n" +
 	"\x12RiskUserTradeLimit\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\x125\n" +
-	"\fproduct_type\x18\x04 \x01(\x0e2\x12.trade.ProductTypeR\vproductType\x12\x19\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x126\n" +
+	"\fproduct_type\x18\x04 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12\x19\n" +
 	"\bcan_open\x18\x05 \x01(\x03R\acanOpen\x12\x1b\n" +
 	"\tcan_close\x18\x06 \x01(\x03R\bcanClose\x12\x1d\n" +
 	"\n" +
@@ -5100,15 +5100,15 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\x12effective_end_time\x18\x14 \x01(\x03R\x10effectiveEndTime\x12\x16\n" +
 	"\x06remark\x18\x15 \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x16 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x17 \x01(\x03R\vupdateTimesJ\x04\b\x05\x10\x06\"\xa3\x05\n" +
+	"\fupdate_times\x18\x17 \x01(\x03R\vupdateTimesJ\x04\b\x05\x10\x06\"\xa4\x05\n" +
 	"\x11RiskOrderCheckLog\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_no\x18\x03 \x01(\tR\aorderNo\x12&\n" +
 	"\x0fclient_order_id\x18\x04 \x01(\tR\rclientOrderId\x12\x17\n" +
 	"\auser_id\x18\x05 \x01(\x03R\x06userId\x12\x1b\n" +
-	"\tsymbol_id\x18\x06 \x01(\x03R\bsymbolId\x125\n" +
-	"\fproduct_type\x18\a \x01(\x0e2\x12.trade.ProductTypeR\vproductType\x123\n" +
+	"\tsymbol_id\x18\x06 \x01(\x03R\bsymbolId\x126\n" +
+	"\fproduct_type\x18\a \x01(\x0e2\x13.common.ProductTypeR\vproductType\x123\n" +
 	"\n" +
 	"check_type\x18\b \x01(\x0e2\x14.trade.RiskCheckTypeR\tcheckType\x129\n" +
 	"\fcheck_result\x18\t \x01(\x0e2\x16.trade.RiskCheckResultR\vcheckResult\x12\x1f\n" +
@@ -5125,7 +5125,7 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"operatorId\x12)\n" +
 	"\x06source\x18\x10 \x01(\x0e2\x11.trade.SourceTypeR\x06source\x12%\n" +
 	"\x0echeck_snapshot\x18\x11 \x01(\tR\rcheckSnapshot\x12!\n" +
-	"\fcreate_times\x18\x12 \x01(\x03R\vcreateTimes\"\xcc\x06\n" +
+	"\fcreate_times\x18\x12 \x01(\x03R\vcreateTimes\"\xcd\x06\n" +
 	"\rBizTradeEvent\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
@@ -5135,8 +5135,8 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\x06biz_id\x18\x05 \x01(\tR\x05bizId\x12\x19\n" +
 	"\bbiz_type\x18\x06 \x01(\tR\abizType\x12\x17\n" +
 	"\auser_id\x18\a \x01(\x03R\x06userId\x12\x1b\n" +
-	"\tsymbol_id\x18\b \x01(\x03R\bsymbolId\x125\n" +
-	"\fproduct_type\x18\t \x01(\x0e2\x12.trade.ProductTypeR\vproductType\x12\x1f\n" +
+	"\tsymbol_id\x18\b \x01(\x03R\bsymbolId\x126\n" +
+	"\fproduct_type\x18\t \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12\x1f\n" +
 	"\voperator_id\x18\n" +
 	" \x01(\x03R\n" +
 	"operatorId\x12)\n" +
@@ -5201,8 +5201,8 @@ var file_proto_trade_model_proto_goTypes = []any{
 	(*RiskUserSymbolLimit)(nil),       // 25: trade.RiskUserSymbolLimit
 	(*RiskOrderCheckLog)(nil),         // 26: trade.RiskOrderCheckLog
 	(*BizTradeEvent)(nil),             // 27: trade.BizTradeEvent
-	(ProductType)(0),                  // 28: trade.ProductType
-	(ContractType)(0),                 // 29: trade.ContractType
+	(common.ProductType)(0),           // 28: common.ProductType
+	(common.ContractType)(0),          // 29: common.ContractType
 	(ContractValueType)(0),            // 30: trade.ContractValueType
 	(SymbolStatus)(0),                 // 31: trade.SymbolStatus
 	(common.Enable)(0),                // 32: common.Enable
@@ -5235,8 +5235,8 @@ var file_proto_trade_model_proto_goTypes = []any{
 	(EventStatus)(0),                  // 59: trade.EventStatus
 }
 var file_proto_trade_model_proto_depIdxs = []int32{
-	28, // 0: trade.TradeSymbol.product_type:type_name -> trade.ProductType
-	29, // 1: trade.TradeSymbol.contract_type:type_name -> trade.ContractType
+	28, // 0: trade.TradeSymbol.product_type:type_name -> common.ProductType
+	29, // 1: trade.TradeSymbol.contract_type:type_name -> common.ContractType
 	30, // 2: trade.TradeSymbol.contract_value_type:type_name -> trade.ContractValueType
 	31, // 3: trade.TradeSymbol.status:type_name -> trade.SymbolStatus
 	32, // 4: trade.TradeSymbolSpot.buy_enabled:type_name -> common.Enable
@@ -5249,11 +5249,11 @@ var file_proto_trade_model_proto_depIdxs = []int32{
 	32, // 11: trade.TradeSymbolSeconds.up_enabled:type_name -> common.Enable
 	32, // 12: trade.TradeSymbolSeconds.down_enabled:type_name -> common.Enable
 	32, // 13: trade.TradeSymbolSession.enabled:type_name -> common.Enable
-	28, // 14: trade.TradeUserConfig.product_type:type_name -> trade.ProductType
+	28, // 14: trade.TradeUserConfig.product_type:type_name -> common.ProductType
 	32, // 15: trade.TradeUserConfig.trade_enabled:type_name -> common.Enable
 	34, // 16: trade.ContractUserConfig.position_mode:type_name -> trade.PositionMode
 	35, // 17: trade.ContractUserConfig.margin_mode:type_name -> trade.MarginMode
-	28, // 18: trade.TradeOrder.product_type:type_name -> trade.ProductType
+	28, // 18: trade.TradeOrder.product_type:type_name -> common.ProductType
 	36, // 19: trade.TradeOrder.side:type_name -> common.Side
 	37, // 20: trade.TradeOrder.position_side:type_name -> trade.PositionSide
 	38, // 21: trade.TradeOrder.order_type:type_name -> trade.OrderType
@@ -5263,7 +5263,7 @@ var file_proto_trade_model_proto_depIdxs = []int32{
 	42, // 25: trade.TradeOrder.is_reduce_only:type_name -> common.YesNo
 	43, // 26: trade.TradeOrder.trigger_type:type_name -> trade.TriggerType
 	44, // 27: trade.TradeOrder.trigger_kind:type_name -> trade.TriggerKind
-	29, // 28: trade.TradeOrder.contract_type:type_name -> trade.ContractType
+	29, // 28: trade.TradeOrder.contract_type:type_name -> common.ContractType
 	30, // 29: trade.TradeOrder.contract_value_type:type_name -> trade.ContractValueType
 	42, // 30: trade.TradeOrder.is_close_position:type_name -> common.YesNo
 	45, // 31: trade.TradeOrder.seconds_direction:type_name -> trade.SecondsDirection
@@ -5273,20 +5273,20 @@ var file_proto_trade_model_proto_depIdxs = []int32{
 	45, // 35: trade.TradeOrderSeconds.direction:type_name -> trade.SecondsDirection
 	48, // 36: trade.TradeOrderSeconds.result:type_name -> trade.SecondsResult
 	49, // 37: trade.TradeOrderSeconds.settlement_status:type_name -> trade.SecondsSettlementStatus
-	28, // 38: trade.TradeFill.product_type:type_name -> trade.ProductType
+	28, // 38: trade.TradeFill.product_type:type_name -> common.ProductType
 	36, // 39: trade.TradeFill.side:type_name -> common.Side
 	37, // 40: trade.TradeFill.position_side:type_name -> trade.PositionSide
 	50, // 41: trade.TradeFill.liquidity_type:type_name -> trade.LiquidityType
-	29, // 42: trade.TradeFill.contract_type:type_name -> trade.ContractType
+	29, // 42: trade.TradeFill.contract_type:type_name -> common.ContractType
 	30, // 43: trade.TradeFill.contract_value_type:type_name -> trade.ContractValueType
 	51, // 44: trade.TradeFill.settlement_status:type_name -> trade.FillSettlementStatus
 	52, // 45: trade.TradeCancelLog.cancel_source:type_name -> trade.CancelSource
-	29, // 46: trade.ContractPosition.contract_type:type_name -> trade.ContractType
+	29, // 46: trade.ContractPosition.contract_type:type_name -> common.ContractType
 	37, // 47: trade.ContractPosition.position_side:type_name -> trade.PositionSide
 	35, // 48: trade.ContractPosition.margin_mode:type_name -> trade.MarginMode
 	30, // 49: trade.ContractPosition.contract_value_type:type_name -> trade.ContractValueType
 	53, // 50: trade.ContractPosition.status:type_name -> trade.PositionStatus
-	29, // 51: trade.ContractPositionHistory.contract_type:type_name -> trade.ContractType
+	29, // 51: trade.ContractPositionHistory.contract_type:type_name -> common.ContractType
 	37, // 52: trade.ContractPositionHistory.position_side:type_name -> trade.PositionSide
 	54, // 53: trade.ContractPositionHistory.action_type:type_name -> trade.PositionActionType
 	55, // 54: trade.ContractPositionHistory.source:type_name -> trade.SourceType
@@ -5296,7 +5296,7 @@ var file_proto_trade_model_proto_depIdxs = []int32{
 	32, // 58: trade.ContractLeverageConfig.enabled:type_name -> common.Enable
 	35, // 59: trade.TradeSymbolLeverageConfig.margin_mode:type_name -> trade.MarginMode
 	32, // 60: trade.TradeSymbolLeverageConfig.enabled:type_name -> common.Enable
-	28, // 61: trade.RiskUserTradeLimit.product_type:type_name -> trade.ProductType
+	28, // 61: trade.RiskUserTradeLimit.product_type:type_name -> common.ProductType
 	32, // 62: trade.RiskUserTradeLimit.trade_enabled:type_name -> common.Enable
 	32, // 63: trade.RiskUserTradeLimit.only_reduce_only:type_name -> common.Enable
 	56, // 64: trade.RiskUserTradeLimit.risk_level:type_name -> trade.RiskLevel
@@ -5304,11 +5304,11 @@ var file_proto_trade_model_proto_depIdxs = []int32{
 	32, // 66: trade.RiskUserTradeLimit.enabled:type_name -> common.Enable
 	55, // 67: trade.RiskUserSymbolLimit.source:type_name -> trade.SourceType
 	32, // 68: trade.RiskUserSymbolLimit.enabled:type_name -> common.Enable
-	28, // 69: trade.RiskOrderCheckLog.product_type:type_name -> trade.ProductType
+	28, // 69: trade.RiskOrderCheckLog.product_type:type_name -> common.ProductType
 	57, // 70: trade.RiskOrderCheckLog.check_type:type_name -> trade.RiskCheckType
 	58, // 71: trade.RiskOrderCheckLog.check_result:type_name -> trade.RiskCheckResult
 	55, // 72: trade.RiskOrderCheckLog.source:type_name -> trade.SourceType
-	28, // 73: trade.BizTradeEvent.product_type:type_name -> trade.ProductType
+	28, // 73: trade.BizTradeEvent.product_type:type_name -> common.ProductType
 	55, // 74: trade.BizTradeEvent.source:type_name -> trade.SourceType
 	59, // 75: trade.BizTradeEvent.event_status:type_name -> trade.EventStatus
 	76, // [76:76] is the sub-list for method output_type

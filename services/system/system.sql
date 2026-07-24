@@ -12,6 +12,7 @@ CREATE TABLE sys_user (
   id BIGINT AUTO_INCREMENT COMMENT '用户ID',
 
   tenant_id BIGINT NOT NULL DEFAULT 0 COMMENT '所属租户ID：0=系统侧，>0=租户ID',
+  app_scope TINYINT NOT NULL DEFAULT 1 COMMENT '应用范围：1综合管理后台 2做市管理后台',
   user_type TINYINT NOT NULL DEFAULT 1 COMMENT '用户类型：1系统管理员 2租户主账号 3租户管理员',
   is_owner TINYINT NOT NULL DEFAULT 2 COMMENT '是否租户主账号：1是 2否',
 
@@ -37,13 +38,13 @@ CREATE TABLE sys_user (
   update_times BIGINT NOT NULL DEFAULT 0,
 
   PRIMARY KEY (id),
-  UNIQUE KEY uk_tenant_username (tenant_id, username),
+  UNIQUE KEY uk_tenant_scope_username (tenant_id, app_scope, username),
   INDEX idx_tenant_id(tenant_id),
+  INDEX idx_app_scope(app_scope),
   INDEX idx_user_type(user_type),
   INDEX idx_owner(is_owner),
   INDEX idx_enabled(enabled)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='统一用户表';
-
 
 -- =============================
 -- 角色
@@ -56,6 +57,7 @@ CREATE TABLE sys_role (
   id BIGINT AUTO_INCREMENT COMMENT '角色ID',
 
   tenant_id BIGINT NOT NULL DEFAULT 0 COMMENT '所属租户ID：0=系统角色，>0=租户角色',
+  app_scope TINYINT NOT NULL DEFAULT 1 COMMENT '应用范围：1综合管理后台 2做市管理后台',
 
   name VARCHAR(64) NOT NULL DEFAULT '' COMMENT '角色名称',
   code VARCHAR(64) NOT NULL DEFAULT '' COMMENT '角色标识(如admin)',
@@ -68,9 +70,10 @@ CREATE TABLE sys_role (
   update_times BIGINT NOT NULL DEFAULT 0,
 
   PRIMARY KEY (id),
-  UNIQUE KEY uk_tenant_role_name(tenant_id, name),
-  UNIQUE KEY uk_tenant_role_code(tenant_id, code),
+  UNIQUE KEY uk_tenant_scope_role_name(tenant_id, app_scope, name),
+  UNIQUE KEY uk_tenant_scope_role_code(tenant_id, app_scope, code),
   INDEX idx_tenant_id(tenant_id),
+  INDEX idx_app_scope(app_scope),
   INDEX idx_enabled(enabled)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色表';
 
@@ -105,6 +108,7 @@ CREATE TABLE sys_menu (
   id BIGINT AUTO_INCREMENT,
 
   parent_id BIGINT DEFAULT 0 COMMENT '父级ID',
+  app_scope TINYINT NOT NULL DEFAULT 1 COMMENT '应用范围：1综合管理后台 2做市管理后台',
 
   name VARCHAR(64) NOT NULL DEFAULT '' COMMENT '名称',
 
@@ -127,6 +131,7 @@ CREATE TABLE sys_menu (
 
   PRIMARY KEY (id),
   INDEX idx_parent(parent_id),
+  INDEX idx_app_scope(app_scope),
   INDEX idx_perms(perms)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='菜单权限';
 

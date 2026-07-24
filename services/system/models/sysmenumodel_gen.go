@@ -42,6 +42,7 @@ type (
 	SysMenu struct {
 		Id          int64  `db:"id"`
 		ParentId    int64  `db:"parent_id"` // 父级ID
+		AppScope    int64  `db:"app_scope"` // 应用范围：1综合管理后台 2做市管理后台
 		Name        string `db:"name"`      // 名称
 		MenuType    int64  `db:"menu_type"` // 菜单类型：0未知 1目录 2菜单 3按钮
 		Method      string `db:"method"`    // 请求方法 GET POST PUT DELETE
@@ -93,8 +94,8 @@ func (m *defaultSysMenuModel) FindOne(ctx context.Context, id int64) (*SysMenu, 
 func (m *defaultSysMenuModel) Insert(ctx context.Context, data *SysMenu) (sql.Result, error) {
 	sysMenuIdKey := fmt.Sprintf("%s%v", cacheSysMenuIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysMenuRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.ParentId, data.Name, data.MenuType, data.Method, data.Path, data.Component, data.Perms, data.Icon, data.Sort, data.Visible, data.Enabled, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysMenuRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.ParentId, data.AppScope, data.Name, data.MenuType, data.Method, data.Path, data.Component, data.Perms, data.Icon, data.Sort, data.Visible, data.Enabled, data.CreateTimes, data.UpdateTimes)
 	}, sysMenuIdKey)
 	return ret, err
 }
@@ -103,7 +104,7 @@ func (m *defaultSysMenuModel) Update(ctx context.Context, data *SysMenu) error {
 	sysMenuIdKey := fmt.Sprintf("%s%v", cacheSysMenuIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysMenuRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.ParentId, data.Name, data.MenuType, data.Method, data.Path, data.Component, data.Perms, data.Icon, data.Sort, data.Visible, data.Enabled, data.CreateTimes, data.UpdateTimes, data.Id)
+		return conn.ExecCtx(ctx, query, data.ParentId, data.AppScope, data.Name, data.MenuType, data.Method, data.Path, data.Component, data.Perms, data.Icon, data.Sort, data.Visible, data.Enabled, data.CreateTimes, data.UpdateTimes, data.Id)
 	}, sysMenuIdKey)
 	return err
 }

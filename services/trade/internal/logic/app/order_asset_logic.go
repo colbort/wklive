@@ -48,7 +48,7 @@ func freezeOrderAsset(
 	resp, err := svcCtx.AssetClient.FreezeAsset(ctx, &asset.FreezeAssetReq{
 		TenantId:   order.TenantId,
 		UserId:     order.UserId,
-		WalletType: walletTypeForProduct(trade.ProductType(order.ProductType)),
+		WalletType: walletTypeForProduct(common.ProductType(order.ProductType)),
 		Coin:       frozenAsset,
 		Amount:     frozenAmount.String(),
 		BizType:    asset.BizType_BIZ_TYPE_TRADE,
@@ -58,13 +58,13 @@ func freezeOrderAsset(
 		Remark:     "trade place order freeze",
 	})
 	if err != nil {
-		return "", &assetFreezeError{err: freezeAssetContextError(order.UserId, walletTypeForProduct(trade.ProductType(order.ProductType)), frozenAsset, err)}
+		return "", &assetFreezeError{err: freezeAssetContextError(order.UserId, walletTypeForProduct(common.ProductType(order.ProductType)), frozenAsset, err)}
 	}
 	if resp == nil || resp.Base == nil {
-		return "", &assetFreezeError{err: freezeAssetContextError(order.UserId, walletTypeForProduct(trade.ProductType(order.ProductType)), frozenAsset, i18n.StatusError(ctx, i18n.InternalServerError))}
+		return "", &assetFreezeError{err: freezeAssetContextError(order.UserId, walletTypeForProduct(common.ProductType(order.ProductType)), frozenAsset, i18n.StatusError(ctx, i18n.InternalServerError))}
 	}
 	if resp.Base.Code != 200 {
-		return "", &assetFreezeError{err: freezeAssetContextError(order.UserId, walletTypeForProduct(trade.ProductType(order.ProductType)), frozenAsset, i18n.StatusError(ctx, resp.Base.Code)), definitive: true}
+		return "", &assetFreezeError{err: freezeAssetContextError(order.UserId, walletTypeForProduct(common.ProductType(order.ProductType)), frozenAsset, i18n.StatusError(ctx, resp.Base.Code)), definitive: true}
 	}
 
 	return resp.GetData().GetFreezeNo(), nil

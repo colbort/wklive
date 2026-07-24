@@ -18,6 +18,7 @@ export type SysRole = {
   remark?: string
   enabled?: number // 启用状态：1启用 2禁用
   tenantId?: number
+  appScope: number
   isSuper?: boolean // 可选：如果后端有的话
 }
 
@@ -42,6 +43,7 @@ export interface CreateRoleRequest {
   code: string
   description?: string
   enabled?: number // 启用状态：1启用 2禁用
+  appScope: number
   menuIds?: number[]
   permIds?: number[]
 }
@@ -53,6 +55,7 @@ export interface UpdateRoleRequest {
   code?: string
   description?: string
   enabled?: number // 启用状态：1启用 2禁用
+  appScope?: number
   menuIds?: number[]
   permIds?: number[]
 }
@@ -62,6 +65,7 @@ export type RoleQueryParams = {
   enabled?: number // 启用状态：1启用 2禁用
   cursor?: number
   limit?: number
+  appScope?: number
 }
 
 export type RoleGrantRequest = {

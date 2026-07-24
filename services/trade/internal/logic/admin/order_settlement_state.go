@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/proto/common"
 
 	"wklive/common/utils"
 	"wklive/proto/trade"
@@ -69,7 +70,7 @@ func finalizeOrderTermination(ctx context.Context, conn sqlx.SqlConn, svcCtx *sv
 	if err != nil || unsettledFills > 0 {
 		return false, err
 	}
-	if order.ProductType == int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) {
+	if order.ProductType == int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) {
 		contractOrder, findErr := contractOrderModel.FindOneByTenantIdOrderId(ctx, order.TenantId, order.Id)
 		if findErr != nil && !errors.Is(findErr, models.ErrNotFound) {
 			return false, findErr

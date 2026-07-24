@@ -34,8 +34,14 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 
 // P0
 func (l *LoginLogic) Login(in *system.LoginReq) (*system.LoginResp, error) {
+	appScope := in.AppScope
+	if appScope != system.ApplicationScope_APPLICATION_SCOPE_ADMIN &&
+		appScope != system.ApplicationScope_APPLICATION_SCOPE_LIQUIDITY {
+		return nil, i18n.StatusError(l.ctx, i18n.ParamError)
+	}
+
 	// 1️⃣ 查用户
-	user, err := l.svcCtx.UserModel.FindOneByUsername(l.ctx, in.Username)
+	user, err := l.svcCtx.UserModel.FindOneByUsername(l.ctx, in.Username, int64(appScope))
 	if err != nil {
 		if err == models.ErrNotFound {
 			return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
@@ -84,6 +90,7 @@ func (l *LoginLogic) Login(in *system.LoginReq) (*system.LoginResp, error) {
 
 	str := make(map[string]any, 0)
 	str["permsVer"] = user.PermsVer
+	str["appScope"] = int32(appScope)
 	expand, err := json.Marshal(str)
 	if err != nil {
 		return nil, err
@@ -109,6 +116,11 @@ func (l *LoginLogic) Login(in *system.LoginReq) (*system.LoginResp, error) {
 			Nickname:         user.Nickname,
 			Google2FaEnabled: commonStatusToProto(user.GoogleEnabled),
 			PermsVer:         user.PermsVer,
+			TenantId:         user.TenantId,
+			UserType:         system.UserType(user.UserType),
+			IsOwner:          common.YesNo(user.IsOwner),
+			Avatar:           user.Avatar,
+			AppScope:         appScope,
 		},
 	}, nil
 }

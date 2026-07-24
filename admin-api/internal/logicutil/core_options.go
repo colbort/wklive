@@ -48,6 +48,7 @@ func SystemOptions() []types.OptionsGroup {
 		EnumGroup("menuType", "菜单类型", system.MenuType_MENU_TYPE_UNKNOWN.Descriptor()),
 		EnumGroup("method", "请求方法", system.RequestMethod_REQUEST_METHOD_UNKNOWN.Descriptor()),
 		EnumGroup("jobStatus", "任务状态", system.JobStatus_JOB_STATUS_DISABLED.Descriptor()),
+		EnumGroup("applicationScope", "应用范围", system.ApplicationScope_APPLICATION_SCOPE_UNKNOWN.Descriptor()),
 		EnumGroup("verificationCodeChannel", "验证码渠道", system.VerificationCodeChannel_VERIFICATION_CODE_CHANNEL_UNKNOWN.Descriptor()),
 		EnumGroup("verificationCodeScene", "验证码业务场景", system.VerificationCodeScene_VERIFICATION_CODE_SCENE_UNKNOWN.Descriptor()),
 		EnumGroup("verificationCodeStatus", "验证码发送状态", system.VerificationCodeStatus_VERIFICATION_CODE_STATUS_UNKNOWN.Descriptor()),
@@ -97,8 +98,8 @@ func PaymentOptions() []types.OptionsGroup {
 
 func TradeOptions() []types.OptionsGroup {
 	return []types.OptionsGroup{
-		EnumGroup("productType", "产品类型", trade.ProductType_PRODUCT_TYPE_UNKNOWN.Descriptor()),
-		EnumGroup("contractType", "合约期限类型", trade.ContractType_CONTRACT_TYPE_NOT_APPLICABLE.Descriptor()),
+		EnumGroup("productType", "产品类型", common.ProductType_PRODUCT_TYPE_UNKNOWN.Descriptor()),
+		EnumGroup("contractType", "合约期限类型", common.ContractType_CONTRACT_TYPE_NOT_APPLICABLE.Descriptor()),
 		EnumGroup("contractValueType", "合约价值类型", trade.ContractValueType_CONTRACT_VALUE_TYPE_NOT_APPLICABLE.Descriptor()),
 		EnumGroup("symbolStatus", "交易对状态", trade.SymbolStatus_SYMBOL_STATUS_UNKNOWN.Descriptor()),
 		EnumGroup("orderType", "订单类型", trade.OrderType_ORDER_TYPE_UNKNOWN.Descriptor()),

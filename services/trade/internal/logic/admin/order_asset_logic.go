@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/proto/common"
 
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -46,7 +47,7 @@ func freezeOrderAsset(
 	resp, err := svcCtx.AssetClient.FreezeAsset(ctx, &asset.FreezeAssetReq{
 		TenantId:   order.TenantId,
 		UserId:     order.UserId,
-		WalletType: walletTypeForProduct(trade.ProductType(order.ProductType)),
+		WalletType: walletTypeForProduct(common.ProductType(order.ProductType)),
 		Coin:       frozenAsset,
 		Amount:     frozenAmount.String(),
 		BizType:    asset.BizType_BIZ_TYPE_TRADE,

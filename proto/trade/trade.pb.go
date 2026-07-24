@@ -68,7 +68,7 @@ func (x *UserCommonResp) GetBase() *common.RespBase {
 
 type GetSymbolListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProductType   ProductType            `protobuf:"varint,1,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType   common.ProductType     `protobuf:"varint,1,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	Status        SymbolStatus           `protobuf:"varint,2,opt,name=status,proto3,enum=trade.SymbolStatus" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -104,11 +104,11 @@ func (*GetSymbolListReq) Descriptor() ([]byte, []int) {
 	return file_proto_trade_trade_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *GetSymbolListReq) GetProductType() ProductType {
+func (x *GetSymbolListReq) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 func (x *GetSymbolListReq) GetStatus() SymbolStatus {
@@ -660,7 +660,7 @@ func (x *CancelOrderReq) GetClientOrderId() string {
 
 type CancelAllOrdersReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProductType   ProductType            `protobuf:"varint,1,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType   common.ProductType     `protobuf:"varint,1,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,2,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	Side          common.Side            `protobuf:"varint,3,opt,name=side,proto3,enum=common.Side" json:"side,omitempty"` // 买卖方向
 	PositionSide  PositionSide           `protobuf:"varint,4,opt,name=position_side,json=positionSide,proto3,enum=trade.PositionSide" json:"position_side,omitempty"`
@@ -698,11 +698,11 @@ func (*CancelAllOrdersReq) Descriptor() ([]byte, []int) {
 	return file_proto_trade_trade_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *CancelAllOrdersReq) GetProductType() ProductType {
+func (x *CancelAllOrdersReq) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 func (x *CancelAllOrdersReq) GetSymbolId() int64 {
@@ -781,7 +781,7 @@ func (x *CancelAllOrdersResp) GetData() int64 {
 type GetOrderListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
-	ProductType   ProductType            `protobuf:"varint,2,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType   common.ProductType     `protobuf:"varint,2,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	Status        OrderStatus            `protobuf:"varint,4,opt,name=status,proto3,enum=trade.OrderStatus" json:"status,omitempty"`
 	Side          common.Side            `protobuf:"varint,5,opt,name=side,proto3,enum=common.Side" json:"side,omitempty"` // 买卖方向
@@ -827,11 +827,11 @@ func (x *GetOrderListReq) GetPage() *common.PageReq {
 	return nil
 }
 
-func (x *GetOrderListReq) GetProductType() ProductType {
+func (x *GetOrderListReq) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 func (x *GetOrderListReq) GetSymbolId() int64 {
@@ -1089,7 +1089,7 @@ func (x *GetOrderDetailData) GetSeconds() *TradeOrderSeconds {
 type GetFillListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
-	ProductType   ProductType            `protobuf:"varint,2,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType   common.ProductType     `protobuf:"varint,2,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	TimeRange     *TimeRange             `protobuf:"bytes,4,opt,name=time_range,json=timeRange,proto3" json:"time_range,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1133,11 +1133,11 @@ func (x *GetFillListReq) GetPage() *common.PageReq {
 	return nil
 }
 
-func (x *GetFillListReq) GetProductType() ProductType {
+func (x *GetFillListReq) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 func (x *GetFillListReq) GetSymbolId() int64 {
@@ -1208,7 +1208,7 @@ func (x *GetFillListResp) GetData() []*TradeFill {
 
 type GetPositionListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ContractType  ContractType           `protobuf:"varint,1,opt,name=contract_type,json=contractType,proto3,enum=trade.ContractType" json:"contract_type,omitempty"`
+	ContractType  common.ContractType    `protobuf:"varint,1,opt,name=contract_type,json=contractType,proto3,enum=common.ContractType" json:"contract_type,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,2,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1244,11 +1244,11 @@ func (*GetPositionListReq) Descriptor() ([]byte, []int) {
 	return file_proto_trade_trade_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *GetPositionListReq) GetContractType() ContractType {
+func (x *GetPositionListReq) GetContractType() common.ContractType {
 	if x != nil {
 		return x.ContractType
 	}
-	return ContractType_CONTRACT_TYPE_NOT_APPLICABLE
+	return common.ContractType(0)
 }
 
 func (x *GetPositionListReq) GetSymbolId() int64 {
@@ -1627,11 +1627,11 @@ type CreateSymbolReq struct {
 	TenantId          int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	Symbol            string                 `protobuf:"bytes,2,opt,name=symbol,proto3" json:"symbol,omitempty"`
 	DisplaySymbol     string                 `protobuf:"bytes,3,opt,name=display_symbol,json=displaySymbol,proto3" json:"display_symbol,omitempty"`
-	ProductType       ProductType            `protobuf:"varint,4,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType       common.ProductType     `protobuf:"varint,4,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	BaseAsset         string                 `protobuf:"bytes,5,opt,name=base_asset,json=baseAsset,proto3" json:"base_asset,omitempty"`
 	QuoteAsset        string                 `protobuf:"bytes,6,opt,name=quote_asset,json=quoteAsset,proto3" json:"quote_asset,omitempty"`
 	SettleAsset       string                 `protobuf:"bytes,7,opt,name=settle_asset,json=settleAsset,proto3" json:"settle_asset,omitempty"`
-	ContractType      ContractType           `protobuf:"varint,8,opt,name=contract_type,json=contractType,proto3,enum=trade.ContractType" json:"contract_type,omitempty"`
+	ContractType      common.ContractType    `protobuf:"varint,8,opt,name=contract_type,json=contractType,proto3,enum=common.ContractType" json:"contract_type,omitempty"`
 	ContractValueType ContractValueType      `protobuf:"varint,24,opt,name=contract_value_type,json=contractValueType,proto3,enum=trade.ContractValueType" json:"contract_value_type,omitempty"`
 	MarginAsset       string                 `protobuf:"bytes,25,opt,name=margin_asset,json=marginAsset,proto3" json:"margin_asset,omitempty"`
 	Status            SymbolStatus           `protobuf:"varint,9,opt,name=status,proto3,enum=trade.SymbolStatus" json:"status,omitempty"`
@@ -1705,11 +1705,11 @@ func (x *CreateSymbolReq) GetDisplaySymbol() string {
 	return ""
 }
 
-func (x *CreateSymbolReq) GetProductType() ProductType {
+func (x *CreateSymbolReq) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 func (x *CreateSymbolReq) GetBaseAsset() string {
@@ -1733,11 +1733,11 @@ func (x *CreateSymbolReq) GetSettleAsset() string {
 	return ""
 }
 
-func (x *CreateSymbolReq) GetContractType() ContractType {
+func (x *CreateSymbolReq) GetContractType() common.ContractType {
 	if x != nil {
 		return x.ContractType
 	}
-	return ContractType_CONTRACT_TYPE_NOT_APPLICABLE
+	return common.ContractType(0)
 }
 
 func (x *CreateSymbolReq) GetContractValueType() ContractValueType {
@@ -2058,7 +2058,7 @@ type GetSymbolListAdminReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	Page          *common.PageReq        `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
-	ProductType   ProductType            `protobuf:"varint,3,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType   common.ProductType     `protobuf:"varint,3,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	Status        SymbolStatus           `protobuf:"varint,4,opt,name=status,proto3,enum=trade.SymbolStatus" json:"status,omitempty"`
 	Keyword       string                 `protobuf:"bytes,5,opt,name=keyword,proto3" json:"keyword,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2109,11 +2109,11 @@ func (x *GetSymbolListAdminReq) GetPage() *common.PageReq {
 	return nil
 }
 
-func (x *GetSymbolListAdminReq) GetProductType() ProductType {
+func (x *GetSymbolListAdminReq) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 func (x *GetSymbolListAdminReq) GetStatus() SymbolStatus {
@@ -3331,7 +3331,7 @@ type GetOrderListAdminReq struct {
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	Page          *common.PageReq        `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
 	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	ProductType   ProductType            `protobuf:"varint,4,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType   common.ProductType     `protobuf:"varint,4,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,5,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	Status        OrderStatus            `protobuf:"varint,6,opt,name=status,proto3,enum=trade.OrderStatus" json:"status,omitempty"`
 	Keyword       string                 `protobuf:"bytes,7,opt,name=keyword,proto3" json:"keyword,omitempty"`
@@ -3391,11 +3391,11 @@ func (x *GetOrderListAdminReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *GetOrderListAdminReq) GetProductType() ProductType {
+func (x *GetOrderListAdminReq) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 func (x *GetOrderListAdminReq) GetSymbolId() int64 {
@@ -3587,7 +3587,7 @@ type GetFillListAdminReq struct {
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	Page          *common.PageReq        `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
 	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	ProductType   ProductType            `protobuf:"varint,4,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType   common.ProductType     `protobuf:"varint,4,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,5,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	TimeRange     *TimeRange             `protobuf:"bytes,6,opt,name=time_range,json=timeRange,proto3" json:"time_range,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -3645,11 +3645,11 @@ func (x *GetFillListAdminReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *GetFillListAdminReq) GetProductType() ProductType {
+func (x *GetFillListAdminReq) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 func (x *GetFillListAdminReq) GetSymbolId() int64 {
@@ -3827,7 +3827,7 @@ type GetPositionListAdminReq struct {
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	Page          *common.PageReq        `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
 	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	ContractType  ContractType           `protobuf:"varint,4,opt,name=contract_type,json=contractType,proto3,enum=trade.ContractType" json:"contract_type,omitempty"`
+	ContractType  common.ContractType    `protobuf:"varint,4,opt,name=contract_type,json=contractType,proto3,enum=common.ContractType" json:"contract_type,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,5,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -3884,11 +3884,11 @@ func (x *GetPositionListAdminReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *GetPositionListAdminReq) GetContractType() ContractType {
+func (x *GetPositionListAdminReq) GetContractType() common.ContractType {
 	if x != nil {
 		return x.ContractType
 	}
-	return ContractType_CONTRACT_TYPE_NOT_APPLICABLE
+	return common.ContractType(0)
 }
 
 func (x *GetPositionListAdminReq) GetSymbolId() int64 {
@@ -4060,7 +4060,7 @@ type GetPositionHistoryListAdminReq struct {
 	Page          *common.PageReq        `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
 	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,4,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
-	ContractType  ContractType           `protobuf:"varint,5,opt,name=contract_type,json=contractType,proto3,enum=trade.ContractType" json:"contract_type,omitempty"`
+	ContractType  common.ContractType    `protobuf:"varint,5,opt,name=contract_type,json=contractType,proto3,enum=common.ContractType" json:"contract_type,omitempty"`
 	PositionId    int64                  `protobuf:"varint,6,opt,name=position_id,json=positionId,proto3" json:"position_id,omitempty"`
 	ActionType    PositionActionType     `protobuf:"varint,7,opt,name=action_type,json=actionType,proto3,enum=trade.PositionActionType" json:"action_type,omitempty"`
 	TimeRange     *TimeRange             `protobuf:"bytes,8,opt,name=time_range,json=timeRange,proto3" json:"time_range,omitempty"`
@@ -4126,11 +4126,11 @@ func (x *GetPositionHistoryListAdminReq) GetSymbolId() int64 {
 	return 0
 }
 
-func (x *GetPositionHistoryListAdminReq) GetContractType() ContractType {
+func (x *GetPositionHistoryListAdminReq) GetContractType() common.ContractType {
 	if x != nil {
 		return x.ContractType
 	}
-	return ContractType_CONTRACT_TYPE_NOT_APPLICABLE
+	return common.ContractType(0)
 }
 
 func (x *GetPositionHistoryListAdminReq) GetPositionId() int64 {
@@ -4474,7 +4474,7 @@ type SetUserTradeLimitReq struct {
 	state                protoimpl.MessageState `protogen:"open.v1"`
 	TenantId             int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId               int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	ProductType          ProductType            `protobuf:"varint,3,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType          common.ProductType     `protobuf:"varint,3,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	CanOpen              int64                  `protobuf:"varint,4,opt,name=can_open,json=canOpen,proto3" json:"can_open,omitempty"`
 	CanClose             int64                  `protobuf:"varint,5,opt,name=can_close,json=canClose,proto3" json:"can_close,omitempty"`
 	CanCancel            int64                  `protobuf:"varint,6,opt,name=can_cancel,json=canCancel,proto3" json:"can_cancel,omitempty"`
@@ -4542,11 +4542,11 @@ func (x *SetUserTradeLimitReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *SetUserTradeLimitReq) GetProductType() ProductType {
+func (x *SetUserTradeLimitReq) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 func (x *SetUserTradeLimitReq) GetCanOpen() int64 {
@@ -4874,7 +4874,7 @@ type GetUserTradeLimitReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	ProductType   ProductType            `protobuf:"varint,3,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType   common.ProductType     `protobuf:"varint,3,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4923,11 +4923,11 @@ func (x *GetUserTradeLimitReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *GetUserTradeLimitReq) GetProductType() ProductType {
+func (x *GetUserTradeLimitReq) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 type GetUserTradeLimitResp struct {
@@ -5098,7 +5098,7 @@ type SetUserTradeConfigReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	ProductType   ProductType            `protobuf:"varint,3,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType   common.ProductType     `protobuf:"varint,3,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,4,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`                                // 0 表示该市场下的全局配置
 	TradeEnabled  common.Enable          `protobuf:"varint,8,opt,name=trade_enabled,json=tradeEnabled,proto3,enum=common.Enable" json:"trade_enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
 	unknownFields protoimpl.UnknownFields
@@ -5149,11 +5149,11 @@ func (x *SetUserTradeConfigReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *SetUserTradeConfigReq) GetProductType() ProductType {
+func (x *SetUserTradeConfigReq) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 func (x *SetUserTradeConfigReq) GetSymbolId() int64 {
@@ -5174,7 +5174,7 @@ type GetUserTradeConfigReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	ProductType   ProductType            `protobuf:"varint,3,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType   common.ProductType     `protobuf:"varint,3,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,4,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"` // 0 表示该市场下的全局配置
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -5224,11 +5224,11 @@ func (x *GetUserTradeConfigReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *GetUserTradeConfigReq) GetProductType() ProductType {
+func (x *GetUserTradeConfigReq) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 func (x *GetUserTradeConfigReq) GetSymbolId() int64 {
@@ -5492,7 +5492,7 @@ type GetRiskOrderCheckLogListReq struct {
 	Page          *common.PageReq        `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
 	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,4,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
-	ProductType   ProductType            `protobuf:"varint,5,opt,name=product_type,json=productType,proto3,enum=trade.ProductType" json:"product_type,omitempty"`
+	ProductType   common.ProductType     `protobuf:"varint,5,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	CheckType     RiskCheckType          `protobuf:"varint,6,opt,name=check_type,json=checkType,proto3,enum=trade.RiskCheckType" json:"check_type,omitempty"`
 	CheckResult   RiskCheckResult        `protobuf:"varint,7,opt,name=check_result,json=checkResult,proto3,enum=trade.RiskCheckResult" json:"check_result,omitempty"`
 	TimeRange     *TimeRange             `protobuf:"bytes,8,opt,name=time_range,json=timeRange,proto3" json:"time_range,omitempty"`
@@ -5558,11 +5558,11 @@ func (x *GetRiskOrderCheckLogListReq) GetSymbolId() int64 {
 	return 0
 }
 
-func (x *GetRiskOrderCheckLogListReq) GetProductType() ProductType {
+func (x *GetRiskOrderCheckLogListReq) GetProductType() common.ProductType {
 	if x != nil {
 		return x.ProductType
 	}
-	return ProductType_PRODUCT_TYPE_UNKNOWN
+	return common.ProductType(0)
 }
 
 func (x *GetRiskOrderCheckLogListReq) GetCheckType() RiskCheckType {
@@ -10164,9 +10164,9 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\n" +
 	"\x17proto/trade/trade.proto\x12\x05trade\x1a\x19proto/common/common.proto\x1a\x16proto/trade/enum.proto\x1a\x17proto/trade/model.proto\"6\n" +
 	"\x0eUserCommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"v\n" +
-	"\x10GetSymbolListReq\x125\n" +
-	"\fproduct_type\x18\x01 \x01(\x0e2\x12.trade.ProductTypeR\vproductType\x12+\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"w\n" +
+	"\x10GetSymbolListReq\x126\n" +
+	"\fproduct_type\x18\x01 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12+\n" +
 	"\x06status\x18\x02 \x01(\x0e2\x13.trade.SymbolStatusR\x06status\"a\n" +
 	"\x11GetSymbolListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
@@ -10213,18 +10213,18 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x0eCancelOrderReq\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\x03R\aorderId\x12\x19\n" +
 	"\border_no\x18\x02 \x01(\tR\aorderNo\x12&\n" +
-	"\x0fclient_order_id\x18\x03 \x01(\tR\rclientOrderId\"\xc4\x01\n" +
-	"\x12CancelAllOrdersReq\x125\n" +
-	"\fproduct_type\x18\x01 \x01(\x0e2\x12.trade.ProductTypeR\vproductType\x12\x1b\n" +
+	"\x0fclient_order_id\x18\x03 \x01(\tR\rclientOrderId\"\xc5\x01\n" +
+	"\x12CancelAllOrdersReq\x126\n" +
+	"\fproduct_type\x18\x01 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12\x1b\n" +
 	"\tsymbol_id\x18\x02 \x01(\x03R\bsymbolId\x12 \n" +
 	"\x04side\x18\x03 \x01(\x0e2\f.common.SideR\x04side\x128\n" +
 	"\rposition_side\x18\x04 \x01(\x0e2\x13.trade.PositionSideR\fpositionSide\"O\n" +
 	"\x13CancelAllOrdersResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\x03R\x04data\"\x89\x02\n" +
+	"\x04data\x18\x02 \x01(\x03R\x04data\"\x8a\x02\n" +
 	"\x0fGetOrderListReq\x12#\n" +
-	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x125\n" +
-	"\fproduct_type\x18\x02 \x01(\x0e2\x12.trade.ProductTypeR\vproductType\x12\x1b\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x126\n" +
+	"\fproduct_type\x18\x02 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12\x1b\n" +
 	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolId\x12*\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x12.trade.OrderStatusR\x06status\x12 \n" +
 	"\x04side\x18\x05 \x01(\x0e2\f.common.SideR\x04side\x12/\n" +
@@ -10243,18 +10243,18 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x05order\x18\x01 \x01(\v2\x11.trade.TradeOrderR\x05order\x12)\n" +
 	"\x04spot\x18\x02 \x01(\v2\x15.trade.TradeOrderSpotR\x04spot\x125\n" +
 	"\bcontract\x18\x03 \x01(\v2\x19.trade.TradeOrderContractR\bcontract\x122\n" +
-	"\aseconds\x18\x04 \x01(\v2\x18.trade.TradeOrderSecondsR\aseconds\"\xba\x01\n" +
+	"\aseconds\x18\x04 \x01(\v2\x18.trade.TradeOrderSecondsR\aseconds\"\xbb\x01\n" +
 	"\x0eGetFillListReq\x12#\n" +
-	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x125\n" +
-	"\fproduct_type\x18\x02 \x01(\x0e2\x12.trade.ProductTypeR\vproductType\x12\x1b\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x126\n" +
+	"\fproduct_type\x18\x02 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12\x1b\n" +
 	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolId\x12/\n" +
 	"\n" +
 	"time_range\x18\x04 \x01(\v2\x10.trade.TimeRangeR\ttimeRange\"]\n" +
 	"\x0fGetFillListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
-	"\x04data\x18\x02 \x03(\v2\x10.trade.TradeFillR\x04data\"k\n" +
-	"\x12GetPositionListReq\x128\n" +
-	"\rcontract_type\x18\x01 \x01(\x0e2\x13.trade.ContractTypeR\fcontractType\x12\x1b\n" +
+	"\x04data\x18\x02 \x03(\v2\x10.trade.TradeFillR\x04data\"l\n" +
+	"\x12GetPositionListReq\x129\n" +
+	"\rcontract_type\x18\x01 \x01(\x0e2\x14.common.ContractTypeR\fcontractType\x12\x1b\n" +
 	"\tsymbol_id\x18\x02 \x01(\x03R\bsymbolId\"h\n" +
 	"\x13GetPositionListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
@@ -10279,18 +10279,18 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x0eshort_leverage\x18\x06 \x01(\x03R\rshortLeverageJ\x04\b\x02\x10\x03J\x04\b\x04\x10\x05\"2\n" +
 	"\n" +
 	"CommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xac\a\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xae\a\n" +
 	"\x0fCreateSymbolReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x16\n" +
 	"\x06symbol\x18\x02 \x01(\tR\x06symbol\x12%\n" +
-	"\x0edisplay_symbol\x18\x03 \x01(\tR\rdisplaySymbol\x125\n" +
-	"\fproduct_type\x18\x04 \x01(\x0e2\x12.trade.ProductTypeR\vproductType\x12\x1d\n" +
+	"\x0edisplay_symbol\x18\x03 \x01(\tR\rdisplaySymbol\x126\n" +
+	"\fproduct_type\x18\x04 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12\x1d\n" +
 	"\n" +
 	"base_asset\x18\x05 \x01(\tR\tbaseAsset\x12\x1f\n" +
 	"\vquote_asset\x18\x06 \x01(\tR\n" +
 	"quoteAsset\x12!\n" +
-	"\fsettle_asset\x18\a \x01(\tR\vsettleAsset\x128\n" +
-	"\rcontract_type\x18\b \x01(\x0e2\x13.trade.ContractTypeR\fcontractType\x12H\n" +
+	"\fsettle_asset\x18\a \x01(\tR\vsettleAsset\x129\n" +
+	"\rcontract_type\x18\b \x01(\x0e2\x14.common.ContractTypeR\fcontractType\x12H\n" +
 	"\x13contract_value_type\x18\x18 \x01(\x0e2\x18.trade.ContractValueTypeR\x11contractValueType\x12!\n" +
 	"\fmargin_asset\x18\x19 \x01(\tR\vmarginAsset\x12+\n" +
 	"\x06status\x18\t \x01(\x0e2\x13.trade.SymbolStatusR\x06status\x12\x1f\n" +
@@ -10334,11 +10334,11 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x12trading_start_time\x18\x10 \x01(\x03R\x10tradingStartTime\x12\x12\n" +
 	"\x04sort\x18\x11 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x12 \x01(\tR\x06remark\x12(\n" +
-	"\x10trading_end_time\x18\x13 \x01(\x03R\x0etradingEndTime\"\xd7\x01\n" +
+	"\x10trading_end_time\x18\x13 \x01(\x03R\x0etradingEndTime\"\xd8\x01\n" +
 	"\x15GetSymbolListAdminReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12#\n" +
-	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x125\n" +
-	"\fproduct_type\x18\x03 \x01(\x0e2\x12.trade.ProductTypeR\vproductType\x12+\n" +
+	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x126\n" +
+	"\fproduct_type\x18\x03 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12+\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x13.trade.SymbolStatusR\x06status\x12\x18\n" +
 	"\akeyword\x18\x05 \x01(\tR\akeyword\"f\n" +
 	"\x16GetSymbolListAdminResp\x12$\n" +
@@ -10457,12 +10457,12 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\aenabled\x18\x06 \x01(\x0e2\x0e.common.EnableR\aenabledJ\x04\b\x04\x10\x05\"}\n" +
 	"\x1fGetSymbolLeverageConfigListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x124\n" +
-	"\x04data\x18\x02 \x03(\v2 .trade.TradeSymbolLeverageConfigR\x04data\"\xbc\x02\n" +
+	"\x04data\x18\x02 \x03(\v2 .trade.TradeSymbolLeverageConfigR\x04data\"\xbd\x02\n" +
 	"\x14GetOrderListAdminReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12#\n" +
 	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\x125\n" +
-	"\fproduct_type\x18\x04 \x01(\x0e2\x12.trade.ProductTypeR\vproductType\x12\x1b\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x126\n" +
+	"\fproduct_type\x18\x04 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12\x1b\n" +
 	"\tsymbol_id\x18\x05 \x01(\x03R\bsymbolId\x12*\n" +
 	"\x06status\x18\x06 \x01(\x0e2\x12.trade.OrderStatusR\x06status\x12\x18\n" +
 	"\akeyword\x18\a \x01(\tR\akeyword\x12/\n" +
@@ -10476,12 +10476,12 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"n\n" +
 	"\x17GetOrderDetailAdminResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x01(\v2\x19.trade.GetOrderDetailDataR\x04data\"\xf5\x01\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.trade.GetOrderDetailDataR\x04data\"\xf6\x01\n" +
 	"\x13GetFillListAdminReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12#\n" +
 	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\x125\n" +
-	"\fproduct_type\x18\x04 \x01(\x0e2\x12.trade.ProductTypeR\vproductType\x12\x1b\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x126\n" +
+	"\fproduct_type\x18\x04 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12\x1b\n" +
 	"\tsymbol_id\x18\x05 \x01(\x03R\bsymbolId\x12/\n" +
 	"\n" +
 	"time_range\x18\x06 \x01(\v2\x10.trade.TimeRangeR\ttimeRange\"b\n" +
@@ -10493,12 +10493,12 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"d\n" +
 	"\x16GetFillDetailAdminResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
-	"\x04data\x18\x02 \x01(\v2\x10.trade.TradeFillR\x04data\"\xcb\x01\n" +
+	"\x04data\x18\x02 \x01(\v2\x10.trade.TradeFillR\x04data\"\xcc\x01\n" +
 	"\x17GetPositionListAdminReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12#\n" +
 	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x03R\x06userId\x128\n" +
-	"\rcontract_type\x18\x04 \x01(\x0e2\x13.trade.ContractTypeR\fcontractType\x12\x1b\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x129\n" +
+	"\rcontract_type\x18\x04 \x01(\x0e2\x14.common.ContractTypeR\fcontractType\x12\x1b\n" +
 	"\tsymbol_id\x18\x05 \x01(\x03R\bsymbolId\"m\n" +
 	"\x18GetPositionListAdminResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
@@ -10508,13 +10508,13 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"o\n" +
 	"\x1aGetPositionDetailAdminResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
-	"\x04data\x18\x02 \x01(\v2\x17.trade.ContractPositionR\x04data\"\xe0\x02\n" +
+	"\x04data\x18\x02 \x01(\v2\x17.trade.ContractPositionR\x04data\"\xe1\x02\n" +
 	"\x1eGetPositionHistoryListAdminReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12#\n" +
 	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1b\n" +
-	"\tsymbol_id\x18\x04 \x01(\x03R\bsymbolId\x128\n" +
-	"\rcontract_type\x18\x05 \x01(\x0e2\x13.trade.ContractTypeR\fcontractType\x12\x1f\n" +
+	"\tsymbol_id\x18\x04 \x01(\x03R\bsymbolId\x129\n" +
+	"\rcontract_type\x18\x05 \x01(\x0e2\x14.common.ContractTypeR\fcontractType\x12\x1f\n" +
 	"\vposition_id\x18\x06 \x01(\x03R\n" +
 	"positionId\x12:\n" +
 	"\vaction_type\x18\a \x01(\x0e2\x19.trade.PositionActionTypeR\n" +
@@ -10543,11 +10543,11 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"time_range\x18\a \x01(\v2\x10.trade.TimeRangeR\ttimeRange\"l\n" +
 	"\x19GetCancelLogListAdminResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x02 \x03(\v2\x15.trade.TradeCancelLogR\x04data\"\xa5\a\n" +
+	"\x04data\x18\x02 \x03(\v2\x15.trade.TradeCancelLogR\x04data\"\xa6\a\n" +
 	"\x14SetUserTradeLimitReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x125\n" +
-	"\fproduct_type\x18\x03 \x01(\x0e2\x12.trade.ProductTypeR\vproductType\x12\x19\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x126\n" +
+	"\fproduct_type\x18\x03 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12\x19\n" +
 	"\bcan_open\x18\x04 \x01(\x03R\acanOpen\x12\x1b\n" +
 	"\tcan_close\x18\x05 \x01(\x03R\bcanClose\x12\x1d\n" +
 	"\n" +
@@ -10592,11 +10592,11 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\aenabled\x18\x11 \x01(\x0e2\x0e.common.EnableR\aenabled\x120\n" +
 	"\x14effective_start_time\x18\x12 \x01(\x03R\x12effectiveStartTime\x12,\n" +
 	"\x12effective_end_time\x18\x13 \x01(\x03R\x10effectiveEndTime\x12\x16\n" +
-	"\x06remark\x18\x14 \x01(\tR\x06remarkJ\x04\b\x04\x10\x05\"\x83\x01\n" +
+	"\x06remark\x18\x14 \x01(\tR\x06remarkJ\x04\b\x04\x10\x05\"\x84\x01\n" +
 	"\x14GetUserTradeLimitReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x125\n" +
-	"\fproduct_type\x18\x03 \x01(\x0e2\x12.trade.ProductTypeR\vproductType\"l\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x126\n" +
+	"\fproduct_type\x18\x03 \x01(\x0e2\x13.common.ProductTypeR\vproductType\"l\n" +
 	"\x15GetUserTradeLimitResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
 	"\x04data\x18\x02 \x01(\v2\x19.trade.RiskUserTradeLimitR\x04data\"p\n" +
@@ -10606,18 +10606,18 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolIdJ\x04\b\x04\x10\x05\"n\n" +
 	"\x16GetUserSymbolLimitResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
-	"\x04data\x18\x02 \x01(\v2\x1a.trade.RiskUserSymbolLimitR\x04data\"\xee\x01\n" +
+	"\x04data\x18\x02 \x01(\v2\x1a.trade.RiskUserSymbolLimitR\x04data\"\xef\x01\n" +
 	"\x15SetUserTradeConfigReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x125\n" +
-	"\fproduct_type\x18\x03 \x01(\x0e2\x12.trade.ProductTypeR\vproductType\x12\x1b\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x126\n" +
+	"\fproduct_type\x18\x03 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12\x1b\n" +
 	"\tsymbol_id\x18\x04 \x01(\x03R\bsymbolId\x123\n" +
 	"\rtrade_enabled\x18\b \x01(\x0e2\x0e.common.EnableR\ftradeEnabledJ\x04\b\x05\x10\x06J\x04\b\x06\x10\aJ\x04\b\a\x10\bJ\x04\b\t\x10\n" +
-	"\"\xa1\x01\n" +
+	"\"\xa2\x01\n" +
 	"\x15GetUserTradeConfigReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x125\n" +
-	"\fproduct_type\x18\x03 \x01(\x0e2\x12.trade.ProductTypeR\vproductType\x12\x1b\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x126\n" +
+	"\fproduct_type\x18\x03 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12\x1b\n" +
 	"\tsymbol_id\x18\x04 \x01(\x03R\bsymbolId\"j\n" +
 	"\x16GetUserTradeConfigResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
@@ -10636,13 +10636,13 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolId\"p\n" +
 	"\x19GetContractUserConfigResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x01(\v2\x19.trade.ContractUserConfigR\x04data\"\xed\x02\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.trade.ContractUserConfigR\x04data\"\xee\x02\n" +
 	"\x1bGetRiskOrderCheckLogListReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12#\n" +
 	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1b\n" +
-	"\tsymbol_id\x18\x04 \x01(\x03R\bsymbolId\x125\n" +
-	"\fproduct_type\x18\x05 \x01(\x0e2\x12.trade.ProductTypeR\vproductType\x123\n" +
+	"\tsymbol_id\x18\x04 \x01(\x03R\bsymbolId\x126\n" +
+	"\fproduct_type\x18\x05 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x123\n" +
 	"\n" +
 	"check_type\x18\x06 \x01(\x0e2\x14.trade.RiskCheckTypeR\tcheckType\x129\n" +
 	"\fcheck_result\x18\a \x01(\x0e2\x16.trade.RiskCheckResultR\vcheckResult\x12/\n" +
@@ -11308,7 +11308,7 @@ var file_proto_trade_trade_proto_goTypes = []any{
 	(*TradeTaskReq)(nil),                     // 124: trade.TradeTaskReq
 	(*TradeTaskResp)(nil),                    // 125: trade.TradeTaskResp
 	(*common.RespBase)(nil),                  // 126: common.RespBase
-	(ProductType)(0),                         // 127: trade.ProductType
+	(common.ProductType)(0),                  // 127: common.ProductType
 	(SymbolStatus)(0),                        // 128: trade.SymbolStatus
 	(*TradeSymbol)(nil),                      // 129: trade.TradeSymbol
 	(*TradeSymbolSpot)(nil),                  // 130: trade.TradeSymbolSpot
@@ -11334,7 +11334,7 @@ var file_proto_trade_trade_proto_goTypes = []any{
 	(*TradeOrderContract)(nil),               // 150: trade.TradeOrderContract
 	(*TradeOrderSeconds)(nil),                // 151: trade.TradeOrderSeconds
 	(*TradeFill)(nil),                        // 152: trade.TradeFill
-	(ContractType)(0),                        // 153: trade.ContractType
+	(common.ContractType)(0),                 // 153: common.ContractType
 	(*ContractPosition)(nil),                 // 154: trade.ContractPosition
 	(*ContractMarginSnapshot)(nil),           // 155: trade.ContractMarginSnapshot
 	(*ContractLeverageConfig)(nil),           // 156: trade.ContractLeverageConfig
@@ -11368,7 +11368,7 @@ var file_proto_trade_trade_proto_goTypes = []any{
 }
 var file_proto_trade_trade_proto_depIdxs = []int32{
 	126, // 0: trade.UserCommonResp.base:type_name -> common.RespBase
-	127, // 1: trade.GetSymbolListReq.product_type:type_name -> trade.ProductType
+	127, // 1: trade.GetSymbolListReq.product_type:type_name -> common.ProductType
 	128, // 2: trade.GetSymbolListReq.status:type_name -> trade.SymbolStatus
 	126, // 3: trade.GetSymbolListResp.base:type_name -> common.RespBase
 	129, // 4: trade.GetSymbolListResp.data:type_name -> trade.TradeSymbol
@@ -11392,12 +11392,12 @@ var file_proto_trade_trade_proto_depIdxs = []int32{
 	144, // 22: trade.PlaceOrderReq.seconds_direction:type_name -> trade.SecondsDirection
 	126, // 23: trade.PlaceOrderResp.base:type_name -> common.RespBase
 	145, // 24: trade.PlaceOrderResp.data:type_name -> trade.TradeOrder
-	127, // 25: trade.CancelAllOrdersReq.product_type:type_name -> trade.ProductType
+	127, // 25: trade.CancelAllOrdersReq.product_type:type_name -> common.ProductType
 	135, // 26: trade.CancelAllOrdersReq.side:type_name -> common.Side
 	136, // 27: trade.CancelAllOrdersReq.position_side:type_name -> trade.PositionSide
 	126, // 28: trade.CancelAllOrdersResp.base:type_name -> common.RespBase
 	146, // 29: trade.GetOrderListReq.page:type_name -> common.PageReq
-	127, // 30: trade.GetOrderListReq.product_type:type_name -> trade.ProductType
+	127, // 30: trade.GetOrderListReq.product_type:type_name -> common.ProductType
 	147, // 31: trade.GetOrderListReq.status:type_name -> trade.OrderStatus
 	135, // 32: trade.GetOrderListReq.side:type_name -> common.Side
 	148, // 33: trade.GetOrderListReq.time_range:type_name -> trade.TimeRange
@@ -11410,11 +11410,11 @@ var file_proto_trade_trade_proto_depIdxs = []int32{
 	150, // 40: trade.GetOrderDetailData.contract:type_name -> trade.TradeOrderContract
 	151, // 41: trade.GetOrderDetailData.seconds:type_name -> trade.TradeOrderSeconds
 	146, // 42: trade.GetFillListReq.page:type_name -> common.PageReq
-	127, // 43: trade.GetFillListReq.product_type:type_name -> trade.ProductType
+	127, // 43: trade.GetFillListReq.product_type:type_name -> common.ProductType
 	148, // 44: trade.GetFillListReq.time_range:type_name -> trade.TimeRange
 	126, // 45: trade.GetFillListResp.base:type_name -> common.RespBase
 	152, // 46: trade.GetFillListResp.data:type_name -> trade.TradeFill
-	153, // 47: trade.GetPositionListReq.contract_type:type_name -> trade.ContractType
+	153, // 47: trade.GetPositionListReq.contract_type:type_name -> common.ContractType
 	126, // 48: trade.GetPositionListResp.base:type_name -> common.RespBase
 	154, // 49: trade.GetPositionListResp.data:type_name -> trade.ContractPosition
 	126, // 50: trade.GetMarginSnapshotListResp.base:type_name -> common.RespBase
@@ -11424,13 +11424,13 @@ var file_proto_trade_trade_proto_depIdxs = []int32{
 	156, // 54: trade.GetLeverageConfigResp.data:type_name -> trade.ContractLeverageConfig
 	141, // 55: trade.SetLeverageReq.margin_mode:type_name -> trade.MarginMode
 	126, // 56: trade.CommonResp.base:type_name -> common.RespBase
-	127, // 57: trade.CreateSymbolReq.product_type:type_name -> trade.ProductType
-	153, // 58: trade.CreateSymbolReq.contract_type:type_name -> trade.ContractType
+	127, // 57: trade.CreateSymbolReq.product_type:type_name -> common.ProductType
+	153, // 58: trade.CreateSymbolReq.contract_type:type_name -> common.ContractType
 	157, // 59: trade.CreateSymbolReq.contract_value_type:type_name -> trade.ContractValueType
 	128, // 60: trade.CreateSymbolReq.status:type_name -> trade.SymbolStatus
 	128, // 61: trade.UpdateSymbolReq.status:type_name -> trade.SymbolStatus
 	146, // 62: trade.GetSymbolListAdminReq.page:type_name -> common.PageReq
-	127, // 63: trade.GetSymbolListAdminReq.product_type:type_name -> trade.ProductType
+	127, // 63: trade.GetSymbolListAdminReq.product_type:type_name -> common.ProductType
 	128, // 64: trade.GetSymbolListAdminReq.status:type_name -> trade.SymbolStatus
 	126, // 65: trade.GetSymbolListAdminResp.base:type_name -> common.RespBase
 	129, // 66: trade.GetSymbolListAdminResp.data:type_name -> trade.TradeSymbol
@@ -11463,7 +11463,7 @@ var file_proto_trade_trade_proto_depIdxs = []int32{
 	126, // 93: trade.GetSymbolLeverageConfigListResp.base:type_name -> common.RespBase
 	132, // 94: trade.GetSymbolLeverageConfigListResp.data:type_name -> trade.TradeSymbolLeverageConfig
 	146, // 95: trade.GetOrderListAdminReq.page:type_name -> common.PageReq
-	127, // 96: trade.GetOrderListAdminReq.product_type:type_name -> trade.ProductType
+	127, // 96: trade.GetOrderListAdminReq.product_type:type_name -> common.ProductType
 	147, // 97: trade.GetOrderListAdminReq.status:type_name -> trade.OrderStatus
 	148, // 98: trade.GetOrderListAdminReq.time_range:type_name -> trade.TimeRange
 	126, // 99: trade.GetOrderListAdminResp.base:type_name -> common.RespBase
@@ -11471,20 +11471,20 @@ var file_proto_trade_trade_proto_depIdxs = []int32{
 	126, // 101: trade.GetOrderDetailAdminResp.base:type_name -> common.RespBase
 	15,  // 102: trade.GetOrderDetailAdminResp.data:type_name -> trade.GetOrderDetailData
 	146, // 103: trade.GetFillListAdminReq.page:type_name -> common.PageReq
-	127, // 104: trade.GetFillListAdminReq.product_type:type_name -> trade.ProductType
+	127, // 104: trade.GetFillListAdminReq.product_type:type_name -> common.ProductType
 	148, // 105: trade.GetFillListAdminReq.time_range:type_name -> trade.TimeRange
 	126, // 106: trade.GetFillListAdminResp.base:type_name -> common.RespBase
 	152, // 107: trade.GetFillListAdminResp.data:type_name -> trade.TradeFill
 	126, // 108: trade.GetFillDetailAdminResp.base:type_name -> common.RespBase
 	152, // 109: trade.GetFillDetailAdminResp.data:type_name -> trade.TradeFill
 	146, // 110: trade.GetPositionListAdminReq.page:type_name -> common.PageReq
-	153, // 111: trade.GetPositionListAdminReq.contract_type:type_name -> trade.ContractType
+	153, // 111: trade.GetPositionListAdminReq.contract_type:type_name -> common.ContractType
 	126, // 112: trade.GetPositionListAdminResp.base:type_name -> common.RespBase
 	154, // 113: trade.GetPositionListAdminResp.data:type_name -> trade.ContractPosition
 	126, // 114: trade.GetPositionDetailAdminResp.base:type_name -> common.RespBase
 	154, // 115: trade.GetPositionDetailAdminResp.data:type_name -> trade.ContractPosition
 	146, // 116: trade.GetPositionHistoryListAdminReq.page:type_name -> common.PageReq
-	153, // 117: trade.GetPositionHistoryListAdminReq.contract_type:type_name -> trade.ContractType
+	153, // 117: trade.GetPositionHistoryListAdminReq.contract_type:type_name -> common.ContractType
 	160, // 118: trade.GetPositionHistoryListAdminReq.action_type:type_name -> trade.PositionActionType
 	148, // 119: trade.GetPositionHistoryListAdminReq.time_range:type_name -> trade.TimeRange
 	126, // 120: trade.GetPositionHistoryListAdminResp.base:type_name -> common.RespBase
@@ -11497,21 +11497,21 @@ var file_proto_trade_trade_proto_depIdxs = []int32{
 	148, // 127: trade.GetCancelLogListAdminReq.time_range:type_name -> trade.TimeRange
 	126, // 128: trade.GetCancelLogListAdminResp.base:type_name -> common.RespBase
 	163, // 129: trade.GetCancelLogListAdminResp.data:type_name -> trade.TradeCancelLog
-	127, // 130: trade.SetUserTradeLimitReq.product_type:type_name -> trade.ProductType
+	127, // 130: trade.SetUserTradeLimitReq.product_type:type_name -> common.ProductType
 	158, // 131: trade.SetUserTradeLimitReq.trade_enabled:type_name -> common.Enable
 	158, // 132: trade.SetUserTradeLimitReq.only_reduce_only:type_name -> common.Enable
 	164, // 133: trade.SetUserTradeLimitReq.source:type_name -> trade.SourceType
 	158, // 134: trade.SetUserTradeLimitReq.enabled:type_name -> common.Enable
 	164, // 135: trade.SetUserSymbolLimitReq.source:type_name -> trade.SourceType
 	158, // 136: trade.SetUserSymbolLimitReq.enabled:type_name -> common.Enable
-	127, // 137: trade.GetUserTradeLimitReq.product_type:type_name -> trade.ProductType
+	127, // 137: trade.GetUserTradeLimitReq.product_type:type_name -> common.ProductType
 	126, // 138: trade.GetUserTradeLimitResp.base:type_name -> common.RespBase
 	165, // 139: trade.GetUserTradeLimitResp.data:type_name -> trade.RiskUserTradeLimit
 	126, // 140: trade.GetUserSymbolLimitResp.base:type_name -> common.RespBase
 	166, // 141: trade.GetUserSymbolLimitResp.data:type_name -> trade.RiskUserSymbolLimit
-	127, // 142: trade.SetUserTradeConfigReq.product_type:type_name -> trade.ProductType
+	127, // 142: trade.SetUserTradeConfigReq.product_type:type_name -> common.ProductType
 	158, // 143: trade.SetUserTradeConfigReq.trade_enabled:type_name -> common.Enable
-	127, // 144: trade.GetUserTradeConfigReq.product_type:type_name -> trade.ProductType
+	127, // 144: trade.GetUserTradeConfigReq.product_type:type_name -> common.ProductType
 	126, // 145: trade.GetUserTradeConfigResp.base:type_name -> common.RespBase
 	167, // 146: trade.GetUserTradeConfigResp.data:type_name -> trade.TradeUserConfig
 	168, // 147: trade.SetContractUserConfigReq.position_mode:type_name -> trade.PositionMode
@@ -11519,7 +11519,7 @@ var file_proto_trade_trade_proto_depIdxs = []int32{
 	126, // 149: trade.GetContractUserConfigResp.base:type_name -> common.RespBase
 	169, // 150: trade.GetContractUserConfigResp.data:type_name -> trade.ContractUserConfig
 	146, // 151: trade.GetRiskOrderCheckLogListReq.page:type_name -> common.PageReq
-	127, // 152: trade.GetRiskOrderCheckLogListReq.product_type:type_name -> trade.ProductType
+	127, // 152: trade.GetRiskOrderCheckLogListReq.product_type:type_name -> common.ProductType
 	170, // 153: trade.GetRiskOrderCheckLogListReq.check_type:type_name -> trade.RiskCheckType
 	171, // 154: trade.GetRiskOrderCheckLogListReq.check_result:type_name -> trade.RiskCheckResult
 	148, // 155: trade.GetRiskOrderCheckLogListReq.time_range:type_name -> trade.TimeRange

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"wklive/proto/common"
 
 	"wklive/common/utils"
 	"wklive/proto/trade"
@@ -53,7 +54,7 @@ func (l *ProcessDeliverySettlementsLogic) advanceSymbols(tenantID int64) error {
 			if err != nil {
 				return err
 			}
-			if symbol.ContractType != int64(trade.ContractType_CONTRACT_TYPE_DELIVERY) {
+			if symbol.ContractType != int64(common.ContractType_CONTRACT_TYPE_DELIVERY) {
 				continue
 			}
 			if c.OpenCutoffTime > 0 && now >= c.OpenCutoffTime && symbol.Status == int64(trade.SymbolStatus_SYMBOL_STATUS_ENABLED) {
@@ -91,7 +92,7 @@ func (l *ProcessDeliverySettlementsLogic) advanceSymbols(tenantID int64) error {
 func (l *ProcessDeliverySettlementsLogic) cancelSymbolOrders(symbol *models.TTradeSymbol) error {
 	cursor := int64(0)
 	for {
-		orders, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{TenantId: symbol.TenantId, SymbolId: symbol.Id, ProductType: int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE), Statuses: []int64{int64(trade.OrderStatus_ORDER_STATUS_PENDING), int64(trade.OrderStatus_ORDER_STATUS_PART_FILLED), int64(trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING)}}, cursor, 100)
+		orders, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{TenantId: symbol.TenantId, SymbolId: symbol.Id, ProductType: int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE), Statuses: []int64{int64(trade.OrderStatus_ORDER_STATUS_PENDING), int64(trade.OrderStatus_ORDER_STATUS_PART_FILLED), int64(trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING)}}, cursor, 100)
 		if err != nil {
 			return err
 		}
@@ -135,7 +136,7 @@ func (l *ProcessDeliverySettlementsLogic) ensureBatch(symbol *models.TTradeSymbo
 		return fmt.Errorf("delivery quote outside configured settlement window")
 	}
 	price := mustParseFloat(quote.LastPrice)
-	positions, err := l.svcCtx.ContractPositionModel.FindList(l.ctx, models.ContractPositionPageFilter{TenantId: c.TenantId, SymbolId: c.SymbolId, ContractType: int64(trade.ContractType_CONTRACT_TYPE_DELIVERY)})
+	positions, err := l.svcCtx.ContractPositionModel.FindList(l.ctx, models.ContractPositionPageFilter{TenantId: c.TenantId, SymbolId: c.SymbolId, ContractType: int64(common.ContractType_CONTRACT_TYPE_DELIVERY)})
 	if err != nil {
 		return err
 	}

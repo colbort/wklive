@@ -108,7 +108,7 @@ func createMatchSettlementRecords(
 	if err := insertMatchOutboxEvent(ctx, eventModel, order, derivedTradeBizNo(fill.FillNo, "ORDER"), orderEventType, order.OrderNo, "order", string(payload), now); err != nil {
 		return err
 	}
-	if order.ProductType == int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) {
+	if order.ProductType == int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) {
 		if err := insertMatchOutboxEvent(ctx, eventModel, order, derivedTradeBizNo(fill.FillNo, "POSITION"), "POSITION_FILL_REQUIRED", fill.FillNo, "position_instruction", string(payload), now); err != nil {
 			return err
 		}
@@ -126,7 +126,7 @@ func derivedTradeBizNo(base, suffix string) string {
 }
 
 func buildFillSettlementInstructions(ctx context.Context, contractOrderModel models.TTradeOrderContractModel, symbol *models.TTradeSymbol, order *models.TTradeOrder, fill *models.TTradeFill) ([]settlementInstructionSpec, error) {
-	if order.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SPOT) {
+	if order.ProductType == int64(common.ProductType_PRODUCT_TYPE_SPOT) {
 		if order.Side == int64(common.Side_SIDE_BUY) {
 			return []settlementInstructionSpec{
 				{suffix: "CONSUME", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CONSUME_FROZEN, asset: symbol.QuoteAsset, amount: fill.Amount},
@@ -140,7 +140,7 @@ func buildFillSettlementInstructions(ctx context.Context, contractOrderModel mod
 			{suffix: "FEE", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_FEE, asset: fill.FeeAsset, amount: fill.Fee},
 		}, nil
 	}
-	if order.ProductType != int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) {
+	if order.ProductType != int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) {
 		return nil, fmt.Errorf("unsupported matched product type: %d", order.ProductType)
 	}
 	contractOrder, err := contractOrderModel.FindOneByTenantIdOrderId(ctx, order.TenantId, order.Id)

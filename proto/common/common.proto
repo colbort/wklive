@@ -73,6 +73,21 @@ enum Side {
   SIDE_SELL = 2;
 }
 
+// 跨交易、行情、流动性和资产展示共享的产品大类。
+enum ProductType {
+  PRODUCT_TYPE_UNKNOWN = 0;
+  PRODUCT_TYPE_SPOT = 1;
+  PRODUCT_TYPE_DERIVATIVE = 2;
+  PRODUCT_TYPE_SECONDS = 3;
+}
+
+// 合约期限类型。现货和秒合约使用 NOT_APPLICABLE。
+enum ContractType {
+  CONTRACT_TYPE_NOT_APPLICABLE = 0;
+  CONTRACT_TYPE_PERPETUAL = 1;
+  CONTRACT_TYPE_DELIVERY = 2;
+}
+
 enum PositionSide {
   POSITION_SIDE_UNKNOWN = 0;
   POSITION_SIDE_LONG = 1; // 多头

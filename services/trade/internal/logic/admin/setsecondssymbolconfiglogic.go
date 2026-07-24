@@ -34,7 +34,7 @@ func NewSetSecondsSymbolConfigLogic(ctx context.Context, svcCtx *svc.ServiceCont
 // 设置秒合约产品配置
 func (l *SetSecondsSymbolConfigLogic) SetSecondsSymbolConfig(in *trade.SetSecondsSymbolConfigReq) (*trade.CommonResp, error) {
 	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
-	if errors.Is(err, models.ErrNotFound) || (err == nil && symbol.ProductType != int64(trade.ProductType_PRODUCT_TYPE_SECONDS)) {
+	if errors.Is(err, models.ErrNotFound) || (err == nil && symbol.ProductType != int64(common.ProductType_PRODUCT_TYPE_SECONDS)) {
 		return &trade.CommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx))}, nil
 	}
 	if err != nil {

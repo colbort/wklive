@@ -1,0 +1,238 @@
+type PageMeta {
+	nextCursor int64 `json:"nextCursor"`
+	total int64 `json:"total"`
+	hasMore bool `json:"hasMore"`
+}
+
+type PageQuery {
+	tenantId int64 `form:"tenantId,optional"`
+	keyword string `form:"keyword,optional"`
+	status int32 `form:"status,optional"`
+	cursor int64 `form:"cursor,optional"`
+	limit int32 `form:"limit,optional"`
+}
+
+type DashboardResp {
+	RespBase
+	runningSymbols int64 `json:"runningSymbols"`
+	healthyProviders int64 `json:"healthyProviders"`
+	openQuotes int64 `json:"openQuotes"`
+	pendingRisks int64 `json:"pendingRisks"`
+}
+
+type ProviderItem {
+	id int64 `json:"id"`
+	tenantId int64 `json:"tenantId"`
+	providerCode string `json:"providerCode"`
+	providerName string `json:"providerName"`
+	providerType int32 `json:"providerType"`
+	tradeUserId int64 `json:"tradeUserId"`
+	venueCode string `json:"venueCode"`
+	environment int32 `json:"environment"`
+	accountRef string `json:"accountRef"`
+	rateLimitPerSecond int32 `json:"rateLimitPerSecond"`
+	status int32 `json:"status"`
+	lastHealthStatus int32 `json:"lastHealthStatus"`
+	lastHealthAt int64 `json:"lastHealthAt"`
+	lastErrorMsg string `json:"lastErrorMsg"`
+	version int64 `json:"version"`
+	credentialConfigured bool `json:"credentialConfigured"`
+}
+type ProviderListResp {
+	RespBase
+	data []ProviderItem `json:"data"`
+	page PageMeta `json:"page"`
+}
+type CreateProviderReq {
+	tenantId int64 `json:"tenantId,optional"`
+	providerCode string `json:"providerCode"`
+	providerName string `json:"providerName"`
+	providerType int32 `json:"providerType"`
+	tradeUserId int64 `json:"tradeUserId,optional"`
+	venueCode string `json:"venueCode,optional"`
+	environment int32 `json:"environment"`
+	credentialRef string `json:"credentialRef,optional"`
+	accountRef string `json:"accountRef,optional"`
+	rateLimitPerSecond int32 `json:"rateLimitPerSecond,optional"`
+	status int32 `json:"status"`
+	remark string `json:"remark,optional"`
+}
+type ProviderActionReq {
+	id int64 `path:"id"`
+}
+type ProviderStatusReq {
+	id int64 `path:"id"`
+	status int32 `json:"status"`
+	version int64 `json:"version"`
+	remark string `json:"remark,optional"`
+}
+
+type SymbolConfigItem {
+	id int64 `json:"id"`
+	tenantId int64 `json:"tenantId"`
+	symbolId int64 `json:"symbolId"`
+	symbol string `json:"symbol"`
+	productType int32 `json:"productType"`
+	contractType int32 `json:"contractType"`
+	liquidityMode int32 `json:"liquidityMode"`
+	internalProviderId int64 `json:"internalProviderId"`
+	externalProviderId int64 `json:"externalProviderId"`
+	externalSymbol string `json:"externalSymbol"`
+	referencePriceSource string `json:"referencePriceSource"`
+	referencePriceKind string `json:"referencePriceKind"`
+	quoteValidityMs int32 `json:"quoteValidityMs"`
+	refreshIntervalMs int32 `json:"refreshIntervalMs"`
+	quoteTtlMs int32 `json:"quoteTtlMs"`
+	baseSpreadBps string `json:"baseSpreadBps"`
+	maxSpreadBps string `json:"maxSpreadBps"`
+	status int32 `json:"status"`
+	pauseReason string `json:"pauseReason"`
+	version int64 `json:"version"`
+}
+type SymbolConfigListResp {
+	RespBase
+	data []SymbolConfigItem `json:"data"`
+	page PageMeta `json:"page"`
+}
+type SaveSymbolConfigReq {
+	tenantId int64 `json:"tenantId,optional"`
+	symbolId int64 `json:"symbolId"`
+	liquidityMode int32 `json:"liquidityMode"`
+	internalProviderId int64 `json:"internalProviderId,optional"`
+	externalProviderId int64 `json:"externalProviderId,optional"`
+	externalSymbol string `json:"externalSymbol,optional"`
+	referencePriceSource string `json:"referencePriceSource"`
+	referencePriceKind string `json:"referencePriceKind"`
+	quoteValidityMs int32 `json:"quoteValidityMs"`
+	refreshIntervalMs int32 `json:"refreshIntervalMs"`
+	quoteTtlMs int32 `json:"quoteTtlMs"`
+	repriceThresholdBps string `json:"repriceThresholdBps"`
+	baseSpreadBps string `json:"baseSpreadBps"`
+	maxSpreadBps string `json:"maxSpreadBps"`
+	maxPriceDeviationBps string `json:"maxPriceDeviationBps"`
+	minQuoteQty string `json:"minQuoteQty"`
+	maxQuoteQty string `json:"maxQuoteQty"`
+	maxQuoteNotional string `json:"maxQuoteNotional"`
+	targetBaseInventory string `json:"targetBaseInventory"`
+	minBaseInventory string `json:"minBaseInventory"`
+	maxBaseInventory string `json:"maxBaseInventory"`
+	maxNetExposure string `json:"maxNetExposure"`
+	maxDailyNotional string `json:"maxDailyNotional"`
+	inventorySkewBps string `json:"inventorySkewBps"`
+	hedgeThreshold string `json:"hedgeThreshold"`
+	hedgeRatio string `json:"hedgeRatio"`
+	selfTradePrevention int32 `json:"selfTradePrevention"`
+}
+type SymbolActionReq {
+	id int64 `path:"id"`
+	action string `path:"action"`
+	version int64 `json:"version,optional"`
+	reason string `json:"reason,optional"`
+}
+
+type OrderItem {
+	id int64 `json:"id"`
+	quoteNo string `json:"quoteNo"`
+	orderNo string `json:"orderNo"`
+	symbolId int64 `json:"symbolId"`
+	side int32 `json:"side"`
+	price string `json:"price"`
+	qty string `json:"qty"`
+	filledQty string `json:"filledQty"`
+	externalOrderId string `json:"externalOrderId"`
+	status int32 `json:"status"`
+	updateTimes int64 `json:"updateTimes"`
+	finishedAt int64 `json:"finishedAt"`
+}
+type OrderListResp {
+	RespBase
+	data []OrderItem `json:"data"`
+	page PageMeta `json:"page"`
+}
+type OrderQuery {
+	PageQuery
+	providerId int64 `form:"providerId,optional"`
+	configId int64 `form:"configId,optional"`
+	symbolId int64 `form:"symbolId,optional"`
+	side int32 `form:"side,optional"`
+}
+
+type HedgeItem {
+	id int64 `json:"id"`
+	hedgeNo string `json:"hedgeNo"`
+	configId int64 `json:"configId"`
+	providerId int64 `json:"providerId"`
+	targetQty string `json:"targetQty"`
+	executedQty string `json:"executedQty"`
+	status int32 `json:"status"`
+	lastErrorMsg string `json:"lastErrorMsg"`
+}
+type HedgeListResp {
+	RespBase
+	data []HedgeItem `json:"data"`
+	page PageMeta `json:"page"`
+}
+type RiskItem {
+	id int64 `json:"id"`
+	eventNo string `json:"eventNo"`
+	riskType string `json:"riskType"`
+	riskLevel int32 `json:"riskLevel"`
+	metricValue string `json:"metricValue"`
+	thresholdValue string `json:"thresholdValue"`
+	status int32 `json:"status"`
+	message string `json:"message"`
+}
+type RiskListResp {
+	RespBase
+	data []RiskItem `json:"data"`
+	page PageMeta `json:"page"`
+}
+type ReconcileItem {
+	id int64 `json:"id"`
+	batchNo string `json:"batchNo"`
+	providerId int64 `json:"providerId"`
+	reconcileType int32 `json:"reconcileType"`
+	localCount int64 `json:"localCount"`
+	externalCount int64 `json:"externalCount"`
+	differenceCount int64 `json:"differenceCount"`
+	status int32 `json:"status"`
+}
+type ReconcileListResp {
+	RespBase
+	data []ReconcileItem `json:"data"`
+	page PageMeta `json:"page"`
+}
+
+@server (
+	prefix: /admin/liquidity
+	group: liquidity
+	jwt: Jwt
+)
+service liquidityAdmin {
+	@handler Dashboard
+	get /dashboard returns (DashboardResp)
+	@handler ProviderList
+	get /providers (PageQuery) returns (ProviderListResp)
+	@handler ProviderCreate
+	post /providers (CreateProviderReq) returns (RespBase)
+	@handler ProviderTest
+	post /providers/:id/test (ProviderActionReq) returns (RespBase)
+	@handler ProviderStatus
+	put /providers/:id/status (ProviderStatusReq) returns (RespBase)
+	@handler SymbolConfigList
+	get /symbol-configs (PageQuery) returns (SymbolConfigListResp)
+	@handler SymbolConfigCreate
+	post /symbol-configs (SaveSymbolConfigReq) returns (RespBase)
+	@handler SymbolAction
+	post /symbol-configs/:id/:action (SymbolActionReq) returns (RespBase)
+	@handler QuoteOrderList
+	get /quote-orders (OrderQuery) returns (OrderListResp)
+	@handler ExternalOrderList
+	get /external-orders (OrderQuery) returns (OrderListResp)
+	@handler HedgeTaskList
+	get /hedge-tasks (PageQuery) returns (HedgeListResp)
+	@handler RiskEventList
+	get /risk-events (PageQuery) returns (RiskListResp)
+	@handler ReconcileBatchList
+	get /reconcile-batches (PageQuery) returns (ReconcileListResp)
+}

@@ -18,6 +18,7 @@ type (
 		MenuType int64
 		Enabled  int64
 		Visible  int64
+		AppScope int64
 	}
 
 	// SysMenuModel is an interface to be customized, add more methods here,
@@ -28,9 +29,9 @@ type (
 		FindIdsByIds(ctx context.Context, ids []int64) ([]int64, error)
 		ListAll(ctx context.Context) ([]*SysMenu, error)
 		FindPage(ctx context.Context, filter MenuPageFilter, cursor int64, limit int64) ([]*SysMenu, int64, error)
-		FindOneByName(ctx context.Context, name string) (*SysMenu, error)
-		FindOneByPath(ctx context.Context, path string) (*SysMenu, error)
-		FindOneByPerms(ctx context.Context, perms string) (*SysMenu, error)
+		FindOneByName(ctx context.Context, appScope int64, name string) (*SysMenu, error)
+		FindOneByPath(ctx context.Context, appScope int64, path string) (*SysMenu, error)
+		FindOneByPerms(ctx context.Context, appScope int64, perms string) (*SysMenu, error)
 	}
 
 	customSysMenuModel struct {
@@ -116,6 +117,7 @@ func (m *defaultSysMenuModel) FindPage(
 	builder.EqInt64("menu_type", filter.MenuType)
 	builder.EqInt64("enabled", filter.Enabled)
 	builder.EqInt64("visible", filter.Visible)
+	builder.EqInt64("app_scope", filter.AppScope)
 
 	where := builder.Where()
 	args := builder.Args()
@@ -163,9 +165,10 @@ func (m *defaultSysMenuModel) FindPage(
 	return list, total, nil
 }
 
-func (m *defaultSysMenuModel) FindOneByName(ctx context.Context, name string) (*SysMenu, error) {
+func (m *defaultSysMenuModel) FindOneByName(ctx context.Context, appScope int64, name string) (*SysMenu, error) {
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.And("name = ?", name)
+	builder.EqInt64("app_scope", appScope)
 
 	var menu SysMenu
 	query := fmt.Sprintf("select %s from %s where %s limit 1", sysMenuRows, m.table, builder.Where())
@@ -176,9 +179,10 @@ func (m *defaultSysMenuModel) FindOneByName(ctx context.Context, name string) (*
 	return &menu, nil
 }
 
-func (m *defaultSysMenuModel) FindOneByPath(ctx context.Context, path string) (*SysMenu, error) {
+func (m *defaultSysMenuModel) FindOneByPath(ctx context.Context, appScope int64, path string) (*SysMenu, error) {
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.And("path = ?", path)
+	builder.EqInt64("app_scope", appScope)
 
 	var menu SysMenu
 	query := fmt.Sprintf("select %s from %s where %s limit 1", sysMenuRows, m.table, builder.Where())
@@ -189,9 +193,10 @@ func (m *defaultSysMenuModel) FindOneByPath(ctx context.Context, path string) (*
 	return &menu, nil
 }
 
-func (m *defaultSysMenuModel) FindOneByPerms(ctx context.Context, perms string) (*SysMenu, error) {
+func (m *defaultSysMenuModel) FindOneByPerms(ctx context.Context, appScope int64, perms string) (*SysMenu, error) {
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.And("perms = ?", perms)
+	builder.EqInt64("app_scope", appScope)
 
 	var menu SysMenu
 	query := fmt.Sprintf("select %s from %s where %s limit 1", sysMenuRows, m.table, builder.Where())

@@ -293,6 +293,56 @@ func (UserType) EnumDescriptor() ([]byte, []int) {
 	return file_proto_system_enum_proto_rawDescGZIP(), []int{4}
 }
 
+// 系统账户允许登录的后台应用。一个账户可同时授权多个应用。
+type ApplicationScope int32
+
+const (
+	ApplicationScope_APPLICATION_SCOPE_UNKNOWN   ApplicationScope = 0
+	ApplicationScope_APPLICATION_SCOPE_ADMIN     ApplicationScope = 1 // 综合管理后台 admin-ui
+	ApplicationScope_APPLICATION_SCOPE_LIQUIDITY ApplicationScope = 2 // 做市管理后台 liquidity-admin-ui
+)
+
+// Enum value maps for ApplicationScope.
+var (
+	ApplicationScope_name = map[int32]string{
+		0: "APPLICATION_SCOPE_UNKNOWN",
+		1: "APPLICATION_SCOPE_ADMIN",
+		2: "APPLICATION_SCOPE_LIQUIDITY",
+	}
+	ApplicationScope_value = map[string]int32{
+		"APPLICATION_SCOPE_UNKNOWN":   0,
+		"APPLICATION_SCOPE_ADMIN":     1,
+		"APPLICATION_SCOPE_LIQUIDITY": 2,
+	}
+)
+
+func (x ApplicationScope) Enum() *ApplicationScope {
+	p := new(ApplicationScope)
+	*p = x
+	return p
+}
+
+func (x ApplicationScope) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ApplicationScope) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_system_enum_proto_enumTypes[5].Descriptor()
+}
+
+func (ApplicationScope) Type() protoreflect.EnumType {
+	return &file_proto_system_enum_proto_enumTypes[5]
+}
+
+func (x ApplicationScope) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ApplicationScope.Descriptor instead.
+func (ApplicationScope) EnumDescriptor() ([]byte, []int) {
+	return file_proto_system_enum_proto_rawDescGZIP(), []int{5}
+}
+
 type VerificationCodeChannel int32
 
 const (
@@ -326,11 +376,11 @@ func (x VerificationCodeChannel) String() string {
 }
 
 func (VerificationCodeChannel) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_system_enum_proto_enumTypes[5].Descriptor()
+	return file_proto_system_enum_proto_enumTypes[6].Descriptor()
 }
 
 func (VerificationCodeChannel) Type() protoreflect.EnumType {
-	return &file_proto_system_enum_proto_enumTypes[5]
+	return &file_proto_system_enum_proto_enumTypes[6]
 }
 
 func (x VerificationCodeChannel) Number() protoreflect.EnumNumber {
@@ -339,7 +389,7 @@ func (x VerificationCodeChannel) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use VerificationCodeChannel.Descriptor instead.
 func (VerificationCodeChannel) EnumDescriptor() ([]byte, []int) {
-	return file_proto_system_enum_proto_rawDescGZIP(), []int{5}
+	return file_proto_system_enum_proto_rawDescGZIP(), []int{6}
 }
 
 type VerificationCodeScene int32
@@ -393,11 +443,11 @@ func (x VerificationCodeScene) String() string {
 }
 
 func (VerificationCodeScene) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_system_enum_proto_enumTypes[6].Descriptor()
+	return file_proto_system_enum_proto_enumTypes[7].Descriptor()
 }
 
 func (VerificationCodeScene) Type() protoreflect.EnumType {
-	return &file_proto_system_enum_proto_enumTypes[6]
+	return &file_proto_system_enum_proto_enumTypes[7]
 }
 
 func (x VerificationCodeScene) Number() protoreflect.EnumNumber {
@@ -406,7 +456,7 @@ func (x VerificationCodeScene) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use VerificationCodeScene.Descriptor instead.
 func (VerificationCodeScene) EnumDescriptor() ([]byte, []int) {
-	return file_proto_system_enum_proto_rawDescGZIP(), []int{6}
+	return file_proto_system_enum_proto_rawDescGZIP(), []int{7}
 }
 
 type VerificationCodeStatus int32
@@ -442,11 +492,11 @@ func (x VerificationCodeStatus) String() string {
 }
 
 func (VerificationCodeStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_system_enum_proto_enumTypes[7].Descriptor()
+	return file_proto_system_enum_proto_enumTypes[8].Descriptor()
 }
 
 func (VerificationCodeStatus) Type() protoreflect.EnumType {
-	return &file_proto_system_enum_proto_enumTypes[7]
+	return &file_proto_system_enum_proto_enumTypes[8]
 }
 
 func (x VerificationCodeStatus) Number() protoreflect.EnumNumber {
@@ -455,7 +505,7 @@ func (x VerificationCodeStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use VerificationCodeStatus.Descriptor instead.
 func (VerificationCodeStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_system_enum_proto_rawDescGZIP(), []int{7}
+	return file_proto_system_enum_proto_rawDescGZIP(), []int{8}
 }
 
 type TenantDomainStatus int32
@@ -494,11 +544,11 @@ func (x TenantDomainStatus) String() string {
 }
 
 func (TenantDomainStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_system_enum_proto_enumTypes[8].Descriptor()
+	return file_proto_system_enum_proto_enumTypes[9].Descriptor()
 }
 
 func (TenantDomainStatus) Type() protoreflect.EnumType {
-	return &file_proto_system_enum_proto_enumTypes[8]
+	return &file_proto_system_enum_proto_enumTypes[9]
 }
 
 func (x TenantDomainStatus) Number() protoreflect.EnumNumber {
@@ -507,7 +557,7 @@ func (x TenantDomainStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use TenantDomainStatus.Descriptor instead.
 func (TenantDomainStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_system_enum_proto_rawDescGZIP(), []int{8}
+	return file_proto_system_enum_proto_rawDescGZIP(), []int{9}
 }
 
 var File_proto_system_enum_proto protoreflect.FileDescriptor
@@ -543,7 +593,11 @@ const file_proto_system_enum_proto_rawDesc = "" +
 	"\x11USER_TYPE_UNKNOWN\x10\x00\x12\x1a\n" +
 	"\x16USER_TYPE_SYSTEM_ADMIN\x10\x01\x12\x1a\n" +
 	"\x16USER_TYPE_TENANT_OWNER\x10\x02\x12\x1a\n" +
-	"\x16USER_TYPE_TENANT_ADMIN\x10\x03*\x8a\x01\n" +
+	"\x16USER_TYPE_TENANT_ADMIN\x10\x03*o\n" +
+	"\x10ApplicationScope\x12\x1d\n" +
+	"\x19APPLICATION_SCOPE_UNKNOWN\x10\x00\x12\x1b\n" +
+	"\x17APPLICATION_SCOPE_ADMIN\x10\x01\x12\x1f\n" +
+	"\x1bAPPLICATION_SCOPE_LIQUIDITY\x10\x02*\x8a\x01\n" +
 	"\x17VerificationCodeChannel\x12%\n" +
 	"!VERIFICATION_CODE_CHANNEL_UNKNOWN\x10\x00\x12#\n" +
 	"\x1fVERIFICATION_CODE_CHANNEL_EMAIL\x10\x01\x12#\n" +
@@ -580,17 +634,18 @@ func file_proto_system_enum_proto_rawDescGZIP() []byte {
 	return file_proto_system_enum_proto_rawDescData
 }
 
-var file_proto_system_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 9)
+var file_proto_system_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 10)
 var file_proto_system_enum_proto_goTypes = []any{
 	(SysConfigType)(0),           // 0: system.SysConfigType
 	(MenuType)(0),                // 1: system.MenuType
 	(RequestMethod)(0),           // 2: system.RequestMethod
 	(JobStatus)(0),               // 3: system.JobStatus
 	(UserType)(0),                // 4: system.UserType
-	(VerificationCodeChannel)(0), // 5: system.VerificationCodeChannel
-	(VerificationCodeScene)(0),   // 6: system.VerificationCodeScene
-	(VerificationCodeStatus)(0),  // 7: system.VerificationCodeStatus
-	(TenantDomainStatus)(0),      // 8: system.TenantDomainStatus
+	(ApplicationScope)(0),        // 5: system.ApplicationScope
+	(VerificationCodeChannel)(0), // 6: system.VerificationCodeChannel
+	(VerificationCodeScene)(0),   // 7: system.VerificationCodeScene
+	(VerificationCodeStatus)(0),  // 8: system.VerificationCodeStatus
+	(TenantDomainStatus)(0),      // 9: system.TenantDomainStatus
 }
 var file_proto_system_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -610,7 +665,7 @@ func file_proto_system_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_system_enum_proto_rawDesc), len(file_proto_system_enum_proto_rawDesc)),
-			NumEnums:      9,
+			NumEnums:      10,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

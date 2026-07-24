@@ -17,13 +17,14 @@ type (
 		Keyword  string
 		TenantId int64
 		Enabled  int64
+		AppScope int64
 	}
 
 	// SysUserModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customSysUserModel.
 	SysUserModel interface {
 		sysUserModel
-		FindOneByUsername(ctx context.Context, username string) (*SysUser, error)
+		FindOneByUsername(ctx context.Context, username string, appScope int64) (*SysUser, error)
 		FindIdsByTenantId(ctx context.Context, tenantId int64) ([]int64, error)
 		FindPage(ctx context.Context, filter UserPageFilter, cursor int64, limit int64) ([]*SysUser, int64, error)
 		TransCtx(ctx context.Context, fn func(context context.Context, session sqlx.Session) error) error
@@ -49,10 +50,10 @@ var (
 	google2FASecretCachePrefix = "cache:google2FASecret:userId:"
 )
 
-func (m *defaultSysUserModel) FindOneByUsername(ctx context.Context, username string) (*SysUser, error) {
+func (m *defaultSysUserModel) FindOneByUsername(ctx context.Context, username string, appScope int64) (*SysUser, error) {
 	var resp SysUser
-	query := fmt.Sprintf("select %s from %s where `username` = ? limit 1", sysUserRows, m.table)
-	err := m.QueryRowNoCacheCtx(ctx, &resp, query, username)
+	query := fmt.Sprintf("select %s from %s where `username` = ? and `app_scope` = ? limit 1", sysUserRows, m.table)
+	err := m.QueryRowNoCacheCtx(ctx, &resp, query, username, appScope)
 	switch err {
 	case nil:
 		return &resp, nil
@@ -90,6 +91,7 @@ func (m *defaultSysUserModel) FindPage(
 	}
 	builder.EqInt64("enabled", filter.Enabled)
 	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.EqInt64("app_scope", filter.AppScope)
 
 	where := builder.Where()
 	args := builder.Args()
@@ -135,13 +137,14 @@ func (m *defaultSysUserModel) TransCtx(ctx context.Context, fn func(context cont
 
 func (m *defaultSysUserModel) InsertCtx(ctx context.Context, session sqlx.Session, data *SysUser) (sql.Result, error) {
 	query := fmt.Sprintf(
-		"insert into %s (`tenant_id`, `user_type`, `is_owner`, `username`, `password`, `nickname`, `avatar`, `enabled`, `google_secret`, `google_enabled`, `perms_ver`, `last_login_ip`, `last_login_at`, `create_by`, `create_times`, `update_times`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		"insert into %s (`tenant_id`, `app_scope`, `user_type`, `is_owner`, `username`, `password`, `nickname`, `avatar`, `enabled`, `google_secret`, `google_enabled`, `perms_ver`, `last_login_ip`, `last_login_at`, `create_by`, `create_times`, `update_times`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		m.table,
 	)
 	ret, err := session.ExecCtx(
 		ctx,
 		query,
 		data.TenantId,
+		data.AppScope,
 		data.UserType,
 		data.IsOwner,
 		data.Username,

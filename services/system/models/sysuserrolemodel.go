@@ -128,8 +128,12 @@ func (m *defaultSysUserRoleModel) findLoginUserPermsFromDB(ctx context.Context, 
 		SELECT DISTINCT m.perms
 		FROM %s ur
 		INNER JOIN sys_role_menu rm ON ur.role_id = rm.role_id
+		INNER JOIN sys_user u ON ur.user_id = u.id
+		INNER JOIN sys_role r ON ur.role_id = r.id
 		INNER JOIN sys_menu m ON rm.menu_id = m.id
 		WHERE ur.user_id = ? AND m.perms != ''
+		  AND u.app_scope = r.app_scope
+		  AND r.app_scope = m.app_scope
 	`, m.table)
 	var perms []string
 	err := m.QueryRowsNoCacheCtx(ctx, &perms, query, userId)

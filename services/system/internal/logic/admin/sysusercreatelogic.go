@@ -41,7 +41,8 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 		creatorId = 0
 	}
 
-	one, err := l.svcCtx.UserModel.FindOneByTenantIdUsername(l.ctx, tenantId, in.Username)
+	appScope := int64(normalizeApplicationScope(in.AppScope))
+	one, err := l.svcCtx.UserModel.FindOneByTenantIdAppScopeUsername(l.ctx, tenantId, appScope, in.Username)
 	if err != nil && err != sqlx.ErrNotFound {
 		return nil, err
 	}
@@ -66,6 +67,7 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 	}
 	data := models.SysUser{
 		TenantId:      tenantId,
+		AppScope:      appScope,
 		UserType:      userType,
 		IsOwner:       int64(common.YesNo_YES_NO_NO),
 		Username:      in.Username,
@@ -95,7 +97,6 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 		seen[id] = struct{}{}
 		roleIds = append(roleIds, id)
 	}
-
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		userModel := models.NewSysUserModel(conn, l.svcCtx.Config.CacheRedis)
@@ -125,6 +126,9 @@ func (l *SysUserCreateLogic) SysUserCreate(in *system.SysUserCreateReq) (*system
 			}
 			if role.TenantId != tenantId {
 				return i18n.StatusError(ctx, i18n.RoleNotFound)
+			}
+			if role.AppScope != data.AppScope {
+				return i18n.StatusError(ctx, i18n.Forbidden)
 			}
 
 			_, err = userRoleModel.InsertCtx(ctx, session, &models.SysUserRole{

@@ -44,7 +44,6 @@ func (l *SysUserDetailLogic) SysUserDetail(in *system.SysUserDetailReq) (*system
 	if err != nil {
 		return nil, err
 	}
-
 	return &system.SysUserDetailResp{
 		Base: helper.OkResp(),
 		Data: &system.SysUserItem{
@@ -64,6 +63,7 @@ func (l *SysUserDetailLogic) SysUserDetail(in *system.SysUserDetailReq) (*system
 			LastLoginAt:      user.LastLoginAt,
 			CreateBy:         user.CreateBy,
 			UpdateTimes:      user.UpdateTimes,
+			AppScope:         system.ApplicationScope(user.AppScope),
 		},
 	}, nil
 }

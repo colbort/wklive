@@ -61,7 +61,7 @@ func (l *SysTenantUpdateLogic) SysTenantUpdate(in *system.SysTenantUpdateReq) (*
 			if err != nil {
 				return err
 			}
-			user, err := userModel.FindOneByTenantIdUsername(ctx, tenant.Id, "")
+			user, err := userModel.FindOneByTenantIdAppScopeUsername(ctx, tenant.Id, int64(system.ApplicationScope_APPLICATION_SCOPE_ADMIN), "")
 			if err != nil {
 				return err
 			}

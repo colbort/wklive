@@ -1,0 +1,12 @@
+syntax = "v1"
+
+info (
+	title:   "liquidity-admin-api"
+	desc:    "Liquidity management BFF"
+	version: "1.0"
+)
+
+import "common.api"
+import "auth.api"
+import "options.api"
+import "liquidity.api"

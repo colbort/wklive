@@ -87,7 +87,7 @@ const { pagination, updateFromResponse, resetAndLoad, nextAndLoad, prevAndLoad }
 const { loading, withLoading } = useLoading()
 const { confirm } = useConfirm()
 const { form: queryForm } = useForm({
-  initialData: { keyword: '', enabled: 0 as 0 | 1 | 2 },
+  initialData: { keyword: '', enabled: 0 as 0 | 1 | 2, appScope: undefined as number | undefined },
 })
 
 const tableData = ref<SysRole[]>([])
@@ -99,6 +99,7 @@ async function fetchList() {
       const q: RoleQueryParams = {
         keyword: queryForm.keyword,
         enabled: queryForm.enabled,
+        appScope: queryForm.appScope,
         cursor: pagination.cursor,
         limit: pagination.limit,
       }
@@ -161,6 +162,7 @@ function loadList() {
 function resetQuery() {
   queryForm.keyword = ''
   queryForm.enabled = 0
+  queryForm.appScope = undefined
   loadList()
 }
 
@@ -183,6 +185,7 @@ const { form: editForm } = useForm({
     code: '',
     remark: '',
     enabled: 1 as 1 | 2,
+    appScope: 1,
   },
 })
 const editIsUpdate = computed(() => editForm.id > 0)
@@ -195,6 +198,7 @@ function openCreate() {
   editForm.code = ''
   editForm.remark = ''
   editForm.enabled = 1
+  editForm.appScope = 1
   editVisible.value = true
 }
 function openUpdate(row: SysRole) {
@@ -205,6 +209,7 @@ function openUpdate(row: SysRole) {
   editForm.code = row.code
   editForm.remark = row.remark || ''
   editForm.enabled = row.enabled === 2 ? 2 : 1
+  editForm.appScope = row.appScope || 1
   editVisible.value = true
 }
 
@@ -420,6 +425,13 @@ onMounted(async () => {
         </el-select>
       </el-form-item>
 
+      <el-form-item :label="t('common.applicationScope')">
+        <el-select v-model="queryForm.appScope" clearable :placeholder="t('common.all')">
+          <el-option :label="t('common.adminBackend')" :value="1" />
+          <el-option :label="t('common.liquidityAdmin')" :value="2" />
+        </el-select>
+      </el-form-item>
+
       <template #actions>
         <el-button v-perm="'sys:role:add'" type="primary" @click="openCreate">
           {{ t('common.add') }}
@@ -432,6 +444,13 @@ onMounted(async () => {
         <el-table-column prop="id" :label="t('common.id')" width="90" />
         <el-table-column prop="name" :label="t('system.roleName')" min-width="160" />
         <el-table-column prop="code" :label="t('system.roleCode')" min-width="160" />
+        <el-table-column :label="t('common.applicationScope')" width="150">
+          <template #default="{ row }">
+            <el-tag :type="row.appScope === 2 ? 'success' : 'primary'">
+              {{ row.appScope === 2 ? t('common.liquidityAdmin') : t('common.adminBackend') }}
+            </el-tag>
+          </template>
+        </el-table-column>
 
         <el-table-column :label="t('common.enabled')" width="110">
           <template #default="{ row }">
@@ -529,6 +548,17 @@ onMounted(async () => {
           :rules="[{ required: true, message: t('common.required') }]"
         >
           <el-input v-model="editForm.name" />
+        </el-form-item>
+
+        <el-form-item
+          :label="t('common.applicationScope')"
+          prop="appScope"
+          :rules="[{ required: true, message: t('common.required') }]"
+        >
+          <el-radio-group v-model="editForm.appScope" :disabled="editIsUpdate">
+            <el-radio :value="1">{{ t('common.adminBackend') }}</el-radio>
+            <el-radio :value="2">{{ t('common.liquidityAdmin') }}</el-radio>
+          </el-radio-group>
         </el-form-item>
 
         <el-form-item

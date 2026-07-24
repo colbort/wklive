@@ -58,11 +58,11 @@ func symbolToProto(item *models.TTradeSymbol) *trade.TradeSymbol {
 		TenantId:          item.TenantId,
 		Symbol:            item.Symbol,
 		DisplaySymbol:     item.DisplaySymbol,
-		ProductType:       trade.ProductType(item.ProductType),
+		ProductType:       common.ProductType(item.ProductType),
 		BaseAsset:         item.BaseAsset,
 		QuoteAsset:        item.QuoteAsset,
 		SettleAsset:       item.SettleAsset,
-		ContractType:      trade.ContractType(item.ContractType),
+		ContractType:      common.ContractType(item.ContractType),
 		ContractValueType: trade.ContractValueType(item.ContractValueType),
 		MarginAsset:       item.MarginAsset,
 		Status:            trade.SymbolStatus(item.Status),
@@ -184,7 +184,7 @@ func userConfigToProto(item *models.TTradeUserConfig) *trade.TradeUserConfig {
 		Id:           item.Id,
 		TenantId:     item.TenantId,
 		UserId:       item.UserId,
-		ProductType:  trade.ProductType(item.ProductType),
+		ProductType:  common.ProductType(item.ProductType),
 		SymbolId:     item.SymbolId,
 		TradeEnabled: enableToProto(item.TradeEnabled),
 		CreateTimes:  item.CreateTimes,
@@ -211,8 +211,8 @@ func orderToProto(item *models.TTradeOrder) *trade.TradeOrder {
 		RequestHash:       item.RequestHash,
 		UserId:            item.UserId,
 		SymbolId:          item.SymbolId,
-		ProductType:       trade.ProductType(item.ProductType),
-		ContractType:      trade.ContractType(item.ContractType),
+		ProductType:       common.ProductType(item.ProductType),
+		ContractType:      common.ContractType(item.ContractType),
 		ContractValueType: trade.ContractValueType(item.ContractValueType),
 		Side:              common.Side(item.Side),
 		PositionSide:      trade.PositionSide(item.PositionSide),
@@ -329,8 +329,8 @@ func fillToProto(item *models.TTradeFill) *trade.TradeFill {
 		OrderNo:              item.OrderNo,
 		UserId:               item.UserId,
 		SymbolId:             item.SymbolId,
-		ProductType:          trade.ProductType(item.ProductType),
-		ContractType:         trade.ContractType(item.ContractType),
+		ProductType:          common.ProductType(item.ProductType),
+		ContractType:         common.ContractType(item.ContractType),
 		ContractValueType:    trade.ContractValueType(item.ContractValueType),
 		MatchNo:              item.MatchNo,
 		Side:                 common.Side(item.Side),
@@ -375,7 +375,7 @@ func positionToProto(item *models.TContractPosition) *trade.ContractPosition {
 		TenantId:          item.TenantId,
 		UserId:            item.UserId,
 		SymbolId:          item.SymbolId,
-		ContractType:      trade.ContractType(item.ContractType),
+		ContractType:      common.ContractType(item.ContractType),
 		ContractValueType: trade.ContractValueType(item.ContractValueType),
 		PositionSide:      trade.PositionSide(item.PositionSide),
 		MarginMode:        trade.MarginMode(item.MarginMode),
@@ -415,7 +415,7 @@ func positionHistoryToProto(item *models.TContractPositionHistory) *trade.Contra
 		PositionId:           item.PositionId,
 		UserId:               item.UserId,
 		SymbolId:             item.SymbolId,
-		ContractType:         trade.ContractType(item.ContractType),
+		ContractType:         common.ContractType(item.ContractType),
 		ContractValueType:    trade.ContractValueType(item.ContractValueType),
 		PositionSide:         trade.PositionSide(item.PositionSide),
 		ActionType:           trade.PositionActionType(item.ActionType),
@@ -603,8 +603,8 @@ func containsLeverage(values []int64, leverage int64) bool {
 	return false
 }
 
-func isDerivativeProduct(productType trade.ProductType) bool {
-	return productType == trade.ProductType_PRODUCT_TYPE_DERIVATIVE
+func isDerivativeProduct(productType common.ProductType) bool {
+	return productType == common.ProductType_PRODUCT_TYPE_DERIVATIVE
 }
 
 func riskUserTradeLimitToProto(item *models.TRiskUserTradeLimit) *trade.RiskUserTradeLimit {
@@ -615,7 +615,7 @@ func riskUserTradeLimitToProto(item *models.TRiskUserTradeLimit) *trade.RiskUser
 		Id:                   item.Id,
 		TenantId:             item.TenantId,
 		UserId:               item.UserId,
-		ProductType:          trade.ProductType(item.ProductType),
+		ProductType:          common.ProductType(item.ProductType),
 		CanOpen:              item.CanOpen,
 		CanClose:             item.CanClose,
 		CanCancel:            item.CanCancel,
@@ -681,7 +681,7 @@ func riskOrderCheckLogToProto(item *models.TRiskOrderCheckLog) *trade.RiskOrderC
 		ClientOrderId: item.ClientOrderId,
 		UserId:        item.UserId,
 		SymbolId:      item.SymbolId,
-		ProductType:   trade.ProductType(item.ProductType),
+		ProductType:   common.ProductType(item.ProductType),
 		CheckType:     trade.RiskCheckType(item.CheckType),
 		CheckResult:   trade.RiskCheckResult(item.CheckResult),
 		RejectCode:    item.RejectCode,
@@ -709,7 +709,7 @@ func tradeEventToProto(item *models.TBizTradeEvent) *trade.BizTradeEvent {
 		BizType:        item.BizType,
 		UserId:         item.UserId,
 		SymbolId:       item.SymbolId,
-		ProductType:    trade.ProductType(item.ProductType),
+		ProductType:    common.ProductType(item.ProductType),
 		OperatorId:     item.OperatorId,
 		Source:         trade.SourceType(item.Source),
 		Consumer:       item.Consumer,
@@ -737,7 +737,7 @@ func ensureLeverage(leverage int64) int64 {
 }
 
 func ensureConfiguredLeverage(ctx context.Context, model models.TTradeSymbolLeverageConfigModel, defaultModel models.TTradeSymbolLeverageDefaultModel, tenantId int64, symbol *models.TTradeSymbol, marginMode trade.MarginMode, leverage int64) (int64, bool, error) {
-	if symbol == nil || model == nil || marginMode == trade.MarginMode_MARGIN_MODE_UNKNOWN || !isDerivativeProduct(trade.ProductType(symbol.ProductType)) {
+	if symbol == nil || model == nil || marginMode == trade.MarginMode_MARGIN_MODE_UNKNOWN || !isDerivativeProduct(common.ProductType(symbol.ProductType)) {
 		return ensureLeverage(leverage), true, nil
 	}
 
@@ -1159,9 +1159,9 @@ func shouldTriggerOrder(order *models.TTradeOrder, triggerPrice decimal.Decimal)
 	}
 }
 
-func walletTypeForProduct(productType trade.ProductType) common.WalletType {
+func walletTypeForProduct(productType common.ProductType) common.WalletType {
 	switch productType {
-	case trade.ProductType_PRODUCT_TYPE_SPOT:
+	case common.ProductType_PRODUCT_TYPE_SPOT:
 		return common.WalletType_WALLET_TYPE_SPOT
 	default:
 		return common.WalletType_WALLET_TYPE_CONTRACT

@@ -22,6 +22,7 @@ message LoginReq {
   string google_code = 3; // optional
   string ip = 4;
   string ua = 5;
+  system.ApplicationScope app_scope = 6;
 }
 
 message LoginResp {
@@ -41,6 +42,7 @@ message LoginData {
   system.UserType user_type = 9;
   common.YesNo is_owner = 10;
   string avatar = 11;
+  system.ApplicationScope app_scope = 12;
 }
 
 message ProfileUser {
@@ -52,6 +54,7 @@ message ProfileUser {
   system.UserType user_type = 6;
   common.YesNo is_owner = 7;
   common.Enable google2fa_enabled = 8; // 状态,0表示全部，1表示启用，2表示禁用
+  system.ApplicationScope app_scope = 9;
 }
 
 message SysMenuNode {
@@ -67,6 +70,7 @@ message SysMenuNode {
   common.Enable enabled = 10; // 状态,0表示全部，1表示启用，2表示禁用
   string perms = 11;
   repeated SysMenuNode children = 12;
+  system.ApplicationScope app_scope = 13;
 }
 
 message ProfileData {
@@ -103,6 +107,7 @@ message SysMenuItem {
   common.Switch visible = 10; // 显示开关
   common.Enable enabled = 11; // 状态,0表示全部，1表示启用，2表示禁用
   string perms = 12; // 按钮必须有，例如 sys:user:add
+  system.ApplicationScope app_scope = 13;
 }
 
 message SysMenuTreeReq {
@@ -169,12 +174,14 @@ message SysUserItem {
   int64 last_login_at = 14;
   int64 create_by = 15;
   int64 update_times = 16;
+  system.ApplicationScope app_scope = 17;
 }
 
 message SysUserListReq {
   common.PageReq page = 1;
   string keyword = 2;
   common.Enable enabled = 3; // 状态,0表示全部，1表示启用，2表示禁用
+  system.ApplicationScope app_scope = 4;
 }
 message SysUserListResp {
   common.RespBase base = 1;
@@ -199,6 +206,7 @@ message SysUserCreateReq {
   system.UserType user_type = 7;
   common.YesNo is_owner = 8;
   string avatar = 9;
+  system.ApplicationScope app_scope = 10;
 }
 message SysUserUpdateReq {
   int64 id = 1;
@@ -209,6 +217,7 @@ message SysUserUpdateReq {
   system.UserType user_type = 6;
   common.YesNo is_owner = 7;
   string avatar = 8;
+  system.ApplicationScope app_scope = 9;
 }
 message SysUserDeleteReq {
   int64 id = 1;
@@ -238,11 +247,13 @@ message SysRoleItem {
   int64 create_times = 6;
   int64 tenant_id = 7;
   int64 update_times = 8;
+  system.ApplicationScope app_scope = 9;
 }
 message SysRoleListReq {
   common.PageReq page = 1;
   string keyword = 2;
   common.Enable enabled = 3; // 状态,0表示全部，1表示启用，2表示禁用
+  system.ApplicationScope app_scope = 4;
 }
 message SysRoleListResp {
   common.RespBase base = 1;
@@ -255,6 +266,7 @@ message SysRoleCreateReq {
   common.Enable enabled = 3; // 状态,0表示全部，1表示启用，2表示禁用
   string remark = 4;
   int64 tenant_id = 5;
+  system.ApplicationScope app_scope = 6;
 }
 message SysRoleUpdateReq {
   int64 id = 1;
@@ -263,6 +275,7 @@ message SysRoleUpdateReq {
   string remark = 4;
   int64 tenant_id = 5;
   string code = 6;
+  system.ApplicationScope app_scope = 7;
 }
 message SysRoleDeleteReq {
   int64 id = 1;
@@ -291,6 +304,7 @@ message SysPermItem {
   system.RequestMethod method = 2;
   string path = 3;
   string name = 4;
+  system.ApplicationScope app_scope = 5;
 }
 
 message SysPermListResp {
@@ -313,6 +327,7 @@ message SysMenuCreateReq {
   common.Switch visible = 9; // 显示开关
   common.Enable enabled = 10; // 状态,0表示全部，1表示启用，2表示禁用
   string perms = 11;
+  system.ApplicationScope app_scope = 12;
 }
 message SysMenuUpdateReq {
   int64 id = 1;
@@ -327,6 +342,7 @@ message SysMenuUpdateReq {
   common.Switch visible = 10; // 显示开关,0表示全部，1表示显示，2表示隐藏
   common.Enable enabled = 11; // 状态,0表示全部，1表示启用，2表示禁用
   string perms = 12;
+  system.ApplicationScope app_scope = 13;
 }
 message SysMenuDeleteReq {
   int64 id = 1;
@@ -338,6 +354,7 @@ message SysMenuListReq {
   system.MenuType menu_type = 3;
   common.Enable enabled = 4; // 状态,0表示全部，1表示启用，2表示禁用
   common.Switch visible = 5; // 显示开关, 0表示全部
+  system.ApplicationScope app_scope = 6;
 }
 message SysMenuListResp {
   common.RespBase base = 1;

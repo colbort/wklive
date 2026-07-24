@@ -33,6 +33,7 @@ func (l *SysMenuListLogic) SysMenuList(in *system.SysMenuListReq) (*system.SysMe
 		MenuType: menuTypeToModel(in.MenuType),
 		Enabled:  commonStatusToModel(in.Enabled),
 		Visible:  visibleStatusToModel(in.Visible),
+		AppScope: int64(in.AppScope),
 	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
@@ -58,6 +59,7 @@ func (l *SysMenuListLogic) SysMenuList(in *system.SysMenuListReq) (*system.SysMe
 			Visible:   visibleStatusToProto(r.Visible),
 			Enabled:   commonStatusToProto(r.Enabled),
 			Perms:     r.Perms,
+			AppScope:  system.ApplicationScope(r.AppScope),
 		})
 	}
 	return &system.SysMenuListResp{

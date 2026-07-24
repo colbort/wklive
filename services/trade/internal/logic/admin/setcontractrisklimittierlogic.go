@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/proto/common"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -32,7 +33,7 @@ func NewSetContractRiskLimitTierLogic(ctx context.Context, svcCtx *svc.ServiceCo
 func (l *SetContractRiskLimitTierLogic) SetContractRiskLimitTier(in *trade.SetContractRiskLimitTierReq) (*trade.CommonResp, error) {
 	tenantID := adminTenantID(l.ctx, in.TenantId)
 	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
-	if err != nil || symbol.TenantId != tenantID || symbol.ProductType != int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) {
+	if err != nil || symbol.TenantId != tenantID || symbol.ProductType != int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) {
 		return &trade.CommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, "derivative symbol not found")}, nil
 	}
 	floor, capValue := mustParseFloat(in.NotionalFloor), mustParseFloat(in.NotionalCap)

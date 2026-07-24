@@ -1,17 +1,18 @@
-INSERT INTO `sys_role` (id, tenant_id, name, code, enabled, remark, create_times, update_times)
+INSERT INTO `sys_role` (id, tenant_id, app_scope, name, code, enabled, remark, create_times, update_times)
 VALUES
-(1, 0, '超级管理员', 'super_admin', 1, '', UNIX_TIMESTAMP()*1000, UNIX_TIMESTAMP()*1000),
-(2, 0, '租户超级管理员', 'tenant_super_admin', 1, '', UNIX_TIMESTAMP() * 1000, UNIX_TIMESTAMP() * 1000);
+(1, 0, 1, '超级管理员', 'super_admin', 1, '', UNIX_TIMESTAMP()*1000, UNIX_TIMESTAMP()*1000),
+(2, 0, 1, '租户超级管理员', 'tenant_super_admin', 1, '', UNIX_TIMESTAMP() * 1000, UNIX_TIMESTAMP() * 1000),
+(3, 0, 2, '做市管理员', 'liquidity_admin', 1, '做市及外部流动性管理后台角色', UNIX_TIMESTAMP() * 1000, UNIX_TIMESTAMP() * 1000);
 
 INSERT INTO `sys_user` (
-  id, tenant_id, user_type, is_owner,
+  id, tenant_id, app_scope, user_type, is_owner,
   username, password, nickname, avatar, enabled,
   google_secret, google_enabled, perms_ver,
   last_login_ip, last_login_at, create_by, create_times, update_times
 )
 VALUES
 (
-  1, 0, 1, 2,
+  1, 0, 1, 1, 2,
   'admin',
   '$2a$10$KdJbtCoUCeO.jcI9LJb6me4YAnMt8JScsCWyA9FEPfuaz4bRCfMee',
   '超级管理员', '', 1,
@@ -941,14 +942,3 @@ VALUES
 (11302, 11300, '编辑租户域名', 3, 'PUT', '/system/tenant-domains', 'sys:tenant-domain:update', 11302),
 (11303, 11300, '删除租户域名', 3, 'DELETE', '/system/tenant-domains/{id}', 'sys:tenant-domain:delete', 11303),
 (11304, 11300, '游客迁移统计', 3, 'GET', '/system/tenant-domains/guest-migration-stats', 'sys:tenant-domain:guest-migration-stats', 11304);
-
--- Trade durable outbox dispatch. System-level jobs publish with tenant_id=0;
--- the outbox dispatcher interprets that value as all tenants.
-INSERT INTO sys_job
-  (job_name, job_group, invoke_target, cron_expression, status, remark, create_by, create_times, update_by, update_times)
-SELECT
-  '交易事件处理', 'TRADE', 'trade.ProcessTradeEvents', '*/1 * * * * *', 1,
-  '处理交易 outbox 异步发布与失败重试', 'init', 0, 'init', 0
-WHERE NOT EXISTS (
-  SELECT 1 FROM sys_job WHERE invoke_target = 'trade.ProcessTradeEvents'
-);

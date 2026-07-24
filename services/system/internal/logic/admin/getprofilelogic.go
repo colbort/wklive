@@ -70,7 +70,13 @@ func (l *GetProfileLogic) GetProfile(in *system.Empty) (*system.ProfileResp, err
 	}
 
 	// 5) build tree + perms
-	tree, perms := buildMenuTreeAndPerms(menus)
+	scopedMenus := make([]*models.SysMenu, 0, len(menus))
+	for _, menu := range menus {
+		if menu.AppScope == u.AppScope {
+			scopedMenus = append(scopedMenus, menu)
+		}
+	}
+	tree, perms := buildMenuTreeAndPerms(scopedMenus)
 
 	return profileResp(u, tree, perms, roleIds), nil
 }
@@ -88,6 +94,7 @@ func profileResp(u *models.SysUser, menus []*system.SysMenuNode, perms []string,
 				UserType:         system.UserType(u.UserType),
 				IsOwner:          common.YesNo(u.IsOwner),
 				Google2FaEnabled: common.Enable(u.GoogleEnabled),
+				AppScope:         system.ApplicationScope(u.AppScope),
 			},
 			Menus:   menus,
 			Perms:   perms,
@@ -124,6 +131,7 @@ func buildMenuTreeAndPerms(rows []*models.SysMenu) ([]*system.SysMenuNode, []str
 			Enabled:   commonStatusToProto(r.Enabled),
 			Perms:     r.Perms,
 			Children:  nil,
+			AppScope:  system.ApplicationScope(r.AppScope),
 		}
 		nodes[r.Id] = n
 	}

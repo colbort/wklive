@@ -37,6 +37,7 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 			Keyword:  in.Keyword,
 			TenantId: tenantId,
 			Enabled:  commonStatusToModel(in.Enabled),
+			AppScope: int64(in.AppScope),
 		},
 		in.Page.Cursor,
 		in.Page.Limit,
@@ -63,7 +64,6 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 	if err != nil {
 		return nil, err
 	}
-
 	lastID := int64(0)
 	if len(items) > 0 {
 		lastID = items[len(items)-1].Id
@@ -89,6 +89,7 @@ func (l *SysUserListLogic) SysUserList(in *system.SysUserListReq) (*system.SysUs
 			LastLoginAt:      u.LastLoginAt,
 			CreateBy:         u.CreateBy,
 			UpdateTimes:      u.UpdateTimes,
+			AppScope:         system.ApplicationScope(u.AppScope),
 		})
 	}
 

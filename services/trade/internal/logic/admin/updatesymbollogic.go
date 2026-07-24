@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/proto/common"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -102,7 +103,7 @@ func (l *UpdateSymbolLogic) UpdateSymbol(in *trade.UpdateSymbolReq) (*trade.Comm
 	if in.Remark != "" {
 		item.Remark = in.Remark
 	}
-	if err := validation.SymbolTradingTimeline(trade.ProductType(item.ProductType), trade.ContractType(item.ContractType), item.ListingTime, item.TradingStartTime, item.TradingEndTime); err != nil {
+	if err := validation.SymbolTradingTimeline(common.ProductType(item.ProductType), common.ContractType(item.ContractType), item.ListingTime, item.TradingStartTime, item.TradingEndTime); err != nil {
 		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
 	}
 	item.UpdateTimes = utils.NowMillis()

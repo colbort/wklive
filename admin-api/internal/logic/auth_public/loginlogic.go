@@ -34,6 +34,7 @@ func (l *LoginLogic) Login(req *types.LoginReq, ip string) (resp *types.LoginRes
 		Password:   req.Password,
 		GoogleCode: req.GoogleCode,
 		Ip:         ip,
+		AppScope:   system.ApplicationScope_APPLICATION_SCOPE_ADMIN,
 	}
 	return logicutil.Proxy[types.LoginResp](l.ctx, protoReq, l.svcCtx.SystemCli.Login)
 }

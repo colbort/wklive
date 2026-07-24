@@ -44,6 +44,15 @@ func (l *SysMenuUpdateLogic) SysMenuUpdate(in *system.SysMenuUpdateReq) (*system
 			Base: helper.ErrResp(i18n.MenuNotFound, i18n.Translate(i18n.MenuNotFound, l.ctx)),
 		}, nil
 	}
+	if in.ParentId > 0 {
+		parent, findErr := l.svcCtx.MenuModel.FindOne(l.ctx, in.ParentId)
+		if findErr != nil {
+			return nil, findErr
+		}
+		if parent.AppScope != one.AppScope {
+			return nil, i18n.StatusError(l.ctx, i18n.Forbidden)
+		}
+	}
 
 	if in.ParentId != 0 {
 		one.ParentId = in.ParentId

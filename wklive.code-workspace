@@ -41,6 +41,14 @@
       "name": "chat-ui"
     },
     {
+      "path": "liquidity-admin-api",
+      "name": "liquidity-admin-api"
+    },
+    {
+      "path": "liquidity-admin-ui",
+      "name": "liquidity-admin-ui"
+    },
+    {
       "path": "services",
       "name": "services"
     },

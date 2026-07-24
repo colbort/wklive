@@ -34,7 +34,7 @@ func (l *ProcessContractPositionFillsLogic) ProcessFill(fillID int64) error {
 	if err != nil {
 		return err
 	}
-	if fill.ProductType != int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) {
+	if fill.ProductType != int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) {
 		return nil
 	}
 	order, err := l.svcCtx.TradeOrderModel.FindOne(l.ctx, fill.OrderId)
@@ -270,7 +270,7 @@ func writePositionProjection(ctx context.Context, historyModel models.TContractP
 		return err
 	}
 	eventNo := derivedTradeBizNo(fill.FillNo, fmt.Sprintf("POS%d", after.PositionSide))
-	_, err := eventModel.Insert(ctx, &models.TBizTradeEvent{TenantId: after.TenantId, EventNo: eventNo, EventType: "POSITION_UPDATED", BizId: fmt.Sprintf("%d", after.Id), BizType: "position", UserId: after.UserId, SymbolId: after.SymbolId, ProductType: int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE), Source: int64(trade.SourceType_SOURCE_TYPE_SYSTEM), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: "{}", CreateTimes: now, UpdateTimes: now})
+	_, err := eventModel.Insert(ctx, &models.TBizTradeEvent{TenantId: after.TenantId, EventNo: eventNo, EventType: "POSITION_UPDATED", BizId: fmt.Sprintf("%d", after.Id), BizType: "position", UserId: after.UserId, SymbolId: after.SymbolId, ProductType: int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE), Source: int64(trade.SourceType_SOURCE_TYPE_SYSTEM), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: "{}", CreateTimes: now, UpdateTimes: now})
 	return err
 }
 

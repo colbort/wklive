@@ -39,11 +39,11 @@ message TradeSymbol {
   int64 tenant_id = 2;
   string symbol = 3;
   string display_symbol = 4;
-  ProductType product_type = 5;
+  common.ProductType product_type = 5;
   string base_asset = 6;
   string quote_asset = 7;
   string settle_asset = 8;
-  ContractType contract_type = 9;
+  common.ContractType contract_type = 9;
   ContractValueType contract_value_type = 27;
   string margin_asset = 28;
   SymbolStatus status = 10;
@@ -151,7 +151,7 @@ message TradeUserConfig {
   int64 id = 1;
   int64 tenant_id = 2;
   int64 user_id = 3;
-  ProductType product_type = 4;
+  common.ProductType product_type = 4;
   int64 symbol_id = 5;
   common.Enable trade_enabled = 9; // 状态,0表示全部，1表示启用，2表示禁用
   int64 create_times = 11;
@@ -179,7 +179,7 @@ message TradeOrder {
   string client_order_id = 4;
   int64 user_id = 5;
   int64 symbol_id = 6;
-  ProductType product_type = 7;
+  common.ProductType product_type = 7;
   common.Side side = 8; // 买卖方向
   PositionSide position_side = 9;
   OrderType order_type = 10;
@@ -202,7 +202,7 @@ message TradeOrder {
   int64 create_times = 28;
   int64 update_times = 29;
   TriggerKind trigger_kind = 30;
-  ContractType contract_type = 31;
+  common.ContractType contract_type = 31;
   ContractValueType contract_value_type = 32;
   string request_hash = 33;
   string canceled_qty = 34;
@@ -290,7 +290,7 @@ message TradeFill {
   string order_no = 5;
   int64 user_id = 6;
   int64 symbol_id = 7;
-  ProductType product_type = 8;
+  common.ProductType product_type = 8;
   common.Side side = 9; // 买卖方向
   PositionSide position_side = 10;
   string price = 11;
@@ -303,7 +303,7 @@ message TradeFill {
   int64 match_time = 18;
   int64 create_times = 19;
   string match_no = 20;
-  ContractType contract_type = 21;
+  common.ContractType contract_type = 21;
   ContractValueType contract_value_type = 22;
   FillSettlementStatus settlement_status = 23;
   int64 settlement_retry_count = 24;
@@ -326,7 +326,7 @@ message ContractPosition {
   int64 tenant_id = 2;
   int64 user_id = 3;
   int64 symbol_id = 4;
-  ContractType contract_type = 5;
+  common.ContractType contract_type = 5;
   PositionSide position_side = 6;
   MarginMode margin_mode = 7;
   int64 leverage = 8;
@@ -361,7 +361,7 @@ message ContractPositionHistory {
   int64 position_id = 3;
   int64 user_id = 4;
   int64 symbol_id = 5;
-  ContractType contract_type = 6;
+  common.ContractType contract_type = 6;
   PositionSide position_side = 7;
   PositionActionType action_type = 8;
   string before_qty = 9;
@@ -447,7 +447,7 @@ message RiskUserTradeLimit {
   int64 id = 1;
   int64 tenant_id = 2;
   int64 user_id = 3;
-  ProductType product_type = 4;
+  common.ProductType product_type = 4;
   int64 can_open = 5;
   int64 can_close = 6;
   int64 can_cancel = 7;
@@ -504,7 +504,7 @@ message RiskOrderCheckLog {
   string client_order_id = 4;
   int64 user_id = 5;
   int64 symbol_id = 6;
-  ProductType product_type = 7;
+  common.ProductType product_type = 7;
   RiskCheckType check_type = 8;
   RiskCheckResult check_result = 9;
   string reject_code = 10;
@@ -527,7 +527,7 @@ message BizTradeEvent {
   string biz_type = 6;
   int64 user_id = 7;
   int64 symbol_id = 8;
-  ProductType product_type = 9;
+  common.ProductType product_type = 9;
   int64 operator_id = 10;
   SourceType source = 11;
   EventStatus event_status = 12;

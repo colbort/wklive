@@ -32,6 +32,7 @@ export type SysMenuCreateReq = {
   visible: number // 显示开关：1显示 2隐藏
   enabled: number // 启用状态：1启用 2禁用
   perms: string
+  appScope: number
 }
 
 export type SysMenuDeleteReq = {
@@ -50,6 +51,7 @@ export type SysMenuUpdateReq = {
   visible: number // 显示开关：1显示 2隐藏
   enabled: number // 启用状态：1启用 2禁用
   perms: string
+  appScope?: number
 }
 
 export type SysMenuListReq = {
@@ -59,6 +61,7 @@ export type SysMenuListReq = {
   menuType: number
   enabled: number // 启用状态：1启用 2禁用
   visible: number // 显示开关：1显示 2隐藏
+  appScope?: number
 }
 
 export type SysMenuItem = {
@@ -73,6 +76,7 @@ export type SysMenuItem = {
   visible: number // 显示开关：1显示 2隐藏
   enabled: number // 启用状态：1启用 2禁用
   perms: string // 按钮必须有，例如 sys:user:add
+  appScope: number
 }
 
 export type SysMenuTreeItem = SysMenuItem & {

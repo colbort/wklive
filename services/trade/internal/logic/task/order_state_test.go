@@ -512,7 +512,7 @@ func TestBuildSpotFillSettlementInstructions(t *testing.T) {
 	symbol := &models.TTradeSymbol{BaseAsset: "BTC", QuoteAsset: "USDT"}
 	fill := &models.TTradeFill{Qty: testDecimal(2), Amount: testDecimal(20000), Fee: testDecimal(10), FeeAsset: "USDT"}
 
-	buy, err := buildFillSettlementInstructions(context.Background(), nil, symbol, &models.TTradeOrder{ProductType: int64(trade.ProductType_PRODUCT_TYPE_SPOT), Side: int64(common.Side_SIDE_BUY)}, fill)
+	buy, err := buildFillSettlementInstructions(context.Background(), nil, symbol, &models.TTradeOrder{ProductType: int64(common.ProductType_PRODUCT_TYPE_SPOT), Side: int64(common.Side_SIDE_BUY)}, fill)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -520,7 +520,7 @@ func TestBuildSpotFillSettlementInstructions(t *testing.T) {
 		t.Fatalf("unexpected spot buy settlement instructions: %+v", buy)
 	}
 
-	sell, err := buildFillSettlementInstructions(context.Background(), nil, symbol, &models.TTradeOrder{ProductType: int64(trade.ProductType_PRODUCT_TYPE_SPOT), Side: int64(common.Side_SIDE_SELL)}, fill)
+	sell, err := buildFillSettlementInstructions(context.Background(), nil, symbol, &models.TTradeOrder{ProductType: int64(common.ProductType_PRODUCT_TYPE_SPOT), Side: int64(common.Side_SIDE_SELL)}, fill)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -534,7 +534,7 @@ func TestOrderBookKeyAndMember(t *testing.T) {
 		Id:          123,
 		TenantId:    7,
 		SymbolId:    4,
-		ProductType: int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE),
+		ProductType: int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE),
 		Side:        int64(common.Side_SIDE_BUY),
 	}
 	if got, want := orderBookKey(order), "trade:book:7:2:4:buy"; got != want {

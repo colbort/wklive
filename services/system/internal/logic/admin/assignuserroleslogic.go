@@ -71,14 +71,16 @@ func (l *AssignUserRolesLogic) AssignUserRoles(in *system.AssignUserRolesReq) (*
 
 	// 2. 校验这些角色是否存在
 	// 这里按你的 model 自己改，比如 FindListByIds / CountByIds / FindByIds
-	existRoleIds, err := l.svcCtx.RoleModel.FindIdsByIds(l.ctx, roleIds)
-	if err != nil {
-		return nil, err
-	}
-	if len(existRoleIds) != len(roleIds) {
-		return &system.RespBase{
-			Base: helper.ErrResp(i18n.SomeRolesNotFound, i18n.Translate(i18n.SomeRolesNotFound, l.ctx)),
-		}, nil
+	for _, roleID := range roleIds {
+		role, findErr := l.svcCtx.RoleModel.FindOne(l.ctx, roleID)
+		if findErr != nil || role == nil {
+			return &system.RespBase{
+				Base: helper.ErrResp(i18n.SomeRolesNotFound, i18n.Translate(i18n.SomeRolesNotFound, l.ctx)),
+			}, nil
+		}
+		if role.TenantId != user.TenantId || role.AppScope != user.AppScope {
+			return nil, i18n.StatusError(l.ctx, i18n.Forbidden)
+		}
 	}
 
 	// 3. 查用户当前已有角色
@@ -102,8 +104,9 @@ func (l *AssignUserRolesLogic) AssignUserRoles(in *system.AssignUserRolesReq) (*
 				continue
 			}
 			if _, err := userRoleModel.Insert(ctx, &models.SysUserRole{
-				UserId: in.UserId,
-				RoleId: roleId,
+				TenantId: user.TenantId,
+				UserId:   in.UserId,
+				RoleId:   roleId,
 			}); err != nil {
 				return err
 			}

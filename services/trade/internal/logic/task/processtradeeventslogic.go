@@ -196,12 +196,12 @@ func (l *ProcessTradeEventsLogic) recoverFreezingOrder(order *models.TTradeOrder
 		plan.frozenAmount = amount
 		return placeLogic.rejectOrderAfterFreezeFailure(order, plan, freezeErr)
 	}
-	return placeLogic.finalizeAcceptedOrder(order, freezeNo, amount, trade.TriggerKind(order.TriggerKind), trade.OrderType(order.OrderType), order.TriggerPrice, order.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SECONDS))
+	return placeLogic.finalizeAcceptedOrder(order, freezeNo, amount, trade.TriggerKind(order.TriggerKind), trade.OrderType(order.OrderType), order.TriggerPrice, order.ProductType == int64(common.ProductType_PRODUCT_TYPE_SECONDS))
 }
 
 func (l *ProcessTradeEventsLogic) recoveryRejectPlan(order *models.TTradeOrder) (*placeOrderPlan, error) {
 	plan := &placeOrderPlan{}
-	if order.ProductType != int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) || order.IsReduceOnly != int64(common.YesNo_YES_NO_YES) {
+	if order.ProductType != int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) || order.IsReduceOnly != int64(common.YesNo_YES_NO_YES) {
 		return plan, nil
 	}
 	ext, err := l.svcCtx.TradeOrderContractModel.FindOneByTenantIdOrderId(l.ctx, order.TenantId, order.Id)

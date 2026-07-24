@@ -1,0 +1,14 @@
+type OptionsResp {
+	RespBase
+	data []OptionsGroup `json:"data"`
+}
+
+@server (
+	prefix: /admin/liquidity
+	group: common
+	jwt: Jwt
+)
+service liquidityAdmin {
+	@handler Options
+	get /options returns (OptionsResp)
+}

@@ -57,10 +57,11 @@ func (l *SysPermListLogic) SysPermList(in *system.Empty) (*system.SysPermListRes
 			continue
 		}
 		data = append(data, &system.SysPermItem{
-			PermKey: key,
-			Method:  requestMethodToProto(method),
-			Path:    path,
-			Name:    menu.Name,
+			PermKey:  key,
+			Method:   requestMethodToProto(method),
+			Path:     path,
+			Name:     menu.Name,
+			AppScope: system.ApplicationScope(menu.AppScope),
 		})
 	}
 

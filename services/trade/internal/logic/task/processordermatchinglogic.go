@@ -277,7 +277,7 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 			buyLiquidity := liquidityTypeForOrder(lockedPlan.BuyOrder, lockedPlan.SellOrder)
 			sellLiquidity := liquidityTypeForOrder(lockedPlan.SellOrder, lockedPlan.BuyOrder)
 			var buyFee, sellFee decimal.Decimal
-			if symbol.ProductType == int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) {
+			if symbol.ProductType == int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) {
 				values, err := contractmath.CalculateTradeValues(symbol.ContractValueType, lockedPlan.Qty, contractConfig.ContractSize, lockedPlan.Price)
 				if err != nil {
 					return err
@@ -308,7 +308,7 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 				realtime.Event{EventNo: derivedTradeBizNo(buyFill.FillNo, "FILL"), Type: realtime.EventFillCreated, TenantID: buyFill.TenantId, BizID: buyFill.FillNo, OrderID: buyFill.OrderId, FillID: buyFill.Id},
 				realtime.Event{EventNo: derivedTradeBizNo(sellFill.FillNo, "FILL"), Type: realtime.EventFillCreated, TenantID: sellFill.TenantId, BizID: sellFill.FillNo, OrderID: sellFill.OrderId, FillID: sellFill.Id},
 			)
-			if symbol.ProductType == int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) {
+			if symbol.ProductType == int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) {
 				createdFillEvents = append(createdFillEvents,
 					realtime.Event{EventNo: derivedTradeBizNo(buyFill.FillNo, "POSITION"), Type: realtime.EventPositionFill, TenantID: buyFill.TenantId, BizID: buyFill.FillNo, OrderID: buyFill.OrderId, FillID: buyFill.Id},
 					realtime.Event{EventNo: derivedTradeBizNo(sellFill.FillNo, "POSITION"), Type: realtime.EventPositionFill, TenantID: sellFill.TenantId, BizID: sellFill.FillNo, OrderID: sellFill.OrderId, FillID: sellFill.Id},
@@ -480,7 +480,7 @@ func buildMatchFill(order *models.TTradeOrder, matchNo, fillNo string, liquidity
 		OrderNo:       order.OrderNo,
 		UserId:        order.UserId,
 		SymbolId:      order.SymbolId,
-		ProductType:   trade.ProductType(order.ProductType),
+		ProductType:   common.ProductType(order.ProductType),
 		Side:          common.Side(order.Side),
 		PositionSide:  trade.PositionSide(order.PositionSide),
 		Price:         conv.FloatString(plan.Price),
@@ -638,7 +638,7 @@ func feeRateByLiquidity(liquidity trade.LiquidityType, makerFeeRate, takerFeeRat
 }
 
 func feeAssetForOrder(order *models.TTradeOrder, symbol *models.TTradeSymbol) string {
-	if order != nil && order.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SPOT) {
+	if order != nil && order.ProductType == int64(common.ProductType_PRODUCT_TYPE_SPOT) {
 		// Spot fees are denominated in quote asset in the current reservation
 		// model, so they are always backed by the same frozen asset.
 		return symbol.QuoteAsset
@@ -650,7 +650,7 @@ func feeAssetForOrder(order *models.TTradeOrder, symbol *models.TTradeSymbol) st
 }
 
 func (l *ProcessOrderMatchingLogic) matchFeeRates(key models.TradeOrderMatchKey) (decimal.Decimal, decimal.Decimal, *models.TTradeSymbolContract, error) {
-	if key.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SPOT) {
+	if key.ProductType == int64(common.ProductType_PRODUCT_TYPE_SPOT) {
 		spot, err := l.svcCtx.TradeSymbolSpotModel.FindOneByTenantIdSymbolId(l.ctx, key.TenantId, key.SymbolId)
 		if err != nil {
 			return decimal.Zero, decimal.Zero, nil, err

@@ -125,8 +125,12 @@ const { form: editForm } = useForm({
     nickname: '',
     enabled: 1,
     roleIds: [] as number[],
+    appScope: 1,
   },
 })
+const selectableRoles = computed(() =>
+  roles.value.filter((role) => role.appScope === editForm.appScope),
+)
 const { loading: editFormLoading, withLoading: withEditLoading } = useLoading()
 
 function openCreate() {
@@ -137,6 +141,7 @@ function openCreate() {
   editForm.nickname = ''
   editForm.enabled = 1
   editForm.roleIds = []
+  editForm.appScope = 1
   editVisible.value = true
 }
 
@@ -149,12 +154,17 @@ function openEdit(row: SysUserItem) {
   editForm.nickname = row.nickname || ''
   editForm.enabled = row.enabled
   editForm.roleIds = (row.roleIds || []).slice()
+  editForm.appScope = row.appScope || 1
   editVisible.value = true
 }
 
 async function submitEdit() {
   await withEditLoading(async () => {
     try {
+      if (!editForm.appScope) {
+        ElMessage.warning(t('common.pleaseSelectApplication'))
+        return
+      }
       if (editMode.value === 'create') {
         if (!editForm.username || !editForm.password) {
           ElMessage.warning(t('common.pleaseInputAccountAndPassword'))
@@ -166,6 +176,7 @@ async function submitEdit() {
           nickname: editForm.nickname || undefined,
           enabled: editForm.enabled,
           roleIds: editForm.roleIds,
+          appScope: editForm.appScope,
         })
         if (res.code !== 200) throw new Error(res.msg || 'create failed')
         ElMessage.success(t('common.success'))
@@ -174,6 +185,7 @@ async function submitEdit() {
           nickname: editForm.nickname || undefined,
           enabled: editForm.enabled,
           roleIds: editForm.roleIds,
+          appScope: editForm.appScope,
         })
         if (res.code !== 200) throw new Error(res.msg || 'update failed')
         ElMessage.success(t('common.success'))
@@ -480,6 +492,14 @@ onMounted(async () => {
           </template>
         </el-table-column>
 
+        <el-table-column :label="t('common.applicationScope')" min-width="190">
+          <template #default="{ row }">
+            <el-tag :type="row.appScope === 2 ? 'success' : 'primary'">
+              {{ row.appScope === 2 ? t('common.liquidityAdmin') : t('common.adminBackend') }}
+            </el-tag>
+          </template>
+        </el-table-column>
+
         <el-table-column :label="t('common.google2fa')" width="110">
           <template #default="{ row }">
             <el-tag :type="row.google2FaEnabled === 1 ? 'success' : 'info'">
@@ -592,7 +612,7 @@ onMounted(async () => {
       :title="editMode === 'create' ? t('common.addUser') : t('common.editUser')"
       width="520px"
     >
-      <el-form label-width="90px">
+      <el-form label-width="100px">
         <el-form-item v-if="editMode === 'create'" :label="t('common.username')">
           <el-input v-model="editForm.username" />
         </el-form-item>
@@ -621,12 +641,22 @@ onMounted(async () => {
             :loading="roleLoading"
           >
             <el-option
-              v-for="r in roles"
+              v-for="r in selectableRoles"
               :key="r.id"
               :label="r.name"
               :value="r.id"
             />
           </el-select>
+        </el-form-item>
+        <el-form-item :label="t('common.applicationScope')">
+          <el-radio-group
+            v-model="editForm.appScope"
+            :disabled="editMode === 'update'"
+            @change="editForm.roleIds = []"
+          >
+            <el-radio :value="1">{{ t('common.adminBackend') }}</el-radio>
+            <el-radio :value="2">{{ t('common.liquidityAdmin') }}</el-radio>
+          </el-radio-group>
         </el-form-item>
       </el-form>
 

@@ -64,7 +64,6 @@ func (l *SysRoleUpdateLogic) SysRoleUpdate(in *system.SysRoleUpdateReq) (*system
 	if in.Code != "" {
 		one.Code = in.Code
 	}
-
 	err = l.svcCtx.RoleModel.Update(l.ctx, one)
 	if err != nil {
 		return nil, err

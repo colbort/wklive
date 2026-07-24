@@ -5,6 +5,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -27,19 +28,23 @@ func NewSysRoleCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 }
 
 func (l *SysRoleCreateLogic) SysRoleCreate(in *system.SysRoleCreateReq) (*system.RespBase, error) {
-	result, err := l.svcCtx.RoleModel.FindOneByTenantIdCode(l.ctx, in.TenantId, in.Code)
-	if err == nil {
-		return nil, err
-	}
+	scope := normalizeApplicationScope(in.AppScope)
+	result, err := l.svcCtx.RoleModel.FindOneByTenantIdAppScopeCode(l.ctx, in.TenantId, int64(scope), in.Code)
 	if result != nil {
 		return nil, i18n.StatusError(l.ctx, i18n.RoleCodeAlreadyExists)
 	}
+	if err != nil && err != models.ErrNotFound {
+		return nil, err
+	}
 	_, err = l.svcCtx.RoleModel.Insert(l.ctx, &models.SysRole{
-		TenantId: in.TenantId,
-		Name:     in.Name,
-		Code:     in.Code,
-		Enabled:  commonStatusToModel(in.Enabled),
-		Remark:   in.Remark,
+		TenantId:    in.TenantId,
+		AppScope:    int64(scope),
+		Name:        in.Name,
+		Code:        in.Code,
+		Enabled:     commonStatusToModel(in.Enabled),
+		Remark:      in.Remark,
+		CreateTimes: utils.NowMillis(),
+		UpdateTimes: utils.NowMillis(),
 	})
 	if err != nil {
 		return nil, err

@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/proto/common"
 
 	"wklive/common/pageutil"
 	"wklive/common/utils"
@@ -56,7 +57,7 @@ func (l *GetOrderListAdminLogic) GetOrderListAdmin(in *trade.GetOrderListAdminRe
 	resp := &trade.GetOrderListAdminResp{Base: pageutil.Base(cursor, limit, len(data), total, lastID)}
 	for _, item := range data {
 		order := orderToProto(item)
-		if item.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SECONDS) {
+		if item.ProductType == int64(common.ProductType_PRODUCT_TYPE_SECONDS) {
 			seconds, findErr := l.svcCtx.TradeOrderSecondsModel.FindOneByTenantIdOrderId(l.ctx, item.TenantId, item.Id)
 			if findErr != nil && !errors.Is(findErr, models.ErrNotFound) {
 				return nil, findErr

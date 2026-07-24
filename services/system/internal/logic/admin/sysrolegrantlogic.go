@@ -54,23 +54,14 @@ func (l *SysRoleGrantLogic) SysRoleGrant(in *system.SysRoleGrantReq) (*system.Re
 	}
 
 	if len(menuIds) > 0 {
-		existIds, err := l.svcCtx.MenuModel.FindIdsByIds(l.ctx, menuIds)
-		if err != nil {
-			return nil, err
-		}
-		if len(existIds) != len(menuIds) {
-			existSet := make(map[int64]struct{}, len(existIds))
-			for _, id := range existIds {
-				existSet[id] = struct{}{}
+		for _, menuID := range menuIds {
+			menu, findErr := l.svcCtx.MenuModel.FindOne(l.ctx, menuID)
+			if findErr != nil || menu == nil {
+				return nil, i18n.StatusError(l.ctx, i18n.MenuNotFound)
 			}
-			missing := make([]int64, 0)
-			for _, id := range menuIds {
-				if _, ok := existSet[id]; !ok {
-					missing = append(missing, id)
-				}
+			if menu.AppScope != role.AppScope {
+				return nil, i18n.StatusError(l.ctx, i18n.Forbidden)
 			}
-			l.Errorf("SysRoleGrant menus not found, roleId=%d missing=%v", in.RoleId, missing)
-			return nil, i18n.StatusError(l.ctx, i18n.MenuNotFound)
 		}
 	}
 

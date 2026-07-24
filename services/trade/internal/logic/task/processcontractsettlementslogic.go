@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"wklive/proto/common"
 
 	"wklive/common/generate"
 	"wklive/common/utils"
@@ -68,7 +69,7 @@ func (l *ProcessContractSettlementsLogic) settleFundingFees(in *trade.TradeTaskR
 			if err != nil {
 				return err
 			}
-			if symbol.ContractType != int64(trade.ContractType_CONTRACT_TYPE_PERPETUAL) {
+			if symbol.ContractType != int64(common.ContractType_CONTRACT_TYPE_PERPETUAL) {
 				continue
 			}
 			intervalMillis := contract.FundingIntervalMinutes * 60 * 1000
@@ -85,7 +86,7 @@ func (l *ProcessContractSettlementsLogic) settleFundingFees(in *trade.TradeTaskR
 	}
 }
 
-func (l *ProcessContractSettlementsLogic) disableExpiredSymbols(tenantID int64, contractType trade.ContractType) error {
+func (l *ProcessContractSettlementsLogic) disableExpiredSymbols(tenantID int64, contractType common.ContractType) error {
 	now := utils.NowMillis()
 	cursor := int64(0)
 	for {

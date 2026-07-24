@@ -42,6 +42,10 @@ export default {
     required: '必填项',
   },
   common: {
+    applicationScope: '应用范围',
+    adminBackend: '综合管理后台',
+    liquidityAdmin: '做市管理后台',
+    pleaseSelectApplication: '请至少选择一个允许登录的后台',
     id: 'ID',
     tenantId: '租户ID',
     userId: '用户ID',
@@ -753,6 +757,7 @@ export default {
     'sys:user:delete': '删除用户',
     'sys:user:resetpwd': '重置密码',
     'sys:user:assignrole': '分配角色',
+    'sys:user:assignapp': '分配登录后台',
     'sys:user:status': '修改用户状态',
     'sys:user:google2fa': 'Google2FA管理',
     'sys:user:2fa:init': '初始化',

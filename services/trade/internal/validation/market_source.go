@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"wklive/proto/trade"
+	"wklive/proto/common"
 )
 
 // AuthoritativeQuoteSources validates one or more market sources. Each source
@@ -29,7 +29,7 @@ func AuthoritativeQuoteSources(field, value string) error {
 }
 
 func FundingRateSource(contractType int64, value string) error {
-	if trade.ContractType(contractType) != trade.ContractType_CONTRACT_TYPE_PERPETUAL {
+	if common.ContractType(contractType) != common.ContractType_CONTRACT_TYPE_PERPETUAL {
 		return nil
 	}
 	if strings.TrimSpace(value) != "premium-v1" {

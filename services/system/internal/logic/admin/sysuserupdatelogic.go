@@ -67,6 +67,15 @@ func (l *SysUserUpdateLogic) SysUserUpdate(in *system.SysUserUpdateReq) (*system
 	if in.Avatar != "" {
 		one.Avatar = in.Avatar
 	}
+	for _, roleID := range in.RoleIds {
+		role, findErr := l.svcCtx.RoleModel.FindOne(l.ctx, roleID)
+		if findErr != nil {
+			return nil, findErr
+		}
+		if role.TenantId != one.TenantId || role.AppScope != one.AppScope {
+			return nil, i18n.StatusError(l.ctx, i18n.Forbidden)
+		}
+	}
 
 	err = l.svcCtx.UserModel.Update(l.ctx, one)
 	if err != nil {

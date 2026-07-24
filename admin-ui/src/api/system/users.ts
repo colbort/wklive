@@ -6,6 +6,7 @@ export function apiUserList(params: {
   enabled?: number
   cursor?: number
   limit?: number
+  appScope?: number
 }): Promise<RespBase<SysUserItem[]>> {
   return get<SysUserItem[]>('/admin/system/users', params)
 }
@@ -20,6 +21,7 @@ export function apiUserCreate(data: {
   nickname?: string
   enabled?: number
   roleIds?: number[]
+  appScope: number
 }): Promise<RespBase> {
   return post<RespBase>('/admin/system/users', data)
 }
@@ -29,6 +31,7 @@ export function apiUserUpdate(data: {
   nickname?: string
   enabled?: number
   roleIds?: number[]
+  appScope?: number
 }): Promise<RespBase> {
   return put<RespBase>('/admin/system/users', data)
 }

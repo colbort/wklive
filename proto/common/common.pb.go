@@ -291,6 +291,109 @@ func (Side) EnumDescriptor() ([]byte, []int) {
 	return file_proto_common_common_proto_rawDescGZIP(), []int{4}
 }
 
+// 跨交易、行情、流动性和资产展示共享的产品大类。
+type ProductType int32
+
+const (
+	ProductType_PRODUCT_TYPE_UNKNOWN    ProductType = 0
+	ProductType_PRODUCT_TYPE_SPOT       ProductType = 1
+	ProductType_PRODUCT_TYPE_DERIVATIVE ProductType = 2
+	ProductType_PRODUCT_TYPE_SECONDS    ProductType = 3
+)
+
+// Enum value maps for ProductType.
+var (
+	ProductType_name = map[int32]string{
+		0: "PRODUCT_TYPE_UNKNOWN",
+		1: "PRODUCT_TYPE_SPOT",
+		2: "PRODUCT_TYPE_DERIVATIVE",
+		3: "PRODUCT_TYPE_SECONDS",
+	}
+	ProductType_value = map[string]int32{
+		"PRODUCT_TYPE_UNKNOWN":    0,
+		"PRODUCT_TYPE_SPOT":       1,
+		"PRODUCT_TYPE_DERIVATIVE": 2,
+		"PRODUCT_TYPE_SECONDS":    3,
+	}
+)
+
+func (x ProductType) Enum() *ProductType {
+	p := new(ProductType)
+	*p = x
+	return p
+}
+
+func (x ProductType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ProductType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_common_common_proto_enumTypes[5].Descriptor()
+}
+
+func (ProductType) Type() protoreflect.EnumType {
+	return &file_proto_common_common_proto_enumTypes[5]
+}
+
+func (x ProductType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ProductType.Descriptor instead.
+func (ProductType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_common_common_proto_rawDescGZIP(), []int{5}
+}
+
+// 合约期限类型。现货和秒合约使用 NOT_APPLICABLE。
+type ContractType int32
+
+const (
+	ContractType_CONTRACT_TYPE_NOT_APPLICABLE ContractType = 0
+	ContractType_CONTRACT_TYPE_PERPETUAL      ContractType = 1
+	ContractType_CONTRACT_TYPE_DELIVERY       ContractType = 2
+)
+
+// Enum value maps for ContractType.
+var (
+	ContractType_name = map[int32]string{
+		0: "CONTRACT_TYPE_NOT_APPLICABLE",
+		1: "CONTRACT_TYPE_PERPETUAL",
+		2: "CONTRACT_TYPE_DELIVERY",
+	}
+	ContractType_value = map[string]int32{
+		"CONTRACT_TYPE_NOT_APPLICABLE": 0,
+		"CONTRACT_TYPE_PERPETUAL":      1,
+		"CONTRACT_TYPE_DELIVERY":       2,
+	}
+)
+
+func (x ContractType) Enum() *ContractType {
+	p := new(ContractType)
+	*p = x
+	return p
+}
+
+func (x ContractType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ContractType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_common_common_proto_enumTypes[6].Descriptor()
+}
+
+func (ContractType) Type() protoreflect.EnumType {
+	return &file_proto_common_common_proto_enumTypes[6]
+}
+
+func (x ContractType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ContractType.Descriptor instead.
+func (ContractType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_common_common_proto_rawDescGZIP(), []int{6}
+}
+
 type PositionSide int32
 
 const (
@@ -324,11 +427,11 @@ func (x PositionSide) String() string {
 }
 
 func (PositionSide) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_common_common_proto_enumTypes[5].Descriptor()
+	return file_proto_common_common_proto_enumTypes[7].Descriptor()
 }
 
 func (PositionSide) Type() protoreflect.EnumType {
-	return &file_proto_common_common_proto_enumTypes[5]
+	return &file_proto_common_common_proto_enumTypes[7]
 }
 
 func (x PositionSide) Number() protoreflect.EnumNumber {
@@ -337,7 +440,7 @@ func (x PositionSide) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use PositionSide.Descriptor instead.
 func (PositionSide) EnumDescriptor() ([]byte, []int) {
-	return file_proto_common_common_proto_rawDescGZIP(), []int{5}
+	return file_proto_common_common_proto_rawDescGZIP(), []int{7}
 }
 
 // 钱包类型
@@ -383,11 +486,11 @@ func (x WalletType) String() string {
 }
 
 func (WalletType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_common_common_proto_enumTypes[6].Descriptor()
+	return file_proto_common_common_proto_enumTypes[8].Descriptor()
 }
 
 func (WalletType) Type() protoreflect.EnumType {
-	return &file_proto_common_common_proto_enumTypes[6]
+	return &file_proto_common_common_proto_enumTypes[8]
 }
 
 func (x WalletType) Number() protoreflect.EnumNumber {
@@ -396,7 +499,7 @@ func (x WalletType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use WalletType.Descriptor instead.
 func (WalletType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_common_common_proto_rawDescGZIP(), []int{6}
+	return file_proto_common_common_proto_rawDescGZIP(), []int{8}
 }
 
 type Empty struct {
@@ -747,7 +850,16 @@ const file_proto_common_common_proto_rawDesc = "" +
 	"\x04Side\x12\x10\n" +
 	"\fSIDE_UNKNOWN\x10\x00\x12\f\n" +
 	"\bSIDE_BUY\x10\x01\x12\r\n" +
-	"\tSIDE_SELL\x10\x02*Z\n" +
+	"\tSIDE_SELL\x10\x02*u\n" +
+	"\vProductType\x12\x18\n" +
+	"\x14PRODUCT_TYPE_UNKNOWN\x10\x00\x12\x15\n" +
+	"\x11PRODUCT_TYPE_SPOT\x10\x01\x12\x1b\n" +
+	"\x17PRODUCT_TYPE_DERIVATIVE\x10\x02\x12\x18\n" +
+	"\x14PRODUCT_TYPE_SECONDS\x10\x03*i\n" +
+	"\fContractType\x12 \n" +
+	"\x1cCONTRACT_TYPE_NOT_APPLICABLE\x10\x00\x12\x1b\n" +
+	"\x17CONTRACT_TYPE_PERPETUAL\x10\x01\x12\x1a\n" +
+	"\x16CONTRACT_TYPE_DELIVERY\x10\x02*Z\n" +
 	"\fPositionSide\x12\x19\n" +
 	"\x15POSITION_SIDE_UNKNOWN\x10\x00\x12\x16\n" +
 	"\x12POSITION_SIDE_LONG\x10\x01\x12\x17\n" +
@@ -773,7 +885,7 @@ func file_proto_common_common_proto_rawDescGZIP() []byte {
 	return file_proto_common_common_proto_rawDescData
 }
 
-var file_proto_common_common_proto_enumTypes = make([]protoimpl.EnumInfo, 7)
+var file_proto_common_common_proto_enumTypes = make([]protoimpl.EnumInfo, 9)
 var file_proto_common_common_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_proto_common_common_proto_goTypes = []any{
 	(ChainCode)(0),    // 0: common.ChainCode
@@ -781,13 +893,15 @@ var file_proto_common_common_proto_goTypes = []any{
 	(Enable)(0),       // 2: common.Enable
 	(Switch)(0),       // 3: common.Switch
 	(Side)(0),         // 4: common.Side
-	(PositionSide)(0), // 5: common.PositionSide
-	(WalletType)(0),   // 6: common.WalletType
-	(*Empty)(nil),     // 7: common.Empty
-	(*RespBase)(nil),  // 8: common.RespBase
-	(*PageReq)(nil),   // 9: common.PageReq
-	(*TokenInfo)(nil), // 10: common.TokenInfo
-	(*TimeRange)(nil), // 11: common.TimeRange
+	(ProductType)(0),  // 5: common.ProductType
+	(ContractType)(0), // 6: common.ContractType
+	(PositionSide)(0), // 7: common.PositionSide
+	(WalletType)(0),   // 8: common.WalletType
+	(*Empty)(nil),     // 9: common.Empty
+	(*RespBase)(nil),  // 10: common.RespBase
+	(*PageReq)(nil),   // 11: common.PageReq
+	(*TokenInfo)(nil), // 12: common.TokenInfo
+	(*TimeRange)(nil), // 13: common.TimeRange
 }
 var file_proto_common_common_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -807,7 +921,7 @@ func file_proto_common_common_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_common_common_proto_rawDesc), len(file_proto_common_common_proto_rawDesc)),
-			NumEnums:      7,
+			NumEnums:      9,
 			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,

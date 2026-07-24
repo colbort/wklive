@@ -43,6 +43,10 @@ export default {
     required: 'Required',
   },
   common: {
+    applicationScope: 'Application scope',
+    adminBackend: 'Admin Console',
+    liquidityAdmin: 'Liquidity Console',
+    pleaseSelectApplication: 'Select at least one allowed application',
     id: 'ID',
     tenantId: 'Tenant ID',
     userId: 'User ID',
@@ -755,6 +759,7 @@ export default {
     'sys:user:delete': 'Delete User',
     'sys:user:resetpwd': 'Reset Password',
     'sys:user:assignrole': 'Assign Roles',
+    'sys:user:assignapp': 'Assign Applications',
     'sys:user:status': 'Update User Status',
     'sys:user:google2fa': 'Google 2FA',
     'sys:user:2fa:init': 'Init',

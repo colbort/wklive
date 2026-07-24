@@ -148,7 +148,7 @@ func (l *ProcessFillSettlementsLogic) processInstruction(item *models.TTradeSett
 }
 
 func (l *ProcessFillSettlementsLogic) executeAssetInstruction(item *models.TTradeSettlementInstruction, fill *models.TTradeFill, order *models.TTradeOrder) error {
-	walletType := walletTypeForProduct(trade.ProductType(fill.ProductType))
+	walletType := walletTypeForProduct(common.ProductType(fill.ProductType))
 	matchReq := func(scene asset.SceneType) (asset.BizType, asset.SceneType, int64, string) {
 		return asset.BizType_BIZ_TYPE_TRADE, scene, fill.Id, item.InstructionNo
 	}
@@ -166,7 +166,7 @@ func (l *ProcessFillSettlementsLogic) executeAssetInstruction(item *models.TTrad
 		resp, err = l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{TenantId: item.TenantId, UserId: item.UserId, WalletType: walletType, Coin: item.Asset, Amount: item.Amount.String(), BizType: bizType, SceneType: scene, BizId: bizID, BizNo: bizNo, Remark: "spot fill credit"})
 	case trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_FEE:
 		bizType, scene, bizID, bizNo := matchReq(asset.SceneType_SCENE_TYPE_TRADE_FEE)
-		if fill.ProductType == int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) || order.Side == int64(common.Side_SIDE_BUY) {
+		if fill.ProductType == int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) || order.Side == int64(common.Side_SIDE_BUY) {
 			resp, err = l.svcCtx.AssetClient.DeductFrozenAssetByBizNo(l.ctx, &asset.DeductFrozenAssetByBizNoReq{TenantId: item.TenantId, TargetBizType: asset.BizType_BIZ_TYPE_TRADE, TargetBizNo: item.ReservationNo, Amount: item.Amount.String(), BizType: bizType, SceneType: scene, BizId: bizID, BizNo: bizNo, Remark: "spot fill fee from frozen"})
 		} else {
 			resp, err = l.svcCtx.AssetClient.SubAvailable(l.ctx, &asset.SubAvailableReq{TenantId: item.TenantId, UserId: item.UserId, WalletType: walletType, Coin: item.Asset, Amount: item.Amount.String(), BizType: bizType, SceneType: scene, BizId: bizID, BizNo: bizNo, Remark: "spot fill fee from proceeds"})
@@ -232,7 +232,7 @@ func (l *ProcessFillSettlementsLogic) markSucceeded(item *models.TTradeSettlemen
 			case trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CONSUME_FROZEN:
 				ok, err = reservationModel.AddConsumed(ctx, reservation.Id, item.Amount, now)
 			case trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_FEE:
-				if fill.ProductType == int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) || order.Side == int64(common.Side_SIDE_BUY) {
+				if fill.ProductType == int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) || order.Side == int64(common.Side_SIDE_BUY) {
 					ok, err = reservationModel.AddConsumed(ctx, reservation.Id, item.Amount, now)
 				} else {
 					ok = true
@@ -271,7 +271,7 @@ func (l *ProcessFillSettlementsLogic) markSucceeded(item *models.TTradeSettlemen
 		if currentFill.SettlementStatus == int64(trade.FillSettlementStatus_FILL_SETTLEMENT_STATUS_SETTLED) {
 			return nil
 		}
-		if fill.ProductType == int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) {
+		if fill.ProductType == int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) {
 			positionEvent, err := eventModel.FindOneByTenantIdEventNo(ctx, fill.TenantId, derivedTradeBizNo(fill.FillNo, "POSITION"))
 			if err != nil {
 				return err
@@ -286,7 +286,7 @@ func (l *ProcessFillSettlementsLogic) markSucceeded(item *models.TTradeSettlemen
 			return err
 		}
 		eventType := "SPOT_FILL_SETTLED"
-		if fill.ProductType == int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) {
+		if fill.ProductType == int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) {
 			eventType = "CONTRACT_FILL_ASSET_SETTLED"
 		}
 		if err := insertMatchOutboxEvent(ctx, eventModel, order, derivedTradeBizNo(fill.FillNo, "SETTLED"), eventType, fill.FillNo, "fill", "{}", now); err != nil {
@@ -319,7 +319,7 @@ func (l *ProcessFillSettlementsLogic) settleFillIfReady(fill *models.TTradeFill)
 				return nil
 			}
 		}
-		if fill.ProductType == int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) {
+		if fill.ProductType == int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) {
 			positionEvent, err := eventModel.FindOneByTenantIdEventNo(ctx, fill.TenantId, derivedTradeBizNo(fill.FillNo, "POSITION"))
 			if err != nil {
 				return err
@@ -345,7 +345,7 @@ func (l *ProcessFillSettlementsLogic) settleFillIfReady(fill *models.TTradeFill)
 			return err
 		}
 		eventType := "SPOT_FILL_SETTLED"
-		if fill.ProductType == int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) {
+		if fill.ProductType == int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) {
 			eventType = "CONTRACT_FILL_ASSET_SETTLED"
 		}
 		if err := insertMatchOutboxEvent(ctx, eventModel, order, derivedTradeBizNo(fill.FillNo, "SETTLED"), eventType, fill.FillNo, "fill", "{}", now); err != nil {
@@ -427,7 +427,7 @@ func (l *ProcessFillSettlementsLogic) markFailed(item *models.TTradeSettlementIn
 		tracksReservation := action == trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CONSUME_FROZEN ||
 			action == trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_RELEASE_FROZEN ||
 			action == trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_ADJUST_MARGIN ||
-			action == trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_FEE && (fill.ProductType == int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) || fill.Side == int64(common.Side_SIDE_BUY))
+			action == trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_FEE && (fill.ProductType == int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) || fill.Side == int64(common.Side_SIDE_BUY))
 		if !tracksReservation {
 			return nil
 		}

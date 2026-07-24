@@ -3,6 +3,7 @@ type SysUserListReq {
 	PageReq
 	keyword string `form:"keyword,optional"`
 	enabled int64  `form:"enabled,optional"`
+	appScope int64 `form:"appScope,optional"`
 }
 
 type SysUserItem {
@@ -22,6 +23,7 @@ type SysUserItem {
 	lastLoginAt      int64   `json:"lastLoginAt"`
 	createBy         int64   `json:"createBy"`
 	updateTimes      int64   `json:"updateTimes"`
+	appScope         int64   `json:"appScope"`
 }
 
 type SysUserListResp {
@@ -40,6 +42,7 @@ type SysUserCreateReq {
 	nickname string  `json:"nickname,optional"`
 	enabled  int64   `json:"enabled,optional"` // 0未知 1启用 2禁用
 	roleIds  []int64 `json:"roleIds,optional"`
+	appScope int64 `json:"appScope"`
 }
 
 type SysUserUpdateReq {
@@ -47,6 +50,7 @@ type SysUserUpdateReq {
 	nickname string  `json:"nickname,optional"`
 	enabled  int64   `json:"enabled,optional"`
 	roleIds  []int64 `json:"roleIds,optional"`
+	appScope int64 `json:"appScope,optional"`
 }
 
 type SysUserDeleteReq {
@@ -113,12 +117,14 @@ type SysRoleItem {
 	remark      string `json:"remark,optional"`
 	tenantId    int64  `json:"tenantId"`
 	createTimes int64  `json:"createTimes"`
+	appScope    int64  `json:"appScope"`
 }
 
 type SysRoleListReq {
 	PageReq
 	keyword string `form:"keyword,optional"`
 	enabled int64  `form:"enabled,optional"`
+	appScope int64 `form:"appScope,optional"`
 }
 
 type SysRoleListResp {
@@ -132,6 +138,7 @@ type SysRoleCreateReq {
 	code     string `json:"code"`
 	enabled  int64  `json:"enabled,optional"`
 	remark   string `json:"remark,optional"`
+	appScope int64 `json:"appScope"`
 }
 
 type SysRoleUpdateReq {
@@ -140,6 +147,7 @@ type SysRoleUpdateReq {
 	name     string `json:"name,optional"`
 	enabled  int64  `json:"enabled,optional"`
 	remark   string `json:"remark,optional"`
+	appScope int64 `json:"appScope,optional"`
 }
 
 type SysRoleDeleteReq {
@@ -169,6 +177,7 @@ type SysRoleGrantDetail {
 type SysPermItem {
 	PermKey string `json:"key"` // 唯一权限标识（如 sys:role:add）
 	Name    string `json:"name"` // 展示名称（如 新增角色）
+	AppScope int64 `json:"appScope"`
 }
 
 type SysPermListResp {
@@ -190,6 +199,7 @@ type SysMenuItem {
 	visible   int64  `json:"visible"`
 	enabled   int64  `json:"enabled"`
 	perms     string `json:"perms,optional"`
+	appScope  int64 `json:"appScope"`
 }
 
 type SysMenuTreeReq {
@@ -213,6 +223,7 @@ type SysMenuCreateReq {
 	visible   int64  `json:"visible,optional"`
 	enabled   int64  `json:"enabled,optional"`
 	perms     string `json:"perms,optional"`
+	appScope  int64 `json:"appScope"`
 }
 
 type SysMenuUpdateReq {
@@ -228,6 +239,7 @@ type SysMenuUpdateReq {
 	visible   int64  `json:"visible,optional"`
 	enabled   int64  `json:"enabled,optional"`
 	perms     string `json:"perms,optional"`
+	appScope  int64 `json:"appScope,optional"`
 }
 
 type SysMenuDeleteReq {
@@ -240,6 +252,7 @@ type SysMenuListReq {
 	enabled  int64  `form:"enabled,optional"` // 0未知 1启用 2禁用
 	visible  int64  `form:"visible,optional"` // 0/1
 	menuType int64  `form:"menuType,optional"` // 1/2/3
+	appScope int64 `form:"appScope,optional"`
 }
 
 type SysMenuListResp {
@@ -871,4 +884,3 @@ service admin {
 	@handler SysChatMerchantDetail
 	get /chat-merchant/detail (SysChatMerchantDetailReq) returns (SysChatMerchantDetailResp)
 }
-

@@ -43,6 +43,13 @@ enum UserType {
   USER_TYPE_TENANT_ADMIN = 3; // 租户管理员
 }
 
+// 系统账户允许登录的后台应用。一个账户可同时授权多个应用。
+enum ApplicationScope {
+  APPLICATION_SCOPE_UNKNOWN = 0;
+  APPLICATION_SCOPE_ADMIN = 1; // 综合管理后台 admin-ui
+  APPLICATION_SCOPE_LIQUIDITY = 2; // 做市管理后台 liquidity-admin-ui
+}
+
 enum VerificationCodeChannel {
   VERIFICATION_CODE_CHANNEL_UNKNOWN = 0;
   VERIFICATION_CODE_CHANNEL_EMAIL = 1; // 邮箱

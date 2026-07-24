@@ -82,7 +82,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	orderType := in.OrderType
 	triggerKind := in.TriggerKind
 	timeInForce := in.TimeInForce
-	isSeconds := symbol.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SECONDS)
+	isSeconds := symbol.ProductType == int64(common.ProductType_PRODUCT_TYPE_SECONDS)
 	var secondsCfg *models.TTradeSymbolSeconds
 
 	price := mustParseFloat(in.Price)
@@ -164,7 +164,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		}
 	}
 	leverage := int64(1)
-	if isDerivativeProduct(trade.ProductType(symbol.ProductType)) {
+	if isDerivativeProduct(common.ProductType(symbol.ProductType)) {
 		var ok bool
 		leverage, ok, err = ensureConfiguredLeverage(l.ctx, l.svcCtx.SymbolLeverageCfgModel, l.svcCtx.SymbolLeverageDefaultModel, configTenantId, symbol, in.MarginMode, in.Leverage)
 		if err != nil {
@@ -248,7 +248,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 			}
 		}
 
-		if symbol.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SPOT) {
+		if symbol.ProductType == int64(common.ProductType_PRODUCT_TYPE_SPOT) {
 			frozenAsset, frozenAmount = plan.frozenAsset, plan.frozenAmount
 			spot := &models.TTradeOrderSpot{
 				TenantId:     tenantId,
@@ -547,7 +547,7 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 	if (symbol.ListingTime > 0 && now < symbol.ListingTime) || (symbol.TradingStartTime > 0 && now < symbol.TradingStartTime) || (symbol.TradingEndTime > 0 && now >= symbol.TradingEndTime) {
 		return nil, errors.New("symbol is outside its trading time")
 	}
-	if symbol.Status == int64(trade.SymbolStatus_SYMBOL_STATUS_CLOSE_ONLY) && !isDerivativeProduct(trade.ProductType(symbol.ProductType)) {
+	if symbol.Status == int64(trade.SymbolStatus_SYMBOL_STATUS_CLOSE_ONLY) && !isDerivativeProduct(common.ProductType(symbol.ProductType)) {
 		return nil, errors.New("close-only is only valid for derivative symbols")
 	}
 	if symbol.Status == int64(trade.SymbolStatus_SYMBOL_STATUS_CLOSE_ONLY) && in.IsReduceOnly != common.YesNo_YES_NO_YES {
@@ -558,7 +558,7 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 	}
 
 	plan := &placeOrderPlan{price: price, qty: qty, notional: amount, riskPrice: price}
-	if symbol.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SECONDS) {
+	if symbol.ProductType == int64(common.ProductType_PRODUCT_TYPE_SECONDS) {
 		if err := validateSymbolNotional(symbol, amount); err != nil {
 			return nil, err
 		}
@@ -578,7 +578,7 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 	// Reject derivative-only fields before quantity validation or reference-price
 	// lookup. Otherwise a malformed spot request can be reported as a market-data
 	// failure, which hides the actual request error.
-	if symbol.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SPOT) &&
+	if symbol.ProductType == int64(common.ProductType_PRODUCT_TYPE_SPOT) &&
 		(in.IsReduceOnly == common.YesNo_YES_NO_YES ||
 			in.PositionSide != trade.PositionSide_POSITION_SIDE_UNKNOWN ||
 			in.MarginMode != trade.MarginMode_MARGIN_MODE_UNKNOWN ||
@@ -592,7 +592,7 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 		if timeInForce != trade.TimeInForce_TIME_IN_FORCE_IOC && timeInForce != trade.TimeInForce_TIME_IN_FORCE_FOK {
 			return nil, errors.New("market order only supports IOC or FOK")
 		}
-		if symbol.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SPOT) && in.Side == common.Side_SIDE_BUY {
+		if symbol.ProductType == int64(common.ProductType_PRODUCT_TYPE_SPOT) && in.Side == common.Side_SIDE_BUY {
 			if !amount.IsPositive() {
 				return nil, errors.New("spot market buy requires quote amount")
 			}
@@ -608,8 +608,8 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 		}
 	}
 
-	switch trade.ProductType(symbol.ProductType) {
-	case trade.ProductType_PRODUCT_TYPE_SPOT:
+	switch common.ProductType(symbol.ProductType) {
+	case common.ProductType_PRODUCT_TYPE_SPOT:
 		cfg, err := l.svcCtx.TradeSymbolSpotModel.FindOneByTenantIdSymbolId(l.ctx, symbol.TenantId, symbol.Id)
 		if errors.Is(err, models.ErrNotFound) || errors.Is(err, sql.ErrNoRows) {
 			return nil, errors.New("spot symbol configuration not found")
@@ -631,7 +631,7 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 			plan.frozenAmount = plan.frozenAmount.Add(plan.notional.Mul(cfg.TakerFeeRate))
 		}
 
-	case trade.ProductType_PRODUCT_TYPE_DERIVATIVE:
+	case common.ProductType_PRODUCT_TYPE_DERIVATIVE:
 		cfg, err := l.svcCtx.TradeSymbolContractModel.FindOneByTenantIdSymbolId(l.ctx, symbol.TenantId, symbol.Id)
 		if err != nil {
 			return nil, err
@@ -647,13 +647,13 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 		if in.MarginMode != trade.MarginMode_MARGIN_MODE_ISOLATED {
 			return nil, errors.New("invalid derivative margin mode")
 		}
-		if symbol.ContractType != int64(trade.ContractType_CONTRACT_TYPE_PERPETUAL) && symbol.ContractType != int64(trade.ContractType_CONTRACT_TYPE_DELIVERY) {
+		if symbol.ContractType != int64(common.ContractType_CONTRACT_TYPE_PERPETUAL) && symbol.ContractType != int64(common.ContractType_CONTRACT_TYPE_DELIVERY) {
 			return nil, errors.New("invalid derivative contract type")
 		}
 		if symbol.ContractValueType != int64(trade.ContractValueType_CONTRACT_VALUE_TYPE_LINEAR) && symbol.ContractValueType != int64(trade.ContractValueType_CONTRACT_VALUE_TYPE_INVERSE) {
 			return nil, errors.New("invalid derivative contract value type")
 		}
-		if symbol.ContractType == int64(trade.ContractType_CONTRACT_TYPE_DELIVERY) {
+		if symbol.ContractType == int64(common.ContractType_CONTRACT_TYPE_DELIVERY) {
 			if cfg.DeliveryTime <= now || cfg.MatchingStopTime <= now {
 				return nil, errors.New("delivery contract no longer accepts orders")
 			}
@@ -808,7 +808,7 @@ func (l *PlaceOrderLogic) bestOppositePrice(tenantID int64, symbol *models.TTrad
 	}
 
 	const maxReferencePriceAge = int64(30_000)
-	if isDerivativeProduct(trade.ProductType(symbol.ProductType)) {
+	if isDerivativeProduct(common.ProductType(symbol.ProductType)) {
 		contract, contractErr := l.svcCtx.TradeSymbolContractModel.FindOneByTenantIdSymbolId(l.ctx, symbol.TenantId, symbol.Id)
 		if contractErr != nil && !errors.Is(contractErr, models.ErrNotFound) {
 			return decimal.Zero, contractErr
@@ -834,7 +834,7 @@ func (l *PlaceOrderLogic) bestOppositePrice(tenantID int64, symbol *models.TTrad
 			}
 		}
 	}
-	if symbol.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SPOT) {
+	if symbol.ProductType == int64(common.ProductType_PRODUCT_TYPE_SPOT) {
 		if source := l.spotReferencePriceSource(symbol); source != "" {
 			quote, quoteErr := NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).getValidQuoteKind("FINAL_QUOTE", source, symbol.Id, maxReferencePriceAge)
 			if quoteErr == nil {
@@ -853,7 +853,7 @@ func (l *PlaceOrderLogic) bestOppositePrice(tenantID int64, symbol *models.TTrad
 		}
 		return decimal.Zero, snapshotErr
 	}
-	if isDerivativeProduct(trade.ProductType(symbol.ProductType)) && snapshot.MarkPrice.IsPositive() {
+	if isDerivativeProduct(common.ProductType(symbol.ProductType)) && snapshot.MarkPrice.IsPositive() {
 		return snapshot.MarkPrice, nil
 	}
 	if snapshot.Price.IsPositive() {
@@ -867,7 +867,7 @@ func (l *PlaceOrderLogic) bestOppositePrice(tenantID int64, symbol *models.TTrad
 
 func (l *PlaceOrderLogic) spotReferencePriceSource(symbol *models.TTradeSymbol) string {
 	secondsSymbol, err := l.svcCtx.TradeSymbolModel.FindOneByTenantIdSymbolProductTypeContractTypeContractValueType(
-		l.ctx, symbol.TenantId, symbol.Symbol, int64(trade.ProductType_PRODUCT_TYPE_SECONDS), 0, 0,
+		l.ctx, symbol.TenantId, symbol.Symbol, int64(common.ProductType_PRODUCT_TYPE_SECONDS), 0, 0,
 	)
 	if err == nil {
 		configs, configErr := l.svcCtx.TradeSymbolSecondsModel.FindAllByTenantIdSymbolId(l.ctx, symbol.TenantId, secondsSymbol.Id)
@@ -884,7 +884,7 @@ func (l *PlaceOrderLogic) spotReferencePriceSource(symbol *models.TTradeSymbol) 
 	}
 	for _, variant := range [][2]int64{{1, 1}, {1, 2}, {2, 1}, {2, 2}} {
 		contractSymbol, findErr := l.svcCtx.TradeSymbolModel.FindOneByTenantIdSymbolProductTypeContractTypeContractValueType(
-			l.ctx, symbol.TenantId, symbol.Symbol, int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE), variant[0], variant[1],
+			l.ctx, symbol.TenantId, symbol.Symbol, int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE), variant[0], variant[1],
 		)
 		if findErr != nil {
 			continue

@@ -271,10 +271,10 @@ func applyFillToOrder(order *models.TTradeOrder, fill *models.TTradeFill, now in
 	if order.Qty.IsPositive() && order.FilledQty.GreaterThan(order.Qty) {
 		order.FilledQty = order.Qty
 	}
-	if order.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SPOT) && order.Amount.IsPositive() && order.FilledAmount.GreaterThan(order.Amount) {
+	if order.ProductType == int64(common.ProductType_PRODUCT_TYPE_SPOT) && order.Amount.IsPositive() && order.FilledAmount.GreaterThan(order.Amount) {
 		order.FilledAmount = order.Amount
 	}
-	if order.ProductType == int64(trade.ProductType_PRODUCT_TYPE_DERIVATIVE) && fill.Price.IsPositive() {
+	if order.ProductType == int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) && fill.Price.IsPositive() {
 		order.AvgPrice = contractAveragePrice(order.AvgPrice, previousFilledQty, fill.Price, fill.Qty, order.ContractValueType)
 	} else if order.FilledQty.IsPositive() && order.FilledAmount.IsPositive() {
 		order.AvgPrice = fromTradeMinorAmount(order.FilledAmount).Div(order.FilledQty)

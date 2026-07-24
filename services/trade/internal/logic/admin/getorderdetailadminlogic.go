@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/proto/common"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -39,8 +40,8 @@ func (l *GetOrderDetailAdminLogic) GetOrderDetailAdmin(in *trade.GetOrderDetailA
 
 	order := orderToProto(item)
 	data := &trade.GetOrderDetailData{Order: order}
-	switch trade.ProductType(item.ProductType) {
-	case trade.ProductType_PRODUCT_TYPE_SPOT:
+	switch common.ProductType(item.ProductType) {
+	case common.ProductType_PRODUCT_TYPE_SPOT:
 		spot, findErr := l.svcCtx.TradeOrderSpotModel.FindOneByTenantIdOrderId(l.ctx, item.TenantId, item.Id)
 		if findErr != nil && !errors.Is(findErr, models.ErrNotFound) {
 			return nil, findErr
@@ -48,7 +49,7 @@ func (l *GetOrderDetailAdminLogic) GetOrderDetailAdmin(in *trade.GetOrderDetailA
 		if findErr == nil {
 			data.Spot = orderSpotToProto(spot)
 		}
-	case trade.ProductType_PRODUCT_TYPE_DERIVATIVE:
+	case common.ProductType_PRODUCT_TYPE_DERIVATIVE:
 		contract, findErr := l.svcCtx.TradeOrderContractModel.FindOneByTenantIdOrderId(l.ctx, item.TenantId, item.Id)
 		if findErr != nil && !errors.Is(findErr, models.ErrNotFound) {
 			return nil, findErr
@@ -56,7 +57,7 @@ func (l *GetOrderDetailAdminLogic) GetOrderDetailAdmin(in *trade.GetOrderDetailA
 		if findErr == nil {
 			data.Contract = orderContractToProto(contract)
 		}
-	case trade.ProductType_PRODUCT_TYPE_SECONDS:
+	case common.ProductType_PRODUCT_TYPE_SECONDS:
 		seconds, findErr := l.svcCtx.TradeOrderSecondsModel.FindOneByTenantIdOrderId(l.ctx, item.TenantId, item.Id)
 		if findErr != nil && !errors.Is(findErr, models.ErrNotFound) {
 			return nil, findErr
