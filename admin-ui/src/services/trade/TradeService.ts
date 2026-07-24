@@ -492,12 +492,91 @@ export type TradeOrder = {
   triggerPrice: string
   triggerType: number
   triggerKind: number
+  requestHash: string
+  canceledQty: string
+  isClosePosition: number
+  ocoGroupNo: string
+  expireAt: number
+  triggeredAt: number
+  completionReason: string
   cancelReason: string
   bizExt: string
+  version: number
   secondsDirection: number
   durationSeconds: number
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
+}
+
+export type TradeOrderSeconds = {
+  id: number
+  tenantId: number
+  orderId: number
+  direction: number
+  durationSeconds: number
+  stakeAsset: string
+  stakeAmount: string
+  payoutRate: string
+  feeRate: string
+  frozenAt: number
+  activatedAt: number
+  startPrice: string
+  startPriceTime: number
+  startPriceSource: string
+  expireTime: number
+  settlementPrice: string
+  settlementPriceTime: number
+  settlementPriceSource: string
+  priceAlgorithm: string
+  result: number
+  profitAmount: string
+  feeAmount: string
+  returnAmount: string
+  settlementStatus: number
+  reservationNo: string
+  settlementReason: string
+  settledAt: number
+  version: number
+  createTimes: number
+  updateTimes: number
+}
+
+export type TradeOrderSpot = {
+  id: number
+  tenantId: number
+  orderId: number
+  frozenAsset: string
+  frozenAmount: string
+  settleAsset: string
+  settleAmount: string
+  createTimes: number
+  updateTimes: number
+}
+
+export type TradeOrderContract = {
+  id: number
+  tenantId: number
+  orderId: number
+  marginMode: number
+  leverage: number
+  marginAsset: string
+  marginAmount: string
+  closePositionType: number
+  liquidationPrice: string
+  takeProfitPrice: string
+  stopLossPrice: string
+  reservedCloseQty: string
+  riskPrice: string
+  riskTierId: number
+  createTimes: number
+  updateTimes: number
+}
+
+export type TradeOrderDetailData = {
+  order: TradeOrder
+  spot?: TradeOrderSpot
+  contract?: TradeOrderContract
+  seconds?: TradeOrderSeconds
 }
 
 export type TradeFill = {

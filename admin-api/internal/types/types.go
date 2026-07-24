@@ -1252,7 +1252,7 @@ type GetOrderDetailAdminReq struct {
 
 type GetOrderDetailAdminResp struct {
 	RespBase
-	Data TradeOrder `json:"data"`
+	Data TradeOrderDetailData `json:"data"`
 }
 
 type GetOrderListAdminReq struct {
@@ -4509,12 +4509,91 @@ type TradeOrder struct {
 	TriggerPrice      string `json:"triggerPrice"`
 	TriggerType       int64  `json:"triggerType"`
 	TriggerKind       int64  `json:"triggerKind"`
+	RequestHash       string `json:"requestHash"`
+	CanceledQty       string `json:"canceledQty"`
+	IsClosePosition   int64  `json:"isClosePosition"`
+	OcoGroupNo        string `json:"ocoGroupNo"`
+	ExpireAt          int64  `json:"expireAt"`
+	TriggeredAt       int64  `json:"triggeredAt"`
+	CompletionReason  string `json:"completionReason"`
 	CancelReason      string `json:"cancelReason"`
 	BizExt            string `json:"bizExt"`
+	Version           int64  `json:"version"`
 	SecondsDirection  int64  `json:"secondsDirection"`
 	DurationSeconds   int64  `json:"durationSeconds"`
 	CreateTimes       int64  `json:"createTimes"`
 	UpdateTimes       int64  `json:"updateTimes"`
+}
+
+type TradeOrderContract struct {
+	Id                int64  `json:"id"`
+	TenantId          int64  `json:"tenantId"`
+	OrderId           int64  `json:"orderId"`
+	MarginMode        int64  `json:"marginMode"`
+	Leverage          int64  `json:"leverage"`
+	MarginAsset       string `json:"marginAsset"`
+	MarginAmount      string `json:"marginAmount"`
+	ClosePositionType int64  `json:"closePositionType"`
+	LiquidationPrice  string `json:"liquidationPrice"`
+	TakeProfitPrice   string `json:"takeProfitPrice"`
+	StopLossPrice     string `json:"stopLossPrice"`
+	ReservedCloseQty  string `json:"reservedCloseQty"`
+	RiskPrice         string `json:"riskPrice"`
+	RiskTierId        int64  `json:"riskTierId"`
+	CreateTimes       int64  `json:"createTimes"`
+	UpdateTimes       int64  `json:"updateTimes"`
+}
+
+type TradeOrderDetailData struct {
+	Order    TradeOrder         `json:"order"`
+	Spot     TradeOrderSpot     `json:"spot,optional"`
+	Contract TradeOrderContract `json:"contract,optional"`
+	Seconds  TradeOrderSeconds  `json:"seconds,optional"`
+}
+
+type TradeOrderSeconds struct {
+	Id                    int64  `json:"id"`
+	TenantId              int64  `json:"tenantId"`
+	OrderId               int64  `json:"orderId"`
+	Direction             int64  `json:"direction"`
+	DurationSeconds       int64  `json:"durationSeconds"`
+	StakeAsset            string `json:"stakeAsset"`
+	StakeAmount           string `json:"stakeAmount"`
+	PayoutRate            string `json:"payoutRate"`
+	FeeRate               string `json:"feeRate"`
+	FrozenAt              int64  `json:"frozenAt"`
+	ActivatedAt           int64  `json:"activatedAt"`
+	StartPrice            string `json:"startPrice"`
+	StartPriceTime        int64  `json:"startPriceTime"`
+	StartPriceSource      string `json:"startPriceSource"`
+	ExpireTime            int64  `json:"expireTime"`
+	SettlementPrice       string `json:"settlementPrice"`
+	SettlementPriceTime   int64  `json:"settlementPriceTime"`
+	SettlementPriceSource string `json:"settlementPriceSource"`
+	PriceAlgorithm        string `json:"priceAlgorithm"`
+	Result                int64  `json:"result"`
+	ProfitAmount          string `json:"profitAmount"`
+	FeeAmount             string `json:"feeAmount"`
+	ReturnAmount          string `json:"returnAmount"`
+	SettlementStatus      int64  `json:"settlementStatus"`
+	ReservationNo         string `json:"reservationNo"`
+	SettlementReason      string `json:"settlementReason"`
+	SettledAt             int64  `json:"settledAt"`
+	Version               int64  `json:"version"`
+	CreateTimes           int64  `json:"createTimes"`
+	UpdateTimes           int64  `json:"updateTimes"`
+}
+
+type TradeOrderSpot struct {
+	Id           int64  `json:"id"`
+	TenantId     int64  `json:"tenantId"`
+	OrderId      int64  `json:"orderId"`
+	FrozenAsset  string `json:"frozenAsset"`
+	FrozenAmount string `json:"frozenAmount"`
+	SettleAsset  string `json:"settleAsset"`
+	SettleAmount string `json:"settleAmount"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateTimes  int64  `json:"updateTimes"`
 }
 
 type TradeSecondsPriceSnapshot struct {

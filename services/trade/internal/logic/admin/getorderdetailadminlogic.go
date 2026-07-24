@@ -38,7 +38,25 @@ func (l *GetOrderDetailAdminLogic) GetOrderDetailAdmin(in *trade.GetOrderDetailA
 	}
 
 	order := orderToProto(item)
-	if item.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SECONDS) {
+	data := &trade.GetOrderDetailData{Order: order}
+	switch trade.ProductType(item.ProductType) {
+	case trade.ProductType_PRODUCT_TYPE_SPOT:
+		spot, findErr := l.svcCtx.TradeOrderSpotModel.FindOneByTenantIdOrderId(l.ctx, item.TenantId, item.Id)
+		if findErr != nil && !errors.Is(findErr, models.ErrNotFound) {
+			return nil, findErr
+		}
+		if findErr == nil {
+			data.Spot = orderSpotToProto(spot)
+		}
+	case trade.ProductType_PRODUCT_TYPE_DERIVATIVE:
+		contract, findErr := l.svcCtx.TradeOrderContractModel.FindOneByTenantIdOrderId(l.ctx, item.TenantId, item.Id)
+		if findErr != nil && !errors.Is(findErr, models.ErrNotFound) {
+			return nil, findErr
+		}
+		if findErr == nil {
+			data.Contract = orderContractToProto(contract)
+		}
+	case trade.ProductType_PRODUCT_TYPE_SECONDS:
 		seconds, findErr := l.svcCtx.TradeOrderSecondsModel.FindOneByTenantIdOrderId(l.ctx, item.TenantId, item.Id)
 		if findErr != nil && !errors.Is(findErr, models.ErrNotFound) {
 			return nil, findErr
@@ -46,7 +64,24 @@ func (l *GetOrderDetailAdminLogic) GetOrderDetailAdmin(in *trade.GetOrderDetailA
 		if findErr == nil {
 			order.SecondsDirection = trade.SecondsDirection(seconds.Direction)
 			order.DurationSeconds = seconds.DurationSeconds
+			data.Seconds = &trade.TradeOrderSeconds{
+				Id: seconds.Id, TenantId: seconds.TenantId, OrderId: seconds.OrderId,
+				Direction: trade.SecondsDirection(seconds.Direction), DurationSeconds: seconds.DurationSeconds,
+				StakeAsset: seconds.StakeAsset, StakeAmount: seconds.StakeAmount.String(),
+				PayoutRate: seconds.PayoutRate.String(), FeeRate: seconds.FeeRate.String(),
+				FrozenAt: seconds.FrozenAt, ActivatedAt: seconds.ActivatedAt,
+				StartPrice: seconds.StartPrice.String(), StartPriceTime: seconds.StartPriceTime,
+				StartPriceSource: seconds.StartPriceSource, ExpireTime: seconds.ExpireTime,
+				SettlementPrice: seconds.SettlementPrice.String(), SettlementPriceTime: seconds.SettlementPriceTime,
+				SettlementPriceSource: seconds.SettlementPriceSource, PriceAlgorithm: seconds.PriceAlgorithm,
+				Result: trade.SecondsResult(seconds.Result), ProfitAmount: seconds.ProfitAmount.String(),
+				FeeAmount: seconds.FeeAmount.String(), ReturnAmount: seconds.ReturnAmount.String(),
+				SettlementStatus: trade.SecondsSettlementStatus(seconds.SettlementStatus),
+				ReservationNo:    seconds.ReservationNo, SettlementReason: seconds.SettlementReason,
+				SettledAt: seconds.SettledAt, Version: seconds.Version,
+				CreateTimes: seconds.CreateTimes, UpdateTimes: seconds.UpdateTimes,
+			}
 		}
 	}
-	return &trade.GetOrderDetailAdminResp{Base: helper.OkResp(), Data: order}, nil
+	return &trade.GetOrderDetailAdminResp{Base: helper.OkResp(), Data: data}, nil
 }

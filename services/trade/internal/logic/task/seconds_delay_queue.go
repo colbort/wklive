@@ -130,6 +130,25 @@ func handleSecondsDelayMessage(ctx context.Context, svcCtx *svc.ServiceContext, 
 				"seconds lifecycle stage=settlement_processed tenantId=%d orderId=%d settlementStatus=%d result=%d retryCount=%d lastError=%q err=%v",
 				message.TenantID, message.OrderID, current.SettlementStatus, current.Result, current.RetryCount, current.LastErrorMsg, processErr,
 			)
+			if processErr != nil &&
+				current.SettlementStatus == int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLING) &&
+				current.NextRetryAt > time.Now().UnixMilli() {
+				retryMessage := delayqueue.Message{
+					Action:   delayqueue.ActionSettle,
+					TenantID: current.TenantId,
+					OrderID:  current.OrderId,
+					Version:  current.Version,
+					DueAt:    current.ExpireTime,
+				}
+				retryErr := svcCtx.DelayQueue.At(retryMessage, time.UnixMilli(current.NextRetryAt))
+				if retryErr == nil {
+					logx.WithContext(ctx).Infof(
+						"seconds lifecycle stage=settlement_retry_enqueued tenantId=%d orderId=%d version=%d retryCount=%d nextRetryAt=%d expireTime=%d",
+						current.TenantId, current.OrderId, current.Version, current.RetryCount, current.NextRetryAt, current.ExpireTime,
+					)
+				}
+				processErr = errors.Join(processErr, retryErr)
+			}
 		}
 		return errors.Join(processErr, findErr)
 	case delayqueue.ActionExpireOrder:

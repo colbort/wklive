@@ -389,6 +389,10 @@ export type {
   TradeMarketSnapshot,
   GetMarketSnapshotListReq,
   GetMarketSnapshotListResp,
+  TradeOrderSeconds,
+  TradeOrderSpot,
+  TradeOrderContract,
+  TradeOrderDetailData,
 } from './trade/TradeService'
 export type {
   MemberRespBase,

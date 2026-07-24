@@ -159,10 +159,19 @@ func (l *ProcessSecondsSettlementsLogic) processSettlements(tenantID int64) erro
 					"seconds lifecycle stage=settlement_quote_failed tenantId=%d orderId=%d symbolId=%d source=%s expireTime=%d err=%v",
 					item.TenantId, item.OrderId, item.SymbolId, cfg.SettlementPriceSource, item.ExpireTime, err,
 				)
-				return l.moveSecondsToRefund(item, "invalid settlement quote: "+err.Error())
+				return fmt.Errorf("invalid settlement quote: %w", err)
 			}
 			if window := cfg.SettlementWindowMs; window > 0 && (quote.QuoteTs < item.ExpireTime-window || quote.QuoteTs > item.ExpireTime+window) {
-				return l.moveSecondsToRefund(item, "settlement quote outside configured window")
+				offset := quote.QuoteTs - item.ExpireTime
+				logx.WithContext(l.ctx).Errorf(
+					"seconds lifecycle stage=settlement_quote_outside_window tenantId=%d orderId=%d symbolId=%d source=%s expireTime=%d quoteTime=%d offsetMs=%d settlementWindowMs=%d quoteValidityMs=%d snapshotId=%s",
+					item.TenantId, item.OrderId, item.SymbolId, cfg.SettlementPriceSource, item.ExpireTime,
+					quote.QuoteTs, offset, window, cfg.QuoteValidityMs, quote.SnapshotID,
+				)
+				return fmt.Errorf(
+					"settlement quote outside configured window: expireTime=%d quoteTime=%d offsetMs=%d settlementWindowMs=%d",
+					item.ExpireTime, quote.QuoteTs, offset, window,
+				)
 			}
 			price := mustParseFloat(quote.LastPrice)
 			result := secondsResult(item.Direction, item.StartPrice, price, cfg.DrawTolerance)

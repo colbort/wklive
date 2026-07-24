@@ -206,7 +206,142 @@
             </el-descriptions-item>
           </el-descriptions>
 
-          <el-descriptions :title="t('trade.orderParams')" :column="2" border>
+          <el-descriptions v-if="detailSpot" :title="t('trade.spotOrderDetails')" :column="2" border>
+            <el-descriptions-item :label="t('trade.frozenAsset')">
+              {{ detailSpot.frozenAsset || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.frozenAmount')">
+              {{ displayAmount(detailSpot.frozenAmount) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.settleAsset')">
+              {{ detailSpot.settleAsset || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.settleAmount')">
+              {{ displayAmount(detailSpot.settleAmount) }}
+            </el-descriptions-item>
+          </el-descriptions>
+
+          <el-descriptions
+            v-if="detailContract"
+            :title="
+              detailData.contractType === 1
+                ? t('trade.perpetualOrderDetails')
+                : t('trade.deliveryOrderDetails')
+            "
+            :column="2"
+            border
+          >
+            <el-descriptions-item :label="t('trade.marginMode')">
+              {{ optionLabel('marginMode', detailContract.marginMode) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.leverage')">
+              {{ detailContract.leverage }}x
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.marginAsset')">
+              {{ detailContract.marginAsset || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.marginAmount')">
+              {{ displayAmount(detailContract.marginAmount) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.closePositionType')">
+              {{ closePositionTypeLabel(detailContract.closePositionType) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.reservedCloseQty')">
+              {{ displayAmount(detailContract.reservedCloseQty) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.liquidationPrice')">
+              {{ displayAmount(detailContract.liquidationPrice) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.riskPrice')">
+              {{ displayAmount(detailContract.riskPrice) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.takeProfitPrice')">
+              {{ displayAmount(detailContract.takeProfitPrice) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.stopLossPrice')">
+              {{ displayAmount(detailContract.stopLossPrice) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.riskTierId')" :span="2">
+              {{ detailContract.riskTierId || '-' }}
+            </el-descriptions-item>
+          </el-descriptions>
+
+          <el-descriptions v-if="detailSeconds" :title="t('trade.secondsDetails')" :column="2" border>
+            <el-descriptions-item :label="t('trade.side')">
+              {{ secondsDirectionLabel(detailSeconds.direction) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.durationSeconds')">
+              {{ detailSeconds.durationSeconds }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.stakeAmount')">
+              {{ displayAmount(detailSeconds.stakeAmount) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.stakeAsset')">
+              {{ detailSeconds.stakeAsset || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.payoutRate')">
+              {{ displayAmount(detailSeconds.payoutRate) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.secondsFeeRate')">
+              {{ displayAmount(detailSeconds.feeRate) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.secondsSettlementStatus')">
+              {{ secondsSettlementStatusLabel(detailSeconds.settlementStatus) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.secondsResult')">
+              {{ secondsResultLabel(detailSeconds.result) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.startPrice')">
+              {{ displayAmount(detailSeconds.startPrice) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.startPriceTime')">
+              {{ formatTimestamp(detailSeconds.startPriceTime) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.startPriceSource')" :span="2">
+              {{ detailSeconds.startPriceSource || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.frozenAt')">
+              {{ formatTimestamp(detailSeconds.frozenAt) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.activatedAt')">
+              {{ formatTimestamp(detailSeconds.activatedAt) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.expireTime')">
+              {{ formatTimestamp(detailSeconds.expireTime) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.settledAt')">
+              {{ formatTimestamp(detailSeconds.settledAt) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.settlementPrice')">
+              {{ displayAmount(detailSeconds.settlementPrice) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.settlementPriceTime')">
+              {{ formatTimestamp(detailSeconds.settlementPriceTime) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.settlementPriceSource')" :span="2">
+              {{ detailSeconds.settlementPriceSource || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.profitAmount')">
+              {{ displayAmount(detailSeconds.profitAmount) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.feeAmount')">
+              {{ displayAmount(detailSeconds.feeAmount) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.returnAmount')">
+              {{ displayAmount(detailSeconds.returnAmount) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.priceAlgorithm')">
+              {{ detailSeconds.priceAlgorithm || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.reservationNo')" :span="2">
+              {{ detailSeconds.reservationNo || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.settlementReason')" :span="2">
+              {{ detailSeconds.settlementReason || '-' }}
+            </el-descriptions-item>
+          </el-descriptions>
+
+          <el-descriptions v-else :title="t('trade.orderParams')" :column="2" border>
             <el-descriptions-item :label="t('trade.orderType')">
               {{ orderTypeLabel(detailData) }}
             </el-descriptions-item>
@@ -231,9 +366,15 @@
             <el-descriptions-item :label="t('trade.isReduceOnly')">
               {{ yesNoLabel(detailData.isReduceOnly) }}
             </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.isClosePosition')">
+              {{ yesNoLabel(detailData.isClosePosition) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.canceledQty')">
+              {{ displayAmount(detailData.canceledQty) }}
+            </el-descriptions-item>
           </el-descriptions>
 
-          <el-descriptions :title="t('trade.fillInfo')" :column="2" border>
+          <el-descriptions v-if="!detailSeconds" :title="t('trade.fillInfo')" :column="2" border>
             <el-descriptions-item :label="t('trade.filledQty')">
               {{ displayAmount(detailData.filledQty) }}
             </el-descriptions-item>
@@ -242,7 +383,7 @@
             </el-descriptions-item>
             <el-descriptions-item :label="t('trade.fillProgress')" :span="2">
               <div class="progress-row">
-                <el-progress :percentage="fillProgress" :stroke-width="10" />
+                <el-progress :percentage="fillProgress" :stroke-width="10" :show-text="false" />
                 <span>{{ fillProgress }}%</span>
               </div>
             </el-descriptions-item>
@@ -254,7 +395,7 @@
             </el-descriptions-item>
           </el-descriptions>
 
-          <el-descriptions :title="t('trade.triggerAndCancel')" :column="2" border>
+          <el-descriptions v-if="!detailSeconds" :title="t('trade.triggerAndCancel')" :column="2" border>
             <el-descriptions-item :label="t('trade.triggerPrice')">
               {{ displayAmount(detailData.triggerPrice) }}
             </el-descriptions-item>
@@ -264,6 +405,18 @@
             <el-descriptions-item :label="t('trade.cancelReason')" :span="2">
               {{ detailData.cancelReason || '-' }}
             </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.ocoGroupNo')">
+              {{ detailData.ocoGroupNo || '-' }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.expireAt')">
+              {{ formatTimestamp(detailData.expireAt) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.triggeredAt')">
+              {{ formatTimestamp(detailData.triggeredAt) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.completionReason')">
+              {{ detailData.completionReason || '-' }}
+            </el-descriptions-item>
           </el-descriptions>
 
           <el-descriptions :title="t('trade.timeAndExt')" :column="2" border>
@@ -272,6 +425,12 @@
             </el-descriptions-item>
             <el-descriptions-item :label="t('trade.updateTimes')">
               {{ formatDate(detailData.updateTimes) }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.version')">
+              {{ detailData.version }}
+            </el-descriptions-item>
+            <el-descriptions-item :label="t('trade.requestHash')">
+              {{ detailData.requestHash || '-' }}
             </el-descriptions-item>
             <el-descriptions-item v-if="detailData.bizExt" :label="t('trade.bizExt')" :span="2">
               <pre class="detail-code">{{ formatJsonText(detailData.bizExt) }}</pre>
@@ -289,7 +448,15 @@ import { useI18n } from 'vue-i18n'
 import { View } from '@element-plus/icons-vue'
 import Decimal from 'decimal.js'
 import { usePagination } from '@/composables'
-import { tradeService, type OptionGroup, type OptionItem, type TradeOrder } from '@/services'
+import {
+  tradeService,
+  type OptionGroup,
+  type OptionItem,
+  type TradeOrder,
+  type TradeOrderContract,
+  type TradeOrderSeconds,
+  type TradeOrderSpot,
+} from '@/services'
 import { formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
@@ -372,6 +539,9 @@ const detailLoading = ref(false)
 const rows = ref<TradeOrder[]>([])
 const detailVisible = ref(false)
 const detailData = ref<TradeOrder | null>(null)
+const detailSpot = ref<TradeOrderSpot | null>(null)
+const detailContract = ref<TradeOrderContract | null>(null)
+const detailSeconds = ref<TradeOrderSeconds | null>(null)
 const optionGroups = ref<OptionGroup[]>([])
 
 const query = reactive<OrderQuery>({
@@ -435,9 +605,15 @@ const showDetail = async (row: TradeOrder) => {
   detailVisible.value = true
   detailLoading.value = true
   detailData.value = row
+  detailSpot.value = null
+  detailContract.value = null
+  detailSeconds.value = null
   try {
     const res = await tradeService.getOrder({ tenantId: row.tenantId, id: row.id })
-    detailData.value = res.data || row
+    detailData.value = res.data?.order || row
+    detailSpot.value = res.data?.spot?.id ? res.data.spot : null
+    detailContract.value = res.data?.contract?.id ? res.data.contract : null
+    detailSeconds.value = res.data?.seconds?.id ? res.data.seconds : null
   } finally {
     detailLoading.value = false
   }
@@ -476,6 +652,48 @@ function orderDirectionLabel(order: TradeOrder) {
   return '-'
 }
 
+function secondsDirectionLabel(direction: number) {
+  if (direction === 1) return t('trade.secondsUp')
+  if (direction === 2) return t('trade.secondsDown')
+  return '-'
+}
+
+function closePositionTypeLabel(value: number) {
+  if (value === 0) return t('trade.closePositionNormal')
+  if (value === 1) return t('trade.closePositionLong')
+  if (value === 2) return t('trade.closePositionShort')
+  return String(value)
+}
+
+function secondsSettlementStatusLabel(status: number) {
+  const labels: Record<number, string> = {
+    0: t('trade.secondsPendingFreeze'),
+    1: t('trade.secondsActivating'),
+    2: t('trade.secondsActive'),
+    3: t('trade.secondsSettling'),
+    4: t('trade.secondsSettled'),
+    5: t('trade.secondsRefunding'),
+    6: t('trade.secondsRefunded'),
+    7: t('trade.secondsManualReview'),
+  }
+  return labels[status] || String(status)
+}
+
+function secondsResultLabel(result: number) {
+  const labels: Record<number, string> = {
+    0: t('trade.secondsResultPending'),
+    1: t('trade.secondsResultWin'),
+    2: t('trade.secondsResultLose'),
+    3: t('trade.secondsResultDraw'),
+    4: t('trade.secondsResultVoid'),
+  }
+  return labels[result] || String(result)
+}
+
+function formatTimestamp(value?: number) {
+  return value && value > 0 ? formatDate(value) : '-'
+}
+
 function orderDirectionTagType(order: TradeOrder) {
   return order.productType === 3
     ? sideTagType(order.secondsDirection)
@@ -509,16 +727,21 @@ function yesNoLabel(value?: number) {
 function calcFillProgress(order: TradeOrder | null) {
   if (!order) return 0
 
-  const calculate = (filled: string, total: string): number | null => {
+  const calculate = (
+    filled: string | number | undefined,
+    total: string | number | undefined,
+  ): number | null => {
     try {
       const totalValue = new Decimal(total || 0)
-      if (!totalValue.isPositive()) return null
+      const filledValue = new Decimal(filled || 0)
+      if (!totalValue.isFinite() || !totalValue.isPositive() || !filledValue.isFinite()) return null
 
-      return Decimal.min(new Decimal(filled || 0).div(totalValue).mul(100), 100)
+      const percentage = Decimal.max(0, Decimal.min(filledValue.div(totalValue).mul(100), 100))
         .toDecimalPlaces(0, Decimal.ROUND_HALF_UP)
         .toNumber()
+      return Number.isFinite(percentage) ? percentage : null
     } catch {
-      return 0
+      return null
     }
   }
 

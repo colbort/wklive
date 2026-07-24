@@ -163,12 +163,91 @@ type TradeOrder {
 	triggerPrice      string `json:"triggerPrice"`
 	triggerType       int64  `json:"triggerType"`
 	triggerKind       int64  `json:"triggerKind"`
+	requestHash       string `json:"requestHash"`
+	canceledQty       string `json:"canceledQty"`
+	isClosePosition   int64  `json:"isClosePosition"`
+	ocoGroupNo        string `json:"ocoGroupNo"`
+	expireAt          int64  `json:"expireAt"`
+	triggeredAt       int64  `json:"triggeredAt"`
+	completionReason  string `json:"completionReason"`
 	cancelReason      string `json:"cancelReason"`
 	bizExt            string `json:"bizExt"`
+	version           int64  `json:"version"`
 	secondsDirection  int64  `json:"secondsDirection"`
 	durationSeconds   int64  `json:"durationSeconds"`
 	createTimes       int64  `json:"createTimes"`
 	updateTimes       int64  `json:"updateTimes"`
+}
+
+type TradeOrderSeconds {
+	id                    int64  `json:"id"`
+	tenantId              int64  `json:"tenantId"`
+	orderId               int64  `json:"orderId"`
+	direction             int64  `json:"direction"`
+	durationSeconds       int64  `json:"durationSeconds"`
+	stakeAsset            string `json:"stakeAsset"`
+	stakeAmount           string `json:"stakeAmount"`
+	payoutRate            string `json:"payoutRate"`
+	feeRate               string `json:"feeRate"`
+	frozenAt              int64  `json:"frozenAt"`
+	activatedAt           int64  `json:"activatedAt"`
+	startPrice            string `json:"startPrice"`
+	startPriceTime        int64  `json:"startPriceTime"`
+	startPriceSource      string `json:"startPriceSource"`
+	expireTime            int64  `json:"expireTime"`
+	settlementPrice       string `json:"settlementPrice"`
+	settlementPriceTime   int64  `json:"settlementPriceTime"`
+	settlementPriceSource string `json:"settlementPriceSource"`
+	priceAlgorithm        string `json:"priceAlgorithm"`
+	result                int64  `json:"result"`
+	profitAmount          string `json:"profitAmount"`
+	feeAmount             string `json:"feeAmount"`
+	returnAmount          string `json:"returnAmount"`
+	settlementStatus      int64  `json:"settlementStatus"`
+	reservationNo         string `json:"reservationNo"`
+	settlementReason      string `json:"settlementReason"`
+	settledAt             int64  `json:"settledAt"`
+	version               int64  `json:"version"`
+	createTimes           int64  `json:"createTimes"`
+	updateTimes           int64  `json:"updateTimes"`
+}
+
+type TradeOrderSpot {
+	id           int64  `json:"id"`
+	tenantId     int64  `json:"tenantId"`
+	orderId      int64  `json:"orderId"`
+	frozenAsset  string `json:"frozenAsset"`
+	frozenAmount string `json:"frozenAmount"`
+	settleAsset  string `json:"settleAsset"`
+	settleAmount string `json:"settleAmount"`
+	createTimes  int64  `json:"createTimes"`
+	updateTimes  int64  `json:"updateTimes"`
+}
+
+type TradeOrderContract {
+	id                int64  `json:"id"`
+	tenantId          int64  `json:"tenantId"`
+	orderId           int64  `json:"orderId"`
+	marginMode        int64  `json:"marginMode"`
+	leverage          int64  `json:"leverage"`
+	marginAsset       string `json:"marginAsset"`
+	marginAmount      string `json:"marginAmount"`
+	closePositionType int64  `json:"closePositionType"`
+	liquidationPrice  string `json:"liquidationPrice"`
+	takeProfitPrice   string `json:"takeProfitPrice"`
+	stopLossPrice     string `json:"stopLossPrice"`
+	reservedCloseQty  string `json:"reservedCloseQty"`
+	riskPrice         string `json:"riskPrice"`
+	riskTierId        int64  `json:"riskTierId"`
+	createTimes       int64  `json:"createTimes"`
+	updateTimes       int64  `json:"updateTimes"`
+}
+
+type TradeOrderDetailData {
+	order    TradeOrder         `json:"order"`
+	spot     TradeOrderSpot     `json:"spot,optional"`
+	contract TradeOrderContract `json:"contract,optional"`
+	seconds  TradeOrderSeconds  `json:"seconds,optional"`
 }
 
 type TradeFill {
@@ -647,7 +726,7 @@ type GetOrderDetailAdminReq {
 
 type GetOrderDetailAdminResp {
 	RespBase
-	data TradeOrder `json:"data"`
+	data TradeOrderDetailData `json:"data"`
 }
 
 type GetFillListAdminReq {

@@ -41,6 +41,7 @@ import type {
   TradeCancelLog,
   TradeFill,
   TradeOrder,
+  TradeOrderDetailData,
   TradeSymbol,
   TradeSymbolDetailData,
   TradeSymbolDetailResp,
@@ -131,8 +132,10 @@ export function apiTradeListOrders(params: GetOrderListAdminReq): Promise<RespBa
   return get<TradeOrder[]>('/admin/trade/orders', params)
 }
 
-export function apiTradeGetOrder(params: GetOrderDetailAdminReq): Promise<RespBase<TradeOrder>> {
-  return get<TradeOrder>('/admin/trade/orders/detail', params)
+export function apiTradeGetOrder(
+  params: GetOrderDetailAdminReq,
+): Promise<RespBase<TradeOrderDetailData>> {
+  return get<TradeOrderDetailData>('/admin/trade/orders/detail', params)
 }
 
 export function apiTradeListFills(params: GetFillListAdminReq): Promise<RespBase<TradeFill[]>> {

@@ -3533,7 +3533,7 @@ func (x *GetOrderDetailAdminReq) GetId() int64 {
 type GetOrderDetailAdminResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          *TradeOrder            `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	Data          *GetOrderDetailData    `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3575,7 +3575,7 @@ func (x *GetOrderDetailAdminResp) GetBase() *common.RespBase {
 	return nil
 }
 
-func (x *GetOrderDetailAdminResp) GetData() *TradeOrder {
+func (x *GetOrderDetailAdminResp) GetData() *GetOrderDetailData {
 	if x != nil {
 		return x.Data
 	}
@@ -10473,10 +10473,10 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x04data\x18\x02 \x03(\v2\x11.trade.TradeOrderR\x04data\"E\n" +
 	"\x16GetOrderDetailAdminReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\"f\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"n\n" +
 	"\x17GetOrderDetailAdminResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
-	"\x04data\x18\x02 \x01(\v2\x11.trade.TradeOrderR\x04data\"\xf5\x01\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.trade.GetOrderDetailDataR\x04data\"\xf5\x01\n" +
 	"\x13GetFillListAdminReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12#\n" +
 	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x12\x17\n" +
@@ -11469,7 +11469,7 @@ var file_proto_trade_trade_proto_depIdxs = []int32{
 	126, // 99: trade.GetOrderListAdminResp.base:type_name -> common.RespBase
 	145, // 100: trade.GetOrderListAdminResp.data:type_name -> trade.TradeOrder
 	126, // 101: trade.GetOrderDetailAdminResp.base:type_name -> common.RespBase
-	145, // 102: trade.GetOrderDetailAdminResp.data:type_name -> trade.TradeOrder
+	15,  // 102: trade.GetOrderDetailAdminResp.data:type_name -> trade.GetOrderDetailData
 	146, // 103: trade.GetFillListAdminReq.page:type_name -> common.PageReq
 	127, // 104: trade.GetFillListAdminReq.product_type:type_name -> trade.ProductType
 	148, // 105: trade.GetFillListAdminReq.time_range:type_name -> trade.TimeRange

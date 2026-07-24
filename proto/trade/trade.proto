@@ -555,7 +555,7 @@ message GetOrderDetailAdminReq {
 
 message GetOrderDetailAdminResp {
   common.RespBase base = 1;
-  TradeOrder data = 2;
+  GetOrderDetailData data = 2;
 }
 
 message GetFillListAdminReq {
