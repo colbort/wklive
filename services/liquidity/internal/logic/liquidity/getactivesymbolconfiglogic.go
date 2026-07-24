@@ -27,14 +27,14 @@ func NewGetActiveSymbolConfigLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *GetActiveSymbolConfigLogic) GetActiveSymbolConfig(in *liquidity.GetActiveSymbolConfigReq) (*liquidity.GetSymbolConfigDetailResp, error) {
-	if in.TenantId <= 0 || in.SymbolId <= 0 {
-		return nil, fmt.Errorf("tenant_id and symbol_id are required")
+	if in.SymbolId <= 0 {
+		return nil, fmt.Errorf("symbol_id are required")
 	}
-	row, err := l.svcCtx.SymbolConfigModel.FindActiveByTenantSymbol(l.ctx, in.TenantId, in.SymbolId)
+	row, err := l.svcCtx.SymbolConfigModel.FindActiveBySymbol(l.ctx, in.SymbolId)
 	if err != nil {
 		return nil, err
 	}
-	levels, err := l.svcCtx.StrategyLevelModel.FindList(l.ctx, in.TenantId, row.Id, true)
+	levels, err := l.svcCtx.StrategyLevelModel.FindList(l.ctx, row.Id, true)
 	if err != nil {
 		return nil, err
 	}

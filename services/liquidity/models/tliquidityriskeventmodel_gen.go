@@ -23,15 +23,15 @@ var (
 	tLiquidityRiskEventRowsExpectAutoSet   = strings.Join(stringx.Remove(tLiquidityRiskEventFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tLiquidityRiskEventRowsWithPlaceHolder = strings.Join(stringx.Remove(tLiquidityRiskEventFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTLiquidityRiskEventIdPrefix              = "cache:tLiquidityRiskEvent:id:"
-	cacheTLiquidityRiskEventTenantIdEventNoPrefix = "cache:tLiquidityRiskEvent:tenantId:eventNo:"
+	cacheTLiquidityRiskEventIdPrefix      = "cache:tLiquidityRiskEvent:id:"
+	cacheTLiquidityRiskEventEventNoPrefix = "cache:tLiquidityRiskEvent:eventNo:"
 )
 
 type (
 	tLiquidityRiskEventModel interface {
 		Insert(ctx context.Context, data *TLiquidityRiskEvent) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TLiquidityRiskEvent, error)
-		FindOneByTenantIdEventNo(ctx context.Context, tenantId int64, eventNo string) (*TLiquidityRiskEvent, error)
+		FindOneByEventNo(ctx context.Context, eventNo string) (*TLiquidityRiskEvent, error)
 		Update(ctx context.Context, data *TLiquidityRiskEvent) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -43,7 +43,6 @@ type (
 
 	TLiquidityRiskEvent struct {
 		Id             int64          `db:"id"`              // 主键ID
-		TenantId       int64          `db:"tenant_id"`       // 租户ID
 		EventNo        string         `db:"event_no"`        // 风控事件号
 		ConfigId       int64          `db:"config_id"`       // 交易对流动性配置ID
 		ProviderId     int64          `db:"provider_id"`     // 流动性提供方ID
@@ -78,12 +77,12 @@ func (m *defaultTLiquidityRiskEventModel) Delete(ctx context.Context, id int64) 
 		return err
 	}
 
+	tLiquidityRiskEventEventNoKey := fmt.Sprintf("%s%v", cacheTLiquidityRiskEventEventNoPrefix, data.EventNo)
 	tLiquidityRiskEventIdKey := fmt.Sprintf("%s%v", cacheTLiquidityRiskEventIdPrefix, id)
-	tLiquidityRiskEventTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityRiskEventTenantIdEventNoPrefix, data.TenantId, data.EventNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tLiquidityRiskEventIdKey, tLiquidityRiskEventTenantIdEventNoKey)
+	}, tLiquidityRiskEventEventNoKey, tLiquidityRiskEventIdKey)
 	return err
 }
 
@@ -104,12 +103,12 @@ func (m *defaultTLiquidityRiskEventModel) FindOne(ctx context.Context, id int64)
 	}
 }
 
-func (m *defaultTLiquidityRiskEventModel) FindOneByTenantIdEventNo(ctx context.Context, tenantId int64, eventNo string) (*TLiquidityRiskEvent, error) {
-	tLiquidityRiskEventTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityRiskEventTenantIdEventNoPrefix, tenantId, eventNo)
+func (m *defaultTLiquidityRiskEventModel) FindOneByEventNo(ctx context.Context, eventNo string) (*TLiquidityRiskEvent, error) {
+	tLiquidityRiskEventEventNoKey := fmt.Sprintf("%s%v", cacheTLiquidityRiskEventEventNoPrefix, eventNo)
 	var resp TLiquidityRiskEvent
-	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityRiskEventTenantIdEventNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `event_no` = ? limit 1", tLiquidityRiskEventRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, eventNo); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityRiskEventEventNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `event_no` = ? limit 1", tLiquidityRiskEventRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, eventNo); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -125,12 +124,12 @@ func (m *defaultTLiquidityRiskEventModel) FindOneByTenantIdEventNo(ctx context.C
 }
 
 func (m *defaultTLiquidityRiskEventModel) Insert(ctx context.Context, data *TLiquidityRiskEvent) (sql.Result, error) {
+	tLiquidityRiskEventEventNoKey := fmt.Sprintf("%s%v", cacheTLiquidityRiskEventEventNoPrefix, data.EventNo)
 	tLiquidityRiskEventIdKey := fmt.Sprintf("%s%v", cacheTLiquidityRiskEventIdPrefix, data.Id)
-	tLiquidityRiskEventTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityRiskEventTenantIdEventNoPrefix, data.TenantId, data.EventNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityRiskEventRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.EventNo, data.ConfigId, data.ProviderId, data.SymbolId, data.RiskType, data.RiskLevel, data.MetricValue, data.ThresholdValue, data.ActionType, data.Status, data.Message, data.ContextJson, data.TriggeredAt, data.RecoveredAt, data.ClosedAt, data.OperatorId, data.CreateTimes, data.UpdateTimes)
-	}, tLiquidityRiskEventIdKey, tLiquidityRiskEventTenantIdEventNoKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityRiskEventRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.EventNo, data.ConfigId, data.ProviderId, data.SymbolId, data.RiskType, data.RiskLevel, data.MetricValue, data.ThresholdValue, data.ActionType, data.Status, data.Message, data.ContextJson, data.TriggeredAt, data.RecoveredAt, data.ClosedAt, data.OperatorId, data.CreateTimes, data.UpdateTimes)
+	}, tLiquidityRiskEventEventNoKey, tLiquidityRiskEventIdKey)
 	return ret, err
 }
 
@@ -140,12 +139,12 @@ func (m *defaultTLiquidityRiskEventModel) Update(ctx context.Context, newData *T
 		return err
 	}
 
+	tLiquidityRiskEventEventNoKey := fmt.Sprintf("%s%v", cacheTLiquidityRiskEventEventNoPrefix, data.EventNo)
 	tLiquidityRiskEventIdKey := fmt.Sprintf("%s%v", cacheTLiquidityRiskEventIdPrefix, data.Id)
-	tLiquidityRiskEventTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityRiskEventTenantIdEventNoPrefix, data.TenantId, data.EventNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tLiquidityRiskEventRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.EventNo, newData.ConfigId, newData.ProviderId, newData.SymbolId, newData.RiskType, newData.RiskLevel, newData.MetricValue, newData.ThresholdValue, newData.ActionType, newData.Status, newData.Message, newData.ContextJson, newData.TriggeredAt, newData.RecoveredAt, newData.ClosedAt, newData.OperatorId, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tLiquidityRiskEventIdKey, tLiquidityRiskEventTenantIdEventNoKey)
+		return conn.ExecCtx(ctx, query, newData.EventNo, newData.ConfigId, newData.ProviderId, newData.SymbolId, newData.RiskType, newData.RiskLevel, newData.MetricValue, newData.ThresholdValue, newData.ActionType, newData.Status, newData.Message, newData.ContextJson, newData.TriggeredAt, newData.RecoveredAt, newData.ClosedAt, newData.OperatorId, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tLiquidityRiskEventEventNoKey, tLiquidityRiskEventIdKey)
 	return err
 }
 

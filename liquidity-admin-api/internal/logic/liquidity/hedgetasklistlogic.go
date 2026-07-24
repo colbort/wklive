@@ -29,12 +29,8 @@ func NewHedgeTaskListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Hed
 }
 
 func (l *HedgeTaskListLogic) HedgeTaskList(req *types.PageQuery) (resp *types.HedgeListResp, err error) {
-	tenantID, err := logicutil.TenantID(l.ctx)
-	if err != nil {
-		return nil, err
-	}
 	out, err := l.svcCtx.LiquidityCli.GetHedgeTaskList(l.ctx, &pb.GetHedgeTaskListReq{
-		TenantId: tenantID, Status: pb.HedgeStatus(req.Status), Cursor: req.Cursor, Limit: listLimit(req.Limit),
+		Status: pb.HedgeStatus(req.Status), Cursor: req.Cursor, Limit: listLimit(req.Limit),
 	})
 	if err != nil {
 		return nil, err

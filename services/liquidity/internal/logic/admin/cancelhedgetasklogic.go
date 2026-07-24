@@ -32,9 +32,6 @@ func (l *CancelHedgeTaskLogic) CancelHedgeTask(in *liquidity.CancelHedgeTaskReq)
 	if err != nil {
 		return nil, err
 	}
-	if row.TenantId != in.TenantId {
-		return nil, fmt.Errorf("hedge task not found")
-	}
 	if row.Version != in.Version {
 		return nil, fmt.Errorf("hedge task version conflict")
 	}

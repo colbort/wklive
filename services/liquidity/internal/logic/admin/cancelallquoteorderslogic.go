@@ -32,9 +32,6 @@ func (l *CancelAllQuoteOrdersLogic) CancelAllQuoteOrders(in *liquidity.SymbolAct
 	if err != nil {
 		return nil, err
 	}
-	if config.TenantId != in.TenantId {
-		return nil, fmt.Errorf("symbol config not found")
-	}
 	if config.Version != in.Version {
 		return nil, fmt.Errorf("symbol config version conflict")
 	}
@@ -44,7 +41,7 @@ func (l *CancelAllQuoteOrdersLogic) CancelAllQuoteOrders(in *liquidity.SymbolAct
 		reason = "manual cancel all"
 	}
 	err = l.svcCtx.QuoteOrderModel.CancelActiveByConfig(
-		l.ctx, in.TenantId, in.ConfigId, reason, now,
+		l.ctx, in.ConfigId, reason, now,
 		int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_PENDING_SUBMIT),
 		int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_CANCELED),
 		int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_CANCELING),

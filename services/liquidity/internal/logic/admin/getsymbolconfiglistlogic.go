@@ -28,11 +28,8 @@ func NewGetSymbolConfigListLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *GetSymbolConfigListLogic) GetSymbolConfigList(in *liquidity.GetSymbolConfigListReq) (*liquidity.GetSymbolConfigListResp, error) {
-	if err := helpers.RequireTenant(in.TenantId); err != nil {
-		return nil, err
-	}
 	rows, total, err := l.svcCtx.SymbolConfigModel.FindPage(l.ctx, models.LiquiditySymbolConfigPageFilter{
-		TenantId: in.TenantId, SymbolId: in.SymbolId, ProductType: int64(in.ProductType),
+		SymbolId: in.SymbolId, ProductType: int64(in.ProductType),
 		ContractType: int64(in.ContractType), LiquidityMode: int64(in.LiquidityMode),
 		Status: int64(in.Status), Keyword: strings.TrimSpace(in.Keyword),
 	}, in.Cursor, int64(in.Limit))

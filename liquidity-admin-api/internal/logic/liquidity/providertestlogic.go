@@ -29,12 +29,12 @@ func NewProviderTestLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Prov
 }
 
 func (l *ProviderTestLogic) ProviderTest(req *types.ProviderActionReq) (resp *types.RespBase, err error) {
-	tenantID, userID, err := logicutil.Identity(l.ctx)
+	_, userID, err := logicutil.Identity(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 	out, err := l.svcCtx.LiquidityCli.TestProviderConnection(l.ctx, &pb.TestProviderConnectionReq{
-		TenantId: tenantID, Id: req.Id, OperatorId: userID,
+		Id: req.Id, OperatorId: userID,
 	})
 	if err != nil {
 		return nil, err

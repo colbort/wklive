@@ -5,7 +5,7 @@
 -- 2. Price, quantity and notional columns use natural trading units, not asset minor units.
 -- 3. Cross-service identifiers (trade symbol/order/user) are not protected by foreign keys.
 -- 4. API secrets are never stored here; credential_ref points to an external secret manager.
--- 5. Every write path must use tenant_id and an idempotent business number.
+-- 5. Liquidity is a platform-level domain; every write path must use an idempotent business number.
 
 SET NAMES utf8mb4;
 
@@ -26,8 +26,7 @@ DROP TABLE IF EXISTS `t_liquidity_provider`;
 
 CREATE TABLE `t_liquidity_provider` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT NOT NULL COMMENT '租户ID',
-  `provider_code` VARCHAR(64) NOT NULL COMMENT '租户内唯一提供方编码',
+  `provider_code` VARCHAR(64) NOT NULL COMMENT '平台唯一提供方编码',
   `provider_name` VARCHAR(128) NOT NULL DEFAULT '' COMMENT '提供方名称',
   `provider_type` TINYINT NOT NULL COMMENT '类型：1平台内部做市 2外部流动性',
   `trade_user_id` BIGINT NOT NULL DEFAULT 0 COMMENT '内部做市用户ID；外部提供方为0',
@@ -45,9 +44,9 @@ CREATE TABLE `t_liquidity_provider` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_provider_code` (`tenant_id`, `provider_code`),
-  KEY `idx_tenant_type_status` (`tenant_id`, `provider_type`, `status`),
-  KEY `idx_trade_user` (`tenant_id`, `trade_user_id`),
+  UNIQUE KEY `uk_provider_code` (`provider_code`),
+  KEY `idx_type_status` (`provider_type`, `status`),
+  KEY `idx_trade_user` (`trade_user_id`),
   CONSTRAINT `chk_liquidity_provider_type` CHECK (`provider_type` IN (1, 2)),
   CONSTRAINT `chk_liquidity_provider_environment` CHECK (`environment` IN (1, 2)),
   CONSTRAINT `chk_liquidity_provider_status` CHECK (`status` IN (1, 2)),
@@ -61,7 +60,6 @@ CREATE TABLE `t_liquidity_provider` (
 
 CREATE TABLE `t_liquidity_symbol_config` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT NOT NULL COMMENT '租户ID',
   `symbol_id` BIGINT NOT NULL COMMENT 'trade.t_trade_symbol.id',
   `symbol` VARCHAR(64) NOT NULL COMMENT '内部交易标的代码快照',
   `product_type` TINYINT NOT NULL COMMENT '产品：1现货 2衍生品',
@@ -99,10 +97,10 @@ CREATE TABLE `t_liquidity_symbol_config` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_symbol_product` (`tenant_id`, `symbol_id`, `product_type`),
-  KEY `idx_tenant_status` (`tenant_id`, `status`),
-  KEY `idx_internal_provider` (`tenant_id`, `internal_provider_id`, `status`),
-  KEY `idx_external_provider` (`tenant_id`, `external_provider_id`, `status`),
+  UNIQUE KEY `uk_symbol_product` (`symbol_id`, `product_type`),
+  KEY `idx_status` (`status`),
+  KEY `idx_internal_provider` (`internal_provider_id`, `status`),
+  KEY `idx_external_provider` (`external_provider_id`, `status`),
   CONSTRAINT `chk_liquidity_symbol_product` CHECK (`product_type` IN (1, 2)),
   CONSTRAINT `chk_liquidity_contract_type` CHECK (
     (`product_type` = 1 AND `contract_type` = 0)
@@ -134,7 +132,6 @@ CREATE TABLE `t_liquidity_symbol_config` (
 
 CREATE TABLE `t_liquidity_strategy_level` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT NOT NULL COMMENT '租户ID',
   `config_id` BIGINT NOT NULL COMMENT '交易对流动性配置ID',
   `level_no` INT NOT NULL COMMENT '深度档位，从1开始',
   `bid_spread_bps` DECIMAL(20,8) NOT NULL COMMENT '买单相对参考价向下偏移基点',
@@ -146,8 +143,8 @@ CREATE TABLE `t_liquidity_strategy_level` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_config_level` (`tenant_id`, `config_id`, `level_no`),
-  KEY `idx_config_enabled` (`tenant_id`, `config_id`, `enabled`),
+  UNIQUE KEY `uk_config_level` (`config_id`, `level_no`),
+  KEY `idx_config_enabled` (`config_id`, `enabled`),
   CONSTRAINT `chk_liquidity_level_no` CHECK (`level_no` > 0),
   CONSTRAINT `chk_liquidity_level_spread` CHECK (`bid_spread_bps` >= 0 AND `ask_spread_bps` >= 0),
   CONSTRAINT `chk_liquidity_level_qty` CHECK (`bid_qty` > 0 AND `ask_qty` > 0),
@@ -156,7 +153,6 @@ CREATE TABLE `t_liquidity_strategy_level` (
 
 CREATE TABLE `t_liquidity_quote_cycle` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT NOT NULL COMMENT '租户ID',
   `cycle_no` VARCHAR(64) NOT NULL COMMENT '报价周期业务号',
   `config_id` BIGINT NOT NULL COMMENT '交易对流动性配置ID',
   `symbol_id` BIGINT NOT NULL COMMENT '内部交易标的ID',
@@ -175,15 +171,14 @@ CREATE TABLE `t_liquidity_quote_cycle` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_cycle_no` (`tenant_id`, `cycle_no`),
-  KEY `idx_config_status_time` (`tenant_id`, `config_id`, `status`, `create_times`),
-  KEY `idx_symbol_time` (`tenant_id`, `symbol_id`, `create_times`),
+  UNIQUE KEY `uk_cycle_no` (`cycle_no`),
+  KEY `idx_config_status_time` (`config_id`, `status`, `create_times`),
+  KEY `idx_symbol_time` (`symbol_id`, `create_times`),
   CONSTRAINT `chk_liquidity_cycle_status` CHECK (`status` IN (1, 2, 3, 4, 5, 6))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='做市报价执行周期';
 
 CREATE TABLE `t_liquidity_quote_order` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT NOT NULL COMMENT '租户ID',
   `quote_no` VARCHAR(64) NOT NULL COMMENT '报价订单业务号',
   `cycle_id` BIGINT NOT NULL COMMENT '报价周期ID',
   `config_id` BIGINT NOT NULL COMMENT '交易对流动性配置ID',
@@ -205,11 +200,11 @@ CREATE TABLE `t_liquidity_quote_order` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_quote_no` (`tenant_id`, `quote_no`),
-  UNIQUE KEY `uk_tenant_client_order_id` (`tenant_id`, `client_order_id`),
-  KEY `idx_config_status_expire` (`tenant_id`, `config_id`, `status`, `expire_at`),
-  KEY `idx_internal_order` (`tenant_id`, `internal_order_id`),
-  KEY `idx_cycle_side_level` (`tenant_id`, `cycle_id`, `side`, `level_no`),
+  UNIQUE KEY `uk_quote_no` (`quote_no`),
+  UNIQUE KEY `uk_client_order_id` (`client_order_id`),
+  KEY `idx_config_status_expire` (`config_id`, `status`, `expire_at`),
+  KEY `idx_internal_order` (`internal_order_id`),
+  KEY `idx_cycle_side_level` (`cycle_id`, `side`, `level_no`),
   CONSTRAINT `chk_liquidity_quote_side` CHECK (`side` IN (1, 2)),
   CONSTRAINT `chk_liquidity_quote_value` CHECK (`level_no` > 0 AND `price` > 0 AND `qty` > 0 AND `filled_qty` >= 0 AND `filled_qty` <= `qty`),
   CONSTRAINT `chk_liquidity_quote_status` CHECK (`status` IN (1, 2, 3, 4, 5, 6, 7, 8))
@@ -217,7 +212,6 @@ CREATE TABLE `t_liquidity_quote_order` (
 
 CREATE TABLE `t_liquidity_external_order` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT NOT NULL COMMENT '租户ID',
   `order_no` VARCHAR(64) NOT NULL COMMENT '内部外部订单业务号',
   `request_no` VARCHAR(64) NOT NULL COMMENT '外部下单幂等请求号',
   `provider_id` BIGINT NOT NULL COMMENT '外部流动性提供方ID',
@@ -250,12 +244,12 @@ CREATE TABLE `t_liquidity_external_order` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_order_no` (`tenant_id`, `order_no`),
-  UNIQUE KEY `uk_tenant_request_no` (`tenant_id`, `request_no`),
+  UNIQUE KEY `uk_order_no` (`order_no`),
+  UNIQUE KEY `uk_request_no` (`request_no`),
   UNIQUE KEY `uk_provider_external_order` (`provider_id`, `external_order_id`),
-  KEY `idx_provider_status_retry` (`tenant_id`, `provider_id`, `status`, `next_retry_at`),
-  KEY `idx_reference` (`tenant_id`, `reference_type`, `reference_id`),
-  KEY `idx_symbol_time` (`tenant_id`, `symbol_id`, `create_times`),
+  KEY `idx_provider_status_retry` (`provider_id`, `status`, `next_retry_at`),
+  KEY `idx_reference` (`reference_type`, `reference_id`),
+  KEY `idx_symbol_time` (`symbol_id`, `create_times`),
   CONSTRAINT `chk_liquidity_external_purpose` CHECK (`purpose` IN (1, 2, 3)),
   CONSTRAINT `chk_liquidity_external_side` CHECK (`side` IN (1, 2)),
   CONSTRAINT `chk_liquidity_external_order_type` CHECK (`order_type` IN (1, 2)),
@@ -269,7 +263,6 @@ CREATE TABLE `t_liquidity_external_order` (
 
 CREATE TABLE `t_liquidity_external_fill` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT NOT NULL COMMENT '租户ID',
   `provider_id` BIGINT NOT NULL COMMENT '外部流动性提供方ID',
   `external_order_id` BIGINT NOT NULL COMMENT 't_liquidity_external_order.id',
   `fill_no` VARCHAR(128) NOT NULL COMMENT '内部成交幂等号',
@@ -291,9 +284,9 @@ CREATE TABLE `t_liquidity_external_fill` (
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_provider_external_trade` (`provider_id`, `external_trade_id`),
-  UNIQUE KEY `uk_tenant_fill_no` (`tenant_id`, `fill_no`),
-  KEY `idx_order` (`tenant_id`, `external_order_id`),
-  KEY `idx_settlement_retry` (`tenant_id`, `settlement_status`, `next_retry_at`),
+  UNIQUE KEY `uk_fill_no` (`fill_no`),
+  KEY `idx_order` (`external_order_id`),
+  KEY `idx_settlement_retry` (`settlement_status`, `next_retry_at`),
   CONSTRAINT `chk_liquidity_fill_side` CHECK (`side` IN (1, 2)),
   CONSTRAINT `chk_liquidity_fill_value` CHECK (`price` > 0 AND `qty` > 0 AND `amount` > 0 AND `fee_amount` >= 0),
   CONSTRAINT `chk_liquidity_fill_type` CHECK (`liquidity_type` IN (0, 1, 2)),
@@ -302,7 +295,6 @@ CREATE TABLE `t_liquidity_external_fill` (
 
 CREATE TABLE `t_liquidity_hedge_task` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT NOT NULL COMMENT '租户ID',
   `hedge_no` VARCHAR(64) NOT NULL COMMENT '对冲业务号',
   `config_id` BIGINT NOT NULL COMMENT '交易对流动性配置ID',
   `provider_id` BIGINT NOT NULL COMMENT '外部对冲提供方ID',
@@ -322,9 +314,9 @@ CREATE TABLE `t_liquidity_hedge_task` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_hedge_no` (`tenant_id`, `hedge_no`),
-  KEY `idx_config_status_retry` (`tenant_id`, `config_id`, `status`, `next_retry_at`),
-  KEY `idx_provider_status` (`tenant_id`, `provider_id`, `status`),
+  UNIQUE KEY `uk_hedge_no` (`hedge_no`),
+  KEY `idx_config_status_retry` (`config_id`, `status`, `next_retry_at`),
+  KEY `idx_provider_status` (`provider_id`, `status`),
   CONSTRAINT `chk_liquidity_hedge_trigger` CHECK (`trigger_type` IN (1, 2, 3, 4)),
   CONSTRAINT `chk_liquidity_hedge_side` CHECK (`side` IN (1, 2)),
   CONSTRAINT `chk_liquidity_hedge_qty` CHECK (`target_qty` > 0 AND `executed_qty` >= 0 AND `executed_qty` <= `target_qty`),
@@ -333,7 +325,6 @@ CREATE TABLE `t_liquidity_hedge_task` (
 
 CREATE TABLE `t_liquidity_inventory_snapshot` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT NOT NULL COMMENT '租户ID',
   `snapshot_no` VARCHAR(64) NOT NULL COMMENT '库存快照业务号',
   `config_id` BIGINT NOT NULL COMMENT '交易对流动性配置ID',
   `provider_id` BIGINT NOT NULL COMMENT '流动性提供方ID',
@@ -357,9 +348,9 @@ CREATE TABLE `t_liquidity_inventory_snapshot` (
   `raw_payload` JSON NULL COMMENT '外部或计算原文',
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_snapshot_no` (`tenant_id`, `snapshot_no`),
-  KEY `idx_config_snapshot_time` (`tenant_id`, `config_id`, `snapshot_time`),
-  KEY `idx_provider_snapshot_time` (`tenant_id`, `provider_id`, `snapshot_time`),
+  UNIQUE KEY `uk_snapshot_no` (`snapshot_no`),
+  KEY `idx_config_snapshot_time` (`config_id`, `snapshot_time`),
+  KEY `idx_provider_snapshot_time` (`provider_id`, `snapshot_time`),
   CONSTRAINT `chk_liquidity_inventory_source` CHECK (`source` IN (1, 2, 3)),
   CONSTRAINT `chk_liquidity_inventory_amount` CHECK (
     `base_total` >= 0 AND `base_available` >= 0 AND `base_frozen` >= 0
@@ -370,7 +361,6 @@ CREATE TABLE `t_liquidity_inventory_snapshot` (
 
 CREATE TABLE `t_liquidity_risk_event` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT NOT NULL COMMENT '租户ID',
   `event_no` VARCHAR(64) NOT NULL COMMENT '风控事件号',
   `config_id` BIGINT NOT NULL DEFAULT 0 COMMENT '交易对流动性配置ID',
   `provider_id` BIGINT NOT NULL DEFAULT 0 COMMENT '流动性提供方ID',
@@ -390,9 +380,9 @@ CREATE TABLE `t_liquidity_risk_event` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_event_no` (`tenant_id`, `event_no`),
-  KEY `idx_tenant_status_level` (`tenant_id`, `status`, `risk_level`, `triggered_at`),
-  KEY `idx_config_type_time` (`tenant_id`, `config_id`, `risk_type`, `triggered_at`),
+  UNIQUE KEY `uk_event_no` (`event_no`),
+  KEY `idx_status_level` (`status`, `risk_level`, `triggered_at`),
+  KEY `idx_config_type_time` (`config_id`, `risk_type`, `triggered_at`),
   CONSTRAINT `chk_liquidity_risk_level` CHECK (`risk_level` IN (1, 2, 3, 4)),
   CONSTRAINT `chk_liquidity_risk_action` CHECK (`action_type` IN (1, 2, 3, 4, 5)),
   CONSTRAINT `chk_liquidity_risk_status` CHECK (`status` IN (1, 2, 3, 4))
@@ -400,7 +390,6 @@ CREATE TABLE `t_liquidity_risk_event` (
 
 CREATE TABLE `t_liquidity_reconcile_batch` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT NOT NULL COMMENT '租户ID',
   `batch_no` VARCHAR(64) NOT NULL COMMENT '对账批次号',
   `provider_id` BIGINT NOT NULL COMMENT '外部流动性提供方ID',
   `reconcile_type` TINYINT NOT NULL COMMENT '类型：1订单 2成交 3余额 4持仓',
@@ -417,9 +406,9 @@ CREATE TABLE `t_liquidity_reconcile_batch` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_batch_no` (`tenant_id`, `batch_no`),
-  KEY `idx_provider_type_window` (`tenant_id`, `provider_id`, `reconcile_type`, `window_start`),
-  KEY `idx_status_time` (`tenant_id`, `status`, `create_times`),
+  UNIQUE KEY `uk_batch_no` (`batch_no`),
+  KEY `idx_provider_type_window` (`provider_id`, `reconcile_type`, `window_start`),
+  KEY `idx_status_time` (`status`, `create_times`),
   CONSTRAINT `chk_liquidity_reconcile_type` CHECK (`reconcile_type` IN (1, 2, 3, 4)),
   CONSTRAINT `chk_liquidity_reconcile_window` CHECK (`window_end` > `window_start`),
   CONSTRAINT `chk_liquidity_reconcile_status` CHECK (`status` IN (1, 2, 3, 4, 5))
@@ -427,7 +416,6 @@ CREATE TABLE `t_liquidity_reconcile_batch` (
 
 CREATE TABLE `t_liquidity_reconcile_detail` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT NOT NULL COMMENT '租户ID',
   `batch_id` BIGINT NOT NULL COMMENT '对账批次ID',
   `difference_no` VARCHAR(64) NOT NULL COMMENT '差异业务号',
   `difference_type` TINYINT NOT NULL COMMENT '差异：1本地缺失 2外部缺失 3状态不一致 4金额不一致 5其他',
@@ -443,16 +431,15 @@ CREATE TABLE `t_liquidity_reconcile_detail` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_difference_no` (`tenant_id`, `difference_no`),
-  KEY `idx_batch_status` (`tenant_id`, `batch_id`, `status`),
-  KEY `idx_business_reference` (`tenant_id`, `business_type`, `local_reference`, `external_reference`),
+  UNIQUE KEY `uk_difference_no` (`difference_no`),
+  KEY `idx_batch_status` (`batch_id`, `status`),
+  KEY `idx_business_reference` (`business_type`, `local_reference`, `external_reference`),
   CONSTRAINT `chk_liquidity_difference_type` CHECK (`difference_type` IN (1, 2, 3, 4, 5)),
   CONSTRAINT `chk_liquidity_difference_status` CHECK (`status` IN (1, 2, 3, 4, 5))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='外部流动性对账差异';
 
 CREATE TABLE `t_liquidity_event_inbox` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT NOT NULL COMMENT '租户ID',
   `consumer` VARCHAR(64) NOT NULL COMMENT '消费者标识',
   `event_no` VARCHAR(128) NOT NULL COMMENT '上游事件唯一号',
   `event_type` VARCHAR(64) NOT NULL COMMENT '事件类型',
@@ -469,13 +456,12 @@ CREATE TABLE `t_liquidity_event_inbox` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_consumer_event` (`consumer`, `event_no`),
   KEY `idx_status_retry` (`status`, `next_retry_at`),
-  KEY `idx_aggregate` (`tenant_id`, `aggregate_type`, `aggregate_id`),
+  KEY `idx_aggregate` (`aggregate_type`, `aggregate_id`),
   CONSTRAINT `chk_liquidity_inbox_status` CHECK (`status` IN (1, 2, 3))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='可靠消费与幂等收件箱';
 
 CREATE TABLE `t_liquidity_event_outbox` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` BIGINT NOT NULL COMMENT '租户ID',
   `event_no` VARCHAR(128) NOT NULL COMMENT '事件唯一号',
   `event_type` VARCHAR(64) NOT NULL COMMENT '事件类型',
   `topic` VARCHAR(128) NOT NULL COMMENT '目标主题',
@@ -492,9 +478,9 @@ CREATE TABLE `t_liquidity_event_outbox` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_event_no` (`tenant_id`, `event_no`),
+  UNIQUE KEY `uk_event_no` (`event_no`),
   KEY `idx_status_retry` (`status`, `next_retry_at`),
-  KEY `idx_aggregate` (`tenant_id`, `aggregate_type`, `aggregate_id`),
+  KEY `idx_aggregate` (`aggregate_type`, `aggregate_id`),
   CONSTRAINT `chk_liquidity_outbox_status` CHECK (`status` IN (1, 2, 3, 4)),
   CONSTRAINT `chk_liquidity_outbox_retry` CHECK (`retry_count` >= 0 AND `max_retry_count` > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='可靠发布发件箱';

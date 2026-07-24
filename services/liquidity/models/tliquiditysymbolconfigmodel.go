@@ -14,18 +14,18 @@ var _ TLiquiditySymbolConfigModel = (*customTLiquiditySymbolConfigModel)(nil)
 
 type (
 	LiquiditySymbolConfigPageFilter struct {
-		TenantId, SymbolId, ProductType, ContractType int64
-		LiquidityMode, Status                         int64
-		Keyword                                       string
+		SymbolId, ProductType, ContractType int64
+		LiquidityMode, Status               int64
+		Keyword                             string
 	}
 	// TLiquiditySymbolConfigModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTLiquiditySymbolConfigModel.
 	TLiquiditySymbolConfigModel interface {
 		tLiquiditySymbolConfigModel
 		FindPage(ctx context.Context, filter LiquiditySymbolConfigPageFilter, cursor, limit int64) ([]*TLiquiditySymbolConfig, int64, error)
-		FindByTenantAndIDOrSymbol(ctx context.Context, tenantID, id, symbolID int64) (*TLiquiditySymbolConfig, error)
-		FindActiveByTenantSymbol(ctx context.Context, tenantID, symbolID int64) (*TLiquiditySymbolConfig, error)
-		FindActiveExternalByTenantSymbol(ctx context.Context, tenantID, symbolID int64) (*TLiquiditySymbolConfig, error)
+		FindByIDOrSymbol(ctx context.Context, id, symbolID int64) (*TLiquiditySymbolConfig, error)
+		FindActiveBySymbol(ctx context.Context, symbolID int64) (*TLiquiditySymbolConfig, error)
+		FindActiveExternalBySymbol(ctx context.Context, symbolID int64) (*TLiquiditySymbolConfig, error)
 	}
 
 	customTLiquiditySymbolConfigModel struct {
@@ -43,7 +43,6 @@ func NewTLiquiditySymbolConfigModel(conn sqlx.SqlConn, c cache.CacheConf, opts .
 func (m *customTLiquiditySymbolConfigModel) FindPage(ctx context.Context, filter LiquiditySymbolConfigPageFilter, cursor, limit int64) ([]*TLiquiditySymbolConfig, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := sqlutil.NewPageQueryBuilder()
-	b.EqInt64("tenant_id", filter.TenantId)
 	b.EqInt64("symbol_id", filter.SymbolId)
 	b.EqInt64("product_type", filter.ProductType)
 	b.EqInt64("contract_type", filter.ContractType)
@@ -73,31 +72,31 @@ func (m *customTLiquiditySymbolConfigModel) FindPage(ctx context.Context, filter
 	return rows, total, nil
 }
 
-func (m *customTLiquiditySymbolConfigModel) FindByTenantAndIDOrSymbol(ctx context.Context, tenantID, id, symbolID int64) (*TLiquiditySymbolConfig, error) {
+func (m *customTLiquiditySymbolConfigModel) FindByIDOrSymbol(ctx context.Context, id, symbolID int64) (*TLiquiditySymbolConfig, error) {
 	var row TLiquiditySymbolConfig
-	query, arg := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND id = ? LIMIT 1", tLiquiditySymbolConfigRows, m.table), id
+	query, arg := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1", tLiquiditySymbolConfigRows, m.table), id
 	if id <= 0 {
-		query, arg = fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND symbol_id = ? LIMIT 1", tLiquiditySymbolConfigRows, m.table), symbolID
+		query, arg = fmt.Sprintf("SELECT %s FROM %s WHERE symbol_id = ? LIMIT 1", tLiquiditySymbolConfigRows, m.table), symbolID
 	}
-	if err := m.QueryRowNoCacheCtx(ctx, &row, query, tenantID, arg); err != nil {
+	if err := m.QueryRowNoCacheCtx(ctx, &row, query, arg); err != nil {
 		return nil, err
 	}
 	return &row, nil
 }
 
-func (m *customTLiquiditySymbolConfigModel) FindActiveByTenantSymbol(ctx context.Context, tenantID, symbolID int64) (*TLiquiditySymbolConfig, error) {
+func (m *customTLiquiditySymbolConfigModel) FindActiveBySymbol(ctx context.Context, symbolID int64) (*TLiquiditySymbolConfig, error) {
 	var row TLiquiditySymbolConfig
-	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND symbol_id = ? AND status = 1 LIMIT 1", tLiquiditySymbolConfigRows, m.table)
-	if err := m.QueryRowNoCacheCtx(ctx, &row, query, tenantID, symbolID); err != nil {
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE symbol_id = ? AND status = 1 LIMIT 1", tLiquiditySymbolConfigRows, m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &row, query, symbolID); err != nil {
 		return nil, err
 	}
 	return &row, nil
 }
 
-func (m *customTLiquiditySymbolConfigModel) FindActiveExternalByTenantSymbol(ctx context.Context, tenantID, symbolID int64) (*TLiquiditySymbolConfig, error) {
+func (m *customTLiquiditySymbolConfigModel) FindActiveExternalBySymbol(ctx context.Context, symbolID int64) (*TLiquiditySymbolConfig, error) {
 	var row TLiquiditySymbolConfig
-	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND symbol_id = ? AND status = 1 AND liquidity_mode IN (2, 3) LIMIT 1", tLiquiditySymbolConfigRows, m.table)
-	if err := m.QueryRowNoCacheCtx(ctx, &row, query, tenantID, symbolID); err != nil {
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE symbol_id = ? AND status = 1 AND liquidity_mode IN (2, 3) LIMIT 1", tLiquiditySymbolConfigRows, m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &row, query, symbolID); err != nil {
 		return nil, err
 	}
 	return &row, nil

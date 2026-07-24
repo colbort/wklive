@@ -28,8 +28,8 @@ func NewSetStrategyLevelsLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *SetStrategyLevelsLogic) SetStrategyLevels(in *liquidity.SetStrategyLevelsReq) (*liquidity.CommonResp, error) {
-	if in.TenantId <= 0 || in.ConfigId <= 0 {
-		return nil, fmt.Errorf("tenant_id and config_id are required")
+	if in.ConfigId <= 0 {
+		return nil, fmt.Errorf("config_id are required")
 	}
 	if len(in.Levels) == 0 {
 		return nil, fmt.Errorf("at least one strategy level is required")
@@ -37,9 +37,6 @@ func (l *SetStrategyLevelsLogic) SetStrategyLevels(in *liquidity.SetStrategyLeve
 	config, err := l.svcCtx.SymbolConfigModel.FindOne(l.ctx, in.ConfigId)
 	if err != nil {
 		return nil, err
-	}
-	if config.TenantId != in.TenantId {
-		return nil, fmt.Errorf("symbol config not found")
 	}
 	if config.Version != in.ConfigVersion {
 		return nil, fmt.Errorf("symbol config version conflict")
@@ -83,7 +80,7 @@ func (l *SetStrategyLevelsLogic) SetStrategyLevels(in *liquidity.SetStrategyLeve
 		})
 	}
 	now := time.Now().UnixMilli()
-	if err := l.svcCtx.StrategyLevelModel.Replace(l.ctx, in.TenantId, in.ConfigId, parsed, now); err != nil {
+	if err := l.svcCtx.StrategyLevelModel.Replace(l.ctx, in.ConfigId, parsed, now); err != nil {
 		return nil, err
 	}
 	config.Version++

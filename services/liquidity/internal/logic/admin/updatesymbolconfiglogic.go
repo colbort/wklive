@@ -31,9 +31,6 @@ func (l *UpdateSymbolConfigLogic) UpdateSymbolConfig(in *liquidity.SaveSymbolCon
 	if err != nil {
 		return nil, err
 	}
-	if current.TenantId != in.TenantId {
-		return nil, fmt.Errorf("symbol config not found")
-	}
 	if current.Version != in.Version {
 		return nil, fmt.Errorf("symbol config version conflict")
 	}

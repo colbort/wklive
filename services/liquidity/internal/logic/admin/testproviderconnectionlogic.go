@@ -2,12 +2,10 @@ package adminlogic
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"wklive/common/helper"
 	"wklive/proto/liquidity"
-	"wklive/services/liquidity/internal/logic/helpers"
 	"wklive/services/liquidity/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -28,15 +26,9 @@ func NewTestProviderConnectionLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 func (l *TestProviderConnectionLogic) TestProviderConnection(in *liquidity.TestProviderConnectionReq) (*liquidity.ProviderHealthResp, error) {
-	if err := helpers.RequireTenant(in.TenantId); err != nil {
-		return nil, err
-	}
 	row, err := l.svcCtx.ProviderModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
-	}
-	if row.TenantId != in.TenantId {
-		return nil, fmt.Errorf("provider not found")
 	}
 	now := time.Now().UnixMilli()
 	health := liquidity.HealthStatus_HEALTH_STATUS_HEALTHY

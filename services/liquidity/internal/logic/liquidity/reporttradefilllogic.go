@@ -32,8 +32,8 @@ func NewReportTradeFillLogic(ctx context.Context, svcCtx *svc.ServiceContext) *R
 }
 
 func (l *ReportTradeFillLogic) ReportTradeFill(in *liquidity.ReportTradeFillReq) (*liquidity.CommonResp, error) {
-	if in.TenantId <= 0 || in.SymbolId <= 0 || strings.TrimSpace(in.EventNo) == "" {
-		return nil, fmt.Errorf("tenant_id, symbol_id and event_no are required")
+	if in.SymbolId <= 0 || strings.TrimSpace(in.EventNo) == "" {
+		return nil, fmt.Errorf("symbol_id and event_no are required")
 	}
 	if existing, err := l.svcCtx.EventInboxModel.FindOneByConsumerEventNo(l.ctx, "liquidity.trade_fill", in.EventNo); err == nil {
 		if existing.Status == 2 {
@@ -54,7 +54,7 @@ func (l *ReportTradeFillLogic) ReportTradeFill(in *liquidity.ReportTradeFillReq)
 	}
 	now := time.Now().UnixMilli()
 	row := &models.TLiquidityEventInbox{
-		TenantId: in.TenantId, Consumer: "liquidity.trade_fill", EventNo: strings.TrimSpace(in.EventNo),
+		Consumer: "liquidity.trade_fill", EventNo: strings.TrimSpace(in.EventNo),
 		EventType: "TRADE_FILL", AggregateType: "TRADE_ORDER", AggregateId: strconv.FormatInt(in.OrderId, 10),
 		Payload: sql.NullString{String: string(payload), Valid: true}, Status: 2,
 		ProcessedAt: now, CreateTimes: now, UpdateTimes: now,

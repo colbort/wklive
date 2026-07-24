@@ -30,12 +30,12 @@ func NewSymbolActionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Symb
 }
 
 func (l *SymbolActionLogic) SymbolAction(req *types.SymbolActionReq) (resp *types.RespBase, err error) {
-	tenantID, userID, err := logicutil.Identity(l.ctx)
+	_, userID, err := logicutil.Identity(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 	in := &pb.SymbolActionReq{
-		TenantId: tenantID, ConfigId: req.Id, Version: req.Version, OperatorId: userID, Reason: req.Reason,
+		ConfigId: req.Id, Version: req.Version, OperatorId: userID, Reason: req.Reason,
 	}
 	var out *pb.CommonResp
 	switch strings.ToLower(req.Action) {

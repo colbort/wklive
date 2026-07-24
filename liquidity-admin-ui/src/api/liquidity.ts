@@ -12,7 +12,6 @@ export type LoginData = {
   exp: number;
   userId: number;
   nickname: string;
-  tenantId: number;
   appScope: number;
 };
 
@@ -21,7 +20,6 @@ export type ProfileUser = {
   username: string;
   nickname?: string;
   avatar?: string;
-  tenantId: number;
   userType: number;
   isOwner: number;
   google2FaEnabled: number;

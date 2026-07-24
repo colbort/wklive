@@ -32,9 +32,6 @@ func (l *CancelExternalOrderLogic) CancelExternalOrder(in *liquidity.CancelExter
 	if err != nil {
 		return nil, err
 	}
-	if row.TenantId != in.TenantId {
-		return nil, fmt.Errorf("external order not found")
-	}
 	if row.Version != in.Version {
 		return nil, fmt.Errorf("external order version conflict")
 	}

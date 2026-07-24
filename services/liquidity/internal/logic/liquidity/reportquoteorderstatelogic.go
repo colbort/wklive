@@ -30,10 +30,10 @@ func NewReportQuoteOrderStateLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *ReportQuoteOrderStateLogic) ReportQuoteOrderState(in *liquidity.ReportQuoteOrderStateReq) (*liquidity.CommonResp, error) {
-	if in.TenantId <= 0 || strings.TrimSpace(in.EventNo) == "" {
-		return nil, fmt.Errorf("tenant_id and event_no are required")
+	if strings.TrimSpace(in.EventNo) == "" {
+		return nil, fmt.Errorf("event_no are required")
 	}
-	row, err := l.svcCtx.QuoteOrderModel.FindByInternalIdentity(l.ctx, in.TenantId, in.InternalOrderId, in.InternalOrderNo, in.ClientOrderId)
+	row, err := l.svcCtx.QuoteOrderModel.FindByInternalIdentity(l.ctx, in.InternalOrderId, in.InternalOrderNo, in.ClientOrderId)
 	if err != nil {
 		return nil, err
 	}

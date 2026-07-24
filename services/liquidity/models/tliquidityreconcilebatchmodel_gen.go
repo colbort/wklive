@@ -23,15 +23,15 @@ var (
 	tLiquidityReconcileBatchRowsExpectAutoSet   = strings.Join(stringx.Remove(tLiquidityReconcileBatchFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tLiquidityReconcileBatchRowsWithPlaceHolder = strings.Join(stringx.Remove(tLiquidityReconcileBatchFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTLiquidityReconcileBatchIdPrefix              = "cache:tLiquidityReconcileBatch:id:"
-	cacheTLiquidityReconcileBatchTenantIdBatchNoPrefix = "cache:tLiquidityReconcileBatch:tenantId:batchNo:"
+	cacheTLiquidityReconcileBatchIdPrefix      = "cache:tLiquidityReconcileBatch:id:"
+	cacheTLiquidityReconcileBatchBatchNoPrefix = "cache:tLiquidityReconcileBatch:batchNo:"
 )
 
 type (
 	tLiquidityReconcileBatchModel interface {
 		Insert(ctx context.Context, data *TLiquidityReconcileBatch) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TLiquidityReconcileBatch, error)
-		FindOneByTenantIdBatchNo(ctx context.Context, tenantId int64, batchNo string) (*TLiquidityReconcileBatch, error)
+		FindOneByBatchNo(ctx context.Context, batchNo string) (*TLiquidityReconcileBatch, error)
 		Update(ctx context.Context, data *TLiquidityReconcileBatch) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -43,7 +43,6 @@ type (
 
 	TLiquidityReconcileBatch struct {
 		Id              int64  `db:"id"`               // 主键ID
-		TenantId        int64  `db:"tenant_id"`        // 租户ID
 		BatchNo         string `db:"batch_no"`         // 对账批次号
 		ProviderId      int64  `db:"provider_id"`      // 外部流动性提供方ID
 		ReconcileType   int64  `db:"reconcile_type"`   // 类型：1订单 2成交 3余额 4持仓
@@ -75,12 +74,12 @@ func (m *defaultTLiquidityReconcileBatchModel) Delete(ctx context.Context, id in
 		return err
 	}
 
+	tLiquidityReconcileBatchBatchNoKey := fmt.Sprintf("%s%v", cacheTLiquidityReconcileBatchBatchNoPrefix, data.BatchNo)
 	tLiquidityReconcileBatchIdKey := fmt.Sprintf("%s%v", cacheTLiquidityReconcileBatchIdPrefix, id)
-	tLiquidityReconcileBatchTenantIdBatchNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityReconcileBatchTenantIdBatchNoPrefix, data.TenantId, data.BatchNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tLiquidityReconcileBatchIdKey, tLiquidityReconcileBatchTenantIdBatchNoKey)
+	}, tLiquidityReconcileBatchBatchNoKey, tLiquidityReconcileBatchIdKey)
 	return err
 }
 
@@ -101,12 +100,12 @@ func (m *defaultTLiquidityReconcileBatchModel) FindOne(ctx context.Context, id i
 	}
 }
 
-func (m *defaultTLiquidityReconcileBatchModel) FindOneByTenantIdBatchNo(ctx context.Context, tenantId int64, batchNo string) (*TLiquidityReconcileBatch, error) {
-	tLiquidityReconcileBatchTenantIdBatchNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityReconcileBatchTenantIdBatchNoPrefix, tenantId, batchNo)
+func (m *defaultTLiquidityReconcileBatchModel) FindOneByBatchNo(ctx context.Context, batchNo string) (*TLiquidityReconcileBatch, error) {
+	tLiquidityReconcileBatchBatchNoKey := fmt.Sprintf("%s%v", cacheTLiquidityReconcileBatchBatchNoPrefix, batchNo)
 	var resp TLiquidityReconcileBatch
-	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityReconcileBatchTenantIdBatchNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `batch_no` = ? limit 1", tLiquidityReconcileBatchRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, batchNo); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityReconcileBatchBatchNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `batch_no` = ? limit 1", tLiquidityReconcileBatchRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, batchNo); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -122,12 +121,12 @@ func (m *defaultTLiquidityReconcileBatchModel) FindOneByTenantIdBatchNo(ctx cont
 }
 
 func (m *defaultTLiquidityReconcileBatchModel) Insert(ctx context.Context, data *TLiquidityReconcileBatch) (sql.Result, error) {
+	tLiquidityReconcileBatchBatchNoKey := fmt.Sprintf("%s%v", cacheTLiquidityReconcileBatchBatchNoPrefix, data.BatchNo)
 	tLiquidityReconcileBatchIdKey := fmt.Sprintf("%s%v", cacheTLiquidityReconcileBatchIdPrefix, data.Id)
-	tLiquidityReconcileBatchTenantIdBatchNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityReconcileBatchTenantIdBatchNoPrefix, data.TenantId, data.BatchNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityReconcileBatchRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.BatchNo, data.ProviderId, data.ReconcileType, data.WindowStart, data.WindowEnd, data.LocalCount, data.ExternalCount, data.MatchedCount, data.DifferenceCount, data.Status, data.LastErrorMsg, data.StartedAt, data.FinishedAt, data.CreateTimes, data.UpdateTimes)
-	}, tLiquidityReconcileBatchIdKey, tLiquidityReconcileBatchTenantIdBatchNoKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityReconcileBatchRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.BatchNo, data.ProviderId, data.ReconcileType, data.WindowStart, data.WindowEnd, data.LocalCount, data.ExternalCount, data.MatchedCount, data.DifferenceCount, data.Status, data.LastErrorMsg, data.StartedAt, data.FinishedAt, data.CreateTimes, data.UpdateTimes)
+	}, tLiquidityReconcileBatchBatchNoKey, tLiquidityReconcileBatchIdKey)
 	return ret, err
 }
 
@@ -137,12 +136,12 @@ func (m *defaultTLiquidityReconcileBatchModel) Update(ctx context.Context, newDa
 		return err
 	}
 
+	tLiquidityReconcileBatchBatchNoKey := fmt.Sprintf("%s%v", cacheTLiquidityReconcileBatchBatchNoPrefix, data.BatchNo)
 	tLiquidityReconcileBatchIdKey := fmt.Sprintf("%s%v", cacheTLiquidityReconcileBatchIdPrefix, data.Id)
-	tLiquidityReconcileBatchTenantIdBatchNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityReconcileBatchTenantIdBatchNoPrefix, data.TenantId, data.BatchNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tLiquidityReconcileBatchRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.BatchNo, newData.ProviderId, newData.ReconcileType, newData.WindowStart, newData.WindowEnd, newData.LocalCount, newData.ExternalCount, newData.MatchedCount, newData.DifferenceCount, newData.Status, newData.LastErrorMsg, newData.StartedAt, newData.FinishedAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tLiquidityReconcileBatchIdKey, tLiquidityReconcileBatchTenantIdBatchNoKey)
+		return conn.ExecCtx(ctx, query, newData.BatchNo, newData.ProviderId, newData.ReconcileType, newData.WindowStart, newData.WindowEnd, newData.LocalCount, newData.ExternalCount, newData.MatchedCount, newData.DifferenceCount, newData.Status, newData.LastErrorMsg, newData.StartedAt, newData.FinishedAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tLiquidityReconcileBatchBatchNoKey, tLiquidityReconcileBatchIdKey)
 	return err
 }
 

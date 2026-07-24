@@ -14,8 +14,8 @@ var _ TLiquidityExternalFillModel = (*customTLiquidityExternalFillModel)(nil)
 
 type (
 	LiquidityExternalFillPageFilter struct {
-		TenantId, ProviderId, ExternalOrderId, SettlementStatus int64
-		TimeStart, TimeEnd                                      int64
+		ProviderId, ExternalOrderId, SettlementStatus int64
+		TimeStart, TimeEnd                            int64
 	}
 	// TLiquidityExternalFillModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTLiquidityExternalFillModel.
@@ -39,7 +39,6 @@ func NewTLiquidityExternalFillModel(conn sqlx.SqlConn, c cache.CacheConf, opts .
 func (m *customTLiquidityExternalFillModel) FindPage(ctx context.Context, filter LiquidityExternalFillPageFilter, cursor, limit int64) ([]*TLiquidityExternalFill, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := sqlutil.NewPageQueryBuilder()
-	b.EqInt64("tenant_id", filter.TenantId)
 	b.EqInt64("provider_id", filter.ProviderId)
 	b.EqInt64("external_order_id", filter.ExternalOrderId)
 	b.EqInt64("settlement_status", filter.SettlementStatus)

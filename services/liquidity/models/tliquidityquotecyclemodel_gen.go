@@ -23,15 +23,15 @@ var (
 	tLiquidityQuoteCycleRowsExpectAutoSet   = strings.Join(stringx.Remove(tLiquidityQuoteCycleFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tLiquidityQuoteCycleRowsWithPlaceHolder = strings.Join(stringx.Remove(tLiquidityQuoteCycleFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTLiquidityQuoteCycleIdPrefix              = "cache:tLiquidityQuoteCycle:id:"
-	cacheTLiquidityQuoteCycleTenantIdCycleNoPrefix = "cache:tLiquidityQuoteCycle:tenantId:cycleNo:"
+	cacheTLiquidityQuoteCycleIdPrefix      = "cache:tLiquidityQuoteCycle:id:"
+	cacheTLiquidityQuoteCycleCycleNoPrefix = "cache:tLiquidityQuoteCycle:cycleNo:"
 )
 
 type (
 	tLiquidityQuoteCycleModel interface {
 		Insert(ctx context.Context, data *TLiquidityQuoteCycle) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TLiquidityQuoteCycle, error)
-		FindOneByTenantIdCycleNo(ctx context.Context, tenantId int64, cycleNo string) (*TLiquidityQuoteCycle, error)
+		FindOneByCycleNo(ctx context.Context, cycleNo string) (*TLiquidityQuoteCycle, error)
 		Update(ctx context.Context, data *TLiquidityQuoteCycle) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -43,7 +43,6 @@ type (
 
 	TLiquidityQuoteCycle struct {
 		Id                  int64   `db:"id"`                    // 主键ID
-		TenantId            int64   `db:"tenant_id"`             // 租户ID
 		CycleNo             string  `db:"cycle_no"`              // 报价周期业务号
 		ConfigId            int64   `db:"config_id"`             // 交易对流动性配置ID
 		SymbolId            int64   `db:"symbol_id"`             // 内部交易标的ID
@@ -77,12 +76,12 @@ func (m *defaultTLiquidityQuoteCycleModel) Delete(ctx context.Context, id int64)
 		return err
 	}
 
+	tLiquidityQuoteCycleCycleNoKey := fmt.Sprintf("%s%v", cacheTLiquidityQuoteCycleCycleNoPrefix, data.CycleNo)
 	tLiquidityQuoteCycleIdKey := fmt.Sprintf("%s%v", cacheTLiquidityQuoteCycleIdPrefix, id)
-	tLiquidityQuoteCycleTenantIdCycleNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityQuoteCycleTenantIdCycleNoPrefix, data.TenantId, data.CycleNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tLiquidityQuoteCycleIdKey, tLiquidityQuoteCycleTenantIdCycleNoKey)
+	}, tLiquidityQuoteCycleCycleNoKey, tLiquidityQuoteCycleIdKey)
 	return err
 }
 
@@ -103,12 +102,12 @@ func (m *defaultTLiquidityQuoteCycleModel) FindOne(ctx context.Context, id int64
 	}
 }
 
-func (m *defaultTLiquidityQuoteCycleModel) FindOneByTenantIdCycleNo(ctx context.Context, tenantId int64, cycleNo string) (*TLiquidityQuoteCycle, error) {
-	tLiquidityQuoteCycleTenantIdCycleNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityQuoteCycleTenantIdCycleNoPrefix, tenantId, cycleNo)
+func (m *defaultTLiquidityQuoteCycleModel) FindOneByCycleNo(ctx context.Context, cycleNo string) (*TLiquidityQuoteCycle, error) {
+	tLiquidityQuoteCycleCycleNoKey := fmt.Sprintf("%s%v", cacheTLiquidityQuoteCycleCycleNoPrefix, cycleNo)
 	var resp TLiquidityQuoteCycle
-	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityQuoteCycleTenantIdCycleNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `cycle_no` = ? limit 1", tLiquidityQuoteCycleRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, cycleNo); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityQuoteCycleCycleNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `cycle_no` = ? limit 1", tLiquidityQuoteCycleRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, cycleNo); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -124,12 +123,12 @@ func (m *defaultTLiquidityQuoteCycleModel) FindOneByTenantIdCycleNo(ctx context.
 }
 
 func (m *defaultTLiquidityQuoteCycleModel) Insert(ctx context.Context, data *TLiquidityQuoteCycle) (sql.Result, error) {
+	tLiquidityQuoteCycleCycleNoKey := fmt.Sprintf("%s%v", cacheTLiquidityQuoteCycleCycleNoPrefix, data.CycleNo)
 	tLiquidityQuoteCycleIdKey := fmt.Sprintf("%s%v", cacheTLiquidityQuoteCycleIdPrefix, data.Id)
-	tLiquidityQuoteCycleTenantIdCycleNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityQuoteCycleTenantIdCycleNoPrefix, data.TenantId, data.CycleNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityQuoteCycleRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.CycleNo, data.ConfigId, data.SymbolId, data.ReferencePrice, data.ReferenceSource, data.ReferenceSnapshotId, data.ReferenceTime, data.TargetBidCount, data.TargetAskCount, data.PlacedBidCount, data.PlacedAskCount, data.Status, data.LastErrorMsg, data.StartedAt, data.FinishedAt, data.CreateTimes, data.UpdateTimes)
-	}, tLiquidityQuoteCycleIdKey, tLiquidityQuoteCycleTenantIdCycleNoKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityQuoteCycleRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.CycleNo, data.ConfigId, data.SymbolId, data.ReferencePrice, data.ReferenceSource, data.ReferenceSnapshotId, data.ReferenceTime, data.TargetBidCount, data.TargetAskCount, data.PlacedBidCount, data.PlacedAskCount, data.Status, data.LastErrorMsg, data.StartedAt, data.FinishedAt, data.CreateTimes, data.UpdateTimes)
+	}, tLiquidityQuoteCycleCycleNoKey, tLiquidityQuoteCycleIdKey)
 	return ret, err
 }
 
@@ -139,12 +138,12 @@ func (m *defaultTLiquidityQuoteCycleModel) Update(ctx context.Context, newData *
 		return err
 	}
 
+	tLiquidityQuoteCycleCycleNoKey := fmt.Sprintf("%s%v", cacheTLiquidityQuoteCycleCycleNoPrefix, data.CycleNo)
 	tLiquidityQuoteCycleIdKey := fmt.Sprintf("%s%v", cacheTLiquidityQuoteCycleIdPrefix, data.Id)
-	tLiquidityQuoteCycleTenantIdCycleNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityQuoteCycleTenantIdCycleNoPrefix, data.TenantId, data.CycleNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tLiquidityQuoteCycleRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.CycleNo, newData.ConfigId, newData.SymbolId, newData.ReferencePrice, newData.ReferenceSource, newData.ReferenceSnapshotId, newData.ReferenceTime, newData.TargetBidCount, newData.TargetAskCount, newData.PlacedBidCount, newData.PlacedAskCount, newData.Status, newData.LastErrorMsg, newData.StartedAt, newData.FinishedAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tLiquidityQuoteCycleIdKey, tLiquidityQuoteCycleTenantIdCycleNoKey)
+		return conn.ExecCtx(ctx, query, newData.CycleNo, newData.ConfigId, newData.SymbolId, newData.ReferencePrice, newData.ReferenceSource, newData.ReferenceSnapshotId, newData.ReferenceTime, newData.TargetBidCount, newData.TargetAskCount, newData.PlacedBidCount, newData.PlacedAskCount, newData.Status, newData.LastErrorMsg, newData.StartedAt, newData.FinishedAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tLiquidityQuoteCycleCycleNoKey, tLiquidityQuoteCycleIdKey)
 	return err
 }
 

@@ -21,8 +21,8 @@ func parsePositive(name, value string) (float64, error) {
 	return number, nil
 }
 
-func loadExternalRoute(ctx context.Context, svcCtx *svc.ServiceContext, tenantID, symbolID int64) (*models.TLiquiditySymbolConfig, *models.TLiquidityProvider, error) {
-	config, err := svcCtx.SymbolConfigModel.FindActiveExternalByTenantSymbol(ctx, tenantID, symbolID)
+func loadExternalRoute(ctx context.Context, svcCtx *svc.ServiceContext, symbolID int64) (*models.TLiquiditySymbolConfig, *models.TLiquidityProvider, error) {
+	config, err := svcCtx.SymbolConfigModel.FindActiveExternalBySymbol(ctx, symbolID)
 	if err != nil {
 		return nil, nil, fmt.Errorf("active external liquidity config: %w", err)
 	}
@@ -33,7 +33,7 @@ func loadExternalRoute(ctx context.Context, svcCtx *svc.ServiceContext, tenantID
 	if err != nil {
 		return nil, nil, err
 	}
-	if provider.TenantId != tenantID || provider.ProviderType != int64(liquidity.ProviderType_PROVIDER_TYPE_EXTERNAL) {
+	if provider.ProviderType != int64(liquidity.ProviderType_PROVIDER_TYPE_EXTERNAL) {
 		return nil, nil, fmt.Errorf("external provider not found")
 	}
 	if provider.Status != int64(liquidity.ProviderStatus_PROVIDER_STATUS_ENABLED) {

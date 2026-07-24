@@ -14,10 +14,10 @@ var _ TLiquidityRiskEventModel = (*customTLiquidityRiskEventModel)(nil)
 
 type (
 	LiquidityRiskEventPageFilter struct {
-		TenantId, ConfigId, ProviderId int64
-		RiskType                       string
-		RiskLevel, Status              int64
-		TimeStart, TimeEnd             int64
+		ConfigId, ProviderId int64
+		RiskType             string
+		RiskLevel, Status    int64
+		TimeStart, TimeEnd   int64
 	}
 	// TLiquidityRiskEventModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTLiquidityRiskEventModel.
@@ -41,7 +41,6 @@ func NewTLiquidityRiskEventModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...c
 func (m *customTLiquidityRiskEventModel) FindPage(ctx context.Context, filter LiquidityRiskEventPageFilter, cursor, limit int64) ([]*TLiquidityRiskEvent, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := sqlutil.NewPageQueryBuilder()
-	b.EqInt64("tenant_id", filter.TenantId)
 	b.EqInt64("config_id", filter.ConfigId)
 	b.EqInt64("provider_id", filter.ProviderId)
 	b.EqString("risk_type", filter.RiskType)

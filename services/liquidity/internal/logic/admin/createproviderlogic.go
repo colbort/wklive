@@ -30,9 +30,6 @@ func NewCreateProviderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cr
 }
 
 func (l *CreateProviderLogic) CreateProvider(in *liquidity.CreateProviderReq) (*liquidity.ProviderResp, error) {
-	if err := helpers.RequireTenant(in.TenantId); err != nil {
-		return nil, err
-	}
 	code, name := strings.TrimSpace(in.ProviderCode), strings.TrimSpace(in.ProviderName)
 	if code == "" || name == "" {
 		return nil, fmt.Errorf("provider_code and provider_name are required")
@@ -48,7 +45,7 @@ func (l *CreateProviderLogic) CreateProvider(in *liquidity.CreateProviderReq) (*
 		(strings.TrimSpace(in.VenueCode) == "" || strings.TrimSpace(in.CredentialRef) == "") {
 		return nil, fmt.Errorf("venue_code and credential_ref are required for external provider")
 	}
-	if _, err := l.svcCtx.ProviderModel.FindOneByTenantIdProviderCode(l.ctx, in.TenantId, code); err == nil {
+	if _, err := l.svcCtx.ProviderModel.FindOneByProviderCode(l.ctx, code); err == nil {
 		return nil, fmt.Errorf("provider_code already exists")
 	} else if err != models.ErrNotFound {
 		return nil, err
@@ -59,7 +56,7 @@ func (l *CreateProviderLogic) CreateProvider(in *liquidity.CreateProviderReq) (*
 		status = liquidity.ProviderStatus_PROVIDER_STATUS_DISABLED
 	}
 	row := &models.TLiquidityProvider{
-		TenantId: in.TenantId, ProviderCode: code, ProviderName: name,
+		ProviderCode: code, ProviderName: name,
 		ProviderType: int64(in.ProviderType), TradeUserId: in.TradeUserId,
 		VenueCode: strings.TrimSpace(in.VenueCode), Environment: int64(in.Environment),
 		CredentialRef: strings.TrimSpace(in.CredentialRef), AccountRef: strings.TrimSpace(in.AccountRef),

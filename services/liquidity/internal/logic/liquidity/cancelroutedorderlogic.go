@@ -28,15 +28,12 @@ func NewCancelRoutedOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *CancelRoutedOrderLogic) CancelRoutedOrder(in *liquidity.CancelRoutedOrderReq) (*liquidity.CommonResp, error) {
-	if in.TenantId <= 0 || in.ExternalOrderId <= 0 || strings.TrimSpace(in.RequestNo) == "" {
-		return nil, fmt.Errorf("tenant_id, external_order_id and request_no are required")
+	if in.ExternalOrderId <= 0 || strings.TrimSpace(in.RequestNo) == "" {
+		return nil, fmt.Errorf("external_order_id and request_no are required")
 	}
 	row, err := l.svcCtx.ExternalOrderModel.FindOne(l.ctx, in.ExternalOrderId)
 	if err != nil {
 		return nil, err
-	}
-	if row.TenantId != in.TenantId {
-		return nil, fmt.Errorf("external order not found")
 	}
 	switch liquidity.ExternalOrderStatus(row.Status) {
 	case liquidity.ExternalOrderStatus_EXTERNAL_ORDER_STATUS_FILLED,

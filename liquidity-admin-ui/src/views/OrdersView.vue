@@ -2,7 +2,7 @@
 import { onMounted, reactive, ref, watch } from "vue";
 import { liquidityApi } from "@/api/liquidity";
 const tab=ref("quotes"), loading=ref(false), rows=ref<Record<string,unknown>[]>([]);
-const query=reactive({tenantId:1,keyword:"",status:"",limit:20});
+const query=reactive({keyword:"",status:"",limit:20});
 async function load(){loading.value=true;try{const r=tab.value==="quotes"?await liquidityApi.quoteOrders(query):await liquidityApi.externalOrders(query);rows.value=r.data||[]}finally{loading.value=false}}
 watch(tab,load);onMounted(load);
 const text=(row:Record<string,unknown>,...keys:string[])=>String(keys.map(k=>row[k]).find(v=>v!==undefined&&v!=="")??"-");

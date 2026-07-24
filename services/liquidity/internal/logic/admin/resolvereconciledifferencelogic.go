@@ -32,9 +32,6 @@ func (l *ResolveReconcileDifferenceLogic) ResolveReconcileDifference(in *liquidi
 	if err != nil {
 		return nil, err
 	}
-	if row.TenantId != in.TenantId {
-		return nil, fmt.Errorf("reconcile difference not found")
-	}
 	switch in.Status {
 	case liquidity.ReconcileDifferenceStatus_RECONCILE_DIFFERENCE_STATUS_RESOLVED,
 		liquidity.ReconcileDifferenceStatus_RECONCILE_DIFFERENCE_STATUS_IGNORED,

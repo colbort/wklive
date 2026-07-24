@@ -23,15 +23,15 @@ var (
 	tLiquiditySymbolConfigRowsExpectAutoSet   = strings.Join(stringx.Remove(tLiquiditySymbolConfigFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tLiquiditySymbolConfigRowsWithPlaceHolder = strings.Join(stringx.Remove(tLiquiditySymbolConfigFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTLiquiditySymbolConfigIdPrefix                          = "cache:tLiquiditySymbolConfig:id:"
-	cacheTLiquiditySymbolConfigTenantIdSymbolIdProductTypePrefix = "cache:tLiquiditySymbolConfig:tenantId:symbolId:productType:"
+	cacheTLiquiditySymbolConfigIdPrefix                  = "cache:tLiquiditySymbolConfig:id:"
+	cacheTLiquiditySymbolConfigSymbolIdProductTypePrefix = "cache:tLiquiditySymbolConfig:symbolId:productType:"
 )
 
 type (
 	tLiquiditySymbolConfigModel interface {
 		Insert(ctx context.Context, data *TLiquiditySymbolConfig) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TLiquiditySymbolConfig, error)
-		FindOneByTenantIdSymbolIdProductType(ctx context.Context, tenantId int64, symbolId int64, productType int64) (*TLiquiditySymbolConfig, error)
+		FindOneBySymbolIdProductType(ctx context.Context, symbolId int64, productType int64) (*TLiquiditySymbolConfig, error)
 		Update(ctx context.Context, data *TLiquiditySymbolConfig) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -43,7 +43,6 @@ type (
 
 	TLiquiditySymbolConfig struct {
 		Id                   int64   `db:"id"`                      // 主键ID
-		TenantId             int64   `db:"tenant_id"`               // 租户ID
 		SymbolId             int64   `db:"symbol_id"`               // trade.t_trade_symbol.id
 		Symbol               string  `db:"symbol"`                  // 内部交易标的代码快照
 		ProductType          int64   `db:"product_type"`            // 产品：1现货 2衍生品
@@ -97,11 +96,11 @@ func (m *defaultTLiquiditySymbolConfigModel) Delete(ctx context.Context, id int6
 	}
 
 	tLiquiditySymbolConfigIdKey := fmt.Sprintf("%s%v", cacheTLiquiditySymbolConfigIdPrefix, id)
-	tLiquiditySymbolConfigTenantIdSymbolIdProductTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTLiquiditySymbolConfigTenantIdSymbolIdProductTypePrefix, data.TenantId, data.SymbolId, data.ProductType)
+	tLiquiditySymbolConfigSymbolIdProductTypeKey := fmt.Sprintf("%s%v:%v", cacheTLiquiditySymbolConfigSymbolIdProductTypePrefix, data.SymbolId, data.ProductType)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tLiquiditySymbolConfigIdKey, tLiquiditySymbolConfigTenantIdSymbolIdProductTypeKey)
+	}, tLiquiditySymbolConfigIdKey, tLiquiditySymbolConfigSymbolIdProductTypeKey)
 	return err
 }
 
@@ -122,12 +121,12 @@ func (m *defaultTLiquiditySymbolConfigModel) FindOne(ctx context.Context, id int
 	}
 }
 
-func (m *defaultTLiquiditySymbolConfigModel) FindOneByTenantIdSymbolIdProductType(ctx context.Context, tenantId int64, symbolId int64, productType int64) (*TLiquiditySymbolConfig, error) {
-	tLiquiditySymbolConfigTenantIdSymbolIdProductTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTLiquiditySymbolConfigTenantIdSymbolIdProductTypePrefix, tenantId, symbolId, productType)
+func (m *defaultTLiquiditySymbolConfigModel) FindOneBySymbolIdProductType(ctx context.Context, symbolId int64, productType int64) (*TLiquiditySymbolConfig, error) {
+	tLiquiditySymbolConfigSymbolIdProductTypeKey := fmt.Sprintf("%s%v:%v", cacheTLiquiditySymbolConfigSymbolIdProductTypePrefix, symbolId, productType)
 	var resp TLiquiditySymbolConfig
-	err := m.QueryRowIndexCtx(ctx, &resp, tLiquiditySymbolConfigTenantIdSymbolIdProductTypeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `symbol_id` = ? and `product_type` = ? limit 1", tLiquiditySymbolConfigRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, symbolId, productType); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tLiquiditySymbolConfigSymbolIdProductTypeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `symbol_id` = ? and `product_type` = ? limit 1", tLiquiditySymbolConfigRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, symbolId, productType); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -144,11 +143,11 @@ func (m *defaultTLiquiditySymbolConfigModel) FindOneByTenantIdSymbolIdProductTyp
 
 func (m *defaultTLiquiditySymbolConfigModel) Insert(ctx context.Context, data *TLiquiditySymbolConfig) (sql.Result, error) {
 	tLiquiditySymbolConfigIdKey := fmt.Sprintf("%s%v", cacheTLiquiditySymbolConfigIdPrefix, data.Id)
-	tLiquiditySymbolConfigTenantIdSymbolIdProductTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTLiquiditySymbolConfigTenantIdSymbolIdProductTypePrefix, data.TenantId, data.SymbolId, data.ProductType)
+	tLiquiditySymbolConfigSymbolIdProductTypeKey := fmt.Sprintf("%s%v:%v", cacheTLiquiditySymbolConfigSymbolIdProductTypePrefix, data.SymbolId, data.ProductType)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquiditySymbolConfigRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.SymbolId, data.Symbol, data.ProductType, data.ContractType, data.LiquidityMode, data.InternalProviderId, data.ExternalProviderId, data.ExternalSymbol, data.ReferencePriceSource, data.ReferencePriceKind, data.QuoteValidityMs, data.RefreshIntervalMs, data.QuoteTtlMs, data.RepriceThresholdBps, data.BaseSpreadBps, data.MaxSpreadBps, data.MaxPriceDeviationBps, data.PriceTick, data.QtyStep, data.MinQuoteQty, data.MaxQuoteQty, data.MaxQuoteNotional, data.TargetBaseInventory, data.MinBaseInventory, data.MaxBaseInventory, data.MaxNetExposure, data.MaxDailyNotional, data.InventorySkewBps, data.HedgeThreshold, data.HedgeRatio, data.SelfTradePrevention, data.Status, data.PauseReason, data.Version, data.CreateTimes, data.UpdateTimes)
-	}, tLiquiditySymbolConfigIdKey, tLiquiditySymbolConfigTenantIdSymbolIdProductTypeKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquiditySymbolConfigRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.SymbolId, data.Symbol, data.ProductType, data.ContractType, data.LiquidityMode, data.InternalProviderId, data.ExternalProviderId, data.ExternalSymbol, data.ReferencePriceSource, data.ReferencePriceKind, data.QuoteValidityMs, data.RefreshIntervalMs, data.QuoteTtlMs, data.RepriceThresholdBps, data.BaseSpreadBps, data.MaxSpreadBps, data.MaxPriceDeviationBps, data.PriceTick, data.QtyStep, data.MinQuoteQty, data.MaxQuoteQty, data.MaxQuoteNotional, data.TargetBaseInventory, data.MinBaseInventory, data.MaxBaseInventory, data.MaxNetExposure, data.MaxDailyNotional, data.InventorySkewBps, data.HedgeThreshold, data.HedgeRatio, data.SelfTradePrevention, data.Status, data.PauseReason, data.Version, data.CreateTimes, data.UpdateTimes)
+	}, tLiquiditySymbolConfigIdKey, tLiquiditySymbolConfigSymbolIdProductTypeKey)
 	return ret, err
 }
 
@@ -159,11 +158,11 @@ func (m *defaultTLiquiditySymbolConfigModel) Update(ctx context.Context, newData
 	}
 
 	tLiquiditySymbolConfigIdKey := fmt.Sprintf("%s%v", cacheTLiquiditySymbolConfigIdPrefix, data.Id)
-	tLiquiditySymbolConfigTenantIdSymbolIdProductTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTLiquiditySymbolConfigTenantIdSymbolIdProductTypePrefix, data.TenantId, data.SymbolId, data.ProductType)
+	tLiquiditySymbolConfigSymbolIdProductTypeKey := fmt.Sprintf("%s%v:%v", cacheTLiquiditySymbolConfigSymbolIdProductTypePrefix, data.SymbolId, data.ProductType)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tLiquiditySymbolConfigRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.SymbolId, newData.Symbol, newData.ProductType, newData.ContractType, newData.LiquidityMode, newData.InternalProviderId, newData.ExternalProviderId, newData.ExternalSymbol, newData.ReferencePriceSource, newData.ReferencePriceKind, newData.QuoteValidityMs, newData.RefreshIntervalMs, newData.QuoteTtlMs, newData.RepriceThresholdBps, newData.BaseSpreadBps, newData.MaxSpreadBps, newData.MaxPriceDeviationBps, newData.PriceTick, newData.QtyStep, newData.MinQuoteQty, newData.MaxQuoteQty, newData.MaxQuoteNotional, newData.TargetBaseInventory, newData.MinBaseInventory, newData.MaxBaseInventory, newData.MaxNetExposure, newData.MaxDailyNotional, newData.InventorySkewBps, newData.HedgeThreshold, newData.HedgeRatio, newData.SelfTradePrevention, newData.Status, newData.PauseReason, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tLiquiditySymbolConfigIdKey, tLiquiditySymbolConfigTenantIdSymbolIdProductTypeKey)
+		return conn.ExecCtx(ctx, query, newData.SymbolId, newData.Symbol, newData.ProductType, newData.ContractType, newData.LiquidityMode, newData.InternalProviderId, newData.ExternalProviderId, newData.ExternalSymbol, newData.ReferencePriceSource, newData.ReferencePriceKind, newData.QuoteValidityMs, newData.RefreshIntervalMs, newData.QuoteTtlMs, newData.RepriceThresholdBps, newData.BaseSpreadBps, newData.MaxSpreadBps, newData.MaxPriceDeviationBps, newData.PriceTick, newData.QtyStep, newData.MinQuoteQty, newData.MaxQuoteQty, newData.MaxQuoteNotional, newData.TargetBaseInventory, newData.MinBaseInventory, newData.MaxBaseInventory, newData.MaxNetExposure, newData.MaxDailyNotional, newData.InventorySkewBps, newData.HedgeThreshold, newData.HedgeRatio, newData.SelfTradePrevention, newData.Status, newData.PauseReason, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tLiquiditySymbolConfigIdKey, tLiquiditySymbolConfigSymbolIdProductTypeKey)
 	return err
 }
 

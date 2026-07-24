@@ -29,12 +29,12 @@ func NewSymbolConfigCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *SymbolConfigCreateLogic) SymbolConfigCreate(req *types.SaveSymbolConfigReq) (resp *types.RespBase, err error) {
-	tenantID, userID, err := logicutil.Identity(l.ctx)
+	_, userID, err := logicutil.Identity(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 	in := logicutil.Convert[pb.SaveSymbolConfigReq](req)
-	in.TenantId, in.OperatorId = tenantID, userID
+	in.OperatorId = userID
 	out, err := l.svcCtx.LiquidityCli.CreateSymbolConfig(l.ctx, in)
 	if err != nil {
 		return nil, err

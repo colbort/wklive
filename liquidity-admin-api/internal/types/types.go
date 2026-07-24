@@ -4,7 +4,6 @@
 package types
 
 type CreateProviderReq struct {
-	TenantId           int64  `json:"tenantId,optional"`
 	ProviderCode       string `json:"providerCode"`
 	ProviderName       string `json:"providerName"`
 	ProviderType       int32  `json:"providerType"`
@@ -48,7 +47,6 @@ type LoginData struct {
 	Exp      int64  `json:"exp"`
 	UserId   int64  `json:"userId"`
 	Nickname string `json:"nickname"`
-	TenantId int64  `json:"tenantId"`
 	AppScope int32  `json:"appScope"`
 }
 
@@ -130,11 +128,10 @@ type PageMeta struct {
 }
 
 type PageQuery struct {
-	TenantId int64  `form:"tenantId,optional"`
-	Keyword  string `form:"keyword,optional"`
-	Status   int32  `form:"status,optional"`
-	Cursor   int64  `form:"cursor,optional"`
-	Limit    int32  `form:"limit,optional"`
+	Keyword string `form:"keyword,optional"`
+	Status  int32  `form:"status,optional"`
+	Cursor  int64  `form:"cursor,optional"`
+	Limit   int32  `form:"limit,optional"`
 }
 
 type PageReq struct {
@@ -159,7 +156,6 @@ type ProfileUser struct {
 	Username         string `json:"username"`
 	Nickname         string `json:"nickname,optional"`
 	Avatar           string `json:"avatar,optional"`
-	TenantId         int64  `json:"tenantId"`
 	UserType         int32  `json:"userType"`
 	IsOwner          int32  `json:"isOwner"`
 	Google2FaEnabled int32  `json:"google2FaEnabled"`
@@ -172,7 +168,6 @@ type ProviderActionReq struct {
 
 type ProviderItem struct {
 	Id                   int64  `json:"id"`
-	TenantId             int64  `json:"tenantId"`
 	ProviderCode         string `json:"providerCode"`
 	ProviderName         string `json:"providerName"`
 	ProviderType         int32  `json:"providerType"`
@@ -247,7 +242,6 @@ type RiskListResp struct {
 }
 
 type SaveSymbolConfigReq struct {
-	TenantId             int64  `json:"tenantId,optional"`
 	SymbolId             int64  `json:"symbolId"`
 	LiquidityMode        int32  `json:"liquidityMode"`
 	InternalProviderId   int64  `json:"internalProviderId,optional"`
@@ -285,7 +279,6 @@ type SymbolActionReq struct {
 
 type SymbolConfigItem struct {
 	Id                   int64  `json:"id"`
-	TenantId             int64  `json:"tenantId"`
 	SymbolId             int64  `json:"symbolId"`
 	Symbol               string `json:"symbol"`
 	ProductType          int32  `json:"productType"`

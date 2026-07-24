@@ -29,12 +29,8 @@ func NewReconcileBatchListLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *ReconcileBatchListLogic) ReconcileBatchList(req *types.PageQuery) (resp *types.ReconcileListResp, err error) {
-	tenantID, err := logicutil.TenantID(l.ctx)
-	if err != nil {
-		return nil, err
-	}
 	out, err := l.svcCtx.LiquidityCli.GetReconcileBatchList(l.ctx, &pb.GetReconcileBatchListReq{
-		TenantId: tenantID, Status: pb.ReconcileStatus(req.Status), Cursor: req.Cursor, Limit: listLimit(req.Limit),
+		Status: pb.ReconcileStatus(req.Status), Cursor: req.Cursor, Limit: listLimit(req.Limit),
 	})
 	if err != nil {
 		return nil, err

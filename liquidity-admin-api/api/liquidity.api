@@ -5,7 +5,6 @@ type PageMeta {
 }
 
 type PageQuery {
-	tenantId int64 `form:"tenantId,optional"`
 	keyword string `form:"keyword,optional"`
 	status int32 `form:"status,optional"`
 	cursor int64 `form:"cursor,optional"`
@@ -22,7 +21,6 @@ type DashboardResp {
 
 type ProviderItem {
 	id int64 `json:"id"`
-	tenantId int64 `json:"tenantId"`
 	providerCode string `json:"providerCode"`
 	providerName string `json:"providerName"`
 	providerType int32 `json:"providerType"`
@@ -44,7 +42,6 @@ type ProviderListResp {
 	page PageMeta `json:"page"`
 }
 type CreateProviderReq {
-	tenantId int64 `json:"tenantId,optional"`
 	providerCode string `json:"providerCode"`
 	providerName string `json:"providerName"`
 	providerType int32 `json:"providerType"`
@@ -69,7 +66,6 @@ type ProviderStatusReq {
 
 type SymbolConfigItem {
 	id int64 `json:"id"`
-	tenantId int64 `json:"tenantId"`
 	symbolId int64 `json:"symbolId"`
 	symbol string `json:"symbol"`
 	productType int32 `json:"productType"`
@@ -95,7 +91,6 @@ type SymbolConfigListResp {
 	page PageMeta `json:"page"`
 }
 type SaveSymbolConfigReq {
-	tenantId int64 `json:"tenantId,optional"`
 	symbolId int64 `json:"symbolId"`
 	liquidityMode int32 `json:"liquidityMode"`
 	internalProviderId int64 `json:"internalProviderId,optional"`

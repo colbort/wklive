@@ -1,5 +1,4 @@
 export interface PageQuery {
-  tenantId?: number;
   keyword?: string;
   status?: number | string;
   cursor?: number;

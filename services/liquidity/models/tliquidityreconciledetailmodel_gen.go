@@ -23,15 +23,15 @@ var (
 	tLiquidityReconcileDetailRowsExpectAutoSet   = strings.Join(stringx.Remove(tLiquidityReconcileDetailFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tLiquidityReconcileDetailRowsWithPlaceHolder = strings.Join(stringx.Remove(tLiquidityReconcileDetailFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTLiquidityReconcileDetailIdPrefix                   = "cache:tLiquidityReconcileDetail:id:"
-	cacheTLiquidityReconcileDetailTenantIdDifferenceNoPrefix = "cache:tLiquidityReconcileDetail:tenantId:differenceNo:"
+	cacheTLiquidityReconcileDetailIdPrefix           = "cache:tLiquidityReconcileDetail:id:"
+	cacheTLiquidityReconcileDetailDifferenceNoPrefix = "cache:tLiquidityReconcileDetail:differenceNo:"
 )
 
 type (
 	tLiquidityReconcileDetailModel interface {
 		Insert(ctx context.Context, data *TLiquidityReconcileDetail) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TLiquidityReconcileDetail, error)
-		FindOneByTenantIdDifferenceNo(ctx context.Context, tenantId int64, differenceNo string) (*TLiquidityReconcileDetail, error)
+		FindOneByDifferenceNo(ctx context.Context, differenceNo string) (*TLiquidityReconcileDetail, error)
 		Update(ctx context.Context, data *TLiquidityReconcileDetail) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -43,7 +43,6 @@ type (
 
 	TLiquidityReconcileDetail struct {
 		Id                int64          `db:"id"`                 // 主键ID
-		TenantId          int64          `db:"tenant_id"`          // 租户ID
 		BatchId           int64          `db:"batch_id"`           // 对账批次ID
 		DifferenceNo      string         `db:"difference_no"`      // 差异业务号
 		DifferenceType    int64          `db:"difference_type"`    // 差异：1本地缺失 2外部缺失 3状态不一致 4金额不一致 5其他
@@ -74,12 +73,12 @@ func (m *defaultTLiquidityReconcileDetailModel) Delete(ctx context.Context, id i
 		return err
 	}
 
+	tLiquidityReconcileDetailDifferenceNoKey := fmt.Sprintf("%s%v", cacheTLiquidityReconcileDetailDifferenceNoPrefix, data.DifferenceNo)
 	tLiquidityReconcileDetailIdKey := fmt.Sprintf("%s%v", cacheTLiquidityReconcileDetailIdPrefix, id)
-	tLiquidityReconcileDetailTenantIdDifferenceNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityReconcileDetailTenantIdDifferenceNoPrefix, data.TenantId, data.DifferenceNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tLiquidityReconcileDetailIdKey, tLiquidityReconcileDetailTenantIdDifferenceNoKey)
+	}, tLiquidityReconcileDetailDifferenceNoKey, tLiquidityReconcileDetailIdKey)
 	return err
 }
 
@@ -100,12 +99,12 @@ func (m *defaultTLiquidityReconcileDetailModel) FindOne(ctx context.Context, id 
 	}
 }
 
-func (m *defaultTLiquidityReconcileDetailModel) FindOneByTenantIdDifferenceNo(ctx context.Context, tenantId int64, differenceNo string) (*TLiquidityReconcileDetail, error) {
-	tLiquidityReconcileDetailTenantIdDifferenceNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityReconcileDetailTenantIdDifferenceNoPrefix, tenantId, differenceNo)
+func (m *defaultTLiquidityReconcileDetailModel) FindOneByDifferenceNo(ctx context.Context, differenceNo string) (*TLiquidityReconcileDetail, error) {
+	tLiquidityReconcileDetailDifferenceNoKey := fmt.Sprintf("%s%v", cacheTLiquidityReconcileDetailDifferenceNoPrefix, differenceNo)
 	var resp TLiquidityReconcileDetail
-	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityReconcileDetailTenantIdDifferenceNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `difference_no` = ? limit 1", tLiquidityReconcileDetailRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, differenceNo); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityReconcileDetailDifferenceNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `difference_no` = ? limit 1", tLiquidityReconcileDetailRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, differenceNo); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -121,12 +120,12 @@ func (m *defaultTLiquidityReconcileDetailModel) FindOneByTenantIdDifferenceNo(ct
 }
 
 func (m *defaultTLiquidityReconcileDetailModel) Insert(ctx context.Context, data *TLiquidityReconcileDetail) (sql.Result, error) {
+	tLiquidityReconcileDetailDifferenceNoKey := fmt.Sprintf("%s%v", cacheTLiquidityReconcileDetailDifferenceNoPrefix, data.DifferenceNo)
 	tLiquidityReconcileDetailIdKey := fmt.Sprintf("%s%v", cacheTLiquidityReconcileDetailIdPrefix, data.Id)
-	tLiquidityReconcileDetailTenantIdDifferenceNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityReconcileDetailTenantIdDifferenceNoPrefix, data.TenantId, data.DifferenceNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityReconcileDetailRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.BatchId, data.DifferenceNo, data.DifferenceType, data.BusinessType, data.LocalReference, data.ExternalReference, data.LocalValue, data.ExternalValue, data.Status, data.Resolution, data.OperatorId, data.ResolvedAt, data.CreateTimes, data.UpdateTimes)
-	}, tLiquidityReconcileDetailIdKey, tLiquidityReconcileDetailTenantIdDifferenceNoKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityReconcileDetailRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.BatchId, data.DifferenceNo, data.DifferenceType, data.BusinessType, data.LocalReference, data.ExternalReference, data.LocalValue, data.ExternalValue, data.Status, data.Resolution, data.OperatorId, data.ResolvedAt, data.CreateTimes, data.UpdateTimes)
+	}, tLiquidityReconcileDetailDifferenceNoKey, tLiquidityReconcileDetailIdKey)
 	return ret, err
 }
 
@@ -136,12 +135,12 @@ func (m *defaultTLiquidityReconcileDetailModel) Update(ctx context.Context, newD
 		return err
 	}
 
+	tLiquidityReconcileDetailDifferenceNoKey := fmt.Sprintf("%s%v", cacheTLiquidityReconcileDetailDifferenceNoPrefix, data.DifferenceNo)
 	tLiquidityReconcileDetailIdKey := fmt.Sprintf("%s%v", cacheTLiquidityReconcileDetailIdPrefix, data.Id)
-	tLiquidityReconcileDetailTenantIdDifferenceNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityReconcileDetailTenantIdDifferenceNoPrefix, data.TenantId, data.DifferenceNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tLiquidityReconcileDetailRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.BatchId, newData.DifferenceNo, newData.DifferenceType, newData.BusinessType, newData.LocalReference, newData.ExternalReference, newData.LocalValue, newData.ExternalValue, newData.Status, newData.Resolution, newData.OperatorId, newData.ResolvedAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tLiquidityReconcileDetailIdKey, tLiquidityReconcileDetailTenantIdDifferenceNoKey)
+		return conn.ExecCtx(ctx, query, newData.BatchId, newData.DifferenceNo, newData.DifferenceType, newData.BusinessType, newData.LocalReference, newData.ExternalReference, newData.LocalValue, newData.ExternalValue, newData.Status, newData.Resolution, newData.OperatorId, newData.ResolvedAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tLiquidityReconcileDetailDifferenceNoKey, tLiquidityReconcileDetailIdKey)
 	return err
 }
 

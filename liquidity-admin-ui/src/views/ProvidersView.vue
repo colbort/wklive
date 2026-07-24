@@ -4,12 +4,12 @@ import { ElMessage } from "element-plus";
 import { liquidityApi } from "@/api/liquidity";
 import type { Provider } from "@/types/liquidity";
 const loading = ref(false), dialog = ref(false), rows = ref<Provider[]>([]);
-const query = reactive({ tenantId: 1, keyword: "", status: "", limit: 20 });
-const form = reactive({ tenantId: 1, providerCode: "", providerName: "", providerType: 1, tradeUserId: 0, venueCode: "", environment: 1, credentialRef: "", accountRef: "", rateLimitPerSecond: 10, status: 2, remark: "" });
+const query = reactive({ keyword: "", status: "", limit: 20 });
+const form = reactive({ providerCode: "", providerName: "", providerType: 1, tradeUserId: 0, venueCode: "", environment: 1, credentialRef: "", accountRef: "", rateLimitPerSecond: 10, status: 2, remark: "" });
 async function load() { loading.value=true; try { const r=await liquidityApi.providers(query); rows.value=(r.data||[]) as unknown as Provider[]; } finally { loading.value=false; } }
 async function create() { await liquidityApi.createProvider(form); ElMessage.success("提供方已创建"); dialog.value=false; await load(); }
 async function test(row: Provider) { await liquidityApi.testProvider(row.id); ElMessage.success("连接测试已提交"); await load(); }
-async function toggle(row: Provider) { await liquidityApi.setProviderStatus(row.id,{ tenantId:query.tenantId,status:row.status===1?2:1,version:row.version }); ElMessage.success("状态已更新"); await load(); }
+async function toggle(row: Provider) { await liquidityApi.setProviderStatus(row.id,{ status:row.status===1?2:1,version:row.version }); ElMessage.success("状态已更新"); await load(); }
 onMounted(load);
 const providerType = (v:number) => v===1?"内部做市":"外部流动性";
 </script>

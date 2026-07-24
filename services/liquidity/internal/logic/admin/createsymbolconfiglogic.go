@@ -32,7 +32,7 @@ func (l *CreateSymbolConfigLogic) CreateSymbolConfig(in *liquidity.SaveSymbolCon
 	if err != nil {
 		return nil, err
 	}
-	if _, err := l.svcCtx.SymbolConfigModel.FindOneByTenantIdSymbolIdProductType(l.ctx, row.TenantId, row.SymbolId, row.ProductType); err == nil {
+	if _, err := l.svcCtx.SymbolConfigModel.FindOneBySymbolIdProductType(l.ctx, row.SymbolId, row.ProductType); err == nil {
 		return nil, fmt.Errorf("symbol liquidity config already exists")
 	} else if err != models.ErrNotFound {
 		return nil, err

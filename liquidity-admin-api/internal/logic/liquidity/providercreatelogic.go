@@ -29,12 +29,12 @@ func NewProviderCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pr
 }
 
 func (l *ProviderCreateLogic) ProviderCreate(req *types.CreateProviderReq) (resp *types.RespBase, err error) {
-	tenantID, userID, err := logicutil.Identity(l.ctx)
+	_, userID, err := logicutil.Identity(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 	in := logicutil.Convert[pb.CreateProviderReq](req)
-	in.TenantId, in.OperatorId = tenantID, userID
+	in.OperatorId = userID
 	out, err := l.svcCtx.LiquidityCli.CreateProvider(l.ctx, in)
 	if err != nil {
 		return nil, err

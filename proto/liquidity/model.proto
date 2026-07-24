@@ -15,7 +15,7 @@ message PageMeta {
 
 message LiquidityProvider {
   int64 id = 1;
-  int64 tenant_id = 2;
+  reserved 2;
   string provider_code = 3;
   string provider_name = 4;
   ProviderType provider_type = 5;
@@ -38,7 +38,7 @@ message LiquidityProvider {
 
 message LiquiditySymbolConfig {
   int64 id = 1;
-  int64 tenant_id = 2;
+  reserved 2;
   int64 symbol_id = 3;
   string symbol = 4;
   common.ProductType product_type = 5;
@@ -79,7 +79,7 @@ message LiquiditySymbolConfig {
 
 message LiquidityStrategyLevel {
   int64 id = 1;
-  int64 tenant_id = 2;
+  reserved 2;
   int64 config_id = 3;
   int32 level_no = 4;
   string bid_spread_bps = 5;
@@ -94,7 +94,7 @@ message LiquidityStrategyLevel {
 
 message LiquidityQuoteCycle {
   int64 id = 1;
-  int64 tenant_id = 2;
+  reserved 2;
   string cycle_no = 3;
   int64 config_id = 4;
   int64 symbol_id = 5;
@@ -116,7 +116,7 @@ message LiquidityQuoteCycle {
 
 message LiquidityQuoteOrder {
   int64 id = 1;
-  int64 tenant_id = 2;
+  reserved 2;
   string quote_no = 3;
   int64 cycle_id = 4;
   int64 config_id = 5;
@@ -141,7 +141,7 @@ message LiquidityQuoteOrder {
 
 message LiquidityExternalOrder {
   int64 id = 1;
-  int64 tenant_id = 2;
+  reserved 2;
   string order_no = 3;
   string request_no = 4;
   int64 provider_id = 5;
@@ -177,7 +177,7 @@ message LiquidityExternalOrder {
 
 message LiquidityExternalFill {
   int64 id = 1;
-  int64 tenant_id = 2;
+  reserved 2;
   int64 provider_id = 3;
   int64 external_order_id = 4;
   string fill_no = 5;
@@ -201,7 +201,7 @@ message LiquidityExternalFill {
 
 message LiquidityHedgeTask {
   int64 id = 1;
-  int64 tenant_id = 2;
+  reserved 2;
   string hedge_no = 3;
   int64 config_id = 4;
   int64 provider_id = 5;
@@ -224,7 +224,7 @@ message LiquidityHedgeTask {
 
 message LiquidityInventorySnapshot {
   int64 id = 1;
-  int64 tenant_id = 2;
+  reserved 2;
   string snapshot_no = 3;
   int64 config_id = 4;
   int64 provider_id = 5;
@@ -251,7 +251,7 @@ message LiquidityInventorySnapshot {
 
 message LiquidityRiskEvent {
   int64 id = 1;
-  int64 tenant_id = 2;
+  reserved 2;
   string event_no = 3;
   int64 config_id = 4;
   int64 provider_id = 5;
@@ -274,7 +274,7 @@ message LiquidityRiskEvent {
 
 message LiquidityReconcileBatch {
   int64 id = 1;
-  int64 tenant_id = 2;
+  reserved 2;
   string batch_no = 3;
   int64 provider_id = 4;
   ReconcileType reconcile_type = 5;
@@ -294,7 +294,7 @@ message LiquidityReconcileBatch {
 
 message LiquidityReconcileDetail {
   int64 id = 1;
-  int64 tenant_id = 2;
+  reserved 2;
   int64 batch_id = 3;
   string difference_no = 4;
   ReconcileDifferenceType difference_type = 5;

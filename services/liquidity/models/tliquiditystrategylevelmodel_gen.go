@@ -23,15 +23,15 @@ var (
 	tLiquidityStrategyLevelRowsExpectAutoSet   = strings.Join(stringx.Remove(tLiquidityStrategyLevelFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tLiquidityStrategyLevelRowsWithPlaceHolder = strings.Join(stringx.Remove(tLiquidityStrategyLevelFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTLiquidityStrategyLevelIdPrefix                      = "cache:tLiquidityStrategyLevel:id:"
-	cacheTLiquidityStrategyLevelTenantIdConfigIdLevelNoPrefix = "cache:tLiquidityStrategyLevel:tenantId:configId:levelNo:"
+	cacheTLiquidityStrategyLevelIdPrefix              = "cache:tLiquidityStrategyLevel:id:"
+	cacheTLiquidityStrategyLevelConfigIdLevelNoPrefix = "cache:tLiquidityStrategyLevel:configId:levelNo:"
 )
 
 type (
 	tLiquidityStrategyLevelModel interface {
 		Insert(ctx context.Context, data *TLiquidityStrategyLevel) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TLiquidityStrategyLevel, error)
-		FindOneByTenantIdConfigIdLevelNo(ctx context.Context, tenantId int64, configId int64, levelNo int64) (*TLiquidityStrategyLevel, error)
+		FindOneByConfigIdLevelNo(ctx context.Context, configId int64, levelNo int64) (*TLiquidityStrategyLevel, error)
 		Update(ctx context.Context, data *TLiquidityStrategyLevel) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -43,7 +43,6 @@ type (
 
 	TLiquidityStrategyLevel struct {
 		Id           int64   `db:"id"`             // 主键ID
-		TenantId     int64   `db:"tenant_id"`      // 租户ID
 		ConfigId     int64   `db:"config_id"`      // 交易对流动性配置ID
 		LevelNo      int64   `db:"level_no"`       // 深度档位，从1开始
 		BidSpreadBps float64 `db:"bid_spread_bps"` // 买单相对参考价向下偏移基点
@@ -70,12 +69,12 @@ func (m *defaultTLiquidityStrategyLevelModel) Delete(ctx context.Context, id int
 		return err
 	}
 
+	tLiquidityStrategyLevelConfigIdLevelNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityStrategyLevelConfigIdLevelNoPrefix, data.ConfigId, data.LevelNo)
 	tLiquidityStrategyLevelIdKey := fmt.Sprintf("%s%v", cacheTLiquidityStrategyLevelIdPrefix, id)
-	tLiquidityStrategyLevelTenantIdConfigIdLevelNoKey := fmt.Sprintf("%s%v:%v:%v", cacheTLiquidityStrategyLevelTenantIdConfigIdLevelNoPrefix, data.TenantId, data.ConfigId, data.LevelNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tLiquidityStrategyLevelIdKey, tLiquidityStrategyLevelTenantIdConfigIdLevelNoKey)
+	}, tLiquidityStrategyLevelConfigIdLevelNoKey, tLiquidityStrategyLevelIdKey)
 	return err
 }
 
@@ -96,12 +95,12 @@ func (m *defaultTLiquidityStrategyLevelModel) FindOne(ctx context.Context, id in
 	}
 }
 
-func (m *defaultTLiquidityStrategyLevelModel) FindOneByTenantIdConfigIdLevelNo(ctx context.Context, tenantId int64, configId int64, levelNo int64) (*TLiquidityStrategyLevel, error) {
-	tLiquidityStrategyLevelTenantIdConfigIdLevelNoKey := fmt.Sprintf("%s%v:%v:%v", cacheTLiquidityStrategyLevelTenantIdConfigIdLevelNoPrefix, tenantId, configId, levelNo)
+func (m *defaultTLiquidityStrategyLevelModel) FindOneByConfigIdLevelNo(ctx context.Context, configId int64, levelNo int64) (*TLiquidityStrategyLevel, error) {
+	tLiquidityStrategyLevelConfigIdLevelNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityStrategyLevelConfigIdLevelNoPrefix, configId, levelNo)
 	var resp TLiquidityStrategyLevel
-	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityStrategyLevelTenantIdConfigIdLevelNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `config_id` = ? and `level_no` = ? limit 1", tLiquidityStrategyLevelRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, configId, levelNo); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityStrategyLevelConfigIdLevelNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `config_id` = ? and `level_no` = ? limit 1", tLiquidityStrategyLevelRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, configId, levelNo); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -117,12 +116,12 @@ func (m *defaultTLiquidityStrategyLevelModel) FindOneByTenantIdConfigIdLevelNo(c
 }
 
 func (m *defaultTLiquidityStrategyLevelModel) Insert(ctx context.Context, data *TLiquidityStrategyLevel) (sql.Result, error) {
+	tLiquidityStrategyLevelConfigIdLevelNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityStrategyLevelConfigIdLevelNoPrefix, data.ConfigId, data.LevelNo)
 	tLiquidityStrategyLevelIdKey := fmt.Sprintf("%s%v", cacheTLiquidityStrategyLevelIdPrefix, data.Id)
-	tLiquidityStrategyLevelTenantIdConfigIdLevelNoKey := fmt.Sprintf("%s%v:%v:%v", cacheTLiquidityStrategyLevelTenantIdConfigIdLevelNoPrefix, data.TenantId, data.ConfigId, data.LevelNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityStrategyLevelRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.ConfigId, data.LevelNo, data.BidSpreadBps, data.AskSpreadBps, data.BidQty, data.AskQty, data.Enabled, data.Version, data.CreateTimes, data.UpdateTimes)
-	}, tLiquidityStrategyLevelIdKey, tLiquidityStrategyLevelTenantIdConfigIdLevelNoKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityStrategyLevelRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.ConfigId, data.LevelNo, data.BidSpreadBps, data.AskSpreadBps, data.BidQty, data.AskQty, data.Enabled, data.Version, data.CreateTimes, data.UpdateTimes)
+	}, tLiquidityStrategyLevelConfigIdLevelNoKey, tLiquidityStrategyLevelIdKey)
 	return ret, err
 }
 
@@ -132,12 +131,12 @@ func (m *defaultTLiquidityStrategyLevelModel) Update(ctx context.Context, newDat
 		return err
 	}
 
+	tLiquidityStrategyLevelConfigIdLevelNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityStrategyLevelConfigIdLevelNoPrefix, data.ConfigId, data.LevelNo)
 	tLiquidityStrategyLevelIdKey := fmt.Sprintf("%s%v", cacheTLiquidityStrategyLevelIdPrefix, data.Id)
-	tLiquidityStrategyLevelTenantIdConfigIdLevelNoKey := fmt.Sprintf("%s%v:%v:%v", cacheTLiquidityStrategyLevelTenantIdConfigIdLevelNoPrefix, data.TenantId, data.ConfigId, data.LevelNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tLiquidityStrategyLevelRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.ConfigId, newData.LevelNo, newData.BidSpreadBps, newData.AskSpreadBps, newData.BidQty, newData.AskQty, newData.Enabled, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tLiquidityStrategyLevelIdKey, tLiquidityStrategyLevelTenantIdConfigIdLevelNoKey)
+		return conn.ExecCtx(ctx, query, newData.ConfigId, newData.LevelNo, newData.BidSpreadBps, newData.AskSpreadBps, newData.BidQty, newData.AskQty, newData.Enabled, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tLiquidityStrategyLevelConfigIdLevelNoKey, tLiquidityStrategyLevelIdKey)
 	return err
 }
 

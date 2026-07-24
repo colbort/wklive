@@ -24,18 +24,18 @@ var (
 	tLiquidityExternalOrderRowsWithPlaceHolder = strings.Join(stringx.Remove(tLiquidityExternalOrderFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheTLiquidityExternalOrderIdPrefix                        = "cache:tLiquidityExternalOrder:id:"
+	cacheTLiquidityExternalOrderOrderNoPrefix                   = "cache:tLiquidityExternalOrder:orderNo:"
 	cacheTLiquidityExternalOrderProviderIdExternalOrderIdPrefix = "cache:tLiquidityExternalOrder:providerId:externalOrderId:"
-	cacheTLiquidityExternalOrderTenantIdOrderNoPrefix           = "cache:tLiquidityExternalOrder:tenantId:orderNo:"
-	cacheTLiquidityExternalOrderTenantIdRequestNoPrefix         = "cache:tLiquidityExternalOrder:tenantId:requestNo:"
+	cacheTLiquidityExternalOrderRequestNoPrefix                 = "cache:tLiquidityExternalOrder:requestNo:"
 )
 
 type (
 	tLiquidityExternalOrderModel interface {
 		Insert(ctx context.Context, data *TLiquidityExternalOrder) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TLiquidityExternalOrder, error)
+		FindOneByOrderNo(ctx context.Context, orderNo string) (*TLiquidityExternalOrder, error)
 		FindOneByProviderIdExternalOrderId(ctx context.Context, providerId int64, externalOrderId sql.NullString) (*TLiquidityExternalOrder, error)
-		FindOneByTenantIdOrderNo(ctx context.Context, tenantId int64, orderNo string) (*TLiquidityExternalOrder, error)
-		FindOneByTenantIdRequestNo(ctx context.Context, tenantId int64, requestNo string) (*TLiquidityExternalOrder, error)
+		FindOneByRequestNo(ctx context.Context, requestNo string) (*TLiquidityExternalOrder, error)
 		Update(ctx context.Context, data *TLiquidityExternalOrder) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -47,7 +47,6 @@ type (
 
 	TLiquidityExternalOrder struct {
 		Id                    int64          `db:"id"`                       // 主键ID
-		TenantId              int64          `db:"tenant_id"`                // 租户ID
 		OrderNo               string         `db:"order_no"`                 // 内部外部订单业务号
 		RequestNo             string         `db:"request_no"`               // 外部下单幂等请求号
 		ProviderId            int64          `db:"provider_id"`              // 外部流动性提供方ID
@@ -96,13 +95,13 @@ func (m *defaultTLiquidityExternalOrderModel) Delete(ctx context.Context, id int
 	}
 
 	tLiquidityExternalOrderIdKey := fmt.Sprintf("%s%v", cacheTLiquidityExternalOrderIdPrefix, id)
+	tLiquidityExternalOrderOrderNoKey := fmt.Sprintf("%s%v", cacheTLiquidityExternalOrderOrderNoPrefix, data.OrderNo)
 	tLiquidityExternalOrderProviderIdExternalOrderIdKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityExternalOrderProviderIdExternalOrderIdPrefix, data.ProviderId, data.ExternalOrderId)
-	tLiquidityExternalOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityExternalOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
-	tLiquidityExternalOrderTenantIdRequestNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityExternalOrderTenantIdRequestNoPrefix, data.TenantId, data.RequestNo)
+	tLiquidityExternalOrderRequestNoKey := fmt.Sprintf("%s%v", cacheTLiquidityExternalOrderRequestNoPrefix, data.RequestNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tLiquidityExternalOrderIdKey, tLiquidityExternalOrderProviderIdExternalOrderIdKey, tLiquidityExternalOrderTenantIdOrderNoKey, tLiquidityExternalOrderTenantIdRequestNoKey)
+	}, tLiquidityExternalOrderIdKey, tLiquidityExternalOrderOrderNoKey, tLiquidityExternalOrderProviderIdExternalOrderIdKey, tLiquidityExternalOrderRequestNoKey)
 	return err
 }
 
@@ -113,6 +112,26 @@ func (m *defaultTLiquidityExternalOrderModel) FindOne(ctx context.Context, id in
 		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tLiquidityExternalOrderRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultTLiquidityExternalOrderModel) FindOneByOrderNo(ctx context.Context, orderNo string) (*TLiquidityExternalOrder, error) {
+	tLiquidityExternalOrderOrderNoKey := fmt.Sprintf("%s%v", cacheTLiquidityExternalOrderOrderNoPrefix, orderNo)
+	var resp TLiquidityExternalOrder
+	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityExternalOrderOrderNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `order_no` = ? limit 1", tLiquidityExternalOrderRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, orderNo); err != nil {
+			return nil, err
+		}
+		return resp.Id, nil
+	}, m.queryPrimary)
 	switch err {
 	case nil:
 		return &resp, nil
@@ -143,32 +162,12 @@ func (m *defaultTLiquidityExternalOrderModel) FindOneByProviderIdExternalOrderId
 	}
 }
 
-func (m *defaultTLiquidityExternalOrderModel) FindOneByTenantIdOrderNo(ctx context.Context, tenantId int64, orderNo string) (*TLiquidityExternalOrder, error) {
-	tLiquidityExternalOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityExternalOrderTenantIdOrderNoPrefix, tenantId, orderNo)
+func (m *defaultTLiquidityExternalOrderModel) FindOneByRequestNo(ctx context.Context, requestNo string) (*TLiquidityExternalOrder, error) {
+	tLiquidityExternalOrderRequestNoKey := fmt.Sprintf("%s%v", cacheTLiquidityExternalOrderRequestNoPrefix, requestNo)
 	var resp TLiquidityExternalOrder
-	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityExternalOrderTenantIdOrderNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `order_no` = ? limit 1", tLiquidityExternalOrderRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, orderNo); err != nil {
-			return nil, err
-		}
-		return resp.Id, nil
-	}, m.queryPrimary)
-	switch err {
-	case nil:
-		return &resp, nil
-	case sqlc.ErrNotFound:
-		return nil, ErrNotFound
-	default:
-		return nil, err
-	}
-}
-
-func (m *defaultTLiquidityExternalOrderModel) FindOneByTenantIdRequestNo(ctx context.Context, tenantId int64, requestNo string) (*TLiquidityExternalOrder, error) {
-	tLiquidityExternalOrderTenantIdRequestNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityExternalOrderTenantIdRequestNoPrefix, tenantId, requestNo)
-	var resp TLiquidityExternalOrder
-	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityExternalOrderTenantIdRequestNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `request_no` = ? limit 1", tLiquidityExternalOrderRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, requestNo); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityExternalOrderRequestNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `request_no` = ? limit 1", tLiquidityExternalOrderRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, requestNo); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -185,13 +184,13 @@ func (m *defaultTLiquidityExternalOrderModel) FindOneByTenantIdRequestNo(ctx con
 
 func (m *defaultTLiquidityExternalOrderModel) Insert(ctx context.Context, data *TLiquidityExternalOrder) (sql.Result, error) {
 	tLiquidityExternalOrderIdKey := fmt.Sprintf("%s%v", cacheTLiquidityExternalOrderIdPrefix, data.Id)
+	tLiquidityExternalOrderOrderNoKey := fmt.Sprintf("%s%v", cacheTLiquidityExternalOrderOrderNoPrefix, data.OrderNo)
 	tLiquidityExternalOrderProviderIdExternalOrderIdKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityExternalOrderProviderIdExternalOrderIdPrefix, data.ProviderId, data.ExternalOrderId)
-	tLiquidityExternalOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityExternalOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
-	tLiquidityExternalOrderTenantIdRequestNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityExternalOrderTenantIdRequestNoPrefix, data.TenantId, data.RequestNo)
+	tLiquidityExternalOrderRequestNoKey := fmt.Sprintf("%s%v", cacheTLiquidityExternalOrderRequestNoPrefix, data.RequestNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityExternalOrderRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.RequestNo, data.ProviderId, data.ConfigId, data.SymbolId, data.ExternalSymbol, data.Purpose, data.ReferenceType, data.ReferenceId, data.Side, data.OrderType, data.TimeInForce, data.Price, data.Qty, data.FilledQty, data.AvgPrice, data.FeeAmount, data.FeeAsset, data.ExternalOrderId, data.ExternalClientOrderId, data.Status, data.SubmittedAt, data.FinishedAt, data.RetryCount, data.NextRetryAt, data.LastErrorCode, data.LastErrorMsg, data.RawResponse, data.Version, data.CreateTimes, data.UpdateTimes)
-	}, tLiquidityExternalOrderIdKey, tLiquidityExternalOrderProviderIdExternalOrderIdKey, tLiquidityExternalOrderTenantIdOrderNoKey, tLiquidityExternalOrderTenantIdRequestNoKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityExternalOrderRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.OrderNo, data.RequestNo, data.ProviderId, data.ConfigId, data.SymbolId, data.ExternalSymbol, data.Purpose, data.ReferenceType, data.ReferenceId, data.Side, data.OrderType, data.TimeInForce, data.Price, data.Qty, data.FilledQty, data.AvgPrice, data.FeeAmount, data.FeeAsset, data.ExternalOrderId, data.ExternalClientOrderId, data.Status, data.SubmittedAt, data.FinishedAt, data.RetryCount, data.NextRetryAt, data.LastErrorCode, data.LastErrorMsg, data.RawResponse, data.Version, data.CreateTimes, data.UpdateTimes)
+	}, tLiquidityExternalOrderIdKey, tLiquidityExternalOrderOrderNoKey, tLiquidityExternalOrderProviderIdExternalOrderIdKey, tLiquidityExternalOrderRequestNoKey)
 	return ret, err
 }
 
@@ -202,13 +201,13 @@ func (m *defaultTLiquidityExternalOrderModel) Update(ctx context.Context, newDat
 	}
 
 	tLiquidityExternalOrderIdKey := fmt.Sprintf("%s%v", cacheTLiquidityExternalOrderIdPrefix, data.Id)
+	tLiquidityExternalOrderOrderNoKey := fmt.Sprintf("%s%v", cacheTLiquidityExternalOrderOrderNoPrefix, data.OrderNo)
 	tLiquidityExternalOrderProviderIdExternalOrderIdKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityExternalOrderProviderIdExternalOrderIdPrefix, data.ProviderId, data.ExternalOrderId)
-	tLiquidityExternalOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityExternalOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
-	tLiquidityExternalOrderTenantIdRequestNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityExternalOrderTenantIdRequestNoPrefix, data.TenantId, data.RequestNo)
+	tLiquidityExternalOrderRequestNoKey := fmt.Sprintf("%s%v", cacheTLiquidityExternalOrderRequestNoPrefix, data.RequestNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tLiquidityExternalOrderRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderNo, newData.RequestNo, newData.ProviderId, newData.ConfigId, newData.SymbolId, newData.ExternalSymbol, newData.Purpose, newData.ReferenceType, newData.ReferenceId, newData.Side, newData.OrderType, newData.TimeInForce, newData.Price, newData.Qty, newData.FilledQty, newData.AvgPrice, newData.FeeAmount, newData.FeeAsset, newData.ExternalOrderId, newData.ExternalClientOrderId, newData.Status, newData.SubmittedAt, newData.FinishedAt, newData.RetryCount, newData.NextRetryAt, newData.LastErrorCode, newData.LastErrorMsg, newData.RawResponse, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tLiquidityExternalOrderIdKey, tLiquidityExternalOrderProviderIdExternalOrderIdKey, tLiquidityExternalOrderTenantIdOrderNoKey, tLiquidityExternalOrderTenantIdRequestNoKey)
+		return conn.ExecCtx(ctx, query, newData.OrderNo, newData.RequestNo, newData.ProviderId, newData.ConfigId, newData.SymbolId, newData.ExternalSymbol, newData.Purpose, newData.ReferenceType, newData.ReferenceId, newData.Side, newData.OrderType, newData.TimeInForce, newData.Price, newData.Qty, newData.FilledQty, newData.AvgPrice, newData.FeeAmount, newData.FeeAsset, newData.ExternalOrderId, newData.ExternalClientOrderId, newData.Status, newData.SubmittedAt, newData.FinishedAt, newData.RetryCount, newData.NextRetryAt, newData.LastErrorCode, newData.LastErrorMsg, newData.RawResponse, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tLiquidityExternalOrderIdKey, tLiquidityExternalOrderOrderNoKey, tLiquidityExternalOrderProviderIdExternalOrderIdKey, tLiquidityExternalOrderRequestNoKey)
 	return err
 }
 

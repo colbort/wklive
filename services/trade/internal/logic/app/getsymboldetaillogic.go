@@ -39,10 +39,10 @@ func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*t
 }
 
 // QuerySymbolDetail is shared by the user-facing App service and trusted
-// service-to-service callers. The caller must resolve and validate tenantId.
+// service-to-service callers. A zero tenantId performs a platform-level lookup.
 func QuerySymbolDetail(ctx context.Context, svcCtx *svc.ServiceContext, tenantId, symbolId int64) (*trade.GetSymbolDetailResp, error) {
 	item, err := svcCtx.TradeSymbolModel.FindOne(ctx, symbolId)
-	if errors.Is(err, models.ErrNotFound) || (err == nil && item.TenantId != tenantId) {
+	if errors.Is(err, models.ErrNotFound) || (err == nil && tenantId > 0 && item.TenantId != tenantId) {
 		return &trade.GetSymbolDetailResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, ctx))}, nil
 	}
 	if err != nil {

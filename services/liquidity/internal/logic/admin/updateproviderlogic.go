@@ -29,15 +29,9 @@ func NewUpdateProviderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Up
 }
 
 func (l *UpdateProviderLogic) UpdateProvider(in *liquidity.UpdateProviderReq) (*liquidity.ProviderResp, error) {
-	if err := helpers.RequireTenant(in.TenantId); err != nil {
-		return nil, err
-	}
 	row, err := l.svcCtx.ProviderModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
-	}
-	if row.TenantId != in.TenantId {
-		return nil, fmt.Errorf("provider not found")
 	}
 	if row.Version != in.Version {
 		return nil, fmt.Errorf("provider version conflict")

@@ -26,11 +26,8 @@ func NewGetLatestInventoryLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *GetLatestInventoryLogic) GetLatestInventory(in *liquidity.GetLatestInventoryReq) (*liquidity.InventorySnapshotResp, error) {
-	if err := helpers.RequireTenant(in.TenantId); err != nil {
-		return nil, err
-	}
 	row, err := l.svcCtx.InventorySnapshotModel.FindLatest(
-		l.ctx, in.TenantId, in.ConfigId, in.ProviderId, int64(in.Source),
+		l.ctx, in.ConfigId, in.ProviderId, int64(in.Source),
 	)
 	if err != nil {
 		return nil, err

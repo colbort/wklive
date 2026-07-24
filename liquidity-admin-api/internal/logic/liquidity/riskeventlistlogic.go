@@ -29,12 +29,8 @@ func NewRiskEventListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ris
 }
 
 func (l *RiskEventListLogic) RiskEventList(req *types.PageQuery) (resp *types.RiskListResp, err error) {
-	tenantID, err := logicutil.TenantID(l.ctx)
-	if err != nil {
-		return nil, err
-	}
 	out, err := l.svcCtx.LiquidityCli.GetRiskEventList(l.ctx, &pb.GetRiskEventListReq{
-		TenantId: tenantID, Status: pb.RiskEventStatus(req.Status), Cursor: req.Cursor, Limit: listLimit(req.Limit),
+		Status: pb.RiskEventStatus(req.Status), Cursor: req.Cursor, Limit: listLimit(req.Limit),
 	})
 	if err != nil {
 		return nil, err

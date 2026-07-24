@@ -11,7 +11,7 @@ func validateTask(in *liquidity.LiquidityTaskReq) error {
 	if in == nil {
 		return fmt.Errorf("task request is required")
 	}
-	if in.TenantId < 0 || in.ConfigId < 0 || in.ProviderId < 0 || in.BatchSize < 0 {
+	if in.ConfigId < 0 || in.ProviderId < 0 || in.BatchSize < 0 {
 		return fmt.Errorf("task filters cannot be negative")
 	}
 	return nil

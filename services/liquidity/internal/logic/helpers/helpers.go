@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -39,13 +38,6 @@ func TrimPage[T any](rows []*T, limit int64, id func(*T) int64) ([]*T, *liquidit
 	return rows, &liquidity.PageMeta{NextCursor: next, HasMore: hasMore}
 }
 
-func RequireTenant(tenantID int64) error {
-	if tenantID <= 0 {
-		return errors.New("tenant_id is required")
-	}
-	return nil
-}
-
 func RequireID(name string, id int64) error {
 	if id <= 0 {
 		return fmt.Errorf("%s is required", name)
@@ -59,7 +51,6 @@ func ProviderToProto(row *models.TLiquidityProvider) *liquidity.LiquidityProvide
 	}
 	return &liquidity.LiquidityProvider{
 		Id:                   row.Id,
-		TenantId:             row.TenantId,
 		ProviderCode:         row.ProviderCode,
 		ProviderName:         row.ProviderName,
 		ProviderType:         liquidity.ProviderType(row.ProviderType),
@@ -86,7 +77,7 @@ func SymbolConfigToProto(row *models.TLiquiditySymbolConfig) *liquidity.Liquidit
 	}
 	f := func(v float64) string { return fmt.Sprintf("%.8f", v) }
 	return &liquidity.LiquiditySymbolConfig{
-		Id: row.Id, TenantId: row.TenantId, SymbolId: row.SymbolId, Symbol: row.Symbol,
+		Id: row.Id, SymbolId: row.SymbolId, Symbol: row.Symbol,
 		ProductType: common.ProductType(row.ProductType), ContractType: common.ContractType(row.ContractType),
 		LiquidityMode:      liquidity.LiquidityMode(row.LiquidityMode),
 		InternalProviderId: row.InternalProviderId, ExternalProviderId: row.ExternalProviderId,
@@ -113,7 +104,7 @@ func StrategyLevelToProto(row *models.TLiquidityStrategyLevel) *liquidity.Liquid
 	}
 	f := func(v float64) string { return fmt.Sprintf("%.8f", v) }
 	return &liquidity.LiquidityStrategyLevel{
-		Id: row.Id, TenantId: row.TenantId, ConfigId: row.ConfigId, LevelNo: int32(row.LevelNo),
+		Id: row.Id, ConfigId: row.ConfigId, LevelNo: int32(row.LevelNo),
 		BidSpreadBps: f(row.BidSpreadBps), AskSpreadBps: f(row.AskSpreadBps),
 		BidQty: f(row.BidQty), AskQty: f(row.AskQty), Enabled: common.Enable(row.Enabled),
 		Version: row.Version, CreateTimes: row.CreateTimes, UpdateTimes: row.UpdateTimes,
@@ -125,7 +116,7 @@ func QuoteCycleToProto(row *models.TLiquidityQuoteCycle) *liquidity.LiquidityQuo
 		return nil
 	}
 	return &liquidity.LiquidityQuoteCycle{
-		Id: row.Id, TenantId: row.TenantId, CycleNo: row.CycleNo, ConfigId: row.ConfigId,
+		Id: row.Id, CycleNo: row.CycleNo, ConfigId: row.ConfigId,
 		SymbolId: row.SymbolId, ReferencePrice: number(row.ReferencePrice),
 		ReferenceSource: row.ReferenceSource, ReferenceSnapshotId: row.ReferenceSnapshotId,
 		ReferenceTime: row.ReferenceTime, TargetBidCount: int32(row.TargetBidCount),
@@ -141,7 +132,7 @@ func QuoteOrderToProto(row *models.TLiquidityQuoteOrder) *liquidity.LiquidityQuo
 		return nil
 	}
 	return &liquidity.LiquidityQuoteOrder{
-		Id: row.Id, TenantId: row.TenantId, QuoteNo: row.QuoteNo, CycleId: row.CycleId,
+		Id: row.Id, QuoteNo: row.QuoteNo, CycleId: row.CycleId,
 		ConfigId: row.ConfigId, ProviderId: row.ProviderId, SymbolId: row.SymbolId,
 		Side: common.Side(row.Side), LevelNo: int32(row.LevelNo), Price: number(row.Price),
 		Qty: number(row.Qty), FilledQty: number(row.FilledQty), InternalOrderId: row.InternalOrderId,
@@ -157,7 +148,7 @@ func ExternalOrderToProto(row *models.TLiquidityExternalOrder) *liquidity.Liquid
 		return nil
 	}
 	return &liquidity.LiquidityExternalOrder{
-		Id: row.Id, TenantId: row.TenantId, OrderNo: row.OrderNo, RequestNo: row.RequestNo,
+		Id: row.Id, OrderNo: row.OrderNo, RequestNo: row.RequestNo,
 		ProviderId: row.ProviderId, ConfigId: row.ConfigId, SymbolId: row.SymbolId,
 		ExternalSymbol: row.ExternalSymbol, Purpose: liquidity.ExternalOrderPurpose(row.Purpose),
 		ReferenceType: row.ReferenceType, ReferenceId: row.ReferenceId, Side: common.Side(row.Side),
@@ -178,7 +169,7 @@ func ExternalFillToProto(row *models.TLiquidityExternalFill) *liquidity.Liquidit
 		return nil
 	}
 	return &liquidity.LiquidityExternalFill{
-		Id: row.Id, TenantId: row.TenantId, ProviderId: row.ProviderId,
+		Id: row.Id, ProviderId: row.ProviderId,
 		ExternalOrderId: row.ExternalOrderId, FillNo: row.FillNo,
 		ExternalTradeId: row.ExternalTradeId, Side: common.Side(row.Side),
 		Price: number(row.Price), Qty: number(row.Qty), Amount: number(row.Amount),
@@ -196,7 +187,7 @@ func HedgeTaskToProto(row *models.TLiquidityHedgeTask) *liquidity.LiquidityHedge
 		return nil
 	}
 	return &liquidity.LiquidityHedgeTask{
-		Id: row.Id, TenantId: row.TenantId, HedgeNo: row.HedgeNo, ConfigId: row.ConfigId,
+		Id: row.Id, HedgeNo: row.HedgeNo, ConfigId: row.ConfigId,
 		ProviderId: row.ProviderId, SymbolId: row.SymbolId,
 		TriggerType:    liquidity.HedgeTriggerType(row.TriggerType),
 		ExposureBefore: number(row.ExposureBefore), TargetExposure: number(row.TargetExposure),
@@ -213,7 +204,7 @@ func InventoryToProto(row *models.TLiquidityInventorySnapshot) *liquidity.Liquid
 		return nil
 	}
 	return &liquidity.LiquidityInventorySnapshot{
-		Id: row.Id, TenantId: row.TenantId, SnapshotNo: row.SnapshotNo,
+		Id: row.Id, SnapshotNo: row.SnapshotNo,
 		ConfigId: row.ConfigId, ProviderId: row.ProviderId, SymbolId: row.SymbolId,
 		BaseAsset: row.BaseAsset, QuoteAsset: row.QuoteAsset,
 		BaseTotal: number(row.BaseTotal), BaseAvailable: number(row.BaseAvailable),
@@ -232,7 +223,7 @@ func RiskEventToProto(row *models.TLiquidityRiskEvent) *liquidity.LiquidityRiskE
 		return nil
 	}
 	return &liquidity.LiquidityRiskEvent{
-		Id: row.Id, TenantId: row.TenantId, EventNo: row.EventNo, ConfigId: row.ConfigId,
+		Id: row.Id, EventNo: row.EventNo, ConfigId: row.ConfigId,
 		ProviderId: row.ProviderId, SymbolId: row.SymbolId, RiskType: row.RiskType,
 		RiskLevel: liquidity.RiskLevel(row.RiskLevel), MetricValue: number(row.MetricValue),
 		ThresholdValue: number(row.ThresholdValue), ActionType: liquidity.RiskActionType(row.ActionType),
@@ -248,7 +239,7 @@ func ReconcileBatchToProto(row *models.TLiquidityReconcileBatch) *liquidity.Liqu
 		return nil
 	}
 	return &liquidity.LiquidityReconcileBatch{
-		Id: row.Id, TenantId: row.TenantId, BatchNo: row.BatchNo, ProviderId: row.ProviderId,
+		Id: row.Id, BatchNo: row.BatchNo, ProviderId: row.ProviderId,
 		ReconcileType: liquidity.ReconcileType(row.ReconcileType), WindowStart: row.WindowStart,
 		WindowEnd: row.WindowEnd, LocalCount: row.LocalCount, ExternalCount: row.ExternalCount,
 		MatchedCount: row.MatchedCount, DifferenceCount: row.DifferenceCount,
@@ -263,7 +254,7 @@ func ReconcileDetailToProto(row *models.TLiquidityReconcileDetail) *liquidity.Li
 		return nil
 	}
 	return &liquidity.LiquidityReconcileDetail{
-		Id: row.Id, TenantId: row.TenantId, BatchId: row.BatchId,
+		Id: row.Id, BatchId: row.BatchId,
 		DifferenceNo: row.DifferenceNo, DifferenceType: liquidity.ReconcileDifferenceType(row.DifferenceType),
 		BusinessType: row.BusinessType, LocalReference: row.LocalReference,
 		ExternalReference: row.ExternalReference, LocalValue: nullString(row.LocalValue),

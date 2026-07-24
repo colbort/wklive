@@ -24,16 +24,16 @@ var (
 	tLiquidityExternalFillRowsWithPlaceHolder = strings.Join(stringx.Remove(tLiquidityExternalFillFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheTLiquidityExternalFillIdPrefix                        = "cache:tLiquidityExternalFill:id:"
+	cacheTLiquidityExternalFillFillNoPrefix                    = "cache:tLiquidityExternalFill:fillNo:"
 	cacheTLiquidityExternalFillProviderIdExternalTradeIdPrefix = "cache:tLiquidityExternalFill:providerId:externalTradeId:"
-	cacheTLiquidityExternalFillTenantIdFillNoPrefix            = "cache:tLiquidityExternalFill:tenantId:fillNo:"
 )
 
 type (
 	tLiquidityExternalFillModel interface {
 		Insert(ctx context.Context, data *TLiquidityExternalFill) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TLiquidityExternalFill, error)
+		FindOneByFillNo(ctx context.Context, fillNo string) (*TLiquidityExternalFill, error)
 		FindOneByProviderIdExternalTradeId(ctx context.Context, providerId int64, externalTradeId string) (*TLiquidityExternalFill, error)
-		FindOneByTenantIdFillNo(ctx context.Context, tenantId int64, fillNo string) (*TLiquidityExternalFill, error)
 		Update(ctx context.Context, data *TLiquidityExternalFill) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -45,7 +45,6 @@ type (
 
 	TLiquidityExternalFill struct {
 		Id               int64          `db:"id"`                // 主键ID
-		TenantId         int64          `db:"tenant_id"`         // 租户ID
 		ProviderId       int64          `db:"provider_id"`       // 外部流动性提供方ID
 		ExternalOrderId  int64          `db:"external_order_id"` // t_liquidity_external_order.id
 		FillNo           string         `db:"fill_no"`           // 内部成交幂等号
@@ -81,13 +80,13 @@ func (m *defaultTLiquidityExternalFillModel) Delete(ctx context.Context, id int6
 		return err
 	}
 
+	tLiquidityExternalFillFillNoKey := fmt.Sprintf("%s%v", cacheTLiquidityExternalFillFillNoPrefix, data.FillNo)
 	tLiquidityExternalFillIdKey := fmt.Sprintf("%s%v", cacheTLiquidityExternalFillIdPrefix, id)
 	tLiquidityExternalFillProviderIdExternalTradeIdKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityExternalFillProviderIdExternalTradeIdPrefix, data.ProviderId, data.ExternalTradeId)
-	tLiquidityExternalFillTenantIdFillNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityExternalFillTenantIdFillNoPrefix, data.TenantId, data.FillNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tLiquidityExternalFillIdKey, tLiquidityExternalFillProviderIdExternalTradeIdKey, tLiquidityExternalFillTenantIdFillNoKey)
+	}, tLiquidityExternalFillFillNoKey, tLiquidityExternalFillIdKey, tLiquidityExternalFillProviderIdExternalTradeIdKey)
 	return err
 }
 
@@ -98,6 +97,26 @@ func (m *defaultTLiquidityExternalFillModel) FindOne(ctx context.Context, id int
 		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tLiquidityExternalFillRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultTLiquidityExternalFillModel) FindOneByFillNo(ctx context.Context, fillNo string) (*TLiquidityExternalFill, error) {
+	tLiquidityExternalFillFillNoKey := fmt.Sprintf("%s%v", cacheTLiquidityExternalFillFillNoPrefix, fillNo)
+	var resp TLiquidityExternalFill
+	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityExternalFillFillNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `fill_no` = ? limit 1", tLiquidityExternalFillRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, fillNo); err != nil {
+			return nil, err
+		}
+		return resp.Id, nil
+	}, m.queryPrimary)
 	switch err {
 	case nil:
 		return &resp, nil
@@ -128,34 +147,14 @@ func (m *defaultTLiquidityExternalFillModel) FindOneByProviderIdExternalTradeId(
 	}
 }
 
-func (m *defaultTLiquidityExternalFillModel) FindOneByTenantIdFillNo(ctx context.Context, tenantId int64, fillNo string) (*TLiquidityExternalFill, error) {
-	tLiquidityExternalFillTenantIdFillNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityExternalFillTenantIdFillNoPrefix, tenantId, fillNo)
-	var resp TLiquidityExternalFill
-	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityExternalFillTenantIdFillNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `fill_no` = ? limit 1", tLiquidityExternalFillRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, fillNo); err != nil {
-			return nil, err
-		}
-		return resp.Id, nil
-	}, m.queryPrimary)
-	switch err {
-	case nil:
-		return &resp, nil
-	case sqlc.ErrNotFound:
-		return nil, ErrNotFound
-	default:
-		return nil, err
-	}
-}
-
 func (m *defaultTLiquidityExternalFillModel) Insert(ctx context.Context, data *TLiquidityExternalFill) (sql.Result, error) {
+	tLiquidityExternalFillFillNoKey := fmt.Sprintf("%s%v", cacheTLiquidityExternalFillFillNoPrefix, data.FillNo)
 	tLiquidityExternalFillIdKey := fmt.Sprintf("%s%v", cacheTLiquidityExternalFillIdPrefix, data.Id)
 	tLiquidityExternalFillProviderIdExternalTradeIdKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityExternalFillProviderIdExternalTradeIdPrefix, data.ProviderId, data.ExternalTradeId)
-	tLiquidityExternalFillTenantIdFillNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityExternalFillTenantIdFillNoPrefix, data.TenantId, data.FillNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityExternalFillRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.ProviderId, data.ExternalOrderId, data.FillNo, data.ExternalTradeId, data.Side, data.Price, data.Qty, data.Amount, data.FeeAmount, data.FeeAsset, data.LiquidityType, data.TradeTime, data.SettlementStatus, data.RetryCount, data.NextRetryAt, data.LastErrorMsg, data.RawPayload, data.CreateTimes, data.UpdateTimes)
-	}, tLiquidityExternalFillIdKey, tLiquidityExternalFillProviderIdExternalTradeIdKey, tLiquidityExternalFillTenantIdFillNoKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityExternalFillRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.ProviderId, data.ExternalOrderId, data.FillNo, data.ExternalTradeId, data.Side, data.Price, data.Qty, data.Amount, data.FeeAmount, data.FeeAsset, data.LiquidityType, data.TradeTime, data.SettlementStatus, data.RetryCount, data.NextRetryAt, data.LastErrorMsg, data.RawPayload, data.CreateTimes, data.UpdateTimes)
+	}, tLiquidityExternalFillFillNoKey, tLiquidityExternalFillIdKey, tLiquidityExternalFillProviderIdExternalTradeIdKey)
 	return ret, err
 }
 
@@ -165,13 +164,13 @@ func (m *defaultTLiquidityExternalFillModel) Update(ctx context.Context, newData
 		return err
 	}
 
+	tLiquidityExternalFillFillNoKey := fmt.Sprintf("%s%v", cacheTLiquidityExternalFillFillNoPrefix, data.FillNo)
 	tLiquidityExternalFillIdKey := fmt.Sprintf("%s%v", cacheTLiquidityExternalFillIdPrefix, data.Id)
 	tLiquidityExternalFillProviderIdExternalTradeIdKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityExternalFillProviderIdExternalTradeIdPrefix, data.ProviderId, data.ExternalTradeId)
-	tLiquidityExternalFillTenantIdFillNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityExternalFillTenantIdFillNoPrefix, data.TenantId, data.FillNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tLiquidityExternalFillRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.ProviderId, newData.ExternalOrderId, newData.FillNo, newData.ExternalTradeId, newData.Side, newData.Price, newData.Qty, newData.Amount, newData.FeeAmount, newData.FeeAsset, newData.LiquidityType, newData.TradeTime, newData.SettlementStatus, newData.RetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.RawPayload, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tLiquidityExternalFillIdKey, tLiquidityExternalFillProviderIdExternalTradeIdKey, tLiquidityExternalFillTenantIdFillNoKey)
+		return conn.ExecCtx(ctx, query, newData.ProviderId, newData.ExternalOrderId, newData.FillNo, newData.ExternalTradeId, newData.Side, newData.Price, newData.Qty, newData.Amount, newData.FeeAmount, newData.FeeAsset, newData.LiquidityType, newData.TradeTime, newData.SettlementStatus, newData.RetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.RawPayload, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tLiquidityExternalFillFillNoKey, tLiquidityExternalFillIdKey, tLiquidityExternalFillProviderIdExternalTradeIdKey)
 	return err
 }
 

@@ -14,15 +14,15 @@ var _ TLiquidityInventorySnapshotModel = (*customTLiquidityInventorySnapshotMode
 
 type (
 	LiquidityInventorySnapshotPageFilter struct {
-		TenantId, ConfigId, ProviderId, Source int64
-		TimeStart, TimeEnd                     int64
+		ConfigId, ProviderId, Source int64
+		TimeStart, TimeEnd           int64
 	}
 	// TLiquidityInventorySnapshotModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTLiquidityInventorySnapshotModel.
 	TLiquidityInventorySnapshotModel interface {
 		tLiquidityInventorySnapshotModel
 		FindPage(ctx context.Context, filter LiquidityInventorySnapshotPageFilter, cursor, limit int64) ([]*TLiquidityInventorySnapshot, int64, error)
-		FindLatest(ctx context.Context, tenantID, configID, providerID, source int64) (*TLiquidityInventorySnapshot, error)
+		FindLatest(ctx context.Context, configID, providerID, source int64) (*TLiquidityInventorySnapshot, error)
 	}
 
 	customTLiquidityInventorySnapshotModel struct {
@@ -40,7 +40,6 @@ func NewTLiquidityInventorySnapshotModel(conn sqlx.SqlConn, c cache.CacheConf, o
 func (m *customTLiquidityInventorySnapshotModel) FindPage(ctx context.Context, filter LiquidityInventorySnapshotPageFilter, cursor, limit int64) ([]*TLiquidityInventorySnapshot, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := sqlutil.NewPageQueryBuilder()
-	b.EqInt64("tenant_id", filter.TenantId)
 	b.EqInt64("config_id", filter.ConfigId)
 	b.EqInt64("provider_id", filter.ProviderId)
 	b.EqInt64("source", filter.Source)
@@ -66,9 +65,8 @@ func (m *customTLiquidityInventorySnapshotModel) FindPage(ctx context.Context, f
 	return rows, total, nil
 }
 
-func (m *customTLiquidityInventorySnapshotModel) FindLatest(ctx context.Context, tenantID, configID, providerID, source int64) (*TLiquidityInventorySnapshot, error) {
+func (m *customTLiquidityInventorySnapshotModel) FindLatest(ctx context.Context, configID, providerID, source int64) (*TLiquidityInventorySnapshot, error) {
 	b := sqlutil.NewPageQueryBuilder()
-	b.EqInt64("tenant_id", tenantID)
 	b.EqInt64("config_id", configID)
 	b.EqInt64("provider_id", providerID)
 	b.EqInt64("source", source)

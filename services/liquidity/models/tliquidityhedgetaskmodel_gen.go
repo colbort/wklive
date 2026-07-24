@@ -23,15 +23,15 @@ var (
 	tLiquidityHedgeTaskRowsExpectAutoSet   = strings.Join(stringx.Remove(tLiquidityHedgeTaskFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tLiquidityHedgeTaskRowsWithPlaceHolder = strings.Join(stringx.Remove(tLiquidityHedgeTaskFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTLiquidityHedgeTaskIdPrefix              = "cache:tLiquidityHedgeTask:id:"
-	cacheTLiquidityHedgeTaskTenantIdHedgeNoPrefix = "cache:tLiquidityHedgeTask:tenantId:hedgeNo:"
+	cacheTLiquidityHedgeTaskIdPrefix      = "cache:tLiquidityHedgeTask:id:"
+	cacheTLiquidityHedgeTaskHedgeNoPrefix = "cache:tLiquidityHedgeTask:hedgeNo:"
 )
 
 type (
 	tLiquidityHedgeTaskModel interface {
 		Insert(ctx context.Context, data *TLiquidityHedgeTask) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TLiquidityHedgeTask, error)
-		FindOneByTenantIdHedgeNo(ctx context.Context, tenantId int64, hedgeNo string) (*TLiquidityHedgeTask, error)
+		FindOneByHedgeNo(ctx context.Context, hedgeNo string) (*TLiquidityHedgeTask, error)
 		Update(ctx context.Context, data *TLiquidityHedgeTask) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -43,7 +43,6 @@ type (
 
 	TLiquidityHedgeTask struct {
 		Id             int64   `db:"id"`              // 主键ID
-		TenantId       int64   `db:"tenant_id"`       // 租户ID
 		HedgeNo        string  `db:"hedge_no"`        // 对冲业务号
 		ConfigId       int64   `db:"config_id"`       // 交易对流动性配置ID
 		ProviderId     int64   `db:"provider_id"`     // 外部对冲提供方ID
@@ -78,12 +77,12 @@ func (m *defaultTLiquidityHedgeTaskModel) Delete(ctx context.Context, id int64) 
 		return err
 	}
 
+	tLiquidityHedgeTaskHedgeNoKey := fmt.Sprintf("%s%v", cacheTLiquidityHedgeTaskHedgeNoPrefix, data.HedgeNo)
 	tLiquidityHedgeTaskIdKey := fmt.Sprintf("%s%v", cacheTLiquidityHedgeTaskIdPrefix, id)
-	tLiquidityHedgeTaskTenantIdHedgeNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityHedgeTaskTenantIdHedgeNoPrefix, data.TenantId, data.HedgeNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tLiquidityHedgeTaskIdKey, tLiquidityHedgeTaskTenantIdHedgeNoKey)
+	}, tLiquidityHedgeTaskHedgeNoKey, tLiquidityHedgeTaskIdKey)
 	return err
 }
 
@@ -104,12 +103,12 @@ func (m *defaultTLiquidityHedgeTaskModel) FindOne(ctx context.Context, id int64)
 	}
 }
 
-func (m *defaultTLiquidityHedgeTaskModel) FindOneByTenantIdHedgeNo(ctx context.Context, tenantId int64, hedgeNo string) (*TLiquidityHedgeTask, error) {
-	tLiquidityHedgeTaskTenantIdHedgeNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityHedgeTaskTenantIdHedgeNoPrefix, tenantId, hedgeNo)
+func (m *defaultTLiquidityHedgeTaskModel) FindOneByHedgeNo(ctx context.Context, hedgeNo string) (*TLiquidityHedgeTask, error) {
+	tLiquidityHedgeTaskHedgeNoKey := fmt.Sprintf("%s%v", cacheTLiquidityHedgeTaskHedgeNoPrefix, hedgeNo)
 	var resp TLiquidityHedgeTask
-	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityHedgeTaskTenantIdHedgeNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `hedge_no` = ? limit 1", tLiquidityHedgeTaskRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, hedgeNo); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityHedgeTaskHedgeNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `hedge_no` = ? limit 1", tLiquidityHedgeTaskRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, hedgeNo); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -125,12 +124,12 @@ func (m *defaultTLiquidityHedgeTaskModel) FindOneByTenantIdHedgeNo(ctx context.C
 }
 
 func (m *defaultTLiquidityHedgeTaskModel) Insert(ctx context.Context, data *TLiquidityHedgeTask) (sql.Result, error) {
+	tLiquidityHedgeTaskHedgeNoKey := fmt.Sprintf("%s%v", cacheTLiquidityHedgeTaskHedgeNoPrefix, data.HedgeNo)
 	tLiquidityHedgeTaskIdKey := fmt.Sprintf("%s%v", cacheTLiquidityHedgeTaskIdPrefix, data.Id)
-	tLiquidityHedgeTaskTenantIdHedgeNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityHedgeTaskTenantIdHedgeNoPrefix, data.TenantId, data.HedgeNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityHedgeTaskRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.HedgeNo, data.ConfigId, data.ProviderId, data.SymbolId, data.TriggerType, data.ExposureBefore, data.TargetExposure, data.Side, data.TargetQty, data.ExecutedQty, data.AvgPrice, data.Status, data.RetryCount, data.NextRetryAt, data.LastErrorMsg, data.Version, data.CreateTimes, data.UpdateTimes)
-	}, tLiquidityHedgeTaskIdKey, tLiquidityHedgeTaskTenantIdHedgeNoKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityHedgeTaskRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.HedgeNo, data.ConfigId, data.ProviderId, data.SymbolId, data.TriggerType, data.ExposureBefore, data.TargetExposure, data.Side, data.TargetQty, data.ExecutedQty, data.AvgPrice, data.Status, data.RetryCount, data.NextRetryAt, data.LastErrorMsg, data.Version, data.CreateTimes, data.UpdateTimes)
+	}, tLiquidityHedgeTaskHedgeNoKey, tLiquidityHedgeTaskIdKey)
 	return ret, err
 }
 
@@ -140,12 +139,12 @@ func (m *defaultTLiquidityHedgeTaskModel) Update(ctx context.Context, newData *T
 		return err
 	}
 
+	tLiquidityHedgeTaskHedgeNoKey := fmt.Sprintf("%s%v", cacheTLiquidityHedgeTaskHedgeNoPrefix, data.HedgeNo)
 	tLiquidityHedgeTaskIdKey := fmt.Sprintf("%s%v", cacheTLiquidityHedgeTaskIdPrefix, data.Id)
-	tLiquidityHedgeTaskTenantIdHedgeNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityHedgeTaskTenantIdHedgeNoPrefix, data.TenantId, data.HedgeNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tLiquidityHedgeTaskRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.HedgeNo, newData.ConfigId, newData.ProviderId, newData.SymbolId, newData.TriggerType, newData.ExposureBefore, newData.TargetExposure, newData.Side, newData.TargetQty, newData.ExecutedQty, newData.AvgPrice, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tLiquidityHedgeTaskIdKey, tLiquidityHedgeTaskTenantIdHedgeNoKey)
+		return conn.ExecCtx(ctx, query, newData.HedgeNo, newData.ConfigId, newData.ProviderId, newData.SymbolId, newData.TriggerType, newData.ExposureBefore, newData.TargetExposure, newData.Side, newData.TargetQty, newData.ExecutedQty, newData.AvgPrice, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tLiquidityHedgeTaskHedgeNoKey, tLiquidityHedgeTaskIdKey)
 	return err
 }
 

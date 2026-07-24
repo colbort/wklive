@@ -7,7 +7,6 @@ import (
 
 	"wklive/common/helper"
 	"wklive/proto/liquidity"
-	"wklive/services/liquidity/internal/logic/helpers"
 	"wklive/services/liquidity/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -28,9 +27,6 @@ func NewSetProviderStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *SetProviderStatusLogic) SetProviderStatus(in *liquidity.SetProviderStatusReq) (*liquidity.CommonResp, error) {
-	if err := helpers.RequireTenant(in.TenantId); err != nil {
-		return nil, err
-	}
 	if in.Status != liquidity.ProviderStatus_PROVIDER_STATUS_ENABLED &&
 		in.Status != liquidity.ProviderStatus_PROVIDER_STATUS_DISABLED {
 		return nil, fmt.Errorf("invalid provider status")
@@ -38,9 +34,6 @@ func (l *SetProviderStatusLogic) SetProviderStatus(in *liquidity.SetProviderStat
 	row, err := l.svcCtx.ProviderModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
-	}
-	if row.TenantId != in.TenantId {
-		return nil, fmt.Errorf("provider not found")
 	}
 	if row.Version != in.Version {
 		return nil, fmt.Errorf("provider version conflict")

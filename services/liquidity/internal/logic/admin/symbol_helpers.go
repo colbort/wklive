@@ -41,11 +41,11 @@ func parseSignedNumber(name, value string) (float64, error) {
 }
 
 func buildSymbolConfig(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.SaveSymbolConfigReq, current *models.TLiquiditySymbolConfig) (*models.TLiquiditySymbolConfig, error) {
-	if in.TenantId <= 0 || in.SymbolId <= 0 {
-		return nil, fmt.Errorf("tenant_id and symbol_id are required")
+	if in.SymbolId <= 0 {
+		return nil, fmt.Errorf("symbol_id is required")
 	}
 	detail, err := svcCtx.TradeClient.GetSymbolDetail(ctx, &trade.GetSymbolDetailReq{
-		TenantId: in.TenantId,
+		// TenantId: 0, // TODO 这里之后看怎么处理
 		SymbolId: in.SymbolId,
 	})
 	if err != nil {
@@ -55,9 +55,6 @@ func buildSymbolConfig(ctx context.Context, svcCtx *svc.ServiceContext, in *liqu
 		return nil, fmt.Errorf("trade symbol unavailable: %s", detail.GetBase().GetMsg())
 	}
 	symbol := detail.GetData().GetSymbol()
-	if symbol.TenantId != in.TenantId {
-		return nil, fmt.Errorf("trade symbol not found")
-	}
 	values := make([]float64, 13)
 	inputs := []struct{ name, value string }{
 		{"reprice_threshold_bps", in.RepriceThresholdBps}, {"base_spread_bps", in.BaseSpreadBps},
@@ -103,9 +100,9 @@ func buildSymbolConfig(ctx context.Context, svcCtx *svc.ServiceContext, in *liqu
 	row := current
 	if row == nil {
 		row = &models.TLiquiditySymbolConfig{
-			TenantId: in.TenantId, SymbolId: in.SymbolId,
-			Status:  int64(liquidity.SymbolLiquidityStatus_SYMBOL_LIQUIDITY_STATUS_DISABLED),
-			Version: 1, CreateTimes: now,
+			SymbolId: in.SymbolId,
+			Status:   int64(liquidity.SymbolLiquidityStatus_SYMBOL_LIQUIDITY_STATUS_DISABLED),
+			Version:  1, CreateTimes: now,
 		}
 	}
 	row.Symbol, row.ProductType, row.ContractType = symbol.Symbol, int64(symbol.ProductType), int64(symbol.ContractType)
@@ -122,21 +119,18 @@ func buildSymbolConfig(ctx context.Context, svcCtx *svc.ServiceContext, in *liqu
 }
 
 func changeSymbolStatus(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.SymbolActionReq, target liquidity.SymbolLiquidityStatus) error {
-	if in.TenantId <= 0 || in.ConfigId <= 0 {
-		return fmt.Errorf("tenant_id and config_id are required")
+	if in.ConfigId <= 0 {
+		return fmt.Errorf("config_id is required")
 	}
 	row, err := svcCtx.SymbolConfigModel.FindOne(ctx, in.ConfigId)
 	if err != nil {
 		return err
 	}
-	if row.TenantId != in.TenantId {
-		return fmt.Errorf("symbol config not found")
-	}
 	if row.Version != in.Version {
 		return fmt.Errorf("symbol config version conflict")
 	}
 	if target == liquidity.SymbolLiquidityStatus_SYMBOL_LIQUIDITY_STATUS_RUNNING {
-		enabledLevels, err := svcCtx.StrategyLevelModel.CountEnabled(ctx, in.TenantId, in.ConfigId)
+		enabledLevels, err := svcCtx.StrategyLevelModel.CountEnabled(ctx, in.ConfigId)
 		if err != nil {
 			return err
 		}

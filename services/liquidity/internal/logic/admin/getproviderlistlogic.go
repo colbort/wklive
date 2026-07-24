@@ -28,12 +28,9 @@ func NewGetProviderListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 }
 
 func (l *GetProviderListLogic) GetProviderList(in *liquidity.GetProviderListReq) (*liquidity.GetProviderListResp, error) {
-	if err := helpers.RequireTenant(in.TenantId); err != nil {
-		return nil, err
-	}
 	rows, total, err := l.svcCtx.ProviderModel.FindPage(l.ctx, models.LiquidityProviderPageFilter{
-		TenantId: in.TenantId, ProviderType: int64(in.ProviderType),
-		Status: int64(in.Status), Keyword: strings.TrimSpace(in.Keyword),
+		ProviderType: int64(in.ProviderType),
+		Status:       int64(in.Status), Keyword: strings.TrimSpace(in.Keyword),
 	}, in.Cursor, int64(in.Limit))
 	if err != nil {
 		return nil, err

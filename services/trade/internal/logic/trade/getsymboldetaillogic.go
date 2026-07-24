@@ -27,9 +27,6 @@ func NewGetSymbolDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 
 // 内部服务获取指定交易对配置，不依赖用户端登录上下文。
 func (l *GetSymbolDetailLogic) GetSymbolDetail(in *trade.GetSymbolDetailReq) (*trade.GetSymbolDetailResp, error) {
-	if in.TenantId <= 0 {
-		return nil, fmt.Errorf("tenant_id is required")
-	}
 	if in.SymbolId <= 0 {
 		return nil, fmt.Errorf("symbol_id is required")
 	}

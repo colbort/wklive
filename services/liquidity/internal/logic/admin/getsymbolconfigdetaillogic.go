@@ -27,20 +27,14 @@ func NewGetSymbolConfigDetailLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *GetSymbolConfigDetailLogic) GetSymbolConfigDetail(in *liquidity.GetSymbolConfigDetailReq) (*liquidity.GetSymbolConfigDetailResp, error) {
-	if err := helpers.RequireTenant(in.TenantId); err != nil {
-		return nil, err
-	}
 	if in.Id <= 0 && in.SymbolId <= 0 {
 		return nil, fmt.Errorf("id or symbol_id is required")
 	}
-	row, err := l.svcCtx.SymbolConfigModel.FindByTenantAndIDOrSymbol(l.ctx, in.TenantId, in.Id, in.SymbolId)
+	row, err := l.svcCtx.SymbolConfigModel.FindByIDOrSymbol(l.ctx, in.Id, in.SymbolId)
 	if err != nil {
 		return nil, err
 	}
-	if row.TenantId != in.TenantId {
-		return nil, fmt.Errorf("symbol config not found")
-	}
-	levels, err := l.svcCtx.StrategyLevelModel.FindList(l.ctx, in.TenantId, row.Id, false)
+	levels, err := l.svcCtx.StrategyLevelModel.FindList(l.ctx, row.Id, false)
 	if err != nil {
 		return nil, err
 	}

@@ -30,10 +30,10 @@ func NewRouteExternalOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *RouteExternalOrderLogic) RouteExternalOrder(in *liquidity.RouteExternalOrderReq) (*liquidity.ExternalOrderResp, error) {
-	if in.TenantId <= 0 || in.SymbolId <= 0 || strings.TrimSpace(in.RequestNo) == "" {
-		return nil, fmt.Errorf("tenant_id, symbol_id and request_no are required")
+	if in.SymbolId <= 0 || strings.TrimSpace(in.RequestNo) == "" {
+		return nil, fmt.Errorf("symbol_id and request_no are required")
 	}
-	if existing, err := l.svcCtx.ExternalOrderModel.FindOneByTenantIdRequestNo(l.ctx, in.TenantId, in.RequestNo); err == nil {
+	if existing, err := l.svcCtx.ExternalOrderModel.FindOneByRequestNo(l.ctx, in.RequestNo); err == nil {
 		return &liquidity.ExternalOrderResp{Base: helper.OkResp(), Data: helpers.ExternalOrderToProto(existing)}, nil
 	} else if err != models.ErrNotFound {
 		return nil, err
@@ -54,13 +54,13 @@ func (l *RouteExternalOrderLogic) RouteExternalOrder(in *liquidity.RouteExternal
 	} else if in.OrderType != liquidity.ExternalOrderType_EXTERNAL_ORDER_TYPE_MARKET {
 		return nil, fmt.Errorf("invalid external order type")
 	}
-	config, provider, err := loadExternalRoute(l.ctx, l.svcCtx, in.TenantId, in.SymbolId)
+	config, provider, err := loadExternalRoute(l.ctx, l.svcCtx, in.SymbolId)
 	if err != nil {
 		return nil, err
 	}
 	now := time.Now().UnixMilli()
 	row := &models.TLiquidityExternalOrder{
-		TenantId: in.TenantId, OrderNo: fmt.Sprintf("EXT%d", time.Now().UnixNano()),
+		OrderNo:   fmt.Sprintf("EXT%d", time.Now().UnixNano()),
 		RequestNo: strings.TrimSpace(in.RequestNo), ProviderId: provider.Id, ConfigId: config.Id,
 		SymbolId: in.SymbolId, ExternalSymbol: config.ExternalSymbol, Purpose: int64(in.Purpose),
 		ReferenceType: strings.TrimSpace(in.ReferenceType), ReferenceId: in.ReferenceId,
@@ -71,7 +71,7 @@ func (l *RouteExternalOrderLogic) RouteExternalOrder(in *liquidity.RouteExternal
 	}
 	insertResult, err := l.svcCtx.ExternalOrderModel.Insert(l.ctx, row)
 	if err != nil {
-		if existing, findErr := l.svcCtx.ExternalOrderModel.FindOneByTenantIdRequestNo(l.ctx, in.TenantId, in.RequestNo); findErr == nil {
+		if existing, findErr := l.svcCtx.ExternalOrderModel.FindOneByRequestNo(l.ctx, in.RequestNo); findErr == nil {
 			return &liquidity.ExternalOrderResp{Base: helper.OkResp(), Data: helpers.ExternalOrderToProto(existing)}, nil
 		}
 		return nil, err

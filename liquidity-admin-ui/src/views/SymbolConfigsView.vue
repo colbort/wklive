@@ -4,8 +4,8 @@ import { ElMessage } from "element-plus";
 import { liquidityApi } from "@/api/liquidity";
 import type { SymbolConfig } from "@/types/liquidity";
 const loading=ref(false), dialog=ref(false), rows=ref<SymbolConfig[]>([]);
-const query=reactive({tenantId:1,keyword:"",status:"",limit:20});
-const form=reactive({tenantId:1,symbolId:0,liquidityMode:1,internalProviderId:0,externalProviderId:0,externalSymbol:"",referencePriceSource:"price-engine",referencePriceKind:"MARK",quoteValidityMs:3000,refreshIntervalMs:1000,quoteTtlMs:5000,repriceThresholdBps:"2",baseSpreadBps:"5",maxSpreadBps:"20",maxPriceDeviationBps:"50",minQuoteQty:"0.001",maxQuoteQty:"1",maxQuoteNotional:"100000",targetBaseInventory:"0",minBaseInventory:"-10",maxBaseInventory:"10",maxNetExposure:"10",maxDailyNotional:"1000000",inventorySkewBps:"2",hedgeThreshold:"1",hedgeRatio:"1",selfTradePrevention:1});
+const query=reactive({keyword:"",status:"",limit:20});
+const form=reactive({symbolId:0,liquidityMode:1,internalProviderId:0,externalProviderId:0,externalSymbol:"",referencePriceSource:"price-engine",referencePriceKind:"MARK",quoteValidityMs:3000,refreshIntervalMs:1000,quoteTtlMs:5000,repriceThresholdBps:"2",baseSpreadBps:"5",maxSpreadBps:"20",maxPriceDeviationBps:"50",minQuoteQty:"0.001",maxQuoteQty:"1",maxQuoteNotional:"100000",targetBaseInventory:"0",minBaseInventory:"-10",maxBaseInventory:"10",maxNetExposure:"10",maxDailyNotional:"1000000",inventorySkewBps:"2",hedgeThreshold:"1",hedgeRatio:"1",selfTradePrevention:1});
 async function load(){loading.value=true;try{const r=await liquidityApi.symbolConfigs(query);rows.value=(r.data||[]) as unknown as SymbolConfig[]}finally{loading.value=false}}
 async function create(){await liquidityApi.createSymbolConfig(form);ElMessage.success("策略配置已创建");dialog.value=false;await load()}
 async function action(row:SymbolConfig,type:"start"|"pause"|"stop"){await liquidityApi.symbolAction(row.id,type);ElMessage.success("操作已提交");await load()}

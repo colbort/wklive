@@ -23,15 +23,15 @@ var (
 	tLiquidityProviderRowsExpectAutoSet   = strings.Join(stringx.Remove(tLiquidityProviderFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tLiquidityProviderRowsWithPlaceHolder = strings.Join(stringx.Remove(tLiquidityProviderFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTLiquidityProviderIdPrefix                   = "cache:tLiquidityProvider:id:"
-	cacheTLiquidityProviderTenantIdProviderCodePrefix = "cache:tLiquidityProvider:tenantId:providerCode:"
+	cacheTLiquidityProviderIdPrefix           = "cache:tLiquidityProvider:id:"
+	cacheTLiquidityProviderProviderCodePrefix = "cache:tLiquidityProvider:providerCode:"
 )
 
 type (
 	tLiquidityProviderModel interface {
 		Insert(ctx context.Context, data *TLiquidityProvider) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TLiquidityProvider, error)
-		FindOneByTenantIdProviderCode(ctx context.Context, tenantId int64, providerCode string) (*TLiquidityProvider, error)
+		FindOneByProviderCode(ctx context.Context, providerCode string) (*TLiquidityProvider, error)
 		Update(ctx context.Context, data *TLiquidityProvider) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -43,8 +43,7 @@ type (
 
 	TLiquidityProvider struct {
 		Id                 int64  `db:"id"`                    // 主键ID
-		TenantId           int64  `db:"tenant_id"`             // 租户ID
-		ProviderCode       string `db:"provider_code"`         // 租户内唯一提供方编码
+		ProviderCode       string `db:"provider_code"`         // 平台唯一提供方编码
 		ProviderName       string `db:"provider_name"`         // 提供方名称
 		ProviderType       int64  `db:"provider_type"`         // 类型：1平台内部做市 2外部流动性
 		TradeUserId        int64  `db:"trade_user_id"`         // 内部做市用户ID；外部提供方为0
@@ -78,11 +77,11 @@ func (m *defaultTLiquidityProviderModel) Delete(ctx context.Context, id int64) e
 	}
 
 	tLiquidityProviderIdKey := fmt.Sprintf("%s%v", cacheTLiquidityProviderIdPrefix, id)
-	tLiquidityProviderTenantIdProviderCodeKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityProviderTenantIdProviderCodePrefix, data.TenantId, data.ProviderCode)
+	tLiquidityProviderProviderCodeKey := fmt.Sprintf("%s%v", cacheTLiquidityProviderProviderCodePrefix, data.ProviderCode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tLiquidityProviderIdKey, tLiquidityProviderTenantIdProviderCodeKey)
+	}, tLiquidityProviderIdKey, tLiquidityProviderProviderCodeKey)
 	return err
 }
 
@@ -103,12 +102,12 @@ func (m *defaultTLiquidityProviderModel) FindOne(ctx context.Context, id int64) 
 	}
 }
 
-func (m *defaultTLiquidityProviderModel) FindOneByTenantIdProviderCode(ctx context.Context, tenantId int64, providerCode string) (*TLiquidityProvider, error) {
-	tLiquidityProviderTenantIdProviderCodeKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityProviderTenantIdProviderCodePrefix, tenantId, providerCode)
+func (m *defaultTLiquidityProviderModel) FindOneByProviderCode(ctx context.Context, providerCode string) (*TLiquidityProvider, error) {
+	tLiquidityProviderProviderCodeKey := fmt.Sprintf("%s%v", cacheTLiquidityProviderProviderCodePrefix, providerCode)
 	var resp TLiquidityProvider
-	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityProviderTenantIdProviderCodeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `provider_code` = ? limit 1", tLiquidityProviderRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, providerCode); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityProviderProviderCodeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `provider_code` = ? limit 1", tLiquidityProviderRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, providerCode); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -125,11 +124,11 @@ func (m *defaultTLiquidityProviderModel) FindOneByTenantIdProviderCode(ctx conte
 
 func (m *defaultTLiquidityProviderModel) Insert(ctx context.Context, data *TLiquidityProvider) (sql.Result, error) {
 	tLiquidityProviderIdKey := fmt.Sprintf("%s%v", cacheTLiquidityProviderIdPrefix, data.Id)
-	tLiquidityProviderTenantIdProviderCodeKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityProviderTenantIdProviderCodePrefix, data.TenantId, data.ProviderCode)
+	tLiquidityProviderProviderCodeKey := fmt.Sprintf("%s%v", cacheTLiquidityProviderProviderCodePrefix, data.ProviderCode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityProviderRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.ProviderCode, data.ProviderName, data.ProviderType, data.TradeUserId, data.VenueCode, data.Environment, data.CredentialRef, data.AccountRef, data.RateLimitPerSecond, data.Status, data.LastHealthStatus, data.LastHealthAt, data.LastErrorMsg, data.Version, data.Remark, data.CreateTimes, data.UpdateTimes)
-	}, tLiquidityProviderIdKey, tLiquidityProviderTenantIdProviderCodeKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityProviderRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.ProviderCode, data.ProviderName, data.ProviderType, data.TradeUserId, data.VenueCode, data.Environment, data.CredentialRef, data.AccountRef, data.RateLimitPerSecond, data.Status, data.LastHealthStatus, data.LastHealthAt, data.LastErrorMsg, data.Version, data.Remark, data.CreateTimes, data.UpdateTimes)
+	}, tLiquidityProviderIdKey, tLiquidityProviderProviderCodeKey)
 	return ret, err
 }
 
@@ -140,11 +139,11 @@ func (m *defaultTLiquidityProviderModel) Update(ctx context.Context, newData *TL
 	}
 
 	tLiquidityProviderIdKey := fmt.Sprintf("%s%v", cacheTLiquidityProviderIdPrefix, data.Id)
-	tLiquidityProviderTenantIdProviderCodeKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityProviderTenantIdProviderCodePrefix, data.TenantId, data.ProviderCode)
+	tLiquidityProviderProviderCodeKey := fmt.Sprintf("%s%v", cacheTLiquidityProviderProviderCodePrefix, data.ProviderCode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tLiquidityProviderRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.ProviderCode, newData.ProviderName, newData.ProviderType, newData.TradeUserId, newData.VenueCode, newData.Environment, newData.CredentialRef, newData.AccountRef, newData.RateLimitPerSecond, newData.Status, newData.LastHealthStatus, newData.LastHealthAt, newData.LastErrorMsg, newData.Version, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tLiquidityProviderIdKey, tLiquidityProviderTenantIdProviderCodeKey)
+		return conn.ExecCtx(ctx, query, newData.ProviderCode, newData.ProviderName, newData.ProviderType, newData.TradeUserId, newData.VenueCode, newData.Environment, newData.CredentialRef, newData.AccountRef, newData.RateLimitPerSecond, newData.Status, newData.LastHealthStatus, newData.LastHealthAt, newData.LastErrorMsg, newData.Version, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tLiquidityProviderIdKey, tLiquidityProviderProviderCodeKey)
 	return err
 }
 

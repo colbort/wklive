@@ -23,15 +23,15 @@ var (
 	tLiquidityInventorySnapshotRowsExpectAutoSet   = strings.Join(stringx.Remove(tLiquidityInventorySnapshotFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tLiquidityInventorySnapshotRowsWithPlaceHolder = strings.Join(stringx.Remove(tLiquidityInventorySnapshotFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTLiquidityInventorySnapshotIdPrefix                 = "cache:tLiquidityInventorySnapshot:id:"
-	cacheTLiquidityInventorySnapshotTenantIdSnapshotNoPrefix = "cache:tLiquidityInventorySnapshot:tenantId:snapshotNo:"
+	cacheTLiquidityInventorySnapshotIdPrefix         = "cache:tLiquidityInventorySnapshot:id:"
+	cacheTLiquidityInventorySnapshotSnapshotNoPrefix = "cache:tLiquidityInventorySnapshot:snapshotNo:"
 )
 
 type (
 	tLiquidityInventorySnapshotModel interface {
 		Insert(ctx context.Context, data *TLiquidityInventorySnapshot) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TLiquidityInventorySnapshot, error)
-		FindOneByTenantIdSnapshotNo(ctx context.Context, tenantId int64, snapshotNo string) (*TLiquidityInventorySnapshot, error)
+		FindOneBySnapshotNo(ctx context.Context, snapshotNo string) (*TLiquidityInventorySnapshot, error)
 		Update(ctx context.Context, data *TLiquidityInventorySnapshot) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -43,7 +43,6 @@ type (
 
 	TLiquidityInventorySnapshot struct {
 		Id               int64          `db:"id"`                // 主键ID
-		TenantId         int64          `db:"tenant_id"`         // 租户ID
 		SnapshotNo       string         `db:"snapshot_no"`       // 库存快照业务号
 		ConfigId         int64          `db:"config_id"`         // 交易对流动性配置ID
 		ProviderId       int64          `db:"provider_id"`       // 流动性提供方ID
@@ -83,11 +82,11 @@ func (m *defaultTLiquidityInventorySnapshotModel) Delete(ctx context.Context, id
 	}
 
 	tLiquidityInventorySnapshotIdKey := fmt.Sprintf("%s%v", cacheTLiquidityInventorySnapshotIdPrefix, id)
-	tLiquidityInventorySnapshotTenantIdSnapshotNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityInventorySnapshotTenantIdSnapshotNoPrefix, data.TenantId, data.SnapshotNo)
+	tLiquidityInventorySnapshotSnapshotNoKey := fmt.Sprintf("%s%v", cacheTLiquidityInventorySnapshotSnapshotNoPrefix, data.SnapshotNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tLiquidityInventorySnapshotIdKey, tLiquidityInventorySnapshotTenantIdSnapshotNoKey)
+	}, tLiquidityInventorySnapshotIdKey, tLiquidityInventorySnapshotSnapshotNoKey)
 	return err
 }
 
@@ -108,12 +107,12 @@ func (m *defaultTLiquidityInventorySnapshotModel) FindOne(ctx context.Context, i
 	}
 }
 
-func (m *defaultTLiquidityInventorySnapshotModel) FindOneByTenantIdSnapshotNo(ctx context.Context, tenantId int64, snapshotNo string) (*TLiquidityInventorySnapshot, error) {
-	tLiquidityInventorySnapshotTenantIdSnapshotNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityInventorySnapshotTenantIdSnapshotNoPrefix, tenantId, snapshotNo)
+func (m *defaultTLiquidityInventorySnapshotModel) FindOneBySnapshotNo(ctx context.Context, snapshotNo string) (*TLiquidityInventorySnapshot, error) {
+	tLiquidityInventorySnapshotSnapshotNoKey := fmt.Sprintf("%s%v", cacheTLiquidityInventorySnapshotSnapshotNoPrefix, snapshotNo)
 	var resp TLiquidityInventorySnapshot
-	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityInventorySnapshotTenantIdSnapshotNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `snapshot_no` = ? limit 1", tLiquidityInventorySnapshotRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, snapshotNo); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityInventorySnapshotSnapshotNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `snapshot_no` = ? limit 1", tLiquidityInventorySnapshotRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, snapshotNo); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -130,11 +129,11 @@ func (m *defaultTLiquidityInventorySnapshotModel) FindOneByTenantIdSnapshotNo(ct
 
 func (m *defaultTLiquidityInventorySnapshotModel) Insert(ctx context.Context, data *TLiquidityInventorySnapshot) (sql.Result, error) {
 	tLiquidityInventorySnapshotIdKey := fmt.Sprintf("%s%v", cacheTLiquidityInventorySnapshotIdPrefix, data.Id)
-	tLiquidityInventorySnapshotTenantIdSnapshotNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityInventorySnapshotTenantIdSnapshotNoPrefix, data.TenantId, data.SnapshotNo)
+	tLiquidityInventorySnapshotSnapshotNoKey := fmt.Sprintf("%s%v", cacheTLiquidityInventorySnapshotSnapshotNoPrefix, data.SnapshotNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityInventorySnapshotRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.SnapshotNo, data.ConfigId, data.ProviderId, data.SymbolId, data.BaseAsset, data.QuoteAsset, data.BaseTotal, data.BaseAvailable, data.BaseFrozen, data.QuoteTotal, data.QuoteAvailable, data.QuoteFrozen, data.PositionQty, data.PendingBuyQty, data.PendingSellQty, data.NetExposure, data.ReferencePrice, data.ExposureNotional, data.Source, data.SnapshotTime, data.RawPayload, data.CreateTimes)
-	}, tLiquidityInventorySnapshotIdKey, tLiquidityInventorySnapshotTenantIdSnapshotNoKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityInventorySnapshotRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.SnapshotNo, data.ConfigId, data.ProviderId, data.SymbolId, data.BaseAsset, data.QuoteAsset, data.BaseTotal, data.BaseAvailable, data.BaseFrozen, data.QuoteTotal, data.QuoteAvailable, data.QuoteFrozen, data.PositionQty, data.PendingBuyQty, data.PendingSellQty, data.NetExposure, data.ReferencePrice, data.ExposureNotional, data.Source, data.SnapshotTime, data.RawPayload, data.CreateTimes)
+	}, tLiquidityInventorySnapshotIdKey, tLiquidityInventorySnapshotSnapshotNoKey)
 	return ret, err
 }
 
@@ -145,11 +144,11 @@ func (m *defaultTLiquidityInventorySnapshotModel) Update(ctx context.Context, ne
 	}
 
 	tLiquidityInventorySnapshotIdKey := fmt.Sprintf("%s%v", cacheTLiquidityInventorySnapshotIdPrefix, data.Id)
-	tLiquidityInventorySnapshotTenantIdSnapshotNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityInventorySnapshotTenantIdSnapshotNoPrefix, data.TenantId, data.SnapshotNo)
+	tLiquidityInventorySnapshotSnapshotNoKey := fmt.Sprintf("%s%v", cacheTLiquidityInventorySnapshotSnapshotNoPrefix, data.SnapshotNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tLiquidityInventorySnapshotRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.SnapshotNo, newData.ConfigId, newData.ProviderId, newData.SymbolId, newData.BaseAsset, newData.QuoteAsset, newData.BaseTotal, newData.BaseAvailable, newData.BaseFrozen, newData.QuoteTotal, newData.QuoteAvailable, newData.QuoteFrozen, newData.PositionQty, newData.PendingBuyQty, newData.PendingSellQty, newData.NetExposure, newData.ReferencePrice, newData.ExposureNotional, newData.Source, newData.SnapshotTime, newData.RawPayload, newData.CreateTimes, newData.Id)
-	}, tLiquidityInventorySnapshotIdKey, tLiquidityInventorySnapshotTenantIdSnapshotNoKey)
+		return conn.ExecCtx(ctx, query, newData.SnapshotNo, newData.ConfigId, newData.ProviderId, newData.SymbolId, newData.BaseAsset, newData.QuoteAsset, newData.BaseTotal, newData.BaseAvailable, newData.BaseFrozen, newData.QuoteTotal, newData.QuoteAvailable, newData.QuoteFrozen, newData.PositionQty, newData.PendingBuyQty, newData.PendingSellQty, newData.NetExposure, newData.ReferencePrice, newData.ExposureNotional, newData.Source, newData.SnapshotTime, newData.RawPayload, newData.CreateTimes, newData.Id)
+	}, tLiquidityInventorySnapshotIdKey, tLiquidityInventorySnapshotSnapshotNoKey)
 	return err
 }
 

@@ -3,7 +3,7 @@ import { computed, onMounted, reactive, ref, watch } from "vue";
 import { liquidityApi } from "@/api/liquidity";
 const props=defineProps<{resource:"hedges"|"risks"|"reconcile"}>();
 const loading=ref(false),rows=ref<Record<string,unknown>[]>([]);
-const query=reactive({tenantId:1,status:"",limit:20});
+const query=reactive({status:"",limit:20});
 const config=computed(()=>({
   hedges:{title:"对冲任务",desc:"监控库存敞口触发的自动与人工对冲",api:liquidityApi.hedgeTasks,columns:[["hedgeNo","对冲编号"],["configId","策略ID"],["providerId","提供方"],["targetQty","目标数量"],["executedQty","已执行"],["status","状态"],["lastErrorMsg","最后错误"]]},
   risks:{title:"风险事件",desc:"集中处理点差、库存、通道和结算风险",api:liquidityApi.riskEvents,columns:[["eventNo","事件编号"],["riskType","风险类型"],["riskLevel","等级"],["metricValue","当前值"],["thresholdValue","阈值"],["status","状态"],["message","事件说明"]]},

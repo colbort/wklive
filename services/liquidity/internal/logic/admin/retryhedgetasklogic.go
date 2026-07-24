@@ -31,9 +31,6 @@ func (l *RetryHedgeTaskLogic) RetryHedgeTask(in *liquidity.RetryHedgeTaskReq) (*
 	if err != nil {
 		return nil, err
 	}
-	if row.TenantId != in.TenantId {
-		return nil, fmt.Errorf("hedge task not found")
-	}
 	if row.Version != in.Version {
 		return nil, fmt.Errorf("hedge task version conflict")
 	}

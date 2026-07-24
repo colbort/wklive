@@ -29,9 +29,6 @@ func NewCreateManualHedgeLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *CreateManualHedgeLogic) CreateManualHedge(in *liquidity.CreateManualHedgeReq) (*liquidity.HedgeTaskResp, error) {
-	if err := helpers.RequireTenant(in.TenantId); err != nil {
-		return nil, err
-	}
 	if in.ConfigId <= 0 || in.ProviderId <= 0 {
 		return nil, fmt.Errorf("config_id and provider_id are required")
 	}
@@ -50,14 +47,11 @@ func (l *CreateManualHedgeLogic) CreateManualHedge(in *liquidity.CreateManualHed
 	if err != nil {
 		return nil, err
 	}
-	if config.TenantId != in.TenantId {
-		return nil, fmt.Errorf("symbol config not found")
-	}
 	provider, err := l.svcCtx.ProviderModel.FindOne(l.ctx, in.ProviderId)
 	if err != nil {
 		return nil, err
 	}
-	if provider.TenantId != in.TenantId || provider.ProviderType != int64(liquidity.ProviderType_PROVIDER_TYPE_EXTERNAL) {
+	if provider.ProviderType != int64(liquidity.ProviderType_PROVIDER_TYPE_EXTERNAL) {
 		return nil, fmt.Errorf("external provider not found")
 	}
 	if provider.Status != int64(liquidity.ProviderStatus_PROVIDER_STATUS_ENABLED) {
@@ -65,7 +59,7 @@ func (l *CreateManualHedgeLogic) CreateManualHedge(in *liquidity.CreateManualHed
 	}
 	now := time.Now().UnixMilli()
 	row := &models.TLiquidityHedgeTask{
-		TenantId: in.TenantId, HedgeNo: fmt.Sprintf("HDG%d", time.Now().UnixNano()),
+		HedgeNo:  fmt.Sprintf("HDG%d", time.Now().UnixNano()),
 		ConfigId: in.ConfigId, ProviderId: in.ProviderId, SymbolId: config.SymbolId,
 		TriggerType:    int64(liquidity.HedgeTriggerType_HEDGE_TRIGGER_TYPE_MANUAL),
 		TargetExposure: targetExposure, Side: int64(in.Side), TargetQty: qty,

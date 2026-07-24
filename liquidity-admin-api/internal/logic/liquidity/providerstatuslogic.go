@@ -29,12 +29,12 @@ func NewProviderStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pr
 }
 
 func (l *ProviderStatusLogic) ProviderStatus(req *types.ProviderStatusReq) (resp *types.RespBase, err error) {
-	tenantID, userID, err := logicutil.Identity(l.ctx)
+	_, userID, err := logicutil.Identity(l.ctx)
 	if err != nil {
 		return nil, err
 	}
 	out, err := l.svcCtx.LiquidityCli.SetProviderStatus(l.ctx, &pb.SetProviderStatusReq{
-		TenantId: tenantID, Id: req.Id, Status: pb.ProviderStatus(req.Status),
+		Id: req.Id, Status: pb.ProviderStatus(req.Status),
 		Version: req.Version, OperatorId: userID, Remark: req.Remark,
 	})
 	if err != nil {

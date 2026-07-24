@@ -23,11 +23,8 @@ func nextID[T any](rows []*T, id func(*T) int64) int64 {
 }
 
 func listQuoteCycles(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.GetQuoteCycleListReq) (*liquidity.GetQuoteCycleListResp, error) {
-	if err := helpers.RequireTenant(in.TenantId); err != nil {
-		return nil, err
-	}
 	rows, total, err := svcCtx.QuoteCycleModel.FindPage(ctx, models.LiquidityQuoteCyclePageFilter{
-		TenantId: in.TenantId, ConfigId: in.ConfigId, SymbolId: in.SymbolId,
+		ConfigId: in.ConfigId, SymbolId: in.SymbolId,
 		Status: int64(in.Status), TimeStart: in.StartTime, TimeEnd: in.EndTime,
 	}, in.Cursor, int64(in.Limit))
 	if err != nil {
@@ -42,11 +39,8 @@ func listQuoteCycles(ctx context.Context, svcCtx *svc.ServiceContext, in *liquid
 }
 
 func listQuoteOrders(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.GetQuoteOrderListReq) (*liquidity.GetQuoteOrderListResp, error) {
-	if err := helpers.RequireTenant(in.TenantId); err != nil {
-		return nil, err
-	}
 	rows, total, err := svcCtx.QuoteOrderModel.FindPage(ctx, models.LiquidityQuoteOrderPageFilter{
-		TenantId: in.TenantId, ConfigId: in.ConfigId, ProviderId: in.ProviderId,
+		ConfigId: in.ConfigId, ProviderId: in.ProviderId,
 		SymbolId: in.SymbolId, Side: int64(in.Side), Status: int64(in.Status),
 		Keyword: strings.TrimSpace(in.Keyword), TimeStart: in.StartTime, TimeEnd: in.EndTime,
 	}, in.Cursor, int64(in.Limit))
@@ -62,11 +56,8 @@ func listQuoteOrders(ctx context.Context, svcCtx *svc.ServiceContext, in *liquid
 }
 
 func listExternalOrders(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.GetExternalOrderListReq) (*liquidity.GetExternalOrderListResp, error) {
-	if err := helpers.RequireTenant(in.TenantId); err != nil {
-		return nil, err
-	}
 	rows, total, err := svcCtx.ExternalOrderModel.FindPage(ctx, models.LiquidityExternalOrderPageFilter{
-		TenantId: in.TenantId, ProviderId: in.ProviderId, ConfigId: in.ConfigId,
+		ProviderId: in.ProviderId, ConfigId: in.ConfigId,
 		SymbolId: in.SymbolId, Purpose: int64(in.Purpose), Side: int64(in.Side),
 		Status: int64(in.Status), Keyword: strings.TrimSpace(in.Keyword),
 		TimeStart: in.StartTime, TimeEnd: in.EndTime,
@@ -83,11 +74,8 @@ func listExternalOrders(ctx context.Context, svcCtx *svc.ServiceContext, in *liq
 }
 
 func listExternalFills(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.GetExternalFillListReq) (*liquidity.GetExternalFillListResp, error) {
-	if err := helpers.RequireTenant(in.TenantId); err != nil {
-		return nil, err
-	}
 	rows, total, err := svcCtx.ExternalFillModel.FindPage(ctx, models.LiquidityExternalFillPageFilter{
-		TenantId: in.TenantId, ProviderId: in.ProviderId, ExternalOrderId: in.ExternalOrderId,
+		ProviderId: in.ProviderId, ExternalOrderId: in.ExternalOrderId,
 		SettlementStatus: int64(in.SettlementStatus), TimeStart: in.StartTime, TimeEnd: in.EndTime,
 	}, in.Cursor, int64(in.Limit))
 	if err != nil {
@@ -102,11 +90,8 @@ func listExternalFills(ctx context.Context, svcCtx *svc.ServiceContext, in *liqu
 }
 
 func listHedgeTasks(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.GetHedgeTaskListReq) (*liquidity.GetHedgeTaskListResp, error) {
-	if err := helpers.RequireTenant(in.TenantId); err != nil {
-		return nil, err
-	}
 	rows, total, err := svcCtx.HedgeTaskModel.FindPage(ctx, models.LiquidityHedgeTaskPageFilter{
-		TenantId: in.TenantId, ConfigId: in.ConfigId, ProviderId: in.ProviderId,
+		ConfigId: in.ConfigId, ProviderId: in.ProviderId,
 		Status: int64(in.Status), TimeStart: in.StartTime, TimeEnd: in.EndTime,
 	}, in.Cursor, int64(in.Limit))
 	if err != nil {
@@ -121,11 +106,8 @@ func listHedgeTasks(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidi
 }
 
 func listInventories(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.GetInventorySnapshotListReq) (*liquidity.GetInventorySnapshotListResp, error) {
-	if err := helpers.RequireTenant(in.TenantId); err != nil {
-		return nil, err
-	}
 	rows, total, err := svcCtx.InventorySnapshotModel.FindPage(ctx, models.LiquidityInventorySnapshotPageFilter{
-		TenantId: in.TenantId, ConfigId: in.ConfigId, ProviderId: in.ProviderId,
+		ConfigId: in.ConfigId, ProviderId: in.ProviderId,
 		Source: int64(in.Source), TimeStart: in.StartTime, TimeEnd: in.EndTime,
 	}, in.Cursor, int64(in.Limit))
 	if err != nil {
@@ -140,11 +122,8 @@ func listInventories(ctx context.Context, svcCtx *svc.ServiceContext, in *liquid
 }
 
 func listRiskEvents(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.GetRiskEventListReq) (*liquidity.GetRiskEventListResp, error) {
-	if err := helpers.RequireTenant(in.TenantId); err != nil {
-		return nil, err
-	}
 	rows, total, err := svcCtx.RiskEventModel.FindPage(ctx, models.LiquidityRiskEventPageFilter{
-		TenantId: in.TenantId, ConfigId: in.ConfigId, ProviderId: in.ProviderId,
+		ConfigId: in.ConfigId, ProviderId: in.ProviderId,
 		RiskType: strings.TrimSpace(in.RiskType), RiskLevel: int64(in.RiskLevel),
 		Status: int64(in.Status), TimeStart: in.StartTime, TimeEnd: in.EndTime,
 	}, in.Cursor, int64(in.Limit))
@@ -160,11 +139,8 @@ func listRiskEvents(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidi
 }
 
 func listReconcileBatches(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.GetReconcileBatchListReq) (*liquidity.GetReconcileBatchListResp, error) {
-	if err := helpers.RequireTenant(in.TenantId); err != nil {
-		return nil, err
-	}
 	rows, total, err := svcCtx.ReconcileBatchModel.FindPage(ctx, models.LiquidityReconcileBatchPageFilter{
-		TenantId: in.TenantId, ProviderId: in.ProviderId, ReconcileType: int64(in.ReconcileType),
+		ProviderId: in.ProviderId, ReconcileType: int64(in.ReconcileType),
 		Status: int64(in.Status), TimeStart: in.StartTime, TimeEnd: in.EndTime,
 	}, in.Cursor, int64(in.Limit))
 	if err != nil {
@@ -179,11 +155,8 @@ func listReconcileBatches(ctx context.Context, svcCtx *svc.ServiceContext, in *l
 }
 
 func listReconcileDetails(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.GetReconcileDetailListReq) (*liquidity.GetReconcileDetailListResp, error) {
-	if err := helpers.RequireTenant(in.TenantId); err != nil {
-		return nil, err
-	}
 	rows, total, err := svcCtx.ReconcileDetailModel.FindPage(ctx, models.LiquidityReconcileDetailPageFilter{
-		TenantId: in.TenantId, BatchId: in.BatchId,
+		BatchId:        in.BatchId,
 		DifferenceType: int64(in.DifferenceType), Status: int64(in.Status),
 	}, in.Cursor, int64(in.Limit))
 	if err != nil {

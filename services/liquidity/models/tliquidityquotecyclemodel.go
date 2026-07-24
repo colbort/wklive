@@ -14,8 +14,8 @@ var _ TLiquidityQuoteCycleModel = (*customTLiquidityQuoteCycleModel)(nil)
 
 type (
 	LiquidityQuoteCyclePageFilter struct {
-		TenantId, ConfigId, SymbolId, Status int64
-		TimeStart, TimeEnd                   int64
+		ConfigId, SymbolId, Status int64
+		TimeStart, TimeEnd         int64
 	}
 	// TLiquidityQuoteCycleModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTLiquidityQuoteCycleModel.
@@ -39,7 +39,6 @@ func NewTLiquidityQuoteCycleModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...
 func (m *customTLiquidityQuoteCycleModel) FindPage(ctx context.Context, filter LiquidityQuoteCyclePageFilter, cursor, limit int64) ([]*TLiquidityQuoteCycle, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := sqlutil.NewPageQueryBuilder()
-	b.EqInt64("tenant_id", filter.TenantId)
 	b.EqInt64("config_id", filter.ConfigId)
 	b.EqInt64("symbol_id", filter.SymbolId)
 	b.EqInt64("status", filter.Status)

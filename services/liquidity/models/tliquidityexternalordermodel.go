@@ -14,10 +14,10 @@ var _ TLiquidityExternalOrderModel = (*customTLiquidityExternalOrderModel)(nil)
 
 type (
 	LiquidityExternalOrderPageFilter struct {
-		TenantId, ProviderId, ConfigId, SymbolId int64
-		Purpose, Side, Status                    int64
-		Keyword                                  string
-		TimeStart, TimeEnd                       int64
+		ProviderId, ConfigId, SymbolId int64
+		Purpose, Side, Status          int64
+		Keyword                        string
+		TimeStart, TimeEnd             int64
 	}
 	// TLiquidityExternalOrderModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTLiquidityExternalOrderModel.
@@ -41,7 +41,6 @@ func NewTLiquidityExternalOrderModel(conn sqlx.SqlConn, c cache.CacheConf, opts 
 func (m *customTLiquidityExternalOrderModel) FindPage(ctx context.Context, filter LiquidityExternalOrderPageFilter, cursor, limit int64) ([]*TLiquidityExternalOrder, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := sqlutil.NewPageQueryBuilder()
-	b.EqInt64("tenant_id", filter.TenantId)
 	b.EqInt64("provider_id", filter.ProviderId)
 	b.EqInt64("config_id", filter.ConfigId)
 	b.EqInt64("symbol_id", filter.SymbolId)

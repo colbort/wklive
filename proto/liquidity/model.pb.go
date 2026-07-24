@@ -85,7 +85,6 @@ func (x *PageMeta) GetHasMore() bool {
 type LiquidityProvider struct {
 	state                protoimpl.MessageState `protogen:"open.v1"`
 	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId             int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	ProviderCode         string                 `protobuf:"bytes,3,opt,name=provider_code,json=providerCode,proto3" json:"provider_code,omitempty"`
 	ProviderName         string                 `protobuf:"bytes,4,opt,name=provider_name,json=providerName,proto3" json:"provider_name,omitempty"`
 	ProviderType         ProviderType           `protobuf:"varint,5,opt,name=provider_type,json=providerType,proto3,enum=liquidity.ProviderType" json:"provider_type,omitempty"`
@@ -140,13 +139,6 @@ func (*LiquidityProvider) Descriptor() ([]byte, []int) {
 func (x *LiquidityProvider) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *LiquidityProvider) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
 	}
 	return 0
 }
@@ -273,7 +265,6 @@ func (x *LiquidityProvider) GetCredentialConfigured() bool {
 type LiquiditySymbolConfig struct {
 	state                protoimpl.MessageState `protogen:"open.v1"`
 	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId             int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	SymbolId             int64                  `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	Symbol               string                 `protobuf:"bytes,4,opt,name=symbol,proto3" json:"symbol,omitempty"`
 	ProductType          common.ProductType     `protobuf:"varint,5,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
@@ -347,13 +338,6 @@ func (*LiquiditySymbolConfig) Descriptor() ([]byte, []int) {
 func (x *LiquiditySymbolConfig) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *LiquiditySymbolConfig) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
 	}
 	return 0
 }
@@ -613,7 +597,6 @@ func (x *LiquiditySymbolConfig) GetUpdateTimes() int64 {
 type LiquidityStrategyLevel struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	ConfigId      int64                  `protobuf:"varint,3,opt,name=config_id,json=configId,proto3" json:"config_id,omitempty"`
 	LevelNo       int32                  `protobuf:"varint,4,opt,name=level_no,json=levelNo,proto3" json:"level_no,omitempty"`
 	BidSpreadBps  string                 `protobuf:"bytes,5,opt,name=bid_spread_bps,json=bidSpreadBps,proto3" json:"bid_spread_bps,omitempty"`
@@ -661,13 +644,6 @@ func (*LiquidityStrategyLevel) Descriptor() ([]byte, []int) {
 func (x *LiquidityStrategyLevel) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *LiquidityStrategyLevel) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
 	}
 	return 0
 }
@@ -745,7 +721,6 @@ func (x *LiquidityStrategyLevel) GetUpdateTimes() int64 {
 type LiquidityQuoteCycle struct {
 	state               protoimpl.MessageState `protogen:"open.v1"`
 	Id                  int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId            int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	CycleNo             string                 `protobuf:"bytes,3,opt,name=cycle_no,json=cycleNo,proto3" json:"cycle_no,omitempty"`
 	ConfigId            int64                  `protobuf:"varint,4,opt,name=config_id,json=configId,proto3" json:"config_id,omitempty"`
 	SymbolId            int64                  `protobuf:"varint,5,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
@@ -800,13 +775,6 @@ func (*LiquidityQuoteCycle) Descriptor() ([]byte, []int) {
 func (x *LiquidityQuoteCycle) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *LiquidityQuoteCycle) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
 	}
 	return 0
 }
@@ -933,7 +901,6 @@ func (x *LiquidityQuoteCycle) GetUpdateTimes() int64 {
 type LiquidityQuoteOrder struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	QuoteNo         string                 `protobuf:"bytes,3,opt,name=quote_no,json=quoteNo,proto3" json:"quote_no,omitempty"`
 	CycleId         int64                  `protobuf:"varint,4,opt,name=cycle_id,json=cycleId,proto3" json:"cycle_id,omitempty"`
 	ConfigId        int64                  `protobuf:"varint,5,opt,name=config_id,json=configId,proto3" json:"config_id,omitempty"`
@@ -991,13 +958,6 @@ func (*LiquidityQuoteOrder) Descriptor() ([]byte, []int) {
 func (x *LiquidityQuoteOrder) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *LiquidityQuoteOrder) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
 	}
 	return 0
 }
@@ -1145,7 +1105,6 @@ func (x *LiquidityQuoteOrder) GetUpdateTimes() int64 {
 type LiquidityExternalOrder struct {
 	state                 protoimpl.MessageState `protogen:"open.v1"`
 	Id                    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId              int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo               string                 `protobuf:"bytes,3,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
 	RequestNo             string                 `protobuf:"bytes,4,opt,name=request_no,json=requestNo,proto3" json:"request_no,omitempty"`
 	ProviderId            int64                  `protobuf:"varint,5,opt,name=provider_id,json=providerId,proto3" json:"provider_id,omitempty"`
@@ -1214,13 +1173,6 @@ func (*LiquidityExternalOrder) Descriptor() ([]byte, []int) {
 func (x *LiquidityExternalOrder) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *LiquidityExternalOrder) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
 	}
 	return 0
 }
@@ -1445,7 +1397,6 @@ func (x *LiquidityExternalOrder) GetUpdateTimes() int64 {
 type LiquidityExternalFill struct {
 	state            protoimpl.MessageState       `protogen:"open.v1"`
 	Id               int64                        `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId         int64                        `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	ProviderId       int64                        `protobuf:"varint,3,opt,name=provider_id,json=providerId,proto3" json:"provider_id,omitempty"`
 	ExternalOrderId  int64                        `protobuf:"varint,4,opt,name=external_order_id,json=externalOrderId,proto3" json:"external_order_id,omitempty"`
 	FillNo           string                       `protobuf:"bytes,5,opt,name=fill_no,json=fillNo,proto3" json:"fill_no,omitempty"`
@@ -1502,13 +1453,6 @@ func (*LiquidityExternalFill) Descriptor() ([]byte, []int) {
 func (x *LiquidityExternalFill) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *LiquidityExternalFill) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
 	}
 	return 0
 }
@@ -1649,7 +1593,6 @@ func (x *LiquidityExternalFill) GetUpdateTimes() int64 {
 type LiquidityHedgeTask struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId       int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	HedgeNo        string                 `protobuf:"bytes,3,opt,name=hedge_no,json=hedgeNo,proto3" json:"hedge_no,omitempty"`
 	ConfigId       int64                  `protobuf:"varint,4,opt,name=config_id,json=configId,proto3" json:"config_id,omitempty"`
 	ProviderId     int64                  `protobuf:"varint,5,opt,name=provider_id,json=providerId,proto3" json:"provider_id,omitempty"`
@@ -1705,13 +1648,6 @@ func (*LiquidityHedgeTask) Descriptor() ([]byte, []int) {
 func (x *LiquidityHedgeTask) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *LiquidityHedgeTask) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
 	}
 	return 0
 }
@@ -1845,7 +1781,6 @@ func (x *LiquidityHedgeTask) GetUpdateTimes() int64 {
 type LiquidityInventorySnapshot struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId         int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	SnapshotNo       string                 `protobuf:"bytes,3,opt,name=snapshot_no,json=snapshotNo,proto3" json:"snapshot_no,omitempty"`
 	ConfigId         int64                  `protobuf:"varint,4,opt,name=config_id,json=configId,proto3" json:"config_id,omitempty"`
 	ProviderId       int64                  `protobuf:"varint,5,opt,name=provider_id,json=providerId,proto3" json:"provider_id,omitempty"`
@@ -1905,13 +1840,6 @@ func (*LiquidityInventorySnapshot) Descriptor() ([]byte, []int) {
 func (x *LiquidityInventorySnapshot) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *LiquidityInventorySnapshot) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
 	}
 	return 0
 }
@@ -2073,7 +2001,6 @@ func (x *LiquidityInventorySnapshot) GetCreateTimes() int64 {
 type LiquidityRiskEvent struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId       int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	EventNo        string                 `protobuf:"bytes,3,opt,name=event_no,json=eventNo,proto3" json:"event_no,omitempty"`
 	ConfigId       int64                  `protobuf:"varint,4,opt,name=config_id,json=configId,proto3" json:"config_id,omitempty"`
 	ProviderId     int64                  `protobuf:"varint,5,opt,name=provider_id,json=providerId,proto3" json:"provider_id,omitempty"`
@@ -2129,13 +2056,6 @@ func (*LiquidityRiskEvent) Descriptor() ([]byte, []int) {
 func (x *LiquidityRiskEvent) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *LiquidityRiskEvent) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
 	}
 	return 0
 }
@@ -2269,7 +2189,6 @@ func (x *LiquidityRiskEvent) GetUpdateTimes() int64 {
 type LiquidityReconcileBatch struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	BatchNo         string                 `protobuf:"bytes,3,opt,name=batch_no,json=batchNo,proto3" json:"batch_no,omitempty"`
 	ProviderId      int64                  `protobuf:"varint,4,opt,name=provider_id,json=providerId,proto3" json:"provider_id,omitempty"`
 	ReconcileType   ReconcileType          `protobuf:"varint,5,opt,name=reconcile_type,json=reconcileType,proto3,enum=liquidity.ReconcileType" json:"reconcile_type,omitempty"`
@@ -2322,13 +2241,6 @@ func (*LiquidityReconcileBatch) Descriptor() ([]byte, []int) {
 func (x *LiquidityReconcileBatch) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *LiquidityReconcileBatch) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
 	}
 	return 0
 }
@@ -2441,7 +2353,6 @@ func (x *LiquidityReconcileBatch) GetUpdateTimes() int64 {
 type LiquidityReconcileDetail struct {
 	state             protoimpl.MessageState    `protogen:"open.v1"`
 	Id                int64                     `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId          int64                     `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	BatchId           int64                     `protobuf:"varint,3,opt,name=batch_id,json=batchId,proto3" json:"batch_id,omitempty"`
 	DifferenceNo      string                    `protobuf:"bytes,4,opt,name=difference_no,json=differenceNo,proto3" json:"difference_no,omitempty"`
 	DifferenceType    ReconcileDifferenceType   `protobuf:"varint,5,opt,name=difference_type,json=differenceType,proto3,enum=liquidity.ReconcileDifferenceType" json:"difference_type,omitempty"`
@@ -2493,13 +2404,6 @@ func (*LiquidityReconcileDetail) Descriptor() ([]byte, []int) {
 func (x *LiquidityReconcileDetail) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *LiquidityReconcileDetail) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
 	}
 	return 0
 }
@@ -2611,10 +2515,9 @@ const file_proto_liquidity_model_proto_rawDesc = "" +
 	"\vnext_cursor\x18\x01 \x01(\x03R\n" +
 	"nextCursor\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x03R\x05total\x12\x19\n" +
-	"\bhas_more\x18\x03 \x01(\bR\ahasMore\"\x9a\x06\n" +
+	"\bhas_more\x18\x03 \x01(\bR\ahasMore\"\x83\x06\n" +
 	"\x11LiquidityProvider\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12#\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rprovider_code\x18\x03 \x01(\tR\fproviderCode\x12#\n" +
 	"\rprovider_name\x18\x04 \x01(\tR\fproviderName\x12<\n" +
 	"\rprovider_type\x18\x05 \x01(\x0e2\x17.liquidity.ProviderTypeR\fproviderType\x12\"\n" +
@@ -2634,11 +2537,10 @@ const file_proto_liquidity_model_proto_rawDesc = "" +
 	"\x06remark\x18\x11 \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x12 \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\x13 \x01(\x03R\vupdateTimes\x123\n" +
-	"\x15credential_configured\x18\x14 \x01(\bR\x14credentialConfiguredJ\x04\b\t\x10\n" +
-	"\"\xe9\f\n" +
+	"\x15credential_configured\x18\x14 \x01(\bR\x14credentialConfiguredJ\x04\b\x02\x10\x03J\x04\b\t\x10\n" +
+	"\"\xd2\f\n" +
 	"\x15LiquiditySymbolConfig\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1b\n" +
 	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolId\x12\x16\n" +
 	"\x06symbol\x18\x04 \x01(\tR\x06symbol\x126\n" +
 	"\fproduct_type\x18\x05 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x129\n" +
@@ -2678,10 +2580,9 @@ const file_proto_liquidity_model_proto_rawDesc = "" +
 	"\fpause_reason\x18# \x01(\tR\vpauseReason\x12\x18\n" +
 	"\aversion\x18$ \x01(\x03R\aversion\x12!\n" +
 	"\fcreate_times\x18% \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18& \x01(\x03R\vupdateTimes\"\x85\x03\n" +
+	"\fupdate_times\x18& \x01(\x03R\vupdateTimesJ\x04\b\x02\x10\x03\"\xee\x02\n" +
 	"\x16LiquidityStrategyLevel\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1b\n" +
 	"\tconfig_id\x18\x03 \x01(\x03R\bconfigId\x12\x19\n" +
 	"\blevel_no\x18\x04 \x01(\x05R\alevelNo\x12$\n" +
 	"\x0ebid_spread_bps\x18\x05 \x01(\tR\fbidSpreadBps\x12$\n" +
@@ -2692,10 +2593,9 @@ const file_proto_liquidity_model_proto_rawDesc = "" +
 	"\aversion\x18\n" +
 	" \x01(\x03R\aversion\x12!\n" +
 	"\fcreate_times\x18\v \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\f \x01(\x03R\vupdateTimes\"\xcf\x05\n" +
+	"\fupdate_times\x18\f \x01(\x03R\vupdateTimesJ\x04\b\x02\x10\x03\"\xb8\x05\n" +
 	"\x13LiquidityQuoteCycle\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\bcycle_no\x18\x03 \x01(\tR\acycleNo\x12\x1b\n" +
 	"\tconfig_id\x18\x04 \x01(\x03R\bconfigId\x12\x1b\n" +
 	"\tsymbol_id\x18\x05 \x01(\x03R\bsymbolId\x12'\n" +
@@ -2715,10 +2615,9 @@ const file_proto_liquidity_model_proto_rawDesc = "" +
 	"\vfinished_at\x18\x11 \x01(\x03R\n" +
 	"finishedAt\x12!\n" +
 	"\fcreate_times\x18\x12 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x13 \x01(\x03R\vupdateTimes\"\xd4\x05\n" +
+	"\fupdate_times\x18\x13 \x01(\x03R\vupdateTimesJ\x04\b\x02\x10\x03\"\xbd\x05\n" +
 	"\x13LiquidityQuoteOrder\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\bquote_no\x18\x03 \x01(\tR\aquoteNo\x12\x19\n" +
 	"\bcycle_id\x18\x04 \x01(\x03R\acycleId\x12\x1b\n" +
 	"\tconfig_id\x18\x05 \x01(\x03R\bconfigId\x12\x1f\n" +
@@ -2741,10 +2640,9 @@ const file_proto_liquidity_model_proto_rawDesc = "" +
 	"\x0elast_error_msg\x18\x13 \x01(\tR\flastErrorMsg\x12\x18\n" +
 	"\aversion\x18\x14 \x01(\x03R\aversion\x12!\n" +
 	"\fcreate_times\x18\x15 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x16 \x01(\x03R\vupdateTimes\"\xc2\t\n" +
+	"\fupdate_times\x18\x16 \x01(\x03R\vupdateTimesJ\x04\b\x02\x10\x03\"\xab\t\n" +
 	"\x16LiquidityExternalOrder\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\border_no\x18\x03 \x01(\tR\aorderNo\x12\x1d\n" +
 	"\n" +
 	"request_no\x18\x04 \x01(\tR\trequestNo\x12\x1f\n" +
@@ -2783,10 +2681,9 @@ const file_proto_liquidity_model_proto_rawDesc = "" +
 	"\fraw_response\x18\x1e \x01(\tR\vrawResponse\x12\x18\n" +
 	"\aversion\x18\x1f \x01(\x03R\aversion\x12!\n" +
 	"\fcreate_times\x18  \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18! \x01(\x03R\vupdateTimes\"\xe2\x05\n" +
+	"\fupdate_times\x18! \x01(\x03R\vupdateTimesJ\x04\b\x02\x10\x03\"\xcb\x05\n" +
 	"\x15LiquidityExternalFill\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vprovider_id\x18\x03 \x01(\x03R\n" +
 	"providerId\x12*\n" +
 	"\x11external_order_id\x18\x04 \x01(\x03R\x0fexternalOrderId\x12\x17\n" +
@@ -2811,10 +2708,9 @@ const file_proto_liquidity_model_proto_rawDesc = "" +
 	"\vraw_payload\x18\x13 \x01(\tR\n" +
 	"rawPayload\x12!\n" +
 	"\fcreate_times\x18\x14 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x15 \x01(\x03R\vupdateTimes\"\xc5\x05\n" +
+	"\fupdate_times\x18\x15 \x01(\x03R\vupdateTimesJ\x04\b\x02\x10\x03\"\xae\x05\n" +
 	"\x12LiquidityHedgeTask\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\bhedge_no\x18\x03 \x01(\tR\ahedgeNo\x12\x1b\n" +
 	"\tconfig_id\x18\x04 \x01(\x03R\bconfigId\x12\x1f\n" +
 	"\vprovider_id\x18\x05 \x01(\x03R\n" +
@@ -2836,10 +2732,9 @@ const file_proto_liquidity_model_proto_rawDesc = "" +
 	"\x0elast_error_msg\x18\x11 \x01(\tR\flastErrorMsg\x12\x18\n" +
 	"\aversion\x18\x12 \x01(\x03R\aversion\x12!\n" +
 	"\fcreate_times\x18\x13 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimes\"\xe4\x06\n" +
+	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimesJ\x04\b\x02\x10\x03\"\xcd\x06\n" +
 	"\x1aLiquidityInventorySnapshot\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vsnapshot_no\x18\x03 \x01(\tR\n" +
 	"snapshotNo\x12\x1b\n" +
 	"\tconfig_id\x18\x04 \x01(\x03R\bconfigId\x12\x1f\n" +
@@ -2870,10 +2765,9 @@ const file_proto_liquidity_model_proto_rawDesc = "" +
 	"\rsnapshot_time\x18\x16 \x01(\x03R\fsnapshotTime\x12\x1f\n" +
 	"\vraw_payload\x18\x17 \x01(\tR\n" +
 	"rawPayload\x12!\n" +
-	"\fcreate_times\x18\x18 \x01(\x03R\vcreateTimes\"\xcc\x05\n" +
+	"\fcreate_times\x18\x18 \x01(\x03R\vcreateTimesJ\x04\b\x02\x10\x03\"\xb5\x05\n" +
 	"\x12LiquidityRiskEvent\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\bevent_no\x18\x03 \x01(\tR\aeventNo\x12\x1b\n" +
 	"\tconfig_id\x18\x04 \x01(\x03R\bconfigId\x12\x1f\n" +
 	"\vprovider_id\x18\x05 \x01(\x03R\n" +
@@ -2896,10 +2790,9 @@ const file_proto_liquidity_model_proto_rawDesc = "" +
 	"\voperator_id\x18\x12 \x01(\x03R\n" +
 	"operatorId\x12!\n" +
 	"\fcreate_times\x18\x13 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimes\"\xfd\x04\n" +
+	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimesJ\x04\b\x02\x10\x03\"\xe6\x04\n" +
 	"\x17LiquidityReconcileBatch\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\bbatch_no\x18\x03 \x01(\tR\abatchNo\x12\x1f\n" +
 	"\vprovider_id\x18\x04 \x01(\x03R\n" +
 	"providerId\x12?\n" +
@@ -2920,10 +2813,9 @@ const file_proto_liquidity_model_proto_rawDesc = "" +
 	"\vfinished_at\x18\x0f \x01(\x03R\n" +
 	"finishedAt\x12!\n" +
 	"\fcreate_times\x18\x10 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x11 \x01(\x03R\vupdateTimes\"\xff\x04\n" +
+	"\fupdate_times\x18\x11 \x01(\x03R\vupdateTimesJ\x04\b\x02\x10\x03\"\xe8\x04\n" +
 	"\x18LiquidityReconcileDetail\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\bbatch_id\x18\x03 \x01(\x03R\abatchId\x12#\n" +
 	"\rdifference_no\x18\x04 \x01(\tR\fdifferenceNo\x12K\n" +
 	"\x0fdifference_type\x18\x05 \x01(\x0e2\".liquidity.ReconcileDifferenceTypeR\x0edifferenceType\x12#\n" +
@@ -2943,7 +2835,7 @@ const file_proto_liquidity_model_proto_rawDesc = "" +
 	"\vresolved_at\x18\x0e \x01(\x03R\n" +
 	"resolvedAt\x12!\n" +
 	"\fcreate_times\x18\x0f \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x10 \x01(\x03R\vupdateTimesB\"Z wklive/proto/liquidity;liquidityb\x06proto3"
+	"\fupdate_times\x18\x10 \x01(\x03R\vupdateTimesJ\x04\b\x02\x10\x03B\"Z wklive/proto/liquidity;liquidityb\x06proto3"
 
 var (
 	file_proto_liquidity_model_proto_rawDescOnce sync.Once

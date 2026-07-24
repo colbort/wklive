@@ -9,7 +9,6 @@ type LoginData {
 	exp int64 `json:"exp"`
 	userId int64 `json:"userId"`
 	nickname string `json:"nickname"`
-	tenantId int64 `json:"tenantId"`
 	appScope int32 `json:"appScope"`
 }
 
@@ -23,7 +22,6 @@ type ProfileUser {
 	username string `json:"username"`
 	nickname string `json:"nickname,optional"`
 	avatar string `json:"avatar,optional"`
-	tenantId int64 `json:"tenantId"`
 	userType int32 `json:"userType"`
 	isOwner int32 `json:"isOwner"`
 	google2FaEnabled int32 `json:"google2FaEnabled"`

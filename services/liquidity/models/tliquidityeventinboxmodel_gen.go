@@ -43,7 +43,6 @@ type (
 
 	TLiquidityEventInbox struct {
 		Id            int64          `db:"id"`             // 主键ID
-		TenantId      int64          `db:"tenant_id"`      // 租户ID
 		Consumer      string         `db:"consumer"`       // 消费者标识
 		EventNo       string         `db:"event_no"`       // 上游事件唯一号
 		EventType     string         `db:"event_type"`     // 事件类型
@@ -123,8 +122,8 @@ func (m *defaultTLiquidityEventInboxModel) Insert(ctx context.Context, data *TLi
 	tLiquidityEventInboxConsumerEventNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityEventInboxConsumerEventNoPrefix, data.Consumer, data.EventNo)
 	tLiquidityEventInboxIdKey := fmt.Sprintf("%s%v", cacheTLiquidityEventInboxIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityEventInboxRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.Consumer, data.EventNo, data.EventType, data.AggregateType, data.AggregateId, data.Payload, data.Status, data.RetryCount, data.NextRetryAt, data.LastErrorMsg, data.ProcessedAt, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityEventInboxRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.Consumer, data.EventNo, data.EventType, data.AggregateType, data.AggregateId, data.Payload, data.Status, data.RetryCount, data.NextRetryAt, data.LastErrorMsg, data.ProcessedAt, data.CreateTimes, data.UpdateTimes)
 	}, tLiquidityEventInboxConsumerEventNoKey, tLiquidityEventInboxIdKey)
 	return ret, err
 }
@@ -139,7 +138,7 @@ func (m *defaultTLiquidityEventInboxModel) Update(ctx context.Context, newData *
 	tLiquidityEventInboxIdKey := fmt.Sprintf("%s%v", cacheTLiquidityEventInboxIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tLiquidityEventInboxRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.Consumer, newData.EventNo, newData.EventType, newData.AggregateType, newData.AggregateId, newData.Payload, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.ProcessedAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.Consumer, newData.EventNo, newData.EventType, newData.AggregateType, newData.AggregateId, newData.Payload, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.ProcessedAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tLiquidityEventInboxConsumerEventNoKey, tLiquidityEventInboxIdKey)
 	return err
 }

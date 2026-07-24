@@ -14,8 +14,8 @@ var _ TLiquidityHedgeTaskModel = (*customTLiquidityHedgeTaskModel)(nil)
 
 type (
 	LiquidityHedgeTaskPageFilter struct {
-		TenantId, ConfigId, ProviderId, Status int64
-		TimeStart, TimeEnd                     int64
+		ConfigId, ProviderId, Status int64
+		TimeStart, TimeEnd           int64
 	}
 	// TLiquidityHedgeTaskModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTLiquidityHedgeTaskModel.
@@ -39,7 +39,6 @@ func NewTLiquidityHedgeTaskModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...c
 func (m *customTLiquidityHedgeTaskModel) FindPage(ctx context.Context, filter LiquidityHedgeTaskPageFilter, cursor, limit int64) ([]*TLiquidityHedgeTask, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := sqlutil.NewPageQueryBuilder()
-	b.EqInt64("tenant_id", filter.TenantId)
 	b.EqInt64("config_id", filter.ConfigId)
 	b.EqInt64("provider_id", filter.ProviderId)
 	b.EqInt64("status", filter.Status)

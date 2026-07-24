@@ -14,7 +14,6 @@ var _ TLiquidityProviderModel = (*customTLiquidityProviderModel)(nil)
 
 type (
 	LiquidityProviderPageFilter struct {
-		TenantId     int64
 		ProviderType int64
 		Status       int64
 		Keyword      string
@@ -41,7 +40,6 @@ func NewTLiquidityProviderModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...ca
 func (m *customTLiquidityProviderModel) FindPage(ctx context.Context, filter LiquidityProviderPageFilter, cursor, limit int64) ([]*TLiquidityProvider, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := sqlutil.NewPageQueryBuilder()
-	b.EqInt64("tenant_id", filter.TenantId)
 	b.EqInt64("provider_type", filter.ProviderType)
 	b.EqInt64("status", filter.Status)
 	if filter.Keyword != "" {

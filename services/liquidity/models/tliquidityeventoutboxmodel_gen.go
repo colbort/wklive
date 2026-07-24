@@ -23,15 +23,15 @@ var (
 	tLiquidityEventOutboxRowsExpectAutoSet   = strings.Join(stringx.Remove(tLiquidityEventOutboxFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tLiquidityEventOutboxRowsWithPlaceHolder = strings.Join(stringx.Remove(tLiquidityEventOutboxFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTLiquidityEventOutboxIdPrefix              = "cache:tLiquidityEventOutbox:id:"
-	cacheTLiquidityEventOutboxTenantIdEventNoPrefix = "cache:tLiquidityEventOutbox:tenantId:eventNo:"
+	cacheTLiquidityEventOutboxIdPrefix      = "cache:tLiquidityEventOutbox:id:"
+	cacheTLiquidityEventOutboxEventNoPrefix = "cache:tLiquidityEventOutbox:eventNo:"
 )
 
 type (
 	tLiquidityEventOutboxModel interface {
 		Insert(ctx context.Context, data *TLiquidityEventOutbox) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TLiquidityEventOutbox, error)
-		FindOneByTenantIdEventNo(ctx context.Context, tenantId int64, eventNo string) (*TLiquidityEventOutbox, error)
+		FindOneByEventNo(ctx context.Context, eventNo string) (*TLiquidityEventOutbox, error)
 		Update(ctx context.Context, data *TLiquidityEventOutbox) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -43,7 +43,6 @@ type (
 
 	TLiquidityEventOutbox struct {
 		Id            int64  `db:"id"`              // 主键ID
-		TenantId      int64  `db:"tenant_id"`       // 租户ID
 		EventNo       string `db:"event_no"`        // 事件唯一号
 		EventType     string `db:"event_type"`      // 事件类型
 		Topic         string `db:"topic"`           // 目标主题
@@ -75,12 +74,12 @@ func (m *defaultTLiquidityEventOutboxModel) Delete(ctx context.Context, id int64
 		return err
 	}
 
+	tLiquidityEventOutboxEventNoKey := fmt.Sprintf("%s%v", cacheTLiquidityEventOutboxEventNoPrefix, data.EventNo)
 	tLiquidityEventOutboxIdKey := fmt.Sprintf("%s%v", cacheTLiquidityEventOutboxIdPrefix, id)
-	tLiquidityEventOutboxTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityEventOutboxTenantIdEventNoPrefix, data.TenantId, data.EventNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tLiquidityEventOutboxIdKey, tLiquidityEventOutboxTenantIdEventNoKey)
+	}, tLiquidityEventOutboxEventNoKey, tLiquidityEventOutboxIdKey)
 	return err
 }
 
@@ -101,12 +100,12 @@ func (m *defaultTLiquidityEventOutboxModel) FindOne(ctx context.Context, id int6
 	}
 }
 
-func (m *defaultTLiquidityEventOutboxModel) FindOneByTenantIdEventNo(ctx context.Context, tenantId int64, eventNo string) (*TLiquidityEventOutbox, error) {
-	tLiquidityEventOutboxTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityEventOutboxTenantIdEventNoPrefix, tenantId, eventNo)
+func (m *defaultTLiquidityEventOutboxModel) FindOneByEventNo(ctx context.Context, eventNo string) (*TLiquidityEventOutbox, error) {
+	tLiquidityEventOutboxEventNoKey := fmt.Sprintf("%s%v", cacheTLiquidityEventOutboxEventNoPrefix, eventNo)
 	var resp TLiquidityEventOutbox
-	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityEventOutboxTenantIdEventNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `event_no` = ? limit 1", tLiquidityEventOutboxRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, eventNo); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityEventOutboxEventNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `event_no` = ? limit 1", tLiquidityEventOutboxRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, eventNo); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -122,12 +121,12 @@ func (m *defaultTLiquidityEventOutboxModel) FindOneByTenantIdEventNo(ctx context
 }
 
 func (m *defaultTLiquidityEventOutboxModel) Insert(ctx context.Context, data *TLiquidityEventOutbox) (sql.Result, error) {
+	tLiquidityEventOutboxEventNoKey := fmt.Sprintf("%s%v", cacheTLiquidityEventOutboxEventNoPrefix, data.EventNo)
 	tLiquidityEventOutboxIdKey := fmt.Sprintf("%s%v", cacheTLiquidityEventOutboxIdPrefix, data.Id)
-	tLiquidityEventOutboxTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityEventOutboxTenantIdEventNoPrefix, data.TenantId, data.EventNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityEventOutboxRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.EventNo, data.EventType, data.Topic, data.MessageKey, data.AggregateType, data.AggregateId, data.Payload, data.Status, data.RetryCount, data.MaxRetryCount, data.NextRetryAt, data.LastErrorMsg, data.SentAt, data.CreateTimes, data.UpdateTimes)
-	}, tLiquidityEventOutboxIdKey, tLiquidityEventOutboxTenantIdEventNoKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityEventOutboxRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.EventNo, data.EventType, data.Topic, data.MessageKey, data.AggregateType, data.AggregateId, data.Payload, data.Status, data.RetryCount, data.MaxRetryCount, data.NextRetryAt, data.LastErrorMsg, data.SentAt, data.CreateTimes, data.UpdateTimes)
+	}, tLiquidityEventOutboxEventNoKey, tLiquidityEventOutboxIdKey)
 	return ret, err
 }
 
@@ -137,12 +136,12 @@ func (m *defaultTLiquidityEventOutboxModel) Update(ctx context.Context, newData 
 		return err
 	}
 
+	tLiquidityEventOutboxEventNoKey := fmt.Sprintf("%s%v", cacheTLiquidityEventOutboxEventNoPrefix, data.EventNo)
 	tLiquidityEventOutboxIdKey := fmt.Sprintf("%s%v", cacheTLiquidityEventOutboxIdPrefix, data.Id)
-	tLiquidityEventOutboxTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityEventOutboxTenantIdEventNoPrefix, data.TenantId, data.EventNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tLiquidityEventOutboxRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.EventNo, newData.EventType, newData.Topic, newData.MessageKey, newData.AggregateType, newData.AggregateId, newData.Payload, newData.Status, newData.RetryCount, newData.MaxRetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.SentAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tLiquidityEventOutboxIdKey, tLiquidityEventOutboxTenantIdEventNoKey)
+		return conn.ExecCtx(ctx, query, newData.EventNo, newData.EventType, newData.Topic, newData.MessageKey, newData.AggregateType, newData.AggregateId, newData.Payload, newData.Status, newData.RetryCount, newData.MaxRetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.SentAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tLiquidityEventOutboxEventNoKey, tLiquidityEventOutboxIdKey)
 	return err
 }
 

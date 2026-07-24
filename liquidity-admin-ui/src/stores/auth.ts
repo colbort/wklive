@@ -9,7 +9,6 @@ import {
 export const useAuthStore = defineStore("auth", () => {
   const token = ref(localStorage.getItem("liquidity_admin_token") || "");
   const exp = ref(Number(localStorage.getItem("liquidity_admin_exp") || 0));
-  const tenantId = ref(Number(localStorage.getItem("liquidity_admin_tenant_id") || 0));
   const user = ref<ProfileUser | null>(null);
   const menus = ref<MenuNode[]>([]);
   const perms = ref<string[]>([]);
@@ -31,10 +30,8 @@ export const useAuthStore = defineStore("auth", () => {
 
     token.value = result.data.token;
     exp.value = result.data.exp;
-    tenantId.value = result.data.tenantId;
     localStorage.setItem("liquidity_admin_token", token.value);
     localStorage.setItem("liquidity_admin_exp", String(exp.value));
-    localStorage.setItem("liquidity_admin_tenant_id", String(tenantId.value));
 
     try {
       await fetchProfile();
@@ -54,18 +51,15 @@ export const useAuthStore = defineStore("auth", () => {
     }
 
     user.value = result.data.user;
-    tenantId.value = result.data.user.tenantId;
     menus.value = result.data.menus || [];
     perms.value = result.data.perms || [];
     roleIds.value = result.data.roleIds || [];
     isProfileLoaded.value = true;
-    localStorage.setItem("liquidity_admin_tenant_id", String(tenantId.value));
   }
 
   function logout() {
     token.value = "";
     exp.value = 0;
-    tenantId.value = 0;
     user.value = null;
     menus.value = [];
     perms.value = [];
@@ -73,14 +67,12 @@ export const useAuthStore = defineStore("auth", () => {
     isProfileLoaded.value = false;
     localStorage.removeItem("liquidity_admin_token");
     localStorage.removeItem("liquidity_admin_exp");
-    localStorage.removeItem("liquidity_admin_tenant_id");
     localStorage.removeItem("liquidity_admin_name");
   }
 
   return {
     token,
     exp,
-    tenantId,
     user,
     menus,
     perms,

@@ -32,9 +32,6 @@ func (l *ResolveRiskEventLogic) ResolveRiskEvent(in *liquidity.ResolveRiskEventR
 	if err != nil {
 		return nil, err
 	}
-	if row.TenantId != in.TenantId {
-		return nil, fmt.Errorf("risk event not found")
-	}
 	if in.Status != liquidity.RiskEventStatus_RISK_EVENT_STATUS_RECOVERED &&
 		in.Status != liquidity.RiskEventStatus_RISK_EVENT_STATUS_CLOSED {
 		return nil, fmt.Errorf("risk event can only be recovered or closed")

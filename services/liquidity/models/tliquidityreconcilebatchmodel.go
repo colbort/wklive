@@ -14,8 +14,8 @@ var _ TLiquidityReconcileBatchModel = (*customTLiquidityReconcileBatchModel)(nil
 
 type (
 	LiquidityReconcileBatchPageFilter struct {
-		TenantId, ProviderId, ReconcileType, Status int64
-		TimeStart, TimeEnd                          int64
+		ProviderId, ReconcileType, Status int64
+		TimeStart, TimeEnd                int64
 	}
 	// TLiquidityReconcileBatchModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTLiquidityReconcileBatchModel.
@@ -39,7 +39,6 @@ func NewTLiquidityReconcileBatchModel(conn sqlx.SqlConn, c cache.CacheConf, opts
 func (m *customTLiquidityReconcileBatchModel) FindPage(ctx context.Context, filter LiquidityReconcileBatchPageFilter, cursor, limit int64) ([]*TLiquidityReconcileBatch, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := sqlutil.NewPageQueryBuilder()
-	b.EqInt64("tenant_id", filter.TenantId)
 	b.EqInt64("provider_id", filter.ProviderId)
 	b.EqInt64("reconcile_type", filter.ReconcileType)
 	b.EqInt64("status", filter.Status)

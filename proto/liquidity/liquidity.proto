@@ -76,7 +76,7 @@ service Task {
 }
 
 message CreateProviderReq {
-  int64 tenant_id = 1;
+  reserved 1;
   string provider_code = 2;
   string provider_name = 3;
   ProviderType provider_type = 4;
@@ -93,7 +93,7 @@ message CreateProviderReq {
 
 message UpdateProviderReq {
   int64 id = 1;
-  int64 tenant_id = 2;
+  reserved 2;
   string provider_name = 3;
   int64 trade_user_id = 4;
   string venue_code = 5;
@@ -107,7 +107,7 @@ message UpdateProviderReq {
 }
 
 message SetProviderStatusReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 id = 2;
   ProviderStatus status = 3;
   int64 version = 4;
@@ -116,13 +116,13 @@ message SetProviderStatusReq {
 }
 
 message TestProviderConnectionReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 id = 2;
   int64 operator_id = 3;
 }
 
 message GetProviderListReq {
-  int64 tenant_id = 1;
+  reserved 1;
   ProviderType provider_type = 2;
   ProviderStatus status = 3;
   string keyword = 4;
@@ -131,7 +131,7 @@ message GetProviderListReq {
 }
 
 message GetProviderDetailReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 id = 2;
 }
 
@@ -155,7 +155,7 @@ message GetProviderListResp {
 
 message SaveSymbolConfigReq {
   int64 id = 1;
-  int64 tenant_id = 2;
+  reserved 2;
   int64 symbol_id = 3;
   LiquidityMode liquidity_mode = 4;
   int64 internal_provider_id = 5;
@@ -187,7 +187,7 @@ message SaveSymbolConfigReq {
 }
 
 message GetSymbolConfigListReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 symbol_id = 2;
   common.ProductType product_type = 3;
   common.ContractType contract_type = 4;
@@ -199,7 +199,7 @@ message GetSymbolConfigListReq {
 }
 
 message GetSymbolConfigDetailReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 id = 2;
   int64 symbol_id = 3;
 }
@@ -223,7 +223,7 @@ message GetSymbolConfigDetailResp {
 }
 
 message SetStrategyLevelsReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 config_id = 2;
   repeated StrategyLevelInput levels = 3;
   int64 config_version = 4;
@@ -240,7 +240,7 @@ message StrategyLevelInput {
 }
 
 message SymbolActionReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 config_id = 2;
   int64 version = 3;
   int64 operator_id = 4;
@@ -248,7 +248,7 @@ message SymbolActionReq {
 }
 
 message GetQuoteCycleListReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 config_id = 2;
   int64 symbol_id = 3;
   QuoteCycleStatus status = 4;
@@ -265,7 +265,7 @@ message GetQuoteCycleListResp {
 }
 
 message GetQuoteOrderListReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 config_id = 2;
   int64 provider_id = 3;
   int64 symbol_id = 4;
@@ -285,7 +285,7 @@ message GetQuoteOrderListResp {
 }
 
 message GetExternalOrderListReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 provider_id = 2;
   int64 config_id = 3;
   int64 symbol_id = 4;
@@ -306,7 +306,7 @@ message GetExternalOrderListResp {
 }
 
 message GetExternalFillListReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 provider_id = 2;
   int64 external_order_id = 3;
   ExternalFillSettlementStatus settlement_status = 4;
@@ -323,7 +323,7 @@ message GetExternalFillListResp {
 }
 
 message CancelExternalOrderReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 order_id = 2;
   int64 version = 3;
   int64 operator_id = 4;
@@ -331,7 +331,7 @@ message CancelExternalOrderReq {
 }
 
 message CreateManualHedgeReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 config_id = 2;
   int64 provider_id = 3;
   common.Side side = 4;
@@ -342,7 +342,7 @@ message CreateManualHedgeReq {
 }
 
 message CancelHedgeTaskReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 hedge_task_id = 2;
   int64 version = 3;
   int64 operator_id = 4;
@@ -350,7 +350,7 @@ message CancelHedgeTaskReq {
 }
 
 message RetryHedgeTaskReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 hedge_task_id = 2;
   int64 version = 3;
   int64 operator_id = 4;
@@ -362,7 +362,7 @@ message HedgeTaskResp {
 }
 
 message GetHedgeTaskListReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 config_id = 2;
   int64 provider_id = 3;
   HedgeStatus status = 4;
@@ -379,7 +379,7 @@ message GetHedgeTaskListResp {
 }
 
 message GetInventorySnapshotListReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 config_id = 2;
   int64 provider_id = 3;
   InventorySource source = 4;
@@ -396,7 +396,7 @@ message GetInventorySnapshotListResp {
 }
 
 message GetLatestInventoryReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 config_id = 2;
   int64 provider_id = 3;
   InventorySource source = 4;
@@ -408,7 +408,7 @@ message InventorySnapshotResp {
 }
 
 message GetRiskEventListReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 config_id = 2;
   int64 provider_id = 3;
   string risk_type = 4;
@@ -427,7 +427,7 @@ message GetRiskEventListResp {
 }
 
 message ResolveRiskEventReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 risk_event_id = 2;
   RiskEventStatus status = 3;
   int64 operator_id = 4;
@@ -435,7 +435,7 @@ message ResolveRiskEventReq {
 }
 
 message RunReconcileReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 provider_id = 2;
   ReconcileType reconcile_type = 3;
   int64 window_start = 4;
@@ -449,7 +449,7 @@ message ReconcileBatchResp {
 }
 
 message GetReconcileBatchListReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 provider_id = 2;
   ReconcileType reconcile_type = 3;
   ReconcileStatus status = 4;
@@ -466,7 +466,7 @@ message GetReconcileBatchListResp {
 }
 
 message GetReconcileDetailListReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 batch_id = 2;
   ReconcileDifferenceType difference_type = 3;
   ReconcileDifferenceStatus status = 4;
@@ -481,7 +481,7 @@ message GetReconcileDetailListResp {
 }
 
 message ResolveReconcileDifferenceReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 difference_id = 2;
   ReconcileDifferenceStatus status = 3;
   int64 operator_id = 4;
@@ -489,12 +489,12 @@ message ResolveReconcileDifferenceReq {
 }
 
 message GetActiveSymbolConfigReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 symbol_id = 2;
 }
 
 message RouteExternalOrderReq {
-  int64 tenant_id = 1;
+  reserved 1;
   string request_no = 2;
   int64 symbol_id = 3;
   ExternalOrderPurpose purpose = 4;
@@ -513,14 +513,14 @@ message ExternalOrderResp {
 }
 
 message CancelRoutedOrderReq {
-  int64 tenant_id = 1;
+  reserved 1;
   string request_no = 2;
   int64 external_order_id = 3;
   string reason = 4;
 }
 
 message ReportTradeFillReq {
-  int64 tenant_id = 1;
+  reserved 1;
   string event_no = 2;
   int64 symbol_id = 3;
   int64 order_id = 4;
@@ -534,7 +534,7 @@ message ReportTradeFillReq {
 }
 
 message ReportQuoteOrderStateReq {
-  int64 tenant_id = 1;
+  reserved 1;
   string event_no = 2;
   int64 internal_order_id = 3;
   string internal_order_no = 4;
@@ -546,7 +546,7 @@ message ReportQuoteOrderStateReq {
 }
 
 message LiquidityTaskReq {
-  int64 tenant_id = 1;
+  reserved 1;
   int64 config_id = 2;
   int64 provider_id = 3;
   int32 batch_size = 4;

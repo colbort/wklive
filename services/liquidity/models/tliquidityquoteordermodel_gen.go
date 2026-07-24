@@ -23,17 +23,17 @@ var (
 	tLiquidityQuoteOrderRowsExpectAutoSet   = strings.Join(stringx.Remove(tLiquidityQuoteOrderFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tLiquidityQuoteOrderRowsWithPlaceHolder = strings.Join(stringx.Remove(tLiquidityQuoteOrderFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTLiquidityQuoteOrderIdPrefix                    = "cache:tLiquidityQuoteOrder:id:"
-	cacheTLiquidityQuoteOrderTenantIdClientOrderIdPrefix = "cache:tLiquidityQuoteOrder:tenantId:clientOrderId:"
-	cacheTLiquidityQuoteOrderTenantIdQuoteNoPrefix       = "cache:tLiquidityQuoteOrder:tenantId:quoteNo:"
+	cacheTLiquidityQuoteOrderIdPrefix            = "cache:tLiquidityQuoteOrder:id:"
+	cacheTLiquidityQuoteOrderClientOrderIdPrefix = "cache:tLiquidityQuoteOrder:clientOrderId:"
+	cacheTLiquidityQuoteOrderQuoteNoPrefix       = "cache:tLiquidityQuoteOrder:quoteNo:"
 )
 
 type (
 	tLiquidityQuoteOrderModel interface {
 		Insert(ctx context.Context, data *TLiquidityQuoteOrder) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TLiquidityQuoteOrder, error)
-		FindOneByTenantIdClientOrderId(ctx context.Context, tenantId int64, clientOrderId string) (*TLiquidityQuoteOrder, error)
-		FindOneByTenantIdQuoteNo(ctx context.Context, tenantId int64, quoteNo string) (*TLiquidityQuoteOrder, error)
+		FindOneByClientOrderId(ctx context.Context, clientOrderId string) (*TLiquidityQuoteOrder, error)
+		FindOneByQuoteNo(ctx context.Context, quoteNo string) (*TLiquidityQuoteOrder, error)
 		Update(ctx context.Context, data *TLiquidityQuoteOrder) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -45,7 +45,6 @@ type (
 
 	TLiquidityQuoteOrder struct {
 		Id              int64   `db:"id"`                // 主键ID
-		TenantId        int64   `db:"tenant_id"`         // 租户ID
 		QuoteNo         string  `db:"quote_no"`          // 报价订单业务号
 		CycleId         int64   `db:"cycle_id"`          // 报价周期ID
 		ConfigId        int64   `db:"config_id"`         // 交易对流动性配置ID
@@ -82,13 +81,13 @@ func (m *defaultTLiquidityQuoteOrderModel) Delete(ctx context.Context, id int64)
 		return err
 	}
 
+	tLiquidityQuoteOrderClientOrderIdKey := fmt.Sprintf("%s%v", cacheTLiquidityQuoteOrderClientOrderIdPrefix, data.ClientOrderId)
 	tLiquidityQuoteOrderIdKey := fmt.Sprintf("%s%v", cacheTLiquidityQuoteOrderIdPrefix, id)
-	tLiquidityQuoteOrderTenantIdClientOrderIdKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityQuoteOrderTenantIdClientOrderIdPrefix, data.TenantId, data.ClientOrderId)
-	tLiquidityQuoteOrderTenantIdQuoteNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityQuoteOrderTenantIdQuoteNoPrefix, data.TenantId, data.QuoteNo)
+	tLiquidityQuoteOrderQuoteNoKey := fmt.Sprintf("%s%v", cacheTLiquidityQuoteOrderQuoteNoPrefix, data.QuoteNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tLiquidityQuoteOrderIdKey, tLiquidityQuoteOrderTenantIdClientOrderIdKey, tLiquidityQuoteOrderTenantIdQuoteNoKey)
+	}, tLiquidityQuoteOrderClientOrderIdKey, tLiquidityQuoteOrderIdKey, tLiquidityQuoteOrderQuoteNoKey)
 	return err
 }
 
@@ -109,12 +108,12 @@ func (m *defaultTLiquidityQuoteOrderModel) FindOne(ctx context.Context, id int64
 	}
 }
 
-func (m *defaultTLiquidityQuoteOrderModel) FindOneByTenantIdClientOrderId(ctx context.Context, tenantId int64, clientOrderId string) (*TLiquidityQuoteOrder, error) {
-	tLiquidityQuoteOrderTenantIdClientOrderIdKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityQuoteOrderTenantIdClientOrderIdPrefix, tenantId, clientOrderId)
+func (m *defaultTLiquidityQuoteOrderModel) FindOneByClientOrderId(ctx context.Context, clientOrderId string) (*TLiquidityQuoteOrder, error) {
+	tLiquidityQuoteOrderClientOrderIdKey := fmt.Sprintf("%s%v", cacheTLiquidityQuoteOrderClientOrderIdPrefix, clientOrderId)
 	var resp TLiquidityQuoteOrder
-	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityQuoteOrderTenantIdClientOrderIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `client_order_id` = ? limit 1", tLiquidityQuoteOrderRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, clientOrderId); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityQuoteOrderClientOrderIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `client_order_id` = ? limit 1", tLiquidityQuoteOrderRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, clientOrderId); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -129,12 +128,12 @@ func (m *defaultTLiquidityQuoteOrderModel) FindOneByTenantIdClientOrderId(ctx co
 	}
 }
 
-func (m *defaultTLiquidityQuoteOrderModel) FindOneByTenantIdQuoteNo(ctx context.Context, tenantId int64, quoteNo string) (*TLiquidityQuoteOrder, error) {
-	tLiquidityQuoteOrderTenantIdQuoteNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityQuoteOrderTenantIdQuoteNoPrefix, tenantId, quoteNo)
+func (m *defaultTLiquidityQuoteOrderModel) FindOneByQuoteNo(ctx context.Context, quoteNo string) (*TLiquidityQuoteOrder, error) {
+	tLiquidityQuoteOrderQuoteNoKey := fmt.Sprintf("%s%v", cacheTLiquidityQuoteOrderQuoteNoPrefix, quoteNo)
 	var resp TLiquidityQuoteOrder
-	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityQuoteOrderTenantIdQuoteNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `quote_no` = ? limit 1", tLiquidityQuoteOrderRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, quoteNo); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tLiquidityQuoteOrderQuoteNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `quote_no` = ? limit 1", tLiquidityQuoteOrderRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, quoteNo); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -150,13 +149,13 @@ func (m *defaultTLiquidityQuoteOrderModel) FindOneByTenantIdQuoteNo(ctx context.
 }
 
 func (m *defaultTLiquidityQuoteOrderModel) Insert(ctx context.Context, data *TLiquidityQuoteOrder) (sql.Result, error) {
+	tLiquidityQuoteOrderClientOrderIdKey := fmt.Sprintf("%s%v", cacheTLiquidityQuoteOrderClientOrderIdPrefix, data.ClientOrderId)
 	tLiquidityQuoteOrderIdKey := fmt.Sprintf("%s%v", cacheTLiquidityQuoteOrderIdPrefix, data.Id)
-	tLiquidityQuoteOrderTenantIdClientOrderIdKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityQuoteOrderTenantIdClientOrderIdPrefix, data.TenantId, data.ClientOrderId)
-	tLiquidityQuoteOrderTenantIdQuoteNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityQuoteOrderTenantIdQuoteNoPrefix, data.TenantId, data.QuoteNo)
+	tLiquidityQuoteOrderQuoteNoKey := fmt.Sprintf("%s%v", cacheTLiquidityQuoteOrderQuoteNoPrefix, data.QuoteNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityQuoteOrderRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.QuoteNo, data.CycleId, data.ConfigId, data.ProviderId, data.SymbolId, data.Side, data.LevelNo, data.Price, data.Qty, data.FilledQty, data.InternalOrderId, data.InternalOrderNo, data.ClientOrderId, data.Status, data.ExpireAt, data.CancelReason, data.LastErrorMsg, data.Version, data.CreateTimes, data.UpdateTimes)
-	}, tLiquidityQuoteOrderIdKey, tLiquidityQuoteOrderTenantIdClientOrderIdKey, tLiquidityQuoteOrderTenantIdQuoteNoKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityQuoteOrderRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.QuoteNo, data.CycleId, data.ConfigId, data.ProviderId, data.SymbolId, data.Side, data.LevelNo, data.Price, data.Qty, data.FilledQty, data.InternalOrderId, data.InternalOrderNo, data.ClientOrderId, data.Status, data.ExpireAt, data.CancelReason, data.LastErrorMsg, data.Version, data.CreateTimes, data.UpdateTimes)
+	}, tLiquidityQuoteOrderClientOrderIdKey, tLiquidityQuoteOrderIdKey, tLiquidityQuoteOrderQuoteNoKey)
 	return ret, err
 }
 
@@ -166,13 +165,13 @@ func (m *defaultTLiquidityQuoteOrderModel) Update(ctx context.Context, newData *
 		return err
 	}
 
+	tLiquidityQuoteOrderClientOrderIdKey := fmt.Sprintf("%s%v", cacheTLiquidityQuoteOrderClientOrderIdPrefix, data.ClientOrderId)
 	tLiquidityQuoteOrderIdKey := fmt.Sprintf("%s%v", cacheTLiquidityQuoteOrderIdPrefix, data.Id)
-	tLiquidityQuoteOrderTenantIdClientOrderIdKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityQuoteOrderTenantIdClientOrderIdPrefix, data.TenantId, data.ClientOrderId)
-	tLiquidityQuoteOrderTenantIdQuoteNoKey := fmt.Sprintf("%s%v:%v", cacheTLiquidityQuoteOrderTenantIdQuoteNoPrefix, data.TenantId, data.QuoteNo)
+	tLiquidityQuoteOrderQuoteNoKey := fmt.Sprintf("%s%v", cacheTLiquidityQuoteOrderQuoteNoPrefix, data.QuoteNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tLiquidityQuoteOrderRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.QuoteNo, newData.CycleId, newData.ConfigId, newData.ProviderId, newData.SymbolId, newData.Side, newData.LevelNo, newData.Price, newData.Qty, newData.FilledQty, newData.InternalOrderId, newData.InternalOrderNo, newData.ClientOrderId, newData.Status, newData.ExpireAt, newData.CancelReason, newData.LastErrorMsg, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tLiquidityQuoteOrderIdKey, tLiquidityQuoteOrderTenantIdClientOrderIdKey, tLiquidityQuoteOrderTenantIdQuoteNoKey)
+		return conn.ExecCtx(ctx, query, newData.QuoteNo, newData.CycleId, newData.ConfigId, newData.ProviderId, newData.SymbolId, newData.Side, newData.LevelNo, newData.Price, newData.Qty, newData.FilledQty, newData.InternalOrderId, newData.InternalOrderNo, newData.ClientOrderId, newData.Status, newData.ExpireAt, newData.CancelReason, newData.LastErrorMsg, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tLiquidityQuoteOrderClientOrderIdKey, tLiquidityQuoteOrderIdKey, tLiquidityQuoteOrderQuoteNoKey)
 	return err
 }
 
