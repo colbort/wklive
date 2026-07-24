@@ -223,12 +223,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import {
-  ProductUpdateReq,
-  stakingService,
-  type OptionGroup,
-  type StakeProduct,
-} from '@/services'
+import { ProductUpdateReq, stakingService, type OptionGroup, type StakeProduct } from '@/services'
 import { findFormOptionGroup, getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'

@@ -176,12 +176,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import {
-  ManualRedeemReq,
-  ManualRewardReq,
-  stakingService,
-  type StakeOrder,
-} from '@/services'
+import { ManualRedeemReq, ManualRewardReq, stakingService, type StakeOrder } from '@/services'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import TenantSelect from '@/components/TenantSelect.vue'

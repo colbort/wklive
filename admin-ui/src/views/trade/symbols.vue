@@ -46,12 +46,12 @@
         <el-table-column prop="tenantId" :label="t('trade.tenantId')" width="100" />
 
         <el-table-column min-width="190" show-overflow-tooltip>
-          <template #header> {{ t('trade.symbol') }} / {{ t('trade.displaySymbol') }} </template>
+          <template #header>
+            {{ t('trade.symbol') }} / {{ t('trade.displaySymbol') }}
+          </template>
           <template #default="{ row }">
             <div class="symbol-cell">
-              <span class="symbol-code"
-                >{{ row.symbol || '-' }}/{{ row.displaySymbol || '-' }}</span
-              >
+              <span class="symbol-code">{{ row.symbol || '-' }}/{{ row.displaySymbol || '-' }}</span>
             </div>
           </template>
         </el-table-column>
@@ -120,9 +120,19 @@
             {{ row.sort || 0 }}
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" align="center" width="260" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="260"
+          fixed="right"
+        >
           <template #default="{ row }">
-            <el-button v-perm="'trade:symbol:detail'" link type="primary" @click="showDetail(row)">
+            <el-button
+              v-perm="'trade:symbol:detail'"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
               {{ t('option.detail') }}
             </el-button>
             <el-button
@@ -355,7 +365,12 @@
           </el-form-item>
 
           <el-form-item :label="t('common.sort')">
-            <el-input-number v-model="symbolForm.sort" :min="0" :precision="0" class="full-width" />
+            <el-input-number
+              v-model="symbolForm.sort"
+              :min="0"
+              :precision="0"
+              class="full-width"
+            />
           </el-form-item>
 
           <el-form-item :label="t('common.remark')" class="wide">
@@ -408,7 +423,12 @@
             <el-input v-model="secondsForm.feeRate" />
           </el-form-item>
           <el-form-item :label="t('trade.drawRule')">
-            <el-input-number v-model="secondsForm.drawRule" :min="1" :max="2" class="full-width" />
+            <el-input-number
+              v-model="secondsForm.drawRule"
+              :min="1"
+              :max="2"
+              class="full-width"
+            />
           </el-form-item>
           <el-form-item :label="t('trade.quoteValidityMs')">
             <el-input-number v-model="secondsForm.quoteValidityMs" :min="1" class="full-width" />
@@ -479,7 +499,9 @@
         <el-table-column prop="payoutRate" :label="t('trade.payoutRate')" width="110" />
         <el-table-column prop="feeRate" :label="t('trade.secondsFeeRate')" width="110" />
         <el-table-column :label="t('trade.stakeRange')" min-width="150">
-          <template #default="{ row }"> {{ row.minStake }} - {{ row.maxStake }} </template>
+          <template #default="{ row }">
+            {{ row.minStake }} - {{ row.maxStake }}
+          </template>
         </el-table-column>
         <el-table-column :label="t('trade.directionStatus')" min-width="150">
           <template #default="{ row }">
@@ -585,7 +607,12 @@
       width="900px"
       class="contract-config-dialog"
     >
-      <el-alert :title="contractConfigSummary" type="info" :closable="false" show-icon />
+      <el-alert
+        :title="contractConfigSummary"
+        type="info"
+        :closable="false"
+        show-icon
+      />
       <el-form label-width="126px" class="dialog-form">
         <div class="form-grid two">
           <el-form-item :label="t('trade.tenantId')">
@@ -893,7 +920,12 @@
         </el-button>
       </div>
 
-      <el-table :data="leverageGroups" size="small" border class="leverage-table">
+      <el-table
+        :data="leverageGroups"
+        size="small"
+        border
+        class="leverage-table"
+      >
         <el-table-column :label="t('trade.marginMode')" width="130">
           <template #default="{ row }">
             {{ optionLabel('marginMode', row.marginMode) }}
@@ -905,7 +937,9 @@
           </template>
         </el-table-column>
         <el-table-column :label="t('trade.defaultLeverage')" width="130">
-          <template #default="{ row }"> {{ row.defaultLeverage }}X </template>
+          <template #default="{ row }">
+            {{ row.defaultLeverage }}X
+          </template>
         </el-table-column>
         <el-table-column :label="t('trade.maxLeverage')" width="120">
           <template #default="{ row }">

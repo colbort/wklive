@@ -13,6 +13,7 @@ type TradeSymbol {
 	contractValueType int64  `json:"contractValueType"`
 	marginAsset       string `json:"marginAsset"`
 	status            int64  `json:"status"`
+	displayStatus     int64  `json:"displayStatus"`
 	priceScale        int64  `json:"priceScale"`
 	qtyScale          int64  `json:"qtyScale"`
 	minPrice          string `json:"minPrice"`

@@ -4646,6 +4646,7 @@ type TradeSymbol struct {
 	ContractValueType int64  `json:"contractValueType"`
 	MarginAsset       string `json:"marginAsset"`
 	Status            int64  `json:"status"`
+	DisplayStatus     int64  `json:"displayStatus"`
 	PriceScale        int64  `json:"priceScale"`
 	QtyScale          int64  `json:"qtyScale"`
 	MinPrice          string `json:"minPrice"`

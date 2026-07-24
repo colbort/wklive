@@ -74,6 +74,16 @@ func (l *GetOrderDetailLogic) GetOrderDetail(in *trade.GetOrderDetailReq) (*trad
 	if contractCfg != nil {
 		resp.Data.Contract = orderContractToProto(contractCfg)
 	}
+	seconds, err := l.svcCtx.TradeOrderSecondsModel.FindOneByTenantIdOrderId(l.ctx, tenantId, item.Id)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, err
+	}
+	if seconds != nil {
+		resp.Data.Seconds = orderSecondsToProto(seconds)
+		resp.Data.Order.SecondsDirection = trade.SecondsDirection(seconds.Direction)
+		resp.Data.Order.DurationSeconds = seconds.DurationSeconds
+		resp.Data.Order.DisplayStatus = secondsOrderDisplayStatus(seconds.SettlementStatus)
+	}
 
 	return resp, nil
 }

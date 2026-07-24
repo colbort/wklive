@@ -60,11 +60,17 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="tenantId" :label="t('trade.tenantId')" width="100" />
-        <el-table-column prop="userId" :label="t('trade.userId')" width="100" />
-        <el-table-column prop="symbolId" :label="t('trade.symbolId')" width="100" />
+        <el-table-column
+          :label="`${t('trade.tenantId')}/${t('trade.userId')}/${t('trade.symbolId')}`"
+          min-width="200"
+          align="center"
+        >
+          <template #default="{ row }">
+            {{ row.tenantId }} / {{ row.userId }} / {{ row.symbolId }}
+          </template>
+        </el-table-column>
 
-        <el-table-column :label="t('trade.productType')" min-width="130">
+        <el-table-column :label="t('trade.productType')" min-width="100">
           <template #default="{ row }">
             <el-tag size="small" effect="light">
               {{ optionLabel('productType', row.productType) }}
@@ -80,13 +86,13 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('trade.orderType')" width="120">
+        <el-table-column :label="t('trade.orderType')" width="120" align="center">
           <template #default="{ row }">
             {{ orderTypeLabel(row) }}
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('trade.triggerKind')" width="120">
+        <el-table-column :label="t('trade.triggerKind')" width="120" align="center">
           <template #default="{ row }">
             {{ optionLabel('triggerKind', row.triggerKind) }}
           </template>
@@ -104,9 +110,15 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('trade.filled')" min-width="150" align="right">
+        <el-table-column
+          v-if="hasMatchableOrders"
+          :label="t('trade.filledQtyAmount')"
+          min-width="150"
+          align="center"
+        >
           <template #default="{ row }">
-            <div class="amount-stack">
+            <span v-if="row.productType === 3" class="muted">-</span>
+            <div v-else class="amount-stack">
               <span>{{ displayAmount(row.filledQty) }}</span>
               <span class="muted">{{ displayAmount(row.filledAmount) }}</span>
             </div>
@@ -115,8 +127,12 @@
 
         <el-table-column :label="t('trade.status')" width="150">
           <template #default="{ row }">
-            <el-tag size="small" :type="orderStatusTagType(row.status)" effect="light">
-              {{ optionLabel('orderStatus', row.status) }}
+            <el-tag
+              size="small"
+              :type="orderDisplayStatusTagType(effectiveOrderDisplayStatus(row))"
+              effect="light"
+            >
+              {{ orderDisplayStatusLabel(effectiveOrderDisplayStatus(row)) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -172,8 +188,11 @@
                 {{ detailData.clientOrderId || '-' }}
               </div>
             </div>
-            <el-tag :type="orderStatusTagType(detailData.status)" effect="light">
-              {{ optionLabel('orderStatus', detailData.status) }}
+            <el-tag
+              :type="orderDisplayStatusTagType(effectiveOrderDisplayStatus(detailData))"
+              effect="light"
+            >
+              {{ orderDisplayStatusLabel(effectiveOrderDisplayStatus(detailData)) }}
             </el-tag>
           </div>
 
@@ -206,7 +225,12 @@
             </el-descriptions-item>
           </el-descriptions>
 
-          <el-descriptions v-if="detailSpot" :title="t('trade.spotOrderDetails')" :column="2" border>
+          <el-descriptions
+            v-if="detailSpot"
+            :title="t('trade.spotOrderDetails')"
+            :column="2"
+            border
+          >
             <el-descriptions-item :label="t('trade.frozenAsset')">
               {{ detailSpot.frozenAsset || '-' }}
             </el-descriptions-item>
@@ -266,7 +290,12 @@
             </el-descriptions-item>
           </el-descriptions>
 
-          <el-descriptions v-if="detailSeconds" :title="t('trade.secondsDetails')" :column="2" border>
+          <el-descriptions
+            v-if="detailSeconds"
+            :title="t('trade.secondsDetails')"
+            :column="2"
+            border
+          >
             <el-descriptions-item :label="t('trade.side')">
               {{ secondsDirectionLabel(detailSeconds.direction) }}
             </el-descriptions-item>
@@ -341,7 +370,12 @@
             </el-descriptions-item>
           </el-descriptions>
 
-          <el-descriptions v-else :title="t('trade.orderParams')" :column="2" border>
+          <el-descriptions
+            v-else
+            :title="t('trade.orderParams')"
+            :column="2"
+            border
+          >
             <el-descriptions-item :label="t('trade.orderType')">
               {{ orderTypeLabel(detailData) }}
             </el-descriptions-item>
@@ -374,7 +408,12 @@
             </el-descriptions-item>
           </el-descriptions>
 
-          <el-descriptions v-if="!detailSeconds" :title="t('trade.fillInfo')" :column="2" border>
+          <el-descriptions
+            v-if="!detailSeconds"
+            :title="t('trade.fillInfo')"
+            :column="2"
+            border
+          >
             <el-descriptions-item :label="t('trade.filledQty')">
               {{ displayAmount(detailData.filledQty) }}
             </el-descriptions-item>
@@ -395,7 +434,12 @@
             </el-descriptions-item>
           </el-descriptions>
 
-          <el-descriptions v-if="!detailSeconds" :title="t('trade.triggerAndCancel')" :column="2" border>
+          <el-descriptions
+            v-if="!detailSeconds"
+            :title="t('trade.triggerAndCancel')"
+            :column="2"
+            border
+          >
             <el-descriptions-item :label="t('trade.triggerPrice')">
               {{ displayAmount(detailData.triggerPrice) }}
             </el-descriptions-item>
@@ -521,6 +565,25 @@ const fallbackOptions: Record<string, OptionItem[]> = {
     { value: 10, code: 'ORDER_STATUS_EXPIRING' },
     { value: 11, code: 'ORDER_STATUS_SETTLEMENT_PENDING' },
   ],
+  orderDisplayStatus: [
+    { value: 1, code: 'ORDER_DISPLAY_STATUS_FREEZING' },
+    { value: 2, code: 'ORDER_DISPLAY_STATUS_ACTIVATING' },
+    { value: 3, code: 'ORDER_DISPLAY_STATUS_ACTIVE' },
+    { value: 4, code: 'ORDER_DISPLAY_STATUS_TRIGGER_WAITING' },
+    { value: 5, code: 'ORDER_DISPLAY_STATUS_PENDING' },
+    { value: 6, code: 'ORDER_DISPLAY_STATUS_PART_FILLED' },
+    { value: 7, code: 'ORDER_DISPLAY_STATUS_SETTLING' },
+    { value: 8, code: 'ORDER_DISPLAY_STATUS_FILLED' },
+    { value: 9, code: 'ORDER_DISPLAY_STATUS_SETTLED' },
+    { value: 10, code: 'ORDER_DISPLAY_STATUS_CANCELING' },
+    { value: 11, code: 'ORDER_DISPLAY_STATUS_CANCELED' },
+    { value: 12, code: 'ORDER_DISPLAY_STATUS_EXPIRING' },
+    { value: 13, code: 'ORDER_DISPLAY_STATUS_EXPIRED' },
+    { value: 14, code: 'ORDER_DISPLAY_STATUS_REFUNDING' },
+    { value: 15, code: 'ORDER_DISPLAY_STATUS_REFUNDED' },
+    { value: 16, code: 'ORDER_DISPLAY_STATUS_REJECTED' },
+    { value: 17, code: 'ORDER_DISPLAY_STATUS_MANUAL_REVIEW' },
+  ],
   triggerType: [
     { value: 1, code: 'TRIGGER_TYPE_LAST_PRICE' },
     { value: 2, code: 'TRIGGER_TYPE_MARK_PRICE' },
@@ -557,6 +620,13 @@ const detailTitle = computed(() => `${t('trade.orders')}${t('option.detail')}`)
 const productTypeOptions = computed(() => optionItems('productType'))
 const orderStatusOptions = computed(() => optionItems('orderStatus'))
 const fillProgress = computed(() => calcFillProgress(detailData.value))
+const hasMatchableOrders = computed(() =>
+  rows.value.some(
+    (order) =>
+      order.productType !== 3 &&
+      (isPositiveAmount(order.filledQty) || isPositiveAmount(order.filledAmount)),
+  ),
+)
 
 const optionItems = (key: string) => {
   const options = findOptionGroup(optionGroups.value, key)
@@ -695,28 +765,65 @@ function formatTimestamp(value?: number) {
 }
 
 function orderDirectionTagType(order: TradeOrder) {
-  return order.productType === 3
-    ? sideTagType(order.secondsDirection)
-    : sideTagType(order.side)
+  return order.productType === 3 ? sideTagType(order.secondsDirection) : sideTagType(order.side)
 }
 
 function orderTypeLabel(order: TradeOrder) {
-  return order.productType === 3 ? t('trade.secondsOrder') : optionLabel('orderType', order.orderType)
+  return order.productType === 3
+    ? t('trade.secondsOrder')
+    : optionLabel('orderType', order.orderType)
 }
 
-function orderStatusTagType(status: number) {
-  if (status === 3) return 'success'
-  if (status === 2) return 'warning'
-  if (status === 4 || status === 6) return 'info'
-  if (status === 5) return 'danger'
-  if (status === 7 || status === 8 || status === 9 || status === 10 || status === 11)
-    return 'warning'
+function orderDisplayStatusLabel(status: number) {
+  return optionLabel('orderDisplayStatus', status)
+}
+
+function effectiveOrderDisplayStatus(order: TradeOrder) {
+  if (order.displayStatus > 0) return order.displayStatus
+
+  // 兼容滚动发布期间尚未返回 displayStatus 的旧版 RPC/API。
+  if (order.productType === 3) {
+    if (order.status === 3) return 9
+    if (order.status === 4) return 15
+    if (order.status === 5) return 16
+  }
+
+  const legacyMapping: Record<number, number> = {
+    1: 5,
+    2: 6,
+    3: 8,
+    4: 11,
+    5: 16,
+    6: 13,
+    7: 1,
+    8: 4,
+    9: 10,
+    10: 12,
+    11: 7,
+  }
+  return legacyMapping[order.status] || 0
+}
+
+function orderDisplayStatusTagType(status: number) {
+  if (status === 8 || status === 9) return 'success'
+  if (status === 11 || status === 13 || status === 15) return 'info'
+  if (status === 16) return 'danger'
+  if ([1, 2, 3, 4, 5, 6, 7, 10, 12, 14, 17].includes(status)) return 'warning'
   return ''
 }
 
 function displayAmount(value?: string | number) {
   if (value === undefined || value === null || value === '') return '-'
   return String(value)
+}
+
+function isPositiveAmount(value?: string | number) {
+  try {
+    const amount = new Decimal(value || 0)
+    return amount.isFinite() && amount.isPositive()
+  } catch {
+    return false
+  }
 }
 
 function yesNoLabel(value?: number) {

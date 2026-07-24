@@ -479,6 +479,7 @@ export type TradeOrder = {
   orderType: number
   timeInForce: number
   status: number
+  displayStatus: number
   price: string
   qty: string
   amount: string

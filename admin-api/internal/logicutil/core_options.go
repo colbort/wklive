@@ -105,6 +105,7 @@ func TradeOptions() []types.OptionsGroup {
 		EnumGroup("triggerKind", "触发用途", trade.TriggerKind_TRIGGER_KIND_NONE.Descriptor()),
 		EnumGroup("timeInForce", "有效方式", trade.TimeInForce_TIME_IN_FORCE_UNKNOWN.Descriptor()),
 		EnumGroup("orderStatus", "订单状态", trade.OrderStatus_ORDER_STATUS_UNKNOWN.Descriptor()),
+		EnumGroup("orderDisplayStatus", "订单展示状态", trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_UNKNOWN.Descriptor()),
 		EnumGroup("eventStatus", "事件状态", trade.EventStatus_EVENT_STATUS_UNKNOWN.Descriptor()),
 		EnumGroup("marginMode", "保证金模式", trade.MarginMode_MARGIN_MODE_UNKNOWN.Descriptor()),
 		EnumGroup("positionMode", "持仓模式", trade.PositionMode_POSITION_MODE_UNKNOWN.Descriptor()),

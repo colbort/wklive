@@ -58,7 +58,19 @@ func (l *GetOrderListLogic) GetOrderList(in *trade.GetOrderListReq) (*trade.GetO
 	}
 	resp := &trade.GetOrderListResp{Base: pageutil.Base(cursor, limit, len(data), total, lastID)}
 	for _, item := range data {
-		resp.Data = append(resp.Data, orderToProto(item))
+		order := orderToProto(item)
+		if item.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SECONDS) {
+			seconds, findErr := l.svcCtx.TradeOrderSecondsModel.FindOneByTenantIdOrderId(l.ctx, item.TenantId, item.Id)
+			if findErr != nil && !errors.Is(findErr, models.ErrNotFound) {
+				return nil, findErr
+			}
+			if findErr == nil {
+				order.SecondsDirection = trade.SecondsDirection(seconds.Direction)
+				order.DurationSeconds = seconds.DurationSeconds
+				order.DisplayStatus = secondsOrderDisplayStatus(seconds.SettlementStatus)
+			}
+		}
+		resp.Data = append(resp.Data, order)
 	}
 	return resp, nil
 }

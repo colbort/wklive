@@ -18,15 +18,11 @@ import type {
   StakeRewardLog,
 } from '@/services'
 
-export function apiStakingListProducts(
-  params: ProductListReq,
-): Promise<RespBase<StakeProduct[]>> {
+export function apiStakingListProducts(params: ProductListReq): Promise<RespBase<StakeProduct[]>> {
   return get<StakeProduct[]>('/admin/staking/products', params)
 }
 
-export function apiStakingGetProduct(
-  params: ProductDetailReq,
-): Promise<RespBase<StakeProduct>> {
+export function apiStakingGetProduct(params: ProductDetailReq): Promise<RespBase<StakeProduct>> {
   return get<StakeProduct>('/admin/staking/products/detail', params)
 }
 

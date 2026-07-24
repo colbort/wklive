@@ -219,6 +219,7 @@ func orderToProto(item *models.TTradeOrder) *trade.TradeOrder {
 		OrderType:         trade.OrderType(item.OrderType),
 		TimeInForce:       trade.TimeInForce(item.TimeInForce),
 		Status:            trade.OrderStatus(item.Status),
+		DisplayStatus:     orderDisplayStatus(item.Status),
 		Price:             conv.FloatString(item.Price),
 		Qty:               conv.FloatString(item.Qty),
 		Amount:            conv.FloatString(item.Amount),
@@ -243,6 +244,58 @@ func orderToProto(item *models.TTradeOrder) *trade.TradeOrder {
 		CreateTimes:       item.CreateTimes,
 		UpdateTimes:       item.UpdateTimes,
 		Version:           item.Version,
+	}
+}
+
+func orderDisplayStatus(status int64) trade.OrderDisplayStatus {
+	switch trade.OrderStatus(status) {
+	case trade.OrderStatus_ORDER_STATUS_FREEZING:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_FREEZING
+	case trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_TRIGGER_WAITING
+	case trade.OrderStatus_ORDER_STATUS_PENDING:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_PENDING
+	case trade.OrderStatus_ORDER_STATUS_PART_FILLED:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_PART_FILLED
+	case trade.OrderStatus_ORDER_STATUS_SETTLEMENT_PENDING:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_SETTLING
+	case trade.OrderStatus_ORDER_STATUS_FILLED:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_FILLED
+	case trade.OrderStatus_ORDER_STATUS_CANCELING:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_CANCELING
+	case trade.OrderStatus_ORDER_STATUS_CANCELED:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_CANCELED
+	case trade.OrderStatus_ORDER_STATUS_EXPIRING:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_EXPIRING
+	case trade.OrderStatus_ORDER_STATUS_EXPIRED:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_EXPIRED
+	case trade.OrderStatus_ORDER_STATUS_REJECTED:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_REJECTED
+	default:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_UNKNOWN
+	}
+}
+
+func secondsOrderDisplayStatus(status int64) trade.OrderDisplayStatus {
+	switch trade.SecondsSettlementStatus(status) {
+	case trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_PENDING_FREEZE:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_FREEZING
+	case trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_ACTIVATING:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_ACTIVATING
+	case trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_ACTIVE:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_ACTIVE
+	case trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLING:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_SETTLING
+	case trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_SETTLED:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_SETTLED
+	case trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_REFUNDING:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_REFUNDING
+	case trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_REFUNDED:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_REFUNDED
+	case trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_MANUAL_REVIEW:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_MANUAL_REVIEW
+	default:
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_UNKNOWN
 	}
 }
 

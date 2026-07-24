@@ -509,6 +509,101 @@ func (OrderStatus) EnumDescriptor() ([]byte, []int) {
 	return file_proto_trade_enum_proto_rawDescGZIP(), []int{8}
 }
 
+// 统一展示状态。OrderStatus 保留撮合/执行语义；该枚举用于跨产品列表和详情展示。
+type OrderDisplayStatus int32
+
+const (
+	OrderDisplayStatus_ORDER_DISPLAY_STATUS_UNKNOWN         OrderDisplayStatus = 0
+	OrderDisplayStatus_ORDER_DISPLAY_STATUS_FREEZING        OrderDisplayStatus = 1
+	OrderDisplayStatus_ORDER_DISPLAY_STATUS_ACTIVATING      OrderDisplayStatus = 2
+	OrderDisplayStatus_ORDER_DISPLAY_STATUS_ACTIVE          OrderDisplayStatus = 3
+	OrderDisplayStatus_ORDER_DISPLAY_STATUS_TRIGGER_WAITING OrderDisplayStatus = 4
+	OrderDisplayStatus_ORDER_DISPLAY_STATUS_PENDING         OrderDisplayStatus = 5
+	OrderDisplayStatus_ORDER_DISPLAY_STATUS_PART_FILLED     OrderDisplayStatus = 6
+	OrderDisplayStatus_ORDER_DISPLAY_STATUS_SETTLING        OrderDisplayStatus = 7
+	OrderDisplayStatus_ORDER_DISPLAY_STATUS_FILLED          OrderDisplayStatus = 8
+	OrderDisplayStatus_ORDER_DISPLAY_STATUS_SETTLED         OrderDisplayStatus = 9
+	OrderDisplayStatus_ORDER_DISPLAY_STATUS_CANCELING       OrderDisplayStatus = 10
+	OrderDisplayStatus_ORDER_DISPLAY_STATUS_CANCELED        OrderDisplayStatus = 11
+	OrderDisplayStatus_ORDER_DISPLAY_STATUS_EXPIRING        OrderDisplayStatus = 12
+	OrderDisplayStatus_ORDER_DISPLAY_STATUS_EXPIRED         OrderDisplayStatus = 13
+	OrderDisplayStatus_ORDER_DISPLAY_STATUS_REFUNDING       OrderDisplayStatus = 14
+	OrderDisplayStatus_ORDER_DISPLAY_STATUS_REFUNDED        OrderDisplayStatus = 15
+	OrderDisplayStatus_ORDER_DISPLAY_STATUS_REJECTED        OrderDisplayStatus = 16
+	OrderDisplayStatus_ORDER_DISPLAY_STATUS_MANUAL_REVIEW   OrderDisplayStatus = 17
+)
+
+// Enum value maps for OrderDisplayStatus.
+var (
+	OrderDisplayStatus_name = map[int32]string{
+		0:  "ORDER_DISPLAY_STATUS_UNKNOWN",
+		1:  "ORDER_DISPLAY_STATUS_FREEZING",
+		2:  "ORDER_DISPLAY_STATUS_ACTIVATING",
+		3:  "ORDER_DISPLAY_STATUS_ACTIVE",
+		4:  "ORDER_DISPLAY_STATUS_TRIGGER_WAITING",
+		5:  "ORDER_DISPLAY_STATUS_PENDING",
+		6:  "ORDER_DISPLAY_STATUS_PART_FILLED",
+		7:  "ORDER_DISPLAY_STATUS_SETTLING",
+		8:  "ORDER_DISPLAY_STATUS_FILLED",
+		9:  "ORDER_DISPLAY_STATUS_SETTLED",
+		10: "ORDER_DISPLAY_STATUS_CANCELING",
+		11: "ORDER_DISPLAY_STATUS_CANCELED",
+		12: "ORDER_DISPLAY_STATUS_EXPIRING",
+		13: "ORDER_DISPLAY_STATUS_EXPIRED",
+		14: "ORDER_DISPLAY_STATUS_REFUNDING",
+		15: "ORDER_DISPLAY_STATUS_REFUNDED",
+		16: "ORDER_DISPLAY_STATUS_REJECTED",
+		17: "ORDER_DISPLAY_STATUS_MANUAL_REVIEW",
+	}
+	OrderDisplayStatus_value = map[string]int32{
+		"ORDER_DISPLAY_STATUS_UNKNOWN":         0,
+		"ORDER_DISPLAY_STATUS_FREEZING":        1,
+		"ORDER_DISPLAY_STATUS_ACTIVATING":      2,
+		"ORDER_DISPLAY_STATUS_ACTIVE":          3,
+		"ORDER_DISPLAY_STATUS_TRIGGER_WAITING": 4,
+		"ORDER_DISPLAY_STATUS_PENDING":         5,
+		"ORDER_DISPLAY_STATUS_PART_FILLED":     6,
+		"ORDER_DISPLAY_STATUS_SETTLING":        7,
+		"ORDER_DISPLAY_STATUS_FILLED":          8,
+		"ORDER_DISPLAY_STATUS_SETTLED":         9,
+		"ORDER_DISPLAY_STATUS_CANCELING":       10,
+		"ORDER_DISPLAY_STATUS_CANCELED":        11,
+		"ORDER_DISPLAY_STATUS_EXPIRING":        12,
+		"ORDER_DISPLAY_STATUS_EXPIRED":         13,
+		"ORDER_DISPLAY_STATUS_REFUNDING":       14,
+		"ORDER_DISPLAY_STATUS_REFUNDED":        15,
+		"ORDER_DISPLAY_STATUS_REJECTED":        16,
+		"ORDER_DISPLAY_STATUS_MANUAL_REVIEW":   17,
+	}
+)
+
+func (x OrderDisplayStatus) Enum() *OrderDisplayStatus {
+	p := new(OrderDisplayStatus)
+	*p = x
+	return p
+}
+
+func (x OrderDisplayStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (OrderDisplayStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[9].Descriptor()
+}
+
+func (OrderDisplayStatus) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[9]
+}
+
+func (x OrderDisplayStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use OrderDisplayStatus.Descriptor instead.
+func (OrderDisplayStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{9}
+}
+
 type MarginMode int32
 
 const (
@@ -542,11 +637,11 @@ func (x MarginMode) String() string {
 }
 
 func (MarginMode) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[9].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[10].Descriptor()
 }
 
 func (MarginMode) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[9]
+	return &file_proto_trade_enum_proto_enumTypes[10]
 }
 
 func (x MarginMode) Number() protoreflect.EnumNumber {
@@ -555,7 +650,7 @@ func (x MarginMode) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use MarginMode.Descriptor instead.
 func (MarginMode) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{9}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{10}
 }
 
 type PositionMode int32
@@ -591,11 +686,11 @@ func (x PositionMode) String() string {
 }
 
 func (PositionMode) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[10].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[11].Descriptor()
 }
 
 func (PositionMode) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[10]
+	return &file_proto_trade_enum_proto_enumTypes[11]
 }
 
 func (x PositionMode) Number() protoreflect.EnumNumber {
@@ -604,7 +699,7 @@ func (x PositionMode) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use PositionMode.Descriptor instead.
 func (PositionMode) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{10}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{11}
 }
 
 type LiquidityType int32
@@ -640,11 +735,11 @@ func (x LiquidityType) String() string {
 }
 
 func (LiquidityType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[11].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[12].Descriptor()
 }
 
 func (LiquidityType) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[11]
+	return &file_proto_trade_enum_proto_enumTypes[12]
 }
 
 func (x LiquidityType) Number() protoreflect.EnumNumber {
@@ -653,7 +748,7 @@ func (x LiquidityType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use LiquidityType.Descriptor instead.
 func (LiquidityType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{11}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{12}
 }
 
 type SourceType int32
@@ -695,11 +790,11 @@ func (x SourceType) String() string {
 }
 
 func (SourceType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[12].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[13].Descriptor()
 }
 
 func (SourceType) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[12]
+	return &file_proto_trade_enum_proto_enumTypes[13]
 }
 
 func (x SourceType) Number() protoreflect.EnumNumber {
@@ -708,7 +803,7 @@ func (x SourceType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SourceType.Descriptor instead.
 func (SourceType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{12}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{13}
 }
 
 type OrderSourceType int32
@@ -750,11 +845,11 @@ func (x OrderSourceType) String() string {
 }
 
 func (OrderSourceType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[13].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[14].Descriptor()
 }
 
 func (OrderSourceType) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[13]
+	return &file_proto_trade_enum_proto_enumTypes[14]
 }
 
 func (x OrderSourceType) Number() protoreflect.EnumNumber {
@@ -763,7 +858,7 @@ func (x OrderSourceType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use OrderSourceType.Descriptor instead.
 func (OrderSourceType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{13}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{14}
 }
 
 type RiskCheckType int32
@@ -817,11 +912,11 @@ func (x RiskCheckType) String() string {
 }
 
 func (RiskCheckType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[14].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[15].Descriptor()
 }
 
 func (RiskCheckType) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[14]
+	return &file_proto_trade_enum_proto_enumTypes[15]
 }
 
 func (x RiskCheckType) Number() protoreflect.EnumNumber {
@@ -830,7 +925,7 @@ func (x RiskCheckType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use RiskCheckType.Descriptor instead.
 func (RiskCheckType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{14}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{15}
 }
 
 type RiskCheckResult int32
@@ -869,11 +964,11 @@ func (x RiskCheckResult) String() string {
 }
 
 func (RiskCheckResult) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[15].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[16].Descriptor()
 }
 
 func (RiskCheckResult) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[15]
+	return &file_proto_trade_enum_proto_enumTypes[16]
 }
 
 func (x RiskCheckResult) Number() protoreflect.EnumNumber {
@@ -882,7 +977,7 @@ func (x RiskCheckResult) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use RiskCheckResult.Descriptor instead.
 func (RiskCheckResult) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{15}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{16}
 }
 
 type EventStatus int32
@@ -930,11 +1025,11 @@ func (x EventStatus) String() string {
 }
 
 func (EventStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[16].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[17].Descriptor()
 }
 
 func (EventStatus) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[16]
+	return &file_proto_trade_enum_proto_enumTypes[17]
 }
 
 func (x EventStatus) Number() protoreflect.EnumNumber {
@@ -943,7 +1038,7 @@ func (x EventStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use EventStatus.Descriptor instead.
 func (EventStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{16}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{17}
 }
 
 type PositionActionType int32
@@ -997,11 +1092,11 @@ func (x PositionActionType) String() string {
 }
 
 func (PositionActionType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[17].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[18].Descriptor()
 }
 
 func (PositionActionType) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[17]
+	return &file_proto_trade_enum_proto_enumTypes[18]
 }
 
 func (x PositionActionType) Number() protoreflect.EnumNumber {
@@ -1010,7 +1105,7 @@ func (x PositionActionType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use PositionActionType.Descriptor instead.
 func (PositionActionType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{17}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{18}
 }
 
 type CancelSource int32
@@ -1052,11 +1147,11 @@ func (x CancelSource) String() string {
 }
 
 func (CancelSource) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[18].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[19].Descriptor()
 }
 
 func (CancelSource) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[18]
+	return &file_proto_trade_enum_proto_enumTypes[19]
 }
 
 func (x CancelSource) Number() protoreflect.EnumNumber {
@@ -1065,7 +1160,7 @@ func (x CancelSource) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CancelSource.Descriptor instead.
 func (CancelSource) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{18}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{19}
 }
 
 type TriggerType int32
@@ -1104,11 +1199,11 @@ func (x TriggerType) String() string {
 }
 
 func (TriggerType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[19].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[20].Descriptor()
 }
 
 func (TriggerType) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[19]
+	return &file_proto_trade_enum_proto_enumTypes[20]
 }
 
 func (x TriggerType) Number() protoreflect.EnumNumber {
@@ -1117,7 +1212,7 @@ func (x TriggerType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use TriggerType.Descriptor instead.
 func (TriggerType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{19}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{20}
 }
 
 type SecondsDrawRule int32
@@ -1153,11 +1248,11 @@ func (x SecondsDrawRule) String() string {
 }
 
 func (SecondsDrawRule) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[20].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[21].Descriptor()
 }
 
 func (SecondsDrawRule) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[20]
+	return &file_proto_trade_enum_proto_enumTypes[21]
 }
 
 func (x SecondsDrawRule) Number() protoreflect.EnumNumber {
@@ -1166,7 +1261,7 @@ func (x SecondsDrawRule) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SecondsDrawRule.Descriptor instead.
 func (SecondsDrawRule) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{20}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{21}
 }
 
 type ClosePositionType int32
@@ -1202,11 +1297,11 @@ func (x ClosePositionType) String() string {
 }
 
 func (ClosePositionType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[21].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[22].Descriptor()
 }
 
 func (ClosePositionType) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[21]
+	return &file_proto_trade_enum_proto_enumTypes[22]
 }
 
 func (x ClosePositionType) Number() protoreflect.EnumNumber {
@@ -1215,7 +1310,7 @@ func (x ClosePositionType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ClosePositionType.Descriptor instead.
 func (ClosePositionType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{21}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{22}
 }
 
 type SecondsDirection int32
@@ -1251,11 +1346,11 @@ func (x SecondsDirection) String() string {
 }
 
 func (SecondsDirection) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[22].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[23].Descriptor()
 }
 
 func (SecondsDirection) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[22]
+	return &file_proto_trade_enum_proto_enumTypes[23]
 }
 
 func (x SecondsDirection) Number() protoreflect.EnumNumber {
@@ -1264,7 +1359,7 @@ func (x SecondsDirection) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SecondsDirection.Descriptor instead.
 func (SecondsDirection) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{22}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{23}
 }
 
 type SecondsResult int32
@@ -1306,11 +1401,11 @@ func (x SecondsResult) String() string {
 }
 
 func (SecondsResult) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[23].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[24].Descriptor()
 }
 
 func (SecondsResult) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[23]
+	return &file_proto_trade_enum_proto_enumTypes[24]
 }
 
 func (x SecondsResult) Number() protoreflect.EnumNumber {
@@ -1319,7 +1414,7 @@ func (x SecondsResult) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SecondsResult.Descriptor instead.
 func (SecondsResult) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{23}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{24}
 }
 
 type SecondsSettlementStatus int32
@@ -1370,11 +1465,11 @@ func (x SecondsSettlementStatus) String() string {
 }
 
 func (SecondsSettlementStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[24].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[25].Descriptor()
 }
 
 func (SecondsSettlementStatus) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[24]
+	return &file_proto_trade_enum_proto_enumTypes[25]
 }
 
 func (x SecondsSettlementStatus) Number() protoreflect.EnumNumber {
@@ -1383,7 +1478,7 @@ func (x SecondsSettlementStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SecondsSettlementStatus.Descriptor instead.
 func (SecondsSettlementStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{24}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{25}
 }
 
 type FillSettlementStatus int32
@@ -1428,11 +1523,11 @@ func (x FillSettlementStatus) String() string {
 }
 
 func (FillSettlementStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[25].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[26].Descriptor()
 }
 
 func (FillSettlementStatus) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[25]
+	return &file_proto_trade_enum_proto_enumTypes[26]
 }
 
 func (x FillSettlementStatus) Number() protoreflect.EnumNumber {
@@ -1441,7 +1536,7 @@ func (x FillSettlementStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use FillSettlementStatus.Descriptor instead.
 func (FillSettlementStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{25}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{26}
 }
 
 type PositionStatus int32
@@ -1489,11 +1584,11 @@ func (x PositionStatus) String() string {
 }
 
 func (PositionStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[26].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[27].Descriptor()
 }
 
 func (PositionStatus) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[26]
+	return &file_proto_trade_enum_proto_enumTypes[27]
 }
 
 func (x PositionStatus) Number() protoreflect.EnumNumber {
@@ -1502,7 +1597,7 @@ func (x PositionStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use PositionStatus.Descriptor instead.
 func (PositionStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{26}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{27}
 }
 
 type RiskLevel int32
@@ -1541,11 +1636,11 @@ func (x RiskLevel) String() string {
 }
 
 func (RiskLevel) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[27].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[28].Descriptor()
 }
 
 func (RiskLevel) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[27]
+	return &file_proto_trade_enum_proto_enumTypes[28]
 }
 
 func (x RiskLevel) Number() protoreflect.EnumNumber {
@@ -1554,7 +1649,7 @@ func (x RiskLevel) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use RiskLevel.Descriptor instead.
 func (RiskLevel) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{27}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{28}
 }
 
 type SecondsPriceSnapshotType int32
@@ -1593,11 +1688,11 @@ func (x SecondsPriceSnapshotType) String() string {
 }
 
 func (SecondsPriceSnapshotType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[28].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[29].Descriptor()
 }
 
 func (SecondsPriceSnapshotType) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[28]
+	return &file_proto_trade_enum_proto_enumTypes[29]
 }
 
 func (x SecondsPriceSnapshotType) Number() protoreflect.EnumNumber {
@@ -1606,7 +1701,7 @@ func (x SecondsPriceSnapshotType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SecondsPriceSnapshotType.Descriptor instead.
 func (SecondsPriceSnapshotType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{28}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{29}
 }
 
 type AssetReservationStatus int32
@@ -1657,11 +1752,11 @@ func (x AssetReservationStatus) String() string {
 }
 
 func (AssetReservationStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[29].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[30].Descriptor()
 }
 
 func (AssetReservationStatus) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[29]
+	return &file_proto_trade_enum_proto_enumTypes[30]
 }
 
 func (x AssetReservationStatus) Number() protoreflect.EnumNumber {
@@ -1670,7 +1765,7 @@ func (x AssetReservationStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AssetReservationStatus.Descriptor instead.
 func (AssetReservationStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{29}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{30}
 }
 
 type SettlementInstructionAction int32
@@ -1724,11 +1819,11 @@ func (x SettlementInstructionAction) String() string {
 }
 
 func (SettlementInstructionAction) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[30].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[31].Descriptor()
 }
 
 func (SettlementInstructionAction) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[30]
+	return &file_proto_trade_enum_proto_enumTypes[31]
 }
 
 func (x SettlementInstructionAction) Number() protoreflect.EnumNumber {
@@ -1737,7 +1832,7 @@ func (x SettlementInstructionAction) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SettlementInstructionAction.Descriptor instead.
 func (SettlementInstructionAction) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{30}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{31}
 }
 
 type SettlementInstructionStatus int32
@@ -1782,11 +1877,11 @@ func (x SettlementInstructionStatus) String() string {
 }
 
 func (SettlementInstructionStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[31].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[32].Descriptor()
 }
 
 func (SettlementInstructionStatus) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[31]
+	return &file_proto_trade_enum_proto_enumTypes[32]
 }
 
 func (x SettlementInstructionStatus) Number() protoreflect.EnumNumber {
@@ -1795,7 +1890,7 @@ func (x SettlementInstructionStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SettlementInstructionStatus.Descriptor instead.
 func (SettlementInstructionStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{31}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{32}
 }
 
 type LiquidationStatus int32
@@ -1846,11 +1941,11 @@ func (x LiquidationStatus) String() string {
 }
 
 func (LiquidationStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[32].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[33].Descriptor()
 }
 
 func (LiquidationStatus) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[32]
+	return &file_proto_trade_enum_proto_enumTypes[33]
 }
 
 func (x LiquidationStatus) Number() protoreflect.EnumNumber {
@@ -1859,7 +1954,7 @@ func (x LiquidationStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use LiquidationStatus.Descriptor instead.
 func (LiquidationStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{32}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{33}
 }
 
 type FundingBatchStatus int32
@@ -1904,11 +1999,11 @@ func (x FundingBatchStatus) String() string {
 }
 
 func (FundingBatchStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[33].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[34].Descriptor()
 }
 
 func (FundingBatchStatus) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[33]
+	return &file_proto_trade_enum_proto_enumTypes[34]
 }
 
 func (x FundingBatchStatus) Number() protoreflect.EnumNumber {
@@ -1917,7 +2012,7 @@ func (x FundingBatchStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use FundingBatchStatus.Descriptor instead.
 func (FundingBatchStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{33}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{34}
 }
 
 type FundingSettlementStatus int32
@@ -1959,11 +2054,11 @@ func (x FundingSettlementStatus) String() string {
 }
 
 func (FundingSettlementStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[34].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[35].Descriptor()
 }
 
 func (FundingSettlementStatus) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[34]
+	return &file_proto_trade_enum_proto_enumTypes[35]
 }
 
 func (x FundingSettlementStatus) Number() protoreflect.EnumNumber {
@@ -1972,7 +2067,7 @@ func (x FundingSettlementStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use FundingSettlementStatus.Descriptor instead.
 func (FundingSettlementStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{34}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{35}
 }
 
 type DeliveryBatchStatus int32
@@ -2026,11 +2121,11 @@ func (x DeliveryBatchStatus) String() string {
 }
 
 func (DeliveryBatchStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[35].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[36].Descriptor()
 }
 
 func (DeliveryBatchStatus) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[35]
+	return &file_proto_trade_enum_proto_enumTypes[36]
 }
 
 func (x DeliveryBatchStatus) Number() protoreflect.EnumNumber {
@@ -2039,7 +2134,7 @@ func (x DeliveryBatchStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use DeliveryBatchStatus.Descriptor instead.
 func (DeliveryBatchStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{35}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{36}
 }
 
 type DeliverySettlementStatus int32
@@ -2081,11 +2176,11 @@ func (x DeliverySettlementStatus) String() string {
 }
 
 func (DeliverySettlementStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_trade_enum_proto_enumTypes[36].Descriptor()
+	return file_proto_trade_enum_proto_enumTypes[37].Descriptor()
 }
 
 func (DeliverySettlementStatus) Type() protoreflect.EnumType {
-	return &file_proto_trade_enum_proto_enumTypes[36]
+	return &file_proto_trade_enum_proto_enumTypes[37]
 }
 
 func (x DeliverySettlementStatus) Number() protoreflect.EnumNumber {
@@ -2094,7 +2189,7 @@ func (x DeliverySettlementStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use DeliverySettlementStatus.Descriptor instead.
 func (DeliverySettlementStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_trade_enum_proto_rawDescGZIP(), []int{36}
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{37}
 }
 
 var File_proto_trade_enum_proto protoreflect.FileDescriptor
@@ -2153,7 +2248,27 @@ const file_proto_trade_enum_proto_rawDesc = "" +
 	"\x16ORDER_STATUS_CANCELING\x10\t\x12\x19\n" +
 	"\x15ORDER_STATUS_EXPIRING\x10\n" +
 	"\x12#\n" +
-	"\x1fORDER_STATUS_SETTLEMENT_PENDING\x10\v*V\n" +
+	"\x1fORDER_STATUS_SETTLEMENT_PENDING\x10\v*\x95\x05\n" +
+	"\x12OrderDisplayStatus\x12 \n" +
+	"\x1cORDER_DISPLAY_STATUS_UNKNOWN\x10\x00\x12!\n" +
+	"\x1dORDER_DISPLAY_STATUS_FREEZING\x10\x01\x12#\n" +
+	"\x1fORDER_DISPLAY_STATUS_ACTIVATING\x10\x02\x12\x1f\n" +
+	"\x1bORDER_DISPLAY_STATUS_ACTIVE\x10\x03\x12(\n" +
+	"$ORDER_DISPLAY_STATUS_TRIGGER_WAITING\x10\x04\x12 \n" +
+	"\x1cORDER_DISPLAY_STATUS_PENDING\x10\x05\x12$\n" +
+	" ORDER_DISPLAY_STATUS_PART_FILLED\x10\x06\x12!\n" +
+	"\x1dORDER_DISPLAY_STATUS_SETTLING\x10\a\x12\x1f\n" +
+	"\x1bORDER_DISPLAY_STATUS_FILLED\x10\b\x12 \n" +
+	"\x1cORDER_DISPLAY_STATUS_SETTLED\x10\t\x12\"\n" +
+	"\x1eORDER_DISPLAY_STATUS_CANCELING\x10\n" +
+	"\x12!\n" +
+	"\x1dORDER_DISPLAY_STATUS_CANCELED\x10\v\x12!\n" +
+	"\x1dORDER_DISPLAY_STATUS_EXPIRING\x10\f\x12 \n" +
+	"\x1cORDER_DISPLAY_STATUS_EXPIRED\x10\r\x12\"\n" +
+	"\x1eORDER_DISPLAY_STATUS_REFUNDING\x10\x0e\x12!\n" +
+	"\x1dORDER_DISPLAY_STATUS_REFUNDED\x10\x0f\x12!\n" +
+	"\x1dORDER_DISPLAY_STATUS_REJECTED\x10\x10\x12&\n" +
+	"\"ORDER_DISPLAY_STATUS_MANUAL_REVIEW\x10\x11*V\n" +
 	"\n" +
 	"MarginMode\x12\x17\n" +
 	"\x13MARGIN_MODE_UNKNOWN\x10\x00\x12\x15\n" +
@@ -2353,7 +2468,7 @@ func file_proto_trade_enum_proto_rawDescGZIP() []byte {
 	return file_proto_trade_enum_proto_rawDescData
 }
 
-var file_proto_trade_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 37)
+var file_proto_trade_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 38)
 var file_proto_trade_enum_proto_goTypes = []any{
 	(ProductType)(0),                 // 0: trade.ProductType
 	(ContractValueType)(0),           // 1: trade.ContractValueType
@@ -2364,34 +2479,35 @@ var file_proto_trade_enum_proto_goTypes = []any{
 	(TriggerKind)(0),                 // 6: trade.TriggerKind
 	(TimeInForce)(0),                 // 7: trade.TimeInForce
 	(OrderStatus)(0),                 // 8: trade.OrderStatus
-	(MarginMode)(0),                  // 9: trade.MarginMode
-	(PositionMode)(0),                // 10: trade.PositionMode
-	(LiquidityType)(0),               // 11: trade.LiquidityType
-	(SourceType)(0),                  // 12: trade.SourceType
-	(OrderSourceType)(0),             // 13: trade.OrderSourceType
-	(RiskCheckType)(0),               // 14: trade.RiskCheckType
-	(RiskCheckResult)(0),             // 15: trade.RiskCheckResult
-	(EventStatus)(0),                 // 16: trade.EventStatus
-	(PositionActionType)(0),          // 17: trade.PositionActionType
-	(CancelSource)(0),                // 18: trade.CancelSource
-	(TriggerType)(0),                 // 19: trade.TriggerType
-	(SecondsDrawRule)(0),             // 20: trade.SecondsDrawRule
-	(ClosePositionType)(0),           // 21: trade.ClosePositionType
-	(SecondsDirection)(0),            // 22: trade.SecondsDirection
-	(SecondsResult)(0),               // 23: trade.SecondsResult
-	(SecondsSettlementStatus)(0),     // 24: trade.SecondsSettlementStatus
-	(FillSettlementStatus)(0),        // 25: trade.FillSettlementStatus
-	(PositionStatus)(0),              // 26: trade.PositionStatus
-	(RiskLevel)(0),                   // 27: trade.RiskLevel
-	(SecondsPriceSnapshotType)(0),    // 28: trade.SecondsPriceSnapshotType
-	(AssetReservationStatus)(0),      // 29: trade.AssetReservationStatus
-	(SettlementInstructionAction)(0), // 30: trade.SettlementInstructionAction
-	(SettlementInstructionStatus)(0), // 31: trade.SettlementInstructionStatus
-	(LiquidationStatus)(0),           // 32: trade.LiquidationStatus
-	(FundingBatchStatus)(0),          // 33: trade.FundingBatchStatus
-	(FundingSettlementStatus)(0),     // 34: trade.FundingSettlementStatus
-	(DeliveryBatchStatus)(0),         // 35: trade.DeliveryBatchStatus
-	(DeliverySettlementStatus)(0),    // 36: trade.DeliverySettlementStatus
+	(OrderDisplayStatus)(0),          // 9: trade.OrderDisplayStatus
+	(MarginMode)(0),                  // 10: trade.MarginMode
+	(PositionMode)(0),                // 11: trade.PositionMode
+	(LiquidityType)(0),               // 12: trade.LiquidityType
+	(SourceType)(0),                  // 13: trade.SourceType
+	(OrderSourceType)(0),             // 14: trade.OrderSourceType
+	(RiskCheckType)(0),               // 15: trade.RiskCheckType
+	(RiskCheckResult)(0),             // 16: trade.RiskCheckResult
+	(EventStatus)(0),                 // 17: trade.EventStatus
+	(PositionActionType)(0),          // 18: trade.PositionActionType
+	(CancelSource)(0),                // 19: trade.CancelSource
+	(TriggerType)(0),                 // 20: trade.TriggerType
+	(SecondsDrawRule)(0),             // 21: trade.SecondsDrawRule
+	(ClosePositionType)(0),           // 22: trade.ClosePositionType
+	(SecondsDirection)(0),            // 23: trade.SecondsDirection
+	(SecondsResult)(0),               // 24: trade.SecondsResult
+	(SecondsSettlementStatus)(0),     // 25: trade.SecondsSettlementStatus
+	(FillSettlementStatus)(0),        // 26: trade.FillSettlementStatus
+	(PositionStatus)(0),              // 27: trade.PositionStatus
+	(RiskLevel)(0),                   // 28: trade.RiskLevel
+	(SecondsPriceSnapshotType)(0),    // 29: trade.SecondsPriceSnapshotType
+	(AssetReservationStatus)(0),      // 30: trade.AssetReservationStatus
+	(SettlementInstructionAction)(0), // 31: trade.SettlementInstructionAction
+	(SettlementInstructionStatus)(0), // 32: trade.SettlementInstructionStatus
+	(LiquidationStatus)(0),           // 33: trade.LiquidationStatus
+	(FundingBatchStatus)(0),          // 34: trade.FundingBatchStatus
+	(FundingSettlementStatus)(0),     // 35: trade.FundingSettlementStatus
+	(DeliveryBatchStatus)(0),         // 36: trade.DeliveryBatchStatus
+	(DeliverySettlementStatus)(0),    // 37: trade.DeliverySettlementStatus
 }
 var file_proto_trade_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -2411,7 +2527,7 @@ func file_proto_trade_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_trade_enum_proto_rawDesc), len(file_proto_trade_enum_proto_rawDesc)),
-			NumEnums:      37,
+			NumEnums:      38,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

@@ -64,6 +64,7 @@ func (l *GetOrderDetailAdminLogic) GetOrderDetailAdmin(in *trade.GetOrderDetailA
 		if findErr == nil {
 			order.SecondsDirection = trade.SecondsDirection(seconds.Direction)
 			order.DurationSeconds = seconds.DurationSeconds
+			order.DisplayStatus = secondsOrderDisplayStatus(seconds.SettlementStatus)
 			data.Seconds = &trade.TradeOrderSeconds{
 				Id: seconds.Id, TenantId: seconds.TenantId, OrderId: seconds.OrderId,
 				Direction: trade.SecondsDirection(seconds.Direction), DurationSeconds: seconds.DurationSeconds,

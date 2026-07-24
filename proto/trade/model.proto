@@ -214,6 +214,7 @@ message TradeOrder {
   int64 version = 40;
   SecondsDirection seconds_direction = 41;
   int64 duration_seconds = 42;
+  OrderDisplayStatus display_status = 43;
   reserved 23;
 }
 

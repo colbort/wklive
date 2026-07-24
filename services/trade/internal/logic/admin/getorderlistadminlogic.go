@@ -64,6 +64,7 @@ func (l *GetOrderListAdminLogic) GetOrderListAdmin(in *trade.GetOrderListAdminRe
 			if findErr == nil {
 				order.SecondsDirection = trade.SecondsDirection(seconds.Direction)
 				order.DurationSeconds = seconds.DurationSeconds
+				order.DisplayStatus = secondsOrderDisplayStatus(seconds.SettlementStatus)
 			}
 		}
 		resp.Data = append(resp.Data, order)

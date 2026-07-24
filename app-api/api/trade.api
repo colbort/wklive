@@ -15,6 +15,7 @@ type TradeSymbol {
 	contractValueType int64  `json:"contractValueType"`
 	marginAsset       string `json:"marginAsset"`
 	status            int64  `json:"status"`
+	displayStatus     int64  `json:"displayStatus"`
 	priceScale        int64  `json:"priceScale"` // 价格精度
 	qtyScale          int64  `json:"qtyScale"` // 数量精度
 	minPrice          string `json:"minPrice"`
@@ -489,4 +490,3 @@ service app {
 	@handler SetLeverage
 	post /leverage (SetLeverageReq) returns (TradeAppCommonResp)
 }
-
