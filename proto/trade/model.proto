@@ -212,6 +212,8 @@ message TradeOrder {
   int64 triggered_at = 38;
   string completion_reason = 39;
   int64 version = 40;
+  SecondsDirection seconds_direction = 41;
+  int64 duration_seconds = 42;
   reserved 23;
 }
 

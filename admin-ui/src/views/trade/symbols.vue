@@ -648,7 +648,10 @@
           </el-form-item>
 
           <el-form-item v-if="isPerpetualContract" :label="t('trade.fundingRateSource')">
-            <el-input v-model="contractForm.fundingRateSource" />
+            <el-input
+              v-model="contractForm.fundingRateSource"
+              :placeholder="t('trade.fundingRateSourcePlaceholder')"
+            />
           </el-form-item>
 
           <el-form-item :label="t('trade.indexSymbol')">
@@ -656,11 +659,17 @@
           </el-form-item>
 
           <el-form-item :label="t('trade.markPriceSource')">
-            <el-input v-model="contractForm.markPriceSource" />
+            <el-input
+              v-model="contractForm.markPriceSource"
+              :placeholder="t('trade.priceSourcePlaceholder')"
+            />
           </el-form-item>
 
           <el-form-item v-if="isDeliveryContract" :label="t('trade.settlementPriceSource')">
-            <el-input v-model="contractForm.settlementPriceSource" />
+            <el-input
+              v-model="contractForm.settlementPriceSource"
+              :placeholder="t('trade.priceSourcePlaceholder')"
+            />
           </el-form-item>
 
           <el-form-item v-if="isDeliveryContract" :label="t('option.deliverTime')">

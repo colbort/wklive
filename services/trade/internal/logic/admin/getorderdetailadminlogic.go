@@ -37,5 +37,16 @@ func (l *GetOrderDetailAdminLogic) GetOrderDetailAdmin(in *trade.GetOrderDetailA
 		return nil, err
 	}
 
-	return &trade.GetOrderDetailAdminResp{Base: helper.OkResp(), Data: orderToProto(item)}, nil
+	order := orderToProto(item)
+	if item.ProductType == int64(trade.ProductType_PRODUCT_TYPE_SECONDS) {
+		seconds, findErr := l.svcCtx.TradeOrderSecondsModel.FindOneByTenantIdOrderId(l.ctx, item.TenantId, item.Id)
+		if findErr != nil && !errors.Is(findErr, models.ErrNotFound) {
+			return nil, findErr
+		}
+		if findErr == nil {
+			order.SecondsDirection = trade.SecondsDirection(seconds.Direction)
+			order.DurationSeconds = seconds.DurationSeconds
+		}
+	}
+	return &trade.GetOrderDetailAdminResp{Base: helper.OkResp(), Data: order}, nil
 }

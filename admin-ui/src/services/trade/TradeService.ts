@@ -494,6 +494,8 @@ export type TradeOrder = {
   triggerKind: number
   cancelReason: string
   bizExt: string
+  secondsDirection: number
+  durationSeconds: number
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
 }

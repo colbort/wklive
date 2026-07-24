@@ -74,15 +74,15 @@
 
         <el-table-column :label="t('trade.side')" width="100">
           <template #default="{ row }">
-            <el-tag size="small" :type="sideTagType(row.side)" effect="light">
-              {{ optionLabel('tradeSide', row.side) }}
+            <el-tag size="small" :type="orderDirectionTagType(row)" effect="light">
+              {{ orderDirectionLabel(row) }}
             </el-tag>
           </template>
         </el-table-column>
 
         <el-table-column :label="t('trade.orderType')" width="120">
           <template #default="{ row }">
-            {{ optionLabel('orderType', row.orderType) }}
+            {{ orderTypeLabel(row) }}
           </template>
         </el-table-column>
 
@@ -197,8 +197,8 @@
               {{ optionLabel('positionSide', detailData.positionSide) }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('trade.side')">
-              <el-tag size="small" :type="sideTagType(detailData.side)" effect="light">
-                {{ optionLabel('tradeSide', detailData.side) }}
+              <el-tag size="small" :type="orderDirectionTagType(detailData)" effect="light">
+                {{ orderDirectionLabel(detailData) }}
               </el-tag>
             </el-descriptions-item>
             <el-descriptions-item :label="t('trade.source')">
@@ -208,7 +208,7 @@
 
           <el-descriptions :title="t('trade.orderParams')" :column="2" border>
             <el-descriptions-item :label="t('trade.orderType')">
-              {{ optionLabel('orderType', detailData.orderType) }}
+              {{ orderTypeLabel(detailData) }}
             </el-descriptions-item>
             <el-descriptions-item :label="t('trade.triggerKind')">
               {{ optionLabel('triggerKind', detailData.triggerKind) }}
@@ -463,6 +463,27 @@ function sideTagType(side: number) {
   if (side === 1) return 'success'
   if (side === 2) return 'danger'
   return 'info'
+}
+
+function orderDirectionLabel(order: TradeOrder) {
+  if (order.productType === 3) {
+    if (order.secondsDirection === 1) return t('trade.secondsUp')
+    if (order.secondsDirection === 2) return t('trade.secondsDown')
+    return '-'
+  }
+  if (order.side === 1) return t('options.SIDE_BUY')
+  if (order.side === 2) return t('options.SIDE_SELL')
+  return '-'
+}
+
+function orderDirectionTagType(order: TradeOrder) {
+  return order.productType === 3
+    ? sideTagType(order.secondsDirection)
+    : sideTagType(order.side)
+}
+
+function orderTypeLabel(order: TradeOrder) {
+  return order.productType === 3 ? t('trade.secondsOrder') : optionLabel('orderType', order.orderType)
 }
 
 function orderStatusTagType(status: number) {

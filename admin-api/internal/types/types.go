@@ -4511,6 +4511,8 @@ type TradeOrder struct {
 	TriggerKind       int64  `json:"triggerKind"`
 	CancelReason      string `json:"cancelReason"`
 	BizExt            string `json:"bizExt"`
+	SecondsDirection  int64  `json:"secondsDirection"`
+	DurationSeconds   int64  `json:"durationSeconds"`
 	CreateTimes       int64  `json:"createTimes"`
 	UpdateTimes       int64  `json:"updateTimes"`
 }

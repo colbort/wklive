@@ -1515,6 +1515,8 @@ type TradeOrder struct {
 	TriggeredAt       int64                  `protobuf:"varint,38,opt,name=triggered_at,json=triggeredAt,proto3" json:"triggered_at,omitempty"`
 	CompletionReason  string                 `protobuf:"bytes,39,opt,name=completion_reason,json=completionReason,proto3" json:"completion_reason,omitempty"`
 	Version           int64                  `protobuf:"varint,40,opt,name=version,proto3" json:"version,omitempty"`
+	SecondsDirection  SecondsDirection       `protobuf:"varint,41,opt,name=seconds_direction,json=secondsDirection,proto3,enum=trade.SecondsDirection" json:"seconds_direction,omitempty"`
+	DurationSeconds   int64                  `protobuf:"varint,42,opt,name=duration_seconds,json=durationSeconds,proto3" json:"duration_seconds,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -1818,6 +1820,20 @@ func (x *TradeOrder) GetCompletionReason() string {
 func (x *TradeOrder) GetVersion() int64 {
 	if x != nil {
 		return x.Version
+	}
+	return 0
+}
+
+func (x *TradeOrder) GetSecondsDirection() SecondsDirection {
+	if x != nil {
+		return x.SecondsDirection
+	}
+	return SecondsDirection_SECONDS_DIRECTION_UNKNOWN
+}
+
+func (x *TradeOrder) GetDurationSeconds() int64 {
+	if x != nil {
+		return x.DurationSeconds
 	}
 	return 0
 }
@@ -4739,7 +4755,7 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\x10default_leverage\x18\a \x01(\x03R\x0fdefaultLeverage\x12!\n" +
 	"\fcreate_times\x18\t \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\n" +
-	" \x01(\x03R\vupdateTimesJ\x04\b\b\x10\t\"\xda\v\n" +
+	" \x01(\x03R\vupdateTimesJ\x04\b\b\x10\t\"\xcb\f\n" +
 	"\n" +
 	"TradeOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
@@ -4784,7 +4800,9 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\texpire_at\x18% \x01(\x03R\bexpireAt\x12!\n" +
 	"\ftriggered_at\x18& \x01(\x03R\vtriggeredAt\x12+\n" +
 	"\x11completion_reason\x18' \x01(\tR\x10completionReason\x12\x18\n" +
-	"\aversion\x18( \x01(\x03R\aversionJ\x04\b\x17\x10\x18\"\xae\x02\n" +
+	"\aversion\x18( \x01(\x03R\aversion\x12D\n" +
+	"\x11seconds_direction\x18) \x01(\x0e2\x17.trade.SecondsDirectionR\x10secondsDirection\x12)\n" +
+	"\x10duration_seconds\x18* \x01(\x03R\x0fdurationSecondsJ\x04\b\x17\x10\x18\"\xae\x02\n" +
 	"\x0eTradeOrderSpot\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
@@ -5191,8 +5209,8 @@ var file_proto_trade_model_proto_goTypes = []any{
 	(common.YesNo)(0),                 // 42: common.YesNo
 	(TriggerType)(0),                  // 43: trade.TriggerType
 	(TriggerKind)(0),                  // 44: trade.TriggerKind
-	(ClosePositionType)(0),            // 45: trade.ClosePositionType
-	(SecondsDirection)(0),             // 46: trade.SecondsDirection
+	(SecondsDirection)(0),             // 45: trade.SecondsDirection
+	(ClosePositionType)(0),            // 46: trade.ClosePositionType
 	(SecondsResult)(0),                // 47: trade.SecondsResult
 	(SecondsSettlementStatus)(0),      // 48: trade.SecondsSettlementStatus
 	(LiquidityType)(0),                // 49: trade.LiquidityType
@@ -5238,54 +5256,55 @@ var file_proto_trade_model_proto_depIdxs = []int32{
 	29, // 28: trade.TradeOrder.contract_type:type_name -> trade.ContractType
 	30, // 29: trade.TradeOrder.contract_value_type:type_name -> trade.ContractValueType
 	42, // 30: trade.TradeOrder.is_close_position:type_name -> common.YesNo
-	35, // 31: trade.TradeOrderContract.margin_mode:type_name -> trade.MarginMode
-	45, // 32: trade.TradeOrderContract.close_position_type:type_name -> trade.ClosePositionType
-	46, // 33: trade.TradeOrderSeconds.direction:type_name -> trade.SecondsDirection
-	47, // 34: trade.TradeOrderSeconds.result:type_name -> trade.SecondsResult
-	48, // 35: trade.TradeOrderSeconds.settlement_status:type_name -> trade.SecondsSettlementStatus
-	28, // 36: trade.TradeFill.product_type:type_name -> trade.ProductType
-	36, // 37: trade.TradeFill.side:type_name -> common.Side
-	37, // 38: trade.TradeFill.position_side:type_name -> trade.PositionSide
-	49, // 39: trade.TradeFill.liquidity_type:type_name -> trade.LiquidityType
-	29, // 40: trade.TradeFill.contract_type:type_name -> trade.ContractType
-	30, // 41: trade.TradeFill.contract_value_type:type_name -> trade.ContractValueType
-	50, // 42: trade.TradeFill.settlement_status:type_name -> trade.FillSettlementStatus
-	51, // 43: trade.TradeCancelLog.cancel_source:type_name -> trade.CancelSource
-	29, // 44: trade.ContractPosition.contract_type:type_name -> trade.ContractType
-	37, // 45: trade.ContractPosition.position_side:type_name -> trade.PositionSide
-	35, // 46: trade.ContractPosition.margin_mode:type_name -> trade.MarginMode
-	30, // 47: trade.ContractPosition.contract_value_type:type_name -> trade.ContractValueType
-	52, // 48: trade.ContractPosition.status:type_name -> trade.PositionStatus
-	29, // 49: trade.ContractPositionHistory.contract_type:type_name -> trade.ContractType
-	37, // 50: trade.ContractPositionHistory.position_side:type_name -> trade.PositionSide
-	53, // 51: trade.ContractPositionHistory.action_type:type_name -> trade.PositionActionType
-	54, // 52: trade.ContractPositionHistory.source:type_name -> trade.SourceType
-	30, // 53: trade.ContractPositionHistory.contract_value_type:type_name -> trade.ContractValueType
-	35, // 54: trade.ContractLeverageConfig.margin_mode:type_name -> trade.MarginMode
-	54, // 55: trade.ContractLeverageConfig.source:type_name -> trade.SourceType
-	32, // 56: trade.ContractLeverageConfig.enabled:type_name -> common.Enable
-	35, // 57: trade.TradeSymbolLeverageConfig.margin_mode:type_name -> trade.MarginMode
-	32, // 58: trade.TradeSymbolLeverageConfig.enabled:type_name -> common.Enable
-	28, // 59: trade.RiskUserTradeLimit.product_type:type_name -> trade.ProductType
-	32, // 60: trade.RiskUserTradeLimit.trade_enabled:type_name -> common.Enable
-	32, // 61: trade.RiskUserTradeLimit.only_reduce_only:type_name -> common.Enable
-	55, // 62: trade.RiskUserTradeLimit.risk_level:type_name -> trade.RiskLevel
-	54, // 63: trade.RiskUserTradeLimit.source:type_name -> trade.SourceType
-	32, // 64: trade.RiskUserTradeLimit.enabled:type_name -> common.Enable
-	54, // 65: trade.RiskUserSymbolLimit.source:type_name -> trade.SourceType
-	32, // 66: trade.RiskUserSymbolLimit.enabled:type_name -> common.Enable
-	28, // 67: trade.RiskOrderCheckLog.product_type:type_name -> trade.ProductType
-	56, // 68: trade.RiskOrderCheckLog.check_type:type_name -> trade.RiskCheckType
-	57, // 69: trade.RiskOrderCheckLog.check_result:type_name -> trade.RiskCheckResult
-	54, // 70: trade.RiskOrderCheckLog.source:type_name -> trade.SourceType
-	28, // 71: trade.BizTradeEvent.product_type:type_name -> trade.ProductType
-	54, // 72: trade.BizTradeEvent.source:type_name -> trade.SourceType
-	58, // 73: trade.BizTradeEvent.event_status:type_name -> trade.EventStatus
-	74, // [74:74] is the sub-list for method output_type
-	74, // [74:74] is the sub-list for method input_type
-	74, // [74:74] is the sub-list for extension type_name
-	74, // [74:74] is the sub-list for extension extendee
-	0,  // [0:74] is the sub-list for field type_name
+	45, // 31: trade.TradeOrder.seconds_direction:type_name -> trade.SecondsDirection
+	35, // 32: trade.TradeOrderContract.margin_mode:type_name -> trade.MarginMode
+	46, // 33: trade.TradeOrderContract.close_position_type:type_name -> trade.ClosePositionType
+	45, // 34: trade.TradeOrderSeconds.direction:type_name -> trade.SecondsDirection
+	47, // 35: trade.TradeOrderSeconds.result:type_name -> trade.SecondsResult
+	48, // 36: trade.TradeOrderSeconds.settlement_status:type_name -> trade.SecondsSettlementStatus
+	28, // 37: trade.TradeFill.product_type:type_name -> trade.ProductType
+	36, // 38: trade.TradeFill.side:type_name -> common.Side
+	37, // 39: trade.TradeFill.position_side:type_name -> trade.PositionSide
+	49, // 40: trade.TradeFill.liquidity_type:type_name -> trade.LiquidityType
+	29, // 41: trade.TradeFill.contract_type:type_name -> trade.ContractType
+	30, // 42: trade.TradeFill.contract_value_type:type_name -> trade.ContractValueType
+	50, // 43: trade.TradeFill.settlement_status:type_name -> trade.FillSettlementStatus
+	51, // 44: trade.TradeCancelLog.cancel_source:type_name -> trade.CancelSource
+	29, // 45: trade.ContractPosition.contract_type:type_name -> trade.ContractType
+	37, // 46: trade.ContractPosition.position_side:type_name -> trade.PositionSide
+	35, // 47: trade.ContractPosition.margin_mode:type_name -> trade.MarginMode
+	30, // 48: trade.ContractPosition.contract_value_type:type_name -> trade.ContractValueType
+	52, // 49: trade.ContractPosition.status:type_name -> trade.PositionStatus
+	29, // 50: trade.ContractPositionHistory.contract_type:type_name -> trade.ContractType
+	37, // 51: trade.ContractPositionHistory.position_side:type_name -> trade.PositionSide
+	53, // 52: trade.ContractPositionHistory.action_type:type_name -> trade.PositionActionType
+	54, // 53: trade.ContractPositionHistory.source:type_name -> trade.SourceType
+	30, // 54: trade.ContractPositionHistory.contract_value_type:type_name -> trade.ContractValueType
+	35, // 55: trade.ContractLeverageConfig.margin_mode:type_name -> trade.MarginMode
+	54, // 56: trade.ContractLeverageConfig.source:type_name -> trade.SourceType
+	32, // 57: trade.ContractLeverageConfig.enabled:type_name -> common.Enable
+	35, // 58: trade.TradeSymbolLeverageConfig.margin_mode:type_name -> trade.MarginMode
+	32, // 59: trade.TradeSymbolLeverageConfig.enabled:type_name -> common.Enable
+	28, // 60: trade.RiskUserTradeLimit.product_type:type_name -> trade.ProductType
+	32, // 61: trade.RiskUserTradeLimit.trade_enabled:type_name -> common.Enable
+	32, // 62: trade.RiskUserTradeLimit.only_reduce_only:type_name -> common.Enable
+	55, // 63: trade.RiskUserTradeLimit.risk_level:type_name -> trade.RiskLevel
+	54, // 64: trade.RiskUserTradeLimit.source:type_name -> trade.SourceType
+	32, // 65: trade.RiskUserTradeLimit.enabled:type_name -> common.Enable
+	54, // 66: trade.RiskUserSymbolLimit.source:type_name -> trade.SourceType
+	32, // 67: trade.RiskUserSymbolLimit.enabled:type_name -> common.Enable
+	28, // 68: trade.RiskOrderCheckLog.product_type:type_name -> trade.ProductType
+	56, // 69: trade.RiskOrderCheckLog.check_type:type_name -> trade.RiskCheckType
+	57, // 70: trade.RiskOrderCheckLog.check_result:type_name -> trade.RiskCheckResult
+	54, // 71: trade.RiskOrderCheckLog.source:type_name -> trade.SourceType
+	28, // 72: trade.BizTradeEvent.product_type:type_name -> trade.ProductType
+	54, // 73: trade.BizTradeEvent.source:type_name -> trade.SourceType
+	58, // 74: trade.BizTradeEvent.event_status:type_name -> trade.EventStatus
+	75, // [75:75] is the sub-list for method output_type
+	75, // [75:75] is the sub-list for method input_type
+	75, // [75:75] is the sub-list for extension type_name
+	75, // [75:75] is the sub-list for extension extendee
+	0,  // [0:75] is the sub-list for field type_name
 }
 
 func init() { file_proto_trade_model_proto_init() }

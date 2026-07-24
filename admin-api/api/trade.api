@@ -165,6 +165,8 @@ type TradeOrder {
 	triggerKind       int64  `json:"triggerKind"`
 	cancelReason      string `json:"cancelReason"`
 	bizExt            string `json:"bizExt"`
+	secondsDirection  int64  `json:"secondsDirection"`
+	durationSeconds   int64  `json:"durationSeconds"`
 	createTimes       int64  `json:"createTimes"`
 	updateTimes       int64  `json:"updateTimes"`
 }
@@ -1457,4 +1459,3 @@ service admin {
 	@handler GetMarketSnapshotList
 	get /market-snapshots (GetMarketSnapshotListReq) returns (GetMarketSnapshotListResp)
 }
-
