@@ -405,13 +405,21 @@ func (l *PlaceOrderLogic) finalizeAcceptedOrder(order *models.TTradeOrder, freez
 		return err
 	}
 	if l.svcCtx.DelayQueue == nil {
+		if isSeconds {
+			l.Errorf("seconds order accepted but delay queue is disabled, tenantId=%d orderId=%d orderNo=%s version=%d",
+				order.TenantId, order.Id, order.OrderNo, order.Version)
+		}
 		return nil
 	}
 	if isSeconds {
 		if err := l.svcCtx.DelayQueue.Delay(delayqueue.Message{
 			Action: delayqueue.ActionActivate, TenantID: order.TenantId, OrderID: order.Id, Version: order.Version,
 		}, time.Millisecond); err != nil {
-			l.Errorf("enqueue seconds activation failed, orderId=%d err=%v", order.Id, err)
+			l.Errorf("enqueue seconds activation failed, tenantId=%d orderId=%d orderNo=%s version=%d err=%v",
+				order.TenantId, order.Id, order.OrderNo, order.Version, err)
+		} else {
+			l.Infof("seconds lifecycle stage=activation_enqueued tenantId=%d orderId=%d orderNo=%s orderStatus=%d version=%d",
+				order.TenantId, order.Id, order.OrderNo, order.Status, order.Version)
 		}
 	}
 	if order.ExpireAt > 0 {

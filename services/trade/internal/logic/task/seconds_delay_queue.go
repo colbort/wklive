@@ -38,9 +38,17 @@ func enqueueOrderExpiration(svcCtx *svc.ServiceContext, order *models.TTradeOrde
 
 func StartSecondsDelayQueue(ctx context.Context, svcCtx *svc.ServiceContext) {
 	if svcCtx == nil || svcCtx.DelayQueue == nil {
+		logx.WithContext(ctx).Error("seconds delay queue consumer not started: delay queue is disabled")
 		return
 	}
+	logx.WithContext(ctx).Info("seconds delay queue consumer starting")
 	go svcCtx.DelayQueue.Consume(func(message delayqueue.Message) {
+		if message.Action == delayqueue.ActionActivate || message.Action == delayqueue.ActionSettle {
+			logx.WithContext(ctx).Infof(
+				"seconds lifecycle stage=message_received action=%s tenantId=%d orderId=%d version=%d dueAt=%d",
+				message.Action, message.TenantID, message.OrderID, message.Version, message.DueAt,
+			)
+		}
 		if err := handleSecondsDelayMessage(ctx, svcCtx, message); err != nil {
 			logx.WithContext(ctx).Errorf(
 				"seconds delay message failed, action=%s tenantId=%d orderId=%d version=%d err=%v",
@@ -61,6 +69,10 @@ func handleSecondsDelayMessage(ctx context.Context, svcCtx *svc.ServiceContext, 
 			return err
 		}
 		if order.TenantId != message.TenantID || order.Version != message.Version {
+			logx.WithContext(ctx).Infof(
+				"seconds lifecycle stage=activation_stale tenantId=%d orderId=%d messageVersion=%d currentVersion=%d currentTenantId=%d",
+				message.TenantID, message.OrderID, message.Version, order.Version, order.TenantId,
+			)
 			return nil
 		}
 		processErr := NewProcessSecondsSettlementsLogic(ctx, svcCtx).Process(message.TenantID)
@@ -69,6 +81,10 @@ func handleSecondsDelayMessage(ctx context.Context, svcCtx *svc.ServiceContext, 
 			return errors.Join(processErr, err)
 		}
 		if item.SettlementStatus != int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_ACTIVE) {
+			logx.WithContext(ctx).Errorf(
+				"seconds lifecycle stage=activation_not_active tenantId=%d orderId=%d settlementStatus=%d retryCount=%d nextRetryAt=%d lastError=%q err=%v",
+				message.TenantID, message.OrderID, item.SettlementStatus, item.RetryCount, item.NextRetryAt, item.LastErrorMsg, processErr,
+			)
 			return processErr
 		}
 		enqueueErr := svcCtx.DelayQueue.At(delayqueue.Message{
@@ -78,19 +94,44 @@ func handleSecondsDelayMessage(ctx context.Context, svcCtx *svc.ServiceContext, 
 			Version:  item.Version,
 			DueAt:    item.ExpireTime,
 		}, time.UnixMilli(item.ExpireTime))
+		if enqueueErr == nil {
+			logx.WithContext(ctx).Infof(
+				"seconds lifecycle stage=settlement_enqueued tenantId=%d orderId=%d version=%d expireTime=%d",
+				message.TenantID, message.OrderID, item.Version, item.ExpireTime,
+			)
+		}
 		return errors.Join(processErr, enqueueErr)
 	case delayqueue.ActionSettle:
 		if message.TenantID <= 0 || message.OrderID <= 0 {
 			return errors.New("invalid seconds settlement message")
+		}
+		if now := time.Now().UnixMilli(); message.DueAt > now {
+			logx.WithContext(ctx).Infof(
+				"seconds lifecycle stage=settlement_early_requeued tenantId=%d orderId=%d dueAt=%d now=%d",
+				message.TenantID, message.OrderID, message.DueAt, now,
+			)
+			return svcCtx.DelayQueue.At(message, time.UnixMilli(message.DueAt))
 		}
 		item, err := svcCtx.TradeOrderSecondsModel.FindOneByTenantIdOrderId(ctx, message.TenantID, message.OrderID)
 		if err != nil {
 			return err
 		}
 		if item.Version != message.Version || item.ExpireTime != message.DueAt {
+			logx.WithContext(ctx).Infof(
+				"seconds lifecycle stage=settlement_stale tenantId=%d orderId=%d messageVersion=%d currentVersion=%d messageDueAt=%d currentExpireTime=%d",
+				message.TenantID, message.OrderID, message.Version, item.Version, message.DueAt, item.ExpireTime,
+			)
 			return nil
 		}
-		return NewProcessSecondsSettlementsLogic(ctx, svcCtx).Process(message.TenantID)
+		processErr := NewProcessSecondsSettlementsLogic(ctx, svcCtx).Process(message.TenantID)
+		current, findErr := svcCtx.TradeOrderSecondsModel.FindOneByTenantIdOrderId(ctx, message.TenantID, message.OrderID)
+		if findErr == nil {
+			logx.WithContext(ctx).Infof(
+				"seconds lifecycle stage=settlement_processed tenantId=%d orderId=%d settlementStatus=%d result=%d retryCount=%d lastError=%q err=%v",
+				message.TenantID, message.OrderID, current.SettlementStatus, current.Result, current.RetryCount, current.LastErrorMsg, processErr,
+			)
+		}
+		return errors.Join(processErr, findErr)
 	case delayqueue.ActionExpireOrder:
 		if message.TenantID <= 0 || message.OrderID <= 0 {
 			return errors.New("invalid order expiration message")

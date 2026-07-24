@@ -15,9 +15,24 @@ import (
 func StartTaskSubscriber(ctx context.Context, svcCtx *svc.ServiceContext) {
 	go func() {
 		if err := tasks.SubscribeService(ctx, svcCtx.TaskSubscriber, tasks.ServiceTrade, func(ctx context.Context, msg tasks.Message) error {
+			logx.WithContext(ctx).Infof(
+				"trade task received, action=%s jobId=%d tenantId=%d messageId=%s createdAt=%d",
+				msg.Action, msg.JobID, msg.TenantID, msg.ID, msg.CreatedAt,
+			)
 			if err := handleTask(ctx, svcCtx, msg); err != nil {
-				logx.Errorf("trade task failed, action=%s jobId=%d err=%v", msg.Action, msg.JobID, err)
+				logx.WithContext(ctx).Errorf(
+					"trade task failed, action=%s jobId=%d tenantId=%d messageId=%s err=%v",
+					msg.Action, msg.JobID, msg.TenantID, msg.ID, err,
+				)
+				// Propagate the failure so the Kafka subscriber applies its
+				// configured retry policy and eventually sends the message to
+				// the DLQ. Returning nil here would acknowledge failed tasks.
+				return err
 			}
+			logx.WithContext(ctx).Infof(
+				"trade task completed, action=%s jobId=%d tenantId=%d messageId=%s",
+				msg.Action, msg.JobID, msg.TenantID, msg.ID,
+			)
 			return nil
 		}); err != nil && ctx.Err() == nil {
 			logx.Errorf("trade task subscriber stopped: %v", err)

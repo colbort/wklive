@@ -24,6 +24,13 @@ type Queue struct {
 	consumer dq.Consumer
 }
 
+func roundUpBeanstalkDelay(delay time.Duration) time.Duration {
+	if delay <= 0 {
+		return 0
+	}
+	return ((delay + time.Second - 1) / time.Second) * time.Second
+}
+
 func New(enabled bool, beanstalks []dq.Beanstalk, redisConf redis.RedisConf) (*Queue, error) {
 	if !enabled {
 		return nil, nil
@@ -54,7 +61,8 @@ func (q *Queue) At(message Message, at time.Time) error {
 	if err != nil {
 		return err
 	}
-	_, err = q.producer.At(body, at)
+	delay := roundUpBeanstalkDelay(time.Until(at))
+	_, err = q.producer.Delay(body, delay)
 	return err
 }
 

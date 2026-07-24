@@ -1,58 +1,58 @@
 [
   {
-    "key" : "\/wklive\/admin-api\/config",
-    "value" : "Name: admin\nHost: 0.0.0.0\nPort: 8888\nTimeout: 120000\n\nRequestEncryption:\n  Scope: admin-api\n  Mode: DISABLED\n  ProtectedPrefixes:\n    - \"\/admin\/asset\/\"\n    - \"\/admin\/itick\/\"\n    - \"\/admin\/member\/\"\n    - \"\/admin\/option\/\"\n    - \"\/admin\/payment\/\"\n    - \"\/admin\/staking\/\"\n    - \"\/admin\/system\/\"\n    - \"\/admin\/trade\/\"\n  RSAKid: \"admin-api-20260718\"\n  RSAPrivateKeyPath: \"\/Users\/sky\/local\/go\/src\/wklive\/secrets\/admin-api-private.pem\"\n  SessionWrapKey: \"0@29odn4s*dP@tcMZ=U_sQHppG4Av114\"\n  SessionTTLSeconds: 960\n  RotateBeforeSeconds: 180\n  ClockSkewSeconds: 120\n  NonceTTLSeconds: 120\n  MaxPlaintextBytes: 1048576\n  MaxCipherTextBytes: 1052672\n\nSystemRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: system.rpc\n\n\nUserRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: user.rpc\n\nPaymentRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: payment.rpc\n\nItickRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: itick.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   \n\nOptionRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: option.rpc   \n\nStakingRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: staking.rpc   \n\nTradeRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: trade.rpc   "
+    "value" : "Name: admin\nHost: 0.0.0.0\nPort: 8888\nTimeout: 120000\n\nRequestEncryption:\n  Scope: admin-api\n  Mode: DISABLED\n  ProtectedPrefixes:\n    - \"\/admin\/asset\/\"\n    - \"\/admin\/itick\/\"\n    - \"\/admin\/member\/\"\n    - \"\/admin\/option\/\"\n    - \"\/admin\/payment\/\"\n    - \"\/admin\/staking\/\"\n    - \"\/admin\/system\/\"\n    - \"\/admin\/trade\/\"\n  RSAKid: \"admin-api-20260718\"\n  RSAPrivateKeyPath: \"\/Users\/sky\/local\/go\/src\/wklive\/secrets\/admin-api-private.pem\"\n  SessionWrapKey: \"0@29odn4s*dP@tcMZ=U_sQHppG4Av114\"\n  SessionTTLSeconds: 960\n  RotateBeforeSeconds: 180\n  ClockSkewSeconds: 120\n  NonceTTLSeconds: 120\n  MaxPlaintextBytes: 1048576\n  MaxCipherTextBytes: 1052672\n\nSystemRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: system.rpc\n\n\nUserRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: user.rpc\n\nPaymentRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: payment.rpc\n\nItickRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: itick.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   \n\nOptionRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: option.rpc   \n\nStakingRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: staking.rpc   \n\nTradeRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: trade.rpc   ",
+    "key" : "\/wklive\/admin-api\/config"
   },
   {
-    "key" : "\/wklive\/app-api\/config",
-    "value" : "Name: app\nHost: 0.0.0.0\nPort: 5555\n\nSystemRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: system.rpc\n\nUserRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: user.rpc\n\nPaymentRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: payment.rpc\n\nItickRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: itick.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   \n\nOptionRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: option.rpc   \n\nStakingRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: staking.rpc   \n\nTradeRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: trade.rpc  "
+    "value" : "Name: app\nHost: 0.0.0.0\nPort: 5555\n\nSystemRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: system.rpc\n\nUserRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: user.rpc\n\nPaymentRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: payment.rpc\n\nItickRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: itick.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   \n\nOptionRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: option.rpc   \n\nStakingRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: staking.rpc   \n\nTradeRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: trade.rpc  ",
+    "key" : "\/wklive\/app-api\/config"
   },
   {
-    "key" : "\/wklive\/asset-rpc\/config",
-    "value" : "Name: asset.rpc\nListenOn: 0.0.0.0:8084\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: asset.rpc\n\nItickRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: itick.rpc"
+    "value" : "Name: asset.rpc\nListenOn: 0.0.0.0:8084\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: asset.rpc\n\nItickRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: itick.rpc",
+    "key" : "\/wklive\/asset-rpc\/config"
   },
   {
-    "key" : "\/wklive\/chat-admin-api\/config",
-    "value" : "Name: chatAdmin\nHost: 0.0.0.0\nPort: 6666\n\nChatRpc:\n  Endpoints:\n    - 127.0.0.1:8088\n  NonBlock: true"
+    "value" : "Name: chatAdmin\nHost: 0.0.0.0\nPort: 6666\n\nChatRpc:\n  Endpoints:\n    - 127.0.0.1:8088\n  NonBlock: true",
+    "key" : "\/wklive\/chat-admin-api\/config"
   },
   {
-    "key" : "\/wklive\/chat-api\/config",
-    "value" : "Name: chat\nHost: 0.0.0.0\nPort: 7777\n\nChatRpc:\n  Endpoints:\n    - 127.0.0.1:8088\n  NonBlock: true\n\nChatTokenIPWhitelist:\n  - 127.0.0.1\n  - 192.168.10.246"
+    "value" : "Name: chat\nHost: 0.0.0.0\nPort: 7777\n\nChatRpc:\n  Endpoints:\n    - 127.0.0.1:8088\n  NonBlock: true\n\nChatTokenIPWhitelist:\n  - 127.0.0.1\n  - 192.168.10.246",
+    "key" : "\/wklive\/chat-api\/config"
   },
   {
-    "key" : "\/wklive\/chat-rpc\/config",
-    "value" : "Name: chat.rpc\nListenOn: 0.0.0.0:8088\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: chat.rpc\n\nMongo:\n  Url: \"mongodb:\/\/root:openIM123@127.0.0.1:27017\/stock?authSource=admin\"\n  Db: \"wklive\""
+    "value" : "Name: chat.rpc\nListenOn: 0.0.0.0:8088\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: chat.rpc\n\nMongo:\n  Url: \"mongodb:\/\/root:openIM123@127.0.0.1:27017\/stock?authSource=admin\"\n  Db: \"wklive\"",
+    "key" : "\/wklive\/chat-rpc\/config"
   },
   {
-    "key" : "\/wklive\/common\/config",
-    "value" : "Log:\n  Mode: console\n  Encoding: plain\n  Stat: false\n  Level: error\n\nMysql:\n  DataSource: root:123456@tcp(127.0.0.1:3306)\/wklive?charset=utf8mb4&parseTime=true&loc=Local\n\nCacheRedis:\n  - Host: 127.0.0.1:6379\n    Type: node\n    Pass:\n\nRedis:\n  Key: test123\n  Host: 127.0.0.1:6379\n  Type: node\n  Pass:\n\nDataCache:\n  Key: test123\n  Host: 127.0.0.1:6379\n  Type: node\n  Pass:\n\nLockRedis:\n  Key: test123\n  Host: 127.0.0.1:6379\n  Type: node\n  Pass:\n\nMQ:\n  Brokers:\n    - 127.0.0.1:9092\n  MinBytes: 1\n  MaxBytes: 10485760\n  MaxAttempts: 5\n  RetryBackoffMs: 1000\n\nJwt:\n  AccessSecret: \"your_access_secret\"\n  AccessExpire: 3600"
+    "value" : "Log:\n  Mode: console\n  Encoding: plain\n  Stat: false\n  Level: error\n\nMysql:\n  DataSource: root:123456@tcp(127.0.0.1:3306)\/wklive?charset=utf8mb4&parseTime=true&loc=Local\n\nCacheRedis:\n  - Host: 127.0.0.1:6379\n    Type: node\n    Pass:\n\nRedis:\n  Key: test123\n  Host: 127.0.0.1:6379\n  Type: node\n  Pass:\n\nDataCache:\n  Key: test123\n  Host: 127.0.0.1:6379\n  Type: node\n  Pass:\n\nLockRedis:\n  Key: test123\n  Host: 127.0.0.1:6379\n  Type: node\n  Pass:\n\nMQ:\n  Brokers:\n    - 127.0.0.1:9092\n  MinBytes: 1\n  MaxBytes: 10485760\n  MaxAttempts: 5\n  RetryBackoffMs: 1000\n\nJwt:\n  AccessSecret: \"your_access_secret\"\n  AccessExpire: 3600",
+    "key" : "\/wklive\/common\/config"
   },
   {
-    "key" : "\/wklive\/itick-rpc\/config",
-    "value" : "Name: itick.rpc\nListenOn: 0.0.0.0:8082\nMode: pro\nMethodTimeouts:\n  - FullMethod: \/itick.ItickAdmin\/SyncProductKlineHistory\n    Timeout: 5m\n  - FullMethod: \/itick.ItickAdmin\/ListProducts\n    Timeout: 5m\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: itick.rpc\n\nSystemRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: system.rpc\nOptionRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: option.rpc\n\nItick:\n  ApiUrl: https:\/\/api.itick.org\n  WSUrl: wss:\/\/api.itick.org\n  Token: 5093272afb5241dfa3fd5505937289804447d9d6941547b2ab45929024c0fd4b\n  RestRateLimitPerMinute: 100\n  RestRateLimitBurst: 1\n\nMongo:\n  Url: \"mongodb:\/\/root:openIM123@127.0.0.1:27017\/stock?authSource=admin\"\n  Db: \"wklive\"\n\nKlineWriter:\n  QueueSize: 20000\n  BatchSize: 300\n  FlushIntervalMs: 1000\n  WriteTimeoutMs: 5000\n\nSnapshotOutboxCleanup:\n  # status=3 的成功记录保留时间，单位分钟。\n  SuccessRetentionMinutes: 30\n  # 清理任务执行周期，单位秒。\n  IntervalSeconds: 60\n  # 单批最多删除数量，上限 10000。\n  BatchSize: 5000\n  # 单轮最多执行批次数，防止长时间占用数据库。\n  MaxBatchesPerRun: 10\n  # 相邻批次之间的等待时间，单位毫秒。\n  BatchPauseMs: 100\n\nAuthoritativeCache:\n  # Redis 只保留最近 30 分钟的历史快照；更早的查询回源 MySQL。\n  HotWindowMinutes: 30\n  # 所有依赖方升级到 v3 并验证后再开启旧 v1\/v2 Key 清理。\n  LegacyCleanupEnabled: false\n  # 每次 SCAN 的建议数量；SCAN 本身不保证精确返回该数量。\n  LegacyCleanupScanCount: 500\n  # 旧 Key 清理批次间隔，单位秒。\n  LegacyCleanupIntervalSeconds: 1"
+    "value" : "Name: itick.rpc\nListenOn: 0.0.0.0:8082\nMode: pro\nMethodTimeouts:\n  - FullMethod: \/itick.ItickAdmin\/SyncProductKlineHistory\n    Timeout: 5m\n  - FullMethod: \/itick.ItickAdmin\/ListProducts\n    Timeout: 5m\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: itick.rpc\n\nSystemRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: system.rpc\nOptionRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: option.rpc\n\nItick:\n  ApiUrl: https:\/\/api.itick.org\n  WSUrl: wss:\/\/api.itick.org\n  Token: 5093272afb5241dfa3fd5505937289804447d9d6941547b2ab45929024c0fd4b\n  RestRateLimitPerMinute: 100\n  RestRateLimitBurst: 1\n\nMongo:\n  Url: \"mongodb:\/\/root:openIM123@127.0.0.1:27017\/stock?authSource=admin\"\n  Db: \"wklive\"\n\nKlineWriter:\n  QueueSize: 20000\n  BatchSize: 300\n  FlushIntervalMs: 1000\n  WriteTimeoutMs: 5000\n\nSnapshotOutboxCleanup:\n  # status=3 的成功记录保留时间，单位分钟。\n  SuccessRetentionMinutes: 30\n  # 清理任务执行周期，单位秒。\n  IntervalSeconds: 60\n  # 单批最多删除数量，上限 10000。\n  BatchSize: 5000\n  # 单轮最多执行批次数，防止长时间占用数据库。\n  MaxBatchesPerRun: 10\n  # 相邻批次之间的等待时间，单位毫秒。\n  BatchPauseMs: 100\n\nAuthoritativeCache:\n  # Redis 只保留最近 30 分钟的历史快照；更早的查询回源 MySQL。\n  HotWindowMinutes: 30\n  # 所有依赖方升级到 v3 并验证后再开启旧 v1\/v2 Key 清理。\n  LegacyCleanupEnabled: false\n  # 每次 SCAN 的建议数量；SCAN 本身不保证精确返回该数量。\n  LegacyCleanupScanCount: 500\n  # 旧 Key 清理批次间隔，单位秒。\n  LegacyCleanupIntervalSeconds: 1\n\nDelayQueue:\n  Enabled: true\n  Beanstalks:\n  - Endpoint: 127.0.0.1:11300\n    Tube: trade-seconds\n  - Endpoint: 127.0.0.1:11301\n    Tube: trade-seconds",
+    "key" : "\/wklive\/itick-rpc\/config"
   },
   {
-    "key" : "\/wklive\/option-rpc\/config",
-    "value" : "Name: option.rpc\nListenOn: 0.0.0.0:8085\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: option.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   "
+    "value" : "Name: option.rpc\nListenOn: 0.0.0.0:8085\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: option.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   \n\nDelayQueue:\n  Enabled: true\n  Beanstalks:\n  - Endpoint: 127.0.0.1:11300\n    Tube: option-lifecycle\n  - Endpoint: 127.0.0.1:11301\n    Tube: option-lifecycle",
+    "key" : "\/wklive\/option-rpc\/config"
   },
   {
-    "key" : "\/wklive\/payment-rpc\/config",
-    "value" : "Name: payment.rpc\nListenOn: 0.0.0.0:8083\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: payment.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc  "
+    "value" : "Name: payment.rpc\nListenOn: 0.0.0.0:8083\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: payment.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc  ",
+    "key" : "\/wklive\/payment-rpc\/config"
   },
   {
-    "key" : "\/wklive\/staking-rpc\/config",
-    "value" : "Name: staking.rpc\nListenOn: 0.0.0.0:8086\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: staking.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   "
+    "value" : "Name: staking.rpc\nListenOn: 0.0.0.0:8086\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: staking.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   \n\nDelayQueue:\n  Enabled: true\n  Beanstalks:\n  - Endpoint: 127.0.0.1:11300\n    Tube: staking-maturity\n  - Endpoint: 127.0.0.1:11301\n    Tube: staking-maturity",
+    "key" : "\/wklive\/staking-rpc\/config"
   },
   {
-    "key" : "\/wklive\/system-rpc\/config",
-    "value" : "Name: system.rpc\nListenOn: 0.0.0.0:8080\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: system.rpc\n\nChatInternalRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n      - \"127.0.0.1:2379\"\n    Key: chat.rpc"
+    "value" : "Name: system.rpc\nListenOn: 0.0.0.0:8080\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: system.rpc\n\nChatRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n      - \"127.0.0.1:2379\"\n    Key: chat.rpc",
+    "key" : "\/wklive\/system-rpc\/config"
   },
   {
-    "key" : "\/wklive\/trade-rpc\/config",
-    "value" : "Name: trade.rpc\nListenOn: 0.0.0.0:8087\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: trade.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   \n\nItickRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: itick.rpc\n\nMarketAuthority: itick-ws\nPriceEngineAuthority: price-engine"
+    "value" : "Name: trade.rpc\nListenOn: 0.0.0.0:8087\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: trade.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   \n\nItickRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: itick.rpc\n\nMarketAuthority: itick-ws\nPriceEngineAuthority: price-engine\n\nDelayQueue:\n  Enabled: true\n  Beanstalks:\n  - Endpoint: 127.0.0.1:11300\n    Tube: trade-seconds\n  - Endpoint: 127.0.0.1:11301\n    Tube: trade-seconds",
+    "key" : "\/wklive\/trade-rpc\/config"
   },
   {
-    "key" : "\/wklive\/user-rpc\/config",
-    "value" : "Name: user.rpc\nListenOn: 0.0.0.0:8081\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: user.rpc\n\nRegister:\n  UsernameNoRechargeLimit: 7\n\nSystemRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: system.rpc   \n\nGuestTransfer:\n  AllowedOrigins:\n  - http:\/\/localhost:5174\n  - http:\/\/192.168.10.167:5174\/\n  ExpireSeconds: 120"
+    "value" : "Name: user.rpc\nListenOn: 0.0.0.0:8081\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: user.rpc\n\nRegister:\n  UsernameNoRechargeLimit: 7\n\nSystemRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: system.rpc   \n\nGuestTransfer:\n  AllowedOrigins:\n  - http:\/\/localhost:5174\n  - http:\/\/192.168.10.167:5174\/\n  ExpireSeconds: 120",
+    "key" : "\/wklive\/user-rpc\/config"
   }
 ]

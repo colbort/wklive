@@ -21,6 +21,7 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
@@ -83,12 +84,23 @@ func (l *ProcessSecondsSettlementsLogic) processActivations(tenantID int64) erro
 			return err
 		}
 		item.UpdateTimes = lease
+		// A seconds contract must start close to the time it was accepted.
+		// Activating an order after its entire configured duration has already
+		// elapsed would silently turn an old order into a new bet at the current
+		// price. Void and refund it instead.
+		if item.CreateTimes > 0 && now > item.CreateTimes+item.DurationSeconds*1000 {
+			return l.moveSecondsToRefund(item, "activation delayed beyond contract duration")
+		}
 		cfg, err := l.svcCtx.TradeSymbolSecondsModel.FindOneByTenantIdSymbolIdDurationSeconds(l.ctx, item.TenantId, item.SymbolId, item.DurationSeconds)
 		if err != nil {
 			return err
 		}
 		quote, candidates, err := l.getValidQuotesKind("SECONDS_START", cfg.StartPriceSource, item.SymbolId, cfg.QuoteValidityMs)
 		if err != nil {
+			logx.WithContext(l.ctx).Errorf(
+				"seconds lifecycle stage=start_quote_failed tenantId=%d orderId=%d symbolId=%d source=%s err=%v",
+				item.TenantId, item.OrderId, item.SymbolId, cfg.StartPriceSource, err,
+			)
 			return l.moveSecondsToRefund(item, "invalid start quote: "+err.Error())
 		}
 		now = utils.NowMillis()
@@ -118,6 +130,10 @@ func (l *ProcessSecondsSettlementsLogic) processActivations(tenantID int64) erro
 					return err
 				}
 			}
+			logx.WithContext(ctx).Infof(
+				"seconds lifecycle stage=activated tenantId=%d orderId=%d startPrice=%s startPriceTime=%d expireTime=%d version=%d",
+				current.TenantId, current.OrderId, current.StartPrice.String(), current.StartPriceTime, current.ExpireTime, current.Version,
+			)
 			return nil
 		})
 	})
@@ -139,6 +155,10 @@ func (l *ProcessSecondsSettlementsLogic) processSettlements(tenantID int64) erro
 			}
 			quote, candidates, err := l.getValidQuotesAtKind("SECONDS_SETTLEMENT", cfg.SettlementPriceSource, item.SymbolId, item.ExpireTime, cfg.QuoteValidityMs)
 			if err != nil {
+				logx.WithContext(l.ctx).Errorf(
+					"seconds lifecycle stage=settlement_quote_failed tenantId=%d orderId=%d symbolId=%d source=%s expireTime=%d err=%v",
+					item.TenantId, item.OrderId, item.SymbolId, cfg.SettlementPriceSource, item.ExpireTime, err,
+				)
 				return l.moveSecondsToRefund(item, "invalid settlement quote: "+err.Error())
 			}
 			if window := cfg.SettlementWindowMs; window > 0 && (quote.QuoteTs < item.ExpireTime-window || quote.QuoteTs > item.ExpireTime+window) {
@@ -206,7 +226,14 @@ func (l *ProcessSecondsSettlementsLogic) processSettlements(tenantID int64) erro
 						return err
 					}
 				}
-				return insertSecondsPriceSnapshot(ctx, conn, l.svcCtx, current, quote, trade.SecondsPriceSnapshotType_SECONDS_PRICE_SNAPSHOT_TYPE_FINAL_SETTLEMENT, true)
+				if err := insertSecondsPriceSnapshot(ctx, conn, l.svcCtx, current, quote, trade.SecondsPriceSnapshotType_SECONDS_PRICE_SNAPSHOT_TYPE_FINAL_SETTLEMENT, true); err != nil {
+					return err
+				}
+				logx.WithContext(ctx).Infof(
+					"seconds lifecycle stage=settled tenantId=%d orderId=%d result=%d startPrice=%s settlementPrice=%s returnAmount=%s settledAt=%d",
+					current.TenantId, current.OrderId, current.Result, current.StartPrice.String(), current.SettlementPrice.String(), current.ReturnAmount.String(), current.SettledAt,
+				)
+				return nil
 			})
 		}); err != nil {
 			return err
@@ -315,6 +342,10 @@ func scanSecondsWork(fetch func(int64) ([]*models.SecondsOrderWorkItem, error), 
 }
 
 func (l *ProcessSecondsSettlementsLogic) moveSecondsToRefund(item *models.SecondsOrderWorkItem, reason string) error {
+	logx.WithContext(l.ctx).Errorf(
+		"seconds lifecycle stage=move_to_refund tenantId=%d orderId=%d settlementStatus=%d reason=%q",
+		item.TenantId, item.OrderId, item.SettlementStatus, reason,
+	)
 	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		model := models.NewTTradeOrderSecondsModel(sqlx.NewSqlConnFromSession(session), l.svcCtx.Config.CacheRedis)
 		current, err := model.FindOneForUpdate(ctx, item.Id)

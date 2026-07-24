@@ -32,6 +32,13 @@ type Queue struct {
 	consumer dq.Consumer
 }
 
+func roundUpBeanstalkDelay(delay time.Duration) time.Duration {
+	if delay <= 0 {
+		return 0
+	}
+	return ((delay + time.Second - 1) / time.Second) * time.Second
+}
+
 func New(enabled bool, beanstalks []dq.Beanstalk, redisConf redis.RedisConf) (*Queue, error) {
 	if !enabled {
 		return nil, nil
@@ -75,7 +82,12 @@ func (q *Queue) At(message Message, at time.Time) error {
 	if err != nil {
 		return err
 	}
-	_, err = q.producer.At(body, at)
+	// Beanstalkd stores delays as integer seconds and go-beanstalk truncates
+	// sub-second durations. Using Producer.At directly can therefore release a
+	// job almost one second before its business due time. Round up so expiry
+	// handlers never consume and delete a not-yet-due message.
+	delay := roundUpBeanstalkDelay(time.Until(at))
+	_, err = q.producer.Delay(body, delay)
 	return err
 }
 
