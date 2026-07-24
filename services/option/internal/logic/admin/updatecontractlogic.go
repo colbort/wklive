@@ -166,6 +166,9 @@ func (l *UpdateContractLogic) UpdateContract(in *option.UpdateContractReq) (*opt
 	if err := l.svcCtx.OptionContractModel.Update(l.ctx, item); err != nil {
 		return nil, err
 	}
+	for _, enqueueErr := range enqueueContractSchedules(l.svcCtx, item) {
+		l.Errorf("enqueue option contract schedule failed, contractId=%d err=%v", item.Id, enqueueErr)
+	}
 
 	return &option.CommonResp{Base: helper.OkResp()}, nil
 }

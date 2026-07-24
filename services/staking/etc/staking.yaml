@@ -15,3 +15,11 @@ AssetRpc:
     Hosts:
     - 127.0.0.1:2379
     Key: asset.rpc
+
+DelayQueue:
+  Enabled: true
+  Beanstalks:
+  - Endpoint: 127.0.0.1:11300
+    Tube: staking-maturity
+  - Endpoint: 127.0.0.1:11301
+    Tube: staking-maturity

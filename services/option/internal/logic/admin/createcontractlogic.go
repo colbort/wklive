@@ -103,6 +103,10 @@ func (l *CreateContractLogic) CreateContract(in *option.CreateContractReq) (*opt
 	if err != nil {
 		return nil, err
 	}
+	item.Id = id
+	for _, enqueueErr := range enqueueContractSchedules(l.svcCtx, item) {
+		l.Errorf("enqueue option contract schedule failed, contractId=%d err=%v", id, enqueueErr)
+	}
 
 	return &option.CreateContractResp{Id: id, Base: helper.OkResp()}, nil
 }

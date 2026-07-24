@@ -26,7 +26,7 @@ ItickRpc:
 MarketAuthority: itick-ws
 PriceEngineAuthority: price-engine
 
-SecondsDelayQueue:
+DelayQueue:
   Enabled: false
   Beanstalks:
   - Endpoint: 127.0.0.1:11300

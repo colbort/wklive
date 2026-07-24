@@ -15,6 +15,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/delayqueue"
 	"wklive/services/trade/internal/domain/contractmath"
 	"wklive/services/trade/internal/realtime"
 	"wklive/services/trade/internal/svc"
@@ -359,7 +360,7 @@ func (l *PlaceOrderLogic) finalizeAcceptedOrder(order *models.TTradeOrder, freez
 		return err
 	}
 	now := utils.NowMillis()
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	if err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
 		reservationModel := models.NewTTradeAssetReservationModel(conn, l.svcCtx.Config.CacheRedis)
@@ -400,7 +401,28 @@ func (l *PlaceOrderLogic) finalizeAcceptedOrder(order *models.TTradeOrder, freez
 		}
 		_, err := eventModel.Insert(ctx, &models.TBizTradeEvent{TenantId: order.TenantId, EventNo: derivedTradeBizNo(order.OrderNo, "ACCEPTED"), EventType: realtime.EventOrderAccepted, BizId: order.OrderNo, BizType: "order", UserId: order.UserId, SymbolId: order.SymbolId, ProductType: order.ProductType, OperatorId: order.UserId, Source: int64(trade.SourceType_SOURCE_TYPE_USER), Consumer: tradeEventConsumer(realtime.EventOrderAccepted), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, PayloadVersion: tradeEventPayloadVersion, Payload: "{}", CreateTimes: now, UpdateTimes: now})
 		return err
-	})
+	}); err != nil {
+		return err
+	}
+	if l.svcCtx.DelayQueue == nil {
+		return nil
+	}
+	if isSeconds {
+		if err := l.svcCtx.DelayQueue.Delay(delayqueue.Message{
+			Action: delayqueue.ActionActivate, TenantID: order.TenantId, OrderID: order.Id, Version: order.Version,
+		}, time.Millisecond); err != nil {
+			l.Errorf("enqueue seconds activation failed, orderId=%d err=%v", order.Id, err)
+		}
+	}
+	if order.ExpireAt > 0 {
+		if err := l.svcCtx.DelayQueue.At(delayqueue.Message{
+			Action: delayqueue.ActionExpireOrder, TenantID: order.TenantId, OrderID: order.Id,
+			Version: order.Version, DueAt: order.ExpireAt,
+		}, time.UnixMilli(order.ExpireAt)); err != nil {
+			l.Errorf("enqueue order expiration failed, orderId=%d err=%v", order.Id, err)
+		}
+	}
+	return nil
 }
 
 func (l *PlaceOrderLogic) markAssetReservationRetry(order *models.TTradeOrder, cause error) error {

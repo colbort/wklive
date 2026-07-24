@@ -3,6 +3,7 @@ package config
 import (
 	"wklive/common/mq/kafka"
 
+	"github.com/zeromicro/go-queue/dq"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/zrpc"
 )
@@ -14,5 +15,9 @@ type Config struct {
 	Mysql      struct {
 		DataSource string
 	} `json:"Mysql" yaml:"Mysql"`
-	AssetRpc zrpc.RpcClientConf
+	AssetRpc   zrpc.RpcClientConf
+	DelayQueue struct {
+		Enabled    bool
+		Beanstalks []dq.Beanstalk
+	}
 }

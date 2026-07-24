@@ -8,6 +8,7 @@ import (
 
 	"wklive/proto/option"
 	"wklive/services/option/internal/config"
+	logic "wklive/services/option/internal/logic/task"
 	admin "wklive/services/option/internal/server/admin"
 	app "wklive/services/option/internal/server/app"
 	options "wklive/services/option/internal/server/option"
@@ -43,6 +44,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	tasks.StartTaskSubscriber(ctx, svcCtx)
+	logic.StartDelayQueue(ctx, svcCtx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		option.RegisterAdminServer(grpcServer, admin.NewAdminServer(svcCtx))

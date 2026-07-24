@@ -403,12 +403,15 @@ func (l *PlaceOrderLogic) finalizeAcceptedOrder(order *models.TTradeOrder, freez
 	}); err != nil {
 		return err
 	}
-	if isSeconds && l.svcCtx.SecondsDelayQueue != nil {
+	if isSeconds && l.svcCtx.DelayQueue != nil {
 		if err := enqueueSecondsActivation(l.svcCtx, order); err != nil {
 			// The durable seconds row is already ACTIVATING. The minute-level
 			// recovery job will pick it up if the delay queue is unavailable.
 			l.Errorf("enqueue seconds activation failed, orderId=%d err=%v", order.Id, err)
 		}
+	}
+	if err := enqueueOrderExpiration(l.svcCtx, order); err != nil {
+		l.Errorf("enqueue order expiration failed, orderId=%d err=%v", order.Id, err)
 	}
 	return nil
 }

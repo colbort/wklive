@@ -2,7 +2,9 @@ package adminlogic
 
 import (
 	"context"
+	"database/sql"
 	"errors"
+	"time"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -10,6 +12,7 @@ import (
 	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/authz"
+	"wklive/services/trade/internal/delayqueue"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
@@ -70,12 +73,24 @@ func (l *SetUserSymbolLimitLogic) SetUserSymbolLimit(in *trade.SetUserSymbolLimi
 	item.Remark = in.Remark
 	item.UpdateTimes = now
 	if item.Id == 0 {
-		_, err = l.svcCtx.RiskUserSymbolLimitModel.Insert(l.ctx, item)
+		var result sql.Result
+		result, err = l.svcCtx.RiskUserSymbolLimitModel.Insert(l.ctx, item)
+		if err == nil {
+			item.Id, err = result.LastInsertId()
+		}
 	} else {
 		err = l.svcCtx.RiskUserSymbolLimitModel.Update(l.ctx, item)
 	}
 	if err != nil {
 		return nil, err
+	}
+	if item.Enabled == int64(common.Enable_ENABLE_ENABLED) && item.EffectiveEndTime > now && l.svcCtx.DelayQueue != nil {
+		if err := l.svcCtx.DelayQueue.At(delayqueue.Message{
+			Action: delayqueue.ActionExpireSymbolRisk, TenantID: item.TenantId,
+			EntityID: item.Id, DueAt: item.EffectiveEndTime,
+		}, time.UnixMilli(item.EffectiveEndTime)); err != nil {
+			l.Errorf("enqueue symbol risk expiration failed, id=%d err=%v", item.Id, err)
+		}
 	}
 	return &trade.CommonResp{Base: helper.OkResp()}, nil
 }

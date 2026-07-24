@@ -4,6 +4,7 @@ import (
 	mq "wklive/common/mq/kafka"
 	"wklive/proto/asset"
 	"wklive/services/option/internal/config"
+	"wklive/services/option/internal/delayqueue"
 	"wklive/services/option/models"
 
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -27,6 +28,7 @@ type ServiceContext struct {
 	OptionAccountModel        models.TOptionAccountModel
 	OptionBillModel           models.TOptionBillModel
 	AssetClient               asset.AssetClient
+	DelayQueue                *delayqueue.Queue
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -34,6 +36,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	assetCli := zrpc.MustNewClient(c.AssetRpc)
 	mqConfig := mq.ForService(c.MQ, c.Name)
 	taskSubscriber := mq.MustNewSubscriber(mqConfig, "option-tasks")
+	queue, err := delayqueue.New(c.DelayQueue.Enabled, c.DelayQueue.Beanstalks, c.Redis.RedisConf)
+	if err != nil {
+		panic(err)
+	}
 	return &ServiceContext{
 		Config:                    c,
 		DB:                        conn,
@@ -50,5 +56,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		OptionAccountModel:        models.NewTOptionAccountModel(conn, c.CacheRedis),
 		OptionBillModel:           models.NewTOptionBillModel(conn, c.CacheRedis),
 		AssetClient:               asset.NewAssetClient(assetCli.Conn()),
+		DelayQueue:                queue,
 	}
 }

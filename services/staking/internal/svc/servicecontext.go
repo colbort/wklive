@@ -4,6 +4,7 @@ import (
 	mq "wklive/common/mq/kafka"
 	"wklive/proto/asset"
 	"wklive/services/staking/internal/config"
+	"wklive/services/staking/internal/delayqueue"
 	"wklive/services/staking/models"
 
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -21,6 +22,7 @@ type ServiceContext struct {
 	StakeRedeemLogModel models.TStakeRedeemLogModel
 	StakeRewardLogModel models.TStakeRewardLogModel
 	AssetClient         asset.AssetClient
+	DelayQueue          *delayqueue.Queue
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -28,6 +30,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	assetCli := zrpc.MustNewClient(c.AssetRpc)
 	mqConfig := mq.ForService(c.MQ, c.Name)
 	taskSubscriber := mq.MustNewSubscriber(mqConfig, "staking-tasks")
+	queue, err := delayqueue.New(c.DelayQueue.Enabled, c.DelayQueue.Beanstalks, c.Redis.RedisConf)
+	if err != nil {
+		panic(err)
+	}
 	return &ServiceContext{
 		Config:              c,
 		DB:                  conn,
@@ -38,5 +44,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		StakeRedeemLogModel: models.NewTStakeRedeemLogModel(conn, c.CacheRedis),
 		StakeRewardLogModel: models.NewTStakeRewardLogModel(conn, c.CacheRedis),
 		AssetClient:         asset.NewAssetClient(assetCli.Conn()),
+		DelayQueue:          queue,
 	}
 }

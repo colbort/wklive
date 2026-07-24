@@ -8,6 +8,7 @@ import (
 
 	"wklive/proto/staking"
 	"wklive/services/staking/internal/config"
+	logic "wklive/services/staking/internal/logic/task"
 	admin "wklive/services/staking/internal/server/admin"
 	app "wklive/services/staking/internal/server/app"
 	task "wklive/services/staking/internal/server/task"
@@ -42,6 +43,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	tasks.StartTaskSubscriber(ctx, svcCtx)
+	logic.StartDelayQueue(ctx, svcCtx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		staking.RegisterAdminServer(grpcServer, admin.NewAdminServer(svcCtx))

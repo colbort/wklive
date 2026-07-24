@@ -2,6 +2,7 @@ package applogic
 
 import (
 	"context"
+	"time"
 
 	"wklive/common/conv"
 	"wklive/common/generate"
@@ -11,6 +12,7 @@ import (
 	"wklive/proto/asset"
 	"wklive/proto/common"
 	"wklive/proto/staking"
+	"wklive/services/staking/internal/delayqueue"
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
 
@@ -195,6 +197,14 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.CreateOrderReq) (*staking.Cre
 			l.Errorf("rollback staking lock asset failed, orderNo=%s err=%v", orderNo, unlockErr)
 		}
 		return nil, err
+	}
+	if order.EndTimes > 0 && l.svcCtx.DelayQueue != nil {
+		if enqueueErr := l.svcCtx.DelayQueue.At(delayqueue.Message{
+			Action: delayqueue.ActionMatureOrder, TenantID: order.TenantId,
+			OrderID: id, DueAt: order.EndTimes,
+		}, time.UnixMilli(order.EndTimes)); enqueueErr != nil {
+			l.Errorf("enqueue staking maturity failed, orderId=%d err=%v", id, enqueueErr)
+		}
 	}
 
 	return &staking.CreateOrderResp{
