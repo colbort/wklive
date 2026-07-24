@@ -284,6 +284,11 @@ CREATE TABLE sys_job (
   KEY idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='定时任务表';
 
+INSERT INTO sys_job
+(`job_name`, `job_group`, `invoke_target`, `cron_expression`, `status`, `remark`, `create_by`, `create_times`, `update_by`, `update_times`)
+VALUES
+('秒合约结算兜底', 'TRADE', 'trade.ProcessSecondsSettlements', '0 * * * * *', 1, '每分钟扫描秒合约激活、到期结算及退款漏单', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
+
 
 -- =============================
 -- 定时任务日志表

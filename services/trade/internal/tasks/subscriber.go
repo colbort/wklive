@@ -35,6 +35,8 @@ func handleTask(ctx context.Context, svcCtx *svc.ServiceContext, msg tasks.Messa
 		return checkResp(logic.NewProcessPositionsLogic(ctx, svcCtx).ProcessPositions(req))
 	case tasks.ActionTradeProcessContractSettlements:
 		return checkResp(logic.NewProcessContractSettlementsLogic(ctx, svcCtx).ProcessContractSettlements(req))
+	case tasks.ActionTradeProcessSecondsSettlements:
+		return checkResp(logic.NewProcessSecondsSettlementsTaskLogic(ctx, svcCtx).ProcessSecondsSettlements(req))
 	case tasks.ActionTradeProcessTradeEvents:
 		return checkResp(logic.NewProcessTradeEventsLogic(ctx, svcCtx).ProcessTradeEvents(req))
 	case tasks.ActionTradeExpireRiskLimits:

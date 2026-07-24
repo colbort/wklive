@@ -46,6 +46,7 @@ func main() {
 	defer cancel()
 	tasks.StartTaskSubscriber(ctx, svcCtx)
 	tasks.StartADLRecovery(ctx, svcCtx)
+	logic.StartSecondsDelayQueue(ctx, svcCtx)
 
 	if restored, err := logic.RestoreOrderBookCache(context.Background(), svcCtx); err != nil {
 		fmt.Printf("Restore order book cache failed: %v\n", err)

@@ -146,8 +146,10 @@ type (
 		ProcessOrderMatching(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
 		// 仓位处理（标记价格刷新/强平扫描/普通平仓）
 		ProcessPositions(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
-		// 合约结算（资金费率/交割合约/秒合约）
+		// 合约结算（资金费率/交割合约）
 		ProcessContractSettlements(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
+		// 秒合约激活与到期结算
+		ProcessSecondsSettlements(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
 		// 交易事件处理（失败重试/冻结资产修复）
 		ProcessTradeEvents(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
 		// 风控限制过期恢复
@@ -177,10 +179,16 @@ func (m *defaultTask) ProcessPositions(ctx context.Context, in *TradeTaskReq, op
 	return client.ProcessPositions(ctx, in, opts...)
 }
 
-// 合约结算（资金费率/交割合约/秒合约）
+// 合约结算（资金费率/交割合约）
 func (m *defaultTask) ProcessContractSettlements(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
 	client := trade.NewTaskClient(m.cli.Conn())
 	return client.ProcessContractSettlements(ctx, in, opts...)
+}
+
+// 秒合约激活与到期结算
+func (m *defaultTask) ProcessSecondsSettlements(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
+	client := trade.NewTaskClient(m.cli.Conn())
+	return client.ProcessSecondsSettlements(ctx, in, opts...)
 }
 
 // 交易事件处理（失败重试/冻结资产修复）

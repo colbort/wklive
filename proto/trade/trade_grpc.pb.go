@@ -2730,6 +2730,7 @@ const (
 	Task_ProcessOrderMatching_FullMethodName       = "/trade.Task/ProcessOrderMatching"
 	Task_ProcessPositions_FullMethodName           = "/trade.Task/ProcessPositions"
 	Task_ProcessContractSettlements_FullMethodName = "/trade.Task/ProcessContractSettlements"
+	Task_ProcessSecondsSettlements_FullMethodName  = "/trade.Task/ProcessSecondsSettlements"
 	Task_ProcessTradeEvents_FullMethodName         = "/trade.Task/ProcessTradeEvents"
 	Task_ExpireRiskLimits_FullMethodName           = "/trade.Task/ExpireRiskLimits"
 )
@@ -2746,8 +2747,10 @@ type TaskClient interface {
 	ProcessOrderMatching(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
 	// 仓位处理（标记价格刷新/强平扫描/普通平仓）
 	ProcessPositions(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
-	// 合约结算（资金费率/交割合约/秒合约）
+	// 合约结算（资金费率/交割合约）
 	ProcessContractSettlements(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
+	// 秒合约激活与到期结算
+	ProcessSecondsSettlements(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
 	// 交易事件处理（失败重试/冻结资产修复）
 	ProcessTradeEvents(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
 	// 风控限制过期恢复
@@ -2792,6 +2795,16 @@ func (c *taskClient) ProcessContractSettlements(ctx context.Context, in *TradeTa
 	return out, nil
 }
 
+func (c *taskClient) ProcessSecondsSettlements(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TradeTaskResp)
+	err := c.cc.Invoke(ctx, Task_ProcessSecondsSettlements_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *taskClient) ProcessTradeEvents(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TradeTaskResp)
@@ -2824,8 +2837,10 @@ type TaskServer interface {
 	ProcessOrderMatching(context.Context, *TradeTaskReq) (*TradeTaskResp, error)
 	// 仓位处理（标记价格刷新/强平扫描/普通平仓）
 	ProcessPositions(context.Context, *TradeTaskReq) (*TradeTaskResp, error)
-	// 合约结算（资金费率/交割合约/秒合约）
+	// 合约结算（资金费率/交割合约）
 	ProcessContractSettlements(context.Context, *TradeTaskReq) (*TradeTaskResp, error)
+	// 秒合约激活与到期结算
+	ProcessSecondsSettlements(context.Context, *TradeTaskReq) (*TradeTaskResp, error)
 	// 交易事件处理（失败重试/冻结资产修复）
 	ProcessTradeEvents(context.Context, *TradeTaskReq) (*TradeTaskResp, error)
 	// 风控限制过期恢复
@@ -2848,6 +2863,9 @@ func (UnimplementedTaskServer) ProcessPositions(context.Context, *TradeTaskReq) 
 }
 func (UnimplementedTaskServer) ProcessContractSettlements(context.Context, *TradeTaskReq) (*TradeTaskResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProcessContractSettlements not implemented")
+}
+func (UnimplementedTaskServer) ProcessSecondsSettlements(context.Context, *TradeTaskReq) (*TradeTaskResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ProcessSecondsSettlements not implemented")
 }
 func (UnimplementedTaskServer) ProcessTradeEvents(context.Context, *TradeTaskReq) (*TradeTaskResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProcessTradeEvents not implemented")
@@ -2930,6 +2948,24 @@ func _Task_ProcessContractSettlements_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Task_ProcessSecondsSettlements_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TradeTaskReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServer).ProcessSecondsSettlements(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Task_ProcessSecondsSettlements_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServer).ProcessSecondsSettlements(ctx, req.(*TradeTaskReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Task_ProcessTradeEvents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TradeTaskReq)
 	if err := dec(in); err != nil {
@@ -2984,6 +3020,10 @@ var Task_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ProcessContractSettlements",
 			Handler:    _Task_ProcessContractSettlements_Handler,
+		},
+		{
+			MethodName: "ProcessSecondsSettlements",
+			Handler:    _Task_ProcessSecondsSettlements_Handler,
 		},
 		{
 			MethodName: "ProcessTradeEvents",

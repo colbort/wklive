@@ -32,9 +32,6 @@ func NewProcessContractSettlementsLogic(ctx context.Context, svcCtx *svc.Service
 func (l *ProcessContractSettlementsLogic) ProcessContractSettlements(in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
 	return runTaskWithLock(l.ctx, l.svcCtx, "process_contract_settlements", func() (*trade.TradeTaskResp, error) {
 		var result error
-		if err := NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).Process(in.GetTenantId()); err != nil {
-			result = errors.Join(result, fmt.Errorf("seconds settlements: %w", err))
-		}
 		if err := NewProcessFundingSettlementsLogic(l.ctx, l.svcCtx).Process(in.GetTenantId()); err != nil {
 			result = errors.Join(result, fmt.Errorf("funding settlements: %w", err))
 		}

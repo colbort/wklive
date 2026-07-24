@@ -41,6 +41,11 @@ func (s *TaskServer) ProcessContractSettlements(ctx context.Context, in *trade.T
 	return l.ProcessContractSettlements(in)
 }
 
+func (s *TaskServer) ProcessSecondsSettlements(ctx context.Context, in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
+	l := tasklogic.NewProcessSecondsSettlementsTaskLogic(ctx, s.svcCtx)
+	return l.ProcessSecondsSettlements(in)
+}
+
 // 交易事件处理（失败重试/冻结资产修复）
 func (s *TaskServer) ProcessTradeEvents(ctx context.Context, in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
 	l := tasklogic.NewProcessTradeEventsLogic(ctx, s.svcCtx)

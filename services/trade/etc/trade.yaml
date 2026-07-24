@@ -25,3 +25,11 @@ ItickRpc:
 
 MarketAuthority: itick-ws
 PriceEngineAuthority: price-engine
+
+SecondsDelayQueue:
+  Enabled: false
+  Beanstalks:
+  - Endpoint: 127.0.0.1:11300
+    Tube: trade-seconds
+  - Endpoint: 127.0.0.1:11301
+    Tube: trade-seconds

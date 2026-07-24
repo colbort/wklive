@@ -1270,8 +1270,10 @@ service Task {
   rpc ProcessOrderMatching(TradeTaskReq) returns (TradeTaskResp);
   // 仓位处理（标记价格刷新/强平扫描/普通平仓）
   rpc ProcessPositions(TradeTaskReq) returns (TradeTaskResp);
-  // 合约结算（资金费率/交割合约/秒合约）
+  // 合约结算（资金费率/交割合约）
   rpc ProcessContractSettlements(TradeTaskReq) returns (TradeTaskResp);
+  // 秒合约激活与到期结算
+  rpc ProcessSecondsSettlements(TradeTaskReq) returns (TradeTaskResp);
   // 交易事件处理（失败重试/冻结资产修复）
   rpc ProcessTradeEvents(TradeTaskReq) returns (TradeTaskResp);
   // 风控限制过期恢复

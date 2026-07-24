@@ -359,7 +359,7 @@ func (l *PlaceOrderLogic) finalizeAcceptedOrder(order *models.TTradeOrder, freez
 		return err
 	}
 	now := utils.NowMillis()
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	if err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
 		reservationModel := models.NewTTradeAssetReservationModel(conn, l.svcCtx.Config.CacheRedis)
@@ -400,7 +400,17 @@ func (l *PlaceOrderLogic) finalizeAcceptedOrder(order *models.TTradeOrder, freez
 		}
 		_, err := eventModel.Insert(ctx, &models.TBizTradeEvent{TenantId: order.TenantId, EventNo: derivedTradeBizNo(order.OrderNo, "ACCEPTED"), EventType: realtime.EventOrderAccepted, BizId: order.OrderNo, BizType: "order", UserId: order.UserId, SymbolId: order.SymbolId, ProductType: order.ProductType, OperatorId: order.UserId, Source: int64(trade.SourceType_SOURCE_TYPE_USER), Consumer: tradeEventConsumer(realtime.EventOrderAccepted), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, PayloadVersion: tradeEventPayloadVersion, Payload: "{}", CreateTimes: now, UpdateTimes: now})
 		return err
-	})
+	}); err != nil {
+		return err
+	}
+	if isSeconds && l.svcCtx.SecondsDelayQueue != nil {
+		if err := enqueueSecondsActivation(l.svcCtx, order); err != nil {
+			// The durable seconds row is already ACTIVATING. The minute-level
+			// recovery job will pick it up if the delay queue is unavailable.
+			l.Errorf("enqueue seconds activation failed, orderId=%d err=%v", order.Id, err)
+		}
+	}
+	return nil
 }
 
 func (l *PlaceOrderLogic) markAssetReservationRetry(order *models.TTradeOrder, cause error) error {

@@ -3,6 +3,7 @@ package config
 import (
 	"wklive/common/mq/kafka"
 
+	"github.com/zeromicro/go-queue/dq"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/zrpc"
 )
@@ -18,4 +19,8 @@ type Config struct {
 	ItickRpc             zrpc.RpcClientConf
 	MarketAuthority      string
 	PriceEngineAuthority string
+	SecondsDelayQueue    struct {
+		Enabled    bool
+		Beanstalks []dq.Beanstalk
+	}
 }

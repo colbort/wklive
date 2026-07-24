@@ -7,6 +7,7 @@ import (
 	cache "wklive/common/market"
 	mq "wklive/common/mq/kafka"
 	"wklive/services/trade/internal/config"
+	"wklive/services/trade/internal/secondsqueue"
 	"wklive/services/trade/models"
 
 	"wklive/proto/asset"
@@ -66,6 +67,7 @@ type ServiceContext struct {
 	ItickClient                 itick.ItickClient
 	MarketDataCache             *cache.MarketDataCache
 	TradeMarketSnapshotModel    models.TTradeMarketSnapshotModel
+	SecondsDelayQueue           *secondsqueue.Queue
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -79,6 +81,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	tradeEventSubscriber := mq.MustNewSubscriber(mqConfig, "trade-realtime")
 	hostname, _ := os.Hostname()
 	instanceID := fmt.Sprintf("%s:%d:%d", hostname, os.Getpid(), time.Now().UnixNano())
+	secondsDelayQueue, err := secondsqueue.New(c.SecondsDelayQueue.Enabled, c.SecondsDelayQueue.Beanstalks, c.Redis.RedisConf)
+	if err != nil {
+		panic(err)
+	}
 	return &ServiceContext{
 		Config:                      c,
 		DB:                          conn,
@@ -127,5 +133,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ItickClient:                 itick.NewItickClient(itickCli.Conn()),
 		MarketDataCache:             cache.NewMarketDataCache(marketRedis),
 		TradeMarketSnapshotModel:    models.NewTTradeMarketSnapshotModel(conn, c.CacheRedis),
+		SecondsDelayQueue:           secondsDelayQueue,
 	}
 }

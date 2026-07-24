@@ -26,6 +26,7 @@ const (
 	ActionTradeProcessOrderMatching       = "ProcessOrderMatching"
 	ActionTradeProcessPositions           = "ProcessPositions"
 	ActionTradeProcessContractSettlements = "ProcessContractSettlements"
+	ActionTradeProcessSecondsSettlements  = "ProcessSecondsSettlements"
 	ActionTradeProcessTradeEvents         = "ProcessTradeEvents"
 	ActionTradeExpireRiskLimits           = "ExpireRiskLimits"
 )
