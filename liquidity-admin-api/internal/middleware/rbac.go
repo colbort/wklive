@@ -203,9 +203,9 @@ func parsePerm(perm string) (obj, act string, ok bool) {
 }
 
 func isWhitePath(path string) bool {
-	return path == "/liquidity/admin/auth/login" ||
-		path == "/liquidity/admin/auth/profile" ||
-		path == "/liquidity/admin/options" ||
+	return path == "/admin/liquidity/auth/login" ||
+		path == "/admin/liquidity/auth/profile" ||
+		path == "/admin/liquidity/options" ||
 		path == "/health"
 }
 
