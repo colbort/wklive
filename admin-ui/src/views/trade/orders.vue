@@ -118,10 +118,9 @@
         >
           <template #default="{ row }">
             <span v-if="row.productType === 3" class="muted">-</span>
-            <div v-else class="amount-stack">
-              <span>{{ displayAmount(row.filledQty) }}</span>
-              <span class="muted">{{ displayAmount(row.filledAmount) }}</span>
-            </div>
+            <span v-else>
+              {{ displayAmount(row.filledQty) }} / {{ displayAmount(row.filledAmount) }}
+            </span>
           </template>
         </el-table-column>
 

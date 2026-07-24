@@ -101,17 +101,17 @@ func (l *ProcessOrderMatchingLogic) matchOrderBook(key models.TradeOrderMatchKey
 			return err
 		}
 		if plan == nil {
-			return l.expireResidualImmediateOrders(key)
+			return l.cancelResidualImmediateOrders(key)
 		}
 		matched, err := l.executeOrderMatch(key, plan)
 		if err != nil {
 			return err
 		}
 		if !matched {
-			return l.expireResidualImmediateOrders(key)
+			return l.cancelResidualImmediateOrders(key)
 		}
 	}
-	return l.expireResidualImmediateOrders(key)
+	return l.cancelResidualImmediateOrders(key)
 }
 
 func (l *ProcessOrderMatchingLogic) findNextOrderMatch(key models.TradeOrderMatchKey) (*orderMatchPlan, error) {
@@ -664,7 +664,7 @@ func (l *ProcessOrderMatchingLogic) matchFeeRates(key models.TradeOrderMatchKey)
 	return contract.MakerFeeRate, contract.TakerFeeRate, contract, nil
 }
 
-func (l *ProcessOrderMatchingLogic) expireResidualImmediateOrders(key models.TradeOrderMatchKey) error {
+func (l *ProcessOrderMatchingLogic) cancelResidualImmediateOrders(key models.TradeOrderMatchKey) error {
 	buys, err := l.svcCtx.TradeOrderModel.FindOpenMatchOrders(l.ctx, key.TenantId, key.SymbolId, key.ProductType, int64(common.Side_SIDE_BUY), matchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), orderMatchBookDepth)
 	if err != nil {
 		return err
@@ -674,38 +674,38 @@ func (l *ProcessOrderMatchingLogic) expireResidualImmediateOrders(key models.Tra
 		return err
 	}
 	for _, order := range append(buys, sells...) {
-		reason := residualExpireReason(order, buys, sells)
+		reason := residualCancelReason(order, buys, sells)
 		if reason == "" {
 			continue
 		}
-		expiredOrder, err := l.expireOpenOrderNow(order.Id, reason)
+		canceledOrder, err := l.cancelOpenOrderNow(order.Id, reason)
 		if err != nil {
 			return err
 		}
-		if expiredOrder != nil {
-			if err := unfreezeRemainingOrderAsset(l.svcCtx, l.ctx, expiredOrder, "trade matching residual unfreeze"); err != nil {
+		if canceledOrder != nil {
+			if err := unfreezeRemainingOrderAsset(l.svcCtx, l.ctx, canceledOrder, "trade matching residual unfreeze"); err != nil {
 				return err
 			}
-			if err := removeOrderBookOrder(l.svcCtx, l.ctx, expiredOrder); err != nil {
-				l.Errorf("remove expired residual order from cache failed, orderId=%d err=%v", expiredOrder.Id, err)
+			if err := removeOrderBookOrder(l.svcCtx, l.ctx, canceledOrder); err != nil {
+				l.Errorf("remove canceled residual order from cache failed, orderId=%d err=%v", canceledOrder.Id, err)
 			}
 		}
 	}
 	return nil
 }
 
-func residualExpireReason(order *models.TTradeOrder, buys, sells []*models.TTradeOrder) string {
+func residualCancelReason(order *models.TTradeOrder, buys, sells []*models.TTradeOrder) string {
 	if order.OrderType == int64(trade.OrderType_ORDER_TYPE_MARKET) {
-		return "expired by market residual"
+		return "canceled: market order has no executable liquidity"
 	}
 	switch trade.TimeInForce(order.TimeInForce) {
 	case trade.TimeInForce_TIME_IN_FORCE_IOC:
-		return "expired by IOC residual"
+		return "canceled: IOC residual"
 	case trade.TimeInForce_TIME_IN_FORCE_FOK:
-		return "expired by FOK residual"
+		return "canceled: FOK cannot be fully filled"
 	case trade.TimeInForce_TIME_IN_FORCE_POST_ONLY:
 		if postOnlyWouldTakeTop(order, buys, sells) {
-			return "expired by post only"
+			return "canceled: post-only order would take liquidity"
 		}
 	}
 	return ""
@@ -736,9 +736,9 @@ func postOnlyWouldTakeTop(order *models.TTradeOrder, buys, sells []*models.TTrad
 	return false
 }
 
-func (l *ProcessOrderMatchingLogic) expireOpenOrderNow(orderID int64, reason string) (*models.TTradeOrder, error) {
+func (l *ProcessOrderMatchingLogic) cancelOpenOrderNow(orderID int64, reason string) (*models.TTradeOrder, error) {
 	now := utils.NowMillis()
-	var expiredOrder *models.TTradeOrder
+	var canceledOrder *models.TTradeOrder
 	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
@@ -749,7 +749,7 @@ func (l *ProcessOrderMatchingLogic) expireOpenOrderNow(orderID int64, reason str
 		if !isMatchableOrderStatus(order.Status) {
 			return nil
 		}
-		order.Status = int64(trade.OrderStatus_ORDER_STATUS_EXPIRING)
+		order.Status = int64(trade.OrderStatus_ORDER_STATUS_CANCELING)
 		order.CanceledQty = decimalMaxZero(order.Qty.Sub(order.FilledQty))
 		order.CancelReason = reason
 		order.Version++
@@ -757,11 +757,11 @@ func (l *ProcessOrderMatchingLogic) expireOpenOrderNow(orderID int64, reason str
 		if err := orderModel.Update(ctx, order); err != nil {
 			return err
 		}
-		expiredOrder = order
+		canceledOrder = order
 		return nil
 	})
-	if err != nil || expiredOrder == nil {
-		return expiredOrder, err
+	if err != nil || canceledOrder == nil {
+		return canceledOrder, err
 	}
-	return expiredOrder, nil
+	return canceledOrder, nil
 }

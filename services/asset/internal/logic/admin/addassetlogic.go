@@ -31,6 +31,9 @@ func NewAddAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddAsset
 
 // 后台人工加币
 func (l *AddAssetLogic) AddAsset(in *asset.AddAssetReq) (*asset.ManualChangeAssetResp, error) {
+	if in == nil || in.TenantId <= 0 || in.UserId <= 0 {
+		return nil, i18n.StatusError(l.ctx, i18n.CodeParamError)
+	}
 	if base, err := adminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
 		return nil, err
 	} else if base != nil {

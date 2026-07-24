@@ -328,7 +328,8 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		}
 		return &trade.PlaceOrderResp{Base: helper.OkResp(), Data: orderToProto(order)}, nil
 	}
-	if err = l.finalizeAcceptedOrder(order, freezeNo, frozenAmount, triggerKind, orderType, triggerPrice, isSeconds); err != nil {
+	err = l.finalizeAcceptedOrder(order, freezeNo, frozenAmount, triggerKind, orderType, triggerPrice, isSeconds)
+	if err != nil {
 		// Asset has already accepted the idempotent freeze. Never unfreeze here:
 		// leave the local order in FREEZING and let reconciliation finalize it.
 		_ = l.markAssetReservationRetry(order, err)
@@ -339,11 +340,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	}
 	if !isSeconds && order.Status == int64(trade.OrderStatus_ORDER_STATUS_PENDING) {
 		event := realtime.Event{EventNo: derivedTradeBizNo(order.OrderNo, "ACCEPTED"), Type: realtime.EventOrderAccepted, TenantID: order.TenantId, BizID: order.OrderNo, OrderID: order.Id}
-		if err := publishTradeOutboxEvent(l.ctx, l.svcCtx, event); err != nil {
-			// The event remains pending in the durable outbox and can be retried by
-			// ProcessTradeEvents. A broker failure must not roll back the order.
-			l.Errorf("publish real-time order accepted event failed, orderId=%d eventNo=%s err=%v", order.Id, event.EventNo, err)
-		}
+		enqueueTradeEventFastPath(l.ctx, l.svcCtx, event)
 	}
 
 	return &trade.PlaceOrderResp{Base: helper.OkResp(), Data: orderToProto(order)}, nil

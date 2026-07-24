@@ -40,12 +40,7 @@
         <el-button v-perm="'asset:freeze:add'" type="primary" @click="openChangeDialog('freeze')">
           {{ t('asset.freezeAsset') }}
         </el-button>
-        <el-button
-          v-perm="'asset:lock:add'"
-          type="primary"
-          plain
-          @click="openChangeDialog('lock')"
-        >
+        <el-button v-perm="'asset:lock:add'" type="primary" plain @click="openChangeDialog('lock')">
           {{ t('asset.lockAsset') }}
         </el-button>
       </template>
@@ -81,31 +76,42 @@
           :label="t('asset.totalAmount')"
           min-width="140"
           show-overflow-tooltip
-        />
+        >
+          <template #default="{ row }">
+            {{ formatCentAmount(row.totalAmount) }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="availableAmount"
           :label="t('asset.availableAmount')"
           min-width="140"
           show-overflow-tooltip
-        />
+        >
+          <template #default="{ row }">
+            {{ formatCentAmount(row.availableAmount) }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="frozenAmount"
           :label="t('asset.frozenAmount')"
           min-width="140"
           show-overflow-tooltip
-        />
+        >
+          <template #default="{ row }">
+            {{ formatCentAmount(row.frozenAmount) }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="lockedAmount"
           :label="t('asset.lockedAmount')"
           min-width="140"
           show-overflow-tooltip
-        />
-        <el-table-column
-          :label="t('common.actions')"
-          align="center"
-          width="120"
-          fixed="right"
         >
+          <template #default="{ row }">
+            {{ formatCentAmount(row.lockedAmount) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('common.actions')" align="center" width="120" fixed="right">
           <template #default="{ row }">
             <el-button
               v-perm="'asset:user-asset:detail'"
@@ -132,6 +138,13 @@
 
     <el-dialog v-model="changeVisible" :title="changeTitle" width="680px">
       <el-form label-width="100px">
+        <el-form-item :label="t('asset.tenantId')" required>
+          <TenantSelect
+            v-model="changeForm.tenantId"
+            style="width: 100%"
+            @change="changeForm.userId = 0"
+          />
+        </el-form-item>
         <el-form-item :label="t('asset.userId')">
           <UserSelect v-model="changeForm.userId" :tenant-id="changeForm.tenantId || undefined" />
         </el-form-item>
@@ -197,16 +210,16 @@
           {{ optionLabel('assetStatus', detailData.enabled) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.totalAmount')">
-          {{ detailData.totalAmount }}
+          {{ formatCentAmount(detailData.totalAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.availableAmount')">
-          {{ detailData.availableAmount }}
+          {{ formatCentAmount(detailData.availableAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.frozenAmount')">
-          {{ detailData.frozenAmount }}
+          {{ formatCentAmount(detailData.frozenAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.lockedAmount')">
-          {{ detailData.lockedAmount }}
+          {{ formatCentAmount(detailData.lockedAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.version')">
           {{ detailData.version }}
@@ -231,7 +244,7 @@ import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { useOptions, usePagination } from '@/composables'
 import { assetService, type AssetUserAsset, type OptionGroup } from '@/services'
-import { formatDate } from '@/utils'
+import { amountToCent, formatCentAmount, formatDate } from '@/utils'
 import TenantSelect from '@/components/TenantSelect.vue'
 import UserSelect from '@/components/UserSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
@@ -354,12 +367,24 @@ function openChangeDialog(mode: typeof changeMode.value) {
 }
 
 async function submitChange() {
+  if (changeForm.tenantId <= 0) {
+    ElMessage.warning(t('system.pleaseSelectTenant'))
+    return
+  }
+  if (changeForm.userId <= 0) {
+    ElMessage.warning(t('asset.userId') + t('common.required'))
+    return
+  }
   submitLoading.value = true
   try {
-    if (changeMode.value === 'add') await assetService.addAsset(changeForm)
-    if (changeMode.value === 'sub') await assetService.subAsset(changeForm)
-    if (changeMode.value === 'freeze') await assetService.freezeAsset(changeForm)
-    if (changeMode.value === 'lock') await assetService.lockAsset(changeForm)
+    const payload = {
+      ...changeForm,
+      amount: String(amountToCent(changeForm.amount)),
+    }
+    if (changeMode.value === 'add') await assetService.addAsset(payload)
+    if (changeMode.value === 'sub') await assetService.subAsset(payload)
+    if (changeMode.value === 'freeze') await assetService.freezeAsset(payload)
+    if (changeMode.value === 'lock') await assetService.lockAsset(payload)
     ElMessage.success(t('common.success'))
     changeVisible.value = false
     loadList()

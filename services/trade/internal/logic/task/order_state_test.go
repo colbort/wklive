@@ -470,15 +470,15 @@ func TestCanFullyFillFromBookByAmount(t *testing.T) {
 	}
 }
 
-func TestResidualExpireReason(t *testing.T) {
-	if got := residualExpireReason(&models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_MARKET)}, nil, nil); got == "" {
-		t.Fatal("market residual should expire")
+func TestResidualCancelReason(t *testing.T) {
+	if got := residualCancelReason(&models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_MARKET)}, nil, nil); got == "" {
+		t.Fatal("market residual should cancel")
 	}
-	if got := residualExpireReason(&models.TTradeOrder{TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_IOC)}, nil, nil); got == "" {
-		t.Fatal("IOC residual should expire")
+	if got := residualCancelReason(&models.TTradeOrder{TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_IOC)}, nil, nil); got == "" {
+		t.Fatal("IOC residual should cancel")
 	}
-	if got := residualExpireReason(&models.TTradeOrder{TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_FOK)}, nil, nil); got == "" {
-		t.Fatal("FOK residual should expire")
+	if got := residualCancelReason(&models.TTradeOrder{TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_FOK)}, nil, nil); got == "" {
+		t.Fatal("FOK residual should cancel")
 	}
 }
 
