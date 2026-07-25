@@ -1,7 +1,7 @@
 package config
 
 import (
-	"wklive/common/mq/kafka"
+	mq "wklive/common/mq/kafka"
 
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -22,4 +22,10 @@ type Config struct {
 
 	MarketAuthority      string
 	PriceEngineAuthority string
+
+	OKX struct {
+		Enabled   bool
+		BaseURL   string
+		TimeoutMs int64
+	}
 }

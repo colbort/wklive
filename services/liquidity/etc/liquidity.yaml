@@ -37,3 +37,8 @@ UserRpc:
 
 MarketAuthority: itick-ws
 PriceEngineAuthority: price-engine
+
+OKX:
+  Enabled: false
+  BaseURL: https://www.okx.com
+  TimeoutMs: 10000

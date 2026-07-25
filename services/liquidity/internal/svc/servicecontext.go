@@ -1,6 +1,8 @@
 package svc
 
 import (
+	"time"
+
 	mq "wklive/common/mq/kafka"
 	"wklive/proto/asset"
 	"wklive/proto/itick"
@@ -47,6 +49,15 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	userClient := zrpc.MustNewClient(c.UserRpc)
 	assetClient := zrpc.MustNewClient(c.AssetRpc)
 	mqConfig := mq.ForService(c.MQ, c.Name)
+	providerAdapters := provider.NewRegistry()
+	if err := providerAdapters.Register("OKX", provider.NewOKXAdapter(
+		c.OKX.Enabled,
+		provider.EnvCredentialResolver{},
+		c.OKX.BaseURL,
+		time.Duration(c.OKX.TimeoutMs)*time.Millisecond,
+	)); err != nil {
+		panic(err)
+	}
 	return &ServiceContext{
 		Config:                 c,
 		ProviderModel:          models.NewTLiquidityProviderModel(conn, c.CacheRedis),
@@ -68,7 +79,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		UserClient:             user.NewUserClient(userClient.Conn()),
 		AssetClient:            asset.NewAssetClient(assetClient.Conn()),
 		InternalMarketMaker:    provider.NewTradeInternalMarketMaker(trade.NewTradeClient(tradeClient.Conn())),
-		ProviderAdapters:       provider.NewRegistry(),
+		ProviderAdapters:       providerAdapters,
 		TaskSubscriber:         mq.MustNewSubscriber(mqConfig, "liquidity-tasks"),
 	}
 }
