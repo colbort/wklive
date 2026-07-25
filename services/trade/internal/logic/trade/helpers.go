@@ -219,7 +219,7 @@ func orderToProto(item *models.TTradeOrder) *trade.TradeOrder {
 		OrderType:         trade.OrderType(item.OrderType),
 		TimeInForce:       trade.TimeInForce(item.TimeInForce),
 		Status:            trade.OrderStatus(item.Status),
-		DisplayStatus:     orderDisplayStatus(item.Status),
+		DisplayStatus:     orderDisplayStatus(item),
 		Price:             conv.FloatString(item.Price),
 		Qty:               conv.FloatString(item.Qty),
 		Amount:            conv.FloatString(item.Amount),
@@ -247,8 +247,15 @@ func orderToProto(item *models.TTradeOrder) *trade.TradeOrder {
 	}
 }
 
-func orderDisplayStatus(status int64) trade.OrderDisplayStatus {
-	switch trade.OrderStatus(status) {
+func orderDisplayStatus(order *models.TTradeOrder) trade.OrderDisplayStatus {
+	if order == nil {
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_UNKNOWN
+	}
+	if trade.OrderStatus(order.Status) == trade.OrderStatus_ORDER_STATUS_CANCELED &&
+		(order.FilledQty.IsPositive() || order.FilledAmount.IsPositive()) {
+		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_PART_FILLED
+	}
+	switch trade.OrderStatus(order.Status) {
 	case trade.OrderStatus_ORDER_STATUS_FREEZING:
 		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_FREEZING
 	case trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING:

@@ -100,13 +100,13 @@
 
         <el-table-column :label="t('trade.price')" min-width="120" align="right">
           <template #default="{ row }">
-            {{ displayAmount(row.price) }}
+            {{ displayOrderPrice(row) }}
           </template>
         </el-table-column>
 
         <el-table-column :label="t('trade.qty')" min-width="120" align="right">
           <template #default="{ row }">
-            {{ displayAmount(row.qty) }}
+            {{ displayOrderQty(row) }}
           </template>
         </el-table-column>
 
@@ -778,6 +778,15 @@ function orderDisplayStatusLabel(status: number) {
 }
 
 function effectiveOrderDisplayStatus(order: TradeOrder) {
+  // 撤销的是未成交的剩余量；已有成交记录时不能展示为“已撤单”。
+  if (
+    order.productType !== 3 &&
+    order.status === 4 &&
+    (isPositiveAmount(order.filledQty) || isPositiveAmount(order.filledAmount))
+  ) {
+    return 6
+  }
+
   if (order.displayStatus > 0) return order.displayStatus
 
   // 兼容滚动发布期间尚未返回 displayStatus 的旧版 RPC/API。
@@ -814,6 +823,20 @@ function orderDisplayStatusTagType(status: number) {
 function displayAmount(value?: string | number) {
   if (value === undefined || value === null || value === '') return '-'
   return String(value)
+}
+
+function displayOrderPrice(order: TradeOrder) {
+  if (order.orderType !== 2) return displayAmount(order.price)
+  if (isPositiveAmount(order.avgPrice)) return displayAmount(order.avgPrice)
+  return optionLabel('orderType', 2)
+}
+
+function displayOrderQty(order: TradeOrder) {
+  if (isPositiveAmount(order.qty)) return displayAmount(order.qty)
+  if (order.orderType === 2 && isPositiveAmount(order.filledQty)) {
+    return displayAmount(order.filledQty)
+  }
+  return '-'
 }
 
 function isPositiveAmount(value?: string | number) {

@@ -471,14 +471,31 @@ func TestCanFullyFillFromBookByAmount(t *testing.T) {
 }
 
 func TestResidualCancelReason(t *testing.T) {
-	if got := residualCancelReason(&models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_MARKET)}, nil, nil); got == "" {
-		t.Fatal("market residual should cancel")
+	if got := residualCancelReason(&models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_MARKET)}, nil, nil); got != "canceled: market order has no executable liquidity" {
+		t.Fatalf("unexpected unfilled market cancel reason: %q", got)
+	}
+	if got := residualCancelReason(&models.TTradeOrder{
+		OrderType:    int64(trade.OrderType_ORDER_TYPE_MARKET),
+		FilledQty:    decimal.RequireFromString("0.001"),
+		FilledAmount: decimal.RequireFromString("64.1"),
+	}, nil, nil); got != "canceled: market order residual after partial fill" {
+		t.Fatalf("unexpected partially filled market cancel reason: %q", got)
 	}
 	if got := residualCancelReason(&models.TTradeOrder{TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_IOC)}, nil, nil); got == "" {
 		t.Fatal("IOC residual should cancel")
 	}
 	if got := residualCancelReason(&models.TTradeOrder{TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_FOK)}, nil, nil); got == "" {
 		t.Fatal("FOK residual should cancel")
+	}
+}
+
+func TestOrderDisplayStatusForPartiallyFilledCanceledOrder(t *testing.T) {
+	order := &models.TTradeOrder{
+		Status:    int64(trade.OrderStatus_ORDER_STATUS_CANCELED),
+		FilledQty: decimal.RequireFromString("0.001"),
+	}
+	if got := orderDisplayStatus(order); got != trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_PART_FILLED {
+		t.Fatalf("display status=%v, want partially filled", got)
 	}
 }
 

@@ -696,6 +696,9 @@ func (l *ProcessOrderMatchingLogic) cancelResidualImmediateOrders(key models.Tra
 
 func residualCancelReason(order *models.TTradeOrder, buys, sells []*models.TTradeOrder) string {
 	if order.OrderType == int64(trade.OrderType_ORDER_TYPE_MARKET) {
+		if order.FilledQty.IsPositive() || order.FilledAmount.IsPositive() {
+			return "canceled: market order residual after partial fill"
+		}
 		return "canceled: market order has no executable liquidity"
 	}
 	switch trade.TimeInForce(order.TimeInForce) {
