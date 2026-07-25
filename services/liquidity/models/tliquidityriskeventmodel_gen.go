@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,25 +44,25 @@ type (
 	}
 
 	TLiquidityRiskEvent struct {
-		Id             int64          `db:"id"`              // 主键ID
-		EventNo        string         `db:"event_no"`        // 风控事件号
-		ConfigId       int64          `db:"config_id"`       // 交易对流动性配置ID
-		ProviderId     int64          `db:"provider_id"`     // 流动性提供方ID
-		SymbolId       int64          `db:"symbol_id"`       // 内部交易标的ID
-		RiskType       string         `db:"risk_type"`       // 风险类型
-		RiskLevel      int64          `db:"risk_level"`      // 级别：1提示 2警告 3严重 4致命
-		MetricValue    float64        `db:"metric_value"`    // 触发指标值
-		ThresholdValue float64        `db:"threshold_value"` // 配置阈值
-		ActionType     int64          `db:"action_type"`     // 动作：1仅记录 2暂停报价 3撤销报价 4熔断 5人工介入
-		Status         int64          `db:"status"`          // 状态：1待处理 2处理中 3已恢复 4已关闭
-		Message        string         `db:"message"`         // 事件描述
-		ContextJson    sql.NullString `db:"context_json"`    // 触发上下文
-		TriggeredAt    int64          `db:"triggered_at"`    // 触发时间
-		RecoveredAt    int64          `db:"recovered_at"`    // 恢复时间
-		ClosedAt       int64          `db:"closed_at"`       // 关闭时间
-		OperatorId     int64          `db:"operator_id"`     // 处理人ID
-		CreateTimes    int64          `db:"create_times"`    // 创建时间
-		UpdateTimes    int64          `db:"update_times"`    // 更新时间
+		Id             int64           `db:"id"`              // 主键ID
+		EventNo        string          `db:"event_no"`        // 风控事件号
+		ConfigId       int64           `db:"config_id"`       // 交易对流动性配置ID
+		ProviderId     int64           `db:"provider_id"`     // 流动性提供方ID
+		SymbolId       int64           `db:"symbol_id"`       // 内部交易标的ID
+		RiskType       string          `db:"risk_type"`       // 风险类型
+		RiskLevel      int64           `db:"risk_level"`      // 级别：1提示 2警告 3严重 4致命
+		MetricValue    decimal.Decimal `db:"metric_value"`    // 触发指标值
+		ThresholdValue decimal.Decimal `db:"threshold_value"` // 配置阈值
+		ActionType     int64           `db:"action_type"`     // 动作：1仅记录 2暂停报价 3撤销报价 4熔断 5人工介入
+		Status         int64           `db:"status"`          // 状态：1待处理 2处理中 3已恢复 4已关闭
+		Message        string          `db:"message"`         // 事件描述
+		ContextJson    sql.NullString  `db:"context_json"`    // 触发上下文
+		TriggeredAt    int64           `db:"triggered_at"`    // 触发时间
+		RecoveredAt    int64           `db:"recovered_at"`    // 恢复时间
+		ClosedAt       int64           `db:"closed_at"`       // 关闭时间
+		OperatorId     int64           `db:"operator_id"`     // 处理人ID
+		CreateTimes    int64           `db:"create_times"`    // 创建时间
+		UpdateTimes    int64           `db:"update_times"`    // 更新时间
 	}
 )
 

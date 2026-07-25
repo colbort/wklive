@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,29 +44,29 @@ type (
 	}
 
 	TLiquidityInventorySnapshot struct {
-		Id               int64          `db:"id"`                // 主键ID
-		SnapshotNo       string         `db:"snapshot_no"`       // 库存快照业务号
-		ConfigId         int64          `db:"config_id"`         // 交易对流动性配置ID
-		ProviderId       int64          `db:"provider_id"`       // 流动性提供方ID
-		SymbolId         int64          `db:"symbol_id"`         // 内部交易标的ID
-		BaseAsset        string         `db:"base_asset"`        // 基础资产
-		QuoteAsset       string         `db:"quote_asset"`       // 计价资产
-		BaseTotal        float64        `db:"base_total"`        // 基础资产总额
-		BaseAvailable    float64        `db:"base_available"`    // 基础资产可用
-		BaseFrozen       float64        `db:"base_frozen"`       // 基础资产冻结
-		QuoteTotal       float64        `db:"quote_total"`       // 计价/保证金资产总额
-		QuoteAvailable   float64        `db:"quote_available"`   // 计价/保证金资产可用
-		QuoteFrozen      float64        `db:"quote_frozen"`      // 计价/保证金资产冻结
-		PositionQty      float64        `db:"position_qty"`      // 合约净持仓；现货为0
-		PendingBuyQty    float64        `db:"pending_buy_qty"`   // 未成交买单数量
-		PendingSellQty   float64        `db:"pending_sell_qty"`  // 未成交卖单数量
-		NetExposure      float64        `db:"net_exposure"`      // 归一化净敞口
-		ReferencePrice   float64        `db:"reference_price"`   // 快照参考价
-		ExposureNotional float64        `db:"exposure_notional"` // 净敞口名义金额
-		Source           int64          `db:"source"`            // 来源：1内部资产持仓 2外部账户 3合并视图
-		SnapshotTime     int64          `db:"snapshot_time"`     // 快照时间
-		RawPayload       sql.NullString `db:"raw_payload"`       // 外部或计算原文
-		CreateTimes      int64          `db:"create_times"`      // 创建时间
+		Id               int64           `db:"id"`                // 主键ID
+		SnapshotNo       string          `db:"snapshot_no"`       // 库存快照业务号
+		ConfigId         int64           `db:"config_id"`         // 交易对流动性配置ID
+		ProviderId       int64           `db:"provider_id"`       // 流动性提供方ID
+		SymbolId         int64           `db:"symbol_id"`         // 内部交易标的ID
+		BaseAsset        string          `db:"base_asset"`        // 基础资产
+		QuoteAsset       string          `db:"quote_asset"`       // 计价资产
+		BaseTotal        decimal.Decimal `db:"base_total"`        // 基础资产总额
+		BaseAvailable    decimal.Decimal `db:"base_available"`    // 基础资产可用
+		BaseFrozen       decimal.Decimal `db:"base_frozen"`       // 基础资产冻结
+		QuoteTotal       decimal.Decimal `db:"quote_total"`       // 计价/保证金资产总额
+		QuoteAvailable   decimal.Decimal `db:"quote_available"`   // 计价/保证金资产可用
+		QuoteFrozen      decimal.Decimal `db:"quote_frozen"`      // 计价/保证金资产冻结
+		PositionQty      decimal.Decimal `db:"position_qty"`      // 合约净持仓；现货为0
+		PendingBuyQty    decimal.Decimal `db:"pending_buy_qty"`   // 未成交买单数量
+		PendingSellQty   decimal.Decimal `db:"pending_sell_qty"`  // 未成交卖单数量
+		NetExposure      decimal.Decimal `db:"net_exposure"`      // 归一化净敞口
+		ReferencePrice   decimal.Decimal `db:"reference_price"`   // 快照参考价
+		ExposureNotional decimal.Decimal `db:"exposure_notional"` // 净敞口名义金额
+		Source           int64           `db:"source"`            // 来源：1内部资产持仓 2外部账户 3合并视图
+		SnapshotTime     int64           `db:"snapshot_time"`     // 快照时间
+		RawPayload       sql.NullString  `db:"raw_payload"`       // 外部或计算原文
+		CreateTimes      int64           `db:"create_times"`      // 创建时间
 	}
 )
 

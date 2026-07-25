@@ -2,6 +2,7 @@ package tasklogic
 
 import (
 	"math"
+	"strconv"
 	"testing"
 
 	"wklive/proto/common"
@@ -42,5 +43,16 @@ func TestParseReferenceSource(t *testing.T) {
 	_, _, symbol = parseReferenceSource("crypto:BA", "BTCUSDT")
 	if symbol != "BTCUSDT" {
 		t.Fatalf("expected fallback symbol, got %s", symbol)
+	}
+}
+
+func TestStepRoundingRemovesFloatTail(t *testing.T) {
+	ask := roundUp(64088.02399999999, 0.001)
+	if got := strconv.FormatFloat(ask, 'f', -1, 64); got != "64088.024" {
+		t.Fatalf("unexpected normalized ask price: %s", got)
+	}
+	bid := roundDown(63956.139800000004, 0.0001)
+	if got := strconv.FormatFloat(bid, 'f', -1, 64); got != "63956.1398" {
+		t.Fatalf("unexpected normalized bid price: %s", got)
 	}
 }

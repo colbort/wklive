@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,25 +44,25 @@ type (
 	}
 
 	TLiquidityHedgeTask struct {
-		Id             int64   `db:"id"`              // 主键ID
-		HedgeNo        string  `db:"hedge_no"`        // 对冲业务号
-		ConfigId       int64   `db:"config_id"`       // 交易对流动性配置ID
-		ProviderId     int64   `db:"provider_id"`     // 外部对冲提供方ID
-		SymbolId       int64   `db:"symbol_id"`       // 内部交易标的ID
-		TriggerType    int64   `db:"trigger_type"`    // 触发：1成交事件 2敞口阈值 3人工 4恢复任务
-		ExposureBefore float64 `db:"exposure_before"` // 对冲前净敞口；正数多头，负数空头
-		TargetExposure float64 `db:"target_exposure"` // 目标净敞口
-		Side           int64   `db:"side"`            // 外部对冲方向：1买 2卖
-		TargetQty      float64 `db:"target_qty"`      // 目标对冲数量
-		ExecutedQty    float64 `db:"executed_qty"`    // 已执行数量
-		AvgPrice       float64 `db:"avg_price"`       // 对冲均价
-		Status         int64   `db:"status"`          // 状态：1待执行 2执行中 3部分完成 4完成 5失败 6取消
-		RetryCount     int64   `db:"retry_count"`     // 重试次数
-		NextRetryAt    int64   `db:"next_retry_at"`   // 下次重试时间
-		LastErrorMsg   string  `db:"last_error_msg"`  // 最近错误
-		Version        int64   `db:"version"`         // 乐观锁版本
-		CreateTimes    int64   `db:"create_times"`    // 创建时间
-		UpdateTimes    int64   `db:"update_times"`    // 更新时间
+		Id             int64           `db:"id"`              // 主键ID
+		HedgeNo        string          `db:"hedge_no"`        // 对冲业务号
+		ConfigId       int64           `db:"config_id"`       // 交易对流动性配置ID
+		ProviderId     int64           `db:"provider_id"`     // 外部对冲提供方ID
+		SymbolId       int64           `db:"symbol_id"`       // 内部交易标的ID
+		TriggerType    int64           `db:"trigger_type"`    // 触发：1成交事件 2敞口阈值 3人工 4恢复任务
+		ExposureBefore decimal.Decimal `db:"exposure_before"` // 对冲前净敞口；正数多头，负数空头
+		TargetExposure decimal.Decimal `db:"target_exposure"` // 目标净敞口
+		Side           int64           `db:"side"`            // 外部对冲方向：1买 2卖
+		TargetQty      decimal.Decimal `db:"target_qty"`      // 目标对冲数量
+		ExecutedQty    decimal.Decimal `db:"executed_qty"`    // 已执行数量
+		AvgPrice       decimal.Decimal `db:"avg_price"`       // 对冲均价
+		Status         int64           `db:"status"`          // 状态：1待执行 2执行中 3部分完成 4完成 5失败 6取消
+		RetryCount     int64           `db:"retry_count"`     // 重试次数
+		NextRetryAt    int64           `db:"next_retry_at"`   // 下次重试时间
+		LastErrorMsg   string          `db:"last_error_msg"`  // 最近错误
+		Version        int64           `db:"version"`         // 乐观锁版本
+		CreateTimes    int64           `db:"create_times"`    // 创建时间
+		UpdateTimes    int64           `db:"update_times"`    // 更新时间
 	}
 )
 

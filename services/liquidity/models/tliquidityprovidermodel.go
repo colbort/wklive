@@ -7,6 +7,7 @@ import (
 	"wklive/common/sqlutil"
 
 	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
@@ -23,6 +24,7 @@ type (
 	TLiquidityProviderModel interface {
 		tLiquidityProviderModel
 		FindPage(ctx context.Context, filter LiquidityProviderPageFilter, cursor, limit int64) ([]*TLiquidityProvider, int64, error)
+		FindOneByProviderTypeTradeUserId(ctx context.Context, providerType, tradeUserID int64) (*TLiquidityProvider, error)
 	}
 
 	customTLiquidityProviderModel struct {
@@ -35,6 +37,19 @@ func NewTLiquidityProviderModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...ca
 	return &customTLiquidityProviderModel{
 		defaultTLiquidityProviderModel: newTLiquidityProviderModel(conn, c, opts...),
 	}
+}
+
+func (m *customTLiquidityProviderModel) FindOneByProviderTypeTradeUserId(ctx context.Context, providerType, tradeUserID int64) (*TLiquidityProvider, error) {
+	var row TLiquidityProvider
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE provider_type = ? AND trade_user_id = ? LIMIT 1", tLiquidityProviderRows, m.table)
+	err := m.QueryRowNoCacheCtx(ctx, &row, query, providerType, tradeUserID)
+	if err == sqlc.ErrNotFound {
+		return nil, ErrNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &row, nil
 }
 
 func (m *customTLiquidityProviderModel) FindPage(ctx context.Context, filter LiquidityProviderPageFilter, cursor, limit int64) ([]*TLiquidityProvider, int64, error) {

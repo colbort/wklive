@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -44,26 +46,26 @@ type (
 	}
 
 	TLiquidityExternalFill struct {
-		Id               int64          `db:"id"`                // 主键ID
-		ProviderId       int64          `db:"provider_id"`       // 外部流动性提供方ID
-		ExternalOrderId  int64          `db:"external_order_id"` // t_liquidity_external_order.id
-		FillNo           string         `db:"fill_no"`           // 内部成交幂等号
-		ExternalTradeId  string         `db:"external_trade_id"` // 外部成交ID
-		Side             int64          `db:"side"`              // 方向：1买 2卖
-		Price            float64        `db:"price"`             // 成交价格
-		Qty              float64        `db:"qty"`               // 成交数量
-		Amount           float64        `db:"amount"`            // 成交名义金额
-		FeeAmount        float64        `db:"fee_amount"`        // 手续费
-		FeeAsset         string         `db:"fee_asset"`         // 手续费币种
-		LiquidityType    int64          `db:"liquidity_type"`    // 流动性：0未知 1Maker 2Taker
-		TradeTime        int64          `db:"trade_time"`        // 外部成交时间
-		SettlementStatus int64          `db:"settlement_status"` // 内部入账：1待处理 2处理中 3成功 4失败
-		RetryCount       int64          `db:"retry_count"`       // 重试次数
-		NextRetryAt      int64          `db:"next_retry_at"`     // 下次重试时间
-		LastErrorMsg     string         `db:"last_error_msg"`    // 最近错误
-		RawPayload       sql.NullString `db:"raw_payload"`       // 外部成交原文
-		CreateTimes      int64          `db:"create_times"`      // 创建时间
-		UpdateTimes      int64          `db:"update_times"`      // 更新时间
+		Id               int64           `db:"id"`                // 主键ID
+		ProviderId       int64           `db:"provider_id"`       // 外部流动性提供方ID
+		ExternalOrderId  int64           `db:"external_order_id"` // t_liquidity_external_order.id
+		FillNo           string          `db:"fill_no"`           // 内部成交幂等号
+		ExternalTradeId  string          `db:"external_trade_id"` // 外部成交ID
+		Side             int64           `db:"side"`              // 方向：1买 2卖
+		Price            decimal.Decimal `db:"price"`             // 成交价格
+		Qty              decimal.Decimal `db:"qty"`               // 成交数量
+		Amount           decimal.Decimal `db:"amount"`            // 成交名义金额
+		FeeAmount        decimal.Decimal `db:"fee_amount"`        // 手续费
+		FeeAsset         string          `db:"fee_asset"`         // 手续费币种
+		LiquidityType    int64           `db:"liquidity_type"`    // 流动性：0未知 1Maker 2Taker
+		TradeTime        int64           `db:"trade_time"`        // 外部成交时间
+		SettlementStatus int64           `db:"settlement_status"` // 内部入账：1待处理 2处理中 3成功 4失败
+		RetryCount       int64           `db:"retry_count"`       // 重试次数
+		NextRetryAt      int64           `db:"next_retry_at"`     // 下次重试时间
+		LastErrorMsg     string          `db:"last_error_msg"`    // 最近错误
+		RawPayload       sql.NullString  `db:"raw_payload"`       // 外部成交原文
+		CreateTimes      int64           `db:"create_times"`      // 创建时间
+		UpdateTimes      int64           `db:"update_times"`      // 更新时间
 	}
 )
 

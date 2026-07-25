@@ -45,6 +45,15 @@ func (l *CreateProviderLogic) CreateProvider(in *liquidity.CreateProviderReq) (*
 		if err := validateInternalTradingUser(l.ctx, l.svcCtx, in.TradeUserId); err != nil {
 			return nil, err
 		}
+		if _, err := l.svcCtx.ProviderModel.FindOneByProviderTypeTradeUserId(
+			l.ctx,
+			int64(liquidity.ProviderType_PROVIDER_TYPE_INTERNAL),
+			in.TradeUserId,
+		); err == nil {
+			return nil, fmt.Errorf("trade_user_id is already bound to an internal provider")
+		} else if err != models.ErrNotFound {
+			return nil, err
+		}
 	}
 	if in.ProviderType == liquidity.ProviderType_PROVIDER_TYPE_EXTERNAL &&
 		(strings.TrimSpace(in.VenueCode) == "" || strings.TrimSpace(in.CredentialRef) == "") {

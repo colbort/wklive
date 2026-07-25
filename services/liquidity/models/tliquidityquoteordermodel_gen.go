@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -44,27 +46,27 @@ type (
 	}
 
 	TLiquidityQuoteOrder struct {
-		Id              int64   `db:"id"`                // 主键ID
-		QuoteNo         string  `db:"quote_no"`          // 报价订单业务号
-		CycleId         int64   `db:"cycle_id"`          // 报价周期ID
-		ConfigId        int64   `db:"config_id"`         // 交易对流动性配置ID
-		ProviderId      int64   `db:"provider_id"`       // 流动性提供方ID
-		SymbolId        int64   `db:"symbol_id"`         // 内部交易标的ID
-		Side            int64   `db:"side"`              // 方向：1买 2卖
-		LevelNo         int64   `db:"level_no"`          // 档位
-		Price           float64 `db:"price"`             // 报价价格
-		Qty             float64 `db:"qty"`               // 报价数量
-		FilledQty       float64 `db:"filled_qty"`        // 累计成交数量
-		InternalOrderId int64   `db:"internal_order_id"` // trade订单ID
-		InternalOrderNo string  `db:"internal_order_no"` // trade订单号
-		ClientOrderId   string  `db:"client_order_id"`   // 发送给trade的幂等客户订单号
-		Status          int64   `db:"status"`            // 状态：1待提交 2已挂单 3部分成交 4已成交 5撤单中 6已撤单 7失败 8未知
-		ExpireAt        int64   `db:"expire_at"`         // 报价到期时间
-		CancelReason    string  `db:"cancel_reason"`     // 撤单原因
-		LastErrorMsg    string  `db:"last_error_msg"`    // 最近错误
-		Version         int64   `db:"version"`           // 乐观锁版本
-		CreateTimes     int64   `db:"create_times"`      // 创建时间
-		UpdateTimes     int64   `db:"update_times"`      // 更新时间
+		Id              int64           `db:"id"`                // 主键ID
+		QuoteNo         string          `db:"quote_no"`          // 报价订单业务号
+		CycleId         int64           `db:"cycle_id"`          // 报价周期ID
+		ConfigId        int64           `db:"config_id"`         // 交易对流动性配置ID
+		ProviderId      int64           `db:"provider_id"`       // 流动性提供方ID
+		SymbolId        int64           `db:"symbol_id"`         // 内部交易标的ID
+		Side            int64           `db:"side"`              // 方向：1买 2卖
+		LevelNo         int64           `db:"level_no"`          // 档位
+		Price           decimal.Decimal `db:"price"`             // 报价价格
+		Qty             decimal.Decimal `db:"qty"`               // 报价数量
+		FilledQty       decimal.Decimal `db:"filled_qty"`        // 累计成交数量
+		InternalOrderId int64           `db:"internal_order_id"` // trade订单ID
+		InternalOrderNo string          `db:"internal_order_no"` // trade订单号
+		ClientOrderId   string          `db:"client_order_id"`   // 发送给trade的幂等客户订单号
+		Status          int64           `db:"status"`            // 状态：1待提交 2已挂单 3部分成交 4已成交 5撤单中 6已撤单 7失败 8未知
+		ExpireAt        int64           `db:"expire_at"`         // 报价到期时间
+		CancelReason    string          `db:"cancel_reason"`     // 撤单原因
+		LastErrorMsg    string          `db:"last_error_msg"`    // 最近错误
+		Version         int64           `db:"version"`           // 乐观锁版本
+		CreateTimes     int64           `db:"create_times"`      // 创建时间
+		UpdateTimes     int64           `db:"update_times"`      // 更新时间
 	}
 )
 

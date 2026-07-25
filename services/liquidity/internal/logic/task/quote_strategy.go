@@ -252,14 +252,31 @@ func roundDown(value, step float64) float64 {
 	if step <= 0 {
 		return value
 	}
-	return math.Floor((value+1e-12)/step) * step
+	return normalizeStepValue(math.Floor((value+1e-12)/step)*step, step)
 }
 
 func roundUp(value, step float64) float64 {
 	if step <= 0 {
 		return value
 	}
-	return math.Ceil((value-1e-12)/step) * step
+	return normalizeStepValue(math.Ceil((value-1e-12)/step)*step, step)
+}
+
+// normalizeStepValue removes the binary floating-point tail introduced by
+// multiplying an integer number of ticks. Trade validates prices and
+// quantities as decimal values, so values such as 64088.024000000005 must be
+// serialized as 64088.024.
+func normalizeStepValue(value, step float64) float64 {
+	stepText := strconv.FormatFloat(step, 'f', -1, 64)
+	scale := 0
+	if dot := strings.IndexByte(stepText, '.'); dot >= 0 {
+		scale = len(strings.TrimRight(stepText[dot+1:], "0"))
+	}
+	normalized, err := strconv.ParseFloat(strconv.FormatFloat(value, 'f', scale, 64), 64)
+	if err != nil {
+		return value
+	}
+	return normalized
 }
 
 func countSides(orders []*models.TLiquidityQuoteOrder) (int64, int64) {

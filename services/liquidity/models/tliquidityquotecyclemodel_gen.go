@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,24 +44,24 @@ type (
 	}
 
 	TLiquidityQuoteCycle struct {
-		Id                  int64   `db:"id"`                    // 主键ID
-		CycleNo             string  `db:"cycle_no"`              // 报价周期业务号
-		ConfigId            int64   `db:"config_id"`             // 交易对流动性配置ID
-		SymbolId            int64   `db:"symbol_id"`             // 内部交易标的ID
-		ReferencePrice      float64 `db:"reference_price"`       // 本轮参考价
-		ReferenceSource     string  `db:"reference_source"`      // 实际选中的行情源
-		ReferenceSnapshotId string  `db:"reference_snapshot_id"` // 权威行情快照ID
-		ReferenceTime       int64   `db:"reference_time"`        // 行情源时间
-		TargetBidCount      int64   `db:"target_bid_count"`      // 目标买单数
-		TargetAskCount      int64   `db:"target_ask_count"`      // 目标卖单数
-		PlacedBidCount      int64   `db:"placed_bid_count"`      // 成功买单数
-		PlacedAskCount      int64   `db:"placed_ask_count"`      // 成功卖单数
-		Status              int64   `db:"status"`                // 状态：1计算中 2执行中 3成功 4部分成功 5失败 6已过期
-		LastErrorMsg        string  `db:"last_error_msg"`        // 最近错误
-		StartedAt           int64   `db:"started_at"`            // 开始时间
-		FinishedAt          int64   `db:"finished_at"`           // 结束时间
-		CreateTimes         int64   `db:"create_times"`          // 创建时间
-		UpdateTimes         int64   `db:"update_times"`          // 更新时间
+		Id                  int64           `db:"id"`                    // 主键ID
+		CycleNo             string          `db:"cycle_no"`              // 报价周期业务号
+		ConfigId            int64           `db:"config_id"`             // 交易对流动性配置ID
+		SymbolId            int64           `db:"symbol_id"`             // 内部交易标的ID
+		ReferencePrice      decimal.Decimal `db:"reference_price"`       // 本轮参考价
+		ReferenceSource     string          `db:"reference_source"`      // 实际选中的行情源
+		ReferenceSnapshotId string          `db:"reference_snapshot_id"` // 权威行情快照ID
+		ReferenceTime       int64           `db:"reference_time"`        // 行情源时间
+		TargetBidCount      int64           `db:"target_bid_count"`      // 目标买单数
+		TargetAskCount      int64           `db:"target_ask_count"`      // 目标卖单数
+		PlacedBidCount      int64           `db:"placed_bid_count"`      // 成功买单数
+		PlacedAskCount      int64           `db:"placed_ask_count"`      // 成功卖单数
+		Status              int64           `db:"status"`                // 状态：1计算中 2执行中 3成功 4部分成功 5失败 6已过期
+		LastErrorMsg        string          `db:"last_error_msg"`        // 最近错误
+		StartedAt           int64           `db:"started_at"`            // 开始时间
+		FinishedAt          int64           `db:"finished_at"`           // 结束时间
+		CreateTimes         int64           `db:"create_times"`          // 创建时间
+		UpdateTimes         int64           `db:"update_times"`          // 更新时间
 	}
 )
 

@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,43 +44,43 @@ type (
 	}
 
 	TLiquiditySymbolConfig struct {
-		Id                   int64   `db:"id"`                      // 主键ID
-		SymbolId             int64   `db:"symbol_id"`               // trade.t_trade_symbol.id
-		Symbol               string  `db:"symbol"`                  // 内部交易标的代码快照
-		ProductType          int64   `db:"product_type"`            // 产品：1现货 2衍生品
-		ContractType         int64   `db:"contract_type"`           // 合约类型：0不适用 1永续 2交割
-		LiquidityMode        int64   `db:"liquidity_mode"`          // 模式：1内部做市 2外部路由 3内部做市并外部对冲
-		InternalProviderId   int64   `db:"internal_provider_id"`    // 内部做市提供方ID
-		ExternalProviderId   int64   `db:"external_provider_id"`    // 外部流动性或对冲提供方ID
-		ExternalSymbol       string  `db:"external_symbol"`         // 外部场所交易对代码
-		ReferencePriceSource string  `db:"reference_price_source"`  // 权威行情源，可配置多个逗号分隔源
-		ReferencePriceKind   string  `db:"reference_price_kind"`    // 参考价类型
-		QuoteValidityMs      int64   `db:"quote_validity_ms"`       // 行情最大有效期
-		RefreshIntervalMs    int64   `db:"refresh_interval_ms"`     // 最小重新报价间隔
-		QuoteTtlMs           int64   `db:"quote_ttl_ms"`            // 内部报价最大存活时间
-		RepriceThresholdBps  float64 `db:"reprice_threshold_bps"`   // 重新报价阈值，基点
-		BaseSpreadBps        float64 `db:"base_spread_bps"`         // 基础单边点差，基点
-		MaxSpreadBps         float64 `db:"max_spread_bps"`          // 允许的最大单边点差
-		MaxPriceDeviationBps float64 `db:"max_price_deviation_bps"` // 内部报价相对参考价最大偏离
-		PriceTick            float64 `db:"price_tick"`              // 价格步长快照
-		QtyStep              float64 `db:"qty_step"`                // 数量步长快照
-		MinQuoteQty          float64 `db:"min_quote_qty"`           // 单档最小报价数量
-		MaxQuoteQty          float64 `db:"max_quote_qty"`           // 单档最大报价数量，0表示不限
-		MaxQuoteNotional     float64 `db:"max_quote_notional"`      // 单档最大名义金额，0表示不限
-		TargetBaseInventory  float64 `db:"target_base_inventory"`   // 基础资产目标库存
-		MinBaseInventory     float64 `db:"min_base_inventory"`      // 基础资产最低库存
-		MaxBaseInventory     float64 `db:"max_base_inventory"`      // 基础资产最高库存，0表示不限
-		MaxNetExposure       float64 `db:"max_net_exposure"`        // 最大净敞口，0表示不限
-		MaxDailyNotional     float64 `db:"max_daily_notional"`      // 每日最大成交名义金额，0表示不限
-		InventorySkewBps     float64 `db:"inventory_skew_bps"`      // 库存偏移达到上限时的最大报价倾斜
-		HedgeThreshold       float64 `db:"hedge_threshold"`         // 触发外部对冲的净敞口阈值
-		HedgeRatio           float64 `db:"hedge_ratio"`             // 目标对冲比例，0到1
-		SelfTradePrevention  int64   `db:"self_trade_prevention"`   // 自成交保护：1启用 2停用
-		Status               int64   `db:"status"`                  // 状态：1运行 2停用 3暂停 4熔断
-		PauseReason          string  `db:"pause_reason"`            // 暂停或熔断原因
-		Version              int64   `db:"version"`                 // 乐观锁版本
-		CreateTimes          int64   `db:"create_times"`            // 创建时间
-		UpdateTimes          int64   `db:"update_times"`            // 更新时间
+		Id                   int64           `db:"id"`                      // 主键ID
+		SymbolId             int64           `db:"symbol_id"`               // trade.t_trade_symbol.id
+		Symbol               string          `db:"symbol"`                  // 内部交易标的代码快照
+		ProductType          int64           `db:"product_type"`            // 产品：1现货 2衍生品
+		ContractType         int64           `db:"contract_type"`           // 合约类型：0不适用 1永续 2交割
+		LiquidityMode        int64           `db:"liquidity_mode"`          // 模式：1内部做市 2外部路由 3内部做市并外部对冲
+		InternalProviderId   int64           `db:"internal_provider_id"`    // 内部做市提供方ID
+		ExternalProviderId   int64           `db:"external_provider_id"`    // 外部流动性或对冲提供方ID
+		ExternalSymbol       string          `db:"external_symbol"`         // 外部场所交易对代码
+		ReferencePriceSource string          `db:"reference_price_source"`  // 权威行情源，可配置多个逗号分隔源
+		ReferencePriceKind   string          `db:"reference_price_kind"`    // 参考价类型
+		QuoteValidityMs      int64           `db:"quote_validity_ms"`       // 行情最大有效期
+		RefreshIntervalMs    int64           `db:"refresh_interval_ms"`     // 最小重新报价间隔
+		QuoteTtlMs           int64           `db:"quote_ttl_ms"`            // 内部报价最大存活时间
+		RepriceThresholdBps  decimal.Decimal `db:"reprice_threshold_bps"`   // 重新报价阈值，基点
+		BaseSpreadBps        decimal.Decimal `db:"base_spread_bps"`         // 基础单边点差，基点
+		MaxSpreadBps         decimal.Decimal `db:"max_spread_bps"`          // 允许的最大单边点差
+		MaxPriceDeviationBps decimal.Decimal `db:"max_price_deviation_bps"` // 内部报价相对参考价最大偏离
+		PriceTick            decimal.Decimal `db:"price_tick"`              // 价格步长快照
+		QtyStep              decimal.Decimal `db:"qty_step"`                // 数量步长快照
+		MinQuoteQty          decimal.Decimal `db:"min_quote_qty"`           // 单档最小报价数量
+		MaxQuoteQty          decimal.Decimal `db:"max_quote_qty"`           // 单档最大报价数量，0表示不限
+		MaxQuoteNotional     decimal.Decimal `db:"max_quote_notional"`      // 单档最大名义金额，0表示不限
+		TargetBaseInventory  decimal.Decimal `db:"target_base_inventory"`   // 基础资产目标库存
+		MinBaseInventory     decimal.Decimal `db:"min_base_inventory"`      // 基础资产最低库存
+		MaxBaseInventory     decimal.Decimal `db:"max_base_inventory"`      // 基础资产最高库存，0表示不限
+		MaxNetExposure       decimal.Decimal `db:"max_net_exposure"`        // 最大净敞口，0表示不限
+		MaxDailyNotional     decimal.Decimal `db:"max_daily_notional"`      // 每日最大成交名义金额，0表示不限
+		InventorySkewBps     decimal.Decimal `db:"inventory_skew_bps"`      // 库存偏移达到上限时的最大报价倾斜
+		HedgeThreshold       decimal.Decimal `db:"hedge_threshold"`         // 触发外部对冲的净敞口阈值
+		HedgeRatio           decimal.Decimal `db:"hedge_ratio"`             // 目标对冲比例，0到1
+		SelfTradePrevention  int64           `db:"self_trade_prevention"`   // 自成交保护：1启用 2停用
+		Status               int64           `db:"status"`                  // 状态：1运行 2停用 3暂停 4熔断
+		PauseReason          string          `db:"pause_reason"`            // 暂停或熔断原因
+		Version              int64           `db:"version"`                 // 乐观锁版本
+		CreateTimes          int64           `db:"create_times"`            // 创建时间
+		UpdateTimes          int64           `db:"update_times"`            // 更新时间
 	}
 )
 

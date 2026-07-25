@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,17 +44,17 @@ type (
 	}
 
 	TLiquidityStrategyLevel struct {
-		Id           int64   `db:"id"`             // 主键ID
-		ConfigId     int64   `db:"config_id"`      // 交易对流动性配置ID
-		LevelNo      int64   `db:"level_no"`       // 深度档位，从1开始
-		BidSpreadBps float64 `db:"bid_spread_bps"` // 买单相对参考价向下偏移基点
-		AskSpreadBps float64 `db:"ask_spread_bps"` // 卖单相对参考价向上偏移基点
-		BidQty       float64 `db:"bid_qty"`        // 买单基础资产数量
-		AskQty       float64 `db:"ask_qty"`        // 卖单基础资产数量
-		Enabled      int64   `db:"enabled"`        // 启用：1是 2否
-		Version      int64   `db:"version"`        // 乐观锁版本
-		CreateTimes  int64   `db:"create_times"`   // 创建时间
-		UpdateTimes  int64   `db:"update_times"`   // 更新时间
+		Id           int64           `db:"id"`             // 主键ID
+		ConfigId     int64           `db:"config_id"`      // 交易对流动性配置ID
+		LevelNo      int64           `db:"level_no"`       // 深度档位，从1开始
+		BidSpreadBps decimal.Decimal `db:"bid_spread_bps"` // 买单相对参考价向下偏移基点
+		AskSpreadBps decimal.Decimal `db:"ask_spread_bps"` // 卖单相对参考价向上偏移基点
+		BidQty       decimal.Decimal `db:"bid_qty"`        // 买单基础资产数量
+		AskQty       decimal.Decimal `db:"ask_qty"`        // 卖单基础资产数量
+		Enabled      int64           `db:"enabled"`        // 启用：1是 2否
+		Version      int64           `db:"version"`        // 乐观锁版本
+		CreateTimes  int64           `db:"create_times"`   // 创建时间
+		UpdateTimes  int64           `db:"update_times"`   // 更新时间
 	}
 )
 

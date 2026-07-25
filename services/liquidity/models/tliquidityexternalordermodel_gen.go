@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -46,38 +48,38 @@ type (
 	}
 
 	TLiquidityExternalOrder struct {
-		Id                    int64          `db:"id"`                       // 主键ID
-		OrderNo               string         `db:"order_no"`                 // 内部外部订单业务号
-		RequestNo             string         `db:"request_no"`               // 外部下单幂等请求号
-		ProviderId            int64          `db:"provider_id"`              // 外部流动性提供方ID
-		ConfigId              int64          `db:"config_id"`                // 交易对流动性配置ID
-		SymbolId              int64          `db:"symbol_id"`                // 内部交易标的ID
-		ExternalSymbol        string         `db:"external_symbol"`          // 外部交易对
-		Purpose               int64          `db:"purpose"`                  // 用途：1用户订单路由 2净敞口对冲 3外部做市
-		ReferenceType         string         `db:"reference_type"`           // 关联类型：TRADE_ORDER/HEDGE_TASK/QUOTE
-		ReferenceId           int64          `db:"reference_id"`             // 关联记录ID
-		Side                  int64          `db:"side"`                     // 方向：1买 2卖
-		OrderType             int64          `db:"order_type"`               // 类型：1限价 2市价
-		TimeInForce           int64          `db:"time_in_force"`            // 有效方式：1GTC 2IOC 3FOK 4POST_ONLY
-		Price                 float64        `db:"price"`                    // 委托价格
-		Qty                   float64        `db:"qty"`                      // 委托数量
-		FilledQty             float64        `db:"filled_qty"`               // 累计成交数量
-		AvgPrice              float64        `db:"avg_price"`                // 成交均价
-		FeeAmount             float64        `db:"fee_amount"`               // 累计手续费
-		FeeAsset              string         `db:"fee_asset"`                // 手续费币种
-		ExternalOrderId       sql.NullString `db:"external_order_id"`        // 外部订单ID；提交成功前为空
-		ExternalClientOrderId string         `db:"external_client_order_id"` // 外部客户订单号
-		Status                int64          `db:"status"`                   // 状态：1待提交 2已提交 3部分成交 4已成交 5撤单中 6已撤单 7拒绝 8失败 9未知
-		SubmittedAt           int64          `db:"submitted_at"`             // 提交时间
-		FinishedAt            int64          `db:"finished_at"`              // 终态时间
-		RetryCount            int64          `db:"retry_count"`              // 重试次数
-		NextRetryAt           int64          `db:"next_retry_at"`            // 下次重试时间
-		LastErrorCode         string         `db:"last_error_code"`          // 最近外部错误码
-		LastErrorMsg          string         `db:"last_error_msg"`           // 最近错误
-		RawResponse           sql.NullString `db:"raw_response"`             // 最近一次外部响应
-		Version               int64          `db:"version"`                  // 乐观锁版本
-		CreateTimes           int64          `db:"create_times"`             // 创建时间
-		UpdateTimes           int64          `db:"update_times"`             // 更新时间
+		Id                    int64           `db:"id"`                       // 主键ID
+		OrderNo               string          `db:"order_no"`                 // 内部外部订单业务号
+		RequestNo             string          `db:"request_no"`               // 外部下单幂等请求号
+		ProviderId            int64           `db:"provider_id"`              // 外部流动性提供方ID
+		ConfigId              int64           `db:"config_id"`                // 交易对流动性配置ID
+		SymbolId              int64           `db:"symbol_id"`                // 内部交易标的ID
+		ExternalSymbol        string          `db:"external_symbol"`          // 外部交易对
+		Purpose               int64           `db:"purpose"`                  // 用途：1用户订单路由 2净敞口对冲 3外部做市
+		ReferenceType         string          `db:"reference_type"`           // 关联类型：TRADE_ORDER/HEDGE_TASK/QUOTE
+		ReferenceId           int64           `db:"reference_id"`             // 关联记录ID
+		Side                  int64           `db:"side"`                     // 方向：1买 2卖
+		OrderType             int64           `db:"order_type"`               // 类型：1限价 2市价
+		TimeInForce           int64           `db:"time_in_force"`            // 有效方式：1GTC 2IOC 3FOK 4POST_ONLY
+		Price                 decimal.Decimal `db:"price"`                    // 委托价格
+		Qty                   decimal.Decimal `db:"qty"`                      // 委托数量
+		FilledQty             decimal.Decimal `db:"filled_qty"`               // 累计成交数量
+		AvgPrice              decimal.Decimal `db:"avg_price"`                // 成交均价
+		FeeAmount             decimal.Decimal `db:"fee_amount"`               // 累计手续费
+		FeeAsset              string          `db:"fee_asset"`                // 手续费币种
+		ExternalOrderId       sql.NullString  `db:"external_order_id"`        // 外部订单ID；提交成功前为空
+		ExternalClientOrderId string          `db:"external_client_order_id"` // 外部客户订单号
+		Status                int64           `db:"status"`                   // 状态：1待提交 2已提交 3部分成交 4已成交 5撤单中 6已撤单 7拒绝 8失败 9未知
+		SubmittedAt           int64           `db:"submitted_at"`             // 提交时间
+		FinishedAt            int64           `db:"finished_at"`              // 终态时间
+		RetryCount            int64           `db:"retry_count"`              // 重试次数
+		NextRetryAt           int64           `db:"next_retry_at"`            // 下次重试时间
+		LastErrorCode         string          `db:"last_error_code"`          // 最近外部错误码
+		LastErrorMsg          string          `db:"last_error_msg"`           // 最近错误
+		RawResponse           sql.NullString  `db:"raw_response"`             // 最近一次外部响应
+		Version               int64           `db:"version"`                  // 乐观锁版本
+		CreateTimes           int64           `db:"create_times"`             // 创建时间
+		UpdateTimes           int64           `db:"update_times"`             // 更新时间
 	}
 )
 
