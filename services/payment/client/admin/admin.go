@@ -117,6 +117,8 @@ type (
 	QueryMyRechargeOrderStatusReq     = payment.QueryMyRechargeOrderStatusReq
 	QueryMyRechargeOrderStatusResp    = payment.QueryMyRechargeOrderStatusResp
 	RetryNotifyReq                    = payment.RetryNotifyReq
+	ThirdPartyNotifyReq               = payment.ThirdPartyNotifyReq
+	ThirdPartyNotifyResp              = payment.ThirdPartyNotifyResp
 	UpdateCryptoRechargeAddressReq    = payment.UpdateCryptoRechargeAddressReq
 	UpdateCryptoRechargeTxReq         = payment.UpdateCryptoRechargeTxReq
 	UpdateCryptoWalletAccountReq      = payment.UpdateCryptoWalletAccountReq

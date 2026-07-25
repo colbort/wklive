@@ -61,6 +61,7 @@ type TenantPayAccount {
 	privateKeyCipher    string `json:"privateKeyCipher"`
 	publicKey           string `json:"publicKey"`
 	certCipher          string `json:"certCipher"`
+	credentialRef       string `json:"credentialRef"`
 	extConfig           string `json:"extConfig"`
 	enabled             int64  `json:"enabled"` // 0未知 1启用 2禁用
 	isDefault           int64  `json:"isDefault"` // 是否默认账号：1是 2否
@@ -170,6 +171,10 @@ type RechargeOrder {
 	remark       string `json:"remark"`
 	createTimes  int64  `json:"createTimes"`
 	updateTimes  int64  `json:"updateTimes"`
+	creditStatus int64 `json:"creditStatus"`
+	creditedTime int64 `json:"creditedTime"`
+	creditRetryCount int64 `json:"creditRetryCount"`
+	lastCreditError string `json:"lastCreditError"`
 }
 
 type PayNotifyLog {
@@ -186,6 +191,7 @@ type PayNotifyLog {
 	errorMessage  string `json:"errorMessage"`
 	notifyTime    int64  `json:"notifyTime"`
 	createTimes   int64  `json:"createTimes"`
+	notifyId      string `json:"notifyId"`
 }
 
 type CryptoRechargeAddress {
@@ -414,6 +420,7 @@ type CreateTenantPayAccountReq {
 	privateKeyCipher    string `json:"privateKeyCipher,optional"`
 	publicKey           string `json:"publicKey,optional"`
 	certCipher          string `json:"certCipher,optional"`
+	credentialRef       string `json:"credentialRef,optional"`
 	extConfig           string `json:"extConfig,optional"`
 	enabled             int64  `json:"enabled"`
 	isDefault           int64  `json:"isDefault"` // 是否默认账号：1是 2否
@@ -432,6 +439,7 @@ type UpdateTenantPayAccountReq {
 	privateKeyCipher string `json:"privateKeyCipher,optional"`
 	publicKey        string `json:"publicKey,optional"`
 	certCipher       string `json:"certCipher,optional"`
+	credentialRef    string `json:"credentialRef,optional"`
 	extConfig        string `json:"extConfig,optional"`
 	enabled          int64  `json:"enabled"`
 	isDefault        int64  `json:"isDefault"` // 是否默认账号：1是 2否
@@ -1211,4 +1219,3 @@ service admin {
 	@handler ListCryptoRechargeTxs
 	get /crypto-recharge-txs (ListCryptoRechargeTxsReq) returns (ListCryptoRechargeTxsResp)
 }
-

@@ -3,6 +3,7 @@ package svc
 import (
 	mq "wklive/common/mq/kafka"
 	"wklive/services/payment/internal/config"
+	"wklive/services/payment/internal/provider"
 	"wklive/services/payment/models"
 
 	"wklive/proto/asset"
@@ -32,6 +33,9 @@ type ServiceContext struct {
 	CryptoRechargeAddressModel models.TCryptoRechargeAddressModel
 	CryptoWalletAccountModel   models.TCryptoWalletAccountModel
 	CryptoRechargeTxModel      models.TCryptoRechargeTxModel
+	PayRequestLogModel         models.TPayRequestLogModel
+	PayOutboxModel             models.TPayOutboxModel
+	PaymentAdapters            *provider.Registry
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -57,5 +61,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		CryptoRechargeAddressModel: models.NewTCryptoRechargeAddressModel(conn, c.CacheRedis),
 		CryptoWalletAccountModel:   models.NewTCryptoWalletAccountModel(conn, c.CacheRedis),
 		CryptoRechargeTxModel:      models.NewTCryptoRechargeTxModel(conn, c.CacheRedis),
+		PayRequestLogModel:         models.NewTPayRequestLogModel(conn, c.CacheRedis),
+		PayOutboxModel:             models.NewTPayOutboxModel(conn, c.CacheRedis),
+		PaymentAdapters:            provider.NewRegistry(),
 	}
 }

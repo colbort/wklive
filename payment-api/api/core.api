@@ -1,0 +1,24 @@
+syntax = "v1"
+
+type NotifyReq {
+	platformCode string            `path:"platformCode"`
+	tenantId     int64             `path:"tenantId"`
+	accountCode  string            `path:"accountCode"`
+	headers      map[string]string `headers:"headers,optional"`
+	form         map[string]string `form:"form,optional"`
+	query        map[string]string `query:"query,optional"`
+	body         []byte            `body:"body,optional"`
+}
+
+@server (
+	prefix: /callback
+	group:  callback
+)
+service payment-api {
+	@handler PaymentNotify
+	post /payment/:platformCode/:tenantId/:accountCode (NotifyReq) returns (string)
+
+	@handler PayoutNotify
+	post /payout/:platformCode/:tenantId/:accountCode (NotifyReq) returns (string)
+}
+

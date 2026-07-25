@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"strconv"
 
 	"wklive/common/conv"
@@ -90,12 +91,27 @@ func markRechargeOrderSuccessAndCredit(ctx context.Context, svcCtx *svc.ServiceC
 			current.ThirdTradeNo = sql.NullString{String: thirdTradeNo, Valid: true}
 		}
 		current.PaidTime = now
+		current.CreditStatus = int64(payment.CreditStatus_CREDIT_STATUS_PENDING)
 		current.UpdateTimes = now
 
-		if err := creditRechargeOrderAsset(txCtx, svcCtx, current, remark); err != nil {
+		if err := rechargeOrderModel.Update(txCtx, current); err != nil {
 			return err
 		}
-		return rechargeOrderModel.Update(txCtx, current)
+		payload, err := json.Marshal(map[string]any{
+			"tenantId": current.TenantId, "userId": current.UserId,
+			"walletType": current.WalletType, "currency": current.Currency,
+			"amount": current.PayAmount, "remark": remark,
+		})
+		if err != nil {
+			return err
+		}
+		outboxModel := models.NewTPayOutboxModel(conn, svcCtx.Config.CacheRedis)
+		_, err = outboxModel.Insert(txCtx, &models.TPayOutbox{
+			EventNo: "RECHARGE_CREDIT_" + current.OrderNo, EventType: "PAYMENT_RECHARGE_CREDIT",
+			AggregateType: "RECHARGE_ORDER", AggregateId: current.Id, AggregateNo: current.OrderNo,
+			Payload: string(payload), Status: 1, NextRetryAt: now, CreateTimes: now, UpdateTimes: now,
+		})
+		return err
 	})
 }
 
@@ -292,6 +308,7 @@ func toTenantPayAccountProto(item *models.TTenantPayAccount) *payment.TenantPayA
 		PrivateKeyCipher:    item.PrivateKeyCipher.String,
 		PublicKey:           item.PublicKey.String,
 		CertCipher:          item.CertCipher.String,
+		CredentialRef:       item.CredentialRef,
 		ExtConfig:           item.ExtConfig.String,
 		Enabled:             common.Enable(item.Enabled),
 		IsDefault:           common.YesNo(item.IsDefault),
@@ -396,41 +413,45 @@ func toRechargeOrderProto(item *models.TRechargeOrder) *payment.RechargeOrder {
 		return nil
 	}
 	return &payment.RechargeOrder{
-		Id:           item.Id,
-		TenantId:     item.TenantId,
-		UserId:       item.UserId,
-		OrderNo:      item.OrderNo,
-		BizOrderNo:   item.BizOrderNo.String,
-		PlatformId:   item.PlatformId,
-		ProductId:    item.ProductId,
-		AccountId:    item.AccountId,
-		ChannelId:    item.ChannelId,
-		RechargeType: payment.RechargeType(item.RechargeType),
-		WalletType:   common.WalletType(item.WalletType),
-		Currency:     item.Currency,
-		OrderAmount:  item.OrderAmount,
-		PayAmount:    item.PayAmount,
-		FeeAmount:    item.FeeAmount,
-		Subject:      item.Subject.String,
-		Body:         item.Body.String,
-		ClientType:   payment.ClientType(item.ClientType),
-		ClientIp:     item.ClientIp.String,
-		Status:       payment.PayOrderStatus(item.Status),
-		ThirdTradeNo: item.ThirdTradeNo.String,
-		ThirdOrderNo: item.ThirdOrderNo.String,
-		PayUrl:       item.PayUrl.String,
-		QrContent:    item.QrContent.String,
-		VoucherImage: item.VoucherImage,
-		RequestData:  item.RequestData.String,
-		ResponseData: item.ResponseData.String,
-		NotifyData:   item.NotifyData.String,
-		ExpireTime:   item.ExpireTime,
-		PaidTime:     item.PaidTime,
-		NotifyTime:   item.NotifyTime,
-		CloseTime:    item.CloseTime,
-		Remark:       item.Remark.String,
-		CreateTimes:  item.CreateTimes,
-		UpdateTimes:  item.UpdateTimes,
+		Id:               item.Id,
+		TenantId:         item.TenantId,
+		UserId:           item.UserId,
+		OrderNo:          item.OrderNo,
+		BizOrderNo:       item.BizOrderNo.String,
+		PlatformId:       item.PlatformId,
+		ProductId:        item.ProductId,
+		AccountId:        item.AccountId,
+		ChannelId:        item.ChannelId,
+		RechargeType:     payment.RechargeType(item.RechargeType),
+		WalletType:       common.WalletType(item.WalletType),
+		Currency:         item.Currency,
+		OrderAmount:      item.OrderAmount,
+		PayAmount:        item.PayAmount,
+		FeeAmount:        item.FeeAmount,
+		Subject:          item.Subject.String,
+		Body:             item.Body.String,
+		ClientType:       payment.ClientType(item.ClientType),
+		ClientIp:         item.ClientIp.String,
+		Status:           payment.PayOrderStatus(item.Status),
+		ThirdTradeNo:     item.ThirdTradeNo.String,
+		ThirdOrderNo:     item.ThirdOrderNo.String,
+		PayUrl:           item.PayUrl.String,
+		QrContent:        item.QrContent.String,
+		VoucherImage:     item.VoucherImage,
+		RequestData:      item.RequestData.String,
+		ResponseData:     item.ResponseData.String,
+		NotifyData:       item.NotifyData.String,
+		ExpireTime:       item.ExpireTime,
+		PaidTime:         item.PaidTime,
+		NotifyTime:       item.NotifyTime,
+		CloseTime:        item.CloseTime,
+		Remark:           item.Remark.String,
+		CreateTimes:      item.CreateTimes,
+		UpdateTimes:      item.UpdateTimes,
+		CreditStatus:     payment.CreditStatus(item.CreditStatus),
+		CreditedTime:     item.CreditedTime,
+		CreditRetryCount: item.CreditRetryCount,
+		LastCreditError:  item.LastCreditError,
 	}
 }
 

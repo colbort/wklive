@@ -1458,40 +1458,44 @@ type Quote struct {
 }
 
 type RechargeOrder struct {
-	Id           int64  `json:"id"`
-	TenantId     int64  `json:"tenantId"`
-	UserId       int64  `json:"userId"`
-	OrderNo      string `json:"orderNo"`
-	BizOrderNo   string `json:"bizOrderNo"`
-	PlatformId   int64  `json:"platformId"`
-	ProductId    int64  `json:"productId"`
-	AccountId    int64  `json:"accountId"`
-	ChannelId    int64  `json:"channelId"`
-	WalletType   int64  `json:"walletType"` // 钱包类型:1现货 2资金 3合约 4理财 5期权
-	Currency     string `json:"currency"`
-	OrderAmount  int64  `json:"orderAmount"`
-	PayAmount    int64  `json:"payAmount"`
-	FeeAmount    int64  `json:"feeAmount"`
-	Subject      string `json:"subject"`
-	Body         string `json:"body"`
-	ClientType   int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
-	ClientIp     string `json:"clientIp"`
-	Status       int64  `json:"status"` // 0未知 1待支付 2支付中 3成功 4失败 5已关闭 6已退款
-	ThirdTradeNo string `json:"thirdTradeNo"`
-	ThirdOrderNo string `json:"thirdOrderNo"`
-	PayUrl       string `json:"payUrl"`
-	QrContent    string `json:"qrContent"`
-	VoucherImage string `json:"voucherImage"`
-	RequestData  string `json:"requestData"`
-	ResponseData string `json:"responseData"`
-	NotifyData   string `json:"notifyData"`
-	ExpireTime   int64  `json:"expireTime"`
-	PaidTime     int64  `json:"paidTime"`
-	NotifyTime   int64  `json:"notifyTime"`
-	CloseTime    int64  `json:"closeTime"`
-	Remark       string `json:"remark"`
-	CreateTimes  int64  `json:"createTimes"`
-	UpdateTimes  int64  `json:"updateTimes"`
+	Id               int64  `json:"id"`
+	TenantId         int64  `json:"tenantId"`
+	UserId           int64  `json:"userId"`
+	OrderNo          string `json:"orderNo"`
+	BizOrderNo       string `json:"bizOrderNo"`
+	PlatformId       int64  `json:"platformId"`
+	ProductId        int64  `json:"productId"`
+	AccountId        int64  `json:"accountId"`
+	ChannelId        int64  `json:"channelId"`
+	WalletType       int64  `json:"walletType"` // 钱包类型:1现货 2资金 3合约 4理财 5期权
+	Currency         string `json:"currency"`
+	OrderAmount      int64  `json:"orderAmount"`
+	PayAmount        int64  `json:"payAmount"`
+	FeeAmount        int64  `json:"feeAmount"`
+	Subject          string `json:"subject"`
+	Body             string `json:"body"`
+	ClientType       int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
+	ClientIp         string `json:"clientIp"`
+	Status           int64  `json:"status"` // 0未知 1待支付 2支付中 3成功 4失败 5已关闭 6已退款
+	ThirdTradeNo     string `json:"thirdTradeNo"`
+	ThirdOrderNo     string `json:"thirdOrderNo"`
+	PayUrl           string `json:"payUrl"`
+	QrContent        string `json:"qrContent"`
+	VoucherImage     string `json:"voucherImage"`
+	RequestData      string `json:"requestData"`
+	ResponseData     string `json:"responseData"`
+	NotifyData       string `json:"notifyData"`
+	ExpireTime       int64  `json:"expireTime"`
+	PaidTime         int64  `json:"paidTime"`
+	NotifyTime       int64  `json:"notifyTime"`
+	CloseTime        int64  `json:"closeTime"`
+	Remark           string `json:"remark"`
+	CreateTimes      int64  `json:"createTimes"`
+	UpdateTimes      int64  `json:"updateTimes"`
+	CreditStatus     int64  `json:"creditStatus"`
+	CreditedTime     int64  `json:"creditedTime"`
+	CreditRetryCount int64  `json:"creditRetryCount"`
+	LastCreditError  string `json:"lastCreditError"`
 }
 
 type RedeemData struct {

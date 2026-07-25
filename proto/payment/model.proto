@@ -66,6 +66,7 @@ message TenantPayAccount {
   string api_secret_cipher = 18; // API Secret密文
   string private_key_cipher = 19; // 私钥密文
   string cert_cipher = 20; // 证书密文
+  string credential_ref = 21; // 密钥管理系统引用
 }
 
 message TenantPayChannel {
@@ -169,6 +170,10 @@ message RechargeOrder {
   int64 update_times = 33; // 更新时间
   payment.RechargeType recharge_type = 34; // 充值类型：1虚拟币 2三方充值 3银行卡 4人工充值 5其他
   common.WalletType wallet_type = 35; // 钱包类型
+  payment.CreditStatus credit_status = 36;
+  int64 credited_time = 37;
+  int64 credit_retry_count = 38;
+  string last_credit_error = 39;
 }
 
 message PayNotifyLog {
@@ -185,6 +190,7 @@ message PayNotifyLog {
   string error_message = 11; // 错误信息
   int64 notify_time = 12; // 回调时间
   int64 create_times = 13; // 创建时间
+  string notify_id = 14; // 三方通知唯一标识
 }
 
 message VisiblePayChannel {

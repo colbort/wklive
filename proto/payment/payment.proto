@@ -195,6 +195,28 @@ message GetMyCryptoRechargeTxResp {
 }
 
 // APP端接口
+message ThirdPartyNotifyReq {
+  string platform_code = 1;
+  string account_code = 2;
+  map<string, string> headers = 3;
+  map<string, string> query = 4;
+  bytes body = 5;
+  int64 tenant_id = 6;
+  map<string, string> form = 7;
+}
+
+message ThirdPartyNotifyResp {
+  int32 http_status = 1;
+  string content_type = 2;
+  bytes body = 3;
+}
+
+// 三方支付公网回调，仅供 payment-api 调用。
+service Callback {
+  rpc PaymentNotify(ThirdPartyNotifyReq) returns (ThirdPartyNotifyResp);
+  rpc PayoutNotify(ThirdPartyNotifyReq) returns (ThirdPartyNotifyResp);
+}
+
 service App {
   // 当前用户累计充值统计（展示用）
   rpc GetMyRechargeStat(GetMyRechargeStatReq) returns (GetMyRechargeStatResp);
@@ -393,6 +415,7 @@ message CreateTenantPayAccountReq {
   common.Enable enabled = 15; // 状态,0表示全部，1表示启用，2表示禁用
   common.YesNo is_default = 16;
   string remark = 17;
+  string credential_ref = 18;
 }
 
 message UpdateTenantPayAccountReq {
@@ -411,6 +434,7 @@ message UpdateTenantPayAccountReq {
   common.Enable enabled = 13; // 状态,0表示全部，1表示启用，2表示禁用
   common.YesNo is_default = 14;
   string remark = 15;
+  string credential_ref = 16;
 }
 
 message GetTenantPayAccountReq {

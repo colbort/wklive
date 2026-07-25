@@ -1,14 +1,17 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"strings"
 
 	pb "wklive/proto/payment"
 	"wklive/services/payment/internal/config"
+	"wklive/services/payment/internal/outbox"
 	admin "wklive/services/payment/internal/server/admin"
 	app "wklive/services/payment/internal/server/app"
+	callback "wklive/services/payment/internal/server/callback"
 	"wklive/services/payment/internal/svc"
 
 	"wklive/common/etcd"
@@ -36,10 +39,14 @@ func main() {
 	}
 
 	ctx := svc.NewServiceContext(c)
+	runCtx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	outbox.Start(runCtx, ctx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		pb.RegisterAdminServer(grpcServer, admin.NewAdminServer(ctx))
 		pb.RegisterAppServer(grpcServer, app.NewAppServer(ctx))
+		pb.RegisterCallbackServer(grpcServer, callback.NewCallbackServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

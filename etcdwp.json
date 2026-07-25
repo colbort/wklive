@@ -32,8 +32,20 @@
     "key" : "\/wklive\/itick-rpc\/config"
   },
   {
+    "value" : "Name: liquidityAdmin\nHost: 0.0.0.0\nPort: 9999\n\nSystemRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: system.rpc\nLiquidityRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: liquidity.rpc\n",
+    "key" : "\/wklive\/liquidity-admin-api\/config"
+  },
+  {
+    "value" : "Name: liquidity.rpc\nListenOn: 0.0.0.0:8089\nMode: dev\n\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: liquidity.rpc\n\nTradeRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: trade.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: asset.rpc\n\nItickRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: itick.rpc\n\nUserRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: user.rpc\n\nMarketAuthority: itick-ws\nPriceEngineAuthority: price-engine",
+    "key" : "\/wklive\/liquidity-rpc\/config"
+  },
+  {
     "value" : "Name: option.rpc\nListenOn: 0.0.0.0:8085\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: option.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   \n\nDelayQueue:\n  Enabled: true\n  Beanstalks:\n  - Endpoint: 127.0.0.1:11300\n    Tube: option-lifecycle\n  - Endpoint: 127.0.0.1:11301\n    Tube: option-lifecycle",
     "key" : "\/wklive\/option-rpc\/config"
+  },
+  {
+    "value" : "Name: payment-api\nHost: 0.0.0.0\nPort: 3333\nTimeout: 10000\nMaxBytes: 1048576\n\nPaymentRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n      - \"127.0.0.1:2379\"\n    Key: payment.rpc",
+    "key" : "\/wklive\/payment-api\/config"
   },
   {
     "value" : "Name: payment.rpc\nListenOn: 0.0.0.0:8083\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: payment.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc  ",
@@ -44,19 +56,11 @@
     "key" : "\/wklive\/staking-rpc\/config"
   },
   {
-    "value" : "Name: liquidityAdmin\nHost: 0.0.0.0\nPort: 8890\n\nSystemRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: system.rpc\n\nLiquidityRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: liquidity.rpc",
-    "key" : "\/wklive\/liquidity-admin-api\/config"
-  },
-  {
-    "value" : "Name: liquidity.rpc\nListenOn: 0.0.0.0:8091\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: liquidity.rpc\n\nMQ:\n  Brokers:\n  - 127.0.0.1:9092\n  MaxAttempts: 5\n\nTradeRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: trade.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: asset.rpc\n\nItickRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: itick.rpc\n\nUserRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: user.rpc\n\nMarketAuthority: itick-ws\nPriceEngineAuthority: price-engine",
-    "key" : "\/wklive\/liquidity-rpc\/config"
-  },
-  {
     "value" : "Name: system.rpc\nListenOn: 0.0.0.0:8080\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: system.rpc\n\nChatRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n      - \"127.0.0.1:2379\"\n    Key: chat.rpc",
     "key" : "\/wklive\/system-rpc\/config"
   },
   {
-    "value" : "Name: trade.rpc\nListenOn: 0.0.0.0:8087\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: trade.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   \n\nItickRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: itick.rpc\n\nMarketAuthority: itick-ws\nPriceEngineAuthority: price-engine\n\nDelayQueue:\n  Enabled: true\n  Beanstalks:\n  - Endpoint: 127.0.0.1:11300\n    Tube: trade-seconds\n  - Endpoint: 127.0.0.1:11301\n    Tube: trade-seconds",
+    "value" : "Name: trade.rpc\nListenOn: 0.0.0.0:8087\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: trade.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: asset.rpc   \n\nItickRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: itick.rpc\n\nMarketAuthority: itick-ws\nPriceEngineAuthority: price-engine\n\nDelayQueue:\n  Enabled: true\n  Beanstalks:\n  - Endpoint: 127.0.0.1:11300\n    Tube: trade-seconds\n  - Endpoint: 127.0.0.1:11301\n    Tube: trade-seconds\n\nLiquidityOrderArchive:\n  Enabled: true\n  RetentionDays: 30\n  BatchSize: 500",
     "key" : "\/wklive\/trade-rpc\/config"
   },
   {

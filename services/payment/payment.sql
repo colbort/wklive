@@ -59,6 +59,7 @@ CREATE TABLE `t_tenant_pay_account` (
   `private_key_cipher` longtext COMMENT '私钥密文',
   `public_key` longtext COMMENT '公钥',
   `cert_cipher` longtext COMMENT '证书密文',
+  `credential_ref` varchar(255) NOT NULL DEFAULT '' COMMENT '密钥管理系统引用，生产环境优先使用',
   `ext_config` json DEFAULT NULL COMMENT '扩展配置',
   `enabled` tinyint NOT NULL DEFAULT 1 COMMENT '启用状态：1启用 2禁用',
   `is_default` tinyint NOT NULL DEFAULT 2 COMMENT '是否默认账号：1是 2否',
@@ -186,6 +187,10 @@ CREATE TABLE `t_recharge_order` (
   `request_data` json DEFAULT NULL COMMENT '请求快照',
   `response_data` json DEFAULT NULL COMMENT '响应快照',
   `notify_data` json DEFAULT NULL COMMENT '回调数据',
+  `credit_status` tinyint NOT NULL DEFAULT 1 COMMENT '入账状态：1待入账 2入账中 3入账成功 4入账失败',
+  `credited_time` bigint NOT NULL DEFAULT 0 COMMENT '资产入账时间',
+  `credit_retry_count` int NOT NULL DEFAULT 0 COMMENT '入账重试次数',
+  `last_credit_error` varchar(1000) NOT NULL DEFAULT '' COMMENT '最近入账错误',
   `expire_time` bigint NOT NULL DEFAULT 0 COMMENT '过期时间',
   `paid_time` bigint NOT NULL DEFAULT 0 COMMENT '支付时间',
   `notify_time` bigint NOT NULL DEFAULT 0 COMMENT '回调时间',
@@ -212,12 +217,14 @@ CREATE TABLE `t_recharge_notify_log` (
   `channel_id` bigint DEFAULT NULL COMMENT '通道ID',
   `notify_status` tinyint NOT NULL DEFAULT 1 COMMENT '处理状态：1待处理 2成功 3失败',
   `notify_body` longtext COMMENT '回调原文',
+  `notify_id` varchar(128) NOT NULL DEFAULT '' COMMENT '三方通知唯一标识或请求内容哈希',
   `sign_result` tinyint NOT NULL DEFAULT 0 COMMENT '验签结果：1未验 2通过 3失败',
   `process_result` varchar(255) DEFAULT NULL COMMENT '处理结果',
   `error_message` varchar(1000) DEFAULT NULL COMMENT '错误信息',
   `notify_time` bigint NOT NULL DEFAULT 0 COMMENT '回调时间',
   `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_platform_notify` (`platform_id`, `notify_id`),
   KEY `idx_tenant_order_no` (`tenant_id`, `order_no`),
   KEY `idx_order_id` (`order_id`),
   KEY `idx_notify_status` (`notify_status`)
@@ -280,6 +287,51 @@ CREATE TABLE `t_withdraw_notify_log` (
   KEY `idx_order_id` (`order_id`),
   KEY `idx_notify_status` (`notify_status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='提现回调日志表'; 
+
+CREATE TABLE `t_pay_request_log` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `order_type` tinyint NOT NULL COMMENT '订单类型：1充值 2提现',
+  `order_id` bigint NOT NULL COMMENT '订单ID',
+  `order_no` varchar(64) NOT NULL COMMENT '平台订单号',
+  `platform_id` bigint NOT NULL COMMENT '平台ID',
+  `account_id` bigint NOT NULL COMMENT '商户账号ID',
+  `request_type` tinyint NOT NULL COMMENT '请求类型：1下单 2查单 3关单 4退款 5代付',
+  `request_no` varchar(64) NOT NULL COMMENT '请求唯一编号',
+  `request_data` json DEFAULT NULL COMMENT '脱敏后的请求数据',
+  `response_data` json DEFAULT NULL COMMENT '三方响应数据',
+  `http_status` int NOT NULL DEFAULT 0 COMMENT 'HTTP状态码',
+  `third_code` varchar(64) NOT NULL DEFAULT '' COMMENT '三方响应码',
+  `third_message` varchar(1000) NOT NULL DEFAULT '' COMMENT '三方响应说明',
+  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1处理中 2成功 3失败 4结果未知',
+  `duration_ms` bigint NOT NULL DEFAULT 0 COMMENT '调用耗时',
+  `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_request_no` (`request_no`),
+  KEY `idx_order_no` (`order_no`),
+  KEY `idx_order` (`order_type`, `order_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='支付三方请求流水';
+
+CREATE TABLE `t_pay_outbox` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `event_no` varchar(64) NOT NULL COMMENT '事件唯一编号',
+  `event_type` varchar(64) NOT NULL COMMENT '事件类型',
+  `aggregate_type` varchar(32) NOT NULL COMMENT '聚合类型',
+  `aggregate_id` bigint NOT NULL COMMENT '聚合ID',
+  `aggregate_no` varchar(64) NOT NULL COMMENT '聚合业务号',
+  `payload` json NOT NULL COMMENT '事件内容',
+  `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1待处理 2处理中 3成功 4失败',
+  `retry_count` int NOT NULL DEFAULT 0 COMMENT '重试次数',
+  `next_retry_at` bigint NOT NULL DEFAULT 0 COMMENT '下次重试时间',
+  `last_error_msg` varchar(1000) NOT NULL DEFAULT '' COMMENT '最近错误',
+  `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_event_no` (`event_no`),
+  KEY `idx_status_retry` (`status`, `next_retry_at`),
+  KEY `idx_aggregate` (`aggregate_type`, `aggregate_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='支付可靠事件表';
 
 CREATE TABLE `t_crypto_recharge_address` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',

@@ -76,6 +76,10 @@ type RechargeOrder {
 	remark       string `json:"remark"`
 	createTimes  int64  `json:"createTimes"`
 	updateTimes  int64  `json:"updateTimes"`
+	creditStatus int64 `json:"creditStatus"`
+	creditedTime int64 `json:"creditedTime"`
+	creditRetryCount int64 `json:"creditRetryCount"`
+	lastCreditError string `json:"lastCreditError"`
 }
 
 // 链上充值地址
@@ -396,4 +400,3 @@ service app {
 	@handler GetMyCryptoRechargeTx
 	get /crypto/recharge/txs/:id (GetMyCryptoRechargeTxReq) returns (GetMyCryptoRechargeTxResp)
 }
-

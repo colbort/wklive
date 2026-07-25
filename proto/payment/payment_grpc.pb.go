@@ -19,6 +19,150 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	Callback_PaymentNotify_FullMethodName = "/payment.Callback/PaymentNotify"
+	Callback_PayoutNotify_FullMethodName  = "/payment.Callback/PayoutNotify"
+)
+
+// CallbackClient is the client API for Callback service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// 三方支付公网回调，仅供 payment-api 调用。
+type CallbackClient interface {
+	PaymentNotify(ctx context.Context, in *ThirdPartyNotifyReq, opts ...grpc.CallOption) (*ThirdPartyNotifyResp, error)
+	PayoutNotify(ctx context.Context, in *ThirdPartyNotifyReq, opts ...grpc.CallOption) (*ThirdPartyNotifyResp, error)
+}
+
+type callbackClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewCallbackClient(cc grpc.ClientConnInterface) CallbackClient {
+	return &callbackClient{cc}
+}
+
+func (c *callbackClient) PaymentNotify(ctx context.Context, in *ThirdPartyNotifyReq, opts ...grpc.CallOption) (*ThirdPartyNotifyResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ThirdPartyNotifyResp)
+	err := c.cc.Invoke(ctx, Callback_PaymentNotify_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *callbackClient) PayoutNotify(ctx context.Context, in *ThirdPartyNotifyReq, opts ...grpc.CallOption) (*ThirdPartyNotifyResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ThirdPartyNotifyResp)
+	err := c.cc.Invoke(ctx, Callback_PayoutNotify_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// CallbackServer is the server API for Callback service.
+// All implementations must embed UnimplementedCallbackServer
+// for forward compatibility.
+//
+// 三方支付公网回调，仅供 payment-api 调用。
+type CallbackServer interface {
+	PaymentNotify(context.Context, *ThirdPartyNotifyReq) (*ThirdPartyNotifyResp, error)
+	PayoutNotify(context.Context, *ThirdPartyNotifyReq) (*ThirdPartyNotifyResp, error)
+	mustEmbedUnimplementedCallbackServer()
+}
+
+// UnimplementedCallbackServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedCallbackServer struct{}
+
+func (UnimplementedCallbackServer) PaymentNotify(context.Context, *ThirdPartyNotifyReq) (*ThirdPartyNotifyResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method PaymentNotify not implemented")
+}
+func (UnimplementedCallbackServer) PayoutNotify(context.Context, *ThirdPartyNotifyReq) (*ThirdPartyNotifyResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method PayoutNotify not implemented")
+}
+func (UnimplementedCallbackServer) mustEmbedUnimplementedCallbackServer() {}
+func (UnimplementedCallbackServer) testEmbeddedByValue()                  {}
+
+// UnsafeCallbackServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CallbackServer will
+// result in compilation errors.
+type UnsafeCallbackServer interface {
+	mustEmbedUnimplementedCallbackServer()
+}
+
+func RegisterCallbackServer(s grpc.ServiceRegistrar, srv CallbackServer) {
+	// If the following call panics, it indicates UnimplementedCallbackServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Callback_ServiceDesc, srv)
+}
+
+func _Callback_PaymentNotify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ThirdPartyNotifyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CallbackServer).PaymentNotify(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Callback_PaymentNotify_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CallbackServer).PaymentNotify(ctx, req.(*ThirdPartyNotifyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Callback_PayoutNotify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ThirdPartyNotifyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CallbackServer).PayoutNotify(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Callback_PayoutNotify_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CallbackServer).PayoutNotify(ctx, req.(*ThirdPartyNotifyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Callback_ServiceDesc is the grpc.ServiceDesc for Callback service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Callback_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "payment.Callback",
+	HandlerType: (*CallbackServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "PaymentNotify",
+			Handler:    _Callback_PaymentNotify_Handler,
+		},
+		{
+			MethodName: "PayoutNotify",
+			Handler:    _Callback_PayoutNotify_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "proto/payment/payment.proto",
+}
+
+const (
 	App_GetMyRechargeStat_FullMethodName             = "/payment.App/GetMyRechargeStat"
 	App_ListAvailableRechargeChannels_FullMethodName = "/payment.App/ListAvailableRechargeChannels"
 	App_CreateRechargeOrder_FullMethodName           = "/payment.App/CreateRechargeOrder"
@@ -39,8 +183,6 @@ const (
 // AppClient is the client API for App service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// APP端接口
 type AppClient interface {
 	// 当前用户累计充值统计（展示用）
 	GetMyRechargeStat(ctx context.Context, in *GetMyRechargeStatReq, opts ...grpc.CallOption) (*GetMyRechargeStatResp, error)
@@ -235,8 +377,6 @@ func (c *appClient) GetMyCryptoRechargeTx(ctx context.Context, in *GetMyCryptoRe
 // AppServer is the server API for App service.
 // All implementations must embed UnimplementedAppServer
 // for forward compatibility.
-//
-// APP端接口
 type AppServer interface {
 	// 当前用户累计充值统计（展示用）
 	GetMyRechargeStat(context.Context, *GetMyRechargeStatReq) (*GetMyRechargeStatResp, error)

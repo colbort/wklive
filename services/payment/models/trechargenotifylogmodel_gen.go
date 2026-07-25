@@ -23,13 +23,15 @@ var (
 	tRechargeNotifyLogRowsExpectAutoSet   = strings.Join(stringx.Remove(tRechargeNotifyLogFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tRechargeNotifyLogRowsWithPlaceHolder = strings.Join(stringx.Remove(tRechargeNotifyLogFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTRechargeNotifyLogIdPrefix = "cache:tRechargeNotifyLog:id:"
+	cacheTRechargeNotifyLogIdPrefix                 = "cache:tRechargeNotifyLog:id:"
+	cacheTRechargeNotifyLogPlatformIdNotifyIdPrefix = "cache:tRechargeNotifyLog:platformId:notifyId:"
 )
 
 type (
 	tRechargeNotifyLogModel interface {
 		Insert(ctx context.Context, data *TRechargeNotifyLog) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TRechargeNotifyLog, error)
+		FindOneByPlatformIdNotifyId(ctx context.Context, platformId int64, notifyId string) (*TRechargeNotifyLog, error)
 		Update(ctx context.Context, data *TRechargeNotifyLog) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -48,6 +50,7 @@ type (
 		ChannelId     sql.NullInt64  `db:"channel_id"`     // 通道ID
 		NotifyStatus  int64          `db:"notify_status"`  // 处理状态：1待处理 2成功 3失败
 		NotifyBody    sql.NullString `db:"notify_body"`    // 回调原文
+		NotifyId      string         `db:"notify_id"`      // 三方通知唯一标识或请求内容哈希
 		SignResult    int64          `db:"sign_result"`    // 验签结果：1未验 2通过 3失败
 		ProcessResult sql.NullString `db:"process_result"` // 处理结果
 		ErrorMessage  sql.NullString `db:"error_message"`  // 错误信息
@@ -64,11 +67,17 @@ func newTRechargeNotifyLogModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...ca
 }
 
 func (m *defaultTRechargeNotifyLogModel) Delete(ctx context.Context, id int64) error {
+	data, err := m.FindOne(ctx, id)
+	if err != nil {
+		return err
+	}
+
 	tRechargeNotifyLogIdKey := fmt.Sprintf("%s%v", cacheTRechargeNotifyLogIdPrefix, id)
-	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+	tRechargeNotifyLogPlatformIdNotifyIdKey := fmt.Sprintf("%s%v:%v", cacheTRechargeNotifyLogPlatformIdNotifyIdPrefix, data.PlatformId, data.NotifyId)
+	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tRechargeNotifyLogIdKey)
+	}, tRechargeNotifyLogIdKey, tRechargeNotifyLogPlatformIdNotifyIdKey)
 	return err
 }
 
@@ -89,21 +98,48 @@ func (m *defaultTRechargeNotifyLogModel) FindOne(ctx context.Context, id int64) 
 	}
 }
 
+func (m *defaultTRechargeNotifyLogModel) FindOneByPlatformIdNotifyId(ctx context.Context, platformId int64, notifyId string) (*TRechargeNotifyLog, error) {
+	tRechargeNotifyLogPlatformIdNotifyIdKey := fmt.Sprintf("%s%v:%v", cacheTRechargeNotifyLogPlatformIdNotifyIdPrefix, platformId, notifyId)
+	var resp TRechargeNotifyLog
+	err := m.QueryRowIndexCtx(ctx, &resp, tRechargeNotifyLogPlatformIdNotifyIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `platform_id` = ? and `notify_id` = ? limit 1", tRechargeNotifyLogRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, platformId, notifyId); err != nil {
+			return nil, err
+		}
+		return resp.Id, nil
+	}, m.queryPrimary)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
 func (m *defaultTRechargeNotifyLogModel) Insert(ctx context.Context, data *TRechargeNotifyLog) (sql.Result, error) {
 	tRechargeNotifyLogIdKey := fmt.Sprintf("%s%v", cacheTRechargeNotifyLogIdPrefix, data.Id)
+	tRechargeNotifyLogPlatformIdNotifyIdKey := fmt.Sprintf("%s%v:%v", cacheTRechargeNotifyLogPlatformIdNotifyIdPrefix, data.PlatformId, data.NotifyId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tRechargeNotifyLogRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.OrderNo, data.PlatformId, data.ChannelId, data.NotifyStatus, data.NotifyBody, data.SignResult, data.ProcessResult, data.ErrorMessage, data.NotifyTime, data.CreateTimes)
-	}, tRechargeNotifyLogIdKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tRechargeNotifyLogRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.OrderNo, data.PlatformId, data.ChannelId, data.NotifyStatus, data.NotifyBody, data.NotifyId, data.SignResult, data.ProcessResult, data.ErrorMessage, data.NotifyTime, data.CreateTimes)
+	}, tRechargeNotifyLogIdKey, tRechargeNotifyLogPlatformIdNotifyIdKey)
 	return ret, err
 }
 
-func (m *defaultTRechargeNotifyLogModel) Update(ctx context.Context, data *TRechargeNotifyLog) error {
+func (m *defaultTRechargeNotifyLogModel) Update(ctx context.Context, newData *TRechargeNotifyLog) error {
+	data, err := m.FindOne(ctx, newData.Id)
+	if err != nil {
+		return err
+	}
+
 	tRechargeNotifyLogIdKey := fmt.Sprintf("%s%v", cacheTRechargeNotifyLogIdPrefix, data.Id)
-	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+	tRechargeNotifyLogPlatformIdNotifyIdKey := fmt.Sprintf("%s%v:%v", cacheTRechargeNotifyLogPlatformIdNotifyIdPrefix, data.PlatformId, data.NotifyId)
+	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tRechargeNotifyLogRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.OrderNo, data.PlatformId, data.ChannelId, data.NotifyStatus, data.NotifyBody, data.SignResult, data.ProcessResult, data.ErrorMessage, data.NotifyTime, data.CreateTimes, data.Id)
-	}, tRechargeNotifyLogIdKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderId, newData.OrderNo, newData.PlatformId, newData.ChannelId, newData.NotifyStatus, newData.NotifyBody, newData.NotifyId, newData.SignResult, newData.ProcessResult, newData.ErrorMessage, newData.NotifyTime, newData.CreateTimes, newData.Id)
+	}, tRechargeNotifyLogIdKey, tRechargeNotifyLogPlatformIdNotifyIdKey)
 	return err
 }
 

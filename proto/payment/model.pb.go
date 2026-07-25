@@ -384,6 +384,7 @@ type TenantPayAccount struct {
 	ApiSecretCipher     string                 `protobuf:"bytes,18,opt,name=api_secret_cipher,json=apiSecretCipher,proto3" json:"api_secret_cipher,omitempty"`               // API Secret密文
 	PrivateKeyCipher    string                 `protobuf:"bytes,19,opt,name=private_key_cipher,json=privateKeyCipher,proto3" json:"private_key_cipher,omitempty"`            // 私钥密文
 	CertCipher          string                 `protobuf:"bytes,20,opt,name=cert_cipher,json=certCipher,proto3" json:"cert_cipher,omitempty"`                                // 证书密文
+	CredentialRef       string                 `protobuf:"bytes,21,opt,name=credential_ref,json=credentialRef,proto3" json:"credential_ref,omitempty"`                       // 密钥管理系统引用
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -554,6 +555,13 @@ func (x *TenantPayAccount) GetPrivateKeyCipher() string {
 func (x *TenantPayAccount) GetCertCipher() string {
 	if x != nil {
 		return x.CertCipher
+	}
+	return ""
+}
+
+func (x *TenantPayAccount) GetCredentialRef() string {
+	if x != nil {
+		return x.CredentialRef
 	}
 	return ""
 }
@@ -1115,44 +1123,48 @@ func (x *UserRechargeStat) GetUpdateTimes() int64 {
 }
 
 type RechargeOrder struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                    // 充值订单ID
-	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                        // 租户ID
-	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                              // 用户ID
-	OrderNo       string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`                                            // 平台订单号
-	BizOrderNo    string                 `protobuf:"bytes,5,opt,name=biz_order_no,json=bizOrderNo,proto3" json:"biz_order_no,omitempty"`                                 // 业务订单号
-	PlatformId    int64                  `protobuf:"varint,6,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`                                  // 平台ID
-	ProductId     int64                  `protobuf:"varint,7,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`                                     // 产品ID
-	AccountId     int64                  `protobuf:"varint,8,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`                                     // 账号ID
-	ChannelId     int64                  `protobuf:"varint,9,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`                                     // 通道ID
-	Currency      string                 `protobuf:"bytes,10,opt,name=currency,proto3" json:"currency,omitempty"`                                                        // 币种
-	OrderAmount   int64                  `protobuf:"varint,11,opt,name=order_amount,json=orderAmount,proto3" json:"order_amount,omitempty"`                              // 订单金额，单位分
-	PayAmount     int64                  `protobuf:"varint,12,opt,name=pay_amount,json=payAmount,proto3" json:"pay_amount,omitempty"`                                    // 实际支付金额，单位分
-	FeeAmount     int64                  `protobuf:"varint,13,opt,name=fee_amount,json=feeAmount,proto3" json:"fee_amount,omitempty"`                                    // 手续费金额，单位分
-	Subject       string                 `protobuf:"bytes,14,opt,name=subject,proto3" json:"subject,omitempty"`                                                          // 标题
-	Body          string                 `protobuf:"bytes,15,opt,name=body,proto3" json:"body,omitempty"`                                                                // 描述
-	ClientType    ClientType             `protobuf:"varint,16,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"`         // 客户端类型：1APP 2H5 3WEB
-	ClientIp      string                 `protobuf:"bytes,17,opt,name=client_ip,json=clientIp,proto3" json:"client_ip,omitempty"`                                        // 客户端IP
-	Status        PayOrderStatus         `protobuf:"varint,18,opt,name=status,proto3,enum=payment.PayOrderStatus" json:"status,omitempty"`                               // 状态：1待支付 2支付中 3成功 4失败 5已关闭 6已退款
-	ThirdTradeNo  string                 `protobuf:"bytes,19,opt,name=third_trade_no,json=thirdTradeNo,proto3" json:"third_trade_no,omitempty"`                          // 三方交易号
-	ThirdOrderNo  string                 `protobuf:"bytes,20,opt,name=third_order_no,json=thirdOrderNo,proto3" json:"third_order_no,omitempty"`                          // 三方订单号
-	PayUrl        string                 `protobuf:"bytes,21,opt,name=pay_url,json=payUrl,proto3" json:"pay_url,omitempty"`                                              // 支付链接
-	QrContent     string                 `protobuf:"bytes,22,opt,name=qr_content,json=qrContent,proto3" json:"qr_content,omitempty"`                                     // 二维码内容
-	VoucherImage  string                 `protobuf:"bytes,23,opt,name=voucher_image,json=voucherImage,proto3" json:"voucher_image,omitempty"`                            // 充值凭证图片
-	RequestData   string                 `protobuf:"bytes,24,opt,name=request_data,json=requestData,proto3" json:"request_data,omitempty"`                               // 请求快照(JSON)
-	ResponseData  string                 `protobuf:"bytes,25,opt,name=response_data,json=responseData,proto3" json:"response_data,omitempty"`                            // 响应快照(JSON)
-	NotifyData    string                 `protobuf:"bytes,26,opt,name=notify_data,json=notifyData,proto3" json:"notify_data,omitempty"`                                  // 回调数据(JSON)
-	ExpireTime    int64                  `protobuf:"varint,27,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`                                 // 过期时间
-	PaidTime      int64                  `protobuf:"varint,28,opt,name=paid_time,json=paidTime,proto3" json:"paid_time,omitempty"`                                       // 支付时间
-	NotifyTime    int64                  `protobuf:"varint,29,opt,name=notify_time,json=notifyTime,proto3" json:"notify_time,omitempty"`                                 // 回调时间
-	CloseTime     int64                  `protobuf:"varint,30,opt,name=close_time,json=closeTime,proto3" json:"close_time,omitempty"`                                    // 关闭时间
-	Remark        string                 `protobuf:"bytes,31,opt,name=remark,proto3" json:"remark,omitempty"`                                                            // 备注
-	CreateTimes   int64                  `protobuf:"varint,32,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                              // 创建时间
-	UpdateTimes   int64                  `protobuf:"varint,33,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                              // 更新时间
-	RechargeType  RechargeType           `protobuf:"varint,34,opt,name=recharge_type,json=rechargeType,proto3,enum=payment.RechargeType" json:"recharge_type,omitempty"` // 充值类型：1虚拟币 2三方充值 3银行卡 4人工充值 5其他
-	WalletType    common.WalletType      `protobuf:"varint,35,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`          // 钱包类型
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                    // 充值订单ID
+	TenantId         int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                        // 租户ID
+	UserId           int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                              // 用户ID
+	OrderNo          string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`                                            // 平台订单号
+	BizOrderNo       string                 `protobuf:"bytes,5,opt,name=biz_order_no,json=bizOrderNo,proto3" json:"biz_order_no,omitempty"`                                 // 业务订单号
+	PlatformId       int64                  `protobuf:"varint,6,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`                                  // 平台ID
+	ProductId        int64                  `protobuf:"varint,7,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`                                     // 产品ID
+	AccountId        int64                  `protobuf:"varint,8,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`                                     // 账号ID
+	ChannelId        int64                  `protobuf:"varint,9,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`                                     // 通道ID
+	Currency         string                 `protobuf:"bytes,10,opt,name=currency,proto3" json:"currency,omitempty"`                                                        // 币种
+	OrderAmount      int64                  `protobuf:"varint,11,opt,name=order_amount,json=orderAmount,proto3" json:"order_amount,omitempty"`                              // 订单金额，单位分
+	PayAmount        int64                  `protobuf:"varint,12,opt,name=pay_amount,json=payAmount,proto3" json:"pay_amount,omitempty"`                                    // 实际支付金额，单位分
+	FeeAmount        int64                  `protobuf:"varint,13,opt,name=fee_amount,json=feeAmount,proto3" json:"fee_amount,omitempty"`                                    // 手续费金额，单位分
+	Subject          string                 `protobuf:"bytes,14,opt,name=subject,proto3" json:"subject,omitempty"`                                                          // 标题
+	Body             string                 `protobuf:"bytes,15,opt,name=body,proto3" json:"body,omitempty"`                                                                // 描述
+	ClientType       ClientType             `protobuf:"varint,16,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"`         // 客户端类型：1APP 2H5 3WEB
+	ClientIp         string                 `protobuf:"bytes,17,opt,name=client_ip,json=clientIp,proto3" json:"client_ip,omitempty"`                                        // 客户端IP
+	Status           PayOrderStatus         `protobuf:"varint,18,opt,name=status,proto3,enum=payment.PayOrderStatus" json:"status,omitempty"`                               // 状态：1待支付 2支付中 3成功 4失败 5已关闭 6已退款
+	ThirdTradeNo     string                 `protobuf:"bytes,19,opt,name=third_trade_no,json=thirdTradeNo,proto3" json:"third_trade_no,omitempty"`                          // 三方交易号
+	ThirdOrderNo     string                 `protobuf:"bytes,20,opt,name=third_order_no,json=thirdOrderNo,proto3" json:"third_order_no,omitempty"`                          // 三方订单号
+	PayUrl           string                 `protobuf:"bytes,21,opt,name=pay_url,json=payUrl,proto3" json:"pay_url,omitempty"`                                              // 支付链接
+	QrContent        string                 `protobuf:"bytes,22,opt,name=qr_content,json=qrContent,proto3" json:"qr_content,omitempty"`                                     // 二维码内容
+	VoucherImage     string                 `protobuf:"bytes,23,opt,name=voucher_image,json=voucherImage,proto3" json:"voucher_image,omitempty"`                            // 充值凭证图片
+	RequestData      string                 `protobuf:"bytes,24,opt,name=request_data,json=requestData,proto3" json:"request_data,omitempty"`                               // 请求快照(JSON)
+	ResponseData     string                 `protobuf:"bytes,25,opt,name=response_data,json=responseData,proto3" json:"response_data,omitempty"`                            // 响应快照(JSON)
+	NotifyData       string                 `protobuf:"bytes,26,opt,name=notify_data,json=notifyData,proto3" json:"notify_data,omitempty"`                                  // 回调数据(JSON)
+	ExpireTime       int64                  `protobuf:"varint,27,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`                                 // 过期时间
+	PaidTime         int64                  `protobuf:"varint,28,opt,name=paid_time,json=paidTime,proto3" json:"paid_time,omitempty"`                                       // 支付时间
+	NotifyTime       int64                  `protobuf:"varint,29,opt,name=notify_time,json=notifyTime,proto3" json:"notify_time,omitempty"`                                 // 回调时间
+	CloseTime        int64                  `protobuf:"varint,30,opt,name=close_time,json=closeTime,proto3" json:"close_time,omitempty"`                                    // 关闭时间
+	Remark           string                 `protobuf:"bytes,31,opt,name=remark,proto3" json:"remark,omitempty"`                                                            // 备注
+	CreateTimes      int64                  `protobuf:"varint,32,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                              // 创建时间
+	UpdateTimes      int64                  `protobuf:"varint,33,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                              // 更新时间
+	RechargeType     RechargeType           `protobuf:"varint,34,opt,name=recharge_type,json=rechargeType,proto3,enum=payment.RechargeType" json:"recharge_type,omitempty"` // 充值类型：1虚拟币 2三方充值 3银行卡 4人工充值 5其他
+	WalletType       common.WalletType      `protobuf:"varint,35,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`          // 钱包类型
+	CreditStatus     CreditStatus           `protobuf:"varint,36,opt,name=credit_status,json=creditStatus,proto3,enum=payment.CreditStatus" json:"credit_status,omitempty"`
+	CreditedTime     int64                  `protobuf:"varint,37,opt,name=credited_time,json=creditedTime,proto3" json:"credited_time,omitempty"`
+	CreditRetryCount int64                  `protobuf:"varint,38,opt,name=credit_retry_count,json=creditRetryCount,proto3" json:"credit_retry_count,omitempty"`
+	LastCreditError  string                 `protobuf:"bytes,39,opt,name=last_credit_error,json=lastCreditError,proto3" json:"last_credit_error,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *RechargeOrder) Reset() {
@@ -1430,6 +1442,34 @@ func (x *RechargeOrder) GetWalletType() common.WalletType {
 	return common.WalletType(0)
 }
 
+func (x *RechargeOrder) GetCreditStatus() CreditStatus {
+	if x != nil {
+		return x.CreditStatus
+	}
+	return CreditStatus_CREDIT_STATUS_UNKNOWN
+}
+
+func (x *RechargeOrder) GetCreditedTime() int64 {
+	if x != nil {
+		return x.CreditedTime
+	}
+	return 0
+}
+
+func (x *RechargeOrder) GetCreditRetryCount() int64 {
+	if x != nil {
+		return x.CreditRetryCount
+	}
+	return 0
+}
+
+func (x *RechargeOrder) GetLastCreditError() string {
+	if x != nil {
+		return x.LastCreditError
+	}
+	return ""
+}
+
 type PayNotifyLog struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                          // 回调日志ID
@@ -1445,6 +1485,7 @@ type PayNotifyLog struct {
 	ErrorMessage  string                 `protobuf:"bytes,11,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`                                  // 错误信息
 	NotifyTime    int64                  `protobuf:"varint,12,opt,name=notify_time,json=notifyTime,proto3" json:"notify_time,omitempty"`                                       // 回调时间
 	CreateTimes   int64                  `protobuf:"varint,13,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                                    // 创建时间
+	NotifyId      string                 `protobuf:"bytes,14,opt,name=notify_id,json=notifyId,proto3" json:"notify_id,omitempty"`                                              // 三方通知唯一标识
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1568,6 +1609,13 @@ func (x *PayNotifyLog) GetCreateTimes() int64 {
 		return x.CreateTimes
 	}
 	return 0
+}
+
+func (x *PayNotifyLog) GetNotifyId() string {
+	if x != nil {
+		return x.NotifyId
+	}
+	return ""
 }
 
 type VisiblePayChannel struct {
@@ -2491,7 +2539,7 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"openStatus\x12\x16\n" +
 	"\x06remark\x18\x06 \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\a \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\b \x01(\x03R\vupdateTimes\"\xcd\x05\n" +
+	"\fupdate_times\x18\b \x01(\x03R\vupdateTimes\"\xf4\x05\n" +
 	"\x10TenantPayAccount\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x123\n" +
@@ -2519,7 +2567,8 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\x11api_secret_cipher\x18\x12 \x01(\tR\x0fapiSecretCipher\x12,\n" +
 	"\x12private_key_cipher\x18\x13 \x01(\tR\x10privateKeyCipher\x12\x1f\n" +
 	"\vcert_cipher\x18\x14 \x01(\tR\n" +
-	"certCipher\"\xb8\x06\n" +
+	"certCipher\x12%\n" +
+	"\x0ecredential_ref\x18\x15 \x01(\tR\rcredentialRef\"\xb8\x06\n" +
 	"\x10TenantPayChannel\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -2587,7 +2636,8 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\x11last_success_time\x18\t \x01(\x03R\x0flastSuccessTime\x12!\n" +
 	"\fcreate_times\x18\n" +
 	" \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\v \x01(\x03R\vupdateTimes\"\x9e\t\n" +
+	"\fupdate_times\x18\v \x01(\x03R\vupdateTimes\"\xd9\n" +
+	"\n" +
 	"\rRechargeOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -2638,7 +2688,11 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\fupdate_times\x18! \x01(\x03R\vupdateTimes\x12:\n" +
 	"\rrecharge_type\x18\" \x01(\x0e2\x15.payment.RechargeTypeR\frechargeType\x123\n" +
 	"\vwallet_type\x18# \x01(\x0e2\x12.common.WalletTypeR\n" +
-	"walletType\"\xdb\x03\n" +
+	"walletType\x12:\n" +
+	"\rcredit_status\x18$ \x01(\x0e2\x15.payment.CreditStatusR\fcreditStatus\x12#\n" +
+	"\rcredited_time\x18% \x01(\x03R\fcreditedTime\x12,\n" +
+	"\x12credit_retry_count\x18& \x01(\x03R\x10creditRetryCount\x12*\n" +
+	"\x11last_credit_error\x18' \x01(\tR\x0flastCreditError\"\xf8\x03\n" +
 	"\fPayNotifyLog\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
@@ -2658,7 +2712,8 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\rerror_message\x18\v \x01(\tR\ferrorMessage\x12\x1f\n" +
 	"\vnotify_time\x18\f \x01(\x03R\n" +
 	"notifyTime\x12!\n" +
-	"\fcreate_times\x18\r \x01(\x03R\vcreateTimes\"\xf4\x03\n" +
+	"\fcreate_times\x18\r \x01(\x03R\vcreateTimes\x12\x1b\n" +
+	"\tnotify_id\x18\x0e \x01(\tR\bnotifyId\"\xf4\x03\n" +
 	"\x11VisiblePayChannel\x12\x1d\n" +
 	"\n" +
 	"channel_id\x18\x01 \x01(\x03R\tchannelId\x12!\n" +
@@ -2816,13 +2871,14 @@ var file_proto_payment_model_proto_goTypes = []any{
 	(PayOrderStatus)(0),              // 22: payment.PayOrderStatus
 	(RechargeType)(0),                // 23: payment.RechargeType
 	(common.WalletType)(0),           // 24: common.WalletType
-	(NotifyProcessStatus)(0),         // 25: payment.NotifyProcessStatus
-	(SignResult)(0),                  // 26: payment.SignResult
-	(common.ChainCode)(0),            // 27: common.ChainCode
-	(CryptoRechargeAddressSource)(0), // 28: payment.CryptoRechargeAddressSource
-	(CryptoRechargeAddressType)(0),   // 29: payment.CryptoRechargeAddressType
-	(CryptoRechargeAddressStatus)(0), // 30: payment.CryptoRechargeAddressStatus
-	(CryptoRechargeTxStatus)(0),      // 31: payment.CryptoRechargeTxStatus
+	(CreditStatus)(0),                // 25: payment.CreditStatus
+	(NotifyProcessStatus)(0),         // 26: payment.NotifyProcessStatus
+	(SignResult)(0),                  // 27: payment.SignResult
+	(common.ChainCode)(0),            // 28: common.ChainCode
+	(CryptoRechargeAddressSource)(0), // 29: payment.CryptoRechargeAddressSource
+	(CryptoRechargeAddressType)(0),   // 30: payment.CryptoRechargeAddressType
+	(CryptoRechargeAddressStatus)(0), // 31: payment.CryptoRechargeAddressStatus
+	(CryptoRechargeTxStatus)(0),      // 32: payment.CryptoRechargeTxStatus
 }
 var file_proto_payment_model_proto_depIdxs = []int32{
 	14, // 0: payment.PayPlatform.platform_type:type_name -> payment.PlatformType
@@ -2843,25 +2899,26 @@ var file_proto_payment_model_proto_depIdxs = []int32{
 	22, // 15: payment.RechargeOrder.status:type_name -> payment.PayOrderStatus
 	23, // 16: payment.RechargeOrder.recharge_type:type_name -> payment.RechargeType
 	24, // 17: payment.RechargeOrder.wallet_type:type_name -> common.WalletType
-	25, // 18: payment.PayNotifyLog.notify_status:type_name -> payment.NotifyProcessStatus
-	26, // 19: payment.PayNotifyLog.sign_result:type_name -> payment.SignResult
-	20, // 20: payment.VisiblePayChannel.fee_type:type_name -> payment.FeeType
-	21, // 21: payment.WithdrawOrder.client_type:type_name -> payment.ClientType
-	22, // 22: payment.WithdrawOrder.status:type_name -> payment.PayOrderStatus
-	24, // 23: payment.CryptoRechargeAddress.wallet_type:type_name -> common.WalletType
-	27, // 24: payment.CryptoRechargeAddress.chain_code:type_name -> common.ChainCode
-	28, // 25: payment.CryptoRechargeAddress.address_source:type_name -> payment.CryptoRechargeAddressSource
-	29, // 26: payment.CryptoRechargeAddress.address_type:type_name -> payment.CryptoRechargeAddressType
-	30, // 27: payment.CryptoRechargeAddress.status:type_name -> payment.CryptoRechargeAddressStatus
-	15, // 28: payment.CryptoWalletAccount.enabled:type_name -> common.Enable
-	18, // 29: payment.CryptoWalletAccount.is_default:type_name -> common.YesNo
-	27, // 30: payment.CryptoRechargeTx.chain_code:type_name -> common.ChainCode
-	31, // 31: payment.CryptoRechargeTx.status:type_name -> payment.CryptoRechargeTxStatus
-	32, // [32:32] is the sub-list for method output_type
-	32, // [32:32] is the sub-list for method input_type
-	32, // [32:32] is the sub-list for extension type_name
-	32, // [32:32] is the sub-list for extension extendee
-	0,  // [0:32] is the sub-list for field type_name
+	25, // 18: payment.RechargeOrder.credit_status:type_name -> payment.CreditStatus
+	26, // 19: payment.PayNotifyLog.notify_status:type_name -> payment.NotifyProcessStatus
+	27, // 20: payment.PayNotifyLog.sign_result:type_name -> payment.SignResult
+	20, // 21: payment.VisiblePayChannel.fee_type:type_name -> payment.FeeType
+	21, // 22: payment.WithdrawOrder.client_type:type_name -> payment.ClientType
+	22, // 23: payment.WithdrawOrder.status:type_name -> payment.PayOrderStatus
+	24, // 24: payment.CryptoRechargeAddress.wallet_type:type_name -> common.WalletType
+	28, // 25: payment.CryptoRechargeAddress.chain_code:type_name -> common.ChainCode
+	29, // 26: payment.CryptoRechargeAddress.address_source:type_name -> payment.CryptoRechargeAddressSource
+	30, // 27: payment.CryptoRechargeAddress.address_type:type_name -> payment.CryptoRechargeAddressType
+	31, // 28: payment.CryptoRechargeAddress.status:type_name -> payment.CryptoRechargeAddressStatus
+	15, // 29: payment.CryptoWalletAccount.enabled:type_name -> common.Enable
+	18, // 30: payment.CryptoWalletAccount.is_default:type_name -> common.YesNo
+	28, // 31: payment.CryptoRechargeTx.chain_code:type_name -> common.ChainCode
+	32, // 32: payment.CryptoRechargeTx.status:type_name -> payment.CryptoRechargeTxStatus
+	33, // [33:33] is the sub-list for method output_type
+	33, // [33:33] is the sub-list for method input_type
+	33, // [33:33] is the sub-list for extension type_name
+	33, // [33:33] is the sub-list for extension extendee
+	0,  // [0:33] is the sub-list for field type_name
 }
 
 func init() { file_proto_payment_model_proto_init() }

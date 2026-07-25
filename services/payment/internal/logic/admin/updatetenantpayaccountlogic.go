@@ -87,6 +87,9 @@ func (l *UpdateTenantPayAccountLogic) UpdateTenantPayAccount(in *payment.UpdateT
 	if in.CertCipher != "" {
 		account.CertCipher = sql.NullString{String: in.CertCipher, Valid: true}
 	}
+	if in.CredentialRef != "" {
+		account.CredentialRef = in.CredentialRef
+	}
 	if in.ExtConfig != "" {
 		account.ExtConfig = sql.NullString{String: in.ExtConfig, Valid: true}
 	}

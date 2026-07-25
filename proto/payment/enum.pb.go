@@ -357,6 +357,171 @@ func (PayOrderStatus) EnumDescriptor() ([]byte, []int) {
 	return file_proto_payment_enum_proto_rawDescGZIP(), []int{5}
 }
 
+type CreditStatus int32
+
+const (
+	CreditStatus_CREDIT_STATUS_UNKNOWN    CreditStatus = 0
+	CreditStatus_CREDIT_STATUS_PENDING    CreditStatus = 1
+	CreditStatus_CREDIT_STATUS_PROCESSING CreditStatus = 2
+	CreditStatus_CREDIT_STATUS_SUCCESS    CreditStatus = 3
+	CreditStatus_CREDIT_STATUS_FAILED     CreditStatus = 4
+)
+
+// Enum value maps for CreditStatus.
+var (
+	CreditStatus_name = map[int32]string{
+		0: "CREDIT_STATUS_UNKNOWN",
+		1: "CREDIT_STATUS_PENDING",
+		2: "CREDIT_STATUS_PROCESSING",
+		3: "CREDIT_STATUS_SUCCESS",
+		4: "CREDIT_STATUS_FAILED",
+	}
+	CreditStatus_value = map[string]int32{
+		"CREDIT_STATUS_UNKNOWN":    0,
+		"CREDIT_STATUS_PENDING":    1,
+		"CREDIT_STATUS_PROCESSING": 2,
+		"CREDIT_STATUS_SUCCESS":    3,
+		"CREDIT_STATUS_FAILED":     4,
+	}
+)
+
+func (x CreditStatus) Enum() *CreditStatus {
+	p := new(CreditStatus)
+	*p = x
+	return p
+}
+
+func (x CreditStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (CreditStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_payment_enum_proto_enumTypes[6].Descriptor()
+}
+
+func (CreditStatus) Type() protoreflect.EnumType {
+	return &file_proto_payment_enum_proto_enumTypes[6]
+}
+
+func (x CreditStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use CreditStatus.Descriptor instead.
+func (CreditStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{6}
+}
+
+type PayRequestStatus int32
+
+const (
+	PayRequestStatus_PAY_REQUEST_STATUS_UNKNOWN    PayRequestStatus = 0
+	PayRequestStatus_PAY_REQUEST_STATUS_PROCESSING PayRequestStatus = 1
+	PayRequestStatus_PAY_REQUEST_STATUS_SUCCESS    PayRequestStatus = 2
+	PayRequestStatus_PAY_REQUEST_STATUS_FAILED     PayRequestStatus = 3
+	PayRequestStatus_PAY_REQUEST_STATUS_UNCERTAIN  PayRequestStatus = 4
+)
+
+// Enum value maps for PayRequestStatus.
+var (
+	PayRequestStatus_name = map[int32]string{
+		0: "PAY_REQUEST_STATUS_UNKNOWN",
+		1: "PAY_REQUEST_STATUS_PROCESSING",
+		2: "PAY_REQUEST_STATUS_SUCCESS",
+		3: "PAY_REQUEST_STATUS_FAILED",
+		4: "PAY_REQUEST_STATUS_UNCERTAIN",
+	}
+	PayRequestStatus_value = map[string]int32{
+		"PAY_REQUEST_STATUS_UNKNOWN":    0,
+		"PAY_REQUEST_STATUS_PROCESSING": 1,
+		"PAY_REQUEST_STATUS_SUCCESS":    2,
+		"PAY_REQUEST_STATUS_FAILED":     3,
+		"PAY_REQUEST_STATUS_UNCERTAIN":  4,
+	}
+)
+
+func (x PayRequestStatus) Enum() *PayRequestStatus {
+	p := new(PayRequestStatus)
+	*p = x
+	return p
+}
+
+func (x PayRequestStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PayRequestStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_payment_enum_proto_enumTypes[7].Descriptor()
+}
+
+func (PayRequestStatus) Type() protoreflect.EnumType {
+	return &file_proto_payment_enum_proto_enumTypes[7]
+}
+
+func (x PayRequestStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PayRequestStatus.Descriptor instead.
+func (PayRequestStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{7}
+}
+
+type PayOutboxStatus int32
+
+const (
+	PayOutboxStatus_PAY_OUTBOX_STATUS_UNKNOWN    PayOutboxStatus = 0
+	PayOutboxStatus_PAY_OUTBOX_STATUS_PENDING    PayOutboxStatus = 1
+	PayOutboxStatus_PAY_OUTBOX_STATUS_PROCESSING PayOutboxStatus = 2
+	PayOutboxStatus_PAY_OUTBOX_STATUS_SUCCESS    PayOutboxStatus = 3
+	PayOutboxStatus_PAY_OUTBOX_STATUS_FAILED     PayOutboxStatus = 4
+)
+
+// Enum value maps for PayOutboxStatus.
+var (
+	PayOutboxStatus_name = map[int32]string{
+		0: "PAY_OUTBOX_STATUS_UNKNOWN",
+		1: "PAY_OUTBOX_STATUS_PENDING",
+		2: "PAY_OUTBOX_STATUS_PROCESSING",
+		3: "PAY_OUTBOX_STATUS_SUCCESS",
+		4: "PAY_OUTBOX_STATUS_FAILED",
+	}
+	PayOutboxStatus_value = map[string]int32{
+		"PAY_OUTBOX_STATUS_UNKNOWN":    0,
+		"PAY_OUTBOX_STATUS_PENDING":    1,
+		"PAY_OUTBOX_STATUS_PROCESSING": 2,
+		"PAY_OUTBOX_STATUS_SUCCESS":    3,
+		"PAY_OUTBOX_STATUS_FAILED":     4,
+	}
+)
+
+func (x PayOutboxStatus) Enum() *PayOutboxStatus {
+	p := new(PayOutboxStatus)
+	*p = x
+	return p
+}
+
+func (x PayOutboxStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PayOutboxStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_payment_enum_proto_enumTypes[8].Descriptor()
+}
+
+func (PayOutboxStatus) Type() protoreflect.EnumType {
+	return &file_proto_payment_enum_proto_enumTypes[8]
+}
+
+func (x PayOutboxStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PayOutboxStatus.Descriptor instead.
+func (PayOutboxStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{8}
+}
+
 type NotifyProcessStatus int32
 
 const (
@@ -393,11 +558,11 @@ func (x NotifyProcessStatus) String() string {
 }
 
 func (NotifyProcessStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_payment_enum_proto_enumTypes[6].Descriptor()
+	return file_proto_payment_enum_proto_enumTypes[9].Descriptor()
 }
 
 func (NotifyProcessStatus) Type() protoreflect.EnumType {
-	return &file_proto_payment_enum_proto_enumTypes[6]
+	return &file_proto_payment_enum_proto_enumTypes[9]
 }
 
 func (x NotifyProcessStatus) Number() protoreflect.EnumNumber {
@@ -406,7 +571,7 @@ func (x NotifyProcessStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use NotifyProcessStatus.Descriptor instead.
 func (NotifyProcessStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_payment_enum_proto_rawDescGZIP(), []int{6}
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{9}
 }
 
 type SignResult int32
@@ -445,11 +610,11 @@ func (x SignResult) String() string {
 }
 
 func (SignResult) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_payment_enum_proto_enumTypes[7].Descriptor()
+	return file_proto_payment_enum_proto_enumTypes[10].Descriptor()
 }
 
 func (SignResult) Type() protoreflect.EnumType {
-	return &file_proto_payment_enum_proto_enumTypes[7]
+	return &file_proto_payment_enum_proto_enumTypes[10]
 }
 
 func (x SignResult) Number() protoreflect.EnumNumber {
@@ -458,7 +623,7 @@ func (x SignResult) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SignResult.Descriptor instead.
 func (SignResult) EnumDescriptor() ([]byte, []int) {
-	return file_proto_payment_enum_proto_rawDescGZIP(), []int{7}
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{10}
 }
 
 type ClientType int32
@@ -497,11 +662,11 @@ func (x ClientType) String() string {
 }
 
 func (ClientType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_payment_enum_proto_enumTypes[8].Descriptor()
+	return file_proto_payment_enum_proto_enumTypes[11].Descriptor()
 }
 
 func (ClientType) Type() protoreflect.EnumType {
-	return &file_proto_payment_enum_proto_enumTypes[8]
+	return &file_proto_payment_enum_proto_enumTypes[11]
 }
 
 func (x ClientType) Number() protoreflect.EnumNumber {
@@ -510,7 +675,7 @@ func (x ClientType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ClientType.Descriptor instead.
 func (ClientType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_payment_enum_proto_rawDescGZIP(), []int{8}
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{11}
 }
 
 type CryptoRechargeAddressSource int32
@@ -549,11 +714,11 @@ func (x CryptoRechargeAddressSource) String() string {
 }
 
 func (CryptoRechargeAddressSource) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_payment_enum_proto_enumTypes[9].Descriptor()
+	return file_proto_payment_enum_proto_enumTypes[12].Descriptor()
 }
 
 func (CryptoRechargeAddressSource) Type() protoreflect.EnumType {
-	return &file_proto_payment_enum_proto_enumTypes[9]
+	return &file_proto_payment_enum_proto_enumTypes[12]
 }
 
 func (x CryptoRechargeAddressSource) Number() protoreflect.EnumNumber {
@@ -562,7 +727,7 @@ func (x CryptoRechargeAddressSource) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CryptoRechargeAddressSource.Descriptor instead.
 func (CryptoRechargeAddressSource) EnumDescriptor() ([]byte, []int) {
-	return file_proto_payment_enum_proto_rawDescGZIP(), []int{9}
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{12}
 }
 
 type CryptoRechargeAddressType int32
@@ -598,11 +763,11 @@ func (x CryptoRechargeAddressType) String() string {
 }
 
 func (CryptoRechargeAddressType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_payment_enum_proto_enumTypes[10].Descriptor()
+	return file_proto_payment_enum_proto_enumTypes[13].Descriptor()
 }
 
 func (CryptoRechargeAddressType) Type() protoreflect.EnumType {
-	return &file_proto_payment_enum_proto_enumTypes[10]
+	return &file_proto_payment_enum_proto_enumTypes[13]
 }
 
 func (x CryptoRechargeAddressType) Number() protoreflect.EnumNumber {
@@ -611,7 +776,7 @@ func (x CryptoRechargeAddressType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CryptoRechargeAddressType.Descriptor instead.
 func (CryptoRechargeAddressType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_payment_enum_proto_rawDescGZIP(), []int{10}
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{13}
 }
 
 type CryptoRechargeAddressStatus int32
@@ -650,11 +815,11 @@ func (x CryptoRechargeAddressStatus) String() string {
 }
 
 func (CryptoRechargeAddressStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_payment_enum_proto_enumTypes[11].Descriptor()
+	return file_proto_payment_enum_proto_enumTypes[14].Descriptor()
 }
 
 func (CryptoRechargeAddressStatus) Type() protoreflect.EnumType {
-	return &file_proto_payment_enum_proto_enumTypes[11]
+	return &file_proto_payment_enum_proto_enumTypes[14]
 }
 
 func (x CryptoRechargeAddressStatus) Number() protoreflect.EnumNumber {
@@ -663,7 +828,7 @@ func (x CryptoRechargeAddressStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CryptoRechargeAddressStatus.Descriptor instead.
 func (CryptoRechargeAddressStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_payment_enum_proto_rawDescGZIP(), []int{11}
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{14}
 }
 
 type CryptoRechargeTxStatus int32
@@ -708,11 +873,11 @@ func (x CryptoRechargeTxStatus) String() string {
 }
 
 func (CryptoRechargeTxStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_payment_enum_proto_enumTypes[12].Descriptor()
+	return file_proto_payment_enum_proto_enumTypes[15].Descriptor()
 }
 
 func (CryptoRechargeTxStatus) Type() protoreflect.EnumType {
-	return &file_proto_payment_enum_proto_enumTypes[12]
+	return &file_proto_payment_enum_proto_enumTypes[15]
 }
 
 func (x CryptoRechargeTxStatus) Number() protoreflect.EnumNumber {
@@ -721,7 +886,7 @@ func (x CryptoRechargeTxStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CryptoRechargeTxStatus.Descriptor instead.
 func (CryptoRechargeTxStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_payment_enum_proto_rawDescGZIP(), []int{12}
+	return file_proto_payment_enum_proto_rawDescGZIP(), []int{15}
 }
 
 var File_proto_payment_enum_proto protoreflect.FileDescriptor
@@ -767,7 +932,25 @@ const file_proto_payment_enum_proto_rawDesc = "" +
 	"\x18PAY_ORDER_STATUS_SUCCESS\x10\x03\x12\x1b\n" +
 	"\x17PAY_ORDER_STATUS_FAILED\x10\x04\x12\x1b\n" +
 	"\x17PAY_ORDER_STATUS_CLOSED\x10\x05\x12\x1d\n" +
-	"\x19PAY_ORDER_STATUS_REFUNDED\x10\x06*\xa0\x01\n" +
+	"\x19PAY_ORDER_STATUS_REFUNDED\x10\x06*\x97\x01\n" +
+	"\fCreditStatus\x12\x19\n" +
+	"\x15CREDIT_STATUS_UNKNOWN\x10\x00\x12\x19\n" +
+	"\x15CREDIT_STATUS_PENDING\x10\x01\x12\x1c\n" +
+	"\x18CREDIT_STATUS_PROCESSING\x10\x02\x12\x19\n" +
+	"\x15CREDIT_STATUS_SUCCESS\x10\x03\x12\x18\n" +
+	"\x14CREDIT_STATUS_FAILED\x10\x04*\xb6\x01\n" +
+	"\x10PayRequestStatus\x12\x1e\n" +
+	"\x1aPAY_REQUEST_STATUS_UNKNOWN\x10\x00\x12!\n" +
+	"\x1dPAY_REQUEST_STATUS_PROCESSING\x10\x01\x12\x1e\n" +
+	"\x1aPAY_REQUEST_STATUS_SUCCESS\x10\x02\x12\x1d\n" +
+	"\x19PAY_REQUEST_STATUS_FAILED\x10\x03\x12 \n" +
+	"\x1cPAY_REQUEST_STATUS_UNCERTAIN\x10\x04*\xae\x01\n" +
+	"\x0fPayOutboxStatus\x12\x1d\n" +
+	"\x19PAY_OUTBOX_STATUS_UNKNOWN\x10\x00\x12\x1d\n" +
+	"\x19PAY_OUTBOX_STATUS_PENDING\x10\x01\x12 \n" +
+	"\x1cPAY_OUTBOX_STATUS_PROCESSING\x10\x02\x12\x1d\n" +
+	"\x19PAY_OUTBOX_STATUS_SUCCESS\x10\x03\x12\x1c\n" +
+	"\x18PAY_OUTBOX_STATUS_FAILED\x10\x04*\xa0\x01\n" +
 	"\x13NotifyProcessStatus\x12!\n" +
 	"\x1dNOTIFY_PROCESS_STATUS_UNKNOWN\x10\x00\x12!\n" +
 	"\x1dNOTIFY_PROCESS_STATUS_PENDING\x10\x01\x12!\n" +
@@ -819,7 +1002,7 @@ func file_proto_payment_enum_proto_rawDescGZIP() []byte {
 	return file_proto_payment_enum_proto_rawDescData
 }
 
-var file_proto_payment_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 13)
+var file_proto_payment_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 16)
 var file_proto_payment_enum_proto_goTypes = []any{
 	(PlatformType)(0),                // 0: payment.PlatformType
 	(RechargeType)(0),                // 1: payment.RechargeType
@@ -827,13 +1010,16 @@ var file_proto_payment_enum_proto_goTypes = []any{
 	(SceneType)(0),                   // 3: payment.SceneType
 	(FeeType)(0),                     // 4: payment.FeeType
 	(PayOrderStatus)(0),              // 5: payment.PayOrderStatus
-	(NotifyProcessStatus)(0),         // 6: payment.NotifyProcessStatus
-	(SignResult)(0),                  // 7: payment.SignResult
-	(ClientType)(0),                  // 8: payment.ClientType
-	(CryptoRechargeAddressSource)(0), // 9: payment.CryptoRechargeAddressSource
-	(CryptoRechargeAddressType)(0),   // 10: payment.CryptoRechargeAddressType
-	(CryptoRechargeAddressStatus)(0), // 11: payment.CryptoRechargeAddressStatus
-	(CryptoRechargeTxStatus)(0),      // 12: payment.CryptoRechargeTxStatus
+	(CreditStatus)(0),                // 6: payment.CreditStatus
+	(PayRequestStatus)(0),            // 7: payment.PayRequestStatus
+	(PayOutboxStatus)(0),             // 8: payment.PayOutboxStatus
+	(NotifyProcessStatus)(0),         // 9: payment.NotifyProcessStatus
+	(SignResult)(0),                  // 10: payment.SignResult
+	(ClientType)(0),                  // 11: payment.ClientType
+	(CryptoRechargeAddressSource)(0), // 12: payment.CryptoRechargeAddressSource
+	(CryptoRechargeAddressType)(0),   // 13: payment.CryptoRechargeAddressType
+	(CryptoRechargeAddressStatus)(0), // 14: payment.CryptoRechargeAddressStatus
+	(CryptoRechargeTxStatus)(0),      // 15: payment.CryptoRechargeTxStatus
 }
 var file_proto_payment_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -853,7 +1039,7 @@ func file_proto_payment_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_payment_enum_proto_rawDesc), len(file_proto_payment_enum_proto_rawDesc)),
-			NumEnums:      13,
+			NumEnums:      16,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

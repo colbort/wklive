@@ -13,6 +13,10 @@
       "name": "app-api"
     },
     {
+      "path": "payment-api",
+      "name": "payment-api"
+    },
+    {
       "path": "app-packages",
       "name": "app-packages"
     },
@@ -101,6 +105,7 @@
       "boxbg",
       "BTCUSD",
       "BTCUSDT",
+      "callbacklogic",
       "casbin",
       "chatadmin",
       "chatinternal",
@@ -247,6 +252,17 @@
           "test": "test"
         },
         "program": "${workspaceFolder:app-api}/"
+      },
+      {
+        "name": "payment-api",
+        "type": "go",
+        "request": "launch",
+        "mode": "auto",
+        "env": {
+          "DEBUG": "true",
+          "VSCODE": "true"
+        },
+        "program": "${workspaceFolder:payment-api}/"
       },
       {
         "name": "chat-api",
@@ -427,6 +443,7 @@
         "configurations": [
           "chat-api",
           "app-api",
+          "payment-api",
           "chat-admin-api",
           "admin-api",
           "liquidity-admin-api"

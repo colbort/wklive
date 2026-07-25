@@ -1,0 +1,12 @@
+Name: payment-api
+Host: 0.0.0.0
+Port: 3333
+Timeout: 10000
+MaxBytes: 1048576
+
+PaymentRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+      - "127.0.0.1:2379"
+    Key: payment.rpc
