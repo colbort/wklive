@@ -11,6 +11,17 @@ export interface ListResponse<T = Record<string, unknown>> {
   page?: { total?: number; nextCursor?: number; hasMore?: boolean };
 }
 
+export interface OptionItem {
+  value: number;
+  code: string;
+}
+
+export interface OptionGroup {
+  key: string;
+  label: string;
+  options: OptionItem[];
+}
+
 export interface Provider {
   id: number;
   providerCode: string;

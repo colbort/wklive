@@ -19,6 +19,7 @@ import CustomerServiceView from '@/views/profile/CustomerServiceView.vue'
 import ProfileView from '@/views/profile/ProfileView.vue'
 import SecuritySettingsView from '@/views/profile/SecuritySettingsView.vue'
 import TradesView from '@/views/trades/TradesView.vue'
+import TradeOrderDetailView from '@/views/trades/TradeOrderDetailView.vue'
 import Test1 from '@/views/dev/Test1.vue'
 import Test2 from '@/views/dev/Test2.vue'
 import Test3 from '@/views/dev/Test3.vue'
@@ -59,6 +60,12 @@ export const router = createRouter({
         { path: 'home', name: 'home', component: HomeView, meta: { title: '首页' } },
         { path: 'markets', name: 'markets', component: MarketsView, meta: { title: '市场' } },
         { path: 'trades', name: 'trades', component: TradesView, meta: { title: '交易' } },
+        {
+          path: 'trades/orders/:orderNo',
+          name: 'trade-order-detail',
+          component: TradeOrderDetailView,
+          meta: { title: '订单详情', hideBottomNav: true },
+        },
         { path: 'assets', name: 'assets', component: AssetsView, meta: { title: '资产' } },
         {
           path: 'assets/recharge',

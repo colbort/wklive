@@ -122,6 +122,8 @@ export interface TradeOrder {
   bizExt: string
   createTimes: number
   updateTimes: number
+  secondsDirection: number
+  durationSeconds: number
 }
 
 export interface TradeOrderSeconds {
@@ -139,9 +141,51 @@ export interface TradeOrderSeconds {
   settlementPrice: string
   settlementPriceTime: number
   result: number
-  payoutAmount: string
+  feeRate: string
+  frozenAt: number
+  activatedAt: number
+  startPriceSource: string
+  settlementPriceSource: string
+  priceAlgorithm: string
+  profitAmount: string
+  feeAmount: string
+  returnAmount: string
   settlementStatus: number
   reservationNo: string
+  settlementReason: string
+  settledAt: number
+  version: number
+  createTimes: number
+  updateTimes: number
+}
+
+export interface TradeOrderSpot {
+  id: number
+  tenantId: number
+  orderId: number
+  frozenAsset: string
+  frozenAmount: string
+  settleAsset: string
+  settleAmount: string
+  createTimes: number
+  updateTimes: number
+}
+
+export interface TradeOrderContract {
+  id: number
+  tenantId: number
+  orderId: number
+  marginMode: number
+  leverage: number
+  marginAsset: string
+  marginAmount: string
+  closePositionType: number
+  liquidationPrice: string
+  takeProfitPrice: string
+  stopLossPrice: string
+  reservedCloseQty: string
+  riskPrice: string
+  riskTierId: number
   createTimes: number
   updateTimes: number
 }

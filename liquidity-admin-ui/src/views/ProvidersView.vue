@@ -2,6 +2,7 @@
 import { onMounted, reactive, ref } from "vue";
 import { ElMessage } from "element-plus";
 import { liquidityApi } from "@/api/liquidity";
+import ListPager from "@/components/ListPager.vue";
 import type { ConfigOptions, Provider } from "@/types/liquidity";
 
 const loading = ref(false);
@@ -14,7 +15,9 @@ const configOptions = ref<ConfigOptions>({
   providers: [],
   tradingUsers: [],
 });
-const query = reactive({ keyword: "", status: "", limit: 20 });
+const query = reactive({ keyword: "", status: "", limit: 20, cursor: 0 });
+const page = reactive({ total: 0, nextCursor: 0, hasMore: false });
+const cursorHistory = ref<number[]>([]);
 const form = reactive({
   providerCode: "",
   providerName: "",
@@ -37,14 +40,35 @@ const provisionForm = reactive({
   remark: "",
 });
 
-async function load() {
+async function load(reset = false) {
+  if (reset) {
+    query.cursor = 0;
+    cursorHistory.value = [];
+  }
   loading.value = true;
   try {
     const response = await liquidityApi.providers(query);
     rows.value = (response.data || []) as unknown as Provider[];
+    page.total = Number(response.page?.total || 0);
+    page.nextCursor = Number(response.page?.nextCursor || 0);
+    page.hasMore = Boolean(response.page?.hasMore);
   } finally {
     loading.value = false;
   }
+}
+
+async function nextPage() {
+  if (!page.hasMore || !page.nextCursor) return;
+  cursorHistory.value.push(query.cursor);
+  query.cursor = page.nextCursor;
+  await load();
+}
+
+async function previousPage() {
+  const cursor = cursorHistory.value.pop();
+  if (cursor === undefined) return;
+  query.cursor = cursor;
+  await load();
 }
 
 async function create() {
@@ -132,6 +156,7 @@ onMounted(load);
 </script>
 
 <template>
+  <div class="list-page">
   <div class="page-head">
     <div>
       <h1>流动性提供方</h1>
@@ -145,7 +170,7 @@ onMounted(load);
     </div>
   </div>
 
-  <section class="panel">
+  <section class="panel list-panel">
     <div class="toolbar">
       <el-input
         v-model="query.keyword"
@@ -162,12 +187,12 @@ onMounted(load);
         <el-option label="已启用" :value="1" />
         <el-option label="已停用" :value="2" />
       </el-select>
-      <el-button class="search-button" type="primary" @click="load">
+      <el-button class="search-button" type="primary" @click="load(true)">
         查询
       </el-button>
     </div>
-    <div class="table-wrap">
-      <el-table :data="rows" v-loading="loading">
+    <div class="table-wrap list-table-wrap">
+      <el-table class="list-table" :data="rows" height="100%" v-loading="loading">
         <el-table-column prop="providerCode" label="提供方编码" width="170">
           <template #default="{ row }">
             <span class="mono">{{ row.providerCode }}</span>
@@ -231,7 +256,18 @@ onMounted(load);
         </el-table-column>
       </el-table>
     </div>
+    <ListPager
+      v-model:limit="query.limit"
+      :total="page.total"
+      :can-previous="Boolean(cursorHistory.length)"
+      :can-next="page.hasMore && Boolean(page.nextCursor)"
+      :loading="loading"
+      @previous="previousPage"
+      @next="nextPage"
+      @limit-change="load(true)"
+    />
   </section>
+  </div>
 
   <el-dialog
     v-model="provisionDialog"

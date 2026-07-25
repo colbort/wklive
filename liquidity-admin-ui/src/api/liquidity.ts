@@ -1,6 +1,7 @@
 import { request } from "./request";
 import type {
   ListResponse,
+  OptionGroup,
   PageQuery,
   ProvisionInternalProviderRequest,
 } from "@/types/liquidity";
@@ -56,6 +57,7 @@ export const liquidityApi = {
   login: (data: { username: string; password: string; googleCode?: string }) =>
     request.post<unknown, ApiResponse<LoginData>>("/auth/login", data),
   profile: () => request.get<unknown, ApiResponse<ProfileData>>("/auth/profile"),
+  options: () => request.get<unknown, ApiResponse<OptionGroup[]>>("/options"),
   dashboard: () => request.get("/dashboard"),
   configOptions: () => request.get("/config-options"),
   providers: (params: PageQuery) =>

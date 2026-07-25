@@ -19,6 +19,8 @@ import type {
   SetLeverageReq,
   TradeFill,
   TradeOrder,
+  TradeOrderContract,
+  TradeOrderSpot,
   TradeSymbol,
   TradeSymbolContract,
   TradeSymbolLeverageConfig,
@@ -85,8 +87,8 @@ export function apiTradeGetOrderDetail(params: TradeGetOrderDetailReq): Promise<
   RespBase & {
     data: {
       order: TradeOrder
-      spot: TradeSymbolSpot
-      contract: TradeSymbolContract
+      spot: TradeOrderSpot
+      contract: TradeOrderContract
       seconds: TradeOrderSeconds
     }
   }

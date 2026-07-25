@@ -147,28 +147,73 @@ type TradeOrder {
 	bizExt            string `json:"bizExt"`
 	createTimes       int64  `json:"createTimes"`
 	updateTimes       int64  `json:"updateTimes"`
+	secondsDirection  int64  `json:"secondsDirection"`
+	durationSeconds   int64  `json:"durationSeconds"`
+	displayStatus     int64  `json:"displayStatus"`
 }
 
 type TradeOrderSeconds {
-	id                  int64  `json:"id"`
-	tenantId            int64  `json:"tenantId"`
-	orderId             int64  `json:"orderId"`
-	direction           int64  `json:"direction"`
-	durationSeconds     int64  `json:"durationSeconds"`
-	stakeAsset          string `json:"stakeAsset"`
-	stakeAmount         string `json:"stakeAmount"`
-	payoutRate          string `json:"payoutRate"`
-	startPrice          string `json:"startPrice"`
-	startPriceTime      int64  `json:"startPriceTime"`
-	expireTime          int64  `json:"expireTime"`
-	settlementPrice     string `json:"settlementPrice"`
-	settlementPriceTime int64  `json:"settlementPriceTime"`
-	result              int64  `json:"result"`
-	payoutAmount        string `json:"payoutAmount"`
-	settlementStatus    int64  `json:"settlementStatus"`
-	reservationNo       string `json:"reservationNo"`
-	createTimes         int64  `json:"createTimes"`
-	updateTimes         int64  `json:"updateTimes"`
+	id                    int64  `json:"id"`
+	tenantId              int64  `json:"tenantId"`
+	orderId               int64  `json:"orderId"`
+	direction             int64  `json:"direction"`
+	durationSeconds       int64  `json:"durationSeconds"`
+	stakeAsset            string `json:"stakeAsset"`
+	stakeAmount           string `json:"stakeAmount"`
+	payoutRate            string `json:"payoutRate"`
+	feeRate               string `json:"feeRate"`
+	frozenAt              int64  `json:"frozenAt"`
+	activatedAt           int64  `json:"activatedAt"`
+	startPrice            string `json:"startPrice"`
+	startPriceTime        int64  `json:"startPriceTime"`
+	startPriceSource      string `json:"startPriceSource"`
+	expireTime            int64  `json:"expireTime"`
+	settlementPrice       string `json:"settlementPrice"`
+	settlementPriceTime   int64  `json:"settlementPriceTime"`
+	settlementPriceSource string `json:"settlementPriceSource"`
+	priceAlgorithm        string `json:"priceAlgorithm"`
+	result                int64  `json:"result"`
+	profitAmount          string `json:"profitAmount"`
+	feeAmount             string `json:"feeAmount"`
+	returnAmount          string `json:"returnAmount"`
+	settlementStatus      int64  `json:"settlementStatus"`
+	reservationNo         string `json:"reservationNo"`
+	settlementReason      string `json:"settlementReason"`
+	settledAt             int64  `json:"settledAt"`
+	version               int64  `json:"version"`
+	createTimes           int64  `json:"createTimes"`
+	updateTimes           int64  `json:"updateTimes"`
+}
+
+type TradeOrderSpot {
+	id           int64  `json:"id"`
+	tenantId     int64  `json:"tenantId"`
+	orderId      int64  `json:"orderId"`
+	frozenAsset  string `json:"frozenAsset"`
+	frozenAmount string `json:"frozenAmount"`
+	settleAsset  string `json:"settleAsset"`
+	settleAmount string `json:"settleAmount"`
+	createTimes  int64  `json:"createTimes"`
+	updateTimes  int64  `json:"updateTimes"`
+}
+
+type TradeOrderContract {
+	id                int64  `json:"id"`
+	tenantId          int64  `json:"tenantId"`
+	orderId           int64  `json:"orderId"`
+	marginMode        int64  `json:"marginMode"`
+	leverage          int64  `json:"leverage"`
+	marginAsset       string `json:"marginAsset"`
+	marginAmount      string `json:"marginAmount"`
+	closePositionType int64  `json:"closePositionType"`
+	liquidationPrice  string `json:"liquidationPrice"`
+	takeProfitPrice   string `json:"takeProfitPrice"`
+	stopLossPrice     string `json:"stopLossPrice"`
+	reservedCloseQty  string `json:"reservedCloseQty"`
+	riskPrice         string `json:"riskPrice"`
+	riskTierId        int64  `json:"riskTierId"`
+	createTimes       int64  `json:"createTimes"`
+	updateTimes       int64  `json:"updateTimes"`
 }
 
 type TradeFill {
@@ -373,10 +418,10 @@ type TradeGetOrderDetailReq {
 }
 
 type GetOrderDetailData {
-	order    TradeOrder          `json:"order"`
-	spot     TradeSymbolSpot     `json:"spot"`
-	contract TradeSymbolContract `json:"contract"`
-	seconds  TradeOrderSeconds   `json:"seconds"`
+	order    TradeOrder         `json:"order"`
+	spot     TradeOrderSpot     `json:"spot"`
+	contract TradeOrderContract `json:"contract"`
+	seconds  TradeOrderSeconds  `json:"seconds"`
 }
 
 type TradeGetOrderDetailResp {

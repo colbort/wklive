@@ -595,10 +595,10 @@ type GetMyWithdrawOrderResp struct {
 }
 
 type GetOrderDetailData struct {
-	Order    TradeOrder          `json:"order"`
-	Spot     TradeSymbolSpot     `json:"spot"`
-	Contract TradeSymbolContract `json:"contract"`
-	Seconds  TradeOrderSeconds   `json:"seconds"`
+	Order    TradeOrder         `json:"order"`
+	Spot     TradeOrderSpot     `json:"spot"`
+	Contract TradeOrderContract `json:"contract"`
+	Seconds  TradeOrderSeconds  `json:"seconds"`
 }
 
 type GetOrderListReq struct {
@@ -1825,28 +1825,73 @@ type TradeOrder struct {
 	BizExt            string `json:"bizExt"`
 	CreateTimes       int64  `json:"createTimes"`
 	UpdateTimes       int64  `json:"updateTimes"`
+	SecondsDirection  int64  `json:"secondsDirection"`
+	DurationSeconds   int64  `json:"durationSeconds"`
+	DisplayStatus     int64  `json:"displayStatus"`
+}
+
+type TradeOrderContract struct {
+	Id                int64  `json:"id"`
+	TenantId          int64  `json:"tenantId"`
+	OrderId           int64  `json:"orderId"`
+	MarginMode        int64  `json:"marginMode"`
+	Leverage          int64  `json:"leverage"`
+	MarginAsset       string `json:"marginAsset"`
+	MarginAmount      string `json:"marginAmount"`
+	ClosePositionType int64  `json:"closePositionType"`
+	LiquidationPrice  string `json:"liquidationPrice"`
+	TakeProfitPrice   string `json:"takeProfitPrice"`
+	StopLossPrice     string `json:"stopLossPrice"`
+	ReservedCloseQty  string `json:"reservedCloseQty"`
+	RiskPrice         string `json:"riskPrice"`
+	RiskTierId        int64  `json:"riskTierId"`
+	CreateTimes       int64  `json:"createTimes"`
+	UpdateTimes       int64  `json:"updateTimes"`
 }
 
 type TradeOrderSeconds struct {
-	Id                  int64  `json:"id"`
-	TenantId            int64  `json:"tenantId"`
-	OrderId             int64  `json:"orderId"`
-	Direction           int64  `json:"direction"`
-	DurationSeconds     int64  `json:"durationSeconds"`
-	StakeAsset          string `json:"stakeAsset"`
-	StakeAmount         string `json:"stakeAmount"`
-	PayoutRate          string `json:"payoutRate"`
-	StartPrice          string `json:"startPrice"`
-	StartPriceTime      int64  `json:"startPriceTime"`
-	ExpireTime          int64  `json:"expireTime"`
-	SettlementPrice     string `json:"settlementPrice"`
-	SettlementPriceTime int64  `json:"settlementPriceTime"`
-	Result              int64  `json:"result"`
-	PayoutAmount        string `json:"payoutAmount"`
-	SettlementStatus    int64  `json:"settlementStatus"`
-	ReservationNo       string `json:"reservationNo"`
-	CreateTimes         int64  `json:"createTimes"`
-	UpdateTimes         int64  `json:"updateTimes"`
+	Id                    int64  `json:"id"`
+	TenantId              int64  `json:"tenantId"`
+	OrderId               int64  `json:"orderId"`
+	Direction             int64  `json:"direction"`
+	DurationSeconds       int64  `json:"durationSeconds"`
+	StakeAsset            string `json:"stakeAsset"`
+	StakeAmount           string `json:"stakeAmount"`
+	PayoutRate            string `json:"payoutRate"`
+	FeeRate               string `json:"feeRate"`
+	FrozenAt              int64  `json:"frozenAt"`
+	ActivatedAt           int64  `json:"activatedAt"`
+	StartPrice            string `json:"startPrice"`
+	StartPriceTime        int64  `json:"startPriceTime"`
+	StartPriceSource      string `json:"startPriceSource"`
+	ExpireTime            int64  `json:"expireTime"`
+	SettlementPrice       string `json:"settlementPrice"`
+	SettlementPriceTime   int64  `json:"settlementPriceTime"`
+	SettlementPriceSource string `json:"settlementPriceSource"`
+	PriceAlgorithm        string `json:"priceAlgorithm"`
+	Result                int64  `json:"result"`
+	ProfitAmount          string `json:"profitAmount"`
+	FeeAmount             string `json:"feeAmount"`
+	ReturnAmount          string `json:"returnAmount"`
+	SettlementStatus      int64  `json:"settlementStatus"`
+	ReservationNo         string `json:"reservationNo"`
+	SettlementReason      string `json:"settlementReason"`
+	SettledAt             int64  `json:"settledAt"`
+	Version               int64  `json:"version"`
+	CreateTimes           int64  `json:"createTimes"`
+	UpdateTimes           int64  `json:"updateTimes"`
+}
+
+type TradeOrderSpot struct {
+	Id           int64  `json:"id"`
+	TenantId     int64  `json:"tenantId"`
+	OrderId      int64  `json:"orderId"`
+	FrozenAsset  string `json:"frozenAsset"`
+	FrozenAmount string `json:"frozenAmount"`
+	SettleAsset  string `json:"settleAsset"`
+	SettleAmount string `json:"settleAmount"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateTimes  int64  `json:"updateTimes"`
 }
 
 type TradePlaceOrderReq struct {

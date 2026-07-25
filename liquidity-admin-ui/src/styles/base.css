@@ -28,6 +28,81 @@ button, input { font: inherit; }
 }
 .toolbar { display: flex; align-items: center; gap: 12px; padding: 16px; border-bottom: 1px solid rgba(111, 140, 176, .13); }
 .table-wrap { padding: 4px 16px 16px; }
+.list-page {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 112px);
+  min-height: 560px;
+}
+.list-page > .page-head {
+  flex: none;
+}
+.list-panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.list-table-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.list-table {
+  height: 100%;
+  min-height: 0;
+}
+.list-table .el-scrollbar__bar.is-vertical {
+  width: 8px;
+}
+.list-table .el-scrollbar__thumb {
+  background: rgba(88, 126, 160, .55);
+}
+.list-pager {
+  display: flex;
+  flex: none;
+  gap: 10px;
+  justify-content: flex-end;
+  align-items: center;
+  min-height: 66px;
+  padding: 12px 18px;
+  border-top: 1px solid rgba(111, 140, 176, .13);
+  color: #71849e;
+}
+.list-pager .el-button {
+  min-width: 76px;
+  border-color: #2a4059;
+  color: #9db0c7;
+  background: #0b1828;
+  box-shadow: none;
+}
+.list-pager .el-button:hover,
+.list-pager .el-button:focus {
+  border-color: #3b5b77;
+  color: #dbe7f5;
+  background: #102238;
+}
+.list-pager .el-button--primary:not(.is-disabled) {
+  border-color: #25d3a2;
+  color: #04150f;
+  background: #25d3a2;
+}
+.list-pager .el-button--primary:not(.is-disabled):hover {
+  border-color: #52ddb7;
+  background: #52ddb7;
+}
+.list-pager .el-button.is-disabled,
+.list-pager .el-button.is-disabled:hover {
+  border-color: #1c2d41;
+  color: #465a72;
+  background: #0a1524;
+}
+.list-pager .el-select__wrapper {
+  min-height: 32px;
+  background: #0b1828;
+  box-shadow: 0 0 0 1px #2a4059 inset;
+}
 .el-table { --el-table-bg-color: transparent; --el-table-tr-bg-color: transparent; --el-table-header-bg-color: transparent; --el-table-row-hover-bg-color: rgba(26, 53, 78, .55); --el-table-border-color: rgba(111, 140, 176, .13); --el-table-text-color: #c8d4e5; --el-table-header-text-color: #71849e; }
 .el-input, .el-select { --el-input-bg-color: #0b1828; --el-input-border-color: #263a53; --el-input-text-color: #dbe6f5; --el-input-placeholder-color: #5f718a; }
 .toolbar .el-input__wrapper,

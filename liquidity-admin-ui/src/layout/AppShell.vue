@@ -62,5 +62,5 @@ nav a:hover { color: #d9e5f4; background: rgba(35,57,81,.45); } nav a.router-lin
 .side-foot { position: absolute; bottom: 25px; left: 31px; color: #566981; font-size: 11px; }.pulse { display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: #2dd4a4; box-shadow: 0 0 9px #2dd4a4; }
 main { width: calc(100% - 244px); margin-left: 244px; } header { height: 68px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; border-bottom: 1px solid rgba(119,146,179,.13); color: #dfe8f3; background: rgba(7,16,29,.7); backdrop-filter: blur(14px); }
 .crumb { color: #53657c; font-size: 13px; }.operator { display: flex; align-items: center; gap: 10px; color: #8494a9; font-size: 12px; }.environment { padding: 5px 8px; border: 1px solid rgba(45,212,164,.24); border-radius: 5px; color: #2dd4a4; font-size: 9px; letter-spacing: 1px; }.avatar { display: grid; place-items: center; width: 29px; height: 29px; border-radius: 8px; background: #1d344c; color: #64e2bf; }.operator button { border: 0; color: #65778e; background: none; cursor: pointer; }
-.content { padding: 26px 28px 50px; }
+.content { padding: 26px 28px 18px; }
 </style>
