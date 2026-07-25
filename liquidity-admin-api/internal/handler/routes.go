@@ -54,6 +54,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodGet,
+				Path:    "/config-options",
+				Handler: liquidity.ConfigOptionsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/dashboard",
 				Handler: liquidity.DashboardHandler(serverCtx),
 			},
@@ -86,6 +91,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/providers/:id/test",
 				Handler: liquidity.ProviderTestHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/providers/provision",
+				Handler: liquidity.ProviderProvisionHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,

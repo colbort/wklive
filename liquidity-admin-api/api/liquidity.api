@@ -54,6 +54,41 @@ type CreateProviderReq {
 	status int32 `json:"status"`
 	remark string `json:"remark,optional"`
 }
+type ProvisionInternalProviderReq {
+	symbolId int64 `json:"symbolId"`
+	providerCode string `json:"providerCode"`
+	providerName string `json:"providerName"`
+	baseAmount string `json:"baseAmount"`
+	quoteAmount string `json:"quoteAmount"`
+	remark string `json:"remark,optional"`
+}
+type ConfigSymbolOption {
+	symbolId int64 `json:"symbolId"`
+	symbol string `json:"symbol"`
+	displaySymbol string `json:"displaySymbol"`
+	productType int32 `json:"productType"`
+	contractType int32 `json:"contractType"`
+	walletType int32 `json:"walletType"`
+	contractValueType int32 `json:"contractValueType"`
+}
+type ConfigProviderOption {
+	providerId int64 `json:"providerId"`
+	providerCode string `json:"providerCode"`
+	providerName string `json:"providerName"`
+	providerType int32 `json:"providerType"`
+	tradeUserId int64 `json:"tradeUserId"`
+	status int32 `json:"status"`
+}
+type ConfigTradingUserOption {
+	tradeUserId int64 `json:"tradeUserId"`
+	username string `json:"username"`
+}
+type ConfigOptionsResp {
+	RespBase
+	symbols []ConfigSymbolOption `json:"symbols"`
+	providers []ConfigProviderOption `json:"providers"`
+	tradingUsers []ConfigTradingUserOption `json:"tradingUsers"`
+}
 type ProviderActionReq {
 	id int64 `path:"id"`
 }
@@ -204,12 +239,16 @@ type ReconcileListResp {
 	jwt: Jwt
 )
 service liquidityAdmin {
+	@handler ConfigOptions
+	get /config-options returns (ConfigOptionsResp)
 	@handler Dashboard
 	get /dashboard returns (DashboardResp)
 	@handler ProviderList
 	get /providers (PageQuery) returns (ProviderListResp)
 	@handler ProviderCreate
 	post /providers (CreateProviderReq) returns (RespBase)
+	@handler ProviderProvision
+	post /providers/provision (ProvisionInternalProviderReq) returns (RespBase)
 	@handler ProviderTest
 	post /providers/:id/test (ProviderActionReq) returns (RespBase)
 	@handler ProviderStatus

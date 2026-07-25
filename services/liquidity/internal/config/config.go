@@ -18,6 +18,7 @@ type Config struct {
 	TradeRpc zrpc.RpcClientConf
 	AssetRpc zrpc.RpcClientConf
 	ItickRpc zrpc.RpcClientConf
+	UserRpc  zrpc.RpcClientConf
 
 	MarketAuthority      string
 	PriceEngineAuthority string

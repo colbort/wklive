@@ -160,6 +160,7 @@ func (l *RegisterLogic) Register(in *user.RegisterReq) (*user.RegisterResp, erro
 		Avatar:              sql.NullString{String: "", Valid: true},
 		PasswordHash:        passwordHash,
 		RegisterType:        int64(in.RegisterType),
+		AccountType:         int64(common.UserAccountType_USER_ACCOUNT_TYPE_NORMAL),
 		Status:              1,
 		MemberLevel:         0,
 		Language:            sql.NullString{String: "", Valid: true},

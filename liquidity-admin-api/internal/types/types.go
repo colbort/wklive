@@ -3,6 +3,37 @@
 
 package types
 
+type ConfigOptionsResp struct {
+	RespBase
+	Symbols      []ConfigSymbolOption      `json:"symbols"`
+	Providers    []ConfigProviderOption    `json:"providers"`
+	TradingUsers []ConfigTradingUserOption `json:"tradingUsers"`
+}
+
+type ConfigProviderOption struct {
+	ProviderId   int64  `json:"providerId"`
+	ProviderCode string `json:"providerCode"`
+	ProviderName string `json:"providerName"`
+	ProviderType int32  `json:"providerType"`
+	TradeUserId  int64  `json:"tradeUserId"`
+	Status       int32  `json:"status"`
+}
+
+type ConfigSymbolOption struct {
+	SymbolId          int64  `json:"symbolId"`
+	Symbol            string `json:"symbol"`
+	DisplaySymbol     string `json:"displaySymbol"`
+	ProductType       int32  `json:"productType"`
+	ContractType      int32  `json:"contractType"`
+	WalletType        int32  `json:"walletType"`
+	ContractValueType int32  `json:"contractValueType"`
+}
+
+type ConfigTradingUserOption struct {
+	TradeUserId int64  `json:"tradeUserId"`
+	Username    string `json:"username"`
+}
+
 type CreateProviderReq struct {
 	ProviderCode       string `json:"providerCode"`
 	ProviderName       string `json:"providerName"`
@@ -195,6 +226,15 @@ type ProviderStatusReq struct {
 	Status  int32  `json:"status"`
 	Version int64  `json:"version"`
 	Remark  string `json:"remark,optional"`
+}
+
+type ProvisionInternalProviderReq struct {
+	SymbolId     int64  `json:"symbolId"`
+	ProviderCode string `json:"providerCode"`
+	ProviderName string `json:"providerName"`
+	BaseAmount   string `json:"baseAmount"`
+	QuoteAmount  string `json:"quoteAmount"`
+	Remark       string `json:"remark,optional"`
 }
 
 type ReconcileItem struct {

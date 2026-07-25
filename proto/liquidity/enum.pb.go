@@ -1298,6 +1298,113 @@ func (ReconcileDifferenceStatus) EnumDescriptor() ([]byte, []int) {
 	return file_proto_liquidity_enum_proto_rawDescGZIP(), []int{22}
 }
 
+type InboxEventStatus int32
+
+const (
+	InboxEventStatus_INBOX_EVENT_STATUS_UNKNOWN    InboxEventStatus = 0
+	InboxEventStatus_INBOX_EVENT_STATUS_PROCESSING InboxEventStatus = 1
+	InboxEventStatus_INBOX_EVENT_STATUS_SUCCESS    InboxEventStatus = 2
+	InboxEventStatus_INBOX_EVENT_STATUS_FAILED     InboxEventStatus = 3
+)
+
+// Enum value maps for InboxEventStatus.
+var (
+	InboxEventStatus_name = map[int32]string{
+		0: "INBOX_EVENT_STATUS_UNKNOWN",
+		1: "INBOX_EVENT_STATUS_PROCESSING",
+		2: "INBOX_EVENT_STATUS_SUCCESS",
+		3: "INBOX_EVENT_STATUS_FAILED",
+	}
+	InboxEventStatus_value = map[string]int32{
+		"INBOX_EVENT_STATUS_UNKNOWN":    0,
+		"INBOX_EVENT_STATUS_PROCESSING": 1,
+		"INBOX_EVENT_STATUS_SUCCESS":    2,
+		"INBOX_EVENT_STATUS_FAILED":     3,
+	}
+)
+
+func (x InboxEventStatus) Enum() *InboxEventStatus {
+	p := new(InboxEventStatus)
+	*p = x
+	return p
+}
+
+func (x InboxEventStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (InboxEventStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_liquidity_enum_proto_enumTypes[23].Descriptor()
+}
+
+func (InboxEventStatus) Type() protoreflect.EnumType {
+	return &file_proto_liquidity_enum_proto_enumTypes[23]
+}
+
+func (x InboxEventStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use InboxEventStatus.Descriptor instead.
+func (InboxEventStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_liquidity_enum_proto_rawDescGZIP(), []int{23}
+}
+
+type OutboxEventStatus int32
+
+const (
+	OutboxEventStatus_OUTBOX_EVENT_STATUS_UNKNOWN OutboxEventStatus = 0
+	OutboxEventStatus_OUTBOX_EVENT_STATUS_PENDING OutboxEventStatus = 1
+	OutboxEventStatus_OUTBOX_EVENT_STATUS_SENDING OutboxEventStatus = 2
+	OutboxEventStatus_OUTBOX_EVENT_STATUS_SUCCESS OutboxEventStatus = 3
+	OutboxEventStatus_OUTBOX_EVENT_STATUS_FAILED  OutboxEventStatus = 4
+)
+
+// Enum value maps for OutboxEventStatus.
+var (
+	OutboxEventStatus_name = map[int32]string{
+		0: "OUTBOX_EVENT_STATUS_UNKNOWN",
+		1: "OUTBOX_EVENT_STATUS_PENDING",
+		2: "OUTBOX_EVENT_STATUS_SENDING",
+		3: "OUTBOX_EVENT_STATUS_SUCCESS",
+		4: "OUTBOX_EVENT_STATUS_FAILED",
+	}
+	OutboxEventStatus_value = map[string]int32{
+		"OUTBOX_EVENT_STATUS_UNKNOWN": 0,
+		"OUTBOX_EVENT_STATUS_PENDING": 1,
+		"OUTBOX_EVENT_STATUS_SENDING": 2,
+		"OUTBOX_EVENT_STATUS_SUCCESS": 3,
+		"OUTBOX_EVENT_STATUS_FAILED":  4,
+	}
+)
+
+func (x OutboxEventStatus) Enum() *OutboxEventStatus {
+	p := new(OutboxEventStatus)
+	*p = x
+	return p
+}
+
+func (x OutboxEventStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (OutboxEventStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_liquidity_enum_proto_enumTypes[24].Descriptor()
+}
+
+func (OutboxEventStatus) Type() protoreflect.EnumType {
+	return &file_proto_liquidity_enum_proto_enumTypes[24]
+}
+
+func (x OutboxEventStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use OutboxEventStatus.Descriptor instead.
+func (OutboxEventStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_liquidity_enum_proto_rawDescGZIP(), []int{24}
+}
+
 var File_proto_liquidity_enum_proto protoreflect.FileDescriptor
 
 const file_proto_liquidity_enum_proto_rawDesc = "" +
@@ -1444,7 +1551,18 @@ const file_proto_liquidity_enum_proto_rawDesc = "" +
 	"'RECONCILE_DIFFERENCE_STATUS_AUTO_FIXING\x10\x02\x12(\n" +
 	"$RECONCILE_DIFFERENCE_STATUS_RESOLVED\x10\x03\x12'\n" +
 	"#RECONCILE_DIFFERENCE_STATUS_IGNORED\x10\x04\x12/\n" +
-	"+RECONCILE_DIFFERENCE_STATUS_MANUAL_REQUIRED\x10\x05B\"Z wklive/proto/liquidity;liquidityb\x06proto3"
+	"+RECONCILE_DIFFERENCE_STATUS_MANUAL_REQUIRED\x10\x05*\x94\x01\n" +
+	"\x10InboxEventStatus\x12\x1e\n" +
+	"\x1aINBOX_EVENT_STATUS_UNKNOWN\x10\x00\x12!\n" +
+	"\x1dINBOX_EVENT_STATUS_PROCESSING\x10\x01\x12\x1e\n" +
+	"\x1aINBOX_EVENT_STATUS_SUCCESS\x10\x02\x12\x1d\n" +
+	"\x19INBOX_EVENT_STATUS_FAILED\x10\x03*\xb7\x01\n" +
+	"\x11OutboxEventStatus\x12\x1f\n" +
+	"\x1bOUTBOX_EVENT_STATUS_UNKNOWN\x10\x00\x12\x1f\n" +
+	"\x1bOUTBOX_EVENT_STATUS_PENDING\x10\x01\x12\x1f\n" +
+	"\x1bOUTBOX_EVENT_STATUS_SENDING\x10\x02\x12\x1f\n" +
+	"\x1bOUTBOX_EVENT_STATUS_SUCCESS\x10\x03\x12\x1e\n" +
+	"\x1aOUTBOX_EVENT_STATUS_FAILED\x10\x04B\"Z wklive/proto/liquidity;liquidityb\x06proto3"
 
 var (
 	file_proto_liquidity_enum_proto_rawDescOnce sync.Once
@@ -1458,7 +1576,7 @@ func file_proto_liquidity_enum_proto_rawDescGZIP() []byte {
 	return file_proto_liquidity_enum_proto_rawDescData
 }
 
-var file_proto_liquidity_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 23)
+var file_proto_liquidity_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 25)
 var file_proto_liquidity_enum_proto_goTypes = []any{
 	(ProviderType)(0),                 // 0: liquidity.ProviderType
 	(ProviderEnvironment)(0),          // 1: liquidity.ProviderEnvironment
@@ -1483,6 +1601,8 @@ var file_proto_liquidity_enum_proto_goTypes = []any{
 	(ReconcileStatus)(0),              // 20: liquidity.ReconcileStatus
 	(ReconcileDifferenceType)(0),      // 21: liquidity.ReconcileDifferenceType
 	(ReconcileDifferenceStatus)(0),    // 22: liquidity.ReconcileDifferenceStatus
+	(InboxEventStatus)(0),             // 23: liquidity.InboxEventStatus
+	(OutboxEventStatus)(0),            // 24: liquidity.OutboxEventStatus
 }
 var file_proto_liquidity_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -1502,7 +1622,7 @@ func file_proto_liquidity_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_liquidity_enum_proto_rawDesc), len(file_proto_liquidity_enum_proto_rawDesc)),
-			NumEnums:      23,
+			NumEnums:      25,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

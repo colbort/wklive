@@ -4,19 +4,23 @@ import "testing"
 
 func TestGetRequiredPermissionUsesDynamicRules(t *testing.T) {
 	rules := []PermissionRule{
-		mustRule(t, "GET", "/liquidity/admin/providers", "liquidity:provider:list"),
-		mustRule(t, "POST", "/liquidity/admin/providers/{id}/test", "liquidity:provider:test"),
-		mustRule(t, "POST", "/liquidity/admin/symbol-configs/{id}/start", "liquidity:strategy:start"),
+		mustRule(t, "GET", "/admin/liquidity/providers", "liquidity:provider:list"),
+		mustRule(t, "GET", "/admin/liquidity/config-options", "liquidity:strategy:list"),
+		mustRule(t, "POST", "/admin/liquidity/providers/provision", "liquidity:provider:add"),
+		mustRule(t, "POST", "/admin/liquidity/providers/{id}/test", "liquidity:provider:test"),
+		mustRule(t, "POST", "/admin/liquidity/symbol-configs/{id}/start", "liquidity:strategy:start"),
 	}
 	tests := []struct {
 		method string
 		path   string
 		want   string
 	}{
-		{"GET", "/liquidity/admin/providers", "liquidity:provider:list"},
-		{"POST", "/liquidity/admin/providers/9/test", "liquidity:provider:test"},
-		{"POST", "/liquidity/admin/symbol-configs/3/start", "liquidity:strategy:start"},
-		{"DELETE", "/liquidity/admin/providers/9", ""},
+		{"GET", "/admin/liquidity/providers", "liquidity:provider:list"},
+		{"GET", "/admin/liquidity/config-options", "liquidity:strategy:list"},
+		{"POST", "/admin/liquidity/providers/provision", "liquidity:provider:add"},
+		{"POST", "/admin/liquidity/providers/9/test", "liquidity:provider:test"},
+		{"POST", "/admin/liquidity/symbol-configs/3/start", "liquidity:strategy:start"},
+		{"DELETE", "/admin/liquidity/providers/9", ""},
 	}
 	for _, test := range tests {
 		if got := getRequiredPermission(rules, test.path, test.method); got != test.want {

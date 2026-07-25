@@ -6,9 +6,12 @@ require (
 	github.com/zeromicro/go-zero v1.10.2
 	google.golang.org/grpc v1.81.1
 	wklive/common v0.0.0-00010101000000-000000000000
+	wklive/proto/asset v0.0.0-00010101000000-000000000000
 	wklive/proto/common v0.0.0-00010101000000-000000000000
+	wklive/proto/itick v0.0.0-00010101000000-000000000000
 	wklive/proto/liquidity v0.0.0-00010101000000-000000000000
 	wklive/proto/trade v0.0.0-00010101000000-000000000000
+	wklive/proto/user v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -107,8 +110,14 @@ require (
 
 replace wklive/common => ../../common
 
+replace wklive/proto/asset => ../../proto/asset
+
 replace wklive/proto/common => ../../proto/common
+
+replace wklive/proto/itick => ../../proto/itick
 
 replace wklive/proto/liquidity => ../../proto/liquidity
 
 replace wklive/proto/trade => ../../proto/trade
+
+replace wklive/proto/user => ../../proto/user

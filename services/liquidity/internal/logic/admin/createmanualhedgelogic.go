@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"wklive/common/helper"
+	"wklive/proto/common"
 	"wklive/proto/liquidity"
 	"wklive/services/liquidity/internal/logic/helpers"
 	"wklive/services/liquidity/internal/svc"
@@ -32,7 +33,7 @@ func (l *CreateManualHedgeLogic) CreateManualHedge(in *liquidity.CreateManualHed
 	if in.ConfigId <= 0 || in.ProviderId <= 0 {
 		return nil, fmt.Errorf("config_id and provider_id are required")
 	}
-	if in.Side != 1 && in.Side != 2 {
+	if in.Side != common.Side_SIDE_BUY && in.Side != common.Side_SIDE_SELL {
 		return nil, fmt.Errorf("invalid side")
 	}
 	qty, err := parseNumber("qty", in.Qty)

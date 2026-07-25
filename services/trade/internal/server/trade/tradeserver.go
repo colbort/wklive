@@ -23,6 +23,12 @@ func NewTradeServer(svcCtx *svc.ServiceContext) *TradeServer {
 	}
 }
 
+// 内部服务查询可配置的交易对，不依赖管理后台登录上下文。
+func (s *TradeServer) GetSymbolList(ctx context.Context, in *trade.GetSymbolListAdminReq) (*trade.GetSymbolListAdminResp, error) {
+	l := tradelogic.NewGetSymbolListLogic(ctx, s.svcCtx)
+	return l.GetSymbolList(in)
+}
+
 // 内部服务获取指定交易对配置，不依赖用户端登录上下文。
 func (s *TradeServer) GetSymbolDetail(ctx context.Context, in *trade.GetSymbolDetailReq) (*trade.GetSymbolDetailResp, error) {
 	l := tradelogic.NewGetSymbolDetailLogic(ctx, s.svcCtx)

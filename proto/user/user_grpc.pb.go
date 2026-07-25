@@ -2033,3 +2033,185 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "proto/user/user.proto",
 }
+
+const (
+	User_CreateInternalTradingUser_FullMethodName = "/user.User/CreateInternalTradingUser"
+	User_GetInternalTradingUser_FullMethodName    = "/user.User/GetInternalTradingUser"
+	User_ListInternalTradingUsers_FullMethodName  = "/user.User/ListInternalTradingUsers"
+)
+
+// UserClient is the client API for User service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// 仅供平台内部服务调用，不暴露给用户端。
+type UserClient interface {
+	CreateInternalTradingUser(ctx context.Context, in *CreateInternalTradingUserReq, opts ...grpc.CallOption) (*InternalTradingUserResp, error)
+	GetInternalTradingUser(ctx context.Context, in *GetInternalTradingUserReq, opts ...grpc.CallOption) (*InternalTradingUserResp, error)
+	ListInternalTradingUsers(ctx context.Context, in *ListInternalTradingUsersReq, opts ...grpc.CallOption) (*ListInternalTradingUsersResp, error)
+}
+
+type userClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewUserClient(cc grpc.ClientConnInterface) UserClient {
+	return &userClient{cc}
+}
+
+func (c *userClient) CreateInternalTradingUser(ctx context.Context, in *CreateInternalTradingUserReq, opts ...grpc.CallOption) (*InternalTradingUserResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(InternalTradingUserResp)
+	err := c.cc.Invoke(ctx, User_CreateInternalTradingUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) GetInternalTradingUser(ctx context.Context, in *GetInternalTradingUserReq, opts ...grpc.CallOption) (*InternalTradingUserResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(InternalTradingUserResp)
+	err := c.cc.Invoke(ctx, User_GetInternalTradingUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userClient) ListInternalTradingUsers(ctx context.Context, in *ListInternalTradingUsersReq, opts ...grpc.CallOption) (*ListInternalTradingUsersResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListInternalTradingUsersResp)
+	err := c.cc.Invoke(ctx, User_ListInternalTradingUsers_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// UserServer is the server API for User service.
+// All implementations must embed UnimplementedUserServer
+// for forward compatibility.
+//
+// 仅供平台内部服务调用，不暴露给用户端。
+type UserServer interface {
+	CreateInternalTradingUser(context.Context, *CreateInternalTradingUserReq) (*InternalTradingUserResp, error)
+	GetInternalTradingUser(context.Context, *GetInternalTradingUserReq) (*InternalTradingUserResp, error)
+	ListInternalTradingUsers(context.Context, *ListInternalTradingUsersReq) (*ListInternalTradingUsersResp, error)
+	mustEmbedUnimplementedUserServer()
+}
+
+// UnimplementedUserServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedUserServer struct{}
+
+func (UnimplementedUserServer) CreateInternalTradingUser(context.Context, *CreateInternalTradingUserReq) (*InternalTradingUserResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateInternalTradingUser not implemented")
+}
+func (UnimplementedUserServer) GetInternalTradingUser(context.Context, *GetInternalTradingUserReq) (*InternalTradingUserResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetInternalTradingUser not implemented")
+}
+func (UnimplementedUserServer) ListInternalTradingUsers(context.Context, *ListInternalTradingUsersReq) (*ListInternalTradingUsersResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListInternalTradingUsers not implemented")
+}
+func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
+func (UnimplementedUserServer) testEmbeddedByValue()              {}
+
+// UnsafeUserServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UserServer will
+// result in compilation errors.
+type UnsafeUserServer interface {
+	mustEmbedUnimplementedUserServer()
+}
+
+func RegisterUserServer(s grpc.ServiceRegistrar, srv UserServer) {
+	// If the following call panics, it indicates UnimplementedUserServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&User_ServiceDesc, srv)
+}
+
+func _User_CreateInternalTradingUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateInternalTradingUserReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).CreateInternalTradingUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_CreateInternalTradingUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).CreateInternalTradingUser(ctx, req.(*CreateInternalTradingUserReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_GetInternalTradingUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetInternalTradingUserReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).GetInternalTradingUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_GetInternalTradingUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).GetInternalTradingUser(ctx, req.(*GetInternalTradingUserReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _User_ListInternalTradingUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListInternalTradingUsersReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).ListInternalTradingUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_ListInternalTradingUsers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).ListInternalTradingUsers(ctx, req.(*ListInternalTradingUsersReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// User_ServiceDesc is the grpc.ServiceDesc for User service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var User_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "user.User",
+	HandlerType: (*UserServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateInternalTradingUser",
+			Handler:    _User_CreateInternalTradingUser_Handler,
+		},
+		{
+			MethodName: "GetInternalTradingUser",
+			Handler:    _User_GetInternalTradingUser_Handler,
+		},
+		{
+			MethodName: "ListInternalTradingUsers",
+			Handler:    _User_ListInternalTradingUsers_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "proto/user/user.proto",
+}

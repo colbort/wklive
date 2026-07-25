@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"strings"
@@ -12,6 +13,7 @@ import (
 	liquidity "wklive/services/liquidity/internal/server/liquidity"
 	task "wklive/services/liquidity/internal/server/task"
 	"wklive/services/liquidity/internal/svc"
+	liquiditytasks "wklive/services/liquidity/internal/tasks"
 
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -34,6 +36,9 @@ func main() {
 	}
 
 	svcCtx := svc.NewServiceContext(c)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	liquiditytasks.StartTaskSubscriber(ctx, svcCtx)
 	server := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		pb.RegisterAdminServer(grpcServer, admin.NewAdminServer(svcCtx))
 		pb.RegisterLiquidityServer(grpcServer, liquidity.NewLiquidityServer(svcCtx))

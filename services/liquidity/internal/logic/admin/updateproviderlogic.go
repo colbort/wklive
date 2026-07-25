@@ -39,6 +39,11 @@ func (l *UpdateProviderLogic) UpdateProvider(in *liquidity.UpdateProviderReq) (*
 	if strings.TrimSpace(in.ProviderName) == "" {
 		return nil, fmt.Errorf("provider_name is required")
 	}
+	if row.ProviderType == int64(liquidity.ProviderType_PROVIDER_TYPE_INTERNAL) {
+		if err := validateInternalTradingUser(l.ctx, l.svcCtx, in.TradeUserId); err != nil {
+			return nil, err
+		}
+	}
 	row.ProviderName = strings.TrimSpace(in.ProviderName)
 	row.TradeUserId = in.TradeUserId
 	row.VenueCode = strings.TrimSpace(in.VenueCode)

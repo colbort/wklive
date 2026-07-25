@@ -54,6 +54,7 @@ type (
 		Avatar              sql.NullString `db:"avatar"`                // 头像
 		PasswordHash        string         `db:"password_hash"`         // 登录密码哈希
 		RegisterType        int64          `db:"register_type"`         // 注册方式：1用户名 2手机号 3邮箱 4游客
+		AccountType         int64          `db:"account_type"`          // 账户类型：1普通用户 2内部做市账户 3平台系统账户
 		Status              int64          `db:"status"`                // 状态：1正常 2禁用 3冻结 4注销
 		MemberLevel         int64          `db:"member_level"`          // 会员等级
 		Language            sql.NullString `db:"language"`              // 语言
@@ -187,8 +188,8 @@ func (m *defaultTUserModel) Insert(ctx context.Context, data *TUser) (sql.Result
 	tUserTenantIdUserNoKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUserNoPrefix, data.TenantId, data.UserNo)
 	tUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUsernamePrefix, data.TenantId, data.Username)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserNo, data.Username, data.Nickname, data.Avatar, data.PasswordHash, data.RegisterType, data.Status, data.MemberLevel, data.Language, data.Timezone, data.InviteCode, data.Signature, data.Source, data.SourceOrigin, data.GuestMigratedOrigin, data.GuestMigratedTime, data.ReferrerUserId, data.LastLoginIp, data.LastLoginTime, data.RegisterIp, data.RegisterTime, data.IsGuest, data.IsRecharge, data.DeviceId, data.Fingerprint, data.Remark, data.Deleted, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tUserRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserNo, data.Username, data.Nickname, data.Avatar, data.PasswordHash, data.RegisterType, data.AccountType, data.Status, data.MemberLevel, data.Language, data.Timezone, data.InviteCode, data.Signature, data.Source, data.SourceOrigin, data.GuestMigratedOrigin, data.GuestMigratedTime, data.ReferrerUserId, data.LastLoginIp, data.LastLoginTime, data.RegisterIp, data.RegisterTime, data.IsGuest, data.IsRecharge, data.DeviceId, data.Fingerprint, data.Remark, data.Deleted, data.CreateTimes, data.UpdateTimes)
 	}, tUserIdKey, tUserTenantIdInviteCodeKey, tUserTenantIdUserNoKey, tUserTenantIdUsernameKey)
 	return ret, err
 }
@@ -205,7 +206,7 @@ func (m *defaultTUserModel) Update(ctx context.Context, newData *TUser) error {
 	tUserTenantIdUsernameKey := fmt.Sprintf("%s%v:%v", cacheTUserTenantIdUsernamePrefix, data.TenantId, data.Username)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tUserRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserNo, newData.Username, newData.Nickname, newData.Avatar, newData.PasswordHash, newData.RegisterType, newData.Status, newData.MemberLevel, newData.Language, newData.Timezone, newData.InviteCode, newData.Signature, newData.Source, newData.SourceOrigin, newData.GuestMigratedOrigin, newData.GuestMigratedTime, newData.ReferrerUserId, newData.LastLoginIp, newData.LastLoginTime, newData.RegisterIp, newData.RegisterTime, newData.IsGuest, newData.IsRecharge, newData.DeviceId, newData.Fingerprint, newData.Remark, newData.Deleted, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserNo, newData.Username, newData.Nickname, newData.Avatar, newData.PasswordHash, newData.RegisterType, newData.AccountType, newData.Status, newData.MemberLevel, newData.Language, newData.Timezone, newData.InviteCode, newData.Signature, newData.Source, newData.SourceOrigin, newData.GuestMigratedOrigin, newData.GuestMigratedTime, newData.ReferrerUserId, newData.LastLoginIp, newData.LastLoginTime, newData.RegisterIp, newData.RegisterTime, newData.IsGuest, newData.IsRecharge, newData.DeviceId, newData.Fingerprint, newData.Remark, newData.Deleted, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tUserIdKey, tUserTenantIdInviteCodeKey, tUserTenantIdUserNoKey, tUserTenantIdUsernameKey)
 	return err
 }

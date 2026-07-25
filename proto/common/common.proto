@@ -73,6 +73,14 @@ enum Side {
   SIDE_SELL = 2;
 }
 
+// 用户账户用途。特殊交易账户禁止通过普通用户端登录。
+enum UserAccountType {
+  USER_ACCOUNT_TYPE_UNKNOWN = 0;
+  USER_ACCOUNT_TYPE_NORMAL = 1;
+  USER_ACCOUNT_TYPE_INTERNAL_MARKET_MAKER = 2;
+  USER_ACCOUNT_TYPE_SYSTEM = 3;
+}
+
 // 跨交易、行情、流动性和资产展示共享的产品大类。
 enum ProductType {
   PRODUCT_TYPE_UNKNOWN = 0;

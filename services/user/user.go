@@ -9,6 +9,7 @@ import (
 	"wklive/services/user/internal/config"
 	admin "wklive/services/user/internal/server/admin"
 	app "wklive/services/user/internal/server/app"
+	user "wklive/services/user/internal/server/user"
 	"wklive/services/user/internal/svc"
 
 	"wklive/common/etcd"
@@ -46,6 +47,7 @@ func main() {
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		pb.RegisterAdminServer(grpcServer, admin.NewAdminServer(ctx))
 		pb.RegisterAppServer(grpcServer, app.NewAppServer(ctx))
+		pb.RegisterUserServer(grpcServer, user.NewUserServer(ctx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

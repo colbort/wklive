@@ -19,6 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	Admin_GetConfigOptions_FullMethodName           = "/liquidity.Admin/GetConfigOptions"
+	Admin_ProvisionInternalProvider_FullMethodName  = "/liquidity.Admin/ProvisionInternalProvider"
 	Admin_CreateProvider_FullMethodName             = "/liquidity.Admin/CreateProvider"
 	Admin_UpdateProvider_FullMethodName             = "/liquidity.Admin/UpdateProvider"
 	Admin_SetProviderStatus_FullMethodName          = "/liquidity.Admin/SetProviderStatus"
@@ -59,6 +61,8 @@ const (
 //
 // 做市运营、外部渠道、风控和对账管理接口。
 type AdminClient interface {
+	GetConfigOptions(ctx context.Context, in *GetConfigOptionsReq, opts ...grpc.CallOption) (*GetConfigOptionsResp, error)
+	ProvisionInternalProvider(ctx context.Context, in *ProvisionInternalProviderReq, opts ...grpc.CallOption) (*ProviderResp, error)
 	CreateProvider(ctx context.Context, in *CreateProviderReq, opts ...grpc.CallOption) (*ProviderResp, error)
 	UpdateProvider(ctx context.Context, in *UpdateProviderReq, opts ...grpc.CallOption) (*ProviderResp, error)
 	SetProviderStatus(ctx context.Context, in *SetProviderStatusReq, opts ...grpc.CallOption) (*CommonResp, error)
@@ -99,6 +103,26 @@ type adminClient struct {
 
 func NewAdminClient(cc grpc.ClientConnInterface) AdminClient {
 	return &adminClient{cc}
+}
+
+func (c *adminClient) GetConfigOptions(ctx context.Context, in *GetConfigOptionsReq, opts ...grpc.CallOption) (*GetConfigOptionsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetConfigOptionsResp)
+	err := c.cc.Invoke(ctx, Admin_GetConfigOptions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ProvisionInternalProvider(ctx context.Context, in *ProvisionInternalProviderReq, opts ...grpc.CallOption) (*ProviderResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProviderResp)
+	err := c.cc.Invoke(ctx, Admin_ProvisionInternalProvider_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *adminClient) CreateProvider(ctx context.Context, in *CreateProviderReq, opts ...grpc.CallOption) (*ProviderResp, error) {
@@ -427,6 +451,8 @@ func (c *adminClient) ResolveReconcileDifference(ctx context.Context, in *Resolv
 //
 // 做市运营、外部渠道、风控和对账管理接口。
 type AdminServer interface {
+	GetConfigOptions(context.Context, *GetConfigOptionsReq) (*GetConfigOptionsResp, error)
+	ProvisionInternalProvider(context.Context, *ProvisionInternalProviderReq) (*ProviderResp, error)
 	CreateProvider(context.Context, *CreateProviderReq) (*ProviderResp, error)
 	UpdateProvider(context.Context, *UpdateProviderReq) (*ProviderResp, error)
 	SetProviderStatus(context.Context, *SetProviderStatusReq) (*CommonResp, error)
@@ -469,6 +495,12 @@ type AdminServer interface {
 // pointer dereference when methods are called.
 type UnimplementedAdminServer struct{}
 
+func (UnimplementedAdminServer) GetConfigOptions(context.Context, *GetConfigOptionsReq) (*GetConfigOptionsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetConfigOptions not implemented")
+}
+func (UnimplementedAdminServer) ProvisionInternalProvider(context.Context, *ProvisionInternalProviderReq) (*ProviderResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ProvisionInternalProvider not implemented")
+}
 func (UnimplementedAdminServer) CreateProvider(context.Context, *CreateProviderReq) (*ProviderResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateProvider not implemented")
 }
@@ -584,6 +616,42 @@ func RegisterAdminServer(s grpc.ServiceRegistrar, srv AdminServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&Admin_ServiceDesc, srv)
+}
+
+func _Admin_GetConfigOptions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetConfigOptionsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).GetConfigOptions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_GetConfigOptions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).GetConfigOptions(ctx, req.(*GetConfigOptionsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ProvisionInternalProvider_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProvisionInternalProviderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ProvisionInternalProvider(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ProvisionInternalProvider_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ProvisionInternalProvider(ctx, req.(*ProvisionInternalProviderReq))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Admin_CreateProvider_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -1169,6 +1237,14 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "liquidity.Admin",
 	HandlerType: (*AdminServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetConfigOptions",
+			Handler:    _Admin_GetConfigOptions_Handler,
+		},
+		{
+			MethodName: "ProvisionInternalProvider",
+			Handler:    _Admin_ProvisionInternalProvider_Handler,
+		},
 		{
 			MethodName: "CreateProvider",
 			Handler:    _Admin_CreateProvider_Handler,

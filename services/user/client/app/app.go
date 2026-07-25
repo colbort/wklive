@@ -24,6 +24,7 @@ type (
 	CreateGuestTransferData       = user.CreateGuestTransferData
 	CreateGuestTransferReq        = user.CreateGuestTransferReq
 	CreateGuestTransferResp       = user.CreateGuestTransferResp
+	CreateInternalTradingUserReq  = user.CreateInternalTradingUserReq
 	CreateUserReq                 = user.CreateUserReq
 	CreateUserResp                = user.CreateUserResp
 	DeleteBankReq                 = user.DeleteBankReq
@@ -36,6 +37,7 @@ type (
 	ExchangeGuestTransferResp     = user.ExchangeGuestTransferResp
 	GetIdentityReq                = user.GetIdentityReq
 	GetIdentityResp               = user.GetIdentityResp
+	GetInternalTradingUserReq     = user.GetInternalTradingUserReq
 	GetProfileReq                 = user.GetProfileReq
 	GetProfileResp                = user.GetProfileResp
 	GetSecurityReq                = user.GetSecurityReq
@@ -55,8 +57,12 @@ type (
 	InitGoogle2FAData             = user.InitGoogle2FAData
 	InitGoogle2FAReq              = user.InitGoogle2FAReq
 	InitGoogle2FAResp             = user.InitGoogle2FAResp
+	InternalTradingUser           = user.InternalTradingUser
+	InternalTradingUserResp       = user.InternalTradingUserResp
 	ListBanksReq                  = user.ListBanksReq
 	ListBanksResp                 = user.ListBanksResp
+	ListInternalTradingUsersReq   = user.ListInternalTradingUsersReq
+	ListInternalTradingUsersResp  = user.ListInternalTradingUsersResp
 	ListUserBanksReq              = user.ListUserBanksReq
 	ListUserBanksResp             = user.ListUserBanksResp
 	ListUserIdentitiesReq         = user.ListUserIdentitiesReq

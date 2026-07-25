@@ -66,6 +66,438 @@ func (x *CommonResp) GetBase() *common.RespBase {
 	return nil
 }
 
+type GetConfigOptionsReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Keyword       string                 `protobuf:"bytes,1,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetConfigOptionsReq) Reset() {
+	*x = GetConfigOptionsReq{}
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetConfigOptionsReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetConfigOptionsReq) ProtoMessage() {}
+
+func (x *GetConfigOptionsReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetConfigOptionsReq.ProtoReflect.Descriptor instead.
+func (*GetConfigOptionsReq) Descriptor() ([]byte, []int) {
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *GetConfigOptionsReq) GetKeyword() string {
+	if x != nil {
+		return x.Keyword
+	}
+	return ""
+}
+
+type ConfigSymbolOption struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	SymbolId          int64                  `protobuf:"varint,1,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
+	Symbol            string                 `protobuf:"bytes,2,opt,name=symbol,proto3" json:"symbol,omitempty"`
+	DisplaySymbol     string                 `protobuf:"bytes,3,opt,name=display_symbol,json=displaySymbol,proto3" json:"display_symbol,omitempty"`
+	ProductType       common.ProductType     `protobuf:"varint,4,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
+	ContractType      common.ContractType    `protobuf:"varint,5,opt,name=contract_type,json=contractType,proto3,enum=common.ContractType" json:"contract_type,omitempty"`
+	WalletType        common.WalletType      `protobuf:"varint,6,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`
+	ContractValueType int32                  `protobuf:"varint,7,opt,name=contract_value_type,json=contractValueType,proto3" json:"contract_value_type,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *ConfigSymbolOption) Reset() {
+	*x = ConfigSymbolOption{}
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfigSymbolOption) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfigSymbolOption) ProtoMessage() {}
+
+func (x *ConfigSymbolOption) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfigSymbolOption.ProtoReflect.Descriptor instead.
+func (*ConfigSymbolOption) Descriptor() ([]byte, []int) {
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ConfigSymbolOption) GetSymbolId() int64 {
+	if x != nil {
+		return x.SymbolId
+	}
+	return 0
+}
+
+func (x *ConfigSymbolOption) GetSymbol() string {
+	if x != nil {
+		return x.Symbol
+	}
+	return ""
+}
+
+func (x *ConfigSymbolOption) GetDisplaySymbol() string {
+	if x != nil {
+		return x.DisplaySymbol
+	}
+	return ""
+}
+
+func (x *ConfigSymbolOption) GetProductType() common.ProductType {
+	if x != nil {
+		return x.ProductType
+	}
+	return common.ProductType(0)
+}
+
+func (x *ConfigSymbolOption) GetContractType() common.ContractType {
+	if x != nil {
+		return x.ContractType
+	}
+	return common.ContractType(0)
+}
+
+func (x *ConfigSymbolOption) GetWalletType() common.WalletType {
+	if x != nil {
+		return x.WalletType
+	}
+	return common.WalletType(0)
+}
+
+func (x *ConfigSymbolOption) GetContractValueType() int32 {
+	if x != nil {
+		return x.ContractValueType
+	}
+	return 0
+}
+
+type ConfigProviderOption struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProviderId    int64                  `protobuf:"varint,1,opt,name=provider_id,json=providerId,proto3" json:"provider_id,omitempty"`
+	ProviderCode  string                 `protobuf:"bytes,2,opt,name=provider_code,json=providerCode,proto3" json:"provider_code,omitempty"`
+	ProviderName  string                 `protobuf:"bytes,3,opt,name=provider_name,json=providerName,proto3" json:"provider_name,omitempty"`
+	ProviderType  ProviderType           `protobuf:"varint,4,opt,name=provider_type,json=providerType,proto3,enum=liquidity.ProviderType" json:"provider_type,omitempty"`
+	TradeUserId   int64                  `protobuf:"varint,5,opt,name=trade_user_id,json=tradeUserId,proto3" json:"trade_user_id,omitempty"`
+	Status        ProviderStatus         `protobuf:"varint,6,opt,name=status,proto3,enum=liquidity.ProviderStatus" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConfigProviderOption) Reset() {
+	*x = ConfigProviderOption{}
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfigProviderOption) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfigProviderOption) ProtoMessage() {}
+
+func (x *ConfigProviderOption) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfigProviderOption.ProtoReflect.Descriptor instead.
+func (*ConfigProviderOption) Descriptor() ([]byte, []int) {
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ConfigProviderOption) GetProviderId() int64 {
+	if x != nil {
+		return x.ProviderId
+	}
+	return 0
+}
+
+func (x *ConfigProviderOption) GetProviderCode() string {
+	if x != nil {
+		return x.ProviderCode
+	}
+	return ""
+}
+
+func (x *ConfigProviderOption) GetProviderName() string {
+	if x != nil {
+		return x.ProviderName
+	}
+	return ""
+}
+
+func (x *ConfigProviderOption) GetProviderType() ProviderType {
+	if x != nil {
+		return x.ProviderType
+	}
+	return ProviderType_PROVIDER_TYPE_UNKNOWN
+}
+
+func (x *ConfigProviderOption) GetTradeUserId() int64 {
+	if x != nil {
+		return x.TradeUserId
+	}
+	return 0
+}
+
+func (x *ConfigProviderOption) GetStatus() ProviderStatus {
+	if x != nil {
+		return x.Status
+	}
+	return ProviderStatus_PROVIDER_STATUS_UNKNOWN
+}
+
+type ConfigTradingUserOption struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TradeUserId   int64                  `protobuf:"varint,1,opt,name=trade_user_id,json=tradeUserId,proto3" json:"trade_user_id,omitempty"`
+	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConfigTradingUserOption) Reset() {
+	*x = ConfigTradingUserOption{}
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfigTradingUserOption) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfigTradingUserOption) ProtoMessage() {}
+
+func (x *ConfigTradingUserOption) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfigTradingUserOption.ProtoReflect.Descriptor instead.
+func (*ConfigTradingUserOption) Descriptor() ([]byte, []int) {
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *ConfigTradingUserOption) GetTradeUserId() int64 {
+	if x != nil {
+		return x.TradeUserId
+	}
+	return 0
+}
+
+func (x *ConfigTradingUserOption) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+type GetConfigOptionsResp struct {
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Base          *common.RespBase           `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Symbols       []*ConfigSymbolOption      `protobuf:"bytes,2,rep,name=symbols,proto3" json:"symbols,omitempty"`
+	Providers     []*ConfigProviderOption    `protobuf:"bytes,3,rep,name=providers,proto3" json:"providers,omitempty"`
+	TradingUsers  []*ConfigTradingUserOption `protobuf:"bytes,4,rep,name=trading_users,json=tradingUsers,proto3" json:"trading_users,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetConfigOptionsResp) Reset() {
+	*x = GetConfigOptionsResp{}
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetConfigOptionsResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetConfigOptionsResp) ProtoMessage() {}
+
+func (x *GetConfigOptionsResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetConfigOptionsResp.ProtoReflect.Descriptor instead.
+func (*GetConfigOptionsResp) Descriptor() ([]byte, []int) {
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetConfigOptionsResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetConfigOptionsResp) GetSymbols() []*ConfigSymbolOption {
+	if x != nil {
+		return x.Symbols
+	}
+	return nil
+}
+
+func (x *GetConfigOptionsResp) GetProviders() []*ConfigProviderOption {
+	if x != nil {
+		return x.Providers
+	}
+	return nil
+}
+
+func (x *GetConfigOptionsResp) GetTradingUsers() []*ConfigTradingUserOption {
+	if x != nil {
+		return x.TradingUsers
+	}
+	return nil
+}
+
+type ProvisionInternalProviderReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SymbolId      int64                  `protobuf:"varint,2,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
+	ProviderCode  string                 `protobuf:"bytes,3,opt,name=provider_code,json=providerCode,proto3" json:"provider_code,omitempty"`
+	ProviderName  string                 `protobuf:"bytes,4,opt,name=provider_name,json=providerName,proto3" json:"provider_name,omitempty"`
+	BaseAmount    string                 `protobuf:"bytes,5,opt,name=base_amount,json=baseAmount,proto3" json:"base_amount,omitempty"`
+	QuoteAmount   string                 `protobuf:"bytes,6,opt,name=quote_amount,json=quoteAmount,proto3" json:"quote_amount,omitempty"`
+	OperatorId    int64                  `protobuf:"varint,7,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`
+	Remark        string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProvisionInternalProviderReq) Reset() {
+	*x = ProvisionInternalProviderReq{}
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProvisionInternalProviderReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProvisionInternalProviderReq) ProtoMessage() {}
+
+func (x *ProvisionInternalProviderReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProvisionInternalProviderReq.ProtoReflect.Descriptor instead.
+func (*ProvisionInternalProviderReq) Descriptor() ([]byte, []int) {
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ProvisionInternalProviderReq) GetSymbolId() int64 {
+	if x != nil {
+		return x.SymbolId
+	}
+	return 0
+}
+
+func (x *ProvisionInternalProviderReq) GetProviderCode() string {
+	if x != nil {
+		return x.ProviderCode
+	}
+	return ""
+}
+
+func (x *ProvisionInternalProviderReq) GetProviderName() string {
+	if x != nil {
+		return x.ProviderName
+	}
+	return ""
+}
+
+func (x *ProvisionInternalProviderReq) GetBaseAmount() string {
+	if x != nil {
+		return x.BaseAmount
+	}
+	return ""
+}
+
+func (x *ProvisionInternalProviderReq) GetQuoteAmount() string {
+	if x != nil {
+		return x.QuoteAmount
+	}
+	return ""
+}
+
+func (x *ProvisionInternalProviderReq) GetOperatorId() int64 {
+	if x != nil {
+		return x.OperatorId
+	}
+	return 0
+}
+
+func (x *ProvisionInternalProviderReq) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
 type CreateProviderReq struct {
 	state              protoimpl.MessageState `protogen:"open.v1"`
 	ProviderCode       string                 `protobuf:"bytes,2,opt,name=provider_code,json=providerCode,proto3" json:"provider_code,omitempty"`
@@ -86,7 +518,7 @@ type CreateProviderReq struct {
 
 func (x *CreateProviderReq) Reset() {
 	*x = CreateProviderReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[1]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -98,7 +530,7 @@ func (x *CreateProviderReq) String() string {
 func (*CreateProviderReq) ProtoMessage() {}
 
 func (x *CreateProviderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[1]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -111,7 +543,7 @@ func (x *CreateProviderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateProviderReq.ProtoReflect.Descriptor instead.
 func (*CreateProviderReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{1}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *CreateProviderReq) GetProviderCode() string {
@@ -217,7 +649,7 @@ type UpdateProviderReq struct {
 
 func (x *UpdateProviderReq) Reset() {
 	*x = UpdateProviderReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[2]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -229,7 +661,7 @@ func (x *UpdateProviderReq) String() string {
 func (*UpdateProviderReq) ProtoMessage() {}
 
 func (x *UpdateProviderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[2]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -242,7 +674,7 @@ func (x *UpdateProviderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateProviderReq.ProtoReflect.Descriptor instead.
 func (*UpdateProviderReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{2}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *UpdateProviderReq) GetId() int64 {
@@ -335,7 +767,7 @@ type SetProviderStatusReq struct {
 
 func (x *SetProviderStatusReq) Reset() {
 	*x = SetProviderStatusReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[3]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -347,7 +779,7 @@ func (x *SetProviderStatusReq) String() string {
 func (*SetProviderStatusReq) ProtoMessage() {}
 
 func (x *SetProviderStatusReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[3]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -360,7 +792,7 @@ func (x *SetProviderStatusReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetProviderStatusReq.ProtoReflect.Descriptor instead.
 func (*SetProviderStatusReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{3}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *SetProviderStatusReq) GetId() int64 {
@@ -408,7 +840,7 @@ type TestProviderConnectionReq struct {
 
 func (x *TestProviderConnectionReq) Reset() {
 	*x = TestProviderConnectionReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[4]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -420,7 +852,7 @@ func (x *TestProviderConnectionReq) String() string {
 func (*TestProviderConnectionReq) ProtoMessage() {}
 
 func (x *TestProviderConnectionReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[4]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -433,7 +865,7 @@ func (x *TestProviderConnectionReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TestProviderConnectionReq.ProtoReflect.Descriptor instead.
 func (*TestProviderConnectionReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{4}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *TestProviderConnectionReq) GetId() int64 {
@@ -463,7 +895,7 @@ type GetProviderListReq struct {
 
 func (x *GetProviderListReq) Reset() {
 	*x = GetProviderListReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[5]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -475,7 +907,7 @@ func (x *GetProviderListReq) String() string {
 func (*GetProviderListReq) ProtoMessage() {}
 
 func (x *GetProviderListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[5]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -488,7 +920,7 @@ func (x *GetProviderListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProviderListReq.ProtoReflect.Descriptor instead.
 func (*GetProviderListReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{5}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetProviderListReq) GetProviderType() ProviderType {
@@ -535,7 +967,7 @@ type GetProviderDetailReq struct {
 
 func (x *GetProviderDetailReq) Reset() {
 	*x = GetProviderDetailReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[6]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -547,7 +979,7 @@ func (x *GetProviderDetailReq) String() string {
 func (*GetProviderDetailReq) ProtoMessage() {}
 
 func (x *GetProviderDetailReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[6]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -560,7 +992,7 @@ func (x *GetProviderDetailReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProviderDetailReq.ProtoReflect.Descriptor instead.
 func (*GetProviderDetailReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{6}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetProviderDetailReq) GetId() int64 {
@@ -580,7 +1012,7 @@ type ProviderResp struct {
 
 func (x *ProviderResp) Reset() {
 	*x = ProviderResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[7]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -592,7 +1024,7 @@ func (x *ProviderResp) String() string {
 func (*ProviderResp) ProtoMessage() {}
 
 func (x *ProviderResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[7]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -605,7 +1037,7 @@ func (x *ProviderResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProviderResp.ProtoReflect.Descriptor instead.
 func (*ProviderResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{7}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ProviderResp) GetBase() *common.RespBase {
@@ -634,7 +1066,7 @@ type ProviderHealthResp struct {
 
 func (x *ProviderHealthResp) Reset() {
 	*x = ProviderHealthResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[8]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -646,7 +1078,7 @@ func (x *ProviderHealthResp) String() string {
 func (*ProviderHealthResp) ProtoMessage() {}
 
 func (x *ProviderHealthResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[8]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -659,7 +1091,7 @@ func (x *ProviderHealthResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProviderHealthResp.ProtoReflect.Descriptor instead.
 func (*ProviderHealthResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{8}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ProviderHealthResp) GetBase() *common.RespBase {
@@ -701,7 +1133,7 @@ type GetProviderListResp struct {
 
 func (x *GetProviderListResp) Reset() {
 	*x = GetProviderListResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[9]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -713,7 +1145,7 @@ func (x *GetProviderListResp) String() string {
 func (*GetProviderListResp) ProtoMessage() {}
 
 func (x *GetProviderListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[9]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -726,7 +1158,7 @@ func (x *GetProviderListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProviderListResp.ProtoReflect.Descriptor instead.
 func (*GetProviderListResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{9}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *GetProviderListResp) GetBase() *common.RespBase {
@@ -787,7 +1219,7 @@ type SaveSymbolConfigReq struct {
 
 func (x *SaveSymbolConfigReq) Reset() {
 	*x = SaveSymbolConfigReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[10]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -799,7 +1231,7 @@ func (x *SaveSymbolConfigReq) String() string {
 func (*SaveSymbolConfigReq) ProtoMessage() {}
 
 func (x *SaveSymbolConfigReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[10]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -812,7 +1244,7 @@ func (x *SaveSymbolConfigReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SaveSymbolConfigReq.ProtoReflect.Descriptor instead.
 func (*SaveSymbolConfigReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{10}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *SaveSymbolConfigReq) GetId() int64 {
@@ -1034,7 +1466,7 @@ type GetSymbolConfigListReq struct {
 
 func (x *GetSymbolConfigListReq) Reset() {
 	*x = GetSymbolConfigListReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[11]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1046,7 +1478,7 @@ func (x *GetSymbolConfigListReq) String() string {
 func (*GetSymbolConfigListReq) ProtoMessage() {}
 
 func (x *GetSymbolConfigListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[11]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1059,7 +1491,7 @@ func (x *GetSymbolConfigListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSymbolConfigListReq.ProtoReflect.Descriptor instead.
 func (*GetSymbolConfigListReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{11}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *GetSymbolConfigListReq) GetSymbolId() int64 {
@@ -1128,7 +1560,7 @@ type GetSymbolConfigDetailReq struct {
 
 func (x *GetSymbolConfigDetailReq) Reset() {
 	*x = GetSymbolConfigDetailReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[12]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1140,7 +1572,7 @@ func (x *GetSymbolConfigDetailReq) String() string {
 func (*GetSymbolConfigDetailReq) ProtoMessage() {}
 
 func (x *GetSymbolConfigDetailReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[12]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1153,7 +1585,7 @@ func (x *GetSymbolConfigDetailReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSymbolConfigDetailReq.ProtoReflect.Descriptor instead.
 func (*GetSymbolConfigDetailReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{12}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *GetSymbolConfigDetailReq) GetId() int64 {
@@ -1180,7 +1612,7 @@ type SymbolConfigResp struct {
 
 func (x *SymbolConfigResp) Reset() {
 	*x = SymbolConfigResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[13]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1192,7 +1624,7 @@ func (x *SymbolConfigResp) String() string {
 func (*SymbolConfigResp) ProtoMessage() {}
 
 func (x *SymbolConfigResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[13]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1205,7 +1637,7 @@ func (x *SymbolConfigResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SymbolConfigResp.ProtoReflect.Descriptor instead.
 func (*SymbolConfigResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{13}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *SymbolConfigResp) GetBase() *common.RespBase {
@@ -1233,7 +1665,7 @@ type GetSymbolConfigListResp struct {
 
 func (x *GetSymbolConfigListResp) Reset() {
 	*x = GetSymbolConfigListResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[14]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1245,7 +1677,7 @@ func (x *GetSymbolConfigListResp) String() string {
 func (*GetSymbolConfigListResp) ProtoMessage() {}
 
 func (x *GetSymbolConfigListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[14]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1258,7 +1690,7 @@ func (x *GetSymbolConfigListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSymbolConfigListResp.ProtoReflect.Descriptor instead.
 func (*GetSymbolConfigListResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{14}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *GetSymbolConfigListResp) GetBase() *common.RespBase {
@@ -1294,7 +1726,7 @@ type GetSymbolConfigDetailResp struct {
 
 func (x *GetSymbolConfigDetailResp) Reset() {
 	*x = GetSymbolConfigDetailResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[15]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1306,7 +1738,7 @@ func (x *GetSymbolConfigDetailResp) String() string {
 func (*GetSymbolConfigDetailResp) ProtoMessage() {}
 
 func (x *GetSymbolConfigDetailResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[15]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1319,7 +1751,7 @@ func (x *GetSymbolConfigDetailResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSymbolConfigDetailResp.ProtoReflect.Descriptor instead.
 func (*GetSymbolConfigDetailResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{15}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *GetSymbolConfigDetailResp) GetBase() *common.RespBase {
@@ -1362,7 +1794,7 @@ type SetStrategyLevelsReq struct {
 
 func (x *SetStrategyLevelsReq) Reset() {
 	*x = SetStrategyLevelsReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[16]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1374,7 +1806,7 @@ func (x *SetStrategyLevelsReq) String() string {
 func (*SetStrategyLevelsReq) ProtoMessage() {}
 
 func (x *SetStrategyLevelsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[16]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1387,7 +1819,7 @@ func (x *SetStrategyLevelsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetStrategyLevelsReq.ProtoReflect.Descriptor instead.
 func (*SetStrategyLevelsReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{16}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *SetStrategyLevelsReq) GetConfigId() int64 {
@@ -1432,7 +1864,7 @@ type StrategyLevelInput struct {
 
 func (x *StrategyLevelInput) Reset() {
 	*x = StrategyLevelInput{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[17]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1444,7 +1876,7 @@ func (x *StrategyLevelInput) String() string {
 func (*StrategyLevelInput) ProtoMessage() {}
 
 func (x *StrategyLevelInput) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[17]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1457,7 +1889,7 @@ func (x *StrategyLevelInput) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StrategyLevelInput.ProtoReflect.Descriptor instead.
 func (*StrategyLevelInput) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{17}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *StrategyLevelInput) GetLevelNo() int32 {
@@ -1514,7 +1946,7 @@ type SymbolActionReq struct {
 
 func (x *SymbolActionReq) Reset() {
 	*x = SymbolActionReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[18]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1526,7 +1958,7 @@ func (x *SymbolActionReq) String() string {
 func (*SymbolActionReq) ProtoMessage() {}
 
 func (x *SymbolActionReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[18]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1539,7 +1971,7 @@ func (x *SymbolActionReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SymbolActionReq.ProtoReflect.Descriptor instead.
 func (*SymbolActionReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{18}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *SymbolActionReq) GetConfigId() int64 {
@@ -1585,7 +2017,7 @@ type GetQuoteCycleListReq struct {
 
 func (x *GetQuoteCycleListReq) Reset() {
 	*x = GetQuoteCycleListReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[19]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1597,7 +2029,7 @@ func (x *GetQuoteCycleListReq) String() string {
 func (*GetQuoteCycleListReq) ProtoMessage() {}
 
 func (x *GetQuoteCycleListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[19]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1610,7 +2042,7 @@ func (x *GetQuoteCycleListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetQuoteCycleListReq.ProtoReflect.Descriptor instead.
 func (*GetQuoteCycleListReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{19}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *GetQuoteCycleListReq) GetConfigId() int64 {
@@ -1673,7 +2105,7 @@ type GetQuoteCycleListResp struct {
 
 func (x *GetQuoteCycleListResp) Reset() {
 	*x = GetQuoteCycleListResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[20]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1685,7 +2117,7 @@ func (x *GetQuoteCycleListResp) String() string {
 func (*GetQuoteCycleListResp) ProtoMessage() {}
 
 func (x *GetQuoteCycleListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[20]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1698,7 +2130,7 @@ func (x *GetQuoteCycleListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetQuoteCycleListResp.ProtoReflect.Descriptor instead.
 func (*GetQuoteCycleListResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{20}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *GetQuoteCycleListResp) GetBase() *common.RespBase {
@@ -1740,7 +2172,7 @@ type GetQuoteOrderListReq struct {
 
 func (x *GetQuoteOrderListReq) Reset() {
 	*x = GetQuoteOrderListReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[21]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1752,7 +2184,7 @@ func (x *GetQuoteOrderListReq) String() string {
 func (*GetQuoteOrderListReq) ProtoMessage() {}
 
 func (x *GetQuoteOrderListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[21]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1765,7 +2197,7 @@ func (x *GetQuoteOrderListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetQuoteOrderListReq.ProtoReflect.Descriptor instead.
 func (*GetQuoteOrderListReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{21}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *GetQuoteOrderListReq) GetConfigId() int64 {
@@ -1849,7 +2281,7 @@ type GetQuoteOrderListResp struct {
 
 func (x *GetQuoteOrderListResp) Reset() {
 	*x = GetQuoteOrderListResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[22]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1861,7 +2293,7 @@ func (x *GetQuoteOrderListResp) String() string {
 func (*GetQuoteOrderListResp) ProtoMessage() {}
 
 func (x *GetQuoteOrderListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[22]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1874,7 +2306,7 @@ func (x *GetQuoteOrderListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetQuoteOrderListResp.ProtoReflect.Descriptor instead.
 func (*GetQuoteOrderListResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{22}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *GetQuoteOrderListResp) GetBase() *common.RespBase {
@@ -1917,7 +2349,7 @@ type GetExternalOrderListReq struct {
 
 func (x *GetExternalOrderListReq) Reset() {
 	*x = GetExternalOrderListReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[23]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1929,7 +2361,7 @@ func (x *GetExternalOrderListReq) String() string {
 func (*GetExternalOrderListReq) ProtoMessage() {}
 
 func (x *GetExternalOrderListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[23]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1942,7 +2374,7 @@ func (x *GetExternalOrderListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetExternalOrderListReq.ProtoReflect.Descriptor instead.
 func (*GetExternalOrderListReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{23}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *GetExternalOrderListReq) GetProviderId() int64 {
@@ -2033,7 +2465,7 @@ type GetExternalOrderListResp struct {
 
 func (x *GetExternalOrderListResp) Reset() {
 	*x = GetExternalOrderListResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[24]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2045,7 +2477,7 @@ func (x *GetExternalOrderListResp) String() string {
 func (*GetExternalOrderListResp) ProtoMessage() {}
 
 func (x *GetExternalOrderListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[24]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2058,7 +2490,7 @@ func (x *GetExternalOrderListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetExternalOrderListResp.ProtoReflect.Descriptor instead.
 func (*GetExternalOrderListResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{24}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *GetExternalOrderListResp) GetBase() *common.RespBase {
@@ -2097,7 +2529,7 @@ type GetExternalFillListReq struct {
 
 func (x *GetExternalFillListReq) Reset() {
 	*x = GetExternalFillListReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[25]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2109,7 +2541,7 @@ func (x *GetExternalFillListReq) String() string {
 func (*GetExternalFillListReq) ProtoMessage() {}
 
 func (x *GetExternalFillListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[25]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2122,7 +2554,7 @@ func (x *GetExternalFillListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetExternalFillListReq.ProtoReflect.Descriptor instead.
 func (*GetExternalFillListReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{25}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *GetExternalFillListReq) GetProviderId() int64 {
@@ -2185,7 +2617,7 @@ type GetExternalFillListResp struct {
 
 func (x *GetExternalFillListResp) Reset() {
 	*x = GetExternalFillListResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[26]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2197,7 +2629,7 @@ func (x *GetExternalFillListResp) String() string {
 func (*GetExternalFillListResp) ProtoMessage() {}
 
 func (x *GetExternalFillListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[26]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2210,7 +2642,7 @@ func (x *GetExternalFillListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetExternalFillListResp.ProtoReflect.Descriptor instead.
 func (*GetExternalFillListResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{26}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *GetExternalFillListResp) GetBase() *common.RespBase {
@@ -2246,7 +2678,7 @@ type CancelExternalOrderReq struct {
 
 func (x *CancelExternalOrderReq) Reset() {
 	*x = CancelExternalOrderReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[27]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2258,7 +2690,7 @@ func (x *CancelExternalOrderReq) String() string {
 func (*CancelExternalOrderReq) ProtoMessage() {}
 
 func (x *CancelExternalOrderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[27]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2271,7 +2703,7 @@ func (x *CancelExternalOrderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CancelExternalOrderReq.ProtoReflect.Descriptor instead.
 func (*CancelExternalOrderReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{27}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *CancelExternalOrderReq) GetOrderId() int64 {
@@ -2317,7 +2749,7 @@ type CreateManualHedgeReq struct {
 
 func (x *CreateManualHedgeReq) Reset() {
 	*x = CreateManualHedgeReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[28]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2329,7 +2761,7 @@ func (x *CreateManualHedgeReq) String() string {
 func (*CreateManualHedgeReq) ProtoMessage() {}
 
 func (x *CreateManualHedgeReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[28]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2342,7 +2774,7 @@ func (x *CreateManualHedgeReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateManualHedgeReq.ProtoReflect.Descriptor instead.
 func (*CreateManualHedgeReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{28}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *CreateManualHedgeReq) GetConfigId() int64 {
@@ -2406,7 +2838,7 @@ type CancelHedgeTaskReq struct {
 
 func (x *CancelHedgeTaskReq) Reset() {
 	*x = CancelHedgeTaskReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[29]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2418,7 +2850,7 @@ func (x *CancelHedgeTaskReq) String() string {
 func (*CancelHedgeTaskReq) ProtoMessage() {}
 
 func (x *CancelHedgeTaskReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[29]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2431,7 +2863,7 @@ func (x *CancelHedgeTaskReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CancelHedgeTaskReq.ProtoReflect.Descriptor instead.
 func (*CancelHedgeTaskReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{29}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *CancelHedgeTaskReq) GetHedgeTaskId() int64 {
@@ -2473,7 +2905,7 @@ type RetryHedgeTaskReq struct {
 
 func (x *RetryHedgeTaskReq) Reset() {
 	*x = RetryHedgeTaskReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[30]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2485,7 +2917,7 @@ func (x *RetryHedgeTaskReq) String() string {
 func (*RetryHedgeTaskReq) ProtoMessage() {}
 
 func (x *RetryHedgeTaskReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[30]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2498,7 +2930,7 @@ func (x *RetryHedgeTaskReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RetryHedgeTaskReq.ProtoReflect.Descriptor instead.
 func (*RetryHedgeTaskReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{30}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *RetryHedgeTaskReq) GetHedgeTaskId() int64 {
@@ -2532,7 +2964,7 @@ type HedgeTaskResp struct {
 
 func (x *HedgeTaskResp) Reset() {
 	*x = HedgeTaskResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[31]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2544,7 +2976,7 @@ func (x *HedgeTaskResp) String() string {
 func (*HedgeTaskResp) ProtoMessage() {}
 
 func (x *HedgeTaskResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[31]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2557,7 +2989,7 @@ func (x *HedgeTaskResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HedgeTaskResp.ProtoReflect.Descriptor instead.
 func (*HedgeTaskResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{31}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *HedgeTaskResp) GetBase() *common.RespBase {
@@ -2589,7 +3021,7 @@ type GetHedgeTaskListReq struct {
 
 func (x *GetHedgeTaskListReq) Reset() {
 	*x = GetHedgeTaskListReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[32]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2601,7 +3033,7 @@ func (x *GetHedgeTaskListReq) String() string {
 func (*GetHedgeTaskListReq) ProtoMessage() {}
 
 func (x *GetHedgeTaskListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[32]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2614,7 +3046,7 @@ func (x *GetHedgeTaskListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetHedgeTaskListReq.ProtoReflect.Descriptor instead.
 func (*GetHedgeTaskListReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{32}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *GetHedgeTaskListReq) GetConfigId() int64 {
@@ -2677,7 +3109,7 @@ type GetHedgeTaskListResp struct {
 
 func (x *GetHedgeTaskListResp) Reset() {
 	*x = GetHedgeTaskListResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[33]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2689,7 +3121,7 @@ func (x *GetHedgeTaskListResp) String() string {
 func (*GetHedgeTaskListResp) ProtoMessage() {}
 
 func (x *GetHedgeTaskListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[33]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2702,7 +3134,7 @@ func (x *GetHedgeTaskListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetHedgeTaskListResp.ProtoReflect.Descriptor instead.
 func (*GetHedgeTaskListResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{33}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *GetHedgeTaskListResp) GetBase() *common.RespBase {
@@ -2741,7 +3173,7 @@ type GetInventorySnapshotListReq struct {
 
 func (x *GetInventorySnapshotListReq) Reset() {
 	*x = GetInventorySnapshotListReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[34]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2753,7 +3185,7 @@ func (x *GetInventorySnapshotListReq) String() string {
 func (*GetInventorySnapshotListReq) ProtoMessage() {}
 
 func (x *GetInventorySnapshotListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[34]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2766,7 +3198,7 @@ func (x *GetInventorySnapshotListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInventorySnapshotListReq.ProtoReflect.Descriptor instead.
 func (*GetInventorySnapshotListReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{34}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *GetInventorySnapshotListReq) GetConfigId() int64 {
@@ -2829,7 +3261,7 @@ type GetInventorySnapshotListResp struct {
 
 func (x *GetInventorySnapshotListResp) Reset() {
 	*x = GetInventorySnapshotListResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[35]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2841,7 +3273,7 @@ func (x *GetInventorySnapshotListResp) String() string {
 func (*GetInventorySnapshotListResp) ProtoMessage() {}
 
 func (x *GetInventorySnapshotListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[35]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2854,7 +3286,7 @@ func (x *GetInventorySnapshotListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInventorySnapshotListResp.ProtoReflect.Descriptor instead.
 func (*GetInventorySnapshotListResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{35}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *GetInventorySnapshotListResp) GetBase() *common.RespBase {
@@ -2889,7 +3321,7 @@ type GetLatestInventoryReq struct {
 
 func (x *GetLatestInventoryReq) Reset() {
 	*x = GetLatestInventoryReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[36]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2901,7 +3333,7 @@ func (x *GetLatestInventoryReq) String() string {
 func (*GetLatestInventoryReq) ProtoMessage() {}
 
 func (x *GetLatestInventoryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[36]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2914,7 +3346,7 @@ func (x *GetLatestInventoryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLatestInventoryReq.ProtoReflect.Descriptor instead.
 func (*GetLatestInventoryReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{36}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *GetLatestInventoryReq) GetConfigId() int64 {
@@ -2948,7 +3380,7 @@ type InventorySnapshotResp struct {
 
 func (x *InventorySnapshotResp) Reset() {
 	*x = InventorySnapshotResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[37]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2960,7 +3392,7 @@ func (x *InventorySnapshotResp) String() string {
 func (*InventorySnapshotResp) ProtoMessage() {}
 
 func (x *InventorySnapshotResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[37]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2973,7 +3405,7 @@ func (x *InventorySnapshotResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InventorySnapshotResp.ProtoReflect.Descriptor instead.
 func (*InventorySnapshotResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{37}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *InventorySnapshotResp) GetBase() *common.RespBase {
@@ -3007,7 +3439,7 @@ type GetRiskEventListReq struct {
 
 func (x *GetRiskEventListReq) Reset() {
 	*x = GetRiskEventListReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[38]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3019,7 +3451,7 @@ func (x *GetRiskEventListReq) String() string {
 func (*GetRiskEventListReq) ProtoMessage() {}
 
 func (x *GetRiskEventListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[38]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3032,7 +3464,7 @@ func (x *GetRiskEventListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRiskEventListReq.ProtoReflect.Descriptor instead.
 func (*GetRiskEventListReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{38}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *GetRiskEventListReq) GetConfigId() int64 {
@@ -3109,7 +3541,7 @@ type GetRiskEventListResp struct {
 
 func (x *GetRiskEventListResp) Reset() {
 	*x = GetRiskEventListResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[39]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3121,7 +3553,7 @@ func (x *GetRiskEventListResp) String() string {
 func (*GetRiskEventListResp) ProtoMessage() {}
 
 func (x *GetRiskEventListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[39]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3134,7 +3566,7 @@ func (x *GetRiskEventListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRiskEventListResp.ProtoReflect.Descriptor instead.
 func (*GetRiskEventListResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{39}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *GetRiskEventListResp) GetBase() *common.RespBase {
@@ -3170,7 +3602,7 @@ type ResolveRiskEventReq struct {
 
 func (x *ResolveRiskEventReq) Reset() {
 	*x = ResolveRiskEventReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[40]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3182,7 +3614,7 @@ func (x *ResolveRiskEventReq) String() string {
 func (*ResolveRiskEventReq) ProtoMessage() {}
 
 func (x *ResolveRiskEventReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[40]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3195,7 +3627,7 @@ func (x *ResolveRiskEventReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResolveRiskEventReq.ProtoReflect.Descriptor instead.
 func (*ResolveRiskEventReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{40}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *ResolveRiskEventReq) GetRiskEventId() int64 {
@@ -3239,7 +3671,7 @@ type RunReconcileReq struct {
 
 func (x *RunReconcileReq) Reset() {
 	*x = RunReconcileReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[41]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3251,7 +3683,7 @@ func (x *RunReconcileReq) String() string {
 func (*RunReconcileReq) ProtoMessage() {}
 
 func (x *RunReconcileReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[41]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3264,7 +3696,7 @@ func (x *RunReconcileReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RunReconcileReq.ProtoReflect.Descriptor instead.
 func (*RunReconcileReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{41}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *RunReconcileReq) GetProviderId() int64 {
@@ -3312,7 +3744,7 @@ type ReconcileBatchResp struct {
 
 func (x *ReconcileBatchResp) Reset() {
 	*x = ReconcileBatchResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[42]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3324,7 +3756,7 @@ func (x *ReconcileBatchResp) String() string {
 func (*ReconcileBatchResp) ProtoMessage() {}
 
 func (x *ReconcileBatchResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[42]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3337,7 +3769,7 @@ func (x *ReconcileBatchResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReconcileBatchResp.ProtoReflect.Descriptor instead.
 func (*ReconcileBatchResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{42}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *ReconcileBatchResp) GetBase() *common.RespBase {
@@ -3369,7 +3801,7 @@ type GetReconcileBatchListReq struct {
 
 func (x *GetReconcileBatchListReq) Reset() {
 	*x = GetReconcileBatchListReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[43]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3381,7 +3813,7 @@ func (x *GetReconcileBatchListReq) String() string {
 func (*GetReconcileBatchListReq) ProtoMessage() {}
 
 func (x *GetReconcileBatchListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[43]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3394,7 +3826,7 @@ func (x *GetReconcileBatchListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetReconcileBatchListReq.ProtoReflect.Descriptor instead.
 func (*GetReconcileBatchListReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{43}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *GetReconcileBatchListReq) GetProviderId() int64 {
@@ -3457,7 +3889,7 @@ type GetReconcileBatchListResp struct {
 
 func (x *GetReconcileBatchListResp) Reset() {
 	*x = GetReconcileBatchListResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[44]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3469,7 +3901,7 @@ func (x *GetReconcileBatchListResp) String() string {
 func (*GetReconcileBatchListResp) ProtoMessage() {}
 
 func (x *GetReconcileBatchListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[44]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3482,7 +3914,7 @@ func (x *GetReconcileBatchListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetReconcileBatchListResp.ProtoReflect.Descriptor instead.
 func (*GetReconcileBatchListResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{44}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *GetReconcileBatchListResp) GetBase() *common.RespBase {
@@ -3519,7 +3951,7 @@ type GetReconcileDetailListReq struct {
 
 func (x *GetReconcileDetailListReq) Reset() {
 	*x = GetReconcileDetailListReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[45]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3531,7 +3963,7 @@ func (x *GetReconcileDetailListReq) String() string {
 func (*GetReconcileDetailListReq) ProtoMessage() {}
 
 func (x *GetReconcileDetailListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[45]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3544,7 +3976,7 @@ func (x *GetReconcileDetailListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetReconcileDetailListReq.ProtoReflect.Descriptor instead.
 func (*GetReconcileDetailListReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{45}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *GetReconcileDetailListReq) GetBatchId() int64 {
@@ -3593,7 +4025,7 @@ type GetReconcileDetailListResp struct {
 
 func (x *GetReconcileDetailListResp) Reset() {
 	*x = GetReconcileDetailListResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[46]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3605,7 +4037,7 @@ func (x *GetReconcileDetailListResp) String() string {
 func (*GetReconcileDetailListResp) ProtoMessage() {}
 
 func (x *GetReconcileDetailListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[46]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3618,7 +4050,7 @@ func (x *GetReconcileDetailListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetReconcileDetailListResp.ProtoReflect.Descriptor instead.
 func (*GetReconcileDetailListResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{46}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *GetReconcileDetailListResp) GetBase() *common.RespBase {
@@ -3654,7 +4086,7 @@ type ResolveReconcileDifferenceReq struct {
 
 func (x *ResolveReconcileDifferenceReq) Reset() {
 	*x = ResolveReconcileDifferenceReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[47]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3666,7 +4098,7 @@ func (x *ResolveReconcileDifferenceReq) String() string {
 func (*ResolveReconcileDifferenceReq) ProtoMessage() {}
 
 func (x *ResolveReconcileDifferenceReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[47]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3679,7 +4111,7 @@ func (x *ResolveReconcileDifferenceReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResolveReconcileDifferenceReq.ProtoReflect.Descriptor instead.
 func (*ResolveReconcileDifferenceReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{47}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *ResolveReconcileDifferenceReq) GetDifferenceId() int64 {
@@ -3719,7 +4151,7 @@ type GetActiveSymbolConfigReq struct {
 
 func (x *GetActiveSymbolConfigReq) Reset() {
 	*x = GetActiveSymbolConfigReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[48]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3731,7 +4163,7 @@ func (x *GetActiveSymbolConfigReq) String() string {
 func (*GetActiveSymbolConfigReq) ProtoMessage() {}
 
 func (x *GetActiveSymbolConfigReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[48]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3744,7 +4176,7 @@ func (x *GetActiveSymbolConfigReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetActiveSymbolConfigReq.ProtoReflect.Descriptor instead.
 func (*GetActiveSymbolConfigReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{48}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *GetActiveSymbolConfigReq) GetSymbolId() int64 {
@@ -3772,7 +4204,7 @@ type RouteExternalOrderReq struct {
 
 func (x *RouteExternalOrderReq) Reset() {
 	*x = RouteExternalOrderReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[49]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3784,7 +4216,7 @@ func (x *RouteExternalOrderReq) String() string {
 func (*RouteExternalOrderReq) ProtoMessage() {}
 
 func (x *RouteExternalOrderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[49]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3797,7 +4229,7 @@ func (x *RouteExternalOrderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RouteExternalOrderReq.ProtoReflect.Descriptor instead.
 func (*RouteExternalOrderReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{49}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *RouteExternalOrderReq) GetRequestNo() string {
@@ -3880,7 +4312,7 @@ type ExternalOrderResp struct {
 
 func (x *ExternalOrderResp) Reset() {
 	*x = ExternalOrderResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[50]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3892,7 +4324,7 @@ func (x *ExternalOrderResp) String() string {
 func (*ExternalOrderResp) ProtoMessage() {}
 
 func (x *ExternalOrderResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[50]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3905,7 +4337,7 @@ func (x *ExternalOrderResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExternalOrderResp.ProtoReflect.Descriptor instead.
 func (*ExternalOrderResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{50}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *ExternalOrderResp) GetBase() *common.RespBase {
@@ -3933,7 +4365,7 @@ type CancelRoutedOrderReq struct {
 
 func (x *CancelRoutedOrderReq) Reset() {
 	*x = CancelRoutedOrderReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[51]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3945,7 +4377,7 @@ func (x *CancelRoutedOrderReq) String() string {
 func (*CancelRoutedOrderReq) ProtoMessage() {}
 
 func (x *CancelRoutedOrderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[51]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3958,7 +4390,7 @@ func (x *CancelRoutedOrderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CancelRoutedOrderReq.ProtoReflect.Descriptor instead.
 func (*CancelRoutedOrderReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{51}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *CancelRoutedOrderReq) GetRequestNo() string {
@@ -4000,7 +4432,7 @@ type ReportTradeFillReq struct {
 
 func (x *ReportTradeFillReq) Reset() {
 	*x = ReportTradeFillReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[52]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4012,7 +4444,7 @@ func (x *ReportTradeFillReq) String() string {
 func (*ReportTradeFillReq) ProtoMessage() {}
 
 func (x *ReportTradeFillReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[52]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4025,7 +4457,7 @@ func (x *ReportTradeFillReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReportTradeFillReq.ProtoReflect.Descriptor instead.
 func (*ReportTradeFillReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{52}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *ReportTradeFillReq) GetEventNo() string {
@@ -4114,7 +4546,7 @@ type ReportQuoteOrderStateReq struct {
 
 func (x *ReportQuoteOrderStateReq) Reset() {
 	*x = ReportQuoteOrderStateReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[53]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4126,7 +4558,7 @@ func (x *ReportQuoteOrderStateReq) String() string {
 func (*ReportQuoteOrderStateReq) ProtoMessage() {}
 
 func (x *ReportQuoteOrderStateReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[53]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4139,7 +4571,7 @@ func (x *ReportQuoteOrderStateReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReportQuoteOrderStateReq.ProtoReflect.Descriptor instead.
 func (*ReportQuoteOrderStateReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{53}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *ReportQuoteOrderStateReq) GetEventNo() string {
@@ -4210,7 +4642,7 @@ type LiquidityTaskReq struct {
 
 func (x *LiquidityTaskReq) Reset() {
 	*x = LiquidityTaskReq{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[54]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4222,7 +4654,7 @@ func (x *LiquidityTaskReq) String() string {
 func (*LiquidityTaskReq) ProtoMessage() {}
 
 func (x *LiquidityTaskReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[54]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4235,7 +4667,7 @@ func (x *LiquidityTaskReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LiquidityTaskReq.ProtoReflect.Descriptor instead.
 func (*LiquidityTaskReq) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{54}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *LiquidityTaskReq) GetConfigId() int64 {
@@ -4278,7 +4710,7 @@ type LiquidityTaskResp struct {
 
 func (x *LiquidityTaskResp) Reset() {
 	*x = LiquidityTaskResp{}
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[55]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4290,7 +4722,7 @@ func (x *LiquidityTaskResp) String() string {
 func (*LiquidityTaskResp) ProtoMessage() {}
 
 func (x *LiquidityTaskResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_liquidity_proto_msgTypes[55]
+	mi := &file_proto_liquidity_liquidity_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4303,7 +4735,7 @@ func (x *LiquidityTaskResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LiquidityTaskResp.ProtoReflect.Descriptor instead.
 func (*LiquidityTaskResp) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{55}
+	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *LiquidityTaskResp) GetBase() *common.RespBase {
@@ -4341,7 +4773,44 @@ const file_proto_liquidity_liquidity_proto_rawDesc = "" +
 	"\x1fproto/liquidity/liquidity.proto\x12\tliquidity\x1a\x19proto/common/common.proto\x1a\x1aproto/liquidity/enum.proto\x1a\x1bproto/liquidity/model.proto\"2\n" +
 	"\n" +
 	"CommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\x8d\x04\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"/\n" +
+	"\x13GetConfigOptionsReq\x12\x18\n" +
+	"\akeyword\x18\x01 \x01(\tR\akeyword\"\xc8\x02\n" +
+	"\x12ConfigSymbolOption\x12\x1b\n" +
+	"\tsymbol_id\x18\x01 \x01(\x03R\bsymbolId\x12\x16\n" +
+	"\x06symbol\x18\x02 \x01(\tR\x06symbol\x12%\n" +
+	"\x0edisplay_symbol\x18\x03 \x01(\tR\rdisplaySymbol\x126\n" +
+	"\fproduct_type\x18\x04 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x129\n" +
+	"\rcontract_type\x18\x05 \x01(\x0e2\x14.common.ContractTypeR\fcontractType\x123\n" +
+	"\vwallet_type\x18\x06 \x01(\x0e2\x12.common.WalletTypeR\n" +
+	"walletType\x12.\n" +
+	"\x13contract_value_type\x18\a \x01(\x05R\x11contractValueType\"\x96\x02\n" +
+	"\x14ConfigProviderOption\x12\x1f\n" +
+	"\vprovider_id\x18\x01 \x01(\x03R\n" +
+	"providerId\x12#\n" +
+	"\rprovider_code\x18\x02 \x01(\tR\fproviderCode\x12#\n" +
+	"\rprovider_name\x18\x03 \x01(\tR\fproviderName\x12<\n" +
+	"\rprovider_type\x18\x04 \x01(\x0e2\x17.liquidity.ProviderTypeR\fproviderType\x12\"\n" +
+	"\rtrade_user_id\x18\x05 \x01(\x03R\vtradeUserId\x121\n" +
+	"\x06status\x18\x06 \x01(\x0e2\x19.liquidity.ProviderStatusR\x06status\"Y\n" +
+	"\x17ConfigTradingUserOption\x12\"\n" +
+	"\rtrade_user_id\x18\x01 \x01(\x03R\vtradeUserId\x12\x1a\n" +
+	"\busername\x18\x02 \x01(\tR\busername\"\xfd\x01\n" +
+	"\x14GetConfigOptionsResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x127\n" +
+	"\asymbols\x18\x02 \x03(\v2\x1d.liquidity.ConfigSymbolOptionR\asymbols\x12=\n" +
+	"\tproviders\x18\x03 \x03(\v2\x1f.liquidity.ConfigProviderOptionR\tproviders\x12G\n" +
+	"\rtrading_users\x18\x04 \x03(\v2\".liquidity.ConfigTradingUserOptionR\ftradingUsers\"\x88\x02\n" +
+	"\x1cProvisionInternalProviderReq\x12\x1b\n" +
+	"\tsymbol_id\x18\x02 \x01(\x03R\bsymbolId\x12#\n" +
+	"\rprovider_code\x18\x03 \x01(\tR\fproviderCode\x12#\n" +
+	"\rprovider_name\x18\x04 \x01(\tR\fproviderName\x12\x1f\n" +
+	"\vbase_amount\x18\x05 \x01(\tR\n" +
+	"baseAmount\x12!\n" +
+	"\fquote_amount\x18\x06 \x01(\tR\vquoteAmount\x12\x1f\n" +
+	"\voperator_id\x18\a \x01(\x03R\n" +
+	"operatorId\x12\x16\n" +
+	"\x06remark\x18\b \x01(\tR\x06remarkJ\x04\b\x01\x10\x02\"\x8d\x04\n" +
 	"\x11CreateProviderReq\x12#\n" +
 	"\rprovider_code\x18\x02 \x01(\tR\fproviderCode\x12#\n" +
 	"\rprovider_name\x18\x03 \x01(\tR\fproviderName\x12<\n" +
@@ -4743,8 +5212,10 @@ const file_proto_liquidity_liquidity_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12#\n" +
 	"\rscanned_count\x18\x02 \x01(\x03R\fscannedCount\x12#\n" +
 	"\rsuccess_count\x18\x03 \x01(\x03R\fsuccessCount\x12!\n" +
-	"\ffailed_count\x18\x04 \x01(\x03R\vfailedCount2\x97\x15\n" +
-	"\x05Admin\x12G\n" +
+	"\ffailed_count\x18\x04 \x01(\x03R\vfailedCount2\xcb\x16\n" +
+	"\x05Admin\x12S\n" +
+	"\x10GetConfigOptions\x12\x1e.liquidity.GetConfigOptionsReq\x1a\x1f.liquidity.GetConfigOptionsResp\x12]\n" +
+	"\x19ProvisionInternalProvider\x12'.liquidity.ProvisionInternalProviderReq\x1a\x17.liquidity.ProviderResp\x12G\n" +
 	"\x0eCreateProvider\x12\x1c.liquidity.CreateProviderReq\x1a\x17.liquidity.ProviderResp\x12G\n" +
 	"\x0eUpdateProvider\x12\x1c.liquidity.UpdateProviderReq\x1a\x17.liquidity.ProviderResp\x12K\n" +
 	"\x11SetProviderStatus\x12\x1f.liquidity.SetProviderStatusReq\x1a\x15.liquidity.CommonResp\x12]\n" +
@@ -4806,296 +5277,316 @@ func file_proto_liquidity_liquidity_proto_rawDescGZIP() []byte {
 	return file_proto_liquidity_liquidity_proto_rawDescData
 }
 
-var file_proto_liquidity_liquidity_proto_msgTypes = make([]protoimpl.MessageInfo, 56)
+var file_proto_liquidity_liquidity_proto_msgTypes = make([]protoimpl.MessageInfo, 62)
 var file_proto_liquidity_liquidity_proto_goTypes = []any{
 	(*CommonResp)(nil),                    // 0: liquidity.CommonResp
-	(*CreateProviderReq)(nil),             // 1: liquidity.CreateProviderReq
-	(*UpdateProviderReq)(nil),             // 2: liquidity.UpdateProviderReq
-	(*SetProviderStatusReq)(nil),          // 3: liquidity.SetProviderStatusReq
-	(*TestProviderConnectionReq)(nil),     // 4: liquidity.TestProviderConnectionReq
-	(*GetProviderListReq)(nil),            // 5: liquidity.GetProviderListReq
-	(*GetProviderDetailReq)(nil),          // 6: liquidity.GetProviderDetailReq
-	(*ProviderResp)(nil),                  // 7: liquidity.ProviderResp
-	(*ProviderHealthResp)(nil),            // 8: liquidity.ProviderHealthResp
-	(*GetProviderListResp)(nil),           // 9: liquidity.GetProviderListResp
-	(*SaveSymbolConfigReq)(nil),           // 10: liquidity.SaveSymbolConfigReq
-	(*GetSymbolConfigListReq)(nil),        // 11: liquidity.GetSymbolConfigListReq
-	(*GetSymbolConfigDetailReq)(nil),      // 12: liquidity.GetSymbolConfigDetailReq
-	(*SymbolConfigResp)(nil),              // 13: liquidity.SymbolConfigResp
-	(*GetSymbolConfigListResp)(nil),       // 14: liquidity.GetSymbolConfigListResp
-	(*GetSymbolConfigDetailResp)(nil),     // 15: liquidity.GetSymbolConfigDetailResp
-	(*SetStrategyLevelsReq)(nil),          // 16: liquidity.SetStrategyLevelsReq
-	(*StrategyLevelInput)(nil),            // 17: liquidity.StrategyLevelInput
-	(*SymbolActionReq)(nil),               // 18: liquidity.SymbolActionReq
-	(*GetQuoteCycleListReq)(nil),          // 19: liquidity.GetQuoteCycleListReq
-	(*GetQuoteCycleListResp)(nil),         // 20: liquidity.GetQuoteCycleListResp
-	(*GetQuoteOrderListReq)(nil),          // 21: liquidity.GetQuoteOrderListReq
-	(*GetQuoteOrderListResp)(nil),         // 22: liquidity.GetQuoteOrderListResp
-	(*GetExternalOrderListReq)(nil),       // 23: liquidity.GetExternalOrderListReq
-	(*GetExternalOrderListResp)(nil),      // 24: liquidity.GetExternalOrderListResp
-	(*GetExternalFillListReq)(nil),        // 25: liquidity.GetExternalFillListReq
-	(*GetExternalFillListResp)(nil),       // 26: liquidity.GetExternalFillListResp
-	(*CancelExternalOrderReq)(nil),        // 27: liquidity.CancelExternalOrderReq
-	(*CreateManualHedgeReq)(nil),          // 28: liquidity.CreateManualHedgeReq
-	(*CancelHedgeTaskReq)(nil),            // 29: liquidity.CancelHedgeTaskReq
-	(*RetryHedgeTaskReq)(nil),             // 30: liquidity.RetryHedgeTaskReq
-	(*HedgeTaskResp)(nil),                 // 31: liquidity.HedgeTaskResp
-	(*GetHedgeTaskListReq)(nil),           // 32: liquidity.GetHedgeTaskListReq
-	(*GetHedgeTaskListResp)(nil),          // 33: liquidity.GetHedgeTaskListResp
-	(*GetInventorySnapshotListReq)(nil),   // 34: liquidity.GetInventorySnapshotListReq
-	(*GetInventorySnapshotListResp)(nil),  // 35: liquidity.GetInventorySnapshotListResp
-	(*GetLatestInventoryReq)(nil),         // 36: liquidity.GetLatestInventoryReq
-	(*InventorySnapshotResp)(nil),         // 37: liquidity.InventorySnapshotResp
-	(*GetRiskEventListReq)(nil),           // 38: liquidity.GetRiskEventListReq
-	(*GetRiskEventListResp)(nil),          // 39: liquidity.GetRiskEventListResp
-	(*ResolveRiskEventReq)(nil),           // 40: liquidity.ResolveRiskEventReq
-	(*RunReconcileReq)(nil),               // 41: liquidity.RunReconcileReq
-	(*ReconcileBatchResp)(nil),            // 42: liquidity.ReconcileBatchResp
-	(*GetReconcileBatchListReq)(nil),      // 43: liquidity.GetReconcileBatchListReq
-	(*GetReconcileBatchListResp)(nil),     // 44: liquidity.GetReconcileBatchListResp
-	(*GetReconcileDetailListReq)(nil),     // 45: liquidity.GetReconcileDetailListReq
-	(*GetReconcileDetailListResp)(nil),    // 46: liquidity.GetReconcileDetailListResp
-	(*ResolveReconcileDifferenceReq)(nil), // 47: liquidity.ResolveReconcileDifferenceReq
-	(*GetActiveSymbolConfigReq)(nil),      // 48: liquidity.GetActiveSymbolConfigReq
-	(*RouteExternalOrderReq)(nil),         // 49: liquidity.RouteExternalOrderReq
-	(*ExternalOrderResp)(nil),             // 50: liquidity.ExternalOrderResp
-	(*CancelRoutedOrderReq)(nil),          // 51: liquidity.CancelRoutedOrderReq
-	(*ReportTradeFillReq)(nil),            // 52: liquidity.ReportTradeFillReq
-	(*ReportQuoteOrderStateReq)(nil),      // 53: liquidity.ReportQuoteOrderStateReq
-	(*LiquidityTaskReq)(nil),              // 54: liquidity.LiquidityTaskReq
-	(*LiquidityTaskResp)(nil),             // 55: liquidity.LiquidityTaskResp
-	(*common.RespBase)(nil),               // 56: common.RespBase
-	(ProviderType)(0),                     // 57: liquidity.ProviderType
-	(ProviderEnvironment)(0),              // 58: liquidity.ProviderEnvironment
-	(ProviderStatus)(0),                   // 59: liquidity.ProviderStatus
-	(*LiquidityProvider)(nil),             // 60: liquidity.LiquidityProvider
-	(HealthStatus)(0),                     // 61: liquidity.HealthStatus
-	(*PageMeta)(nil),                      // 62: liquidity.PageMeta
-	(LiquidityMode)(0),                    // 63: liquidity.LiquidityMode
-	(common.YesNo)(0),                     // 64: common.YesNo
-	(common.ProductType)(0),               // 65: common.ProductType
-	(common.ContractType)(0),              // 66: common.ContractType
-	(SymbolLiquidityStatus)(0),            // 67: liquidity.SymbolLiquidityStatus
-	(*LiquiditySymbolConfig)(nil),         // 68: liquidity.LiquiditySymbolConfig
-	(*LiquidityStrategyLevel)(nil),        // 69: liquidity.LiquidityStrategyLevel
-	(*LiquidityInventorySnapshot)(nil),    // 70: liquidity.LiquidityInventorySnapshot
-	(common.Enable)(0),                    // 71: common.Enable
-	(QuoteCycleStatus)(0),                 // 72: liquidity.QuoteCycleStatus
-	(*LiquidityQuoteCycle)(nil),           // 73: liquidity.LiquidityQuoteCycle
-	(common.Side)(0),                      // 74: common.Side
-	(QuoteOrderStatus)(0),                 // 75: liquidity.QuoteOrderStatus
-	(*LiquidityQuoteOrder)(nil),           // 76: liquidity.LiquidityQuoteOrder
-	(ExternalOrderPurpose)(0),             // 77: liquidity.ExternalOrderPurpose
-	(ExternalOrderStatus)(0),              // 78: liquidity.ExternalOrderStatus
-	(*LiquidityExternalOrder)(nil),        // 79: liquidity.LiquidityExternalOrder
-	(ExternalFillSettlementStatus)(0),     // 80: liquidity.ExternalFillSettlementStatus
-	(*LiquidityExternalFill)(nil),         // 81: liquidity.LiquidityExternalFill
-	(*LiquidityHedgeTask)(nil),            // 82: liquidity.LiquidityHedgeTask
-	(HedgeStatus)(0),                      // 83: liquidity.HedgeStatus
-	(InventorySource)(0),                  // 84: liquidity.InventorySource
-	(RiskLevel)(0),                        // 85: liquidity.RiskLevel
-	(RiskEventStatus)(0),                  // 86: liquidity.RiskEventStatus
-	(*LiquidityRiskEvent)(nil),            // 87: liquidity.LiquidityRiskEvent
-	(ReconcileType)(0),                    // 88: liquidity.ReconcileType
-	(*LiquidityReconcileBatch)(nil),       // 89: liquidity.LiquidityReconcileBatch
-	(ReconcileStatus)(0),                  // 90: liquidity.ReconcileStatus
-	(ReconcileDifferenceType)(0),          // 91: liquidity.ReconcileDifferenceType
-	(ReconcileDifferenceStatus)(0),        // 92: liquidity.ReconcileDifferenceStatus
-	(*LiquidityReconcileDetail)(nil),      // 93: liquidity.LiquidityReconcileDetail
-	(ExternalOrderType)(0),                // 94: liquidity.ExternalOrderType
-	(ExternalTimeInForce)(0),              // 95: liquidity.ExternalTimeInForce
+	(*GetConfigOptionsReq)(nil),           // 1: liquidity.GetConfigOptionsReq
+	(*ConfigSymbolOption)(nil),            // 2: liquidity.ConfigSymbolOption
+	(*ConfigProviderOption)(nil),          // 3: liquidity.ConfigProviderOption
+	(*ConfigTradingUserOption)(nil),       // 4: liquidity.ConfigTradingUserOption
+	(*GetConfigOptionsResp)(nil),          // 5: liquidity.GetConfigOptionsResp
+	(*ProvisionInternalProviderReq)(nil),  // 6: liquidity.ProvisionInternalProviderReq
+	(*CreateProviderReq)(nil),             // 7: liquidity.CreateProviderReq
+	(*UpdateProviderReq)(nil),             // 8: liquidity.UpdateProviderReq
+	(*SetProviderStatusReq)(nil),          // 9: liquidity.SetProviderStatusReq
+	(*TestProviderConnectionReq)(nil),     // 10: liquidity.TestProviderConnectionReq
+	(*GetProviderListReq)(nil),            // 11: liquidity.GetProviderListReq
+	(*GetProviderDetailReq)(nil),          // 12: liquidity.GetProviderDetailReq
+	(*ProviderResp)(nil),                  // 13: liquidity.ProviderResp
+	(*ProviderHealthResp)(nil),            // 14: liquidity.ProviderHealthResp
+	(*GetProviderListResp)(nil),           // 15: liquidity.GetProviderListResp
+	(*SaveSymbolConfigReq)(nil),           // 16: liquidity.SaveSymbolConfigReq
+	(*GetSymbolConfigListReq)(nil),        // 17: liquidity.GetSymbolConfigListReq
+	(*GetSymbolConfigDetailReq)(nil),      // 18: liquidity.GetSymbolConfigDetailReq
+	(*SymbolConfigResp)(nil),              // 19: liquidity.SymbolConfigResp
+	(*GetSymbolConfigListResp)(nil),       // 20: liquidity.GetSymbolConfigListResp
+	(*GetSymbolConfigDetailResp)(nil),     // 21: liquidity.GetSymbolConfigDetailResp
+	(*SetStrategyLevelsReq)(nil),          // 22: liquidity.SetStrategyLevelsReq
+	(*StrategyLevelInput)(nil),            // 23: liquidity.StrategyLevelInput
+	(*SymbolActionReq)(nil),               // 24: liquidity.SymbolActionReq
+	(*GetQuoteCycleListReq)(nil),          // 25: liquidity.GetQuoteCycleListReq
+	(*GetQuoteCycleListResp)(nil),         // 26: liquidity.GetQuoteCycleListResp
+	(*GetQuoteOrderListReq)(nil),          // 27: liquidity.GetQuoteOrderListReq
+	(*GetQuoteOrderListResp)(nil),         // 28: liquidity.GetQuoteOrderListResp
+	(*GetExternalOrderListReq)(nil),       // 29: liquidity.GetExternalOrderListReq
+	(*GetExternalOrderListResp)(nil),      // 30: liquidity.GetExternalOrderListResp
+	(*GetExternalFillListReq)(nil),        // 31: liquidity.GetExternalFillListReq
+	(*GetExternalFillListResp)(nil),       // 32: liquidity.GetExternalFillListResp
+	(*CancelExternalOrderReq)(nil),        // 33: liquidity.CancelExternalOrderReq
+	(*CreateManualHedgeReq)(nil),          // 34: liquidity.CreateManualHedgeReq
+	(*CancelHedgeTaskReq)(nil),            // 35: liquidity.CancelHedgeTaskReq
+	(*RetryHedgeTaskReq)(nil),             // 36: liquidity.RetryHedgeTaskReq
+	(*HedgeTaskResp)(nil),                 // 37: liquidity.HedgeTaskResp
+	(*GetHedgeTaskListReq)(nil),           // 38: liquidity.GetHedgeTaskListReq
+	(*GetHedgeTaskListResp)(nil),          // 39: liquidity.GetHedgeTaskListResp
+	(*GetInventorySnapshotListReq)(nil),   // 40: liquidity.GetInventorySnapshotListReq
+	(*GetInventorySnapshotListResp)(nil),  // 41: liquidity.GetInventorySnapshotListResp
+	(*GetLatestInventoryReq)(nil),         // 42: liquidity.GetLatestInventoryReq
+	(*InventorySnapshotResp)(nil),         // 43: liquidity.InventorySnapshotResp
+	(*GetRiskEventListReq)(nil),           // 44: liquidity.GetRiskEventListReq
+	(*GetRiskEventListResp)(nil),          // 45: liquidity.GetRiskEventListResp
+	(*ResolveRiskEventReq)(nil),           // 46: liquidity.ResolveRiskEventReq
+	(*RunReconcileReq)(nil),               // 47: liquidity.RunReconcileReq
+	(*ReconcileBatchResp)(nil),            // 48: liquidity.ReconcileBatchResp
+	(*GetReconcileBatchListReq)(nil),      // 49: liquidity.GetReconcileBatchListReq
+	(*GetReconcileBatchListResp)(nil),     // 50: liquidity.GetReconcileBatchListResp
+	(*GetReconcileDetailListReq)(nil),     // 51: liquidity.GetReconcileDetailListReq
+	(*GetReconcileDetailListResp)(nil),    // 52: liquidity.GetReconcileDetailListResp
+	(*ResolveReconcileDifferenceReq)(nil), // 53: liquidity.ResolveReconcileDifferenceReq
+	(*GetActiveSymbolConfigReq)(nil),      // 54: liquidity.GetActiveSymbolConfigReq
+	(*RouteExternalOrderReq)(nil),         // 55: liquidity.RouteExternalOrderReq
+	(*ExternalOrderResp)(nil),             // 56: liquidity.ExternalOrderResp
+	(*CancelRoutedOrderReq)(nil),          // 57: liquidity.CancelRoutedOrderReq
+	(*ReportTradeFillReq)(nil),            // 58: liquidity.ReportTradeFillReq
+	(*ReportQuoteOrderStateReq)(nil),      // 59: liquidity.ReportQuoteOrderStateReq
+	(*LiquidityTaskReq)(nil),              // 60: liquidity.LiquidityTaskReq
+	(*LiquidityTaskResp)(nil),             // 61: liquidity.LiquidityTaskResp
+	(*common.RespBase)(nil),               // 62: common.RespBase
+	(common.ProductType)(0),               // 63: common.ProductType
+	(common.ContractType)(0),              // 64: common.ContractType
+	(common.WalletType)(0),                // 65: common.WalletType
+	(ProviderType)(0),                     // 66: liquidity.ProviderType
+	(ProviderStatus)(0),                   // 67: liquidity.ProviderStatus
+	(ProviderEnvironment)(0),              // 68: liquidity.ProviderEnvironment
+	(*LiquidityProvider)(nil),             // 69: liquidity.LiquidityProvider
+	(HealthStatus)(0),                     // 70: liquidity.HealthStatus
+	(*PageMeta)(nil),                      // 71: liquidity.PageMeta
+	(LiquidityMode)(0),                    // 72: liquidity.LiquidityMode
+	(common.YesNo)(0),                     // 73: common.YesNo
+	(SymbolLiquidityStatus)(0),            // 74: liquidity.SymbolLiquidityStatus
+	(*LiquiditySymbolConfig)(nil),         // 75: liquidity.LiquiditySymbolConfig
+	(*LiquidityStrategyLevel)(nil),        // 76: liquidity.LiquidityStrategyLevel
+	(*LiquidityInventorySnapshot)(nil),    // 77: liquidity.LiquidityInventorySnapshot
+	(common.Enable)(0),                    // 78: common.Enable
+	(QuoteCycleStatus)(0),                 // 79: liquidity.QuoteCycleStatus
+	(*LiquidityQuoteCycle)(nil),           // 80: liquidity.LiquidityQuoteCycle
+	(common.Side)(0),                      // 81: common.Side
+	(QuoteOrderStatus)(0),                 // 82: liquidity.QuoteOrderStatus
+	(*LiquidityQuoteOrder)(nil),           // 83: liquidity.LiquidityQuoteOrder
+	(ExternalOrderPurpose)(0),             // 84: liquidity.ExternalOrderPurpose
+	(ExternalOrderStatus)(0),              // 85: liquidity.ExternalOrderStatus
+	(*LiquidityExternalOrder)(nil),        // 86: liquidity.LiquidityExternalOrder
+	(ExternalFillSettlementStatus)(0),     // 87: liquidity.ExternalFillSettlementStatus
+	(*LiquidityExternalFill)(nil),         // 88: liquidity.LiquidityExternalFill
+	(*LiquidityHedgeTask)(nil),            // 89: liquidity.LiquidityHedgeTask
+	(HedgeStatus)(0),                      // 90: liquidity.HedgeStatus
+	(InventorySource)(0),                  // 91: liquidity.InventorySource
+	(RiskLevel)(0),                        // 92: liquidity.RiskLevel
+	(RiskEventStatus)(0),                  // 93: liquidity.RiskEventStatus
+	(*LiquidityRiskEvent)(nil),            // 94: liquidity.LiquidityRiskEvent
+	(ReconcileType)(0),                    // 95: liquidity.ReconcileType
+	(*LiquidityReconcileBatch)(nil),       // 96: liquidity.LiquidityReconcileBatch
+	(ReconcileStatus)(0),                  // 97: liquidity.ReconcileStatus
+	(ReconcileDifferenceType)(0),          // 98: liquidity.ReconcileDifferenceType
+	(ReconcileDifferenceStatus)(0),        // 99: liquidity.ReconcileDifferenceStatus
+	(*LiquidityReconcileDetail)(nil),      // 100: liquidity.LiquidityReconcileDetail
+	(ExternalOrderType)(0),                // 101: liquidity.ExternalOrderType
+	(ExternalTimeInForce)(0),              // 102: liquidity.ExternalTimeInForce
 }
 var file_proto_liquidity_liquidity_proto_depIdxs = []int32{
-	56,  // 0: liquidity.CommonResp.base:type_name -> common.RespBase
-	57,  // 1: liquidity.CreateProviderReq.provider_type:type_name -> liquidity.ProviderType
-	58,  // 2: liquidity.CreateProviderReq.environment:type_name -> liquidity.ProviderEnvironment
-	59,  // 3: liquidity.CreateProviderReq.status:type_name -> liquidity.ProviderStatus
-	58,  // 4: liquidity.UpdateProviderReq.environment:type_name -> liquidity.ProviderEnvironment
-	59,  // 5: liquidity.SetProviderStatusReq.status:type_name -> liquidity.ProviderStatus
-	57,  // 6: liquidity.GetProviderListReq.provider_type:type_name -> liquidity.ProviderType
-	59,  // 7: liquidity.GetProviderListReq.status:type_name -> liquidity.ProviderStatus
-	56,  // 8: liquidity.ProviderResp.base:type_name -> common.RespBase
-	60,  // 9: liquidity.ProviderResp.data:type_name -> liquidity.LiquidityProvider
-	56,  // 10: liquidity.ProviderHealthResp.base:type_name -> common.RespBase
-	61,  // 11: liquidity.ProviderHealthResp.health_status:type_name -> liquidity.HealthStatus
-	56,  // 12: liquidity.GetProviderListResp.base:type_name -> common.RespBase
-	60,  // 13: liquidity.GetProviderListResp.data:type_name -> liquidity.LiquidityProvider
-	62,  // 14: liquidity.GetProviderListResp.page:type_name -> liquidity.PageMeta
-	63,  // 15: liquidity.SaveSymbolConfigReq.liquidity_mode:type_name -> liquidity.LiquidityMode
-	64,  // 16: liquidity.SaveSymbolConfigReq.self_trade_prevention:type_name -> common.YesNo
-	65,  // 17: liquidity.GetSymbolConfigListReq.product_type:type_name -> common.ProductType
-	66,  // 18: liquidity.GetSymbolConfigListReq.contract_type:type_name -> common.ContractType
-	63,  // 19: liquidity.GetSymbolConfigListReq.liquidity_mode:type_name -> liquidity.LiquidityMode
-	67,  // 20: liquidity.GetSymbolConfigListReq.status:type_name -> liquidity.SymbolLiquidityStatus
-	56,  // 21: liquidity.SymbolConfigResp.base:type_name -> common.RespBase
-	68,  // 22: liquidity.SymbolConfigResp.data:type_name -> liquidity.LiquiditySymbolConfig
-	56,  // 23: liquidity.GetSymbolConfigListResp.base:type_name -> common.RespBase
-	68,  // 24: liquidity.GetSymbolConfigListResp.data:type_name -> liquidity.LiquiditySymbolConfig
-	62,  // 25: liquidity.GetSymbolConfigListResp.page:type_name -> liquidity.PageMeta
-	56,  // 26: liquidity.GetSymbolConfigDetailResp.base:type_name -> common.RespBase
-	68,  // 27: liquidity.GetSymbolConfigDetailResp.data:type_name -> liquidity.LiquiditySymbolConfig
-	69,  // 28: liquidity.GetSymbolConfigDetailResp.levels:type_name -> liquidity.LiquidityStrategyLevel
-	70,  // 29: liquidity.GetSymbolConfigDetailResp.latest_inventory:type_name -> liquidity.LiquidityInventorySnapshot
-	17,  // 30: liquidity.SetStrategyLevelsReq.levels:type_name -> liquidity.StrategyLevelInput
-	71,  // 31: liquidity.StrategyLevelInput.enabled:type_name -> common.Enable
-	72,  // 32: liquidity.GetQuoteCycleListReq.status:type_name -> liquidity.QuoteCycleStatus
-	56,  // 33: liquidity.GetQuoteCycleListResp.base:type_name -> common.RespBase
-	73,  // 34: liquidity.GetQuoteCycleListResp.data:type_name -> liquidity.LiquidityQuoteCycle
-	62,  // 35: liquidity.GetQuoteCycleListResp.page:type_name -> liquidity.PageMeta
-	74,  // 36: liquidity.GetQuoteOrderListReq.side:type_name -> common.Side
-	75,  // 37: liquidity.GetQuoteOrderListReq.status:type_name -> liquidity.QuoteOrderStatus
-	56,  // 38: liquidity.GetQuoteOrderListResp.base:type_name -> common.RespBase
-	76,  // 39: liquidity.GetQuoteOrderListResp.data:type_name -> liquidity.LiquidityQuoteOrder
-	62,  // 40: liquidity.GetQuoteOrderListResp.page:type_name -> liquidity.PageMeta
-	77,  // 41: liquidity.GetExternalOrderListReq.purpose:type_name -> liquidity.ExternalOrderPurpose
-	74,  // 42: liquidity.GetExternalOrderListReq.side:type_name -> common.Side
-	78,  // 43: liquidity.GetExternalOrderListReq.status:type_name -> liquidity.ExternalOrderStatus
-	56,  // 44: liquidity.GetExternalOrderListResp.base:type_name -> common.RespBase
-	79,  // 45: liquidity.GetExternalOrderListResp.data:type_name -> liquidity.LiquidityExternalOrder
-	62,  // 46: liquidity.GetExternalOrderListResp.page:type_name -> liquidity.PageMeta
-	80,  // 47: liquidity.GetExternalFillListReq.settlement_status:type_name -> liquidity.ExternalFillSettlementStatus
-	56,  // 48: liquidity.GetExternalFillListResp.base:type_name -> common.RespBase
-	81,  // 49: liquidity.GetExternalFillListResp.data:type_name -> liquidity.LiquidityExternalFill
-	62,  // 50: liquidity.GetExternalFillListResp.page:type_name -> liquidity.PageMeta
-	74,  // 51: liquidity.CreateManualHedgeReq.side:type_name -> common.Side
-	56,  // 52: liquidity.HedgeTaskResp.base:type_name -> common.RespBase
-	82,  // 53: liquidity.HedgeTaskResp.data:type_name -> liquidity.LiquidityHedgeTask
-	83,  // 54: liquidity.GetHedgeTaskListReq.status:type_name -> liquidity.HedgeStatus
-	56,  // 55: liquidity.GetHedgeTaskListResp.base:type_name -> common.RespBase
-	82,  // 56: liquidity.GetHedgeTaskListResp.data:type_name -> liquidity.LiquidityHedgeTask
-	62,  // 57: liquidity.GetHedgeTaskListResp.page:type_name -> liquidity.PageMeta
-	84,  // 58: liquidity.GetInventorySnapshotListReq.source:type_name -> liquidity.InventorySource
-	56,  // 59: liquidity.GetInventorySnapshotListResp.base:type_name -> common.RespBase
-	70,  // 60: liquidity.GetInventorySnapshotListResp.data:type_name -> liquidity.LiquidityInventorySnapshot
-	62,  // 61: liquidity.GetInventorySnapshotListResp.page:type_name -> liquidity.PageMeta
-	84,  // 62: liquidity.GetLatestInventoryReq.source:type_name -> liquidity.InventorySource
-	56,  // 63: liquidity.InventorySnapshotResp.base:type_name -> common.RespBase
-	70,  // 64: liquidity.InventorySnapshotResp.data:type_name -> liquidity.LiquidityInventorySnapshot
-	85,  // 65: liquidity.GetRiskEventListReq.risk_level:type_name -> liquidity.RiskLevel
-	86,  // 66: liquidity.GetRiskEventListReq.status:type_name -> liquidity.RiskEventStatus
-	56,  // 67: liquidity.GetRiskEventListResp.base:type_name -> common.RespBase
-	87,  // 68: liquidity.GetRiskEventListResp.data:type_name -> liquidity.LiquidityRiskEvent
-	62,  // 69: liquidity.GetRiskEventListResp.page:type_name -> liquidity.PageMeta
-	86,  // 70: liquidity.ResolveRiskEventReq.status:type_name -> liquidity.RiskEventStatus
-	88,  // 71: liquidity.RunReconcileReq.reconcile_type:type_name -> liquidity.ReconcileType
-	56,  // 72: liquidity.ReconcileBatchResp.base:type_name -> common.RespBase
-	89,  // 73: liquidity.ReconcileBatchResp.data:type_name -> liquidity.LiquidityReconcileBatch
-	88,  // 74: liquidity.GetReconcileBatchListReq.reconcile_type:type_name -> liquidity.ReconcileType
-	90,  // 75: liquidity.GetReconcileBatchListReq.status:type_name -> liquidity.ReconcileStatus
-	56,  // 76: liquidity.GetReconcileBatchListResp.base:type_name -> common.RespBase
-	89,  // 77: liquidity.GetReconcileBatchListResp.data:type_name -> liquidity.LiquidityReconcileBatch
-	62,  // 78: liquidity.GetReconcileBatchListResp.page:type_name -> liquidity.PageMeta
-	91,  // 79: liquidity.GetReconcileDetailListReq.difference_type:type_name -> liquidity.ReconcileDifferenceType
-	92,  // 80: liquidity.GetReconcileDetailListReq.status:type_name -> liquidity.ReconcileDifferenceStatus
-	56,  // 81: liquidity.GetReconcileDetailListResp.base:type_name -> common.RespBase
-	93,  // 82: liquidity.GetReconcileDetailListResp.data:type_name -> liquidity.LiquidityReconcileDetail
-	62,  // 83: liquidity.GetReconcileDetailListResp.page:type_name -> liquidity.PageMeta
-	92,  // 84: liquidity.ResolveReconcileDifferenceReq.status:type_name -> liquidity.ReconcileDifferenceStatus
-	77,  // 85: liquidity.RouteExternalOrderReq.purpose:type_name -> liquidity.ExternalOrderPurpose
-	74,  // 86: liquidity.RouteExternalOrderReq.side:type_name -> common.Side
-	94,  // 87: liquidity.RouteExternalOrderReq.order_type:type_name -> liquidity.ExternalOrderType
-	95,  // 88: liquidity.RouteExternalOrderReq.time_in_force:type_name -> liquidity.ExternalTimeInForce
-	56,  // 89: liquidity.ExternalOrderResp.base:type_name -> common.RespBase
-	79,  // 90: liquidity.ExternalOrderResp.data:type_name -> liquidity.LiquidityExternalOrder
-	74,  // 91: liquidity.ReportTradeFillReq.side:type_name -> common.Side
-	56,  // 92: liquidity.LiquidityTaskResp.base:type_name -> common.RespBase
-	1,   // 93: liquidity.Admin.CreateProvider:input_type -> liquidity.CreateProviderReq
-	2,   // 94: liquidity.Admin.UpdateProvider:input_type -> liquidity.UpdateProviderReq
-	3,   // 95: liquidity.Admin.SetProviderStatus:input_type -> liquidity.SetProviderStatusReq
-	4,   // 96: liquidity.Admin.TestProviderConnection:input_type -> liquidity.TestProviderConnectionReq
-	5,   // 97: liquidity.Admin.GetProviderList:input_type -> liquidity.GetProviderListReq
-	6,   // 98: liquidity.Admin.GetProviderDetail:input_type -> liquidity.GetProviderDetailReq
-	10,  // 99: liquidity.Admin.CreateSymbolConfig:input_type -> liquidity.SaveSymbolConfigReq
-	10,  // 100: liquidity.Admin.UpdateSymbolConfig:input_type -> liquidity.SaveSymbolConfigReq
-	11,  // 101: liquidity.Admin.GetSymbolConfigList:input_type -> liquidity.GetSymbolConfigListReq
-	12,  // 102: liquidity.Admin.GetSymbolConfigDetail:input_type -> liquidity.GetSymbolConfigDetailReq
-	16,  // 103: liquidity.Admin.SetStrategyLevels:input_type -> liquidity.SetStrategyLevelsReq
-	18,  // 104: liquidity.Admin.StartSymbolLiquidity:input_type -> liquidity.SymbolActionReq
-	18,  // 105: liquidity.Admin.PauseSymbolLiquidity:input_type -> liquidity.SymbolActionReq
-	18,  // 106: liquidity.Admin.StopSymbolLiquidity:input_type -> liquidity.SymbolActionReq
-	18,  // 107: liquidity.Admin.CancelAllQuoteOrders:input_type -> liquidity.SymbolActionReq
-	19,  // 108: liquidity.Admin.GetQuoteCycleList:input_type -> liquidity.GetQuoteCycleListReq
-	21,  // 109: liquidity.Admin.GetQuoteOrderList:input_type -> liquidity.GetQuoteOrderListReq
-	23,  // 110: liquidity.Admin.GetExternalOrderList:input_type -> liquidity.GetExternalOrderListReq
-	25,  // 111: liquidity.Admin.GetExternalFillList:input_type -> liquidity.GetExternalFillListReq
-	27,  // 112: liquidity.Admin.CancelExternalOrder:input_type -> liquidity.CancelExternalOrderReq
-	28,  // 113: liquidity.Admin.CreateManualHedge:input_type -> liquidity.CreateManualHedgeReq
-	29,  // 114: liquidity.Admin.CancelHedgeTask:input_type -> liquidity.CancelHedgeTaskReq
-	30,  // 115: liquidity.Admin.RetryHedgeTask:input_type -> liquidity.RetryHedgeTaskReq
-	32,  // 116: liquidity.Admin.GetHedgeTaskList:input_type -> liquidity.GetHedgeTaskListReq
-	34,  // 117: liquidity.Admin.GetInventorySnapshotList:input_type -> liquidity.GetInventorySnapshotListReq
-	36,  // 118: liquidity.Admin.GetLatestInventory:input_type -> liquidity.GetLatestInventoryReq
-	38,  // 119: liquidity.Admin.GetRiskEventList:input_type -> liquidity.GetRiskEventListReq
-	40,  // 120: liquidity.Admin.ResolveRiskEvent:input_type -> liquidity.ResolveRiskEventReq
-	41,  // 121: liquidity.Admin.RunReconcile:input_type -> liquidity.RunReconcileReq
-	43,  // 122: liquidity.Admin.GetReconcileBatchList:input_type -> liquidity.GetReconcileBatchListReq
-	45,  // 123: liquidity.Admin.GetReconcileDetailList:input_type -> liquidity.GetReconcileDetailListReq
-	47,  // 124: liquidity.Admin.ResolveReconcileDifference:input_type -> liquidity.ResolveReconcileDifferenceReq
-	48,  // 125: liquidity.Liquidity.GetActiveSymbolConfig:input_type -> liquidity.GetActiveSymbolConfigReq
-	49,  // 126: liquidity.Liquidity.RouteExternalOrder:input_type -> liquidity.RouteExternalOrderReq
-	51,  // 127: liquidity.Liquidity.CancelRoutedOrder:input_type -> liquidity.CancelRoutedOrderReq
-	52,  // 128: liquidity.Liquidity.ReportTradeFill:input_type -> liquidity.ReportTradeFillReq
-	53,  // 129: liquidity.Liquidity.ReportQuoteOrderState:input_type -> liquidity.ReportQuoteOrderStateReq
-	54,  // 130: liquidity.Task.RefreshQuotes:input_type -> liquidity.LiquidityTaskReq
-	54,  // 131: liquidity.Task.RecoverQuoteOrders:input_type -> liquidity.LiquidityTaskReq
-	54,  // 132: liquidity.Task.ProcessHedgeTasks:input_type -> liquidity.LiquidityTaskReq
-	54,  // 133: liquidity.Task.SyncExternalOrders:input_type -> liquidity.LiquidityTaskReq
-	54,  // 134: liquidity.Task.SettleExternalFills:input_type -> liquidity.LiquidityTaskReq
-	54,  // 135: liquidity.Task.SnapshotInventories:input_type -> liquidity.LiquidityTaskReq
-	54,  // 136: liquidity.Task.ScanLiquidityRisks:input_type -> liquidity.LiquidityTaskReq
-	54,  // 137: liquidity.Task.ProcessReconciliations:input_type -> liquidity.LiquidityTaskReq
-	54,  // 138: liquidity.Task.PublishOutboxEvents:input_type -> liquidity.LiquidityTaskReq
-	7,   // 139: liquidity.Admin.CreateProvider:output_type -> liquidity.ProviderResp
-	7,   // 140: liquidity.Admin.UpdateProvider:output_type -> liquidity.ProviderResp
-	0,   // 141: liquidity.Admin.SetProviderStatus:output_type -> liquidity.CommonResp
-	8,   // 142: liquidity.Admin.TestProviderConnection:output_type -> liquidity.ProviderHealthResp
-	9,   // 143: liquidity.Admin.GetProviderList:output_type -> liquidity.GetProviderListResp
-	7,   // 144: liquidity.Admin.GetProviderDetail:output_type -> liquidity.ProviderResp
-	13,  // 145: liquidity.Admin.CreateSymbolConfig:output_type -> liquidity.SymbolConfigResp
-	13,  // 146: liquidity.Admin.UpdateSymbolConfig:output_type -> liquidity.SymbolConfigResp
-	14,  // 147: liquidity.Admin.GetSymbolConfigList:output_type -> liquidity.GetSymbolConfigListResp
-	15,  // 148: liquidity.Admin.GetSymbolConfigDetail:output_type -> liquidity.GetSymbolConfigDetailResp
-	0,   // 149: liquidity.Admin.SetStrategyLevels:output_type -> liquidity.CommonResp
-	0,   // 150: liquidity.Admin.StartSymbolLiquidity:output_type -> liquidity.CommonResp
-	0,   // 151: liquidity.Admin.PauseSymbolLiquidity:output_type -> liquidity.CommonResp
-	0,   // 152: liquidity.Admin.StopSymbolLiquidity:output_type -> liquidity.CommonResp
-	0,   // 153: liquidity.Admin.CancelAllQuoteOrders:output_type -> liquidity.CommonResp
-	20,  // 154: liquidity.Admin.GetQuoteCycleList:output_type -> liquidity.GetQuoteCycleListResp
-	22,  // 155: liquidity.Admin.GetQuoteOrderList:output_type -> liquidity.GetQuoteOrderListResp
-	24,  // 156: liquidity.Admin.GetExternalOrderList:output_type -> liquidity.GetExternalOrderListResp
-	26,  // 157: liquidity.Admin.GetExternalFillList:output_type -> liquidity.GetExternalFillListResp
-	0,   // 158: liquidity.Admin.CancelExternalOrder:output_type -> liquidity.CommonResp
-	31,  // 159: liquidity.Admin.CreateManualHedge:output_type -> liquidity.HedgeTaskResp
-	0,   // 160: liquidity.Admin.CancelHedgeTask:output_type -> liquidity.CommonResp
-	0,   // 161: liquidity.Admin.RetryHedgeTask:output_type -> liquidity.CommonResp
-	33,  // 162: liquidity.Admin.GetHedgeTaskList:output_type -> liquidity.GetHedgeTaskListResp
-	35,  // 163: liquidity.Admin.GetInventorySnapshotList:output_type -> liquidity.GetInventorySnapshotListResp
-	37,  // 164: liquidity.Admin.GetLatestInventory:output_type -> liquidity.InventorySnapshotResp
-	39,  // 165: liquidity.Admin.GetRiskEventList:output_type -> liquidity.GetRiskEventListResp
-	0,   // 166: liquidity.Admin.ResolveRiskEvent:output_type -> liquidity.CommonResp
-	42,  // 167: liquidity.Admin.RunReconcile:output_type -> liquidity.ReconcileBatchResp
-	44,  // 168: liquidity.Admin.GetReconcileBatchList:output_type -> liquidity.GetReconcileBatchListResp
-	46,  // 169: liquidity.Admin.GetReconcileDetailList:output_type -> liquidity.GetReconcileDetailListResp
-	0,   // 170: liquidity.Admin.ResolveReconcileDifference:output_type -> liquidity.CommonResp
-	15,  // 171: liquidity.Liquidity.GetActiveSymbolConfig:output_type -> liquidity.GetSymbolConfigDetailResp
-	50,  // 172: liquidity.Liquidity.RouteExternalOrder:output_type -> liquidity.ExternalOrderResp
-	0,   // 173: liquidity.Liquidity.CancelRoutedOrder:output_type -> liquidity.CommonResp
-	0,   // 174: liquidity.Liquidity.ReportTradeFill:output_type -> liquidity.CommonResp
-	0,   // 175: liquidity.Liquidity.ReportQuoteOrderState:output_type -> liquidity.CommonResp
-	55,  // 176: liquidity.Task.RefreshQuotes:output_type -> liquidity.LiquidityTaskResp
-	55,  // 177: liquidity.Task.RecoverQuoteOrders:output_type -> liquidity.LiquidityTaskResp
-	55,  // 178: liquidity.Task.ProcessHedgeTasks:output_type -> liquidity.LiquidityTaskResp
-	55,  // 179: liquidity.Task.SyncExternalOrders:output_type -> liquidity.LiquidityTaskResp
-	55,  // 180: liquidity.Task.SettleExternalFills:output_type -> liquidity.LiquidityTaskResp
-	55,  // 181: liquidity.Task.SnapshotInventories:output_type -> liquidity.LiquidityTaskResp
-	55,  // 182: liquidity.Task.ScanLiquidityRisks:output_type -> liquidity.LiquidityTaskResp
-	55,  // 183: liquidity.Task.ProcessReconciliations:output_type -> liquidity.LiquidityTaskResp
-	55,  // 184: liquidity.Task.PublishOutboxEvents:output_type -> liquidity.LiquidityTaskResp
-	139, // [139:185] is the sub-list for method output_type
-	93,  // [93:139] is the sub-list for method input_type
-	93,  // [93:93] is the sub-list for extension type_name
-	93,  // [93:93] is the sub-list for extension extendee
-	0,   // [0:93] is the sub-list for field type_name
+	62,  // 0: liquidity.CommonResp.base:type_name -> common.RespBase
+	63,  // 1: liquidity.ConfigSymbolOption.product_type:type_name -> common.ProductType
+	64,  // 2: liquidity.ConfigSymbolOption.contract_type:type_name -> common.ContractType
+	65,  // 3: liquidity.ConfigSymbolOption.wallet_type:type_name -> common.WalletType
+	66,  // 4: liquidity.ConfigProviderOption.provider_type:type_name -> liquidity.ProviderType
+	67,  // 5: liquidity.ConfigProviderOption.status:type_name -> liquidity.ProviderStatus
+	62,  // 6: liquidity.GetConfigOptionsResp.base:type_name -> common.RespBase
+	2,   // 7: liquidity.GetConfigOptionsResp.symbols:type_name -> liquidity.ConfigSymbolOption
+	3,   // 8: liquidity.GetConfigOptionsResp.providers:type_name -> liquidity.ConfigProviderOption
+	4,   // 9: liquidity.GetConfigOptionsResp.trading_users:type_name -> liquidity.ConfigTradingUserOption
+	66,  // 10: liquidity.CreateProviderReq.provider_type:type_name -> liquidity.ProviderType
+	68,  // 11: liquidity.CreateProviderReq.environment:type_name -> liquidity.ProviderEnvironment
+	67,  // 12: liquidity.CreateProviderReq.status:type_name -> liquidity.ProviderStatus
+	68,  // 13: liquidity.UpdateProviderReq.environment:type_name -> liquidity.ProviderEnvironment
+	67,  // 14: liquidity.SetProviderStatusReq.status:type_name -> liquidity.ProviderStatus
+	66,  // 15: liquidity.GetProviderListReq.provider_type:type_name -> liquidity.ProviderType
+	67,  // 16: liquidity.GetProviderListReq.status:type_name -> liquidity.ProviderStatus
+	62,  // 17: liquidity.ProviderResp.base:type_name -> common.RespBase
+	69,  // 18: liquidity.ProviderResp.data:type_name -> liquidity.LiquidityProvider
+	62,  // 19: liquidity.ProviderHealthResp.base:type_name -> common.RespBase
+	70,  // 20: liquidity.ProviderHealthResp.health_status:type_name -> liquidity.HealthStatus
+	62,  // 21: liquidity.GetProviderListResp.base:type_name -> common.RespBase
+	69,  // 22: liquidity.GetProviderListResp.data:type_name -> liquidity.LiquidityProvider
+	71,  // 23: liquidity.GetProviderListResp.page:type_name -> liquidity.PageMeta
+	72,  // 24: liquidity.SaveSymbolConfigReq.liquidity_mode:type_name -> liquidity.LiquidityMode
+	73,  // 25: liquidity.SaveSymbolConfigReq.self_trade_prevention:type_name -> common.YesNo
+	63,  // 26: liquidity.GetSymbolConfigListReq.product_type:type_name -> common.ProductType
+	64,  // 27: liquidity.GetSymbolConfigListReq.contract_type:type_name -> common.ContractType
+	72,  // 28: liquidity.GetSymbolConfigListReq.liquidity_mode:type_name -> liquidity.LiquidityMode
+	74,  // 29: liquidity.GetSymbolConfigListReq.status:type_name -> liquidity.SymbolLiquidityStatus
+	62,  // 30: liquidity.SymbolConfigResp.base:type_name -> common.RespBase
+	75,  // 31: liquidity.SymbolConfigResp.data:type_name -> liquidity.LiquiditySymbolConfig
+	62,  // 32: liquidity.GetSymbolConfigListResp.base:type_name -> common.RespBase
+	75,  // 33: liquidity.GetSymbolConfigListResp.data:type_name -> liquidity.LiquiditySymbolConfig
+	71,  // 34: liquidity.GetSymbolConfigListResp.page:type_name -> liquidity.PageMeta
+	62,  // 35: liquidity.GetSymbolConfigDetailResp.base:type_name -> common.RespBase
+	75,  // 36: liquidity.GetSymbolConfigDetailResp.data:type_name -> liquidity.LiquiditySymbolConfig
+	76,  // 37: liquidity.GetSymbolConfigDetailResp.levels:type_name -> liquidity.LiquidityStrategyLevel
+	77,  // 38: liquidity.GetSymbolConfigDetailResp.latest_inventory:type_name -> liquidity.LiquidityInventorySnapshot
+	23,  // 39: liquidity.SetStrategyLevelsReq.levels:type_name -> liquidity.StrategyLevelInput
+	78,  // 40: liquidity.StrategyLevelInput.enabled:type_name -> common.Enable
+	79,  // 41: liquidity.GetQuoteCycleListReq.status:type_name -> liquidity.QuoteCycleStatus
+	62,  // 42: liquidity.GetQuoteCycleListResp.base:type_name -> common.RespBase
+	80,  // 43: liquidity.GetQuoteCycleListResp.data:type_name -> liquidity.LiquidityQuoteCycle
+	71,  // 44: liquidity.GetQuoteCycleListResp.page:type_name -> liquidity.PageMeta
+	81,  // 45: liquidity.GetQuoteOrderListReq.side:type_name -> common.Side
+	82,  // 46: liquidity.GetQuoteOrderListReq.status:type_name -> liquidity.QuoteOrderStatus
+	62,  // 47: liquidity.GetQuoteOrderListResp.base:type_name -> common.RespBase
+	83,  // 48: liquidity.GetQuoteOrderListResp.data:type_name -> liquidity.LiquidityQuoteOrder
+	71,  // 49: liquidity.GetQuoteOrderListResp.page:type_name -> liquidity.PageMeta
+	84,  // 50: liquidity.GetExternalOrderListReq.purpose:type_name -> liquidity.ExternalOrderPurpose
+	81,  // 51: liquidity.GetExternalOrderListReq.side:type_name -> common.Side
+	85,  // 52: liquidity.GetExternalOrderListReq.status:type_name -> liquidity.ExternalOrderStatus
+	62,  // 53: liquidity.GetExternalOrderListResp.base:type_name -> common.RespBase
+	86,  // 54: liquidity.GetExternalOrderListResp.data:type_name -> liquidity.LiquidityExternalOrder
+	71,  // 55: liquidity.GetExternalOrderListResp.page:type_name -> liquidity.PageMeta
+	87,  // 56: liquidity.GetExternalFillListReq.settlement_status:type_name -> liquidity.ExternalFillSettlementStatus
+	62,  // 57: liquidity.GetExternalFillListResp.base:type_name -> common.RespBase
+	88,  // 58: liquidity.GetExternalFillListResp.data:type_name -> liquidity.LiquidityExternalFill
+	71,  // 59: liquidity.GetExternalFillListResp.page:type_name -> liquidity.PageMeta
+	81,  // 60: liquidity.CreateManualHedgeReq.side:type_name -> common.Side
+	62,  // 61: liquidity.HedgeTaskResp.base:type_name -> common.RespBase
+	89,  // 62: liquidity.HedgeTaskResp.data:type_name -> liquidity.LiquidityHedgeTask
+	90,  // 63: liquidity.GetHedgeTaskListReq.status:type_name -> liquidity.HedgeStatus
+	62,  // 64: liquidity.GetHedgeTaskListResp.base:type_name -> common.RespBase
+	89,  // 65: liquidity.GetHedgeTaskListResp.data:type_name -> liquidity.LiquidityHedgeTask
+	71,  // 66: liquidity.GetHedgeTaskListResp.page:type_name -> liquidity.PageMeta
+	91,  // 67: liquidity.GetInventorySnapshotListReq.source:type_name -> liquidity.InventorySource
+	62,  // 68: liquidity.GetInventorySnapshotListResp.base:type_name -> common.RespBase
+	77,  // 69: liquidity.GetInventorySnapshotListResp.data:type_name -> liquidity.LiquidityInventorySnapshot
+	71,  // 70: liquidity.GetInventorySnapshotListResp.page:type_name -> liquidity.PageMeta
+	91,  // 71: liquidity.GetLatestInventoryReq.source:type_name -> liquidity.InventorySource
+	62,  // 72: liquidity.InventorySnapshotResp.base:type_name -> common.RespBase
+	77,  // 73: liquidity.InventorySnapshotResp.data:type_name -> liquidity.LiquidityInventorySnapshot
+	92,  // 74: liquidity.GetRiskEventListReq.risk_level:type_name -> liquidity.RiskLevel
+	93,  // 75: liquidity.GetRiskEventListReq.status:type_name -> liquidity.RiskEventStatus
+	62,  // 76: liquidity.GetRiskEventListResp.base:type_name -> common.RespBase
+	94,  // 77: liquidity.GetRiskEventListResp.data:type_name -> liquidity.LiquidityRiskEvent
+	71,  // 78: liquidity.GetRiskEventListResp.page:type_name -> liquidity.PageMeta
+	93,  // 79: liquidity.ResolveRiskEventReq.status:type_name -> liquidity.RiskEventStatus
+	95,  // 80: liquidity.RunReconcileReq.reconcile_type:type_name -> liquidity.ReconcileType
+	62,  // 81: liquidity.ReconcileBatchResp.base:type_name -> common.RespBase
+	96,  // 82: liquidity.ReconcileBatchResp.data:type_name -> liquidity.LiquidityReconcileBatch
+	95,  // 83: liquidity.GetReconcileBatchListReq.reconcile_type:type_name -> liquidity.ReconcileType
+	97,  // 84: liquidity.GetReconcileBatchListReq.status:type_name -> liquidity.ReconcileStatus
+	62,  // 85: liquidity.GetReconcileBatchListResp.base:type_name -> common.RespBase
+	96,  // 86: liquidity.GetReconcileBatchListResp.data:type_name -> liquidity.LiquidityReconcileBatch
+	71,  // 87: liquidity.GetReconcileBatchListResp.page:type_name -> liquidity.PageMeta
+	98,  // 88: liquidity.GetReconcileDetailListReq.difference_type:type_name -> liquidity.ReconcileDifferenceType
+	99,  // 89: liquidity.GetReconcileDetailListReq.status:type_name -> liquidity.ReconcileDifferenceStatus
+	62,  // 90: liquidity.GetReconcileDetailListResp.base:type_name -> common.RespBase
+	100, // 91: liquidity.GetReconcileDetailListResp.data:type_name -> liquidity.LiquidityReconcileDetail
+	71,  // 92: liquidity.GetReconcileDetailListResp.page:type_name -> liquidity.PageMeta
+	99,  // 93: liquidity.ResolveReconcileDifferenceReq.status:type_name -> liquidity.ReconcileDifferenceStatus
+	84,  // 94: liquidity.RouteExternalOrderReq.purpose:type_name -> liquidity.ExternalOrderPurpose
+	81,  // 95: liquidity.RouteExternalOrderReq.side:type_name -> common.Side
+	101, // 96: liquidity.RouteExternalOrderReq.order_type:type_name -> liquidity.ExternalOrderType
+	102, // 97: liquidity.RouteExternalOrderReq.time_in_force:type_name -> liquidity.ExternalTimeInForce
+	62,  // 98: liquidity.ExternalOrderResp.base:type_name -> common.RespBase
+	86,  // 99: liquidity.ExternalOrderResp.data:type_name -> liquidity.LiquidityExternalOrder
+	81,  // 100: liquidity.ReportTradeFillReq.side:type_name -> common.Side
+	62,  // 101: liquidity.LiquidityTaskResp.base:type_name -> common.RespBase
+	1,   // 102: liquidity.Admin.GetConfigOptions:input_type -> liquidity.GetConfigOptionsReq
+	6,   // 103: liquidity.Admin.ProvisionInternalProvider:input_type -> liquidity.ProvisionInternalProviderReq
+	7,   // 104: liquidity.Admin.CreateProvider:input_type -> liquidity.CreateProviderReq
+	8,   // 105: liquidity.Admin.UpdateProvider:input_type -> liquidity.UpdateProviderReq
+	9,   // 106: liquidity.Admin.SetProviderStatus:input_type -> liquidity.SetProviderStatusReq
+	10,  // 107: liquidity.Admin.TestProviderConnection:input_type -> liquidity.TestProviderConnectionReq
+	11,  // 108: liquidity.Admin.GetProviderList:input_type -> liquidity.GetProviderListReq
+	12,  // 109: liquidity.Admin.GetProviderDetail:input_type -> liquidity.GetProviderDetailReq
+	16,  // 110: liquidity.Admin.CreateSymbolConfig:input_type -> liquidity.SaveSymbolConfigReq
+	16,  // 111: liquidity.Admin.UpdateSymbolConfig:input_type -> liquidity.SaveSymbolConfigReq
+	17,  // 112: liquidity.Admin.GetSymbolConfigList:input_type -> liquidity.GetSymbolConfigListReq
+	18,  // 113: liquidity.Admin.GetSymbolConfigDetail:input_type -> liquidity.GetSymbolConfigDetailReq
+	22,  // 114: liquidity.Admin.SetStrategyLevels:input_type -> liquidity.SetStrategyLevelsReq
+	24,  // 115: liquidity.Admin.StartSymbolLiquidity:input_type -> liquidity.SymbolActionReq
+	24,  // 116: liquidity.Admin.PauseSymbolLiquidity:input_type -> liquidity.SymbolActionReq
+	24,  // 117: liquidity.Admin.StopSymbolLiquidity:input_type -> liquidity.SymbolActionReq
+	24,  // 118: liquidity.Admin.CancelAllQuoteOrders:input_type -> liquidity.SymbolActionReq
+	25,  // 119: liquidity.Admin.GetQuoteCycleList:input_type -> liquidity.GetQuoteCycleListReq
+	27,  // 120: liquidity.Admin.GetQuoteOrderList:input_type -> liquidity.GetQuoteOrderListReq
+	29,  // 121: liquidity.Admin.GetExternalOrderList:input_type -> liquidity.GetExternalOrderListReq
+	31,  // 122: liquidity.Admin.GetExternalFillList:input_type -> liquidity.GetExternalFillListReq
+	33,  // 123: liquidity.Admin.CancelExternalOrder:input_type -> liquidity.CancelExternalOrderReq
+	34,  // 124: liquidity.Admin.CreateManualHedge:input_type -> liquidity.CreateManualHedgeReq
+	35,  // 125: liquidity.Admin.CancelHedgeTask:input_type -> liquidity.CancelHedgeTaskReq
+	36,  // 126: liquidity.Admin.RetryHedgeTask:input_type -> liquidity.RetryHedgeTaskReq
+	38,  // 127: liquidity.Admin.GetHedgeTaskList:input_type -> liquidity.GetHedgeTaskListReq
+	40,  // 128: liquidity.Admin.GetInventorySnapshotList:input_type -> liquidity.GetInventorySnapshotListReq
+	42,  // 129: liquidity.Admin.GetLatestInventory:input_type -> liquidity.GetLatestInventoryReq
+	44,  // 130: liquidity.Admin.GetRiskEventList:input_type -> liquidity.GetRiskEventListReq
+	46,  // 131: liquidity.Admin.ResolveRiskEvent:input_type -> liquidity.ResolveRiskEventReq
+	47,  // 132: liquidity.Admin.RunReconcile:input_type -> liquidity.RunReconcileReq
+	49,  // 133: liquidity.Admin.GetReconcileBatchList:input_type -> liquidity.GetReconcileBatchListReq
+	51,  // 134: liquidity.Admin.GetReconcileDetailList:input_type -> liquidity.GetReconcileDetailListReq
+	53,  // 135: liquidity.Admin.ResolveReconcileDifference:input_type -> liquidity.ResolveReconcileDifferenceReq
+	54,  // 136: liquidity.Liquidity.GetActiveSymbolConfig:input_type -> liquidity.GetActiveSymbolConfigReq
+	55,  // 137: liquidity.Liquidity.RouteExternalOrder:input_type -> liquidity.RouteExternalOrderReq
+	57,  // 138: liquidity.Liquidity.CancelRoutedOrder:input_type -> liquidity.CancelRoutedOrderReq
+	58,  // 139: liquidity.Liquidity.ReportTradeFill:input_type -> liquidity.ReportTradeFillReq
+	59,  // 140: liquidity.Liquidity.ReportQuoteOrderState:input_type -> liquidity.ReportQuoteOrderStateReq
+	60,  // 141: liquidity.Task.RefreshQuotes:input_type -> liquidity.LiquidityTaskReq
+	60,  // 142: liquidity.Task.RecoverQuoteOrders:input_type -> liquidity.LiquidityTaskReq
+	60,  // 143: liquidity.Task.ProcessHedgeTasks:input_type -> liquidity.LiquidityTaskReq
+	60,  // 144: liquidity.Task.SyncExternalOrders:input_type -> liquidity.LiquidityTaskReq
+	60,  // 145: liquidity.Task.SettleExternalFills:input_type -> liquidity.LiquidityTaskReq
+	60,  // 146: liquidity.Task.SnapshotInventories:input_type -> liquidity.LiquidityTaskReq
+	60,  // 147: liquidity.Task.ScanLiquidityRisks:input_type -> liquidity.LiquidityTaskReq
+	60,  // 148: liquidity.Task.ProcessReconciliations:input_type -> liquidity.LiquidityTaskReq
+	60,  // 149: liquidity.Task.PublishOutboxEvents:input_type -> liquidity.LiquidityTaskReq
+	5,   // 150: liquidity.Admin.GetConfigOptions:output_type -> liquidity.GetConfigOptionsResp
+	13,  // 151: liquidity.Admin.ProvisionInternalProvider:output_type -> liquidity.ProviderResp
+	13,  // 152: liquidity.Admin.CreateProvider:output_type -> liquidity.ProviderResp
+	13,  // 153: liquidity.Admin.UpdateProvider:output_type -> liquidity.ProviderResp
+	0,   // 154: liquidity.Admin.SetProviderStatus:output_type -> liquidity.CommonResp
+	14,  // 155: liquidity.Admin.TestProviderConnection:output_type -> liquidity.ProviderHealthResp
+	15,  // 156: liquidity.Admin.GetProviderList:output_type -> liquidity.GetProviderListResp
+	13,  // 157: liquidity.Admin.GetProviderDetail:output_type -> liquidity.ProviderResp
+	19,  // 158: liquidity.Admin.CreateSymbolConfig:output_type -> liquidity.SymbolConfigResp
+	19,  // 159: liquidity.Admin.UpdateSymbolConfig:output_type -> liquidity.SymbolConfigResp
+	20,  // 160: liquidity.Admin.GetSymbolConfigList:output_type -> liquidity.GetSymbolConfigListResp
+	21,  // 161: liquidity.Admin.GetSymbolConfigDetail:output_type -> liquidity.GetSymbolConfigDetailResp
+	0,   // 162: liquidity.Admin.SetStrategyLevels:output_type -> liquidity.CommonResp
+	0,   // 163: liquidity.Admin.StartSymbolLiquidity:output_type -> liquidity.CommonResp
+	0,   // 164: liquidity.Admin.PauseSymbolLiquidity:output_type -> liquidity.CommonResp
+	0,   // 165: liquidity.Admin.StopSymbolLiquidity:output_type -> liquidity.CommonResp
+	0,   // 166: liquidity.Admin.CancelAllQuoteOrders:output_type -> liquidity.CommonResp
+	26,  // 167: liquidity.Admin.GetQuoteCycleList:output_type -> liquidity.GetQuoteCycleListResp
+	28,  // 168: liquidity.Admin.GetQuoteOrderList:output_type -> liquidity.GetQuoteOrderListResp
+	30,  // 169: liquidity.Admin.GetExternalOrderList:output_type -> liquidity.GetExternalOrderListResp
+	32,  // 170: liquidity.Admin.GetExternalFillList:output_type -> liquidity.GetExternalFillListResp
+	0,   // 171: liquidity.Admin.CancelExternalOrder:output_type -> liquidity.CommonResp
+	37,  // 172: liquidity.Admin.CreateManualHedge:output_type -> liquidity.HedgeTaskResp
+	0,   // 173: liquidity.Admin.CancelHedgeTask:output_type -> liquidity.CommonResp
+	0,   // 174: liquidity.Admin.RetryHedgeTask:output_type -> liquidity.CommonResp
+	39,  // 175: liquidity.Admin.GetHedgeTaskList:output_type -> liquidity.GetHedgeTaskListResp
+	41,  // 176: liquidity.Admin.GetInventorySnapshotList:output_type -> liquidity.GetInventorySnapshotListResp
+	43,  // 177: liquidity.Admin.GetLatestInventory:output_type -> liquidity.InventorySnapshotResp
+	45,  // 178: liquidity.Admin.GetRiskEventList:output_type -> liquidity.GetRiskEventListResp
+	0,   // 179: liquidity.Admin.ResolveRiskEvent:output_type -> liquidity.CommonResp
+	48,  // 180: liquidity.Admin.RunReconcile:output_type -> liquidity.ReconcileBatchResp
+	50,  // 181: liquidity.Admin.GetReconcileBatchList:output_type -> liquidity.GetReconcileBatchListResp
+	52,  // 182: liquidity.Admin.GetReconcileDetailList:output_type -> liquidity.GetReconcileDetailListResp
+	0,   // 183: liquidity.Admin.ResolveReconcileDifference:output_type -> liquidity.CommonResp
+	21,  // 184: liquidity.Liquidity.GetActiveSymbolConfig:output_type -> liquidity.GetSymbolConfigDetailResp
+	56,  // 185: liquidity.Liquidity.RouteExternalOrder:output_type -> liquidity.ExternalOrderResp
+	0,   // 186: liquidity.Liquidity.CancelRoutedOrder:output_type -> liquidity.CommonResp
+	0,   // 187: liquidity.Liquidity.ReportTradeFill:output_type -> liquidity.CommonResp
+	0,   // 188: liquidity.Liquidity.ReportQuoteOrderState:output_type -> liquidity.CommonResp
+	61,  // 189: liquidity.Task.RefreshQuotes:output_type -> liquidity.LiquidityTaskResp
+	61,  // 190: liquidity.Task.RecoverQuoteOrders:output_type -> liquidity.LiquidityTaskResp
+	61,  // 191: liquidity.Task.ProcessHedgeTasks:output_type -> liquidity.LiquidityTaskResp
+	61,  // 192: liquidity.Task.SyncExternalOrders:output_type -> liquidity.LiquidityTaskResp
+	61,  // 193: liquidity.Task.SettleExternalFills:output_type -> liquidity.LiquidityTaskResp
+	61,  // 194: liquidity.Task.SnapshotInventories:output_type -> liquidity.LiquidityTaskResp
+	61,  // 195: liquidity.Task.ScanLiquidityRisks:output_type -> liquidity.LiquidityTaskResp
+	61,  // 196: liquidity.Task.ProcessReconciliations:output_type -> liquidity.LiquidityTaskResp
+	61,  // 197: liquidity.Task.PublishOutboxEvents:output_type -> liquidity.LiquidityTaskResp
+	150, // [150:198] is the sub-list for method output_type
+	102, // [102:150] is the sub-list for method input_type
+	102, // [102:102] is the sub-list for extension type_name
+	102, // [102:102] is the sub-list for extension extendee
+	0,   // [0:102] is the sub-list for field type_name
 }
 
 func init() { file_proto_liquidity_liquidity_proto_init() }
@@ -5111,7 +5602,7 @@ func file_proto_liquidity_liquidity_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_liquidity_liquidity_proto_rawDesc), len(file_proto_liquidity_liquidity_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   56,
+			NumMessages:   62,
 			NumExtensions: 0,
 			NumServices:   3,
 		},

@@ -59,6 +59,7 @@ func (l *CreateUserLogic) CreateUser(in *user.CreateUserReq) (*user.CreateUserRe
 		Avatar:         sql.NullString{String: in.Avatar, Valid: in.Avatar != ""},
 		PasswordHash:   in.Password,
 		RegisterType:   int64(in.RegisterType),
+		AccountType:    int64(common.UserAccountType_USER_ACCOUNT_TYPE_NORMAL),
 		Status:         int64(in.Status),
 		MemberLevel:    int64(in.MemberLevel),
 		Language:       sql.NullString{String: in.Language, Valid: in.Language != ""},

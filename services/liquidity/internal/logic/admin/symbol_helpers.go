@@ -40,6 +40,25 @@ func parseSignedNumber(name, value string) (float64, error) {
 	return number, nil
 }
 
+func validateReferencePriceSources(value string) error {
+	sources := strings.FieldsFunc(value, func(r rune) bool {
+		return r == ',' || r == '|' || r == ';'
+	})
+	if len(sources) == 0 {
+		return fmt.Errorf("reference_price_source is required")
+	}
+	for _, source := range sources {
+		parts := strings.Split(strings.TrimSpace(source), ":")
+		if len(parts) != 3 ||
+			strings.TrimSpace(parts[0]) == "" ||
+			strings.TrimSpace(parts[1]) == "" ||
+			strings.TrimSpace(parts[2]) == "" {
+			return fmt.Errorf("reference_price_source must use category:market:symbol format")
+		}
+	}
+	return nil
+}
+
 func buildSymbolConfig(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.SaveSymbolConfigReq, current *models.TLiquiditySymbolConfig) (*models.TLiquiditySymbolConfig, error) {
 	if in.SymbolId <= 0 {
 		return nil, fmt.Errorf("symbol_id is required")
@@ -89,6 +108,9 @@ func buildSymbolConfig(ctx context.Context, svcCtx *svc.ServiceContext, in *liqu
 	}
 	if in.LiquidityMode == liquidity.LiquidityMode_LIQUIDITY_MODE_UNKNOWN {
 		return nil, fmt.Errorf("liquidity_mode is required")
+	}
+	if err := validateReferencePriceSources(in.ReferencePriceSource); err != nil {
+		return nil, err
 	}
 	if values[4] <= 0 || (values[5] > 0 && values[5] < values[4]) {
 		return nil, fmt.Errorf("invalid quote quantity range")

@@ -41,6 +41,11 @@ func (l *CreateProviderLogic) CreateProvider(in *liquidity.CreateProviderReq) (*
 	if in.ProviderType == liquidity.ProviderType_PROVIDER_TYPE_INTERNAL && in.TradeUserId <= 0 {
 		return nil, fmt.Errorf("trade_user_id is required for internal provider")
 	}
+	if in.ProviderType == liquidity.ProviderType_PROVIDER_TYPE_INTERNAL {
+		if err := validateInternalTradingUser(l.ctx, l.svcCtx, in.TradeUserId); err != nil {
+			return nil, err
+		}
+	}
 	if in.ProviderType == liquidity.ProviderType_PROVIDER_TYPE_EXTERNAL &&
 		(strings.TrimSpace(in.VenueCode) == "" || strings.TrimSpace(in.CredentialRef) == "") {
 		return nil, fmt.Errorf("venue_code and credential_ref are required for external provider")

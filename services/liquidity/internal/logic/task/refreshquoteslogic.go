@@ -2,7 +2,9 @@ package tasklogic
 
 import (
 	"context"
+	"time"
 
+	"wklive/common/helper"
 	"wklive/proto/liquidity"
 	"wklive/services/liquidity/internal/svc"
 
@@ -27,5 +29,21 @@ func (l *RefreshQuotesLogic) RefreshQuotes(in *liquidity.LiquidityTaskReq) (*liq
 	if err := validateTask(in); err != nil {
 		return nil, err
 	}
-	return processInternalQuotes(l.ctx, l.svcCtx, in, false)
+	created, prepareFailed, err := prepareInternalQuoteCycles(l.ctx, l.svcCtx, in)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := processInternalQuotes(l.ctx, l.svcCtx, in, false)
+	if err != nil {
+		return nil, err
+	}
+	if resp.Base == nil {
+		resp.Base = helper.OkResp()
+	}
+	resp.ScannedCount += created
+	resp.FailedCount += prepareFailed
+	if err := l.svcCtx.QuoteCycleModel.RefreshExecutionResults(l.ctx, in.ConfigId, time.Now().UnixMilli()); err != nil {
+		return nil, err
+	}
+	return resp, nil
 }

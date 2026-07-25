@@ -36,6 +36,7 @@ message UserBase {
   int64 deleted = 26; // 删除状态：0未删除 1已删除
   int64 create_times = 27; // 创建时间
   int64 update_times = 28; // 更新时间
+  common.UserAccountType account_type = 29; // 账户用途
 }
 
 message UserIdentity {
@@ -123,6 +124,7 @@ message UserItem {
   int64 deleted = 26; // 删除状态：0未删除 1已删除
   int64 create_times = 27; // 创建时间
   int64 update_times = 28; // 更新时间
+  common.UserAccountType account_type = 29; // 账户用途
 }
 
 message UserIdentityItem {

@@ -1,7 +1,11 @@
 package svc
 
 import (
+	mq "wklive/common/mq/kafka"
+	"wklive/proto/asset"
+	"wklive/proto/itick"
 	"wklive/proto/trade"
+	"wklive/proto/user"
 	"wklive/services/liquidity/internal/config"
 	"wklive/services/liquidity/internal/provider"
 	"wklive/services/liquidity/models"
@@ -28,13 +32,21 @@ type ServiceContext struct {
 	EventInboxModel        models.TLiquidityEventInboxModel
 	EventOutboxModel       models.TLiquidityEventOutboxModel
 	TradeClient            trade.TradeClient
+	ItickClient            itick.ItickClient
+	UserClient             user.UserClient
+	AssetClient            asset.AssetClient
 	InternalMarketMaker    provider.InternalMarketMaker
 	ProviderAdapters       *provider.Registry
+	TaskSubscriber         *mq.Subscriber
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 	tradeClient := zrpc.MustNewClient(c.TradeRpc)
+	itickClient := zrpc.MustNewClient(c.ItickRpc)
+	userClient := zrpc.MustNewClient(c.UserRpc)
+	assetClient := zrpc.MustNewClient(c.AssetRpc)
+	mqConfig := mq.ForService(c.MQ, c.Name)
 	return &ServiceContext{
 		Config:                 c,
 		ProviderModel:          models.NewTLiquidityProviderModel(conn, c.CacheRedis),
@@ -52,7 +64,11 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		EventInboxModel:        models.NewTLiquidityEventInboxModel(conn, c.CacheRedis),
 		EventOutboxModel:       models.NewTLiquidityEventOutboxModel(conn, c.CacheRedis),
 		TradeClient:            trade.NewTradeClient(tradeClient.Conn()),
+		ItickClient:            itick.NewItickClient(itickClient.Conn()),
+		UserClient:             user.NewUserClient(userClient.Conn()),
+		AssetClient:            asset.NewAssetClient(assetClient.Conn()),
 		InternalMarketMaker:    provider.NewTradeInternalMarketMaker(trade.NewTradeClient(tradeClient.Conn())),
 		ProviderAdapters:       provider.NewRegistry(),
+		TaskSubscriber:         mq.MustNewSubscriber(mqConfig, "liquidity-tasks"),
 	}
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"wklive/common/sqlutil"
+	"wklive/proto/liquidity"
 
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -26,6 +27,7 @@ type (
 		FindByIDOrSymbol(ctx context.Context, id, symbolID int64) (*TLiquiditySymbolConfig, error)
 		FindActiveBySymbol(ctx context.Context, symbolID int64) (*TLiquiditySymbolConfig, error)
 		FindActiveExternalBySymbol(ctx context.Context, symbolID int64) (*TLiquiditySymbolConfig, error)
+		FindRunningInternal(ctx context.Context, configID int64, limit int64) ([]*TLiquiditySymbolConfig, error)
 	}
 
 	customTLiquiditySymbolConfigModel struct {
@@ -38,6 +40,27 @@ func NewTLiquiditySymbolConfigModel(conn sqlx.SqlConn, c cache.CacheConf, opts .
 	return &customTLiquiditySymbolConfigModel{
 		defaultTLiquiditySymbolConfigModel: newTLiquiditySymbolConfigModel(conn, c, opts...),
 	}
+}
+
+func (m *customTLiquiditySymbolConfigModel) FindRunningInternal(ctx context.Context, configID int64, limit int64) ([]*TLiquiditySymbolConfig, error) {
+	limit = sqlutil.NormalizeLimit(limit)
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE status = ? AND liquidity_mode IN (?, ?)", tLiquiditySymbolConfigRows, m.table)
+	args := []any{
+		int64(liquidity.SymbolLiquidityStatus_SYMBOL_LIQUIDITY_STATUS_RUNNING),
+		int64(liquidity.LiquidityMode_LIQUIDITY_MODE_INTERNAL_MARKET_MAKING),
+		int64(liquidity.LiquidityMode_LIQUIDITY_MODE_INTERNAL_WITH_EXTERNAL_HEDGE),
+	}
+	if configID > 0 {
+		query += " AND id = ?"
+		args = append(args, configID)
+	}
+	query += " ORDER BY id ASC LIMIT ?"
+	args = append(args, limit)
+	var rows []*TLiquiditySymbolConfig
+	if err := m.QueryRowsNoCacheCtx(ctx, &rows, query, args...); err != nil {
+		return nil, err
+	}
+	return rows, nil
 }
 
 func (m *customTLiquiditySymbolConfigModel) FindPage(ctx context.Context, filter LiquiditySymbolConfigPageFilter, cursor, limit int64) ([]*TLiquiditySymbolConfig, int64, error) {
@@ -86,8 +109,8 @@ func (m *customTLiquiditySymbolConfigModel) FindByIDOrSymbol(ctx context.Context
 
 func (m *customTLiquiditySymbolConfigModel) FindActiveBySymbol(ctx context.Context, symbolID int64) (*TLiquiditySymbolConfig, error) {
 	var row TLiquiditySymbolConfig
-	query := fmt.Sprintf("SELECT %s FROM %s WHERE symbol_id = ? AND status = 1 LIMIT 1", tLiquiditySymbolConfigRows, m.table)
-	if err := m.QueryRowNoCacheCtx(ctx, &row, query, symbolID); err != nil {
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE symbol_id = ? AND status = ? LIMIT 1", tLiquiditySymbolConfigRows, m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &row, query, symbolID, int64(liquidity.SymbolLiquidityStatus_SYMBOL_LIQUIDITY_STATUS_RUNNING)); err != nil {
 		return nil, err
 	}
 	return &row, nil
@@ -95,8 +118,13 @@ func (m *customTLiquiditySymbolConfigModel) FindActiveBySymbol(ctx context.Conte
 
 func (m *customTLiquiditySymbolConfigModel) FindActiveExternalBySymbol(ctx context.Context, symbolID int64) (*TLiquiditySymbolConfig, error) {
 	var row TLiquiditySymbolConfig
-	query := fmt.Sprintf("SELECT %s FROM %s WHERE symbol_id = ? AND status = 1 AND liquidity_mode IN (2, 3) LIMIT 1", tLiquiditySymbolConfigRows, m.table)
-	if err := m.QueryRowNoCacheCtx(ctx, &row, query, symbolID); err != nil {
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE symbol_id = ? AND status = ? AND liquidity_mode IN (?, ?) LIMIT 1", tLiquiditySymbolConfigRows, m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &row, query,
+		symbolID,
+		int64(liquidity.SymbolLiquidityStatus_SYMBOL_LIQUIDITY_STATUS_RUNNING),
+		int64(liquidity.LiquidityMode_LIQUIDITY_MODE_EXTERNAL_ROUTING),
+		int64(liquidity.LiquidityMode_LIQUIDITY_MODE_INTERNAL_WITH_EXTERNAL_HEDGE),
+	); err != nil {
 		return nil, err
 	}
 	return &row, nil

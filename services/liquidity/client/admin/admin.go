@@ -18,10 +18,15 @@ type (
 	CancelHedgeTaskReq            = liquidity.CancelHedgeTaskReq
 	CancelRoutedOrderReq          = liquidity.CancelRoutedOrderReq
 	CommonResp                    = liquidity.CommonResp
+	ConfigProviderOption          = liquidity.ConfigProviderOption
+	ConfigSymbolOption            = liquidity.ConfigSymbolOption
+	ConfigTradingUserOption       = liquidity.ConfigTradingUserOption
 	CreateManualHedgeReq          = liquidity.CreateManualHedgeReq
 	CreateProviderReq             = liquidity.CreateProviderReq
 	ExternalOrderResp             = liquidity.ExternalOrderResp
 	GetActiveSymbolConfigReq      = liquidity.GetActiveSymbolConfigReq
+	GetConfigOptionsReq           = liquidity.GetConfigOptionsReq
+	GetConfigOptionsResp          = liquidity.GetConfigOptionsResp
 	GetExternalFillListReq        = liquidity.GetExternalFillListReq
 	GetExternalFillListResp       = liquidity.GetExternalFillListResp
 	GetExternalOrderListReq       = liquidity.GetExternalOrderListReq
@@ -54,6 +59,7 @@ type (
 	LiquidityTaskResp             = liquidity.LiquidityTaskResp
 	ProviderHealthResp            = liquidity.ProviderHealthResp
 	ProviderResp                  = liquidity.ProviderResp
+	ProvisionInternalProviderReq  = liquidity.ProvisionInternalProviderReq
 	ReconcileBatchResp            = liquidity.ReconcileBatchResp
 	ReportQuoteOrderStateReq      = liquidity.ReportQuoteOrderStateReq
 	ReportTradeFillReq            = liquidity.ReportTradeFillReq
@@ -72,6 +78,8 @@ type (
 	UpdateProviderReq             = liquidity.UpdateProviderReq
 
 	Admin interface {
+		GetConfigOptions(ctx context.Context, in *GetConfigOptionsReq, opts ...grpc.CallOption) (*GetConfigOptionsResp, error)
+		ProvisionInternalProvider(ctx context.Context, in *ProvisionInternalProviderReq, opts ...grpc.CallOption) (*ProviderResp, error)
 		CreateProvider(ctx context.Context, in *CreateProviderReq, opts ...grpc.CallOption) (*ProviderResp, error)
 		UpdateProvider(ctx context.Context, in *UpdateProviderReq, opts ...grpc.CallOption) (*ProviderResp, error)
 		SetProviderStatus(ctx context.Context, in *SetProviderStatusReq, opts ...grpc.CallOption) (*CommonResp, error)
@@ -115,6 +123,16 @@ func NewAdmin(cli zrpc.Client) Admin {
 	return &defaultAdmin{
 		cli: cli,
 	}
+}
+
+func (m *defaultAdmin) GetConfigOptions(ctx context.Context, in *GetConfigOptionsReq, opts ...grpc.CallOption) (*GetConfigOptionsResp, error) {
+	client := liquidity.NewAdminClient(m.cli.Conn())
+	return client.GetConfigOptions(ctx, in, opts...)
+}
+
+func (m *defaultAdmin) ProvisionInternalProvider(ctx context.Context, in *ProvisionInternalProviderReq, opts ...grpc.CallOption) (*ProviderResp, error) {
+	client := liquidity.NewAdminClient(m.cli.Conn())
+	return client.ProvisionInternalProvider(ctx, in, opts...)
 }
 
 func (m *defaultAdmin) CreateProvider(ctx context.Context, in *CreateProviderReq, opts ...grpc.CallOption) (*ProviderResp, error) {

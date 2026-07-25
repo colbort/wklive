@@ -21,6 +21,9 @@ VALUES
   (20103, 20100, 2, '修改状态', 3, 'PUT', '/admin/liquidity/providers/{id}/status',
    'liquidity:provider:status', '', '', 20103, 2, 1,
    UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
+  (20104, 20100, 2, '一键创建内部做市账户', 3, 'POST', '/admin/liquidity/providers/provision',
+   'liquidity:provider:add', '', '', 20104, 2, 1,
+   UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
   (20200, 20000, 2, '做市策略', 2, 'GET', '/admin/liquidity/symbol-configs',
    'liquidity:strategy:list', '', '', 20200, 1, 1,
    UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
@@ -35,6 +38,9 @@ VALUES
    UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
   (20204, 20200, 2, '停止策略', 3, 'POST', '/admin/liquidity/symbol-configs/{id}/stop',
    'liquidity:strategy:stop', '', '', 20204, 2, 1,
+   UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
+  (20205, 20200, 2, '做市配置选项', 3, 'GET', '/admin/liquidity/config-options',
+   'liquidity:strategy:list', '', '', 20205, 2, 1,
    UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
   (20300, 20000, 2, '内部报价单', 2, 'GET', '/admin/liquidity/quote-orders',
    'liquidity:quote:list', '', '', 20300, 1, 1,
@@ -66,8 +72,8 @@ INSERT IGNORE INTO sys_role_menu (tenant_id, role_id, menu_id)
 SELECT r.tenant_id, r.id, m.id
 FROM sys_role r
 JOIN sys_menu m ON m.id IN (
-  20000, 20001, 20100, 20101, 20102, 20103,
-  20200, 20201, 20202, 20203, 20204,
+  20000, 20001, 20100, 20101, 20102, 20103, 20104,
+  20200, 20201, 20202, 20203, 20204, 20205,
   20300, 20400, 20500, 20600, 20700
 )
 WHERE r.code = 'liquidity_admin'

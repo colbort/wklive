@@ -135,6 +135,7 @@ func (l *GuestLoginLogic) GuestLogin(in *user.GuestLoginReq) (*user.GuestLoginRe
 		Avatar:         sql.NullString{},
 		PasswordHash:   "",
 		RegisterType:   int64(user.RegisterType_REGISTER_TYPE_GUEST),
+		AccountType:    int64(common.UserAccountType_USER_ACCOUNT_TYPE_NORMAL),
 		Status:         1,
 		MemberLevel:    0,
 		Language:       sql.NullString{},

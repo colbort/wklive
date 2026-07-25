@@ -89,6 +89,11 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 			Base: helper.ErrResp(i18n.UserNotFoundOrPasswordIncorrect, i18n.Translate(i18n.UserNotFoundOrPasswordIncorrect, l.ctx)),
 		}, nil
 	}
+	if tuser.AccountType != int64(common.UserAccountType_USER_ACCOUNT_TYPE_NORMAL) {
+		return &user.LoginResp{
+			Base: helper.ErrResp(i18n.UserNotFoundOrPasswordIncorrect, i18n.Translate(i18n.UserNotFoundOrPasswordIncorrect, l.ctx)),
+		}, nil
+	}
 
 	if tuser.Status != 1 {
 		return &user.LoginResp{

@@ -28,5 +28,12 @@ ItickRpc:
     - 127.0.0.1:2379
     Key: itick.rpc
 
+UserRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - 127.0.0.1:2379
+    Key: user.rpc
+
 MarketAuthority: itick-ws
 PriceEngineAuthority: price-engine

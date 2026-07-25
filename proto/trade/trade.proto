@@ -1211,6 +1211,9 @@ message RetrySettlementInstructionReq {
 
 // 交易服务内部接口
 service Trade {
+  // 内部服务查询可配置的交易对，不依赖管理后台登录上下文。
+  rpc GetSymbolList(GetSymbolListAdminReq) returns (GetSymbolListAdminResp);
+
   // 内部服务获取指定交易对配置，不依赖用户端登录上下文。
   rpc GetSymbolDetail(GetSymbolDetailReq) returns (GetSymbolDetailResp);
 

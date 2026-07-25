@@ -10,10 +10,11 @@ import (
 const (
 	channel = "system:scheduled-tasks"
 
-	ServiceItick   = "itick"
-	ServiceOption  = "option"
-	ServiceStaking = "staking"
-	ServiceTrade   = "trade"
+	ServiceItick     = "itick"
+	ServiceLiquidity = "liquidity"
+	ServiceOption    = "option"
+	ServiceStaking   = "staking"
+	ServiceTrade     = "trade"
 
 	ActionItickSyncProducts = "SyncProducts"
 	ActionItickSyncKlines   = "SyncKlines"
@@ -29,6 +30,9 @@ const (
 	ActionTradeProcessSecondsSettlements  = "ProcessSecondsSettlements"
 	ActionTradeProcessTradeEvents         = "ProcessTradeEvents"
 	ActionTradeExpireRiskLimits           = "ExpireRiskLimits"
+
+	ActionLiquidityRefreshQuotes      = "RefreshQuotes"
+	ActionLiquidityRecoverQuoteOrders = "RecoverQuoteOrders"
 )
 
 type Message struct {

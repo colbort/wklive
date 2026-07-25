@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"wklive/common/sqlutil"
+	"wklive/proto/liquidity"
 
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -27,6 +28,7 @@ type (
 		FindPage(ctx context.Context, filter LiquidityQuoteOrderPageFilter, cursor, limit int64) ([]*TLiquidityQuoteOrder, int64, error)
 		FindByInternalIdentity(ctx context.Context, internalOrderID int64, internalOrderNo, clientOrderID string) (*TLiquidityQuoteOrder, error)
 		CancelActiveByConfig(ctx context.Context, configID int64, reason string, now, pendingStatus, canceledStatus, cancelingStatus int64) error
+		FindActiveByConfig(ctx context.Context, configID int64) ([]*TLiquidityQuoteOrder, error)
 	}
 
 	customTLiquidityQuoteOrderModel struct {
@@ -39,6 +41,21 @@ func NewTLiquidityQuoteOrderModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...
 	return &customTLiquidityQuoteOrderModel{
 		defaultTLiquidityQuoteOrderModel: newTLiquidityQuoteOrderModel(conn, c, opts...),
 	}
+}
+
+func (m *customTLiquidityQuoteOrderModel) FindActiveByConfig(ctx context.Context, configID int64) ([]*TLiquidityQuoteOrder, error) {
+	var rows []*TLiquidityQuoteOrder
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE config_id = ? AND status IN (?, ?, ?, ?) ORDER BY id ASC", tLiquidityQuoteOrderRows, m.table)
+	if err := m.QueryRowsNoCacheCtx(ctx, &rows, query,
+		configID,
+		int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_PENDING_SUBMIT),
+		int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_OPEN),
+		int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_PART_FILLED),
+		int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_CANCELING),
+	); err != nil {
+		return nil, err
+	}
+	return rows, nil
 }
 
 func (m *customTLiquidityQuoteOrderModel) FindByInternalIdentity(ctx context.Context, internalOrderID int64, internalOrderNo, clientOrderID string) (*TLiquidityQuoteOrder, error) {

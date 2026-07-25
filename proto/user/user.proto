@@ -12,6 +12,42 @@ message UserCommonResp {
   common.RespBase base = 1;
 }
 
+message CreateInternalTradingUserReq {
+  int64 tenant_id = 1;
+  string account_key = 2;
+  string nickname = 3;
+  string source = 4;
+  string remark = 5;
+}
+
+message GetInternalTradingUserReq {
+  int64 user_id = 1;
+}
+
+message ListInternalTradingUsersReq {
+  int64 tenant_id = 1;
+  string keyword = 2;
+  common.PageReq page = 3;
+}
+
+message InternalTradingUser {
+  int64 user_id = 1;
+  int64 tenant_id = 2;
+  string username = 3;
+  common.UserAccountType account_type = 4;
+  user.UserStatus status = 5;
+}
+
+message InternalTradingUserResp {
+  common.RespBase base = 1;
+  InternalTradingUser data = 2;
+}
+
+message ListInternalTradingUsersResp {
+  common.RespBase base = 1;
+  repeated InternalTradingUser data = 2;
+}
+
 message RegisterReq {
   user.RegisterType register_type = 2;
   string username = 3;
@@ -651,4 +687,11 @@ service Admin {
   rpc UpdateUserBankStatus(UpdateUserBankStatusReq) returns (CommonResp);
   // 设置默认用户银行卡
   rpc SetDefaultUserBank(SetDefaultUserBankReq) returns (CommonResp);
+}
+
+// 仅供平台内部服务调用，不暴露给用户端。
+service User {
+  rpc CreateInternalTradingUser(CreateInternalTradingUserReq) returns (InternalTradingUserResp);
+  rpc GetInternalTradingUser(GetInternalTradingUserReq) returns (InternalTradingUserResp);
+  rpc ListInternalTradingUsers(ListInternalTradingUsersReq) returns (ListInternalTradingUsersResp);
 }

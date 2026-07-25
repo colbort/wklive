@@ -18,10 +18,15 @@ type (
 	CancelHedgeTaskReq            = liquidity.CancelHedgeTaskReq
 	CancelRoutedOrderReq          = liquidity.CancelRoutedOrderReq
 	CommonResp                    = liquidity.CommonResp
+	ConfigProviderOption          = liquidity.ConfigProviderOption
+	ConfigSymbolOption            = liquidity.ConfigSymbolOption
+	ConfigTradingUserOption       = liquidity.ConfigTradingUserOption
 	CreateManualHedgeReq          = liquidity.CreateManualHedgeReq
 	CreateProviderReq             = liquidity.CreateProviderReq
 	ExternalOrderResp             = liquidity.ExternalOrderResp
 	GetActiveSymbolConfigReq      = liquidity.GetActiveSymbolConfigReq
+	GetConfigOptionsReq           = liquidity.GetConfigOptionsReq
+	GetConfigOptionsResp          = liquidity.GetConfigOptionsResp
 	GetExternalFillListReq        = liquidity.GetExternalFillListReq
 	GetExternalFillListResp       = liquidity.GetExternalFillListResp
 	GetExternalOrderListReq       = liquidity.GetExternalOrderListReq
@@ -54,6 +59,7 @@ type (
 	LiquidityTaskResp             = liquidity.LiquidityTaskResp
 	ProviderHealthResp            = liquidity.ProviderHealthResp
 	ProviderResp                  = liquidity.ProviderResp
+	ProvisionInternalProviderReq  = liquidity.ProvisionInternalProviderReq
 	ReconcileBatchResp            = liquidity.ReconcileBatchResp
 	ReportQuoteOrderStateReq      = liquidity.ReportQuoteOrderStateReq
 	ReportTradeFillReq            = liquidity.ReportTradeFillReq

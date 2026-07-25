@@ -29,6 +29,7 @@ type (
 		RegisterTimeStart int64
 		RegisterTimeEnd   int64
 		Keyword           string
+		AccountType       int64
 	}
 
 	GuestDomainMigrationStats struct {
@@ -103,6 +104,7 @@ func (m *defaultTUserModel) FindPage(ctx context.Context, filter UserPageFilter,
 	builder.LikeString("nickname", filter.Nickname)
 	builder.EqInt64("status", filter.Status)
 	builder.EqInt64("member_level", filter.MemberLevel)
+	builder.EqInt64("account_type", filter.AccountType)
 	builder.EqString("invite_code", filter.InviteCode)
 	builder.GteInt64("register_time", filter.RegisterTimeStart)
 	builder.LteInt64("register_time", filter.RegisterTimeEnd)

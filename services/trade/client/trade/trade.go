@@ -145,6 +145,8 @@ type (
 	UserCommonResp                   = trade.UserCommonResp
 
 	Trade interface {
+		// 内部服务查询可配置的交易对，不依赖管理后台登录上下文。
+		GetSymbolList(ctx context.Context, in *GetSymbolListAdminReq, opts ...grpc.CallOption) (*GetSymbolListAdminResp, error)
 		// 内部服务获取指定交易对配置，不依赖用户端登录上下文。
 		GetSymbolDetail(ctx context.Context, in *GetSymbolDetailReq, opts ...grpc.CallOption) (*GetSymbolDetailResp, error)
 		// 平台内部做市账户报价，不依赖用户登录 metadata。
@@ -168,6 +170,12 @@ func NewTrade(cli zrpc.Client) Trade {
 	return &defaultTrade{
 		cli: cli,
 	}
+}
+
+// 内部服务查询可配置的交易对，不依赖管理后台登录上下文。
+func (m *defaultTrade) GetSymbolList(ctx context.Context, in *GetSymbolListAdminReq, opts ...grpc.CallOption) (*GetSymbolListAdminResp, error) {
+	client := trade.NewTradeClient(m.cli.Conn())
+	return client.GetSymbolList(ctx, in, opts...)
 }
 
 // 内部服务获取指定交易对配置，不依赖用户端登录上下文。

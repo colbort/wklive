@@ -25,6 +25,45 @@ export interface Provider {
   version: number;
 }
 
+export interface ProvisionInternalProviderRequest {
+  symbolId: number;
+  providerCode: string;
+  providerName: string;
+  baseAmount: string;
+  quoteAmount: string;
+  remark?: string;
+}
+
+export interface ConfigSymbolOption {
+  symbolId: number;
+  symbol: string;
+  displaySymbol: string;
+  productType: number;
+  contractType: number;
+  walletType: number;
+  contractValueType: number;
+}
+
+export interface ConfigProviderOption {
+  providerId: number;
+  providerCode: string;
+  providerName: string;
+  providerType: number;
+  tradeUserId: number;
+  status: number;
+}
+
+export interface ConfigTradingUserOption {
+  tradeUserId: number;
+  username: string;
+}
+
+export interface ConfigOptions {
+  symbols: ConfigSymbolOption[];
+  providers: ConfigProviderOption[];
+  tradingUsers: ConfigTradingUserOption[];
+}
+
 export interface SymbolConfig {
   id: number;
   symbolId: number;

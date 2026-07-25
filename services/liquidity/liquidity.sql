@@ -45,6 +45,7 @@ CREATE TABLE `t_liquidity_provider` (
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_provider_code` (`provider_code`),
+  UNIQUE KEY `uk_internal_trade_user` ((CASE WHEN `provider_type` = 1 THEN `trade_user_id` ELSE NULL END)),
   KEY `idx_type_status` (`provider_type`, `status`),
   KEY `idx_trade_user` (`trade_user_id`),
   CONSTRAINT `chk_liquidity_provider_type` CHECK (`provider_type` IN (1, 2)),

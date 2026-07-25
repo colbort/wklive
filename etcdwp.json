@@ -48,7 +48,7 @@
     "key" : "\/wklive\/liquidity-admin-api\/config"
   },
   {
-    "value" : "Name: liquidity.rpc\nListenOn: 0.0.0.0:8091\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: liquidity.rpc\n\nMQ:\n  Brokers:\n  - 127.0.0.1:9092\n  MaxAttempts: 5\n\nTradeRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: trade.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: asset.rpc\n\nItickRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: itick.rpc\n\nMarketAuthority: itick-ws\nPriceEngineAuthority: price-engine",
+    "value" : "Name: liquidity.rpc\nListenOn: 0.0.0.0:8091\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: liquidity.rpc\n\nMQ:\n  Brokers:\n  - 127.0.0.1:9092\n  MaxAttempts: 5\n\nTradeRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: trade.rpc\n\nAssetRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: asset.rpc\n\nItickRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: itick.rpc\n\nUserRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - 127.0.0.1:2379\n    Key: user.rpc\n\nMarketAuthority: itick-ws\nPriceEngineAuthority: price-engine",
     "key" : "\/wklive\/liquidity-rpc\/config"
   },
   {

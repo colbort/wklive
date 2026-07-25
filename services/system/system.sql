@@ -292,7 +292,9 @@ CREATE TABLE sys_job (
 INSERT INTO sys_job
 (`job_name`, `job_group`, `invoke_target`, `cron_expression`, `status`, `remark`, `create_by`, `create_times`, `update_by`, `update_times`)
 VALUES
-('秒合约结算兜底', 'TRADE', 'trade.ProcessSecondsSettlements', '0 * * * * *', 1, '每分钟扫描秒合约激活、到期结算及退款漏单', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
+('秒合约结算兜底', 'TRADE', 'trade.ProcessSecondsSettlements', '0 * * * * *', 1, '每分钟扫描秒合约激活、到期结算及退款漏单', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
+('做市报价刷新', 'LIQUIDITY', 'liquidity.RefreshQuotes', '*/1 * * * * *', 1, '扫描运行中的做市配置并按各配置刷新间隔撤旧挂新', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
+('做市报价恢复', 'LIQUIDITY', 'liquidity.RecoverQuoteOrders', '*/10 * * * * *', 1, '恢复提交结果不确定的内部做市报价状态', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
 
 
 -- =============================

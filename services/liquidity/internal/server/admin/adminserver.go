@@ -23,6 +23,16 @@ func NewAdminServer(svcCtx *svc.ServiceContext) *AdminServer {
 	}
 }
 
+func (s *AdminServer) GetConfigOptions(ctx context.Context, in *liquidity.GetConfigOptionsReq) (*liquidity.GetConfigOptionsResp, error) {
+	l := adminlogic.NewGetConfigOptionsLogic(ctx, s.svcCtx)
+	return l.GetConfigOptions(in)
+}
+
+func (s *AdminServer) ProvisionInternalProvider(ctx context.Context, in *liquidity.ProvisionInternalProviderReq) (*liquidity.ProviderResp, error) {
+	l := adminlogic.NewProvisionInternalProviderLogic(ctx, s.svcCtx)
+	return l.ProvisionInternalProvider(in)
+}
+
 func (s *AdminServer) CreateProvider(ctx context.Context, in *liquidity.CreateProviderReq) (*liquidity.ProviderResp, error) {
 	l := adminlogic.NewCreateProviderLogic(ctx, s.svcCtx)
 	return l.CreateProvider(in)

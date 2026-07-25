@@ -1,5 +1,9 @@
 import { request } from "./request";
-import type { ListResponse, PageQuery } from "@/types/liquidity";
+import type {
+  ListResponse,
+  PageQuery,
+  ProvisionInternalProviderRequest,
+} from "@/types/liquidity";
 
 export type ApiResponse<T> = {
   code: number;
@@ -53,9 +57,12 @@ export const liquidityApi = {
     request.post<unknown, ApiResponse<LoginData>>("/auth/login", data),
   profile: () => request.get<unknown, ApiResponse<ProfileData>>("/auth/profile"),
   dashboard: () => request.get("/dashboard"),
+  configOptions: () => request.get("/config-options"),
   providers: (params: PageQuery) =>
     request.get<unknown, ListResponse>("/providers", { params }),
   createProvider: (data: Record<string, unknown>) => request.post("/providers", data),
+  provisionInternalProvider: (data: ProvisionInternalProviderRequest) =>
+    request.post("/providers/provision", data),
   testProvider: (id: number) => request.post(`/providers/${id}/test`),
   setProviderStatus: (id: number, data: Record<string, unknown>) =>
     request.put(`/providers/${id}/status`, data),
@@ -63,8 +70,11 @@ export const liquidityApi = {
     request.get<unknown, ListResponse>("/symbol-configs", { params }),
   createSymbolConfig: (data: Record<string, unknown>) =>
     request.post("/symbol-configs", data),
-  symbolAction: (id: number, action: "start" | "pause" | "stop") =>
-    request.post(`/symbol-configs/${id}/${action}`),
+  symbolAction: (
+    id: number,
+    action: "start" | "pause" | "stop",
+    version: number,
+  ) => request.post(`/symbol-configs/${id}/${action}`, { version }),
   quoteOrders: (params: PageQuery) =>
     request.get<unknown, ListResponse>("/quote-orders", { params }),
   externalOrders: (params: PageQuery) =>

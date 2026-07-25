@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"wklive/proto/common"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -40,12 +42,14 @@ func NewTLiquidityStrategyLevelModel(conn sqlx.SqlConn, c cache.CacheConf, opts 
 
 func (m *customTLiquidityStrategyLevelModel) FindList(ctx context.Context, configID int64, enabledOnly bool) ([]*TLiquidityStrategyLevel, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE config_id = ?", tLiquidityStrategyLevelRows, m.table)
+	args := []any{configID}
 	if enabledOnly {
-		query += " AND enabled = 1"
+		query += " AND enabled = ?"
+		args = append(args, int64(common.Switch_SWITCH_ON))
 	}
 	query += " ORDER BY level_no ASC"
 	var rows []*TLiquidityStrategyLevel
-	if err := m.QueryRowsNoCacheCtx(ctx, &rows, query, configID); err != nil {
+	if err := m.QueryRowsNoCacheCtx(ctx, &rows, query, args...); err != nil {
 		return nil, err
 	}
 	return rows, nil
@@ -53,8 +57,8 @@ func (m *customTLiquidityStrategyLevelModel) FindList(ctx context.Context, confi
 
 func (m *customTLiquidityStrategyLevelModel) CountEnabled(ctx context.Context, configID int64) (int64, error) {
 	var count int64
-	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE config_id = ? AND enabled = 1", m.table)
-	if err := m.QueryRowNoCacheCtx(ctx, &count, query, configID); err != nil {
+	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE config_id = ? AND enabled = ?", m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &count, query, configID, int64(common.Switch_SWITCH_ON)); err != nil {
 		return 0, err
 	}
 	return count, nil
@@ -72,7 +76,7 @@ func (m *customTLiquidityStrategyLevelModel) Replace(ctx context.Context, config
 		for _, level := range levels {
 			_, err := session.ExecCtx(ctx, fmt.Sprintf(`INSERT INTO %s
 				(config_id, level_no, bid_spread_bps, ask_spread_bps, bid_qty, ask_qty, enabled, version, create_times, update_times)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)`, m.table),
+				VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?)`, m.table),
 				configID, level.LevelNo, level.BidSpreadBps, level.AskSpreadBps,
 				level.BidQty, level.AskQty, level.Enabled, now, now)
 			if err != nil {

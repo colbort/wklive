@@ -11329,8 +11329,9 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x1aRetrySettlementInstruction\x12$.trade.RetrySettlementInstructionReq\x1a\x11.trade.CommonResp\x12O\n" +
 	"\x17SetInsuranceFundAccount\x12!.trade.SetInsuranceFundAccountReq\x1a\x11.trade.CommonResp\x12l\n" +
 	"\x1bGetInsuranceFundAccountList\x12%.trade.GetInsuranceFundAccountListReq\x1a&.trade.GetInsuranceFundAccountListResp\x12Z\n" +
-	"\x15GetMarketSnapshotList\x12\x1f.trade.GetMarketSnapshotListReq\x1a .trade.GetMarketSnapshotListResp2\xa1\x04\n" +
-	"\x05Trade\x12H\n" +
+	"\x15GetMarketSnapshotList\x12\x1f.trade.GetMarketSnapshotListReq\x1a .trade.GetMarketSnapshotListResp2\xef\x04\n" +
+	"\x05Trade\x12L\n" +
+	"\rGetSymbolList\x12\x1c.trade.GetSymbolListAdminReq\x1a\x1d.trade.GetSymbolListAdminResp\x12H\n" +
 	"\x0fGetSymbolDetail\x12\x19.trade.GetSymbolDetailReq\x1a\x1a.trade.GetSymbolDetailResp\x12K\n" +
 	"\x13PlaceLiquidityQuote\x12\x1d.trade.PlaceLiquidityQuoteReq\x1a\x15.trade.PlaceOrderResp\x12M\n" +
 	"\x14CancelLiquidityQuote\x12\x1e.trade.CancelLiquidityQuoteReq\x1a\x15.trade.UserCommonResp\x12K\n" +
@@ -11857,94 +11858,96 @@ var file_proto_trade_trade_proto_depIdxs = []int32{
 	105, // 305: trade.Admin.SetInsuranceFundAccount:input_type -> trade.SetInsuranceFundAccountReq
 	106, // 306: trade.Admin.GetInsuranceFundAccountList:input_type -> trade.GetInsuranceFundAccountListReq
 	109, // 307: trade.Admin.GetMarketSnapshotList:input_type -> trade.GetMarketSnapshotListReq
-	3,   // 308: trade.Trade.GetSymbolDetail:input_type -> trade.GetSymbolDetailReq
-	118, // 309: trade.Trade.PlaceLiquidityQuote:input_type -> trade.PlaceLiquidityQuoteReq
-	119, // 310: trade.Trade.CancelLiquidityQuote:input_type -> trade.CancelLiquidityQuoteReq
-	120, // 311: trade.Trade.GetLiquidityQuote:input_type -> trade.GetLiquidityQuoteReq
-	123, // 312: trade.Trade.RecordPositionHistory:input_type -> trade.RecordPositionHistoryReq
-	124, // 313: trade.Trade.CreateTradeEvent:input_type -> trade.CreateTradeEventReq
-	125, // 314: trade.Trade.CheckOrderRisk:input_type -> trade.CheckOrderRiskReq
-	127, // 315: trade.Task.ProcessOrderMatching:input_type -> trade.TradeTaskReq
-	127, // 316: trade.Task.ProcessPositions:input_type -> trade.TradeTaskReq
-	127, // 317: trade.Task.ProcessContractSettlements:input_type -> trade.TradeTaskReq
-	127, // 318: trade.Task.ProcessSecondsSettlements:input_type -> trade.TradeTaskReq
-	127, // 319: trade.Task.ProcessTradeEvents:input_type -> trade.TradeTaskReq
-	127, // 320: trade.Task.ExpireRiskLimits:input_type -> trade.TradeTaskReq
-	2,   // 321: trade.App.GetSymbolList:output_type -> trade.GetSymbolListResp
-	4,   // 322: trade.App.GetSymbolDetail:output_type -> trade.GetSymbolDetailResp
-	7,   // 323: trade.App.PlaceOrder:output_type -> trade.PlaceOrderResp
-	0,   // 324: trade.App.CancelOrder:output_type -> trade.UserCommonResp
-	10,  // 325: trade.App.CancelAllOrders:output_type -> trade.CancelAllOrdersResp
-	12,  // 326: trade.App.GetOrderList:output_type -> trade.GetOrderListResp
-	14,  // 327: trade.App.GetOrderDetail:output_type -> trade.GetOrderDetailResp
-	17,  // 328: trade.App.GetFillList:output_type -> trade.GetFillListResp
-	19,  // 329: trade.App.GetPositionList:output_type -> trade.GetPositionListResp
-	21,  // 330: trade.App.GetMarginSnapshotList:output_type -> trade.GetMarginSnapshotListResp
-	23,  // 331: trade.App.GetLeverageConfig:output_type -> trade.GetLeverageConfigResp
-	0,   // 332: trade.App.SetLeverage:output_type -> trade.UserCommonResp
-	25,  // 333: trade.Admin.CreateSymbol:output_type -> trade.CommonResp
-	25,  // 334: trade.Admin.UpdateSymbol:output_type -> trade.CommonResp
-	29,  // 335: trade.Admin.GetSymbolListAdmin:output_type -> trade.GetSymbolListAdminResp
-	31,  // 336: trade.Admin.GetSymbolDetailAdmin:output_type -> trade.GetSymbolDetailAdminResp
-	25,  // 337: trade.Admin.SetSpotSymbolConfig:output_type -> trade.CommonResp
-	25,  // 338: trade.Admin.SetContractSymbolConfig:output_type -> trade.CommonResp
-	25,  // 339: trade.Admin.SetSecondsSymbolConfig:output_type -> trade.CommonResp
-	25,  // 340: trade.Admin.SetSymbolSession:output_type -> trade.CommonResp
-	25,  // 341: trade.Admin.SetSymbolLeverageConfig:output_type -> trade.CommonResp
-	39,  // 342: trade.Admin.GetSymbolLeverageConfig:output_type -> trade.GetSymbolLeverageConfigResp
-	41,  // 343: trade.Admin.GetSymbolLeverageConfigList:output_type -> trade.GetSymbolLeverageConfigListResp
-	43,  // 344: trade.Admin.GetOrderListAdmin:output_type -> trade.GetOrderListAdminResp
-	45,  // 345: trade.Admin.GetOrderDetailAdmin:output_type -> trade.GetOrderDetailAdminResp
-	47,  // 346: trade.Admin.GetFillListAdmin:output_type -> trade.GetFillListAdminResp
-	49,  // 347: trade.Admin.GetFillDetailAdmin:output_type -> trade.GetFillDetailAdminResp
-	51,  // 348: trade.Admin.GetPositionListAdmin:output_type -> trade.GetPositionListAdminResp
-	53,  // 349: trade.Admin.GetPositionDetailAdmin:output_type -> trade.GetPositionDetailAdminResp
-	55,  // 350: trade.Admin.GetPositionHistoryListAdmin:output_type -> trade.GetPositionHistoryListAdminResp
-	57,  // 351: trade.Admin.GetMarginSnapshotListAdmin:output_type -> trade.GetMarginSnapshotListAdminResp
-	59,  // 352: trade.Admin.GetCancelLogListAdmin:output_type -> trade.GetCancelLogListAdminResp
-	25,  // 353: trade.Admin.SetUserTradeLimit:output_type -> trade.CommonResp
-	25,  // 354: trade.Admin.SetUserSymbolLimit:output_type -> trade.CommonResp
-	63,  // 355: trade.Admin.GetUserTradeLimit:output_type -> trade.GetUserTradeLimitResp
-	65,  // 356: trade.Admin.GetUserSymbolLimit:output_type -> trade.GetUserSymbolLimitResp
-	25,  // 357: trade.Admin.SetUserTradeConfig:output_type -> trade.CommonResp
-	68,  // 358: trade.Admin.GetUserTradeConfig:output_type -> trade.GetUserTradeConfigResp
-	25,  // 359: trade.Admin.SetContractUserConfig:output_type -> trade.CommonResp
-	71,  // 360: trade.Admin.GetContractUserConfig:output_type -> trade.GetContractUserConfigResp
-	73,  // 361: trade.Admin.GetRiskOrderCheckLogList:output_type -> trade.GetRiskOrderCheckLogListResp
-	25,  // 362: trade.Admin.SetUserLeverageConfig:output_type -> trade.CommonResp
-	76,  // 363: trade.Admin.GetUserLeverageConfig:output_type -> trade.GetUserLeverageConfigResp
-	78,  // 364: trade.Admin.GetTradeEventList:output_type -> trade.GetTradeEventListResp
-	80,  // 365: trade.Admin.GetTradeEventDetail:output_type -> trade.GetTradeEventDetailResp
-	25,  // 366: trade.Admin.RetryTradeEvent:output_type -> trade.CommonResp
-	25,  // 367: trade.Admin.SetContractRiskLimitTier:output_type -> trade.CommonResp
-	85,  // 368: trade.Admin.GetContractRiskLimitTierList:output_type -> trade.GetContractRiskLimitTierListResp
-	88,  // 369: trade.Admin.GetFundingBatchList:output_type -> trade.GetFundingBatchListResp
-	91,  // 370: trade.Admin.GetFundingSettlementList:output_type -> trade.GetFundingSettlementListResp
-	94,  // 371: trade.Admin.GetDeliveryBatchList:output_type -> trade.GetDeliveryBatchListResp
-	97,  // 372: trade.Admin.GetDeliverySettlementList:output_type -> trade.GetDeliverySettlementListResp
-	100, // 373: trade.Admin.GetLiquidationList:output_type -> trade.GetLiquidationListResp
-	103, // 374: trade.Admin.GetSecondsPriceSnapshotList:output_type -> trade.GetSecondsPriceSnapshotListResp
-	113, // 375: trade.Admin.GetAssetReservationList:output_type -> trade.GetAssetReservationListResp
-	116, // 376: trade.Admin.GetSettlementInstructionList:output_type -> trade.GetSettlementInstructionListResp
-	25,  // 377: trade.Admin.RetrySettlementInstruction:output_type -> trade.CommonResp
-	25,  // 378: trade.Admin.SetInsuranceFundAccount:output_type -> trade.CommonResp
-	107, // 379: trade.Admin.GetInsuranceFundAccountList:output_type -> trade.GetInsuranceFundAccountListResp
-	110, // 380: trade.Admin.GetMarketSnapshotList:output_type -> trade.GetMarketSnapshotListResp
-	4,   // 381: trade.Trade.GetSymbolDetail:output_type -> trade.GetSymbolDetailResp
-	7,   // 382: trade.Trade.PlaceLiquidityQuote:output_type -> trade.PlaceOrderResp
-	0,   // 383: trade.Trade.CancelLiquidityQuote:output_type -> trade.UserCommonResp
-	14,  // 384: trade.Trade.GetLiquidityQuote:output_type -> trade.GetOrderDetailResp
-	121, // 385: trade.Trade.RecordPositionHistory:output_type -> trade.InternalCommonResp
-	121, // 386: trade.Trade.CreateTradeEvent:output_type -> trade.InternalCommonResp
-	126, // 387: trade.Trade.CheckOrderRisk:output_type -> trade.CheckOrderRiskResp
-	128, // 388: trade.Task.ProcessOrderMatching:output_type -> trade.TradeTaskResp
-	128, // 389: trade.Task.ProcessPositions:output_type -> trade.TradeTaskResp
-	128, // 390: trade.Task.ProcessContractSettlements:output_type -> trade.TradeTaskResp
-	128, // 391: trade.Task.ProcessSecondsSettlements:output_type -> trade.TradeTaskResp
-	128, // 392: trade.Task.ProcessTradeEvents:output_type -> trade.TradeTaskResp
-	128, // 393: trade.Task.ExpireRiskLimits:output_type -> trade.TradeTaskResp
-	321, // [321:394] is the sub-list for method output_type
-	248, // [248:321] is the sub-list for method input_type
+	28,  // 308: trade.Trade.GetSymbolList:input_type -> trade.GetSymbolListAdminReq
+	3,   // 309: trade.Trade.GetSymbolDetail:input_type -> trade.GetSymbolDetailReq
+	118, // 310: trade.Trade.PlaceLiquidityQuote:input_type -> trade.PlaceLiquidityQuoteReq
+	119, // 311: trade.Trade.CancelLiquidityQuote:input_type -> trade.CancelLiquidityQuoteReq
+	120, // 312: trade.Trade.GetLiquidityQuote:input_type -> trade.GetLiquidityQuoteReq
+	123, // 313: trade.Trade.RecordPositionHistory:input_type -> trade.RecordPositionHistoryReq
+	124, // 314: trade.Trade.CreateTradeEvent:input_type -> trade.CreateTradeEventReq
+	125, // 315: trade.Trade.CheckOrderRisk:input_type -> trade.CheckOrderRiskReq
+	127, // 316: trade.Task.ProcessOrderMatching:input_type -> trade.TradeTaskReq
+	127, // 317: trade.Task.ProcessPositions:input_type -> trade.TradeTaskReq
+	127, // 318: trade.Task.ProcessContractSettlements:input_type -> trade.TradeTaskReq
+	127, // 319: trade.Task.ProcessSecondsSettlements:input_type -> trade.TradeTaskReq
+	127, // 320: trade.Task.ProcessTradeEvents:input_type -> trade.TradeTaskReq
+	127, // 321: trade.Task.ExpireRiskLimits:input_type -> trade.TradeTaskReq
+	2,   // 322: trade.App.GetSymbolList:output_type -> trade.GetSymbolListResp
+	4,   // 323: trade.App.GetSymbolDetail:output_type -> trade.GetSymbolDetailResp
+	7,   // 324: trade.App.PlaceOrder:output_type -> trade.PlaceOrderResp
+	0,   // 325: trade.App.CancelOrder:output_type -> trade.UserCommonResp
+	10,  // 326: trade.App.CancelAllOrders:output_type -> trade.CancelAllOrdersResp
+	12,  // 327: trade.App.GetOrderList:output_type -> trade.GetOrderListResp
+	14,  // 328: trade.App.GetOrderDetail:output_type -> trade.GetOrderDetailResp
+	17,  // 329: trade.App.GetFillList:output_type -> trade.GetFillListResp
+	19,  // 330: trade.App.GetPositionList:output_type -> trade.GetPositionListResp
+	21,  // 331: trade.App.GetMarginSnapshotList:output_type -> trade.GetMarginSnapshotListResp
+	23,  // 332: trade.App.GetLeverageConfig:output_type -> trade.GetLeverageConfigResp
+	0,   // 333: trade.App.SetLeverage:output_type -> trade.UserCommonResp
+	25,  // 334: trade.Admin.CreateSymbol:output_type -> trade.CommonResp
+	25,  // 335: trade.Admin.UpdateSymbol:output_type -> trade.CommonResp
+	29,  // 336: trade.Admin.GetSymbolListAdmin:output_type -> trade.GetSymbolListAdminResp
+	31,  // 337: trade.Admin.GetSymbolDetailAdmin:output_type -> trade.GetSymbolDetailAdminResp
+	25,  // 338: trade.Admin.SetSpotSymbolConfig:output_type -> trade.CommonResp
+	25,  // 339: trade.Admin.SetContractSymbolConfig:output_type -> trade.CommonResp
+	25,  // 340: trade.Admin.SetSecondsSymbolConfig:output_type -> trade.CommonResp
+	25,  // 341: trade.Admin.SetSymbolSession:output_type -> trade.CommonResp
+	25,  // 342: trade.Admin.SetSymbolLeverageConfig:output_type -> trade.CommonResp
+	39,  // 343: trade.Admin.GetSymbolLeverageConfig:output_type -> trade.GetSymbolLeverageConfigResp
+	41,  // 344: trade.Admin.GetSymbolLeverageConfigList:output_type -> trade.GetSymbolLeverageConfigListResp
+	43,  // 345: trade.Admin.GetOrderListAdmin:output_type -> trade.GetOrderListAdminResp
+	45,  // 346: trade.Admin.GetOrderDetailAdmin:output_type -> trade.GetOrderDetailAdminResp
+	47,  // 347: trade.Admin.GetFillListAdmin:output_type -> trade.GetFillListAdminResp
+	49,  // 348: trade.Admin.GetFillDetailAdmin:output_type -> trade.GetFillDetailAdminResp
+	51,  // 349: trade.Admin.GetPositionListAdmin:output_type -> trade.GetPositionListAdminResp
+	53,  // 350: trade.Admin.GetPositionDetailAdmin:output_type -> trade.GetPositionDetailAdminResp
+	55,  // 351: trade.Admin.GetPositionHistoryListAdmin:output_type -> trade.GetPositionHistoryListAdminResp
+	57,  // 352: trade.Admin.GetMarginSnapshotListAdmin:output_type -> trade.GetMarginSnapshotListAdminResp
+	59,  // 353: trade.Admin.GetCancelLogListAdmin:output_type -> trade.GetCancelLogListAdminResp
+	25,  // 354: trade.Admin.SetUserTradeLimit:output_type -> trade.CommonResp
+	25,  // 355: trade.Admin.SetUserSymbolLimit:output_type -> trade.CommonResp
+	63,  // 356: trade.Admin.GetUserTradeLimit:output_type -> trade.GetUserTradeLimitResp
+	65,  // 357: trade.Admin.GetUserSymbolLimit:output_type -> trade.GetUserSymbolLimitResp
+	25,  // 358: trade.Admin.SetUserTradeConfig:output_type -> trade.CommonResp
+	68,  // 359: trade.Admin.GetUserTradeConfig:output_type -> trade.GetUserTradeConfigResp
+	25,  // 360: trade.Admin.SetContractUserConfig:output_type -> trade.CommonResp
+	71,  // 361: trade.Admin.GetContractUserConfig:output_type -> trade.GetContractUserConfigResp
+	73,  // 362: trade.Admin.GetRiskOrderCheckLogList:output_type -> trade.GetRiskOrderCheckLogListResp
+	25,  // 363: trade.Admin.SetUserLeverageConfig:output_type -> trade.CommonResp
+	76,  // 364: trade.Admin.GetUserLeverageConfig:output_type -> trade.GetUserLeverageConfigResp
+	78,  // 365: trade.Admin.GetTradeEventList:output_type -> trade.GetTradeEventListResp
+	80,  // 366: trade.Admin.GetTradeEventDetail:output_type -> trade.GetTradeEventDetailResp
+	25,  // 367: trade.Admin.RetryTradeEvent:output_type -> trade.CommonResp
+	25,  // 368: trade.Admin.SetContractRiskLimitTier:output_type -> trade.CommonResp
+	85,  // 369: trade.Admin.GetContractRiskLimitTierList:output_type -> trade.GetContractRiskLimitTierListResp
+	88,  // 370: trade.Admin.GetFundingBatchList:output_type -> trade.GetFundingBatchListResp
+	91,  // 371: trade.Admin.GetFundingSettlementList:output_type -> trade.GetFundingSettlementListResp
+	94,  // 372: trade.Admin.GetDeliveryBatchList:output_type -> trade.GetDeliveryBatchListResp
+	97,  // 373: trade.Admin.GetDeliverySettlementList:output_type -> trade.GetDeliverySettlementListResp
+	100, // 374: trade.Admin.GetLiquidationList:output_type -> trade.GetLiquidationListResp
+	103, // 375: trade.Admin.GetSecondsPriceSnapshotList:output_type -> trade.GetSecondsPriceSnapshotListResp
+	113, // 376: trade.Admin.GetAssetReservationList:output_type -> trade.GetAssetReservationListResp
+	116, // 377: trade.Admin.GetSettlementInstructionList:output_type -> trade.GetSettlementInstructionListResp
+	25,  // 378: trade.Admin.RetrySettlementInstruction:output_type -> trade.CommonResp
+	25,  // 379: trade.Admin.SetInsuranceFundAccount:output_type -> trade.CommonResp
+	107, // 380: trade.Admin.GetInsuranceFundAccountList:output_type -> trade.GetInsuranceFundAccountListResp
+	110, // 381: trade.Admin.GetMarketSnapshotList:output_type -> trade.GetMarketSnapshotListResp
+	29,  // 382: trade.Trade.GetSymbolList:output_type -> trade.GetSymbolListAdminResp
+	4,   // 383: trade.Trade.GetSymbolDetail:output_type -> trade.GetSymbolDetailResp
+	7,   // 384: trade.Trade.PlaceLiquidityQuote:output_type -> trade.PlaceOrderResp
+	0,   // 385: trade.Trade.CancelLiquidityQuote:output_type -> trade.UserCommonResp
+	14,  // 386: trade.Trade.GetLiquidityQuote:output_type -> trade.GetOrderDetailResp
+	121, // 387: trade.Trade.RecordPositionHistory:output_type -> trade.InternalCommonResp
+	121, // 388: trade.Trade.CreateTradeEvent:output_type -> trade.InternalCommonResp
+	126, // 389: trade.Trade.CheckOrderRisk:output_type -> trade.CheckOrderRiskResp
+	128, // 390: trade.Task.ProcessOrderMatching:output_type -> trade.TradeTaskResp
+	128, // 391: trade.Task.ProcessPositions:output_type -> trade.TradeTaskResp
+	128, // 392: trade.Task.ProcessContractSettlements:output_type -> trade.TradeTaskResp
+	128, // 393: trade.Task.ProcessSecondsSettlements:output_type -> trade.TradeTaskResp
+	128, // 394: trade.Task.ProcessTradeEvents:output_type -> trade.TradeTaskResp
+	128, // 395: trade.Task.ExpireRiskLimits:output_type -> trade.TradeTaskResp
+	322, // [322:396] is the sub-list for method output_type
+	248, // [248:322] is the sub-list for method input_type
 	248, // [248:248] is the sub-list for extension type_name
 	248, // [248:248] is the sub-list for extension extendee
 	0,   // [0:248] is the sub-list for field type_name
