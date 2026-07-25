@@ -4,19 +4,20 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
 	"wklive/proto/liquidity"
 	"wklive/services/liquidity/internal/svc"
 	"wklive/services/liquidity/models"
+
+	"github.com/shopspring/decimal"
 )
 
-func parsePositive(name, value string) (float64, error) {
-	number, err := strconv.ParseFloat(strings.TrimSpace(value), 64)
-	if err != nil || number <= 0 {
-		return 0, fmt.Errorf("%s must be a positive number", name)
+func parsePositive(name, value string) (decimal.Decimal, error) {
+	number, err := decimal.NewFromString(strings.TrimSpace(value))
+	if err != nil || !number.IsPositive() {
+		return decimal.Zero, fmt.Errorf("%s must be a positive number", name)
 	}
 	return number, nil
 }
@@ -42,7 +43,7 @@ func loadExternalRoute(ctx context.Context, svcCtx *svc.ServiceContext, symbolID
 	return config, provider, nil
 }
 
-func applyExternalResult(row *models.TLiquidityExternalOrder, resultStatus int64, externalOrderID string, filledQty, avgPrice, feeAmount float64, feeAsset, raw string) {
+func applyExternalResult(row *models.TLiquidityExternalOrder, resultStatus int64, externalOrderID string, filledQty, avgPrice, feeAmount decimal.Decimal, feeAsset, raw string) {
 	now := time.Now().UnixMilli()
 	row.ExternalOrderId = sql.NullString{String: externalOrderID, Valid: strings.TrimSpace(externalOrderID) != ""}
 	row.FilledQty, row.AvgPrice, row.FeeAmount, row.FeeAsset = filledQty, avgPrice, feeAmount, feeAsset

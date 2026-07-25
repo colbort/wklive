@@ -40,11 +40,11 @@ func (l *ProvisionInternalProviderLogic) ProvisionInternalProvider(in *liquidity
 		return nil, fmt.Errorf("provider_code and provider_name are required")
 	}
 	baseAmount, err := parseNumber("base_amount", in.BaseAmount)
-	if err != nil || baseAmount <= 0 {
+	if err != nil || !baseAmount.IsPositive() {
 		return nil, fmt.Errorf("base_amount must be positive")
 	}
 	quoteAmount, err := parseNumber("quote_amount", in.QuoteAmount)
-	if err != nil || quoteAmount <= 0 {
+	if err != nil || !quoteAmount.IsPositive() {
 		return nil, fmt.Errorf("quote_amount must be positive")
 	}
 	if existing, err := l.svcCtx.ProviderModel.FindOneByProviderCode(l.ctx, code); err == nil {

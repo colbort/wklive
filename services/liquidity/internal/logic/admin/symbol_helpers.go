@@ -3,7 +3,6 @@ package adminlogic
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
@@ -11,31 +10,33 @@ import (
 	"wklive/proto/trade"
 	"wklive/services/liquidity/internal/svc"
 	"wklive/services/liquidity/models"
+
+	"github.com/shopspring/decimal"
 )
 
-func parseNumber(name, value string) (float64, error) {
+func parseNumber(name, value string) (decimal.Decimal, error) {
 	value = strings.TrimSpace(value)
 	if value == "" {
-		return 0, nil
+		return decimal.Zero, nil
 	}
-	number, err := strconv.ParseFloat(value, 64)
+	number, err := decimal.NewFromString(value)
 	if err != nil {
-		return 0, fmt.Errorf("%s is invalid: %w", name, err)
+		return decimal.Zero, fmt.Errorf("%s is invalid: %w", name, err)
 	}
-	if number < 0 {
-		return 0, fmt.Errorf("%s cannot be negative", name)
+	if number.IsNegative() {
+		return decimal.Zero, fmt.Errorf("%s cannot be negative", name)
 	}
 	return number, nil
 }
 
-func parseSignedNumber(name, value string) (float64, error) {
+func parseSignedNumber(name, value string) (decimal.Decimal, error) {
 	value = strings.TrimSpace(value)
 	if value == "" {
-		return 0, nil
+		return decimal.Zero, nil
 	}
-	number, err := strconv.ParseFloat(value, 64)
+	number, err := decimal.NewFromString(value)
 	if err != nil {
-		return 0, fmt.Errorf("%s is invalid: %w", name, err)
+		return decimal.Zero, fmt.Errorf("%s is invalid: %w", name, err)
 	}
 	return number, nil
 }
@@ -74,7 +75,7 @@ func buildSymbolConfig(ctx context.Context, svcCtx *svc.ServiceContext, in *liqu
 		return nil, fmt.Errorf("trade symbol unavailable: %s", detail.GetBase().GetMsg())
 	}
 	symbol := detail.GetData().GetSymbol()
-	values := make([]float64, 13)
+	values := make([]decimal.Decimal, 13)
 	inputs := []struct{ name, value string }{
 		{"reprice_threshold_bps", in.RepriceThresholdBps}, {"base_spread_bps", in.BaseSpreadBps},
 		{"max_spread_bps", in.MaxSpreadBps}, {"max_price_deviation_bps", in.MaxPriceDeviationBps},
@@ -95,15 +96,15 @@ func buildSymbolConfig(ctx context.Context, svcCtx *svc.ServiceContext, in *liqu
 		return nil, err
 	}
 	hedgeRatio, err := parseNumber("hedge_ratio", in.HedgeRatio)
-	if err != nil || hedgeRatio > 1 {
+	if err != nil || hedgeRatio.GreaterThan(decimal.NewFromInt(1)) {
 		return nil, fmt.Errorf("hedge_ratio must be between 0 and 1")
 	}
 	priceTick, err := parseNumber("price_tick", symbol.PriceTick)
-	if err != nil || priceTick <= 0 {
+	if err != nil || !priceTick.IsPositive() {
 		return nil, fmt.Errorf("trade symbol price_tick is invalid")
 	}
 	qtyStep, err := parseNumber("qty_step", symbol.QtyStep)
-	if err != nil || qtyStep <= 0 {
+	if err != nil || !qtyStep.IsPositive() {
 		return nil, fmt.Errorf("trade symbol qty_step is invalid")
 	}
 	if in.LiquidityMode == liquidity.LiquidityMode_LIQUIDITY_MODE_UNKNOWN {
@@ -112,10 +113,10 @@ func buildSymbolConfig(ctx context.Context, svcCtx *svc.ServiceContext, in *liqu
 	if err := validateReferencePriceSources(in.ReferencePriceSource); err != nil {
 		return nil, err
 	}
-	if values[4] <= 0 || (values[5] > 0 && values[5] < values[4]) {
+	if !values[4].IsPositive() || (values[5].IsPositive() && values[5].LessThan(values[4])) {
 		return nil, fmt.Errorf("invalid quote quantity range")
 	}
-	if values[2] > 0 && values[1] > values[2] {
+	if values[2].IsPositive() && values[1].GreaterThan(values[2]) {
 		return nil, fmt.Errorf("base_spread_bps cannot exceed max_spread_bps")
 	}
 	now := time.Now().UnixMilli()

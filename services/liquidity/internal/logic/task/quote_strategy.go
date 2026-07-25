@@ -4,9 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"math"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 
@@ -15,10 +13,12 @@ import (
 	"wklive/proto/liquidity"
 	"wklive/services/liquidity/internal/svc"
 	"wklive/services/liquidity/models"
+
+	"github.com/shopspring/decimal"
 )
 
 type referenceQuote struct {
-	price      float64
+	price      decimal.Decimal
 	source     string
 	snapshotID string
 	timestamp  int64
@@ -60,8 +60,8 @@ func prepareInternalQuoteCycle(ctx context.Context, svcCtx *svc.ServiceContext, 
 	if err != nil {
 		return false, err
 	}
-	if latest != nil && latest.ReferencePrice > 0 && config.RepriceThresholdBps > 0 &&
-		math.Abs(reference.price-latest.ReferencePrice)/latest.ReferencePrice*10000 < config.RepriceThresholdBps &&
+	if latest != nil && latest.ReferencePrice.IsPositive() && config.RepriceThresholdBps.IsPositive() &&
+		reference.price.Sub(latest.ReferencePrice).Abs().Div(latest.ReferencePrice).Mul(decimal.NewFromInt(10_000)).LessThan(config.RepriceThresholdBps) &&
 		(config.QuoteTtlMs <= 0 || now-latest.StartedAt < config.QuoteTtlMs) {
 		return false, nil
 	}
@@ -155,8 +155,8 @@ func loadReferenceQuote(ctx context.Context, svcCtx *svc.ServiceContext, config 
 			continue
 		}
 		row := resp.GetData()
-		price, parseErr := strconv.ParseFloat(row.GetPrice(), 64)
-		if parseErr != nil || price <= 0 {
+		price, parseErr := decimal.NewFromString(row.GetPrice())
+		if parseErr != nil || !price.IsPositive() {
 			continue
 		}
 		candidates = append(candidates, &referenceQuote{
@@ -167,7 +167,7 @@ func loadReferenceQuote(ctx context.Context, svcCtx *svc.ServiceContext, config 
 	if len(candidates) == 0 {
 		return nil, fmt.Errorf("no valid reference price: source=%s", config.ReferencePriceSource)
 	}
-	sort.Slice(candidates, func(i, j int) bool { return candidates[i].price < candidates[j].price })
+	sort.Slice(candidates, func(i, j int) bool { return candidates[i].price.LessThan(candidates[j].price) })
 	return candidates[len(candidates)/2], nil
 }
 
@@ -186,24 +186,24 @@ func parseReferenceSource(source, fallbackSymbol string) (string, string, string
 	return category, market, symbol
 }
 
-func buildQuoteOrders(config *models.TLiquiditySymbolConfig, levels []*models.TLiquidityStrategyLevel, reference float64, now int64) []*models.TLiquidityQuoteOrder {
+func buildQuoteOrders(config *models.TLiquiditySymbolConfig, levels []*models.TLiquidityStrategyLevel, reference decimal.Decimal, now int64) []*models.TLiquidityQuoteOrder {
 	orders := make([]*models.TLiquidityQuoteOrder, 0, len(levels)*2)
 	expireAt := now + config.QuoteTtlMs
 	if config.QuoteTtlMs <= 0 {
 		expireAt = now + 30_000
 	}
 	for _, level := range levels {
-		bidSpread := clampSpread(config.BaseSpreadBps+level.BidSpreadBps, config)
-		askSpread := clampSpread(config.BaseSpreadBps+level.AskSpreadBps, config)
-		bidPrice := roundDown(reference*(1-bidSpread/10000), config.PriceTick)
-		askPrice := roundUp(reference*(1+askSpread/10000), config.PriceTick)
-		if bidPrice > 0 && bidPrice < reference {
-			if qty := normalizeQty(level.BidQty, bidPrice, config); qty > 0 {
+		bidSpread := clampSpread(config.BaseSpreadBps.Add(level.BidSpreadBps), config)
+		askSpread := clampSpread(config.BaseSpreadBps.Add(level.AskSpreadBps), config)
+		bidPrice := roundDown(reference.Mul(decimal.NewFromInt(1).Sub(bidSpread.Div(decimal.NewFromInt(10_000)))), config.PriceTick)
+		askPrice := roundUp(reference.Mul(decimal.NewFromInt(1).Add(askSpread.Div(decimal.NewFromInt(10_000)))), config.PriceTick)
+		if bidPrice.IsPositive() && bidPrice.LessThan(reference) {
+			if qty := normalizeQty(level.BidQty, bidPrice, config); qty.IsPositive() {
 				orders = append(orders, newQuoteOrder(config, level.LevelNo, int64(common.Side_SIDE_BUY), bidPrice, qty, expireAt, now))
 			}
 		}
-		if askPrice > reference {
-			if qty := normalizeQty(level.AskQty, askPrice, config); qty > 0 {
+		if askPrice.GreaterThan(reference) {
+			if qty := normalizeQty(level.AskQty, askPrice, config); qty.IsPositive() {
 				orders = append(orders, newQuoteOrder(config, level.LevelNo, int64(common.Side_SIDE_SELL), askPrice, qty, expireAt, now))
 			}
 		}
@@ -211,7 +211,7 @@ func buildQuoteOrders(config *models.TLiquiditySymbolConfig, levels []*models.TL
 	return orders
 }
 
-func newQuoteOrder(config *models.TLiquiditySymbolConfig, level, side int64, price, qty float64, expireAt, now int64) *models.TLiquidityQuoteOrder {
+func newQuoteOrder(config *models.TLiquiditySymbolConfig, level, side int64, price, qty decimal.Decimal, expireAt, now int64) *models.TLiquidityQuoteOrder {
 	return &models.TLiquidityQuoteOrder{
 		ConfigId: config.Id, ProviderId: config.InternalProviderId, SymbolId: config.SymbolId,
 		Side: side, LevelNo: level, Price: price, Qty: qty,
@@ -220,63 +220,46 @@ func newQuoteOrder(config *models.TLiquiditySymbolConfig, level, side int64, pri
 	}
 }
 
-func clampSpread(spread float64, config *models.TLiquiditySymbolConfig) float64 {
-	if spread < 0 {
-		spread = 0
+func clampSpread(spread decimal.Decimal, config *models.TLiquiditySymbolConfig) decimal.Decimal {
+	if spread.IsNegative() {
+		spread = decimal.Zero
 	}
 	limit := config.MaxSpreadBps
-	if config.MaxPriceDeviationBps > 0 && (limit <= 0 || config.MaxPriceDeviationBps < limit) {
+	if config.MaxPriceDeviationBps.IsPositive() && (!limit.IsPositive() || config.MaxPriceDeviationBps.LessThan(limit)) {
 		limit = config.MaxPriceDeviationBps
 	}
-	if limit > 0 && spread > limit {
+	if limit.IsPositive() && spread.GreaterThan(limit) {
 		return limit
 	}
 	return spread
 }
 
-func normalizeQty(qty, price float64, config *models.TLiquiditySymbolConfig) float64 {
+func normalizeQty(qty, price decimal.Decimal, config *models.TLiquiditySymbolConfig) decimal.Decimal {
 	qty = roundDown(qty, config.QtyStep)
-	if config.MaxQuoteQty > 0 && qty > config.MaxQuoteQty {
+	if config.MaxQuoteQty.IsPositive() && qty.GreaterThan(config.MaxQuoteQty) {
 		qty = roundDown(config.MaxQuoteQty, config.QtyStep)
 	}
-	if config.MaxQuoteNotional > 0 && qty*price > config.MaxQuoteNotional {
-		qty = roundDown(config.MaxQuoteNotional/price, config.QtyStep)
+	if config.MaxQuoteNotional.IsPositive() && qty.Mul(price).GreaterThan(config.MaxQuoteNotional) {
+		qty = roundDown(config.MaxQuoteNotional.Div(price), config.QtyStep)
 	}
-	if qty <= 0 || (config.MinQuoteQty > 0 && qty < config.MinQuoteQty) {
-		return 0
+	if !qty.IsPositive() || (config.MinQuoteQty.IsPositive() && qty.LessThan(config.MinQuoteQty)) {
+		return decimal.Zero
 	}
 	return qty
 }
 
-func roundDown(value, step float64) float64 {
-	if step <= 0 {
+func roundDown(value, step decimal.Decimal) decimal.Decimal {
+	if !step.IsPositive() {
 		return value
 	}
-	return normalizeStepValue(math.Floor((value+1e-12)/step)*step, step)
+	return value.Div(step).Floor().Mul(step)
 }
 
-func roundUp(value, step float64) float64 {
-	if step <= 0 {
+func roundUp(value, step decimal.Decimal) decimal.Decimal {
+	if !step.IsPositive() {
 		return value
 	}
-	return normalizeStepValue(math.Ceil((value-1e-12)/step)*step, step)
-}
-
-// normalizeStepValue removes the binary floating-point tail introduced by
-// multiplying an integer number of ticks. Trade validates prices and
-// quantities as decimal values, so values such as 64088.024000000005 must be
-// serialized as 64088.024.
-func normalizeStepValue(value, step float64) float64 {
-	stepText := strconv.FormatFloat(step, 'f', -1, 64)
-	scale := 0
-	if dot := strings.IndexByte(stepText, '.'); dot >= 0 {
-		scale = len(strings.TrimRight(stepText[dot+1:], "0"))
-	}
-	normalized, err := strconv.ParseFloat(strconv.FormatFloat(value, 'f', scale, 64), 64)
-	if err != nil {
-		return value
-	}
-	return normalized
+	return value.Div(step).Ceil().Mul(step)
 }
 
 func countSides(orders []*models.TLiquidityQuoteOrder) (int64, int64) {

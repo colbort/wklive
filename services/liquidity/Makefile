@@ -10,6 +10,8 @@ PROTO_DIR := $(REPO_ROOT)/proto/liquidity
 PROTO_FILE := $(PROTO_DIR)/liquidity.proto
 
 GOCTL ?= $(shell go env GOPATH)/bin/goctl
+GOCACHE ?= /private/tmp/wklive-go-build-cache
+export GOCACHE
 
 .PHONY: gen gen-rpc fix-imports tidy fmt clean-gen gen-model print-protos clean-main install-goctl
 

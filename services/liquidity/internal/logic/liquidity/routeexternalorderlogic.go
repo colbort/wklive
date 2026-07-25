@@ -13,6 +13,7 @@ import (
 	"wklive/services/liquidity/internal/svc"
 	"wklive/services/liquidity/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -46,7 +47,7 @@ func (l *RouteExternalOrderLogic) RouteExternalOrder(in *liquidity.RouteExternal
 	if err != nil {
 		return nil, err
 	}
-	price := float64(0)
+	price := decimal.Zero
 	if in.OrderType == liquidity.ExternalOrderType_EXTERNAL_ORDER_TYPE_LIMIT {
 		price, err = parsePositive("price", in.Price)
 		if err != nil {

@@ -1,5 +1,7 @@
 API_FILE := api/core.api
 GOCTL ?= $(shell go env GOPATH)/bin/goctl
+GOCACHE ?= /private/tmp/wklive-go-build-cache
+export GOCACHE
 
 .PHONY: gen check-goctl fmt tidy verify
 

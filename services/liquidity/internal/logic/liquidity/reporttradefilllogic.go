@@ -14,6 +14,7 @@ import (
 	"wklive/services/liquidity/internal/svc"
 	"wklive/services/liquidity/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -43,8 +44,8 @@ func (l *ReportTradeFillLogic) ReportTradeFill(in *liquidity.ReportTradeFillReq)
 		return nil, err
 	}
 	for name, value := range map[string]string{"price": in.Price, "qty": in.Qty, "amount": in.Amount} {
-		number, err := strconv.ParseFloat(strings.TrimSpace(value), 64)
-		if err != nil || number < 0 {
+		number, err := decimal.NewFromString(strings.TrimSpace(value))
+		if err != nil || number.IsNegative() {
 			return nil, fmt.Errorf("%s is invalid", name)
 		}
 	}

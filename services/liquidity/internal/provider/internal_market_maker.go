@@ -3,19 +3,20 @@ package provider
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	"wklive/proto/common"
 	"wklive/proto/liquidity"
 	"wklive/proto/trade"
 	"wklive/services/liquidity/models"
+
+	"github.com/shopspring/decimal"
 )
 
 type QuoteResult struct {
 	InternalOrderID int64
 	OrderNo         string
 	Status          int64
-	FilledQty       float64
+	FilledQty       decimal.Decimal
 	Reason          string
 }
 
@@ -46,13 +47,13 @@ func (m *TradeInternalMarketMaker) PlaceQuote(ctx context.Context, p *models.TLi
 	if err := m.Health(ctx, p); err != nil {
 		return nil, err
 	}
-	if q == nil || q.SymbolId <= 0 || q.Price <= 0 || q.Qty <= 0 {
+	if q == nil || q.SymbolId <= 0 || !q.Price.IsPositive() || !q.Qty.IsPositive() {
 		return nil, fmt.Errorf("valid quote order is required")
 	}
 	resp, err := m.client.PlaceLiquidityQuote(ctx, &trade.PlaceLiquidityQuoteReq{TradeUserId: p.TradeUserId, Order: &trade.PlaceOrderReq{
 		SymbolId: q.SymbolId, Side: common.Side(q.Side), OrderType: trade.OrderType_ORDER_TYPE_LIMIT,
 		TimeInForce: trade.TimeInForce_TIME_IN_FORCE_GTC, ClientOrderId: q.ClientOrderId,
-		Price: strconv.FormatFloat(q.Price, 'f', -1, 64), Qty: strconv.FormatFloat(q.Qty, 'f', -1, 64),
+		Price: q.Price.String(), Qty: q.Qty.String(),
 		OrderSource: trade.OrderSourceType_ORDER_SOURCE_TYPE_SYSTEM,
 	}})
 	if err != nil {
@@ -93,7 +94,7 @@ func (m *TradeInternalMarketMaker) QueryQuote(ctx context.Context, p *models.TLi
 }
 
 func normalizeQuote(o *trade.TradeOrder) *QuoteResult {
-	filled, _ := strconv.ParseFloat(o.FilledQty, 64)
+	filled, _ := decimal.NewFromString(o.FilledQty)
 	status := liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_UNCERTAIN
 	switch o.Status {
 	case trade.OrderStatus_ORDER_STATUS_PENDING:

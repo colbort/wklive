@@ -6,6 +6,7 @@ import (
 
 	"wklive/proto/common"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -15,8 +16,8 @@ var _ TLiquidityStrategyLevelModel = (*customTLiquidityStrategyLevelModel)(nil)
 type (
 	LiquidityStrategyLevelInput struct {
 		LevelNo                    int64
-		BidSpreadBps, AskSpreadBps float64
-		BidQty, AskQty             float64
+		BidSpreadBps, AskSpreadBps decimal.Decimal
+		BidQty, AskQty             decimal.Decimal
 		Enabled                    int64
 	}
 	// TLiquidityStrategyLevelModel is an interface to be customized, add more methods here,

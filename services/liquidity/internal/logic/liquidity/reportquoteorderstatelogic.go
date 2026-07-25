@@ -3,7 +3,6 @@ package liquiditylogic
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
@@ -12,6 +11,7 @@ import (
 	"wklive/proto/trade"
 	"wklive/services/liquidity/internal/svc"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -37,8 +37,8 @@ func (l *ReportQuoteOrderStateLogic) ReportQuoteOrderState(in *liquidity.ReportQ
 	if err != nil {
 		return nil, err
 	}
-	filled, err := strconv.ParseFloat(strings.TrimSpace(in.FilledQty), 64)
-	if err != nil || filled < 0 {
+	filled, err := decimal.NewFromString(strings.TrimSpace(in.FilledQty))
+	if err != nil || filled.IsNegative() {
 		return nil, fmt.Errorf("filled_qty is invalid")
 	}
 	switch trade.OrderStatus(in.OrderStatus) {

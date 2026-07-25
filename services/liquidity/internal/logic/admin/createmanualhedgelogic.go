@@ -37,7 +37,7 @@ func (l *CreateManualHedgeLogic) CreateManualHedge(in *liquidity.CreateManualHed
 		return nil, fmt.Errorf("invalid side")
 	}
 	qty, err := parseNumber("qty", in.Qty)
-	if err != nil || qty <= 0 {
+	if err != nil || !qty.IsPositive() {
 		return nil, fmt.Errorf("qty must be positive")
 	}
 	targetExposure, err := parseSignedNumber("target_exposure", in.TargetExposure)

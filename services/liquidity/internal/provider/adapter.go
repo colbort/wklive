@@ -7,6 +7,8 @@ import (
 	"sync"
 
 	"wklive/services/liquidity/models"
+
+	"github.com/shopspring/decimal"
 )
 
 // OrderResult is the normalized result returned by an external venue adapter.
@@ -14,9 +16,9 @@ import (
 type OrderResult struct {
 	ExternalOrderID string
 	Status          int64
-	FilledQty       float64
-	AvgPrice        float64
-	FeeAmount       float64
+	FilledQty       decimal.Decimal
+	AvgPrice        decimal.Decimal
+	FeeAmount       decimal.Decimal
 	FeeAsset        string
 	RawResponse     string
 }
@@ -24,10 +26,10 @@ type OrderResult struct {
 type Fill struct {
 	ExternalTradeID string
 	Side            int64
-	Price           float64
-	Qty             float64
-	Amount          float64
-	FeeAmount       float64
+	Price           decimal.Decimal
+	Qty             decimal.Decimal
+	Amount          decimal.Decimal
+	FeeAmount       decimal.Decimal
 	FeeAsset        string
 	LiquidityType   int64
 	TradeTime       int64
@@ -37,13 +39,13 @@ type Fill struct {
 type Inventory struct {
 	BaseAsset      string
 	QuoteAsset     string
-	BaseTotal      float64
-	BaseAvailable  float64
-	BaseFrozen     float64
-	QuoteTotal     float64
-	QuoteAvailable float64
-	QuoteFrozen    float64
-	PositionQty    float64
+	BaseTotal      decimal.Decimal
+	BaseAvailable  decimal.Decimal
+	BaseFrozen     decimal.Decimal
+	QuoteTotal     decimal.Decimal
+	QuoteAvailable decimal.Decimal
+	QuoteFrozen    decimal.Decimal
+	PositionQty    decimal.Decimal
 	RawPayload     string
 }
 

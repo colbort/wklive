@@ -63,11 +63,11 @@ func (l *SetStrategyLevelsLogic) SetStrategyLevels(in *liquidity.SetStrategyLeve
 			return nil, err
 		}
 		bidQty, err := parseNumber("bid_qty", level.BidQty)
-		if err != nil || bidQty <= 0 {
+		if err != nil || !bidQty.IsPositive() {
 			return nil, fmt.Errorf("bid_qty must be positive")
 		}
 		askQty, err := parseNumber("ask_qty", level.AskQty)
-		if err != nil || askQty <= 0 {
+		if err != nil || !askQty.IsPositive() {
 			return nil, fmt.Errorf("ask_qty must be positive")
 		}
 		parsed = append(parsed, models.LiquidityStrategyLevelInput{

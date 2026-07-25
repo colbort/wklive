@@ -3,12 +3,13 @@ package helpers
 import (
 	"database/sql"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"wklive/proto/common"
 	"wklive/proto/liquidity"
 	"wklive/services/liquidity/models"
+
+	"github.com/shopspring/decimal"
 )
 
 const (
@@ -75,7 +76,7 @@ func SymbolConfigToProto(row *models.TLiquiditySymbolConfig) *liquidity.Liquidit
 	if row == nil {
 		return nil
 	}
-	f := func(v float64) string { return fmt.Sprintf("%.8f", v) }
+	f := func(v decimal.Decimal) string { return v.String() }
 	return &liquidity.LiquiditySymbolConfig{
 		Id: row.Id, SymbolId: row.SymbolId, Symbol: row.Symbol,
 		ProductType: common.ProductType(row.ProductType), ContractType: common.ContractType(row.ContractType),
@@ -102,7 +103,7 @@ func StrategyLevelToProto(row *models.TLiquidityStrategyLevel) *liquidity.Liquid
 	if row == nil {
 		return nil
 	}
-	f := func(v float64) string { return fmt.Sprintf("%.8f", v) }
+	f := func(v decimal.Decimal) string { return v.String() }
 	return &liquidity.LiquidityStrategyLevel{
 		Id: row.Id, ConfigId: row.ConfigId, LevelNo: int32(row.LevelNo),
 		BidSpreadBps: f(row.BidSpreadBps), AskSpreadBps: f(row.AskSpreadBps),
@@ -265,8 +266,8 @@ func ReconcileDetailToProto(row *models.TLiquidityReconcileDetail) *liquidity.Li
 	}
 }
 
-func number(value float64) string {
-	return strconv.FormatFloat(value, 'f', -1, 64)
+func number(value decimal.Decimal) string {
+	return value.String()
 }
 
 func nullString(value sql.NullString) string {
