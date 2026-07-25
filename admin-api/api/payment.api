@@ -35,21 +35,9 @@ type PayProduct {
 	updateTimes int64  `json:"updateTimes"`
 }
 
-type TenantPayPlatform {
-	id          int64  `json:"id"`
-	tenantId    int64  `json:"tenantId"`
-	platformId  int64  `json:"platformId"`
-	enabled     int64  `json:"enabled"` // 0未知 1启用 2禁用
-	openStatus  int64  `json:"openStatus"` // 0未知 1待配置 2已开通 3审核中 4已拒绝
-	remark      string `json:"remark"`
-	createTimes int64  `json:"createTimes"`
-	updateTimes int64  `json:"updateTimes"`
-}
-
 type TenantPayAccount {
 	id                  int64  `json:"id"`
 	tenantId            int64  `json:"tenantId"`
-	tenantPayPlatformId int64  `json:"tenantPayPlatformId"`
 	platformId          int64  `json:"platformId"`
 	accountCode         string `json:"accountCode"`
 	accountName         string `json:"accountName"`
@@ -357,64 +345,16 @@ type DeletePayProductReq {
 }
 
 // ====================
-// tenant pay platform
-// ====================
-type OpenTenantPayPlatformReq {
-	tenantId   int64  `json:"tenantId"`
-	platformId int64  `json:"platformId"`
-	enabled    int64  `json:"enabled"`
-	openStatus int64  `json:"openStatus"`
-	remark     string `json:"remark,optional"`
-}
-
-type UpdateTenantPayPlatformReq {
-	id         int64  `json:"id"`
-	tenantId   int64  `json:"tenantId"`
-	enabled    int64  `json:"enabled"`
-	openStatus int64  `json:"openStatus"`
-	remark     string `json:"remark,optional"`
-}
-
-type GetTenantPayPlatformReq {
-	id       int64 `form:"id"`
-	tenantId int64 `form:"tenantId"`
-}
-
-type GetTenantPayPlatformResp {
-	RespBase
-	data TenantPayPlatform `json:"data"`
-}
-
-type ListTenantPayPlatformsReq {
-	PageReq
-	tenantId   int64 `form:"tenantId,optional"`
-	platformId int64 `form:"platformId,optional"`
-	enabled    int64 `form:"enabled,optional"`
-	openStatus int64 `form:"openStatus,optional"`
-}
-
-type ListTenantPayPlatformsResp {
-	RespBase
-	data []TenantPayPlatform `json:"data"`
-}
-
-type DeleteTenantPayPlatformReq {
-	tenantId int64 `form:"tenantId"`
-	id       int64 `path:"id"`
-}
-
-// ====================
 // tenant pay account
 // ====================
 type CreateTenantPayAccountReq {
 	tenantId            int64  `json:"tenantId"`
-	tenantPayPlatformId int64  `json:"tenantPayPlatformId"`
 	platformId          int64  `json:"platformId"`
 	accountCode         string `json:"accountCode"`
 	accountName         string `json:"accountName"`
 	appId               string `json:"appId,optional"`
-	merchantId          string `json:"merchantId,optional"`
-	merchantName        string `json:"merchantName,optional"`
+	merchantId          string `json:"merchantId"`
+	merchantName        string `json:"merchantName"`
 	apiKeyCipher        string `json:"apiKeyCipher,optional"`
 	apiSecretCipher     string `json:"apiSecretCipher,optional"`
 	privateKeyCipher    string `json:"privateKeyCipher,optional"`
@@ -458,11 +398,10 @@ type GetTenantPayAccountResp {
 
 type ListTenantPayAccountsReq {
 	PageReq
-	tenantId            int64  `form:"tenantId,optional"`
-	platformId          int64  `form:"platformId,optional"`
-	tenantPayPlatformId int64  `form:"tenantPayPlatformId,optional"`
-	keyword             string `form:"keyword,optional"`
-	enabled             int64  `form:"enabled,optional"`
+	tenantId   int64  `form:"tenantId,optional"`
+	platformId int64  `form:"platformId,optional"`
+	keyword    string `form:"keyword,optional"`
+	enabled    int64  `form:"enabled,optional"`
 }
 
 type ListTenantPayAccountsResp {
@@ -1034,26 +973,6 @@ service admin {
 	// 删除产品
 	@handler DeletePayProduct
 	delete /product/:id (DeletePayProductReq) returns (RespBase)
-
-	// 添加租户平台
-	@handler OpenTenantPayPlatform
-	post /tenant-platform (OpenTenantPayPlatformReq) returns (RespBase)
-
-	// 更新租户平台
-	@handler UpdateTenantPayPlatform
-	put /tenant-platform (UpdateTenantPayPlatformReq) returns (RespBase)
-
-	// 获取租户平台详情
-	@handler GetTenantPayPlatform
-	get /tenant-platform (GetTenantPayPlatformReq) returns (GetTenantPayPlatformResp)
-
-	// 获取租户平台列表
-	@handler ListTenantPayPlatforms
-	get /tenant-platforms (ListTenantPayPlatformsReq) returns (ListTenantPayPlatformsResp)
-
-	// 删除租户平台
-	@handler DeleteTenantPayPlatform
-	delete /tenant-platform/:id (DeleteTenantPayPlatformReq) returns (RespBase)
 
 	// 添加租户支付账号
 	@handler CreateTenantPayAccount

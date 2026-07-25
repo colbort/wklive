@@ -688,7 +688,6 @@ export default {
     2076: 'Product not found',
     2077: 'Account not found',
     2078: 'Platform not found',
-    2079: 'Tenant platform not found',
     2080: 'Only pending payment orders can be canceled',
     2081: 'No permission to cancel this order',
     2082: 'Only unpaid orders can be closed',
@@ -803,5 +802,6 @@ export default {
     2191: 'Tenant owner role template not found',
     2192: 'Sync task failed',
     2193: 'Asset coin config not found',
+    2196: 'Payment product code already exists',
   },
 } as const

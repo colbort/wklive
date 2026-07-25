@@ -38,7 +38,6 @@ const optionGroupByKey: Record<string, string> = {
   platformType: 'platformType',
   sceneType: 'sceneType',
   feeType: 'feeType',
-  openStatus: 'openStatus',
   clientType: 'clientType',
   notifyStatus: 'notifyStatus',
   signResult: 'signResult',

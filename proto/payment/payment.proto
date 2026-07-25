@@ -356,50 +356,10 @@ message ListPayProductsResp {
   repeated payment.PayProduct data = 2;
 }
 
-// ---------- 租户开通平台 ----------
-message OpenTenantPayPlatformReq {
-  int64 tenant_id = 1;
-  int64 platform_id = 2;
-  common.Enable enabled = 3; // 状态,0表示全部，1表示启用，2表示禁用
-  payment.OpenStatus open_status = 4;
-  string remark = 5;
-}
-
-message UpdateTenantPayPlatformReq {
-  int64 id = 1;
-  int64 tenant_id = 2;
-  common.Enable enabled = 3; // 状态,0表示全部，1表示启用，2表示禁用
-  payment.OpenStatus open_status = 4;
-  string remark = 5;
-}
-
-message GetTenantPayPlatformReq {
-  int64 id = 1;
-  int64 tenant_id = 2;
-}
-
-message GetTenantPayPlatformResp {
-  common.RespBase base = 1;
-  payment.TenantPayPlatform data = 2;
-}
-
-message ListTenantPayPlatformsReq {
-  common.PageReq page = 1;
-  int64 tenant_id = 2;
-  int64 platform_id = 3;
-  common.Enable enabled = 4; // 状态,0表示全部，1表示启用，2表示禁用
-  payment.OpenStatus open_status = 5;
-}
-
-message ListTenantPayPlatformsResp {
-  common.RespBase base = 1;
-  repeated payment.TenantPayPlatform data = 2;
-}
-
 // ---------- 租户支付账号 ----------
 message CreateTenantPayAccountReq {
   int64 tenant_id = 1;
-  int64 tenant_pay_platform_id = 2;
+  reserved 2;
   int64 platform_id = 3;
   string account_code = 4;
   string account_name = 5;
@@ -451,7 +411,7 @@ message ListTenantPayAccountsReq {
   common.PageReq page = 1;
   int64 tenant_id = 2;
   int64 platform_id = 3;
-  int64 tenant_pay_platform_id = 4;
+  reserved 4;
   string keyword = 5;
   common.Enable enabled = 6; // 状态,0表示全部，1表示启用，2表示禁用
 }
@@ -957,15 +917,6 @@ service Admin {
   rpc GetPayProduct(GetPayProductReq) returns (GetPayProductResp);
   // 产品列表
   rpc ListPayProducts(ListPayProductsReq) returns (ListPayProductsResp);
-
-  // 租户开通平台
-  rpc OpenTenantPayPlatform(OpenTenantPayPlatformReq) returns (CommonResp);
-  // 更新租户开通平台
-  rpc UpdateTenantPayPlatform(UpdateTenantPayPlatformReq) returns (CommonResp);
-  // 获取租户开通平台详情
-  rpc GetTenantPayPlatform(GetTenantPayPlatformReq) returns (GetTenantPayPlatformResp);
-  // 租户开通平台列表
-  rpc ListTenantPayPlatforms(ListTenantPayPlatformsReq) returns (ListTenantPayPlatformsResp);
 
   // 租户支付账号
   rpc CreateTenantPayAccount(CreateTenantPayAccountReq) returns (CommonResp);

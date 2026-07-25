@@ -836,10 +836,6 @@ const (
 	Admin_UpdatePayProduct_FullMethodName               = "/payment.Admin/UpdatePayProduct"
 	Admin_GetPayProduct_FullMethodName                  = "/payment.Admin/GetPayProduct"
 	Admin_ListPayProducts_FullMethodName                = "/payment.Admin/ListPayProducts"
-	Admin_OpenTenantPayPlatform_FullMethodName          = "/payment.Admin/OpenTenantPayPlatform"
-	Admin_UpdateTenantPayPlatform_FullMethodName        = "/payment.Admin/UpdateTenantPayPlatform"
-	Admin_GetTenantPayPlatform_FullMethodName           = "/payment.Admin/GetTenantPayPlatform"
-	Admin_ListTenantPayPlatforms_FullMethodName         = "/payment.Admin/ListTenantPayPlatforms"
 	Admin_CreateTenantPayAccount_FullMethodName         = "/payment.Admin/CreateTenantPayAccount"
 	Admin_UpdateTenantPayAccount_FullMethodName         = "/payment.Admin/UpdateTenantPayAccount"
 	Admin_GetTenantPayAccount_FullMethodName            = "/payment.Admin/GetTenantPayAccount"
@@ -904,14 +900,6 @@ type AdminClient interface {
 	GetPayProduct(ctx context.Context, in *GetPayProductReq, opts ...grpc.CallOption) (*GetPayProductResp, error)
 	// 产品列表
 	ListPayProducts(ctx context.Context, in *ListPayProductsReq, opts ...grpc.CallOption) (*ListPayProductsResp, error)
-	// 租户开通平台
-	OpenTenantPayPlatform(ctx context.Context, in *OpenTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error)
-	// 更新租户开通平台
-	UpdateTenantPayPlatform(ctx context.Context, in *UpdateTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error)
-	// 获取租户开通平台详情
-	GetTenantPayPlatform(ctx context.Context, in *GetTenantPayPlatformReq, opts ...grpc.CallOption) (*GetTenantPayPlatformResp, error)
-	// 租户开通平台列表
-	ListTenantPayPlatforms(ctx context.Context, in *ListTenantPayPlatformsReq, opts ...grpc.CallOption) (*ListTenantPayPlatformsResp, error)
 	// 租户支付账号
 	CreateTenantPayAccount(ctx context.Context, in *CreateTenantPayAccountReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 更新租户支付账号
@@ -1082,46 +1070,6 @@ func (c *adminClient) ListPayProducts(ctx context.Context, in *ListPayProductsRe
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListPayProductsResp)
 	err := c.cc.Invoke(ctx, Admin_ListPayProducts_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *adminClient) OpenTenantPayPlatform(ctx context.Context, in *OpenTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, Admin_OpenTenantPayPlatform_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *adminClient) UpdateTenantPayPlatform(ctx context.Context, in *UpdateTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, Admin_UpdateTenantPayPlatform_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *adminClient) GetTenantPayPlatform(ctx context.Context, in *GetTenantPayPlatformReq, opts ...grpc.CallOption) (*GetTenantPayPlatformResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetTenantPayPlatformResp)
-	err := c.cc.Invoke(ctx, Admin_GetTenantPayPlatform_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *adminClient) ListTenantPayPlatforms(ctx context.Context, in *ListTenantPayPlatformsReq, opts ...grpc.CallOption) (*ListTenantPayPlatformsResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListTenantPayPlatformsResp)
-	err := c.cc.Invoke(ctx, Admin_ListTenantPayPlatforms_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1532,14 +1480,6 @@ type AdminServer interface {
 	GetPayProduct(context.Context, *GetPayProductReq) (*GetPayProductResp, error)
 	// 产品列表
 	ListPayProducts(context.Context, *ListPayProductsReq) (*ListPayProductsResp, error)
-	// 租户开通平台
-	OpenTenantPayPlatform(context.Context, *OpenTenantPayPlatformReq) (*CommonResp, error)
-	// 更新租户开通平台
-	UpdateTenantPayPlatform(context.Context, *UpdateTenantPayPlatformReq) (*CommonResp, error)
-	// 获取租户开通平台详情
-	GetTenantPayPlatform(context.Context, *GetTenantPayPlatformReq) (*GetTenantPayPlatformResp, error)
-	// 租户开通平台列表
-	ListTenantPayPlatforms(context.Context, *ListTenantPayPlatformsReq) (*ListTenantPayPlatformsResp, error)
 	// 租户支付账号
 	CreateTenantPayAccount(context.Context, *CreateTenantPayAccountReq) (*CommonResp, error)
 	// 更新租户支付账号
@@ -1652,18 +1592,6 @@ func (UnimplementedAdminServer) GetPayProduct(context.Context, *GetPayProductReq
 }
 func (UnimplementedAdminServer) ListPayProducts(context.Context, *ListPayProductsReq) (*ListPayProductsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListPayProducts not implemented")
-}
-func (UnimplementedAdminServer) OpenTenantPayPlatform(context.Context, *OpenTenantPayPlatformReq) (*CommonResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method OpenTenantPayPlatform not implemented")
-}
-func (UnimplementedAdminServer) UpdateTenantPayPlatform(context.Context, *UpdateTenantPayPlatformReq) (*CommonResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method UpdateTenantPayPlatform not implemented")
-}
-func (UnimplementedAdminServer) GetTenantPayPlatform(context.Context, *GetTenantPayPlatformReq) (*GetTenantPayPlatformResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetTenantPayPlatform not implemented")
-}
-func (UnimplementedAdminServer) ListTenantPayPlatforms(context.Context, *ListTenantPayPlatformsReq) (*ListTenantPayPlatformsResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method ListTenantPayPlatforms not implemented")
 }
 func (UnimplementedAdminServer) CreateTenantPayAccount(context.Context, *CreateTenantPayAccountReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateTenantPayAccount not implemented")
@@ -1958,78 +1886,6 @@ func _Admin_ListPayProducts_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AdminServer).ListPayProducts(ctx, req.(*ListPayProductsReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Admin_OpenTenantPayPlatform_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(OpenTenantPayPlatformReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AdminServer).OpenTenantPayPlatform(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Admin_OpenTenantPayPlatform_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServer).OpenTenantPayPlatform(ctx, req.(*OpenTenantPayPlatformReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Admin_UpdateTenantPayPlatform_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateTenantPayPlatformReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AdminServer).UpdateTenantPayPlatform(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Admin_UpdateTenantPayPlatform_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServer).UpdateTenantPayPlatform(ctx, req.(*UpdateTenantPayPlatformReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Admin_GetTenantPayPlatform_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTenantPayPlatformReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AdminServer).GetTenantPayPlatform(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Admin_GetTenantPayPlatform_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServer).GetTenantPayPlatform(ctx, req.(*GetTenantPayPlatformReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Admin_ListTenantPayPlatforms_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListTenantPayPlatformsReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AdminServer).ListTenantPayPlatforms(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Admin_ListTenantPayPlatforms_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServer).ListTenantPayPlatforms(ctx, req.(*ListTenantPayPlatformsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2760,22 +2616,6 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListPayProducts",
 			Handler:    _Admin_ListPayProducts_Handler,
-		},
-		{
-			MethodName: "OpenTenantPayPlatform",
-			Handler:    _Admin_OpenTenantPayPlatform_Handler,
-		},
-		{
-			MethodName: "UpdateTenantPayPlatform",
-			Handler:    _Admin_UpdateTenantPayPlatform_Handler,
-		},
-		{
-			MethodName: "GetTenantPayPlatform",
-			Handler:    _Admin_GetTenantPayPlatform_Handler,
-		},
-		{
-			MethodName: "ListTenantPayPlatforms",
-			Handler:    _Admin_ListTenantPayPlatforms_Handler,
 		},
 		{
 			MethodName: "CreateTenantPayAccount",

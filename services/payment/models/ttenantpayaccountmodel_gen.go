@@ -42,27 +42,26 @@ type (
 	}
 
 	TTenantPayAccount struct {
-		Id                  int64          `db:"id"`                     // 账号ID
-		TenantId            int64          `db:"tenant_id"`              // 租户ID
-		TenantPayPlatformId int64          `db:"tenant_pay_platform_id"` // 租户开通平台ID
-		PlatformId          int64          `db:"platform_id"`            // 平台ID
-		AccountCode         string         `db:"account_code"`           // 账号编码
-		AccountName         string         `db:"account_name"`           // 账号名称
-		AppId               sql.NullString `db:"app_id"`                 // 应用ID
-		MerchantId          sql.NullString `db:"merchant_id"`            // 商户号
-		MerchantName        sql.NullString `db:"merchant_name"`          // 商户名称
-		ApiKeyCipher        sql.NullString `db:"api_key_cipher"`         // API Key密文
-		ApiSecretCipher     sql.NullString `db:"api_secret_cipher"`      // API Secret密文
-		PrivateKeyCipher    sql.NullString `db:"private_key_cipher"`     // 私钥密文
-		PublicKey           sql.NullString `db:"public_key"`             // 公钥
-		CertCipher          sql.NullString `db:"cert_cipher"`            // 证书密文
-		CredentialRef       string         `db:"credential_ref"`         // 密钥管理系统引用，生产环境优先使用
-		ExtConfig           sql.NullString `db:"ext_config"`             // 扩展配置
-		Enabled             int64          `db:"enabled"`                // 启用状态：1启用 2禁用
-		IsDefault           int64          `db:"is_default"`             // 是否默认账号：1是 2否
-		Remark              sql.NullString `db:"remark"`                 // 备注
-		CreateTimes         int64          `db:"create_times"`           // 创建时间
-		UpdateTimes         int64          `db:"update_times"`           // 更新时间
+		Id               int64          `db:"id"`                 // 账号ID
+		TenantId         int64          `db:"tenant_id"`          // 租户ID
+		PlatformId       int64          `db:"platform_id"`        // 平台ID
+		AccountCode      string         `db:"account_code"`       // 账号编码
+		AccountName      string         `db:"account_name"`       // 账号名称
+		AppId            sql.NullString `db:"app_id"`             // 应用ID
+		MerchantId       sql.NullString `db:"merchant_id"`        // 商户号
+		MerchantName     sql.NullString `db:"merchant_name"`      // 商户名称
+		ApiKeyCipher     sql.NullString `db:"api_key_cipher"`     // API Key密文
+		ApiSecretCipher  sql.NullString `db:"api_secret_cipher"`  // API Secret密文
+		PrivateKeyCipher sql.NullString `db:"private_key_cipher"` // 私钥密文
+		PublicKey        sql.NullString `db:"public_key"`         // 公钥
+		CertCipher       sql.NullString `db:"cert_cipher"`        // 证书密文
+		CredentialRef    string         `db:"credential_ref"`     // 密钥管理系统引用，生产环境优先使用
+		ExtConfig        sql.NullString `db:"ext_config"`         // 扩展配置
+		Enabled          int64          `db:"enabled"`            // 启用状态：1启用 2禁用
+		IsDefault        int64          `db:"is_default"`         // 是否默认账号：1是 2否
+		Remark           sql.NullString `db:"remark"`             // 备注
+		CreateTimes      int64          `db:"create_times"`       // 创建时间
+		UpdateTimes      int64          `db:"update_times"`       // 更新时间
 	}
 )
 
@@ -129,8 +128,8 @@ func (m *defaultTTenantPayAccountModel) Insert(ctx context.Context, data *TTenan
 	tTenantPayAccountIdKey := fmt.Sprintf("%s%v", cacheTTenantPayAccountIdPrefix, data.Id)
 	tTenantPayAccountTenantIdAccountCodeKey := fmt.Sprintf("%s%v:%v", cacheTTenantPayAccountTenantIdAccountCodePrefix, data.TenantId, data.AccountCode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTenantPayAccountRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.TenantPayPlatformId, data.PlatformId, data.AccountCode, data.AccountName, data.AppId, data.MerchantId, data.MerchantName, data.ApiKeyCipher, data.ApiSecretCipher, data.PrivateKeyCipher, data.PublicKey, data.CertCipher, data.CredentialRef, data.ExtConfig, data.Enabled, data.IsDefault, data.Remark, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTenantPayAccountRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.PlatformId, data.AccountCode, data.AccountName, data.AppId, data.MerchantId, data.MerchantName, data.ApiKeyCipher, data.ApiSecretCipher, data.PrivateKeyCipher, data.PublicKey, data.CertCipher, data.CredentialRef, data.ExtConfig, data.Enabled, data.IsDefault, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tTenantPayAccountIdKey, tTenantPayAccountTenantIdAccountCodeKey)
 	return ret, err
 }
@@ -145,7 +144,7 @@ func (m *defaultTTenantPayAccountModel) Update(ctx context.Context, newData *TTe
 	tTenantPayAccountTenantIdAccountCodeKey := fmt.Sprintf("%s%v:%v", cacheTTenantPayAccountTenantIdAccountCodePrefix, data.TenantId, data.AccountCode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTenantPayAccountRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.TenantPayPlatformId, newData.PlatformId, newData.AccountCode, newData.AccountName, newData.AppId, newData.MerchantId, newData.MerchantName, newData.ApiKeyCipher, newData.ApiSecretCipher, newData.PrivateKeyCipher, newData.PublicKey, newData.CertCipher, newData.CredentialRef, newData.ExtConfig, newData.Enabled, newData.IsDefault, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.PlatformId, newData.AccountCode, newData.AccountName, newData.AppId, newData.MerchantId, newData.MerchantName, newData.ApiKeyCipher, newData.ApiSecretCipher, newData.PrivateKeyCipher, newData.PublicKey, newData.CertCipher, newData.CredentialRef, newData.ExtConfig, newData.Enabled, newData.IsDefault, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tTenantPayAccountIdKey, tTenantPayAccountTenantIdAccountCodeKey)
 	return err
 }

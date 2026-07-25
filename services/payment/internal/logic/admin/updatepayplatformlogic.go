@@ -3,11 +3,13 @@ package adminlogic
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
+	"wklive/services/payment/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -31,6 +33,9 @@ func (l *UpdatePayPlatformLogic) UpdatePayPlatform(in *payment.UpdatePayPlatform
 	var (
 		errLogic = "UpdatePayPlatform"
 	)
+	if in.Id <= 0 {
+		return paymentErrorResp(l.ctx, i18n.PaymentRequiredParamsMissing), nil
+	}
 	if base, err := systemAdminWriteScopeResp(l.ctx); err != nil {
 		return nil, err
 	} else if base != nil {
@@ -41,12 +46,12 @@ func (l *UpdatePayPlatformLogic) UpdatePayPlatform(in *payment.UpdatePayPlatform
 
 	// 査询平台是否存在
 	platform, err := l.svcCtx.PayPlatformModel.FindOne(l.ctx, in.Id)
-	if err != nil {
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
 		return nil, err
 	}
 
-	if platform == nil {
+	if errors.Is(err, models.ErrNotFound) || platform == nil {
 		return &payment.CommonResp{
 			Base: helper.ErrResp(i18n.PlatformNotFound, i18n.Translate(i18n.PlatformNotFound, l.ctx)),
 		}, nil
@@ -57,6 +62,9 @@ func (l *UpdatePayPlatformLogic) UpdatePayPlatform(in *payment.UpdatePayPlatform
 		platform.PlatformName = in.PlatformName
 	}
 	if in.PlatformType != 0 {
+		if _, ok := payment.PlatformType_name[int32(in.PlatformType)]; !ok {
+			return paymentErrorResp(l.ctx, i18n.ParamError), nil
+		}
 		platform.PlatformType = int64(in.PlatformType)
 	}
 	if in.NotifyUrl != "" {

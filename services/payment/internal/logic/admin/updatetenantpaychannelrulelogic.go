@@ -34,6 +34,9 @@ func (l *UpdateTenantPayChannelRuleLogic) UpdateTenantPayChannelRule(in *payment
 	var (
 		errLogic = "UpdateTenantPayChannelRule"
 	)
+	if in.Id <= 0 {
+		return paymentErrorResp(l.ctx, i18n.PaymentRequiredParamsMissing), nil
+	}
 
 	// 查询规则是否存在
 	rule, err := l.svcCtx.TenantPayChannelRuleModel.FindOne(l.ctx, in.Id)
@@ -42,7 +45,7 @@ func (l *UpdateTenantPayChannelRuleLogic) UpdateTenantPayChannelRule(in *payment
 		return nil, err
 	}
 
-	if rule == nil {
+	if errors.Is(err, models.ErrNotFound) || rule == nil {
 		return &payment.CommonResp{
 			Base: helper.ErrResp(i18n.ChannelRuleNotFound, i18n.Translate(i18n.ChannelRuleNotFound, l.ctx)),
 		}, nil
@@ -55,7 +58,7 @@ func (l *UpdateTenantPayChannelRuleLogic) UpdateTenantPayChannelRule(in *payment
 	if resp != nil {
 		return resp, nil
 	}
-	if allowTenantUpdate {
+	if allowTenantUpdate && in.TenantId > 0 {
 		rule.TenantId = in.TenantId
 	}
 
@@ -100,13 +103,28 @@ func (l *UpdateTenantPayChannelRuleLogic) UpdateTenantPayChannelRule(in *payment
 		rule.AllowOldUser = int64(in.AllowOldUser)
 	}
 	if in.AllowTags != "" {
+		if !validJSONArray(in.AllowTags) {
+			return paymentErrorResp(l.ctx, i18n.InvalidPaymentJSON), nil
+		}
 		rule.AllowTags = sql.NullString{String: in.AllowTags, Valid: true}
 	}
 	if in.DenyTags != "" {
+		if !validJSONArray(in.DenyTags) {
+			return paymentErrorResp(l.ctx, i18n.InvalidPaymentJSON), nil
+		}
 		rule.DenyTags = sql.NullString{String: in.DenyTags, Valid: true}
 	}
 	if in.Remark != "" {
 		rule.Remark = sql.NullString{String: in.Remark, Valid: true}
+	}
+	if !requiredStrings(rule.RuleName) {
+		return paymentErrorResp(l.ctx, i18n.PaymentRequiredParamsMissing), nil
+	}
+	if !validNonNegativeRange(rule.SingleAmountMin, rule.SingleAmountMax) ||
+		!validNonNegativeRange(rule.UserTotalRechargeMin, rule.UserTotalRechargeMax) ||
+		!validNonNegativeRange(rule.MemberLevelMin, rule.MemberLevelMax) ||
+		!validNonNegativeRange(rule.KycLevelMin, rule.KycLevelMax) {
+		return paymentErrorResp(l.ctx, i18n.InvalidPaymentAmountRange), nil
 	}
 	rule.UpdateTimes = now
 

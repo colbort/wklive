@@ -105,7 +105,6 @@ const (
 	ProductNotFound                        = 2076
 	TenantPayAccountNotFound               = 2077
 	PlatformNotFound                       = 2078
-	TenantPlatformNotFound                 = 2079
 	OnlyPendingPaymentOrdersCanCancel      = 2080
 	NoPermissionCancelOrder                = 2081
 	OnlyUnpaidOrdersCanClose               = 2082
@@ -222,6 +221,16 @@ const (
 	AssetCoinConfigNotFound                = 2193
 	SuperAdminUpdateForbidden              = 2194
 	SuperAdminDeleteForbidden              = 2195
+	PayProductCodeAlreadyExists            = 2196
+	PayPlatformCodeAlreadyExists           = 2197
+	TenantPayAccountCodeAlreadyExists      = 2198
+	TenantPayChannelCodeAlreadyExists      = 2199
+	PaymentRequiredParamsMissing           = 2200
+	InvalidPaymentJSON                     = 2201
+	InvalidPaymentAmountRange              = 2202
+	PaymentRelationMismatch                = 2203
+	CryptoResourceAlreadyExists            = 2204
+	InvalidPaymentDecimal                  = 2205
 )
 
 // MessageMap 定义所有支持的错误消息翻译
@@ -605,10 +614,6 @@ var MessageMap = map[int32]map[Language]string{
 	PlatformNotFound: {
 		EN: "Platform not found",
 		ZH: "平台不存在",
-	},
-	TenantPlatformNotFound: {
-		EN: "Tenant platform not found",
-		ZH: "租户平台不存在",
 	},
 	OnlyPendingPaymentOrdersCanCancel: {
 		EN: "Only pending payment orders can be canceled",
@@ -1073,5 +1078,45 @@ var MessageMap = map[int32]map[Language]string{
 	SuperAdminDeleteForbidden: {
 		EN: "System super administrator cannot be deleted",
 		ZH: "系统超级管理员不能删除",
+	},
+	PayProductCodeAlreadyExists: {
+		EN: "Payment product code already exists",
+		ZH: "支付产品编码已存在",
+	},
+	PayPlatformCodeAlreadyExists: {
+		EN: "Payment platform code already exists",
+		ZH: "支付平台编码已存在",
+	},
+	TenantPayAccountCodeAlreadyExists: {
+		EN: "Tenant payment account code already exists",
+		ZH: "租户支付账号编码已存在",
+	},
+	TenantPayChannelCodeAlreadyExists: {
+		EN: "Tenant payment channel code already exists",
+		ZH: "租户支付通道编码已存在",
+	},
+	PaymentRequiredParamsMissing: {
+		EN: "Required payment parameters are missing",
+		ZH: "支付必填参数缺失",
+	},
+	InvalidPaymentJSON: {
+		EN: "Payment JSON configuration is invalid",
+		ZH: "支付 JSON 配置格式不正确",
+	},
+	InvalidPaymentAmountRange: {
+		EN: "Payment amount or level range is invalid",
+		ZH: "支付金额或等级范围不正确",
+	},
+	PaymentRelationMismatch: {
+		EN: "Payment platform, product, account, or channel relation does not match",
+		ZH: "支付平台、产品、账号或通道归属关系不匹配",
+	},
+	CryptoResourceAlreadyExists: {
+		EN: "Crypto address, account, or transaction already exists",
+		ZH: "链上地址、账号或交易已存在",
+	},
+	InvalidPaymentDecimal: {
+		EN: "Payment decimal value is invalid",
+		ZH: "支付小数参数格式不正确",
 	},
 }

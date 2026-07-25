@@ -173,13 +173,9 @@ export type {
   ListPayProductsReq,
 } from './payment/CatalogService'
 export type {
-  TenantPayPlatform,
   TenantPayAccount,
   TenantPayChannel,
   TenantPayChannelRule,
-  ListTenantPayPlatformsReq,
-  OpenTenantPayPlatformReq,
-  UpdateTenantPayPlatformReq,
   ListTenantPayAccountsReq,
   CreateTenantPayAccountReq,
   UpdateTenantPayAccountReq,

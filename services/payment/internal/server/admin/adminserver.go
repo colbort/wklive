@@ -77,30 +77,6 @@ func (s *AdminServer) ListPayProducts(ctx context.Context, in *payment.ListPayPr
 	return l.ListPayProducts(in)
 }
 
-// 租户开通平台
-func (s *AdminServer) OpenTenantPayPlatform(ctx context.Context, in *payment.OpenTenantPayPlatformReq) (*payment.CommonResp, error) {
-	l := adminlogic.NewOpenTenantPayPlatformLogic(ctx, s.svcCtx)
-	return l.OpenTenantPayPlatform(in)
-}
-
-// 更新租户开通平台
-func (s *AdminServer) UpdateTenantPayPlatform(ctx context.Context, in *payment.UpdateTenantPayPlatformReq) (*payment.CommonResp, error) {
-	l := adminlogic.NewUpdateTenantPayPlatformLogic(ctx, s.svcCtx)
-	return l.UpdateTenantPayPlatform(in)
-}
-
-// 获取租户开通平台详情
-func (s *AdminServer) GetTenantPayPlatform(ctx context.Context, in *payment.GetTenantPayPlatformReq) (*payment.GetTenantPayPlatformResp, error) {
-	l := adminlogic.NewGetTenantPayPlatformLogic(ctx, s.svcCtx)
-	return l.GetTenantPayPlatform(in)
-}
-
-// 租户开通平台列表
-func (s *AdminServer) ListTenantPayPlatforms(ctx context.Context, in *payment.ListTenantPayPlatformsReq) (*payment.ListTenantPayPlatformsResp, error) {
-	l := adminlogic.NewListTenantPayPlatformsLogic(ctx, s.svcCtx)
-	return l.ListTenantPayPlatforms(in)
-}
-
 // 租户支付账号
 func (s *AdminServer) CreateTenantPayAccount(ctx context.Context, in *payment.CreateTenantPayAccountReq) (*payment.CommonResp, error) {
 	l := adminlogic.NewCreateTenantPayAccountLogic(ctx, s.svcCtx)

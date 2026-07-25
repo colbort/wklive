@@ -34,21 +34,10 @@ message PayProduct {
   int64 update_times = 10; // 更新时间
 }
 
-message TenantPayPlatform {
-  int64 id = 1; // 主键ID
-  int64 tenant_id = 2; // 租户ID
-  int64 platform_id = 3; // 平台ID
-  common.Enable enabled = 4; // 状态,0表示全部，1表示启用，2表示禁用
-  payment.OpenStatus open_status = 5; // 开通状态：1待配置 2已开通 3审核中 4驳回
-  string remark = 6; // 备注
-  int64 create_times = 7; // 创建时间
-  int64 update_times = 8; // 更新时间
-}
-
 message TenantPayAccount {
   int64 id = 1; // 账号ID
   int64 tenant_id = 2; // 租户ID
-  int64 tenant_pay_platform_id = 3; // 租户开通平台ID
+  reserved 3;
   int64 platform_id = 4; // 平台ID
   string account_code = 5; // 账号编码
   string account_name = 6; // 账号名称

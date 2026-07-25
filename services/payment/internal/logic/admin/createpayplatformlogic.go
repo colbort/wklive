@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/payment"
@@ -33,6 +34,17 @@ func (l *CreatePayPlatformLogic) CreatePayPlatform(in *payment.CreatePayPlatform
 	var (
 		errLogic = "CreatePayPlatform"
 	)
+	if base, err := systemAdminWriteScopeResp(l.ctx); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &payment.CommonResp{Base: base}, nil
+	}
+	if !requiredStrings(in.PlatformCode, in.PlatformName) || in.PlatformType == 0 {
+		return paymentErrorResp(l.ctx, i18n.PaymentRequiredParamsMissing), nil
+	}
+	if _, ok := payment.PlatformType_name[int32(in.PlatformType)]; !ok {
+		return paymentErrorResp(l.ctx, i18n.ParamError), nil
+	}
 
 	now := utils.NowMillis()
 	platform := &models.TPayPlatform{
@@ -50,6 +62,9 @@ func (l *CreatePayPlatformLogic) CreatePayPlatform(in *payment.CreatePayPlatform
 
 	_, err := l.svcCtx.PayPlatformModel.Insert(l.ctx, platform)
 	if err != nil {
+		if isDuplicateEntry(err) {
+			return paymentErrorResp(l.ctx, i18n.PayPlatformCodeAlreadyExists), nil
+		}
 		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
 		return nil, err
 	}

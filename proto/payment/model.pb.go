@@ -262,136 +262,35 @@ func (x *PayProduct) GetUpdateTimes() int64 {
 	return 0
 }
 
-type TenantPayPlatform struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                           // 主键ID
-	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                               // 租户ID
-	PlatformId    int64                  `protobuf:"varint,3,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`                         // 平台ID
-	Enabled       common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                              // 状态,0表示全部，1表示启用，2表示禁用
-	OpenStatus    OpenStatus             `protobuf:"varint,5,opt,name=open_status,json=openStatus,proto3,enum=payment.OpenStatus" json:"open_status,omitempty"` // 开通状态：1待配置 2已开通 3审核中 4驳回
-	Remark        string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`                                                    // 备注
-	CreateTimes   int64                  `protobuf:"varint,7,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                      // 创建时间
-	UpdateTimes   int64                  `protobuf:"varint,8,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                      // 更新时间
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *TenantPayPlatform) Reset() {
-	*x = TenantPayPlatform{}
-	mi := &file_proto_payment_model_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TenantPayPlatform) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TenantPayPlatform) ProtoMessage() {}
-
-func (x *TenantPayPlatform) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_model_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TenantPayPlatform.ProtoReflect.Descriptor instead.
-func (*TenantPayPlatform) Descriptor() ([]byte, []int) {
-	return file_proto_payment_model_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *TenantPayPlatform) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *TenantPayPlatform) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *TenantPayPlatform) GetPlatformId() int64 {
-	if x != nil {
-		return x.PlatformId
-	}
-	return 0
-}
-
-func (x *TenantPayPlatform) GetEnabled() common.Enable {
-	if x != nil {
-		return x.Enabled
-	}
-	return common.Enable(0)
-}
-
-func (x *TenantPayPlatform) GetOpenStatus() OpenStatus {
-	if x != nil {
-		return x.OpenStatus
-	}
-	return OpenStatus_OPEN_STATUS_UNKNOWN
-}
-
-func (x *TenantPayPlatform) GetRemark() string {
-	if x != nil {
-		return x.Remark
-	}
-	return ""
-}
-
-func (x *TenantPayPlatform) GetCreateTimes() int64 {
-	if x != nil {
-		return x.CreateTimes
-	}
-	return 0
-}
-
-func (x *TenantPayPlatform) GetUpdateTimes() int64 {
-	if x != nil {
-		return x.UpdateTimes
-	}
-	return 0
-}
-
 type TenantPayAccount struct {
-	state               protoimpl.MessageState `protogen:"open.v1"`
-	Id                  int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                  // 账号ID
-	TenantId            int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                      // 租户ID
-	TenantPayPlatformId int64                  `protobuf:"varint,3,opt,name=tenant_pay_platform_id,json=tenantPayPlatformId,proto3" json:"tenant_pay_platform_id,omitempty"` // 租户开通平台ID
-	PlatformId          int64                  `protobuf:"varint,4,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`                                // 平台ID
-	AccountCode         string                 `protobuf:"bytes,5,opt,name=account_code,json=accountCode,proto3" json:"account_code,omitempty"`                              // 账号编码
-	AccountName         string                 `protobuf:"bytes,6,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`                              // 账号名称
-	AppId               string                 `protobuf:"bytes,7,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`                                                // 应用ID
-	MerchantId          string                 `protobuf:"bytes,8,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                                 // 商户号
-	MerchantName        string                 `protobuf:"bytes,9,opt,name=merchant_name,json=merchantName,proto3" json:"merchant_name,omitempty"`                           // 商户名称
-	PublicKey           string                 `protobuf:"bytes,10,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`                                   // 公钥
-	ExtConfig           string                 `protobuf:"bytes,11,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`                                   // 扩展配置(JSON)
-	Enabled             common.Enable          `protobuf:"varint,12,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                                    // 状态,0表示全部，1表示启用，2表示禁用
-	IsDefault           common.YesNo           `protobuf:"varint,13,opt,name=is_default,json=isDefault,proto3,enum=common.YesNo" json:"is_default,omitempty"`                // 是否默认账号：1是 2否
-	Remark              string                 `protobuf:"bytes,14,opt,name=remark,proto3" json:"remark,omitempty"`                                                          // 备注
-	CreateTimes         int64                  `protobuf:"varint,15,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                            // 创建时间
-	UpdateTimes         int64                  `protobuf:"varint,16,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                            // 更新时间
-	ApiKeyCipher        string                 `protobuf:"bytes,17,opt,name=api_key_cipher,json=apiKeyCipher,proto3" json:"api_key_cipher,omitempty"`                        // API Key密文
-	ApiSecretCipher     string                 `protobuf:"bytes,18,opt,name=api_secret_cipher,json=apiSecretCipher,proto3" json:"api_secret_cipher,omitempty"`               // API Secret密文
-	PrivateKeyCipher    string                 `protobuf:"bytes,19,opt,name=private_key_cipher,json=privateKeyCipher,proto3" json:"private_key_cipher,omitempty"`            // 私钥密文
-	CertCipher          string                 `protobuf:"bytes,20,opt,name=cert_cipher,json=certCipher,proto3" json:"cert_cipher,omitempty"`                                // 证书密文
-	CredentialRef       string                 `protobuf:"bytes,21,opt,name=credential_ref,json=credentialRef,proto3" json:"credential_ref,omitempty"`                       // 密钥管理系统引用
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                       // 账号ID
+	TenantId         int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                           // 租户ID
+	PlatformId       int64                  `protobuf:"varint,4,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`                     // 平台ID
+	AccountCode      string                 `protobuf:"bytes,5,opt,name=account_code,json=accountCode,proto3" json:"account_code,omitempty"`                   // 账号编码
+	AccountName      string                 `protobuf:"bytes,6,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`                   // 账号名称
+	AppId            string                 `protobuf:"bytes,7,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`                                     // 应用ID
+	MerchantId       string                 `protobuf:"bytes,8,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`                      // 商户号
+	MerchantName     string                 `protobuf:"bytes,9,opt,name=merchant_name,json=merchantName,proto3" json:"merchant_name,omitempty"`                // 商户名称
+	PublicKey        string                 `protobuf:"bytes,10,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`                        // 公钥
+	ExtConfig        string                 `protobuf:"bytes,11,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`                        // 扩展配置(JSON)
+	Enabled          common.Enable          `protobuf:"varint,12,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                         // 状态,0表示全部，1表示启用，2表示禁用
+	IsDefault        common.YesNo           `protobuf:"varint,13,opt,name=is_default,json=isDefault,proto3,enum=common.YesNo" json:"is_default,omitempty"`     // 是否默认账号：1是 2否
+	Remark           string                 `protobuf:"bytes,14,opt,name=remark,proto3" json:"remark,omitempty"`                                               // 备注
+	CreateTimes      int64                  `protobuf:"varint,15,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                 // 创建时间
+	UpdateTimes      int64                  `protobuf:"varint,16,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                 // 更新时间
+	ApiKeyCipher     string                 `protobuf:"bytes,17,opt,name=api_key_cipher,json=apiKeyCipher,proto3" json:"api_key_cipher,omitempty"`             // API Key密文
+	ApiSecretCipher  string                 `protobuf:"bytes,18,opt,name=api_secret_cipher,json=apiSecretCipher,proto3" json:"api_secret_cipher,omitempty"`    // API Secret密文
+	PrivateKeyCipher string                 `protobuf:"bytes,19,opt,name=private_key_cipher,json=privateKeyCipher,proto3" json:"private_key_cipher,omitempty"` // 私钥密文
+	CertCipher       string                 `protobuf:"bytes,20,opt,name=cert_cipher,json=certCipher,proto3" json:"cert_cipher,omitempty"`                     // 证书密文
+	CredentialRef    string                 `protobuf:"bytes,21,opt,name=credential_ref,json=credentialRef,proto3" json:"credential_ref,omitempty"`            // 密钥管理系统引用
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *TenantPayAccount) Reset() {
 	*x = TenantPayAccount{}
-	mi := &file_proto_payment_model_proto_msgTypes[3]
+	mi := &file_proto_payment_model_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -403,7 +302,7 @@ func (x *TenantPayAccount) String() string {
 func (*TenantPayAccount) ProtoMessage() {}
 
 func (x *TenantPayAccount) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_model_proto_msgTypes[3]
+	mi := &file_proto_payment_model_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -416,7 +315,7 @@ func (x *TenantPayAccount) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TenantPayAccount.ProtoReflect.Descriptor instead.
 func (*TenantPayAccount) Descriptor() ([]byte, []int) {
-	return file_proto_payment_model_proto_rawDescGZIP(), []int{3}
+	return file_proto_payment_model_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *TenantPayAccount) GetId() int64 {
@@ -429,13 +328,6 @@ func (x *TenantPayAccount) GetId() int64 {
 func (x *TenantPayAccount) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
-	}
-	return 0
-}
-
-func (x *TenantPayAccount) GetTenantPayPlatformId() int64 {
-	if x != nil {
-		return x.TenantPayPlatformId
 	}
 	return 0
 }
@@ -598,7 +490,7 @@ type TenantPayChannel struct {
 
 func (x *TenantPayChannel) Reset() {
 	*x = TenantPayChannel{}
-	mi := &file_proto_payment_model_proto_msgTypes[4]
+	mi := &file_proto_payment_model_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -610,7 +502,7 @@ func (x *TenantPayChannel) String() string {
 func (*TenantPayChannel) ProtoMessage() {}
 
 func (x *TenantPayChannel) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_model_proto_msgTypes[4]
+	mi := &file_proto_payment_model_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -623,7 +515,7 @@ func (x *TenantPayChannel) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TenantPayChannel.ProtoReflect.Descriptor instead.
 func (*TenantPayChannel) Descriptor() ([]byte, []int) {
-	return file_proto_payment_model_proto_rawDescGZIP(), []int{4}
+	return file_proto_payment_model_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *TenantPayChannel) GetId() int64 {
@@ -823,7 +715,7 @@ type TenantPayChannelRule struct {
 
 func (x *TenantPayChannelRule) Reset() {
 	*x = TenantPayChannelRule{}
-	mi := &file_proto_payment_model_proto_msgTypes[5]
+	mi := &file_proto_payment_model_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -835,7 +727,7 @@ func (x *TenantPayChannelRule) String() string {
 func (*TenantPayChannelRule) ProtoMessage() {}
 
 func (x *TenantPayChannelRule) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_model_proto_msgTypes[5]
+	mi := &file_proto_payment_model_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -848,7 +740,7 @@ func (x *TenantPayChannelRule) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TenantPayChannelRule.ProtoReflect.Descriptor instead.
 func (*TenantPayChannelRule) Descriptor() ([]byte, []int) {
-	return file_proto_payment_model_proto_rawDescGZIP(), []int{5}
+	return file_proto_payment_model_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *TenantPayChannelRule) GetId() int64 {
@@ -1017,7 +909,7 @@ type UserRechargeStat struct {
 
 func (x *UserRechargeStat) Reset() {
 	*x = UserRechargeStat{}
-	mi := &file_proto_payment_model_proto_msgTypes[6]
+	mi := &file_proto_payment_model_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1029,7 +921,7 @@ func (x *UserRechargeStat) String() string {
 func (*UserRechargeStat) ProtoMessage() {}
 
 func (x *UserRechargeStat) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_model_proto_msgTypes[6]
+	mi := &file_proto_payment_model_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1042,7 +934,7 @@ func (x *UserRechargeStat) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserRechargeStat.ProtoReflect.Descriptor instead.
 func (*UserRechargeStat) Descriptor() ([]byte, []int) {
-	return file_proto_payment_model_proto_rawDescGZIP(), []int{6}
+	return file_proto_payment_model_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *UserRechargeStat) GetId() int64 {
@@ -1169,7 +1061,7 @@ type RechargeOrder struct {
 
 func (x *RechargeOrder) Reset() {
 	*x = RechargeOrder{}
-	mi := &file_proto_payment_model_proto_msgTypes[7]
+	mi := &file_proto_payment_model_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1181,7 +1073,7 @@ func (x *RechargeOrder) String() string {
 func (*RechargeOrder) ProtoMessage() {}
 
 func (x *RechargeOrder) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_model_proto_msgTypes[7]
+	mi := &file_proto_payment_model_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1194,7 +1086,7 @@ func (x *RechargeOrder) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RechargeOrder.ProtoReflect.Descriptor instead.
 func (*RechargeOrder) Descriptor() ([]byte, []int) {
-	return file_proto_payment_model_proto_rawDescGZIP(), []int{7}
+	return file_proto_payment_model_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *RechargeOrder) GetId() int64 {
@@ -1492,7 +1384,7 @@ type PayNotifyLog struct {
 
 func (x *PayNotifyLog) Reset() {
 	*x = PayNotifyLog{}
-	mi := &file_proto_payment_model_proto_msgTypes[8]
+	mi := &file_proto_payment_model_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1504,7 +1396,7 @@ func (x *PayNotifyLog) String() string {
 func (*PayNotifyLog) ProtoMessage() {}
 
 func (x *PayNotifyLog) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_model_proto_msgTypes[8]
+	mi := &file_proto_payment_model_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1517,7 +1409,7 @@ func (x *PayNotifyLog) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PayNotifyLog.ProtoReflect.Descriptor instead.
 func (*PayNotifyLog) Descriptor() ([]byte, []int) {
-	return file_proto_payment_model_proto_rawDescGZIP(), []int{8}
+	return file_proto_payment_model_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *PayNotifyLog) GetId() int64 {
@@ -1640,7 +1532,7 @@ type VisiblePayChannel struct {
 
 func (x *VisiblePayChannel) Reset() {
 	*x = VisiblePayChannel{}
-	mi := &file_proto_payment_model_proto_msgTypes[9]
+	mi := &file_proto_payment_model_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1652,7 +1544,7 @@ func (x *VisiblePayChannel) String() string {
 func (*VisiblePayChannel) ProtoMessage() {}
 
 func (x *VisiblePayChannel) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_model_proto_msgTypes[9]
+	mi := &file_proto_payment_model_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1665,7 +1557,7 @@ func (x *VisiblePayChannel) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use VisiblePayChannel.ProtoReflect.Descriptor instead.
 func (*VisiblePayChannel) Descriptor() ([]byte, []int) {
-	return file_proto_payment_model_proto_rawDescGZIP(), []int{9}
+	return file_proto_payment_model_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *VisiblePayChannel) GetChannelId() int64 {
@@ -1801,7 +1693,7 @@ type WithdrawOrder struct {
 
 func (x *WithdrawOrder) Reset() {
 	*x = WithdrawOrder{}
-	mi := &file_proto_payment_model_proto_msgTypes[10]
+	mi := &file_proto_payment_model_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1813,7 +1705,7 @@ func (x *WithdrawOrder) String() string {
 func (*WithdrawOrder) ProtoMessage() {}
 
 func (x *WithdrawOrder) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_model_proto_msgTypes[10]
+	mi := &file_proto_payment_model_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1826,7 +1718,7 @@ func (x *WithdrawOrder) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WithdrawOrder.ProtoReflect.Descriptor instead.
 func (*WithdrawOrder) Descriptor() ([]byte, []int) {
-	return file_proto_payment_model_proto_rawDescGZIP(), []int{10}
+	return file_proto_payment_model_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *WithdrawOrder) GetId() int64 {
@@ -2040,7 +1932,7 @@ type CryptoRechargeAddress struct {
 
 func (x *CryptoRechargeAddress) Reset() {
 	*x = CryptoRechargeAddress{}
-	mi := &file_proto_payment_model_proto_msgTypes[11]
+	mi := &file_proto_payment_model_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2052,7 +1944,7 @@ func (x *CryptoRechargeAddress) String() string {
 func (*CryptoRechargeAddress) ProtoMessage() {}
 
 func (x *CryptoRechargeAddress) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_model_proto_msgTypes[11]
+	mi := &file_proto_payment_model_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2065,7 +1957,7 @@ func (x *CryptoRechargeAddress) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CryptoRechargeAddress.ProtoReflect.Descriptor instead.
 func (*CryptoRechargeAddress) Descriptor() ([]byte, []int) {
-	return file_proto_payment_model_proto_rawDescGZIP(), []int{11}
+	return file_proto_payment_model_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *CryptoRechargeAddress) GetId() int64 {
@@ -2187,7 +2079,7 @@ type CryptoWalletAccount struct {
 
 func (x *CryptoWalletAccount) Reset() {
 	*x = CryptoWalletAccount{}
-	mi := &file_proto_payment_model_proto_msgTypes[12]
+	mi := &file_proto_payment_model_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2199,7 +2091,7 @@ func (x *CryptoWalletAccount) String() string {
 func (*CryptoWalletAccount) ProtoMessage() {}
 
 func (x *CryptoWalletAccount) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_model_proto_msgTypes[12]
+	mi := &file_proto_payment_model_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2212,7 +2104,7 @@ func (x *CryptoWalletAccount) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CryptoWalletAccount.ProtoReflect.Descriptor instead.
 func (*CryptoWalletAccount) Descriptor() ([]byte, []int) {
-	return file_proto_payment_model_proto_rawDescGZIP(), []int{12}
+	return file_proto_payment_model_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *CryptoWalletAccount) GetId() int64 {
@@ -2333,7 +2225,7 @@ type CryptoRechargeTx struct {
 
 func (x *CryptoRechargeTx) Reset() {
 	*x = CryptoRechargeTx{}
-	mi := &file_proto_payment_model_proto_msgTypes[13]
+	mi := &file_proto_payment_model_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2345,7 +2237,7 @@ func (x *CryptoRechargeTx) String() string {
 func (*CryptoRechargeTx) ProtoMessage() {}
 
 func (x *CryptoRechargeTx) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_model_proto_msgTypes[13]
+	mi := &file_proto_payment_model_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2358,7 +2250,7 @@ func (x *CryptoRechargeTx) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CryptoRechargeTx.ProtoReflect.Descriptor instead.
 func (*CryptoRechargeTx) Descriptor() ([]byte, []int) {
-	return file_proto_payment_model_proto_rawDescGZIP(), []int{13}
+	return file_proto_payment_model_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *CryptoRechargeTx) GetId() int64 {
@@ -2528,22 +2420,10 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\x06remark\x18\b \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\t \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\n" +
-	" \x01(\x03R\vupdateTimes\"\x9f\x02\n" +
-	"\x11TenantPayPlatform\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
-	"\vplatform_id\x18\x03 \x01(\x03R\n" +
-	"platformId\x12(\n" +
-	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\x124\n" +
-	"\vopen_status\x18\x05 \x01(\x0e2\x13.payment.OpenStatusR\n" +
-	"openStatus\x12\x16\n" +
-	"\x06remark\x18\x06 \x01(\tR\x06remark\x12!\n" +
-	"\fcreate_times\x18\a \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\b \x01(\x03R\vupdateTimes\"\xf4\x05\n" +
+	" \x01(\x03R\vupdateTimes\"\xc5\x05\n" +
 	"\x10TenantPayAccount\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x123\n" +
-	"\x16tenant_pay_platform_id\x18\x03 \x01(\x03R\x13tenantPayPlatformId\x12\x1f\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vplatform_id\x18\x04 \x01(\x03R\n" +
 	"platformId\x12!\n" +
 	"\faccount_code\x18\x05 \x01(\tR\vaccountCode\x12!\n" +
@@ -2568,7 +2448,7 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\x12private_key_cipher\x18\x13 \x01(\tR\x10privateKeyCipher\x12\x1f\n" +
 	"\vcert_cipher\x18\x14 \x01(\tR\n" +
 	"certCipher\x12%\n" +
-	"\x0ecredential_ref\x18\x15 \x01(\tR\rcredentialRef\"\xb8\x06\n" +
+	"\x0ecredential_ref\x18\x15 \x01(\tR\rcredentialRefJ\x04\b\x03\x10\x04\"\xb8\x06\n" +
 	"\x10TenantPayChannel\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -2844,81 +2724,77 @@ func file_proto_payment_model_proto_rawDescGZIP() []byte {
 	return file_proto_payment_model_proto_rawDescData
 }
 
-var file_proto_payment_model_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_proto_payment_model_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_proto_payment_model_proto_goTypes = []any{
 	(*PayPlatform)(nil),              // 0: payment.PayPlatform
 	(*PayProduct)(nil),               // 1: payment.PayProduct
-	(*TenantPayPlatform)(nil),        // 2: payment.TenantPayPlatform
-	(*TenantPayAccount)(nil),         // 3: payment.TenantPayAccount
-	(*TenantPayChannel)(nil),         // 4: payment.TenantPayChannel
-	(*TenantPayChannelRule)(nil),     // 5: payment.TenantPayChannelRule
-	(*UserRechargeStat)(nil),         // 6: payment.UserRechargeStat
-	(*RechargeOrder)(nil),            // 7: payment.RechargeOrder
-	(*PayNotifyLog)(nil),             // 8: payment.PayNotifyLog
-	(*VisiblePayChannel)(nil),        // 9: payment.VisiblePayChannel
-	(*WithdrawOrder)(nil),            // 10: payment.WithdrawOrder
-	(*CryptoRechargeAddress)(nil),    // 11: payment.CryptoRechargeAddress
-	(*CryptoWalletAccount)(nil),      // 12: payment.CryptoWalletAccount
-	(*CryptoRechargeTx)(nil),         // 13: payment.CryptoRechargeTx
-	(PlatformType)(0),                // 14: payment.PlatformType
-	(common.Enable)(0),               // 15: common.Enable
-	(SceneType)(0),                   // 16: payment.SceneType
-	(OpenStatus)(0),                  // 17: payment.OpenStatus
-	(common.YesNo)(0),                // 18: common.YesNo
-	(common.Switch)(0),               // 19: common.Switch
-	(FeeType)(0),                     // 20: payment.FeeType
-	(ClientType)(0),                  // 21: payment.ClientType
-	(PayOrderStatus)(0),              // 22: payment.PayOrderStatus
-	(RechargeType)(0),                // 23: payment.RechargeType
-	(common.WalletType)(0),           // 24: common.WalletType
-	(CreditStatus)(0),                // 25: payment.CreditStatus
-	(NotifyProcessStatus)(0),         // 26: payment.NotifyProcessStatus
-	(SignResult)(0),                  // 27: payment.SignResult
-	(common.ChainCode)(0),            // 28: common.ChainCode
-	(CryptoRechargeAddressSource)(0), // 29: payment.CryptoRechargeAddressSource
-	(CryptoRechargeAddressType)(0),   // 30: payment.CryptoRechargeAddressType
-	(CryptoRechargeAddressStatus)(0), // 31: payment.CryptoRechargeAddressStatus
-	(CryptoRechargeTxStatus)(0),      // 32: payment.CryptoRechargeTxStatus
+	(*TenantPayAccount)(nil),         // 2: payment.TenantPayAccount
+	(*TenantPayChannel)(nil),         // 3: payment.TenantPayChannel
+	(*TenantPayChannelRule)(nil),     // 4: payment.TenantPayChannelRule
+	(*UserRechargeStat)(nil),         // 5: payment.UserRechargeStat
+	(*RechargeOrder)(nil),            // 6: payment.RechargeOrder
+	(*PayNotifyLog)(nil),             // 7: payment.PayNotifyLog
+	(*VisiblePayChannel)(nil),        // 8: payment.VisiblePayChannel
+	(*WithdrawOrder)(nil),            // 9: payment.WithdrawOrder
+	(*CryptoRechargeAddress)(nil),    // 10: payment.CryptoRechargeAddress
+	(*CryptoWalletAccount)(nil),      // 11: payment.CryptoWalletAccount
+	(*CryptoRechargeTx)(nil),         // 12: payment.CryptoRechargeTx
+	(PlatformType)(0),                // 13: payment.PlatformType
+	(common.Enable)(0),               // 14: common.Enable
+	(SceneType)(0),                   // 15: payment.SceneType
+	(common.YesNo)(0),                // 16: common.YesNo
+	(common.Switch)(0),               // 17: common.Switch
+	(FeeType)(0),                     // 18: payment.FeeType
+	(ClientType)(0),                  // 19: payment.ClientType
+	(PayOrderStatus)(0),              // 20: payment.PayOrderStatus
+	(RechargeType)(0),                // 21: payment.RechargeType
+	(common.WalletType)(0),           // 22: common.WalletType
+	(CreditStatus)(0),                // 23: payment.CreditStatus
+	(NotifyProcessStatus)(0),         // 24: payment.NotifyProcessStatus
+	(SignResult)(0),                  // 25: payment.SignResult
+	(common.ChainCode)(0),            // 26: common.ChainCode
+	(CryptoRechargeAddressSource)(0), // 27: payment.CryptoRechargeAddressSource
+	(CryptoRechargeAddressType)(0),   // 28: payment.CryptoRechargeAddressType
+	(CryptoRechargeAddressStatus)(0), // 29: payment.CryptoRechargeAddressStatus
+	(CryptoRechargeTxStatus)(0),      // 30: payment.CryptoRechargeTxStatus
 }
 var file_proto_payment_model_proto_depIdxs = []int32{
-	14, // 0: payment.PayPlatform.platform_type:type_name -> payment.PlatformType
-	15, // 1: payment.PayPlatform.enabled:type_name -> common.Enable
-	16, // 2: payment.PayProduct.scene_type:type_name -> payment.SceneType
-	15, // 3: payment.PayProduct.enabled:type_name -> common.Enable
-	15, // 4: payment.TenantPayPlatform.enabled:type_name -> common.Enable
-	17, // 5: payment.TenantPayPlatform.open_status:type_name -> payment.OpenStatus
-	15, // 6: payment.TenantPayAccount.enabled:type_name -> common.Enable
-	18, // 7: payment.TenantPayAccount.is_default:type_name -> common.YesNo
-	19, // 8: payment.TenantPayChannel.visible:type_name -> common.Switch
-	15, // 9: payment.TenantPayChannel.enabled:type_name -> common.Enable
-	20, // 10: payment.TenantPayChannel.fee_type:type_name -> payment.FeeType
-	15, // 11: payment.TenantPayChannelRule.enabled:type_name -> common.Enable
-	18, // 12: payment.TenantPayChannelRule.allow_new_user:type_name -> common.YesNo
-	18, // 13: payment.TenantPayChannelRule.allow_old_user:type_name -> common.YesNo
-	21, // 14: payment.RechargeOrder.client_type:type_name -> payment.ClientType
-	22, // 15: payment.RechargeOrder.status:type_name -> payment.PayOrderStatus
-	23, // 16: payment.RechargeOrder.recharge_type:type_name -> payment.RechargeType
-	24, // 17: payment.RechargeOrder.wallet_type:type_name -> common.WalletType
-	25, // 18: payment.RechargeOrder.credit_status:type_name -> payment.CreditStatus
-	26, // 19: payment.PayNotifyLog.notify_status:type_name -> payment.NotifyProcessStatus
-	27, // 20: payment.PayNotifyLog.sign_result:type_name -> payment.SignResult
-	20, // 21: payment.VisiblePayChannel.fee_type:type_name -> payment.FeeType
-	21, // 22: payment.WithdrawOrder.client_type:type_name -> payment.ClientType
-	22, // 23: payment.WithdrawOrder.status:type_name -> payment.PayOrderStatus
-	24, // 24: payment.CryptoRechargeAddress.wallet_type:type_name -> common.WalletType
-	28, // 25: payment.CryptoRechargeAddress.chain_code:type_name -> common.ChainCode
-	29, // 26: payment.CryptoRechargeAddress.address_source:type_name -> payment.CryptoRechargeAddressSource
-	30, // 27: payment.CryptoRechargeAddress.address_type:type_name -> payment.CryptoRechargeAddressType
-	31, // 28: payment.CryptoRechargeAddress.status:type_name -> payment.CryptoRechargeAddressStatus
-	15, // 29: payment.CryptoWalletAccount.enabled:type_name -> common.Enable
-	18, // 30: payment.CryptoWalletAccount.is_default:type_name -> common.YesNo
-	28, // 31: payment.CryptoRechargeTx.chain_code:type_name -> common.ChainCode
-	32, // 32: payment.CryptoRechargeTx.status:type_name -> payment.CryptoRechargeTxStatus
-	33, // [33:33] is the sub-list for method output_type
-	33, // [33:33] is the sub-list for method input_type
-	33, // [33:33] is the sub-list for extension type_name
-	33, // [33:33] is the sub-list for extension extendee
-	0,  // [0:33] is the sub-list for field type_name
+	13, // 0: payment.PayPlatform.platform_type:type_name -> payment.PlatformType
+	14, // 1: payment.PayPlatform.enabled:type_name -> common.Enable
+	15, // 2: payment.PayProduct.scene_type:type_name -> payment.SceneType
+	14, // 3: payment.PayProduct.enabled:type_name -> common.Enable
+	14, // 4: payment.TenantPayAccount.enabled:type_name -> common.Enable
+	16, // 5: payment.TenantPayAccount.is_default:type_name -> common.YesNo
+	17, // 6: payment.TenantPayChannel.visible:type_name -> common.Switch
+	14, // 7: payment.TenantPayChannel.enabled:type_name -> common.Enable
+	18, // 8: payment.TenantPayChannel.fee_type:type_name -> payment.FeeType
+	14, // 9: payment.TenantPayChannelRule.enabled:type_name -> common.Enable
+	16, // 10: payment.TenantPayChannelRule.allow_new_user:type_name -> common.YesNo
+	16, // 11: payment.TenantPayChannelRule.allow_old_user:type_name -> common.YesNo
+	19, // 12: payment.RechargeOrder.client_type:type_name -> payment.ClientType
+	20, // 13: payment.RechargeOrder.status:type_name -> payment.PayOrderStatus
+	21, // 14: payment.RechargeOrder.recharge_type:type_name -> payment.RechargeType
+	22, // 15: payment.RechargeOrder.wallet_type:type_name -> common.WalletType
+	23, // 16: payment.RechargeOrder.credit_status:type_name -> payment.CreditStatus
+	24, // 17: payment.PayNotifyLog.notify_status:type_name -> payment.NotifyProcessStatus
+	25, // 18: payment.PayNotifyLog.sign_result:type_name -> payment.SignResult
+	18, // 19: payment.VisiblePayChannel.fee_type:type_name -> payment.FeeType
+	19, // 20: payment.WithdrawOrder.client_type:type_name -> payment.ClientType
+	20, // 21: payment.WithdrawOrder.status:type_name -> payment.PayOrderStatus
+	22, // 22: payment.CryptoRechargeAddress.wallet_type:type_name -> common.WalletType
+	26, // 23: payment.CryptoRechargeAddress.chain_code:type_name -> common.ChainCode
+	27, // 24: payment.CryptoRechargeAddress.address_source:type_name -> payment.CryptoRechargeAddressSource
+	28, // 25: payment.CryptoRechargeAddress.address_type:type_name -> payment.CryptoRechargeAddressType
+	29, // 26: payment.CryptoRechargeAddress.status:type_name -> payment.CryptoRechargeAddressStatus
+	14, // 27: payment.CryptoWalletAccount.enabled:type_name -> common.Enable
+	16, // 28: payment.CryptoWalletAccount.is_default:type_name -> common.YesNo
+	26, // 29: payment.CryptoRechargeTx.chain_code:type_name -> common.ChainCode
+	30, // 30: payment.CryptoRechargeTx.status:type_name -> payment.CryptoRechargeTxStatus
+	31, // [31:31] is the sub-list for method output_type
+	31, // [31:31] is the sub-list for method input_type
+	31, // [31:31] is the sub-list for extension type_name
+	31, // [31:31] is the sub-list for extension extendee
+	0,  // [0:31] is the sub-list for field type_name
 }
 
 func init() { file_proto_payment_model_proto_init() }
@@ -2933,7 +2809,7 @@ func file_proto_payment_model_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_payment_model_proto_rawDesc), len(file_proto_payment_model_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

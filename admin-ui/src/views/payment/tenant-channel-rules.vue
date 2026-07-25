@@ -2,10 +2,18 @@
   <div class="payment-page">
     <CrudQueryCard :model="ruleQuery" @search="loadList" @reset="resetQuery">
       <el-form-item :label="t('common.tenantId')">
-        <TenantSelect v-model="ruleQuery.tenantId" class="tenant-select-filter" />
+        <TenantSelect
+          v-model="ruleQuery.tenantId"
+          class="tenant-select-filter"
+          @change="handleRuleQueryTenantChange"
+        />
       </el-form-item>
       <el-form-item :label="t('payment.channelId')">
-        <el-input-number v-model="ruleQuery.channelId" :min="0" :precision="0" />
+        <TenantPayChannelSelect
+          v-model="ruleQuery.channelId"
+          :tenant-id="ruleQuery.tenantId"
+          :enabled-only="false"
+        />
       </el-form-item>
       <template #actions>
         <el-button
@@ -21,8 +29,16 @@
     <el-card shadow="never" class="table-card">
       <el-table v-loading="ruleLoading" :data="rules" stripe>
         <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="tenantId" :label="t('common.tenantId')" width="100" />
-        <el-table-column prop="channelId" :label="t('payment.channelId')" width="100" />
+        <el-table-column :label="t('common.tenantId')" min-width="180">
+          <template #default="{ row }">
+            {{ formatRelationLabel(tenantNames[row.tenantId], row.tenantId) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('payment.channelId')" min-width="200">
+          <template #default="{ row }">
+            {{ formatRelationLabel(channelNames[row.channelId], row.channelId) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="ruleName" :label="t('payment.ruleName')" min-width="140" />
         <el-table-column prop="priority" :label="t('payment.priority')" width="90" />
         <el-table-column :label="t('common.enabled')" width="100">
@@ -70,7 +86,7 @@
       :title="ruleForm.id ? t('payment.editRule') : t('payment.addRule')"
       width="760px"
     >
-      <el-form label-width="120px">
+      <el-form label-width="120px" class="rule-form-grid">
         <el-form-item :label="t('common.tenantId')">
           <TenantSelect
             v-model="ruleForm.tenantId"
@@ -80,21 +96,13 @@
         </el-form-item>
 
         <el-form-item :label="t('payment.channelId')">
-          <div class="verify-row">
-            <el-input-number
-              v-model="ruleForm.channelId"
-              :min="1"
-              :precision="0"
-              :disabled="!!ruleForm.id"
-              @change="handleRuleChannelChange"
-            />
-            <el-button v-if="!ruleForm.id" :loading="ruleChannelChecking" @click="checkRuleChannel">
-              {{ t('payment.verifyChannel') }}
-            </el-button>
-            <span v-if="!ruleForm.id && ruleChannelVerified" class="verified-text">
-              {{ t('payment.verified') }}
-            </span>
-          </div>
+          <TenantPayChannelSelect
+            v-model="ruleForm.channelId"
+            :tenant-id="ruleForm.tenantId"
+            :disabled="!!ruleForm.id"
+            :clearable="false"
+            @change="handleRuleChannelChange"
+          />
         </el-form-item>
 
         <el-form-item :label="t('payment.ruleName')">
@@ -139,7 +147,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item :label="t('common.remark')">
+        <el-form-item :label="t('common.remark')" class="rule-form-grid__full">
           <el-input v-model="ruleForm.remark" type="textarea" :rows="3" />
         </el-form-item>
       </el-form>
@@ -171,11 +179,17 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import { ElMessage } from 'element-plus'
-import { tenantService, type OptionGroup, type TenantPayChannelRule } from '@/services'
+import {
+  tenantService,
+  tenantsService,
+  type OptionGroup,
+  type TenantPayChannelRule,
+} from '@/services'
 import { findFormOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
+import TenantPayChannelSelect from '@/components/payment/TenantPayChannelSelect.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
@@ -183,6 +197,8 @@ const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad }
 
 const ruleLoading = ref(false)
 const rules = ref<TenantPayChannelRule[]>([])
+const tenantNames = ref<Record<number, string>>({})
+const channelNames = ref<Record<number, string>>({})
 const detailVisible = ref(false)
 const detailData = ref<Record<string, unknown>>({})
 const ruleDialogVisible = ref(false)
@@ -213,12 +229,11 @@ const ruleForm = reactive({
   kycLevelMax: 0,
   allowNewUser: 1,
   allowOldUser: 1,
-  allowTags: '{}',
-  denyTags: '{}',
+  allowTags: '[]',
+  denyTags: '[]',
   remark: '',
 })
 
-const ruleChannelChecking = ref(false)
 const ruleTenantVerified = ref(false)
 const ruleChannelVerified = ref(false)
 const verifiedRuleTenantId = ref(0)
@@ -249,16 +264,53 @@ const loadList = async () => {
       limit: pagination.limit,
     })
     rules.value = res.data || []
+    await loadRelationNames(rules.value)
     updateFromResponse(res)
   } finally {
     ruleLoading.value = false
   }
 }
 
+async function loadRelationNames(rows: TenantPayChannelRule[]) {
+  const tenantIds = [...new Set(rows.map((row) => row.tenantId).filter(Boolean))]
+  const channels = [
+    ...new Map(
+      rows.filter((row) => row.channelId).map((row) => [row.channelId, row] as const),
+    ).values(),
+  ]
+
+  const [tenantResults, channelResults] = await Promise.all([
+    Promise.allSettled(tenantIds.map((tenantId) => tenantsService.detail({ tenantId }))),
+    Promise.allSettled(
+      channels.map((row) => tenantService.getTenantChannelDetail(row.channelId, row.tenantId)),
+    ),
+  ])
+
+  tenantResults.forEach((result) => {
+    if (result.status !== 'fulfilled' || !result.value.data) return
+    const tenant = result.value.data
+    tenantNames.value[tenant.id] = tenant.tenantName || tenant.tenantCode
+  })
+  channelResults.forEach((result) => {
+    if (result.status !== 'fulfilled' || !result.value.data) return
+    const channel = result.value.data
+    channelNames.value[channel.id] =
+      channel.channelName || channel.displayName || channel.channelCode
+  })
+}
+
+function formatRelationLabel(name: string | undefined, id: number) {
+  return name ? `${name} (${id})` : String(id)
+}
+
 function resetQuery() {
   ruleQuery.tenantId = 0
   ruleQuery.channelId = 0
   resetAndLoad(loadList)
+}
+
+function handleRuleQueryTenantChange() {
+  ruleQuery.channelId = undefined
 }
 
 const resetRuleVerifyState = () => {
@@ -288,8 +340,8 @@ const openRuleDialog = (row?: TenantPayChannelRule) => {
       kycLevelMax: 0,
       allowNewUser: 1,
       allowOldUser: 1,
-      allowTags: '{}',
-      denyTags: '{}',
+      allowTags: '[]',
+      denyTags: '[]',
       remark: '',
     },
   )
@@ -306,49 +358,17 @@ const openRuleDialog = (row?: TenantPayChannelRule) => {
   ruleDialogVisible.value = true
 }
 
-const validateChannelExists = async (channelId: number, tenantId: number) => {
-  if (!channelId) {
-    ElMessage.warning(t('payment.pleaseInputChannelId'))
-    return false
-  }
-  if (!tenantId) {
-    ElMessage.warning(t('payment.pleaseInputTenantFirst'))
-    return false
-  }
-
-  ruleChannelChecking.value = true
-  try {
-    const res = await tenantService.getTenantChannelDetail(channelId, tenantId)
-    if (!res.data?.id) {
-      ElMessage.error(t('payment.channelNotFound'))
-      return false
-    }
-    return true
-  } catch {
-    ElMessage.error(t('payment.channelNotFound'))
-    return false
-  } finally {
-    ruleChannelChecking.value = false
-  }
-}
-
 const handleRuleTenantChange = () => {
   ruleTenantVerified.value = ruleForm.tenantId > 0
   verifiedRuleTenantId.value = ruleForm.tenantId
+  ruleForm.channelId = 0
   ruleChannelVerified.value = false
   verifiedRuleChannelId.value = 0
 }
 
 const handleRuleChannelChange = () => {
-  ruleChannelVerified.value = false
-  verifiedRuleChannelId.value = 0
-}
-
-const checkRuleChannel = async () => {
-  const exists = await validateChannelExists(ruleForm.channelId, ruleForm.tenantId)
-  ruleChannelVerified.value = exists
-  verifiedRuleChannelId.value = exists ? ruleForm.channelId : 0
-  if (exists) ElMessage.success(t('payment.channelVerifiedSuccess'))
+  ruleChannelVerified.value = ruleForm.channelId > 0
+  verifiedRuleChannelId.value = ruleForm.channelId
 }
 
 const submitRule = async () => {
@@ -398,15 +418,14 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.verify-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.rule-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 20px;
 }
 
-.verified-text {
-  color: var(--el-color-success);
-  font-size: 14px;
+.rule-form-grid__full {
+  grid-column: 1 / -1;
 }
 
 .option-tag {
@@ -426,5 +445,15 @@ onMounted(async () => {
 .option-tag--slate {
   color: var(--el-text-color-regular);
   background: var(--el-fill-color-light);
+}
+
+@media (max-width: 900px) {
+  .rule-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rule-form-grid__full {
+    grid-column: auto;
+  }
 }
 </style>

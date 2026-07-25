@@ -34,6 +34,9 @@ func (l *UpdateTenantPayAccountLogic) UpdateTenantPayAccount(in *payment.UpdateT
 	var (
 		errLogic = "UpdateTenantPayAccount"
 	)
+	if in.Id <= 0 {
+		return paymentErrorResp(l.ctx, i18n.PaymentRequiredParamsMissing), nil
+	}
 
 	// 査询账户是否存在
 	account, err := l.svcCtx.TenantPayAccountModel.FindOne(l.ctx, in.Id)
@@ -42,7 +45,7 @@ func (l *UpdateTenantPayAccountLogic) UpdateTenantPayAccount(in *payment.UpdateT
 		return nil, err
 	}
 
-	if account == nil {
+	if errors.Is(err, models.ErrNotFound) || account == nil {
 		return &payment.CommonResp{
 			Base: helper.ErrResp(i18n.TenantPayAccountNotFound, i18n.Translate(i18n.TenantPayAccountNotFound, l.ctx)),
 		}, nil
@@ -55,7 +58,7 @@ func (l *UpdateTenantPayAccountLogic) UpdateTenantPayAccount(in *payment.UpdateT
 	if resp != nil {
 		return resp, nil
 	}
-	if allowTenantUpdate {
+	if allowTenantUpdate && in.TenantId > 0 {
 		account.TenantId = in.TenantId
 	}
 
@@ -91,7 +94,13 @@ func (l *UpdateTenantPayAccountLogic) UpdateTenantPayAccount(in *payment.UpdateT
 		account.CredentialRef = in.CredentialRef
 	}
 	if in.ExtConfig != "" {
-		account.ExtConfig = sql.NullString{String: in.ExtConfig, Valid: true}
+		extConfig, valid := nullableJSON(in.ExtConfig)
+		if !valid {
+			return &payment.CommonResp{
+				Base: helper.ErrResp(i18n.InvalidPaymentJSON, i18n.Translate(i18n.InvalidPaymentJSON, l.ctx)),
+			}, nil
+		}
+		account.ExtConfig = extConfig
 	}
 	if in.Enabled != 0 {
 		account.Enabled = int64(in.Enabled)
@@ -102,10 +111,16 @@ func (l *UpdateTenantPayAccountLogic) UpdateTenantPayAccount(in *payment.UpdateT
 	if in.Remark != "" {
 		account.Remark = sql.NullString{String: in.Remark, Valid: true}
 	}
+	if !requiredStrings(account.AccountName, account.MerchantId.String, account.MerchantName.String) {
+		return paymentErrorResp(l.ctx, i18n.PaymentRequiredParamsMissing), nil
+	}
 	account.UpdateTimes = now
 
 	err = l.svcCtx.TenantPayAccountModel.Update(l.ctx, account)
 	if err != nil {
+		if isDuplicateEntry(err) {
+			return paymentErrorResp(l.ctx, i18n.TenantPayAccountCodeAlreadyExists), nil
+		}
 		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
 		return nil, err
 	}

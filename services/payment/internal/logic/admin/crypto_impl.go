@@ -17,6 +17,32 @@ import (
 )
 
 func createCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.CreateCryptoRechargeAddressReq) (*payment.CommonResp, error) {
+	tenantID, resp, err := resolveAdminTenantCreateScope(ctx, in.TenantId)
+	if err != nil {
+		return nil, err
+	}
+	if resp != nil {
+		return resp, nil
+	}
+	if in.UserId <= 0 || in.WalletType == 0 || in.ChainCode == 0 ||
+		!requiredStrings(in.Coin, in.Address) {
+		return paymentErrorResp(ctx, i18n.PaymentRequiredParamsMissing), nil
+	}
+	if in.AddressSource != 0 {
+		if _, ok := payment.CryptoRechargeAddressSource_name[int32(in.AddressSource)]; !ok {
+			return paymentErrorResp(ctx, i18n.ParamError), nil
+		}
+	}
+	if in.AddressType != 0 {
+		if _, ok := payment.CryptoRechargeAddressType_name[int32(in.AddressType)]; !ok {
+			return paymentErrorResp(ctx, i18n.ParamError), nil
+		}
+	}
+	if in.Status != 0 {
+		if _, ok := payment.CryptoRechargeAddressStatus_name[int32(in.Status)]; !ok {
+			return paymentErrorResp(ctx, i18n.ParamError), nil
+		}
+	}
 	now := utils.NowMillis()
 	status := toCryptoAddressStatusDB(in.Status, int64(payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_ENABLED))
 	if in.AddressSource == 0 {
@@ -25,8 +51,8 @@ func createCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext
 	if in.AddressType == 0 {
 		in.AddressType = payment.CryptoRechargeAddressType_CRYPTO_RECHARGE_ADDRESS_TYPE_EXCLUSIVE
 	}
-	_, err := svcCtx.CryptoRechargeAddressModel.Insert(ctx, &models.TCryptoRechargeAddress{
-		TenantId:      in.TenantId,
+	_, err = svcCtx.CryptoRechargeAddressModel.Insert(ctx, &models.TCryptoRechargeAddress{
+		TenantId:      tenantID,
 		UserId:        in.UserId,
 		WalletType:    int64(in.WalletType),
 		Coin:          in.Coin,
@@ -40,15 +66,24 @@ func createCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext
 		UpdateTimes:   now,
 	})
 	if err != nil {
+		if isDuplicateEntry(err) {
+			return paymentErrorResp(ctx, i18n.CryptoResourceAlreadyExists), nil
+		}
 		return nil, err
 	}
 	return &payment.CommonResp{Base: helper.OkResp()}, nil
 }
 
 func updateCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.UpdateCryptoRechargeAddressReq) (*payment.CommonResp, error) {
+	if in.Id <= 0 {
+		return paymentErrorResp(ctx, i18n.PaymentRequiredParamsMissing), nil
+	}
 	item, err := svcCtx.CryptoRechargeAddressModel.FindOne(ctx, in.Id)
-	if err != nil {
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
+	}
+	if errors.Is(err, models.ErrNotFound) || item == nil {
+		return paymentErrorResp(ctx, i18n.CryptoRechargeAddressNotFound), nil
 	}
 
 	allowTenantUpdate, resp, err := applyAdminTenantUpdateScope(ctx, item.TenantId, i18n.CryptoRechargeAddressNotFound)
@@ -58,7 +93,7 @@ func updateCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext
 	if resp != nil {
 		return resp, nil
 	}
-	if allowTenantUpdate {
+	if allowTenantUpdate && in.TenantId > 0 {
 		item.TenantId = in.TenantId
 	}
 
@@ -69,14 +104,28 @@ func updateCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext
 		item.Memo = in.Memo
 	}
 	if in.AddressSource != 0 {
+		if _, ok := payment.CryptoRechargeAddressSource_name[int32(in.AddressSource)]; !ok {
+			return paymentErrorResp(ctx, i18n.ParamError), nil
+		}
 		item.AddressSource = int64(in.AddressSource)
 	}
 	if in.AddressType != 0 {
+		if _, ok := payment.CryptoRechargeAddressType_name[int32(in.AddressType)]; !ok {
+			return paymentErrorResp(ctx, i18n.ParamError), nil
+		}
 		item.AddressType = int64(in.AddressType)
+	}
+	if in.Status != 0 {
+		if _, ok := payment.CryptoRechargeAddressStatus_name[int32(in.Status)]; !ok {
+			return paymentErrorResp(ctx, i18n.ParamError), nil
+		}
 	}
 	item.Status = toCryptoAddressStatusDB(in.Status, item.Status)
 	item.UpdateTimes = utils.NowMillis()
 	if err := svcCtx.CryptoRechargeAddressModel.Update(ctx, item); err != nil {
+		if isDuplicateEntry(err) {
+			return paymentErrorResp(ctx, i18n.CryptoResourceAlreadyExists), nil
+		}
 		return nil, err
 	}
 	return &payment.CommonResp{Base: helper.OkResp()}, nil
@@ -118,35 +167,58 @@ func listCryptoRechargeAddresses(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func createCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.CreateCryptoWalletAccountReq) (*payment.CommonResp, error) {
+	tenantID, resp, err := resolveAdminTenantCreateScope(ctx, in.TenantId)
+	if err != nil {
+		return nil, err
+	}
+	if resp != nil {
+		return resp, nil
+	}
+	if !requiredStrings(in.AccountCode, in.AccountName, in.Provider) {
+		return paymentErrorResp(ctx, i18n.PaymentRequiredParamsMissing), nil
+	}
+	extConfig, valid := nullableJSON(in.ExtConfig)
+	if !valid {
+		return paymentErrorResp(ctx, i18n.InvalidPaymentJSON), nil
+	}
 	now := utils.NowMillis()
 	isDefault := int64(in.IsDefault)
 	if common.YesNo(in.IsDefault) == common.YesNo_YES_NO_UNKNOWN {
 		isDefault = int64(common.YesNo_YES_NO_NO)
 	}
-	_, err := svcCtx.CryptoWalletAccountModel.Insert(ctx, &models.TCryptoWalletAccount{
-		TenantId:             in.TenantId,
+	_, err = svcCtx.CryptoWalletAccountModel.Insert(ctx, &models.TCryptoWalletAccount{
+		TenantId:             tenantID,
 		AccountCode:          in.AccountCode,
 		AccountName:          in.AccountName,
 		Provider:             in.Provider,
 		ApiKeyCipher:         nullableString(in.ApiKeyCipher),
 		ApiSecretCipher:      nullableString(in.ApiSecretCipher),
 		CallbackSecretCipher: nullableString(in.CallbackSecretCipher),
-		ExtConfig:            nullableString(in.ExtConfig),
+		ExtConfig:            extConfig,
 		Enabled:              toCryptoWalletStatusDB(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
 		IsDefault:            isDefault,
 		CreateTimes:          now,
 		UpdateTimes:          now,
 	})
 	if err != nil {
+		if isDuplicateEntry(err) {
+			return paymentErrorResp(ctx, i18n.CryptoResourceAlreadyExists), nil
+		}
 		return nil, err
 	}
 	return &payment.CommonResp{Base: helper.OkResp()}, nil
 }
 
 func updateCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.UpdateCryptoWalletAccountReq) (*payment.CommonResp, error) {
+	if in.Id <= 0 {
+		return paymentErrorResp(ctx, i18n.PaymentRequiredParamsMissing), nil
+	}
 	item, err := svcCtx.CryptoWalletAccountModel.FindOne(ctx, in.Id)
-	if err != nil {
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
+	}
+	if errors.Is(err, models.ErrNotFound) || item == nil {
+		return paymentErrorResp(ctx, i18n.CryptoWalletAccountNotFound), nil
 	}
 	allowTenantUpdate, resp, err := applyAdminTenantUpdateScope(ctx, item.TenantId, i18n.CryptoWalletAccountNotFound)
 	if err != nil {
@@ -155,7 +227,7 @@ func updateCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 	if resp != nil {
 		return resp, nil
 	}
-	if allowTenantUpdate {
+	if allowTenantUpdate && in.TenantId > 0 {
 		item.TenantId = in.TenantId
 	}
 	if in.AccountName != "" {
@@ -174,14 +246,24 @@ func updateCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 		item.CallbackSecretCipher = nullableString(in.CallbackSecretCipher)
 	}
 	if in.ExtConfig != "" {
-		item.ExtConfig = nullableString(in.ExtConfig)
+		extConfig, valid := nullableJSON(in.ExtConfig)
+		if !valid {
+			return paymentErrorResp(ctx, i18n.InvalidPaymentJSON), nil
+		}
+		item.ExtConfig = extConfig
 	}
 	item.Enabled = toCryptoWalletStatusDB(in.Enabled, item.Enabled)
 	if common.YesNo(in.IsDefault) != common.YesNo_YES_NO_UNKNOWN {
 		item.IsDefault = int64(in.IsDefault)
 	}
 	item.UpdateTimes = utils.NowMillis()
+	if !requiredStrings(item.AccountName, item.Provider) {
+		return paymentErrorResp(ctx, i18n.PaymentRequiredParamsMissing), nil
+	}
 	if err := svcCtx.CryptoWalletAccountModel.Update(ctx, item); err != nil {
+		if isDuplicateEntry(err) {
+			return paymentErrorResp(ctx, i18n.CryptoResourceAlreadyExists), nil
+		}
 		return nil, err
 	}
 	return &payment.CommonResp{Base: helper.OkResp()}, nil
@@ -209,13 +291,41 @@ func listCryptoWalletAccounts(ctx context.Context, svcCtx *svc.ServiceContext, i
 }
 
 func createCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.CreateCryptoRechargeTxReq) (*payment.CommonResp, error) {
-	amount, err := conv.ParseDecimalField(in.Amount)
+	tenantID, resp, err := resolveAdminTenantCreateScope(ctx, in.TenantId)
 	if err != nil {
 		return nil, err
 	}
+	if resp != nil {
+		return resp, nil
+	}
+	if in.UserId <= 0 || in.ChainCode == 0 || !requiredStrings(in.Coin, in.TxHash, in.ToAddress, in.Amount) {
+		return paymentErrorResp(ctx, i18n.PaymentRequiredParamsMissing), nil
+	}
+	if in.BlockHeight < 0 || in.ConfirmCount < 0 || in.RequiredConfirmCount < 0 ||
+		(in.RequiredConfirmCount > 0 && in.ConfirmCount > in.RequiredConfirmCount) {
+		return paymentErrorResp(ctx, i18n.InvalidPaymentAmountRange), nil
+	}
+	amount, err := conv.ParseDecimalField(in.Amount)
+	if err != nil {
+		return paymentErrorResp(ctx, i18n.InvalidPaymentDecimal), nil
+	}
+	if !amount.IsPositive() {
+		return paymentErrorResp(ctx, i18n.InvalidPaymentAmountRange), nil
+	}
+	rawData, valid := nullableJSON(in.RawData)
+	if !valid {
+		return paymentErrorResp(ctx, i18n.InvalidPaymentJSON), nil
+	}
+	status := in.Status
+	if status == payment.CryptoRechargeTxStatus_CRYPTO_RECHARGE_TX_STATUS_UNKNOWN {
+		status = payment.CryptoRechargeTxStatus_CRYPTO_RECHARGE_TX_STATUS_PENDING
+	}
+	if _, ok := payment.CryptoRechargeTxStatus_name[int32(status)]; !ok {
+		return paymentErrorResp(ctx, i18n.ParamError), nil
+	}
 	now := utils.NowMillis()
 	_, err = svcCtx.CryptoRechargeTxModel.Insert(ctx, &models.TCryptoRechargeTx{
-		TenantId:             in.TenantId,
+		TenantId:             tenantID,
 		UserId:               in.UserId,
 		OrderId:              in.OrderId,
 		OrderNo:              in.OrderNo,
@@ -229,15 +339,18 @@ func createCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in 
 		BlockHeight:          in.BlockHeight,
 		ConfirmCount:         in.ConfirmCount,
 		RequiredConfirmCount: in.RequiredConfirmCount,
-		Status:               int64(in.Status),
-		RawData:              nullableString(in.RawData),
+		Status:               int64(status),
+		RawData:              rawData,
 		CreateTimes:          now,
 		UpdateTimes:          now,
 	})
 	if err != nil {
+		if isDuplicateEntry(err) {
+			return paymentErrorResp(ctx, i18n.CryptoResourceAlreadyExists), nil
+		}
 		return nil, err
 	}
-	if in.Status == payment.CryptoRechargeTxStatus_CRYPTO_RECHARGE_TX_STATUS_CREDITED {
+	if status == payment.CryptoRechargeTxStatus_CRYPTO_RECHARGE_TX_STATUS_CREDITED {
 		if err := creditCryptoRechargeOrder(ctx, svcCtx, in.OrderNo, in.TxHash); err != nil {
 			return nil, err
 		}
@@ -246,9 +359,15 @@ func createCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in 
 }
 
 func updateCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.UpdateCryptoRechargeTxReq) (*payment.CommonResp, error) {
+	if in.Id <= 0 {
+		return paymentErrorResp(ctx, i18n.PaymentRequiredParamsMissing), nil
+	}
 	item, err := svcCtx.CryptoRechargeTxModel.FindOne(ctx, in.Id)
-	if err != nil {
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
+	}
+	if errors.Is(err, models.ErrNotFound) || item == nil {
+		return paymentErrorResp(ctx, i18n.CryptoRechargeTxNotFound), nil
 	}
 	allowTenantUpdate, resp, err := applyAdminTenantUpdateScope(ctx, item.TenantId, i18n.CryptoRechargeTxNotFound)
 	if err != nil {
@@ -257,7 +376,7 @@ func updateCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in 
 	if resp != nil {
 		return resp, nil
 	}
-	if allowTenantUpdate {
+	if allowTenantUpdate && in.TenantId > 0 {
 		item.TenantId = in.TenantId
 	}
 	if in.OrderId > 0 {
@@ -273,10 +392,21 @@ func updateCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in 
 		item.RequiredConfirmCount = in.RequiredConfirmCount
 	}
 	if in.Status != 0 {
+		if _, ok := payment.CryptoRechargeTxStatus_name[int32(in.Status)]; !ok {
+			return paymentErrorResp(ctx, i18n.ParamError), nil
+		}
 		item.Status = int64(in.Status)
 	}
 	if in.RawData != "" {
-		item.RawData = nullableString(in.RawData)
+		rawData, valid := nullableJSON(in.RawData)
+		if !valid {
+			return paymentErrorResp(ctx, i18n.InvalidPaymentJSON), nil
+		}
+		item.RawData = rawData
+	}
+	if item.ConfirmCount < 0 || item.RequiredConfirmCount < 0 ||
+		(item.RequiredConfirmCount > 0 && item.ConfirmCount > item.RequiredConfirmCount) {
+		return paymentErrorResp(ctx, i18n.InvalidPaymentAmountRange), nil
 	}
 	if payment.CryptoRechargeTxStatus(item.Status) == payment.CryptoRechargeTxStatus_CRYPTO_RECHARGE_TX_STATUS_CREDITED {
 		if err := creditCryptoRechargeOrder(ctx, svcCtx, item.OrderNo, item.TxHash); err != nil {

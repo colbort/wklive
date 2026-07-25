@@ -655,31 +655,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: payment.ListTenantPayChannelsHandler(serverCtx),
 			},
 			{
-				Method:  http.MethodPost,
-				Path:    "/tenant-platform",
-				Handler: payment.OpenTenantPayPlatformHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPut,
-				Path:    "/tenant-platform",
-				Handler: payment.UpdateTenantPayPlatformHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/tenant-platform",
-				Handler: payment.GetTenantPayPlatformHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodDelete,
-				Path:    "/tenant-platform/:id",
-				Handler: payment.DeleteTenantPayPlatformHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodGet,
-				Path:    "/tenant-platforms",
-				Handler: payment.ListTenantPayPlatformsHandler(serverCtx),
-			},
-			{
 				Method:  http.MethodGet,
 				Path:    "/user-recharge-stat",
 				Handler: payment.GetUserRechargeStatHandler(serverCtx),

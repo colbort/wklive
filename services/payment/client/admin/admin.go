@@ -64,8 +64,6 @@ type (
 	GetTenantPayChannelResp           = payment.GetTenantPayChannelResp
 	GetTenantPayChannelRuleReq        = payment.GetTenantPayChannelRuleReq
 	GetTenantPayChannelRuleResp       = payment.GetTenantPayChannelRuleResp
-	GetTenantPayPlatformReq           = payment.GetTenantPayPlatformReq
-	GetTenantPayPlatformResp          = payment.GetTenantPayPlatformResp
 	GetUserRechargeStatReq            = payment.GetUserRechargeStatReq
 	GetUserRechargeStatResp           = payment.GetUserRechargeStatResp
 	GetWithdrawNotifyLogReq           = payment.GetWithdrawNotifyLogReq
@@ -102,8 +100,6 @@ type (
 	ListTenantPayChannelRulesResp     = payment.ListTenantPayChannelRulesResp
 	ListTenantPayChannelsReq          = payment.ListTenantPayChannelsReq
 	ListTenantPayChannelsResp         = payment.ListTenantPayChannelsResp
-	ListTenantPayPlatformsReq         = payment.ListTenantPayPlatformsReq
-	ListTenantPayPlatformsResp        = payment.ListTenantPayPlatformsResp
 	ListUserRechargeStatsReq          = payment.ListUserRechargeStatsReq
 	ListUserRechargeStatsResp         = payment.ListUserRechargeStatsResp
 	ListWithdrawNotifyLogsReq         = payment.ListWithdrawNotifyLogsReq
@@ -111,7 +107,6 @@ type (
 	ListWithdrawOrdersReq             = payment.ListWithdrawOrdersReq
 	ListWithdrawOrdersResp            = payment.ListWithdrawOrdersResp
 	ManualMarkRechargeOrderSuccessReq = payment.ManualMarkRechargeOrderSuccessReq
-	OpenTenantPayPlatformReq          = payment.OpenTenantPayPlatformReq
 	PayPlatformItem                   = payment.PayPlatformItem
 	PayPlatformsResp                  = payment.PayPlatformsResp
 	QueryMyRechargeOrderStatusReq     = payment.QueryMyRechargeOrderStatusReq
@@ -127,7 +122,6 @@ type (
 	UpdateTenantPayAccountReq         = payment.UpdateTenantPayAccountReq
 	UpdateTenantPayChannelReq         = payment.UpdateTenantPayChannelReq
 	UpdateTenantPayChannelRuleReq     = payment.UpdateTenantPayChannelRuleReq
-	UpdateTenantPayPlatformReq        = payment.UpdateTenantPayPlatformReq
 	UserCommonResp                    = payment.UserCommonResp
 
 	Admin interface {
@@ -149,14 +143,6 @@ type (
 		GetPayProduct(ctx context.Context, in *GetPayProductReq, opts ...grpc.CallOption) (*GetPayProductResp, error)
 		// 产品列表
 		ListPayProducts(ctx context.Context, in *ListPayProductsReq, opts ...grpc.CallOption) (*ListPayProductsResp, error)
-		// 租户开通平台
-		OpenTenantPayPlatform(ctx context.Context, in *OpenTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error)
-		// 更新租户开通平台
-		UpdateTenantPayPlatform(ctx context.Context, in *UpdateTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error)
-		// 获取租户开通平台详情
-		GetTenantPayPlatform(ctx context.Context, in *GetTenantPayPlatformReq, opts ...grpc.CallOption) (*GetTenantPayPlatformResp, error)
-		// 租户开通平台列表
-		ListTenantPayPlatforms(ctx context.Context, in *ListTenantPayPlatformsReq, opts ...grpc.CallOption) (*ListTenantPayPlatformsResp, error)
 		// 租户支付账号
 		CreateTenantPayAccount(ctx context.Context, in *CreateTenantPayAccountReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 更新租户支付账号
@@ -298,30 +284,6 @@ func (m *defaultAdmin) GetPayProduct(ctx context.Context, in *GetPayProductReq, 
 func (m *defaultAdmin) ListPayProducts(ctx context.Context, in *ListPayProductsReq, opts ...grpc.CallOption) (*ListPayProductsResp, error) {
 	client := payment.NewAdminClient(m.cli.Conn())
 	return client.ListPayProducts(ctx, in, opts...)
-}
-
-// 租户开通平台
-func (m *defaultAdmin) OpenTenantPayPlatform(ctx context.Context, in *OpenTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
-	client := payment.NewAdminClient(m.cli.Conn())
-	return client.OpenTenantPayPlatform(ctx, in, opts...)
-}
-
-// 更新租户开通平台
-func (m *defaultAdmin) UpdateTenantPayPlatform(ctx context.Context, in *UpdateTenantPayPlatformReq, opts ...grpc.CallOption) (*CommonResp, error) {
-	client := payment.NewAdminClient(m.cli.Conn())
-	return client.UpdateTenantPayPlatform(ctx, in, opts...)
-}
-
-// 获取租户开通平台详情
-func (m *defaultAdmin) GetTenantPayPlatform(ctx context.Context, in *GetTenantPayPlatformReq, opts ...grpc.CallOption) (*GetTenantPayPlatformResp, error) {
-	client := payment.NewAdminClient(m.cli.Conn())
-	return client.GetTenantPayPlatform(ctx, in, opts...)
-}
-
-// 租户开通平台列表
-func (m *defaultAdmin) ListTenantPayPlatforms(ctx context.Context, in *ListTenantPayPlatformsReq, opts ...grpc.CallOption) (*ListTenantPayPlatformsResp, error) {
-	client := payment.NewAdminClient(m.cli.Conn())
-	return client.ListTenantPayPlatforms(ctx, in, opts...)
 }
 
 // 租户支付账号

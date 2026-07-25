@@ -4,7 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"strconv"
+	"strings"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -16,6 +18,7 @@ import (
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
 
+	"github.com/go-sql-driver/mysql"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
@@ -273,48 +276,31 @@ func toPayProductProto(item *models.TPayProduct) *payment.PayProduct {
 	}
 }
 
-func toTenantPayPlatformProto(item *models.TTenantPayPlatform) *payment.TenantPayPlatform {
-	if item == nil {
-		return nil
-	}
-	return &payment.TenantPayPlatform{
-		Id:          item.Id,
-		TenantId:    item.TenantId,
-		PlatformId:  item.PlatformId,
-		Enabled:     common.Enable(item.Enabled),
-		OpenStatus:  payment.OpenStatus(item.OpenStatus),
-		Remark:      item.Remark.String,
-		CreateTimes: item.CreateTimes,
-		UpdateTimes: item.UpdateTimes,
-	}
-}
-
 func toTenantPayAccountProto(item *models.TTenantPayAccount) *payment.TenantPayAccount {
 	if item == nil {
 		return nil
 	}
 	return &payment.TenantPayAccount{
-		Id:                  item.Id,
-		TenantId:            item.TenantId,
-		TenantPayPlatformId: item.TenantPayPlatformId,
-		PlatformId:          item.PlatformId,
-		AccountCode:         item.AccountCode,
-		AccountName:         item.AccountName,
-		AppId:               item.AppId.String,
-		MerchantId:          item.MerchantId.String,
-		MerchantName:        item.MerchantName.String,
-		ApiKeyCipher:        item.ApiKeyCipher.String,
-		ApiSecretCipher:     item.ApiSecretCipher.String,
-		PrivateKeyCipher:    item.PrivateKeyCipher.String,
-		PublicKey:           item.PublicKey.String,
-		CertCipher:          item.CertCipher.String,
-		CredentialRef:       item.CredentialRef,
-		ExtConfig:           item.ExtConfig.String,
-		Enabled:             common.Enable(item.Enabled),
-		IsDefault:           common.YesNo(item.IsDefault),
-		Remark:              item.Remark.String,
-		CreateTimes:         item.CreateTimes,
-		UpdateTimes:         item.UpdateTimes,
+		Id:               item.Id,
+		TenantId:         item.TenantId,
+		PlatformId:       item.PlatformId,
+		AccountCode:      item.AccountCode,
+		AccountName:      item.AccountName,
+		AppId:            item.AppId.String,
+		MerchantId:       item.MerchantId.String,
+		MerchantName:     item.MerchantName.String,
+		ApiKeyCipher:     item.ApiKeyCipher.String,
+		ApiSecretCipher:  item.ApiSecretCipher.String,
+		PrivateKeyCipher: item.PrivateKeyCipher.String,
+		PublicKey:        item.PublicKey.String,
+		CertCipher:       item.CertCipher.String,
+		CredentialRef:    item.CredentialRef,
+		ExtConfig:        item.ExtConfig.String,
+		Enabled:          common.Enable(item.Enabled),
+		IsDefault:        common.YesNo(item.IsDefault),
+		Remark:           item.Remark.String,
+		CreateTimes:      item.CreateTimes,
+		UpdateTimes:      item.UpdateTimes,
 	}
 }
 
@@ -629,4 +615,17 @@ func enableToModel(enabled common.Enable, defaultValue int64) int64 {
 		return defaultValue
 	}
 	return int64(enabled)
+}
+
+func nullableJSON(value string) (sql.NullString, bool) {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return sql.NullString{}, true
+	}
+	return sql.NullString{String: value, Valid: true}, json.Valid([]byte(value))
+}
+
+func isDuplicateEntry(err error) bool {
+	var mysqlErr *mysql.MySQLError
+	return errors.As(err, &mysqlErr) && mysqlErr.Number == 1062
 }

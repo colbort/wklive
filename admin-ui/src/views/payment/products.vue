@@ -2,7 +2,11 @@
   <div class="payment-page module-page">
     <CrudQueryCard :model="productQuery" @search="loadList" @reset="resetQuery">
       <el-form-item :label="t('payment.platformId')">
-        <el-input-number v-model="productQuery.platformId" :min="0" :precision="0" />
+        <PayPlatformSelect
+          v-model="productQuery.platformId"
+          :enabled-only="false"
+          class="platform-select-filter"
+        />
       </el-form-item>
       <el-form-item :label="t('payment.productCode')">
         <el-input v-model="productQuery.productCode" clearable />
@@ -87,20 +91,11 @@
     >
       <el-form label-width="100px">
         <el-form-item v-if="!productForm.id" :label="t('payment.platformId')">
-          <div class="platform-verify-row">
-            <el-input-number
-              v-model="productForm.platformId"
-              :min="1"
-              :precision="0"
-              @change="handlePlatformIdChange"
-            />
-            <el-button :loading="platformChecking" @click="checkPlatform">
-              {{ t('payment.verifyPlatform') }}
-            </el-button>
-            <span v-if="platformVerified" class="platform-verified-text">
-              {{ t('payment.verified') }}
-            </span>
-          </div>
+          <PayPlatformSelect
+            v-model="productForm.platformId"
+            :clearable="false"
+            @change="handlePlatformIdChange"
+          />
         </el-form-item>
         <el-form-item v-if="!productForm.id" :label="t('payment.productCode')">
           <el-input v-model="productForm.productCode" />
@@ -164,6 +159,7 @@ import { usePagination } from '@/composables'
 import { ElMessage } from 'element-plus'
 import { catalogService, type OptionGroup, type PayProduct } from '@/services'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
+import PayPlatformSelect from '@/components/payment/PayPlatformSelect.vue'
 import { findFormOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
@@ -178,7 +174,6 @@ const detailVisible = ref(false)
 const detailTitle = ref('')
 const detailData = ref<PayProduct | null>(null)
 const productDialogVisible = ref(false)
-const platformChecking = ref(false)
 const platformVerified = ref(false)
 const verifiedPlatformId = ref(0)
 const optionGroups = ref<OptionGroup[]>([])
@@ -249,39 +244,8 @@ const openProductDialog = (row?: PayProduct) => {
 }
 
 const handlePlatformIdChange = () => {
-  platformVerified.value = false
-  verifiedPlatformId.value = 0
-}
-
-const validatePlatformExists = async (platformId: number) => {
-  if (!platformId) {
-    ElMessage.warning(t('payment.pleaseInputPlatformId'))
-    return false
-  }
-
-  platformChecking.value = true
-  try {
-    const res = await catalogService.getPlatformDetail(platformId)
-    if (!res.data?.id) {
-      ElMessage.error(t('payment.platformNotFound'))
-      return false
-    }
-    return true
-  } catch {
-    ElMessage.error(t('payment.platformNotFound'))
-    return false
-  } finally {
-    platformChecking.value = false
-  }
-}
-
-const checkPlatform = async () => {
-  const platformExists = await validatePlatformExists(productForm.platformId)
-  platformVerified.value = platformExists
-  verifiedPlatformId.value = platformExists ? productForm.platformId : 0
-  if (platformExists) {
-    ElMessage.success(t('payment.platformVerifiedSuccess'))
-  }
+  platformVerified.value = productForm.platformId > 0
+  verifiedPlatformId.value = productForm.platformId
 }
 
 const submitProduct = async () => {

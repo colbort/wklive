@@ -1,13 +1,9 @@
 import { get, post, put } from '@/utils/request'
 import type {
   RespBase,
-  TenantPayPlatform,
   TenantPayAccount,
   TenantPayChannel,
   TenantPayChannelRule,
-  OpenTenantPayPlatformReq,
-  UpdateTenantPayPlatformReq,
-  ListTenantPayPlatformsReq,
   CreateTenantPayAccountReq,
   UpdateTenantPayAccountReq,
   ListTenantPayAccountsReq,
@@ -18,27 +14,6 @@ import type {
   UpdateTenantPayChannelRuleReq,
   ListTenantPayChannelRulesReq,
 } from '@/services'
-
-export function apiTenantPayPlatformList(
-  params: ListTenantPayPlatformsReq,
-): Promise<RespBase<TenantPayPlatform[]>> {
-  return get<TenantPayPlatform[]>('/admin/payment/tenant-platforms', params)
-}
-
-export function apiTenantPayPlatformDetail(
-  id: number,
-  tenantId: number,
-): Promise<RespBase<TenantPayPlatform>> {
-  return get<TenantPayPlatform>('/admin/payment/tenant-platform', { id, tenantId })
-}
-
-export function apiOpenTenantPayPlatform(params: OpenTenantPayPlatformReq): Promise<RespBase> {
-  return post('/admin/payment/tenant-platform', params)
-}
-
-export function apiUpdateTenantPayPlatform(params: UpdateTenantPayPlatformReq): Promise<RespBase> {
-  return put('/admin/payment/tenant-platform', params)
-}
 
 export function apiTenantPayAccountList(
   params: ListTenantPayAccountsReq,

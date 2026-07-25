@@ -2816,419 +2816,33 @@ func (x *ListPayProductsResp) GetData() []*PayProduct {
 	return nil
 }
 
-// ---------- 租户开通平台 ----------
-type OpenTenantPayPlatformReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	PlatformId    int64                  `protobuf:"varint,2,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
-	Enabled       common.Enable          `protobuf:"varint,3,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
-	OpenStatus    OpenStatus             `protobuf:"varint,4,opt,name=open_status,json=openStatus,proto3,enum=payment.OpenStatus" json:"open_status,omitempty"`
-	Remark        string                 `protobuf:"bytes,5,opt,name=remark,proto3" json:"remark,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *OpenTenantPayPlatformReq) Reset() {
-	*x = OpenTenantPayPlatformReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[46]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *OpenTenantPayPlatformReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*OpenTenantPayPlatformReq) ProtoMessage() {}
-
-func (x *OpenTenantPayPlatformReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[46]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use OpenTenantPayPlatformReq.ProtoReflect.Descriptor instead.
-func (*OpenTenantPayPlatformReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{46}
-}
-
-func (x *OpenTenantPayPlatformReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *OpenTenantPayPlatformReq) GetPlatformId() int64 {
-	if x != nil {
-		return x.PlatformId
-	}
-	return 0
-}
-
-func (x *OpenTenantPayPlatformReq) GetEnabled() common.Enable {
-	if x != nil {
-		return x.Enabled
-	}
-	return common.Enable(0)
-}
-
-func (x *OpenTenantPayPlatformReq) GetOpenStatus() OpenStatus {
-	if x != nil {
-		return x.OpenStatus
-	}
-	return OpenStatus_OPEN_STATUS_UNKNOWN
-}
-
-func (x *OpenTenantPayPlatformReq) GetRemark() string {
-	if x != nil {
-		return x.Remark
-	}
-	return ""
-}
-
-type UpdateTenantPayPlatformReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Enabled       common.Enable          `protobuf:"varint,3,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
-	OpenStatus    OpenStatus             `protobuf:"varint,4,opt,name=open_status,json=openStatus,proto3,enum=payment.OpenStatus" json:"open_status,omitempty"`
-	Remark        string                 `protobuf:"bytes,5,opt,name=remark,proto3" json:"remark,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateTenantPayPlatformReq) Reset() {
-	*x = UpdateTenantPayPlatformReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[47]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateTenantPayPlatformReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateTenantPayPlatformReq) ProtoMessage() {}
-
-func (x *UpdateTenantPayPlatformReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[47]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateTenantPayPlatformReq.ProtoReflect.Descriptor instead.
-func (*UpdateTenantPayPlatformReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{47}
-}
-
-func (x *UpdateTenantPayPlatformReq) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *UpdateTenantPayPlatformReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *UpdateTenantPayPlatformReq) GetEnabled() common.Enable {
-	if x != nil {
-		return x.Enabled
-	}
-	return common.Enable(0)
-}
-
-func (x *UpdateTenantPayPlatformReq) GetOpenStatus() OpenStatus {
-	if x != nil {
-		return x.OpenStatus
-	}
-	return OpenStatus_OPEN_STATUS_UNKNOWN
-}
-
-func (x *UpdateTenantPayPlatformReq) GetRemark() string {
-	if x != nil {
-		return x.Remark
-	}
-	return ""
-}
-
-type GetTenantPayPlatformReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetTenantPayPlatformReq) Reset() {
-	*x = GetTenantPayPlatformReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[48]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetTenantPayPlatformReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetTenantPayPlatformReq) ProtoMessage() {}
-
-func (x *GetTenantPayPlatformReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[48]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetTenantPayPlatformReq.ProtoReflect.Descriptor instead.
-func (*GetTenantPayPlatformReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{48}
-}
-
-func (x *GetTenantPayPlatformReq) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *GetTenantPayPlatformReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-type GetTenantPayPlatformResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          *TenantPayPlatform     `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetTenantPayPlatformResp) Reset() {
-	*x = GetTenantPayPlatformResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[49]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetTenantPayPlatformResp) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetTenantPayPlatformResp) ProtoMessage() {}
-
-func (x *GetTenantPayPlatformResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[49]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetTenantPayPlatformResp.ProtoReflect.Descriptor instead.
-func (*GetTenantPayPlatformResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{49}
-}
-
-func (x *GetTenantPayPlatformResp) GetBase() *common.RespBase {
-	if x != nil {
-		return x.Base
-	}
-	return nil
-}
-
-func (x *GetTenantPayPlatformResp) GetData() *TenantPayPlatform {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
-type ListTenantPayPlatformsReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
-	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	PlatformId    int64                  `protobuf:"varint,3,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
-	Enabled       common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
-	OpenStatus    OpenStatus             `protobuf:"varint,5,opt,name=open_status,json=openStatus,proto3,enum=payment.OpenStatus" json:"open_status,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListTenantPayPlatformsReq) Reset() {
-	*x = ListTenantPayPlatformsReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[50]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListTenantPayPlatformsReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListTenantPayPlatformsReq) ProtoMessage() {}
-
-func (x *ListTenantPayPlatformsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[50]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListTenantPayPlatformsReq.ProtoReflect.Descriptor instead.
-func (*ListTenantPayPlatformsReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{50}
-}
-
-func (x *ListTenantPayPlatformsReq) GetPage() *common.PageReq {
-	if x != nil {
-		return x.Page
-	}
-	return nil
-}
-
-func (x *ListTenantPayPlatformsReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *ListTenantPayPlatformsReq) GetPlatformId() int64 {
-	if x != nil {
-		return x.PlatformId
-	}
-	return 0
-}
-
-func (x *ListTenantPayPlatformsReq) GetEnabled() common.Enable {
-	if x != nil {
-		return x.Enabled
-	}
-	return common.Enable(0)
-}
-
-func (x *ListTenantPayPlatformsReq) GetOpenStatus() OpenStatus {
-	if x != nil {
-		return x.OpenStatus
-	}
-	return OpenStatus_OPEN_STATUS_UNKNOWN
-}
-
-type ListTenantPayPlatformsResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          []*TenantPayPlatform   `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListTenantPayPlatformsResp) Reset() {
-	*x = ListTenantPayPlatformsResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[51]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListTenantPayPlatformsResp) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListTenantPayPlatformsResp) ProtoMessage() {}
-
-func (x *ListTenantPayPlatformsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[51]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListTenantPayPlatformsResp.ProtoReflect.Descriptor instead.
-func (*ListTenantPayPlatformsResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{51}
-}
-
-func (x *ListTenantPayPlatformsResp) GetBase() *common.RespBase {
-	if x != nil {
-		return x.Base
-	}
-	return nil
-}
-
-func (x *ListTenantPayPlatformsResp) GetData() []*TenantPayPlatform {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
 // ---------- 租户支付账号 ----------
 type CreateTenantPayAccountReq struct {
-	state               protoimpl.MessageState `protogen:"open.v1"`
-	TenantId            int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	TenantPayPlatformId int64                  `protobuf:"varint,2,opt,name=tenant_pay_platform_id,json=tenantPayPlatformId,proto3" json:"tenant_pay_platform_id,omitempty"`
-	PlatformId          int64                  `protobuf:"varint,3,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
-	AccountCode         string                 `protobuf:"bytes,4,opt,name=account_code,json=accountCode,proto3" json:"account_code,omitempty"`
-	AccountName         string                 `protobuf:"bytes,5,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`
-	AppId               string                 `protobuf:"bytes,6,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
-	MerchantId          string                 `protobuf:"bytes,7,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`
-	MerchantName        string                 `protobuf:"bytes,8,opt,name=merchant_name,json=merchantName,proto3" json:"merchant_name,omitempty"`
-	ApiKeyCipher        string                 `protobuf:"bytes,9,opt,name=api_key_cipher,json=apiKeyCipher,proto3" json:"api_key_cipher,omitempty"`
-	ApiSecretCipher     string                 `protobuf:"bytes,10,opt,name=api_secret_cipher,json=apiSecretCipher,proto3" json:"api_secret_cipher,omitempty"`
-	PrivateKeyCipher    string                 `protobuf:"bytes,11,opt,name=private_key_cipher,json=privateKeyCipher,proto3" json:"private_key_cipher,omitempty"`
-	PublicKey           string                 `protobuf:"bytes,12,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
-	CertCipher          string                 `protobuf:"bytes,13,opt,name=cert_cipher,json=certCipher,proto3" json:"cert_cipher,omitempty"`
-	ExtConfig           string                 `protobuf:"bytes,14,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`
-	Enabled             common.Enable          `protobuf:"varint,15,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
-	IsDefault           common.YesNo           `protobuf:"varint,16,opt,name=is_default,json=isDefault,proto3,enum=common.YesNo" json:"is_default,omitempty"`
-	Remark              string                 `protobuf:"bytes,17,opt,name=remark,proto3" json:"remark,omitempty"`
-	CredentialRef       string                 `protobuf:"bytes,18,opt,name=credential_ref,json=credentialRef,proto3" json:"credential_ref,omitempty"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	TenantId         int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	PlatformId       int64                  `protobuf:"varint,3,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
+	AccountCode      string                 `protobuf:"bytes,4,opt,name=account_code,json=accountCode,proto3" json:"account_code,omitempty"`
+	AccountName      string                 `protobuf:"bytes,5,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`
+	AppId            string                 `protobuf:"bytes,6,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	MerchantId       string                 `protobuf:"bytes,7,opt,name=merchant_id,json=merchantId,proto3" json:"merchant_id,omitempty"`
+	MerchantName     string                 `protobuf:"bytes,8,opt,name=merchant_name,json=merchantName,proto3" json:"merchant_name,omitempty"`
+	ApiKeyCipher     string                 `protobuf:"bytes,9,opt,name=api_key_cipher,json=apiKeyCipher,proto3" json:"api_key_cipher,omitempty"`
+	ApiSecretCipher  string                 `protobuf:"bytes,10,opt,name=api_secret_cipher,json=apiSecretCipher,proto3" json:"api_secret_cipher,omitempty"`
+	PrivateKeyCipher string                 `protobuf:"bytes,11,opt,name=private_key_cipher,json=privateKeyCipher,proto3" json:"private_key_cipher,omitempty"`
+	PublicKey        string                 `protobuf:"bytes,12,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
+	CertCipher       string                 `protobuf:"bytes,13,opt,name=cert_cipher,json=certCipher,proto3" json:"cert_cipher,omitempty"`
+	ExtConfig        string                 `protobuf:"bytes,14,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`
+	Enabled          common.Enable          `protobuf:"varint,15,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
+	IsDefault        common.YesNo           `protobuf:"varint,16,opt,name=is_default,json=isDefault,proto3,enum=common.YesNo" json:"is_default,omitempty"`
+	Remark           string                 `protobuf:"bytes,17,opt,name=remark,proto3" json:"remark,omitempty"`
+	CredentialRef    string                 `protobuf:"bytes,18,opt,name=credential_ref,json=credentialRef,proto3" json:"credential_ref,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *CreateTenantPayAccountReq) Reset() {
 	*x = CreateTenantPayAccountReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[52]
+	mi := &file_proto_payment_payment_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3240,7 +2854,7 @@ func (x *CreateTenantPayAccountReq) String() string {
 func (*CreateTenantPayAccountReq) ProtoMessage() {}
 
 func (x *CreateTenantPayAccountReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[52]
+	mi := &file_proto_payment_payment_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3253,19 +2867,12 @@ func (x *CreateTenantPayAccountReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTenantPayAccountReq.ProtoReflect.Descriptor instead.
 func (*CreateTenantPayAccountReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{52}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *CreateTenantPayAccountReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
-	}
-	return 0
-}
-
-func (x *CreateTenantPayAccountReq) GetTenantPayPlatformId() int64 {
-	if x != nil {
-		return x.TenantPayPlatformId
 	}
 	return 0
 }
@@ -3406,7 +3013,7 @@ type UpdateTenantPayAccountReq struct {
 
 func (x *UpdateTenantPayAccountReq) Reset() {
 	*x = UpdateTenantPayAccountReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[53]
+	mi := &file_proto_payment_payment_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3418,7 +3025,7 @@ func (x *UpdateTenantPayAccountReq) String() string {
 func (*UpdateTenantPayAccountReq) ProtoMessage() {}
 
 func (x *UpdateTenantPayAccountReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[53]
+	mi := &file_proto_payment_payment_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3431,7 +3038,7 @@ func (x *UpdateTenantPayAccountReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTenantPayAccountReq.ProtoReflect.Descriptor instead.
 func (*UpdateTenantPayAccountReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{53}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *UpdateTenantPayAccountReq) GetId() int64 {
@@ -3556,7 +3163,7 @@ type GetTenantPayAccountReq struct {
 
 func (x *GetTenantPayAccountReq) Reset() {
 	*x = GetTenantPayAccountReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[54]
+	mi := &file_proto_payment_payment_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3568,7 +3175,7 @@ func (x *GetTenantPayAccountReq) String() string {
 func (*GetTenantPayAccountReq) ProtoMessage() {}
 
 func (x *GetTenantPayAccountReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[54]
+	mi := &file_proto_payment_payment_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3581,7 +3188,7 @@ func (x *GetTenantPayAccountReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTenantPayAccountReq.ProtoReflect.Descriptor instead.
 func (*GetTenantPayAccountReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{54}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *GetTenantPayAccountReq) GetId() int64 {
@@ -3608,7 +3215,7 @@ type GetTenantPayAccountResp struct {
 
 func (x *GetTenantPayAccountResp) Reset() {
 	*x = GetTenantPayAccountResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[55]
+	mi := &file_proto_payment_payment_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3620,7 +3227,7 @@ func (x *GetTenantPayAccountResp) String() string {
 func (*GetTenantPayAccountResp) ProtoMessage() {}
 
 func (x *GetTenantPayAccountResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[55]
+	mi := &file_proto_payment_payment_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3633,7 +3240,7 @@ func (x *GetTenantPayAccountResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTenantPayAccountResp.ProtoReflect.Descriptor instead.
 func (*GetTenantPayAccountResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{55}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *GetTenantPayAccountResp) GetBase() *common.RespBase {
@@ -3651,20 +3258,19 @@ func (x *GetTenantPayAccountResp) GetData() *TenantPayAccount {
 }
 
 type ListTenantPayAccountsReq struct {
-	state               protoimpl.MessageState `protogen:"open.v1"`
-	Page                *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
-	TenantId            int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	PlatformId          int64                  `protobuf:"varint,3,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
-	TenantPayPlatformId int64                  `protobuf:"varint,4,opt,name=tenant_pay_platform_id,json=tenantPayPlatformId,proto3" json:"tenant_pay_platform_id,omitempty"`
-	Keyword             string                 `protobuf:"bytes,5,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	Enabled             common.Enable          `protobuf:"varint,6,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	PlatformId    int64                  `protobuf:"varint,3,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`
+	Keyword       string                 `protobuf:"bytes,5,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	Enabled       common.Enable          `protobuf:"varint,6,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListTenantPayAccountsReq) Reset() {
 	*x = ListTenantPayAccountsReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[56]
+	mi := &file_proto_payment_payment_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3676,7 +3282,7 @@ func (x *ListTenantPayAccountsReq) String() string {
 func (*ListTenantPayAccountsReq) ProtoMessage() {}
 
 func (x *ListTenantPayAccountsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[56]
+	mi := &file_proto_payment_payment_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3689,7 +3295,7 @@ func (x *ListTenantPayAccountsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTenantPayAccountsReq.ProtoReflect.Descriptor instead.
 func (*ListTenantPayAccountsReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{56}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *ListTenantPayAccountsReq) GetPage() *common.PageReq {
@@ -3709,13 +3315,6 @@ func (x *ListTenantPayAccountsReq) GetTenantId() int64 {
 func (x *ListTenantPayAccountsReq) GetPlatformId() int64 {
 	if x != nil {
 		return x.PlatformId
-	}
-	return 0
-}
-
-func (x *ListTenantPayAccountsReq) GetTenantPayPlatformId() int64 {
-	if x != nil {
-		return x.TenantPayPlatformId
 	}
 	return 0
 }
@@ -3744,7 +3343,7 @@ type ListTenantPayAccountsResp struct {
 
 func (x *ListTenantPayAccountsResp) Reset() {
 	*x = ListTenantPayAccountsResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[57]
+	mi := &file_proto_payment_payment_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3756,7 +3355,7 @@ func (x *ListTenantPayAccountsResp) String() string {
 func (*ListTenantPayAccountsResp) ProtoMessage() {}
 
 func (x *ListTenantPayAccountsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[57]
+	mi := &file_proto_payment_payment_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3769,7 +3368,7 @@ func (x *ListTenantPayAccountsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTenantPayAccountsResp.ProtoReflect.Descriptor instead.
 func (*ListTenantPayAccountsResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{57}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *ListTenantPayAccountsResp) GetBase() *common.RespBase {
@@ -3816,7 +3415,7 @@ type CreateTenantPayChannelReq struct {
 
 func (x *CreateTenantPayChannelReq) Reset() {
 	*x = CreateTenantPayChannelReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[58]
+	mi := &file_proto_payment_payment_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3828,7 +3427,7 @@ func (x *CreateTenantPayChannelReq) String() string {
 func (*CreateTenantPayChannelReq) ProtoMessage() {}
 
 func (x *CreateTenantPayChannelReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[58]
+	mi := &file_proto_payment_payment_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3841,7 +3440,7 @@ func (x *CreateTenantPayChannelReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTenantPayChannelReq.ProtoReflect.Descriptor instead.
 func (*CreateTenantPayChannelReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{58}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *CreateTenantPayChannelReq) GetTenantId() int64 {
@@ -4017,7 +3616,7 @@ type UpdateTenantPayChannelReq struct {
 
 func (x *UpdateTenantPayChannelReq) Reset() {
 	*x = UpdateTenantPayChannelReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[59]
+	mi := &file_proto_payment_payment_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4029,7 +3628,7 @@ func (x *UpdateTenantPayChannelReq) String() string {
 func (*UpdateTenantPayChannelReq) ProtoMessage() {}
 
 func (x *UpdateTenantPayChannelReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[59]
+	mi := &file_proto_payment_payment_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4042,7 +3641,7 @@ func (x *UpdateTenantPayChannelReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTenantPayChannelReq.ProtoReflect.Descriptor instead.
 func (*UpdateTenantPayChannelReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{59}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *UpdateTenantPayChannelReq) GetId() int64 {
@@ -4181,7 +3780,7 @@ type GetTenantPayChannelReq struct {
 
 func (x *GetTenantPayChannelReq) Reset() {
 	*x = GetTenantPayChannelReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[60]
+	mi := &file_proto_payment_payment_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4193,7 +3792,7 @@ func (x *GetTenantPayChannelReq) String() string {
 func (*GetTenantPayChannelReq) ProtoMessage() {}
 
 func (x *GetTenantPayChannelReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[60]
+	mi := &file_proto_payment_payment_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4206,7 +3805,7 @@ func (x *GetTenantPayChannelReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTenantPayChannelReq.ProtoReflect.Descriptor instead.
 func (*GetTenantPayChannelReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{60}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *GetTenantPayChannelReq) GetId() int64 {
@@ -4233,7 +3832,7 @@ type GetTenantPayChannelResp struct {
 
 func (x *GetTenantPayChannelResp) Reset() {
 	*x = GetTenantPayChannelResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[61]
+	mi := &file_proto_payment_payment_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4245,7 +3844,7 @@ func (x *GetTenantPayChannelResp) String() string {
 func (*GetTenantPayChannelResp) ProtoMessage() {}
 
 func (x *GetTenantPayChannelResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[61]
+	mi := &file_proto_payment_payment_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4258,7 +3857,7 @@ func (x *GetTenantPayChannelResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTenantPayChannelResp.ProtoReflect.Descriptor instead.
 func (*GetTenantPayChannelResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{61}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *GetTenantPayChannelResp) GetBase() *common.RespBase {
@@ -4291,7 +3890,7 @@ type ListTenantPayChannelsReq struct {
 
 func (x *ListTenantPayChannelsReq) Reset() {
 	*x = ListTenantPayChannelsReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[62]
+	mi := &file_proto_payment_payment_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4303,7 +3902,7 @@ func (x *ListTenantPayChannelsReq) String() string {
 func (*ListTenantPayChannelsReq) ProtoMessage() {}
 
 func (x *ListTenantPayChannelsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[62]
+	mi := &file_proto_payment_payment_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4316,7 +3915,7 @@ func (x *ListTenantPayChannelsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTenantPayChannelsReq.ProtoReflect.Descriptor instead.
 func (*ListTenantPayChannelsReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{62}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *ListTenantPayChannelsReq) GetPage() *common.PageReq {
@@ -4385,7 +3984,7 @@ type ListTenantPayChannelsResp struct {
 
 func (x *ListTenantPayChannelsResp) Reset() {
 	*x = ListTenantPayChannelsResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[63]
+	mi := &file_proto_payment_payment_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4397,7 +3996,7 @@ func (x *ListTenantPayChannelsResp) String() string {
 func (*ListTenantPayChannelsResp) ProtoMessage() {}
 
 func (x *ListTenantPayChannelsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[63]
+	mi := &file_proto_payment_payment_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4410,7 +4009,7 @@ func (x *ListTenantPayChannelsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTenantPayChannelsResp.ProtoReflect.Descriptor instead.
 func (*ListTenantPayChannelsResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{63}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *ListTenantPayChannelsResp) GetBase() *common.RespBase {
@@ -4454,7 +4053,7 @@ type CreateTenantPayChannelRuleReq struct {
 
 func (x *CreateTenantPayChannelRuleReq) Reset() {
 	*x = CreateTenantPayChannelRuleReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[64]
+	mi := &file_proto_payment_payment_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4466,7 +4065,7 @@ func (x *CreateTenantPayChannelRuleReq) String() string {
 func (*CreateTenantPayChannelRuleReq) ProtoMessage() {}
 
 func (x *CreateTenantPayChannelRuleReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[64]
+	mi := &file_proto_payment_payment_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4479,7 +4078,7 @@ func (x *CreateTenantPayChannelRuleReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTenantPayChannelRuleReq.ProtoReflect.Descriptor instead.
 func (*CreateTenantPayChannelRuleReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{64}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *CreateTenantPayChannelRuleReq) GetTenantId() int64 {
@@ -4634,7 +4233,7 @@ type UpdateTenantPayChannelRuleReq struct {
 
 func (x *UpdateTenantPayChannelRuleReq) Reset() {
 	*x = UpdateTenantPayChannelRuleReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[65]
+	mi := &file_proto_payment_payment_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4646,7 +4245,7 @@ func (x *UpdateTenantPayChannelRuleReq) String() string {
 func (*UpdateTenantPayChannelRuleReq) ProtoMessage() {}
 
 func (x *UpdateTenantPayChannelRuleReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[65]
+	mi := &file_proto_payment_payment_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4659,7 +4258,7 @@ func (x *UpdateTenantPayChannelRuleReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTenantPayChannelRuleReq.ProtoReflect.Descriptor instead.
 func (*UpdateTenantPayChannelRuleReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{65}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *UpdateTenantPayChannelRuleReq) GetId() int64 {
@@ -4798,7 +4397,7 @@ type GetTenantPayChannelRuleReq struct {
 
 func (x *GetTenantPayChannelRuleReq) Reset() {
 	*x = GetTenantPayChannelRuleReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[66]
+	mi := &file_proto_payment_payment_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4810,7 +4409,7 @@ func (x *GetTenantPayChannelRuleReq) String() string {
 func (*GetTenantPayChannelRuleReq) ProtoMessage() {}
 
 func (x *GetTenantPayChannelRuleReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[66]
+	mi := &file_proto_payment_payment_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4823,7 +4422,7 @@ func (x *GetTenantPayChannelRuleReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTenantPayChannelRuleReq.ProtoReflect.Descriptor instead.
 func (*GetTenantPayChannelRuleReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{66}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *GetTenantPayChannelRuleReq) GetId() int64 {
@@ -4850,7 +4449,7 @@ type GetTenantPayChannelRuleResp struct {
 
 func (x *GetTenantPayChannelRuleResp) Reset() {
 	*x = GetTenantPayChannelRuleResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[67]
+	mi := &file_proto_payment_payment_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4862,7 +4461,7 @@ func (x *GetTenantPayChannelRuleResp) String() string {
 func (*GetTenantPayChannelRuleResp) ProtoMessage() {}
 
 func (x *GetTenantPayChannelRuleResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[67]
+	mi := &file_proto_payment_payment_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4875,7 +4474,7 @@ func (x *GetTenantPayChannelRuleResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTenantPayChannelRuleResp.ProtoReflect.Descriptor instead.
 func (*GetTenantPayChannelRuleResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{67}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *GetTenantPayChannelRuleResp) GetBase() *common.RespBase {
@@ -4904,7 +4503,7 @@ type ListTenantPayChannelRulesReq struct {
 
 func (x *ListTenantPayChannelRulesReq) Reset() {
 	*x = ListTenantPayChannelRulesReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[68]
+	mi := &file_proto_payment_payment_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4916,7 +4515,7 @@ func (x *ListTenantPayChannelRulesReq) String() string {
 func (*ListTenantPayChannelRulesReq) ProtoMessage() {}
 
 func (x *ListTenantPayChannelRulesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[68]
+	mi := &file_proto_payment_payment_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4929,7 +4528,7 @@ func (x *ListTenantPayChannelRulesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTenantPayChannelRulesReq.ProtoReflect.Descriptor instead.
 func (*ListTenantPayChannelRulesReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{68}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *ListTenantPayChannelRulesReq) GetPage() *common.PageReq {
@@ -4970,7 +4569,7 @@ type ListTenantPayChannelRulesResp struct {
 
 func (x *ListTenantPayChannelRulesResp) Reset() {
 	*x = ListTenantPayChannelRulesResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[69]
+	mi := &file_proto_payment_payment_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4982,7 +4581,7 @@ func (x *ListTenantPayChannelRulesResp) String() string {
 func (*ListTenantPayChannelRulesResp) ProtoMessage() {}
 
 func (x *ListTenantPayChannelRulesResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[69]
+	mi := &file_proto_payment_payment_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4995,7 +4594,7 @@ func (x *ListTenantPayChannelRulesResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTenantPayChannelRulesResp.ProtoReflect.Descriptor instead.
 func (*ListTenantPayChannelRulesResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{69}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *ListTenantPayChannelRulesResp) GetBase() *common.RespBase {
@@ -5023,7 +4622,7 @@ type GetUserRechargeStatReq struct {
 
 func (x *GetUserRechargeStatReq) Reset() {
 	*x = GetUserRechargeStatReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[70]
+	mi := &file_proto_payment_payment_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5035,7 +4634,7 @@ func (x *GetUserRechargeStatReq) String() string {
 func (*GetUserRechargeStatReq) ProtoMessage() {}
 
 func (x *GetUserRechargeStatReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[70]
+	mi := &file_proto_payment_payment_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5048,7 +4647,7 @@ func (x *GetUserRechargeStatReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserRechargeStatReq.ProtoReflect.Descriptor instead.
 func (*GetUserRechargeStatReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{70}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *GetUserRechargeStatReq) GetTenantId() int64 {
@@ -5075,7 +4674,7 @@ type GetUserRechargeStatResp struct {
 
 func (x *GetUserRechargeStatResp) Reset() {
 	*x = GetUserRechargeStatResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[71]
+	mi := &file_proto_payment_payment_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5087,7 +4686,7 @@ func (x *GetUserRechargeStatResp) String() string {
 func (*GetUserRechargeStatResp) ProtoMessage() {}
 
 func (x *GetUserRechargeStatResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[71]
+	mi := &file_proto_payment_payment_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5100,7 +4699,7 @@ func (x *GetUserRechargeStatResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserRechargeStatResp.ProtoReflect.Descriptor instead.
 func (*GetUserRechargeStatResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{71}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *GetUserRechargeStatResp) GetBase() *common.RespBase {
@@ -5130,7 +4729,7 @@ type ListUserRechargeStatsReq struct {
 
 func (x *ListUserRechargeStatsReq) Reset() {
 	*x = ListUserRechargeStatsReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[72]
+	mi := &file_proto_payment_payment_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5142,7 +4741,7 @@ func (x *ListUserRechargeStatsReq) String() string {
 func (*ListUserRechargeStatsReq) ProtoMessage() {}
 
 func (x *ListUserRechargeStatsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[72]
+	mi := &file_proto_payment_payment_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5155,7 +4754,7 @@ func (x *ListUserRechargeStatsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUserRechargeStatsReq.ProtoReflect.Descriptor instead.
 func (*ListUserRechargeStatsReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{72}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{66}
 }
 
 func (x *ListUserRechargeStatsReq) GetPage() *common.PageReq {
@@ -5203,7 +4802,7 @@ type ListUserRechargeStatsResp struct {
 
 func (x *ListUserRechargeStatsResp) Reset() {
 	*x = ListUserRechargeStatsResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[73]
+	mi := &file_proto_payment_payment_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5215,7 +4814,7 @@ func (x *ListUserRechargeStatsResp) String() string {
 func (*ListUserRechargeStatsResp) ProtoMessage() {}
 
 func (x *ListUserRechargeStatsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[73]
+	mi := &file_proto_payment_payment_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5228,7 +4827,7 @@ func (x *ListUserRechargeStatsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUserRechargeStatsResp.ProtoReflect.Descriptor instead.
 func (*ListUserRechargeStatsResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{73}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{67}
 }
 
 func (x *ListUserRechargeStatsResp) GetBase() *common.RespBase {
@@ -5256,7 +4855,7 @@ type GetRechargeOrderReq struct {
 
 func (x *GetRechargeOrderReq) Reset() {
 	*x = GetRechargeOrderReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[74]
+	mi := &file_proto_payment_payment_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5268,7 +4867,7 @@ func (x *GetRechargeOrderReq) String() string {
 func (*GetRechargeOrderReq) ProtoMessage() {}
 
 func (x *GetRechargeOrderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[74]
+	mi := &file_proto_payment_payment_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5281,7 +4880,7 @@ func (x *GetRechargeOrderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRechargeOrderReq.ProtoReflect.Descriptor instead.
 func (*GetRechargeOrderReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{74}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{68}
 }
 
 func (x *GetRechargeOrderReq) GetTenantId() int64 {
@@ -5308,7 +4907,7 @@ type GetRechargeOrderResp struct {
 
 func (x *GetRechargeOrderResp) Reset() {
 	*x = GetRechargeOrderResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[75]
+	mi := &file_proto_payment_payment_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5320,7 +4919,7 @@ func (x *GetRechargeOrderResp) String() string {
 func (*GetRechargeOrderResp) ProtoMessage() {}
 
 func (x *GetRechargeOrderResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[75]
+	mi := &file_proto_payment_payment_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5333,7 +4932,7 @@ func (x *GetRechargeOrderResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRechargeOrderResp.ProtoReflect.Descriptor instead.
 func (*GetRechargeOrderResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{75}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{69}
 }
 
 func (x *GetRechargeOrderResp) GetBase() *common.RespBase {
@@ -5372,7 +4971,7 @@ type ListRechargeOrdersReq struct {
 
 func (x *ListRechargeOrdersReq) Reset() {
 	*x = ListRechargeOrdersReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[76]
+	mi := &file_proto_payment_payment_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5384,7 +4983,7 @@ func (x *ListRechargeOrdersReq) String() string {
 func (*ListRechargeOrdersReq) ProtoMessage() {}
 
 func (x *ListRechargeOrdersReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[76]
+	mi := &file_proto_payment_payment_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5397,7 +4996,7 @@ func (x *ListRechargeOrdersReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRechargeOrdersReq.ProtoReflect.Descriptor instead.
 func (*ListRechargeOrdersReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{76}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *ListRechargeOrdersReq) GetPage() *common.PageReq {
@@ -5508,7 +5107,7 @@ type ListRechargeOrdersResp struct {
 
 func (x *ListRechargeOrdersResp) Reset() {
 	*x = ListRechargeOrdersResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[77]
+	mi := &file_proto_payment_payment_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5520,7 +5119,7 @@ func (x *ListRechargeOrdersResp) String() string {
 func (*ListRechargeOrdersResp) ProtoMessage() {}
 
 func (x *ListRechargeOrdersResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[77]
+	mi := &file_proto_payment_payment_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5533,7 +5132,7 @@ func (x *ListRechargeOrdersResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRechargeOrdersResp.ProtoReflect.Descriptor instead.
 func (*ListRechargeOrdersResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{77}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{71}
 }
 
 func (x *ListRechargeOrdersResp) GetBase() *common.RespBase {
@@ -5561,7 +5160,7 @@ type CloseRechargeOrderReq struct {
 
 func (x *CloseRechargeOrderReq) Reset() {
 	*x = CloseRechargeOrderReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[78]
+	mi := &file_proto_payment_payment_proto_msgTypes[72]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5573,7 +5172,7 @@ func (x *CloseRechargeOrderReq) String() string {
 func (*CloseRechargeOrderReq) ProtoMessage() {}
 
 func (x *CloseRechargeOrderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[78]
+	mi := &file_proto_payment_payment_proto_msgTypes[72]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5586,7 +5185,7 @@ func (x *CloseRechargeOrderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CloseRechargeOrderReq.ProtoReflect.Descriptor instead.
 func (*CloseRechargeOrderReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{78}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{72}
 }
 
 func (x *CloseRechargeOrderReq) GetTenantId() int64 {
@@ -5623,7 +5222,7 @@ type ManualMarkRechargeOrderSuccessReq struct {
 
 func (x *ManualMarkRechargeOrderSuccessReq) Reset() {
 	*x = ManualMarkRechargeOrderSuccessReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[79]
+	mi := &file_proto_payment_payment_proto_msgTypes[73]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5635,7 +5234,7 @@ func (x *ManualMarkRechargeOrderSuccessReq) String() string {
 func (*ManualMarkRechargeOrderSuccessReq) ProtoMessage() {}
 
 func (x *ManualMarkRechargeOrderSuccessReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[79]
+	mi := &file_proto_payment_payment_proto_msgTypes[73]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5648,7 +5247,7 @@ func (x *ManualMarkRechargeOrderSuccessReq) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use ManualMarkRechargeOrderSuccessReq.ProtoReflect.Descriptor instead.
 func (*ManualMarkRechargeOrderSuccessReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{79}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{73}
 }
 
 func (x *ManualMarkRechargeOrderSuccessReq) GetTenantId() int64 {
@@ -5696,7 +5295,7 @@ type RetryNotifyReq struct {
 
 func (x *RetryNotifyReq) Reset() {
 	*x = RetryNotifyReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[80]
+	mi := &file_proto_payment_payment_proto_msgTypes[74]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5708,7 +5307,7 @@ func (x *RetryNotifyReq) String() string {
 func (*RetryNotifyReq) ProtoMessage() {}
 
 func (x *RetryNotifyReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[80]
+	mi := &file_proto_payment_payment_proto_msgTypes[74]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5721,7 +5320,7 @@ func (x *RetryNotifyReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RetryNotifyReq.ProtoReflect.Descriptor instead.
 func (*RetryNotifyReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{80}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{74}
 }
 
 func (x *RetryNotifyReq) GetTenantId() int64 {
@@ -5749,7 +5348,7 @@ type GetRechargeNotifyLogReq struct {
 
 func (x *GetRechargeNotifyLogReq) Reset() {
 	*x = GetRechargeNotifyLogReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[81]
+	mi := &file_proto_payment_payment_proto_msgTypes[75]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5761,7 +5360,7 @@ func (x *GetRechargeNotifyLogReq) String() string {
 func (*GetRechargeNotifyLogReq) ProtoMessage() {}
 
 func (x *GetRechargeNotifyLogReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[81]
+	mi := &file_proto_payment_payment_proto_msgTypes[75]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5774,7 +5373,7 @@ func (x *GetRechargeNotifyLogReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRechargeNotifyLogReq.ProtoReflect.Descriptor instead.
 func (*GetRechargeNotifyLogReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{81}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{75}
 }
 
 func (x *GetRechargeNotifyLogReq) GetTenantId() int64 {
@@ -5801,7 +5400,7 @@ type GetRechargeNotifyLogResp struct {
 
 func (x *GetRechargeNotifyLogResp) Reset() {
 	*x = GetRechargeNotifyLogResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[82]
+	mi := &file_proto_payment_payment_proto_msgTypes[76]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5813,7 +5412,7 @@ func (x *GetRechargeNotifyLogResp) String() string {
 func (*GetRechargeNotifyLogResp) ProtoMessage() {}
 
 func (x *GetRechargeNotifyLogResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[82]
+	mi := &file_proto_payment_payment_proto_msgTypes[76]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5826,7 +5425,7 @@ func (x *GetRechargeNotifyLogResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRechargeNotifyLogResp.ProtoReflect.Descriptor instead.
 func (*GetRechargeNotifyLogResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{82}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{76}
 }
 
 func (x *GetRechargeNotifyLogResp) GetBase() *common.RespBase {
@@ -5861,7 +5460,7 @@ type ListRechargeNotifyLogsReq struct {
 
 func (x *ListRechargeNotifyLogsReq) Reset() {
 	*x = ListRechargeNotifyLogsReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[83]
+	mi := &file_proto_payment_payment_proto_msgTypes[77]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5873,7 +5472,7 @@ func (x *ListRechargeNotifyLogsReq) String() string {
 func (*ListRechargeNotifyLogsReq) ProtoMessage() {}
 
 func (x *ListRechargeNotifyLogsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[83]
+	mi := &file_proto_payment_payment_proto_msgTypes[77]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5886,7 +5485,7 @@ func (x *ListRechargeNotifyLogsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRechargeNotifyLogsReq.ProtoReflect.Descriptor instead.
 func (*ListRechargeNotifyLogsReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{83}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{77}
 }
 
 func (x *ListRechargeNotifyLogsReq) GetPage() *common.PageReq {
@@ -5969,7 +5568,7 @@ type ListRechargeNotifyLogsResp struct {
 
 func (x *ListRechargeNotifyLogsResp) Reset() {
 	*x = ListRechargeNotifyLogsResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[84]
+	mi := &file_proto_payment_payment_proto_msgTypes[78]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5981,7 +5580,7 @@ func (x *ListRechargeNotifyLogsResp) String() string {
 func (*ListRechargeNotifyLogsResp) ProtoMessage() {}
 
 func (x *ListRechargeNotifyLogsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[84]
+	mi := &file_proto_payment_payment_proto_msgTypes[78]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5994,7 +5593,7 @@ func (x *ListRechargeNotifyLogsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRechargeNotifyLogsResp.ProtoReflect.Descriptor instead.
 func (*ListRechargeNotifyLogsResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{84}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{78}
 }
 
 func (x *ListRechargeNotifyLogsResp) GetBase() *common.RespBase {
@@ -6024,7 +5623,7 @@ type ListWithdrawOrdersReq struct {
 
 func (x *ListWithdrawOrdersReq) Reset() {
 	*x = ListWithdrawOrdersReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[85]
+	mi := &file_proto_payment_payment_proto_msgTypes[79]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6036,7 +5635,7 @@ func (x *ListWithdrawOrdersReq) String() string {
 func (*ListWithdrawOrdersReq) ProtoMessage() {}
 
 func (x *ListWithdrawOrdersReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[85]
+	mi := &file_proto_payment_payment_proto_msgTypes[79]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6049,7 +5648,7 @@ func (x *ListWithdrawOrdersReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWithdrawOrdersReq.ProtoReflect.Descriptor instead.
 func (*ListWithdrawOrdersReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{85}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{79}
 }
 
 func (x *ListWithdrawOrdersReq) GetPage() *common.PageReq {
@@ -6090,7 +5689,7 @@ type ListWithdrawOrdersResp struct {
 
 func (x *ListWithdrawOrdersResp) Reset() {
 	*x = ListWithdrawOrdersResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[86]
+	mi := &file_proto_payment_payment_proto_msgTypes[80]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6102,7 +5701,7 @@ func (x *ListWithdrawOrdersResp) String() string {
 func (*ListWithdrawOrdersResp) ProtoMessage() {}
 
 func (x *ListWithdrawOrdersResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[86]
+	mi := &file_proto_payment_payment_proto_msgTypes[80]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6115,7 +5714,7 @@ func (x *ListWithdrawOrdersResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWithdrawOrdersResp.ProtoReflect.Descriptor instead.
 func (*ListWithdrawOrdersResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{86}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{80}
 }
 
 func (x *ListWithdrawOrdersResp) GetBase() *common.RespBase {
@@ -6141,7 +5740,7 @@ type GetWithdrawOrderReq struct {
 
 func (x *GetWithdrawOrderReq) Reset() {
 	*x = GetWithdrawOrderReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[87]
+	mi := &file_proto_payment_payment_proto_msgTypes[81]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6153,7 +5752,7 @@ func (x *GetWithdrawOrderReq) String() string {
 func (*GetWithdrawOrderReq) ProtoMessage() {}
 
 func (x *GetWithdrawOrderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[87]
+	mi := &file_proto_payment_payment_proto_msgTypes[81]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6166,7 +5765,7 @@ func (x *GetWithdrawOrderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWithdrawOrderReq.ProtoReflect.Descriptor instead.
 func (*GetWithdrawOrderReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{87}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{81}
 }
 
 func (x *GetWithdrawOrderReq) GetOrderNo() string {
@@ -6186,7 +5785,7 @@ type GetWithdrawOrderResp struct {
 
 func (x *GetWithdrawOrderResp) Reset() {
 	*x = GetWithdrawOrderResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[88]
+	mi := &file_proto_payment_payment_proto_msgTypes[82]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6198,7 +5797,7 @@ func (x *GetWithdrawOrderResp) String() string {
 func (*GetWithdrawOrderResp) ProtoMessage() {}
 
 func (x *GetWithdrawOrderResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[88]
+	mi := &file_proto_payment_payment_proto_msgTypes[82]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6211,7 +5810,7 @@ func (x *GetWithdrawOrderResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWithdrawOrderResp.ProtoReflect.Descriptor instead.
 func (*GetWithdrawOrderResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{88}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{82}
 }
 
 func (x *GetWithdrawOrderResp) GetBase() *common.RespBase {
@@ -6240,7 +5839,7 @@ type AuditWithdrawOrderReq struct {
 
 func (x *AuditWithdrawOrderReq) Reset() {
 	*x = AuditWithdrawOrderReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[89]
+	mi := &file_proto_payment_payment_proto_msgTypes[83]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6252,7 +5851,7 @@ func (x *AuditWithdrawOrderReq) String() string {
 func (*AuditWithdrawOrderReq) ProtoMessage() {}
 
 func (x *AuditWithdrawOrderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[89]
+	mi := &file_proto_payment_payment_proto_msgTypes[83]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6265,7 +5864,7 @@ func (x *AuditWithdrawOrderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AuditWithdrawOrderReq.ProtoReflect.Descriptor instead.
 func (*AuditWithdrawOrderReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{89}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{83}
 }
 
 func (x *AuditWithdrawOrderReq) GetTenantId() int64 {
@@ -6314,7 +5913,7 @@ type ListWithdrawNotifyLogsReq struct {
 
 func (x *ListWithdrawNotifyLogsReq) Reset() {
 	*x = ListWithdrawNotifyLogsReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[90]
+	mi := &file_proto_payment_payment_proto_msgTypes[84]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6326,7 +5925,7 @@ func (x *ListWithdrawNotifyLogsReq) String() string {
 func (*ListWithdrawNotifyLogsReq) ProtoMessage() {}
 
 func (x *ListWithdrawNotifyLogsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[90]
+	mi := &file_proto_payment_payment_proto_msgTypes[84]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6339,7 +5938,7 @@ func (x *ListWithdrawNotifyLogsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWithdrawNotifyLogsReq.ProtoReflect.Descriptor instead.
 func (*ListWithdrawNotifyLogsReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{90}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{84}
 }
 
 func (x *ListWithdrawNotifyLogsReq) GetPage() *common.PageReq {
@@ -6422,7 +6021,7 @@ type ListWithdrawNotifyLogsResp struct {
 
 func (x *ListWithdrawNotifyLogsResp) Reset() {
 	*x = ListWithdrawNotifyLogsResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[91]
+	mi := &file_proto_payment_payment_proto_msgTypes[85]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6434,7 +6033,7 @@ func (x *ListWithdrawNotifyLogsResp) String() string {
 func (*ListWithdrawNotifyLogsResp) ProtoMessage() {}
 
 func (x *ListWithdrawNotifyLogsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[91]
+	mi := &file_proto_payment_payment_proto_msgTypes[85]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6447,7 +6046,7 @@ func (x *ListWithdrawNotifyLogsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListWithdrawNotifyLogsResp.ProtoReflect.Descriptor instead.
 func (*ListWithdrawNotifyLogsResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{91}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{85}
 }
 
 func (x *ListWithdrawNotifyLogsResp) GetBase() *common.RespBase {
@@ -6474,7 +6073,7 @@ type GetWithdrawNotifyLogReq struct {
 
 func (x *GetWithdrawNotifyLogReq) Reset() {
 	*x = GetWithdrawNotifyLogReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[92]
+	mi := &file_proto_payment_payment_proto_msgTypes[86]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6486,7 +6085,7 @@ func (x *GetWithdrawNotifyLogReq) String() string {
 func (*GetWithdrawNotifyLogReq) ProtoMessage() {}
 
 func (x *GetWithdrawNotifyLogReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[92]
+	mi := &file_proto_payment_payment_proto_msgTypes[86]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6499,7 +6098,7 @@ func (x *GetWithdrawNotifyLogReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWithdrawNotifyLogReq.ProtoReflect.Descriptor instead.
 func (*GetWithdrawNotifyLogReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{92}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{86}
 }
 
 func (x *GetWithdrawNotifyLogReq) GetTenantId() int64 {
@@ -6526,7 +6125,7 @@ type GetWithdrawNotifyLogResp struct {
 
 func (x *GetWithdrawNotifyLogResp) Reset() {
 	*x = GetWithdrawNotifyLogResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[93]
+	mi := &file_proto_payment_payment_proto_msgTypes[87]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6538,7 +6137,7 @@ func (x *GetWithdrawNotifyLogResp) String() string {
 func (*GetWithdrawNotifyLogResp) ProtoMessage() {}
 
 func (x *GetWithdrawNotifyLogResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[93]
+	mi := &file_proto_payment_payment_proto_msgTypes[87]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6551,7 +6150,7 @@ func (x *GetWithdrawNotifyLogResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetWithdrawNotifyLogResp.ProtoReflect.Descriptor instead.
 func (*GetWithdrawNotifyLogResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{93}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{87}
 }
 
 func (x *GetWithdrawNotifyLogResp) GetBase() *common.RespBase {
@@ -6587,7 +6186,7 @@ type CreateCryptoRechargeAddressReq struct {
 
 func (x *CreateCryptoRechargeAddressReq) Reset() {
 	*x = CreateCryptoRechargeAddressReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[94]
+	mi := &file_proto_payment_payment_proto_msgTypes[88]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6599,7 +6198,7 @@ func (x *CreateCryptoRechargeAddressReq) String() string {
 func (*CreateCryptoRechargeAddressReq) ProtoMessage() {}
 
 func (x *CreateCryptoRechargeAddressReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[94]
+	mi := &file_proto_payment_payment_proto_msgTypes[88]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6612,7 +6211,7 @@ func (x *CreateCryptoRechargeAddressReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCryptoRechargeAddressReq.ProtoReflect.Descriptor instead.
 func (*CreateCryptoRechargeAddressReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{94}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{88}
 }
 
 func (x *CreateCryptoRechargeAddressReq) GetTenantId() int64 {
@@ -6700,7 +6299,7 @@ type UpdateCryptoRechargeAddressReq struct {
 
 func (x *UpdateCryptoRechargeAddressReq) Reset() {
 	*x = UpdateCryptoRechargeAddressReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[95]
+	mi := &file_proto_payment_payment_proto_msgTypes[89]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6712,7 +6311,7 @@ func (x *UpdateCryptoRechargeAddressReq) String() string {
 func (*UpdateCryptoRechargeAddressReq) ProtoMessage() {}
 
 func (x *UpdateCryptoRechargeAddressReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[95]
+	mi := &file_proto_payment_payment_proto_msgTypes[89]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6725,7 +6324,7 @@ func (x *UpdateCryptoRechargeAddressReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateCryptoRechargeAddressReq.ProtoReflect.Descriptor instead.
 func (*UpdateCryptoRechargeAddressReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{95}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{89}
 }
 
 func (x *UpdateCryptoRechargeAddressReq) GetId() int64 {
@@ -6787,7 +6386,7 @@ type GetCryptoRechargeAddressReq struct {
 
 func (x *GetCryptoRechargeAddressReq) Reset() {
 	*x = GetCryptoRechargeAddressReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[96]
+	mi := &file_proto_payment_payment_proto_msgTypes[90]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6799,7 +6398,7 @@ func (x *GetCryptoRechargeAddressReq) String() string {
 func (*GetCryptoRechargeAddressReq) ProtoMessage() {}
 
 func (x *GetCryptoRechargeAddressReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[96]
+	mi := &file_proto_payment_payment_proto_msgTypes[90]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6812,7 +6411,7 @@ func (x *GetCryptoRechargeAddressReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCryptoRechargeAddressReq.ProtoReflect.Descriptor instead.
 func (*GetCryptoRechargeAddressReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{96}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{90}
 }
 
 func (x *GetCryptoRechargeAddressReq) GetTenantId() int64 {
@@ -6839,7 +6438,7 @@ type GetCryptoRechargeAddressResp struct {
 
 func (x *GetCryptoRechargeAddressResp) Reset() {
 	*x = GetCryptoRechargeAddressResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[97]
+	mi := &file_proto_payment_payment_proto_msgTypes[91]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6851,7 +6450,7 @@ func (x *GetCryptoRechargeAddressResp) String() string {
 func (*GetCryptoRechargeAddressResp) ProtoMessage() {}
 
 func (x *GetCryptoRechargeAddressResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[97]
+	mi := &file_proto_payment_payment_proto_msgTypes[91]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6864,7 +6463,7 @@ func (x *GetCryptoRechargeAddressResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCryptoRechargeAddressResp.ProtoReflect.Descriptor instead.
 func (*GetCryptoRechargeAddressResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{97}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{91}
 }
 
 func (x *GetCryptoRechargeAddressResp) GetBase() *common.RespBase {
@@ -6898,7 +6497,7 @@ type ListCryptoRechargeAddressesReq struct {
 
 func (x *ListCryptoRechargeAddressesReq) Reset() {
 	*x = ListCryptoRechargeAddressesReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[98]
+	mi := &file_proto_payment_payment_proto_msgTypes[92]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6910,7 +6509,7 @@ func (x *ListCryptoRechargeAddressesReq) String() string {
 func (*ListCryptoRechargeAddressesReq) ProtoMessage() {}
 
 func (x *ListCryptoRechargeAddressesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[98]
+	mi := &file_proto_payment_payment_proto_msgTypes[92]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6923,7 +6522,7 @@ func (x *ListCryptoRechargeAddressesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCryptoRechargeAddressesReq.ProtoReflect.Descriptor instead.
 func (*ListCryptoRechargeAddressesReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{98}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{92}
 }
 
 func (x *ListCryptoRechargeAddressesReq) GetPage() *common.PageReq {
@@ -6999,7 +6598,7 @@ type ListCryptoRechargeAddressesResp struct {
 
 func (x *ListCryptoRechargeAddressesResp) Reset() {
 	*x = ListCryptoRechargeAddressesResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[99]
+	mi := &file_proto_payment_payment_proto_msgTypes[93]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7011,7 +6610,7 @@ func (x *ListCryptoRechargeAddressesResp) String() string {
 func (*ListCryptoRechargeAddressesResp) ProtoMessage() {}
 
 func (x *ListCryptoRechargeAddressesResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[99]
+	mi := &file_proto_payment_payment_proto_msgTypes[93]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7024,7 +6623,7 @@ func (x *ListCryptoRechargeAddressesResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCryptoRechargeAddressesResp.ProtoReflect.Descriptor instead.
 func (*ListCryptoRechargeAddressesResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{99}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{93}
 }
 
 func (x *ListCryptoRechargeAddressesResp) GetBase() *common.RespBase {
@@ -7060,7 +6659,7 @@ type CreateCryptoWalletAccountReq struct {
 
 func (x *CreateCryptoWalletAccountReq) Reset() {
 	*x = CreateCryptoWalletAccountReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[100]
+	mi := &file_proto_payment_payment_proto_msgTypes[94]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7072,7 +6671,7 @@ func (x *CreateCryptoWalletAccountReq) String() string {
 func (*CreateCryptoWalletAccountReq) ProtoMessage() {}
 
 func (x *CreateCryptoWalletAccountReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[100]
+	mi := &file_proto_payment_payment_proto_msgTypes[94]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7085,7 +6684,7 @@ func (x *CreateCryptoWalletAccountReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCryptoWalletAccountReq.ProtoReflect.Descriptor instead.
 func (*CreateCryptoWalletAccountReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{100}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{94}
 }
 
 func (x *CreateCryptoWalletAccountReq) GetTenantId() int64 {
@@ -7176,7 +6775,7 @@ type UpdateCryptoWalletAccountReq struct {
 
 func (x *UpdateCryptoWalletAccountReq) Reset() {
 	*x = UpdateCryptoWalletAccountReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[101]
+	mi := &file_proto_payment_payment_proto_msgTypes[95]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7188,7 +6787,7 @@ func (x *UpdateCryptoWalletAccountReq) String() string {
 func (*UpdateCryptoWalletAccountReq) ProtoMessage() {}
 
 func (x *UpdateCryptoWalletAccountReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[101]
+	mi := &file_proto_payment_payment_proto_msgTypes[95]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7201,7 +6800,7 @@ func (x *UpdateCryptoWalletAccountReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateCryptoWalletAccountReq.ProtoReflect.Descriptor instead.
 func (*UpdateCryptoWalletAccountReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{101}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{95}
 }
 
 func (x *UpdateCryptoWalletAccountReq) GetId() int64 {
@@ -7284,7 +6883,7 @@ type GetCryptoWalletAccountReq struct {
 
 func (x *GetCryptoWalletAccountReq) Reset() {
 	*x = GetCryptoWalletAccountReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[102]
+	mi := &file_proto_payment_payment_proto_msgTypes[96]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7296,7 +6895,7 @@ func (x *GetCryptoWalletAccountReq) String() string {
 func (*GetCryptoWalletAccountReq) ProtoMessage() {}
 
 func (x *GetCryptoWalletAccountReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[102]
+	mi := &file_proto_payment_payment_proto_msgTypes[96]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7309,7 +6908,7 @@ func (x *GetCryptoWalletAccountReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCryptoWalletAccountReq.ProtoReflect.Descriptor instead.
 func (*GetCryptoWalletAccountReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{102}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{96}
 }
 
 func (x *GetCryptoWalletAccountReq) GetTenantId() int64 {
@@ -7336,7 +6935,7 @@ type GetCryptoWalletAccountResp struct {
 
 func (x *GetCryptoWalletAccountResp) Reset() {
 	*x = GetCryptoWalletAccountResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[103]
+	mi := &file_proto_payment_payment_proto_msgTypes[97]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7348,7 +6947,7 @@ func (x *GetCryptoWalletAccountResp) String() string {
 func (*GetCryptoWalletAccountResp) ProtoMessage() {}
 
 func (x *GetCryptoWalletAccountResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[103]
+	mi := &file_proto_payment_payment_proto_msgTypes[97]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7361,7 +6960,7 @@ func (x *GetCryptoWalletAccountResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCryptoWalletAccountResp.ProtoReflect.Descriptor instead.
 func (*GetCryptoWalletAccountResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{103}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{97}
 }
 
 func (x *GetCryptoWalletAccountResp) GetBase() *common.RespBase {
@@ -7392,7 +6991,7 @@ type ListCryptoWalletAccountsReq struct {
 
 func (x *ListCryptoWalletAccountsReq) Reset() {
 	*x = ListCryptoWalletAccountsReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[104]
+	mi := &file_proto_payment_payment_proto_msgTypes[98]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7404,7 +7003,7 @@ func (x *ListCryptoWalletAccountsReq) String() string {
 func (*ListCryptoWalletAccountsReq) ProtoMessage() {}
 
 func (x *ListCryptoWalletAccountsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[104]
+	mi := &file_proto_payment_payment_proto_msgTypes[98]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7417,7 +7016,7 @@ func (x *ListCryptoWalletAccountsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCryptoWalletAccountsReq.ProtoReflect.Descriptor instead.
 func (*ListCryptoWalletAccountsReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{104}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{98}
 }
 
 func (x *ListCryptoWalletAccountsReq) GetPage() *common.PageReq {
@@ -7472,7 +7071,7 @@ type ListCryptoWalletAccountsResp struct {
 
 func (x *ListCryptoWalletAccountsResp) Reset() {
 	*x = ListCryptoWalletAccountsResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[105]
+	mi := &file_proto_payment_payment_proto_msgTypes[99]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7484,7 +7083,7 @@ func (x *ListCryptoWalletAccountsResp) String() string {
 func (*ListCryptoWalletAccountsResp) ProtoMessage() {}
 
 func (x *ListCryptoWalletAccountsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[105]
+	mi := &file_proto_payment_payment_proto_msgTypes[99]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7497,7 +7096,7 @@ func (x *ListCryptoWalletAccountsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCryptoWalletAccountsResp.ProtoReflect.Descriptor instead.
 func (*ListCryptoWalletAccountsResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{105}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{99}
 }
 
 func (x *ListCryptoWalletAccountsResp) GetBase() *common.RespBase {
@@ -7539,7 +7138,7 @@ type CreateCryptoRechargeTxReq struct {
 
 func (x *CreateCryptoRechargeTxReq) Reset() {
 	*x = CreateCryptoRechargeTxReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[106]
+	mi := &file_proto_payment_payment_proto_msgTypes[100]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7551,7 +7150,7 @@ func (x *CreateCryptoRechargeTxReq) String() string {
 func (*CreateCryptoRechargeTxReq) ProtoMessage() {}
 
 func (x *CreateCryptoRechargeTxReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[106]
+	mi := &file_proto_payment_payment_proto_msgTypes[100]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7564,7 +7163,7 @@ func (x *CreateCryptoRechargeTxReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCryptoRechargeTxReq.ProtoReflect.Descriptor instead.
 func (*CreateCryptoRechargeTxReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{106}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{100}
 }
 
 func (x *CreateCryptoRechargeTxReq) GetTenantId() int64 {
@@ -7695,7 +7294,7 @@ type UpdateCryptoRechargeTxReq struct {
 
 func (x *UpdateCryptoRechargeTxReq) Reset() {
 	*x = UpdateCryptoRechargeTxReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[107]
+	mi := &file_proto_payment_payment_proto_msgTypes[101]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7707,7 +7306,7 @@ func (x *UpdateCryptoRechargeTxReq) String() string {
 func (*UpdateCryptoRechargeTxReq) ProtoMessage() {}
 
 func (x *UpdateCryptoRechargeTxReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[107]
+	mi := &file_proto_payment_payment_proto_msgTypes[101]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7720,7 +7319,7 @@ func (x *UpdateCryptoRechargeTxReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateCryptoRechargeTxReq.ProtoReflect.Descriptor instead.
 func (*UpdateCryptoRechargeTxReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{107}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{101}
 }
 
 func (x *UpdateCryptoRechargeTxReq) GetId() int64 {
@@ -7791,7 +7390,7 @@ type GetCryptoRechargeTxReq struct {
 
 func (x *GetCryptoRechargeTxReq) Reset() {
 	*x = GetCryptoRechargeTxReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[108]
+	mi := &file_proto_payment_payment_proto_msgTypes[102]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7803,7 +7402,7 @@ func (x *GetCryptoRechargeTxReq) String() string {
 func (*GetCryptoRechargeTxReq) ProtoMessage() {}
 
 func (x *GetCryptoRechargeTxReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[108]
+	mi := &file_proto_payment_payment_proto_msgTypes[102]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7816,7 +7415,7 @@ func (x *GetCryptoRechargeTxReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCryptoRechargeTxReq.ProtoReflect.Descriptor instead.
 func (*GetCryptoRechargeTxReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{108}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{102}
 }
 
 func (x *GetCryptoRechargeTxReq) GetTenantId() int64 {
@@ -7857,7 +7456,7 @@ type GetCryptoRechargeTxResp struct {
 
 func (x *GetCryptoRechargeTxResp) Reset() {
 	*x = GetCryptoRechargeTxResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[109]
+	mi := &file_proto_payment_payment_proto_msgTypes[103]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7869,7 +7468,7 @@ func (x *GetCryptoRechargeTxResp) String() string {
 func (*GetCryptoRechargeTxResp) ProtoMessage() {}
 
 func (x *GetCryptoRechargeTxResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[109]
+	mi := &file_proto_payment_payment_proto_msgTypes[103]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7882,7 +7481,7 @@ func (x *GetCryptoRechargeTxResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCryptoRechargeTxResp.ProtoReflect.Descriptor instead.
 func (*GetCryptoRechargeTxResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{109}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{103}
 }
 
 func (x *GetCryptoRechargeTxResp) GetBase() *common.RespBase {
@@ -7918,7 +7517,7 @@ type ListCryptoRechargeTxsReq struct {
 
 func (x *ListCryptoRechargeTxsReq) Reset() {
 	*x = ListCryptoRechargeTxsReq{}
-	mi := &file_proto_payment_payment_proto_msgTypes[110]
+	mi := &file_proto_payment_payment_proto_msgTypes[104]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7930,7 +7529,7 @@ func (x *ListCryptoRechargeTxsReq) String() string {
 func (*ListCryptoRechargeTxsReq) ProtoMessage() {}
 
 func (x *ListCryptoRechargeTxsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[110]
+	mi := &file_proto_payment_payment_proto_msgTypes[104]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7943,7 +7542,7 @@ func (x *ListCryptoRechargeTxsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCryptoRechargeTxsReq.ProtoReflect.Descriptor instead.
 func (*ListCryptoRechargeTxsReq) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{110}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{104}
 }
 
 func (x *ListCryptoRechargeTxsReq) GetPage() *common.PageReq {
@@ -8033,7 +7632,7 @@ type ListCryptoRechargeTxsResp struct {
 
 func (x *ListCryptoRechargeTxsResp) Reset() {
 	*x = ListCryptoRechargeTxsResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[111]
+	mi := &file_proto_payment_payment_proto_msgTypes[105]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8045,7 +7644,7 @@ func (x *ListCryptoRechargeTxsResp) String() string {
 func (*ListCryptoRechargeTxsResp) ProtoMessage() {}
 
 func (x *ListCryptoRechargeTxsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[111]
+	mi := &file_proto_payment_payment_proto_msgTypes[105]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8058,7 +7657,7 @@ func (x *ListCryptoRechargeTxsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCryptoRechargeTxsResp.ProtoReflect.Descriptor instead.
 func (*ListCryptoRechargeTxsResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{111}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{105}
 }
 
 func (x *ListCryptoRechargeTxsResp) GetBase() *common.RespBase {
@@ -8083,7 +7682,7 @@ type Empty struct {
 
 func (x *Empty) Reset() {
 	*x = Empty{}
-	mi := &file_proto_payment_payment_proto_msgTypes[112]
+	mi := &file_proto_payment_payment_proto_msgTypes[106]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8095,7 +7694,7 @@ func (x *Empty) String() string {
 func (*Empty) ProtoMessage() {}
 
 func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[112]
+	mi := &file_proto_payment_payment_proto_msgTypes[106]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8108,7 +7707,7 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Empty.ProtoReflect.Descriptor instead.
 func (*Empty) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{112}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{106}
 }
 
 type PayPlatformItem struct {
@@ -8121,7 +7720,7 @@ type PayPlatformItem struct {
 
 func (x *PayPlatformItem) Reset() {
 	*x = PayPlatformItem{}
-	mi := &file_proto_payment_payment_proto_msgTypes[113]
+	mi := &file_proto_payment_payment_proto_msgTypes[107]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8133,7 +7732,7 @@ func (x *PayPlatformItem) String() string {
 func (*PayPlatformItem) ProtoMessage() {}
 
 func (x *PayPlatformItem) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[113]
+	mi := &file_proto_payment_payment_proto_msgTypes[107]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8146,7 +7745,7 @@ func (x *PayPlatformItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PayPlatformItem.ProtoReflect.Descriptor instead.
 func (*PayPlatformItem) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{113}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{107}
 }
 
 func (x *PayPlatformItem) GetPlatformCode() string {
@@ -8173,7 +7772,7 @@ type PayPlatformsResp struct {
 
 func (x *PayPlatformsResp) Reset() {
 	*x = PayPlatformsResp{}
-	mi := &file_proto_payment_payment_proto_msgTypes[114]
+	mi := &file_proto_payment_payment_proto_msgTypes[108]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8185,7 +7784,7 @@ func (x *PayPlatformsResp) String() string {
 func (*PayPlatformsResp) ProtoMessage() {}
 
 func (x *PayPlatformsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_payment_payment_proto_msgTypes[114]
+	mi := &file_proto_payment_payment_proto_msgTypes[108]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8198,7 +7797,7 @@ func (x *PayPlatformsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PayPlatformsResp.ProtoReflect.Descriptor instead.
 func (*PayPlatformsResp) Descriptor() ([]byte, []int) {
-	return file_proto_payment_payment_proto_rawDescGZIP(), []int{114}
+	return file_proto_payment_payment_proto_rawDescGZIP(), []int{108}
 }
 
 func (x *PayPlatformsResp) GetBase() *common.RespBase {
@@ -8439,42 +8038,9 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"scene_type\x18\x06 \x01(\x0e2\x12.payment.SceneTypeR\tsceneType\"d\n" +
 	"\x13ListPayProductsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
-	"\x04data\x18\x02 \x03(\v2\x13.payment.PayProductR\x04data\"\xd0\x01\n" +
-	"\x18OpenTenantPayPlatformReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1f\n" +
-	"\vplatform_id\x18\x02 \x01(\x03R\n" +
-	"platformId\x12(\n" +
-	"\aenabled\x18\x03 \x01(\x0e2\x0e.common.EnableR\aenabled\x124\n" +
-	"\vopen_status\x18\x04 \x01(\x0e2\x13.payment.OpenStatusR\n" +
-	"openStatus\x12\x16\n" +
-	"\x06remark\x18\x05 \x01(\tR\x06remark\"\xc1\x01\n" +
-	"\x1aUpdateTenantPayPlatformReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12(\n" +
-	"\aenabled\x18\x03 \x01(\x0e2\x0e.common.EnableR\aenabled\x124\n" +
-	"\vopen_status\x18\x04 \x01(\x0e2\x13.payment.OpenStatusR\n" +
-	"openStatus\x12\x16\n" +
-	"\x06remark\x18\x05 \x01(\tR\x06remark\"F\n" +
-	"\x17GetTenantPayPlatformReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"p\n" +
-	"\x18GetTenantPayPlatformResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
-	"\x04data\x18\x02 \x01(\v2\x1a.payment.TenantPayPlatformR\x04data\"\xde\x01\n" +
-	"\x19ListTenantPayPlatformsReq\x12#\n" +
-	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
-	"\vplatform_id\x18\x03 \x01(\x03R\n" +
-	"platformId\x12(\n" +
-	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\x124\n" +
-	"\vopen_status\x18\x05 \x01(\x0e2\x13.payment.OpenStatusR\n" +
-	"openStatus\"r\n" +
-	"\x1aListTenantPayPlatformsResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12.\n" +
-	"\x04data\x18\x02 \x03(\v2\x1a.payment.TenantPayPlatformR\x04data\"\xa7\x05\n" +
+	"\x04data\x18\x02 \x03(\v2\x13.payment.PayProductR\x04data\"\xf8\x04\n" +
 	"\x19CreateTenantPayAccountReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x123\n" +
-	"\x16tenant_pay_platform_id\x18\x02 \x01(\x03R\x13tenantPayPlatformId\x12\x1f\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vplatform_id\x18\x03 \x01(\x03R\n" +
 	"platformId\x12!\n" +
 	"\faccount_code\x18\x04 \x01(\tR\vaccountCode\x12!\n" +
@@ -8497,7 +8063,7 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\n" +
 	"is_default\x18\x10 \x01(\x0e2\r.common.YesNoR\tisDefault\x12\x16\n" +
 	"\x06remark\x18\x11 \x01(\tR\x06remark\x12%\n" +
-	"\x0ecredential_ref\x18\x12 \x01(\tR\rcredentialRef\"\xbe\x04\n" +
+	"\x0ecredential_ref\x18\x12 \x01(\tR\rcredentialRefJ\x04\b\x02\x10\x03\"\xbe\x04\n" +
 	"\x19UpdateTenantPayAccountReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12!\n" +
@@ -8526,15 +8092,14 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"n\n" +
 	"\x17GetTenantPayAccountResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
-	"\x04data\x18\x02 \x01(\v2\x19.payment.TenantPayAccountR\x04data\"\xf6\x01\n" +
+	"\x04data\x18\x02 \x01(\v2\x19.payment.TenantPayAccountR\x04data\"\xc7\x01\n" +
 	"\x18ListTenantPayAccountsReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vplatform_id\x18\x03 \x01(\x03R\n" +
-	"platformId\x123\n" +
-	"\x16tenant_pay_platform_id\x18\x04 \x01(\x03R\x13tenantPayPlatformId\x12\x18\n" +
+	"platformId\x12\x18\n" +
 	"\akeyword\x18\x05 \x01(\tR\akeyword\x12(\n" +
-	"\aenabled\x18\x06 \x01(\x0e2\x0e.common.EnableR\aenabled\"p\n" +
+	"\aenabled\x18\x06 \x01(\x0e2\x0e.common.EnableR\aenabledJ\x04\b\x04\x10\x05\"p\n" +
 	"\x19ListTenantPayAccountsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
 	"\x04data\x18\x02 \x03(\v2\x19.payment.TenantPayAccountR\x04data\"\xeb\x05\n" +
@@ -8959,7 +8524,7 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\x1aGetMyCryptoRechargeAddress\x12&.payment.GetMyCryptoRechargeAddressReq\x1a'.payment.GetMyCryptoRechargeAddressResp\x12v\n" +
 	"\x1dListMyCryptoRechargeAddresses\x12).payment.ListMyCryptoRechargeAddressesReq\x1a*.payment.ListMyCryptoRechargeAddressesResp\x12d\n" +
 	"\x17ListMyCryptoRechargeTxs\x12#.payment.ListMyCryptoRechargeTxsReq\x1a$.payment.ListMyCryptoRechargeTxsResp\x12^\n" +
-	"\x15GetMyCryptoRechargeTx\x12!.payment.GetMyCryptoRechargeTxReq\x1a\".payment.GetMyCryptoRechargeTxResp2\xf8\"\n" +
+	"\x15GetMyCryptoRechargeTx\x12!.payment.GetMyCryptoRechargeTxReq\x1a\".payment.GetMyCryptoRechargeTxResp2\x92 \n" +
 	"\x05Admin\x12<\n" +
 	"\x0fGetPayPlatforms\x12\x0e.payment.Empty\x1a\x19.payment.PayPlatformsResp\x12G\n" +
 	"\x11CreatePayPlatform\x12\x1d.payment.CreatePayPlatformReq\x1a\x13.payment.CommonResp\x12G\n" +
@@ -8969,11 +8534,7 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\x10CreatePayProduct\x12\x1c.payment.CreatePayProductReq\x1a\x13.payment.CommonResp\x12E\n" +
 	"\x10UpdatePayProduct\x12\x1c.payment.UpdatePayProductReq\x1a\x13.payment.CommonResp\x12F\n" +
 	"\rGetPayProduct\x12\x19.payment.GetPayProductReq\x1a\x1a.payment.GetPayProductResp\x12L\n" +
-	"\x0fListPayProducts\x12\x1b.payment.ListPayProductsReq\x1a\x1c.payment.ListPayProductsResp\x12O\n" +
-	"\x15OpenTenantPayPlatform\x12!.payment.OpenTenantPayPlatformReq\x1a\x13.payment.CommonResp\x12S\n" +
-	"\x17UpdateTenantPayPlatform\x12#.payment.UpdateTenantPayPlatformReq\x1a\x13.payment.CommonResp\x12[\n" +
-	"\x14GetTenantPayPlatform\x12 .payment.GetTenantPayPlatformReq\x1a!.payment.GetTenantPayPlatformResp\x12a\n" +
-	"\x16ListTenantPayPlatforms\x12\".payment.ListTenantPayPlatformsReq\x1a#.payment.ListTenantPayPlatformsResp\x12Q\n" +
+	"\x0fListPayProducts\x12\x1b.payment.ListPayProductsReq\x1a\x1c.payment.ListPayProductsResp\x12Q\n" +
 	"\x16CreateTenantPayAccount\x12\".payment.CreateTenantPayAccountReq\x1a\x13.payment.CommonResp\x12Q\n" +
 	"\x16UpdateTenantPayAccount\x12\".payment.UpdateTenantPayAccountReq\x1a\x13.payment.CommonResp\x12X\n" +
 	"\x13GetTenantPayAccount\x12\x1f.payment.GetTenantPayAccountReq\x1a .payment.GetTenantPayAccountResp\x12^\n" +
@@ -9025,7 +8586,7 @@ func file_proto_payment_payment_proto_rawDescGZIP() []byte {
 	return file_proto_payment_payment_proto_rawDescData
 }
 
-var file_proto_payment_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 118)
+var file_proto_payment_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 112)
 var file_proto_payment_payment_proto_goTypes = []any{
 	(*UserCommonResp)(nil),                    // 0: payment.UserCommonResp
 	(*GetMyRechargeStatReq)(nil),              // 1: payment.GetMyRechargeStatReq
@@ -9073,445 +8634,418 @@ var file_proto_payment_payment_proto_goTypes = []any{
 	(*GetPayProductResp)(nil),                 // 43: payment.GetPayProductResp
 	(*ListPayProductsReq)(nil),                // 44: payment.ListPayProductsReq
 	(*ListPayProductsResp)(nil),               // 45: payment.ListPayProductsResp
-	(*OpenTenantPayPlatformReq)(nil),          // 46: payment.OpenTenantPayPlatformReq
-	(*UpdateTenantPayPlatformReq)(nil),        // 47: payment.UpdateTenantPayPlatformReq
-	(*GetTenantPayPlatformReq)(nil),           // 48: payment.GetTenantPayPlatformReq
-	(*GetTenantPayPlatformResp)(nil),          // 49: payment.GetTenantPayPlatformResp
-	(*ListTenantPayPlatformsReq)(nil),         // 50: payment.ListTenantPayPlatformsReq
-	(*ListTenantPayPlatformsResp)(nil),        // 51: payment.ListTenantPayPlatformsResp
-	(*CreateTenantPayAccountReq)(nil),         // 52: payment.CreateTenantPayAccountReq
-	(*UpdateTenantPayAccountReq)(nil),         // 53: payment.UpdateTenantPayAccountReq
-	(*GetTenantPayAccountReq)(nil),            // 54: payment.GetTenantPayAccountReq
-	(*GetTenantPayAccountResp)(nil),           // 55: payment.GetTenantPayAccountResp
-	(*ListTenantPayAccountsReq)(nil),          // 56: payment.ListTenantPayAccountsReq
-	(*ListTenantPayAccountsResp)(nil),         // 57: payment.ListTenantPayAccountsResp
-	(*CreateTenantPayChannelReq)(nil),         // 58: payment.CreateTenantPayChannelReq
-	(*UpdateTenantPayChannelReq)(nil),         // 59: payment.UpdateTenantPayChannelReq
-	(*GetTenantPayChannelReq)(nil),            // 60: payment.GetTenantPayChannelReq
-	(*GetTenantPayChannelResp)(nil),           // 61: payment.GetTenantPayChannelResp
-	(*ListTenantPayChannelsReq)(nil),          // 62: payment.ListTenantPayChannelsReq
-	(*ListTenantPayChannelsResp)(nil),         // 63: payment.ListTenantPayChannelsResp
-	(*CreateTenantPayChannelRuleReq)(nil),     // 64: payment.CreateTenantPayChannelRuleReq
-	(*UpdateTenantPayChannelRuleReq)(nil),     // 65: payment.UpdateTenantPayChannelRuleReq
-	(*GetTenantPayChannelRuleReq)(nil),        // 66: payment.GetTenantPayChannelRuleReq
-	(*GetTenantPayChannelRuleResp)(nil),       // 67: payment.GetTenantPayChannelRuleResp
-	(*ListTenantPayChannelRulesReq)(nil),      // 68: payment.ListTenantPayChannelRulesReq
-	(*ListTenantPayChannelRulesResp)(nil),     // 69: payment.ListTenantPayChannelRulesResp
-	(*GetUserRechargeStatReq)(nil),            // 70: payment.GetUserRechargeStatReq
-	(*GetUserRechargeStatResp)(nil),           // 71: payment.GetUserRechargeStatResp
-	(*ListUserRechargeStatsReq)(nil),          // 72: payment.ListUserRechargeStatsReq
-	(*ListUserRechargeStatsResp)(nil),         // 73: payment.ListUserRechargeStatsResp
-	(*GetRechargeOrderReq)(nil),               // 74: payment.GetRechargeOrderReq
-	(*GetRechargeOrderResp)(nil),              // 75: payment.GetRechargeOrderResp
-	(*ListRechargeOrdersReq)(nil),             // 76: payment.ListRechargeOrdersReq
-	(*ListRechargeOrdersResp)(nil),            // 77: payment.ListRechargeOrdersResp
-	(*CloseRechargeOrderReq)(nil),             // 78: payment.CloseRechargeOrderReq
-	(*ManualMarkRechargeOrderSuccessReq)(nil), // 79: payment.ManualMarkRechargeOrderSuccessReq
-	(*RetryNotifyReq)(nil),                    // 80: payment.RetryNotifyReq
-	(*GetRechargeNotifyLogReq)(nil),           // 81: payment.GetRechargeNotifyLogReq
-	(*GetRechargeNotifyLogResp)(nil),          // 82: payment.GetRechargeNotifyLogResp
-	(*ListRechargeNotifyLogsReq)(nil),         // 83: payment.ListRechargeNotifyLogsReq
-	(*ListRechargeNotifyLogsResp)(nil),        // 84: payment.ListRechargeNotifyLogsResp
-	(*ListWithdrawOrdersReq)(nil),             // 85: payment.ListWithdrawOrdersReq
-	(*ListWithdrawOrdersResp)(nil),            // 86: payment.ListWithdrawOrdersResp
-	(*GetWithdrawOrderReq)(nil),               // 87: payment.GetWithdrawOrderReq
-	(*GetWithdrawOrderResp)(nil),              // 88: payment.GetWithdrawOrderResp
-	(*AuditWithdrawOrderReq)(nil),             // 89: payment.AuditWithdrawOrderReq
-	(*ListWithdrawNotifyLogsReq)(nil),         // 90: payment.ListWithdrawNotifyLogsReq
-	(*ListWithdrawNotifyLogsResp)(nil),        // 91: payment.ListWithdrawNotifyLogsResp
-	(*GetWithdrawNotifyLogReq)(nil),           // 92: payment.GetWithdrawNotifyLogReq
-	(*GetWithdrawNotifyLogResp)(nil),          // 93: payment.GetWithdrawNotifyLogResp
-	(*CreateCryptoRechargeAddressReq)(nil),    // 94: payment.CreateCryptoRechargeAddressReq
-	(*UpdateCryptoRechargeAddressReq)(nil),    // 95: payment.UpdateCryptoRechargeAddressReq
-	(*GetCryptoRechargeAddressReq)(nil),       // 96: payment.GetCryptoRechargeAddressReq
-	(*GetCryptoRechargeAddressResp)(nil),      // 97: payment.GetCryptoRechargeAddressResp
-	(*ListCryptoRechargeAddressesReq)(nil),    // 98: payment.ListCryptoRechargeAddressesReq
-	(*ListCryptoRechargeAddressesResp)(nil),   // 99: payment.ListCryptoRechargeAddressesResp
-	(*CreateCryptoWalletAccountReq)(nil),      // 100: payment.CreateCryptoWalletAccountReq
-	(*UpdateCryptoWalletAccountReq)(nil),      // 101: payment.UpdateCryptoWalletAccountReq
-	(*GetCryptoWalletAccountReq)(nil),         // 102: payment.GetCryptoWalletAccountReq
-	(*GetCryptoWalletAccountResp)(nil),        // 103: payment.GetCryptoWalletAccountResp
-	(*ListCryptoWalletAccountsReq)(nil),       // 104: payment.ListCryptoWalletAccountsReq
-	(*ListCryptoWalletAccountsResp)(nil),      // 105: payment.ListCryptoWalletAccountsResp
-	(*CreateCryptoRechargeTxReq)(nil),         // 106: payment.CreateCryptoRechargeTxReq
-	(*UpdateCryptoRechargeTxReq)(nil),         // 107: payment.UpdateCryptoRechargeTxReq
-	(*GetCryptoRechargeTxReq)(nil),            // 108: payment.GetCryptoRechargeTxReq
-	(*GetCryptoRechargeTxResp)(nil),           // 109: payment.GetCryptoRechargeTxResp
-	(*ListCryptoRechargeTxsReq)(nil),          // 110: payment.ListCryptoRechargeTxsReq
-	(*ListCryptoRechargeTxsResp)(nil),         // 111: payment.ListCryptoRechargeTxsResp
-	(*Empty)(nil),                             // 112: payment.Empty
-	(*PayPlatformItem)(nil),                   // 113: payment.PayPlatformItem
-	(*PayPlatformsResp)(nil),                  // 114: payment.PayPlatformsResp
-	nil,                                       // 115: payment.ThirdPartyNotifyReq.HeadersEntry
-	nil,                                       // 116: payment.ThirdPartyNotifyReq.QueryEntry
-	nil,                                       // 117: payment.ThirdPartyNotifyReq.FormEntry
-	(*common.RespBase)(nil),                   // 118: common.RespBase
-	(*UserRechargeStat)(nil),                  // 119: payment.UserRechargeStat
-	(ClientType)(0),                           // 120: payment.ClientType
-	(*VisiblePayChannel)(nil),                 // 121: payment.VisiblePayChannel
-	(*RechargeOrder)(nil),                     // 122: payment.RechargeOrder
-	(common.WalletType)(0),                    // 123: common.WalletType
-	(common.ChainCode)(0),                     // 124: common.ChainCode
-	(*CryptoRechargeAddress)(nil),             // 125: payment.CryptoRechargeAddress
-	(*common.PageReq)(nil),                    // 126: common.PageReq
-	(PayOrderStatus)(0),                       // 127: payment.PayOrderStatus
-	(*WithdrawOrder)(nil),                     // 128: payment.WithdrawOrder
-	(CryptoRechargeTxStatus)(0),               // 129: payment.CryptoRechargeTxStatus
-	(*CryptoRechargeTx)(nil),                  // 130: payment.CryptoRechargeTx
-	(PlatformType)(0),                         // 131: payment.PlatformType
-	(common.Enable)(0),                        // 132: common.Enable
-	(*PayPlatform)(nil),                       // 133: payment.PayPlatform
-	(SceneType)(0),                            // 134: payment.SceneType
-	(*PayProduct)(nil),                        // 135: payment.PayProduct
-	(OpenStatus)(0),                           // 136: payment.OpenStatus
-	(*TenantPayPlatform)(nil),                 // 137: payment.TenantPayPlatform
-	(common.YesNo)(0),                         // 138: common.YesNo
-	(*TenantPayAccount)(nil),                  // 139: payment.TenantPayAccount
-	(common.Switch)(0),                        // 140: common.Switch
-	(FeeType)(0),                              // 141: payment.FeeType
-	(*TenantPayChannel)(nil),                  // 142: payment.TenantPayChannel
-	(*TenantPayChannelRule)(nil),              // 143: payment.TenantPayChannelRule
-	(RechargeType)(0),                         // 144: payment.RechargeType
-	(*PayNotifyLog)(nil),                      // 145: payment.PayNotifyLog
-	(NotifyProcessStatus)(0),                  // 146: payment.NotifyProcessStatus
-	(SignResult)(0),                           // 147: payment.SignResult
-	(CryptoRechargeAddressSource)(0),          // 148: payment.CryptoRechargeAddressSource
-	(CryptoRechargeAddressType)(0),            // 149: payment.CryptoRechargeAddressType
-	(CryptoRechargeAddressStatus)(0),          // 150: payment.CryptoRechargeAddressStatus
-	(*CryptoWalletAccount)(nil),               // 151: payment.CryptoWalletAccount
+	(*CreateTenantPayAccountReq)(nil),         // 46: payment.CreateTenantPayAccountReq
+	(*UpdateTenantPayAccountReq)(nil),         // 47: payment.UpdateTenantPayAccountReq
+	(*GetTenantPayAccountReq)(nil),            // 48: payment.GetTenantPayAccountReq
+	(*GetTenantPayAccountResp)(nil),           // 49: payment.GetTenantPayAccountResp
+	(*ListTenantPayAccountsReq)(nil),          // 50: payment.ListTenantPayAccountsReq
+	(*ListTenantPayAccountsResp)(nil),         // 51: payment.ListTenantPayAccountsResp
+	(*CreateTenantPayChannelReq)(nil),         // 52: payment.CreateTenantPayChannelReq
+	(*UpdateTenantPayChannelReq)(nil),         // 53: payment.UpdateTenantPayChannelReq
+	(*GetTenantPayChannelReq)(nil),            // 54: payment.GetTenantPayChannelReq
+	(*GetTenantPayChannelResp)(nil),           // 55: payment.GetTenantPayChannelResp
+	(*ListTenantPayChannelsReq)(nil),          // 56: payment.ListTenantPayChannelsReq
+	(*ListTenantPayChannelsResp)(nil),         // 57: payment.ListTenantPayChannelsResp
+	(*CreateTenantPayChannelRuleReq)(nil),     // 58: payment.CreateTenantPayChannelRuleReq
+	(*UpdateTenantPayChannelRuleReq)(nil),     // 59: payment.UpdateTenantPayChannelRuleReq
+	(*GetTenantPayChannelRuleReq)(nil),        // 60: payment.GetTenantPayChannelRuleReq
+	(*GetTenantPayChannelRuleResp)(nil),       // 61: payment.GetTenantPayChannelRuleResp
+	(*ListTenantPayChannelRulesReq)(nil),      // 62: payment.ListTenantPayChannelRulesReq
+	(*ListTenantPayChannelRulesResp)(nil),     // 63: payment.ListTenantPayChannelRulesResp
+	(*GetUserRechargeStatReq)(nil),            // 64: payment.GetUserRechargeStatReq
+	(*GetUserRechargeStatResp)(nil),           // 65: payment.GetUserRechargeStatResp
+	(*ListUserRechargeStatsReq)(nil),          // 66: payment.ListUserRechargeStatsReq
+	(*ListUserRechargeStatsResp)(nil),         // 67: payment.ListUserRechargeStatsResp
+	(*GetRechargeOrderReq)(nil),               // 68: payment.GetRechargeOrderReq
+	(*GetRechargeOrderResp)(nil),              // 69: payment.GetRechargeOrderResp
+	(*ListRechargeOrdersReq)(nil),             // 70: payment.ListRechargeOrdersReq
+	(*ListRechargeOrdersResp)(nil),            // 71: payment.ListRechargeOrdersResp
+	(*CloseRechargeOrderReq)(nil),             // 72: payment.CloseRechargeOrderReq
+	(*ManualMarkRechargeOrderSuccessReq)(nil), // 73: payment.ManualMarkRechargeOrderSuccessReq
+	(*RetryNotifyReq)(nil),                    // 74: payment.RetryNotifyReq
+	(*GetRechargeNotifyLogReq)(nil),           // 75: payment.GetRechargeNotifyLogReq
+	(*GetRechargeNotifyLogResp)(nil),          // 76: payment.GetRechargeNotifyLogResp
+	(*ListRechargeNotifyLogsReq)(nil),         // 77: payment.ListRechargeNotifyLogsReq
+	(*ListRechargeNotifyLogsResp)(nil),        // 78: payment.ListRechargeNotifyLogsResp
+	(*ListWithdrawOrdersReq)(nil),             // 79: payment.ListWithdrawOrdersReq
+	(*ListWithdrawOrdersResp)(nil),            // 80: payment.ListWithdrawOrdersResp
+	(*GetWithdrawOrderReq)(nil),               // 81: payment.GetWithdrawOrderReq
+	(*GetWithdrawOrderResp)(nil),              // 82: payment.GetWithdrawOrderResp
+	(*AuditWithdrawOrderReq)(nil),             // 83: payment.AuditWithdrawOrderReq
+	(*ListWithdrawNotifyLogsReq)(nil),         // 84: payment.ListWithdrawNotifyLogsReq
+	(*ListWithdrawNotifyLogsResp)(nil),        // 85: payment.ListWithdrawNotifyLogsResp
+	(*GetWithdrawNotifyLogReq)(nil),           // 86: payment.GetWithdrawNotifyLogReq
+	(*GetWithdrawNotifyLogResp)(nil),          // 87: payment.GetWithdrawNotifyLogResp
+	(*CreateCryptoRechargeAddressReq)(nil),    // 88: payment.CreateCryptoRechargeAddressReq
+	(*UpdateCryptoRechargeAddressReq)(nil),    // 89: payment.UpdateCryptoRechargeAddressReq
+	(*GetCryptoRechargeAddressReq)(nil),       // 90: payment.GetCryptoRechargeAddressReq
+	(*GetCryptoRechargeAddressResp)(nil),      // 91: payment.GetCryptoRechargeAddressResp
+	(*ListCryptoRechargeAddressesReq)(nil),    // 92: payment.ListCryptoRechargeAddressesReq
+	(*ListCryptoRechargeAddressesResp)(nil),   // 93: payment.ListCryptoRechargeAddressesResp
+	(*CreateCryptoWalletAccountReq)(nil),      // 94: payment.CreateCryptoWalletAccountReq
+	(*UpdateCryptoWalletAccountReq)(nil),      // 95: payment.UpdateCryptoWalletAccountReq
+	(*GetCryptoWalletAccountReq)(nil),         // 96: payment.GetCryptoWalletAccountReq
+	(*GetCryptoWalletAccountResp)(nil),        // 97: payment.GetCryptoWalletAccountResp
+	(*ListCryptoWalletAccountsReq)(nil),       // 98: payment.ListCryptoWalletAccountsReq
+	(*ListCryptoWalletAccountsResp)(nil),      // 99: payment.ListCryptoWalletAccountsResp
+	(*CreateCryptoRechargeTxReq)(nil),         // 100: payment.CreateCryptoRechargeTxReq
+	(*UpdateCryptoRechargeTxReq)(nil),         // 101: payment.UpdateCryptoRechargeTxReq
+	(*GetCryptoRechargeTxReq)(nil),            // 102: payment.GetCryptoRechargeTxReq
+	(*GetCryptoRechargeTxResp)(nil),           // 103: payment.GetCryptoRechargeTxResp
+	(*ListCryptoRechargeTxsReq)(nil),          // 104: payment.ListCryptoRechargeTxsReq
+	(*ListCryptoRechargeTxsResp)(nil),         // 105: payment.ListCryptoRechargeTxsResp
+	(*Empty)(nil),                             // 106: payment.Empty
+	(*PayPlatformItem)(nil),                   // 107: payment.PayPlatformItem
+	(*PayPlatformsResp)(nil),                  // 108: payment.PayPlatformsResp
+	nil,                                       // 109: payment.ThirdPartyNotifyReq.HeadersEntry
+	nil,                                       // 110: payment.ThirdPartyNotifyReq.QueryEntry
+	nil,                                       // 111: payment.ThirdPartyNotifyReq.FormEntry
+	(*common.RespBase)(nil),                   // 112: common.RespBase
+	(*UserRechargeStat)(nil),                  // 113: payment.UserRechargeStat
+	(ClientType)(0),                           // 114: payment.ClientType
+	(*VisiblePayChannel)(nil),                 // 115: payment.VisiblePayChannel
+	(*RechargeOrder)(nil),                     // 116: payment.RechargeOrder
+	(common.WalletType)(0),                    // 117: common.WalletType
+	(common.ChainCode)(0),                     // 118: common.ChainCode
+	(*CryptoRechargeAddress)(nil),             // 119: payment.CryptoRechargeAddress
+	(*common.PageReq)(nil),                    // 120: common.PageReq
+	(PayOrderStatus)(0),                       // 121: payment.PayOrderStatus
+	(*WithdrawOrder)(nil),                     // 122: payment.WithdrawOrder
+	(CryptoRechargeTxStatus)(0),               // 123: payment.CryptoRechargeTxStatus
+	(*CryptoRechargeTx)(nil),                  // 124: payment.CryptoRechargeTx
+	(PlatformType)(0),                         // 125: payment.PlatformType
+	(common.Enable)(0),                        // 126: common.Enable
+	(*PayPlatform)(nil),                       // 127: payment.PayPlatform
+	(SceneType)(0),                            // 128: payment.SceneType
+	(*PayProduct)(nil),                        // 129: payment.PayProduct
+	(common.YesNo)(0),                         // 130: common.YesNo
+	(*TenantPayAccount)(nil),                  // 131: payment.TenantPayAccount
+	(common.Switch)(0),                        // 132: common.Switch
+	(FeeType)(0),                              // 133: payment.FeeType
+	(*TenantPayChannel)(nil),                  // 134: payment.TenantPayChannel
+	(*TenantPayChannelRule)(nil),              // 135: payment.TenantPayChannelRule
+	(RechargeType)(0),                         // 136: payment.RechargeType
+	(*PayNotifyLog)(nil),                      // 137: payment.PayNotifyLog
+	(NotifyProcessStatus)(0),                  // 138: payment.NotifyProcessStatus
+	(SignResult)(0),                           // 139: payment.SignResult
+	(CryptoRechargeAddressSource)(0),          // 140: payment.CryptoRechargeAddressSource
+	(CryptoRechargeAddressType)(0),            // 141: payment.CryptoRechargeAddressType
+	(CryptoRechargeAddressStatus)(0),          // 142: payment.CryptoRechargeAddressStatus
+	(*CryptoWalletAccount)(nil),               // 143: payment.CryptoWalletAccount
 }
 var file_proto_payment_payment_proto_depIdxs = []int32{
-	118, // 0: payment.UserCommonResp.base:type_name -> common.RespBase
-	118, // 1: payment.GetMyRechargeStatResp.base:type_name -> common.RespBase
-	119, // 2: payment.GetMyRechargeStatResp.data:type_name -> payment.UserRechargeStat
-	120, // 3: payment.ListAvailableRechargeChannelsReq.client_type:type_name -> payment.ClientType
-	118, // 4: payment.ListAvailableRechargeChannelsResp.base:type_name -> common.RespBase
-	121, // 5: payment.ListAvailableRechargeChannelsResp.data:type_name -> payment.VisiblePayChannel
-	120, // 6: payment.CreateRechargeOrderReq.client_type:type_name -> payment.ClientType
-	118, // 7: payment.CreateRechargeOrderResp.base:type_name -> common.RespBase
-	122, // 8: payment.CreateRechargeOrderResp.data:type_name -> payment.RechargeOrder
-	123, // 9: payment.CreateCryptoRechargeOrderReq.wallet_type:type_name -> common.WalletType
-	124, // 10: payment.CreateCryptoRechargeOrderReq.chain_code:type_name -> common.ChainCode
-	120, // 11: payment.CreateCryptoRechargeOrderReq.client_type:type_name -> payment.ClientType
-	118, // 12: payment.CreateCryptoRechargeOrderResp.base:type_name -> common.RespBase
+	112, // 0: payment.UserCommonResp.base:type_name -> common.RespBase
+	112, // 1: payment.GetMyRechargeStatResp.base:type_name -> common.RespBase
+	113, // 2: payment.GetMyRechargeStatResp.data:type_name -> payment.UserRechargeStat
+	114, // 3: payment.ListAvailableRechargeChannelsReq.client_type:type_name -> payment.ClientType
+	112, // 4: payment.ListAvailableRechargeChannelsResp.base:type_name -> common.RespBase
+	115, // 5: payment.ListAvailableRechargeChannelsResp.data:type_name -> payment.VisiblePayChannel
+	114, // 6: payment.CreateRechargeOrderReq.client_type:type_name -> payment.ClientType
+	112, // 7: payment.CreateRechargeOrderResp.base:type_name -> common.RespBase
+	116, // 8: payment.CreateRechargeOrderResp.data:type_name -> payment.RechargeOrder
+	117, // 9: payment.CreateCryptoRechargeOrderReq.wallet_type:type_name -> common.WalletType
+	118, // 10: payment.CreateCryptoRechargeOrderReq.chain_code:type_name -> common.ChainCode
+	114, // 11: payment.CreateCryptoRechargeOrderReq.client_type:type_name -> payment.ClientType
+	112, // 12: payment.CreateCryptoRechargeOrderResp.base:type_name -> common.RespBase
 	9,   // 13: payment.CreateCryptoRechargeOrderResp.data:type_name -> payment.CreateCryptoRechargeOrderData
-	122, // 14: payment.CreateCryptoRechargeOrderData.order:type_name -> payment.RechargeOrder
-	125, // 15: payment.CreateCryptoRechargeOrderData.address:type_name -> payment.CryptoRechargeAddress
-	118, // 16: payment.GetMyRechargeOrderResp.base:type_name -> common.RespBase
-	122, // 17: payment.GetMyRechargeOrderResp.data:type_name -> payment.RechargeOrder
-	126, // 18: payment.ListMyRechargeOrdersReq.page:type_name -> common.PageReq
-	127, // 19: payment.ListMyRechargeOrdersReq.status:type_name -> payment.PayOrderStatus
-	118, // 20: payment.ListMyRechargeOrdersResp.base:type_name -> common.RespBase
-	122, // 21: payment.ListMyRechargeOrdersResp.data:type_name -> payment.RechargeOrder
-	118, // 22: payment.QueryMyRechargeOrderStatusResp.base:type_name -> common.RespBase
-	122, // 23: payment.QueryMyRechargeOrderStatusResp.data:type_name -> payment.RechargeOrder
-	118, // 24: payment.CreateWithdrawOrderResp.base:type_name -> common.RespBase
-	126, // 25: payment.ListMyWithdrawOrdersReq.page:type_name -> common.PageReq
-	127, // 26: payment.ListMyWithdrawOrdersReq.status:type_name -> payment.PayOrderStatus
-	118, // 27: payment.ListMyWithdrawOrdersResp.base:type_name -> common.RespBase
-	128, // 28: payment.ListMyWithdrawOrdersResp.data:type_name -> payment.WithdrawOrder
-	118, // 29: payment.GetMyWithdrawOrderResp.base:type_name -> common.RespBase
-	128, // 30: payment.GetMyWithdrawOrderResp.data:type_name -> payment.WithdrawOrder
-	123, // 31: payment.GetMyCryptoRechargeAddressReq.wallet_type:type_name -> common.WalletType
-	124, // 32: payment.GetMyCryptoRechargeAddressReq.chain_code:type_name -> common.ChainCode
-	118, // 33: payment.GetMyCryptoRechargeAddressResp.base:type_name -> common.RespBase
-	125, // 34: payment.GetMyCryptoRechargeAddressResp.data:type_name -> payment.CryptoRechargeAddress
-	123, // 35: payment.ListMyCryptoRechargeAddressesReq.wallet_type:type_name -> common.WalletType
-	124, // 36: payment.ListMyCryptoRechargeAddressesReq.chain_code:type_name -> common.ChainCode
-	118, // 37: payment.ListMyCryptoRechargeAddressesResp.base:type_name -> common.RespBase
-	125, // 38: payment.ListMyCryptoRechargeAddressesResp.data:type_name -> payment.CryptoRechargeAddress
-	126, // 39: payment.ListMyCryptoRechargeTxsReq.page:type_name -> common.PageReq
-	124, // 40: payment.ListMyCryptoRechargeTxsReq.chain_code:type_name -> common.ChainCode
-	129, // 41: payment.ListMyCryptoRechargeTxsReq.status:type_name -> payment.CryptoRechargeTxStatus
-	118, // 42: payment.ListMyCryptoRechargeTxsResp.base:type_name -> common.RespBase
-	130, // 43: payment.ListMyCryptoRechargeTxsResp.data:type_name -> payment.CryptoRechargeTx
-	118, // 44: payment.GetMyCryptoRechargeTxResp.base:type_name -> common.RespBase
-	130, // 45: payment.GetMyCryptoRechargeTxResp.data:type_name -> payment.CryptoRechargeTx
-	115, // 46: payment.ThirdPartyNotifyReq.headers:type_name -> payment.ThirdPartyNotifyReq.HeadersEntry
-	116, // 47: payment.ThirdPartyNotifyReq.query:type_name -> payment.ThirdPartyNotifyReq.QueryEntry
-	117, // 48: payment.ThirdPartyNotifyReq.form:type_name -> payment.ThirdPartyNotifyReq.FormEntry
-	118, // 49: payment.CommonResp.base:type_name -> common.RespBase
-	131, // 50: payment.CreatePayPlatformReq.platform_type:type_name -> payment.PlatformType
-	132, // 51: payment.CreatePayPlatformReq.enabled:type_name -> common.Enable
-	131, // 52: payment.UpdatePayPlatformReq.platform_type:type_name -> payment.PlatformType
-	132, // 53: payment.UpdatePayPlatformReq.enabled:type_name -> common.Enable
-	118, // 54: payment.GetPayPlatformResp.base:type_name -> common.RespBase
-	133, // 55: payment.GetPayPlatformResp.data:type_name -> payment.PayPlatform
-	126, // 56: payment.ListPayPlatformsReq.page:type_name -> common.PageReq
-	132, // 57: payment.ListPayPlatformsReq.enabled:type_name -> common.Enable
-	131, // 58: payment.ListPayPlatformsReq.platform_type:type_name -> payment.PlatformType
-	118, // 59: payment.ListPayPlatformsResp.base:type_name -> common.RespBase
-	133, // 60: payment.ListPayPlatformsResp.data:type_name -> payment.PayPlatform
-	134, // 61: payment.CreatePayProductReq.scene_type:type_name -> payment.SceneType
-	132, // 62: payment.CreatePayProductReq.enabled:type_name -> common.Enable
-	134, // 63: payment.UpdatePayProductReq.scene_type:type_name -> payment.SceneType
-	132, // 64: payment.UpdatePayProductReq.enabled:type_name -> common.Enable
-	118, // 65: payment.GetPayProductResp.base:type_name -> common.RespBase
-	135, // 66: payment.GetPayProductResp.data:type_name -> payment.PayProduct
-	126, // 67: payment.ListPayProductsReq.page:type_name -> common.PageReq
-	132, // 68: payment.ListPayProductsReq.enabled:type_name -> common.Enable
-	134, // 69: payment.ListPayProductsReq.scene_type:type_name -> payment.SceneType
-	118, // 70: payment.ListPayProductsResp.base:type_name -> common.RespBase
-	135, // 71: payment.ListPayProductsResp.data:type_name -> payment.PayProduct
-	132, // 72: payment.OpenTenantPayPlatformReq.enabled:type_name -> common.Enable
-	136, // 73: payment.OpenTenantPayPlatformReq.open_status:type_name -> payment.OpenStatus
-	132, // 74: payment.UpdateTenantPayPlatformReq.enabled:type_name -> common.Enable
-	136, // 75: payment.UpdateTenantPayPlatformReq.open_status:type_name -> payment.OpenStatus
-	118, // 76: payment.GetTenantPayPlatformResp.base:type_name -> common.RespBase
-	137, // 77: payment.GetTenantPayPlatformResp.data:type_name -> payment.TenantPayPlatform
-	126, // 78: payment.ListTenantPayPlatformsReq.page:type_name -> common.PageReq
-	132, // 79: payment.ListTenantPayPlatformsReq.enabled:type_name -> common.Enable
-	136, // 80: payment.ListTenantPayPlatformsReq.open_status:type_name -> payment.OpenStatus
-	118, // 81: payment.ListTenantPayPlatformsResp.base:type_name -> common.RespBase
-	137, // 82: payment.ListTenantPayPlatformsResp.data:type_name -> payment.TenantPayPlatform
-	132, // 83: payment.CreateTenantPayAccountReq.enabled:type_name -> common.Enable
-	138, // 84: payment.CreateTenantPayAccountReq.is_default:type_name -> common.YesNo
-	132, // 85: payment.UpdateTenantPayAccountReq.enabled:type_name -> common.Enable
-	138, // 86: payment.UpdateTenantPayAccountReq.is_default:type_name -> common.YesNo
-	118, // 87: payment.GetTenantPayAccountResp.base:type_name -> common.RespBase
-	139, // 88: payment.GetTenantPayAccountResp.data:type_name -> payment.TenantPayAccount
-	126, // 89: payment.ListTenantPayAccountsReq.page:type_name -> common.PageReq
-	132, // 90: payment.ListTenantPayAccountsReq.enabled:type_name -> common.Enable
-	118, // 91: payment.ListTenantPayAccountsResp.base:type_name -> common.RespBase
-	139, // 92: payment.ListTenantPayAccountsResp.data:type_name -> payment.TenantPayAccount
-	140, // 93: payment.CreateTenantPayChannelReq.visible:type_name -> common.Switch
-	132, // 94: payment.CreateTenantPayChannelReq.enabled:type_name -> common.Enable
-	141, // 95: payment.CreateTenantPayChannelReq.fee_type:type_name -> payment.FeeType
-	140, // 96: payment.UpdateTenantPayChannelReq.visible:type_name -> common.Switch
-	132, // 97: payment.UpdateTenantPayChannelReq.enabled:type_name -> common.Enable
-	141, // 98: payment.UpdateTenantPayChannelReq.fee_type:type_name -> payment.FeeType
-	118, // 99: payment.GetTenantPayChannelResp.base:type_name -> common.RespBase
-	142, // 100: payment.GetTenantPayChannelResp.data:type_name -> payment.TenantPayChannel
-	126, // 101: payment.ListTenantPayChannelsReq.page:type_name -> common.PageReq
-	132, // 102: payment.ListTenantPayChannelsReq.enabled:type_name -> common.Enable
-	140, // 103: payment.ListTenantPayChannelsReq.visible:type_name -> common.Switch
-	118, // 104: payment.ListTenantPayChannelsResp.base:type_name -> common.RespBase
-	142, // 105: payment.ListTenantPayChannelsResp.data:type_name -> payment.TenantPayChannel
-	132, // 106: payment.CreateTenantPayChannelRuleReq.enabled:type_name -> common.Enable
-	138, // 107: payment.CreateTenantPayChannelRuleReq.allow_new_user:type_name -> common.YesNo
-	138, // 108: payment.CreateTenantPayChannelRuleReq.allow_old_user:type_name -> common.YesNo
-	132, // 109: payment.UpdateTenantPayChannelRuleReq.enabled:type_name -> common.Enable
-	138, // 110: payment.UpdateTenantPayChannelRuleReq.allow_new_user:type_name -> common.YesNo
-	138, // 111: payment.UpdateTenantPayChannelRuleReq.allow_old_user:type_name -> common.YesNo
-	118, // 112: payment.GetTenantPayChannelRuleResp.base:type_name -> common.RespBase
-	143, // 113: payment.GetTenantPayChannelRuleResp.data:type_name -> payment.TenantPayChannelRule
-	126, // 114: payment.ListTenantPayChannelRulesReq.page:type_name -> common.PageReq
-	132, // 115: payment.ListTenantPayChannelRulesReq.enabled:type_name -> common.Enable
-	118, // 116: payment.ListTenantPayChannelRulesResp.base:type_name -> common.RespBase
-	143, // 117: payment.ListTenantPayChannelRulesResp.data:type_name -> payment.TenantPayChannelRule
-	118, // 118: payment.GetUserRechargeStatResp.base:type_name -> common.RespBase
-	119, // 119: payment.GetUserRechargeStatResp.data:type_name -> payment.UserRechargeStat
-	126, // 120: payment.ListUserRechargeStatsReq.page:type_name -> common.PageReq
-	118, // 121: payment.ListUserRechargeStatsResp.base:type_name -> common.RespBase
-	119, // 122: payment.ListUserRechargeStatsResp.data:type_name -> payment.UserRechargeStat
-	118, // 123: payment.GetRechargeOrderResp.base:type_name -> common.RespBase
-	122, // 124: payment.GetRechargeOrderResp.data:type_name -> payment.RechargeOrder
-	126, // 125: payment.ListRechargeOrdersReq.page:type_name -> common.PageReq
-	127, // 126: payment.ListRechargeOrdersReq.status:type_name -> payment.PayOrderStatus
-	144, // 127: payment.ListRechargeOrdersReq.recharge_type:type_name -> payment.RechargeType
-	118, // 128: payment.ListRechargeOrdersResp.base:type_name -> common.RespBase
-	122, // 129: payment.ListRechargeOrdersResp.data:type_name -> payment.RechargeOrder
-	118, // 130: payment.GetRechargeNotifyLogResp.base:type_name -> common.RespBase
-	145, // 131: payment.GetRechargeNotifyLogResp.data:type_name -> payment.PayNotifyLog
-	126, // 132: payment.ListRechargeNotifyLogsReq.page:type_name -> common.PageReq
-	146, // 133: payment.ListRechargeNotifyLogsReq.notify_status:type_name -> payment.NotifyProcessStatus
-	147, // 134: payment.ListRechargeNotifyLogsReq.sign_result:type_name -> payment.SignResult
-	118, // 135: payment.ListRechargeNotifyLogsResp.base:type_name -> common.RespBase
-	145, // 136: payment.ListRechargeNotifyLogsResp.data:type_name -> payment.PayNotifyLog
-	126, // 137: payment.ListWithdrawOrdersReq.page:type_name -> common.PageReq
-	118, // 138: payment.ListWithdrawOrdersResp.base:type_name -> common.RespBase
-	128, // 139: payment.ListWithdrawOrdersResp.data:type_name -> payment.WithdrawOrder
-	118, // 140: payment.GetWithdrawOrderResp.base:type_name -> common.RespBase
-	128, // 141: payment.GetWithdrawOrderResp.data:type_name -> payment.WithdrawOrder
-	126, // 142: payment.ListWithdrawNotifyLogsReq.page:type_name -> common.PageReq
-	146, // 143: payment.ListWithdrawNotifyLogsReq.notify_status:type_name -> payment.NotifyProcessStatus
-	147, // 144: payment.ListWithdrawNotifyLogsReq.sign_result:type_name -> payment.SignResult
-	118, // 145: payment.ListWithdrawNotifyLogsResp.base:type_name -> common.RespBase
-	145, // 146: payment.ListWithdrawNotifyLogsResp.data:type_name -> payment.PayNotifyLog
-	118, // 147: payment.GetWithdrawNotifyLogResp.base:type_name -> common.RespBase
-	145, // 148: payment.GetWithdrawNotifyLogResp.data:type_name -> payment.PayNotifyLog
-	123, // 149: payment.CreateCryptoRechargeAddressReq.wallet_type:type_name -> common.WalletType
-	124, // 150: payment.CreateCryptoRechargeAddressReq.chain_code:type_name -> common.ChainCode
-	148, // 151: payment.CreateCryptoRechargeAddressReq.address_source:type_name -> payment.CryptoRechargeAddressSource
-	149, // 152: payment.CreateCryptoRechargeAddressReq.address_type:type_name -> payment.CryptoRechargeAddressType
-	150, // 153: payment.CreateCryptoRechargeAddressReq.status:type_name -> payment.CryptoRechargeAddressStatus
-	148, // 154: payment.UpdateCryptoRechargeAddressReq.address_source:type_name -> payment.CryptoRechargeAddressSource
-	149, // 155: payment.UpdateCryptoRechargeAddressReq.address_type:type_name -> payment.CryptoRechargeAddressType
-	150, // 156: payment.UpdateCryptoRechargeAddressReq.status:type_name -> payment.CryptoRechargeAddressStatus
-	118, // 157: payment.GetCryptoRechargeAddressResp.base:type_name -> common.RespBase
-	125, // 158: payment.GetCryptoRechargeAddressResp.data:type_name -> payment.CryptoRechargeAddress
-	126, // 159: payment.ListCryptoRechargeAddressesReq.page:type_name -> common.PageReq
-	123, // 160: payment.ListCryptoRechargeAddressesReq.wallet_type:type_name -> common.WalletType
-	124, // 161: payment.ListCryptoRechargeAddressesReq.chain_code:type_name -> common.ChainCode
-	150, // 162: payment.ListCryptoRechargeAddressesReq.status:type_name -> payment.CryptoRechargeAddressStatus
-	149, // 163: payment.ListCryptoRechargeAddressesReq.address_type:type_name -> payment.CryptoRechargeAddressType
-	118, // 164: payment.ListCryptoRechargeAddressesResp.base:type_name -> common.RespBase
-	125, // 165: payment.ListCryptoRechargeAddressesResp.data:type_name -> payment.CryptoRechargeAddress
-	132, // 166: payment.CreateCryptoWalletAccountReq.enabled:type_name -> common.Enable
-	138, // 167: payment.CreateCryptoWalletAccountReq.is_default:type_name -> common.YesNo
-	132, // 168: payment.UpdateCryptoWalletAccountReq.enabled:type_name -> common.Enable
-	138, // 169: payment.UpdateCryptoWalletAccountReq.is_default:type_name -> common.YesNo
-	118, // 170: payment.GetCryptoWalletAccountResp.base:type_name -> common.RespBase
-	151, // 171: payment.GetCryptoWalletAccountResp.data:type_name -> payment.CryptoWalletAccount
-	126, // 172: payment.ListCryptoWalletAccountsReq.page:type_name -> common.PageReq
-	132, // 173: payment.ListCryptoWalletAccountsReq.enabled:type_name -> common.Enable
-	138, // 174: payment.ListCryptoWalletAccountsReq.is_default:type_name -> common.YesNo
-	118, // 175: payment.ListCryptoWalletAccountsResp.base:type_name -> common.RespBase
-	151, // 176: payment.ListCryptoWalletAccountsResp.data:type_name -> payment.CryptoWalletAccount
-	124, // 177: payment.CreateCryptoRechargeTxReq.chain_code:type_name -> common.ChainCode
-	129, // 178: payment.CreateCryptoRechargeTxReq.status:type_name -> payment.CryptoRechargeTxStatus
-	129, // 179: payment.UpdateCryptoRechargeTxReq.status:type_name -> payment.CryptoRechargeTxStatus
-	124, // 180: payment.GetCryptoRechargeTxReq.chain_code:type_name -> common.ChainCode
-	118, // 181: payment.GetCryptoRechargeTxResp.base:type_name -> common.RespBase
-	130, // 182: payment.GetCryptoRechargeTxResp.data:type_name -> payment.CryptoRechargeTx
-	126, // 183: payment.ListCryptoRechargeTxsReq.page:type_name -> common.PageReq
-	124, // 184: payment.ListCryptoRechargeTxsReq.chain_code:type_name -> common.ChainCode
-	129, // 185: payment.ListCryptoRechargeTxsReq.status:type_name -> payment.CryptoRechargeTxStatus
-	118, // 186: payment.ListCryptoRechargeTxsResp.base:type_name -> common.RespBase
-	130, // 187: payment.ListCryptoRechargeTxsResp.data:type_name -> payment.CryptoRechargeTx
-	118, // 188: payment.PayPlatformsResp.base:type_name -> common.RespBase
-	113, // 189: payment.PayPlatformsResp.data:type_name -> payment.PayPlatformItem
-	31,  // 190: payment.Callback.PaymentNotify:input_type -> payment.ThirdPartyNotifyReq
-	31,  // 191: payment.Callback.PayoutNotify:input_type -> payment.ThirdPartyNotifyReq
-	1,   // 192: payment.App.GetMyRechargeStat:input_type -> payment.GetMyRechargeStatReq
-	3,   // 193: payment.App.ListAvailableRechargeChannels:input_type -> payment.ListAvailableRechargeChannelsReq
-	5,   // 194: payment.App.CreateRechargeOrder:input_type -> payment.CreateRechargeOrderReq
-	7,   // 195: payment.App.CreateCryptoRechargeOrder:input_type -> payment.CreateCryptoRechargeOrderReq
-	10,  // 196: payment.App.GetMyRechargeOrder:input_type -> payment.GetMyRechargeOrderReq
-	12,  // 197: payment.App.ListMyRechargeOrders:input_type -> payment.ListMyRechargeOrdersReq
-	14,  // 198: payment.App.CancelMyRechargeOrder:input_type -> payment.CancelMyRechargeOrderReq
-	15,  // 199: payment.App.QueryMyRechargeOrderStatus:input_type -> payment.QueryMyRechargeOrderStatusReq
-	17,  // 200: payment.App.CreateWithdrawOrder:input_type -> payment.CreateWithdrawOrderReq
-	19,  // 201: payment.App.ListMyWithdrawOrders:input_type -> payment.ListMyWithdrawOrdersReq
-	21,  // 202: payment.App.GetMyWithdrawOrder:input_type -> payment.GetMyWithdrawOrderReq
-	23,  // 203: payment.App.GetMyCryptoRechargeAddress:input_type -> payment.GetMyCryptoRechargeAddressReq
-	25,  // 204: payment.App.ListMyCryptoRechargeAddresses:input_type -> payment.ListMyCryptoRechargeAddressesReq
-	27,  // 205: payment.App.ListMyCryptoRechargeTxs:input_type -> payment.ListMyCryptoRechargeTxsReq
-	29,  // 206: payment.App.GetMyCryptoRechargeTx:input_type -> payment.GetMyCryptoRechargeTxReq
-	112, // 207: payment.Admin.GetPayPlatforms:input_type -> payment.Empty
-	34,  // 208: payment.Admin.CreatePayPlatform:input_type -> payment.CreatePayPlatformReq
-	35,  // 209: payment.Admin.UpdatePayPlatform:input_type -> payment.UpdatePayPlatformReq
-	36,  // 210: payment.Admin.GetPayPlatform:input_type -> payment.GetPayPlatformReq
-	38,  // 211: payment.Admin.ListPayPlatforms:input_type -> payment.ListPayPlatformsReq
-	40,  // 212: payment.Admin.CreatePayProduct:input_type -> payment.CreatePayProductReq
-	41,  // 213: payment.Admin.UpdatePayProduct:input_type -> payment.UpdatePayProductReq
-	42,  // 214: payment.Admin.GetPayProduct:input_type -> payment.GetPayProductReq
-	44,  // 215: payment.Admin.ListPayProducts:input_type -> payment.ListPayProductsReq
-	46,  // 216: payment.Admin.OpenTenantPayPlatform:input_type -> payment.OpenTenantPayPlatformReq
-	47,  // 217: payment.Admin.UpdateTenantPayPlatform:input_type -> payment.UpdateTenantPayPlatformReq
-	48,  // 218: payment.Admin.GetTenantPayPlatform:input_type -> payment.GetTenantPayPlatformReq
-	50,  // 219: payment.Admin.ListTenantPayPlatforms:input_type -> payment.ListTenantPayPlatformsReq
-	52,  // 220: payment.Admin.CreateTenantPayAccount:input_type -> payment.CreateTenantPayAccountReq
-	53,  // 221: payment.Admin.UpdateTenantPayAccount:input_type -> payment.UpdateTenantPayAccountReq
-	54,  // 222: payment.Admin.GetTenantPayAccount:input_type -> payment.GetTenantPayAccountReq
-	56,  // 223: payment.Admin.ListTenantPayAccounts:input_type -> payment.ListTenantPayAccountsReq
-	58,  // 224: payment.Admin.CreateTenantPayChannel:input_type -> payment.CreateTenantPayChannelReq
-	59,  // 225: payment.Admin.UpdateTenantPayChannel:input_type -> payment.UpdateTenantPayChannelReq
-	60,  // 226: payment.Admin.GetTenantPayChannel:input_type -> payment.GetTenantPayChannelReq
-	62,  // 227: payment.Admin.ListTenantPayChannels:input_type -> payment.ListTenantPayChannelsReq
-	64,  // 228: payment.Admin.CreateTenantPayChannelRule:input_type -> payment.CreateTenantPayChannelRuleReq
-	65,  // 229: payment.Admin.UpdateTenantPayChannelRule:input_type -> payment.UpdateTenantPayChannelRuleReq
-	66,  // 230: payment.Admin.GetTenantPayChannelRule:input_type -> payment.GetTenantPayChannelRuleReq
-	68,  // 231: payment.Admin.ListTenantPayChannelRules:input_type -> payment.ListTenantPayChannelRulesReq
-	70,  // 232: payment.Admin.GetUserRechargeStat:input_type -> payment.GetUserRechargeStatReq
-	72,  // 233: payment.Admin.ListUserRechargeStats:input_type -> payment.ListUserRechargeStatsReq
-	76,  // 234: payment.Admin.ListRechargeOrders:input_type -> payment.ListRechargeOrdersReq
-	74,  // 235: payment.Admin.GetRechargeOrder:input_type -> payment.GetRechargeOrderReq
-	78,  // 236: payment.Admin.CloseRechargeOrder:input_type -> payment.CloseRechargeOrderReq
-	79,  // 237: payment.Admin.ManualMarkRechargeOrderSuccess:input_type -> payment.ManualMarkRechargeOrderSuccessReq
-	80,  // 238: payment.Admin.RetryNotify:input_type -> payment.RetryNotifyReq
-	83,  // 239: payment.Admin.ListRechargeNotifyLogs:input_type -> payment.ListRechargeNotifyLogsReq
-	81,  // 240: payment.Admin.GetRechargeNotifyLog:input_type -> payment.GetRechargeNotifyLogReq
-	85,  // 241: payment.Admin.ListWithdrawOrders:input_type -> payment.ListWithdrawOrdersReq
-	87,  // 242: payment.Admin.GetWithdrawOrder:input_type -> payment.GetWithdrawOrderReq
-	89,  // 243: payment.Admin.AuditWithdrawOrder:input_type -> payment.AuditWithdrawOrderReq
-	90,  // 244: payment.Admin.ListWithdrawNotifyLogs:input_type -> payment.ListWithdrawNotifyLogsReq
-	92,  // 245: payment.Admin.GetWithdrawNotifyLog:input_type -> payment.GetWithdrawNotifyLogReq
-	94,  // 246: payment.Admin.CreateCryptoRechargeAddress:input_type -> payment.CreateCryptoRechargeAddressReq
-	95,  // 247: payment.Admin.UpdateCryptoRechargeAddress:input_type -> payment.UpdateCryptoRechargeAddressReq
-	96,  // 248: payment.Admin.GetCryptoRechargeAddress:input_type -> payment.GetCryptoRechargeAddressReq
-	98,  // 249: payment.Admin.ListCryptoRechargeAddresses:input_type -> payment.ListCryptoRechargeAddressesReq
-	100, // 250: payment.Admin.CreateCryptoWalletAccount:input_type -> payment.CreateCryptoWalletAccountReq
-	101, // 251: payment.Admin.UpdateCryptoWalletAccount:input_type -> payment.UpdateCryptoWalletAccountReq
-	102, // 252: payment.Admin.GetCryptoWalletAccount:input_type -> payment.GetCryptoWalletAccountReq
-	104, // 253: payment.Admin.ListCryptoWalletAccounts:input_type -> payment.ListCryptoWalletAccountsReq
-	106, // 254: payment.Admin.CreateCryptoRechargeTx:input_type -> payment.CreateCryptoRechargeTxReq
-	107, // 255: payment.Admin.UpdateCryptoRechargeTx:input_type -> payment.UpdateCryptoRechargeTxReq
-	108, // 256: payment.Admin.GetCryptoRechargeTx:input_type -> payment.GetCryptoRechargeTxReq
-	110, // 257: payment.Admin.ListCryptoRechargeTxs:input_type -> payment.ListCryptoRechargeTxsReq
-	32,  // 258: payment.Callback.PaymentNotify:output_type -> payment.ThirdPartyNotifyResp
-	32,  // 259: payment.Callback.PayoutNotify:output_type -> payment.ThirdPartyNotifyResp
-	2,   // 260: payment.App.GetMyRechargeStat:output_type -> payment.GetMyRechargeStatResp
-	4,   // 261: payment.App.ListAvailableRechargeChannels:output_type -> payment.ListAvailableRechargeChannelsResp
-	6,   // 262: payment.App.CreateRechargeOrder:output_type -> payment.CreateRechargeOrderResp
-	8,   // 263: payment.App.CreateCryptoRechargeOrder:output_type -> payment.CreateCryptoRechargeOrderResp
-	11,  // 264: payment.App.GetMyRechargeOrder:output_type -> payment.GetMyRechargeOrderResp
-	13,  // 265: payment.App.ListMyRechargeOrders:output_type -> payment.ListMyRechargeOrdersResp
-	0,   // 266: payment.App.CancelMyRechargeOrder:output_type -> payment.UserCommonResp
-	16,  // 267: payment.App.QueryMyRechargeOrderStatus:output_type -> payment.QueryMyRechargeOrderStatusResp
-	18,  // 268: payment.App.CreateWithdrawOrder:output_type -> payment.CreateWithdrawOrderResp
-	20,  // 269: payment.App.ListMyWithdrawOrders:output_type -> payment.ListMyWithdrawOrdersResp
-	22,  // 270: payment.App.GetMyWithdrawOrder:output_type -> payment.GetMyWithdrawOrderResp
-	24,  // 271: payment.App.GetMyCryptoRechargeAddress:output_type -> payment.GetMyCryptoRechargeAddressResp
-	26,  // 272: payment.App.ListMyCryptoRechargeAddresses:output_type -> payment.ListMyCryptoRechargeAddressesResp
-	28,  // 273: payment.App.ListMyCryptoRechargeTxs:output_type -> payment.ListMyCryptoRechargeTxsResp
-	30,  // 274: payment.App.GetMyCryptoRechargeTx:output_type -> payment.GetMyCryptoRechargeTxResp
-	114, // 275: payment.Admin.GetPayPlatforms:output_type -> payment.PayPlatformsResp
-	33,  // 276: payment.Admin.CreatePayPlatform:output_type -> payment.CommonResp
-	33,  // 277: payment.Admin.UpdatePayPlatform:output_type -> payment.CommonResp
-	37,  // 278: payment.Admin.GetPayPlatform:output_type -> payment.GetPayPlatformResp
-	39,  // 279: payment.Admin.ListPayPlatforms:output_type -> payment.ListPayPlatformsResp
-	33,  // 280: payment.Admin.CreatePayProduct:output_type -> payment.CommonResp
-	33,  // 281: payment.Admin.UpdatePayProduct:output_type -> payment.CommonResp
-	43,  // 282: payment.Admin.GetPayProduct:output_type -> payment.GetPayProductResp
-	45,  // 283: payment.Admin.ListPayProducts:output_type -> payment.ListPayProductsResp
-	33,  // 284: payment.Admin.OpenTenantPayPlatform:output_type -> payment.CommonResp
-	33,  // 285: payment.Admin.UpdateTenantPayPlatform:output_type -> payment.CommonResp
-	49,  // 286: payment.Admin.GetTenantPayPlatform:output_type -> payment.GetTenantPayPlatformResp
-	51,  // 287: payment.Admin.ListTenantPayPlatforms:output_type -> payment.ListTenantPayPlatformsResp
-	33,  // 288: payment.Admin.CreateTenantPayAccount:output_type -> payment.CommonResp
-	33,  // 289: payment.Admin.UpdateTenantPayAccount:output_type -> payment.CommonResp
-	55,  // 290: payment.Admin.GetTenantPayAccount:output_type -> payment.GetTenantPayAccountResp
-	57,  // 291: payment.Admin.ListTenantPayAccounts:output_type -> payment.ListTenantPayAccountsResp
-	33,  // 292: payment.Admin.CreateTenantPayChannel:output_type -> payment.CommonResp
-	33,  // 293: payment.Admin.UpdateTenantPayChannel:output_type -> payment.CommonResp
-	61,  // 294: payment.Admin.GetTenantPayChannel:output_type -> payment.GetTenantPayChannelResp
-	63,  // 295: payment.Admin.ListTenantPayChannels:output_type -> payment.ListTenantPayChannelsResp
-	33,  // 296: payment.Admin.CreateTenantPayChannelRule:output_type -> payment.CommonResp
-	33,  // 297: payment.Admin.UpdateTenantPayChannelRule:output_type -> payment.CommonResp
-	67,  // 298: payment.Admin.GetTenantPayChannelRule:output_type -> payment.GetTenantPayChannelRuleResp
-	69,  // 299: payment.Admin.ListTenantPayChannelRules:output_type -> payment.ListTenantPayChannelRulesResp
-	71,  // 300: payment.Admin.GetUserRechargeStat:output_type -> payment.GetUserRechargeStatResp
-	73,  // 301: payment.Admin.ListUserRechargeStats:output_type -> payment.ListUserRechargeStatsResp
-	77,  // 302: payment.Admin.ListRechargeOrders:output_type -> payment.ListRechargeOrdersResp
-	75,  // 303: payment.Admin.GetRechargeOrder:output_type -> payment.GetRechargeOrderResp
-	33,  // 304: payment.Admin.CloseRechargeOrder:output_type -> payment.CommonResp
-	33,  // 305: payment.Admin.ManualMarkRechargeOrderSuccess:output_type -> payment.CommonResp
-	33,  // 306: payment.Admin.RetryNotify:output_type -> payment.CommonResp
-	84,  // 307: payment.Admin.ListRechargeNotifyLogs:output_type -> payment.ListRechargeNotifyLogsResp
-	82,  // 308: payment.Admin.GetRechargeNotifyLog:output_type -> payment.GetRechargeNotifyLogResp
-	86,  // 309: payment.Admin.ListWithdrawOrders:output_type -> payment.ListWithdrawOrdersResp
-	88,  // 310: payment.Admin.GetWithdrawOrder:output_type -> payment.GetWithdrawOrderResp
-	33,  // 311: payment.Admin.AuditWithdrawOrder:output_type -> payment.CommonResp
-	91,  // 312: payment.Admin.ListWithdrawNotifyLogs:output_type -> payment.ListWithdrawNotifyLogsResp
-	93,  // 313: payment.Admin.GetWithdrawNotifyLog:output_type -> payment.GetWithdrawNotifyLogResp
-	33,  // 314: payment.Admin.CreateCryptoRechargeAddress:output_type -> payment.CommonResp
-	33,  // 315: payment.Admin.UpdateCryptoRechargeAddress:output_type -> payment.CommonResp
-	97,  // 316: payment.Admin.GetCryptoRechargeAddress:output_type -> payment.GetCryptoRechargeAddressResp
-	99,  // 317: payment.Admin.ListCryptoRechargeAddresses:output_type -> payment.ListCryptoRechargeAddressesResp
-	33,  // 318: payment.Admin.CreateCryptoWalletAccount:output_type -> payment.CommonResp
-	33,  // 319: payment.Admin.UpdateCryptoWalletAccount:output_type -> payment.CommonResp
-	103, // 320: payment.Admin.GetCryptoWalletAccount:output_type -> payment.GetCryptoWalletAccountResp
-	105, // 321: payment.Admin.ListCryptoWalletAccounts:output_type -> payment.ListCryptoWalletAccountsResp
-	33,  // 322: payment.Admin.CreateCryptoRechargeTx:output_type -> payment.CommonResp
-	33,  // 323: payment.Admin.UpdateCryptoRechargeTx:output_type -> payment.CommonResp
-	109, // 324: payment.Admin.GetCryptoRechargeTx:output_type -> payment.GetCryptoRechargeTxResp
-	111, // 325: payment.Admin.ListCryptoRechargeTxs:output_type -> payment.ListCryptoRechargeTxsResp
-	258, // [258:326] is the sub-list for method output_type
-	190, // [190:258] is the sub-list for method input_type
-	190, // [190:190] is the sub-list for extension type_name
-	190, // [190:190] is the sub-list for extension extendee
-	0,   // [0:190] is the sub-list for field type_name
+	116, // 14: payment.CreateCryptoRechargeOrderData.order:type_name -> payment.RechargeOrder
+	119, // 15: payment.CreateCryptoRechargeOrderData.address:type_name -> payment.CryptoRechargeAddress
+	112, // 16: payment.GetMyRechargeOrderResp.base:type_name -> common.RespBase
+	116, // 17: payment.GetMyRechargeOrderResp.data:type_name -> payment.RechargeOrder
+	120, // 18: payment.ListMyRechargeOrdersReq.page:type_name -> common.PageReq
+	121, // 19: payment.ListMyRechargeOrdersReq.status:type_name -> payment.PayOrderStatus
+	112, // 20: payment.ListMyRechargeOrdersResp.base:type_name -> common.RespBase
+	116, // 21: payment.ListMyRechargeOrdersResp.data:type_name -> payment.RechargeOrder
+	112, // 22: payment.QueryMyRechargeOrderStatusResp.base:type_name -> common.RespBase
+	116, // 23: payment.QueryMyRechargeOrderStatusResp.data:type_name -> payment.RechargeOrder
+	112, // 24: payment.CreateWithdrawOrderResp.base:type_name -> common.RespBase
+	120, // 25: payment.ListMyWithdrawOrdersReq.page:type_name -> common.PageReq
+	121, // 26: payment.ListMyWithdrawOrdersReq.status:type_name -> payment.PayOrderStatus
+	112, // 27: payment.ListMyWithdrawOrdersResp.base:type_name -> common.RespBase
+	122, // 28: payment.ListMyWithdrawOrdersResp.data:type_name -> payment.WithdrawOrder
+	112, // 29: payment.GetMyWithdrawOrderResp.base:type_name -> common.RespBase
+	122, // 30: payment.GetMyWithdrawOrderResp.data:type_name -> payment.WithdrawOrder
+	117, // 31: payment.GetMyCryptoRechargeAddressReq.wallet_type:type_name -> common.WalletType
+	118, // 32: payment.GetMyCryptoRechargeAddressReq.chain_code:type_name -> common.ChainCode
+	112, // 33: payment.GetMyCryptoRechargeAddressResp.base:type_name -> common.RespBase
+	119, // 34: payment.GetMyCryptoRechargeAddressResp.data:type_name -> payment.CryptoRechargeAddress
+	117, // 35: payment.ListMyCryptoRechargeAddressesReq.wallet_type:type_name -> common.WalletType
+	118, // 36: payment.ListMyCryptoRechargeAddressesReq.chain_code:type_name -> common.ChainCode
+	112, // 37: payment.ListMyCryptoRechargeAddressesResp.base:type_name -> common.RespBase
+	119, // 38: payment.ListMyCryptoRechargeAddressesResp.data:type_name -> payment.CryptoRechargeAddress
+	120, // 39: payment.ListMyCryptoRechargeTxsReq.page:type_name -> common.PageReq
+	118, // 40: payment.ListMyCryptoRechargeTxsReq.chain_code:type_name -> common.ChainCode
+	123, // 41: payment.ListMyCryptoRechargeTxsReq.status:type_name -> payment.CryptoRechargeTxStatus
+	112, // 42: payment.ListMyCryptoRechargeTxsResp.base:type_name -> common.RespBase
+	124, // 43: payment.ListMyCryptoRechargeTxsResp.data:type_name -> payment.CryptoRechargeTx
+	112, // 44: payment.GetMyCryptoRechargeTxResp.base:type_name -> common.RespBase
+	124, // 45: payment.GetMyCryptoRechargeTxResp.data:type_name -> payment.CryptoRechargeTx
+	109, // 46: payment.ThirdPartyNotifyReq.headers:type_name -> payment.ThirdPartyNotifyReq.HeadersEntry
+	110, // 47: payment.ThirdPartyNotifyReq.query:type_name -> payment.ThirdPartyNotifyReq.QueryEntry
+	111, // 48: payment.ThirdPartyNotifyReq.form:type_name -> payment.ThirdPartyNotifyReq.FormEntry
+	112, // 49: payment.CommonResp.base:type_name -> common.RespBase
+	125, // 50: payment.CreatePayPlatformReq.platform_type:type_name -> payment.PlatformType
+	126, // 51: payment.CreatePayPlatformReq.enabled:type_name -> common.Enable
+	125, // 52: payment.UpdatePayPlatformReq.platform_type:type_name -> payment.PlatformType
+	126, // 53: payment.UpdatePayPlatformReq.enabled:type_name -> common.Enable
+	112, // 54: payment.GetPayPlatformResp.base:type_name -> common.RespBase
+	127, // 55: payment.GetPayPlatformResp.data:type_name -> payment.PayPlatform
+	120, // 56: payment.ListPayPlatformsReq.page:type_name -> common.PageReq
+	126, // 57: payment.ListPayPlatformsReq.enabled:type_name -> common.Enable
+	125, // 58: payment.ListPayPlatformsReq.platform_type:type_name -> payment.PlatformType
+	112, // 59: payment.ListPayPlatformsResp.base:type_name -> common.RespBase
+	127, // 60: payment.ListPayPlatformsResp.data:type_name -> payment.PayPlatform
+	128, // 61: payment.CreatePayProductReq.scene_type:type_name -> payment.SceneType
+	126, // 62: payment.CreatePayProductReq.enabled:type_name -> common.Enable
+	128, // 63: payment.UpdatePayProductReq.scene_type:type_name -> payment.SceneType
+	126, // 64: payment.UpdatePayProductReq.enabled:type_name -> common.Enable
+	112, // 65: payment.GetPayProductResp.base:type_name -> common.RespBase
+	129, // 66: payment.GetPayProductResp.data:type_name -> payment.PayProduct
+	120, // 67: payment.ListPayProductsReq.page:type_name -> common.PageReq
+	126, // 68: payment.ListPayProductsReq.enabled:type_name -> common.Enable
+	128, // 69: payment.ListPayProductsReq.scene_type:type_name -> payment.SceneType
+	112, // 70: payment.ListPayProductsResp.base:type_name -> common.RespBase
+	129, // 71: payment.ListPayProductsResp.data:type_name -> payment.PayProduct
+	126, // 72: payment.CreateTenantPayAccountReq.enabled:type_name -> common.Enable
+	130, // 73: payment.CreateTenantPayAccountReq.is_default:type_name -> common.YesNo
+	126, // 74: payment.UpdateTenantPayAccountReq.enabled:type_name -> common.Enable
+	130, // 75: payment.UpdateTenantPayAccountReq.is_default:type_name -> common.YesNo
+	112, // 76: payment.GetTenantPayAccountResp.base:type_name -> common.RespBase
+	131, // 77: payment.GetTenantPayAccountResp.data:type_name -> payment.TenantPayAccount
+	120, // 78: payment.ListTenantPayAccountsReq.page:type_name -> common.PageReq
+	126, // 79: payment.ListTenantPayAccountsReq.enabled:type_name -> common.Enable
+	112, // 80: payment.ListTenantPayAccountsResp.base:type_name -> common.RespBase
+	131, // 81: payment.ListTenantPayAccountsResp.data:type_name -> payment.TenantPayAccount
+	132, // 82: payment.CreateTenantPayChannelReq.visible:type_name -> common.Switch
+	126, // 83: payment.CreateTenantPayChannelReq.enabled:type_name -> common.Enable
+	133, // 84: payment.CreateTenantPayChannelReq.fee_type:type_name -> payment.FeeType
+	132, // 85: payment.UpdateTenantPayChannelReq.visible:type_name -> common.Switch
+	126, // 86: payment.UpdateTenantPayChannelReq.enabled:type_name -> common.Enable
+	133, // 87: payment.UpdateTenantPayChannelReq.fee_type:type_name -> payment.FeeType
+	112, // 88: payment.GetTenantPayChannelResp.base:type_name -> common.RespBase
+	134, // 89: payment.GetTenantPayChannelResp.data:type_name -> payment.TenantPayChannel
+	120, // 90: payment.ListTenantPayChannelsReq.page:type_name -> common.PageReq
+	126, // 91: payment.ListTenantPayChannelsReq.enabled:type_name -> common.Enable
+	132, // 92: payment.ListTenantPayChannelsReq.visible:type_name -> common.Switch
+	112, // 93: payment.ListTenantPayChannelsResp.base:type_name -> common.RespBase
+	134, // 94: payment.ListTenantPayChannelsResp.data:type_name -> payment.TenantPayChannel
+	126, // 95: payment.CreateTenantPayChannelRuleReq.enabled:type_name -> common.Enable
+	130, // 96: payment.CreateTenantPayChannelRuleReq.allow_new_user:type_name -> common.YesNo
+	130, // 97: payment.CreateTenantPayChannelRuleReq.allow_old_user:type_name -> common.YesNo
+	126, // 98: payment.UpdateTenantPayChannelRuleReq.enabled:type_name -> common.Enable
+	130, // 99: payment.UpdateTenantPayChannelRuleReq.allow_new_user:type_name -> common.YesNo
+	130, // 100: payment.UpdateTenantPayChannelRuleReq.allow_old_user:type_name -> common.YesNo
+	112, // 101: payment.GetTenantPayChannelRuleResp.base:type_name -> common.RespBase
+	135, // 102: payment.GetTenantPayChannelRuleResp.data:type_name -> payment.TenantPayChannelRule
+	120, // 103: payment.ListTenantPayChannelRulesReq.page:type_name -> common.PageReq
+	126, // 104: payment.ListTenantPayChannelRulesReq.enabled:type_name -> common.Enable
+	112, // 105: payment.ListTenantPayChannelRulesResp.base:type_name -> common.RespBase
+	135, // 106: payment.ListTenantPayChannelRulesResp.data:type_name -> payment.TenantPayChannelRule
+	112, // 107: payment.GetUserRechargeStatResp.base:type_name -> common.RespBase
+	113, // 108: payment.GetUserRechargeStatResp.data:type_name -> payment.UserRechargeStat
+	120, // 109: payment.ListUserRechargeStatsReq.page:type_name -> common.PageReq
+	112, // 110: payment.ListUserRechargeStatsResp.base:type_name -> common.RespBase
+	113, // 111: payment.ListUserRechargeStatsResp.data:type_name -> payment.UserRechargeStat
+	112, // 112: payment.GetRechargeOrderResp.base:type_name -> common.RespBase
+	116, // 113: payment.GetRechargeOrderResp.data:type_name -> payment.RechargeOrder
+	120, // 114: payment.ListRechargeOrdersReq.page:type_name -> common.PageReq
+	121, // 115: payment.ListRechargeOrdersReq.status:type_name -> payment.PayOrderStatus
+	136, // 116: payment.ListRechargeOrdersReq.recharge_type:type_name -> payment.RechargeType
+	112, // 117: payment.ListRechargeOrdersResp.base:type_name -> common.RespBase
+	116, // 118: payment.ListRechargeOrdersResp.data:type_name -> payment.RechargeOrder
+	112, // 119: payment.GetRechargeNotifyLogResp.base:type_name -> common.RespBase
+	137, // 120: payment.GetRechargeNotifyLogResp.data:type_name -> payment.PayNotifyLog
+	120, // 121: payment.ListRechargeNotifyLogsReq.page:type_name -> common.PageReq
+	138, // 122: payment.ListRechargeNotifyLogsReq.notify_status:type_name -> payment.NotifyProcessStatus
+	139, // 123: payment.ListRechargeNotifyLogsReq.sign_result:type_name -> payment.SignResult
+	112, // 124: payment.ListRechargeNotifyLogsResp.base:type_name -> common.RespBase
+	137, // 125: payment.ListRechargeNotifyLogsResp.data:type_name -> payment.PayNotifyLog
+	120, // 126: payment.ListWithdrawOrdersReq.page:type_name -> common.PageReq
+	112, // 127: payment.ListWithdrawOrdersResp.base:type_name -> common.RespBase
+	122, // 128: payment.ListWithdrawOrdersResp.data:type_name -> payment.WithdrawOrder
+	112, // 129: payment.GetWithdrawOrderResp.base:type_name -> common.RespBase
+	122, // 130: payment.GetWithdrawOrderResp.data:type_name -> payment.WithdrawOrder
+	120, // 131: payment.ListWithdrawNotifyLogsReq.page:type_name -> common.PageReq
+	138, // 132: payment.ListWithdrawNotifyLogsReq.notify_status:type_name -> payment.NotifyProcessStatus
+	139, // 133: payment.ListWithdrawNotifyLogsReq.sign_result:type_name -> payment.SignResult
+	112, // 134: payment.ListWithdrawNotifyLogsResp.base:type_name -> common.RespBase
+	137, // 135: payment.ListWithdrawNotifyLogsResp.data:type_name -> payment.PayNotifyLog
+	112, // 136: payment.GetWithdrawNotifyLogResp.base:type_name -> common.RespBase
+	137, // 137: payment.GetWithdrawNotifyLogResp.data:type_name -> payment.PayNotifyLog
+	117, // 138: payment.CreateCryptoRechargeAddressReq.wallet_type:type_name -> common.WalletType
+	118, // 139: payment.CreateCryptoRechargeAddressReq.chain_code:type_name -> common.ChainCode
+	140, // 140: payment.CreateCryptoRechargeAddressReq.address_source:type_name -> payment.CryptoRechargeAddressSource
+	141, // 141: payment.CreateCryptoRechargeAddressReq.address_type:type_name -> payment.CryptoRechargeAddressType
+	142, // 142: payment.CreateCryptoRechargeAddressReq.status:type_name -> payment.CryptoRechargeAddressStatus
+	140, // 143: payment.UpdateCryptoRechargeAddressReq.address_source:type_name -> payment.CryptoRechargeAddressSource
+	141, // 144: payment.UpdateCryptoRechargeAddressReq.address_type:type_name -> payment.CryptoRechargeAddressType
+	142, // 145: payment.UpdateCryptoRechargeAddressReq.status:type_name -> payment.CryptoRechargeAddressStatus
+	112, // 146: payment.GetCryptoRechargeAddressResp.base:type_name -> common.RespBase
+	119, // 147: payment.GetCryptoRechargeAddressResp.data:type_name -> payment.CryptoRechargeAddress
+	120, // 148: payment.ListCryptoRechargeAddressesReq.page:type_name -> common.PageReq
+	117, // 149: payment.ListCryptoRechargeAddressesReq.wallet_type:type_name -> common.WalletType
+	118, // 150: payment.ListCryptoRechargeAddressesReq.chain_code:type_name -> common.ChainCode
+	142, // 151: payment.ListCryptoRechargeAddressesReq.status:type_name -> payment.CryptoRechargeAddressStatus
+	141, // 152: payment.ListCryptoRechargeAddressesReq.address_type:type_name -> payment.CryptoRechargeAddressType
+	112, // 153: payment.ListCryptoRechargeAddressesResp.base:type_name -> common.RespBase
+	119, // 154: payment.ListCryptoRechargeAddressesResp.data:type_name -> payment.CryptoRechargeAddress
+	126, // 155: payment.CreateCryptoWalletAccountReq.enabled:type_name -> common.Enable
+	130, // 156: payment.CreateCryptoWalletAccountReq.is_default:type_name -> common.YesNo
+	126, // 157: payment.UpdateCryptoWalletAccountReq.enabled:type_name -> common.Enable
+	130, // 158: payment.UpdateCryptoWalletAccountReq.is_default:type_name -> common.YesNo
+	112, // 159: payment.GetCryptoWalletAccountResp.base:type_name -> common.RespBase
+	143, // 160: payment.GetCryptoWalletAccountResp.data:type_name -> payment.CryptoWalletAccount
+	120, // 161: payment.ListCryptoWalletAccountsReq.page:type_name -> common.PageReq
+	126, // 162: payment.ListCryptoWalletAccountsReq.enabled:type_name -> common.Enable
+	130, // 163: payment.ListCryptoWalletAccountsReq.is_default:type_name -> common.YesNo
+	112, // 164: payment.ListCryptoWalletAccountsResp.base:type_name -> common.RespBase
+	143, // 165: payment.ListCryptoWalletAccountsResp.data:type_name -> payment.CryptoWalletAccount
+	118, // 166: payment.CreateCryptoRechargeTxReq.chain_code:type_name -> common.ChainCode
+	123, // 167: payment.CreateCryptoRechargeTxReq.status:type_name -> payment.CryptoRechargeTxStatus
+	123, // 168: payment.UpdateCryptoRechargeTxReq.status:type_name -> payment.CryptoRechargeTxStatus
+	118, // 169: payment.GetCryptoRechargeTxReq.chain_code:type_name -> common.ChainCode
+	112, // 170: payment.GetCryptoRechargeTxResp.base:type_name -> common.RespBase
+	124, // 171: payment.GetCryptoRechargeTxResp.data:type_name -> payment.CryptoRechargeTx
+	120, // 172: payment.ListCryptoRechargeTxsReq.page:type_name -> common.PageReq
+	118, // 173: payment.ListCryptoRechargeTxsReq.chain_code:type_name -> common.ChainCode
+	123, // 174: payment.ListCryptoRechargeTxsReq.status:type_name -> payment.CryptoRechargeTxStatus
+	112, // 175: payment.ListCryptoRechargeTxsResp.base:type_name -> common.RespBase
+	124, // 176: payment.ListCryptoRechargeTxsResp.data:type_name -> payment.CryptoRechargeTx
+	112, // 177: payment.PayPlatformsResp.base:type_name -> common.RespBase
+	107, // 178: payment.PayPlatformsResp.data:type_name -> payment.PayPlatformItem
+	31,  // 179: payment.Callback.PaymentNotify:input_type -> payment.ThirdPartyNotifyReq
+	31,  // 180: payment.Callback.PayoutNotify:input_type -> payment.ThirdPartyNotifyReq
+	1,   // 181: payment.App.GetMyRechargeStat:input_type -> payment.GetMyRechargeStatReq
+	3,   // 182: payment.App.ListAvailableRechargeChannels:input_type -> payment.ListAvailableRechargeChannelsReq
+	5,   // 183: payment.App.CreateRechargeOrder:input_type -> payment.CreateRechargeOrderReq
+	7,   // 184: payment.App.CreateCryptoRechargeOrder:input_type -> payment.CreateCryptoRechargeOrderReq
+	10,  // 185: payment.App.GetMyRechargeOrder:input_type -> payment.GetMyRechargeOrderReq
+	12,  // 186: payment.App.ListMyRechargeOrders:input_type -> payment.ListMyRechargeOrdersReq
+	14,  // 187: payment.App.CancelMyRechargeOrder:input_type -> payment.CancelMyRechargeOrderReq
+	15,  // 188: payment.App.QueryMyRechargeOrderStatus:input_type -> payment.QueryMyRechargeOrderStatusReq
+	17,  // 189: payment.App.CreateWithdrawOrder:input_type -> payment.CreateWithdrawOrderReq
+	19,  // 190: payment.App.ListMyWithdrawOrders:input_type -> payment.ListMyWithdrawOrdersReq
+	21,  // 191: payment.App.GetMyWithdrawOrder:input_type -> payment.GetMyWithdrawOrderReq
+	23,  // 192: payment.App.GetMyCryptoRechargeAddress:input_type -> payment.GetMyCryptoRechargeAddressReq
+	25,  // 193: payment.App.ListMyCryptoRechargeAddresses:input_type -> payment.ListMyCryptoRechargeAddressesReq
+	27,  // 194: payment.App.ListMyCryptoRechargeTxs:input_type -> payment.ListMyCryptoRechargeTxsReq
+	29,  // 195: payment.App.GetMyCryptoRechargeTx:input_type -> payment.GetMyCryptoRechargeTxReq
+	106, // 196: payment.Admin.GetPayPlatforms:input_type -> payment.Empty
+	34,  // 197: payment.Admin.CreatePayPlatform:input_type -> payment.CreatePayPlatformReq
+	35,  // 198: payment.Admin.UpdatePayPlatform:input_type -> payment.UpdatePayPlatformReq
+	36,  // 199: payment.Admin.GetPayPlatform:input_type -> payment.GetPayPlatformReq
+	38,  // 200: payment.Admin.ListPayPlatforms:input_type -> payment.ListPayPlatformsReq
+	40,  // 201: payment.Admin.CreatePayProduct:input_type -> payment.CreatePayProductReq
+	41,  // 202: payment.Admin.UpdatePayProduct:input_type -> payment.UpdatePayProductReq
+	42,  // 203: payment.Admin.GetPayProduct:input_type -> payment.GetPayProductReq
+	44,  // 204: payment.Admin.ListPayProducts:input_type -> payment.ListPayProductsReq
+	46,  // 205: payment.Admin.CreateTenantPayAccount:input_type -> payment.CreateTenantPayAccountReq
+	47,  // 206: payment.Admin.UpdateTenantPayAccount:input_type -> payment.UpdateTenantPayAccountReq
+	48,  // 207: payment.Admin.GetTenantPayAccount:input_type -> payment.GetTenantPayAccountReq
+	50,  // 208: payment.Admin.ListTenantPayAccounts:input_type -> payment.ListTenantPayAccountsReq
+	52,  // 209: payment.Admin.CreateTenantPayChannel:input_type -> payment.CreateTenantPayChannelReq
+	53,  // 210: payment.Admin.UpdateTenantPayChannel:input_type -> payment.UpdateTenantPayChannelReq
+	54,  // 211: payment.Admin.GetTenantPayChannel:input_type -> payment.GetTenantPayChannelReq
+	56,  // 212: payment.Admin.ListTenantPayChannels:input_type -> payment.ListTenantPayChannelsReq
+	58,  // 213: payment.Admin.CreateTenantPayChannelRule:input_type -> payment.CreateTenantPayChannelRuleReq
+	59,  // 214: payment.Admin.UpdateTenantPayChannelRule:input_type -> payment.UpdateTenantPayChannelRuleReq
+	60,  // 215: payment.Admin.GetTenantPayChannelRule:input_type -> payment.GetTenantPayChannelRuleReq
+	62,  // 216: payment.Admin.ListTenantPayChannelRules:input_type -> payment.ListTenantPayChannelRulesReq
+	64,  // 217: payment.Admin.GetUserRechargeStat:input_type -> payment.GetUserRechargeStatReq
+	66,  // 218: payment.Admin.ListUserRechargeStats:input_type -> payment.ListUserRechargeStatsReq
+	70,  // 219: payment.Admin.ListRechargeOrders:input_type -> payment.ListRechargeOrdersReq
+	68,  // 220: payment.Admin.GetRechargeOrder:input_type -> payment.GetRechargeOrderReq
+	72,  // 221: payment.Admin.CloseRechargeOrder:input_type -> payment.CloseRechargeOrderReq
+	73,  // 222: payment.Admin.ManualMarkRechargeOrderSuccess:input_type -> payment.ManualMarkRechargeOrderSuccessReq
+	74,  // 223: payment.Admin.RetryNotify:input_type -> payment.RetryNotifyReq
+	77,  // 224: payment.Admin.ListRechargeNotifyLogs:input_type -> payment.ListRechargeNotifyLogsReq
+	75,  // 225: payment.Admin.GetRechargeNotifyLog:input_type -> payment.GetRechargeNotifyLogReq
+	79,  // 226: payment.Admin.ListWithdrawOrders:input_type -> payment.ListWithdrawOrdersReq
+	81,  // 227: payment.Admin.GetWithdrawOrder:input_type -> payment.GetWithdrawOrderReq
+	83,  // 228: payment.Admin.AuditWithdrawOrder:input_type -> payment.AuditWithdrawOrderReq
+	84,  // 229: payment.Admin.ListWithdrawNotifyLogs:input_type -> payment.ListWithdrawNotifyLogsReq
+	86,  // 230: payment.Admin.GetWithdrawNotifyLog:input_type -> payment.GetWithdrawNotifyLogReq
+	88,  // 231: payment.Admin.CreateCryptoRechargeAddress:input_type -> payment.CreateCryptoRechargeAddressReq
+	89,  // 232: payment.Admin.UpdateCryptoRechargeAddress:input_type -> payment.UpdateCryptoRechargeAddressReq
+	90,  // 233: payment.Admin.GetCryptoRechargeAddress:input_type -> payment.GetCryptoRechargeAddressReq
+	92,  // 234: payment.Admin.ListCryptoRechargeAddresses:input_type -> payment.ListCryptoRechargeAddressesReq
+	94,  // 235: payment.Admin.CreateCryptoWalletAccount:input_type -> payment.CreateCryptoWalletAccountReq
+	95,  // 236: payment.Admin.UpdateCryptoWalletAccount:input_type -> payment.UpdateCryptoWalletAccountReq
+	96,  // 237: payment.Admin.GetCryptoWalletAccount:input_type -> payment.GetCryptoWalletAccountReq
+	98,  // 238: payment.Admin.ListCryptoWalletAccounts:input_type -> payment.ListCryptoWalletAccountsReq
+	100, // 239: payment.Admin.CreateCryptoRechargeTx:input_type -> payment.CreateCryptoRechargeTxReq
+	101, // 240: payment.Admin.UpdateCryptoRechargeTx:input_type -> payment.UpdateCryptoRechargeTxReq
+	102, // 241: payment.Admin.GetCryptoRechargeTx:input_type -> payment.GetCryptoRechargeTxReq
+	104, // 242: payment.Admin.ListCryptoRechargeTxs:input_type -> payment.ListCryptoRechargeTxsReq
+	32,  // 243: payment.Callback.PaymentNotify:output_type -> payment.ThirdPartyNotifyResp
+	32,  // 244: payment.Callback.PayoutNotify:output_type -> payment.ThirdPartyNotifyResp
+	2,   // 245: payment.App.GetMyRechargeStat:output_type -> payment.GetMyRechargeStatResp
+	4,   // 246: payment.App.ListAvailableRechargeChannels:output_type -> payment.ListAvailableRechargeChannelsResp
+	6,   // 247: payment.App.CreateRechargeOrder:output_type -> payment.CreateRechargeOrderResp
+	8,   // 248: payment.App.CreateCryptoRechargeOrder:output_type -> payment.CreateCryptoRechargeOrderResp
+	11,  // 249: payment.App.GetMyRechargeOrder:output_type -> payment.GetMyRechargeOrderResp
+	13,  // 250: payment.App.ListMyRechargeOrders:output_type -> payment.ListMyRechargeOrdersResp
+	0,   // 251: payment.App.CancelMyRechargeOrder:output_type -> payment.UserCommonResp
+	16,  // 252: payment.App.QueryMyRechargeOrderStatus:output_type -> payment.QueryMyRechargeOrderStatusResp
+	18,  // 253: payment.App.CreateWithdrawOrder:output_type -> payment.CreateWithdrawOrderResp
+	20,  // 254: payment.App.ListMyWithdrawOrders:output_type -> payment.ListMyWithdrawOrdersResp
+	22,  // 255: payment.App.GetMyWithdrawOrder:output_type -> payment.GetMyWithdrawOrderResp
+	24,  // 256: payment.App.GetMyCryptoRechargeAddress:output_type -> payment.GetMyCryptoRechargeAddressResp
+	26,  // 257: payment.App.ListMyCryptoRechargeAddresses:output_type -> payment.ListMyCryptoRechargeAddressesResp
+	28,  // 258: payment.App.ListMyCryptoRechargeTxs:output_type -> payment.ListMyCryptoRechargeTxsResp
+	30,  // 259: payment.App.GetMyCryptoRechargeTx:output_type -> payment.GetMyCryptoRechargeTxResp
+	108, // 260: payment.Admin.GetPayPlatforms:output_type -> payment.PayPlatformsResp
+	33,  // 261: payment.Admin.CreatePayPlatform:output_type -> payment.CommonResp
+	33,  // 262: payment.Admin.UpdatePayPlatform:output_type -> payment.CommonResp
+	37,  // 263: payment.Admin.GetPayPlatform:output_type -> payment.GetPayPlatformResp
+	39,  // 264: payment.Admin.ListPayPlatforms:output_type -> payment.ListPayPlatformsResp
+	33,  // 265: payment.Admin.CreatePayProduct:output_type -> payment.CommonResp
+	33,  // 266: payment.Admin.UpdatePayProduct:output_type -> payment.CommonResp
+	43,  // 267: payment.Admin.GetPayProduct:output_type -> payment.GetPayProductResp
+	45,  // 268: payment.Admin.ListPayProducts:output_type -> payment.ListPayProductsResp
+	33,  // 269: payment.Admin.CreateTenantPayAccount:output_type -> payment.CommonResp
+	33,  // 270: payment.Admin.UpdateTenantPayAccount:output_type -> payment.CommonResp
+	49,  // 271: payment.Admin.GetTenantPayAccount:output_type -> payment.GetTenantPayAccountResp
+	51,  // 272: payment.Admin.ListTenantPayAccounts:output_type -> payment.ListTenantPayAccountsResp
+	33,  // 273: payment.Admin.CreateTenantPayChannel:output_type -> payment.CommonResp
+	33,  // 274: payment.Admin.UpdateTenantPayChannel:output_type -> payment.CommonResp
+	55,  // 275: payment.Admin.GetTenantPayChannel:output_type -> payment.GetTenantPayChannelResp
+	57,  // 276: payment.Admin.ListTenantPayChannels:output_type -> payment.ListTenantPayChannelsResp
+	33,  // 277: payment.Admin.CreateTenantPayChannelRule:output_type -> payment.CommonResp
+	33,  // 278: payment.Admin.UpdateTenantPayChannelRule:output_type -> payment.CommonResp
+	61,  // 279: payment.Admin.GetTenantPayChannelRule:output_type -> payment.GetTenantPayChannelRuleResp
+	63,  // 280: payment.Admin.ListTenantPayChannelRules:output_type -> payment.ListTenantPayChannelRulesResp
+	65,  // 281: payment.Admin.GetUserRechargeStat:output_type -> payment.GetUserRechargeStatResp
+	67,  // 282: payment.Admin.ListUserRechargeStats:output_type -> payment.ListUserRechargeStatsResp
+	71,  // 283: payment.Admin.ListRechargeOrders:output_type -> payment.ListRechargeOrdersResp
+	69,  // 284: payment.Admin.GetRechargeOrder:output_type -> payment.GetRechargeOrderResp
+	33,  // 285: payment.Admin.CloseRechargeOrder:output_type -> payment.CommonResp
+	33,  // 286: payment.Admin.ManualMarkRechargeOrderSuccess:output_type -> payment.CommonResp
+	33,  // 287: payment.Admin.RetryNotify:output_type -> payment.CommonResp
+	78,  // 288: payment.Admin.ListRechargeNotifyLogs:output_type -> payment.ListRechargeNotifyLogsResp
+	76,  // 289: payment.Admin.GetRechargeNotifyLog:output_type -> payment.GetRechargeNotifyLogResp
+	80,  // 290: payment.Admin.ListWithdrawOrders:output_type -> payment.ListWithdrawOrdersResp
+	82,  // 291: payment.Admin.GetWithdrawOrder:output_type -> payment.GetWithdrawOrderResp
+	33,  // 292: payment.Admin.AuditWithdrawOrder:output_type -> payment.CommonResp
+	85,  // 293: payment.Admin.ListWithdrawNotifyLogs:output_type -> payment.ListWithdrawNotifyLogsResp
+	87,  // 294: payment.Admin.GetWithdrawNotifyLog:output_type -> payment.GetWithdrawNotifyLogResp
+	33,  // 295: payment.Admin.CreateCryptoRechargeAddress:output_type -> payment.CommonResp
+	33,  // 296: payment.Admin.UpdateCryptoRechargeAddress:output_type -> payment.CommonResp
+	91,  // 297: payment.Admin.GetCryptoRechargeAddress:output_type -> payment.GetCryptoRechargeAddressResp
+	93,  // 298: payment.Admin.ListCryptoRechargeAddresses:output_type -> payment.ListCryptoRechargeAddressesResp
+	33,  // 299: payment.Admin.CreateCryptoWalletAccount:output_type -> payment.CommonResp
+	33,  // 300: payment.Admin.UpdateCryptoWalletAccount:output_type -> payment.CommonResp
+	97,  // 301: payment.Admin.GetCryptoWalletAccount:output_type -> payment.GetCryptoWalletAccountResp
+	99,  // 302: payment.Admin.ListCryptoWalletAccounts:output_type -> payment.ListCryptoWalletAccountsResp
+	33,  // 303: payment.Admin.CreateCryptoRechargeTx:output_type -> payment.CommonResp
+	33,  // 304: payment.Admin.UpdateCryptoRechargeTx:output_type -> payment.CommonResp
+	103, // 305: payment.Admin.GetCryptoRechargeTx:output_type -> payment.GetCryptoRechargeTxResp
+	105, // 306: payment.Admin.ListCryptoRechargeTxs:output_type -> payment.ListCryptoRechargeTxsResp
+	243, // [243:307] is the sub-list for method output_type
+	179, // [179:243] is the sub-list for method input_type
+	179, // [179:179] is the sub-list for extension type_name
+	179, // [179:179] is the sub-list for extension extendee
+	0,   // [0:179] is the sub-list for field type_name
 }
 
 func init() { file_proto_payment_payment_proto_init() }
@@ -9527,7 +9061,7 @@ func file_proto_payment_payment_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_payment_payment_proto_rawDesc), len(file_proto_payment_payment_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   118,
+			NumMessages:   112,
 			NumExtensions: 0,
 			NumServices:   3,
 		},

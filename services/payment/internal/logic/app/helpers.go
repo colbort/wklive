@@ -273,48 +273,31 @@ func toPayProductProto(item *models.TPayProduct) *payment.PayProduct {
 	}
 }
 
-func toTenantPayPlatformProto(item *models.TTenantPayPlatform) *payment.TenantPayPlatform {
-	if item == nil {
-		return nil
-	}
-	return &payment.TenantPayPlatform{
-		Id:          item.Id,
-		TenantId:    item.TenantId,
-		PlatformId:  item.PlatformId,
-		Enabled:     common.Enable(item.Enabled),
-		OpenStatus:  payment.OpenStatus(item.OpenStatus),
-		Remark:      item.Remark.String,
-		CreateTimes: item.CreateTimes,
-		UpdateTimes: item.UpdateTimes,
-	}
-}
-
 func toTenantPayAccountProto(item *models.TTenantPayAccount) *payment.TenantPayAccount {
 	if item == nil {
 		return nil
 	}
 	return &payment.TenantPayAccount{
-		Id:                  item.Id,
-		TenantId:            item.TenantId,
-		TenantPayPlatformId: item.TenantPayPlatformId,
-		PlatformId:          item.PlatformId,
-		AccountCode:         item.AccountCode,
-		AccountName:         item.AccountName,
-		AppId:               item.AppId.String,
-		MerchantId:          item.MerchantId.String,
-		MerchantName:        item.MerchantName.String,
-		ApiKeyCipher:        item.ApiKeyCipher.String,
-		ApiSecretCipher:     item.ApiSecretCipher.String,
-		PrivateKeyCipher:    item.PrivateKeyCipher.String,
-		PublicKey:           item.PublicKey.String,
-		CertCipher:          item.CertCipher.String,
-		CredentialRef:       item.CredentialRef,
-		ExtConfig:           item.ExtConfig.String,
-		Enabled:             common.Enable(item.Enabled),
-		IsDefault:           common.YesNo(item.IsDefault),
-		Remark:              item.Remark.String,
-		CreateTimes:         item.CreateTimes,
-		UpdateTimes:         item.UpdateTimes,
+		Id:               item.Id,
+		TenantId:         item.TenantId,
+		PlatformId:       item.PlatformId,
+		AccountCode:      item.AccountCode,
+		AccountName:      item.AccountName,
+		AppId:            item.AppId.String,
+		MerchantId:       item.MerchantId.String,
+		MerchantName:     item.MerchantName.String,
+		ApiKeyCipher:     item.ApiKeyCipher.String,
+		ApiSecretCipher:  item.ApiSecretCipher.String,
+		PrivateKeyCipher: item.PrivateKeyCipher.String,
+		PublicKey:        item.PublicKey.String,
+		CertCipher:       item.CertCipher.String,
+		CredentialRef:    item.CredentialRef,
+		ExtConfig:        item.ExtConfig.String,
+		Enabled:          common.Enable(item.Enabled),
+		IsDefault:        common.YesNo(item.IsDefault),
+		Remark:           item.Remark.String,
+		CreateTimes:      item.CreateTimes,
+		UpdateTimes:      item.UpdateTimes,
 	}
 }
 

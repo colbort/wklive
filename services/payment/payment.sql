@@ -30,24 +30,9 @@ CREATE TABLE `t_pay_product` (
   KEY `idx_platform_id` (`platform_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='支付产品表';
 
-CREATE TABLE `t_tenant_pay_platform` (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `tenant_id` bigint NOT NULL COMMENT '租户ID',
-  `platform_id` bigint NOT NULL COMMENT '平台ID',
-  `enabled` tinyint NOT NULL DEFAULT 1 COMMENT '启用状态：1启用 2禁用',
-  `open_status` tinyint NOT NULL DEFAULT 1 COMMENT '开通状态：1待配置 2已开通 3审核中 4驳回',
-  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
-  `create_times` bigint NOT NULL DEFAULT 0 COMMENT '创建时间',
-  `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_platform` (`tenant_id`, `platform_id`),
-  KEY `idx_platform_id` (`platform_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='租户开通支付平台表';
-
 CREATE TABLE `t_tenant_pay_account` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '账号ID',
   `tenant_id` bigint NOT NULL COMMENT '租户ID',
-  `tenant_pay_platform_id` bigint NOT NULL COMMENT '租户开通平台ID',
   `platform_id` bigint NOT NULL COMMENT '平台ID',
   `account_code` varchar(64) NOT NULL COMMENT '账号编码',
   `account_name` varchar(128) NOT NULL COMMENT '账号名称',

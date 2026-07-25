@@ -64,8 +64,6 @@ type (
 	GetTenantPayChannelResp           = payment.GetTenantPayChannelResp
 	GetTenantPayChannelRuleReq        = payment.GetTenantPayChannelRuleReq
 	GetTenantPayChannelRuleResp       = payment.GetTenantPayChannelRuleResp
-	GetTenantPayPlatformReq           = payment.GetTenantPayPlatformReq
-	GetTenantPayPlatformResp          = payment.GetTenantPayPlatformResp
 	GetUserRechargeStatReq            = payment.GetUserRechargeStatReq
 	GetUserRechargeStatResp           = payment.GetUserRechargeStatResp
 	GetWithdrawNotifyLogReq           = payment.GetWithdrawNotifyLogReq
@@ -102,8 +100,6 @@ type (
 	ListTenantPayChannelRulesResp     = payment.ListTenantPayChannelRulesResp
 	ListTenantPayChannelsReq          = payment.ListTenantPayChannelsReq
 	ListTenantPayChannelsResp         = payment.ListTenantPayChannelsResp
-	ListTenantPayPlatformsReq         = payment.ListTenantPayPlatformsReq
-	ListTenantPayPlatformsResp        = payment.ListTenantPayPlatformsResp
 	ListUserRechargeStatsReq          = payment.ListUserRechargeStatsReq
 	ListUserRechargeStatsResp         = payment.ListUserRechargeStatsResp
 	ListWithdrawNotifyLogsReq         = payment.ListWithdrawNotifyLogsReq
@@ -111,7 +107,6 @@ type (
 	ListWithdrawOrdersReq             = payment.ListWithdrawOrdersReq
 	ListWithdrawOrdersResp            = payment.ListWithdrawOrdersResp
 	ManualMarkRechargeOrderSuccessReq = payment.ManualMarkRechargeOrderSuccessReq
-	OpenTenantPayPlatformReq          = payment.OpenTenantPayPlatformReq
 	PayPlatformItem                   = payment.PayPlatformItem
 	PayPlatformsResp                  = payment.PayPlatformsResp
 	QueryMyRechargeOrderStatusReq     = payment.QueryMyRechargeOrderStatusReq
@@ -127,7 +122,6 @@ type (
 	UpdateTenantPayAccountReq         = payment.UpdateTenantPayAccountReq
 	UpdateTenantPayChannelReq         = payment.UpdateTenantPayChannelReq
 	UpdateTenantPayChannelRuleReq     = payment.UpdateTenantPayChannelRuleReq
-	UpdateTenantPayPlatformReq        = payment.UpdateTenantPayPlatformReq
 	UserCommonResp                    = payment.UserCommonResp
 
 	App interface {

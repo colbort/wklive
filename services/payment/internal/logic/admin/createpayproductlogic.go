@@ -3,8 +3,10 @@ package adminlogic
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/payment"
@@ -33,6 +35,22 @@ func (l *CreatePayProductLogic) CreatePayProduct(in *payment.CreatePayProductReq
 	var (
 		errLogic = "CreatePayProduct"
 	)
+	if base, err := systemAdminWriteScopeResp(l.ctx); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &payment.CommonResp{Base: base}, nil
+	}
+	if in.PlatformId <= 0 || !requiredStrings(in.ProductCode, in.ProductName, in.Currency) || in.SceneType == 0 {
+		return paymentErrorResp(l.ctx, i18n.PaymentRequiredParamsMissing), nil
+	}
+	if _, ok := payment.SceneType_name[int32(in.SceneType)]; !ok {
+		return paymentErrorResp(l.ctx, i18n.ParamError), nil
+	}
+	if platform, err := l.svcCtx.PayPlatformModel.FindOne(l.ctx, in.PlatformId); errors.Is(err, models.ErrNotFound) || platform == nil {
+		return paymentErrorResp(l.ctx, i18n.PlatformNotFound), nil
+	} else if err != nil {
+		return nil, err
+	}
 
 	now := utils.NowMillis()
 	product := &models.TPayProduct{
@@ -49,6 +67,14 @@ func (l *CreatePayProductLogic) CreatePayProduct(in *payment.CreatePayProductReq
 
 	_, err := l.svcCtx.PayProductModel.Insert(l.ctx, product)
 	if err != nil {
+		if isDuplicateEntry(err) {
+			return &payment.CommonResp{
+				Base: helper.ErrResp(
+					i18n.PayProductCodeAlreadyExists,
+					i18n.Translate(i18n.PayProductCodeAlreadyExists, l.ctx),
+				),
+			}, nil
+		}
 		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
 		return nil, err
 	}

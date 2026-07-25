@@ -14,6 +14,8 @@ type (
 	TenantPayAccountPageFilter struct {
 		TenantId   int64
 		PlatformId int64
+		Keyword    string
+		Enabled    int64
 	}
 
 	// TTenantPayAccountModel is an interface to be customized, add more methods here,
@@ -41,6 +43,22 @@ func (m *defaultTTenantPayAccountModel) FindPage(ctx context.Context, filter Ten
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
 	builder.EqInt64("platform_id", filter.PlatformId)
+	builder.EqInt64("enabled", filter.Enabled)
+	if filter.Keyword != "" {
+		keyword := "%" + filter.Keyword + "%"
+		builder.Or(
+			[]string{
+				"account_code LIKE ?",
+				"account_name LIKE ?",
+				"merchant_id LIKE ?",
+				"merchant_name LIKE ?",
+			},
+			keyword,
+			keyword,
+			keyword,
+			keyword,
+		)
+	}
 
 	where := builder.Where()
 	args := builder.Args()

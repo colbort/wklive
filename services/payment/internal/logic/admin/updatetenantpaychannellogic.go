@@ -34,6 +34,9 @@ func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateT
 	var (
 		errLogic = "UpdateTenantPayChannel"
 	)
+	if in.Id <= 0 {
+		return paymentErrorResp(l.ctx, i18n.PaymentRequiredParamsMissing), nil
+	}
 
 	// 查询通道是否存在
 	channel, err := l.svcCtx.TenantPayChannelModel.FindOne(l.ctx, in.Id)
@@ -42,7 +45,7 @@ func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateT
 		return nil, err
 	}
 
-	if channel == nil {
+	if errors.Is(err, models.ErrNotFound) || channel == nil {
 		return &payment.CommonResp{
 			Base: helper.ErrResp(i18n.PaymentChannelNotFound, i18n.Translate(i18n.PaymentChannelNotFound, l.ctx)),
 		}, nil
@@ -55,7 +58,7 @@ func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateT
 	if resp != nil {
 		return resp, nil
 	}
-	if allowTenantUpdate {
+	if allowTenantUpdate && in.TenantId > 0 {
 		channel.TenantId = in.TenantId
 	}
 
@@ -94,12 +97,18 @@ func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateT
 		channel.DailyMaxCount = in.DailyMaxCount
 	}
 	if in.FeeType != 0 {
+		if _, ok := payment.FeeType_name[int32(in.FeeType)]; !ok {
+			return paymentErrorResp(l.ctx, i18n.ParamError), nil
+		}
 		channel.FeeType = int64(in.FeeType)
 	}
 	if in.FeeRate != "" {
 		feeRate, err := conv.ParseDecimalField(in.FeeRate)
 		if err != nil {
-			return nil, err
+			return paymentErrorResp(l.ctx, i18n.InvalidPaymentDecimal), nil
+		}
+		if feeRate.IsNegative() {
+			return paymentErrorResp(l.ctx, i18n.InvalidPaymentAmountRange), nil
 		}
 		channel.FeeRate = feeRate
 	}
@@ -107,15 +116,31 @@ func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateT
 		channel.FeeFixedAmount = in.FeeFixedAmount
 	}
 	if in.ExtConfig != "" {
-		channel.ExtConfig = sql.NullString{String: in.ExtConfig, Valid: true}
+		extConfig, valid := nullableJSON(in.ExtConfig)
+		if !valid {
+			return &payment.CommonResp{
+				Base: helper.ErrResp(i18n.InvalidPaymentJSON, i18n.Translate(i18n.InvalidPaymentJSON, l.ctx)),
+			}, nil
+		}
+		channel.ExtConfig = extConfig
 	}
 	if in.Remark != "" {
 		channel.Remark = sql.NullString{String: in.Remark, Valid: true}
+	}
+	if !requiredStrings(channel.ChannelName, channel.Currency) {
+		return paymentErrorResp(l.ctx, i18n.PaymentRequiredParamsMissing), nil
+	}
+	if !validNonNegativeRange(channel.SingleMinAmount, channel.SingleMaxAmount) ||
+		channel.DailyMaxAmount < 0 || channel.DailyMaxCount < 0 || channel.FeeFixedAmount < 0 {
+		return paymentErrorResp(l.ctx, i18n.InvalidPaymentAmountRange), nil
 	}
 	channel.UpdateTimes = now
 
 	err = l.svcCtx.TenantPayChannelModel.Update(l.ctx, channel)
 	if err != nil {
+		if isDuplicateEntry(err) {
+			return paymentErrorResp(l.ctx, i18n.TenantPayChannelCodeAlreadyExists), nil
+		}
 		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
 		return nil, err
 	}

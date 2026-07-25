@@ -81,7 +81,6 @@ func AssetOptions() []types.OptionsGroup {
 func PaymentOptions() []types.OptionsGroup {
 	return []types.OptionsGroup{
 		EnumGroup("platformType", "平台类型", payment.PlatformType_PLATFORM_TYPE_UNKNOWN.Descriptor()),
-		EnumGroup("openStatus", "开通状态", payment.OpenStatus_OPEN_STATUS_UNKNOWN.Descriptor()),
 		EnumGroup("sceneType", "场景类型", payment.SceneType_SCENE_TYPE_UNKNOWN.Descriptor()),
 		EnumGroup("feeType", "费用类型", payment.FeeType_FEE_TYPE_UNKNOWN.Descriptor()),
 		EnumGroup("rechargeType", "充值类型", payment.RechargeType_RECHARGE_TYPE_UNKNOWN.Descriptor()),

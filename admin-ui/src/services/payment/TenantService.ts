@@ -1,6 +1,5 @@
 import type { OptionGroup, RespBase } from '@/services'
 import {
-  apiOpenTenantPayPlatform,
   apiTenantPayAccountCreate,
   apiTenantPayAccountDetail,
   apiTenantPayAccountList,
@@ -13,27 +12,12 @@ import {
   apiTenantPayChannelRuleList,
   apiTenantPayChannelRuleUpdate,
   apiTenantPayChannelUpdate,
-  apiTenantPayPlatformDetail,
-  apiTenantPayPlatformList,
-  apiUpdateTenantPayPlatform,
 } from '@/api/payment/tenant'
 import { getCoreOptions } from '@/stores/core'
-
-export type TenantPayPlatform = {
-  id: number // 主键ID
-  tenantId: number // 租户ID
-  platformId: number // 平台ID
-  enabled: number // 启用状态：1启用 2禁用
-  openStatus: number // 开通状态：1待配置 2已开通 3审核中 4驳回
-  remark: string // 备注
-  createTimes: number // 创建时间
-  updateTimes: number // 更新时间
-}
 
 export type TenantPayAccount = {
   id: number // 账号ID
   tenantId: number // 租户ID
-  tenantPayPlatformId: number // 租户开通平台ID
   platformId: number // 平台ID
   accountCode: string // 账号编码
   accountName: string // 账号名称
@@ -104,35 +88,9 @@ export type TenantPayChannelRule = {
   updateTimes: number // 更新时间
 }
 
-export type ListTenantPayPlatformsReq = {
-  tenantId?: number // 租户ID
-  platformId?: number // 平台ID
-  enabled?: number // 启用状态：1启用 2禁用
-  openStatus?: number // 开通状态
-  cursor?: number // 分页游标
-  limit?: number // 分页大小
-}
-
-export type OpenTenantPayPlatformReq = {
-  tenantId: number // 租户ID
-  platformId: number // 平台ID
-  enabled: number // 启用状态：1启用 2禁用
-  openStatus: number // 开通状态
-  remark?: string // 备注
-}
-
-export type UpdateTenantPayPlatformReq = {
-  id: number // 主键ID
-  tenantId: number // 租户ID
-  enabled: number // 启用状态：1启用 2禁用
-  openStatus: number // 开通状态
-  remark?: string // 备注
-}
-
 export type ListTenantPayAccountsReq = {
   tenantId?: number // 租户ID
   platformId?: number // 平台ID
-  tenantPayPlatformId?: number // 租户开通平台ID
   keyword?: string // 关键字
   enabled?: number // 启用状态：1启用 2禁用
   cursor?: number // 分页游标
@@ -141,13 +99,12 @@ export type ListTenantPayAccountsReq = {
 
 export type CreateTenantPayAccountReq = {
   tenantId: number // 租户ID
-  tenantPayPlatformId: number // 租户开通平台ID
   platformId: number // 平台ID
   accountCode: string // 账号编码
   accountName: string // 账号名称
   appId?: string // 应用ID
-  merchantId?: string // 商户号
-  merchantName?: string // 商户名称
+  merchantId: string // 商户号
+  merchantName: string // 商户名称
   apiKeyCipher?: string // API Key密文
   apiSecretCipher?: string // API Secret密文
   privateKeyCipher?: string // 私钥密文
@@ -268,18 +225,6 @@ export type UpdateTenantPayChannelRuleReq = CreateTenantPayChannelRuleReq & { id
 export class TenantService {
   getOptions(): Promise<RespBase<OptionGroup[]>> {
     return getCoreOptions()
-  }
-  getTenantPlatformList(params: ListTenantPayPlatformsReq): Promise<RespBase<TenantPayPlatform[]>> {
-    return apiTenantPayPlatformList(params)
-  }
-  getTenantPlatformDetail(id: number, tenantId: number): Promise<RespBase<TenantPayPlatform>> {
-    return apiTenantPayPlatformDetail(id, tenantId)
-  }
-  openTenantPlatform(params: OpenTenantPayPlatformReq): Promise<RespBase> {
-    return apiOpenTenantPayPlatform(params)
-  }
-  updateTenantPlatform(params: UpdateTenantPayPlatformReq): Promise<RespBase> {
-    return apiUpdateTenantPayPlatform(params)
   }
   getTenantAccountList(params: ListTenantPayAccountsReq): Promise<RespBase<TenantPayAccount[]>> {
     return apiTenantPayAccountList(params)

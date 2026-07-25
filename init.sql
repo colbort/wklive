@@ -62,11 +62,6 @@ INSERT INTO `sys_role_menu` (`tenant_id`, `role_id`, `menu_id`) VALUES
 (0, 1, 122),
 (0, 1, 123),
 (0, 1, 124),
-(0, 1, 140),
-(0, 1, 141),
-(0, 1, 142),
-(0, 1, 143),
-(0, 1, 144),
 (0, 1, 160),
 (0, 1, 161),
 (0, 1, 162),
@@ -340,11 +335,6 @@ INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 
 -- 支付管理：只保留租户相关
 (0, 2, 100),
-(0, 2, 140),
-(0, 2, 141),
-(0, 2, 142),
-(0, 2, 143),
-(0, 2, 144),
 (0, 2, 160),
 (0, 2, 161),
 (0, 2, 162),
@@ -596,12 +586,6 @@ VALUES
 (122, 120, 1, '更新支付产品', 3, 'PUT', '/payment/product', 'payment:product:update', '', '', 122),
 (123, 120, 1, '获取支付产品详情', 3, 'GET', '/payment/product', 'payment:product:detail', '', '', 123),
 (124, 120, 1, '删除支付产品', 3, 'DELETE', '/payment/product/{id}', 'payment:product:delete', '', '', 124),
-
-(140, 100, 1, '租户平台', 2, 'GET', '/payment/tenant-platforms', 'payment:tenant-platform:list', 'payment/tenant-platforms', 'Gold', 140),
-(141, 140, 1, '开通租户平台', 3, 'POST', '/payment/tenant-platform', 'payment:tenant-platform:add', '', '', 141),
-(142, 140, 1, '更新租户平台', 3, 'PUT', '/payment/tenant-platform', 'payment:tenant-platform:update', '', '', 142),
-(143, 140, 1, '获取租户平台详情', 3, 'GET', '/payment/tenant-platform', 'payment:tenant-platform:detail', '', '', 143),
-(144, 140, 1, '删除租户平台', 3, 'DELETE', '/payment/tenant-platform/{id}', 'payment:tenant-platform:delete', '', '', 144),
 
 (160, 100, 1, '租户支付账号', 2, 'GET', '/payment/tenant-accounts', 'payment:tenant-account:list', 'payment/tenant-accounts', 'Gold', 160),
 (161, 160, 1, '创建租户支付账号', 3, 'POST', '/payment/tenant-account', 'payment:tenant-account:add', '', '', 161),

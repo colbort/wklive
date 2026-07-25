@@ -6,6 +6,7 @@ import (
 
 	"wklive/common/conv"
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/payment"
@@ -34,15 +35,52 @@ func (l *CreateTenantPayChannelLogic) CreateTenantPayChannel(in *payment.CreateT
 	var (
 		errLogic = "CreateTenantPayChannel"
 	)
+	tenantID, resp, err := resolveAdminTenantCreateScope(l.ctx, in.TenantId)
+	if err != nil {
+		return nil, err
+	}
+	if resp != nil {
+		return resp, nil
+	}
+	if in.PlatformId <= 0 || in.ProductId <= 0 || in.AccountId <= 0 ||
+		!requiredStrings(in.ChannelCode, in.ChannelName, in.Currency) || in.FeeType == 0 {
+		return paymentErrorResp(l.ctx, i18n.PaymentRequiredParamsMissing), nil
+	}
+	if _, ok := payment.FeeType_name[int32(in.FeeType)]; !ok {
+		return paymentErrorResp(l.ctx, i18n.ParamError), nil
+	}
+	if !validNonNegativeRange(in.SingleMinAmount, in.SingleMaxAmount) ||
+		in.DailyMaxAmount < 0 || in.DailyMaxCount < 0 || in.FeeFixedAmount < 0 {
+		return paymentErrorResp(l.ctx, i18n.InvalidPaymentAmountRange), nil
+	}
+	if relationResp, err := validateProductPlatform(l.ctx, l.svcCtx, in.ProductId, in.PlatformId); err != nil {
+		return nil, err
+	} else if relationResp != nil {
+		return relationResp, nil
+	}
+	if relationResp, err := validateAccountPlatform(l.ctx, l.svcCtx, in.AccountId, tenantID, in.PlatformId); err != nil {
+		return nil, err
+	} else if relationResp != nil {
+		return relationResp, nil
+	}
 
 	feeRate, err := conv.ParseDecimalField(in.FeeRate)
 	if err != nil {
-		return nil, err
+		return paymentErrorResp(l.ctx, i18n.InvalidPaymentDecimal), nil
+	}
+	if feeRate.IsNegative() {
+		return paymentErrorResp(l.ctx, i18n.InvalidPaymentAmountRange), nil
+	}
+	extConfig, valid := nullableJSON(in.ExtConfig)
+	if !valid {
+		return &payment.CommonResp{
+			Base: helper.ErrResp(i18n.InvalidPaymentJSON, i18n.Translate(i18n.InvalidPaymentJSON, l.ctx)),
+		}, nil
 	}
 
 	now := utils.NowMillis()
 	channel := &models.TTenantPayChannel{
-		TenantId:        in.TenantId,
+		TenantId:        tenantID,
 		PlatformId:      in.PlatformId,
 		ProductId:       in.ProductId,
 		AccountId:       in.AccountId,
@@ -61,7 +99,7 @@ func (l *CreateTenantPayChannelLogic) CreateTenantPayChannel(in *payment.CreateT
 		FeeType:         int64(in.FeeType),
 		FeeRate:         feeRate,
 		FeeFixedAmount:  in.FeeFixedAmount,
-		ExtConfig:       sql.NullString{String: in.ExtConfig, Valid: true},
+		ExtConfig:       extConfig,
 		Remark:          sql.NullString{String: in.Remark, Valid: true},
 		CreateTimes:     now,
 		UpdateTimes:     now,
@@ -69,6 +107,9 @@ func (l *CreateTenantPayChannelLogic) CreateTenantPayChannel(in *payment.CreateT
 
 	_, err = l.svcCtx.TenantPayChannelModel.Insert(l.ctx, channel)
 	if err != nil {
+		if isDuplicateEntry(err) {
+			return paymentErrorResp(l.ctx, i18n.TenantPayChannelCodeAlreadyExists), nil
+		}
 		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
 		return nil, err
 	}

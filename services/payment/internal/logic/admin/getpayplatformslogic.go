@@ -5,6 +5,7 @@ import (
 
 	"wklive/common/helper"
 	"wklive/proto/payment"
+	"wklive/services/payment/internal/provider"
 	"wklive/services/payment/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -28,12 +29,12 @@ func NewGetPayPlatformsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 func (l *GetPayPlatformsLogic) GetPayPlatforms(in *payment.Empty) (*payment.PayPlatformsResp, error) {
 	data := make([]*payment.PayPlatformItem, 0)
 	data = append(data, &payment.PayPlatformItem{
-		PlatformCode: "dongfang",
-		PlatformName: "东方支付",
+		PlatformCode: string(provider.PaymentCodeAlipay),
+		PlatformName: "支付宝",
 	})
 	data = append(data, &payment.PayPlatformItem{
-		PlatformCode: "xifang",
-		PlatformName: "西方支付",
+		PlatformCode: string(provider.PaymentCodeWechat),
+		PlatformName: "微信支付",
 	})
 	return &payment.PayPlatformsResp{
 		Base: helper.OkResp(),

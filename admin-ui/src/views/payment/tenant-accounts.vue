@@ -5,7 +5,11 @@
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
       <el-form-item :label="t('payment.platformId')">
-        <el-input-number v-model="query.platformId" :min="0" :precision="0" />
+        <PayPlatformSelect
+          v-model="query.platformId"
+          :enabled-only="false"
+          class="platform-select-filter"
+        />
       </el-form-item>
       <el-form-item :label="t('common.keyword')">
         <el-input v-model="query.keyword" clearable />
@@ -74,10 +78,17 @@
     <el-dialog
       v-model="dialogVisible"
       :title="form.id ? t('payment.editAccount') : t('payment.addAccount')"
-      width="760px"
+      width="1040px"
+      class="account-form-dialog"
     >
-      <el-form label-width="120px">
-        <el-form-item :label="t('common.tenantId')">
+      <el-form
+        ref="formRef"
+        :model="form"
+        :rules="formRules"
+        label-width="120px"
+        class="account-form-grid"
+      >
+        <el-form-item :label="t('common.tenantId')" prop="tenantId">
           <TenantSelect
             v-model="form.tenantId"
             :disabled="!!form.id"
@@ -85,39 +96,15 @@
           />
         </el-form-item>
 
-        <el-form-item v-if="!form.id" :label="t('payment.tenantPayPlatformId')">
-          <div class="verify-row">
-            <el-input-number
-              v-model="form.tenantPayPlatformId"
-              :min="1"
-              :precision="0"
-              @change="handleTenantPlatformChange"
-            />
-            <el-button :loading="tenantPlatformChecking" @click="checkTenantPlatform">
-              {{ t('payment.verifyTenantPlatform') }}
-            </el-button>
-            <span v-if="tenantPlatformVerified" class="verified-text">
-              {{ t('payment.verified') }}
-            </span>
-          </div>
+        <el-form-item v-if="!form.id" :label="t('payment.platformId')" prop="platformId">
+          <PayPlatformSelect
+            v-model="form.platformId"
+            :clearable="false"
+            @change="handlePlatformChange"
+          />
         </el-form-item>
 
-        <el-form-item v-if="!form.id" :label="t('payment.platformId')">
-          <div class="verify-row">
-            <el-input-number
-              v-model="form.platformId"
-              :min="1"
-              :precision="0"
-              @change="handlePlatformChange"
-            />
-            <el-button :loading="platformChecking" @click="checkPlatform">
-              {{ t('payment.verifyPlatform') }}
-            </el-button>
-            <span v-if="platformVerified" class="verified-text"> {{ t('payment.verified') }} </span>
-          </div>
-        </el-form-item>
-
-        <el-form-item v-if="!form.id" :label="t('payment.accountCode')">
+        <el-form-item v-if="!form.id" :label="t('payment.accountCode')" prop="accountCode">
           <el-input v-model="form.accountCode" />
         </el-form-item>
         <el-form-item :label="t('payment.accountName')">
@@ -126,29 +113,11 @@
         <el-form-item label="APP ID">
           <el-input v-model="form.appId" />
         </el-form-item>
-        <el-form-item :label="t('payment.merchantId')">
+        <el-form-item :label="t('payment.merchantId')" prop="merchantId">
           <el-input v-model="form.merchantId" />
         </el-form-item>
-        <el-form-item :label="t('payment.merchantName')">
+        <el-form-item :label="t('payment.merchantName')" prop="merchantName">
           <el-input v-model="form.merchantName" />
-        </el-form-item>
-        <el-form-item :label="t('payment.apiKeyCipher')">
-          <el-input v-model="form.apiKeyCipher" type="textarea" :rows="2" />
-        </el-form-item>
-        <el-form-item :label="t('payment.apiSecretCipher')">
-          <el-input v-model="form.apiSecretCipher" type="textarea" :rows="2" />
-        </el-form-item>
-        <el-form-item :label="t('payment.privateKeyCipher')">
-          <el-input v-model="form.privateKeyCipher" type="textarea" :rows="3" />
-        </el-form-item>
-        <el-form-item :label="t('payment.publicKey')">
-          <el-input v-model="form.publicKey" type="textarea" :rows="3" />
-        </el-form-item>
-        <el-form-item :label="t('payment.certCipher')">
-          <el-input v-model="form.certCipher" type="textarea" :rows="3" />
-        </el-form-item>
-        <el-form-item :label="t('payment.extConfig')">
-          <el-input v-model="form.extConfig" type="textarea" :rows="3" />
         </el-form-item>
         <el-form-item :label="t('common.enabled')">
           <el-select v-model="form.enabled" style="width: 100%">
@@ -170,7 +139,31 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item :label="t('common.remark')">
+        <div class="account-secret-grid account-form-grid__full">
+          <el-form-item :label="t('payment.apiKeyCipher')">
+            <el-input v-model="form.apiKeyCipher" type="textarea" :rows="2" />
+          </el-form-item>
+          <el-form-item :label="t('payment.apiSecretCipher')">
+            <el-input v-model="form.apiSecretCipher" type="textarea" :rows="2" />
+          </el-form-item>
+          <el-form-item :label="t('payment.privateKeyCipher')">
+            <el-input v-model="form.privateKeyCipher" type="textarea" :rows="3" />
+          </el-form-item>
+          <el-form-item :label="t('payment.publicKey')">
+            <el-input v-model="form.publicKey" type="textarea" :rows="3" />
+          </el-form-item>
+        </div>
+        <el-form-item :label="t('payment.certCipher')" class="account-form-grid__full">
+          <el-input v-model="form.certCipher" type="textarea" :rows="3" />
+        </el-form-item>
+        <el-form-item
+          :label="t('payment.extConfig')"
+          prop="extConfig"
+          class="account-form-grid__full"
+        >
+          <el-input v-model="form.extConfig" type="textarea" :rows="3" />
+        </el-form-item>
+        <el-form-item :label="t('common.remark')" class="account-form-grid__full">
           <el-input v-model="form.remark" type="textarea" :rows="3" />
         </el-form-item>
       </el-form>
@@ -200,12 +193,13 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
-import { ElMessage } from 'element-plus'
-import { catalogService, tenantService, type OptionGroup, type TenantPayAccount } from '@/services'
+import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import { tenantService, type OptionGroup, type TenantPayAccount } from '@/services'
 import { findFormOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
+import PayPlatformSelect from '@/components/payment/PayPlatformSelect.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
@@ -221,13 +215,9 @@ const optionGroups = ref<OptionGroup[]>([])
 const enabledFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'enabled'))
 const yesNoFormOptions = computed(() => findFormOptionGroup(optionGroups.value, 'yesNo'))
 
-const tenantPlatformChecking = ref(false)
-const platformChecking = ref(false)
 const tenantVerified = ref(false)
-const tenantPlatformVerified = ref(false)
 const platformVerified = ref(false)
 const verifiedTenantId = ref(0)
-const verifiedTenantPlatformId = ref(0)
 const verifiedPlatformId = ref(0)
 
 const query = reactive({
@@ -239,7 +229,6 @@ const query = reactive({
 const createEmptyForm = () => ({
   id: 0,
   tenantId: 0,
-  tenantPayPlatformId: 0,
   platformId: 0,
   accountCode: '',
   accountName: '',
@@ -258,15 +247,75 @@ const createEmptyForm = () => ({
 })
 
 const form = reactive(createEmptyForm())
+const formRef = ref<FormInstance>()
+const formRules: FormRules = {
+  tenantId: [
+    {
+      required: true,
+      type: 'number',
+      min: 1,
+      message: t('payment.pleaseInputTenantId'),
+      trigger: 'change',
+    },
+  ],
+  platformId: [
+    {
+      required: true,
+      type: 'number',
+      min: 1,
+      message: t('payment.pleaseInputPlatformId'),
+      trigger: 'change',
+    },
+  ],
+  accountCode: [
+    {
+      required: true,
+      whitespace: true,
+      message: t('payment.pleaseInputAccountCode'),
+      trigger: 'blur',
+    },
+  ],
+  merchantId: [
+    {
+      required: true,
+      whitespace: true,
+      message: t('payment.pleaseInputMerchantId'),
+      trigger: 'blur',
+    },
+  ],
+  merchantName: [
+    {
+      required: true,
+      whitespace: true,
+      message: t('payment.pleaseInputMerchantName'),
+      trigger: 'blur',
+    },
+  ],
+  extConfig: [
+    {
+      validator: (_rule, value: string, callback) => {
+        if (!value.trim()) {
+          callback()
+          return
+        }
+        try {
+          JSON.parse(value)
+          callback()
+        } catch {
+          callback(new Error(t('payment.invalidExtConfigJson')))
+        }
+      },
+      trigger: 'blur',
+    },
+  ],
+}
 
 const submitDisabled = computed(
   () =>
     !form.id &&
     (!tenantVerified.value ||
-      !tenantPlatformVerified.value ||
       !platformVerified.value ||
       verifiedTenantId.value !== form.tenantId ||
-      verifiedTenantPlatformId.value !== form.tenantPayPlatformId ||
       verifiedPlatformId.value !== form.platformId),
 )
 
@@ -302,10 +351,8 @@ function resetQuery() {
 
 const resetVerifyState = () => {
   tenantVerified.value = false
-  tenantPlatformVerified.value = false
   platformVerified.value = false
   verifiedTenantId.value = 0
-  verifiedTenantPlatformId.value = 0
   verifiedPlatformId.value = 0
 }
 
@@ -313,10 +360,8 @@ const openDialog = (row?: TenantPayAccount) => {
   Object.assign(form, createEmptyForm(), row || {})
   if (row?.id) {
     tenantVerified.value = true
-    tenantPlatformVerified.value = true
     platformVerified.value = true
     verifiedTenantId.value = row.tenantId
-    verifiedTenantPlatformId.value = row.tenantPayPlatformId
     verifiedPlatformId.value = row.platformId
   } else {
     resetVerifyState()
@@ -327,105 +372,17 @@ const openDialog = (row?: TenantPayAccount) => {
 const handleTenantChange = () => {
   tenantVerified.value = form.tenantId > 0
   verifiedTenantId.value = form.tenantId
-  tenantPlatformVerified.value = false
-  verifiedTenantPlatformId.value = 0
-}
-
-const handleTenantPlatformChange = () => {
-  tenantPlatformVerified.value = false
-  verifiedTenantPlatformId.value = 0
 }
 
 const handlePlatformChange = () => {
-  platformVerified.value = false
-  verifiedPlatformId.value = 0
-  tenantPlatformVerified.value = false
-  verifiedTenantPlatformId.value = 0
-}
-
-const validatePlatformExists = async (platformId: number) => {
-  if (!platformId) {
-    ElMessage.warning(t('payment.pleaseInputPlatformId'))
-    return false
-  }
-
-  platformChecking.value = true
-  try {
-    const res = await catalogService.getPlatformDetail(platformId)
-    if (!res.data?.id) {
-      ElMessage.error(t('payment.platformNotFound'))
-      return false
-    }
-    return true
-  } catch {
-    ElMessage.error(t('payment.platformNotFound'))
-    return false
-  } finally {
-    platformChecking.value = false
-  }
-}
-
-const validateTenantPlatformExists = async (
-  tenantPayPlatformId: number,
-  tenantId: number,
-  platformId: number,
-) => {
-  if (!tenantPayPlatformId) {
-    ElMessage.warning(t('payment.pleaseInputTenantPlatformId'))
-    return false
-  }
-  if (!tenantId) {
-    ElMessage.warning(t('payment.pleaseInputTenantFirst'))
-    return false
-  }
-  if (!platformId) {
-    ElMessage.warning(t('payment.pleaseInputPlatformFirst'))
-    return false
-  }
-
-  tenantPlatformChecking.value = true
-  try {
-    const res = await tenantService.getTenantPlatformDetail(tenantPayPlatformId, tenantId)
-    if (!res.data?.id) {
-      ElMessage.error(t('payment.tenantPlatformNotFound'))
-      return false
-    }
-    if (res.data.platformId !== platformId) {
-      ElMessage.error(t('payment.tenantPlatformPlatformMismatch'))
-      return false
-    }
-    return true
-  } catch {
-    ElMessage.error(t('payment.tenantPlatformNotFound'))
-    return false
-  } finally {
-    tenantPlatformChecking.value = false
-  }
-}
-
-const checkPlatform = async () => {
-  const exists = await validatePlatformExists(form.platformId)
-  platformVerified.value = exists
-  verifiedPlatformId.value = exists ? form.platformId : 0
-  if (exists) {
-    ElMessage.success(t('payment.platformVerifiedSuccess'))
-  }
-}
-
-const checkTenantPlatform = async () => {
-  const exists = await validateTenantPlatformExists(
-    form.tenantPayPlatformId,
-    form.tenantId,
-    form.platformId,
-  )
-  tenantPlatformVerified.value = exists
-  verifiedTenantPlatformId.value = exists ? form.tenantPayPlatformId : 0
-  if (exists) {
-    ElMessage.success(t('payment.tenantPlatformVerifiedSuccess'))
-  }
+  platformVerified.value = form.platformId > 0
+  verifiedPlatformId.value = form.platformId
 }
 
 const submit = async () => {
+  const valid = await formRef.value?.validate().catch(() => false)
+  if (!valid) return
+
   if (!form.id && submitDisabled.value) {
     ElMessage.warning(t('payment.pleaseCompleteAccountValidation'))
     return
@@ -472,10 +429,31 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.account-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 24px;
+}
+
+.account-form-grid__full {
+  grid-column: 1 / -1;
+}
+
+.account-secret-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 24px;
+}
+
 .verify-row {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.verify-row .el-input-number {
+  flex: 1;
+  min-width: 0;
 }
 
 .verified-text {
@@ -500,5 +478,25 @@ onMounted(async () => {
 .option-tag--slate {
   color: var(--el-text-color-regular);
   background: var(--el-fill-color-light);
+}
+
+@media (max-width: 1200px) {
+  .account-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .account-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .account-form-grid__full {
+    grid-column: auto;
+  }
+
+  .account-secret-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 </style>

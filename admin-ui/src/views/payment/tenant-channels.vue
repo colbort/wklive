@@ -5,7 +5,11 @@
         <TenantSelect v-model="channelQuery.tenantId" class="tenant-select-filter" />
       </el-form-item>
       <el-form-item :label="t('payment.platformId')">
-        <el-input-number v-model="channelQuery.platformId" :min="0" :precision="0" />
+        <PayPlatformSelect
+          v-model="channelQuery.platformId"
+          :enabled-only="false"
+          class="platform-select-filter"
+        />
       </el-form-item>
       <el-form-item :label="t('common.keyword')">
         <el-input v-model="channelQuery.keyword" clearable />
@@ -77,9 +81,16 @@
     <el-dialog
       v-model="channelDialogVisible"
       :title="channelForm.id ? t('payment.editChannel') : t('payment.addChannel')"
-      width="760px"
+      width="1040px"
+      class="channel-form-dialog"
     >
-      <el-form label-width="110px">
+      <el-form
+        ref="channelFormRef"
+        :model="channelForm"
+        :rules="channelFormRules"
+        label-width="110px"
+        class="channel-form-grid"
+      >
         <el-form-item :label="t('common.tenantId')">
           <TenantSelect
             v-model="channelForm.tenantId"
@@ -89,54 +100,30 @@
         </el-form-item>
 
         <el-form-item v-if="!channelForm.id" :label="t('payment.platformId')">
-          <div class="verify-row">
-            <el-input-number
-              v-model="channelForm.platformId"
-              :min="1"
-              :precision="0"
-              @change="handleChannelPlatformChange"
-            />
-            <el-button :loading="channelPlatformChecking" @click="checkChannelPlatform">
-              {{ t('payment.verifyPlatform') }}
-            </el-button>
-            <span v-if="channelPlatformVerified" class="verified-text">
-              {{ t('payment.verified') }}
-            </span>
-          </div>
+          <PayPlatformSelect
+            v-model="channelForm.platformId"
+            :clearable="false"
+            @change="handleChannelPlatformChange"
+          />
         </el-form-item>
 
         <el-form-item v-if="!channelForm.id" :label="t('payment.productId')">
-          <div class="verify-row">
-            <el-input-number
-              v-model="channelForm.productId"
-              :min="1"
-              :precision="0"
-              @change="handleChannelProductChange"
-            />
-            <el-button :loading="channelProductChecking" @click="checkChannelProduct">
-              {{ t('payment.verifyProduct') }}
-            </el-button>
-            <span v-if="channelProductVerified" class="verified-text">
-              {{ t('payment.verified') }}
-            </span>
-          </div>
+          <PayProductSelect
+            v-model="channelForm.productId"
+            :platform-id="channelForm.platformId"
+            :clearable="false"
+            @change="handleChannelProductChange"
+          />
         </el-form-item>
 
         <el-form-item v-if="!channelForm.id" :label="t('payment.accountId')">
-          <div class="verify-row">
-            <el-input-number
-              v-model="channelForm.accountId"
-              :min="1"
-              :precision="0"
-              @change="handleChannelAccountChange"
-            />
-            <el-button :loading="channelAccountChecking" @click="checkChannelAccount">
-              {{ t('payment.verifyAccount') }}
-            </el-button>
-            <span v-if="channelAccountVerified" class="verified-text">
-              {{ t('payment.verified') }}
-            </span>
-          </div>
+          <TenantPayAccountSelect
+            v-model="channelForm.accountId"
+            :tenant-id="channelForm.tenantId"
+            :platform-id="channelForm.platformId"
+            :clearable="false"
+            @change="handleChannelAccountChange"
+          />
         </el-form-item>
 
         <el-form-item v-if="!channelForm.id" :label="t('payment.channelCode')">
@@ -187,10 +174,14 @@
         <el-form-item :label="t('payment.feeFixedAmount')">
           <el-input-number v-model="channelForm.feeFixedAmount" :min="0" :precision="0" />
         </el-form-item>
-        <el-form-item :label="t('payment.extConfig')">
+        <el-form-item
+          :label="t('payment.extConfig')"
+          prop="extConfig"
+          class="channel-form-grid__full"
+        >
           <el-input v-model="channelForm.extConfig" type="textarea" :rows="3" />
         </el-form-item>
-        <el-form-item :label="t('common.remark')">
+        <el-form-item :label="t('common.remark')" class="channel-form-grid__full">
           <el-input v-model="channelForm.remark" type="textarea" :rows="3" />
         </el-form-item>
       </el-form>
@@ -219,12 +210,15 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
-import { ElMessage } from 'element-plus'
-import { catalogService, tenantService, type OptionGroup, type TenantPayChannel } from '@/services'
+import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import { tenantService, type OptionGroup, type TenantPayChannel } from '@/services'
 import { findFormOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
+import PayPlatformSelect from '@/components/payment/PayPlatformSelect.vue'
+import PayProductSelect from '@/components/payment/PayProductSelect.vue'
+import TenantPayAccountSelect from '@/components/payment/TenantPayAccountSelect.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
@@ -271,10 +265,26 @@ const channelForm = reactive({
   extConfig: '',
   remark: '',
 })
-
-const channelPlatformChecking = ref(false)
-const channelProductChecking = ref(false)
-const channelAccountChecking = ref(false)
+const channelFormRef = ref<FormInstance>()
+const channelFormRules: FormRules = {
+  extConfig: [
+    {
+      validator: (_rule, value: string, callback) => {
+        if (!value.trim()) {
+          callback()
+          return
+        }
+        try {
+          JSON.parse(value)
+          callback()
+        } catch {
+          callback(new Error(t('payment.invalidExtConfigJson')))
+        }
+      },
+      trigger: 'blur',
+    },
+  ],
+}
 
 const channelTenantVerified = ref(false)
 const channelPlatformVerified = ref(false)
@@ -385,102 +395,19 @@ const openChannelDialog = (row?: TenantPayChannel) => {
   channelDialogVisible.value = true
 }
 
-const validatePlatformExists = async (platformId: number) => {
-  if (!platformId) {
-    ElMessage.warning(t('payment.pleaseInputPlatformId'))
-    return false
-  }
-
-  channelPlatformChecking.value = true
-  try {
-    const res = await catalogService.getPlatformDetail(platformId)
-    if (!res.data?.id) {
-      ElMessage.error(t('payment.platformNotFound'))
-      return false
-    }
-    return true
-  } catch {
-    ElMessage.error(t('payment.platformNotFound'))
-    return false
-  } finally {
-    channelPlatformChecking.value = false
-  }
-}
-
-const validateProductExists = async (productId: number, platformId: number) => {
-  if (!productId) {
-    ElMessage.warning(t('payment.pleaseInputProductId'))
-    return false
-  }
-  if (!platformId) {
-    ElMessage.warning(t('payment.pleaseInputPlatformFirst'))
-    return false
-  }
-
-  channelProductChecking.value = true
-  try {
-    const res = await catalogService.getProductDetail(productId)
-    if (!res.data?.id) {
-      ElMessage.error(t('payment.productNotFound'))
-      return false
-    }
-    if (res.data.platformId !== platformId) {
-      ElMessage.error(t('payment.productPlatformMismatch'))
-      return false
-    }
-    return true
-  } catch {
-    ElMessage.error(t('payment.productNotFound'))
-    return false
-  } finally {
-    channelProductChecking.value = false
-  }
-}
-
-const validateAccountExists = async (accountId: number, tenantId: number, platformId: number) => {
-  if (!accountId) {
-    ElMessage.warning(t('payment.pleaseInputAccountId'))
-    return false
-  }
-  if (!tenantId) {
-    ElMessage.warning(t('payment.pleaseInputTenantFirst'))
-    return false
-  }
-  if (!platformId) {
-    ElMessage.warning(t('payment.pleaseInputPlatformFirst'))
-    return false
-  }
-
-  channelAccountChecking.value = true
-  try {
-    const res = await tenantService.getTenantAccountDetail(accountId, tenantId)
-    if (!res.data?.id) {
-      ElMessage.error(t('payment.accountNotFound'))
-      return false
-    }
-    if (res.data.platformId !== platformId) {
-      ElMessage.error(t('payment.accountPlatformMismatch'))
-      return false
-    }
-    return true
-  } catch {
-    ElMessage.error(t('payment.accountNotFound'))
-    return false
-  } finally {
-    channelAccountChecking.value = false
-  }
-}
-
 const handleChannelTenantChange = () => {
   channelTenantVerified.value = channelForm.tenantId > 0
   verifiedChannelTenantId.value = channelForm.tenantId
+  channelForm.accountId = 0
   channelAccountVerified.value = false
   verifiedChannelAccountId.value = 0
 }
 
 const handleChannelPlatformChange = () => {
-  channelPlatformVerified.value = false
-  verifiedChannelPlatformId.value = 0
+  channelPlatformVerified.value = channelForm.platformId > 0
+  verifiedChannelPlatformId.value = channelForm.platformId
+  channelForm.productId = 0
+  channelForm.accountId = 0
   channelProductVerified.value = false
   verifiedChannelProductId.value = 0
   channelAccountVerified.value = false
@@ -488,41 +415,19 @@ const handleChannelPlatformChange = () => {
 }
 
 const handleChannelProductChange = () => {
-  channelProductVerified.value = false
-  verifiedChannelProductId.value = 0
+  channelProductVerified.value = channelForm.productId > 0
+  verifiedChannelProductId.value = channelForm.productId
 }
 
 const handleChannelAccountChange = () => {
-  channelAccountVerified.value = false
-  verifiedChannelAccountId.value = 0
-}
-
-const checkChannelPlatform = async () => {
-  const exists = await validatePlatformExists(channelForm.platformId)
-  channelPlatformVerified.value = exists
-  verifiedChannelPlatformId.value = exists ? channelForm.platformId : 0
-  if (exists) ElMessage.success(t('payment.platformVerifiedSuccess'))
-}
-
-const checkChannelProduct = async () => {
-  const exists = await validateProductExists(channelForm.productId, channelForm.platformId)
-  channelProductVerified.value = exists
-  verifiedChannelProductId.value = exists ? channelForm.productId : 0
-  if (exists) ElMessage.success(t('payment.productVerifiedSuccess'))
-}
-
-const checkChannelAccount = async () => {
-  const exists = await validateAccountExists(
-    channelForm.accountId,
-    channelForm.tenantId,
-    channelForm.platformId,
-  )
-  channelAccountVerified.value = exists
-  verifiedChannelAccountId.value = exists ? channelForm.accountId : 0
-  if (exists) ElMessage.success(t('payment.accountVerifiedSuccess'))
+  channelAccountVerified.value = channelForm.accountId > 0
+  verifiedChannelAccountId.value = channelForm.accountId
 }
 
 const submitChannel = async () => {
+  const valid = await channelFormRef.value?.validate().catch(() => false)
+  if (!valid) return
+
   if (!channelForm.id && channelSubmitDisabled.value) {
     ElMessage.warning(t('payment.pleaseCompleteChannelValidation'))
     return
@@ -569,10 +474,25 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.channel-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 24px;
+}
+
+.channel-form-grid__full {
+  grid-column: 1 / -1;
+}
+
 .verify-row {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.verify-row .el-input-number {
+  flex: 1;
+  min-width: 0;
 }
 
 .verified-text {
@@ -597,5 +517,15 @@ onMounted(async () => {
 .option-tag--slate {
   color: var(--el-text-color-regular);
   background: var(--el-fill-color-light);
+}
+
+@media (max-width: 900px) {
+  .channel-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .channel-form-grid__full {
+    grid-column: auto;
+  }
 }
 </style>

@@ -704,24 +704,23 @@ type CreateTenantCategoryReq struct {
 }
 
 type CreateTenantPayAccountReq struct {
-	TenantId            int64  `json:"tenantId"`
-	TenantPayPlatformId int64  `json:"tenantPayPlatformId"`
-	PlatformId          int64  `json:"platformId"`
-	AccountCode         string `json:"accountCode"`
-	AccountName         string `json:"accountName"`
-	AppId               string `json:"appId,optional"`
-	MerchantId          string `json:"merchantId,optional"`
-	MerchantName        string `json:"merchantName,optional"`
-	ApiKeyCipher        string `json:"apiKeyCipher,optional"`
-	ApiSecretCipher     string `json:"apiSecretCipher,optional"`
-	PrivateKeyCipher    string `json:"privateKeyCipher,optional"`
-	PublicKey           string `json:"publicKey,optional"`
-	CertCipher          string `json:"certCipher,optional"`
-	CredentialRef       string `json:"credentialRef,optional"`
-	ExtConfig           string `json:"extConfig,optional"`
-	Enabled             int64  `json:"enabled"`
-	IsDefault           int64  `json:"isDefault"` // 是否默认账号：1是 2否
-	Remark              string `json:"remark,optional"`
+	TenantId         int64  `json:"tenantId"`
+	PlatformId       int64  `json:"platformId"`
+	AccountCode      string `json:"accountCode"`
+	AccountName      string `json:"accountName"`
+	AppId            string `json:"appId,optional"`
+	MerchantId       string `json:"merchantId"`
+	MerchantName     string `json:"merchantName"`
+	ApiKeyCipher     string `json:"apiKeyCipher,optional"`
+	ApiSecretCipher  string `json:"apiSecretCipher,optional"`
+	PrivateKeyCipher string `json:"privateKeyCipher,optional"`
+	PublicKey        string `json:"publicKey,optional"`
+	CertCipher       string `json:"certCipher,optional"`
+	CredentialRef    string `json:"credentialRef,optional"`
+	ExtConfig        string `json:"extConfig,optional"`
+	Enabled          int64  `json:"enabled"`
+	IsDefault        int64  `json:"isDefault"` // 是否默认账号：1是 2否
+	Remark           string `json:"remark,optional"`
 }
 
 type CreateTenantPayChannelReq struct {
@@ -889,11 +888,6 @@ type DeleteTenantPayChannelReq struct {
 }
 
 type DeleteTenantPayChannelRuleReq struct {
-	TenantId int64 `form:"tenantId"`
-	Id       int64 `path:"id"`
-}
-
-type DeleteTenantPayPlatformReq struct {
 	TenantId int64 `form:"tenantId"`
 	Id       int64 `path:"id"`
 }
@@ -1582,16 +1576,6 @@ type GetTenantPayChannelRuleResp struct {
 	Data TenantPayChannelRule `json:"data"`
 }
 
-type GetTenantPayPlatformReq struct {
-	Id       int64 `form:"id"`
-	TenantId int64 `form:"tenantId"`
-}
-
-type GetTenantPayPlatformResp struct {
-	RespBase
-	Data TenantPayPlatform `json:"data"`
-}
-
 type GetTenantProductReq struct {
 	Id       int64 `path:"id"`
 	TenantId int64 `form:"tenantId"`
@@ -2213,11 +2197,10 @@ type ListTenantCategoriesResp struct {
 
 type ListTenantPayAccountsReq struct {
 	PageReq
-	TenantId            int64  `form:"tenantId,optional"`
-	PlatformId          int64  `form:"platformId,optional"`
-	TenantPayPlatformId int64  `form:"tenantPayPlatformId,optional"`
-	Keyword             string `form:"keyword,optional"`
-	Enabled             int64  `form:"enabled,optional"`
+	TenantId   int64  `form:"tenantId,optional"`
+	PlatformId int64  `form:"platformId,optional"`
+	Keyword    string `form:"keyword,optional"`
+	Enabled    int64  `form:"enabled,optional"`
 }
 
 type ListTenantPayAccountsResp struct {
@@ -2251,19 +2234,6 @@ type ListTenantPayChannelsReq struct {
 type ListTenantPayChannelsResp struct {
 	RespBase
 	Data []TenantPayChannel `json:"data"`
-}
-
-type ListTenantPayPlatformsReq struct {
-	PageReq
-	TenantId   int64 `form:"tenantId,optional"`
-	PlatformId int64 `form:"platformId,optional"`
-	Enabled    int64 `form:"enabled,optional"`
-	OpenStatus int64 `form:"openStatus,optional"`
-}
-
-type ListTenantPayPlatformsResp struct {
-	RespBase
-	Data []TenantPayPlatform `json:"data"`
 }
 
 type ListTenantProductsReq struct {
@@ -2529,14 +2499,6 @@ type OpLogListReq struct {
 type OpLogListResp struct {
 	RespBase
 	Data []OpLogItem `json:"data"`
-}
-
-type OpenTenantPayPlatformReq struct {
-	TenantId   int64  `json:"tenantId"`
-	PlatformId int64  `json:"platformId"`
-	Enabled    int64  `json:"enabled"`
-	OpenStatus int64  `json:"openStatus"`
-	Remark     string `json:"remark,optional"`
 }
 
 type OptionAccount struct {
@@ -4314,27 +4276,26 @@ type TenantJsonScope struct {
 }
 
 type TenantPayAccount struct {
-	Id                  int64  `json:"id"`
-	TenantId            int64  `json:"tenantId"`
-	TenantPayPlatformId int64  `json:"tenantPayPlatformId"`
-	PlatformId          int64  `json:"platformId"`
-	AccountCode         string `json:"accountCode"`
-	AccountName         string `json:"accountName"`
-	AppId               string `json:"appId"`
-	MerchantId          string `json:"merchantId"`
-	MerchantName        string `json:"merchantName"`
-	ApiKeyCipher        string `json:"apiKeyCipher"`
-	ApiSecretCipher     string `json:"apiSecretCipher"`
-	PrivateKeyCipher    string `json:"privateKeyCipher"`
-	PublicKey           string `json:"publicKey"`
-	CertCipher          string `json:"certCipher"`
-	CredentialRef       string `json:"credentialRef"`
-	ExtConfig           string `json:"extConfig"`
-	Enabled             int64  `json:"enabled"`   // 0未知 1启用 2禁用
-	IsDefault           int64  `json:"isDefault"` // 是否默认账号：1是 2否
-	Remark              string `json:"remark"`
-	CreateTimes         int64  `json:"createTimes"`
-	UpdateTimes         int64  `json:"updateTimes"`
+	Id               int64  `json:"id"`
+	TenantId         int64  `json:"tenantId"`
+	PlatformId       int64  `json:"platformId"`
+	AccountCode      string `json:"accountCode"`
+	AccountName      string `json:"accountName"`
+	AppId            string `json:"appId"`
+	MerchantId       string `json:"merchantId"`
+	MerchantName     string `json:"merchantName"`
+	ApiKeyCipher     string `json:"apiKeyCipher"`
+	ApiSecretCipher  string `json:"apiSecretCipher"`
+	PrivateKeyCipher string `json:"privateKeyCipher"`
+	PublicKey        string `json:"publicKey"`
+	CertCipher       string `json:"certCipher"`
+	CredentialRef    string `json:"credentialRef"`
+	ExtConfig        string `json:"extConfig"`
+	Enabled          int64  `json:"enabled"`   // 0未知 1启用 2禁用
+	IsDefault        int64  `json:"isDefault"` // 是否默认账号：1是 2否
+	Remark           string `json:"remark"`
+	CreateTimes      int64  `json:"createTimes"`
+	UpdateTimes      int64  `json:"updateTimes"`
 }
 
 type TenantPayChannel struct {
@@ -4386,17 +4347,6 @@ type TenantPayChannelRule struct {
 	Remark               string `json:"remark"`
 	CreateTimes          int64  `json:"createTimes"`
 	UpdateTimes          int64  `json:"updateTimes"`
-}
-
-type TenantPayPlatform struct {
-	Id          int64  `json:"id"`
-	TenantId    int64  `json:"tenantId"`
-	PlatformId  int64  `json:"platformId"`
-	Enabled     int64  `json:"enabled"`    // 0未知 1启用 2禁用
-	OpenStatus  int64  `json:"openStatus"` // 0未知 1待配置 2已开通 3审核中 4已拒绝
-	Remark      string `json:"remark"`
-	CreateTimes int64  `json:"createTimes"`
-	UpdateTimes int64  `json:"updateTimes"`
 }
 
 type TenantProductItem struct {
@@ -5066,14 +5016,6 @@ type UpdateTenantPayChannelRuleReq struct {
 	AllowTags            string `json:"allowTags,optional"`
 	DenyTags             string `json:"denyTags,optional"`
 	Remark               string `json:"remark,optional"`
-}
-
-type UpdateTenantPayPlatformReq struct {
-	Id         int64  `json:"id"`
-	TenantId   int64  `json:"tenantId"`
-	Enabled    int64  `json:"enabled"`
-	OpenStatus int64  `json:"openStatus"`
-	Remark     string `json:"remark,optional"`
 }
 
 type UpdateTenantProductReq struct {

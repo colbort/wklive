@@ -21,14 +21,6 @@ enum RechargeType {
   RECHARGE_TYPE_OTHER = 5; // 其他
 }
 
-enum OpenStatus {
-  OPEN_STATUS_UNKNOWN = 0;
-  OPEN_STATUS_PENDING_CONFIG = 1;
-  OPEN_STATUS_OPENED = 2;
-  OPEN_STATUS_AUDITING = 3;
-  OPEN_STATUS_REJECTED = 4;
-}
-
 enum SceneType {
   SCENE_TYPE_UNKNOWN = 0;
   SCENE_TYPE_APP = 1;

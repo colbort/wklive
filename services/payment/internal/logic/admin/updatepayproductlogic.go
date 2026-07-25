@@ -3,11 +3,13 @@ package adminlogic
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/payment"
 	"wklive/services/payment/internal/svc"
+	"wklive/services/payment/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -31,6 +33,9 @@ func (l *UpdatePayProductLogic) UpdatePayProduct(in *payment.UpdatePayProductReq
 	var (
 		errLogic = "UpdatePayProduct"
 	)
+	if in.Id <= 0 {
+		return paymentErrorResp(l.ctx, i18n.PaymentRequiredParamsMissing), nil
+	}
 	if base, err := systemAdminWriteScopeResp(l.ctx); err != nil {
 		return nil, err
 	} else if base != nil {
@@ -41,12 +46,12 @@ func (l *UpdatePayProductLogic) UpdatePayProduct(in *payment.UpdatePayProductReq
 
 	// 査询产品是否存在
 	product, err := l.svcCtx.PayProductModel.FindOne(l.ctx, in.Id)
-	if err != nil {
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
 		return nil, err
 	}
 
-	if product == nil {
+	if errors.Is(err, models.ErrNotFound) || product == nil {
 		return &payment.CommonResp{
 			Base: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx)),
 		}, nil
@@ -57,6 +62,9 @@ func (l *UpdatePayProductLogic) UpdatePayProduct(in *payment.UpdatePayProductReq
 		product.ProductName = in.ProductName
 	}
 	if in.SceneType != 0 {
+		if _, ok := payment.SceneType_name[int32(in.SceneType)]; !ok {
+			return paymentErrorResp(l.ctx, i18n.ParamError), nil
+		}
 		product.SceneType = int64(in.SceneType)
 	}
 	if in.Currency != "" {

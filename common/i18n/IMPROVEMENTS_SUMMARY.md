@@ -18,7 +18,6 @@
 - ListPayProducts
 - ListTenantPayAccounts
 - ListTenantPayChannels
-- ListTenantPayPlatforms
 - ListTenantPayChannelRules
 - ListMyRechargeOrders
 - ListRechargeOrders

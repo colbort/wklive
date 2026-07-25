@@ -25,7 +25,6 @@ type ServiceContext struct {
 	TenantPayAccountModel      models.TTenantPayAccountModel
 	TenantPayChannelModel      models.TTenantPayChannelModel
 	TenantPayChannelRuleModel  models.TTenantPayChannelRuleModel
-	TenantPayPlatformModel     models.TTenantPayPlatformModel
 	RechargeOrderModel         models.TRechargeOrderModel
 	RechargeNotifyLogModel     models.TRechargeNotifyLogModel
 	WithdrawOrderModel         models.TWithdrawOrderModel
@@ -53,7 +52,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		TenantPayAccountModel:      models.NewTTenantPayAccountModel(conn, c.CacheRedis),
 		TenantPayChannelModel:      models.NewTTenantPayChannelModel(conn, c.CacheRedis),
 		TenantPayChannelRuleModel:  models.NewTTenantPayChannelRuleModel(conn, c.CacheRedis),
-		TenantPayPlatformModel:     models.NewTTenantPayPlatformModel(conn, c.CacheRedis),
 		RechargeOrderModel:         models.NewTRechargeOrderModel(conn, c.CacheRedis),
 		RechargeNotifyLogModel:     models.NewTRechargeNotifyLogModel(conn, c.CacheRedis),
 		WithdrawOrderModel:         models.NewTWithdrawOrderModel(conn, c.CacheRedis),

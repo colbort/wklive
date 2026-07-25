@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/payment"
@@ -33,6 +34,30 @@ func (l *CreateTenantPayChannelRuleLogic) CreateTenantPayChannelRule(in *payment
 	var (
 		errLogic = "CreateTenantPayChannelRule"
 	)
+	tenantID, resp, err := resolveAdminTenantCreateScope(l.ctx, in.TenantId)
+	if err != nil {
+		return nil, err
+	}
+	if resp != nil {
+		return resp, nil
+	}
+	if in.ChannelId <= 0 || !requiredStrings(in.RuleName) {
+		return paymentErrorResp(l.ctx, i18n.PaymentRequiredParamsMissing), nil
+	}
+	if !validNonNegativeRange(in.SingleAmountMin, in.SingleAmountMax) ||
+		!validNonNegativeRange(in.UserTotalRechargeMin, in.UserTotalRechargeMax) ||
+		!validNonNegativeRange(in.MemberLevelMin, in.MemberLevelMax) ||
+		!validNonNegativeRange(in.KycLevelMin, in.KycLevelMax) {
+		return paymentErrorResp(l.ctx, i18n.InvalidPaymentAmountRange), nil
+	}
+	if !validJSONArray(in.AllowTags) || !validJSONArray(in.DenyTags) {
+		return paymentErrorResp(l.ctx, i18n.InvalidPaymentJSON), nil
+	}
+	if relationResp, err := validateChannelTenant(l.ctx, l.svcCtx, in.ChannelId, tenantID); err != nil {
+		return nil, err
+	} else if relationResp != nil {
+		return relationResp, nil
+	}
 
 	now := utils.NowMillis()
 	allowNewUser := int64(in.AllowNewUser)
@@ -44,7 +69,7 @@ func (l *CreateTenantPayChannelRuleLogic) CreateTenantPayChannelRule(in *payment
 		allowOldUser = int64(common.YesNo_YES_NO_YES)
 	}
 	rule := &models.TTenantPayChannelRule{
-		TenantId:             in.TenantId,
+		TenantId:             tenantID,
 		ChannelId:            in.ChannelId,
 		RuleName:             in.RuleName,
 		Priority:             in.Priority,
@@ -59,14 +84,14 @@ func (l *CreateTenantPayChannelRuleLogic) CreateTenantPayChannelRule(in *payment
 		KycLevelMax:          in.KycLevelMax,
 		AllowNewUser:         allowNewUser,
 		AllowOldUser:         allowOldUser,
-		AllowTags:            sql.NullString{String: in.AllowTags, Valid: true},
-		DenyTags:             sql.NullString{String: in.DenyTags, Valid: true},
+		AllowTags:            nullableString(in.AllowTags),
+		DenyTags:             nullableString(in.DenyTags),
 		Remark:               sql.NullString{String: in.Remark, Valid: true},
 		CreateTimes:          now,
 		UpdateTimes:          now,
 	}
 
-	_, err := l.svcCtx.TenantPayChannelRuleModel.Insert(l.ctx, rule)
+	_, err = l.svcCtx.TenantPayChannelRuleModel.Insert(l.ctx, rule)
 	if err != nil {
 		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
 		return nil, err
