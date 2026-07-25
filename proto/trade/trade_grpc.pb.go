@@ -2929,6 +2929,7 @@ const (
 	Task_ProcessSecondsSettlements_FullMethodName  = "/trade.Task/ProcessSecondsSettlements"
 	Task_ProcessTradeEvents_FullMethodName         = "/trade.Task/ProcessTradeEvents"
 	Task_ExpireRiskLimits_FullMethodName           = "/trade.Task/ExpireRiskLimits"
+	Task_ArchiveLiquidityOrders_FullMethodName     = "/trade.Task/ArchiveLiquidityOrders"
 )
 
 // TaskClient is the client API for Task service.
@@ -2951,6 +2952,8 @@ type TaskClient interface {
 	ProcessTradeEvents(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
 	// 风控限制过期恢复
 	ExpireRiskLimits(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
+	// 归档零成交且已撤销的做市订单
+	ArchiveLiquidityOrders(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
 }
 
 type taskClient struct {
@@ -3021,6 +3024,16 @@ func (c *taskClient) ExpireRiskLimits(ctx context.Context, in *TradeTaskReq, opt
 	return out, nil
 }
 
+func (c *taskClient) ArchiveLiquidityOrders(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TradeTaskResp)
+	err := c.cc.Invoke(ctx, Task_ArchiveLiquidityOrders_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TaskServer is the server API for Task service.
 // All implementations must embed UnimplementedTaskServer
 // for forward compatibility.
@@ -3041,6 +3054,8 @@ type TaskServer interface {
 	ProcessTradeEvents(context.Context, *TradeTaskReq) (*TradeTaskResp, error)
 	// 风控限制过期恢复
 	ExpireRiskLimits(context.Context, *TradeTaskReq) (*TradeTaskResp, error)
+	// 归档零成交且已撤销的做市订单
+	ArchiveLiquidityOrders(context.Context, *TradeTaskReq) (*TradeTaskResp, error)
 	mustEmbedUnimplementedTaskServer()
 }
 
@@ -3068,6 +3083,9 @@ func (UnimplementedTaskServer) ProcessTradeEvents(context.Context, *TradeTaskReq
 }
 func (UnimplementedTaskServer) ExpireRiskLimits(context.Context, *TradeTaskReq) (*TradeTaskResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ExpireRiskLimits not implemented")
+}
+func (UnimplementedTaskServer) ArchiveLiquidityOrders(context.Context, *TradeTaskReq) (*TradeTaskResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ArchiveLiquidityOrders not implemented")
 }
 func (UnimplementedTaskServer) mustEmbedUnimplementedTaskServer() {}
 func (UnimplementedTaskServer) testEmbeddedByValue()              {}
@@ -3198,6 +3216,24 @@ func _Task_ExpireRiskLimits_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Task_ArchiveLiquidityOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TradeTaskReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServer).ArchiveLiquidityOrders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Task_ArchiveLiquidityOrders_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServer).ArchiveLiquidityOrders(ctx, req.(*TradeTaskReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Task_ServiceDesc is the grpc.ServiceDesc for Task service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -3228,6 +3264,10 @@ var Task_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExpireRiskLimits",
 			Handler:    _Task_ExpireRiskLimits_Handler,
+		},
+		{
+			MethodName: "ArchiveLiquidityOrders",
+			Handler:    _Task_ArchiveLiquidityOrders_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

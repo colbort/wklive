@@ -38,5 +38,6 @@ func (l *PlaceLiquidityQuoteLogic) PlaceLiquidityQuote(in *trade.PlaceLiquidityQ
 	if err != nil {
 		return nil, err
 	}
+	in.Order.OrderSource = trade.OrderSourceType_ORDER_SOURCE_TYPE_LIQUIDITY
 	return applogic.NewPlaceOrderLogic(ctx, l.svcCtx).PlaceOrder(in.Order)
 }

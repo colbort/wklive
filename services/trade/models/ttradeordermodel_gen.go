@@ -70,7 +70,7 @@ type (
 		AvgPrice          decimal.Decimal `db:"avg_price"`           // 平均成交价格
 		Fee               decimal.Decimal `db:"fee"`                 // 累计手续费
 		FeeAsset          string          `db:"fee_asset"`           // 手续费币种
-		Source            int64           `db:"source"`              // 订单来源：1App 2Web 3API 4System
+		Source            int64           `db:"source"`              // 订单来源：1App 2Web 3API 4System 5Liquidity
 		IsReduceOnly      int64           `db:"is_reduce_only"`      // 是否只减仓：1是 2否
 		IsClosePosition   int64           `db:"is_close_position"`   // 是否在触发/执行时关闭全部可平仓位：1是 2否
 		TriggerPrice      decimal.Decimal `db:"trigger_price"`       // 触发价格，非条件单则为0

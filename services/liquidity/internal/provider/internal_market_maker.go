@@ -54,7 +54,7 @@ func (m *TradeInternalMarketMaker) PlaceQuote(ctx context.Context, p *models.TLi
 		SymbolId: q.SymbolId, Side: common.Side(q.Side), OrderType: trade.OrderType_ORDER_TYPE_LIMIT,
 		TimeInForce: trade.TimeInForce_TIME_IN_FORCE_GTC, ClientOrderId: q.ClientOrderId,
 		Price: q.Price.String(), Qty: q.Qty.String(),
-		OrderSource: trade.OrderSourceType_ORDER_SOURCE_TYPE_SYSTEM,
+		OrderSource: trade.OrderSourceType_ORDER_SOURCE_TYPE_LIQUIDITY,
 	}})
 	if err != nil {
 		return nil, err

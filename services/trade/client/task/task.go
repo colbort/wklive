@@ -157,6 +157,8 @@ type (
 		ProcessTradeEvents(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
 		// 风控限制过期恢复
 		ExpireRiskLimits(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
+		// 归档零成交且已撤销的做市订单
+		ArchiveLiquidityOrders(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error)
 	}
 
 	defaultTask struct {
@@ -204,4 +206,10 @@ func (m *defaultTask) ProcessTradeEvents(ctx context.Context, in *TradeTaskReq, 
 func (m *defaultTask) ExpireRiskLimits(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
 	client := trade.NewTaskClient(m.cli.Conn())
 	return client.ExpireRiskLimits(ctx, in, opts...)
+}
+
+// 归档零成交且已撤销的做市订单
+func (m *defaultTask) ArchiveLiquidityOrders(ctx context.Context, in *TradeTaskReq, opts ...grpc.CallOption) (*TradeTaskResp, error) {
+	client := trade.NewTaskClient(m.cli.Conn())
+	return client.ArchiveLiquidityOrders(ctx, in, opts...)
 }

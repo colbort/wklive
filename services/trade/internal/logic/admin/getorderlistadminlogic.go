@@ -45,6 +45,9 @@ func (l *GetOrderListAdminLogic) GetOrderListAdmin(in *trade.GetOrderListAdminRe
 		TimeStart:   in.TimeRange.StartTime,
 		TimeEnd:     in.TimeRange.EndTime,
 		Keyword:     in.Keyword,
+		ExcludeSources: []int64{
+			int64(trade.OrderSourceType_ORDER_SOURCE_TYPE_LIQUIDITY),
+		},
 	}, cursor, limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err

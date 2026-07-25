@@ -46,7 +46,7 @@ type (
 		TenantId       int64  `db:"tenant_id"`       // 租户ID
 		SymbolId       int64  `db:"symbol_id"`       // 交易标的ID，对应t_trade_symbol.id
 		MarginMode     int64  `db:"margin_mode"`     // 保证金模式：1全仓 2逐仓
-		LeverageValues string `db:"leverage_values"` // 可选杠杆倍数JSON列表
+		LeverageValues string `db:"leverage_values"` // 可选杠杆倍数列表，如[1,2,5,10]
 		Enabled        int64  `db:"enabled"`         // 启用开关：1启用 2禁用
 		Sort           int64  `db:"sort"`            // 排序值，越小越靠前
 		Remark         string `db:"remark"`          // 备注

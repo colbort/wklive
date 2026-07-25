@@ -23,4 +23,9 @@ type Config struct {
 		Enabled    bool
 		Beanstalks []dq.Beanstalk
 	}
+	LiquidityOrderArchive struct {
+		Enabled       bool
+		RetentionDays int64
+		BatchSize     int64
+	}
 }

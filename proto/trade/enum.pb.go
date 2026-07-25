@@ -707,11 +707,12 @@ func (SourceType) EnumDescriptor() ([]byte, []int) {
 type OrderSourceType int32
 
 const (
-	OrderSourceType_ORDER_SOURCE_TYPE_UNKNOWN OrderSourceType = 0
-	OrderSourceType_ORDER_SOURCE_TYPE_APP     OrderSourceType = 1
-	OrderSourceType_ORDER_SOURCE_TYPE_WEB     OrderSourceType = 2
-	OrderSourceType_ORDER_SOURCE_TYPE_API     OrderSourceType = 3
-	OrderSourceType_ORDER_SOURCE_TYPE_SYSTEM  OrderSourceType = 4
+	OrderSourceType_ORDER_SOURCE_TYPE_UNKNOWN   OrderSourceType = 0
+	OrderSourceType_ORDER_SOURCE_TYPE_APP       OrderSourceType = 1
+	OrderSourceType_ORDER_SOURCE_TYPE_WEB       OrderSourceType = 2
+	OrderSourceType_ORDER_SOURCE_TYPE_API       OrderSourceType = 3
+	OrderSourceType_ORDER_SOURCE_TYPE_SYSTEM    OrderSourceType = 4
+	OrderSourceType_ORDER_SOURCE_TYPE_LIQUIDITY OrderSourceType = 5
 )
 
 // Enum value maps for OrderSourceType.
@@ -722,13 +723,15 @@ var (
 		2: "ORDER_SOURCE_TYPE_WEB",
 		3: "ORDER_SOURCE_TYPE_API",
 		4: "ORDER_SOURCE_TYPE_SYSTEM",
+		5: "ORDER_SOURCE_TYPE_LIQUIDITY",
 	}
 	OrderSourceType_value = map[string]int32{
-		"ORDER_SOURCE_TYPE_UNKNOWN": 0,
-		"ORDER_SOURCE_TYPE_APP":     1,
-		"ORDER_SOURCE_TYPE_WEB":     2,
-		"ORDER_SOURCE_TYPE_API":     3,
-		"ORDER_SOURCE_TYPE_SYSTEM":  4,
+		"ORDER_SOURCE_TYPE_UNKNOWN":   0,
+		"ORDER_SOURCE_TYPE_APP":       1,
+		"ORDER_SOURCE_TYPE_WEB":       2,
+		"ORDER_SOURCE_TYPE_API":       3,
+		"ORDER_SOURCE_TYPE_SYSTEM":    4,
+		"ORDER_SOURCE_TYPE_LIQUIDITY": 5,
 	}
 )
 
@@ -2177,13 +2180,14 @@ const file_proto_trade_enum_proto_rawDesc = "" +
 	"\x12SOURCE_TYPE_SYSTEM\x10\x01\x12\x14\n" +
 	"\x10SOURCE_TYPE_USER\x10\x02\x12\x15\n" +
 	"\x11SOURCE_TYPE_ADMIN\x10\x03\x12\x14\n" +
-	"\x10SOURCE_TYPE_TASK\x10\x04*\x9f\x01\n" +
+	"\x10SOURCE_TYPE_TASK\x10\x04*\xc0\x01\n" +
 	"\x0fOrderSourceType\x12\x1d\n" +
 	"\x19ORDER_SOURCE_TYPE_UNKNOWN\x10\x00\x12\x19\n" +
 	"\x15ORDER_SOURCE_TYPE_APP\x10\x01\x12\x19\n" +
 	"\x15ORDER_SOURCE_TYPE_WEB\x10\x02\x12\x19\n" +
 	"\x15ORDER_SOURCE_TYPE_API\x10\x03\x12\x1c\n" +
-	"\x18ORDER_SOURCE_TYPE_SYSTEM\x10\x04*\xb4\x02\n" +
+	"\x18ORDER_SOURCE_TYPE_SYSTEM\x10\x04\x12\x1f\n" +
+	"\x1bORDER_SOURCE_TYPE_LIQUIDITY\x10\x05*\xb4\x02\n" +
 	"\rRiskCheckType\x12\x1b\n" +
 	"\x17RISK_CHECK_TYPE_UNKNOWN\x10\x00\x12\x1b\n" +
 	"\x17RISK_CHECK_TYPE_BALANCE\x10\x01\x12\x1a\n" +

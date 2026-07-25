@@ -56,6 +56,8 @@ func handleTask(ctx context.Context, svcCtx *svc.ServiceContext, msg tasks.Messa
 		return checkResp(logic.NewProcessTradeEventsLogic(ctx, svcCtx).ProcessTradeEvents(req))
 	case tasks.ActionTradeExpireRiskLimits:
 		return checkResp(logic.NewExpireRiskLimitsLogic(ctx, svcCtx).ExpireRiskLimits(req))
+	case tasks.ActionTradeArchiveLiquidityOrders:
+		return checkResp(logic.NewArchiveLiquidityOrdersLogic(ctx, svcCtx).ArchiveLiquidityOrders(req))
 	default:
 		logx.Errorf("unknown trade task action: %s", msg.Action)
 		return nil

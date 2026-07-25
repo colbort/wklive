@@ -58,3 +58,9 @@ func (s *TaskServer) ExpireRiskLimits(ctx context.Context, in *trade.TradeTaskRe
 	l := tasklogic.NewExpireRiskLimitsLogic(ctx, s.svcCtx)
 	return l.ExpireRiskLimits(in)
 }
+
+// 归档零成交且已撤销的做市订单
+func (s *TaskServer) ArchiveLiquidityOrders(ctx context.Context, in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
+	l := tasklogic.NewArchiveLiquidityOrdersLogic(ctx, s.svcCtx)
+	return l.ArchiveLiquidityOrders(in)
+}

@@ -115,6 +115,7 @@ enum OrderSourceType {
   ORDER_SOURCE_TYPE_WEB = 2;
   ORDER_SOURCE_TYPE_API = 3;
   ORDER_SOURCE_TYPE_SYSTEM = 4;
+  ORDER_SOURCE_TYPE_LIQUIDITY = 5;
 }
 
 enum RiskCheckType {

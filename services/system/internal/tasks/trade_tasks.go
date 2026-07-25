@@ -15,6 +15,7 @@ func init() {
 	cronx.Register("trade.ProcessSecondsSettlements", "秒合约结算处理", runTradeProcessSecondsSettlements)
 	cronx.Register("trade.ProcessTradeEvents", "交易事件处理", runTradeProcessTradeEvents)
 	cronx.Register("trade.ExpireRiskLimits", "风控限制过期恢复", runTradeExpireRiskLimits)
+	cronx.Register("trade.ArchiveLiquidityOrders", "归档零成交做市撤单", runTradeArchiveLiquidityOrders)
 }
 
 func runTradeProcessOrderMatching(ctx context.Context, job *models.SysJob) error {
@@ -39,4 +40,8 @@ func runTradeProcessTradeEvents(ctx context.Context, job *models.SysJob) error {
 
 func runTradeExpireRiskLimits(ctx context.Context, job *models.SysJob) error {
 	return publishTask(ctx, job, tasks.ServiceTrade, tasks.ActionTradeExpireRiskLimits)
+}
+
+func runTradeArchiveLiquidityOrders(ctx context.Context, job *models.SysJob) error {
+	return publishTask(ctx, job, tasks.ServiceTrade, tasks.ActionTradeArchiveLiquidityOrders)
 }

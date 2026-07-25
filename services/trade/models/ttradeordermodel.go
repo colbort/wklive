@@ -26,6 +26,7 @@ type (
 		Keyword         string
 		Statuses        []int64
 		ExcludeStatuses []int64
+		ExcludeSources  []int64
 		PositionSide    int64
 	}
 
@@ -47,6 +48,7 @@ type (
 		FindOneByTenantIdOrderNoForUpdate(ctx context.Context, tenantId int64, orderNo string) (*TTradeOrder, error)
 		FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId, userId int64, clientOrderId sql.NullString) (*TTradeOrder, error)
 		CountBySymbolStatuses(ctx context.Context, tenantID, symbolID int64, statuses []int64) (int64, error)
+		ArchiveZeroFillLiquidityOrders(ctx context.Context, source, canceledStatus, cutoff, batchSize, archivedAt int64) (int64, error)
 	}
 
 	customTTradeOrderModel struct {
@@ -59,6 +61,84 @@ func NewTTradeOrderModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Opt
 	return &customTTradeOrderModel{
 		defaultTTradeOrderModel: newTTradeOrderModel(conn, c, opts...),
 	}
+}
+
+func (m *customTTradeOrderModel) ArchiveZeroFillLiquidityOrders(ctx context.Context, source, canceledStatus, cutoff, batchSize, archivedAt int64) (int64, error) {
+	if cutoff <= 0 || batchSize <= 0 {
+		return 0, nil
+	}
+	if batchSize > 1000 {
+		batchSize = 1000
+	}
+
+	var rows []*TTradeOrder
+	err := m.TransactCtx(ctx, func(ctx context.Context, session sqlx.Session) error {
+		query := fmt.Sprintf(
+			"SELECT %s FROM %s o WHERE o.source=? AND o.status=? AND o.filled_qty=0 AND o.filled_amount=0 AND o.update_times>0 AND o.update_times<? AND NOT EXISTS (SELECT 1 FROM `t_trade_fill` f WHERE f.tenant_id=o.tenant_id AND f.order_id=o.id) ORDER BY o.id LIMIT ? FOR UPDATE",
+			tTradeOrderRows,
+			m.table,
+		)
+		if err := session.QueryRowsCtx(ctx, &rows, query, source, canceledStatus, cutoff, batchSize); err != nil {
+			return err
+		}
+		if len(rows) == 0 {
+			return nil
+		}
+
+		parts := make([]string, 0, len(rows))
+		idArgs := make([]any, 0, len(rows))
+		for _, row := range rows {
+			parts = append(parts, "?")
+			idArgs = append(idArgs, row.Id)
+		}
+		inClause := strings.Join(parts, ",")
+		archiveArgs := append([]any{archivedAt, "ZERO_FILL_CANCELED"}, idArgs...)
+
+		for _, table := range []string{"t_trade_order_spot", "t_trade_order_contract", "t_trade_cancel_log"} {
+			archiveTable := table + "_archive"
+			stmt := fmt.Sprintf(
+				"INSERT IGNORE INTO `%s` SELECT c.*, ?, ? FROM `%s` c WHERE c.order_id IN (%s)",
+				archiveTable,
+				table,
+				inClause,
+			)
+			args := append([]any{archivedAt, "ZERO_FILL_CANCELED"}, idArgs...)
+			if _, err := session.ExecCtx(ctx, stmt, args...); err != nil {
+				return err
+			}
+		}
+		if _, err := session.ExecCtx(ctx,
+			fmt.Sprintf("INSERT IGNORE INTO `t_trade_order_archive` SELECT o.*, ?, ? FROM `t_trade_order` o WHERE o.id IN (%s)", inClause),
+			archiveArgs...,
+		); err != nil {
+			return err
+		}
+		for _, table := range []string{"t_trade_order_spot", "t_trade_order_contract", "t_trade_cancel_log"} {
+			if _, err := session.ExecCtx(ctx, fmt.Sprintf("DELETE FROM `%s` WHERE order_id IN (%s)", table, inClause), idArgs...); err != nil {
+				return err
+			}
+		}
+		_, err := session.ExecCtx(ctx, fmt.Sprintf("DELETE FROM `t_trade_order` WHERE id IN (%s)", inClause), idArgs...)
+		return err
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	keys := make([]string, 0, len(rows)*3)
+	for _, row := range rows {
+		keys = append(keys,
+			fmt.Sprintf("%s%v", cacheTTradeOrderIdPrefix, row.Id),
+			fmt.Sprintf("%s%v:%v", cacheTTradeOrderTenantIdOrderNoPrefix, row.TenantId, row.OrderNo),
+			fmt.Sprintf("%s%v:%v:%v:%v", cacheTTradeOrderTenantIdUserIdProductTypeClientOrderIdPrefix, row.TenantId, row.UserId, row.ProductType, row.ClientOrderId),
+		)
+	}
+	if len(keys) > 0 {
+		if err := m.DelCacheCtx(ctx, keys...); err != nil {
+			return 0, err
+		}
+	}
+	return int64(len(rows)), nil
 }
 
 func (m *defaultTTradeOrderModel) CountBySymbolStatuses(ctx context.Context, tenantID, symbolID int64, statuses []int64) (int64, error) {
@@ -100,6 +180,15 @@ func (m *defaultTTradeOrderModel) FindPage(ctx context.Context, filter TradeOrde
 			holders = append(holders, item)
 		}
 		builder.And(fmt.Sprintf("status NOT IN (%s)", joinComma(parts)), holders...)
+	}
+	if len(filter.ExcludeSources) > 0 {
+		holders := make([]any, 0, len(filter.ExcludeSources))
+		parts := make([]string, 0, len(filter.ExcludeSources))
+		for _, item := range filter.ExcludeSources {
+			parts = append(parts, "?")
+			holders = append(holders, item)
+		}
+		builder.And(fmt.Sprintf("source NOT IN (%s)", joinComma(parts)), holders...)
 	}
 	if filter.Keyword != "" {
 		kw := "%" + filter.Keyword + "%"

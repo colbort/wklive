@@ -30,6 +30,7 @@ const (
 	ActionTradeProcessSecondsSettlements  = "ProcessSecondsSettlements"
 	ActionTradeProcessTradeEvents         = "ProcessTradeEvents"
 	ActionTradeExpireRiskLimits           = "ExpireRiskLimits"
+	ActionTradeArchiveLiquidityOrders     = "ArchiveLiquidityOrders"
 
 	ActionLiquidityRefreshQuotes      = "RefreshQuotes"
 	ActionLiquidityRecoverQuoteOrders = "RecoverQuoteOrders"

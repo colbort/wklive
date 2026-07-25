@@ -1306,4 +1306,6 @@ service Task {
   rpc ProcessTradeEvents(TradeTaskReq) returns (TradeTaskResp);
   // 风控限制过期恢复
   rpc ExpireRiskLimits(TradeTaskReq) returns (TradeTaskResp);
+  // 归档零成交且已撤销的做市订单
+  rpc ArchiveLiquidityOrders(TradeTaskReq) returns (TradeTaskResp);
 }

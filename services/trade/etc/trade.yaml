@@ -33,3 +33,8 @@ DelayQueue:
     Tube: trade-seconds
   - Endpoint: 127.0.0.1:11301
     Tube: trade-seconds
+
+LiquidityOrderArchive:
+  Enabled: true
+  RetentionDays: 30
+  BatchSize: 500

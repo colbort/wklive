@@ -220,7 +220,7 @@
               </el-tag>
             </el-descriptions-item>
             <el-descriptions-item :label="t('trade.source')">
-              {{ optionLabel('sourceType', detailData.source) }}
+              {{ optionLabel('orderSourceType', detailData.source) }}
             </el-descriptions-item>
           </el-descriptions>
 
@@ -594,6 +594,13 @@ const fallbackOptions: Record<string, OptionItem[]> = {
     { value: 3, code: 'SOURCE_TYPE_ADMIN' },
     { value: 4, code: 'SOURCE_TYPE_TASK' },
   ],
+  orderSourceType: [
+    { value: 1, code: 'ORDER_SOURCE_TYPE_APP' },
+    { value: 2, code: 'ORDER_SOURCE_TYPE_WEB' },
+    { value: 3, code: 'ORDER_SOURCE_TYPE_API' },
+    { value: 4, code: 'ORDER_SOURCE_TYPE_SYSTEM' },
+    { value: 5, code: 'ORDER_SOURCE_TYPE_LIQUIDITY' },
+  ],
 }
 
 const loading = ref(false)
@@ -833,9 +840,7 @@ function displayOrderPrice(order: TradeOrder) {
 
 function displayOrderQty(order: TradeOrder) {
   if (isPositiveAmount(order.qty)) return displayAmount(order.qty)
-  if (order.orderType === 2 && isPositiveAmount(order.filledQty)) {
-    return displayAmount(order.filledQty)
-  }
+  if (isPositiveAmount(order.filledQty)) return displayAmount(order.filledQty)
   return '-'
 }
 
