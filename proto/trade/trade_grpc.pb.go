@@ -2540,6 +2540,9 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 
 const (
 	Trade_GetSymbolDetail_FullMethodName       = "/trade.Trade/GetSymbolDetail"
+	Trade_PlaceLiquidityQuote_FullMethodName   = "/trade.Trade/PlaceLiquidityQuote"
+	Trade_CancelLiquidityQuote_FullMethodName  = "/trade.Trade/CancelLiquidityQuote"
+	Trade_GetLiquidityQuote_FullMethodName     = "/trade.Trade/GetLiquidityQuote"
 	Trade_RecordPositionHistory_FullMethodName = "/trade.Trade/RecordPositionHistory"
 	Trade_CreateTradeEvent_FullMethodName      = "/trade.Trade/CreateTradeEvent"
 	Trade_CheckOrderRisk_FullMethodName        = "/trade.Trade/CheckOrderRisk"
@@ -2553,6 +2556,10 @@ const (
 type TradeClient interface {
 	// 内部服务获取指定交易对配置，不依赖用户端登录上下文。
 	GetSymbolDetail(ctx context.Context, in *GetSymbolDetailReq, opts ...grpc.CallOption) (*GetSymbolDetailResp, error)
+	// 平台内部做市账户报价，不依赖用户登录 metadata。
+	PlaceLiquidityQuote(ctx context.Context, in *PlaceLiquidityQuoteReq, opts ...grpc.CallOption) (*PlaceOrderResp, error)
+	CancelLiquidityQuote(ctx context.Context, in *CancelLiquidityQuoteReq, opts ...grpc.CallOption) (*UserCommonResp, error)
+	GetLiquidityQuote(ctx context.Context, in *GetLiquidityQuoteReq, opts ...grpc.CallOption) (*GetOrderDetailResp, error)
 	// 记录持仓历史信息
 	RecordPositionHistory(ctx context.Context, in *RecordPositionHistoryReq, opts ...grpc.CallOption) (*InternalCommonResp, error)
 	// 创建交易事件
@@ -2573,6 +2580,36 @@ func (c *tradeClient) GetSymbolDetail(ctx context.Context, in *GetSymbolDetailRe
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSymbolDetailResp)
 	err := c.cc.Invoke(ctx, Trade_GetSymbolDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeClient) PlaceLiquidityQuote(ctx context.Context, in *PlaceLiquidityQuoteReq, opts ...grpc.CallOption) (*PlaceOrderResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PlaceOrderResp)
+	err := c.cc.Invoke(ctx, Trade_PlaceLiquidityQuote_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeClient) CancelLiquidityQuote(ctx context.Context, in *CancelLiquidityQuoteReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserCommonResp)
+	err := c.cc.Invoke(ctx, Trade_CancelLiquidityQuote_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tradeClient) GetLiquidityQuote(ctx context.Context, in *GetLiquidityQuoteReq, opts ...grpc.CallOption) (*GetOrderDetailResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOrderDetailResp)
+	err := c.cc.Invoke(ctx, Trade_GetLiquidityQuote_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2617,6 +2654,10 @@ func (c *tradeClient) CheckOrderRisk(ctx context.Context, in *CheckOrderRiskReq,
 type TradeServer interface {
 	// 内部服务获取指定交易对配置，不依赖用户端登录上下文。
 	GetSymbolDetail(context.Context, *GetSymbolDetailReq) (*GetSymbolDetailResp, error)
+	// 平台内部做市账户报价，不依赖用户登录 metadata。
+	PlaceLiquidityQuote(context.Context, *PlaceLiquidityQuoteReq) (*PlaceOrderResp, error)
+	CancelLiquidityQuote(context.Context, *CancelLiquidityQuoteReq) (*UserCommonResp, error)
+	GetLiquidityQuote(context.Context, *GetLiquidityQuoteReq) (*GetOrderDetailResp, error)
 	// 记录持仓历史信息
 	RecordPositionHistory(context.Context, *RecordPositionHistoryReq) (*InternalCommonResp, error)
 	// 创建交易事件
@@ -2635,6 +2676,15 @@ type UnimplementedTradeServer struct{}
 
 func (UnimplementedTradeServer) GetSymbolDetail(context.Context, *GetSymbolDetailReq) (*GetSymbolDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSymbolDetail not implemented")
+}
+func (UnimplementedTradeServer) PlaceLiquidityQuote(context.Context, *PlaceLiquidityQuoteReq) (*PlaceOrderResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method PlaceLiquidityQuote not implemented")
+}
+func (UnimplementedTradeServer) CancelLiquidityQuote(context.Context, *CancelLiquidityQuoteReq) (*UserCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CancelLiquidityQuote not implemented")
+}
+func (UnimplementedTradeServer) GetLiquidityQuote(context.Context, *GetLiquidityQuoteReq) (*GetOrderDetailResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetLiquidityQuote not implemented")
 }
 func (UnimplementedTradeServer) RecordPositionHistory(context.Context, *RecordPositionHistoryReq) (*InternalCommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RecordPositionHistory not implemented")
@@ -2680,6 +2730,60 @@ func _Trade_GetSymbolDetail_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TradeServer).GetSymbolDetail(ctx, req.(*GetSymbolDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Trade_PlaceLiquidityQuote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PlaceLiquidityQuoteReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeServer).PlaceLiquidityQuote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Trade_PlaceLiquidityQuote_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeServer).PlaceLiquidityQuote(ctx, req.(*PlaceLiquidityQuoteReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Trade_CancelLiquidityQuote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CancelLiquidityQuoteReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeServer).CancelLiquidityQuote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Trade_CancelLiquidityQuote_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeServer).CancelLiquidityQuote(ctx, req.(*CancelLiquidityQuoteReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Trade_GetLiquidityQuote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetLiquidityQuoteReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TradeServer).GetLiquidityQuote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Trade_GetLiquidityQuote_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TradeServer).GetLiquidityQuote(ctx, req.(*GetLiquidityQuoteReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2748,6 +2852,18 @@ var Trade_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSymbolDetail",
 			Handler:    _Trade_GetSymbolDetail_Handler,
+		},
+		{
+			MethodName: "PlaceLiquidityQuote",
+			Handler:    _Trade_PlaceLiquidityQuote_Handler,
+		},
+		{
+			MethodName: "CancelLiquidityQuote",
+			Handler:    _Trade_CancelLiquidityQuote_Handler,
+		},
+		{
+			MethodName: "GetLiquidityQuote",
+			Handler:    _Trade_GetLiquidityQuote_Handler,
 		},
 		{
 			MethodName: "RecordPositionHistory",

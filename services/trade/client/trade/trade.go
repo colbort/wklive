@@ -16,6 +16,7 @@ import (
 type (
 	CancelAllOrdersReq               = trade.CancelAllOrdersReq
 	CancelAllOrdersResp              = trade.CancelAllOrdersResp
+	CancelLiquidityQuoteReq          = trade.CancelLiquidityQuoteReq
 	CancelOrderReq                   = trade.CancelOrderReq
 	CheckOrderRiskReq                = trade.CheckOrderRiskReq
 	CheckOrderRiskResp               = trade.CheckOrderRiskResp
@@ -56,6 +57,7 @@ type (
 	GetLeverageConfigResp            = trade.GetLeverageConfigResp
 	GetLiquidationListReq            = trade.GetLiquidationListReq
 	GetLiquidationListResp           = trade.GetLiquidationListResp
+	GetLiquidityQuoteReq             = trade.GetLiquidityQuoteReq
 	GetMarginSnapshotListAdminReq    = trade.GetMarginSnapshotListAdminReq
 	GetMarginSnapshotListAdminResp   = trade.GetMarginSnapshotListAdminResp
 	GetMarginSnapshotListReq         = trade.GetMarginSnapshotListReq
@@ -113,6 +115,7 @@ type (
 	GetUserTradeLimitResp            = trade.GetUserTradeLimitResp
 	InsuranceFundAccount             = trade.InsuranceFundAccount
 	InternalCommonResp               = trade.InternalCommonResp
+	PlaceLiquidityQuoteReq           = trade.PlaceLiquidityQuoteReq
 	PlaceOrderReq                    = trade.PlaceOrderReq
 	PlaceOrderResp                   = trade.PlaceOrderResp
 	RecordOrderFillReq               = trade.RecordOrderFillReq
@@ -144,6 +147,10 @@ type (
 	Trade interface {
 		// 内部服务获取指定交易对配置，不依赖用户端登录上下文。
 		GetSymbolDetail(ctx context.Context, in *GetSymbolDetailReq, opts ...grpc.CallOption) (*GetSymbolDetailResp, error)
+		// 平台内部做市账户报价，不依赖用户登录 metadata。
+		PlaceLiquidityQuote(ctx context.Context, in *PlaceLiquidityQuoteReq, opts ...grpc.CallOption) (*PlaceOrderResp, error)
+		CancelLiquidityQuote(ctx context.Context, in *CancelLiquidityQuoteReq, opts ...grpc.CallOption) (*UserCommonResp, error)
+		GetLiquidityQuote(ctx context.Context, in *GetLiquidityQuoteReq, opts ...grpc.CallOption) (*GetOrderDetailResp, error)
 		// 记录持仓历史信息
 		RecordPositionHistory(ctx context.Context, in *RecordPositionHistoryReq, opts ...grpc.CallOption) (*InternalCommonResp, error)
 		// 创建交易事件
@@ -167,6 +174,22 @@ func NewTrade(cli zrpc.Client) Trade {
 func (m *defaultTrade) GetSymbolDetail(ctx context.Context, in *GetSymbolDetailReq, opts ...grpc.CallOption) (*GetSymbolDetailResp, error) {
 	client := trade.NewTradeClient(m.cli.Conn())
 	return client.GetSymbolDetail(ctx, in, opts...)
+}
+
+// 平台内部做市账户报价，不依赖用户登录 metadata。
+func (m *defaultTrade) PlaceLiquidityQuote(ctx context.Context, in *PlaceLiquidityQuoteReq, opts ...grpc.CallOption) (*PlaceOrderResp, error) {
+	client := trade.NewTradeClient(m.cli.Conn())
+	return client.PlaceLiquidityQuote(ctx, in, opts...)
+}
+
+func (m *defaultTrade) CancelLiquidityQuote(ctx context.Context, in *CancelLiquidityQuoteReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
+	client := trade.NewTradeClient(m.cli.Conn())
+	return client.CancelLiquidityQuote(ctx, in, opts...)
+}
+
+func (m *defaultTrade) GetLiquidityQuote(ctx context.Context, in *GetLiquidityQuoteReq, opts ...grpc.CallOption) (*GetOrderDetailResp, error) {
+	client := trade.NewTradeClient(m.cli.Conn())
+	return client.GetLiquidityQuote(ctx, in, opts...)
 }
 
 // 记录持仓历史信息

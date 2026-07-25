@@ -19,7 +19,7 @@ type Config struct {
 	ItickRpc             zrpc.RpcClientConf
 	MarketAuthority      string
 	PriceEngineAuthority string
-	DelayQueue    struct {
+	DelayQueue           struct {
 		Enabled    bool
 		Beanstalks []dq.Beanstalk
 	}

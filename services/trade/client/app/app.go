@@ -16,6 +16,7 @@ import (
 type (
 	CancelAllOrdersReq               = trade.CancelAllOrdersReq
 	CancelAllOrdersResp              = trade.CancelAllOrdersResp
+	CancelLiquidityQuoteReq          = trade.CancelLiquidityQuoteReq
 	CancelOrderReq                   = trade.CancelOrderReq
 	CheckOrderRiskReq                = trade.CheckOrderRiskReq
 	CheckOrderRiskResp               = trade.CheckOrderRiskResp
@@ -56,6 +57,7 @@ type (
 	GetLeverageConfigResp            = trade.GetLeverageConfigResp
 	GetLiquidationListReq            = trade.GetLiquidationListReq
 	GetLiquidationListResp           = trade.GetLiquidationListResp
+	GetLiquidityQuoteReq             = trade.GetLiquidityQuoteReq
 	GetMarginSnapshotListAdminReq    = trade.GetMarginSnapshotListAdminReq
 	GetMarginSnapshotListAdminResp   = trade.GetMarginSnapshotListAdminResp
 	GetMarginSnapshotListReq         = trade.GetMarginSnapshotListReq
@@ -113,6 +115,7 @@ type (
 	GetUserTradeLimitResp            = trade.GetUserTradeLimitResp
 	InsuranceFundAccount             = trade.InsuranceFundAccount
 	InternalCommonResp               = trade.InternalCommonResp
+	PlaceLiquidityQuoteReq           = trade.PlaceLiquidityQuoteReq
 	PlaceOrderReq                    = trade.PlaceOrderReq
 	PlaceOrderResp                   = trade.PlaceOrderResp
 	RecordOrderFillReq               = trade.RecordOrderFillReq

@@ -1214,6 +1214,11 @@ service Trade {
   // 内部服务获取指定交易对配置，不依赖用户端登录上下文。
   rpc GetSymbolDetail(GetSymbolDetailReq) returns (GetSymbolDetailResp);
 
+  // 平台内部做市账户报价，不依赖用户登录 metadata。
+  rpc PlaceLiquidityQuote(PlaceLiquidityQuoteReq) returns (PlaceOrderResp);
+  rpc CancelLiquidityQuote(CancelLiquidityQuoteReq) returns (UserCommonResp);
+  rpc GetLiquidityQuote(GetLiquidityQuoteReq) returns (GetOrderDetailResp);
+
   // 记录持仓历史信息
   rpc RecordPositionHistory(RecordPositionHistoryReq) returns (InternalCommonResp);
 
@@ -1222,6 +1227,21 @@ service Trade {
 
   // 校验订单风控
   rpc CheckOrderRisk(CheckOrderRiskReq) returns (CheckOrderRiskResp);
+}
+
+message PlaceLiquidityQuoteReq {
+  int64 trade_user_id = 1;
+  PlaceOrderReq order = 2;
+}
+
+message CancelLiquidityQuoteReq {
+  int64 trade_user_id = 1;
+  CancelOrderReq order = 2;
+}
+
+message GetLiquidityQuoteReq {
+  int64 trade_user_id = 1;
+  GetOrderDetailReq order = 2;
 }
 
 message InternalCommonResp {

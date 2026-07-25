@@ -29,6 +29,22 @@ func (s *TradeServer) GetSymbolDetail(ctx context.Context, in *trade.GetSymbolDe
 	return l.GetSymbolDetail(in)
 }
 
+// 平台内部做市账户报价，不依赖用户登录 metadata。
+func (s *TradeServer) PlaceLiquidityQuote(ctx context.Context, in *trade.PlaceLiquidityQuoteReq) (*trade.PlaceOrderResp, error) {
+	l := tradelogic.NewPlaceLiquidityQuoteLogic(ctx, s.svcCtx)
+	return l.PlaceLiquidityQuote(in)
+}
+
+func (s *TradeServer) CancelLiquidityQuote(ctx context.Context, in *trade.CancelLiquidityQuoteReq) (*trade.UserCommonResp, error) {
+	l := tradelogic.NewCancelLiquidityQuoteLogic(ctx, s.svcCtx)
+	return l.CancelLiquidityQuote(in)
+}
+
+func (s *TradeServer) GetLiquidityQuote(ctx context.Context, in *trade.GetLiquidityQuoteReq) (*trade.GetOrderDetailResp, error) {
+	l := tradelogic.NewGetLiquidityQuoteLogic(ctx, s.svcCtx)
+	return l.GetLiquidityQuote(in)
+}
+
 // 记录持仓历史信息
 func (s *TradeServer) RecordPositionHistory(ctx context.Context, in *trade.RecordPositionHistoryReq) (*trade.InternalCommonResp, error) {
 	l := tradelogic.NewRecordPositionHistoryLogic(ctx, s.svcCtx)

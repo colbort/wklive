@@ -27,5 +27,5 @@ func (l *RefreshQuotesLogic) RefreshQuotes(in *liquidity.LiquidityTaskReq) (*liq
 	if err := validateTask(in); err != nil {
 		return nil, err
 	}
-	return taskDependencyUnavailable("quote refresh"), nil
+	return processInternalQuotes(l.ctx, l.svcCtx, in, false)
 }

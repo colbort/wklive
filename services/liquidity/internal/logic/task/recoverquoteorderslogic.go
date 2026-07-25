@@ -27,5 +27,5 @@ func (l *RecoverQuoteOrdersLogic) RecoverQuoteOrders(in *liquidity.LiquidityTask
 	if err := validateTask(in); err != nil {
 		return nil, err
 	}
-	return taskDependencyUnavailable("quote order recovery"), nil
+	return processInternalQuotes(l.ctx, l.svcCtx, in, true)
 }

@@ -28,6 +28,7 @@ type ServiceContext struct {
 	EventInboxModel        models.TLiquidityEventInboxModel
 	EventOutboxModel       models.TLiquidityEventOutboxModel
 	TradeClient            trade.TradeClient
+	InternalMarketMaker    provider.InternalMarketMaker
 	ProviderAdapters       *provider.Registry
 }
 
@@ -51,6 +52,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		EventInboxModel:        models.NewTLiquidityEventInboxModel(conn, c.CacheRedis),
 		EventOutboxModel:       models.NewTLiquidityEventOutboxModel(conn, c.CacheRedis),
 		TradeClient:            trade.NewTradeClient(tradeClient.Conn()),
+		InternalMarketMaker:    provider.NewTradeInternalMarketMaker(trade.NewTradeClient(tradeClient.Conn())),
 		ProviderAdapters:       provider.NewRegistry(),
 	}
 }

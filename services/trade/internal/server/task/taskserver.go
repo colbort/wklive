@@ -35,12 +35,13 @@ func (s *TaskServer) ProcessPositions(ctx context.Context, in *trade.TradeTaskRe
 	return l.ProcessPositions(in)
 }
 
-// 合约结算（资金费率/交割合约/秒合约）
+// 合约结算（资金费率/交割合约）
 func (s *TaskServer) ProcessContractSettlements(ctx context.Context, in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
 	l := tasklogic.NewProcessContractSettlementsLogic(ctx, s.svcCtx)
 	return l.ProcessContractSettlements(in)
 }
 
+// 秒合约激活与到期结算
 func (s *TaskServer) ProcessSecondsSettlements(ctx context.Context, in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
 	l := tasklogic.NewProcessSecondsSettlementsTaskLogic(ctx, s.svcCtx)
 	return l.ProcessSecondsSettlements(in)
