@@ -20,4 +20,10 @@ type Config struct {
 		Enabled    bool
 		Beanstalks []dq.Beanstalk
 	}
+	MarketSnapshotInboxCleanup struct {
+		RetentionHours   int
+		IntervalMinutes  int
+		BatchSize        int64
+		MaxBatchesPerRun int
+	}
 }

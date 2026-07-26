@@ -48,6 +48,7 @@ func main() {
 	}
 
 	svcCtx := svc.NewServiceContext(c)
+	defer svcCtx.SnapshotPublisher.Close()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

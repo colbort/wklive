@@ -573,7 +573,7 @@ message SnapshotOutboxData {
   int64 create_times = 7;
   int64 update_times = 8;
   int64 redis_published_at = 9;
-  int64 option_published_at = 10;
+  int64 event_published_at = 10;
 }
 
 message ListSnapshotOutboxResp {

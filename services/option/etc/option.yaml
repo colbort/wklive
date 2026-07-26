@@ -3,6 +3,11 @@ ListenOn: 0.0.0.0:8085
 MQ:
   Brokers: [kafka:9092]
   MaxAttempts: 5
+MarketSnapshotInboxCleanup:
+  RetentionHours: 720
+  IntervalMinutes: 60
+  BatchSize: 5000
+  MaxBatchesPerRun: 10
 Mode: dev
 Etcd:
   Hosts:

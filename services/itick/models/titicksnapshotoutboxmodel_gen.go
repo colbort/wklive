@@ -42,17 +42,17 @@ type (
 	}
 
 	TItickSnapshotOutbox struct {
-		Id                int64  `db:"id"`
-		SnapshotId        string `db:"snapshot_id"`
-		Payload           string `db:"payload"`
-		Status            int64  `db:"status"` // 1 pending 2 processing 3 success 4 failed 5 manual
-		RetryCount        int64  `db:"retry_count"`
-		NextRetryAt       int64  `db:"next_retry_at"`
-		RedisPublishedAt  int64  `db:"redis_published_at"`  // Redis权威快照发布完成时间
-		OptionPublishedAt int64  `db:"option_published_at"` // 兼容字段：权威行情Kafka事件发布完成时间；无需发布时同样置完成
-		LastErrorMsg      string `db:"last_error_msg"`
-		CreateTimes       int64  `db:"create_times"`
-		UpdateTimes       int64  `db:"update_times"`
+		Id               int64  `db:"id"`
+		SnapshotId       string `db:"snapshot_id"`
+		Payload          string `db:"payload"`
+		Status           int64  `db:"status"` // 1 pending 2 processing 3 success 4 failed 5 manual
+		RetryCount       int64  `db:"retry_count"`
+		NextRetryAt      int64  `db:"next_retry_at"`
+		RedisPublishedAt int64  `db:"redis_published_at"` // Redis权威快照发布完成时间
+		EventPublishedAt int64  `db:"event_published_at"` // 权威行情Kafka事件发布完成时间；无需发布时同样置完成
+		LastErrorMsg     string `db:"last_error_msg"`
+		CreateTimes      int64  `db:"create_times"`
+		UpdateTimes      int64  `db:"update_times"`
 	}
 )
 
@@ -120,7 +120,7 @@ func (m *defaultTItickSnapshotOutboxModel) Insert(ctx context.Context, data *TIt
 	tItickSnapshotOutboxSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotOutboxSnapshotIdPrefix, data.SnapshotId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickSnapshotOutboxRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.SnapshotId, data.Payload, data.Status, data.RetryCount, data.NextRetryAt, data.RedisPublishedAt, data.OptionPublishedAt, data.LastErrorMsg, data.CreateTimes, data.UpdateTimes)
+		return conn.ExecCtx(ctx, query, data.SnapshotId, data.Payload, data.Status, data.RetryCount, data.NextRetryAt, data.RedisPublishedAt, data.EventPublishedAt, data.LastErrorMsg, data.CreateTimes, data.UpdateTimes)
 	}, tItickSnapshotOutboxIdKey, tItickSnapshotOutboxSnapshotIdKey)
 	return ret, err
 }
@@ -135,7 +135,7 @@ func (m *defaultTItickSnapshotOutboxModel) Update(ctx context.Context, newData *
 	tItickSnapshotOutboxSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotOutboxSnapshotIdPrefix, data.SnapshotId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickSnapshotOutboxRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.SnapshotId, newData.Payload, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.RedisPublishedAt, newData.OptionPublishedAt, newData.LastErrorMsg, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.SnapshotId, newData.Payload, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.RedisPublishedAt, newData.EventPublishedAt, newData.LastErrorMsg, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tItickSnapshotOutboxIdKey, tItickSnapshotOutboxSnapshotIdKey)
 	return err
 }

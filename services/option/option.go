@@ -11,7 +11,6 @@ import (
 	logic "wklive/services/option/internal/logic/task"
 	admin "wklive/services/option/internal/server/admin"
 	app "wklive/services/option/internal/server/app"
-	option "wklive/services/option/internal/server/option"
 	task "wklive/services/option/internal/server/task"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/internal/tasks"
@@ -45,12 +44,12 @@ func main() {
 	defer cancel()
 	tasks.StartTaskSubscriber(ctx, svcCtx)
 	tasks.StartMarketSnapshotSubscriber(ctx, svcCtx)
+	tasks.StartMarketSnapshotInboxCleanup(ctx, svcCtx)
 	logic.StartDelayQueue(ctx, svcCtx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
 		pb.RegisterAdminServer(grpcServer, admin.NewAdminServer(svcCtx))
 		pb.RegisterAppServer(grpcServer, app.NewAppServer(svcCtx))
-		pb.RegisterOptionServer(grpcServer, option.NewOptionServer(svcCtx))
 		pb.RegisterTaskServer(grpcServer, task.NewTaskServer(svcCtx))
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {

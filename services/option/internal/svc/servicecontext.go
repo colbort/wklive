@@ -14,23 +14,24 @@ import (
 )
 
 type ServiceContext struct {
-	Config                    config.Config
-	DB                        sqlx.SqlConn
-	Redis                     *redis.Redis
-	TaskSubscriber            *mq.Subscriber
-	MarketSnapshotSubscriber  *mq.Subscriber
-	OptionContractModel       models.TOptionContractModel
-	OptionMarketModel         models.TOptionMarketModel
-	OptionMarketSnapshotModel models.TOptionMarketSnapshotModel
-	OptionOrderModel          models.TOptionOrderModel
-	OptionTradeModel          models.TOptionTradeModel
-	OptionPositionModel       models.TOptionPositionModel
-	OptionExerciseModel       models.TOptionExerciseModel
-	OptionSettlementModel     models.TOptionSettlementModel
-	OptionAccountModel        models.TOptionAccountModel
-	OptionBillModel           models.TOptionBillModel
-	AssetClient               asset.AssetClient
-	DelayQueue                *delayqueue.Queue
+	Config                         config.Config
+	DB                             sqlx.SqlConn
+	Redis                          *redis.Redis
+	TaskSubscriber                 *mq.Subscriber
+	MarketSnapshotSubscriber       *mq.Subscriber
+	OptionContractModel            models.TOptionContractModel
+	OptionMarketModel              models.TOptionMarketModel
+	OptionMarketSnapshotModel      models.TOptionMarketSnapshotModel
+	OptionMarketSnapshotInboxModel models.TOptionMarketSnapshotInboxModel
+	OptionOrderModel               models.TOptionOrderModel
+	OptionTradeModel               models.TOptionTradeModel
+	OptionPositionModel            models.TOptionPositionModel
+	OptionExerciseModel            models.TOptionExerciseModel
+	OptionSettlementModel          models.TOptionSettlementModel
+	OptionAccountModel             models.TOptionAccountModel
+	OptionBillModel                models.TOptionBillModel
+	AssetClient                    asset.AssetClient
+	DelayQueue                     *delayqueue.Queue
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -44,22 +45,23 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		panic(err)
 	}
 	return &ServiceContext{
-		Config:                    c,
-		DB:                        conn,
-		Redis:                     redis.MustNewRedis(c.Redis.RedisConf),
-		TaskSubscriber:            taskSubscriber,
-		MarketSnapshotSubscriber:  marketSnapshotSubscriber,
-		OptionContractModel:       models.NewTOptionContractModel(conn, c.CacheRedis),
-		OptionMarketModel:         models.NewTOptionMarketModel(conn, c.CacheRedis),
-		OptionMarketSnapshotModel: models.NewTOptionMarketSnapshotModel(conn, c.CacheRedis),
-		OptionOrderModel:          models.NewTOptionOrderModel(conn, c.CacheRedis),
-		OptionTradeModel:          models.NewTOptionTradeModel(conn, c.CacheRedis),
-		OptionPositionModel:       models.NewTOptionPositionModel(conn, c.CacheRedis),
-		OptionExerciseModel:       models.NewTOptionExerciseModel(conn, c.CacheRedis),
-		OptionSettlementModel:     models.NewTOptionSettlementModel(conn, c.CacheRedis),
-		OptionAccountModel:        models.NewTOptionAccountModel(conn, c.CacheRedis),
-		OptionBillModel:           models.NewTOptionBillModel(conn, c.CacheRedis),
-		AssetClient:               asset.NewAssetClient(assetCli.Conn()),
-		DelayQueue:                queue,
+		Config:                         c,
+		DB:                             conn,
+		Redis:                          redis.MustNewRedis(c.Redis.RedisConf),
+		TaskSubscriber:                 taskSubscriber,
+		MarketSnapshotSubscriber:       marketSnapshotSubscriber,
+		OptionContractModel:            models.NewTOptionContractModel(conn, c.CacheRedis),
+		OptionMarketModel:              models.NewTOptionMarketModel(conn, c.CacheRedis),
+		OptionMarketSnapshotModel:      models.NewTOptionMarketSnapshotModel(conn, c.CacheRedis),
+		OptionMarketSnapshotInboxModel: models.NewTOptionMarketSnapshotInboxModel(conn, c.CacheRedis),
+		OptionOrderModel:               models.NewTOptionOrderModel(conn, c.CacheRedis),
+		OptionTradeModel:               models.NewTOptionTradeModel(conn, c.CacheRedis),
+		OptionPositionModel:            models.NewTOptionPositionModel(conn, c.CacheRedis),
+		OptionExerciseModel:            models.NewTOptionExerciseModel(conn, c.CacheRedis),
+		OptionSettlementModel:          models.NewTOptionSettlementModel(conn, c.CacheRedis),
+		OptionAccountModel:             models.NewTOptionAccountModel(conn, c.CacheRedis),
+		OptionBillModel:                models.NewTOptionBillModel(conn, c.CacheRedis),
+		AssetClient:                    asset.NewAssetClient(assetCli.Conn()),
+		DelayQueue:                     queue,
 	}
 }

@@ -2,7 +2,7 @@
 
 ## 1. 背景
 
-`t_itick_snapshot_outbox` 用于可靠发布权威行情快照。权威快照与 Outbox 记录在同一个 MySQL 事务内写入，后台 Worker 再将消息发布到 Redis 和 Option 服务。
+`t_itick_snapshot_outbox` 用于可靠发布权威行情快照。权威快照与 Outbox 记录在同一个 MySQL 事务内写入，后台 Worker 再将快照发布到 Redis，并将服务中立的权威行情事件发布到 Kafka `market.authoritative-snapshot.v1`。Option 使用独立 consumer group 异步消费，不再由 Itick RPC 调用。
 
 当前状态定义如下：
 
@@ -100,7 +100,7 @@ ADD INDEX idx_outbox_cleanup (status, update_times, id);
 
 1. Redis 发布以 `snapshot_id` 或版本号保证重复写入安全。
 2. 永久档案作为生产端去重依据：`t_itick_authoritative_snapshot` 已存在相同 `snapshot_id` 时，不再创建新的 Outbox 记录。
-3. Option 的 `SyncMarketQuote` 当前会追加行情快照，不能将其视为天然幂等；生产端去重不可省略。消费端后续仍建议增加 `snapshot_id` 去重作为纵深保护。
+3. Option 消费端通过 `t_option_market_snapshot_inbox` 的唯一键 `(snapshot_id, contract_id)` 实现逐合约幂等。Kafka 发布成功但 Outbox checkpoint 失败时允许重复发布，Option 不会重复追加同一合约快照。
 4. 若生产端和消费端都不能保证幂等，应增加独立的轻量去重机制，而不是永久保存包含 JSON payload 的成功 Outbox。
 
 可选的过渡方案是成功后清空 `payload`，只保留 `snapshot_id` 和状态字段。但这仍会导致行数持续增长，仅适合作为短期措施。

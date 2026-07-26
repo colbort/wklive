@@ -3,6 +3,7 @@ module wklive/services/option
 go 1.26.4
 
 require (
+	github.com/go-sql-driver/mysql v1.10.0
 	github.com/shopspring/decimal v1.4.0
 	github.com/zeromicro/go-queue v1.2.2
 	github.com/zeromicro/go-zero v1.10.2
@@ -42,7 +43,6 @@ require (
 	github.com/go-openapi/swag/stringutils v0.26.1 // indirect
 	github.com/go-openapi/swag/typeutils v0.26.1 // indirect
 	github.com/go-openapi/swag/yamlutils v0.26.1 // indirect
-	github.com/go-sql-driver/mysql v1.10.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect

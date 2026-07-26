@@ -607,29 +607,6 @@ message ListBillsResp {
   repeated OptionBill data = 2;
 }
 
-message SyncMarketQuoteReq {
-  int64 tenant_id = 1;
-  string category_code = 2;
-  string market = 3;
-  string symbol = 4;
-  string underlying_price = 5;
-  string open_price = 6;
-  string high_price = 7;
-  string low_price = 8;
-  string volume = 9;
-  string turnover = 10;
-  int64 quote_ts = 11;
-}
-
-message InternalCommonResp {
-  common.RespBase base = 1;
-}
-
-service Option {
-  // 同步标的行情，更新对应期权合约行情和快照。
-  rpc SyncMarketQuote(SyncMarketQuoteReq) returns (InternalCommonResp);
-}
-
 message OptionTaskReq {
   int64 tenant_id = 1;
 }

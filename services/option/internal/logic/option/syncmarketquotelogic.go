@@ -7,8 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"wklive/common/helper"
-	"wklive/common/i18n"
 	marketEvent "wklive/common/market"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
@@ -25,6 +23,11 @@ type SyncMarketQuoteLogic struct {
 	logx.Logger
 }
 
+type MarketSnapshotConsumeResult struct {
+	Updated    int64
+	Duplicates int64
+}
+
 func NewSyncMarketQuoteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncMarketQuoteLogic {
 	return &SyncMarketQuoteLogic{
 		ctx:    ctx,
@@ -33,73 +36,52 @@ func NewSyncMarketQuoteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 	}
 }
 
-// 同步标的行情，更新对应期权合约行情和快照。
-func (l *SyncMarketQuoteLogic) SyncMarketQuote(in *option.SyncMarketQuoteReq) (*option.InternalCommonResp, error) {
-	if in == nil {
-		return &option.InternalCommonResp{Base: helper.ErrResp(i18n.RequestRequired, i18n.Translate(i18n.RequestRequired, l.ctx))}, nil
-	}
-	symbol := strings.ToUpper(strings.TrimSpace(in.GetSymbol()))
-	if symbol == "" {
-		return &option.InternalCommonResp{Base: helper.ErrResp(i18n.SymbolRequired, i18n.Translate(i18n.SymbolRequired, l.ctx))}, nil
-	}
-	underlyingPrice, err := decimal.NewFromString(strings.TrimSpace(in.GetUnderlyingPrice()))
-	if err != nil || !underlyingPrice.IsPositive() {
-		return &option.InternalCommonResp{Base: helper.ErrResp(i18n.UnderlyingPriceMustBePositive, i18n.Translate(i18n.UnderlyingPriceMustBePositive, l.ctx))}, nil
-	}
-
-	event := marketEvent.AuthoritativeSnapshotEvent{
-		CategoryCode:    in.GetCategoryCode(),
-		Market:          in.GetMarket(),
-		Symbol:          symbol,
-		UnderlyingPrice: in.GetUnderlyingPrice(),
-		QuoteTimestamp:  in.GetQuoteTs(),
-	}
-	updated, err := l.syncMarketQuote(in.GetTenantId(), event)
-	if err != nil {
-		return nil, err
-	}
-	l.Infof("option market quote synced, symbol=%s market=%s category=%s updated=%d",
-		symbol, in.GetMarket(), in.GetCategoryCode(), updated)
-	return &option.InternalCommonResp{Base: helper.OkResp()}, nil
-}
-
-func (l *SyncMarketQuoteLogic) SyncAuthoritativeSnapshot(event marketEvent.AuthoritativeSnapshotEvent) error {
+func (l *SyncMarketQuoteLogic) SyncAuthoritativeSnapshot(event marketEvent.AuthoritativeSnapshotEvent) (MarketSnapshotConsumeResult, error) {
 	if event.Version != marketEvent.AuthoritativeSnapshotEventVersion {
-		return fmt.Errorf("unsupported authoritative snapshot event version: %d", event.Version)
+		return MarketSnapshotConsumeResult{}, fmt.Errorf("unsupported authoritative snapshot event version: %d", event.Version)
 	}
 	if strings.TrimSpace(event.SnapshotID) == "" {
-		return errors.New("authoritative snapshot id is required")
+		return MarketSnapshotConsumeResult{}, errors.New("authoritative snapshot id is required")
 	}
-	updated, err := l.syncMarketQuote(0, event)
+	if strings.TrimSpace(event.CategoryCode) == "" {
+		return MarketSnapshotConsumeResult{}, errors.New("market category code is required")
+	}
+	if strings.TrimSpace(event.Market) == "" {
+		return MarketSnapshotConsumeResult{}, errors.New("market is required")
+	}
+	result, err := l.syncMarketQuote(0, event)
 	if err != nil {
-		return err
+		return MarketSnapshotConsumeResult{}, err
 	}
-	l.Infof("authoritative option market quote consumed, snapshotId=%s symbol=%s updated=%d",
-		event.SnapshotID, event.Symbol, updated)
-	return nil
+	l.Infof("authoritative option market quote consumed, snapshotId=%s symbol=%s updated=%d duplicates=%d",
+		event.SnapshotID, event.Symbol, result.Updated, result.Duplicates)
+	return result, nil
 }
 
-func (l *SyncMarketQuoteLogic) syncMarketQuote(tenantID int64, event marketEvent.AuthoritativeSnapshotEvent) (int64, error) {
+func (l *SyncMarketQuoteLogic) syncMarketQuote(tenantID int64, event marketEvent.AuthoritativeSnapshotEvent) (MarketSnapshotConsumeResult, error) {
 	symbol := strings.ToUpper(strings.TrimSpace(event.Symbol))
 	if symbol == "" {
-		return 0, errors.New("market symbol is required")
+		return MarketSnapshotConsumeResult{}, errors.New("market symbol is required")
 	}
 	underlyingPrice, err := decimal.NewFromString(strings.TrimSpace(event.UnderlyingPrice))
 	if err != nil || !underlyingPrice.IsPositive() {
-		return 0, errors.New("underlying price must be positive")
+		return MarketSnapshotConsumeResult{}, errors.New("underlying price must be positive")
 	}
 	now := time.Now().Unix()
 	snapshotTime := normalizeQuoteTime(event.QuoteTimestamp, now)
 	var cursor int64
-	var updated int64
+	var result MarketSnapshotConsumeResult
 
 	for {
+		// Option contracts currently identify their underlying globally by symbol;
+		// category and market are validated above but cannot be used as DB filters
+		// until those dimensions are added to t_option_contract.
 		contracts, _, err := l.svcCtx.OptionContractModel.FindPage(l.ctx, models.OptionContractPageFilter{
 			TenantId:         tenantID,
 			UnderlyingSymbol: symbol,
 		}, cursor, 200)
 		if err != nil {
-			return 0, err
+			return MarketSnapshotConsumeResult{}, err
 		}
 		if len(contracts) == 0 {
 			break
@@ -112,14 +94,16 @@ func (l *SyncMarketQuoteLogic) syncMarketQuote(tenantID int64, event marketEvent
 			}
 			changed, err := l.syncContractMarket(contract, event.SnapshotID, underlyingPrice, snapshotTime, now)
 			if err != nil {
-				return 0, err
+				return MarketSnapshotConsumeResult{}, err
 			}
 			if changed {
-				updated++
+				result.Updated++
+			} else if event.SnapshotID != "" {
+				result.Duplicates++
 			}
 		}
 	}
-	return updated, nil
+	return result, nil
 }
 
 func (l *SyncMarketQuoteLogic) syncContractMarket(contract *models.TOptionContract, snapshotID string, underlyingPrice decimal.Decimal, snapshotTime int64, now int64) (bool, error) {

@@ -45,7 +45,6 @@ type (
 	GetSettlementResp       = option.GetSettlementResp
 	GetTradeReq             = option.GetTradeReq
 	GetTradeResp            = option.GetTradeResp
-	InternalCommonResp      = option.InternalCommonResp
 	ListAccountsReq         = option.ListAccountsReq
 	ListAccountsResp        = option.ListAccountsResp
 	ListBillsReq            = option.ListBillsReq
@@ -73,7 +72,6 @@ type (
 	PlaceOrderData          = option.PlaceOrderData
 	PlaceOrderReq           = option.PlaceOrderReq
 	PlaceOrderResp          = option.PlaceOrderResp
-	SyncMarketQuoteReq      = option.SyncMarketQuoteReq
 	UpdateContractReq       = option.UpdateContractReq
 	UpdateMarketReq         = option.UpdateMarketReq
 	UserCommonResp          = option.UserCommonResp

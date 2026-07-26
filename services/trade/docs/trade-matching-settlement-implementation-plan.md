@@ -28,7 +28,7 @@
 
 > **2026-07-21 秒合约批处理隔离修复：** 激活、结算和退款扫描不再因单条订单错误立即退出；失败订单保留可恢复状态与租约，Worker 继续推进同批及后续分页订单，扫描结束后聚合返回首个带订单 ID 的错误用于告警。故障注入单测已验证首条失败不会阻塞后续订单。
 
-> **2026-07-21 Snapshot Outbox 双下游修复：** Outbox 已增加 `redis_published_at` 与 `option_published_at` 两个持久化检查点；Redis 成功而 Option 失败时，重试只推进未完成的 Option，不再重复已确认的 Redis 步骤。无需 Option 同步的历史修复任务会显式完成 Option 检查点；聚合 SUCCESS 只有两个检查点均完成后才能提交。迁移会回填历史 SUCCESS，Itick Admin 和 admin-api 已暴露两个完成时间。
+> **2026-07-26 Snapshot Outbox Kafka 解耦：** Outbox 使用 `redis_published_at` 与 `event_published_at` 两个持久化检查点；Redis 发布与 Kafka 权威行情事件发布分别推进。Option 通过独立 consumer group 幂等消费事件，不再由 Itick RPC 同步调用。聚合 SUCCESS 只有两个发布检查点均完成后才能提交。
 
 > **2026-07-21 Kafka 消费失败闭环修复：** Trade 实时事件消费者不再忽略解码、事件校验、Inbox Claim/Fail/Complete 或 Outbox 成功/失败写回错误；任一步失败都会返回 Kafka 订阅层进入有限重试，耗尽后写入 DLQ，再提交 offset。业务处理失败会合并原始错误、Inbox 写回错误和 Outbox 写回错误，避免消息被静默确认而数据库停留在 PROCESSING/DELIVERING。
 

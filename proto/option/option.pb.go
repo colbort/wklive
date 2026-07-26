@@ -4778,174 +4778,6 @@ func (x *ListBillsResp) GetData() []*OptionBill {
 	return nil
 }
 
-type SyncMarketQuoteReq struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	TenantId        int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	CategoryCode    string                 `protobuf:"bytes,2,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
-	Market          string                 `protobuf:"bytes,3,opt,name=market,proto3" json:"market,omitempty"`
-	Symbol          string                 `protobuf:"bytes,4,opt,name=symbol,proto3" json:"symbol,omitempty"`
-	UnderlyingPrice string                 `protobuf:"bytes,5,opt,name=underlying_price,json=underlyingPrice,proto3" json:"underlying_price,omitempty"`
-	OpenPrice       string                 `protobuf:"bytes,6,opt,name=open_price,json=openPrice,proto3" json:"open_price,omitempty"`
-	HighPrice       string                 `protobuf:"bytes,7,opt,name=high_price,json=highPrice,proto3" json:"high_price,omitempty"`
-	LowPrice        string                 `protobuf:"bytes,8,opt,name=low_price,json=lowPrice,proto3" json:"low_price,omitempty"`
-	Volume          string                 `protobuf:"bytes,9,opt,name=volume,proto3" json:"volume,omitempty"`
-	Turnover        string                 `protobuf:"bytes,10,opt,name=turnover,proto3" json:"turnover,omitempty"`
-	QuoteTs         int64                  `protobuf:"varint,11,opt,name=quote_ts,json=quoteTs,proto3" json:"quote_ts,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
-}
-
-func (x *SyncMarketQuoteReq) Reset() {
-	*x = SyncMarketQuoteReq{}
-	mi := &file_proto_option_option_proto_msgTypes[71]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SyncMarketQuoteReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SyncMarketQuoteReq) ProtoMessage() {}
-
-func (x *SyncMarketQuoteReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_option_option_proto_msgTypes[71]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SyncMarketQuoteReq.ProtoReflect.Descriptor instead.
-func (*SyncMarketQuoteReq) Descriptor() ([]byte, []int) {
-	return file_proto_option_option_proto_rawDescGZIP(), []int{71}
-}
-
-func (x *SyncMarketQuoteReq) GetTenantId() int64 {
-	if x != nil {
-		return x.TenantId
-	}
-	return 0
-}
-
-func (x *SyncMarketQuoteReq) GetCategoryCode() string {
-	if x != nil {
-		return x.CategoryCode
-	}
-	return ""
-}
-
-func (x *SyncMarketQuoteReq) GetMarket() string {
-	if x != nil {
-		return x.Market
-	}
-	return ""
-}
-
-func (x *SyncMarketQuoteReq) GetSymbol() string {
-	if x != nil {
-		return x.Symbol
-	}
-	return ""
-}
-
-func (x *SyncMarketQuoteReq) GetUnderlyingPrice() string {
-	if x != nil {
-		return x.UnderlyingPrice
-	}
-	return ""
-}
-
-func (x *SyncMarketQuoteReq) GetOpenPrice() string {
-	if x != nil {
-		return x.OpenPrice
-	}
-	return ""
-}
-
-func (x *SyncMarketQuoteReq) GetHighPrice() string {
-	if x != nil {
-		return x.HighPrice
-	}
-	return ""
-}
-
-func (x *SyncMarketQuoteReq) GetLowPrice() string {
-	if x != nil {
-		return x.LowPrice
-	}
-	return ""
-}
-
-func (x *SyncMarketQuoteReq) GetVolume() string {
-	if x != nil {
-		return x.Volume
-	}
-	return ""
-}
-
-func (x *SyncMarketQuoteReq) GetTurnover() string {
-	if x != nil {
-		return x.Turnover
-	}
-	return ""
-}
-
-func (x *SyncMarketQuoteReq) GetQuoteTs() int64 {
-	if x != nil {
-		return x.QuoteTs
-	}
-	return 0
-}
-
-type InternalCommonResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *InternalCommonResp) Reset() {
-	*x = InternalCommonResp{}
-	mi := &file_proto_option_option_proto_msgTypes[72]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *InternalCommonResp) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*InternalCommonResp) ProtoMessage() {}
-
-func (x *InternalCommonResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_option_option_proto_msgTypes[72]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use InternalCommonResp.ProtoReflect.Descriptor instead.
-func (*InternalCommonResp) Descriptor() ([]byte, []int) {
-	return file_proto_option_option_proto_rawDescGZIP(), []int{72}
-}
-
-func (x *InternalCommonResp) GetBase() *common.RespBase {
-	if x != nil {
-		return x.Base
-	}
-	return nil
-}
-
 type OptionTaskReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
@@ -4955,7 +4787,7 @@ type OptionTaskReq struct {
 
 func (x *OptionTaskReq) Reset() {
 	*x = OptionTaskReq{}
-	mi := &file_proto_option_option_proto_msgTypes[73]
+	mi := &file_proto_option_option_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4967,7 +4799,7 @@ func (x *OptionTaskReq) String() string {
 func (*OptionTaskReq) ProtoMessage() {}
 
 func (x *OptionTaskReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_option_option_proto_msgTypes[73]
+	mi := &file_proto_option_option_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4980,7 +4812,7 @@ func (x *OptionTaskReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OptionTaskReq.ProtoReflect.Descriptor instead.
 func (*OptionTaskReq) Descriptor() ([]byte, []int) {
-	return file_proto_option_option_proto_rawDescGZIP(), []int{73}
+	return file_proto_option_option_proto_rawDescGZIP(), []int{71}
 }
 
 func (x *OptionTaskReq) GetTenantId() int64 {
@@ -4999,7 +4831,7 @@ type OptionTaskResp struct {
 
 func (x *OptionTaskResp) Reset() {
 	*x = OptionTaskResp{}
-	mi := &file_proto_option_option_proto_msgTypes[74]
+	mi := &file_proto_option_option_proto_msgTypes[72]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5011,7 +4843,7 @@ func (x *OptionTaskResp) String() string {
 func (*OptionTaskResp) ProtoMessage() {}
 
 func (x *OptionTaskResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_option_option_proto_msgTypes[74]
+	mi := &file_proto_option_option_proto_msgTypes[72]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5024,7 +4856,7 @@ func (x *OptionTaskResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OptionTaskResp.ProtoReflect.Descriptor instead.
 func (*OptionTaskResp) Descriptor() ([]byte, []int) {
-	return file_proto_option_option_proto_rawDescGZIP(), []int{74}
+	return file_proto_option_option_proto_rawDescGZIP(), []int{72}
 }
 
 func (x *OptionTaskResp) GetBase() *common.RespBase {
@@ -5454,24 +5286,7 @@ const file_proto_option_option_proto_rawDesc = "" +
 	"\x04page\x18\a \x01(\v2\x0f.common.PageReqR\x04page\"]\n" +
 	"\rListBillsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
-	"\x04data\x18\x02 \x03(\v2\x12.option.OptionBillR\x04data\"\xdb\x02\n" +
-	"\x12SyncMarketQuoteReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12#\n" +
-	"\rcategory_code\x18\x02 \x01(\tR\fcategoryCode\x12\x16\n" +
-	"\x06market\x18\x03 \x01(\tR\x06market\x12\x16\n" +
-	"\x06symbol\x18\x04 \x01(\tR\x06symbol\x12)\n" +
-	"\x10underlying_price\x18\x05 \x01(\tR\x0funderlyingPrice\x12\x1d\n" +
-	"\n" +
-	"open_price\x18\x06 \x01(\tR\topenPrice\x12\x1d\n" +
-	"\n" +
-	"high_price\x18\a \x01(\tR\thighPrice\x12\x1b\n" +
-	"\tlow_price\x18\b \x01(\tR\blowPrice\x12\x16\n" +
-	"\x06volume\x18\t \x01(\tR\x06volume\x12\x1a\n" +
-	"\bturnover\x18\n" +
-	" \x01(\tR\bturnover\x12\x19\n" +
-	"\bquote_ts\x18\v \x01(\x03R\aquoteTs\":\n" +
-	"\x12InternalCommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\",\n" +
+	"\x04data\x18\x02 \x03(\v2\x12.option.OptionBillR\x04data\",\n" +
 	"\rOptionTaskReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\"6\n" +
 	"\x0eOptionTaskResp\x12$\n" +
@@ -5518,9 +5333,7 @@ const file_proto_option_option_proto_rawDesc = "" +
 	"GetAccount\x12\x15.option.GetAccountReq\x1a\x16.option.GetAccountResp\x12A\n" +
 	"\fListAccounts\x12\x17.option.ListAccountsReq\x1a\x18.option.ListAccountsResp\x122\n" +
 	"\aGetBill\x12\x12.option.GetBillReq\x1a\x13.option.GetBillResp\x128\n" +
-	"\tListBills\x12\x14.option.ListBillsReq\x1a\x15.option.ListBillsResp2S\n" +
-	"\x06Option\x12I\n" +
-	"\x0fSyncMarketQuote\x12\x1a.option.SyncMarketQuoteReq\x1a\x1a.option.InternalCommonResp2\x98\x01\n" +
+	"\tListBills\x12\x14.option.ListBillsReq\x1a\x15.option.ListBillsResp2\x98\x01\n" +
 	"\x04Task\x12I\n" +
 	"\x18ProcessContractLifecycle\x12\x15.option.OptionTaskReq\x1a\x16.option.OptionTaskResp\x12E\n" +
 	"\x14CleanMarketSnapshots\x12\x15.option.OptionTaskReq\x1a\x16.option.OptionTaskRespB\x1cZ\x1awklive/proto/option;optionb\x06proto3"
@@ -5537,7 +5350,7 @@ func file_proto_option_option_proto_rawDescGZIP() []byte {
 	return file_proto_option_option_proto_rawDescData
 }
 
-var file_proto_option_option_proto_msgTypes = make([]protoimpl.MessageInfo, 75)
+var file_proto_option_option_proto_msgTypes = make([]protoimpl.MessageInfo, 73)
 var file_proto_option_option_proto_goTypes = []any{
 	(*UserCommonResp)(nil),          // 0: option.UserCommonResp
 	(*UserListContractsReq)(nil),    // 1: option.UserListContractsReq
@@ -5610,253 +5423,248 @@ var file_proto_option_option_proto_goTypes = []any{
 	(*GetBillResp)(nil),             // 68: option.GetBillResp
 	(*ListBillsReq)(nil),            // 69: option.ListBillsReq
 	(*ListBillsResp)(nil),           // 70: option.ListBillsResp
-	(*SyncMarketQuoteReq)(nil),      // 71: option.SyncMarketQuoteReq
-	(*InternalCommonResp)(nil),      // 72: option.InternalCommonResp
-	(*OptionTaskReq)(nil),           // 73: option.OptionTaskReq
-	(*OptionTaskResp)(nil),          // 74: option.OptionTaskResp
-	(*common.RespBase)(nil),         // 75: common.RespBase
-	(OptionType)(0),                 // 76: option.OptionType
-	(ContractStatus)(0),             // 77: option.ContractStatus
-	(*common.PageReq)(nil),          // 78: common.PageReq
-	(*OptionContractDetail)(nil),    // 79: option.OptionContractDetail
-	(common.Side)(0),                // 80: common.Side
-	(PositionEffect)(0),             // 81: option.PositionEffect
-	(OrderType)(0),                  // 82: option.OrderType
-	(common.YesNo)(0),               // 83: common.YesNo
-	(*OptionOrderDetail)(nil),       // 84: option.OptionOrderDetail
-	(OrderStatus)(0),                // 85: option.OrderStatus
-	(*common.TimeRange)(nil),        // 86: common.TimeRange
-	(*OptionTradeDetail)(nil),       // 87: option.OptionTradeDetail
-	(PositionStatus)(0),             // 88: option.PositionStatus
-	(*OptionPositionDetail)(nil),    // 89: option.OptionPositionDetail
-	(ExerciseStatus)(0),             // 90: option.ExerciseStatus
-	(*OptionExerciseDetail)(nil),    // 91: option.OptionExerciseDetail
-	(*OptionAccount)(nil),           // 92: option.OptionAccount
-	(BillRefType)(0),                // 93: option.BillRefType
-	(*OptionBill)(nil),              // 94: option.OptionBill
-	(ExerciseStyle)(0),              // 95: option.ExerciseStyle
-	(SettlementType)(0),             // 96: option.SettlementType
-	(*OptionMarket)(nil),            // 97: option.OptionMarket
-	(*OptionMarketSnapshot)(nil),    // 98: option.OptionMarketSnapshot
-	(common.PositionSide)(0),        // 99: common.PositionSide
-	(ExerciseType)(0),               // 100: option.ExerciseType
-	(*OptionSettlementDetail)(nil),  // 101: option.OptionSettlementDetail
-	(SettlementStatus)(0),           // 102: option.SettlementStatus
-	(AccountStatus)(0),              // 103: option.AccountStatus
+	(*OptionTaskReq)(nil),           // 71: option.OptionTaskReq
+	(*OptionTaskResp)(nil),          // 72: option.OptionTaskResp
+	(*common.RespBase)(nil),         // 73: common.RespBase
+	(OptionType)(0),                 // 74: option.OptionType
+	(ContractStatus)(0),             // 75: option.ContractStatus
+	(*common.PageReq)(nil),          // 76: common.PageReq
+	(*OptionContractDetail)(nil),    // 77: option.OptionContractDetail
+	(common.Side)(0),                // 78: common.Side
+	(PositionEffect)(0),             // 79: option.PositionEffect
+	(OrderType)(0),                  // 80: option.OrderType
+	(common.YesNo)(0),               // 81: common.YesNo
+	(*OptionOrderDetail)(nil),       // 82: option.OptionOrderDetail
+	(OrderStatus)(0),                // 83: option.OrderStatus
+	(*common.TimeRange)(nil),        // 84: common.TimeRange
+	(*OptionTradeDetail)(nil),       // 85: option.OptionTradeDetail
+	(PositionStatus)(0),             // 86: option.PositionStatus
+	(*OptionPositionDetail)(nil),    // 87: option.OptionPositionDetail
+	(ExerciseStatus)(0),             // 88: option.ExerciseStatus
+	(*OptionExerciseDetail)(nil),    // 89: option.OptionExerciseDetail
+	(*OptionAccount)(nil),           // 90: option.OptionAccount
+	(BillRefType)(0),                // 91: option.BillRefType
+	(*OptionBill)(nil),              // 92: option.OptionBill
+	(ExerciseStyle)(0),              // 93: option.ExerciseStyle
+	(SettlementType)(0),             // 94: option.SettlementType
+	(*OptionMarket)(nil),            // 95: option.OptionMarket
+	(*OptionMarketSnapshot)(nil),    // 96: option.OptionMarketSnapshot
+	(common.PositionSide)(0),        // 97: common.PositionSide
+	(ExerciseType)(0),               // 98: option.ExerciseType
+	(*OptionSettlementDetail)(nil),  // 99: option.OptionSettlementDetail
+	(SettlementStatus)(0),           // 100: option.SettlementStatus
+	(AccountStatus)(0),              // 101: option.AccountStatus
 }
 var file_proto_option_option_proto_depIdxs = []int32{
-	75,  // 0: option.UserCommonResp.base:type_name -> common.RespBase
-	76,  // 1: option.UserListContractsReq.option_type:type_name -> option.OptionType
-	77,  // 2: option.UserListContractsReq.status:type_name -> option.ContractStatus
-	78,  // 3: option.UserListContractsReq.page:type_name -> common.PageReq
-	75,  // 4: option.UserListContractsResp.base:type_name -> common.RespBase
-	79,  // 5: option.UserListContractsResp.data:type_name -> option.OptionContractDetail
-	75,  // 6: option.GetContractDetailResp.base:type_name -> common.RespBase
-	79,  // 7: option.GetContractDetailResp.data:type_name -> option.OptionContractDetail
-	80,  // 8: option.PlaceOrderReq.side:type_name -> common.Side
-	81,  // 9: option.PlaceOrderReq.position_effect:type_name -> option.PositionEffect
-	82,  // 10: option.PlaceOrderReq.order_type:type_name -> option.OrderType
-	83,  // 11: option.PlaceOrderReq.reduce_only:type_name -> common.YesNo
-	83,  // 12: option.PlaceOrderReq.mmp:type_name -> common.YesNo
-	75,  // 13: option.PlaceOrderResp.base:type_name -> common.RespBase
+	73,  // 0: option.UserCommonResp.base:type_name -> common.RespBase
+	74,  // 1: option.UserListContractsReq.option_type:type_name -> option.OptionType
+	75,  // 2: option.UserListContractsReq.status:type_name -> option.ContractStatus
+	76,  // 3: option.UserListContractsReq.page:type_name -> common.PageReq
+	73,  // 4: option.UserListContractsResp.base:type_name -> common.RespBase
+	77,  // 5: option.UserListContractsResp.data:type_name -> option.OptionContractDetail
+	73,  // 6: option.GetContractDetailResp.base:type_name -> common.RespBase
+	77,  // 7: option.GetContractDetailResp.data:type_name -> option.OptionContractDetail
+	78,  // 8: option.PlaceOrderReq.side:type_name -> common.Side
+	79,  // 9: option.PlaceOrderReq.position_effect:type_name -> option.PositionEffect
+	80,  // 10: option.PlaceOrderReq.order_type:type_name -> option.OrderType
+	81,  // 11: option.PlaceOrderReq.reduce_only:type_name -> common.YesNo
+	81,  // 12: option.PlaceOrderReq.mmp:type_name -> common.YesNo
+	73,  // 13: option.PlaceOrderResp.base:type_name -> common.RespBase
 	7,   // 14: option.PlaceOrderResp.data:type_name -> option.PlaceOrderData
-	75,  // 15: option.GetOrderDetailResp.base:type_name -> common.RespBase
-	84,  // 16: option.GetOrderDetailResp.data:type_name -> option.OptionOrderDetail
-	80,  // 17: option.ListCurrentOrdersReq.side:type_name -> common.Side
-	78,  // 18: option.ListCurrentOrdersReq.page:type_name -> common.PageReq
-	75,  // 19: option.ListCurrentOrdersResp.base:type_name -> common.RespBase
-	84,  // 20: option.ListCurrentOrdersResp.data:type_name -> option.OptionOrderDetail
-	85,  // 21: option.ListHistoryOrdersReq.status:type_name -> option.OrderStatus
-	86,  // 22: option.ListHistoryOrdersReq.create_time_range:type_name -> common.TimeRange
-	78,  // 23: option.ListHistoryOrdersReq.page:type_name -> common.PageReq
-	75,  // 24: option.ListHistoryOrdersResp.base:type_name -> common.RespBase
-	84,  // 25: option.ListHistoryOrdersResp.data:type_name -> option.OptionOrderDetail
-	86,  // 26: option.UserListTradesReq.trade_time_range:type_name -> common.TimeRange
-	78,  // 27: option.UserListTradesReq.page:type_name -> common.PageReq
-	75,  // 28: option.UserListTradesResp.base:type_name -> common.RespBase
-	87,  // 29: option.UserListTradesResp.data:type_name -> option.OptionTradeDetail
-	88,  // 30: option.UserListPositionsReq.status:type_name -> option.PositionStatus
-	78,  // 31: option.UserListPositionsReq.page:type_name -> common.PageReq
-	75,  // 32: option.UserListPositionsResp.base:type_name -> common.RespBase
-	89,  // 33: option.UserListPositionsResp.data:type_name -> option.OptionPositionDetail
-	75,  // 34: option.GetPositionDetailResp.base:type_name -> common.RespBase
-	89,  // 35: option.GetPositionDetailResp.data:type_name -> option.OptionPositionDetail
-	75,  // 36: option.ExerciseResp.base:type_name -> common.RespBase
+	73,  // 15: option.GetOrderDetailResp.base:type_name -> common.RespBase
+	82,  // 16: option.GetOrderDetailResp.data:type_name -> option.OptionOrderDetail
+	78,  // 17: option.ListCurrentOrdersReq.side:type_name -> common.Side
+	76,  // 18: option.ListCurrentOrdersReq.page:type_name -> common.PageReq
+	73,  // 19: option.ListCurrentOrdersResp.base:type_name -> common.RespBase
+	82,  // 20: option.ListCurrentOrdersResp.data:type_name -> option.OptionOrderDetail
+	83,  // 21: option.ListHistoryOrdersReq.status:type_name -> option.OrderStatus
+	84,  // 22: option.ListHistoryOrdersReq.create_time_range:type_name -> common.TimeRange
+	76,  // 23: option.ListHistoryOrdersReq.page:type_name -> common.PageReq
+	73,  // 24: option.ListHistoryOrdersResp.base:type_name -> common.RespBase
+	82,  // 25: option.ListHistoryOrdersResp.data:type_name -> option.OptionOrderDetail
+	84,  // 26: option.UserListTradesReq.trade_time_range:type_name -> common.TimeRange
+	76,  // 27: option.UserListTradesReq.page:type_name -> common.PageReq
+	73,  // 28: option.UserListTradesResp.base:type_name -> common.RespBase
+	85,  // 29: option.UserListTradesResp.data:type_name -> option.OptionTradeDetail
+	86,  // 30: option.UserListPositionsReq.status:type_name -> option.PositionStatus
+	76,  // 31: option.UserListPositionsReq.page:type_name -> common.PageReq
+	73,  // 32: option.UserListPositionsResp.base:type_name -> common.RespBase
+	87,  // 33: option.UserListPositionsResp.data:type_name -> option.OptionPositionDetail
+	73,  // 34: option.GetPositionDetailResp.base:type_name -> common.RespBase
+	87,  // 35: option.GetPositionDetailResp.data:type_name -> option.OptionPositionDetail
+	73,  // 36: option.ExerciseResp.base:type_name -> common.RespBase
 	23,  // 37: option.ExerciseResp.data:type_name -> option.ExerciseData
-	90,  // 38: option.UserListExercisesReq.status:type_name -> option.ExerciseStatus
-	86,  // 39: option.UserListExercisesReq.exercise_time_range:type_name -> common.TimeRange
-	78,  // 40: option.UserListExercisesReq.page:type_name -> common.PageReq
-	75,  // 41: option.UserListExercisesResp.base:type_name -> common.RespBase
-	91,  // 42: option.UserListExercisesResp.data:type_name -> option.OptionExerciseDetail
-	75,  // 43: option.UserListAccountsResp.base:type_name -> common.RespBase
-	92,  // 44: option.UserListAccountsResp.data:type_name -> option.OptionAccount
-	93,  // 45: option.UserListBillsReq.ref_type:type_name -> option.BillRefType
-	86,  // 46: option.UserListBillsReq.create_time_range:type_name -> common.TimeRange
-	78,  // 47: option.UserListBillsReq.page:type_name -> common.PageReq
-	75,  // 48: option.UserListBillsResp.base:type_name -> common.RespBase
-	94,  // 49: option.UserListBillsResp.data:type_name -> option.OptionBill
-	75,  // 50: option.CommonResp.base:type_name -> common.RespBase
-	76,  // 51: option.CreateContractReq.option_type:type_name -> option.OptionType
-	95,  // 52: option.CreateContractReq.exercise_style:type_name -> option.ExerciseStyle
-	96,  // 53: option.CreateContractReq.settlement_type:type_name -> option.SettlementType
-	83,  // 54: option.CreateContractReq.is_auto_exercise:type_name -> common.YesNo
-	77,  // 55: option.CreateContractReq.status:type_name -> option.ContractStatus
-	75,  // 56: option.CreateContractResp.base:type_name -> common.RespBase
-	76,  // 57: option.UpdateContractReq.option_type:type_name -> option.OptionType
-	95,  // 58: option.UpdateContractReq.exercise_style:type_name -> option.ExerciseStyle
-	96,  // 59: option.UpdateContractReq.settlement_type:type_name -> option.SettlementType
-	83,  // 60: option.UpdateContractReq.is_auto_exercise:type_name -> common.YesNo
-	77,  // 61: option.UpdateContractReq.status:type_name -> option.ContractStatus
-	83,  // 62: option.UpdateContractReq.is_deleted:type_name -> common.YesNo
-	75,  // 63: option.GetContractResp.base:type_name -> common.RespBase
-	79,  // 64: option.GetContractResp.data:type_name -> option.OptionContractDetail
-	76,  // 65: option.ListContractsReq.option_type:type_name -> option.OptionType
-	77,  // 66: option.ListContractsReq.status:type_name -> option.ContractStatus
-	86,  // 67: option.ListContractsReq.list_time_range:type_name -> common.TimeRange
-	86,  // 68: option.ListContractsReq.expire_time_range:type_name -> common.TimeRange
-	78,  // 69: option.ListContractsReq.page:type_name -> common.PageReq
-	75,  // 70: option.ListContractsResp.base:type_name -> common.RespBase
-	79,  // 71: option.ListContractsResp.data:type_name -> option.OptionContractDetail
-	75,  // 72: option.GetMarketResp.base:type_name -> common.RespBase
-	97,  // 73: option.GetMarketResp.data:type_name -> option.OptionMarket
-	86,  // 74: option.ListMarketSnapshotsReq.time_range:type_name -> common.TimeRange
-	78,  // 75: option.ListMarketSnapshotsReq.page:type_name -> common.PageReq
-	75,  // 76: option.ListMarketSnapshotsResp.base:type_name -> common.RespBase
-	98,  // 77: option.ListMarketSnapshotsResp.data:type_name -> option.OptionMarketSnapshot
-	75,  // 78: option.GetOrderResp.base:type_name -> common.RespBase
-	84,  // 79: option.GetOrderResp.data:type_name -> option.OptionOrderDetail
-	80,  // 80: option.ListOrdersReq.side:type_name -> common.Side
-	81,  // 81: option.ListOrdersReq.position_effect:type_name -> option.PositionEffect
-	82,  // 82: option.ListOrdersReq.order_type:type_name -> option.OrderType
-	85,  // 83: option.ListOrdersReq.status:type_name -> option.OrderStatus
-	86,  // 84: option.ListOrdersReq.create_time_range:type_name -> common.TimeRange
-	78,  // 85: option.ListOrdersReq.page:type_name -> common.PageReq
-	75,  // 86: option.ListOrdersResp.base:type_name -> common.RespBase
-	84,  // 87: option.ListOrdersResp.data:type_name -> option.OptionOrderDetail
-	75,  // 88: option.GetTradeResp.base:type_name -> common.RespBase
-	87,  // 89: option.GetTradeResp.data:type_name -> option.OptionTradeDetail
-	86,  // 90: option.ListTradesReq.trade_time_range:type_name -> common.TimeRange
-	78,  // 91: option.ListTradesReq.page:type_name -> common.PageReq
-	75,  // 92: option.ListTradesResp.base:type_name -> common.RespBase
-	87,  // 93: option.ListTradesResp.data:type_name -> option.OptionTradeDetail
-	75,  // 94: option.GetPositionResp.base:type_name -> common.RespBase
-	89,  // 95: option.GetPositionResp.data:type_name -> option.OptionPositionDetail
-	99,  // 96: option.ListPositionsReq.side:type_name -> common.PositionSide
-	88,  // 97: option.ListPositionsReq.status:type_name -> option.PositionStatus
-	78,  // 98: option.ListPositionsReq.page:type_name -> common.PageReq
-	75,  // 99: option.ListPositionsResp.base:type_name -> common.RespBase
-	89,  // 100: option.ListPositionsResp.data:type_name -> option.OptionPositionDetail
-	75,  // 101: option.GetExerciseResp.base:type_name -> common.RespBase
-	91,  // 102: option.GetExerciseResp.data:type_name -> option.OptionExerciseDetail
-	100, // 103: option.ListExercisesReq.exercise_type:type_name -> option.ExerciseType
-	90,  // 104: option.ListExercisesReq.status:type_name -> option.ExerciseStatus
-	86,  // 105: option.ListExercisesReq.exercise_time_range:type_name -> common.TimeRange
-	78,  // 106: option.ListExercisesReq.page:type_name -> common.PageReq
-	75,  // 107: option.ListExercisesResp.base:type_name -> common.RespBase
-	91,  // 108: option.ListExercisesResp.data:type_name -> option.OptionExerciseDetail
-	75,  // 109: option.GetSettlementResp.base:type_name -> common.RespBase
-	101, // 110: option.GetSettlementResp.data:type_name -> option.OptionSettlementDetail
-	102, // 111: option.ListSettlementsReq.status:type_name -> option.SettlementStatus
-	86,  // 112: option.ListSettlementsReq.settlement_time_range:type_name -> common.TimeRange
-	78,  // 113: option.ListSettlementsReq.page:type_name -> common.PageReq
-	75,  // 114: option.ListSettlementsResp.base:type_name -> common.RespBase
-	101, // 115: option.ListSettlementsResp.data:type_name -> option.OptionSettlementDetail
-	75,  // 116: option.GetAccountResp.base:type_name -> common.RespBase
-	92,  // 117: option.GetAccountResp.data:type_name -> option.OptionAccount
-	103, // 118: option.ListAccountsReq.status:type_name -> option.AccountStatus
-	78,  // 119: option.ListAccountsReq.page:type_name -> common.PageReq
-	75,  // 120: option.ListAccountsResp.base:type_name -> common.RespBase
-	92,  // 121: option.ListAccountsResp.data:type_name -> option.OptionAccount
-	75,  // 122: option.GetBillResp.base:type_name -> common.RespBase
-	94,  // 123: option.GetBillResp.data:type_name -> option.OptionBill
-	93,  // 124: option.ListBillsReq.ref_type:type_name -> option.BillRefType
-	86,  // 125: option.ListBillsReq.create_time_range:type_name -> common.TimeRange
-	78,  // 126: option.ListBillsReq.page:type_name -> common.PageReq
-	75,  // 127: option.ListBillsResp.base:type_name -> common.RespBase
-	94,  // 128: option.ListBillsResp.data:type_name -> option.OptionBill
-	75,  // 129: option.InternalCommonResp.base:type_name -> common.RespBase
-	75,  // 130: option.OptionTaskResp.base:type_name -> common.RespBase
-	1,   // 131: option.App.ListContracts:input_type -> option.UserListContractsReq
-	3,   // 132: option.App.GetContractDetail:input_type -> option.GetContractDetailReq
-	5,   // 133: option.App.PlaceOrder:input_type -> option.PlaceOrderReq
-	8,   // 134: option.App.CancelOrder:input_type -> option.CancelOrderReq
-	9,   // 135: option.App.GetOrderDetail:input_type -> option.GetOrderDetailReq
-	11,  // 136: option.App.ListCurrentOrders:input_type -> option.ListCurrentOrdersReq
-	13,  // 137: option.App.ListHistoryOrders:input_type -> option.ListHistoryOrdersReq
-	15,  // 138: option.App.ListTrades:input_type -> option.UserListTradesReq
-	17,  // 139: option.App.ListPositions:input_type -> option.UserListPositionsReq
-	19,  // 140: option.App.GetPositionDetail:input_type -> option.GetPositionDetailReq
-	21,  // 141: option.App.Exercise:input_type -> option.ExerciseReq
-	24,  // 142: option.App.ListExercises:input_type -> option.UserListExercisesReq
-	26,  // 143: option.App.ListAccounts:input_type -> option.UserListAccountsReq
-	28,  // 144: option.App.ListBills:input_type -> option.UserListBillsReq
-	31,  // 145: option.Admin.CreateContract:input_type -> option.CreateContractReq
-	33,  // 146: option.Admin.UpdateContract:input_type -> option.UpdateContractReq
-	34,  // 147: option.Admin.GetContract:input_type -> option.GetContractReq
-	36,  // 148: option.Admin.ListContracts:input_type -> option.ListContractsReq
-	38,  // 149: option.Admin.UpdateMarket:input_type -> option.UpdateMarketReq
-	39,  // 150: option.Admin.GetMarket:input_type -> option.GetMarketReq
-	41,  // 151: option.Admin.ListMarketSnapshots:input_type -> option.ListMarketSnapshotsReq
-	43,  // 152: option.Admin.GetOrder:input_type -> option.GetOrderReq
-	45,  // 153: option.Admin.ListOrders:input_type -> option.ListOrdersReq
-	47,  // 154: option.Admin.GetTrade:input_type -> option.GetTradeReq
-	49,  // 155: option.Admin.ListTrades:input_type -> option.ListTradesReq
-	51,  // 156: option.Admin.GetPosition:input_type -> option.GetPositionReq
-	53,  // 157: option.Admin.ListPositions:input_type -> option.ListPositionsReq
-	55,  // 158: option.Admin.GetExercise:input_type -> option.GetExerciseReq
-	57,  // 159: option.Admin.ListExercises:input_type -> option.ListExercisesReq
-	59,  // 160: option.Admin.GetSettlement:input_type -> option.GetSettlementReq
-	61,  // 161: option.Admin.ListSettlements:input_type -> option.ListSettlementsReq
-	63,  // 162: option.Admin.GetAccount:input_type -> option.GetAccountReq
-	65,  // 163: option.Admin.ListAccounts:input_type -> option.ListAccountsReq
-	67,  // 164: option.Admin.GetBill:input_type -> option.GetBillReq
-	69,  // 165: option.Admin.ListBills:input_type -> option.ListBillsReq
-	71,  // 166: option.Option.SyncMarketQuote:input_type -> option.SyncMarketQuoteReq
-	73,  // 167: option.Task.ProcessContractLifecycle:input_type -> option.OptionTaskReq
-	73,  // 168: option.Task.CleanMarketSnapshots:input_type -> option.OptionTaskReq
-	2,   // 169: option.App.ListContracts:output_type -> option.UserListContractsResp
-	4,   // 170: option.App.GetContractDetail:output_type -> option.GetContractDetailResp
-	6,   // 171: option.App.PlaceOrder:output_type -> option.PlaceOrderResp
-	0,   // 172: option.App.CancelOrder:output_type -> option.UserCommonResp
-	10,  // 173: option.App.GetOrderDetail:output_type -> option.GetOrderDetailResp
-	12,  // 174: option.App.ListCurrentOrders:output_type -> option.ListCurrentOrdersResp
-	14,  // 175: option.App.ListHistoryOrders:output_type -> option.ListHistoryOrdersResp
-	16,  // 176: option.App.ListTrades:output_type -> option.UserListTradesResp
-	18,  // 177: option.App.ListPositions:output_type -> option.UserListPositionsResp
-	20,  // 178: option.App.GetPositionDetail:output_type -> option.GetPositionDetailResp
-	22,  // 179: option.App.Exercise:output_type -> option.ExerciseResp
-	25,  // 180: option.App.ListExercises:output_type -> option.UserListExercisesResp
-	27,  // 181: option.App.ListAccounts:output_type -> option.UserListAccountsResp
-	29,  // 182: option.App.ListBills:output_type -> option.UserListBillsResp
-	32,  // 183: option.Admin.CreateContract:output_type -> option.CreateContractResp
-	30,  // 184: option.Admin.UpdateContract:output_type -> option.CommonResp
-	35,  // 185: option.Admin.GetContract:output_type -> option.GetContractResp
-	37,  // 186: option.Admin.ListContracts:output_type -> option.ListContractsResp
-	30,  // 187: option.Admin.UpdateMarket:output_type -> option.CommonResp
-	40,  // 188: option.Admin.GetMarket:output_type -> option.GetMarketResp
-	42,  // 189: option.Admin.ListMarketSnapshots:output_type -> option.ListMarketSnapshotsResp
-	44,  // 190: option.Admin.GetOrder:output_type -> option.GetOrderResp
-	46,  // 191: option.Admin.ListOrders:output_type -> option.ListOrdersResp
-	48,  // 192: option.Admin.GetTrade:output_type -> option.GetTradeResp
-	50,  // 193: option.Admin.ListTrades:output_type -> option.ListTradesResp
-	52,  // 194: option.Admin.GetPosition:output_type -> option.GetPositionResp
-	54,  // 195: option.Admin.ListPositions:output_type -> option.ListPositionsResp
-	56,  // 196: option.Admin.GetExercise:output_type -> option.GetExerciseResp
-	58,  // 197: option.Admin.ListExercises:output_type -> option.ListExercisesResp
-	60,  // 198: option.Admin.GetSettlement:output_type -> option.GetSettlementResp
-	62,  // 199: option.Admin.ListSettlements:output_type -> option.ListSettlementsResp
-	64,  // 200: option.Admin.GetAccount:output_type -> option.GetAccountResp
-	66,  // 201: option.Admin.ListAccounts:output_type -> option.ListAccountsResp
-	68,  // 202: option.Admin.GetBill:output_type -> option.GetBillResp
-	70,  // 203: option.Admin.ListBills:output_type -> option.ListBillsResp
-	72,  // 204: option.Option.SyncMarketQuote:output_type -> option.InternalCommonResp
-	74,  // 205: option.Task.ProcessContractLifecycle:output_type -> option.OptionTaskResp
-	74,  // 206: option.Task.CleanMarketSnapshots:output_type -> option.OptionTaskResp
-	169, // [169:207] is the sub-list for method output_type
-	131, // [131:169] is the sub-list for method input_type
-	131, // [131:131] is the sub-list for extension type_name
-	131, // [131:131] is the sub-list for extension extendee
-	0,   // [0:131] is the sub-list for field type_name
+	88,  // 38: option.UserListExercisesReq.status:type_name -> option.ExerciseStatus
+	84,  // 39: option.UserListExercisesReq.exercise_time_range:type_name -> common.TimeRange
+	76,  // 40: option.UserListExercisesReq.page:type_name -> common.PageReq
+	73,  // 41: option.UserListExercisesResp.base:type_name -> common.RespBase
+	89,  // 42: option.UserListExercisesResp.data:type_name -> option.OptionExerciseDetail
+	73,  // 43: option.UserListAccountsResp.base:type_name -> common.RespBase
+	90,  // 44: option.UserListAccountsResp.data:type_name -> option.OptionAccount
+	91,  // 45: option.UserListBillsReq.ref_type:type_name -> option.BillRefType
+	84,  // 46: option.UserListBillsReq.create_time_range:type_name -> common.TimeRange
+	76,  // 47: option.UserListBillsReq.page:type_name -> common.PageReq
+	73,  // 48: option.UserListBillsResp.base:type_name -> common.RespBase
+	92,  // 49: option.UserListBillsResp.data:type_name -> option.OptionBill
+	73,  // 50: option.CommonResp.base:type_name -> common.RespBase
+	74,  // 51: option.CreateContractReq.option_type:type_name -> option.OptionType
+	93,  // 52: option.CreateContractReq.exercise_style:type_name -> option.ExerciseStyle
+	94,  // 53: option.CreateContractReq.settlement_type:type_name -> option.SettlementType
+	81,  // 54: option.CreateContractReq.is_auto_exercise:type_name -> common.YesNo
+	75,  // 55: option.CreateContractReq.status:type_name -> option.ContractStatus
+	73,  // 56: option.CreateContractResp.base:type_name -> common.RespBase
+	74,  // 57: option.UpdateContractReq.option_type:type_name -> option.OptionType
+	93,  // 58: option.UpdateContractReq.exercise_style:type_name -> option.ExerciseStyle
+	94,  // 59: option.UpdateContractReq.settlement_type:type_name -> option.SettlementType
+	81,  // 60: option.UpdateContractReq.is_auto_exercise:type_name -> common.YesNo
+	75,  // 61: option.UpdateContractReq.status:type_name -> option.ContractStatus
+	81,  // 62: option.UpdateContractReq.is_deleted:type_name -> common.YesNo
+	73,  // 63: option.GetContractResp.base:type_name -> common.RespBase
+	77,  // 64: option.GetContractResp.data:type_name -> option.OptionContractDetail
+	74,  // 65: option.ListContractsReq.option_type:type_name -> option.OptionType
+	75,  // 66: option.ListContractsReq.status:type_name -> option.ContractStatus
+	84,  // 67: option.ListContractsReq.list_time_range:type_name -> common.TimeRange
+	84,  // 68: option.ListContractsReq.expire_time_range:type_name -> common.TimeRange
+	76,  // 69: option.ListContractsReq.page:type_name -> common.PageReq
+	73,  // 70: option.ListContractsResp.base:type_name -> common.RespBase
+	77,  // 71: option.ListContractsResp.data:type_name -> option.OptionContractDetail
+	73,  // 72: option.GetMarketResp.base:type_name -> common.RespBase
+	95,  // 73: option.GetMarketResp.data:type_name -> option.OptionMarket
+	84,  // 74: option.ListMarketSnapshotsReq.time_range:type_name -> common.TimeRange
+	76,  // 75: option.ListMarketSnapshotsReq.page:type_name -> common.PageReq
+	73,  // 76: option.ListMarketSnapshotsResp.base:type_name -> common.RespBase
+	96,  // 77: option.ListMarketSnapshotsResp.data:type_name -> option.OptionMarketSnapshot
+	73,  // 78: option.GetOrderResp.base:type_name -> common.RespBase
+	82,  // 79: option.GetOrderResp.data:type_name -> option.OptionOrderDetail
+	78,  // 80: option.ListOrdersReq.side:type_name -> common.Side
+	79,  // 81: option.ListOrdersReq.position_effect:type_name -> option.PositionEffect
+	80,  // 82: option.ListOrdersReq.order_type:type_name -> option.OrderType
+	83,  // 83: option.ListOrdersReq.status:type_name -> option.OrderStatus
+	84,  // 84: option.ListOrdersReq.create_time_range:type_name -> common.TimeRange
+	76,  // 85: option.ListOrdersReq.page:type_name -> common.PageReq
+	73,  // 86: option.ListOrdersResp.base:type_name -> common.RespBase
+	82,  // 87: option.ListOrdersResp.data:type_name -> option.OptionOrderDetail
+	73,  // 88: option.GetTradeResp.base:type_name -> common.RespBase
+	85,  // 89: option.GetTradeResp.data:type_name -> option.OptionTradeDetail
+	84,  // 90: option.ListTradesReq.trade_time_range:type_name -> common.TimeRange
+	76,  // 91: option.ListTradesReq.page:type_name -> common.PageReq
+	73,  // 92: option.ListTradesResp.base:type_name -> common.RespBase
+	85,  // 93: option.ListTradesResp.data:type_name -> option.OptionTradeDetail
+	73,  // 94: option.GetPositionResp.base:type_name -> common.RespBase
+	87,  // 95: option.GetPositionResp.data:type_name -> option.OptionPositionDetail
+	97,  // 96: option.ListPositionsReq.side:type_name -> common.PositionSide
+	86,  // 97: option.ListPositionsReq.status:type_name -> option.PositionStatus
+	76,  // 98: option.ListPositionsReq.page:type_name -> common.PageReq
+	73,  // 99: option.ListPositionsResp.base:type_name -> common.RespBase
+	87,  // 100: option.ListPositionsResp.data:type_name -> option.OptionPositionDetail
+	73,  // 101: option.GetExerciseResp.base:type_name -> common.RespBase
+	89,  // 102: option.GetExerciseResp.data:type_name -> option.OptionExerciseDetail
+	98,  // 103: option.ListExercisesReq.exercise_type:type_name -> option.ExerciseType
+	88,  // 104: option.ListExercisesReq.status:type_name -> option.ExerciseStatus
+	84,  // 105: option.ListExercisesReq.exercise_time_range:type_name -> common.TimeRange
+	76,  // 106: option.ListExercisesReq.page:type_name -> common.PageReq
+	73,  // 107: option.ListExercisesResp.base:type_name -> common.RespBase
+	89,  // 108: option.ListExercisesResp.data:type_name -> option.OptionExerciseDetail
+	73,  // 109: option.GetSettlementResp.base:type_name -> common.RespBase
+	99,  // 110: option.GetSettlementResp.data:type_name -> option.OptionSettlementDetail
+	100, // 111: option.ListSettlementsReq.status:type_name -> option.SettlementStatus
+	84,  // 112: option.ListSettlementsReq.settlement_time_range:type_name -> common.TimeRange
+	76,  // 113: option.ListSettlementsReq.page:type_name -> common.PageReq
+	73,  // 114: option.ListSettlementsResp.base:type_name -> common.RespBase
+	99,  // 115: option.ListSettlementsResp.data:type_name -> option.OptionSettlementDetail
+	73,  // 116: option.GetAccountResp.base:type_name -> common.RespBase
+	90,  // 117: option.GetAccountResp.data:type_name -> option.OptionAccount
+	101, // 118: option.ListAccountsReq.status:type_name -> option.AccountStatus
+	76,  // 119: option.ListAccountsReq.page:type_name -> common.PageReq
+	73,  // 120: option.ListAccountsResp.base:type_name -> common.RespBase
+	90,  // 121: option.ListAccountsResp.data:type_name -> option.OptionAccount
+	73,  // 122: option.GetBillResp.base:type_name -> common.RespBase
+	92,  // 123: option.GetBillResp.data:type_name -> option.OptionBill
+	91,  // 124: option.ListBillsReq.ref_type:type_name -> option.BillRefType
+	84,  // 125: option.ListBillsReq.create_time_range:type_name -> common.TimeRange
+	76,  // 126: option.ListBillsReq.page:type_name -> common.PageReq
+	73,  // 127: option.ListBillsResp.base:type_name -> common.RespBase
+	92,  // 128: option.ListBillsResp.data:type_name -> option.OptionBill
+	73,  // 129: option.OptionTaskResp.base:type_name -> common.RespBase
+	1,   // 130: option.App.ListContracts:input_type -> option.UserListContractsReq
+	3,   // 131: option.App.GetContractDetail:input_type -> option.GetContractDetailReq
+	5,   // 132: option.App.PlaceOrder:input_type -> option.PlaceOrderReq
+	8,   // 133: option.App.CancelOrder:input_type -> option.CancelOrderReq
+	9,   // 134: option.App.GetOrderDetail:input_type -> option.GetOrderDetailReq
+	11,  // 135: option.App.ListCurrentOrders:input_type -> option.ListCurrentOrdersReq
+	13,  // 136: option.App.ListHistoryOrders:input_type -> option.ListHistoryOrdersReq
+	15,  // 137: option.App.ListTrades:input_type -> option.UserListTradesReq
+	17,  // 138: option.App.ListPositions:input_type -> option.UserListPositionsReq
+	19,  // 139: option.App.GetPositionDetail:input_type -> option.GetPositionDetailReq
+	21,  // 140: option.App.Exercise:input_type -> option.ExerciseReq
+	24,  // 141: option.App.ListExercises:input_type -> option.UserListExercisesReq
+	26,  // 142: option.App.ListAccounts:input_type -> option.UserListAccountsReq
+	28,  // 143: option.App.ListBills:input_type -> option.UserListBillsReq
+	31,  // 144: option.Admin.CreateContract:input_type -> option.CreateContractReq
+	33,  // 145: option.Admin.UpdateContract:input_type -> option.UpdateContractReq
+	34,  // 146: option.Admin.GetContract:input_type -> option.GetContractReq
+	36,  // 147: option.Admin.ListContracts:input_type -> option.ListContractsReq
+	38,  // 148: option.Admin.UpdateMarket:input_type -> option.UpdateMarketReq
+	39,  // 149: option.Admin.GetMarket:input_type -> option.GetMarketReq
+	41,  // 150: option.Admin.ListMarketSnapshots:input_type -> option.ListMarketSnapshotsReq
+	43,  // 151: option.Admin.GetOrder:input_type -> option.GetOrderReq
+	45,  // 152: option.Admin.ListOrders:input_type -> option.ListOrdersReq
+	47,  // 153: option.Admin.GetTrade:input_type -> option.GetTradeReq
+	49,  // 154: option.Admin.ListTrades:input_type -> option.ListTradesReq
+	51,  // 155: option.Admin.GetPosition:input_type -> option.GetPositionReq
+	53,  // 156: option.Admin.ListPositions:input_type -> option.ListPositionsReq
+	55,  // 157: option.Admin.GetExercise:input_type -> option.GetExerciseReq
+	57,  // 158: option.Admin.ListExercises:input_type -> option.ListExercisesReq
+	59,  // 159: option.Admin.GetSettlement:input_type -> option.GetSettlementReq
+	61,  // 160: option.Admin.ListSettlements:input_type -> option.ListSettlementsReq
+	63,  // 161: option.Admin.GetAccount:input_type -> option.GetAccountReq
+	65,  // 162: option.Admin.ListAccounts:input_type -> option.ListAccountsReq
+	67,  // 163: option.Admin.GetBill:input_type -> option.GetBillReq
+	69,  // 164: option.Admin.ListBills:input_type -> option.ListBillsReq
+	71,  // 165: option.Task.ProcessContractLifecycle:input_type -> option.OptionTaskReq
+	71,  // 166: option.Task.CleanMarketSnapshots:input_type -> option.OptionTaskReq
+	2,   // 167: option.App.ListContracts:output_type -> option.UserListContractsResp
+	4,   // 168: option.App.GetContractDetail:output_type -> option.GetContractDetailResp
+	6,   // 169: option.App.PlaceOrder:output_type -> option.PlaceOrderResp
+	0,   // 170: option.App.CancelOrder:output_type -> option.UserCommonResp
+	10,  // 171: option.App.GetOrderDetail:output_type -> option.GetOrderDetailResp
+	12,  // 172: option.App.ListCurrentOrders:output_type -> option.ListCurrentOrdersResp
+	14,  // 173: option.App.ListHistoryOrders:output_type -> option.ListHistoryOrdersResp
+	16,  // 174: option.App.ListTrades:output_type -> option.UserListTradesResp
+	18,  // 175: option.App.ListPositions:output_type -> option.UserListPositionsResp
+	20,  // 176: option.App.GetPositionDetail:output_type -> option.GetPositionDetailResp
+	22,  // 177: option.App.Exercise:output_type -> option.ExerciseResp
+	25,  // 178: option.App.ListExercises:output_type -> option.UserListExercisesResp
+	27,  // 179: option.App.ListAccounts:output_type -> option.UserListAccountsResp
+	29,  // 180: option.App.ListBills:output_type -> option.UserListBillsResp
+	32,  // 181: option.Admin.CreateContract:output_type -> option.CreateContractResp
+	30,  // 182: option.Admin.UpdateContract:output_type -> option.CommonResp
+	35,  // 183: option.Admin.GetContract:output_type -> option.GetContractResp
+	37,  // 184: option.Admin.ListContracts:output_type -> option.ListContractsResp
+	30,  // 185: option.Admin.UpdateMarket:output_type -> option.CommonResp
+	40,  // 186: option.Admin.GetMarket:output_type -> option.GetMarketResp
+	42,  // 187: option.Admin.ListMarketSnapshots:output_type -> option.ListMarketSnapshotsResp
+	44,  // 188: option.Admin.GetOrder:output_type -> option.GetOrderResp
+	46,  // 189: option.Admin.ListOrders:output_type -> option.ListOrdersResp
+	48,  // 190: option.Admin.GetTrade:output_type -> option.GetTradeResp
+	50,  // 191: option.Admin.ListTrades:output_type -> option.ListTradesResp
+	52,  // 192: option.Admin.GetPosition:output_type -> option.GetPositionResp
+	54,  // 193: option.Admin.ListPositions:output_type -> option.ListPositionsResp
+	56,  // 194: option.Admin.GetExercise:output_type -> option.GetExerciseResp
+	58,  // 195: option.Admin.ListExercises:output_type -> option.ListExercisesResp
+	60,  // 196: option.Admin.GetSettlement:output_type -> option.GetSettlementResp
+	62,  // 197: option.Admin.ListSettlements:output_type -> option.ListSettlementsResp
+	64,  // 198: option.Admin.GetAccount:output_type -> option.GetAccountResp
+	66,  // 199: option.Admin.ListAccounts:output_type -> option.ListAccountsResp
+	68,  // 200: option.Admin.GetBill:output_type -> option.GetBillResp
+	70,  // 201: option.Admin.ListBills:output_type -> option.ListBillsResp
+	72,  // 202: option.Task.ProcessContractLifecycle:output_type -> option.OptionTaskResp
+	72,  // 203: option.Task.CleanMarketSnapshots:output_type -> option.OptionTaskResp
+	167, // [167:204] is the sub-list for method output_type
+	130, // [130:167] is the sub-list for method input_type
+	130, // [130:130] is the sub-list for extension type_name
+	130, // [130:130] is the sub-list for extension extendee
+	0,   // [0:130] is the sub-list for field type_name
 }
 
 func init() { file_proto_option_option_proto_init() }
@@ -5872,9 +5680,9 @@ func file_proto_option_option_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_option_option_proto_rawDesc), len(file_proto_option_option_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   75,
+			NumMessages:   73,
 			NumExtensions: 0,
-			NumServices:   4,
+			NumServices:   3,
 		},
 		GoTypes:           file_proto_option_option_proto_goTypes,
 		DependencyIndexes: file_proto_option_option_proto_depIdxs,

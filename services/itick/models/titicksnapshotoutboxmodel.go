@@ -67,7 +67,7 @@ func (m *defaultTItickSnapshotOutboxModel) MarkRedisPublished(ctx context.Contex
 }
 
 func (m *defaultTItickSnapshotOutboxModel) MarkEventPublished(ctx context.Context, id, now int64) error {
-	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET option_published_at=CASE WHEN option_published_at=0 THEN ? ELSE option_published_at END,update_times=? WHERE id=? AND status=2", now, now, id)
+	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET event_published_at=CASE WHEN event_published_at=0 THEN ? ELSE event_published_at END,update_times=? WHERE id=? AND status=2", now, now, id)
 	return requireOneOutboxRow(result, err)
 }
 
@@ -160,7 +160,7 @@ func (m *defaultTItickSnapshotOutboxModel) Claim(ctx context.Context, id, now in
 	return n == 1, e
 }
 func (m *defaultTItickSnapshotOutboxModel) MarkSuccess(ctx context.Context, id, now int64) error {
-	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET status=3,next_retry_at=0,last_error_msg='',update_times=? WHERE id=? AND status=2 AND redis_published_at>0 AND option_published_at>0", now, id)
+	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET status=3,next_retry_at=0,last_error_msg='',update_times=? WHERE id=? AND status=2 AND redis_published_at>0 AND event_published_at>0", now, id)
 	return requireOneOutboxRow(result, err)
 }
 func (m *defaultTItickSnapshotOutboxModel) MarkFailure(ctx context.Context, id int64, msg string, now int64) error {

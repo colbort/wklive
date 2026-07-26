@@ -118,14 +118,14 @@ func publishSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, row 
 	// Migrated repair rows intentionally contain only the snapshot. Redis repair
 	// is complete even though the original full quote is no longer available.
 	if payload.Quote == nil {
-		if row.OptionPublishedAt == 0 {
+		if row.EventPublishedAt == 0 {
 			if err := svcCtx.SnapshotOutboxModel.MarkEventPublished(ctx, row.Id, time.Now().UnixMilli()); err != nil {
 				return fmt.Errorf("checkpoint skipped market event publication: %w", err)
 			}
 		}
 		return nil
 	}
-	if row.OptionPublishedAt > 0 {
+	if row.EventPublishedAt > 0 {
 		return nil
 	}
 	event := market.AuthoritativeSnapshotEvent{
