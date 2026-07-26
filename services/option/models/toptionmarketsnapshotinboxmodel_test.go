@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"testing"
@@ -23,3 +24,36 @@ func TestIsDuplicateKeyError(t *testing.T) {
 		t.Fatal("must not ignore generic database errors")
 	}
 }
+
+func TestResolveSnapshotInboxClaim(t *testing.T) {
+	claimed, err := resolveSnapshotInboxClaim(fakeSQLResult{rowsAffected: 1}, nil)
+	if err != nil || !claimed {
+		t.Fatalf("successful claim = (%v, %v), want (true, nil)", claimed, err)
+	}
+
+	claimed, err = resolveSnapshotInboxClaim(nil, &mysql.MySQLError{Number: 1062, Message: "duplicate"})
+	if err != nil || claimed {
+		t.Fatalf("duplicate claim = (%v, %v), want (false, nil)", claimed, err)
+	}
+
+	wantErr := errors.New("database unavailable")
+	claimed, err = resolveSnapshotInboxClaim(nil, wantErr)
+	if claimed || !errors.Is(err, wantErr) {
+		t.Fatalf("failed claim = (%v, %v), want (false, %v)", claimed, err, wantErr)
+	}
+}
+
+type fakeSQLResult struct {
+	rowsAffected int64
+	err          error
+}
+
+func (r fakeSQLResult) LastInsertId() (int64, error) {
+	return 0, nil
+}
+
+func (r fakeSQLResult) RowsAffected() (int64, error) {
+	return r.rowsAffected, r.err
+}
+
+var _ sql.Result = fakeSQLResult{}

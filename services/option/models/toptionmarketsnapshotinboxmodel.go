@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 
 	"github.com/go-sql-driver/mysql"
@@ -33,9 +34,12 @@ func NewTOptionMarketSnapshotInboxModel(conn sqlx.SqlConn, c cache.CacheConf, op
 }
 
 func (m *defaultTOptionMarketSnapshotInboxModel) Claim(ctx context.Context, snapshotID string, tenantID, contractID, createTimes int64) (bool, error) {
-	result, err := m.ExecNoCacheCtx(ctx, `INSERT INTO t_option_market_snapshot_inbox
+	return resolveSnapshotInboxClaim(m.ExecNoCacheCtx(ctx, `INSERT INTO t_option_market_snapshot_inbox
 		(snapshot_id,tenant_id,contract_id,create_times) VALUES(?,?,?,?)`,
-		snapshotID, tenantID, contractID, createTimes)
+		snapshotID, tenantID, contractID, createTimes))
+}
+
+func resolveSnapshotInboxClaim(result sql.Result, err error) (bool, error) {
 	if err != nil {
 		if isDuplicateKeyError(err) {
 			return false, nil

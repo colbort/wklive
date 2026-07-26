@@ -15,7 +15,7 @@ Option 通过 consumer group `option-market-quote-v1` 消费
 
 `MarketSnapshotInboxCleanup` 控制清理任务：
 
-- `RetentionHours` 默认 720 小时（30 天）。
+- `RetentionHours` 默认 720 小时（30 天），代码强制不少于 336 小时（14 天）。
 - `IntervalMinutes` 默认 60 分钟。
 - `BatchSize` 默认 5000，最大 10000。
 - `MaxBatchesPerRun` 默认 10。
@@ -33,11 +33,14 @@ Option 通过 consumer group `option-market-quote-v1` 消费
 
 ## 观测
 
-消费者每 30 秒记录累计指标：
+消费者异常退出时会以 1 秒起步、最多 30 秒的指数退避自动重新订阅。消费者每
+30 秒记录累计指标：
 
-- `success`
-- `failed`
+- `message_success`
+- `handler_attempt_failed`
 - `updated`
 - `duplicates`
+- `restarts`
 
+`handler_attempt_failed` 表示 handler 失败尝试次数，不等同于最终失败消息数。
 Kafka 组件在达到最大重试次数后写入 DLQ 并提交原消息 offset。

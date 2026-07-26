@@ -48,7 +48,11 @@ func main() {
 	}
 
 	svcCtx := svc.NewServiceContext(c)
-	defer svcCtx.SnapshotPublisher.Close()
+	defer func() {
+		if err := svcCtx.SnapshotPublisher.Close(); err != nil {
+			log.Printf("close authoritative snapshot publisher failed: %v", err)
+		}
+	}()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
