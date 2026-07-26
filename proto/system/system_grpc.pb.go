@@ -76,11 +76,6 @@ const (
 	Admin_SysTenantDomainCreate_FullMethodName        = "/system.Admin/SysTenantDomainCreate"
 	Admin_SysTenantDomainUpdate_FullMethodName        = "/system.Admin/SysTenantDomainUpdate"
 	Admin_SysTenantDomainDelete_FullMethodName        = "/system.Admin/SysTenantDomainDelete"
-	Admin_SysChatMerchantCreate_FullMethodName        = "/system.Admin/SysChatMerchantCreate"
-	Admin_SysChatMerchantUpdate_FullMethodName        = "/system.Admin/SysChatMerchantUpdate"
-	Admin_SysChatMerchantDelete_FullMethodName        = "/system.Admin/SysChatMerchantDelete"
-	Admin_SysChatMerchantList_FullMethodName          = "/system.Admin/SysChatMerchantList"
-	Admin_SysChatMerchantDetail_FullMethodName        = "/system.Admin/SysChatMerchantDetail"
 )
 
 // AdminClient is the client API for Admin service.
@@ -148,11 +143,6 @@ type AdminClient interface {
 	SysTenantDomainCreate(ctx context.Context, in *SysTenantDomainCreateReq, opts ...grpc.CallOption) (*RespBase, error)
 	SysTenantDomainUpdate(ctx context.Context, in *SysTenantDomainUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
 	SysTenantDomainDelete(ctx context.Context, in *SysTenantDomainDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
-	SysChatMerchantCreate(ctx context.Context, in *SysChatMerchantCreateReq, opts ...grpc.CallOption) (*RespBase, error)
-	SysChatMerchantUpdate(ctx context.Context, in *SysChatMerchantUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
-	SysChatMerchantDelete(ctx context.Context, in *SysChatMerchantDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
-	SysChatMerchantList(ctx context.Context, in *SysChatMerchantListReq, opts ...grpc.CallOption) (*SysChatMerchantListResp, error)
-	SysChatMerchantDetail(ctx context.Context, in *SysChatMerchantDetailReq, opts ...grpc.CallOption) (*SysChatMerchantDetailResp, error)
 }
 
 type adminClient struct {
@@ -733,56 +723,6 @@ func (c *adminClient) SysTenantDomainDelete(ctx context.Context, in *SysTenantDo
 	return out, nil
 }
 
-func (c *adminClient) SysChatMerchantCreate(ctx context.Context, in *SysChatMerchantCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RespBase)
-	err := c.cc.Invoke(ctx, Admin_SysChatMerchantCreate_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *adminClient) SysChatMerchantUpdate(ctx context.Context, in *SysChatMerchantUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RespBase)
-	err := c.cc.Invoke(ctx, Admin_SysChatMerchantUpdate_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *adminClient) SysChatMerchantDelete(ctx context.Context, in *SysChatMerchantDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RespBase)
-	err := c.cc.Invoke(ctx, Admin_SysChatMerchantDelete_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *adminClient) SysChatMerchantList(ctx context.Context, in *SysChatMerchantListReq, opts ...grpc.CallOption) (*SysChatMerchantListResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SysChatMerchantListResp)
-	err := c.cc.Invoke(ctx, Admin_SysChatMerchantList_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *adminClient) SysChatMerchantDetail(ctx context.Context, in *SysChatMerchantDetailReq, opts ...grpc.CallOption) (*SysChatMerchantDetailResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SysChatMerchantDetailResp)
-	err := c.cc.Invoke(ctx, Admin_SysChatMerchantDetail_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // AdminServer is the server API for Admin service.
 // All implementations must embed UnimplementedAdminServer
 // for forward compatibility.
@@ -848,11 +788,6 @@ type AdminServer interface {
 	SysTenantDomainCreate(context.Context, *SysTenantDomainCreateReq) (*RespBase, error)
 	SysTenantDomainUpdate(context.Context, *SysTenantDomainUpdateReq) (*RespBase, error)
 	SysTenantDomainDelete(context.Context, *SysTenantDomainDeleteReq) (*RespBase, error)
-	SysChatMerchantCreate(context.Context, *SysChatMerchantCreateReq) (*RespBase, error)
-	SysChatMerchantUpdate(context.Context, *SysChatMerchantUpdateReq) (*RespBase, error)
-	SysChatMerchantDelete(context.Context, *SysChatMerchantDeleteReq) (*RespBase, error)
-	SysChatMerchantList(context.Context, *SysChatMerchantListReq) (*SysChatMerchantListResp, error)
-	SysChatMerchantDetail(context.Context, *SysChatMerchantDetailReq) (*SysChatMerchantDetailResp, error)
 	mustEmbedUnimplementedAdminServer()
 }
 
@@ -1033,21 +968,6 @@ func (UnimplementedAdminServer) SysTenantDomainUpdate(context.Context, *SysTenan
 }
 func (UnimplementedAdminServer) SysTenantDomainDelete(context.Context, *SysTenantDomainDeleteReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysTenantDomainDelete not implemented")
-}
-func (UnimplementedAdminServer) SysChatMerchantCreate(context.Context, *SysChatMerchantCreateReq) (*RespBase, error) {
-	return nil, status.Error(codes.Unimplemented, "method SysChatMerchantCreate not implemented")
-}
-func (UnimplementedAdminServer) SysChatMerchantUpdate(context.Context, *SysChatMerchantUpdateReq) (*RespBase, error) {
-	return nil, status.Error(codes.Unimplemented, "method SysChatMerchantUpdate not implemented")
-}
-func (UnimplementedAdminServer) SysChatMerchantDelete(context.Context, *SysChatMerchantDeleteReq) (*RespBase, error) {
-	return nil, status.Error(codes.Unimplemented, "method SysChatMerchantDelete not implemented")
-}
-func (UnimplementedAdminServer) SysChatMerchantList(context.Context, *SysChatMerchantListReq) (*SysChatMerchantListResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method SysChatMerchantList not implemented")
-}
-func (UnimplementedAdminServer) SysChatMerchantDetail(context.Context, *SysChatMerchantDetailReq) (*SysChatMerchantDetailResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method SysChatMerchantDetail not implemented")
 }
 func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
 func (UnimplementedAdminServer) testEmbeddedByValue()               {}
@@ -2096,96 +2016,6 @@ func _Admin_SysTenantDomainDelete_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Admin_SysChatMerchantCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SysChatMerchantCreateReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AdminServer).SysChatMerchantCreate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Admin_SysChatMerchantCreate_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServer).SysChatMerchantCreate(ctx, req.(*SysChatMerchantCreateReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Admin_SysChatMerchantUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SysChatMerchantUpdateReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AdminServer).SysChatMerchantUpdate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Admin_SysChatMerchantUpdate_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServer).SysChatMerchantUpdate(ctx, req.(*SysChatMerchantUpdateReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Admin_SysChatMerchantDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SysChatMerchantDeleteReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AdminServer).SysChatMerchantDelete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Admin_SysChatMerchantDelete_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServer).SysChatMerchantDelete(ctx, req.(*SysChatMerchantDeleteReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Admin_SysChatMerchantList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SysChatMerchantListReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AdminServer).SysChatMerchantList(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Admin_SysChatMerchantList_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServer).SysChatMerchantList(ctx, req.(*SysChatMerchantListReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Admin_SysChatMerchantDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SysChatMerchantDetailReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AdminServer).SysChatMerchantDetail(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Admin_SysChatMerchantDetail_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServer).SysChatMerchantDetail(ctx, req.(*SysChatMerchantDetailReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2420,26 +2250,6 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SysTenantDomainDelete",
 			Handler:    _Admin_SysTenantDomainDelete_Handler,
-		},
-		{
-			MethodName: "SysChatMerchantCreate",
-			Handler:    _Admin_SysChatMerchantCreate_Handler,
-		},
-		{
-			MethodName: "SysChatMerchantUpdate",
-			Handler:    _Admin_SysChatMerchantUpdate_Handler,
-		},
-		{
-			MethodName: "SysChatMerchantDelete",
-			Handler:    _Admin_SysChatMerchantDelete_Handler,
-		},
-		{
-			MethodName: "SysChatMerchantList",
-			Handler:    _Admin_SysChatMerchantList_Handler,
-		},
-		{
-			MethodName: "SysChatMerchantDetail",
-			Handler:    _Admin_SysChatMerchantDetail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -51,10 +51,12 @@ ifeq ($(shell uname -s),Darwin)
 	@find . -name "*.go" -type f -exec sed -i '' -e 's#"$(MODULE)/wklive/proto/chat"#"wklive/proto/chat"#g' {} +
 	@find . -name "*.go" -type f -exec sed -i '' -e 's#"wklive/services/chat/wklive/proto/chat"#"wklive/proto/chat"#g' {} +
 	@find . -name "*.go" -type f -exec sed -i '' -e 's/chat_chat\./chat\./g' {} +
+	@sed -i '' '/PlatformChatMerchant/d' client/admin/admin.go client/app/app.go
 else
 	@find . -name "*.go" -type f -exec sed -i -e 's#"$(MODULE)/wklive/proto/chat"#"wklive/proto/chat"#g' {} +
 	@find . -name "*.go" -type f -exec sed -i -e 's#"wklive/services/chat/wklive/proto/chat"#"wklive/proto/chat"#g' {} +
 	@find . -name "*.go" -type f -exec sed -i -e 's/chat_chat\./chat\./g' {} +
+	@sed -i '/PlatformChatMerchant/d' client/admin/admin.go client/app/app.go
 endif
 	@echo "✅ [services/chat] imports fixed"
 

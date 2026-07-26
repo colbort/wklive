@@ -28,5 +28,5 @@ func NewSysChatMerchantDeleteLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *SysChatMerchantDeleteLogic) SysChatMerchantDelete(req *types.SysChatMerchantDeleteReq) (resp *types.RespBase, err error) {
-	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.SystemCli.SysChatMerchantDelete)
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.ChatCli.DeletePlatformChatMerchant)
 }

@@ -2,7 +2,6 @@ package svc
 
 import (
 	mq "wklive/common/mq/kafka"
-	chat "wklive/services/chat/client/chat"
 	"wklive/services/system/internal/config"
 	"wklive/services/system/internal/plugins/cronx"
 	"wklive/services/system/internal/tasks"
@@ -12,7 +11,6 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/syncx"
-	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type ServiceContext struct {
@@ -34,8 +32,6 @@ type ServiceContext struct {
 	JobLogModel                 models.SysJobLogModel
 	TenantMode                  models.SysTenantModel
 	TenantDomainModel           models.SysTenantDomainModel
-	ChatMerchantModel           models.SysChatMerchantModel
-	ChatCli                     chat.Chat
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -68,7 +64,5 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		JobLogModel:                 jobLogModel,
 		TenantMode:                  models.NewSysTenantModel(conn, c.CacheRedis),
 		TenantDomainModel:           models.NewSysTenantDomainModel(conn),
-		ChatMerchantModel:           models.NewSysChatMerchantModel(conn, c.CacheRedis),
-		ChatCli:                     chat.NewChat(zrpc.MustNewClient(c.ChatRpc)),
 	}
 }

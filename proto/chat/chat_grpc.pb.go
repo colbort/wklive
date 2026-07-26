@@ -573,6 +573,264 @@ var App_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
+	Platform_CreatePlatformChatMerchant_FullMethodName = "/chat.Platform/CreatePlatformChatMerchant"
+	Platform_UpdatePlatformChatMerchant_FullMethodName = "/chat.Platform/UpdatePlatformChatMerchant"
+	Platform_DeletePlatformChatMerchant_FullMethodName = "/chat.Platform/DeletePlatformChatMerchant"
+	Platform_ListPlatformChatMerchants_FullMethodName  = "/chat.Platform/ListPlatformChatMerchants"
+	Platform_GetPlatformChatMerchant_FullMethodName    = "/chat.Platform/GetPlatformChatMerchant"
+)
+
+// PlatformClient is the client API for Platform service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// 平台总后台客服商户管理服务
+type PlatformClient interface {
+	CreatePlatformChatMerchant(ctx context.Context, in *PlatformChatMerchantCreateReq, opts ...grpc.CallOption) (*CommonResp, error)
+	UpdatePlatformChatMerchant(ctx context.Context, in *PlatformChatMerchantUpdateReq, opts ...grpc.CallOption) (*CommonResp, error)
+	DeletePlatformChatMerchant(ctx context.Context, in *PlatformChatMerchantDeleteReq, opts ...grpc.CallOption) (*CommonResp, error)
+	ListPlatformChatMerchants(ctx context.Context, in *PlatformChatMerchantListReq, opts ...grpc.CallOption) (*PlatformChatMerchantListResp, error)
+	GetPlatformChatMerchant(ctx context.Context, in *PlatformChatMerchantDetailReq, opts ...grpc.CallOption) (*PlatformChatMerchantDetailResp, error)
+}
+
+type platformClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewPlatformClient(cc grpc.ClientConnInterface) PlatformClient {
+	return &platformClient{cc}
+}
+
+func (c *platformClient) CreatePlatformChatMerchant(ctx context.Context, in *PlatformChatMerchantCreateReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, Platform_CreatePlatformChatMerchant_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *platformClient) UpdatePlatformChatMerchant(ctx context.Context, in *PlatformChatMerchantUpdateReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, Platform_UpdatePlatformChatMerchant_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *platformClient) DeletePlatformChatMerchant(ctx context.Context, in *PlatformChatMerchantDeleteReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, Platform_DeletePlatformChatMerchant_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *platformClient) ListPlatformChatMerchants(ctx context.Context, in *PlatformChatMerchantListReq, opts ...grpc.CallOption) (*PlatformChatMerchantListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PlatformChatMerchantListResp)
+	err := c.cc.Invoke(ctx, Platform_ListPlatformChatMerchants_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *platformClient) GetPlatformChatMerchant(ctx context.Context, in *PlatformChatMerchantDetailReq, opts ...grpc.CallOption) (*PlatformChatMerchantDetailResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PlatformChatMerchantDetailResp)
+	err := c.cc.Invoke(ctx, Platform_GetPlatformChatMerchant_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// PlatformServer is the server API for Platform service.
+// All implementations must embed UnimplementedPlatformServer
+// for forward compatibility.
+//
+// 平台总后台客服商户管理服务
+type PlatformServer interface {
+	CreatePlatformChatMerchant(context.Context, *PlatformChatMerchantCreateReq) (*CommonResp, error)
+	UpdatePlatformChatMerchant(context.Context, *PlatformChatMerchantUpdateReq) (*CommonResp, error)
+	DeletePlatformChatMerchant(context.Context, *PlatformChatMerchantDeleteReq) (*CommonResp, error)
+	ListPlatformChatMerchants(context.Context, *PlatformChatMerchantListReq) (*PlatformChatMerchantListResp, error)
+	GetPlatformChatMerchant(context.Context, *PlatformChatMerchantDetailReq) (*PlatformChatMerchantDetailResp, error)
+	mustEmbedUnimplementedPlatformServer()
+}
+
+// UnimplementedPlatformServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedPlatformServer struct{}
+
+func (UnimplementedPlatformServer) CreatePlatformChatMerchant(context.Context, *PlatformChatMerchantCreateReq) (*CommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreatePlatformChatMerchant not implemented")
+}
+func (UnimplementedPlatformServer) UpdatePlatformChatMerchant(context.Context, *PlatformChatMerchantUpdateReq) (*CommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdatePlatformChatMerchant not implemented")
+}
+func (UnimplementedPlatformServer) DeletePlatformChatMerchant(context.Context, *PlatformChatMerchantDeleteReq) (*CommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeletePlatformChatMerchant not implemented")
+}
+func (UnimplementedPlatformServer) ListPlatformChatMerchants(context.Context, *PlatformChatMerchantListReq) (*PlatformChatMerchantListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListPlatformChatMerchants not implemented")
+}
+func (UnimplementedPlatformServer) GetPlatformChatMerchant(context.Context, *PlatformChatMerchantDetailReq) (*PlatformChatMerchantDetailResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPlatformChatMerchant not implemented")
+}
+func (UnimplementedPlatformServer) mustEmbedUnimplementedPlatformServer() {}
+func (UnimplementedPlatformServer) testEmbeddedByValue()                  {}
+
+// UnsafePlatformServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to PlatformServer will
+// result in compilation errors.
+type UnsafePlatformServer interface {
+	mustEmbedUnimplementedPlatformServer()
+}
+
+func RegisterPlatformServer(s grpc.ServiceRegistrar, srv PlatformServer) {
+	// If the following call panics, it indicates UnimplementedPlatformServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&Platform_ServiceDesc, srv)
+}
+
+func _Platform_CreatePlatformChatMerchant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PlatformChatMerchantCreateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PlatformServer).CreatePlatformChatMerchant(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Platform_CreatePlatformChatMerchant_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PlatformServer).CreatePlatformChatMerchant(ctx, req.(*PlatformChatMerchantCreateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Platform_UpdatePlatformChatMerchant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PlatformChatMerchantUpdateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PlatformServer).UpdatePlatformChatMerchant(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Platform_UpdatePlatformChatMerchant_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PlatformServer).UpdatePlatformChatMerchant(ctx, req.(*PlatformChatMerchantUpdateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Platform_DeletePlatformChatMerchant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PlatformChatMerchantDeleteReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PlatformServer).DeletePlatformChatMerchant(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Platform_DeletePlatformChatMerchant_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PlatformServer).DeletePlatformChatMerchant(ctx, req.(*PlatformChatMerchantDeleteReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Platform_ListPlatformChatMerchants_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PlatformChatMerchantListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PlatformServer).ListPlatformChatMerchants(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Platform_ListPlatformChatMerchants_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PlatformServer).ListPlatformChatMerchants(ctx, req.(*PlatformChatMerchantListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Platform_GetPlatformChatMerchant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PlatformChatMerchantDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PlatformServer).GetPlatformChatMerchant(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Platform_GetPlatformChatMerchant_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PlatformServer).GetPlatformChatMerchant(ctx, req.(*PlatformChatMerchantDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Platform_ServiceDesc is the grpc.ServiceDesc for Platform service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Platform_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "chat.Platform",
+	HandlerType: (*PlatformServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreatePlatformChatMerchant",
+			Handler:    _Platform_CreatePlatformChatMerchant_Handler,
+		},
+		{
+			MethodName: "UpdatePlatformChatMerchant",
+			Handler:    _Platform_UpdatePlatformChatMerchant_Handler,
+		},
+		{
+			MethodName: "DeletePlatformChatMerchant",
+			Handler:    _Platform_DeletePlatformChatMerchant_Handler,
+		},
+		{
+			MethodName: "ListPlatformChatMerchants",
+			Handler:    _Platform_ListPlatformChatMerchants_Handler,
+		},
+		{
+			MethodName: "GetPlatformChatMerchant",
+			Handler:    _Platform_GetPlatformChatMerchant_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "proto/chat/chat.proto",
+}
+
+const (
 	Admin_Login_FullMethodName                       = "/chat.Admin/Login"
 	Admin_Logout_FullMethodName                      = "/chat.Admin/Logout"
 	Admin_Profile_FullMethodName                     = "/chat.Admin/Profile"
@@ -624,7 +882,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// 后台客服服务
+// 客服商户及坐席后台服务
 type AdminClient interface {
 	// 登录
 	Login(ctx context.Context, in *ChatAdminLoginReq, opts ...grpc.CallOption) (*ChatAdminLoginResp, error)
@@ -1189,7 +1447,7 @@ type Admin_SubscribeStreamClient = grpc.ServerStreamingClient[ChatWsResponse]
 // All implementations must embed UnimplementedAdminServer
 // for forward compatibility.
 //
-// 后台客服服务
+// 客服商户及坐席后台服务
 type AdminServer interface {
 	// 登录
 	Login(context.Context, *ChatAdminLoginReq) (*ChatAdminLoginResp, error)
@@ -2441,115 +2699,5 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "proto/chat/chat.proto",
-}
-
-const (
-	Chat_SyncChatMerchantUser_FullMethodName = "/chat.Chat/SyncChatMerchantUser"
-)
-
-// ChatClient is the client API for Chat service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// 内部客服服务
-// 面向业务系统/任务系统；不直接暴露给 chat-ui/chat-admin-ui。
-type ChatClient interface {
-	// 同步客服商户主账号
-	SyncChatMerchantUser(ctx context.Context, in *SyncChatMerchantUserReq, opts ...grpc.CallOption) (*SyncChatMerchantUserResp, error)
-}
-
-type chatClient struct {
-	cc grpc.ClientConnInterface
-}
-
-func NewChatClient(cc grpc.ClientConnInterface) ChatClient {
-	return &chatClient{cc}
-}
-
-func (c *chatClient) SyncChatMerchantUser(ctx context.Context, in *SyncChatMerchantUserReq, opts ...grpc.CallOption) (*SyncChatMerchantUserResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SyncChatMerchantUserResp)
-	err := c.cc.Invoke(ctx, Chat_SyncChatMerchantUser_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// ChatServer is the server API for Chat service.
-// All implementations must embed UnimplementedChatServer
-// for forward compatibility.
-//
-// 内部客服服务
-// 面向业务系统/任务系统；不直接暴露给 chat-ui/chat-admin-ui。
-type ChatServer interface {
-	// 同步客服商户主账号
-	SyncChatMerchantUser(context.Context, *SyncChatMerchantUserReq) (*SyncChatMerchantUserResp, error)
-	mustEmbedUnimplementedChatServer()
-}
-
-// UnimplementedChatServer must be embedded to have
-// forward compatible implementations.
-//
-// NOTE: this should be embedded by value instead of pointer to avoid a nil
-// pointer dereference when methods are called.
-type UnimplementedChatServer struct{}
-
-func (UnimplementedChatServer) SyncChatMerchantUser(context.Context, *SyncChatMerchantUserReq) (*SyncChatMerchantUserResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method SyncChatMerchantUser not implemented")
-}
-func (UnimplementedChatServer) mustEmbedUnimplementedChatServer() {}
-func (UnimplementedChatServer) testEmbeddedByValue()              {}
-
-// UnsafeChatServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ChatServer will
-// result in compilation errors.
-type UnsafeChatServer interface {
-	mustEmbedUnimplementedChatServer()
-}
-
-func RegisterChatServer(s grpc.ServiceRegistrar, srv ChatServer) {
-	// If the following call panics, it indicates UnimplementedChatServer was
-	// embedded by pointer and is nil.  This will cause panics if an
-	// unimplemented method is ever invoked, so we test this at initialization
-	// time to prevent it from happening at runtime later due to I/O.
-	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
-		t.testEmbeddedByValue()
-	}
-	s.RegisterService(&Chat_ServiceDesc, srv)
-}
-
-func _Chat_SyncChatMerchantUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SyncChatMerchantUserReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ChatServer).SyncChatMerchantUser(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Chat_SyncChatMerchantUser_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatServer).SyncChatMerchantUser(ctx, req.(*SyncChatMerchantUserReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// Chat_ServiceDesc is the grpc.ServiceDesc for Chat service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var Chat_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "chat.Chat",
-	HandlerType: (*ChatServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "SyncChatMerchantUser",
-			Handler:    _Chat_SyncChatMerchantUser_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
 	Metadata: "proto/chat/chat.proto",
 }

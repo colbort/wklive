@@ -23,7 +23,7 @@
 不过，当前结构存在几个值得关注的风险：
 
 1. `itick -> option` 已整改为 Kafka 权威行情事件，不再构成 RPC 依赖。
-2. `system -> chat` 存在基础服务依赖业务服务的分层耦合。
+2. `system -> chat` 已移除，客服商户主数据归属 Chat。
 3. `liquidity` 的直接依赖较多，故障面和维护复杂度较高。
 4. 最长静态依赖链较长，需要防范同步调用链上的超时和重试放大。
 5. RPC client 在 `ServiceContext` 中集中、无条件构造，可选功能与核心启动流程存在配置耦合。
@@ -42,8 +42,6 @@ graph LR
 
     itick --> system
     user --> system
-    system --> chat
-
     option --> asset
     payment --> asset
     staking --> asset
@@ -60,7 +58,6 @@ graph LR
 | `option` | `asset` |
 | `payment` | `asset` |
 | `staking` | `asset` |
-| `system` | `chat` |
 | `trade` | `asset`、`itick` |
 | `user` | `system` |
 
@@ -86,9 +83,9 @@ itick Outbox -> Kafka market.authoritative-snapshot.v1 -> option
 
 状态：**已整改。**
 
-### 4.2 `system -> chat` 存在分层耦合
+### 4.2 `system -> chat` 分层耦合
 
-当前相关链路：
+原相关链路：
 
 ```text
 user -> system -> chat
@@ -97,24 +94,16 @@ itick -> system -> chat
 
 `system` 通常承担公共配置、租户或系统级能力，而 `chat` 属于具体业务域。公共基础服务反向依赖业务服务，会让依赖层次变得不清晰。
 
-可能影响：
+该依赖已经按以下方式整改：
 
-- `chat` 的故障可能影响 `system` 中使用聊天 RPC 的功能。
-- 上游的 `user`、`itick` 可能通过 `system` 间接受到影响。
-- 未来 `chat` 如果需要调用 `system` 获取租户或配置数据，会形成：
+- 平台管理员认证和 RBAC 继续归属 System。
+- 客服商户主档、主账号和商户配置统一归属 Chat。
+- `admin-api` 完成 System 鉴权后直接调用 Chat Platform RPC。
+- Chat 在一个本地数据库事务内维护 `t_chat_merchant`、`t_chat_user` 和
+  `t_chat_merchant_info`，不再使用跨服务同步补偿。
+- System 已移除 Chat RPC client 和客服商户 RPC 接口。
 
-```text
-system -> chat -> system
-```
-
-建议：
-
-- 明确 `system` 调用 `chat` 的用途和调用入口。
-- 如果用途是聊天商户初始化、配置同步或通知，优先考虑由 `chat` 主动消费系统事件。
-- 如果必须同步调用，建议将相关编排放到 API/BFF 或独立编排服务中，避免放在基础服务内部。
-- 在重构前，禁止新增 `chat -> system` RPC 依赖，并为现有调用设置明确的超时、降级和隔离策略。
-
-风险等级：**中高。**
+状态：**已整改。** 历史数据上线前仍需按 Chat 迁移文档导入。
 
 ### 4.3 `liquidity` 依赖面较大
 
@@ -157,9 +146,9 @@ liquidity -> trade -> asset
 当前较长的静态路径包括：
 
 ```text
-liquidity -> trade -> itick -> system -> chat
 liquidity -> trade -> itick -> option -> asset
-liquidity -> user -> system -> chat
+liquidity -> trade -> itick -> system
+liquidity -> user -> system
 ```
 
 静态依赖路径不代表一次请求一定会完整经过这些服务，但如果业务代码中存在对应的连续同步调用，可能产生：
@@ -204,12 +193,12 @@ liquidity -> user -> system -> chat
 ### P0：防止形成新的循环
 
 - 保持 Itick 与 Option 之间使用行情事件解耦，不重新引入双向同步 RPC。
-- 禁止新增 `chat -> system` RPC，除非先处理现有的 `system -> chat`。
+- 保持 System 与 Chat 业务数据边界，不重新引入双向同步 RPC。
 - 在代码评审或 CI 中维护并检查 RPC 依赖图。
 
 ### P1：确认并调整依赖方向
 
-- 分析 `system -> chat`，尽量将业务编排移出 `system`。
+- `system -> chat` 已整改；上线前完成历史客服商户主数据迁移。
 
 ### P2：降低调用链和故障面
 
@@ -219,10 +208,6 @@ liquidity -> user -> system -> chat
 
 ## 6. 总结
 
-当前 RPC 依赖图是无环图。`itick -> option` 已改为 Kafka 事件，剩余需要优先关注的潜在反向依赖是：
-
-```text
-system -> chat
-```
-
-建议继续处理 `system -> chat` 的业务合理性，并整理 `liquidity` 的多下游依赖和运行时同步调用链。
+当前 RPC 依赖图是无环图。`itick -> option` 已改为 Kafka 事件，
+`system -> chat` 也已通过调整数据归属和 API 编排移除。后续重点是整理
+`liquidity` 的多下游依赖和运行时同步调用链。

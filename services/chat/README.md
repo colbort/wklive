@@ -352,8 +352,8 @@ chat_group_id
 
 身份聚合来源:
 
-- `services/system`: 客服商户主档。
-- `services/chat`: 登录账号、坐席资料、客服分组、商户自己的快捷回复、工单和会话数据。
+- `services/system`: 平台管理员身份、认证和 RBAC。
+- `services/chat`: 客服商户主档、商户主账号、坐席资料、客服分组、快捷回复、工单和会话数据。
 
 客服商户管理坐席时，`chat-api` 直接在 `services/chat` 创建或更新 `t_chat_user`；如果该用户需要接待，再创建或更新 `t_chat_agent` 业务资料。
 
@@ -365,23 +365,15 @@ chat_group_id
 - 问题分类: `t_chat_category`
 - 工单/离线留言: `t_chat_work_order`
 
-`services/system` 只需要管理客服商户主体 `sys_chat_merchant`；不要管理客服账号、会话、消息、工单、快捷回复等客服业务数据。
-
-`services/system` 创建、更新、删除 `sys_chat_merchant` 时，需要调用 `ChatInternal.SyncChatMerchantUser` 同步 `t_chat_user` 中的商户主账号记录:
+平台管理端通过 `services/chat.Platform` 管理 `t_chat_merchant`。Chat 在同一个本地数据库事务中同时维护商户主档、商户主账号和商户配置，`services/system` 不再保存或同步客服商户业务数据:
 
 ```text
-create sys_chat_merchant
-  -> SyncChatMerchantUser(UPSERT)
-  -> upsert t_chat_user(user_type = MERCHANT, is_owner = YES)
-
-update sys_chat_merchant
-  -> SyncChatMerchantUser(UPSERT)
-  -> update t_chat_user nickname/enabled/contact fields
-
-delete/disable sys_chat_merchant
-  -> SyncChatMerchantUser(DELETE)
-  -> disable t_chat_user and merchant-scoped chat data entry
+admin-api (System 认证/RBAC + subject_domain=system)
+  -> Chat.Platform PlatformChatMerchant*
+  -> transaction(t_chat_merchant + t_chat_user + t_chat_merchant_info)
 ```
+
+历史 `sys_chat_merchant` 数据的上线迁移参见 `docs/chat-merchant-ownership-migration.md`。
 
 推荐判断规则:
 

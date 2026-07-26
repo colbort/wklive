@@ -94,8 +94,6 @@ type (
 	SendUserTypingReq              = chat.SendUserTypingReq
 	SubmitChatSatisfactionReq      = chat.SubmitChatSatisfactionReq
 	SubscribeRequest               = chat.SubscribeRequest
-	SyncChatMerchantUserReq        = chat.SyncChatMerchantUserReq
-	SyncChatMerchantUserResp       = chat.SyncChatMerchantUserResp
 	UpdateChatAdminProfileReq      = chat.UpdateChatAdminProfileReq
 	UpdateChatAgentReq             = chat.UpdateChatAgentReq
 	UpdateChatAgentStatusReq       = chat.UpdateChatAgentStatusReq

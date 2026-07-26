@@ -737,78 +737,6 @@ message ResolveTenantDomainResp {
   string target_origin = 3;
 }
 
-// 客服商户管理
-message SysChatMerchantItem {
-  int64 id = 1;
-  string merchant_code = 2;
-  string merchant_name = 3;
-  common.Enable enabled = 4; // 状态,0表示全部，1表示启用，2表示禁用
-  int64 expire_time = 5;
-  string contact_name = 6;
-  string contact_phone = 7;
-  string contact_email = 8;
-  string remark = 9;
-  string create_by = 10;
-  int64 create_times = 11;
-  string update_by = 12;
-  int64 update_times = 13;
-}
-
-message SysChatMerchantListReq {
-  common.PageReq page = 1;
-  string keyword = 2;
-  common.Enable enabled = 3; // 状态,0表示全部，1表示启用，2表示禁用
-  string merchant_code = 4;
-  string merchant_name = 5;
-  string contact_name = 6;
-  string contact_phone = 7;
-  string contact_email = 8;
-}
-
-message SysChatMerchantListResp {
-  common.RespBase base = 1;
-  repeated SysChatMerchantItem data = 2;
-}
-
-message SysChatMerchantCreateReq {
-  string merchant_code = 1;
-  string merchant_name = 2;
-  common.Enable enabled = 3; // 状态,0表示全部，1表示启用，2表示禁用
-  int64 expire_time = 4;
-  string contact_name = 5;
-  string contact_phone = 6;
-  string contact_email = 7;
-  string remark = 8;
-  string password = 9; // 客服商户主账号登录密码
-}
-
-message SysChatMerchantUpdateReq {
-  int64 id = 1;
-  string merchant_code = 2;
-  string merchant_name = 3;
-  common.Enable enabled = 4; // 状态,0表示全部，1表示启用，2表示禁用
-  int64 expire_time = 5;
-  string contact_name = 6;
-  string contact_phone = 7;
-  string contact_email = 8;
-  string remark = 9;
-  string password = 10; // 不为空时重置客服商户主账号密码
-}
-
-message SysChatMerchantDeleteReq {
-  int64 id = 1;
-}
-
-message SysChatMerchantDetailReq {
-  optional int64 id = 1;
-  optional string merchant_code = 2;
-}
-
-message SysChatMerchantDetailResp {
-  common.RespBase base = 1;
-  SysChatMerchantItem data = 2;
-}
-
 //////////////////////
 // Service
 //////////////////////
@@ -870,11 +798,6 @@ service Admin {
   rpc SysTenantDomainCreate(SysTenantDomainCreateReq) returns (RespBase);
   rpc SysTenantDomainUpdate(SysTenantDomainUpdateReq) returns (RespBase);
   rpc SysTenantDomainDelete(SysTenantDomainDeleteReq) returns (RespBase);
-  rpc SysChatMerchantCreate(SysChatMerchantCreateReq) returns (RespBase);
-  rpc SysChatMerchantUpdate(SysChatMerchantUpdateReq) returns (RespBase);
-  rpc SysChatMerchantDelete(SysChatMerchantDeleteReq) returns (RespBase);
-  rpc SysChatMerchantList(SysChatMerchantListReq) returns (SysChatMerchantListResp);
-  rpc SysChatMerchantDetail(SysChatMerchantDetailReq) returns (SysChatMerchantDetailResp);
 }
 
 service App {

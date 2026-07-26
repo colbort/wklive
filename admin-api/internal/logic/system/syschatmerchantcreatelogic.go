@@ -28,5 +28,5 @@ func NewSysChatMerchantCreateLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *SysChatMerchantCreateLogic) SysChatMerchantCreate(req *types.SysChatMerchantCreateReq) (resp *types.RespBase, err error) {
-	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.SystemCli.SysChatMerchantCreate)
+	return logicutil.Proxy[types.RespBase](l.ctx, req, l.svcCtx.ChatCli.CreatePlatformChatMerchant)
 }

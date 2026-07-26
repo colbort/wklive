@@ -14,6 +14,7 @@ import (
 	"wklive/common/reqenc"
 	"wklive/common/utils"
 	"wklive/proto/asset"
+	"wklive/proto/chat"
 	"wklive/proto/itick"
 	"wklive/proto/option"
 	"wklive/proto/payment"
@@ -31,6 +32,7 @@ import (
 type ServiceContext struct {
 	Config            config.Config
 	SystemCli         system.AdminClient
+	ChatCli           chat.PlatformClient
 	UserCli           user.AdminClient
 	PaymentCli        payment.AdminClient
 	ItickCli          itick.AdminClient
@@ -51,7 +53,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		invoker grpc.UnaryInvoker,
 		opts ...grpc.CallOption,
 	) error {
-		pairs := make([]string, 0)
+		pairs := []string{utils.CtxKeySubjectDomain, utils.SubjectDomainSystem}
 		if userId, err := utils.GetUserIdFromCtx(ctx); err == nil {
 			pairs = append(pairs, utils.CtxKeyUid, strconv.FormatInt(userId, 10))
 		}
@@ -73,6 +75,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		return invoker(ctx, method, req, reply, cc, opts...)
 	})
 	systemCli := zrpc.MustNewClient(c.SystemRpc, options)
+	chatCli := zrpc.MustNewClient(c.ChatRpc, options)
 	userCli := zrpc.MustNewClient(c.UserRpc, options)
 	paymentCli := zrpc.MustNewClient(c.PaymentRpc, options)
 	itickCli := zrpc.MustNewClient(c.ItickRpc, options)
@@ -93,6 +96,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:          c,
 		SystemCli:       system.NewAdminClient(systemCli.Conn()),
+		ChatCli:         chat.NewPlatformClient(chatCli.Conn()),
 		UserCli:         user.NewAdminClient(userCli.Conn()),
 		PaymentCli:      payment.NewAdminClient(paymentCli.Conn()),
 		ItickCli:        itick.NewAdminClient(itickCli.Conn()),

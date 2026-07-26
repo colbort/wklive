@@ -7209,671 +7209,6 @@ func (x *ResolveTenantDomainResp) GetTargetOrigin() string {
 	return ""
 }
 
-// 客服商户管理
-type SysChatMerchantItem struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	MerchantCode  string                 `protobuf:"bytes,2,opt,name=merchant_code,json=merchantCode,proto3" json:"merchant_code,omitempty"`
-	MerchantName  string                 `protobuf:"bytes,3,opt,name=merchant_name,json=merchantName,proto3" json:"merchant_name,omitempty"`
-	Enabled       common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
-	ExpireTime    int64                  `protobuf:"varint,5,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`
-	ContactName   string                 `protobuf:"bytes,6,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
-	ContactPhone  string                 `protobuf:"bytes,7,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
-	ContactEmail  string                 `protobuf:"bytes,8,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
-	Remark        string                 `protobuf:"bytes,9,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreateBy      string                 `protobuf:"bytes,10,opt,name=create_by,json=createBy,proto3" json:"create_by,omitempty"`
-	CreateTimes   int64                  `protobuf:"varint,11,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateBy      string                 `protobuf:"bytes,12,opt,name=update_by,json=updateBy,proto3" json:"update_by,omitempty"`
-	UpdateTimes   int64                  `protobuf:"varint,13,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SysChatMerchantItem) Reset() {
-	*x = SysChatMerchantItem{}
-	mi := &file_proto_system_system_proto_msgTypes[103]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SysChatMerchantItem) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SysChatMerchantItem) ProtoMessage() {}
-
-func (x *SysChatMerchantItem) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[103]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SysChatMerchantItem.ProtoReflect.Descriptor instead.
-func (*SysChatMerchantItem) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{103}
-}
-
-func (x *SysChatMerchantItem) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *SysChatMerchantItem) GetMerchantCode() string {
-	if x != nil {
-		return x.MerchantCode
-	}
-	return ""
-}
-
-func (x *SysChatMerchantItem) GetMerchantName() string {
-	if x != nil {
-		return x.MerchantName
-	}
-	return ""
-}
-
-func (x *SysChatMerchantItem) GetEnabled() common.Enable {
-	if x != nil {
-		return x.Enabled
-	}
-	return common.Enable(0)
-}
-
-func (x *SysChatMerchantItem) GetExpireTime() int64 {
-	if x != nil {
-		return x.ExpireTime
-	}
-	return 0
-}
-
-func (x *SysChatMerchantItem) GetContactName() string {
-	if x != nil {
-		return x.ContactName
-	}
-	return ""
-}
-
-func (x *SysChatMerchantItem) GetContactPhone() string {
-	if x != nil {
-		return x.ContactPhone
-	}
-	return ""
-}
-
-func (x *SysChatMerchantItem) GetContactEmail() string {
-	if x != nil {
-		return x.ContactEmail
-	}
-	return ""
-}
-
-func (x *SysChatMerchantItem) GetRemark() string {
-	if x != nil {
-		return x.Remark
-	}
-	return ""
-}
-
-func (x *SysChatMerchantItem) GetCreateBy() string {
-	if x != nil {
-		return x.CreateBy
-	}
-	return ""
-}
-
-func (x *SysChatMerchantItem) GetCreateTimes() int64 {
-	if x != nil {
-		return x.CreateTimes
-	}
-	return 0
-}
-
-func (x *SysChatMerchantItem) GetUpdateBy() string {
-	if x != nil {
-		return x.UpdateBy
-	}
-	return ""
-}
-
-func (x *SysChatMerchantItem) GetUpdateTimes() int64 {
-	if x != nil {
-		return x.UpdateTimes
-	}
-	return 0
-}
-
-type SysChatMerchantListReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
-	Keyword       string                 `protobuf:"bytes,2,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	Enabled       common.Enable          `protobuf:"varint,3,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
-	MerchantCode  string                 `protobuf:"bytes,4,opt,name=merchant_code,json=merchantCode,proto3" json:"merchant_code,omitempty"`
-	MerchantName  string                 `protobuf:"bytes,5,opt,name=merchant_name,json=merchantName,proto3" json:"merchant_name,omitempty"`
-	ContactName   string                 `protobuf:"bytes,6,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
-	ContactPhone  string                 `protobuf:"bytes,7,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
-	ContactEmail  string                 `protobuf:"bytes,8,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SysChatMerchantListReq) Reset() {
-	*x = SysChatMerchantListReq{}
-	mi := &file_proto_system_system_proto_msgTypes[104]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SysChatMerchantListReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SysChatMerchantListReq) ProtoMessage() {}
-
-func (x *SysChatMerchantListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[104]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SysChatMerchantListReq.ProtoReflect.Descriptor instead.
-func (*SysChatMerchantListReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{104}
-}
-
-func (x *SysChatMerchantListReq) GetPage() *common.PageReq {
-	if x != nil {
-		return x.Page
-	}
-	return nil
-}
-
-func (x *SysChatMerchantListReq) GetKeyword() string {
-	if x != nil {
-		return x.Keyword
-	}
-	return ""
-}
-
-func (x *SysChatMerchantListReq) GetEnabled() common.Enable {
-	if x != nil {
-		return x.Enabled
-	}
-	return common.Enable(0)
-}
-
-func (x *SysChatMerchantListReq) GetMerchantCode() string {
-	if x != nil {
-		return x.MerchantCode
-	}
-	return ""
-}
-
-func (x *SysChatMerchantListReq) GetMerchantName() string {
-	if x != nil {
-		return x.MerchantName
-	}
-	return ""
-}
-
-func (x *SysChatMerchantListReq) GetContactName() string {
-	if x != nil {
-		return x.ContactName
-	}
-	return ""
-}
-
-func (x *SysChatMerchantListReq) GetContactPhone() string {
-	if x != nil {
-		return x.ContactPhone
-	}
-	return ""
-}
-
-func (x *SysChatMerchantListReq) GetContactEmail() string {
-	if x != nil {
-		return x.ContactEmail
-	}
-	return ""
-}
-
-type SysChatMerchantListResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          []*SysChatMerchantItem `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SysChatMerchantListResp) Reset() {
-	*x = SysChatMerchantListResp{}
-	mi := &file_proto_system_system_proto_msgTypes[105]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SysChatMerchantListResp) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SysChatMerchantListResp) ProtoMessage() {}
-
-func (x *SysChatMerchantListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[105]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SysChatMerchantListResp.ProtoReflect.Descriptor instead.
-func (*SysChatMerchantListResp) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{105}
-}
-
-func (x *SysChatMerchantListResp) GetBase() *common.RespBase {
-	if x != nil {
-		return x.Base
-	}
-	return nil
-}
-
-func (x *SysChatMerchantListResp) GetData() []*SysChatMerchantItem {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
-type SysChatMerchantCreateReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	MerchantCode  string                 `protobuf:"bytes,1,opt,name=merchant_code,json=merchantCode,proto3" json:"merchant_code,omitempty"`
-	MerchantName  string                 `protobuf:"bytes,2,opt,name=merchant_name,json=merchantName,proto3" json:"merchant_name,omitempty"`
-	Enabled       common.Enable          `protobuf:"varint,3,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
-	ExpireTime    int64                  `protobuf:"varint,4,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`
-	ContactName   string                 `protobuf:"bytes,5,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
-	ContactPhone  string                 `protobuf:"bytes,6,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
-	ContactEmail  string                 `protobuf:"bytes,7,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
-	Remark        string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`
-	Password      string                 `protobuf:"bytes,9,opt,name=password,proto3" json:"password,omitempty"` // 客服商户主账号登录密码
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SysChatMerchantCreateReq) Reset() {
-	*x = SysChatMerchantCreateReq{}
-	mi := &file_proto_system_system_proto_msgTypes[106]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SysChatMerchantCreateReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SysChatMerchantCreateReq) ProtoMessage() {}
-
-func (x *SysChatMerchantCreateReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[106]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SysChatMerchantCreateReq.ProtoReflect.Descriptor instead.
-func (*SysChatMerchantCreateReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{106}
-}
-
-func (x *SysChatMerchantCreateReq) GetMerchantCode() string {
-	if x != nil {
-		return x.MerchantCode
-	}
-	return ""
-}
-
-func (x *SysChatMerchantCreateReq) GetMerchantName() string {
-	if x != nil {
-		return x.MerchantName
-	}
-	return ""
-}
-
-func (x *SysChatMerchantCreateReq) GetEnabled() common.Enable {
-	if x != nil {
-		return x.Enabled
-	}
-	return common.Enable(0)
-}
-
-func (x *SysChatMerchantCreateReq) GetExpireTime() int64 {
-	if x != nil {
-		return x.ExpireTime
-	}
-	return 0
-}
-
-func (x *SysChatMerchantCreateReq) GetContactName() string {
-	if x != nil {
-		return x.ContactName
-	}
-	return ""
-}
-
-func (x *SysChatMerchantCreateReq) GetContactPhone() string {
-	if x != nil {
-		return x.ContactPhone
-	}
-	return ""
-}
-
-func (x *SysChatMerchantCreateReq) GetContactEmail() string {
-	if x != nil {
-		return x.ContactEmail
-	}
-	return ""
-}
-
-func (x *SysChatMerchantCreateReq) GetRemark() string {
-	if x != nil {
-		return x.Remark
-	}
-	return ""
-}
-
-func (x *SysChatMerchantCreateReq) GetPassword() string {
-	if x != nil {
-		return x.Password
-	}
-	return ""
-}
-
-type SysChatMerchantUpdateReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	MerchantCode  string                 `protobuf:"bytes,2,opt,name=merchant_code,json=merchantCode,proto3" json:"merchant_code,omitempty"`
-	MerchantName  string                 `protobuf:"bytes,3,opt,name=merchant_name,json=merchantName,proto3" json:"merchant_name,omitempty"`
-	Enabled       common.Enable          `protobuf:"varint,4,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
-	ExpireTime    int64                  `protobuf:"varint,5,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`
-	ContactName   string                 `protobuf:"bytes,6,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
-	ContactPhone  string                 `protobuf:"bytes,7,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
-	ContactEmail  string                 `protobuf:"bytes,8,opt,name=contact_email,json=contactEmail,proto3" json:"contact_email,omitempty"`
-	Remark        string                 `protobuf:"bytes,9,opt,name=remark,proto3" json:"remark,omitempty"`
-	Password      string                 `protobuf:"bytes,10,opt,name=password,proto3" json:"password,omitempty"` // 不为空时重置客服商户主账号密码
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SysChatMerchantUpdateReq) Reset() {
-	*x = SysChatMerchantUpdateReq{}
-	mi := &file_proto_system_system_proto_msgTypes[107]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SysChatMerchantUpdateReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SysChatMerchantUpdateReq) ProtoMessage() {}
-
-func (x *SysChatMerchantUpdateReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[107]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SysChatMerchantUpdateReq.ProtoReflect.Descriptor instead.
-func (*SysChatMerchantUpdateReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{107}
-}
-
-func (x *SysChatMerchantUpdateReq) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *SysChatMerchantUpdateReq) GetMerchantCode() string {
-	if x != nil {
-		return x.MerchantCode
-	}
-	return ""
-}
-
-func (x *SysChatMerchantUpdateReq) GetMerchantName() string {
-	if x != nil {
-		return x.MerchantName
-	}
-	return ""
-}
-
-func (x *SysChatMerchantUpdateReq) GetEnabled() common.Enable {
-	if x != nil {
-		return x.Enabled
-	}
-	return common.Enable(0)
-}
-
-func (x *SysChatMerchantUpdateReq) GetExpireTime() int64 {
-	if x != nil {
-		return x.ExpireTime
-	}
-	return 0
-}
-
-func (x *SysChatMerchantUpdateReq) GetContactName() string {
-	if x != nil {
-		return x.ContactName
-	}
-	return ""
-}
-
-func (x *SysChatMerchantUpdateReq) GetContactPhone() string {
-	if x != nil {
-		return x.ContactPhone
-	}
-	return ""
-}
-
-func (x *SysChatMerchantUpdateReq) GetContactEmail() string {
-	if x != nil {
-		return x.ContactEmail
-	}
-	return ""
-}
-
-func (x *SysChatMerchantUpdateReq) GetRemark() string {
-	if x != nil {
-		return x.Remark
-	}
-	return ""
-}
-
-func (x *SysChatMerchantUpdateReq) GetPassword() string {
-	if x != nil {
-		return x.Password
-	}
-	return ""
-}
-
-type SysChatMerchantDeleteReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SysChatMerchantDeleteReq) Reset() {
-	*x = SysChatMerchantDeleteReq{}
-	mi := &file_proto_system_system_proto_msgTypes[108]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SysChatMerchantDeleteReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SysChatMerchantDeleteReq) ProtoMessage() {}
-
-func (x *SysChatMerchantDeleteReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[108]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SysChatMerchantDeleteReq.ProtoReflect.Descriptor instead.
-func (*SysChatMerchantDeleteReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{108}
-}
-
-func (x *SysChatMerchantDeleteReq) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-type SysChatMerchantDetailReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
-	MerchantCode  *string                `protobuf:"bytes,2,opt,name=merchant_code,json=merchantCode,proto3,oneof" json:"merchant_code,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SysChatMerchantDetailReq) Reset() {
-	*x = SysChatMerchantDetailReq{}
-	mi := &file_proto_system_system_proto_msgTypes[109]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SysChatMerchantDetailReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SysChatMerchantDetailReq) ProtoMessage() {}
-
-func (x *SysChatMerchantDetailReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[109]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SysChatMerchantDetailReq.ProtoReflect.Descriptor instead.
-func (*SysChatMerchantDetailReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{109}
-}
-
-func (x *SysChatMerchantDetailReq) GetId() int64 {
-	if x != nil && x.Id != nil {
-		return *x.Id
-	}
-	return 0
-}
-
-func (x *SysChatMerchantDetailReq) GetMerchantCode() string {
-	if x != nil && x.MerchantCode != nil {
-		return *x.MerchantCode
-	}
-	return ""
-}
-
-type SysChatMerchantDetailResp struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Data          *SysChatMerchantItem   `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SysChatMerchantDetailResp) Reset() {
-	*x = SysChatMerchantDetailResp{}
-	mi := &file_proto_system_system_proto_msgTypes[110]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SysChatMerchantDetailResp) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SysChatMerchantDetailResp) ProtoMessage() {}
-
-func (x *SysChatMerchantDetailResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[110]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SysChatMerchantDetailResp.ProtoReflect.Descriptor instead.
-func (*SysChatMerchantDetailResp) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{110}
-}
-
-func (x *SysChatMerchantDetailResp) GetBase() *common.RespBase {
-	if x != nil {
-		return x.Base
-	}
-	return nil
-}
-
-func (x *SysChatMerchantDetailResp) GetData() *SysChatMerchantItem {
-	if x != nil {
-		return x.Data
-	}
-	return nil
-}
-
 var File_proto_system_system_proto protoreflect.FileDescriptor
 
 const file_proto_system_system_proto_rawDesc = "" +
@@ -8455,69 +7790,7 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x17ResolveTenantDomainResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12?\n" +
 	"\rsource_status\x18\x02 \x01(\x0e2\x1a.system.TenantDomainStatusR\fsourceStatus\x12#\n" +
-	"\rtarget_origin\x18\x03 \x01(\tR\ftargetOrigin\"\xbf\x03\n" +
-	"\x13SysChatMerchantItem\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
-	"\rmerchant_code\x18\x02 \x01(\tR\fmerchantCode\x12#\n" +
-	"\rmerchant_name\x18\x03 \x01(\tR\fmerchantName\x12(\n" +
-	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x1f\n" +
-	"\vexpire_time\x18\x05 \x01(\x03R\n" +
-	"expireTime\x12!\n" +
-	"\fcontact_name\x18\x06 \x01(\tR\vcontactName\x12#\n" +
-	"\rcontact_phone\x18\a \x01(\tR\fcontactPhone\x12#\n" +
-	"\rcontact_email\x18\b \x01(\tR\fcontactEmail\x12\x16\n" +
-	"\x06remark\x18\t \x01(\tR\x06remark\x12\x1b\n" +
-	"\tcreate_by\x18\n" +
-	" \x01(\tR\bcreateBy\x12!\n" +
-	"\fcreate_times\x18\v \x01(\x03R\vcreateTimes\x12\x1b\n" +
-	"\tupdate_by\x18\f \x01(\tR\bupdateBy\x12!\n" +
-	"\fupdate_times\x18\r \x01(\x03R\vupdateTimes\"\xb8\x02\n" +
-	"\x16SysChatMerchantListReq\x12#\n" +
-	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x18\n" +
-	"\akeyword\x18\x02 \x01(\tR\akeyword\x12(\n" +
-	"\aenabled\x18\x03 \x01(\x0e2\x0e.common.EnableR\aenabled\x12#\n" +
-	"\rmerchant_code\x18\x04 \x01(\tR\fmerchantCode\x12#\n" +
-	"\rmerchant_name\x18\x05 \x01(\tR\fmerchantName\x12!\n" +
-	"\fcontact_name\x18\x06 \x01(\tR\vcontactName\x12#\n" +
-	"\rcontact_phone\x18\a \x01(\tR\fcontactPhone\x12#\n" +
-	"\rcontact_email\x18\b \x01(\tR\fcontactEmail\"p\n" +
-	"\x17SysChatMerchantListResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12/\n" +
-	"\x04data\x18\x02 \x03(\v2\x1b.system.SysChatMerchantItemR\x04data\"\xd0\x02\n" +
-	"\x18SysChatMerchantCreateReq\x12#\n" +
-	"\rmerchant_code\x18\x01 \x01(\tR\fmerchantCode\x12#\n" +
-	"\rmerchant_name\x18\x02 \x01(\tR\fmerchantName\x12(\n" +
-	"\aenabled\x18\x03 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x1f\n" +
-	"\vexpire_time\x18\x04 \x01(\x03R\n" +
-	"expireTime\x12!\n" +
-	"\fcontact_name\x18\x05 \x01(\tR\vcontactName\x12#\n" +
-	"\rcontact_phone\x18\x06 \x01(\tR\fcontactPhone\x12#\n" +
-	"\rcontact_email\x18\a \x01(\tR\fcontactEmail\x12\x16\n" +
-	"\x06remark\x18\b \x01(\tR\x06remark\x12\x1a\n" +
-	"\bpassword\x18\t \x01(\tR\bpassword\"\xe0\x02\n" +
-	"\x18SysChatMerchantUpdateReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
-	"\rmerchant_code\x18\x02 \x01(\tR\fmerchantCode\x12#\n" +
-	"\rmerchant_name\x18\x03 \x01(\tR\fmerchantName\x12(\n" +
-	"\aenabled\x18\x04 \x01(\x0e2\x0e.common.EnableR\aenabled\x12\x1f\n" +
-	"\vexpire_time\x18\x05 \x01(\x03R\n" +
-	"expireTime\x12!\n" +
-	"\fcontact_name\x18\x06 \x01(\tR\vcontactName\x12#\n" +
-	"\rcontact_phone\x18\a \x01(\tR\fcontactPhone\x12#\n" +
-	"\rcontact_email\x18\b \x01(\tR\fcontactEmail\x12\x16\n" +
-	"\x06remark\x18\t \x01(\tR\x06remark\x12\x1a\n" +
-	"\bpassword\x18\n" +
-	" \x01(\tR\bpassword\"*\n" +
-	"\x18SysChatMerchantDeleteReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"r\n" +
-	"\x18SysChatMerchantDetailReq\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12(\n" +
-	"\rmerchant_code\x18\x02 \x01(\tH\x01R\fmerchantCode\x88\x01\x01B\x05\n" +
-	"\x03_idB\x10\n" +
-	"\x0e_merchant_code\"r\n" +
-	"\x19SysChatMerchantDetailResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12/\n" +
-	"\x04data\x18\x02 \x01(\v2\x1b.system.SysChatMerchantItemR\x04data2\xb8!\n" +
+	"\rtarget_origin\x18\x03 \x01(\tR\ftargetOrigin2\x9b\x1e\n" +
 	"\x05Admin\x12,\n" +
 	"\x05Login\x12\x10.system.LoginReq\x1a\x11.system.LoginResp\x120\n" +
 	"\n" +
@@ -8576,12 +7849,7 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x13SysTenantDomainList\x12\x1e.system.SysTenantDomainListReq\x1a\x1f.system.SysTenantDomainListResp\x12K\n" +
 	"\x15SysTenantDomainCreate\x12 .system.SysTenantDomainCreateReq\x1a\x10.system.RespBase\x12K\n" +
 	"\x15SysTenantDomainUpdate\x12 .system.SysTenantDomainUpdateReq\x1a\x10.system.RespBase\x12K\n" +
-	"\x15SysTenantDomainDelete\x12 .system.SysTenantDomainDeleteReq\x1a\x10.system.RespBase\x12K\n" +
-	"\x15SysChatMerchantCreate\x12 .system.SysChatMerchantCreateReq\x1a\x10.system.RespBase\x12K\n" +
-	"\x15SysChatMerchantUpdate\x12 .system.SysChatMerchantUpdateReq\x1a\x10.system.RespBase\x12K\n" +
-	"\x15SysChatMerchantDelete\x12 .system.SysChatMerchantDeleteReq\x1a\x10.system.RespBase\x12V\n" +
-	"\x13SysChatMerchantList\x12\x1e.system.SysChatMerchantListReq\x1a\x1f.system.SysChatMerchantListResp\x12\\\n" +
-	"\x15SysChatMerchantDetail\x12 .system.SysChatMerchantDetailReq\x1a!.system.SysChatMerchantDetailResp2\xe8\x01\n" +
+	"\x15SysTenantDomainDelete\x12 .system.SysTenantDomainDeleteReq\x1a\x10.system.RespBase2\xe8\x01\n" +
 	"\x03App\x12J\n" +
 	"\x0fSysConfigDetail\x12\x1a.system.SysConfigDetailReq\x1a\x1b.system.SysConfigDetailResp\x12I\n" +
 	"\x14SendVerificationCode\x12\x1f.system.SendVerificationCodeReq\x1a\x10.system.RespBase\x12J\n" +
@@ -8605,7 +7873,7 @@ func file_proto_system_system_proto_rawDescGZIP() []byte {
 	return file_proto_system_system_proto_rawDescData
 }
 
-var file_proto_system_system_proto_msgTypes = make([]protoimpl.MessageInfo, 111)
+var file_proto_system_system_proto_msgTypes = make([]protoimpl.MessageInfo, 103)
 var file_proto_system_system_proto_goTypes = []any{
 	(*Empty)(nil),                            // 0: system.Empty
 	(*RespBase)(nil),                         // 1: system.RespBase
@@ -8710,329 +7978,302 @@ var file_proto_system_system_proto_goTypes = []any{
 	(*SysTenantDomainDeleteReq)(nil),         // 100: system.SysTenantDomainDeleteReq
 	(*ResolveTenantDomainReq)(nil),           // 101: system.ResolveTenantDomainReq
 	(*ResolveTenantDomainResp)(nil),          // 102: system.ResolveTenantDomainResp
-	(*SysChatMerchantItem)(nil),              // 103: system.SysChatMerchantItem
-	(*SysChatMerchantListReq)(nil),           // 104: system.SysChatMerchantListReq
-	(*SysChatMerchantListResp)(nil),          // 105: system.SysChatMerchantListResp
-	(*SysChatMerchantCreateReq)(nil),         // 106: system.SysChatMerchantCreateReq
-	(*SysChatMerchantUpdateReq)(nil),         // 107: system.SysChatMerchantUpdateReq
-	(*SysChatMerchantDeleteReq)(nil),         // 108: system.SysChatMerchantDeleteReq
-	(*SysChatMerchantDetailReq)(nil),         // 109: system.SysChatMerchantDetailReq
-	(*SysChatMerchantDetailResp)(nil),        // 110: system.SysChatMerchantDetailResp
-	(*common.RespBase)(nil),                  // 111: common.RespBase
-	(ApplicationScope)(0),                    // 112: system.ApplicationScope
-	(common.Enable)(0),                       // 113: common.Enable
-	(UserType)(0),                            // 114: system.UserType
-	(common.YesNo)(0),                        // 115: common.YesNo
-	(MenuType)(0),                            // 116: system.MenuType
-	(common.Switch)(0),                       // 117: common.Switch
-	(RequestMethod)(0),                       // 118: system.RequestMethod
-	(*common.PageReq)(nil),                   // 119: common.PageReq
-	(SysConfigType)(0),                       // 120: system.SysConfigType
-	(VerificationCodeChannel)(0),             // 121: system.VerificationCodeChannel
-	(VerificationCodeScene)(0),               // 122: system.VerificationCodeScene
-	(VerificationCodeStatus)(0),              // 123: system.VerificationCodeStatus
-	(JobStatus)(0),                           // 124: system.JobStatus
-	(TenantDomainStatus)(0),                  // 125: system.TenantDomainStatus
+	(*common.RespBase)(nil),                  // 103: common.RespBase
+	(ApplicationScope)(0),                    // 104: system.ApplicationScope
+	(common.Enable)(0),                       // 105: common.Enable
+	(UserType)(0),                            // 106: system.UserType
+	(common.YesNo)(0),                        // 107: common.YesNo
+	(MenuType)(0),                            // 108: system.MenuType
+	(common.Switch)(0),                       // 109: common.Switch
+	(RequestMethod)(0),                       // 110: system.RequestMethod
+	(*common.PageReq)(nil),                   // 111: common.PageReq
+	(SysConfigType)(0),                       // 112: system.SysConfigType
+	(VerificationCodeChannel)(0),             // 113: system.VerificationCodeChannel
+	(VerificationCodeScene)(0),               // 114: system.VerificationCodeScene
+	(VerificationCodeStatus)(0),              // 115: system.VerificationCodeStatus
+	(JobStatus)(0),                           // 116: system.JobStatus
+	(TenantDomainStatus)(0),                  // 117: system.TenantDomainStatus
 }
 var file_proto_system_system_proto_depIdxs = []int32{
-	111, // 0: system.RespBase.base:type_name -> common.RespBase
-	112, // 1: system.LoginReq.app_scope:type_name -> system.ApplicationScope
-	111, // 2: system.LoginResp.base:type_name -> common.RespBase
+	103, // 0: system.RespBase.base:type_name -> common.RespBase
+	104, // 1: system.LoginReq.app_scope:type_name -> system.ApplicationScope
+	103, // 2: system.LoginResp.base:type_name -> common.RespBase
 	4,   // 3: system.LoginResp.data:type_name -> system.LoginData
-	113, // 4: system.LoginData.google2fa_enabled:type_name -> common.Enable
-	114, // 5: system.LoginData.user_type:type_name -> system.UserType
-	115, // 6: system.LoginData.is_owner:type_name -> common.YesNo
-	112, // 7: system.LoginData.app_scope:type_name -> system.ApplicationScope
-	114, // 8: system.ProfileUser.user_type:type_name -> system.UserType
-	115, // 9: system.ProfileUser.is_owner:type_name -> common.YesNo
-	113, // 10: system.ProfileUser.google2fa_enabled:type_name -> common.Enable
-	112, // 11: system.ProfileUser.app_scope:type_name -> system.ApplicationScope
-	116, // 12: system.SysMenuNode.menu_type:type_name -> system.MenuType
-	117, // 13: system.SysMenuNode.visible:type_name -> common.Switch
-	113, // 14: system.SysMenuNode.enabled:type_name -> common.Enable
+	105, // 4: system.LoginData.google2fa_enabled:type_name -> common.Enable
+	106, // 5: system.LoginData.user_type:type_name -> system.UserType
+	107, // 6: system.LoginData.is_owner:type_name -> common.YesNo
+	104, // 7: system.LoginData.app_scope:type_name -> system.ApplicationScope
+	106, // 8: system.ProfileUser.user_type:type_name -> system.UserType
+	107, // 9: system.ProfileUser.is_owner:type_name -> common.YesNo
+	105, // 10: system.ProfileUser.google2fa_enabled:type_name -> common.Enable
+	104, // 11: system.ProfileUser.app_scope:type_name -> system.ApplicationScope
+	108, // 12: system.SysMenuNode.menu_type:type_name -> system.MenuType
+	109, // 13: system.SysMenuNode.visible:type_name -> common.Switch
+	105, // 14: system.SysMenuNode.enabled:type_name -> common.Enable
 	6,   // 15: system.SysMenuNode.children:type_name -> system.SysMenuNode
-	112, // 16: system.SysMenuNode.app_scope:type_name -> system.ApplicationScope
+	104, // 16: system.SysMenuNode.app_scope:type_name -> system.ApplicationScope
 	5,   // 17: system.ProfileData.user:type_name -> system.ProfileUser
 	6,   // 18: system.ProfileData.menus:type_name -> system.SysMenuNode
-	111, // 19: system.ProfileResp.base:type_name -> common.RespBase
+	103, // 19: system.ProfileResp.base:type_name -> common.RespBase
 	7,   // 20: system.ProfileResp.data:type_name -> system.ProfileData
-	116, // 21: system.SysMenuItem.menu_type:type_name -> system.MenuType
-	118, // 22: system.SysMenuItem.method:type_name -> system.RequestMethod
-	117, // 23: system.SysMenuItem.visible:type_name -> common.Switch
-	113, // 24: system.SysMenuItem.enabled:type_name -> common.Enable
-	112, // 25: system.SysMenuItem.app_scope:type_name -> system.ApplicationScope
-	111, // 26: system.SysMenuTreeResp.base:type_name -> common.RespBase
+	108, // 21: system.SysMenuItem.menu_type:type_name -> system.MenuType
+	110, // 22: system.SysMenuItem.method:type_name -> system.RequestMethod
+	109, // 23: system.SysMenuItem.visible:type_name -> common.Switch
+	105, // 24: system.SysMenuItem.enabled:type_name -> common.Enable
+	104, // 25: system.SysMenuItem.app_scope:type_name -> system.ApplicationScope
+	103, // 26: system.SysMenuTreeResp.base:type_name -> common.RespBase
 	10,  // 27: system.SysMenuTreeResp.data:type_name -> system.SysMenuItem
-	111, // 28: system.Google2FAInitResp.base:type_name -> common.RespBase
+	103, // 28: system.Google2FAInitResp.base:type_name -> common.RespBase
 	15,  // 29: system.Google2FAInitResp.data:type_name -> system.Google2FAInitData
-	113, // 30: system.SysUserItem.enabled:type_name -> common.Enable
-	113, // 31: system.SysUserItem.google2fa_enabled:type_name -> common.Enable
-	114, // 32: system.SysUserItem.user_type:type_name -> system.UserType
-	115, // 33: system.SysUserItem.is_owner:type_name -> common.YesNo
-	112, // 34: system.SysUserItem.app_scope:type_name -> system.ApplicationScope
-	119, // 35: system.SysUserListReq.page:type_name -> common.PageReq
-	113, // 36: system.SysUserListReq.enabled:type_name -> common.Enable
-	112, // 37: system.SysUserListReq.app_scope:type_name -> system.ApplicationScope
-	111, // 38: system.SysUserListResp.base:type_name -> common.RespBase
+	105, // 30: system.SysUserItem.enabled:type_name -> common.Enable
+	105, // 31: system.SysUserItem.google2fa_enabled:type_name -> common.Enable
+	106, // 32: system.SysUserItem.user_type:type_name -> system.UserType
+	107, // 33: system.SysUserItem.is_owner:type_name -> common.YesNo
+	104, // 34: system.SysUserItem.app_scope:type_name -> system.ApplicationScope
+	111, // 35: system.SysUserListReq.page:type_name -> common.PageReq
+	105, // 36: system.SysUserListReq.enabled:type_name -> common.Enable
+	104, // 37: system.SysUserListReq.app_scope:type_name -> system.ApplicationScope
+	103, // 38: system.SysUserListResp.base:type_name -> common.RespBase
 	20,  // 39: system.SysUserListResp.data:type_name -> system.SysUserItem
-	111, // 40: system.SysUserDetailResp.base:type_name -> common.RespBase
+	103, // 40: system.SysUserDetailResp.base:type_name -> common.RespBase
 	20,  // 41: system.SysUserDetailResp.data:type_name -> system.SysUserItem
-	113, // 42: system.SysUserCreateReq.enabled:type_name -> common.Enable
-	114, // 43: system.SysUserCreateReq.user_type:type_name -> system.UserType
-	115, // 44: system.SysUserCreateReq.is_owner:type_name -> common.YesNo
-	112, // 45: system.SysUserCreateReq.app_scope:type_name -> system.ApplicationScope
-	113, // 46: system.SysUserUpdateReq.enabled:type_name -> common.Enable
-	114, // 47: system.SysUserUpdateReq.user_type:type_name -> system.UserType
-	115, // 48: system.SysUserUpdateReq.is_owner:type_name -> common.YesNo
-	112, // 49: system.SysUserUpdateReq.app_scope:type_name -> system.ApplicationScope
-	113, // 50: system.ChangeUserStatusReq.enabled:type_name -> common.Enable
-	113, // 51: system.SysRoleItem.enabled:type_name -> common.Enable
-	112, // 52: system.SysRoleItem.app_scope:type_name -> system.ApplicationScope
-	119, // 53: system.SysRoleListReq.page:type_name -> common.PageReq
-	113, // 54: system.SysRoleListReq.enabled:type_name -> common.Enable
-	112, // 55: system.SysRoleListReq.app_scope:type_name -> system.ApplicationScope
-	111, // 56: system.SysRoleListResp.base:type_name -> common.RespBase
+	105, // 42: system.SysUserCreateReq.enabled:type_name -> common.Enable
+	106, // 43: system.SysUserCreateReq.user_type:type_name -> system.UserType
+	107, // 44: system.SysUserCreateReq.is_owner:type_name -> common.YesNo
+	104, // 45: system.SysUserCreateReq.app_scope:type_name -> system.ApplicationScope
+	105, // 46: system.SysUserUpdateReq.enabled:type_name -> common.Enable
+	106, // 47: system.SysUserUpdateReq.user_type:type_name -> system.UserType
+	107, // 48: system.SysUserUpdateReq.is_owner:type_name -> common.YesNo
+	104, // 49: system.SysUserUpdateReq.app_scope:type_name -> system.ApplicationScope
+	105, // 50: system.ChangeUserStatusReq.enabled:type_name -> common.Enable
+	105, // 51: system.SysRoleItem.enabled:type_name -> common.Enable
+	104, // 52: system.SysRoleItem.app_scope:type_name -> system.ApplicationScope
+	111, // 53: system.SysRoleListReq.page:type_name -> common.PageReq
+	105, // 54: system.SysRoleListReq.enabled:type_name -> common.Enable
+	104, // 55: system.SysRoleListReq.app_scope:type_name -> system.ApplicationScope
+	103, // 56: system.SysRoleListResp.base:type_name -> common.RespBase
 	31,  // 57: system.SysRoleListResp.data:type_name -> system.SysRoleItem
-	113, // 58: system.SysRoleCreateReq.enabled:type_name -> common.Enable
-	112, // 59: system.SysRoleCreateReq.app_scope:type_name -> system.ApplicationScope
-	113, // 60: system.SysRoleUpdateReq.enabled:type_name -> common.Enable
-	112, // 61: system.SysRoleUpdateReq.app_scope:type_name -> system.ApplicationScope
-	111, // 62: system.SysRoleGrantDetailResp.base:type_name -> common.RespBase
+	105, // 58: system.SysRoleCreateReq.enabled:type_name -> common.Enable
+	104, // 59: system.SysRoleCreateReq.app_scope:type_name -> system.ApplicationScope
+	105, // 60: system.SysRoleUpdateReq.enabled:type_name -> common.Enable
+	104, // 61: system.SysRoleUpdateReq.app_scope:type_name -> system.ApplicationScope
+	103, // 62: system.SysRoleGrantDetailResp.base:type_name -> common.RespBase
 	40,  // 63: system.SysRoleGrantDetailResp.data:type_name -> system.SysRoleGrantDetailData
-	118, // 64: system.SysPermItem.method:type_name -> system.RequestMethod
-	112, // 65: system.SysPermItem.app_scope:type_name -> system.ApplicationScope
-	111, // 66: system.SysPermListResp.base:type_name -> common.RespBase
+	110, // 64: system.SysPermItem.method:type_name -> system.RequestMethod
+	104, // 65: system.SysPermItem.app_scope:type_name -> system.ApplicationScope
+	103, // 66: system.SysPermListResp.base:type_name -> common.RespBase
 	41,  // 67: system.SysPermListResp.data:type_name -> system.SysPermItem
-	116, // 68: system.SysMenuCreateReq.menu_type:type_name -> system.MenuType
-	118, // 69: system.SysMenuCreateReq.method:type_name -> system.RequestMethod
-	117, // 70: system.SysMenuCreateReq.visible:type_name -> common.Switch
-	113, // 71: system.SysMenuCreateReq.enabled:type_name -> common.Enable
-	112, // 72: system.SysMenuCreateReq.app_scope:type_name -> system.ApplicationScope
-	116, // 73: system.SysMenuUpdateReq.menu_type:type_name -> system.MenuType
-	118, // 74: system.SysMenuUpdateReq.method:type_name -> system.RequestMethod
-	117, // 75: system.SysMenuUpdateReq.visible:type_name -> common.Switch
-	113, // 76: system.SysMenuUpdateReq.enabled:type_name -> common.Enable
-	112, // 77: system.SysMenuUpdateReq.app_scope:type_name -> system.ApplicationScope
-	119, // 78: system.SysMenuListReq.page:type_name -> common.PageReq
-	116, // 79: system.SysMenuListReq.menu_type:type_name -> system.MenuType
-	113, // 80: system.SysMenuListReq.enabled:type_name -> common.Enable
-	117, // 81: system.SysMenuListReq.visible:type_name -> common.Switch
-	112, // 82: system.SysMenuListReq.app_scope:type_name -> system.ApplicationScope
-	111, // 83: system.SysMenuListResp.base:type_name -> common.RespBase
+	108, // 68: system.SysMenuCreateReq.menu_type:type_name -> system.MenuType
+	110, // 69: system.SysMenuCreateReq.method:type_name -> system.RequestMethod
+	109, // 70: system.SysMenuCreateReq.visible:type_name -> common.Switch
+	105, // 71: system.SysMenuCreateReq.enabled:type_name -> common.Enable
+	104, // 72: system.SysMenuCreateReq.app_scope:type_name -> system.ApplicationScope
+	108, // 73: system.SysMenuUpdateReq.menu_type:type_name -> system.MenuType
+	110, // 74: system.SysMenuUpdateReq.method:type_name -> system.RequestMethod
+	109, // 75: system.SysMenuUpdateReq.visible:type_name -> common.Switch
+	105, // 76: system.SysMenuUpdateReq.enabled:type_name -> common.Enable
+	104, // 77: system.SysMenuUpdateReq.app_scope:type_name -> system.ApplicationScope
+	111, // 78: system.SysMenuListReq.page:type_name -> common.PageReq
+	108, // 79: system.SysMenuListReq.menu_type:type_name -> system.MenuType
+	105, // 80: system.SysMenuListReq.enabled:type_name -> common.Enable
+	109, // 81: system.SysMenuListReq.visible:type_name -> common.Switch
+	104, // 82: system.SysMenuListReq.app_scope:type_name -> system.ApplicationScope
+	103, // 83: system.SysMenuListResp.base:type_name -> common.RespBase
 	10,  // 84: system.SysMenuListResp.data:type_name -> system.SysMenuItem
-	119, // 85: system.LoginLogListReq.page:type_name -> common.PageReq
-	111, // 86: system.LoginLogListResp.base:type_name -> common.RespBase
+	111, // 85: system.LoginLogListReq.page:type_name -> common.PageReq
+	103, // 86: system.LoginLogListResp.base:type_name -> common.RespBase
 	48,  // 87: system.LoginLogListResp.data:type_name -> system.LoginLogItem
-	118, // 88: system.OpLogItem.method:type_name -> system.RequestMethod
-	119, // 89: system.OpLogListReq.page:type_name -> common.PageReq
-	118, // 90: system.OpLogListReq.method:type_name -> system.RequestMethod
-	111, // 91: system.OpLogListResp.base:type_name -> common.RespBase
+	110, // 88: system.OpLogItem.method:type_name -> system.RequestMethod
+	111, // 89: system.OpLogListReq.page:type_name -> common.PageReq
+	110, // 90: system.OpLogListReq.method:type_name -> system.RequestMethod
+	103, // 91: system.OpLogListResp.base:type_name -> common.RespBase
 	51,  // 92: system.OpLogListResp.data:type_name -> system.OpLogItem
-	119, // 93: system.SysConfigListReq.page:type_name -> common.PageReq
-	111, // 94: system.SysConfigListResp.base:type_name -> common.RespBase
+	111, // 93: system.SysConfigListReq.page:type_name -> common.PageReq
+	103, // 94: system.SysConfigListResp.base:type_name -> common.RespBase
 	57,  // 95: system.SysConfigListResp.data:type_name -> system.SysConfigItem
-	120, // 96: system.SysConfigDetailReq.config_key:type_name -> system.SysConfigType
-	111, // 97: system.SysConfigDetailResp.base:type_name -> common.RespBase
+	112, // 96: system.SysConfigDetailReq.config_key:type_name -> system.SysConfigType
+	103, // 97: system.SysConfigDetailResp.base:type_name -> common.RespBase
 	57,  // 98: system.SysConfigDetailResp.data:type_name -> system.SysConfigItem
-	111, // 99: system.SysConfigByKeysResp.base:type_name -> common.RespBase
+	103, // 99: system.SysConfigByKeysResp.base:type_name -> common.RespBase
 	57,  // 100: system.SysConfigByKeysResp.data:type_name -> system.SysConfigItem
-	121, // 101: system.SendVerificationCodeReq.channel:type_name -> system.VerificationCodeChannel
-	122, // 102: system.SendVerificationCodeReq.scene:type_name -> system.VerificationCodeScene
-	121, // 103: system.TestVerificationCodeReq.channel:type_name -> system.VerificationCodeChannel
-	122, // 104: system.TestVerificationCodeReq.scene:type_name -> system.VerificationCodeScene
-	121, // 105: system.VerificationCodeRecordItem.channel:type_name -> system.VerificationCodeChannel
-	122, // 106: system.VerificationCodeRecordItem.scene:type_name -> system.VerificationCodeScene
-	123, // 107: system.VerificationCodeRecordItem.status:type_name -> system.VerificationCodeStatus
-	119, // 108: system.VerificationCodeRecordListReq.page:type_name -> common.PageReq
-	121, // 109: system.VerificationCodeRecordListReq.channel:type_name -> system.VerificationCodeChannel
-	122, // 110: system.VerificationCodeRecordListReq.scene:type_name -> system.VerificationCodeScene
-	123, // 111: system.VerificationCodeRecordListReq.status:type_name -> system.VerificationCodeStatus
-	111, // 112: system.VerificationCodeRecordListResp.base:type_name -> common.RespBase
+	113, // 101: system.SendVerificationCodeReq.channel:type_name -> system.VerificationCodeChannel
+	114, // 102: system.SendVerificationCodeReq.scene:type_name -> system.VerificationCodeScene
+	113, // 103: system.TestVerificationCodeReq.channel:type_name -> system.VerificationCodeChannel
+	114, // 104: system.TestVerificationCodeReq.scene:type_name -> system.VerificationCodeScene
+	113, // 105: system.VerificationCodeRecordItem.channel:type_name -> system.VerificationCodeChannel
+	114, // 106: system.VerificationCodeRecordItem.scene:type_name -> system.VerificationCodeScene
+	115, // 107: system.VerificationCodeRecordItem.status:type_name -> system.VerificationCodeStatus
+	111, // 108: system.VerificationCodeRecordListReq.page:type_name -> common.PageReq
+	113, // 109: system.VerificationCodeRecordListReq.channel:type_name -> system.VerificationCodeChannel
+	114, // 110: system.VerificationCodeRecordListReq.scene:type_name -> system.VerificationCodeScene
+	115, // 111: system.VerificationCodeRecordListReq.status:type_name -> system.VerificationCodeStatus
+	103, // 112: system.VerificationCodeRecordListResp.base:type_name -> common.RespBase
 	66,  // 113: system.VerificationCodeRecordListResp.data:type_name -> system.VerificationCodeRecordItem
-	111, // 114: system.VerificationCodeRecordDetailResp.base:type_name -> common.RespBase
+	103, // 114: system.VerificationCodeRecordDetailResp.base:type_name -> common.RespBase
 	66,  // 115: system.VerificationCodeRecordDetailResp.data:type_name -> system.VerificationCodeRecordItem
-	124, // 116: system.SysCronJobItem.status:type_name -> system.JobStatus
-	119, // 117: system.SysCronJobListReq.page:type_name -> common.PageReq
-	124, // 118: system.SysCronJobListReq.status:type_name -> system.JobStatus
-	111, // 119: system.SysCronJobListResp.base:type_name -> common.RespBase
+	116, // 116: system.SysCronJobItem.status:type_name -> system.JobStatus
+	111, // 117: system.SysCronJobListReq.page:type_name -> common.PageReq
+	116, // 118: system.SysCronJobListReq.status:type_name -> system.JobStatus
+	103, // 119: system.SysCronJobListResp.base:type_name -> common.RespBase
 	73,  // 120: system.SysCronJobListResp.data:type_name -> system.SysCronJobItem
-	124, // 121: system.SysCronJobCreateReq.status:type_name -> system.JobStatus
-	124, // 122: system.SysCronJobUpdateReq.status:type_name -> system.JobStatus
-	119, // 123: system.SysCronJobLogListReq.page:type_name -> common.PageReq
-	111, // 124: system.SysCronJobHandlersResp.base:type_name -> common.RespBase
+	116, // 121: system.SysCronJobCreateReq.status:type_name -> system.JobStatus
+	116, // 122: system.SysCronJobUpdateReq.status:type_name -> system.JobStatus
+	111, // 123: system.SysCronJobLogListReq.page:type_name -> common.PageReq
+	103, // 124: system.SysCronJobHandlersResp.base:type_name -> common.RespBase
 	84,  // 125: system.SysCronJobHandlersResp.data:type_name -> system.SysCronJobHandler
-	111, // 126: system.SysCronJobLogListResp.base:type_name -> common.RespBase
+	103, // 126: system.SysCronJobLogListResp.base:type_name -> common.RespBase
 	82,  // 127: system.SysCronJobLogListResp.data:type_name -> system.SysCronJobLogItem
-	113, // 128: system.SysTenantItem.enabled:type_name -> common.Enable
-	119, // 129: system.SysTenantListReq.page:type_name -> common.PageReq
-	113, // 130: system.SysTenantListReq.enabled:type_name -> common.Enable
-	111, // 131: system.SysTenantListResp.base:type_name -> common.RespBase
+	105, // 128: system.SysTenantItem.enabled:type_name -> common.Enable
+	111, // 129: system.SysTenantListReq.page:type_name -> common.PageReq
+	105, // 130: system.SysTenantListReq.enabled:type_name -> common.Enable
+	103, // 131: system.SysTenantListResp.base:type_name -> common.RespBase
 	87,  // 132: system.SysTenantListResp.data:type_name -> system.SysTenantItem
-	113, // 133: system.SysTenantCreateReq.enabled:type_name -> common.Enable
-	113, // 134: system.SysTenantUpdateReq.enabled:type_name -> common.Enable
-	111, // 135: system.SysTenantDetailResp.base:type_name -> common.RespBase
+	105, // 133: system.SysTenantCreateReq.enabled:type_name -> common.Enable
+	105, // 134: system.SysTenantUpdateReq.enabled:type_name -> common.Enable
+	103, // 135: system.SysTenantDetailResp.base:type_name -> common.RespBase
 	87,  // 136: system.SysTenantDetailResp.data:type_name -> system.SysTenantItem
-	125, // 137: system.SysTenantDomainItem.status:type_name -> system.TenantDomainStatus
-	111, // 138: system.SysTenantDomainListResp.base:type_name -> common.RespBase
+	117, // 137: system.SysTenantDomainItem.status:type_name -> system.TenantDomainStatus
+	103, // 138: system.SysTenantDomainListResp.base:type_name -> common.RespBase
 	95,  // 139: system.SysTenantDomainListResp.data:type_name -> system.SysTenantDomainItem
-	125, // 140: system.SysTenantDomainCreateReq.status:type_name -> system.TenantDomainStatus
-	125, // 141: system.SysTenantDomainUpdateReq.status:type_name -> system.TenantDomainStatus
-	111, // 142: system.ResolveTenantDomainResp.base:type_name -> common.RespBase
-	125, // 143: system.ResolveTenantDomainResp.source_status:type_name -> system.TenantDomainStatus
-	113, // 144: system.SysChatMerchantItem.enabled:type_name -> common.Enable
-	119, // 145: system.SysChatMerchantListReq.page:type_name -> common.PageReq
-	113, // 146: system.SysChatMerchantListReq.enabled:type_name -> common.Enable
-	111, // 147: system.SysChatMerchantListResp.base:type_name -> common.RespBase
-	103, // 148: system.SysChatMerchantListResp.data:type_name -> system.SysChatMerchantItem
-	113, // 149: system.SysChatMerchantCreateReq.enabled:type_name -> common.Enable
-	113, // 150: system.SysChatMerchantUpdateReq.enabled:type_name -> common.Enable
-	111, // 151: system.SysChatMerchantDetailResp.base:type_name -> common.RespBase
-	103, // 152: system.SysChatMerchantDetailResp.data:type_name -> system.SysChatMerchantItem
-	2,   // 153: system.Admin.Login:input_type -> system.LoginReq
-	0,   // 154: system.Admin.GetProfile:input_type -> system.Empty
-	9,   // 155: system.Admin.UpdateProfile:input_type -> system.UpdateProfileReq
-	13,  // 156: system.Admin.Google2FAInit:input_type -> system.Google2FAInitReq
-	16,  // 157: system.Admin.Google2FABind:input_type -> system.Google2FABindReq
-	17,  // 158: system.Admin.Google2FAEnable:input_type -> system.Google2FAEnableReq
-	18,  // 159: system.Admin.Google2FADisable:input_type -> system.Google2FADisableReq
-	19,  // 160: system.Admin.Google2FAReset:input_type -> system.Google2FAResetReq
-	21,  // 161: system.Admin.SysUserList:input_type -> system.SysUserListReq
-	23,  // 162: system.Admin.SysUserDetail:input_type -> system.SysUserDetailReq
-	25,  // 163: system.Admin.SysUserCreate:input_type -> system.SysUserCreateReq
-	26,  // 164: system.Admin.SysUserUpdate:input_type -> system.SysUserUpdateReq
-	27,  // 165: system.Admin.SysUserDelete:input_type -> system.SysUserDeleteReq
-	28,  // 166: system.Admin.ChangeUserStatus:input_type -> system.ChangeUserStatusReq
-	29,  // 167: system.Admin.ResetUserPwd:input_type -> system.ResetUserPwdReq
-	30,  // 168: system.Admin.AssignUserRoles:input_type -> system.AssignUserRolesReq
-	32,  // 169: system.Admin.SysRoleList:input_type -> system.SysRoleListReq
-	34,  // 170: system.Admin.SysRoleCreate:input_type -> system.SysRoleCreateReq
-	35,  // 171: system.Admin.SysRoleUpdate:input_type -> system.SysRoleUpdateReq
-	36,  // 172: system.Admin.SysRoleDelete:input_type -> system.SysRoleDeleteReq
-	37,  // 173: system.Admin.SysRoleGrant:input_type -> system.SysRoleGrantReq
-	38,  // 174: system.Admin.SysRoleGrantDetail:input_type -> system.SysRoleGrantDetailReq
-	0,   // 175: system.Admin.SysPermList:input_type -> system.Empty
-	11,  // 176: system.Admin.GetMenuTree:input_type -> system.SysMenuTreeReq
-	43,  // 177: system.Admin.SysMenuCreate:input_type -> system.SysMenuCreateReq
-	44,  // 178: system.Admin.SysMenuUpdate:input_type -> system.SysMenuUpdateReq
-	45,  // 179: system.Admin.SysMenuDelete:input_type -> system.SysMenuDeleteReq
-	46,  // 180: system.Admin.SysMenuList:input_type -> system.SysMenuListReq
-	49,  // 181: system.Admin.LoginLogList:input_type -> system.LoginLogListReq
-	52,  // 182: system.Admin.OpLogList:input_type -> system.OpLogListReq
-	54,  // 183: system.Admin.SysConfigCreate:input_type -> system.SysConfigCreateReq
-	55,  // 184: system.Admin.SysConfigUpdate:input_type -> system.SysConfigUpdateReq
-	56,  // 185: system.Admin.SysConfigDelete:input_type -> system.SysConfigDeleteReq
-	58,  // 186: system.Admin.SysConfigList:input_type -> system.SysConfigListReq
-	60,  // 187: system.Admin.SysConfigDetail:input_type -> system.SysConfigDetailReq
-	65,  // 188: system.Admin.TestVerificationCode:input_type -> system.TestVerificationCodeReq
-	67,  // 189: system.Admin.VerificationCodeRecordList:input_type -> system.VerificationCodeRecordListReq
-	69,  // 190: system.Admin.VerificationCodeRecordDetail:input_type -> system.VerificationCodeRecordDetailReq
-	71,  // 191: system.Admin.LoginUserPerms:input_type -> system.LoginUserPermsReq
-	74,  // 192: system.Admin.SysCronJobList:input_type -> system.SysCronJobListReq
-	76,  // 193: system.Admin.SysCronJobCreate:input_type -> system.SysCronJobCreateReq
-	77,  // 194: system.Admin.SysCronJobUpdate:input_type -> system.SysCronJobUpdateReq
-	78,  // 195: system.Admin.SysCronJobDelete:input_type -> system.SysCronJobDeleteReq
-	79,  // 196: system.Admin.SysCronJobRun:input_type -> system.SysCronJobRunReq
-	80,  // 197: system.Admin.SysCronJobStart:input_type -> system.SysCronJobStartReq
-	81,  // 198: system.Admin.SysCronJobStop:input_type -> system.SysCronJobStopReq
-	0,   // 199: system.Admin.SysCronJobHandlers:input_type -> system.Empty
-	83,  // 200: system.Admin.SysCronJobLogList:input_type -> system.SysCronJobLogListReq
-	90,  // 201: system.Admin.SysTenantCreate:input_type -> system.SysTenantCreateReq
-	91,  // 202: system.Admin.SysTenantUpdate:input_type -> system.SysTenantUpdateReq
-	92,  // 203: system.Admin.SysTenantDelete:input_type -> system.SysTenantDeleteReq
-	88,  // 204: system.Admin.SysTenantList:input_type -> system.SysTenantListReq
-	93,  // 205: system.Admin.SysTenantDetail:input_type -> system.SysTenantDetailReq
-	96,  // 206: system.Admin.SysTenantDomainList:input_type -> system.SysTenantDomainListReq
-	98,  // 207: system.Admin.SysTenantDomainCreate:input_type -> system.SysTenantDomainCreateReq
-	99,  // 208: system.Admin.SysTenantDomainUpdate:input_type -> system.SysTenantDomainUpdateReq
-	100, // 209: system.Admin.SysTenantDomainDelete:input_type -> system.SysTenantDomainDeleteReq
-	106, // 210: system.Admin.SysChatMerchantCreate:input_type -> system.SysChatMerchantCreateReq
-	107, // 211: system.Admin.SysChatMerchantUpdate:input_type -> system.SysChatMerchantUpdateReq
-	108, // 212: system.Admin.SysChatMerchantDelete:input_type -> system.SysChatMerchantDeleteReq
-	104, // 213: system.Admin.SysChatMerchantList:input_type -> system.SysChatMerchantListReq
-	109, // 214: system.Admin.SysChatMerchantDetail:input_type -> system.SysChatMerchantDetailReq
-	60,  // 215: system.App.SysConfigDetail:input_type -> system.SysConfigDetailReq
-	64,  // 216: system.App.SendVerificationCode:input_type -> system.SendVerificationCodeReq
-	93,  // 217: system.App.SysTenantDetail:input_type -> system.SysTenantDetailReq
-	60,  // 218: system.System.SysConfigDetail:input_type -> system.SysConfigDetailReq
-	62,  // 219: system.System.SysConfigByKeys:input_type -> system.SysConfigByKeysReq
-	88,  // 220: system.System.SysTenantList:input_type -> system.SysTenantListReq
-	93,  // 221: system.System.SysTenantDetail:input_type -> system.SysTenantDetailReq
-	101, // 222: system.System.ResolveTenantDomain:input_type -> system.ResolveTenantDomainReq
-	3,   // 223: system.Admin.Login:output_type -> system.LoginResp
-	8,   // 224: system.Admin.GetProfile:output_type -> system.ProfileResp
-	1,   // 225: system.Admin.UpdateProfile:output_type -> system.RespBase
-	14,  // 226: system.Admin.Google2FAInit:output_type -> system.Google2FAInitResp
-	1,   // 227: system.Admin.Google2FABind:output_type -> system.RespBase
-	1,   // 228: system.Admin.Google2FAEnable:output_type -> system.RespBase
-	1,   // 229: system.Admin.Google2FADisable:output_type -> system.RespBase
-	1,   // 230: system.Admin.Google2FAReset:output_type -> system.RespBase
-	22,  // 231: system.Admin.SysUserList:output_type -> system.SysUserListResp
-	24,  // 232: system.Admin.SysUserDetail:output_type -> system.SysUserDetailResp
-	1,   // 233: system.Admin.SysUserCreate:output_type -> system.RespBase
-	1,   // 234: system.Admin.SysUserUpdate:output_type -> system.RespBase
-	1,   // 235: system.Admin.SysUserDelete:output_type -> system.RespBase
-	1,   // 236: system.Admin.ChangeUserStatus:output_type -> system.RespBase
-	1,   // 237: system.Admin.ResetUserPwd:output_type -> system.RespBase
-	1,   // 238: system.Admin.AssignUserRoles:output_type -> system.RespBase
-	33,  // 239: system.Admin.SysRoleList:output_type -> system.SysRoleListResp
-	1,   // 240: system.Admin.SysRoleCreate:output_type -> system.RespBase
-	1,   // 241: system.Admin.SysRoleUpdate:output_type -> system.RespBase
-	1,   // 242: system.Admin.SysRoleDelete:output_type -> system.RespBase
-	1,   // 243: system.Admin.SysRoleGrant:output_type -> system.RespBase
-	39,  // 244: system.Admin.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
-	42,  // 245: system.Admin.SysPermList:output_type -> system.SysPermListResp
-	12,  // 246: system.Admin.GetMenuTree:output_type -> system.SysMenuTreeResp
-	1,   // 247: system.Admin.SysMenuCreate:output_type -> system.RespBase
-	1,   // 248: system.Admin.SysMenuUpdate:output_type -> system.RespBase
-	1,   // 249: system.Admin.SysMenuDelete:output_type -> system.RespBase
-	47,  // 250: system.Admin.SysMenuList:output_type -> system.SysMenuListResp
-	50,  // 251: system.Admin.LoginLogList:output_type -> system.LoginLogListResp
-	53,  // 252: system.Admin.OpLogList:output_type -> system.OpLogListResp
-	1,   // 253: system.Admin.SysConfigCreate:output_type -> system.RespBase
-	1,   // 254: system.Admin.SysConfigUpdate:output_type -> system.RespBase
-	1,   // 255: system.Admin.SysConfigDelete:output_type -> system.RespBase
-	59,  // 256: system.Admin.SysConfigList:output_type -> system.SysConfigListResp
-	61,  // 257: system.Admin.SysConfigDetail:output_type -> system.SysConfigDetailResp
-	1,   // 258: system.Admin.TestVerificationCode:output_type -> system.RespBase
-	68,  // 259: system.Admin.VerificationCodeRecordList:output_type -> system.VerificationCodeRecordListResp
-	70,  // 260: system.Admin.VerificationCodeRecordDetail:output_type -> system.VerificationCodeRecordDetailResp
-	72,  // 261: system.Admin.LoginUserPerms:output_type -> system.LoginUserPermsResp
-	75,  // 262: system.Admin.SysCronJobList:output_type -> system.SysCronJobListResp
-	1,   // 263: system.Admin.SysCronJobCreate:output_type -> system.RespBase
-	1,   // 264: system.Admin.SysCronJobUpdate:output_type -> system.RespBase
-	1,   // 265: system.Admin.SysCronJobDelete:output_type -> system.RespBase
-	1,   // 266: system.Admin.SysCronJobRun:output_type -> system.RespBase
-	1,   // 267: system.Admin.SysCronJobStart:output_type -> system.RespBase
-	1,   // 268: system.Admin.SysCronJobStop:output_type -> system.RespBase
-	85,  // 269: system.Admin.SysCronJobHandlers:output_type -> system.SysCronJobHandlersResp
-	86,  // 270: system.Admin.SysCronJobLogList:output_type -> system.SysCronJobLogListResp
-	1,   // 271: system.Admin.SysTenantCreate:output_type -> system.RespBase
-	1,   // 272: system.Admin.SysTenantUpdate:output_type -> system.RespBase
-	1,   // 273: system.Admin.SysTenantDelete:output_type -> system.RespBase
-	89,  // 274: system.Admin.SysTenantList:output_type -> system.SysTenantListResp
-	94,  // 275: system.Admin.SysTenantDetail:output_type -> system.SysTenantDetailResp
-	97,  // 276: system.Admin.SysTenantDomainList:output_type -> system.SysTenantDomainListResp
-	1,   // 277: system.Admin.SysTenantDomainCreate:output_type -> system.RespBase
-	1,   // 278: system.Admin.SysTenantDomainUpdate:output_type -> system.RespBase
-	1,   // 279: system.Admin.SysTenantDomainDelete:output_type -> system.RespBase
-	1,   // 280: system.Admin.SysChatMerchantCreate:output_type -> system.RespBase
-	1,   // 281: system.Admin.SysChatMerchantUpdate:output_type -> system.RespBase
-	1,   // 282: system.Admin.SysChatMerchantDelete:output_type -> system.RespBase
-	105, // 283: system.Admin.SysChatMerchantList:output_type -> system.SysChatMerchantListResp
-	110, // 284: system.Admin.SysChatMerchantDetail:output_type -> system.SysChatMerchantDetailResp
-	61,  // 285: system.App.SysConfigDetail:output_type -> system.SysConfigDetailResp
-	1,   // 286: system.App.SendVerificationCode:output_type -> system.RespBase
-	94,  // 287: system.App.SysTenantDetail:output_type -> system.SysTenantDetailResp
-	61,  // 288: system.System.SysConfigDetail:output_type -> system.SysConfigDetailResp
-	63,  // 289: system.System.SysConfigByKeys:output_type -> system.SysConfigByKeysResp
-	89,  // 290: system.System.SysTenantList:output_type -> system.SysTenantListResp
-	94,  // 291: system.System.SysTenantDetail:output_type -> system.SysTenantDetailResp
-	102, // 292: system.System.ResolveTenantDomain:output_type -> system.ResolveTenantDomainResp
-	223, // [223:293] is the sub-list for method output_type
-	153, // [153:223] is the sub-list for method input_type
-	153, // [153:153] is the sub-list for extension type_name
-	153, // [153:153] is the sub-list for extension extendee
-	0,   // [0:153] is the sub-list for field type_name
+	117, // 140: system.SysTenantDomainCreateReq.status:type_name -> system.TenantDomainStatus
+	117, // 141: system.SysTenantDomainUpdateReq.status:type_name -> system.TenantDomainStatus
+	103, // 142: system.ResolveTenantDomainResp.base:type_name -> common.RespBase
+	117, // 143: system.ResolveTenantDomainResp.source_status:type_name -> system.TenantDomainStatus
+	2,   // 144: system.Admin.Login:input_type -> system.LoginReq
+	0,   // 145: system.Admin.GetProfile:input_type -> system.Empty
+	9,   // 146: system.Admin.UpdateProfile:input_type -> system.UpdateProfileReq
+	13,  // 147: system.Admin.Google2FAInit:input_type -> system.Google2FAInitReq
+	16,  // 148: system.Admin.Google2FABind:input_type -> system.Google2FABindReq
+	17,  // 149: system.Admin.Google2FAEnable:input_type -> system.Google2FAEnableReq
+	18,  // 150: system.Admin.Google2FADisable:input_type -> system.Google2FADisableReq
+	19,  // 151: system.Admin.Google2FAReset:input_type -> system.Google2FAResetReq
+	21,  // 152: system.Admin.SysUserList:input_type -> system.SysUserListReq
+	23,  // 153: system.Admin.SysUserDetail:input_type -> system.SysUserDetailReq
+	25,  // 154: system.Admin.SysUserCreate:input_type -> system.SysUserCreateReq
+	26,  // 155: system.Admin.SysUserUpdate:input_type -> system.SysUserUpdateReq
+	27,  // 156: system.Admin.SysUserDelete:input_type -> system.SysUserDeleteReq
+	28,  // 157: system.Admin.ChangeUserStatus:input_type -> system.ChangeUserStatusReq
+	29,  // 158: system.Admin.ResetUserPwd:input_type -> system.ResetUserPwdReq
+	30,  // 159: system.Admin.AssignUserRoles:input_type -> system.AssignUserRolesReq
+	32,  // 160: system.Admin.SysRoleList:input_type -> system.SysRoleListReq
+	34,  // 161: system.Admin.SysRoleCreate:input_type -> system.SysRoleCreateReq
+	35,  // 162: system.Admin.SysRoleUpdate:input_type -> system.SysRoleUpdateReq
+	36,  // 163: system.Admin.SysRoleDelete:input_type -> system.SysRoleDeleteReq
+	37,  // 164: system.Admin.SysRoleGrant:input_type -> system.SysRoleGrantReq
+	38,  // 165: system.Admin.SysRoleGrantDetail:input_type -> system.SysRoleGrantDetailReq
+	0,   // 166: system.Admin.SysPermList:input_type -> system.Empty
+	11,  // 167: system.Admin.GetMenuTree:input_type -> system.SysMenuTreeReq
+	43,  // 168: system.Admin.SysMenuCreate:input_type -> system.SysMenuCreateReq
+	44,  // 169: system.Admin.SysMenuUpdate:input_type -> system.SysMenuUpdateReq
+	45,  // 170: system.Admin.SysMenuDelete:input_type -> system.SysMenuDeleteReq
+	46,  // 171: system.Admin.SysMenuList:input_type -> system.SysMenuListReq
+	49,  // 172: system.Admin.LoginLogList:input_type -> system.LoginLogListReq
+	52,  // 173: system.Admin.OpLogList:input_type -> system.OpLogListReq
+	54,  // 174: system.Admin.SysConfigCreate:input_type -> system.SysConfigCreateReq
+	55,  // 175: system.Admin.SysConfigUpdate:input_type -> system.SysConfigUpdateReq
+	56,  // 176: system.Admin.SysConfigDelete:input_type -> system.SysConfigDeleteReq
+	58,  // 177: system.Admin.SysConfigList:input_type -> system.SysConfigListReq
+	60,  // 178: system.Admin.SysConfigDetail:input_type -> system.SysConfigDetailReq
+	65,  // 179: system.Admin.TestVerificationCode:input_type -> system.TestVerificationCodeReq
+	67,  // 180: system.Admin.VerificationCodeRecordList:input_type -> system.VerificationCodeRecordListReq
+	69,  // 181: system.Admin.VerificationCodeRecordDetail:input_type -> system.VerificationCodeRecordDetailReq
+	71,  // 182: system.Admin.LoginUserPerms:input_type -> system.LoginUserPermsReq
+	74,  // 183: system.Admin.SysCronJobList:input_type -> system.SysCronJobListReq
+	76,  // 184: system.Admin.SysCronJobCreate:input_type -> system.SysCronJobCreateReq
+	77,  // 185: system.Admin.SysCronJobUpdate:input_type -> system.SysCronJobUpdateReq
+	78,  // 186: system.Admin.SysCronJobDelete:input_type -> system.SysCronJobDeleteReq
+	79,  // 187: system.Admin.SysCronJobRun:input_type -> system.SysCronJobRunReq
+	80,  // 188: system.Admin.SysCronJobStart:input_type -> system.SysCronJobStartReq
+	81,  // 189: system.Admin.SysCronJobStop:input_type -> system.SysCronJobStopReq
+	0,   // 190: system.Admin.SysCronJobHandlers:input_type -> system.Empty
+	83,  // 191: system.Admin.SysCronJobLogList:input_type -> system.SysCronJobLogListReq
+	90,  // 192: system.Admin.SysTenantCreate:input_type -> system.SysTenantCreateReq
+	91,  // 193: system.Admin.SysTenantUpdate:input_type -> system.SysTenantUpdateReq
+	92,  // 194: system.Admin.SysTenantDelete:input_type -> system.SysTenantDeleteReq
+	88,  // 195: system.Admin.SysTenantList:input_type -> system.SysTenantListReq
+	93,  // 196: system.Admin.SysTenantDetail:input_type -> system.SysTenantDetailReq
+	96,  // 197: system.Admin.SysTenantDomainList:input_type -> system.SysTenantDomainListReq
+	98,  // 198: system.Admin.SysTenantDomainCreate:input_type -> system.SysTenantDomainCreateReq
+	99,  // 199: system.Admin.SysTenantDomainUpdate:input_type -> system.SysTenantDomainUpdateReq
+	100, // 200: system.Admin.SysTenantDomainDelete:input_type -> system.SysTenantDomainDeleteReq
+	60,  // 201: system.App.SysConfigDetail:input_type -> system.SysConfigDetailReq
+	64,  // 202: system.App.SendVerificationCode:input_type -> system.SendVerificationCodeReq
+	93,  // 203: system.App.SysTenantDetail:input_type -> system.SysTenantDetailReq
+	60,  // 204: system.System.SysConfigDetail:input_type -> system.SysConfigDetailReq
+	62,  // 205: system.System.SysConfigByKeys:input_type -> system.SysConfigByKeysReq
+	88,  // 206: system.System.SysTenantList:input_type -> system.SysTenantListReq
+	93,  // 207: system.System.SysTenantDetail:input_type -> system.SysTenantDetailReq
+	101, // 208: system.System.ResolveTenantDomain:input_type -> system.ResolveTenantDomainReq
+	3,   // 209: system.Admin.Login:output_type -> system.LoginResp
+	8,   // 210: system.Admin.GetProfile:output_type -> system.ProfileResp
+	1,   // 211: system.Admin.UpdateProfile:output_type -> system.RespBase
+	14,  // 212: system.Admin.Google2FAInit:output_type -> system.Google2FAInitResp
+	1,   // 213: system.Admin.Google2FABind:output_type -> system.RespBase
+	1,   // 214: system.Admin.Google2FAEnable:output_type -> system.RespBase
+	1,   // 215: system.Admin.Google2FADisable:output_type -> system.RespBase
+	1,   // 216: system.Admin.Google2FAReset:output_type -> system.RespBase
+	22,  // 217: system.Admin.SysUserList:output_type -> system.SysUserListResp
+	24,  // 218: system.Admin.SysUserDetail:output_type -> system.SysUserDetailResp
+	1,   // 219: system.Admin.SysUserCreate:output_type -> system.RespBase
+	1,   // 220: system.Admin.SysUserUpdate:output_type -> system.RespBase
+	1,   // 221: system.Admin.SysUserDelete:output_type -> system.RespBase
+	1,   // 222: system.Admin.ChangeUserStatus:output_type -> system.RespBase
+	1,   // 223: system.Admin.ResetUserPwd:output_type -> system.RespBase
+	1,   // 224: system.Admin.AssignUserRoles:output_type -> system.RespBase
+	33,  // 225: system.Admin.SysRoleList:output_type -> system.SysRoleListResp
+	1,   // 226: system.Admin.SysRoleCreate:output_type -> system.RespBase
+	1,   // 227: system.Admin.SysRoleUpdate:output_type -> system.RespBase
+	1,   // 228: system.Admin.SysRoleDelete:output_type -> system.RespBase
+	1,   // 229: system.Admin.SysRoleGrant:output_type -> system.RespBase
+	39,  // 230: system.Admin.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
+	42,  // 231: system.Admin.SysPermList:output_type -> system.SysPermListResp
+	12,  // 232: system.Admin.GetMenuTree:output_type -> system.SysMenuTreeResp
+	1,   // 233: system.Admin.SysMenuCreate:output_type -> system.RespBase
+	1,   // 234: system.Admin.SysMenuUpdate:output_type -> system.RespBase
+	1,   // 235: system.Admin.SysMenuDelete:output_type -> system.RespBase
+	47,  // 236: system.Admin.SysMenuList:output_type -> system.SysMenuListResp
+	50,  // 237: system.Admin.LoginLogList:output_type -> system.LoginLogListResp
+	53,  // 238: system.Admin.OpLogList:output_type -> system.OpLogListResp
+	1,   // 239: system.Admin.SysConfigCreate:output_type -> system.RespBase
+	1,   // 240: system.Admin.SysConfigUpdate:output_type -> system.RespBase
+	1,   // 241: system.Admin.SysConfigDelete:output_type -> system.RespBase
+	59,  // 242: system.Admin.SysConfigList:output_type -> system.SysConfigListResp
+	61,  // 243: system.Admin.SysConfigDetail:output_type -> system.SysConfigDetailResp
+	1,   // 244: system.Admin.TestVerificationCode:output_type -> system.RespBase
+	68,  // 245: system.Admin.VerificationCodeRecordList:output_type -> system.VerificationCodeRecordListResp
+	70,  // 246: system.Admin.VerificationCodeRecordDetail:output_type -> system.VerificationCodeRecordDetailResp
+	72,  // 247: system.Admin.LoginUserPerms:output_type -> system.LoginUserPermsResp
+	75,  // 248: system.Admin.SysCronJobList:output_type -> system.SysCronJobListResp
+	1,   // 249: system.Admin.SysCronJobCreate:output_type -> system.RespBase
+	1,   // 250: system.Admin.SysCronJobUpdate:output_type -> system.RespBase
+	1,   // 251: system.Admin.SysCronJobDelete:output_type -> system.RespBase
+	1,   // 252: system.Admin.SysCronJobRun:output_type -> system.RespBase
+	1,   // 253: system.Admin.SysCronJobStart:output_type -> system.RespBase
+	1,   // 254: system.Admin.SysCronJobStop:output_type -> system.RespBase
+	85,  // 255: system.Admin.SysCronJobHandlers:output_type -> system.SysCronJobHandlersResp
+	86,  // 256: system.Admin.SysCronJobLogList:output_type -> system.SysCronJobLogListResp
+	1,   // 257: system.Admin.SysTenantCreate:output_type -> system.RespBase
+	1,   // 258: system.Admin.SysTenantUpdate:output_type -> system.RespBase
+	1,   // 259: system.Admin.SysTenantDelete:output_type -> system.RespBase
+	89,  // 260: system.Admin.SysTenantList:output_type -> system.SysTenantListResp
+	94,  // 261: system.Admin.SysTenantDetail:output_type -> system.SysTenantDetailResp
+	97,  // 262: system.Admin.SysTenantDomainList:output_type -> system.SysTenantDomainListResp
+	1,   // 263: system.Admin.SysTenantDomainCreate:output_type -> system.RespBase
+	1,   // 264: system.Admin.SysTenantDomainUpdate:output_type -> system.RespBase
+	1,   // 265: system.Admin.SysTenantDomainDelete:output_type -> system.RespBase
+	61,  // 266: system.App.SysConfigDetail:output_type -> system.SysConfigDetailResp
+	1,   // 267: system.App.SendVerificationCode:output_type -> system.RespBase
+	94,  // 268: system.App.SysTenantDetail:output_type -> system.SysTenantDetailResp
+	61,  // 269: system.System.SysConfigDetail:output_type -> system.SysConfigDetailResp
+	63,  // 270: system.System.SysConfigByKeys:output_type -> system.SysConfigByKeysResp
+	89,  // 271: system.System.SysTenantList:output_type -> system.SysTenantListResp
+	94,  // 272: system.System.SysTenantDetail:output_type -> system.SysTenantDetailResp
+	102, // 273: system.System.ResolveTenantDomain:output_type -> system.ResolveTenantDomainResp
+	209, // [209:274] is the sub-list for method output_type
+	144, // [144:209] is the sub-list for method input_type
+	144, // [144:144] is the sub-list for extension type_name
+	144, // [144:144] is the sub-list for extension extendee
+	0,   // [0:144] is the sub-list for field type_name
 }
 
 func init() { file_proto_system_system_proto_init() }
@@ -9044,14 +8285,13 @@ func file_proto_system_system_proto_init() {
 	file_proto_system_system_proto_msgTypes[9].OneofWrappers = []any{}
 	file_proto_system_system_proto_msgTypes[60].OneofWrappers = []any{}
 	file_proto_system_system_proto_msgTypes[93].OneofWrappers = []any{}
-	file_proto_system_system_proto_msgTypes[109].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_system_system_proto_rawDesc), len(file_proto_system_system_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   111,
+			NumMessages:   103,
 			NumExtensions: 0,
 			NumServices:   3,
 		},

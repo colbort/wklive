@@ -11,6 +11,7 @@ require (
 	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af
 	wklive/common v0.0.0-00010101000000-000000000000
 	wklive/proto/asset v0.0.0-00010101000000-000000000000
+	wklive/proto/chat v0.0.0-00010101000000-000000000000
 	wklive/proto/common v0.0.0-00010101000000-000000000000
 	wklive/proto/itick v0.0.0-00010101000000-000000000000
 	wklive/proto/option v0.0.0-00010101000000-000000000000
@@ -149,6 +150,8 @@ require (
 replace wklive/common => ../common
 
 replace wklive/proto/common => ../proto/common
+
+replace wklive/proto/chat => ../proto/chat
 
 replace wklive/proto/system => ../proto/system
 

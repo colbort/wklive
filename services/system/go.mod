@@ -10,10 +10,8 @@ require (
 	golang.org/x/crypto v0.53.0
 	google.golang.org/grpc v1.81.1
 	wklive/common v0.0.0-00010101000000-000000000000
-	wklive/proto/chat v0.0.0-00010101000000-000000000000
 	wklive/proto/common v0.0.0-00010101000000-000000000000
 	wklive/proto/system v0.0.0-20251105000000-000000000000
-	wklive/services/chat v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -132,7 +130,3 @@ replace wklive/proto/option => ../../proto/option
 replace wklive/proto/staking => ../../proto/staking
 
 replace wklive/proto/trade => ../../proto/trade
-
-replace wklive/proto/chat => ../../proto/chat
-
-replace wklive/services/chat => ../chat

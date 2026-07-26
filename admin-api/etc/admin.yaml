@@ -32,6 +32,13 @@ SystemRpc:
     - "127.0.0.1:2379"
     Key: system.rpc
 
+ChatRpc:
+  rpcType: zrpc
+  Etcd:
+    Hosts:
+    - "127.0.0.1:2379"
+    Key: chat.rpc
+
 
 UserRpc:
   rpcType: zrpc
@@ -80,4 +87,4 @@ TradeRpc:
   Etcd:
     Hosts:
     - "127.0.0.1:2379"
-    Key: trade.rpc   
+    Key: trade.rpc

@@ -19,6 +19,7 @@ type Config struct {
 		AccessExpire int64
 	} `json:"Jwt" yaml:"Jwt"`
 	SystemRpc         zrpc.RpcClientConf
+	ChatRpc           zrpc.RpcClientConf
 	UserRpc           zrpc.RpcClientConf
 	PaymentRpc        zrpc.RpcClientConf
 	ItickRpc          zrpc.RpcClientConf

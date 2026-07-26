@@ -846,60 +846,6 @@ func (ChatUserType) EnumDescriptor() ([]byte, []int) {
 }
 
 // *
-// 同步动作
-// 用于后台用户、客服、商户、配置等数据同步
-type ChatSyncAction int32
-
-const (
-	ChatSyncAction_CHAT_SYNC_ACTION_UNKNOWN ChatSyncAction = 0
-	// 创建或更新
-	ChatSyncAction_CHAT_SYNC_ACTION_UPSERT ChatSyncAction = 1
-	// 删除 / 禁用
-	ChatSyncAction_CHAT_SYNC_ACTION_DELETE ChatSyncAction = 2
-)
-
-// Enum value maps for ChatSyncAction.
-var (
-	ChatSyncAction_name = map[int32]string{
-		0: "CHAT_SYNC_ACTION_UNKNOWN",
-		1: "CHAT_SYNC_ACTION_UPSERT",
-		2: "CHAT_SYNC_ACTION_DELETE",
-	}
-	ChatSyncAction_value = map[string]int32{
-		"CHAT_SYNC_ACTION_UNKNOWN": 0,
-		"CHAT_SYNC_ACTION_UPSERT":  1,
-		"CHAT_SYNC_ACTION_DELETE":  2,
-	}
-)
-
-func (x ChatSyncAction) Enum() *ChatSyncAction {
-	p := new(ChatSyncAction)
-	*p = x
-	return p
-}
-
-func (x ChatSyncAction) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (ChatSyncAction) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_chat_enum_proto_enumTypes[11].Descriptor()
-}
-
-func (ChatSyncAction) Type() protoreflect.EnumType {
-	return &file_proto_chat_enum_proto_enumTypes[11]
-}
-
-func (x ChatSyncAction) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use ChatSyncAction.Descriptor instead.
-func (ChatSyncAction) EnumDescriptor() ([]byte, []int) {
-	return file_proto_chat_enum_proto_rawDescGZIP(), []int{11}
-}
-
-// *
 // 消息操作类型
 type ChatMessageOperateType int32
 
@@ -936,11 +882,11 @@ func (x ChatMessageOperateType) String() string {
 }
 
 func (ChatMessageOperateType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_chat_enum_proto_enumTypes[12].Descriptor()
+	return file_proto_chat_enum_proto_enumTypes[11].Descriptor()
 }
 
 func (ChatMessageOperateType) Type() protoreflect.EnumType {
-	return &file_proto_chat_enum_proto_enumTypes[12]
+	return &file_proto_chat_enum_proto_enumTypes[11]
 }
 
 func (x ChatMessageOperateType) Number() protoreflect.EnumNumber {
@@ -949,7 +895,7 @@ func (x ChatMessageOperateType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ChatMessageOperateType.Descriptor instead.
 func (ChatMessageOperateType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_chat_enum_proto_rawDescGZIP(), []int{12}
+	return file_proto_chat_enum_proto_rawDescGZIP(), []int{11}
 }
 
 // *
@@ -989,11 +935,11 @@ func (x ChatMessageDeleteScope) String() string {
 }
 
 func (ChatMessageDeleteScope) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_chat_enum_proto_enumTypes[13].Descriptor()
+	return file_proto_chat_enum_proto_enumTypes[12].Descriptor()
 }
 
 func (ChatMessageDeleteScope) Type() protoreflect.EnumType {
-	return &file_proto_chat_enum_proto_enumTypes[13]
+	return &file_proto_chat_enum_proto_enumTypes[12]
 }
 
 func (x ChatMessageDeleteScope) Number() protoreflect.EnumNumber {
@@ -1002,7 +948,7 @@ func (x ChatMessageDeleteScope) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ChatMessageDeleteScope.Descriptor instead.
 func (ChatMessageDeleteScope) EnumDescriptor() ([]byte, []int) {
-	return file_proto_chat_enum_proto_rawDescGZIP(), []int{13}
+	return file_proto_chat_enum_proto_rawDescGZIP(), []int{12}
 }
 
 var File_proto_chat_enum_proto protoreflect.FileDescriptor
@@ -1108,11 +1054,7 @@ const file_proto_chat_enum_proto_rawDesc = "" +
 	"\fChatUserType\x12\x1a\n" +
 	"\x16CHAT_USER_TYPE_UNKNOWN\x10\x00\x12\x1b\n" +
 	"\x17CHAT_USER_TYPE_MERCHANT\x10\x01\x12\x18\n" +
-	"\x14CHAT_USER_TYPE_AGENT\x10\x02\"\x04\b\x03\x10\x03*h\n" +
-	"\x0eChatSyncAction\x12\x1c\n" +
-	"\x18CHAT_SYNC_ACTION_UNKNOWN\x10\x00\x12\x1b\n" +
-	"\x17CHAT_SYNC_ACTION_UPSERT\x10\x01\x12\x1b\n" +
-	"\x17CHAT_SYNC_ACTION_DELETE\x10\x02*\x8b\x01\n" +
+	"\x14CHAT_USER_TYPE_AGENT\x10\x02\"\x04\b\x03\x10\x03*\x8b\x01\n" +
 	"\x16ChatMessageOperateType\x12%\n" +
 	"!CHAT_MESSAGE_OPERATE_TYPE_UNKNOWN\x10\x00\x12$\n" +
 	" CHAT_MESSAGE_OPERATE_TYPE_RECALL\x10\x01\x12$\n" +
@@ -1134,7 +1076,7 @@ func file_proto_chat_enum_proto_rawDescGZIP() []byte {
 	return file_proto_chat_enum_proto_rawDescData
 }
 
-var file_proto_chat_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 14)
+var file_proto_chat_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 13)
 var file_proto_chat_enum_proto_goTypes = []any{
 	(ChatSessionSource)(0),      // 0: chat.ChatSessionSource
 	(ChatSessionStatus)(0),      // 1: chat.ChatSessionStatus
@@ -1147,9 +1089,8 @@ var file_proto_chat_enum_proto_goTypes = []any{
 	(ChatSenderType)(0),         // 8: chat.ChatSenderType
 	(ChatMessageStatus)(0),      // 9: chat.ChatMessageStatus
 	(ChatUserType)(0),           // 10: chat.ChatUserType
-	(ChatSyncAction)(0),         // 11: chat.ChatSyncAction
-	(ChatMessageOperateType)(0), // 12: chat.ChatMessageOperateType
-	(ChatMessageDeleteScope)(0), // 13: chat.ChatMessageDeleteScope
+	(ChatMessageOperateType)(0), // 11: chat.ChatMessageOperateType
+	(ChatMessageDeleteScope)(0), // 12: chat.ChatMessageDeleteScope
 }
 var file_proto_chat_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -1169,7 +1110,7 @@ func file_proto_chat_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_chat_enum_proto_rawDesc), len(file_proto_chat_enum_proto_rawDesc)),
-			NumEnums:      14,
+			NumEnums:      13,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

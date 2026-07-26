@@ -15,6 +15,7 @@ type ServiceContext struct {
 	Config                config.Config
 	DB                    sqlx.SqlConn
 	ChatMerchantInfoModel models.TChatMerchantInfoModel
+	ChatMerchantModel     models.TChatMerchantModel
 	ChatUserModel         models.TChatUserModel
 	ChatAgentModel        models.TChatAgentModel
 	ChatSessionModel      models.TChatSessionModel
@@ -48,6 +49,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:                c,
 		DB:                    conn,
 		ChatMerchantInfoModel: models.NewTChatMerchantInfoModel(conn, c.CacheRedis),
+		ChatMerchantModel:     models.NewTChatMerchantModel(conn, c.CacheRedis),
 		ChatUserModel:         models.NewTChatUserModel(conn, c.CacheRedis),
 		ChatAgentModel:        models.NewTChatAgentModel(conn, c.CacheRedis),
 		ChatSessionModel:      models.NewTChatSessionModel(conn, c.CacheRedis),

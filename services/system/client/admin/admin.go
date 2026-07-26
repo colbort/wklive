@@ -43,14 +43,6 @@ type (
 	ResolveTenantDomainResp          = system.ResolveTenantDomainResp
 	RespBase                         = system.RespBase
 	SendVerificationCodeReq          = system.SendVerificationCodeReq
-	SysChatMerchantCreateReq         = system.SysChatMerchantCreateReq
-	SysChatMerchantDeleteReq         = system.SysChatMerchantDeleteReq
-	SysChatMerchantDetailReq         = system.SysChatMerchantDetailReq
-	SysChatMerchantDetailResp        = system.SysChatMerchantDetailResp
-	SysChatMerchantItem              = system.SysChatMerchantItem
-	SysChatMerchantListReq           = system.SysChatMerchantListReq
-	SysChatMerchantListResp          = system.SysChatMerchantListResp
-	SysChatMerchantUpdateReq         = system.SysChatMerchantUpdateReq
 	SysConfigByKeysReq               = system.SysConfigByKeysReq
 	SysConfigByKeysResp              = system.SysConfigByKeysResp
 	SysConfigCreateReq               = system.SysConfigCreateReq
@@ -184,11 +176,6 @@ type (
 		SysTenantDomainCreate(ctx context.Context, in *SysTenantDomainCreateReq, opts ...grpc.CallOption) (*RespBase, error)
 		SysTenantDomainUpdate(ctx context.Context, in *SysTenantDomainUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
 		SysTenantDomainDelete(ctx context.Context, in *SysTenantDomainDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
-		SysChatMerchantCreate(ctx context.Context, in *SysChatMerchantCreateReq, opts ...grpc.CallOption) (*RespBase, error)
-		SysChatMerchantUpdate(ctx context.Context, in *SysChatMerchantUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
-		SysChatMerchantDelete(ctx context.Context, in *SysChatMerchantDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
-		SysChatMerchantList(ctx context.Context, in *SysChatMerchantListReq, opts ...grpc.CallOption) (*SysChatMerchantListResp, error)
-		SysChatMerchantDetail(ctx context.Context, in *SysChatMerchantDetailReq, opts ...grpc.CallOption) (*SysChatMerchantDetailResp, error)
 	}
 
 	defaultAdmin struct {
@@ -485,29 +472,4 @@ func (m *defaultAdmin) SysTenantDomainUpdate(ctx context.Context, in *SysTenantD
 func (m *defaultAdmin) SysTenantDomainDelete(ctx context.Context, in *SysTenantDomainDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
 	client := system.NewAdminClient(m.cli.Conn())
 	return client.SysTenantDomainDelete(ctx, in, opts...)
-}
-
-func (m *defaultAdmin) SysChatMerchantCreate(ctx context.Context, in *SysChatMerchantCreateReq, opts ...grpc.CallOption) (*RespBase, error) {
-	client := system.NewAdminClient(m.cli.Conn())
-	return client.SysChatMerchantCreate(ctx, in, opts...)
-}
-
-func (m *defaultAdmin) SysChatMerchantUpdate(ctx context.Context, in *SysChatMerchantUpdateReq, opts ...grpc.CallOption) (*RespBase, error) {
-	client := system.NewAdminClient(m.cli.Conn())
-	return client.SysChatMerchantUpdate(ctx, in, opts...)
-}
-
-func (m *defaultAdmin) SysChatMerchantDelete(ctx context.Context, in *SysChatMerchantDeleteReq, opts ...grpc.CallOption) (*RespBase, error) {
-	client := system.NewAdminClient(m.cli.Conn())
-	return client.SysChatMerchantDelete(ctx, in, opts...)
-}
-
-func (m *defaultAdmin) SysChatMerchantList(ctx context.Context, in *SysChatMerchantListReq, opts ...grpc.CallOption) (*SysChatMerchantListResp, error) {
-	client := system.NewAdminClient(m.cli.Conn())
-	return client.SysChatMerchantList(ctx, in, opts...)
-}
-
-func (m *defaultAdmin) SysChatMerchantDetail(ctx context.Context, in *SysChatMerchantDetailReq, opts ...grpc.CallOption) (*SysChatMerchantDetailResp, error) {
-	client := system.NewAdminClient(m.cli.Conn())
-	return client.SysChatMerchantDetail(ctx, in, opts...)
 }

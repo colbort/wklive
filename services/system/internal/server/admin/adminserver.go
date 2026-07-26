@@ -307,28 +307,3 @@ func (s *AdminServer) SysTenantDomainDelete(ctx context.Context, in *system.SysT
 	l := adminlogic.NewSysTenantDomainDeleteLogic(ctx, s.svcCtx)
 	return l.SysTenantDomainDelete(in)
 }
-
-func (s *AdminServer) SysChatMerchantCreate(ctx context.Context, in *system.SysChatMerchantCreateReq) (*system.RespBase, error) {
-	l := adminlogic.NewSysChatMerchantCreateLogic(ctx, s.svcCtx)
-	return l.SysChatMerchantCreate(in)
-}
-
-func (s *AdminServer) SysChatMerchantUpdate(ctx context.Context, in *system.SysChatMerchantUpdateReq) (*system.RespBase, error) {
-	l := adminlogic.NewSysChatMerchantUpdateLogic(ctx, s.svcCtx)
-	return l.SysChatMerchantUpdate(in)
-}
-
-func (s *AdminServer) SysChatMerchantDelete(ctx context.Context, in *system.SysChatMerchantDeleteReq) (*system.RespBase, error) {
-	l := adminlogic.NewSysChatMerchantDeleteLogic(ctx, s.svcCtx)
-	return l.SysChatMerchantDelete(in)
-}
-
-func (s *AdminServer) SysChatMerchantList(ctx context.Context, in *system.SysChatMerchantListReq) (*system.SysChatMerchantListResp, error) {
-	l := adminlogic.NewSysChatMerchantListLogic(ctx, s.svcCtx)
-	return l.SysChatMerchantList(in)
-}
-
-func (s *AdminServer) SysChatMerchantDetail(ctx context.Context, in *system.SysChatMerchantDetailReq) (*system.SysChatMerchantDetailResp, error) {
-	l := adminlogic.NewSysChatMerchantDetailLogic(ctx, s.svcCtx)
-	return l.SysChatMerchantDetail(in)
-}

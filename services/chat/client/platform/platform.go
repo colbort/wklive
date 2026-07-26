@@ -2,7 +2,7 @@
 // goctl 1.9.2
 // Source: chat.proto
 
-package chat
+package platform
 
 import (
 	"context"
@@ -88,14 +88,20 @@ type (
 	PageChatSessionsResp           = chat.PageChatSessionsResp
 	PageChatWorkOrdersReq          = chat.PageChatWorkOrdersReq
 	PageChatWorkOrdersResp         = chat.PageChatWorkOrdersResp
+	PlatformChatMerchant           = chat.PlatformChatMerchant
+	PlatformChatMerchantCreateReq  = chat.PlatformChatMerchantCreateReq
+	PlatformChatMerchantDeleteReq  = chat.PlatformChatMerchantDeleteReq
+	PlatformChatMerchantDetailReq  = chat.PlatformChatMerchantDetailReq
+	PlatformChatMerchantDetailResp = chat.PlatformChatMerchantDetailResp
+	PlatformChatMerchantListReq    = chat.PlatformChatMerchantListReq
+	PlatformChatMerchantListResp   = chat.PlatformChatMerchantListResp
+	PlatformChatMerchantUpdateReq  = chat.PlatformChatMerchantUpdateReq
 	SendAgentMessageReq            = chat.SendAgentMessageReq
 	SendAgentTypingReq             = chat.SendAgentTypingReq
 	SendUserMessageReq             = chat.SendUserMessageReq
 	SendUserTypingReq              = chat.SendUserTypingReq
 	SubmitChatSatisfactionReq      = chat.SubmitChatSatisfactionReq
 	SubscribeRequest               = chat.SubscribeRequest
-	SyncChatMerchantUserReq        = chat.SyncChatMerchantUserReq
-	SyncChatMerchantUserResp       = chat.SyncChatMerchantUserResp
 	UpdateChatAdminProfileReq      = chat.UpdateChatAdminProfileReq
 	UpdateChatAgentReq             = chat.UpdateChatAgentReq
 	UpdateChatAgentStatusReq       = chat.UpdateChatAgentStatusReq
@@ -109,24 +115,46 @@ type (
 	UserChatSessionResp            = chat.UserChatSessionResp
 	UserCommonResp                 = chat.UserCommonResp
 
-	Chat interface {
-		// 同步客服商户主账号
-		SyncChatMerchantUser(ctx context.Context, in *SyncChatMerchantUserReq, opts ...grpc.CallOption) (*SyncChatMerchantUserResp, error)
+	Platform interface {
+		CreatePlatformChatMerchant(ctx context.Context, in *PlatformChatMerchantCreateReq, opts ...grpc.CallOption) (*CommonResp, error)
+		UpdatePlatformChatMerchant(ctx context.Context, in *PlatformChatMerchantUpdateReq, opts ...grpc.CallOption) (*CommonResp, error)
+		DeletePlatformChatMerchant(ctx context.Context, in *PlatformChatMerchantDeleteReq, opts ...grpc.CallOption) (*CommonResp, error)
+		ListPlatformChatMerchants(ctx context.Context, in *PlatformChatMerchantListReq, opts ...grpc.CallOption) (*PlatformChatMerchantListResp, error)
+		GetPlatformChatMerchant(ctx context.Context, in *PlatformChatMerchantDetailReq, opts ...grpc.CallOption) (*PlatformChatMerchantDetailResp, error)
 	}
 
-	defaultChat struct {
+	defaultPlatform struct {
 		cli zrpc.Client
 	}
 )
 
-func NewChat(cli zrpc.Client) Chat {
-	return &defaultChat{
+func NewPlatform(cli zrpc.Client) Platform {
+	return &defaultPlatform{
 		cli: cli,
 	}
 }
 
-// 同步客服商户主账号
-func (m *defaultChat) SyncChatMerchantUser(ctx context.Context, in *SyncChatMerchantUserReq, opts ...grpc.CallOption) (*SyncChatMerchantUserResp, error) {
-	client := chat.NewChatClient(m.cli.Conn())
-	return client.SyncChatMerchantUser(ctx, in, opts...)
+func (m *defaultPlatform) CreatePlatformChatMerchant(ctx context.Context, in *PlatformChatMerchantCreateReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := chat.NewPlatformClient(m.cli.Conn())
+	return client.CreatePlatformChatMerchant(ctx, in, opts...)
+}
+
+func (m *defaultPlatform) UpdatePlatformChatMerchant(ctx context.Context, in *PlatformChatMerchantUpdateReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := chat.NewPlatformClient(m.cli.Conn())
+	return client.UpdatePlatformChatMerchant(ctx, in, opts...)
+}
+
+func (m *defaultPlatform) DeletePlatformChatMerchant(ctx context.Context, in *PlatformChatMerchantDeleteReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := chat.NewPlatformClient(m.cli.Conn())
+	return client.DeletePlatformChatMerchant(ctx, in, opts...)
+}
+
+func (m *defaultPlatform) ListPlatformChatMerchants(ctx context.Context, in *PlatformChatMerchantListReq, opts ...grpc.CallOption) (*PlatformChatMerchantListResp, error) {
+	client := chat.NewPlatformClient(m.cli.Conn())
+	return client.ListPlatformChatMerchants(ctx, in, opts...)
+}
+
+func (m *defaultPlatform) GetPlatformChatMerchant(ctx context.Context, in *PlatformChatMerchantDetailReq, opts ...grpc.CallOption) (*PlatformChatMerchantDetailResp, error) {
+	client := chat.NewPlatformClient(m.cli.Conn())
+	return client.GetPlatformChatMerchant(ctx, in, opts...)
 }

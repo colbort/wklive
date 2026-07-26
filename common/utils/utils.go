@@ -178,3 +178,14 @@ func GetTenantCodeFromMd(ctx context.Context) (string, error) {
 
 	return tenantCode, nil
 }
+
+func GetSubjectDomainFromMd(ctx context.Context) (string, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return "", fmt.Errorf("no metadata in context")
+	}
+	if vals := md.Get(CtxKeySubjectDomain); len(vals) > 0 && vals[0] != "" {
+		return vals[0], nil
+	}
+	return "", fmt.Errorf("%s not found in metadata", CtxKeySubjectDomain)
+}

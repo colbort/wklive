@@ -43,14 +43,6 @@ type (
 	ResolveTenantDomainResp          = system.ResolveTenantDomainResp
 	RespBase                         = system.RespBase
 	SendVerificationCodeReq          = system.SendVerificationCodeReq
-	SysChatMerchantCreateReq         = system.SysChatMerchantCreateReq
-	SysChatMerchantDeleteReq         = system.SysChatMerchantDeleteReq
-	SysChatMerchantDetailReq         = system.SysChatMerchantDetailReq
-	SysChatMerchantDetailResp        = system.SysChatMerchantDetailResp
-	SysChatMerchantItem              = system.SysChatMerchantItem
-	SysChatMerchantListReq           = system.SysChatMerchantListReq
-	SysChatMerchantListResp          = system.SysChatMerchantListResp
-	SysChatMerchantUpdateReq         = system.SysChatMerchantUpdateReq
 	SysConfigByKeysReq               = system.SysConfigByKeysReq
 	SysConfigByKeysResp              = system.SysConfigByKeysResp
 	SysConfigCreateReq               = system.SysConfigCreateReq

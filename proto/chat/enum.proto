@@ -338,20 +338,6 @@ enum ChatUserType {
 }
 
 /**
- * 同步动作
- * 用于后台用户、客服、商户、配置等数据同步
- */
-enum ChatSyncAction {
-  CHAT_SYNC_ACTION_UNKNOWN = 0;
-
-  // 创建或更新
-  CHAT_SYNC_ACTION_UPSERT = 1;
-
-  // 删除 / 禁用
-  CHAT_SYNC_ACTION_DELETE = 2;
-}
-
-/**
  * 消息操作类型
  */
 enum ChatMessageOperateType {

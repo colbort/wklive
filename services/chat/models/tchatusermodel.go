@@ -30,6 +30,7 @@ type (
 		tChatUserModel
 		FindPage(ctx context.Context, filter ChatUserPageFilter, cursor int64, limit int64) ([]*TChatUser, int64, error)
 		FindOneByUsername(ctx context.Context, username string) (*TChatUser, error)
+		UpdateWithUniqueCache(ctx context.Context, data *TChatUser) error
 	}
 
 	customTChatUserModel struct {
@@ -42,6 +43,15 @@ func NewTChatUserModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Optio
 	return &customTChatUserModel{
 		defaultTChatUserModel: newTChatUserModel(conn, c, opts...),
 	}
+}
+
+// UpdateWithUniqueCache also clears the cache key derived from the new
+// merchant_id + username pair.
+func (m *customTChatUserModel) UpdateWithUniqueCache(ctx context.Context, data *TChatUser) error {
+	if err := m.Update(ctx, data); err != nil {
+		return err
+	}
+	return m.DelCacheCtx(ctx, fmt.Sprintf("%s%v:%v", cacheTChatUserMerchantIdUsernamePrefix, data.MerchantId, data.Username))
 }
 
 func (m *customTChatUserModel) FindPage(ctx context.Context, filter ChatUserPageFilter, cursor int64, limit int64) ([]*TChatUser, int64, error) {

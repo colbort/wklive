@@ -205,7 +205,16 @@ message ChatSatisfactionResp {
   ChatSatisfaction data = 2;
 }
 
-// 后台客服服务
+// 平台总后台客服商户管理服务
+service Platform {
+  rpc CreatePlatformChatMerchant(PlatformChatMerchantCreateReq) returns (CommonResp);
+  rpc UpdatePlatformChatMerchant(PlatformChatMerchantUpdateReq) returns (CommonResp);
+  rpc DeletePlatformChatMerchant(PlatformChatMerchantDeleteReq) returns (CommonResp);
+  rpc ListPlatformChatMerchants(PlatformChatMerchantListReq) returns (PlatformChatMerchantListResp);
+  rpc GetPlatformChatMerchant(PlatformChatMerchantDetailReq) returns (PlatformChatMerchantDetailResp);
+}
+
+// 客服商户及坐席后台服务
 service Admin {
   // 登录
   rpc Login(ChatAdminLoginReq) returns (ChatAdminLoginResp);
@@ -341,6 +350,71 @@ service Admin {
 
   // 订阅客服消息事件流
   rpc SubscribeStream(SubscribeRequest) returns (stream ChatWsResponse);
+}
+
+message PlatformChatMerchant {
+  int64 id = 1;
+  string merchant_code = 2;
+  string merchant_name = 3;
+  common.Enable enabled = 4;
+  int64 expire_time = 5;
+  string contact_name = 6;
+  string contact_phone = 7;
+  string contact_email = 8;
+  string remark = 9;
+  string create_by = 10;
+  int64 create_times = 11;
+  string update_by = 12;
+  int64 update_times = 13;
+}
+
+message PlatformChatMerchantCreateReq {
+  string merchant_code = 1;
+  string merchant_name = 2;
+  common.Enable enabled = 3;
+  int64 expire_time = 4;
+  string contact_name = 5;
+  string contact_phone = 6;
+  string contact_email = 7;
+  string remark = 8;
+  string password = 9;
+}
+
+message PlatformChatMerchantUpdateReq {
+  int64 id = 1;
+  string merchant_code = 2;
+  string merchant_name = 3;
+  common.Enable enabled = 4;
+  int64 expire_time = 5;
+  string contact_name = 6;
+  string contact_phone = 7;
+  string contact_email = 8;
+  string remark = 9;
+  string password = 10;
+}
+
+message PlatformChatMerchantDeleteReq { int64 id = 1; }
+message PlatformChatMerchantDetailReq {
+  int64 id = 1;
+  string merchant_code = 2;
+}
+message PlatformChatMerchantListReq {
+  string keyword = 1;
+  common.Enable enabled = 2;
+  common.PageReq page = 3;
+  string merchant_code = 4;
+  string merchant_name = 5;
+  string contact_name = 6;
+  string contact_phone = 7;
+  string contact_email = 8;
+}
+message PlatformChatMerchantListResp {
+  common.RespBase base = 1;
+  repeated PlatformChatMerchant data = 2;
+}
+message PlatformChatMerchantDetailResp {
+  common.RespBase base = 1;
+  PlatformChatMerchant data = 2;
 }
 
 message CommonResp {
@@ -794,30 +868,4 @@ message ChatCategoryResp {
 message ChatWorkOrderResp {
   common.RespBase base = 1;
   ChatWorkOrder data = 2;
-}
-
-// 内部客服服务
-// 面向业务系统/任务系统；不直接暴露给 chat-ui/chat-admin-ui。
-service Chat {
-  // 同步客服商户主账号
-  rpc SyncChatMerchantUser(SyncChatMerchantUserReq) returns (SyncChatMerchantUserResp);
-}
-
-message SyncChatMerchantUserReq {
-  ChatSyncAction action = 1; // 同步动作
-  int64 merchant_id = 2; // 客服商户ID
-  string merchant_code = 3; // 客服商户编码
-  string merchant_name = 4; // 客服商户名称
-  common.Enable enabled = 5; // 启用状态
-  int64 expire_time = 6; // 到期时间
-  string contact_name = 7; // 联系人
-  string contact_phone = 8; // 联系电话
-  string contact_email = 9; // 联系邮箱
-  string remark = 10; // 备注
-  string password = 11; // 明文密码,仅内部同步使用
-}
-
-message SyncChatMerchantUserResp {
-  common.RespBase base = 1;
-  ChatUser data = 2;
 }
