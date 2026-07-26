@@ -23,6 +23,7 @@ type (
 	TPayPlatformModel interface {
 		tPayPlatformModel
 		FindPage(ctx context.Context, filter PayPlatformPageFilter, cursor int64, limit int64) ([]*TPayPlatform, int64, error)
+		FindByIDs(ctx context.Context, ids []int64) ([]*TPayPlatform, error)
 	}
 
 	customTPayPlatformModel struct {
@@ -35,6 +36,20 @@ func NewTPayPlatformModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Op
 	return &customTPayPlatformModel{
 		defaultTPayPlatformModel: newTPayPlatformModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTPayPlatformModel) FindByIDs(ctx context.Context, ids []int64) ([]*TPayPlatform, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.InInt64("id", ids)
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s", tPayPlatformRows, m.table, builder.Where())
+	var list []*TPayPlatform
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, builder.Args()...); err != nil {
+		return nil, err
+	}
+	return list, nil
 }
 
 func (m *defaultTPayPlatformModel) FindPage(ctx context.Context, filter PayPlatformPageFilter, cursor int64, limit int64) ([]*TPayPlatform, int64, error) {

@@ -34,6 +34,7 @@ export type PayPlatformItem = {
 export type PayProduct = {
   id: number // 产品ID
   platformId: number // 平台ID
+  platformName: string // 平台名称
   productCode: string // 产品编码
   productName: string // 产品名称
   sceneType: number // 场景：1APP 2H5 3WEB 4收银台 5链上

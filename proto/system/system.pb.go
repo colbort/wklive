@@ -6238,6 +6238,7 @@ type SysTenantListReq struct {
 	TenantName    string                 `protobuf:"bytes,5,opt,name=tenant_name,json=tenantName,proto3" json:"tenant_name,omitempty"`
 	ContactName   string                 `protobuf:"bytes,6,opt,name=contact_name,json=contactName,proto3" json:"contact_name,omitempty"`
 	ContactPhone  string                 `protobuf:"bytes,7,opt,name=contact_phone,json=contactPhone,proto3" json:"contact_phone,omitempty"`
+	Ids           []int64                `protobuf:"varint,8,rep,packed,name=ids,proto3" json:"ids,omitempty"` // 按租户ID批量查询
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -6319,6 +6320,13 @@ func (x *SysTenantListReq) GetContactPhone() string {
 		return x.ContactPhone
 	}
 	return ""
+}
+
+func (x *SysTenantListReq) GetIds() []int64 {
+	if x != nil {
+		return x.Ids
+	}
+	return nil
 }
 
 type SysTenantListResp struct {
@@ -8367,7 +8375,7 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\vlogin_count\x18\r \x01(\x03R\n" +
 	"loginCount\x12\x1b\n" +
 	"\tcreate_by\x18\x0e \x01(\x03R\bcreateBy\x12\x1b\n" +
-	"\tupdate_by\x18\x0f \x01(\x03R\bupdateBy\"\x85\x02\n" +
+	"\tupdate_by\x18\x0f \x01(\x03R\bupdateBy\"\x97\x02\n" +
 	"\x10SysTenantListReq\x12#\n" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x18\n" +
 	"\akeyword\x18\x02 \x01(\tR\akeyword\x12(\n" +
@@ -8377,7 +8385,8 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\vtenant_name\x18\x05 \x01(\tR\n" +
 	"tenantName\x12!\n" +
 	"\fcontact_name\x18\x06 \x01(\tR\vcontactName\x12#\n" +
-	"\rcontact_phone\x18\a \x01(\tR\fcontactPhone\"d\n" +
+	"\rcontact_phone\x18\a \x01(\tR\fcontactPhone\x12\x10\n" +
+	"\x03ids\x18\b \x03(\x03R\x03ids\"d\n" +
 	"\x11SysTenantListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
 	"\x04data\x18\x02 \x03(\v2\x15.system.SysTenantItemR\x04data\"\xa5\x02\n" +

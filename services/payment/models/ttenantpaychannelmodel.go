@@ -25,6 +25,7 @@ type (
 	TTenantPayChannelModel interface {
 		tTenantPayChannelModel
 		FindPage(ctx context.Context, filter TenantPayChannelPageFilter, cursor int64, limit int64) ([]*TTenantPayChannel, int64, error)
+		FindByIDs(ctx context.Context, ids []int64) ([]*TTenantPayChannel, error)
 	}
 
 	customTTenantPayChannelModel struct {
@@ -37,6 +38,20 @@ func NewTTenantPayChannelModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cac
 	return &customTTenantPayChannelModel{
 		defaultTTenantPayChannelModel: newTTenantPayChannelModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTTenantPayChannelModel) FindByIDs(ctx context.Context, ids []int64) ([]*TTenantPayChannel, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.InInt64("id", ids)
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s", tTenantPayChannelRows, m.table, builder.Where())
+	var list []*TTenantPayChannel
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, builder.Args()...); err != nil {
+		return nil, err
+	}
+	return list, nil
 }
 
 func (m *defaultTTenantPayChannelModel) FindPage(ctx context.Context, filter TenantPayChannelPageFilter, cursor int64, limit int64) ([]*TTenantPayChannel, int64, error) {

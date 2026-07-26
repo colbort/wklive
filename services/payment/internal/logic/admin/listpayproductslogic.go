@@ -39,8 +39,26 @@ func (l *ListPayProductsLogic) ListPayProducts(in *payment.ListPayProductsReq) (
 	}
 
 	data := make([]*payment.PayProduct, 0, len(items))
+	platformIDs := make([]int64, 0, len(items))
+	seenPlatformIDs := make(map[int64]struct{}, len(items))
+	for _, item := range items {
+		if _, exists := seenPlatformIDs[item.PlatformId]; !exists {
+			seenPlatformIDs[item.PlatformId] = struct{}{}
+			platformIDs = append(platformIDs, item.PlatformId)
+		}
+	}
+	platforms, err := l.svcCtx.PayPlatformModel.FindByIDs(l.ctx, platformIDs)
+	if err != nil {
+		return nil, err
+	}
+	platformNames := make(map[int64]string, len(platforms))
+	for _, platform := range platforms {
+		platformNames[platform.Id] = platform.PlatformName
+	}
 	for _, p := range items {
-		data = append(data, toPayProductProto(p))
+		item := toPayProductProto(p)
+		item.PlatformName = platformNames[p.PlatformId]
+		data = append(data, item)
 	}
 
 	return &payment.ListPayProductsResp{

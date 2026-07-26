@@ -45,8 +45,26 @@ func (l *ListTenantPayChannelRulesLogic) ListTenantPayChannelRules(in *payment.L
 	}
 
 	data := make([]*payment.TenantPayChannelRule, 0, len(rules))
+	channelIDs := make([]int64, 0, len(rules))
+	seenChannelIDs := make(map[int64]struct{}, len(rules))
+	for _, rule := range rules {
+		if _, exists := seenChannelIDs[rule.ChannelId]; !exists {
+			seenChannelIDs[rule.ChannelId] = struct{}{}
+			channelIDs = append(channelIDs, rule.ChannelId)
+		}
+	}
+	channels, err := l.svcCtx.TenantPayChannelModel.FindByIDs(l.ctx, channelIDs)
+	if err != nil {
+		return nil, err
+	}
+	channelNames := make(map[int64]string, len(channels))
+	for _, channel := range channels {
+		channelNames[channel.Id] = channel.ChannelName
+	}
 	for _, r := range rules {
-		data = append(data, toTenantPayChannelRuleProto(r))
+		item := toTenantPayChannelRuleProto(r)
+		item.ChannelName = channelNames[r.ChannelId]
+		data = append(data, item)
 	}
 
 	return &payment.ListTenantPayChannelRulesResp{

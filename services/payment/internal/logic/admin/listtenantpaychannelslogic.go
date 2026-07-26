@@ -52,8 +52,56 @@ func (l *ListTenantPayChannelsLogic) ListTenantPayChannels(in *payment.ListTenan
 	}
 
 	data := make([]*payment.TenantPayChannel, 0, len(channels))
+	platformIDs := make([]int64, 0, len(channels))
+	productIDs := make([]int64, 0, len(channels))
+	accountIDs := make([]int64, 0, len(channels))
+	seenPlatforms := make(map[int64]struct{}, len(channels))
+	seenProducts := make(map[int64]struct{}, len(channels))
+	seenAccounts := make(map[int64]struct{}, len(channels))
+	for _, channel := range channels {
+		if _, exists := seenPlatforms[channel.PlatformId]; !exists {
+			seenPlatforms[channel.PlatformId] = struct{}{}
+			platformIDs = append(platformIDs, channel.PlatformId)
+		}
+		if _, exists := seenProducts[channel.ProductId]; !exists {
+			seenProducts[channel.ProductId] = struct{}{}
+			productIDs = append(productIDs, channel.ProductId)
+		}
+		if _, exists := seenAccounts[channel.AccountId]; !exists {
+			seenAccounts[channel.AccountId] = struct{}{}
+			accountIDs = append(accountIDs, channel.AccountId)
+		}
+	}
+	platforms, err := l.svcCtx.PayPlatformModel.FindByIDs(l.ctx, platformIDs)
+	if err != nil {
+		return nil, err
+	}
+	products, err := l.svcCtx.PayProductModel.FindByIDs(l.ctx, productIDs)
+	if err != nil {
+		return nil, err
+	}
+	accounts, err := l.svcCtx.TenantPayAccountModel.FindByIDs(l.ctx, accountIDs)
+	if err != nil {
+		return nil, err
+	}
+	platformNames := make(map[int64]string, len(platforms))
+	productNames := make(map[int64]string, len(products))
+	accountNames := make(map[int64]string, len(accounts))
+	for _, platform := range platforms {
+		platformNames[platform.Id] = platform.PlatformName
+	}
+	for _, product := range products {
+		productNames[product.Id] = product.ProductName
+	}
+	for _, account := range accounts {
+		accountNames[account.Id] = account.AccountName
+	}
 	for _, c := range channels {
-		data = append(data, toTenantPayChannelProto(c))
+		item := toTenantPayChannelProto(c)
+		item.PlatformName = platformNames[c.PlatformId]
+		item.ProductName = productNames[c.ProductId]
+		item.AccountName = accountNames[c.AccountId]
+		data = append(data, item)
 	}
 
 	return &payment.ListTenantPayChannelsResp{

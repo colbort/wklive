@@ -7,7 +7,6 @@ import (
 	"context"
 
 	"wklive/admin-api/internal/logicutil"
-
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
 
@@ -29,5 +28,15 @@ func NewListTenantPayChannelRulesLogic(ctx context.Context, svcCtx *svc.ServiceC
 }
 
 func (l *ListTenantPayChannelRulesLogic) ListTenantPayChannelRules(req *types.ListTenantPayChannelRulesReq) (resp *types.ListTenantPayChannelRulesResp, err error) {
-	return logicutil.Proxy[types.ListTenantPayChannelRulesResp](l.ctx, req, l.svcCtx.PaymentCli.ListTenantPayChannelRules)
+	resp, err = logicutil.Proxy[types.ListTenantPayChannelRulesResp](l.ctx, req, l.svcCtx.PaymentCli.ListTenantPayChannelRules)
+	if err != nil || resp == nil || resp.Code != 200 {
+		return resp, err
+	}
+	names := loadTenantNames(l.ctx, l.svcCtx, uniqueTenantIDs(resp.Data, func(item types.TenantPayChannelRule) int64 {
+		return item.TenantId
+	}))
+	for index := range resp.Data {
+		resp.Data[index].TenantName = names[resp.Data[index].TenantId]
+	}
+	return resp, nil
 }

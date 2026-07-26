@@ -651,6 +651,7 @@ message SysTenantListReq {
   string tenant_name = 5;
   string contact_name = 6;
   string contact_phone = 7;
+  repeated int64 ids = 8; // 按租户ID批量查询
 }
 message SysTenantListResp {
   common.RespBase base = 1;

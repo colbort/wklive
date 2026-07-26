@@ -158,6 +158,7 @@ type PayProduct struct {
 	Remark        string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`                                                // 备注
 	CreateTimes   int64                  `protobuf:"varint,9,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                  // 创建时间
 	UpdateTimes   int64                  `protobuf:"varint,10,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                 // 更新时间
+	PlatformName  string                 `protobuf:"bytes,11,opt,name=platform_name,json=platformName,proto3" json:"platform_name,omitempty"`               // 平台名称（列表展示）
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -262,6 +263,13 @@ func (x *PayProduct) GetUpdateTimes() int64 {
 	return 0
 }
 
+func (x *PayProduct) GetPlatformName() string {
+	if x != nil {
+		return x.PlatformName
+	}
+	return ""
+}
+
 type TenantPayAccount struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                       // 账号ID
@@ -284,6 +292,8 @@ type TenantPayAccount struct {
 	PrivateKeyCipher string                 `protobuf:"bytes,19,opt,name=private_key_cipher,json=privateKeyCipher,proto3" json:"private_key_cipher,omitempty"` // 私钥密文
 	CertCipher       string                 `protobuf:"bytes,20,opt,name=cert_cipher,json=certCipher,proto3" json:"cert_cipher,omitempty"`                     // 证书密文
 	CredentialRef    string                 `protobuf:"bytes,21,opt,name=credential_ref,json=credentialRef,proto3" json:"credential_ref,omitempty"`            // 密钥管理系统引用
+	TenantName       string                 `protobuf:"bytes,22,opt,name=tenant_name,json=tenantName,proto3" json:"tenant_name,omitempty"`                     // 租户名称（由网关批量补充）
+	PlatformName     string                 `protobuf:"bytes,23,opt,name=platform_name,json=platformName,proto3" json:"platform_name,omitempty"`               // 平台名称（列表展示）
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -458,6 +468,20 @@ func (x *TenantPayAccount) GetCredentialRef() string {
 	return ""
 }
 
+func (x *TenantPayAccount) GetTenantName() string {
+	if x != nil {
+		return x.TenantName
+	}
+	return ""
+}
+
+func (x *TenantPayAccount) GetPlatformName() string {
+	if x != nil {
+		return x.PlatformName
+	}
+	return ""
+}
+
 type TenantPayChannel struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                     // 通道ID
@@ -484,6 +508,10 @@ type TenantPayChannel struct {
 	Remark          string                 `protobuf:"bytes,22,opt,name=remark,proto3" json:"remark,omitempty"`                                             // 备注
 	CreateTimes     int64                  `protobuf:"varint,23,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`               // 创建时间
 	UpdateTimes     int64                  `protobuf:"varint,24,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`               // 更新时间
+	TenantName      string                 `protobuf:"bytes,25,opt,name=tenant_name,json=tenantName,proto3" json:"tenant_name,omitempty"`                   // 租户名称（由网关批量补充）
+	PlatformName    string                 `protobuf:"bytes,26,opt,name=platform_name,json=platformName,proto3" json:"platform_name,omitempty"`             // 平台名称（列表展示）
+	ProductName     string                 `protobuf:"bytes,27,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`                // 产品名称（列表展示）
+	AccountName     string                 `protobuf:"bytes,28,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`                // 支付账号名称（列表展示）
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -686,6 +714,34 @@ func (x *TenantPayChannel) GetUpdateTimes() int64 {
 	return 0
 }
 
+func (x *TenantPayChannel) GetTenantName() string {
+	if x != nil {
+		return x.TenantName
+	}
+	return ""
+}
+
+func (x *TenantPayChannel) GetPlatformName() string {
+	if x != nil {
+		return x.PlatformName
+	}
+	return ""
+}
+
+func (x *TenantPayChannel) GetProductName() string {
+	if x != nil {
+		return x.ProductName
+	}
+	return ""
+}
+
+func (x *TenantPayChannel) GetAccountName() string {
+	if x != nil {
+		return x.AccountName
+	}
+	return ""
+}
+
 type TenantPayChannelRule struct {
 	state                protoimpl.MessageState `protogen:"open.v1"`
 	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                      // 规则ID
@@ -709,6 +765,8 @@ type TenantPayChannelRule struct {
 	Remark               string                 `protobuf:"bytes,19,opt,name=remark,proto3" json:"remark,omitempty"`                                                              // 备注
 	CreateTimes          int64                  `protobuf:"varint,20,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                                // 创建时间
 	UpdateTimes          int64                  `protobuf:"varint,21,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                                // 更新时间
+	TenantName           string                 `protobuf:"bytes,22,opt,name=tenant_name,json=tenantName,proto3" json:"tenant_name,omitempty"`                                    // 租户名称（由网关批量补充）
+	ChannelName          string                 `protobuf:"bytes,23,opt,name=channel_name,json=channelName,proto3" json:"channel_name,omitempty"`                                 // 通道名称（列表展示）
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -888,6 +946,20 @@ func (x *TenantPayChannelRule) GetUpdateTimes() int64 {
 		return x.UpdateTimes
 	}
 	return 0
+}
+
+func (x *TenantPayChannelRule) GetTenantName() string {
+	if x != nil {
+		return x.TenantName
+	}
+	return ""
+}
+
+func (x *TenantPayChannelRule) GetChannelName() string {
+	if x != nil {
+		return x.ChannelName
+	}
+	return ""
 }
 
 type UserRechargeStat struct {
@@ -2405,7 +2477,7 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\x06remark\x18\t \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\n" +
 	" \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\v \x01(\x03R\vupdateTimes\"\xda\x02\n" +
+	"\fupdate_times\x18\v \x01(\x03R\vupdateTimes\"\xff\x02\n" +
 	"\n" +
 	"PayProduct\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
@@ -2420,7 +2492,8 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\x06remark\x18\b \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\t \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\n" +
-	" \x01(\x03R\vupdateTimes\"\xc5\x05\n" +
+	" \x01(\x03R\vupdateTimes\x12#\n" +
+	"\rplatform_name\x18\v \x01(\tR\fplatformName\"\x8b\x06\n" +
 	"\x10TenantPayAccount\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -2448,7 +2521,10 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\x12private_key_cipher\x18\x13 \x01(\tR\x10privateKeyCipher\x12\x1f\n" +
 	"\vcert_cipher\x18\x14 \x01(\tR\n" +
 	"certCipher\x12%\n" +
-	"\x0ecredential_ref\x18\x15 \x01(\tR\rcredentialRefJ\x04\b\x03\x10\x04\"\xb8\x06\n" +
+	"\x0ecredential_ref\x18\x15 \x01(\tR\rcredentialRef\x12\x1f\n" +
+	"\vtenant_name\x18\x16 \x01(\tR\n" +
+	"tenantName\x12#\n" +
+	"\rplatform_name\x18\x17 \x01(\tR\fplatformNameJ\x04\b\x03\x10\x04\"\xc4\a\n" +
 	"\x10TenantPayChannel\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -2478,7 +2554,12 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"ext_config\x18\x15 \x01(\tR\textConfig\x12\x16\n" +
 	"\x06remark\x18\x16 \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x17 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x18 \x01(\x03R\vupdateTimes\"\xab\x06\n" +
+	"\fupdate_times\x18\x18 \x01(\x03R\vupdateTimes\x12\x1f\n" +
+	"\vtenant_name\x18\x19 \x01(\tR\n" +
+	"tenantName\x12#\n" +
+	"\rplatform_name\x18\x1a \x01(\tR\fplatformName\x12!\n" +
+	"\fproduct_name\x18\x1b \x01(\tR\vproductName\x12!\n" +
+	"\faccount_name\x18\x1c \x01(\tR\vaccountName\"\xef\x06\n" +
 	"\x14TenantPayChannelRule\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1d\n" +
@@ -2503,7 +2584,10 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\tdeny_tags\x18\x12 \x01(\tR\bdenyTags\x12\x16\n" +
 	"\x06remark\x18\x13 \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x14 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x15 \x01(\x03R\vupdateTimes\"\xbc\x03\n" +
+	"\fupdate_times\x18\x15 \x01(\x03R\vupdateTimes\x12\x1f\n" +
+	"\vtenant_name\x18\x16 \x01(\tR\n" +
+	"tenantName\x12!\n" +
+	"\fchannel_name\x18\x17 \x01(\tR\vchannelName\"\xbc\x03\n" +
 	"\x10UserRechargeStat\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +

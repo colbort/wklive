@@ -16,6 +16,7 @@ type (
 	TPayProductModel interface {
 		tPayProductModel
 		FindPage(ctx context.Context, platformId int64, cursor int64, limit int64) ([]*TPayProduct, int64, error)
+		FindByIDs(ctx context.Context, ids []int64) ([]*TPayProduct, error)
 	}
 
 	customTPayProductModel struct {
@@ -28,6 +29,20 @@ func NewTPayProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Opt
 	return &customTPayProductModel{
 		defaultTPayProductModel: newTPayProductModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTPayProductModel) FindByIDs(ctx context.Context, ids []int64) ([]*TPayProduct, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.InInt64("id", ids)
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s", tPayProductRows, m.table, builder.Where())
+	var list []*TPayProduct
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, builder.Args()...); err != nil {
+		return nil, err
+	}
+	return list, nil
 }
 
 func (m *defaultTPayProductModel) FindPage(ctx context.Context, platformId int64, cursor int64, limit int64) ([]*TPayProduct, int64, error) {

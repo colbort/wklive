@@ -29,5 +29,15 @@ func NewListTenantPayChannelsLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *ListTenantPayChannelsLogic) ListTenantPayChannels(req *types.ListTenantPayChannelsReq) (resp *types.ListTenantPayChannelsResp, err error) {
-	return logicutil.Proxy[types.ListTenantPayChannelsResp](l.ctx, req, l.svcCtx.PaymentCli.ListTenantPayChannels)
+	resp, err = logicutil.Proxy[types.ListTenantPayChannelsResp](l.ctx, req, l.svcCtx.PaymentCli.ListTenantPayChannels)
+	if err != nil || resp == nil || resp.Code != 200 {
+		return resp, err
+	}
+	names := loadTenantNames(l.ctx, l.svcCtx, uniqueTenantIDs(resp.Data, func(item types.TenantPayChannel) int64 {
+		return item.TenantId
+	}))
+	for index := range resp.Data {
+		resp.Data[index].TenantName = names[resp.Data[index].TenantId]
+	}
+	return resp, nil
 }

@@ -18,7 +18,9 @@ import { getCoreOptions } from '@/stores/core'
 export type TenantPayAccount = {
   id: number // 账号ID
   tenantId: number // 租户ID
+  tenantName: string // 租户名称
   platformId: number // 平台ID
+  platformName: string // 平台名称
   accountCode: string // 账号编码
   accountName: string // 账号名称
   appId: string // 应用ID
@@ -40,9 +42,13 @@ export type TenantPayAccount = {
 export type TenantPayChannel = {
   id: number // 通道ID
   tenantId: number // 租户ID
+  tenantName: string // 租户名称
   platformId: number // 平台ID
+  platformName: string // 平台名称
   productId: number // 产品ID
+  productName: string // 产品名称
   accountId: number // 租户支付账号ID
+  accountName: string // 支付账号名称
   channelCode: string // 通道编码
   channelName: string // 通道名称
   displayName: string // 前端展示名称
@@ -67,7 +73,9 @@ export type TenantPayChannel = {
 export type TenantPayChannelRule = {
   id: number // 规则ID
   tenantId: number // 租户ID
+  tenantName: string // 租户名称
   channelId: number // 通道ID
+  channelName: string // 通道名称
   ruleName: string // 规则名称
   priority: number // 优先级，越小越优先
   enabled: number // 启用状态：1启用 2禁用

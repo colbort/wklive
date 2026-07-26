@@ -25,6 +25,7 @@ type PayPlatformItem {
 type PayProduct {
 	id          int64  `json:"id"`
 	platformId  int64  `json:"platformId"`
+	platformName string `json:"platformName"`
 	productCode string `json:"productCode"`
 	productName string `json:"productName"`
 	sceneType   int64  `json:"sceneType"` // 0未知 1APP 2H5 3WEB 4收银台 5链上
@@ -38,7 +39,9 @@ type PayProduct {
 type TenantPayAccount {
 	id                  int64  `json:"id"`
 	tenantId            int64  `json:"tenantId"`
+	tenantName          string `json:"tenantName"`
 	platformId          int64  `json:"platformId"`
+	platformName        string `json:"platformName"`
 	accountCode         string `json:"accountCode"`
 	accountName         string `json:"accountName"`
 	appId               string `json:"appId"`
@@ -61,9 +64,13 @@ type TenantPayAccount {
 type TenantPayChannel {
 	id              int64  `json:"id"`
 	tenantId        int64  `json:"tenantId"`
+	tenantName      string `json:"tenantName"`
 	platformId      int64  `json:"platformId"`
+	platformName    string `json:"platformName"`
 	productId       int64  `json:"productId"`
+	productName     string `json:"productName"`
 	accountId       int64  `json:"accountId"`
+	accountName     string `json:"accountName"`
 	channelCode     string `json:"channelCode"`
 	channelName     string `json:"channelName"`
 	displayName     string `json:"displayName"`
@@ -88,7 +95,9 @@ type TenantPayChannel {
 type TenantPayChannelRule {
 	id                   int64  `json:"id"`
 	tenantId             int64  `json:"tenantId"`
+	tenantName           string `json:"tenantName"`
 	channelId            int64  `json:"channelId"`
+	channelName          string `json:"channelName"`
 	ruleName             string `json:"ruleName"`
 	priority             int64  `json:"priority"`
 	enabled              int64  `json:"enabled"` // 0未知 1启用 2禁用

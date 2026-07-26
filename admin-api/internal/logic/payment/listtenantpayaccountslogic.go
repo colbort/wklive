@@ -29,5 +29,15 @@ func NewListTenantPayAccountsLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *ListTenantPayAccountsLogic) ListTenantPayAccounts(req *types.ListTenantPayAccountsReq) (resp *types.ListTenantPayAccountsResp, err error) {
-	return logicutil.Proxy[types.ListTenantPayAccountsResp](l.ctx, req, l.svcCtx.PaymentCli.ListTenantPayAccounts)
+	resp, err = logicutil.Proxy[types.ListTenantPayAccountsResp](l.ctx, req, l.svcCtx.PaymentCli.ListTenantPayAccounts)
+	if err != nil || resp == nil || resp.Code != 200 {
+		return resp, err
+	}
+	names := loadTenantNames(l.ctx, l.svcCtx, uniqueTenantIDs(resp.Data, func(item types.TenantPayAccount) int64 {
+		return item.TenantId
+	}))
+	for index := range resp.Data {
+		resp.Data[index].TenantName = names[resp.Data[index].TenantId]
+	}
+	return resp, nil
 }

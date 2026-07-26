@@ -28,7 +28,26 @@
     <el-card shadow="never" class="table-card">
       <el-table v-loading="channelLoading" :data="channels" stripe>
         <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="tenantId" :label="t('common.tenantId')" width="100" />
+        <el-table-column :label="t('common.tenantId')" min-width="170">
+          <template #default="{ row }">
+            {{ formatRelationLabel(row.tenantName, row.tenantId) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('payment.platformId')" min-width="180">
+          <template #default="{ row }">
+            {{ formatRelationLabel(row.platformName, row.platformId) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('payment.productId')" min-width="180">
+          <template #default="{ row }">
+            {{ formatRelationLabel(row.productName, row.productId) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('payment.accountId')" min-width="180">
+          <template #default="{ row }">
+            {{ formatRelationLabel(row.accountName, row.accountId) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="channelCode" :label="t('payment.channelCode')" min-width="120" />
         <el-table-column prop="channelName" :label="t('payment.channelName')" min-width="140" />
         <el-table-column prop="displayName" :label="t('payment.displayName')" min-width="140" />
@@ -471,6 +490,10 @@ function handleNextPage() {
 onMounted(async () => {
   await Promise.all([loadOptions(), loadList()])
 })
+
+function formatRelationLabel(name: string | undefined, id: number) {
+  return name ? `${name} (${id})` : String(id)
+}
 </script>
 
 <style scoped>

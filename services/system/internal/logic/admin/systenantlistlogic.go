@@ -34,6 +34,7 @@ func (l *SysTenantListLogic) SysTenantList(in *system.SysTenantListReq) (*system
 		TenantCode:   in.TenantCode,
 		ContactName:  in.ContactName,
 		ContactPhone: in.ContactPhone,
+		IDs:          in.Ids,
 	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err

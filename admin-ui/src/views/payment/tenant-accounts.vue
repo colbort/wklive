@@ -25,8 +25,16 @@
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="list" stripe>
         <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="tenantId" :label="t('common.tenantId')" width="100" />
-        <el-table-column prop="platformId" :label="t('payment.platformId')" width="100" />
+        <el-table-column :label="t('common.tenantId')" min-width="170">
+          <template #default="{ row }">
+            {{ formatRelationLabel(row.tenantName, row.tenantId) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('payment.platformId')" min-width="180">
+          <template #default="{ row }">
+            {{ formatRelationLabel(row.platformName, row.platformId) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="accountCode" :label="t('payment.accountCode')" min-width="140" />
         <el-table-column prop="accountName" :label="t('payment.accountName')" min-width="160" />
         <el-table-column prop="merchantId" :label="t('payment.merchantId')" min-width="140" />
@@ -426,6 +434,10 @@ function handleNextPage() {
 onMounted(async () => {
   await Promise.all([loadOptions(), loadList()])
 })
+
+function formatRelationLabel(name: string | undefined, id: number) {
+  return name ? `${name} (${id})` : String(id)
+}
 </script>
 
 <style scoped>

@@ -31,12 +31,12 @@
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column :label="t('common.tenantId')" min-width="180">
           <template #default="{ row }">
-            {{ formatRelationLabel(tenantNames[row.tenantId], row.tenantId) }}
+            {{ formatRelationLabel(row.tenantName, row.tenantId) }}
           </template>
         </el-table-column>
         <el-table-column :label="t('payment.channelId')" min-width="200">
           <template #default="{ row }">
-            {{ formatRelationLabel(channelNames[row.channelId], row.channelId) }}
+            {{ formatRelationLabel(row.channelName, row.channelId) }}
           </template>
         </el-table-column>
         <el-table-column prop="ruleName" :label="t('payment.ruleName')" min-width="140" />
@@ -181,7 +181,6 @@ import { usePagination } from '@/composables'
 import { ElMessage } from 'element-plus'
 import {
   tenantService,
-  tenantsService,
   type OptionGroup,
   type TenantPayChannelRule,
 } from '@/services'
@@ -197,8 +196,6 @@ const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad }
 
 const ruleLoading = ref(false)
 const rules = ref<TenantPayChannelRule[]>([])
-const tenantNames = ref<Record<number, string>>({})
-const channelNames = ref<Record<number, string>>({})
 const detailVisible = ref(false)
 const detailData = ref<Record<string, unknown>>({})
 const ruleDialogVisible = ref(false)
@@ -264,39 +261,10 @@ const loadList = async () => {
       limit: pagination.limit,
     })
     rules.value = res.data || []
-    await loadRelationNames(rules.value)
     updateFromResponse(res)
   } finally {
     ruleLoading.value = false
   }
-}
-
-async function loadRelationNames(rows: TenantPayChannelRule[]) {
-  const tenantIds = [...new Set(rows.map((row) => row.tenantId).filter(Boolean))]
-  const channels = [
-    ...new Map(
-      rows.filter((row) => row.channelId).map((row) => [row.channelId, row] as const),
-    ).values(),
-  ]
-
-  const [tenantResults, channelResults] = await Promise.all([
-    Promise.allSettled(tenantIds.map((tenantId) => tenantsService.detail({ tenantId }))),
-    Promise.allSettled(
-      channels.map((row) => tenantService.getTenantChannelDetail(row.channelId, row.tenantId)),
-    ),
-  ])
-
-  tenantResults.forEach((result) => {
-    if (result.status !== 'fulfilled' || !result.value.data) return
-    const tenant = result.value.data
-    tenantNames.value[tenant.id] = tenant.tenantName || tenant.tenantCode
-  })
-  channelResults.forEach((result) => {
-    if (result.status !== 'fulfilled' || !result.value.data) return
-    const channel = result.value.data
-    channelNames.value[channel.id] =
-      channel.channelName || channel.displayName || channel.channelCode
-  })
 }
 
 function formatRelationLabel(name: string | undefined, id: number) {

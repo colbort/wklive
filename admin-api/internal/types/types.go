@@ -2938,16 +2938,17 @@ type PayPlatformItem struct {
 }
 
 type PayProduct struct {
-	Id          int64  `json:"id"`
-	PlatformId  int64  `json:"platformId"`
-	ProductCode string `json:"productCode"`
-	ProductName string `json:"productName"`
-	SceneType   int64  `json:"sceneType"` // 0未知 1APP 2H5 3WEB 4收银台 5链上
-	Currency    string `json:"currency"`
-	Enabled     int64  `json:"enabled"` // 0未知 1启用 2禁用
-	Remark      string `json:"remark"`
-	CreateTimes int64  `json:"createTimes"`
-	UpdateTimes int64  `json:"updateTimes"`
+	Id           int64  `json:"id"`
+	PlatformId   int64  `json:"platformId"`
+	PlatformName string `json:"platformName"`
+	ProductCode  string `json:"productCode"`
+	ProductName  string `json:"productName"`
+	SceneType    int64  `json:"sceneType"` // 0未知 1APP 2H5 3WEB 4收银台 5链上
+	Currency     string `json:"currency"`
+	Enabled      int64  `json:"enabled"` // 0未知 1启用 2禁用
+	Remark       string `json:"remark"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateTimes  int64  `json:"updateTimes"`
 }
 
 type PlatformAccount struct {
@@ -4278,7 +4279,9 @@ type TenantJsonScope struct {
 type TenantPayAccount struct {
 	Id               int64  `json:"id"`
 	TenantId         int64  `json:"tenantId"`
+	TenantName       string `json:"tenantName"`
 	PlatformId       int64  `json:"platformId"`
+	PlatformName     string `json:"platformName"`
 	AccountCode      string `json:"accountCode"`
 	AccountName      string `json:"accountName"`
 	AppId            string `json:"appId"`
@@ -4301,9 +4304,13 @@ type TenantPayAccount struct {
 type TenantPayChannel struct {
 	Id              int64  `json:"id"`
 	TenantId        int64  `json:"tenantId"`
+	TenantName      string `json:"tenantName"`
 	PlatformId      int64  `json:"platformId"`
+	PlatformName    string `json:"platformName"`
 	ProductId       int64  `json:"productId"`
+	ProductName     string `json:"productName"`
 	AccountId       int64  `json:"accountId"`
+	AccountName     string `json:"accountName"`
 	ChannelCode     string `json:"channelCode"`
 	ChannelName     string `json:"channelName"`
 	DisplayName     string `json:"displayName"`
@@ -4328,7 +4335,9 @@ type TenantPayChannel struct {
 type TenantPayChannelRule struct {
 	Id                   int64  `json:"id"`
 	TenantId             int64  `json:"tenantId"`
+	TenantName           string `json:"tenantName"`
 	ChannelId            int64  `json:"channelId"`
+	ChannelName          string `json:"channelName"`
 	RuleName             string `json:"ruleName"`
 	Priority             int64  `json:"priority"`
 	Enabled              int64  `json:"enabled"` // 0未知 1启用 2禁用

@@ -32,6 +32,7 @@ message PayProduct {
   string remark = 8; // 备注
   int64 create_times = 9; // 创建时间
   int64 update_times = 10; // 更新时间
+  string platform_name = 11; // 平台名称（列表展示）
 }
 
 message TenantPayAccount {
@@ -56,6 +57,8 @@ message TenantPayAccount {
   string private_key_cipher = 19; // 私钥密文
   string cert_cipher = 20; // 证书密文
   string credential_ref = 21; // 密钥管理系统引用
+  string tenant_name = 22; // 租户名称（由网关批量补充）
+  string platform_name = 23; // 平台名称（列表展示）
 }
 
 message TenantPayChannel {
@@ -83,6 +86,10 @@ message TenantPayChannel {
   string remark = 22; // 备注
   int64 create_times = 23; // 创建时间
   int64 update_times = 24; // 更新时间
+  string tenant_name = 25; // 租户名称（由网关批量补充）
+  string platform_name = 26; // 平台名称（列表展示）
+  string product_name = 27; // 产品名称（列表展示）
+  string account_name = 28; // 支付账号名称（列表展示）
 }
 
 message TenantPayChannelRule {
@@ -107,6 +114,8 @@ message TenantPayChannelRule {
   string remark = 19; // 备注
   int64 create_times = 20; // 创建时间
   int64 update_times = 21; // 更新时间
+  string tenant_name = 22; // 租户名称（由网关批量补充）
+  string channel_name = 23; // 通道名称（列表展示）
 }
 
 message UserRechargeStat {

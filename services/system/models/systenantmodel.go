@@ -18,6 +18,7 @@ type (
 		TenantCode   string
 		ContactName  string
 		ContactPhone string
+		IDs          []int64
 	}
 
 	// SysTenantModel is an interface to be customized, add more methods here,
@@ -53,6 +54,7 @@ func (m *customSysTenantModel) FindPage(ctx context.Context, filter TenantPageFi
 	builder.EqString("tenant_code", filter.TenantCode)
 	builder.EqString("contact_name", filter.ContactName)
 	builder.EqString("contact_phone", filter.ContactPhone)
+	builder.InInt64("id", filter.IDs)
 
 	where := builder.Where()
 	args := builder.Args()
