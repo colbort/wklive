@@ -30,7 +30,7 @@ type (
 		MarkSuccess(context.Context, int64, int64) error
 		MarkFailure(context.Context, int64, string, int64) error
 		MarkRedisPublished(context.Context, int64, int64) error
-		MarkOptionPublished(context.Context, int64, int64) error
+		MarkEventPublished(context.Context, int64, int64) error
 		FindPage(context.Context, int64, string, int64, int64) ([]*TItickSnapshotOutbox, int64, error)
 		RetryFailed(context.Context, int64, int64) error
 		Health(context.Context) (*SnapshotOutboxHealth, error)
@@ -66,7 +66,7 @@ func (m *defaultTItickSnapshotOutboxModel) MarkRedisPublished(ctx context.Contex
 	return requireOneOutboxRow(result, err)
 }
 
-func (m *defaultTItickSnapshotOutboxModel) MarkOptionPublished(ctx context.Context, id, now int64) error {
+func (m *defaultTItickSnapshotOutboxModel) MarkEventPublished(ctx context.Context, id, now int64) error {
 	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET option_published_at=CASE WHEN option_published_at=0 THEN ? ELSE option_published_at END,update_times=? WHERE id=? AND status=2", now, now, id)
 	return requireOneOutboxRow(result, err)
 }

@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	market "wklive/common/market"
-	"wklive/proto/option"
 	"wklive/services/itick/internal/market/types"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
@@ -119,8 +119,8 @@ func publishSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, row 
 	// is complete even though the original full quote is no longer available.
 	if payload.Quote == nil {
 		if row.OptionPublishedAt == 0 {
-			if err := svcCtx.SnapshotOutboxModel.MarkOptionPublished(ctx, row.Id, time.Now().UnixMilli()); err != nil {
-				return fmt.Errorf("checkpoint skipped Option publication: %w", err)
+			if err := svcCtx.SnapshotOutboxModel.MarkEventPublished(ctx, row.Id, time.Now().UnixMilli()); err != nil {
+				return fmt.Errorf("checkpoint skipped market event publication: %w", err)
 			}
 		}
 		return nil
@@ -128,15 +128,27 @@ func publishSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, row 
 	if row.OptionPublishedAt > 0 {
 		return nil
 	}
-	resp, err := svcCtx.OptionCli.SyncMarketQuote(ctx, &option.SyncMarketQuoteReq{CategoryCode: payload.Message.CategoryCode, Market: payload.Message.Market, Symbol: payload.Message.Symbol, UnderlyingPrice: payload.Quote.LastPriceText, OpenPrice: strconv.FormatFloat(payload.Quote.Open, 'f', -1, 64), HighPrice: strconv.FormatFloat(payload.Quote.High, 'f', -1, 64), LowPrice: strconv.FormatFloat(payload.Quote.Low, 'f', -1, 64), Volume: strconv.FormatFloat(payload.Quote.Volume, 'f', -1, 64), Turnover: strconv.FormatFloat(payload.Quote.Turnover, 'f', -1, 64), QuoteTs: payload.Quote.Ts})
-	if err != nil {
+	event := market.AuthoritativeSnapshotEvent{
+		Version:         market.AuthoritativeSnapshotEventVersion,
+		EventID:         payload.Snapshot.SnapshotID,
+		SnapshotID:      payload.Snapshot.SnapshotID,
+		CategoryCode:    payload.Message.CategoryCode,
+		Market:          payload.Message.Market,
+		Symbol:          payload.Message.Symbol,
+		UnderlyingPrice: payload.Quote.LastPriceText,
+		OpenPrice:       strconv.FormatFloat(payload.Quote.Open, 'f', -1, 64),
+		HighPrice:       strconv.FormatFloat(payload.Quote.High, 'f', -1, 64),
+		LowPrice:        strconv.FormatFloat(payload.Quote.Low, 'f', -1, 64),
+		Volume:          strconv.FormatFloat(payload.Quote.Volume, 'f', -1, 64),
+		Turnover:        strconv.FormatFloat(payload.Quote.Turnover, 'f', -1, 64),
+		QuoteTimestamp:  payload.Quote.Ts,
+		PublishedAt:     time.Now().UnixMilli(),
+	}
+	if err := svcCtx.SnapshotPublisher.PublishKey(ctx, market.AuthoritativeSnapshotTopic, []byte(strings.ToUpper(event.PartitionKey())), event); err != nil {
 		return err
 	}
-	if resp == nil || resp.GetBase() == nil || resp.GetBase().GetCode() != 200 {
-		return fmt.Errorf("option quote sync rejected")
-	}
-	if err = svcCtx.SnapshotOutboxModel.MarkOptionPublished(ctx, row.Id, time.Now().UnixMilli()); err != nil {
-		return fmt.Errorf("checkpoint Option quote publication: %w", err)
+	if err := svcCtx.SnapshotOutboxModel.MarkEventPublished(ctx, row.Id, time.Now().UnixMilli()); err != nil {
+		return fmt.Errorf("checkpoint market event publication: %w", err)
 	}
 	return nil
 }

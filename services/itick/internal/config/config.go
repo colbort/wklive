@@ -15,7 +15,6 @@ type Config struct {
 	DataCache  redis.RedisKeyConf
 	LockRedis  redis.RedisKeyConf
 	SystemRpc  zrpc.RpcClientConf
-	OptionRpc  zrpc.RpcClientConf
 	Mysql      struct {
 		DataSource string
 	} `json:"Mysql" yaml:"Mysql"`

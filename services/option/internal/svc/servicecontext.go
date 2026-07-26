@@ -1,6 +1,7 @@
 package svc
 
 import (
+	market "wklive/common/market"
 	mq "wklive/common/mq/kafka"
 	"wklive/proto/asset"
 	"wklive/services/option/internal/config"
@@ -17,6 +18,7 @@ type ServiceContext struct {
 	DB                        sqlx.SqlConn
 	Redis                     *redis.Redis
 	TaskSubscriber            *mq.Subscriber
+	MarketSnapshotSubscriber  *mq.Subscriber
 	OptionContractModel       models.TOptionContractModel
 	OptionMarketModel         models.TOptionMarketModel
 	OptionMarketSnapshotModel models.TOptionMarketSnapshotModel
@@ -36,6 +38,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	assetCli := zrpc.MustNewClient(c.AssetRpc)
 	mqConfig := mq.ForService(c.MQ, c.Name)
 	taskSubscriber := mq.MustNewSubscriber(mqConfig, "option-tasks")
+	marketSnapshotSubscriber := mq.MustNewSubscriber(mqConfig, market.OptionMarketQuoteConsumerGroup)
 	queue, err := delayqueue.New(c.DelayQueue.Enabled, c.DelayQueue.Beanstalks, c.Redis.RedisConf)
 	if err != nil {
 		panic(err)
@@ -45,6 +48,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		DB:                        conn,
 		Redis:                     redis.MustNewRedis(c.Redis.RedisConf),
 		TaskSubscriber:            taskSubscriber,
+		MarketSnapshotSubscriber:  marketSnapshotSubscriber,
 		OptionContractModel:       models.NewTOptionContractModel(conn, c.CacheRedis),
 		OptionMarketModel:         models.NewTOptionMarketModel(conn, c.CacheRedis),
 		OptionMarketSnapshotModel: models.NewTOptionMarketSnapshotModel(conn, c.CacheRedis),

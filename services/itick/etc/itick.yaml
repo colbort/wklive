@@ -21,14 +21,6 @@ Itick:
   RestRateLimitPerMinute: 100
   RestRateLimitBurst: 1
 
-OptionRpc:
-  rpcType: zrpc
-  Etcd:
-    Hosts:
-    - 127.0.0.1:2379
-    Key: option.rpc
-
-
 Mongo:
   Url: "mongodb://root:openIM123@127.0.0.1:27017/stock?authSource=admin"
   Db: "wklive"

@@ -44,6 +44,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	tasks.StartTaskSubscriber(ctx, svcCtx)
+	tasks.StartMarketSnapshotSubscriber(ctx, svcCtx)
 	logic.StartDelayQueue(ctx, svcCtx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {

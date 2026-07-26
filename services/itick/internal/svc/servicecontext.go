@@ -9,7 +9,6 @@ import (
 	"time"
 
 	mq "wklive/common/mq/kafka"
-	"wklive/proto/option"
 	"wklive/proto/system"
 	"wklive/services/itick/internal/config"
 	"wklive/services/itick/internal/market/calendar"
@@ -36,12 +35,12 @@ type ServiceContext struct {
 	Config                      config.Config
 	ItickRuntimeConfig          *system.ItickConfig
 	SystemCli                   system.SystemClient
-	OptionCli                   option.OptionClient
 	ItickManager                *client.ItickManager
 	MarketDataCache             *icache.MarketDataCache
 	DataCache                   *redis.Client
 	LockRedis                   *redis.Client
 	TaskSubscriber              *mq.Subscriber
+	SnapshotPublisher           *mq.Publisher
 	Cache                       cache.Cache
 	Factory                     *models.CoinKlineModelFactory
 	Writer                      *klinewriter.BatchWriter
@@ -83,7 +82,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	itickRestClient := itickrest.New(c.Itick.Token, itickRestLimiter, nil)
 
 	systemCli := system.NewSystemClient(zrpc.MustNewClient(c.SystemRpc).Conn())
-	optionCli := option.NewOptionClient(zrpc.MustNewClient(c.OptionRpc).Conn())
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 
 	itickCategoryModel := models.NewTItickCategoryModel(conn, c.CacheRedis)
@@ -118,6 +116,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	marketDataCache := icache.NewMarketDataCache(dataCache)
 	mqConfig := mq.ForService(c.MQ, c.Name)
 	taskSubscriber := mq.MustNewSubscriber(mqConfig, "itick-tasks")
+	snapshotPublisher := mq.MustNewPublisher(mqConfig)
 
 	// 这里不能 defer Close，不然函数返回后 Redis 连接就被关掉了
 	// defer rdb.Close()
@@ -182,12 +181,12 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:                      c,
 		SystemCli:                   systemCli,
-		OptionCli:                   optionCli,
 		ItickManager:                itickManager,
 		MarketDataCache:             marketDataCache,
 		DataCache:                   dataCache,
 		LockRedis:                   lockRedis,
 		TaskSubscriber:              taskSubscriber,
+		SnapshotPublisher:           snapshotPublisher,
 		Cache:                       cache.New(c.CacheRedis, syncx.NewSingleFlight(), cache.NewStat("quote"), redis.Nil),
 		Factory:                     factory,
 		Writer:                      writer,

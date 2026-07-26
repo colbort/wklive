@@ -3,11 +3,13 @@ package optionlogic
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
+	marketEvent "wklive/common/market"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
@@ -45,18 +47,59 @@ func (l *SyncMarketQuoteLogic) SyncMarketQuote(in *option.SyncMarketQuoteReq) (*
 		return &option.InternalCommonResp{Base: helper.ErrResp(i18n.UnderlyingPriceMustBePositive, i18n.Translate(i18n.UnderlyingPriceMustBePositive, l.ctx))}, nil
 	}
 
+	event := marketEvent.AuthoritativeSnapshotEvent{
+		CategoryCode:    in.GetCategoryCode(),
+		Market:          in.GetMarket(),
+		Symbol:          symbol,
+		UnderlyingPrice: in.GetUnderlyingPrice(),
+		QuoteTimestamp:  in.GetQuoteTs(),
+	}
+	updated, err := l.syncMarketQuote(in.GetTenantId(), event)
+	if err != nil {
+		return nil, err
+	}
+	l.Infof("option market quote synced, symbol=%s market=%s category=%s updated=%d",
+		symbol, in.GetMarket(), in.GetCategoryCode(), updated)
+	return &option.InternalCommonResp{Base: helper.OkResp()}, nil
+}
+
+func (l *SyncMarketQuoteLogic) SyncAuthoritativeSnapshot(event marketEvent.AuthoritativeSnapshotEvent) error {
+	if event.Version != marketEvent.AuthoritativeSnapshotEventVersion {
+		return fmt.Errorf("unsupported authoritative snapshot event version: %d", event.Version)
+	}
+	if strings.TrimSpace(event.SnapshotID) == "" {
+		return errors.New("authoritative snapshot id is required")
+	}
+	updated, err := l.syncMarketQuote(0, event)
+	if err != nil {
+		return err
+	}
+	l.Infof("authoritative option market quote consumed, snapshotId=%s symbol=%s updated=%d",
+		event.SnapshotID, event.Symbol, updated)
+	return nil
+}
+
+func (l *SyncMarketQuoteLogic) syncMarketQuote(tenantID int64, event marketEvent.AuthoritativeSnapshotEvent) (int64, error) {
+	symbol := strings.ToUpper(strings.TrimSpace(event.Symbol))
+	if symbol == "" {
+		return 0, errors.New("market symbol is required")
+	}
+	underlyingPrice, err := decimal.NewFromString(strings.TrimSpace(event.UnderlyingPrice))
+	if err != nil || !underlyingPrice.IsPositive() {
+		return 0, errors.New("underlying price must be positive")
+	}
 	now := time.Now().Unix()
-	snapshotTime := normalizeQuoteTime(in.GetQuoteTs(), now)
+	snapshotTime := normalizeQuoteTime(event.QuoteTimestamp, now)
 	var cursor int64
 	var updated int64
 
 	for {
 		contracts, _, err := l.svcCtx.OptionContractModel.FindPage(l.ctx, models.OptionContractPageFilter{
-			TenantId:         in.GetTenantId(),
+			TenantId:         tenantID,
 			UnderlyingSymbol: symbol,
 		}, cursor, 200)
 		if err != nil {
-			return nil, err
+			return 0, err
 		}
 		if len(contracts) == 0 {
 			break
@@ -67,23 +110,33 @@ func (l *SyncMarketQuoteLogic) SyncMarketQuote(in *option.SyncMarketQuoteReq) (*
 			if !canSyncMarketQuote(contract.Status) {
 				continue
 			}
-			if err := l.syncContractMarket(contract, underlyingPrice, snapshotTime, now); err != nil {
-				return nil, err
+			changed, err := l.syncContractMarket(contract, event.SnapshotID, underlyingPrice, snapshotTime, now)
+			if err != nil {
+				return 0, err
 			}
-			updated++
+			if changed {
+				updated++
+			}
 		}
 	}
-
-	l.Infof("option market quote synced, symbol=%s market=%s category=%s updated=%d",
-		symbol, in.GetMarket(), in.GetCategoryCode(), updated)
-	return &option.InternalCommonResp{Base: helper.OkResp()}, nil
+	return updated, nil
 }
 
-func (l *SyncMarketQuoteLogic) syncContractMarket(contract *models.TOptionContract, underlyingPrice decimal.Decimal, snapshotTime int64, now int64) error {
+func (l *SyncMarketQuoteLogic) syncContractMarket(contract *models.TOptionContract, snapshotID string, underlyingPrice decimal.Decimal, snapshotTime int64, now int64) (bool, error) {
 	intrinsicValue := calcIntrinsicValue(contract.OptionType, contract.StrikePrice, underlyingPrice)
-
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	changed := false
+	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
+		if snapshotID != "" {
+			inboxModel := models.NewTOptionMarketSnapshotInboxModel(conn, l.svcCtx.Config.CacheRedis)
+			claimed, err := inboxModel.Claim(ctx, snapshotID, contract.TenantId, contract.Id, now)
+			if err != nil {
+				return err
+			}
+			if !claimed {
+				return nil
+			}
+		}
 		marketModel := models.NewTOptionMarketModel(conn, l.svcCtx.Config.CacheRedis)
 		snapshotModel := models.NewTOptionMarketSnapshotModel(conn, l.svcCtx.Config.CacheRedis)
 
@@ -117,8 +170,13 @@ func (l *SyncMarketQuoteLogic) syncContractMarket(contract *models.TOptionContra
 			return err
 		}
 
-		return insertMarketSnapshot(ctx, snapshotModel, market, now)
+		if err := insertMarketSnapshot(ctx, snapshotModel, market, now); err != nil {
+			return err
+		}
+		changed = true
+		return nil
 	})
+	return changed, err
 }
 
 func canSyncMarketQuote(status int64) bool {

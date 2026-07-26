@@ -95,6 +95,7 @@
     "cSpell.words": [
       "Acks",
       "adminlogic",
+      "alicebob",
       "Aliyun",
       "APIURLIs",
       "applogic",
@@ -152,6 +153,7 @@
       "Lpush",
       "Lrange",
       "Ltrim",
+      "miniredis",
       "nacos",
       "omitempty",
       "optionlogic",

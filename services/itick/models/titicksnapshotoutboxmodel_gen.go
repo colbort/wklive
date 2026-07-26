@@ -49,7 +49,7 @@ type (
 		RetryCount        int64  `db:"retry_count"`
 		NextRetryAt       int64  `db:"next_retry_at"`
 		RedisPublishedAt  int64  `db:"redis_published_at"`  // Redis权威快照发布完成时间
-		OptionPublishedAt int64  `db:"option_published_at"` // Option行情同步完成时间；无需同步时同样置完成
+		OptionPublishedAt int64  `db:"option_published_at"` // 兼容字段：权威行情Kafka事件发布完成时间；无需发布时同样置完成
 		LastErrorMsg      string `db:"last_error_msg"`
 		CreateTimes       int64  `db:"create_times"`
 		UpdateTimes       int64  `db:"update_times"`
