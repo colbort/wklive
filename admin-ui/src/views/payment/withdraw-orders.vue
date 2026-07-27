@@ -32,12 +32,12 @@
         <el-table-column prop="currency" :label="t('payment.currency')" width="80" />
         <el-table-column :label="t('payment.amount')" min-width="120">
           <template #default="{ row }">
-            {{ formatCentAmount(row.amount) }}
+            {{ formatAssetAmount(row.amount) }}
           </template>
         </el-table-column>
         <el-table-column :label="t('payment.feeAmount')" min-width="100">
           <template #default="{ row }">
-            {{ formatCentAmount(row.feeAmount) }}
+            {{ formatAssetAmount(row.feeAmount) }}
           </template>
         </el-table-column>
         <el-table-column :label="t('common.status')" width="110">
@@ -125,7 +125,7 @@ import { ElMessage } from 'element-plus'
 import { catalogService, withdrawService, type OptionGroup, type WithdrawOrder } from '@/services'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
-import { formatCentAmount, formatCentFields } from '@/utils/amount'
+import { formatAssetAmount, formatAssetFields } from '@/utils/amount'
 import TenantSelect from '@/components/TenantSelect.vue'
 import UserSelect from '@/components/UserSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
@@ -144,10 +144,10 @@ const optionGroups = ref<OptionGroup[]>([])
 const payOrderStatusOptions = computed(() => findOptionGroup(optionGroups.value, 'payOrderStatus'))
 
 const PAY_ORDER_STATUS_PENDING = 1
-const CENT_AMOUNT_KEYS = new Set(['amount', 'feeAmount', 'actualAmount'])
+const AMOUNT_KEYS = new Set(['amount', 'feeAmount', 'actualAmount'])
 
 const detailDisplayData = computed(() => {
-  return formatCentFields(detailData.value, CENT_AMOUNT_KEYS)
+  return formatAssetFields(detailData.value, AMOUNT_KEYS)
 })
 
 const auditForm = reactive({

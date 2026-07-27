@@ -64,7 +64,7 @@
         />
         <el-table-column :label="t('asset.changeAmount')" min-width="140" show-overflow-tooltip>
           <template #default="{ row }">
-            {{ formatCentAmount(row.changeAmount) }}
+            {{ formatAssetAmount(row.changeAmount) }}
           </template>
         </el-table-column>
         <el-table-column prop="opType" :label="t('asset.opType')" min-width="130">
@@ -131,7 +131,7 @@
           {{ detailData.coin }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.changeAmount')">
-          {{ formatCentAmount(detailData.changeAmount) }}
+          {{ formatAssetAmount(detailData.changeAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.opType')">
           {{ optionLabelWithFallback('opType', detailData.opType) }}
@@ -149,28 +149,28 @@
           {{ detailData.bizNo || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.beforeTotalAmount')">
-          {{ formatCentAmount(detailData.beforeTotalAmount) }}
+          {{ formatAssetAmount(detailData.beforeTotalAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.afterTotalAmount')">
-          {{ formatCentAmount(detailData.afterTotalAmount) }}
+          {{ formatAssetAmount(detailData.afterTotalAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.beforeAvailableAmount')">
-          {{ formatCentAmount(detailData.beforeAvailableAmount) }}
+          {{ formatAssetAmount(detailData.beforeAvailableAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.afterAvailableAmount')">
-          {{ formatCentAmount(detailData.afterAvailableAmount) }}
+          {{ formatAssetAmount(detailData.afterAvailableAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.beforeFrozenAmount')">
-          {{ formatCentAmount(detailData.beforeFrozenAmount) }}
+          {{ formatAssetAmount(detailData.beforeFrozenAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.afterFrozenAmount')">
-          {{ formatCentAmount(detailData.afterFrozenAmount) }}
+          {{ formatAssetAmount(detailData.afterFrozenAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.beforeLockedAmount')">
-          {{ formatCentAmount(detailData.beforeLockedAmount) }}
+          {{ formatAssetAmount(detailData.beforeLockedAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.afterLockedAmount')">
-          {{ formatCentAmount(detailData.afterLockedAmount) }}
+          {{ formatAssetAmount(detailData.afterLockedAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.balanceSnapshotVersion')">
           {{ detailData.balanceSnapshotVersion }}
@@ -197,7 +197,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useOptions, usePagination } from '@/composables'
 import { assetService, type AssetFlow, type OptionGroup, type OptionItem } from '@/services'
-import { formatCentAmount, formatDate } from '@/utils'
+import { formatAssetAmount, formatDate } from '@/utils'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import UserSelect from '@/components/UserSelect.vue'

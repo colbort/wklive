@@ -345,10 +345,17 @@ const submitRule = async () => {
     return
   }
 
+  const payload = {
+    ...ruleForm,
+    singleAmountMin: String(ruleForm.singleAmountMin),
+    singleAmountMax: String(ruleForm.singleAmountMax),
+    userTotalRechargeMin: String(ruleForm.userTotalRechargeMin),
+    userTotalRechargeMax: String(ruleForm.userTotalRechargeMax),
+  }
   if (ruleForm.id) {
-    await tenantService.updateTenantChannelRule({ ...ruleForm })
+    await tenantService.updateTenantChannelRule(payload)
   } else {
-    await tenantService.createTenantChannelRule({ ...ruleForm })
+    await tenantService.createTenantChannelRule(payload)
   }
   ElMessage.success(t('common.operationSuccess'))
   ruleDialogVisible.value = false

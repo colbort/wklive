@@ -19,10 +19,9 @@ import { useI18n } from '@/i18n'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
 import {
   compareDecimalText,
-  formatAssetMinorAmount,
+  formatAssetDecimalAmount,
   normalizeAssetDecimalPlaces,
-  normalizeAssetInputDecimalPlaces,
-  parseAssetDecimalToMinorText,
+  parseAssetDecimalText,
 } from '@/utils/assetAmount'
 
 const route = useRoute()
@@ -59,7 +58,7 @@ const fromDecimalPlaces = computed(() =>
   normalizeAssetDecimalPlaces(fromConfig.value?.decimalPlaces),
 )
 const fromInputDecimalPlaces = computed(() =>
-  normalizeAssetInputDecimalPlaces(fromConfig.value?.decimalPlaces),
+  normalizeAssetDecimalPlaces(fromConfig.value?.decimalPlaces),
 )
 const pickerWalletType = computed(() =>
   pickerTarget.value === 'to' ? toWalletType.value : fromWalletType.value,
@@ -78,7 +77,7 @@ const rawAvailableAmount = computed(() => {
   )
 })
 const availableAmount = computed(() =>
-  formatAssetMinorAmount(rawAvailableAmount.value, fromDecimalPlaces.value),
+  formatAssetDecimalAmount(rawAvailableAmount.value, fromDecimalPlaces.value),
 )
 const walletTypes = computed(() => {
   const options = assetOptions
@@ -193,7 +192,7 @@ async function submitTransfer() {
   pageError.value = ''
   pageTip.value = ''
 
-  const transferAmount = parseAssetDecimalToMinorText(amount.value, fromDecimalPlaces.value)
+  const transferAmount = parseAssetDecimalText(amount.value, fromDecimalPlaces.value)
   if (!fromCoin.value || !toCoin.value) {
     pageError.value = t('assetFlow.selectTransferCoin')
     return

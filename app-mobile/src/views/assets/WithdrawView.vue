@@ -14,10 +14,9 @@ import { useI18n } from '@/i18n'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
 import {
   formatAssetDecimalAmount,
-  formatAssetMinorAmount,
   normalizeAssetDecimalPlaces,
   normalizeAssetInputDecimalPlaces,
-  parseAssetDecimalToMinorText,
+  parseAssetDecimalText,
 } from '@/utils/assetAmount'
 
 const route = useRoute()
@@ -60,7 +59,7 @@ const rawAvailableAmount = computed(() => {
   )
 })
 const availableAmount = computed(() =>
-  formatAssetMinorAmount(rawAvailableAmount.value, selectedDecimalPlaces.value),
+  formatAssetDecimalAmount(rawAvailableAmount.value, selectedDecimalPlaces.value),
 )
 const feeAmount = computed(() => formatAssetDecimalAmount('0', selectedDecimalPlaces.value))
 const receivedAmount = computed(() => {
@@ -124,7 +123,7 @@ async function submitWithdraw() {
 
   pageError.value = ''
   pageTip.value = ''
-  const withdrawAmountText = parseAssetDecimalToMinorText(amount.value, selectedDecimalPlaces.value)
+  const withdrawAmountText = parseAssetDecimalText(amount.value, selectedDecimalPlaces.value)
   const withdrawAmount = Number(withdrawAmountText)
   if (!coin.value) {
     pageError.value = t('assetFlow.selectWithdrawCoin')
@@ -150,7 +149,7 @@ async function submitWithdraw() {
   submitLoading.value = true
   try {
     const resp = await apiCreateWithdrawOrder({
-      amount: withdrawAmount,
+      amount: withdrawAmountText,
       currency: coin.value,
       address: withdrawAddress,
       bankId: 0,

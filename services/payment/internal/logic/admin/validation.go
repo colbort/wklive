@@ -6,6 +6,8 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/shopspring/decimal"
+
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -29,6 +31,19 @@ func requiredStrings(values ...string) bool {
 
 func validNonNegativeRange(minValue, maxValue int64) bool {
 	return minValue >= 0 && maxValue >= 0 && (maxValue == 0 || minValue <= maxValue)
+}
+
+func parseNonNegativeAmount(value string) (decimal.Decimal, error) {
+	amount, err := parsePaymentAmount(value)
+	if err != nil || amount.IsNegative() {
+		return decimal.Zero, errors.New("invalid non-negative payment amount")
+	}
+	return amount, nil
+}
+
+func validDecimalRange(minValue, maxValue decimal.Decimal) bool {
+	return !minValue.IsNegative() && !maxValue.IsNegative() &&
+		(maxValue.IsZero() || !minValue.GreaterThan(maxValue))
 }
 
 func validJSONArray(value string) bool {

@@ -46,6 +46,12 @@ func NewCreateRechargeOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 // 创建充值订单
 func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRechargeOrderReq) (*payment.CreateRechargeOrderResp, error) {
+	rechargeAmount, err := parsePaymentAmount(in.RechargeAmount)
+	if err != nil || !rechargeAmount.IsPositive() {
+		return &payment.CreateRechargeOrderResp{
+			Base: helper.ErrResp(i18n.AmountMustBePositive, i18n.Translate(i18n.AmountMustBePositive, l.ctx)),
+		}, nil
+	}
 	userId, err := utils.GetUserIdFromMd(l.ctx)
 	if err != nil {
 		return nil, err
@@ -82,14 +88,14 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 	rechargeType := rechargeTypeFromPlatform(platform)
 
 	if platform != nil && platform.PlatformType == int64(payment.PlatformType_PLATFORM_TYPE_THIRD) {
-		reusable, err := l.findReusableRechargeOrder(tenantId, userId, channel.Id, in.RechargeAmount, in.Currency)
+		reusable, err := l.findReusableRechargeOrder(tenantId, userId, channel.Id, rechargeAmount, in.Currency)
 		if err != nil {
 			return nil, err
 		}
 		if reusable != nil {
 			return &payment.CreateRechargeOrderResp{Base: helper.OkResp(), Data: toRechargeOrderProto(reusable)}, nil
 		}
-		release, acquired, err := l.acquireRechargeSession(tenantId, userId, channel.Id, in.RechargeAmount, in.Currency)
+		release, acquired, err := l.acquireRechargeSession(tenantId, userId, channel.Id, rechargeAmount, in.Currency)
 		if err != nil {
 			return nil, err
 		}
@@ -98,7 +104,7 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 		}
 		defer release()
 		// The first request may have completed between the initial lookup and lock acquisition.
-		reusable, err = l.findReusableRechargeOrder(tenantId, userId, channel.Id, in.RechargeAmount, in.Currency)
+		reusable, err = l.findReusableRechargeOrder(tenantId, userId, channel.Id, rechargeAmount, in.Currency)
 		if err != nil {
 			return nil, err
 		}
@@ -108,8 +114,8 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 	}
 
 	// 验证金额限制
-	if in.RechargeAmount < channel.SingleMinAmount ||
-		(channel.SingleMaxAmount > 0 && in.RechargeAmount > channel.SingleMaxAmount) {
+	if rechargeAmount.LessThan(channel.SingleMinAmount) ||
+		(channel.SingleMaxAmount.IsPositive() && rechargeAmount.GreaterThan(channel.SingleMaxAmount)) {
 		return &payment.CreateRechargeOrderResp{
 			Base: helper.ErrResp(i18n.RechargeAmountOutOfLimit, i18n.Translate(i18n.RechargeAmountOutOfLimit, l.ctx)),
 		}, nil
@@ -122,10 +128,10 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 	}
 
 	// 计算手续费
-	var feeAmount int64
+	feeAmount := decimal.Zero
 	if channel.FeeType == int64(payment.FeeType_FEE_TYPE_RATE) {
 		// 按比例计算
-		feeAmount = decimal.NewFromInt(in.RechargeAmount).Mul(channel.FeeRate).Div(decimal.NewFromInt(100)).IntPart()
+		feeAmount = rechargeAmount.Mul(channel.FeeRate).Div(decimal.NewFromInt(100))
 	} else if channel.FeeType == int64(payment.FeeType_FEE_TYPE_FIXED) {
 		// 固定费用
 		feeAmount = channel.FeeFixedAmount
@@ -144,8 +150,8 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 		RechargeType: int64(rechargeType),
 		WalletType:   1,
 		Currency:     in.Currency,
-		OrderAmount:  in.RechargeAmount,
-		PayAmount:    in.RechargeAmount,
+		OrderAmount:  rechargeAmount,
+		PayAmount:    rechargeAmount,
 		FeeAmount:    feeAmount,
 		Subject:      sql.NullString{String: in.Subject, Valid: in.Subject != ""},
 		Body:         sql.NullString{String: in.Body, Valid: in.Body != ""},
@@ -220,13 +226,13 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 	}, nil
 }
 
-func rechargeSessionKey(tenantID, userID, channelID, amount int64, currency string) string {
-	return fmt.Sprintf("payment:recharge:session:%d:%d:%d:%s:%d",
-		tenantID, userID, channelID, strings.ToUpper(strings.TrimSpace(currency)), amount)
+func rechargeSessionKey(tenantID, userID, channelID int64, amount decimal.Decimal, currency string) string {
+	return fmt.Sprintf("payment:recharge:session:%d:%d:%d:%s:%s",
+		tenantID, userID, channelID, strings.ToUpper(strings.TrimSpace(currency)), amount.String())
 }
 
 func (l *CreateRechargeOrderLogic) findReusableRechargeOrder(
-	tenantID, userID, channelID, amount int64,
+	tenantID, userID, channelID int64, amount decimal.Decimal,
 	currency string,
 ) (*models.TRechargeOrder, error) {
 	key := rechargeSessionKey(tenantID, userID, channelID, amount, currency)
@@ -252,7 +258,7 @@ func (l *CreateRechargeOrderLogic) findReusableRechargeOrder(
 	reusable := order.TenantId == tenantID &&
 		order.UserId == userID &&
 		order.ChannelId == channelID &&
-		order.OrderAmount == amount &&
+		order.OrderAmount.Equal(amount) &&
 		strings.EqualFold(order.Currency, currency) &&
 		(order.Status == int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING) ||
 			order.Status == int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PAYING)) &&
@@ -266,7 +272,7 @@ func (l *CreateRechargeOrderLogic) findReusableRechargeOrder(
 }
 
 func (l *CreateRechargeOrderLogic) acquireRechargeSession(
-	tenantID, userID, channelID, amount int64,
+	tenantID, userID, channelID int64, amount decimal.Decimal,
 	currency string,
 ) (func(), bool, error) {
 	key := rechargeSessionKey(tenantID, userID, channelID, amount, currency) + ":lock"

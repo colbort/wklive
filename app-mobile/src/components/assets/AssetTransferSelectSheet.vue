@@ -5,7 +5,7 @@ import AssetCoinIcon from '@/components/assets/AssetCoinIcon.vue'
 import BottomDrawer from '@/components/common/BottomDrawer.vue'
 import { useI18n } from '@/i18n'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
-import { formatAssetMinorAmount } from '@/utils/assetAmount'
+import { formatAssetDecimalAmount } from '@/utils/assetAmount'
 
 const props = withDefaults(
   defineProps<{
@@ -73,7 +73,7 @@ const coins = computed(() => {
             coin: config.coin,
             config,
             amountLabel: t('assetFlow.balance'),
-            availableAmount: formatAssetMinorAmount(
+            availableAmount: formatAssetDecimalAmount(
               asset?.availableAmount || asset?.totalAmount || '0',
               config.decimalPlaces,
             ),
@@ -85,7 +85,7 @@ const coins = computed(() => {
             coin: asset.coin,
             config: configMap.get(coinKey(asset.coin)),
             amountLabel: t('assetFlow.available'),
-            availableAmount: formatAssetMinorAmount(
+            availableAmount: formatAssetDecimalAmount(
               asset.availableAmount || asset.totalAmount || '0',
               configMap.get(coinKey(asset.coin))?.decimalPlaces,
             ),

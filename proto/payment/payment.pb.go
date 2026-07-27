@@ -158,7 +158,7 @@ func (x *GetMyRechargeStatResp) GetData() *UserRechargeStat {
 // 获取当前登录用户在指定充值场景下可用的充值通道
 type ListAvailableRechargeChannelsReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	RechargeAmount int64                  `protobuf:"varint,1,opt,name=recharge_amount,json=rechargeAmount,proto3" json:"recharge_amount,omitempty"` // 单位：分
+	RechargeAmount string                 `protobuf:"bytes,1,opt,name=recharge_amount,json=rechargeAmount,proto3" json:"recharge_amount,omitempty"` // 自然货币单位
 	Currency       string                 `protobuf:"bytes,2,opt,name=currency,proto3" json:"currency,omitempty"`
 	ClientType     ClientType             `protobuf:"varint,3,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"`
 	unknownFields  protoimpl.UnknownFields
@@ -195,11 +195,11 @@ func (*ListAvailableRechargeChannelsReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *ListAvailableRechargeChannelsReq) GetRechargeAmount() int64 {
+func (x *ListAvailableRechargeChannelsReq) GetRechargeAmount() string {
 	if x != nil {
 		return x.RechargeAmount
 	}
-	return 0
+	return ""
 }
 
 func (x *ListAvailableRechargeChannelsReq) GetCurrency() string {
@@ -272,7 +272,7 @@ func (x *ListAvailableRechargeChannelsResp) GetData() []*VisiblePayChannel {
 type CreateRechargeOrderReq struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	ChannelId      int64                  `protobuf:"varint,1,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`
-	RechargeAmount int64                  `protobuf:"varint,2,opt,name=recharge_amount,json=rechargeAmount,proto3" json:"recharge_amount,omitempty"` // 单位：分
+	RechargeAmount string                 `protobuf:"bytes,2,opt,name=recharge_amount,json=rechargeAmount,proto3" json:"recharge_amount,omitempty"` // 自然货币单位
 	Currency       string                 `protobuf:"bytes,3,opt,name=currency,proto3" json:"currency,omitempty"`
 	Subject        string                 `protobuf:"bytes,4,opt,name=subject,proto3" json:"subject,omitempty"`
 	Body           string                 `protobuf:"bytes,5,opt,name=body,proto3" json:"body,omitempty"`
@@ -319,11 +319,11 @@ func (x *CreateRechargeOrderReq) GetChannelId() int64 {
 	return 0
 }
 
-func (x *CreateRechargeOrderReq) GetRechargeAmount() int64 {
+func (x *CreateRechargeOrderReq) GetRechargeAmount() string {
 	if x != nil {
 		return x.RechargeAmount
 	}
-	return 0
+	return ""
 }
 
 func (x *CreateRechargeOrderReq) GetCurrency() string {
@@ -419,7 +419,7 @@ type CreateCryptoRechargeOrderReq struct {
 	WalletType     common.WalletType      `protobuf:"varint,1,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`
 	Coin           string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`
 	ChainCode      common.ChainCode       `protobuf:"varint,3,opt,name=chain_code,json=chainCode,proto3,enum=common.ChainCode" json:"chain_code,omitempty"`
-	RechargeAmount int64                  `protobuf:"varint,4,opt,name=recharge_amount,json=rechargeAmount,proto3" json:"recharge_amount,omitempty"` // 单位：分
+	RechargeAmount string                 `protobuf:"bytes,4,opt,name=recharge_amount,json=rechargeAmount,proto3" json:"recharge_amount,omitempty"` // 自然货币单位
 	ClientType     ClientType             `protobuf:"varint,5,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"`
 	BizOrderNo     string                 `protobuf:"bytes,6,opt,name=biz_order_no,json=bizOrderNo,proto3" json:"biz_order_no,omitempty"`
 	VoucherImage   string                 `protobuf:"bytes,7,opt,name=voucher_image,json=voucherImage,proto3" json:"voucher_image,omitempty"`
@@ -478,11 +478,11 @@ func (x *CreateCryptoRechargeOrderReq) GetChainCode() common.ChainCode {
 	return common.ChainCode(0)
 }
 
-func (x *CreateCryptoRechargeOrderReq) GetRechargeAmount() int64 {
+func (x *CreateCryptoRechargeOrderReq) GetRechargeAmount() string {
 	if x != nil {
 		return x.RechargeAmount
 	}
-	return 0
+	return ""
 }
 
 func (x *CreateCryptoRechargeOrderReq) GetClientType() ClientType {
@@ -981,7 +981,7 @@ func (x *QueryMyRechargeOrderStatusResp) GetData() *RechargeOrder {
 // 提现
 type CreateWithdrawOrderReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Amount        int64                  `protobuf:"varint,1,opt,name=amount,proto3" json:"amount,omitempty"` // 单位：分
+	Amount        string                 `protobuf:"bytes,1,opt,name=amount,proto3" json:"amount,omitempty"` // 自然货币单位
 	Currency      string                 `protobuf:"bytes,2,opt,name=currency,proto3" json:"currency,omitempty"`
 	Address       string                 `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`              // 提现地址（钱包地址等）
 	BankId        int64                  `protobuf:"varint,4,opt,name=bank_id,json=bankId,proto3" json:"bank_id,omitempty"` // 银行ID（如果是提现到银行卡）
@@ -1020,11 +1020,11 @@ func (*CreateWithdrawOrderReq) Descriptor() ([]byte, []int) {
 	return file_proto_payment_payment_proto_rawDescGZIP(), []int{17}
 }
 
-func (x *CreateWithdrawOrderReq) GetAmount() int64 {
+func (x *CreateWithdrawOrderReq) GetAmount() string {
 	if x != nil {
 		return x.Amount
 	}
-	return 0
+	return ""
 }
 
 func (x *CreateWithdrawOrderReq) GetCurrency() string {
@@ -3400,13 +3400,13 @@ type CreateTenantPayChannelReq struct {
 	Sort            int64                  `protobuf:"varint,10,opt,name=sort,proto3" json:"sort,omitempty"`
 	Visible         common.Switch          `protobuf:"varint,11,opt,name=visible,proto3,enum=common.Switch" json:"visible,omitempty"` // 是否在前端展示,0表示全部，1表示显示，2表示隐藏
 	Enabled         common.Enable          `protobuf:"varint,12,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
-	SingleMinAmount int64                  `protobuf:"varint,13,opt,name=single_min_amount,json=singleMinAmount,proto3" json:"single_min_amount,omitempty"`
-	SingleMaxAmount int64                  `protobuf:"varint,14,opt,name=single_max_amount,json=singleMaxAmount,proto3" json:"single_max_amount,omitempty"`
-	DailyMaxAmount  int64                  `protobuf:"varint,15,opt,name=daily_max_amount,json=dailyMaxAmount,proto3" json:"daily_max_amount,omitempty"`
+	SingleMinAmount string                 `protobuf:"bytes,13,opt,name=single_min_amount,json=singleMinAmount,proto3" json:"single_min_amount,omitempty"`
+	SingleMaxAmount string                 `protobuf:"bytes,14,opt,name=single_max_amount,json=singleMaxAmount,proto3" json:"single_max_amount,omitempty"`
+	DailyMaxAmount  string                 `protobuf:"bytes,15,opt,name=daily_max_amount,json=dailyMaxAmount,proto3" json:"daily_max_amount,omitempty"`
 	DailyMaxCount   int64                  `protobuf:"varint,16,opt,name=daily_max_count,json=dailyMaxCount,proto3" json:"daily_max_count,omitempty"`
 	FeeType         FeeType                `protobuf:"varint,17,opt,name=fee_type,json=feeType,proto3,enum=payment.FeeType" json:"fee_type,omitempty"`
 	FeeRate         string                 `protobuf:"bytes,18,opt,name=fee_rate,json=feeRate,proto3" json:"fee_rate,omitempty"`
-	FeeFixedAmount  int64                  `protobuf:"varint,19,opt,name=fee_fixed_amount,json=feeFixedAmount,proto3" json:"fee_fixed_amount,omitempty"`
+	FeeFixedAmount  string                 `protobuf:"bytes,19,opt,name=fee_fixed_amount,json=feeFixedAmount,proto3" json:"fee_fixed_amount,omitempty"`
 	ExtConfig       string                 `protobuf:"bytes,20,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`
 	Remark          string                 `protobuf:"bytes,21,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -3527,25 +3527,25 @@ func (x *CreateTenantPayChannelReq) GetEnabled() common.Enable {
 	return common.Enable(0)
 }
 
-func (x *CreateTenantPayChannelReq) GetSingleMinAmount() int64 {
+func (x *CreateTenantPayChannelReq) GetSingleMinAmount() string {
 	if x != nil {
 		return x.SingleMinAmount
 	}
-	return 0
+	return ""
 }
 
-func (x *CreateTenantPayChannelReq) GetSingleMaxAmount() int64 {
+func (x *CreateTenantPayChannelReq) GetSingleMaxAmount() string {
 	if x != nil {
 		return x.SingleMaxAmount
 	}
-	return 0
+	return ""
 }
 
-func (x *CreateTenantPayChannelReq) GetDailyMaxAmount() int64 {
+func (x *CreateTenantPayChannelReq) GetDailyMaxAmount() string {
 	if x != nil {
 		return x.DailyMaxAmount
 	}
-	return 0
+	return ""
 }
 
 func (x *CreateTenantPayChannelReq) GetDailyMaxCount() int64 {
@@ -3569,11 +3569,11 @@ func (x *CreateTenantPayChannelReq) GetFeeRate() string {
 	return ""
 }
 
-func (x *CreateTenantPayChannelReq) GetFeeFixedAmount() int64 {
+func (x *CreateTenantPayChannelReq) GetFeeFixedAmount() string {
 	if x != nil {
 		return x.FeeFixedAmount
 	}
-	return 0
+	return ""
 }
 
 func (x *CreateTenantPayChannelReq) GetExtConfig() string {
@@ -3601,13 +3601,13 @@ type UpdateTenantPayChannelReq struct {
 	Sort            int64                  `protobuf:"varint,7,opt,name=sort,proto3" json:"sort,omitempty"`
 	Visible         common.Switch          `protobuf:"varint,8,opt,name=visible,proto3,enum=common.Switch" json:"visible,omitempty"` // 是否在前端展示,0表示全部，1表示显示，2表示隐藏
 	Enabled         common.Enable          `protobuf:"varint,9,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
-	SingleMinAmount int64                  `protobuf:"varint,10,opt,name=single_min_amount,json=singleMinAmount,proto3" json:"single_min_amount,omitempty"`
-	SingleMaxAmount int64                  `protobuf:"varint,11,opt,name=single_max_amount,json=singleMaxAmount,proto3" json:"single_max_amount,omitempty"`
-	DailyMaxAmount  int64                  `protobuf:"varint,12,opt,name=daily_max_amount,json=dailyMaxAmount,proto3" json:"daily_max_amount,omitempty"`
+	SingleMinAmount string                 `protobuf:"bytes,10,opt,name=single_min_amount,json=singleMinAmount,proto3" json:"single_min_amount,omitempty"`
+	SingleMaxAmount string                 `protobuf:"bytes,11,opt,name=single_max_amount,json=singleMaxAmount,proto3" json:"single_max_amount,omitempty"`
+	DailyMaxAmount  string                 `protobuf:"bytes,12,opt,name=daily_max_amount,json=dailyMaxAmount,proto3" json:"daily_max_amount,omitempty"`
 	DailyMaxCount   int64                  `protobuf:"varint,13,opt,name=daily_max_count,json=dailyMaxCount,proto3" json:"daily_max_count,omitempty"`
 	FeeType         FeeType                `protobuf:"varint,14,opt,name=fee_type,json=feeType,proto3,enum=payment.FeeType" json:"fee_type,omitempty"`
 	FeeRate         string                 `protobuf:"bytes,15,opt,name=fee_rate,json=feeRate,proto3" json:"fee_rate,omitempty"`
-	FeeFixedAmount  int64                  `protobuf:"varint,16,opt,name=fee_fixed_amount,json=feeFixedAmount,proto3" json:"fee_fixed_amount,omitempty"`
+	FeeFixedAmount  string                 `protobuf:"bytes,16,opt,name=fee_fixed_amount,json=feeFixedAmount,proto3" json:"fee_fixed_amount,omitempty"`
 	ExtConfig       string                 `protobuf:"bytes,17,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`
 	Remark          string                 `protobuf:"bytes,18,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields   protoimpl.UnknownFields
@@ -3707,25 +3707,25 @@ func (x *UpdateTenantPayChannelReq) GetEnabled() common.Enable {
 	return common.Enable(0)
 }
 
-func (x *UpdateTenantPayChannelReq) GetSingleMinAmount() int64 {
+func (x *UpdateTenantPayChannelReq) GetSingleMinAmount() string {
 	if x != nil {
 		return x.SingleMinAmount
 	}
-	return 0
+	return ""
 }
 
-func (x *UpdateTenantPayChannelReq) GetSingleMaxAmount() int64 {
+func (x *UpdateTenantPayChannelReq) GetSingleMaxAmount() string {
 	if x != nil {
 		return x.SingleMaxAmount
 	}
-	return 0
+	return ""
 }
 
-func (x *UpdateTenantPayChannelReq) GetDailyMaxAmount() int64 {
+func (x *UpdateTenantPayChannelReq) GetDailyMaxAmount() string {
 	if x != nil {
 		return x.DailyMaxAmount
 	}
-	return 0
+	return ""
 }
 
 func (x *UpdateTenantPayChannelReq) GetDailyMaxCount() int64 {
@@ -3749,11 +3749,11 @@ func (x *UpdateTenantPayChannelReq) GetFeeRate() string {
 	return ""
 }
 
-func (x *UpdateTenantPayChannelReq) GetFeeFixedAmount() int64 {
+func (x *UpdateTenantPayChannelReq) GetFeeFixedAmount() string {
 	if x != nil {
 		return x.FeeFixedAmount
 	}
-	return 0
+	return ""
 }
 
 func (x *UpdateTenantPayChannelReq) GetExtConfig() string {
@@ -4034,10 +4034,10 @@ type CreateTenantPayChannelRuleReq struct {
 	RuleName             string                 `protobuf:"bytes,3,opt,name=rule_name,json=ruleName,proto3" json:"rule_name,omitempty"`
 	Priority             int64                  `protobuf:"varint,4,opt,name=priority,proto3" json:"priority,omitempty"`
 	Enabled              common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
-	SingleAmountMin      int64                  `protobuf:"varint,6,opt,name=single_amount_min,json=singleAmountMin,proto3" json:"single_amount_min,omitempty"`
-	SingleAmountMax      int64                  `protobuf:"varint,7,opt,name=single_amount_max,json=singleAmountMax,proto3" json:"single_amount_max,omitempty"`
-	UserTotalRechargeMin int64                  `protobuf:"varint,8,opt,name=user_total_recharge_min,json=userTotalRechargeMin,proto3" json:"user_total_recharge_min,omitempty"`
-	UserTotalRechargeMax int64                  `protobuf:"varint,9,opt,name=user_total_recharge_max,json=userTotalRechargeMax,proto3" json:"user_total_recharge_max,omitempty"`
+	SingleAmountMin      string                 `protobuf:"bytes,6,opt,name=single_amount_min,json=singleAmountMin,proto3" json:"single_amount_min,omitempty"`
+	SingleAmountMax      string                 `protobuf:"bytes,7,opt,name=single_amount_max,json=singleAmountMax,proto3" json:"single_amount_max,omitempty"`
+	UserTotalRechargeMin string                 `protobuf:"bytes,8,opt,name=user_total_recharge_min,json=userTotalRechargeMin,proto3" json:"user_total_recharge_min,omitempty"`
+	UserTotalRechargeMax string                 `protobuf:"bytes,9,opt,name=user_total_recharge_max,json=userTotalRechargeMax,proto3" json:"user_total_recharge_max,omitempty"`
 	MemberLevelMin       int64                  `protobuf:"varint,10,opt,name=member_level_min,json=memberLevelMin,proto3" json:"member_level_min,omitempty"`
 	MemberLevelMax       int64                  `protobuf:"varint,11,opt,name=member_level_max,json=memberLevelMax,proto3" json:"member_level_max,omitempty"`
 	KycLevelMin          int64                  `protobuf:"varint,12,opt,name=kyc_level_min,json=kycLevelMin,proto3" json:"kyc_level_min,omitempty"`
@@ -4116,32 +4116,32 @@ func (x *CreateTenantPayChannelRuleReq) GetEnabled() common.Enable {
 	return common.Enable(0)
 }
 
-func (x *CreateTenantPayChannelRuleReq) GetSingleAmountMin() int64 {
+func (x *CreateTenantPayChannelRuleReq) GetSingleAmountMin() string {
 	if x != nil {
 		return x.SingleAmountMin
 	}
-	return 0
+	return ""
 }
 
-func (x *CreateTenantPayChannelRuleReq) GetSingleAmountMax() int64 {
+func (x *CreateTenantPayChannelRuleReq) GetSingleAmountMax() string {
 	if x != nil {
 		return x.SingleAmountMax
 	}
-	return 0
+	return ""
 }
 
-func (x *CreateTenantPayChannelRuleReq) GetUserTotalRechargeMin() int64 {
+func (x *CreateTenantPayChannelRuleReq) GetUserTotalRechargeMin() string {
 	if x != nil {
 		return x.UserTotalRechargeMin
 	}
-	return 0
+	return ""
 }
 
-func (x *CreateTenantPayChannelRuleReq) GetUserTotalRechargeMax() int64 {
+func (x *CreateTenantPayChannelRuleReq) GetUserTotalRechargeMax() string {
 	if x != nil {
 		return x.UserTotalRechargeMax
 	}
-	return 0
+	return ""
 }
 
 func (x *CreateTenantPayChannelRuleReq) GetMemberLevelMin() int64 {
@@ -4214,10 +4214,10 @@ type UpdateTenantPayChannelRuleReq struct {
 	RuleName             string                 `protobuf:"bytes,3,opt,name=rule_name,json=ruleName,proto3" json:"rule_name,omitempty"`
 	Priority             int64                  `protobuf:"varint,4,opt,name=priority,proto3" json:"priority,omitempty"`
 	Enabled              common.Enable          `protobuf:"varint,5,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"` // 状态,0表示全部，1表示启用，2表示禁用
-	SingleAmountMin      int64                  `protobuf:"varint,6,opt,name=single_amount_min,json=singleAmountMin,proto3" json:"single_amount_min,omitempty"`
-	SingleAmountMax      int64                  `protobuf:"varint,7,opt,name=single_amount_max,json=singleAmountMax,proto3" json:"single_amount_max,omitempty"`
-	UserTotalRechargeMin int64                  `protobuf:"varint,8,opt,name=user_total_recharge_min,json=userTotalRechargeMin,proto3" json:"user_total_recharge_min,omitempty"`
-	UserTotalRechargeMax int64                  `protobuf:"varint,9,opt,name=user_total_recharge_max,json=userTotalRechargeMax,proto3" json:"user_total_recharge_max,omitempty"`
+	SingleAmountMin      string                 `protobuf:"bytes,6,opt,name=single_amount_min,json=singleAmountMin,proto3" json:"single_amount_min,omitempty"`
+	SingleAmountMax      string                 `protobuf:"bytes,7,opt,name=single_amount_max,json=singleAmountMax,proto3" json:"single_amount_max,omitempty"`
+	UserTotalRechargeMin string                 `protobuf:"bytes,8,opt,name=user_total_recharge_min,json=userTotalRechargeMin,proto3" json:"user_total_recharge_min,omitempty"`
+	UserTotalRechargeMax string                 `protobuf:"bytes,9,opt,name=user_total_recharge_max,json=userTotalRechargeMax,proto3" json:"user_total_recharge_max,omitempty"`
 	MemberLevelMin       int64                  `protobuf:"varint,10,opt,name=member_level_min,json=memberLevelMin,proto3" json:"member_level_min,omitempty"`
 	MemberLevelMax       int64                  `protobuf:"varint,11,opt,name=member_level_max,json=memberLevelMax,proto3" json:"member_level_max,omitempty"`
 	KycLevelMin          int64                  `protobuf:"varint,12,opt,name=kyc_level_min,json=kycLevelMin,proto3" json:"kyc_level_min,omitempty"`
@@ -4296,32 +4296,32 @@ func (x *UpdateTenantPayChannelRuleReq) GetEnabled() common.Enable {
 	return common.Enable(0)
 }
 
-func (x *UpdateTenantPayChannelRuleReq) GetSingleAmountMin() int64 {
+func (x *UpdateTenantPayChannelRuleReq) GetSingleAmountMin() string {
 	if x != nil {
 		return x.SingleAmountMin
 	}
-	return 0
+	return ""
 }
 
-func (x *UpdateTenantPayChannelRuleReq) GetSingleAmountMax() int64 {
+func (x *UpdateTenantPayChannelRuleReq) GetSingleAmountMax() string {
 	if x != nil {
 		return x.SingleAmountMax
 	}
-	return 0
+	return ""
 }
 
-func (x *UpdateTenantPayChannelRuleReq) GetUserTotalRechargeMin() int64 {
+func (x *UpdateTenantPayChannelRuleReq) GetUserTotalRechargeMin() string {
 	if x != nil {
 		return x.UserTotalRechargeMin
 	}
-	return 0
+	return ""
 }
 
-func (x *UpdateTenantPayChannelRuleReq) GetUserTotalRechargeMax() int64 {
+func (x *UpdateTenantPayChannelRuleReq) GetUserTotalRechargeMax() string {
 	if x != nil {
 		return x.UserTotalRechargeMax
 	}
-	return 0
+	return ""
 }
 
 func (x *UpdateTenantPayChannelRuleReq) GetMemberLevelMin() int64 {
@@ -4721,8 +4721,8 @@ type ListUserRechargeStatsReq struct {
 	Page                  *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	TenantId              int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	UserId                int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	SuccessTotalAmountMin int64                  `protobuf:"varint,4,opt,name=success_total_amount_min,json=successTotalAmountMin,proto3" json:"success_total_amount_min,omitempty"`
-	SuccessTotalAmountMax int64                  `protobuf:"varint,5,opt,name=success_total_amount_max,json=successTotalAmountMax,proto3" json:"success_total_amount_max,omitempty"`
+	SuccessTotalAmountMin string                 `protobuf:"bytes,4,opt,name=success_total_amount_min,json=successTotalAmountMin,proto3" json:"success_total_amount_min,omitempty"`
+	SuccessTotalAmountMax string                 `protobuf:"bytes,5,opt,name=success_total_amount_max,json=successTotalAmountMax,proto3" json:"success_total_amount_max,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -4778,18 +4778,18 @@ func (x *ListUserRechargeStatsReq) GetUserId() int64 {
 	return 0
 }
 
-func (x *ListUserRechargeStatsReq) GetSuccessTotalAmountMin() int64 {
+func (x *ListUserRechargeStatsReq) GetSuccessTotalAmountMin() string {
 	if x != nil {
 		return x.SuccessTotalAmountMin
 	}
-	return 0
+	return ""
 }
 
-func (x *ListUserRechargeStatsReq) GetSuccessTotalAmountMax() int64 {
+func (x *ListUserRechargeStatsReq) GetSuccessTotalAmountMax() string {
 	if x != nil {
 		return x.SuccessTotalAmountMax
 	}
-	return 0
+	return ""
 }
 
 type ListUserRechargeStatsResp struct {
@@ -5214,7 +5214,7 @@ type ManualMarkRechargeOrderSuccessReq struct {
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	OrderNo       string                 `protobuf:"bytes,2,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
 	ThirdTradeNo  string                 `protobuf:"bytes,3,opt,name=third_trade_no,json=thirdTradeNo,proto3" json:"third_trade_no,omitempty"`
-	PayAmount     int64                  `protobuf:"varint,4,opt,name=pay_amount,json=payAmount,proto3" json:"pay_amount,omitempty"`
+	PayAmount     string                 `protobuf:"bytes,4,opt,name=pay_amount,json=payAmount,proto3" json:"pay_amount,omitempty"`
 	Remark        string                 `protobuf:"bytes,5,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -5271,11 +5271,11 @@ func (x *ManualMarkRechargeOrderSuccessReq) GetThirdTradeNo() string {
 	return ""
 }
 
-func (x *ManualMarkRechargeOrderSuccessReq) GetPayAmount() int64 {
+func (x *ManualMarkRechargeOrderSuccessReq) GetPayAmount() string {
 	if x != nil {
 		return x.PayAmount
 	}
-	return 0
+	return ""
 }
 
 func (x *ManualMarkRechargeOrderSuccessReq) GetRemark() string {
@@ -7826,7 +7826,7 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
 	"\x04data\x18\x02 \x01(\v2\x19.payment.UserRechargeStatR\x04data\"\x9d\x01\n" +
 	" ListAvailableRechargeChannelsReq\x12'\n" +
-	"\x0frecharge_amount\x18\x01 \x01(\x03R\x0erechargeAmount\x12\x1a\n" +
+	"\x0frecharge_amount\x18\x01 \x01(\tR\x0erechargeAmount\x12\x1a\n" +
 	"\bcurrency\x18\x02 \x01(\tR\bcurrency\x124\n" +
 	"\vclient_type\x18\x03 \x01(\x0e2\x13.payment.ClientTypeR\n" +
 	"clientType\"y\n" +
@@ -7836,7 +7836,7 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\x16CreateRechargeOrderReq\x12\x1d\n" +
 	"\n" +
 	"channel_id\x18\x01 \x01(\x03R\tchannelId\x12'\n" +
-	"\x0frecharge_amount\x18\x02 \x01(\x03R\x0erechargeAmount\x12\x1a\n" +
+	"\x0frecharge_amount\x18\x02 \x01(\tR\x0erechargeAmount\x12\x1a\n" +
 	"\bcurrency\x18\x03 \x01(\tR\bcurrency\x12\x18\n" +
 	"\asubject\x18\x04 \x01(\tR\asubject\x12\x12\n" +
 	"\x04body\x18\x05 \x01(\tR\x04body\x124\n" +
@@ -7853,7 +7853,7 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\x04coin\x18\x02 \x01(\tR\x04coin\x120\n" +
 	"\n" +
 	"chain_code\x18\x03 \x01(\x0e2\x11.common.ChainCodeR\tchainCode\x12'\n" +
-	"\x0frecharge_amount\x18\x04 \x01(\x03R\x0erechargeAmount\x124\n" +
+	"\x0frecharge_amount\x18\x04 \x01(\tR\x0erechargeAmount\x124\n" +
 	"\vclient_type\x18\x05 \x01(\x0e2\x13.payment.ClientTypeR\n" +
 	"clientType\x12 \n" +
 	"\fbiz_order_no\x18\x06 \x01(\tR\n" +
@@ -7887,7 +7887,7 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12*\n" +
 	"\x04data\x18\x02 \x01(\v2\x16.payment.RechargeOrderR\x04data\"\x97\x01\n" +
 	"\x16CreateWithdrawOrderReq\x12\x16\n" +
-	"\x06amount\x18\x01 \x01(\x03R\x06amount\x12\x1a\n" +
+	"\x06amount\x18\x01 \x01(\tR\x06amount\x12\x1a\n" +
 	"\bcurrency\x18\x02 \x01(\tR\bcurrency\x12\x18\n" +
 	"\aaddress\x18\x03 \x01(\tR\aaddress\x12\x17\n" +
 	"\abank_id\x18\x04 \x01(\x03R\x06bankId\x12\x16\n" +
@@ -8120,13 +8120,13 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	" \x01(\x03R\x04sort\x12(\n" +
 	"\avisible\x18\v \x01(\x0e2\x0e.common.SwitchR\avisible\x12(\n" +
 	"\aenabled\x18\f \x01(\x0e2\x0e.common.EnableR\aenabled\x12*\n" +
-	"\x11single_min_amount\x18\r \x01(\x03R\x0fsingleMinAmount\x12*\n" +
-	"\x11single_max_amount\x18\x0e \x01(\x03R\x0fsingleMaxAmount\x12(\n" +
-	"\x10daily_max_amount\x18\x0f \x01(\x03R\x0edailyMaxAmount\x12&\n" +
+	"\x11single_min_amount\x18\r \x01(\tR\x0fsingleMinAmount\x12*\n" +
+	"\x11single_max_amount\x18\x0e \x01(\tR\x0fsingleMaxAmount\x12(\n" +
+	"\x10daily_max_amount\x18\x0f \x01(\tR\x0edailyMaxAmount\x12&\n" +
 	"\x0fdaily_max_count\x18\x10 \x01(\x03R\rdailyMaxCount\x12+\n" +
 	"\bfee_type\x18\x11 \x01(\x0e2\x10.payment.FeeTypeR\afeeType\x12\x19\n" +
 	"\bfee_rate\x18\x12 \x01(\tR\afeeRate\x12(\n" +
-	"\x10fee_fixed_amount\x18\x13 \x01(\x03R\x0efeeFixedAmount\x12\x1d\n" +
+	"\x10fee_fixed_amount\x18\x13 \x01(\tR\x0efeeFixedAmount\x12\x1d\n" +
 	"\n" +
 	"ext_config\x18\x14 \x01(\tR\textConfig\x12\x16\n" +
 	"\x06remark\x18\x15 \x01(\tR\x06remark\"\xf9\x04\n" +
@@ -8141,13 +8141,13 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\avisible\x18\b \x01(\x0e2\x0e.common.SwitchR\avisible\x12(\n" +
 	"\aenabled\x18\t \x01(\x0e2\x0e.common.EnableR\aenabled\x12*\n" +
 	"\x11single_min_amount\x18\n" +
-	" \x01(\x03R\x0fsingleMinAmount\x12*\n" +
-	"\x11single_max_amount\x18\v \x01(\x03R\x0fsingleMaxAmount\x12(\n" +
-	"\x10daily_max_amount\x18\f \x01(\x03R\x0edailyMaxAmount\x12&\n" +
+	" \x01(\tR\x0fsingleMinAmount\x12*\n" +
+	"\x11single_max_amount\x18\v \x01(\tR\x0fsingleMaxAmount\x12(\n" +
+	"\x10daily_max_amount\x18\f \x01(\tR\x0edailyMaxAmount\x12&\n" +
 	"\x0fdaily_max_count\x18\r \x01(\x03R\rdailyMaxCount\x12+\n" +
 	"\bfee_type\x18\x0e \x01(\x0e2\x10.payment.FeeTypeR\afeeType\x12\x19\n" +
 	"\bfee_rate\x18\x0f \x01(\tR\afeeRate\x12(\n" +
-	"\x10fee_fixed_amount\x18\x10 \x01(\x03R\x0efeeFixedAmount\x12\x1d\n" +
+	"\x10fee_fixed_amount\x18\x10 \x01(\tR\x0efeeFixedAmount\x12\x1d\n" +
 	"\n" +
 	"ext_config\x18\x11 \x01(\tR\textConfig\x12\x16\n" +
 	"\x06remark\x18\x12 \x01(\tR\x06remark\"E\n" +
@@ -8179,10 +8179,10 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\trule_name\x18\x03 \x01(\tR\bruleName\x12\x1a\n" +
 	"\bpriority\x18\x04 \x01(\x03R\bpriority\x12(\n" +
 	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12*\n" +
-	"\x11single_amount_min\x18\x06 \x01(\x03R\x0fsingleAmountMin\x12*\n" +
-	"\x11single_amount_max\x18\a \x01(\x03R\x0fsingleAmountMax\x125\n" +
-	"\x17user_total_recharge_min\x18\b \x01(\x03R\x14userTotalRechargeMin\x125\n" +
-	"\x17user_total_recharge_max\x18\t \x01(\x03R\x14userTotalRechargeMax\x12(\n" +
+	"\x11single_amount_min\x18\x06 \x01(\tR\x0fsingleAmountMin\x12*\n" +
+	"\x11single_amount_max\x18\a \x01(\tR\x0fsingleAmountMax\x125\n" +
+	"\x17user_total_recharge_min\x18\b \x01(\tR\x14userTotalRechargeMin\x125\n" +
+	"\x17user_total_recharge_max\x18\t \x01(\tR\x14userTotalRechargeMax\x12(\n" +
 	"\x10member_level_min\x18\n" +
 	" \x01(\x03R\x0ememberLevelMin\x12(\n" +
 	"\x10member_level_max\x18\v \x01(\x03R\x0ememberLevelMax\x12\"\n" +
@@ -8200,10 +8200,10 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\trule_name\x18\x03 \x01(\tR\bruleName\x12\x1a\n" +
 	"\bpriority\x18\x04 \x01(\x03R\bpriority\x12(\n" +
 	"\aenabled\x18\x05 \x01(\x0e2\x0e.common.EnableR\aenabled\x12*\n" +
-	"\x11single_amount_min\x18\x06 \x01(\x03R\x0fsingleAmountMin\x12*\n" +
-	"\x11single_amount_max\x18\a \x01(\x03R\x0fsingleAmountMax\x125\n" +
-	"\x17user_total_recharge_min\x18\b \x01(\x03R\x14userTotalRechargeMin\x125\n" +
-	"\x17user_total_recharge_max\x18\t \x01(\x03R\x14userTotalRechargeMax\x12(\n" +
+	"\x11single_amount_min\x18\x06 \x01(\tR\x0fsingleAmountMin\x12*\n" +
+	"\x11single_amount_max\x18\a \x01(\tR\x0fsingleAmountMax\x125\n" +
+	"\x17user_total_recharge_min\x18\b \x01(\tR\x14userTotalRechargeMin\x125\n" +
+	"\x17user_total_recharge_max\x18\t \x01(\tR\x14userTotalRechargeMax\x12(\n" +
 	"\x10member_level_min\x18\n" +
 	" \x01(\x03R\x0ememberLevelMin\x12(\n" +
 	"\x10member_level_max\x18\v \x01(\x03R\x0ememberLevelMax\x12\"\n" +
@@ -8240,8 +8240,8 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x127\n" +
-	"\x18success_total_amount_min\x18\x04 \x01(\x03R\x15successTotalAmountMin\x127\n" +
-	"\x18success_total_amount_max\x18\x05 \x01(\x03R\x15successTotalAmountMax\"p\n" +
+	"\x18success_total_amount_min\x18\x04 \x01(\tR\x15successTotalAmountMin\x127\n" +
+	"\x18success_total_amount_max\x18\x05 \x01(\tR\x15successTotalAmountMax\"p\n" +
 	"\x19ListUserRechargeStatsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12-\n" +
 	"\x04data\x18\x02 \x03(\v2\x19.payment.UserRechargeStatR\x04data\"M\n" +
@@ -8284,7 +8284,7 @@ const file_proto_payment_payment_proto_rawDesc = "" +
 	"\border_no\x18\x02 \x01(\tR\aorderNo\x12$\n" +
 	"\x0ethird_trade_no\x18\x03 \x01(\tR\fthirdTradeNo\x12\x1d\n" +
 	"\n" +
-	"pay_amount\x18\x04 \x01(\x03R\tpayAmount\x12\x16\n" +
+	"pay_amount\x18\x04 \x01(\tR\tpayAmount\x12\x16\n" +
 	"\x06remark\x18\x05 \x01(\tR\x06remark\"H\n" +
 	"\x0eRetryNotifyReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +

@@ -137,8 +137,12 @@ const loadList = async () => {
       ...query,
       tenantId: query.tenantId || undefined,
       userId: query.userId || undefined,
-      successTotalAmountMin: query.successTotalAmountMin || undefined,
-      successTotalAmountMax: query.successTotalAmountMax || undefined,
+      successTotalAmountMin: query.successTotalAmountMin
+        ? String(query.successTotalAmountMin)
+        : undefined,
+      successTotalAmountMax: query.successTotalAmountMax
+        ? String(query.successTotalAmountMax)
+        : undefined,
       cursor: pagination.cursor,
       limit: pagination.limit,
     })

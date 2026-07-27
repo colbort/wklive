@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/shopspring/decimal"
+
 	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -428,7 +430,7 @@ func creditCryptoRechargeOrder(ctx context.Context, svcCtx *svc.ServiceContext, 
 	if err != nil {
 		return err
 	}
-	return markRechargeOrderSuccessAndCredit(ctx, svcCtx, order, txHash, 0, "crypto recharge credited")
+	return markRechargeOrderSuccessAndCredit(ctx, svcCtx, order, txHash, decimal.Zero, "crypto recharge credited")
 }
 
 func listCryptoRechargeTxs(ctx context.Context, svcCtx *svc.ServiceContext, req listCryptoTxReq) ([]*models.TCryptoRechargeTx, int64, error) {

@@ -13,6 +13,7 @@ import (
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -33,6 +34,10 @@ func NewCreateWithdrawOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 // 提现
 func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(in *payment.CreateWithdrawOrderReq) (*payment.CreateWithdrawOrderResp, error) {
+	amount, err := parsePaymentAmount(in.Amount)
+	if err != nil || !amount.IsPositive() {
+		return nil, fmt.Errorf("withdraw amount must be a positive decimal")
+	}
 	userId, err := utils.GetUserIdFromMd(l.ctx)
 	if err != nil {
 		return nil, err
@@ -59,9 +64,9 @@ func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(in *payment.CreateWithdra
 		AccountId:    0,
 		ChannelId:    0,
 		Currency:     in.Currency,
-		Amount:       in.Amount,
-		FeeAmount:    0,
-		ActualAmount: 0,
+		Amount:       amount,
+		FeeAmount:    decimal.Zero,
+		ActualAmount: decimal.Zero,
 		ClientType:   0,
 		ClientIp:     sql.NullString{String: clientIP, Valid: clientIP != ""},
 		Status:       int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PENDING),
@@ -100,7 +105,7 @@ func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(in *payment.CreateWithdra
 		return nil, err
 	}
 
-	l.Logger.Infof("Create withdraw order success: %s, user_id: %d, amount: %d", orderNo, userId, in.Amount)
+	l.Logger.Infof("Create withdraw order success: %s, user_id: %d, amount: %s", orderNo, userId, amount.String())
 	event := notify.NewEvent(notify.EventTypeWithdraw, notify.EventLevelWarning, "用户提现", fmt.Sprintf("用户 %d 发起提现订单 %s", userId, orderNo))
 	event.Source = "payment"
 	event.TenantID = tenantId

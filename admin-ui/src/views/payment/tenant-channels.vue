@@ -452,10 +452,17 @@ const submitChannel = async () => {
     return
   }
 
+  const payload = {
+    ...channelForm,
+    singleMinAmount: String(channelForm.singleMinAmount),
+    singleMaxAmount: String(channelForm.singleMaxAmount),
+    dailyMaxAmount: String(channelForm.dailyMaxAmount),
+    feeFixedAmount: String(channelForm.feeFixedAmount),
+  }
   if (channelForm.id) {
-    await tenantService.updateTenantChannel({ ...channelForm })
+    await tenantService.updateTenantChannel(payload)
   } else {
-    await tenantService.createTenantChannel({ ...channelForm })
+    await tenantService.createTenantChannel(payload)
   }
   ElMessage.success(t('common.operationSuccess'))
   channelDialogVisible.value = false

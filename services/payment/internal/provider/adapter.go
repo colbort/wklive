@@ -6,6 +6,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/shopspring/decimal"
+
 	"wklive/services/payment/models"
 )
 
@@ -23,7 +25,7 @@ type PaymentQueryResult struct {
 	ThirdOrderNo string
 	ThirdTradeNo string
 	Status       int64
-	PayAmount    int64
+	PayAmount    decimal.Decimal
 	Currency     string
 	PaidTime     int64
 	RawResponse  string
@@ -31,7 +33,7 @@ type PaymentQueryResult struct {
 
 type RefundRequest struct {
 	RefundNo string
-	Amount   int64
+	Amount   decimal.Decimal
 	Currency string
 	Reason   string
 }
@@ -40,7 +42,7 @@ type RefundResult struct {
 	RefundNo      string
 	ThirdRefundNo string
 	Status        int64
-	Amount        int64
+	Amount        decimal.Decimal
 	Currency      string
 	FinishedTime  int64
 	RawRequest    string
@@ -51,7 +53,7 @@ type CreatePayoutResult struct {
 	ThirdOrderNo string
 	ThirdTradeNo string
 	Status       int64
-	Amount       int64
+	Amount       decimal.Decimal
 	Currency     string
 	FinishedTime int64
 	RawRequest   string
@@ -62,7 +64,7 @@ type PayoutQueryResult struct {
 	ThirdOrderNo string
 	ThirdTradeNo string
 	Status       int64
-	Amount       int64
+	Amount       decimal.Decimal
 	Currency     string
 	FinishedTime int64
 	RawResponse  string
@@ -81,7 +83,7 @@ type PaymentNotifyResult struct {
 	ThirdOrderNo string
 	ThirdTradeNo string
 	Status       int64
-	PayAmount    int64
+	PayAmount    decimal.Decimal
 	Currency     string
 	PaidTime     int64
 	RawBody      string
@@ -93,7 +95,7 @@ type PayoutNotifyResult struct {
 	ThirdOrderNo string
 	ThirdTradeNo string
 	Status       int64
-	Amount       int64
+	Amount       decimal.Decimal
 	Currency     string
 	FinishedTime int64
 	RawBody      string

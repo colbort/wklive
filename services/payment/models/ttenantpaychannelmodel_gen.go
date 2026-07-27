@@ -57,13 +57,13 @@ type (
 		Sort            int64           `db:"sort"`              // 排序
 		Visible         int64           `db:"visible"`           // 显示开关：1显示 2隐藏
 		Enabled         int64           `db:"enabled"`           // 启用状态：1启用 2禁用
-		SingleMinAmount int64           `db:"single_min_amount"` // 单笔最小金额，单位分
-		SingleMaxAmount int64           `db:"single_max_amount"` // 单笔最大金额，0表示不限制，单位分
-		DailyMaxAmount  int64           `db:"daily_max_amount"`  // 单日最大金额，0表示不限制，单位分
+		SingleMinAmount decimal.Decimal `db:"single_min_amount"` // 单笔最小金额，自然货币单位
+		SingleMaxAmount decimal.Decimal `db:"single_max_amount"` // 单笔最大金额，0表示不限制
+		DailyMaxAmount  decimal.Decimal `db:"daily_max_amount"`  // 单日最大金额，0表示不限制
 		DailyMaxCount   int64           `db:"daily_max_count"`   // 单日最大次数，0表示不限制
 		FeeType         int64           `db:"fee_type"`          // 手续费类型：1比例 2固定
 		FeeRate         decimal.Decimal `db:"fee_rate"`          // 手续费比例
-		FeeFixedAmount  int64           `db:"fee_fixed_amount"`  // 固定手续费，单位分
+		FeeFixedAmount  decimal.Decimal `db:"fee_fixed_amount"`  // 固定手续费，自然货币单位
 		ExtConfig       sql.NullString  `db:"ext_config"`        // 扩展配置
 		Remark          sql.NullString  `db:"remark"`            // 备注
 		CreateTimes     int64           `db:"create_times"`      // 创建时间

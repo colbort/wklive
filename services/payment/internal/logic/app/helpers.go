@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"strconv"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -16,8 +15,17 @@ import (
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
+
+func paymentAmountToText(amount decimal.Decimal) string {
+	return amount.String()
+}
+
+func parsePaymentAmount(value string) (decimal.Decimal, error) {
+	return conv.ParseDecimalField(value)
+}
 
 func systemAdminWriteScopeResp(ctx context.Context) (*common.RespBase, error) {
 	userType, err := utils.GetUserTypeFromMd(ctx)
@@ -59,7 +67,7 @@ func switchToModel(value common.Switch, defaultValue int64) int64 {
 	return int64(value)
 }
 
-func markRechargeOrderSuccessAndCredit(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TRechargeOrder, thirdTradeNo string, payAmount int64, remark string) error {
+func markRechargeOrderSuccessAndCredit(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TRechargeOrder, thirdTradeNo string, payAmount decimal.Decimal, remark string) error {
 	if order == nil {
 		return i18n.StatusError(ctx, i18n.OrderNotFound)
 	}
@@ -82,9 +90,9 @@ func markRechargeOrderSuccessAndCredit(ctx context.Context, svcCtx *svc.ServiceC
 
 		now := utils.NowMillis()
 		current.Status = int64(payment.PayOrderStatus_PAY_ORDER_STATUS_SUCCESS)
-		if payAmount > 0 {
+		if payAmount.IsPositive() {
 			current.PayAmount = payAmount
-		} else if current.PayAmount <= 0 {
+		} else if !current.PayAmount.IsPositive() {
 			current.PayAmount = current.OrderAmount
 		}
 		if thirdTradeNo != "" {
@@ -120,7 +128,7 @@ func creditRechargeOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, o
 		return i18n.StatusError(ctx, i18n.OrderNotFound)
 	}
 	amount := order.PayAmount
-	if amount <= 0 {
+	if !amount.IsPositive() {
 		amount = order.OrderAmount
 	}
 	resp, err := svcCtx.AssetCli.AddAvailable(ctx, &asset.AddAvailableReq{
@@ -128,7 +136,7 @@ func creditRechargeOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, o
 		UserId:     order.UserId,
 		WalletType: rechargeOrderWalletType(order),
 		Coin:       order.Currency,
-		Amount:     strconv.FormatInt(amount, 10),
+		Amount:     paymentAmountToText(amount),
 		BizType:    asset.BizType_BIZ_TYPE_PAYMENT,
 		SceneType:  asset.SceneType_SCENE_TYPE_RECHARGE,
 		BizId:      order.Id,
@@ -156,7 +164,7 @@ func freezeWithdrawOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, o
 		UserId:     order.UserId,
 		WalletType: common.WalletType_WALLET_TYPE_SPOT,
 		Coin:       order.Currency,
-		Amount:     strconv.FormatInt(order.Amount, 10),
+		Amount:     paymentAmountToText(order.Amount),
 		BizType:    asset.BizType_BIZ_TYPE_PAYMENT,
 		SceneType:  asset.SceneType_SCENE_TYPE_WITHDRAW_APPLY,
 		BizId:      order.Id,
@@ -183,7 +191,7 @@ func deductWithdrawOrderFrozenAsset(ctx context.Context, svcCtx *svc.ServiceCont
 		TenantId:      order.TenantId,
 		TargetBizType: asset.BizType_BIZ_TYPE_PAYMENT,
 		TargetBizNo:   order.OrderNo,
-		Amount:        strconv.FormatInt(order.Amount, 10),
+		Amount:        paymentAmountToText(order.Amount),
 		BizType:       asset.BizType_BIZ_TYPE_PAYMENT,
 		SceneType:     asset.SceneType_SCENE_TYPE_WITHDRAW_SUCCESS,
 		BizId:         order.Id,
@@ -210,7 +218,7 @@ func unfreezeWithdrawOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext,
 		TenantId:      order.TenantId,
 		TargetBizType: asset.BizType_BIZ_TYPE_PAYMENT,
 		TargetBizNo:   order.OrderNo,
-		Amount:        strconv.FormatInt(order.Amount, 10),
+		Amount:        paymentAmountToText(order.Amount),
 		BizType:       asset.BizType_BIZ_TYPE_PAYMENT,
 		SceneType:     asset.SceneType_SCENE_TYPE_WITHDRAW_REJECT,
 		BizId:         order.Id,
@@ -319,13 +327,13 @@ func toTenantPayChannelProto(item *models.TTenantPayChannel) *payment.TenantPayC
 		Sort:            item.Sort,
 		Visible:         switchToProto(item.Visible),
 		Enabled:         common.Enable(item.Enabled),
-		SingleMinAmount: item.SingleMinAmount,
-		SingleMaxAmount: item.SingleMaxAmount,
-		DailyMaxAmount:  item.DailyMaxAmount,
+		SingleMinAmount: item.SingleMinAmount.String(),
+		SingleMaxAmount: item.SingleMaxAmount.String(),
+		DailyMaxAmount:  item.DailyMaxAmount.String(),
 		DailyMaxCount:   item.DailyMaxCount,
 		FeeType:         payment.FeeType(item.FeeType),
 		FeeRate:         item.FeeRate.String(),
-		FeeFixedAmount:  item.FeeFixedAmount,
+		FeeFixedAmount:  item.FeeFixedAmount.String(),
 		ExtConfig:       item.ExtConfig.String,
 		Remark:          item.Remark.String,
 		CreateTimes:     item.CreateTimes,
@@ -354,10 +362,10 @@ func toTenantPayChannelRuleProto(item *models.TTenantPayChannelRule) *payment.Te
 		RuleName:             item.RuleName,
 		Priority:             item.Priority,
 		Enabled:              common.Enable(item.Enabled),
-		SingleAmountMin:      item.SingleAmountMin,
-		SingleAmountMax:      item.SingleAmountMax,
-		UserTotalRechargeMin: item.UserTotalRechargeMin,
-		UserTotalRechargeMax: item.UserTotalRechargeMax,
+		SingleAmountMin:      item.SingleAmountMin.String(),
+		SingleAmountMax:      item.SingleAmountMax.String(),
+		UserTotalRechargeMin: item.UserTotalRechargeMin.String(),
+		UserTotalRechargeMax: item.UserTotalRechargeMax.String(),
 		MemberLevelMin:       item.MemberLevelMin,
 		MemberLevelMax:       item.MemberLevelMax,
 		KycLevelMin:          item.KycLevelMin,
@@ -381,8 +389,8 @@ func toUserRechargeStatProto(item *models.TUserRechargeStat) *payment.UserRechar
 		TenantId:           item.TenantId,
 		UserId:             item.UserId,
 		SuccessOrderCount:  item.SuccessOrderCount,
-		SuccessTotalAmount: item.SuccessTotalAmount,
-		TodaySuccessAmount: item.TodaySuccessAmount,
+		SuccessTotalAmount: item.SuccessTotalAmount.String(),
+		TodaySuccessAmount: item.TodaySuccessAmount.String(),
 		TodaySuccessCount:  item.TodaySuccessCount,
 		FirstSuccessTime:   item.FirstSuccessTime.Int64,
 		LastSuccessTime:    item.LastSuccessTime.Int64,
@@ -408,9 +416,9 @@ func toRechargeOrderProto(item *models.TRechargeOrder) *payment.RechargeOrder {
 		RechargeType:     payment.RechargeType(item.RechargeType),
 		WalletType:       common.WalletType(item.WalletType),
 		Currency:         item.Currency,
-		OrderAmount:      item.OrderAmount,
-		PayAmount:        item.PayAmount,
-		FeeAmount:        item.FeeAmount,
+		OrderAmount:      item.OrderAmount.String(),
+		PayAmount:        item.PayAmount.String(),
+		FeeAmount:        item.FeeAmount.String(),
 		Subject:          item.Subject.String,
 		Body:             item.Body.String,
 		ClientType:       payment.ClientType(item.ClientType),
@@ -495,9 +503,9 @@ func toWithdrawOrderProto(item *models.TWithdrawOrder) *payment.WithdrawOrder {
 		AccountId:    item.AccountId,
 		ChannelId:    item.ChannelId,
 		Currency:     item.Currency,
-		Amount:       item.Amount,
-		FeeAmount:    item.FeeAmount,
-		ActualAmount: item.ActualAmount,
+		Amount:       item.Amount.String(),
+		FeeAmount:    item.FeeAmount.String(),
+		ActualAmount: item.ActualAmount.String(),
 		ClientType:   payment.ClientType(item.ClientType),
 		ClientIp:     item.ClientIp.String,
 		Status:       payment.PayOrderStatus(item.Status),

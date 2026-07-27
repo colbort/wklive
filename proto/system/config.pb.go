@@ -593,9 +593,9 @@ func (x *ItickConfig) GetWsKlineStaleSeconds() int32 {
 
 type RechargeConfig struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MinAmount     int64                  `protobuf:"varint,1,opt,name=min_amount,json=minAmount,proto3" json:"min_amount,omitempty"` // 最小充值金额，单位：分
-	MaxAmount     int64                  `protobuf:"varint,2,opt,name=max_amount,json=maxAmount,proto3" json:"max_amount,omitempty"` // 最大充值金额，单位：分
-	FeeRate       int64                  `protobuf:"varint,3,opt,name=fee_rate,json=feeRate,proto3" json:"fee_rate,omitempty"`       // 手续费配置，单位：万分之几，例如：100表示1%
+	MinAmount     string                 `protobuf:"bytes,1,opt,name=min_amount,json=minAmount,proto3" json:"min_amount,omitempty"` // 最小充值金额，自然货币单位
+	MaxAmount     string                 `protobuf:"bytes,2,opt,name=max_amount,json=maxAmount,proto3" json:"max_amount,omitempty"` // 最大充值金额，自然货币单位
+	FeeRate       int64                  `protobuf:"varint,3,opt,name=fee_rate,json=feeRate,proto3" json:"fee_rate,omitempty"`      // 手续费配置，单位：万分之几，例如：100表示1%
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -630,18 +630,18 @@ func (*RechargeConfig) Descriptor() ([]byte, []int) {
 	return file_proto_system_config_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *RechargeConfig) GetMinAmount() int64 {
+func (x *RechargeConfig) GetMinAmount() string {
 	if x != nil {
 		return x.MinAmount
 	}
-	return 0
+	return ""
 }
 
-func (x *RechargeConfig) GetMaxAmount() int64 {
+func (x *RechargeConfig) GetMaxAmount() string {
 	if x != nil {
 		return x.MaxAmount
 	}
-	return 0
+	return ""
 }
 
 func (x *RechargeConfig) GetFeeRate() int64 {
@@ -653,11 +653,11 @@ func (x *RechargeConfig) GetFeeRate() int64 {
 
 type WithdrawConfig struct {
 	state                         protoimpl.MessageState `protogen:"open.v1"`
-	MinAmount                     int64                  `protobuf:"varint,1,opt,name=min_amount,json=minAmount,proto3" json:"min_amount,omitempty"`                                                                   // 最小提现金额，单位：分
-	MaxAmount                     int64                  `protobuf:"varint,2,opt,name=max_amount,json=maxAmount,proto3" json:"max_amount,omitempty"`                                                                   // 最大提现金额，单位：分
+	MinAmount                     string                 `protobuf:"bytes,1,opt,name=min_amount,json=minAmount,proto3" json:"min_amount,omitempty"`                                                                    // 最小提现金额，自然货币单位
+	MaxAmount                     string                 `protobuf:"bytes,2,opt,name=max_amount,json=maxAmount,proto3" json:"max_amount,omitempty"`                                                                    // 最大提现金额，自然货币单位
 	FeeRate                       int64                  `protobuf:"varint,3,opt,name=fee_rate,json=feeRate,proto3" json:"fee_rate,omitempty"`                                                                         // 手续费配置，单位：万分之几，例如：100表示1%
 	DailyLimitPerUser             int32                  `protobuf:"varint,4,opt,name=daily_limit_per_user,json=dailyLimitPerUser,proto3" json:"daily_limit_per_user,omitempty"`                                       // 每人每天提现次数限制
-	DailyAmountLimitPerUser       int64                  `protobuf:"varint,5,opt,name=daily_amount_limit_per_user,json=dailyAmountLimitPerUser,proto3" json:"daily_amount_limit_per_user,omitempty"`                   // 每人每天提现金额限制，单位：分
+	DailyAmountLimitPerUser       string                 `protobuf:"bytes,5,opt,name=daily_amount_limit_per_user,json=dailyAmountLimitPerUser,proto3" json:"daily_amount_limit_per_user,omitempty"`                    // 每人每天提现金额限制，自然货币单位
 	AllowedTimeRange              string                 `protobuf:"bytes,6,opt,name=allowed_time_range,json=allowedTimeRange,proto3" json:"allowed_time_range,omitempty"`                                             // 允许提现的时间段，例如：每天9:00-18:00，格式为"09:00-18:00"
 	PendingWithdrawalLimitPerUser int32                  `protobuf:"varint,7,opt,name=pending_withdrawal_limit_per_user,json=pendingWithdrawalLimitPerUser,proto3" json:"pending_withdrawal_limit_per_user,omitempty"` // 允许未审核在提现数量限制，单位：笔
 	FreeWithdrawTimesPerDay       int32                  `protobuf:"varint,8,opt,name=free_withdraw_times_per_day,json=freeWithdrawTimesPerDay,proto3" json:"free_withdraw_times_per_day,omitempty"`                   // 每日免费提现次数，0=没有免费提现
@@ -695,18 +695,18 @@ func (*WithdrawConfig) Descriptor() ([]byte, []int) {
 	return file_proto_system_config_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *WithdrawConfig) GetMinAmount() int64 {
+func (x *WithdrawConfig) GetMinAmount() string {
 	if x != nil {
 		return x.MinAmount
 	}
-	return 0
+	return ""
 }
 
-func (x *WithdrawConfig) GetMaxAmount() int64 {
+func (x *WithdrawConfig) GetMaxAmount() string {
 	if x != nil {
 		return x.MaxAmount
 	}
-	return 0
+	return ""
 }
 
 func (x *WithdrawConfig) GetFeeRate() int64 {
@@ -723,11 +723,11 @@ func (x *WithdrawConfig) GetDailyLimitPerUser() int32 {
 	return 0
 }
 
-func (x *WithdrawConfig) GetDailyAmountLimitPerUser() int64 {
+func (x *WithdrawConfig) GetDailyAmountLimitPerUser() string {
 	if x != nil {
 		return x.DailyAmountLimitPerUser
 	}
-	return 0
+	return ""
 }
 
 func (x *WithdrawConfig) GetAllowedTimeRange() string {
@@ -1091,18 +1091,18 @@ const file_proto_system_config_proto_rawDesc = "" +
 	"\x16ws_kline_stale_seconds\x18\t \x01(\x05R\x13wsKlineStaleSeconds\"i\n" +
 	"\x0eRechargeConfig\x12\x1d\n" +
 	"\n" +
-	"min_amount\x18\x01 \x01(\x03R\tminAmount\x12\x1d\n" +
+	"min_amount\x18\x01 \x01(\tR\tminAmount\x12\x1d\n" +
 	"\n" +
-	"max_amount\x18\x02 \x01(\x03R\tmaxAmount\x12\x19\n" +
+	"max_amount\x18\x02 \x01(\tR\tmaxAmount\x12\x19\n" +
 	"\bfee_rate\x18\x03 \x01(\x03R\afeeRate\"\x8e\x03\n" +
 	"\x0eWithdrawConfig\x12\x1d\n" +
 	"\n" +
-	"min_amount\x18\x01 \x01(\x03R\tminAmount\x12\x1d\n" +
+	"min_amount\x18\x01 \x01(\tR\tminAmount\x12\x1d\n" +
 	"\n" +
-	"max_amount\x18\x02 \x01(\x03R\tmaxAmount\x12\x19\n" +
+	"max_amount\x18\x02 \x01(\tR\tmaxAmount\x12\x19\n" +
 	"\bfee_rate\x18\x03 \x01(\x03R\afeeRate\x12/\n" +
 	"\x14daily_limit_per_user\x18\x04 \x01(\x05R\x11dailyLimitPerUser\x12<\n" +
-	"\x1bdaily_amount_limit_per_user\x18\x05 \x01(\x03R\x17dailyAmountLimitPerUser\x12,\n" +
+	"\x1bdaily_amount_limit_per_user\x18\x05 \x01(\tR\x17dailyAmountLimitPerUser\x12,\n" +
 	"\x12allowed_time_range\x18\x06 \x01(\tR\x10allowedTimeRange\x12H\n" +
 	"!pending_withdrawal_limit_per_user\x18\a \x01(\x05R\x1dpendingWithdrawalLimitPerUser\x12<\n" +
 	"\x1bfree_withdraw_times_per_day\x18\b \x01(\x05R\x17freeWithdrawTimesPerDay\"\xb5\x02\n" +

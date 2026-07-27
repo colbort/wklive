@@ -20,7 +20,15 @@ type (
 		InsertImmutableAndEnqueue(context.Context, *TItickAuthoritativeSnapshot, string) error
 		FindAtOrBefore(context.Context, string, string, string, string, string, int64, int64) (*TItickAuthoritativeSnapshot, error)
 		FindAfterID(context.Context, int64, int64) ([]*TItickAuthoritativeSnapshot, error)
-		FindLatestPage(context.Context, int64, int64) ([]*TItickAuthoritativeSnapshot, error)
+		FindProductKeys(context.Context) ([]AuthoritativeSnapshotProductKey, error)
+	}
+
+	AuthoritativeSnapshotProductKey struct {
+		Authority    string `db:"authority"`
+		SnapshotKind string `db:"snapshot_kind"`
+		CategoryCode string `db:"category_code"`
+		Market       string `db:"market"`
+		Symbol       string `db:"symbol"`
 	}
 
 	customTItickAuthoritativeSnapshotModel struct {
@@ -35,26 +43,11 @@ func NewTItickAuthoritativeSnapshotModel(conn sqlx.SqlConn, c cache.CacheConf, o
 	}
 }
 
-func (m *defaultTItickAuthoritativeSnapshotModel) FindLatestPage(ctx context.Context, afterID, limit int64) ([]*TItickAuthoritativeSnapshot, error) {
-	if limit <= 0 || limit > 1000 {
-		limit = 500
-	}
-	var rows []*TItickAuthoritativeSnapshot
-	query := `SELECT s.id,s.snapshot_id,s.authority,s.snapshot_kind,s.category_code,s.market,s.symbol,s.price,s.source_timestamp,s.snapshot_timestamp,s.revision,s.formula_version,s.raw_payload,s.create_times
-	FROM t_itick_authoritative_snapshot AS s
-	WHERE s.id>?
-		AND NOT EXISTS (
-			SELECT 1
-			FROM t_itick_authoritative_snapshot AS newer
-			WHERE newer.authority=s.authority
-				AND newer.snapshot_kind=s.snapshot_kind
-				AND newer.category_code=s.category_code
-				AND newer.market=s.market
-				AND newer.symbol=s.symbol
-				AND (newer.source_timestamp,newer.revision,newer.id)>(s.source_timestamp,s.revision,s.id)
-		)
-	ORDER BY s.id LIMIT ?`
-	err := m.QueryRowsNoCacheCtx(ctx, &rows, query, afterID, limit)
+func (m *defaultTItickAuthoritativeSnapshotModel) FindProductKeys(ctx context.Context) ([]AuthoritativeSnapshotProductKey, error) {
+	var rows []AuthoritativeSnapshotProductKey
+	err := m.QueryRowsNoCacheCtx(ctx, &rows, `SELECT DISTINCT authority,snapshot_kind,category_code,market,symbol
+FROM t_itick_authoritative_snapshot
+ORDER BY authority,snapshot_kind,category_code,market,symbol`)
 	return rows, err
 }
 

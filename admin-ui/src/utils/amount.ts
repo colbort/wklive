@@ -1,17 +1,15 @@
-export function centToAmount(value: unknown): number {
-  const amount = Number(value || 0) / 100
-  return Number.isFinite(amount) ? amount : 0
+import Decimal from 'decimal.js'
+
+/** Asset RPC values are decimal natural units, not integer payment cents. */
+export function formatAssetAmount(value: unknown): string {
+  try {
+    return new Decimal(String(value ?? 0)).toFixed()
+  } catch {
+    return '0'
+  }
 }
 
-export function amountToCent(value: unknown): number {
-  return Math.round(Number(value || 0) * 100)
-}
-
-export function formatCentAmount(value: unknown, digits = 2): string {
-  return centToAmount(value).toFixed(digits)
-}
-
-export function formatCentFields<T extends Record<string, unknown>>(
+export function formatAssetFields<T extends Record<string, unknown>>(
   data: T | null | undefined,
   keys: Iterable<string>,
 ) {
@@ -20,7 +18,7 @@ export function formatCentFields<T extends Record<string, unknown>>(
   return Object.fromEntries(
     Object.entries(data).map(([key, value]) => [
       key,
-      keySet.has(key) ? formatCentAmount(value) : value,
+      keySet.has(key) ? formatAssetAmount(value) : value,
     ]),
   )
 }

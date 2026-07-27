@@ -1,5 +1,4 @@
 export const DEFAULT_ASSET_DECIMAL_PLACES = 8
-const CENT_DECIMAL_PLACES = 2
 const MAX_ASSET_DECIMAL_PLACES = 18
 
 type DecimalParts = {
@@ -15,15 +14,7 @@ export function normalizeAssetDecimalPlaces(value: unknown) {
 }
 
 export function normalizeAssetInputDecimalPlaces(value: unknown) {
-  return Math.min(CENT_DECIMAL_PLACES, normalizeAssetDecimalPlaces(value))
-}
-
-export function formatAssetMinorAmount(value: unknown, decimalPlaces: unknown) {
-  const places = normalizeAssetDecimalPlaces(decimalPlaces)
-  const parsed = parseDecimalParts(value)
-  if (!parsed) return String(value ?? '')
-
-  return formatDecimalText(scaleMinorToDecimal(parsed), places)
+  return normalizeAssetDecimalPlaces(value)
 }
 
 export function formatAssetDecimalAmount(value: unknown, decimalPlaces: unknown) {
@@ -34,19 +25,11 @@ export function formatAssetDecimalAmount(value: unknown, decimalPlaces: unknown)
   return formatDecimalText(partsToDecimalText(parsed), places)
 }
 
-export function parseAssetDecimalToMinorText(value: unknown, decimalPlaces: unknown) {
-  const places = normalizeAssetInputDecimalPlaces(decimalPlaces)
-  const text = String(value ?? '').trim()
-  if (!/^\d+(\.\d*)?$/.test(text)) return ''
-
-  const [integerPart, fractionPart = ''] = text.split('.')
-  if (fractionPart.length > places) return ''
-
-  const normalizedInteger = integerPart.replace(/^0+(?=\d)/, '') || '0'
-  const minorText =
-    `${normalizedInteger}${fractionPart.padEnd(CENT_DECIMAL_PLACES, '0')}`.replace(/^0+(?=\d)/, '') || '0'
-
-  return minorText
+export function parseAssetDecimalText(value: unknown, decimalPlaces: unknown) {
+  const places = normalizeAssetDecimalPlaces(decimalPlaces)
+  const parsed = parseDecimalParts(value)
+  if (!parsed || parsed.negative || parsed.fractionPart.length > places) return ''
+  return partsToDecimalText(parsed)
 }
 
 export function compareDecimalText(left: unknown, right: unknown) {
@@ -78,20 +61,6 @@ function parseDecimalParts(value: unknown): DecimalParts | null {
     integerPart,
     fractionPart,
   }
-}
-
-function scaleMinorToDecimal(value: DecimalParts) {
-  const decimalPlaces = CENT_DECIMAL_PLACES
-
-  const digits = `${value.integerPart}${value.fractionPart}`.replace(/^0+(?=\d)/, '') || '0'
-  const scale = value.fractionPart.length + decimalPlaces
-  const paddedDigits = digits.padStart(scale + 1, '0')
-  const integerEndIndex = paddedDigits.length - scale
-  const integerPart = paddedDigits.slice(0, integerEndIndex).replace(/^0+(?=\d)/, '') || '0'
-  const fractionPart = paddedDigits.slice(integerEndIndex).replace(/0+$/, '')
-  const sign = value.negative && (integerPart !== '0' || fractionPart) ? '-' : ''
-
-  return fractionPart ? `${sign}${integerPart}.${fractionPart}` : `${sign}${integerPart}`
 }
 
 function partsToDecimalText(value: DecimalParts) {

@@ -11,7 +11,7 @@ import { useI18n } from '@/i18n'
 import { useSystemStore } from '@/stores/system'
 import type { AssetCoinConfig } from '@/types/asset'
 import type { RechargeOrder } from '@/types/payment'
-import { formatAssetMinorAmount } from '@/utils/assetAmount'
+import { formatAssetDecimalAmount } from '@/utils/assetAmount'
 import { resolveSystemAssetUrl } from '@/utils/assetUrl'
 
 const route = useRoute()
@@ -120,7 +120,7 @@ function resolveAssetUrl(url?: string) {
 
 function formatRechargeAmount() {
   if (!order.value) return '-'
-  return `${formatAssetMinorAmount(order.value.orderAmount, 2)} ${order.value.currency}`
+  return `${formatAssetDecimalAmount(order.value.orderAmount, 2)} ${order.value.currency}`
 }
 
 function formatRecordTime(value?: number) {

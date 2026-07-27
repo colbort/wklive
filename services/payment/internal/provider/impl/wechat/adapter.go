@@ -67,7 +67,7 @@ func (a *Adapter) RefundPayment(
 	if err := validatePayment(account, order); err != nil {
 		return nil, err
 	}
-	if request.RefundNo == "" || request.Amount <= 0 {
+	if request.RefundNo == "" || !request.Amount.IsPositive() {
 		return nil, fmt.Errorf("wechat refund number and amount are required")
 	}
 	return requestRefund(ctx, account, order, request)
@@ -132,7 +132,7 @@ func validatePayment(account *models.TTenantPayAccount, order *models.TRechargeO
 	if err := validateAccount(account); err != nil {
 		return err
 	}
-	if order == nil || order.OrderNo == "" || order.OrderAmount <= 0 {
+	if order == nil || order.OrderNo == "" || !order.OrderAmount.IsPositive() {
 		return fmt.Errorf("valid wechat recharge order is required")
 	}
 	return nil
@@ -142,7 +142,7 @@ func validatePayout(account *models.TTenantPayAccount, order *models.TWithdrawOr
 	if err := validateAccount(account); err != nil {
 		return err
 	}
-	if order == nil || order.OrderNo == "" || order.Amount <= 0 {
+	if order == nil || order.OrderNo == "" || !order.Amount.IsPositive() {
 		return fmt.Errorf("valid wechat withdraw order is required")
 	}
 	return nil

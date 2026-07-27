@@ -19,9 +19,9 @@ export type WithdrawOrder = {
   accountId: number // 账号ID
   channelId: number // 通道ID
   currency: string // 币种
-  amount: number // 订单金额，单位分
-  feeAmount: number // 手续费金额，单位分
-  actualAmount: number // 实际到账金额，单位分
+  amount: string // 订单金额，自然货币单位
+  feeAmount: string // 手续费金额，自然货币单位
+  actualAmount: string // 实际到账金额，自然货币单位
   clientType: number // 客户端类型：1APP 2H5 3WEB
   clientIp: string // 客户端IP
   status: number // 状态：1待处理 2处理中 3成功 4失败 5已关闭

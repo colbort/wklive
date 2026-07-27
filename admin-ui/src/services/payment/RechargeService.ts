@@ -16,8 +16,8 @@ export type UserRechargeStat = {
   tenantId: number // 租户ID
   userId: number // 用户ID
   successOrderCount: number // 成功充值笔数
-  successTotalAmount: number // 成功累计充值金额，单位分
-  todaySuccessAmount: number // 今日成功充值金额，单位分
+  successTotalAmount: string // 成功累计充值金额，自然货币单位
+  todaySuccessAmount: string // 今日成功充值金额，自然货币单位
   todaySuccessCount: number // 今日成功充值次数
   firstSuccessTime: number // 首次成功充值时间
   lastSuccessTime: number // 最近成功充值时间
@@ -37,9 +37,9 @@ export type RechargeOrder = {
   channelId: number // 通道ID
   walletType: number // 钱包类型:1现货 2资金 3合约 4理财 5期权
   currency: string // 币种
-  orderAmount: number // 订单金额，单位分
-  payAmount: number // 实际支付金额，单位分
-  feeAmount: number // 手续费金额，单位分
+  orderAmount: string // 订单金额，自然货币单位
+  payAmount: string // 实际支付金额，自然货币单位
+  feeAmount: string // 手续费金额，自然货币单位
   subject: string // 标题
   body: string // 描述
   clientType: number // 客户端类型：1APP 2H5 3WEB
@@ -86,8 +86,8 @@ export type GetUserRechargeStatReq = {
 export type ListUserRechargeStatsReq = {
   tenantId?: number // 租户ID
   userId?: number // 用户ID
-  successTotalAmountMin?: number // 累计充值金额最小值，单位分
-  successTotalAmountMax?: number // 累计充值金额最大值，单位分
+  successTotalAmountMin?: string // 累计充值金额最小值，自然货币单位
+  successTotalAmountMax?: string // 累计充值金额最大值，自然货币单位
   cursor?: number // 分页游标
   limit?: number // 分页大小
 }
@@ -141,7 +141,7 @@ export class RechargeService {
   }
   manualSuccessRechargeOrder(
     orderNo: string,
-    params: { tenantId: number; thirdTradeNo?: string; payAmount: number; remark?: string },
+    params: { tenantId: number; thirdTradeNo?: string; payAmount: string; remark?: string },
   ): Promise<RespBase> {
     return apiManualSuccessRechargeOrder(orderNo, params)
   }

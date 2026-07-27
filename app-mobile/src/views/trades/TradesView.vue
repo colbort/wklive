@@ -30,7 +30,7 @@ import type {
   TradeSymbolSpot,
 } from '@/types/trade'
 import type { AssetUserAsset } from '@/types/asset'
-import { formatAssetMinorAmount } from '@/utils/assetAmount'
+import { formatAssetDecimalAmount } from '@/utils/assetAmount'
 import { marketCategoryLabel } from '@/utils/marketCategory'
 
 type SubmitSide = 'buy' | 'sell'
@@ -184,7 +184,7 @@ const walletAvailableBalance = (walletType: number, coin: string, decimalPlaces:
   const asset = userAssets.value.find(
     (item) => item.walletType === walletType && item.coin.toUpperCase() === coin.toUpperCase(),
   )
-  return formatAssetMinorAmount(asset?.availableAmount || '0', decimalPlaces)
+  return formatAssetDecimalAmount(asset?.availableAmount || '0', decimalPlaces)
 }
 const availableBalance = computed(() => {
   const symbol = selectedTradeSymbol.value

@@ -36,7 +36,8 @@ func NewCreateCryptoRechargeOrderLogic(ctx context.Context, svcCtx *svc.ServiceC
 
 // 创建链上充值订单
 func (l *CreateCryptoRechargeOrderLogic) CreateCryptoRechargeOrder(in *payment.CreateCryptoRechargeOrderReq) (*payment.CreateCryptoRechargeOrderResp, error) {
-	if in.RechargeAmount <= 0 {
+	rechargeAmount, err := parsePaymentAmount(in.RechargeAmount)
+	if err != nil || !rechargeAmount.IsPositive() {
 		return &payment.CreateCryptoRechargeOrderResp{Base: helper.ErrResp(i18n.AmountMustBePositive, i18n.Translate(i18n.AmountMustBePositive, l.ctx))}, nil
 	}
 	if in.WalletType <= 0 || in.Coin == "" || in.ChainCode == 0 {
@@ -91,8 +92,8 @@ func (l *CreateCryptoRechargeOrderLogic) CreateCryptoRechargeOrder(in *payment.C
 		RechargeType: int64(payment.RechargeType_RECHARGE_TYPE_CRYPTO),
 		WalletType:   int64(in.WalletType),
 		Currency:     in.Coin,
-		OrderAmount:  in.RechargeAmount,
-		PayAmount:    in.RechargeAmount,
+		OrderAmount:  rechargeAmount,
+		PayAmount:    rechargeAmount,
 		Subject:      sql.NullString{String: "Crypto Recharge", Valid: true},
 		Body:         sql.NullString{String: addressItem.Address, Valid: true},
 		ClientType:   int64(in.ClientType),

@@ -57,13 +57,13 @@ export type TenantPayChannel = {
   sort: number // 排序
   visible: number // 是否显示：1显示 2隐藏
   enabled: number // 启用状态：1启用 2禁用
-  singleMinAmount: number // 单笔最小金额，单位分
-  singleMaxAmount: number // 单笔最大金额，单位分
-  dailyMaxAmount: number // 单日最大金额，单位分
+  singleMinAmount: string // 单笔最小金额，自然货币单位
+  singleMaxAmount: string // 单笔最大金额，自然货币单位
+  dailyMaxAmount: string // 单日最大金额，自然货币单位
   dailyMaxCount: number // 单日最大次数
   feeType: number // 手续费类型：1比例 2固定
   feeRate: string // 手续费比例
-  feeFixedAmount: number // 固定手续费，单位分
+  feeFixedAmount: string // 固定手续费，自然货币单位
   extConfig: string // 扩展配置(JSON)
   remark: string // 备注
   createTimes: number // 创建时间
@@ -79,10 +79,10 @@ export type TenantPayChannelRule = {
   ruleName: string // 规则名称
   priority: number // 优先级，越小越优先
   enabled: number // 启用状态：1启用 2禁用
-  singleAmountMin: number // 单笔充值最小金额，单位分
-  singleAmountMax: number // 单笔充值最大金额，单位分
-  userTotalRechargeMin: number // 用户累计充值最小金额，单位分
-  userTotalRechargeMax: number // 用户累计充值最大金额，单位分
+  singleAmountMin: string // 单笔充值最小金额，自然货币单位
+  singleAmountMax: string // 单笔充值最大金额，自然货币单位
+  userTotalRechargeMin: string // 用户累计充值最小金额，自然货币单位
+  userTotalRechargeMax: string // 用户累计充值最大金额，自然货币单位
   memberLevelMin: number // 会员等级最小值
   memberLevelMax: number // 会员等级最大值
   kycLevelMin: number // KYC等级最小值
@@ -167,13 +167,13 @@ export type CreateTenantPayChannelReq = {
   sort: number // 排序
   visible: number // 是否显示：1显示 2隐藏
   enabled: number // 启用状态：1启用 2禁用
-  singleMinAmount: number // 单笔最小金额，单位分
-  singleMaxAmount: number // 单笔最大金额，单位分
-  dailyMaxAmount: number // 单日最大金额，单位分
+  singleMinAmount: string // 单笔最小金额，自然货币单位
+  singleMaxAmount: string // 单笔最大金额，自然货币单位
+  dailyMaxAmount: string // 单日最大金额，自然货币单位
   dailyMaxCount: number // 单日最大次数
   feeType: number // 手续费类型：1比例 2固定
   feeRate?: string // 手续费比例
-  feeFixedAmount?: number // 固定手续费，单位分
+  feeFixedAmount?: string // 固定手续费，自然货币单位
   extConfig?: string // 扩展配置(JSON)
   remark?: string // 备注
 }
@@ -188,13 +188,13 @@ export type UpdateTenantPayChannelReq = {
   sort: number // 排序
   visible: number // 是否显示：1显示 2隐藏
   enabled: number // 启用状态：1启用 2禁用
-  singleMinAmount: number // 单笔最小金额，单位分
-  singleMaxAmount: number // 单笔最大金额，单位分
-  dailyMaxAmount: number // 单日最大金额，单位分
+  singleMinAmount: string // 单笔最小金额，自然货币单位
+  singleMaxAmount: string // 单笔最大金额，自然货币单位
+  dailyMaxAmount: string // 单日最大金额，自然货币单位
   dailyMaxCount: number // 单日最大次数
   feeType: number // 手续费类型：1比例 2固定
   feeRate?: string // 手续费比例
-  feeFixedAmount?: number // 固定手续费，单位分
+  feeFixedAmount?: string // 固定手续费，自然货币单位
   extConfig?: string // 扩展配置(JSON)
   remark?: string // 备注
 }
@@ -213,10 +213,10 @@ export type CreateTenantPayChannelRuleReq = {
   ruleName: string // 规则名称
   priority: number // 优先级，越小越优先
   enabled: number // 启用状态：1启用 2禁用
-  singleAmountMin: number // 单笔充值最小金额，单位分
-  singleAmountMax: number // 单笔充值最大金额，单位分
-  userTotalRechargeMin: number // 用户累计充值最小金额，单位分
-  userTotalRechargeMax: number // 用户累计充值最大金额，单位分
+  singleAmountMin: string // 单笔充值最小金额，自然货币单位
+  singleAmountMax: string // 单笔充值最大金额，自然货币单位
+  userTotalRechargeMin: string // 用户累计充值最小金额，自然货币单位
+  userTotalRechargeMax: string // 用户累计充值最大金额，自然货币单位
   memberLevelMin: number // 会员等级最小值
   memberLevelMax: number // 会员等级最大值
   kycLevelMin: number // KYC等级最小值

@@ -44,8 +44,13 @@ func (l *CreateTenantPayChannelRuleLogic) CreateTenantPayChannelRule(in *payment
 	if in.ChannelId <= 0 || !requiredStrings(in.RuleName) {
 		return paymentErrorResp(l.ctx, i18n.PaymentRequiredParamsMissing), nil
 	}
-	if !validNonNegativeRange(in.SingleAmountMin, in.SingleAmountMax) ||
-		!validNonNegativeRange(in.UserTotalRechargeMin, in.UserTotalRechargeMax) ||
+	singleAmountMin, singleMinErr := parseNonNegativeAmount(in.SingleAmountMin)
+	singleAmountMax, singleMaxErr := parseNonNegativeAmount(in.SingleAmountMax)
+	userTotalMin, userMinErr := parseNonNegativeAmount(in.UserTotalRechargeMin)
+	userTotalMax, userMaxErr := parseNonNegativeAmount(in.UserTotalRechargeMax)
+	if singleMinErr != nil || singleMaxErr != nil || userMinErr != nil || userMaxErr != nil ||
+		!validDecimalRange(singleAmountMin, singleAmountMax) ||
+		!validDecimalRange(userTotalMin, userTotalMax) ||
 		!validNonNegativeRange(in.MemberLevelMin, in.MemberLevelMax) ||
 		!validNonNegativeRange(in.KycLevelMin, in.KycLevelMax) {
 		return paymentErrorResp(l.ctx, i18n.InvalidPaymentAmountRange), nil
@@ -74,10 +79,10 @@ func (l *CreateTenantPayChannelRuleLogic) CreateTenantPayChannelRule(in *payment
 		RuleName:             in.RuleName,
 		Priority:             in.Priority,
 		Enabled:              enableToModel(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
-		SingleAmountMin:      in.SingleAmountMin,
-		SingleAmountMax:      in.SingleAmountMax,
-		UserTotalRechargeMin: in.UserTotalRechargeMin,
-		UserTotalRechargeMax: in.UserTotalRechargeMax,
+		SingleAmountMin:      singleAmountMin,
+		SingleAmountMax:      singleAmountMax,
+		UserTotalRechargeMin: userTotalMin,
+		UserTotalRechargeMax: userTotalMax,
 		MemberLevelMin:       in.MemberLevelMin,
 		MemberLevelMax:       in.MemberLevelMax,
 		KycLevelMin:          in.KycLevelMin,

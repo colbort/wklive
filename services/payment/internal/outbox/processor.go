@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"time"
 
 	"wklive/proto/asset"
@@ -20,7 +19,7 @@ type rechargeCreditPayload struct {
 	UserID     int64  `json:"userId"`
 	WalletType int64  `json:"walletType"`
 	Currency   string `json:"currency"`
-	Amount     int64  `json:"amount"`
+	Amount     string `json:"amount"`
 	Remark     string `json:"remark"`
 }
 
@@ -57,7 +56,7 @@ func process(ctx context.Context, svcCtx *svc.ServiceContext) {
 		resp, err := svcCtx.AssetCli.AddAvailable(ctx, &asset.AddAvailableReq{
 			TenantId: payload.TenantID, UserId: payload.UserID,
 			WalletType: common.WalletType(payload.WalletType), Coin: payload.Currency,
-			Amount: strconv.FormatInt(payload.Amount, 10), BizType: asset.BizType_BIZ_TYPE_PAYMENT,
+			Amount: payload.Amount, BizType: asset.BizType_BIZ_TYPE_PAYMENT,
 			SceneType: asset.SceneType_SCENE_TYPE_RECHARGE, BizId: row.AggregateId,
 			BizNo: row.AggregateNo, Remark: payload.Remark,
 		})

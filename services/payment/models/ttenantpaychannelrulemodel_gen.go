@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -40,27 +42,27 @@ type (
 	}
 
 	TTenantPayChannelRule struct {
-		Id                   int64          `db:"id"`                      // 规则ID
-		TenantId             int64          `db:"tenant_id"`               // 租户ID
-		ChannelId            int64          `db:"channel_id"`              // 通道ID
-		RuleName             string         `db:"rule_name"`               // 规则名称
-		Priority             int64          `db:"priority"`                // 优先级，越小越优先
-		Enabled              int64          `db:"enabled"`                 // 启用状态：1启用 2禁用
-		SingleAmountMin      int64          `db:"single_amount_min"`       // 单笔充值最小金额，单位分
-		SingleAmountMax      int64          `db:"single_amount_max"`       // 单笔充值最大金额，0表示不限制，单位分
-		UserTotalRechargeMin int64          `db:"user_total_recharge_min"` // 用户累计充值最小金额，单位分
-		UserTotalRechargeMax int64          `db:"user_total_recharge_max"` // 用户累计充值最大金额，0表示不限制，单位分
-		MemberLevelMin       int64          `db:"member_level_min"`        // 会员等级最小值
-		MemberLevelMax       int64          `db:"member_level_max"`        // 会员等级最大值，0表示不限制
-		KycLevelMin          int64          `db:"kyc_level_min"`           // KYC等级最小值
-		KycLevelMax          int64          `db:"kyc_level_max"`           // KYC等级最大值，0表示不限制
-		AllowNewUser         int64          `db:"allow_new_user"`          // 是否允许新用户：1是 2否
-		AllowOldUser         int64          `db:"allow_old_user"`          // 是否允许老用户：1是 2否
-		AllowTags            sql.NullString `db:"allow_tags"`              // 允许的用户标签(JSON数组)
-		DenyTags             sql.NullString `db:"deny_tags"`               // 禁止的用户标签(JSON数组)
-		Remark               sql.NullString `db:"remark"`                  // 备注
-		CreateTimes          int64          `db:"create_times"`            // 创建时间
-		UpdateTimes          int64          `db:"update_times"`            // 更新时间
+		Id                   int64           `db:"id"`                      // 规则ID
+		TenantId             int64           `db:"tenant_id"`               // 租户ID
+		ChannelId            int64           `db:"channel_id"`              // 通道ID
+		RuleName             string          `db:"rule_name"`               // 规则名称
+		Priority             int64           `db:"priority"`                // 优先级，越小越优先
+		Enabled              int64           `db:"enabled"`                 // 启用状态：1启用 2禁用
+		SingleAmountMin      decimal.Decimal `db:"single_amount_min"`       // 单笔充值最小金额，自然货币单位
+		SingleAmountMax      decimal.Decimal `db:"single_amount_max"`       // 单笔充值最大金额，0表示不限制
+		UserTotalRechargeMin decimal.Decimal `db:"user_total_recharge_min"` // 用户累计充值最小金额，自然货币单位
+		UserTotalRechargeMax decimal.Decimal `db:"user_total_recharge_max"` // 用户累计充值最大金额，0表示不限制
+		MemberLevelMin       int64           `db:"member_level_min"`        // 会员等级最小值
+		MemberLevelMax       int64           `db:"member_level_max"`        // 会员等级最大值，0表示不限制
+		KycLevelMin          int64           `db:"kyc_level_min"`           // KYC等级最小值
+		KycLevelMax          int64           `db:"kyc_level_max"`           // KYC等级最大值，0表示不限制
+		AllowNewUser         int64           `db:"allow_new_user"`          // 是否允许新用户：1是 2否
+		AllowOldUser         int64           `db:"allow_old_user"`          // 是否允许老用户：1是 2否
+		AllowTags            sql.NullString  `db:"allow_tags"`              // 允许的用户标签(JSON数组)
+		DenyTags             sql.NullString  `db:"deny_tags"`               // 禁止的用户标签(JSON数组)
+		Remark               sql.NullString  `db:"remark"`                  // 备注
+		CreateTimes          int64           `db:"create_times"`            // 创建时间
+		UpdateTimes          int64           `db:"update_times"`            // 更新时间
 	}
 )
 

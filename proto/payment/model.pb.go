@@ -484,34 +484,34 @@ func (x *TenantPayAccount) GetPlatformName() string {
 
 type TenantPayChannel struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                     // 通道ID
-	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                         // 租户ID
-	PlatformId      int64                  `protobuf:"varint,3,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`                   // 平台ID
-	ProductId       int64                  `protobuf:"varint,4,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`                      // 产品ID
-	AccountId       int64                  `protobuf:"varint,5,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`                      // 租户支付账号ID
-	ChannelCode     string                 `protobuf:"bytes,6,opt,name=channel_code,json=channelCode,proto3" json:"channel_code,omitempty"`                 // 通道编码
-	ChannelName     string                 `protobuf:"bytes,7,opt,name=channel_name,json=channelName,proto3" json:"channel_name,omitempty"`                 // 通道名称
-	DisplayName     string                 `protobuf:"bytes,8,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`                 // 前端展示名称
-	Icon            string                 `protobuf:"bytes,9,opt,name=icon,proto3" json:"icon,omitempty"`                                                  // 图标
-	Currency        string                 `protobuf:"bytes,10,opt,name=currency,proto3" json:"currency,omitempty"`                                         // 币种
-	Sort            int64                  `protobuf:"varint,11,opt,name=sort,proto3" json:"sort,omitempty"`                                                // 排序
-	Visible         common.Switch          `protobuf:"varint,12,opt,name=visible,proto3,enum=common.Switch" json:"visible,omitempty"`                       // 显示开关 0表示全部，1表示显示，2表示隐藏
-	Enabled         common.Enable          `protobuf:"varint,13,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                       // 状态,0表示全部，1表示启用，2表示禁用
-	SingleMinAmount int64                  `protobuf:"varint,14,opt,name=single_min_amount,json=singleMinAmount,proto3" json:"single_min_amount,omitempty"` // 单笔最小金额，单位分
-	SingleMaxAmount int64                  `protobuf:"varint,15,opt,name=single_max_amount,json=singleMaxAmount,proto3" json:"single_max_amount,omitempty"` // 单笔最大金额，0表示不限制，单位分
-	DailyMaxAmount  int64                  `protobuf:"varint,16,opt,name=daily_max_amount,json=dailyMaxAmount,proto3" json:"daily_max_amount,omitempty"`    // 单日最大金额，0表示不限制，单位分
-	DailyMaxCount   int64                  `protobuf:"varint,17,opt,name=daily_max_count,json=dailyMaxCount,proto3" json:"daily_max_count,omitempty"`       // 单日最大次数，0表示不限制
-	FeeType         FeeType                `protobuf:"varint,18,opt,name=fee_type,json=feeType,proto3,enum=payment.FeeType" json:"fee_type,omitempty"`      // 手续费类型：1比例 2固定
-	FeeRate         string                 `protobuf:"bytes,19,opt,name=fee_rate,json=feeRate,proto3" json:"fee_rate,omitempty"`                            // 手续费比例
-	FeeFixedAmount  int64                  `protobuf:"varint,20,opt,name=fee_fixed_amount,json=feeFixedAmount,proto3" json:"fee_fixed_amount,omitempty"`    // 固定手续费，单位分
-	ExtConfig       string                 `protobuf:"bytes,21,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`                      // 扩展配置(JSON)
-	Remark          string                 `protobuf:"bytes,22,opt,name=remark,proto3" json:"remark,omitempty"`                                             // 备注
-	CreateTimes     int64                  `protobuf:"varint,23,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`               // 创建时间
-	UpdateTimes     int64                  `protobuf:"varint,24,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`               // 更新时间
-	TenantName      string                 `protobuf:"bytes,25,opt,name=tenant_name,json=tenantName,proto3" json:"tenant_name,omitempty"`                   // 租户名称（由网关批量补充）
-	PlatformName    string                 `protobuf:"bytes,26,opt,name=platform_name,json=platformName,proto3" json:"platform_name,omitempty"`             // 平台名称（列表展示）
-	ProductName     string                 `protobuf:"bytes,27,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`                // 产品名称（列表展示）
-	AccountName     string                 `protobuf:"bytes,28,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`                // 支付账号名称（列表展示）
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                    // 通道ID
+	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                        // 租户ID
+	PlatformId      int64                  `protobuf:"varint,3,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`                  // 平台ID
+	ProductId       int64                  `protobuf:"varint,4,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`                     // 产品ID
+	AccountId       int64                  `protobuf:"varint,5,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`                     // 租户支付账号ID
+	ChannelCode     string                 `protobuf:"bytes,6,opt,name=channel_code,json=channelCode,proto3" json:"channel_code,omitempty"`                // 通道编码
+	ChannelName     string                 `protobuf:"bytes,7,opt,name=channel_name,json=channelName,proto3" json:"channel_name,omitempty"`                // 通道名称
+	DisplayName     string                 `protobuf:"bytes,8,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`                // 前端展示名称
+	Icon            string                 `protobuf:"bytes,9,opt,name=icon,proto3" json:"icon,omitempty"`                                                 // 图标
+	Currency        string                 `protobuf:"bytes,10,opt,name=currency,proto3" json:"currency,omitempty"`                                        // 币种
+	Sort            int64                  `protobuf:"varint,11,opt,name=sort,proto3" json:"sort,omitempty"`                                               // 排序
+	Visible         common.Switch          `protobuf:"varint,12,opt,name=visible,proto3,enum=common.Switch" json:"visible,omitempty"`                      // 显示开关 0表示全部，1表示显示，2表示隐藏
+	Enabled         common.Enable          `protobuf:"varint,13,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                      // 状态,0表示全部，1表示启用，2表示禁用
+	SingleMinAmount string                 `protobuf:"bytes,14,opt,name=single_min_amount,json=singleMinAmount,proto3" json:"single_min_amount,omitempty"` // 单笔最小金额，自然货币单位
+	SingleMaxAmount string                 `protobuf:"bytes,15,opt,name=single_max_amount,json=singleMaxAmount,proto3" json:"single_max_amount,omitempty"` // 单笔最大金额，0表示不限制
+	DailyMaxAmount  string                 `protobuf:"bytes,16,opt,name=daily_max_amount,json=dailyMaxAmount,proto3" json:"daily_max_amount,omitempty"`    // 单日最大金额，0表示不限制
+	DailyMaxCount   int64                  `protobuf:"varint,17,opt,name=daily_max_count,json=dailyMaxCount,proto3" json:"daily_max_count,omitempty"`      // 单日最大次数，0表示不限制
+	FeeType         FeeType                `protobuf:"varint,18,opt,name=fee_type,json=feeType,proto3,enum=payment.FeeType" json:"fee_type,omitempty"`     // 手续费类型：1比例 2固定
+	FeeRate         string                 `protobuf:"bytes,19,opt,name=fee_rate,json=feeRate,proto3" json:"fee_rate,omitempty"`                           // 手续费比例
+	FeeFixedAmount  string                 `protobuf:"bytes,20,opt,name=fee_fixed_amount,json=feeFixedAmount,proto3" json:"fee_fixed_amount,omitempty"`    // 固定手续费，自然货币单位
+	ExtConfig       string                 `protobuf:"bytes,21,opt,name=ext_config,json=extConfig,proto3" json:"ext_config,omitempty"`                     // 扩展配置(JSON)
+	Remark          string                 `protobuf:"bytes,22,opt,name=remark,proto3" json:"remark,omitempty"`                                            // 备注
+	CreateTimes     int64                  `protobuf:"varint,23,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`              // 创建时间
+	UpdateTimes     int64                  `protobuf:"varint,24,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`              // 更新时间
+	TenantName      string                 `protobuf:"bytes,25,opt,name=tenant_name,json=tenantName,proto3" json:"tenant_name,omitempty"`                  // 租户名称（由网关批量补充）
+	PlatformName    string                 `protobuf:"bytes,26,opt,name=platform_name,json=platformName,proto3" json:"platform_name,omitempty"`            // 平台名称（列表展示）
+	ProductName     string                 `protobuf:"bytes,27,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`               // 产品名称（列表展示）
+	AccountName     string                 `protobuf:"bytes,28,opt,name=account_name,json=accountName,proto3" json:"account_name,omitempty"`               // 支付账号名称（列表展示）
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -637,25 +637,25 @@ func (x *TenantPayChannel) GetEnabled() common.Enable {
 	return common.Enable(0)
 }
 
-func (x *TenantPayChannel) GetSingleMinAmount() int64 {
+func (x *TenantPayChannel) GetSingleMinAmount() string {
 	if x != nil {
 		return x.SingleMinAmount
 	}
-	return 0
+	return ""
 }
 
-func (x *TenantPayChannel) GetSingleMaxAmount() int64 {
+func (x *TenantPayChannel) GetSingleMaxAmount() string {
 	if x != nil {
 		return x.SingleMaxAmount
 	}
-	return 0
+	return ""
 }
 
-func (x *TenantPayChannel) GetDailyMaxAmount() int64 {
+func (x *TenantPayChannel) GetDailyMaxAmount() string {
 	if x != nil {
 		return x.DailyMaxAmount
 	}
-	return 0
+	return ""
 }
 
 func (x *TenantPayChannel) GetDailyMaxCount() int64 {
@@ -679,11 +679,11 @@ func (x *TenantPayChannel) GetFeeRate() string {
 	return ""
 }
 
-func (x *TenantPayChannel) GetFeeFixedAmount() int64 {
+func (x *TenantPayChannel) GetFeeFixedAmount() string {
 	if x != nil {
 		return x.FeeFixedAmount
 	}
-	return 0
+	return ""
 }
 
 func (x *TenantPayChannel) GetExtConfig() string {
@@ -744,29 +744,29 @@ func (x *TenantPayChannel) GetAccountName() string {
 
 type TenantPayChannelRule struct {
 	state                protoimpl.MessageState `protogen:"open.v1"`
-	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                      // 规则ID
-	TenantId             int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                          // 租户ID
-	ChannelId            int64                  `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`                                       // 通道ID
-	RuleName             string                 `protobuf:"bytes,4,opt,name=rule_name,json=ruleName,proto3" json:"rule_name,omitempty"`                                           // 规则名称
-	Priority             int64                  `protobuf:"varint,5,opt,name=priority,proto3" json:"priority,omitempty"`                                                          // 优先级，越小越优先
-	Enabled              common.Enable          `protobuf:"varint,6,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                                         // 状态,0表示全部，1表示启用，2表示禁用
-	SingleAmountMin      int64                  `protobuf:"varint,7,opt,name=single_amount_min,json=singleAmountMin,proto3" json:"single_amount_min,omitempty"`                   // 单笔充值最小金额，单位分
-	SingleAmountMax      int64                  `protobuf:"varint,8,opt,name=single_amount_max,json=singleAmountMax,proto3" json:"single_amount_max,omitempty"`                   // 单笔充值最大金额，0表示不限制，单位分
-	UserTotalRechargeMin int64                  `protobuf:"varint,9,opt,name=user_total_recharge_min,json=userTotalRechargeMin,proto3" json:"user_total_recharge_min,omitempty"`  // 用户累计充值最小金额，单位分
-	UserTotalRechargeMax int64                  `protobuf:"varint,10,opt,name=user_total_recharge_max,json=userTotalRechargeMax,proto3" json:"user_total_recharge_max,omitempty"` // 用户累计充值最大金额，0表示不限制，单位分
-	MemberLevelMin       int64                  `protobuf:"varint,11,opt,name=member_level_min,json=memberLevelMin,proto3" json:"member_level_min,omitempty"`                     // 会员等级最小值
-	MemberLevelMax       int64                  `protobuf:"varint,12,opt,name=member_level_max,json=memberLevelMax,proto3" json:"member_level_max,omitempty"`                     // 会员等级最大值，0表示不限制
-	KycLevelMin          int64                  `protobuf:"varint,13,opt,name=kyc_level_min,json=kycLevelMin,proto3" json:"kyc_level_min,omitempty"`                              // KYC等级最小值
-	KycLevelMax          int64                  `protobuf:"varint,14,opt,name=kyc_level_max,json=kycLevelMax,proto3" json:"kyc_level_max,omitempty"`                              // KYC等级最大值，0表示不限制
-	AllowNewUser         common.YesNo           `protobuf:"varint,15,opt,name=allow_new_user,json=allowNewUser,proto3,enum=common.YesNo" json:"allow_new_user,omitempty"`         // 是否允许新用户：1是 2否
-	AllowOldUser         common.YesNo           `protobuf:"varint,16,opt,name=allow_old_user,json=allowOldUser,proto3,enum=common.YesNo" json:"allow_old_user,omitempty"`         // 是否允许老用户：1是 2否
-	AllowTags            string                 `protobuf:"bytes,17,opt,name=allow_tags,json=allowTags,proto3" json:"allow_tags,omitempty"`                                       // 允许的用户标签(JSON数组)
-	DenyTags             string                 `protobuf:"bytes,18,opt,name=deny_tags,json=denyTags,proto3" json:"deny_tags,omitempty"`                                          // 禁止的用户标签(JSON数组)
-	Remark               string                 `protobuf:"bytes,19,opt,name=remark,proto3" json:"remark,omitempty"`                                                              // 备注
-	CreateTimes          int64                  `protobuf:"varint,20,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                                // 创建时间
-	UpdateTimes          int64                  `protobuf:"varint,21,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                                // 更新时间
-	TenantName           string                 `protobuf:"bytes,22,opt,name=tenant_name,json=tenantName,proto3" json:"tenant_name,omitempty"`                                    // 租户名称（由网关批量补充）
-	ChannelName          string                 `protobuf:"bytes,23,opt,name=channel_name,json=channelName,proto3" json:"channel_name,omitempty"`                                 // 通道名称（列表展示）
+	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                     // 规则ID
+	TenantId             int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                         // 租户ID
+	ChannelId            int64                  `protobuf:"varint,3,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`                                      // 通道ID
+	RuleName             string                 `protobuf:"bytes,4,opt,name=rule_name,json=ruleName,proto3" json:"rule_name,omitempty"`                                          // 规则名称
+	Priority             int64                  `protobuf:"varint,5,opt,name=priority,proto3" json:"priority,omitempty"`                                                         // 优先级，越小越优先
+	Enabled              common.Enable          `protobuf:"varint,6,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                                        // 状态,0表示全部，1表示启用，2表示禁用
+	SingleAmountMin      string                 `protobuf:"bytes,7,opt,name=single_amount_min,json=singleAmountMin,proto3" json:"single_amount_min,omitempty"`                   // 单笔充值最小金额，自然货币单位
+	SingleAmountMax      string                 `protobuf:"bytes,8,opt,name=single_amount_max,json=singleAmountMax,proto3" json:"single_amount_max,omitempty"`                   // 单笔充值最大金额，0表示不限制
+	UserTotalRechargeMin string                 `protobuf:"bytes,9,opt,name=user_total_recharge_min,json=userTotalRechargeMin,proto3" json:"user_total_recharge_min,omitempty"`  // 用户累计充值最小金额，自然货币单位
+	UserTotalRechargeMax string                 `protobuf:"bytes,10,opt,name=user_total_recharge_max,json=userTotalRechargeMax,proto3" json:"user_total_recharge_max,omitempty"` // 用户累计充值最大金额，0表示不限制
+	MemberLevelMin       int64                  `protobuf:"varint,11,opt,name=member_level_min,json=memberLevelMin,proto3" json:"member_level_min,omitempty"`                    // 会员等级最小值
+	MemberLevelMax       int64                  `protobuf:"varint,12,opt,name=member_level_max,json=memberLevelMax,proto3" json:"member_level_max,omitempty"`                    // 会员等级最大值，0表示不限制
+	KycLevelMin          int64                  `protobuf:"varint,13,opt,name=kyc_level_min,json=kycLevelMin,proto3" json:"kyc_level_min,omitempty"`                             // KYC等级最小值
+	KycLevelMax          int64                  `protobuf:"varint,14,opt,name=kyc_level_max,json=kycLevelMax,proto3" json:"kyc_level_max,omitempty"`                             // KYC等级最大值，0表示不限制
+	AllowNewUser         common.YesNo           `protobuf:"varint,15,opt,name=allow_new_user,json=allowNewUser,proto3,enum=common.YesNo" json:"allow_new_user,omitempty"`        // 是否允许新用户：1是 2否
+	AllowOldUser         common.YesNo           `protobuf:"varint,16,opt,name=allow_old_user,json=allowOldUser,proto3,enum=common.YesNo" json:"allow_old_user,omitempty"`        // 是否允许老用户：1是 2否
+	AllowTags            string                 `protobuf:"bytes,17,opt,name=allow_tags,json=allowTags,proto3" json:"allow_tags,omitempty"`                                      // 允许的用户标签(JSON数组)
+	DenyTags             string                 `protobuf:"bytes,18,opt,name=deny_tags,json=denyTags,proto3" json:"deny_tags,omitempty"`                                         // 禁止的用户标签(JSON数组)
+	Remark               string                 `protobuf:"bytes,19,opt,name=remark,proto3" json:"remark,omitempty"`                                                             // 备注
+	CreateTimes          int64                  `protobuf:"varint,20,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                               // 创建时间
+	UpdateTimes          int64                  `protobuf:"varint,21,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                               // 更新时间
+	TenantName           string                 `protobuf:"bytes,22,opt,name=tenant_name,json=tenantName,proto3" json:"tenant_name,omitempty"`                                   // 租户名称（由网关批量补充）
+	ChannelName          string                 `protobuf:"bytes,23,opt,name=channel_name,json=channelName,proto3" json:"channel_name,omitempty"`                                // 通道名称（列表展示）
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -843,32 +843,32 @@ func (x *TenantPayChannelRule) GetEnabled() common.Enable {
 	return common.Enable(0)
 }
 
-func (x *TenantPayChannelRule) GetSingleAmountMin() int64 {
+func (x *TenantPayChannelRule) GetSingleAmountMin() string {
 	if x != nil {
 		return x.SingleAmountMin
 	}
-	return 0
+	return ""
 }
 
-func (x *TenantPayChannelRule) GetSingleAmountMax() int64 {
+func (x *TenantPayChannelRule) GetSingleAmountMax() string {
 	if x != nil {
 		return x.SingleAmountMax
 	}
-	return 0
+	return ""
 }
 
-func (x *TenantPayChannelRule) GetUserTotalRechargeMin() int64 {
+func (x *TenantPayChannelRule) GetUserTotalRechargeMin() string {
 	if x != nil {
 		return x.UserTotalRechargeMin
 	}
-	return 0
+	return ""
 }
 
-func (x *TenantPayChannelRule) GetUserTotalRechargeMax() int64 {
+func (x *TenantPayChannelRule) GetUserTotalRechargeMax() string {
 	if x != nil {
 		return x.UserTotalRechargeMax
 	}
-	return 0
+	return ""
 }
 
 func (x *TenantPayChannelRule) GetMemberLevelMin() int64 {
@@ -964,17 +964,17 @@ func (x *TenantPayChannelRule) GetChannelName() string {
 
 type UserRechargeStat struct {
 	state              protoimpl.MessageState `protogen:"open.v1"`
-	Id                 int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                             // 主键ID
-	TenantId           int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                 // 租户ID
-	UserId             int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                       // 用户ID
-	SuccessOrderCount  int64                  `protobuf:"varint,4,opt,name=success_order_count,json=successOrderCount,proto3" json:"success_order_count,omitempty"`    // 成功充值笔数
-	SuccessTotalAmount int64                  `protobuf:"varint,5,opt,name=success_total_amount,json=successTotalAmount,proto3" json:"success_total_amount,omitempty"` // 成功累计充值金额，单位分
-	TodaySuccessAmount int64                  `protobuf:"varint,6,opt,name=today_success_amount,json=todaySuccessAmount,proto3" json:"today_success_amount,omitempty"` // 今日成功充值金额，单位分
-	TodaySuccessCount  int64                  `protobuf:"varint,7,opt,name=today_success_count,json=todaySuccessCount,proto3" json:"today_success_count,omitempty"`    // 今日成功充值次数
-	FirstSuccessTime   int64                  `protobuf:"varint,8,opt,name=first_success_time,json=firstSuccessTime,proto3" json:"first_success_time,omitempty"`       // 首次成功充值时间
-	LastSuccessTime    int64                  `protobuf:"varint,9,opt,name=last_success_time,json=lastSuccessTime,proto3" json:"last_success_time,omitempty"`          // 最近成功充值时间
-	CreateTimes        int64                  `protobuf:"varint,10,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                       // 创建时间
-	UpdateTimes        int64                  `protobuf:"varint,11,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                       // 更新时间
+	Id                 int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                            // 主键ID
+	TenantId           int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                // 租户ID
+	UserId             int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`                                      // 用户ID
+	SuccessOrderCount  int64                  `protobuf:"varint,4,opt,name=success_order_count,json=successOrderCount,proto3" json:"success_order_count,omitempty"`   // 成功充值笔数
+	SuccessTotalAmount string                 `protobuf:"bytes,5,opt,name=success_total_amount,json=successTotalAmount,proto3" json:"success_total_amount,omitempty"` // 成功累计充值金额，自然货币单位
+	TodaySuccessAmount string                 `protobuf:"bytes,6,opt,name=today_success_amount,json=todaySuccessAmount,proto3" json:"today_success_amount,omitempty"` // 今日成功充值金额，自然货币单位
+	TodaySuccessCount  int64                  `protobuf:"varint,7,opt,name=today_success_count,json=todaySuccessCount,proto3" json:"today_success_count,omitempty"`   // 今日成功充值次数
+	FirstSuccessTime   int64                  `protobuf:"varint,8,opt,name=first_success_time,json=firstSuccessTime,proto3" json:"first_success_time,omitempty"`      // 首次成功充值时间
+	LastSuccessTime    int64                  `protobuf:"varint,9,opt,name=last_success_time,json=lastSuccessTime,proto3" json:"last_success_time,omitempty"`         // 最近成功充值时间
+	CreateTimes        int64                  `protobuf:"varint,10,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`                      // 创建时间
+	UpdateTimes        int64                  `protobuf:"varint,11,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`                      // 更新时间
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -1037,18 +1037,18 @@ func (x *UserRechargeStat) GetSuccessOrderCount() int64 {
 	return 0
 }
 
-func (x *UserRechargeStat) GetSuccessTotalAmount() int64 {
+func (x *UserRechargeStat) GetSuccessTotalAmount() string {
 	if x != nil {
 		return x.SuccessTotalAmount
 	}
-	return 0
+	return ""
 }
 
-func (x *UserRechargeStat) GetTodaySuccessAmount() int64 {
+func (x *UserRechargeStat) GetTodaySuccessAmount() string {
 	if x != nil {
 		return x.TodaySuccessAmount
 	}
-	return 0
+	return ""
 }
 
 func (x *UserRechargeStat) GetTodaySuccessCount() int64 {
@@ -1098,9 +1098,9 @@ type RechargeOrder struct {
 	AccountId        int64                  `protobuf:"varint,8,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`                                     // 账号ID
 	ChannelId        int64                  `protobuf:"varint,9,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`                                     // 通道ID
 	Currency         string                 `protobuf:"bytes,10,opt,name=currency,proto3" json:"currency,omitempty"`                                                        // 币种
-	OrderAmount      int64                  `protobuf:"varint,11,opt,name=order_amount,json=orderAmount,proto3" json:"order_amount,omitempty"`                              // 订单金额，单位分
-	PayAmount        int64                  `protobuf:"varint,12,opt,name=pay_amount,json=payAmount,proto3" json:"pay_amount,omitempty"`                                    // 实际支付金额，单位分
-	FeeAmount        int64                  `protobuf:"varint,13,opt,name=fee_amount,json=feeAmount,proto3" json:"fee_amount,omitempty"`                                    // 手续费金额，单位分
+	OrderAmount      string                 `protobuf:"bytes,11,opt,name=order_amount,json=orderAmount,proto3" json:"order_amount,omitempty"`                               // 订单金额，自然货币单位
+	PayAmount        string                 `protobuf:"bytes,12,opt,name=pay_amount,json=payAmount,proto3" json:"pay_amount,omitempty"`                                     // 实际支付金额，自然货币单位
+	FeeAmount        string                 `protobuf:"bytes,13,opt,name=fee_amount,json=feeAmount,proto3" json:"fee_amount,omitempty"`                                     // 手续费金额，自然货币单位
 	Subject          string                 `protobuf:"bytes,14,opt,name=subject,proto3" json:"subject,omitempty"`                                                          // 标题
 	Body             string                 `protobuf:"bytes,15,opt,name=body,proto3" json:"body,omitempty"`                                                                // 描述
 	ClientType       ClientType             `protobuf:"varint,16,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"`         // 客户端类型：1APP 2H5 3WEB
@@ -1231,25 +1231,25 @@ func (x *RechargeOrder) GetCurrency() string {
 	return ""
 }
 
-func (x *RechargeOrder) GetOrderAmount() int64 {
+func (x *RechargeOrder) GetOrderAmount() string {
 	if x != nil {
 		return x.OrderAmount
 	}
-	return 0
+	return ""
 }
 
-func (x *RechargeOrder) GetPayAmount() int64 {
+func (x *RechargeOrder) GetPayAmount() string {
 	if x != nil {
 		return x.PayAmount
 	}
-	return 0
+	return ""
 }
 
-func (x *RechargeOrder) GetFeeAmount() int64 {
+func (x *RechargeOrder) GetFeeAmount() string {
 	if x != nil {
 		return x.FeeAmount
 	}
-	return 0
+	return ""
 }
 
 func (x *RechargeOrder) GetSubject() string {
@@ -1584,20 +1584,20 @@ func (x *PayNotifyLog) GetNotifyId() string {
 
 type VisiblePayChannel struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	ChannelId       int64                  `protobuf:"varint,1,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`                     // 通道ID
-	ChannelCode     string                 `protobuf:"bytes,2,opt,name=channel_code,json=channelCode,proto3" json:"channel_code,omitempty"`                // 通道编码
-	ChannelName     string                 `protobuf:"bytes,3,opt,name=channel_name,json=channelName,proto3" json:"channel_name,omitempty"`                // 通道名称
-	DisplayName     string                 `protobuf:"bytes,4,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`                // 前端展示名称
-	Icon            string                 `protobuf:"bytes,5,opt,name=icon,proto3" json:"icon,omitempty"`                                                 // 图标
-	Currency        string                 `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`                                         // 币种
-	SingleMinAmount int64                  `protobuf:"varint,7,opt,name=single_min_amount,json=singleMinAmount,proto3" json:"single_min_amount,omitempty"` // 单笔最小金额，单位分
-	SingleMaxAmount int64                  `protobuf:"varint,8,opt,name=single_max_amount,json=singleMaxAmount,proto3" json:"single_max_amount,omitempty"` // 单笔最大金额，单位分
-	FeeType         FeeType                `protobuf:"varint,9,opt,name=fee_type,json=feeType,proto3,enum=payment.FeeType" json:"fee_type,omitempty"`      // 手续费类型：1比例 2固定
-	FeeRate         string                 `protobuf:"bytes,10,opt,name=fee_rate,json=feeRate,proto3" json:"fee_rate,omitempty"`                           // 手续费比例
-	FeeFixedAmount  int64                  `protobuf:"varint,11,opt,name=fee_fixed_amount,json=feeFixedAmount,proto3" json:"fee_fixed_amount,omitempty"`   // 固定手续费，单位分
-	PlatformId      int64                  `protobuf:"varint,12,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`                 // 平台ID
-	ProductId       int64                  `protobuf:"varint,13,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`                    // 产品ID
-	AccountId       int64                  `protobuf:"varint,14,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`                    // 账号ID
+	ChannelId       int64                  `protobuf:"varint,1,opt,name=channel_id,json=channelId,proto3" json:"channel_id,omitempty"`                    // 通道ID
+	ChannelCode     string                 `protobuf:"bytes,2,opt,name=channel_code,json=channelCode,proto3" json:"channel_code,omitempty"`               // 通道编码
+	ChannelName     string                 `protobuf:"bytes,3,opt,name=channel_name,json=channelName,proto3" json:"channel_name,omitempty"`               // 通道名称
+	DisplayName     string                 `protobuf:"bytes,4,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`               // 前端展示名称
+	Icon            string                 `protobuf:"bytes,5,opt,name=icon,proto3" json:"icon,omitempty"`                                                // 图标
+	Currency        string                 `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`                                        // 币种
+	SingleMinAmount string                 `protobuf:"bytes,7,opt,name=single_min_amount,json=singleMinAmount,proto3" json:"single_min_amount,omitempty"` // 单笔最小金额，自然货币单位
+	SingleMaxAmount string                 `protobuf:"bytes,8,opt,name=single_max_amount,json=singleMaxAmount,proto3" json:"single_max_amount,omitempty"` // 单笔最大金额，自然货币单位
+	FeeType         FeeType                `protobuf:"varint,9,opt,name=fee_type,json=feeType,proto3,enum=payment.FeeType" json:"fee_type,omitempty"`     // 手续费类型：1比例 2固定
+	FeeRate         string                 `protobuf:"bytes,10,opt,name=fee_rate,json=feeRate,proto3" json:"fee_rate,omitempty"`                          // 手续费比例
+	FeeFixedAmount  string                 `protobuf:"bytes,11,opt,name=fee_fixed_amount,json=feeFixedAmount,proto3" json:"fee_fixed_amount,omitempty"`   // 固定手续费，自然货币单位
+	PlatformId      int64                  `protobuf:"varint,12,opt,name=platform_id,json=platformId,proto3" json:"platform_id,omitempty"`                // 平台ID
+	ProductId       int64                  `protobuf:"varint,13,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`                   // 产品ID
+	AccountId       int64                  `protobuf:"varint,14,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`                   // 账号ID
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -1674,18 +1674,18 @@ func (x *VisiblePayChannel) GetCurrency() string {
 	return ""
 }
 
-func (x *VisiblePayChannel) GetSingleMinAmount() int64 {
+func (x *VisiblePayChannel) GetSingleMinAmount() string {
 	if x != nil {
 		return x.SingleMinAmount
 	}
-	return 0
+	return ""
 }
 
-func (x *VisiblePayChannel) GetSingleMaxAmount() int64 {
+func (x *VisiblePayChannel) GetSingleMaxAmount() string {
 	if x != nil {
 		return x.SingleMaxAmount
 	}
-	return 0
+	return ""
 }
 
 func (x *VisiblePayChannel) GetFeeType() FeeType {
@@ -1702,11 +1702,11 @@ func (x *VisiblePayChannel) GetFeeRate() string {
 	return ""
 }
 
-func (x *VisiblePayChannel) GetFeeFixedAmount() int64 {
+func (x *VisiblePayChannel) GetFeeFixedAmount() string {
 	if x != nil {
 		return x.FeeFixedAmount
 	}
-	return 0
+	return ""
 }
 
 func (x *VisiblePayChannel) GetPlatformId() int64 {
@@ -1738,9 +1738,9 @@ type WithdrawOrder struct {
 	OrderNo       string                 `protobuf:"bytes,4,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`                                    // 平台订单号
 	BizOrderNo    string                 `protobuf:"bytes,5,opt,name=biz_order_no,json=bizOrderNo,proto3" json:"biz_order_no,omitempty"`                         // 业务订单号
 	Currency      string                 `protobuf:"bytes,6,opt,name=currency,proto3" json:"currency,omitempty"`                                                 // 币种
-	Amount        int64                  `protobuf:"varint,7,opt,name=amount,proto3" json:"amount,omitempty"`                                                    // 订单金额，单位分
-	FeeAmount     int64                  `protobuf:"varint,8,opt,name=fee_amount,json=feeAmount,proto3" json:"fee_amount,omitempty"`                             // 手续费金额，单位分
-	ActualAmount  int64                  `protobuf:"varint,9,opt,name=actual_amount,json=actualAmount,proto3" json:"actual_amount,omitempty"`                    // 实际到账金额，单位分
+	Amount        string                 `protobuf:"bytes,7,opt,name=amount,proto3" json:"amount,omitempty"`                                                     // 订单金额，自然货币单位
+	FeeAmount     string                 `protobuf:"bytes,8,opt,name=fee_amount,json=feeAmount,proto3" json:"fee_amount,omitempty"`                              // 手续费金额，自然货币单位
+	ActualAmount  string                 `protobuf:"bytes,9,opt,name=actual_amount,json=actualAmount,proto3" json:"actual_amount,omitempty"`                     // 实际到账金额，自然货币单位
 	ClientType    ClientType             `protobuf:"varint,10,opt,name=client_type,json=clientType,proto3,enum=payment.ClientType" json:"client_type,omitempty"` // 客户端类型：1APP 2H5 3WEB
 	ClientIp      string                 `protobuf:"bytes,11,opt,name=client_ip,json=clientIp,proto3" json:"client_ip,omitempty"`                                // 客户端IP
 	Status        PayOrderStatus         `protobuf:"varint,12,opt,name=status,proto3,enum=payment.PayOrderStatus" json:"status,omitempty"`                       // 状态：1待处理 2处理中 3成功 4失败 5已关闭
@@ -1835,25 +1835,25 @@ func (x *WithdrawOrder) GetCurrency() string {
 	return ""
 }
 
-func (x *WithdrawOrder) GetAmount() int64 {
+func (x *WithdrawOrder) GetAmount() string {
 	if x != nil {
 		return x.Amount
 	}
-	return 0
+	return ""
 }
 
-func (x *WithdrawOrder) GetFeeAmount() int64 {
+func (x *WithdrawOrder) GetFeeAmount() string {
 	if x != nil {
 		return x.FeeAmount
 	}
-	return 0
+	return ""
 }
 
-func (x *WithdrawOrder) GetActualAmount() int64 {
+func (x *WithdrawOrder) GetActualAmount() string {
 	if x != nil {
 		return x.ActualAmount
 	}
-	return 0
+	return ""
 }
 
 func (x *WithdrawOrder) GetClientType() ClientType {
@@ -2543,13 +2543,13 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\x04sort\x18\v \x01(\x03R\x04sort\x12(\n" +
 	"\avisible\x18\f \x01(\x0e2\x0e.common.SwitchR\avisible\x12(\n" +
 	"\aenabled\x18\r \x01(\x0e2\x0e.common.EnableR\aenabled\x12*\n" +
-	"\x11single_min_amount\x18\x0e \x01(\x03R\x0fsingleMinAmount\x12*\n" +
-	"\x11single_max_amount\x18\x0f \x01(\x03R\x0fsingleMaxAmount\x12(\n" +
-	"\x10daily_max_amount\x18\x10 \x01(\x03R\x0edailyMaxAmount\x12&\n" +
+	"\x11single_min_amount\x18\x0e \x01(\tR\x0fsingleMinAmount\x12*\n" +
+	"\x11single_max_amount\x18\x0f \x01(\tR\x0fsingleMaxAmount\x12(\n" +
+	"\x10daily_max_amount\x18\x10 \x01(\tR\x0edailyMaxAmount\x12&\n" +
 	"\x0fdaily_max_count\x18\x11 \x01(\x03R\rdailyMaxCount\x12+\n" +
 	"\bfee_type\x18\x12 \x01(\x0e2\x10.payment.FeeTypeR\afeeType\x12\x19\n" +
 	"\bfee_rate\x18\x13 \x01(\tR\afeeRate\x12(\n" +
-	"\x10fee_fixed_amount\x18\x14 \x01(\x03R\x0efeeFixedAmount\x12\x1d\n" +
+	"\x10fee_fixed_amount\x18\x14 \x01(\tR\x0efeeFixedAmount\x12\x1d\n" +
 	"\n" +
 	"ext_config\x18\x15 \x01(\tR\textConfig\x12\x16\n" +
 	"\x06remark\x18\x16 \x01(\tR\x06remark\x12!\n" +
@@ -2568,11 +2568,11 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\trule_name\x18\x04 \x01(\tR\bruleName\x12\x1a\n" +
 	"\bpriority\x18\x05 \x01(\x03R\bpriority\x12(\n" +
 	"\aenabled\x18\x06 \x01(\x0e2\x0e.common.EnableR\aenabled\x12*\n" +
-	"\x11single_amount_min\x18\a \x01(\x03R\x0fsingleAmountMin\x12*\n" +
-	"\x11single_amount_max\x18\b \x01(\x03R\x0fsingleAmountMax\x125\n" +
-	"\x17user_total_recharge_min\x18\t \x01(\x03R\x14userTotalRechargeMin\x125\n" +
+	"\x11single_amount_min\x18\a \x01(\tR\x0fsingleAmountMin\x12*\n" +
+	"\x11single_amount_max\x18\b \x01(\tR\x0fsingleAmountMax\x125\n" +
+	"\x17user_total_recharge_min\x18\t \x01(\tR\x14userTotalRechargeMin\x125\n" +
 	"\x17user_total_recharge_max\x18\n" +
-	" \x01(\x03R\x14userTotalRechargeMax\x12(\n" +
+	" \x01(\tR\x14userTotalRechargeMax\x12(\n" +
 	"\x10member_level_min\x18\v \x01(\x03R\x0ememberLevelMin\x12(\n" +
 	"\x10member_level_max\x18\f \x01(\x03R\x0ememberLevelMax\x12\"\n" +
 	"\rkyc_level_min\x18\r \x01(\x03R\vkycLevelMin\x12\"\n" +
@@ -2593,8 +2593,8 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12.\n" +
 	"\x13success_order_count\x18\x04 \x01(\x03R\x11successOrderCount\x120\n" +
-	"\x14success_total_amount\x18\x05 \x01(\x03R\x12successTotalAmount\x120\n" +
-	"\x14today_success_amount\x18\x06 \x01(\x03R\x12todaySuccessAmount\x12.\n" +
+	"\x14success_total_amount\x18\x05 \x01(\tR\x12successTotalAmount\x120\n" +
+	"\x14today_success_amount\x18\x06 \x01(\tR\x12todaySuccessAmount\x12.\n" +
 	"\x13today_success_count\x18\a \x01(\x03R\x11todaySuccessCount\x12,\n" +
 	"\x12first_success_time\x18\b \x01(\x03R\x10firstSuccessTime\x12*\n" +
 	"\x11last_success_time\x18\t \x01(\x03R\x0flastSuccessTime\x12!\n" +
@@ -2619,11 +2619,11 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"channel_id\x18\t \x01(\x03R\tchannelId\x12\x1a\n" +
 	"\bcurrency\x18\n" +
 	" \x01(\tR\bcurrency\x12!\n" +
-	"\forder_amount\x18\v \x01(\x03R\vorderAmount\x12\x1d\n" +
+	"\forder_amount\x18\v \x01(\tR\vorderAmount\x12\x1d\n" +
 	"\n" +
-	"pay_amount\x18\f \x01(\x03R\tpayAmount\x12\x1d\n" +
+	"pay_amount\x18\f \x01(\tR\tpayAmount\x12\x1d\n" +
 	"\n" +
-	"fee_amount\x18\r \x01(\x03R\tfeeAmount\x12\x18\n" +
+	"fee_amount\x18\r \x01(\tR\tfeeAmount\x12\x18\n" +
 	"\asubject\x18\x0e \x01(\tR\asubject\x12\x12\n" +
 	"\x04body\x18\x0f \x01(\tR\x04body\x124\n" +
 	"\vclient_type\x18\x10 \x01(\x0e2\x13.payment.ClientTypeR\n" +
@@ -2686,12 +2686,12 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\fdisplay_name\x18\x04 \x01(\tR\vdisplayName\x12\x12\n" +
 	"\x04icon\x18\x05 \x01(\tR\x04icon\x12\x1a\n" +
 	"\bcurrency\x18\x06 \x01(\tR\bcurrency\x12*\n" +
-	"\x11single_min_amount\x18\a \x01(\x03R\x0fsingleMinAmount\x12*\n" +
-	"\x11single_max_amount\x18\b \x01(\x03R\x0fsingleMaxAmount\x12+\n" +
+	"\x11single_min_amount\x18\a \x01(\tR\x0fsingleMinAmount\x12*\n" +
+	"\x11single_max_amount\x18\b \x01(\tR\x0fsingleMaxAmount\x12+\n" +
 	"\bfee_type\x18\t \x01(\x0e2\x10.payment.FeeTypeR\afeeType\x12\x19\n" +
 	"\bfee_rate\x18\n" +
 	" \x01(\tR\afeeRate\x12(\n" +
-	"\x10fee_fixed_amount\x18\v \x01(\x03R\x0efeeFixedAmount\x12\x1f\n" +
+	"\x10fee_fixed_amount\x18\v \x01(\tR\x0efeeFixedAmount\x12\x1f\n" +
 	"\vplatform_id\x18\f \x01(\x03R\n" +
 	"platformId\x12\x1d\n" +
 	"\n" +
@@ -2706,10 +2706,10 @@ const file_proto_payment_model_proto_rawDesc = "" +
 	"\fbiz_order_no\x18\x05 \x01(\tR\n" +
 	"bizOrderNo\x12\x1a\n" +
 	"\bcurrency\x18\x06 \x01(\tR\bcurrency\x12\x16\n" +
-	"\x06amount\x18\a \x01(\x03R\x06amount\x12\x1d\n" +
+	"\x06amount\x18\a \x01(\tR\x06amount\x12\x1d\n" +
 	"\n" +
-	"fee_amount\x18\b \x01(\x03R\tfeeAmount\x12#\n" +
-	"\ractual_amount\x18\t \x01(\x03R\factualAmount\x124\n" +
+	"fee_amount\x18\b \x01(\tR\tfeeAmount\x12#\n" +
+	"\ractual_amount\x18\t \x01(\tR\factualAmount\x124\n" +
 	"\vclient_type\x18\n" +
 	" \x01(\x0e2\x13.payment.ClientTypeR\n" +
 	"clientType\x12\x1b\n" +

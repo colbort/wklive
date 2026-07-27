@@ -18,7 +18,7 @@ import type { CryptoRechargeAddress } from '@/types/payment'
 import {
   normalizeAssetDecimalPlaces,
   normalizeAssetInputDecimalPlaces,
-  parseAssetDecimalToMinorText,
+  parseAssetDecimalText,
 } from '@/utils/assetAmount'
 
 const route = useRoute()
@@ -226,7 +226,7 @@ async function ensureValidRechargeAddress() {
   return true
 }
 
-async function createRechargeOrder(voucherImage: string, rechargeAmount: number) {
+async function createRechargeOrder(voucherImage: string, rechargeAmount: string) {
   const resp = await apiCreateCryptoRechargeOrder({
     walletType: walletType.value,
     coin: selectedCoin.value,
@@ -324,7 +324,7 @@ async function completeRecharge() {
 
   pageError.value = ''
   copyTip.value = ''
-  const rechargeAmountText = parseAssetDecimalToMinorText(amount.value, selectedDecimalPlaces.value)
+  const rechargeAmountText = parseAssetDecimalText(amount.value, selectedDecimalPlaces.value)
   const rechargeAmount = Number(rechargeAmountText)
   if (!rechargeAmountText || rechargeAmount <= 0) {
     pageError.value = t('assetFlow.invalidRechargeAmount', {
@@ -341,7 +341,7 @@ async function completeRecharge() {
   submitLoading.value = true
   try {
     const voucherImage = await uploadVoucherImage()
-    await createRechargeOrder(voucherImage, rechargeAmount)
+    await createRechargeOrder(voucherImage, rechargeAmountText)
   } catch (error) {
     console.warn('create crypto recharge order failed', error)
     pageError.value = t('assetFlow.submitFailedLater')

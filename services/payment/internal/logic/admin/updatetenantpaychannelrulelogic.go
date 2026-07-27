@@ -72,17 +72,33 @@ func (l *UpdateTenantPayChannelRuleLogic) UpdateTenantPayChannelRule(in *payment
 	if in.Enabled != 0 {
 		rule.Enabled = int64(in.Enabled)
 	}
-	if in.SingleAmountMin != 0 {
-		rule.SingleAmountMin = in.SingleAmountMin
+	if in.SingleAmountMin != "" {
+		value, err := parseNonNegativeAmount(in.SingleAmountMin)
+		if err != nil {
+			return paymentErrorResp(l.ctx, i18n.InvalidPaymentDecimal), nil
+		}
+		rule.SingleAmountMin = value
 	}
-	if in.SingleAmountMax != 0 {
-		rule.SingleAmountMax = in.SingleAmountMax
+	if in.SingleAmountMax != "" {
+		value, err := parseNonNegativeAmount(in.SingleAmountMax)
+		if err != nil {
+			return paymentErrorResp(l.ctx, i18n.InvalidPaymentDecimal), nil
+		}
+		rule.SingleAmountMax = value
 	}
-	if in.UserTotalRechargeMin != 0 {
-		rule.UserTotalRechargeMin = in.UserTotalRechargeMin
+	if in.UserTotalRechargeMin != "" {
+		value, err := parseNonNegativeAmount(in.UserTotalRechargeMin)
+		if err != nil {
+			return paymentErrorResp(l.ctx, i18n.InvalidPaymentDecimal), nil
+		}
+		rule.UserTotalRechargeMin = value
 	}
-	if in.UserTotalRechargeMax != 0 {
-		rule.UserTotalRechargeMax = in.UserTotalRechargeMax
+	if in.UserTotalRechargeMax != "" {
+		value, err := parseNonNegativeAmount(in.UserTotalRechargeMax)
+		if err != nil {
+			return paymentErrorResp(l.ctx, i18n.InvalidPaymentDecimal), nil
+		}
+		rule.UserTotalRechargeMax = value
 	}
 	if in.MemberLevelMin != 0 {
 		rule.MemberLevelMin = in.MemberLevelMin
@@ -120,8 +136,8 @@ func (l *UpdateTenantPayChannelRuleLogic) UpdateTenantPayChannelRule(in *payment
 	if !requiredStrings(rule.RuleName) {
 		return paymentErrorResp(l.ctx, i18n.PaymentRequiredParamsMissing), nil
 	}
-	if !validNonNegativeRange(rule.SingleAmountMin, rule.SingleAmountMax) ||
-		!validNonNegativeRange(rule.UserTotalRechargeMin, rule.UserTotalRechargeMax) ||
+	if !validDecimalRange(rule.SingleAmountMin, rule.SingleAmountMax) ||
+		!validDecimalRange(rule.UserTotalRechargeMin, rule.UserTotalRechargeMax) ||
 		!validNonNegativeRange(rule.MemberLevelMin, rule.MemberLevelMax) ||
 		!validNonNegativeRange(rule.KycLevelMin, rule.KycLevelMax) {
 		return paymentErrorResp(l.ctx, i18n.InvalidPaymentAmountRange), nil

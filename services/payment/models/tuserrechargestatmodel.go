@@ -14,8 +14,8 @@ type (
 	UserRechargeStatPageFilter struct {
 		TenantId              int64
 		UserId                int64
-		SuccessTotalAmountMin int64
-		SuccessTotalAmountMax int64
+		SuccessTotalAmountMin string
+		SuccessTotalAmountMax string
 	}
 
 	// TUserRechargeStatModel is an interface to be customized, add more methods here,
@@ -43,8 +43,12 @@ func (m *defaultTUserRechargeStatModel) FindPage(ctx context.Context, filter Use
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
 	builder.EqInt64("user_id", filter.UserId)
-	builder.GteInt64("success_total_amount", filter.SuccessTotalAmountMin)
-	builder.LteInt64("success_total_amount", filter.SuccessTotalAmountMax)
+	if filter.SuccessTotalAmountMin != "" {
+		builder.And("success_total_amount >= ?", filter.SuccessTotalAmountMin)
+	}
+	if filter.SuccessTotalAmountMax != "" {
+		builder.And("success_total_amount <= ?", filter.SuccessTotalAmountMax)
+	}
 
 	where := builder.Where()
 	args := builder.Args()

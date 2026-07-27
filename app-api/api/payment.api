@@ -11,8 +11,8 @@ type UserRechargeStat {
 	tenantId           int64 `json:"tenantId"`
 	userId             int64 `json:"userId"`
 	successOrderCount  int64 `json:"successOrderCount"`
-	successTotalAmount int64 `json:"successTotalAmount"`
-	todaySuccessAmount int64 `json:"todaySuccessAmount"`
+	successTotalAmount string `json:"successTotalAmount"`
+	todaySuccessAmount string `json:"todaySuccessAmount"`
 	todaySuccessCount  int64 `json:"todaySuccessCount"`
 	firstSuccessTime   int64 `json:"firstSuccessTime"`
 	lastSuccessTime    int64 `json:"lastSuccessTime"`
@@ -28,16 +28,16 @@ type AvailableRechargeChannel {
 	displayName     string `json:"displayName"`
 	icon            string `json:"icon"`
 	currency        string `json:"currency"`
-	singleMinAmount int64  `json:"singleMinAmount"`
-	singleMaxAmount int64  `json:"singleMaxAmount"`
+	singleMinAmount string `json:"singleMinAmount"`
+	singleMaxAmount string `json:"singleMaxAmount"`
 	feeType         int64  `json:"feeType"` // 0未知 1费率 2固定
 	feeRate         string `json:"feeRate"`
-	feeFixedAmount  int64  `json:"feeFixedAmount"`
+	feeFixedAmount  string `json:"feeFixedAmount"`
 	platformId      int64  `json:"platformId"`
 	productId       int64  `json:"productId"`
 	accountId       int64  `json:"accountId"`
 	// 以下字段为服务端基于当前登录用户上下文计算后返回，方便前端展示
-	userSuccessTotalAmount int64 `json:"userSuccessTotalAmount"`
+	userSuccessTotalAmount string `json:"userSuccessTotalAmount"`
 }
 
 // 支付订单
@@ -53,9 +53,9 @@ type RechargeOrder {
 	channelId    int64  `json:"channelId"`
 	walletType   int64  `json:"walletType"` // 钱包类型:1现货 2资金 3合约 4理财 5期权
 	currency     string `json:"currency"`
-	orderAmount  int64  `json:"orderAmount"`
-	payAmount    int64  `json:"payAmount"`
-	feeAmount    int64  `json:"feeAmount"`
+	orderAmount  string `json:"orderAmount"`
+	payAmount    string `json:"payAmount"`
+	feeAmount    string `json:"feeAmount"`
 	subject      string `json:"subject"`
 	body         string `json:"body"`
 	clientType   int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
@@ -137,7 +137,7 @@ type GetMyRechargeStatResp {
 // 获取当前用户在指定充值金额下可用的充值通道
 // 服务端需要基于当前登录用户自动查询累计充值金额并套用规则过滤
 type ListAvailableRechargeChannelsReq {
-	rechargeAmount int64  `json:"rechargeAmount"` // 单位：分
+	rechargeAmount string `json:"rechargeAmount"` // 自然货币单位
 	currency       string `json:"currency"`
 	clientType     int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
 }
@@ -154,7 +154,7 @@ type ListAvailableRechargeChannelsResp {
 // 3. 金额、币种、客户端是否合法
 type CreateRechargeOrderReq {
 	channelId      int64  `json:"channelId"`
-	rechargeAmount int64  `json:"rechargeAmount"` // 单位：分
+	rechargeAmount string `json:"rechargeAmount"` // 自然货币单位
 	currency       string `json:"currency"`
 	subject        string `json:"subject,optional"`
 	body           string `json:"body,optional"`
@@ -172,7 +172,7 @@ type CreateCryptoRechargeOrderReq {
 	walletType     int64  `json:"walletType"`
 	coin           string `json:"coin"`
 	chainCode      int64  `json:"chainCode"`
-	rechargeAmount int64  `json:"rechargeAmount"` // 单位：分
+	rechargeAmount string `json:"rechargeAmount"` // 自然货币单位
 	clientType     int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
 	bizOrderNo     string `json:"bizOrderNo,optional"`
 	voucherImage   string `json:"voucherImage,optional"`
@@ -288,9 +288,9 @@ type WithdrawOrder {
 	orderNo      string `json:"orderNo"`
 	bizOrderNo   string `json:"bizOrderNo"`
 	currency     string `json:"currency"`
-	amount       int64  `json:"amount"`
-	feeAmount    int64  `json:"feeAmount"`
-	actualAmount int64  `json:"actualAmount"`
+	amount       string `json:"amount"`
+	feeAmount    string `json:"feeAmount"`
+	actualAmount string `json:"actualAmount"`
 	clientType   int64  `json:"clientType"`
 	clientIp     string `json:"clientIp"`
 	status       int64  `json:"status"`
@@ -308,7 +308,7 @@ type WithdrawOrder {
 }
 
 type CreateWithdrawOrderReq {
-	amount   int64  `json:"amount"` // 单位：分
+	amount   string `json:"amount"` // 自然货币单位
 	currency string `json:"currency"`
 	address  string `json:"address"` // 提现地址（钱包地址等）
 	bankId   int64  `json:"bankId"` // 银行ID（如果是提现到银行卡）

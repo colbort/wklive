@@ -21,7 +21,7 @@ func (s *authoritativeSnapshotModelStub) FindAfterID(context.Context, int64, int
 	return nil, nil
 }
 
-func (s *authoritativeSnapshotModelStub) FindLatestPage(context.Context, int64, int64) ([]*models.TItickAuthoritativeSnapshot, error) {
+func (s *authoritativeSnapshotModelStub) FindProductKeys(context.Context) ([]models.AuthoritativeSnapshotProductKey, error) {
 	return nil, nil
 }
 

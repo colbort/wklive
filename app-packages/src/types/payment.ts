@@ -5,8 +5,8 @@ export interface UserRechargeStat {
   tenantId: number
   userId: number
   successOrderCount: number
-  successTotalAmount: number
-  todaySuccessAmount: number
+  successTotalAmount: string
+  todaySuccessAmount: string
   todaySuccessCount: number
   firstSuccessTime: number
   lastSuccessTime: number
@@ -21,15 +21,15 @@ export interface AvailableRechargeChannel {
   displayName: string
   icon: string
   currency: string
-  singleMinAmount: number
-  singleMaxAmount: number
+  singleMinAmount: string
+  singleMaxAmount: string
   feeType: number
   feeRate: string
-  feeFixedAmount: number
+  feeFixedAmount: string
   platformId: number
   productId: number
   accountId: number
-  userSuccessTotalAmount: number
+  userSuccessTotalAmount: string
 }
 
 export interface RechargeOrder {
@@ -44,9 +44,9 @@ export interface RechargeOrder {
   channelId: number
   walletType: number
   currency: string
-  orderAmount: number
-  payAmount: number
-  feeAmount: number
+  orderAmount: string
+  payAmount: string
+  feeAmount: string
   subject: string
   body: string
   clientType: number
@@ -76,9 +76,9 @@ export interface WithdrawOrder {
   orderNo: string
   bizOrderNo: string
   currency: string
-  amount: number
-  feeAmount: number
-  actualAmount: number
+  amount: string
+  feeAmount: string
+  actualAmount: string
   clientType: number
   clientIp: string
   status: number
@@ -142,14 +142,14 @@ export interface CryptoRechargeTx {
 export interface GetMyRechargeStatReq {}
 
 export interface ListAvailableRechargeChannelsReq {
-  rechargeAmount: number
+  rechargeAmount: string
   currency: string
   clientType: number
 }
 
 export interface CreateRechargeOrderReq {
   channelId: number
-  rechargeAmount: number
+  rechargeAmount: string
   currency: string
   subject?: string
   body?: string
@@ -162,7 +162,7 @@ export interface CreateCryptoRechargeOrderReq {
   walletType: number
   coin: string
   chainCode: number
-  rechargeAmount: number
+  rechargeAmount: string
   clientType: number
   clientIp?: string
   bizOrderNo?: string
@@ -215,7 +215,7 @@ export interface GetMyCryptoRechargeTxReq {
 }
 
 export interface CreateWithdrawOrderReq {
-  amount: number
+  amount: string
   currency: string
   address: string
   bankId: number

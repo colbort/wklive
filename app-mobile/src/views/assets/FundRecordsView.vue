@@ -14,7 +14,7 @@ import { useI18n } from '@/i18n'
 import { useSystemStore } from '@/stores/system'
 import type { AssetCoinConfig } from '@/types/asset'
 import type { RechargeOrder, WithdrawOrder } from '@/types/payment'
-import { formatAssetMinorAmount } from '@/utils/assetAmount'
+import { formatAssetDecimalAmount } from '@/utils/assetAmount'
 import { resolveSystemAssetUrl } from '@/utils/assetUrl'
 
 type MainTab = 'recharge' | 'withdraw'
@@ -167,8 +167,8 @@ function coinIconUrl(coin: string) {
   return resolveSystemAssetUrl(systemStore.systemCore.assetUrl, configForCoin(coin)?.iconUrl)
 }
 
-function formatRecordAmount(value: number, currency: string) {
-  return `${formatAssetMinorAmount(value, 2)} ${currency}`
+function formatRecordAmount(value: string | number, currency: string) {
+  return `${formatAssetDecimalAmount(value, 2)} ${currency}`
 }
 
 function formatRecordTime(value: number) {

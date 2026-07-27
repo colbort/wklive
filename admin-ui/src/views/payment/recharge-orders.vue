@@ -32,12 +32,12 @@
         <el-table-column prop="currency" :label="t('payment.currency')" width="80" />
         <el-table-column :label="t('payment.orderAmount')" min-width="120">
           <template #default="{ row }">
-            {{ formatCentAmount(row.orderAmount) }}
+            {{ formatAssetAmount(row.orderAmount) }}
           </template>
         </el-table-column>
         <el-table-column :label="t('payment.payAmount')" min-width="120">
           <template #default="{ row }">
-            {{ formatCentAmount(row.payAmount) }}
+            {{ formatAssetAmount(row.payAmount) }}
           </template>
         </el-table-column>
         <el-table-column :label="t('common.status')" width="110">
@@ -177,7 +177,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { catalogService, rechargeService, type OptionGroup, type RechargeOrder } from '@/services'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'
 import { findOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
-import { amountToCent, centToAmount, formatCentAmount, formatCentFields } from '@/utils/amount'
+import { formatAssetAmount, formatAssetFields } from '@/utils/amount'
 import TenantSelect from '@/components/TenantSelect.vue'
 import UserSelect from '@/components/UserSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
@@ -206,10 +206,10 @@ const query = reactive({
 
 const PAY_ORDER_STATUS_PENDING = 1
 const PAY_ORDER_STATUS_PAYING = 2
-const CENT_AMOUNT_KEYS = new Set(['orderAmount', 'payAmount', 'feeAmount'])
+const AMOUNT_KEYS = new Set(['orderAmount', 'payAmount', 'feeAmount'])
 
 const detailDisplayData = computed(() => {
-  return formatCentFields(detailData.value, CENT_AMOUNT_KEYS)
+  return formatAssetFields(detailData.value, AMOUNT_KEYS)
 })
 const resolveAssetUrl = (url?: string) => buildSystemAssetUrl(systemCore.value.assetUrl, url)
 const detailVoucherImageUrl = computed(() => resolveAssetUrl(detailData.value?.voucherImage))
@@ -274,7 +274,7 @@ const openManualSuccess = (row: RechargeOrder) => {
   currentOrder.value = row
   Object.assign(manualForm, {
     thirdTradeNo: '',
-    payAmount: centToAmount(row.payAmount || row.orderAmount || 0),
+    payAmount: Number(row.payAmount || row.orderAmount || 0),
     remark: '',
   })
   manualVisible.value = true
@@ -285,7 +285,7 @@ const submitManual = async () => {
   await rechargeService.manualSuccessRechargeOrder(currentOrder.value.orderNo, {
     tenantId: currentOrder.value.tenantId,
     thirdTradeNo: manualForm.thirdTradeNo,
-    payAmount: amountToCent(manualForm.payAmount),
+    payAmount: String(manualForm.payAmount),
     remark: manualForm.remark,
   })
   ElMessage.success(t('common.operationSuccess'))

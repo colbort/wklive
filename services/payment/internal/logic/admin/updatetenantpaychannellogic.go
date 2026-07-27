@@ -84,14 +84,26 @@ func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateT
 	if in.Enabled != 0 {
 		channel.Enabled = int64(in.Enabled)
 	}
-	if in.SingleMinAmount != 0 {
-		channel.SingleMinAmount = in.SingleMinAmount
+	if in.SingleMinAmount != "" {
+		value, err := parseNonNegativeAmount(in.SingleMinAmount)
+		if err != nil {
+			return paymentErrorResp(l.ctx, i18n.InvalidPaymentDecimal), nil
+		}
+		channel.SingleMinAmount = value
 	}
-	if in.SingleMaxAmount != 0 {
-		channel.SingleMaxAmount = in.SingleMaxAmount
+	if in.SingleMaxAmount != "" {
+		value, err := parseNonNegativeAmount(in.SingleMaxAmount)
+		if err != nil {
+			return paymentErrorResp(l.ctx, i18n.InvalidPaymentDecimal), nil
+		}
+		channel.SingleMaxAmount = value
 	}
-	if in.DailyMaxAmount != 0 {
-		channel.DailyMaxAmount = in.DailyMaxAmount
+	if in.DailyMaxAmount != "" {
+		value, err := parseNonNegativeAmount(in.DailyMaxAmount)
+		if err != nil {
+			return paymentErrorResp(l.ctx, i18n.InvalidPaymentDecimal), nil
+		}
+		channel.DailyMaxAmount = value
 	}
 	if in.DailyMaxCount != 0 {
 		channel.DailyMaxCount = in.DailyMaxCount
@@ -112,8 +124,12 @@ func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateT
 		}
 		channel.FeeRate = feeRate
 	}
-	if in.FeeFixedAmount != 0 {
-		channel.FeeFixedAmount = in.FeeFixedAmount
+	if in.FeeFixedAmount != "" {
+		value, err := parseNonNegativeAmount(in.FeeFixedAmount)
+		if err != nil {
+			return paymentErrorResp(l.ctx, i18n.InvalidPaymentDecimal), nil
+		}
+		channel.FeeFixedAmount = value
 	}
 	if in.ExtConfig != "" {
 		extConfig, valid := nullableJSON(in.ExtConfig)
@@ -130,8 +146,8 @@ func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateT
 	if !requiredStrings(channel.ChannelName, channel.Currency) {
 		return paymentErrorResp(l.ctx, i18n.PaymentRequiredParamsMissing), nil
 	}
-	if !validNonNegativeRange(channel.SingleMinAmount, channel.SingleMaxAmount) ||
-		channel.DailyMaxAmount < 0 || channel.DailyMaxCount < 0 || channel.FeeFixedAmount < 0 {
+	if !validDecimalRange(channel.SingleMinAmount, channel.SingleMaxAmount) ||
+		channel.DailyMaxAmount.IsNegative() || channel.DailyMaxCount < 0 || channel.FeeFixedAmount.IsNegative() {
 		return paymentErrorResp(l.ctx, i18n.InvalidPaymentAmountRange), nil
 	}
 	channel.UpdateTimes = now

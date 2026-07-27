@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -44,33 +46,33 @@ type (
 	}
 
 	TWithdrawOrder struct {
-		Id           int64          `db:"id"`             // 提现订单ID
-		TenantId     int64          `db:"tenant_id"`      // 租户ID
-		UserId       int64          `db:"user_id"`        // 用户ID
-		OrderNo      string         `db:"order_no"`       // 平台订单号
-		BizOrderNo   sql.NullString `db:"biz_order_no"`   // 业务订单号
-		PlatformId   int64          `db:"platform_id"`    // 平台ID
-		ProductId    int64          `db:"product_id"`     // 产品ID
-		AccountId    int64          `db:"account_id"`     // 账号ID
-		ChannelId    int64          `db:"channel_id"`     // 通道ID
-		Currency     string         `db:"currency"`       // 币种
-		Amount       int64          `db:"amount"`         // 订单金额，单位分
-		FeeAmount    int64          `db:"fee_amount"`     // 手续费金额，单位分
-		ActualAmount int64          `db:"actual_amount"`  // 实际到账金额，单位分
-		ClientType   int64          `db:"client_type"`    // 客户端类型：1APP 2H5 3WEB
-		ClientIp     sql.NullString `db:"client_ip"`      // 客户端IP
-		Status       int64          `db:"status"`         // 状态：1待处理 2处理中 3成功 4失败 5已关闭
-		ThirdTradeNo sql.NullString `db:"third_trade_no"` // 三方交易号
-		ThirdOrderNo sql.NullString `db:"third_order_no"` // 三方订单号
-		RequestData  sql.NullString `db:"request_data"`   // 请求快照
-		ResponseData sql.NullString `db:"response_data"`  // 响应快照
-		NotifyData   sql.NullString `db:"notify_data"`    // 回调数据
-		ProcessTime  int64          `db:"process_time"`   // 处理时间
-		NotifyTime   int64          `db:"notify_time"`    // 回调时间
-		CloseTime    int64          `db:"close_time"`     // 关闭时间
-		Remark       sql.NullString `db:"remark"`         // 备注
-		CreateTimes  int64          `db:"create_times"`   // 创建时间
-		UpdateTimes  int64          `db:"update_times"`   // 更新时间
+		Id           int64           `db:"id"`             // 提现订单ID
+		TenantId     int64           `db:"tenant_id"`      // 租户ID
+		UserId       int64           `db:"user_id"`        // 用户ID
+		OrderNo      string          `db:"order_no"`       // 平台订单号
+		BizOrderNo   sql.NullString  `db:"biz_order_no"`   // 业务订单号
+		PlatformId   int64           `db:"platform_id"`    // 平台ID
+		ProductId    int64           `db:"product_id"`     // 产品ID
+		AccountId    int64           `db:"account_id"`     // 账号ID
+		ChannelId    int64           `db:"channel_id"`     // 通道ID
+		Currency     string          `db:"currency"`       // 币种
+		Amount       decimal.Decimal `db:"amount"`         // 订单金额，自然货币单位
+		FeeAmount    decimal.Decimal `db:"fee_amount"`     // 手续费金额，自然货币单位
+		ActualAmount decimal.Decimal `db:"actual_amount"`  // 实际到账金额，自然货币单位
+		ClientType   int64           `db:"client_type"`    // 客户端类型：1APP 2H5 3WEB
+		ClientIp     sql.NullString  `db:"client_ip"`      // 客户端IP
+		Status       int64           `db:"status"`         // 状态：1待处理 2处理中 3成功 4失败 5已关闭
+		ThirdTradeNo sql.NullString  `db:"third_trade_no"` // 三方交易号
+		ThirdOrderNo sql.NullString  `db:"third_order_no"` // 三方订单号
+		RequestData  sql.NullString  `db:"request_data"`   // 请求快照
+		ResponseData sql.NullString  `db:"response_data"`  // 响应快照
+		NotifyData   sql.NullString  `db:"notify_data"`    // 回调数据
+		ProcessTime  int64           `db:"process_time"`   // 处理时间
+		NotifyTime   int64           `db:"notify_time"`    // 回调时间
+		CloseTime    int64           `db:"close_time"`     // 关闭时间
+		Remark       sql.NullString  `db:"remark"`         // 备注
+		CreateTimes  int64           `db:"create_times"`   // 创建时间
+		UpdateTimes  int64           `db:"update_times"`   // 更新时间
 	}
 )
 

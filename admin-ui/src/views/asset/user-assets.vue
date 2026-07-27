@@ -78,7 +78,7 @@
           show-overflow-tooltip
         >
           <template #default="{ row }">
-            {{ formatCentAmount(row.totalAmount) }}
+            {{ formatAssetAmount(row.totalAmount) }}
           </template>
         </el-table-column>
         <el-table-column
@@ -88,7 +88,7 @@
           show-overflow-tooltip
         >
           <template #default="{ row }">
-            {{ formatCentAmount(row.availableAmount) }}
+            {{ formatAssetAmount(row.availableAmount) }}
           </template>
         </el-table-column>
         <el-table-column
@@ -98,7 +98,7 @@
           show-overflow-tooltip
         >
           <template #default="{ row }">
-            {{ formatCentAmount(row.frozenAmount) }}
+            {{ formatAssetAmount(row.frozenAmount) }}
           </template>
         </el-table-column>
         <el-table-column
@@ -108,7 +108,7 @@
           show-overflow-tooltip
         >
           <template #default="{ row }">
-            {{ formatCentAmount(row.lockedAmount) }}
+            {{ formatAssetAmount(row.lockedAmount) }}
           </template>
         </el-table-column>
         <el-table-column :label="t('common.actions')" align="center" width="120" fixed="right">
@@ -210,16 +210,16 @@
           {{ optionLabel('assetStatus', detailData.enabled) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.totalAmount')">
-          {{ formatCentAmount(detailData.totalAmount) }}
+          {{ formatAssetAmount(detailData.totalAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.availableAmount')">
-          {{ formatCentAmount(detailData.availableAmount) }}
+          {{ formatAssetAmount(detailData.availableAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.frozenAmount')">
-          {{ formatCentAmount(detailData.frozenAmount) }}
+          {{ formatAssetAmount(detailData.frozenAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.lockedAmount')">
-          {{ formatCentAmount(detailData.lockedAmount) }}
+          {{ formatAssetAmount(detailData.lockedAmount) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('asset.version')">
           {{ detailData.version }}
@@ -242,9 +242,10 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
+import Decimal from 'decimal.js'
 import { useOptions, usePagination } from '@/composables'
 import { assetService, type AssetUserAsset, type OptionGroup } from '@/services'
-import { amountToCent, formatCentAmount, formatDate } from '@/utils'
+import { formatAssetAmount, formatDate } from '@/utils'
 import TenantSelect from '@/components/TenantSelect.vue'
 import UserSelect from '@/components/UserSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
@@ -375,11 +376,23 @@ async function submitChange() {
     ElMessage.warning(t('asset.userId') + t('common.required'))
     return
   }
+  let amount: string
+  try {
+    const parsedAmount = new Decimal(changeForm.amount)
+    if (!parsedAmount.isPositive()) {
+      ElMessage.warning(t('asset.amount') + t('common.required'))
+      return
+    }
+    amount = parsedAmount.toFixed()
+  } catch {
+    ElMessage.warning(t('asset.amount') + t('common.required'))
+    return
+  }
   submitLoading.value = true
   try {
     const payload = {
       ...changeForm,
-      amount: String(amountToCent(changeForm.amount)),
+      amount,
     }
     if (changeMode.value === 'add') await assetService.addAsset(payload)
     if (changeMode.value === 'sub') await assetService.subAsset(payload)

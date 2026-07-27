@@ -49,8 +49,12 @@ func (l *CreateTenantPayChannelLogic) CreateTenantPayChannel(in *payment.CreateT
 	if _, ok := payment.FeeType_name[int32(in.FeeType)]; !ok {
 		return paymentErrorResp(l.ctx, i18n.ParamError), nil
 	}
-	if !validNonNegativeRange(in.SingleMinAmount, in.SingleMaxAmount) ||
-		in.DailyMaxAmount < 0 || in.DailyMaxCount < 0 || in.FeeFixedAmount < 0 {
+	singleMinAmount, minErr := parseNonNegativeAmount(in.SingleMinAmount)
+	singleMaxAmount, maxErr := parseNonNegativeAmount(in.SingleMaxAmount)
+	dailyMaxAmount, dailyErr := parseNonNegativeAmount(in.DailyMaxAmount)
+	feeFixedAmount, fixedErr := parseNonNegativeAmount(in.FeeFixedAmount)
+	if minErr != nil || maxErr != nil || dailyErr != nil || fixedErr != nil ||
+		!validDecimalRange(singleMinAmount, singleMaxAmount) || in.DailyMaxCount < 0 {
 		return paymentErrorResp(l.ctx, i18n.InvalidPaymentAmountRange), nil
 	}
 	if relationResp, err := validateProductPlatform(l.ctx, l.svcCtx, in.ProductId, in.PlatformId); err != nil {
@@ -92,13 +96,13 @@ func (l *CreateTenantPayChannelLogic) CreateTenantPayChannel(in *payment.CreateT
 		Sort:            in.Sort,
 		Visible:         switchToModel(in.Visible, int64(common.Switch_SWITCH_OFF)),
 		Enabled:         enableToModel(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
-		SingleMinAmount: in.SingleMinAmount,
-		SingleMaxAmount: in.SingleMaxAmount,
-		DailyMaxAmount:  in.DailyMaxAmount,
+		SingleMinAmount: singleMinAmount,
+		SingleMaxAmount: singleMaxAmount,
+		DailyMaxAmount:  dailyMaxAmount,
 		DailyMaxCount:   in.DailyMaxCount,
 		FeeType:         int64(in.FeeType),
 		FeeRate:         feeRate,
-		FeeFixedAmount:  in.FeeFixedAmount,
+		FeeFixedAmount:  feeFixedAmount,
 		ExtConfig:       extConfig,
 		Remark:          sql.NullString{String: in.Remark, Valid: true},
 		CreateTimes:     now,

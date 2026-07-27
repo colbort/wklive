@@ -736,13 +736,13 @@ type CreateTenantPayChannelReq struct {
 	Sort            int64  `json:"sort"`
 	Visible         int64  `json:"visible"`
 	Enabled         int64  `json:"enabled"`
-	SingleMinAmount int64  `json:"singleMinAmount"`
-	SingleMaxAmount int64  `json:"singleMaxAmount"`
-	DailyMaxAmount  int64  `json:"dailyMaxAmount"`
+	SingleMinAmount string `json:"singleMinAmount"`
+	SingleMaxAmount string `json:"singleMaxAmount"`
+	DailyMaxAmount  string `json:"dailyMaxAmount"`
 	DailyMaxCount   int64  `json:"dailyMaxCount"`
 	FeeType         int64  `json:"feeType"`
 	FeeRate         string `json:"feeRate,optional"`
-	FeeFixedAmount  int64  `json:"feeFixedAmount,optional"`
+	FeeFixedAmount  string `json:"feeFixedAmount,optional"`
 	ExtConfig       string `json:"extConfig,optional"`
 	Remark          string `json:"remark,optional"`
 }
@@ -753,10 +753,10 @@ type CreateTenantPayChannelRuleReq struct {
 	RuleName             string `json:"ruleName"`
 	Priority             int64  `json:"priority"`
 	Enabled              int64  `json:"enabled"`
-	SingleAmountMin      int64  `json:"singleAmountMin"`
-	SingleAmountMax      int64  `json:"singleAmountMax"`
-	UserTotalRechargeMin int64  `json:"userTotalRechargeMin"`
-	UserTotalRechargeMax int64  `json:"userTotalRechargeMax"`
+	SingleAmountMin      string `json:"singleAmountMin"`
+	SingleAmountMax      string `json:"singleAmountMax"`
+	UserTotalRechargeMin string `json:"userTotalRechargeMin"`
+	UserTotalRechargeMax string `json:"userTotalRechargeMax"`
 	MemberLevelMin       int64  `json:"memberLevelMin"`
 	MemberLevelMax       int64  `json:"memberLevelMax"`
 	KycLevelMin          int64  `json:"kycLevelMin"`
@@ -2420,7 +2420,7 @@ type ManualMarkRechargeOrderSuccessReq struct {
 	TenantId     int64  `json:"tenantId"`
 	OrderNo      string `path:"orderNo"`
 	ThirdTradeNo string `json:"thirdTradeNo,optional"`
-	PayAmount    int64  `json:"payAmount"`
+	PayAmount    string `json:"payAmount"`
 	Remark       string `json:"remark,optional"`
 }
 
@@ -3158,9 +3158,9 @@ type RechargeOrder struct {
 	RechargeType     int64  `json:"rechargeType"` // 0未知 1虚拟币 2三方充值 3银行卡 4人工充值 5其他
 	WalletType       int64  `json:"walletType"`   // 钱包类型:1现货 2资金 3合约 4理财 5期权
 	Currency         string `json:"currency"`
-	OrderAmount      int64  `json:"orderAmount"`
-	PayAmount        int64  `json:"payAmount"`
-	FeeAmount        int64  `json:"feeAmount"`
+	OrderAmount      string `json:"orderAmount"`
+	PayAmount        string `json:"payAmount"`
+	FeeAmount        string `json:"feeAmount"`
 	Subject          string `json:"subject"`
 	Body             string `json:"body"`
 	ClientType       int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
@@ -4319,13 +4319,13 @@ type TenantPayChannel struct {
 	Sort            int64  `json:"sort"`
 	Visible         int64  `json:"visible"`
 	Enabled         int64  `json:"enabled"` // 0未知 1启用 2禁用
-	SingleMinAmount int64  `json:"singleMinAmount"`
-	SingleMaxAmount int64  `json:"singleMaxAmount"`
-	DailyMaxAmount  int64  `json:"dailyMaxAmount"`
+	SingleMinAmount string `json:"singleMinAmount"`
+	SingleMaxAmount string `json:"singleMaxAmount"`
+	DailyMaxAmount  string `json:"dailyMaxAmount"`
 	DailyMaxCount   int64  `json:"dailyMaxCount"`
 	FeeType         int64  `json:"feeType"` // 0未知 1费率 2固定
 	FeeRate         string `json:"feeRate"`
-	FeeFixedAmount  int64  `json:"feeFixedAmount"`
+	FeeFixedAmount  string `json:"feeFixedAmount"`
 	ExtConfig       string `json:"extConfig"`
 	Remark          string `json:"remark"`
 	CreateTimes     int64  `json:"createTimes"`
@@ -4341,10 +4341,10 @@ type TenantPayChannelRule struct {
 	RuleName             string `json:"ruleName"`
 	Priority             int64  `json:"priority"`
 	Enabled              int64  `json:"enabled"` // 0未知 1启用 2禁用
-	SingleAmountMin      int64  `json:"singleAmountMin"`
-	SingleAmountMax      int64  `json:"singleAmountMax"`
-	UserTotalRechargeMin int64  `json:"userTotalRechargeMin"`
-	UserTotalRechargeMax int64  `json:"userTotalRechargeMax"`
+	SingleAmountMin      string `json:"singleAmountMin"`
+	SingleAmountMax      string `json:"singleAmountMax"`
+	UserTotalRechargeMin string `json:"userTotalRechargeMin"`
+	UserTotalRechargeMax string `json:"userTotalRechargeMax"`
 	MemberLevelMin       int64  `json:"memberLevelMin"`
 	MemberLevelMax       int64  `json:"memberLevelMax"`
 	KycLevelMin          int64  `json:"kycLevelMin"`
@@ -4995,13 +4995,13 @@ type UpdateTenantPayChannelReq struct {
 	Sort            int64  `json:"sort"`
 	Visible         int64  `json:"visible"`
 	Enabled         int64  `json:"enabled"`
-	SingleMinAmount int64  `json:"singleMinAmount"`
-	SingleMaxAmount int64  `json:"singleMaxAmount"`
-	DailyMaxAmount  int64  `json:"dailyMaxAmount"`
+	SingleMinAmount string `json:"singleMinAmount"`
+	SingleMaxAmount string `json:"singleMaxAmount"`
+	DailyMaxAmount  string `json:"dailyMaxAmount"`
 	DailyMaxCount   int64  `json:"dailyMaxCount"`
 	FeeType         int64  `json:"feeType"`
 	FeeRate         string `json:"feeRate,optional"`
-	FeeFixedAmount  int64  `json:"feeFixedAmount,optional"`
+	FeeFixedAmount  string `json:"feeFixedAmount,optional"`
 	ExtConfig       string `json:"extConfig,optional"`
 	Remark          string `json:"remark,optional"`
 }
@@ -5012,10 +5012,10 @@ type UpdateTenantPayChannelRuleReq struct {
 	RuleName             string `json:"ruleName"`
 	Priority             int64  `json:"priority"`
 	Enabled              int64  `json:"enabled"`
-	SingleAmountMin      int64  `json:"singleAmountMin"`
-	SingleAmountMax      int64  `json:"singleAmountMax"`
-	UserTotalRechargeMin int64  `json:"userTotalRechargeMin"`
-	UserTotalRechargeMax int64  `json:"userTotalRechargeMax"`
+	SingleAmountMin      string `json:"singleAmountMin"`
+	SingleAmountMax      string `json:"singleAmountMax"`
+	UserTotalRechargeMin string `json:"userTotalRechargeMin"`
+	UserTotalRechargeMax string `json:"userTotalRechargeMax"`
 	MemberLevelMin       int64  `json:"memberLevelMin"`
 	MemberLevelMax       int64  `json:"memberLevelMax"`
 	KycLevelMin          int64  `json:"kycLevelMin"`
@@ -5251,17 +5251,17 @@ type UserItem struct {
 }
 
 type UserRechargeStat struct {
-	Id                 int64 `json:"id"`
-	TenantId           int64 `json:"tenantId"`
-	UserId             int64 `json:"userId"`
-	SuccessOrderCount  int64 `json:"successOrderCount"`
-	SuccessTotalAmount int64 `json:"successTotalAmount"`
-	TodaySuccessAmount int64 `json:"todaySuccessAmount"`
-	TodaySuccessCount  int64 `json:"todaySuccessCount"`
-	FirstSuccessTime   int64 `json:"firstSuccessTime"`
-	LastSuccessTime    int64 `json:"lastSuccessTime"`
-	CreateTimes        int64 `json:"createTimes"`
-	UpdateTimes        int64 `json:"updateTimes"`
+	Id                 int64  `json:"id"`
+	TenantId           int64  `json:"tenantId"`
+	UserId             int64  `json:"userId"`
+	SuccessOrderCount  int64  `json:"successOrderCount"`
+	SuccessTotalAmount string `json:"successTotalAmount"`
+	TodaySuccessAmount string `json:"todaySuccessAmount"`
+	TodaySuccessCount  int64  `json:"todaySuccessCount"`
+	FirstSuccessTime   int64  `json:"firstSuccessTime"`
+	LastSuccessTime    int64  `json:"lastSuccessTime"`
+	CreateTimes        int64  `json:"createTimes"`
+	UpdateTimes        int64  `json:"updateTimes"`
 }
 
 type UserReferrerInfo struct {
@@ -5334,9 +5334,9 @@ type WithdrawOrder struct {
 	AccountId    int64  `json:"accountId"`
 	ChannelId    int64  `json:"channelId"`
 	Currency     string `json:"currency"`
-	Amount       int64  `json:"amount"`
-	FeeAmount    int64  `json:"feeAmount"`
-	ActualAmount int64  `json:"actualAmount"`
+	Amount       string `json:"amount"`
+	FeeAmount    string `json:"feeAmount"`
+	ActualAmount string `json:"actualAmount"`
 	ClientType   int64  `json:"clientType"`
 	ClientIp     string `json:"clientIp"`
 	Status       int64  `json:"status"`

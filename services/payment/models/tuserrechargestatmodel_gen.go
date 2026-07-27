@@ -15,6 +15,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
+
+	"github.com/shopspring/decimal"
 )
 
 var (
@@ -42,17 +44,17 @@ type (
 	}
 
 	TUserRechargeStat struct {
-		Id                 int64         `db:"id"`                   // 主键ID
-		TenantId           int64         `db:"tenant_id"`            // 租户ID
-		UserId             int64         `db:"user_id"`              // 用户ID
-		SuccessOrderCount  int64         `db:"success_order_count"`  // 成功充值笔数
-		SuccessTotalAmount int64         `db:"success_total_amount"` // 成功累计充值金额，单位分
-		TodaySuccessAmount int64         `db:"today_success_amount"` // 今日成功充值金额，单位分
-		TodaySuccessCount  int64         `db:"today_success_count"`  // 今日成功充值次数
-		FirstSuccessTime   sql.NullInt64 `db:"first_success_time"`   // 首次成功充值时间
-		LastSuccessTime    sql.NullInt64 `db:"last_success_time"`    // 最近成功充值时间
-		CreateTimes        int64         `db:"create_times"`         // 创建时间
-		UpdateTimes        int64         `db:"update_times"`         // 更新时间
+		Id                 int64           `db:"id"`                   // 主键ID
+		TenantId           int64           `db:"tenant_id"`            // 租户ID
+		UserId             int64           `db:"user_id"`              // 用户ID
+		SuccessOrderCount  int64           `db:"success_order_count"`  // 成功充值笔数
+		SuccessTotalAmount decimal.Decimal `db:"success_total_amount"` // 成功累计充值金额，自然货币单位
+		TodaySuccessAmount decimal.Decimal `db:"today_success_amount"` // 今日成功充值金额，自然货币单位
+		TodaySuccessCount  int64           `db:"today_success_count"`  // 今日成功充值次数
+		FirstSuccessTime   sql.NullInt64   `db:"first_success_time"`   // 首次成功充值时间
+		LastSuccessTime    sql.NullInt64   `db:"last_success_time"`    // 最近成功充值时间
+		CreateTimes        int64           `db:"create_times"`         // 创建时间
+		UpdateTimes        int64           `db:"update_times"`         // 更新时间
 	}
 )
 

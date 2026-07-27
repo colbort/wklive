@@ -44,7 +44,7 @@ export function apiCloseRechargeOrder(
 
 export function apiManualSuccessRechargeOrder(
   orderNo: string,
-  params: { tenantId: number; thirdTradeNo?: string; payAmount: number; remark?: string },
+  params: { tenantId: number; thirdTradeNo?: string; payAmount: string; remark?: string },
 ): Promise<RespBase> {
   return post(`/admin/payment/recharge-order/${orderNo}/manual-success`, params)
 }

@@ -153,15 +153,15 @@ type AvailableRechargeChannel struct {
 	DisplayName            string `json:"displayName"`
 	Icon                   string `json:"icon"`
 	Currency               string `json:"currency"`
-	SingleMinAmount        int64  `json:"singleMinAmount"`
-	SingleMaxAmount        int64  `json:"singleMaxAmount"`
+	SingleMinAmount        string `json:"singleMinAmount"`
+	SingleMaxAmount        string `json:"singleMaxAmount"`
 	FeeType                int64  `json:"feeType"` // 0未知 1费率 2固定
 	FeeRate                string `json:"feeRate"`
-	FeeFixedAmount         int64  `json:"feeFixedAmount"`
+	FeeFixedAmount         string `json:"feeFixedAmount"`
 	PlatformId             int64  `json:"platformId"`
 	ProductId              int64  `json:"productId"`
 	AccountId              int64  `json:"accountId"`
-	UserSuccessTotalAmount int64  `json:"userSuccessTotalAmount"`
+	UserSuccessTotalAmount string `json:"userSuccessTotalAmount"`
 }
 
 type BatchGetQuoteReq struct {
@@ -296,7 +296,7 @@ type CreateCryptoRechargeOrderReq struct {
 	WalletType     int64  `json:"walletType"`
 	Coin           string `json:"coin"`
 	ChainCode      int64  `json:"chainCode"`
-	RechargeAmount int64  `json:"rechargeAmount"` // 单位：分
+	RechargeAmount string `json:"rechargeAmount"` // 自然货币单位
 	ClientType     int64  `json:"clientType"`     // 0未知 1APP 2H5 3WEB
 	BizOrderNo     string `json:"bizOrderNo,optional"`
 	VoucherImage   string `json:"voucherImage,optional"`
@@ -340,7 +340,7 @@ type CreateOrderResp struct {
 
 type CreateRechargeOrderReq struct {
 	ChannelId      int64  `json:"channelId"`
-	RechargeAmount int64  `json:"rechargeAmount"` // 单位：分
+	RechargeAmount string `json:"rechargeAmount"` // 自然货币单位
 	Currency       string `json:"currency"`
 	Subject        string `json:"subject,optional"`
 	Body           string `json:"body,optional"`
@@ -354,7 +354,7 @@ type CreateRechargeOrderResp struct {
 }
 
 type CreateWithdrawOrderReq struct {
-	Amount   int64  `json:"amount"` // 单位：分
+	Amount   string `json:"amount"` // 自然货币单位
 	Currency string `json:"currency"`
 	Address  string `json:"address"` // 提现地址（钱包地址等）
 	BankId   int64  `json:"bankId"`  // 银行ID（如果是提现到银行卡）
@@ -844,7 +844,7 @@ type ListAssetCoinConfigsResp struct {
 }
 
 type ListAvailableRechargeChannelsReq struct {
-	RechargeAmount int64  `json:"rechargeAmount"` // 单位：分
+	RechargeAmount string `json:"rechargeAmount"` // 自然货币单位
 	Currency       string `json:"currency"`
 	ClientType     int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
 }
@@ -1469,9 +1469,9 @@ type RechargeOrder struct {
 	ChannelId        int64  `json:"channelId"`
 	WalletType       int64  `json:"walletType"` // 钱包类型:1现货 2资金 3合约 4理财 5期权
 	Currency         string `json:"currency"`
-	OrderAmount      int64  `json:"orderAmount"`
-	PayAmount        int64  `json:"payAmount"`
-	FeeAmount        int64  `json:"feeAmount"`
+	OrderAmount      string `json:"orderAmount"`
+	PayAmount        string `json:"payAmount"`
+	FeeAmount        string `json:"feeAmount"`
 	Subject          string `json:"subject"`
 	Body             string `json:"body"`
 	ClientType       int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
@@ -2282,17 +2282,17 @@ type UserProfile struct {
 }
 
 type UserRechargeStat struct {
-	Id                 int64 `json:"id"`
-	TenantId           int64 `json:"tenantId"`
-	UserId             int64 `json:"userId"`
-	SuccessOrderCount  int64 `json:"successOrderCount"`
-	SuccessTotalAmount int64 `json:"successTotalAmount"`
-	TodaySuccessAmount int64 `json:"todaySuccessAmount"`
-	TodaySuccessCount  int64 `json:"todaySuccessCount"`
-	FirstSuccessTime   int64 `json:"firstSuccessTime"`
-	LastSuccessTime    int64 `json:"lastSuccessTime"`
-	CreateTimes        int64 `json:"createTimes"`
-	UpdateTimes        int64 `json:"updateTimes"`
+	Id                 int64  `json:"id"`
+	TenantId           int64  `json:"tenantId"`
+	UserId             int64  `json:"userId"`
+	SuccessOrderCount  int64  `json:"successOrderCount"`
+	SuccessTotalAmount string `json:"successTotalAmount"`
+	TodaySuccessAmount string `json:"todaySuccessAmount"`
+	TodaySuccessCount  int64  `json:"todaySuccessCount"`
+	FirstSuccessTime   int64  `json:"firstSuccessTime"`
+	LastSuccessTime    int64  `json:"lastSuccessTime"`
+	CreateTimes        int64  `json:"createTimes"`
+	UpdateTimes        int64  `json:"updateTimes"`
 }
 
 type UserSecurity struct {
@@ -2320,9 +2320,9 @@ type WithdrawOrder struct {
 	OrderNo      string `json:"orderNo"`
 	BizOrderNo   string `json:"bizOrderNo"`
 	Currency     string `json:"currency"`
-	Amount       int64  `json:"amount"`
-	FeeAmount    int64  `json:"feeAmount"`
-	ActualAmount int64  `json:"actualAmount"`
+	Amount       string `json:"amount"`
+	FeeAmount    string `json:"feeAmount"`
+	ActualAmount string `json:"actualAmount"`
 	ClientType   int64  `json:"clientType"`
 	ClientIp     string `json:"clientIp"`
 	Status       int64  `json:"status"`

@@ -12,7 +12,7 @@ import { optionText, useOptions } from '@/composables/useOptions'
 import { useI18n } from '@/i18n'
 import { useSystemStore } from '@/stores/system'
 import type { AssetCoinConfig, AssetUserAsset } from '@/types/asset'
-import { DEFAULT_ASSET_DECIMAL_PLACES, formatAssetMinorAmount } from '@/utils/assetAmount'
+import { DEFAULT_ASSET_DECIMAL_PLACES, formatAssetDecimalAmount } from '@/utils/assetAmount'
 import { resolveSystemAssetUrl } from '@/utils/assetUrl'
 
 type AssetTopTab = 'assets' | 'orders' | 'profile'
@@ -158,7 +158,7 @@ const displayedAssets = computed(() => {
     const asset = amountMap.get(config.coin)
     return {
       config,
-      amount: formatAssetMinorAmount(
+      amount: formatAssetDecimalAmount(
         asset?.availableAmount || asset?.totalAmount || '0',
         config.decimalPlaces,
       ),

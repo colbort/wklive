@@ -58,7 +58,11 @@ func (l *ManualMarkRechargeOrderSuccessLogic) ManualMarkRechargeOrderSuccess(in 
 		}, nil
 	}
 
-	if err := markRechargeOrderSuccessAndCredit(l.ctx, l.svcCtx, order, in.ThirdTradeNo, in.PayAmount, "manual mark recharge success"); err != nil {
+	payAmount, err := parseNonNegativeAmount(in.PayAmount)
+	if err != nil {
+		return paymentErrorResp(l.ctx, i18n.InvalidPaymentDecimal), nil
+	}
+	if err := markRechargeOrderSuccessAndCredit(l.ctx, l.svcCtx, order, in.ThirdTradeNo, payAmount, "manual mark recharge success"); err != nil {
 		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
 		return nil, err
 	}
