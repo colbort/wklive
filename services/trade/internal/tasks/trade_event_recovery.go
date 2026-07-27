@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"wklive/common/i18n"
 	"wklive/proto/trade"
 	logic "wklive/services/trade/internal/logic/task"
 	"wklive/services/trade/internal/svc"
@@ -28,8 +29,19 @@ func StartTradeEventRecovery(ctx context.Context, svcCtx *svc.ServiceContext) {
 				logx.Errorf("trade event recovery scan failed: %v", err)
 				return
 			}
-			if resp == nil || resp.GetBase() == nil || resp.GetBase().GetCode() != 200 {
-				logx.Errorf("trade event recovery scan returned an invalid response")
+			if resp == nil || resp.GetBase() == nil {
+				logx.Errorf("trade event recovery scan returned an empty response")
+				return
+			}
+			if resp.GetBase().GetCode() == int32(i18n.SyncTaskAlreadyRunning) {
+				return
+			}
+			if resp.GetBase().GetCode() != 200 {
+				logx.Errorf(
+					"trade event recovery scan failed, code=%d msg=%s",
+					resp.GetBase().GetCode(),
+					resp.GetBase().GetMsg(),
+				)
 			}
 		}
 

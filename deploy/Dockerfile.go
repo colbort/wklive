@@ -13,7 +13,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/service
 
 FROM alpine:3.23
 
-RUN apk add --no-cache ca-certificates tzdata \
+RUN apk add --no-cache busybox-extras ca-certificates tzdata \
     && addgroup -S wklive \
     && adduser -S -G wklive wklive
 

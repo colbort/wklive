@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"wklive/common/i18n"
 	"wklive/common/tasks"
 	"wklive/proto/trade"
 	logic "wklive/services/trade/internal/logic/task"
@@ -70,6 +71,12 @@ func checkResp(resp *trade.TradeTaskResp, err error) error {
 	}
 	if resp == nil || resp.GetBase() == nil {
 		return fmt.Errorf("empty task response")
+	}
+	// Another scheduler or the in-process recovery safety net already owns the
+	// distributed task lock. The work is being performed, so acknowledge this
+	// Kafka message instead of retrying it and emitting misleading errors.
+	if resp.GetBase().GetCode() == int32(i18n.SyncTaskAlreadyRunning) {
+		return nil
 	}
 	if resp.GetBase().GetCode() != 200 {
 		return fmt.Errorf("task rejected, code=%d msg=%s", resp.GetBase().GetCode(), resp.GetBase().GetMsg())

@@ -1,7 +1,7 @@
 [
   {
     "key": "/wklive/common/config",
-    "value": "Log:\n  Mode: console\n  Encoding: plain\n  Stat: false\n  Level: info\n\nMysql:\n  DataSource: root:123456@tcp(127.0.0.1:3306)/wklive?charset=utf8mb4&parseTime=true&loc=Local\n\nCacheRedis:\n  - Host: 127.0.0.1:6379\n    Type: node\n\nRedis:\n  Key: wklive\n  Host: 127.0.0.1:6379\n  Type: node\n\nDataCache:\n  Key: wklive\n  Host: 127.0.0.1:6379\n  Type: node\n\nLockRedis:\n  Key: wklive\n  Host: 127.0.0.1:6379\n  Type: node\n\nMQ:\n  Brokers:\n    - 127.0.0.1:9092\n  MinBytes: 1\n  MaxBytes: 10485760\n  MaxAttempts: 5\n  RetryBackoffMs: 1000\n\nJwt:\n  AccessSecret: change-this-secret-before-production\n  AccessExpire: 3600\n"
+    "value": "Log:\n  Mode: console\n  Encoding: plain\n  Stat: false\n  Level: error\n\nMysql:\n  DataSource: root:123456@tcp(127.0.0.1:3306)/wklive?charset=utf8mb4&parseTime=true&loc=Local\n\nCacheRedis:\n  - Host: 127.0.0.1:6379\n    Type: node\n\nRedis:\n  Key: wklive\n  Host: 127.0.0.1:6379\n  Type: node\n\nDataCache:\n  Key: wklive\n  Host: 127.0.0.1:6379\n  Type: node\n\nLockRedis:\n  Key: wklive\n  Host: 127.0.0.1:6379\n  Type: node\n\nMQ:\n  Brokers:\n    - 127.0.0.1:9092\n  MinBytes: 1\n  MaxBytes: 10485760\n  MaxAttempts: 5\n  RetryBackoffMs: 1000\n\nJwt:\n  AccessSecret: change-this-secret-before-production\n  AccessExpire: 3600\n"
   },
   {
     "key": "/wklive/admin-api/config",

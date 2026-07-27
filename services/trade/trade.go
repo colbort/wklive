@@ -19,7 +19,9 @@ import (
 
 	"wklive/common/etcd"
 
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/service"
+	"github.com/zeromicro/go-zero/core/stores/mon"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -40,6 +42,9 @@ func main() {
 	if err := etcd.LoadFromEtcdAndMerge(strings.Split(*endpoints, ","), []string{*commonKey, *configKey}, &c); err != nil {
 		panic(err)
 	}
+
+	logx.SetLevel(logx.ErrorLevel)
+	mon.DisableInfoLog()
 
 	svcCtx := svc.NewServiceContext(c)
 	ctx, cancel := context.WithCancel(context.Background())

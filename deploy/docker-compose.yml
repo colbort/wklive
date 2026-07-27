@@ -5,6 +5,12 @@ x-go-service: &go-service
   init: true
   environment:
     TZ: ${TZ:-Asia/Hong_Kong}
+  healthcheck:
+    test: ["CMD-SHELL", "nc -z 127.0.0.1 \"$$HEALTHCHECK_PORT\""]
+    interval: 5s
+    timeout: 3s
+    retries: 20
+    start_period: 5s
   depends_on:
     config-seed:
       condition: service_completed_successfully
@@ -197,6 +203,9 @@ services:
 
   system-rpc:
     <<: *go-service
+    environment:
+      TZ: ${TZ:-Asia/Hong_Kong}
+      HEALTHCHECK_PORT: "8080"
     build:
       <<: *go-build
       args:
@@ -206,6 +215,12 @@ services:
 
   user-rpc:
     <<: *go-service
+    environment:
+      TZ: ${TZ:-Asia/Hong_Kong}
+      HEALTHCHECK_PORT: "8081"
+    depends_on:
+      system-rpc:
+        condition: service_healthy
     build:
       <<: *go-build
       args:
@@ -215,6 +230,9 @@ services:
 
   itick-rpc:
     <<: *go-service
+    environment:
+      TZ: ${TZ:-Asia/Hong_Kong}
+      HEALTHCHECK_PORT: "8082"
     build:
       <<: *go-build
       args:
@@ -224,6 +242,12 @@ services:
 
   payment-rpc:
     <<: *go-service
+    environment:
+      TZ: ${TZ:-Asia/Hong_Kong}
+      HEALTHCHECK_PORT: "8083"
+    depends_on:
+      asset-rpc:
+        condition: service_healthy
     build:
       <<: *go-build
       args:
@@ -233,6 +257,9 @@ services:
 
   asset-rpc:
     <<: *go-service
+    environment:
+      TZ: ${TZ:-Asia/Hong_Kong}
+      HEALTHCHECK_PORT: "8084"
     build:
       <<: *go-build
       args:
@@ -242,6 +269,12 @@ services:
 
   option-rpc:
     <<: *go-service
+    environment:
+      TZ: ${TZ:-Asia/Hong_Kong}
+      HEALTHCHECK_PORT: "8085"
+    depends_on:
+      asset-rpc:
+        condition: service_healthy
     build:
       <<: *go-build
       args:
@@ -251,6 +284,12 @@ services:
 
   staking-rpc:
     <<: *go-service
+    environment:
+      TZ: ${TZ:-Asia/Hong_Kong}
+      HEALTHCHECK_PORT: "8086"
+    depends_on:
+      asset-rpc:
+        condition: service_healthy
     build:
       <<: *go-build
       args:
@@ -260,6 +299,14 @@ services:
 
   trade-rpc:
     <<: *go-service
+    environment:
+      TZ: ${TZ:-Asia/Hong_Kong}
+      HEALTHCHECK_PORT: "8087"
+    depends_on:
+      asset-rpc:
+        condition: service_healthy
+      itick-rpc:
+        condition: service_healthy
     build:
       <<: *go-build
       args:
@@ -269,6 +316,9 @@ services:
 
   chat-rpc:
     <<: *go-service
+    environment:
+      TZ: ${TZ:-Asia/Hong_Kong}
+      HEALTHCHECK_PORT: "8088"
     build:
       <<: *go-build
       args:
@@ -278,6 +328,18 @@ services:
 
   liquidity-rpc:
     <<: *go-service
+    environment:
+      TZ: ${TZ:-Asia/Hong_Kong}
+      HEALTHCHECK_PORT: "8089"
+    depends_on:
+      asset-rpc:
+        condition: service_healthy
+      itick-rpc:
+        condition: service_healthy
+      trade-rpc:
+        condition: service_healthy
+      user-rpc:
+        condition: service_healthy
     build:
       <<: *go-build
       args:
@@ -287,6 +349,12 @@ services:
 
   payment-api:
     <<: *go-service
+    environment:
+      TZ: ${TZ:-Asia/Hong_Kong}
+      HEALTHCHECK_PORT: "3333"
+    depends_on:
+      payment-rpc:
+        condition: service_healthy
     build:
       <<: *go-build
       args:
@@ -297,6 +365,26 @@ services:
 
   app-api:
     <<: *go-service
+    environment:
+      TZ: ${TZ:-Asia/Hong_Kong}
+      HEALTHCHECK_PORT: "5555"
+    depends_on:
+      asset-rpc:
+        condition: service_healthy
+      itick-rpc:
+        condition: service_healthy
+      option-rpc:
+        condition: service_healthy
+      payment-rpc:
+        condition: service_healthy
+      staking-rpc:
+        condition: service_healthy
+      system-rpc:
+        condition: service_healthy
+      trade-rpc:
+        condition: service_healthy
+      user-rpc:
+        condition: service_healthy
     build:
       <<: *go-build
       args:
@@ -307,6 +395,12 @@ services:
 
   chat-admin-api:
     <<: *go-service
+    environment:
+      TZ: ${TZ:-Asia/Hong_Kong}
+      HEALTHCHECK_PORT: "6666"
+    depends_on:
+      chat-rpc:
+        condition: service_healthy
     build:
       <<: *go-build
       args:
@@ -317,6 +411,12 @@ services:
 
   chat-api:
     <<: *go-service
+    environment:
+      TZ: ${TZ:-Asia/Hong_Kong}
+      HEALTHCHECK_PORT: "7777"
+    depends_on:
+      chat-rpc:
+        condition: service_healthy
     build:
       <<: *go-build
       args:
@@ -327,6 +427,28 @@ services:
 
   admin-api:
     <<: *go-service
+    environment:
+      TZ: ${TZ:-Asia/Hong_Kong}
+      HEALTHCHECK_PORT: "8888"
+    depends_on:
+      asset-rpc:
+        condition: service_healthy
+      chat-rpc:
+        condition: service_healthy
+      itick-rpc:
+        condition: service_healthy
+      option-rpc:
+        condition: service_healthy
+      payment-rpc:
+        condition: service_healthy
+      staking-rpc:
+        condition: service_healthy
+      system-rpc:
+        condition: service_healthy
+      trade-rpc:
+        condition: service_healthy
+      user-rpc:
+        condition: service_healthy
     build:
       <<: *go-build
       args:
@@ -337,6 +459,14 @@ services:
 
   liquidity-admin-api:
     <<: *go-service
+    environment:
+      TZ: ${TZ:-Asia/Hong_Kong}
+      HEALTHCHECK_PORT: "9999"
+    depends_on:
+      liquidity-rpc:
+        condition: service_healthy
+      system-rpc:
+        condition: service_healthy
     build:
       <<: *go-build
       args:

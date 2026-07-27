@@ -168,6 +168,18 @@ func (l *ProcessFillSettlementsLogic) executeAssetInstruction(item *models.TTrad
 		bizType, scene, bizID, bizNo := matchReq(asset.SceneType_SCENE_TYPE_TRADE_FEE)
 		if fill.ProductType == int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) || order.Side == int64(common.Side_SIDE_BUY) {
 			resp, err = l.svcCtx.AssetClient.DeductFrozenAssetByBizNo(l.ctx, &asset.DeductFrozenAssetByBizNoReq{TenantId: item.TenantId, TargetBizType: asset.BizType_BIZ_TYPE_TRADE, TargetBizNo: item.ReservationNo, Amount: item.Amount.String(), BizType: bizType, SceneType: scene, BizId: bizID, BizNo: bizNo, Remark: "spot fill fee from frozen"})
+			if i18n.IsStatusError(err, i18n.FreezeRecordNotDeductible) {
+				// Legacy residual cancellation could release the reservation
+				// before its fee instruction ran. The same biz number keeps
+				// this fallback idempotent in Asset, so a previously applied
+				// fee can never be charged twice.
+				resp, err = l.svcCtx.AssetClient.SubAvailable(l.ctx, &asset.SubAvailableReq{
+					TenantId: item.TenantId, UserId: item.UserId, WalletType: walletType,
+					Coin: item.Asset, Amount: item.Amount.String(),
+					BizType: bizType, SceneType: scene, BizId: bizID, BizNo: bizNo,
+					Remark: "spot fill fee recovery from available",
+				})
+			}
 		} else {
 			resp, err = l.svcCtx.AssetClient.SubAvailable(l.ctx, &asset.SubAvailableReq{TenantId: item.TenantId, UserId: item.UserId, WalletType: walletType, Coin: item.Asset, Amount: item.Amount.String(), BizType: bizType, SceneType: scene, BizId: bizID, BizNo: bizNo, Remark: "spot fill fee from proceeds"})
 		}
