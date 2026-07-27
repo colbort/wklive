@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	"wklive/services/option/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/utils"
@@ -47,7 +48,7 @@ func (l *ListAccountsLogic) ListAccounts(in *option.UserListAccountsReq) (*optio
 	}
 	data := make([]*option.OptionAccount, 0, len(items))
 	for _, item := range items {
-		data = append(data, toAccountProto(item))
+		data = append(data, helpers.ToAccountProto(item))
 	}
 
 	return &option.UserListAccountsResp{Base: helper.OkResp(), Data: data}, nil

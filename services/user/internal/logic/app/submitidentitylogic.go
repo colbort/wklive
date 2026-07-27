@@ -10,6 +10,7 @@ import (
 	"wklive/common/notify"
 	"wklive/common/utils"
 	"wklive/proto/user"
+	"wklive/services/user/internal/logic/helpers"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
 
@@ -163,6 +164,6 @@ func (l *SubmitIdentityLogic) SubmitIdentity(in *user.SubmitIdentityReq) (*user.
 
 	return &user.SubmitIdentityResp{
 		Base: helper.OkResp(),
-		Data: toUserIdentityProto(identity),
+		Data: helpers.ToUserIdentityProto(identity),
 	}, nil
 }

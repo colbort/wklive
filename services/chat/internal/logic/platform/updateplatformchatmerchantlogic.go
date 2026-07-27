@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"strings"
+	"wklive/services/chat/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/utils"
@@ -32,14 +33,14 @@ func NewUpdatePlatformChatMerchantLogic(ctx context.Context, svcCtx *svc.Service
 }
 
 func (l *UpdatePlatformChatMerchantLogic) UpdatePlatformChatMerchant(in *chat.PlatformChatMerchantUpdateReq) (*chat.CommonResp, error) {
-	if base, err := platformScope(l.ctx); err != nil {
+	if base, err := helpers.PlatformScope(l.ctx); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &chat.CommonResp{Base: base}, nil
 	}
 	merchant, err := l.svcCtx.ChatMerchantModel.FindOne(l.ctx, in.GetId())
 	if errors.Is(err, models.ErrNotFound) {
-		return &chat.CommonResp{Base: paramError(l.ctx)}, nil
+		return &chat.CommonResp{Base: helpers.ParamError(l.ctx)}, nil
 	}
 	if err != nil {
 		return nil, err
@@ -52,7 +53,7 @@ func (l *UpdatePlatformChatMerchantLogic) UpdatePlatformChatMerchant(in *chat.Pl
 				return nil, findErr
 			}
 			if existing != nil && existing.Id != merchant.Id {
-				return &chat.CommonResp{Base: paramError(l.ctx)}, nil
+				return &chat.CommonResp{Base: helpers.ParamError(l.ctx)}, nil
 			}
 		}
 		merchant.MerchantCode = code

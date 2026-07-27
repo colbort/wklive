@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/asset"
@@ -39,8 +40,8 @@ func (l *PageAssetFlowsLogic) PageAssetFlows(in *asset.PageAssetFlowsReq) (*asse
 		UserId:     in.UserId,
 		WalletType: int64(in.WalletType),
 		Coin:       in.Coin,
-		BizType:    assetBizType(in.BizType),
-		SceneType:  assetSceneType(in.SceneType),
+		BizType:    helpers.AssetBizType(in.BizType),
+		SceneType:  helpers.AssetSceneType(in.SceneType),
 		BizNo:      in.BizNo,
 		StartTime:  startTime,
 		EndTime:    endTime,
@@ -57,7 +58,7 @@ func (l *PageAssetFlowsLogic) PageAssetFlows(in *asset.PageAssetFlowsReq) (*asse
 	resp := &asset.PageAssetFlowsResp{Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(flows), total, lastID)}
 
 	for _, item := range flows {
-		resp.Data = append(resp.Data, toAssetFlowProto(item))
+		resp.Data = append(resp.Data, helpers.ToAssetFlowProto(item))
 	}
 	return resp, nil
 }

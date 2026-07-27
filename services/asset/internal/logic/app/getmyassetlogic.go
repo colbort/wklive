@@ -7,6 +7,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/asset"
+	"wklive/services/asset/internal/logic/helpers"
 	"wklive/services/asset/internal/svc"
 	"wklive/services/asset/models"
 
@@ -45,5 +46,5 @@ func (l *GetMyAssetLogic) GetMyAsset(in *asset.GetMyAssetReq) (*asset.GetMyAsset
 		return nil, err
 	}
 
-	return &asset.GetMyAssetResp{Base: helper.OkResp(), Data: toUserAssetProto(item)}, nil
+	return &asset.GetMyAssetResp{Base: helper.OkResp(), Data: helpers.ToUserAssetProto(item)}, nil
 }

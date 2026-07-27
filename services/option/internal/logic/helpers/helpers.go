@@ -1,4 +1,4 @@
-package applogic
+package helpers
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	"wklive/services/option/models"
 )
 
-func findContractByCodeOrID(ctx context.Context, svcCtx *svc.ServiceContext, tenantId, id int64, contractCode string) (*models.TOptionContract, error) {
+func FindContractByCodeOrID(ctx context.Context, svcCtx *svc.ServiceContext, tenantId, id int64, contractCode string) (*models.TOptionContract, error) {
 	if id != 0 {
 		item, err := svcCtx.OptionContractModel.FindOne(ctx, id)
 		if err != nil {
@@ -25,7 +25,7 @@ func findContractByCodeOrID(ctx context.Context, svcCtx *svc.ServiceContext, ten
 	return svcCtx.OptionContractModel.FindOneByTenantIdContractCode(ctx, tenantId, contractCode)
 }
 
-func findOrderByNoOrID(ctx context.Context, svcCtx *svc.ServiceContext, tenantId, id int64, orderNo string) (*models.TOptionOrder, error) {
+func FindOrderByNoOrID(ctx context.Context, svcCtx *svc.ServiceContext, tenantId, id int64, orderNo string) (*models.TOptionOrder, error) {
 	if id != 0 {
 		item, err := svcCtx.OptionOrderModel.FindOne(ctx, id)
 		if err != nil {
@@ -39,7 +39,7 @@ func findOrderByNoOrID(ctx context.Context, svcCtx *svc.ServiceContext, tenantId
 	return svcCtx.OptionOrderModel.FindOneByTenantIdOrderNo(ctx, tenantId, orderNo)
 }
 
-func findTradeByNoOrID(ctx context.Context, svcCtx *svc.ServiceContext, tenantId, id int64, tradeNo string) (*models.TOptionTrade, error) {
+func FindTradeByNoOrID(ctx context.Context, svcCtx *svc.ServiceContext, tenantId, id int64, tradeNo string) (*models.TOptionTrade, error) {
 	if id != 0 {
 		item, err := svcCtx.OptionTradeModel.FindOne(ctx, id)
 		if err != nil {
@@ -53,7 +53,7 @@ func findTradeByNoOrID(ctx context.Context, svcCtx *svc.ServiceContext, tenantId
 	return svcCtx.OptionTradeModel.FindOneByTenantIdTradeNo(ctx, tenantId, tradeNo)
 }
 
-func findExerciseByNoOrID(ctx context.Context, svcCtx *svc.ServiceContext, tenantId, id int64, exerciseNo string) (*models.TOptionExercise, error) {
+func FindExerciseByNoOrID(ctx context.Context, svcCtx *svc.ServiceContext, tenantId, id int64, exerciseNo string) (*models.TOptionExercise, error) {
 	if id != 0 {
 		item, err := svcCtx.OptionExerciseModel.FindOne(ctx, id)
 		if err != nil {
@@ -67,7 +67,7 @@ func findExerciseByNoOrID(ctx context.Context, svcCtx *svc.ServiceContext, tenan
 	return svcCtx.OptionExerciseModel.FindOneByTenantIdExerciseNo(ctx, tenantId, exerciseNo)
 }
 
-func findSettlementByNoOrID(ctx context.Context, svcCtx *svc.ServiceContext, tenantId, id int64, settlementNo string) (*models.TOptionSettlement, error) {
+func FindSettlementByNoOrID(ctx context.Context, svcCtx *svc.ServiceContext, tenantId, id int64, settlementNo string) (*models.TOptionSettlement, error) {
 	if id != 0 {
 		item, err := svcCtx.OptionSettlementModel.FindOne(ctx, id)
 		if err != nil {
@@ -81,7 +81,7 @@ func findSettlementByNoOrID(ctx context.Context, svcCtx *svc.ServiceContext, ten
 	return svcCtx.OptionSettlementModel.FindOneByTenantIdSettlementNo(ctx, tenantId, settlementNo)
 }
 
-func findContractIgnoreNotFound(ctx context.Context, svcCtx *svc.ServiceContext, tenantId, contractId int64) (*models.TOptionContract, error) {
+func FindContractIgnoreNotFound(ctx context.Context, svcCtx *svc.ServiceContext, tenantId, contractId int64) (*models.TOptionContract, error) {
 	item, err := svcCtx.OptionContractModel.FindOne(ctx, contractId)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
@@ -95,7 +95,7 @@ func findContractIgnoreNotFound(ctx context.Context, svcCtx *svc.ServiceContext,
 	return item, nil
 }
 
-func findMarketIgnoreNotFound(ctx context.Context, svcCtx *svc.ServiceContext, tenantId, contractId int64) (*models.TOptionMarket, error) {
+func FindMarketIgnoreNotFound(ctx context.Context, svcCtx *svc.ServiceContext, tenantId, contractId int64) (*models.TOptionMarket, error) {
 	item, err := svcCtx.OptionMarketModel.FindOneByTenantIdContractId(ctx, tenantId, contractId)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
@@ -106,7 +106,7 @@ func findMarketIgnoreNotFound(ctx context.Context, svcCtx *svc.ServiceContext, t
 	return item, nil
 }
 
-func toContractProto(item *models.TOptionContract) *option.OptionContract {
+func ToContractProto(item *models.TOptionContract) *option.OptionContract {
 	if item == nil {
 		return nil
 	}
@@ -140,7 +140,7 @@ func toContractProto(item *models.TOptionContract) *option.OptionContract {
 	}
 }
 
-func toMarketProto(item *models.TOptionMarket) *option.OptionMarket {
+func ToMarketProto(item *models.TOptionMarket) *option.OptionMarket {
 	if item == nil {
 		return nil
 	}
@@ -170,7 +170,7 @@ func toMarketProto(item *models.TOptionMarket) *option.OptionMarket {
 	}
 }
 
-func toMarketSnapshotProto(item *models.TOptionMarketSnapshot) *option.OptionMarketSnapshot {
+func ToMarketSnapshotProto(item *models.TOptionMarketSnapshot) *option.OptionMarketSnapshot {
 	if item == nil {
 		return nil
 	}
@@ -195,7 +195,7 @@ func toMarketSnapshotProto(item *models.TOptionMarketSnapshot) *option.OptionMar
 	}
 }
 
-func insertMarketSnapshot(ctx context.Context, model models.TOptionMarketSnapshotModel, market *models.TOptionMarket, now int64) error {
+func InsertMarketSnapshot(ctx context.Context, model models.TOptionMarketSnapshotModel, market *models.TOptionMarket, now int64) error {
 	if market == nil {
 		return nil
 	}
@@ -224,7 +224,7 @@ func insertMarketSnapshot(ctx context.Context, model models.TOptionMarketSnapsho
 	return err
 }
 
-func toOrderProto(item *models.TOptionOrder) *option.OptionOrder {
+func ToOrderProto(item *models.TOptionOrder) *option.OptionOrder {
 	if item == nil {
 		return nil
 	}
@@ -261,7 +261,7 @@ func toOrderProto(item *models.TOptionOrder) *option.OptionOrder {
 	}
 }
 
-func toTradeProto(item *models.TOptionTrade) *option.OptionTrade {
+func ToTradeProto(item *models.TOptionTrade) *option.OptionTrade {
 	if item == nil {
 		return nil
 	}
@@ -291,7 +291,7 @@ func toTradeProto(item *models.TOptionTrade) *option.OptionTrade {
 	}
 }
 
-func toPositionProto(item *models.TOptionPosition) *option.OptionPosition {
+func ToPositionProto(item *models.TOptionPosition) *option.OptionPosition {
 	if item == nil {
 		return nil
 	}
@@ -321,7 +321,7 @@ func toPositionProto(item *models.TOptionPosition) *option.OptionPosition {
 	}
 }
 
-func toExerciseProto(item *models.TOptionExercise) *option.OptionExercise {
+func ToExerciseProto(item *models.TOptionExercise) *option.OptionExercise {
 	if item == nil {
 		return nil
 	}
@@ -350,7 +350,7 @@ func toExerciseProto(item *models.TOptionExercise) *option.OptionExercise {
 	}
 }
 
-func toSettlementProto(item *models.TOptionSettlement) *option.OptionSettlement {
+func ToSettlementProto(item *models.TOptionSettlement) *option.OptionSettlement {
 	if item == nil {
 		return nil
 	}
@@ -374,7 +374,7 @@ func toSettlementProto(item *models.TOptionSettlement) *option.OptionSettlement 
 	}
 }
 
-func toAccountProto(item *models.TOptionAccount) *option.OptionAccount {
+func ToAccountProto(item *models.TOptionAccount) *option.OptionAccount {
 	if item == nil {
 		return nil
 	}
@@ -398,7 +398,7 @@ func toAccountProto(item *models.TOptionAccount) *option.OptionAccount {
 	}
 }
 
-func toBillProto(item *models.TOptionBill) *option.OptionBill {
+func ToBillProto(item *models.TOptionBill) *option.OptionBill {
 	if item == nil {
 		return nil
 	}
@@ -419,61 +419,61 @@ func toBillProto(item *models.TOptionBill) *option.OptionBill {
 	}
 }
 
-func buildContractDetail(ctx context.Context, svcCtx *svc.ServiceContext, contract *models.TOptionContract) (*option.OptionContractDetail, error) {
-	market, err := findMarketIgnoreNotFound(ctx, svcCtx, contract.TenantId, contract.Id)
+func BuildContractDetail(ctx context.Context, svcCtx *svc.ServiceContext, contract *models.TOptionContract) (*option.OptionContractDetail, error) {
+	market, err := FindMarketIgnoreNotFound(ctx, svcCtx, contract.TenantId, contract.Id)
 	if err != nil {
 		return nil, err
 	}
 	return &option.OptionContractDetail{
-		Contract: toContractProto(contract),
-		Market:   toMarketProto(market),
+		Contract: ToContractProto(contract),
+		Market:   ToMarketProto(market),
 	}, nil
 }
 
-func buildOrderDetail(ctx context.Context, svcCtx *svc.ServiceContext, item *models.TOptionOrder) (*option.OptionOrderDetail, error) {
-	contract, err := findContractIgnoreNotFound(ctx, svcCtx, item.TenantId, item.ContractId)
+func BuildOrderDetail(ctx context.Context, svcCtx *svc.ServiceContext, item *models.TOptionOrder) (*option.OptionOrderDetail, error) {
+	contract, err := FindContractIgnoreNotFound(ctx, svcCtx, item.TenantId, item.ContractId)
 	if err != nil {
 		return nil, err
 	}
-	return &option.OptionOrderDetail{Order: toOrderProto(item), Contract: toContractProto(contract)}, nil
+	return &option.OptionOrderDetail{Order: ToOrderProto(item), Contract: ToContractProto(contract)}, nil
 }
 
-func buildTradeDetail(ctx context.Context, svcCtx *svc.ServiceContext, item *models.TOptionTrade) (*option.OptionTradeDetail, error) {
-	contract, err := findContractIgnoreNotFound(ctx, svcCtx, item.TenantId, item.ContractId)
+func BuildTradeDetail(ctx context.Context, svcCtx *svc.ServiceContext, item *models.TOptionTrade) (*option.OptionTradeDetail, error) {
+	contract, err := FindContractIgnoreNotFound(ctx, svcCtx, item.TenantId, item.ContractId)
 	if err != nil {
 		return nil, err
 	}
-	return &option.OptionTradeDetail{Trade: toTradeProto(item), Contract: toContractProto(contract)}, nil
+	return &option.OptionTradeDetail{Trade: ToTradeProto(item), Contract: ToContractProto(contract)}, nil
 }
 
-func buildPositionDetail(ctx context.Context, svcCtx *svc.ServiceContext, item *models.TOptionPosition) (*option.OptionPositionDetail, error) {
-	contract, err := findContractIgnoreNotFound(ctx, svcCtx, item.TenantId, item.ContractId)
+func BuildPositionDetail(ctx context.Context, svcCtx *svc.ServiceContext, item *models.TOptionPosition) (*option.OptionPositionDetail, error) {
+	contract, err := FindContractIgnoreNotFound(ctx, svcCtx, item.TenantId, item.ContractId)
 	if err != nil {
 		return nil, err
 	}
-	market, err := findMarketIgnoreNotFound(ctx, svcCtx, item.TenantId, item.ContractId)
+	market, err := FindMarketIgnoreNotFound(ctx, svcCtx, item.TenantId, item.ContractId)
 	if err != nil {
 		return nil, err
 	}
 	return &option.OptionPositionDetail{
-		Position: toPositionProto(item),
-		Contract: toContractProto(contract),
-		Market:   toMarketProto(market),
+		Position: ToPositionProto(item),
+		Contract: ToContractProto(contract),
+		Market:   ToMarketProto(market),
 	}, nil
 }
 
-func buildExerciseDetail(ctx context.Context, svcCtx *svc.ServiceContext, item *models.TOptionExercise) (*option.OptionExerciseDetail, error) {
-	contract, err := findContractIgnoreNotFound(ctx, svcCtx, item.TenantId, item.ContractId)
+func BuildExerciseDetail(ctx context.Context, svcCtx *svc.ServiceContext, item *models.TOptionExercise) (*option.OptionExerciseDetail, error) {
+	contract, err := FindContractIgnoreNotFound(ctx, svcCtx, item.TenantId, item.ContractId)
 	if err != nil {
 		return nil, err
 	}
-	return &option.OptionExerciseDetail{Exercise: toExerciseProto(item), Contract: toContractProto(contract)}, nil
+	return &option.OptionExerciseDetail{Exercise: ToExerciseProto(item), Contract: ToContractProto(contract)}, nil
 }
 
-func buildSettlementDetail(ctx context.Context, svcCtx *svc.ServiceContext, item *models.TOptionSettlement) (*option.OptionSettlementDetail, error) {
-	contract, err := findContractIgnoreNotFound(ctx, svcCtx, item.TenantId, item.ContractId)
+func BuildSettlementDetail(ctx context.Context, svcCtx *svc.ServiceContext, item *models.TOptionSettlement) (*option.OptionSettlementDetail, error) {
+	contract, err := FindContractIgnoreNotFound(ctx, svcCtx, item.TenantId, item.ContractId)
 	if err != nil {
 		return nil, err
 	}
-	return &option.OptionSettlementDetail{Settlement: toSettlementProto(item), Contract: toContractProto(contract)}, nil
+	return &option.OptionSettlementDetail{Settlement: ToSettlementProto(item), Contract: ToContractProto(contract)}, nil
 }

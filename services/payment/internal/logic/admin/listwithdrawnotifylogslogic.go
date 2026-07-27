@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/common/utils"
@@ -61,7 +62,7 @@ func (l *ListWithdrawNotifyLogsLogic) ListWithdrawNotifyLogs(in *payment.ListWit
 
 	data := make([]*payment.PayNotifyLog, 0, len(logs))
 	for _, log := range logs {
-		data = append(data, toWithdrawNotifyLogProto(log))
+		data = append(data, helpers.ToWithdrawNotifyLogProto(log))
 	}
 
 	return &payment.ListWithdrawNotifyLogsResp{

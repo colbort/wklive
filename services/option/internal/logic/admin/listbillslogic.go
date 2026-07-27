@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/option/internal/logic/helpers"
 
 	pageutil "wklive/common/pageutil"
 	"wklive/proto/option"
@@ -46,7 +47,7 @@ func (l *ListBillsLogic) ListBills(in *option.ListBillsReq) (*option.ListBillsRe
 	lastID := int64(0)
 	for _, item := range items {
 		lastID = item.Id
-		data = append(data, toBillProto(item))
+		data = append(data, helpers.ToBillProto(item))
 	}
 
 	return &option.ListBillsResp{

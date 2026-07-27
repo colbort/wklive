@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/option"
+	"wklive/services/option/internal/logic/helpers"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -41,5 +42,5 @@ func (l *GetAccountLogic) GetAccount(in *option.GetAccountReq) (*option.GetAccou
 		return &option.GetAccountResp{Base: helper.ErrResp(i18n.AccountAssetNotFound, i18n.Translate(i18n.AccountAssetNotFound, l.ctx))}, nil
 	}
 
-	return &option.GetAccountResp{Base: helper.OkResp(), Data: toAccountProto(items[0])}, nil
+	return &option.GetAccountResp{Base: helper.OkResp(), Data: helpers.ToAccountProto(items[0])}, nil
 }

@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"database/sql"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -78,7 +79,7 @@ func (l *CreateTenantPayChannelRuleLogic) CreateTenantPayChannelRule(in *payment
 		ChannelId:            in.ChannelId,
 		RuleName:             in.RuleName,
 		Priority:             in.Priority,
-		Enabled:              enableToModel(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
+		Enabled:              helpers.EnableToModel(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
 		SingleAmountMin:      singleAmountMin,
 		SingleAmountMax:      singleAmountMax,
 		UserTotalRechargeMin: userTotalMin,

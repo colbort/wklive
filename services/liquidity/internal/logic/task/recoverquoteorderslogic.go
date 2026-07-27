@@ -2,6 +2,7 @@ package tasklogic
 
 import (
 	"context"
+	"wklive/services/liquidity/internal/logic/helpers"
 
 	"wklive/proto/liquidity"
 	"wklive/services/liquidity/internal/svc"
@@ -24,7 +25,7 @@ func NewRecoverQuoteOrdersLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *RecoverQuoteOrdersLogic) RecoverQuoteOrders(in *liquidity.LiquidityTaskReq) (*liquidity.LiquidityTaskResp, error) {
-	if err := validateTask(in); err != nil {
+	if err := helpers.ValidateTask(in); err != nil {
 		return nil, err
 	}
 	return processInternalQuotes(l.ctx, l.svcCtx, in, true)

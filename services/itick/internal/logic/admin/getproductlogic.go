@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/itick/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -40,6 +41,6 @@ func (l *GetProductLogic) GetProduct(in *itick.GetProductReq) (*itick.GetProduct
 	}
 	return &itick.GetProductResp{
 		Base: helper.OkResp(),
-		Data: toProductProto(result),
+		Data: helpers.ToProductProto(result),
 	}, nil
 }

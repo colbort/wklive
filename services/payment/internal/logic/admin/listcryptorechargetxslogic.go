@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/payment"
@@ -45,7 +46,7 @@ func (l *ListCryptoRechargeTxsLogic) ListCryptoRechargeTxs(in *payment.ListCrypt
 	}
 	data := make([]*payment.CryptoRechargeTx, 0, len(items))
 	for _, item := range items {
-		data = append(data, toCryptoRechargeTxProto(item))
+		data = append(data, helpers.ToCryptoRechargeTxProto(item))
 	}
 	return &payment.ListCryptoRechargeTxsResp{
 		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastCryptoTxID(items)),

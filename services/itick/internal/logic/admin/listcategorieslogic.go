@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/itick/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/itick"
@@ -43,7 +44,7 @@ func (l *ListCategoriesLogic) ListCategories(in *itick.ListCategoriesReq) (*itic
 
 	var data []*itick.ItickCategory
 	for _, item := range items {
-		data = append(data, toCategoryProto(item))
+		data = append(data, helpers.ToCategoryProto(item))
 	}
 
 	return &itick.ListCategoriesResp{

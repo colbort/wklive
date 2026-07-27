@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/asset"
@@ -30,7 +31,7 @@ func NewPageUserAssetsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pa
 func (l *PageUserAssetsLogic) PageUserAssets(in *asset.PageUserAssetsReq) (*asset.PageUserAssetsResp, error) {
 	enabled := int64(0)
 	if in.Enabled != common.Enable_ENABLE_UNKNOWN {
-		enabled = assetEnabledFilter(in.Enabled)
+		enabled = helpers.AssetEnabledFilter(in.Enabled)
 	}
 
 	list, total, err := l.svcCtx.UserAssetModel.FindPage(l.ctx, models.UserAssetPageFilter{
@@ -52,7 +53,7 @@ func (l *PageUserAssetsLogic) PageUserAssets(in *asset.PageUserAssetsReq) (*asse
 	resp := &asset.PageUserAssetsResp{Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(list), total, lastID)}
 
 	for _, item := range list {
-		resp.Data = append(resp.Data, toUserAssetProto(item))
+		resp.Data = append(resp.Data, helpers.ToUserAssetProto(item))
 	}
 	return resp, nil
 }

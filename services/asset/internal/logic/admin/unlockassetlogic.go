@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -56,7 +57,7 @@ func (l *UnlockAssetLogic) UnlockAsset(in *asset.ManualUnlockAssetReq) (*asset.M
 			in.TenantId, lock.TenantId, in.LockNo, in.Amount, in.BizNo, err)
 		return nil, err
 	}
-	if base, err := adminTenantWriteScopeResp(l.ctx, lock.TenantId, i18n.BusinessDataNotFound); err != nil {
+	if base, err := helpers.AdminTenantWriteScopeResp(l.ctx, lock.TenantId, i18n.BusinessDataNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &asset.ManualChangeAssetResp{Base: base}, nil
@@ -102,7 +103,7 @@ func (l *UnlockAssetLogic) UnlockAsset(in *asset.ManualUnlockAssetReq) (*asset.M
 			return err
 		}
 
-		flow := buildAssetFlowRecord(l.svcCtx, ctx, lock.TenantId, lock.UserId, lock.WalletType, lock.Coin, "manual_sub", "system", "manual_sub", 0, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_UNLOCK, amount, before, after, in.Remark, ts)
+		flow := helpers.BuildAssetFlowRecord(l.svcCtx, ctx, lock.TenantId, lock.UserId, lock.WalletType, lock.Coin, "manual_sub", "system", "manual_sub", 0, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_UNLOCK, amount, before, after, in.Remark, ts)
 		if _, err := assetFlowModel.Insert(ctx, flow); err != nil {
 			return err
 		}
@@ -114,5 +115,5 @@ func (l *UnlockAssetLogic) UnlockAsset(in *asset.ManualUnlockAssetReq) (*asset.M
 		return nil, err
 	}
 
-	return &asset.ManualChangeAssetResp{Base: helper.OkResp(), Data: &asset.ManualChangeAssetData{BizNo: in.BizNo, Asset: toUserAssetProto(after)}}, nil
+	return &asset.ManualChangeAssetResp{Base: helper.OkResp(), Data: &asset.ManualChangeAssetData{BizNo: in.BizNo, Asset: helpers.ToUserAssetProto(after)}}, nil
 }

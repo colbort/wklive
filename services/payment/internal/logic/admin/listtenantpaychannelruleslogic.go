@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/common/utils"
@@ -62,7 +63,7 @@ func (l *ListTenantPayChannelRulesLogic) ListTenantPayChannelRules(in *payment.L
 		channelNames[channel.Id] = channel.ChannelName
 	}
 	for _, r := range rules {
-		item := toTenantPayChannelRuleProto(r)
+		item := helpers.ToTenantPayChannelRuleProto(r)
 		item.ChannelName = channelNames[r.ChannelId]
 		data = append(data, item)
 	}

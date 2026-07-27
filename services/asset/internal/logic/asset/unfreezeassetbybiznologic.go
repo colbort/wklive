@@ -3,6 +3,7 @@ package assetlogic
 import (
 	"context"
 	"strings"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -44,7 +45,7 @@ func (l *UnfreezeAssetByBizNoLogic) UnfreezeAssetByBizNo(in *asset.UnfreezeAsset
 	unfreezeRemaining := rawAmount == "" || amount.IsZero()
 	unfreezeAmount := rawAmount
 
-	freeze, err := findFreezeByBizNo(l.ctx, l.svcCtx, in.TenantId, in.TargetBizType, in.TargetBizNo)
+	freeze, err := helpers.FindFreezeByBizNo(l.ctx, l.svcCtx, in.TenantId, in.TargetBizType, in.TargetBizNo)
 	if err != nil {
 		if unfreezeRemaining {
 			return &asset.ChangeAssetResp{Base: helper.OkResp(), Data: &asset.ChangeAssetData{BizNo: in.BizNo}}, nil

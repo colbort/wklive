@@ -9,6 +9,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/user"
+	"wklive/services/user/internal/logic/helpers"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
 
@@ -94,6 +95,6 @@ func (l *UpdateBankLogic) UpdateBank(in *user.UpdateBankReq) (*user.UpdateBankRe
 
 	return &user.UpdateBankResp{
 		Base: helper.OkResp(),
-		Data: toUserBankItemProto(bank),
+		Data: helpers.ToUserBankItemProto(bank),
 	}, nil
 }

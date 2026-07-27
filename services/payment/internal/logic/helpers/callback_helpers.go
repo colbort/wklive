@@ -1,4 +1,4 @@
-package callbacklogic
+package helpers
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"wklive/services/payment/models"
 )
 
-func resolveNotifyAdapter(
+func ResolveNotifyAdapter(
 	ctx context.Context,
 	svcCtx *svc.ServiceContext,
 	in *payment.ThirdPartyNotifyReq,
@@ -35,7 +35,7 @@ func resolveNotifyAdapter(
 	return account, adapter, err
 }
 
-func toNotifyRequest(in *payment.ThirdPartyNotifyReq) provider.NotifyRequest {
+func ToNotifyRequest(in *payment.ThirdPartyNotifyReq) provider.NotifyRequest {
 	headers := make(map[string][]string, len(in.Headers))
 	for key, value := range in.Headers {
 		headers[key] = []string{value}
@@ -51,7 +51,7 @@ func toNotifyRequest(in *payment.ThirdPartyNotifyReq) provider.NotifyRequest {
 	return provider.NotifyRequest{Headers: headers, Query: query, Form: form, Body: in.Body}
 }
 
-func notifyResponse(platformCode string, success bool) *payment.ThirdPartyNotifyResp {
+func NotifyResponse(platformCode string, success bool) *payment.ThirdPartyNotifyResp {
 	switch strings.ToLower(strings.TrimSpace(platformCode)) {
 	case string(provider.PaymentCodeAlipay):
 		body := []byte("failure")
@@ -70,6 +70,6 @@ func notifyResponse(platformCode string, success bool) *payment.ThirdPartyNotify
 	}
 }
 
-func isNotFound(err error) bool {
+func IsNotFound(err error) bool {
 	return errors.Is(err, models.ErrNotFound)
 }

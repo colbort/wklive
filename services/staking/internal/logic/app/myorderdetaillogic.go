@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	"wklive/services/staking/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -52,5 +53,5 @@ func (l *MyOrderDetailLogic) MyOrderDetail(in *staking.MyOrderDetailReq) (*staki
 		return &staking.MyOrderDetailResp{Base: helper.ErrResp(i18n.NoPermissionAccessOrder, i18n.Translate(i18n.NoPermissionAccessOrder, l.ctx))}, nil
 	}
 
-	return &staking.MyOrderDetailResp{Base: helper.OkResp(), Data: orderToProto(item)}, nil
+	return &staking.MyOrderDetailResp{Base: helper.OkResp(), Data: helpers.OrderToProto(item)}, nil
 }

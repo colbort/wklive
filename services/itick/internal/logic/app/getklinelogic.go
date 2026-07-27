@@ -4,6 +4,7 @@ import (
 	"context"
 	"sort"
 	"time"
+	"wklive/services/itick/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/proto/itick"
@@ -44,7 +45,7 @@ func (l *GetKlineLogic) GetKline(in *itick.GetKlineReq) (*itick.GetKlineResp, er
 	}
 	data := make([]*itick.Kline, 0, len(result))
 	for _, item := range result {
-		data = append(data, toKlineProto(in.KType, item))
+		data = append(data, helpers.ToKlineProto(in.KType, item))
 	}
 	return &itick.GetKlineResp{Base: helper.OkResp(), Data: data}, nil
 }
@@ -86,7 +87,7 @@ func (l *GetKlineLogic) getYearKlines(in *itick.GetKlineReq) (*itick.GetKlineRes
 		sort.Slice(list, func(i, j int) bool { return list[i].Ts < list[j].Ts })
 		start, _ := l.svcCtx.MarketCalendarResolver.Bucket(l.ctx, in.CategoryCode, in.Market, "", list[0].Ts, "1y")
 		bar := aggregateQueryKlines(in, start, list)
-		data = append(data, toKlineProto(in.KType, bar))
+		data = append(data, helpers.ToKlineProto(in.KType, bar))
 	}
 	return &itick.GetKlineResp{Base: helper.OkResp(), Data: data}, nil
 }

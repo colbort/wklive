@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/generate"
@@ -100,7 +101,7 @@ func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(in *payment.CreateWithdra
 		}
 		withdrawOrder.Id = id
 
-		return freezeWithdrawOrderAsset(ctx, l.svcCtx, withdrawOrder, "withdraw apply freeze")
+		return helpers.FreezeWithdrawOrderAsset(ctx, l.svcCtx, withdrawOrder, "withdraw apply freeze")
 	})
 	if err != nil {
 		return nil, err

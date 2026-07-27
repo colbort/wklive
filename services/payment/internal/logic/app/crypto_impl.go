@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"github.com/shopspring/decimal"
 
@@ -20,7 +21,7 @@ import (
 
 func createCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext, in *payment.CreateCryptoRechargeAddressReq) (*payment.CommonResp, error) {
 	now := utils.NowMillis()
-	status := toCryptoAddressStatusDB(in.Status, int64(payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_ENABLED))
+	status := helpers.ToCryptoAddressStatusDB(in.Status, int64(payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_ENABLED))
 	if in.AddressSource == 0 {
 		in.AddressSource = payment.CryptoRechargeAddressSource_CRYPTO_RECHARGE_ADDRESS_SOURCE_MANUAL
 	}
@@ -76,7 +77,7 @@ func updateCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext
 	if in.AddressType != 0 {
 		item.AddressType = int64(in.AddressType)
 	}
-	item.Status = toCryptoAddressStatusDB(in.Status, item.Status)
+	item.Status = helpers.ToCryptoAddressStatusDB(in.Status, item.Status)
 	item.UpdateTimes = utils.NowMillis()
 	if err := svcCtx.CryptoRechargeAddressModel.Update(ctx, item); err != nil {
 		return nil, err
@@ -111,7 +112,7 @@ func listCryptoRechargeAddresses(ctx context.Context, svcCtx *svc.ServiceContext
 	}
 	data := make([]*payment.CryptoRechargeAddress, 0, len(items))
 	for _, item := range items {
-		data = append(data, toCryptoRechargeAddressProto(item))
+		data = append(data, helpers.ToCryptoRechargeAddressProto(item))
 	}
 	return &payment.ListCryptoRechargeAddressesResp{
 		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastCryptoAddressID(items)),
@@ -134,7 +135,7 @@ func createCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 		ApiSecretCipher:      nullableString(in.ApiSecretCipher),
 		CallbackSecretCipher: nullableString(in.CallbackSecretCipher),
 		ExtConfig:            nullableString(in.ExtConfig),
-		Enabled:              toCryptoWalletStatusDB(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
+		Enabled:              helpers.ToCryptoWalletStatusDB(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
 		IsDefault:            isDefault,
 		CreateTimes:          now,
 		UpdateTimes:          now,
@@ -178,7 +179,7 @@ func updateCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 	if in.ExtConfig != "" {
 		item.ExtConfig = nullableString(in.ExtConfig)
 	}
-	item.Enabled = toCryptoWalletStatusDB(in.Enabled, item.Enabled)
+	item.Enabled = helpers.ToCryptoWalletStatusDB(in.Enabled, item.Enabled)
 	if common.YesNo(in.IsDefault) != common.YesNo_YES_NO_UNKNOWN {
 		item.IsDefault = int64(in.IsDefault)
 	}
@@ -202,7 +203,7 @@ func listCryptoWalletAccounts(ctx context.Context, svcCtx *svc.ServiceContext, i
 	}
 	data := make([]*payment.CryptoWalletAccount, 0, len(items))
 	for _, item := range items {
-		data = append(data, toCryptoWalletAccountProto(item))
+		data = append(data, helpers.ToCryptoWalletAccountProto(item))
 	}
 	return &payment.ListCryptoWalletAccountsResp{
 		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastCryptoWalletAccountID(items)),
@@ -303,7 +304,7 @@ func creditCryptoRechargeOrder(ctx context.Context, svcCtx *svc.ServiceContext, 
 	if err != nil {
 		return err
 	}
-	return markRechargeOrderSuccessAndCredit(ctx, svcCtx, order, txHash, decimal.Zero, "crypto recharge credited")
+	return helpers.MarkRechargeOrderSuccessAndCredit(ctx, svcCtx, order, txHash, decimal.Zero, "crypto recharge credited")
 }
 
 func listCryptoRechargeTxs(ctx context.Context, svcCtx *svc.ServiceContext, req listCryptoTxReq) ([]*models.TCryptoRechargeTx, int64, error) {
@@ -385,8 +386,4 @@ func lastCryptoTxID(items []*models.TCryptoRechargeTx) int64 {
 
 func cryptoNotFoundResp() *payment.CommonResp {
 	return &payment.CommonResp{Base: helper.ErrResp(i18n.NotFound, i18n.Translate(i18n.NotFound, context.Background()))}
-}
-
-func isNotFound(err error) bool {
-	return errors.Is(err, models.ErrNotFound)
 }

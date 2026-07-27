@@ -7,6 +7,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/option"
+	"wklive/services/option/internal/logic/helpers"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -43,7 +44,7 @@ func (l *GetContractDetailLogic) GetContractDetail(in *option.GetContractDetailR
 	if item.TenantId != tenantId {
 		return &option.GetContractDetailResp{Base: helper.ErrResp(i18n.ContractNotFound, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
 	}
-	data, err := buildContractDetail(l.ctx, l.svcCtx, item)
+	data, err := helpers.BuildContractDetail(l.ctx, l.svcCtx, item)
 	if err != nil {
 		return nil, err
 	}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -35,7 +36,7 @@ func (l *CreatePayProductLogic) CreatePayProduct(in *payment.CreatePayProductReq
 	var (
 		errLogic = "CreatePayProduct"
 	)
-	if base, err := systemAdminWriteScopeResp(l.ctx); err != nil {
+	if base, err := helpers.SystemAdminWriteScopeResp(l.ctx); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &payment.CommonResp{Base: base}, nil
@@ -59,7 +60,7 @@ func (l *CreatePayProductLogic) CreatePayProduct(in *payment.CreatePayProductReq
 		ProductName: in.ProductName,
 		SceneType:   int64(in.SceneType),
 		Currency:    in.Currency,
-		Enabled:     enableToModel(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
+		Enabled:     helpers.EnableToModel(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
 		Remark:      sql.NullString{String: in.Remark, Valid: true},
 		CreateTimes: now,
 		UpdateTimes: now,
@@ -67,7 +68,7 @@ func (l *CreatePayProductLogic) CreatePayProduct(in *payment.CreatePayProductReq
 
 	_, err := l.svcCtx.PayProductModel.Insert(l.ctx, product)
 	if err != nil {
-		if isDuplicateEntry(err) {
+		if helpers.IsDuplicateEntry(err) {
 			return &payment.CommonResp{
 				Base: helper.ErrResp(
 					i18n.PayProductCodeAlreadyExists,

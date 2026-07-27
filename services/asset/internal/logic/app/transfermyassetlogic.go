@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"strings"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/generate"
@@ -178,12 +179,12 @@ func (l *TransferMyAssetLogic) transferAsset(tenantId, userId int64, fromWalletT
 			return err
 		}
 
-		flowOut := buildAssetFlowRecord(l.svcCtx, ctx, tenantId, userId, int64(fromWalletType), fromCoin, "transfer", "transfer", "transfer", 0, bizNo, asset.AssetOpType_ASSET_OP_TYPE_TRANSFER_OUT, fromAmount, beforeFrom, afterFrom, remark, ts)
+		flowOut := helpers.BuildAssetFlowRecord(l.svcCtx, ctx, tenantId, userId, int64(fromWalletType), fromCoin, "transfer", "transfer", "transfer", 0, bizNo, asset.AssetOpType_ASSET_OP_TYPE_TRANSFER_OUT, fromAmount, beforeFrom, afterFrom, remark, ts)
 		if _, err := assetFlowModel.Insert(ctx, flowOut); err != nil {
 			return err
 		}
 
-		flowIn := buildAssetFlowRecord(l.svcCtx, ctx, tenantId, userId, int64(toWalletType), toCoin, "transfer", "transfer", "transfer", 0, bizNo, asset.AssetOpType_ASSET_OP_TYPE_TRANSFER_IN, toAmount, beforeTo, afterTo, remark, ts)
+		flowIn := helpers.BuildAssetFlowRecord(l.svcCtx, ctx, tenantId, userId, int64(toWalletType), toCoin, "transfer", "transfer", "transfer", 0, bizNo, asset.AssetOpType_ASSET_OP_TYPE_TRANSFER_IN, toAmount, beforeTo, afterTo, remark, ts)
 		if _, err := assetFlowModel.Insert(ctx, flowIn); err != nil {
 			return err
 		}
@@ -195,5 +196,5 @@ func (l *TransferMyAssetLogic) transferAsset(tenantId, userId int64, fromWalletT
 		return nil, err
 	}
 
-	return &asset.TransferMyAssetResp{Base: helper.OkResp(), Data: &asset.TransferMyAssetData{FromAsset: toUserAssetProto(afterFrom), ToAsset: toUserAssetProto(afterTo)}}, nil
+	return &asset.TransferMyAssetResp{Base: helper.OkResp(), Data: &asset.TransferMyAssetData{FromAsset: helpers.ToUserAssetProto(afterFrom), ToAsset: helpers.ToUserAssetProto(afterTo)}}, nil
 }

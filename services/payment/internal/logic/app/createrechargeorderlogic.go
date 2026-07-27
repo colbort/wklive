@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"github.com/redis/go-redis/v9"
 	"github.com/shopspring/decimal"
@@ -86,7 +87,7 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
-	rechargeType := rechargeTypeFromPlatform(platform)
+	rechargeType := helpers.RechargeTypeFromPlatform(platform)
 
 	if platform != nil && platform.PlatformType == int64(payment.PlatformType_PLATFORM_TYPE_THIRD) {
 		reusable, err := l.findReusableRechargeOrder(tenantId, userId, channel.Id, rechargeAmount, in.Currency)
@@ -94,7 +95,7 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 			return nil, err
 		}
 		if reusable != nil {
-			return &payment.CreateRechargeOrderResp{Base: helper.OkResp(), Data: toRechargeOrderProto(reusable)}, nil
+			return &payment.CreateRechargeOrderResp{Base: helper.OkResp(), Data: helpers.ToRechargeOrderProto(reusable)}, nil
 		}
 		release, acquired, err := l.acquireRechargeSession(tenantId, userId, channel.Id, rechargeAmount, in.Currency)
 		if err != nil {
@@ -110,7 +111,7 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 			return nil, err
 		}
 		if reusable != nil {
-			return &payment.CreateRechargeOrderResp{Base: helper.OkResp(), Data: toRechargeOrderProto(reusable)}, nil
+			return &payment.CreateRechargeOrderResp{Base: helper.OkResp(), Data: helpers.ToRechargeOrderProto(reusable)}, nil
 		}
 	}
 
@@ -223,7 +224,7 @@ func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRecharg
 
 	return &payment.CreateRechargeOrderResp{
 		Base: helper.OkResp(),
-		Data: toRechargeOrderProto(rechargeOrder),
+		Data: helpers.ToRechargeOrderProto(rechargeOrder),
 	}, nil
 }
 

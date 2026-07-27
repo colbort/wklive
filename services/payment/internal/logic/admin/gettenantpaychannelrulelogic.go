@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/payment"
+	"wklive/services/payment/internal/logic/helpers"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
 
@@ -46,6 +47,6 @@ func (l *GetTenantPayChannelRuleLogic) GetTenantPayChannelRule(in *payment.GetTe
 
 	return &payment.GetTenantPayChannelRuleResp{
 		Base: helper.OkResp(),
-		Data: toTenantPayChannelRuleProto(rule),
+		Data: helpers.ToTenantPayChannelRuleProto(rule),
 	}, nil
 }

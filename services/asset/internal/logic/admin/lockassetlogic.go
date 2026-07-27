@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -31,7 +32,7 @@ func NewLockAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LockAss
 
 // 后台锁仓资产
 func (l *LockAssetLogic) LockAsset(in *asset.ManualLockAssetReq) (*asset.ManualChangeAssetResp, error) {
-	if base, err := adminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
+	if base, err := helpers.AdminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &asset.ManualChangeAssetResp{Base: base}, nil
@@ -79,12 +80,12 @@ func (l *LockAssetLogic) LockAsset(in *asset.ManualLockAssetReq) (*asset.ManualC
 			return err
 		}
 
-		lock = buildAssetLockRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "system", "manual_add", in.BizNo, in.Remark, amount, 0, 0, ts)
+		lock = helpers.BuildAssetLockRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "system", "manual_add", in.BizNo, in.Remark, amount, 0, 0, ts)
 		if _, err := assetLockModel.Insert(ctx, lock); err != nil {
 			return err
 		}
 
-		flow := buildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "manual_add", "system", "manual_add", 0, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_LOCK, amount, before, after, in.Remark, ts)
+		flow := helpers.BuildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "manual_add", "system", "manual_add", 0, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_LOCK, amount, before, after, in.Remark, ts)
 		if _, err := assetFlowModel.Insert(ctx, flow); err != nil {
 			return err
 		}
@@ -96,5 +97,5 @@ func (l *LockAssetLogic) LockAsset(in *asset.ManualLockAssetReq) (*asset.ManualC
 		return nil, err
 	}
 
-	return &asset.ManualChangeAssetResp{Base: helper.OkResp(), Data: &asset.ManualChangeAssetData{BizNo: in.BizNo, Asset: toUserAssetProto(after)}}, nil
+	return &asset.ManualChangeAssetResp{Base: helper.OkResp(), Data: &asset.ManualChangeAssetData{BizNo: in.BizNo, Asset: helpers.ToUserAssetProto(after)}}, nil
 }

@@ -3,12 +3,13 @@ package adminlogic
 import (
 	"testing"
 	"wklive/common/conv"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"github.com/shopspring/decimal"
 )
 
 func TestPaymentAmountToTextUsesNaturalUnits(t *testing.T) {
-	if got := paymentAmountToText(decimal.RequireFromString("1000.25")); got != "1000.25" {
+	if got := helpers.PaymentAmountToText(decimal.RequireFromString("1000.25")); got != "1000.25" {
 		t.Fatalf("payment natural amount = %s, want 1000.25", got)
 	}
 }

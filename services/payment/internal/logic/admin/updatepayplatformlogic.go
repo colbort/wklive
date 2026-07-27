@@ -8,6 +8,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/payment"
+	"wklive/services/payment/internal/logic/helpers"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
 
@@ -36,7 +37,7 @@ func (l *UpdatePayPlatformLogic) UpdatePayPlatform(in *payment.UpdatePayPlatform
 	if in.Id <= 0 {
 		return paymentErrorResp(l.ctx, i18n.PaymentRequiredParamsMissing), nil
 	}
-	if base, err := systemAdminWriteScopeResp(l.ctx); err != nil {
+	if base, err := helpers.SystemAdminWriteScopeResp(l.ctx); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &payment.CommonResp{

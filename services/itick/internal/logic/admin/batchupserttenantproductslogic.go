@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"fmt"
+	"wklive/services/itick/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -30,7 +31,7 @@ func NewBatchUpsertTenantProductsLogic(ctx context.Context, svcCtx *svc.ServiceC
 
 // 批量更新租户产品，已关联的修改状态、排序和备注，未关联的新增，未提交的删除
 func (l *BatchUpsertTenantProductsLogic) BatchUpsertTenantProducts(in *itick.BatchUpsertTenantProductsReq) (*itick.CommonResp, error) {
-	if base, err := adminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
+	if base, err := helpers.AdminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &itick.CommonResp{Base: base}, nil

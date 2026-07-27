@@ -2,6 +2,7 @@ package applogic
 
 import (
 	"context"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/utils"
@@ -48,7 +49,7 @@ func (l *ListMyAssetsLogic) ListMyAssets(in *asset.ListMyAssetsReq) (*asset.List
 
 	resp := &asset.ListMyAssetsResp{Base: helper.OkResp()}
 	for _, item := range list {
-		resp.Data = append(resp.Data, toUserAssetProto(item))
+		resp.Data = append(resp.Data, helpers.ToUserAssetProto(item))
 	}
 	return resp, nil
 }

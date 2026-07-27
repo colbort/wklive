@@ -11,6 +11,7 @@ import (
 	"wklive/proto/common"
 	"wklive/proto/system"
 	"wklive/proto/user"
+	"wklive/services/user/internal/logic/helpers"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
 
@@ -152,7 +153,7 @@ func (l *LoginLogic) Login(in *user.LoginReq) (*user.LoginResp, error) {
 		Data: &user.LoginData{
 			UserId:  tuser.Id,
 			Token:   token,
-			Profile: toUserProfileProto(tuser, nil, userSecurity),
+			Profile: helpers.ToUserProfileProto(tuser, nil, userSecurity),
 		},
 	}, nil
 }

@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	"wklive/services/option/internal/logic/helpers"
 
-	marketEvent "wklive/common/market"
+	cache "wklive/common/market"
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
@@ -36,8 +37,8 @@ func NewSyncMarketQuoteLogic(ctx context.Context, svcCtx *svc.ServiceContext) *S
 	}
 }
 
-func (l *SyncMarketQuoteLogic) SyncAuthoritativeSnapshot(event marketEvent.AuthoritativeSnapshotEvent) (MarketSnapshotConsumeResult, error) {
-	if event.Version != marketEvent.AuthoritativeSnapshotEventVersion {
+func (l *SyncMarketQuoteLogic) SyncAuthoritativeSnapshot(event cache.AuthoritativeSnapshotEvent) (MarketSnapshotConsumeResult, error) {
+	if event.Version != cache.AuthoritativeSnapshotEventVersion {
 		return MarketSnapshotConsumeResult{}, fmt.Errorf("unsupported authoritative snapshot event version: %d", event.Version)
 	}
 	if strings.TrimSpace(event.SnapshotID) == "" {
@@ -58,7 +59,7 @@ func (l *SyncMarketQuoteLogic) SyncAuthoritativeSnapshot(event marketEvent.Autho
 	return result, nil
 }
 
-func (l *SyncMarketQuoteLogic) syncMarketQuote(tenantID int64, event marketEvent.AuthoritativeSnapshotEvent) (MarketSnapshotConsumeResult, error) {
+func (l *SyncMarketQuoteLogic) syncMarketQuote(tenantID int64, event cache.AuthoritativeSnapshotEvent) (MarketSnapshotConsumeResult, error) {
 	symbol := strings.ToUpper(strings.TrimSpace(event.Symbol))
 	if symbol == "" {
 		return MarketSnapshotConsumeResult{}, errors.New("market symbol is required")
@@ -154,7 +155,7 @@ func (l *SyncMarketQuoteLogic) syncContractMarket(contract *models.TOptionContra
 			return err
 		}
 
-		if err := insertMarketSnapshot(ctx, snapshotModel, market, now); err != nil {
+		if err := helpers.InsertMarketSnapshot(ctx, snapshotModel, market, now); err != nil {
 			return err
 		}
 		changed = true

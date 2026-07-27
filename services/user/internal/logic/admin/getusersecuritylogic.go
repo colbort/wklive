@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/user/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/proto/user"
@@ -33,6 +34,6 @@ func (l *GetUserSecurityLogic) GetUserSecurity(in *user.GetUserSecurityReq) (*us
 
 	return &user.GetUserSecurityResp{
 		Base: helper.OkResp(),
-		Data: toUserSecurityProto(result),
+		Data: helpers.ToUserSecurityProto(result),
 	}, nil
 }

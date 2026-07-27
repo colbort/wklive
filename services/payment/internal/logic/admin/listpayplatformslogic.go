@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/payment"
@@ -42,7 +43,7 @@ func (l *ListPayPlatformsLogic) ListPayPlatforms(in *payment.ListPayPlatformsReq
 	}
 	data := make([]*payment.PayPlatform, 0)
 	for _, p := range items {
-		data = append(data, toPayPlatformProto(p))
+		data = append(data, helpers.ToPayPlatformProto(p))
 	}
 
 	return &payment.ListPayPlatformsResp{

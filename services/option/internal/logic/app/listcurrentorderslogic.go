@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	"wklive/services/option/internal/logic/helpers"
 
 	pageutil "wklive/common/pageutil"
 	"wklive/common/utils"
@@ -57,7 +58,7 @@ func (l *ListCurrentOrdersLogic) ListCurrentOrders(in *option.ListCurrentOrdersR
 	lastID := int64(0)
 	for _, item := range items {
 		lastID = item.Id
-		detail, err := buildOrderDetail(l.ctx, l.svcCtx, item)
+		detail, err := helpers.BuildOrderDetail(l.ctx, l.svcCtx, item)
 		if err != nil {
 			return nil, err
 		}

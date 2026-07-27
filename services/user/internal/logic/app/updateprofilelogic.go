@@ -9,6 +9,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/user"
+	"wklive/services/user/internal/logic/helpers"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
 
@@ -132,7 +133,7 @@ func (l *UpdateProfileLogic) buildUpdateProfileResp(tuser *models.TUser, _ *mode
 
 	return &user.UpdateProfileResp{
 		Base: helper.OkResp(),
-		Data: toUserProfileProto(tuser, identity, security),
+		Data: helpers.ToUserProfileProto(tuser, identity, security),
 	}, nil
 }
 

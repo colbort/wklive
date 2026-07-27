@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/option"
+	"wklive/services/option/internal/logic/helpers"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -28,14 +29,14 @@ func NewGetTradeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetTrade
 
 // 获取单个成交记录详情
 func (l *GetTradeLogic) GetTrade(in *option.GetTradeReq) (*option.GetTradeResp, error) {
-	item, err := findTradeByNoOrID(l.ctx, l.svcCtx, in.TenantId, in.Id, in.TradeNo)
+	item, err := helpers.FindTradeByNoOrID(l.ctx, l.svcCtx, in.TenantId, in.Id, in.TradeNo)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			return &option.GetTradeResp{Base: helper.ErrResp(i18n.TradeNotFound, i18n.Translate(i18n.TradeNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
-	data, err := buildTradeDetail(l.ctx, l.svcCtx, item)
+	data, err := helpers.BuildTradeDetail(l.ctx, l.svcCtx, item)
 	if err != nil {
 		return nil, err
 	}

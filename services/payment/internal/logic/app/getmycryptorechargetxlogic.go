@@ -2,6 +2,7 @@ package applogic
 
 import (
 	"context"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -38,7 +39,7 @@ func (l *GetMyCryptoRechargeTxLogic) GetMyCryptoRechargeTx(in *payment.GetMyCryp
 	}
 	item, err := l.svcCtx.CryptoRechargeTxModel.FindOneByIdOrHash(l.ctx, tenantId, in.Id, 0, in.TxHash)
 	if err != nil {
-		if isNotFound(err) {
+		if helpers.IsNotFound(err) {
 			return &payment.GetMyCryptoRechargeTxResp{Base: helper.ErrResp(i18n.CryptoRechargeTxNotFound, i18n.Translate(i18n.CryptoRechargeTxNotFound, l.ctx))}, nil
 		}
 		return nil, err
@@ -46,5 +47,5 @@ func (l *GetMyCryptoRechargeTxLogic) GetMyCryptoRechargeTx(in *payment.GetMyCryp
 	if item.UserId != userId {
 		return &payment.GetMyCryptoRechargeTxResp{Base: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
 	}
-	return &payment.GetMyCryptoRechargeTxResp{Base: helper.OkResp(), Data: toCryptoRechargeTxProto(item)}, nil
+	return &payment.GetMyCryptoRechargeTxResp{Base: helper.OkResp(), Data: helpers.ToCryptoRechargeTxProto(item)}, nil
 }

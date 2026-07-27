@@ -2,6 +2,7 @@ package applogic
 
 import (
 	"context"
+	"wklive/services/itick/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/proto/itick"
@@ -49,6 +50,6 @@ func (l *GetQuoteLogic) GetQuote(in *itick.GetQuoteReq) (*itick.GetQuoteResp, er
 
 	return &itick.GetQuoteResp{
 		Base: helper.OkResp(),
-		Data: toQuotePayloadProto(msg.CategoryCode, msg.Market, msg.Symbol, data),
+		Data: helpers.ToQuotePayloadProto(msg.CategoryCode, msg.Market, msg.Symbol, data),
 	}, nil
 }

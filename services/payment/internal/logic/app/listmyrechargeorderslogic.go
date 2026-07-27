@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/common/utils"
@@ -54,7 +55,7 @@ func (l *ListMyRechargeOrdersLogic) ListMyRechargeOrders(in *payment.ListMyRecha
 
 	data := make([]*payment.RechargeOrder, 0)
 	for _, order := range items {
-		data = append(data, toRechargeOrderProto(order))
+		data = append(data, helpers.ToRechargeOrderProto(order))
 	}
 
 	return &payment.ListMyRechargeOrdersResp{

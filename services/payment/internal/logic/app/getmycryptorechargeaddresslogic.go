@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -53,7 +54,7 @@ func (l *GetMyCryptoRechargeAddressLogic) GetMyCryptoRechargeAddress(in *payment
 			}
 			return nil, err
 		}
-		return &payment.GetMyCryptoRechargeAddressResp{Base: helper.OkResp(), Data: toCryptoRechargeAddressProto(item)}, nil
+		return &payment.GetMyCryptoRechargeAddressResp{Base: helper.OkResp(), Data: helpers.ToCryptoRechargeAddressProto(item)}, nil
 	}
 
 	ok, err := reserveCryptoRechargeAddress(l.ctx, l.svcCtx, item, tenantId, userId)
@@ -70,7 +71,7 @@ func (l *GetMyCryptoRechargeAddressLogic) GetMyCryptoRechargeAddress(in *payment
 		}
 		refreshCryptoRechargeAddressReservation(l.ctx, l.svcCtx, item.Id)
 	}
-	return &payment.GetMyCryptoRechargeAddressResp{Base: helper.OkResp(), Data: toCryptoRechargeAddressProto(item)}, nil
+	return &payment.GetMyCryptoRechargeAddressResp{Base: helper.OkResp(), Data: helpers.ToCryptoRechargeAddressProto(item)}, nil
 }
 
 func (l *GetMyCryptoRechargeAddressLogic) reserveAssignableAddress(tenantId, userId int64, in *payment.GetMyCryptoRechargeAddressReq) (*models.TCryptoRechargeAddress, error) {

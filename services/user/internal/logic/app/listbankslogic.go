@@ -8,6 +8,7 @@ import (
 	"wklive/common/pageutil"
 	"wklive/common/utils"
 	"wklive/proto/user"
+	"wklive/services/user/internal/logic/helpers"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
 
@@ -55,7 +56,7 @@ func (l *ListBanksLogic) ListBanks(in *user.ListBanksReq) (*user.ListBanksResp, 
 		lastID = items[len(items)-1].Id
 	}
 
-	data := toUserBankItemListProto(items)
+	data := helpers.ToUserBankItemListProto(items)
 
 	return &user.ListBanksResp{
 		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastID),

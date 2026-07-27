@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/asset"
@@ -32,7 +33,7 @@ func (l *PageAssetFreezesLogic) PageAssetFreezes(in *asset.PageAssetFreezesReq) 
 		UserId:     in.UserId,
 		WalletType: int64(in.WalletType),
 		Coin:       in.Coin,
-		BizType:    assetBizType(in.BizType),
+		BizType:    helpers.AssetBizType(in.BizType),
 		BizNo:      in.BizNo,
 		Status:     int64(in.Status),
 	}, in.Page.Cursor, in.Page.Limit)
@@ -48,7 +49,7 @@ func (l *PageAssetFreezesLogic) PageAssetFreezes(in *asset.PageAssetFreezesReq) 
 	resp := &asset.PageAssetFreezesResp{Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(freezes), total, lastID)}
 
 	for _, item := range freezes {
-		resp.Data = append(resp.Data, toAssetFreezeProto(item))
+		resp.Data = append(resp.Data, helpers.ToAssetFreezeProto(item))
 	}
 	return resp, nil
 }

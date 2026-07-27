@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/common/utils"
@@ -55,7 +56,7 @@ func (l *ListWithdrawOrdersLogic) ListWithdrawOrders(in *payment.ListWithdrawOrd
 
 	data := make([]*payment.WithdrawOrder, 0, len(orders))
 	for _, o := range orders {
-		data = append(data, toWithdrawOrderProto(o))
+		data = append(data, helpers.ToWithdrawOrderProto(o))
 	}
 
 	return &payment.ListWithdrawOrdersResp{

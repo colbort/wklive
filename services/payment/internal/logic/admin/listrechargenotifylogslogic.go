@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/payment"
@@ -55,7 +56,7 @@ func (l *ListRechargeNotifyLogsLogic) ListRechargeNotifyLogs(in *payment.ListRec
 
 	data := make([]*payment.PayNotifyLog, 0, len(logs))
 	for _, log := range logs {
-		data = append(data, toRechargeNotifyLogProto(log))
+		data = append(data, helpers.ToRechargeNotifyLogProto(log))
 	}
 
 	return &payment.ListRechargeNotifyLogsResp{

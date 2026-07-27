@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"strings"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/i18n"
 	"wklive/common/pageutil"
@@ -83,7 +84,7 @@ func (l *ListUserRechargeStatsLogic) ListUserRechargeStats(in *payment.ListUserR
 
 	data := make([]*payment.UserRechargeStat, 0, len(stats))
 	for _, s := range stats {
-		data = append(data, toUserRechargeStatProto(s))
+		data = append(data, helpers.ToUserRechargeStatProto(s))
 	}
 
 	return &payment.ListUserRechargeStatsResp{

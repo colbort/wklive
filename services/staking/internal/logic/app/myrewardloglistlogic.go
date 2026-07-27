@@ -2,6 +2,7 @@ package applogic
 
 import (
 	"context"
+	"wklive/services/staking/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/pageutil"
@@ -59,7 +60,7 @@ func (l *MyRewardLogListLogic) MyRewardLogList(in *staking.MyRewardLogListReq) (
 	}
 	resp.Data = make([]*staking.StakeRewardLog, 0, len(items))
 	for _, item := range items {
-		resp.Data = append(resp.Data, rewardLogToProto(item))
+		resp.Data = append(resp.Data, helpers.RewardLogToProto(item))
 	}
 	resp.Base = pageutil.Base(cursor, limit, len(items), total, int64(items[len(items)-1].Id))
 	return resp, nil

@@ -1,9 +1,11 @@
-package applogic
+package helpers
 
 import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
+	"strings"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -15,15 +17,16 @@ import (
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
 
+	"github.com/go-sql-driver/mysql"
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-func paymentAmountToText(amount decimal.Decimal) string {
+func PaymentAmountToText(amount decimal.Decimal) string {
 	return amount.String()
 }
 
-func systemAdminWriteScopeResp(ctx context.Context) (*common.RespBase, error) {
+func SystemAdminWriteScopeResp(ctx context.Context) (*common.RespBase, error) {
 	userType, err := utils.GetUserTypeFromMd(ctx)
 	if err != nil {
 		return nil, i18n.StatusError(ctx, i18n.UserNotFound)
@@ -34,7 +37,7 @@ func systemAdminWriteScopeResp(ctx context.Context) (*common.RespBase, error) {
 	return nil, nil
 }
 
-func rechargeTypeFromPlatform(item *models.TPayPlatform) payment.RechargeType {
+func RechargeTypeFromPlatform(item *models.TPayPlatform) payment.RechargeType {
 	if item == nil {
 		return payment.RechargeType_RECHARGE_TYPE_UNKNOWN
 	}
@@ -52,18 +55,18 @@ func rechargeTypeFromPlatform(item *models.TPayPlatform) payment.RechargeType {
 	}
 }
 
-func switchToProto(value int64) common.Switch {
+func SwitchToProto(value int64) common.Switch {
 	return common.Switch(value)
 }
 
-func switchToModel(value common.Switch, defaultValue int64) int64 {
+func SwitchToModel(value common.Switch, defaultValue int64) int64 {
 	if value == common.Switch_SWITCH_UNKNOWN {
 		return defaultValue
 	}
 	return int64(value)
 }
 
-func markRechargeOrderSuccessAndCredit(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TRechargeOrder, thirdTradeNo string, payAmount decimal.Decimal, remark string) error {
+func MarkRechargeOrderSuccessAndCredit(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TRechargeOrder, thirdTradeNo string, payAmount decimal.Decimal, remark string) error {
 	if order == nil {
 		return i18n.StatusError(ctx, i18n.OrderNotFound)
 	}
@@ -126,7 +129,7 @@ func markRechargeOrderSuccessAndCredit(ctx context.Context, svcCtx *svc.ServiceC
 	})
 }
 
-func creditRechargeOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TRechargeOrder, remark string) error {
+func CreditRechargeOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TRechargeOrder, remark string) error {
 	if order == nil {
 		return i18n.StatusError(ctx, i18n.OrderNotFound)
 	}
@@ -137,9 +140,9 @@ func creditRechargeOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, o
 	resp, err := svcCtx.AssetCli.AddAvailable(ctx, &asset.AddAvailableReq{
 		TenantId:   order.TenantId,
 		UserId:     order.UserId,
-		WalletType: rechargeOrderWalletType(order),
+		WalletType: RechargeOrderWalletType(order),
 		Coin:       order.Currency,
-		Amount:     paymentAmountToText(amount),
+		Amount:     PaymentAmountToText(amount),
 		BizType:    asset.BizType_BIZ_TYPE_PAYMENT,
 		SceneType:  asset.SceneType_SCENE_TYPE_RECHARGE,
 		BizId:      order.Id,
@@ -158,7 +161,7 @@ func creditRechargeOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, o
 	return nil
 }
 
-func freezeWithdrawOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TWithdrawOrder, remark string) error {
+func FreezeWithdrawOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TWithdrawOrder, remark string) error {
 	if order == nil {
 		return i18n.StatusError(ctx, i18n.OrderNotFound)
 	}
@@ -167,7 +170,7 @@ func freezeWithdrawOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, o
 		UserId:     order.UserId,
 		WalletType: common.WalletType_WALLET_TYPE_SPOT,
 		Coin:       order.Currency,
-		Amount:     paymentAmountToText(order.Amount),
+		Amount:     PaymentAmountToText(order.Amount),
 		BizType:    asset.BizType_BIZ_TYPE_PAYMENT,
 		SceneType:  asset.SceneType_SCENE_TYPE_WITHDRAW_APPLY,
 		BizId:      order.Id,
@@ -186,7 +189,7 @@ func freezeWithdrawOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, o
 	return nil
 }
 
-func deductWithdrawOrderFrozenAsset(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TWithdrawOrder, remark string) error {
+func DeductWithdrawOrderFrozenAsset(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TWithdrawOrder, remark string) error {
 	if order == nil {
 		return i18n.StatusError(ctx, i18n.OrderNotFound)
 	}
@@ -194,7 +197,7 @@ func deductWithdrawOrderFrozenAsset(ctx context.Context, svcCtx *svc.ServiceCont
 		TenantId:      order.TenantId,
 		TargetBizType: asset.BizType_BIZ_TYPE_PAYMENT,
 		TargetBizNo:   order.OrderNo,
-		Amount:        paymentAmountToText(order.Amount),
+		Amount:        PaymentAmountToText(order.Amount),
 		BizType:       asset.BizType_BIZ_TYPE_PAYMENT,
 		SceneType:     asset.SceneType_SCENE_TYPE_WITHDRAW_SUCCESS,
 		BizId:         order.Id,
@@ -213,7 +216,7 @@ func deductWithdrawOrderFrozenAsset(ctx context.Context, svcCtx *svc.ServiceCont
 	return nil
 }
 
-func unfreezeWithdrawOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TWithdrawOrder, remark string) error {
+func UnfreezeWithdrawOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TWithdrawOrder, remark string) error {
 	if order == nil {
 		return i18n.StatusError(ctx, i18n.OrderNotFound)
 	}
@@ -221,7 +224,7 @@ func unfreezeWithdrawOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext,
 		TenantId:      order.TenantId,
 		TargetBizType: asset.BizType_BIZ_TYPE_PAYMENT,
 		TargetBizNo:   order.OrderNo,
-		Amount:        paymentAmountToText(order.Amount),
+		Amount:        PaymentAmountToText(order.Amount),
 		BizType:       asset.BizType_BIZ_TYPE_PAYMENT,
 		SceneType:     asset.SceneType_SCENE_TYPE_WITHDRAW_REJECT,
 		BizId:         order.Id,
@@ -240,14 +243,14 @@ func unfreezeWithdrawOrderAsset(ctx context.Context, svcCtx *svc.ServiceContext,
 	return nil
 }
 
-func rechargeOrderWalletType(order *models.TRechargeOrder) common.WalletType {
+func RechargeOrderWalletType(order *models.TRechargeOrder) common.WalletType {
 	if order == nil || order.WalletType <= 0 {
 		return common.WalletType_WALLET_TYPE_SPOT
 	}
 	return common.WalletType(order.WalletType)
 }
 
-func toPayPlatformProto(item *models.TPayPlatform) *payment.PayPlatform {
+func ToPayPlatformProto(item *models.TPayPlatform) *payment.PayPlatform {
 	if item == nil {
 		return nil
 	}
@@ -266,7 +269,7 @@ func toPayPlatformProto(item *models.TPayPlatform) *payment.PayPlatform {
 	}
 }
 
-func toPayProductProto(item *models.TPayProduct) *payment.PayProduct {
+func ToPayProductProto(item *models.TPayProduct) *payment.PayProduct {
 	if item == nil {
 		return nil
 	}
@@ -284,7 +287,7 @@ func toPayProductProto(item *models.TPayProduct) *payment.PayProduct {
 	}
 }
 
-func toTenantPayAccountProto(item *models.TTenantPayAccount) *payment.TenantPayAccount {
+func ToTenantPayAccountProto(item *models.TTenantPayAccount) *payment.TenantPayAccount {
 	if item == nil {
 		return nil
 	}
@@ -312,7 +315,7 @@ func toTenantPayAccountProto(item *models.TTenantPayAccount) *payment.TenantPayA
 	}
 }
 
-func toTenantPayChannelProto(item *models.TTenantPayChannel) *payment.TenantPayChannel {
+func ToTenantPayChannelProto(item *models.TTenantPayChannel) *payment.TenantPayChannel {
 	if item == nil {
 		return nil
 	}
@@ -328,7 +331,7 @@ func toTenantPayChannelProto(item *models.TTenantPayChannel) *payment.TenantPayC
 		Icon:            item.Icon.String,
 		Currency:        item.Currency,
 		Sort:            item.Sort,
-		Visible:         switchToProto(item.Visible),
+		Visible:         SwitchToProto(item.Visible),
 		Enabled:         common.Enable(item.Enabled),
 		SingleMinAmount: item.SingleMinAmount.String(),
 		SingleMaxAmount: item.SingleMaxAmount.String(),
@@ -344,7 +347,7 @@ func toTenantPayChannelProto(item *models.TTenantPayChannel) *payment.TenantPayC
 	}
 }
 
-func toVisiblePayChannelProto(item *models.TTenantPayChannel) *payment.VisiblePayChannel {
+func ToVisiblePayChannelProto(item *models.TTenantPayChannel) *payment.VisiblePayChannel {
 	if item == nil {
 		return nil
 	}
@@ -354,7 +357,7 @@ func toVisiblePayChannelProto(item *models.TTenantPayChannel) *payment.VisiblePa
 	}
 }
 
-func toTenantPayChannelRuleProto(item *models.TTenantPayChannelRule) *payment.TenantPayChannelRule {
+func ToTenantPayChannelRuleProto(item *models.TTenantPayChannelRule) *payment.TenantPayChannelRule {
 	if item == nil {
 		return nil
 	}
@@ -383,7 +386,7 @@ func toTenantPayChannelRuleProto(item *models.TTenantPayChannelRule) *payment.Te
 	}
 }
 
-func toUserRechargeStatProto(item *models.TUserRechargeStat) *payment.UserRechargeStat {
+func ToUserRechargeStatProto(item *models.TUserRechargeStat) *payment.UserRechargeStat {
 	if item == nil {
 		return nil
 	}
@@ -402,7 +405,7 @@ func toUserRechargeStatProto(item *models.TUserRechargeStat) *payment.UserRechar
 	}
 }
 
-func toRechargeOrderProto(item *models.TRechargeOrder) *payment.RechargeOrder {
+func ToRechargeOrderProto(item *models.TRechargeOrder) *payment.RechargeOrder {
 	if item == nil {
 		return nil
 	}
@@ -449,7 +452,7 @@ func toRechargeOrderProto(item *models.TRechargeOrder) *payment.RechargeOrder {
 	}
 }
 
-func toRechargeNotifyLogProto(item *models.TRechargeNotifyLog) *payment.PayNotifyLog {
+func ToRechargeNotifyLogProto(item *models.TRechargeNotifyLog) *payment.PayNotifyLog {
 	if item == nil {
 		return nil
 	}
@@ -470,7 +473,7 @@ func toRechargeNotifyLogProto(item *models.TRechargeNotifyLog) *payment.PayNotif
 	}
 }
 
-func toWithdrawNotifyLogProto(item *models.TWithdrawNotifyLog) *payment.PayNotifyLog {
+func ToWithdrawNotifyLogProto(item *models.TWithdrawNotifyLog) *payment.PayNotifyLog {
 	if item == nil {
 		return nil
 	}
@@ -491,7 +494,7 @@ func toWithdrawNotifyLogProto(item *models.TWithdrawNotifyLog) *payment.PayNotif
 	}
 }
 
-func toWithdrawOrderProto(item *models.TWithdrawOrder) *payment.WithdrawOrder {
+func ToWithdrawOrderProto(item *models.TWithdrawOrder) *payment.WithdrawOrder {
 	if item == nil {
 		return nil
 	}
@@ -526,7 +529,7 @@ func toWithdrawOrderProto(item *models.TWithdrawOrder) *payment.WithdrawOrder {
 	}
 }
 
-func toCryptoRechargeAddressProto(item *models.TCryptoRechargeAddress) *payment.CryptoRechargeAddress {
+func ToCryptoRechargeAddressProto(item *models.TCryptoRechargeAddress) *payment.CryptoRechargeAddress {
 	if item == nil {
 		return nil
 	}
@@ -541,14 +544,14 @@ func toCryptoRechargeAddressProto(item *models.TCryptoRechargeAddress) *payment.
 		Memo:          item.Memo,
 		AddressSource: payment.CryptoRechargeAddressSource(item.AddressSource),
 		AddressType:   payment.CryptoRechargeAddressType(item.AddressType),
-		Status:        toCryptoAddressStatusProto(item.Status),
+		Status:        ToCryptoAddressStatusProto(item.Status),
 		LastUsedTime:  item.LastUsedTime,
 		CreateTimes:   item.CreateTimes,
 		UpdateTimes:   item.UpdateTimes,
 	}
 }
 
-func toCryptoWalletAccountProto(item *models.TCryptoWalletAccount) *payment.CryptoWalletAccount {
+func ToCryptoWalletAccountProto(item *models.TCryptoWalletAccount) *payment.CryptoWalletAccount {
 	if item == nil {
 		return nil
 	}
@@ -562,14 +565,14 @@ func toCryptoWalletAccountProto(item *models.TCryptoWalletAccount) *payment.Cryp
 		ApiSecretCipher:      item.ApiSecretCipher.String,
 		CallbackSecretCipher: item.CallbackSecretCipher.String,
 		ExtConfig:            item.ExtConfig.String,
-		Enabled:              toCryptoWalletStatusProto(item.Enabled),
+		Enabled:              ToCryptoWalletStatusProto(item.Enabled),
 		IsDefault:            common.YesNo(item.IsDefault),
 		CreateTimes:          item.CreateTimes,
 		UpdateTimes:          item.UpdateTimes,
 	}
 }
 
-func toCryptoRechargeTxProto(item *models.TCryptoRechargeTx) *payment.CryptoRechargeTx {
+func ToCryptoRechargeTxProto(item *models.TCryptoRechargeTx) *payment.CryptoRechargeTx {
 	if item == nil {
 		return nil
 	}
@@ -596,31 +599,44 @@ func toCryptoRechargeTxProto(item *models.TCryptoRechargeTx) *payment.CryptoRech
 	}
 }
 
-func toCryptoAddressStatusDB(status payment.CryptoRechargeAddressStatus, defaultValue int64) int64 {
+func ToCryptoAddressStatusDB(status payment.CryptoRechargeAddressStatus, defaultValue int64) int64 {
 	if status == payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_UNKNOWN {
 		return defaultValue
 	}
 	return int64(status)
 }
 
-func toCryptoAddressStatusProto(status int64) payment.CryptoRechargeAddressStatus {
+func ToCryptoAddressStatusProto(status int64) payment.CryptoRechargeAddressStatus {
 	return payment.CryptoRechargeAddressStatus(status)
 }
 
-func toCryptoWalletStatusDB(status common.Enable, defaultValue int64) int64 {
+func ToCryptoWalletStatusDB(status common.Enable, defaultValue int64) int64 {
 	if status == common.Enable_ENABLE_UNKNOWN {
 		return defaultValue
 	}
 	return int64(status)
 }
 
-func toCryptoWalletStatusProto(status int64) common.Enable {
+func ToCryptoWalletStatusProto(status int64) common.Enable {
 	return common.Enable(status)
 }
 
-func enableToModel(enabled common.Enable, defaultValue int64) int64 {
+func EnableToModel(enabled common.Enable, defaultValue int64) int64 {
 	if enabled == common.Enable_ENABLE_UNKNOWN {
 		return defaultValue
 	}
 	return int64(enabled)
+}
+
+func NullableJSON(value string) (sql.NullString, bool) {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return sql.NullString{}, true
+	}
+	return sql.NullString{String: value, Valid: true}, json.Valid([]byte(value))
+}
+
+func IsDuplicateEntry(err error) bool {
+	var mysqlErr *mysql.MySQLError
+	return errors.As(err, &mysqlErr) && mysqlErr.Number == 1062
 }

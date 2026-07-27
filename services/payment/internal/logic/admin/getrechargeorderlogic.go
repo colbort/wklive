@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/payment"
+	"wklive/services/payment/internal/logic/helpers"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
 
@@ -46,6 +47,6 @@ func (l *GetRechargeOrderLogic) GetRechargeOrder(in *payment.GetRechargeOrderReq
 
 	return &payment.GetRechargeOrderResp{
 		Base: helper.OkResp(),
-		Data: toRechargeOrderProto(order),
+		Data: helpers.ToRechargeOrderProto(order),
 	}, nil
 }

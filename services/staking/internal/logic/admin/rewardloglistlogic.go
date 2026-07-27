@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/staking/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/pageutil"
@@ -65,7 +66,7 @@ func (l *RewardLogListLogic) RewardLogList(in *staking.RewardLogListReq) (*staki
 	}
 	resp.Data = make([]*staking.StakeRewardLog, 0, len(items))
 	for _, item := range items {
-		resp.Data = append(resp.Data, rewardLogToProto(item))
+		resp.Data = append(resp.Data, helpers.RewardLogToProto(item))
 	}
 	resp.Page = pageutil.Base(cursor, limit, len(items), total, int64(items[len(items)-1].Id))
 	return resp, nil

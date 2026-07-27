@@ -8,6 +8,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/user"
+	"wklive/services/user/internal/logic/helpers"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
 
@@ -41,7 +42,7 @@ func (l *SetDefaultUserBankLogic) SetDefaultUserBank(in *user.SetDefaultUserBank
 			Base: helper.ErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
 		}, nil
 	}
-	if base, err := adminTenantWriteScopeResp(l.ctx, userBank.TenantId, i18n.NoPermissionOperateThisBankCard); err != nil {
+	if base, err := helpers.AdminTenantWriteScopeResp(l.ctx, userBank.TenantId, i18n.NoPermissionOperateThisBankCard); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &user.CommonResp{

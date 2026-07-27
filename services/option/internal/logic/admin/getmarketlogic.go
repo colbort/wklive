@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/option"
+	"wklive/services/option/internal/logic/helpers"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -36,5 +37,5 @@ func (l *GetMarketLogic) GetMarket(in *option.GetMarketReq) (*option.GetMarketRe
 		return nil, err
 	}
 
-	return &option.GetMarketResp{Base: helper.OkResp(), Data: toMarketProto(item)}, nil
+	return &option.GetMarketResp{Base: helper.OkResp(), Data: helpers.ToMarketProto(item)}, nil
 }

@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/utils"
@@ -55,6 +56,6 @@ func (l *GetMyRechargeStatLogic) GetMyRechargeStat(in *payment.GetMyRechargeStat
 
 	return &payment.GetMyRechargeStatResp{
 		Base: helper.OkResp(),
-		Data: toUserRechargeStatProto(stat),
+		Data: helpers.ToUserRechargeStatProto(stat),
 	}, nil
 }

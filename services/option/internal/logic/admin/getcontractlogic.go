@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/option"
+	"wklive/services/option/internal/logic/helpers"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -28,14 +29,14 @@ func NewGetContractLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCo
 
 // 获取单个期权合约详情
 func (l *GetContractLogic) GetContract(in *option.GetContractReq) (*option.GetContractResp, error) {
-	item, err := findContractByCodeOrID(l.ctx, l.svcCtx, in.TenantId, in.Id, in.ContractCode)
+	item, err := helpers.FindContractByCodeOrID(l.ctx, l.svcCtx, in.TenantId, in.Id, in.ContractCode)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			return &option.GetContractResp{Base: helper.ErrResp(i18n.ContractNotFound, i18n.Translate(i18n.ContractNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
-	data, err := buildContractDetail(l.ctx, l.svcCtx, item)
+	data, err := helpers.BuildContractDetail(l.ctx, l.svcCtx, item)
 	if err != nil {
 		return nil, err
 	}

@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"sort"
+	"wklive/services/itick/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -75,7 +76,7 @@ func (l *ListVisibleProductsLogic) ListVisibleProducts(in *itick.ListVisibleProd
 		if product == nil {
 			continue
 		}
-		data = append(data, toTenantProductProto(item, product))
+		data = append(data, helpers.ToTenantProductProto(item, product))
 	}
 
 	return &itick.ListVisibleProductsResp{

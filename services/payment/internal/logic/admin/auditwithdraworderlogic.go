@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -105,7 +106,7 @@ func (l *AuditWithdrawOrderLogic) AuditWithdrawOrder(in *payment.AuditWithdrawOr
 			current.Status = int64(payment.PayOrderStatus_PAY_ORDER_STATUS_PAYING)
 			current.ProcessTime = now
 		} else {
-			if err := unfreezeWithdrawOrderAsset(ctx, l.svcCtx, current, "withdraw audit rejected"); err != nil {
+			if err := helpers.UnfreezeWithdrawOrderAsset(ctx, l.svcCtx, current, "withdraw audit rejected"); err != nil {
 				return err
 			}
 			// 审核不通过，改为已拒绝
@@ -234,14 +235,14 @@ func (l *AuditWithdrawOrderLogic) applyThirdPartyPayoutResult(
 
 		switch payment.PayOrderStatus(payoutResult.Status) {
 		case payment.PayOrderStatus_PAY_ORDER_STATUS_SUCCESS:
-			if err := deductWithdrawOrderFrozenAsset(ctx, l.svcCtx, current, "third-party payout success"); err != nil {
+			if err := helpers.DeductWithdrawOrderFrozenAsset(ctx, l.svcCtx, current, "third-party payout success"); err != nil {
 				return err
 			}
 			current.Status = int64(payment.PayOrderStatus_PAY_ORDER_STATUS_SUCCESS)
 			current.CloseTime = finishedAt
 		case payment.PayOrderStatus_PAY_ORDER_STATUS_FAILED,
 			payment.PayOrderStatus_PAY_ORDER_STATUS_CLOSED:
-			if err := unfreezeWithdrawOrderAsset(ctx, l.svcCtx, current, "third-party payout failed"); err != nil {
+			if err := helpers.UnfreezeWithdrawOrderAsset(ctx, l.svcCtx, current, "third-party payout failed"); err != nil {
 				return err
 			}
 			current.Status = int64(payment.PayOrderStatus_PAY_ORDER_STATUS_FAILED)

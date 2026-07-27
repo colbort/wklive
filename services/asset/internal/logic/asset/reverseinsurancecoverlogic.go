@@ -3,6 +3,7 @@ package assetlogic
 import (
 	"context"
 	"fmt"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/utils"
@@ -37,7 +38,7 @@ func (l *ReverseInsuranceCoverLogic) ReverseInsuranceCover(in *asset.ReverseInsu
 		if err != nil {
 			return err
 		}
-		done, err := prepareAssetIdempotent(ctx, idempotent, in.GetTenantId(), assetBizType(asset.BizType_BIZ_TYPE_INSURANCE_FUND), assetSceneType(asset.SceneType_SCENE_TYPE_INSURANCE_FUND_REVERSAL), in.GetReversalNo(), in.GetRemark(), now)
+		done, err := helpers.PrepareAssetIdempotent(ctx, idempotent, in.GetTenantId(), helpers.AssetBizType(asset.BizType_BIZ_TYPE_INSURANCE_FUND), helpers.AssetSceneType(asset.SceneType_SCENE_TYPE_INSURANCE_FUND_REVERSAL), in.GetReversalNo(), in.GetRemark(), now)
 		if err != nil {
 			return err
 		}
@@ -58,7 +59,7 @@ func (l *ReverseInsuranceCoverLogic) ReverseInsuranceCover(in *asset.ReverseInsu
 			if err = accounts.AddAvailable(ctx, account.Id, cover.CoveredAmount, now); err != nil {
 				return err
 			}
-			_, err = flows.Insert(ctx, &models.TAssetPlatformFlow{TenantId: cover.TenantId, PlatformAccountId: account.Id, AccountType: account.AccountType, Coin: cover.Coin, OpType: 1, Amount: cover.CoveredAmount, BeforeAvailable: account.AvailableAmount, AfterAvailable: account.AvailableAmount.Add(cover.CoveredAmount), BizType: assetBizType(asset.BizType_BIZ_TYPE_INSURANCE_FUND), SceneType: assetSceneType(asset.SceneType_SCENE_TYPE_INSURANCE_FUND_REVERSAL), BizId: cover.LiquidationId, BizNo: in.GetReversalNo(), Remark: in.GetRemark(), CreateTimes: now})
+			_, err = flows.Insert(ctx, &models.TAssetPlatformFlow{TenantId: cover.TenantId, PlatformAccountId: account.Id, AccountType: account.AccountType, Coin: cover.Coin, OpType: 1, Amount: cover.CoveredAmount, BeforeAvailable: account.AvailableAmount, AfterAvailable: account.AvailableAmount.Add(cover.CoveredAmount), BizType: helpers.AssetBizType(asset.BizType_BIZ_TYPE_INSURANCE_FUND), SceneType: helpers.AssetSceneType(asset.SceneType_SCENE_TYPE_INSURANCE_FUND_REVERSAL), BizId: cover.LiquidationId, BizNo: in.GetReversalNo(), Remark: in.GetRemark(), CreateTimes: now})
 			if err != nil {
 				return err
 			}
@@ -66,7 +67,7 @@ func (l *ReverseInsuranceCoverLogic) ReverseInsuranceCover(in *asset.ReverseInsu
 		if err = covers.MarkReversed(ctx, cover.Id, now); err != nil {
 			return err
 		}
-		return completeAssetIdempotent(ctx, idempotent, in.GetTenantId(), assetBizType(asset.BizType_BIZ_TYPE_INSURANCE_FUND), assetSceneType(asset.SceneType_SCENE_TYPE_INSURANCE_FUND_REVERSAL), in.GetReversalNo(), now)
+		return helpers.CompleteAssetIdempotent(ctx, idempotent, in.GetTenantId(), helpers.AssetBizType(asset.BizType_BIZ_TYPE_INSURANCE_FUND), helpers.AssetSceneType(asset.SceneType_SCENE_TYPE_INSURANCE_FUND_REVERSAL), in.GetReversalNo(), now)
 	})
 	if err != nil {
 		return nil, err

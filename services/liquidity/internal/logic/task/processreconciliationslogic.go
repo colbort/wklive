@@ -2,6 +2,7 @@ package tasklogic
 
 import (
 	"context"
+	"wklive/services/liquidity/internal/logic/helpers"
 
 	"wklive/proto/liquidity"
 	"wklive/services/liquidity/internal/svc"
@@ -24,8 +25,8 @@ func NewProcessReconciliationsLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 func (l *ProcessReconciliationsLogic) ProcessReconciliations(in *liquidity.LiquidityTaskReq) (*liquidity.LiquidityTaskResp, error) {
-	if err := validateTask(in); err != nil {
+	if err := helpers.ValidateTask(in); err != nil {
 		return nil, err
 	}
-	return taskDependencyUnavailable("reconciliation"), nil
+	return helpers.TaskDependencyUnavailable("reconciliation"), nil
 }

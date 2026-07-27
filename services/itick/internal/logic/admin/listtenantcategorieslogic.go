@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/itick/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/itick"
@@ -51,17 +52,17 @@ func (l *ListTenantCategoriesLogic) ListTenantCategories(in *itick.ListTenantCat
 		if in.CategoryType > 0 && int64(in.CategoryType) != category.CategoryType {
 			continue
 		}
-		if !statusMatches(int32(in.Enabled), item.Enabled) {
+		if !helpers.StatusMatches(int32(in.Enabled), item.Enabled) {
 			continue
 		}
-		if !statusMatches(int32(in.VisibleStatus), item.AppVisible) {
+		if !helpers.StatusMatches(int32(in.VisibleStatus), item.AppVisible) {
 			continue
 		}
 
 		if item.Id <= in.Page.Cursor || int64(len(data)) >= limit {
 			continue
 		}
-		data = append(data, toTenantCategoryProto(item, category))
+		data = append(data, helpers.ToTenantCategoryProto(item, category))
 	}
 
 	lastID := int64(0)

@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/common/utils"
@@ -97,7 +98,7 @@ func (l *ListTenantPayChannelsLogic) ListTenantPayChannels(in *payment.ListTenan
 		accountNames[account.Id] = account.AccountName
 	}
 	for _, c := range channels {
-		item := toTenantPayChannelProto(c)
+		item := helpers.ToTenantPayChannelProto(c)
 		item.PlatformName = platformNames[c.PlatformId]
 		item.ProductName = productNames[c.ProductId]
 		item.AccountName = accountNames[c.AccountId]

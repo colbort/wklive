@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -56,7 +57,7 @@ func (l *CreateTenantPayAccountLogic) CreateTenantPayAccount(in *payment.CreateT
 	if common.YesNo(in.IsDefault) == common.YesNo_YES_NO_UNKNOWN {
 		isDefault = int64(common.YesNo_YES_NO_NO)
 	}
-	extConfig, valid := nullableJSON(in.ExtConfig)
+	extConfig, valid := helpers.NullableJSON(in.ExtConfig)
 	if !valid {
 		return &payment.CommonResp{
 			Base: helper.ErrResp(i18n.InvalidPaymentJSON, i18n.Translate(i18n.InvalidPaymentJSON, l.ctx)),
@@ -77,7 +78,7 @@ func (l *CreateTenantPayAccountLogic) CreateTenantPayAccount(in *payment.CreateT
 		CertCipher:       sql.NullString{String: in.CertCipher, Valid: true},
 		CredentialRef:    in.CredentialRef,
 		ExtConfig:        extConfig,
-		Enabled:          enableToModel(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
+		Enabled:          helpers.EnableToModel(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
 		IsDefault:        isDefault,
 		Remark:           sql.NullString{String: in.Remark, Valid: true},
 		CreateTimes:      now,
@@ -86,7 +87,7 @@ func (l *CreateTenantPayAccountLogic) CreateTenantPayAccount(in *payment.CreateT
 
 	_, err = l.svcCtx.TenantPayAccountModel.Insert(l.ctx, account)
 	if err != nil {
-		if isDuplicateEntry(err) {
+		if helpers.IsDuplicateEntry(err) {
 			return paymentErrorResp(l.ctx, i18n.TenantPayAccountCodeAlreadyExists), nil
 		}
 		l.Logger.Errorf("%s error: %s", errLogic, err.Error())

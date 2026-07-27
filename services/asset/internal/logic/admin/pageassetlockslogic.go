@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/asset"
@@ -32,7 +33,7 @@ func (l *PageAssetLocksLogic) PageAssetLocks(in *asset.PageAssetLocksReq) (*asse
 		UserId:     in.UserId,
 		WalletType: int64(in.WalletType),
 		Coin:       in.Coin,
-		BizType:    assetBizType(in.BizType),
+		BizType:    helpers.AssetBizType(in.BizType),
 		BizNo:      in.BizNo,
 		Status:     int64(in.Status),
 	}, in.Page.Cursor, in.Page.Limit)
@@ -48,7 +49,7 @@ func (l *PageAssetLocksLogic) PageAssetLocks(in *asset.PageAssetLocksReq) (*asse
 	resp := &asset.PageAssetLocksResp{Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(locks), total, lastID)}
 
 	for _, item := range locks {
-		resp.Data = append(resp.Data, toAssetLockProto(item))
+		resp.Data = append(resp.Data, helpers.ToAssetLockProto(item))
 	}
 	return resp, nil
 }

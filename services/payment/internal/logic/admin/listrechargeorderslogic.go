@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/payment"
@@ -51,7 +52,7 @@ func (l *ListRechargeOrdersLogic) ListRechargeOrders(in *payment.ListRechargeOrd
 
 	data := make([]*payment.RechargeOrder, 0, len(orders))
 	for _, o := range orders {
-		data = append(data, toRechargeOrderProto(o))
+		data = append(data, helpers.ToRechargeOrderProto(o))
 	}
 
 	return &payment.ListRechargeOrdersResp{

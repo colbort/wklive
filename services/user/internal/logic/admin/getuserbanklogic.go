@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/user"
+	"wklive/services/user/internal/logic/helpers"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
 
@@ -42,6 +43,6 @@ func (l *GetUserBankLogic) GetUserBank(in *user.GetUserBankReq) (*user.GetUserBa
 
 	return &user.GetUserBankResp{
 		Base: helper.OkResp(),
-		Data: toUserBankItemProto(bank),
+		Data: helpers.ToUserBankItemProto(bank),
 	}, nil
 }

@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/option"
+	"wklive/services/option/internal/logic/helpers"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -38,7 +39,7 @@ func (l *GetPositionLogic) GetPosition(in *option.GetPositionReq) (*option.GetPo
 	if in.TenantId != 0 && item.TenantId != in.TenantId {
 		return &option.GetPositionResp{Base: helper.ErrResp(i18n.PositionNotFound, i18n.Translate(i18n.PositionNotFound, l.ctx))}, nil
 	}
-	data, err := buildPositionDetail(l.ctx, l.svcCtx, item)
+	data, err := helpers.BuildPositionDetail(l.ctx, l.svcCtx, item)
 	if err != nil {
 		return nil, err
 	}

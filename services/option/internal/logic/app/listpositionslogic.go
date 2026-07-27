@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	"wklive/services/option/internal/logic/helpers"
 
 	pageutil "wklive/common/pageutil"
 	"wklive/common/utils"
@@ -52,7 +53,7 @@ func (l *ListPositionsLogic) ListPositions(in *option.UserListPositionsReq) (*op
 	lastID := int64(0)
 	for _, item := range items {
 		lastID = item.Id
-		detail, err := buildPositionDetail(l.ctx, l.svcCtx, item)
+		detail, err := helpers.BuildPositionDetail(l.ctx, l.svcCtx, item)
 		if err != nil {
 			return nil, err
 		}

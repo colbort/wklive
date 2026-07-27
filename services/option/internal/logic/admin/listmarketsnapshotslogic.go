@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/option/internal/logic/helpers"
 
 	pageutil "wklive/common/pageutil"
 	"wklive/proto/option"
@@ -43,7 +44,7 @@ func (l *ListMarketSnapshotsLogic) ListMarketSnapshots(in *option.ListMarketSnap
 	lastID := int64(0)
 	for _, item := range items {
 		lastID = item.Id
-		data = append(data, toMarketSnapshotProto(item))
+		data = append(data, helpers.ToMarketSnapshotProto(item))
 	}
 
 	return &option.ListMarketSnapshotsResp{

@@ -2,6 +2,7 @@ package assetlogic
 
 import (
 	"context"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
@@ -24,7 +25,7 @@ func NewDeductLockedAssetByBizNoLogic(ctx context.Context, svcCtx *svc.ServiceCo
 }
 
 func (l *DeductLockedAssetByBizNoLogic) DeductLockedAssetByBizNo(in *asset.DeductLockedAssetByBizNoReq) (*asset.ChangeAssetResp, error) {
-	lock, err := findLockByBizNo(l.ctx, l.svcCtx, in.TenantId, in.TargetBizType, in.TargetBizNo)
+	lock, err := helpers.FindLockByBizNo(l.ctx, l.svcCtx, in.TenantId, in.TargetBizType, in.TargetBizNo)
 	if err != nil {
 		l.Errorf("DeductLockedAssetByBizNo find lock failed, tenantId=%d targetBizType=%d targetBizNo=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s err=%v",
 			in.TenantId, in.TargetBizType, in.TargetBizNo, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, err)

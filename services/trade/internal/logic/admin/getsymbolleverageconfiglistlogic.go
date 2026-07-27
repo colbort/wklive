@@ -3,7 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
-	helpers "wklive/services/trade/internal/logic/helpers"
+	"wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/trade"

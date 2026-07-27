@@ -3,6 +3,7 @@ package tasklogic
 import (
 	"context"
 	"time"
+	"wklive/services/option/internal/logic/helpers"
 
 	"wklive/proto/option"
 	"wklive/services/option/internal/svc"
@@ -27,7 +28,7 @@ func NewCleanMarketSnapshotsLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // 期权行情快照归档/清理
 func (l *CleanMarketSnapshotsLogic) CleanMarketSnapshots(in *option.OptionTaskReq) (*option.OptionTaskResp, error) {
-	return runTaskWithLock(l.ctx, l.svcCtx, "clean_market_snapshots", func() (*option.OptionTaskResp, error) {
+	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "clean_market_snapshots", func() (*option.OptionTaskResp, error) {
 		cutoff := time.Now().AddDate(0, 0, -30).Unix()
 		cursor := int64(0)
 		for {
@@ -50,6 +51,6 @@ func (l *CleanMarketSnapshotsLogic) CleanMarketSnapshots(in *option.OptionTaskRe
 				break
 			}
 		}
-		return okTaskResp(), nil
+		return helpers.OkTaskResp(), nil
 	})
 }

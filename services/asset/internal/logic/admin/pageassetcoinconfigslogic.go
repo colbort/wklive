@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/asset"
@@ -57,7 +58,7 @@ func (l *PageAssetCoinConfigsLogic) PageAssetCoinConfigs(in *asset.PageAssetCoin
 
 	resp := &asset.PageAssetCoinConfigsResp{Base: pageutil.Base(page.Cursor, page.Limit, len(list), total, lastID)}
 	for _, item := range list {
-		resp.Data = append(resp.Data, toAssetCoinConfigProto(item))
+		resp.Data = append(resp.Data, helpers.ToAssetCoinConfigProto(item))
 	}
 
 	return resp, nil

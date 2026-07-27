@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/staking/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -40,5 +41,5 @@ func (l *OrderDetailLogic) OrderDetail(in *staking.OrderDetailReq) (*staking.Ord
 		return &staking.OrderDetailResp{Page: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
 
-	return &staking.OrderDetailResp{Page: helper.OkResp(), Data: orderToProto(item)}, nil
+	return &staking.OrderDetailResp{Page: helper.OkResp(), Data: helpers.OrderToProto(item)}, nil
 }

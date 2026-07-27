@@ -9,6 +9,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/user"
+	"wklive/services/user/internal/logic/helpers"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
 
@@ -42,7 +43,7 @@ func (l *UpdateUserBankLogic) UpdateUserBank(in *user.UpdateUserBankReq) (*user.
 			Base: helper.ErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
 		}, nil
 	}
-	if base, err := adminTenantWriteScopeResp(l.ctx, bank.TenantId, i18n.NoPermissionModifyThisBankCard); err != nil {
+	if base, err := helpers.AdminTenantWriteScopeResp(l.ctx, bank.TenantId, i18n.NoPermissionModifyThisBankCard); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &user.UpdateUserBankResp{
@@ -100,6 +101,6 @@ func (l *UpdateUserBankLogic) UpdateUserBank(in *user.UpdateUserBankReq) (*user.
 
 	return &user.UpdateUserBankResp{
 		Base: helper.OkResp(),
-		Data: toUserBankItemProto(bank),
+		Data: helpers.ToUserBankItemProto(bank),
 	}, nil
 }

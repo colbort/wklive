@@ -2,6 +2,7 @@ package applogic
 
 import (
 	"context"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/common/utils"
@@ -48,8 +49,8 @@ func (l *ListMyAssetFlowsLogic) ListMyAssetFlows(in *asset.ListMyAssetFlowsReq) 
 		UserId:     userId,
 		WalletType: int64(in.WalletType),
 		Coin:       in.Coin,
-		BizType:    assetBizType(in.BizType),
-		SceneType:  assetSceneType(in.SceneType),
+		BizType:    helpers.AssetBizType(in.BizType),
+		SceneType:  helpers.AssetSceneType(in.SceneType),
 		StartTime:  startTime,
 		EndTime:    endTime,
 	}, in.Page.Cursor, in.Page.Limit)
@@ -65,7 +66,7 @@ func (l *ListMyAssetFlowsLogic) ListMyAssetFlows(in *asset.ListMyAssetFlowsReq) 
 	resp := &asset.ListMyAssetFlowsResp{Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastID)}
 
 	for _, item := range items {
-		resp.Data = append(resp.Data, toAssetFlowProto(item))
+		resp.Data = append(resp.Data, helpers.ToAssetFlowProto(item))
 	}
 
 	return resp, nil

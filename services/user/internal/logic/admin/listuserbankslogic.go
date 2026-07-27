@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"strings"
+	"wklive/services/user/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/common/utils"
@@ -71,7 +72,7 @@ func (l *ListUserBanksLogic) ListUserBanks(in *user.ListUserBanksReq) (*user.Lis
 			}
 		}
 
-		data = append(data, toUserBankItemProto(bank))
+		data = append(data, helpers.ToUserBankItemProto(bank))
 	}
 
 	return &user.ListUserBanksResp{

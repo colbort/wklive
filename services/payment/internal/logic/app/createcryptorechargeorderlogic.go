@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/generate"
@@ -159,8 +160,8 @@ func (l *CreateCryptoRechargeOrderLogic) CreateCryptoRechargeOrder(in *payment.C
 	return &payment.CreateCryptoRechargeOrderResp{
 		Base: helper.OkResp(),
 		Data: &payment.CreateCryptoRechargeOrderData{
-			Order:   toRechargeOrderProto(rechargeOrder),
-			Address: toCryptoRechargeAddressProto(addressItem),
+			Order:   helpers.ToRechargeOrderProto(rechargeOrder),
+			Address: helpers.ToCryptoRechargeAddressProto(addressItem),
 		},
 	}, nil
 }

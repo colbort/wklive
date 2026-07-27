@@ -2,6 +2,7 @@ package applogic
 
 import (
 	"context"
+	"wklive/services/staking/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/pageutil"
@@ -60,7 +61,7 @@ func (l *ProductListLogic) ProductList(in *staking.UserProductListReq) (*staking
 	}
 	resp.Data = make([]*staking.StakeProduct, 0, len(items))
 	for _, item := range items {
-		resp.Data = append(resp.Data, productToProto(item))
+		resp.Data = append(resp.Data, helpers.ProductToProto(item))
 	}
 	resp.Base = pageutil.Base(cursor, limit, len(items), total, int64(items[len(items)-1].Id))
 	return resp, nil

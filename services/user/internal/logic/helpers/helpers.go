@@ -1,4 +1,4 @@
-package adminlogic
+package helpers
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	"wklive/services/user/models"
 )
 
-func adminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAllowedCode int32) (*common.RespBase, error) {
+func AdminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAllowedCode int32) (*common.RespBase, error) {
 	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(ctx, currentTenantId)
 	if err != nil {
 		return nil, i18n.StatusError(ctx, i18n.UserNotFound)
@@ -25,7 +25,7 @@ func adminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAl
 	return nil, nil
 }
 
-func toUserBaseProto(tuser *models.TUser) *user.UserBase {
+func ToUserBaseProto(tuser *models.TUser) *user.UserBase {
 	if tuser == nil {
 		return &user.UserBase{}
 	}
@@ -63,7 +63,7 @@ func toUserBaseProto(tuser *models.TUser) *user.UserBase {
 	}
 }
 
-func toUserItemProto(tuser *models.TUser) *user.UserItem {
+func ToUserItemProto(tuser *models.TUser) *user.UserItem {
 	if tuser == nil {
 		return &user.UserItem{}
 	}
@@ -101,7 +101,7 @@ func toUserItemProto(tuser *models.TUser) *user.UserItem {
 	}
 }
 
-func toUserIdentityProto(identity *models.TUserIdentity) *user.UserIdentity {
+func ToUserIdentityProto(identity *models.TUserIdentity) *user.UserIdentity {
 	if identity == nil {
 		return &user.UserIdentity{}
 	}
@@ -135,7 +135,7 @@ func toUserIdentityProto(identity *models.TUserIdentity) *user.UserIdentity {
 	}
 }
 
-func toUserIdentityItemProto(identity *models.TUserIdentity) *user.UserIdentityItem {
+func ToUserIdentityItemProto(identity *models.TUserIdentity) *user.UserIdentityItem {
 	if identity == nil {
 		return &user.UserIdentityItem{}
 	}
@@ -169,7 +169,7 @@ func toUserIdentityItemProto(identity *models.TUserIdentity) *user.UserIdentityI
 	}
 }
 
-func toUserSecurityProto(security *models.TUserSecurity) *user.UserSecurity {
+func ToUserSecurityProto(security *models.TUserSecurity) *user.UserSecurity {
 	if security == nil {
 		return &user.UserSecurity{}
 	}
@@ -190,7 +190,7 @@ func toUserSecurityProto(security *models.TUserSecurity) *user.UserSecurity {
 	}
 }
 
-func toUserBankItemProto(bank *models.TUserBank) *user.UserBankItem {
+func ToUserBankItemProto(bank *models.TUserBank) *user.UserBankItem {
 	if bank == nil {
 		return &user.UserBankItem{}
 	}
@@ -212,31 +212,31 @@ func toUserBankItemProto(bank *models.TUserBank) *user.UserBankItem {
 	}
 }
 
-func toUserBankItemListProto(items []*models.TUserBank) []*user.UserBankItem {
+func ToUserBankItemListProto(items []*models.TUserBank) []*user.UserBankItem {
 	if len(items) == 0 {
 		return []*user.UserBankItem{}
 	}
 
 	list := make([]*user.UserBankItem, 0, len(items))
 	for _, item := range items {
-		list = append(list, toUserBankItemProto(item))
+		list = append(list, ToUserBankItemProto(item))
 	}
 	return list
 }
 
-func toUserProfileProto(tuser *models.TUser, identity *models.TUserIdentity, security *models.TUserSecurity) *user.UserProfile {
+func ToUserProfileProto(tuser *models.TUser, identity *models.TUserIdentity, security *models.TUserSecurity) *user.UserProfile {
 	return &user.UserProfile{
-		User:     toUserBaseProto(tuser),
-		Identity: toUserIdentityProto(identity),
-		Security: toUserSecurityProto(security),
+		User:     ToUserBaseProto(tuser),
+		Identity: ToUserIdentityProto(identity),
+		Security: ToUserSecurityProto(security),
 	}
 }
 
-func toUserDetailProto(tuser *models.TUser, identity *models.TUserIdentity, security *models.TUserSecurity, banks []*models.TUserBank) *user.UserDetail {
+func ToUserDetailProto(tuser *models.TUser, identity *models.TUserIdentity, security *models.TUserSecurity, banks []*models.TUserBank) *user.UserDetail {
 	return &user.UserDetail{
-		User:     toUserBaseProto(tuser),
-		Identity: toUserIdentityProto(identity),
-		Security: toUserSecurityProto(security),
-		Banks:    toUserBankItemListProto(banks),
+		User:     ToUserBaseProto(tuser),
+		Identity: ToUserIdentityProto(identity),
+		Security: ToUserSecurityProto(security),
+		Banks:    ToUserBankItemListProto(banks),
 	}
 }

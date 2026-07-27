@@ -9,6 +9,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/payment"
+	"wklive/services/payment/internal/logic/helpers"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
 
@@ -79,7 +80,7 @@ func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateT
 		channel.Sort = in.Sort
 	}
 	if in.Visible != 0 {
-		channel.Visible = switchToModel(in.Visible, channel.Visible)
+		channel.Visible = helpers.SwitchToModel(in.Visible, channel.Visible)
 	}
 	if in.Enabled != 0 {
 		channel.Enabled = int64(in.Enabled)
@@ -132,7 +133,7 @@ func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateT
 		channel.FeeFixedAmount = value
 	}
 	if in.ExtConfig != "" {
-		extConfig, valid := nullableJSON(in.ExtConfig)
+		extConfig, valid := helpers.NullableJSON(in.ExtConfig)
 		if !valid {
 			return &payment.CommonResp{
 				Base: helper.ErrResp(i18n.InvalidPaymentJSON, i18n.Translate(i18n.InvalidPaymentJSON, l.ctx)),
@@ -154,7 +155,7 @@ func (l *UpdateTenantPayChannelLogic) UpdateTenantPayChannel(in *payment.UpdateT
 
 	err = l.svcCtx.TenantPayChannelModel.Update(l.ctx, channel)
 	if err != nil {
-		if isDuplicateEntry(err) {
+		if helpers.IsDuplicateEntry(err) {
 			return paymentErrorResp(l.ctx, i18n.TenantPayChannelCodeAlreadyExists), nil
 		}
 		l.Logger.Errorf("%s error: %s", errLogic, err.Error())

@@ -7,6 +7,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/payment"
+	"wklive/services/payment/internal/logic/helpers"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
 
@@ -57,6 +58,6 @@ func (l *QueryMyRechargeOrderStatusLogic) QueryMyRechargeOrderStatus(in *payment
 
 	return &payment.QueryMyRechargeOrderStatusResp{
 		Base: helper.OkResp(),
-		Data: toRechargeOrderProto(order),
+		Data: helpers.ToRechargeOrderProto(order),
 	}, nil
 }

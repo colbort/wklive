@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	"wklive/services/option/internal/logic/helpers"
 
 	pageutil "wklive/common/pageutil"
 	"wklive/common/utils"
@@ -54,7 +55,7 @@ func (l *ListTradesLogic) ListTrades(in *option.UserListTradesReq) (*option.User
 	lastID := int64(0)
 	for _, item := range items {
 		lastID = item.Id
-		detail, err := buildTradeDetail(l.ctx, l.svcCtx, item)
+		detail, err := helpers.BuildTradeDetail(l.ctx, l.svcCtx, item)
 		if err != nil {
 			return nil, err
 		}

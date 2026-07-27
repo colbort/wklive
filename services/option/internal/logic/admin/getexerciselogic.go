@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/option"
+	"wklive/services/option/internal/logic/helpers"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -28,14 +29,14 @@ func NewGetExerciseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetEx
 
 // 获取单个行权记录详情
 func (l *GetExerciseLogic) GetExercise(in *option.GetExerciseReq) (*option.GetExerciseResp, error) {
-	item, err := findExerciseByNoOrID(l.ctx, l.svcCtx, in.TenantId, in.Id, in.ExerciseNo)
+	item, err := helpers.FindExerciseByNoOrID(l.ctx, l.svcCtx, in.TenantId, in.Id, in.ExerciseNo)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			return &option.GetExerciseResp{Base: helper.ErrResp(i18n.ExerciseRecordNotFound, i18n.Translate(i18n.ExerciseRecordNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
-	data, err := buildExerciseDetail(l.ctx, l.svcCtx, item)
+	data, err := helpers.BuildExerciseDetail(l.ctx, l.svcCtx, item)
 	if err != nil {
 		return nil, err
 	}

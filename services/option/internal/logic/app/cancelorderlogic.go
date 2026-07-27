@@ -10,6 +10,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/proto/option"
+	"wklive/services/option/internal/logic/helpers"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -41,7 +42,7 @@ func (l *CancelOrderLogic) CancelOrder(in *option.CancelOrderReq) (*option.UserC
 	if err != nil {
 		return nil, err
 	}
-	item, err := findOrderByNoOrID(l.ctx, l.svcCtx, tenantId, in.OrderId, in.OrderNo)
+	item, err := helpers.FindOrderByNoOrID(l.ctx, l.svcCtx, tenantId, in.OrderId, in.OrderNo)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			return &option.UserCommonResp{Base: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil

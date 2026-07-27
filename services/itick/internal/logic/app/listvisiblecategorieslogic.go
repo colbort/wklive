@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"sort"
+	"wklive/services/itick/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -74,7 +75,7 @@ func (l *ListVisibleCategoriesLogic) ListVisibleCategories(in *itick.ListVisible
 		if item.Id <= in.Page.Cursor || int64(len(data)) >= limit {
 			continue
 		}
-		data = append(data, toTenantCategoryProto(item, category))
+		data = append(data, helpers.ToTenantCategoryProto(item, category))
 	}
 
 	lastID := int64(0)

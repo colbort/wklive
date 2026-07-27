@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"strings"
+	"wklive/services/chat/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/utils"
@@ -34,7 +35,7 @@ func NewCreatePlatformChatMerchantLogic(ctx context.Context, svcCtx *svc.Service
 }
 
 func (l *CreatePlatformChatMerchantLogic) CreatePlatformChatMerchant(in *chat.PlatformChatMerchantCreateReq) (*chat.CommonResp, error) {
-	if base, err := platformScope(l.ctx); err != nil {
+	if base, err := helpers.PlatformScope(l.ctx); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &chat.CommonResp{Base: base}, nil
@@ -43,10 +44,10 @@ func (l *CreatePlatformChatMerchantLogic) CreatePlatformChatMerchant(in *chat.Pl
 	name := strings.TrimSpace(in.GetMerchantName())
 	password := strings.TrimSpace(in.GetPassword())
 	if code == "" || name == "" || password == "" {
-		return &chat.CommonResp{Base: paramError(l.ctx)}, nil
+		return &chat.CommonResp{Base: helpers.ParamError(l.ctx)}, nil
 	}
 	if _, err := l.svcCtx.ChatMerchantModel.FindOneByMerchantCode(l.ctx, code); err == nil {
-		return &chat.CommonResp{Base: paramError(l.ctx)}, nil
+		return &chat.CommonResp{Base: helpers.ParamError(l.ctx)}, nil
 	} else if !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -54,7 +55,7 @@ func (l *CreatePlatformChatMerchantLogic) CreatePlatformChatMerchant(in *chat.Pl
 	if err != nil {
 		return nil, err
 	}
-	apiKey, apiSecret, err := newMerchantKeys()
+	apiKey, apiSecret, err := helpers.NewMerchantKeys()
 	if err != nil {
 		return nil, err
 	}
@@ -94,8 +95,8 @@ func (l *CreatePlatformChatMerchantLogic) CreatePlatformChatMerchant(in *chat.Pl
 		}); err != nil {
 			return err
 		}
-		theme, _ := protojson.Marshal(defaultPlatformChatTheme())
-		features, _ := protojson.Marshal(defaultPlatformChatFeatures())
+		theme, _ := protojson.Marshal(helpers.DefaultPlatformChatTheme())
+		features, _ := protojson.Marshal(helpers.DefaultPlatformChatFeatures())
 		_, err = infoModel.Insert(ctx, &models.TChatMerchantInfo{
 			MerchantId: merchantID, Title: name, ApiKey: apiKey, ApiSecret: apiSecret,
 			UiConfig:      sql.NullString{String: string(theme), Valid: true},

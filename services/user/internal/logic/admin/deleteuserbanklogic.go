@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/user/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -38,7 +39,7 @@ func (l *DeleteUserBankLogic) DeleteUserBank(in *user.DeleteUserBankReq) (*user.
 			Base: helper.ErrResp(i18n.BankCardNotFound, i18n.Translate(i18n.BankCardNotFound, l.ctx)),
 		}, nil
 	}
-	if base, err := adminTenantWriteScopeResp(l.ctx, bank.TenantId, i18n.NoPermissionDeleteThisBankCard); err != nil {
+	if base, err := helpers.AdminTenantWriteScopeResp(l.ctx, bank.TenantId, i18n.NoPermissionDeleteThisBankCard); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &user.CommonResp{

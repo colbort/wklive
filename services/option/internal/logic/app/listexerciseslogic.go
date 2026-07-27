@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	"wklive/services/option/internal/logic/helpers"
 
 	pageutil "wklive/common/pageutil"
 	"wklive/common/utils"
@@ -55,7 +56,7 @@ func (l *ListExercisesLogic) ListExercises(in *option.UserListExercisesReq) (*op
 	lastID := int64(0)
 	for _, item := range items {
 		lastID = item.Id
-		detail, err := buildExerciseDetail(l.ctx, l.svcCtx, item)
+		detail, err := helpers.BuildExerciseDetail(l.ctx, l.svcCtx, item)
 		if err != nil {
 			return nil, err
 		}

@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/payment"
+	"wklive/services/payment/internal/logic/helpers"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
 
@@ -46,6 +47,6 @@ func (l *GetTenantPayAccountLogic) GetTenantPayAccount(in *payment.GetTenantPayA
 
 	return &payment.GetTenantPayAccountResp{
 		Base: helper.OkResp(),
-		Data: toTenantPayAccountProto(account),
+		Data: helpers.ToTenantPayAccountProto(account),
 	}, nil
 }

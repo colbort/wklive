@@ -1,4 +1,4 @@
-package adminlogic
+package helpers
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"wklive/services/staking/models"
 )
 
-func adminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAllowedCode int32) (*common.RespBase, error) {
+func AdminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAllowedCode int32) (*common.RespBase, error) {
 	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(ctx, currentTenantId)
 	if err != nil {
 		return nil, i18n.StatusError(ctx, i18n.UserNotFound)
@@ -26,7 +26,7 @@ func adminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAl
 	return nil, nil
 }
 
-func productToProto(item *models.TStakeProduct) *staking.StakeProduct {
+func ProductToProto(item *models.TStakeProduct) *staking.StakeProduct {
 	if item == nil {
 		return nil
 	}
@@ -62,7 +62,7 @@ func productToProto(item *models.TStakeProduct) *staking.StakeProduct {
 	}
 }
 
-func orderToProto(item *models.TStakeOrder) *staking.StakeOrder {
+func OrderToProto(item *models.TStakeOrder) *staking.StakeOrder {
 	if item == nil {
 		return nil
 	}
@@ -108,7 +108,7 @@ func orderToProto(item *models.TStakeOrder) *staking.StakeOrder {
 	}
 }
 
-func rewardLogToProto(item *models.TStakeRewardLog) *staking.StakeRewardLog {
+func RewardLogToProto(item *models.TStakeRewardLog) *staking.StakeRewardLog {
 	if item == nil {
 		return nil
 	}
@@ -136,7 +136,7 @@ func rewardLogToProto(item *models.TStakeRewardLog) *staking.StakeRewardLog {
 	}
 }
 
-func redeemLogToProto(item *models.TStakeRedeemLog) *staking.StakeRedeemLog {
+func RedeemLogToProto(item *models.TStakeRedeemLog) *staking.StakeRedeemLog {
 	if item == nil {
 		return nil
 	}
@@ -164,14 +164,14 @@ func redeemLogToProto(item *models.TStakeRedeemLog) *staking.StakeRedeemLog {
 	}
 }
 
-func activeOrderStatuses() []int64 {
+func ActiveOrderStatuses() []int64 {
 	return []int64{
 		int64(staking.OrderStatus_ORDER_STATUS_STAKING),
 		int64(staking.OrderStatus_ORDER_STATUS_EXPIRED),
 	}
 }
 
-func calcNextRewardTime(now int64, rewardMode staking.RewardMode, endTime int64) int64 {
+func CalcNextRewardTime(now int64, rewardMode staking.RewardMode, endTime int64) int64 {
 	if rewardMode == staking.RewardMode_REWARD_MODE_DAILY {
 		return now + 24*3600*1000
 	}

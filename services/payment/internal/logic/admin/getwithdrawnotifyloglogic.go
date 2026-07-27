@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/payment"
+	"wklive/services/payment/internal/logic/helpers"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
 
@@ -46,6 +47,6 @@ func (l *GetWithdrawNotifyLogLogic) GetWithdrawNotifyLog(in *payment.GetWithdraw
 
 	return &payment.GetWithdrawNotifyLogResp{
 		Base: helper.OkResp(),
-		Data: toWithdrawNotifyLogProto(notifyLog),
+		Data: helpers.ToWithdrawNotifyLogProto(notifyLog),
 	}, nil
 }

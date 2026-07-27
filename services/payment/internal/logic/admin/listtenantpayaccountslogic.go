@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/common/utils"
@@ -67,7 +68,7 @@ func (l *ListTenantPayAccountsLogic) ListTenantPayAccounts(in *payment.ListTenan
 		platformNames[platform.Id] = platform.PlatformName
 	}
 	for _, acc := range items {
-		item := toTenantPayAccountProto(acc)
+		item := helpers.ToTenantPayAccountProto(acc)
 		item.PlatformName = platformNames[acc.PlatformId]
 		data = append(data, item)
 	}

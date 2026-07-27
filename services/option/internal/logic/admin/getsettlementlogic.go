@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/option"
+	"wklive/services/option/internal/logic/helpers"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -28,14 +29,14 @@ func NewGetSettlementLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 
 // 获取单个到期结算记录详情
 func (l *GetSettlementLogic) GetSettlement(in *option.GetSettlementReq) (*option.GetSettlementResp, error) {
-	item, err := findSettlementByNoOrID(l.ctx, l.svcCtx, in.TenantId, in.Id, in.SettlementNo)
+	item, err := helpers.FindSettlementByNoOrID(l.ctx, l.svcCtx, in.TenantId, in.Id, in.SettlementNo)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			return &option.GetSettlementResp{Base: helper.ErrResp(i18n.SettlementRecordNotFound, i18n.Translate(i18n.SettlementRecordNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
-	data, err := buildSettlementDetail(l.ctx, l.svcCtx, item)
+	data, err := helpers.BuildSettlementDetail(l.ctx, l.svcCtx, item)
 	if err != nil {
 		return nil, err
 	}

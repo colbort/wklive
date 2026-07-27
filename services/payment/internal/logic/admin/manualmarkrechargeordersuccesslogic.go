@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/payment"
+	"wklive/services/payment/internal/logic/helpers"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
 
@@ -62,7 +63,7 @@ func (l *ManualMarkRechargeOrderSuccessLogic) ManualMarkRechargeOrderSuccess(in 
 	if err != nil {
 		return paymentErrorResp(l.ctx, i18n.InvalidPaymentDecimal), nil
 	}
-	if err := markRechargeOrderSuccessAndCredit(l.ctx, l.svcCtx, order, in.ThirdTradeNo, payAmount, "manual mark recharge success"); err != nil {
+	if err := helpers.MarkRechargeOrderSuccessAndCredit(l.ctx, l.svcCtx, order, in.ThirdTradeNo, payAmount, "manual mark recharge success"); err != nil {
 		l.Logger.Errorf("%s error: %s", errLogic, err.Error())
 		return nil, err
 	}

@@ -1,4 +1,4 @@
-package tasklogic
+package helpers
 
 import (
 	"context"
@@ -14,7 +14,7 @@ import (
 	"wklive/services/itick/models"
 )
 
-func adminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAllowedCode int32) (*common.RespBase, error) {
+func AdminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAllowedCode int32) (*common.RespBase, error) {
 	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(ctx, currentTenantId)
 	if err != nil {
 		return nil, i18n.StatusError(ctx, i18n.UserNotFound)
@@ -28,7 +28,7 @@ func adminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAl
 	return nil, nil
 }
 
-func toCategoryProto(item *models.TItickCategory) *itick.ItickCategory {
+func ToCategoryProto(item *models.TItickCategory) *itick.ItickCategory {
 	if item == nil {
 		return nil
 	}
@@ -48,7 +48,7 @@ func toCategoryProto(item *models.TItickCategory) *itick.ItickCategory {
 	}
 }
 
-func toProductProto(item *models.TItickProduct) *itick.ItickProduct {
+func ToProductProto(item *models.TItickProduct) *itick.ItickProduct {
 	if item == nil {
 		return nil
 	}
@@ -75,7 +75,7 @@ func toProductProto(item *models.TItickProduct) *itick.ItickProduct {
 	}
 }
 
-func toQuoteProto(item *models.TItickQuote) *itick.Quote {
+func ToQuoteProto(item *models.TItickQuote) *itick.Quote {
 	if item == nil {
 		return nil
 	}
@@ -97,7 +97,7 @@ func toQuoteProto(item *models.TItickQuote) *itick.Quote {
 	}
 }
 
-func toQuotePayloadProto(categoryCode, market, symbol string, item *types.QuotePayload) *itick.Quote {
+func ToQuotePayloadProto(categoryCode, market, symbol string, item *types.QuotePayload) *itick.Quote {
 	if item == nil {
 		return nil
 	}
@@ -105,17 +105,17 @@ func toQuotePayloadProto(categoryCode, market, symbol string, item *types.QuoteP
 		CategoryCode: categoryCode,
 		Market:       market,
 		Symbol:       symbol,
-		LastPrice:    formatMarketDecimal(item.LastPrice),
-		OpenPrice:    formatMarketDecimal(item.Open),
-		HighPrice:    formatMarketDecimal(item.High),
-		LowPrice:     formatMarketDecimal(item.LastPrice),
-		Volume:       formatMarketDecimal(item.Volume),
-		Turnover:     formatMarketDecimal(item.Turnover),
+		LastPrice:    FormatMarketDecimal(item.LastPrice),
+		OpenPrice:    FormatMarketDecimal(item.Open),
+		HighPrice:    FormatMarketDecimal(item.High),
+		LowPrice:     FormatMarketDecimal(item.LastPrice),
+		Volume:       FormatMarketDecimal(item.Volume),
+		Turnover:     FormatMarketDecimal(item.Turnover),
 		QuoteTs:      item.Ts,
 	}
 }
 
-func toKlineProto(kType itick.KlineType, item *models.CoinKline) *itick.Kline {
+func ToKlineProto(kType itick.KlineType, item *models.CoinKline) *itick.Kline {
 	if item == nil {
 		return nil
 	}
@@ -125,12 +125,12 @@ func toKlineProto(kType itick.KlineType, item *models.CoinKline) *itick.Kline {
 		Symbol:        item.Symbol,
 		KType:         kType,
 		Ts:            item.Ts,
-		Open:          formatMarketDecimal(item.Open),
-		High:          formatMarketDecimal(item.High),
-		Low:           formatMarketDecimal(item.Low),
-		Close:         formatMarketDecimal(item.Close),
-		Volume:        formatMarketDecimal(item.Volume),
-		Turnover:      formatMarketDecimal(item.Turnover),
+		Open:          FormatMarketDecimal(item.Open),
+		High:          FormatMarketDecimal(item.High),
+		Low:           FormatMarketDecimal(item.Low),
+		Close:         FormatMarketDecimal(item.Close),
+		Volume:        FormatMarketDecimal(item.Volume),
+		Turnover:      FormatMarketDecimal(item.Turnover),
 		Source:        item.Source,
 		Revision:      item.Revision,
 		IsClosed:      item.IsClosed,
@@ -140,11 +140,71 @@ func toKlineProto(kType itick.KlineType, item *models.CoinKline) *itick.Kline {
 	}
 }
 
-func formatMarketDecimal(value float64) string {
+func FormatMarketDecimal(value float64) string {
 	return strconv.FormatFloat(value, 'f', -1, 64)
 }
 
-func categoryTypeCode(categoryType itick.CategoryType) string {
+func ToTenantCategoryProto(item *models.TItickTenantCategory, category *models.TItickCategory) *itick.ItickTenantCategory {
+	if item == nil {
+		return nil
+	}
+
+	data := &itick.ItickTenantCategory{
+		Id:          item.Id,
+		TenantId:    item.TenantId,
+		CategoryId:  item.CategoryId,
+		Enabled:     common.Enable(item.Enabled),
+		AppVisible:  common.Switch(item.AppVisible),
+		Sort:        item.Sort,
+		Remark:      item.Remark,
+		CreateTimes: item.CreateTimes,
+		UpdateTimes: item.UpdateTimes,
+	}
+	if category != nil {
+		data.CategoryType = itick.CategoryType(category.CategoryType)
+		data.CategoryCode = category.CategoryCode
+		data.CategoryName = category.CategoryName
+		data.Icon = category.Icon
+	}
+	return data
+}
+
+func ToTenantProductProto(item *models.TItickTenantProduct, product *models.TItickProduct) *itick.ItickTenantProduct {
+	if item == nil {
+		return nil
+	}
+
+	data := &itick.ItickTenantProduct{
+		Id:          item.Id,
+		TenantId:    item.TenantId,
+		ProductId:   item.ProductId,
+		Enabled:     common.Enable(item.Enabled),
+		AppVisible:  common.Switch(item.AppVisible),
+		Sort:        item.Sort,
+		Remark:      item.Remark,
+		CreateTimes: item.CreateTimes,
+		UpdateTimes: item.UpdateTimes,
+	}
+	if product != nil {
+		data.CategoryType = itick.CategoryType(product.CategoryType)
+		data.CategoryCode = product.CategoryCode
+		data.CategoryName = product.CategoryName
+		data.Market = product.Market
+		data.Symbol = product.Symbol
+		data.Code = product.Code
+		data.Name = product.Name
+		data.DisplayName = product.DisplayName
+		data.BaseCoin = product.BaseCoin
+		data.QuoteCoin = product.QuoteCoin
+		data.Icon = product.Icon
+	}
+	if item.DisplayName != "" {
+		data.DisplayName = item.DisplayName
+	}
+	return data
+}
+
+func CategoryTypeCode(categoryType itick.CategoryType) string {
 	switch categoryType {
 	case itick.CategoryType_CATEGORY_TYPE_FOREX:
 		return "forex"
@@ -163,7 +223,7 @@ func categoryTypeCode(categoryType itick.CategoryType) string {
 	}
 }
 
-func statusMatches(filter int32, actual int64) bool {
+func StatusMatches(filter int32, actual int64) bool {
 	switch filter {
 	case 0:
 		return true
@@ -176,7 +236,7 @@ func statusMatches(filter int32, actual int64) bool {
 	}
 }
 
-func keywordMatches(keyword string, parts ...string) bool {
+func KeywordMatches(keyword string, parts ...string) bool {
 	keyword = strings.ToLower(strings.TrimSpace(keyword))
 	if keyword == "" {
 		return true

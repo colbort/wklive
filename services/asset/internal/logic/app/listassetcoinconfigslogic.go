@@ -2,6 +2,7 @@ package applogic
 
 import (
 	"context"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/utils"
@@ -38,7 +39,7 @@ func (l *ListAssetCoinConfigsLogic) ListAssetCoinConfigs(in *asset.ListAssetCoin
 
 	resp := &asset.ListAssetCoinConfigsResp{Base: helper.OkResp()}
 	for _, item := range list {
-		resp.Data = append(resp.Data, toAssetCoinConfigProto(item))
+		resp.Data = append(resp.Data, helpers.ToAssetCoinConfigProto(item))
 	}
 
 	return resp, nil

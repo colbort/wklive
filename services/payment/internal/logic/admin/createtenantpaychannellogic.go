@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"database/sql"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -75,7 +76,7 @@ func (l *CreateTenantPayChannelLogic) CreateTenantPayChannel(in *payment.CreateT
 	if feeRate.IsNegative() {
 		return paymentErrorResp(l.ctx, i18n.InvalidPaymentAmountRange), nil
 	}
-	extConfig, valid := nullableJSON(in.ExtConfig)
+	extConfig, valid := helpers.NullableJSON(in.ExtConfig)
 	if !valid {
 		return &payment.CommonResp{
 			Base: helper.ErrResp(i18n.InvalidPaymentJSON, i18n.Translate(i18n.InvalidPaymentJSON, l.ctx)),
@@ -94,8 +95,8 @@ func (l *CreateTenantPayChannelLogic) CreateTenantPayChannel(in *payment.CreateT
 		Icon:            sql.NullString{String: in.Icon, Valid: true},
 		Currency:        in.Currency,
 		Sort:            in.Sort,
-		Visible:         switchToModel(in.Visible, int64(common.Switch_SWITCH_OFF)),
-		Enabled:         enableToModel(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
+		Visible:         helpers.SwitchToModel(in.Visible, int64(common.Switch_SWITCH_OFF)),
+		Enabled:         helpers.EnableToModel(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
 		SingleMinAmount: singleMinAmount,
 		SingleMaxAmount: singleMaxAmount,
 		DailyMaxAmount:  dailyMaxAmount,
@@ -111,7 +112,7 @@ func (l *CreateTenantPayChannelLogic) CreateTenantPayChannel(in *payment.CreateT
 
 	_, err = l.svcCtx.TenantPayChannelModel.Insert(l.ctx, channel)
 	if err != nil {
-		if isDuplicateEntry(err) {
+		if helpers.IsDuplicateEntry(err) {
 			return paymentErrorResp(l.ctx, i18n.TenantPayChannelCodeAlreadyExists), nil
 		}
 		l.Logger.Errorf("%s error: %s", errLogic, err.Error())

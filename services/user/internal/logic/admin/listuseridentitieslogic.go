@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"strings"
+	"wklive/services/user/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/common/utils"
@@ -47,7 +48,7 @@ func (l *ListUserIdentitiesLogic) ListUserIdentities(in *user.ListUserIdentities
 
 	data := make([]*user.UserIdentityItem, 0, len(items))
 	for _, item := range items {
-		data = append(data, toUserIdentityItemProto(item))
+		data = append(data, helpers.ToUserIdentityItemProto(item))
 	}
 
 	return &user.ListUserIdentitiesResp{

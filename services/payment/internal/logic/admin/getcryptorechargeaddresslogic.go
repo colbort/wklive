@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -29,7 +30,7 @@ func NewGetCryptoRechargeAddressLogic(ctx context.Context, svcCtx *svc.ServiceCo
 func (l *GetCryptoRechargeAddressLogic) GetCryptoRechargeAddress(in *payment.GetCryptoRechargeAddressReq) (*payment.GetCryptoRechargeAddressResp, error) {
 	item, err := getCryptoRechargeAddress(l.ctx, l.svcCtx, in.TenantId, in.Id)
 	if err != nil {
-		if isNotFound(err) {
+		if helpers.IsNotFound(err) {
 			return &payment.GetCryptoRechargeAddressResp{Base: helper.ErrResp(i18n.CryptoRechargeAddressNotFound, i18n.Translate(i18n.CryptoRechargeAddressNotFound, l.ctx))}, nil
 		}
 		return nil, err
@@ -37,5 +38,5 @@ func (l *GetCryptoRechargeAddressLogic) GetCryptoRechargeAddress(in *payment.Get
 	if item == nil {
 		return &payment.GetCryptoRechargeAddressResp{Base: helper.ErrResp(i18n.CryptoRechargeAddressNotFound, i18n.Translate(i18n.CryptoRechargeAddressNotFound, l.ctx))}, nil
 	}
-	return &payment.GetCryptoRechargeAddressResp{Base: helper.OkResp(), Data: toCryptoRechargeAddressProto(item)}, nil
+	return &payment.GetCryptoRechargeAddressResp{Base: helper.OkResp(), Data: helpers.ToCryptoRechargeAddressProto(item)}, nil
 }

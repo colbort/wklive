@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -109,5 +110,5 @@ func (l *UpdateAssetCoinConfigLogic) UpdateAssetCoinConfig(in *asset.UpdateAsset
 		return nil, err
 	}
 
-	return &asset.AssetCoinConfigResp{Base: helper.OkResp(), Data: toAssetCoinConfigProto(old)}, nil
+	return &asset.AssetCoinConfigResp{Base: helper.OkResp(), Data: helpers.ToAssetCoinConfigProto(old)}, nil
 }

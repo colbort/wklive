@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -29,10 +30,10 @@ func NewGetCryptoRechargeTxLogic(ctx context.Context, svcCtx *svc.ServiceContext
 func (l *GetCryptoRechargeTxLogic) GetCryptoRechargeTx(in *payment.GetCryptoRechargeTxReq) (*payment.GetCryptoRechargeTxResp, error) {
 	item, err := l.svcCtx.CryptoRechargeTxModel.FindOneByIdOrHash(l.ctx, in.TenantId, in.Id, int64(in.ChainCode), in.TxHash)
 	if err != nil {
-		if isNotFound(err) {
+		if helpers.IsNotFound(err) {
 			return &payment.GetCryptoRechargeTxResp{Base: helper.ErrResp(i18n.CryptoRechargeTxNotFound, i18n.Translate(i18n.CryptoRechargeTxNotFound, l.ctx))}, nil
 		}
 		return nil, err
 	}
-	return &payment.GetCryptoRechargeTxResp{Base: helper.OkResp(), Data: toCryptoRechargeTxProto(item)}, nil
+	return &payment.GetCryptoRechargeTxResp{Base: helper.OkResp(), Data: helpers.ToCryptoRechargeTxProto(item)}, nil
 }

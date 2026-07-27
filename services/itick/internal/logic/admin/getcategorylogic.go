@@ -5,6 +5,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/itick"
+	"wklive/services/itick/internal/logic/helpers"
 	"wklive/services/itick/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -37,6 +38,6 @@ func (l *GetCategoryLogic) GetCategory(in *itick.GetCategoryReq) (*itick.GetCate
 	}
 	return &itick.GetCategoryResp{
 		Base: helper.OkResp(),
-		Data: toCategoryProto(result),
+		Data: helpers.ToCategoryProto(result),
 	}, nil
 }

@@ -7,6 +7,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/option"
+	"wklive/services/option/internal/logic/helpers"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -37,7 +38,7 @@ func (l *GetOrderDetailLogic) GetOrderDetail(in *option.GetOrderDetailReq) (*opt
 	if err != nil {
 		return nil, err
 	}
-	item, err := findOrderByNoOrID(l.ctx, l.svcCtx, tenantId, in.OrderId, in.OrderNo)
+	item, err := helpers.FindOrderByNoOrID(l.ctx, l.svcCtx, tenantId, in.OrderId, in.OrderNo)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			return &option.GetOrderDetailResp{Base: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
@@ -47,7 +48,7 @@ func (l *GetOrderDetailLogic) GetOrderDetail(in *option.GetOrderDetailReq) (*opt
 	if item.UserId != userId || item.AccountId != in.AccountId {
 		return &option.GetOrderDetailResp{Base: helper.ErrResp(i18n.NoPermissionViewOrder, i18n.Translate(i18n.NoPermissionViewOrder, l.ctx))}, nil
 	}
-	data, err := buildOrderDetail(l.ctx, l.svcCtx, item)
+	data, err := helpers.BuildOrderDetail(l.ctx, l.svcCtx, item)
 	if err != nil {
 		return nil, err
 	}

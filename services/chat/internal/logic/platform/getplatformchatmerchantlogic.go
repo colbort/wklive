@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"strings"
+	"wklive/services/chat/internal/logic/helpers"
 
 	"wklive/proto/chat"
 	"wklive/services/chat/internal/svc"
@@ -27,7 +28,7 @@ func NewGetPlatformChatMerchantLogic(ctx context.Context, svcCtx *svc.ServiceCon
 }
 
 func (l *GetPlatformChatMerchantLogic) GetPlatformChatMerchant(in *chat.PlatformChatMerchantDetailReq) (*chat.PlatformChatMerchantDetailResp, error) {
-	if base, err := platformScope(l.ctx); err != nil {
+	if base, err := helpers.PlatformScope(l.ctx); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &chat.PlatformChatMerchantDetailResp{Base: base}, nil
@@ -40,10 +41,10 @@ func (l *GetPlatformChatMerchantLogic) GetPlatformChatMerchant(in *chat.Platform
 		row, err = l.svcCtx.ChatMerchantModel.FindOneByMerchantCode(l.ctx, strings.TrimSpace(in.GetMerchantCode()))
 	}
 	if errors.Is(err, models.ErrNotFound) {
-		return &chat.PlatformChatMerchantDetailResp{Base: paramError(l.ctx)}, nil
+		return &chat.PlatformChatMerchantDetailResp{Base: helpers.ParamError(l.ctx)}, nil
 	}
 	if err != nil {
 		return nil, err
 	}
-	return &chat.PlatformChatMerchantDetailResp{Base: okResp(), Data: merchantProto(row)}, nil
+	return &chat.PlatformChatMerchantDetailResp{Base: helpers.OkResp(), Data: helpers.MerchantProto(row)}, nil
 }

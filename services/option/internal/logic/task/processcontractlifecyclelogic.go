@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"time"
+	"wklive/services/option/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/generate"
@@ -35,7 +36,7 @@ func NewProcessContractLifecycleLogic(ctx context.Context, svcCtx *svc.ServiceCo
 
 // 期权合约生命周期处理（状态流转/订单过期/自动行权/到期结算）
 func (l *ProcessContractLifecycleLogic) ProcessContractLifecycle(in *option.OptionTaskReq) (*option.OptionTaskResp, error) {
-	return runTaskWithLock(l.ctx, l.svcCtx, "process_contract_lifecycle", func() (*option.OptionTaskResp, error) {
+	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_contract_lifecycle", func() (*option.OptionTaskResp, error) {
 		now := time.Now().Unix()
 		if err := l.syncContracts(option.ContractStatus_CONTRACT_STATUS_PENDING, now, 0, option.ContractStatus_CONTRACT_STATUS_TRADING, now); err != nil {
 			return nil, err
@@ -46,7 +47,7 @@ func (l *ProcessContractLifecycleLogic) ProcessContractLifecycle(in *option.Opti
 		if err := l.processExpiredContracts(now); err != nil {
 			return nil, err
 		}
-		return okTaskResp(), nil
+		return helpers.OkTaskResp(), nil
 	})
 }
 
@@ -333,7 +334,7 @@ func (l *ProcessContractLifecycleLogic) settleContract(contract *models.TOptionC
 		if err := settleContractPositions(ctx, positionModel, accountModel, billModel, contract, settlementNo, settlementId, deliveryPrice, now); err != nil {
 			return err
 		}
-		if err := insertMarketSnapshot(ctx, snapshotModel, market, now); err != nil {
+		if err := helpers.InsertMarketSnapshot(ctx, snapshotModel, market, now); err != nil {
 			return err
 		}
 		return contractModel.Update(ctx, contract)

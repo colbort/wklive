@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -40,5 +41,5 @@ func (l *GetAssetCoinConfigLogic) GetAssetCoinConfig(in *asset.GetAssetCoinConfi
 		return &asset.AssetCoinConfigResp{Base: helper.ErrResp(i18n.AssetCoinConfigNotFound, i18n.Translate(i18n.AssetCoinConfigNotFound, l.ctx))}, nil
 	}
 
-	return &asset.AssetCoinConfigResp{Base: helper.OkResp(), Data: toAssetCoinConfigProto(data)}, nil
+	return &asset.AssetCoinConfigResp{Base: helper.OkResp(), Data: helpers.ToAssetCoinConfigProto(data)}, nil
 }

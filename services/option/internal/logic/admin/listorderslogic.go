@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/option/internal/logic/helpers"
 
 	pageutil "wklive/common/pageutil"
 	"wklive/proto/option"
@@ -51,7 +52,7 @@ func (l *ListOrdersLogic) ListOrders(in *option.ListOrdersReq) (*option.ListOrde
 	lastID := int64(0)
 	for _, item := range items {
 		lastID = item.Id
-		detail, err := buildOrderDetail(l.ctx, l.svcCtx, item)
+		detail, err := helpers.BuildOrderDetail(l.ctx, l.svcCtx, item)
 		if err != nil {
 			return nil, err
 		}

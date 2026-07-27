@@ -2,6 +2,7 @@ package assetlogic
 
 import (
 	"context"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -50,8 +51,8 @@ func (l *TransferAssetLogic) TransferAsset(in *asset.TransferAssetReq) (*asset.T
 		afterFrom  *models.TUserAsset
 		afterTo    *models.TUserAsset
 	)
-	sceneType := assetSceneType(in.SceneType)
-	bizType := assetBizType(in.BizType)
+	sceneType := helpers.AssetSceneType(in.SceneType)
+	bizType := helpers.AssetBizType(in.BizType)
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		userAssetModel := models.NewTUserAssetModel(conn, l.svcCtx.Config.CacheRedis)
@@ -105,12 +106,12 @@ func (l *TransferAssetLogic) TransferAsset(in *asset.TransferAssetReq) (*asset.T
 			return err
 		}
 
-		flowOut := buildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.FromWalletType), in.Coin, sceneType, bizType, sceneType, in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_TRANSFER_OUT, amount, beforeFrom, afterFrom, in.Remark, ts)
+		flowOut := helpers.BuildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.FromWalletType), in.Coin, sceneType, bizType, sceneType, in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_TRANSFER_OUT, amount, beforeFrom, afterFrom, in.Remark, ts)
 		if _, err := assetFlowModel.Insert(ctx, flowOut); err != nil {
 			return err
 		}
 
-		flowIn := buildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.ToWalletType), in.Coin, sceneType, bizType, sceneType, in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_TRANSFER_IN, amount, beforeTo, afterTo, in.Remark, ts)
+		flowIn := helpers.BuildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.ToWalletType), in.Coin, sceneType, bizType, sceneType, in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_TRANSFER_IN, amount, beforeTo, afterTo, in.Remark, ts)
 		if _, err := assetFlowModel.Insert(ctx, flowIn); err != nil {
 			return err
 		}
@@ -122,5 +123,5 @@ func (l *TransferAssetLogic) TransferAsset(in *asset.TransferAssetReq) (*asset.T
 		return nil, err
 	}
 
-	return &asset.TransferAssetResp{Base: helper.OkResp(), Data: &asset.TransferAssetData{FromAsset: toUserAssetProto(afterFrom), ToAsset: toUserAssetProto(afterTo)}}, nil
+	return &asset.TransferAssetResp{Base: helper.OkResp(), Data: &asset.TransferAssetData{FromAsset: helpers.ToUserAssetProto(afterFrom), ToAsset: helpers.ToUserAssetProto(afterTo)}}, nil
 }

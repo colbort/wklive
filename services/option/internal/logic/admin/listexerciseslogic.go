@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/option/internal/logic/helpers"
 
 	pageutil "wklive/common/pageutil"
 	"wklive/proto/option"
@@ -47,7 +48,7 @@ func (l *ListExercisesLogic) ListExercises(in *option.ListExercisesReq) (*option
 	lastID := int64(0)
 	for _, item := range items {
 		lastID = item.Id
-		detail, err := buildExerciseDetail(l.ctx, l.svcCtx, item)
+		detail, err := helpers.BuildExerciseDetail(l.ctx, l.svcCtx, item)
 		if err != nil {
 			return nil, err
 		}

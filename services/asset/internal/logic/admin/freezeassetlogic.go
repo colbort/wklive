@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -31,7 +32,7 @@ func NewFreezeAssetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Freez
 
 // 后台冻结资产
 func (l *FreezeAssetLogic) FreezeAsset(in *asset.ManualFreezeAssetReq) (*asset.ManualChangeAssetResp, error) {
-	if base, err := adminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
+	if base, err := helpers.AdminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.BusinessDataNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &asset.ManualChangeAssetResp{Base: base}, nil
@@ -79,12 +80,12 @@ func (l *FreezeAssetLogic) FreezeAsset(in *asset.ManualFreezeAssetReq) (*asset.M
 			return err
 		}
 
-		freeze = buildAssetFreezeRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "system", "manual_add", in.BizNo, in.Remark, amount, 0, ts)
+		freeze = helpers.BuildAssetFreezeRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "system", "manual_add", in.BizNo, in.Remark, amount, 0, ts)
 		if _, err := assetFreezeModel.Insert(ctx, freeze); err != nil {
 			return err
 		}
 
-		flow := buildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "manual_add", "system", "manual_add", 0, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_FREEZE, amount, before, after, in.Remark, ts)
+		flow := helpers.BuildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "manual_add", "system", "manual_add", 0, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_FREEZE, amount, before, after, in.Remark, ts)
 		if _, err := assetFlowModel.Insert(ctx, flow); err != nil {
 			return err
 		}
@@ -96,5 +97,5 @@ func (l *FreezeAssetLogic) FreezeAsset(in *asset.ManualFreezeAssetReq) (*asset.M
 		return nil, err
 	}
 
-	return &asset.ManualChangeAssetResp{Base: helper.OkResp(), Data: &asset.ManualChangeAssetData{BizNo: in.BizNo, Asset: toUserAssetProto(after)}}, nil
+	return &asset.ManualChangeAssetResp{Base: helper.OkResp(), Data: &asset.ManualChangeAssetData{BizNo: in.BizNo, Asset: helpers.ToUserAssetProto(after)}}, nil
 }

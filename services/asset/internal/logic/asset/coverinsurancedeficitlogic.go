@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -47,7 +48,7 @@ func (l *CoverInsuranceDeficitLogic) CoverInsuranceDeficit(in *asset.CoverInsura
 		flows := models.NewTAssetPlatformFlowModel(conn, l.svcCtx.Config.CacheRedis)
 		covers := models.NewTAssetInsuranceCoverModel(conn, l.svcCtx.Config.CacheRedis)
 		idempotent := models.NewTAssetIdempotentModel(conn, l.svcCtx.Config.CacheRedis)
-		done, err := prepareAssetIdempotent(ctx, idempotent, in.GetTenantId(), assetBizType(asset.BizType_BIZ_TYPE_INSURANCE_FUND), assetSceneType(asset.SceneType_SCENE_TYPE_INSURANCE_FUND_COVER), in.GetLiquidationNo(), in.GetRemark(), now)
+		done, err := helpers.PrepareAssetIdempotent(ctx, idempotent, in.GetTenantId(), helpers.AssetBizType(asset.BizType_BIZ_TYPE_INSURANCE_FUND), helpers.AssetSceneType(asset.SceneType_SCENE_TYPE_INSURANCE_FUND_COVER), in.GetLiquidationNo(), in.GetRemark(), now)
 		if err != nil {
 			return err
 		}
@@ -81,7 +82,7 @@ func (l *CoverInsuranceDeficitLogic) CoverInsuranceDeficit(in *asset.CoverInsura
 				}
 				return fmt.Errorf("insurance platform account concurrent debit rejected")
 			}
-			_, err = flows.Insert(ctx, &models.TAssetPlatformFlow{TenantId: in.GetTenantId(), PlatformAccountId: account.Id, AccountType: account.AccountType, Coin: coin, OpType: 2, Amount: covered, BeforeAvailable: account.AvailableAmount, AfterAvailable: balance, BizType: assetBizType(asset.BizType_BIZ_TYPE_INSURANCE_FUND), SceneType: assetSceneType(asset.SceneType_SCENE_TYPE_INSURANCE_FUND_COVER), BizId: in.GetLiquidationId(), BizNo: in.GetLiquidationNo(), Remark: in.GetRemark(), CreateTimes: now})
+			_, err = flows.Insert(ctx, &models.TAssetPlatformFlow{TenantId: in.GetTenantId(), PlatformAccountId: account.Id, AccountType: account.AccountType, Coin: coin, OpType: 2, Amount: covered, BeforeAvailable: account.AvailableAmount, AfterAvailable: balance, BizType: helpers.AssetBizType(asset.BizType_BIZ_TYPE_INSURANCE_FUND), SceneType: helpers.AssetSceneType(asset.SceneType_SCENE_TYPE_INSURANCE_FUND_COVER), BizId: in.GetLiquidationId(), BizNo: in.GetLiquidationNo(), Remark: in.GetRemark(), CreateTimes: now})
 			if err != nil {
 				return err
 			}
@@ -90,7 +91,7 @@ func (l *CoverInsuranceDeficitLogic) CoverInsuranceDeficit(in *asset.CoverInsura
 		if err != nil {
 			return err
 		}
-		return completeAssetIdempotent(ctx, idempotent, in.GetTenantId(), assetBizType(asset.BizType_BIZ_TYPE_INSURANCE_FUND), assetSceneType(asset.SceneType_SCENE_TYPE_INSURANCE_FUND_COVER), in.GetLiquidationNo(), now)
+		return helpers.CompleteAssetIdempotent(ctx, idempotent, in.GetTenantId(), helpers.AssetBizType(asset.BizType_BIZ_TYPE_INSURANCE_FUND), helpers.AssetSceneType(asset.SceneType_SCENE_TYPE_INSURANCE_FUND_COVER), in.GetLiquidationNo(), now)
 	})
 	if err != nil {
 		return nil, err

@@ -7,6 +7,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/option"
+	"wklive/services/option/internal/logic/helpers"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -47,7 +48,7 @@ func (l *GetPositionDetailLogic) GetPositionDetail(in *option.GetPositionDetailR
 	if item.TenantId != tenantId || item.UserId != userId || item.AccountId != in.AccountId {
 		return &option.GetPositionDetailResp{Base: helper.ErrResp(i18n.NoPermissionViewPosition, i18n.Translate(i18n.NoPermissionViewPosition, l.ctx))}, nil
 	}
-	data, err := buildPositionDetail(l.ctx, l.svcCtx, item)
+	data, err := helpers.BuildPositionDetail(l.ctx, l.svcCtx, item)
 	if err != nil {
 		return nil, err
 	}

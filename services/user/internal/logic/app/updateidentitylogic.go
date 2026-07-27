@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"wklive/services/user/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -108,6 +109,6 @@ func (l *UpdateIdentityLogic) UpdateIdentity(in *user.UpdateIdentityReq) (*user.
 
 	return &user.UpdateIdentityResp{
 		Base: helper.OkResp(),
-		Data: toUserIdentityProto(identity),
+		Data: helpers.ToUserIdentityProto(identity),
 	}, nil
 }

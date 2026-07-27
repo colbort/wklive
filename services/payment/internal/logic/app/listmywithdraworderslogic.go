@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/common/utils"
@@ -52,7 +53,7 @@ func (l *ListMyWithdrawOrdersLogic) ListMyWithdrawOrders(in *payment.ListMyWithd
 
 	data := make([]*payment.WithdrawOrder, 0)
 	for _, order := range items {
-		data = append(data, toWithdrawOrderProto(order))
+		data = append(data, helpers.ToWithdrawOrderProto(order))
 	}
 
 	return &payment.ListMyWithdrawOrdersResp{

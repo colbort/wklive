@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"wklive/services/staking/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/utils"
@@ -34,7 +35,7 @@ func NewProcessRewardsAndSettleOrdersLogic(ctx context.Context, svcCtx *svc.Serv
 
 // 质押收益发放/到期结算
 func (l *ProcessRewardsAndSettleOrdersLogic) ProcessRewardsAndSettleOrders(in *staking.StakingTaskReq) (*staking.StakingTaskResp, error) {
-	return runTaskWithLock(l.ctx, l.svcCtx, "process_rewards_and_settle_orders", func() (*staking.StakingTaskResp, error) {
+	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_rewards_and_settle_orders", func() (*staking.StakingTaskResp, error) {
 		now := utils.NowMillis()
 		cursor := int64(0)
 		for {
@@ -63,7 +64,7 @@ func (l *ProcessRewardsAndSettleOrdersLogic) ProcessRewardsAndSettleOrders(in *s
 				break
 			}
 		}
-		return okTaskResp(), nil
+		return helpers.OkTaskResp(), nil
 	})
 }
 
@@ -71,7 +72,7 @@ func (l *ProcessRewardsAndSettleOrdersLogic) processDailyReward(order *models.TS
 	if order.RewardMode != int64(staking.RewardMode_REWARD_MODE_DAILY) || order.NextRewardTimes == 0 || order.NextRewardTimes > now {
 		return nil
 	}
-	rewardAmount := calcTaskReward(order, 1)
+	rewardAmount := helpers.CalcTaskReward(order, 1)
 	if !rewardAmount.IsPositive() {
 		return nil
 	}
@@ -109,7 +110,7 @@ func (l *ProcessRewardsAndSettleOrdersLogic) processDailyReward(order *models.TS
 	if rewardStatus == int64(staking.RewardStatus_REWARD_STATUS_SUCCESS) {
 		order.TotalReward = order.TotalReward.Add(rewardAmount)
 		order.LastRewardTimes = now
-		order.NextRewardTimes = calcNextRewardTime(now, staking.RewardMode(order.RewardMode), order.EndTimes)
+		order.NextRewardTimes = helpers.CalcNextRewardTime(now, staking.RewardMode(order.RewardMode), order.EndTimes)
 		order.InterestDays++
 	}
 	order.UpdateTimes = now
@@ -158,7 +159,7 @@ func (l *ProcessRewardsAndSettleOrdersLogic) settleExpiredOrder(order *models.TS
 		if days <= 0 {
 			days = 1
 		}
-		order.PendingReward = order.PendingReward.Add(calcTaskReward(order, days))
+		order.PendingReward = order.PendingReward.Add(helpers.CalcTaskReward(order, days))
 	}
 
 	redeemNo := maturityRedeemBizNo(order)

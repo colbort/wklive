@@ -2,6 +2,7 @@ package applogic
 
 import (
 	"context"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/common/utils"
@@ -52,7 +53,7 @@ func (l *ListMyLocksLogic) ListMyLocks(in *asset.ListMyLocksReq) (*asset.ListMyL
 	}
 	resp := &asset.ListMyLocksResp{Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastID)}
 	for _, item := range items {
-		resp.Data = append(resp.Data, toAssetLockProto(item))
+		resp.Data = append(resp.Data, helpers.ToAssetLockProto(item))
 	}
 	return resp, nil
 }

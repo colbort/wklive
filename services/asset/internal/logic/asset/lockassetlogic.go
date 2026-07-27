@@ -2,6 +2,7 @@ package assetlogic
 
 import (
 	"context"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -73,12 +74,12 @@ func (l *LockAssetLogic) LockAsset(in *asset.LockAssetReq) (*asset.LockAssetResp
 			return err
 		}
 
-		lock = buildAssetLockRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizNo, in.Remark, amount, in.StartTime, in.EndTime, ts)
+		lock = helpers.BuildAssetLockRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, helpers.AssetBizType(in.BizType), helpers.AssetSceneType(in.SceneType), in.BizNo, in.Remark, amount, in.StartTime, in.EndTime, ts)
 		if _, err := assetLockModel.Insert(ctx, lock); err != nil {
 			return err
 		}
 
-		flow := buildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, assetSceneType(in.SceneType), assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_LOCK, amount, before, after, in.Remark, ts)
+		flow := helpers.BuildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, helpers.AssetSceneType(in.SceneType), helpers.AssetBizType(in.BizType), helpers.AssetSceneType(in.SceneType), in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_LOCK, amount, before, after, in.Remark, ts)
 		if _, err := assetFlowModel.Insert(ctx, flow); err != nil {
 			return err
 		}
@@ -90,5 +91,5 @@ func (l *LockAssetLogic) LockAsset(in *asset.LockAssetReq) (*asset.LockAssetResp
 		return nil, err
 	}
 
-	return &asset.LockAssetResp{Base: helper.OkResp(), Data: &asset.LockAssetData{LockNo: lock.LockNo, Asset: toUserAssetProto(after)}}, nil
+	return &asset.LockAssetResp{Base: helper.OkResp(), Data: &asset.LockAssetData{LockNo: lock.LockNo, Asset: helpers.ToUserAssetProto(after)}}, nil
 }

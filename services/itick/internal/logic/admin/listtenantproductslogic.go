@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"strings"
+	"wklive/services/itick/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/itick"
@@ -61,13 +62,13 @@ func (l *ListTenantProductsLogic) ListTenantProducts(in *itick.ListTenantProduct
 		if market != "" && product.Market != market {
 			continue
 		}
-		if !statusMatches(int32(in.Enabled), item.Enabled) {
+		if !helpers.StatusMatches(int32(in.Enabled), item.Enabled) {
 			continue
 		}
-		if !statusMatches(int32(in.AppVisible), item.AppVisible) {
+		if !helpers.StatusMatches(int32(in.AppVisible), item.AppVisible) {
 			continue
 		}
-		if !keywordMatches(in.Keyword, product.Symbol, product.Code, product.Name, item.DisplayName, product.DisplayName, product.CategoryName) {
+		if !helpers.KeywordMatches(in.Keyword, product.Symbol, product.Code, product.Name, item.DisplayName, product.DisplayName, product.CategoryName) {
 			continue
 		}
 
@@ -75,7 +76,7 @@ func (l *ListTenantProductsLogic) ListTenantProducts(in *itick.ListTenantProduct
 		if item.Id <= in.Page.Cursor || int64(len(filtered)) >= limit {
 			continue
 		}
-		filtered = append(filtered, toTenantProductProto(item, product))
+		filtered = append(filtered, helpers.ToTenantProductProto(item, product))
 	}
 
 	lastID := int64(0)

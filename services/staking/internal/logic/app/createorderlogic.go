@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"time"
+	"wklive/services/staking/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/generate"
@@ -75,7 +76,7 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.CreateOrderReq) (*staking.Cre
 		return &staking.CreateOrderResp{Base: helper.ErrResp(i18n.ProductQuotaInsufficient, i18n.Translate(i18n.ProductQuotaInsufficient, l.ctx))}, nil
 	}
 	if product.UserLimitAmount.IsPositive() {
-		userStaked, err := l.svcCtx.StakeOrderModel.SumStakeAmountByStatuses(l.ctx, tenantId, userId, in.ProductId, activeOrderStatuses())
+		userStaked, err := l.svcCtx.StakeOrderModel.SumStakeAmountByStatuses(l.ctx, tenantId, userId, in.ProductId, helpers.ActiveOrderStatuses())
 		if err != nil {
 			return nil, err
 		}
@@ -117,7 +118,7 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.CreateOrderReq) (*staking.Cre
 		StartTimes:       now,
 		EndTimes:         endTimes,
 		LastRewardTimes:  0,
-		NextRewardTimes:  calcNextRewardTime(int64(now), staking.RewardMode(product.RewardMode), int64(endTimes)),
+		NextRewardTimes:  helpers.CalcNextRewardTime(int64(now), staking.RewardMode(product.RewardMode), int64(endTimes)),
 		TotalReward:      decimal.Zero,
 		PendingReward:    decimal.Zero,
 		RedeemAmount:     decimal.Zero,

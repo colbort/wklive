@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/option/internal/logic/helpers"
 
 	pageutil "wklive/common/pageutil"
 	"wklive/proto/option"
@@ -43,7 +44,7 @@ func (l *ListAccountsLogic) ListAccounts(in *option.ListAccountsReq) (*option.Li
 	lastID := int64(0)
 	for _, item := range items {
 		lastID = item.Id
-		data = append(data, toAccountProto(item))
+		data = append(data, helpers.ToAccountProto(item))
 	}
 
 	return &option.ListAccountsResp{

@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -51,7 +52,7 @@ func (l *UnfreezeAssetLogic) UnfreezeAsset(in *asset.ManualUnfreezeAssetReq) (*a
 	if freeze.TenantId != in.TenantId {
 		return nil, i18n.StatusError(l.ctx, i18n.AssetTenantMismatch)
 	}
-	if base, err := adminTenantWriteScopeResp(l.ctx, freeze.TenantId, i18n.BusinessDataNotFound); err != nil {
+	if base, err := helpers.AdminTenantWriteScopeResp(l.ctx, freeze.TenantId, i18n.BusinessDataNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &asset.ManualChangeAssetResp{Base: base}, nil
@@ -105,7 +106,7 @@ func (l *UnfreezeAssetLogic) UnfreezeAsset(in *asset.ManualUnfreezeAssetReq) (*a
 			return err
 		}
 
-		flow := buildAssetFlowRecord(l.svcCtx, ctx, freeze.TenantId, freeze.UserId, freeze.WalletType, freeze.Coin, "manual_sub", "system", "manual_sub", 0, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_UNFREEZE, amount, before, after, in.Remark, ts)
+		flow := helpers.BuildAssetFlowRecord(l.svcCtx, ctx, freeze.TenantId, freeze.UserId, freeze.WalletType, freeze.Coin, "manual_sub", "system", "manual_sub", 0, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_UNFREEZE, amount, before, after, in.Remark, ts)
 		if _, err := assetFlowModel.Insert(ctx, flow); err != nil {
 			return err
 		}
@@ -117,5 +118,5 @@ func (l *UnfreezeAssetLogic) UnfreezeAsset(in *asset.ManualUnfreezeAssetReq) (*a
 		return nil, err
 	}
 
-	return &asset.ManualChangeAssetResp{Base: helper.OkResp(), Data: &asset.ManualChangeAssetData{BizNo: in.BizNo, Asset: toUserAssetProto(after)}}, nil
+	return &asset.ManualChangeAssetResp{Base: helper.OkResp(), Data: &asset.ManualChangeAssetData{BizNo: in.BizNo, Asset: helpers.ToUserAssetProto(after)}}, nil
 }

@@ -8,6 +8,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/user"
+	"wklive/services/user/internal/logic/helpers"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
 
@@ -42,7 +43,7 @@ func (l *UpdateUserBaseLogic) UpdateUserBase(in *user.UpdateUserBaseReq) (*user.
 			Base: helper.ErrResp(i18n.UserNotFound, i18n.Translate(i18n.UserNotFound, l.ctx)),
 		}, nil
 	}
-	if base, err := adminTenantWriteScopeResp(l.ctx, tuser.TenantId, i18n.NoPermissionOperateThisUser); err != nil {
+	if base, err := helpers.AdminTenantWriteScopeResp(l.ctx, tuser.TenantId, i18n.NoPermissionOperateThisUser); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &user.UpdateUserBaseResp{
@@ -126,7 +127,7 @@ func (l *UpdateUserBaseLogic) UpdateUserBase(in *user.UpdateUserBaseReq) (*user.
 		return nil, err
 	}
 
-	userDetailResp := toUserDetailProto(tuser, identity, security, nil)
+	userDetailResp := helpers.ToUserDetailProto(tuser, identity, security, nil)
 
 	return &user.UpdateUserBaseResp{
 		Base: helper.OkResp(),

@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/itick/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -44,6 +45,6 @@ func (l *GetTenantProductLogic) GetTenantProduct(in *itick.GetTenantProductReq) 
 
 	return &itick.GetTenantProductResp{
 		Base: helper.OkResp(),
-		Data: toTenantProductProto(item, product),
+		Data: helpers.ToTenantProductProto(item, product),
 	}, nil
 }

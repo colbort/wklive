@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/payment"
+	"wklive/services/payment/internal/logic/helpers"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
 
@@ -46,6 +47,6 @@ func (l *GetRechargeNotifyLogLogic) GetRechargeNotifyLog(in *payment.GetRecharge
 
 	return &payment.GetRechargeNotifyLogResp{
 		Base: helper.OkResp(),
-		Data: toRechargeNotifyLogProto(notifyLog),
+		Data: helpers.ToRechargeNotifyLogProto(notifyLog),
 	}, nil
 }

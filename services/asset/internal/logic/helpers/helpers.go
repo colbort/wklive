@@ -1,4 +1,4 @@
-package assetlogic
+package helpers
 
 import (
 	"context"
@@ -16,7 +16,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-func adminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAllowedCode int32) (*common.RespBase, error) {
+func AdminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAllowedCode int32) (*common.RespBase, error) {
 	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(ctx, currentTenantId)
 	if err != nil {
 		return nil, i18n.StatusError(ctx, i18n.UserNotFound)
@@ -30,7 +30,7 @@ func adminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAl
 	return nil, nil
 }
 
-func prepareAssetIdempotent(ctx context.Context, model models.TAssetIdempotentModel, tenantId int64, bizType, sceneType, bizNo, remark string, ts int64) (bool, error) {
+func PrepareAssetIdempotent(ctx context.Context, model models.TAssetIdempotentModel, tenantId int64, bizType, sceneType, bizNo, remark string, ts int64) (bool, error) {
 	record, err := model.FindOneByTenantIdBizTypeSceneTypeBizNo(ctx, tenantId, bizType, sceneType, bizNo)
 	if err != nil && err != models.ErrNotFound {
 		return false, err
@@ -60,7 +60,7 @@ func prepareAssetIdempotent(ctx context.Context, model models.TAssetIdempotentMo
 	return false, err
 }
 
-func completeAssetIdempotent(ctx context.Context, model models.TAssetIdempotentModel, tenantId int64, bizType, sceneType, bizNo string, ts int64) error {
+func CompleteAssetIdempotent(ctx context.Context, model models.TAssetIdempotentModel, tenantId int64, bizType, sceneType, bizNo string, ts int64) error {
 	record, err := model.FindOneByTenantIdBizTypeSceneTypeBizNo(ctx, tenantId, bizType, sceneType, bizNo)
 	if err != nil {
 		return err
@@ -235,7 +235,7 @@ func FromSceneTypeEnum(sceneType asset.SceneType) string {
 	}
 }
 
-func toUserAssetProto(data *models.TUserAsset) *asset.UserAsset {
+func ToUserAssetProto(data *models.TUserAsset) *asset.UserAsset {
 	if data == nil {
 		return nil
 	}
@@ -257,7 +257,7 @@ func toUserAssetProto(data *models.TUserAsset) *asset.UserAsset {
 	}
 }
 
-func toAssetCoinConfigProto(data *models.TAssetCoinConfig) *asset.AssetCoinConfig {
+func ToAssetCoinConfigProto(data *models.TAssetCoinConfig) *asset.AssetCoinConfig {
 	if data == nil {
 		return nil
 	}
@@ -286,7 +286,7 @@ func toAssetCoinConfigProto(data *models.TAssetCoinConfig) *asset.AssetCoinConfi
 	}
 }
 
-func toAssetFlowProto(data *models.TAssetFlow) *asset.AssetFlow {
+func ToAssetFlowProto(data *models.TAssetFlow) *asset.AssetFlow {
 	if data == nil {
 		return nil
 	}
@@ -319,7 +319,7 @@ func toAssetFlowProto(data *models.TAssetFlow) *asset.AssetFlow {
 	}
 }
 
-func toAssetFreezeProto(data *models.TAssetFreeze) *asset.AssetFreeze {
+func ToAssetFreezeProto(data *models.TAssetFreeze) *asset.AssetFreeze {
 	if data == nil {
 		return nil
 	}
@@ -346,7 +346,7 @@ func toAssetFreezeProto(data *models.TAssetFreeze) *asset.AssetFreeze {
 	}
 }
 
-func toAssetLockProto(data *models.TAssetLock) *asset.AssetLock {
+func ToAssetLockProto(data *models.TAssetLock) *asset.AssetLock {
 	if data == nil {
 		return nil
 	}
@@ -373,7 +373,7 @@ func toAssetLockProto(data *models.TAssetLock) *asset.AssetLock {
 	}
 }
 
-func buildAssetFlowRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenantId, userId, walletType int64, coin, changeType, bizType, sceneType string, bizId int64, bizNo string, opType asset.AssetOpType, amount decimal.Decimal, before *models.TUserAsset, after *models.TUserAsset, remark string, ts int64) *models.TAssetFlow {
+func BuildAssetFlowRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenantId, userId, walletType int64, coin, changeType, bizType, sceneType string, bizId int64, bizNo string, opType asset.AssetOpType, amount decimal.Decimal, before *models.TUserAsset, after *models.TUserAsset, remark string, ts int64) *models.TAssetFlow {
 	beforeTotal, beforeAvailable, beforeFrozen, beforeLocked := decimal.Zero, decimal.Zero, decimal.Zero, decimal.Zero
 	afterTotal, afterAvailable, afterFrozen, afterLocked := decimal.Zero, decimal.Zero, decimal.Zero, decimal.Zero
 	if before != nil {
@@ -420,7 +420,7 @@ func buildAssetFlowRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenan
 	}
 }
 
-func buildAssetFreezeRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenantId, userId, walletType int64, coin, bizType, sceneType, bizNo, remark string, amount decimal.Decimal, expireTime, ts int64) *models.TAssetFreeze {
+func BuildAssetFreezeRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenantId, userId, walletType int64, coin, bizType, sceneType, bizNo, remark string, amount decimal.Decimal, expireTime, ts int64) *models.TAssetFreeze {
 	freezeNo, err := generate.GenerateNo(svcCtx.Redis, ctx, "order_id", "FREEZE", bizNo)
 	if err != nil {
 		return nil
@@ -446,7 +446,7 @@ func buildAssetFreezeRecord(svcCtx *svc.ServiceContext, ctx context.Context, ten
 	}
 }
 
-func buildAssetLockRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenantId, userId, walletType int64, coin, bizType, sceneType, bizNo, remark string, amount decimal.Decimal, startTime, endTime, ts int64) *models.TAssetLock {
+func BuildAssetLockRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenantId, userId, walletType int64, coin, bizType, sceneType, bizNo, remark string, amount decimal.Decimal, startTime, endTime, ts int64) *models.TAssetLock {
 	lockNo, err := generate.GenerateNo(svcCtx.Redis, ctx, "order_id", "FREEZE", bizNo)
 	if err != nil {
 		return nil
@@ -472,33 +472,33 @@ func buildAssetLockRecord(svcCtx *svc.ServiceContext, ctx context.Context, tenan
 	}
 }
 
-func assetBizType(in asset.BizType) string {
+func AssetBizType(in asset.BizType) string {
 	return FromBizTypeEnum(in)
 }
 
-func assetSceneType(in asset.SceneType) string {
+func AssetSceneType(in asset.SceneType) string {
 	return FromSceneTypeEnum(in)
 }
 
-func assetEnabledFilter(enabled common.Enable) int64 {
+func AssetEnabledFilter(enabled common.Enable) int64 {
 	return int64(enabled)
 }
 
-func assetCoinEnabledValue(enabled common.Enable, defaultValue int64) int64 {
+func AssetCoinEnabledValue(enabled common.Enable, defaultValue int64) int64 {
 	if enabled == common.Enable_ENABLE_UNKNOWN {
 		return defaultValue
 	}
 	return int64(enabled)
 }
 
-func assetCoinSwitchValue(value common.Switch, defaultValue int64) int64 {
+func AssetCoinSwitchValue(value common.Switch, defaultValue int64) int64 {
 	if value == common.Switch_SWITCH_UNKNOWN {
 		return defaultValue
 	}
 	return int64(value)
 }
 
-func assetCoinTypeValue(value asset.AssetCoinType, defaultValue int64) int64 {
+func AssetCoinTypeValue(value asset.AssetCoinType, defaultValue int64) int64 {
 	if value == asset.AssetCoinType_ASSET_COIN_TYPE_UNKNOWN {
 		return defaultValue
 	}
@@ -506,10 +506,10 @@ func assetCoinTypeValue(value asset.AssetCoinType, defaultValue int64) int64 {
 }
 
 func EnumToFilterString(bizType asset.BizType, sceneType asset.SceneType) (string, string) {
-	return assetBizType(bizType), assetSceneType(sceneType)
+	return AssetBizType(bizType), AssetSceneType(sceneType)
 }
 
-func findFreezeByBizNo(ctx context.Context, svcCtx *svc.ServiceContext, tenantId int64, bizType asset.BizType, bizNo string) (*models.TAssetFreeze, error) {
+func FindFreezeByBizNo(ctx context.Context, svcCtx *svc.ServiceContext, tenantId int64, bizType asset.BizType, bizNo string) (*models.TAssetFreeze, error) {
 	list, _, err := svcCtx.AssetFreezeModel.FindPage(ctx, models.AssetFreezePageFilter{
 		TenantId: tenantId,
 		BizType:  FromBizTypeEnum(bizType),
@@ -524,7 +524,7 @@ func findFreezeByBizNo(ctx context.Context, svcCtx *svc.ServiceContext, tenantId
 	return list[0], nil
 }
 
-func findLockByBizNo(ctx context.Context, svcCtx *svc.ServiceContext, tenantId int64, bizType asset.BizType, bizNo string) (*models.TAssetLock, error) {
+func FindLockByBizNo(ctx context.Context, svcCtx *svc.ServiceContext, tenantId int64, bizType asset.BizType, bizNo string) (*models.TAssetLock, error) {
 	list, _, err := svcCtx.AssetLockModel.FindPage(ctx, models.AssetLockPageFilter{
 		TenantId: tenantId,
 		BizType:  FromBizTypeEnum(bizType),

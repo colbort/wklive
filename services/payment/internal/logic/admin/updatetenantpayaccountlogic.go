@@ -9,6 +9,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/payment"
+	"wklive/services/payment/internal/logic/helpers"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
 
@@ -94,7 +95,7 @@ func (l *UpdateTenantPayAccountLogic) UpdateTenantPayAccount(in *payment.UpdateT
 		account.CredentialRef = in.CredentialRef
 	}
 	if in.ExtConfig != "" {
-		extConfig, valid := nullableJSON(in.ExtConfig)
+		extConfig, valid := helpers.NullableJSON(in.ExtConfig)
 		if !valid {
 			return &payment.CommonResp{
 				Base: helper.ErrResp(i18n.InvalidPaymentJSON, i18n.Translate(i18n.InvalidPaymentJSON, l.ctx)),
@@ -118,7 +119,7 @@ func (l *UpdateTenantPayAccountLogic) UpdateTenantPayAccount(in *payment.UpdateT
 
 	err = l.svcCtx.TenantPayAccountModel.Update(l.ctx, account)
 	if err != nil {
-		if isDuplicateEntry(err) {
+		if helpers.IsDuplicateEntry(err) {
 			return paymentErrorResp(l.ctx, i18n.TenantPayAccountCodeAlreadyExists), nil
 		}
 		l.Logger.Errorf("%s error: %s", errLogic, err.Error())

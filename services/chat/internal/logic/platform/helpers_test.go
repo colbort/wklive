@@ -4,6 +4,7 @@ import (
 	"context"
 	"strconv"
 	"testing"
+	"wklive/services/chat/internal/logic/helpers"
 
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -31,18 +32,18 @@ func TestPlatformScope(t *testing.T) {
 				pairs = append(pairs, utils.CtxKeySubjectDomain, tt.domain)
 			}
 			ctx := metadata.NewIncomingContext(context.Background(), metadata.Pairs(pairs...))
-			base, err := platformScope(ctx)
+			base, err := helpers.PlatformScope(ctx)
 			if err != nil {
-				t.Fatalf("platformScope() error = %v", err)
+				t.Fatalf("helpers.PlatformScope() error = %v", err)
 			}
 			if tt.wantAllow {
 				if base != nil {
-					t.Fatalf("platformScope() denied allowed caller: %+v", base)
+					t.Fatalf("helpers.PlatformScope() denied allowed caller: %+v", base)
 				}
 				return
 			}
 			if base == nil || base.Code != i18n.PermissionDenied {
-				t.Fatalf("platformScope() base = %+v, want permission denied", base)
+				t.Fatalf("helpers.PlatformScope() base = %+v, want permission denied", base)
 			}
 		})
 	}

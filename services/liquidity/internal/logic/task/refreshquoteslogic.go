@@ -3,6 +3,7 @@ package tasklogic
 import (
 	"context"
 	"time"
+	"wklive/services/liquidity/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/proto/liquidity"
@@ -26,7 +27,7 @@ func NewRefreshQuotesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ref
 }
 
 func (l *RefreshQuotesLogic) RefreshQuotes(in *liquidity.LiquidityTaskReq) (*liquidity.LiquidityTaskResp, error) {
-	if err := validateTask(in); err != nil {
+	if err := helpers.ValidateTask(in); err != nil {
 		return nil, err
 	}
 	created, prepareFailed, err := prepareInternalQuoteCycles(l.ctx, l.svcCtx, in)

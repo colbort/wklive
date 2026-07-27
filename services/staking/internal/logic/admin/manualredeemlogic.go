@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/staking/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/generate"
@@ -43,7 +44,7 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.ManualRedeemReq) (*staking.
 	if order == nil || order.TenantId != in.TenantId {
 		return &staking.ManualRedeemResp{Page: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
-	if base, err := adminTenantWriteScopeResp(l.ctx, order.TenantId, i18n.OrderNotFound); err != nil {
+	if base, err := helpers.AdminTenantWriteScopeResp(l.ctx, order.TenantId, i18n.OrderNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &staking.ManualRedeemResp{Page: base}, nil

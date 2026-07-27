@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/itick/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/pageutil"
@@ -54,7 +55,7 @@ func (l *ListProductsLogic) ListProducts(in *itick.ListProductsReq) (*itick.List
 
 	var data []*itick.ItickProduct
 	for _, item := range items {
-		data = append(data, toProductProto(item))
+		data = append(data, helpers.ToProductProto(item))
 	}
 
 	nextCursor := int64(0)

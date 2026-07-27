@@ -3,6 +3,7 @@ package platformlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/chat/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/utils"
@@ -30,14 +31,14 @@ func NewDeletePlatformChatMerchantLogic(ctx context.Context, svcCtx *svc.Service
 }
 
 func (l *DeletePlatformChatMerchantLogic) DeletePlatformChatMerchant(in *chat.PlatformChatMerchantDeleteReq) (*chat.CommonResp, error) {
-	if base, err := platformScope(l.ctx); err != nil {
+	if base, err := helpers.PlatformScope(l.ctx); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &chat.CommonResp{Base: base}, nil
 	}
 	merchant, err := l.svcCtx.ChatMerchantModel.FindOne(l.ctx, in.GetId())
 	if errors.Is(err, models.ErrNotFound) {
-		return &chat.CommonResp{Base: paramError(l.ctx)}, nil
+		return &chat.CommonResp{Base: helpers.ParamError(l.ctx)}, nil
 	}
 	if err != nil {
 		return nil, err

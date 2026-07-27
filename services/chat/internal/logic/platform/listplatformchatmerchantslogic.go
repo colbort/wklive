@@ -3,6 +3,7 @@ package platformlogic
 import (
 	"context"
 	"strings"
+	"wklive/services/chat/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/chat"
@@ -27,7 +28,7 @@ func NewListPlatformChatMerchantsLogic(ctx context.Context, svcCtx *svc.ServiceC
 }
 
 func (l *ListPlatformChatMerchantsLogic) ListPlatformChatMerchants(in *chat.PlatformChatMerchantListReq) (*chat.PlatformChatMerchantListResp, error) {
-	if base, err := platformScope(l.ctx); err != nil {
+	if base, err := helpers.PlatformScope(l.ctx); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &chat.PlatformChatMerchantListResp{Base: base}, nil
@@ -46,10 +47,10 @@ func (l *ListPlatformChatMerchantsLogic) ListPlatformChatMerchants(in *chat.Plat
 	}
 	data := make([]*chat.PlatformChatMerchant, 0, len(rows))
 	for _, row := range rows {
-		data = append(data, merchantProto(row))
+		data = append(data, helpers.MerchantProto(row))
 	}
 	return &chat.PlatformChatMerchantListResp{
-		Base: offsetBase(offset, limit, len(rows), total),
+		Base: helpers.OffsetBase(offset, limit, len(rows), total),
 		Data: data,
 	}, nil
 }

@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/itick/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -44,6 +45,6 @@ func (l *GetTenantCategoryLogic) GetTenantCategory(in *itick.GetTenantCategoryRe
 
 	return &itick.GetTenantCategoryResp{
 		Base: helper.OkResp(),
-		Data: toTenantCategoryProto(item, category),
+		Data: helpers.ToTenantCategoryProto(item, category),
 	}, nil
 }

@@ -2,6 +2,7 @@ package applogic
 
 import (
 	"context"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/utils"
@@ -49,7 +50,7 @@ func (l *ListMyCryptoRechargeAddressesLogic) ListMyCryptoRechargeAddresses(in *p
 	}
 	data := make([]*payment.CryptoRechargeAddress, 0, len(items))
 	for _, item := range items {
-		data = append(data, toCryptoRechargeAddressProto(item))
+		data = append(data, helpers.ToCryptoRechargeAddressProto(item))
 	}
 	return &payment.ListMyCryptoRechargeAddressesResp{Base: helper.OkResp(), Data: data}, nil
 }

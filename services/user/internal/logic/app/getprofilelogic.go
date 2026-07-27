@@ -7,6 +7,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/user"
+	"wklive/services/user/internal/logic/helpers"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
 
@@ -59,6 +60,6 @@ func (l *GetProfileLogic) GetProfile(in *user.GetProfileReq) (*user.GetProfileRe
 
 	return &user.GetProfileResp{
 		Base: helper.OkResp(),
-		Data: toUserProfileProto(tuser, identity, security),
+		Data: helpers.ToUserProfileProto(tuser, identity, security),
 	}, nil
 }

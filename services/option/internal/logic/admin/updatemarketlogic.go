@@ -9,6 +9,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/option"
+	"wklive/services/option/internal/logic/helpers"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -193,7 +194,7 @@ func (l *UpdateMarketLogic) UpdateMarket(in *option.UpdateMarketReq) (*option.Co
 			return err
 		}
 
-		return insertMarketSnapshot(ctx, snapshotModel, market, now)
+		return helpers.InsertMarketSnapshot(ctx, snapshotModel, market, now)
 	})
 	if err != nil {
 		return nil, err

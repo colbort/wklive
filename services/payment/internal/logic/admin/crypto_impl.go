@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"github.com/shopspring/decimal"
 
@@ -46,7 +47,7 @@ func createCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext
 		}
 	}
 	now := utils.NowMillis()
-	status := toCryptoAddressStatusDB(in.Status, int64(payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_ENABLED))
+	status := helpers.ToCryptoAddressStatusDB(in.Status, int64(payment.CryptoRechargeAddressStatus_CRYPTO_RECHARGE_ADDRESS_STATUS_ENABLED))
 	if in.AddressSource == 0 {
 		in.AddressSource = payment.CryptoRechargeAddressSource_CRYPTO_RECHARGE_ADDRESS_SOURCE_MANUAL
 	}
@@ -68,7 +69,7 @@ func createCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext
 		UpdateTimes:   now,
 	})
 	if err != nil {
-		if isDuplicateEntry(err) {
+		if helpers.IsDuplicateEntry(err) {
 			return paymentErrorResp(ctx, i18n.CryptoResourceAlreadyExists), nil
 		}
 		return nil, err
@@ -122,10 +123,10 @@ func updateCryptoRechargeAddress(ctx context.Context, svcCtx *svc.ServiceContext
 			return paymentErrorResp(ctx, i18n.ParamError), nil
 		}
 	}
-	item.Status = toCryptoAddressStatusDB(in.Status, item.Status)
+	item.Status = helpers.ToCryptoAddressStatusDB(in.Status, item.Status)
 	item.UpdateTimes = utils.NowMillis()
 	if err := svcCtx.CryptoRechargeAddressModel.Update(ctx, item); err != nil {
-		if isDuplicateEntry(err) {
+		if helpers.IsDuplicateEntry(err) {
 			return paymentErrorResp(ctx, i18n.CryptoResourceAlreadyExists), nil
 		}
 		return nil, err
@@ -160,7 +161,7 @@ func listCryptoRechargeAddresses(ctx context.Context, svcCtx *svc.ServiceContext
 	}
 	data := make([]*payment.CryptoRechargeAddress, 0, len(items))
 	for _, item := range items {
-		data = append(data, toCryptoRechargeAddressProto(item))
+		data = append(data, helpers.ToCryptoRechargeAddressProto(item))
 	}
 	return &payment.ListCryptoRechargeAddressesResp{
 		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastCryptoAddressID(items)),
@@ -179,7 +180,7 @@ func createCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 	if !requiredStrings(in.AccountCode, in.AccountName, in.Provider) {
 		return paymentErrorResp(ctx, i18n.PaymentRequiredParamsMissing), nil
 	}
-	extConfig, valid := nullableJSON(in.ExtConfig)
+	extConfig, valid := helpers.NullableJSON(in.ExtConfig)
 	if !valid {
 		return paymentErrorResp(ctx, i18n.InvalidPaymentJSON), nil
 	}
@@ -197,13 +198,13 @@ func createCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 		ApiSecretCipher:      nullableString(in.ApiSecretCipher),
 		CallbackSecretCipher: nullableString(in.CallbackSecretCipher),
 		ExtConfig:            extConfig,
-		Enabled:              toCryptoWalletStatusDB(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
+		Enabled:              helpers.ToCryptoWalletStatusDB(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
 		IsDefault:            isDefault,
 		CreateTimes:          now,
 		UpdateTimes:          now,
 	})
 	if err != nil {
-		if isDuplicateEntry(err) {
+		if helpers.IsDuplicateEntry(err) {
 			return paymentErrorResp(ctx, i18n.CryptoResourceAlreadyExists), nil
 		}
 		return nil, err
@@ -248,13 +249,13 @@ func updateCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 		item.CallbackSecretCipher = nullableString(in.CallbackSecretCipher)
 	}
 	if in.ExtConfig != "" {
-		extConfig, valid := nullableJSON(in.ExtConfig)
+		extConfig, valid := helpers.NullableJSON(in.ExtConfig)
 		if !valid {
 			return paymentErrorResp(ctx, i18n.InvalidPaymentJSON), nil
 		}
 		item.ExtConfig = extConfig
 	}
-	item.Enabled = toCryptoWalletStatusDB(in.Enabled, item.Enabled)
+	item.Enabled = helpers.ToCryptoWalletStatusDB(in.Enabled, item.Enabled)
 	if common.YesNo(in.IsDefault) != common.YesNo_YES_NO_UNKNOWN {
 		item.IsDefault = int64(in.IsDefault)
 	}
@@ -263,7 +264,7 @@ func updateCryptoWalletAccount(ctx context.Context, svcCtx *svc.ServiceContext, 
 		return paymentErrorResp(ctx, i18n.PaymentRequiredParamsMissing), nil
 	}
 	if err := svcCtx.CryptoWalletAccountModel.Update(ctx, item); err != nil {
-		if isDuplicateEntry(err) {
+		if helpers.IsDuplicateEntry(err) {
 			return paymentErrorResp(ctx, i18n.CryptoResourceAlreadyExists), nil
 		}
 		return nil, err
@@ -284,7 +285,7 @@ func listCryptoWalletAccounts(ctx context.Context, svcCtx *svc.ServiceContext, i
 	}
 	data := make([]*payment.CryptoWalletAccount, 0, len(items))
 	for _, item := range items {
-		data = append(data, toCryptoWalletAccountProto(item))
+		data = append(data, helpers.ToCryptoWalletAccountProto(item))
 	}
 	return &payment.ListCryptoWalletAccountsResp{
 		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(items), total, lastCryptoWalletAccountID(items)),
@@ -314,7 +315,7 @@ func createCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in 
 	if !amount.IsPositive() {
 		return paymentErrorResp(ctx, i18n.InvalidPaymentAmountRange), nil
 	}
-	rawData, valid := nullableJSON(in.RawData)
+	rawData, valid := helpers.NullableJSON(in.RawData)
 	if !valid {
 		return paymentErrorResp(ctx, i18n.InvalidPaymentJSON), nil
 	}
@@ -347,7 +348,7 @@ func createCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in 
 		UpdateTimes:          now,
 	})
 	if err != nil {
-		if isDuplicateEntry(err) {
+		if helpers.IsDuplicateEntry(err) {
 			return paymentErrorResp(ctx, i18n.CryptoResourceAlreadyExists), nil
 		}
 		return nil, err
@@ -400,7 +401,7 @@ func updateCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in 
 		item.Status = int64(in.Status)
 	}
 	if in.RawData != "" {
-		rawData, valid := nullableJSON(in.RawData)
+		rawData, valid := helpers.NullableJSON(in.RawData)
 		if !valid {
 			return paymentErrorResp(ctx, i18n.InvalidPaymentJSON), nil
 		}
@@ -430,7 +431,7 @@ func creditCryptoRechargeOrder(ctx context.Context, svcCtx *svc.ServiceContext, 
 	if err != nil {
 		return err
 	}
-	return markRechargeOrderSuccessAndCredit(ctx, svcCtx, order, txHash, decimal.Zero, "crypto recharge credited")
+	return helpers.MarkRechargeOrderSuccessAndCredit(ctx, svcCtx, order, txHash, decimal.Zero, "crypto recharge credited")
 }
 
 func listCryptoRechargeTxs(ctx context.Context, svcCtx *svc.ServiceContext, req listCryptoTxReq) ([]*models.TCryptoRechargeTx, int64, error) {
@@ -512,8 +513,4 @@ func lastCryptoTxID(items []*models.TCryptoRechargeTx) int64 {
 
 func cryptoNotFoundResp() *payment.CommonResp {
 	return &payment.CommonResp{Base: helper.ErrResp(i18n.NotFound, i18n.Translate(i18n.NotFound, context.Background()))}
-}
-
-func isNotFound(err error) bool {
-	return errors.Is(err, models.ErrNotFound)
 }

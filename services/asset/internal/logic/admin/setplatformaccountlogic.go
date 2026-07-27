@@ -9,6 +9,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/utils"
 	"wklive/proto/asset"
+	"wklive/services/asset/internal/logic/helpers"
 	"wklive/services/asset/internal/svc"
 	"wklive/services/asset/models"
 
@@ -70,5 +71,5 @@ func normalizePlatformAccount(t, coin string) (string, string) {
 	return strings.ToUpper(strings.TrimSpace(t)), strings.ToUpper(strings.TrimSpace(coin))
 }
 func platformAccountProto(v *models.TAssetPlatformAccount) *asset.PlatformAccount {
-	return &asset.PlatformAccount{Id: v.Id, TenantId: v.TenantId, AccountType: v.AccountType, Coin: v.Coin, AvailableAmount: v.AvailableAmount.String(), FrozenAmount: v.FrozenAmount.String(), Status: ToAssetStatus(v.Status), Version: v.Version, CreateTimes: v.CreateTimes, UpdateTimes: v.UpdateTimes}
+	return &asset.PlatformAccount{Id: v.Id, TenantId: v.TenantId, AccountType: v.AccountType, Coin: v.Coin, AvailableAmount: v.AvailableAmount.String(), FrozenAmount: v.FrozenAmount.String(), Status: helpers.ToAssetStatus(v.Status), Version: v.Version, CreateTimes: v.CreateTimes, UpdateTimes: v.UpdateTimes}
 }

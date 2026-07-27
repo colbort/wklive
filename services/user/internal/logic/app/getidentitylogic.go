@@ -7,6 +7,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/user"
+	"wklive/services/user/internal/logic/helpers"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
 
@@ -53,6 +54,6 @@ func (l *GetIdentityLogic) GetIdentity(in *user.GetIdentityReq) (*user.GetIdenti
 
 	return &user.GetIdentityResp{
 		Base: helper.OkResp(),
-		Data: toUserIdentityProto(identity),
+		Data: helpers.ToUserIdentityProto(identity),
 	}, nil
 }

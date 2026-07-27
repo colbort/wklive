@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/option"
+	"wklive/services/option/internal/logic/helpers"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -39,5 +40,5 @@ func (l *GetBillLogic) GetBill(in *option.GetBillReq) (*option.GetBillResp, erro
 		return &option.GetBillResp{Base: helper.ErrResp(i18n.BillNotFound, i18n.Translate(i18n.BillNotFound, l.ctx))}, nil
 	}
 
-	return &option.GetBillResp{Base: helper.OkResp(), Data: toBillProto(item)}, nil
+	return &option.GetBillResp{Base: helper.OkResp(), Data: helpers.ToBillProto(item)}, nil
 }

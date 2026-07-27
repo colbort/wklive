@@ -2,6 +2,7 @@ package applogic
 
 import (
 	"context"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -71,7 +72,7 @@ func (l *GetMyAssetSummaryLogic) GetMyAssetSummary(in *asset.GetMyAssetSummaryRe
 			totalFrozen = totalFrozen.Add(item.FrozenAmount.Mul(exchangeRate))
 			totalLocked = totalLocked.Add(item.LockedAmount.Mul(exchangeRate))
 		}
-		resp.Data.Assets = append(resp.Data.Assets, toUserAssetProto(item))
+		resp.Data.Assets = append(resp.Data.Assets, helpers.ToUserAssetProto(item))
 	}
 
 	resp.Data.TotalAssetUsdt = conv.FloatString(totalAsset)

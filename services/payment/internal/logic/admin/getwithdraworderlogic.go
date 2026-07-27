@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/payment"
+	"wklive/services/payment/internal/logic/helpers"
 	"wklive/services/payment/internal/svc"
 	"wklive/services/payment/models"
 
@@ -46,6 +47,6 @@ func (l *GetWithdrawOrderLogic) GetWithdrawOrder(in *payment.GetWithdrawOrderReq
 
 	return &payment.GetWithdrawOrderResp{
 		Base: helper.OkResp(),
-		Data: toWithdrawOrderProto(order),
+		Data: helpers.ToWithdrawOrderProto(order),
 	}, nil
 }

@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/utils"
@@ -43,7 +44,7 @@ func (l *ListAvailableRechargeChannelsLogic) ListAvailableRechargeChannels(in *p
 
 	data := make([]*payment.VisiblePayChannel, 0)
 	for _, ch := range channels {
-		data = append(data, toVisiblePayChannelProto(ch))
+		data = append(data, helpers.ToVisiblePayChannelProto(ch))
 	}
 
 	return &payment.ListAvailableRechargeChannelsResp{

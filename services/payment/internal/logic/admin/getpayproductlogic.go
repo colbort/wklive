@@ -5,6 +5,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/payment"
+	"wklive/services/payment/internal/logic/helpers"
 	"wklive/services/payment/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -44,6 +45,6 @@ func (l *GetPayProductLogic) GetPayProduct(in *payment.GetPayProductReq) (*payme
 
 	return &payment.GetPayProductResp{
 		Base: helper.OkResp(),
-		Data: toPayProductProto(product),
+		Data: helpers.ToPayProductProto(product),
 	}, nil
 }

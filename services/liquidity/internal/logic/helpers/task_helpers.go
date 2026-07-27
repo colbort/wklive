@@ -1,4 +1,4 @@
-package tasklogic
+package helpers
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"wklive/proto/liquidity"
 )
 
-func validateTask(in *liquidity.LiquidityTaskReq) error {
+func ValidateTask(in *liquidity.LiquidityTaskReq) error {
 	if in == nil {
 		return fmt.Errorf("task request is required")
 	}
@@ -17,7 +17,7 @@ func validateTask(in *liquidity.LiquidityTaskReq) error {
 	return nil
 }
 
-func taskDependencyUnavailable(name string) *liquidity.LiquidityTaskResp {
+func TaskDependencyUnavailable(name string) *liquidity.LiquidityTaskResp {
 	return &liquidity.LiquidityTaskResp{
 		Base:        helper.ErrResp(503, name+" executor is not configured"),
 		FailedCount: 1,

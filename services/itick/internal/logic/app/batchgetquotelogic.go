@@ -2,6 +2,7 @@ package applogic
 
 import (
 	"context"
+	"wklive/services/itick/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/proto/itick"
@@ -63,7 +64,7 @@ func (l *BatchGetQuoteLogic) BatchGetQuote(in *itick.BatchGetQuoteReq) (*itick.B
 		if !ok || quote == nil {
 			continue
 		}
-		data = append(data, toQuotePayloadProto(item.Message.CategoryCode, item.Message.Market, item.Message.Symbol, quote))
+		data = append(data, helpers.ToQuotePayloadProto(item.Message.CategoryCode, item.Message.Market, item.Message.Symbol, quote))
 	}
 
 	return &itick.BatchGetQuoteResp{

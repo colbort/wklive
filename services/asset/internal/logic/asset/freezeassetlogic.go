@@ -2,6 +2,7 @@ package assetlogic
 
 import (
 	"context"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -83,14 +84,14 @@ func (l *FreezeAssetLogic) FreezeAsset(in *asset.FreezeAssetReq) (*asset.FreezeA
 			return err
 		}
 
-		freeze = buildAssetFreezeRecord(l.svcCtx, ctx, in.TenantId, in.UserId, walletType, in.Coin, assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizNo, in.Remark, amount, in.ExpireTime, ts)
+		freeze = helpers.BuildAssetFreezeRecord(l.svcCtx, ctx, in.TenantId, in.UserId, walletType, in.Coin, helpers.AssetBizType(in.BizType), helpers.AssetSceneType(in.SceneType), in.BizNo, in.Remark, amount, in.ExpireTime, ts)
 		if _, err := assetFreezeModel.Insert(ctx, freeze); err != nil {
 			l.Errorf("FreezeAsset insert freeze record failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s freezeNo=%s err=%v",
 				in.TenantId, in.UserId, walletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, freeze.FreezeNo, err)
 			return err
 		}
 
-		flow := buildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, walletType, in.Coin, assetSceneType(in.SceneType), assetBizType(in.BizType), assetSceneType(in.SceneType), in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_FREEZE, amount, before, after, in.Remark, ts)
+		flow := helpers.BuildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, walletType, in.Coin, helpers.AssetSceneType(in.SceneType), helpers.AssetBizType(in.BizType), helpers.AssetSceneType(in.SceneType), in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_FREEZE, amount, before, after, in.Remark, ts)
 		if _, err := assetFlowModel.Insert(ctx, flow); err != nil {
 			l.Errorf("FreezeAsset insert asset flow failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizType=%d sceneType=%d bizId=%d bizNo=%s freezeNo=%s err=%v",
 				in.TenantId, in.UserId, walletType, in.Coin, in.Amount, in.BizType, in.SceneType, in.BizId, in.BizNo, freeze.FreezeNo, err)
@@ -104,5 +105,5 @@ func (l *FreezeAssetLogic) FreezeAsset(in *asset.FreezeAssetReq) (*asset.FreezeA
 		return nil, err
 	}
 
-	return &asset.FreezeAssetResp{Base: helper.OkResp(), Data: &asset.FreezeAssetData{FreezeNo: freeze.FreezeNo, Asset: toUserAssetProto(after)}}, nil
+	return &asset.FreezeAssetResp{Base: helper.OkResp(), Data: &asset.FreezeAssetData{FreezeNo: freeze.FreezeNo, Asset: helpers.ToUserAssetProto(after)}}, nil
 }

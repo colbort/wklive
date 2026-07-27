@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/staking/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -40,7 +41,7 @@ func (l *ManualRewardLogic) ManualReward(in *staking.ManualRewardReq) (*staking.
 	if order == nil || order.TenantId != in.TenantId {
 		return &staking.ManualRewardResp{Page: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
-	if base, err := adminTenantWriteScopeResp(l.ctx, order.TenantId, i18n.OrderNotFound); err != nil {
+	if base, err := helpers.AdminTenantWriteScopeResp(l.ctx, order.TenantId, i18n.OrderNotFound); err != nil {
 		return nil, err
 	} else if base != nil {
 		return &staking.ManualRewardResp{Page: base}, nil
@@ -82,7 +83,7 @@ func (l *ManualRewardLogic) ManualReward(in *staking.ManualRewardReq) (*staking.
 	afterReward := beforeReward.Add(rewardAmount)
 	order.TotalReward = afterReward
 	order.LastRewardTimes = now
-	order.NextRewardTimes = calcNextRewardTime(int64(now), staking.RewardMode(order.RewardMode), int64(order.EndTimes))
+	order.NextRewardTimes = helpers.CalcNextRewardTime(int64(now), staking.RewardMode(order.RewardMode), int64(order.EndTimes))
 	order.UpdateUserId = in.OperatorUid
 	order.UpdateTimes = now
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {

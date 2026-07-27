@@ -7,6 +7,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/user"
+	"wklive/services/user/internal/logic/helpers"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
 
@@ -59,6 +60,6 @@ func (l *GetSecurityLogic) GetSecurity(in *user.GetSecurityReq) (*user.GetSecuri
 
 	return &user.GetSecurityResp{
 		Base: helper.OkResp(),
-		Data: toUserSecurityProto(security),
+		Data: helpers.ToUserSecurityProto(security),
 	}, nil
 }

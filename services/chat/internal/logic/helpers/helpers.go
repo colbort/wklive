@@ -1,4 +1,4 @@
-package platformlogic
+package helpers
 
 import (
 	"context"
@@ -13,31 +13,31 @@ import (
 	"wklive/services/chat/models"
 )
 
-func platformScope(ctx context.Context) (*common.RespBase, error) {
+func PlatformScope(ctx context.Context) (*common.RespBase, error) {
 	subjectDomain, err := utils.GetSubjectDomainFromMd(ctx)
 	if err != nil || subjectDomain != utils.SubjectDomainSystem {
-		return permissionDenied(ctx), nil
+		return PermissionDenied(ctx), nil
 	}
 	userType, err := utils.GetUserTypeFromMd(ctx)
 	if err != nil || userType != utils.SysUserTypeSystemAdmin {
-		return permissionDenied(ctx), nil
+		return PermissionDenied(ctx), nil
 	}
 	return nil, nil
 }
 
-func permissionDenied(ctx context.Context) *common.RespBase {
+func PermissionDenied(ctx context.Context) *common.RespBase {
 	return helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, ctx))
 }
 
-func paramError(ctx context.Context) *common.RespBase {
+func ParamError(ctx context.Context) *common.RespBase {
 	return helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, ctx))
 }
 
-func okResp() *common.RespBase {
+func OkResp() *common.RespBase {
 	return helper.OkResp()
 }
 
-func merchantProto(v *models.TChatMerchant) *chat.PlatformChatMerchant {
+func MerchantProto(v *models.TChatMerchant) *chat.PlatformChatMerchant {
 	return &chat.PlatformChatMerchant{
 		Id: v.Id, MerchantCode: v.MerchantCode, MerchantName: v.MerchantName,
 		Enabled: common.Enable(v.Enabled), ExpireTime: v.ExpireTime,
@@ -47,7 +47,7 @@ func merchantProto(v *models.TChatMerchant) *chat.PlatformChatMerchant {
 	}
 }
 
-func offsetBase(offset, limit int64, size int, total int64) *common.RespBase {
+func OffsetBase(offset, limit int64, size int, total int64) *common.RespBase {
 	base := helper.OkResp()
 	base.Total = total
 	base.HasPrev = offset > 0
@@ -57,7 +57,7 @@ func offsetBase(offset, limit int64, size int, total int64) *common.RespBase {
 	return base
 }
 
-func newMerchantKeys() (string, string, error) {
+func NewMerchantKeys() (string, string, error) {
 	key := make([]byte, 16)
 	secret := make([]byte, 32)
 	if _, err := rand.Read(key); err != nil {
@@ -69,7 +69,7 @@ func newMerchantKeys() (string, string, error) {
 	return "ck_" + hex.EncodeToString(key), "cs_" + hex.EncodeToString(secret), nil
 }
 
-func defaultPlatformChatTheme() *chat.ChatThemeConfig {
+func DefaultPlatformChatTheme() *chat.ChatThemeConfig {
 	return &chat.ChatThemeConfig{
 		BackgroundColor: "#F6F8FB", PrimaryColor: "#128577",
 		NoticeBarColor: "#102A43", NoticeTextColor: "#E6FFFA",
@@ -77,6 +77,6 @@ func defaultPlatformChatTheme() *chat.ChatThemeConfig {
 	}
 }
 
-func defaultPlatformChatFeatures() *chat.ChatFeatureConfig {
+func DefaultPlatformChatFeatures() *chat.ChatFeatureConfig {
 	return &chat.ChatFeatureConfig{EnableCopy: true, EnableRevoke: true, EnableDelete: true}
 }

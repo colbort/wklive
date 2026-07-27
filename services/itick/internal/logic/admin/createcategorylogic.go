@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/itick/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -44,7 +45,7 @@ func (l *CreateCategoryLogic) CreateCategory(in *itick.CreateCategoryReq) (*itic
 	_, err = l.svcCtx.ItickCategoryModel.Insert(l.ctx, &models.TItickCategory{
 		CategoryType: int64(in.CategoryType),
 		CategoryName: in.CategoryName,
-		CategoryCode: categoryTypeCode(in.CategoryType),
+		CategoryCode: helpers.CategoryTypeCode(in.CategoryType),
 		Enabled:      int64(in.Enabled),
 		AppVisible:   int64(in.AppVisible),
 		SyncPriority: int64(in.SyncPriority),

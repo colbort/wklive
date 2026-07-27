@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	"wklive/services/staking/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -45,5 +46,5 @@ func (l *ProductDetailLogic) ProductDetail(in *staking.UserProductDetailReq) (*s
 		return &staking.UserProductDetailResp{Base: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
 	}
 
-	return &staking.UserProductDetailResp{Base: helper.OkResp(), Data: productToProto(item)}, nil
+	return &staking.UserProductDetailResp{Base: helper.OkResp(), Data: helpers.ProductToProto(item)}, nil
 }

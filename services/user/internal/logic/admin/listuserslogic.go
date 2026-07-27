@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/user/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/common/utils"
@@ -62,7 +63,7 @@ func (l *ListUsersLogic) ListUsers(in *user.ListUsersReq) (*user.ListUsersResp, 
 
 	data := make([]*user.UserItem, 0, len(items))
 	for _, item := range items {
-		data = append(data, toUserItemProto(item))
+		data = append(data, helpers.ToUserItemProto(item))
 	}
 
 	return &user.ListUsersResp{

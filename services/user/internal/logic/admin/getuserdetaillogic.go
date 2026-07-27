@@ -6,6 +6,7 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/user"
+	"wklive/services/user/internal/logic/helpers"
 	"wklive/services/user/internal/svc"
 	"wklive/services/user/models"
 
@@ -77,6 +78,6 @@ func (l *GetUserDetailLogic) GetUserDetail(in *user.GetUserDetailReq) (*user.Get
 	}
 	return &user.GetUserDetailResp{
 		Base: helper.OkResp(),
-		Data: toUserDetailProto(tuser, identity, security, userBanks),
+		Data: helpers.ToUserDetailProto(tuser, identity, security, userBanks),
 	}, nil
 }

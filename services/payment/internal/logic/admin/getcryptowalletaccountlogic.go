@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -29,7 +30,7 @@ func NewGetCryptoWalletAccountLogic(ctx context.Context, svcCtx *svc.ServiceCont
 func (l *GetCryptoWalletAccountLogic) GetCryptoWalletAccount(in *payment.GetCryptoWalletAccountReq) (*payment.GetCryptoWalletAccountResp, error) {
 	item, err := l.svcCtx.CryptoWalletAccountModel.FindOne(l.ctx, in.Id)
 	if err != nil {
-		if isNotFound(err) {
+		if helpers.IsNotFound(err) {
 			return &payment.GetCryptoWalletAccountResp{Base: helper.ErrResp(i18n.CryptoWalletAccountNotFound, i18n.Translate(i18n.CryptoWalletAccountNotFound, l.ctx))}, nil
 		}
 		return nil, err
@@ -37,5 +38,5 @@ func (l *GetCryptoWalletAccountLogic) GetCryptoWalletAccount(in *payment.GetCryp
 	if in.TenantId > 0 && item.TenantId != in.TenantId {
 		return &payment.GetCryptoWalletAccountResp{Base: helper.ErrResp(i18n.CryptoWalletAccountNotFound, i18n.Translate(i18n.CryptoWalletAccountNotFound, l.ctx))}, nil
 	}
-	return &payment.GetCryptoWalletAccountResp{Base: helper.OkResp(), Data: toCryptoWalletAccountProto(item)}, nil
+	return &payment.GetCryptoWalletAccountResp{Base: helper.OkResp(), Data: helpers.ToCryptoWalletAccountProto(item)}, nil
 }

@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/utils"
@@ -36,17 +37,17 @@ func (l *CreateAssetCoinConfigLogic) CreateAssetCoinConfig(in *asset.CreateAsset
 		Coin:            in.Coin,
 		Symbol:          in.Symbol,
 		CoinName:        in.CoinName,
-		CoinType:        assetCoinTypeValue(in.CoinType, int64(asset.AssetCoinType_ASSET_COIN_TYPE_CRYPTO)),
+		CoinType:        helpers.AssetCoinTypeValue(in.CoinType, int64(asset.AssetCoinType_ASSET_COIN_TYPE_CRYPTO)),
 		ChainCode:       int64(in.ChainCode),
 		IconUrl:         in.IconUrl,
 		IconText:        in.IconText,
 		IconBgColor:     in.IconBgColor,
 		DecimalPlaces:   int64(in.DecimalPlaces),
-		AppVisible:      assetCoinSwitchValue(in.AppVisible, int64(common.Switch_SWITCH_ON)),
-		RechargeEnabled: assetCoinSwitchValue(in.RechargeEnabled, int64(common.Switch_SWITCH_OFF)),
-		WithdrawEnabled: assetCoinSwitchValue(in.WithdrawEnabled, int64(common.Switch_SWITCH_OFF)),
-		TransferEnabled: assetCoinSwitchValue(in.TransferEnabled, int64(common.Switch_SWITCH_ON)),
-		Enabled:         assetCoinEnabledValue(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
+		AppVisible:      helpers.AssetCoinSwitchValue(in.AppVisible, int64(common.Switch_SWITCH_ON)),
+		RechargeEnabled: helpers.AssetCoinSwitchValue(in.RechargeEnabled, int64(common.Switch_SWITCH_OFF)),
+		WithdrawEnabled: helpers.AssetCoinSwitchValue(in.WithdrawEnabled, int64(common.Switch_SWITCH_OFF)),
+		TransferEnabled: helpers.AssetCoinSwitchValue(in.TransferEnabled, int64(common.Switch_SWITCH_ON)),
+		Enabled:         helpers.AssetCoinEnabledValue(in.Enabled, int64(common.Enable_ENABLE_ENABLED)),
 		Sort:            int64(in.Sort),
 		Remark:          in.Remark,
 		CreateTimes:     now,
@@ -65,5 +66,5 @@ func (l *CreateAssetCoinConfigLogic) CreateAssetCoinConfig(in *asset.CreateAsset
 		data.Id = id
 	}
 
-	return &asset.AssetCoinConfigResp{Base: helper.OkResp(), Data: toAssetCoinConfigProto(data)}, nil
+	return &asset.AssetCoinConfigResp{Base: helper.OkResp(), Data: helpers.ToAssetCoinConfigProto(data)}, nil
 }

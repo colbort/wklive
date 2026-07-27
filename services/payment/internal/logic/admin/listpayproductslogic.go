@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/payment/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/payment"
@@ -56,7 +57,7 @@ func (l *ListPayProductsLogic) ListPayProducts(in *payment.ListPayProductsReq) (
 		platformNames[platform.Id] = platform.PlatformName
 	}
 	for _, p := range items {
-		item := toPayProductProto(p)
+		item := helpers.ToPayProductProto(p)
 		item.PlatformName = platformNames[p.PlatformId]
 		data = append(data, item)
 	}

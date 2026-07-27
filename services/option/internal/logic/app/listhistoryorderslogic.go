@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	"wklive/services/option/internal/logic/helpers"
 
 	pageutil "wklive/common/pageutil"
 	"wklive/common/utils"
@@ -64,7 +65,7 @@ func (l *ListHistoryOrdersLogic) ListHistoryOrders(in *option.ListHistoryOrdersR
 	lastID := int64(0)
 	for _, item := range items {
 		lastID = item.Id
-		detail, err := buildOrderDetail(l.ctx, l.svcCtx, item)
+		detail, err := helpers.BuildOrderDetail(l.ctx, l.svcCtx, item)
 		if err != nil {
 			return nil, err
 		}
