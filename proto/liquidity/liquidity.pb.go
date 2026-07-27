@@ -339,15 +339,13 @@ func (x *ConfigTradingUserOption) GetUsername() string {
 }
 
 type GetConfigOptionsResp struct {
-	state               protoimpl.MessageState     `protogen:"open.v1"`
-	Base                *common.RespBase           `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Symbols             []*ConfigSymbolOption      `protobuf:"bytes,2,rep,name=symbols,proto3" json:"symbols,omitempty"`
-	Providers           []*ConfigProviderOption    `protobuf:"bytes,3,rep,name=providers,proto3" json:"providers,omitempty"`
-	TradingUsers        []*ConfigTradingUserOption `protobuf:"bytes,4,rep,name=trading_users,json=tradingUsers,proto3" json:"trading_users,omitempty"`
-	UnavailableSections []string                   `protobuf:"bytes,5,rep,name=unavailable_sections,json=unavailableSections,proto3" json:"unavailable_sections,omitempty"`
-	Warnings            []string                   `protobuf:"bytes,6,rep,name=warnings,proto3" json:"warnings,omitempty"`
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Base          *common.RespBase           `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Symbols       []*ConfigSymbolOption      `protobuf:"bytes,2,rep,name=symbols,proto3" json:"symbols,omitempty"`
+	Providers     []*ConfigProviderOption    `protobuf:"bytes,3,rep,name=providers,proto3" json:"providers,omitempty"`
+	TradingUsers  []*ConfigTradingUserOption `protobuf:"bytes,4,rep,name=trading_users,json=tradingUsers,proto3" json:"trading_users,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetConfigOptionsResp) Reset() {
@@ -404,20 +402,6 @@ func (x *GetConfigOptionsResp) GetProviders() []*ConfigProviderOption {
 func (x *GetConfigOptionsResp) GetTradingUsers() []*ConfigTradingUserOption {
 	if x != nil {
 		return x.TradingUsers
-	}
-	return nil
-}
-
-func (x *GetConfigOptionsResp) GetUnavailableSections() []string {
-	if x != nil {
-		return x.UnavailableSections
-	}
-	return nil
-}
-
-func (x *GetConfigOptionsResp) GetWarnings() []string {
-	if x != nil {
-		return x.Warnings
 	}
 	return nil
 }
@@ -4811,14 +4795,12 @@ const file_proto_liquidity_liquidity_proto_rawDesc = "" +
 	"\x06status\x18\x06 \x01(\x0e2\x19.liquidity.ProviderStatusR\x06status\"Y\n" +
 	"\x17ConfigTradingUserOption\x12\"\n" +
 	"\rtrade_user_id\x18\x01 \x01(\x03R\vtradeUserId\x12\x1a\n" +
-	"\busername\x18\x02 \x01(\tR\busername\"\xcc\x02\n" +
+	"\busername\x18\x02 \x01(\tR\busername\"\xfd\x01\n" +
 	"\x14GetConfigOptionsResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x127\n" +
 	"\asymbols\x18\x02 \x03(\v2\x1d.liquidity.ConfigSymbolOptionR\asymbols\x12=\n" +
 	"\tproviders\x18\x03 \x03(\v2\x1f.liquidity.ConfigProviderOptionR\tproviders\x12G\n" +
-	"\rtrading_users\x18\x04 \x03(\v2\".liquidity.ConfigTradingUserOptionR\ftradingUsers\x121\n" +
-	"\x14unavailable_sections\x18\x05 \x03(\tR\x13unavailableSections\x12\x1a\n" +
-	"\bwarnings\x18\x06 \x03(\tR\bwarnings\"\x88\x02\n" +
+	"\rtrading_users\x18\x04 \x03(\v2\".liquidity.ConfigTradingUserOptionR\ftradingUsers\"\x88\x02\n" +
 	"\x1cProvisionInternalProviderReq\x12\x1b\n" +
 	"\tsymbol_id\x18\x02 \x01(\x03R\bsymbolId\x12#\n" +
 	"\rprovider_code\x18\x03 \x01(\tR\fproviderCode\x12#\n" +

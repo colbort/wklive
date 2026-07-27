@@ -37,8 +37,3 @@ func (s *UserServer) ListInternalTradingUsers(ctx context.Context, in *user.List
 	l := userlogic.NewListInternalTradingUsersLogic(ctx, s.svcCtx)
 	return l.ListInternalTradingUsers(in)
 }
-
-func (s *UserServer) SetInternalTradingUserStatus(ctx context.Context, in *user.SetInternalTradingUserStatusReq) (*user.CommonResp, error) {
-	l := userlogic.NewSetInternalTradingUserStatusLogic(ctx, s.svcCtx)
-	return l.SetInternalTradingUserStatus(in)
-}

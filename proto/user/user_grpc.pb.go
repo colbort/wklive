@@ -2035,10 +2035,9 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	User_CreateInternalTradingUser_FullMethodName    = "/user.User/CreateInternalTradingUser"
-	User_GetInternalTradingUser_FullMethodName       = "/user.User/GetInternalTradingUser"
-	User_ListInternalTradingUsers_FullMethodName     = "/user.User/ListInternalTradingUsers"
-	User_SetInternalTradingUserStatus_FullMethodName = "/user.User/SetInternalTradingUserStatus"
+	User_CreateInternalTradingUser_FullMethodName = "/user.User/CreateInternalTradingUser"
+	User_GetInternalTradingUser_FullMethodName    = "/user.User/GetInternalTradingUser"
+	User_ListInternalTradingUsers_FullMethodName  = "/user.User/ListInternalTradingUsers"
 )
 
 // UserClient is the client API for User service.
@@ -2050,7 +2049,6 @@ type UserClient interface {
 	CreateInternalTradingUser(ctx context.Context, in *CreateInternalTradingUserReq, opts ...grpc.CallOption) (*InternalTradingUserResp, error)
 	GetInternalTradingUser(ctx context.Context, in *GetInternalTradingUserReq, opts ...grpc.CallOption) (*InternalTradingUserResp, error)
 	ListInternalTradingUsers(ctx context.Context, in *ListInternalTradingUsersReq, opts ...grpc.CallOption) (*ListInternalTradingUsersResp, error)
-	SetInternalTradingUserStatus(ctx context.Context, in *SetInternalTradingUserStatusReq, opts ...grpc.CallOption) (*CommonResp, error)
 }
 
 type userClient struct {
@@ -2091,16 +2089,6 @@ func (c *userClient) ListInternalTradingUsers(ctx context.Context, in *ListInter
 	return out, nil
 }
 
-func (c *userClient) SetInternalTradingUserStatus(ctx context.Context, in *SetInternalTradingUserStatusReq, opts ...grpc.CallOption) (*CommonResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CommonResp)
-	err := c.cc.Invoke(ctx, User_SetInternalTradingUserStatus_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility.
@@ -2110,7 +2098,6 @@ type UserServer interface {
 	CreateInternalTradingUser(context.Context, *CreateInternalTradingUserReq) (*InternalTradingUserResp, error)
 	GetInternalTradingUser(context.Context, *GetInternalTradingUserReq) (*InternalTradingUserResp, error)
 	ListInternalTradingUsers(context.Context, *ListInternalTradingUsersReq) (*ListInternalTradingUsersResp, error)
-	SetInternalTradingUserStatus(context.Context, *SetInternalTradingUserStatusReq) (*CommonResp, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -2129,9 +2116,6 @@ func (UnimplementedUserServer) GetInternalTradingUser(context.Context, *GetInter
 }
 func (UnimplementedUserServer) ListInternalTradingUsers(context.Context, *ListInternalTradingUsersReq) (*ListInternalTradingUsersResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListInternalTradingUsers not implemented")
-}
-func (UnimplementedUserServer) SetInternalTradingUserStatus(context.Context, *SetInternalTradingUserStatusReq) (*CommonResp, error) {
-	return nil, status.Error(codes.Unimplemented, "method SetInternalTradingUserStatus not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 func (UnimplementedUserServer) testEmbeddedByValue()              {}
@@ -2208,24 +2192,6 @@ func _User_ListInternalTradingUsers_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _User_SetInternalTradingUserStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetInternalTradingUserStatusReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServer).SetInternalTradingUserStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: User_SetInternalTradingUserStatus_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServer).SetInternalTradingUserStatus(ctx, req.(*SetInternalTradingUserStatusReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2244,10 +2210,6 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListInternalTradingUsers",
 			Handler:    _User_ListInternalTradingUsers_Handler,
-		},
-		{
-			MethodName: "SetInternalTradingUserStatus",
-			Handler:    _User_SetInternalTradingUserStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

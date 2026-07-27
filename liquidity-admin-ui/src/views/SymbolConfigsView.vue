@@ -16,8 +16,6 @@ const configOptions = ref<ConfigOptions>({
   symbols: [],
   providers: [],
   tradingUsers: [],
-  unavailableSections: [],
-  warnings: [],
 });
 const query = reactive({ keyword: "", status: "", limit: 20, cursor: 0 });
 const page = reactive({ total: 0, nextCursor: 0, hasMore: false });
@@ -136,12 +134,6 @@ async function loadConfigOptions() {
 
 async function openCreate() {
   await loadConfigOptions();
-  const unavailable = configOptions.value.unavailableSections;
-  if (unavailable.includes("symbols") || unavailable.includes("providers")) {
-    ElMessage.error("交易对或提供方选项暂不可用，无法安全创建配置");
-    return;
-  }
-  configOptions.value.warnings.forEach((warning) => ElMessage.warning(warning));
   dialog.value = true;
 }
 

@@ -20,7 +20,6 @@ type ServiceContext struct {
 	Config config.Config
 
 	ProviderModel          models.TLiquidityProviderModel
-	ProviderProvisionModel models.TLiquidityProviderProvisionModel
 	SymbolConfigModel      models.TLiquiditySymbolConfigModel
 	StrategyLevelModel     models.TLiquidityStrategyLevelModel
 	QuoteCycleModel        models.TLiquidityQuoteCycleModel
@@ -62,7 +61,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:                 c,
 		ProviderModel:          models.NewTLiquidityProviderModel(conn, c.CacheRedis),
-		ProviderProvisionModel: models.NewTLiquidityProviderProvisionModel(conn, c.CacheRedis),
 		SymbolConfigModel:      models.NewTLiquiditySymbolConfigModel(conn, c.CacheRedis),
 		StrategyLevelModel:     models.NewTLiquidityStrategyLevelModel(conn, c.CacheRedis),
 		QuoteCycleModel:        models.NewTLiquidityQuoteCycleModel(conn, c.CacheRedis),

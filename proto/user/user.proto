@@ -24,12 +24,6 @@ message GetInternalTradingUserReq {
   int64 user_id = 1;
 }
 
-message SetInternalTradingUserStatusReq {
-  int64 user_id = 1;
-  UserStatus status = 2;
-  string remark = 3;
-}
-
 message ListInternalTradingUsersReq {
   int64 tenant_id = 1;
   string keyword = 2;
@@ -700,5 +694,4 @@ service User {
   rpc CreateInternalTradingUser(CreateInternalTradingUserReq) returns (InternalTradingUserResp);
   rpc GetInternalTradingUser(GetInternalTradingUserReq) returns (InternalTradingUserResp);
   rpc ListInternalTradingUsers(ListInternalTradingUsersReq) returns (ListInternalTradingUsersResp);
-  rpc SetInternalTradingUserStatus(SetInternalTradingUserStatusReq) returns (CommonResp);
 }

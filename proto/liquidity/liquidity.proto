@@ -88,8 +88,6 @@ message GetConfigOptionsResp {
   repeated ConfigSymbolOption symbols = 2;
   repeated ConfigProviderOption providers = 3;
   repeated ConfigTradingUserOption trading_users = 4;
-  repeated string unavailable_sections = 5;
-  repeated string warnings = 6;
 }
 
 message ProvisionInternalProviderReq {

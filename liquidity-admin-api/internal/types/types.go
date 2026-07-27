@@ -5,11 +5,9 @@ package types
 
 type ConfigOptionsResp struct {
 	RespBase
-	Symbols             []ConfigSymbolOption      `json:"symbols"`
-	Providers           []ConfigProviderOption    `json:"providers"`
-	TradingUsers        []ConfigTradingUserOption `json:"tradingUsers"`
-	UnavailableSections []string                  `json:"unavailableSections"`
-	Warnings            []string                  `json:"warnings"`
+	Symbols      []ConfigSymbolOption      `json:"symbols"`
+	Providers    []ConfigProviderOption    `json:"providers"`
+	TradingUsers []ConfigTradingUserOption `json:"tradingUsers"`
 }
 
 type ConfigProviderOption struct {

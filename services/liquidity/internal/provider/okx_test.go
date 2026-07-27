@@ -47,7 +47,7 @@ func TestOKXSubmitSpotMarketBuy(t *testing.T) {
 		return okResponse(`{"code":"0","msg":"","data":[{"ordId":"123","clOrdId":"route-1","sCode":"0","sMsg":""}]}`), nil
 	})
 
-	adapter := NewOKXAdapter(true, staticCredentialResolver{OKXCredentials{
+	adapter := NewOKXAdapter(false, staticCredentialResolver{OKXCredentials{
 		APIKey: "key", SecretKey: "secret", Passphrase: "passphrase",
 	}}, "", time.Second)
 	adapter.client.Transport = transport
@@ -84,7 +84,7 @@ func TestOKXQueryOrderMapping(t *testing.T) {
 		return okResponse(`{"code":"0","msg":"","data":[{"ordId":"123","state":"partially_filled","accFillSz":"0.2","avgPx":"64000","fee":"-0.01","feeCcy":"USDT"}]}`), nil
 	})
 
-	adapter := NewOKXAdapter(true, staticCredentialResolver{OKXCredentials{
+	adapter := NewOKXAdapter(false, staticCredentialResolver{OKXCredentials{
 		APIKey: "key", SecretKey: "secret", Passphrase: "passphrase",
 	}}, "", time.Second)
 	adapter.client.Transport = transport
