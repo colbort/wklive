@@ -28,8 +28,16 @@
         />
         <el-table-column prop="userId" :label="t('trade.userId')" width="100" />
         <el-table-column prop="symbolId" :label="t('trade.symbolId')" width="100" />
-        <el-table-column prop="checkType" :label="t('trade.checkType')" width="100" />
-        <el-table-column prop="checkResult" :label="t('trade.checkResult')" width="100" />
+        <el-table-column prop="checkType" :label="t('trade.checkType')" min-width="130">
+          <template #default="{ row }">{{ checkTypeLabel(row.checkType) }}</template>
+        </el-table-column>
+        <el-table-column prop="checkResult" :label="t('trade.checkResult')" width="110">
+          <template #default="{ row }">
+            <el-tag :type="checkResultTagType(row.checkResult)">
+              {{ checkResultLabel(row.checkResult) }}
+            </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="rejectMsg"
           :label="t('trade.rejectMsg')"
@@ -60,8 +68,72 @@
         @limit-change="handleLimitChange"
       />
     </el-card>
-    <el-dialog v-model="detailVisible" :title="t('option.detail')" width="760px">
-      <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
+    <el-dialog v-model="detailVisible" :title="t('trade.riskCheckLogDetail')" width="900px">
+      <template v-if="detailData">
+        <div class="detail-section-title">{{ t('trade.basicInfo') }}</div>
+        <el-descriptions :column="3" border>
+          <el-descriptions-item :label="t('trade.id')">{{ detailData.id }}</el-descriptions-item>
+          <el-descriptions-item :label="t('trade.tenantId')">
+            {{ detailData.tenantId }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('trade.userId')">
+            {{ detailData.userId }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('trade.orderNo')" :span="2">
+            {{ detailData.orderNo || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('trade.clientOrderId')">
+            {{ detailData.clientOrderId || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('trade.symbolId')">
+            {{ detailData.symbolId }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('trade.productType')">
+            {{ productTypeLabel(detailData.productType) }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('trade.source')">
+            {{ sourceLabel(detailData.source) }}
+          </el-descriptions-item>
+        </el-descriptions>
+
+        <div class="detail-section-title">{{ t('trade.riskCheckInfo') }}</div>
+        <el-descriptions :column="3" border>
+          <el-descriptions-item :label="t('trade.checkType')">
+            {{ checkTypeLabel(detailData.checkType) }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('trade.checkResult')">
+            <el-tag :type="checkResultTagType(detailData.checkResult)">
+              {{ checkResultLabel(detailData.checkResult) }}
+            </el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('trade.operatorId')">
+            {{ detailData.operatorId || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('trade.requestPrice')">
+            {{ detailData.requestPrice || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('trade.requestQty')">
+            {{ detailData.requestQty || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('trade.requestAmount')">
+            {{ detailData.requestAmount || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('trade.rejectCode')">
+            {{ detailData.rejectCode || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('trade.rejectMsg')" :span="2">
+            {{ detailData.rejectMsg || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('trade.createTimes')" :span="3">
+            {{ formatDate(detailData.createTimes) }}
+          </el-descriptions-item>
+        </el-descriptions>
+
+        <template v-if="detailData.checkSnapshot">
+          <div class="detail-section-title">{{ t('trade.checkSnapshot') }}</div>
+          <pre class="snapshot-pre">{{ formatSnapshot(detailData.checkSnapshot) }}</pre>
+        </template>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -69,7 +141,8 @@
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
-import { tradeService, type GetRiskOrderCheckLogListReq, type RiskOrderCheckLog } from '@/services'
+import { tradeService, type RiskOrderCheckLog } from '@/services'
+import { formatDate } from '@/utils'
 import TenantSelect from '@/components/TenantSelect.vue'
 import UserSelect from '@/components/UserSelect.vue'
 import SymbolSelect from '@/components/SymbolSelect.vue'
@@ -91,24 +164,67 @@ const rows = ref<RiskOrderCheckLog[]>([])
 const detailVisible = ref(false)
 const detailData = ref<RiskOrderCheckLog | null>(null)
 const riskQuery = reactive<RiskQuery>({
-  tenantId: undefined as number | undefined,
-  userId: undefined as number | undefined,
-  symbolId: undefined as number | undefined,
-  productType: undefined as number | undefined,
+  tenantId: undefined,
+  userId: undefined,
+  symbolId: undefined,
+  productType: undefined,
 })
-const riskLogQuery = reactive<GetRiskOrderCheckLogListReq>({
-  tenantId: 0,
-  userId: 0,
-  symbolId: 0,
-  orderNo: '',
-  limit: 20,
-})
+
+const checkTypeLabels: Record<number, string> = {
+  0: t('options.RISK_CHECK_TYPE_UNKNOWN'),
+  1: t('options.RISK_CHECK_TYPE_BALANCE'),
+  2: t('options.RISK_CHECK_TYPE_MARGIN'),
+  3: t('options.RISK_CHECK_TYPE_POSITION'),
+  4: t('options.RISK_CHECK_TYPE_TRADE_PERMISSION'),
+  5: t('options.RISK_CHECK_TYPE_PRICE_PROTECT'),
+  6: t('options.RISK_CHECK_TYPE_QTY_LIMIT'),
+  7: t('options.RISK_CHECK_TYPE_NOTIONAL_LIMIT'),
+  8: t('options.RISK_CHECK_TYPE_FREQUENCY_LIMIT'),
+}
+const checkResultLabels: Record<number, string> = {
+  0: t('options.RISK_CHECK_RESULT_UNKNOWN'),
+  1: t('options.RISK_CHECK_RESULT_PASS'),
+  2: t('options.RISK_CHECK_RESULT_REJECT'),
+  3: t('options.RISK_CHECK_RESULT_WARN_PASS'),
+}
+const productTypeLabels: Record<number, string> = {
+  1: t('options.PRODUCT_TYPE_SPOT'),
+  2: t('options.PRODUCT_TYPE_DERIVATIVE'),
+  3: t('options.PRODUCT_TYPE_SECONDS'),
+}
+const sourceLabels: Record<number, string> = {
+  1: t('options.SOURCE_TYPE_SYSTEM'),
+  2: t('options.SOURCE_TYPE_USER'),
+  3: t('options.SOURCE_TYPE_ADMIN'),
+  4: t('options.SOURCE_TYPE_TASK'),
+}
+
+const valueLabel = (labels: Record<number, string>, value: number) => labels[value] || String(value)
+const checkTypeLabel = (value: number) => valueLabel(checkTypeLabels, value)
+const checkResultLabel = (value: number) => valueLabel(checkResultLabels, value)
+const productTypeLabel = (value: number) => valueLabel(productTypeLabels, value)
+const sourceLabel = (value: number) => valueLabel(sourceLabels, value)
+
+function checkResultTagType(result: number): 'success' | 'warning' | 'danger' | 'info' {
+  if (result === 1) return 'success'
+  if (result === 2) return 'danger'
+  if (result === 3) return 'warning'
+  return 'info'
+}
+
+function formatSnapshot(value: string) {
+  try {
+    return JSON.stringify(JSON.parse(value), null, 2)
+  } catch {
+    return value
+  }
+}
 
 const loadList = async () => {
   loading.value = true
   try {
     const res = await tradeService.listRiskLogs({
-      ...riskLogQuery,
+      ...riskQuery,
       cursor: pagination.cursor,
       limit: pagination.limit,
     })
@@ -120,10 +236,10 @@ const loadList = async () => {
 }
 
 function resetQuery() {
-  riskLogQuery.tenantId = 0
-  riskLogQuery.userId = 0
-  riskLogQuery.symbolId = 0
-  riskLogQuery.orderNo = ''
+  riskQuery.tenantId = undefined
+  riskQuery.userId = undefined
+  riskQuery.symbolId = undefined
+  riskQuery.productType = undefined
   resetAndLoad(loadList)
 }
 
@@ -141,3 +257,27 @@ function handleNextPage() {
 
 onMounted(loadList)
 </script>
+
+<style scoped>
+.detail-section-title {
+  margin: 20px 0 12px;
+  color: var(--el-text-color-primary);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.detail-section-title:first-child {
+  margin-top: 0;
+}
+
+.snapshot-pre {
+  max-height: 260px;
+  margin: 0;
+  padding: 16px;
+  overflow: auto;
+  border-radius: 8px;
+  background: var(--el-fill-color-light);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+</style>

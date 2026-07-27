@@ -16,7 +16,7 @@
           :tenant-id="query.tenantId || undefined"
         />
         <el-select
-          v-else-if="field === 'status' || field === 'enabled'"
+          v-else-if="field === 'status' || field === 'enabled' || field === 'snapshotType'"
           v-model="query[field]"
           :placeholder="t('common.pleaseSelect')"
           clearable
@@ -54,7 +54,7 @@
           :key="column"
           :prop="column"
           :label="t(`trade.${column}`)"
-          min-width="135"
+          :min-width="columnWidth(column)"
           show-overflow-tooltip
         >
           <template #default="{ row }">
@@ -65,6 +65,22 @@
               effect="light"
             >
               {{ formatStatus(column, row[column]) }}
+            </el-tag>
+            <el-tag
+              v-else-if="column === 'snapshotType'"
+              size="small"
+              :type="snapshotTypeTagType(Number(row[column]))"
+              effect="light"
+            >
+              {{ snapshotTypeLabel(Number(row[column])) }}
+            </el-tag>
+            <el-tag
+              v-else-if="column === 'isSelected'"
+              size="small"
+              :type="Number(row[column]) === 1 ? 'success' : 'info'"
+              effect="light"
+            >
+              {{ Number(row[column]) === 1 ? t('common.yes') : t('common.no') }}
             </el-tag>
             <template v-else>
               {{ formatValue(column, row[column]) }}
@@ -104,7 +120,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
@@ -112,6 +128,9 @@ import SymbolSelect from '@/components/SymbolSelect.vue'
 import TenantSelect from '@/components/TenantSelect.vue'
 import UserSelect from '@/components/UserSelect.vue'
 import { usePagination } from '@/composables'
+import { formatDate } from '@/utils'
+import { findFormOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
+import { tradeService, type OptionGroup } from '@/services'
 import {
   apiTradeListAssetReservations,
   apiTradeListDeliveryBatches,
@@ -143,6 +162,7 @@ const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad }
   usePagination<number>(20)
 const loading = ref(false),
   rows = ref<TradeOperationRecord[]>([])
+const optionGroups = ref<OptionGroup[]>([])
 const query = reactive<Record<string, any>>({
   tenantId: undefined,
   symbolId: undefined,
@@ -302,6 +322,11 @@ const configs: Record<Kind, { filters: string[]; columns: string[]; api: ListApi
 }
 const filters = configs[props.kind].filters,
   columns = configs[props.kind].columns
+const statusOptionGroup = computed(() => {
+  if (props.kind === 'reservations') return 'assetReservationStatus'
+  if (props.kind === 'instructions') return 'settlementInstructionStatus'
+  return ''
+})
 function params() {
   const p: Record<string, any> = { cursor: pagination.cursor, limit: pagination.limit }
   for (const k of ['tenantId', ...filters]) if (query[k] !== '' && query[k] != null) p[k] = query[k]
@@ -327,12 +352,56 @@ function filterOptions(field: string) {
       { value: 1, label: t('common.enabled') },
       { value: 2, label: t('common.disabled') },
     ]
+  if (field === 'snapshotType')
+    return optionSelectItems('secondsPriceSnapshotType')
+  if (field === 'status' && statusOptionGroup.value)
+    return optionSelectItems(statusOptionGroup.value)
   return Array.from({ length: 12 }, (_, index) => ({
     value: index + 1,
     label: String(index + 1),
   }))
 }
+function optionSelectItems(group: string) {
+  return findFormOptionGroup(optionGroups.value, group).map((item) => ({
+    value: item.value,
+    label: getOptionLabel(t, item.code, item.value),
+  }))
+}
+function optionValueLabel(group: string, value: number) {
+  return getOptionValueLabel(optionGroups.value, group, value, t) || String(value)
+}
+function snapshotTypeLabel(value: number) {
+  return optionValueLabel('secondsPriceSnapshotType', value)
+}
+function snapshotTypeTagType(value: number): 'primary' | 'warning' | 'success' | 'info' {
+  if (value === 1) return 'primary'
+  if (value === 2) return 'warning'
+  if (value === 3) return 'success'
+  return 'info'
+}
+function columnWidth(column: string) {
+  if (column === 'source') return 220
+  if (/(Time|Times|At)$/.test(column)) return 210
+  if (/(No)$/.test(column)) return 210
+  if (column === 'snapshotType') return 150
+  if (column === 'algorithm') return 150
+  if (column === 'isSelected') return 110
+  if (column === 'status') return 130
+  return 135
+}
 function statusTagType(value: number) {
+  if (props.kind === 'reservations') {
+    if (value === 2 || value === 4 || value === 6) return 'success'
+    if (value === 7) return 'danger'
+    if (value === 1 || value === 3 || value === 5) return 'warning'
+    return 'info'
+  }
+  if (props.kind === 'instructions') {
+    if (value === 3) return 'success'
+    if (value === 4 || value === 5) return 'danger'
+    if (value === 1 || value === 2) return 'warning'
+    return 'info'
+  }
   if (value === 1 || value === 3) return 'success'
   if (value === 4 || value === 5) return 'danger'
   if (value === 2) return 'warning'
@@ -340,12 +409,15 @@ function statusTagType(value: number) {
 }
 function formatStatus(key: string, value: unknown) {
   if (key === 'enabled') return Number(value) === 1 ? t('common.enabled') : t('common.disabled')
+  if (key === 'status' && statusOptionGroup.value)
+    return optionValueLabel(statusOptionGroup.value, Number(value))
   return formatValue(key, value)
 }
 function formatValue(key: string, value: any) {
   if (value == null || value === '') return '-'
-  if (/(Time|Times|At)$/.test(key) && Number(value) > 0)
-    return new Date(Number(value)).toLocaleString()
+  if (key === 'action' && props.kind === 'instructions')
+    return optionValueLabel('settlementInstructionAction', Number(value))
+  if (/(Time|Times|At)$/.test(key) && Number(value) > 0) return formatDate(Number(value))
   return value
 }
 async function retry(row: TradeOperationRecord) {
@@ -356,5 +428,9 @@ async function retry(row: TradeOperationRecord) {
   ElMessage.success(t('common.success'))
   load()
 }
-onMounted(() => load())
+onMounted(async () => {
+  const optionsResponse = await tradeService.getOptions()
+  optionGroups.value = optionsResponse.data || []
+  await load()
+})
 </script>

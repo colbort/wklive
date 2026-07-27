@@ -107,6 +107,10 @@ func TradeOptions() []types.OptionsGroup {
 		EnumGroup("orderStatus", "订单状态", trade.OrderStatus_ORDER_STATUS_UNKNOWN.Descriptor()),
 		EnumGroup("orderDisplayStatus", "订单展示状态", trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_UNKNOWN.Descriptor()),
 		EnumGroup("eventStatus", "事件状态", trade.EventStatus_EVENT_STATUS_UNKNOWN.Descriptor()),
+		EnumGroup("secondsPriceSnapshotType", "秒合约价格快照类型", trade.SecondsPriceSnapshotType_SECONDS_PRICE_SNAPSHOT_TYPE_UNKNOWN.Descriptor()),
+		EnumGroup("assetReservationStatus", "资金预占状态", trade.AssetReservationStatus_ASSET_RESERVATION_STATUS_UNKNOWN.Descriptor()),
+		EnumGroup("settlementInstructionAction", "结算指令动作", trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_UNKNOWN.Descriptor()),
+		EnumGroup("settlementInstructionStatus", "结算指令状态", trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_UNKNOWN.Descriptor()),
 		EnumGroup("marginMode", "保证金模式", trade.MarginMode_MARGIN_MODE_UNKNOWN.Descriptor()),
 		EnumGroup("positionMode", "持仓模式", trade.PositionMode_POSITION_MODE_UNKNOWN.Descriptor()),
 		Group(
