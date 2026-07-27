@@ -282,6 +282,7 @@ type RiskListResp struct {
 }
 
 type SaveSymbolConfigReq struct {
+	Id                   int64  `path:"id,optional"`
 	SymbolId             int64  `json:"symbolId"`
 	LiquidityMode        int32  `json:"liquidityMode"`
 	InternalProviderId   int64  `json:"internalProviderId,optional"`
@@ -308,6 +309,7 @@ type SaveSymbolConfigReq struct {
 	HedgeThreshold       string `json:"hedgeThreshold"`
 	HedgeRatio           string `json:"hedgeRatio"`
 	SelfTradePrevention  int32  `json:"selfTradePrevention"`
+	Version              int64  `json:"version,optional"`
 }
 
 type SymbolActionReq struct {
@@ -343,6 +345,70 @@ type SymbolConfigListResp struct {
 	RespBase
 	Data []SymbolConfigItem `json:"data"`
 	Page PageMeta           `json:"page"`
+}
+
+type SymbolConfigDetailReq struct {
+	Id int64 `path:"id"`
+}
+
+type SymbolConfigDetailResp struct {
+	RespBase
+	Data   SymbolConfigDetailItem   `json:"data"`
+	Levels []LiquidityStrategyLevel `json:"levels"`
+}
+
+type SymbolConfigDetailItem struct {
+	Id                   int64  `json:"id"`
+	SymbolId             int64  `json:"symbolId"`
+	Symbol               string `json:"symbol"`
+	ProductType          int32  `json:"productType"`
+	ContractType         int32  `json:"contractType"`
+	LiquidityMode        int32  `json:"liquidityMode"`
+	InternalProviderId   int64  `json:"internalProviderId"`
+	ExternalProviderId   int64  `json:"externalProviderId"`
+	ExternalSymbol       string `json:"externalSymbol"`
+	ReferencePriceSource string `json:"referencePriceSource"`
+	ReferencePriceKind   string `json:"referencePriceKind"`
+	QuoteValidityMs      int32  `json:"quoteValidityMs"`
+	RefreshIntervalMs    int32  `json:"refreshIntervalMs"`
+	QuoteTtlMs           int32  `json:"quoteTtlMs"`
+	RepriceThresholdBps  string `json:"repriceThresholdBps"`
+	BaseSpreadBps        string `json:"baseSpreadBps"`
+	MaxSpreadBps         string `json:"maxSpreadBps"`
+	MaxPriceDeviationBps string `json:"maxPriceDeviationBps"`
+	PriceTick            string `json:"priceTick"`
+	QtyStep              string `json:"qtyStep"`
+	MinQuoteQty          string `json:"minQuoteQty"`
+	MaxQuoteQty          string `json:"maxQuoteQty"`
+	MaxQuoteNotional     string `json:"maxQuoteNotional"`
+	TargetBaseInventory  string `json:"targetBaseInventory"`
+	MinBaseInventory     string `json:"minBaseInventory"`
+	MaxBaseInventory     string `json:"maxBaseInventory"`
+	MaxNetExposure       string `json:"maxNetExposure"`
+	MaxDailyNotional     string `json:"maxDailyNotional"`
+	InventorySkewBps     string `json:"inventorySkewBps"`
+	HedgeThreshold       string `json:"hedgeThreshold"`
+	HedgeRatio           string `json:"hedgeRatio"`
+	SelfTradePrevention  int32  `json:"selfTradePrevention"`
+	Status               int32  `json:"status"`
+	PauseReason          string `json:"pauseReason"`
+	Version              int64  `json:"version"`
+	CreateTimes          int64  `json:"createTimes"`
+	UpdateTimes          int64  `json:"updateTimes"`
+}
+
+type LiquidityStrategyLevel struct {
+	Id           int64  `json:"id"`
+	ConfigId     int64  `json:"configId"`
+	LevelNo      int32  `json:"levelNo"`
+	BidSpreadBps string `json:"bidSpreadBps"`
+	AskSpreadBps string `json:"askSpreadBps"`
+	BidQty       string `json:"bidQty"`
+	AskQty       string `json:"askQty"`
+	Enabled      int32  `json:"enabled"`
+	Version      int64  `json:"version"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateTimes  int64  `json:"updateTimes"`
 }
 
 type TimeRange struct {

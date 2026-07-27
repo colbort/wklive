@@ -6,7 +6,7 @@ CREATE TABLE `t_user` (
   `nickname` varchar(64) DEFAULT NULL COMMENT '昵称',
   `avatar` varchar(255) DEFAULT NULL COMMENT '头像',
   `password_hash` varchar(255) NOT NULL COMMENT '登录密码哈希',
-  `register_type` tinyint NOT NULL DEFAULT 1 COMMENT '注册方式：1用户名 2手机号 3邮箱 4游客',
+  `register_type` tinyint NOT NULL DEFAULT 1 COMMENT '注册方式：1用户名 2手机号 3邮箱 4游客 5做市账户',
   `account_type` tinyint NOT NULL DEFAULT 1 COMMENT '账户类型：1普通用户 2内部做市账户 3平台系统账户',
   `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1正常 2禁用 3冻结 4注销',
   `member_level` int NOT NULL DEFAULT 0 COMMENT '会员等级',

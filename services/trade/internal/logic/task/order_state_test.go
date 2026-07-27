@@ -40,6 +40,14 @@ func TestOrderStatusAfterFill(t *testing.T) {
 			order: &models.TTradeOrder{Amount: testDecimal(10000), FilledAmount: testDecimal(10000)},
 			want:  int64(trade.OrderStatus_ORDER_STATUS_SETTLEMENT_PENDING),
 		},
+		{
+			name: "filled by amount with decimal division dust",
+			order: &models.TTradeOrder{
+				Amount:       decimal.RequireFromString("1000"),
+				FilledAmount: decimal.RequireFromString("999.9999999999999242839"),
+			},
+			want: int64(trade.OrderStatus_ORDER_STATUS_SETTLEMENT_PENDING),
+		},
 	}
 
 	for _, tt := range tests {
@@ -48,6 +56,41 @@ func TestOrderStatusAfterFill(t *testing.T) {
 				t.Fatalf("orderStatusAfterFill() = %d, want %d", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestBuildOrderMatchPlanClampsAmountOrderDust(t *testing.T) {
+	buy := &models.TTradeOrder{
+		Id:        2,
+		Side:      int64(common.Side_SIDE_BUY),
+		OrderType: int64(trade.OrderType_ORDER_TYPE_MARKET),
+		Amount:    decimal.RequireFromString("1000"),
+		Status:    int64(trade.OrderStatus_ORDER_STATUS_PENDING),
+	}
+	sell := &models.TTradeOrder{
+		Id:        1,
+		Side:      int64(common.Side_SIDE_SELL),
+		OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT),
+		Price:     decimal.RequireFromString("65253.0079"),
+		Qty:       decimal.RequireFromString("2"),
+		Status:    int64(trade.OrderStatus_ORDER_STATUS_PENDING),
+	}
+	plan := buildOrderMatchPlan(buy, sell)
+	if plan == nil {
+		t.Fatal("expected match plan")
+	}
+	if !plan.Amount.Equal(buy.Amount) {
+		t.Fatalf("match amount=%s, want exact remaining amount=%s", plan.Amount, buy.Amount)
+	}
+}
+
+func TestOrderFillTargetReachedAcceptsAmountDust(t *testing.T) {
+	order := &models.TTradeOrder{
+		Amount:       decimal.RequireFromString("1000"),
+		FilledAmount: decimal.RequireFromString("999.9999999999999242839"),
+	}
+	if !orderFillTargetReached(order) {
+		t.Fatal("amount order with arithmetic dust should be treated as filled")
 	}
 }
 

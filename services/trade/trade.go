@@ -46,6 +46,7 @@ func main() {
 	defer cancel()
 	tasks.StartTaskSubscriber(ctx, svcCtx)
 	tasks.StartADLRecovery(ctx, svcCtx)
+	tasks.StartTradeEventRecovery(ctx, svcCtx)
 	logic.StartSecondsDelayQueue(ctx, svcCtx)
 
 	if restored, err := logic.RestoreOrderBookCache(context.Background(), svcCtx); err != nil {

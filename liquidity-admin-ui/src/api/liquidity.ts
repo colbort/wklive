@@ -70,8 +70,12 @@ export const liquidityApi = {
     request.put(`/providers/${id}/status`, data),
   symbolConfigs: (params: PageQuery) =>
     request.get<unknown, ListResponse>("/symbol-configs", { params }),
+  symbolConfigDetail: (id: number) =>
+    request.get(`/symbol-configs/${id}`),
   createSymbolConfig: (data: Record<string, unknown>) =>
     request.post("/symbol-configs", data),
+  updateSymbolConfig: (id: number, data: Record<string, unknown>) =>
+    request.put(`/symbol-configs/${id}`, data),
   symbolAction: (
     id: number,
     action: "start" | "pause" | "stop",

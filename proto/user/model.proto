@@ -15,7 +15,7 @@ message UserBase {
   string nickname = 5; // 昵称
   string avatar = 6; // 头像
   string password_hash = 7; // 登录密码哈希
-  user.RegisterType register_type = 8; // 注册方式：1用户名 2手机号 3邮箱 4游客
+  user.RegisterType register_type = 8; // 注册方式：1用户名 2手机号 3邮箱 4游客 5做市账户
   user.UserStatus status = 9; // 状态：1正常 2禁用 3冻结 4注销
   int64 member_level = 10; // 会员等级
   string language = 11; // 语言
@@ -103,7 +103,7 @@ message UserItem {
   string nickname = 5; // 昵称
   string avatar = 6; // 头像
   string password_hash = 7; // 登录密码哈希
-  user.RegisterType register_type = 8; // 注册方式：1用户名 2手机号 3邮箱 4游客
+  user.RegisterType register_type = 8; // 注册方式：1用户名 2手机号 3邮箱 4游客 5做市账户
   user.UserStatus status = 9; // 状态：1正常 2禁用 3冻结 4注销
   int64 member_level = 10; // 会员等级
   string language = 11; // 语言

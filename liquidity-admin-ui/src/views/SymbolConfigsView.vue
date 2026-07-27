@@ -3,14 +3,25 @@ import { computed, onMounted, reactive, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { liquidityApi } from "@/api/liquidity";
 import ListPager from "@/components/ListPager.vue";
+import { useAuthStore } from "@/stores/auth";
 import type {
   ConfigOptions,
   ConfigProviderOption,
+  StrategyLevel,
   SymbolConfig,
+  SymbolConfigDetail,
+  SymbolConfigDetailResponse,
 } from "@/types/liquidity";
 
+const auth = useAuthStore();
 const loading = ref(false);
 const dialog = ref(false);
+const editingId = ref<number | null>(null);
+const editingVersion = ref(0);
+const detailDialog = ref(false);
+const detailLoading = ref(false);
+const detail = ref<SymbolConfigDetail | null>(null);
+const detailLevels = ref<StrategyLevel[]>([]);
 const rows = ref<SymbolConfig[]>([]);
 const configOptions = ref<ConfigOptions>({
   symbols: [],
@@ -63,6 +74,36 @@ const selectedInternalProvider = computed(() =>
     (item) => item.providerId === form.internalProviderId,
   ),
 );
+const quoteLimitHint = computed(() => {
+  const qty = Number(form.minQuoteQty);
+  const maxNotional = Number(form.maxQuoteNotional);
+  if (!Number.isFinite(qty) || qty <= 0) {
+    return "填写单档报价数量后，将自动计算名义金额限制对应的最高参考价格。";
+  }
+  if (!Number.isFinite(maxNotional) || maxNotional < 0) {
+    return "单档最大名义金额不能小于 0；填写 0 表示不限制。";
+  }
+  if (maxNotional === 0) {
+    return "当前单档最大名义金额不设上限，实际报价仍受单档最大数量和账户余额限制。";
+  }
+  const maxPrice = maxNotional / qty;
+  return `当前配置仅支持参考价格不高于 ${maxPrice.toLocaleString("zh-CN", {
+    maximumFractionDigits: 8,
+  })}；计算公式：${maxNotional} ÷ ${qty}。若市场价格高于该值，系统将无法生成报价。`;
+});
+const quoteLimitHintType = computed(() => {
+  const qty = Number(form.minQuoteQty);
+  const maxNotional = Number(form.maxQuoteNotional);
+  if (
+    Number.isFinite(qty) &&
+    qty > 0 &&
+    Number.isFinite(maxNotional) &&
+    maxNotional > 0
+  ) {
+    return "warning";
+  }
+  return "info";
+});
 
 watch(selectedSymbol, (symbol) => {
   if (!symbol) return;
@@ -134,6 +175,51 @@ async function loadConfigOptions() {
 
 async function openCreate() {
   await loadConfigOptions();
+  editingId.value = null;
+  editingVersion.value = 0;
+  dialog.value = true;
+}
+
+async function openEdit(row: SymbolConfig) {
+  if (row.status === 1) {
+    ElMessage.warning("请先暂停流动性，再修改策略");
+    return;
+  }
+  await loadConfigOptions();
+  const response = (await liquidityApi.symbolConfigDetail(
+    row.id,
+  )) as unknown as SymbolConfigDetailResponse;
+  const data = response.data;
+  Object.assign(form, {
+    symbolId: data.symbolId,
+    liquidityMode: data.liquidityMode,
+    internalProviderId: data.internalProviderId || undefined,
+    externalProviderId: data.externalProviderId || undefined,
+    externalSymbol: data.externalSymbol,
+    referencePriceSource: data.referencePriceSource,
+    referencePriceKind: data.referencePriceKind,
+    quoteValidityMs: data.quoteValidityMs,
+    refreshIntervalMs: data.refreshIntervalMs,
+    quoteTtlMs: data.quoteTtlMs,
+    repriceThresholdBps: data.repriceThresholdBps,
+    baseSpreadBps: data.baseSpreadBps,
+    maxSpreadBps: data.maxSpreadBps,
+    maxPriceDeviationBps: data.maxPriceDeviationBps,
+    minQuoteQty: data.minQuoteQty,
+    maxQuoteQty: data.maxQuoteQty,
+    maxQuoteNotional: data.maxQuoteNotional,
+    targetBaseInventory: data.targetBaseInventory,
+    minBaseInventory: data.minBaseInventory,
+    maxBaseInventory: data.maxBaseInventory,
+    maxNetExposure: data.maxNetExposure,
+    maxDailyNotional: data.maxDailyNotional,
+    inventorySkewBps: data.inventorySkewBps,
+    hedgeThreshold: data.hedgeThreshold,
+    hedgeRatio: data.hedgeRatio,
+    selfTradePrevention: data.selfTradePrevention,
+  });
+  editingId.value = row.id;
+  editingVersion.value = data.version;
   dialog.value = true;
 }
 
@@ -157,8 +243,36 @@ async function create() {
     ElMessage.warning("请选择外部流动性提供方");
     return;
   }
-  await liquidityApi.createSymbolConfig({ ...form, symbolId });
-  ElMessage.success("策略配置已创建");
+  const minQuoteQty = Number(form.minQuoteQty);
+  const maxQuoteQty = Number(form.maxQuoteQty);
+  const maxQuoteNotional = Number(form.maxQuoteNotional);
+  if (!Number.isFinite(minQuoteQty) || minQuoteQty <= 0) {
+    ElMessage.warning("单档报价数量必须大于 0");
+    return;
+  }
+  if (
+    !Number.isFinite(maxQuoteQty) ||
+    maxQuoteQty <= 0 ||
+    maxQuoteQty < minQuoteQty
+  ) {
+    ElMessage.warning("单档最大数量不能小于报价数量");
+    return;
+  }
+  if (!Number.isFinite(maxQuoteNotional) || maxQuoteNotional < 0) {
+    ElMessage.warning("单档最大名义金额不能小于 0");
+    return;
+  }
+  if (editingId.value) {
+    await liquidityApi.updateSymbolConfig(editingId.value, {
+      ...form,
+      symbolId,
+      version: editingVersion.value,
+    });
+    ElMessage.success("策略配置已更新");
+  } else {
+    await liquidityApi.createSymbolConfig({ ...form, symbolId });
+    ElMessage.success("策略配置已创建");
+  }
   dialog.value = false;
   await load();
 }
@@ -170,6 +284,20 @@ async function action(
   await liquidityApi.symbolAction(row.id, type, row.version);
   ElMessage.success("操作已提交");
   await load();
+}
+
+async function showDetail(row: SymbolConfig) {
+  detailDialog.value = true;
+  detailLoading.value = true;
+  try {
+    const response = (await liquidityApi.symbolConfigDetail(
+      row.id,
+    )) as unknown as SymbolConfigDetailResponse;
+    detail.value = response.data;
+    detailLevels.value = response.levels || [];
+  } finally {
+    detailLoading.value = false;
+  }
 }
 
 const mode = (value: number) =>
@@ -188,7 +316,13 @@ onMounted(load);
       <h1>交易对策略</h1>
       <p>配置现货、交割与永续合约的报价和对冲参数</p>
     </div>
-    <el-button type="primary" @click="openCreate">＋ 新建策略</el-button>
+    <el-button
+      v-if="auth.hasPerm('liquidity:strategy:add')"
+      type="primary"
+      @click="openCreate"
+    >
+      ＋ 新建策略
+    </el-button>
   </div>
 
   <section class="panel list-panel">
@@ -259,15 +393,46 @@ onMounted(load);
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" width="210">
+        <el-table-column label="操作" fixed="right" width="250">
           <template #default="{ row }">
-            <el-button link type="success" @click="action(row, 'start')">
+            <el-button
+              v-if="auth.hasPerm('liquidity:strategy:detail')"
+              link
+              type="primary"
+              @click="showDetail(row)"
+            >
+              详情
+            </el-button>
+            <el-button
+              v-if="auth.hasPerm('liquidity:strategy:update')"
+              link
+              type="primary"
+              @click="openEdit(row)"
+            >
+              编辑
+            </el-button>
+            <el-button
+              v-if="auth.hasPerm('liquidity:strategy:start')"
+              link
+              type="success"
+              @click="action(row, 'start')"
+            >
               启动
             </el-button>
-            <el-button link type="warning" @click="action(row, 'pause')">
+            <el-button
+              v-if="auth.hasPerm('liquidity:strategy:pause')"
+              link
+              type="warning"
+              @click="action(row, 'pause')"
+            >
               暂停
             </el-button>
-            <el-button link type="danger" @click="action(row, 'stop')">
+            <el-button
+              v-if="auth.hasPerm('liquidity:strategy:stop')"
+              link
+              type="danger"
+              @click="action(row, 'stop')"
+            >
               停止
             </el-button>
           </template>
@@ -289,7 +454,7 @@ onMounted(load);
 
   <el-dialog
     v-model="dialog"
-    title="新建交易对流动性策略"
+    :title="editingId ? '编辑交易对流动性策略' : '新建交易对流动性策略'"
     width="820px"
   >
     <el-form :model="form" label-width="135px">
@@ -298,6 +463,7 @@ onMounted(load);
           <el-form-item label="交易对">
             <el-select
               v-model="form.symbolId"
+              :disabled="Boolean(editingId)"
               filterable
               placeholder="请选择交易对"
               style="width: 100%"
@@ -408,11 +574,220 @@ onMounted(load);
             <el-input-number v-model="form.refreshIntervalMs" :min="100" />
           </el-form-item>
         </el-col>
+        <el-col :span="8">
+          <el-form-item label="单档报价数量">
+            <el-input
+              v-model="form.minQuoteQty"
+              placeholder="例如 0.5"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="单档最大数量">
+            <el-input
+              v-model="form.maxQuoteQty"
+              placeholder="例如 1"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="单档最大名义金额">
+            <el-input
+              v-model="form.maxQuoteNotional"
+              placeholder="例如 200000，0 表示不限"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-alert
+            class="quote-limit-hint"
+            :title="quoteLimitHint"
+            :type="quoteLimitHintType"
+            :closable="false"
+            show-icon
+          />
+        </el-col>
       </el-row>
     </el-form>
     <template #footer>
       <el-button @click="dialog = false">取消</el-button>
-      <el-button type="primary" @click="create">创建策略</el-button>
+      <el-button type="primary" @click="create">
+        {{ editingId ? "保存修改" : "创建策略" }}
+      </el-button>
     </template>
   </el-dialog>
+
+  <el-dialog
+    v-model="detailDialog"
+    class="strategy-detail-dialog"
+    title="流动性策略详情"
+    width="980px"
+  >
+    <div class="strategy-detail" v-loading="detailLoading">
+      <template v-if="detail">
+        <h3 class="detail-title">基本配置</h3>
+        <el-descriptions :column="3" border>
+          <el-descriptions-item label="交易对">{{ detail.symbol }}</el-descriptions-item>
+          <el-descriptions-item label="流动性模式">
+            {{ mode(detail.liquidityMode) }}
+          </el-descriptions-item>
+          <el-descriptions-item label="状态">
+            {{ status(detail.status) }}
+          </el-descriptions-item>
+          <el-descriptions-item label="内部提供方ID">
+            {{ detail.internalProviderId || "—" }}
+          </el-descriptions-item>
+          <el-descriptions-item label="外部提供方ID">
+            {{ detail.externalProviderId || "—" }}
+          </el-descriptions-item>
+          <el-descriptions-item label="外部交易对">
+            {{ detail.externalSymbol || "—" }}
+          </el-descriptions-item>
+          <el-descriptions-item label="参考价格源" :span="2">
+            {{ detail.referencePriceSource }}
+          </el-descriptions-item>
+          <el-descriptions-item label="价格类型">
+            {{ detail.referencePriceKind }}
+          </el-descriptions-item>
+          <el-descriptions-item label="基础/最大点差">
+            {{ detail.baseSpreadBps }} / {{ detail.maxSpreadBps }} BPS
+          </el-descriptions-item>
+          <el-descriptions-item label="刷新间隔">
+            {{ detail.refreshIntervalMs }} ms
+          </el-descriptions-item>
+          <el-descriptions-item label="报价有效期">
+            {{ detail.quoteValidityMs }} ms
+          </el-descriptions-item>
+        </el-descriptions>
+
+        <h3 class="detail-title">报价与风险限制</h3>
+        <el-descriptions :column="3" border>
+          <el-descriptions-item label="最小报价数量">
+            {{ detail.minQuoteQty }}
+          </el-descriptions-item>
+          <el-descriptions-item label="单档最大数量">
+            {{ detail.maxQuoteQty }}
+          </el-descriptions-item>
+          <el-descriptions-item label="单档最大名义金额">
+            {{ detail.maxQuoteNotional }}
+          </el-descriptions-item>
+          <el-descriptions-item label="数量步长">{{ detail.qtyStep }}</el-descriptions-item>
+          <el-descriptions-item label="价格步长">{{ detail.priceTick }}</el-descriptions-item>
+          <el-descriptions-item label="最大净敞口">
+            {{ detail.maxNetExposure }}
+          </el-descriptions-item>
+          <el-descriptions-item label="基础库存范围" :span="2">
+            {{ detail.minBaseInventory }} ～ {{ detail.maxBaseInventory }}
+          </el-descriptions-item>
+          <el-descriptions-item label="每日最大名义金额">
+            {{ detail.maxDailyNotional }}
+          </el-descriptions-item>
+        </el-descriptions>
+
+        <h3 class="detail-title">策略档位</h3>
+        <el-table :data="detailLevels" border>
+          <el-table-column prop="levelNo" label="档位" width="80" />
+          <el-table-column prop="bidSpreadBps" label="买价差(BPS)" />
+          <el-table-column prop="askSpreadBps" label="卖价差(BPS)" />
+          <el-table-column prop="bidQty" label="买单数量" />
+          <el-table-column prop="askQty" label="卖单数量" />
+          <el-table-column label="启用" width="90">
+            <template #default="{ row }">
+              <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
+                {{ row.enabled === 1 ? "是" : "否" }}
+              </el-tag>
+            </template>
+          </el-table-column>
+        </el-table>
+      </template>
+    </div>
+  </el-dialog>
 </template>
+
+<style scoped>
+.detail-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 26px 0 12px;
+  color: #dce7f7;
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.detail-title:first-child {
+  margin-top: 0;
+}
+
+.detail-title::before {
+  width: 3px;
+  height: 15px;
+  border-radius: 2px;
+  background: #25d3a2;
+  content: "";
+}
+
+.strategy-detail {
+  min-height: 180px;
+}
+
+.strategy-detail :deep(.el-descriptions) {
+  --el-descriptions-table-border: rgba(111, 140, 176, 0.18);
+}
+
+.strategy-detail :deep(.el-descriptions__body) {
+  overflow: hidden;
+  border-radius: 8px;
+  background: #091727;
+}
+
+.strategy-detail
+  :deep(.el-descriptions__table.is-bordered .el-descriptions__cell) {
+  padding: 13px 15px;
+  border-color: rgba(111, 140, 176, 0.18);
+}
+
+.strategy-detail :deep(.el-descriptions__label.el-descriptions__cell) {
+  width: 138px;
+  color: #8194ad;
+  font-weight: 600;
+  background: rgba(22, 43, 65, 0.82);
+}
+
+.strategy-detail :deep(.el-descriptions__content.el-descriptions__cell) {
+  color: #dce7f7;
+  background: rgba(8, 22, 37, 0.72);
+}
+
+.strategy-detail :deep(.el-table) {
+  overflow: hidden;
+  border-radius: 8px;
+  --el-table-bg-color: #091727;
+  --el-table-tr-bg-color: #091727;
+  --el-table-header-bg-color: #102238;
+  --el-table-row-hover-bg-color: #102a3d;
+  --el-table-border-color: rgba(111, 140, 176, 0.18);
+  --el-table-text-color: #d3deec;
+  --el-table-header-text-color: #8194ad;
+}
+
+.strategy-detail :deep(.el-table th.el-table__cell) {
+  height: 46px;
+  font-weight: 600;
+}
+
+.strategy-detail :deep(.el-table td.el-table__cell) {
+  height: 46px;
+}
+
+.strategy-detail :deep(.el-tag--success) {
+  border-color: rgba(37, 211, 162, 0.28);
+  color: #45dfb4;
+  background: rgba(37, 211, 162, 0.12);
+}
+
+.quote-limit-hint {
+  margin-top: 2px;
+  line-height: 1.6;
+}
+</style>

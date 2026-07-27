@@ -900,17 +900,32 @@ func orderStatusAfterFill(order *models.TTradeOrder) int64 {
 	if !order.FilledQty.IsPositive() && !order.FilledAmount.IsPositive() {
 		return int64(trade.OrderStatus_ORDER_STATUS_PENDING)
 	}
-	if reachedFillTarget(order.FilledQty, order.Qty) {
-		return int64(trade.OrderStatus_ORDER_STATUS_SETTLEMENT_PENDING)
-	}
-	if !order.Qty.IsPositive() && reachedFillTarget(order.FilledAmount, order.Amount) {
+	if orderFillTargetReached(order) {
 		return int64(trade.OrderStatus_ORDER_STATUS_SETTLEMENT_PENDING)
 	}
 	return int64(trade.OrderStatus_ORDER_STATUS_PART_FILLED)
 }
 
+func orderFillTargetReached(order *models.TTradeOrder) bool {
+	if order == nil {
+		return false
+	}
+	if order.Qty.IsPositive() {
+		return reachedFillTarget(order.FilledQty, order.Qty)
+	}
+	return reachedFillTarget(order.FilledAmount, order.Amount)
+}
+
 func reachedFillTarget(filled, target decimal.Decimal) bool {
-	return target.IsPositive() && filled.GreaterThanOrEqual(target)
+	if !target.IsPositive() {
+		return false
+	}
+	if filled.GreaterThanOrEqual(target) {
+		return true
+	}
+	// Amount-based spot orders calculate qty by dividing amount by execution
+	// price. Treat sub-minor-unit arithmetic dust as fully filled.
+	return target.Sub(filled).LessThanOrEqual(decimal.RequireFromString("0.00000001"))
 }
 
 func shouldExpireOrder(order *models.TTradeOrder, now int64) bool {

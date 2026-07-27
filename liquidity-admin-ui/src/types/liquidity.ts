@@ -89,3 +89,47 @@ export interface SymbolConfig {
   status: number;
   version: number;
 }
+
+export interface StrategyLevel {
+  id: number;
+  configId: number;
+  levelNo: number;
+  bidSpreadBps: string;
+  askSpreadBps: string;
+  bidQty: string;
+  askQty: string;
+  enabled: number;
+}
+
+export interface SymbolConfigDetail extends SymbolConfig {
+  internalProviderId: number;
+  externalProviderId: number;
+  externalSymbol: string;
+  referencePriceKind: string;
+  quoteValidityMs: number;
+  quoteTtlMs: number;
+  repriceThresholdBps: string;
+  maxPriceDeviationBps: string;
+  priceTick: string;
+  qtyStep: string;
+  minQuoteQty: string;
+  maxQuoteQty: string;
+  maxQuoteNotional: string;
+  targetBaseInventory: string;
+  minBaseInventory: string;
+  maxBaseInventory: string;
+  maxNetExposure: string;
+  maxDailyNotional: string;
+  inventorySkewBps: string;
+  hedgeThreshold: string;
+  hedgeRatio: string;
+  selfTradePrevention: number;
+  pauseReason: string;
+  createTimes: number;
+  updateTimes: number;
+}
+
+export interface SymbolConfigDetailResponse {
+  data: SymbolConfigDetail;
+  levels: StrategyLevel[];
+}

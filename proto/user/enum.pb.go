@@ -24,11 +24,12 @@ const (
 type RegisterType int32
 
 const (
-	RegisterType_REGISTER_TYPE_UNKNOWN  RegisterType = 0
-	RegisterType_REGISTER_TYPE_USERNAME RegisterType = 1
-	RegisterType_REGISTER_TYPE_PHONE    RegisterType = 2
-	RegisterType_REGISTER_TYPE_EMAIL    RegisterType = 3
-	RegisterType_REGISTER_TYPE_GUEST    RegisterType = 4
+	RegisterType_REGISTER_TYPE_UNKNOWN      RegisterType = 0
+	RegisterType_REGISTER_TYPE_USERNAME     RegisterType = 1
+	RegisterType_REGISTER_TYPE_PHONE        RegisterType = 2
+	RegisterType_REGISTER_TYPE_EMAIL        RegisterType = 3
+	RegisterType_REGISTER_TYPE_GUEST        RegisterType = 4
+	RegisterType_REGISTER_TYPE_MARKET_MAKER RegisterType = 5
 )
 
 // Enum value maps for RegisterType.
@@ -39,13 +40,15 @@ var (
 		2: "REGISTER_TYPE_PHONE",
 		3: "REGISTER_TYPE_EMAIL",
 		4: "REGISTER_TYPE_GUEST",
+		5: "REGISTER_TYPE_MARKET_MAKER",
 	}
 	RegisterType_value = map[string]int32{
-		"REGISTER_TYPE_UNKNOWN":  0,
-		"REGISTER_TYPE_USERNAME": 1,
-		"REGISTER_TYPE_PHONE":    2,
-		"REGISTER_TYPE_EMAIL":    3,
-		"REGISTER_TYPE_GUEST":    4,
+		"REGISTER_TYPE_UNKNOWN":      0,
+		"REGISTER_TYPE_USERNAME":     1,
+		"REGISTER_TYPE_PHONE":        2,
+		"REGISTER_TYPE_EMAIL":        3,
+		"REGISTER_TYPE_GUEST":        4,
+		"REGISTER_TYPE_MARKET_MAKER": 5,
 	}
 )
 
@@ -438,13 +441,14 @@ var File_proto_user_enum_proto protoreflect.FileDescriptor
 
 const file_proto_user_enum_proto_rawDesc = "" +
 	"\n" +
-	"\x15proto/user/enum.proto\x12\x04user*\x90\x01\n" +
+	"\x15proto/user/enum.proto\x12\x04user*\xb0\x01\n" +
 	"\fRegisterType\x12\x19\n" +
 	"\x15REGISTER_TYPE_UNKNOWN\x10\x00\x12\x1a\n" +
 	"\x16REGISTER_TYPE_USERNAME\x10\x01\x12\x17\n" +
 	"\x13REGISTER_TYPE_PHONE\x10\x02\x12\x17\n" +
 	"\x13REGISTER_TYPE_EMAIL\x10\x03\x12\x17\n" +
-	"\x13REGISTER_TYPE_GUEST\x10\x04*h\n" +
+	"\x13REGISTER_TYPE_GUEST\x10\x04\x12\x1e\n" +
+	"\x1aREGISTER_TYPE_MARKET_MAKER\x10\x05*h\n" +
 	"\tLoginType\x12\x16\n" +
 	"\x12LOGIN_TYPE_UNKNOWN\x10\x00\x12\x17\n" +
 	"\x13LOGIN_TYPE_USERNAME\x10\x01\x12\x14\n" +

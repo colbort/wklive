@@ -394,6 +394,7 @@ export default {
     REGISTER_TYPE_PHONE: '手机号',
     REGISTER_TYPE_EMAIL: '邮箱',
     REGISTER_TYPE_GUEST: '游客',
+    REGISTER_TYPE_MARKET_MAKER: '做市账户',
     LOGIN_TYPE_UNKNOWN: '全部',
     LOGIN_TYPE_USERNAME: '用户名',
     LOGIN_TYPE_PHONE: '手机号',

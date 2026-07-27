@@ -60,7 +60,7 @@ func (l *CreateInternalTradingUserLogic) CreateInternalTradingUser(in *user.Crea
 		Username:     username,
 		Nickname:     sql.NullString{String: strings.TrimSpace(in.Nickname), Valid: strings.TrimSpace(in.Nickname) != ""},
 		PasswordHash: string(passwordHash),
-		RegisterType: int64(user.RegisterType_REGISTER_TYPE_USERNAME),
+		RegisterType: int64(user.RegisterType_REGISTER_TYPE_MARKET_MAKER),
 		AccountType:  int64(common.UserAccountType_USER_ACCOUNT_TYPE_INTERNAL_MARKET_MAKER),
 		Status:       int64(user.UserStatus_USER_STATUS_NORMAL),
 		Source:       sql.NullString{String: strings.TrimSpace(in.Source), Valid: strings.TrimSpace(in.Source) != ""},

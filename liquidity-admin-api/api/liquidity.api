@@ -125,7 +125,68 @@ type SymbolConfigListResp {
 	data []SymbolConfigItem `json:"data"`
 	page PageMeta `json:"page"`
 }
+type SymbolConfigDetailReq {
+	id int64 `path:"id"`
+}
+type SymbolConfigDetailResp {
+	RespBase
+	data SymbolConfigDetailItem `json:"data"`
+	levels []LiquidityStrategyLevel `json:"levels"`
+}
+type SymbolConfigDetailItem {
+	id int64 `json:"id"`
+	symbolId int64 `json:"symbolId"`
+	symbol string `json:"symbol"`
+	productType int32 `json:"productType"`
+	contractType int32 `json:"contractType"`
+	liquidityMode int32 `json:"liquidityMode"`
+	internalProviderId int64 `json:"internalProviderId"`
+	externalProviderId int64 `json:"externalProviderId"`
+	externalSymbol string `json:"externalSymbol"`
+	referencePriceSource string `json:"referencePriceSource"`
+	referencePriceKind string `json:"referencePriceKind"`
+	quoteValidityMs int32 `json:"quoteValidityMs"`
+	refreshIntervalMs int32 `json:"refreshIntervalMs"`
+	quoteTtlMs int32 `json:"quoteTtlMs"`
+	repriceThresholdBps string `json:"repriceThresholdBps"`
+	baseSpreadBps string `json:"baseSpreadBps"`
+	maxSpreadBps string `json:"maxSpreadBps"`
+	maxPriceDeviationBps string `json:"maxPriceDeviationBps"`
+	priceTick string `json:"priceTick"`
+	qtyStep string `json:"qtyStep"`
+	minQuoteQty string `json:"minQuoteQty"`
+	maxQuoteQty string `json:"maxQuoteQty"`
+	maxQuoteNotional string `json:"maxQuoteNotional"`
+	targetBaseInventory string `json:"targetBaseInventory"`
+	minBaseInventory string `json:"minBaseInventory"`
+	maxBaseInventory string `json:"maxBaseInventory"`
+	maxNetExposure string `json:"maxNetExposure"`
+	maxDailyNotional string `json:"maxDailyNotional"`
+	inventorySkewBps string `json:"inventorySkewBps"`
+	hedgeThreshold string `json:"hedgeThreshold"`
+	hedgeRatio string `json:"hedgeRatio"`
+	selfTradePrevention int32 `json:"selfTradePrevention"`
+	status int32 `json:"status"`
+	pauseReason string `json:"pauseReason"`
+	version int64 `json:"version"`
+	createTimes int64 `json:"createTimes"`
+	updateTimes int64 `json:"updateTimes"`
+}
+type LiquidityStrategyLevel {
+	id int64 `json:"id"`
+	configId int64 `json:"configId"`
+	levelNo int32 `json:"levelNo"`
+	bidSpreadBps string `json:"bidSpreadBps"`
+	askSpreadBps string `json:"askSpreadBps"`
+	bidQty string `json:"bidQty"`
+	askQty string `json:"askQty"`
+	enabled int32 `json:"enabled"`
+	version int64 `json:"version"`
+	createTimes int64 `json:"createTimes"`
+	updateTimes int64 `json:"updateTimes"`
+}
 type SaveSymbolConfigReq {
+	id int64 `path:"id,optional"`
 	symbolId int64 `json:"symbolId"`
 	liquidityMode int32 `json:"liquidityMode"`
 	internalProviderId int64 `json:"internalProviderId,optional"`
@@ -152,6 +213,7 @@ type SaveSymbolConfigReq {
 	hedgeThreshold string `json:"hedgeThreshold"`
 	hedgeRatio string `json:"hedgeRatio"`
 	selfTradePrevention int32 `json:"selfTradePrevention"`
+	version int64 `json:"version,optional"`
 }
 type SymbolActionReq {
 	id int64 `path:"id"`
@@ -255,8 +317,12 @@ service liquidityAdmin {
 	put /providers/:id/status (ProviderStatusReq) returns (RespBase)
 	@handler SymbolConfigList
 	get /symbol-configs (PageQuery) returns (SymbolConfigListResp)
+	@handler SymbolConfigDetail
+	get /symbol-configs/:id (SymbolConfigDetailReq) returns (SymbolConfigDetailResp)
 	@handler SymbolConfigCreate
 	post /symbol-configs (SaveSymbolConfigReq) returns (RespBase)
+	@handler SymbolConfigUpdate
+	put /symbol-configs/:id (SaveSymbolConfigReq) returns (RespBase)
 	@handler SymbolAction
 	post /symbol-configs/:id/:action (SymbolActionReq) returns (RespBase)
 	@handler QuoteOrderList

@@ -380,6 +380,7 @@ func buildOrderMatchPlan(buy, sell *models.TTradeOrder) *orderMatchPlan {
 		return nil
 	}
 	amount := tradeMinorAmountAtPrice(price, qty)
+	amount = clampMatchAmountToOrderRemainder(buy, sell, price, qty, amount)
 	if !amount.IsPositive() {
 		return nil
 	}
@@ -438,6 +439,7 @@ func (l *ProcessOrderMatchingLogic) buildFOKMatchPlans(ctx context.Context, orde
 
 		qty := decimal.Min(focalQty, oppositeQty)
 		amount := tradeMinorAmountAtPrice(price, qty)
+		amount = clampMatchAmountToOrderRemainder(buy, sell, price, qty, amount)
 		if !qty.IsPositive() || !amount.IsPositive() {
 			continue
 		}
@@ -454,6 +456,29 @@ func (l *ProcessOrderMatchingLogic) buildFOKMatchPlans(ctx context.Context, orde
 		return nil, false, nil
 	}
 	return plans, len(plans) > 0, nil
+}
+
+// clampMatchAmountToOrderRemainder removes division/multiplication dust for
+// amount-based orders. When an amount order is the side limiting this match,
+// its calculated qty is remainingAmount/price; multiplying it back by price
+// may be microscopically smaller because decimal division has finite
+// precision. Persisting that dust makes a fully consumed market order look
+// partially filled and sends it into the residual-cancel path.
+func clampMatchAmountToOrderRemainder(buy, sell *models.TTradeOrder, price, qty, amount decimal.Decimal) decimal.Decimal {
+	for _, order := range []*models.TTradeOrder{buy, sell} {
+		if order == nil || order.Qty.IsPositive() || !order.Amount.IsPositive() {
+			continue
+		}
+		remaining := decimal.Max(order.Amount.Sub(order.FilledAmount), decimal.Zero)
+		if !remaining.IsPositive() {
+			continue
+		}
+		limitingQty := tradeQtyFromMinorAmount(remaining, price)
+		if qty.Equal(limitingQty) {
+			return remaining
+		}
+	}
+	return amount
 }
 
 func sameMatchBook(order *models.TTradeOrder, key models.TradeOrderMatchKey, side int64) bool {

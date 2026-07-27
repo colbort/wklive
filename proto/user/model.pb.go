@@ -31,7 +31,7 @@ type UserBase struct {
 	Nickname       string                 `protobuf:"bytes,5,opt,name=nickname,proto3" json:"nickname,omitempty"`                                                        // 昵称
 	Avatar         string                 `protobuf:"bytes,6,opt,name=avatar,proto3" json:"avatar,omitempty"`                                                            // 头像
 	PasswordHash   string                 `protobuf:"bytes,7,opt,name=password_hash,json=passwordHash,proto3" json:"password_hash,omitempty"`                            // 登录密码哈希
-	RegisterType   RegisterType           `protobuf:"varint,8,opt,name=register_type,json=registerType,proto3,enum=user.RegisterType" json:"register_type,omitempty"`    // 注册方式：1用户名 2手机号 3邮箱 4游客
+	RegisterType   RegisterType           `protobuf:"varint,8,opt,name=register_type,json=registerType,proto3,enum=user.RegisterType" json:"register_type,omitempty"`    // 注册方式：1用户名 2手机号 3邮箱 4游客 5做市账户
 	Status         UserStatus             `protobuf:"varint,9,opt,name=status,proto3,enum=user.UserStatus" json:"status,omitempty"`                                      // 状态：1正常 2禁用 3冻结 4注销
 	MemberLevel    int64                  `protobuf:"varint,10,opt,name=member_level,json=memberLevel,proto3" json:"member_level,omitempty"`                             // 会员等级
 	Language       string                 `protobuf:"bytes,11,opt,name=language,proto3" json:"language,omitempty"`                                                       // 语言
@@ -795,7 +795,7 @@ type UserItem struct {
 	Nickname       string                 `protobuf:"bytes,5,opt,name=nickname,proto3" json:"nickname,omitempty"`                                                        // 昵称
 	Avatar         string                 `protobuf:"bytes,6,opt,name=avatar,proto3" json:"avatar,omitempty"`                                                            // 头像
 	PasswordHash   string                 `protobuf:"bytes,7,opt,name=password_hash,json=passwordHash,proto3" json:"password_hash,omitempty"`                            // 登录密码哈希
-	RegisterType   RegisterType           `protobuf:"varint,8,opt,name=register_type,json=registerType,proto3,enum=user.RegisterType" json:"register_type,omitempty"`    // 注册方式：1用户名 2手机号 3邮箱 4游客
+	RegisterType   RegisterType           `protobuf:"varint,8,opt,name=register_type,json=registerType,proto3,enum=user.RegisterType" json:"register_type,omitempty"`    // 注册方式：1用户名 2手机号 3邮箱 4游客 5做市账户
 	Status         UserStatus             `protobuf:"varint,9,opt,name=status,proto3,enum=user.UserStatus" json:"status,omitempty"`                                      // 状态：1正常 2禁用 3冻结 4注销
 	MemberLevel    int64                  `protobuf:"varint,10,opt,name=member_level,json=memberLevel,proto3" json:"member_level,omitempty"`                             // 会员等级
 	Language       string                 `protobuf:"bytes,11,opt,name=language,proto3" json:"language,omitempty"`                                                       // 语言

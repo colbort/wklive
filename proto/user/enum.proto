@@ -10,6 +10,7 @@ enum RegisterType {
   REGISTER_TYPE_PHONE = 2;
   REGISTER_TYPE_EMAIL = 3;
   REGISTER_TYPE_GUEST = 4;
+  REGISTER_TYPE_MARKET_MAKER = 5;
 }
 
 enum LoginType {

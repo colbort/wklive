@@ -971,6 +971,12 @@ VALUES
   (20205, 20200, 2, '做市配置选项', 3, 'GET', '/admin/liquidity/config-options',
    'liquidity:strategy:list', '', '', 20205, 2, 1,
    UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
+  (20206, 20200, 2, '策略详情', 3, 'GET', '/admin/liquidity/symbol-configs/{id}',
+   'liquidity:strategy:detail', '', '', 20206, 2, 1,
+   UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
+  (20207, 20200, 2, '编辑策略', 3, 'PUT', '/admin/liquidity/symbol-configs/{id}',
+   'liquidity:strategy:update', '', '', 20207, 2, 1,
+   UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
   (20300, 20000, 2, '内部报价单', 2, 'GET', '/admin/liquidity/quote-orders',
    'liquidity:quote:list', '', '', 20300, 1, 1,
    UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
@@ -993,7 +999,7 @@ SELECT r.tenant_id, r.id, m.id
 FROM sys_role r
 JOIN sys_menu m ON m.id IN (
   20000, 20001, 20100, 20101, 20102, 20103, 20104,
-  20200, 20201, 20202, 20203, 20204, 20205,
+  20200, 20201, 20202, 20203, 20204, 20205, 20206, 20207,
   20300, 20400, 20500, 20600, 20700
 )
 WHERE r.code = 'liquidity_admin'

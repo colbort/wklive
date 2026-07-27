@@ -395,6 +395,7 @@ export default {
     REGISTER_TYPE_PHONE: 'Phone',
     REGISTER_TYPE_EMAIL: 'Email',
     REGISTER_TYPE_GUEST: 'Guest',
+    REGISTER_TYPE_MARKET_MAKER: 'Market Maker',
     LOGIN_TYPE_UNKNOWN: 'All',
     LOGIN_TYPE_USERNAME: 'Username',
     LOGIN_TYPE_PHONE: 'Phone',

@@ -118,9 +118,19 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: liquidity.SymbolConfigListHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodGet,
+				Path:    "/symbol-configs/:id",
+				Handler: liquidity.SymbolConfigDetailHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodPost,
 				Path:    "/symbol-configs",
 				Handler: liquidity.SymbolConfigCreateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/symbol-configs/:id",
+				Handler: liquidity.SymbolConfigUpdateHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,

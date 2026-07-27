@@ -8,6 +8,8 @@ func TestGetRequiredPermissionUsesDynamicRules(t *testing.T) {
 		mustRule(t, "GET", "/admin/liquidity/config-options", "liquidity:strategy:list"),
 		mustRule(t, "POST", "/admin/liquidity/providers/provision", "liquidity:provider:add"),
 		mustRule(t, "POST", "/admin/liquidity/providers/{id}/test", "liquidity:provider:test"),
+		mustRule(t, "GET", "/admin/liquidity/symbol-configs/{id}", "liquidity:strategy:detail"),
+		mustRule(t, "PUT", "/admin/liquidity/symbol-configs/{id}", "liquidity:strategy:update"),
 		mustRule(t, "POST", "/admin/liquidity/symbol-configs/{id}/start", "liquidity:strategy:start"),
 	}
 	tests := []struct {
@@ -19,6 +21,8 @@ func TestGetRequiredPermissionUsesDynamicRules(t *testing.T) {
 		{"GET", "/admin/liquidity/config-options", "liquidity:strategy:list"},
 		{"POST", "/admin/liquidity/providers/provision", "liquidity:provider:add"},
 		{"POST", "/admin/liquidity/providers/9/test", "liquidity:provider:test"},
+		{"GET", "/admin/liquidity/symbol-configs/3", "liquidity:strategy:detail"},
+		{"PUT", "/admin/liquidity/symbol-configs/3", "liquidity:strategy:update"},
 		{"POST", "/admin/liquidity/symbol-configs/3/start", "liquidity:strategy:start"},
 		{"DELETE", "/admin/liquidity/providers/9", ""},
 	}

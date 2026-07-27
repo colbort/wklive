@@ -96,7 +96,15 @@ func finalizeOrderTermination(ctx context.Context, conn sqlx.SqlConn, svcCtx *sv
 	}
 	finalStatus := trade.OrderStatus_ORDER_STATUS_CANCELED
 	eventType, suffix := "ORDER_CANCELED", "CANCELED"
-	if status == trade.OrderStatus_ORDER_STATUS_EXPIRING {
+	if orderFillTargetReached(order) {
+		// A legacy amount order may already be CANCELING because a decimal
+		// division tail was mistaken for a residual. Once its settlements and
+		// reservation release are complete, repair it to the truthful terminal
+		// state instead of leaving it canceled/part-filled.
+		finalStatus, eventType, suffix = trade.OrderStatus_ORDER_STATUS_FILLED, "ORDER_SETTLED", "SETTLED"
+		order.CompletionReason = "FILLED_AND_SETTLED"
+		order.CancelReason = ""
+	} else if status == trade.OrderStatus_ORDER_STATUS_EXPIRING {
 		finalStatus, eventType, suffix = trade.OrderStatus_ORDER_STATUS_EXPIRED, "ORDER_EXPIRED", "EXPIRED"
 	}
 	order.Status = int64(finalStatus)

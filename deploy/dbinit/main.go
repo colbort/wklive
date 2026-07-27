@@ -267,6 +267,7 @@ func applySystemDataMigrations(ctx context.Context, db *sql.DB, workspace string
 		"20260725_add_liquidity_order_archive_job.sql",
 		"20260725_add_liquidity_provider_provision_permission.sql",
 		"20260725_remove_tenant_pay_platform_menu.sql",
+		"20260727_add_liquidity_strategy_detail_update_permissions.sql",
 	}
 	for _, name := range files {
 		path := filepath.Join(workspace, "services", "system", "migrations", name)

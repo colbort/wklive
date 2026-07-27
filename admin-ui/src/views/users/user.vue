@@ -194,6 +194,7 @@ function getOptionTagClass(groupKey: string, value?: number) {
       2: 'option-tag option-tag--green',
       3: 'option-tag option-tag--orange',
       4: 'option-tag option-tag--slate',
+      5: 'option-tag option-tag--purple',
     }
     return registerTypeMap[normalizedValue] || 'option-tag'
   }
@@ -1243,6 +1244,11 @@ onMounted(fetchCreateOptions)
 .option-tag--slate {
   background: #e5e7eb;
   color: #475467;
+}
+
+.option-tag--purple {
+  background: #f3e8ff;
+  color: #7e22ce;
 }
 
 .sensitive-value {
