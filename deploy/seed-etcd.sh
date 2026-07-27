@@ -21,7 +21,7 @@ validate_secret() {
 
 check_etcd() {
   echo "checking etcd at $ETCD_ENDPOINT"
-  if ! ETCDCTL_API=3 ETCDCTL_DIAL_TIMEOUT=3s ETCDCTL_COMMAND_TIMEOUT=5s \
+  if ! ETCDCTL_DIAL_TIMEOUT=3s ETCDCTL_COMMAND_TIMEOUT=5s \
     etcdctl --endpoints="$ETCD_ENDPOINT" endpoint health >/dev/null 2>&1; then
     echo "etcd at $ETCD_ENDPOINT is unreachable or unhealthy; start it first or set ETCD_ENDPOINT in deploy/.env" >&2
     exit 1
@@ -45,7 +45,7 @@ put_file() {
   key="$1"
   file="$2"
   echo "seeding $key from $file"
-  render_config "$file" | ETCDCTL_API=3 etcdctl --endpoints="$ETCD_ENDPOINT" put "$key"
+  render_config "$file" | etcdctl --endpoints="$ETCD_ENDPOINT" put "$key"
 }
 
 validate_secret MYSQL_ROOT_PASSWORD "$MYSQL_ROOT_PASSWORD"

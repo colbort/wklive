@@ -190,6 +190,8 @@ services:
       - ..:/workspace:ro
       - ./seed-etcd.sh:/deploy/seed-etcd.sh:ro
       - ./config:/deploy-config:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - backend
 

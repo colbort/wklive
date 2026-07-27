@@ -107,8 +107,9 @@ LIQUIDITY_ADMIN_PASSWORD=replace-liquidity-password
 ```
 
 `config` 只运行配置导入，不会启动 Etcd、数据库和 Kafka 等依赖；`seed` 是兼容旧用法
-的别名。执行前必须保证 seed 容器可以访问 Etcd。默认连接 Compose 网络中的
-`http://etcd:2379`。连接外部 Etcd 时，在 `deploy/.env` 中设置容器可访问的地址：
+的别名。执行前必须保证 seed 容器可以访问 Etcd。默认通过
+`http://host.docker.internal:2379` 连接宿主机上的 Etcd。连接其他 Etcd 时，在
+`deploy/.env` 中设置容器可访问的地址：
 
 ```dotenv
 ETCD_ENDPOINT=http://192.0.2.10:2379
