@@ -14,6 +14,7 @@ import (
 	payment "wklive/app-api/internal/handler/payment"
 	staking "wklive/app-api/internal/handler/staking"
 	trade "wklive/app-api/internal/handler/trade"
+	user_event "wklive/app-api/internal/handler/user_event"
 	user_private "wklive/app-api/internal/handler/user_private"
 	user_public "wklive/app-api/internal/handler/user_public"
 	"wklive/app-api/internal/svc"
@@ -503,6 +504,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		),
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
 		rest.WithPrefix("/app/trade"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.PublicRateLimit},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/stream/:id",
+					Handler: user_event.UserEventStreamHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
+		rest.WithPrefix("/app/events"),
+		rest.WithSSE(),
 	)
 
 	server.AddRoutes(

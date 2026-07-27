@@ -2212,6 +2212,30 @@ type UserDetail struct {
 	Banks    []UserBank   `json:"banks,optional"`
 }
 
+type UserEventStreamData struct {
+	Version     int64  `json:"version,optional"`
+	Id          string `json:"id,optional"`
+	EventType   string `json:"type,optional"`
+	Domain      string `json:"domain,optional"`
+	TenantId    int64  `json:"tenant_id,optional"`
+	UserId      int64  `json:"user_id,optional"`
+	BizId       int64  `json:"biz_id,optional"`
+	BizNo       string `json:"biz_no,optional"`
+	SymbolId    int64  `json:"symbol_id,optional"`
+	ProductType int64  `json:"product_type,optional"`
+	OccurredAt  int64  `json:"occurred_at,optional"`
+}
+
+type UserEventStreamReq struct {
+	Id string `path:"id"`
+}
+
+type UserEventStreamResp struct {
+	EventType string               `json:"type"`
+	Data      *UserEventStreamData `json:"data,omitempty"`
+	ServerTs  int64                `json:"serverTs"`
+}
+
 type UserIdentity struct {
 	Id            int64  `json:"id"`
 	TenantId      int64  `json:"tenantId"`

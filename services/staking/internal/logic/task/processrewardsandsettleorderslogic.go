@@ -266,6 +266,7 @@ func (l *ProcessRewardsAndSettleOrdersLogic) settleExpiredOrder(order *models.TS
 			order.TenantId, order.UserId, order.Id, order.OrderNo, redeemNo, rewardAmount, err)
 		return err
 	}
+	publishStakingOrderChanged(l.ctx, l.svcCtx, order)
 	return nil
 }
 

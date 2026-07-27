@@ -163,6 +163,7 @@ func (l *ProcessContractLifecycleLogic) expireContractOrders(contract *models.TO
 			if err != nil {
 				return err
 			}
+			publishOptionOrderChanged(l.ctx, l.svcCtx, order)
 		}
 		if len(orders) < 100 {
 			return nil

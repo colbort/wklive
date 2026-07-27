@@ -17,6 +17,7 @@ import {
 import CommonPage from '@/components/common/CommonPage.vue'
 import TradeView from '@/components/trades/TradeView.vue'
 import { useTradingDesk } from '@/composables/useTradingDesk'
+import { useOrderEvents } from '@/composables/useOrderEvents'
 import { t } from '@/i18n'
 import type {
   ContractLeverageConfig,
@@ -107,6 +108,17 @@ let tradeAccountRequestId = 0
 let tradeOrdersRequestId = 0
 let leverageConfigRequestId = 0
 let saveLeverageRequestId = 0
+let orderRefreshInFlight = false
+const orderEvents = useOrderEvents(
+  (event) => {
+    if (event.domain !== 'trade') return
+    if (event.symbol_id && event.symbol_id !== selectedTradeSymbol.value?.id) return
+    void pollTradeOrders()
+  },
+  () => {
+    void pollTradeOrders()
+  },
+)
 const {
   selectedCategoryType,
   selectedProductKey,
@@ -298,6 +310,7 @@ watch(
 watch(isLoggedIn, () => {
   void refreshTradeAccount()
   void loadUserLeverageConfig()
+  orderEvents.reconnect()
 })
 watch([maxTradeLeverage, configuredLeverageValues], () => {
   const nextLeverage = clampLeverage(leverage.value || defaultTradeLeverage())
@@ -315,13 +328,13 @@ watch(
 onMounted(() => {
   syncAuthState()
   void loadTradeSymbols()
-  window.addEventListener('focus', syncAuthState)
-  document.addEventListener('visibilitychange', syncAuthState)
+  window.addEventListener('focus', handlePageFocus)
+  document.addEventListener('visibilitychange', handleVisibilityChange)
 })
 
 onBeforeUnmount(() => {
-  window.removeEventListener('focus', syncAuthState)
-  document.removeEventListener('visibilitychange', syncAuthState)
+  window.removeEventListener('focus', handlePageFocus)
+  document.removeEventListener('visibilitychange', handleVisibilityChange)
 })
 
 function closeProductSheet() {
@@ -330,6 +343,28 @@ function closeProductSheet() {
 
 function syncAuthState() {
   authToken.value = getAccessToken()
+}
+
+async function pollTradeOrders() {
+  if (orderRefreshInFlight || !isLoggedIn.value || !selectedTradeSymbol.value) return
+  orderRefreshInFlight = true
+  try {
+    await refreshTradeOrders()
+  } finally {
+    orderRefreshInFlight = false
+  }
+}
+
+function handlePageFocus() {
+  syncAuthState()
+  void pollTradeOrders()
+}
+
+function handleVisibilityChange() {
+  syncAuthState()
+  if (document.visibilityState === 'visible') {
+    void pollTradeOrders()
+  }
 }
 
 function isSuccessCode(code: number) {

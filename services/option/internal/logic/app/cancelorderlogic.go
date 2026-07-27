@@ -95,6 +95,7 @@ func (l *CancelOrderLogic) CancelOrder(in *option.CancelOrderReq) (*option.UserC
 	if err != nil {
 		return nil, err
 	}
+	publishOptionOrderChanged(l.ctx, l.svcCtx, item)
 
 	return &option.UserCommonResp{Base: helper.OkResp()}, nil
 }

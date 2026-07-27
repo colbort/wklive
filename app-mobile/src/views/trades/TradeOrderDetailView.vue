@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { apiTradeGetOrderDetail } from '@/api/trade'
 import CommonPage from '@/components/common/CommonPage.vue'
 import { useI18n } from '@/i18n'
+import { useOrderEvents } from '@/composables/useOrderEvents'
 import type {
   TradeOrder,
   TradeOrderContract,
@@ -22,6 +23,17 @@ const order = ref<TradeOrder | null>(null)
 const spot = ref<TradeOrderSpot | null>(null)
 const contract = ref<TradeOrderContract | null>(null)
 const seconds = ref<TradeOrderSeconds | null>(null)
+let detailRefreshInFlight = false
+useOrderEvents(
+  (event) => {
+    if (event.domain !== 'trade') return
+    if (event.biz_id && order.value?.id && event.biz_id !== order.value.id) return
+    void pollDetail()
+  },
+  () => {
+    void pollDetail()
+  },
+)
 
 const orderNo = computed(() => String(route.params.orderNo || ''))
 const symbol = computed(() => String(route.query.symbol || '--'))
@@ -41,29 +53,59 @@ function ok(code: number) {
   return code === 0 || code === 200
 }
 
-async function loadDetail() {
+async function loadDetail(silent = false) {
   if (!orderNo.value) {
     order.value = null
     error.value = t('trade.orderDetailLoadFailed')
     return
   }
-  loading.value = true
-  error.value = ''
+  if (!silent) loading.value = true
+  if (!silent) error.value = ''
   try {
     const resp = await apiTradeGetOrderDetail({ orderNo: orderNo.value })
     if (!ok(resp.code) || !resp.data?.order) {
-      error.value = resp.msg || t('trade.orderDetailLoadFailed')
+      if (!silent || !order.value) {
+        error.value = resp.msg || t('trade.orderDetailLoadFailed')
+      }
       return
     }
+    error.value = ''
     order.value = resp.data.order
     spot.value = resp.data.spot?.id ? resp.data.spot : null
     contract.value = resp.data.contract?.id ? resp.data.contract : null
     seconds.value = resp.data.seconds?.id ? resp.data.seconds : null
   } catch (cause) {
     console.warn('load trade order detail failed', cause)
-    error.value = t('trade.orderDetailLoadFailed')
+    if (!silent || !order.value) {
+      error.value = t('trade.orderDetailLoadFailed')
+    }
   } finally {
-    loading.value = false
+    if (!silent) loading.value = false
+  }
+}
+
+function isTerminalOrder(value: TradeOrder) {
+  if ([8, 9, 11, 13, 15, 16].includes(value.displayStatus)) return true
+  return [3, 4, 5, 6].includes(value.status)
+}
+
+async function pollDetail() {
+  if (detailRefreshInFlight || (order.value && isTerminalOrder(order.value))) return
+  detailRefreshInFlight = true
+  try {
+    await loadDetail(true)
+  } finally {
+    detailRefreshInFlight = false
+  }
+}
+
+function handleDetailFocus() {
+  void pollDetail()
+}
+
+function handleDetailVisibilityChange() {
+  if (document.visibilityState === 'visible') {
+    void pollDetail()
   }
 }
 
@@ -179,6 +221,16 @@ watch(
   },
   { immediate: true },
 )
+
+onMounted(() => {
+  window.addEventListener('focus', handleDetailFocus)
+  document.addEventListener('visibilitychange', handleDetailVisibilityChange)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('focus', handleDetailFocus)
+  document.removeEventListener('visibilitychange', handleDetailVisibilityChange)
+})
 </script>
 
 <template>

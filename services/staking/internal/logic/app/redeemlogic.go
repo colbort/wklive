@@ -234,6 +234,7 @@ func (l *RedeemLogic) Redeem(in *staking.RedeemReq) (*staking.RedeemResp, error)
 	if err != nil {
 		return nil, err
 	}
+	publishStakingOrderChanged(l.ctx, l.svcCtx, order)
 
 	return &staking.RedeemResp{
 		Base: helper.OkResp(),

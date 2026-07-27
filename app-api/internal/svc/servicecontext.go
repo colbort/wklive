@@ -6,9 +6,12 @@ package svc
 import (
 	"context"
 	"fmt"
+	"os"
 	"strconv"
 	"wklive/app-api/internal/config"
 	"wklive/app-api/internal/middleware"
+	apprealtime "wklive/app-api/internal/realtime"
+	mq "wklive/common/mq/kafka"
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/proto/itick"
@@ -41,6 +44,8 @@ type ServiceContext struct {
 	OptionCli               option.AppClient
 	StakingCli              staking.AppClient
 	TradeCli                trade.AppClient
+	UserEventHub            *apprealtime.UserEventHub
+	UserEventSubscriber     *mq.Subscriber
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -82,6 +87,15 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	optionCli := zrpc.MustNewClient(c.OptionRpc, options)
 	stakingCli := zrpc.MustNewClient(c.StakingRpc, options)
 	tradeCli := zrpc.MustNewClient(c.TradeRpc, options)
+	instanceID, err := os.Hostname()
+	if err != nil || instanceID == "" {
+		instanceID = "local"
+	}
+	userEventHub := apprealtime.NewUserEventHub()
+	userEventSubscriber := mq.MustNewBroadcastSubscriber(
+		mq.ForService(c.MQ, c.Name),
+		"app-api-user-events-"+instanceID,
+	)
 	return &ServiceContext{
 		Config:                  c,
 		PublicRateLimit:         middleware.NewPublicRateLimitMiddleware(rds).Handle,
@@ -97,5 +111,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		OptionCli:               option.NewAppClient(optionCli.Conn()),
 		StakingCli:              staking.NewAppClient(stakingCli.Conn()),
 		TradeCli:                trade.NewAppClient(tradeCli.Conn()),
+		UserEventHub:            userEventHub,
+		UserEventSubscriber:     userEventSubscriber,
 	}
 }

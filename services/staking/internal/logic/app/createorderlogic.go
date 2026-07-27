@@ -206,6 +206,8 @@ func (l *CreateOrderLogic) CreateOrder(in *staking.CreateOrderReq) (*staking.Cre
 			l.Errorf("enqueue staking maturity failed, orderId=%d err=%v", id, enqueueErr)
 		}
 	}
+	order.Id = id
+	publishStakingOrderChanged(l.ctx, l.svcCtx, order)
 
 	return &staking.CreateOrderResp{
 		Base: helper.OkResp(),

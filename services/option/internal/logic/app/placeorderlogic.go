@@ -194,6 +194,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *option.PlaceOrderReq) (*option.PlaceOrd
 	if err := l.matchOrder(contract, order); err != nil {
 		return nil, err
 	}
+	publishOptionOrderChanged(l.ctx, l.svcCtx, order)
 
 	return &option.PlaceOrderResp{Base: helper.OkResp(), Data: &option.PlaceOrderData{OrderNo: order.OrderNo, OrderId: id}}, nil
 }

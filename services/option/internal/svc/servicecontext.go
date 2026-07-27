@@ -18,6 +18,7 @@ type ServiceContext struct {
 	DB                             sqlx.SqlConn
 	Redis                          *redis.Redis
 	TaskSubscriber                 *mq.Subscriber
+	UserEventPublisher             *mq.Publisher
 	MarketSnapshotSubscriber       *mq.Subscriber
 	OptionContractModel            models.TOptionContractModel
 	OptionMarketModel              models.TOptionMarketModel
@@ -39,6 +40,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	assetCli := zrpc.MustNewClient(c.AssetRpc)
 	mqConfig := mq.ForService(c.MQ, c.Name)
 	taskSubscriber := mq.MustNewSubscriber(mqConfig, "option-tasks")
+	userEventPublisher := mq.MustNewPublisher(mqConfig)
 	marketSnapshotSubscriber := mq.MustNewSubscriber(mqConfig, market.OptionMarketQuoteConsumerGroup)
 	queue, err := delayqueue.New(c.DelayQueue.Enabled, c.DelayQueue.Beanstalks, c.Redis.RedisConf)
 	if err != nil {
@@ -49,6 +51,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		DB:                             conn,
 		Redis:                          redis.MustNewRedis(c.Redis.RedisConf),
 		TaskSubscriber:                 taskSubscriber,
+		UserEventPublisher:             userEventPublisher,
 		MarketSnapshotSubscriber:       marketSnapshotSubscriber,
 		OptionContractModel:            models.NewTOptionContractModel(conn, c.CacheRedis),
 		OptionMarketModel:              models.NewTOptionMarketModel(conn, c.CacheRedis),

@@ -22,6 +22,7 @@ func (l *PlaceOrderLogic) matchOrder(contract *models.TOptionContract, order *mo
 		return nil
 	}
 
+	changedOrders := make(map[int64]*models.TOptionOrder)
 	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		orderModel := models.NewTOptionOrderModel(conn, l.svcCtx.Config.CacheRedis)
@@ -119,6 +120,10 @@ func (l *PlaceOrderLogic) matchOrder(contract *models.TOptionContract, order *mo
 				if err := orderModel.Update(ctx, incoming); err != nil {
 					return err
 				}
+				incomingCopy := *incoming
+				makerCopy := *maker
+				changedOrders[incoming.Id] = &incomingCopy
+				changedOrders[maker.Id] = &makerCopy
 				if err := updateMarketLastTrade(ctx, marketModel, contract, tradePrice, now); err != nil {
 					return err
 				}
@@ -137,6 +142,9 @@ func (l *PlaceOrderLogic) matchOrder(contract *models.TOptionContract, order *mo
 	})
 	if err != nil {
 		return err
+	}
+	for _, changedOrder := range changedOrders {
+		publishOptionOrderChanged(l.ctx, l.svcCtx, changedOrder)
 	}
 	return nil
 }

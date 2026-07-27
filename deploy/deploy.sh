@@ -5,7 +5,7 @@ SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 COMPOSE_FILE="$SCRIPT_DIR/docker-compose.yml"
 
 usage() {
-  echo "usage: $0 {up|down|restart|build|logs|ps|config|seed|compose-config|db-init} [service ...]"
+  echo "usage: $0 {up|down|restart|build|logs|ps|config|seed|compose-config|db-init|kafka-init} [service ...]"
 }
 
 command="${1:-}"
@@ -42,6 +42,9 @@ case "$command" in
     ;;
   db-init)
     docker compose -f "$COMPOSE_FILE" run --rm db-init
+    ;;
+  kafka-init)
+    docker compose -f "$COMPOSE_FILE" run --rm kafka-init
     ;;
   *)
     usage

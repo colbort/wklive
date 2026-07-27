@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"wklive/common/userevent"
 	"wklive/common/utils"
 	"wklive/services/trade/internal/realtime"
 	"wklive/services/trade/internal/svc"
@@ -57,6 +58,12 @@ func publishTradeOutboxEvent(ctx context.Context, svcCtx *svc.ServiceContext, ev
 		if markErr != nil {
 			return markErr
 		}
+		return err
+	}
+	userEvent := userevent.NewOrderChanged(userevent.DomainTrade, item.TenantId, item.UserId, event.OrderID, item.BizId)
+	userEvent.SymbolID = item.SymbolId
+	userEvent.ProductType = item.ProductType
+	if err := userevent.Publish(ctx, svcCtx.TradeEventPublisher, userEvent); err != nil {
 		return err
 	}
 	return nil

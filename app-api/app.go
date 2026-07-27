@@ -4,11 +4,13 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"strings"
 	"wklive/app-api/internal/config"
 	"wklive/app-api/internal/handler"
+	"wklive/app-api/internal/realtime"
 	"wklive/app-api/internal/svc"
 	"wklive/common/etcd"
 	"wklive/common/middleware"
@@ -49,6 +51,9 @@ func main() {
 	server.Use(headerMiddleware.Handle)
 
 	ctx := svc.NewServiceContext(c)
+	userEventContext, stopUserEvents := context.WithCancel(context.Background())
+	defer stopUserEvents()
+	realtime.StartUserEventSubscriber(userEventContext, ctx.UserEventSubscriber, ctx.UserEventHub)
 	handler.RegisterHandlers(server, ctx)
 
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)

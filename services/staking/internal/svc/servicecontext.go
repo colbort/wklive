@@ -17,6 +17,7 @@ type ServiceContext struct {
 	DB                  sqlx.SqlConn
 	Redis               *redis.Redis
 	TaskSubscriber      *mq.Subscriber
+	UserEventPublisher  *mq.Publisher
 	StakeOrderModel     models.TStakeOrderModel
 	StakeProductModel   models.TStakeProductModel
 	StakeRedeemLogModel models.TStakeRedeemLogModel
@@ -30,6 +31,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	assetCli := zrpc.MustNewClient(c.AssetRpc)
 	mqConfig := mq.ForService(c.MQ, c.Name)
 	taskSubscriber := mq.MustNewSubscriber(mqConfig, "staking-tasks")
+	userEventPublisher := mq.MustNewPublisher(mqConfig)
 	queue, err := delayqueue.New(c.DelayQueue.Enabled, c.DelayQueue.Beanstalks, c.Redis.RedisConf)
 	if err != nil {
 		panic(err)
@@ -39,6 +41,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		DB:                  conn,
 		Redis:               redis.MustNewRedis(c.Redis.RedisConf),
 		TaskSubscriber:      taskSubscriber,
+		UserEventPublisher:  userEventPublisher,
 		StakeOrderModel:     models.NewTStakeOrderModel(conn, c.CacheRedis),
 		StakeProductModel:   models.NewTStakeProductModel(conn, c.CacheRedis),
 		StakeRedeemLogModel: models.NewTStakeRedeemLogModel(conn, c.CacheRedis),

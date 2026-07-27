@@ -8,6 +8,7 @@ import "asset.api"
 import "option.api"
 import "staking.api"
 import "trade.api"
+import "user_event.api"
 
 //
 type Interval {

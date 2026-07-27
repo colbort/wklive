@@ -369,6 +369,8 @@ services:
       TZ: ${TZ:-Asia/Hong_Kong}
       HEALTHCHECK_PORT: "5555"
     depends_on:
+      kafka-init:
+        condition: service_completed_successfully
       asset-rpc:
         condition: service_healthy
       itick-rpc:
