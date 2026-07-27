@@ -14,12 +14,15 @@
 cd deploy
 cp .env.example .env
 # 修改 .env 中两个后台的初始密码
-./deploy.sh config
+./deploy.sh compose-config
 ./deploy.sh up
 ./deploy.sh ps
 ```
 
 首次构建需要下载 Go 模块和容器镜像，耗时会比后续启动长。
+
+项目使用 Etcd client `3.7.x`，部署固定使用 Etcd `3.7.1`。不要连接旧的
+Etcd `3.5.x`，否则 go-zero RPC resolver 会报告 `old cluster version`。
 
 查看全部日志：
 
@@ -99,9 +102,19 @@ LIQUIDITY_ADMIN_PASSWORD=replace-liquidity-password
 服务名后写入 Etcd。修改 YAML 后可重新执行：
 
 ```bash
-./deploy.sh seed
+./deploy.sh config
 ./deploy.sh restart
 ```
+
+`config` 只运行配置导入，不会启动 Etcd、数据库和 Kafka 等依赖；`seed` 是兼容旧用法
+的别名。执行前必须保证 seed 容器可以访问 Etcd。默认连接 Compose 网络中的
+`http://etcd:2379`。连接外部 Etcd 时，在 `deploy/.env` 中设置容器可访问的地址：
+
+```dotenv
+ETCD_ENDPOINT=http://192.0.2.10:2379
+```
+
+仅检查和渲染 Compose 配置时使用 `./deploy.sh compose-config`。
 
 公共配置位于 `deploy/config/common.yaml`。MySQL、MongoDB 和 JWT 密钥由 `.env`
 覆盖；当前脚本为避免配置转义错误，只接受字母、数字、点、下划线和连字符。默认值仅

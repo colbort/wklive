@@ -19,16 +19,13 @@ validate_secret() {
   esac
 }
 
-wait_for_etcd() {
-  attempts=0
-  until ETCDCTL_API=3 etcdctl --endpoints="$ETCD_ENDPOINT" endpoint health >/dev/null 2>&1; do
-    attempts=$((attempts + 1))
-    if [ "$attempts" -ge 60 ]; then
-      echo "etcd did not become healthy" >&2
-      exit 1
-    fi
-    sleep 1
-  done
+check_etcd() {
+  echo "checking etcd at $ETCD_ENDPOINT"
+  if ! ETCDCTL_API=3 ETCDCTL_DIAL_TIMEOUT=3s ETCDCTL_COMMAND_TIMEOUT=5s \
+    etcdctl --endpoints="$ETCD_ENDPOINT" endpoint health >/dev/null 2>&1; then
+    echo "etcd at $ETCD_ENDPOINT is unreachable or unhealthy; start it first or set ETCD_ENDPOINT in deploy/.env" >&2
+    exit 1
+  fi
 }
 
 render_config() {
@@ -54,7 +51,7 @@ put_file() {
 validate_secret MYSQL_ROOT_PASSWORD "$MYSQL_ROOT_PASSWORD"
 validate_secret MONGO_ROOT_PASSWORD "$MONGO_ROOT_PASSWORD"
 validate_secret JWT_ACCESS_SECRET "$JWT_ACCESS_SECRET"
-wait_for_etcd
+check_etcd
 
 put_file /wklive/common/config "$COMMON_CONFIG"
 put_file /wklive/admin-api/config "$WORKSPACE/admin-api/etc/admin.yaml"

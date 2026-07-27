@@ -5,7 +5,7 @@ SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 COMPOSE_FILE="$SCRIPT_DIR/docker-compose.yml"
 
 usage() {
-  echo "usage: $0 {up|down|restart|build|logs|ps|config|seed|db-init} [service ...]"
+  echo "usage: $0 {up|down|restart|build|logs|ps|config|seed|compose-config|db-init} [service ...]"
 }
 
 command="${1:-}"
@@ -34,11 +34,11 @@ case "$command" in
   ps)
     docker compose -f "$COMPOSE_FILE" ps "$@"
     ;;
-  config)
+  compose-config)
     docker compose -f "$COMPOSE_FILE" config
     ;;
-  seed)
-    docker compose -f "$COMPOSE_FILE" run --rm config-seed
+  config|seed)
+    docker compose -f "$COMPOSE_FILE" run --rm --no-deps config-seed
     ;;
   db-init)
     docker compose -f "$COMPOSE_FILE" run --rm db-init

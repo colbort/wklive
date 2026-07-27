@@ -66,41 +66,5 @@
   {
     "key" : "\/wklive\/user-rpc\/config",
     "value" : "Name: user.rpc\nListenOn: 0.0.0.0:8081\nMode: dev\nEtcd:\n  Hosts:\n  - 127.0.0.1:2379\n  Key: user.rpc\n\nRegister:\n  UsernameNoRechargeLimit: 7\n\nSystemRpc:\n  rpcType: zrpc\n  Etcd:\n    Hosts:\n    - \"127.0.0.1:2379\"\n    Key: system.rpc   \n\nGuestTransfer:\n  AllowedOrigins:\n  - http:\/\/localhost:5174\n  - http:\/\/192.168.10.167:5174\/\n  ExpireSeconds: 120"
-  },
-  {
-    "key" : "asset.rpc\/7587896418500743203",
-    "value" : "192.168.10.167:8084"
-  },
-  {
-    "key" : "chat.rpc\/7587896418500743237",
-    "value" : "192.168.10.167:8088"
-  },
-  {
-    "key" : "itick.rpc\/7587896418500743240",
-    "value" : "192.168.10.167:8082"
-  },
-  {
-    "key" : "option.rpc\/7587896418500743213",
-    "value" : "192.168.10.167:8085"
-  },
-  {
-    "key" : "payment.rpc\/7587896418500743197",
-    "value" : "192.168.10.167:8083"
-  },
-  {
-    "key" : "staking.rpc\/7587896418500743199",
-    "value" : "192.168.10.167:8086"
-  },
-  {
-    "key" : "system.rpc\/7587896418500743207",
-    "value" : "192.168.10.167:8080"
-  },
-  {
-    "key" : "trade.rpc\/7587896418500743226",
-    "value" : "192.168.10.167:8087"
-  },
-  {
-    "key" : "user.rpc\/7587896418500743219",
-    "value" : "192.168.10.167:8081"
   }
 ]
