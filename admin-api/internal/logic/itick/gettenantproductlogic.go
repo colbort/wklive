@@ -29,5 +29,14 @@ func NewGetTenantProductLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *GetTenantProductLogic) GetTenantProduct(req *types.GetTenantProductReq) (resp *types.GetTenantProductResp, err error) {
-	return logicutil.Proxy[types.GetTenantProductResp](l.ctx, req, l.svcCtx.ItickCli.GetTenantProduct)
+	resp, err = logicutil.Proxy[types.GetTenantProductResp](l.ctx, req, l.svcCtx.ItickCli.GetTenantProduct)
+	if err != nil || resp == nil || resp.Code != 200 {
+		return resp, err
+	}
+	names, err := loadTenantNames(l.ctx, l.svcCtx, []int64{resp.Data.TenantId})
+	if err != nil {
+		return nil, err
+	}
+	resp.Data.TenantName = names[resp.Data.TenantId]
+	return resp, nil
 }

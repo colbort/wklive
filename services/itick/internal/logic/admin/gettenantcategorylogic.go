@@ -6,7 +6,6 @@ import (
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/proto/itick"
-	"wklive/proto/system"
 	"wklive/services/itick/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -38,13 +37,6 @@ func (l *GetTenantCategoryLogic) GetTenantCategory(in *itick.GetTenantCategoryRe
 		}, nil
 	}
 
-	tenant, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
-		TenantId: &in.TenantId,
-	})
-	if err != nil {
-		return nil, err
-	}
-
 	category, err := l.svcCtx.ItickCategoryModel.FindOne(l.ctx, item.CategoryId)
 	if err != nil {
 		return nil, err
@@ -52,6 +44,6 @@ func (l *GetTenantCategoryLogic) GetTenantCategory(in *itick.GetTenantCategoryRe
 
 	return &itick.GetTenantCategoryResp{
 		Base: helper.OkResp(),
-		Data: toTenantCategoryProto(item, category, tenant.Data),
+		Data: toTenantCategoryProto(item, category),
 	}, nil
 }

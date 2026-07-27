@@ -10,7 +10,6 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/itick"
-	"wklive/proto/system"
 	"wklive/services/itick/internal/market/types"
 	"wklive/services/itick/models"
 )
@@ -143,72 +142,6 @@ func toKlineProto(kType itick.KlineType, item *models.CoinKline) *itick.Kline {
 
 func formatMarketDecimal(value float64) string {
 	return strconv.FormatFloat(value, 'f', -1, 64)
-}
-
-func toTenantCategoryProto(item *models.TItickTenantCategory, category *models.TItickCategory, tenant *system.SysTenantItem) *itick.ItickTenantCategory {
-	if item == nil {
-		return nil
-	}
-
-	data := &itick.ItickTenantCategory{
-		Id:          item.Id,
-		TenantId:    item.TenantId,
-		CategoryId:  item.CategoryId,
-		Enabled:     common.Enable(item.Enabled),
-		AppVisible:  common.Switch(item.AppVisible),
-		Sort:        item.Sort,
-		Remark:      item.Remark,
-		CreateTimes: item.CreateTimes,
-		UpdateTimes: item.UpdateTimes,
-	}
-	if category != nil {
-		data.CategoryType = itick.CategoryType(category.CategoryType)
-		data.CategoryCode = category.CategoryCode
-		data.CategoryName = category.CategoryName
-		data.Icon = category.Icon
-	}
-	if tenant != nil {
-		data.TenantName = tenant.TenantName
-	}
-	return data
-}
-
-func toTenantProductProto(item *models.TItickTenantProduct, product *models.TItickProduct, tenant *system.SysTenantItem) *itick.ItickTenantProduct {
-	if item == nil {
-		return nil
-	}
-
-	data := &itick.ItickTenantProduct{
-		Id:          item.Id,
-		TenantId:    item.TenantId,
-		ProductId:   item.ProductId,
-		Enabled:     common.Enable(item.Enabled),
-		AppVisible:  common.Switch(item.AppVisible),
-		Sort:        item.Sort,
-		Remark:      item.Remark,
-		CreateTimes: item.CreateTimes,
-		UpdateTimes: item.UpdateTimes,
-	}
-	if product != nil {
-		data.CategoryType = itick.CategoryType(product.CategoryType)
-		data.CategoryCode = product.CategoryCode
-		data.CategoryName = product.CategoryName
-		data.Market = product.Market
-		data.Symbol = product.Symbol
-		data.Code = product.Code
-		data.Name = product.Name
-		data.DisplayName = product.DisplayName
-		data.BaseCoin = product.BaseCoin
-		data.QuoteCoin = product.QuoteCoin
-		data.Icon = product.Icon
-	}
-	if item.DisplayName != "" {
-		data.DisplayName = item.DisplayName
-	}
-	if tenant != nil {
-		data.TenantName = tenant.TenantName
-	}
-	return data
 }
 
 func categoryTypeCode(categoryType itick.CategoryType) string {

@@ -4,9 +4,7 @@ import (
 	"context"
 
 	"wklive/common/pageutil"
-	"wklive/proto/common"
 	"wklive/proto/itick"
-	"wklive/proto/system"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
 
@@ -34,20 +32,6 @@ func (l *ListTenantCategoriesLogic) ListTenantCategories(in *itick.ListTenantCat
 		return nil, err
 	}
 
-	tenants, err := l.svcCtx.SystemCli.SysTenantList(l.ctx, &system.SysTenantListReq{
-		Page: &common.PageReq{
-			Cursor: 0,
-			Limit:  100,
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-	tenantMap := make(map[int64]*system.SysTenantItem, len(tenants.Data))
-	for _, tenant := range tenants.Data {
-		tenantMap[tenant.Id] = tenant
-	}
-
 	categories, err := l.svcCtx.ItickCategoryModel.FindAll(l.ctx)
 	if err != nil {
 		return nil, err
@@ -61,7 +45,6 @@ func (l *ListTenantCategoriesLogic) ListTenantCategories(in *itick.ListTenantCat
 	data := make([]*itick.ItickTenantCategory, 0)
 	for _, item := range items {
 		category := categoryMap[item.CategoryId]
-		tenant := tenantMap[item.TenantId]
 		if category == nil {
 			continue
 		}
@@ -78,7 +61,7 @@ func (l *ListTenantCategoriesLogic) ListTenantCategories(in *itick.ListTenantCat
 		if item.Id <= in.Page.Cursor || int64(len(data)) >= limit {
 			continue
 		}
-		data = append(data, toTenantCategoryProto(item, category, tenant))
+		data = append(data, toTenantCategoryProto(item, category))
 	}
 
 	lastID := int64(0)

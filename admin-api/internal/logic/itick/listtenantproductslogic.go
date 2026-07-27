@@ -29,5 +29,20 @@ func NewListTenantProductsLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *ListTenantProductsLogic) ListTenantProducts(req *types.ListTenantProductsReq) (resp *types.ListTenantProductsResp, err error) {
-	return logicutil.Proxy[types.ListTenantProductsResp](l.ctx, req, l.svcCtx.ItickCli.ListTenantProducts)
+	resp, err = logicutil.Proxy[types.ListTenantProductsResp](l.ctx, req, l.svcCtx.ItickCli.ListTenantProducts)
+	if err != nil || resp == nil || resp.Code != 200 {
+		return resp, err
+	}
+	ids := make([]int64, 0, len(resp.Data))
+	for _, item := range resp.Data {
+		ids = append(ids, item.TenantId)
+	}
+	names, err := loadTenantNames(l.ctx, l.svcCtx, ids)
+	if err != nil {
+		return nil, err
+	}
+	for i := range resp.Data {
+		resp.Data[i].TenantName = names[resp.Data[i].TenantId]
+	}
+	return resp, nil
 }

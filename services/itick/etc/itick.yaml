@@ -21,6 +21,14 @@ Itick:
   RestRateLimitPerMinute: 100
   RestRateLimitBurst: 1
 
+Runtime:
+  ReconcileIntervalMinutes: 5
+  ReconcileWindowBars: 30
+  GapScanIntervalMinutes: 60
+  RepairBatchSize: 10
+  BuildingBucketTtlMinutes: 120
+  WsKlineStaleSeconds: 30
+
 Mongo:
   Url: "mongodb://root:openIM123@127.0.0.1:27017/stock?authSource=admin"
   Db: "wklive"

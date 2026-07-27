@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -10,7 +9,6 @@ import (
 	"time"
 
 	pb "wklive/proto/itick"
-	"wklive/proto/system"
 	"wklive/services/itick/internal/config"
 	"wklive/services/itick/internal/market/calendar"
 	"wklive/services/itick/internal/market/kline"
@@ -56,7 +54,7 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	svcCtx.ItickRuntimeConfig = loadItickRuntimeConfig(ctx, svcCtx.SystemCli)
+	svcCtx.ItickRuntimeConfig = loadItickRuntimeConfig(c.Runtime)
 	svcCtx.MarketDataCache.SetKlineStaleTTL(time.Duration(svcCtx.ItickRuntimeConfig.WsKlineStaleSeconds) * time.Second)
 	hotWindowMinutes := c.AuthoritativeCache.HotWindowMinutes
 	if hotWindowMinutes <= 0 {
@@ -144,33 +142,24 @@ func main() {
 	s.Start()
 }
 
-func loadItickRuntimeConfig(ctx context.Context, cli system.SystemClient) *system.ItickConfig {
-	config := &system.ItickConfig{ReconcileIntervalMinutes: 5, ReconcileWindowBars: 30,
-		GapScanIntervalMinutes: 60, RepairBatchSize: 10, BuildingBucketTtlMinutes: 120, WsKlineStaleSeconds: 30}
-	key := system.SysConfigType_ITICK_CONFIG
-	callCtx, cancel := context.WithTimeout(ctx, 3*time.Second)
-	defer cancel()
-	resp, err := cli.SysConfigDetail(callCtx, &system.SysConfigDetailReq{ConfigKey: &key})
-	if err == nil && resp.GetData() != nil {
-		_ = json.Unmarshal([]byte(resp.GetData().GetConfigValue()), config)
+func loadItickRuntimeConfig(runtime config.ItickRuntimeConf) *config.ItickRuntimeConf {
+	if runtime.ReconcileIntervalMinutes <= 0 {
+		runtime.ReconcileIntervalMinutes = 5
 	}
-	if config.ReconcileIntervalMinutes <= 0 {
-		config.ReconcileIntervalMinutes = 5
+	if runtime.ReconcileWindowBars <= 0 {
+		runtime.ReconcileWindowBars = 30
 	}
-	if config.ReconcileWindowBars <= 0 {
-		config.ReconcileWindowBars = 30
+	if runtime.GapScanIntervalMinutes <= 0 {
+		runtime.GapScanIntervalMinutes = 60
 	}
-	if config.GapScanIntervalMinutes <= 0 {
-		config.GapScanIntervalMinutes = 60
+	if runtime.RepairBatchSize <= 0 {
+		runtime.RepairBatchSize = 10
 	}
-	if config.RepairBatchSize <= 0 {
-		config.RepairBatchSize = 10
+	if runtime.BuildingBucketTtlMinutes <= 0 {
+		runtime.BuildingBucketTtlMinutes = 120
 	}
-	if config.BuildingBucketTtlMinutes <= 0 {
-		config.BuildingBucketTtlMinutes = 120
+	if runtime.WsKlineStaleSeconds <= 0 {
+		runtime.WsKlineStaleSeconds = 30
 	}
-	if config.WsKlineStaleSeconds <= 0 {
-		config.WsKlineStaleSeconds = 30
-	}
-	return config
+	return &runtime
 }

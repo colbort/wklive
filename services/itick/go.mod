@@ -13,8 +13,6 @@ require (
 	wklive/common v0.0.0-00010101000000-000000000000
 	wklive/proto/common v0.0.0-00010101000000-000000000000
 	wklive/proto/itick v0.0.0-00010101000000-000000000000
-	wklive/proto/option v0.0.0-00010101000000-000000000000
-	wklive/proto/system v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -130,7 +128,3 @@ replace wklive/proto/common => ../../proto/common
 replace wklive/proto/itick => ../../proto/itick
 
 replace wklive/common => ../../common
-
-replace wklive/proto/system => ../../proto/system
-
-replace wklive/proto/option => ../../proto/option

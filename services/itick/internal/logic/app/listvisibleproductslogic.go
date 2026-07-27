@@ -9,7 +9,6 @@ import (
 	"wklive/common/pageutil"
 	"wklive/common/utils"
 	"wklive/proto/itick"
-	"wklive/proto/system"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
 
@@ -32,20 +31,14 @@ func NewListVisibleProductsLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 // 获取允许显示的产品
 func (l *ListVisibleProductsLogic) ListVisibleProducts(in *itick.ListVisibleProductsReq) (*itick.ListVisibleProductsResp, error) {
-	tenantCode, err := utils.GetTenantCodeFromMd(l.ctx)
-	if err != nil || tenantCode == "" {
+	tenantID, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil || tenantID <= 0 {
 		return &itick.ListVisibleProductsResp{
 			Base: helper.ErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
 		}, nil
 	}
-	detail, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
-		TenantCode: &tenantCode,
-	})
-	if err != nil {
-		return nil, err
-	}
 	items, total, err := l.svcCtx.ItickTenantProductModel.FindPage(l.ctx, models.TenantProductPageFilter{
-		TenantId:     detail.Data.Id,
+		TenantId:     tenantID,
 		CategoryType: int64(in.CategoryType),
 		Enabled:      1,
 		AppVisible:   1,
@@ -82,7 +75,7 @@ func (l *ListVisibleProductsLogic) ListVisibleProducts(in *itick.ListVisibleProd
 		if product == nil {
 			continue
 		}
-		data = append(data, toTenantProductProto(item, product, detail.Data))
+		data = append(data, toTenantProductProto(item, product))
 	}
 
 	return &itick.ListVisibleProductsResp{

@@ -815,7 +815,6 @@ type ItickTenantCategory struct {
 	CategoryType  CategoryType `protobuf:"varint,10,opt,name=category_type,json=categoryType,proto3,enum=itick.CategoryType" json:"category_type,omitempty"`
 	CategoryName  string       `protobuf:"bytes,11,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"`
 	Icon          string       `protobuf:"bytes,12,opt,name=icon,proto3" json:"icon,omitempty"`
-	TenantName    string       `protobuf:"bytes,13,opt,name=tenant_name,json=tenantName,proto3" json:"tenant_name,omitempty"`
 	CategoryCode  string       `protobuf:"bytes,14,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -935,13 +934,6 @@ func (x *ItickTenantCategory) GetIcon() string {
 	return ""
 }
 
-func (x *ItickTenantCategory) GetTenantName() string {
-	if x != nil {
-		return x.TenantName
-	}
-	return ""
-}
-
 func (x *ItickTenantCategory) GetCategoryCode() string {
 	if x != nil {
 		return x.CategoryCode
@@ -971,7 +963,6 @@ type ItickTenantProduct struct {
 	BaseCoin      string       `protobuf:"bytes,17,opt,name=base_coin,json=baseCoin,proto3" json:"base_coin,omitempty"`
 	QuoteCoin     string       `protobuf:"bytes,18,opt,name=quote_coin,json=quoteCoin,proto3" json:"quote_coin,omitempty"`
 	Icon          string       `protobuf:"bytes,19,opt,name=icon,proto3" json:"icon,omitempty"`
-	TenantName    string       `protobuf:"bytes,20,opt,name=tenant_name,json=tenantName,proto3" json:"tenant_name,omitempty"`
 	CategoryCode  string       `protobuf:"bytes,21,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1140,13 +1131,6 @@ func (x *ItickTenantProduct) GetIcon() string {
 	return ""
 }
 
-func (x *ItickTenantProduct) GetTenantName() string {
-	if x != nil {
-		return x.TenantName
-	}
-	return ""
-}
-
 func (x *ItickTenantProduct) GetCategoryCode() string {
 	if x != nil {
 		return x.CategoryCode
@@ -1251,7 +1235,7 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	" \x01(\x03R\brevision\x12'\n" +
 	"\x0fformula_version\x18\v \x01(\tR\x0eformulaVersion\x12\x1f\n" +
 	"\vraw_payload\x18\f \x01(\tR\n" +
-	"rawPayload\"\xe9\x03\n" +
+	"rawPayload\"\xce\x03\n" +
 	"\x13ItickTenantCategory\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -1267,10 +1251,8 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\rcategory_type\x18\n" +
 	" \x01(\x0e2\x13.itick.CategoryTypeR\fcategoryType\x12#\n" +
 	"\rcategory_name\x18\v \x01(\tR\fcategoryName\x12\x12\n" +
-	"\x04icon\x18\f \x01(\tR\x04icon\x12\x1f\n" +
-	"\vtenant_name\x18\r \x01(\tR\n" +
-	"tenantName\x12#\n" +
-	"\rcategory_code\x18\x0e \x01(\tR\fcategoryCode\"\x9d\x05\n" +
+	"\x04icon\x18\f \x01(\tR\x04icon\x12#\n" +
+	"\rcategory_code\x18\x0e \x01(\tR\fcategoryCodeJ\x04\b\r\x10\x0e\"\x82\x05\n" +
 	"\x12ItickTenantProduct\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1d\n" +
@@ -1294,10 +1276,8 @@ const file_proto_itick_model_proto_rawDesc = "" +
 	"\tbase_coin\x18\x11 \x01(\tR\bbaseCoin\x12\x1d\n" +
 	"\n" +
 	"quote_coin\x18\x12 \x01(\tR\tquoteCoin\x12\x12\n" +
-	"\x04icon\x18\x13 \x01(\tR\x04icon\x12\x1f\n" +
-	"\vtenant_name\x18\x14 \x01(\tR\n" +
-	"tenantName\x12#\n" +
-	"\rcategory_code\x18\x15 \x01(\tR\fcategoryCodeB\x1aZ\x18wklive/proto/itick;itickb\x06proto3"
+	"\x04icon\x18\x13 \x01(\tR\x04icon\x12#\n" +
+	"\rcategory_code\x18\x15 \x01(\tR\fcategoryCodeJ\x04\b\x14\x10\x15B\x1aZ\x18wklive/proto/itick;itickb\x06proto3"
 
 var (
 	file_proto_itick_model_proto_rawDescOnce sync.Once

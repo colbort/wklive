@@ -9,7 +9,6 @@ import (
 	"wklive/common/pageutil"
 	"wklive/common/utils"
 	"wklive/proto/itick"
-	"wklive/proto/system"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
 
@@ -32,19 +31,13 @@ func NewListVisibleCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 获取允许显示的产品类型
 func (l *ListVisibleCategoriesLogic) ListVisibleCategories(in *itick.ListVisibleCategoriesReq) (*itick.ListVisibleCategoriesResp, error) {
-	tenantCode, err := utils.GetTenantCodeFromMd(l.ctx)
-	if err != nil || tenantCode == "" {
+	tenantID, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil || tenantID <= 0 {
 		return &itick.ListVisibleCategoriesResp{
 			Base: helper.ErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
 		}, nil
 	}
-	detail, err := l.svcCtx.SystemCli.SysTenantDetail(l.ctx, &system.SysTenantDetailReq{
-		TenantCode: &tenantCode,
-	})
-	if err != nil {
-		return nil, err
-	}
-	items, total, err := l.svcCtx.ItickTenantCategoryModel.FindPage(l.ctx, detail.Data.Id, in.Page.Cursor, in.Page.Limit)
+	items, total, err := l.svcCtx.ItickTenantCategoryModel.FindPage(l.ctx, tenantID, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +74,7 @@ func (l *ListVisibleCategoriesLogic) ListVisibleCategories(in *itick.ListVisible
 		if item.Id <= in.Page.Cursor || int64(len(data)) >= limit {
 			continue
 		}
-		data = append(data, toTenantCategoryProto(item, category, detail.Data))
+		data = append(data, toTenantCategoryProto(item, category))
 	}
 
 	lastID := int64(0)

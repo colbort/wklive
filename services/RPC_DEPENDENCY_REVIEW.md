@@ -5,28 +5,31 @@
 - 检查日期：2026-07-26
 - 检查目录：`services/*/internal/svc/servicecontext.go`
 - 检查方式：根据 `ServiceContext` 中创建和注入的 RPC client，建立服务间有向依赖图
+- 补充检查：全仓扫描业务代码中的 `zrpc.MustNewClient`，确认没有绕过
+  `ServiceContext` 临时创建的跨服务 RPC client
 - 依赖方向：`A -> B` 表示服务 A 通过 RPC 调用服务 B
 
 本次检查只反映 `servicecontext.go` 中显式声明的 RPC client 依赖，不包含：
 
 - HTTP、消息队列、Redis 和数据库依赖
-- 未注入到 `ServiceContext` 的临时 RPC client
 - RPC 方法内部继续调用其他服务所形成的实际运行时链路
 - 管理后台、App API 等 `services` 目录以外的调用方
 
 ## 2. 检查结论
 
-当前 `services` 内没有发现 RPC 循环依赖。
+当前共检查 10 个服务、10 条服务间 RPC 依赖边，没有发现 RPC 循环依赖。
 
 依赖图可以完成拓扑排序，不存在任何服务能够沿 RPC 依赖路径重新回到自身。
+当前最长路径为 2 条依赖边。
 
 不过，当前结构存在几个值得关注的风险：
 
 1. `itick -> option` 已整改为 Kafka 权威行情事件，不再构成 RPC 依赖。
 2. `system -> chat` 已移除，客服商户主数据归属 Chat。
-3. `liquidity` 的直接依赖较多，故障面和维护复杂度较高。
-4. 最长静态依赖链较长，需要防范同步调用链上的超时和重试放大。
+3. `itick -> system` 已移除，租户信息改由 Admin API / App API 编排并传入。
+4. `liquidity` 的直接依赖较多，故障面和维护复杂度较高。
 5. RPC client 在 `ServiceContext` 中集中、无条件构造，可选功能与核心启动流程存在配置耦合。
+6. Asset 仍残留未使用的 `ItickRpc` 配置声明，虽然不形成实际依赖，但应清理以避免误判。
 
 ## 3. 当前 RPC 依赖关系
 
@@ -40,7 +43,6 @@ graph LR
     trade --> asset
     trade --> itick
 
-    itick --> system
     user --> system
     option --> asset
     payment --> asset
@@ -53,11 +55,12 @@ graph LR
 | --- | --- |
 | `asset` | 无 |
 | `chat` | 无 |
-| `itick` | `system` |
+| `itick` | 无 |
 | `liquidity` | `trade`、`itick`、`user`、`asset` |
 | `option` | `asset` |
 | `payment` | `asset` |
 | `staking` | `asset` |
+| `system` | 无 |
 | `trade` | `asset`、`itick` |
 | `user` | `system` |
 
@@ -89,7 +92,6 @@ itick Outbox -> Kafka market.authoritative-snapshot.v1 -> option
 
 ```text
 user -> system -> chat
-itick -> system -> chat
 ```
 
 `system` 通常承担公共配置、租户或系统级能力，而 `chat` 属于具体业务域。公共基础服务反向依赖业务服务，会让依赖层次变得不清晰。
@@ -105,7 +107,32 @@ itick -> system -> chat
 
 状态：**已整改。** 历史数据上线前仍需按 Chat 迁移文档导入。
 
-### 4.3 `liquidity` 依赖面较大
+### 4.3 `itick -> system` 已由 API 层编排移除
+
+原关系：
+
+```text
+itick -> system
+```
+
+该调用主要服务于 Itick 的 Admin/App 接口补充租户信息，不属于 Itick 行情领域
+本身的职责。现已按调用入口调整：
+
+- Itick RPC 不再持有 System RPC client 或配置。
+- Itick 返回 `tenant_id` 等自身持有的业务数据，不再查询租户名称。
+- Admin API 通过 System 批量查询租户信息，并在 API 层组装 `tenant_name`。
+- App API 从认证上下文取得租户信息，通过请求或 metadata 传入 Itick。
+- Itick 自身运行所需的非租户业务配置已迁入 Itick 配置，不再借 System
+  作为运行时配置来源。
+- `itick.proto` 中仅用于服务内补充的 `tenant_name` 已移除并保留字段号，
+  防止后续误复用。
+
+这使 Itick 保持为独立行情域服务，同时避免为展示字段形成
+`itick -> system` 的服务层依赖。
+
+状态：**已整改。**
+
+### 4.4 `liquidity` 依赖面较大
 
 `liquidity` 直接依赖：
 
@@ -141,13 +168,13 @@ liquidity -> trade -> asset
 
 风险等级：**中。**
 
-### 4.4 静态依赖链较长
+### 4.5 两跳静态依赖链
 
-当前较长的静态路径包括：
+当前最长静态路径为两跳，包括：
 
 ```text
-liquidity -> trade -> itick -> option -> asset
-liquidity -> trade -> itick -> system
+liquidity -> trade -> itick
+liquidity -> trade -> asset
 liquidity -> user -> system
 ```
 
@@ -165,9 +192,9 @@ liquidity -> user -> system
 - 避免每一层都进行自动重试；只在明确幂等且有剩余时间预算时重试。
 - 对非实时强一致操作优先使用消息队列解耦。
 
-风险等级：**中，需要结合运行时调用确认。**
+风险等级：**低到中，需要结合运行时调用确认。**
 
-### 4.5 RPC client 与服务启动配置耦合
+### 4.6 RPC client 与服务启动配置耦合
 
 多个服务在 `NewServiceContext` 中通过 `zrpc.MustNewClient(...)` 无条件构造所有 RPC client。
 
@@ -188,26 +215,50 @@ liquidity -> user -> system
 
 风险等级：**低到中。**
 
+### 4.7 Asset 存在未使用的 Itick RPC 配置
+
+`services/asset/internal/config/config.go` 仍声明了：
+
+```go
+ItickRpc zrpc.RpcClientConf
+```
+
+但 Asset 的 `servicecontext.go` 没有构造或注入 Itick client，因此当前依赖图中
+不存在 `asset -> itick`。这属于无效配置残留，不是循环依赖。
+
+建议同步删除配置结构及 YAML 中对应配置，避免：
+
+- 运维误以为 Asset 依赖 Itick。
+- 后续代码直接复用残留配置，重新引入未经评审的依赖。
+- 配置模板和实际运行依赖长期不一致。
+
+风险等级：**低，建议清理。**
+
 ## 5. 建议优先级
 
 ### P0：防止形成新的循环
 
 - 保持 Itick 与 Option 之间使用行情事件解耦，不重新引入双向同步 RPC。
 - 保持 System 与 Chat 业务数据边界，不重新引入双向同步 RPC。
+- 保持 Itick 与 System 通过 API 层编排，不把租户展示信息查询重新下沉到 Itick。
 - 在代码评审或 CI 中维护并检查 RPC 依赖图。
 
 ### P1：确认并调整依赖方向
 
 - `system -> chat` 已整改；上线前完成历史客服商户主数据迁移。
+- `itick -> system` 已整改；保持租户信息由 Admin API / App API 获取和组装。
 
 ### P2：降低调用链和故障面
 
+- 清理 Asset 中未使用的 `ItickRpc` 配置声明及 YAML 配置。
 - 梳理 `liquidity` 对 `trade`、`itick`、`user`、`asset` 的职责边界。
-- 通过链路追踪确认是否真的存在最长同步调用链。
+- 通过链路追踪确认两跳静态路径是否形成连续同步调用链。
 - 完善超时、重试、熔断和降级策略。
 
 ## 6. 总结
 
 当前 RPC 依赖图是无环图。`itick -> option` 已改为 Kafka 事件，
-`system -> chat` 也已通过调整数据归属和 API 编排移除。后续重点是整理
-`liquidity` 的多下游依赖和运行时同步调用链。
+`system -> chat` 已通过调整数据归属和 API 编排移除，`itick -> system`
+也已通过 API 层租户信息编排移除。目前没有发现绕过 `ServiceContext`
+临时创建的服务间 RPC client。后续重点是清理 Asset 的无效 Itick 配置，
+并整理 `liquidity` 的多下游依赖和运行时同步调用链。

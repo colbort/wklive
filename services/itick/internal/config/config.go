@@ -14,12 +14,12 @@ type Config struct {
 	MQ         mq.Config
 	DataCache  redis.RedisKeyConf
 	LockRedis  redis.RedisKeyConf
-	SystemRpc  zrpc.RpcClientConf
 	Mysql      struct {
 		DataSource string
 	} `json:"Mysql" yaml:"Mysql"`
-	Itick ItickConf
-	Mongo struct {
+	Itick   ItickConf
+	Runtime ItickRuntimeConf
+	Mongo   struct {
 		Url string
 		Db  string
 	}
@@ -68,6 +68,15 @@ type Config struct {
 		// LegacyCleanupIntervalSeconds is the delay between legacy cleanup batches.
 		LegacyCleanupIntervalSeconds int
 	}
+}
+
+type ItickRuntimeConf struct {
+	ReconcileIntervalMinutes int64
+	ReconcileWindowBars      int64
+	GapScanIntervalMinutes   int64
+	RepairBatchSize          int64
+	BuildingBucketTtlMinutes int64
+	WsKlineStaleSeconds      int64
 }
 
 type ItickConf struct {

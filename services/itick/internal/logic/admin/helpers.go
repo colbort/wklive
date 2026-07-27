@@ -10,7 +10,6 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/itick"
-	"wklive/proto/system"
 	"wklive/services/itick/internal/market/types"
 	"wklive/services/itick/models"
 )
@@ -145,7 +144,7 @@ func formatMarketDecimal(value float64) string {
 	return strconv.FormatFloat(value, 'f', -1, 64)
 }
 
-func toTenantCategoryProto(item *models.TItickTenantCategory, category *models.TItickCategory, tenant *system.SysTenantItem) *itick.ItickTenantCategory {
+func toTenantCategoryProto(item *models.TItickTenantCategory, category *models.TItickCategory) *itick.ItickTenantCategory {
 	if item == nil {
 		return nil
 	}
@@ -167,13 +166,10 @@ func toTenantCategoryProto(item *models.TItickTenantCategory, category *models.T
 		data.CategoryName = category.CategoryName
 		data.Icon = category.Icon
 	}
-	if tenant != nil {
-		data.TenantName = tenant.TenantName
-	}
 	return data
 }
 
-func toTenantProductProto(item *models.TItickTenantProduct, product *models.TItickProduct, tenant *system.SysTenantItem) *itick.ItickTenantProduct {
+func toTenantProductProto(item *models.TItickTenantProduct, product *models.TItickProduct) *itick.ItickTenantProduct {
 	if item == nil {
 		return nil
 	}
@@ -204,9 +200,6 @@ func toTenantProductProto(item *models.TItickTenantProduct, product *models.TIti
 	}
 	if item.DisplayName != "" {
 		data.DisplayName = item.DisplayName
-	}
-	if tenant != nil {
-		data.TenantName = tenant.TenantName
 	}
 	return data
 }

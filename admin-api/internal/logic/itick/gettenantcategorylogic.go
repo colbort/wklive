@@ -29,5 +29,14 @@ func NewGetTenantCategoryLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *GetTenantCategoryLogic) GetTenantCategory(req *types.GetTenantCategoryReq) (resp *types.GetTenantCategoryResp, err error) {
-	return logicutil.Proxy[types.GetTenantCategoryResp](l.ctx, req, l.svcCtx.ItickCli.GetTenantCategory)
+	resp, err = logicutil.Proxy[types.GetTenantCategoryResp](l.ctx, req, l.svcCtx.ItickCli.GetTenantCategory)
+	if err != nil || resp == nil || resp.Code != 200 {
+		return resp, err
+	}
+	names, err := loadTenantNames(l.ctx, l.svcCtx, []int64{resp.Data.TenantId})
+	if err != nil {
+		return nil, err
+	}
+	resp.Data.TenantName = names[resp.Data.TenantId]
+	return resp, nil
 }

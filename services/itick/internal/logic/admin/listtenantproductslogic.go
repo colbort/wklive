@@ -5,9 +5,7 @@ import (
 	"strings"
 
 	"wklive/common/pageutil"
-	"wklive/proto/common"
 	"wklive/proto/itick"
-	"wklive/proto/system"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
 
@@ -48,26 +46,12 @@ func (l *ListTenantProductsLogic) ListTenantProducts(in *itick.ListTenantProduct
 	if err != nil {
 		return nil, err
 	}
-	tenants, err := l.svcCtx.SystemCli.SysTenantList(l.ctx, &system.SysTenantListReq{
-		Page: &common.PageReq{
-			Cursor: 0,
-			Limit:  100,
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-	tenantMap := make(map[int64]*system.SysTenantItem, len(tenants.Data))
-	for _, tenant := range tenants.Data {
-		tenantMap[tenant.Id] = tenant
-	}
 	limit := pageutil.NormalizeLimit(in.Page.Limit)
 	market := strings.TrimSpace(in.Market)
 	filtered := make([]*itick.ItickTenantProduct, 0)
 	total := int64(0)
 	for _, item := range items {
 		product := products[item.ProductId]
-		tenant := tenantMap[item.TenantId]
 		if product == nil {
 			continue
 		}
@@ -91,7 +75,7 @@ func (l *ListTenantProductsLogic) ListTenantProducts(in *itick.ListTenantProduct
 		if item.Id <= in.Page.Cursor || int64(len(filtered)) >= limit {
 			continue
 		}
-		filtered = append(filtered, toTenantProductProto(item, product, tenant))
+		filtered = append(filtered, toTenantProductProto(item, product))
 	}
 
 	lastID := int64(0)

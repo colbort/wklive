@@ -117,7 +117,7 @@ message ItickTenantCategory {
   itick.CategoryType category_type = 10;
   string category_name = 11;
   string icon = 12;
-  string tenant_name = 13;
+  reserved 13;
   string category_code = 14;
 }
 
@@ -143,6 +143,6 @@ message ItickTenantProduct {
   string base_coin = 17;
   string quote_coin = 18;
   string icon = 19;
-  string tenant_name = 20;
+  reserved 20;
   string category_code = 21;
 }
