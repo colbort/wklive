@@ -196,6 +196,7 @@ func (l *ProcessSecondsSettlementsLogic) processSettlements(tenantID int64) erro
 				conn := sqlx.NewSqlConnFromSession(session)
 				secondsModel := models.NewTTradeOrderSecondsModel(conn, l.svcCtx.Config.CacheRedis)
 				orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
+				eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
 				current, err := secondsModel.FindOneForUpdate(ctx, item.Id)
 				if err != nil {
 					return err
@@ -227,8 +228,12 @@ func (l *ProcessSecondsSettlementsLogic) processSettlements(tenantID int64) erro
 					return err
 				}
 				order.Status = int64(trade.OrderStatus_ORDER_STATUS_FILLED)
+				order.Version++
 				order.UpdateTimes = now
 				if err := orderModel.Update(ctx, order); err != nil {
+					return err
+				}
+				if err := helpers.InsertOrderChangedOutbox(ctx, eventModel, order, order.OrderNo+"-SECONDS-SETTLED", "ORDER_SETTLED", now); err != nil {
 					return err
 				}
 				for _, candidate := range candidates {
@@ -273,6 +278,7 @@ func (l *ProcessSecondsSettlementsLogic) processRefunds(tenantID int64) error {
 			secondsModel := models.NewTTradeOrderSecondsModel(conn, l.svcCtx.Config.CacheRedis)
 			orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
 			reservationModel := models.NewTTradeAssetReservationModel(conn, l.svcCtx.Config.CacheRedis)
+			eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
 			current, err := secondsModel.FindOneForUpdate(ctx, item.Id)
 			if err != nil {
 				return err
@@ -307,7 +313,10 @@ func (l *ProcessSecondsSettlementsLogic) processRefunds(tenantID int64) error {
 				return err
 			}
 			order.Status, order.CancelReason, order.Version, order.UpdateTimes = int64(trade.OrderStatus_ORDER_STATUS_CANCELED), current.SettlementReason, order.Version+1, now
-			return orderModel.Update(ctx, order)
+			if err := orderModel.Update(ctx, order); err != nil {
+				return err
+			}
+			return helpers.InsertOrderChangedOutbox(ctx, eventModel, order, order.OrderNo+"-SECONDS-REFUNDED", "ORDER_CANCELED", now)
 		})
 	})
 }

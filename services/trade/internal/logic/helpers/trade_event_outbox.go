@@ -3,16 +3,49 @@ package helpers
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"wklive/common/userevent"
 	"wklive/common/utils"
+	"wklive/proto/trade"
 	"wklive/services/trade/internal/realtime"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 )
 
 const TradeEventPayloadVersion = realtime.PayloadVersionV1
+
+// InsertOrderChangedOutbox stores an order notification in the caller's
+// transaction. The outbox dispatcher turns every order event into a user event,
+// so state changes and their notification cannot be committed independently.
+func InsertOrderChangedOutbox(
+	ctx context.Context,
+	eventModel models.TBizTradeEventModel,
+	order *models.TTradeOrder,
+	eventNo, eventType string,
+	now int64,
+) error {
+	existing, err := eventModel.FindOneByTenantIdEventNo(ctx, order.TenantId, eventNo)
+	if err == nil {
+		if existing.EventType != eventType || existing.BizId != order.OrderNo || existing.BizType != "order" {
+			return fmt.Errorf("outbox idempotency conflict: %s", eventNo)
+		}
+		return nil
+	}
+	if !errors.Is(err, models.ErrNotFound) {
+		return err
+	}
+	_, err = eventModel.Insert(ctx, &models.TBizTradeEvent{
+		TenantId: order.TenantId, EventNo: eventNo, EventType: eventType,
+		BizId: order.OrderNo, BizType: "order", UserId: order.UserId, SymbolId: order.SymbolId,
+		ProductType: order.ProductType, Source: int64(trade.SourceType_SOURCE_TYPE_SYSTEM),
+		Consumer: TradeEventConsumer(eventType), PayloadVersion: TradeEventPayloadVersion,
+		EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20,
+		NextRetryAt: now, Payload: "{}", CreateTimes: now, UpdateTimes: now,
+	})
+	return err
+}
 
 func TradeEventConsumer(eventType string) string {
 	switch eventType {
