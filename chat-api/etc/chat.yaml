@@ -5,8 +5,6 @@ Port: 7777
 ChatRpc:
   Endpoints:
     - 127.0.0.1:8088
-  NonBlock: true
-
 ChatTokenIPWhitelist:
   - 127.0.0.1
   - 192.168.10.246

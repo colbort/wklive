@@ -5,4 +5,3 @@ Port: 6666
 ChatRpc:
   Endpoints:
     - 127.0.0.1:8088
-  NonBlock: true

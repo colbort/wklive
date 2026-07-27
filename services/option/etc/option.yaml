@@ -7,7 +7,6 @@ Etcd:
   Key: option.rpc
 
 AssetRpc:
-  rpcType: zrpc
   Etcd:
     Hosts:
     - 127.0.0.1:2379

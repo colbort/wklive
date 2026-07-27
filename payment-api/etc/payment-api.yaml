@@ -5,7 +5,6 @@ Timeout: 10000
 MaxBytes: 1048576
 
 PaymentRpc:
-  rpcType: zrpc
   Etcd:
     Hosts:
       - "127.0.0.1:2379"

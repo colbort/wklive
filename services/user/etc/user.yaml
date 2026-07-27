@@ -1,16 +1,19 @@
 Name: user.rpc
-ListenOn: 0.0.0.0:8080
+ListenOn: 0.0.0.0:8081
+Mode: dev
 Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: user.rpc
-Jwt:
-  AccessSecret: "your_access_secret"
-  AccessExpire: 3600
+
 Register:
   UsernameNoRechargeLimit: 7
+
+SystemRpc:
+  Etcd:
+    Hosts:
+    - 127.0.0.1:2379
+    Key: system.rpc
+
 GuestTransfer:
   ExpireSeconds: 120
-MQ:
-  Brokers: [kafka:9092]
-  MaxAttempts: 5

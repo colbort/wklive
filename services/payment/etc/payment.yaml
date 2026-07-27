@@ -1,9 +1,13 @@
 Name: payment.rpc
-ListenOn: 0.0.0.0:8080
+ListenOn: 0.0.0.0:8083
+Mode: dev
 Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: payment.rpc
-MQ:
-  Brokers: [kafka:9092]
-  MaxAttempts: 5
+
+AssetRpc:
+  Etcd:
+    Hosts:
+    - 127.0.0.1:2379
+    Key: asset.rpc

@@ -8,28 +8,24 @@ Etcd:
   Key: liquidity.rpc
 
 TradeRpc:
-  rpcType: zrpc
   Etcd:
     Hosts:
     - 127.0.0.1:2379
     Key: trade.rpc
 
 AssetRpc:
-  rpcType: zrpc
   Etcd:
     Hosts:
     - 127.0.0.1:2379
     Key: asset.rpc
 
 ItickRpc:
-  rpcType: zrpc
   Etcd:
     Hosts:
     - 127.0.0.1:2379
     Key: itick.rpc
 
 UserRpc:
-  rpcType: zrpc
   Etcd:
     Hosts:
     - 127.0.0.1:2379

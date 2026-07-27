@@ -1,8 +1,5 @@
 Name: trade.rpc
 ListenOn: 0.0.0.0:8087
-MQ:
-  Brokers: [kafka:9092]
-  MaxAttempts: 5
 Mode: dev
 Etcd:
   Hosts:
@@ -10,14 +7,12 @@ Etcd:
   Key: trade.rpc
 
 AssetRpc:
-  rpcType: zrpc
   Etcd:
     Hosts:
     - 127.0.0.1:2379
     Key: asset.rpc
 
 ItickRpc:
-  rpcType: zrpc
   Etcd:
     Hosts:
     - 127.0.0.1:2379

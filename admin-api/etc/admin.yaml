@@ -26,14 +26,12 @@ RequestEncryption:
   MaxCipherTextBytes: 1052672
 
 SystemRpc:
-  rpcType: zrpc
   Etcd:
     Hosts:
     - "127.0.0.1:2379"
     Key: system.rpc
 
 ChatRpc:
-  rpcType: zrpc
   Etcd:
     Hosts:
     - "127.0.0.1:2379"
@@ -41,49 +39,42 @@ ChatRpc:
 
 
 UserRpc:
-  rpcType: zrpc
   Etcd:
     Hosts:
     - "127.0.0.1:2379"
     Key: user.rpc
 
 PaymentRpc:
-  rpcType: zrpc
   Etcd:
     Hosts:
     - "127.0.0.1:2379"
     Key: payment.rpc
 
 ItickRpc:
-  rpcType: zrpc
   Etcd:
     Hosts:
     - "127.0.0.1:2379"
     Key: itick.rpc
 
 AssetRpc:
-  rpcType: zrpc
   Etcd:
     Hosts:
     - "127.0.0.1:2379"
-    Key: asset.rpc   
+    Key: asset.rpc
 
 OptionRpc:
-  rpcType: zrpc
   Etcd:
     Hosts:
     - "127.0.0.1:2379"
-    Key: option.rpc   
+    Key: option.rpc
 
 StakingRpc:
-  rpcType: zrpc
   Etcd:
     Hosts:
     - "127.0.0.1:2379"
-    Key: staking.rpc   
+    Key: staking.rpc
 
 TradeRpc:
-  rpcType: zrpc
   Etcd:
     Hosts:
     - "127.0.0.1:2379"

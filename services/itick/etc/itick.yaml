@@ -1,18 +1,15 @@
 Name: itick.rpc
-ListenOn: 0.0.0.0:8080
-MQ:
-  Brokers: [kafka:9092]
-  MaxAttempts: 5
+ListenOn: 0.0.0.0:8082
+Mode: pro
 MethodTimeouts:
   - FullMethod: /itick.ItickAdmin/SyncProductKlineHistory
+    Timeout: 5m
   - FullMethod: /itick.ItickAdmin/ListProducts
-    Timeout: 2m
+    Timeout: 5m
 Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: itick.rpc
-
-
 Itick:
   ApiUrl: https://api.itick.org
   WSUrl: wss://api.itick.org
