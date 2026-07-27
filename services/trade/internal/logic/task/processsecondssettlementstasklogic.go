@@ -3,6 +3,7 @@ package tasklogic
 import (
 	"context"
 	"fmt"
+	"wklive/services/trade/internal/logic/helpers"
 
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
@@ -26,10 +27,10 @@ func NewProcessSecondsSettlementsTaskLogic(ctx context.Context, svcCtx *svc.Serv
 
 // ProcessSecondsSettlements runs independently at second-level frequency.
 func (l *ProcessSecondsSettlementsTaskLogic) ProcessSecondsSettlements(in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
-	return runTaskWithLock(l.ctx, l.svcCtx, "process_seconds_settlements", func() (*trade.TradeTaskResp, error) {
+	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_seconds_settlements", func() (*trade.TradeTaskResp, error) {
 		if err := NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).Process(in.GetTenantId()); err != nil {
 			return nil, fmt.Errorf("seconds settlements: %w", err)
 		}
-		return okTaskResp(), nil
+		return helpers.OkTaskResp(), nil
 	})
 }

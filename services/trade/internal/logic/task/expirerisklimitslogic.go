@@ -2,6 +2,7 @@ package tasklogic
 
 import (
 	"context"
+	"wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/utils"
 	"wklive/proto/common"
@@ -27,7 +28,7 @@ func NewExpireRiskLimitsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 风控限制过期恢复
 func (l *ExpireRiskLimitsLogic) ExpireRiskLimits(in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
-	return runTaskWithLock(l.ctx, l.svcCtx, "expire_risk_limits", func() (*trade.TradeTaskResp, error) {
+	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "expire_risk_limits", func() (*trade.TradeTaskResp, error) {
 		now := utils.NowMillis()
 		cursor := int64(0)
 		for {
@@ -81,6 +82,6 @@ func (l *ExpireRiskLimitsLogic) ExpireRiskLimits(in *trade.TradeTaskReq) (*trade
 				break
 			}
 		}
-		return okTaskResp(), nil
+		return helpers.OkTaskResp(), nil
 	})
 }

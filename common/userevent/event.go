@@ -30,6 +30,7 @@ type Event struct {
 	BizNo       string `json:"biz_no,omitempty"`
 	SymbolID    int64  `json:"symbol_id,omitempty"`
 	ProductType int64  `json:"product_type,omitempty"`
+	ChangeType  string `json:"change_type,omitempty"`
 	OccurredAt  int64  `json:"occurred_at"`
 }
 

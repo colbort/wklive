@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"wklive/services/trade/internal/logic/helpers"
 
 	marketcache "wklive/common/market"
 	"wklive/common/utils"
@@ -358,7 +359,7 @@ func (l *ProcessFundingSettlementsLogic) failFundingInstruction(item *models.TTr
 		}
 		current.RetryCount++
 		current.Status = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_FAILED)
-		current.NextRetryAt = now + tradeEventRetryDelay(current.RetryCount).Milliseconds()
+		current.NextRetryAt = now + helpers.TradeEventRetryDelay(current.RetryCount).Milliseconds()
 		if current.RetryCount >= 20 {
 			current.Status, current.NextRetryAt = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_MANUAL_REVIEW), 0
 		}

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"wklive/proto/common"
+	"wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/generate"
 	"wklive/common/utils"
@@ -31,7 +32,7 @@ func NewProcessContractSettlementsLogic(ctx context.Context, svcCtx *svc.Service
 
 // 合约结算（永续资金费率/交割合约）；秒合约是独立产品，不属于 contract_type。
 func (l *ProcessContractSettlementsLogic) ProcessContractSettlements(in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
-	return runTaskWithLock(l.ctx, l.svcCtx, "process_contract_settlements", func() (*trade.TradeTaskResp, error) {
+	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_contract_settlements", func() (*trade.TradeTaskResp, error) {
 		var result error
 		if err := NewProcessFundingSettlementsLogic(l.ctx, l.svcCtx).Process(in.GetTenantId()); err != nil {
 			result = errors.Join(result, fmt.Errorf("funding settlements: %w", err))
@@ -42,7 +43,7 @@ func (l *ProcessContractSettlementsLogic) ProcessContractSettlements(in *trade.T
 		if result != nil {
 			return nil, result
 		}
-		return okTaskResp(), nil
+		return helpers.OkTaskResp(), nil
 	})
 }
 
@@ -76,7 +77,7 @@ func (l *ProcessContractSettlementsLogic) settleFundingFees(in *trade.TradeTaskR
 			if intervalMillis <= 0 || now%intervalMillis > 60*1000 {
 				continue
 			}
-			if err := createTaskEvent(l.ctx, l.svcCtx, contract.TenantId, "FUNDING_FEE_SETTLEMENT_REQUIRED", "symbol", symbol.Id, 0, symbol.Id, symbol.ProductType, "funding fee task"); err != nil {
+			if err := helpers.CreateTaskEvent(l.ctx, l.svcCtx, contract.TenantId, "FUNDING_FEE_SETTLEMENT_REQUIRED", "symbol", symbol.Id, 0, symbol.Id, symbol.ProductType, "funding fee task"); err != nil {
 				return err
 			}
 		}
@@ -133,7 +134,7 @@ func (l *ProcessContractSettlementsLogic) disableExpiredSymbols(tenantID int64, 
 				EventStatus:   int64(trade.EventStatus_EVENT_STATUS_PENDING),
 				MaxRetryCount: 3,
 				NextRetryAt:   now,
-				Payload:       normalizeTradeEventJSON(symbol.Symbol),
+				Payload:       helpers.NormalizeTradeEventJSON(symbol.Symbol),
 				CreateTimes:   now,
 				UpdateTimes:   now,
 			}); err != nil {

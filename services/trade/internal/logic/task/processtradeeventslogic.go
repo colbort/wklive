@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/utils"
@@ -34,7 +35,7 @@ func NewProcessTradeEventsLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 交易事件处理（失败重试/订单过期/冻结资产修复）
 func (l *ProcessTradeEventsLogic) ProcessTradeEvents(in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
-	return runTaskWithLock(l.ctx, l.svcCtx, "process_trade_events", func() (*trade.TradeTaskResp, error) {
+	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_trade_events", func() (*trade.TradeTaskResp, error) {
 		if err := NewProcessFillSettlementsLogic(l.ctx, l.svcCtx).Process(in.GetTenantId()); err != nil {
 			return nil, err
 		}
@@ -62,7 +63,7 @@ func (l *ProcessTradeEventsLogic) ProcessTradeEvents(in *trade.TradeTaskReq) (*t
 		if err := l.repairFrozenAssets(in); err != nil {
 			return nil, err
 		}
-		return okTaskResp(), nil
+		return helpers.OkTaskResp(), nil
 	})
 }
 
@@ -121,7 +122,7 @@ func (l *ProcessTradeEventsLogic) dispatchPendingTradeEvents(in *trade.TradeTask
 		for _, item := range items {
 			cursor = item.Id
 			event := realtime.Event{Version: item.PayloadVersion, Consumer: item.Consumer, EventNo: item.EventNo, Type: item.EventType, TenantID: item.TenantId, BizID: item.BizId, Payload: item.Payload}
-			if err := publishTradeOutboxEvent(l.ctx, l.svcCtx, event); err != nil {
+			if err := helpers.PublishTradeOutboxEvent(l.ctx, l.svcCtx, event); err != nil {
 				l.Errorf("dispatch trade event failed, eventNo=%s: %v", item.EventNo, err)
 			}
 		}
@@ -300,8 +301,8 @@ func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPri
 			TenantId: order.TenantId, EventNo: eventNo, EventType: realtime.EventOrderAccepted,
 			BizId: order.OrderNo, BizType: "order", UserId: order.UserId, SymbolId: order.SymbolId,
 			ProductType: order.ProductType, OperatorId: order.UserId, Source: int64(trade.SourceType_SOURCE_TYPE_SYSTEM),
-			Consumer: tradeEventConsumer(realtime.EventOrderAccepted), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now,
-			PayloadVersion: tradeEventPayloadVersion,
+			Consumer: helpers.TradeEventConsumer(realtime.EventOrderAccepted), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now,
+			PayloadVersion: helpers.TradeEventPayloadVersion,
 			Payload:        "{}", CreateTimes: now, UpdateTimes: now,
 		}); err != nil {
 			return err
@@ -316,7 +317,7 @@ func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPri
 		return err
 	}
 	event := realtime.Event{EventNo: eventNo, Type: realtime.EventOrderAccepted, TenantID: triggeredOrder.TenantId, BizID: triggeredOrder.OrderNo, OrderID: triggeredOrder.Id}
-	if err := publishTradeOutboxEvent(l.ctx, l.svcCtx, event); err != nil {
+	if err := helpers.PublishTradeOutboxEvent(l.ctx, l.svcCtx, event); err != nil {
 		l.Errorf("publish triggered order event failed, orderId=%d eventNo=%s err=%v", triggeredOrder.Id, eventNo, err)
 	}
 	return nil

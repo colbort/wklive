@@ -3,6 +3,7 @@ package tasklogic
 import (
 	"context"
 	"errors"
+	"wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/utils"
 	"wklive/proto/trade"
@@ -28,14 +29,14 @@ func NewProcessPositionsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 仓位处理（标记价格刷新/强平扫描/普通平仓）
 func (l *ProcessPositionsLogic) ProcessPositions(in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
-	return runTaskWithLock(l.ctx, l.svcCtx, "process_positions", func() (*trade.TradeTaskResp, error) {
+	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_positions", func() (*trade.TradeTaskResp, error) {
 		if err := l.refreshMarkPrices(in); err != nil {
 			return nil, err
 		}
 		if err := l.forceLiquidation(in); err != nil {
 			return nil, err
 		}
-		return okTaskResp(), nil
+		return helpers.OkTaskResp(), nil
 	})
 }
 
@@ -141,7 +142,7 @@ func (l *ProcessPositionsLogic) closePositions(in *trade.TradeTaskReq) error {
 			if symbol.Status != int64(trade.SymbolStatus_SYMBOL_STATUS_DISABLED) && (symbol.TradingEndTime == 0 || symbol.TradingEndTime > now) {
 				continue
 			}
-			if err := createTaskEvent(l.ctx, l.svcCtx, position.TenantId, "CLOSE_POSITION_REQUIRED", "position", position.Id, position.UserId, position.SymbolId, symbol.ProductType, "close position task"); err != nil {
+			if err := helpers.CreateTaskEvent(l.ctx, l.svcCtx, position.TenantId, "CLOSE_POSITION_REQUIRED", "position", position.Id, position.UserId, position.SymbolId, symbol.ProductType, "close position task"); err != nil {
 				return err
 			}
 		}

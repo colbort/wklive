@@ -127,12 +127,12 @@ func (m *defaultTAssetFreezeModel) UpdateUnfreeze(ctx context.Context, freezeNo 
 		UPDATE %s
 		SET 
 			unfreeze_amount = unfreeze_amount + ?,
-			remain_amount = remain_amount - ?,
 			status = CASE
 				WHEN remain_amount - ? <= 0 AND used_amount > 0 THEN 5
 				WHEN remain_amount - ? <= 0 THEN 3
 				ELSE 2
 			END,
+			remain_amount = remain_amount - ?,
 			update_times = ?
 		WHERE freeze_no = ? AND status IN (1, 2) AND remain_amount >= ?
 	`, m.table)
@@ -160,12 +160,12 @@ func (m *defaultTAssetFreezeModel) UpdateDeduct(ctx context.Context, freezeNo st
 		UPDATE %s
 		SET 
 			used_amount = used_amount + ?,
-			remain_amount = remain_amount - ?,
 			status = CASE
 				WHEN remain_amount - ? <= 0 AND unfreeze_amount > 0 THEN 5
 				WHEN remain_amount - ? <= 0 THEN 4
 				ELSE 2
 			END,
+			remain_amount = remain_amount - ?,
 			update_times = ?
 		WHERE freeze_no = ? AND status IN (1, 2) AND remain_amount >= ?
 	`, m.table)

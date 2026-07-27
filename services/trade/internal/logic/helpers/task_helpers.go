@@ -1,4 +1,4 @@
-package adminlogic
+package helpers
 
 import (
 	"context"
@@ -26,11 +26,11 @@ const (
 	tradeTaskLockRenewInterval = 10 * time.Second
 )
 
-func okTaskResp() *trade.TradeTaskResp {
+func OkTaskResp() *trade.TradeTaskResp {
 	return &trade.TradeTaskResp{Base: helper.OkResp()}
 }
 
-func runTaskWithLock(
+func RunTaskWithLock(
 	ctx context.Context,
 	svcCtx *svc.ServiceContext,
 	taskName string,
@@ -39,7 +39,7 @@ func runTaskWithLock(
 	lockKey := fmt.Sprintf("trade:task:%s", taskName)
 	lockValue := fmt.Sprintf("%d", time.Now().UnixNano())
 
-	if err := acquireTaskLock(ctx, svcCtx.Redis, lockKey, lockValue); err != nil {
+	if err := AcquireTaskLock(ctx, svcCtx.Redis, lockKey, lockValue); err != nil {
 		if i18n.IsStatusError(err, i18n.SyncTaskAlreadyRunning) {
 			return &trade.TradeTaskResp{
 				Base: helper.ErrResp(i18n.SyncTaskAlreadyRunning, i18n.Translate(i18n.SyncTaskAlreadyRunning, ctx)),
@@ -55,12 +55,12 @@ func runTaskWithLock(
 	renewDone := make(chan struct{})
 	go func() {
 		defer close(renewDone)
-		autoRenewTaskLock(renewCtx, svcCtx.Redis, lockKey, lockValue)
+		AutoRenewTaskLock(renewCtx, svcCtx.Redis, lockKey, lockValue)
 	}()
 	defer func() {
 		renewCancel()
 		<-renewDone
-		if err := releaseTaskLock(context.Background(), svcCtx.Redis, lockKey, lockValue); err != nil {
+		if err := ReleaseTaskLock(context.Background(), svcCtx.Redis, lockKey, lockValue); err != nil {
 			logx.Errorf("release trade task lock failed, key=%s err=%v", lockKey, err)
 		}
 	}()
@@ -68,7 +68,7 @@ func runTaskWithLock(
 	return fn()
 }
 
-func acquireTaskLock(ctx context.Context, rds *redis.Redis, key, value string) error {
+func AcquireTaskLock(ctx context.Context, rds *redis.Redis, key, value string) error {
 	ok, err := rds.SetnxExCtx(ctx, key, value, int(tradeTaskLockTTL.Seconds()))
 	if err != nil {
 		return err
@@ -79,7 +79,7 @@ func acquireTaskLock(ctx context.Context, rds *redis.Redis, key, value string) e
 	return nil
 }
 
-func autoRenewTaskLock(ctx context.Context, rds *redis.Redis, key, value string) {
+func AutoRenewTaskLock(ctx context.Context, rds *redis.Redis, key, value string) {
 	ticker := time.NewTicker(tradeTaskLockRenewInterval)
 	defer ticker.Stop()
 
@@ -88,7 +88,7 @@ func autoRenewTaskLock(ctx context.Context, rds *redis.Redis, key, value string)
 		case <-ctx.Done():
 			return
 		case <-ticker.C:
-			if err := refreshTaskLock(context.Background(), rds, key, value); err != nil {
+			if err := RefreshTaskLock(context.Background(), rds, key, value); err != nil {
 				logx.Errorf("refresh trade task lock failed, key=%s err=%v", key, err)
 				return
 			}
@@ -96,7 +96,7 @@ func autoRenewTaskLock(ctx context.Context, rds *redis.Redis, key, value string)
 	}
 }
 
-func refreshTaskLock(ctx context.Context, rds *redis.Redis, key, value string) error {
+func RefreshTaskLock(ctx context.Context, rds *redis.Redis, key, value string) error {
 	lua := `
 if redis.call("GET", KEYS[1]) == ARGV[1] then
 	return redis.call("PEXPIRE", KEYS[1], ARGV[2])
@@ -108,13 +108,13 @@ end
 	if err != nil {
 		return err
 	}
-	if !redisEvalOK(ret) {
+	if !RedisEvalOK(ret) {
 		return i18n.StatusError(ctx, i18n.SyncTaskAlreadyRunning)
 	}
 	return nil
 }
 
-func releaseTaskLock(ctx context.Context, rds *redis.Redis, key, value string) error {
+func ReleaseTaskLock(ctx context.Context, rds *redis.Redis, key, value string) error {
 	lua := `
 if redis.call("GET", KEYS[1]) == ARGV[1] then
 	return redis.call("DEL", KEYS[1])
@@ -126,7 +126,7 @@ end
 	return err
 }
 
-func redisEvalOK(ret any) bool {
+func RedisEvalOK(ret any) bool {
 	switch v := ret.(type) {
 	case int64:
 		return v > 0
@@ -141,7 +141,7 @@ func redisEvalOK(ret any) bool {
 	}
 }
 
-func normalizeTradeEventJSON(raw string) string {
+func NormalizeTradeEventJSON(raw string) string {
 	value := strings.TrimSpace(raw)
 	if value == "" {
 		return "{}"
@@ -158,18 +158,18 @@ func normalizeTradeEventJSON(raw string) string {
 	return string(data)
 }
 
-func nullableTradeEventJSON(raw string) sql.NullString {
+func NullableTradeEventJSON(raw string) sql.NullString {
 	value := strings.TrimSpace(raw)
 	if value == "" {
 		return sql.NullString{}
 	}
 	return sql.NullString{
-		String: normalizeTradeEventJSON(value),
+		String: NormalizeTradeEventJSON(value),
 		Valid:  true,
 	}
 }
 
-func createTaskEvent(ctx context.Context, svcCtx *svc.ServiceContext, tenantID int64, eventType, bizType string, bizID int64, userID, symbolID, productType int64, payload string) error {
+func CreateTaskEvent(ctx context.Context, svcCtx *svc.ServiceContext, tenantID int64, eventType, bizType string, bizID int64, userID, symbolID, productType int64, payload string) error {
 	bizIDText := strconv.FormatInt(bizID, 10)
 	exists, _, err := svcCtx.BizTradeEventModel.FindPage(ctx, models.BizTradeEventPageFilter{
 		TenantId:    tenantID,
@@ -199,12 +199,12 @@ func createTaskEvent(ctx context.Context, svcCtx *svc.ServiceContext, tenantID i
 		SymbolId:       symbolID,
 		ProductType:    productType,
 		Source:         int64(trade.SourceType_SOURCE_TYPE_TASK),
-		Consumer:       tradeEventConsumer(eventType),
+		Consumer:       TradeEventConsumer(eventType),
 		EventStatus:    int64(trade.EventStatus_EVENT_STATUS_PENDING),
 		MaxRetryCount:  3,
 		NextRetryAt:    now,
-		PayloadVersion: tradeEventPayloadVersion,
-		Payload:        normalizeTradeEventJSON(payload),
+		PayloadVersion: TradeEventPayloadVersion,
+		Payload:        NormalizeTradeEventJSON(payload),
 		CreateTimes:    now,
 		UpdateTimes:    now,
 	})

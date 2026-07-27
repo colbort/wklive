@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/generate"
 	"wklive/common/helper"
@@ -74,6 +75,6 @@ func retrySettlementInstructionTx(ctx context.Context, conn sqlx.SqlConn, svcCtx
 	if err = instructionModel.Update(ctx, item); err != nil {
 		return false, false, err
 	}
-	_, err = models.NewTBizTradeEventModel(conn, svcCtx.Config.CacheRedis).Insert(ctx, &models.TBizTradeEvent{TenantId: tenantID, EventNo: eventNo, EventType: "SETTLEMENT_INSTRUCTION_RETRY_REQUESTED", BizId: item.InstructionNo, BizType: "settlement_instruction", UserId: item.UserId, OperatorId: operatorID, Source: int64(trade.SourceType_SOURCE_TYPE_ADMIN), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: normalizeTradeEventJSON(in.Reason), CreateTimes: now, UpdateTimes: now})
+	_, err = models.NewTBizTradeEventModel(conn, svcCtx.Config.CacheRedis).Insert(ctx, &models.TBizTradeEvent{TenantId: tenantID, EventNo: eventNo, EventType: "SETTLEMENT_INSTRUCTION_RETRY_REQUESTED", BizId: item.InstructionNo, BizType: "settlement_instruction", UserId: item.UserId, OperatorId: operatorID, Source: int64(trade.SourceType_SOURCE_TYPE_ADMIN), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: helpers.NormalizeTradeEventJSON(in.Reason), CreateTimes: now, UpdateTimes: now})
 	return false, false, err
 }

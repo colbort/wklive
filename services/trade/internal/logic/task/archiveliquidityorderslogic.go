@@ -3,6 +3,7 @@ package tasklogic
 import (
 	"context"
 	"time"
+	"wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/utils"
 	"wklive/proto/trade"
@@ -33,7 +34,7 @@ func NewArchiveLiquidityOrdersLogic(ctx context.Context, svcCtx *svc.ServiceCont
 // 归档零成交且已撤销的做市订单
 func (l *ArchiveLiquidityOrdersLogic) ArchiveLiquidityOrders(_ *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
 	if !l.svcCtx.Config.LiquidityOrderArchive.Enabled {
-		return okTaskResp(), nil
+		return helpers.OkTaskResp(), nil
 	}
 	retentionDays := l.svcCtx.Config.LiquidityOrderArchive.RetentionDays
 	if retentionDays <= 0 {
@@ -44,7 +45,7 @@ func (l *ArchiveLiquidityOrdersLogic) ArchiveLiquidityOrders(_ *trade.TradeTaskR
 		batchSize = defaultLiquidityArchiveBatchSize
 	}
 
-	return runTaskWithLock(l.ctx, l.svcCtx, "archive_liquidity_orders", func() (*trade.TradeTaskResp, error) {
+	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "archive_liquidity_orders", func() (*trade.TradeTaskResp, error) {
 		now := utils.NowMillis()
 		cutoff := now - retentionDays*int64(24*time.Hour/time.Millisecond)
 		for {
@@ -63,6 +64,6 @@ func (l *ArchiveLiquidityOrdersLogic) ArchiveLiquidityOrders(_ *trade.TradeTaskR
 				break
 			}
 		}
-		return okTaskResp(), nil
+		return helpers.OkTaskResp(), nil
 	})
 }

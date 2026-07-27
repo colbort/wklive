@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	"wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/generate"
@@ -111,10 +112,10 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		if secondsCfg.MaxExposureAmount.IsPositive() {
 			lockKey := fmt.Sprintf("trade:seconds:exposure:%d:%d", tenantId, in.SymbolId)
 			lockValue := fmt.Sprintf("%d:%d:%d", userId, utils.NowMillis(), in.DurationSeconds)
-			if lockErr := acquireTaskLock(l.ctx, l.svcCtx.Redis, lockKey, lockValue); lockErr != nil {
+			if lockErr := helpers.AcquireTaskLock(l.ctx, l.svcCtx.Redis, lockKey, lockValue); lockErr != nil {
 				return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.OperationNotAllowed, "seconds contract exposure is being updated; retry")}, nil
 			}
-			defer func() { _ = releaseTaskLock(context.Background(), l.svcCtx.Redis, lockKey, lockValue) }()
+			defer func() { _ = helpers.ReleaseTaskLock(context.Background(), l.svcCtx.Redis, lockKey, lockValue) }()
 			exposure, exposureErr := l.svcCtx.TradeOrderSecondsModel.SumExposure(l.ctx, tenantId, in.SymbolId, []int64{
 				int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_ACTIVATING),
 				int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_ACTIVE),
@@ -401,7 +402,7 @@ func (l *PlaceOrderLogic) finalizeAcceptedOrder(order *models.TTradeOrder, freez
 				return err
 			}
 		}
-		_, err := eventModel.Insert(ctx, &models.TBizTradeEvent{TenantId: order.TenantId, EventNo: derivedTradeBizNo(order.OrderNo, "ACCEPTED"), EventType: realtime.EventOrderAccepted, BizId: order.OrderNo, BizType: "order", UserId: order.UserId, SymbolId: order.SymbolId, ProductType: order.ProductType, OperatorId: order.UserId, Source: int64(trade.SourceType_SOURCE_TYPE_USER), Consumer: tradeEventConsumer(realtime.EventOrderAccepted), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, PayloadVersion: tradeEventPayloadVersion, Payload: "{}", CreateTimes: now, UpdateTimes: now})
+		_, err := eventModel.Insert(ctx, &models.TBizTradeEvent{TenantId: order.TenantId, EventNo: derivedTradeBizNo(order.OrderNo, "ACCEPTED"), EventType: realtime.EventOrderAccepted, BizId: order.OrderNo, BizType: "order", UserId: order.UserId, SymbolId: order.SymbolId, ProductType: order.ProductType, OperatorId: order.UserId, Source: int64(trade.SourceType_SOURCE_TYPE_USER), Consumer: helpers.TradeEventConsumer(realtime.EventOrderAccepted), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, PayloadVersion: helpers.TradeEventPayloadVersion, Payload: "{}", CreateTimes: now, UpdateTimes: now})
 		return err
 	}); err != nil {
 		return err

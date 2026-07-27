@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"wklive/services/trade/internal/logic/helpers"
 
 	"wklive/proto/common"
 	"wklive/proto/trade"
@@ -177,7 +178,7 @@ func insertMatchOutboxEvent(ctx context.Context, eventModel models.TBizTradeEven
 		TenantId: order.TenantId, EventNo: eventNo, EventType: eventType,
 		BizId: bizID, BizType: bizType, UserId: order.UserId, SymbolId: order.SymbolId,
 		ProductType: order.ProductType, OperatorId: 0, Source: int64(trade.SourceType_SOURCE_TYPE_SYSTEM),
-		Consumer: tradeEventConsumer(eventType), PayloadVersion: tradeEventPayloadVersion,
+		Consumer: helpers.TradeEventConsumer(eventType), PayloadVersion: helpers.TradeEventPayloadVersion,
 		EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20,
 		NextRetryAt: now, Payload: payload, CreateTimes: now, UpdateTimes: now,
 	})

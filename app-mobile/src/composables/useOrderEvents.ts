@@ -13,6 +13,7 @@ export type PrivateOrderEvent = {
   product_type?: number
   biz_id?: number
   biz_no?: string
+  change_type?: string
   occurred_at: number
 }
 
@@ -32,6 +33,7 @@ export function useOrderEvents(
   let reconnectTimer: number | undefined
   let reconnectDelay = INITIAL_RECONNECT_DELAY
   let disposed = false
+  const seenEventIds = new Set<string>()
 
   function connectionId() {
     if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -69,6 +71,12 @@ export function useOrderEvents(
       await readEventStream(response.body, (payload) => {
         if (controller !== nextController) return
         if (payload.type === 'order.changed' && payload.data) {
+          if (seenEventIds.has(payload.data.id)) return
+          seenEventIds.add(payload.data.id)
+          if (seenEventIds.size > 500) {
+            const oldest = seenEventIds.values().next().value
+            if (oldest) seenEventIds.delete(oldest)
+          }
           onOrderChanged(payload.data)
         } else if (payload.type === 'connected') {
           reconnectDelay = INITIAL_RECONNECT_DELAY

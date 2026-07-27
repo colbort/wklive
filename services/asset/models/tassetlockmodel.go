@@ -107,11 +107,11 @@ func (m *defaultTAssetLockModel) UpdateUnlock(ctx context.Context, lockNo string
 		UPDATE %s
 		SET 
 			unlock_amount = unlock_amount + ?,
-			remain_amount = remain_amount - ?,
 			status = CASE
 				WHEN remain_amount - ? = 0 THEN 3
 				ELSE 2
 			END,
+			remain_amount = remain_amount - ?,
 			update_times = ?
 		WHERE lock_no = ?
 	`, m.table)
@@ -133,11 +133,11 @@ func (m *defaultTAssetLockModel) UpdateDeduct(ctx context.Context, lockNo string
 	query := fmt.Sprintf(`
 		UPDATE %s
 		SET 
-			remain_amount = remain_amount - ?,
 			status = CASE
 				WHEN remain_amount - ? = 0 THEN 4
 				ELSE 2
 			END,
+			remain_amount = remain_amount - ?,
 			update_times = ?
 		WHERE lock_no = ?
 	`, m.table)

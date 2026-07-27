@@ -1,4 +1,4 @@
-package tasklogic
+package helpers
 
 import (
 	"testing"
@@ -17,7 +17,7 @@ func TestTradeEventRetryDelay(t *testing.T) {
 		{retry: 20, want: 512 * time.Second},
 	}
 	for _, tt := range tests {
-		if got := tradeEventRetryDelay(tt.retry); got != tt.want {
+		if got := TradeEventRetryDelay(tt.retry); got != tt.want {
 			t.Fatalf("retry %d: got %s, want %s", tt.retry, got, tt.want)
 		}
 	}

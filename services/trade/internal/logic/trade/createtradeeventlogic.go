@@ -3,6 +3,7 @@ package tradelogic
 import (
 	"context"
 	"errors"
+	"wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/generate"
 	"wklive/common/helper"
@@ -46,11 +47,11 @@ func (l *CreateTradeEventLogic) CreateTradeEvent(in *trade.CreateTradeEventReq) 
 		}
 		consumer := in.Event.Consumer
 		if consumer == "" {
-			consumer = tradeEventConsumer(in.Event.EventType)
+			consumer = helpers.TradeEventConsumer(in.Event.EventType)
 		}
 		payloadVersion := in.Event.PayloadVersion
 		if payloadVersion <= 0 {
-			payloadVersion = tradeEventPayloadVersion
+			payloadVersion = helpers.TradeEventPayloadVersion
 		}
 		_, err = l.svcCtx.BizTradeEventModel.Insert(l.ctx, &models.TBizTradeEvent{
 			TenantId:       in.Event.TenantId,
@@ -73,8 +74,8 @@ func (l *CreateTradeEventLogic) CreateTradeEvent(in *trade.CreateTradeEventReq) 
 			ClaimedAt:      in.Event.ClaimedAt,
 			DeliveredAt:    in.Event.DeliveredAt,
 			PayloadVersion: payloadVersion,
-			Payload:        normalizeTradeEventJSON(in.Event.Payload),
-			ExtData:        nullableTradeEventJSON(in.Event.ExtData),
+			Payload:        helpers.NormalizeTradeEventJSON(in.Event.Payload),
+			ExtData:        helpers.NullableTradeEventJSON(in.Event.ExtData),
 			CreateTimes:    in.Event.CreateTimes,
 			UpdateTimes:    in.Event.UpdateTimes,
 		})

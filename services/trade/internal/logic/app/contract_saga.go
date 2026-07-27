@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/utils"
 	"wklive/proto/asset"
@@ -91,7 +92,7 @@ func failContractSagaInstruction(ctx context.Context, svcCtx *svc.ServiceContext
 		}
 		current.RetryCount++
 		current.Status = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_FAILED)
-		current.NextRetryAt = now + tradeEventRetryDelay(current.RetryCount).Milliseconds()
+		current.NextRetryAt = now + helpers.TradeEventRetryDelay(current.RetryCount).Milliseconds()
 		manual := current.RetryCount >= 20
 		if manual {
 			current.Status, current.NextRetryAt = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_MANUAL_REVIEW), 0

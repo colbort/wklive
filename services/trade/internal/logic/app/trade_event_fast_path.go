@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"sync"
+	"wklive/services/trade/internal/logic/helpers"
 
 	"wklive/services/trade/internal/realtime"
 	"wklive/services/trade/internal/svc"
@@ -31,7 +32,7 @@ func enqueueTradeEventFastPath(ctx context.Context, svcCtx *svc.ServiceContext, 
 		for range tradeEventFastPathWorkers {
 			go func() {
 				for job := range tradeEventFastPathQueue {
-					if err := publishTradeOutboxEvent(job.ctx, job.svcCtx, job.event); err != nil {
+					if err := helpers.PublishTradeOutboxEvent(job.ctx, job.svcCtx, job.event); err != nil {
 						// The durable outbox remains pending and ProcessTradeEvents
 						// will retry it. The fast path must not fail the order.
 						logx.WithContext(job.ctx).Errorf(

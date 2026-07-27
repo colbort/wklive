@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"time"
+	"wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/generate"
@@ -52,7 +53,7 @@ func NewProcessOrderMatchingLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // 订单撮合
 func (l *ProcessOrderMatchingLogic) ProcessOrderMatching(in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
-	return runTaskWithLock(l.ctx, l.svcCtx, "process_order_matching", func() (*trade.TradeTaskResp, error) {
+	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_order_matching", func() (*trade.TradeTaskResp, error) {
 		keys, err := l.svcCtx.TradeOrderModel.FindMatchKeys(l.ctx, in.GetTenantId(), matchableOrderStatuses(), orderMatchKeyLimit)
 		if err != nil {
 			return nil, err
@@ -62,7 +63,7 @@ func (l *ProcessOrderMatchingLogic) ProcessOrderMatching(in *trade.TradeTaskReq)
 				return nil, err
 			}
 		}
-		return okTaskResp(), nil
+		return helpers.OkTaskResp(), nil
 	})
 }
 
@@ -80,14 +81,14 @@ func (l *ProcessOrderMatchingLogic) ProcessOrder(orderID int64) error {
 	key := models.TradeOrderMatchKey{TenantId: order.TenantId, SymbolId: order.SymbolId, ProductType: order.ProductType}
 	lockKey := fmt.Sprintf("trade:matching:%d:%d:%d", key.TenantId, key.ProductType, key.SymbolId)
 	lockValue := fmt.Sprintf("%d", time.Now().UnixNano())
-	if err := acquireTaskLock(l.ctx, l.svcCtx.Redis, lockKey, lockValue); err != nil {
+	if err := helpers.AcquireTaskLock(l.ctx, l.svcCtx.Redis, lockKey, lockValue); err != nil {
 		if i18n.IsStatusError(err, i18n.SyncTaskAlreadyRunning) {
 			return nil
 		}
 		return err
 	}
 	defer func() {
-		if err := releaseTaskLock(context.Background(), l.svcCtx.Redis, lockKey, lockValue); err != nil {
+		if err := helpers.ReleaseTaskLock(context.Background(), l.svcCtx.Redis, lockKey, lockValue); err != nil {
 			l.Errorf("release real-time matching lock failed, key=%s err=%v", lockKey, err)
 		}
 	}()
@@ -324,7 +325,7 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 		return matched, err
 	}
 	for _, event := range createdFillEvents {
-		if publishErr := publishTradeOutboxEvent(l.ctx, l.svcCtx, event); publishErr != nil {
+		if publishErr := helpers.PublishTradeOutboxEvent(l.ctx, l.svcCtx, event); publishErr != nil {
 			l.Errorf("publish real-time fill event failed, eventNo=%s fillId=%d err=%v", event.EventNo, event.FillID, publishErr)
 		}
 	}
