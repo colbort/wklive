@@ -73,6 +73,8 @@ export interface ConfigOptions {
   symbols: ConfigSymbolOption[];
   providers: ConfigProviderOption[];
   tradingUsers: ConfigTradingUserOption[];
+  unavailableSections: string[];
+  warnings: string[];
 }
 
 export interface SymbolConfig {

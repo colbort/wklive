@@ -14,6 +14,8 @@ const configOptions = ref<ConfigOptions>({
   symbols: [],
   providers: [],
   tradingUsers: [],
+  unavailableSections: [],
+  warnings: [],
 });
 const query = reactive({ keyword: "", status: "", limit: 20, cursor: 0 });
 const page = reactive({ total: 0, nextCursor: 0, hasMore: false });
@@ -131,6 +133,11 @@ async function provision() {
 async function openProvision() {
   const response = await liquidityApi.configOptions();
   configOptions.value = response as unknown as ConfigOptions;
+  if (configOptions.value.unavailableSections.includes("symbols")) {
+    ElMessage.error("交易对服务暂不可用，无法安全创建内部做市账户");
+    return;
+  }
+  configOptions.value.warnings.forEach((warning) => ElMessage.warning(warning));
   provisionDialog.value = true;
 }
 

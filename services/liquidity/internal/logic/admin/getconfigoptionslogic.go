@@ -3,7 +3,9 @@ package adminlogic
 import (
 	"context"
 	"fmt"
+	"sort"
 	"strings"
+	"sync"
 
 	"wklive/common/helper"
 	"wklive/proto/common"
@@ -40,8 +42,18 @@ func (l *GetConfigOptionsLogic) GetConfigOptions(in *liquidity.GetConfigOptionsR
 		symbolResp   *trade.GetSymbolListAdminResp
 		userResp     *user.ListInternalTradingUsersResp
 		providerRows []*models.TLiquidityProvider
+		unavailable  []string
+		warnings     []string
+		mu           sync.Mutex
 	)
-	if err := mr.Finish(
+	recordUnavailable := func(section string, err error) {
+		l.Errorf("config options section unavailable: section=%s err=%v", section, err)
+		mu.Lock()
+		defer mu.Unlock()
+		unavailable = append(unavailable, section)
+		warnings = append(warnings, fmt.Sprintf("%s options are temporarily unavailable", section))
+	}
+	_ = mr.Finish(
 		func() error {
 			resp, err := l.svcCtx.TradeClient.GetSymbolList(l.ctx, &trade.GetSymbolListAdminReq{
 				Status:  trade.SymbolStatus_SYMBOL_STATUS_ENABLED,
@@ -49,10 +61,12 @@ func (l *GetConfigOptionsLogic) GetConfigOptions(in *liquidity.GetConfigOptionsR
 				Page:    &common.PageReq{Limit: 100},
 			})
 			if err != nil {
-				return err
+				recordUnavailable("symbols", err)
+				return nil
 			}
 			if resp.GetBase().GetCode() != 200 {
-				return fmt.Errorf("get trade symbol options failed: %s", resp.GetBase().GetMsg())
+				recordUnavailable("symbols", fmt.Errorf("%s", resp.GetBase().GetMsg()))
+				return nil
 			}
 			symbolResp = resp
 			return nil
@@ -63,10 +77,12 @@ func (l *GetConfigOptionsLogic) GetConfigOptions(in *liquidity.GetConfigOptionsR
 				Page:    &common.PageReq{Limit: 100},
 			})
 			if err != nil {
-				return err
+				recordUnavailable("tradingUsers", err)
+				return nil
 			}
 			if resp.GetBase().GetCode() != 200 {
-				return fmt.Errorf("get internal trading user options failed: %s", resp.GetBase().GetMsg())
+				recordUnavailable("tradingUsers", fmt.Errorf("%s", resp.GetBase().GetMsg()))
+				return nil
 			}
 			userResp = resp
 			return nil
@@ -76,16 +92,22 @@ func (l *GetConfigOptionsLogic) GetConfigOptions(in *liquidity.GetConfigOptionsR
 				Keyword: keyword,
 			}, 0, 100)
 			if err != nil {
-				return err
+				recordUnavailable("providers", err)
+				return nil
 			}
 			providerRows = rows
 			return nil
 		},
-	); err != nil {
-		return nil, err
+	)
+	sort.Strings(unavailable)
+	sort.Strings(warnings)
+	if len(unavailable) == 3 {
+		return nil, fmt.Errorf("all config option sections are unavailable")
 	}
 
-	resp := &liquidity.GetConfigOptionsResp{Base: helper.OkResp()}
+	resp := &liquidity.GetConfigOptionsResp{
+		Base: helper.OkResp(), UnavailableSections: unavailable, Warnings: warnings,
+	}
 	for _, symbol := range symbolResp.GetData() {
 		isSpot := symbol.ProductType == common.ProductType_PRODUCT_TYPE_SPOT &&
 			symbol.ContractType == common.ContractType_CONTRACT_TYPE_NOT_APPLICABLE

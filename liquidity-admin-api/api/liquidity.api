@@ -88,6 +88,8 @@ type ConfigOptionsResp {
 	symbols []ConfigSymbolOption `json:"symbols"`
 	providers []ConfigProviderOption `json:"providers"`
 	tradingUsers []ConfigTradingUserOption `json:"tradingUsers"`
+	unavailableSections []string `json:"unavailableSections"`
+	warnings []string `json:"warnings"`
 }
 type ProviderActionReq {
 	id int64 `path:"id"`
