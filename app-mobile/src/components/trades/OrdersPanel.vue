@@ -166,6 +166,8 @@ function openOrderDetail(order: TradeOrder) {
     params: { orderNo: order.orderNo },
     query: {
       symbol: props.selectedTradeSymbol?.displaySymbol || props.selectedTradeSymbol?.symbol || '',
+      priceScale: props.selectedTradeSymbol?.priceScale,
+      qtyScale: props.selectedTradeSymbol?.qtyScale,
     },
   })
 }

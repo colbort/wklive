@@ -11,6 +11,7 @@ import type {
   TradeOrderSeconds,
   TradeOrderSpot,
 } from '@/types/trade'
+import { formatAssetDecimalAmount } from '@/utils/assetAmount'
 
 const route = useRoute()
 const router = useRouter()
@@ -24,6 +25,17 @@ const seconds = ref<TradeOrderSeconds | null>(null)
 
 const orderNo = computed(() => String(route.params.orderNo || ''))
 const symbol = computed(() => String(route.query.symbol || '--'))
+const priceScale = computed(() => normalizeScale(route.query.priceScale, 8))
+const qtyScale = computed(() => normalizeScale(route.query.qtyScale, 8))
+
+function normalizeScale(value: unknown, fallback: number) {
+  const scale = Number(value)
+  return Number.isInteger(scale) && scale >= 0 && scale <= 18 ? scale : fallback
+}
+
+function formatTradeDecimal(value: string, scale: number) {
+  return formatAssetDecimalAmount(value, scale).replace(/(\.\d*?[1-9])0+$|\.0+$/, '$1')
+}
 
 function ok(code: number) {
   return code === 0 || code === 200
@@ -127,6 +139,33 @@ function orderTypeText(value: number) {
   return t('trade.conditional')
 }
 
+function displayOrderQty(value: TradeOrder) {
+  if (Number(value.qty) > 0) return formatTradeDecimal(value.qty, qtyScale.value)
+  // 现货市价买单按计价币金额下单，委托时没有确定的基础币数量。
+  // 成交后以实际 filledQty 作为详情页的数量，避免把原始占位值 0 展示给用户。
+  if (
+    value.productType === 1 &&
+    value.orderType === 2 &&
+    value.side === 1 &&
+    Number(value.amount) > 0
+  ) {
+    return Number(value.filledQty) > 0
+      ? formatTradeDecimal(value.filledQty, qtyScale.value)
+      : '--'
+  }
+  return value.qty || '0'
+}
+
+function displayOrderPrice(value: TradeOrder) {
+  if (Number(value.price) > 0) return formatTradeDecimal(value.price, priceScale.value)
+  if (value.orderType === 2) {
+    return Number(value.avgPrice) > 0
+      ? formatTradeDecimal(value.avgPrice, priceScale.value)
+      : t('trade.market')
+  }
+  return value.price || '0'
+}
+
 function formatTime(value?: number) {
   if (!value) return '--'
   const ms = value > 9999999999 ? value : value * 1000
@@ -167,12 +206,12 @@ watch(
           <h2>{{ t('trade.orderInfo') }}</h2>
           <dl>
             <div><dt>{{ t('trade.orderNo') }}</dt><dd>{{ order.orderNo }}</dd></div>
-            <div><dt>{{ t('trade.price') }}</dt><dd>{{ order.price || '0' }}</dd></div>
-            <div><dt>{{ t('trade.qty') }}</dt><dd>{{ order.qty || '0' }}</dd></div>
+            <div v-if="order.productType !== 3"><dt>{{ t('trade.price') }}</dt><dd>{{ displayOrderPrice(order) }}</dd></div>
+            <div v-if="order.productType !== 3"><dt>{{ t('trade.qty') }}</dt><dd>{{ displayOrderQty(order) }}</dd></div>
             <div><dt>{{ t('trade.orderAmount') }}</dt><dd>{{ order.amount || '0' }}</dd></div>
-            <div><dt>{{ t('trade.filledQty') }}</dt><dd>{{ order.filledQty || '0' }}</dd></div>
-            <div><dt>{{ t('trade.filledAmount') }}</dt><dd>{{ order.filledAmount || '0' }}</dd></div>
-            <div><dt>{{ t('trade.avgPrice') }}</dt><dd>{{ order.avgPrice || '0' }}</dd></div>
+            <div v-if="order.productType !== 3"><dt>{{ t('trade.filledQty') }}</dt><dd>{{ formatTradeDecimal(order.filledQty || '0', qtyScale) }}</dd></div>
+            <div v-if="order.productType !== 3"><dt>{{ t('trade.filledAmount') }}</dt><dd>{{ order.filledAmount || '0' }}</dd></div>
+            <div v-if="order.productType !== 3"><dt>{{ t('trade.avgPrice') }}</dt><dd>{{ formatTradeDecimal(order.avgPrice || '0', priceScale) }}</dd></div>
             <div><dt>{{ t('trade.fee') }}</dt><dd>{{ order.fee || '0' }} {{ order.feeAsset }}</dd></div>
             <div><dt>{{ t('trade.createTime') }}</dt><dd>{{ formatTime(order.createTimes) }}</dd></div>
             <div><dt>{{ t('trade.updateTime') }}</dt><dd>{{ formatTime(order.updateTimes) }}</dd></div>
