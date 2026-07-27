@@ -1,0 +1,39 @@
+Log:
+  Mode: console
+  Encoding: plain
+  Stat: false
+  Level: info
+
+Mysql:
+  DataSource: root:123456@tcp(mysql:3306)/wklive?charset=utf8mb4&parseTime=true&loc=Local
+
+CacheRedis:
+  - Host: redis:6379
+    Type: node
+
+Redis:
+  Key: wklive
+  Host: redis:6379
+  Type: node
+
+DataCache:
+  Key: wklive
+  Host: redis:6379
+  Type: node
+
+LockRedis:
+  Key: wklive
+  Host: redis:6379
+  Type: node
+
+MQ:
+  Brokers:
+    - kafka:9092
+  MinBytes: 1
+  MaxBytes: 10485760
+  MaxAttempts: 5
+  RetryBackoffMs: 1000
+
+Jwt:
+  AccessSecret: change-this-secret-before-production
+  AccessExpire: 3600

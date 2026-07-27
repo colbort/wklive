@@ -1,0 +1,13 @@
+ARG GO_VERSION=1.26.4
+FROM golang:${GO_VERSION}-alpine AS builder
+
+WORKDIR /src
+COPY deploy/dbinit/go.mod deploy/dbinit/go.sum* ./
+RUN go mod download
+COPY deploy/dbinit/main.go .
+RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/db-init .
+
+FROM alpine:3.23
+RUN apk add --no-cache ca-certificates tzdata
+COPY --from=builder /out/db-init /usr/local/bin/db-init
+ENTRYPOINT ["/usr/local/bin/db-init"]
