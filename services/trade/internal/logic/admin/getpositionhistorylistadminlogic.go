@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/trade"
@@ -49,7 +50,7 @@ func (l *GetPositionHistoryListAdminLogic) GetPositionHistoryListAdmin(in *trade
 	}
 	resp := &trade.GetPositionHistoryListAdminResp{Base: pageutil.Base(cursor, limit, len(data), total, lastID)}
 	for _, item := range data {
-		resp.Data = append(resp.Data, positionHistoryToProto(item))
+		resp.Data = append(resp.Data, helpers.PositionHistoryToProto(item))
 	}
 	return resp, nil
 }

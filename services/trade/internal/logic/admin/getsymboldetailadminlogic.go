@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -41,7 +42,7 @@ func (l *GetSymbolDetailAdminLogic) GetSymbolDetailAdmin(in *trade.GetSymbolDeta
 	resp := &trade.GetSymbolDetailAdminResp{
 		Base: helper.OkResp(),
 		Data: &trade.GetSymbolDetailAdminData{
-			Symbol: symbolToProto(item),
+			Symbol: helpers.SymbolToProto(item),
 		},
 	}
 	var spot *models.TTradeSymbolSpot
@@ -98,20 +99,20 @@ func (l *GetSymbolDetailAdminLogic) GetSymbolDetailAdmin(in *trade.GetSymbolDeta
 		return nil, err
 	}
 
-	resp.Data.Spot = spotSymbolToProto(spot)
-	resp.Data.Contract = contractSymbolToProto(contractCfg)
+	resp.Data.Spot = helpers.SpotSymbolToProto(spot)
+	resp.Data.Contract = helpers.ContractSymbolToProto(contractCfg)
 	for _, cfg := range leverageConfigs {
-		defaultLeverage, findErr := findDefaultLeverage(l.ctx, l.svcCtx.SymbolLeverageDefaultModel, cfg.TenantId, cfg.SymbolId, cfg.MarginMode)
+		defaultLeverage, findErr := helpers.FindDefaultLeverage(l.ctx, l.svcCtx.SymbolLeverageDefaultModel, cfg.TenantId, cfg.SymbolId, cfg.MarginMode)
 		if findErr != nil {
 			return nil, findErr
 		}
-		resp.Data.LeverageConfigs = append(resp.Data.LeverageConfigs, symbolLeverageConfigToProto(cfg, defaultLeverage))
+		resp.Data.LeverageConfigs = append(resp.Data.LeverageConfigs, helpers.SymbolLeverageConfigToProto(cfg, defaultLeverage))
 	}
 	for _, cfg := range secondsConfigs {
-		resp.Data.SecondsConfigs = append(resp.Data.SecondsConfigs, secondsSymbolToProto(cfg))
+		resp.Data.SecondsConfigs = append(resp.Data.SecondsConfigs, helpers.SecondsSymbolToProto(cfg))
 	}
 	for _, session := range sessions {
-		resp.Data.Sessions = append(resp.Data.Sessions, symbolSessionToProto(session))
+		resp.Data.Sessions = append(resp.Data.Sessions, helpers.SymbolSessionToProto(session))
 	}
 	return resp, nil
 }

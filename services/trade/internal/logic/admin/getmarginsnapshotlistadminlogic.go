@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/trade"
@@ -37,7 +38,7 @@ func (l *GetMarginSnapshotListAdminLogic) GetMarginSnapshotListAdmin(in *trade.G
 	}
 	resp := &trade.GetMarginSnapshotListAdminResp{Base: pageutil.Base(cursor, limit, len(items), total, lastID)}
 	for _, item := range items {
-		resp.Data = append(resp.Data, marginSnapshotToProto(item))
+		resp.Data = append(resp.Data, helpers.MarginSnapshotToProto(item))
 	}
 	return resp, nil
 }

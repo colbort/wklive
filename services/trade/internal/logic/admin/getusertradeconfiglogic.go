@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/proto/trade"
@@ -34,7 +35,7 @@ func (l *GetUserTradeConfigLogic) GetUserTradeConfig(in *trade.GetUserTradeConfi
 	}
 	resp := &trade.GetUserTradeConfigResp{Base: helper.OkResp()}
 	if item != nil {
-		resp.Data = userConfigToProto(item)
+		resp.Data = helpers.UserConfigToProto(item)
 	}
 	return resp, nil
 }

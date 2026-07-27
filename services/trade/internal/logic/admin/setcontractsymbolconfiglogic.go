@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -75,15 +76,15 @@ func (l *SetContractSymbolConfigLogic) SetContractSymbolConfig(in *trade.SetCont
 			CreateTimes:       now,
 		}
 	}
-	cfg.ContractSize = mustParseFloat(in.ContractSize)
-	cfg.Multiplier = mustParseFloat(in.Multiplier)
-	cfg.MaintenanceMarginRate = mustParseFloat(in.MaintenanceMarginRate)
-	cfg.InitialMarginRate = mustParseFloat(in.InitialMarginRate)
-	cfg.MakerFeeRate = mustParseFloat(in.MakerFeeRate)
-	cfg.TakerFeeRate = mustParseFloat(in.TakerFeeRate)
+	cfg.ContractSize = helpers.MustParseFloat(in.ContractSize)
+	cfg.Multiplier = helpers.MustParseFloat(in.Multiplier)
+	cfg.MaintenanceMarginRate = helpers.MustParseFloat(in.MaintenanceMarginRate)
+	cfg.InitialMarginRate = helpers.MustParseFloat(in.InitialMarginRate)
+	cfg.MakerFeeRate = helpers.MustParseFloat(in.MakerFeeRate)
+	cfg.TakerFeeRate = helpers.MustParseFloat(in.TakerFeeRate)
 	cfg.FundingIntervalMinutes = int64(in.FundingIntervalMinutes)
-	cfg.FundingRateCap = mustParseFloat(in.FundingRateCap)
-	cfg.FundingRateFloor = mustParseFloat(in.FundingRateFloor)
+	cfg.FundingRateCap = helpers.MustParseFloat(in.FundingRateCap)
+	cfg.FundingRateFloor = helpers.MustParseFloat(in.FundingRateFloor)
 	cfg.FundingRateSource = in.FundingRateSource
 	cfg.IndexSymbol = in.IndexSymbol
 	cfg.MarkPriceSource = in.MarkPriceSource
@@ -93,14 +94,14 @@ func (l *SetContractSymbolConfigLogic) SetContractSymbolConfig(in *trade.SetCont
 	cfg.MatchingStopTime = in.MatchingStopTime
 	cfg.SettlementWindowSeconds = in.SettlementWindowSeconds
 	cfg.SettlementPriceAlgorithm = in.SettlementPriceAlgorithm
-	cfg.DeliveryFeeRate = mustParseFloat(in.DeliveryFeeRate)
-	cfg.LiquidationFeeRate = mustParseFloat(in.LiquidationFeeRate)
+	cfg.DeliveryFeeRate = helpers.MustParseFloat(in.DeliveryFeeRate)
+	cfg.LiquidationFeeRate = helpers.MustParseFloat(in.LiquidationFeeRate)
 	cfg.SupportCross = in.SupportCross
 	cfg.SupportIsolated = in.SupportIsolated
-	cfg.OpenLongEnabled = enableToModel(in.OpenLongEnabled, cfg.OpenLongEnabled)
-	cfg.OpenShortEnabled = enableToModel(in.OpenShortEnabled, cfg.OpenShortEnabled)
-	cfg.CloseLongEnabled = enableToModel(in.CloseLongEnabled, cfg.CloseLongEnabled)
-	cfg.CloseShortEnabled = enableToModel(in.CloseShortEnabled, cfg.CloseShortEnabled)
+	cfg.OpenLongEnabled = helpers.EnableToModel(in.OpenLongEnabled, cfg.OpenLongEnabled)
+	cfg.OpenShortEnabled = helpers.EnableToModel(in.OpenShortEnabled, cfg.OpenShortEnabled)
+	cfg.CloseLongEnabled = helpers.EnableToModel(in.CloseLongEnabled, cfg.CloseLongEnabled)
+	cfg.CloseShortEnabled = helpers.EnableToModel(in.CloseShortEnabled, cfg.CloseShortEnabled)
 	cfg.UpdateTimes = now
 	if cfg.Id == 0 {
 		if _, err = l.svcCtx.TradeSymbolContractModel.Insert(l.ctx, cfg); err != nil {

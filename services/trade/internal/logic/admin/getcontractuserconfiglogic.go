@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/proto/trade"
@@ -32,5 +33,5 @@ func (l *GetContractUserConfigLogic) GetContractUserConfig(in *trade.GetContract
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
-	return &trade.GetContractUserConfigResp{Base: helper.OkResp(), Data: contractUserConfigToProto(item)}, nil
+	return &trade.GetContractUserConfigResp{Base: helper.OkResp(), Data: helpers.ContractUserConfigToProto(item)}, nil
 }

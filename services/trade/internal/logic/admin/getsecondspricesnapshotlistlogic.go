@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"wklive/common/pageutil"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/mapper"
@@ -28,7 +29,7 @@ func NewGetSecondsPriceSnapshotListLogic(ctx context.Context, svcCtx *svc.Servic
 
 func (l *GetSecondsPriceSnapshotListLogic) GetSecondsPriceSnapshotList(in *trade.GetSecondsPriceSnapshotListReq) (*trade.GetSecondsPriceSnapshotListResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
-	d, total, err := l.svcCtx.TradeSecondsPriceModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: adminTenantID(l.ctx, in.TenantId), OrderId: in.OrderId, SnapshotType: int64(in.SnapshotType)}, cursor, limit)
+	d, total, err := l.svcCtx.TradeSecondsPriceModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: helpers.AdminTenantID(l.ctx, in.TenantId), OrderId: in.OrderId, SnapshotType: int64(in.SnapshotType)}, cursor, limit)
 	if err != nil {
 		return nil, err
 	}

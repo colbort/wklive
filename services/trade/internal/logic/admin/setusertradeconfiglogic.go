@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -53,7 +54,7 @@ func (l *SetUserTradeConfigLogic) SetUserTradeConfig(in *trade.SetUserTradeConfi
 			CreateTimes:  now,
 		}
 	}
-	item.TradeEnabled = enableToModel(in.TradeEnabled, item.TradeEnabled)
+	item.TradeEnabled = helpers.EnableToModel(in.TradeEnabled, item.TradeEnabled)
 	item.UpdateTimes = now
 	if item.Id == 0 {
 		_, err = l.svcCtx.TradeUserConfigModel.Insert(l.ctx, item)

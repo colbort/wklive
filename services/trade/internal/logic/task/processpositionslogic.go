@@ -67,7 +67,7 @@ func (l *ProcessPositionsLogic) refreshMarkPrices(in *trade.TradeTaskReq) error 
 				l.Errorf("skip stale mark price, positionId=%d err=%v", position.Id, err)
 				continue
 			}
-			position.MarkPrice = mustParseFloat(quote.LastPrice)
+			position.MarkPrice = helpers.MustParseFloat(quote.LastPrice)
 			position.MarkSnapshotId = quote.SnapshotID
 			tier, err := NewProcessContractPositionFillsLogic(l.ctx, l.svcCtx).riskTierForPosition(l.ctx, position, contract)
 			if err != nil {

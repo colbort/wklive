@@ -91,7 +91,7 @@ func (l *ProcessTradeEventsLogic) recoverSettlementPendingOrders(in *trade.Trade
 func (l *ProcessTradeEventsLogic) recoverTerminatingOrders(in *trade.TradeTaskReq) error {
 	cursor := int64(0)
 	for {
-		orders, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{TenantId: in.GetTenantId(), Statuses: terminatingOrderStatuses()}, cursor, 100)
+		orders, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{TenantId: in.GetTenantId(), Statuses: helpers.TerminatingOrderStatuses()}, cursor, 100)
 		if err != nil {
 			return err
 		}
@@ -144,7 +144,7 @@ func (l *ProcessTradeEventsLogic) recoverFreezingOrders(in *trade.TradeTaskReq) 
 	for {
 		orders, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{
 			TenantId: in.GetTenantId(),
-			Statuses: freezingOrderStatuses(),
+			Statuses: helpers.FreezingOrderStatuses(),
 		}, cursor, 100)
 		if err != nil {
 			return err
@@ -165,7 +165,7 @@ func (l *ProcessTradeEventsLogic) recoverFreezingOrders(in *trade.TradeTaskReq) 
 }
 
 func (l *ProcessTradeEventsLogic) recoverFreezingOrder(order *models.TTradeOrder, now int64) error {
-	if !shouldRecoverFreezingOrder(order, now) {
+	if !helpers.ShouldRecoverFreezingOrder(order, now) {
 		return nil
 	}
 	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, order.SymbolId)
@@ -225,7 +225,7 @@ func (l *ProcessTradeEventsLogic) triggerWaitingOrders(in *trade.TradeTaskReq) e
 	for {
 		orders, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{
 			TenantId: in.GetTenantId(),
-			Statuses: triggerWaitingOrderStatuses(),
+			Statuses: helpers.TriggerWaitingOrderStatuses(),
 		}, cursor, 100)
 		if err != nil {
 			return err
@@ -247,7 +247,7 @@ func (l *ProcessTradeEventsLogic) triggerWaitingOrders(in *trade.TradeTaskReq) e
 				}
 				priceCache[key] = triggerPrice
 			}
-			if !shouldTriggerOrder(order, triggerPrice) {
+			if !helpers.ShouldTriggerOrder(order, triggerPrice) {
 				continue
 			}
 			if err := l.triggerOrderIfNeeded(order.Id, triggerPrice, now); err != nil {
@@ -271,10 +271,10 @@ func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPri
 		if err != nil {
 			return err
 		}
-		if !shouldTriggerOrder(order, triggerPrice) {
+		if !helpers.ShouldTriggerOrder(order, triggerPrice) {
 			return nil
 		}
-		ext, err := parseOrderAssetExt(conv.NullStringValue(order.BizExt))
+		ext, err := helpers.ParseOrderAssetExt(conv.NullStringValue(order.BizExt))
 		if err != nil {
 			return err
 		}
@@ -284,13 +284,13 @@ func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPri
 		ext.TriggeredAt = now
 		ext.TriggerPrice = conv.FloatString(triggerPrice)
 		ext.TriggerSource = "last_price"
-		extValue, err := marshalOrderAssetExt(ext)
+		extValue, err := helpers.MarshalOrderAssetExt(ext)
 		if err != nil {
 			return err
 		}
 		order.BizExt = sql.NullString{String: extValue, Valid: extValue != ""}
-		order.OrderType = triggeredOrderExecutionType(order)
-		order.TimeInForce = triggeredTimeInForce(order)
+		order.OrderType = helpers.TriggeredOrderExecutionType(order)
+		order.TimeInForce = helpers.TriggeredTimeInForce(order)
 		order.Status = int64(trade.OrderStatus_ORDER_STATUS_PENDING)
 		order.UpdateTimes = now
 		if err := orderModel.Update(ctx, order); err != nil {
@@ -329,7 +329,7 @@ func (l *ProcessTradeEventsLogic) expireImmediateOrders(in *trade.TradeTaskReq) 
 	for {
 		orders, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{
 			TenantId: in.GetTenantId(),
-			Statuses: matchableOrderStatuses(),
+			Statuses: helpers.MatchableOrderStatuses(),
 		}, cursor, 100)
 		if err != nil {
 			return err
@@ -367,12 +367,12 @@ func (l *ProcessTradeEventsLogic) expireOrderIfNeeded(orderID, now int64) (*mode
 		if err != nil {
 			return err
 		}
-		if !shouldExpireOrder(order, now) {
+		if !helpers.ShouldExpireOrder(order, now) {
 			return nil
 		}
 		order.Status = int64(trade.OrderStatus_ORDER_STATUS_EXPIRING)
 		order.CanceledQty = decimalMaxZero(order.Qty.Sub(order.FilledQty))
-		order.CancelReason = orderExpireReason(order)
+		order.CancelReason = helpers.OrderExpireReason(order)
 		order.Version++
 		order.UpdateTimes = now
 		if err := orderModel.Update(ctx, order); err != nil {

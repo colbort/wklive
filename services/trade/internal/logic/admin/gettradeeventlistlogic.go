@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/common/utils"
@@ -53,7 +54,7 @@ func (l *GetTradeEventListLogic) GetTradeEventList(in *trade.GetTradeEventListRe
 	}
 	resp := &trade.GetTradeEventListResp{Base: pageutil.Base(cursor, limit, len(data), total, lastID)}
 	for _, item := range data {
-		resp.Data = append(resp.Data, tradeEventToProto(item))
+		resp.Data = append(resp.Data, helpers.TradeEventToProto(item))
 	}
 	return resp, nil
 }

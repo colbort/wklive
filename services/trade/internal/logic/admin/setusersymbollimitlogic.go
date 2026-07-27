@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"time"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -55,19 +56,19 @@ func (l *SetUserSymbolLimitLogic) SetUserSymbolLimit(in *trade.SetUserSymbolLimi
 			CreateTimes: now,
 		}
 	}
-	item.MaxPositionQty = mustParseFloat(in.MaxPositionQty)
-	item.MaxPositionNotional = mustParseFloat(in.MaxPositionNotional)
+	item.MaxPositionQty = helpers.MustParseFloat(in.MaxPositionQty)
+	item.MaxPositionNotional = helpers.MustParseFloat(in.MaxPositionNotional)
 	item.MaxOpenOrders = int64(in.MaxOpenOrders)
-	item.MaxOrderQty = mustParseFloat(in.MaxOrderQty)
-	item.MaxOrderNotional = mustParseFloat(in.MaxOrderNotional)
-	item.MinOrderQty = mustParseFloat(in.MinOrderQty)
-	item.MinOrderNotional = mustParseFloat(in.MinOrderNotional)
-	item.MaxLongPositionQty = mustParseFloat(in.MaxLongPositionQty)
-	item.MaxShortPositionQty = mustParseFloat(in.MaxShortPositionQty)
-	item.PriceDeviationRate = mustParseFloat(in.PriceDeviationRate)
+	item.MaxOrderQty = helpers.MustParseFloat(in.MaxOrderQty)
+	item.MaxOrderNotional = helpers.MustParseFloat(in.MaxOrderNotional)
+	item.MinOrderQty = helpers.MustParseFloat(in.MinOrderQty)
+	item.MinOrderNotional = helpers.MustParseFloat(in.MinOrderNotional)
+	item.MaxLongPositionQty = helpers.MustParseFloat(in.MaxLongPositionQty)
+	item.MaxShortPositionQty = helpers.MustParseFloat(in.MaxShortPositionQty)
+	item.PriceDeviationRate = helpers.MustParseFloat(in.PriceDeviationRate)
 	item.OperatorId = in.OperatorId
 	item.Source = int64(in.Source)
-	item.Enabled = enableToModel(in.Enabled, item.Enabled)
+	item.Enabled = helpers.EnableToModel(in.Enabled, item.Enabled)
 	item.EffectiveStartTime = in.EffectiveStartTime
 	item.EffectiveEndTime = in.EffectiveEndTime
 	item.Remark = in.Remark

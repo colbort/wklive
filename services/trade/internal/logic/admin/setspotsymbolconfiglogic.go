@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -58,10 +59,10 @@ func (l *SetSpotSymbolConfigLogic) SetSpotSymbolConfig(in *trade.SetSpotSymbolCo
 			CreateTimes: now,
 		}
 	}
-	cfg.MakerFeeRate = mustParseFloat(in.MakerFeeRate)
-	cfg.TakerFeeRate = mustParseFloat(in.TakerFeeRate)
-	cfg.BuyEnabled = enableToModel(in.BuyEnabled, cfg.BuyEnabled)
-	cfg.SellEnabled = enableToModel(in.SellEnabled, cfg.SellEnabled)
+	cfg.MakerFeeRate = helpers.MustParseFloat(in.MakerFeeRate)
+	cfg.TakerFeeRate = helpers.MustParseFloat(in.TakerFeeRate)
+	cfg.BuyEnabled = helpers.EnableToModel(in.BuyEnabled, cfg.BuyEnabled)
+	cfg.SellEnabled = helpers.EnableToModel(in.SellEnabled, cfg.SellEnabled)
 	cfg.UpdateTimes = now
 	if cfg.Id == 0 {
 		if _, err = l.svcCtx.TradeSymbolSpotModel.Insert(l.ctx, cfg); err != nil {

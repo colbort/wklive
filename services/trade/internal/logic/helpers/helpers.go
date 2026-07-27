@@ -1,4 +1,4 @@
-package adminlogic
+package helpers
 
 import (
 	"context"
@@ -18,30 +18,30 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-func mustParseFloat(v string) decimal.Decimal {
+func MustParseFloat(v string) decimal.Decimal {
 	value, _ := conv.ParseDecimalField(v)
 	return value
 }
 
-func enableToProto(value int64) common.Enable {
+func EnableToProto(value int64) common.Enable {
 	return common.Enable(value)
 }
 
-func enableToModel(value common.Enable, defaultValue int64) int64 {
+func EnableToModel(value common.Enable, defaultValue int64) int64 {
 	if value == common.Enable_ENABLE_UNKNOWN {
 		return defaultValue
 	}
 	return int64(value)
 }
 
-func yesNoToModel(value common.YesNo, defaultValue int64) int64 {
+func YesNoToModel(value common.YesNo, defaultValue int64) int64 {
 	if value == common.YesNo_YES_NO_UNKNOWN {
 		return defaultValue
 	}
 	return int64(value)
 }
 
-type orderAssetExt struct {
+type OrderAssetExt struct {
 	FreezeNo          string `json:"freezeNo,omitempty"`
 	OriginalOrderType int64  `json:"originalOrderType,omitempty"`
 	TriggeredAt       int64  `json:"triggeredAt,omitempty"`
@@ -49,7 +49,7 @@ type orderAssetExt struct {
 	TriggerSource     string `json:"triggerSource,omitempty"`
 }
 
-func symbolToProto(item *models.TTradeSymbol) *trade.TradeSymbol {
+func SymbolToProto(item *models.TTradeSymbol) *trade.TradeSymbol {
 	if item == nil {
 		return nil
 	}
@@ -86,7 +86,7 @@ func symbolToProto(item *models.TTradeSymbol) *trade.TradeSymbol {
 	}
 }
 
-func spotSymbolToProto(item *models.TTradeSymbolSpot) *trade.TradeSymbolSpot {
+func SpotSymbolToProto(item *models.TTradeSymbolSpot) *trade.TradeSymbolSpot {
 	if item == nil {
 		return nil
 	}
@@ -96,14 +96,14 @@ func spotSymbolToProto(item *models.TTradeSymbolSpot) *trade.TradeSymbolSpot {
 		SymbolId:     item.SymbolId,
 		MakerFeeRate: conv.FloatString(item.MakerFeeRate),
 		TakerFeeRate: conv.FloatString(item.TakerFeeRate),
-		BuyEnabled:   enableToProto(item.BuyEnabled),
-		SellEnabled:  enableToProto(item.SellEnabled),
+		BuyEnabled:   EnableToProto(item.BuyEnabled),
+		SellEnabled:  EnableToProto(item.SellEnabled),
 		CreateTimes:  item.CreateTimes,
 		UpdateTimes:  item.UpdateTimes,
 	}
 }
 
-func contractSymbolToProto(item *models.TTradeSymbolContract) *trade.TradeSymbolContract {
+func ContractSymbolToProto(item *models.TTradeSymbolContract) *trade.TradeSymbolContract {
 	if item == nil {
 		return nil
 	}
@@ -133,16 +133,16 @@ func contractSymbolToProto(item *models.TTradeSymbolContract) *trade.TradeSymbol
 		LiquidationFeeRate:       conv.FloatString(item.LiquidationFeeRate),
 		SupportCross:             item.SupportCross,
 		SupportIsolated:          item.SupportIsolated,
-		OpenLongEnabled:          enableToProto(item.OpenLongEnabled),
-		OpenShortEnabled:         enableToProto(item.OpenShortEnabled),
-		CloseLongEnabled:         enableToProto(item.CloseLongEnabled),
-		CloseShortEnabled:        enableToProto(item.CloseShortEnabled),
+		OpenLongEnabled:          EnableToProto(item.OpenLongEnabled),
+		OpenShortEnabled:         EnableToProto(item.OpenShortEnabled),
+		CloseLongEnabled:         EnableToProto(item.CloseLongEnabled),
+		CloseShortEnabled:        EnableToProto(item.CloseShortEnabled),
 		CreateTimes:              item.CreateTimes,
 		UpdateTimes:              item.UpdateTimes,
 	}
 }
 
-func secondsSymbolToProto(item *models.TTradeSymbolSeconds) *trade.TradeSymbolSeconds {
+func SecondsSymbolToProto(item *models.TTradeSymbolSeconds) *trade.TradeSymbolSeconds {
 	if item == nil {
 		return nil
 	}
@@ -155,12 +155,12 @@ func secondsSymbolToProto(item *models.TTradeSymbolSeconds) *trade.TradeSymbolSe
 		FeeRate: conv.FloatString(item.FeeRate), SettlementWindowMs: item.SettlementWindowMs,
 		SettlementPriceAlgorithm: item.SettlementPriceAlgorithm,
 		DrawTolerance:            conv.FloatString(item.DrawTolerance), MaxExposureAmount: conv.FloatString(item.MaxExposureAmount),
-		UpEnabled: enableToProto(item.UpEnabled), DownEnabled: enableToProto(item.DownEnabled),
+		UpEnabled: EnableToProto(item.UpEnabled), DownEnabled: EnableToProto(item.DownEnabled),
 		CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
 	}
 }
 
-func symbolSessionToProto(item *models.TTradeSymbolSession) *trade.TradeSymbolSession {
+func SymbolSessionToProto(item *models.TTradeSymbolSession) *trade.TradeSymbolSession {
 	if item == nil {
 		return nil
 	}
@@ -172,11 +172,11 @@ func symbolSessionToProto(item *models.TTradeSymbolSession) *trade.TradeSymbolSe
 		StartSecond: item.StartSecond,
 		EndSecond:   item.EndSecond,
 		Timezone:    item.Timezone,
-		Enabled:     enableToProto(item.Enabled),
+		Enabled:     EnableToProto(item.Enabled),
 	}
 }
 
-func userConfigToProto(item *models.TTradeUserConfig) *trade.TradeUserConfig {
+func UserConfigToProto(item *models.TTradeUserConfig) *trade.TradeUserConfig {
 	if item == nil {
 		return nil
 	}
@@ -186,20 +186,20 @@ func userConfigToProto(item *models.TTradeUserConfig) *trade.TradeUserConfig {
 		UserId:       item.UserId,
 		ProductType:  common.ProductType(item.ProductType),
 		SymbolId:     item.SymbolId,
-		TradeEnabled: enableToProto(item.TradeEnabled),
+		TradeEnabled: EnableToProto(item.TradeEnabled),
 		CreateTimes:  item.CreateTimes,
 		UpdateTimes:  item.UpdateTimes,
 	}
 }
 
-func contractUserConfigToProto(item *models.TContractUserConfig) *trade.ContractUserConfig {
+func ContractUserConfigToProto(item *models.TContractUserConfig) *trade.ContractUserConfig {
 	if item == nil {
 		return nil
 	}
 	return &trade.ContractUserConfig{Id: item.Id, TenantId: item.TenantId, UserId: item.UserId, SymbolId: item.SymbolId, PositionMode: trade.PositionMode(item.PositionMode), MarginMode: trade.MarginMode(item.MarginMode), DefaultLeverage: item.DefaultLeverage, CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes}
 }
 
-func orderToProto(item *models.TTradeOrder) *trade.TradeOrder {
+func OrderToProto(item *models.TTradeOrder) *trade.TradeOrder {
 	if item == nil {
 		return nil
 	}
@@ -219,7 +219,7 @@ func orderToProto(item *models.TTradeOrder) *trade.TradeOrder {
 		OrderType:         trade.OrderType(item.OrderType),
 		TimeInForce:       trade.TimeInForce(item.TimeInForce),
 		Status:            trade.OrderStatus(item.Status),
-		DisplayStatus:     orderDisplayStatus(item),
+		DisplayStatus:     OrderDisplayStatus(item),
 		Price:             conv.FloatString(item.Price),
 		Qty:               conv.FloatString(item.Qty),
 		Amount:            conv.FloatString(item.Amount),
@@ -247,7 +247,7 @@ func orderToProto(item *models.TTradeOrder) *trade.TradeOrder {
 	}
 }
 
-func orderDisplayStatus(order *models.TTradeOrder) trade.OrderDisplayStatus {
+func OrderDisplayStatus(order *models.TTradeOrder) trade.OrderDisplayStatus {
 	if order == nil {
 		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_UNKNOWN
 	}
@@ -283,7 +283,7 @@ func orderDisplayStatus(order *models.TTradeOrder) trade.OrderDisplayStatus {
 	}
 }
 
-func secondsOrderDisplayStatus(status int64) trade.OrderDisplayStatus {
+func SecondsOrderDisplayStatus(status int64) trade.OrderDisplayStatus {
 	switch trade.SecondsSettlementStatus(status) {
 	case trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_PENDING_FREEZE:
 		return trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_FREEZING
@@ -306,7 +306,7 @@ func secondsOrderDisplayStatus(status int64) trade.OrderDisplayStatus {
 	}
 }
 
-func orderSpotToProto(item *models.TTradeOrderSpot) *trade.TradeOrderSpot {
+func OrderSpotToProto(item *models.TTradeOrderSpot) *trade.TradeOrderSpot {
 	if item == nil {
 		return nil
 	}
@@ -323,7 +323,7 @@ func orderSpotToProto(item *models.TTradeOrderSpot) *trade.TradeOrderSpot {
 	}
 }
 
-func orderContractToProto(item *models.TTradeOrderContract) *trade.TradeOrderContract {
+func OrderContractToProto(item *models.TTradeOrderContract) *trade.TradeOrderContract {
 	if item == nil {
 		return nil
 	}
@@ -347,7 +347,30 @@ func orderContractToProto(item *models.TTradeOrderContract) *trade.TradeOrderCon
 	}
 }
 
-func fillToProto(item *models.TTradeFill) *trade.TradeFill {
+func OrderSecondsToProto(item *models.TTradeOrderSeconds) *trade.TradeOrderSeconds {
+	if item == nil {
+		return nil
+	}
+	return &trade.TradeOrderSeconds{
+		Id: item.Id, TenantId: item.TenantId, OrderId: item.OrderId,
+		Direction: trade.SecondsDirection(item.Direction), DurationSeconds: item.DurationSeconds,
+		StakeAsset: item.StakeAsset, StakeAmount: conv.FloatString(item.StakeAmount),
+		PayoutRate: conv.FloatString(item.PayoutRate), FeeRate: conv.FloatString(item.FeeRate),
+		FrozenAt: item.FrozenAt, ActivatedAt: item.ActivatedAt,
+		StartPrice: conv.FloatString(item.StartPrice), StartPriceTime: item.StartPriceTime,
+		StartPriceSource: item.StartPriceSource, ExpireTime: item.ExpireTime,
+		SettlementPrice: conv.FloatString(item.SettlementPrice), SettlementPriceTime: item.SettlementPriceTime,
+		SettlementPriceSource: item.SettlementPriceSource, PriceAlgorithm: item.PriceAlgorithm,
+		Result: trade.SecondsResult(item.Result), ProfitAmount: conv.FloatString(item.ProfitAmount),
+		FeeAmount: conv.FloatString(item.FeeAmount), ReturnAmount: conv.FloatString(item.ReturnAmount),
+		SettlementStatus: trade.SecondsSettlementStatus(item.SettlementStatus),
+		ReservationNo:    item.ReservationNo, SettlementReason: item.SettlementReason,
+		SettledAt: item.SettledAt, Version: item.Version,
+		CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
+	}
+}
+
+func FillToProto(item *models.TTradeFill) *trade.TradeFill {
 	if item == nil {
 		return nil
 	}
@@ -380,7 +403,7 @@ func fillToProto(item *models.TTradeFill) *trade.TradeFill {
 	}
 }
 
-func cancelLogToProto(item *models.TTradeCancelLog) *trade.TradeCancelLog {
+func CancelLogToProto(item *models.TTradeCancelLog) *trade.TradeCancelLog {
 	if item == nil {
 		return nil
 	}
@@ -396,7 +419,7 @@ func cancelLogToProto(item *models.TTradeCancelLog) *trade.TradeCancelLog {
 	}
 }
 
-func positionToProto(item *models.TContractPosition) *trade.ContractPosition {
+func PositionToProto(item *models.TContractPosition) *trade.ContractPosition {
 	if item == nil {
 		return nil
 	}
@@ -435,7 +458,7 @@ func positionToProto(item *models.TContractPosition) *trade.ContractPosition {
 	}
 }
 
-func positionHistoryToProto(item *models.TContractPositionHistory) *trade.ContractPositionHistory {
+func PositionHistoryToProto(item *models.TContractPositionHistory) *trade.ContractPositionHistory {
 	if item == nil {
 		return nil
 	}
@@ -476,7 +499,7 @@ func positionHistoryToProto(item *models.TContractPositionHistory) *trade.Contra
 	}
 }
 
-func marginSnapshotToProto(item *models.TContractMarginSnapshot) *trade.ContractMarginSnapshot {
+func MarginSnapshotToProto(item *models.TContractMarginSnapshot) *trade.ContractMarginSnapshot {
 	if item == nil {
 		return nil
 	}
@@ -500,7 +523,7 @@ func marginSnapshotToProto(item *models.TContractMarginSnapshot) *trade.Contract
 	}
 }
 
-func leverageConfigToProto(item *models.TContractLeverageConfig) *trade.ContractLeverageConfig {
+func LeverageConfigToProto(item *models.TContractLeverageConfig) *trade.ContractLeverageConfig {
 	if item == nil {
 		return nil
 	}
@@ -514,14 +537,14 @@ func leverageConfigToProto(item *models.TContractLeverageConfig) *trade.Contract
 		ShortLeverage: item.ShortLeverage,
 		OperatorId:    item.OperatorId,
 		Source:        trade.SourceType(item.Source),
-		Enabled:       enableToProto(item.Enabled),
+		Enabled:       EnableToProto(item.Enabled),
 		Remark:        item.Remark,
 		CreateTimes:   item.CreateTimes,
 		UpdateTimes:   item.UpdateTimes,
 	}
 }
 
-func symbolLeverageConfigToProto(item *models.TTradeSymbolLeverageConfig, defaultLeverage ...int64) *trade.TradeSymbolLeverageConfig {
+func SymbolLeverageConfigToProto(item *models.TTradeSymbolLeverageConfig, defaultLeverage ...int64) *trade.TradeSymbolLeverageConfig {
 	if item == nil {
 		return nil
 	}
@@ -534,9 +557,9 @@ func symbolLeverageConfigToProto(item *models.TTradeSymbolLeverageConfig, defaul
 		TenantId:        item.TenantId,
 		SymbolId:        item.SymbolId,
 		MarginMode:      trade.MarginMode(item.MarginMode),
-		LeverageValues:  parseLeverageValues(item.LeverageValues),
+		LeverageValues:  ParseLeverageValues(item.LeverageValues),
 		DefaultLeverage: defaultValue,
-		Enabled:         enableToProto(item.Enabled),
+		Enabled:         EnableToProto(item.Enabled),
 		Sort:            item.Sort,
 		Remark:          item.Remark,
 		CreateTimes:     item.CreateTimes,
@@ -544,7 +567,7 @@ func symbolLeverageConfigToProto(item *models.TTradeSymbolLeverageConfig, defaul
 	}
 }
 
-func findDefaultLeverage(ctx context.Context, model models.TTradeSymbolLeverageDefaultModel, tenantId, symbolId, marginMode int64) (int64, error) {
+func FindDefaultLeverage(ctx context.Context, model models.TTradeSymbolLeverageDefaultModel, tenantId, symbolId, marginMode int64) (int64, error) {
 	if model == nil {
 		return 0, nil
 	}
@@ -558,10 +581,10 @@ func findDefaultLeverage(ctx context.Context, model models.TTradeSymbolLeverageD
 	return item.Leverage, nil
 }
 
-func parseLeverageValues(value string) []int64 {
+func ParseLeverageValues(value string) []int64 {
 	var jsonValues []int64
 	if json.Unmarshal([]byte(value), &jsonValues) == nil {
-		return normalizeLeverageValues(jsonValues)
+		return NormalizeLeverageValues(jsonValues)
 	}
 	parts := strings.Split(value, ",")
 	values := make([]int64, 0, len(parts))
@@ -572,10 +595,10 @@ func parseLeverageValues(value string) []int64 {
 		}
 		values = append(values, next)
 	}
-	return normalizeLeverageValues(values)
+	return NormalizeLeverageValues(values)
 }
 
-func normalizeLeverageValues(values []int64) []int64 {
+func NormalizeLeverageValues(values []int64) []int64 {
 	result := make([]int64, 0, len(values))
 	seen := make(map[int64]struct{}, len(values))
 	for _, value := range values {
@@ -594,7 +617,7 @@ func normalizeLeverageValues(values []int64) []int64 {
 	return result
 }
 
-func joinLeverageValues(values []int64, maxLeverage int64) (string, []int64) {
+func JoinLeverageValues(values []int64, maxLeverage int64) (string, []int64) {
 	if maxLeverage <= 0 {
 		maxLeverage = 1
 	}
@@ -624,7 +647,7 @@ func joinLeverageValues(values []int64, maxLeverage int64) (string, []int64) {
 	return strings.Join(parts, ","), result
 }
 
-func containsLeverage(values []int64, leverage int64) bool {
+func ContainsLeverage(values []int64, leverage int64) bool {
 	for _, value := range values {
 		if value == leverage {
 			return true
@@ -633,11 +656,11 @@ func containsLeverage(values []int64, leverage int64) bool {
 	return false
 }
 
-func isDerivativeProduct(productType common.ProductType) bool {
+func IsDerivativeProduct(productType common.ProductType) bool {
 	return productType == common.ProductType_PRODUCT_TYPE_DERIVATIVE
 }
 
-func riskUserTradeLimitToProto(item *models.TRiskUserTradeLimit) *trade.RiskUserTradeLimit {
+func RiskUserTradeLimitToProto(item *models.TRiskUserTradeLimit) *trade.RiskUserTradeLimit {
 	if item == nil {
 		return nil
 	}
@@ -651,7 +674,7 @@ func riskUserTradeLimitToProto(item *models.TRiskUserTradeLimit) *trade.RiskUser
 		CanCancel:            item.CanCancel,
 		CanTriggerOrder:      item.CanTriggerOrder,
 		CanApiTrade:          item.CanApiTrade,
-		TradeEnabled:         enableToProto(item.TradeEnabled),
+		TradeEnabled:         EnableToProto(item.TradeEnabled),
 		OnlyReduceOnly:       common.Enable(item.OnlyReduceOnly),
 		MaxOpenOrderCount:    item.MaxOpenOrderCount,
 		MaxOrderCountPerDay:  item.MaxOrderCountPerDay,
@@ -661,7 +684,7 @@ func riskUserTradeLimitToProto(item *models.TRiskUserTradeLimit) *trade.RiskUser
 		RiskLevel:            trade.RiskLevel(item.RiskLevel),
 		OperatorId:           item.OperatorId,
 		Source:               trade.SourceType(item.Source),
-		Enabled:              enableToProto(item.Enabled),
+		Enabled:              EnableToProto(item.Enabled),
 		EffectiveStartTime:   item.EffectiveStartTime,
 		EffectiveEndTime:     item.EffectiveEndTime,
 		Remark:               item.Remark,
@@ -670,7 +693,7 @@ func riskUserTradeLimitToProto(item *models.TRiskUserTradeLimit) *trade.RiskUser
 	}
 }
 
-func riskUserSymbolLimitToProto(item *models.TRiskUserSymbolLimit) *trade.RiskUserSymbolLimit {
+func RiskUserSymbolLimitToProto(item *models.TRiskUserSymbolLimit) *trade.RiskUserSymbolLimit {
 	if item == nil {
 		return nil
 	}
@@ -691,7 +714,7 @@ func riskUserSymbolLimitToProto(item *models.TRiskUserSymbolLimit) *trade.RiskUs
 		PriceDeviationRate:  conv.FloatString(item.PriceDeviationRate),
 		OperatorId:          item.OperatorId,
 		Source:              trade.SourceType(item.Source),
-		Enabled:             enableToProto(item.Enabled),
+		Enabled:             EnableToProto(item.Enabled),
 		EffectiveStartTime:  item.EffectiveStartTime,
 		EffectiveEndTime:    item.EffectiveEndTime,
 		Remark:              item.Remark,
@@ -700,7 +723,7 @@ func riskUserSymbolLimitToProto(item *models.TRiskUserSymbolLimit) *trade.RiskUs
 	}
 }
 
-func riskOrderCheckLogToProto(item *models.TRiskOrderCheckLog) *trade.RiskOrderCheckLog {
+func RiskOrderCheckLogToProto(item *models.TRiskOrderCheckLog) *trade.RiskOrderCheckLog {
 	if item == nil {
 		return nil
 	}
@@ -726,7 +749,7 @@ func riskOrderCheckLogToProto(item *models.TRiskOrderCheckLog) *trade.RiskOrderC
 	}
 }
 
-func tradeEventToProto(item *models.TBizTradeEvent) *trade.BizTradeEvent {
+func TradeEventToProto(item *models.TBizTradeEvent) *trade.BizTradeEvent {
 	if item == nil {
 		return nil
 	}
@@ -759,23 +782,23 @@ func tradeEventToProto(item *models.TBizTradeEvent) *trade.BizTradeEvent {
 	}
 }
 
-func ensureLeverage(leverage int64) int64 {
+func EnsureLeverage(leverage int64) int64 {
 	if leverage <= 0 {
 		return 1
 	}
 	return leverage
 }
 
-func ensureConfiguredLeverage(ctx context.Context, model models.TTradeSymbolLeverageConfigModel, defaultModel models.TTradeSymbolLeverageDefaultModel, tenantId int64, symbol *models.TTradeSymbol, marginMode trade.MarginMode, leverage int64) (int64, bool, error) {
-	if symbol == nil || model == nil || marginMode == trade.MarginMode_MARGIN_MODE_UNKNOWN || !isDerivativeProduct(common.ProductType(symbol.ProductType)) {
-		return ensureLeverage(leverage), true, nil
+func EnsureConfiguredLeverage(ctx context.Context, model models.TTradeSymbolLeverageConfigModel, defaultModel models.TTradeSymbolLeverageDefaultModel, tenantId int64, symbol *models.TTradeSymbol, marginMode trade.MarginMode, leverage int64) (int64, bool, error) {
+	if symbol == nil || model == nil || marginMode == trade.MarginMode_MARGIN_MODE_UNKNOWN || !IsDerivativeProduct(common.ProductType(symbol.ProductType)) {
+		return EnsureLeverage(leverage), true, nil
 	}
 
 	configs, _, err := model.FindPage(ctx, models.TradeSymbolLeverageConfigPageFilter{
 		TenantId: tenantId, SymbolId: symbol.Id, MarginMode: int64(marginMode), Enabled: 1,
 	}, 0, 200)
 	if errors.Is(err, models.ErrNotFound) || len(configs) == 0 {
-		return ensureLeverage(leverage), true, nil
+		return EnsureLeverage(leverage), true, nil
 	}
 	if err != nil {
 		return 0, false, err
@@ -793,14 +816,14 @@ func ensureConfiguredLeverage(ctx context.Context, model models.TTradeSymbolLeve
 			}
 		}
 		if effective <= 0 {
-			values := parseLeverageValues(configs[0].LeverageValues)
+			values := ParseLeverageValues(configs[0].LeverageValues)
 			if len(values) > 0 {
 				effective = values[0]
 			}
 		}
 	}
 	for _, cfg := range configs {
-		for _, configured := range parseLeverageValues(cfg.LeverageValues) {
+		for _, configured := range ParseLeverageValues(cfg.LeverageValues) {
 			if configured == effective {
 				return effective, true, nil
 			}
@@ -809,7 +832,7 @@ func ensureConfiguredLeverage(ctx context.Context, model models.TTradeSymbolLeve
 	return 0, false, nil
 }
 
-func marginAssetForSymbol(symbol *models.TTradeSymbol) string {
+func MarginAssetForSymbol(symbol *models.TTradeSymbol) string {
 	if symbol == nil {
 		return ""
 	}
@@ -822,7 +845,7 @@ func marginAssetForSymbol(symbol *models.TTradeSymbol) string {
 	return symbol.BaseAsset
 }
 
-func orderCancelReason(operator string) string {
+func OrderCancelReason(operator string) string {
 	if operator == "" {
 		return "canceled"
 	}
@@ -830,30 +853,30 @@ func orderCancelReason(operator string) string {
 }
 
 const (
-	immediateOrderExpireDelayMillis = int64(60 * 1000)
-	freezingOrderRecoverDelayMillis = int64(60 * 1000)
+	ImmediateOrderExpireDelayMillis = int64(60 * 1000)
+	FreezingOrderRecoverDelayMillis = int64(60 * 1000)
 )
 
-func toTradeMinorAmount(amount decimal.Decimal) decimal.Decimal {
+func ToTradeMinorAmount(amount decimal.Decimal) decimal.Decimal {
 	return amount
 }
 
-func fromTradeMinorAmount(amount decimal.Decimal) decimal.Decimal {
+func FromTradeMinorAmount(amount decimal.Decimal) decimal.Decimal {
 	return amount
 }
 
-func tradeMinorAmountAtPrice(price, qty decimal.Decimal) decimal.Decimal {
-	return toTradeMinorAmount(price.Mul(qty))
+func TradeMinorAmountAtPrice(price, qty decimal.Decimal) decimal.Decimal {
+	return ToTradeMinorAmount(price.Mul(qty))
 }
 
-func tradeQtyFromMinorAmount(amount, price decimal.Decimal) decimal.Decimal {
+func TradeQtyFromMinorAmount(amount, price decimal.Decimal) decimal.Decimal {
 	if !price.IsPositive() {
 		return decimal.Zero
 	}
-	return fromTradeMinorAmount(amount).Div(price)
+	return FromTradeMinorAmount(amount).Div(price)
 }
 
-func openOrderStatuses() []int64 {
+func OpenOrderStatuses() []int64 {
 	return []int64{
 		int64(trade.OrderStatus_ORDER_STATUS_PENDING),
 		int64(trade.OrderStatus_ORDER_STATUS_PART_FILLED),
@@ -861,7 +884,7 @@ func openOrderStatuses() []int64 {
 	}
 }
 
-func isOpenOrderStatus(status int64) bool {
+func IsOpenOrderStatus(status int64) bool {
 	switch trade.OrderStatus(status) {
 	case trade.OrderStatus_ORDER_STATUS_PENDING,
 		trade.OrderStatus_ORDER_STATUS_PART_FILLED,
@@ -872,14 +895,14 @@ func isOpenOrderStatus(status int64) bool {
 	}
 }
 
-func matchableOrderStatuses() []int64 {
+func MatchableOrderStatuses() []int64 {
 	return []int64{
 		int64(trade.OrderStatus_ORDER_STATUS_PENDING),
 		int64(trade.OrderStatus_ORDER_STATUS_PART_FILLED),
 	}
 }
 
-func isMatchableOrderStatus(status int64) bool {
+func IsMatchableOrderStatus(status int64) bool {
 	switch trade.OrderStatus(status) {
 	case trade.OrderStatus_ORDER_STATUS_PENDING, trade.OrderStatus_ORDER_STATUS_PART_FILLED:
 		return true
@@ -888,23 +911,23 @@ func isMatchableOrderStatus(status int64) bool {
 	}
 }
 
-func triggerWaitingOrderStatuses() []int64 {
+func TriggerWaitingOrderStatuses() []int64 {
 	return []int64{int64(trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING)}
 }
 
-func freezingOrderStatuses() []int64 {
+func FreezingOrderStatuses() []int64 {
 	return []int64{int64(trade.OrderStatus_ORDER_STATUS_FREEZING)}
 }
 
-func terminatingOrderStatuses() []int64 {
+func TerminatingOrderStatuses() []int64 {
 	return []int64{int64(trade.OrderStatus_ORDER_STATUS_CANCELING), int64(trade.OrderStatus_ORDER_STATUS_EXPIRING)}
 }
 
-func isTriggerWaitingOrderStatus(status int64) bool {
+func IsTriggerWaitingOrderStatus(status int64) bool {
 	return trade.OrderStatus(status) == trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING
 }
 
-func isTerminalOrderStatus(status int64) bool {
+func IsTerminalOrderStatus(status int64) bool {
 	switch trade.OrderStatus(status) {
 	case trade.OrderStatus_ORDER_STATUS_FILLED,
 		trade.OrderStatus_ORDER_STATUS_CANCELED,
@@ -916,28 +939,43 @@ func isTerminalOrderStatus(status int64) bool {
 	}
 }
 
-func orderStatusAfterFill(order *models.TTradeOrder) int64 {
+func OrderStatusAfterFill(order *models.TTradeOrder) int64 {
 	if order == nil {
 		return int64(trade.OrderStatus_ORDER_STATUS_UNKNOWN)
 	}
 	if !order.FilledQty.IsPositive() && !order.FilledAmount.IsPositive() {
 		return int64(trade.OrderStatus_ORDER_STATUS_PENDING)
 	}
-	if reachedFillTarget(order.FilledQty, order.Qty) {
-		return int64(trade.OrderStatus_ORDER_STATUS_SETTLEMENT_PENDING)
-	}
-	if !order.Qty.IsPositive() && reachedFillTarget(order.FilledAmount, order.Amount) {
+	if OrderFillTargetReached(order) {
 		return int64(trade.OrderStatus_ORDER_STATUS_SETTLEMENT_PENDING)
 	}
 	return int64(trade.OrderStatus_ORDER_STATUS_PART_FILLED)
 }
 
-func reachedFillTarget(filled, target decimal.Decimal) bool {
-	return target.IsPositive() && filled.GreaterThanOrEqual(target)
+func OrderFillTargetReached(order *models.TTradeOrder) bool {
+	if order == nil {
+		return false
+	}
+	if order.Qty.IsPositive() {
+		return ReachedFillTarget(order.FilledQty, order.Qty)
+	}
+	return ReachedFillTarget(order.FilledAmount, order.Amount)
 }
 
-func shouldExpireOrder(order *models.TTradeOrder, now int64) bool {
-	if order == nil || !isMatchableOrderStatus(order.Status) {
+func ReachedFillTarget(filled, target decimal.Decimal) bool {
+	if !target.IsPositive() {
+		return false
+	}
+	if filled.GreaterThanOrEqual(target) {
+		return true
+	}
+	// Amount-based spot orders calculate quantity by dividing amount by the
+	// execution price. Sub-minor-unit arithmetic dust counts as fully filled.
+	return target.Sub(filled).LessThanOrEqual(decimal.RequireFromString("0.00000001"))
+}
+
+func ShouldExpireOrder(order *models.TTradeOrder, now int64) bool {
+	if order == nil || !IsMatchableOrderStatus(order.Status) {
 		return false
 	}
 	switch trade.TimeInForce(order.TimeInForce) {
@@ -945,35 +983,35 @@ func shouldExpireOrder(order *models.TTradeOrder, now int64) bool {
 	default:
 		return false
 	}
-	activeAt := orderImmediateActiveAt(order)
+	activeAt := OrderImmediateActiveAt(order)
 	if activeAt <= 0 {
 		return true
 	}
-	return now-activeAt >= immediateOrderExpireDelayMillis
+	return now-activeAt >= ImmediateOrderExpireDelayMillis
 }
 
-func orderImmediateActiveAt(order *models.TTradeOrder) int64 {
+func OrderImmediateActiveAt(order *models.TTradeOrder) int64 {
 	if order == nil {
 		return 0
 	}
-	ext, err := parseOrderAssetExt(conv.NullStringValue(order.BizExt))
+	ext, err := ParseOrderAssetExt(conv.NullStringValue(order.BizExt))
 	if err == nil && ext.TriggeredAt > 0 {
 		return ext.TriggeredAt
 	}
 	return order.CreateTimes
 }
 
-func shouldRecoverFreezingOrder(order *models.TTradeOrder, now int64) bool {
+func ShouldRecoverFreezingOrder(order *models.TTradeOrder, now int64) bool {
 	if order == nil || trade.OrderStatus(order.Status) != trade.OrderStatus_ORDER_STATUS_FREEZING {
 		return false
 	}
 	if order.CreateTimes <= 0 {
 		return true
 	}
-	return now-order.CreateTimes >= freezingOrderRecoverDelayMillis
+	return now-order.CreateTimes >= FreezingOrderRecoverDelayMillis
 }
 
-func orderExpireReason(order *models.TTradeOrder) string {
+func OrderExpireReason(order *models.TTradeOrder) string {
 	switch trade.TimeInForce(order.TimeInForce) {
 	case trade.TimeInForce_TIME_IN_FORCE_IOC:
 		return "expired by IOC"
@@ -984,7 +1022,7 @@ func orderExpireReason(order *models.TTradeOrder) string {
 	}
 }
 
-func marshalOrderAssetExt(ext orderAssetExt) (string, error) {
+func MarshalOrderAssetExt(ext OrderAssetExt) (string, error) {
 	if ext.FreezeNo == "" && ext.OriginalOrderType == 0 && ext.TriggeredAt == 0 && ext.TriggerPrice == "" && ext.TriggerSource == "" {
 		return "", nil
 	}
@@ -995,54 +1033,54 @@ func marshalOrderAssetExt(ext orderAssetExt) (string, error) {
 	return string(buf), nil
 }
 
-func parseOrderAssetExt(raw string) (orderAssetExt, error) {
+func ParseOrderAssetExt(raw string) (OrderAssetExt, error) {
 	if raw == "" {
-		return orderAssetExt{}, nil
+		return OrderAssetExt{}, nil
 	}
-	var ext orderAssetExt
+	var ext OrderAssetExt
 	if err := json.Unmarshal([]byte(raw), &ext); err != nil {
-		return orderAssetExt{}, err
+		return OrderAssetExt{}, err
 	}
 	return ext, nil
 }
 
-func spotFrozenAssetAndAmount(symbol *models.TTradeSymbol, side common.Side, qty, amount decimal.Decimal) (string, decimal.Decimal) {
+func SpotFrozenAssetAndAmount(symbol *models.TTradeSymbol, side common.Side, qty, amount decimal.Decimal) (string, decimal.Decimal) {
 	if symbol == nil {
 		return "", decimal.Zero
 	}
 	if side == common.Side_SIDE_SELL {
-		return symbol.BaseAsset, toTradeMinorAmount(qty)
+		return symbol.BaseAsset, ToTradeMinorAmount(qty)
 	}
 	return symbol.QuoteAsset, amount
 }
 
 const (
-	legacyOrderTypeConditional = 3
-	legacyOrderTypeTakeProfit  = 4
-	legacyOrderTypeStopLoss    = 5
+	LegacyOrderTypeConditional = 3
+	LegacyOrderTypeTakeProfit  = 4
+	LegacyOrderTypeStopLoss    = 5
 )
 
-func normalizeOrderTypeAndTriggerKind(orderType trade.OrderType, triggerKind trade.TriggerKind, price decimal.Decimal) (trade.OrderType, trade.TriggerKind) {
+func NormalizeOrderTypeAndTriggerKind(orderType trade.OrderType, triggerKind trade.TriggerKind, price decimal.Decimal) (trade.OrderType, trade.TriggerKind) {
 	switch int32(orderType) {
-	case legacyOrderTypeConditional:
-		return executionOrderTypeFromPrice(price), trade.TriggerKind_TRIGGER_KIND_CONDITIONAL
-	case legacyOrderTypeTakeProfit:
-		return executionOrderTypeFromPrice(price), trade.TriggerKind_TRIGGER_KIND_TAKE_PROFIT
-	case legacyOrderTypeStopLoss:
-		return executionOrderTypeFromPrice(price), trade.TriggerKind_TRIGGER_KIND_STOP_LOSS
+	case LegacyOrderTypeConditional:
+		return ExecutionOrderTypeFromPrice(price), trade.TriggerKind_TRIGGER_KIND_CONDITIONAL
+	case LegacyOrderTypeTakeProfit:
+		return ExecutionOrderTypeFromPrice(price), trade.TriggerKind_TRIGGER_KIND_TAKE_PROFIT
+	case LegacyOrderTypeStopLoss:
+		return ExecutionOrderTypeFromPrice(price), trade.TriggerKind_TRIGGER_KIND_STOP_LOSS
 	default:
 		return orderType, triggerKind
 	}
 }
 
-func executionOrderTypeFromPrice(price decimal.Decimal) trade.OrderType {
+func ExecutionOrderTypeFromPrice(price decimal.Decimal) trade.OrderType {
 	if price.IsPositive() {
 		return trade.OrderType_ORDER_TYPE_LIMIT
 	}
 	return trade.OrderType_ORDER_TYPE_MARKET
 }
 
-func isTriggerKind(triggerKind trade.TriggerKind) bool {
+func IsTriggerKind(triggerKind trade.TriggerKind) bool {
 	switch triggerKind {
 	case trade.TriggerKind_TRIGGER_KIND_CONDITIONAL,
 		trade.TriggerKind_TRIGGER_KIND_TAKE_PROFIT,
@@ -1053,7 +1091,7 @@ func isTriggerKind(triggerKind trade.TriggerKind) bool {
 	}
 }
 
-func isSupportedOrderType(orderType trade.OrderType) bool {
+func IsSupportedOrderType(orderType trade.OrderType) bool {
 	switch orderType {
 	case trade.OrderType_ORDER_TYPE_LIMIT,
 		trade.OrderType_ORDER_TYPE_MARKET:
@@ -1063,7 +1101,7 @@ func isSupportedOrderType(orderType trade.OrderType) bool {
 	}
 }
 
-func isSupportedTriggerKind(triggerKind trade.TriggerKind) bool {
+func IsSupportedTriggerKind(triggerKind trade.TriggerKind) bool {
 	switch triggerKind {
 	case trade.TriggerKind_TRIGGER_KIND_NONE,
 		trade.TriggerKind_TRIGGER_KIND_CONDITIONAL,
@@ -1075,28 +1113,28 @@ func isSupportedTriggerKind(triggerKind trade.TriggerKind) bool {
 	}
 }
 
-func isValidOrderPrice(orderType trade.OrderType, price decimal.Decimal) bool {
+func IsValidOrderPrice(orderType trade.OrderType, price decimal.Decimal) bool {
 	if orderType == trade.OrderType_ORDER_TYPE_LIMIT {
 		return price.IsPositive()
 	}
 	return true
 }
 
-func hasNegativeOrderInput(price, qty, amount, triggerPrice decimal.Decimal) bool {
+func HasNegativeOrderInput(price, qty, amount, triggerPrice decimal.Decimal) bool {
 	return price.IsNegative() || qty.IsNegative() || amount.IsNegative() || triggerPrice.IsNegative()
 }
 
-func isValidOrderTimeInForce(orderType trade.OrderType, triggerKind trade.TriggerKind, timeInForce trade.TimeInForce) bool {
+func IsValidOrderTimeInForce(orderType trade.OrderType, triggerKind trade.TriggerKind, timeInForce trade.TimeInForce) bool {
 	if orderType == trade.OrderType_ORDER_TYPE_MARKET && timeInForce == trade.TimeInForce_TIME_IN_FORCE_POST_ONLY {
 		return false
 	}
-	if isTriggerKind(triggerKind) && timeInForce == trade.TimeInForce_TIME_IN_FORCE_POST_ONLY {
+	if IsTriggerKind(triggerKind) && timeInForce == trade.TimeInForce_TIME_IN_FORCE_POST_ONLY {
 		return false
 	}
 	return true
 }
 
-func normalizeOrderTimeInForce(orderType trade.OrderType, timeInForce trade.TimeInForce) trade.TimeInForce {
+func NormalizeOrderTimeInForce(orderType trade.OrderType, timeInForce trade.TimeInForce) trade.TimeInForce {
 	switch orderType {
 	case trade.OrderType_ORDER_TYPE_MARKET:
 		if timeInForce == trade.TimeInForce_TIME_IN_FORCE_UNKNOWN ||
@@ -1111,14 +1149,14 @@ func normalizeOrderTimeInForce(orderType trade.OrderType, timeInForce trade.Time
 	return timeInForce
 }
 
-func statusAfterFreeze(triggerKind trade.TriggerKind) int64 {
-	if isTriggerKind(triggerKind) {
+func StatusAfterFreeze(triggerKind trade.TriggerKind) int64 {
+	if IsTriggerKind(triggerKind) {
 		return int64(trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING)
 	}
 	return int64(trade.OrderStatus_ORDER_STATUS_PENDING)
 }
 
-func triggeredOrderExecutionType(order *models.TTradeOrder) int64 {
+func TriggeredOrderExecutionType(order *models.TTradeOrder) int64 {
 	if order == nil {
 		return int64(trade.OrderType_ORDER_TYPE_UNKNOWN)
 	}
@@ -1131,11 +1169,11 @@ func triggeredOrderExecutionType(order *models.TTradeOrder) int64 {
 	return int64(trade.OrderType_ORDER_TYPE_MARKET)
 }
 
-func triggeredTimeInForce(order *models.TTradeOrder) int64 {
+func TriggeredTimeInForce(order *models.TTradeOrder) int64 {
 	if order == nil {
 		return int64(trade.TimeInForce_TIME_IN_FORCE_UNKNOWN)
 	}
-	if triggeredOrderExecutionType(order) == int64(trade.OrderType_ORDER_TYPE_MARKET) {
+	if TriggeredOrderExecutionType(order) == int64(trade.OrderType_ORDER_TYPE_MARKET) {
 		if order.TimeInForce == int64(trade.TimeInForce_TIME_IN_FORCE_UNKNOWN) ||
 			order.TimeInForce == int64(trade.TimeInForce_TIME_IN_FORCE_GTC) ||
 			order.TimeInForce == int64(trade.TimeInForce_TIME_IN_FORCE_POST_ONLY) {
@@ -1145,7 +1183,7 @@ func triggeredTimeInForce(order *models.TTradeOrder) int64 {
 	return order.TimeInForce
 }
 
-func triggerKindForOrder(order *models.TTradeOrder) trade.TriggerKind {
+func TriggerKindForOrder(order *models.TTradeOrder) trade.TriggerKind {
 	if order == nil {
 		return trade.TriggerKind_TRIGGER_KIND_NONE
 	}
@@ -1153,22 +1191,22 @@ func triggerKindForOrder(order *models.TTradeOrder) trade.TriggerKind {
 		return trade.TriggerKind(order.TriggerKind)
 	}
 	switch order.OrderType {
-	case legacyOrderTypeConditional:
+	case LegacyOrderTypeConditional:
 		return trade.TriggerKind_TRIGGER_KIND_CONDITIONAL
-	case legacyOrderTypeTakeProfit:
+	case LegacyOrderTypeTakeProfit:
 		return trade.TriggerKind_TRIGGER_KIND_TAKE_PROFIT
-	case legacyOrderTypeStopLoss:
+	case LegacyOrderTypeStopLoss:
 		return trade.TriggerKind_TRIGGER_KIND_STOP_LOSS
 	default:
 		return trade.TriggerKind_TRIGGER_KIND_NONE
 	}
 }
 
-func shouldTriggerOrder(order *models.TTradeOrder, triggerPrice decimal.Decimal) bool {
-	if order == nil || !isTriggerWaitingOrderStatus(order.Status) || !order.TriggerPrice.IsPositive() || !triggerPrice.IsPositive() {
+func ShouldTriggerOrder(order *models.TTradeOrder, triggerPrice decimal.Decimal) bool {
+	if order == nil || !IsTriggerWaitingOrderStatus(order.Status) || !order.TriggerPrice.IsPositive() || !triggerPrice.IsPositive() {
 		return false
 	}
-	switch triggerKindForOrder(order) {
+	switch TriggerKindForOrder(order) {
 	case trade.TriggerKind_TRIGGER_KIND_TAKE_PROFIT:
 		if order.Side == int64(common.Side_SIDE_BUY) {
 			return triggerPrice.LessThanOrEqual(order.TriggerPrice)
@@ -1189,7 +1227,7 @@ func shouldTriggerOrder(order *models.TTradeOrder, triggerPrice decimal.Decimal)
 	}
 }
 
-func walletTypeForProduct(productType common.ProductType) common.WalletType {
+func WalletTypeForProduct(productType common.ProductType) common.WalletType {
 	switch productType {
 	case common.ProductType_PRODUCT_TYPE_SPOT:
 		return common.WalletType_WALLET_TYPE_SPOT
@@ -1198,7 +1236,7 @@ func walletTypeForProduct(productType common.ProductType) common.WalletType {
 	}
 }
 
-func adminTenantID(ctx context.Context, requested int64) int64 {
+func AdminTenantID(ctx context.Context, requested int64) int64 {
 	// 管理端请求只能访问网关注入的当前租户，不能通过请求体切换租户。
 	if tenantID, err := utils.GetTenantIdFromMd(ctx); err == nil && tenantID > 0 {
 		return tenantID

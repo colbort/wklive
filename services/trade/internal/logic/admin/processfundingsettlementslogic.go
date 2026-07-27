@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"wklive/services/trade/internal/logic/helpers"
 
-	marketcache "wklive/common/market"
+	cache "wklive/common/market"
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/proto/common"
@@ -167,18 +167,18 @@ func (l *ProcessFundingSettlementsLogic) lockFundingInputs(c *models.TTradeSymbo
 	if err != nil {
 		return decimal.Zero, decimal.Zero, decimal.Zero, "", err
 	}
-	mark, index := mustParseFloat(markQ.LastPrice), mustParseFloat(indexQ.LastPrice)
+	mark, index := helpers.MustParseFloat(markQ.LastPrice), helpers.MustParseFloat(indexQ.LastPrice)
 	if !index.IsPositive() {
 		return decimal.Zero, decimal.Zero, decimal.Zero, "", errors.New("invalid funding index price")
 	}
-	rate := mustParseFloat(fundingQ.LastPrice)
+	rate := helpers.MustParseFloat(fundingQ.LastPrice)
 	if c.FundingRateCap.IsPositive() && rate.GreaterThan(c.FundingRateCap) {
 		rate = c.FundingRateCap
 	}
 	if c.FundingRateFloor.IsNegative() && rate.LessThan(c.FundingRateFloor) {
 		rate = c.FundingRateFloor
 	}
-	snapshot := &marketcache.SettlementSnapshot{Kind: "FUNDING", MarkPrice: mark.String(), IndexPrice: index.String(), FundingRate: rate.String(), Source: fundingQ.SnapshotID, SourceTimestamp: minInt64(minInt64(markQ.QuoteTs, indexQ.QuoteTs), fundingQ.QuoteTs), SnapshotTimestamp: utils.NowMillis(), Revision: maxInt64(maxInt64(markQ.Revision, indexQ.Revision), fundingQ.Revision), FormulaVersion: "price-engine", Confirmed: markQ.Confirmed && indexQ.Confirmed && fundingQ.Confirmed}
+	snapshot := &cache.SettlementSnapshot{Kind: "FUNDING", MarkPrice: mark.String(), IndexPrice: index.String(), FundingRate: rate.String(), Source: fundingQ.SnapshotID, SourceTimestamp: minInt64(minInt64(markQ.QuoteTs, indexQ.QuoteTs), fundingQ.QuoteTs), SnapshotTimestamp: utils.NowMillis(), Revision: maxInt64(maxInt64(markQ.Revision, indexQ.Revision), fundingQ.Revision), FormulaVersion: "price-engine", Confirmed: markQ.Confirmed && indexQ.Confirmed && fundingQ.Confirmed}
 	if err := l.svcCtx.MarketDataCache.PutSettlementSnapshot(l.ctx, snapshot); err != nil {
 		return decimal.Zero, decimal.Zero, decimal.Zero, "", err
 	}

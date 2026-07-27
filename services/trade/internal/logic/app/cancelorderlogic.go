@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -70,12 +71,12 @@ func (l *CancelOrderLogic) CancelOrder(in *trade.CancelOrderReq) (*trade.UserCom
 		if err != nil {
 			return err
 		}
-		if locked.TenantId != tenantId || locked.UserId != userId || !isOpenOrderStatus(locked.Status) {
+		if locked.TenantId != tenantId || locked.UserId != userId || !helpers.IsOpenOrderStatus(locked.Status) {
 			return nil
 		}
 		locked.Status = int64(trade.OrderStatus_ORDER_STATUS_CANCELING)
 		locked.CanceledQty = decimalMaxZero(locked.Qty.Sub(locked.FilledQty))
-		locked.CancelReason = orderCancelReason("user")
+		locked.CancelReason = helpers.OrderCancelReason("user")
 		locked.Version++
 		locked.UpdateTimes = utils.NowMillis()
 		if err := orderModel.Update(ctx, locked); err != nil {

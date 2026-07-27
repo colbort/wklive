@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/generate"
 	"wklive/common/helper"
@@ -95,7 +96,7 @@ func recordOrderFillWithModels(ctx context.Context, fillModel models.TTradeFillM
 	if err != nil {
 		return nil, nil, err
 	}
-	if !isMatchableOrderStatus(order.Status) {
+	if !helpers.IsMatchableOrderStatus(order.Status) {
 		return nil, nil, i18n.StatusError(ctx, i18n.OperationNotAllowed)
 	}
 	if !fillMatchesOrder(order, fill) {
@@ -201,11 +202,11 @@ func tradeFillFromProto(fill *trade.TradeFill, now int64) (*models.TTradeFill, e
 	if fill == nil || fill.TenantId <= 0 || fill.FillNo == "" || fill.MatchNo == "" || (fill.OrderId <= 0 && fill.OrderNo == "") {
 		return nil, i18n.StatusError(context.Background(), i18n.ParamError)
 	}
-	price := mustParseFloat(fill.Price)
-	qty := mustParseFloat(fill.Qty)
-	amount := mustParseFloat(fill.Amount)
+	price := helpers.MustParseFloat(fill.Price)
+	qty := helpers.MustParseFloat(fill.Qty)
+	amount := helpers.MustParseFloat(fill.Amount)
 	if !amount.IsPositive() && price.IsPositive() && qty.IsPositive() {
-		amount = tradeMinorAmountAtPrice(price, qty)
+		amount = helpers.TradeMinorAmountAtPrice(price, qty)
 	}
 	if !price.IsPositive() || !qty.IsPositive() || !amount.IsPositive() {
 		return nil, i18n.StatusError(context.Background(), i18n.ParamError)
@@ -234,10 +235,10 @@ func tradeFillFromProto(fill *trade.TradeFill, now int64) (*models.TTradeFill, e
 		Price:             price,
 		Qty:               qty,
 		Amount:            amount,
-		Fee:               mustParseFloat(fill.Fee),
+		Fee:               helpers.MustParseFloat(fill.Fee),
 		FeeAsset:          fill.FeeAsset,
 		LiquidityType:     int64(fill.LiquidityType),
-		RealizedPnl:       mustParseFloat(fill.RealizedPnl),
+		RealizedPnl:       helpers.MustParseFloat(fill.RealizedPnl),
 		SettlementStatus:  int64(trade.FillSettlementStatus_FILL_SETTLEMENT_STATUS_PENDING),
 		MatchTime:         matchTime,
 		CreateTimes:       createTimes,
@@ -277,13 +278,13 @@ func applyFillToOrder(order *models.TTradeOrder, fill *models.TTradeFill, now in
 	if order.ProductType == int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) && fill.Price.IsPositive() {
 		order.AvgPrice = contractAveragePrice(order.AvgPrice, previousFilledQty, fill.Price, fill.Qty, order.ContractValueType)
 	} else if order.FilledQty.IsPositive() && order.FilledAmount.IsPositive() {
-		order.AvgPrice = fromTradeMinorAmount(order.FilledAmount).Div(order.FilledQty)
+		order.AvgPrice = helpers.FromTradeMinorAmount(order.FilledAmount).Div(order.FilledQty)
 	}
 	order.Fee = order.Fee.Add(fill.Fee)
 	if fill.FeeAsset != "" {
 		order.FeeAsset = fill.FeeAsset
 	}
-	order.Status = orderStatusAfterFill(order)
+	order.Status = helpers.OrderStatusAfterFill(order)
 	order.Version++
 	order.UpdateTimes = now
 }

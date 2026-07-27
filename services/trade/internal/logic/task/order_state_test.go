@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"testing"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/proto/common"
 	"wklive/proto/trade"
@@ -52,8 +53,8 @@ func TestOrderStatusAfterFill(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := orderStatusAfterFill(tt.order); got != tt.want {
-				t.Fatalf("orderStatusAfterFill() = %d, want %d", got, tt.want)
+			if got := helpers.OrderStatusAfterFill(tt.order); got != tt.want {
+				t.Fatalf("helpers.OrderStatusAfterFill() = %d, want %d", got, tt.want)
 			}
 		})
 	}
@@ -89,38 +90,38 @@ func TestOrderFillTargetReachedAcceptsAmountDust(t *testing.T) {
 		Amount:       decimal.RequireFromString("1000"),
 		FilledAmount: decimal.RequireFromString("999.9999999999999242839"),
 	}
-	if !orderFillTargetReached(order) {
+	if !helpers.OrderFillTargetReached(order) {
 		t.Fatal("amount order with arithmetic dust should be treated as filled")
 	}
 }
 
 func TestOrderStateCategories(t *testing.T) {
-	if !isOpenOrderStatus(int64(trade.OrderStatus_ORDER_STATUS_PENDING)) {
+	if !helpers.IsOpenOrderStatus(int64(trade.OrderStatus_ORDER_STATUS_PENDING)) {
 		t.Fatal("pending should be open")
 	}
-	if !isOpenOrderStatus(int64(trade.OrderStatus_ORDER_STATUS_PART_FILLED)) {
+	if !helpers.IsOpenOrderStatus(int64(trade.OrderStatus_ORDER_STATUS_PART_FILLED)) {
 		t.Fatal("part-filled should be open")
 	}
-	if !isOpenOrderStatus(int64(trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING)) {
+	if !helpers.IsOpenOrderStatus(int64(trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING)) {
 		t.Fatal("trigger-waiting should be open")
 	}
-	if isMatchableOrderStatus(int64(trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING)) {
+	if helpers.IsMatchableOrderStatus(int64(trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING)) {
 		t.Fatal("trigger-waiting should not be matchable")
 	}
-	if isOpenOrderStatus(int64(trade.OrderStatus_ORDER_STATUS_CANCELED)) {
+	if helpers.IsOpenOrderStatus(int64(trade.OrderStatus_ORDER_STATUS_CANCELED)) {
 		t.Fatal("canceled should not be open")
 	}
-	if isOpenOrderStatus(int64(trade.OrderStatus_ORDER_STATUS_FREEZING)) {
+	if helpers.IsOpenOrderStatus(int64(trade.OrderStatus_ORDER_STATUS_FREEZING)) {
 		t.Fatal("freezing should not be open")
 	}
-	if !isTerminalOrderStatus(int64(trade.OrderStatus_ORDER_STATUS_FILLED)) {
+	if !helpers.IsTerminalOrderStatus(int64(trade.OrderStatus_ORDER_STATUS_FILLED)) {
 		t.Fatal("filled should be terminal")
 	}
-	if !isTerminalOrderStatus(int64(trade.OrderStatus_ORDER_STATUS_EXPIRED)) {
+	if !helpers.IsTerminalOrderStatus(int64(trade.OrderStatus_ORDER_STATUS_EXPIRED)) {
 		t.Fatal("expired should be terminal")
 	}
 	for _, status := range []trade.OrderStatus{trade.OrderStatus_ORDER_STATUS_CANCELING, trade.OrderStatus_ORDER_STATUS_EXPIRING, trade.OrderStatus_ORDER_STATUS_SETTLEMENT_PENDING} {
-		if isMatchableOrderStatus(int64(status)) || isTerminalOrderStatus(int64(status)) {
+		if helpers.IsMatchableOrderStatus(int64(status)) || helpers.IsTerminalOrderStatus(int64(status)) {
 			t.Fatalf("intermediate status %s must be neither matchable nor terminal", status)
 		}
 	}
@@ -129,51 +130,51 @@ func TestOrderStateCategories(t *testing.T) {
 func TestShouldExpireOrder(t *testing.T) {
 	now := int64(120_000)
 
-	if !shouldExpireOrder(&models.TTradeOrder{
+	if !helpers.ShouldExpireOrder(&models.TTradeOrder{
 		Status:      int64(trade.OrderStatus_ORDER_STATUS_PENDING),
 		TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_IOC),
-		CreateTimes: now - immediateOrderExpireDelayMillis,
+		CreateTimes: now - helpers.ImmediateOrderExpireDelayMillis,
 	}, now) {
 		t.Fatal("old IOC order should expire")
 	}
 
-	if shouldExpireOrder(&models.TTradeOrder{
+	if helpers.ShouldExpireOrder(&models.TTradeOrder{
 		Status:      int64(trade.OrderStatus_ORDER_STATUS_PENDING),
 		TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_GTC),
-		CreateTimes: now - immediateOrderExpireDelayMillis,
+		CreateTimes: now - helpers.ImmediateOrderExpireDelayMillis,
 	}, now) {
 		t.Fatal("GTC order should not expire")
 	}
 
-	if shouldExpireOrder(&models.TTradeOrder{
+	if helpers.ShouldExpireOrder(&models.TTradeOrder{
 		Status:      int64(trade.OrderStatus_ORDER_STATUS_FILLED),
 		TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_FOK),
-		CreateTimes: now - immediateOrderExpireDelayMillis,
+		CreateTimes: now - helpers.ImmediateOrderExpireDelayMillis,
 	}, now) {
 		t.Fatal("terminal order should not expire")
 	}
 
-	triggerExt, err := marshalOrderAssetExt(orderAssetExt{TriggeredAt: now})
+	triggerExt, err := helpers.MarshalOrderAssetExt(helpers.OrderAssetExt{TriggeredAt: now})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if shouldExpireOrder(&models.TTradeOrder{
+	if helpers.ShouldExpireOrder(&models.TTradeOrder{
 		Status:      int64(trade.OrderStatus_ORDER_STATUS_PENDING),
 		TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_IOC),
-		CreateTimes: now - immediateOrderExpireDelayMillis,
+		CreateTimes: now - helpers.ImmediateOrderExpireDelayMillis,
 		BizExt:      sql.NullString{String: triggerExt, Valid: true},
 	}, now) {
 		t.Fatal("freshly triggered IOC order should not expire by original create time")
 	}
 
-	oldTriggerExt, err := marshalOrderAssetExt(orderAssetExt{TriggeredAt: now - immediateOrderExpireDelayMillis})
+	oldTriggerExt, err := helpers.MarshalOrderAssetExt(helpers.OrderAssetExt{TriggeredAt: now - helpers.ImmediateOrderExpireDelayMillis})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !shouldExpireOrder(&models.TTradeOrder{
+	if !helpers.ShouldExpireOrder(&models.TTradeOrder{
 		Status:      int64(trade.OrderStatus_ORDER_STATUS_PENDING),
 		TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_IOC),
-		CreateTimes: now - immediateOrderExpireDelayMillis*2,
+		CreateTimes: now - helpers.ImmediateOrderExpireDelayMillis*2,
 		BizExt:      sql.NullString{String: oldTriggerExt, Valid: true},
 	}, now) {
 		t.Fatal("old triggered IOC order should expire by triggered time")
@@ -182,46 +183,46 @@ func TestShouldExpireOrder(t *testing.T) {
 
 func TestShouldRecoverFreezingOrder(t *testing.T) {
 	now := int64(120_000)
-	if !shouldRecoverFreezingOrder(&models.TTradeOrder{
+	if !helpers.ShouldRecoverFreezingOrder(&models.TTradeOrder{
 		Status:      int64(trade.OrderStatus_ORDER_STATUS_FREEZING),
-		CreateTimes: now - freezingOrderRecoverDelayMillis,
+		CreateTimes: now - helpers.FreezingOrderRecoverDelayMillis,
 	}, now) {
 		t.Fatal("old freezing order should recover")
 	}
-	if shouldRecoverFreezingOrder(&models.TTradeOrder{
+	if helpers.ShouldRecoverFreezingOrder(&models.TTradeOrder{
 		Status:      int64(trade.OrderStatus_ORDER_STATUS_FREEZING),
-		CreateTimes: now - freezingOrderRecoverDelayMillis + 1,
+		CreateTimes: now - helpers.FreezingOrderRecoverDelayMillis + 1,
 	}, now) {
 		t.Fatal("new freezing order should not recover")
 	}
-	if shouldRecoverFreezingOrder(&models.TTradeOrder{
+	if helpers.ShouldRecoverFreezingOrder(&models.TTradeOrder{
 		Status:      int64(trade.OrderStatus_ORDER_STATUS_PENDING),
-		CreateTimes: now - freezingOrderRecoverDelayMillis,
+		CreateTimes: now - helpers.FreezingOrderRecoverDelayMillis,
 	}, now) {
 		t.Fatal("non-freezing order should not recover")
 	}
 }
 
 func TestOrderInputGuards(t *testing.T) {
-	if isValidOrderPrice(trade.OrderType_ORDER_TYPE_LIMIT, decimal.Zero) {
+	if helpers.IsValidOrderPrice(trade.OrderType_ORDER_TYPE_LIMIT, decimal.Zero) {
 		t.Fatal("limit order without price should be invalid")
 	}
-	if !hasNegativeOrderInput(decimal.Zero, testDecimal(1), testDecimal(-1), decimal.Zero) {
+	if !helpers.HasNegativeOrderInput(decimal.Zero, testDecimal(1), testDecimal(-1), decimal.Zero) {
 		t.Fatal("negative order amount should be invalid")
 	}
-	if !isValidOrderPrice(trade.OrderType_ORDER_TYPE_MARKET, decimal.Zero) {
+	if !helpers.IsValidOrderPrice(trade.OrderType_ORDER_TYPE_MARKET, decimal.Zero) {
 		t.Fatal("market order should not require user price")
 	}
-	if isValidOrderTimeInForce(trade.OrderType_ORDER_TYPE_MARKET, trade.TriggerKind_TRIGGER_KIND_NONE, trade.TimeInForce_TIME_IN_FORCE_POST_ONLY) {
+	if helpers.IsValidOrderTimeInForce(trade.OrderType_ORDER_TYPE_MARKET, trade.TriggerKind_TRIGGER_KIND_NONE, trade.TimeInForce_TIME_IN_FORCE_POST_ONLY) {
 		t.Fatal("market post-only should be invalid")
 	}
-	if got := normalizeOrderTimeInForce(trade.OrderType_ORDER_TYPE_LIMIT, trade.TimeInForce_TIME_IN_FORCE_UNKNOWN); got != trade.TimeInForce_TIME_IN_FORCE_GTC {
+	if got := helpers.NormalizeOrderTimeInForce(trade.OrderType_ORDER_TYPE_LIMIT, trade.TimeInForce_TIME_IN_FORCE_UNKNOWN); got != trade.TimeInForce_TIME_IN_FORCE_GTC {
 		t.Fatalf("limit default TIF = %v, want GTC", got)
 	}
-	if got := normalizeOrderTimeInForce(trade.OrderType_ORDER_TYPE_MARKET, trade.TimeInForce_TIME_IN_FORCE_GTC); got != trade.TimeInForce_TIME_IN_FORCE_IOC {
+	if got := helpers.NormalizeOrderTimeInForce(trade.OrderType_ORDER_TYPE_MARKET, trade.TimeInForce_TIME_IN_FORCE_GTC); got != trade.TimeInForce_TIME_IN_FORCE_IOC {
 		t.Fatalf("market GTC should normalize to IOC, got %v", got)
 	}
-	if isValidOrderTimeInForce(trade.OrderType_ORDER_TYPE_LIMIT, trade.TriggerKind_TRIGGER_KIND_STOP_LOSS, trade.TimeInForce_TIME_IN_FORCE_POST_ONLY) {
+	if helpers.IsValidOrderTimeInForce(trade.OrderType_ORDER_TYPE_LIMIT, trade.TriggerKind_TRIGGER_KIND_STOP_LOSS, trade.TimeInForce_TIME_IN_FORCE_POST_ONLY) {
 		t.Fatal("trigger order post-only should be invalid")
 	}
 }
@@ -410,25 +411,25 @@ func TestShouldTriggerOrder(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := shouldTriggerOrder(&tt.order, tt.price); got != tt.want {
-				t.Fatalf("shouldTriggerOrder() = %v, want %v", got, tt.want)
+			if got := helpers.ShouldTriggerOrder(&tt.order, tt.price); got != tt.want {
+				t.Fatalf("helpers.ShouldTriggerOrder() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
 func TestTriggeredOrderExecutionType(t *testing.T) {
-	if got := triggeredOrderExecutionType(&models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: testDecimal(10)}); got != int64(trade.OrderType_ORDER_TYPE_LIMIT) {
-		t.Fatalf("triggeredOrderExecutionType() = %d, want LIMIT", got)
+	if got := helpers.TriggeredOrderExecutionType(&models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_LIMIT), Price: testDecimal(10)}); got != int64(trade.OrderType_ORDER_TYPE_LIMIT) {
+		t.Fatalf("helpers.TriggeredOrderExecutionType() = %d, want LIMIT", got)
 	}
-	if got := triggeredOrderExecutionType(&models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_MARKET)}); got != int64(trade.OrderType_ORDER_TYPE_MARKET) {
-		t.Fatalf("triggeredOrderExecutionType() = %d, want MARKET", got)
+	if got := helpers.TriggeredOrderExecutionType(&models.TTradeOrder{OrderType: int64(trade.OrderType_ORDER_TYPE_MARKET)}); got != int64(trade.OrderType_ORDER_TYPE_MARKET) {
+		t.Fatalf("helpers.TriggeredOrderExecutionType() = %d, want MARKET", got)
 	}
-	if got := triggeredOrderExecutionType(&models.TTradeOrder{OrderType: legacyOrderTypeStopLoss, Price: testDecimal(10)}); got != int64(trade.OrderType_ORDER_TYPE_LIMIT) {
+	if got := helpers.TriggeredOrderExecutionType(&models.TTradeOrder{OrderType: helpers.LegacyOrderTypeStopLoss, Price: testDecimal(10)}); got != int64(trade.OrderType_ORDER_TYPE_LIMIT) {
 		t.Fatalf("legacy triggered order execution type = %d, want LIMIT", got)
 	}
-	if got := triggeredTimeInForce(&models.TTradeOrder{}); got != int64(trade.TimeInForce_TIME_IN_FORCE_IOC) {
-		t.Fatalf("triggeredTimeInForce() = %d, want IOC", got)
+	if got := helpers.TriggeredTimeInForce(&models.TTradeOrder{}); got != int64(trade.TimeInForce_TIME_IN_FORCE_IOC) {
+		t.Fatalf("helpers.TriggeredTimeInForce() = %d, want IOC", got)
 	}
 }
 
@@ -537,7 +538,7 @@ func TestOrderDisplayStatusForPartiallyFilledCanceledOrder(t *testing.T) {
 		Status:    int64(trade.OrderStatus_ORDER_STATUS_CANCELED),
 		FilledQty: decimal.RequireFromString("0.001"),
 	}
-	if got := orderDisplayStatus(order); got != trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_PART_FILLED {
+	if got := helpers.OrderDisplayStatus(order); got != trade.OrderDisplayStatus_ORDER_DISPLAY_STATUS_PART_FILLED {
 		t.Fatalf("display status=%v, want partially filled", got)
 	}
 }
@@ -576,7 +577,7 @@ func TestBuildSpotFillSettlementInstructions(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(buy) != 3 || buy[0].asset != "USDT" || buy[0].action != trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CONSUME_FROZEN || !buy[0].amount.Equal(fill.Amount) || buy[1].asset != "BTC" || !buy[1].amount.Equal(toTradeMinorAmount(fill.Qty)) {
+	if len(buy) != 3 || buy[0].asset != "USDT" || buy[0].action != trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CONSUME_FROZEN || !buy[0].amount.Equal(fill.Amount) || buy[1].asset != "BTC" || !buy[1].amount.Equal(helpers.ToTradeMinorAmount(fill.Qty)) {
 		t.Fatalf("unexpected spot buy settlement instructions: %+v", buy)
 	}
 
@@ -584,7 +585,7 @@ func TestBuildSpotFillSettlementInstructions(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(sell) != 3 || sell[0].asset != "BTC" || !sell[0].amount.Equal(toTradeMinorAmount(fill.Qty)) || sell[1].asset != "USDT" || !sell[1].amount.Equal(fill.Amount) {
+	if len(sell) != 3 || sell[0].asset != "BTC" || !sell[0].amount.Equal(helpers.ToTradeMinorAmount(fill.Qty)) || sell[1].asset != "USDT" || !sell[1].amount.Equal(fill.Amount) {
 		t.Fatalf("unexpected spot sell settlement instructions: %+v", sell)
 	}
 }
@@ -639,7 +640,7 @@ func TestIsOrderBookOrder(t *testing.T) {
 	}
 	if isOrderBookOrder(&models.TTradeOrder{
 		Status:    int64(trade.OrderStatus_ORDER_STATUS_PENDING),
-		OrderType: legacyOrderTypeStopLoss,
+		OrderType: helpers.LegacyOrderTypeStopLoss,
 	}) {
 		t.Fatal("untriggered stop order type should not enter order book")
 	}

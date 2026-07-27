@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/trade"
@@ -48,7 +49,7 @@ func (l *GetRiskOrderCheckLogListLogic) GetRiskOrderCheckLogList(in *trade.GetRi
 	}
 	resp := &trade.GetRiskOrderCheckLogListResp{Base: pageutil.Base(cursor, limit, len(data), total, lastID)}
 	for _, item := range data {
-		resp.Data = append(resp.Data, riskOrderCheckLogToProto(item))
+		resp.Data = append(resp.Data, helpers.RiskOrderCheckLogToProto(item))
 	}
 	return resp, nil
 }

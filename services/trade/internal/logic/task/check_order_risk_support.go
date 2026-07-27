@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/utils"
 	"wklive/proto/common"
@@ -57,8 +58,8 @@ func (l *CheckOrderRiskLogic) CheckOrderRisk(in *trade.CheckOrderRiskReq) (*trad
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
-	qty := mustParseFloat(in.Qty)
-	amount := mustParseFloat(in.Amount)
+	qty := helpers.MustParseFloat(in.Qty)
+	amount := helpers.MustParseFloat(in.Amount)
 	if symbolLimit != nil && resp.Passed == 1 {
 		if symbolLimit.MinOrderQty.IsPositive() && qty.IsPositive() && qty.LessThan(symbolLimit.MinOrderQty) {
 			resp.Passed = 0
@@ -95,7 +96,7 @@ func (l *CheckOrderRiskLogic) CheckOrderRisk(in *trade.CheckOrderRiskReq) (*trad
 		CheckResult:   int64(checkResult),
 		RejectCode:    rejectCode,
 		RejectMsg:     rejectMsg,
-		RequestPrice:  mustParseFloat(in.Price),
+		RequestPrice:  helpers.MustParseFloat(in.Price),
 		RequestQty:    qty,
 		RequestAmount: amount,
 		OperatorId:    in.UserId,

@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -37,5 +38,5 @@ func (l *GetFillDetailAdminLogic) GetFillDetailAdmin(in *trade.GetFillDetailAdmi
 		return nil, err
 	}
 
-	return &trade.GetFillDetailAdminResp{Base: helper.OkResp(), Data: fillToProto(item)}, nil
+	return &trade.GetFillDetailAdminResp{Base: helper.OkResp(), Data: helpers.FillToProto(item)}, nil
 }

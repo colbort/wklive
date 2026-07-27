@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -59,17 +60,17 @@ func (l *SetSecondsSymbolConfigLogic) SetSecondsSymbolConfig(in *trade.SetSecond
 	if item == nil {
 		item = &models.TTradeSymbolSeconds{TenantId: symbol.TenantId, SymbolId: in.SymbolId, DurationSeconds: in.DurationSeconds, UpEnabled: int64(common.Enable_ENABLE_ENABLED), DownEnabled: int64(common.Enable_ENABLE_ENABLED), CreateTimes: now}
 	}
-	item.PayoutRate, item.DrawRule = mustParseFloat(in.PayoutRate), int64(in.DrawRule)
-	item.FeeRate = mustParseFloat(in.FeeRate)
+	item.PayoutRate, item.DrawRule = helpers.MustParseFloat(in.PayoutRate), int64(in.DrawRule)
+	item.FeeRate = helpers.MustParseFloat(in.FeeRate)
 	item.StartPriceSource, item.SettlementPriceSource = in.StartPriceSource, in.SettlementPriceSource
 	item.QuoteValidityMs = in.QuoteValidityMs
 	item.SettlementWindowMs = in.SettlementWindowMs
 	item.SettlementPriceAlgorithm = in.SettlementPriceAlgorithm
-	item.DrawTolerance = mustParseFloat(in.DrawTolerance)
-	item.MaxExposureAmount = mustParseFloat(in.MaxExposureAmount)
-	item.MinStake, item.MaxStake = mustParseFloat(in.MinStake), mustParseFloat(in.MaxStake)
-	item.UpEnabled = enableToModel(in.UpEnabled, item.UpEnabled)
-	item.DownEnabled = enableToModel(in.DownEnabled, item.DownEnabled)
+	item.DrawTolerance = helpers.MustParseFloat(in.DrawTolerance)
+	item.MaxExposureAmount = helpers.MustParseFloat(in.MaxExposureAmount)
+	item.MinStake, item.MaxStake = helpers.MustParseFloat(in.MinStake), helpers.MustParseFloat(in.MaxStake)
+	item.UpEnabled = helpers.EnableToModel(in.UpEnabled, item.UpEnabled)
+	item.DownEnabled = helpers.EnableToModel(in.DownEnabled, item.DownEnabled)
 	item.UpdateTimes = now
 	if item.Id == 0 {
 		_, err = l.svcCtx.TradeSymbolSecondsModel.Insert(l.ctx, item)

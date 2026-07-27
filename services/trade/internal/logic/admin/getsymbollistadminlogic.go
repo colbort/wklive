@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/trade"
@@ -45,7 +46,7 @@ func (l *GetSymbolListAdminLogic) GetSymbolListAdmin(in *trade.GetSymbolListAdmi
 	}
 	resp := &trade.GetSymbolListAdminResp{Base: pageutil.Base(cursor, limit, len(data), total, lastID)}
 	for _, item := range data {
-		resp.Data = append(resp.Data, symbolToProto(item))
+		resp.Data = append(resp.Data, helpers.SymbolToProto(item))
 	}
 	return resp, nil
 }

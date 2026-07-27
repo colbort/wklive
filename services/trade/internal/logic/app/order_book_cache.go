@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/proto/common"
 	"wklive/proto/trade"
@@ -59,7 +60,7 @@ func orderBookScore(order *models.TTradeOrder) float64 {
 
 func isOrderBookOrder(order *models.TTradeOrder) bool {
 	return order != nil &&
-		isMatchableOrderStatus(order.Status) &&
+		helpers.IsMatchableOrderStatus(order.Status) &&
 		(order.OrderType == int64(trade.OrderType_ORDER_TYPE_MARKET) ||
 			order.OrderType == int64(trade.OrderType_ORDER_TYPE_LIMIT))
 }
@@ -118,7 +119,7 @@ func RestoreOrderBookCache(ctx context.Context, svcCtx *svc.ServiceContext) (int
 	cursor := int64(0)
 	for {
 		orders, _, err := svcCtx.TradeOrderModel.FindPage(ctx, models.TradeOrderPageFilter{
-			Statuses: matchableOrderStatuses(),
+			Statuses: helpers.MatchableOrderStatuses(),
 		}, cursor, orderBookRestoreSize)
 		if err != nil {
 			return restored, err

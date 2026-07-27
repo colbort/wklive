@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -37,5 +38,5 @@ func (l *GetPositionDetailAdminLogic) GetPositionDetailAdmin(in *trade.GetPositi
 		return nil, err
 	}
 
-	return &trade.GetPositionDetailAdminResp{Base: helper.OkResp(), Data: positionToProto(item)}, nil
+	return &trade.GetPositionDetailAdminResp{Base: helper.OkResp(), Data: helpers.PositionToProto(item)}, nil
 }

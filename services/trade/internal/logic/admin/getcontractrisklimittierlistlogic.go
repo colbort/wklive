@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/trade"
@@ -29,7 +30,7 @@ func NewGetContractRiskLimitTierListLogic(ctx context.Context, svcCtx *svc.Servi
 // 获取合约风险限额档位列表
 func (l *GetContractRiskLimitTierListLogic) GetContractRiskLimitTierList(in *trade.GetContractRiskLimitTierListReq) (*trade.GetContractRiskLimitTierListResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
-	data, total, err := l.svcCtx.ContractRiskLimitTierModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: adminTenantID(l.ctx, in.TenantId), SymbolId: in.SymbolId, Enabled: int64(in.Enabled)}, cursor, limit)
+	data, total, err := l.svcCtx.ContractRiskLimitTierModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: helpers.AdminTenantID(l.ctx, in.TenantId), SymbolId: in.SymbolId, Enabled: int64(in.Enabled)}, cursor, limit)
 	if err != nil {
 		return nil, err
 	}

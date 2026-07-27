@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"wklive/proto/common"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/utils"
 	"wklive/proto/trade"
@@ -135,7 +136,7 @@ func (l *ProcessDeliverySettlementsLogic) ensureBatch(symbol *models.TTradeSymbo
 	if window <= 0 || quote.QuoteTs < c.DeliveryTime-window || quote.QuoteTs > c.DeliveryTime+window {
 		return fmt.Errorf("delivery quote outside configured settlement window")
 	}
-	price := mustParseFloat(quote.LastPrice)
+	price := helpers.MustParseFloat(quote.LastPrice)
 	positions, err := l.svcCtx.ContractPositionModel.FindList(l.ctx, models.ContractPositionPageFilter{TenantId: c.TenantId, SymbolId: c.SymbolId, ContractType: int64(common.ContractType_CONTRACT_TYPE_DELIVERY)})
 	if err != nil {
 		return err

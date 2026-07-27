@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"time"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -62,17 +63,17 @@ func (l *SetUserTradeLimitLogic) SetUserTradeLimit(in *trade.SetUserTradeLimitRe
 	item.CanCancel = in.CanCancel
 	item.CanTriggerOrder = in.CanTriggerOrder
 	item.CanApiTrade = in.CanApiTrade
-	item.TradeEnabled = enableToModel(in.TradeEnabled, item.TradeEnabled)
-	item.OnlyReduceOnly = enableToModel(common.Enable(in.OnlyReduceOnly), item.OnlyReduceOnly)
+	item.TradeEnabled = helpers.EnableToModel(in.TradeEnabled, item.TradeEnabled)
+	item.OnlyReduceOnly = helpers.EnableToModel(common.Enable(in.OnlyReduceOnly), item.OnlyReduceOnly)
 	item.MaxOpenOrderCount = in.MaxOpenOrderCount
 	item.MaxOrderCountPerDay = in.MaxOrderCountPerDay
 	item.MaxCancelCountPerDay = in.MaxCancelCountPerDay
-	item.MaxOpenNotional = mustParseFloat(in.MaxOpenNotional)
-	item.MaxPositionNotional = mustParseFloat(in.MaxPositionNotional)
+	item.MaxOpenNotional = helpers.MustParseFloat(in.MaxOpenNotional)
+	item.MaxPositionNotional = helpers.MustParseFloat(in.MaxPositionNotional)
 	item.RiskLevel = in.RiskLevel
 	item.OperatorId = in.OperatorId
 	item.Source = int64(in.Source)
-	item.Enabled = enableToModel(in.Enabled, item.Enabled)
+	item.Enabled = helpers.EnableToModel(in.Enabled, item.Enabled)
 	item.EffectiveStartTime = in.EffectiveStartTime
 	item.EffectiveEndTime = in.EffectiveEndTime
 	item.Remark = in.Remark

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"sort"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/utils"
 	"wklive/proto/asset"
@@ -162,7 +163,7 @@ func (l *ProcessLiquidationsLogic) lockRiskUnit(position *models.TContractPositi
 func (l *ProcessLiquidationsLogic) cancelRiskIncreasingOrders(position *models.TContractPosition) error {
 	cursor := int64(0)
 	for {
-		statuses := append(matchableOrderStatuses(), int64(trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING))
+		statuses := append(helpers.MatchableOrderStatuses(), int64(trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING))
 		orders, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{TenantId: position.TenantId, UserId: position.UserId, SymbolId: position.SymbolId, ProductType: int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE), Statuses: statuses}, cursor, 100)
 		if err != nil {
 			return err

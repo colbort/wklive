@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"wklive/common/pageutil"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/mapper"
@@ -29,7 +30,7 @@ func NewGetLiquidationListLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 // 强平、秒合约价格与结算异常（只读）
 func (l *GetLiquidationListLogic) GetLiquidationList(in *trade.GetLiquidationListReq) (*trade.GetLiquidationListResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
-	d, total, err := l.svcCtx.ContractLiquidationModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: adminTenantID(l.ctx, in.TenantId), UserId: in.UserId, SymbolId: in.SymbolId, PositionId: in.PositionId, Status: int64(in.Status), TimeStart: in.TimeRange.GetStartTime(), TimeEnd: in.TimeRange.GetEndTime()}, cursor, limit)
+	d, total, err := l.svcCtx.ContractLiquidationModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: helpers.AdminTenantID(l.ctx, in.TenantId), UserId: in.UserId, SymbolId: in.SymbolId, PositionId: in.PositionId, Status: int64(in.Status), TimeStart: in.TimeRange.GetStartTime(), TimeEnd: in.TimeRange.GetEndTime()}, cursor, limit)
 	if err != nil {
 		return nil, err
 	}

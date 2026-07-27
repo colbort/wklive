@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/trade"
@@ -33,7 +34,7 @@ func (l *GetSymbolLeverageConfigListLogic) GetSymbolLeverageConfigList(in *trade
 		TenantId:   in.TenantId,
 		SymbolId:   in.SymbolId,
 		MarginMode: int64(in.MarginMode),
-		Enabled:    enableToModel(in.Enabled, 0),
+		Enabled:    helpers.EnableToModel(in.Enabled, 0),
 	}, cursor, limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
@@ -45,11 +46,11 @@ func (l *GetSymbolLeverageConfigListLogic) GetSymbolLeverageConfigList(in *trade
 	}
 	resp := &trade.GetSymbolLeverageConfigListResp{Base: pageutil.Base(cursor, limit, len(data), total, lastID)}
 	for _, item := range data {
-		defaultLeverage, findErr := findDefaultLeverage(l.ctx, l.svcCtx.SymbolLeverageDefaultModel, item.TenantId, item.SymbolId, item.MarginMode)
+		defaultLeverage, findErr := helpers.FindDefaultLeverage(l.ctx, l.svcCtx.SymbolLeverageDefaultModel, item.TenantId, item.SymbolId, item.MarginMode)
 		if findErr != nil {
 			return nil, findErr
 		}
-		resp.Data = append(resp.Data, symbolLeverageConfigToProto(item, defaultLeverage))
+		resp.Data = append(resp.Data, helpers.SymbolLeverageConfigToProto(item, defaultLeverage))
 	}
 	return resp, nil
 }

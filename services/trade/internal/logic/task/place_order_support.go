@@ -76,7 +76,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 			if exists.RequestHash != "" && exists.RequestHash != requestHash {
 				return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, "client_order_id already exists with different order parameters")}, nil
 			}
-			return &trade.PlaceOrderResp{Base: helper.OkResp(), Data: orderToProto(exists)}, nil
+			return &trade.PlaceOrderResp{Base: helper.OkResp(), Data: helpers.OrderToProto(exists)}, nil
 		}
 	}
 
@@ -128,31 +128,31 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 			}
 		}
 	} else {
-		orderType, triggerKind = normalizeOrderTypeAndTriggerKind(orderType, triggerKind, price)
-		if !isSupportedOrderType(orderType) || !isSupportedTriggerKind(triggerKind) {
+		orderType, triggerKind = helpers.NormalizeOrderTypeAndTriggerKind(orderType, triggerKind, price)
+		if !helpers.IsSupportedOrderType(orderType) || !helpers.IsSupportedTriggerKind(triggerKind) {
 			return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
 	}
-	if hasNegativeOrderInput(price, qty, amount, triggerPrice) {
+	if helpers.HasNegativeOrderInput(price, qty, amount, triggerPrice) {
 		return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
-	if !isSeconds && (!isValidOrderPrice(orderType, price) || !isValidOrderTimeInForce(orderType, triggerKind, timeInForce)) {
+	if !isSeconds && (!helpers.IsValidOrderPrice(orderType, price) || !helpers.IsValidOrderTimeInForce(orderType, triggerKind, timeInForce)) {
 		return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	if !isSeconds {
-		timeInForce = normalizeOrderTimeInForce(orderType, timeInForce)
+		timeInForce = helpers.NormalizeOrderTimeInForce(orderType, timeInForce)
 	}
 	if !isSeconds && amount.IsZero() && orderType == trade.OrderType_ORDER_TYPE_LIMIT {
 		if !price.IsPositive() || !qty.IsPositive() {
 			return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
-		amount = tradeMinorAmountAtPrice(price, qty)
+		amount = helpers.TradeMinorAmountAtPrice(price, qty)
 	}
 
 	if !qty.IsPositive() && !amount.IsPositive() {
 		return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
-	if !isSeconds && isTriggerKind(triggerKind) && !triggerPrice.IsPositive() {
+	if !isSeconds && helpers.IsTriggerKind(triggerKind) && !triggerPrice.IsPositive() {
 		return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	if timeInForce == trade.TimeInForce_TIME_IN_FORCE_POST_ONLY {
@@ -168,9 +168,9 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		}
 	}
 	leverage := int64(1)
-	if isDerivativeProduct(common.ProductType(symbol.ProductType)) {
+	if helpers.IsDerivativeProduct(common.ProductType(symbol.ProductType)) {
 		var ok bool
-		leverage, ok, err = ensureConfiguredLeverage(l.ctx, l.svcCtx.SymbolLeverageCfgModel, l.svcCtx.SymbolLeverageDefaultModel, configTenantId, symbol, in.MarginMode, in.Leverage)
+		leverage, ok, err = helpers.EnsureConfiguredLeverage(l.ctx, l.svcCtx.SymbolLeverageCfgModel, l.svcCtx.SymbolLeverageDefaultModel, configTenantId, symbol, in.MarginMode, in.Leverage)
 		if err != nil {
 			return nil, err
 		}
@@ -188,7 +188,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	if err != nil {
 		return nil, err
 	}
-	marginAsset := marginAssetForSymbol(symbol)
+	marginAsset := helpers.MarginAssetForSymbol(symbol)
 	now := utils.NowMillis()
 	order := &models.TTradeOrder{
 		TenantId:          tenantId,
@@ -214,7 +214,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		Fee:               decimal.Zero,
 		FeeAsset:          marginAsset,
 		Source:            int64(in.OrderSource),
-		IsReduceOnly:      yesNoToModel(common.YesNo(in.IsReduceOnly), int64(common.YesNo_YES_NO_NO)),
+		IsReduceOnly:      helpers.YesNoToModel(common.YesNo(in.IsReduceOnly), int64(common.YesNo_YES_NO_NO)),
 		IsClosePosition:   int64(common.YesNo_YES_NO_NO),
 		TriggerPrice:      triggerPrice,
 		TriggerType:       int64(in.TriggerType),
@@ -293,8 +293,8 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 			RiskTierId:        plan.riskTierID,
 			ClosePositionType: 0,
 			LiquidationPrice:  decimal.Zero,
-			TakeProfitPrice:   mustParseFloat(in.TakeProfitPrice),
-			StopLossPrice:     mustParseFloat(in.StopLossPrice),
+			TakeProfitPrice:   helpers.MustParseFloat(in.TakeProfitPrice),
+			StopLossPrice:     helpers.MustParseFloat(in.StopLossPrice),
 			CreateTimes:       now,
 			UpdateTimes:       now,
 		}
@@ -310,7 +310,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 				if exists.RequestHash != "" && exists.RequestHash != requestHash {
 					return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, "client_order_id already exists with different order parameters")}, nil
 				}
-				return &trade.PlaceOrderResp{Base: helper.OkResp(), Data: orderToProto(exists)}, nil
+				return &trade.PlaceOrderResp{Base: helper.OkResp(), Data: helpers.OrderToProto(exists)}, nil
 			}
 		}
 		return nil, err
@@ -324,14 +324,14 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 			if rejectErr := l.rejectOrderAfterFreezeFailure(order, plan, err); rejectErr != nil {
 				return nil, rejectErr
 			}
-			return &trade.PlaceOrderResp{Base: helper.OkResp(), Data: orderToProto(order)}, nil
+			return &trade.PlaceOrderResp{Base: helper.OkResp(), Data: helpers.OrderToProto(order)}, nil
 		}
 		// Timeout/transport failure does not prove that Asset failed. Keep the
 		// order and reservation in FREEZING for idempotent reconciliation.
 		if updateErr := l.markAssetReservationRetry(order, err); updateErr != nil {
 			l.Errorf("mark uncertain asset reservation failed, orderNo=%s err=%v", order.OrderNo, updateErr)
 		}
-		return &trade.PlaceOrderResp{Base: helper.OkResp(), Data: orderToProto(order)}, nil
+		return &trade.PlaceOrderResp{Base: helper.OkResp(), Data: helpers.OrderToProto(order)}, nil
 	}
 	if err = l.finalizeAcceptedOrder(order, freezeNo, frozenAmount, triggerKind, orderType, triggerPrice, isSeconds); err != nil {
 		// Asset has already accepted the idempotent freeze. Never unfreeze here:
@@ -351,16 +351,16 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		}
 	}
 
-	return &trade.PlaceOrderResp{Base: helper.OkResp(), Data: orderToProto(order)}, nil
+	return &trade.PlaceOrderResp{Base: helper.OkResp(), Data: helpers.OrderToProto(order)}, nil
 }
 
 func (l *PlaceOrderLogic) finalizeAcceptedOrder(order *models.TTradeOrder, freezeNo string, frozenAmount decimal.Decimal, triggerKind trade.TriggerKind, orderType trade.OrderType, triggerPrice decimal.Decimal, isSeconds bool) error {
-	ext := orderAssetExt{FreezeNo: freezeNo}
-	if isTriggerKind(triggerKind) {
+	ext := helpers.OrderAssetExt{FreezeNo: freezeNo}
+	if helpers.IsTriggerKind(triggerKind) {
 		ext.OriginalOrderType = int64(orderType)
 		ext.TriggerPrice = triggerPrice.String()
 	}
-	extValue, err := marshalOrderAssetExt(ext)
+	extValue, err := helpers.MarshalOrderAssetExt(ext)
 	if err != nil {
 		return err
 	}
@@ -373,7 +373,7 @@ func (l *PlaceOrderLogic) finalizeAcceptedOrder(order *models.TTradeOrder, freez
 		eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
 
 		order.BizExt = sql.NullString{String: extValue, Valid: extValue != ""}
-		order.Status = statusAfterFreeze(triggerKind)
+		order.Status = helpers.StatusAfterFreeze(triggerKind)
 		order.UpdateTimes = now
 		if err := orderModel.Update(ctx, order); err != nil {
 			return err
@@ -486,7 +486,7 @@ func (l *PlaceOrderLogic) postOnlyWouldTake(tenantID, symbolID, marketType, side
 		symbolID,
 		marketType,
 		oppositeSide,
-		matchableOrderStatuses(),
+		helpers.MatchableOrderStatuses(),
 		int64(trade.OrderType_ORDER_TYPE_MARKET),
 		1,
 	)
@@ -538,7 +538,7 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 	if (symbol.ListingTime > 0 && now < symbol.ListingTime) || (symbol.TradingStartTime > 0 && now < symbol.TradingStartTime) || (symbol.TradingEndTime > 0 && now >= symbol.TradingEndTime) {
 		return nil, errors.New("symbol is outside its trading time")
 	}
-	if symbol.Status == int64(trade.SymbolStatus_SYMBOL_STATUS_CLOSE_ONLY) && !isDerivativeProduct(common.ProductType(symbol.ProductType)) {
+	if symbol.Status == int64(trade.SymbolStatus_SYMBOL_STATUS_CLOSE_ONLY) && !helpers.IsDerivativeProduct(common.ProductType(symbol.ProductType)) {
 		return nil, errors.New("close-only is only valid for derivative symbols")
 	}
 	if symbol.Status == int64(trade.SymbolStatus_SYMBOL_STATUS_CLOSE_ONLY) && in.IsReduceOnly != common.YesNo_YES_NO_YES {
@@ -612,12 +612,12 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 			return nil, errors.New("spot side is disabled")
 		}
 		if !plan.notional.IsPositive() && qty.IsPositive() {
-			plan.notional = tradeMinorAmountAtPrice(plan.riskPrice, qty)
+			plan.notional = helpers.TradeMinorAmountAtPrice(plan.riskPrice, qty)
 		}
 		if err := validateSymbolNotional(symbol, plan.notional); err != nil {
 			return nil, err
 		}
-		plan.frozenAsset, plan.frozenAmount = spotFrozenAssetAndAmount(symbol, in.Side, qty, plan.notional)
+		plan.frozenAsset, plan.frozenAmount = helpers.SpotFrozenAssetAndAmount(symbol, in.Side, qty, plan.notional)
 		if in.Side == common.Side_SIDE_BUY {
 			plan.frozenAmount = plan.frozenAmount.Add(plan.notional.Mul(cfg.TakerFeeRate))
 		}
@@ -687,7 +687,7 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 			plan.riskTierID = tier.Id
 		}
 		fee := contractmath.CalculateFee(values, cfg.TakerFeeRate)
-		plan.frozenAsset = marginAssetForSymbol(symbol)
+		plan.frozenAsset = helpers.MarginAssetForSymbol(symbol)
 		isHedgeClose := in.PositionSide != trade.PositionSide_POSITION_SIDE_NET && isClosingFill(int64(in.PositionSide), int64(in.Side))
 		if in.IsReduceOnly == common.YesNo_YES_NO_YES || isHedgeClose {
 			lookupSide := int64(in.PositionSide)
@@ -790,7 +790,7 @@ func (l *PlaceOrderLogic) bestOppositePrice(tenantID int64, symbol *models.TTrad
 	if side == common.Side_SIDE_SELL {
 		opposite = int64(common.Side_SIDE_BUY)
 	}
-	orders, err := l.svcCtx.TradeOrderModel.FindOpenMatchOrders(l.ctx, tenantID, symbol.Id, symbol.ProductType, opposite, matchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), 1)
+	orders, err := l.svcCtx.TradeOrderModel.FindOpenMatchOrders(l.ctx, tenantID, symbol.Id, symbol.ProductType, opposite, helpers.MatchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), 1)
 	if err != nil {
 		return decimal.Zero, err
 	}
@@ -799,7 +799,7 @@ func (l *PlaceOrderLogic) bestOppositePrice(tenantID int64, symbol *models.TTrad
 	}
 
 	const maxReferencePriceAge = int64(30_000)
-	if isDerivativeProduct(common.ProductType(symbol.ProductType)) {
+	if helpers.IsDerivativeProduct(common.ProductType(symbol.ProductType)) {
 		contract, contractErr := l.svcCtx.TradeSymbolContractModel.FindOneByTenantIdSymbolId(l.ctx, symbol.TenantId, symbol.Id)
 		if contractErr != nil && !errors.Is(contractErr, models.ErrNotFound) {
 			return decimal.Zero, contractErr
@@ -807,7 +807,7 @@ func (l *PlaceOrderLogic) bestOppositePrice(tenantID int64, symbol *models.TTrad
 		if contract != nil && contract.MarkPriceSource != "" {
 			quote, quoteErr := NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).getValidQuoteKind("MARK_PRICE", contract.MarkPriceSource, symbol.Id, maxReferencePriceAge)
 			if quoteErr == nil {
-				price := mustParseFloat(quote.LastPrice)
+				price := helpers.MustParseFloat(quote.LastPrice)
 				if price.IsPositive() {
 					return price, nil
 				}
@@ -818,7 +818,7 @@ func (l *PlaceOrderLogic) bestOppositePrice(tenantID int64, symbol *models.TTrad
 			// bootstrap window; the 30-second validity bound still applies.
 			quote, quoteErr = NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).getValidQuoteKind("FINAL_QUOTE", contract.MarkPriceSource, symbol.Id, maxReferencePriceAge)
 			if quoteErr == nil {
-				price := mustParseFloat(quote.LastPrice)
+				price := helpers.MustParseFloat(quote.LastPrice)
 				if price.IsPositive() {
 					return price, nil
 				}
@@ -829,7 +829,7 @@ func (l *PlaceOrderLogic) bestOppositePrice(tenantID int64, symbol *models.TTrad
 		if source := l.spotReferencePriceSource(symbol); source != "" {
 			quote, quoteErr := NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).getValidQuoteKind("FINAL_QUOTE", source, symbol.Id, maxReferencePriceAge)
 			if quoteErr == nil {
-				price := mustParseFloat(quote.LastPrice)
+				price := helpers.MustParseFloat(quote.LastPrice)
 				if price.IsPositive() {
 					return price, nil
 				}
@@ -844,7 +844,7 @@ func (l *PlaceOrderLogic) bestOppositePrice(tenantID int64, symbol *models.TTrad
 		}
 		return decimal.Zero, snapshotErr
 	}
-	if isDerivativeProduct(common.ProductType(symbol.ProductType)) && snapshot.MarkPrice.IsPositive() {
+	if helpers.IsDerivativeProduct(common.ProductType(symbol.ProductType)) && snapshot.MarkPrice.IsPositive() {
 		return snapshot.MarkPrice, nil
 	}
 	if snapshot.Price.IsPositive() {

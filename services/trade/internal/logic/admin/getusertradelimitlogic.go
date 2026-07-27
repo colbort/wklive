@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/proto/trade"
@@ -34,7 +35,7 @@ func (l *GetUserTradeLimitLogic) GetUserTradeLimit(in *trade.GetUserTradeLimitRe
 	}
 	resp := &trade.GetUserTradeLimitResp{Base: helper.OkResp()}
 	if item != nil {
-		resp.Data = riskUserTradeLimitToProto(item)
+		resp.Data = helpers.RiskUserTradeLimitToProto(item)
 	}
 	return resp, nil
 }

@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -45,14 +46,14 @@ func (l *SetLeverageLogic) SetLeverage(in *trade.SetLeverageReq) (*trade.UserCom
 	if err != nil {
 		return nil, err
 	}
-	longLeverage, ok, err := ensureConfiguredLeverage(l.ctx, l.svcCtx.SymbolLeverageCfgModel, l.svcCtx.SymbolLeverageDefaultModel, tenantId, symbol, in.MarginMode, in.LongLeverage)
+	longLeverage, ok, err := helpers.EnsureConfiguredLeverage(l.ctx, l.svcCtx.SymbolLeverageCfgModel, l.svcCtx.SymbolLeverageDefaultModel, tenantId, symbol, in.MarginMode, in.LongLeverage)
 	if err != nil {
 		return nil, err
 	}
 	if !ok {
 		return &trade.UserCommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
-	shortLeverage, ok, err := ensureConfiguredLeverage(l.ctx, l.svcCtx.SymbolLeverageCfgModel, l.svcCtx.SymbolLeverageDefaultModel, tenantId, symbol, in.MarginMode, in.ShortLeverage)
+	shortLeverage, ok, err := helpers.EnsureConfiguredLeverage(l.ctx, l.svcCtx.SymbolLeverageCfgModel, l.svcCtx.SymbolLeverageDefaultModel, tenantId, symbol, in.MarginMode, in.ShortLeverage)
 	if err != nil {
 		return nil, err
 	}

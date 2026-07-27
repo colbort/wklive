@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -76,7 +77,7 @@ func (l *ProcessReservationReleasesLogic) recoverTerminatingOrders(tenantID int6
 	for scanned := 0; scanned < spotSettlementMaxSteps; {
 		orders, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{
 			TenantId: tenantID,
-			Statuses: terminatingOrderStatuses(),
+			Statuses: helpers.TerminatingOrderStatuses(),
 		}, cursor, reservationReleaseBatchSize)
 		if err != nil {
 			return err

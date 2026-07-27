@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"wklive/proto/common"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -38,7 +39,7 @@ func (l *GetOrderDetailAdminLogic) GetOrderDetailAdmin(in *trade.GetOrderDetailA
 		return nil, err
 	}
 
-	order := orderToProto(item)
+	order := helpers.OrderToProto(item)
 	data := &trade.GetOrderDetailData{Order: order}
 	switch common.ProductType(item.ProductType) {
 	case common.ProductType_PRODUCT_TYPE_SPOT:
@@ -47,7 +48,7 @@ func (l *GetOrderDetailAdminLogic) GetOrderDetailAdmin(in *trade.GetOrderDetailA
 			return nil, findErr
 		}
 		if findErr == nil {
-			data.Spot = orderSpotToProto(spot)
+			data.Spot = helpers.OrderSpotToProto(spot)
 		}
 	case common.ProductType_PRODUCT_TYPE_DERIVATIVE:
 		contract, findErr := l.svcCtx.TradeOrderContractModel.FindOneByTenantIdOrderId(l.ctx, item.TenantId, item.Id)
@@ -55,7 +56,7 @@ func (l *GetOrderDetailAdminLogic) GetOrderDetailAdmin(in *trade.GetOrderDetailA
 			return nil, findErr
 		}
 		if findErr == nil {
-			data.Contract = orderContractToProto(contract)
+			data.Contract = helpers.OrderContractToProto(contract)
 		}
 	case common.ProductType_PRODUCT_TYPE_SECONDS:
 		seconds, findErr := l.svcCtx.TradeOrderSecondsModel.FindOneByTenantIdOrderId(l.ctx, item.TenantId, item.Id)
@@ -65,7 +66,7 @@ func (l *GetOrderDetailAdminLogic) GetOrderDetailAdmin(in *trade.GetOrderDetailA
 		if findErr == nil {
 			order.SecondsDirection = trade.SecondsDirection(seconds.Direction)
 			order.DurationSeconds = seconds.DurationSeconds
-			order.DisplayStatus = secondsOrderDisplayStatus(seconds.SettlementStatus)
+			order.DisplayStatus = helpers.SecondsOrderDisplayStatus(seconds.SettlementStatus)
 			data.Seconds = &trade.TradeOrderSeconds{
 				Id: seconds.Id, TenantId: seconds.TenantId, OrderId: seconds.OrderId,
 				Direction: trade.SecondsDirection(seconds.Direction), DurationSeconds: seconds.DurationSeconds,

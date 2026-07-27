@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -148,7 +149,7 @@ func (l *ProcessFillSettlementsLogic) processInstruction(item *models.TTradeSett
 }
 
 func (l *ProcessFillSettlementsLogic) executeAssetInstruction(item *models.TTradeSettlementInstruction, fill *models.TTradeFill, order *models.TTradeOrder) error {
-	walletType := walletTypeForProduct(common.ProductType(fill.ProductType))
+	walletType := helpers.WalletTypeForProduct(common.ProductType(fill.ProductType))
 	matchReq := func(scene asset.SceneType) (asset.BizType, asset.SceneType, int64, string) {
 		return asset.BizType_BIZ_TYPE_TRADE, scene, fill.Id, item.InstructionNo
 	}

@@ -2,6 +2,7 @@ package adminlogic
 
 import (
 	"context"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/proto/trade"
@@ -29,7 +30,7 @@ func NewGetFundingBatchListLogic(ctx context.Context, svcCtx *svc.ServiceContext
 // 资金费批次与结算明细（只读）
 func (l *GetFundingBatchListLogic) GetFundingBatchList(in *trade.GetFundingBatchListReq) (*trade.GetFundingBatchListResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
-	data, total, err := l.svcCtx.ContractFundingBatchModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: adminTenantID(l.ctx, in.TenantId), SymbolId: in.SymbolId, Status: int64(in.Status), TimeStart: in.TimeRange.GetStartTime(), TimeEnd: in.TimeRange.GetEndTime()}, cursor, limit)
+	data, total, err := l.svcCtx.ContractFundingBatchModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: helpers.AdminTenantID(l.ctx, in.TenantId), SymbolId: in.SymbolId, Status: int64(in.Status), TimeStart: in.TimeRange.GetStartTime(), TimeEnd: in.TimeRange.GetEndTime()}, cursor, limit)
 	if err != nil {
 		return nil, err
 	}

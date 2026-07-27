@@ -54,7 +54,7 @@ func NewProcessOrderMatchingLogic(ctx context.Context, svcCtx *svc.ServiceContex
 // 订单撮合
 func (l *ProcessOrderMatchingLogic) ProcessOrderMatching(in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
 	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_order_matching", func() (*trade.TradeTaskResp, error) {
-		keys, err := l.svcCtx.TradeOrderModel.FindMatchKeys(l.ctx, in.GetTenantId(), matchableOrderStatuses(), orderMatchKeyLimit)
+		keys, err := l.svcCtx.TradeOrderModel.FindMatchKeys(l.ctx, in.GetTenantId(), helpers.MatchableOrderStatuses(), orderMatchKeyLimit)
 		if err != nil {
 			return nil, err
 		}
@@ -75,7 +75,7 @@ func (l *ProcessOrderMatchingLogic) ProcessOrder(orderID int64) error {
 	if err != nil {
 		return err
 	}
-	if !isMatchableOrderStatus(order.Status) {
+	if !helpers.IsMatchableOrderStatus(order.Status) {
 		return nil
 	}
 	key := models.TradeOrderMatchKey{TenantId: order.TenantId, SymbolId: order.SymbolId, ProductType: order.ProductType}
@@ -143,7 +143,7 @@ func (l *ProcessOrderMatchingLogic) findOpenMatchOrdersFromBook(key models.Trade
 		key.SymbolId,
 		key.ProductType,
 		side,
-		matchableOrderStatuses(),
+		helpers.MatchableOrderStatuses(),
 		int64(trade.OrderType_ORDER_TYPE_MARKET),
 		limit,
 	)
@@ -353,7 +353,7 @@ func (l *ProcessOrderMatchingLogic) normalizeLockedMatchPlans(ctx context.Contex
 }
 
 func normalizeLockedMatchPlan(buy, sell *models.TTradeOrder) (*orderMatchPlan, bool) {
-	if buy == nil || sell == nil || !isMatchableOrderStatus(buy.Status) || !isMatchableOrderStatus(sell.Status) {
+	if buy == nil || sell == nil || !helpers.IsMatchableOrderStatus(buy.Status) || !helpers.IsMatchableOrderStatus(sell.Status) {
 		return nil, false
 	}
 	plan := buildOrderMatchPlan(buy, sell)
@@ -380,7 +380,7 @@ func buildOrderMatchPlan(buy, sell *models.TTradeOrder) *orderMatchPlan {
 	if !qty.IsPositive() {
 		return nil
 	}
-	amount := tradeMinorAmountAtPrice(price, qty)
+	amount := helpers.TradeMinorAmountAtPrice(price, qty)
 	amount = clampMatchAmountToOrderRemainder(buy, sell, price, qty, amount)
 	if !amount.IsPositive() {
 		return nil
@@ -395,14 +395,14 @@ func buildOrderMatchPlan(buy, sell *models.TTradeOrder) *orderMatchPlan {
 }
 
 func (l *ProcessOrderMatchingLogic) buildFOKMatchPlans(ctx context.Context, orderModel models.TTradeOrderModel, key models.TradeOrderMatchKey, focal *models.TTradeOrder) ([]*orderMatchPlan, bool, error) {
-	if focal == nil || !isMatchableOrderStatus(focal.Status) {
+	if focal == nil || !helpers.IsMatchableOrderStatus(focal.Status) {
 		return nil, false, nil
 	}
 	oppositeSide := int64(common.Side_SIDE_SELL)
 	if focal.Side == int64(common.Side_SIDE_SELL) {
 		oppositeSide = int64(common.Side_SIDE_BUY)
 	}
-	opposites, err := orderModel.FindOpenMatchOrders(ctx, key.TenantId, key.SymbolId, key.ProductType, oppositeSide, matchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), orderMatchBookDepth)
+	opposites, err := orderModel.FindOpenMatchOrders(ctx, key.TenantId, key.SymbolId, key.ProductType, oppositeSide, helpers.MatchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), orderMatchBookDepth)
 	if err != nil {
 		return nil, false, err
 	}
@@ -417,7 +417,7 @@ func (l *ProcessOrderMatchingLogic) buildFOKMatchPlans(ctx context.Context, orde
 		if err != nil {
 			return nil, false, err
 		}
-		if !sameMatchBook(opposite, key, oppositeSide) || !isMatchableOrderStatus(opposite.Status) {
+		if !sameMatchBook(opposite, key, oppositeSide) || !helpers.IsMatchableOrderStatus(opposite.Status) {
 			continue
 		}
 		buy, sell := matchSides(focal, opposite)
@@ -439,7 +439,7 @@ func (l *ProcessOrderMatchingLogic) buildFOKMatchPlans(ctx context.Context, orde
 		}
 
 		qty := decimal.Min(focalQty, oppositeQty)
-		amount := tradeMinorAmountAtPrice(price, qty)
+		amount := helpers.TradeMinorAmountAtPrice(price, qty)
 		amount = clampMatchAmountToOrderRemainder(buy, sell, price, qty, amount)
 		if !qty.IsPositive() || !amount.IsPositive() {
 			continue
@@ -474,7 +474,7 @@ func clampMatchAmountToOrderRemainder(buy, sell *models.TTradeOrder, price, qty,
 		if !remaining.IsPositive() {
 			continue
 		}
-		limitingQty := tradeQtyFromMinorAmount(remaining, price)
+		limitingQty := helpers.TradeQtyFromMinorAmount(remaining, price)
 		if qty.Equal(limitingQty) {
 			return remaining
 		}
@@ -545,7 +545,7 @@ func remainingMatchQty(order *models.TTradeOrder, price decimal.Decimal) decimal
 		return decimal.Max(order.Qty.Sub(order.FilledQty), decimal.Zero)
 	}
 	if order.Amount.IsPositive() && price.IsPositive() {
-		return tradeQtyFromMinorAmount(decimal.Max(order.Amount.Sub(order.FilledAmount), decimal.Zero), price)
+		return helpers.TradeQtyFromMinorAmount(decimal.Max(order.Amount.Sub(order.FilledAmount), decimal.Zero), price)
 	}
 	return decimal.Zero
 }
@@ -570,7 +570,7 @@ func (n orderFillNeed) matchQty(price decimal.Decimal) decimal.Decimal {
 	if n.byQty {
 		return n.remainingQty
 	}
-	return tradeQtyFromMinorAmount(n.remainingAmount, price)
+	return helpers.TradeQtyFromMinorAmount(n.remainingAmount, price)
 }
 
 func (n *orderFillNeed) consume(qty, amount decimal.Decimal) {
@@ -627,7 +627,7 @@ func canFullyFillFromBook(order *models.TTradeOrder, opposites []*models.TTradeO
 			continue
 		}
 		qty := decimal.Min(focalQty, oppositeQty)
-		need.consume(qty, tradeMinorAmountAtPrice(price, qty))
+		need.consume(qty, helpers.TradeMinorAmountAtPrice(price, qty))
 		if need.filled() {
 			return true
 		}
@@ -672,7 +672,7 @@ func feeAssetForOrder(order *models.TTradeOrder, symbol *models.TTradeSymbol) st
 	if order.FeeAsset != "" {
 		return order.FeeAsset
 	}
-	return marginAssetForSymbol(symbol)
+	return helpers.MarginAssetForSymbol(symbol)
 }
 
 func (l *ProcessOrderMatchingLogic) matchFeeRates(key models.TradeOrderMatchKey) (decimal.Decimal, decimal.Decimal, *models.TTradeSymbolContract, error) {
@@ -691,11 +691,11 @@ func (l *ProcessOrderMatchingLogic) matchFeeRates(key models.TradeOrderMatchKey)
 }
 
 func (l *ProcessOrderMatchingLogic) cancelResidualImmediateOrders(key models.TradeOrderMatchKey) error {
-	buys, err := l.svcCtx.TradeOrderModel.FindOpenMatchOrders(l.ctx, key.TenantId, key.SymbolId, key.ProductType, int64(common.Side_SIDE_BUY), matchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), orderMatchBookDepth)
+	buys, err := l.svcCtx.TradeOrderModel.FindOpenMatchOrders(l.ctx, key.TenantId, key.SymbolId, key.ProductType, int64(common.Side_SIDE_BUY), helpers.MatchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), orderMatchBookDepth)
 	if err != nil {
 		return err
 	}
-	sells, err := l.svcCtx.TradeOrderModel.FindOpenMatchOrders(l.ctx, key.TenantId, key.SymbolId, key.ProductType, int64(common.Side_SIDE_SELL), matchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), orderMatchBookDepth)
+	sells, err := l.svcCtx.TradeOrderModel.FindOpenMatchOrders(l.ctx, key.TenantId, key.SymbolId, key.ProductType, int64(common.Side_SIDE_SELL), helpers.MatchableOrderStatuses(), int64(trade.OrderType_ORDER_TYPE_MARKET), orderMatchBookDepth)
 	if err != nil {
 		return err
 	}
@@ -775,7 +775,7 @@ func (l *ProcessOrderMatchingLogic) cancelOpenOrderNow(orderID int64, reason str
 		if err != nil {
 			return err
 		}
-		if !isMatchableOrderStatus(order.Status) {
+		if !helpers.IsMatchableOrderStatus(order.Status) {
 			return nil
 		}
 		order.Status = int64(trade.OrderStatus_ORDER_STATUS_CANCELING)

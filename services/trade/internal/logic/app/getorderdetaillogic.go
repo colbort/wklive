@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -57,7 +58,7 @@ func (l *GetOrderDetailLogic) GetOrderDetail(in *trade.GetOrderDetailReq) (*trad
 	resp := &trade.GetOrderDetailResp{
 		Base: helper.OkResp(),
 		Data: &trade.GetOrderDetailData{
-			Order: orderToProto(item),
+			Order: helpers.OrderToProto(item),
 		},
 	}
 	spot, err := l.svcCtx.TradeOrderSpotModel.FindOneByTenantIdOrderId(l.ctx, tenantId, item.Id)
@@ -65,24 +66,24 @@ func (l *GetOrderDetailLogic) GetOrderDetail(in *trade.GetOrderDetailReq) (*trad
 		return nil, err
 	}
 	if spot != nil {
-		resp.Data.Spot = orderSpotToProto(spot)
+		resp.Data.Spot = helpers.OrderSpotToProto(spot)
 	}
 	contractCfg, err := l.svcCtx.TradeOrderContractModel.FindOneByTenantIdOrderId(l.ctx, tenantId, item.Id)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	if contractCfg != nil {
-		resp.Data.Contract = orderContractToProto(contractCfg)
+		resp.Data.Contract = helpers.OrderContractToProto(contractCfg)
 	}
 	seconds, err := l.svcCtx.TradeOrderSecondsModel.FindOneByTenantIdOrderId(l.ctx, tenantId, item.Id)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
 	if seconds != nil {
-		resp.Data.Seconds = orderSecondsToProto(seconds)
+		resp.Data.Seconds = helpers.OrderSecondsToProto(seconds)
 		resp.Data.Order.SecondsDirection = trade.SecondsDirection(seconds.Direction)
 		resp.Data.Order.DurationSeconds = seconds.DurationSeconds
-		resp.Data.Order.DisplayStatus = secondsOrderDisplayStatus(seconds.SettlementStatus)
+		resp.Data.Order.DisplayStatus = helpers.SecondsOrderDisplayStatus(seconds.SettlementStatus)
 	}
 
 	return resp, nil

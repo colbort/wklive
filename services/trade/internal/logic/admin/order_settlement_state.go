@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"wklive/proto/common"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/utils"
 	"wklive/proto/trade"
@@ -21,7 +22,7 @@ func beginSystemOrderTermination(ctx context.Context, svcCtx *svc.ServiceContext
 		if err != nil {
 			return err
 		}
-		if !isOpenOrderStatus(current.Status) || rejectReduceOnly && current.IsReduceOnly == 1 {
+		if !helpers.IsOpenOrderStatus(current.Status) || rejectReduceOnly && current.IsReduceOnly == 1 {
 			return nil
 		}
 		current.Status = int64(trade.OrderStatus_ORDER_STATUS_CANCELING)

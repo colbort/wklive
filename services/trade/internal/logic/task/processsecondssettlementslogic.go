@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strings"
 	"time"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	cache "wklive/common/market"
 	"wklive/common/utils"
@@ -115,7 +116,7 @@ func (l *ProcessSecondsSettlementsLogic) processActivations(tenantID int64) erro
 				return errors.New("seconds activation lease lost")
 			}
 			current.ActivatedAt, current.StartPriceTime, current.ExpireTime = now, quote.QuoteTs, now+current.DurationSeconds*1000
-			current.StartPrice = mustParseFloat(quote.LastPrice)
+			current.StartPrice = helpers.MustParseFloat(quote.LastPrice)
 			current.StartPriceSource = quoteSource(quote)
 			current.PriceAlgorithm = nonEmpty(cfg.SettlementPriceAlgorithm, "last-v1")
 			current.SettlementStatus = int64(trade.SecondsSettlementStatus_SECONDS_SETTLEMENT_STATUS_ACTIVE)
@@ -173,7 +174,7 @@ func (l *ProcessSecondsSettlementsLogic) processSettlements(tenantID int64) erro
 					item.ExpireTime, quote.QuoteTs, offset, window,
 				)
 			}
-			price := mustParseFloat(quote.LastPrice)
+			price := helpers.MustParseFloat(quote.LastPrice)
 			result := secondsResult(item.Direction, item.StartPrice, price, cfg.DrawTolerance)
 			if result == trade.SecondsResult_SECONDS_RESULT_DRAW && cfg.DrawRule == int64(trade.SecondsDrawRule_SECONDS_DRAW_RULE_LOSE) {
 				result = trade.SecondsResult_SECONDS_RESULT_LOSE
@@ -412,7 +413,7 @@ func (l *ProcessSecondsSettlementsLogic) getValidQuotesAtKind(kind, source strin
 		return nil, nil, fmt.Errorf("no valid market quote: source=%s", source)
 	}
 	sort.Slice(candidates, func(i, j int) bool {
-		return mustParseFloat(candidates[i].LastPrice).LessThan(mustParseFloat(candidates[j].LastPrice))
+		return helpers.MustParseFloat(candidates[i].LastPrice).LessThan(helpers.MustParseFloat(candidates[j].LastPrice))
 	})
 	return candidates[len(candidates)/2], candidates, nil
 }
@@ -510,7 +511,7 @@ func quoteIsValidAtKind(q *marketQuoteSnapshot, targetTime, validity int64, kind
 	if q == nil || !q.Confirmed || q.SnapshotID == "" || q.QuoteTs <= 0 || q.QuoteTs > targetTime || validity > 0 && targetTime-q.QuoteTs > validity {
 		return false
 	}
-	value := mustParseFloat(q.LastPrice)
+	value := helpers.MustParseFloat(q.LastPrice)
 	if kind == "FUNDING" {
 		return !value.IsZero() || strings.TrimSpace(q.LastPrice) == "0"
 	}
@@ -531,7 +532,7 @@ func persistMarketSnapshot(ctx context.Context, model models.TTradeMarketSnapsho
 	if s.Confirmed {
 		confirmed = int64(common.YesNo_YES_NO_YES)
 	}
-	_, err = model.InsertIgnore(ctx, &models.TTradeMarketSnapshot{TenantId: tenantID, SnapshotId: s.SnapshotID, SnapshotKind: s.Kind, SymbolId: symbolID, Source: s.Source, Price: mustParseFloat(s.Price), MarkPrice: mustParseFloat(s.MarkPrice), IndexPrice: mustParseFloat(s.IndexPrice), FundingRate: mustParseFloat(s.FundingRate), SourceTimestamp: s.SourceTimestamp, SnapshotTimestamp: s.SnapshotTimestamp, Revision: s.Revision, FormulaVersion: s.FormulaVersion, Confirmed: confirmed, RawPayload: string(raw), CreateTimes: utils.NowMillis()})
+	_, err = model.InsertIgnore(ctx, &models.TTradeMarketSnapshot{TenantId: tenantID, SnapshotId: s.SnapshotID, SnapshotKind: s.Kind, SymbolId: symbolID, Source: s.Source, Price: helpers.MustParseFloat(s.Price), MarkPrice: helpers.MustParseFloat(s.MarkPrice), IndexPrice: helpers.MustParseFloat(s.IndexPrice), FundingRate: helpers.MustParseFloat(s.FundingRate), SourceTimestamp: s.SourceTimestamp, SnapshotTimestamp: s.SnapshotTimestamp, Revision: s.Revision, FormulaVersion: s.FormulaVersion, Confirmed: confirmed, RawPayload: string(raw), CreateTimes: utils.NowMillis()})
 	return err
 }
 
@@ -564,7 +565,7 @@ func quoteIsValid(q *marketQuoteSnapshot, validity int64) bool {
 	return quoteIsValidAt(q, utils.NowMillis(), validity)
 }
 func quoteIsValidAt(q *marketQuoteSnapshot, targetTime, validity int64) bool {
-	return q != nil && q.Confirmed && q.SnapshotID != "" && mustParseFloat(q.LastPrice).IsPositive() && q.QuoteTs > 0 && q.QuoteTs <= targetTime && (validity <= 0 || targetTime-q.QuoteTs <= validity)
+	return q != nil && q.Confirmed && q.SnapshotID != "" && helpers.MustParseFloat(q.LastPrice).IsPositive() && q.QuoteTs > 0 && q.QuoteTs <= targetTime && (validity <= 0 || targetTime-q.QuoteTs <= validity)
 }
 func parseQuoteSource(source string) (string, string, string) {
 	parts := strings.Split(source, ":")
@@ -636,6 +637,6 @@ func insertSecondsPriceSnapshot(ctx context.Context, conn sqlx.SqlConn, svcCtx *
 	if selected {
 		yes = int64(common.YesNo_YES_NO_YES)
 	}
-	_, err := models.NewTTradeSecondsPriceSnapshotModel(conn, svcCtx.Config.CacheRedis).Insert(ctx, &models.TTradeSecondsPriceSnapshot{TenantId: order.TenantId, OrderId: order.Id, SnapshotType: int64(typ), Source: quoteSource(q), Price: mustParseFloat(q.LastPrice), QuoteTime: q.QuoteTs, ReceivedAt: q.ReceivedAt, Algorithm: order.PriceAlgorithm, IsSelected: yes, RawPayload: sql.NullString{String: string(raw), Valid: true}, CreateTimes: utils.NowMillis()})
+	_, err := models.NewTTradeSecondsPriceSnapshotModel(conn, svcCtx.Config.CacheRedis).Insert(ctx, &models.TTradeSecondsPriceSnapshot{TenantId: order.TenantId, OrderId: order.Id, SnapshotType: int64(typ), Source: quoteSource(q), Price: helpers.MustParseFloat(q.LastPrice), QuoteTime: q.QuoteTs, ReceivedAt: q.ReceivedAt, Algorithm: order.PriceAlgorithm, IsSelected: yes, RawPayload: sql.NullString{String: string(raw), Valid: true}, CreateTimes: utils.NowMillis()})
 	return err
 }

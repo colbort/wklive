@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"wklive/common/pageutil"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/mapper"
@@ -29,7 +30,7 @@ func NewGetDeliveryBatchListLogic(ctx context.Context, svcCtx *svc.ServiceContex
 // 交割批次与结算明细（只读）
 func (l *GetDeliveryBatchListLogic) GetDeliveryBatchList(in *trade.GetDeliveryBatchListReq) (*trade.GetDeliveryBatchListResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
-	d, total, err := l.svcCtx.ContractDeliveryBatchModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: adminTenantID(l.ctx, in.TenantId), SymbolId: in.SymbolId, Status: int64(in.Status), TimeStart: in.TimeRange.GetStartTime(), TimeEnd: in.TimeRange.GetEndTime()}, cursor, limit)
+	d, total, err := l.svcCtx.ContractDeliveryBatchModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: helpers.AdminTenantID(l.ctx, in.TenantId), SymbolId: in.SymbolId, Status: int64(in.Status), TimeStart: in.TimeRange.GetStartTime(), TimeEnd: in.TimeRange.GetEndTime()}, cursor, limit)
 	if err != nil {
 		return nil, err
 	}

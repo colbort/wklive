@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"wklive/common/pageutil"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/mapper"
@@ -28,7 +29,7 @@ func NewGetFundingSettlementListLogic(ctx context.Context, svcCtx *svc.ServiceCo
 
 func (l *GetFundingSettlementListLogic) GetFundingSettlementList(in *trade.GetFundingSettlementListReq) (*trade.GetFundingSettlementListResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
-	d, total, err := l.svcCtx.ContractFundingSettleModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: adminTenantID(l.ctx, in.TenantId), BatchId: in.BatchId, UserId: in.UserId, PositionId: in.PositionId, Status: int64(in.Status)}, cursor, limit)
+	d, total, err := l.svcCtx.ContractFundingSettleModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: helpers.AdminTenantID(l.ctx, in.TenantId), BatchId: in.BatchId, UserId: in.UserId, PositionId: in.PositionId, Status: int64(in.Status)}, cursor, limit)
 	if err != nil {
 		return nil, err
 	}

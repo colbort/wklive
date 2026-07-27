@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -55,7 +56,7 @@ func (l *SetSymbolSessionLogic) SetSymbolSession(in *trade.SetSymbolSessionReq) 
 		item.CreateTimes = utils.NowMillis()
 	}
 	item.Timezone = in.Timezone
-	item.Enabled = enableToModel(in.Enabled, item.Enabled)
+	item.Enabled = helpers.EnableToModel(in.Enabled, item.Enabled)
 	if item.Enabled == 0 {
 		item.Enabled = 1
 	}

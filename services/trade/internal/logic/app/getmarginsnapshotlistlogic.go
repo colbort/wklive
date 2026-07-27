@@ -2,6 +2,7 @@ package applogic
 
 import (
 	"context"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/utils"
@@ -41,7 +42,7 @@ func (l *GetMarginSnapshotListLogic) GetMarginSnapshotList(in *trade.GetMarginSn
 	}
 	resp := &trade.GetMarginSnapshotListResp{Base: helper.OkResp()}
 	for _, item := range items {
-		resp.Data = append(resp.Data, marginSnapshotToProto(item))
+		resp.Data = append(resp.Data, helpers.MarginSnapshotToProto(item))
 	}
 	return resp, nil
 }

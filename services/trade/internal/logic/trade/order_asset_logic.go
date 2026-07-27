@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"wklive/proto/common"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -47,7 +48,7 @@ func freezeOrderAsset(
 	resp, err := svcCtx.AssetClient.FreezeAsset(ctx, &asset.FreezeAssetReq{
 		TenantId:   order.TenantId,
 		UserId:     order.UserId,
-		WalletType: walletTypeForProduct(common.ProductType(order.ProductType)),
+		WalletType: helpers.WalletTypeForProduct(common.ProductType(order.ProductType)),
 		Coin:       frozenAsset,
 		Amount:     frozenAmount.String(),
 		BizType:    asset.BizType_BIZ_TYPE_TRADE,

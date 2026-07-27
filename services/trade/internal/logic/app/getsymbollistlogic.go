@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/utils"
@@ -44,7 +45,7 @@ func (l *GetSymbolListLogic) GetSymbolList(in *trade.GetSymbolListReq) (*trade.G
 
 	resp := &trade.GetSymbolListResp{Base: helper.OkResp()}
 	for _, item := range data {
-		resp.Data = append(resp.Data, symbolToProto(item))
+		resp.Data = append(resp.Data, helpers.SymbolToProto(item))
 	}
 	return resp, nil
 }

@@ -33,7 +33,7 @@ func NewRetrySettlementInstructionLogic(ctx context.Context, svcCtx *svc.Service
 
 // 仅重置失败/人工处理的结算指令；不得修改金额
 func (l *RetrySettlementInstructionLogic) RetrySettlementInstruction(in *trade.RetrySettlementInstructionReq) (*trade.CommonResp, error) {
-	tenantID := adminTenantID(l.ctx, in.TenantId)
+	tenantID := helpers.AdminTenantID(l.ctx, in.TenantId)
 	operatorID, err := utils.GetUserIdFromMd(l.ctx)
 	if err != nil || operatorID <= 0 {
 		return &trade.CommonResp{Base: helper.ErrResp(i18n.OperationNotAllowed, "missing admin operator identity")}, nil

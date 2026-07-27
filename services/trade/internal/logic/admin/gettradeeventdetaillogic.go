@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -36,5 +37,5 @@ func (l *GetTradeEventDetailLogic) GetTradeEventDetail(in *trade.GetTradeEventDe
 	if err != nil {
 		return nil, err
 	}
-	return &trade.GetTradeEventDetailResp{Base: helper.OkResp(), Data: tradeEventToProto(item)}, nil
+	return &trade.GetTradeEventDetailResp{Base: helper.OkResp(), Data: helpers.TradeEventToProto(item)}, nil
 }

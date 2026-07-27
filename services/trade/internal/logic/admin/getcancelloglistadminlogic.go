@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/common/utils"
@@ -54,7 +55,7 @@ func (l *GetCancelLogListAdminLogic) GetCancelLogListAdmin(in *trade.GetCancelLo
 	}
 	resp := &trade.GetCancelLogListAdminResp{Base: pageutil.Base(cursor, limit, len(data), total, lastID)}
 	for _, item := range data {
-		resp.Data = append(resp.Data, cancelLogToProto(item))
+		resp.Data = append(resp.Data, helpers.CancelLogToProto(item))
 	}
 	return resp, nil
 }

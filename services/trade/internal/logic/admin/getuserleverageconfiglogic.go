@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/proto/trade"
@@ -34,7 +35,7 @@ func (l *GetUserLeverageConfigLogic) GetUserLeverageConfig(in *trade.GetUserLeve
 	}
 	resp := &trade.GetUserLeverageConfigResp{Base: helper.OkResp()}
 	if item != nil {
-		resp.Data = leverageConfigToProto(item)
+		resp.Data = helpers.LeverageConfigToProto(item)
 	}
 	return resp, nil
 }

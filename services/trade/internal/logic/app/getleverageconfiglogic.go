@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/utils"
@@ -45,7 +46,7 @@ func (l *GetLeverageConfigLogic) GetLeverageConfig(in *trade.GetLeverageConfigRe
 	}
 	resp := &trade.GetLeverageConfigResp{Base: helper.OkResp()}
 	if cfg != nil {
-		resp.Data = leverageConfigToProto(cfg)
+		resp.Data = helpers.LeverageConfigToProto(cfg)
 	}
 
 	return resp, nil

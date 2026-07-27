@@ -131,12 +131,12 @@ func buildFillSettlementInstructions(ctx context.Context, contractOrderModel mod
 		if order.Side == int64(common.Side_SIDE_BUY) {
 			return []settlementInstructionSpec{
 				{suffix: "CONSUME", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CONSUME_FROZEN, asset: symbol.QuoteAsset, amount: fill.Amount},
-				{suffix: "CREDIT", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE, asset: symbol.BaseAsset, amount: toTradeMinorAmount(fill.Qty)},
+				{suffix: "CREDIT", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE, asset: symbol.BaseAsset, amount: helpers.ToTradeMinorAmount(fill.Qty)},
 				{suffix: "FEE", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_FEE, asset: fill.FeeAsset, amount: fill.Fee},
 			}, nil
 		}
 		return []settlementInstructionSpec{
-			{suffix: "CONSUME", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CONSUME_FROZEN, asset: symbol.BaseAsset, amount: toTradeMinorAmount(fill.Qty)},
+			{suffix: "CONSUME", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CONSUME_FROZEN, asset: symbol.BaseAsset, amount: helpers.ToTradeMinorAmount(fill.Qty)},
 			{suffix: "CREDIT", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE, asset: symbol.QuoteAsset, amount: fill.Amount},
 			{suffix: "FEE", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_FEE, asset: fill.FeeAsset, amount: fill.Fee},
 		}, nil

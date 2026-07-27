@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/common/utils"
@@ -56,7 +57,7 @@ func (l *GetFillListLogic) GetFillList(in *trade.GetFillListReq) (*trade.GetFill
 	}
 	resp := &trade.GetFillListResp{Base: pageutil.Base(cursor, limit, len(data), total, lastID)}
 	for _, item := range data {
-		resp.Data = append(resp.Data, fillToProto(item))
+		resp.Data = append(resp.Data, helpers.FillToProto(item))
 	}
 	return resp, nil
 }

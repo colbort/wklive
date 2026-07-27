@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/utils"
@@ -49,7 +50,7 @@ func (l *GetPositionListLogic) GetPositionList(in *trade.GetPositionListReq) (*t
 
 	resp := &trade.GetPositionListResp{Base: helper.OkResp()}
 	for _, item := range data {
-		resp.Data = append(resp.Data, positionToProto(item))
+		resp.Data = append(resp.Data, helpers.PositionToProto(item))
 	}
 	return resp, nil
 }

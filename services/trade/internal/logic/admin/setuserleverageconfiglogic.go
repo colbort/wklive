@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -57,7 +58,7 @@ func (l *SetUserLeverageConfigLogic) SetUserLeverageConfig(in *trade.SetUserLeve
 	item.ShortLeverage = in.ShortLeverage
 	item.OperatorId = in.OperatorId
 	item.Source = int64(in.Source)
-	item.Enabled = enableToModel(in.Enabled, item.Enabled)
+	item.Enabled = helpers.EnableToModel(in.Enabled, item.Enabled)
 	item.Remark = in.Remark
 	item.UpdateTimes = now
 	if item.Id == 0 {

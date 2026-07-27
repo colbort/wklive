@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"strings"
+	"wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -25,7 +26,7 @@ func NewAdminInsuranceSnapshotLogic(ctx context.Context, s *svc.ServiceContext) 
 }
 
 func (l *AdminInsuranceSnapshotLogic) SetInsuranceFundAccount(in *trade.SetInsuranceFundAccountReq) (*trade.CommonResp, error) {
-	tenant := adminTenantID(l.ctx, in.TenantId)
+	tenant := helpers.AdminTenantID(l.ctx, in.TenantId)
 	assetCode := strings.ToUpper(strings.TrimSpace(in.SettleAsset))
 	if tenant <= 0 || assetCode == "" {
 		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, "invalid insurance fund account")}, nil
@@ -70,7 +71,7 @@ func (l *AdminInsuranceSnapshotLogic) SetInsuranceFundAccount(in *trade.SetInsur
 }
 func (l *AdminInsuranceSnapshotLogic) GetInsuranceFundAccountList(in *trade.GetInsuranceFundAccountListReq) (*trade.GetInsuranceFundAccountListResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
-	rows, total, err := l.svc.ContractInsuranceFundModel.FindPage(l.ctx, adminTenantID(l.ctx, in.TenantId), in.SymbolId, int64(in.Status), cursor, limit, strings.ToUpper(strings.TrimSpace(in.SettleAsset)))
+	rows, total, err := l.svc.ContractInsuranceFundModel.FindPage(l.ctx, helpers.AdminTenantID(l.ctx, in.TenantId), in.SymbolId, int64(in.Status), cursor, limit, strings.ToUpper(strings.TrimSpace(in.SettleAsset)))
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +86,7 @@ func (l *AdminInsuranceSnapshotLogic) GetInsuranceFundAccountList(in *trade.GetI
 }
 func (l *AdminInsuranceSnapshotLogic) GetMarketSnapshotList(in *trade.GetMarketSnapshotListReq) (*trade.GetMarketSnapshotListResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
-	rows, total, err := l.svc.TradeMarketSnapshotModel.FindPage(l.ctx, adminTenantID(l.ctx, in.TenantId), in.SymbolId, cursor, limit, in.StartTime, in.EndTime, strings.ToUpper(strings.TrimSpace(in.SnapshotKind)))
+	rows, total, err := l.svc.TradeMarketSnapshotModel.FindPage(l.ctx, helpers.AdminTenantID(l.ctx, in.TenantId), in.SymbolId, cursor, limit, in.StartTime, in.EndTime, strings.ToUpper(strings.TrimSpace(in.SnapshotKind)))
 	if err != nil {
 		return nil, err
 	}

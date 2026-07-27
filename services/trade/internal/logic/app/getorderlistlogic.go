@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"wklive/proto/common"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/pageutil"
 	"wklive/common/utils"
@@ -59,7 +60,7 @@ func (l *GetOrderListLogic) GetOrderList(in *trade.GetOrderListReq) (*trade.GetO
 	}
 	resp := &trade.GetOrderListResp{Base: pageutil.Base(cursor, limit, len(data), total, lastID)}
 	for _, item := range data {
-		order := orderToProto(item)
+		order := helpers.OrderToProto(item)
 		if item.ProductType == int64(common.ProductType_PRODUCT_TYPE_SECONDS) {
 			seconds, findErr := l.svcCtx.TradeOrderSecondsModel.FindOneByTenantIdOrderId(l.ctx, item.TenantId, item.Id)
 			if findErr != nil && !errors.Is(findErr, models.ErrNotFound) {
@@ -68,7 +69,7 @@ func (l *GetOrderListLogic) GetOrderList(in *trade.GetOrderListReq) (*trade.GetO
 			if findErr == nil {
 				order.SecondsDirection = trade.SecondsDirection(seconds.Direction)
 				order.DurationSeconds = seconds.DurationSeconds
-				order.DisplayStatus = secondsOrderDisplayStatus(seconds.SettlementStatus)
+				order.DisplayStatus = helpers.SecondsOrderDisplayStatus(seconds.SettlementStatus)
 			}
 		}
 		resp.Data = append(resp.Data, order)

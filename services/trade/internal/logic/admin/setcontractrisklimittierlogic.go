@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"wklive/proto/common"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -31,14 +32,14 @@ func NewSetContractRiskLimitTierLogic(ctx context.Context, svcCtx *svc.ServiceCo
 
 // 保存合约风险限额档位
 func (l *SetContractRiskLimitTierLogic) SetContractRiskLimitTier(in *trade.SetContractRiskLimitTierReq) (*trade.CommonResp, error) {
-	tenantID := adminTenantID(l.ctx, in.TenantId)
+	tenantID := helpers.AdminTenantID(l.ctx, in.TenantId)
 	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, in.SymbolId)
 	if err != nil || symbol.TenantId != tenantID || symbol.ProductType != int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) {
 		return &trade.CommonResp{Base: helper.ErrResp(i18n.BusinessDataNotFound, "derivative symbol not found")}, nil
 	}
-	floor, capValue := mustParseFloat(in.NotionalFloor), mustParseFloat(in.NotionalCap)
-	initial, maintenance := mustParseFloat(in.InitialMarginRate), mustParseFloat(in.MaintenanceMarginRate)
-	maintenanceAmount := mustParseFloat(in.MaintenanceAmount)
+	floor, capValue := helpers.MustParseFloat(in.NotionalFloor), helpers.MustParseFloat(in.NotionalCap)
+	initial, maintenance := helpers.MustParseFloat(in.InitialMarginRate), helpers.MustParseFloat(in.MaintenanceMarginRate)
+	maintenanceAmount := helpers.MustParseFloat(in.MaintenanceAmount)
 	if in.TierNo <= 0 || in.MaxLeverage <= 0 || floor.IsNegative() || (capValue.IsPositive() && !capValue.GreaterThan(floor)) || maintenance.IsNegative() || initial.LessThan(maintenance) || maintenanceAmount.IsNegative() {
 		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, "invalid risk tier")}, nil
 	}

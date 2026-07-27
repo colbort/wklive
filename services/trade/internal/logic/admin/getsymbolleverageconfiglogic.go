@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	helpers "wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -50,13 +51,13 @@ func (l *GetSymbolLeverageConfigLogic) GetSymbolLeverageConfig(in *trade.GetSymb
 	if err != nil {
 		return nil, err
 	}
-	defaultLeverage, err := findDefaultLeverage(l.ctx, l.svcCtx.SymbolLeverageDefaultModel, item.TenantId, item.SymbolId, item.MarginMode)
+	defaultLeverage, err := helpers.FindDefaultLeverage(l.ctx, l.svcCtx.SymbolLeverageDefaultModel, item.TenantId, item.SymbolId, item.MarginMode)
 	if err != nil {
 		return nil, err
 	}
 
 	return &trade.GetSymbolLeverageConfigResp{
 		Base: helper.OkResp(),
-		Data: symbolLeverageConfigToProto(item, defaultLeverage),
+		Data: helpers.SymbolLeverageConfigToProto(item, defaultLeverage),
 	}, nil
 }
