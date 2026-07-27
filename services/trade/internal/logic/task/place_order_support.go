@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"wklive/common/conv"
 	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -84,10 +85,13 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 	isSeconds := symbol.ProductType == int64(common.ProductType_PRODUCT_TYPE_SECONDS)
 	var secondsCfg *models.TTradeSymbolSeconds
 
-	price := mustParseFloat(in.Price)
-	qty := mustParseFloat(in.Qty)
-	amount := mustParseFloat(in.Amount)
-	triggerPrice := mustParseFloat(in.TriggerPrice)
+	price, priceErr := conv.ParseDecimalField(in.Price)
+	qty, qtyErr := conv.ParseDecimalField(in.Qty)
+	amount, amountErr := conv.ParseDecimalField(in.Amount)
+	triggerPrice, triggerPriceErr := conv.ParseDecimalField(in.TriggerPrice)
+	if priceErr != nil || qtyErr != nil || amountErr != nil || triggerPriceErr != nil {
+		return nil, fmt.Errorf("invalid decimal order input")
+	}
 	if isSeconds {
 		orderType, triggerKind, timeInForce = trade.OrderType_ORDER_TYPE_UNKNOWN, trade.TriggerKind_TRIGGER_KIND_NONE, trade.TimeInForce_TIME_IN_FORCE_UNKNOWN
 		if in.SecondsDirection < 1 || in.SecondsDirection > 2 || in.DurationSeconds <= 0 || !amount.IsPositive() {

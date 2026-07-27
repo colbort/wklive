@@ -5,6 +5,7 @@ import (
 	"errors"
 	"wklive/proto/common"
 
+	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -13,6 +14,7 @@ import (
 	"wklive/services/trade/internal/validation"
 	"wklive/services/trade/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -64,29 +66,28 @@ func (l *UpdateSymbolLogic) UpdateSymbol(in *trade.UpdateSymbolReq) (*trade.Comm
 	if in.QtyScale != 0 {
 		item.QtyScale = int64(in.QtyScale)
 	}
-	if in.MinPrice != "" {
-		item.MinPrice = mustParseFloat(in.MinPrice)
+	decimalFields := []struct {
+		raw    string
+		target *decimal.Decimal
+	}{
+		{in.MinPrice, &item.MinPrice},
+		{in.MaxPrice, &item.MaxPrice},
+		{in.PriceTick, &item.PriceTick},
+		{in.MinQty, &item.MinQty},
+		{in.MaxQty, &item.MaxQty},
+		{in.QtyStep, &item.QtyStep},
+		{in.MinNotional, &item.MinNotional},
+		{in.MaxNotional, &item.MaxNotional},
 	}
-	if in.MaxPrice != "" {
-		item.MaxPrice = mustParseFloat(in.MaxPrice)
-	}
-	if in.PriceTick != "" {
-		item.PriceTick = mustParseFloat(in.PriceTick)
-	}
-	if in.MinQty != "" {
-		item.MinQty = mustParseFloat(in.MinQty)
-	}
-	if in.MaxQty != "" {
-		item.MaxQty = mustParseFloat(in.MaxQty)
-	}
-	if in.QtyStep != "" {
-		item.QtyStep = mustParseFloat(in.QtyStep)
-	}
-	if in.MinNotional != "" {
-		item.MinNotional = mustParseFloat(in.MinNotional)
-	}
-	if in.MaxNotional != "" {
-		item.MaxNotional = mustParseFloat(in.MaxNotional)
+	for _, field := range decimalFields {
+		if field.raw == "" {
+			continue
+		}
+		value, parseErr := conv.ParseDecimalField(field.raw)
+		if parseErr != nil {
+			return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, parseErr.Error())}, nil
+		}
+		*field.target = value
 	}
 	if in.ListingTime != 0 {
 		item.ListingTime = in.ListingTime

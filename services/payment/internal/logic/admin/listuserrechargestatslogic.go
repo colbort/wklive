@@ -3,7 +3,9 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"strings"
 
+	"wklive/common/i18n"
 	"wklive/common/pageutil"
 	"wklive/common/utils"
 	"wklive/proto/payment"
@@ -34,13 +36,38 @@ func (l *ListUserRechargeStatsLogic) ListUserRechargeStats(in *payment.ListUserR
 			in.TenantId = tenantId
 		}
 	}
+	minAmountText := ""
+	minAmount, err := parseNonNegativeAmount(in.SuccessTotalAmountMin)
+	if strings.TrimSpace(in.SuccessTotalAmountMin) != "" {
+		if err != nil {
+			return &payment.ListUserRechargeStatsResp{
+				Base: paymentErrorResp(l.ctx, i18n.InvalidPaymentDecimal).Base,
+			}, nil
+		}
+		minAmountText = minAmount.String()
+	}
+	maxAmountText := ""
+	maxAmount, err := parseNonNegativeAmount(in.SuccessTotalAmountMax)
+	if strings.TrimSpace(in.SuccessTotalAmountMax) != "" {
+		if err != nil {
+			return &payment.ListUserRechargeStatsResp{
+				Base: paymentErrorResp(l.ctx, i18n.InvalidPaymentDecimal).Base,
+			}, nil
+		}
+		if minAmount.GreaterThan(maxAmount) {
+			return &payment.ListUserRechargeStatsResp{
+				Base: paymentErrorResp(l.ctx, i18n.InvalidPaymentAmountRange).Base,
+			}, nil
+		}
+		maxAmountText = maxAmount.String()
+	}
 	stats, total, err := l.svcCtx.UserRechargeStatModel.FindPage(
 		l.ctx,
 		models.UserRechargeStatPageFilter{
 			TenantId:              in.TenantId,
 			UserId:                in.UserId,
-			SuccessTotalAmountMin: in.SuccessTotalAmountMin,
-			SuccessTotalAmountMax: in.SuccessTotalAmountMax,
+			SuccessTotalAmountMin: minAmountText,
+			SuccessTotalAmountMax: maxAmountText,
 		},
 		in.Page.Cursor,
 		in.Page.Limit,

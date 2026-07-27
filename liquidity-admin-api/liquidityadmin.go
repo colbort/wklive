@@ -14,9 +14,11 @@ import (
 
 	"wklive/common/etcd"
 	um "wklive/common/middleware"
+	"wklive/common/validation"
 	"wklive/liquidity-admin-api/internal/middleware"
 
 	"github.com/zeromicro/go-zero/rest"
+	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
 var (
@@ -27,6 +29,7 @@ var (
 
 func main() {
 	flag.Parse()
+	httpx.SetValidator(validation.New())
 
 	var c config.Config
 	if err := etcd.LoadFromEtcdAndMerge(strings.Split(*endpoints, ","), []string{*commonKey, *configKey}, &c); err != nil {

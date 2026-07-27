@@ -8,6 +8,7 @@ import (
 
 	"github.com/shopspring/decimal"
 
+	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -34,7 +35,7 @@ func validNonNegativeRange(minValue, maxValue int64) bool {
 }
 
 func parseNonNegativeAmount(value string) (decimal.Decimal, error) {
-	amount, err := parsePaymentAmount(value)
+	amount, err := conv.ParseDecimalField(value)
 	if err != nil || amount.IsNegative() {
 		return decimal.Zero, errors.New("invalid non-negative payment amount")
 	}

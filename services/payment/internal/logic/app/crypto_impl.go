@@ -215,6 +215,9 @@ func createCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in 
 	if err != nil {
 		return nil, err
 	}
+	if !amount.IsPositive() {
+		return nil, errors.New("crypto recharge amount must be positive")
+	}
 	now := utils.NowMillis()
 	_, err = svcCtx.CryptoRechargeTxModel.Insert(ctx, &models.TCryptoRechargeTx{
 		TenantId:             in.TenantId,

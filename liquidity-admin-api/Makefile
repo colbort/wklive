@@ -24,3 +24,6 @@ tidy:
 
 verify:
 	@go test ./...
+
+fmt-api:
+	goctl api format --dir ./api/

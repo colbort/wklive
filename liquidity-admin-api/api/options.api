@@ -5,10 +5,11 @@ type OptionsResp {
 
 @server (
 	prefix: /admin/liquidity
-	group: common
-	jwt: Jwt
+	group:  common
+	jwt:    Jwt
 )
 service liquidityAdmin {
 	@handler Options
 	get /options returns (OptionsResp)
 }
+

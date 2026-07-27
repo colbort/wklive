@@ -7,17 +7,17 @@ import "common.api"
 // ====================
 // 用户充值统计
 type UserRechargeStat {
-	id                 int64 `json:"id"`
-	tenantId           int64 `json:"tenantId"`
-	userId             int64 `json:"userId"`
-	successOrderCount  int64 `json:"successOrderCount"`
-	successTotalAmount string `json:"successTotalAmount"`
-	todaySuccessAmount string `json:"todaySuccessAmount"`
-	todaySuccessCount  int64 `json:"todaySuccessCount"`
-	firstSuccessTime   int64 `json:"firstSuccessTime"`
-	lastSuccessTime    int64 `json:"lastSuccessTime"`
-	createTimes        int64 `json:"createTimes"`
-	updateTimes        int64 `json:"updateTimes"`
+	id                 int64  `json:"id"`
+	tenantId           int64  `json:"tenantId"`
+	userId             int64  `json:"userId"`
+	successOrderCount  int64  `json:"successOrderCount"`
+	successTotalAmount string `json:"successTotalAmount" validate:"decimal_36_18"` // DECIMAL(36,18)，自然货币单位
+	todaySuccessAmount string `json:"todaySuccessAmount" validate:"decimal_36_18"` // DECIMAL(36,18)，自然货币单位
+	todaySuccessCount  int64  `json:"todaySuccessCount"`
+	firstSuccessTime   int64  `json:"firstSuccessTime"`
+	lastSuccessTime    int64  `json:"lastSuccessTime"`
+	createTimes        int64  `json:"createTimes"`
+	updateTimes        int64  `json:"updateTimes"`
 }
 
 // 当前用户可用充值通道
@@ -42,44 +42,45 @@ type AvailableRechargeChannel {
 
 // 支付订单
 type RechargeOrder {
-	id           int64  `json:"id"`
-	tenantId     int64  `json:"tenantId"`
-	userId       int64  `json:"userId"`
-	orderNo      string `json:"orderNo"`
-	bizOrderNo   string `json:"bizOrderNo"`
-	platformId   int64  `json:"platformId"`
-	productId    int64  `json:"productId"`
-	accountId    int64  `json:"accountId"`
-	channelId    int64  `json:"channelId"`
-	walletType   int64  `json:"walletType"` // 钱包类型:1现货 2资金 3合约 4理财 5期权
-	currency     string `json:"currency"`
-	orderAmount  string `json:"orderAmount"`
-	payAmount    string `json:"payAmount"`
-	feeAmount    string `json:"feeAmount"`
-	subject      string `json:"subject"`
-	body         string `json:"body"`
-	clientType   int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
-	clientIp     string `json:"clientIp"`
-	status       int64  `json:"status"` // 0未知 1待支付 2支付中 3成功 4失败 5已关闭 6已退款
-	thirdTradeNo string `json:"thirdTradeNo"`
-	thirdOrderNo string `json:"thirdOrderNo"`
-	payUrl       string `json:"payUrl"`
-	qrContent    string `json:"qrContent"`
-	voucherImage string `json:"voucherImage"`
-	requestData  string `json:"requestData"`
-	responseData string `json:"responseData"`
-	notifyData   string `json:"notifyData"`
-	expireTime   int64  `json:"expireTime"`
-	paidTime     int64  `json:"paidTime"`
-	notifyTime   int64  `json:"notifyTime"`
-	closeTime    int64  `json:"closeTime"`
-	remark       string `json:"remark"`
-	createTimes  int64  `json:"createTimes"`
-	updateTimes  int64  `json:"updateTimes"`
-	creditStatus int64 `json:"creditStatus"`
-	creditedTime int64 `json:"creditedTime"`
-	creditRetryCount int64 `json:"creditRetryCount"`
-	lastCreditError string `json:"lastCreditError"`
+	id               int64  `json:"id"`
+	tenantId         int64  `json:"tenantId"`
+	userId           int64  `json:"userId"`
+	orderNo          string `json:"orderNo"`
+	bizOrderNo       string `json:"bizOrderNo"`
+	platformId       int64  `json:"platformId"`
+	productId        int64  `json:"productId"`
+	accountId        int64  `json:"accountId"`
+	channelId        int64  `json:"channelId"`
+	rechargeType     int64  `json:"rechargeType"` // 0未知 1虚拟币 2三方充值 3银行卡 4人工充值 5其他
+	walletType       int64  `json:"walletType"` // 钱包类型:1现货 2资金 3合约 4理财 5期权
+	currency         string `json:"currency"`
+	orderAmount      string `json:"orderAmount" validate:"decimal_36_18"` // DECIMAL(36,18)，订单金额
+	payAmount        string `json:"payAmount" validate:"decimal_36_18"` // DECIMAL(36,18)，实际支付金额
+	feeAmount        string `json:"feeAmount" validate:"decimal_36_18"` // DECIMAL(36,18)，手续费金额
+	subject          string `json:"subject"`
+	body             string `json:"body"`
+	clientType       int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
+	clientIp         string `json:"clientIp"`
+	status           int64  `json:"status"` // 0未知 1待支付 2支付中 3成功 4失败 5已关闭 6已退款
+	thirdTradeNo     string `json:"thirdTradeNo"`
+	thirdOrderNo     string `json:"thirdOrderNo"`
+	payUrl           string `json:"payUrl"`
+	qrContent        string `json:"qrContent"`
+	voucherImage     string `json:"voucherImage"`
+	requestData      string `json:"requestData"`
+	responseData     string `json:"responseData"`
+	notifyData       string `json:"notifyData"`
+	expireTime       int64  `json:"expireTime"`
+	paidTime         int64  `json:"paidTime"`
+	notifyTime       int64  `json:"notifyTime"`
+	closeTime        int64  `json:"closeTime"`
+	remark           string `json:"remark"`
+	createTimes      int64  `json:"createTimes"`
+	updateTimes      int64  `json:"updateTimes"`
+	creditStatus     int64  `json:"creditStatus"`
+	creditedTime     int64  `json:"creditedTime"`
+	creditRetryCount int64  `json:"creditRetryCount"`
+	lastCreditError  string `json:"lastCreditError"`
 }
 
 // 链上充值地址
@@ -113,7 +114,7 @@ type CryptoRechargeTx {
 	fromAddress          string `json:"fromAddress"`
 	toAddress            string `json:"toAddress"`
 	memo                 string `json:"memo"`
-	amount               string `json:"amount"`
+	amount               string `json:"amount" validate:"decimal_36_18"`
 	blockHeight          int64  `json:"blockHeight"`
 	confirmCount         int64  `json:"confirmCount"`
 	requiredConfirmCount int64  `json:"requiredConfirmCount"`
@@ -137,7 +138,7 @@ type GetMyRechargeStatResp {
 // 获取当前用户在指定充值金额下可用的充值通道
 // 服务端需要基于当前登录用户自动查询累计充值金额并套用规则过滤
 type ListAvailableRechargeChannelsReq {
-	rechargeAmount string `json:"rechargeAmount"` // 自然货币单位
+	rechargeAmount string `json:"rechargeAmount" validate:"required,decimal_gt_zero,decimal_36_18"` // 自然货币单位
 	currency       string `json:"currency"`
 	clientType     int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
 }
@@ -154,7 +155,7 @@ type ListAvailableRechargeChannelsResp {
 // 3. 金额、币种、客户端是否合法
 type CreateRechargeOrderReq {
 	channelId      int64  `json:"channelId"`
-	rechargeAmount string `json:"rechargeAmount"` // 自然货币单位
+	rechargeAmount string `json:"rechargeAmount" validate:"required,decimal_gt_zero,decimal_36_18"` // 自然货币单位
 	currency       string `json:"currency"`
 	subject        string `json:"subject,optional"`
 	body           string `json:"body,optional"`
@@ -172,7 +173,7 @@ type CreateCryptoRechargeOrderReq {
 	walletType     int64  `json:"walletType"`
 	coin           string `json:"coin"`
 	chainCode      int64  `json:"chainCode"`
-	rechargeAmount string `json:"rechargeAmount"` // 自然货币单位
+	rechargeAmount string `json:"rechargeAmount" validate:"required,decimal_gt_zero,decimal_36_18"` // 自然货币单位
 	clientType     int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
 	bizOrderNo     string `json:"bizOrderNo,optional"`
 	voucherImage   string `json:"voucherImage,optional"`
@@ -288,9 +289,9 @@ type WithdrawOrder {
 	orderNo      string `json:"orderNo"`
 	bizOrderNo   string `json:"bizOrderNo"`
 	currency     string `json:"currency"`
-	amount       string `json:"amount"`
-	feeAmount    string `json:"feeAmount"`
-	actualAmount string `json:"actualAmount"`
+	amount       string `json:"amount" validate:"decimal_36_18"`
+	feeAmount    string `json:"feeAmount" validate:"decimal_36_18"`
+	actualAmount string `json:"actualAmount" validate:"decimal_36_18"`
 	clientType   int64  `json:"clientType"`
 	clientIp     string `json:"clientIp"`
 	status       int64  `json:"status"`
@@ -308,7 +309,7 @@ type WithdrawOrder {
 }
 
 type CreateWithdrawOrderReq {
-	amount   string `json:"amount"` // 自然货币单位
+	amount   string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"` // 自然货币单位
 	currency string `json:"currency"`
 	address  string `json:"address"` // 提现地址（钱包地址等）
 	bankId   int64  `json:"bankId"` // 银行ID（如果是提现到银行卡）
@@ -400,3 +401,4 @@ service app {
 	@handler GetMyCryptoRechargeTx
 	get /crypto/recharge/txs/:id (GetMyCryptoRechargeTxReq) returns (GetMyCryptoRechargeTxResp)
 }
+

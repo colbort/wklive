@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"wklive/common/conv"
 	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/common/notify"
@@ -34,7 +35,7 @@ func NewCreateWithdrawOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 // 提现
 func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(in *payment.CreateWithdrawOrderReq) (*payment.CreateWithdrawOrderResp, error) {
-	amount, err := parsePaymentAmount(in.Amount)
+	amount, err := conv.ParseDecimalField(in.Amount)
 	if err != nil || !amount.IsPositive() {
 		return nil, fmt.Errorf("withdraw amount must be a positive decimal")
 	}

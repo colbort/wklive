@@ -23,10 +23,6 @@ func paymentAmountToText(amount decimal.Decimal) string {
 	return amount.String()
 }
 
-func parsePaymentAmount(value string) (decimal.Decimal, error) {
-	return conv.ParseDecimalField(value)
-}
-
 func systemAdminWriteScopeResp(ctx context.Context) (*common.RespBase, error) {
 	userType, err := utils.GetUserTypeFromMd(ctx)
 	if err != nil {
@@ -70,6 +66,13 @@ func switchToModel(value common.Switch, defaultValue int64) int64 {
 func markRechargeOrderSuccessAndCredit(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TRechargeOrder, thirdTradeNo string, payAmount decimal.Decimal, remark string) error {
 	if order == nil {
 		return i18n.StatusError(ctx, i18n.OrderNotFound)
+	}
+	if payAmount.IsPositive() {
+		validatedAmount, err := conv.ParseDecimalField(payAmount.String())
+		if err != nil {
+			return err
+		}
+		payAmount = validatedAmount
 	}
 
 	return svcCtx.DB.TransactCtx(ctx, func(txCtx context.Context, session sqlx.Session) error {

@@ -12,18 +12,18 @@ type StakeProduct {
 	coinSymbol       string `json:"coinSymbol"`
 	rewardCoinName   string `json:"rewardCoinName"`
 	rewardCoinSymbol string `json:"rewardCoinSymbol"`
-	apr              string `json:"apr"`
+	apr              string `json:"apr" validate:"decimal_10_4"`
 	lockDays         int64  `json:"lockDays"` // 锁仓天数
-	minAmount        string `json:"minAmount"`
-	maxAmount        string `json:"maxAmount"`
-	stepAmount       string `json:"stepAmount"`
-	totalAmount      string `json:"totalAmount"`
-	stakedAmount     string `json:"stakedAmount"`
-	userLimitAmount  string `json:"userLimitAmount"`
+	minAmount        string `json:"minAmount" validate:"decimal_30_8"`
+	maxAmount        string `json:"maxAmount" validate:"decimal_30_8"`
+	stepAmount       string `json:"stepAmount" validate:"decimal_30_8"`
+	totalAmount      string `json:"totalAmount" validate:"decimal_30_8"`
+	stakedAmount     string `json:"stakedAmount" validate:"decimal_30_8"`
+	userLimitAmount  string `json:"userLimitAmount" validate:"decimal_30_8"`
 	interestMode     int64  `json:"interestMode"`
 	rewardMode       int64  `json:"rewardMode"`
 	allowEarlyRedeem int64  `json:"allowEarlyRedeem"` // 是否允许提前赎回：1是 2否
-	earlyRedeemRate  string `json:"earlyRedeemRate"`
+	earlyRedeemRate  string `json:"earlyRedeemRate" validate:"decimal_10_4"`
 	status           int64  `json:"status"`
 	sort             int64  `json:"sort"` // 排序
 	remark           string `json:"remark"` // 备注
@@ -46,22 +46,22 @@ type StakeOrder {
 	coinSymbol       string `json:"coinSymbol"`
 	rewardCoinName   string `json:"rewardCoinName"`
 	rewardCoinSymbol string `json:"rewardCoinSymbol"`
-	stakeAmount      string `json:"stakeAmount"`
-	apr              string `json:"apr"`
+	stakeAmount      string `json:"stakeAmount" validate:"decimal_30_8"`
+	apr              string `json:"apr" validate:"decimal_10_4"`
 	lockDays         int64  `json:"lockDays"` // 锁仓天数
 	interestMode     int64  `json:"interestMode"`
 	rewardMode       int64  `json:"rewardMode"`
 	allowEarlyRedeem int64  `json:"allowEarlyRedeem"` // 是否允许提前赎回：1是 2否
-	earlyRedeemRate  string `json:"earlyRedeemRate"`
+	earlyRedeemRate  string `json:"earlyRedeemRate" validate:"decimal_10_4"`
 	interestDays     int64  `json:"interestDays"` // 已计息天数
 	startTimes       int64  `json:"startTimes"`
 	endTimes         int64  `json:"endTimes"`
 	lastRewardTimes  int64  `json:"lastRewardTimes"`
 	nextRewardTimes  int64  `json:"nextRewardTimes"`
-	totalReward      string `json:"totalReward"`
-	pendingReward    string `json:"pendingReward"`
-	redeemAmount     string `json:"redeemAmount"`
-	redeemFee        string `json:"redeemFee"`
+	totalReward      string `json:"totalReward" validate:"decimal_30_8"`
+	pendingReward    string `json:"pendingReward" validate:"decimal_30_8"`
+	redeemAmount     string `json:"redeemAmount" validate:"decimal_30_8"`
+	redeemFee        string `json:"redeemFee" validate:"decimal_30_8"`
 	status           int64  `json:"status"`
 	redeemType       int64  `json:"redeemType"`
 	redeemApplyTimes int64  `json:"redeemApplyTimes"`
@@ -84,9 +84,9 @@ type StakeRewardLog {
 	productName      string `json:"productName"`
 	coinSymbol       string `json:"coinSymbol"`
 	rewardCoinSymbol string `json:"rewardCoinSymbol"`
-	rewardAmount     string `json:"rewardAmount"`
-	beforeReward     string `json:"beforeReward"`
-	afterReward      string `json:"afterReward"`
+	rewardAmount     string `json:"rewardAmount" validate:"decimal_30_8"`
+	beforeReward     string `json:"beforeReward" validate:"decimal_30_8"`
+	afterReward      string `json:"afterReward" validate:"decimal_30_8"`
 	rewardType       int64  `json:"rewardType"`
 	rewardStatus     int64  `json:"rewardStatus"`
 	rewardTimes      int64  `json:"rewardTimes"`
@@ -106,11 +106,11 @@ type StakeRedeemLog {
 	productId    int64  `json:"productId"`
 	redeemNo     string `json:"redeemNo"`
 	redeemType   int64  `json:"redeemType"`
-	stakeAmount  string `json:"stakeAmount"`
-	redeemAmount string `json:"redeemAmount"`
-	rewardAmount string `json:"rewardAmount"`
-	feeRate      string `json:"feeRate"`
-	feeAmount    string `json:"feeAmount"`
+	stakeAmount  string `json:"stakeAmount" validate:"decimal_30_8"`
+	redeemAmount string `json:"redeemAmount" validate:"decimal_30_8"`
+	rewardAmount string `json:"rewardAmount" validate:"decimal_30_8"`
+	feeRate      string `json:"feeRate" validate:"decimal_10_4"`
+	feeAmount    string `json:"feeAmount" validate:"decimal_30_8"`
 	redeemStatus int64  `json:"redeemStatus"`
 	redeemTimes  int64  `json:"redeemTimes"`
 	remark       string `json:"remark"`
@@ -142,7 +142,7 @@ type ProductDetailResp {
 
 type CreateOrderReq {
 	productId   int64  `json:"productId"`
-	stakeAmount string `json:"stakeAmount"`
+	stakeAmount string `json:"stakeAmount" validate:"required,decimal_gt_zero,decimal_30_8"`
 	source      int64  `json:"source"`
 	remark      string `json:"remark,optional"`
 }

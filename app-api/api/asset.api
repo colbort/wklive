@@ -55,15 +55,15 @@ type AssetFlow {
 	opType                 int64  `json:"opType"` // 操作方向
 	bizId                  int64  `json:"bizId"` // 业务ID
 	bizNo                  string `json:"bizNo"` // 业务单号
-	changeAmount           string `json:"changeAmount"` // 变动金额
-	beforeTotalAmount      string `json:"beforeTotalAmount"` // 变动前总资产
-	afterTotalAmount       string `json:"afterTotalAmount"` // 变动后总资产
-	beforeAvailableAmount  string `json:"beforeAvailableAmount"` // 变动前可用资产
-	afterAvailableAmount   string `json:"afterAvailableAmount"` // 变动后可用资产
-	beforeFrozenAmount     string `json:"beforeFrozenAmount"` // 变动前冻结资产
-	afterFrozenAmount      string `json:"afterFrozenAmount"` // 变动后冻结资产
-	beforeLockedAmount     string `json:"beforeLockedAmount"` // 变动前锁定资产
-	afterLockedAmount      string `json:"afterLockedAmount"` // 变动后锁定资产
+	changeAmount           string `json:"changeAmount" validate:"decimal_36_18"` // 变动金额
+	beforeTotalAmount      string `json:"beforeTotalAmount" validate:"decimal_36_18"` // 变动前总资产
+	afterTotalAmount       string `json:"afterTotalAmount" validate:"decimal_36_18"` // 变动后总资产
+	beforeAvailableAmount  string `json:"beforeAvailableAmount" validate:"decimal_36_18"` // 变动前可用资产
+	afterAvailableAmount   string `json:"afterAvailableAmount" validate:"decimal_36_18"` // 变动后可用资产
+	beforeFrozenAmount     string `json:"beforeFrozenAmount" validate:"decimal_36_18"` // 变动前冻结资产
+	afterFrozenAmount      string `json:"afterFrozenAmount" validate:"decimal_36_18"` // 变动后冻结资产
+	beforeLockedAmount     string `json:"beforeLockedAmount" validate:"decimal_36_18"` // 变动前锁定资产
+	afterLockedAmount      string `json:"afterLockedAmount" validate:"decimal_36_18"` // 变动后锁定资产
 	balanceSnapshotVersion int64  `json:"balanceSnapshotVersion"` // 快照版本号
 	changeType             string `json:"changeType"` // 变更类型
 	remark                 string `json:"remark"` // 备注
@@ -82,10 +82,10 @@ type AssetFreeze {
 	sceneType      int64  `json:"sceneType"` // 业务场景
 	bizId          int64  `json:"bizId"` // 业务ID
 	bizNo          string `json:"bizNo"` // 业务单号
-	amount         string `json:"amount"` // 冻结金额
-	usedAmount     string `json:"usedAmount"` // 已使用金额
-	unfreezeAmount string `json:"unfreezeAmount"` // 已解冻金额
-	remainAmount   string `json:"remainAmount"` // 剩余冻结金额
+	amount         string `json:"amount" validate:"decimal_36_18"` // 冻结金额
+	usedAmount     string `json:"usedAmount" validate:"decimal_36_18"` // 已使用金额
+	unfreezeAmount string `json:"unfreezeAmount" validate:"decimal_36_18"` // 已解冻金额
+	remainAmount   string `json:"remainAmount" validate:"decimal_36_18"` // 剩余冻结金额
 	status         int64  `json:"status"` // 状态
 	expireTime     int64  `json:"expireTime"` // 过期时间
 	remark         string `json:"remark"` // 备注
@@ -104,9 +104,9 @@ type AssetLock {
 	sceneType    int64  `json:"sceneType"` // 业务场景
 	bizId        int64  `json:"bizId"` // 业务ID
 	bizNo        string `json:"bizNo"` // 业务单号
-	amount       string `json:"amount"` // 锁仓金额
-	unlockAmount string `json:"unlockAmount"` // 已解锁金额
-	remainAmount string `json:"remainAmount"` // 剩余锁仓金额
+	amount       string `json:"amount" validate:"decimal_36_18"` // 锁仓金额
+	unlockAmount string `json:"unlockAmount" validate:"decimal_36_18"` // 已解锁金额
+	remainAmount string `json:"remainAmount" validate:"decimal_36_18"` // 剩余锁仓金额
 	status       int64  `json:"status"` // 状态
 	startTime    int64  `json:"startTime"` // 开始时间
 	endTime      int64  `json:"endTime"` // 结束时间
@@ -206,7 +206,7 @@ type TransferMyAssetReq {
 	toWalletType   int64  `json:"toWalletType"` // 转入钱包类型
 	fromCoin       string `json:"fromCoin"` // 转出币种
 	toCoin         string `json:"toCoin"` // 转入币种
-	amount         string `json:"amount"` // 划转金额，单位：分
+	amount         string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"` // 划转金额（自然资产单位）
 	remark         string `json:"remark,optional"` // 备注
 }
 

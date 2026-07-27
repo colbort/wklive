@@ -8,7 +8,7 @@ type AddAssetReq struct {
 	UserId     int64  `json:"userId"`
 	WalletType int64  `json:"walletType"`
 	Coin       string `json:"coin"`
-	Amount     string `json:"amount"`
+	Amount     string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"`
 	BizNo      string `json:"bizNo"`
 	Remark     string `json:"remark,optional"`
 	OperatorId int64  `json:"operatorId"`
@@ -38,7 +38,7 @@ type AdjustPlatformAccountReq struct {
 	Coin        string `json:"coin"`
 	RequestNo   string `json:"requestNo"`
 	Direction   int64  `json:"direction"`
-	Amount      string `json:"amount"`
+	Amount      string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"`
 	Remark      string `json:"remark,optional"`
 }
 
@@ -83,15 +83,15 @@ type AssetFlow struct {
 	OpType                 int64  `json:"opType"`
 	BizId                  int64  `json:"bizId"`
 	BizNo                  string `json:"bizNo"`
-	ChangeAmount           string `json:"changeAmount"`
-	BeforeTotalAmount      string `json:"beforeTotalAmount"`
-	AfterTotalAmount       string `json:"afterTotalAmount"`
-	BeforeAvailableAmount  string `json:"beforeAvailableAmount"`
-	AfterAvailableAmount   string `json:"afterAvailableAmount"`
-	BeforeFrozenAmount     string `json:"beforeFrozenAmount"`
-	AfterFrozenAmount      string `json:"afterFrozenAmount"`
-	BeforeLockedAmount     string `json:"beforeLockedAmount"`
-	AfterLockedAmount      string `json:"afterLockedAmount"`
+	ChangeAmount           string `json:"changeAmount" validate:"decimal_36_18"`
+	BeforeTotalAmount      string `json:"beforeTotalAmount" validate:"decimal_36_18"`
+	AfterTotalAmount       string `json:"afterTotalAmount" validate:"decimal_36_18"`
+	BeforeAvailableAmount  string `json:"beforeAvailableAmount" validate:"decimal_36_18"`
+	AfterAvailableAmount   string `json:"afterAvailableAmount" validate:"decimal_36_18"`
+	BeforeFrozenAmount     string `json:"beforeFrozenAmount" validate:"decimal_36_18"`
+	AfterFrozenAmount      string `json:"afterFrozenAmount" validate:"decimal_36_18"`
+	BeforeLockedAmount     string `json:"beforeLockedAmount" validate:"decimal_36_18"`
+	AfterLockedAmount      string `json:"afterLockedAmount" validate:"decimal_36_18"`
 	BalanceSnapshotVersion int64  `json:"balanceSnapshotVersion"`
 	ChangeType             string `json:"changeType"`
 	Remark                 string `json:"remark"`
@@ -110,10 +110,10 @@ type AssetFreeze struct {
 	SceneType      int64  `json:"sceneType"`
 	BizId          int64  `json:"bizId"`
 	BizNo          string `json:"bizNo"`
-	Amount         string `json:"amount"`
-	UsedAmount     string `json:"usedAmount"`
-	UnfreezeAmount string `json:"unfreezeAmount"`
-	RemainAmount   string `json:"remainAmount"`
+	Amount         string `json:"amount" validate:"decimal_36_18"`
+	UsedAmount     string `json:"usedAmount" validate:"decimal_36_18"`
+	UnfreezeAmount string `json:"unfreezeAmount" validate:"decimal_36_18"`
+	RemainAmount   string `json:"remainAmount" validate:"decimal_36_18"`
 	Status         int64  `json:"status"`
 	ExpireTime     int64  `json:"expireTime"`
 	Remark         string `json:"remark"`
@@ -132,9 +132,9 @@ type AssetLock struct {
 	SceneType    int64  `json:"sceneType"`
 	BizId        int64  `json:"bizId"`
 	BizNo        string `json:"bizNo"`
-	Amount       string `json:"amount"`
-	UnlockAmount string `json:"unlockAmount"`
-	RemainAmount string `json:"remainAmount"`
+	Amount       string `json:"amount" validate:"decimal_36_18"`
+	UnlockAmount string `json:"unlockAmount" validate:"decimal_36_18"`
+	RemainAmount string `json:"remainAmount" validate:"decimal_36_18"`
 	Status       int64  `json:"status"`
 	StartTime    int64  `json:"startTime"`
 	EndTime      int64  `json:"endTime"`
@@ -258,7 +258,7 @@ type ContractDeliveryBatch struct {
 	Id               int64  `json:"id"`
 	BatchNo          string `json:"batchNo"`
 	SymbolId         int64  `json:"symbolId"`
-	SettlementPrice  string `json:"settlementPrice"`
+	SettlementPrice  string `json:"settlementPrice" validate:"decimal_36_18"`
 	PriceSource      string `json:"priceSource"`
 	PriceAlgorithm   string `json:"priceAlgorithm"`
 	OpenCutoffTime   int64  `json:"openCutoffTime"`
@@ -281,10 +281,10 @@ type ContractDeliverySettlement struct {
 	UserId          int64  `json:"userId"`
 	PositionId      int64  `json:"positionId"`
 	PositionSide    int64  `json:"positionSide"`
-	SettlementPrice string `json:"settlementPrice"`
-	PositionQty     string `json:"positionQty"`
-	RealizedPnl     string `json:"realizedPnl"`
-	DeliveryFee     string `json:"deliveryFee"`
+	SettlementPrice string `json:"settlementPrice" validate:"decimal_36_18"`
+	PositionQty     string `json:"positionQty" validate:"decimal_36_18"`
+	RealizedPnl     string `json:"realizedPnl" validate:"decimal_36_18"`
+	DeliveryFee     string `json:"deliveryFee" validate:"decimal_36_18"`
 	SettleAsset     string `json:"settleAsset"`
 	DeliveryTime    int64  `json:"deliveryTime"`
 	Status          int64  `json:"status"`
@@ -300,9 +300,9 @@ type ContractFundingBatch struct {
 	Id               int64  `json:"id"`
 	BatchNo          string `json:"batchNo"`
 	SymbolId         int64  `json:"symbolId"`
-	FundingRate      string `json:"fundingRate"`
-	MarkPrice        string `json:"markPrice"`
-	IndexPrice       string `json:"indexPrice"`
+	FundingRate      string `json:"fundingRate" validate:"decimal_20_10"`
+	MarkPrice        string `json:"markPrice" validate:"decimal_36_18"`
+	IndexPrice       string `json:"indexPrice" validate:"decimal_36_18"`
 	PriceSource      string `json:"priceSource"`
 	FormulaVersion   string `json:"formulaVersion"`
 	SettlementTime   int64  `json:"settlementTime"`
@@ -323,11 +323,11 @@ type ContractFundingSettlement struct {
 	UserId         int64  `json:"userId"`
 	PositionId     int64  `json:"positionId"`
 	PositionSide   int64  `json:"positionSide"`
-	FundingRate    string `json:"fundingRate"`
-	MarkPrice      string `json:"markPrice"`
-	PositionQty    string `json:"positionQty"`
+	FundingRate    string `json:"fundingRate" validate:"decimal_20_10"`
+	MarkPrice      string `json:"markPrice" validate:"decimal_36_18"`
+	PositionQty    string `json:"positionQty" validate:"decimal_36_18"`
 	FeeAsset       string `json:"feeAsset"`
-	FeeAmount      string `json:"feeAmount"`
+	FeeAmount      string `json:"feeAmount" validate:"decimal_36_18"`
 	SettlementTime int64  `json:"settlementTime"`
 	Status         int64  `json:"status"`
 	RetryCount     int64  `json:"retryCount"`
@@ -362,17 +362,17 @@ type ContractLiquidation struct {
 	SymbolId            int64  `json:"symbolId"`
 	PositionSide        int64  `json:"positionSide"`
 	MarginMode          int64  `json:"marginMode"`
-	TriggerMarkPrice    string `json:"triggerMarkPrice"`
+	TriggerMarkPrice    string `json:"triggerMarkPrice" validate:"decimal_36_18"`
 	TriggerSnapshotId   string `json:"triggerSnapshotId"`
-	TriggerIndexPrice   string `json:"triggerIndexPrice"`
-	TriggerQty          string `json:"triggerQty"`
-	LiquidatedQty       string `json:"liquidatedQty"`
-	MaintenanceMargin   string `json:"maintenanceMargin"`
-	AccountEquity       string `json:"accountEquity"`
-	BankruptcyPrice     string `json:"bankruptcyPrice"`
-	LiquidationFee      string `json:"liquidationFee"`
-	InsuranceFundAmount string `json:"insuranceFundAmount"`
-	AdlQty              string `json:"adlQty"`
+	TriggerIndexPrice   string `json:"triggerIndexPrice" validate:"decimal_36_18"`
+	TriggerQty          string `json:"triggerQty" validate:"decimal_36_18"`
+	LiquidatedQty       string `json:"liquidatedQty" validate:"decimal_36_18"`
+	MaintenanceMargin   string `json:"maintenanceMargin" validate:"decimal_36_18"`
+	AccountEquity       string `json:"accountEquity" validate:"decimal_36_18"`
+	BankruptcyPrice     string `json:"bankruptcyPrice" validate:"decimal_36_18"`
+	LiquidationFee      string `json:"liquidationFee" validate:"decimal_36_18"`
+	InsuranceFundAmount string `json:"insuranceFundAmount" validate:"decimal_36_18"`
+	AdlQty              string `json:"adlQty" validate:"decimal_36_18"`
 	Status              int64  `json:"status"`
 	Reason              string `json:"reason"`
 	StartedAt           int64  `json:"startedAt"`
@@ -386,13 +386,13 @@ type ContractMarginSnapshot struct {
 	TenantId         int64  `json:"tenantId"`
 	UserId           int64  `json:"userId"`
 	MarginAsset      string `json:"marginAsset"`
-	WalletBalance    string `json:"walletBalance"`
-	AvailableBalance string `json:"availableBalance"`
-	FrozenBalance    string `json:"frozenBalance"`
-	PositionMargin   string `json:"positionMargin"`
-	OrderMargin      string `json:"orderMargin"`
-	UnrealizedPnl    string `json:"unrealizedPnl"`
-	RealizedPnl      string `json:"realizedPnl"`
+	WalletBalance    string `json:"walletBalance" validate:"decimal_36_18"`
+	AvailableBalance string `json:"availableBalance" validate:"decimal_36_18"`
+	FrozenBalance    string `json:"frozenBalance" validate:"decimal_36_18"`
+	PositionMargin   string `json:"positionMargin" validate:"decimal_36_18"`
+	OrderMargin      string `json:"orderMargin" validate:"decimal_36_18"`
+	UnrealizedPnl    string `json:"unrealizedPnl" validate:"decimal_36_18"`
+	RealizedPnl      string `json:"realizedPnl" validate:"decimal_36_18"`
 	Version          int64  `json:"version"`
 	CreateTimes      int64  `json:"createTimes"`
 	UpdateTimes      int64  `json:"updateTimes"`
@@ -410,21 +410,21 @@ type ContractPosition struct {
 	PositionSide      int64  `json:"positionSide"`
 	MarginMode        int64  `json:"marginMode"`
 	Leverage          int64  `json:"leverage"`
-	Qty               string `json:"qty"`
-	AvailQty          string `json:"availQty"`
-	FrozenQty         string `json:"frozenQty"`
-	OpenAvgPrice      string `json:"openAvgPrice"`
-	MarkPrice         string `json:"markPrice"`
+	Qty               string `json:"qty" validate:"decimal_36_18"`
+	AvailQty          string `json:"availQty" validate:"decimal_36_18"`
+	FrozenQty         string `json:"frozenQty" validate:"decimal_36_18"`
+	OpenAvgPrice      string `json:"openAvgPrice" validate:"decimal_36_18"`
+	MarkPrice         string `json:"markPrice" validate:"decimal_36_18"`
 	MarkSnapshotId    string `json:"markSnapshotId"`
 	MarginAsset       string `json:"marginAsset"`
-	PositionMargin    string `json:"positionMargin"`
-	IsolatedMargin    string `json:"isolatedMargin"`
-	UnrealizedPnl     string `json:"unrealizedPnl"`
-	RealizedPnl       string `json:"realizedPnl"`
-	LiquidationPrice  string `json:"liquidationPrice"`
-	MaintenanceMargin string `json:"maintenanceMargin"`
-	BankruptcyPrice   string `json:"bankruptcyPrice"`
-	RiskRate          string `json:"riskRate"`
+	PositionMargin    string `json:"positionMargin" validate:"decimal_36_18"`
+	IsolatedMargin    string `json:"isolatedMargin" validate:"decimal_36_18"`
+	UnrealizedPnl     string `json:"unrealizedPnl" validate:"decimal_36_18"`
+	RealizedPnl       string `json:"realizedPnl" validate:"decimal_36_18"`
+	LiquidationPrice  string `json:"liquidationPrice" validate:"decimal_36_18"`
+	MaintenanceMargin string `json:"maintenanceMargin" validate:"decimal_36_18"`
+	BankruptcyPrice   string `json:"bankruptcyPrice" validate:"decimal_36_18"`
+	RiskRate          string `json:"riskRate" validate:"decimal_20_10"`
 	Status            int64  `json:"status"`
 	AdlRank           int64  `json:"adlRank"`
 	LastFundingTime   int64  `json:"lastFundingTime"`
@@ -444,24 +444,24 @@ type ContractPositionHistory struct {
 	ContractValueType    int64  `json:"contractValueType"`
 	PositionSide         int64  `json:"positionSide"`
 	ActionType           int64  `json:"actionType"`
-	BeforeQty            string `json:"beforeQty"`
-	AfterQty             string `json:"afterQty"`
-	BeforeAvailQty       string `json:"beforeAvailQty"`
-	AfterAvailQty        string `json:"afterAvailQty"`
-	BeforeFrozenQty      string `json:"beforeFrozenQty"`
-	AfterFrozenQty       string `json:"afterFrozenQty"`
-	BeforeOpenAvgPrice   string `json:"beforeOpenAvgPrice"`
-	AfterOpenAvgPrice    string `json:"afterOpenAvgPrice"`
-	BeforePositionMargin string `json:"beforePositionMargin"`
-	AfterPositionMargin  string `json:"afterPositionMargin"`
-	BeforeIsolatedMargin string `json:"beforeIsolatedMargin"`
-	AfterIsolatedMargin  string `json:"afterIsolatedMargin"`
-	BeforeUnrealizedPnl  string `json:"beforeUnrealizedPnl"`
-	AfterUnrealizedPnl   string `json:"afterUnrealizedPnl"`
-	RealizedPnlDelta     string `json:"realizedPnlDelta"`
-	FeeDelta             string `json:"feeDelta"`
+	BeforeQty            string `json:"beforeQty" validate:"decimal_36_18"`
+	AfterQty             string `json:"afterQty" validate:"decimal_36_18"`
+	BeforeAvailQty       string `json:"beforeAvailQty" validate:"decimal_36_18"`
+	AfterAvailQty        string `json:"afterAvailQty" validate:"decimal_36_18"`
+	BeforeFrozenQty      string `json:"beforeFrozenQty" validate:"decimal_36_18"`
+	AfterFrozenQty       string `json:"afterFrozenQty" validate:"decimal_36_18"`
+	BeforeOpenAvgPrice   string `json:"beforeOpenAvgPrice" validate:"decimal_36_18"`
+	AfterOpenAvgPrice    string `json:"afterOpenAvgPrice" validate:"decimal_36_18"`
+	BeforePositionMargin string `json:"beforePositionMargin" validate:"decimal_36_18"`
+	AfterPositionMargin  string `json:"afterPositionMargin" validate:"decimal_36_18"`
+	BeforeIsolatedMargin string `json:"beforeIsolatedMargin" validate:"decimal_36_18"`
+	AfterIsolatedMargin  string `json:"afterIsolatedMargin" validate:"decimal_36_18"`
+	BeforeUnrealizedPnl  string `json:"beforeUnrealizedPnl" validate:"decimal_36_18"`
+	AfterUnrealizedPnl   string `json:"afterUnrealizedPnl" validate:"decimal_36_18"`
+	RealizedPnlDelta     string `json:"realizedPnlDelta" validate:"decimal_36_18"`
+	FeeDelta             string `json:"feeDelta" validate:"decimal_36_18"`
 	FeeAsset             string `json:"feeAsset"`
-	MarkPrice            string `json:"markPrice"`
+	MarkPrice            string `json:"markPrice" validate:"decimal_36_18"`
 	RefOrderId           int64  `json:"refOrderId"`
 	RefFillId            int64  `json:"refFillId"`
 	OperatorId           int64  `json:"operatorId"`
@@ -475,12 +475,12 @@ type ContractRiskLimitTier struct {
 	TenantId              int64  `json:"tenantId"`
 	SymbolId              int64  `json:"symbolId"`
 	TierNo                int64  `json:"tierNo"`
-	NotionalFloor         string `json:"notionalFloor"`
-	NotionalCap           string `json:"notionalCap"`
+	NotionalFloor         string `json:"notionalFloor" validate:"decimal_36_18"`
+	NotionalCap           string `json:"notionalCap" validate:"decimal_36_18"`
 	MaxLeverage           int64  `json:"maxLeverage"`
-	InitialMarginRate     string `json:"initialMarginRate"`
-	MaintenanceMarginRate string `json:"maintenanceMarginRate"`
-	MaintenanceAmount     string `json:"maintenanceAmount"`
+	InitialMarginRate     string `json:"initialMarginRate" validate:"decimal_20_10"`
+	MaintenanceMarginRate string `json:"maintenanceMarginRate" validate:"decimal_20_10"`
+	MaintenanceAmount     string `json:"maintenanceAmount" validate:"decimal_36_18"`
 	Enabled               int64  `json:"enabled"`
 	CreateTimes           int64  `json:"createTimes"`
 	UpdateTimes           int64  `json:"updateTimes"`
@@ -539,13 +539,13 @@ type CreateContractReq struct {
 	OptionType       int64  `json:"optionType"`
 	ExerciseStyle    int64  `json:"exerciseStyle"`
 	SettlementType   int64  `json:"settlementType"`
-	StrikePrice      string `json:"strikePrice"`
-	ContractUnit     string `json:"contractUnit"`
-	MinOrderQty      string `json:"minOrderQty"`
-	MaxOrderQty      string `json:"maxOrderQty"`
-	PriceTick        string `json:"priceTick"`
-	QtyStep          string `json:"qtyStep"`
-	Multiplier       string `json:"multiplier"`
+	StrikePrice      string `json:"strikePrice" validate:"required,decimal_gt_zero,decimal_32_16"`
+	ContractUnit     string `json:"contractUnit" validate:"required,decimal_gt_zero,decimal_32_16"`
+	MinOrderQty      string `json:"minOrderQty" validate:"required,decimal_gte_zero,decimal_32_16"`
+	MaxOrderQty      string `json:"maxOrderQty" validate:"required,decimal_gte_zero,decimal_32_16"`
+	PriceTick        string `json:"priceTick" validate:"required,decimal_gt_zero,decimal_32_16"`
+	QtyStep          string `json:"qtyStep" validate:"required,decimal_gt_zero,decimal_32_16"`
+	Multiplier       string `json:"multiplier" validate:"required,decimal_gt_zero,decimal_32_16"`
 	ListTime         int64  `json:"listTime"`
 	ExpireTime       int64  `json:"expireTime"`
 	DeliverTime      int64  `json:"deliverTime"`
@@ -584,7 +584,7 @@ type CreateCryptoRechargeTxReq struct {
 	FromAddress          string `json:"fromAddress,optional"`
 	ToAddress            string `json:"toAddress"`
 	Memo                 string `json:"memo,optional"`
-	Amount               string `json:"amount"`
+	Amount               string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"`
 	BlockHeight          int64  `json:"blockHeight,optional"`
 	ConfirmCount         int64  `json:"confirmCount,optional"`
 	RequiredConfirmCount int64  `json:"requiredConfirmCount,optional"`
@@ -679,14 +679,14 @@ type CreateSymbolReq struct {
 	Status            int64  `json:"status"`
 	PriceScale        int64  `json:"priceScale"`
 	QtyScale          int64  `json:"qtyScale"`
-	MinPrice          string `json:"minPrice"`
-	MaxPrice          string `json:"maxPrice"`
-	PriceTick         string `json:"priceTick"`
-	MinQty            string `json:"minQty"`
-	MaxQty            string `json:"maxQty"`
-	QtyStep           string `json:"qtyStep"`
-	MinNotional       string `json:"minNotional"`
-	MaxNotional       string `json:"maxNotional"`
+	MinPrice          string `json:"minPrice" validate:"required,decimal_gte_zero,decimal_36_18"`
+	MaxPrice          string `json:"maxPrice" validate:"required,decimal_gte_zero,decimal_36_18"`
+	PriceTick         string `json:"priceTick" validate:"required,decimal_gt_zero,decimal_36_18"`
+	MinQty            string `json:"minQty" validate:"required,decimal_gte_zero,decimal_36_18"`
+	MaxQty            string `json:"maxQty" validate:"required,decimal_gte_zero,decimal_36_18"`
+	QtyStep           string `json:"qtyStep" validate:"required,decimal_gt_zero,decimal_36_18"`
+	MinNotional       string `json:"minNotional" validate:"required,decimal_gte_zero,decimal_36_18"`
+	MaxNotional       string `json:"maxNotional" validate:"required,decimal_gte_zero,decimal_36_18"`
 	ListingTime       int64  `json:"listingTime"`
 	TradingStartTime  int64  `json:"tradingStartTime"`
 	TradingEndTime    int64  `json:"tradingEndTime"`
@@ -736,13 +736,13 @@ type CreateTenantPayChannelReq struct {
 	Sort            int64  `json:"sort"`
 	Visible         int64  `json:"visible"`
 	Enabled         int64  `json:"enabled"`
-	SingleMinAmount string `json:"singleMinAmount"`
-	SingleMaxAmount string `json:"singleMaxAmount"`
-	DailyMaxAmount  string `json:"dailyMaxAmount"`
+	SingleMinAmount string `json:"singleMinAmount" validate:"required,decimal_gte_zero,decimal_36_18"`
+	SingleMaxAmount string `json:"singleMaxAmount" validate:"required,decimal_gte_zero,decimal_36_18"`
+	DailyMaxAmount  string `json:"dailyMaxAmount" validate:"required,decimal_gte_zero,decimal_36_18"`
 	DailyMaxCount   int64  `json:"dailyMaxCount"`
 	FeeType         int64  `json:"feeType"`
-	FeeRate         string `json:"feeRate,optional"`
-	FeeFixedAmount  string `json:"feeFixedAmount,optional"`
+	FeeRate         string `json:"feeRate,optional" validate:"decimal_gte_zero,decimal_10_4"`
+	FeeFixedAmount  string `json:"feeFixedAmount,optional" validate:"decimal_gte_zero,decimal_36_18"`
 	ExtConfig       string `json:"extConfig,optional"`
 	Remark          string `json:"remark,optional"`
 }
@@ -753,10 +753,10 @@ type CreateTenantPayChannelRuleReq struct {
 	RuleName             string `json:"ruleName"`
 	Priority             int64  `json:"priority"`
 	Enabled              int64  `json:"enabled"`
-	SingleAmountMin      string `json:"singleAmountMin"`
-	SingleAmountMax      string `json:"singleAmountMax"`
-	UserTotalRechargeMin string `json:"userTotalRechargeMin"`
-	UserTotalRechargeMax string `json:"userTotalRechargeMax"`
+	SingleAmountMin      string `json:"singleAmountMin" validate:"required,decimal_gte_zero,decimal_36_18"`
+	SingleAmountMax      string `json:"singleAmountMax" validate:"required,decimal_gte_zero,decimal_36_18"`
+	UserTotalRechargeMin string `json:"userTotalRechargeMin" validate:"required,decimal_gte_zero,decimal_36_18"`
+	UserTotalRechargeMax string `json:"userTotalRechargeMax" validate:"required,decimal_gte_zero,decimal_36_18"`
 	MemberLevelMin       int64  `json:"memberLevelMin"`
 	MemberLevelMax       int64  `json:"memberLevelMax"`
 	KycLevelMin          int64  `json:"kycLevelMin"`
@@ -832,7 +832,7 @@ type CryptoRechargeTx struct {
 	FromAddress          string `json:"fromAddress"`
 	ToAddress            string `json:"toAddress"`
 	Memo                 string `json:"memo"`
-	Amount               string `json:"amount"`
+	Amount               string `json:"amount" validate:"decimal_36_18"`
 	BlockHeight          int64  `json:"blockHeight"`
 	ConfirmCount         int64  `json:"confirmCount"`
 	RequiredConfirmCount int64  `json:"requiredConfirmCount"`
@@ -951,7 +951,7 @@ type FreezeAssetReq struct {
 	UserId     int64  `json:"userId"`
 	WalletType int64  `json:"walletType"`
 	Coin       string `json:"coin"`
-	Amount     string `json:"amount"`
+	Amount     string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"`
 	BizNo      string `json:"bizNo"`
 	Remark     string `json:"remark,optional"`
 	OperatorId int64  `json:"operatorId"`
@@ -2301,10 +2301,10 @@ type ListUserIdentitiesResp struct {
 
 type ListUserRechargeStatsReq struct {
 	PageReq
-	TenantId              int64 `form:"tenantId,optional"`
-	UserId                int64 `form:"userId,optional"`
-	SuccessTotalAmountMin int64 `form:"successTotalAmountMin,optional"`
-	SuccessTotalAmountMax int64 `form:"successTotalAmountMax,optional"`
+	TenantId              int64  `form:"tenantId,optional"`
+	UserId                int64  `form:"userId,optional"`
+	SuccessTotalAmountMin string `form:"successTotalAmountMin,optional" validate:"decimal_gte_zero,decimal_36_18"`
+	SuccessTotalAmountMax string `form:"successTotalAmountMax,optional" validate:"decimal_gte_zero,decimal_36_18"`
 }
 
 type ListUserRechargeStatsResp struct {
@@ -2372,7 +2372,7 @@ type LockAssetReq struct {
 	UserId     int64  `json:"userId"`
 	WalletType int64  `json:"walletType"`
 	Coin       string `json:"coin"`
-	Amount     string `json:"amount"`
+	Amount     string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"`
 	BizNo      string `json:"bizNo"`
 	Remark     string `json:"remark,optional"`
 	OperatorId int64  `json:"operatorId"`
@@ -2420,7 +2420,7 @@ type ManualMarkRechargeOrderSuccessReq struct {
 	TenantId     int64  `json:"tenantId"`
 	OrderNo      string `path:"orderNo"`
 	ThirdTradeNo string `json:"thirdTradeNo,optional"`
-	PayAmount    string `json:"payAmount"`
+	PayAmount    string `json:"payAmount" validate:"required,decimal_gt_zero,decimal_36_18"`
 	Remark       string `json:"remark,optional"`
 }
 
@@ -2433,10 +2433,10 @@ type ManualRedeemReq struct {
 	TenantId     int64  `json:"tenantId"`
 	OrderId      int64  `json:"orderId"`
 	RedeemType   int64  `json:"redeemType"`
-	RedeemAmount string `json:"redeemAmount"`
-	RewardAmount string `json:"rewardAmount"`
-	FeeRate      string `json:"feeRate"`
-	FeeAmount    string `json:"feeAmount"`
+	RedeemAmount string `json:"redeemAmount" validate:"required,decimal_gt_zero,decimal_30_8"`
+	RewardAmount string `json:"rewardAmount" validate:"required,decimal_gte_zero,decimal_30_8"`
+	FeeRate      string `json:"feeRate" validate:"required,decimal_gte_zero,decimal_10_4"`
+	FeeAmount    string `json:"feeAmount" validate:"required,decimal_gte_zero,decimal_30_8"`
 	Remark       string `json:"remark,optional"`
 	OperatorUid  int64  `json:"operatorUid"`
 }
@@ -2449,7 +2449,7 @@ type ManualRedeemResp struct {
 type ManualRewardReq struct {
 	TenantId     int64  `json:"tenantId"`
 	OrderId      int64  `json:"orderId"`
-	RewardAmount string `json:"rewardAmount"`
+	RewardAmount string `json:"rewardAmount" validate:"required,decimal_gt_zero,decimal_30_8"`
 	RewardType   int64  `json:"rewardType"`
 	Remark       string `json:"remark,optional"`
 	OperatorUid  int64  `json:"operatorUid"`
@@ -2507,14 +2507,14 @@ type OptionAccount struct {
 	UserId           int64  `json:"userId"`
 	AccountId        int64  `json:"accountId"`
 	MarginCoin       string `json:"marginCoin"`
-	Balance          string `json:"balance"`
-	AvailableBalance string `json:"availableBalance"`
-	FrozenBalance    string `json:"frozenBalance"`
-	PositionMargin   string `json:"positionMargin"`
-	OrderMargin      string `json:"orderMargin"`
-	UnrealizedPnl    string `json:"unrealizedPnl"`
-	RealizedPnl      string `json:"realizedPnl"`
-	RiskRate         string `json:"riskRate"`
+	Balance          string `json:"balance" validate:"decimal_32_16"`
+	AvailableBalance string `json:"availableBalance" validate:"decimal_32_16"`
+	FrozenBalance    string `json:"frozenBalance" validate:"decimal_32_16"`
+	PositionMargin   string `json:"positionMargin" validate:"decimal_32_16"`
+	OrderMargin      string `json:"orderMargin" validate:"decimal_32_16"`
+	UnrealizedPnl    string `json:"unrealizedPnl" validate:"decimal_32_16"`
+	RealizedPnl      string `json:"realizedPnl" validate:"decimal_32_16"`
+	RiskRate         string `json:"riskRate" validate:"decimal_20_10"`
 	Status           int64  `json:"status"`
 	CreateTimes      int64  `json:"createTimes"`
 	UpdateTimes      int64  `json:"updateTimes"`
@@ -2533,9 +2533,9 @@ type OptionBill struct {
 	RefType       int64  `json:"refType"`
 	RefId         int64  `json:"refId"`
 	Coin          string `json:"coin"`
-	ChangeAmount  string `json:"changeAmount"`
-	BalanceBefore string `json:"balanceBefore"`
-	BalanceAfter  string `json:"balanceAfter"`
+	ChangeAmount  string `json:"changeAmount" validate:"decimal_32_16"`
+	BalanceBefore string `json:"balanceBefore" validate:"decimal_32_16"`
+	BalanceAfter  string `json:"balanceAfter" validate:"decimal_32_16"`
 	Remark        string `json:"remark"`
 	CreateTimes   int64  `json:"createTimes"`
 }
@@ -2550,13 +2550,13 @@ type OptionContract struct {
 	OptionType       int64  `json:"optionType"`
 	ExerciseStyle    int64  `json:"exerciseStyle"`
 	SettlementType   int64  `json:"settlementType"`
-	StrikePrice      string `json:"strikePrice"`
-	ContractUnit     string `json:"contractUnit"`
-	MinOrderQty      string `json:"minOrderQty"`
-	MaxOrderQty      string `json:"maxOrderQty"`
-	PriceTick        string `json:"priceTick"`
-	QtyStep          string `json:"qtyStep"`
-	Multiplier       string `json:"multiplier"`
+	StrikePrice      string `json:"strikePrice" validate:"decimal_32_16"`
+	ContractUnit     string `json:"contractUnit" validate:"decimal_32_16"`
+	MinOrderQty      string `json:"minOrderQty" validate:"decimal_32_16"`
+	MaxOrderQty      string `json:"maxOrderQty" validate:"decimal_32_16"`
+	PriceTick        string `json:"priceTick" validate:"decimal_32_16"`
+	QtyStep          string `json:"qtyStep" validate:"decimal_32_16"`
+	Multiplier       string `json:"multiplier" validate:"decimal_32_16"`
 	ListTime         int64  `json:"listTime"`
 	ExpireTime       int64  `json:"expireTime"`
 	DeliverTime      int64  `json:"deliverTime"`
@@ -2583,12 +2583,12 @@ type OptionExercise struct {
 	ContractId      int64  `json:"contractId"`
 	PositionId      int64  `json:"positionId"`
 	ExerciseType    int64  `json:"exerciseType"`
-	ExerciseQty     string `json:"exerciseQty"`
-	StrikePrice     string `json:"strikePrice"`
-	SettlementPrice string `json:"settlementPrice"`
-	ExerciseAmount  string `json:"exerciseAmount"`
-	ProfitAmount    string `json:"profitAmount"`
-	Fee             string `json:"fee"`
+	ExerciseQty     string `json:"exerciseQty" validate:"decimal_32_16"`
+	StrikePrice     string `json:"strikePrice" validate:"decimal_32_16"`
+	SettlementPrice string `json:"settlementPrice" validate:"decimal_32_16"`
+	ExerciseAmount  string `json:"exerciseAmount" validate:"decimal_32_16"`
+	ProfitAmount    string `json:"profitAmount" validate:"decimal_32_16"`
+	Fee             string `json:"fee" validate:"decimal_32_16"`
 	FeeCoin         string `json:"feeCoin"`
 	Status          int64  `json:"status"`
 	Remark          string `json:"remark"`
@@ -2607,21 +2607,21 @@ type OptionMarket struct {
 	Id               int64  `json:"id"`
 	TenantId         int64  `json:"tenantId"`
 	ContractId       int64  `json:"contractId"`
-	UnderlyingPrice  string `json:"underlyingPrice"`
-	MarkPrice        string `json:"markPrice"`
-	LastPrice        string `json:"lastPrice"`
-	BidPrice         string `json:"bidPrice"`
-	AskPrice         string `json:"askPrice"`
-	TheoreticalPrice string `json:"theoreticalPrice"`
-	IntrinsicValue   string `json:"intrinsicValue"`
-	TimeValue        string `json:"timeValue"`
-	Iv               string `json:"iv"`
-	Delta            string `json:"delta"`
-	Gamma            string `json:"gamma"`
-	Theta            string `json:"theta"`
-	Vega             string `json:"vega"`
-	Rho              string `json:"rho"`
-	RiskFreeRate     string `json:"riskFreeRate"`
+	UnderlyingPrice  string `json:"underlyingPrice" validate:"decimal_32_16"`
+	MarkPrice        string `json:"markPrice" validate:"decimal_32_16"`
+	LastPrice        string `json:"lastPrice" validate:"decimal_32_16"`
+	BidPrice         string `json:"bidPrice" validate:"decimal_32_16"`
+	AskPrice         string `json:"askPrice" validate:"decimal_32_16"`
+	TheoreticalPrice string `json:"theoreticalPrice" validate:"decimal_32_16"`
+	IntrinsicValue   string `json:"intrinsicValue" validate:"decimal_32_16"`
+	TimeValue        string `json:"timeValue" validate:"decimal_32_16"`
+	Iv               string `json:"iv" validate:"decimal_20_10"`
+	Delta            string `json:"delta" validate:"decimal_20_10"`
+	Gamma            string `json:"gamma" validate:"decimal_20_10"`
+	Theta            string `json:"theta" validate:"decimal_20_10"`
+	Vega             string `json:"vega" validate:"decimal_20_10"`
+	Rho              string `json:"rho" validate:"decimal_20_10"`
+	RiskFreeRate     string `json:"riskFreeRate" validate:"decimal_20_10"`
 	PricingModel     string `json:"pricingModel"`
 	SnapshotTime     int64  `json:"snapshotTime"`
 	CreateTimes      int64  `json:"createTimes"`
@@ -2632,18 +2632,18 @@ type OptionMarketSnapshot struct {
 	Id               int64  `json:"id"`
 	TenantId         int64  `json:"tenantId"`
 	ContractId       int64  `json:"contractId"`
-	UnderlyingPrice  string `json:"underlyingPrice"`
-	MarkPrice        string `json:"markPrice"`
-	LastPrice        string `json:"lastPrice"`
-	BidPrice         string `json:"bidPrice"`
-	AskPrice         string `json:"askPrice"`
-	TheoreticalPrice string `json:"theoreticalPrice"`
-	Iv               string `json:"iv"`
-	Delta            string `json:"delta"`
-	Gamma            string `json:"gamma"`
-	Theta            string `json:"theta"`
-	Vega             string `json:"vega"`
-	Rho              string `json:"rho"`
+	UnderlyingPrice  string `json:"underlyingPrice" validate:"decimal_32_16"`
+	MarkPrice        string `json:"markPrice" validate:"decimal_32_16"`
+	LastPrice        string `json:"lastPrice" validate:"decimal_32_16"`
+	BidPrice         string `json:"bidPrice" validate:"decimal_32_16"`
+	AskPrice         string `json:"askPrice" validate:"decimal_32_16"`
+	TheoreticalPrice string `json:"theoreticalPrice" validate:"decimal_32_16"`
+	Iv               string `json:"iv" validate:"decimal_20_10"`
+	Delta            string `json:"delta" validate:"decimal_20_10"`
+	Gamma            string `json:"gamma" validate:"decimal_20_10"`
+	Theta            string `json:"theta" validate:"decimal_20_10"`
+	Vega             string `json:"vega" validate:"decimal_20_10"`
+	Rho              string `json:"rho" validate:"decimal_20_10"`
 	SnapshotTime     int64  `json:"snapshotTime"`
 	CreateTimes      int64  `json:"createTimes"`
 }
@@ -2659,15 +2659,15 @@ type OptionOrder struct {
 	Side             int64  `json:"side"`
 	PositionEffect   int64  `json:"positionEffect"`
 	OrderType        int64  `json:"orderType"`
-	Price            string `json:"price"`
-	Qty              string `json:"qty"`
-	FilledQty        string `json:"filledQty"`
-	UnfilledQty      string `json:"unfilledQty"`
-	AvgPrice         string `json:"avgPrice"`
-	Turnover         string `json:"turnover"`
-	Fee              string `json:"fee"`
+	Price            string `json:"price" validate:"decimal_32_16"`
+	Qty              string `json:"qty" validate:"decimal_32_16"`
+	FilledQty        string `json:"filledQty" validate:"decimal_32_16"`
+	UnfilledQty      string `json:"unfilledQty" validate:"decimal_32_16"`
+	AvgPrice         string `json:"avgPrice" validate:"decimal_32_16"`
+	Turnover         string `json:"turnover" validate:"decimal_32_16"`
+	Fee              string `json:"fee" validate:"decimal_32_16"`
 	FeeCoin          string `json:"feeCoin"`
-	MarginAmount     string `json:"marginAmount"`
+	MarginAmount     string `json:"marginAmount" validate:"decimal_32_16"`
 	Source           int64  `json:"source"`
 	ClientOrderId    string `json:"clientOrderId"`
 	ReduceOnly       int64  `json:"reduceOnly"` // 是否只减仓：1是 2否
@@ -2693,17 +2693,17 @@ type OptionPosition struct {
 	ContractId        int64  `json:"contractId"`
 	UnderlyingSymbol  string `json:"underlyingSymbol"`
 	Side              int64  `json:"side"`
-	PositionQty       string `json:"positionQty"`
-	AvailableQty      string `json:"availableQty"`
-	FrozenQty         string `json:"frozenQty"`
-	OpenAvgPrice      string `json:"openAvgPrice"`
-	MarkPrice         string `json:"markPrice"`
-	PositionValue     string `json:"positionValue"`
-	MarginAmount      string `json:"marginAmount"`
-	MaintenanceMargin string `json:"maintenanceMargin"`
-	UnrealizedPnl     string `json:"unrealizedPnl"`
-	RealizedPnl       string `json:"realizedPnl"`
-	ExerciseableQty   string `json:"exerciseableQty"`
+	PositionQty       string `json:"positionQty" validate:"decimal_32_16"`
+	AvailableQty      string `json:"availableQty" validate:"decimal_32_16"`
+	FrozenQty         string `json:"frozenQty" validate:"decimal_32_16"`
+	OpenAvgPrice      string `json:"openAvgPrice" validate:"decimal_32_16"`
+	MarkPrice         string `json:"markPrice" validate:"decimal_32_16"`
+	PositionValue     string `json:"positionValue" validate:"decimal_32_16"`
+	MarginAmount      string `json:"marginAmount" validate:"decimal_32_16"`
+	MaintenanceMargin string `json:"maintenanceMargin" validate:"decimal_32_16"`
+	UnrealizedPnl     string `json:"unrealizedPnl" validate:"decimal_32_16"`
+	RealizedPnl       string `json:"realizedPnl" validate:"decimal_32_16"`
+	ExerciseableQty   string `json:"exerciseableQty" validate:"decimal_32_16"`
 	Status            int64  `json:"status"`
 	LastCalcTime      int64  `json:"lastCalcTime"`
 	CreateTimes       int64  `json:"createTimes"`
@@ -2724,9 +2724,9 @@ type OptionSettlement struct {
 	UnderlyingSymbol string `json:"underlyingSymbol"`
 	ExpireTime       int64  `json:"expireTime"`
 	SettlementTime   int64  `json:"settlementTime"`
-	DeliveryPrice    string `json:"deliveryPrice"`
-	TheoreticalPrice string `json:"theoreticalPrice"`
-	Iv               string `json:"iv"`
+	DeliveryPrice    string `json:"deliveryPrice" validate:"decimal_32_16"`
+	TheoreticalPrice string `json:"theoreticalPrice" validate:"decimal_32_16"`
+	Iv               string `json:"iv" validate:"decimal_20_10"`
 	IsItm            int64  `json:"isItm"` // 是否实值：1是 2否
 	ExerciseResult   int64  `json:"exerciseResult"`
 	Status           int64  `json:"status"`
@@ -2754,11 +2754,11 @@ type OptionTrade struct {
 	SellOrderNo      string `json:"sellOrderNo"`
 	SellUserId       int64  `json:"sellUserId"`
 	SellAccountId    int64  `json:"sellAccountId"`
-	Price            string `json:"price"`
-	Qty              string `json:"qty"`
-	Turnover         string `json:"turnover"`
-	BuyFee           string `json:"buyFee"`
-	SellFee          string `json:"sellFee"`
+	Price            string `json:"price" validate:"decimal_32_16"`
+	Qty              string `json:"qty" validate:"decimal_32_16"`
+	Turnover         string `json:"turnover" validate:"decimal_32_16"`
+	BuyFee           string `json:"buyFee" validate:"decimal_32_16"`
+	SellFee          string `json:"sellFee" validate:"decimal_32_16"`
 	FeeCoin          string `json:"feeCoin"`
 	MakerSide        int64  `json:"makerSide"`
 	TradeTime        int64  `json:"tradeTime"`
@@ -2975,7 +2975,7 @@ type PriceFormulaComponent struct {
 	CategoryCode string `json:"categoryCode,optional"`
 	Market       string `json:"market,optional"`
 	Symbol       string `json:"symbol"`
-	Weight       string `json:"weight"`
+	Weight       string `json:"weight" validate:"required,decimal_gte_zero,decimal_65_30"`
 }
 
 type PriceFormulaData struct {
@@ -3029,17 +3029,17 @@ type ProductCreateReq struct {
 	CoinSymbol       string `json:"coinSymbol"`
 	RewardCoinName   string `json:"rewardCoinName"`
 	RewardCoinSymbol string `json:"rewardCoinSymbol"`
-	Apr              string `json:"apr"`
+	Apr              string `json:"apr" validate:"required,decimal_gte_zero,decimal_10_4"`
 	LockDays         int64  `json:"lockDays"`
-	MinAmount        string `json:"minAmount"`
-	MaxAmount        string `json:"maxAmount"`
-	StepAmount       string `json:"stepAmount"`
-	TotalAmount      string `json:"totalAmount"`
-	UserLimitAmount  string `json:"userLimitAmount"`
+	MinAmount        string `json:"minAmount" validate:"required,decimal_gte_zero,decimal_30_8"`
+	MaxAmount        string `json:"maxAmount" validate:"required,decimal_gte_zero,decimal_30_8"`
+	StepAmount       string `json:"stepAmount" validate:"required,decimal_gte_zero,decimal_30_8"`
+	TotalAmount      string `json:"totalAmount" validate:"required,decimal_gte_zero,decimal_30_8"`
+	UserLimitAmount  string `json:"userLimitAmount" validate:"required,decimal_gte_zero,decimal_30_8"`
 	InterestMode     int64  `json:"interestMode"`
 	RewardMode       int64  `json:"rewardMode"`
 	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"` // 是否允许提前赎回：1是 2否
-	EarlyRedeemRate  string `json:"earlyRedeemRate"`
+	EarlyRedeemRate  string `json:"earlyRedeemRate" validate:"required,decimal_gte_zero,decimal_10_4"`
 	Status           int64  `json:"status"`
 	Sort             int64  `json:"sort"`
 	Remark           string `json:"remark,optional"`
@@ -3085,17 +3085,17 @@ type ProductUpdateReq struct {
 	CoinSymbol       string `json:"coinSymbol"`
 	RewardCoinName   string `json:"rewardCoinName"`
 	RewardCoinSymbol string `json:"rewardCoinSymbol"`
-	Apr              string `json:"apr"`
+	Apr              string `json:"apr" validate:"decimal_gte_zero,decimal_10_4"`
 	LockDays         int64  `json:"lockDays"`
-	MinAmount        string `json:"minAmount"`
-	MaxAmount        string `json:"maxAmount"`
-	StepAmount       string `json:"stepAmount"`
-	TotalAmount      string `json:"totalAmount"`
-	UserLimitAmount  string `json:"userLimitAmount"`
+	MinAmount        string `json:"minAmount" validate:"decimal_gte_zero,decimal_30_8"`
+	MaxAmount        string `json:"maxAmount" validate:"decimal_gte_zero,decimal_30_8"`
+	StepAmount       string `json:"stepAmount" validate:"decimal_gte_zero,decimal_30_8"`
+	TotalAmount      string `json:"totalAmount" validate:"decimal_gte_zero,decimal_30_8"`
+	UserLimitAmount  string `json:"userLimitAmount" validate:"decimal_gte_zero,decimal_30_8"`
 	InterestMode     int64  `json:"interestMode"`
 	RewardMode       int64  `json:"rewardMode"`
 	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"` // 是否允许提前赎回：1是 2否
-	EarlyRedeemRate  string `json:"earlyRedeemRate"`
+	EarlyRedeemRate  string `json:"earlyRedeemRate" validate:"decimal_gte_zero,decimal_10_4"`
 	Status           int64  `json:"status"`
 	Sort             int64  `json:"sort"`
 	Remark           string `json:"remark,optional"`
@@ -3158,9 +3158,9 @@ type RechargeOrder struct {
 	RechargeType     int64  `json:"rechargeType"` // 0未知 1虚拟币 2三方充值 3银行卡 4人工充值 5其他
 	WalletType       int64  `json:"walletType"`   // 钱包类型:1现货 2资金 3合约 4理财 5期权
 	Currency         string `json:"currency"`
-	OrderAmount      string `json:"orderAmount"`
-	PayAmount        string `json:"payAmount"`
-	FeeAmount        string `json:"feeAmount"`
+	OrderAmount      string `json:"orderAmount" validate:"decimal_36_18"` // DECIMAL(36,18)，订单金额
+	PayAmount        string `json:"payAmount" validate:"decimal_36_18"`   // DECIMAL(36,18)，实际支付金额
+	FeeAmount        string `json:"feeAmount" validate:"decimal_36_18"`   // DECIMAL(36,18)，手续费金额
 	Subject          string `json:"subject"`
 	Body             string `json:"body"`
 	ClientType       int64  `json:"clientType"` // 0未知 1APP 2H5 3WEB
@@ -3306,9 +3306,9 @@ type RiskOrderCheckLog struct {
 	CheckResult   int64  `json:"checkResult"`
 	RejectCode    string `json:"rejectCode"`
 	RejectMsg     string `json:"rejectMsg"`
-	RequestPrice  string `json:"requestPrice"`
-	RequestQty    string `json:"requestQty"`
-	RequestAmount string `json:"requestAmount"`
+	RequestPrice  string `json:"requestPrice" validate:"decimal_36_18"`
+	RequestQty    string `json:"requestQty" validate:"decimal_36_18"`
+	RequestAmount string `json:"requestAmount" validate:"decimal_36_18"`
 	OperatorId    int64  `json:"operatorId"`
 	Source        int64  `json:"source"`
 	CheckSnapshot string `json:"checkSnapshot"`
@@ -3320,16 +3320,16 @@ type RiskUserSymbolLimit struct {
 	TenantId            int64  `json:"tenantId"`
 	UserId              int64  `json:"userId"`
 	SymbolId            int64  `json:"symbolId"`
-	MaxPositionQty      string `json:"maxPositionQty"`
-	MaxPositionNotional string `json:"maxPositionNotional"`
+	MaxPositionQty      string `json:"maxPositionQty" validate:"decimal_36_18"`
+	MaxPositionNotional string `json:"maxPositionNotional" validate:"decimal_36_18"`
 	MaxOpenOrders       int64  `json:"maxOpenOrders"`
-	MaxOrderQty         string `json:"maxOrderQty"`
-	MaxOrderNotional    string `json:"maxOrderNotional"`
-	MinOrderQty         string `json:"minOrderQty"`
-	MinOrderNotional    string `json:"minOrderNotional"`
-	MaxLongPositionQty  string `json:"maxLongPositionQty"`
-	MaxShortPositionQty string `json:"maxShortPositionQty"`
-	PriceDeviationRate  string `json:"priceDeviationRate"`
+	MaxOrderQty         string `json:"maxOrderQty" validate:"decimal_36_18"`
+	MaxOrderNotional    string `json:"maxOrderNotional" validate:"decimal_36_18"`
+	MinOrderQty         string `json:"minOrderQty" validate:"decimal_36_18"`
+	MinOrderNotional    string `json:"minOrderNotional" validate:"decimal_36_18"`
+	MaxLongPositionQty  string `json:"maxLongPositionQty" validate:"decimal_36_18"`
+	MaxShortPositionQty string `json:"maxShortPositionQty" validate:"decimal_36_18"`
+	PriceDeviationRate  string `json:"priceDeviationRate" validate:"decimal_20_10"`
 	OperatorId          int64  `json:"operatorId"`
 	Source              int64  `json:"source"`
 	Enabled             int64  `json:"enabled"`
@@ -3355,8 +3355,8 @@ type RiskUserTradeLimit struct {
 	MaxOpenOrderCount    int64  `json:"maxOpenOrderCount"`
 	MaxOrderCountPerDay  int64  `json:"maxOrderCountPerDay"`
 	MaxCancelCountPerDay int64  `json:"maxCancelCountPerDay"`
-	MaxOpenNotional      string `json:"maxOpenNotional"`
-	MaxPositionNotional  string `json:"maxPositionNotional"`
+	MaxOpenNotional      string `json:"maxOpenNotional" validate:"decimal_36_18"`
+	MaxPositionNotional  string `json:"maxPositionNotional" validate:"decimal_36_18"`
 	RiskLevel            int64  `json:"riskLevel"`
 	OperatorId           int64  `json:"operatorId"`
 	Source               int64  `json:"source"`
@@ -3373,30 +3373,30 @@ type SetContractRiskLimitTierReq struct {
 	Id                    int64  `json:"id,optional"`
 	SymbolId              int64  `json:"symbolId"`
 	TierNo                int64  `json:"tierNo"`
-	NotionalFloor         string `json:"notionalFloor"`
-	NotionalCap           string `json:"notionalCap"`
+	NotionalFloor         string `json:"notionalFloor" validate:"required,decimal_gte_zero,decimal_36_18"`
+	NotionalCap           string `json:"notionalCap" validate:"required,decimal_gte_zero,decimal_36_18"`
 	MaxLeverage           int64  `json:"maxLeverage"`
-	InitialMarginRate     string `json:"initialMarginRate"`
-	MaintenanceMarginRate string `json:"maintenanceMarginRate"`
-	MaintenanceAmount     string `json:"maintenanceAmount"`
+	InitialMarginRate     string `json:"initialMarginRate" validate:"required,decimal_gte_zero,decimal_20_10"`
+	MaintenanceMarginRate string `json:"maintenanceMarginRate" validate:"required,decimal_gte_zero,decimal_20_10"`
+	MaintenanceAmount     string `json:"maintenanceAmount" validate:"required,decimal_gte_zero,decimal_36_18"`
 	Enabled               int64  `json:"enabled"`
 }
 
 type SetContractSymbolConfigReq struct {
 	TenantId                 int64  `json:"tenantId"`
 	SymbolId                 int64  `json:"symbolId"`
-	ContractSize             string `json:"contractSize"`
-	Multiplier               string `json:"multiplier"`
-	MaintenanceMarginRate    string `json:"maintenanceMarginRate"`
-	InitialMarginRate        string `json:"initialMarginRate"`
-	MakerFeeRate             string `json:"makerFeeRate"`
-	TakerFeeRate             string `json:"takerFeeRate"`
+	ContractSize             string `json:"contractSize" validate:"required,decimal_gt_zero,decimal_36_18"`
+	Multiplier               string `json:"multiplier" validate:"required,decimal_gt_zero,decimal_36_18"`
+	MaintenanceMarginRate    string `json:"maintenanceMarginRate" validate:"required,decimal_gte_zero,decimal_20_10"`
+	InitialMarginRate        string `json:"initialMarginRate" validate:"required,decimal_gte_zero,decimal_20_10"`
+	MakerFeeRate             string `json:"makerFeeRate" validate:"required,decimal_gte_zero,decimal_20_10"`
+	TakerFeeRate             string `json:"takerFeeRate" validate:"required,decimal_gte_zero,decimal_20_10"`
 	FundingIntervalMinutes   int64  `json:"fundingIntervalMinutes"`
 	DeliveryTime             int64  `json:"deliveryTime"`
 	SupportCross             int64  `json:"supportCross"`
 	SupportIsolated          int64  `json:"supportIsolated"`
-	FundingRateCap           string `json:"fundingRateCap"`
-	FundingRateFloor         string `json:"fundingRateFloor"`
+	FundingRateCap           string `json:"fundingRateCap" validate:"required,decimal_20_10"`
+	FundingRateFloor         string `json:"fundingRateFloor" validate:"required,decimal_20_10"`
 	FundingRateSource        string `json:"fundingRateSource"`
 	IndexSymbol              string `json:"indexSymbol"`
 	MarkPriceSource          string `json:"markPriceSource"`
@@ -3405,8 +3405,8 @@ type SetContractSymbolConfigReq struct {
 	MatchingStopTime         int64  `json:"matchingStopTime"`
 	SettlementWindowSeconds  int64  `json:"settlementWindowSeconds"`
 	SettlementPriceAlgorithm string `json:"settlementPriceAlgorithm"`
-	DeliveryFeeRate          string `json:"deliveryFeeRate"`
-	LiquidationFeeRate       string `json:"liquidationFeeRate"`
+	DeliveryFeeRate          string `json:"deliveryFeeRate" validate:"required,decimal_gte_zero,decimal_20_10"`
+	LiquidationFeeRate       string `json:"liquidationFeeRate" validate:"required,decimal_gte_zero,decimal_20_10"`
 	OpenLongEnabled          int64  `json:"openLongEnabled"`
 	OpenShortEnabled         int64  `json:"openShortEnabled"`
 	CloseLongEnabled         int64  `json:"closeLongEnabled"`
@@ -3450,18 +3450,18 @@ type SetSecondsSymbolConfigReq struct {
 	TenantId                 int64  `json:"tenantId"`
 	SymbolId                 int64  `json:"symbolId"`
 	DurationSeconds          int64  `json:"durationSeconds"`
-	PayoutRate               string `json:"payoutRate"`
-	FeeRate                  string `json:"feeRate"`
+	PayoutRate               string `json:"payoutRate" validate:"required,decimal_gte_zero,decimal_20_10"`
+	FeeRate                  string `json:"feeRate" validate:"required,decimal_gte_zero,decimal_20_10"`
 	DrawRule                 int64  `json:"drawRule"`
 	StartPriceSource         string `json:"startPriceSource"`
 	SettlementPriceSource    string `json:"settlementPriceSource"`
 	QuoteValidityMs          int64  `json:"quoteValidityMs"`
 	SettlementWindowMs       int64  `json:"settlementWindowMs"`
 	SettlementPriceAlgorithm string `json:"settlementPriceAlgorithm"`
-	DrawTolerance            string `json:"drawTolerance"`
-	MaxExposureAmount        string `json:"maxExposureAmount"`
-	MinStake                 string `json:"minStake"`
-	MaxStake                 string `json:"maxStake"`
+	DrawTolerance            string `json:"drawTolerance" validate:"required,decimal_gte_zero,decimal_36_18"`
+	MaxExposureAmount        string `json:"maxExposureAmount" validate:"required,decimal_gte_zero,decimal_36_18"`
+	MinStake                 string `json:"minStake" validate:"required,decimal_gte_zero,decimal_36_18"`
+	MaxStake                 string `json:"maxStake" validate:"required,decimal_gte_zero,decimal_36_18"`
 	UpEnabled                int64  `json:"upEnabled"`
 	DownEnabled              int64  `json:"downEnabled"`
 }
@@ -3469,8 +3469,8 @@ type SetSecondsSymbolConfigReq struct {
 type SetSpotSymbolConfigReq struct {
 	TenantId     int64  `json:"tenantId"`
 	SymbolId     int64  `json:"symbolId"`
-	MakerFeeRate string `json:"makerFeeRate"`
-	TakerFeeRate string `json:"takerFeeRate"`
+	MakerFeeRate string `json:"makerFeeRate" validate:"required,decimal_gte_zero,decimal_20_10"`
+	TakerFeeRate string `json:"takerFeeRate" validate:"required,decimal_gte_zero,decimal_20_10"`
 	BuyEnabled   int64  `json:"buyEnabled"`
 	SellEnabled  int64  `json:"sellEnabled"`
 }
@@ -3513,16 +3513,16 @@ type SetUserSymbolLimitReq struct {
 	TenantId            int64  `json:"tenantId"`
 	UserId              int64  `json:"userId"`
 	SymbolId            int64  `json:"symbolId"`
-	MaxPositionQty      string `json:"maxPositionQty"`
-	MaxPositionNotional string `json:"maxPositionNotional"`
+	MaxPositionQty      string `json:"maxPositionQty" validate:"required,decimal_gte_zero,decimal_36_18"`
+	MaxPositionNotional string `json:"maxPositionNotional" validate:"required,decimal_gte_zero,decimal_36_18"`
 	MaxOpenOrders       int64  `json:"maxOpenOrders"`
-	MaxOrderQty         string `json:"maxOrderQty"`
-	MaxOrderNotional    string `json:"maxOrderNotional"`
-	MinOrderQty         string `json:"minOrderQty"`
-	MinOrderNotional    string `json:"minOrderNotional"`
-	MaxLongPositionQty  string `json:"maxLongPositionQty"`
-	MaxShortPositionQty string `json:"maxShortPositionQty"`
-	PriceDeviationRate  string `json:"priceDeviationRate"`
+	MaxOrderQty         string `json:"maxOrderQty" validate:"required,decimal_gte_zero,decimal_36_18"`
+	MaxOrderNotional    string `json:"maxOrderNotional" validate:"required,decimal_gte_zero,decimal_36_18"`
+	MinOrderQty         string `json:"minOrderQty" validate:"required,decimal_gte_zero,decimal_36_18"`
+	MinOrderNotional    string `json:"minOrderNotional" validate:"required,decimal_gte_zero,decimal_36_18"`
+	MaxLongPositionQty  string `json:"maxLongPositionQty" validate:"required,decimal_gte_zero,decimal_36_18"`
+	MaxShortPositionQty string `json:"maxShortPositionQty" validate:"required,decimal_gte_zero,decimal_36_18"`
+	PriceDeviationRate  string `json:"priceDeviationRate" validate:"required,decimal_gte_zero,decimal_20_10"`
 	OperatorId          int64  `json:"operatorId"`
 	Source              int64  `json:"source"`
 	Enabled             int64  `json:"enabled"`
@@ -3553,8 +3553,8 @@ type SetUserTradeLimitReq struct {
 	MaxOpenOrderCount    int64  `json:"maxOpenOrderCount"`
 	MaxOrderCountPerDay  int64  `json:"maxOrderCountPerDay"`
 	MaxCancelCountPerDay int64  `json:"maxCancelCountPerDay"`
-	MaxOpenNotional      string `json:"maxOpenNotional"`
-	MaxPositionNotional  string `json:"maxPositionNotional"`
+	MaxOpenNotional      string `json:"maxOpenNotional" validate:"required,decimal_gte_zero,decimal_36_18"`
+	MaxPositionNotional  string `json:"maxPositionNotional" validate:"required,decimal_gte_zero,decimal_36_18"`
 	RiskLevel            int64  `json:"riskLevel"`
 	OperatorId           int64  `json:"operatorId"`
 	Source               int64  `json:"source"`
@@ -3588,22 +3588,22 @@ type StakeOrder struct {
 	CoinSymbol       string `json:"coinSymbol"`
 	RewardCoinName   string `json:"rewardCoinName"`
 	RewardCoinSymbol string `json:"rewardCoinSymbol"`
-	StakeAmount      string `json:"stakeAmount"`
-	Apr              string `json:"apr"`
+	StakeAmount      string `json:"stakeAmount" validate:"decimal_30_8"`
+	Apr              string `json:"apr" validate:"decimal_10_4"`
 	LockDays         int64  `json:"lockDays"`
 	InterestMode     int64  `json:"interestMode"`
 	RewardMode       int64  `json:"rewardMode"`
 	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"` // 是否允许提前赎回：1是 2否
-	EarlyRedeemRate  string `json:"earlyRedeemRate"`
+	EarlyRedeemRate  string `json:"earlyRedeemRate" validate:"decimal_10_4"`
 	InterestDays     int64  `json:"interestDays"`
 	StartTimes       int64  `json:"startTimes"`
 	EndTimes         int64  `json:"endTimes"`
 	LastRewardTimes  int64  `json:"lastRewardTimes"`
 	NextRewardTimes  int64  `json:"nextRewardTimes"`
-	TotalReward      string `json:"totalReward"`
-	PendingReward    string `json:"pendingReward"`
-	RedeemAmount     string `json:"redeemAmount"`
-	RedeemFee        string `json:"redeemFee"`
+	TotalReward      string `json:"totalReward" validate:"decimal_30_8"`
+	PendingReward    string `json:"pendingReward" validate:"decimal_30_8"`
+	RedeemAmount     string `json:"redeemAmount" validate:"decimal_30_8"`
+	RedeemFee        string `json:"redeemFee" validate:"decimal_30_8"`
 	Status           int64  `json:"status"`
 	RedeemType       int64  `json:"redeemType"`
 	RedeemApplyTimes int64  `json:"redeemApplyTimes"`
@@ -3626,18 +3626,18 @@ type StakeProduct struct {
 	CoinSymbol       string `json:"coinSymbol"`
 	RewardCoinName   string `json:"rewardCoinName"`
 	RewardCoinSymbol string `json:"rewardCoinSymbol"`
-	Apr              string `json:"apr"`
+	Apr              string `json:"apr" validate:"decimal_10_4"`
 	LockDays         int64  `json:"lockDays"`
-	MinAmount        string `json:"minAmount"`
-	MaxAmount        string `json:"maxAmount"`
-	StepAmount       string `json:"stepAmount"`
-	TotalAmount      string `json:"totalAmount"`
-	StakedAmount     string `json:"stakedAmount"`
-	UserLimitAmount  string `json:"userLimitAmount"`
+	MinAmount        string `json:"minAmount" validate:"decimal_30_8"`
+	MaxAmount        string `json:"maxAmount" validate:"decimal_30_8"`
+	StepAmount       string `json:"stepAmount" validate:"decimal_30_8"`
+	TotalAmount      string `json:"totalAmount" validate:"decimal_30_8"`
+	StakedAmount     string `json:"stakedAmount" validate:"decimal_30_8"`
+	UserLimitAmount  string `json:"userLimitAmount" validate:"decimal_30_8"`
 	InterestMode     int64  `json:"interestMode"`
 	RewardMode       int64  `json:"rewardMode"`
 	AllowEarlyRedeem int64  `json:"allowEarlyRedeem"` // 是否允许提前赎回：1是 2否
-	EarlyRedeemRate  string `json:"earlyRedeemRate"`
+	EarlyRedeemRate  string `json:"earlyRedeemRate" validate:"decimal_10_4"`
 	Status           int64  `json:"status"`
 	Sort             int64  `json:"sort"`
 	Remark           string `json:"remark"`
@@ -3656,11 +3656,11 @@ type StakeRedeemLog struct {
 	ProductId    int64  `json:"productId"`
 	RedeemNo     string `json:"redeemNo"`
 	RedeemType   int64  `json:"redeemType"`
-	StakeAmount  string `json:"stakeAmount"`
-	RedeemAmount string `json:"redeemAmount"`
-	RewardAmount string `json:"rewardAmount"`
-	FeeRate      string `json:"feeRate"`
-	FeeAmount    string `json:"feeAmount"`
+	StakeAmount  string `json:"stakeAmount" validate:"decimal_30_8"`
+	RedeemAmount string `json:"redeemAmount" validate:"decimal_30_8"`
+	RewardAmount string `json:"rewardAmount" validate:"decimal_30_8"`
+	FeeRate      string `json:"feeRate" validate:"decimal_10_4"`
+	FeeAmount    string `json:"feeAmount" validate:"decimal_30_8"`
 	RedeemStatus int64  `json:"redeemStatus"`
 	RedeemTimes  int64  `json:"redeemTimes"`
 	Remark       string `json:"remark"`
@@ -3680,9 +3680,9 @@ type StakeRewardLog struct {
 	ProductName      string `json:"productName"`
 	CoinSymbol       string `json:"coinSymbol"`
 	RewardCoinSymbol string `json:"rewardCoinSymbol"`
-	RewardAmount     string `json:"rewardAmount"`
-	BeforeReward     string `json:"beforeReward"`
-	AfterReward      string `json:"afterReward"`
+	RewardAmount     string `json:"rewardAmount" validate:"decimal_30_8"`
+	BeforeReward     string `json:"beforeReward" validate:"decimal_30_8"`
+	AfterReward      string `json:"afterReward" validate:"decimal_30_8"`
 	RewardType       int64  `json:"rewardType"`
 	RewardStatus     int64  `json:"rewardStatus"`
 	RewardTimes      int64  `json:"rewardTimes"`
@@ -3698,7 +3698,7 @@ type SubAssetReq struct {
 	UserId     int64  `json:"userId"`
 	WalletType int64  `json:"walletType"`
 	Coin       string `json:"coin"`
-	Amount     string `json:"amount"`
+	Amount     string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"`
 	BizNo      string `json:"bizNo"`
 	Remark     string `json:"remark,optional"`
 	OperatorId int64  `json:"operatorId"`
@@ -4319,13 +4319,13 @@ type TenantPayChannel struct {
 	Sort            int64  `json:"sort"`
 	Visible         int64  `json:"visible"`
 	Enabled         int64  `json:"enabled"` // 0未知 1启用 2禁用
-	SingleMinAmount string `json:"singleMinAmount"`
-	SingleMaxAmount string `json:"singleMaxAmount"`
-	DailyMaxAmount  string `json:"dailyMaxAmount"`
+	SingleMinAmount string `json:"singleMinAmount" validate:"decimal_36_18"`
+	SingleMaxAmount string `json:"singleMaxAmount" validate:"decimal_36_18"`
+	DailyMaxAmount  string `json:"dailyMaxAmount" validate:"decimal_36_18"`
 	DailyMaxCount   int64  `json:"dailyMaxCount"`
 	FeeType         int64  `json:"feeType"` // 0未知 1费率 2固定
-	FeeRate         string `json:"feeRate"`
-	FeeFixedAmount  string `json:"feeFixedAmount"`
+	FeeRate         string `json:"feeRate" validate:"decimal_10_4"`
+	FeeFixedAmount  string `json:"feeFixedAmount" validate:"decimal_36_18"`
 	ExtConfig       string `json:"extConfig"`
 	Remark          string `json:"remark"`
 	CreateTimes     int64  `json:"createTimes"`
@@ -4341,10 +4341,10 @@ type TenantPayChannelRule struct {
 	RuleName             string `json:"ruleName"`
 	Priority             int64  `json:"priority"`
 	Enabled              int64  `json:"enabled"` // 0未知 1启用 2禁用
-	SingleAmountMin      string `json:"singleAmountMin"`
-	SingleAmountMax      string `json:"singleAmountMax"`
-	UserTotalRechargeMin string `json:"userTotalRechargeMin"`
-	UserTotalRechargeMax string `json:"userTotalRechargeMax"`
+	SingleAmountMin      string `json:"singleAmountMin" validate:"decimal_36_18"`
+	SingleAmountMax      string `json:"singleAmountMax" validate:"decimal_36_18"`
+	UserTotalRechargeMin string `json:"userTotalRechargeMin" validate:"decimal_36_18"`
+	UserTotalRechargeMax string `json:"userTotalRechargeMax" validate:"decimal_36_18"`
 	MemberLevelMin       int64  `json:"memberLevelMin"`
 	MemberLevelMax       int64  `json:"memberLevelMax"`
 	KycLevelMin          int64  `json:"kycLevelMin"`
@@ -4390,9 +4390,9 @@ type TradeAssetReservation struct {
 	OrderId        int64  `json:"orderId"`
 	ReservationNo  string `json:"reservationNo"`
 	Asset          string `json:"asset"`
-	ReservedAmount string `json:"reservedAmount"`
-	ConsumedAmount string `json:"consumedAmount"`
-	ReleasedAmount string `json:"releasedAmount"`
+	ReservedAmount string `json:"reservedAmount" validate:"decimal_36_18"`
+	ConsumedAmount string `json:"consumedAmount" validate:"decimal_36_18"`
+	ReleasedAmount string `json:"releasedAmount" validate:"decimal_36_18"`
 	Status         int64  `json:"status"`
 	RetryCount     int64  `json:"retryCount"`
 	NextRetryAt    int64  `json:"nextRetryAt"`
@@ -4430,13 +4430,13 @@ type TradeFill struct {
 	SettledAt            int64  `json:"settledAt"`
 	Side                 int64  `json:"side"`
 	PositionSide         int64  `json:"positionSide"`
-	Price                string `json:"price"`
-	Qty                  string `json:"qty"`
-	Amount               string `json:"amount"`
-	Fee                  string `json:"fee"`
+	Price                string `json:"price" validate:"decimal_36_18"`
+	Qty                  string `json:"qty" validate:"decimal_36_18"`
+	Amount               string `json:"amount" validate:"decimal_36_18"`
+	Fee                  string `json:"fee" validate:"decimal_36_18"`
 	FeeAsset             string `json:"feeAsset"`
 	LiquidityType        int64  `json:"liquidityType"`
-	RealizedPnl          string `json:"realizedPnl"`
+	RealizedPnl          string `json:"realizedPnl" validate:"decimal_36_18"`
 	MatchTime            int64  `json:"matchTime"`
 	CreateTimes          int64  `json:"createTimes"`
 }
@@ -4447,10 +4447,10 @@ type TradeMarketSnapshot struct {
 	SnapshotKind      string `json:"snapshotKind"`
 	SymbolId          int64  `json:"symbolId"`
 	Source            string `json:"source"`
-	Price             string `json:"price"`
-	MarkPrice         string `json:"markPrice"`
-	IndexPrice        string `json:"indexPrice"`
-	FundingRate       string `json:"fundingRate"`
+	Price             string `json:"price" validate:"decimal_36_18"`
+	MarkPrice         string `json:"markPrice" validate:"decimal_36_18"`
+	IndexPrice        string `json:"indexPrice" validate:"decimal_36_18"`
+	FundingRate       string `json:"fundingRate" validate:"decimal_20_10"`
 	SourceTimestamp   int64  `json:"sourceTimestamp"`
 	SnapshotTimestamp int64  `json:"snapshotTimestamp"`
 	Revision          int64  `json:"revision"`
@@ -4475,21 +4475,21 @@ type TradeOrder struct {
 	OrderType         int64  `json:"orderType"`
 	TimeInForce       int64  `json:"timeInForce"`
 	Status            int64  `json:"status"`
-	Price             string `json:"price"`
-	Qty               string `json:"qty"`
-	Amount            string `json:"amount"`
-	FilledQty         string `json:"filledQty"`
-	FilledAmount      string `json:"filledAmount"`
-	AvgPrice          string `json:"avgPrice"`
-	Fee               string `json:"fee"`
+	Price             string `json:"price" validate:"decimal_36_18"`
+	Qty               string `json:"qty" validate:"decimal_36_18"`
+	Amount            string `json:"amount" validate:"decimal_36_18"`
+	FilledQty         string `json:"filledQty" validate:"decimal_36_18"`
+	FilledAmount      string `json:"filledAmount" validate:"decimal_36_18"`
+	AvgPrice          string `json:"avgPrice" validate:"decimal_36_18"`
+	Fee               string `json:"fee" validate:"decimal_36_18"`
 	FeeAsset          string `json:"feeAsset"`
 	Source            int64  `json:"source"`
 	IsReduceOnly      int64  `json:"isReduceOnly"` // 是否只减仓：1是 2否
-	TriggerPrice      string `json:"triggerPrice"`
+	TriggerPrice      string `json:"triggerPrice" validate:"decimal_36_18"`
 	TriggerType       int64  `json:"triggerType"`
 	TriggerKind       int64  `json:"triggerKind"`
 	RequestHash       string `json:"requestHash"`
-	CanceledQty       string `json:"canceledQty"`
+	CanceledQty       string `json:"canceledQty" validate:"decimal_36_18"`
 	IsClosePosition   int64  `json:"isClosePosition"`
 	OcoGroupNo        string `json:"ocoGroupNo"`
 	ExpireAt          int64  `json:"expireAt"`
@@ -4511,13 +4511,13 @@ type TradeOrderContract struct {
 	MarginMode        int64  `json:"marginMode"`
 	Leverage          int64  `json:"leverage"`
 	MarginAsset       string `json:"marginAsset"`
-	MarginAmount      string `json:"marginAmount"`
+	MarginAmount      string `json:"marginAmount" validate:"decimal_36_18"`
 	ClosePositionType int64  `json:"closePositionType"`
-	LiquidationPrice  string `json:"liquidationPrice"`
-	TakeProfitPrice   string `json:"takeProfitPrice"`
-	StopLossPrice     string `json:"stopLossPrice"`
-	ReservedCloseQty  string `json:"reservedCloseQty"`
-	RiskPrice         string `json:"riskPrice"`
+	LiquidationPrice  string `json:"liquidationPrice" validate:"decimal_36_18"`
+	TakeProfitPrice   string `json:"takeProfitPrice" validate:"decimal_36_18"`
+	StopLossPrice     string `json:"stopLossPrice" validate:"decimal_36_18"`
+	ReservedCloseQty  string `json:"reservedCloseQty" validate:"decimal_36_18"`
+	RiskPrice         string `json:"riskPrice" validate:"decimal_36_18"`
 	RiskTierId        int64  `json:"riskTierId"`
 	CreateTimes       int64  `json:"createTimes"`
 	UpdateTimes       int64  `json:"updateTimes"`
@@ -4537,23 +4537,23 @@ type TradeOrderSeconds struct {
 	Direction             int64  `json:"direction"`
 	DurationSeconds       int64  `json:"durationSeconds"`
 	StakeAsset            string `json:"stakeAsset"`
-	StakeAmount           string `json:"stakeAmount"`
-	PayoutRate            string `json:"payoutRate"`
-	FeeRate               string `json:"feeRate"`
+	StakeAmount           string `json:"stakeAmount" validate:"decimal_36_18"`
+	PayoutRate            string `json:"payoutRate" validate:"decimal_20_10"`
+	FeeRate               string `json:"feeRate" validate:"decimal_20_10"`
 	FrozenAt              int64  `json:"frozenAt"`
 	ActivatedAt           int64  `json:"activatedAt"`
-	StartPrice            string `json:"startPrice"`
+	StartPrice            string `json:"startPrice" validate:"decimal_36_18"`
 	StartPriceTime        int64  `json:"startPriceTime"`
 	StartPriceSource      string `json:"startPriceSource"`
 	ExpireTime            int64  `json:"expireTime"`
-	SettlementPrice       string `json:"settlementPrice"`
+	SettlementPrice       string `json:"settlementPrice" validate:"decimal_36_18"`
 	SettlementPriceTime   int64  `json:"settlementPriceTime"`
 	SettlementPriceSource string `json:"settlementPriceSource"`
 	PriceAlgorithm        string `json:"priceAlgorithm"`
 	Result                int64  `json:"result"`
-	ProfitAmount          string `json:"profitAmount"`
-	FeeAmount             string `json:"feeAmount"`
-	ReturnAmount          string `json:"returnAmount"`
+	ProfitAmount          string `json:"profitAmount" validate:"decimal_36_18"`
+	FeeAmount             string `json:"feeAmount" validate:"decimal_36_18"`
+	ReturnAmount          string `json:"returnAmount" validate:"decimal_36_18"`
 	SettlementStatus      int64  `json:"settlementStatus"`
 	ReservationNo         string `json:"reservationNo"`
 	SettlementReason      string `json:"settlementReason"`
@@ -4568,9 +4568,9 @@ type TradeOrderSpot struct {
 	TenantId     int64  `json:"tenantId"`
 	OrderId      int64  `json:"orderId"`
 	FrozenAsset  string `json:"frozenAsset"`
-	FrozenAmount string `json:"frozenAmount"`
+	FrozenAmount string `json:"frozenAmount" validate:"decimal_36_18"`
 	SettleAsset  string `json:"settleAsset"`
-	SettleAmount string `json:"settleAmount"`
+	SettleAmount string `json:"settleAmount" validate:"decimal_36_18"`
 	CreateTimes  int64  `json:"createTimes"`
 	UpdateTimes  int64  `json:"updateTimes"`
 }
@@ -4580,7 +4580,7 @@ type TradeSecondsPriceSnapshot struct {
 	OrderId      int64  `json:"orderId"`
 	SnapshotType int64  `json:"snapshotType"`
 	Source       string `json:"source"`
-	Price        string `json:"price"`
+	Price        string `json:"price" validate:"decimal_36_18"`
 	QuoteTime    int64  `json:"quoteTime"`
 	ReceivedAt   int64  `json:"receivedAt"`
 	Algorithm    string `json:"algorithm"`
@@ -4602,7 +4602,7 @@ type TradeSettlementInstruction struct {
 	UserId        int64  `json:"userId"`
 	Action        int64  `json:"action"`
 	Asset         string `json:"asset"`
-	Amount        string `json:"amount"`
+	Amount        string `json:"amount" validate:"decimal_36_18"`
 	StepNo        int64  `json:"stepNo"`
 	Status        int64  `json:"status"`
 	RetryCount    int64  `json:"retryCount"`
@@ -4628,14 +4628,14 @@ type TradeSymbol struct {
 	DisplayStatus     int64  `json:"displayStatus"`
 	PriceScale        int64  `json:"priceScale"`
 	QtyScale          int64  `json:"qtyScale"`
-	MinPrice          string `json:"minPrice"`
-	MaxPrice          string `json:"maxPrice"`
-	PriceTick         string `json:"priceTick"`
-	MinQty            string `json:"minQty"`
-	MaxQty            string `json:"maxQty"`
-	QtyStep           string `json:"qtyStep"`
-	MinNotional       string `json:"minNotional"`
-	MaxNotional       string `json:"maxNotional"`
+	MinPrice          string `json:"minPrice" validate:"decimal_36_18"`
+	MaxPrice          string `json:"maxPrice" validate:"decimal_36_18"`
+	PriceTick         string `json:"priceTick" validate:"decimal_36_18"`
+	MinQty            string `json:"minQty" validate:"decimal_36_18"`
+	MaxQty            string `json:"maxQty" validate:"decimal_36_18"`
+	QtyStep           string `json:"qtyStep" validate:"decimal_36_18"`
+	MinNotional       string `json:"minNotional" validate:"decimal_36_18"`
+	MaxNotional       string `json:"maxNotional" validate:"decimal_36_18"`
 	ListingTime       int64  `json:"listingTime"`
 	TradingStartTime  int64  `json:"tradingStartTime"`
 	TradingEndTime    int64  `json:"tradingEndTime"`
@@ -4649,18 +4649,18 @@ type TradeSymbolContract struct {
 	Id                       int64  `json:"id"`
 	TenantId                 int64  `json:"tenantId"`
 	SymbolId                 int64  `json:"symbolId"`
-	ContractSize             string `json:"contractSize"`
-	Multiplier               string `json:"multiplier"`
-	MaintenanceMarginRate    string `json:"maintenanceMarginRate"`
-	InitialMarginRate        string `json:"initialMarginRate"`
-	MakerFeeRate             string `json:"makerFeeRate"`
-	TakerFeeRate             string `json:"takerFeeRate"`
+	ContractSize             string `json:"contractSize" validate:"decimal_36_18"`
+	Multiplier               string `json:"multiplier" validate:"decimal_36_18"`
+	MaintenanceMarginRate    string `json:"maintenanceMarginRate" validate:"decimal_20_10"`
+	InitialMarginRate        string `json:"initialMarginRate" validate:"decimal_20_10"`
+	MakerFeeRate             string `json:"makerFeeRate" validate:"decimal_20_10"`
+	TakerFeeRate             string `json:"takerFeeRate" validate:"decimal_20_10"`
 	FundingIntervalMinutes   int64  `json:"fundingIntervalMinutes"`
 	DeliveryTime             int64  `json:"deliveryTime"`
 	SupportCross             int64  `json:"supportCross"`
 	SupportIsolated          int64  `json:"supportIsolated"`
-	FundingRateCap           string `json:"fundingRateCap"`
-	FundingRateFloor         string `json:"fundingRateFloor"`
+	FundingRateCap           string `json:"fundingRateCap" validate:"decimal_20_10"`
+	FundingRateFloor         string `json:"fundingRateFloor" validate:"decimal_20_10"`
 	FundingRateSource        string `json:"fundingRateSource"`
 	IndexSymbol              string `json:"indexSymbol"`
 	MarkPriceSource          string `json:"markPriceSource"`
@@ -4669,8 +4669,8 @@ type TradeSymbolContract struct {
 	MatchingStopTime         int64  `json:"matchingStopTime"`
 	SettlementWindowSeconds  int64  `json:"settlementWindowSeconds"`
 	SettlementPriceAlgorithm string `json:"settlementPriceAlgorithm"`
-	DeliveryFeeRate          string `json:"deliveryFeeRate"`
-	LiquidationFeeRate       string `json:"liquidationFeeRate"`
+	DeliveryFeeRate          string `json:"deliveryFeeRate" validate:"decimal_20_10"`
+	LiquidationFeeRate       string `json:"liquidationFeeRate" validate:"decimal_20_10"`
 	OpenLongEnabled          int64  `json:"openLongEnabled"`
 	OpenShortEnabled         int64  `json:"openShortEnabled"`
 	CloseLongEnabled         int64  `json:"closeLongEnabled"`
@@ -4698,18 +4698,18 @@ type TradeSymbolSeconds struct {
 	TenantId                 int64  `json:"tenantId"`
 	SymbolId                 int64  `json:"symbolId"`
 	DurationSeconds          int64  `json:"durationSeconds"`
-	PayoutRate               string `json:"payoutRate"`
-	FeeRate                  string `json:"feeRate"`
+	PayoutRate               string `json:"payoutRate" validate:"decimal_20_10"`
+	FeeRate                  string `json:"feeRate" validate:"decimal_20_10"`
 	DrawRule                 int64  `json:"drawRule"`
 	StartPriceSource         string `json:"startPriceSource"`
 	SettlementPriceSource    string `json:"settlementPriceSource"`
 	QuoteValidityMs          int64  `json:"quoteValidityMs"`
 	SettlementWindowMs       int64  `json:"settlementWindowMs"`
 	SettlementPriceAlgorithm string `json:"settlementPriceAlgorithm"`
-	DrawTolerance            string `json:"drawTolerance"`
-	MaxExposureAmount        string `json:"maxExposureAmount"`
-	MinStake                 string `json:"minStake"`
-	MaxStake                 string `json:"maxStake"`
+	DrawTolerance            string `json:"drawTolerance" validate:"decimal_36_18"`
+	MaxExposureAmount        string `json:"maxExposureAmount" validate:"decimal_36_18"`
+	MinStake                 string `json:"minStake" validate:"decimal_36_18"`
+	MaxStake                 string `json:"maxStake" validate:"decimal_36_18"`
 	UpEnabled                int64  `json:"upEnabled"`
 	DownEnabled              int64  `json:"downEnabled"`
 	CreateTimes              int64  `json:"createTimes"`
@@ -4731,8 +4731,8 @@ type TradeSymbolSpot struct {
 	Id           int64  `json:"id"`
 	TenantId     int64  `json:"tenantId"`
 	SymbolId     int64  `json:"symbolId"`
-	MakerFeeRate string `json:"makerFeeRate"`
-	TakerFeeRate string `json:"takerFeeRate"`
+	MakerFeeRate string `json:"makerFeeRate" validate:"decimal_20_10"`
+	TakerFeeRate string `json:"takerFeeRate" validate:"decimal_20_10"`
 	BuyEnabled   int64  `json:"buyEnabled"`
 	SellEnabled  int64  `json:"sellEnabled"`
 	CreateTimes  int64  `json:"createTimes"`
@@ -4753,7 +4753,7 @@ type TradeUserConfig struct {
 type UnfreezeAssetReq struct {
 	TenantId   int64  `json:"tenantId"`
 	FreezeNo   string `json:"freezeNo"`
-	Amount     string `json:"amount"`
+	Amount     string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"`
 	BizNo      string `json:"bizNo"`
 	Remark     string `json:"remark,optional"`
 	OperatorId int64  `json:"operatorId"`
@@ -4762,7 +4762,7 @@ type UnfreezeAssetReq struct {
 type UnlockAssetReq struct {
 	TenantId   int64  `json:"tenantId"`
 	LockNo     string `json:"lockNo"`
-	Amount     string `json:"amount"`
+	Amount     string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"`
 	BizNo      string `json:"bizNo"`
 	Remark     string `json:"remark,optional"`
 	OperatorId int64  `json:"operatorId"`
@@ -4816,13 +4816,13 @@ type UpdateContractReq struct {
 	OptionType       int64  `json:"optionType"`
 	ExerciseStyle    int64  `json:"exerciseStyle"`
 	SettlementType   int64  `json:"settlementType"`
-	StrikePrice      string `json:"strikePrice"`
-	ContractUnit     string `json:"contractUnit"`
-	MinOrderQty      string `json:"minOrderQty"`
-	MaxOrderQty      string `json:"maxOrderQty"`
-	PriceTick        string `json:"priceTick"`
-	QtyStep          string `json:"qtyStep"`
-	Multiplier       string `json:"multiplier"`
+	StrikePrice      string `json:"strikePrice" validate:"decimal_gte_zero,decimal_32_16"`
+	ContractUnit     string `json:"contractUnit" validate:"decimal_gte_zero,decimal_32_16"`
+	MinOrderQty      string `json:"minOrderQty" validate:"decimal_gte_zero,decimal_32_16"`
+	MaxOrderQty      string `json:"maxOrderQty" validate:"decimal_gte_zero,decimal_32_16"`
+	PriceTick        string `json:"priceTick" validate:"decimal_gte_zero,decimal_32_16"`
+	QtyStep          string `json:"qtyStep" validate:"decimal_gte_zero,decimal_32_16"`
+	Multiplier       string `json:"multiplier" validate:"decimal_gte_zero,decimal_32_16"`
 	ListTime         int64  `json:"listTime"`
 	ExpireTime       int64  `json:"expireTime"`
 	DeliverTime      int64  `json:"deliverTime"`
@@ -4870,21 +4870,21 @@ type UpdateCryptoWalletAccountReq struct {
 type UpdateMarketReq struct {
 	TenantId         int64  `json:"tenantId"`
 	ContractId       int64  `json:"contractId"`
-	UnderlyingPrice  string `json:"underlyingPrice"`
-	MarkPrice        string `json:"markPrice"`
-	LastPrice        string `json:"lastPrice"`
-	BidPrice         string `json:"bidPrice"`
-	AskPrice         string `json:"askPrice"`
-	TheoreticalPrice string `json:"theoreticalPrice"`
-	IntrinsicValue   string `json:"intrinsicValue"`
-	TimeValue        string `json:"timeValue"`
-	Iv               string `json:"iv"`
-	Delta            string `json:"delta"`
-	Gamma            string `json:"gamma"`
-	Theta            string `json:"theta"`
-	Vega             string `json:"vega"`
-	Rho              string `json:"rho"`
-	RiskFreeRate     string `json:"riskFreeRate"`
+	UnderlyingPrice  string `json:"underlyingPrice" validate:"decimal_gte_zero,decimal_32_16"`
+	MarkPrice        string `json:"markPrice" validate:"decimal_gte_zero,decimal_32_16"`
+	LastPrice        string `json:"lastPrice" validate:"decimal_gte_zero,decimal_32_16"`
+	BidPrice         string `json:"bidPrice" validate:"decimal_gte_zero,decimal_32_16"`
+	AskPrice         string `json:"askPrice" validate:"decimal_gte_zero,decimal_32_16"`
+	TheoreticalPrice string `json:"theoreticalPrice" validate:"decimal_gte_zero,decimal_32_16"`
+	IntrinsicValue   string `json:"intrinsicValue" validate:"decimal_gte_zero,decimal_32_16"`
+	TimeValue        string `json:"timeValue" validate:"decimal_gte_zero,decimal_32_16"`
+	Iv               string `json:"iv" validate:"decimal_gte_zero,decimal_20_10"`
+	Delta            string `json:"delta" validate:"decimal_20_10"`
+	Gamma            string `json:"gamma" validate:"decimal_20_10"`
+	Theta            string `json:"theta" validate:"decimal_20_10"`
+	Vega             string `json:"vega" validate:"decimal_20_10"`
+	Rho              string `json:"rho" validate:"decimal_20_10"`
+	RiskFreeRate     string `json:"riskFreeRate" validate:"decimal_20_10"`
 	PricingModel     string `json:"pricingModel"`
 	SnapshotTime     int64  `json:"snapshotTime"`
 }
@@ -4942,14 +4942,14 @@ type UpdateSymbolReq struct {
 	Status           int64  `json:"status"`
 	PriceScale       int64  `json:"priceScale"`
 	QtyScale         int64  `json:"qtyScale"`
-	MinPrice         string `json:"minPrice"`
-	MaxPrice         string `json:"maxPrice"`
-	PriceTick        string `json:"priceTick"`
-	MinQty           string `json:"minQty"`
-	MaxQty           string `json:"maxQty"`
-	QtyStep          string `json:"qtyStep"`
-	MinNotional      string `json:"minNotional"`
-	MaxNotional      string `json:"maxNotional"`
+	MinPrice         string `json:"minPrice" validate:"decimal_gte_zero,decimal_36_18"`
+	MaxPrice         string `json:"maxPrice" validate:"decimal_gte_zero,decimal_36_18"`
+	PriceTick        string `json:"priceTick" validate:"decimal_gte_zero,decimal_36_18"`
+	MinQty           string `json:"minQty" validate:"decimal_gte_zero,decimal_36_18"`
+	MaxQty           string `json:"maxQty" validate:"decimal_gte_zero,decimal_36_18"`
+	QtyStep          string `json:"qtyStep" validate:"decimal_gte_zero,decimal_36_18"`
+	MinNotional      string `json:"minNotional" validate:"decimal_gte_zero,decimal_36_18"`
+	MaxNotional      string `json:"maxNotional" validate:"decimal_gte_zero,decimal_36_18"`
 	ListingTime      int64  `json:"listingTime"`
 	TradingStartTime int64  `json:"tradingStartTime"`
 	TradingEndTime   int64  `json:"tradingEndTime"`
@@ -4995,13 +4995,13 @@ type UpdateTenantPayChannelReq struct {
 	Sort            int64  `json:"sort"`
 	Visible         int64  `json:"visible"`
 	Enabled         int64  `json:"enabled"`
-	SingleMinAmount string `json:"singleMinAmount"`
-	SingleMaxAmount string `json:"singleMaxAmount"`
-	DailyMaxAmount  string `json:"dailyMaxAmount"`
+	SingleMinAmount string `json:"singleMinAmount" validate:"required,decimal_gte_zero,decimal_36_18"`
+	SingleMaxAmount string `json:"singleMaxAmount" validate:"required,decimal_gte_zero,decimal_36_18"`
+	DailyMaxAmount  string `json:"dailyMaxAmount" validate:"required,decimal_gte_zero,decimal_36_18"`
 	DailyMaxCount   int64  `json:"dailyMaxCount"`
 	FeeType         int64  `json:"feeType"`
-	FeeRate         string `json:"feeRate,optional"`
-	FeeFixedAmount  string `json:"feeFixedAmount,optional"`
+	FeeRate         string `json:"feeRate,optional" validate:"decimal_gte_zero,decimal_10_4"`
+	FeeFixedAmount  string `json:"feeFixedAmount,optional" validate:"decimal_gte_zero,decimal_36_18"`
 	ExtConfig       string `json:"extConfig,optional"`
 	Remark          string `json:"remark,optional"`
 }
@@ -5012,10 +5012,10 @@ type UpdateTenantPayChannelRuleReq struct {
 	RuleName             string `json:"ruleName"`
 	Priority             int64  `json:"priority"`
 	Enabled              int64  `json:"enabled"`
-	SingleAmountMin      string `json:"singleAmountMin"`
-	SingleAmountMax      string `json:"singleAmountMax"`
-	UserTotalRechargeMin string `json:"userTotalRechargeMin"`
-	UserTotalRechargeMax string `json:"userTotalRechargeMax"`
+	SingleAmountMin      string `json:"singleAmountMin" validate:"required,decimal_gte_zero,decimal_36_18"`
+	SingleAmountMax      string `json:"singleAmountMax" validate:"required,decimal_gte_zero,decimal_36_18"`
+	UserTotalRechargeMin string `json:"userTotalRechargeMin" validate:"required,decimal_gte_zero,decimal_36_18"`
+	UserTotalRechargeMax string `json:"userTotalRechargeMax" validate:"required,decimal_gte_zero,decimal_36_18"`
 	MemberLevelMin       int64  `json:"memberLevelMin"`
 	MemberLevelMax       int64  `json:"memberLevelMax"`
 	KycLevelMin          int64  `json:"kycLevelMin"`
@@ -5255,8 +5255,8 @@ type UserRechargeStat struct {
 	TenantId           int64  `json:"tenantId"`
 	UserId             int64  `json:"userId"`
 	SuccessOrderCount  int64  `json:"successOrderCount"`
-	SuccessTotalAmount string `json:"successTotalAmount"`
-	TodaySuccessAmount string `json:"todaySuccessAmount"`
+	SuccessTotalAmount string `json:"successTotalAmount" validate:"decimal_36_18"` // DECIMAL(36,18)，自然货币单位
+	TodaySuccessAmount string `json:"todaySuccessAmount" validate:"decimal_36_18"` // DECIMAL(36,18)，自然货币单位
 	TodaySuccessCount  int64  `json:"todaySuccessCount"`
 	FirstSuccessTime   int64  `json:"firstSuccessTime"`
 	LastSuccessTime    int64  `json:"lastSuccessTime"`
@@ -5334,9 +5334,9 @@ type WithdrawOrder struct {
 	AccountId    int64  `json:"accountId"`
 	ChannelId    int64  `json:"channelId"`
 	Currency     string `json:"currency"`
-	Amount       string `json:"amount"`
-	FeeAmount    string `json:"feeAmount"`
-	ActualAmount string `json:"actualAmount"`
+	Amount       string `json:"amount" validate:"decimal_36_18"`
+	FeeAmount    string `json:"feeAmount" validate:"decimal_36_18"`
+	ActualAmount string `json:"actualAmount" validate:"decimal_36_18"`
 	ClientType   int64  `json:"clientType"`
 	ClientIp     string `json:"clientIp"`
 	Status       int64  `json:"status"`

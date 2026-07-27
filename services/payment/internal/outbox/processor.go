@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/shopspring/decimal"
+
 	"wklive/proto/asset"
 	"wklive/proto/common"
 	"wklive/proto/payment"
@@ -53,10 +55,15 @@ func process(ctx context.Context, svcCtx *svc.ServiceContext) {
 			markFailed(ctx, svcCtx, row.Id, err.Error())
 			continue
 		}
+		amount, err := decimal.NewFromString(payload.Amount)
+		if err != nil || !amount.IsPositive() {
+			markFailed(ctx, svcCtx, row.Id, "invalid recharge credit decimal amount")
+			continue
+		}
 		resp, err := svcCtx.AssetCli.AddAvailable(ctx, &asset.AddAvailableReq{
 			TenantId: payload.TenantID, UserId: payload.UserID,
 			WalletType: common.WalletType(payload.WalletType), Coin: payload.Currency,
-			Amount: payload.Amount, BizType: asset.BizType_BIZ_TYPE_PAYMENT,
+			Amount: amount.String(), BizType: asset.BizType_BIZ_TYPE_PAYMENT,
 			SceneType: asset.SceneType_SCENE_TYPE_RECHARGE, BizId: row.AggregateId,
 			BizNo: row.AggregateNo, Remark: payload.Remark,
 		})

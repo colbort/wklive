@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 
+	"wklive/common/conv"
 	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -36,7 +37,7 @@ func NewCreateCryptoRechargeOrderLogic(ctx context.Context, svcCtx *svc.ServiceC
 
 // 创建链上充值订单
 func (l *CreateCryptoRechargeOrderLogic) CreateCryptoRechargeOrder(in *payment.CreateCryptoRechargeOrderReq) (*payment.CreateCryptoRechargeOrderResp, error) {
-	rechargeAmount, err := parsePaymentAmount(in.RechargeAmount)
+	rechargeAmount, err := conv.ParseDecimalField(in.RechargeAmount)
 	if err != nil || !rechargeAmount.IsPositive() {
 		return &payment.CreateCryptoRechargeOrderResp{Base: helper.ErrResp(i18n.AmountMustBePositive, i18n.Translate(i18n.AmountMustBePositive, l.ctx))}, nil
 	}

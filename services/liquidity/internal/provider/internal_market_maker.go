@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"wklive/common/conv"
 	"wklive/proto/common"
 	"wklive/proto/liquidity"
 	"wklive/proto/trade"
@@ -62,7 +63,7 @@ func (m *TradeInternalMarketMaker) PlaceQuote(ctx context.Context, p *models.TLi
 	if resp.GetBase().GetCode() != 200 || resp.Data == nil {
 		return nil, fmt.Errorf("place liquidity quote failed: %s", resp.GetBase().GetMsg())
 	}
-	return normalizeQuote(resp.Data), nil
+	return normalizeQuote(resp.Data)
 }
 
 func (m *TradeInternalMarketMaker) CancelQuote(ctx context.Context, p *models.TLiquidityProvider, q *models.TLiquidityQuoteOrder) (*QuoteResult, error) {
@@ -90,11 +91,14 @@ func (m *TradeInternalMarketMaker) QueryQuote(ctx context.Context, p *models.TLi
 	if resp.GetBase().GetCode() != 200 || resp.GetData().GetOrder() == nil {
 		return nil, fmt.Errorf("query liquidity quote failed: %s", resp.GetBase().GetMsg())
 	}
-	return normalizeQuote(resp.Data.Order), nil
+	return normalizeQuote(resp.Data.Order)
 }
 
-func normalizeQuote(o *trade.TradeOrder) *QuoteResult {
-	filled, _ := decimal.NewFromString(o.FilledQty)
+func normalizeQuote(o *trade.TradeOrder) (*QuoteResult, error) {
+	filled, err := conv.ParseDecimalField(o.FilledQty)
+	if err != nil {
+		return nil, fmt.Errorf("invalid filled quantity from trade service: %w", err)
+	}
 	status := liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_UNCERTAIN
 	switch o.Status {
 	case trade.OrderStatus_ORDER_STATUS_PENDING:
@@ -110,5 +114,5 @@ func normalizeQuote(o *trade.TradeOrder) *QuoteResult {
 	case trade.OrderStatus_ORDER_STATUS_REJECTED:
 		status = liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_FAILED
 	}
-	return &QuoteResult{InternalOrderID: o.Id, OrderNo: o.OrderNo, Status: int64(status), FilledQty: filled, Reason: o.CancelReason}
+	return &QuoteResult{InternalOrderID: o.Id, OrderNo: o.OrderNo, Status: int64(status), FilledQty: filled, Reason: o.CancelReason}, nil
 }

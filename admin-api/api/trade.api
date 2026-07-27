@@ -16,14 +16,14 @@ type TradeSymbol {
 	displayStatus     int64  `json:"displayStatus"`
 	priceScale        int64  `json:"priceScale"`
 	qtyScale          int64  `json:"qtyScale"`
-	minPrice          string `json:"minPrice"`
-	maxPrice          string `json:"maxPrice"`
-	priceTick         string `json:"priceTick"`
-	minQty            string `json:"minQty"`
-	maxQty            string `json:"maxQty"`
-	qtyStep           string `json:"qtyStep"`
-	minNotional       string `json:"minNotional"`
-	maxNotional       string `json:"maxNotional"`
+	minPrice          string `json:"minPrice" validate:"decimal_36_18"`
+	maxPrice          string `json:"maxPrice" validate:"decimal_36_18"`
+	priceTick         string `json:"priceTick" validate:"decimal_36_18"`
+	minQty            string `json:"minQty" validate:"decimal_36_18"`
+	maxQty            string `json:"maxQty" validate:"decimal_36_18"`
+	qtyStep           string `json:"qtyStep" validate:"decimal_36_18"`
+	minNotional       string `json:"minNotional" validate:"decimal_36_18"`
+	maxNotional       string `json:"maxNotional" validate:"decimal_36_18"`
 	listingTime       int64  `json:"listingTime"`
 	tradingStartTime  int64  `json:"tradingStartTime"`
 	tradingEndTime    int64  `json:"tradingEndTime"`
@@ -37,8 +37,8 @@ type TradeSymbolSpot {
 	id           int64  `json:"id"`
 	tenantId     int64  `json:"tenantId"`
 	symbolId     int64  `json:"symbolId"`
-	makerFeeRate string `json:"makerFeeRate"`
-	takerFeeRate string `json:"takerFeeRate"`
+	makerFeeRate string `json:"makerFeeRate" validate:"decimal_20_10"`
+	takerFeeRate string `json:"takerFeeRate" validate:"decimal_20_10"`
 	buyEnabled   int64  `json:"buyEnabled"`
 	sellEnabled  int64  `json:"sellEnabled"`
 	createTimes  int64  `json:"createTimes"`
@@ -49,18 +49,18 @@ type TradeSymbolContract {
 	id                       int64  `json:"id"`
 	tenantId                 int64  `json:"tenantId"`
 	symbolId                 int64  `json:"symbolId"`
-	contractSize             string `json:"contractSize"`
-	multiplier               string `json:"multiplier"`
-	maintenanceMarginRate    string `json:"maintenanceMarginRate"`
-	initialMarginRate        string `json:"initialMarginRate"`
-	makerFeeRate             string `json:"makerFeeRate"`
-	takerFeeRate             string `json:"takerFeeRate"`
+	contractSize             string `json:"contractSize" validate:"decimal_36_18"`
+	multiplier               string `json:"multiplier" validate:"decimal_36_18"`
+	maintenanceMarginRate    string `json:"maintenanceMarginRate" validate:"decimal_20_10"`
+	initialMarginRate        string `json:"initialMarginRate" validate:"decimal_20_10"`
+	makerFeeRate             string `json:"makerFeeRate" validate:"decimal_20_10"`
+	takerFeeRate             string `json:"takerFeeRate" validate:"decimal_20_10"`
 	fundingIntervalMinutes   int64  `json:"fundingIntervalMinutes"`
 	deliveryTime             int64  `json:"deliveryTime"`
 	supportCross             int64  `json:"supportCross"`
 	supportIsolated          int64  `json:"supportIsolated"`
-	fundingRateCap           string `json:"fundingRateCap"`
-	fundingRateFloor         string `json:"fundingRateFloor"`
+	fundingRateCap           string `json:"fundingRateCap" validate:"decimal_20_10"`
+	fundingRateFloor         string `json:"fundingRateFloor" validate:"decimal_20_10"`
 	fundingRateSource        string `json:"fundingRateSource"`
 	indexSymbol              string `json:"indexSymbol"`
 	markPriceSource          string `json:"markPriceSource"`
@@ -69,8 +69,8 @@ type TradeSymbolContract {
 	matchingStopTime         int64  `json:"matchingStopTime"`
 	settlementWindowSeconds  int64  `json:"settlementWindowSeconds"`
 	settlementPriceAlgorithm string `json:"settlementPriceAlgorithm"`
-	deliveryFeeRate          string `json:"deliveryFeeRate"`
-	liquidationFeeRate       string `json:"liquidationFeeRate"`
+	deliveryFeeRate          string `json:"deliveryFeeRate" validate:"decimal_20_10"`
+	liquidationFeeRate       string `json:"liquidationFeeRate" validate:"decimal_20_10"`
 	openLongEnabled          int64  `json:"openLongEnabled"`
 	openShortEnabled         int64  `json:"openShortEnabled"`
 	closeLongEnabled         int64  `json:"closeLongEnabled"`
@@ -84,18 +84,18 @@ type TradeSymbolSeconds {
 	tenantId                 int64  `json:"tenantId"`
 	symbolId                 int64  `json:"symbolId"`
 	durationSeconds          int64  `json:"durationSeconds"`
-	payoutRate               string `json:"payoutRate"`
-	feeRate                  string `json:"feeRate"`
+	payoutRate               string `json:"payoutRate" validate:"decimal_20_10"`
+	feeRate                  string `json:"feeRate" validate:"decimal_20_10"`
 	drawRule                 int64  `json:"drawRule"`
 	startPriceSource         string `json:"startPriceSource"`
 	settlementPriceSource    string `json:"settlementPriceSource"`
 	quoteValidityMs          int64  `json:"quoteValidityMs"`
 	settlementWindowMs       int64  `json:"settlementWindowMs"`
 	settlementPriceAlgorithm string `json:"settlementPriceAlgorithm"`
-	drawTolerance            string `json:"drawTolerance"`
-	maxExposureAmount        string `json:"maxExposureAmount"`
-	minStake                 string `json:"minStake"`
-	maxStake                 string `json:"maxStake"`
+	drawTolerance            string `json:"drawTolerance" validate:"decimal_36_18"`
+	maxExposureAmount        string `json:"maxExposureAmount" validate:"decimal_36_18"`
+	minStake                 string `json:"minStake" validate:"decimal_36_18"`
+	maxStake                 string `json:"maxStake" validate:"decimal_36_18"`
 	upEnabled                int64  `json:"upEnabled"`
 	downEnabled              int64  `json:"downEnabled"`
 	createTimes              int64  `json:"createTimes"`
@@ -151,21 +151,21 @@ type TradeOrder {
 	orderType         int64  `json:"orderType"`
 	timeInForce       int64  `json:"timeInForce"`
 	status            int64  `json:"status"`
-	price             string `json:"price"`
-	qty               string `json:"qty"`
-	amount            string `json:"amount"`
-	filledQty         string `json:"filledQty"`
-	filledAmount      string `json:"filledAmount"`
-	avgPrice          string `json:"avgPrice"`
-	fee               string `json:"fee"`
+	price             string `json:"price" validate:"decimal_36_18"`
+	qty               string `json:"qty" validate:"decimal_36_18"`
+	amount            string `json:"amount" validate:"decimal_36_18"`
+	filledQty         string `json:"filledQty" validate:"decimal_36_18"`
+	filledAmount      string `json:"filledAmount" validate:"decimal_36_18"`
+	avgPrice          string `json:"avgPrice" validate:"decimal_36_18"`
+	fee               string `json:"fee" validate:"decimal_36_18"`
 	feeAsset          string `json:"feeAsset"`
 	source            int64  `json:"source"`
 	isReduceOnly      int64  `json:"isReduceOnly"` // 是否只减仓：1是 2否
-	triggerPrice      string `json:"triggerPrice"`
+	triggerPrice      string `json:"triggerPrice" validate:"decimal_36_18"`
 	triggerType       int64  `json:"triggerType"`
 	triggerKind       int64  `json:"triggerKind"`
 	requestHash       string `json:"requestHash"`
-	canceledQty       string `json:"canceledQty"`
+	canceledQty       string `json:"canceledQty" validate:"decimal_36_18"`
 	isClosePosition   int64  `json:"isClosePosition"`
 	ocoGroupNo        string `json:"ocoGroupNo"`
 	expireAt          int64  `json:"expireAt"`
@@ -187,23 +187,23 @@ type TradeOrderSeconds {
 	direction             int64  `json:"direction"`
 	durationSeconds       int64  `json:"durationSeconds"`
 	stakeAsset            string `json:"stakeAsset"`
-	stakeAmount           string `json:"stakeAmount"`
-	payoutRate            string `json:"payoutRate"`
-	feeRate               string `json:"feeRate"`
+	stakeAmount           string `json:"stakeAmount" validate:"decimal_36_18"`
+	payoutRate            string `json:"payoutRate" validate:"decimal_20_10"`
+	feeRate               string `json:"feeRate" validate:"decimal_20_10"`
 	frozenAt              int64  `json:"frozenAt"`
 	activatedAt           int64  `json:"activatedAt"`
-	startPrice            string `json:"startPrice"`
+	startPrice            string `json:"startPrice" validate:"decimal_36_18"`
 	startPriceTime        int64  `json:"startPriceTime"`
 	startPriceSource      string `json:"startPriceSource"`
 	expireTime            int64  `json:"expireTime"`
-	settlementPrice       string `json:"settlementPrice"`
+	settlementPrice       string `json:"settlementPrice" validate:"decimal_36_18"`
 	settlementPriceTime   int64  `json:"settlementPriceTime"`
 	settlementPriceSource string `json:"settlementPriceSource"`
 	priceAlgorithm        string `json:"priceAlgorithm"`
 	result                int64  `json:"result"`
-	profitAmount          string `json:"profitAmount"`
-	feeAmount             string `json:"feeAmount"`
-	returnAmount          string `json:"returnAmount"`
+	profitAmount          string `json:"profitAmount" validate:"decimal_36_18"`
+	feeAmount             string `json:"feeAmount" validate:"decimal_36_18"`
+	returnAmount          string `json:"returnAmount" validate:"decimal_36_18"`
 	settlementStatus      int64  `json:"settlementStatus"`
 	reservationNo         string `json:"reservationNo"`
 	settlementReason      string `json:"settlementReason"`
@@ -218,9 +218,9 @@ type TradeOrderSpot {
 	tenantId     int64  `json:"tenantId"`
 	orderId      int64  `json:"orderId"`
 	frozenAsset  string `json:"frozenAsset"`
-	frozenAmount string `json:"frozenAmount"`
+	frozenAmount string `json:"frozenAmount" validate:"decimal_36_18"`
 	settleAsset  string `json:"settleAsset"`
-	settleAmount string `json:"settleAmount"`
+	settleAmount string `json:"settleAmount" validate:"decimal_36_18"`
 	createTimes  int64  `json:"createTimes"`
 	updateTimes  int64  `json:"updateTimes"`
 }
@@ -232,13 +232,13 @@ type TradeOrderContract {
 	marginMode        int64  `json:"marginMode"`
 	leverage          int64  `json:"leverage"`
 	marginAsset       string `json:"marginAsset"`
-	marginAmount      string `json:"marginAmount"`
+	marginAmount      string `json:"marginAmount" validate:"decimal_36_18"`
 	closePositionType int64  `json:"closePositionType"`
-	liquidationPrice  string `json:"liquidationPrice"`
-	takeProfitPrice   string `json:"takeProfitPrice"`
-	stopLossPrice     string `json:"stopLossPrice"`
-	reservedCloseQty  string `json:"reservedCloseQty"`
-	riskPrice         string `json:"riskPrice"`
+	liquidationPrice  string `json:"liquidationPrice" validate:"decimal_36_18"`
+	takeProfitPrice   string `json:"takeProfitPrice" validate:"decimal_36_18"`
+	stopLossPrice     string `json:"stopLossPrice" validate:"decimal_36_18"`
+	reservedCloseQty  string `json:"reservedCloseQty" validate:"decimal_36_18"`
+	riskPrice         string `json:"riskPrice" validate:"decimal_36_18"`
 	riskTierId        int64  `json:"riskTierId"`
 	createTimes       int64  `json:"createTimes"`
 	updateTimes       int64  `json:"updateTimes"`
@@ -268,13 +268,13 @@ type TradeFill {
 	settledAt            int64  `json:"settledAt"`
 	side                 int64  `json:"side"`
 	positionSide         int64  `json:"positionSide"`
-	price                string `json:"price"`
-	qty                  string `json:"qty"`
-	amount               string `json:"amount"`
-	fee                  string `json:"fee"`
+	price                string `json:"price" validate:"decimal_36_18"`
+	qty                  string `json:"qty" validate:"decimal_36_18"`
+	amount               string `json:"amount" validate:"decimal_36_18"`
+	fee                  string `json:"fee" validate:"decimal_36_18"`
 	feeAsset             string `json:"feeAsset"`
 	liquidityType        int64  `json:"liquidityType"`
-	realizedPnl          string `json:"realizedPnl"`
+	realizedPnl          string `json:"realizedPnl" validate:"decimal_36_18"`
 	matchTime            int64  `json:"matchTime"`
 	createTimes          int64  `json:"createTimes"`
 }
@@ -300,21 +300,21 @@ type ContractPosition {
 	positionSide      int64  `json:"positionSide"`
 	marginMode        int64  `json:"marginMode"`
 	leverage          int64  `json:"leverage"`
-	qty               string `json:"qty"`
-	availQty          string `json:"availQty"`
-	frozenQty         string `json:"frozenQty"`
-	openAvgPrice      string `json:"openAvgPrice"`
-	markPrice         string `json:"markPrice"`
+	qty               string `json:"qty" validate:"decimal_36_18"`
+	availQty          string `json:"availQty" validate:"decimal_36_18"`
+	frozenQty         string `json:"frozenQty" validate:"decimal_36_18"`
+	openAvgPrice      string `json:"openAvgPrice" validate:"decimal_36_18"`
+	markPrice         string `json:"markPrice" validate:"decimal_36_18"`
 	markSnapshotId    string `json:"markSnapshotId"`
 	marginAsset       string `json:"marginAsset"`
-	positionMargin    string `json:"positionMargin"`
-	isolatedMargin    string `json:"isolatedMargin"`
-	unrealizedPnl     string `json:"unrealizedPnl"`
-	realizedPnl       string `json:"realizedPnl"`
-	liquidationPrice  string `json:"liquidationPrice"`
-	maintenanceMargin string `json:"maintenanceMargin"`
-	bankruptcyPrice   string `json:"bankruptcyPrice"`
-	riskRate          string `json:"riskRate"`
+	positionMargin    string `json:"positionMargin" validate:"decimal_36_18"`
+	isolatedMargin    string `json:"isolatedMargin" validate:"decimal_36_18"`
+	unrealizedPnl     string `json:"unrealizedPnl" validate:"decimal_36_18"`
+	realizedPnl       string `json:"realizedPnl" validate:"decimal_36_18"`
+	liquidationPrice  string `json:"liquidationPrice" validate:"decimal_36_18"`
+	maintenanceMargin string `json:"maintenanceMargin" validate:"decimal_36_18"`
+	bankruptcyPrice   string `json:"bankruptcyPrice" validate:"decimal_36_18"`
+	riskRate          string `json:"riskRate" validate:"decimal_20_10"`
 	status            int64  `json:"status"`
 	adlRank           int64  `json:"adlRank"`
 	lastFundingTime   int64  `json:"lastFundingTime"`
@@ -334,24 +334,24 @@ type ContractPositionHistory {
 	contractValueType    int64  `json:"contractValueType"`
 	positionSide         int64  `json:"positionSide"`
 	actionType           int64  `json:"actionType"`
-	beforeQty            string `json:"beforeQty"`
-	afterQty             string `json:"afterQty"`
-	beforeAvailQty       string `json:"beforeAvailQty"`
-	afterAvailQty        string `json:"afterAvailQty"`
-	beforeFrozenQty      string `json:"beforeFrozenQty"`
-	afterFrozenQty       string `json:"afterFrozenQty"`
-	beforeOpenAvgPrice   string `json:"beforeOpenAvgPrice"`
-	afterOpenAvgPrice    string `json:"afterOpenAvgPrice"`
-	beforePositionMargin string `json:"beforePositionMargin"`
-	afterPositionMargin  string `json:"afterPositionMargin"`
-	beforeIsolatedMargin string `json:"beforeIsolatedMargin"`
-	afterIsolatedMargin  string `json:"afterIsolatedMargin"`
-	beforeUnrealizedPnl  string `json:"beforeUnrealizedPnl"`
-	afterUnrealizedPnl   string `json:"afterUnrealizedPnl"`
-	realizedPnlDelta     string `json:"realizedPnlDelta"`
-	feeDelta             string `json:"feeDelta"`
+	beforeQty            string `json:"beforeQty" validate:"decimal_36_18"`
+	afterQty             string `json:"afterQty" validate:"decimal_36_18"`
+	beforeAvailQty       string `json:"beforeAvailQty" validate:"decimal_36_18"`
+	afterAvailQty        string `json:"afterAvailQty" validate:"decimal_36_18"`
+	beforeFrozenQty      string `json:"beforeFrozenQty" validate:"decimal_36_18"`
+	afterFrozenQty       string `json:"afterFrozenQty" validate:"decimal_36_18"`
+	beforeOpenAvgPrice   string `json:"beforeOpenAvgPrice" validate:"decimal_36_18"`
+	afterOpenAvgPrice    string `json:"afterOpenAvgPrice" validate:"decimal_36_18"`
+	beforePositionMargin string `json:"beforePositionMargin" validate:"decimal_36_18"`
+	afterPositionMargin  string `json:"afterPositionMargin" validate:"decimal_36_18"`
+	beforeIsolatedMargin string `json:"beforeIsolatedMargin" validate:"decimal_36_18"`
+	afterIsolatedMargin  string `json:"afterIsolatedMargin" validate:"decimal_36_18"`
+	beforeUnrealizedPnl  string `json:"beforeUnrealizedPnl" validate:"decimal_36_18"`
+	afterUnrealizedPnl   string `json:"afterUnrealizedPnl" validate:"decimal_36_18"`
+	realizedPnlDelta     string `json:"realizedPnlDelta" validate:"decimal_36_18"`
+	feeDelta             string `json:"feeDelta" validate:"decimal_36_18"`
 	feeAsset             string `json:"feeAsset"`
-	markPrice            string `json:"markPrice"`
+	markPrice            string `json:"markPrice" validate:"decimal_36_18"`
 	refOrderId           int64  `json:"refOrderId"`
 	refFillId            int64  `json:"refFillId"`
 	operatorId           int64  `json:"operatorId"`
@@ -365,13 +365,13 @@ type ContractMarginSnapshot {
 	tenantId         int64  `json:"tenantId"`
 	userId           int64  `json:"userId"`
 	marginAsset      string `json:"marginAsset"`
-	walletBalance    string `json:"walletBalance"`
-	availableBalance string `json:"availableBalance"`
-	frozenBalance    string `json:"frozenBalance"`
-	positionMargin   string `json:"positionMargin"`
-	orderMargin      string `json:"orderMargin"`
-	unrealizedPnl    string `json:"unrealizedPnl"`
-	realizedPnl      string `json:"realizedPnl"`
+	walletBalance    string `json:"walletBalance" validate:"decimal_36_18"`
+	availableBalance string `json:"availableBalance" validate:"decimal_36_18"`
+	frozenBalance    string `json:"frozenBalance" validate:"decimal_36_18"`
+	positionMargin   string `json:"positionMargin" validate:"decimal_36_18"`
+	orderMargin      string `json:"orderMargin" validate:"decimal_36_18"`
+	unrealizedPnl    string `json:"unrealizedPnl" validate:"decimal_36_18"`
+	realizedPnl      string `json:"realizedPnl" validate:"decimal_36_18"`
 	version          int64  `json:"version"`
 	createTimes      int64  `json:"createTimes"`
 	updateTimes      int64  `json:"updateTimes"`
@@ -424,8 +424,8 @@ type RiskUserTradeLimit {
 	maxOpenOrderCount    int64  `json:"maxOpenOrderCount"`
 	maxOrderCountPerDay  int64  `json:"maxOrderCountPerDay"`
 	maxCancelCountPerDay int64  `json:"maxCancelCountPerDay"`
-	maxOpenNotional      string `json:"maxOpenNotional"`
-	maxPositionNotional  string `json:"maxPositionNotional"`
+	maxOpenNotional      string `json:"maxOpenNotional" validate:"decimal_36_18"`
+	maxPositionNotional  string `json:"maxPositionNotional" validate:"decimal_36_18"`
 	riskLevel            int64  `json:"riskLevel"`
 	operatorId           int64  `json:"operatorId"`
 	source               int64  `json:"source"`
@@ -442,16 +442,16 @@ type RiskUserSymbolLimit {
 	tenantId            int64  `json:"tenantId"`
 	userId              int64  `json:"userId"`
 	symbolId            int64  `json:"symbolId"`
-	maxPositionQty      string `json:"maxPositionQty"`
-	maxPositionNotional string `json:"maxPositionNotional"`
+	maxPositionQty      string `json:"maxPositionQty" validate:"decimal_36_18"`
+	maxPositionNotional string `json:"maxPositionNotional" validate:"decimal_36_18"`
 	maxOpenOrders       int64  `json:"maxOpenOrders"`
-	maxOrderQty         string `json:"maxOrderQty"`
-	maxOrderNotional    string `json:"maxOrderNotional"`
-	minOrderQty         string `json:"minOrderQty"`
-	minOrderNotional    string `json:"minOrderNotional"`
-	maxLongPositionQty  string `json:"maxLongPositionQty"`
-	maxShortPositionQty string `json:"maxShortPositionQty"`
-	priceDeviationRate  string `json:"priceDeviationRate"`
+	maxOrderQty         string `json:"maxOrderQty" validate:"decimal_36_18"`
+	maxOrderNotional    string `json:"maxOrderNotional" validate:"decimal_36_18"`
+	minOrderQty         string `json:"minOrderQty" validate:"decimal_36_18"`
+	minOrderNotional    string `json:"minOrderNotional" validate:"decimal_36_18"`
+	maxLongPositionQty  string `json:"maxLongPositionQty" validate:"decimal_36_18"`
+	maxShortPositionQty string `json:"maxShortPositionQty" validate:"decimal_36_18"`
+	priceDeviationRate  string `json:"priceDeviationRate" validate:"decimal_20_10"`
 	operatorId          int64  `json:"operatorId"`
 	source              int64  `json:"source"`
 	enabled             int64  `json:"enabled"`
@@ -474,9 +474,9 @@ type RiskOrderCheckLog {
 	checkResult   int64  `json:"checkResult"`
 	rejectCode    string `json:"rejectCode"`
 	rejectMsg     string `json:"rejectMsg"`
-	requestPrice  string `json:"requestPrice"`
-	requestQty    string `json:"requestQty"`
-	requestAmount string `json:"requestAmount"`
+	requestPrice  string `json:"requestPrice" validate:"decimal_36_18"`
+	requestQty    string `json:"requestQty" validate:"decimal_36_18"`
+	requestAmount string `json:"requestAmount" validate:"decimal_36_18"`
 	operatorId    int64  `json:"operatorId"`
 	source        int64  `json:"source"`
 	checkSnapshot string `json:"checkSnapshot"`
@@ -529,14 +529,14 @@ type CreateSymbolReq {
 	status            int64  `json:"status"`
 	priceScale        int64  `json:"priceScale"`
 	qtyScale          int64  `json:"qtyScale"`
-	minPrice          string `json:"minPrice"`
-	maxPrice          string `json:"maxPrice"`
-	priceTick         string `json:"priceTick"`
-	minQty            string `json:"minQty"`
-	maxQty            string `json:"maxQty"`
-	qtyStep           string `json:"qtyStep"`
-	minNotional       string `json:"minNotional"`
-	maxNotional       string `json:"maxNotional"`
+	minPrice          string `json:"minPrice" validate:"required,decimal_gte_zero,decimal_36_18"`
+	maxPrice          string `json:"maxPrice" validate:"required,decimal_gte_zero,decimal_36_18"`
+	priceTick         string `json:"priceTick" validate:"required,decimal_gt_zero,decimal_36_18"`
+	minQty            string `json:"minQty" validate:"required,decimal_gte_zero,decimal_36_18"`
+	maxQty            string `json:"maxQty" validate:"required,decimal_gte_zero,decimal_36_18"`
+	qtyStep           string `json:"qtyStep" validate:"required,decimal_gt_zero,decimal_36_18"`
+	minNotional       string `json:"minNotional" validate:"required,decimal_gte_zero,decimal_36_18"`
+	maxNotional       string `json:"maxNotional" validate:"required,decimal_gte_zero,decimal_36_18"`
 	listingTime       int64  `json:"listingTime"`
 	tradingStartTime  int64  `json:"tradingStartTime"`
 	tradingEndTime    int64  `json:"tradingEndTime"`
@@ -551,14 +551,14 @@ type UpdateSymbolReq {
 	status           int64  `json:"status"`
 	priceScale       int64  `json:"priceScale"`
 	qtyScale         int64  `json:"qtyScale"`
-	minPrice         string `json:"minPrice"`
-	maxPrice         string `json:"maxPrice"`
-	priceTick        string `json:"priceTick"`
-	minQty           string `json:"minQty"`
-	maxQty           string `json:"maxQty"`
-	qtyStep          string `json:"qtyStep"`
-	minNotional      string `json:"minNotional"`
-	maxNotional      string `json:"maxNotional"`
+	minPrice         string `json:"minPrice" validate:"decimal_gte_zero,decimal_36_18"`
+	maxPrice         string `json:"maxPrice" validate:"decimal_gte_zero,decimal_36_18"`
+	priceTick        string `json:"priceTick" validate:"decimal_gte_zero,decimal_36_18"`
+	minQty           string `json:"minQty" validate:"decimal_gte_zero,decimal_36_18"`
+	maxQty           string `json:"maxQty" validate:"decimal_gte_zero,decimal_36_18"`
+	qtyStep          string `json:"qtyStep" validate:"decimal_gte_zero,decimal_36_18"`
+	minNotional      string `json:"minNotional" validate:"decimal_gte_zero,decimal_36_18"`
+	maxNotional      string `json:"maxNotional" validate:"decimal_gte_zero,decimal_36_18"`
 	listingTime      int64  `json:"listingTime"`
 	tradingStartTime int64  `json:"tradingStartTime"`
 	tradingEndTime   int64  `json:"tradingEndTime"`
@@ -601,8 +601,8 @@ type GetSymbolDetailAdminResp {
 type SetSpotSymbolConfigReq {
 	tenantId     int64  `json:"tenantId"`
 	symbolId     int64  `json:"symbolId"`
-	makerFeeRate string `json:"makerFeeRate"`
-	takerFeeRate string `json:"takerFeeRate"`
+	makerFeeRate string `json:"makerFeeRate" validate:"required,decimal_gte_zero,decimal_20_10"`
+	takerFeeRate string `json:"takerFeeRate" validate:"required,decimal_gte_zero,decimal_20_10"`
 	buyEnabled   int64  `json:"buyEnabled"`
 	sellEnabled  int64  `json:"sellEnabled"`
 }
@@ -610,18 +610,18 @@ type SetSpotSymbolConfigReq {
 type SetContractSymbolConfigReq {
 	tenantId                 int64  `json:"tenantId"`
 	symbolId                 int64  `json:"symbolId"`
-	contractSize             string `json:"contractSize"`
-	multiplier               string `json:"multiplier"`
-	maintenanceMarginRate    string `json:"maintenanceMarginRate"`
-	initialMarginRate        string `json:"initialMarginRate"`
-	makerFeeRate             string `json:"makerFeeRate"`
-	takerFeeRate             string `json:"takerFeeRate"`
+	contractSize             string `json:"contractSize" validate:"required,decimal_gt_zero,decimal_36_18"`
+	multiplier               string `json:"multiplier" validate:"required,decimal_gt_zero,decimal_36_18"`
+	maintenanceMarginRate    string `json:"maintenanceMarginRate" validate:"required,decimal_gte_zero,decimal_20_10"`
+	initialMarginRate        string `json:"initialMarginRate" validate:"required,decimal_gte_zero,decimal_20_10"`
+	makerFeeRate             string `json:"makerFeeRate" validate:"required,decimal_gte_zero,decimal_20_10"`
+	takerFeeRate             string `json:"takerFeeRate" validate:"required,decimal_gte_zero,decimal_20_10"`
 	fundingIntervalMinutes   int64  `json:"fundingIntervalMinutes"`
 	deliveryTime             int64  `json:"deliveryTime"`
 	supportCross             int64  `json:"supportCross"`
 	supportIsolated          int64  `json:"supportIsolated"`
-	fundingRateCap           string `json:"fundingRateCap"`
-	fundingRateFloor         string `json:"fundingRateFloor"`
+	fundingRateCap           string `json:"fundingRateCap" validate:"required,decimal_20_10"`
+	fundingRateFloor         string `json:"fundingRateFloor" validate:"required,decimal_20_10"`
 	fundingRateSource        string `json:"fundingRateSource"`
 	indexSymbol              string `json:"indexSymbol"`
 	markPriceSource          string `json:"markPriceSource"`
@@ -630,8 +630,8 @@ type SetContractSymbolConfigReq {
 	matchingStopTime         int64  `json:"matchingStopTime"`
 	settlementWindowSeconds  int64  `json:"settlementWindowSeconds"`
 	settlementPriceAlgorithm string `json:"settlementPriceAlgorithm"`
-	deliveryFeeRate          string `json:"deliveryFeeRate"`
-	liquidationFeeRate       string `json:"liquidationFeeRate"`
+	deliveryFeeRate          string `json:"deliveryFeeRate" validate:"required,decimal_gte_zero,decimal_20_10"`
+	liquidationFeeRate       string `json:"liquidationFeeRate" validate:"required,decimal_gte_zero,decimal_20_10"`
 	openLongEnabled          int64  `json:"openLongEnabled"`
 	openShortEnabled         int64  `json:"openShortEnabled"`
 	closeLongEnabled         int64  `json:"closeLongEnabled"`
@@ -642,18 +642,18 @@ type SetSecondsSymbolConfigReq {
 	tenantId                 int64  `json:"tenantId"`
 	symbolId                 int64  `json:"symbolId"`
 	durationSeconds          int64  `json:"durationSeconds"`
-	payoutRate               string `json:"payoutRate"`
-	feeRate                  string `json:"feeRate"`
+	payoutRate               string `json:"payoutRate" validate:"required,decimal_gte_zero,decimal_20_10"`
+	feeRate                  string `json:"feeRate" validate:"required,decimal_gte_zero,decimal_20_10"`
 	drawRule                 int64  `json:"drawRule"`
 	startPriceSource         string `json:"startPriceSource"`
 	settlementPriceSource    string `json:"settlementPriceSource"`
 	quoteValidityMs          int64  `json:"quoteValidityMs"`
 	settlementWindowMs       int64  `json:"settlementWindowMs"`
 	settlementPriceAlgorithm string `json:"settlementPriceAlgorithm"`
-	drawTolerance            string `json:"drawTolerance"`
-	maxExposureAmount        string `json:"maxExposureAmount"`
-	minStake                 string `json:"minStake"`
-	maxStake                 string `json:"maxStake"`
+	drawTolerance            string `json:"drawTolerance" validate:"required,decimal_gte_zero,decimal_36_18"`
+	maxExposureAmount        string `json:"maxExposureAmount" validate:"required,decimal_gte_zero,decimal_36_18"`
+	minStake                 string `json:"minStake" validate:"required,decimal_gte_zero,decimal_36_18"`
+	maxStake                 string `json:"maxStake" validate:"required,decimal_gte_zero,decimal_36_18"`
 	upEnabled                int64  `json:"upEnabled"`
 	downEnabled              int64  `json:"downEnabled"`
 }
@@ -834,8 +834,8 @@ type SetUserTradeLimitReq {
 	maxOpenOrderCount    int64  `json:"maxOpenOrderCount"`
 	maxOrderCountPerDay  int64  `json:"maxOrderCountPerDay"`
 	maxCancelCountPerDay int64  `json:"maxCancelCountPerDay"`
-	maxOpenNotional      string `json:"maxOpenNotional"`
-	maxPositionNotional  string `json:"maxPositionNotional"`
+	maxOpenNotional      string `json:"maxOpenNotional" validate:"required,decimal_gte_zero,decimal_36_18"`
+	maxPositionNotional  string `json:"maxPositionNotional" validate:"required,decimal_gte_zero,decimal_36_18"`
 	riskLevel            int64  `json:"riskLevel"`
 	operatorId           int64  `json:"operatorId"`
 	source               int64  `json:"source"`
@@ -849,16 +849,16 @@ type SetUserSymbolLimitReq {
 	tenantId            int64  `json:"tenantId"`
 	userId              int64  `json:"userId"`
 	symbolId            int64  `json:"symbolId"`
-	maxPositionQty      string `json:"maxPositionQty"`
-	maxPositionNotional string `json:"maxPositionNotional"`
+	maxPositionQty      string `json:"maxPositionQty" validate:"required,decimal_gte_zero,decimal_36_18"`
+	maxPositionNotional string `json:"maxPositionNotional" validate:"required,decimal_gte_zero,decimal_36_18"`
 	maxOpenOrders       int64  `json:"maxOpenOrders"`
-	maxOrderQty         string `json:"maxOrderQty"`
-	maxOrderNotional    string `json:"maxOrderNotional"`
-	minOrderQty         string `json:"minOrderQty"`
-	minOrderNotional    string `json:"minOrderNotional"`
-	maxLongPositionQty  string `json:"maxLongPositionQty"`
-	maxShortPositionQty string `json:"maxShortPositionQty"`
-	priceDeviationRate  string `json:"priceDeviationRate"`
+	maxOrderQty         string `json:"maxOrderQty" validate:"required,decimal_gte_zero,decimal_36_18"`
+	maxOrderNotional    string `json:"maxOrderNotional" validate:"required,decimal_gte_zero,decimal_36_18"`
+	minOrderQty         string `json:"minOrderQty" validate:"required,decimal_gte_zero,decimal_36_18"`
+	minOrderNotional    string `json:"minOrderNotional" validate:"required,decimal_gte_zero,decimal_36_18"`
+	maxLongPositionQty  string `json:"maxLongPositionQty" validate:"required,decimal_gte_zero,decimal_36_18"`
+	maxShortPositionQty string `json:"maxShortPositionQty" validate:"required,decimal_gte_zero,decimal_36_18"`
+	priceDeviationRate  string `json:"priceDeviationRate" validate:"required,decimal_gte_zero,decimal_20_10"`
 	operatorId          int64  `json:"operatorId"`
 	source              int64  `json:"source"`
 	enabled             int64  `json:"enabled"`
@@ -1006,12 +1006,12 @@ type ContractRiskLimitTier {
 	tenantId              int64  `json:"tenantId"`
 	symbolId              int64  `json:"symbolId"`
 	tierNo                int64  `json:"tierNo"`
-	notionalFloor         string `json:"notionalFloor"`
-	notionalCap           string `json:"notionalCap"`
+	notionalFloor         string `json:"notionalFloor" validate:"decimal_36_18"`
+	notionalCap           string `json:"notionalCap" validate:"decimal_36_18"`
 	maxLeverage           int64  `json:"maxLeverage"`
-	initialMarginRate     string `json:"initialMarginRate"`
-	maintenanceMarginRate string `json:"maintenanceMarginRate"`
-	maintenanceAmount     string `json:"maintenanceAmount"`
+	initialMarginRate     string `json:"initialMarginRate" validate:"decimal_20_10"`
+	maintenanceMarginRate string `json:"maintenanceMarginRate" validate:"decimal_20_10"`
+	maintenanceAmount     string `json:"maintenanceAmount" validate:"decimal_36_18"`
 	enabled               int64  `json:"enabled"`
 	createTimes           int64  `json:"createTimes"`
 	updateTimes           int64  `json:"updateTimes"`
@@ -1022,12 +1022,12 @@ type SetContractRiskLimitTierReq {
 	id                    int64  `json:"id,optional"`
 	symbolId              int64  `json:"symbolId"`
 	tierNo                int64  `json:"tierNo"`
-	notionalFloor         string `json:"notionalFloor"`
-	notionalCap           string `json:"notionalCap"`
+	notionalFloor         string `json:"notionalFloor" validate:"required,decimal_gte_zero,decimal_36_18"`
+	notionalCap           string `json:"notionalCap" validate:"required,decimal_gte_zero,decimal_36_18"`
 	maxLeverage           int64  `json:"maxLeverage"`
-	initialMarginRate     string `json:"initialMarginRate"`
-	maintenanceMarginRate string `json:"maintenanceMarginRate"`
-	maintenanceAmount     string `json:"maintenanceAmount"`
+	initialMarginRate     string `json:"initialMarginRate" validate:"required,decimal_gte_zero,decimal_20_10"`
+	maintenanceMarginRate string `json:"maintenanceMarginRate" validate:"required,decimal_gte_zero,decimal_20_10"`
+	maintenanceAmount     string `json:"maintenanceAmount" validate:"required,decimal_gte_zero,decimal_36_18"`
 	enabled               int64  `json:"enabled"`
 }
 
@@ -1047,9 +1047,9 @@ type ContractFundingBatch {
 	id               int64  `json:"id"`
 	batchNo          string `json:"batchNo"`
 	symbolId         int64  `json:"symbolId"`
-	fundingRate      string `json:"fundingRate"`
-	markPrice        string `json:"markPrice"`
-	indexPrice       string `json:"indexPrice"`
+	fundingRate      string `json:"fundingRate" validate:"decimal_20_10"`
+	markPrice        string `json:"markPrice" validate:"decimal_36_18"`
+	indexPrice       string `json:"indexPrice" validate:"decimal_36_18"`
 	priceSource      string `json:"priceSource"`
 	formulaVersion   string `json:"formulaVersion"`
 	settlementTime   int64  `json:"settlementTime"`
@@ -1115,10 +1115,10 @@ type TradeMarketSnapshot {
 	snapshotKind      string `json:"snapshotKind"`
 	symbolId          int64  `json:"symbolId"`
 	source            string `json:"source"`
-	price             string `json:"price"`
-	markPrice         string `json:"markPrice"`
-	indexPrice        string `json:"indexPrice"`
-	fundingRate       string `json:"fundingRate"`
+	price             string `json:"price" validate:"decimal_36_18"`
+	markPrice         string `json:"markPrice" validate:"decimal_36_18"`
+	indexPrice        string `json:"indexPrice" validate:"decimal_36_18"`
+	fundingRate       string `json:"fundingRate" validate:"decimal_20_10"`
 	sourceTimestamp   int64  `json:"sourceTimestamp"`
 	snapshotTimestamp int64  `json:"snapshotTimestamp"`
 	revision          int64  `json:"revision"`
@@ -1151,11 +1151,11 @@ type ContractFundingSettlement {
 	userId         int64  `json:"userId"`
 	positionId     int64  `json:"positionId"`
 	positionSide   int64  `json:"positionSide"`
-	fundingRate    string `json:"fundingRate"`
-	markPrice      string `json:"markPrice"`
-	positionQty    string `json:"positionQty"`
+	fundingRate    string `json:"fundingRate" validate:"decimal_20_10"`
+	markPrice      string `json:"markPrice" validate:"decimal_36_18"`
+	positionQty    string `json:"positionQty" validate:"decimal_36_18"`
 	feeAsset       string `json:"feeAsset"`
-	feeAmount      string `json:"feeAmount"`
+	feeAmount      string `json:"feeAmount" validate:"decimal_36_18"`
 	settlementTime int64  `json:"settlementTime"`
 	status         int64  `json:"status"`
 	retryCount     int64  `json:"retryCount"`
@@ -1184,7 +1184,7 @@ type ContractDeliveryBatch {
 	id               int64  `json:"id"`
 	batchNo          string `json:"batchNo"`
 	symbolId         int64  `json:"symbolId"`
-	settlementPrice  string `json:"settlementPrice"`
+	settlementPrice  string `json:"settlementPrice" validate:"decimal_36_18"`
 	priceSource      string `json:"priceSource"`
 	priceAlgorithm   string `json:"priceAlgorithm"`
 	openCutoffTime   int64  `json:"openCutoffTime"`
@@ -1220,10 +1220,10 @@ type ContractDeliverySettlement {
 	userId          int64  `json:"userId"`
 	positionId      int64  `json:"positionId"`
 	positionSide    int64  `json:"positionSide"`
-	settlementPrice string `json:"settlementPrice"`
-	positionQty     string `json:"positionQty"`
-	realizedPnl     string `json:"realizedPnl"`
-	deliveryFee     string `json:"deliveryFee"`
+	settlementPrice string `json:"settlementPrice" validate:"decimal_36_18"`
+	positionQty     string `json:"positionQty" validate:"decimal_36_18"`
+	realizedPnl     string `json:"realizedPnl" validate:"decimal_36_18"`
+	deliveryFee     string `json:"deliveryFee" validate:"decimal_36_18"`
 	settleAsset     string `json:"settleAsset"`
 	deliveryTime    int64  `json:"deliveryTime"`
 	status          int64  `json:"status"`
@@ -1257,17 +1257,17 @@ type ContractLiquidation {
 	symbolId            int64  `json:"symbolId"`
 	positionSide        int64  `json:"positionSide"`
 	marginMode          int64  `json:"marginMode"`
-	triggerMarkPrice    string `json:"triggerMarkPrice"`
+	triggerMarkPrice    string `json:"triggerMarkPrice" validate:"decimal_36_18"`
 	triggerSnapshotId   string `json:"triggerSnapshotId"`
-	triggerIndexPrice   string `json:"triggerIndexPrice"`
-	triggerQty          string `json:"triggerQty"`
-	liquidatedQty       string `json:"liquidatedQty"`
-	maintenanceMargin   string `json:"maintenanceMargin"`
-	accountEquity       string `json:"accountEquity"`
-	bankruptcyPrice     string `json:"bankruptcyPrice"`
-	liquidationFee      string `json:"liquidationFee"`
-	insuranceFundAmount string `json:"insuranceFundAmount"`
-	adlQty              string `json:"adlQty"`
+	triggerIndexPrice   string `json:"triggerIndexPrice" validate:"decimal_36_18"`
+	triggerQty          string `json:"triggerQty" validate:"decimal_36_18"`
+	liquidatedQty       string `json:"liquidatedQty" validate:"decimal_36_18"`
+	maintenanceMargin   string `json:"maintenanceMargin" validate:"decimal_36_18"`
+	accountEquity       string `json:"accountEquity" validate:"decimal_36_18"`
+	bankruptcyPrice     string `json:"bankruptcyPrice" validate:"decimal_36_18"`
+	liquidationFee      string `json:"liquidationFee" validate:"decimal_36_18"`
+	insuranceFundAmount string `json:"insuranceFundAmount" validate:"decimal_36_18"`
+	adlQty              string `json:"adlQty" validate:"decimal_36_18"`
 	status              int64  `json:"status"`
 	reason              string `json:"reason"`
 	startedAt           int64  `json:"startedAt"`
@@ -1296,7 +1296,7 @@ type TradeSecondsPriceSnapshot {
 	orderId      int64  `json:"orderId"`
 	snapshotType int64  `json:"snapshotType"`
 	source       string `json:"source"`
-	price        string `json:"price"`
+	price        string `json:"price" validate:"decimal_36_18"`
 	quoteTime    int64  `json:"quoteTime"`
 	receivedAt   int64  `json:"receivedAt"`
 	algorithm    string `json:"algorithm"`
@@ -1322,9 +1322,9 @@ type TradeAssetReservation {
 	orderId        int64  `json:"orderId"`
 	reservationNo  string `json:"reservationNo"`
 	asset          string `json:"asset"`
-	reservedAmount string `json:"reservedAmount"`
-	consumedAmount string `json:"consumedAmount"`
-	releasedAmount string `json:"releasedAmount"`
+	reservedAmount string `json:"reservedAmount" validate:"decimal_36_18"`
+	consumedAmount string `json:"consumedAmount" validate:"decimal_36_18"`
+	releasedAmount string `json:"releasedAmount" validate:"decimal_36_18"`
 	status         int64  `json:"status"`
 	retryCount     int64  `json:"retryCount"`
 	nextRetryAt    int64  `json:"nextRetryAt"`
@@ -1359,7 +1359,7 @@ type TradeSettlementInstruction {
 	userId        int64  `json:"userId"`
 	action        int64  `json:"action"`
 	asset         string `json:"asset"`
-	amount        string `json:"amount"`
+	amount        string `json:"amount" validate:"decimal_36_18"`
 	stepNo        int64  `json:"stepNo"`
 	status        int64  `json:"status"`
 	retryCount    int64  `json:"retryCount"`
@@ -1539,3 +1539,4 @@ service admin {
 	@handler GetMarketSnapshotList
 	get /market-snapshots (GetMarketSnapshotListReq) returns (GetMarketSnapshotListResp)
 }
+

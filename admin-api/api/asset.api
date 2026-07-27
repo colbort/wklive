@@ -53,15 +53,15 @@ type AssetFlow {
 	opType                 int64  `json:"opType"`
 	bizId                  int64  `json:"bizId"`
 	bizNo                  string `json:"bizNo"`
-	changeAmount           string `json:"changeAmount"`
-	beforeTotalAmount      string `json:"beforeTotalAmount"`
-	afterTotalAmount       string `json:"afterTotalAmount"`
-	beforeAvailableAmount  string `json:"beforeAvailableAmount"`
-	afterAvailableAmount   string `json:"afterAvailableAmount"`
-	beforeFrozenAmount     string `json:"beforeFrozenAmount"`
-	afterFrozenAmount      string `json:"afterFrozenAmount"`
-	beforeLockedAmount     string `json:"beforeLockedAmount"`
-	afterLockedAmount      string `json:"afterLockedAmount"`
+	changeAmount           string `json:"changeAmount" validate:"decimal_36_18"`
+	beforeTotalAmount      string `json:"beforeTotalAmount" validate:"decimal_36_18"`
+	afterTotalAmount       string `json:"afterTotalAmount" validate:"decimal_36_18"`
+	beforeAvailableAmount  string `json:"beforeAvailableAmount" validate:"decimal_36_18"`
+	afterAvailableAmount   string `json:"afterAvailableAmount" validate:"decimal_36_18"`
+	beforeFrozenAmount     string `json:"beforeFrozenAmount" validate:"decimal_36_18"`
+	afterFrozenAmount      string `json:"afterFrozenAmount" validate:"decimal_36_18"`
+	beforeLockedAmount     string `json:"beforeLockedAmount" validate:"decimal_36_18"`
+	afterLockedAmount      string `json:"afterLockedAmount" validate:"decimal_36_18"`
 	balanceSnapshotVersion int64  `json:"balanceSnapshotVersion"`
 	changeType             string `json:"changeType"`
 	remark                 string `json:"remark"`
@@ -80,10 +80,10 @@ type AssetFreeze {
 	sceneType      int64  `json:"sceneType"`
 	bizId          int64  `json:"bizId"`
 	bizNo          string `json:"bizNo"`
-	amount         string `json:"amount"`
-	usedAmount     string `json:"usedAmount"`
-	unfreezeAmount string `json:"unfreezeAmount"`
-	remainAmount   string `json:"remainAmount"`
+	amount         string `json:"amount" validate:"decimal_36_18"`
+	usedAmount     string `json:"usedAmount" validate:"decimal_36_18"`
+	unfreezeAmount string `json:"unfreezeAmount" validate:"decimal_36_18"`
+	remainAmount   string `json:"remainAmount" validate:"decimal_36_18"`
 	status         int64  `json:"status"`
 	expireTime     int64  `json:"expireTime"`
 	remark         string `json:"remark"`
@@ -102,9 +102,9 @@ type AssetLock {
 	sceneType    int64  `json:"sceneType"`
 	bizId        int64  `json:"bizId"`
 	bizNo        string `json:"bizNo"`
-	amount       string `json:"amount"`
-	unlockAmount string `json:"unlockAmount"`
-	remainAmount string `json:"remainAmount"`
+	amount       string `json:"amount" validate:"decimal_36_18"`
+	unlockAmount string `json:"unlockAmount" validate:"decimal_36_18"`
+	remainAmount string `json:"remainAmount" validate:"decimal_36_18"`
 	status       int64  `json:"status"`
 	startTime    int64  `json:"startTime"`
 	endTime      int64  `json:"endTime"`
@@ -275,7 +275,7 @@ type AddAssetReq {
 	userId     int64  `json:"userId"`
 	walletType int64  `json:"walletType"`
 	coin       string `json:"coin"`
-	amount     string `json:"amount"`
+	amount     string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"`
 	bizNo      string `json:"bizNo"`
 	remark     string `json:"remark,optional"`
 	operatorId int64  `json:"operatorId"`
@@ -286,7 +286,7 @@ type SubAssetReq {
 	userId     int64  `json:"userId"`
 	walletType int64  `json:"walletType"`
 	coin       string `json:"coin"`
-	amount     string `json:"amount"`
+	amount     string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"`
 	bizNo      string `json:"bizNo"`
 	remark     string `json:"remark,optional"`
 	operatorId int64  `json:"operatorId"`
@@ -297,7 +297,7 @@ type FreezeAssetReq {
 	userId     int64  `json:"userId"`
 	walletType int64  `json:"walletType"`
 	coin       string `json:"coin"`
-	amount     string `json:"amount"`
+	amount     string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"`
 	bizNo      string `json:"bizNo"`
 	remark     string `json:"remark,optional"`
 	operatorId int64  `json:"operatorId"`
@@ -306,7 +306,7 @@ type FreezeAssetReq {
 type UnfreezeAssetReq {
 	tenantId   int64  `json:"tenantId"`
 	freezeNo   string `json:"freezeNo"`
-	amount     string `json:"amount"`
+	amount     string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"`
 	bizNo      string `json:"bizNo"`
 	remark     string `json:"remark,optional"`
 	operatorId int64  `json:"operatorId"`
@@ -317,7 +317,7 @@ type LockAssetReq {
 	userId     int64  `json:"userId"`
 	walletType int64  `json:"walletType"`
 	coin       string `json:"coin"`
-	amount     string `json:"amount"`
+	amount     string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"`
 	bizNo      string `json:"bizNo"`
 	remark     string `json:"remark,optional"`
 	operatorId int64  `json:"operatorId"`
@@ -326,7 +326,7 @@ type LockAssetReq {
 type UnlockAssetReq {
 	tenantId   int64  `json:"tenantId"`
 	lockNo     string `json:"lockNo"`
-	amount     string `json:"amount"`
+	amount     string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"`
 	bizNo      string `json:"bizNo"`
 	remark     string `json:"remark,optional"`
 	operatorId int64  `json:"operatorId"`
@@ -380,7 +380,7 @@ type AdjustPlatformAccountReq {
 	coin        string `json:"coin"`
 	requestNo   string `json:"requestNo"`
 	direction   int64  `json:"direction"`
-	amount      string `json:"amount"`
+	amount      string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"`
 	remark      string `json:"remark,optional"`
 }
 

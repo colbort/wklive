@@ -18,14 +18,14 @@ type TradeSymbol {
 	displayStatus     int64  `json:"displayStatus"`
 	priceScale        int64  `json:"priceScale"` // 价格精度
 	qtyScale          int64  `json:"qtyScale"` // 数量精度
-	minPrice          string `json:"minPrice"`
-	maxPrice          string `json:"maxPrice"`
-	priceTick         string `json:"priceTick"`
-	minQty            string `json:"minQty"`
-	maxQty            string `json:"maxQty"`
-	qtyStep           string `json:"qtyStep"`
-	minNotional       string `json:"minNotional"`
-	maxNotional       string `json:"maxNotional"`
+	minPrice          string `json:"minPrice" validate:"decimal_36_18"`
+	maxPrice          string `json:"maxPrice" validate:"decimal_36_18"`
+	priceTick         string `json:"priceTick" validate:"decimal_36_18"`
+	minQty            string `json:"minQty" validate:"decimal_36_18"`
+	maxQty            string `json:"maxQty" validate:"decimal_36_18"`
+	qtyStep           string `json:"qtyStep" validate:"decimal_36_18"`
+	minNotional       string `json:"minNotional" validate:"decimal_36_18"`
+	maxNotional       string `json:"maxNotional" validate:"decimal_36_18"`
 	listingTime       int64  `json:"listingTime"`
 	tradingStartTime  int64  `json:"tradingStartTime"`
 	tradingEndTime    int64  `json:"tradingEndTime"`
@@ -39,8 +39,8 @@ type TradeSymbolSpot {
 	id           int64  `json:"id"`
 	tenantId     int64  `json:"tenantId"`
 	symbolId     int64  `json:"symbolId"`
-	makerFeeRate string `json:"makerFeeRate"`
-	takerFeeRate string `json:"takerFeeRate"`
+	makerFeeRate string `json:"makerFeeRate" validate:"decimal_20_10"`
+	takerFeeRate string `json:"takerFeeRate" validate:"decimal_20_10"`
 	buyEnabled   int64  `json:"buyEnabled"` // 买入开关：1启用 2禁用
 	sellEnabled  int64  `json:"sellEnabled"` // 卖出开关：1启用 2禁用
 	createTimes  int64  `json:"createTimes"`
@@ -51,18 +51,18 @@ type TradeSymbolContract {
 	id                       int64  `json:"id"`
 	tenantId                 int64  `json:"tenantId"`
 	symbolId                 int64  `json:"symbolId"`
-	contractSize             string `json:"contractSize"`
-	multiplier               string `json:"multiplier"`
-	maintenanceMarginRate    string `json:"maintenanceMarginRate"`
-	initialMarginRate        string `json:"initialMarginRate"`
-	makerFeeRate             string `json:"makerFeeRate"`
-	takerFeeRate             string `json:"takerFeeRate"`
+	contractSize             string `json:"contractSize" validate:"decimal_36_18"`
+	multiplier               string `json:"multiplier" validate:"decimal_36_18"`
+	maintenanceMarginRate    string `json:"maintenanceMarginRate" validate:"decimal_20_10"`
+	initialMarginRate        string `json:"initialMarginRate" validate:"decimal_20_10"`
+	makerFeeRate             string `json:"makerFeeRate" validate:"decimal_20_10"`
+	takerFeeRate             string `json:"takerFeeRate" validate:"decimal_20_10"`
 	fundingIntervalMinutes   int64  `json:"fundingIntervalMinutes"` // 资金费率间隔分钟数
 	deliveryTime             int64  `json:"deliveryTime"`
 	supportCross             int64  `json:"supportCross"` // 全仓支持状态：0不支持 1支持
 	supportIsolated          int64  `json:"supportIsolated"` // 逐仓支持状态：0不支持 1支持
-	fundingRateCap           string `json:"fundingRateCap"`
-	fundingRateFloor         string `json:"fundingRateFloor"`
+	fundingRateCap           string `json:"fundingRateCap" validate:"decimal_20_10"`
+	fundingRateFloor         string `json:"fundingRateFloor" validate:"decimal_20_10"`
 	fundingRateSource        string `json:"fundingRateSource"`
 	indexSymbol              string `json:"indexSymbol"`
 	markPriceSource          string `json:"markPriceSource"`
@@ -71,8 +71,8 @@ type TradeSymbolContract {
 	matchingStopTime         int64  `json:"matchingStopTime"`
 	settlementWindowSeconds  int64  `json:"settlementWindowSeconds"`
 	settlementPriceAlgorithm string `json:"settlementPriceAlgorithm"`
-	deliveryFeeRate          string `json:"deliveryFeeRate"`
-	liquidationFeeRate       string `json:"liquidationFeeRate"`
+	deliveryFeeRate          string `json:"deliveryFeeRate" validate:"decimal_20_10"`
+	liquidationFeeRate       string `json:"liquidationFeeRate" validate:"decimal_20_10"`
 	openLongEnabled          int64  `json:"openLongEnabled"`
 	openShortEnabled         int64  `json:"openShortEnabled"`
 	closeLongEnabled         int64  `json:"closeLongEnabled"`
@@ -86,18 +86,18 @@ type TradeSymbolSeconds {
 	tenantId                 int64  `json:"tenantId"`
 	symbolId                 int64  `json:"symbolId"`
 	durationSeconds          int64  `json:"durationSeconds"`
-	payoutRate               string `json:"payoutRate"`
-	feeRate                  string `json:"feeRate"`
+	payoutRate               string `json:"payoutRate" validate:"decimal_20_10"`
+	feeRate                  string `json:"feeRate" validate:"decimal_20_10"`
 	drawRule                 int64  `json:"drawRule"`
 	startPriceSource         string `json:"startPriceSource"`
 	settlementPriceSource    string `json:"settlementPriceSource"`
 	quoteValidityMs          int64  `json:"quoteValidityMs"`
 	settlementWindowMs       int64  `json:"settlementWindowMs"`
 	settlementPriceAlgorithm string `json:"settlementPriceAlgorithm"`
-	drawTolerance            string `json:"drawTolerance"`
-	maxExposureAmount        string `json:"maxExposureAmount"`
-	minStake                 string `json:"minStake"`
-	maxStake                 string `json:"maxStake"`
+	drawTolerance            string `json:"drawTolerance" validate:"decimal_36_18"`
+	maxExposureAmount        string `json:"maxExposureAmount" validate:"decimal_36_18"`
+	minStake                 string `json:"minStake" validate:"decimal_36_18"`
+	maxStake                 string `json:"maxStake" validate:"decimal_36_18"`
 	upEnabled                int64  `json:"upEnabled"`
 	downEnabled              int64  `json:"downEnabled"`
 	createTimes              int64  `json:"createTimes"`
@@ -130,17 +130,17 @@ type TradeOrder {
 	orderType         int64  `json:"orderType"`
 	timeInForce       int64  `json:"timeInForce"`
 	status            int64  `json:"status"`
-	price             string `json:"price"`
-	qty               string `json:"qty"`
-	amount            string `json:"amount"`
-	filledQty         string `json:"filledQty"`
-	filledAmount      string `json:"filledAmount"`
-	avgPrice          string `json:"avgPrice"`
-	fee               string `json:"fee"`
+	price             string `json:"price" validate:"decimal_36_18"`
+	qty               string `json:"qty" validate:"decimal_36_18"`
+	amount            string `json:"amount" validate:"decimal_36_18"`
+	filledQty         string `json:"filledQty" validate:"decimal_36_18"`
+	filledAmount      string `json:"filledAmount" validate:"decimal_36_18"`
+	avgPrice          string `json:"avgPrice" validate:"decimal_36_18"`
+	fee               string `json:"fee" validate:"decimal_36_18"`
 	feeAsset          string `json:"feeAsset"`
 	source            int64  `json:"source"`
 	isReduceOnly      int64  `json:"isReduceOnly"` // 是否只减仓：1是 2否
-	triggerPrice      string `json:"triggerPrice"`
+	triggerPrice      string `json:"triggerPrice" validate:"decimal_36_18"`
 	triggerType       int64  `json:"triggerType"` // 触发类型
 	triggerKind       int64  `json:"triggerKind"` // 触发用途：0无 1条件单 2止盈 3止损
 	cancelReason      string `json:"cancelReason"`
@@ -159,23 +159,23 @@ type TradeOrderSeconds {
 	direction             int64  `json:"direction"`
 	durationSeconds       int64  `json:"durationSeconds"`
 	stakeAsset            string `json:"stakeAsset"`
-	stakeAmount           string `json:"stakeAmount"`
-	payoutRate            string `json:"payoutRate"`
-	feeRate               string `json:"feeRate"`
+	stakeAmount           string `json:"stakeAmount" validate:"decimal_36_18"`
+	payoutRate            string `json:"payoutRate" validate:"decimal_20_10"`
+	feeRate               string `json:"feeRate" validate:"decimal_20_10"`
 	frozenAt              int64  `json:"frozenAt"`
 	activatedAt           int64  `json:"activatedAt"`
-	startPrice            string `json:"startPrice"`
+	startPrice            string `json:"startPrice" validate:"decimal_36_18"`
 	startPriceTime        int64  `json:"startPriceTime"`
 	startPriceSource      string `json:"startPriceSource"`
 	expireTime            int64  `json:"expireTime"`
-	settlementPrice       string `json:"settlementPrice"`
+	settlementPrice       string `json:"settlementPrice" validate:"decimal_36_18"`
 	settlementPriceTime   int64  `json:"settlementPriceTime"`
 	settlementPriceSource string `json:"settlementPriceSource"`
 	priceAlgorithm        string `json:"priceAlgorithm"`
 	result                int64  `json:"result"`
-	profitAmount          string `json:"profitAmount"`
-	feeAmount             string `json:"feeAmount"`
-	returnAmount          string `json:"returnAmount"`
+	profitAmount          string `json:"profitAmount" validate:"decimal_36_18"`
+	feeAmount             string `json:"feeAmount" validate:"decimal_36_18"`
+	returnAmount          string `json:"returnAmount" validate:"decimal_36_18"`
 	settlementStatus      int64  `json:"settlementStatus"`
 	reservationNo         string `json:"reservationNo"`
 	settlementReason      string `json:"settlementReason"`
@@ -190,9 +190,9 @@ type TradeOrderSpot {
 	tenantId     int64  `json:"tenantId"`
 	orderId      int64  `json:"orderId"`
 	frozenAsset  string `json:"frozenAsset"`
-	frozenAmount string `json:"frozenAmount"`
+	frozenAmount string `json:"frozenAmount" validate:"decimal_36_18"`
 	settleAsset  string `json:"settleAsset"`
-	settleAmount string `json:"settleAmount"`
+	settleAmount string `json:"settleAmount" validate:"decimal_36_18"`
 	createTimes  int64  `json:"createTimes"`
 	updateTimes  int64  `json:"updateTimes"`
 }
@@ -204,13 +204,13 @@ type TradeOrderContract {
 	marginMode        int64  `json:"marginMode"`
 	leverage          int64  `json:"leverage"`
 	marginAsset       string `json:"marginAsset"`
-	marginAmount      string `json:"marginAmount"`
+	marginAmount      string `json:"marginAmount" validate:"decimal_36_18"`
 	closePositionType int64  `json:"closePositionType"`
-	liquidationPrice  string `json:"liquidationPrice"`
-	takeProfitPrice   string `json:"takeProfitPrice"`
-	stopLossPrice     string `json:"stopLossPrice"`
-	reservedCloseQty  string `json:"reservedCloseQty"`
-	riskPrice         string `json:"riskPrice"`
+	liquidationPrice  string `json:"liquidationPrice" validate:"decimal_36_18"`
+	takeProfitPrice   string `json:"takeProfitPrice" validate:"decimal_36_18"`
+	stopLossPrice     string `json:"stopLossPrice" validate:"decimal_36_18"`
+	reservedCloseQty  string `json:"reservedCloseQty" validate:"decimal_36_18"`
+	riskPrice         string `json:"riskPrice" validate:"decimal_36_18"`
 	riskTierId        int64  `json:"riskTierId"`
 	createTimes       int64  `json:"createTimes"`
 	updateTimes       int64  `json:"updateTimes"`
@@ -233,13 +233,13 @@ type TradeFill {
 	settledAt            int64  `json:"settledAt"`
 	side                 int64  `json:"side"`
 	positionSide         int64  `json:"positionSide"`
-	price                string `json:"price"`
-	qty                  string `json:"qty"`
-	amount               string `json:"amount"`
-	fee                  string `json:"fee"`
+	price                string `json:"price" validate:"decimal_36_18"`
+	qty                  string `json:"qty" validate:"decimal_36_18"`
+	amount               string `json:"amount" validate:"decimal_36_18"`
+	fee                  string `json:"fee" validate:"decimal_36_18"`
 	feeAsset             string `json:"feeAsset"`
 	liquidityType        int64  `json:"liquidityType"`
-	realizedPnl          string `json:"realizedPnl"`
+	realizedPnl          string `json:"realizedPnl" validate:"decimal_36_18"`
 	matchTime            int64  `json:"matchTime"`
 	createTimes          int64  `json:"createTimes"`
 }
@@ -254,17 +254,17 @@ type ContractPosition {
 	positionSide      int64  `json:"positionSide"`
 	marginMode        int64  `json:"marginMode"`
 	leverage          int64  `json:"leverage"` // 杠杆倍数
-	qty               string `json:"qty"`
-	availQty          string `json:"availQty"`
-	frozenQty         string `json:"frozenQty"`
-	openAvgPrice      string `json:"openAvgPrice"`
-	markPrice         string `json:"markPrice"`
+	qty               string `json:"qty" validate:"decimal_36_18"`
+	availQty          string `json:"availQty" validate:"decimal_36_18"`
+	frozenQty         string `json:"frozenQty" validate:"decimal_36_18"`
+	openAvgPrice      string `json:"openAvgPrice" validate:"decimal_36_18"`
+	markPrice         string `json:"markPrice" validate:"decimal_36_18"`
 	marginAsset       string `json:"marginAsset"`
-	positionMargin    string `json:"positionMargin"`
-	isolatedMargin    string `json:"isolatedMargin"`
-	unrealizedPnl     string `json:"unrealizedPnl"`
-	realizedPnl       string `json:"realizedPnl"`
-	liquidationPrice  string `json:"liquidationPrice"`
+	positionMargin    string `json:"positionMargin" validate:"decimal_36_18"`
+	isolatedMargin    string `json:"isolatedMargin" validate:"decimal_36_18"`
+	unrealizedPnl     string `json:"unrealizedPnl" validate:"decimal_36_18"`
+	realizedPnl       string `json:"realizedPnl" validate:"decimal_36_18"`
+	liquidationPrice  string `json:"liquidationPrice" validate:"decimal_36_18"`
 	adlRank           int64  `json:"adlRank"` // ADL等级
 	version           int64  `json:"version"`
 	createTimes       int64  `json:"createTimes"`
@@ -276,13 +276,13 @@ type ContractMarginSnapshot {
 	tenantId         int64  `json:"tenantId"`
 	userId           int64  `json:"userId"`
 	marginAsset      string `json:"marginAsset"`
-	walletBalance    string `json:"walletBalance"`
-	availableBalance string `json:"availableBalance"`
-	frozenBalance    string `json:"frozenBalance"`
-	positionMargin   string `json:"positionMargin"`
-	orderMargin      string `json:"orderMargin"`
-	unrealizedPnl    string `json:"unrealizedPnl"`
-	realizedPnl      string `json:"realizedPnl"`
+	walletBalance    string `json:"walletBalance" validate:"decimal_36_18"`
+	availableBalance string `json:"availableBalance" validate:"decimal_36_18"`
+	frozenBalance    string `json:"frozenBalance" validate:"decimal_36_18"`
+	positionMargin   string `json:"positionMargin" validate:"decimal_36_18"`
+	orderMargin      string `json:"orderMargin" validate:"decimal_36_18"`
+	unrealizedPnl    string `json:"unrealizedPnl" validate:"decimal_36_18"`
+	realizedPnl      string `json:"realizedPnl" validate:"decimal_36_18"`
 	version          int64  `json:"version"`
 	sourceEventNo    string `json:"sourceEventNo"`
 	snapshotTime     int64  `json:"snapshotTime"`
@@ -359,17 +359,17 @@ type TradePlaceOrderReq {
 	orderType        int64  `json:"orderType"`
 	timeInForce      int64  `json:"timeInForce"`
 	clientOrderId    string `json:"clientOrderId,optional"`
-	price            string `json:"price,optional"`
-	qty              string `json:"qty,optional"`
-	amount           string `json:"amount,optional"`
+	price            string `json:"price,optional" validate:"decimal_gte_zero,decimal_36_18"`
+	qty              string `json:"qty,optional" validate:"decimal_gte_zero,decimal_36_18"`
+	amount           string `json:"amount,optional" validate:"decimal_gte_zero,decimal_36_18"`
 	isReduceOnly     int64  `json:"isReduceOnly,optional"` // 是否只减仓：1是 2否
-	triggerPrice     string `json:"triggerPrice,optional"`
+	triggerPrice     string `json:"triggerPrice,optional" validate:"decimal_gte_zero,decimal_36_18"`
 	triggerType      int64  `json:"triggerType,optional"`
 	triggerKind      int64  `json:"triggerKind,optional"`
 	marginMode       int64  `json:"marginMode,optional"`
 	leverage         int64  `json:"leverage,optional"` // 杠杆倍数
-	takeProfitPrice  string `json:"takeProfitPrice,optional"`
-	stopLossPrice    string `json:"stopLossPrice,optional"`
+	takeProfitPrice  string `json:"takeProfitPrice,optional" validate:"decimal_gte_zero,decimal_36_18"`
+	stopLossPrice    string `json:"stopLossPrice,optional" validate:"decimal_gte_zero,decimal_36_18"`
 	orderSource      int64  `json:"orderSource,optional"`
 	secondsDirection int64  `json:"secondsDirection,optional"`
 	durationSeconds  int64  `json:"durationSeconds,optional"`
@@ -535,3 +535,4 @@ service app {
 	@handler SetLeverage
 	post /leverage (SetLeverageReq) returns (TradeAppCommonResp)
 }
+

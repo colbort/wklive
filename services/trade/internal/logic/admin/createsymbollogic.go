@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
@@ -12,6 +13,7 @@ import (
 	"wklive/services/trade/internal/validation"
 	"wklive/services/trade/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -56,14 +58,6 @@ func (l *CreateSymbolLogic) CreateSymbol(in *trade.CreateSymbolReq) (*trade.Comm
 		Status:            int64(in.Status),
 		PriceScale:        int64(in.PriceScale),
 		QtyScale:          int64(in.QtyScale),
-		MinPrice:          mustParseFloat(in.MinPrice),
-		MaxPrice:          mustParseFloat(in.MaxPrice),
-		PriceTick:         mustParseFloat(in.PriceTick),
-		MinQty:            mustParseFloat(in.MinQty),
-		MaxQty:            mustParseFloat(in.MaxQty),
-		QtyStep:           mustParseFloat(in.QtyStep),
-		MinNotional:       mustParseFloat(in.MinNotional),
-		MaxNotional:       mustParseFloat(in.MaxNotional),
 		ListingTime:       in.ListingTime,
 		TradingStartTime:  in.TradingStartTime,
 		TradingEndTime:    in.TradingEndTime,
@@ -71,6 +65,26 @@ func (l *CreateSymbolLogic) CreateSymbol(in *trade.CreateSymbolReq) (*trade.Comm
 		Remark:            in.Remark,
 		CreateTimes:       now,
 		UpdateTimes:       now,
+	}
+	decimalFields := []struct {
+		raw    string
+		target *decimal.Decimal
+	}{
+		{in.MinPrice, &data.MinPrice},
+		{in.MaxPrice, &data.MaxPrice},
+		{in.PriceTick, &data.PriceTick},
+		{in.MinQty, &data.MinQty},
+		{in.MaxQty, &data.MaxQty},
+		{in.QtyStep, &data.QtyStep},
+		{in.MinNotional, &data.MinNotional},
+		{in.MaxNotional, &data.MaxNotional},
+	}
+	for _, field := range decimalFields {
+		value, parseErr := conv.ParseDecimalField(field.raw)
+		if parseErr != nil {
+			return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, parseErr.Error())}, nil
+		}
+		*field.target = value
 	}
 	if _, err = l.svcCtx.TradeSymbolModel.Insert(l.ctx, data); err != nil {
 		return nil, err

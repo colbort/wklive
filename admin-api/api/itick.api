@@ -426,7 +426,7 @@ type PriceFormulaComponent {
 	categoryCode string `json:"categoryCode,optional"`
 	market       string `json:"market,optional"`
 	symbol       string `json:"symbol"`
-	weight       string `json:"weight"`
+	weight       string `json:"weight" validate:"required,decimal_gte_zero,decimal_65_30"`
 }
 
 type CreatePriceFormulaReq {
@@ -646,3 +646,4 @@ service admin {
 	@handler RevokeAuthoritativeSnapshot
 	post /authoritative-snapshots/revoke (RevokeAuthoritativeSnapshotReq) returns (RespBase)
 }
+

@@ -20,6 +20,9 @@ import (
 	um "wklive/common/middleware"
 	"wklive/common/reqenc"
 	"wklive/common/utils"
+	"wklive/common/validation"
+
+	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
 var (
@@ -30,6 +33,7 @@ var (
 
 func main() {
 	flag.Parse()
+	httpx.SetValidator(validation.New())
 
 	var c config.Config
 	// 用 etcd 配置中心

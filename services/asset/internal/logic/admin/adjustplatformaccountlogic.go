@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"strings"
 
+	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/services/asset/internal/svc"
 	"wklive/services/asset/models"
 
-	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -34,7 +34,7 @@ func NewAdjustPlatformAccountLogic(ctx context.Context, svcCtx *svc.ServiceConte
 func (l *AdjustPlatformAccountLogic) AdjustPlatformAccount(in *asset.AdjustPlatformAccountReq) (*asset.PlatformAccountResp, error) {
 	typeName, coin := normalizePlatformAccount(in.GetAccountType(), in.GetCoin())
 	requestNo := strings.TrimSpace(in.GetRequestNo())
-	amount, err := decimal.NewFromString(in.GetAmount())
+	amount, err := conv.ParseDecimalField(in.GetAmount())
 	if err != nil || !amount.IsPositive() || in.GetTenantId() <= 0 || typeName != insuranceFundAccountType || coin == "" || requestNo == "" || (in.GetDirection() != 1 && in.GetDirection() != 2) {
 		return nil, fmt.Errorf("invalid platform account adjustment")
 	}

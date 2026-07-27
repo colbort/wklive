@@ -10,13 +10,13 @@ type OptionContract {
 	optionType       int64  `json:"optionType"`
 	exerciseStyle    int64  `json:"exerciseStyle"`
 	settlementType   int64  `json:"settlementType"`
-	strikePrice      string `json:"strikePrice"`
-	contractUnit     string `json:"contractUnit"`
-	minOrderQty      string `json:"minOrderQty"`
-	maxOrderQty      string `json:"maxOrderQty"`
-	priceTick        string `json:"priceTick"`
-	qtyStep          string `json:"qtyStep"`
-	multiplier       string `json:"multiplier"`
+	strikePrice      string `json:"strikePrice" validate:"decimal_32_16"`
+	contractUnit     string `json:"contractUnit" validate:"decimal_32_16"`
+	minOrderQty      string `json:"minOrderQty" validate:"decimal_32_16"`
+	maxOrderQty      string `json:"maxOrderQty" validate:"decimal_32_16"`
+	priceTick        string `json:"priceTick" validate:"decimal_32_16"`
+	qtyStep          string `json:"qtyStep" validate:"decimal_32_16"`
+	multiplier       string `json:"multiplier" validate:"decimal_32_16"`
 	listTime         int64  `json:"listTime"`
 	expireTime       int64  `json:"expireTime"`
 	deliverTime      int64  `json:"deliverTime"`
@@ -33,21 +33,21 @@ type OptionMarket {
 	id               int64  `json:"id"`
 	tenantId         int64  `json:"tenantId"`
 	contractId       int64  `json:"contractId"`
-	underlyingPrice  string `json:"underlyingPrice"`
-	markPrice        string `json:"markPrice"`
-	lastPrice        string `json:"lastPrice"`
-	bidPrice         string `json:"bidPrice"`
-	askPrice         string `json:"askPrice"`
-	theoreticalPrice string `json:"theoreticalPrice"`
-	intrinsicValue   string `json:"intrinsicValue"`
-	timeValue        string `json:"timeValue"`
-	iv               string `json:"iv"`
-	delta            string `json:"delta"`
-	gamma            string `json:"gamma"`
-	theta            string `json:"theta"`
-	vega             string `json:"vega"`
-	rho              string `json:"rho"`
-	riskFreeRate     string `json:"riskFreeRate"`
+	underlyingPrice  string `json:"underlyingPrice" validate:"decimal_32_16"`
+	markPrice        string `json:"markPrice" validate:"decimal_32_16"`
+	lastPrice        string `json:"lastPrice" validate:"decimal_32_16"`
+	bidPrice         string `json:"bidPrice" validate:"decimal_32_16"`
+	askPrice         string `json:"askPrice" validate:"decimal_32_16"`
+	theoreticalPrice string `json:"theoreticalPrice" validate:"decimal_32_16"`
+	intrinsicValue   string `json:"intrinsicValue" validate:"decimal_32_16"`
+	timeValue        string `json:"timeValue" validate:"decimal_32_16"`
+	iv               string `json:"iv" validate:"decimal_20_10"`
+	delta            string `json:"delta" validate:"decimal_20_10"`
+	gamma            string `json:"gamma" validate:"decimal_20_10"`
+	theta            string `json:"theta" validate:"decimal_20_10"`
+	vega             string `json:"vega" validate:"decimal_20_10"`
+	rho              string `json:"rho" validate:"decimal_20_10"`
+	riskFreeRate     string `json:"riskFreeRate" validate:"decimal_20_10"`
 	pricingModel     string `json:"pricingModel"`
 	snapshotTime     int64  `json:"snapshotTime"`
 	createTimes      int64  `json:"createTimes"`
@@ -58,18 +58,18 @@ type OptionMarketSnapshot {
 	id               int64  `json:"id"`
 	tenantId         int64  `json:"tenantId"`
 	contractId       int64  `json:"contractId"`
-	underlyingPrice  string `json:"underlyingPrice"`
-	markPrice        string `json:"markPrice"`
-	lastPrice        string `json:"lastPrice"`
-	bidPrice         string `json:"bidPrice"`
-	askPrice         string `json:"askPrice"`
-	theoreticalPrice string `json:"theoreticalPrice"`
-	iv               string `json:"iv"`
-	delta            string `json:"delta"`
-	gamma            string `json:"gamma"`
-	theta            string `json:"theta"`
-	vega             string `json:"vega"`
-	rho              string `json:"rho"`
+	underlyingPrice  string `json:"underlyingPrice" validate:"decimal_32_16"`
+	markPrice        string `json:"markPrice" validate:"decimal_32_16"`
+	lastPrice        string `json:"lastPrice" validate:"decimal_32_16"`
+	bidPrice         string `json:"bidPrice" validate:"decimal_32_16"`
+	askPrice         string `json:"askPrice" validate:"decimal_32_16"`
+	theoreticalPrice string `json:"theoreticalPrice" validate:"decimal_32_16"`
+	iv               string `json:"iv" validate:"decimal_20_10"`
+	delta            string `json:"delta" validate:"decimal_20_10"`
+	gamma            string `json:"gamma" validate:"decimal_20_10"`
+	theta            string `json:"theta" validate:"decimal_20_10"`
+	vega             string `json:"vega" validate:"decimal_20_10"`
+	rho              string `json:"rho" validate:"decimal_20_10"`
 	snapshotTime     int64  `json:"snapshotTime"`
 	createTimes      int64  `json:"createTimes"`
 }
@@ -85,15 +85,15 @@ type OptionOrder {
 	side             int64  `json:"side"`
 	positionEffect   int64  `json:"positionEffect"`
 	orderType        int64  `json:"orderType"`
-	price            string `json:"price"`
-	qty              string `json:"qty"`
-	filledQty        string `json:"filledQty"`
-	unfilledQty      string `json:"unfilledQty"`
-	avgPrice         string `json:"avgPrice"`
-	turnover         string `json:"turnover"`
-	fee              string `json:"fee"`
+	price            string `json:"price" validate:"decimal_32_16"`
+	qty              string `json:"qty" validate:"decimal_32_16"`
+	filledQty        string `json:"filledQty" validate:"decimal_32_16"`
+	unfilledQty      string `json:"unfilledQty" validate:"decimal_32_16"`
+	avgPrice         string `json:"avgPrice" validate:"decimal_32_16"`
+	turnover         string `json:"turnover" validate:"decimal_32_16"`
+	fee              string `json:"fee" validate:"decimal_32_16"`
 	feeCoin          string `json:"feeCoin"`
-	marginAmount     string `json:"marginAmount"`
+	marginAmount     string `json:"marginAmount" validate:"decimal_32_16"`
 	source           int64  `json:"source"`
 	clientOrderId    string `json:"clientOrderId"`
 	reduceOnly       int64  `json:"reduceOnly"` // 是否只减仓：1是 2否
@@ -120,11 +120,11 @@ type OptionTrade {
 	sellOrderNo      string `json:"sellOrderNo"`
 	sellUserId       int64  `json:"sellUserId"`
 	sellAccountId    int64  `json:"sellAccountId"`
-	price            string `json:"price"`
-	qty              string `json:"qty"`
-	turnover         string `json:"turnover"`
-	buyFee           string `json:"buyFee"`
-	sellFee          string `json:"sellFee"`
+	price            string `json:"price" validate:"decimal_32_16"`
+	qty              string `json:"qty" validate:"decimal_32_16"`
+	turnover         string `json:"turnover" validate:"decimal_32_16"`
+	buyFee           string `json:"buyFee" validate:"decimal_32_16"`
+	sellFee          string `json:"sellFee" validate:"decimal_32_16"`
 	feeCoin          string `json:"feeCoin"`
 	makerSide        int64  `json:"makerSide"`
 	tradeTime        int64  `json:"tradeTime"`
@@ -139,17 +139,17 @@ type OptionPosition {
 	contractId        int64  `json:"contractId"`
 	underlyingSymbol  string `json:"underlyingSymbol"`
 	side              int64  `json:"side"`
-	positionQty       string `json:"positionQty"`
-	availableQty      string `json:"availableQty"`
-	frozenQty         string `json:"frozenQty"`
-	openAvgPrice      string `json:"openAvgPrice"`
-	markPrice         string `json:"markPrice"`
-	positionValue     string `json:"positionValue"`
-	marginAmount      string `json:"marginAmount"`
-	maintenanceMargin string `json:"maintenanceMargin"`
-	unrealizedPnl     string `json:"unrealizedPnl"`
-	realizedPnl       string `json:"realizedPnl"`
-	exerciseableQty   string `json:"exerciseableQty"`
+	positionQty       string `json:"positionQty" validate:"decimal_32_16"`
+	availableQty      string `json:"availableQty" validate:"decimal_32_16"`
+	frozenQty         string `json:"frozenQty" validate:"decimal_32_16"`
+	openAvgPrice      string `json:"openAvgPrice" validate:"decimal_32_16"`
+	markPrice         string `json:"markPrice" validate:"decimal_32_16"`
+	positionValue     string `json:"positionValue" validate:"decimal_32_16"`
+	marginAmount      string `json:"marginAmount" validate:"decimal_32_16"`
+	maintenanceMargin string `json:"maintenanceMargin" validate:"decimal_32_16"`
+	unrealizedPnl     string `json:"unrealizedPnl" validate:"decimal_32_16"`
+	realizedPnl       string `json:"realizedPnl" validate:"decimal_32_16"`
+	exerciseableQty   string `json:"exerciseableQty" validate:"decimal_32_16"`
 	status            int64  `json:"status"`
 	lastCalcTime      int64  `json:"lastCalcTime"`
 	createTimes       int64  `json:"createTimes"`
@@ -165,12 +165,12 @@ type OptionExercise {
 	contractId      int64  `json:"contractId"`
 	positionId      int64  `json:"positionId"`
 	exerciseType    int64  `json:"exerciseType"`
-	exerciseQty     string `json:"exerciseQty"`
-	strikePrice     string `json:"strikePrice"`
-	settlementPrice string `json:"settlementPrice"`
-	exerciseAmount  string `json:"exerciseAmount"`
-	profitAmount    string `json:"profitAmount"`
-	fee             string `json:"fee"`
+	exerciseQty     string `json:"exerciseQty" validate:"decimal_32_16"`
+	strikePrice     string `json:"strikePrice" validate:"decimal_32_16"`
+	settlementPrice string `json:"settlementPrice" validate:"decimal_32_16"`
+	exerciseAmount  string `json:"exerciseAmount" validate:"decimal_32_16"`
+	profitAmount    string `json:"profitAmount" validate:"decimal_32_16"`
+	fee             string `json:"fee" validate:"decimal_32_16"`
 	feeCoin         string `json:"feeCoin"`
 	status          int64  `json:"status"`
 	remark          string `json:"remark"`
@@ -188,9 +188,9 @@ type OptionSettlement {
 	underlyingSymbol string `json:"underlyingSymbol"`
 	expireTime       int64  `json:"expireTime"`
 	settlementTime   int64  `json:"settlementTime"`
-	deliveryPrice    string `json:"deliveryPrice"`
-	theoreticalPrice string `json:"theoreticalPrice"`
-	iv               string `json:"iv"`
+	deliveryPrice    string `json:"deliveryPrice" validate:"decimal_32_16"`
+	theoreticalPrice string `json:"theoreticalPrice" validate:"decimal_32_16"`
+	iv               string `json:"iv" validate:"decimal_20_10"`
 	isItm            int64  `json:"isItm"` // 是否实值：1是 2否
 	exerciseResult   int64  `json:"exerciseResult"`
 	status           int64  `json:"status"`
@@ -205,14 +205,14 @@ type OptionAccount {
 	userId           int64  `json:"userId"`
 	accountId        int64  `json:"accountId"`
 	marginCoin       string `json:"marginCoin"`
-	balance          string `json:"balance"`
-	availableBalance string `json:"availableBalance"`
-	frozenBalance    string `json:"frozenBalance"`
-	positionMargin   string `json:"positionMargin"`
-	orderMargin      string `json:"orderMargin"`
-	unrealizedPnl    string `json:"unrealizedPnl"`
-	realizedPnl      string `json:"realizedPnl"`
-	riskRate         string `json:"riskRate"`
+	balance          string `json:"balance" validate:"decimal_32_16"`
+	availableBalance string `json:"availableBalance" validate:"decimal_32_16"`
+	frozenBalance    string `json:"frozenBalance" validate:"decimal_32_16"`
+	positionMargin   string `json:"positionMargin" validate:"decimal_32_16"`
+	orderMargin      string `json:"orderMargin" validate:"decimal_32_16"`
+	unrealizedPnl    string `json:"unrealizedPnl" validate:"decimal_32_16"`
+	realizedPnl      string `json:"realizedPnl" validate:"decimal_32_16"`
+	riskRate         string `json:"riskRate" validate:"decimal_20_10"`
 	status           int64  `json:"status"`
 	createTimes      int64  `json:"createTimes"`
 	updateTimes      int64  `json:"updateTimes"`
@@ -227,9 +227,9 @@ type OptionBill {
 	refType       int64  `json:"refType"`
 	refId         int64  `json:"refId"`
 	coin          string `json:"coin"`
-	changeAmount  string `json:"changeAmount"`
-	balanceBefore string `json:"balanceBefore"`
-	balanceAfter  string `json:"balanceAfter"`
+	changeAmount  string `json:"changeAmount" validate:"decimal_32_16"`
+	balanceBefore string `json:"balanceBefore" validate:"decimal_32_16"`
+	balanceAfter  string `json:"balanceAfter" validate:"decimal_32_16"`
 	remark        string `json:"remark"`
 	createTimes   int64  `json:"createTimes"`
 }
@@ -274,13 +274,13 @@ type CreateContractReq {
 	optionType       int64  `json:"optionType"`
 	exerciseStyle    int64  `json:"exerciseStyle"`
 	settlementType   int64  `json:"settlementType"`
-	strikePrice      string `json:"strikePrice"`
-	contractUnit     string `json:"contractUnit"`
-	minOrderQty      string `json:"minOrderQty"`
-	maxOrderQty      string `json:"maxOrderQty"`
-	priceTick        string `json:"priceTick"`
-	qtyStep          string `json:"qtyStep"`
-	multiplier       string `json:"multiplier"`
+	strikePrice      string `json:"strikePrice" validate:"required,decimal_gt_zero,decimal_32_16"`
+	contractUnit     string `json:"contractUnit" validate:"required,decimal_gt_zero,decimal_32_16"`
+	minOrderQty      string `json:"minOrderQty" validate:"required,decimal_gte_zero,decimal_32_16"`
+	maxOrderQty      string `json:"maxOrderQty" validate:"required,decimal_gte_zero,decimal_32_16"`
+	priceTick        string `json:"priceTick" validate:"required,decimal_gt_zero,decimal_32_16"`
+	qtyStep          string `json:"qtyStep" validate:"required,decimal_gt_zero,decimal_32_16"`
+	multiplier       string `json:"multiplier" validate:"required,decimal_gt_zero,decimal_32_16"`
 	listTime         int64  `json:"listTime"`
 	expireTime       int64  `json:"expireTime"`
 	deliverTime      int64  `json:"deliverTime"`
@@ -305,13 +305,13 @@ type UpdateContractReq {
 	optionType       int64  `json:"optionType"`
 	exerciseStyle    int64  `json:"exerciseStyle"`
 	settlementType   int64  `json:"settlementType"`
-	strikePrice      string `json:"strikePrice"`
-	contractUnit     string `json:"contractUnit"`
-	minOrderQty      string `json:"minOrderQty"`
-	maxOrderQty      string `json:"maxOrderQty"`
-	priceTick        string `json:"priceTick"`
-	qtyStep          string `json:"qtyStep"`
-	multiplier       string `json:"multiplier"`
+	strikePrice      string `json:"strikePrice" validate:"decimal_gte_zero,decimal_32_16"`
+	contractUnit     string `json:"contractUnit" validate:"decimal_gte_zero,decimal_32_16"`
+	minOrderQty      string `json:"minOrderQty" validate:"decimal_gte_zero,decimal_32_16"`
+	maxOrderQty      string `json:"maxOrderQty" validate:"decimal_gte_zero,decimal_32_16"`
+	priceTick        string `json:"priceTick" validate:"decimal_gte_zero,decimal_32_16"`
+	qtyStep          string `json:"qtyStep" validate:"decimal_gte_zero,decimal_32_16"`
+	multiplier       string `json:"multiplier" validate:"decimal_gte_zero,decimal_32_16"`
 	listTime         int64  `json:"listTime"`
 	expireTime       int64  `json:"expireTime"`
 	deliverTime      int64  `json:"deliverTime"`
@@ -356,21 +356,21 @@ type ListContractsResp {
 type UpdateMarketReq {
 	tenantId         int64  `json:"tenantId"`
 	contractId       int64  `json:"contractId"`
-	underlyingPrice  string `json:"underlyingPrice"`
-	markPrice        string `json:"markPrice"`
-	lastPrice        string `json:"lastPrice"`
-	bidPrice         string `json:"bidPrice"`
-	askPrice         string `json:"askPrice"`
-	theoreticalPrice string `json:"theoreticalPrice"`
-	intrinsicValue   string `json:"intrinsicValue"`
-	timeValue        string `json:"timeValue"`
-	iv               string `json:"iv"`
-	delta            string `json:"delta"`
-	gamma            string `json:"gamma"`
-	theta            string `json:"theta"`
-	vega             string `json:"vega"`
-	rho              string `json:"rho"`
-	riskFreeRate     string `json:"riskFreeRate"`
+	underlyingPrice  string `json:"underlyingPrice" validate:"decimal_gte_zero,decimal_32_16"`
+	markPrice        string `json:"markPrice" validate:"decimal_gte_zero,decimal_32_16"`
+	lastPrice        string `json:"lastPrice" validate:"decimal_gte_zero,decimal_32_16"`
+	bidPrice         string `json:"bidPrice" validate:"decimal_gte_zero,decimal_32_16"`
+	askPrice         string `json:"askPrice" validate:"decimal_gte_zero,decimal_32_16"`
+	theoreticalPrice string `json:"theoreticalPrice" validate:"decimal_gte_zero,decimal_32_16"`
+	intrinsicValue   string `json:"intrinsicValue" validate:"decimal_gte_zero,decimal_32_16"`
+	timeValue        string `json:"timeValue" validate:"decimal_gte_zero,decimal_32_16"`
+	iv               string `json:"iv" validate:"decimal_gte_zero,decimal_20_10"`
+	delta            string `json:"delta" validate:"decimal_20_10"`
+	gamma            string `json:"gamma" validate:"decimal_20_10"`
+	theta            string `json:"theta" validate:"decimal_20_10"`
+	vega             string `json:"vega" validate:"decimal_20_10"`
+	rho              string `json:"rho" validate:"decimal_20_10"`
+	riskFreeRate     string `json:"riskFreeRate" validate:"decimal_20_10"`
 	pricingModel     string `json:"pricingModel"`
 	snapshotTime     int64  `json:"snapshotTime"`
 }

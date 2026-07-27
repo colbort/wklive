@@ -221,7 +221,7 @@ type AuthoritativeSnapshot {
 	categoryCode      string `json:"categoryCode"`
 	market            string `json:"market"`
 	symbol            string `json:"symbol"`
-	price             string `json:"price"`
+	price             string `json:"price" validate:"decimal_65_30"`
 	sourceTimestamp   int64  `json:"sourceTimestamp"`
 	snapshotTimestamp int64  `json:"snapshotTimestamp"`
 	revision          int64  `json:"revision"`
