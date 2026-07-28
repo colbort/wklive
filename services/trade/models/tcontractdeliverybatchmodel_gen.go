@@ -53,6 +53,7 @@ type (
 		SettlementPrice  decimal.Decimal `db:"settlement_price"`   // 锁定交割价格
 		PriceSource      string          `db:"price_source"`       // 统一交割价格快照ID
 		PriceAlgorithm   string          `db:"price_algorithm"`    // 采样算法及版本
+		FormulaVersion   string          `db:"formula_version"`    // Price Engine交割公式版本
 		SampleSnapshot   sql.NullString  `db:"sample_snapshot"`    // 原始样本与剔除信息摘要
 		OpenCutoffTime   int64           `db:"open_cutoff_time"`   // 停止开仓时间快照
 		MatchingStopTime int64           `db:"matching_stop_time"` // 停止撮合时间快照
@@ -152,8 +153,8 @@ func (m *defaultTContractDeliveryBatchModel) Insert(ctx context.Context, data *T
 	tContractDeliveryBatchTenantIdBatchNoKey := fmt.Sprintf("%s%v:%v", cacheTContractDeliveryBatchTenantIdBatchNoPrefix, data.TenantId, data.BatchNo)
 	tContractDeliveryBatchTenantIdSymbolIdDeliveryTimeKey := fmt.Sprintf("%s%v:%v:%v", cacheTContractDeliveryBatchTenantIdSymbolIdDeliveryTimePrefix, data.TenantId, data.SymbolId, data.DeliveryTime)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractDeliveryBatchRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.BatchNo, data.SymbolId, data.SettlementPrice, data.PriceSource, data.PriceAlgorithm, data.SampleSnapshot, data.OpenCutoffTime, data.MatchingStopTime, data.DeliveryTime, data.Status, data.TotalPositions, data.SettledPositions, data.LastErrorMsg, data.Version, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractDeliveryBatchRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.BatchNo, data.SymbolId, data.SettlementPrice, data.PriceSource, data.PriceAlgorithm, data.FormulaVersion, data.SampleSnapshot, data.OpenCutoffTime, data.MatchingStopTime, data.DeliveryTime, data.Status, data.TotalPositions, data.SettledPositions, data.LastErrorMsg, data.Version, data.CreateTimes, data.UpdateTimes)
 	}, tContractDeliveryBatchIdKey, tContractDeliveryBatchTenantIdBatchNoKey, tContractDeliveryBatchTenantIdSymbolIdDeliveryTimeKey)
 	return ret, err
 }
@@ -169,7 +170,7 @@ func (m *defaultTContractDeliveryBatchModel) Update(ctx context.Context, newData
 	tContractDeliveryBatchTenantIdSymbolIdDeliveryTimeKey := fmt.Sprintf("%s%v:%v:%v", cacheTContractDeliveryBatchTenantIdSymbolIdDeliveryTimePrefix, data.TenantId, data.SymbolId, data.DeliveryTime)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tContractDeliveryBatchRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.BatchNo, newData.SymbolId, newData.SettlementPrice, newData.PriceSource, newData.PriceAlgorithm, newData.SampleSnapshot, newData.OpenCutoffTime, newData.MatchingStopTime, newData.DeliveryTime, newData.Status, newData.TotalPositions, newData.SettledPositions, newData.LastErrorMsg, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.BatchNo, newData.SymbolId, newData.SettlementPrice, newData.PriceSource, newData.PriceAlgorithm, newData.FormulaVersion, newData.SampleSnapshot, newData.OpenCutoffTime, newData.MatchingStopTime, newData.DeliveryTime, newData.Status, newData.TotalPositions, newData.SettledPositions, newData.LastErrorMsg, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tContractDeliveryBatchIdKey, tContractDeliveryBatchTenantIdBatchNoKey, tContractDeliveryBatchTenantIdSymbolIdDeliveryTimeKey)
 	return err
 }

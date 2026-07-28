@@ -7224,6 +7224,8 @@ type ContractDeliveryBatch struct {
 	LastErrorMsg     string                 `protobuf:"bytes,13,opt,name=last_error_msg,json=lastErrorMsg,proto3" json:"last_error_msg,omitempty"`
 	CreateTimes      int64                  `protobuf:"varint,14,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes      int64                  `protobuf:"varint,15,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	FormulaVersion   string                 `protobuf:"bytes,16,opt,name=formula_version,json=formulaVersion,proto3" json:"formula_version,omitempty"`
+	SampleSnapshot   string                 `protobuf:"bytes,17,opt,name=sample_snapshot,json=sampleSnapshot,proto3" json:"sample_snapshot,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -7361,6 +7363,20 @@ func (x *ContractDeliveryBatch) GetUpdateTimes() int64 {
 		return x.UpdateTimes
 	}
 	return 0
+}
+
+func (x *ContractDeliveryBatch) GetFormulaVersion() string {
+	if x != nil {
+		return x.FormulaVersion
+	}
+	return ""
+}
+
+func (x *ContractDeliveryBatch) GetSampleSnapshot() string {
+	if x != nil {
+		return x.SampleSnapshot
+	}
+	return ""
 }
 
 type GetDeliveryBatchListReq struct {
@@ -9365,6 +9381,8 @@ type TradeSettlementInstruction struct {
 	LastErrorMsg  string                      `protobuf:"bytes,18,opt,name=last_error_msg,json=lastErrorMsg,proto3" json:"last_error_msg,omitempty"`
 	CreateTimes   int64                       `protobuf:"varint,19,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes   int64                       `protobuf:"varint,20,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	AssetFlowNo   string                      `protobuf:"bytes,21,opt,name=asset_flow_no,json=assetFlowNo,proto3" json:"asset_flow_no,omitempty"`
+	ReconciledAt  int64                       `protobuf:"varint,22,opt,name=reconciled_at,json=reconciledAt,proto3" json:"reconciled_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -9535,6 +9553,20 @@ func (x *TradeSettlementInstruction) GetCreateTimes() int64 {
 func (x *TradeSettlementInstruction) GetUpdateTimes() int64 {
 	if x != nil {
 		return x.UpdateTimes
+	}
+	return 0
+}
+
+func (x *TradeSettlementInstruction) GetAssetFlowNo() string {
+	if x != nil {
+		return x.AssetFlowNo
+	}
+	return ""
+}
+
+func (x *TradeSettlementInstruction) GetReconciledAt() int64 {
+	if x != nil {
+		return x.ReconciledAt
 	}
 	return 0
 }
@@ -9735,6 +9767,374 @@ func (x *RetrySettlementInstructionReq) GetReason() string {
 	return ""
 }
 
+type ContractReconciliationIssue struct {
+	state            protoimpl.MessageState            `protogen:"open.v1"`
+	Id               int64                             `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	IssueKey         string                            `protobuf:"bytes,2,opt,name=issue_key,json=issueKey,proto3" json:"issue_key,omitempty"`
+	CheckType        string                            `protobuf:"bytes,3,opt,name=check_type,json=checkType,proto3" json:"check_type,omitempty"`
+	BizType          string                            `protobuf:"bytes,4,opt,name=biz_type,json=bizType,proto3" json:"biz_type,omitempty"`
+	BizNo            string                            `protobuf:"bytes,5,opt,name=biz_no,json=bizNo,proto3" json:"biz_no,omitempty"`
+	InstructionId    int64                             `protobuf:"varint,6,opt,name=instruction_id,json=instructionId,proto3" json:"instruction_id,omitempty"`
+	ExpectedValue    string                            `protobuf:"bytes,7,opt,name=expected_value,json=expectedValue,proto3" json:"expected_value,omitempty"`
+	ActualValue      string                            `protobuf:"bytes,8,opt,name=actual_value,json=actualValue,proto3" json:"actual_value,omitempty"`
+	Detail           string                            `protobuf:"bytes,9,opt,name=detail,proto3" json:"detail,omitempty"`
+	Status           ContractReconciliationIssueStatus `protobuf:"varint,10,opt,name=status,proto3,enum=trade.ContractReconciliationIssueStatus" json:"status,omitempty"`
+	OccurrenceCount  int64                             `protobuf:"varint,11,opt,name=occurrence_count,json=occurrenceCount,proto3" json:"occurrence_count,omitempty"`
+	FirstSeenAt      int64                             `protobuf:"varint,12,opt,name=first_seen_at,json=firstSeenAt,proto3" json:"first_seen_at,omitempty"`
+	LastSeenAt       int64                             `protobuf:"varint,13,opt,name=last_seen_at,json=lastSeenAt,proto3" json:"last_seen_at,omitempty"`
+	ResolvedAt       int64                             `protobuf:"varint,14,opt,name=resolved_at,json=resolvedAt,proto3" json:"resolved_at,omitempty"`
+	OperatorId       int64                             `protobuf:"varint,15,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`
+	ResolutionReason string                            `protobuf:"bytes,16,opt,name=resolution_reason,json=resolutionReason,proto3" json:"resolution_reason,omitempty"`
+	CreateTimes      int64                             `protobuf:"varint,17,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	UpdateTimes      int64                             `protobuf:"varint,18,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *ContractReconciliationIssue) Reset() {
+	*x = ContractReconciliationIssue{}
+	mi := &file_proto_trade_trade_proto_msgTypes[118]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ContractReconciliationIssue) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ContractReconciliationIssue) ProtoMessage() {}
+
+func (x *ContractReconciliationIssue) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_proto_msgTypes[118]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ContractReconciliationIssue.ProtoReflect.Descriptor instead.
+func (*ContractReconciliationIssue) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_proto_rawDescGZIP(), []int{118}
+}
+
+func (x *ContractReconciliationIssue) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ContractReconciliationIssue) GetIssueKey() string {
+	if x != nil {
+		return x.IssueKey
+	}
+	return ""
+}
+
+func (x *ContractReconciliationIssue) GetCheckType() string {
+	if x != nil {
+		return x.CheckType
+	}
+	return ""
+}
+
+func (x *ContractReconciliationIssue) GetBizType() string {
+	if x != nil {
+		return x.BizType
+	}
+	return ""
+}
+
+func (x *ContractReconciliationIssue) GetBizNo() string {
+	if x != nil {
+		return x.BizNo
+	}
+	return ""
+}
+
+func (x *ContractReconciliationIssue) GetInstructionId() int64 {
+	if x != nil {
+		return x.InstructionId
+	}
+	return 0
+}
+
+func (x *ContractReconciliationIssue) GetExpectedValue() string {
+	if x != nil {
+		return x.ExpectedValue
+	}
+	return ""
+}
+
+func (x *ContractReconciliationIssue) GetActualValue() string {
+	if x != nil {
+		return x.ActualValue
+	}
+	return ""
+}
+
+func (x *ContractReconciliationIssue) GetDetail() string {
+	if x != nil {
+		return x.Detail
+	}
+	return ""
+}
+
+func (x *ContractReconciliationIssue) GetStatus() ContractReconciliationIssueStatus {
+	if x != nil {
+		return x.Status
+	}
+	return ContractReconciliationIssueStatus_CONTRACT_RECONCILIATION_ISSUE_STATUS_UNKNOWN
+}
+
+func (x *ContractReconciliationIssue) GetOccurrenceCount() int64 {
+	if x != nil {
+		return x.OccurrenceCount
+	}
+	return 0
+}
+
+func (x *ContractReconciliationIssue) GetFirstSeenAt() int64 {
+	if x != nil {
+		return x.FirstSeenAt
+	}
+	return 0
+}
+
+func (x *ContractReconciliationIssue) GetLastSeenAt() int64 {
+	if x != nil {
+		return x.LastSeenAt
+	}
+	return 0
+}
+
+func (x *ContractReconciliationIssue) GetResolvedAt() int64 {
+	if x != nil {
+		return x.ResolvedAt
+	}
+	return 0
+}
+
+func (x *ContractReconciliationIssue) GetOperatorId() int64 {
+	if x != nil {
+		return x.OperatorId
+	}
+	return 0
+}
+
+func (x *ContractReconciliationIssue) GetResolutionReason() string {
+	if x != nil {
+		return x.ResolutionReason
+	}
+	return ""
+}
+
+func (x *ContractReconciliationIssue) GetCreateTimes() int64 {
+	if x != nil {
+		return x.CreateTimes
+	}
+	return 0
+}
+
+func (x *ContractReconciliationIssue) GetUpdateTimes() int64 {
+	if x != nil {
+		return x.UpdateTimes
+	}
+	return 0
+}
+
+type GetContractReconciliationIssueListReq struct {
+	state         protoimpl.MessageState            `protogen:"open.v1"`
+	TenantId      int64                             `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Page          *common.PageReq                   `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
+	Status        ContractReconciliationIssueStatus `protobuf:"varint,3,opt,name=status,proto3,enum=trade.ContractReconciliationIssueStatus" json:"status,omitempty"`
+	CheckType     string                            `protobuf:"bytes,4,opt,name=check_type,json=checkType,proto3" json:"check_type,omitempty"`
+	BizNo         string                            `protobuf:"bytes,5,opt,name=biz_no,json=bizNo,proto3" json:"biz_no,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetContractReconciliationIssueListReq) Reset() {
+	*x = GetContractReconciliationIssueListReq{}
+	mi := &file_proto_trade_trade_proto_msgTypes[119]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetContractReconciliationIssueListReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetContractReconciliationIssueListReq) ProtoMessage() {}
+
+func (x *GetContractReconciliationIssueListReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_proto_msgTypes[119]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetContractReconciliationIssueListReq.ProtoReflect.Descriptor instead.
+func (*GetContractReconciliationIssueListReq) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_proto_rawDescGZIP(), []int{119}
+}
+
+func (x *GetContractReconciliationIssueListReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *GetContractReconciliationIssueListReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+func (x *GetContractReconciliationIssueListReq) GetStatus() ContractReconciliationIssueStatus {
+	if x != nil {
+		return x.Status
+	}
+	return ContractReconciliationIssueStatus_CONTRACT_RECONCILIATION_ISSUE_STATUS_UNKNOWN
+}
+
+func (x *GetContractReconciliationIssueListReq) GetCheckType() string {
+	if x != nil {
+		return x.CheckType
+	}
+	return ""
+}
+
+func (x *GetContractReconciliationIssueListReq) GetBizNo() string {
+	if x != nil {
+		return x.BizNo
+	}
+	return ""
+}
+
+type GetContractReconciliationIssueListResp struct {
+	state         protoimpl.MessageState         `protogen:"open.v1"`
+	Base          *common.RespBase               `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          []*ContractReconciliationIssue `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetContractReconciliationIssueListResp) Reset() {
+	*x = GetContractReconciliationIssueListResp{}
+	mi := &file_proto_trade_trade_proto_msgTypes[120]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetContractReconciliationIssueListResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetContractReconciliationIssueListResp) ProtoMessage() {}
+
+func (x *GetContractReconciliationIssueListResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_proto_msgTypes[120]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetContractReconciliationIssueListResp.ProtoReflect.Descriptor instead.
+func (*GetContractReconciliationIssueListResp) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_proto_rawDescGZIP(), []int{120}
+}
+
+func (x *GetContractReconciliationIssueListResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetContractReconciliationIssueListResp) GetData() []*ContractReconciliationIssue {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type IgnoreContractReconciliationIssueReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Reason        string                 `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *IgnoreContractReconciliationIssueReq) Reset() {
+	*x = IgnoreContractReconciliationIssueReq{}
+	mi := &file_proto_trade_trade_proto_msgTypes[121]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IgnoreContractReconciliationIssueReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IgnoreContractReconciliationIssueReq) ProtoMessage() {}
+
+func (x *IgnoreContractReconciliationIssueReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_trade_proto_msgTypes[121]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IgnoreContractReconciliationIssueReq.ProtoReflect.Descriptor instead.
+func (*IgnoreContractReconciliationIssueReq) Descriptor() ([]byte, []int) {
+	return file_proto_trade_trade_proto_rawDescGZIP(), []int{121}
+}
+
+func (x *IgnoreContractReconciliationIssueReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *IgnoreContractReconciliationIssueReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *IgnoreContractReconciliationIssueReq) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
 type PlaceLiquidityQuoteReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TradeUserId   int64                  `protobuf:"varint,1,opt,name=trade_user_id,json=tradeUserId,proto3" json:"trade_user_id,omitempty"`
@@ -9745,7 +10145,7 @@ type PlaceLiquidityQuoteReq struct {
 
 func (x *PlaceLiquidityQuoteReq) Reset() {
 	*x = PlaceLiquidityQuoteReq{}
-	mi := &file_proto_trade_trade_proto_msgTypes[118]
+	mi := &file_proto_trade_trade_proto_msgTypes[122]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9757,7 +10157,7 @@ func (x *PlaceLiquidityQuoteReq) String() string {
 func (*PlaceLiquidityQuoteReq) ProtoMessage() {}
 
 func (x *PlaceLiquidityQuoteReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_proto_msgTypes[118]
+	mi := &file_proto_trade_trade_proto_msgTypes[122]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9770,7 +10170,7 @@ func (x *PlaceLiquidityQuoteReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlaceLiquidityQuoteReq.ProtoReflect.Descriptor instead.
 func (*PlaceLiquidityQuoteReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_proto_rawDescGZIP(), []int{118}
+	return file_proto_trade_trade_proto_rawDescGZIP(), []int{122}
 }
 
 func (x *PlaceLiquidityQuoteReq) GetTradeUserId() int64 {
@@ -9797,7 +10197,7 @@ type CancelLiquidityQuoteReq struct {
 
 func (x *CancelLiquidityQuoteReq) Reset() {
 	*x = CancelLiquidityQuoteReq{}
-	mi := &file_proto_trade_trade_proto_msgTypes[119]
+	mi := &file_proto_trade_trade_proto_msgTypes[123]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9809,7 +10209,7 @@ func (x *CancelLiquidityQuoteReq) String() string {
 func (*CancelLiquidityQuoteReq) ProtoMessage() {}
 
 func (x *CancelLiquidityQuoteReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_proto_msgTypes[119]
+	mi := &file_proto_trade_trade_proto_msgTypes[123]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9822,7 +10222,7 @@ func (x *CancelLiquidityQuoteReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CancelLiquidityQuoteReq.ProtoReflect.Descriptor instead.
 func (*CancelLiquidityQuoteReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_proto_rawDescGZIP(), []int{119}
+	return file_proto_trade_trade_proto_rawDescGZIP(), []int{123}
 }
 
 func (x *CancelLiquidityQuoteReq) GetTradeUserId() int64 {
@@ -9849,7 +10249,7 @@ type GetLiquidityQuoteReq struct {
 
 func (x *GetLiquidityQuoteReq) Reset() {
 	*x = GetLiquidityQuoteReq{}
-	mi := &file_proto_trade_trade_proto_msgTypes[120]
+	mi := &file_proto_trade_trade_proto_msgTypes[124]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9861,7 +10261,7 @@ func (x *GetLiquidityQuoteReq) String() string {
 func (*GetLiquidityQuoteReq) ProtoMessage() {}
 
 func (x *GetLiquidityQuoteReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_proto_msgTypes[120]
+	mi := &file_proto_trade_trade_proto_msgTypes[124]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9874,7 +10274,7 @@ func (x *GetLiquidityQuoteReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLiquidityQuoteReq.ProtoReflect.Descriptor instead.
 func (*GetLiquidityQuoteReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_proto_rawDescGZIP(), []int{120}
+	return file_proto_trade_trade_proto_rawDescGZIP(), []int{124}
 }
 
 func (x *GetLiquidityQuoteReq) GetTradeUserId() int64 {
@@ -9900,7 +10300,7 @@ type InternalCommonResp struct {
 
 func (x *InternalCommonResp) Reset() {
 	*x = InternalCommonResp{}
-	mi := &file_proto_trade_trade_proto_msgTypes[121]
+	mi := &file_proto_trade_trade_proto_msgTypes[125]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9912,7 +10312,7 @@ func (x *InternalCommonResp) String() string {
 func (*InternalCommonResp) ProtoMessage() {}
 
 func (x *InternalCommonResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_proto_msgTypes[121]
+	mi := &file_proto_trade_trade_proto_msgTypes[125]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9925,7 +10325,7 @@ func (x *InternalCommonResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InternalCommonResp.ProtoReflect.Descriptor instead.
 func (*InternalCommonResp) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_proto_rawDescGZIP(), []int{121}
+	return file_proto_trade_trade_proto_rawDescGZIP(), []int{125}
 }
 
 func (x *InternalCommonResp) GetBase() *common.RespBase {
@@ -9944,7 +10344,7 @@ type RecordOrderFillReq struct {
 
 func (x *RecordOrderFillReq) Reset() {
 	*x = RecordOrderFillReq{}
-	mi := &file_proto_trade_trade_proto_msgTypes[122]
+	mi := &file_proto_trade_trade_proto_msgTypes[126]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9956,7 +10356,7 @@ func (x *RecordOrderFillReq) String() string {
 func (*RecordOrderFillReq) ProtoMessage() {}
 
 func (x *RecordOrderFillReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_proto_msgTypes[122]
+	mi := &file_proto_trade_trade_proto_msgTypes[126]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9969,7 +10369,7 @@ func (x *RecordOrderFillReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RecordOrderFillReq.ProtoReflect.Descriptor instead.
 func (*RecordOrderFillReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_proto_rawDescGZIP(), []int{122}
+	return file_proto_trade_trade_proto_rawDescGZIP(), []int{126}
 }
 
 func (x *RecordOrderFillReq) GetFill() *TradeFill {
@@ -9988,7 +10388,7 @@ type RecordPositionHistoryReq struct {
 
 func (x *RecordPositionHistoryReq) Reset() {
 	*x = RecordPositionHistoryReq{}
-	mi := &file_proto_trade_trade_proto_msgTypes[123]
+	mi := &file_proto_trade_trade_proto_msgTypes[127]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10000,7 +10400,7 @@ func (x *RecordPositionHistoryReq) String() string {
 func (*RecordPositionHistoryReq) ProtoMessage() {}
 
 func (x *RecordPositionHistoryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_proto_msgTypes[123]
+	mi := &file_proto_trade_trade_proto_msgTypes[127]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10013,7 +10413,7 @@ func (x *RecordPositionHistoryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RecordPositionHistoryReq.ProtoReflect.Descriptor instead.
 func (*RecordPositionHistoryReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_proto_rawDescGZIP(), []int{123}
+	return file_proto_trade_trade_proto_rawDescGZIP(), []int{127}
 }
 
 func (x *RecordPositionHistoryReq) GetHistory() *ContractPositionHistory {
@@ -10032,7 +10432,7 @@ type CreateTradeEventReq struct {
 
 func (x *CreateTradeEventReq) Reset() {
 	*x = CreateTradeEventReq{}
-	mi := &file_proto_trade_trade_proto_msgTypes[124]
+	mi := &file_proto_trade_trade_proto_msgTypes[128]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10044,7 +10444,7 @@ func (x *CreateTradeEventReq) String() string {
 func (*CreateTradeEventReq) ProtoMessage() {}
 
 func (x *CreateTradeEventReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_proto_msgTypes[124]
+	mi := &file_proto_trade_trade_proto_msgTypes[128]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10057,7 +10457,7 @@ func (x *CreateTradeEventReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTradeEventReq.ProtoReflect.Descriptor instead.
 func (*CreateTradeEventReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_proto_rawDescGZIP(), []int{124}
+	return file_proto_trade_trade_proto_rawDescGZIP(), []int{128}
 }
 
 func (x *CreateTradeEventReq) GetEvent() *BizTradeEvent {
@@ -10084,7 +10484,7 @@ type CheckOrderRiskReq struct {
 
 func (x *CheckOrderRiskReq) Reset() {
 	*x = CheckOrderRiskReq{}
-	mi := &file_proto_trade_trade_proto_msgTypes[125]
+	mi := &file_proto_trade_trade_proto_msgTypes[129]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10096,7 +10496,7 @@ func (x *CheckOrderRiskReq) String() string {
 func (*CheckOrderRiskReq) ProtoMessage() {}
 
 func (x *CheckOrderRiskReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_proto_msgTypes[125]
+	mi := &file_proto_trade_trade_proto_msgTypes[129]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10109,7 +10509,7 @@ func (x *CheckOrderRiskReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckOrderRiskReq.ProtoReflect.Descriptor instead.
 func (*CheckOrderRiskReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_proto_rawDescGZIP(), []int{125}
+	return file_proto_trade_trade_proto_rawDescGZIP(), []int{129}
 }
 
 func (x *CheckOrderRiskReq) GetTenantId() int64 {
@@ -10186,7 +10586,7 @@ type CheckOrderRiskResp struct {
 
 func (x *CheckOrderRiskResp) Reset() {
 	*x = CheckOrderRiskResp{}
-	mi := &file_proto_trade_trade_proto_msgTypes[126]
+	mi := &file_proto_trade_trade_proto_msgTypes[130]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10198,7 +10598,7 @@ func (x *CheckOrderRiskResp) String() string {
 func (*CheckOrderRiskResp) ProtoMessage() {}
 
 func (x *CheckOrderRiskResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_proto_msgTypes[126]
+	mi := &file_proto_trade_trade_proto_msgTypes[130]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10211,7 +10611,7 @@ func (x *CheckOrderRiskResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckOrderRiskResp.ProtoReflect.Descriptor instead.
 func (*CheckOrderRiskResp) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_proto_rawDescGZIP(), []int{126}
+	return file_proto_trade_trade_proto_rawDescGZIP(), []int{130}
 }
 
 func (x *CheckOrderRiskResp) GetPassed() int64 {
@@ -10244,7 +10644,7 @@ type TradeTaskReq struct {
 
 func (x *TradeTaskReq) Reset() {
 	*x = TradeTaskReq{}
-	mi := &file_proto_trade_trade_proto_msgTypes[127]
+	mi := &file_proto_trade_trade_proto_msgTypes[131]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10256,7 +10656,7 @@ func (x *TradeTaskReq) String() string {
 func (*TradeTaskReq) ProtoMessage() {}
 
 func (x *TradeTaskReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_proto_msgTypes[127]
+	mi := &file_proto_trade_trade_proto_msgTypes[131]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10269,7 +10669,7 @@ func (x *TradeTaskReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TradeTaskReq.ProtoReflect.Descriptor instead.
 func (*TradeTaskReq) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_proto_rawDescGZIP(), []int{127}
+	return file_proto_trade_trade_proto_rawDescGZIP(), []int{131}
 }
 
 func (x *TradeTaskReq) GetTenantId() int64 {
@@ -10288,7 +10688,7 @@ type TradeTaskResp struct {
 
 func (x *TradeTaskResp) Reset() {
 	*x = TradeTaskResp{}
-	mi := &file_proto_trade_trade_proto_msgTypes[128]
+	mi := &file_proto_trade_trade_proto_msgTypes[132]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -10300,7 +10700,7 @@ func (x *TradeTaskResp) String() string {
 func (*TradeTaskResp) ProtoMessage() {}
 
 func (x *TradeTaskResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_trade_proto_msgTypes[128]
+	mi := &file_proto_trade_trade_proto_msgTypes[132]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -10313,7 +10713,7 @@ func (x *TradeTaskResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TradeTaskResp.ProtoReflect.Descriptor instead.
 func (*TradeTaskResp) Descriptor() ([]byte, []int) {
-	return file_proto_trade_trade_proto_rawDescGZIP(), []int{128}
+	return file_proto_trade_trade_proto_rawDescGZIP(), []int{132}
 }
 
 func (x *TradeTaskResp) GetBase() *common.RespBase {
@@ -10969,7 +11369,7 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x06status\x18\x06 \x01(\x0e2\x1e.trade.FundingSettlementStatusR\x06status\"z\n" +
 	"\x1cGetFundingSettlementListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x124\n" +
-	"\x04data\x18\x02 \x03(\v2 .trade.ContractFundingSettlementR\x04data\"\xc9\x04\n" +
+	"\x04data\x18\x02 \x03(\v2 .trade.ContractFundingSettlementR\x04data\"\x9b\x05\n" +
 	"\x15ContractDeliveryBatch\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\bbatch_no\x18\x02 \x01(\tR\abatchNo\x12\x1b\n" +
@@ -10986,7 +11386,9 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x11settled_positions\x18\f \x01(\x03R\x10settledPositions\x12$\n" +
 	"\x0elast_error_msg\x18\r \x01(\tR\flastErrorMsg\x12!\n" +
 	"\fcreate_times\x18\x0e \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x0f \x01(\x03R\vupdateTimes\"\xdd\x01\n" +
+	"\fupdate_times\x18\x0f \x01(\x03R\vupdateTimes\x12'\n" +
+	"\x0fformula_version\x18\x10 \x01(\tR\x0eformulaVersion\x12'\n" +
+	"\x0fsample_snapshot\x18\x11 \x01(\tR\x0esampleSnapshot\"\xdd\x01\n" +
 	"\x17GetDeliveryBatchListReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12#\n" +
 	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
@@ -11189,7 +11591,7 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x06status\x18\x04 \x01(\x0e2\x1d.trade.AssetReservationStatusR\x06status\"u\n" +
 	"\x1bGetAssetReservationListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
-	"\x04data\x18\x02 \x03(\v2\x1c.trade.TradeAssetReservationR\x04data\"\xa5\x05\n" +
+	"\x04data\x18\x02 \x03(\v2\x1c.trade.TradeAssetReservationR\x04data\"\xee\x05\n" +
 	"\x1aTradeSettlementInstruction\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12%\n" +
 	"\x0einstruction_no\x18\x02 \x01(\tR\rinstructionNo\x12\x19\n" +
@@ -11213,7 +11615,9 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\rnext_retry_at\x18\x11 \x01(\x03R\vnextRetryAt\x12$\n" +
 	"\x0elast_error_msg\x18\x12 \x01(\tR\flastErrorMsg\x12!\n" +
 	"\fcreate_times\x18\x13 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimes\"\xec\x01\n" +
+	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimes\x12\"\n" +
+	"\rasset_flow_no\x18\x15 \x01(\tR\vassetFlowNo\x12#\n" +
+	"\rreconciled_at\x18\x16 \x01(\x03R\freconciledAt\"\xec\x01\n" +
 	"\x1fGetSettlementInstructionListReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12#\n" +
 	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x12\x19\n" +
@@ -11227,7 +11631,45 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x1dRetrySettlementInstructionReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x16\n" +
-	"\x06reason\x18\x04 \x01(\tR\x06reasonJ\x04\b\x03\x10\x04\"h\n" +
+	"\x06reason\x18\x04 \x01(\tR\x06reasonJ\x04\b\x03\x10\x04\"\x8c\x05\n" +
+	"\x1bContractReconciliationIssue\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\tissue_key\x18\x02 \x01(\tR\bissueKey\x12\x1d\n" +
+	"\n" +
+	"check_type\x18\x03 \x01(\tR\tcheckType\x12\x19\n" +
+	"\bbiz_type\x18\x04 \x01(\tR\abizType\x12\x15\n" +
+	"\x06biz_no\x18\x05 \x01(\tR\x05bizNo\x12%\n" +
+	"\x0einstruction_id\x18\x06 \x01(\x03R\rinstructionId\x12%\n" +
+	"\x0eexpected_value\x18\a \x01(\tR\rexpectedValue\x12!\n" +
+	"\factual_value\x18\b \x01(\tR\vactualValue\x12\x16\n" +
+	"\x06detail\x18\t \x01(\tR\x06detail\x12@\n" +
+	"\x06status\x18\n" +
+	" \x01(\x0e2(.trade.ContractReconciliationIssueStatusR\x06status\x12)\n" +
+	"\x10occurrence_count\x18\v \x01(\x03R\x0foccurrenceCount\x12\"\n" +
+	"\rfirst_seen_at\x18\f \x01(\x03R\vfirstSeenAt\x12 \n" +
+	"\flast_seen_at\x18\r \x01(\x03R\n" +
+	"lastSeenAt\x12\x1f\n" +
+	"\vresolved_at\x18\x0e \x01(\x03R\n" +
+	"resolvedAt\x12\x1f\n" +
+	"\voperator_id\x18\x0f \x01(\x03R\n" +
+	"operatorId\x12+\n" +
+	"\x11resolution_reason\x18\x10 \x01(\tR\x10resolutionReason\x12!\n" +
+	"\fcreate_times\x18\x11 \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\x12 \x01(\x03R\vupdateTimes\"\xe1\x01\n" +
+	"%GetContractReconciliationIssueListReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12#\n" +
+	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x12@\n" +
+	"\x06status\x18\x03 \x01(\x0e2(.trade.ContractReconciliationIssueStatusR\x06status\x12\x1d\n" +
+	"\n" +
+	"check_type\x18\x04 \x01(\tR\tcheckType\x12\x15\n" +
+	"\x06biz_no\x18\x05 \x01(\tR\x05bizNo\"\x86\x01\n" +
+	"&GetContractReconciliationIssueListResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x126\n" +
+	"\x04data\x18\x02 \x03(\v2\".trade.ContractReconciliationIssueR\x04data\"k\n" +
+	"$IgnoreContractReconciliationIssueReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x16\n" +
+	"\x06reason\x18\x03 \x01(\tR\x06reason\"h\n" +
 	"\x16PlaceLiquidityQuoteReq\x12\"\n" +
 	"\rtrade_user_id\x18\x01 \x01(\x03R\vtradeUserId\x12*\n" +
 	"\x05order\x18\x02 \x01(\v2\x14.trade.PlaceOrderReqR\x05order\"j\n" +
@@ -11280,7 +11722,7 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x0fGetPositionList\x12\x19.trade.GetPositionListReq\x1a\x1a.trade.GetPositionListResp\x12Z\n" +
 	"\x15GetMarginSnapshotList\x12\x1f.trade.GetMarginSnapshotListReq\x1a .trade.GetMarginSnapshotListResp\x12N\n" +
 	"\x11GetLeverageConfig\x12\x1b.trade.GetLeverageConfigReq\x1a\x1c.trade.GetLeverageConfigResp\x12;\n" +
-	"\vSetLeverage\x12\x15.trade.SetLeverageReq\x1a\x15.trade.UserCommonResp2\xd6 \n" +
+	"\vSetLeverage\x12\x15.trade.SetLeverageReq\x1a\x15.trade.UserCommonResp2\xbf\"\n" +
 	"\x05Admin\x129\n" +
 	"\fCreateSymbol\x12\x16.trade.CreateSymbolReq\x1a\x11.trade.CommonResp\x129\n" +
 	"\fUpdateSymbol\x12\x16.trade.UpdateSymbolReq\x1a\x11.trade.CommonResp\x12Q\n" +
@@ -11326,7 +11768,9 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x1bGetSecondsPriceSnapshotList\x12%.trade.GetSecondsPriceSnapshotListReq\x1a&.trade.GetSecondsPriceSnapshotListResp\x12`\n" +
 	"\x17GetAssetReservationList\x12!.trade.GetAssetReservationListReq\x1a\".trade.GetAssetReservationListResp\x12o\n" +
 	"\x1cGetSettlementInstructionList\x12&.trade.GetSettlementInstructionListReq\x1a'.trade.GetSettlementInstructionListResp\x12U\n" +
-	"\x1aRetrySettlementInstruction\x12$.trade.RetrySettlementInstructionReq\x1a\x11.trade.CommonResp\x12O\n" +
+	"\x1aRetrySettlementInstruction\x12$.trade.RetrySettlementInstructionReq\x1a\x11.trade.CommonResp\x12\x81\x01\n" +
+	"\"GetContractReconciliationIssueList\x12,.trade.GetContractReconciliationIssueListReq\x1a-.trade.GetContractReconciliationIssueListResp\x12c\n" +
+	"!IgnoreContractReconciliationIssue\x12+.trade.IgnoreContractReconciliationIssueReq\x1a\x11.trade.CommonResp\x12O\n" +
 	"\x17SetInsuranceFundAccount\x12!.trade.SetInsuranceFundAccountReq\x1a\x11.trade.CommonResp\x12l\n" +
 	"\x1bGetInsuranceFundAccountList\x12%.trade.GetInsuranceFundAccountListReq\x1a&.trade.GetInsuranceFundAccountListResp\x12Z\n" +
 	"\x15GetMarketSnapshotList\x12\x1f.trade.GetMarketSnapshotListReq\x1a .trade.GetMarketSnapshotListResp2\xef\x04\n" +
@@ -11360,600 +11804,614 @@ func file_proto_trade_trade_proto_rawDescGZIP() []byte {
 	return file_proto_trade_trade_proto_rawDescData
 }
 
-var file_proto_trade_trade_proto_msgTypes = make([]protoimpl.MessageInfo, 129)
+var file_proto_trade_trade_proto_msgTypes = make([]protoimpl.MessageInfo, 133)
 var file_proto_trade_trade_proto_goTypes = []any{
-	(*UserCommonResp)(nil),                   // 0: trade.UserCommonResp
-	(*GetSymbolListReq)(nil),                 // 1: trade.GetSymbolListReq
-	(*GetSymbolListResp)(nil),                // 2: trade.GetSymbolListResp
-	(*GetSymbolDetailReq)(nil),               // 3: trade.GetSymbolDetailReq
-	(*GetSymbolDetailResp)(nil),              // 4: trade.GetSymbolDetailResp
-	(*GetSymbolDetailData)(nil),              // 5: trade.GetSymbolDetailData
-	(*PlaceOrderReq)(nil),                    // 6: trade.PlaceOrderReq
-	(*PlaceOrderResp)(nil),                   // 7: trade.PlaceOrderResp
-	(*CancelOrderReq)(nil),                   // 8: trade.CancelOrderReq
-	(*CancelAllOrdersReq)(nil),               // 9: trade.CancelAllOrdersReq
-	(*CancelAllOrdersResp)(nil),              // 10: trade.CancelAllOrdersResp
-	(*GetOrderListReq)(nil),                  // 11: trade.GetOrderListReq
-	(*GetOrderListResp)(nil),                 // 12: trade.GetOrderListResp
-	(*GetOrderDetailReq)(nil),                // 13: trade.GetOrderDetailReq
-	(*GetOrderDetailResp)(nil),               // 14: trade.GetOrderDetailResp
-	(*GetOrderDetailData)(nil),               // 15: trade.GetOrderDetailData
-	(*GetFillListReq)(nil),                   // 16: trade.GetFillListReq
-	(*GetFillListResp)(nil),                  // 17: trade.GetFillListResp
-	(*GetPositionListReq)(nil),               // 18: trade.GetPositionListReq
-	(*GetPositionListResp)(nil),              // 19: trade.GetPositionListResp
-	(*GetMarginSnapshotListReq)(nil),         // 20: trade.GetMarginSnapshotListReq
-	(*GetMarginSnapshotListResp)(nil),        // 21: trade.GetMarginSnapshotListResp
-	(*GetLeverageConfigReq)(nil),             // 22: trade.GetLeverageConfigReq
-	(*GetLeverageConfigResp)(nil),            // 23: trade.GetLeverageConfigResp
-	(*SetLeverageReq)(nil),                   // 24: trade.SetLeverageReq
-	(*CommonResp)(nil),                       // 25: trade.CommonResp
-	(*CreateSymbolReq)(nil),                  // 26: trade.CreateSymbolReq
-	(*UpdateSymbolReq)(nil),                  // 27: trade.UpdateSymbolReq
-	(*GetSymbolListAdminReq)(nil),            // 28: trade.GetSymbolListAdminReq
-	(*GetSymbolListAdminResp)(nil),           // 29: trade.GetSymbolListAdminResp
-	(*GetSymbolDetailAdminReq)(nil),          // 30: trade.GetSymbolDetailAdminReq
-	(*GetSymbolDetailAdminResp)(nil),         // 31: trade.GetSymbolDetailAdminResp
-	(*GetSymbolDetailAdminData)(nil),         // 32: trade.GetSymbolDetailAdminData
-	(*SetSpotSymbolConfigReq)(nil),           // 33: trade.SetSpotSymbolConfigReq
-	(*SetContractSymbolConfigReq)(nil),       // 34: trade.SetContractSymbolConfigReq
-	(*SetSecondsSymbolConfigReq)(nil),        // 35: trade.SetSecondsSymbolConfigReq
-	(*SetSymbolSessionReq)(nil),              // 36: trade.SetSymbolSessionReq
-	(*SetSymbolLeverageConfigReq)(nil),       // 37: trade.SetSymbolLeverageConfigReq
-	(*GetSymbolLeverageConfigReq)(nil),       // 38: trade.GetSymbolLeverageConfigReq
-	(*GetSymbolLeverageConfigResp)(nil),      // 39: trade.GetSymbolLeverageConfigResp
-	(*GetSymbolLeverageConfigListReq)(nil),   // 40: trade.GetSymbolLeverageConfigListReq
-	(*GetSymbolLeverageConfigListResp)(nil),  // 41: trade.GetSymbolLeverageConfigListResp
-	(*GetOrderListAdminReq)(nil),             // 42: trade.GetOrderListAdminReq
-	(*GetOrderListAdminResp)(nil),            // 43: trade.GetOrderListAdminResp
-	(*GetOrderDetailAdminReq)(nil),           // 44: trade.GetOrderDetailAdminReq
-	(*GetOrderDetailAdminResp)(nil),          // 45: trade.GetOrderDetailAdminResp
-	(*GetFillListAdminReq)(nil),              // 46: trade.GetFillListAdminReq
-	(*GetFillListAdminResp)(nil),             // 47: trade.GetFillListAdminResp
-	(*GetFillDetailAdminReq)(nil),            // 48: trade.GetFillDetailAdminReq
-	(*GetFillDetailAdminResp)(nil),           // 49: trade.GetFillDetailAdminResp
-	(*GetPositionListAdminReq)(nil),          // 50: trade.GetPositionListAdminReq
-	(*GetPositionListAdminResp)(nil),         // 51: trade.GetPositionListAdminResp
-	(*GetPositionDetailAdminReq)(nil),        // 52: trade.GetPositionDetailAdminReq
-	(*GetPositionDetailAdminResp)(nil),       // 53: trade.GetPositionDetailAdminResp
-	(*GetPositionHistoryListAdminReq)(nil),   // 54: trade.GetPositionHistoryListAdminReq
-	(*GetPositionHistoryListAdminResp)(nil),  // 55: trade.GetPositionHistoryListAdminResp
-	(*GetMarginSnapshotListAdminReq)(nil),    // 56: trade.GetMarginSnapshotListAdminReq
-	(*GetMarginSnapshotListAdminResp)(nil),   // 57: trade.GetMarginSnapshotListAdminResp
-	(*GetCancelLogListAdminReq)(nil),         // 58: trade.GetCancelLogListAdminReq
-	(*GetCancelLogListAdminResp)(nil),        // 59: trade.GetCancelLogListAdminResp
-	(*SetUserTradeLimitReq)(nil),             // 60: trade.SetUserTradeLimitReq
-	(*SetUserSymbolLimitReq)(nil),            // 61: trade.SetUserSymbolLimitReq
-	(*GetUserTradeLimitReq)(nil),             // 62: trade.GetUserTradeLimitReq
-	(*GetUserTradeLimitResp)(nil),            // 63: trade.GetUserTradeLimitResp
-	(*GetUserSymbolLimitReq)(nil),            // 64: trade.GetUserSymbolLimitReq
-	(*GetUserSymbolLimitResp)(nil),           // 65: trade.GetUserSymbolLimitResp
-	(*SetUserTradeConfigReq)(nil),            // 66: trade.SetUserTradeConfigReq
-	(*GetUserTradeConfigReq)(nil),            // 67: trade.GetUserTradeConfigReq
-	(*GetUserTradeConfigResp)(nil),           // 68: trade.GetUserTradeConfigResp
-	(*SetContractUserConfigReq)(nil),         // 69: trade.SetContractUserConfigReq
-	(*GetContractUserConfigReq)(nil),         // 70: trade.GetContractUserConfigReq
-	(*GetContractUserConfigResp)(nil),        // 71: trade.GetContractUserConfigResp
-	(*GetRiskOrderCheckLogListReq)(nil),      // 72: trade.GetRiskOrderCheckLogListReq
-	(*GetRiskOrderCheckLogListResp)(nil),     // 73: trade.GetRiskOrderCheckLogListResp
-	(*SetUserLeverageConfigReq)(nil),         // 74: trade.SetUserLeverageConfigReq
-	(*GetUserLeverageConfigReq)(nil),         // 75: trade.GetUserLeverageConfigReq
-	(*GetUserLeverageConfigResp)(nil),        // 76: trade.GetUserLeverageConfigResp
-	(*GetTradeEventListReq)(nil),             // 77: trade.GetTradeEventListReq
-	(*GetTradeEventListResp)(nil),            // 78: trade.GetTradeEventListResp
-	(*GetTradeEventDetailReq)(nil),           // 79: trade.GetTradeEventDetailReq
-	(*GetTradeEventDetailResp)(nil),          // 80: trade.GetTradeEventDetailResp
-	(*RetryTradeEventReq)(nil),               // 81: trade.RetryTradeEventReq
-	(*SetContractRiskLimitTierReq)(nil),      // 82: trade.SetContractRiskLimitTierReq
-	(*ContractRiskLimitTier)(nil),            // 83: trade.ContractRiskLimitTier
-	(*GetContractRiskLimitTierListReq)(nil),  // 84: trade.GetContractRiskLimitTierListReq
-	(*GetContractRiskLimitTierListResp)(nil), // 85: trade.GetContractRiskLimitTierListResp
-	(*ContractFundingBatch)(nil),             // 86: trade.ContractFundingBatch
-	(*GetFundingBatchListReq)(nil),           // 87: trade.GetFundingBatchListReq
-	(*GetFundingBatchListResp)(nil),          // 88: trade.GetFundingBatchListResp
-	(*ContractFundingSettlement)(nil),        // 89: trade.ContractFundingSettlement
-	(*GetFundingSettlementListReq)(nil),      // 90: trade.GetFundingSettlementListReq
-	(*GetFundingSettlementListResp)(nil),     // 91: trade.GetFundingSettlementListResp
-	(*ContractDeliveryBatch)(nil),            // 92: trade.ContractDeliveryBatch
-	(*GetDeliveryBatchListReq)(nil),          // 93: trade.GetDeliveryBatchListReq
-	(*GetDeliveryBatchListResp)(nil),         // 94: trade.GetDeliveryBatchListResp
-	(*ContractDeliverySettlement)(nil),       // 95: trade.ContractDeliverySettlement
-	(*GetDeliverySettlementListReq)(nil),     // 96: trade.GetDeliverySettlementListReq
-	(*GetDeliverySettlementListResp)(nil),    // 97: trade.GetDeliverySettlementListResp
-	(*ContractLiquidation)(nil),              // 98: trade.ContractLiquidation
-	(*GetLiquidationListReq)(nil),            // 99: trade.GetLiquidationListReq
-	(*GetLiquidationListResp)(nil),           // 100: trade.GetLiquidationListResp
-	(*TradeSecondsPriceSnapshot)(nil),        // 101: trade.TradeSecondsPriceSnapshot
-	(*GetSecondsPriceSnapshotListReq)(nil),   // 102: trade.GetSecondsPriceSnapshotListReq
-	(*GetSecondsPriceSnapshotListResp)(nil),  // 103: trade.GetSecondsPriceSnapshotListResp
-	(*InsuranceFundAccount)(nil),             // 104: trade.InsuranceFundAccount
-	(*SetInsuranceFundAccountReq)(nil),       // 105: trade.SetInsuranceFundAccountReq
-	(*GetInsuranceFundAccountListReq)(nil),   // 106: trade.GetInsuranceFundAccountListReq
-	(*GetInsuranceFundAccountListResp)(nil),  // 107: trade.GetInsuranceFundAccountListResp
-	(*TradeMarketSnapshot)(nil),              // 108: trade.TradeMarketSnapshot
-	(*GetMarketSnapshotListReq)(nil),         // 109: trade.GetMarketSnapshotListReq
-	(*GetMarketSnapshotListResp)(nil),        // 110: trade.GetMarketSnapshotListResp
-	(*TradeAssetReservation)(nil),            // 111: trade.TradeAssetReservation
-	(*GetAssetReservationListReq)(nil),       // 112: trade.GetAssetReservationListReq
-	(*GetAssetReservationListResp)(nil),      // 113: trade.GetAssetReservationListResp
-	(*TradeSettlementInstruction)(nil),       // 114: trade.TradeSettlementInstruction
-	(*GetSettlementInstructionListReq)(nil),  // 115: trade.GetSettlementInstructionListReq
-	(*GetSettlementInstructionListResp)(nil), // 116: trade.GetSettlementInstructionListResp
-	(*RetrySettlementInstructionReq)(nil),    // 117: trade.RetrySettlementInstructionReq
-	(*PlaceLiquidityQuoteReq)(nil),           // 118: trade.PlaceLiquidityQuoteReq
-	(*CancelLiquidityQuoteReq)(nil),          // 119: trade.CancelLiquidityQuoteReq
-	(*GetLiquidityQuoteReq)(nil),             // 120: trade.GetLiquidityQuoteReq
-	(*InternalCommonResp)(nil),               // 121: trade.InternalCommonResp
-	(*RecordOrderFillReq)(nil),               // 122: trade.RecordOrderFillReq
-	(*RecordPositionHistoryReq)(nil),         // 123: trade.RecordPositionHistoryReq
-	(*CreateTradeEventReq)(nil),              // 124: trade.CreateTradeEventReq
-	(*CheckOrderRiskReq)(nil),                // 125: trade.CheckOrderRiskReq
-	(*CheckOrderRiskResp)(nil),               // 126: trade.CheckOrderRiskResp
-	(*TradeTaskReq)(nil),                     // 127: trade.TradeTaskReq
-	(*TradeTaskResp)(nil),                    // 128: trade.TradeTaskResp
-	(*common.RespBase)(nil),                  // 129: common.RespBase
-	(common.ProductType)(0),                  // 130: common.ProductType
-	(SymbolStatus)(0),                        // 131: trade.SymbolStatus
-	(*TradeSymbol)(nil),                      // 132: trade.TradeSymbol
-	(*TradeSymbolSpot)(nil),                  // 133: trade.TradeSymbolSpot
-	(*TradeSymbolContract)(nil),              // 134: trade.TradeSymbolContract
-	(*TradeSymbolLeverageConfig)(nil),        // 135: trade.TradeSymbolLeverageConfig
-	(*TradeSymbolSeconds)(nil),               // 136: trade.TradeSymbolSeconds
-	(*TradeSymbolSession)(nil),               // 137: trade.TradeSymbolSession
-	(common.Side)(0),                         // 138: common.Side
-	(PositionSide)(0),                        // 139: trade.PositionSide
-	(OrderType)(0),                           // 140: trade.OrderType
-	(TimeInForce)(0),                         // 141: trade.TimeInForce
-	(common.YesNo)(0),                        // 142: common.YesNo
-	(TriggerType)(0),                         // 143: trade.TriggerType
-	(MarginMode)(0),                          // 144: trade.MarginMode
-	(OrderSourceType)(0),                     // 145: trade.OrderSourceType
-	(TriggerKind)(0),                         // 146: trade.TriggerKind
-	(SecondsDirection)(0),                    // 147: trade.SecondsDirection
-	(*TradeOrder)(nil),                       // 148: trade.TradeOrder
-	(*common.PageReq)(nil),                   // 149: common.PageReq
-	(OrderStatus)(0),                         // 150: trade.OrderStatus
-	(*TimeRange)(nil),                        // 151: trade.TimeRange
-	(*TradeOrderSpot)(nil),                   // 152: trade.TradeOrderSpot
-	(*TradeOrderContract)(nil),               // 153: trade.TradeOrderContract
-	(*TradeOrderSeconds)(nil),                // 154: trade.TradeOrderSeconds
-	(*TradeFill)(nil),                        // 155: trade.TradeFill
-	(common.ContractType)(0),                 // 156: common.ContractType
-	(*ContractPosition)(nil),                 // 157: trade.ContractPosition
-	(*ContractMarginSnapshot)(nil),           // 158: trade.ContractMarginSnapshot
-	(*ContractLeverageConfig)(nil),           // 159: trade.ContractLeverageConfig
-	(ContractValueType)(0),                   // 160: trade.ContractValueType
-	(common.Enable)(0),                       // 161: common.Enable
-	(SecondsDrawRule)(0),                     // 162: trade.SecondsDrawRule
-	(PositionActionType)(0),                  // 163: trade.PositionActionType
-	(*ContractPositionHistory)(nil),          // 164: trade.ContractPositionHistory
-	(CancelSource)(0),                        // 165: trade.CancelSource
-	(*TradeCancelLog)(nil),                   // 166: trade.TradeCancelLog
-	(SourceType)(0),                          // 167: trade.SourceType
-	(*RiskUserTradeLimit)(nil),               // 168: trade.RiskUserTradeLimit
-	(*RiskUserSymbolLimit)(nil),              // 169: trade.RiskUserSymbolLimit
-	(*TradeUserConfig)(nil),                  // 170: trade.TradeUserConfig
-	(PositionMode)(0),                        // 171: trade.PositionMode
-	(*ContractUserConfig)(nil),               // 172: trade.ContractUserConfig
-	(RiskCheckType)(0),                       // 173: trade.RiskCheckType
-	(RiskCheckResult)(0),                     // 174: trade.RiskCheckResult
-	(*RiskOrderCheckLog)(nil),                // 175: trade.RiskOrderCheckLog
-	(EventStatus)(0),                         // 176: trade.EventStatus
-	(*BizTradeEvent)(nil),                    // 177: trade.BizTradeEvent
-	(FundingBatchStatus)(0),                  // 178: trade.FundingBatchStatus
-	(FundingSettlementStatus)(0),             // 179: trade.FundingSettlementStatus
-	(DeliveryBatchStatus)(0),                 // 180: trade.DeliveryBatchStatus
-	(DeliverySettlementStatus)(0),            // 181: trade.DeliverySettlementStatus
-	(LiquidationStatus)(0),                   // 182: trade.LiquidationStatus
-	(SecondsPriceSnapshotType)(0),            // 183: trade.SecondsPriceSnapshotType
-	(AssetReservationStatus)(0),              // 184: trade.AssetReservationStatus
-	(SettlementInstructionAction)(0),         // 185: trade.SettlementInstructionAction
-	(SettlementInstructionStatus)(0),         // 186: trade.SettlementInstructionStatus
+	(*UserCommonResp)(nil),                         // 0: trade.UserCommonResp
+	(*GetSymbolListReq)(nil),                       // 1: trade.GetSymbolListReq
+	(*GetSymbolListResp)(nil),                      // 2: trade.GetSymbolListResp
+	(*GetSymbolDetailReq)(nil),                     // 3: trade.GetSymbolDetailReq
+	(*GetSymbolDetailResp)(nil),                    // 4: trade.GetSymbolDetailResp
+	(*GetSymbolDetailData)(nil),                    // 5: trade.GetSymbolDetailData
+	(*PlaceOrderReq)(nil),                          // 6: trade.PlaceOrderReq
+	(*PlaceOrderResp)(nil),                         // 7: trade.PlaceOrderResp
+	(*CancelOrderReq)(nil),                         // 8: trade.CancelOrderReq
+	(*CancelAllOrdersReq)(nil),                     // 9: trade.CancelAllOrdersReq
+	(*CancelAllOrdersResp)(nil),                    // 10: trade.CancelAllOrdersResp
+	(*GetOrderListReq)(nil),                        // 11: trade.GetOrderListReq
+	(*GetOrderListResp)(nil),                       // 12: trade.GetOrderListResp
+	(*GetOrderDetailReq)(nil),                      // 13: trade.GetOrderDetailReq
+	(*GetOrderDetailResp)(nil),                     // 14: trade.GetOrderDetailResp
+	(*GetOrderDetailData)(nil),                     // 15: trade.GetOrderDetailData
+	(*GetFillListReq)(nil),                         // 16: trade.GetFillListReq
+	(*GetFillListResp)(nil),                        // 17: trade.GetFillListResp
+	(*GetPositionListReq)(nil),                     // 18: trade.GetPositionListReq
+	(*GetPositionListResp)(nil),                    // 19: trade.GetPositionListResp
+	(*GetMarginSnapshotListReq)(nil),               // 20: trade.GetMarginSnapshotListReq
+	(*GetMarginSnapshotListResp)(nil),              // 21: trade.GetMarginSnapshotListResp
+	(*GetLeverageConfigReq)(nil),                   // 22: trade.GetLeverageConfigReq
+	(*GetLeverageConfigResp)(nil),                  // 23: trade.GetLeverageConfigResp
+	(*SetLeverageReq)(nil),                         // 24: trade.SetLeverageReq
+	(*CommonResp)(nil),                             // 25: trade.CommonResp
+	(*CreateSymbolReq)(nil),                        // 26: trade.CreateSymbolReq
+	(*UpdateSymbolReq)(nil),                        // 27: trade.UpdateSymbolReq
+	(*GetSymbolListAdminReq)(nil),                  // 28: trade.GetSymbolListAdminReq
+	(*GetSymbolListAdminResp)(nil),                 // 29: trade.GetSymbolListAdminResp
+	(*GetSymbolDetailAdminReq)(nil),                // 30: trade.GetSymbolDetailAdminReq
+	(*GetSymbolDetailAdminResp)(nil),               // 31: trade.GetSymbolDetailAdminResp
+	(*GetSymbolDetailAdminData)(nil),               // 32: trade.GetSymbolDetailAdminData
+	(*SetSpotSymbolConfigReq)(nil),                 // 33: trade.SetSpotSymbolConfigReq
+	(*SetContractSymbolConfigReq)(nil),             // 34: trade.SetContractSymbolConfigReq
+	(*SetSecondsSymbolConfigReq)(nil),              // 35: trade.SetSecondsSymbolConfigReq
+	(*SetSymbolSessionReq)(nil),                    // 36: trade.SetSymbolSessionReq
+	(*SetSymbolLeverageConfigReq)(nil),             // 37: trade.SetSymbolLeverageConfigReq
+	(*GetSymbolLeverageConfigReq)(nil),             // 38: trade.GetSymbolLeverageConfigReq
+	(*GetSymbolLeverageConfigResp)(nil),            // 39: trade.GetSymbolLeverageConfigResp
+	(*GetSymbolLeverageConfigListReq)(nil),         // 40: trade.GetSymbolLeverageConfigListReq
+	(*GetSymbolLeverageConfigListResp)(nil),        // 41: trade.GetSymbolLeverageConfigListResp
+	(*GetOrderListAdminReq)(nil),                   // 42: trade.GetOrderListAdminReq
+	(*GetOrderListAdminResp)(nil),                  // 43: trade.GetOrderListAdminResp
+	(*GetOrderDetailAdminReq)(nil),                 // 44: trade.GetOrderDetailAdminReq
+	(*GetOrderDetailAdminResp)(nil),                // 45: trade.GetOrderDetailAdminResp
+	(*GetFillListAdminReq)(nil),                    // 46: trade.GetFillListAdminReq
+	(*GetFillListAdminResp)(nil),                   // 47: trade.GetFillListAdminResp
+	(*GetFillDetailAdminReq)(nil),                  // 48: trade.GetFillDetailAdminReq
+	(*GetFillDetailAdminResp)(nil),                 // 49: trade.GetFillDetailAdminResp
+	(*GetPositionListAdminReq)(nil),                // 50: trade.GetPositionListAdminReq
+	(*GetPositionListAdminResp)(nil),               // 51: trade.GetPositionListAdminResp
+	(*GetPositionDetailAdminReq)(nil),              // 52: trade.GetPositionDetailAdminReq
+	(*GetPositionDetailAdminResp)(nil),             // 53: trade.GetPositionDetailAdminResp
+	(*GetPositionHistoryListAdminReq)(nil),         // 54: trade.GetPositionHistoryListAdminReq
+	(*GetPositionHistoryListAdminResp)(nil),        // 55: trade.GetPositionHistoryListAdminResp
+	(*GetMarginSnapshotListAdminReq)(nil),          // 56: trade.GetMarginSnapshotListAdminReq
+	(*GetMarginSnapshotListAdminResp)(nil),         // 57: trade.GetMarginSnapshotListAdminResp
+	(*GetCancelLogListAdminReq)(nil),               // 58: trade.GetCancelLogListAdminReq
+	(*GetCancelLogListAdminResp)(nil),              // 59: trade.GetCancelLogListAdminResp
+	(*SetUserTradeLimitReq)(nil),                   // 60: trade.SetUserTradeLimitReq
+	(*SetUserSymbolLimitReq)(nil),                  // 61: trade.SetUserSymbolLimitReq
+	(*GetUserTradeLimitReq)(nil),                   // 62: trade.GetUserTradeLimitReq
+	(*GetUserTradeLimitResp)(nil),                  // 63: trade.GetUserTradeLimitResp
+	(*GetUserSymbolLimitReq)(nil),                  // 64: trade.GetUserSymbolLimitReq
+	(*GetUserSymbolLimitResp)(nil),                 // 65: trade.GetUserSymbolLimitResp
+	(*SetUserTradeConfigReq)(nil),                  // 66: trade.SetUserTradeConfigReq
+	(*GetUserTradeConfigReq)(nil),                  // 67: trade.GetUserTradeConfigReq
+	(*GetUserTradeConfigResp)(nil),                 // 68: trade.GetUserTradeConfigResp
+	(*SetContractUserConfigReq)(nil),               // 69: trade.SetContractUserConfigReq
+	(*GetContractUserConfigReq)(nil),               // 70: trade.GetContractUserConfigReq
+	(*GetContractUserConfigResp)(nil),              // 71: trade.GetContractUserConfigResp
+	(*GetRiskOrderCheckLogListReq)(nil),            // 72: trade.GetRiskOrderCheckLogListReq
+	(*GetRiskOrderCheckLogListResp)(nil),           // 73: trade.GetRiskOrderCheckLogListResp
+	(*SetUserLeverageConfigReq)(nil),               // 74: trade.SetUserLeverageConfigReq
+	(*GetUserLeverageConfigReq)(nil),               // 75: trade.GetUserLeverageConfigReq
+	(*GetUserLeverageConfigResp)(nil),              // 76: trade.GetUserLeverageConfigResp
+	(*GetTradeEventListReq)(nil),                   // 77: trade.GetTradeEventListReq
+	(*GetTradeEventListResp)(nil),                  // 78: trade.GetTradeEventListResp
+	(*GetTradeEventDetailReq)(nil),                 // 79: trade.GetTradeEventDetailReq
+	(*GetTradeEventDetailResp)(nil),                // 80: trade.GetTradeEventDetailResp
+	(*RetryTradeEventReq)(nil),                     // 81: trade.RetryTradeEventReq
+	(*SetContractRiskLimitTierReq)(nil),            // 82: trade.SetContractRiskLimitTierReq
+	(*ContractRiskLimitTier)(nil),                  // 83: trade.ContractRiskLimitTier
+	(*GetContractRiskLimitTierListReq)(nil),        // 84: trade.GetContractRiskLimitTierListReq
+	(*GetContractRiskLimitTierListResp)(nil),       // 85: trade.GetContractRiskLimitTierListResp
+	(*ContractFundingBatch)(nil),                   // 86: trade.ContractFundingBatch
+	(*GetFundingBatchListReq)(nil),                 // 87: trade.GetFundingBatchListReq
+	(*GetFundingBatchListResp)(nil),                // 88: trade.GetFundingBatchListResp
+	(*ContractFundingSettlement)(nil),              // 89: trade.ContractFundingSettlement
+	(*GetFundingSettlementListReq)(nil),            // 90: trade.GetFundingSettlementListReq
+	(*GetFundingSettlementListResp)(nil),           // 91: trade.GetFundingSettlementListResp
+	(*ContractDeliveryBatch)(nil),                  // 92: trade.ContractDeliveryBatch
+	(*GetDeliveryBatchListReq)(nil),                // 93: trade.GetDeliveryBatchListReq
+	(*GetDeliveryBatchListResp)(nil),               // 94: trade.GetDeliveryBatchListResp
+	(*ContractDeliverySettlement)(nil),             // 95: trade.ContractDeliverySettlement
+	(*GetDeliverySettlementListReq)(nil),           // 96: trade.GetDeliverySettlementListReq
+	(*GetDeliverySettlementListResp)(nil),          // 97: trade.GetDeliverySettlementListResp
+	(*ContractLiquidation)(nil),                    // 98: trade.ContractLiquidation
+	(*GetLiquidationListReq)(nil),                  // 99: trade.GetLiquidationListReq
+	(*GetLiquidationListResp)(nil),                 // 100: trade.GetLiquidationListResp
+	(*TradeSecondsPriceSnapshot)(nil),              // 101: trade.TradeSecondsPriceSnapshot
+	(*GetSecondsPriceSnapshotListReq)(nil),         // 102: trade.GetSecondsPriceSnapshotListReq
+	(*GetSecondsPriceSnapshotListResp)(nil),        // 103: trade.GetSecondsPriceSnapshotListResp
+	(*InsuranceFundAccount)(nil),                   // 104: trade.InsuranceFundAccount
+	(*SetInsuranceFundAccountReq)(nil),             // 105: trade.SetInsuranceFundAccountReq
+	(*GetInsuranceFundAccountListReq)(nil),         // 106: trade.GetInsuranceFundAccountListReq
+	(*GetInsuranceFundAccountListResp)(nil),        // 107: trade.GetInsuranceFundAccountListResp
+	(*TradeMarketSnapshot)(nil),                    // 108: trade.TradeMarketSnapshot
+	(*GetMarketSnapshotListReq)(nil),               // 109: trade.GetMarketSnapshotListReq
+	(*GetMarketSnapshotListResp)(nil),              // 110: trade.GetMarketSnapshotListResp
+	(*TradeAssetReservation)(nil),                  // 111: trade.TradeAssetReservation
+	(*GetAssetReservationListReq)(nil),             // 112: trade.GetAssetReservationListReq
+	(*GetAssetReservationListResp)(nil),            // 113: trade.GetAssetReservationListResp
+	(*TradeSettlementInstruction)(nil),             // 114: trade.TradeSettlementInstruction
+	(*GetSettlementInstructionListReq)(nil),        // 115: trade.GetSettlementInstructionListReq
+	(*GetSettlementInstructionListResp)(nil),       // 116: trade.GetSettlementInstructionListResp
+	(*RetrySettlementInstructionReq)(nil),          // 117: trade.RetrySettlementInstructionReq
+	(*ContractReconciliationIssue)(nil),            // 118: trade.ContractReconciliationIssue
+	(*GetContractReconciliationIssueListReq)(nil),  // 119: trade.GetContractReconciliationIssueListReq
+	(*GetContractReconciliationIssueListResp)(nil), // 120: trade.GetContractReconciliationIssueListResp
+	(*IgnoreContractReconciliationIssueReq)(nil),   // 121: trade.IgnoreContractReconciliationIssueReq
+	(*PlaceLiquidityQuoteReq)(nil),                 // 122: trade.PlaceLiquidityQuoteReq
+	(*CancelLiquidityQuoteReq)(nil),                // 123: trade.CancelLiquidityQuoteReq
+	(*GetLiquidityQuoteReq)(nil),                   // 124: trade.GetLiquidityQuoteReq
+	(*InternalCommonResp)(nil),                     // 125: trade.InternalCommonResp
+	(*RecordOrderFillReq)(nil),                     // 126: trade.RecordOrderFillReq
+	(*RecordPositionHistoryReq)(nil),               // 127: trade.RecordPositionHistoryReq
+	(*CreateTradeEventReq)(nil),                    // 128: trade.CreateTradeEventReq
+	(*CheckOrderRiskReq)(nil),                      // 129: trade.CheckOrderRiskReq
+	(*CheckOrderRiskResp)(nil),                     // 130: trade.CheckOrderRiskResp
+	(*TradeTaskReq)(nil),                           // 131: trade.TradeTaskReq
+	(*TradeTaskResp)(nil),                          // 132: trade.TradeTaskResp
+	(*common.RespBase)(nil),                        // 133: common.RespBase
+	(common.ProductType)(0),                        // 134: common.ProductType
+	(SymbolStatus)(0),                              // 135: trade.SymbolStatus
+	(*TradeSymbol)(nil),                            // 136: trade.TradeSymbol
+	(*TradeSymbolSpot)(nil),                        // 137: trade.TradeSymbolSpot
+	(*TradeSymbolContract)(nil),                    // 138: trade.TradeSymbolContract
+	(*TradeSymbolLeverageConfig)(nil),              // 139: trade.TradeSymbolLeverageConfig
+	(*TradeSymbolSeconds)(nil),                     // 140: trade.TradeSymbolSeconds
+	(*TradeSymbolSession)(nil),                     // 141: trade.TradeSymbolSession
+	(common.Side)(0),                               // 142: common.Side
+	(PositionSide)(0),                              // 143: trade.PositionSide
+	(OrderType)(0),                                 // 144: trade.OrderType
+	(TimeInForce)(0),                               // 145: trade.TimeInForce
+	(common.YesNo)(0),                              // 146: common.YesNo
+	(TriggerType)(0),                               // 147: trade.TriggerType
+	(MarginMode)(0),                                // 148: trade.MarginMode
+	(OrderSourceType)(0),                           // 149: trade.OrderSourceType
+	(TriggerKind)(0),                               // 150: trade.TriggerKind
+	(SecondsDirection)(0),                          // 151: trade.SecondsDirection
+	(*TradeOrder)(nil),                             // 152: trade.TradeOrder
+	(*common.PageReq)(nil),                         // 153: common.PageReq
+	(OrderStatus)(0),                               // 154: trade.OrderStatus
+	(*TimeRange)(nil),                              // 155: trade.TimeRange
+	(*TradeOrderSpot)(nil),                         // 156: trade.TradeOrderSpot
+	(*TradeOrderContract)(nil),                     // 157: trade.TradeOrderContract
+	(*TradeOrderSeconds)(nil),                      // 158: trade.TradeOrderSeconds
+	(*TradeFill)(nil),                              // 159: trade.TradeFill
+	(common.ContractType)(0),                       // 160: common.ContractType
+	(*ContractPosition)(nil),                       // 161: trade.ContractPosition
+	(*ContractMarginSnapshot)(nil),                 // 162: trade.ContractMarginSnapshot
+	(*ContractLeverageConfig)(nil),                 // 163: trade.ContractLeverageConfig
+	(ContractValueType)(0),                         // 164: trade.ContractValueType
+	(common.Enable)(0),                             // 165: common.Enable
+	(SecondsDrawRule)(0),                           // 166: trade.SecondsDrawRule
+	(PositionActionType)(0),                        // 167: trade.PositionActionType
+	(*ContractPositionHistory)(nil),                // 168: trade.ContractPositionHistory
+	(CancelSource)(0),                              // 169: trade.CancelSource
+	(*TradeCancelLog)(nil),                         // 170: trade.TradeCancelLog
+	(SourceType)(0),                                // 171: trade.SourceType
+	(*RiskUserTradeLimit)(nil),                     // 172: trade.RiskUserTradeLimit
+	(*RiskUserSymbolLimit)(nil),                    // 173: trade.RiskUserSymbolLimit
+	(*TradeUserConfig)(nil),                        // 174: trade.TradeUserConfig
+	(PositionMode)(0),                              // 175: trade.PositionMode
+	(*ContractUserConfig)(nil),                     // 176: trade.ContractUserConfig
+	(RiskCheckType)(0),                             // 177: trade.RiskCheckType
+	(RiskCheckResult)(0),                           // 178: trade.RiskCheckResult
+	(*RiskOrderCheckLog)(nil),                      // 179: trade.RiskOrderCheckLog
+	(EventStatus)(0),                               // 180: trade.EventStatus
+	(*BizTradeEvent)(nil),                          // 181: trade.BizTradeEvent
+	(FundingBatchStatus)(0),                        // 182: trade.FundingBatchStatus
+	(FundingSettlementStatus)(0),                   // 183: trade.FundingSettlementStatus
+	(DeliveryBatchStatus)(0),                       // 184: trade.DeliveryBatchStatus
+	(DeliverySettlementStatus)(0),                  // 185: trade.DeliverySettlementStatus
+	(LiquidationStatus)(0),                         // 186: trade.LiquidationStatus
+	(SecondsPriceSnapshotType)(0),                  // 187: trade.SecondsPriceSnapshotType
+	(AssetReservationStatus)(0),                    // 188: trade.AssetReservationStatus
+	(SettlementInstructionAction)(0),               // 189: trade.SettlementInstructionAction
+	(SettlementInstructionStatus)(0),               // 190: trade.SettlementInstructionStatus
+	(ContractReconciliationIssueStatus)(0),         // 191: trade.ContractReconciliationIssueStatus
 }
 var file_proto_trade_trade_proto_depIdxs = []int32{
-	129, // 0: trade.UserCommonResp.base:type_name -> common.RespBase
-	130, // 1: trade.GetSymbolListReq.product_type:type_name -> common.ProductType
-	131, // 2: trade.GetSymbolListReq.status:type_name -> trade.SymbolStatus
-	129, // 3: trade.GetSymbolListResp.base:type_name -> common.RespBase
-	132, // 4: trade.GetSymbolListResp.data:type_name -> trade.TradeSymbol
-	129, // 5: trade.GetSymbolDetailResp.base:type_name -> common.RespBase
+	133, // 0: trade.UserCommonResp.base:type_name -> common.RespBase
+	134, // 1: trade.GetSymbolListReq.product_type:type_name -> common.ProductType
+	135, // 2: trade.GetSymbolListReq.status:type_name -> trade.SymbolStatus
+	133, // 3: trade.GetSymbolListResp.base:type_name -> common.RespBase
+	136, // 4: trade.GetSymbolListResp.data:type_name -> trade.TradeSymbol
+	133, // 5: trade.GetSymbolDetailResp.base:type_name -> common.RespBase
 	5,   // 6: trade.GetSymbolDetailResp.data:type_name -> trade.GetSymbolDetailData
-	132, // 7: trade.GetSymbolDetailData.symbol:type_name -> trade.TradeSymbol
-	133, // 8: trade.GetSymbolDetailData.spot:type_name -> trade.TradeSymbolSpot
-	134, // 9: trade.GetSymbolDetailData.contract:type_name -> trade.TradeSymbolContract
-	135, // 10: trade.GetSymbolDetailData.leverage_configs:type_name -> trade.TradeSymbolLeverageConfig
-	136, // 11: trade.GetSymbolDetailData.seconds_configs:type_name -> trade.TradeSymbolSeconds
-	137, // 12: trade.GetSymbolDetailData.sessions:type_name -> trade.TradeSymbolSession
-	138, // 13: trade.PlaceOrderReq.side:type_name -> common.Side
-	139, // 14: trade.PlaceOrderReq.position_side:type_name -> trade.PositionSide
-	140, // 15: trade.PlaceOrderReq.order_type:type_name -> trade.OrderType
-	141, // 16: trade.PlaceOrderReq.time_in_force:type_name -> trade.TimeInForce
-	142, // 17: trade.PlaceOrderReq.is_reduce_only:type_name -> common.YesNo
-	143, // 18: trade.PlaceOrderReq.trigger_type:type_name -> trade.TriggerType
-	144, // 19: trade.PlaceOrderReq.margin_mode:type_name -> trade.MarginMode
-	145, // 20: trade.PlaceOrderReq.order_source:type_name -> trade.OrderSourceType
-	146, // 21: trade.PlaceOrderReq.trigger_kind:type_name -> trade.TriggerKind
-	147, // 22: trade.PlaceOrderReq.seconds_direction:type_name -> trade.SecondsDirection
-	129, // 23: trade.PlaceOrderResp.base:type_name -> common.RespBase
-	148, // 24: trade.PlaceOrderResp.data:type_name -> trade.TradeOrder
-	130, // 25: trade.CancelAllOrdersReq.product_type:type_name -> common.ProductType
-	138, // 26: trade.CancelAllOrdersReq.side:type_name -> common.Side
-	139, // 27: trade.CancelAllOrdersReq.position_side:type_name -> trade.PositionSide
-	129, // 28: trade.CancelAllOrdersResp.base:type_name -> common.RespBase
-	149, // 29: trade.GetOrderListReq.page:type_name -> common.PageReq
-	130, // 30: trade.GetOrderListReq.product_type:type_name -> common.ProductType
-	150, // 31: trade.GetOrderListReq.status:type_name -> trade.OrderStatus
-	138, // 32: trade.GetOrderListReq.side:type_name -> common.Side
-	151, // 33: trade.GetOrderListReq.time_range:type_name -> trade.TimeRange
-	129, // 34: trade.GetOrderListResp.base:type_name -> common.RespBase
-	148, // 35: trade.GetOrderListResp.data:type_name -> trade.TradeOrder
-	129, // 36: trade.GetOrderDetailResp.base:type_name -> common.RespBase
+	136, // 7: trade.GetSymbolDetailData.symbol:type_name -> trade.TradeSymbol
+	137, // 8: trade.GetSymbolDetailData.spot:type_name -> trade.TradeSymbolSpot
+	138, // 9: trade.GetSymbolDetailData.contract:type_name -> trade.TradeSymbolContract
+	139, // 10: trade.GetSymbolDetailData.leverage_configs:type_name -> trade.TradeSymbolLeverageConfig
+	140, // 11: trade.GetSymbolDetailData.seconds_configs:type_name -> trade.TradeSymbolSeconds
+	141, // 12: trade.GetSymbolDetailData.sessions:type_name -> trade.TradeSymbolSession
+	142, // 13: trade.PlaceOrderReq.side:type_name -> common.Side
+	143, // 14: trade.PlaceOrderReq.position_side:type_name -> trade.PositionSide
+	144, // 15: trade.PlaceOrderReq.order_type:type_name -> trade.OrderType
+	145, // 16: trade.PlaceOrderReq.time_in_force:type_name -> trade.TimeInForce
+	146, // 17: trade.PlaceOrderReq.is_reduce_only:type_name -> common.YesNo
+	147, // 18: trade.PlaceOrderReq.trigger_type:type_name -> trade.TriggerType
+	148, // 19: trade.PlaceOrderReq.margin_mode:type_name -> trade.MarginMode
+	149, // 20: trade.PlaceOrderReq.order_source:type_name -> trade.OrderSourceType
+	150, // 21: trade.PlaceOrderReq.trigger_kind:type_name -> trade.TriggerKind
+	151, // 22: trade.PlaceOrderReq.seconds_direction:type_name -> trade.SecondsDirection
+	133, // 23: trade.PlaceOrderResp.base:type_name -> common.RespBase
+	152, // 24: trade.PlaceOrderResp.data:type_name -> trade.TradeOrder
+	134, // 25: trade.CancelAllOrdersReq.product_type:type_name -> common.ProductType
+	142, // 26: trade.CancelAllOrdersReq.side:type_name -> common.Side
+	143, // 27: trade.CancelAllOrdersReq.position_side:type_name -> trade.PositionSide
+	133, // 28: trade.CancelAllOrdersResp.base:type_name -> common.RespBase
+	153, // 29: trade.GetOrderListReq.page:type_name -> common.PageReq
+	134, // 30: trade.GetOrderListReq.product_type:type_name -> common.ProductType
+	154, // 31: trade.GetOrderListReq.status:type_name -> trade.OrderStatus
+	142, // 32: trade.GetOrderListReq.side:type_name -> common.Side
+	155, // 33: trade.GetOrderListReq.time_range:type_name -> trade.TimeRange
+	133, // 34: trade.GetOrderListResp.base:type_name -> common.RespBase
+	152, // 35: trade.GetOrderListResp.data:type_name -> trade.TradeOrder
+	133, // 36: trade.GetOrderDetailResp.base:type_name -> common.RespBase
 	15,  // 37: trade.GetOrderDetailResp.data:type_name -> trade.GetOrderDetailData
-	148, // 38: trade.GetOrderDetailData.order:type_name -> trade.TradeOrder
-	152, // 39: trade.GetOrderDetailData.spot:type_name -> trade.TradeOrderSpot
-	153, // 40: trade.GetOrderDetailData.contract:type_name -> trade.TradeOrderContract
-	154, // 41: trade.GetOrderDetailData.seconds:type_name -> trade.TradeOrderSeconds
-	149, // 42: trade.GetFillListReq.page:type_name -> common.PageReq
-	130, // 43: trade.GetFillListReq.product_type:type_name -> common.ProductType
-	151, // 44: trade.GetFillListReq.time_range:type_name -> trade.TimeRange
-	129, // 45: trade.GetFillListResp.base:type_name -> common.RespBase
-	155, // 46: trade.GetFillListResp.data:type_name -> trade.TradeFill
-	156, // 47: trade.GetPositionListReq.contract_type:type_name -> common.ContractType
-	129, // 48: trade.GetPositionListResp.base:type_name -> common.RespBase
-	157, // 49: trade.GetPositionListResp.data:type_name -> trade.ContractPosition
-	129, // 50: trade.GetMarginSnapshotListResp.base:type_name -> common.RespBase
-	158, // 51: trade.GetMarginSnapshotListResp.data:type_name -> trade.ContractMarginSnapshot
-	144, // 52: trade.GetLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
-	129, // 53: trade.GetLeverageConfigResp.base:type_name -> common.RespBase
-	159, // 54: trade.GetLeverageConfigResp.data:type_name -> trade.ContractLeverageConfig
-	144, // 55: trade.SetLeverageReq.margin_mode:type_name -> trade.MarginMode
-	129, // 56: trade.CommonResp.base:type_name -> common.RespBase
-	130, // 57: trade.CreateSymbolReq.product_type:type_name -> common.ProductType
-	156, // 58: trade.CreateSymbolReq.contract_type:type_name -> common.ContractType
-	160, // 59: trade.CreateSymbolReq.contract_value_type:type_name -> trade.ContractValueType
-	131, // 60: trade.CreateSymbolReq.status:type_name -> trade.SymbolStatus
-	131, // 61: trade.UpdateSymbolReq.status:type_name -> trade.SymbolStatus
-	149, // 62: trade.GetSymbolListAdminReq.page:type_name -> common.PageReq
-	130, // 63: trade.GetSymbolListAdminReq.product_type:type_name -> common.ProductType
-	131, // 64: trade.GetSymbolListAdminReq.status:type_name -> trade.SymbolStatus
-	129, // 65: trade.GetSymbolListAdminResp.base:type_name -> common.RespBase
-	132, // 66: trade.GetSymbolListAdminResp.data:type_name -> trade.TradeSymbol
-	129, // 67: trade.GetSymbolDetailAdminResp.base:type_name -> common.RespBase
+	152, // 38: trade.GetOrderDetailData.order:type_name -> trade.TradeOrder
+	156, // 39: trade.GetOrderDetailData.spot:type_name -> trade.TradeOrderSpot
+	157, // 40: trade.GetOrderDetailData.contract:type_name -> trade.TradeOrderContract
+	158, // 41: trade.GetOrderDetailData.seconds:type_name -> trade.TradeOrderSeconds
+	153, // 42: trade.GetFillListReq.page:type_name -> common.PageReq
+	134, // 43: trade.GetFillListReq.product_type:type_name -> common.ProductType
+	155, // 44: trade.GetFillListReq.time_range:type_name -> trade.TimeRange
+	133, // 45: trade.GetFillListResp.base:type_name -> common.RespBase
+	159, // 46: trade.GetFillListResp.data:type_name -> trade.TradeFill
+	160, // 47: trade.GetPositionListReq.contract_type:type_name -> common.ContractType
+	133, // 48: trade.GetPositionListResp.base:type_name -> common.RespBase
+	161, // 49: trade.GetPositionListResp.data:type_name -> trade.ContractPosition
+	133, // 50: trade.GetMarginSnapshotListResp.base:type_name -> common.RespBase
+	162, // 51: trade.GetMarginSnapshotListResp.data:type_name -> trade.ContractMarginSnapshot
+	148, // 52: trade.GetLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
+	133, // 53: trade.GetLeverageConfigResp.base:type_name -> common.RespBase
+	163, // 54: trade.GetLeverageConfigResp.data:type_name -> trade.ContractLeverageConfig
+	148, // 55: trade.SetLeverageReq.margin_mode:type_name -> trade.MarginMode
+	133, // 56: trade.CommonResp.base:type_name -> common.RespBase
+	134, // 57: trade.CreateSymbolReq.product_type:type_name -> common.ProductType
+	160, // 58: trade.CreateSymbolReq.contract_type:type_name -> common.ContractType
+	164, // 59: trade.CreateSymbolReq.contract_value_type:type_name -> trade.ContractValueType
+	135, // 60: trade.CreateSymbolReq.status:type_name -> trade.SymbolStatus
+	135, // 61: trade.UpdateSymbolReq.status:type_name -> trade.SymbolStatus
+	153, // 62: trade.GetSymbolListAdminReq.page:type_name -> common.PageReq
+	134, // 63: trade.GetSymbolListAdminReq.product_type:type_name -> common.ProductType
+	135, // 64: trade.GetSymbolListAdminReq.status:type_name -> trade.SymbolStatus
+	133, // 65: trade.GetSymbolListAdminResp.base:type_name -> common.RespBase
+	136, // 66: trade.GetSymbolListAdminResp.data:type_name -> trade.TradeSymbol
+	133, // 67: trade.GetSymbolDetailAdminResp.base:type_name -> common.RespBase
 	32,  // 68: trade.GetSymbolDetailAdminResp.data:type_name -> trade.GetSymbolDetailAdminData
-	132, // 69: trade.GetSymbolDetailAdminData.symbol:type_name -> trade.TradeSymbol
-	135, // 70: trade.GetSymbolDetailAdminData.leverage_configs:type_name -> trade.TradeSymbolLeverageConfig
-	133, // 71: trade.GetSymbolDetailAdminData.spot:type_name -> trade.TradeSymbolSpot
-	134, // 72: trade.GetSymbolDetailAdminData.contract:type_name -> trade.TradeSymbolContract
-	136, // 73: trade.GetSymbolDetailAdminData.seconds_configs:type_name -> trade.TradeSymbolSeconds
-	137, // 74: trade.GetSymbolDetailAdminData.sessions:type_name -> trade.TradeSymbolSession
-	161, // 75: trade.SetSpotSymbolConfigReq.buy_enabled:type_name -> common.Enable
-	161, // 76: trade.SetSpotSymbolConfigReq.sell_enabled:type_name -> common.Enable
-	161, // 77: trade.SetContractSymbolConfigReq.open_long_enabled:type_name -> common.Enable
-	161, // 78: trade.SetContractSymbolConfigReq.open_short_enabled:type_name -> common.Enable
-	161, // 79: trade.SetContractSymbolConfigReq.close_long_enabled:type_name -> common.Enable
-	161, // 80: trade.SetContractSymbolConfigReq.close_short_enabled:type_name -> common.Enable
-	162, // 81: trade.SetSecondsSymbolConfigReq.draw_rule:type_name -> trade.SecondsDrawRule
-	161, // 82: trade.SetSecondsSymbolConfigReq.up_enabled:type_name -> common.Enable
-	161, // 83: trade.SetSecondsSymbolConfigReq.down_enabled:type_name -> common.Enable
-	161, // 84: trade.SetSymbolSessionReq.enabled:type_name -> common.Enable
-	144, // 85: trade.SetSymbolLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
-	161, // 86: trade.SetSymbolLeverageConfigReq.enabled:type_name -> common.Enable
-	144, // 87: trade.GetSymbolLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
-	129, // 88: trade.GetSymbolLeverageConfigResp.base:type_name -> common.RespBase
-	135, // 89: trade.GetSymbolLeverageConfigResp.data:type_name -> trade.TradeSymbolLeverageConfig
-	149, // 90: trade.GetSymbolLeverageConfigListReq.page:type_name -> common.PageReq
-	144, // 91: trade.GetSymbolLeverageConfigListReq.margin_mode:type_name -> trade.MarginMode
-	161, // 92: trade.GetSymbolLeverageConfigListReq.enabled:type_name -> common.Enable
-	129, // 93: trade.GetSymbolLeverageConfigListResp.base:type_name -> common.RespBase
-	135, // 94: trade.GetSymbolLeverageConfigListResp.data:type_name -> trade.TradeSymbolLeverageConfig
-	149, // 95: trade.GetOrderListAdminReq.page:type_name -> common.PageReq
-	130, // 96: trade.GetOrderListAdminReq.product_type:type_name -> common.ProductType
-	150, // 97: trade.GetOrderListAdminReq.status:type_name -> trade.OrderStatus
-	151, // 98: trade.GetOrderListAdminReq.time_range:type_name -> trade.TimeRange
-	129, // 99: trade.GetOrderListAdminResp.base:type_name -> common.RespBase
-	148, // 100: trade.GetOrderListAdminResp.data:type_name -> trade.TradeOrder
-	129, // 101: trade.GetOrderDetailAdminResp.base:type_name -> common.RespBase
+	136, // 69: trade.GetSymbolDetailAdminData.symbol:type_name -> trade.TradeSymbol
+	139, // 70: trade.GetSymbolDetailAdminData.leverage_configs:type_name -> trade.TradeSymbolLeverageConfig
+	137, // 71: trade.GetSymbolDetailAdminData.spot:type_name -> trade.TradeSymbolSpot
+	138, // 72: trade.GetSymbolDetailAdminData.contract:type_name -> trade.TradeSymbolContract
+	140, // 73: trade.GetSymbolDetailAdminData.seconds_configs:type_name -> trade.TradeSymbolSeconds
+	141, // 74: trade.GetSymbolDetailAdminData.sessions:type_name -> trade.TradeSymbolSession
+	165, // 75: trade.SetSpotSymbolConfigReq.buy_enabled:type_name -> common.Enable
+	165, // 76: trade.SetSpotSymbolConfigReq.sell_enabled:type_name -> common.Enable
+	165, // 77: trade.SetContractSymbolConfigReq.open_long_enabled:type_name -> common.Enable
+	165, // 78: trade.SetContractSymbolConfigReq.open_short_enabled:type_name -> common.Enable
+	165, // 79: trade.SetContractSymbolConfigReq.close_long_enabled:type_name -> common.Enable
+	165, // 80: trade.SetContractSymbolConfigReq.close_short_enabled:type_name -> common.Enable
+	166, // 81: trade.SetSecondsSymbolConfigReq.draw_rule:type_name -> trade.SecondsDrawRule
+	165, // 82: trade.SetSecondsSymbolConfigReq.up_enabled:type_name -> common.Enable
+	165, // 83: trade.SetSecondsSymbolConfigReq.down_enabled:type_name -> common.Enable
+	165, // 84: trade.SetSymbolSessionReq.enabled:type_name -> common.Enable
+	148, // 85: trade.SetSymbolLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
+	165, // 86: trade.SetSymbolLeverageConfigReq.enabled:type_name -> common.Enable
+	148, // 87: trade.GetSymbolLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
+	133, // 88: trade.GetSymbolLeverageConfigResp.base:type_name -> common.RespBase
+	139, // 89: trade.GetSymbolLeverageConfigResp.data:type_name -> trade.TradeSymbolLeverageConfig
+	153, // 90: trade.GetSymbolLeverageConfigListReq.page:type_name -> common.PageReq
+	148, // 91: trade.GetSymbolLeverageConfigListReq.margin_mode:type_name -> trade.MarginMode
+	165, // 92: trade.GetSymbolLeverageConfigListReq.enabled:type_name -> common.Enable
+	133, // 93: trade.GetSymbolLeverageConfigListResp.base:type_name -> common.RespBase
+	139, // 94: trade.GetSymbolLeverageConfigListResp.data:type_name -> trade.TradeSymbolLeverageConfig
+	153, // 95: trade.GetOrderListAdminReq.page:type_name -> common.PageReq
+	134, // 96: trade.GetOrderListAdminReq.product_type:type_name -> common.ProductType
+	154, // 97: trade.GetOrderListAdminReq.status:type_name -> trade.OrderStatus
+	155, // 98: trade.GetOrderListAdminReq.time_range:type_name -> trade.TimeRange
+	133, // 99: trade.GetOrderListAdminResp.base:type_name -> common.RespBase
+	152, // 100: trade.GetOrderListAdminResp.data:type_name -> trade.TradeOrder
+	133, // 101: trade.GetOrderDetailAdminResp.base:type_name -> common.RespBase
 	15,  // 102: trade.GetOrderDetailAdminResp.data:type_name -> trade.GetOrderDetailData
-	149, // 103: trade.GetFillListAdminReq.page:type_name -> common.PageReq
-	130, // 104: trade.GetFillListAdminReq.product_type:type_name -> common.ProductType
-	151, // 105: trade.GetFillListAdminReq.time_range:type_name -> trade.TimeRange
-	129, // 106: trade.GetFillListAdminResp.base:type_name -> common.RespBase
-	155, // 107: trade.GetFillListAdminResp.data:type_name -> trade.TradeFill
-	129, // 108: trade.GetFillDetailAdminResp.base:type_name -> common.RespBase
-	155, // 109: trade.GetFillDetailAdminResp.data:type_name -> trade.TradeFill
-	149, // 110: trade.GetPositionListAdminReq.page:type_name -> common.PageReq
-	156, // 111: trade.GetPositionListAdminReq.contract_type:type_name -> common.ContractType
-	129, // 112: trade.GetPositionListAdminResp.base:type_name -> common.RespBase
-	157, // 113: trade.GetPositionListAdminResp.data:type_name -> trade.ContractPosition
-	129, // 114: trade.GetPositionDetailAdminResp.base:type_name -> common.RespBase
-	157, // 115: trade.GetPositionDetailAdminResp.data:type_name -> trade.ContractPosition
-	149, // 116: trade.GetPositionHistoryListAdminReq.page:type_name -> common.PageReq
-	156, // 117: trade.GetPositionHistoryListAdminReq.contract_type:type_name -> common.ContractType
-	163, // 118: trade.GetPositionHistoryListAdminReq.action_type:type_name -> trade.PositionActionType
-	151, // 119: trade.GetPositionHistoryListAdminReq.time_range:type_name -> trade.TimeRange
-	129, // 120: trade.GetPositionHistoryListAdminResp.base:type_name -> common.RespBase
-	164, // 121: trade.GetPositionHistoryListAdminResp.data:type_name -> trade.ContractPositionHistory
-	149, // 122: trade.GetMarginSnapshotListAdminReq.page:type_name -> common.PageReq
-	129, // 123: trade.GetMarginSnapshotListAdminResp.base:type_name -> common.RespBase
-	158, // 124: trade.GetMarginSnapshotListAdminResp.data:type_name -> trade.ContractMarginSnapshot
-	149, // 125: trade.GetCancelLogListAdminReq.page:type_name -> common.PageReq
-	165, // 126: trade.GetCancelLogListAdminReq.cancel_source:type_name -> trade.CancelSource
-	151, // 127: trade.GetCancelLogListAdminReq.time_range:type_name -> trade.TimeRange
-	129, // 128: trade.GetCancelLogListAdminResp.base:type_name -> common.RespBase
-	166, // 129: trade.GetCancelLogListAdminResp.data:type_name -> trade.TradeCancelLog
-	130, // 130: trade.SetUserTradeLimitReq.product_type:type_name -> common.ProductType
-	161, // 131: trade.SetUserTradeLimitReq.trade_enabled:type_name -> common.Enable
-	161, // 132: trade.SetUserTradeLimitReq.only_reduce_only:type_name -> common.Enable
-	167, // 133: trade.SetUserTradeLimitReq.source:type_name -> trade.SourceType
-	161, // 134: trade.SetUserTradeLimitReq.enabled:type_name -> common.Enable
-	167, // 135: trade.SetUserSymbolLimitReq.source:type_name -> trade.SourceType
-	161, // 136: trade.SetUserSymbolLimitReq.enabled:type_name -> common.Enable
-	130, // 137: trade.GetUserTradeLimitReq.product_type:type_name -> common.ProductType
-	129, // 138: trade.GetUserTradeLimitResp.base:type_name -> common.RespBase
-	168, // 139: trade.GetUserTradeLimitResp.data:type_name -> trade.RiskUserTradeLimit
-	129, // 140: trade.GetUserSymbolLimitResp.base:type_name -> common.RespBase
-	169, // 141: trade.GetUserSymbolLimitResp.data:type_name -> trade.RiskUserSymbolLimit
-	130, // 142: trade.SetUserTradeConfigReq.product_type:type_name -> common.ProductType
-	161, // 143: trade.SetUserTradeConfigReq.trade_enabled:type_name -> common.Enable
-	130, // 144: trade.GetUserTradeConfigReq.product_type:type_name -> common.ProductType
-	129, // 145: trade.GetUserTradeConfigResp.base:type_name -> common.RespBase
-	170, // 146: trade.GetUserTradeConfigResp.data:type_name -> trade.TradeUserConfig
-	171, // 147: trade.SetContractUserConfigReq.position_mode:type_name -> trade.PositionMode
-	144, // 148: trade.SetContractUserConfigReq.margin_mode:type_name -> trade.MarginMode
-	129, // 149: trade.GetContractUserConfigResp.base:type_name -> common.RespBase
-	172, // 150: trade.GetContractUserConfigResp.data:type_name -> trade.ContractUserConfig
-	149, // 151: trade.GetRiskOrderCheckLogListReq.page:type_name -> common.PageReq
-	130, // 152: trade.GetRiskOrderCheckLogListReq.product_type:type_name -> common.ProductType
-	173, // 153: trade.GetRiskOrderCheckLogListReq.check_type:type_name -> trade.RiskCheckType
-	174, // 154: trade.GetRiskOrderCheckLogListReq.check_result:type_name -> trade.RiskCheckResult
-	151, // 155: trade.GetRiskOrderCheckLogListReq.time_range:type_name -> trade.TimeRange
-	129, // 156: trade.GetRiskOrderCheckLogListResp.base:type_name -> common.RespBase
-	175, // 157: trade.GetRiskOrderCheckLogListResp.data:type_name -> trade.RiskOrderCheckLog
-	144, // 158: trade.SetUserLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
-	167, // 159: trade.SetUserLeverageConfigReq.source:type_name -> trade.SourceType
-	161, // 160: trade.SetUserLeverageConfigReq.enabled:type_name -> common.Enable
-	144, // 161: trade.GetUserLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
-	129, // 162: trade.GetUserLeverageConfigResp.base:type_name -> common.RespBase
-	159, // 163: trade.GetUserLeverageConfigResp.data:type_name -> trade.ContractLeverageConfig
-	149, // 164: trade.GetTradeEventListReq.page:type_name -> common.PageReq
-	176, // 165: trade.GetTradeEventListReq.event_status:type_name -> trade.EventStatus
-	151, // 166: trade.GetTradeEventListReq.time_range:type_name -> trade.TimeRange
-	129, // 167: trade.GetTradeEventListResp.base:type_name -> common.RespBase
-	177, // 168: trade.GetTradeEventListResp.data:type_name -> trade.BizTradeEvent
-	129, // 169: trade.GetTradeEventDetailResp.base:type_name -> common.RespBase
-	177, // 170: trade.GetTradeEventDetailResp.data:type_name -> trade.BizTradeEvent
-	161, // 171: trade.SetContractRiskLimitTierReq.enabled:type_name -> common.Enable
-	161, // 172: trade.ContractRiskLimitTier.enabled:type_name -> common.Enable
-	149, // 173: trade.GetContractRiskLimitTierListReq.page:type_name -> common.PageReq
-	161, // 174: trade.GetContractRiskLimitTierListReq.enabled:type_name -> common.Enable
-	129, // 175: trade.GetContractRiskLimitTierListResp.base:type_name -> common.RespBase
+	153, // 103: trade.GetFillListAdminReq.page:type_name -> common.PageReq
+	134, // 104: trade.GetFillListAdminReq.product_type:type_name -> common.ProductType
+	155, // 105: trade.GetFillListAdminReq.time_range:type_name -> trade.TimeRange
+	133, // 106: trade.GetFillListAdminResp.base:type_name -> common.RespBase
+	159, // 107: trade.GetFillListAdminResp.data:type_name -> trade.TradeFill
+	133, // 108: trade.GetFillDetailAdminResp.base:type_name -> common.RespBase
+	159, // 109: trade.GetFillDetailAdminResp.data:type_name -> trade.TradeFill
+	153, // 110: trade.GetPositionListAdminReq.page:type_name -> common.PageReq
+	160, // 111: trade.GetPositionListAdminReq.contract_type:type_name -> common.ContractType
+	133, // 112: trade.GetPositionListAdminResp.base:type_name -> common.RespBase
+	161, // 113: trade.GetPositionListAdminResp.data:type_name -> trade.ContractPosition
+	133, // 114: trade.GetPositionDetailAdminResp.base:type_name -> common.RespBase
+	161, // 115: trade.GetPositionDetailAdminResp.data:type_name -> trade.ContractPosition
+	153, // 116: trade.GetPositionHistoryListAdminReq.page:type_name -> common.PageReq
+	160, // 117: trade.GetPositionHistoryListAdminReq.contract_type:type_name -> common.ContractType
+	167, // 118: trade.GetPositionHistoryListAdminReq.action_type:type_name -> trade.PositionActionType
+	155, // 119: trade.GetPositionHistoryListAdminReq.time_range:type_name -> trade.TimeRange
+	133, // 120: trade.GetPositionHistoryListAdminResp.base:type_name -> common.RespBase
+	168, // 121: trade.GetPositionHistoryListAdminResp.data:type_name -> trade.ContractPositionHistory
+	153, // 122: trade.GetMarginSnapshotListAdminReq.page:type_name -> common.PageReq
+	133, // 123: trade.GetMarginSnapshotListAdminResp.base:type_name -> common.RespBase
+	162, // 124: trade.GetMarginSnapshotListAdminResp.data:type_name -> trade.ContractMarginSnapshot
+	153, // 125: trade.GetCancelLogListAdminReq.page:type_name -> common.PageReq
+	169, // 126: trade.GetCancelLogListAdminReq.cancel_source:type_name -> trade.CancelSource
+	155, // 127: trade.GetCancelLogListAdminReq.time_range:type_name -> trade.TimeRange
+	133, // 128: trade.GetCancelLogListAdminResp.base:type_name -> common.RespBase
+	170, // 129: trade.GetCancelLogListAdminResp.data:type_name -> trade.TradeCancelLog
+	134, // 130: trade.SetUserTradeLimitReq.product_type:type_name -> common.ProductType
+	165, // 131: trade.SetUserTradeLimitReq.trade_enabled:type_name -> common.Enable
+	165, // 132: trade.SetUserTradeLimitReq.only_reduce_only:type_name -> common.Enable
+	171, // 133: trade.SetUserTradeLimitReq.source:type_name -> trade.SourceType
+	165, // 134: trade.SetUserTradeLimitReq.enabled:type_name -> common.Enable
+	171, // 135: trade.SetUserSymbolLimitReq.source:type_name -> trade.SourceType
+	165, // 136: trade.SetUserSymbolLimitReq.enabled:type_name -> common.Enable
+	134, // 137: trade.GetUserTradeLimitReq.product_type:type_name -> common.ProductType
+	133, // 138: trade.GetUserTradeLimitResp.base:type_name -> common.RespBase
+	172, // 139: trade.GetUserTradeLimitResp.data:type_name -> trade.RiskUserTradeLimit
+	133, // 140: trade.GetUserSymbolLimitResp.base:type_name -> common.RespBase
+	173, // 141: trade.GetUserSymbolLimitResp.data:type_name -> trade.RiskUserSymbolLimit
+	134, // 142: trade.SetUserTradeConfigReq.product_type:type_name -> common.ProductType
+	165, // 143: trade.SetUserTradeConfigReq.trade_enabled:type_name -> common.Enable
+	134, // 144: trade.GetUserTradeConfigReq.product_type:type_name -> common.ProductType
+	133, // 145: trade.GetUserTradeConfigResp.base:type_name -> common.RespBase
+	174, // 146: trade.GetUserTradeConfigResp.data:type_name -> trade.TradeUserConfig
+	175, // 147: trade.SetContractUserConfigReq.position_mode:type_name -> trade.PositionMode
+	148, // 148: trade.SetContractUserConfigReq.margin_mode:type_name -> trade.MarginMode
+	133, // 149: trade.GetContractUserConfigResp.base:type_name -> common.RespBase
+	176, // 150: trade.GetContractUserConfigResp.data:type_name -> trade.ContractUserConfig
+	153, // 151: trade.GetRiskOrderCheckLogListReq.page:type_name -> common.PageReq
+	134, // 152: trade.GetRiskOrderCheckLogListReq.product_type:type_name -> common.ProductType
+	177, // 153: trade.GetRiskOrderCheckLogListReq.check_type:type_name -> trade.RiskCheckType
+	178, // 154: trade.GetRiskOrderCheckLogListReq.check_result:type_name -> trade.RiskCheckResult
+	155, // 155: trade.GetRiskOrderCheckLogListReq.time_range:type_name -> trade.TimeRange
+	133, // 156: trade.GetRiskOrderCheckLogListResp.base:type_name -> common.RespBase
+	179, // 157: trade.GetRiskOrderCheckLogListResp.data:type_name -> trade.RiskOrderCheckLog
+	148, // 158: trade.SetUserLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
+	171, // 159: trade.SetUserLeverageConfigReq.source:type_name -> trade.SourceType
+	165, // 160: trade.SetUserLeverageConfigReq.enabled:type_name -> common.Enable
+	148, // 161: trade.GetUserLeverageConfigReq.margin_mode:type_name -> trade.MarginMode
+	133, // 162: trade.GetUserLeverageConfigResp.base:type_name -> common.RespBase
+	163, // 163: trade.GetUserLeverageConfigResp.data:type_name -> trade.ContractLeverageConfig
+	153, // 164: trade.GetTradeEventListReq.page:type_name -> common.PageReq
+	180, // 165: trade.GetTradeEventListReq.event_status:type_name -> trade.EventStatus
+	155, // 166: trade.GetTradeEventListReq.time_range:type_name -> trade.TimeRange
+	133, // 167: trade.GetTradeEventListResp.base:type_name -> common.RespBase
+	181, // 168: trade.GetTradeEventListResp.data:type_name -> trade.BizTradeEvent
+	133, // 169: trade.GetTradeEventDetailResp.base:type_name -> common.RespBase
+	181, // 170: trade.GetTradeEventDetailResp.data:type_name -> trade.BizTradeEvent
+	165, // 171: trade.SetContractRiskLimitTierReq.enabled:type_name -> common.Enable
+	165, // 172: trade.ContractRiskLimitTier.enabled:type_name -> common.Enable
+	153, // 173: trade.GetContractRiskLimitTierListReq.page:type_name -> common.PageReq
+	165, // 174: trade.GetContractRiskLimitTierListReq.enabled:type_name -> common.Enable
+	133, // 175: trade.GetContractRiskLimitTierListResp.base:type_name -> common.RespBase
 	83,  // 176: trade.GetContractRiskLimitTierListResp.data:type_name -> trade.ContractRiskLimitTier
-	178, // 177: trade.ContractFundingBatch.status:type_name -> trade.FundingBatchStatus
-	149, // 178: trade.GetFundingBatchListReq.page:type_name -> common.PageReq
-	178, // 179: trade.GetFundingBatchListReq.status:type_name -> trade.FundingBatchStatus
-	151, // 180: trade.GetFundingBatchListReq.time_range:type_name -> trade.TimeRange
-	129, // 181: trade.GetFundingBatchListResp.base:type_name -> common.RespBase
+	182, // 177: trade.ContractFundingBatch.status:type_name -> trade.FundingBatchStatus
+	153, // 178: trade.GetFundingBatchListReq.page:type_name -> common.PageReq
+	182, // 179: trade.GetFundingBatchListReq.status:type_name -> trade.FundingBatchStatus
+	155, // 180: trade.GetFundingBatchListReq.time_range:type_name -> trade.TimeRange
+	133, // 181: trade.GetFundingBatchListResp.base:type_name -> common.RespBase
 	86,  // 182: trade.GetFundingBatchListResp.data:type_name -> trade.ContractFundingBatch
-	139, // 183: trade.ContractFundingSettlement.position_side:type_name -> trade.PositionSide
-	179, // 184: trade.ContractFundingSettlement.status:type_name -> trade.FundingSettlementStatus
-	149, // 185: trade.GetFundingSettlementListReq.page:type_name -> common.PageReq
-	179, // 186: trade.GetFundingSettlementListReq.status:type_name -> trade.FundingSettlementStatus
-	129, // 187: trade.GetFundingSettlementListResp.base:type_name -> common.RespBase
+	143, // 183: trade.ContractFundingSettlement.position_side:type_name -> trade.PositionSide
+	183, // 184: trade.ContractFundingSettlement.status:type_name -> trade.FundingSettlementStatus
+	153, // 185: trade.GetFundingSettlementListReq.page:type_name -> common.PageReq
+	183, // 186: trade.GetFundingSettlementListReq.status:type_name -> trade.FundingSettlementStatus
+	133, // 187: trade.GetFundingSettlementListResp.base:type_name -> common.RespBase
 	89,  // 188: trade.GetFundingSettlementListResp.data:type_name -> trade.ContractFundingSettlement
-	180, // 189: trade.ContractDeliveryBatch.status:type_name -> trade.DeliveryBatchStatus
-	149, // 190: trade.GetDeliveryBatchListReq.page:type_name -> common.PageReq
-	180, // 191: trade.GetDeliveryBatchListReq.status:type_name -> trade.DeliveryBatchStatus
-	151, // 192: trade.GetDeliveryBatchListReq.time_range:type_name -> trade.TimeRange
-	129, // 193: trade.GetDeliveryBatchListResp.base:type_name -> common.RespBase
+	184, // 189: trade.ContractDeliveryBatch.status:type_name -> trade.DeliveryBatchStatus
+	153, // 190: trade.GetDeliveryBatchListReq.page:type_name -> common.PageReq
+	184, // 191: trade.GetDeliveryBatchListReq.status:type_name -> trade.DeliveryBatchStatus
+	155, // 192: trade.GetDeliveryBatchListReq.time_range:type_name -> trade.TimeRange
+	133, // 193: trade.GetDeliveryBatchListResp.base:type_name -> common.RespBase
 	92,  // 194: trade.GetDeliveryBatchListResp.data:type_name -> trade.ContractDeliveryBatch
-	139, // 195: trade.ContractDeliverySettlement.position_side:type_name -> trade.PositionSide
-	181, // 196: trade.ContractDeliverySettlement.status:type_name -> trade.DeliverySettlementStatus
-	149, // 197: trade.GetDeliverySettlementListReq.page:type_name -> common.PageReq
-	181, // 198: trade.GetDeliverySettlementListReq.status:type_name -> trade.DeliverySettlementStatus
-	129, // 199: trade.GetDeliverySettlementListResp.base:type_name -> common.RespBase
+	143, // 195: trade.ContractDeliverySettlement.position_side:type_name -> trade.PositionSide
+	185, // 196: trade.ContractDeliverySettlement.status:type_name -> trade.DeliverySettlementStatus
+	153, // 197: trade.GetDeliverySettlementListReq.page:type_name -> common.PageReq
+	185, // 198: trade.GetDeliverySettlementListReq.status:type_name -> trade.DeliverySettlementStatus
+	133, // 199: trade.GetDeliverySettlementListResp.base:type_name -> common.RespBase
 	95,  // 200: trade.GetDeliverySettlementListResp.data:type_name -> trade.ContractDeliverySettlement
-	139, // 201: trade.ContractLiquidation.position_side:type_name -> trade.PositionSide
-	144, // 202: trade.ContractLiquidation.margin_mode:type_name -> trade.MarginMode
-	182, // 203: trade.ContractLiquidation.status:type_name -> trade.LiquidationStatus
-	149, // 204: trade.GetLiquidationListReq.page:type_name -> common.PageReq
-	182, // 205: trade.GetLiquidationListReq.status:type_name -> trade.LiquidationStatus
-	151, // 206: trade.GetLiquidationListReq.time_range:type_name -> trade.TimeRange
-	129, // 207: trade.GetLiquidationListResp.base:type_name -> common.RespBase
+	143, // 201: trade.ContractLiquidation.position_side:type_name -> trade.PositionSide
+	148, // 202: trade.ContractLiquidation.margin_mode:type_name -> trade.MarginMode
+	186, // 203: trade.ContractLiquidation.status:type_name -> trade.LiquidationStatus
+	153, // 204: trade.GetLiquidationListReq.page:type_name -> common.PageReq
+	186, // 205: trade.GetLiquidationListReq.status:type_name -> trade.LiquidationStatus
+	155, // 206: trade.GetLiquidationListReq.time_range:type_name -> trade.TimeRange
+	133, // 207: trade.GetLiquidationListResp.base:type_name -> common.RespBase
 	98,  // 208: trade.GetLiquidationListResp.data:type_name -> trade.ContractLiquidation
-	183, // 209: trade.TradeSecondsPriceSnapshot.snapshot_type:type_name -> trade.SecondsPriceSnapshotType
-	149, // 210: trade.GetSecondsPriceSnapshotListReq.page:type_name -> common.PageReq
-	183, // 211: trade.GetSecondsPriceSnapshotListReq.snapshot_type:type_name -> trade.SecondsPriceSnapshotType
-	129, // 212: trade.GetSecondsPriceSnapshotListResp.base:type_name -> common.RespBase
+	187, // 209: trade.TradeSecondsPriceSnapshot.snapshot_type:type_name -> trade.SecondsPriceSnapshotType
+	153, // 210: trade.GetSecondsPriceSnapshotListReq.page:type_name -> common.PageReq
+	187, // 211: trade.GetSecondsPriceSnapshotListReq.snapshot_type:type_name -> trade.SecondsPriceSnapshotType
+	133, // 212: trade.GetSecondsPriceSnapshotListResp.base:type_name -> common.RespBase
 	101, // 213: trade.GetSecondsPriceSnapshotListResp.data:type_name -> trade.TradeSecondsPriceSnapshot
-	142, // 214: trade.InsuranceFundAccount.adl_enabled:type_name -> common.YesNo
-	161, // 215: trade.InsuranceFundAccount.status:type_name -> common.Enable
-	142, // 216: trade.SetInsuranceFundAccountReq.adl_enabled:type_name -> common.YesNo
-	161, // 217: trade.SetInsuranceFundAccountReq.status:type_name -> common.Enable
-	149, // 218: trade.GetInsuranceFundAccountListReq.page:type_name -> common.PageReq
-	161, // 219: trade.GetInsuranceFundAccountListReq.status:type_name -> common.Enable
-	129, // 220: trade.GetInsuranceFundAccountListResp.base:type_name -> common.RespBase
+	146, // 214: trade.InsuranceFundAccount.adl_enabled:type_name -> common.YesNo
+	165, // 215: trade.InsuranceFundAccount.status:type_name -> common.Enable
+	146, // 216: trade.SetInsuranceFundAccountReq.adl_enabled:type_name -> common.YesNo
+	165, // 217: trade.SetInsuranceFundAccountReq.status:type_name -> common.Enable
+	153, // 218: trade.GetInsuranceFundAccountListReq.page:type_name -> common.PageReq
+	165, // 219: trade.GetInsuranceFundAccountListReq.status:type_name -> common.Enable
+	133, // 220: trade.GetInsuranceFundAccountListResp.base:type_name -> common.RespBase
 	104, // 221: trade.GetInsuranceFundAccountListResp.data:type_name -> trade.InsuranceFundAccount
-	142, // 222: trade.TradeMarketSnapshot.confirmed:type_name -> common.YesNo
-	149, // 223: trade.GetMarketSnapshotListReq.page:type_name -> common.PageReq
-	129, // 224: trade.GetMarketSnapshotListResp.base:type_name -> common.RespBase
+	146, // 222: trade.TradeMarketSnapshot.confirmed:type_name -> common.YesNo
+	153, // 223: trade.GetMarketSnapshotListReq.page:type_name -> common.PageReq
+	133, // 224: trade.GetMarketSnapshotListResp.base:type_name -> common.RespBase
 	108, // 225: trade.GetMarketSnapshotListResp.data:type_name -> trade.TradeMarketSnapshot
-	184, // 226: trade.TradeAssetReservation.status:type_name -> trade.AssetReservationStatus
-	149, // 227: trade.GetAssetReservationListReq.page:type_name -> common.PageReq
-	184, // 228: trade.GetAssetReservationListReq.status:type_name -> trade.AssetReservationStatus
-	129, // 229: trade.GetAssetReservationListResp.base:type_name -> common.RespBase
+	188, // 226: trade.TradeAssetReservation.status:type_name -> trade.AssetReservationStatus
+	153, // 227: trade.GetAssetReservationListReq.page:type_name -> common.PageReq
+	188, // 228: trade.GetAssetReservationListReq.status:type_name -> trade.AssetReservationStatus
+	133, // 229: trade.GetAssetReservationListResp.base:type_name -> common.RespBase
 	111, // 230: trade.GetAssetReservationListResp.data:type_name -> trade.TradeAssetReservation
-	185, // 231: trade.TradeSettlementInstruction.action:type_name -> trade.SettlementInstructionAction
-	186, // 232: trade.TradeSettlementInstruction.status:type_name -> trade.SettlementInstructionStatus
-	149, // 233: trade.GetSettlementInstructionListReq.page:type_name -> common.PageReq
-	186, // 234: trade.GetSettlementInstructionListReq.status:type_name -> trade.SettlementInstructionStatus
-	129, // 235: trade.GetSettlementInstructionListResp.base:type_name -> common.RespBase
+	189, // 231: trade.TradeSettlementInstruction.action:type_name -> trade.SettlementInstructionAction
+	190, // 232: trade.TradeSettlementInstruction.status:type_name -> trade.SettlementInstructionStatus
+	153, // 233: trade.GetSettlementInstructionListReq.page:type_name -> common.PageReq
+	190, // 234: trade.GetSettlementInstructionListReq.status:type_name -> trade.SettlementInstructionStatus
+	133, // 235: trade.GetSettlementInstructionListResp.base:type_name -> common.RespBase
 	114, // 236: trade.GetSettlementInstructionListResp.data:type_name -> trade.TradeSettlementInstruction
-	6,   // 237: trade.PlaceLiquidityQuoteReq.order:type_name -> trade.PlaceOrderReq
-	8,   // 238: trade.CancelLiquidityQuoteReq.order:type_name -> trade.CancelOrderReq
-	13,  // 239: trade.GetLiquidityQuoteReq.order:type_name -> trade.GetOrderDetailReq
-	129, // 240: trade.InternalCommonResp.base:type_name -> common.RespBase
-	155, // 241: trade.RecordOrderFillReq.fill:type_name -> trade.TradeFill
-	164, // 242: trade.RecordPositionHistoryReq.history:type_name -> trade.ContractPositionHistory
-	177, // 243: trade.CreateTradeEventReq.event:type_name -> trade.BizTradeEvent
-	138, // 244: trade.CheckOrderRiskReq.side:type_name -> common.Side
-	139, // 245: trade.CheckOrderRiskReq.position_side:type_name -> trade.PositionSide
-	140, // 246: trade.CheckOrderRiskReq.order_type:type_name -> trade.OrderType
-	129, // 247: trade.TradeTaskResp.base:type_name -> common.RespBase
-	1,   // 248: trade.App.GetSymbolList:input_type -> trade.GetSymbolListReq
-	3,   // 249: trade.App.GetSymbolDetail:input_type -> trade.GetSymbolDetailReq
-	6,   // 250: trade.App.PlaceOrder:input_type -> trade.PlaceOrderReq
-	8,   // 251: trade.App.CancelOrder:input_type -> trade.CancelOrderReq
-	9,   // 252: trade.App.CancelAllOrders:input_type -> trade.CancelAllOrdersReq
-	11,  // 253: trade.App.GetOrderList:input_type -> trade.GetOrderListReq
-	13,  // 254: trade.App.GetOrderDetail:input_type -> trade.GetOrderDetailReq
-	16,  // 255: trade.App.GetFillList:input_type -> trade.GetFillListReq
-	18,  // 256: trade.App.GetPositionList:input_type -> trade.GetPositionListReq
-	20,  // 257: trade.App.GetMarginSnapshotList:input_type -> trade.GetMarginSnapshotListReq
-	22,  // 258: trade.App.GetLeverageConfig:input_type -> trade.GetLeverageConfigReq
-	24,  // 259: trade.App.SetLeverage:input_type -> trade.SetLeverageReq
-	26,  // 260: trade.Admin.CreateSymbol:input_type -> trade.CreateSymbolReq
-	27,  // 261: trade.Admin.UpdateSymbol:input_type -> trade.UpdateSymbolReq
-	28,  // 262: trade.Admin.GetSymbolListAdmin:input_type -> trade.GetSymbolListAdminReq
-	30,  // 263: trade.Admin.GetSymbolDetailAdmin:input_type -> trade.GetSymbolDetailAdminReq
-	33,  // 264: trade.Admin.SetSpotSymbolConfig:input_type -> trade.SetSpotSymbolConfigReq
-	34,  // 265: trade.Admin.SetContractSymbolConfig:input_type -> trade.SetContractSymbolConfigReq
-	35,  // 266: trade.Admin.SetSecondsSymbolConfig:input_type -> trade.SetSecondsSymbolConfigReq
-	36,  // 267: trade.Admin.SetSymbolSession:input_type -> trade.SetSymbolSessionReq
-	37,  // 268: trade.Admin.SetSymbolLeverageConfig:input_type -> trade.SetSymbolLeverageConfigReq
-	38,  // 269: trade.Admin.GetSymbolLeverageConfig:input_type -> trade.GetSymbolLeverageConfigReq
-	40,  // 270: trade.Admin.GetSymbolLeverageConfigList:input_type -> trade.GetSymbolLeverageConfigListReq
-	42,  // 271: trade.Admin.GetOrderListAdmin:input_type -> trade.GetOrderListAdminReq
-	44,  // 272: trade.Admin.GetOrderDetailAdmin:input_type -> trade.GetOrderDetailAdminReq
-	46,  // 273: trade.Admin.GetFillListAdmin:input_type -> trade.GetFillListAdminReq
-	48,  // 274: trade.Admin.GetFillDetailAdmin:input_type -> trade.GetFillDetailAdminReq
-	50,  // 275: trade.Admin.GetPositionListAdmin:input_type -> trade.GetPositionListAdminReq
-	52,  // 276: trade.Admin.GetPositionDetailAdmin:input_type -> trade.GetPositionDetailAdminReq
-	54,  // 277: trade.Admin.GetPositionHistoryListAdmin:input_type -> trade.GetPositionHistoryListAdminReq
-	56,  // 278: trade.Admin.GetMarginSnapshotListAdmin:input_type -> trade.GetMarginSnapshotListAdminReq
-	58,  // 279: trade.Admin.GetCancelLogListAdmin:input_type -> trade.GetCancelLogListAdminReq
-	60,  // 280: trade.Admin.SetUserTradeLimit:input_type -> trade.SetUserTradeLimitReq
-	61,  // 281: trade.Admin.SetUserSymbolLimit:input_type -> trade.SetUserSymbolLimitReq
-	62,  // 282: trade.Admin.GetUserTradeLimit:input_type -> trade.GetUserTradeLimitReq
-	64,  // 283: trade.Admin.GetUserSymbolLimit:input_type -> trade.GetUserSymbolLimitReq
-	66,  // 284: trade.Admin.SetUserTradeConfig:input_type -> trade.SetUserTradeConfigReq
-	67,  // 285: trade.Admin.GetUserTradeConfig:input_type -> trade.GetUserTradeConfigReq
-	69,  // 286: trade.Admin.SetContractUserConfig:input_type -> trade.SetContractUserConfigReq
-	70,  // 287: trade.Admin.GetContractUserConfig:input_type -> trade.GetContractUserConfigReq
-	72,  // 288: trade.Admin.GetRiskOrderCheckLogList:input_type -> trade.GetRiskOrderCheckLogListReq
-	74,  // 289: trade.Admin.SetUserLeverageConfig:input_type -> trade.SetUserLeverageConfigReq
-	75,  // 290: trade.Admin.GetUserLeverageConfig:input_type -> trade.GetUserLeverageConfigReq
-	77,  // 291: trade.Admin.GetTradeEventList:input_type -> trade.GetTradeEventListReq
-	79,  // 292: trade.Admin.GetTradeEventDetail:input_type -> trade.GetTradeEventDetailReq
-	81,  // 293: trade.Admin.RetryTradeEvent:input_type -> trade.RetryTradeEventReq
-	82,  // 294: trade.Admin.SetContractRiskLimitTier:input_type -> trade.SetContractRiskLimitTierReq
-	84,  // 295: trade.Admin.GetContractRiskLimitTierList:input_type -> trade.GetContractRiskLimitTierListReq
-	87,  // 296: trade.Admin.GetFundingBatchList:input_type -> trade.GetFundingBatchListReq
-	90,  // 297: trade.Admin.GetFundingSettlementList:input_type -> trade.GetFundingSettlementListReq
-	93,  // 298: trade.Admin.GetDeliveryBatchList:input_type -> trade.GetDeliveryBatchListReq
-	96,  // 299: trade.Admin.GetDeliverySettlementList:input_type -> trade.GetDeliverySettlementListReq
-	99,  // 300: trade.Admin.GetLiquidationList:input_type -> trade.GetLiquidationListReq
-	102, // 301: trade.Admin.GetSecondsPriceSnapshotList:input_type -> trade.GetSecondsPriceSnapshotListReq
-	112, // 302: trade.Admin.GetAssetReservationList:input_type -> trade.GetAssetReservationListReq
-	115, // 303: trade.Admin.GetSettlementInstructionList:input_type -> trade.GetSettlementInstructionListReq
-	117, // 304: trade.Admin.RetrySettlementInstruction:input_type -> trade.RetrySettlementInstructionReq
-	105, // 305: trade.Admin.SetInsuranceFundAccount:input_type -> trade.SetInsuranceFundAccountReq
-	106, // 306: trade.Admin.GetInsuranceFundAccountList:input_type -> trade.GetInsuranceFundAccountListReq
-	109, // 307: trade.Admin.GetMarketSnapshotList:input_type -> trade.GetMarketSnapshotListReq
-	28,  // 308: trade.Trade.GetSymbolList:input_type -> trade.GetSymbolListAdminReq
-	3,   // 309: trade.Trade.GetSymbolDetail:input_type -> trade.GetSymbolDetailReq
-	118, // 310: trade.Trade.PlaceLiquidityQuote:input_type -> trade.PlaceLiquidityQuoteReq
-	119, // 311: trade.Trade.CancelLiquidityQuote:input_type -> trade.CancelLiquidityQuoteReq
-	120, // 312: trade.Trade.GetLiquidityQuote:input_type -> trade.GetLiquidityQuoteReq
-	123, // 313: trade.Trade.RecordPositionHistory:input_type -> trade.RecordPositionHistoryReq
-	124, // 314: trade.Trade.CreateTradeEvent:input_type -> trade.CreateTradeEventReq
-	125, // 315: trade.Trade.CheckOrderRisk:input_type -> trade.CheckOrderRiskReq
-	127, // 316: trade.Task.ProcessOrderMatching:input_type -> trade.TradeTaskReq
-	127, // 317: trade.Task.ProcessPositions:input_type -> trade.TradeTaskReq
-	127, // 318: trade.Task.ProcessContractSettlements:input_type -> trade.TradeTaskReq
-	127, // 319: trade.Task.ProcessSecondsSettlements:input_type -> trade.TradeTaskReq
-	127, // 320: trade.Task.ProcessTradeEvents:input_type -> trade.TradeTaskReq
-	127, // 321: trade.Task.ExpireRiskLimits:input_type -> trade.TradeTaskReq
-	127, // 322: trade.Task.ArchiveLiquidityOrders:input_type -> trade.TradeTaskReq
-	2,   // 323: trade.App.GetSymbolList:output_type -> trade.GetSymbolListResp
-	4,   // 324: trade.App.GetSymbolDetail:output_type -> trade.GetSymbolDetailResp
-	7,   // 325: trade.App.PlaceOrder:output_type -> trade.PlaceOrderResp
-	0,   // 326: trade.App.CancelOrder:output_type -> trade.UserCommonResp
-	10,  // 327: trade.App.CancelAllOrders:output_type -> trade.CancelAllOrdersResp
-	12,  // 328: trade.App.GetOrderList:output_type -> trade.GetOrderListResp
-	14,  // 329: trade.App.GetOrderDetail:output_type -> trade.GetOrderDetailResp
-	17,  // 330: trade.App.GetFillList:output_type -> trade.GetFillListResp
-	19,  // 331: trade.App.GetPositionList:output_type -> trade.GetPositionListResp
-	21,  // 332: trade.App.GetMarginSnapshotList:output_type -> trade.GetMarginSnapshotListResp
-	23,  // 333: trade.App.GetLeverageConfig:output_type -> trade.GetLeverageConfigResp
-	0,   // 334: trade.App.SetLeverage:output_type -> trade.UserCommonResp
-	25,  // 335: trade.Admin.CreateSymbol:output_type -> trade.CommonResp
-	25,  // 336: trade.Admin.UpdateSymbol:output_type -> trade.CommonResp
-	29,  // 337: trade.Admin.GetSymbolListAdmin:output_type -> trade.GetSymbolListAdminResp
-	31,  // 338: trade.Admin.GetSymbolDetailAdmin:output_type -> trade.GetSymbolDetailAdminResp
-	25,  // 339: trade.Admin.SetSpotSymbolConfig:output_type -> trade.CommonResp
-	25,  // 340: trade.Admin.SetContractSymbolConfig:output_type -> trade.CommonResp
-	25,  // 341: trade.Admin.SetSecondsSymbolConfig:output_type -> trade.CommonResp
-	25,  // 342: trade.Admin.SetSymbolSession:output_type -> trade.CommonResp
-	25,  // 343: trade.Admin.SetSymbolLeverageConfig:output_type -> trade.CommonResp
-	39,  // 344: trade.Admin.GetSymbolLeverageConfig:output_type -> trade.GetSymbolLeverageConfigResp
-	41,  // 345: trade.Admin.GetSymbolLeverageConfigList:output_type -> trade.GetSymbolLeverageConfigListResp
-	43,  // 346: trade.Admin.GetOrderListAdmin:output_type -> trade.GetOrderListAdminResp
-	45,  // 347: trade.Admin.GetOrderDetailAdmin:output_type -> trade.GetOrderDetailAdminResp
-	47,  // 348: trade.Admin.GetFillListAdmin:output_type -> trade.GetFillListAdminResp
-	49,  // 349: trade.Admin.GetFillDetailAdmin:output_type -> trade.GetFillDetailAdminResp
-	51,  // 350: trade.Admin.GetPositionListAdmin:output_type -> trade.GetPositionListAdminResp
-	53,  // 351: trade.Admin.GetPositionDetailAdmin:output_type -> trade.GetPositionDetailAdminResp
-	55,  // 352: trade.Admin.GetPositionHistoryListAdmin:output_type -> trade.GetPositionHistoryListAdminResp
-	57,  // 353: trade.Admin.GetMarginSnapshotListAdmin:output_type -> trade.GetMarginSnapshotListAdminResp
-	59,  // 354: trade.Admin.GetCancelLogListAdmin:output_type -> trade.GetCancelLogListAdminResp
-	25,  // 355: trade.Admin.SetUserTradeLimit:output_type -> trade.CommonResp
-	25,  // 356: trade.Admin.SetUserSymbolLimit:output_type -> trade.CommonResp
-	63,  // 357: trade.Admin.GetUserTradeLimit:output_type -> trade.GetUserTradeLimitResp
-	65,  // 358: trade.Admin.GetUserSymbolLimit:output_type -> trade.GetUserSymbolLimitResp
-	25,  // 359: trade.Admin.SetUserTradeConfig:output_type -> trade.CommonResp
-	68,  // 360: trade.Admin.GetUserTradeConfig:output_type -> trade.GetUserTradeConfigResp
-	25,  // 361: trade.Admin.SetContractUserConfig:output_type -> trade.CommonResp
-	71,  // 362: trade.Admin.GetContractUserConfig:output_type -> trade.GetContractUserConfigResp
-	73,  // 363: trade.Admin.GetRiskOrderCheckLogList:output_type -> trade.GetRiskOrderCheckLogListResp
-	25,  // 364: trade.Admin.SetUserLeverageConfig:output_type -> trade.CommonResp
-	76,  // 365: trade.Admin.GetUserLeverageConfig:output_type -> trade.GetUserLeverageConfigResp
-	78,  // 366: trade.Admin.GetTradeEventList:output_type -> trade.GetTradeEventListResp
-	80,  // 367: trade.Admin.GetTradeEventDetail:output_type -> trade.GetTradeEventDetailResp
-	25,  // 368: trade.Admin.RetryTradeEvent:output_type -> trade.CommonResp
-	25,  // 369: trade.Admin.SetContractRiskLimitTier:output_type -> trade.CommonResp
-	85,  // 370: trade.Admin.GetContractRiskLimitTierList:output_type -> trade.GetContractRiskLimitTierListResp
-	88,  // 371: trade.Admin.GetFundingBatchList:output_type -> trade.GetFundingBatchListResp
-	91,  // 372: trade.Admin.GetFundingSettlementList:output_type -> trade.GetFundingSettlementListResp
-	94,  // 373: trade.Admin.GetDeliveryBatchList:output_type -> trade.GetDeliveryBatchListResp
-	97,  // 374: trade.Admin.GetDeliverySettlementList:output_type -> trade.GetDeliverySettlementListResp
-	100, // 375: trade.Admin.GetLiquidationList:output_type -> trade.GetLiquidationListResp
-	103, // 376: trade.Admin.GetSecondsPriceSnapshotList:output_type -> trade.GetSecondsPriceSnapshotListResp
-	113, // 377: trade.Admin.GetAssetReservationList:output_type -> trade.GetAssetReservationListResp
-	116, // 378: trade.Admin.GetSettlementInstructionList:output_type -> trade.GetSettlementInstructionListResp
-	25,  // 379: trade.Admin.RetrySettlementInstruction:output_type -> trade.CommonResp
-	25,  // 380: trade.Admin.SetInsuranceFundAccount:output_type -> trade.CommonResp
-	107, // 381: trade.Admin.GetInsuranceFundAccountList:output_type -> trade.GetInsuranceFundAccountListResp
-	110, // 382: trade.Admin.GetMarketSnapshotList:output_type -> trade.GetMarketSnapshotListResp
-	29,  // 383: trade.Trade.GetSymbolList:output_type -> trade.GetSymbolListAdminResp
-	4,   // 384: trade.Trade.GetSymbolDetail:output_type -> trade.GetSymbolDetailResp
-	7,   // 385: trade.Trade.PlaceLiquidityQuote:output_type -> trade.PlaceOrderResp
-	0,   // 386: trade.Trade.CancelLiquidityQuote:output_type -> trade.UserCommonResp
-	14,  // 387: trade.Trade.GetLiquidityQuote:output_type -> trade.GetOrderDetailResp
-	121, // 388: trade.Trade.RecordPositionHistory:output_type -> trade.InternalCommonResp
-	121, // 389: trade.Trade.CreateTradeEvent:output_type -> trade.InternalCommonResp
-	126, // 390: trade.Trade.CheckOrderRisk:output_type -> trade.CheckOrderRiskResp
-	128, // 391: trade.Task.ProcessOrderMatching:output_type -> trade.TradeTaskResp
-	128, // 392: trade.Task.ProcessPositions:output_type -> trade.TradeTaskResp
-	128, // 393: trade.Task.ProcessContractSettlements:output_type -> trade.TradeTaskResp
-	128, // 394: trade.Task.ProcessSecondsSettlements:output_type -> trade.TradeTaskResp
-	128, // 395: trade.Task.ProcessTradeEvents:output_type -> trade.TradeTaskResp
-	128, // 396: trade.Task.ExpireRiskLimits:output_type -> trade.TradeTaskResp
-	128, // 397: trade.Task.ArchiveLiquidityOrders:output_type -> trade.TradeTaskResp
-	323, // [323:398] is the sub-list for method output_type
-	248, // [248:323] is the sub-list for method input_type
-	248, // [248:248] is the sub-list for extension type_name
-	248, // [248:248] is the sub-list for extension extendee
-	0,   // [0:248] is the sub-list for field type_name
+	191, // 237: trade.ContractReconciliationIssue.status:type_name -> trade.ContractReconciliationIssueStatus
+	153, // 238: trade.GetContractReconciliationIssueListReq.page:type_name -> common.PageReq
+	191, // 239: trade.GetContractReconciliationIssueListReq.status:type_name -> trade.ContractReconciliationIssueStatus
+	133, // 240: trade.GetContractReconciliationIssueListResp.base:type_name -> common.RespBase
+	118, // 241: trade.GetContractReconciliationIssueListResp.data:type_name -> trade.ContractReconciliationIssue
+	6,   // 242: trade.PlaceLiquidityQuoteReq.order:type_name -> trade.PlaceOrderReq
+	8,   // 243: trade.CancelLiquidityQuoteReq.order:type_name -> trade.CancelOrderReq
+	13,  // 244: trade.GetLiquidityQuoteReq.order:type_name -> trade.GetOrderDetailReq
+	133, // 245: trade.InternalCommonResp.base:type_name -> common.RespBase
+	159, // 246: trade.RecordOrderFillReq.fill:type_name -> trade.TradeFill
+	168, // 247: trade.RecordPositionHistoryReq.history:type_name -> trade.ContractPositionHistory
+	181, // 248: trade.CreateTradeEventReq.event:type_name -> trade.BizTradeEvent
+	142, // 249: trade.CheckOrderRiskReq.side:type_name -> common.Side
+	143, // 250: trade.CheckOrderRiskReq.position_side:type_name -> trade.PositionSide
+	144, // 251: trade.CheckOrderRiskReq.order_type:type_name -> trade.OrderType
+	133, // 252: trade.TradeTaskResp.base:type_name -> common.RespBase
+	1,   // 253: trade.App.GetSymbolList:input_type -> trade.GetSymbolListReq
+	3,   // 254: trade.App.GetSymbolDetail:input_type -> trade.GetSymbolDetailReq
+	6,   // 255: trade.App.PlaceOrder:input_type -> trade.PlaceOrderReq
+	8,   // 256: trade.App.CancelOrder:input_type -> trade.CancelOrderReq
+	9,   // 257: trade.App.CancelAllOrders:input_type -> trade.CancelAllOrdersReq
+	11,  // 258: trade.App.GetOrderList:input_type -> trade.GetOrderListReq
+	13,  // 259: trade.App.GetOrderDetail:input_type -> trade.GetOrderDetailReq
+	16,  // 260: trade.App.GetFillList:input_type -> trade.GetFillListReq
+	18,  // 261: trade.App.GetPositionList:input_type -> trade.GetPositionListReq
+	20,  // 262: trade.App.GetMarginSnapshotList:input_type -> trade.GetMarginSnapshotListReq
+	22,  // 263: trade.App.GetLeverageConfig:input_type -> trade.GetLeverageConfigReq
+	24,  // 264: trade.App.SetLeverage:input_type -> trade.SetLeverageReq
+	26,  // 265: trade.Admin.CreateSymbol:input_type -> trade.CreateSymbolReq
+	27,  // 266: trade.Admin.UpdateSymbol:input_type -> trade.UpdateSymbolReq
+	28,  // 267: trade.Admin.GetSymbolListAdmin:input_type -> trade.GetSymbolListAdminReq
+	30,  // 268: trade.Admin.GetSymbolDetailAdmin:input_type -> trade.GetSymbolDetailAdminReq
+	33,  // 269: trade.Admin.SetSpotSymbolConfig:input_type -> trade.SetSpotSymbolConfigReq
+	34,  // 270: trade.Admin.SetContractSymbolConfig:input_type -> trade.SetContractSymbolConfigReq
+	35,  // 271: trade.Admin.SetSecondsSymbolConfig:input_type -> trade.SetSecondsSymbolConfigReq
+	36,  // 272: trade.Admin.SetSymbolSession:input_type -> trade.SetSymbolSessionReq
+	37,  // 273: trade.Admin.SetSymbolLeverageConfig:input_type -> trade.SetSymbolLeverageConfigReq
+	38,  // 274: trade.Admin.GetSymbolLeverageConfig:input_type -> trade.GetSymbolLeverageConfigReq
+	40,  // 275: trade.Admin.GetSymbolLeverageConfigList:input_type -> trade.GetSymbolLeverageConfigListReq
+	42,  // 276: trade.Admin.GetOrderListAdmin:input_type -> trade.GetOrderListAdminReq
+	44,  // 277: trade.Admin.GetOrderDetailAdmin:input_type -> trade.GetOrderDetailAdminReq
+	46,  // 278: trade.Admin.GetFillListAdmin:input_type -> trade.GetFillListAdminReq
+	48,  // 279: trade.Admin.GetFillDetailAdmin:input_type -> trade.GetFillDetailAdminReq
+	50,  // 280: trade.Admin.GetPositionListAdmin:input_type -> trade.GetPositionListAdminReq
+	52,  // 281: trade.Admin.GetPositionDetailAdmin:input_type -> trade.GetPositionDetailAdminReq
+	54,  // 282: trade.Admin.GetPositionHistoryListAdmin:input_type -> trade.GetPositionHistoryListAdminReq
+	56,  // 283: trade.Admin.GetMarginSnapshotListAdmin:input_type -> trade.GetMarginSnapshotListAdminReq
+	58,  // 284: trade.Admin.GetCancelLogListAdmin:input_type -> trade.GetCancelLogListAdminReq
+	60,  // 285: trade.Admin.SetUserTradeLimit:input_type -> trade.SetUserTradeLimitReq
+	61,  // 286: trade.Admin.SetUserSymbolLimit:input_type -> trade.SetUserSymbolLimitReq
+	62,  // 287: trade.Admin.GetUserTradeLimit:input_type -> trade.GetUserTradeLimitReq
+	64,  // 288: trade.Admin.GetUserSymbolLimit:input_type -> trade.GetUserSymbolLimitReq
+	66,  // 289: trade.Admin.SetUserTradeConfig:input_type -> trade.SetUserTradeConfigReq
+	67,  // 290: trade.Admin.GetUserTradeConfig:input_type -> trade.GetUserTradeConfigReq
+	69,  // 291: trade.Admin.SetContractUserConfig:input_type -> trade.SetContractUserConfigReq
+	70,  // 292: trade.Admin.GetContractUserConfig:input_type -> trade.GetContractUserConfigReq
+	72,  // 293: trade.Admin.GetRiskOrderCheckLogList:input_type -> trade.GetRiskOrderCheckLogListReq
+	74,  // 294: trade.Admin.SetUserLeverageConfig:input_type -> trade.SetUserLeverageConfigReq
+	75,  // 295: trade.Admin.GetUserLeverageConfig:input_type -> trade.GetUserLeverageConfigReq
+	77,  // 296: trade.Admin.GetTradeEventList:input_type -> trade.GetTradeEventListReq
+	79,  // 297: trade.Admin.GetTradeEventDetail:input_type -> trade.GetTradeEventDetailReq
+	81,  // 298: trade.Admin.RetryTradeEvent:input_type -> trade.RetryTradeEventReq
+	82,  // 299: trade.Admin.SetContractRiskLimitTier:input_type -> trade.SetContractRiskLimitTierReq
+	84,  // 300: trade.Admin.GetContractRiskLimitTierList:input_type -> trade.GetContractRiskLimitTierListReq
+	87,  // 301: trade.Admin.GetFundingBatchList:input_type -> trade.GetFundingBatchListReq
+	90,  // 302: trade.Admin.GetFundingSettlementList:input_type -> trade.GetFundingSettlementListReq
+	93,  // 303: trade.Admin.GetDeliveryBatchList:input_type -> trade.GetDeliveryBatchListReq
+	96,  // 304: trade.Admin.GetDeliverySettlementList:input_type -> trade.GetDeliverySettlementListReq
+	99,  // 305: trade.Admin.GetLiquidationList:input_type -> trade.GetLiquidationListReq
+	102, // 306: trade.Admin.GetSecondsPriceSnapshotList:input_type -> trade.GetSecondsPriceSnapshotListReq
+	112, // 307: trade.Admin.GetAssetReservationList:input_type -> trade.GetAssetReservationListReq
+	115, // 308: trade.Admin.GetSettlementInstructionList:input_type -> trade.GetSettlementInstructionListReq
+	117, // 309: trade.Admin.RetrySettlementInstruction:input_type -> trade.RetrySettlementInstructionReq
+	119, // 310: trade.Admin.GetContractReconciliationIssueList:input_type -> trade.GetContractReconciliationIssueListReq
+	121, // 311: trade.Admin.IgnoreContractReconciliationIssue:input_type -> trade.IgnoreContractReconciliationIssueReq
+	105, // 312: trade.Admin.SetInsuranceFundAccount:input_type -> trade.SetInsuranceFundAccountReq
+	106, // 313: trade.Admin.GetInsuranceFundAccountList:input_type -> trade.GetInsuranceFundAccountListReq
+	109, // 314: trade.Admin.GetMarketSnapshotList:input_type -> trade.GetMarketSnapshotListReq
+	28,  // 315: trade.Trade.GetSymbolList:input_type -> trade.GetSymbolListAdminReq
+	3,   // 316: trade.Trade.GetSymbolDetail:input_type -> trade.GetSymbolDetailReq
+	122, // 317: trade.Trade.PlaceLiquidityQuote:input_type -> trade.PlaceLiquidityQuoteReq
+	123, // 318: trade.Trade.CancelLiquidityQuote:input_type -> trade.CancelLiquidityQuoteReq
+	124, // 319: trade.Trade.GetLiquidityQuote:input_type -> trade.GetLiquidityQuoteReq
+	127, // 320: trade.Trade.RecordPositionHistory:input_type -> trade.RecordPositionHistoryReq
+	128, // 321: trade.Trade.CreateTradeEvent:input_type -> trade.CreateTradeEventReq
+	129, // 322: trade.Trade.CheckOrderRisk:input_type -> trade.CheckOrderRiskReq
+	131, // 323: trade.Task.ProcessOrderMatching:input_type -> trade.TradeTaskReq
+	131, // 324: trade.Task.ProcessPositions:input_type -> trade.TradeTaskReq
+	131, // 325: trade.Task.ProcessContractSettlements:input_type -> trade.TradeTaskReq
+	131, // 326: trade.Task.ProcessSecondsSettlements:input_type -> trade.TradeTaskReq
+	131, // 327: trade.Task.ProcessTradeEvents:input_type -> trade.TradeTaskReq
+	131, // 328: trade.Task.ExpireRiskLimits:input_type -> trade.TradeTaskReq
+	131, // 329: trade.Task.ArchiveLiquidityOrders:input_type -> trade.TradeTaskReq
+	2,   // 330: trade.App.GetSymbolList:output_type -> trade.GetSymbolListResp
+	4,   // 331: trade.App.GetSymbolDetail:output_type -> trade.GetSymbolDetailResp
+	7,   // 332: trade.App.PlaceOrder:output_type -> trade.PlaceOrderResp
+	0,   // 333: trade.App.CancelOrder:output_type -> trade.UserCommonResp
+	10,  // 334: trade.App.CancelAllOrders:output_type -> trade.CancelAllOrdersResp
+	12,  // 335: trade.App.GetOrderList:output_type -> trade.GetOrderListResp
+	14,  // 336: trade.App.GetOrderDetail:output_type -> trade.GetOrderDetailResp
+	17,  // 337: trade.App.GetFillList:output_type -> trade.GetFillListResp
+	19,  // 338: trade.App.GetPositionList:output_type -> trade.GetPositionListResp
+	21,  // 339: trade.App.GetMarginSnapshotList:output_type -> trade.GetMarginSnapshotListResp
+	23,  // 340: trade.App.GetLeverageConfig:output_type -> trade.GetLeverageConfigResp
+	0,   // 341: trade.App.SetLeverage:output_type -> trade.UserCommonResp
+	25,  // 342: trade.Admin.CreateSymbol:output_type -> trade.CommonResp
+	25,  // 343: trade.Admin.UpdateSymbol:output_type -> trade.CommonResp
+	29,  // 344: trade.Admin.GetSymbolListAdmin:output_type -> trade.GetSymbolListAdminResp
+	31,  // 345: trade.Admin.GetSymbolDetailAdmin:output_type -> trade.GetSymbolDetailAdminResp
+	25,  // 346: trade.Admin.SetSpotSymbolConfig:output_type -> trade.CommonResp
+	25,  // 347: trade.Admin.SetContractSymbolConfig:output_type -> trade.CommonResp
+	25,  // 348: trade.Admin.SetSecondsSymbolConfig:output_type -> trade.CommonResp
+	25,  // 349: trade.Admin.SetSymbolSession:output_type -> trade.CommonResp
+	25,  // 350: trade.Admin.SetSymbolLeverageConfig:output_type -> trade.CommonResp
+	39,  // 351: trade.Admin.GetSymbolLeverageConfig:output_type -> trade.GetSymbolLeverageConfigResp
+	41,  // 352: trade.Admin.GetSymbolLeverageConfigList:output_type -> trade.GetSymbolLeverageConfigListResp
+	43,  // 353: trade.Admin.GetOrderListAdmin:output_type -> trade.GetOrderListAdminResp
+	45,  // 354: trade.Admin.GetOrderDetailAdmin:output_type -> trade.GetOrderDetailAdminResp
+	47,  // 355: trade.Admin.GetFillListAdmin:output_type -> trade.GetFillListAdminResp
+	49,  // 356: trade.Admin.GetFillDetailAdmin:output_type -> trade.GetFillDetailAdminResp
+	51,  // 357: trade.Admin.GetPositionListAdmin:output_type -> trade.GetPositionListAdminResp
+	53,  // 358: trade.Admin.GetPositionDetailAdmin:output_type -> trade.GetPositionDetailAdminResp
+	55,  // 359: trade.Admin.GetPositionHistoryListAdmin:output_type -> trade.GetPositionHistoryListAdminResp
+	57,  // 360: trade.Admin.GetMarginSnapshotListAdmin:output_type -> trade.GetMarginSnapshotListAdminResp
+	59,  // 361: trade.Admin.GetCancelLogListAdmin:output_type -> trade.GetCancelLogListAdminResp
+	25,  // 362: trade.Admin.SetUserTradeLimit:output_type -> trade.CommonResp
+	25,  // 363: trade.Admin.SetUserSymbolLimit:output_type -> trade.CommonResp
+	63,  // 364: trade.Admin.GetUserTradeLimit:output_type -> trade.GetUserTradeLimitResp
+	65,  // 365: trade.Admin.GetUserSymbolLimit:output_type -> trade.GetUserSymbolLimitResp
+	25,  // 366: trade.Admin.SetUserTradeConfig:output_type -> trade.CommonResp
+	68,  // 367: trade.Admin.GetUserTradeConfig:output_type -> trade.GetUserTradeConfigResp
+	25,  // 368: trade.Admin.SetContractUserConfig:output_type -> trade.CommonResp
+	71,  // 369: trade.Admin.GetContractUserConfig:output_type -> trade.GetContractUserConfigResp
+	73,  // 370: trade.Admin.GetRiskOrderCheckLogList:output_type -> trade.GetRiskOrderCheckLogListResp
+	25,  // 371: trade.Admin.SetUserLeverageConfig:output_type -> trade.CommonResp
+	76,  // 372: trade.Admin.GetUserLeverageConfig:output_type -> trade.GetUserLeverageConfigResp
+	78,  // 373: trade.Admin.GetTradeEventList:output_type -> trade.GetTradeEventListResp
+	80,  // 374: trade.Admin.GetTradeEventDetail:output_type -> trade.GetTradeEventDetailResp
+	25,  // 375: trade.Admin.RetryTradeEvent:output_type -> trade.CommonResp
+	25,  // 376: trade.Admin.SetContractRiskLimitTier:output_type -> trade.CommonResp
+	85,  // 377: trade.Admin.GetContractRiskLimitTierList:output_type -> trade.GetContractRiskLimitTierListResp
+	88,  // 378: trade.Admin.GetFundingBatchList:output_type -> trade.GetFundingBatchListResp
+	91,  // 379: trade.Admin.GetFundingSettlementList:output_type -> trade.GetFundingSettlementListResp
+	94,  // 380: trade.Admin.GetDeliveryBatchList:output_type -> trade.GetDeliveryBatchListResp
+	97,  // 381: trade.Admin.GetDeliverySettlementList:output_type -> trade.GetDeliverySettlementListResp
+	100, // 382: trade.Admin.GetLiquidationList:output_type -> trade.GetLiquidationListResp
+	103, // 383: trade.Admin.GetSecondsPriceSnapshotList:output_type -> trade.GetSecondsPriceSnapshotListResp
+	113, // 384: trade.Admin.GetAssetReservationList:output_type -> trade.GetAssetReservationListResp
+	116, // 385: trade.Admin.GetSettlementInstructionList:output_type -> trade.GetSettlementInstructionListResp
+	25,  // 386: trade.Admin.RetrySettlementInstruction:output_type -> trade.CommonResp
+	120, // 387: trade.Admin.GetContractReconciliationIssueList:output_type -> trade.GetContractReconciliationIssueListResp
+	25,  // 388: trade.Admin.IgnoreContractReconciliationIssue:output_type -> trade.CommonResp
+	25,  // 389: trade.Admin.SetInsuranceFundAccount:output_type -> trade.CommonResp
+	107, // 390: trade.Admin.GetInsuranceFundAccountList:output_type -> trade.GetInsuranceFundAccountListResp
+	110, // 391: trade.Admin.GetMarketSnapshotList:output_type -> trade.GetMarketSnapshotListResp
+	29,  // 392: trade.Trade.GetSymbolList:output_type -> trade.GetSymbolListAdminResp
+	4,   // 393: trade.Trade.GetSymbolDetail:output_type -> trade.GetSymbolDetailResp
+	7,   // 394: trade.Trade.PlaceLiquidityQuote:output_type -> trade.PlaceOrderResp
+	0,   // 395: trade.Trade.CancelLiquidityQuote:output_type -> trade.UserCommonResp
+	14,  // 396: trade.Trade.GetLiquidityQuote:output_type -> trade.GetOrderDetailResp
+	125, // 397: trade.Trade.RecordPositionHistory:output_type -> trade.InternalCommonResp
+	125, // 398: trade.Trade.CreateTradeEvent:output_type -> trade.InternalCommonResp
+	130, // 399: trade.Trade.CheckOrderRisk:output_type -> trade.CheckOrderRiskResp
+	132, // 400: trade.Task.ProcessOrderMatching:output_type -> trade.TradeTaskResp
+	132, // 401: trade.Task.ProcessPositions:output_type -> trade.TradeTaskResp
+	132, // 402: trade.Task.ProcessContractSettlements:output_type -> trade.TradeTaskResp
+	132, // 403: trade.Task.ProcessSecondsSettlements:output_type -> trade.TradeTaskResp
+	132, // 404: trade.Task.ProcessTradeEvents:output_type -> trade.TradeTaskResp
+	132, // 405: trade.Task.ExpireRiskLimits:output_type -> trade.TradeTaskResp
+	132, // 406: trade.Task.ArchiveLiquidityOrders:output_type -> trade.TradeTaskResp
+	330, // [330:407] is the sub-list for method output_type
+	253, // [253:330] is the sub-list for method input_type
+	253, // [253:253] is the sub-list for extension type_name
+	253, // [253:253] is the sub-list for extension extendee
+	0,   // [0:253] is the sub-list for field type_name
 }
 
 func init() { file_proto_trade_trade_proto_init() }
@@ -11969,7 +12427,7 @@ func file_proto_trade_trade_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_trade_trade_proto_rawDesc), len(file_proto_trade_trade_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   129,
+			NumMessages:   133,
 			NumExtensions: 0,
 			NumServices:   4,
 		},

@@ -292,6 +292,10 @@ CREATE TABLE sys_job (
 INSERT INTO sys_job
 (`job_name`, `job_group`, `invoke_target`, `cron_expression`, `status`, `remark`, `create_by`, `create_times`, `update_by`, `update_times`)
 VALUES
+('交易撮合恢复', 'TRADE', 'trade.ProcessOrderMatching', '*/5 * * * * *', 1, '每5秒恢复尚未完成的订单撮合事件', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
+('合约仓位与风险处理', 'TRADE', 'trade.ProcessPositions', '*/1 * * * * *', 1, '每秒恢复合约仓位投影并执行风险扫描', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
+('合约资金费与交割结算', 'TRADE', 'trade.ProcessContractSettlements', '*/1 * * * * *', 1, '每秒处理永续资金费、交割生命周期及未完成结算', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
+('交易事件恢复', 'TRADE', 'trade.ProcessTradeEvents', '*/1 * * * * *', 1, '每秒恢复未投递或未完成的交易领域事件', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
 ('秒合约结算兜底', 'TRADE', 'trade.ProcessSecondsSettlements', '0 * * * * *', 1, '每分钟扫描秒合约激活、到期结算及退款漏单', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
 ('做市零成交撤单归档', 'TRADE', 'trade.ArchiveLiquidityOrders', '0 20 3 * * *', 1, '每日归档超过保留期且不存在成交明细的做市撤单', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
 ('做市报价刷新', 'LIQUIDITY', 'liquidity.RefreshQuotes', '*/1 * * * * *', 1, '扫描运行中的做市配置并按各配置刷新间隔撤旧挂新', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),

@@ -497,8 +497,12 @@ CREATE TABLE `t_contract_position_history` (
   `contract_type` TINYINT NOT NULL COMMENT '合约期限类型快照：1永续 2交割',
   `contract_value_type` TINYINT NOT NULL COMMENT '合约价值类型快照：1线性 2反向',
   `position_side` TINYINT NOT NULL COMMENT '持仓方向：1净持仓 2多 3空',
+  `margin_asset` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '仓位结算币种快照',
   `action_type` TINYINT NOT NULL COMMENT '变更动作类型：1开仓 2加仓 3减仓 4平仓 5强平 6结算 7资金费结转 8手动调整',
   `action_key` VARCHAR(128) NOT NULL COMMENT '持仓变更幂等键，如fill_id+position_id+action',
+  `business_time` BIGINT NOT NULL DEFAULT 0 COMMENT '仓位变更所属业务时点；用于历史结算重建',
+  `before_version` BIGINT NOT NULL DEFAULT 0 COMMENT '变更前仓位版本',
+  `after_version` BIGINT NOT NULL DEFAULT 0 COMMENT '变更后仓位版本',
   `before_qty` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '变更前持仓数量',
   `after_qty` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '变更后持仓数量',
   `before_avail_qty` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '变更前可平数量',
@@ -526,10 +530,11 @@ CREATE TABLE `t_contract_position_history` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_action_key` (`tenant_id`, `action_key`),
   KEY `idx_tenant_position_id_created` (`tenant_id`, `position_id`, `create_times`),
+  KEY `idx_tenant_symbol_business_position` (`tenant_id`, `symbol_id`, `business_time`, `position_id`, `id`),
   KEY `idx_tenant_user_symbol_created` (`tenant_id`, `user_id`, `symbol_id`, `create_times`),
   KEY `idx_tenant_ref_order_id` (`tenant_id`, `ref_order_id`),
   KEY `idx_tenant_ref_fill_id` (`tenant_id`, `ref_fill_id`),
-  CONSTRAINT `chk_position_history_dimensions` CHECK (`contract_type` IN (1, 2) AND `contract_value_type` IN (1, 2) AND `position_side` IN (1, 2, 3) AND `action_type` IN (1, 2, 3, 4, 5, 6, 7, 8))
+  CONSTRAINT `chk_position_history_dimensions` CHECK (`contract_type` IN (1, 2) AND `contract_value_type` IN (1, 2) AND `position_side` IN (1, 2, 3) AND `action_type` IN (1, 2, 3, 4, 5, 6, 7, 8) AND `business_time` > 0 AND `before_version` >= 0 AND `after_version` >= `before_version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合约持仓历史表';
 
 DROP TABLE IF EXISTS `t_contract_leverage_config`;
@@ -799,16 +804,62 @@ CREATE TABLE `t_trade_settlement_instruction` (
   `retry_count` INT NOT NULL DEFAULT 0 COMMENT '重试次数',
   `next_retry_at` BIGINT NOT NULL DEFAULT 0 COMMENT '下次重试时间',
   `last_error_msg` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '最后错误',
+  `asset_flow_no` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '对账确认的Asset流水号',
+  `reconciled_at` BIGINT NOT NULL DEFAULT 0 COMMENT 'Asset流水对账完成时间',
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_instruction_no` (`tenant_id`, `instruction_no`),
   KEY `idx_pending_retry` (`tenant_id`, `status`, `next_retry_at`),
+  KEY `idx_settlement_biz_pending` (`tenant_id`,`biz_type`,`status`,`next_retry_at`,`id`),
+  KEY `idx_settlement_batch_step` (`tenant_id`,`biz_type`,`batch_no`,`step_no`,`status`,`id`),
+  KEY `idx_settlement_reconcile` (`tenant_id`,`status`,`reconciled_at`,`id`),
   KEY `idx_tenant_fill` (`tenant_id`, `fill_id`),
   KEY `idx_tenant_order` (`tenant_id`, `order_id`),
   KEY `idx_tenant_biz` (`tenant_id`, `biz_type`, `biz_id`, `step_no`),
   CONSTRAINT `chk_settlement_instruction` CHECK (`action` IN (1, 2, 3, 4, 5, 6, 7, 8) AND `amount` > 0 AND `step_no` > 0 AND `status` IN (1, 2, 3, 4, 5) AND `retry_count` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='发送给Asset的幂等结算指令';
+
+DROP TABLE IF EXISTS `t_contract_reconciliation_issue`;
+CREATE TABLE `t_contract_reconciliation_issue` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `issue_key` VARCHAR(160) NOT NULL COMMENT '稳定差异键',
+  `check_type` VARCHAR(64) NOT NULL COMMENT '对账类型',
+  `biz_type` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '业务类型',
+  `biz_no` VARCHAR(96) NOT NULL DEFAULT '' COMMENT '业务单号',
+  `instruction_id` BIGINT NOT NULL DEFAULT 0 COMMENT '结算指令ID',
+  `expected_value` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '预期值摘要',
+  `actual_value` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '实际值摘要',
+  `detail` VARCHAR(1000) NOT NULL DEFAULT '' COMMENT '差异详情',
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1待处理 2已恢复 3人工忽略',
+  `occurrence_count` BIGINT NOT NULL DEFAULT 1 COMMENT '累计发现次数',
+  `first_seen_at` BIGINT NOT NULL COMMENT '首次发现时间',
+  `last_seen_at` BIGINT NOT NULL COMMENT '最近发现时间',
+  `resolved_at` BIGINT NOT NULL DEFAULT 0 COMMENT '恢复时间',
+  `operator_id` BIGINT NOT NULL DEFAULT 0 COMMENT '人工处理人',
+  `resolution_reason` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '处理原因',
+  `create_times` BIGINT NOT NULL COMMENT '创建时间',
+  `update_times` BIGINT NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_tenant_issue_key` (`tenant_id`,`issue_key`),
+  KEY `idx_reconciliation_open` (`tenant_id`,`status`,`last_seen_at`,`id`),
+  KEY `idx_reconciliation_instruction` (`tenant_id`,`instruction_id`),
+  CONSTRAINT `chk_contract_reconciliation_issue` CHECK (`status` IN (1,2,3) AND `occurrence_count` > 0)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合约跨服务对账差异';
+
+DROP TABLE IF EXISTS `t_contract_reconciliation_cursor`;
+CREATE TABLE `t_contract_reconciliation_cursor` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '扫描租户；0表示全租户任务',
+  `check_type` VARCHAR(64) NOT NULL COMMENT '对账类型',
+  `last_scanned_id` BIGINT NOT NULL DEFAULT 0 COMMENT '当前轮次最后扫描的业务主键',
+  `last_cycle_completed_at` BIGINT NOT NULL DEFAULT 0 COMMENT '最近完整轮次完成时间',
+  `create_times` BIGINT NOT NULL COMMENT '创建时间',
+  `update_times` BIGINT NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_reconciliation_cursor` (`tenant_id`,`check_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合约自动对账全量循环扫描游标';
 
 DROP TABLE IF EXISTS `t_contract_liquidation`;
 CREATE TABLE `t_contract_liquidation` (
@@ -962,6 +1013,7 @@ CREATE TABLE `t_contract_delivery_batch` (
   `settlement_price` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '锁定交割价格',
   `price_source` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '统一交割价格快照ID',
   `price_algorithm` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '采样算法及版本',
+  `formula_version` VARCHAR(64) NOT NULL DEFAULT '' COMMENT 'Price Engine交割公式版本',
   `sample_snapshot` JSON DEFAULT NULL COMMENT '原始样本与剔除信息摘要',
   `open_cutoff_time` BIGINT NOT NULL DEFAULT 0 COMMENT '停止开仓时间快照',
   `matching_stop_time` BIGINT NOT NULL DEFAULT 0 COMMENT '停止撮合时间快照',

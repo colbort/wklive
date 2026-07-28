@@ -261,6 +261,8 @@ type ContractDeliveryBatch struct {
 	SettlementPrice  string `json:"settlementPrice" validate:"decimal_36_18"`
 	PriceSource      string `json:"priceSource"`
 	PriceAlgorithm   string `json:"priceAlgorithm"`
+	FormulaVersion   string `json:"formulaVersion"`
+	SampleSnapshot   string `json:"sampleSnapshot"`
 	OpenCutoffTime   int64  `json:"openCutoffTime"`
 	MatchingStopTime int64  `json:"matchingStopTime"`
 	DeliveryTime     int64  `json:"deliveryTime"`
@@ -468,6 +470,27 @@ type ContractPositionHistory struct {
 	Source               int64  `json:"source"`
 	Remark               string `json:"remark"`
 	CreateTimes          int64  `json:"createTimes"`
+}
+
+type ContractReconciliationIssue struct {
+	Id               int64  `json:"id"`
+	IssueKey         string `json:"issueKey"`
+	CheckType        string `json:"checkType"`
+	BizType          string `json:"bizType"`
+	BizNo            string `json:"bizNo"`
+	InstructionId    int64  `json:"instructionId"`
+	ExpectedValue    string `json:"expectedValue"`
+	ActualValue      string `json:"actualValue"`
+	Detail           string `json:"detail"`
+	Status           int64  `json:"status"`
+	OccurrenceCount  int64  `json:"occurrenceCount"`
+	FirstSeenAt      int64  `json:"firstSeenAt"`
+	LastSeenAt       int64  `json:"lastSeenAt"`
+	ResolvedAt       int64  `json:"resolvedAt"`
+	OperatorId       int64  `json:"operatorId"`
+	ResolutionReason string `json:"resolutionReason"`
+	CreateTimes      int64  `json:"createTimes"`
+	UpdateTimes      int64  `json:"updateTimes"`
 }
 
 type ContractRiskLimitTier struct {
@@ -1019,6 +1042,19 @@ type GetCategoryReq struct {
 type GetCategoryResp struct {
 	RespBase
 	Data ItickCategory `json:"data"`
+}
+
+type GetContractReconciliationIssueListReq struct {
+	PageReq
+	TenantId  int64  `form:"tenantId,optional"`
+	Status    int64  `form:"status,optional"`
+	CheckType string `form:"checkType,optional"`
+	BizNo     string `form:"bizNo,optional"`
+}
+
+type GetContractReconciliationIssueListResp struct {
+	RespBase
+	Data []ContractReconciliationIssue `json:"data"`
 }
 
 type GetContractReq struct {
@@ -1771,6 +1807,12 @@ type Google2FAInitResp struct {
 
 type Google2FAResetReq struct {
 	UserId int64 `json:"userId"`
+}
+
+type IgnoreContractReconciliationIssueReq struct {
+	TenantId int64  `json:"tenantId,optional"`
+	Id       int64  `json:"id"`
+	Reason   string `json:"reason"`
 }
 
 type InitTenantItickDisplayData struct {
@@ -4610,6 +4652,8 @@ type TradeSettlementInstruction struct {
 	RetryCount    int64  `json:"retryCount"`
 	NextRetryAt   int64  `json:"nextRetryAt"`
 	LastErrorMsg  string `json:"lastErrorMsg"`
+	AssetFlowNo   string `json:"assetFlowNo"`
+	ReconciledAt  int64  `json:"reconciledAt"`
 	CreateTimes   int64  `json:"createTimes"`
 	UpdateTimes   int64  `json:"updateTimes"`
 }

@@ -35,20 +35,21 @@ type ProcessSecondsSettlementsLogic struct {
 }
 
 type marketQuoteSnapshot struct {
-	Category   string `json:"category"`
-	Market     string `json:"market"`
-	Symbol     string `json:"symbol"`
-	LastPrice  string `json:"last_price"`
-	OpenPrice  string `json:"open_price"`
-	HighPrice  string `json:"high_price"`
-	LowPrice   string `json:"low_price"`
-	Volume     string `json:"volume"`
-	Turnover   string `json:"turnover"`
-	QuoteTs    int64  `json:"quote_ts"`
-	ReceivedAt int64  `json:"received_at"`
-	SnapshotID string `json:"snapshot_id"`
-	Revision   int64  `json:"revision"`
-	Confirmed  bool   `json:"confirmed"`
+	Category       string `json:"category"`
+	Market         string `json:"market"`
+	Symbol         string `json:"symbol"`
+	LastPrice      string `json:"last_price"`
+	OpenPrice      string `json:"open_price"`
+	HighPrice      string `json:"high_price"`
+	LowPrice       string `json:"low_price"`
+	Volume         string `json:"volume"`
+	Turnover       string `json:"turnover"`
+	QuoteTs        int64  `json:"quote_ts"`
+	ReceivedAt     int64  `json:"received_at"`
+	SnapshotID     string `json:"snapshot_id"`
+	Revision       int64  `json:"revision"`
+	FormulaVersion string `json:"formula_version"`
+	Confirmed      bool   `json:"confirmed"`
 }
 
 func secondsWorkLeaseOwned(current *models.TTradeOrderSeconds, status trade.SecondsSettlementStatus, lease int64) bool {
@@ -457,7 +458,7 @@ func (l *ProcessSecondsSettlementsLogic) getOneValidQuote(kind, source string, s
 	if err = persistMarketSnapshot(l.ctx, l.svcCtx.TradeMarketSnapshotModel, tradeSymbol.TenantId, symbolID, s); err != nil {
 		return nil, err
 	}
-	q := &marketQuoteSnapshot{Category: category, Market: market, Symbol: symbol, LastPrice: s.Price, QuoteTs: s.SourceTimestamp, ReceivedAt: s.SnapshotTimestamp, SnapshotID: s.SnapshotID, Revision: s.Revision, Confirmed: s.Confirmed}
+	q := &marketQuoteSnapshot{Category: category, Market: market, Symbol: symbol, LastPrice: s.Price, QuoteTs: s.SourceTimestamp, ReceivedAt: s.SnapshotTimestamp, SnapshotID: s.SnapshotID, Revision: s.Revision, FormulaVersion: s.FormulaVersion, Confirmed: s.Confirmed}
 	if quoteIsValidAtKind(q, targetTime, validity, snapshotKind) {
 		return q, nil
 	}

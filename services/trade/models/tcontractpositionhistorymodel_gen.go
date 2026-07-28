@@ -52,8 +52,12 @@ type (
 		ContractType         int64           `db:"contract_type"`          // 合约期限类型快照：1永续 2交割
 		ContractValueType    int64           `db:"contract_value_type"`    // 合约价值类型快照：1线性 2反向
 		PositionSide         int64           `db:"position_side"`          // 持仓方向：1净持仓 2多 3空
+		MarginAsset          string          `db:"margin_asset"`           // 仓位结算币种快照
 		ActionType           int64           `db:"action_type"`            // 变更动作类型：1开仓 2加仓 3减仓 4平仓 5强平 6结算 7资金费结转 8手动调整
 		ActionKey            string          `db:"action_key"`             // 持仓变更幂等键，如fill_id+position_id+action
+		BusinessTime         int64           `db:"business_time"`          // 仓位变更所属业务时点；用于历史结算重建
+		BeforeVersion        int64           `db:"before_version"`         // 变更前仓位版本
+		AfterVersion         int64           `db:"after_version"`          // 变更后仓位版本
 		BeforeQty            decimal.Decimal `db:"before_qty"`             // 变更前持仓数量
 		AfterQty             decimal.Decimal `db:"after_qty"`              // 变更后持仓数量
 		BeforeAvailQty       decimal.Decimal `db:"before_avail_qty"`       // 变更前可平数量
@@ -144,8 +148,8 @@ func (m *defaultTContractPositionHistoryModel) Insert(ctx context.Context, data 
 	tContractPositionHistoryIdKey := fmt.Sprintf("%s%v", cacheTContractPositionHistoryIdPrefix, data.Id)
 	tContractPositionHistoryTenantIdActionKeyKey := fmt.Sprintf("%s%v:%v", cacheTContractPositionHistoryTenantIdActionKeyPrefix, data.TenantId, data.ActionKey)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractPositionHistoryRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.PositionId, data.UserId, data.SymbolId, data.ContractType, data.ContractValueType, data.PositionSide, data.ActionType, data.ActionKey, data.BeforeQty, data.AfterQty, data.BeforeAvailQty, data.AfterAvailQty, data.BeforeFrozenQty, data.AfterFrozenQty, data.BeforeOpenAvgPrice, data.AfterOpenAvgPrice, data.BeforePositionMargin, data.AfterPositionMargin, data.BeforeIsolatedMargin, data.AfterIsolatedMargin, data.BeforeUnrealizedPnl, data.AfterUnrealizedPnl, data.RealizedPnlDelta, data.FeeDelta, data.FeeAsset, data.MarkPrice, data.RefOrderId, data.RefFillId, data.OperatorId, data.Source, data.Remark, data.CreateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractPositionHistoryRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.PositionId, data.UserId, data.SymbolId, data.ContractType, data.ContractValueType, data.PositionSide, data.MarginAsset, data.ActionType, data.ActionKey, data.BusinessTime, data.BeforeVersion, data.AfterVersion, data.BeforeQty, data.AfterQty, data.BeforeAvailQty, data.AfterAvailQty, data.BeforeFrozenQty, data.AfterFrozenQty, data.BeforeOpenAvgPrice, data.AfterOpenAvgPrice, data.BeforePositionMargin, data.AfterPositionMargin, data.BeforeIsolatedMargin, data.AfterIsolatedMargin, data.BeforeUnrealizedPnl, data.AfterUnrealizedPnl, data.RealizedPnlDelta, data.FeeDelta, data.FeeAsset, data.MarkPrice, data.RefOrderId, data.RefFillId, data.OperatorId, data.Source, data.Remark, data.CreateTimes)
 	}, tContractPositionHistoryIdKey, tContractPositionHistoryTenantIdActionKeyKey)
 	return ret, err
 }
@@ -160,7 +164,7 @@ func (m *defaultTContractPositionHistoryModel) Update(ctx context.Context, newDa
 	tContractPositionHistoryTenantIdActionKeyKey := fmt.Sprintf("%s%v:%v", cacheTContractPositionHistoryTenantIdActionKeyPrefix, data.TenantId, data.ActionKey)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tContractPositionHistoryRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.PositionId, newData.UserId, newData.SymbolId, newData.ContractType, newData.ContractValueType, newData.PositionSide, newData.ActionType, newData.ActionKey, newData.BeforeQty, newData.AfterQty, newData.BeforeAvailQty, newData.AfterAvailQty, newData.BeforeFrozenQty, newData.AfterFrozenQty, newData.BeforeOpenAvgPrice, newData.AfterOpenAvgPrice, newData.BeforePositionMargin, newData.AfterPositionMargin, newData.BeforeIsolatedMargin, newData.AfterIsolatedMargin, newData.BeforeUnrealizedPnl, newData.AfterUnrealizedPnl, newData.RealizedPnlDelta, newData.FeeDelta, newData.FeeAsset, newData.MarkPrice, newData.RefOrderId, newData.RefFillId, newData.OperatorId, newData.Source, newData.Remark, newData.CreateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.PositionId, newData.UserId, newData.SymbolId, newData.ContractType, newData.ContractValueType, newData.PositionSide, newData.MarginAsset, newData.ActionType, newData.ActionKey, newData.BusinessTime, newData.BeforeVersion, newData.AfterVersion, newData.BeforeQty, newData.AfterQty, newData.BeforeAvailQty, newData.AfterAvailQty, newData.BeforeFrozenQty, newData.AfterFrozenQty, newData.BeforeOpenAvgPrice, newData.AfterOpenAvgPrice, newData.BeforePositionMargin, newData.AfterPositionMargin, newData.BeforeIsolatedMargin, newData.AfterIsolatedMargin, newData.BeforeUnrealizedPnl, newData.AfterUnrealizedPnl, newData.RealizedPnlDelta, newData.FeeDelta, newData.FeeAsset, newData.MarkPrice, newData.RefOrderId, newData.RefFillId, newData.OperatorId, newData.Source, newData.Remark, newData.CreateTimes, newData.Id)
 	}, tContractPositionHistoryIdKey, tContractPositionHistoryTenantIdActionKeyKey)
 	return err
 }

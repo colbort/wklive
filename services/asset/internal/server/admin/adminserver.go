@@ -71,6 +71,12 @@ func (s *AdminServer) PageAssetFlows(ctx context.Context, in *asset.PageAssetFlo
 	return l.PageAssetFlows(in)
 }
 
+// 按强平号查询保险基金赔付事实
+func (s *AdminServer) GetInsuranceCover(ctx context.Context, in *asset.GetInsuranceCoverReq) (*asset.GetInsuranceCoverResp, error) {
+	l := adminlogic.NewGetInsuranceCoverLogic(ctx, s.svcCtx)
+	return l.GetInsuranceCover(in)
+}
+
 // 分页查询冻结明细
 func (s *AdminServer) PageAssetFreezes(ctx context.Context, in *asset.PageAssetFreezesReq) (*asset.PageAssetFreezesResp, error) {
 	l := adminlogic.NewPageAssetFreezesLogic(ctx, s.svcCtx)

@@ -63,6 +63,12 @@ func (l *ProcessFillSettlementsLogic) ProcessFill(fillID int64) error {
 		if next == nil {
 			return l.settleFillIfReady(fill)
 		}
+		if isUnboundProjectedMarginInstruction(next) {
+			if err := NewProcessContractPositionFillsLogic(l.ctx, l.svcCtx).ProcessFill(next.FillId); err != nil {
+				return err
+			}
+			continue
+		}
 		now := utils.NowMillis()
 		if next.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_FAILED) && next.NextRetryAt > now || next.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PROCESSING) && next.UpdateTimes > now-60*1000 {
 			return nil
@@ -99,6 +105,14 @@ func (l *ProcessFillSettlementsLogic) Process(tenantID int64) error {
 		}
 		progressed := false
 		for _, item := range items {
+			if isUnboundProjectedMarginInstruction(item) {
+				if err := NewProcessContractPositionFillsLogic(l.ctx, l.svcCtx).ProcessFill(item.FillId); err != nil {
+					return err
+				}
+				progressed = true
+				processed++
+				continue
+			}
 			claimed, lease, err := l.svcCtx.TradeSettlementInstrModel.ClaimLease(l.ctx, item.Id, now)
 			if err != nil {
 				return err
@@ -122,6 +136,13 @@ func (l *ProcessFillSettlementsLogic) Process(tenantID int64) error {
 		}
 	}
 	return nil
+}
+
+func isUnboundProjectedMarginInstruction(item *models.TTradeSettlementInstruction) bool {
+	return item != nil &&
+		item.Action == int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_ADJUST_MARGIN) &&
+		item.PositionId == 0 &&
+		item.FillId > 0
 }
 
 func (l *ProcessFillSettlementsLogic) processInstruction(item *models.TTradeSettlementInstruction) error {
@@ -414,14 +435,7 @@ func (l *ProcessFillSettlementsLogic) markFailed(item *models.TTradeSettlementIn
 			return nil
 		}
 		current.RetryCount++
-		current.Status = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_FAILED)
-		if current.RetryCount >= spotSettlementMaxRetry {
-			current.Status = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_MANUAL_REVIEW)
-			current.NextRetryAt = 0
-		} else {
-			delaySeconds := int64(1) << min(current.RetryCount, int64(10))
-			current.NextRetryAt = now + delaySeconds*1000
-		}
+		current.Status, current.NextRetryAt = settlementFailureTransition(current.RetryCount, now)
 		current.LastErrorMsg = cause.Error()
 		current.UpdateTimes = now
 		if err := instructionModel.Update(ctx, current); err != nil {
@@ -458,4 +472,12 @@ func (l *ProcessFillSettlementsLogic) markFailed(item *models.TTradeSettlementIn
 		terminal := current.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_MANUAL_REVIEW)
 		return reservationModel.MarkSettlementFailure(ctx, reservation.Id, retryStatus, terminal, current.NextRetryAt, cause.Error(), now)
 	})
+}
+
+func settlementFailureTransition(retryCount, now int64) (status, nextRetryAt int64) {
+	if retryCount >= spotSettlementMaxRetry {
+		return int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_MANUAL_REVIEW), 0
+	}
+	delaySeconds := int64(1) << min(retryCount, int64(10))
+	return int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_FAILED), now + delaySeconds*1000
 }

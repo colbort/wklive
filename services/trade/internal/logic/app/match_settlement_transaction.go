@@ -10,7 +10,6 @@ import (
 
 	"wklive/proto/common"
 	"wklive/proto/trade"
-	"wklive/services/trade/internal/domain/contractmath"
 	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
@@ -40,6 +39,7 @@ type settlementInstructionSpec struct {
 	action trade.SettlementInstructionAction
 	asset  string
 	amount decimal.Decimal
+	stepNo int64
 }
 
 func createMatchSettlementRecords(
@@ -65,6 +65,10 @@ func createMatchSettlementRecords(
 			continue
 		}
 		stepNo++
+		instructionStep := stepNo
+		if spec.stepNo > 0 {
+			instructionStep = spec.stepNo
+		}
 		instruction := &models.TTradeSettlementInstruction{
 			TenantId:      fill.TenantId,
 			InstructionNo: derivedTradeBizNo(fill.FillNo, spec.suffix),
@@ -78,7 +82,7 @@ func createMatchSettlementRecords(
 			Action:        int64(spec.action),
 			Asset:         spec.asset,
 			Amount:        spec.amount,
-			StepNo:        stepNo,
+			StepNo:        instructionStep,
 			Status:        int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING),
 			NextRetryAt:   now,
 			CreateTimes:   now,
@@ -126,7 +130,7 @@ func derivedTradeBizNo(base, suffix string) string {
 	return base[:47] + "-" + fmt.Sprintf("%x", digest[:8])
 }
 
-func buildFillSettlementInstructions(ctx context.Context, contractOrderModel models.TTradeOrderContractModel, symbol *models.TTradeSymbol, order *models.TTradeOrder, fill *models.TTradeFill) ([]settlementInstructionSpec, error) {
+func buildFillSettlementInstructions(ctx context.Context, _ models.TTradeOrderContractModel, symbol *models.TTradeSymbol, order *models.TTradeOrder, fill *models.TTradeFill) ([]settlementInstructionSpec, error) {
 	if order.ProductType == int64(common.ProductType_PRODUCT_TYPE_SPOT) {
 		if order.Side == int64(common.Side_SIDE_BUY) {
 			return []settlementInstructionSpec{
@@ -144,21 +148,9 @@ func buildFillSettlementInstructions(ctx context.Context, contractOrderModel mod
 	if order.ProductType != int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) {
 		return nil, fmt.Errorf("unsupported matched product type: %d", order.ProductType)
 	}
-	contractOrder, err := contractOrderModel.FindOneByTenantIdOrderId(ctx, order.TenantId, order.Id)
-	if err != nil {
-		return nil, err
-	}
-	specs := make([]settlementInstructionSpec, 0, 2)
-	if order.IsReduceOnly != int64(common.YesNo_YES_NO_YES) && contractOrder.MarginAmount.IsPositive() && order.Qty.IsPositive() {
-		settlementNotional := fill.Amount
-		if fill.ContractValueType == int64(trade.ContractValueType_CONTRACT_VALUE_TYPE_INVERSE) {
-			settlementNotional = fill.Amount.Div(fill.Price)
-		}
-		marginDelta := contractmath.RoundDebit(settlementNotional.Div(decimal.NewFromInt(contractOrder.Leverage)))
-		specs = append(specs, settlementInstructionSpec{suffix: "MARGIN", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_ADJUST_MARGIN, asset: contractOrder.MarginAsset, amount: marginDelta})
-	}
+	specs := make([]settlementInstructionSpec, 0, 1)
 	if fill.Fee.IsPositive() {
-		specs = append(specs, settlementInstructionSpec{suffix: "FEE", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_FEE, asset: fill.FeeAsset, amount: fill.Fee})
+		specs = append(specs, settlementInstructionSpec{suffix: "FEE", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_FEE, asset: fill.FeeAsset, amount: fill.Fee, stepNo: 2})
 	}
 	return specs, nil
 }

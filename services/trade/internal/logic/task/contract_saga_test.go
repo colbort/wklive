@@ -15,11 +15,11 @@ func TestDeliveryAssetStepsDebitBeforeCredit(t *testing.T) {
 		t.Fatalf("unexpected step count: %d", len(steps))
 	}
 	for _, step := range steps {
-		if step.action == trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_PNL_LOSS && step.stepNo != 1 {
-			t.Fatalf("debit must be step 1: %+v", step)
+		if step.suffix == "MARGIN" && step.stepNo != 1 {
+			t.Fatalf("held margin must be returned at step 1: %+v", step)
 		}
-		if step.action == trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE && step.stepNo != 2 {
-			t.Fatalf("credit must be step 2: %+v", step)
+		if step.action == trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_PNL_LOSS && step.stepNo != 2 {
+			t.Fatalf("loss and fee must be collected at step 2: %+v", step)
 		}
 	}
 }
@@ -33,13 +33,29 @@ func TestDeliveryAssetStepsOmitZeroAmounts(t *testing.T) {
 
 func TestDeliveryInstructionMustMatchImmutableStep(t *testing.T) {
 	steps := deliveryAssetSteps(decimal.NewFromInt(10), decimal.NewFromInt(2), decimal.NewFromInt(1))
-	item := &models.TTradeSettlementInstruction{InstructionNo: "S-MARGIN", BizId: "S", Action: 3, Amount: decimal.NewFromInt(10), StepNo: 2}
+	item := &models.TTradeSettlementInstruction{InstructionNo: "S-MARGIN", BizId: "S", Action: 3, Amount: decimal.NewFromInt(10), StepNo: 1}
 	if !matchesDeliveryAssetStep(item, steps) {
 		t.Fatal("valid delivery instruction rejected")
 	}
 	item.Amount = decimal.NewFromInt(11)
 	if matchesDeliveryAssetStep(item, steps) {
 		t.Fatal("modified delivery amount accepted")
+	}
+}
+
+func TestLegacyDeliveryInstructionRemainsRecoverable(t *testing.T) {
+	steps := legacyDeliveryAssetSteps(decimal.NewFromInt(10), decimal.NewFromInt(-2), decimal.NewFromInt(1))
+	item := &models.TTradeSettlementInstruction{InstructionNo: "S-LOSS", BizId: "S", Action: int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_PNL_LOSS), Amount: decimal.NewFromInt(2), StepNo: 1}
+	if !matchesDeliveryAssetStep(item, steps) {
+		t.Fatal("legacy delivery instruction must remain recoverable")
+	}
+}
+
+func TestDeliveryProfitWaitsForBatchDebits(t *testing.T) {
+	for _, step := range deliveryAssetSteps(decimal.NewFromInt(10), decimal.NewFromInt(2), decimal.NewFromInt(1)) {
+		if step.suffix == "PROFIT" && step.stepNo != 3 {
+			t.Fatalf("profit must wait until all batch debits complete: %+v", step)
+		}
 	}
 }
 

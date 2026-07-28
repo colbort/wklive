@@ -415,6 +415,7 @@ const (
 	Admin_PageUserAssets_FullMethodName        = "/asset.Admin/PageUserAssets"
 	Admin_GetUserAssetDetail_FullMethodName    = "/asset.Admin/GetUserAssetDetail"
 	Admin_PageAssetFlows_FullMethodName        = "/asset.Admin/PageAssetFlows"
+	Admin_GetInsuranceCover_FullMethodName     = "/asset.Admin/GetInsuranceCover"
 	Admin_PageAssetFreezes_FullMethodName      = "/asset.Admin/PageAssetFreezes"
 	Admin_PageAssetLocks_FullMethodName        = "/asset.Admin/PageAssetLocks"
 	Admin_AddAsset_FullMethodName              = "/asset.Admin/AddAsset"
@@ -450,6 +451,8 @@ type AdminClient interface {
 	GetUserAssetDetail(ctx context.Context, in *GetUserAssetDetailReq, opts ...grpc.CallOption) (*GetUserAssetDetailResp, error)
 	// 分页查询资产流水
 	PageAssetFlows(ctx context.Context, in *PageAssetFlowsReq, opts ...grpc.CallOption) (*PageAssetFlowsResp, error)
+	// 按强平号查询保险基金赔付事实
+	GetInsuranceCover(ctx context.Context, in *GetInsuranceCoverReq, opts ...grpc.CallOption) (*GetInsuranceCoverResp, error)
 	// 分页查询冻结明细
 	PageAssetFreezes(ctx context.Context, in *PageAssetFreezesReq, opts ...grpc.CallOption) (*PageAssetFreezesResp, error)
 	// 分页查询锁仓明细
@@ -556,6 +559,16 @@ func (c *adminClient) PageAssetFlows(ctx context.Context, in *PageAssetFlowsReq,
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PageAssetFlowsResp)
 	err := c.cc.Invoke(ctx, Admin_PageAssetFlows_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) GetInsuranceCover(ctx context.Context, in *GetInsuranceCoverReq, opts ...grpc.CallOption) (*GetInsuranceCoverResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetInsuranceCoverResp)
+	err := c.cc.Invoke(ctx, Admin_GetInsuranceCover_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -694,6 +707,8 @@ type AdminServer interface {
 	GetUserAssetDetail(context.Context, *GetUserAssetDetailReq) (*GetUserAssetDetailResp, error)
 	// 分页查询资产流水
 	PageAssetFlows(context.Context, *PageAssetFlowsReq) (*PageAssetFlowsResp, error)
+	// 按强平号查询保险基金赔付事实
+	GetInsuranceCover(context.Context, *GetInsuranceCoverReq) (*GetInsuranceCoverResp, error)
 	// 分页查询冻结明细
 	PageAssetFreezes(context.Context, *PageAssetFreezesReq) (*PageAssetFreezesResp, error)
 	// 分页查询锁仓明细
@@ -749,6 +764,9 @@ func (UnimplementedAdminServer) GetUserAssetDetail(context.Context, *GetUserAsse
 }
 func (UnimplementedAdminServer) PageAssetFlows(context.Context, *PageAssetFlowsReq) (*PageAssetFlowsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method PageAssetFlows not implemented")
+}
+func (UnimplementedAdminServer) GetInsuranceCover(context.Context, *GetInsuranceCoverReq) (*GetInsuranceCoverResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetInsuranceCover not implemented")
 }
 func (UnimplementedAdminServer) PageAssetFreezes(context.Context, *PageAssetFreezesReq) (*PageAssetFreezesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method PageAssetFreezes not implemented")
@@ -944,6 +962,24 @@ func _Admin_PageAssetFlows_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AdminServer).PageAssetFlows(ctx, req.(*PageAssetFlowsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_GetInsuranceCover_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetInsuranceCoverReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).GetInsuranceCover(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_GetInsuranceCover_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).GetInsuranceCover(ctx, req.(*GetInsuranceCoverReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1184,6 +1220,10 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PageAssetFlows",
 			Handler:    _Admin_PageAssetFlows_Handler,
+		},
+		{
+			MethodName: "GetInsuranceCover",
+			Handler:    _Admin_GetInsuranceCover_Handler,
 		},
 		{
 			MethodName: "PageAssetFreezes",

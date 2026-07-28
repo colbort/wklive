@@ -567,54 +567,56 @@ var App_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Admin_CreateSymbol_FullMethodName                 = "/trade.Admin/CreateSymbol"
-	Admin_UpdateSymbol_FullMethodName                 = "/trade.Admin/UpdateSymbol"
-	Admin_GetSymbolListAdmin_FullMethodName           = "/trade.Admin/GetSymbolListAdmin"
-	Admin_GetSymbolDetailAdmin_FullMethodName         = "/trade.Admin/GetSymbolDetailAdmin"
-	Admin_SetSpotSymbolConfig_FullMethodName          = "/trade.Admin/SetSpotSymbolConfig"
-	Admin_SetContractSymbolConfig_FullMethodName      = "/trade.Admin/SetContractSymbolConfig"
-	Admin_SetSecondsSymbolConfig_FullMethodName       = "/trade.Admin/SetSecondsSymbolConfig"
-	Admin_SetSymbolSession_FullMethodName             = "/trade.Admin/SetSymbolSession"
-	Admin_SetSymbolLeverageConfig_FullMethodName      = "/trade.Admin/SetSymbolLeverageConfig"
-	Admin_GetSymbolLeverageConfig_FullMethodName      = "/trade.Admin/GetSymbolLeverageConfig"
-	Admin_GetSymbolLeverageConfigList_FullMethodName  = "/trade.Admin/GetSymbolLeverageConfigList"
-	Admin_GetOrderListAdmin_FullMethodName            = "/trade.Admin/GetOrderListAdmin"
-	Admin_GetOrderDetailAdmin_FullMethodName          = "/trade.Admin/GetOrderDetailAdmin"
-	Admin_GetFillListAdmin_FullMethodName             = "/trade.Admin/GetFillListAdmin"
-	Admin_GetFillDetailAdmin_FullMethodName           = "/trade.Admin/GetFillDetailAdmin"
-	Admin_GetPositionListAdmin_FullMethodName         = "/trade.Admin/GetPositionListAdmin"
-	Admin_GetPositionDetailAdmin_FullMethodName       = "/trade.Admin/GetPositionDetailAdmin"
-	Admin_GetPositionHistoryListAdmin_FullMethodName  = "/trade.Admin/GetPositionHistoryListAdmin"
-	Admin_GetMarginSnapshotListAdmin_FullMethodName   = "/trade.Admin/GetMarginSnapshotListAdmin"
-	Admin_GetCancelLogListAdmin_FullMethodName        = "/trade.Admin/GetCancelLogListAdmin"
-	Admin_SetUserTradeLimit_FullMethodName            = "/trade.Admin/SetUserTradeLimit"
-	Admin_SetUserSymbolLimit_FullMethodName           = "/trade.Admin/SetUserSymbolLimit"
-	Admin_GetUserTradeLimit_FullMethodName            = "/trade.Admin/GetUserTradeLimit"
-	Admin_GetUserSymbolLimit_FullMethodName           = "/trade.Admin/GetUserSymbolLimit"
-	Admin_SetUserTradeConfig_FullMethodName           = "/trade.Admin/SetUserTradeConfig"
-	Admin_GetUserTradeConfig_FullMethodName           = "/trade.Admin/GetUserTradeConfig"
-	Admin_SetContractUserConfig_FullMethodName        = "/trade.Admin/SetContractUserConfig"
-	Admin_GetContractUserConfig_FullMethodName        = "/trade.Admin/GetContractUserConfig"
-	Admin_GetRiskOrderCheckLogList_FullMethodName     = "/trade.Admin/GetRiskOrderCheckLogList"
-	Admin_SetUserLeverageConfig_FullMethodName        = "/trade.Admin/SetUserLeverageConfig"
-	Admin_GetUserLeverageConfig_FullMethodName        = "/trade.Admin/GetUserLeverageConfig"
-	Admin_GetTradeEventList_FullMethodName            = "/trade.Admin/GetTradeEventList"
-	Admin_GetTradeEventDetail_FullMethodName          = "/trade.Admin/GetTradeEventDetail"
-	Admin_RetryTradeEvent_FullMethodName              = "/trade.Admin/RetryTradeEvent"
-	Admin_SetContractRiskLimitTier_FullMethodName     = "/trade.Admin/SetContractRiskLimitTier"
-	Admin_GetContractRiskLimitTierList_FullMethodName = "/trade.Admin/GetContractRiskLimitTierList"
-	Admin_GetFundingBatchList_FullMethodName          = "/trade.Admin/GetFundingBatchList"
-	Admin_GetFundingSettlementList_FullMethodName     = "/trade.Admin/GetFundingSettlementList"
-	Admin_GetDeliveryBatchList_FullMethodName         = "/trade.Admin/GetDeliveryBatchList"
-	Admin_GetDeliverySettlementList_FullMethodName    = "/trade.Admin/GetDeliverySettlementList"
-	Admin_GetLiquidationList_FullMethodName           = "/trade.Admin/GetLiquidationList"
-	Admin_GetSecondsPriceSnapshotList_FullMethodName  = "/trade.Admin/GetSecondsPriceSnapshotList"
-	Admin_GetAssetReservationList_FullMethodName      = "/trade.Admin/GetAssetReservationList"
-	Admin_GetSettlementInstructionList_FullMethodName = "/trade.Admin/GetSettlementInstructionList"
-	Admin_RetrySettlementInstruction_FullMethodName   = "/trade.Admin/RetrySettlementInstruction"
-	Admin_SetInsuranceFundAccount_FullMethodName      = "/trade.Admin/SetInsuranceFundAccount"
-	Admin_GetInsuranceFundAccountList_FullMethodName  = "/trade.Admin/GetInsuranceFundAccountList"
-	Admin_GetMarketSnapshotList_FullMethodName        = "/trade.Admin/GetMarketSnapshotList"
+	Admin_CreateSymbol_FullMethodName                       = "/trade.Admin/CreateSymbol"
+	Admin_UpdateSymbol_FullMethodName                       = "/trade.Admin/UpdateSymbol"
+	Admin_GetSymbolListAdmin_FullMethodName                 = "/trade.Admin/GetSymbolListAdmin"
+	Admin_GetSymbolDetailAdmin_FullMethodName               = "/trade.Admin/GetSymbolDetailAdmin"
+	Admin_SetSpotSymbolConfig_FullMethodName                = "/trade.Admin/SetSpotSymbolConfig"
+	Admin_SetContractSymbolConfig_FullMethodName            = "/trade.Admin/SetContractSymbolConfig"
+	Admin_SetSecondsSymbolConfig_FullMethodName             = "/trade.Admin/SetSecondsSymbolConfig"
+	Admin_SetSymbolSession_FullMethodName                   = "/trade.Admin/SetSymbolSession"
+	Admin_SetSymbolLeverageConfig_FullMethodName            = "/trade.Admin/SetSymbolLeverageConfig"
+	Admin_GetSymbolLeverageConfig_FullMethodName            = "/trade.Admin/GetSymbolLeverageConfig"
+	Admin_GetSymbolLeverageConfigList_FullMethodName        = "/trade.Admin/GetSymbolLeverageConfigList"
+	Admin_GetOrderListAdmin_FullMethodName                  = "/trade.Admin/GetOrderListAdmin"
+	Admin_GetOrderDetailAdmin_FullMethodName                = "/trade.Admin/GetOrderDetailAdmin"
+	Admin_GetFillListAdmin_FullMethodName                   = "/trade.Admin/GetFillListAdmin"
+	Admin_GetFillDetailAdmin_FullMethodName                 = "/trade.Admin/GetFillDetailAdmin"
+	Admin_GetPositionListAdmin_FullMethodName               = "/trade.Admin/GetPositionListAdmin"
+	Admin_GetPositionDetailAdmin_FullMethodName             = "/trade.Admin/GetPositionDetailAdmin"
+	Admin_GetPositionHistoryListAdmin_FullMethodName        = "/trade.Admin/GetPositionHistoryListAdmin"
+	Admin_GetMarginSnapshotListAdmin_FullMethodName         = "/trade.Admin/GetMarginSnapshotListAdmin"
+	Admin_GetCancelLogListAdmin_FullMethodName              = "/trade.Admin/GetCancelLogListAdmin"
+	Admin_SetUserTradeLimit_FullMethodName                  = "/trade.Admin/SetUserTradeLimit"
+	Admin_SetUserSymbolLimit_FullMethodName                 = "/trade.Admin/SetUserSymbolLimit"
+	Admin_GetUserTradeLimit_FullMethodName                  = "/trade.Admin/GetUserTradeLimit"
+	Admin_GetUserSymbolLimit_FullMethodName                 = "/trade.Admin/GetUserSymbolLimit"
+	Admin_SetUserTradeConfig_FullMethodName                 = "/trade.Admin/SetUserTradeConfig"
+	Admin_GetUserTradeConfig_FullMethodName                 = "/trade.Admin/GetUserTradeConfig"
+	Admin_SetContractUserConfig_FullMethodName              = "/trade.Admin/SetContractUserConfig"
+	Admin_GetContractUserConfig_FullMethodName              = "/trade.Admin/GetContractUserConfig"
+	Admin_GetRiskOrderCheckLogList_FullMethodName           = "/trade.Admin/GetRiskOrderCheckLogList"
+	Admin_SetUserLeverageConfig_FullMethodName              = "/trade.Admin/SetUserLeverageConfig"
+	Admin_GetUserLeverageConfig_FullMethodName              = "/trade.Admin/GetUserLeverageConfig"
+	Admin_GetTradeEventList_FullMethodName                  = "/trade.Admin/GetTradeEventList"
+	Admin_GetTradeEventDetail_FullMethodName                = "/trade.Admin/GetTradeEventDetail"
+	Admin_RetryTradeEvent_FullMethodName                    = "/trade.Admin/RetryTradeEvent"
+	Admin_SetContractRiskLimitTier_FullMethodName           = "/trade.Admin/SetContractRiskLimitTier"
+	Admin_GetContractRiskLimitTierList_FullMethodName       = "/trade.Admin/GetContractRiskLimitTierList"
+	Admin_GetFundingBatchList_FullMethodName                = "/trade.Admin/GetFundingBatchList"
+	Admin_GetFundingSettlementList_FullMethodName           = "/trade.Admin/GetFundingSettlementList"
+	Admin_GetDeliveryBatchList_FullMethodName               = "/trade.Admin/GetDeliveryBatchList"
+	Admin_GetDeliverySettlementList_FullMethodName          = "/trade.Admin/GetDeliverySettlementList"
+	Admin_GetLiquidationList_FullMethodName                 = "/trade.Admin/GetLiquidationList"
+	Admin_GetSecondsPriceSnapshotList_FullMethodName        = "/trade.Admin/GetSecondsPriceSnapshotList"
+	Admin_GetAssetReservationList_FullMethodName            = "/trade.Admin/GetAssetReservationList"
+	Admin_GetSettlementInstructionList_FullMethodName       = "/trade.Admin/GetSettlementInstructionList"
+	Admin_RetrySettlementInstruction_FullMethodName         = "/trade.Admin/RetrySettlementInstruction"
+	Admin_GetContractReconciliationIssueList_FullMethodName = "/trade.Admin/GetContractReconciliationIssueList"
+	Admin_IgnoreContractReconciliationIssue_FullMethodName  = "/trade.Admin/IgnoreContractReconciliationIssue"
+	Admin_SetInsuranceFundAccount_FullMethodName            = "/trade.Admin/SetInsuranceFundAccount"
+	Admin_GetInsuranceFundAccountList_FullMethodName        = "/trade.Admin/GetInsuranceFundAccountList"
+	Admin_GetMarketSnapshotList_FullMethodName              = "/trade.Admin/GetMarketSnapshotList"
 )
 
 // AdminClient is the client API for Admin service.
@@ -708,6 +710,9 @@ type AdminClient interface {
 	GetSettlementInstructionList(ctx context.Context, in *GetSettlementInstructionListReq, opts ...grpc.CallOption) (*GetSettlementInstructionListResp, error)
 	// 仅重置失败/人工处理的结算指令；不得修改金额
 	RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*CommonResp, error)
+	// 查询及人工忽略跨服务对账差异；恢复态只能由自动对账证据关闭
+	GetContractReconciliationIssueList(ctx context.Context, in *GetContractReconciliationIssueListReq, opts ...grpc.CallOption) (*GetContractReconciliationIssueListResp, error)
+	IgnoreContractReconciliationIssue(ctx context.Context, in *IgnoreContractReconciliationIssueReq, opts ...grpc.CallOption) (*CommonResp, error)
 	SetInsuranceFundAccount(ctx context.Context, in *SetInsuranceFundAccountReq, opts ...grpc.CallOption) (*CommonResp, error)
 	GetInsuranceFundAccountList(ctx context.Context, in *GetInsuranceFundAccountListReq, opts ...grpc.CallOption) (*GetInsuranceFundAccountListResp, error)
 	GetMarketSnapshotList(ctx context.Context, in *GetMarketSnapshotListReq, opts ...grpc.CallOption) (*GetMarketSnapshotListResp, error)
@@ -1171,6 +1176,26 @@ func (c *adminClient) RetrySettlementInstruction(ctx context.Context, in *RetryS
 	return out, nil
 }
 
+func (c *adminClient) GetContractReconciliationIssueList(ctx context.Context, in *GetContractReconciliationIssueListReq, opts ...grpc.CallOption) (*GetContractReconciliationIssueListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetContractReconciliationIssueListResp)
+	err := c.cc.Invoke(ctx, Admin_GetContractReconciliationIssueList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) IgnoreContractReconciliationIssue(ctx context.Context, in *IgnoreContractReconciliationIssueReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, Admin_IgnoreContractReconciliationIssue_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *adminClient) SetInsuranceFundAccount(ctx context.Context, in *SetInsuranceFundAccountReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
@@ -1292,6 +1317,9 @@ type AdminServer interface {
 	GetSettlementInstructionList(context.Context, *GetSettlementInstructionListReq) (*GetSettlementInstructionListResp, error)
 	// 仅重置失败/人工处理的结算指令；不得修改金额
 	RetrySettlementInstruction(context.Context, *RetrySettlementInstructionReq) (*CommonResp, error)
+	// 查询及人工忽略跨服务对账差异；恢复态只能由自动对账证据关闭
+	GetContractReconciliationIssueList(context.Context, *GetContractReconciliationIssueListReq) (*GetContractReconciliationIssueListResp, error)
+	IgnoreContractReconciliationIssue(context.Context, *IgnoreContractReconciliationIssueReq) (*CommonResp, error)
 	SetInsuranceFundAccount(context.Context, *SetInsuranceFundAccountReq) (*CommonResp, error)
 	GetInsuranceFundAccountList(context.Context, *GetInsuranceFundAccountListReq) (*GetInsuranceFundAccountListResp, error)
 	GetMarketSnapshotList(context.Context, *GetMarketSnapshotListReq) (*GetMarketSnapshotListResp, error)
@@ -1439,6 +1467,12 @@ func (UnimplementedAdminServer) GetSettlementInstructionList(context.Context, *G
 }
 func (UnimplementedAdminServer) RetrySettlementInstruction(context.Context, *RetrySettlementInstructionReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RetrySettlementInstruction not implemented")
+}
+func (UnimplementedAdminServer) GetContractReconciliationIssueList(context.Context, *GetContractReconciliationIssueListReq) (*GetContractReconciliationIssueListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetContractReconciliationIssueList not implemented")
+}
+func (UnimplementedAdminServer) IgnoreContractReconciliationIssue(context.Context, *IgnoreContractReconciliationIssueReq) (*CommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method IgnoreContractReconciliationIssue not implemented")
 }
 func (UnimplementedAdminServer) SetInsuranceFundAccount(context.Context, *SetInsuranceFundAccountReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetInsuranceFundAccount not implemented")
@@ -2280,6 +2314,42 @@ func _Admin_RetrySettlementInstruction_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_GetContractReconciliationIssueList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetContractReconciliationIssueListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).GetContractReconciliationIssueList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_GetContractReconciliationIssueList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).GetContractReconciliationIssueList(ctx, req.(*GetContractReconciliationIssueListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_IgnoreContractReconciliationIssue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IgnoreContractReconciliationIssueReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).IgnoreContractReconciliationIssue(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_IgnoreContractReconciliationIssue_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).IgnoreContractReconciliationIssue(ctx, req.(*IgnoreContractReconciliationIssueReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Admin_SetInsuranceFundAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetInsuranceFundAccountReq)
 	if err := dec(in); err != nil {
@@ -2520,6 +2590,14 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RetrySettlementInstruction",
 			Handler:    _Admin_RetrySettlementInstruction_Handler,
+		},
+		{
+			MethodName: "GetContractReconciliationIssueList",
+			Handler:    _Admin_GetContractReconciliationIssueList_Handler,
+		},
+		{
+			MethodName: "IgnoreContractReconciliationIssue",
+			Handler:    _Admin_IgnoreContractReconciliationIssue_Handler,
 		},
 		{
 			MethodName: "SetInsuranceFundAccount",

@@ -63,6 +63,8 @@ type (
 		RetryCount    int64           `db:"retry_count"`    // 重试次数
 		NextRetryAt   int64           `db:"next_retry_at"`  // 下次重试时间
 		LastErrorMsg  string          `db:"last_error_msg"` // 最后错误
+		AssetFlowNo   string          `db:"asset_flow_no"`  // 对账确认的Asset流水号
+		ReconciledAt  int64           `db:"reconciled_at"`  // Asset流水对账完成时间
 		CreateTimes   int64           `db:"create_times"`   // 创建时间
 		UpdateTimes   int64           `db:"update_times"`   // 更新时间
 	}
@@ -131,8 +133,8 @@ func (m *defaultTTradeSettlementInstructionModel) Insert(ctx context.Context, da
 	tTradeSettlementInstructionIdKey := fmt.Sprintf("%s%v", cacheTTradeSettlementInstructionIdPrefix, data.Id)
 	tTradeSettlementInstructionTenantIdInstructionNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeSettlementInstructionTenantIdInstructionNoPrefix, data.TenantId, data.InstructionNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeSettlementInstructionRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.InstructionNo, data.BizType, data.BizId, data.BatchNo, data.FillId, data.OrderId, data.PositionId, data.ReservationNo, data.UserId, data.Action, data.Asset, data.Amount, data.StepNo, data.Status, data.RetryCount, data.NextRetryAt, data.LastErrorMsg, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeSettlementInstructionRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.InstructionNo, data.BizType, data.BizId, data.BatchNo, data.FillId, data.OrderId, data.PositionId, data.ReservationNo, data.UserId, data.Action, data.Asset, data.Amount, data.StepNo, data.Status, data.RetryCount, data.NextRetryAt, data.LastErrorMsg, data.AssetFlowNo, data.ReconciledAt, data.CreateTimes, data.UpdateTimes)
 	}, tTradeSettlementInstructionIdKey, tTradeSettlementInstructionTenantIdInstructionNoKey)
 	return ret, err
 }
@@ -147,7 +149,7 @@ func (m *defaultTTradeSettlementInstructionModel) Update(ctx context.Context, ne
 	tTradeSettlementInstructionTenantIdInstructionNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeSettlementInstructionTenantIdInstructionNoPrefix, data.TenantId, data.InstructionNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTradeSettlementInstructionRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.InstructionNo, newData.BizType, newData.BizId, newData.BatchNo, newData.FillId, newData.OrderId, newData.PositionId, newData.ReservationNo, newData.UserId, newData.Action, newData.Asset, newData.Amount, newData.StepNo, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.InstructionNo, newData.BizType, newData.BizId, newData.BatchNo, newData.FillId, newData.OrderId, newData.PositionId, newData.ReservationNo, newData.UserId, newData.Action, newData.Asset, newData.Amount, newData.StepNo, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.AssetFlowNo, newData.ReconciledAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tTradeSettlementInstructionIdKey, tTradeSettlementInstructionTenantIdInstructionNoKey)
 	return err
 }

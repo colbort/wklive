@@ -590,6 +590,36 @@ func TestBuildSpotFillSettlementInstructions(t *testing.T) {
 	}
 }
 
+func TestDerivativeMarginIsNotCreatedBeforePositionProjection(t *testing.T) {
+	fill := &models.TTradeFill{
+		ProductType: int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE),
+		Qty:         testDecimal(10),
+		Amount:      testDecimal(1000),
+		Fee:         testDecimal(2),
+		FeeAsset:    "USDT",
+	}
+	specs, err := buildFillSettlementInstructions(
+		context.Background(), nil, &models.TTradeSymbol{},
+		&models.TTradeOrder{ProductType: int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE)}, fill,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(specs) != 1 || specs[0].action != trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_FEE ||
+		specs[0].stepNo != 2 {
+		t.Fatalf("derivative match phase must create only the fee instruction: %+v", specs)
+	}
+
+	fill.Fee = decimal.Zero
+	specs, err = buildFillSettlementInstructions(
+		context.Background(), nil, &models.TTradeSymbol{},
+		&models.TTradeOrder{ProductType: int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE)}, fill,
+	)
+	if err != nil || len(specs) != 0 {
+		t.Fatalf("zero-fee derivative match created premature instructions: %+v err=%v", specs, err)
+	}
+}
+
 func TestOrderBookKeyAndMember(t *testing.T) {
 	order := &models.TTradeOrder{
 		Id:          123,

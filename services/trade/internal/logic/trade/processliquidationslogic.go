@@ -586,7 +586,7 @@ func (l *ProcessLiquidationsLogic) completeADLExecution(execution *models.TContr
 		if err = pm.Update(ctx, current); err != nil {
 			return err
 		}
-		if err = writeSystemPositionHistory(ctx, models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis), before, current, e.ExecutionNo, trade.PositionActionType_POSITION_ACTION_TYPE_LIQUIDATION, e.RealizedPnl, decimal.Zero, e.BankruptcyPrice, "automatic deleveraging"); err != nil {
+		if err = writeSystemPositionHistory(ctx, models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis), before, current, e.CreateTimes, e.ExecutionNo, trade.PositionActionType_POSITION_ACTION_TYPE_LIQUIDATION, e.RealizedPnl, decimal.Zero, e.BankruptcyPrice, "automatic deleveraging"); err != nil {
 			return err
 		}
 		e.Status, e.LastErrorMsg, e.UpdateTimes = 3, "", now
@@ -627,7 +627,7 @@ func (l *ProcessLiquidationsLogic) completeLiquidation(position *models.TContrac
 		if err := pm.Update(ctx, current); err != nil {
 			return err
 		}
-		if err := writeSystemPositionHistory(ctx, hm, before, current, liq.LiquidationNo, trade.PositionActionType_POSITION_ACTION_TYPE_LIQUIDATION, liq.AccountEquity.Sub(before.PositionMargin).Sub(before.IsolatedMargin), fee, liq.TriggerMarkPrice, "forced liquidation"); err != nil {
+		if err := writeSystemPositionHistory(ctx, hm, before, current, liq.CreateTimes, liq.LiquidationNo, trade.PositionActionType_POSITION_ACTION_TYPE_LIQUIDATION, liq.AccountEquity.Sub(before.PositionMargin).Sub(before.IsolatedMargin), fee, liq.TriggerMarkPrice, "forced liquidation"); err != nil {
 			return err
 		}
 		liq.Status = int64(trade.LiquidationStatus_LIQUIDATION_STATUS_COMPLETED)

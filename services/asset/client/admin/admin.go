@@ -33,6 +33,8 @@ type (
 	FreezeAssetReq              = asset.FreezeAssetReq
 	FreezeAssetResp             = asset.FreezeAssetResp
 	GetAssetCoinConfigReq       = asset.GetAssetCoinConfigReq
+	GetInsuranceCoverReq        = asset.GetInsuranceCoverReq
+	GetInsuranceCoverResp       = asset.GetInsuranceCoverResp
 	GetMyAssetReq               = asset.GetMyAssetReq
 	GetMyAssetResp              = asset.GetMyAssetResp
 	GetMyAssetSummaryReq        = asset.GetMyAssetSummaryReq
@@ -104,6 +106,8 @@ type (
 		GetUserAssetDetail(ctx context.Context, in *GetUserAssetDetailReq, opts ...grpc.CallOption) (*GetUserAssetDetailResp, error)
 		// 分页查询资产流水
 		PageAssetFlows(ctx context.Context, in *PageAssetFlowsReq, opts ...grpc.CallOption) (*PageAssetFlowsResp, error)
+		// 按强平号查询保险基金赔付事实
+		GetInsuranceCover(ctx context.Context, in *GetInsuranceCoverReq, opts ...grpc.CallOption) (*GetInsuranceCoverResp, error)
 		// 分页查询冻结明细
 		PageAssetFreezes(ctx context.Context, in *PageAssetFreezesReq, opts ...grpc.CallOption) (*PageAssetFreezesResp, error)
 		// 分页查询锁仓明细
@@ -185,6 +189,12 @@ func (m *defaultAdmin) GetUserAssetDetail(ctx context.Context, in *GetUserAssetD
 func (m *defaultAdmin) PageAssetFlows(ctx context.Context, in *PageAssetFlowsReq, opts ...grpc.CallOption) (*PageAssetFlowsResp, error) {
 	client := asset.NewAdminClient(m.cli.Conn())
 	return client.PageAssetFlows(ctx, in, opts...)
+}
+
+// 按强平号查询保险基金赔付事实
+func (m *defaultAdmin) GetInsuranceCover(ctx context.Context, in *GetInsuranceCoverReq, opts ...grpc.CallOption) (*GetInsuranceCoverResp, error) {
+	client := asset.NewAdminClient(m.cli.Conn())
+	return client.GetInsuranceCover(ctx, in, opts...)
 }
 
 // 分页查询冻结明细

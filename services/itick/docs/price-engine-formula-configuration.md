@@ -199,6 +199,56 @@ FUNDING = (101000 - 100000) / 100000
         = 1%
 ```
 
+### 4.4 DELIVERY 交割价
+
+生产配置应使用多个相互独立的权威来源，不能复用当前单一 BA 行情测试配置：
+
+```json
+{
+  "formula_no": "BTCUSDT-DELIVERY-v1",
+  "formula_version": "v1",
+  "authority": "price-engine",
+  "snapshot_kind": "DELIVERY",
+  "category_code": "crypto",
+  "market": "BA",
+  "symbol": "BTCUSDT",
+  "algorithm": "MEDIAN",
+  "components": [
+    {
+      "authority": "itick-ws",
+      "kind": "FINAL_QUOTE",
+      "category_code": "crypto",
+      "market": "SOURCE_A",
+      "symbol": "BTCUSDT",
+      "weight": "1"
+    },
+    {
+      "authority": "itick-ws",
+      "kind": "FINAL_QUOTE",
+      "category_code": "crypto",
+      "market": "SOURCE_B",
+      "symbol": "BTCUSDT",
+      "weight": "1"
+    },
+    {
+      "authority": "itick-ws",
+      "kind": "FINAL_QUOTE",
+      "category_code": "crypto",
+      "market": "SOURCE_C",
+      "symbol": "BTCUSDT",
+      "weight": "1"
+    }
+  ],
+  "max_lookback_ms": 30000,
+  "max_deviation_bps": 200,
+  "interval_ms": 1000
+}
+```
+
+每个输出快照的 `raw_payload` 固化目标时点、公式版本、算法、完整输入、
+采用输入和被剔除输入。快照 ID 由这些事实与计算结果确定性生成，因此同一
+输入集合可以重放；输入不足时计算失败，不允许以无审计的最新价兜底。
+
 ## 5. 当前配置评价
 
 当前配置可以用于验证以下技术链路：

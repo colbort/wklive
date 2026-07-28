@@ -814,7 +814,9 @@ VALUES
 (1183, 1000, 1, '结算行情快照', 2, 'GET', '/trade/market-snapshots', 'trade:market-snapshot:list', 'trade/market-snapshots', 'DataAnalysis', 1183),
 (1190, 1000, 1, '资金预占记录', 2, 'GET', '/trade/operations/asset-reservations', 'trade:operation:asset-reservation:list', 'trade/asset-reservations', 'Lock', 1190),
 (1191, 1000, 1, '结算指令', 2, 'GET', '/trade/operations/settlement-instructions', 'trade:operation:settlement-instruction:list', 'trade/settlement-instructions', 'Operation', 1191),
-(1192, 1191, 1, '重试结算指令', 3, 'POST', '/trade/operations/settlement-instructions/retry', 'trade:operation:settlement-instruction:retry', '', '', 1192);
+(1192, 1191, 1, '重试结算指令', 3, 'POST', '/trade/operations/settlement-instructions/retry', 'trade:operation:settlement-instruction:retry', '', '', 1192),
+(1193, 1000, 1, '合约资产对账异常', 2, 'GET', '/trade/operations/reconciliation-issues', 'trade:operation:reconciliation-issue:list', 'trade/reconciliation-issues', 'Warning', 1193),
+(1194, 1193, 1, '忽略合约资产对账异常', 3, 'POST', '/trade/operations/reconciliation-issues/ignore', 'trade:operation:reconciliation-issue:ignore', '', '', 1194);
 
 
 

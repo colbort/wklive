@@ -28,6 +28,8 @@ type (
 		tContractPositionHistoryModel
 		FindPage(ctx context.Context, filter ContractPositionHistoryPageFilter, cursor int64, limit int64) ([]*TContractPositionHistory, int64, error)
 		CountByRefFillId(ctx context.Context, tenantID, fillID int64) (int64, error)
+		FindByRefFillId(ctx context.Context, tenantID, fillID int64) ([]*TContractPositionHistory, error)
+		FindLatestBySymbolAt(ctx context.Context, tenantID, symbolID, businessTime int64) ([]*TContractPositionHistory, error)
 	}
 
 	customTContractPositionHistoryModel struct {
@@ -49,6 +51,47 @@ func (m *defaultTContractPositionHistoryModel) CountByRefFillId(ctx context.Cont
 		return 0, err
 	}
 	return count, nil
+}
+
+func (m *defaultTContractPositionHistoryModel) FindByRefFillId(ctx context.Context, tenantID, fillID int64) ([]*TContractPositionHistory, error) {
+	var rows []*TContractPositionHistory
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND ref_fill_id=? ORDER BY id", tContractPositionHistoryRows, m.table)
+	if err := m.QueryRowsNoCacheCtx(ctx, &rows, query, tenantID, fillID); err != nil {
+		return nil, err
+	}
+	return rows, nil
+}
+
+// FindLatestBySymbolAt returns the last recorded state for every position at
+// the requested business time. It deliberately orders by business_time first,
+// then id, so delayed event processing cannot move a fill into a later funding
+// period merely because its history row was inserted later.
+func (m *defaultTContractPositionHistoryModel) FindLatestBySymbolAt(ctx context.Context, tenantID, symbolID, businessTime int64) ([]*TContractPositionHistory, error) {
+	query := fmt.Sprintf(`
+SELECT %s
+FROM %s AS h
+WHERE h.tenant_id = ?
+  AND h.symbol_id = ?
+  AND h.business_time <= ?
+  AND h.after_qty > 0
+  AND NOT EXISTS (
+    SELECT 1
+    FROM %s AS newer
+    WHERE newer.tenant_id = h.tenant_id
+      AND newer.symbol_id = h.symbol_id
+      AND newer.position_id = h.position_id
+      AND newer.business_time <= ?
+      AND (
+        newer.business_time > h.business_time
+        OR (newer.business_time = h.business_time AND newer.id > h.id)
+      )
+  )
+ORDER BY h.position_id`, tContractPositionHistoryRows, m.table, m.table)
+	var list []*TContractPositionHistory
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, tenantID, symbolID, businessTime, businessTime); err != nil {
+		return nil, err
+	}
+	return list, nil
 }
 
 func (m *defaultTContractPositionHistoryModel) FindPage(ctx context.Context, filter ContractPositionHistoryPageFilter, cursor int64, limit int64) ([]*TContractPositionHistory, int64, error) {

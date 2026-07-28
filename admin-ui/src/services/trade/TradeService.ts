@@ -172,6 +172,8 @@ export type ContractDeliveryBatch = {
   settlementPrice: string
   priceSource: string
   priceAlgorithm: string
+  formulaVersion: string
+  sampleSnapshot: string
   openCutoffTime: number
   matchingStopTime: number
   deliveryTime: number
@@ -315,6 +317,8 @@ export type TradeSettlementInstruction = {
   retryCount: number
   nextRetryAt: number
   lastErrorMsg: string
+  assetFlowNo: string
+  reconciledAt: number
   createTimes: number
   updateTimes: number
 }
@@ -327,6 +331,38 @@ export type GetSettlementInstructionListReq = TradePageReq & {
 }
 export type GetSettlementInstructionListResp = RespBase<TradeSettlementInstruction[]>
 export type RetrySettlementInstructionReq = { tenantId?: number; id: number; reason: string }
+export type ContractReconciliationIssue = {
+  id: number
+  issueKey: string
+  checkType: string
+  bizType: string
+  bizNo: string
+  instructionId: number
+  expectedValue: string
+  actualValue: string
+  detail: string
+  status: number
+  occurrenceCount: number
+  firstSeenAt: number
+  lastSeenAt: number
+  resolvedAt: number
+  operatorId: number
+  resolutionReason: string
+  createTimes: number
+  updateTimes: number
+}
+export type GetContractReconciliationIssueListReq = TradePageReq & {
+  tenantId?: number
+  status?: number
+  checkType?: string
+  bizNo?: string
+}
+export type GetContractReconciliationIssueListResp = RespBase<ContractReconciliationIssue[]>
+export type IgnoreContractReconciliationIssueReq = {
+  tenantId?: number
+  id: number
+  reason: string
+}
 
 export type TradeSymbol = {
   id: number // 主键ID

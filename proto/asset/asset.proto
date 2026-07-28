@@ -156,6 +156,9 @@ service Admin {
   // 分页查询资产流水
   rpc PageAssetFlows(PageAssetFlowsReq) returns (PageAssetFlowsResp);
 
+  // 按强平号查询保险基金赔付事实
+  rpc GetInsuranceCover(GetInsuranceCoverReq) returns (GetInsuranceCoverResp);
+
   // 分页查询冻结明细
   rpc PageAssetFreezes(PageAssetFreezesReq) returns (PageAssetFreezesResp);
 
@@ -353,6 +356,24 @@ message PageAssetFlowsReq {
 message PageAssetFlowsResp {
   common.RespBase base = 1;
   repeated AssetFlow data = 2; // 流水列表
+}
+
+message GetInsuranceCoverReq {
+  int64 tenant_id = 1;
+  string liquidation_no = 2;
+}
+
+message GetInsuranceCoverResp {
+  common.RespBase base = 1;
+  int64 platform_account_id = 2;
+  string coin = 3;
+  int64 liquidation_id = 4;
+  string liquidation_no = 5;
+  string requested_amount = 6;
+  string covered_amount = 7;
+  string remaining_amount = 8;
+  int64 status = 9;
+  int64 create_times = 10;
 }
 
 message PageAssetFreezesReq {

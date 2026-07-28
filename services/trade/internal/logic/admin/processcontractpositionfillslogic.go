@@ -77,7 +77,7 @@ func (l *ProcessContractPositionFillsLogic) ProcessFill(fillID int64) error {
 				return fmt.Errorf("reduce-only fill exceeds position: fill=%s remaining=%s", fill.FillNo, remaining)
 			}
 			if remaining.IsPositive() {
-				if err := l.applyOpen(ctx, positionModel, historyModel, eventModel, fill, contractOrder, contract, openSide, remaining); err != nil {
+				if err := l.applyOpen(ctx, positionModel, historyModel, eventModel, instructionModel, fill, contractOrder, contract, openSide, remaining); err != nil {
 					return err
 				}
 			}
@@ -90,7 +90,7 @@ func (l *ProcessContractPositionFillsLogic) ProcessFill(fillID int64) error {
 				return fmt.Errorf("closing fill exceeds position: fill=%s qty=%s closed=%s", fill.FillNo, remaining, closed)
 			}
 		} else {
-			if err := l.applyOpen(ctx, positionModel, historyModel, eventModel, fill, contractOrder, contract, fill.PositionSide, remaining); err != nil {
+			if err := l.applyOpen(ctx, positionModel, historyModel, eventModel, instructionModel, fill, contractOrder, contract, fill.PositionSide, remaining); err != nil {
 				return err
 			}
 		}
@@ -107,7 +107,7 @@ func (l *ProcessContractPositionFillsLogic) ProcessFill(fillID int64) error {
 	})
 }
 
-func (l *ProcessContractPositionFillsLogic) applyOpen(ctx context.Context, positionModel models.TContractPositionModel, historyModel models.TContractPositionHistoryModel, eventModel models.TBizTradeEventModel, fill *models.TTradeFill, contractOrder *models.TTradeOrderContract, contract *models.TTradeSymbolContract, side int64, qty decimal.Decimal) error {
+func (l *ProcessContractPositionFillsLogic) applyOpen(ctx context.Context, positionModel models.TContractPositionModel, historyModel models.TContractPositionHistoryModel, eventModel models.TBizTradeEventModel, instructionModel models.TTradeSettlementInstructionModel, fill *models.TTradeFill, contractOrder *models.TTradeOrderContract, contract *models.TTradeSymbolContract, side int64, qty decimal.Decimal) error {
 	if !qty.IsPositive() {
 		return nil
 	}
@@ -155,6 +155,17 @@ func (l *ProcessContractPositionFillsLogic) applyOpen(ctx context.Context, posit
 		}
 		position.Id, _ = result.LastInsertId()
 	} else if err := positionModel.Update(ctx, position); err != nil {
+		return err
+	}
+	if err := insertSettlementInstructionIdempotent(ctx, instructionModel, &models.TTradeSettlementInstruction{
+		TenantId: fill.TenantId, InstructionNo: derivedTradeBizNo(fill.FillNo, "MARGIN"),
+		BizType: "fill", BizId: fill.FillNo, BatchNo: fill.MatchNo, FillId: fill.Id,
+		OrderId: fill.OrderId, PositionId: position.Id, ReservationNo: fill.OrderNo,
+		UserId: fill.UserId, Action: int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_ADJUST_MARGIN),
+		Asset: contractOrder.MarginAsset, Amount: contractmath.RoundDebit(margin), StepNo: 1,
+		Status:      int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING),
+		NextRetryAt: now, CreateTimes: now, UpdateTimes: now,
+	}); err != nil {
 		return err
 	}
 	action := trade.PositionActionType_POSITION_ACTION_TYPE_INCREASE
@@ -266,7 +277,7 @@ func (l *ProcessContractPositionFillsLogic) riskTierForPosition(ctx context.Cont
 func writePositionProjection(ctx context.Context, historyModel models.TContractPositionHistoryModel, eventModel models.TBizTradeEventModel, before, after *models.TContractPosition, fill *models.TTradeFill, actionKey string, action trade.PositionActionType, realized, appliedQty decimal.Decimal) error {
 	now := utils.NowMillis()
 	feeDelta := proportionalAmount(fill.Fee, appliedQty, fill.Qty)
-	if _, err := historyModel.Insert(ctx, &models.TContractPositionHistory{TenantId: after.TenantId, PositionId: after.Id, UserId: after.UserId, SymbolId: after.SymbolId, ContractType: after.ContractType, ContractValueType: after.ContractValueType, PositionSide: after.PositionSide, ActionType: int64(action), ActionKey: actionKey, BeforeQty: before.Qty, AfterQty: after.Qty, BeforeAvailQty: before.AvailQty, AfterAvailQty: after.AvailQty, BeforeFrozenQty: before.FrozenQty, AfterFrozenQty: after.FrozenQty, BeforeOpenAvgPrice: before.OpenAvgPrice, AfterOpenAvgPrice: after.OpenAvgPrice, BeforePositionMargin: before.PositionMargin, AfterPositionMargin: after.PositionMargin, BeforeIsolatedMargin: before.IsolatedMargin, AfterIsolatedMargin: after.IsolatedMargin, BeforeUnrealizedPnl: before.UnrealizedPnl, AfterUnrealizedPnl: after.UnrealizedPnl, RealizedPnlDelta: realized, FeeDelta: feeDelta, FeeAsset: fill.FeeAsset, MarkPrice: fill.Price, RefOrderId: fill.OrderId, RefFillId: fill.Id, Source: int64(trade.SourceType_SOURCE_TYPE_SYSTEM), Remark: "position projected from fill", CreateTimes: now}); err != nil {
+	if _, err := historyModel.Insert(ctx, &models.TContractPositionHistory{TenantId: after.TenantId, PositionId: after.Id, UserId: after.UserId, SymbolId: after.SymbolId, ContractType: after.ContractType, ContractValueType: after.ContractValueType, PositionSide: after.PositionSide, MarginAsset: after.MarginAsset, ActionType: int64(action), ActionKey: actionKey, BusinessTime: fill.CreateTimes, BeforeVersion: before.Version, AfterVersion: after.Version, BeforeQty: before.Qty, AfterQty: after.Qty, BeforeAvailQty: before.AvailQty, AfterAvailQty: after.AvailQty, BeforeFrozenQty: before.FrozenQty, AfterFrozenQty: after.FrozenQty, BeforeOpenAvgPrice: before.OpenAvgPrice, AfterOpenAvgPrice: after.OpenAvgPrice, BeforePositionMargin: before.PositionMargin, AfterPositionMargin: after.PositionMargin, BeforeIsolatedMargin: before.IsolatedMargin, AfterIsolatedMargin: after.IsolatedMargin, BeforeUnrealizedPnl: before.UnrealizedPnl, AfterUnrealizedPnl: after.UnrealizedPnl, RealizedPnlDelta: realized, FeeDelta: feeDelta, FeeAsset: fill.FeeAsset, MarkPrice: fill.Price, RefOrderId: fill.OrderId, RefFillId: fill.Id, Source: int64(trade.SourceType_SOURCE_TYPE_SYSTEM), Remark: "position projected from fill", CreateTimes: now}); err != nil {
 		return err
 	}
 	eventNo := derivedTradeBizNo(fill.FillNo, fmt.Sprintf("POS%d", after.PositionSide))

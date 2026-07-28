@@ -2093,6 +2093,58 @@ func (DeliverySettlementStatus) EnumDescriptor() ([]byte, []int) {
 	return file_proto_trade_enum_proto_rawDescGZIP(), []int{35}
 }
 
+type ContractReconciliationIssueStatus int32
+
+const (
+	ContractReconciliationIssueStatus_CONTRACT_RECONCILIATION_ISSUE_STATUS_UNKNOWN  ContractReconciliationIssueStatus = 0
+	ContractReconciliationIssueStatus_CONTRACT_RECONCILIATION_ISSUE_STATUS_OPEN     ContractReconciliationIssueStatus = 1
+	ContractReconciliationIssueStatus_CONTRACT_RECONCILIATION_ISSUE_STATUS_RESOLVED ContractReconciliationIssueStatus = 2
+	ContractReconciliationIssueStatus_CONTRACT_RECONCILIATION_ISSUE_STATUS_IGNORED  ContractReconciliationIssueStatus = 3
+)
+
+// Enum value maps for ContractReconciliationIssueStatus.
+var (
+	ContractReconciliationIssueStatus_name = map[int32]string{
+		0: "CONTRACT_RECONCILIATION_ISSUE_STATUS_UNKNOWN",
+		1: "CONTRACT_RECONCILIATION_ISSUE_STATUS_OPEN",
+		2: "CONTRACT_RECONCILIATION_ISSUE_STATUS_RESOLVED",
+		3: "CONTRACT_RECONCILIATION_ISSUE_STATUS_IGNORED",
+	}
+	ContractReconciliationIssueStatus_value = map[string]int32{
+		"CONTRACT_RECONCILIATION_ISSUE_STATUS_UNKNOWN":  0,
+		"CONTRACT_RECONCILIATION_ISSUE_STATUS_OPEN":     1,
+		"CONTRACT_RECONCILIATION_ISSUE_STATUS_RESOLVED": 2,
+		"CONTRACT_RECONCILIATION_ISSUE_STATUS_IGNORED":  3,
+	}
+)
+
+func (x ContractReconciliationIssueStatus) Enum() *ContractReconciliationIssueStatus {
+	p := new(ContractReconciliationIssueStatus)
+	*p = x
+	return p
+}
+
+func (x ContractReconciliationIssueStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ContractReconciliationIssueStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[36].Descriptor()
+}
+
+func (ContractReconciliationIssueStatus) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[36]
+}
+
+func (x ContractReconciliationIssueStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ContractReconciliationIssueStatus.Descriptor instead.
+func (ContractReconciliationIssueStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{36}
+}
+
 var File_proto_trade_enum_proto protoreflect.FileDescriptor
 
 const file_proto_trade_enum_proto_rawDesc = "" +
@@ -2347,7 +2399,12 @@ const file_proto_trade_enum_proto_rawDesc = "" +
 	"\"DELIVERY_SETTLEMENT_STATUS_PENDING\x10\x01\x12&\n" +
 	"\"DELIVERY_SETTLEMENT_STATUS_SETTLED\x10\x02\x12%\n" +
 	"!DELIVERY_SETTLEMENT_STATUS_FAILED\x10\x03\x12,\n" +
-	"(DELIVERY_SETTLEMENT_STATUS_MANUAL_REVIEW\x10\x04B\x1aZ\x18wklive/proto/trade;tradeb\x06proto3"
+	"(DELIVERY_SETTLEMENT_STATUS_MANUAL_REVIEW\x10\x04*\xe9\x01\n" +
+	"!ContractReconciliationIssueStatus\x120\n" +
+	",CONTRACT_RECONCILIATION_ISSUE_STATUS_UNKNOWN\x10\x00\x12-\n" +
+	")CONTRACT_RECONCILIATION_ISSUE_STATUS_OPEN\x10\x01\x121\n" +
+	"-CONTRACT_RECONCILIATION_ISSUE_STATUS_RESOLVED\x10\x02\x120\n" +
+	",CONTRACT_RECONCILIATION_ISSUE_STATUS_IGNORED\x10\x03B\x1aZ\x18wklive/proto/trade;tradeb\x06proto3"
 
 var (
 	file_proto_trade_enum_proto_rawDescOnce sync.Once
@@ -2361,44 +2418,45 @@ func file_proto_trade_enum_proto_rawDescGZIP() []byte {
 	return file_proto_trade_enum_proto_rawDescData
 }
 
-var file_proto_trade_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 36)
+var file_proto_trade_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 37)
 var file_proto_trade_enum_proto_goTypes = []any{
-	(ContractValueType)(0),           // 0: trade.ContractValueType
-	(SymbolStatus)(0),                // 1: trade.SymbolStatus
-	(PositionSide)(0),                // 2: trade.PositionSide
-	(OrderType)(0),                   // 3: trade.OrderType
-	(TriggerKind)(0),                 // 4: trade.TriggerKind
-	(TimeInForce)(0),                 // 5: trade.TimeInForce
-	(OrderStatus)(0),                 // 6: trade.OrderStatus
-	(OrderDisplayStatus)(0),          // 7: trade.OrderDisplayStatus
-	(MarginMode)(0),                  // 8: trade.MarginMode
-	(PositionMode)(0),                // 9: trade.PositionMode
-	(LiquidityType)(0),               // 10: trade.LiquidityType
-	(SourceType)(0),                  // 11: trade.SourceType
-	(OrderSourceType)(0),             // 12: trade.OrderSourceType
-	(RiskCheckType)(0),               // 13: trade.RiskCheckType
-	(RiskCheckResult)(0),             // 14: trade.RiskCheckResult
-	(EventStatus)(0),                 // 15: trade.EventStatus
-	(PositionActionType)(0),          // 16: trade.PositionActionType
-	(CancelSource)(0),                // 17: trade.CancelSource
-	(TriggerType)(0),                 // 18: trade.TriggerType
-	(SecondsDrawRule)(0),             // 19: trade.SecondsDrawRule
-	(ClosePositionType)(0),           // 20: trade.ClosePositionType
-	(SecondsDirection)(0),            // 21: trade.SecondsDirection
-	(SecondsResult)(0),               // 22: trade.SecondsResult
-	(SecondsSettlementStatus)(0),     // 23: trade.SecondsSettlementStatus
-	(FillSettlementStatus)(0),        // 24: trade.FillSettlementStatus
-	(PositionStatus)(0),              // 25: trade.PositionStatus
-	(RiskLevel)(0),                   // 26: trade.RiskLevel
-	(SecondsPriceSnapshotType)(0),    // 27: trade.SecondsPriceSnapshotType
-	(AssetReservationStatus)(0),      // 28: trade.AssetReservationStatus
-	(SettlementInstructionAction)(0), // 29: trade.SettlementInstructionAction
-	(SettlementInstructionStatus)(0), // 30: trade.SettlementInstructionStatus
-	(LiquidationStatus)(0),           // 31: trade.LiquidationStatus
-	(FundingBatchStatus)(0),          // 32: trade.FundingBatchStatus
-	(FundingSettlementStatus)(0),     // 33: trade.FundingSettlementStatus
-	(DeliveryBatchStatus)(0),         // 34: trade.DeliveryBatchStatus
-	(DeliverySettlementStatus)(0),    // 35: trade.DeliverySettlementStatus
+	(ContractValueType)(0),                 // 0: trade.ContractValueType
+	(SymbolStatus)(0),                      // 1: trade.SymbolStatus
+	(PositionSide)(0),                      // 2: trade.PositionSide
+	(OrderType)(0),                         // 3: trade.OrderType
+	(TriggerKind)(0),                       // 4: trade.TriggerKind
+	(TimeInForce)(0),                       // 5: trade.TimeInForce
+	(OrderStatus)(0),                       // 6: trade.OrderStatus
+	(OrderDisplayStatus)(0),                // 7: trade.OrderDisplayStatus
+	(MarginMode)(0),                        // 8: trade.MarginMode
+	(PositionMode)(0),                      // 9: trade.PositionMode
+	(LiquidityType)(0),                     // 10: trade.LiquidityType
+	(SourceType)(0),                        // 11: trade.SourceType
+	(OrderSourceType)(0),                   // 12: trade.OrderSourceType
+	(RiskCheckType)(0),                     // 13: trade.RiskCheckType
+	(RiskCheckResult)(0),                   // 14: trade.RiskCheckResult
+	(EventStatus)(0),                       // 15: trade.EventStatus
+	(PositionActionType)(0),                // 16: trade.PositionActionType
+	(CancelSource)(0),                      // 17: trade.CancelSource
+	(TriggerType)(0),                       // 18: trade.TriggerType
+	(SecondsDrawRule)(0),                   // 19: trade.SecondsDrawRule
+	(ClosePositionType)(0),                 // 20: trade.ClosePositionType
+	(SecondsDirection)(0),                  // 21: trade.SecondsDirection
+	(SecondsResult)(0),                     // 22: trade.SecondsResult
+	(SecondsSettlementStatus)(0),           // 23: trade.SecondsSettlementStatus
+	(FillSettlementStatus)(0),              // 24: trade.FillSettlementStatus
+	(PositionStatus)(0),                    // 25: trade.PositionStatus
+	(RiskLevel)(0),                         // 26: trade.RiskLevel
+	(SecondsPriceSnapshotType)(0),          // 27: trade.SecondsPriceSnapshotType
+	(AssetReservationStatus)(0),            // 28: trade.AssetReservationStatus
+	(SettlementInstructionAction)(0),       // 29: trade.SettlementInstructionAction
+	(SettlementInstructionStatus)(0),       // 30: trade.SettlementInstructionStatus
+	(LiquidationStatus)(0),                 // 31: trade.LiquidationStatus
+	(FundingBatchStatus)(0),                // 32: trade.FundingBatchStatus
+	(FundingSettlementStatus)(0),           // 33: trade.FundingSettlementStatus
+	(DeliveryBatchStatus)(0),               // 34: trade.DeliveryBatchStatus
+	(DeliverySettlementStatus)(0),          // 35: trade.DeliverySettlementStatus
+	(ContractReconciliationIssueStatus)(0), // 36: trade.ContractReconciliationIssueStatus
 }
 var file_proto_trade_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -2418,7 +2476,7 @@ func file_proto_trade_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_trade_enum_proto_rawDesc), len(file_proto_trade_enum_proto_rawDesc)),
-			NumEnums:      36,
+			NumEnums:      37,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

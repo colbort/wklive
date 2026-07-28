@@ -288,6 +288,17 @@ func (s *AdminServer) RetrySettlementInstruction(ctx context.Context, in *trade.
 	return l.RetrySettlementInstruction(in)
 }
 
+// 查询及人工忽略跨服务对账差异；恢复态只能由自动对账证据关闭
+func (s *AdminServer) GetContractReconciliationIssueList(ctx context.Context, in *trade.GetContractReconciliationIssueListReq) (*trade.GetContractReconciliationIssueListResp, error) {
+	l := adminlogic.NewGetContractReconciliationIssueListLogic(ctx, s.svcCtx)
+	return l.GetContractReconciliationIssueList(in)
+}
+
+func (s *AdminServer) IgnoreContractReconciliationIssue(ctx context.Context, in *trade.IgnoreContractReconciliationIssueReq) (*trade.CommonResp, error) {
+	l := adminlogic.NewIgnoreContractReconciliationIssueLogic(ctx, s.svcCtx)
+	return l.IgnoreContractReconciliationIssue(in)
+}
+
 func (s *AdminServer) SetInsuranceFundAccount(ctx context.Context, in *trade.SetInsuranceFundAccountReq) (*trade.CommonResp, error) {
 	l := adminlogic.NewSetInsuranceFundAccountLogic(ctx, s.svcCtx)
 	return l.SetInsuranceFundAccount(in)

@@ -62,7 +62,7 @@ func (l *ProcessContractPositionFillsLogic) ProcessFill(fillID int64) error {
 			return err
 		}
 		if projected > 0 {
-			return nil
+			return ensureProjectedMarginInstruction(ctx, instructionModel, historyModel, fill, contractOrder)
 		}
 
 		remaining := fill.Qty
@@ -77,7 +77,7 @@ func (l *ProcessContractPositionFillsLogic) ProcessFill(fillID int64) error {
 				return fmt.Errorf("reduce-only fill exceeds position: fill=%s remaining=%s", fill.FillNo, remaining)
 			}
 			if remaining.IsPositive() {
-				if err := l.applyOpen(ctx, positionModel, historyModel, eventModel, fill, contractOrder, contract, openSide, remaining); err != nil {
+				if err := l.applyOpen(ctx, positionModel, historyModel, eventModel, instructionModel, fill, contractOrder, contract, openSide, remaining); err != nil {
 					return err
 				}
 			}
@@ -90,7 +90,7 @@ func (l *ProcessContractPositionFillsLogic) ProcessFill(fillID int64) error {
 				return fmt.Errorf("closing fill exceeds position: fill=%s qty=%s closed=%s", fill.FillNo, remaining, closed)
 			}
 		} else {
-			if err := l.applyOpen(ctx, positionModel, historyModel, eventModel, fill, contractOrder, contract, fill.PositionSide, remaining); err != nil {
+			if err := l.applyOpen(ctx, positionModel, historyModel, eventModel, instructionModel, fill, contractOrder, contract, fill.PositionSide, remaining); err != nil {
 				return err
 			}
 		}
@@ -107,7 +107,87 @@ func (l *ProcessContractPositionFillsLogic) ProcessFill(fillID int64) error {
 	})
 }
 
-func (l *ProcessContractPositionFillsLogic) applyOpen(ctx context.Context, positionModel models.TContractPositionModel, historyModel models.TContractPositionHistoryModel, eventModel models.TBizTradeEventModel, fill *models.TTradeFill, contractOrder *models.TTradeOrderContract, contract *models.TTradeSymbolContract, side int64, qty decimal.Decimal) error {
+func ensureProjectedMarginInstruction(ctx context.Context, instructionModel models.TTradeSettlementInstructionModel, historyModel models.TContractPositionHistoryModel, fill *models.TTradeFill, contractOrder *models.TTradeOrderContract) error {
+	histories, err := historyModel.FindByRefFillId(ctx, fill.TenantId, fill.Id)
+	if err != nil {
+		return err
+	}
+	margin, positionID := decimal.Zero, int64(0)
+	for _, history := range histories {
+		if history.ActionType != int64(trade.PositionActionType_POSITION_ACTION_TYPE_OPEN) &&
+			history.ActionType != int64(trade.PositionActionType_POSITION_ACTION_TYPE_INCREASE) {
+			continue
+		}
+		delta := history.AfterPositionMargin.Sub(history.BeforePositionMargin)
+		if delta.IsPositive() {
+			margin = margin.Add(delta)
+			if positionID != 0 && positionID != history.PositionId {
+				return fmt.Errorf("fill %s opens more than one position", fill.FillNo)
+			}
+			positionID = history.PositionId
+		}
+	}
+	instructionNo := derivedTradeBizNo(fill.FillNo, "MARGIN")
+	existing, findErr := instructionModel.FindOneByTenantIdInstructionNo(ctx, fill.TenantId, instructionNo)
+	if !margin.IsPositive() {
+		if errors.Is(findErr, models.ErrNotFound) {
+			return nil
+		}
+		if findErr != nil {
+			return findErr
+		}
+		if existing.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING) ||
+			existing.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_FAILED) ||
+			existing.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_MANUAL_REVIEW) {
+			return instructionModel.Delete(ctx, existing.Id)
+		}
+		return fmt.Errorf("legacy margin instruction %s was already executed for a pure closing fill", instructionNo)
+	}
+	desired := &models.TTradeSettlementInstruction{
+		TenantId: fill.TenantId, InstructionNo: instructionNo, BizType: "fill", BizId: fill.FillNo,
+		BatchNo: fill.MatchNo, FillId: fill.Id, OrderId: fill.OrderId, PositionId: positionID,
+		ReservationNo: fill.OrderNo, UserId: fill.UserId,
+		Action: int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_ADJUST_MARGIN),
+		Asset:  contractOrder.MarginAsset, Amount: contractmath.RoundDebit(margin), StepNo: 1,
+	}
+	if findErr != nil {
+		if !errors.Is(findErr, models.ErrNotFound) {
+			return findErr
+		}
+		existing = nil
+	}
+	return upsertProjectedMarginInstruction(ctx, instructionModel, existing, desired)
+}
+
+func upsertProjectedMarginInstruction(ctx context.Context, instructionModel models.TTradeSettlementInstructionModel, existing, desired *models.TTradeSettlementInstruction) error {
+	if existing == nil {
+		now := utils.NowMillis()
+		desired.Status = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING)
+		desired.NextRetryAt, desired.CreateTimes, desired.UpdateTimes = now, now, now
+		_, err := instructionModel.Insert(ctx, desired)
+		return err
+	}
+	if sameSettlementInstructionIdentity(existing, desired) {
+		return nil
+	}
+	if existing.PositionId == 0 &&
+		existing.Action == int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_ADJUST_MARGIN) &&
+		(existing.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING) ||
+			existing.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_FAILED) ||
+			existing.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_MANUAL_REVIEW)) {
+		existing.PositionId = desired.PositionId
+		existing.Amount = desired.Amount
+		existing.StepNo = desired.StepNo
+		existing.Status = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING)
+		existing.NextRetryAt = utils.NowMillis()
+		existing.LastErrorMsg = ""
+		existing.UpdateTimes = existing.NextRetryAt
+		return instructionModel.Update(ctx, existing)
+	}
+	return fmt.Errorf("legacy margin instruction %s conflicts with projected opening margin", desired.InstructionNo)
+}
+
+func (l *ProcessContractPositionFillsLogic) applyOpen(ctx context.Context, positionModel models.TContractPositionModel, historyModel models.TContractPositionHistoryModel, eventModel models.TBizTradeEventModel, instructionModel models.TTradeSettlementInstructionModel, fill *models.TTradeFill, contractOrder *models.TTradeOrderContract, contract *models.TTradeSymbolContract, side int64, qty decimal.Decimal) error {
 	if !qty.IsPositive() {
 		return nil
 	}
@@ -155,6 +235,23 @@ func (l *ProcessContractPositionFillsLogic) applyOpen(ctx context.Context, posit
 		}
 		position.Id, _ = result.LastInsertId()
 	} else if err := positionModel.Update(ctx, position); err != nil {
+		return err
+	}
+	desiredInstruction := &models.TTradeSettlementInstruction{
+		TenantId: fill.TenantId, InstructionNo: derivedTradeBizNo(fill.FillNo, "MARGIN"),
+		BizType: "fill", BizId: fill.FillNo, BatchNo: fill.MatchNo, FillId: fill.Id,
+		OrderId: fill.OrderId, PositionId: position.Id, ReservationNo: fill.OrderNo,
+		UserId: fill.UserId, Action: int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_ADJUST_MARGIN),
+		Asset: contractOrder.MarginAsset, Amount: contractmath.RoundDebit(margin), StepNo: 1,
+	}
+	existingInstruction, findErr := instructionModel.FindOneByTenantIdInstructionNo(ctx, fill.TenantId, desiredInstruction.InstructionNo)
+	if findErr != nil && !errors.Is(findErr, models.ErrNotFound) {
+		return findErr
+	}
+	if errors.Is(findErr, models.ErrNotFound) {
+		existingInstruction = nil
+	}
+	if err := upsertProjectedMarginInstruction(ctx, instructionModel, existingInstruction, desiredInstruction); err != nil {
 		return err
 	}
 	action := trade.PositionActionType_POSITION_ACTION_TYPE_INCREASE
@@ -266,7 +363,7 @@ func (l *ProcessContractPositionFillsLogic) riskTierForPosition(ctx context.Cont
 func writePositionProjection(ctx context.Context, historyModel models.TContractPositionHistoryModel, eventModel models.TBizTradeEventModel, before, after *models.TContractPosition, fill *models.TTradeFill, actionKey string, action trade.PositionActionType, realized, appliedQty decimal.Decimal) error {
 	now := utils.NowMillis()
 	feeDelta := proportionalAmount(fill.Fee, appliedQty, fill.Qty)
-	if _, err := historyModel.Insert(ctx, &models.TContractPositionHistory{TenantId: after.TenantId, PositionId: after.Id, UserId: after.UserId, SymbolId: after.SymbolId, ContractType: after.ContractType, ContractValueType: after.ContractValueType, PositionSide: after.PositionSide, ActionType: int64(action), ActionKey: actionKey, BeforeQty: before.Qty, AfterQty: after.Qty, BeforeAvailQty: before.AvailQty, AfterAvailQty: after.AvailQty, BeforeFrozenQty: before.FrozenQty, AfterFrozenQty: after.FrozenQty, BeforeOpenAvgPrice: before.OpenAvgPrice, AfterOpenAvgPrice: after.OpenAvgPrice, BeforePositionMargin: before.PositionMargin, AfterPositionMargin: after.PositionMargin, BeforeIsolatedMargin: before.IsolatedMargin, AfterIsolatedMargin: after.IsolatedMargin, BeforeUnrealizedPnl: before.UnrealizedPnl, AfterUnrealizedPnl: after.UnrealizedPnl, RealizedPnlDelta: realized, FeeDelta: feeDelta, FeeAsset: fill.FeeAsset, MarkPrice: fill.Price, RefOrderId: fill.OrderId, RefFillId: fill.Id, Source: int64(trade.SourceType_SOURCE_TYPE_SYSTEM), Remark: "position projected from fill", CreateTimes: now}); err != nil {
+	if _, err := historyModel.Insert(ctx, &models.TContractPositionHistory{TenantId: after.TenantId, PositionId: after.Id, UserId: after.UserId, SymbolId: after.SymbolId, ContractType: after.ContractType, ContractValueType: after.ContractValueType, PositionSide: after.PositionSide, MarginAsset: after.MarginAsset, ActionType: int64(action), ActionKey: actionKey, BusinessTime: fill.CreateTimes, BeforeVersion: before.Version, AfterVersion: after.Version, BeforeQty: before.Qty, AfterQty: after.Qty, BeforeAvailQty: before.AvailQty, AfterAvailQty: after.AvailQty, BeforeFrozenQty: before.FrozenQty, AfterFrozenQty: after.FrozenQty, BeforeOpenAvgPrice: before.OpenAvgPrice, AfterOpenAvgPrice: after.OpenAvgPrice, BeforePositionMargin: before.PositionMargin, AfterPositionMargin: after.PositionMargin, BeforeIsolatedMargin: before.IsolatedMargin, AfterIsolatedMargin: after.IsolatedMargin, BeforeUnrealizedPnl: before.UnrealizedPnl, AfterUnrealizedPnl: after.UnrealizedPnl, RealizedPnlDelta: realized, FeeDelta: feeDelta, FeeAsset: fill.FeeAsset, MarkPrice: fill.Price, RefOrderId: fill.OrderId, RefFillId: fill.Id, Source: int64(trade.SourceType_SOURCE_TYPE_SYSTEM), Remark: "position projected from fill", CreateTimes: now}); err != nil {
 		return err
 	}
 	eventNo := derivedTradeBizNo(fill.FillNo, fmt.Sprintf("POS%d", after.PositionSide))

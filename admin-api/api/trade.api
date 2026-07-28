@@ -1187,6 +1187,8 @@ type ContractDeliveryBatch {
 	settlementPrice  string `json:"settlementPrice" validate:"decimal_36_18"`
 	priceSource      string `json:"priceSource"`
 	priceAlgorithm   string `json:"priceAlgorithm"`
+	formulaVersion   string `json:"formulaVersion"`
+	sampleSnapshot   string `json:"sampleSnapshot"`
 	openCutoffTime   int64  `json:"openCutoffTime"`
 	matchingStopTime int64  `json:"matchingStopTime"`
 	deliveryTime     int64  `json:"deliveryTime"`
@@ -1365,6 +1367,8 @@ type TradeSettlementInstruction {
 	retryCount    int64  `json:"retryCount"`
 	nextRetryAt   int64  `json:"nextRetryAt"`
 	lastErrorMsg  string `json:"lastErrorMsg"`
+	assetFlowNo   string `json:"assetFlowNo"`
+	reconciledAt  int64  `json:"reconciledAt"`
 	createTimes   int64  `json:"createTimes"`
 	updateTimes   int64  `json:"updateTimes"`
 }
@@ -1384,6 +1388,46 @@ type GetSettlementInstructionListResp {
 }
 
 type RetrySettlementInstructionReq {
+	tenantId int64  `json:"tenantId,optional"`
+	id       int64  `json:"id"`
+	reason   string `json:"reason"`
+}
+
+type ContractReconciliationIssue {
+	id               int64  `json:"id"`
+	issueKey         string `json:"issueKey"`
+	checkType        string `json:"checkType"`
+	bizType          string `json:"bizType"`
+	bizNo            string `json:"bizNo"`
+	instructionId    int64  `json:"instructionId"`
+	expectedValue    string `json:"expectedValue"`
+	actualValue      string `json:"actualValue"`
+	detail           string `json:"detail"`
+	status           int64  `json:"status"`
+	occurrenceCount  int64  `json:"occurrenceCount"`
+	firstSeenAt      int64  `json:"firstSeenAt"`
+	lastSeenAt       int64  `json:"lastSeenAt"`
+	resolvedAt       int64  `json:"resolvedAt"`
+	operatorId       int64  `json:"operatorId"`
+	resolutionReason string `json:"resolutionReason"`
+	createTimes      int64  `json:"createTimes"`
+	updateTimes      int64  `json:"updateTimes"`
+}
+
+type GetContractReconciliationIssueListReq {
+	PageReq
+	tenantId  int64  `form:"tenantId,optional"`
+	status    int64  `form:"status,optional"`
+	checkType string `form:"checkType,optional"`
+	bizNo     string `form:"bizNo,optional"`
+}
+
+type GetContractReconciliationIssueListResp {
+	RespBase
+	data []ContractReconciliationIssue `json:"data"`
+}
+
+type IgnoreContractReconciliationIssueReq {
 	tenantId int64  `json:"tenantId,optional"`
 	id       int64  `json:"id"`
 	reason   string `json:"reason"`
@@ -1529,6 +1573,12 @@ service admin {
 
 	@handler RetrySettlementInstruction
 	post /operations/settlement-instructions/retry (RetrySettlementInstructionReq) returns (CommonResp)
+
+	@handler GetContractReconciliationIssueList
+	get /operations/reconciliation-issues (GetContractReconciliationIssueListReq) returns (GetContractReconciliationIssueListResp)
+
+	@handler IgnoreContractReconciliationIssue
+	post /operations/reconciliation-issues/ignore (IgnoreContractReconciliationIssueReq) returns (CommonResp)
 
 	@handler SetInsuranceFundAccount
 	post /insurance-fund/accounts (SetInsuranceFundAccountReq) returns (CommonResp)

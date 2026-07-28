@@ -40,6 +40,9 @@ func (l *ProcessContractSettlementsLogic) ProcessContractSettlements(in *trade.T
 		if err := NewProcessDeliverySettlementsLogic(l.ctx, l.svcCtx).Process(in.GetTenantId()); err != nil {
 			result = errors.Join(result, fmt.Errorf("delivery settlements: %w", err))
 		}
+		if err := NewReconcileContractAssetFlowsLogic(l.ctx, l.svcCtx).Process(in.GetTenantId()); err != nil {
+			result = errors.Join(result, fmt.Errorf("contract Asset flow reconciliation: %w", err))
+		}
 		if result != nil {
 			return nil, result
 		}

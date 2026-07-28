@@ -333,6 +333,9 @@ service Admin {
   rpc GetSettlementInstructionList(GetSettlementInstructionListReq) returns (GetSettlementInstructionListResp);
   // 仅重置失败/人工处理的结算指令；不得修改金额
   rpc RetrySettlementInstruction(RetrySettlementInstructionReq) returns (CommonResp);
+  // 查询及人工忽略跨服务对账差异；恢复态只能由自动对账证据关闭
+  rpc GetContractReconciliationIssueList(GetContractReconciliationIssueListReq) returns (GetContractReconciliationIssueListResp);
+  rpc IgnoreContractReconciliationIssue(IgnoreContractReconciliationIssueReq) returns (CommonResp);
   rpc SetInsuranceFundAccount(SetInsuranceFundAccountReq) returns (CommonResp);
   rpc GetInsuranceFundAccountList(GetInsuranceFundAccountListReq) returns (GetInsuranceFundAccountListResp);
   rpc GetMarketSnapshotList(GetMarketSnapshotListReq) returns (GetMarketSnapshotListResp);
@@ -961,6 +964,8 @@ message ContractDeliveryBatch {
   string last_error_msg = 13;
   int64 create_times = 14;
   int64 update_times = 15;
+  string formula_version = 16;
+  string sample_snapshot = 17;
 }
 message GetDeliveryBatchListReq {
   int64 tenant_id = 1;
@@ -1189,6 +1194,8 @@ message TradeSettlementInstruction {
   string last_error_msg = 18;
   int64 create_times = 19;
   int64 update_times = 20;
+  string asset_flow_no = 21;
+  int64 reconciled_at = 22;
 }
 message GetSettlementInstructionListReq {
   int64 tenant_id = 1;
@@ -1207,6 +1214,46 @@ message RetrySettlementInstructionReq {
   int64 id = 2;
   string reason = 4;
   reserved 3; // 操作人必须从可信网关元数据获取，禁止客户端传入
+}
+
+message ContractReconciliationIssue {
+  int64 id = 1;
+  string issue_key = 2;
+  string check_type = 3;
+  string biz_type = 4;
+  string biz_no = 5;
+  int64 instruction_id = 6;
+  string expected_value = 7;
+  string actual_value = 8;
+  string detail = 9;
+  ContractReconciliationIssueStatus status = 10;
+  int64 occurrence_count = 11;
+  int64 first_seen_at = 12;
+  int64 last_seen_at = 13;
+  int64 resolved_at = 14;
+  int64 operator_id = 15;
+  string resolution_reason = 16;
+  int64 create_times = 17;
+  int64 update_times = 18;
+}
+
+message GetContractReconciliationIssueListReq {
+  int64 tenant_id = 1;
+  common.PageReq page = 2;
+  ContractReconciliationIssueStatus status = 3;
+  string check_type = 4;
+  string biz_no = 5;
+}
+
+message GetContractReconciliationIssueListResp {
+  common.RespBase base = 1;
+  repeated ContractReconciliationIssue data = 2;
+}
+
+message IgnoreContractReconciliationIssueReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  string reason = 3;
 }
 
 // 交易服务内部接口

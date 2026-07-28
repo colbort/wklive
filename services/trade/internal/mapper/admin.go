@@ -16,7 +16,11 @@ func FundingSettlementProto(v *models.TContractFundingSettlement) *trade.Contrac
 	return &trade.ContractFundingSettlement{Id: v.Id, SettlementNo: v.SettlementNo, BatchId: v.BatchId, BatchNo: v.BatchNo, SymbolId: v.SymbolId, UserId: v.UserId, PositionId: v.PositionId, PositionSide: trade.PositionSide(v.PositionSide), FundingRate: v.FundingRate.String(), MarkPrice: v.MarkPrice.String(), PositionQty: v.PositionQty.String(), FeeAsset: v.FeeAsset, FeeAmount: v.FeeAmount.String(), SettlementTime: v.SettlementTime, Status: trade.FundingSettlementStatus(v.Status), RetryCount: v.RetryCount, NextRetryAt: v.NextRetryAt, LastErrorMsg: v.LastErrorMsg, SettledAt: v.SettledAt, CreateTimes: v.CreateTimes, UpdateTimes: v.UpdateTimes, PositionVersion: v.PositionVersion}
 }
 func DeliveryBatchProto(v *models.TContractDeliveryBatch) *trade.ContractDeliveryBatch {
-	return &trade.ContractDeliveryBatch{Id: v.Id, BatchNo: v.BatchNo, SymbolId: v.SymbolId, SettlementPrice: v.SettlementPrice.String(), PriceSource: v.PriceSource, PriceAlgorithm: v.PriceAlgorithm, OpenCutoffTime: v.OpenCutoffTime, MatchingStopTime: v.MatchingStopTime, DeliveryTime: v.DeliveryTime, Status: trade.DeliveryBatchStatus(v.Status), TotalPositions: v.TotalPositions, SettledPositions: v.SettledPositions, LastErrorMsg: v.LastErrorMsg, CreateTimes: v.CreateTimes, UpdateTimes: v.UpdateTimes}
+	sampleSnapshot := ""
+	if v.SampleSnapshot.Valid {
+		sampleSnapshot = v.SampleSnapshot.String
+	}
+	return &trade.ContractDeliveryBatch{Id: v.Id, BatchNo: v.BatchNo, SymbolId: v.SymbolId, SettlementPrice: v.SettlementPrice.String(), PriceSource: v.PriceSource, PriceAlgorithm: v.PriceAlgorithm, OpenCutoffTime: v.OpenCutoffTime, MatchingStopTime: v.MatchingStopTime, DeliveryTime: v.DeliveryTime, Status: trade.DeliveryBatchStatus(v.Status), TotalPositions: v.TotalPositions, SettledPositions: v.SettledPositions, LastErrorMsg: v.LastErrorMsg, CreateTimes: v.CreateTimes, UpdateTimes: v.UpdateTimes, FormulaVersion: v.FormulaVersion, SampleSnapshot: sampleSnapshot}
 }
 func DeliverySettlementProto(v *models.TContractDeliverySettlement) *trade.ContractDeliverySettlement {
 	return &trade.ContractDeliverySettlement{Id: v.Id, SettlementNo: v.SettlementNo, BatchId: v.BatchId, BatchNo: v.BatchNo, SymbolId: v.SymbolId, UserId: v.UserId, PositionId: v.PositionId, PositionSide: trade.PositionSide(v.PositionSide), SettlementPrice: v.SettlementPrice.String(), PositionQty: v.PositionQty.String(), RealizedPnl: v.RealizedPnl.String(), DeliveryFee: v.DeliveryFee.String(), SettleAsset: v.SettleAsset, DeliveryTime: v.DeliveryTime, Status: trade.DeliverySettlementStatus(v.Status), RetryCount: v.RetryCount, NextRetryAt: v.NextRetryAt, LastErrorMsg: v.LastErrorMsg, SettledAt: v.SettledAt, CreateTimes: v.CreateTimes, UpdateTimes: v.UpdateTimes}
@@ -35,5 +39,28 @@ func ReservationProto(v *models.TTradeAssetReservation) *trade.TradeAssetReserva
 	return &trade.TradeAssetReservation{Id: v.Id, OrderId: v.OrderId, ReservationNo: v.ReservationNo, Asset: v.Asset, ReservedAmount: v.ReservedAmount.String(), ConsumedAmount: v.ConsumedAmount.String(), ReleasedAmount: v.ReleasedAmount.String(), Status: trade.AssetReservationStatus(v.Status), RetryCount: v.RetryCount, NextRetryAt: v.NextRetryAt, LastErrorMsg: v.LastErrorMsg, Version: v.Version, CreateTimes: v.CreateTimes, UpdateTimes: v.UpdateTimes}
 }
 func InstructionProto(v *models.TTradeSettlementInstruction) *trade.TradeSettlementInstruction {
-	return &trade.TradeSettlementInstruction{Id: v.Id, InstructionNo: v.InstructionNo, BizType: v.BizType, BizId: v.BizId, BatchNo: v.BatchNo, FillId: v.FillId, OrderId: v.OrderId, PositionId: v.PositionId, ReservationNo: v.ReservationNo, UserId: v.UserId, Action: trade.SettlementInstructionAction(v.Action), Asset: v.Asset, Amount: v.Amount.String(), StepNo: v.StepNo, Status: trade.SettlementInstructionStatus(v.Status), RetryCount: v.RetryCount, NextRetryAt: v.NextRetryAt, LastErrorMsg: v.LastErrorMsg, CreateTimes: v.CreateTimes, UpdateTimes: v.UpdateTimes}
+	return &trade.TradeSettlementInstruction{Id: v.Id, InstructionNo: v.InstructionNo, BizType: v.BizType, BizId: v.BizId, BatchNo: v.BatchNo, FillId: v.FillId, OrderId: v.OrderId, PositionId: v.PositionId, ReservationNo: v.ReservationNo, UserId: v.UserId, Action: trade.SettlementInstructionAction(v.Action), Asset: v.Asset, Amount: v.Amount.String(), StepNo: v.StepNo, Status: trade.SettlementInstructionStatus(v.Status), RetryCount: v.RetryCount, NextRetryAt: v.NextRetryAt, LastErrorMsg: v.LastErrorMsg, CreateTimes: v.CreateTimes, UpdateTimes: v.UpdateTimes, AssetFlowNo: v.AssetFlowNo, ReconciledAt: v.ReconciledAt}
+}
+
+func ContractReconciliationIssueProto(v *models.TContractReconciliationIssue) *trade.ContractReconciliationIssue {
+	return &trade.ContractReconciliationIssue{
+		Id:               v.Id,
+		IssueKey:         v.IssueKey,
+		CheckType:        v.CheckType,
+		BizType:          v.BizType,
+		BizNo:            v.BizNo,
+		InstructionId:    v.InstructionId,
+		ExpectedValue:    v.ExpectedValue,
+		ActualValue:      v.ActualValue,
+		Detail:           v.Detail,
+		Status:           trade.ContractReconciliationIssueStatus(v.Status),
+		OccurrenceCount:  v.OccurrenceCount,
+		FirstSeenAt:      v.FirstSeenAt,
+		LastSeenAt:       v.LastSeenAt,
+		ResolvedAt:       v.ResolvedAt,
+		OperatorId:       v.OperatorId,
+		ResolutionReason: v.ResolutionReason,
+		CreateTimes:      v.CreateTimes,
+		UpdateTimes:      v.UpdateTimes,
+	}
 }

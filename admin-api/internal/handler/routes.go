@@ -1163,6 +1163,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
+				Path:    "/operations/reconciliation-issues",
+				Handler: trade.GetContractReconciliationIssueListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/operations/reconciliation-issues/ignore",
+				Handler: trade.IgnoreContractReconciliationIssueHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/operations/settlement-instructions",
 				Handler: trade.GetSettlementInstructionListHandler(serverCtx),
 			},

@@ -32,6 +32,22 @@ func settlementInstructionLeaseOwned(current, claimed *models.TTradeSettlementIn
 
 func deliveryAssetSteps(margin, pnl, fee decimal.Decimal) []contractAssetStep {
 	candidates := []contractAssetStep{
+		{suffix: "MARGIN", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE, amount: margin, stepNo: 1},
+		{suffix: "LOSS", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_PNL_LOSS, amount: decimalMaxZero(pnl.Neg()), stepNo: 2},
+		{suffix: "FEE", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_PNL_LOSS, amount: fee, stepNo: 2},
+		{suffix: "PROFIT", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE, amount: decimalMaxZero(pnl), stepNo: 3},
+	}
+	out := make([]contractAssetStep, 0, len(candidates))
+	for _, candidate := range candidates {
+		if candidate.amount.IsPositive() {
+			out = append(out, candidate)
+		}
+	}
+	return out
+}
+
+func legacyDeliveryAssetSteps(margin, pnl, fee decimal.Decimal) []contractAssetStep {
+	candidates := []contractAssetStep{
 		{suffix: "LOSS", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_PNL_LOSS, amount: decimalMaxZero(pnl.Neg()), stepNo: 1},
 		{suffix: "FEE", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_DEDUCT_PNL_LOSS, amount: fee, stepNo: 1},
 		{suffix: "MARGIN", action: trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE, amount: margin, stepNo: 2},

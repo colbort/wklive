@@ -30,7 +30,7 @@
           />
         </el-select>
         <el-input-number
-          v-else-if="field !== 'bizType' && field !== 'bizId'"
+          v-else-if="!['bizType', 'bizId', 'checkType', 'bizNo'].includes(field)"
           v-model="query[field]"
           :min="0"
           controls-position="right"
@@ -88,20 +88,29 @@
           </template>
         </el-table-column>
         <el-table-column
-          v-if="kind === 'instructions'"
+          v-if="kind === 'instructions' || kind === 'reconciliationIssues'"
           :label="t('common.actions')"
           width="110"
           fixed="right"
         >
           <template #default="{ row }">
             <el-button
-              v-if="row.status === 4 || row.status === 5"
+              v-if="kind === 'instructions' && (row.status === 4 || row.status === 5)"
               v-perm="'trade:operation:settlement-instruction:retry'"
               link
               type="warning"
               @click="retry(row)"
             >
               {{ t('trade.retry') }}
+            </el-button>
+            <el-button
+              v-if="kind === 'reconciliationIssues' && row.status === 1"
+              v-perm="'trade:operation:reconciliation-issue:ignore'"
+              link
+              type="warning"
+              @click="ignoreIssue(row)"
+            >
+              {{ t('trade.ignoreIssue') }}
             </el-button>
           </template>
         </el-table-column>
@@ -141,6 +150,8 @@ import {
   apiTradeListRiskTiers,
   apiTradeListSecondsPriceSnapshots,
   apiTradeListSettlementInstructions,
+  apiTradeListContractReconciliationIssues,
+  apiTradeIgnoreContractReconciliationIssue,
   apiTradeRetrySettlementInstruction,
 } from '@/api/trade'
 type TradeOperationRecord = Record<string, string | number | null | undefined>
@@ -156,6 +167,7 @@ type Kind =
   | 'snapshots'
   | 'reservations'
   | 'instructions'
+  | 'reconciliationIssues'
 const props = defineProps<{ kind: Kind }>()
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
@@ -175,6 +187,8 @@ const query = reactive<Record<string, any>>({
   snapshotType: undefined,
   bizType: '',
   bizId: '',
+  checkType: '',
+  bizNo: '',
 })
 const configs: Record<Kind, { filters: string[]; columns: string[]; api: ListApi }> = {
   riskTiers: {
@@ -229,6 +243,10 @@ const configs: Record<Kind, { filters: string[]; columns: string[]; api: ListApi
       'batchNo',
       'symbolId',
       'settlementPrice',
+      'priceSource',
+      'priceAlgorithm',
+      'formulaVersion',
+      'sampleSnapshot',
       'deliveryTime',
       'status',
       'settledPositions',
@@ -316,8 +334,31 @@ const configs: Record<Kind, { filters: string[]; columns: string[]; api: ListApi
       'status',
       'retryCount',
       'lastErrorMsg',
+      'assetFlowNo',
+      'reconciledAt',
     ],
     api: apiTradeListSettlementInstructions as unknown as ListApi,
+  },
+  reconciliationIssues: {
+    filters: ['status', 'checkType', 'bizNo'],
+    columns: [
+      'issueKey',
+      'checkType',
+      'bizType',
+      'bizNo',
+      'instructionId',
+      'expectedValue',
+      'actualValue',
+      'detail',
+      'status',
+      'occurrenceCount',
+      'firstSeenAt',
+      'lastSeenAt',
+      'resolvedAt',
+      'operatorId',
+      'resolutionReason',
+    ],
+    api: apiTradeListContractReconciliationIssues as unknown as ListApi,
   },
 }
 const filters = configs[props.kind].filters,
@@ -329,7 +370,8 @@ const statusOptionGroup = computed(() => {
 })
 function params() {
   const p: Record<string, any> = { cursor: pagination.cursor, limit: pagination.limit }
-  for (const k of ['tenantId', ...filters]) if (query[k] !== '' && query[k] != null) p[k] = query[k]
+  for (const k of ['tenantId', ...filters])
+    if (query[k] !== '' && query[k] != null) p[k] = query[k]
   return p
 }
 async function load() {
@@ -343,7 +385,9 @@ async function load() {
   }
 }
 function reset() {
-  Object.keys(query).forEach((k) => (query[k] = k === 'bizType' || k === 'bizId' ? '' : undefined))
+  Object.keys(query).forEach(
+    (k) => (query[k] = ['bizType', 'bizId', 'checkType', 'bizNo'].includes(k) ? '' : undefined),
+  )
   resetAndLoad(load)
 }
 function filterOptions(field: string) {
@@ -353,6 +397,12 @@ function filterOptions(field: string) {
       { value: 2, label: t('common.disabled') },
     ]
   if (field === 'snapshotType') return optionSelectItems('secondsPriceSnapshotType')
+  if (field === 'status' && props.kind === 'reconciliationIssues')
+    return [
+      { value: 1, label: t('trade.reconciliationOpen') },
+      { value: 2, label: t('trade.reconciliationResolved') },
+      { value: 3, label: t('trade.reconciliationIgnored') },
+    ]
   if (field === 'status' && statusOptionGroup.value)
     return optionSelectItems(statusOptionGroup.value)
   return Array.from({ length: 12 }, (_, index) => ({
@@ -401,6 +451,12 @@ function statusTagType(value: number) {
     if (value === 1 || value === 2) return 'warning'
     return 'info'
   }
+  if (props.kind === 'reconciliationIssues') {
+    if (value === 2) return 'success'
+    if (value === 3) return 'info'
+    if (value === 1) return 'danger'
+    return 'info'
+  }
   if (value === 1 || value === 3) return 'success'
   if (value === 4 || value === 5) return 'danger'
   if (value === 2) return 'warning'
@@ -410,6 +466,11 @@ function formatStatus(key: string, value: unknown) {
   if (key === 'enabled') return Number(value) === 1 ? t('common.enabled') : t('common.disabled')
   if (key === 'status' && statusOptionGroup.value)
     return optionValueLabel(statusOptionGroup.value, Number(value))
+  if (key === 'status' && props.kind === 'reconciliationIssues') {
+    if (Number(value) === 1) return t('trade.reconciliationOpen')
+    if (Number(value) === 2) return t('trade.reconciliationResolved')
+    if (Number(value) === 3) return t('trade.reconciliationIgnored')
+  }
   return formatValue(key, value)
 }
 function formatValue(key: string, value: any) {
@@ -424,6 +485,22 @@ async function retry(row: TradeOperationRecord) {
     inputValidator: (v) => !!v || t('trade.retryReasonRequired'),
   })
   await apiTradeRetrySettlementInstruction({ id: Number(row.id), reason: value })
+  ElMessage.success(t('common.success'))
+  load()
+}
+async function ignoreIssue(row: TradeOperationRecord) {
+  const { value } = await ElMessageBox.prompt(t('trade.ignoreReason'), t('trade.ignoreIssue'), {
+    inputValidator: (v) => {
+      if (!v?.trim()) return t('trade.ignoreReasonRequired')
+      if (new TextEncoder().encode(v.trim()).length > 500) return t('trade.ignoreReasonTooLong')
+      return true
+    },
+  })
+  await apiTradeIgnoreContractReconciliationIssue({
+    id: Number(row.id),
+    tenantId: query.tenantId,
+    reason: value.trim(),
+  })
   ElMessage.success(t('common.success'))
   load()
 }

@@ -76,6 +76,10 @@ import type {
   GetSettlementInstructionListReq,
   GetSettlementInstructionListResp,
   RetrySettlementInstructionReq,
+  ContractReconciliationIssue,
+  GetContractReconciliationIssueListReq,
+  GetContractReconciliationIssueListResp,
+  IgnoreContractReconciliationIssueReq,
   UpdateSymbolReq,
   InsuranceFundAccount,
   SetInsuranceFundAccountReq,
@@ -301,6 +305,18 @@ export function apiTradeRetrySettlementInstruction(
   params: RetrySettlementInstructionReq,
 ): Promise<RespBase> {
   return post('/admin/trade/operations/settlement-instructions/retry', params)
+}
+
+export function apiTradeListContractReconciliationIssues(
+  params: GetContractReconciliationIssueListReq,
+): Promise<GetContractReconciliationIssueListResp> {
+  return get<ContractReconciliationIssue[]>('/admin/trade/operations/reconciliation-issues', params)
+}
+
+export function apiTradeIgnoreContractReconciliationIssue(
+  params: IgnoreContractReconciliationIssueReq,
+): Promise<RespBase> {
+  return post('/admin/trade/operations/reconciliation-issues/ignore', params)
 }
 
 export function apiTradeListInsuranceFundAccounts(

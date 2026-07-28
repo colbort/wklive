@@ -16,6 +16,7 @@ type (
 	TContractFundingBatchModel interface {
 		tContractFundingBatchModel
 		FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractFundingBatch, int64, error)
+		FindLatestBySymbol(ctx context.Context, tenantID, symbolID int64) (*TContractFundingBatch, error)
 	}
 
 	customTContractFundingBatchModel struct {
@@ -28,6 +29,15 @@ func NewTContractFundingBatchModel(conn sqlx.SqlConn, c cache.CacheConf, opts ..
 	return &customTContractFundingBatchModel{
 		defaultTContractFundingBatchModel: newTContractFundingBatchModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTContractFundingBatchModel) FindLatestBySymbol(ctx context.Context, tenantID, symbolID int64) (*TContractFundingBatch, error) {
+	var row TContractFundingBatch
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND symbol_id = ? ORDER BY settlement_time DESC, id DESC LIMIT 1", tContractFundingBatchRows, m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &row, query, tenantID, symbolID); err != nil {
+		return nil, err
+	}
+	return &row, nil
 }
 
 func (m *defaultTContractFundingBatchModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractFundingBatch, int64, error) {
