@@ -29,7 +29,7 @@
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="rows" stripe>
-        <el-table-column prop="formulaNo" :label="t('itick.formulaNo')" min-width="150" />
+        <el-table-column prop="formulaNo" :label="t('itick.formulaNo')" min-width="200" />
         <el-table-column prop="authority" :label="t('itick.authority')" min-width="130" />
         <el-table-column prop="snapshotKind" :label="t('itick.snapshotKind')" min-width="140" />
         <el-table-column prop="symbol" :label="t('itick.symbol')" min-width="120" />
@@ -51,8 +51,11 @@
             {{ formatTime(row.lastTargetTime) }}
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" width="180" fixed="right">
+        <el-table-column :label="t('common.actions')" width="120" fixed="right">
           <template #default="{ row }">
+            <el-button link type="primary" @click="openDetail(row)">
+              {{ t('common.detail') }}
+            </el-button>
             <el-button
               v-if="row.status !== 1 && row.status !== 3"
               v-perm="'itick:price-formula:status'"
@@ -100,17 +103,43 @@
           </el-col>
           <el-col :span="12">
             <el-form-item :label="t('itick.authority')" required>
-              <el-input v-model="form.authority" />
+              <el-select v-model="form.authority" style="width: 100%">
+                <el-option
+                  v-for="item in outputAuthorities"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="t('itick.snapshotKind')" required>
-              <el-input v-model="form.snapshotKind" />
+              <el-select v-model="form.snapshotKind" style="width: 100%">
+                <el-option
+                  v-for="item in priceEngineSnapshotKinds"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item :label="t('itick.categoryCode')">
-              <el-input v-model="form.categoryCode" />
+              <el-select
+                v-model="form.categoryCode"
+                filterable
+                clearable
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in categoryOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -160,17 +189,47 @@
         <el-table :data="form.components" border>
           <el-table-column :label="t('itick.authority')">
             <template #default="{ row }">
-              <el-input v-model="row.authority" />
+              <el-select
+                v-model="row.authority"
+                style="width: 100%"
+                @change="handleComponentAuthorityChange(row)"
+              >
+                <el-option
+                  v-for="item in componentAuthorities"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
             </template>
           </el-table-column>
           <el-table-column :label="t('itick.snapshotKind')">
             <template #default="{ row }">
-              <el-input v-model="row.snapshotKind" />
+              <el-select v-model="row.snapshotKind" style="width: 100%">
+                <el-option
+                  v-for="item in componentSnapshotKinds(row.authority)"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
+              </el-select>
             </template>
           </el-table-column>
           <el-table-column :label="t('itick.categoryCode')">
             <template #default="{ row }">
-              <el-input v-model="row.categoryCode" />
+              <el-select
+                v-model="row.categoryCode"
+                filterable
+                clearable
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in categoryOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </template>
           </el-table-column>
           <el-table-column :label="t('itick.market')">
@@ -208,6 +267,66 @@
         </el-button>
       </template>
     </el-dialog>
+
+    <el-dialog v-model="detailVisible" :title="t('itick.formulaDetail')" width="900px">
+      <el-descriptions v-if="detail" :column="2" border>
+        <el-descriptions-item :label="t('itick.formulaNo')">
+          {{ detail.formulaNo }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.formulaVersion')">
+          {{ detail.formulaVersion }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.authority')">
+          {{ detail.authority }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.snapshotKind')">
+          {{ detail.snapshotKind }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.categoryCode')">
+          {{ detail.categoryCode || '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.market')">
+          {{ detail.market || '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.symbol')">
+          {{ detail.symbol }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.algorithm')">
+          {{ algorithmLabel(detail.algorithm) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('common.status')">
+          <el-tag :type="formulaStatusType(detail.status)">
+            {{ formulaStatusLabel(detail.status) }}
+          </el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.lastTargetTime')">
+          {{ formatTime(detail.lastTargetTime) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.maxLookbackMs')">
+          {{ detail.maxLookbackMs }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.maxDeviationBps')">
+          {{ detail.maxDeviationBps }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.intervalMs')">
+          {{ detail.intervalMs }}
+        </el-descriptions-item>
+      </el-descriptions>
+      <el-divider>{{ t('itick.components') }}</el-divider>
+      <el-table :data="detail?.components || []" border>
+        <el-table-column prop="authority" :label="t('itick.authority')" min-width="130" />
+        <el-table-column prop="snapshotKind" :label="t('itick.snapshotKind')" min-width="130" />
+        <el-table-column prop="categoryCode" :label="t('itick.categoryCode')" min-width="120" />
+        <el-table-column prop="market" :label="t('itick.market')" min-width="100" />
+        <el-table-column prop="symbol" :label="t('itick.symbol')" min-width="120" />
+        <el-table-column prop="weight" :label="t('itick.weight')" width="100" />
+      </el-table>
+      <template #footer>
+        <el-button @click="detailVisible = false">
+          {{ t('common.close') }}
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -220,6 +339,8 @@ import { usePagination } from '@/composables'
 import { getCoreOptions } from '@/stores/core'
 import type { OptionGroup } from '@/services'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
+import { apiItickCategoryList } from '@/api/itick/categories'
+import type { ItickCategory } from '@/services/itick/CategoriesService'
 import {
   apiChangePriceFormulaStatus,
   apiCreatePriceFormula,
@@ -234,6 +355,8 @@ const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad }
 const loading = ref(false),
   saving = ref(false),
   dialogVisible = ref(false),
+  detailVisible = ref(false),
+  detail = ref<PriceFormula | null>(null),
   rows = ref<PriceFormula[]>([])
 const query = reactive({
   authority: '',
@@ -242,6 +365,16 @@ const query = reactive({
   status: undefined as number | undefined,
 })
 const optionGroups = ref<OptionGroup[]>([])
+const categories = ref<ItickCategory[]>([])
+const outputAuthorities = ['price-engine']
+const componentAuthorities = ['itick-ws', 'itick-rest', 'price-engine']
+const priceEngineSnapshotKinds = ['MARK', 'INDEX', 'FUNDING', 'DELIVERY']
+const categoryOptions = computed(() =>
+  categories.value.map((item) => ({
+    value: item.categoryCode,
+    label: `${item.categoryName} (${item.categoryCode})`,
+  })),
+)
 const algorithms = computed(() =>
   findOptionGroup(optionGroups.value, 'priceAlgorithm').map((item) => ({
     value: item.value,
@@ -255,8 +388,8 @@ const formulaStatuses = computed(() => [
 ])
 const emptyForm = (): CreatePriceFormulaReq => ({
   formulaNo: '',
-  authority: '',
-  snapshotKind: '',
+  authority: 'price-engine',
+  snapshotKind: 'MARK',
   categoryCode: '',
   market: '',
   symbol: '',
@@ -276,7 +409,12 @@ function algorithmLabel(algorithm: number) {
   return algorithms.value.find((item) => item.value === algorithm)?.label || algorithm
 }
 async function loadOptions() {
-  optionGroups.value = (await getCoreOptions()).data || []
+  const [coreOptions, categoryList] = await Promise.all([
+    getCoreOptions(),
+    apiItickCategoryList({ enabled: 1, cursor: 0, limit: 100 }),
+  ])
+  optionGroups.value = coreOptions.data || []
+  categories.value = categoryList.data || []
 }
 function formulaStatusType(status: number) {
   return status === 1 ? 'success' : status === 3 ? 'danger' : 'info'
@@ -310,15 +448,28 @@ function openCreate() {
   addComponent()
   dialogVisible.value = true
 }
+function openDetail(row: PriceFormula) {
+  detail.value = row
+  detailVisible.value = true
+}
 function addComponent() {
   form.components.push({
-    authority: '',
-    snapshotKind: '',
+    authority: 'itick-ws',
+    snapshotKind: 'FINAL_QUOTE',
     categoryCode: '',
     market: '',
     symbol: '',
     weight: '1',
   })
+}
+function componentSnapshotKinds(authority: string) {
+  return authority === 'price-engine' ? priceEngineSnapshotKinds : ['FINAL_QUOTE']
+}
+function handleComponentAuthorityChange(row: CreatePriceFormulaReq['components'][number]) {
+  const kinds = componentSnapshotKinds(row.authority)
+  if (!kinds.includes(row.snapshotKind)) {
+    row.snapshotKind = kinds[0]
+  }
 }
 async function save() {
   if (

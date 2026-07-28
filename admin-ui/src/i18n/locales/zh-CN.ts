@@ -1050,6 +1050,7 @@ export default {
     priceFormulas: '价格公式',
     snapshotOutbox: '快照发布任务',
     formulaNo: '公式编号',
+    formulaDetail: '价格公式详情',
     formulaVersion: '公式版本',
     authority: '权威来源',
     snapshotKind: '快照类型',

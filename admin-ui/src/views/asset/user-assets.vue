@@ -40,7 +40,12 @@
         <el-button v-perm="'asset:freeze:add'" type="primary" @click="openChangeDialog('freeze')">
           {{ t('asset.freezeAsset') }}
         </el-button>
-        <el-button v-perm="'asset:lock:add'" type="primary" plain @click="openChangeDialog('lock')">
+        <el-button
+          v-perm="'asset:lock:add'"
+          type="primary"
+          plain
+          @click="openChangeDialog('lock')"
+        >
           {{ t('asset.lockAsset') }}
         </el-button>
       </template>
@@ -111,7 +116,12 @@
             {{ formatAssetAmount(row.lockedAmount) }}
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" align="center" width="120" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="120"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button
               v-perm="'asset:user-asset:detail'"

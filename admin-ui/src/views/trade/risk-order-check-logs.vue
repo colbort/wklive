@@ -29,7 +29,9 @@
         <el-table-column prop="userId" :label="t('trade.userId')" width="100" />
         <el-table-column prop="symbolId" :label="t('trade.symbolId')" width="100" />
         <el-table-column prop="checkType" :label="t('trade.checkType')" min-width="130">
-          <template #default="{ row }">{{ checkTypeLabel(row.checkType) }}</template>
+          <template #default="{ row }">
+            {{ checkTypeLabel(row.checkType) }}
+          </template>
         </el-table-column>
         <el-table-column prop="checkResult" :label="t('trade.checkResult')" width="110">
           <template #default="{ row }">
@@ -70,9 +72,13 @@
     </el-card>
     <el-dialog v-model="detailVisible" :title="t('trade.riskCheckLogDetail')" width="900px">
       <template v-if="detailData">
-        <div class="detail-section-title">{{ t('trade.basicInfo') }}</div>
+        <div class="detail-section-title">
+          {{ t('trade.basicInfo') }}
+        </div>
         <el-descriptions :column="3" border>
-          <el-descriptions-item :label="t('trade.id')">{{ detailData.id }}</el-descriptions-item>
+          <el-descriptions-item :label="t('trade.id')">
+            {{ detailData.id }}
+          </el-descriptions-item>
           <el-descriptions-item :label="t('trade.tenantId')">
             {{ detailData.tenantId }}
           </el-descriptions-item>
@@ -96,7 +102,9 @@
           </el-descriptions-item>
         </el-descriptions>
 
-        <div class="detail-section-title">{{ t('trade.riskCheckInfo') }}</div>
+        <div class="detail-section-title">
+          {{ t('trade.riskCheckInfo') }}
+        </div>
         <el-descriptions :column="3" border>
           <el-descriptions-item :label="t('trade.checkType')">
             {{ checkTypeLabel(detailData.checkType) }}
@@ -130,7 +138,9 @@
         </el-descriptions>
 
         <template v-if="detailData.checkSnapshot">
-          <div class="detail-section-title">{{ t('trade.checkSnapshot') }}</div>
+          <div class="detail-section-title">
+            {{ t('trade.checkSnapshot') }}
+          </div>
           <pre class="snapshot-pre">{{ formatSnapshot(detailData.checkSnapshot) }}</pre>
         </template>
       </template>

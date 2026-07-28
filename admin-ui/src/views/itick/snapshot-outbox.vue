@@ -21,7 +21,7 @@
         <el-table-column
           prop="snapshotId"
           :label="t('itick.snapshotId')"
-          min-width="240"
+          min-width="560"
           show-overflow-tooltip
         />
         <el-table-column :label="t('common.status')" width="120">
@@ -39,7 +39,7 @@
         </el-table-column>
         <el-table-column :label="t('itick.optionPublishedAt')" min-width="180">
           <template #default="{ row }">
-            {{ formatTime(row.optionPublishedAt) }}
+            {{ formatTime(row.eventPublishedAt) }}
           </template>
         </el-table-column>
         <el-table-column
@@ -53,7 +53,7 @@
             {{ formatTime(row.updateTimes) }}
           </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" width="190" fixed="right">
+        <el-table-column :label="t('common.actions')" width="60" fixed="right">
           <template #default="{ row }">
             <el-button
               v-if="row.status === 4 || row.status === 5"

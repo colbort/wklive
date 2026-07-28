@@ -179,11 +179,7 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import { ElMessage } from 'element-plus'
-import {
-  tenantService,
-  type OptionGroup,
-  type TenantPayChannelRule,
-} from '@/services'
+import { tenantService, type OptionGroup, type TenantPayChannelRule } from '@/services'
 import { findFormOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import PaymentDetailDescriptions from '@/components/payment/PaymentDetailDescriptions.vue'

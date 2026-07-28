@@ -3565,14 +3565,16 @@ type SetUserTradeLimitReq struct {
 }
 
 type SnapshotOutboxData struct {
-	Id           int64  `json:"id"`
-	SnapshotId   string `json:"snapshotId"`
-	Status       int32  `json:"status"`
-	RetryCount   int64  `json:"retryCount"`
-	NextRetryAt  int64  `json:"nextRetryAt"`
-	LastErrorMsg string `json:"lastErrorMsg"`
-	CreateTimes  int64  `json:"createTimes"`
-	UpdateTimes  int64  `json:"updateTimes"`
+	Id               int64  `json:"id"`
+	SnapshotId       string `json:"snapshotId"`
+	Status           int32  `json:"status"`
+	RetryCount       int64  `json:"retryCount"`
+	NextRetryAt      int64  `json:"nextRetryAt"`
+	RedisPublishedAt int64  `json:"redisPublishedAt"`
+	EventPublishedAt int64  `json:"eventPublishedAt"`
+	LastErrorMsg     string `json:"lastErrorMsg"`
+	CreateTimes      int64  `json:"createTimes"`
+	UpdateTimes      int64  `json:"updateTimes"`
 }
 
 type StakeOrder struct {

@@ -352,8 +352,7 @@ function filterOptions(field: string) {
       { value: 1, label: t('common.enabled') },
       { value: 2, label: t('common.disabled') },
     ]
-  if (field === 'snapshotType')
-    return optionSelectItems('secondsPriceSnapshotType')
+  if (field === 'snapshotType') return optionSelectItems('secondsPriceSnapshotType')
   if (field === 'status' && statusOptionGroup.value)
     return optionSelectItems(statusOptionGroup.value)
   return Array.from({ length: 12 }, (_, index) => ({

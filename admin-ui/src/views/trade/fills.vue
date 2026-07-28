@@ -61,12 +61,16 @@
 
     <el-dialog v-model="detailVisible" :title="t('trade.fillDetail')" width="960px">
       <template v-if="detailData">
-        <div class="detail-section-title">{{ t('trade.basicInfo') }}</div>
+        <div class="detail-section-title">
+          {{ t('trade.basicInfo') }}
+        </div>
         <el-descriptions :column="3" border>
           <el-descriptions-item :label="t('trade.fillNo')" :span="2">
             {{ detailData.fillNo }}
           </el-descriptions-item>
-          <el-descriptions-item :label="t('trade.id')">{{ detailData.id }}</el-descriptions-item>
+          <el-descriptions-item :label="t('trade.id')">
+            {{ detailData.id }}
+          </el-descriptions-item>
           <el-descriptions-item :label="t('trade.tenantId')">
             {{ detailData.tenantId }}
           </el-descriptions-item>
@@ -96,7 +100,9 @@
           </el-descriptions-item>
         </el-descriptions>
 
-        <div class="detail-section-title">{{ t('trade.fillInfo') }}</div>
+        <div class="detail-section-title">
+          {{ t('trade.fillInfo') }}
+        </div>
         <el-descriptions :column="3" border>
           <el-descriptions-item :label="t('trade.side')">
             <el-tag :type="detailData.side === 1 ? 'success' : 'danger'">
@@ -129,7 +135,9 @@
           </el-descriptions-item>
         </el-descriptions>
 
-        <div class="detail-section-title">{{ t('trade.settlementInfo') }}</div>
+        <div class="detail-section-title">
+          {{ t('trade.settlementInfo') }}
+        </div>
         <el-descriptions :column="3" border>
           <el-descriptions-item :label="t('trade.settlementStatus')">
             <el-tag :type="settlementTagType(detailData.settlementStatus)">

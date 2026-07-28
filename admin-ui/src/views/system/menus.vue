@@ -195,8 +195,12 @@
             :disabled="dialogType === 'edit'"
             @change="formData.parentId = 0"
           >
-            <el-radio :value="1">{{ t('common.adminBackend') }}</el-radio>
-            <el-radio :value="2">{{ t('common.liquidityAdmin') }}</el-radio>
+            <el-radio :value="1">
+              {{ t('common.adminBackend') }}
+            </el-radio>
+            <el-radio :value="2">
+              {{ t('common.liquidityAdmin') }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
 

@@ -1053,6 +1053,7 @@ export default {
     priceFormulas: 'Price Formulas',
     snapshotOutbox: 'Snapshot Outbox',
     formulaNo: 'Formula No.',
+    formulaDetail: 'Price Formula Detail',
     formulaVersion: 'Formula Version',
     authority: 'Authority',
     snapshotKind: 'Snapshot Kind',

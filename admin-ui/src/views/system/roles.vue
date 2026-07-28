@@ -517,11 +517,7 @@ onMounted(async () => {
             <el-tag v-if="isSuperRole(row)" type="warning" style="margin-left: 8px">
               {{ t('system.superAdmin') }}
             </el-tag>
-            <el-tag
-              v-else-if="isLiquidityAdminRole(row)"
-              type="success"
-              style="margin-left: 8px"
-            >
+            <el-tag v-else-if="isLiquidityAdminRole(row)" type="success" style="margin-left: 8px">
               {{ t('common.liquidityAdmin') }}
             </el-tag>
           </template>
@@ -571,8 +567,12 @@ onMounted(async () => {
           :rules="[{ required: true, message: t('common.required') }]"
         >
           <el-radio-group v-model="editForm.appScope" :disabled="editIsUpdate">
-            <el-radio :value="1">{{ t('common.adminBackend') }}</el-radio>
-            <el-radio :value="2">{{ t('common.liquidityAdmin') }}</el-radio>
+            <el-radio :value="1">
+              {{ t('common.adminBackend') }}
+            </el-radio>
+            <el-radio :value="2">
+              {{ t('common.liquidityAdmin') }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
 

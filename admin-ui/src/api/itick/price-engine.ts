@@ -54,7 +54,7 @@ export type SnapshotOutbox = {
   nextRetryAt: number
   lastErrorMsg: string
   redisPublishedAt: number
-  optionPublishedAt: number
+  eventPublishedAt: number
   createTimes: number
   updateTimes: number
 }

@@ -649,8 +649,12 @@ onMounted(async () => {
             :disabled="editMode === 'update'"
             @change="handleApplicationScopeChange"
           >
-            <el-radio :value="1">{{ t('common.adminBackend') }}</el-radio>
-            <el-radio :value="2">{{ t('common.liquidityAdmin') }}</el-radio>
+            <el-radio :value="1">
+              {{ t('common.adminBackend') }}
+            </el-radio>
+            <el-radio :value="2">
+              {{ t('common.liquidityAdmin') }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item :label="t('common.role')">
