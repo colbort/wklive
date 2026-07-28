@@ -31,7 +31,7 @@ import type {
   TradeSymbolSpot,
 } from '@/types/trade'
 import type { AssetUserAsset } from '@/types/asset'
-import { formatAssetDecimalAmount } from '@/utils/assetAmount'
+import { compareDecimalText, formatAssetDecimalAmount } from '@/utils/assetAmount'
 import { marketCategoryLabel } from '@/utils/marketCategory'
 
 type SubmitSide = 'buy' | 'sell'
@@ -198,13 +198,20 @@ const walletAvailableBalance = (walletType: number, coin: string, decimalPlaces:
   )
   return formatAssetDecimalAmount(asset?.availableAmount || '0', decimalPlaces)
 }
-const availableBalance = computed(() => {
+const availableBalanceAmount = computed(() => {
   const symbol = selectedTradeSymbol.value
   if (!symbol) return '0'
-  if (symbol.productType === PRODUCT_TYPE_SPOT) {
-    return walletAvailableBalance(1, symbol.quoteAsset, 4)
-  }
-  return walletAvailableBalance(3, selectedTradeSettleAsset.value, 4)
+  const walletType = symbol.productType === PRODUCT_TYPE_SPOT ? 1 : 3
+  const coin =
+    symbol.productType === PRODUCT_TYPE_SPOT ? symbol.quoteAsset : selectedTradeSettleAsset.value
+  return (
+    userAssets.value.find(
+      (item) => item.walletType === walletType && item.coin.toUpperCase() === coin.toUpperCase(),
+    )?.availableAmount || '0'
+  )
+})
+const availableBalance = computed(() => {
+  return formatAssetDecimalAmount(availableBalanceAmount.value, 4)
 })
 const longPositionQty = computed(() => {
   if (selectedTradeSymbol.value?.productType === PRODUCT_TYPE_SPOT) {
@@ -804,6 +811,27 @@ async function submitTradeOrder(side: SubmitSide) {
     })
     if (!secondsConfig) {
       tradeError.value = t('trade.symbolNotConfigured')
+      return
+    }
+    if (compareDecimalText(qty, secondsConfig.minStake) < 0) {
+      tradeError.value = t('trade.secondsAmountBelowMin', {
+        amount: secondsConfig.minStake,
+        asset: selectedTradeSettleAsset.value,
+      })
+      return
+    }
+    if (
+      compareDecimalText(secondsConfig.maxStake, '0') > 0 &&
+      compareDecimalText(qty, secondsConfig.maxStake) > 0
+    ) {
+      tradeError.value = t('trade.secondsAmountAboveMax', {
+        amount: secondsConfig.maxStake,
+        asset: selectedTradeSettleAsset.value,
+      })
+      return
+    }
+    if (compareDecimalText(qty, availableBalanceAmount.value) > 0) {
+      tradeError.value = t('common.insufficientBalance')
       return
     }
     params.amount = qty

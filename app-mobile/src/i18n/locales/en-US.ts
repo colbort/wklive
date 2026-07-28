@@ -428,6 +428,8 @@ export default {
     minutesValue: '{value} min',
     hoursValue: '{value} hr',
     inputValidQty: 'Enter a valid qty',
+    secondsAmountBelowMin: 'Amount must be at least {amount} {asset}',
+    secondsAmountAboveMax: 'Amount must not exceed {amount} {asset}',
     inputValidPrice: 'Enter a valid price',
     inputValidTakeProfit: 'Enter a valid TP price',
     inputValidStopLoss: 'Enter a valid SL price',

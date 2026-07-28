@@ -428,6 +428,8 @@ export default {
     minutesValue: '{value} 分钟',
     hoursValue: '{value} 小时',
     inputValidQty: '请输入有效数量',
+    secondsAmountBelowMin: '投资额不能低于 {amount} {asset}',
+    secondsAmountAboveMax: '投资额不能超过 {amount} {asset}',
     inputValidPrice: '请输入有效价格',
     inputValidTakeProfit: '请输入有效止盈价',
     inputValidStopLoss: '请输入有效止损价',
