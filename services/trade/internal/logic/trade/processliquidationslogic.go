@@ -99,6 +99,9 @@ func (l *ProcessLiquidationsLogic) ProcessPosition(positionID int64) error {
 	if liquidation.Status == int64(trade.LiquidationStatus_LIQUIDATION_STATUS_MANUAL_REVIEW) {
 		return nil
 	}
+	if shouldHoldLiquidationForManual(l.svcCtx.Config.AutomaticLiquidation.Enabled, liquidation.Status) {
+		return l.markLiquidationManual(liquidation, "automatic liquidation is disabled until P1-02 production acceptance")
+	}
 	lockedPosition, err := l.lockRiskUnit(position, liquidation)
 	if err != nil {
 		return err
@@ -112,9 +115,13 @@ func (l *ProcessLiquidationsLogic) ProcessPosition(positionID int64) error {
 	return l.settleTakeover(lockedPosition, contract, liquidation)
 }
 
+func shouldHoldLiquidationForManual(enabled bool, status int64) bool {
+	return !enabled && status == int64(trade.LiquidationStatus_LIQUIDATION_STATUS_PENDING_TAKEOVER)
+}
+
 func (l *ProcessLiquidationsLogic) lockRiskUnit(position *models.TContractPosition, liq *models.TContractLiquidation) (*models.TContractPosition, error) {
 	var locked *models.TContractPosition
-	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	err := helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
 		lm := models.NewTContractLiquidationModel(conn, l.svcCtx.Config.CacheRedis)
@@ -255,7 +262,7 @@ func (l *ProcessLiquidationsLogic) settleTakeover(position *models.TContractPosi
 
 func (l *ProcessLiquidationsLogic) markLiquidationManual(liq *models.TContractLiquidation, reason string) error {
 	now := utils.NowMillis()
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 		lm := models.NewTContractLiquidationModel(sqlx.NewSqlConnFromSession(session), l.svcCtx.Config.CacheRedis)
 		current, err := lm.FindOneForUpdate(ctx, liq.Id)
 		if err != nil {
@@ -285,7 +292,7 @@ func (l *ProcessLiquidationsLogic) markLiquidationManual(liq *models.TContractLi
 
 func (l *ProcessLiquidationsLogic) checkpointLiquidation(liq *models.TContractLiquidation, status trade.LiquidationStatus, insuranceAmount, adlQty decimal.Decimal) error {
 	now := utils.NowMillis()
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 		lm := models.NewTContractLiquidationModel(sqlx.NewSqlConnFromSession(session), l.svcCtx.Config.CacheRedis)
 		current, err := lm.FindOneForUpdate(ctx, liq.Id)
 		if err != nil {
@@ -462,7 +469,7 @@ func (l *ProcessLiquidationsLogic) prepareADLExecution(candidate, bankrupt *mode
 	now := utils.NowMillis()
 	executionNo := fmt.Sprintf("%s-ADL-%d", liq.LiquidationNo, candidate.Id)
 	var prepared *models.TContractAdlExecution
-	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	err := helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
 		current, err := pm.FindOneForUpdateByTenantUserSymbolSideMode(ctx, candidate.TenantId, candidate.UserId, candidate.SymbolId, candidate.PositionSide, candidate.MarginMode)
@@ -539,7 +546,7 @@ func (l *ProcessLiquidationsLogic) runADLExecution(execution *models.TContractAd
 
 func (l *ProcessLiquidationsLogic) completeADLExecution(execution *models.TContractAdlExecution, instruction *models.TTradeSettlementInstruction) error {
 	now := utils.NowMillis()
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		em := models.NewTContractAdlExecutionModel(conn, l.svcCtx.Config.CacheRedis)
 		e, err := em.FindOneForUpdate(ctx, execution.Id)
@@ -596,7 +603,7 @@ func (l *ProcessLiquidationsLogic) completeADLExecution(execution *models.TContr
 
 func (l *ProcessLiquidationsLogic) completeLiquidation(position *models.TContractPosition, liq *models.TContractLiquidation, fee decimal.Decimal) error {
 	now := utils.NowMillis()
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
 		lm := models.NewTContractLiquidationModel(conn, l.svcCtx.Config.CacheRedis)

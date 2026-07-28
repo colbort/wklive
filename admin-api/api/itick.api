@@ -441,6 +441,7 @@ type CreatePriceFormulaReq {
 	components      []PriceFormulaComponent `json:"components"`
 	maxLookbackMs   int64                   `json:"maxLookbackMs"`
 	maxDeviationBps int64                   `json:"maxDeviationBps"`
+	minInputCount   int64                   `json:"minInputCount"`
 	intervalMs      int64                   `json:"intervalMs"`
 	activate        bool                    `json:"activate"`
 }
@@ -477,6 +478,7 @@ type PriceFormulaData {
 	components      []PriceFormulaComponent `json:"components"`
 	maxLookbackMs   int64                   `json:"maxLookbackMs"`
 	maxDeviationBps int64                   `json:"maxDeviationBps"`
+	minInputCount   int64                   `json:"minInputCount"`
 	intervalMs      int64                   `json:"intervalMs"`
 	lastTargetTime  int64                   `json:"lastTargetTime"`
 	status          int32                   `json:"status"`
@@ -648,4 +650,3 @@ service admin {
 	@handler RevokeAuthoritativeSnapshot
 	post /authoritative-snapshots/revoke (RevokeAuthoritativeSnapshotReq) returns (RespBase)
 }
-

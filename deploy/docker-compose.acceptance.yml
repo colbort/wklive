@@ -1,0 +1,15 @@
+services:
+  kafka:
+    hostname: kafka
+
+  mongo:
+    # Keep the acceptance stack isolated from a developer MongoDB that may
+    # already own the default host port. Containers still connect to
+    # mongo:27017 on the private backend network.
+    ports: !override
+      - "127.0.0.1:37017:27017"
+
+  db-init:
+    environment:
+      ADMIN_PASSWORD: "AcceptanceAdmin!2026"
+      LIQUIDITY_ADMIN_PASSWORD: "AcceptanceLiquidity!2026"

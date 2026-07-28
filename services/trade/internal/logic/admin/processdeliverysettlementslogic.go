@@ -46,11 +46,15 @@ func validateFinalDeliveryPriceFact(configuredAlgorithm string, quote *marketQuo
 	}
 	return strings.TrimSpace(configuredAlgorithm), formulaVersion, nil
 }
+
 func (l *ProcessDeliverySettlementsLogic) Process(tenantID int64) error {
 	if err := l.advanceSymbols(tenantID); err != nil {
 		return err
 	}
-	return l.settlePending(tenantID)
+	if err := l.settlePending(tenantID); err != nil {
+		return err
+	}
+	return l.archiveCompletedBatches(tenantID)
 }
 
 func (l *ProcessDeliverySettlementsLogic) advanceSymbols(tenantID int64) error {
@@ -83,8 +87,16 @@ func (l *ProcessDeliverySettlementsLogic) advanceSymbols(tenantID int64) error {
 					return err
 				}
 			}
+			if c.OpenCutoffTime > 0 && now >= c.OpenCutoffTime {
+				if err := l.ensureLifecycleBatch(c, trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_CLOSE_ONLY); err != nil {
+					return err
+				}
+			}
 			if c.MatchingStopTime > 0 && now >= c.MatchingStopTime {
 				if err := l.cancelSymbolOrders(symbol); err != nil {
+					return err
+				}
+				if err := l.ensureLifecycleBatch(c, trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_MATCHING_STOPPED); err != nil {
 					return err
 				}
 			}
@@ -98,7 +110,11 @@ func (l *ProcessDeliverySettlementsLogic) advanceSymbols(tenantID int64) error {
 			if unfinished > 0 {
 				continue
 			}
+			if err := l.ensureLifecycleBatch(c, trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_PRICE_LOCKING); err != nil {
+				return err
+			}
 			if err := l.ensureBatch(symbol, c); err != nil {
+				_ = l.recordDeliveryBatchError(c, err)
 				return err
 			}
 		}
@@ -106,6 +122,66 @@ func (l *ProcessDeliverySettlementsLogic) advanceSymbols(tenantID int64) error {
 			return nil
 		}
 	}
+}
+
+func (l *ProcessDeliverySettlementsLogic) ensureLifecycleBatch(c *models.TTradeSymbolContract, target trade.DeliveryBatchStatus) error {
+	if c == nil || c.DeliveryTime <= 0 {
+		return errors.New("delivery lifecycle requires a delivery contract")
+	}
+	now := utils.NowMillis()
+	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		bm := models.NewTContractDeliveryBatchModel(conn, l.svcCtx.Config.CacheRedis)
+		current, err := bm.FindOneForUpdateByTenantSymbolDelivery(ctx, c.TenantId, c.SymbolId, c.DeliveryTime)
+		if errors.Is(err, models.ErrNotFound) {
+			_, err = bm.Insert(ctx, &models.TContractDeliveryBatch{
+				TenantId: c.TenantId, BatchNo: fmt.Sprintf("DLV-%d-%d", c.SymbolId, c.DeliveryTime),
+				SymbolId: c.SymbolId, OpenCutoffTime: c.OpenCutoffTime, MatchingStopTime: c.MatchingStopTime,
+				DeliveryTime: c.DeliveryTime, Status: int64(target), CreateTimes: now, UpdateTimes: now,
+			})
+			return err
+		}
+		if err != nil {
+			return err
+		}
+		// Lifecycle states are monotonic. Once settlement has started, an
+		// earlier scheduler stage must never move the batch backwards.
+		if !shouldAdvanceDeliveryBatchStatus(current.Status, target) {
+			return nil
+		}
+		current.Status = int64(target)
+		current.Version++
+		current.UpdateTimes = now
+		return bm.Update(ctx, current)
+	})
+}
+
+func shouldAdvanceDeliveryBatchStatus(current int64, target trade.DeliveryBatchStatus) bool {
+	targetStatus := int64(target)
+	if targetStatus < int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_CLOSE_ONLY) ||
+		targetStatus > int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_PRICE_LOCKING) {
+		return false
+	}
+	return current < targetStatus &&
+		current < int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_SETTLING)
+}
+
+func (l *ProcessDeliverySettlementsLogic) recordDeliveryBatchError(c *models.TTradeSymbolContract, cause error) error {
+	if c == nil || cause == nil {
+		return nil
+	}
+	now := utils.NowMillis()
+	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
+		bm := models.NewTContractDeliveryBatchModel(sqlx.NewSqlConnFromSession(session), l.svcCtx.Config.CacheRedis)
+		current, err := bm.FindOneForUpdateByTenantSymbolDelivery(ctx, c.TenantId, c.SymbolId, c.DeliveryTime)
+		if err != nil {
+			return err
+		}
+		current.LastErrorMsg = cause.Error()
+		current.Version++
+		current.UpdateTimes = now
+		return bm.Update(ctx, current)
+	})
 }
 
 func (l *ProcessDeliverySettlementsLogic) cancelSymbolOrders(symbol *models.TTradeSymbol) error {
@@ -141,9 +217,11 @@ func (l *ProcessDeliverySettlementsLogic) cancelSymbolOrders(symbol *models.TTra
 }
 
 func (l *ProcessDeliverySettlementsLogic) ensureBatch(symbol *models.TTradeSymbol, c *models.TTradeSymbolContract) error {
-	if _, err := l.svcCtx.ContractDeliveryBatchModel.FindOneByTenantIdSymbolIdDeliveryTime(l.ctx, c.TenantId, c.SymbolId, c.DeliveryTime); err == nil {
+	existing, err := l.svcCtx.ContractDeliveryBatchModel.FindOneByTenantIdSymbolIdDeliveryTime(l.ctx, c.TenantId, c.SymbolId, c.DeliveryTime)
+	if err == nil && existing.Status >= int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_SETTLING) {
 		return nil
-	} else if !errors.Is(err, models.ErrNotFound) {
+	}
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return err
 	}
 	quote, candidates, err := NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).getValidQuotesAtKind("DELIVERY_PRICE", c.SettlementPriceSource, c.SymbolId, c.DeliveryTime, c.SettlementWindowSeconds*1000)
@@ -172,18 +250,43 @@ func (l *ProcessDeliverySettlementsLogic) ensureBatch(symbol *models.TTradeSymbo
 	now := utils.NowMillis()
 	batchNo := fmt.Sprintf("DLV-%d-%d", c.SymbolId, c.DeliveryTime)
 	raw, _ := normalizeJSON(map[string]any{"quote": quote, "configured_algorithm": c.SettlementPriceAlgorithm, "trade_policy": priceAlgorithm})
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		bm := models.NewTContractDeliveryBatchModel(conn, l.svcCtx.Config.CacheRedis)
 		sm := models.NewTContractDeliverySettlementModel(conn, l.svcCtx.Config.CacheRedis)
 		im := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
 		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
 		symbolModel := models.NewTTradeSymbolModel(conn, l.svcCtx.Config.CacheRedis)
-		res, err := bm.Insert(ctx, &models.TContractDeliveryBatch{TenantId: c.TenantId, BatchNo: batchNo, SymbolId: c.SymbolId, SettlementPrice: price, PriceSource: quote.SnapshotID, PriceAlgorithm: priceAlgorithm, FormulaVersion: formulaVersion, SampleSnapshot: sql.NullString{String: raw, Valid: true}, OpenCutoffTime: c.OpenCutoffTime, MatchingStopTime: c.MatchingStopTime, DeliveryTime: c.DeliveryTime, Status: int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_SETTLING), TotalPositions: int64(len(active)), CreateTimes: now, UpdateTimes: now})
-		if err != nil {
-			return err
+		currentBatch, err := bm.FindOneForUpdateByTenantSymbolDelivery(ctx, c.TenantId, c.SymbolId, c.DeliveryTime)
+		var batchID int64
+		if errors.Is(err, models.ErrNotFound) {
+			res, insertErr := bm.Insert(ctx, &models.TContractDeliveryBatch{TenantId: c.TenantId, BatchNo: batchNo, SymbolId: c.SymbolId, SettlementPrice: price, PriceSource: quote.SnapshotID, PriceAlgorithm: priceAlgorithm, FormulaVersion: formulaVersion, SampleSnapshot: sql.NullString{String: raw, Valid: true}, OpenCutoffTime: c.OpenCutoffTime, MatchingStopTime: c.MatchingStopTime, DeliveryTime: c.DeliveryTime, Status: int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_SETTLING), TotalPositions: int64(len(active)), CreateTimes: now, UpdateTimes: now})
+			if insertErr != nil {
+				return insertErr
+			}
+			batchID, _ = res.LastInsertId()
+		} else {
+			if err != nil {
+				return err
+			}
+			if currentBatch.Status >= int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_SETTLING) {
+				return nil
+			}
+			currentBatch.SettlementPrice = price
+			currentBatch.PriceSource = quote.SnapshotID
+			currentBatch.PriceAlgorithm = priceAlgorithm
+			currentBatch.FormulaVersion = formulaVersion
+			currentBatch.SampleSnapshot = sql.NullString{String: raw, Valid: true}
+			currentBatch.Status = int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_SETTLING)
+			currentBatch.TotalPositions = int64(len(active))
+			currentBatch.LastErrorMsg = ""
+			currentBatch.Version++
+			currentBatch.UpdateTimes = now
+			if err = bm.Update(ctx, currentBatch); err != nil {
+				return err
+			}
+			batchID = currentBatch.Id
 		}
-		batchID, _ := res.LastInsertId()
 		for _, p := range active {
 			locked, err := pm.FindOneForUpdateByTenantUserSymbolSideMode(ctx, p.TenantId, p.UserId, p.SymbolId, p.PositionSide, p.MarginMode)
 			if err != nil {
@@ -301,7 +404,7 @@ func (l *ProcessDeliverySettlementsLogic) executeDeliveryInstruction(item *model
 		return err
 	}
 	now := utils.NowMillis()
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		im := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
 		currentInstruction, err := im.FindOneForUpdate(ctx, item.Id)
@@ -403,6 +506,57 @@ func (l *ProcessDeliverySettlementsLogic) finishBatches(tenantID int64) error {
 		b.Version++
 		b.UpdateTimes = utils.NowMillis()
 		if err := l.svcCtx.ContractDeliveryBatchModel.Update(l.ctx, b); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (l *ProcessDeliverySettlementsLogic) archiveCompletedBatches(tenantID int64) error {
+	batches, _, err := l.svcCtx.ContractDeliveryBatchModel.FindPage(l.ctx, models.AdminPageFilter{
+		TenantId: tenantID,
+		Status:   int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_COMPLETED),
+	}, 0, 100)
+	if err != nil {
+		return err
+	}
+	for _, batch := range batches {
+		now := utils.NowMillis()
+		if err = helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
+			conn := sqlx.NewSqlConnFromSession(session)
+			batchModel := models.NewTContractDeliveryBatchModel(conn, l.svcCtx.Config.CacheRedis)
+			eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
+			current, findErr := batchModel.FindOne(ctx, batch.Id)
+			if findErr != nil {
+				return findErr
+			}
+			if current.Status != int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_COMPLETED) {
+				return nil
+			}
+			current.Status = int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_ARCHIVED)
+			current.Version++
+			current.UpdateTimes = now
+			if updateErr := batchModel.Update(ctx, current); updateErr != nil {
+				return updateErr
+			}
+			_, insertErr := eventModel.Insert(ctx, &models.TBizTradeEvent{
+				TenantId:      current.TenantId,
+				EventNo:       current.BatchNo + "-ARCHIVED",
+				EventType:     "CONTRACT_SETTLED",
+				BizId:         current.BatchNo,
+				BizType:       "delivery_batch",
+				SymbolId:      current.SymbolId,
+				ProductType:   int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE),
+				Source:        int64(trade.SourceType_SOURCE_TYPE_TASK),
+				EventStatus:   int64(trade.EventStatus_EVENT_STATUS_PENDING),
+				MaxRetryCount: 20,
+				NextRetryAt:   now,
+				Payload:       helpers.NormalizeTradeEventJSON(current.BatchNo),
+				CreateTimes:   now,
+				UpdateTimes:   now,
+			})
+			return insertErr
+		}); err != nil {
 			return err
 		}
 	}

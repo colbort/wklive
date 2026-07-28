@@ -215,6 +215,8 @@ const (
 	PriceAlgorithm_PRICE_ALGORITHM_WEIGHTED_MEAN PriceAlgorithm = 1
 	PriceAlgorithm_PRICE_ALGORITHM_MEDIAN        PriceAlgorithm = 2
 	PriceAlgorithm_PRICE_ALGORITHM_PREMIUM_RATE  PriceAlgorithm = 3
+	// MARK = INDEX * (1 + clamp((PERPETUAL_QUOTE-INDEX)/INDEX, +/- max_deviation_bps)).
+	PriceAlgorithm_PRICE_ALGORITHM_INDEX_BASIS PriceAlgorithm = 4
 )
 
 // Enum value maps for PriceAlgorithm.
@@ -224,12 +226,14 @@ var (
 		1: "PRICE_ALGORITHM_WEIGHTED_MEAN",
 		2: "PRICE_ALGORITHM_MEDIAN",
 		3: "PRICE_ALGORITHM_PREMIUM_RATE",
+		4: "PRICE_ALGORITHM_INDEX_BASIS",
 	}
 	PriceAlgorithm_value = map[string]int32{
 		"PRICE_ALGORITHM_UNKNOWN":       0,
 		"PRICE_ALGORITHM_WEIGHTED_MEAN": 1,
 		"PRICE_ALGORITHM_MEDIAN":        2,
 		"PRICE_ALGORITHM_PREMIUM_RATE":  3,
+		"PRICE_ALGORITHM_INDEX_BASIS":   4,
 	}
 )
 
@@ -289,12 +293,13 @@ const file_proto_itick_enum_proto_rawDesc = "" +
 	"\x1bSYNC_KLINE_PRIORITY_UNKNOWN\x10\x00\x12\x1c\n" +
 	"\x18SYNC_KLINE_PRIORITY_HIGH\x10\x01\x12\x1e\n" +
 	"\x1aSYNC_KLINE_PRIORITY_NORMAL\x10\x02\x12\x1b\n" +
-	"\x17SYNC_KLINE_PRIORITY_LOW\x10\x03*\x8e\x01\n" +
+	"\x17SYNC_KLINE_PRIORITY_LOW\x10\x03*\xaf\x01\n" +
 	"\x0ePriceAlgorithm\x12\x1b\n" +
 	"\x17PRICE_ALGORITHM_UNKNOWN\x10\x00\x12!\n" +
 	"\x1dPRICE_ALGORITHM_WEIGHTED_MEAN\x10\x01\x12\x1a\n" +
 	"\x16PRICE_ALGORITHM_MEDIAN\x10\x02\x12 \n" +
-	"\x1cPRICE_ALGORITHM_PREMIUM_RATE\x10\x03B\x1aZ\x18wklive/proto/itick;itickb\x06proto3"
+	"\x1cPRICE_ALGORITHM_PREMIUM_RATE\x10\x03\x12\x1f\n" +
+	"\x1bPRICE_ALGORITHM_INDEX_BASIS\x10\x04B\x1aZ\x18wklive/proto/itick;itickb\x06proto3"
 
 var (
 	file_proto_itick_enum_proto_rawDescOnce sync.Once

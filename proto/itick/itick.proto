@@ -505,6 +505,7 @@ message CreatePriceFormulaReq {
   int64 max_deviation_bps = 11;
   int64 interval_ms = 12;
   bool activate = 13;
+  int64 min_input_count = 14;
 }
 
 message PriceFormulaReq {
@@ -545,6 +546,7 @@ message PriceFormulaData {
   int64 version = 16;
   int64 create_times = 17;
   int64 update_times = 18;
+  int64 min_input_count = 19;
 }
 
 message PriceFormulaResp {

@@ -36,8 +36,8 @@
 - [x] 初始化 `trade.ProcessContractSettlements`；
 - [x] 初始化 `trade.ProcessTradeEvents`；
 - [x] 使用幂等 migration 支持已有环境升级；
-- [ ] 验证任务能发布到 Trade Task Subscriber；
-- [ ] 验证多实例任务锁不会重复执行同一批次。
+- [x] 验证任务能发布到 Trade Task Subscriber（全新隔离库初始化四个任务，System Job Log 持续记录四类任务成功；Trade 路由及未知 Action 拒绝由单测覆盖）；
+- [~] 验证多实例任务锁不会重复执行同一批次（持有者校验续租/释放及续租失败取消任务已实现并单测，待双实例 Redis 验收）。
 
 完成标准：
 
@@ -48,16 +48,16 @@
 
 ### P0-02 合约基础交易矩阵
 
-- [ ] 永续 U 本位线性；
-- [ ] 永续币本位反向；
-- [ ] 交割 U 本位线性；
-- [ ] 交割币本位反向；
-- [ ] LONG、SHORT、NET；
-- [ ] 开仓、加仓、部分减仓、全部平仓、反向开仓；
-- [ ] 限价、市价、条件单、Reduce Only；
-- [ ] 部分成交、全部成交、价格改善；
-- [ ] 撤单与成交并发；
-- [ ] 重复 Fill 和重复事件。
+- [~] 永续 U 本位线性（下单、保证金、盈亏和资金费公式已覆盖，待端到端账务验收）；
+- [~] 永续币本位反向（反向名义价值、均价、盈亏和资金费公式已覆盖，待端到端账务验收）；
+- [~] 交割 U 本位线性（与 Delivery 生命周期及结算公式联通，待到期实跑）；
+- [~] 交割币本位反向（反向交割盈亏/费用公式已覆盖，待到期实跑）；
+- [~] LONG、SHORT、NET（方向矩阵及 NET 先平后开逻辑单测通过，待仓位组合验收）；
+- [~] 开仓、加仓、部分减仓、全部平仓、反向开仓（Position History 幂等投影已实现，待数据库场景矩阵）；
+- [~] 限价、市价、条件单、Reduce Only（输入约束、触发条件、IOC/FOK/Post Only 及 Reduce Only 投影防线已有单测，待撮合联调）；
+- [~] 部分成交、全部成交、价格改善（订单状态、金额尘埃、Maker 价格和多档成交单测已覆盖，待 Asset 联调）；
+- [~] 撤单与成交并发（行锁、终止中间态及数量守恒对账已实现，待并发注入）；
+- [~] 重复 Fill 和重复事件（Fill 唯一事实、Position History `action_key`、Inbox/指令业务号幂等已实现，待重复投递注入）。
 
 每个用例必须核对：
 
@@ -82,20 +82,20 @@ Outbox / Inbox
 
 ### P0-03 永续资金费
 
-- [ ] 正资金费率：多头付款、空头收款；
-- [ ] 负资金费率：空头付款、多头收款；
-- [ ] 零资金费率；
-- [ ] 多空金额不能完全抵消时由平台差额账户承接；
-- [ ] 平台差额账户缺失时批次整体拒绝；
-- [ ] 用户余额不足；
-- [ ] 同一周期重复执行；
-- [ ] 历史周期补跑；
-- [ ] 资金费与成交仓位投影并发；
-- [ ] Asset 成功、Trade 超时；
-- [ ] Trade 本地提交前后进程退出；
-- [ ] `last_funding_time` 和仓位版本核对；
-- [ ] Funding Batch 资金守恒；
-- [ ] Funding Settlement 与 Asset 流水对账。
+- [~] 正资金费率：多头付款、空头收款（线性/反向公式单测通过，待端到端资产验收）；
+- [~] 负资金费率：空头付款、多头收款（线性公式单测通过，待端到端资产验收）；
+- [~] 零资金费率（无 Asset 步骤、直接完成仓位投影，待部署验收）；
+- [~] 多空金额不能完全抵消时由平台差额账户承接（资金守恒与指令顺序单测通过，待真实账户验收）；
+- [~] 平台差额账户缺失时批次整体拒绝（创建事务内校验，待故障注入）；
+- [~] 用户余额不足（进入有界重试并最终人工处理，待 Asset 联调）；
+- [~] 同一周期重复执行（批次唯一键及结算指令幂等，待数据库并发验收）；
+- [~] 历史周期补跑（按最近批次逐周期推进，待历史数据回放）；
+- [~] 资金费与成交仓位投影并发（仓位行锁及结算事实版本固化，待并发注入）；
+- [~] Asset 成功、Trade 超时（Asset 业务号幂等及本地指令重试，待故障注入）；
+- [~] Trade 本地提交前后进程退出（租约、幂等指令及恢复任务已实现，待进程退出注入）；
+- [~] `last_funding_time` 和仓位版本核对（事务内行锁、时间防重及版本递增已实现，待存量对账）；
+- [~] Funding Batch 资金守恒（用户净额由平台差额反向承接，单测通过，待全量批次对账）；
+- [~] Funding Settlement 与 Asset 流水对账（自动对账闭环已实现，待部署联调）。
 
 完成标准：
 
@@ -107,36 +107,36 @@ Outbox / Inbox
 
 ### P0-04 交割合约生命周期
 
-- [ ] `open_cutoff_time` 后进入 `CLOSE_ONLY`；
-- [ ] `matching_stop_time` 后停止撮合；
-- [ ] 撤销活动委托；
-- [ ] 释放资金和可平仓数量预占；
-- [ ] 未完成订单清零后锁定交割价；
-- [ ] 创建唯一 Delivery Batch；
-- [ ] 逐仓计算盈亏和交割手续费；
-- [ ] 先返还 Trade 已持有的仓位保证金，再扣亏损/费用，最后发放盈利；
-- [ ] 释放仓位保证金；
-- [ ] 关闭仓位并写 Position History；
-- [ ] Delivery Settlement 与 Asset 流水对账；
-- [ ] Batch 对账完成后进入终态；
-- [ ] Symbol 最终归档。
+- [~] `open_cutoff_time` 后进入 `CLOSE_ONLY`（Symbol 与 Delivery Batch 状态均持久化，待定时任务实跑验收）；
+- [~] `matching_stop_time` 后停止撮合（下单入口按时间硬阻断，Batch 进入 `MATCHING_STOPPED`，待撮合联调）；
+- [~] 撤销活动委托（分页撤销 Pending、Part Filled、Trigger Waiting，待存量订单验收）；
+- [~] 释放资金和可平仓数量预占（复用订单终止 Saga，待 Asset 联调）；
+- [~] 未完成订单清零后锁定交割价（五类未完成状态计数为零才进入 `PRICE_LOCKING`，待并发验收）；
+- [~] 创建唯一 Delivery Batch（按租户、Symbol、交割时间唯一并支持状态机恢复，待迁移部署）；
+- [~] 逐仓计算盈亏和交割手续费（线性/反向 Decimal 公式及产品矩阵单测通过，待端到端验收）；
+- [~] 先返还 Trade 已持有的仓位保证金，再扣亏损/费用，最后发放盈利（批次步骤屏障及不可变指令校验已实现，待 Asset 故障注入）；
+- [~] 释放仓位保证金（成功终态清零 Position/Isolated/Maintenance Margin，待资产对账）；
+- [~] 关闭仓位并写 Position History（与最后一个 Asset 指令本地确认同事务，待部署验收）；
+- [~] Delivery Settlement 与 Asset 流水对账（自动对账闭环已实现，待部署联调）；
+- [~] Batch 对账完成后进入终态（全部仓位、指令及流水对账完成才可 Completed，待实跑）；
+- [~] Symbol 最终归档（锁价后禁用交易，Batch 对账完成后归档并发布 `CONTRACT_SETTLED`，待下游验收）。
 
 必须覆盖：
 
-- [ ] 无持仓到期；
-- [ ] 存在未完成订单；
-- [ ] 部分成交订单到期；
-- [ ] 交割价缺失或超出窗口；
-- [ ] 零盈亏、零手续费、零 Asset 步骤；
-- [ ] 用户亏损扣款失败；
-- [ ] Asset 执行到一半服务重启；
-- [ ] 同一批次重复执行。
+- [~] 无持仓到期（Batch 可记录 `total_positions=0`，无指令时完成并归档；待数据库到期实跑）；
+- [~] 存在未完成订单（五类未完成状态非零时禁止锁价；待并发实跑）；
+- [~] 部分成交订单到期（先进入终止 Saga，释放剩余预占，订单归零前不锁价；待 Asset 联调）；
+- [~] 交割价缺失或超出窗口（缺失、审计元数据不全、非单一最终价和窗口外报价均拒绝创建结算事实，已有单测，待 Price Engine 联调）；
+- [~] 零盈亏、零手续费、零 Asset 步骤（零金额步骤被过滤；完全无 Asset 步骤时同事务关闭仓位并写 History，待数据库场景验收）；
+- [~] 用户亏损扣款失败（指令有界重试后进入人工处理，Batch 不得完成；待真实 Asset 余额不足注入）；
+- [~] Asset 执行到一半服务重启（步骤顺序、Instruction 业务号、租约重领及 Asset 幂等已实现；待进程级重启注入）；
+- [~] 同一批次重复执行（租户、Symbol、Delivery Time 唯一 Batch，Settlement/Instruction/History/Event 均有稳定业务键；待数据库双实例重放）。
 
 ### P0-05 交割价格
 
 - [~] Price Engine 输出 `DELIVERY` 快照（引擎与配置模型已支持，待生产多源公式配置验收）；
 - [~] 固化窗口内完整输入集合（完整、采用及剔除输入均进入不可变 `raw_payload`，待历史回放验收）；
-- [ ] 支持多样本中位数或加权平均；
+- [~] 支持多样本中位数或加权平均（代码完成，待生产三独立来源配置与回放验收）；
 - [~] 固化异常剔除摘要（已实现，待部署验证）；
 - [~] 公式版本、目标时点和来源快照可审计（已实现，待部署验证）；
 - [~] 使用原输入集合确定性重放（确定性快照 ID 与单测已实现，待生产历史回放）；
@@ -171,29 +171,29 @@ Outbox / Inbox
 
 ### P0-07 故障注入
 
-- [ ] Redis 超时；
-- [ ] Kafka 发布超时和重复投递；
-- [ ] Asset RPC 超时；
-- [ ] Asset 成功但 Trade 未确认；
-- [ ] MySQL 死锁；
-- [ ] Trade 事务提交后立即退出；
-- [ ] Position 乐观锁冲突；
-- [ ] Worker 租约过期；
-- [ ] 多实例并发领取；
-- [ ] 服务重启恢复；
+- [~] Redis 超时（隔离 Redis 停机/恢复已验证：停机期间任务锁获取失败并返回任务错误，不会无锁执行；恢复后四类 Job 自动连续成功；续租失败取消业务上下文已有单测，仍待持锁任务执行途中断 Redis 的实测）；
+- [~] Kafka 发布超时和重复投递（隔离 Kafka 停机/恢复及相同 `event_no` 双重放已通过；修复了 Broker 断开后 Event/Task Subscriber 永久退出的问题，现以 1～30 秒退避持续重连；Outbox/Inbox 最终各保留一条成功事实；仍待真实 `POSITION_FILL_REQUIRED` 资金/仓位事件重放）；
+- [~] Asset RPC 超时（Reservation/Settlement Instruction 持久化重试、退避和人工处理边界已实现，待真实 RPC 超时注入）；
+- [~] Asset 成功但 Trade 未确认（以稳定业务号重试并由 Asset 幂等返回既有结果，对账绑定唯一 Asset Flow；待断连注入）；
+- [~] MySQL 死锁（真实 MySQL 双事务已产生 1213 并验证回滚后自动重试、最终数值无丢失；合约核心事务统一仅对 1213/1205 做最多 3 次有界重试，业务错误不重试；待带真实 Position/Instruction 事实的场景注入）；
+- [~] Trade 事务提交后立即退出（撮合事实与 Outbox 同事务，恢复任务扫描未完成 Order/Event/Instruction；待进程级 kill 注入）；
+- [~] Position 乐观锁冲突（标记价风险刷新已改为仅更新派生字段的 version CAS，冲突后由下轮按新仓位重算，待并发注入验收）；
+- [~] Worker 租约过期（Settlement 指令具备 60 秒过期重领与 lease fencing，待并发注入）；
+- [~] 多实例并发领取（任务锁和 Settlement CAS 领取已实现；任务锁续租丢失会取消旧 Worker，待双实例注入）；
+- [~] 服务重启恢复（恢复源均为 MySQL 持久事实，Outbox/Inbox/Reservation/Instruction/Batch 均具备租约重领；待真实进程重启验收）；
 - [~] Price Engine 输入暂时缺失（已增加可识别错误、组件维度诊断、30 秒日志节流及“不生成快照”单测，待部署注入验收）；
-- [ ] Snapshot Outbox 大量积压。
+- [~] Snapshot Outbox 大量积压（Claim/发布 Worker 流水线并发、Kafka 检查点与成功状态原子提交、健康日志输出排空速率和 ETA；待部署容量压测）。
 
 完成标准：不存在重复资金变动、重复仓位投影、永久中间态或不可定位的资金差异。
 
 ### P1-01 Price Engine 生产配置
 
-- [ ] INDEX 使用至少三个独立市场来源；
-- [ ] MARK 使用指数价及溢价/基差；
-- [ ] 配置偏离剔除；
-- [ ] 配置平滑、上下限和版本；
-- [ ] 完成生产历史回放；
-- [ ] Snapshot Outbox 回到实时水位；
+- [~] INDEX 使用至少三个独立市场来源（新公式强制三种独立来源且运行时按 Snapshot ID 去重，待生产源配置）；
+- [~] MARK 使用指数价及溢价/基差（`INDEX_BASIS` 代码、协议、迁移、管理端和单测完成，待生产 v2 配置回放）；
+- [~] 配置偏离剔除（INDEX/DELIVERY 支持异常剔除；MARK 基差支持对称 BPS 限幅，待参数验收）；
+- [~] 配置平滑、上下限和版本（上一 MARK 加权平滑、基差上下限及不可变公式版本已完成，待生产参数回放）；
+- [~] 完成生产历史回放（离线确定性回放工具及篡改检测单测完成，待导出生产时间段执行）；
+- [~] Snapshot Outbox 回到实时水位（Claim/发布已流水线并发、最终检查点合并、健康日志新增净排空速度和 ETA，待部署观察归零）；
 - [ ] 完成容量、备份和灾备恢复演练。
 
 当前 BTCUSDT MARK 和 INDEX 使用相同单一行情，适合技术测试，不适合作为真实资金费来源。
@@ -262,9 +262,27 @@ Outbox / Inbox
 | 2026-07-28 | P0-06 Order/Fill、Fill/Position、Reservation/Freeze、Position/Margin 对账 | 代码及单测完成，待迁移部署验收 | 全量循环游标避免只扫热点数据；稳定延迟后核对成交聚合、仓位投影、冻结守恒和保证金托管守恒；差异使用稳定业务键持久化并自动恢复 |
 | 2026-07-28 | P0-06 强平/保险基金/ADL 对账 | 代码及单测完成，待部署联调 | 核对强平终态、破产仓位清零、唯一历史/完成事件、ADL 数量与执行终态、ADL 用户资产流水；新增 Asset 保险赔付只读接口，按强平号核对平台账户赔付的币种、强平 ID、请求额、承接额、ADL 接续缺口及冲正状态 |
 | 2026-07-28 | P0-07 故障注入基线 | 自动化不变量测试及验收手册已建立，待隔离环境逐项执行 | 覆盖 Asset 超时持久重试、退避上限、人工处理、过期租约 fencing、旧保证金指令拦截、Price Engine 缺源阻断；`perpetual-delivery-fault-injection-runbook.md` 固化 11 类注入步骤、SQL 证据和通过条件 |
+| 2026-07-28 | P0-07 Position 并发覆盖防护 | 代码完成，待并发注入验收 | 标记价扫描不再用无条件全行 Update 覆盖仓位；仅 CAS 更新 mark/risk 派生字段，version 冲突时放弃陈旧结果并由下轮重算 |
+| 2026-07-28 | P1-02 自动强平生产安全门禁 | 已修复并有单测，待配置部署验证 | 新增 `AutomaticLiquidation.Enabled`，默认 false；未验收时触发风险阈值只生成 `MANUAL_REVIEW` 事实，不执行新保险赔付/ADL；已经开始的资金 Saga 仍允许恢复，避免永久中间态 |
+| 2026-07-28 | P0-02 衍生品计算矩阵 | 单元测试完成，端到端矩阵待执行 | 覆盖永续/交割 × 线性/反向、LONG/SHORT/NET 方向、NET 反向开仓只按开仓余量计提保证金 |
+| 2026-07-28 | P0-03 资金费输入事实绑定 | 已修复并有单测，待历史回放 | 组合资金费快照的内容哈希现在绑定 MARK、INDEX、FUNDING 三个输入快照 ID；补齐品类、市场、交易对和 Price Engine 权威方；Batch 使用不可变快照实际公式版本，不再硬编码 `premium-v1` |
 | 2026-07-28 | 成交保证金扣款时点修正 | 已修复，待端到端与存量数据验收 | 不再在撮合阶段按整笔 Fill 预生成保证金扣款；改为仓位投影后仅按实际开仓数量生成并绑定 Position；兼容修复未执行的旧 `position_id=0` 指令，纯平仓旧指令删除，已执行冲突拒绝自动修正 |
 | 2026-07-28 | P0-06 对账异常人工处理入口 | 代码完成，待迁移与权限验收 | Trade/Admin API 提供租户隔离的异常列表及忽略接口；仅 OPEN 可忽略，强制原因和可信操作人，写审计事件；Admin UI 提供状态筛选、资产流水与对账时间展示；`admin-ui npm run type-check` 通过 |
 | 2026-07-28 | P0-05 最终交割价边界与审计 | 代码完成，待 Price Engine DELIVERY 配置联调 | Trade 仅接受单个已确认最终 DELIVERY 快照，不再聚合二次定价；Batch 固化快照ID、公式版本、目标时点、配置算法及原始摘要 |
 | 2026-07-28 | P0-05 Price Engine 输入审计与确定性重放 | 代码及单测完成，待生产多源配置回放 | `raw_payload` 固化完整/采用/剔除输入；快照 ID 由输出维度、价格和审计事实确定性生成；补充 DELIVERY 多源配置说明；`services/itick go test ./internal/priceengine ./internal/tasks ./internal/logic/itick` 通过 |
+| 2026-07-28 | P0-05 交割价有效输入门槛 | 代码及管理端完成，待迁移部署与生产三源验收 | 公式新增 `min_input_count`；DELIVERY 运行时强制至少 3 个偏差过滤后的有效来源，不足时拒绝出价；创建/详情页可配置和查看；补充偏差剔除后仅剩 2 源不发布快照的故障测试 |
+| 2026-07-28 | P0-03 资金费能力审计 | 代码与公式单测完成，故障及生产验收未完成 | 正/负/零费率、线性/反向计价、平台差额守恒、批次唯一、指令幂等、租约重试、`last_funding_time` 防重、Position History 及 Asset Flow 对账链路均已落地；未将尚未执行的数据库并发、进程退出和真实 Asset 故障场景标为完成 |
+| 2026-07-28 | P0-04 Delivery Batch 持久化状态机 | 代码与单测完成，待定时任务和数据库联调 | 修复此前仅在交割时创建 Batch、无法审计 `CLOSE_ONLY/MATCHING_STOPPED/PRICE_LOCKING` 的缺口；状态单调推进，锁价错误持久化并可重试，已有生命周期 Batch 可继续原子升级为 Settling；同步 Task/Admin/App/Trade 四个触发入口，Trade 全量测试通过 |
+| 2026-07-28 | P0-01/P0-07 任务锁续租 fencing | 代码和故障单测完成，待双实例 Redis/Kafka 验收 | 修复续租失败后旧 Worker 仍无锁运行的并发窗口；所有七类 Trade 定时任务现在使用可取消任务上下文，续租失败立即取消 DB/RPC 调用并向 Kafka 返回错误；Subscriber 路由表覆盖全部计划任务，且单测证明仅成功/已被另一实例领取时确认，空响应和失败均触发重试 |
+| 2026-07-28 | P0-02 合约基础矩阵代码审计 | 主体代码和纯逻辑测试具备，待数据库/Asset 组合验收 | 四种 ContractType/ValueType 盈亏矩阵、LONG/SHORT/NET、NET 反向开仓余量、订单类型/TIF/触发、部分成交、Maker 价格、尘埃处理及对账约束已有自动化证据；未用纯逻辑单测替代跨表和真实资产流水验收 |
+| 2026-07-28 | P1-01 INDEX_BASIS 生产标记价 | 代码、迁移、管理端及单测完成，待生产 v2 配置与历史回放 | 新算法按 `INDEX × (1 + bounded basis)` 计算 MARK，并可用上一时点 MARK 加权平滑；强制 INDEX/独立 FINAL_QUOTE/可选上一 MARK 的有序同 Symbol 输入、正基差上限和全部输入门槛；上一 MARK 查询固定为 `target-1ms` 防止自引用；正/负/零基差、上下限和平滑均有测试，原始/采用基差及未平滑价进入不可变审计 |
+| 2026-07-28 | P1-01 三源 INDEX 与离线回放 | 代码和单测完成，待生产源配置及历史数据执行 | 新 INDEX 公式强制 MEDIAN/WEIGHTED_MEAN、至少三种独立 FINAL_QUOTE 来源和三个有效输入；引擎按 Snapshot ID 去重阻断伪多源；审计新增输出价，`cmd/price-replay` 可脱离当前配置/行情重算并拒绝输出篡改或重复输入 |
+| 2026-07-28 | P1-01 Snapshot Outbox 排空优化 | 代码和单测完成，待部署容量验收 | 候选 Claim 与 Redis/Kafka 发布改为 Worker 流水线并发；Kafka 检查点与 Success 状态合并为原子更新，减少每条成功记录一次 SQL；健康日志输出 `drain_per_sec` 与 `eta_seconds`，明确 `processing` 仅为瞬时在途数 |
 | 2026-07-28 | P0-04 交割完成归档 | 代码完成，待端到端验收 | Batch 仅在资金流水对账完成后进入 COMPLETED，随后进入 ARCHIVED 并发送稳定幂等号的 `CONTRACT_SETTLED` 事件 |
+| 2026-07-28 | P0-07 MySQL 事务并发恢复 | 代码和单测完成，待隔离数据库注入 | 合约核心事务统一处理 MySQL 1213/1205：最多 3 次、10ms/20ms 退避、响应上下文取消；普通业务错误只执行 1 次；幂等 History、Instruction、Event、Reservation 键继续承担重放防重；`services/trade go test ./...` 通过 |
+| 2026-07-28 | P0-07 Kafka/进程恢复审计 | 代码链路闭环，待外部故障注入 | Trade Event 的事务 Outbox、领取租约、失败退避/死信、Inbox 唯一防重和 claimant fencing 已核对；撮合提交后的 Fill 与 Outbox 同事务，后续 Position/Settlement 由持久事件恢复；未把真实 Kafka 阻断、重复投递和进程 kill 提前标完成 |
+| 2026-07-28 | 隔离 Compose 运行时基线 | 通过 | 全新数据库初始化完成（36 个 migration）；Trade/Asset/Itick/System、MySQL/Redis/Kafka/Etcd 健康；四个 Trade Job 持续成功；Batch、Instruction、History、Outbox、Inbox 关键唯一索引实库存在 |
+| 2026-07-28 | P0-07 真实 MySQL/Redis 注入 | 部分通过 | MySQL 双事务实际触发 1213，失败事务回滚且重试后两测试行均精确累计两次；Redis 双 Worker 验证非持有者不能续租或释放，持有者释放后新 Worker 才能领取；集成测试均为环境变量显式启用 |
+| 2026-07-28 | P0-07 Kafka 停机与重放 | 发现缺陷后修复并复测通过 | 首次注入发现 Broker 断开会令 Trade Event Subscriber 永久退出；新增 Event/Task Subscriber 持续重连及退避单测；修复镜像中再次停机/恢复无需重启 Trade，Outbox 从失败/领取态恢复成功，Inbox 唯一；相同事件双重放后 Outbox/Inbox 仍各一条 |
+| 2026-07-28 | P0-07 Redis 停机恢复 | 部分通过 | Redis 停机期间 Trade 明确拒绝取得任务锁并向 Kafka 返回失败，没有无锁执行；Redis 恢复后 ProcessOrderMatching、ProcessPositions、ProcessContractSettlements、ProcessTradeEvents 均无需重启自动恢复连续成功；待补持锁执行中断网的运行时证据 |
 | 2026-07-28 | 本轮静态回归 | 通过 | `services/trade go test ./...`、`services/asset go test ./...`、`services/system go test ./...`；协议向后兼容编译通过 |

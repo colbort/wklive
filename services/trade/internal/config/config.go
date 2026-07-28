@@ -28,4 +28,9 @@ type Config struct {
 		RetentionDays int64
 		BatchSize     int64
 	}
+	AutomaticLiquidation struct {
+		// Enabled must remain false until the P1-02 liquidation, insurance-fund
+		// and ADL production gate has been fully accepted.
+		Enabled bool
+	}
 }

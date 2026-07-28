@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	market "wklive/common/market"
@@ -48,13 +49,14 @@ func StartSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext) {
 	go func() {
 		ticker := time.NewTicker(defaultSnapshotOutboxHealthInterval)
 		defer ticker.Stop()
-		checkSnapshotOutboxHealth(ctx, svcCtx, time.Now())
+		var previous *snapshotOutboxHealthSample
+		previous = checkSnapshotOutboxHealth(ctx, svcCtx, time.Now(), previous)
 		for {
 			select {
 			case <-ctx.Done():
 				return
 			case now := <-ticker.C:
-				checkSnapshotOutboxHealth(ctx, svcCtx, now)
+				previous = checkSnapshotOutboxHealth(ctx, svcCtx, now, previous)
 			}
 		}
 	}()
@@ -82,23 +84,44 @@ func StartSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext) {
 	}()
 }
 
-func checkSnapshotOutboxHealth(ctx context.Context, svcCtx *svc.ServiceContext, now time.Time) {
+type snapshotOutboxHealthSample struct {
+	at       time.Time
+	openRows int64
+}
+
+func checkSnapshotOutboxHealth(ctx context.Context, svcCtx *svc.ServiceContext, now time.Time, previous *snapshotOutboxHealthSample) *snapshotOutboxHealthSample {
 	health, err := svcCtx.SnapshotOutboxModel.Health(ctx)
 	if err != nil {
 		if ctx.Err() == nil {
 			logx.Errorf("snapshot outbox health query failed: %v", err)
 		}
-		return
+		return previous
 	}
+	current := &snapshotOutboxHealthSample{at: now, openRows: health.PendingCount + health.ProcessingCount}
 	oldestAge := int64(0)
 	if health.OldestOpenAt > 0 {
 		oldestAge = now.UnixMilli() - health.OldestOpenAt
 	}
 	if !snapshotOutboxUnhealthy(health, oldestAge) {
-		return
+		return current
 	}
-	logx.Errorf("snapshot outbox unhealthy pending=%d processing=%d failed=%d manual=%d oldest_open_age_ms=%d",
-		health.PendingCount, health.ProcessingCount, health.FailedCount, health.ManualCount, oldestAge)
+	drainPerSecond, etaSeconds := snapshotOutboxDrainMetrics(previous, current)
+	logx.Errorf("snapshot outbox unhealthy pending=%d processing=%d failed=%d manual=%d oldest_open_age_ms=%d drain_per_sec=%.2f eta_seconds=%d",
+		health.PendingCount, health.ProcessingCount, health.FailedCount, health.ManualCount, oldestAge, drainPerSecond, etaSeconds)
+	return current
+}
+
+func snapshotOutboxDrainMetrics(previous, current *snapshotOutboxHealthSample) (float64, int64) {
+	if previous == nil || current == nil || !current.at.After(previous.at) {
+		return 0, -1
+	}
+	elapsed := current.at.Sub(previous.at).Seconds()
+	drained := previous.openRows - current.openRows
+	if elapsed <= 0 || drained <= 0 {
+		return 0, -1
+	}
+	rate := float64(drained) / elapsed
+	return rate, int64(float64(current.openRows) / rate)
 }
 
 func snapshotOutboxUnhealthy(health *models.SnapshotOutboxHealth, oldestAgeMillis int64) bool {
@@ -115,66 +138,79 @@ func processSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, work
 	if err != nil {
 		return 0, err
 	}
-	claimedRows := make([]*models.TItickSnapshotOutbox, 0, len(rows))
-	for _, row := range rows {
-		claimed, claimErr := svcCtx.SnapshotOutboxModel.Claim(ctx, row.Id, now)
-		if claimErr != nil {
-			return int64(len(claimedRows)), claimErr
-		}
-		if claimed {
-			claimedRows = append(claimedRows, row)
-		}
-	}
-	if len(claimedRows) == 0 {
+	if len(rows) == 0 {
 		return 0, nil
 	}
 
 	jobs := make(chan *models.TItickSnapshotOutbox)
-	errs := make(chan error, len(claimedRows))
+	errs := make(chan error, len(rows))
+	var claimedCount atomic.Int64
 	var workers sync.WaitGroup
 	for i := 0; i < workerCount; i++ {
 		workers.Add(1)
 		go func() {
 			defer workers.Done()
 			for row := range jobs {
-				if publishErr := publishSnapshotOutbox(ctx, svcCtx, row); publishErr != nil {
+				claimed, claimErr := svcCtx.SnapshotOutboxModel.Claim(ctx, row.Id, time.Now().UnixMilli())
+				if claimErr != nil {
+					errs <- claimErr
+					continue
+				}
+				if !claimed {
+					continue
+				}
+				claimedCount.Add(1)
+				completed, publishErr := publishSnapshotOutbox(ctx, svcCtx, row)
+				if publishErr != nil {
 					if markErr := svcCtx.SnapshotOutboxModel.MarkFailure(ctx, row.Id, publishErr.Error(), time.Now().UnixMilli()); markErr != nil {
 						errs <- markErr
 					}
 					continue
 				}
-				if markErr := svcCtx.SnapshotOutboxModel.MarkSuccess(ctx, row.Id, time.Now().UnixMilli()); markErr != nil {
-					errs <- markErr
+				if !completed {
+					if markErr := svcCtx.SnapshotOutboxModel.MarkSuccess(ctx, row.Id, time.Now().UnixMilli()); markErr != nil {
+						errs <- markErr
+					}
 				}
 			}
 		}()
 	}
-	for _, row := range claimedRows {
-		jobs <- row
+	for _, row := range rows {
+		select {
+		case <-ctx.Done():
+			close(jobs)
+			workers.Wait()
+			close(errs)
+			return claimedCount.Load(), ctx.Err()
+		case jobs <- row:
+		}
 	}
 	close(jobs)
 	workers.Wait()
 	close(errs)
 	for workerErr := range errs {
-		return int64(len(claimedRows)), workerErr
+		return claimedCount.Load(), workerErr
 	}
-	return int64(len(claimedRows)), nil
+	return claimedCount.Load(), nil
 }
 
-func publishSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, row *models.TItickSnapshotOutbox) error {
+// publishSnapshotOutbox returns completed=true when it atomically moved the
+// row to success. completed=false means the caller must close a row whose
+// publication checkpoints were already present from an earlier attempt.
+func publishSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, row *models.TItickSnapshotOutbox) (bool, error) {
 	var payload snapshotOutboxPayload
 	if err := json.Unmarshal([]byte(row.Payload), &payload); err != nil {
-		return err
+		return false, err
 	}
 	if payload.Snapshot == nil {
-		return fmt.Errorf("outbox %s has no snapshot", row.SnapshotId)
+		return false, fmt.Errorf("outbox %s has no snapshot", row.SnapshotId)
 	}
 	if row.RedisPublishedAt == 0 {
 		if err := svcCtx.MarketDataCache.PublishAuthoritativeSnapshot(ctx, payload.Snapshot); err != nil {
-			return err
+			return false, err
 		}
 		if err := svcCtx.SnapshotOutboxModel.MarkRedisPublished(ctx, row.Id, time.Now().UnixMilli()); err != nil {
-			return fmt.Errorf("checkpoint Redis snapshot publication: %w", err)
+			return false, fmt.Errorf("checkpoint Redis snapshot publication: %w", err)
 		}
 		row.RedisPublishedAt = time.Now().UnixMilli()
 	}
@@ -182,14 +218,16 @@ func publishSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, row 
 	// is complete even though the original full quote is no longer available.
 	if payload.Quote == nil {
 		if row.EventPublishedAt == 0 {
-			if err := svcCtx.SnapshotOutboxModel.MarkEventPublished(ctx, row.Id, time.Now().UnixMilli()); err != nil {
-				return fmt.Errorf("checkpoint skipped market event publication: %w", err)
+			if err := svcCtx.SnapshotOutboxModel.CompleteAfterEventPublished(ctx, row.Id, time.Now().UnixMilli()); err != nil {
+				return false, fmt.Errorf("complete skipped market event publication: %w", err)
 			}
+			row.EventPublishedAt = time.Now().UnixMilli()
+			return true, nil
 		}
-		return nil
+		return false, nil
 	}
 	if row.EventPublishedAt > 0 {
-		return nil
+		return false, nil
 	}
 	event := market.AuthoritativeSnapshotEvent{
 		Version:         market.AuthoritativeSnapshotEventVersion,
@@ -208,10 +246,11 @@ func publishSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, row 
 		PublishedAt:     time.Now().UnixMilli(),
 	}
 	if err := svcCtx.SnapshotPublisher.PublishKey(ctx, market.AuthoritativeSnapshotTopic, []byte(strings.ToUpper(event.PartitionKey())), event); err != nil {
-		return err
+		return false, err
 	}
-	if err := svcCtx.SnapshotOutboxModel.MarkEventPublished(ctx, row.Id, time.Now().UnixMilli()); err != nil {
-		return fmt.Errorf("checkpoint market event publication: %w", err)
+	if err := svcCtx.SnapshotOutboxModel.CompleteAfterEventPublished(ctx, row.Id, time.Now().UnixMilli()); err != nil {
+		return false, fmt.Errorf("complete market event publication: %w", err)
 	}
-	return nil
+	row.EventPublishedAt = time.Now().UnixMilli()
+	return true, nil
 }

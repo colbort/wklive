@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"wklive/services/trade/internal/logic/helpers"
 
 	cache "wklive/common/market"
@@ -87,8 +88,15 @@ func (l *ProcessFundingSettlementsLogic) createDueBatches(tenantID int64) error 
 			if err != nil {
 				return err
 			}
+			fundingFact, err := l.svcCtx.TradeMarketSnapshotModel.FindOneByTenantIdSymbolIdSnapshotId(l.ctx, c.TenantId, c.SymbolId, source)
+			if err != nil {
+				return fmt.Errorf("reload immutable funding input fact: %w", err)
+			}
+			if fundingFact.FormulaVersion == "" {
+				return errors.New("immutable funding input fact has no formula version")
+			}
 			batchNo := fmt.Sprintf("FND-%d-%d", c.SymbolId, settlementTime)
-			if err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+			if err := helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 				conn := sqlx.NewSqlConnFromSession(session)
 				bm := models.NewTContractFundingBatchModel(conn, l.svcCtx.Config.CacheRedis)
 				sm := models.NewTContractFundingSettlementModel(conn, l.svcCtx.Config.CacheRedis)
@@ -106,7 +114,7 @@ func (l *ProcessFundingSettlementsLogic) createDueBatches(tenantID int64) error 
 						return err
 					}
 				}
-				res, err := bm.Insert(ctx, &models.TContractFundingBatch{TenantId: c.TenantId, BatchNo: batchNo, SymbolId: c.SymbolId, FundingRate: rate, MarkPrice: mark, IndexPrice: index, PriceSource: source, FormulaVersion: "premium-v1", SettlementTime: settlementTime, Status: int64(trade.FundingBatchStatus_FUNDING_BATCH_STATUS_SETTLING), TotalPositions: int64(len(active)), CreateTimes: now, UpdateTimes: now})
+				res, err := bm.Insert(ctx, &models.TContractFundingBatch{TenantId: c.TenantId, BatchNo: batchNo, SymbolId: c.SymbolId, FundingRate: rate, MarkPrice: mark, IndexPrice: index, PriceSource: source, FormulaVersion: fundingFact.FormulaVersion, SettlementTime: settlementTime, Status: int64(trade.FundingBatchStatus_FUNDING_BATCH_STATUS_SETTLING), TotalPositions: int64(len(active)), CreateTimes: now, UpdateTimes: now})
 				if err != nil {
 					return err
 				}
@@ -242,7 +250,18 @@ func (l *ProcessFundingSettlementsLogic) lockFundingInputs(c *models.TTradeSymbo
 	if c.FundingRateFloor.IsNegative() && rate.LessThan(c.FundingRateFloor) {
 		rate = c.FundingRateFloor
 	}
-	snapshot := &cache.SettlementSnapshot{Kind: "FUNDING", MarkPrice: mark.String(), IndexPrice: index.String(), FundingRate: rate.String(), Source: fundingQ.SnapshotID, SourceTimestamp: minInt64(minInt64(markQ.QuoteTs, indexQ.QuoteTs), fundingQ.QuoteTs), SnapshotTimestamp: utils.NowMillis(), Revision: maxInt64(maxInt64(markQ.Revision, indexQ.Revision), fundingQ.Revision), FormulaVersion: nonEmpty(fundingQ.FormulaVersion, "price-engine"), Confirmed: markQ.Confirmed && indexQ.Confirmed && fundingQ.Confirmed}
+	category, market, symbol := parseQuoteSource(c.MarkPriceSource)
+	snapshot := &cache.SettlementSnapshot{
+		Kind: "FUNDING", CategoryCode: category, Market: market, Symbol: symbol,
+		MarkPrice: mark.String(), IndexPrice: index.String(), FundingRate: rate.String(),
+		Source:            fundingInputIdentity(markQ, indexQ, fundingQ),
+		SourceTimestamp:   minInt64(minInt64(markQ.QuoteTs, indexQ.QuoteTs), fundingQ.QuoteTs),
+		SnapshotTimestamp: utils.NowMillis(),
+		Revision:          maxInt64(maxInt64(markQ.Revision, indexQ.Revision), fundingQ.Revision),
+		FormulaVersion:    nonEmpty(fundingQ.FormulaVersion, "price-engine"),
+		Authority:         strings.TrimSpace(l.svcCtx.Config.PriceEngineAuthority),
+		Confirmed:         markQ.Confirmed && indexQ.Confirmed && fundingQ.Confirmed,
+	}
 	if err := l.svcCtx.MarketDataCache.PutSettlementSnapshot(l.ctx, snapshot); err != nil {
 		return decimal.Zero, decimal.Zero, decimal.Zero, "", err
 	}
@@ -254,6 +273,10 @@ func (l *ProcessFundingSettlementsLogic) lockFundingInputs(c *models.TTradeSymbo
 		return decimal.Zero, decimal.Zero, decimal.Zero, "", err
 	}
 	return mark, index, rate, snapshot.SnapshotID, nil
+}
+
+func fundingInputIdentity(mark, index, funding *marketQuoteSnapshot) string {
+	return fmt.Sprintf("MARK=%s|INDEX=%s|FUNDING=%s", mark.SnapshotID, index.SnapshotID, funding.SnapshotID)
 }
 func minInt64(a, b int64) int64 {
 	if a < b {
@@ -386,7 +409,7 @@ func (l *ProcessFundingSettlementsLogic) validateFundingUserInstruction(item *mo
 
 func (l *ProcessFundingSettlementsLogic) completeFundingInstruction(item *models.TTradeSettlementInstruction) error {
 	now := utils.NowMillis()
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		im := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
 		current, err := im.FindOneForUpdate(ctx, item.Id)
@@ -412,7 +435,7 @@ func (l *ProcessFundingSettlementsLogic) completeFundingInstruction(item *models
 
 func (l *ProcessFundingSettlementsLogic) failFundingInstruction(item *models.TTradeSettlementInstruction, cause error) error {
 	now := utils.NowMillis()
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 		im := models.NewTTradeSettlementInstructionModel(sqlx.NewSqlConnFromSession(session), l.svcCtx.Config.CacheRedis)
 		current, err := im.FindOneForUpdate(ctx, item.Id)
 		if err != nil {
@@ -453,7 +476,7 @@ func (l *ProcessFundingSettlementsLogic) failFundingInstruction(item *models.TTr
 
 func (l *ProcessFundingSettlementsLogic) completeFunding(row *models.TContractFundingSettlement) error {
 	now := utils.NowMillis()
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		return l.completeFundingInSession(ctx, conn, row, now)
 	})

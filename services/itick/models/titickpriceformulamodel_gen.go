@@ -56,6 +56,7 @@ type (
 		Components      string `db:"components"`
 		MaxLookbackMs   int64  `db:"max_lookback_ms"`
 		MaxDeviationBps int64  `db:"max_deviation_bps"`
+		MinInputCount   int64  `db:"min_input_count"`
 		IntervalMs      int64  `db:"interval_ms"`
 		LastTargetTime  int64  `db:"last_target_time"`
 		Status          int64  `db:"status"`      // 1 active,2 inactive,3 revoked
@@ -151,8 +152,8 @@ func (m *defaultTItickPriceFormulaModel) Insert(ctx context.Context, data *TItic
 	tItickPriceFormulaFormulaNoKey := fmt.Sprintf("%s%v", cacheTItickPriceFormulaFormulaNoPrefix, data.FormulaNo)
 	tItickPriceFormulaIdKey := fmt.Sprintf("%s%v", cacheTItickPriceFormulaIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickPriceFormulaRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.FormulaNo, data.Authority, data.SnapshotKind, data.CategoryCode, data.Market, data.Symbol, data.Algorithm, data.FormulaVersion, data.Components, data.MaxLookbackMs, data.MaxDeviationBps, data.IntervalMs, data.LastTargetTime, data.Status, data.Version, data.RunVersion, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickPriceFormulaRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.FormulaNo, data.Authority, data.SnapshotKind, data.CategoryCode, data.Market, data.Symbol, data.Algorithm, data.FormulaVersion, data.Components, data.MaxLookbackMs, data.MaxDeviationBps, data.MinInputCount, data.IntervalMs, data.LastTargetTime, data.Status, data.Version, data.RunVersion, data.CreateTimes, data.UpdateTimes)
 	}, tItickPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionKey, tItickPriceFormulaFormulaNoKey, tItickPriceFormulaIdKey)
 	return ret, err
 }
@@ -168,7 +169,7 @@ func (m *defaultTItickPriceFormulaModel) Update(ctx context.Context, newData *TI
 	tItickPriceFormulaIdKey := fmt.Sprintf("%s%v", cacheTItickPriceFormulaIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickPriceFormulaRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.FormulaNo, newData.Authority, newData.SnapshotKind, newData.CategoryCode, newData.Market, newData.Symbol, newData.Algorithm, newData.FormulaVersion, newData.Components, newData.MaxLookbackMs, newData.MaxDeviationBps, newData.IntervalMs, newData.LastTargetTime, newData.Status, newData.Version, newData.RunVersion, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.FormulaNo, newData.Authority, newData.SnapshotKind, newData.CategoryCode, newData.Market, newData.Symbol, newData.Algorithm, newData.FormulaVersion, newData.Components, newData.MaxLookbackMs, newData.MaxDeviationBps, newData.MinInputCount, newData.IntervalMs, newData.LastTargetTime, newData.Status, newData.Version, newData.RunVersion, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tItickPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionKey, tItickPriceFormulaFormulaNoKey, tItickPriceFormulaIdKey)
 	return err
 }

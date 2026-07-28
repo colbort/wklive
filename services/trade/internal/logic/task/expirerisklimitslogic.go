@@ -28,7 +28,8 @@ func NewExpireRiskLimitsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 风控限制过期恢复
 func (l *ExpireRiskLimitsLogic) ExpireRiskLimits(in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
-	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "expire_risk_limits", func() (*trade.TradeTaskResp, error) {
+	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "expire_risk_limits", func(taskCtx context.Context) (*trade.TradeTaskResp, error) {
+		l.ctx = taskCtx
 		now := utils.NowMillis()
 		cursor := int64(0)
 		for {

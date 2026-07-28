@@ -31,6 +31,7 @@ type (
 		MarkFailure(context.Context, int64, string, int64) error
 		MarkRedisPublished(context.Context, int64, int64) error
 		MarkEventPublished(context.Context, int64, int64) error
+		CompleteAfterEventPublished(context.Context, int64, int64) error
 		FindPage(context.Context, int64, string, int64, int64) ([]*TItickSnapshotOutbox, int64, error)
 		RetryFailed(context.Context, int64, int64) error
 		Health(context.Context) (*SnapshotOutboxHealth, error)
@@ -68,6 +69,18 @@ func (m *defaultTItickSnapshotOutboxModel) MarkRedisPublished(ctx context.Contex
 
 func (m *defaultTItickSnapshotOutboxModel) MarkEventPublished(ctx context.Context, id, now int64) error {
 	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET event_published_at=CASE WHEN event_published_at=0 THEN ? ELSE event_published_at END,update_times=? WHERE id=? AND status=2", now, now, id)
+	return requireOneOutboxRow(result, err)
+}
+
+// CompleteAfterEventPublished atomically checkpoints the final publication
+// stage and closes the outbox row. A retry can only reach this method after the
+// Redis checkpoint is durable, so success never hides an incomplete Redis
+// publication.
+func (m *defaultTItickSnapshotOutboxModel) CompleteAfterEventPublished(ctx context.Context, id, now int64) error {
+	result, err := m.ExecNoCacheCtx(ctx, `UPDATE t_itick_snapshot_outbox
+		SET event_published_at=CASE WHEN event_published_at=0 THEN ? ELSE event_published_at END,
+		    status=3,next_retry_at=0,last_error_msg='',update_times=?
+		WHERE id=? AND status=2 AND redis_published_at>0`, now, now, id)
 	return requireOneOutboxRow(result, err)
 }
 

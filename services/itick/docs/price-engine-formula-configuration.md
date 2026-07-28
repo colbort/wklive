@@ -115,6 +115,70 @@ interval_ms     = 1000
 ```
 
 当前只有一个输入成分，权重为 `1`，因此标记价格等于该 `FINAL_QUOTE` 价格。
+该配置只能用于技术联调，不能用于永续合约真实资金费、强平或交割风险计算。
+
+生产 MARK 应创建新版本并使用 `INDEX_BASIS`：
+
+```json
+{
+  "formula_no": "BTCUSDT-MARK-v2",
+  "formula_version": "v2",
+  "authority": "price-engine",
+  "snapshot_kind": "MARK",
+  "category_code": "crypto",
+  "market": "BA",
+  "symbol": "BTCUSDT",
+  "algorithm": "INDEX_BASIS",
+  "components": [
+    {
+      "authority": "price-engine",
+      "kind": "INDEX",
+      "category_code": "crypto",
+      "market": "BA",
+      "symbol": "BTCUSDT",
+      "weight": "1"
+    },
+    {
+      "authority": "itick-ws",
+      "kind": "FINAL_QUOTE",
+      "category_code": "crypto",
+      "market": "BA",
+      "symbol": "BTCUSDT",
+      "weight": "0.2"
+    },
+    {
+      "authority": "price-engine",
+      "kind": "MARK",
+      "category_code": "crypto",
+      "market": "BA",
+      "symbol": "BTCUSDT",
+      "weight": "0.8"
+    }
+  ],
+  "max_lookback_ms": 30000,
+  "max_deviation_bps": 200,
+  "min_input_count": 3,
+  "interval_ms": 1000
+}
+```
+
+计算规则：
+
+```text
+raw_basis     = (PERPETUAL_QUOTE - INDEX) / INDEX
+applied_basis = clamp(raw_basis, -max_deviation_bps/10000, +max_deviation_bps/10000)
+raw_mark      = INDEX × (1 + applied_basis)
+MARK          = weighted_mean(raw_mark, PREVIOUS_MARK)
+```
+
+组件顺序属于公式语义：第一个必须是同一 Price Engine 输出的 `INDEX`，第二个必须是
+独立行情权威的 `FINAL_QUOTE`，可选第三个是同一输出维度的上一时点 `MARK`。第三个
+组件存在时，第二、三个组件的权重分别控制当前基差价和历史 MARK 的平滑比例；引擎
+强制按 `target-1ms` 查找上一 MARK，禁止读取本轮输出形成自引用。初次启用平滑版本前，
+必须已有旧 MARK 历史用于启动。
+
+系统拒绝反向顺序、缺失必需输入、跨 Symbol、自引用行情源以及未配置基差上限的公式。
+每次计算的原始基差、限幅后基差和未平滑 MARK 均进入快照 `raw_payload`，用于风险事件重放。
 
 ### 4.2 INDEX 指数价格
 
@@ -146,7 +210,34 @@ interval_ms     = 1000
 
 当前只有一个输入成分，因此中位数仍等于该 `FINAL_QUOTE` 价格。
 
-### 4.3 FUNDING 资金费率
+该单源 INDEX 仅保留用于已有技术测试。新建 INDEX 版本必须满足：
+
+- `MEDIAN` 或 `WEIGHTED_MEAN`；
+- 至少三个组件且 `min_input_count >= 3`；
+- 每个组件均为外部权威 `FINAL_QUOTE`；
+- Authority、快照类型、分类、市场和 Symbol 组成的来源身份不得重复；
+- 运行时相同 Snapshot ID 只计算一次，不能通过重复组件凑足数量。
+
+### 4.3 历史确定性回放
+
+新生成的 Price Engine 审计会在 `raw_payload` 中固化 `output_price`、完整输入、
+采用/剔除输入及算法参数。导出单条 `raw_payload` 为 JSON 文件后执行：
+
+```bash
+cd services/itick
+go run ./cmd/price-replay /path/to/evaluation-audit.json
+```
+
+成功输出：
+
+```text
+replay verified: price=...
+```
+
+工具只读取不可变审计，不读取当前公式表或实时行情；记录输出被修改、采用输入出现重复
+Snapshot ID、算法参数缺失或重算结果不一致时会返回非零状态。
+
+### 4.4 FUNDING 资金费率
 
 ```json
 {
@@ -199,7 +290,7 @@ FUNDING = (101000 - 100000) / 100000
         = 1%
 ```
 
-### 4.4 DELIVERY 交割价
+### 4.5 DELIVERY 交割价
 
 生产配置应使用多个相互独立的权威来源，不能复用当前单一 BA 行情测试配置：
 
@@ -241,9 +332,15 @@ FUNDING = (101000 - 100000) / 100000
   ],
   "max_lookback_ms": 30000,
   "max_deviation_bps": 200,
+  "min_input_count": 3,
   "interval_ms": 1000
 }
 ```
+
+`min_input_count` 表示偏差过滤后仍必须保留的有效输入数量。`DELIVERY`
+无论新旧配置都强制不低于 `3`；少于 3 个有效来源时，本轮返回
+`price engine input unavailable`，不会生成或发布交割快照。创建页面建议显式填写
+`3`，并保证三个组件来自相互独立的行情来源。
 
 每个输出快照的 `raw_payload` 固化目标时点、公式版本、算法、完整输入、
 采用输入和被剔除输入。快照 ID 由这些事实与计算结果确定性生成，因此同一

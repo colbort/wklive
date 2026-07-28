@@ -143,10 +143,18 @@ position.avail_qty + position.frozen_qty <= position.qty
 
 预期：
 
+- 仅 MySQL 1213/1205 在当前调用内重试，最多执行 3 次，退避为 10ms、20ms；
+- 普通业务校验错误不重试；上下文取消后不再发起下一次事务；
 - 被回滚事务不留下半条 Position History 或半条指令；
-- Inbox/Outbox 或定时恢复路径重新执行；
+- 三次仍失败时返回错误，由 Inbox/Outbox 或定时恢复路径重新执行；
 - 稳定幂等键阻止重复投影；
 - 最终不存在订单、仓位和资金终态不一致。
+
+证据：
+
+- 保存两会话锁定与解锁的 SQL、Trade 错误日志及每个业务键的尝试次数；
+- 对同一 `order_no`、`fill_id`、`action_key`、`instruction_no`、`event_no` 查询唯一性；
+- 对比注入前后 Position、Position History、Reservation、Settlement Instruction、Trade Event 和 Asset Flow，确认没有半事务或重复事实。
 
 ### FI-06 Trade 事务提交后立即退出
 
@@ -260,3 +268,30 @@ GROUP BY status;
 4. 没有依靠直接修改终态字段完成恢复；
 5. 演练证据归档并关联发布版本。
 
+## 5. 2026-07-28 隔离环境执行记录
+
+环境：仓库 `deploy/docker-compose.yml` 加
+`deploy/docker-compose.acceptance.yml`，使用独立 Docker Volume。
+
+已取得证据：
+
+- 全新数据库初始化成功，记录 36 个 migration；
+- `trade.ProcessOrderMatching`、`trade.ProcessPositions`、
+  `trade.ProcessContractSettlements`、`trade.ProcessTradeEvents` 持续写入成功 Job Log；
+- 真实 MySQL 双事务产生 1213，失败事务自动回滚并重试，最终两行测试值均为 2；
+- 真实 Redis 验证非持有者无法续租、无法删除他人租约；
+- 隔离 Redis 停机时 Trade 无法取得任务锁并返回失败，未绕过锁执行；恢复后四类 Job
+  无需重启自动恢复连续成功；
+- Trade 停机期间创建的 `ACCEPT-RESTART-20260728-1` 保持 Pending，启动后 Outbox 和 Inbox 均成功；
+- 同一事件向 Kafka 重放两次后，Outbox 和 Inbox 仍各只有一条；
+- Kafka 停机时 `ACCEPT-KAFKA-TIMEOUT-20260728-1` 进入 Failed 并递增重试，恢复后成功；
+- 首次 Kafka 注入发现 Event Subscriber 退出后不重连；修复 Event/Task Subscriber 持续重连后，
+  `ACCEPT-KAFKA-RECONNECT-20260728-2` 在不重启 Trade 的情况下自动恢复，最终 Outbox/Inbox 成功。
+
+仍需补充后才能把对应大项标为完成：
+
+- 使用真实 `POSITION_FILL_REQUIRED` 重放，核对 Position History、Instruction 和 Asset Flow 不增加第二份；
+- 在 Position/Instruction 事务中制造 1213，而不只是测试专用行；
+- 在任务已持锁且正在执行时停止 Redis，保存续租失败取消任务上下文的运行时证据；
+- 在 Reservation、Funding、Delivery、ADL 父子 Saga 各中间态执行进程退出；
+- 保存完整 trace、SQL 结果和发布版本号到正式验收归档。

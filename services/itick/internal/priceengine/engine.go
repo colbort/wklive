@@ -28,14 +28,19 @@ type Component struct {
 }
 
 type EvaluationAudit struct {
-	FormulaNo       string  `json:"formula_no"`
-	FormulaVersion  string  `json:"formula_version"`
-	Algorithm       int64   `json:"algorithm"`
-	TargetTime      int64   `json:"target_time"`
-	AllInputs       []Input `json:"all_inputs"`
-	AcceptedInputs  []Input `json:"accepted_inputs"`
-	RejectedInputs  []Input `json:"rejected_inputs"`
-	MaxDeviationBps int64   `json:"max_deviation_bps"`
+	FormulaNo        string  `json:"formula_no"`
+	FormulaVersion   string  `json:"formula_version"`
+	Algorithm        int64   `json:"algorithm"`
+	TargetTime       int64   `json:"target_time"`
+	AllInputs        []Input `json:"all_inputs"`
+	AcceptedInputs   []Input `json:"accepted_inputs"`
+	RejectedInputs   []Input `json:"rejected_inputs"`
+	MaxDeviationBps  int64   `json:"max_deviation_bps"`
+	MinInputCount    int64   `json:"min_input_count"`
+	RawBasisRate     string  `json:"raw_basis_rate,omitempty"`
+	AppliedBasisRate string  `json:"applied_basis_rate,omitempty"`
+	UnsmoothedMark   string  `json:"unsmoothed_mark,omitempty"`
+	OutputPrice      string  `json:"output_price"`
 }
 
 var ErrInputUnavailable = errors.New("price engine input unavailable")
@@ -95,17 +100,41 @@ func (e *Engine) evaluate(ctx context.Context, f *models.TItickPriceFormula, tar
 	if itick.PriceAlgorithm(f.Algorithm) == itick.PriceAlgorithm_PRICE_ALGORITHM_PREMIUM_RATE && len(components) != 2 {
 		return errors.New("PREMIUM_RATE requires exactly mark and index components")
 	}
+	if itick.PriceAlgorithm(f.Algorithm) == itick.PriceAlgorithm_PRICE_ALGORITHM_INDEX_BASIS {
+		if !strings.EqualFold(f.SnapshotKind, "MARK") || (len(components) != 2 && len(components) != 3) ||
+			!strings.EqualFold(components[0].Kind, "INDEX") ||
+			!strings.EqualFold(components[0].Authority, f.Authority) ||
+			!strings.EqualFold(components[0].Symbol, f.Symbol) ||
+			!strings.EqualFold(components[1].Kind, "FINAL_QUOTE") ||
+			strings.EqualFold(components[1].Authority, f.Authority) ||
+			!strings.EqualFold(components[1].Symbol, f.Symbol) ||
+			len(components) == 3 && (!strings.EqualFold(components[2].Kind, "MARK") ||
+				!strings.EqualFold(components[2].Authority, f.Authority) ||
+				!strings.EqualFold(components[2].Symbol, f.Symbol)) {
+			return errors.New("INDEX_BASIS requires MARK output and ordered INDEX, FINAL_QUOTE, optional previous MARK components")
+		}
+	}
 	inputs := make([]Input, 0, len(components))
 	sourceTime := target
-	for _, c := range components {
+	for componentIndex, c := range components {
 		kind := strings.ToUpper(strings.TrimSpace(c.Kind))
 		if kind == "" {
 			kind = "FINAL_QUOTE"
 		}
-		row, err := e.archive.FindAtOrBefore(ctx, c.Authority, kind, c.CategoryCode, c.Market, c.Symbol, target, target-f.MaxLookbackMs)
+		lookupTarget := target
+		if itick.PriceAlgorithm(f.Algorithm) == itick.PriceAlgorithm_PRICE_ALGORITHM_INDEX_BASIS && componentIndex == 2 {
+			// The smoothing input is the previous MARK, never the output being
+			// evaluated at this same target.
+			lookupTarget = target - 1
+		}
+		row, err := e.archive.FindAtOrBefore(ctx, c.Authority, kind, c.CategoryCode, c.Market, c.Symbol, lookupTarget, target-f.MaxLookbackMs)
 		if err != nil {
 			return fmt.Errorf("%w: formula=%s authority=%s kind=%s category=%s market=%s symbol=%s target=%d: %v",
 				ErrInputUnavailable, f.FormulaNo, c.Authority, kind, c.CategoryCode, c.Market, c.Symbol, target, err)
+		}
+		if strings.TrimSpace(row.SnapshotId) == "" {
+			return fmt.Errorf("%w: formula=%s authority=%s kind=%s returned empty snapshot id",
+				ErrInputUnavailable, f.FormulaNo, c.Authority, kind)
 		}
 		weight, err := decimal.NewFromString(c.Weight)
 		if err != nil {
@@ -117,8 +146,25 @@ func (e *Engine) evaluate(ctx context.Context, f *models.TItickPriceFormula, tar
 		}
 	}
 	allInputs := append([]Input(nil), inputs...)
-	inputs, rejectedInputs := filterDeviationWithAudit(inputs, f.MaxDeviationBps)
-	price, err := Calculate(itick.PriceAlgorithm(f.Algorithm), inputs)
+	inputs, rejectedInputs := deduplicateInputsWithAudit(inputs)
+	if itick.PriceAlgorithm(f.Algorithm) != itick.PriceAlgorithm_PRICE_ALGORITHM_INDEX_BASIS {
+		var deviationRejected []Input
+		inputs, deviationRejected = filterDeviationWithAudit(inputs, f.MaxDeviationBps)
+		rejectedInputs = append(rejectedInputs, deviationRejected...)
+	}
+	minInputCount := effectiveMinInputCount(f)
+	if int64(len(inputs)) < minInputCount {
+		return fmt.Errorf("%w: formula=%s accepted=%d required=%d rejected=%d target=%d",
+			ErrInputUnavailable, f.FormulaNo, len(inputs), minInputCount, len(rejectedInputs), target)
+	}
+	var price decimal.Decimal
+	var rawBasis, appliedBasis decimal.Decimal
+	var err error
+	if itick.PriceAlgorithm(f.Algorithm) == itick.PriceAlgorithm_PRICE_ALGORITHM_INDEX_BASIS {
+		price, rawBasis, appliedBasis, err = CalculateIndexBasis(inputs, f.MaxDeviationBps)
+	} else {
+		price, err = Calculate(itick.PriceAlgorithm(f.Algorithm), inputs)
+	}
 	if err != nil {
 		return err
 	}
@@ -131,7 +177,14 @@ func (e *Engine) evaluate(ctx context.Context, f *models.TItickPriceFormula, tar
 		AcceptedInputs:  inputs,
 		RejectedInputs:  rejectedInputs,
 		MaxDeviationBps: f.MaxDeviationBps,
+		MinInputCount:   minInputCount,
 	}
+	if itick.PriceAlgorithm(f.Algorithm) == itick.PriceAlgorithm_PRICE_ALGORITHM_INDEX_BASIS {
+		audit.RawBasisRate = rawBasis.String()
+		audit.AppliedBasisRate = appliedBasis.String()
+		audit.UnsmoothedMark = inputs[0].Price.Mul(decimal.NewFromInt(1).Add(appliedBasis)).String()
+	}
+	audit.OutputPrice = price.String()
 	raw, err := json.Marshal(audit)
 	if err != nil {
 		return err
@@ -140,6 +193,81 @@ func (e *Engine) evaluate(ctx context.Context, f *models.TItickPriceFormula, tar
 	s := &market.SettlementSnapshot{SnapshotID: id, Kind: f.SnapshotKind, CategoryCode: f.CategoryCode, Market: f.Market, Symbol: f.Symbol, Price: price.String(), Source: "price-engine", SourceTimestamp: sourceTime, SnapshotTimestamp: time.Now().UnixMilli(), Revision: target, FormulaVersion: f.FormulaVersion, Authority: f.Authority, Confirmed: true}
 	payload, _ := json.Marshal(map[string]any{"snapshot": s})
 	return e.archive.InsertImmutableAndEnqueue(ctx, &models.TItickAuthoritativeSnapshot{SnapshotId: id, Authority: f.Authority, SnapshotKind: f.SnapshotKind, CategoryCode: f.CategoryCode, Market: f.Market, Symbol: f.Symbol, Price: price, SourceTimestamp: sourceTime, SnapshotTimestamp: s.SnapshotTimestamp, Revision: target, FormulaVersion: f.FormulaVersion, RawPayload: string(raw), CreateTimes: s.SnapshotTimestamp}, string(payload))
+}
+
+// ReplayEvaluationAudit recalculates a published formula solely from its
+// immutable audit payload and rejects any output mismatch. It is intentionally
+// independent of current formula rows and live market state.
+func ReplayEvaluationAudit(raw []byte) (decimal.Decimal, error) {
+	var audit EvaluationAudit
+	if err := json.Unmarshal(raw, &audit); err != nil {
+		return decimal.Zero, fmt.Errorf("decode evaluation audit: %w", err)
+	}
+	if strings.TrimSpace(audit.FormulaNo) == "" || strings.TrimSpace(audit.FormulaVersion) == "" ||
+		audit.TargetTime <= 0 || len(audit.AcceptedInputs) == 0 || strings.TrimSpace(audit.OutputPrice) == "" {
+		return decimal.Zero, errors.New("evaluation audit is incomplete")
+	}
+	seen := make(map[string]struct{}, len(audit.AcceptedInputs))
+	for _, input := range audit.AcceptedInputs {
+		if strings.TrimSpace(input.SnapshotID) == "" {
+			return decimal.Zero, errors.New("evaluation audit contains an input without snapshot id")
+		}
+		if _, exists := seen[input.SnapshotID]; exists {
+			return decimal.Zero, errors.New("evaluation audit contains duplicate accepted snapshot ids")
+		}
+		seen[input.SnapshotID] = struct{}{}
+	}
+	algorithm := itick.PriceAlgorithm(audit.Algorithm)
+	var replayed decimal.Decimal
+	var err error
+	if algorithm == itick.PriceAlgorithm_PRICE_ALGORITHM_INDEX_BASIS {
+		replayed, _, _, err = CalculateIndexBasis(audit.AcceptedInputs, audit.MaxDeviationBps)
+	} else {
+		replayed, err = Calculate(algorithm, audit.AcceptedInputs)
+	}
+	if err != nil {
+		return decimal.Zero, fmt.Errorf("recalculate evaluation audit: %w", err)
+	}
+	expected, err := decimal.NewFromString(audit.OutputPrice)
+	if err != nil {
+		return decimal.Zero, errors.New("evaluation audit output price is invalid")
+	}
+	if !replayed.Equal(expected) {
+		return decimal.Zero, fmt.Errorf("evaluation audit output mismatch: replayed=%s recorded=%s", replayed, expected)
+	}
+	return replayed, nil
+}
+
+func deduplicateInputsWithAudit(inputs []Input) ([]Input, []Input) {
+	accepted := make([]Input, 0, len(inputs))
+	rejected := make([]Input, 0)
+	seen := make(map[string]struct{}, len(inputs))
+	for _, input := range inputs {
+		if _, exists := seen[input.SnapshotID]; exists {
+			rejected = append(rejected, input)
+			continue
+		}
+		seen[input.SnapshotID] = struct{}{}
+		accepted = append(accepted, input)
+	}
+	return accepted, rejected
+}
+
+func effectiveMinInputCount(f *models.TItickPriceFormula) int64 {
+	if f == nil {
+		return 1
+	}
+	minimum := f.MinInputCount
+	if minimum <= 0 {
+		minimum = 1
+	}
+	// Delivery is an irreversible financial terminal price. Existing formulas
+	// created before min_input_count was introduced are also held to three
+	// accepted sources instead of silently retaining a one-source fallback.
+	if strings.EqualFold(f.SnapshotKind, "DELIVERY") && minimum < 3 {
+		minimum = 3
+	}
+	return minimum
 }
 
 func filterDeviation(in []Input, bps int64) []Input {

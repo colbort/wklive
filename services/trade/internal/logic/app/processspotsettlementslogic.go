@@ -198,7 +198,7 @@ func (l *ProcessFillSettlementsLogic) executeAssetInstruction(item *models.TTrad
 
 func (l *ProcessFillSettlementsLogic) markSucceeded(item *models.TTradeSettlementInstruction, fill *models.TTradeFill, order *models.TTradeOrder) error {
 	now := utils.NowMillis()
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		instructionModel := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
 		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis)
@@ -305,7 +305,7 @@ func (l *ProcessFillSettlementsLogic) settleFillIfReady(fill *models.TTradeFill)
 		return nil
 	}
 	now := utils.NowMillis()
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis)
 		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
@@ -389,7 +389,7 @@ func ensureFillRemainderRelease(ctx context.Context, instructionModel models.TTr
 
 func (l *ProcessFillSettlementsLogic) markFailed(item *models.TTradeSettlementInstruction, cause error) error {
 	now := utils.NowMillis()
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		instructionModel := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
 		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis)

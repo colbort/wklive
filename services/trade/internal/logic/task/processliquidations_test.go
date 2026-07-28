@@ -62,3 +62,16 @@ func TestADLMarginReleaseKeepsMarginBucketsSeparate(t *testing.T) {
 		t.Fatalf("released position=%s isolated=%s, want 16 and 4", position, isolated)
 	}
 }
+
+func TestAutomaticLiquidationProductionGate(t *testing.T) {
+	pending := int64(trade.LiquidationStatus_LIQUIDATION_STATUS_PENDING_TAKEOVER)
+	if !shouldHoldLiquidationForManual(false, pending) {
+		t.Fatal("disabled automatic liquidation must hold a new takeover for manual review")
+	}
+	if shouldHoldLiquidationForManual(true, pending) {
+		t.Fatal("accepted and explicitly enabled automatic liquidation was held")
+	}
+	if shouldHoldLiquidationForManual(false, int64(trade.LiquidationStatus_LIQUIDATION_STATUS_INSURANCE_FUND)) {
+		t.Fatal("an already-started money saga must remain recoverable after the gate is disabled")
+	}
+}

@@ -16,12 +16,22 @@ type (
 	TContractDeliveryBatchModel interface {
 		tContractDeliveryBatchModel
 		FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractDeliveryBatch, int64, error)
+		FindOneForUpdateByTenantSymbolDelivery(ctx context.Context, tenantID, symbolID, deliveryTime int64) (*TContractDeliveryBatch, error)
 	}
 
 	customTContractDeliveryBatchModel struct {
 		*defaultTContractDeliveryBatchModel
 	}
 )
+
+func (m *defaultTContractDeliveryBatchModel) FindOneForUpdateByTenantSymbolDelivery(ctx context.Context, tenantID, symbolID, deliveryTime int64) (*TContractDeliveryBatch, error) {
+	var row TContractDeliveryBatch
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND symbol_id=? AND delivery_time=? LIMIT 1 FOR UPDATE", tContractDeliveryBatchRows, m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &row, query, tenantID, symbolID, deliveryTime); err != nil {
+		return nil, err
+	}
+	return &row, nil
+}
 
 // NewTContractDeliveryBatchModel returns a model for the database table.
 func NewTContractDeliveryBatchModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TContractDeliveryBatchModel {

@@ -33,3 +33,8 @@ LiquidityOrderArchive:
   Enabled: true
   RetentionDays: 30
   BatchSize: 500
+
+# P1-02 完成前必须保持 false；false 时仅生成待人工处理的强平事实，
+# 不会自动执行保险基金赔付或 ADL。
+AutomaticLiquidation:
+  Enabled: false

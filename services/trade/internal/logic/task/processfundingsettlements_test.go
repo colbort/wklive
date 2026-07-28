@@ -151,3 +151,18 @@ func TestFundingPositionsFromHistoryUsesSettlementFacts(t *testing.T) {
 		t.Fatalf("unexpected reconstructed position: %+v", p)
 	}
 }
+
+func TestFundingInputIdentityBindsAllPriceEngineFacts(t *testing.T) {
+	mark := &marketQuoteSnapshot{SnapshotID: "mark-a"}
+	index := &marketQuoteSnapshot{SnapshotID: "index-a"}
+	funding := &marketQuoteSnapshot{SnapshotID: "funding-a"}
+	first := fundingInputIdentity(mark, index, funding)
+	index.SnapshotID = "index-b"
+	second := fundingInputIdentity(mark, index, funding)
+	if first == second {
+		t.Fatal("changing an INDEX input did not change the composite funding identity")
+	}
+	if first != "MARK=mark-a|INDEX=index-a|FUNDING=funding-a" {
+		t.Fatalf("unexpected funding input identity: %s", first)
+	}
+}

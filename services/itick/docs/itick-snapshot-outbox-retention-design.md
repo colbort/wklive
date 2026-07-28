@@ -92,6 +92,22 @@ ADD INDEX idx_outbox_cleanup (status, update_times, id);
 - `status=5` 数量。
 - 数据库复制延迟、锁等待和磁盘使用率。
 
+Worker 采用流水线执行：候选行进入并发 Worker 后再原子 Claim，因此数据库领取和
+Redis/Kafka 发布可以重叠。Kafka 发布成功后，事件检查点和 `status=3` 在同一条 SQL
+中完成，减少积压期的数据库往返。
+
+健康日志增加：
+
+```text
+drain_per_sec=<最近30秒净排空速度>
+eta_seconds=<按当前净速度估算的剩余秒数>
+```
+
+`processing` 是健康检查采样瞬间仍在网络发布或等待最终检查点的数量，通常接近并发
+Worker 数，并不是吞吐量。扩容后是否有效应看 `drain_per_sec`、`pending` 的连续下降量、
+Kafka 延迟和 MySQL 写入压力。若新入队速度大于完成速度，`drain_per_sec=0` 且
+`eta_seconds=-1`，必须继续扩容或降低生产速率，不能以 `processing` 变小判定异常。
+
 ## 5. 幂等要求
 
 当前表使用 `snapshot_id` 唯一索引防止相同快照重复进入 Outbox。成功记录删除后，相同 `snapshot_id` 理论上可能再次进入并重新投递。

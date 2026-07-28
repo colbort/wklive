@@ -33,6 +33,7 @@ type (
 		FindOneForUpdateByTenantUserSymbolSideMode(ctx context.Context, tenantID, userID, symbolID, positionSide, marginMode int64) (*TContractPosition, error)
 		ReserveCloseQty(ctx context.Context, id, version int64, qty decimal.Decimal, updateTimes int64) error
 		ReleaseCloseQty(ctx context.Context, id int64, qty decimal.Decimal, updateTimes int64) error
+		UpdateMarkRiskCAS(ctx context.Context, data *TContractPosition, expectedVersion, updateTimes int64) (bool, error)
 	}
 
 	customTContractPositionModel struct {
@@ -45,6 +46,35 @@ func NewTContractPositionModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cac
 	return &customTContractPositionModel{
 		defaultTContractPositionModel: newTContractPositionModel(conn, c, opts...),
 	}
+}
+
+// UpdateMarkRiskCAS updates only mark-derived fields. It deliberately avoids
+// writing quantity, margin or realized PnL read by the scanner, and the version
+// predicate prevents a stale mark refresh from overwriting a concurrent Fill.
+func (m *defaultTContractPositionModel) UpdateMarkRiskCAS(ctx context.Context, data *TContractPosition, expectedVersion, updateTimes int64) (bool, error) {
+	current, err := m.FindOne(ctx, data.Id)
+	if err != nil {
+		return false, err
+	}
+	idKey := fmt.Sprintf("%s%v", cacheTContractPositionIdPrefix, current.Id)
+	uniqueKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTContractPositionTenantIdUserIdSymbolIdPositionSideMarginModePrefix, current.TenantId, current.UserId, current.SymbolId, current.PositionSide, current.MarginMode)
+	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
+		query := fmt.Sprintf(`UPDATE %s SET
+			mark_price=?,mark_snapshot_id=?,maintenance_margin=?,unrealized_pnl=?,
+			liquidation_price=?,bankruptcy_price=?,risk_rate=?,adl_rank=?,
+			version=version+1,update_times=?
+			WHERE id=? AND version=? AND status=1 AND qty>0`, m.table)
+		return conn.ExecCtx(ctx, query,
+			data.MarkPrice, data.MarkSnapshotId, data.MaintenanceMargin, data.UnrealizedPnl,
+			data.LiquidationPrice, data.BankruptcyPrice, data.RiskRate, data.AdlRank,
+			updateTimes, data.Id, expectedVersion,
+		)
+	}, idKey, uniqueKey)
+	if err != nil {
+		return false, err
+	}
+	affected, err := result.RowsAffected()
+	return affected == 1, err
 }
 
 func (m *defaultTContractPositionModel) FindActiveListForUpdate(ctx context.Context, tenantID, symbolID int64) ([]*TContractPosition, error) {

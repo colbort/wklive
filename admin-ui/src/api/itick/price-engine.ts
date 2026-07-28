@@ -22,6 +22,7 @@ export type CreatePriceFormulaReq = {
   components: PriceFormulaComponent[]
   maxLookbackMs: number
   maxDeviationBps: number
+  minInputCount: number
   intervalMs: number
   activate: boolean
 }

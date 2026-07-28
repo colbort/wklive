@@ -180,6 +180,15 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
+            <el-form-item :label="t('itick.minInputCount')">
+              <el-input-number
+                v-model="form.minInputCount"
+                :min="1"
+                :max="Math.max(1, form.components.length)"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item :label="t('itick.intervalMs')">
               <el-input-number v-model="form.intervalMs" :min="1" />
             </el-form-item>
@@ -308,6 +317,9 @@
         <el-descriptions-item :label="t('itick.maxDeviationBps')">
           {{ detail.maxDeviationBps }}
         </el-descriptions-item>
+        <el-descriptions-item :label="t('itick.minInputCount')">
+          {{ detail.minInputCount }}
+        </el-descriptions-item>
         <el-descriptions-item :label="t('itick.intervalMs')">
           {{ detail.intervalMs }}
         </el-descriptions-item>
@@ -398,6 +410,7 @@ const emptyForm = (): CreatePriceFormulaReq => ({
   components: [],
   maxLookbackMs: 60000,
   maxDeviationBps: 500,
+  minInputCount: 1,
   intervalMs: 1000,
   activate: false,
 })

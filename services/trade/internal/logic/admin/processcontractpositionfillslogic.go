@@ -9,6 +9,7 @@ import (
 	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/domain/contractmath"
+	"wklive/services/trade/internal/logic/helpers"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
@@ -50,7 +51,7 @@ func (l *ProcessContractPositionFillsLogic) ProcessFill(fillID int64) error {
 		return err
 	}
 
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		positionModel := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
 		historyModel := models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis)

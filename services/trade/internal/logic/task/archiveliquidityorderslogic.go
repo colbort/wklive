@@ -45,7 +45,8 @@ func (l *ArchiveLiquidityOrdersLogic) ArchiveLiquidityOrders(_ *trade.TradeTaskR
 		batchSize = defaultLiquidityArchiveBatchSize
 	}
 
-	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "archive_liquidity_orders", func() (*trade.TradeTaskResp, error) {
+	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "archive_liquidity_orders", func(taskCtx context.Context) (*trade.TradeTaskResp, error) {
+		l.ctx = taskCtx
 		now := utils.NowMillis()
 		cutoff := now - retentionDays*int64(24*time.Hour/time.Millisecond)
 		for {

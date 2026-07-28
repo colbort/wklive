@@ -29,7 +29,8 @@ func NewProcessPositionsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 仓位处理（标记价格刷新/强平扫描/普通平仓）
 func (l *ProcessPositionsLogic) ProcessPositions(in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
-	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_positions", func() (*trade.TradeTaskResp, error) {
+	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_positions", func(taskCtx context.Context) (*trade.TradeTaskResp, error) {
+		l.ctx = taskCtx
 		if err := l.refreshMarkPrices(in); err != nil {
 			return nil, err
 		}
@@ -73,11 +74,17 @@ func (l *ProcessPositionsLogic) refreshMarkPrices(in *trade.TradeTaskReq) error 
 			if err != nil {
 				return err
 			}
+			expectedVersion := position.Version
 			recalculatePositionRisk(position, contract, tier)
-			position.Version++
-			position.UpdateTimes = utils.NowMillis()
-			if err := l.svcCtx.ContractPositionModel.Update(l.ctx, position); err != nil {
+			updated, err := l.svcCtx.ContractPositionModel.UpdateMarkRiskCAS(l.ctx, position, expectedVersion, utils.NowMillis())
+			if err != nil {
 				return err
+			}
+			if !updated {
+				// A Fill, funding settlement or reservation changed the
+				// position after this scan read it. The next scan recomputes
+				// risk from the new position instead of overwriting it.
+				continue
 			}
 		}
 		if len(positions) < 100 {

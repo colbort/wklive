@@ -50,7 +50,7 @@ func (l *CreatePriceFormulaLogic) CreatePriceFormula(in *itick.CreatePriceFormul
 		return nil, err
 	}
 	now := utils.NowMillis()
-	row := &models.TItickPriceFormula{FormulaNo: strings.TrimSpace(in.FormulaNo), Authority: in.Authority, SnapshotKind: in.SnapshotKind, CategoryCode: in.CategoryCode, Market: in.Market, Symbol: in.Symbol, Algorithm: int64(in.Algorithm), FormulaVersion: strings.TrimSpace(in.FormulaVersion), Components: string(raw), MaxLookbackMs: in.MaxLookbackMs, MaxDeviationBps: in.MaxDeviationBps, IntervalMs: in.IntervalMs, Status: 2, CreateTimes: now, UpdateTimes: now}
+	row := &models.TItickPriceFormula{FormulaNo: strings.TrimSpace(in.FormulaNo), Authority: in.Authority, SnapshotKind: in.SnapshotKind, CategoryCode: in.CategoryCode, Market: in.Market, Symbol: in.Symbol, Algorithm: int64(in.Algorithm), FormulaVersion: strings.TrimSpace(in.FormulaVersion), Components: string(raw), MaxLookbackMs: in.MaxLookbackMs, MaxDeviationBps: in.MaxDeviationBps, MinInputCount: in.MinInputCount, IntervalMs: in.IntervalMs, Status: 2, CreateTimes: now, UpdateTimes: now}
 	result, err := l.svcCtx.PriceFormulaModel.Insert(l.ctx, row)
 	if err != nil {
 		return nil, err

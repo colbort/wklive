@@ -96,7 +96,7 @@ func executeSimpleAssetInstruction(ctx context.Context, svcCtx *svc.ServiceConte
 
 func failContractSagaInstruction(ctx context.Context, svcCtx *svc.ServiceContext, item *models.TTradeSettlementInstruction, cause error, updateBiz func(context.Context, sqlx.SqlConn, *models.TTradeSettlementInstruction, bool, int64) error) error {
 	now := utils.NowMillis()
-	return svcCtx.DB.TransactCtx(ctx, func(txCtx context.Context, session sqlx.Session) error {
+	return helpers.TransactWithDeadlockRetry(ctx, svcCtx.DB, func(txCtx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		im := models.NewTTradeSettlementInstructionModel(conn, svcCtx.Config.CacheRedis)
 		current, err := im.FindOneForUpdate(txCtx, item.Id)

@@ -30,3 +30,89 @@ func TestNormalizePriceFormulaRejectsNonPositiveWeight(t *testing.T) {
 		t.Fatal("expected positive weight validation error")
 	}
 }
+
+func TestNormalizeDeliveryFormulaRequiresThreeAcceptedInputs(t *testing.T) {
+	components := []*itick.PriceFormulaComponent{
+		{Authority: "itick-ws", SnapshotKind: "FINAL_QUOTE", Market: "BA", Symbol: "BTCUSDT", Weight: "1"},
+		{Authority: "itick-ws", SnapshotKind: "FINAL_QUOTE", Market: "BB", Symbol: "BTCUSDT", Weight: "1"},
+		{Authority: "itick-ws", SnapshotKind: "FINAL_QUOTE", Market: "BC", Symbol: "BTCUSDT", Weight: "1"},
+	}
+	req := &itick.CreatePriceFormulaReq{
+		FormulaNo: "delivery-v1", FormulaVersion: "v1", Authority: "price-engine",
+		SnapshotKind: "DELIVERY", CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT",
+		Algorithm: itick.PriceAlgorithm_PRICE_ALGORITHM_MEDIAN, MaxLookbackMs: 30000,
+		IntervalMs: 1000, Components: components, MinInputCount: 2,
+	}
+	if _, err := normalizePriceFormulaReq(req); err == nil {
+		t.Fatal("expected DELIVERY min_input_count below 3 to be rejected")
+	}
+	req.MinInputCount = 3
+	if _, err := normalizePriceFormulaReq(req); err != nil {
+		t.Fatalf("expected valid DELIVERY formula: %v", err)
+	}
+}
+
+func TestNormalizeIndexBasisMarkFormula(t *testing.T) {
+	req := &itick.CreatePriceFormulaReq{
+		FormulaNo: "BTCUSDT-MARK-v2", FormulaVersion: "v2", Authority: "price-engine",
+		SnapshotKind: "MARK", CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT",
+		Algorithm:     itick.PriceAlgorithm_PRICE_ALGORITHM_INDEX_BASIS,
+		MaxLookbackMs: 30000, MaxDeviationBps: 200, MinInputCount: 2, IntervalMs: 1000,
+		Components: []*itick.PriceFormulaComponent{
+			{Authority: "price-engine", SnapshotKind: "INDEX", CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT", Weight: "1"},
+			{Authority: "itick-ws", SnapshotKind: "FINAL_QUOTE", CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT", Weight: "1"},
+		},
+	}
+	if _, err := normalizePriceFormulaReq(req); err != nil {
+		t.Fatalf("valid INDEX_BASIS MARK rejected: %v", err)
+	}
+	req.MaxDeviationBps = 0
+	if _, err := normalizePriceFormulaReq(req); err == nil {
+		t.Fatal("INDEX_BASIS without cap accepted")
+	}
+	req.MaxDeviationBps = 200
+	req.Components[0], req.Components[1] = req.Components[1], req.Components[0]
+	if _, err := normalizePriceFormulaReq(req); err == nil {
+		t.Fatal("INDEX_BASIS with reversed component semantics accepted")
+	}
+
+	req.Components[0], req.Components[1] = req.Components[1], req.Components[0]
+	req.Components = append(req.Components, &itick.PriceFormulaComponent{
+		Authority: "price-engine", SnapshotKind: "MARK", CategoryCode: "crypto",
+		Market: "BA", Symbol: "BTCUSDT", Weight: "4",
+	})
+	req.MinInputCount = 3
+	if _, err := normalizePriceFormulaReq(req); err != nil {
+		t.Fatalf("valid smoothed INDEX_BASIS rejected: %v", err)
+	}
+	req.Components[2].Authority = "itick-ws"
+	if _, err := normalizePriceFormulaReq(req); err == nil {
+		t.Fatal("previous MARK from non-output authority accepted")
+	}
+}
+
+func TestNormalizeIndexFormulaRequiresThreeDistinctMarkets(t *testing.T) {
+	req := &itick.CreatePriceFormulaReq{
+		FormulaNo: "BTCUSDT-INDEX-v2", FormulaVersion: "v2", Authority: "price-engine",
+		SnapshotKind: "INDEX", CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT",
+		Algorithm:     itick.PriceAlgorithm_PRICE_ALGORITHM_MEDIAN,
+		MaxLookbackMs: 30000, MinInputCount: 3, IntervalMs: 1000,
+		Components: []*itick.PriceFormulaComponent{
+			{Authority: "itick-ws", SnapshotKind: "FINAL_QUOTE", CategoryCode: "crypto", Market: "SOURCE_A", Symbol: "BTCUSDT", Weight: "1"},
+			{Authority: "itick-ws", SnapshotKind: "FINAL_QUOTE", CategoryCode: "crypto", Market: "SOURCE_B", Symbol: "BTCUSDT", Weight: "1"},
+			{Authority: "itick-rest", SnapshotKind: "FINAL_QUOTE", CategoryCode: "crypto", Market: "SOURCE_C", Symbol: "BTCUSDT", Weight: "1"},
+		},
+	}
+	if _, err := normalizePriceFormulaReq(req); err != nil {
+		t.Fatalf("valid three-source INDEX rejected: %v", err)
+	}
+	req.Components[2] = req.Components[1]
+	if _, err := normalizePriceFormulaReq(req); err == nil {
+		t.Fatal("duplicate INDEX source accepted")
+	}
+	req.Components = req.Components[:2]
+	req.MinInputCount = 2
+	if _, err := normalizePriceFormulaReq(req); err == nil {
+		t.Fatal("two-source INDEX accepted")
+	}
+}

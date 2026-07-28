@@ -667,6 +667,7 @@ type CreatePriceFormulaReq struct {
 	Components      []PriceFormulaComponent `json:"components"`
 	MaxLookbackMs   int64                   `json:"maxLookbackMs"`
 	MaxDeviationBps int64                   `json:"maxDeviationBps"`
+	MinInputCount   int64                   `json:"minInputCount"`
 	IntervalMs      int64                   `json:"intervalMs"`
 	Activate        bool                    `json:"activate"`
 }
@@ -3033,6 +3034,7 @@ type PriceFormulaData struct {
 	Components      []PriceFormulaComponent `json:"components"`
 	MaxLookbackMs   int64                   `json:"maxLookbackMs"`
 	MaxDeviationBps int64                   `json:"maxDeviationBps"`
+	MinInputCount   int64                   `json:"minInputCount"`
 	IntervalMs      int64                   `json:"intervalMs"`
 	LastTargetTime  int64                   `json:"lastTargetTime"`
 	Status          int32                   `json:"status"`

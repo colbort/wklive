@@ -76,7 +76,7 @@ func unfreezeRemainingOrderAsset(svcCtx *svc.ServiceContext, ctx context.Context
 	}
 	var instructionID int64
 	now := utils.NowMillis()
-	err := svcCtx.DB.TransactCtx(ctx, func(txCtx context.Context, session sqlx.Session) error {
+	err := helpers.TransactWithDeadlockRetry(ctx, svcCtx.DB, func(txCtx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		reservationModel := models.NewTTradeAssetReservationModel(conn, svcCtx.Config.CacheRedis)
 		instructionModel := models.NewTTradeSettlementInstructionModel(conn, svcCtx.Config.CacheRedis)
@@ -114,7 +114,7 @@ func unfreezeRemainingOrderAsset(svcCtx *svc.ServiceContext, ctx context.Context
 		return err
 	}
 	if instructionID == 0 {
-		return svcCtx.DB.TransactCtx(ctx, func(txCtx context.Context, session sqlx.Session) error {
+		return helpers.TransactWithDeadlockRetry(ctx, svcCtx.DB, func(txCtx context.Context, session sqlx.Session) error {
 			_, err := finalizeOrderTermination(txCtx, sqlx.NewSqlConnFromSession(session), svcCtx, order.Id, utils.NowMillis())
 			return err
 		})

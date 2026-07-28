@@ -53,7 +53,8 @@ func NewProcessOrderMatchingLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // 订单撮合
 func (l *ProcessOrderMatchingLogic) ProcessOrderMatching(in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
-	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_order_matching", func() (*trade.TradeTaskResp, error) {
+	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_order_matching", func(taskCtx context.Context) (*trade.TradeTaskResp, error) {
+		l.ctx = taskCtx
 		keys, err := l.svcCtx.TradeOrderModel.FindMatchKeys(l.ctx, in.GetTenantId(), helpers.MatchableOrderStatuses(), orderMatchKeyLimit)
 		if err != nil {
 			return nil, err
@@ -234,7 +235,7 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 	matched := false
 	matchedOrderIDs := make(map[int64]struct{})
 	var createdFillEvents []realtime.Event
-	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	err = helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis)
 		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
@@ -768,7 +769,7 @@ func postOnlyWouldTakeTop(order *models.TTradeOrder, buys, sells []*models.TTrad
 func (l *ProcessOrderMatchingLogic) cancelOpenOrderNow(orderID int64, reason string) (*models.TTradeOrder, error) {
 	now := utils.NowMillis()
 	var canceledOrder *models.TTradeOrder
-	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	err := helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
 		order, err := orderModel.FindOneForUpdate(ctx, orderID)

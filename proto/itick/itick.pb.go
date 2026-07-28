@@ -4037,6 +4037,7 @@ type CreatePriceFormulaReq struct {
 	MaxDeviationBps int64                    `protobuf:"varint,11,opt,name=max_deviation_bps,json=maxDeviationBps,proto3" json:"max_deviation_bps,omitempty"`
 	IntervalMs      int64                    `protobuf:"varint,12,opt,name=interval_ms,json=intervalMs,proto3" json:"interval_ms,omitempty"`
 	Activate        bool                     `protobuf:"varint,13,opt,name=activate,proto3" json:"activate,omitempty"`
+	MinInputCount   int64                    `protobuf:"varint,14,opt,name=min_input_count,json=minInputCount,proto3" json:"min_input_count,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -4160,6 +4161,13 @@ func (x *CreatePriceFormulaReq) GetActivate() bool {
 		return x.Activate
 	}
 	return false
+}
+
+func (x *CreatePriceFormulaReq) GetMinInputCount() int64 {
+	if x != nil {
+		return x.MinInputCount
+	}
+	return 0
 }
 
 type PriceFormulaReq struct {
@@ -4370,6 +4378,7 @@ type PriceFormulaData struct {
 	Version         int64                    `protobuf:"varint,16,opt,name=version,proto3" json:"version,omitempty"`
 	CreateTimes     int64                    `protobuf:"varint,17,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes     int64                    `protobuf:"varint,18,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	MinInputCount   int64                    `protobuf:"varint,19,opt,name=min_input_count,json=minInputCount,proto3" json:"min_input_count,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -4526,6 +4535,13 @@ func (x *PriceFormulaData) GetCreateTimes() int64 {
 func (x *PriceFormulaData) GetUpdateTimes() int64 {
 	if x != nil {
 		return x.UpdateTimes
+	}
+	return 0
+}
+
+func (x *PriceFormulaData) GetMinInputCount() int64 {
+	if x != nil {
+		return x.MinInputCount
 	}
 	return 0
 }
@@ -5436,7 +5452,7 @@ const file_proto_itick_itick_proto_rawDesc = "" +
 	"\rcategory_code\x18\x03 \x01(\tR\fcategoryCode\x12\x16\n" +
 	"\x06market\x18\x04 \x01(\tR\x06market\x12\x16\n" +
 	"\x06symbol\x18\x05 \x01(\tR\x06symbol\x12\x16\n" +
-	"\x06weight\x18\x06 \x01(\tR\x06weight\"\xfb\x03\n" +
+	"\x06weight\x18\x06 \x01(\tR\x06weight\"\xa3\x04\n" +
 	"\x15CreatePriceFormulaReq\x12\x1d\n" +
 	"\n" +
 	"formula_no\x18\x01 \x01(\tR\tformulaNo\x12\x1c\n" +
@@ -5455,7 +5471,8 @@ const file_proto_itick_itick_proto_rawDesc = "" +
 	"\x11max_deviation_bps\x18\v \x01(\x03R\x0fmaxDeviationBps\x12\x1f\n" +
 	"\vinterval_ms\x18\f \x01(\x03R\n" +
 	"intervalMs\x12\x1a\n" +
-	"\bactivate\x18\r \x01(\bR\bactivate\"!\n" +
+	"\bactivate\x18\r \x01(\bR\bactivate\x12&\n" +
+	"\x0fmin_input_count\x18\x0e \x01(\x03R\rminInputCount\"!\n" +
 	"\x0fPriceFormulaReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"E\n" +
 	"\x1bChangePriceFormulaStatusReq\x12\x0e\n" +
@@ -5468,7 +5485,7 @@ const file_proto_itick_itick_proto_rawDesc = "" +
 	"\rcategory_code\x18\x04 \x01(\tR\fcategoryCode\x12\x16\n" +
 	"\x06market\x18\x05 \x01(\tR\x06market\x12\x16\n" +
 	"\x06symbol\x18\x06 \x01(\tR\x06symbol\x12\x16\n" +
-	"\x06status\x18\a \x01(\x05R\x06status\"\x8c\x05\n" +
+	"\x06status\x18\a \x01(\x05R\x06status\"\xb4\x05\n" +
 	"\x10PriceFormulaData\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -5492,7 +5509,8 @@ const file_proto_itick_itick_proto_rawDesc = "" +
 	"\x06status\x18\x0f \x01(\x05R\x06status\x12\x18\n" +
 	"\aversion\x18\x10 \x01(\x03R\aversion\x12!\n" +
 	"\fcreate_times\x18\x11 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x12 \x01(\x03R\vupdateTimes\"e\n" +
+	"\fupdate_times\x18\x12 \x01(\x03R\vupdateTimes\x12&\n" +
+	"\x0fmin_input_count\x18\x13 \x01(\x03R\rminInputCount\"e\n" +
 	"\x10PriceFormulaResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
 	"\x04data\x18\x02 \x01(\v2\x17.itick.PriceFormulaDataR\x04data\"j\n" +

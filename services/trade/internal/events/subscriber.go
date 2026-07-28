@@ -8,6 +8,7 @@ import (
 
 	"wklive/common/mq/kafka"
 	"wklive/common/utils"
+	"wklive/services/trade/internal/logic/helpers"
 	logic "wklive/services/trade/internal/logic/task"
 	"wklive/services/trade/internal/realtime"
 	"wklive/services/trade/internal/svc"
@@ -17,8 +18,8 @@ import (
 )
 
 func StartSubscriber(ctx context.Context, svcCtx *svc.ServiceContext) {
-	go func() {
-		if err := svcCtx.TradeEventSubscriber.Subscribe(ctx, realtime.Channel, func(messageCtx context.Context, msg mq.Message) error {
+	go helpers.RunSubscriberWithRestart(ctx, "trade real-time event subscriber", func() error {
+		return svcCtx.TradeEventSubscriber.Subscribe(ctx, realtime.Channel, func(messageCtx context.Context, msg mq.Message) error {
 			var event realtime.Event
 			if err := mq.Decode(msg, &event); err != nil {
 				logx.Errorf("decode trade real-time event failed: %v", err)
@@ -63,10 +64,8 @@ func StartSubscriber(ctx context.Context, svcCtx *svc.ServiceContext) {
 				return err
 			}
 			return nil
-		}); err != nil && ctx.Err() == nil {
-			logx.Errorf("trade real-time event subscriber stopped: %v", err)
-		}
-	}()
+		})
+	})
 }
 
 func validateEvent(event realtime.Event) error {

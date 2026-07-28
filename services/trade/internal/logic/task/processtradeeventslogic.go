@@ -35,7 +35,8 @@ func NewProcessTradeEventsLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 交易事件处理（失败重试/订单过期/冻结资产修复）
 func (l *ProcessTradeEventsLogic) ProcessTradeEvents(in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
-	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_trade_events", func() (*trade.TradeTaskResp, error) {
+	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_trade_events", func(taskCtx context.Context) (*trade.TradeTaskResp, error) {
+		l.ctx = taskCtx
 		if err := NewProcessFillSettlementsLogic(l.ctx, l.svcCtx).Process(in.GetTenantId()); err != nil {
 			return nil, err
 		}
@@ -76,7 +77,7 @@ func (l *ProcessTradeEventsLogic) recoverSettlementPendingOrders(in *trade.Trade
 		}
 		for _, order := range orders {
 			cursor = order.Id
-			if err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+			if err := helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 				return finalizeSettledOrder(ctx, sqlx.NewSqlConnFromSession(session), l.svcCtx, order.Id, utils.NowMillis())
 			}); err != nil {
 				return err
@@ -263,7 +264,7 @@ func (l *ProcessTradeEventsLogic) triggerWaitingOrders(in *trade.TradeTaskReq) e
 func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPrice decimal.Decimal, now int64) error {
 	var triggeredOrder *models.TTradeOrder
 	var eventNo string
-	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	err := helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
 		eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
@@ -360,7 +361,7 @@ func (l *ProcessTradeEventsLogic) expireImmediateOrders(in *trade.TradeTaskReq) 
 
 func (l *ProcessTradeEventsLogic) expireOrderIfNeeded(orderID, now int64) (*models.TTradeOrder, error) {
 	var expiredOrder *models.TTradeOrder
-	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	err := helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
 		order, err := orderModel.FindOneForUpdate(ctx, orderID)

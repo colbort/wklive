@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -34,7 +35,7 @@ func RunTaskWithLock(
 	ctx context.Context,
 	svcCtx *svc.ServiceContext,
 	taskName string,
-	fn func() (*trade.TradeTaskResp, error),
+	fn func(context.Context) (*trade.TradeTaskResp, error),
 ) (*trade.TradeTaskResp, error) {
 	lockKey := fmt.Sprintf("trade:task:%s", taskName)
 	lockValue := fmt.Sprintf("%d", time.Now().UnixNano())
@@ -51,21 +52,60 @@ func RunTaskWithLock(
 		}, nil
 	}
 
-	renewCtx, renewCancel := context.WithCancel(ctx)
-	renewDone := make(chan struct{})
-	go func() {
-		defer close(renewDone)
-		AutoRenewTaskLock(renewCtx, svcCtx.Redis, lockKey, lockValue)
-	}()
 	defer func() {
-		renewCancel()
-		<-renewDone
 		if err := ReleaseTaskLock(context.Background(), svcCtx.Redis, lockKey, lockValue); err != nil {
 			logx.Errorf("release trade task lock failed, key=%s err=%v", lockKey, err)
 		}
 	}()
 
-	return fn()
+	return runWithTaskLockRenewal(ctx, tradeTaskLockRenewInterval, func(refreshCtx context.Context) error {
+		return RefreshTaskLock(refreshCtx, svcCtx.Redis, lockKey, lockValue)
+	}, fn)
+}
+
+func runWithTaskLockRenewal(
+	ctx context.Context,
+	interval time.Duration,
+	refresh func(context.Context) error,
+	fn func(context.Context) (*trade.TradeTaskResp, error),
+) (*trade.TradeTaskResp, error) {
+	if interval <= 0 || refresh == nil || fn == nil {
+		return nil, errors.New("invalid task lock renewal configuration")
+	}
+	taskCtx, cancel := context.WithCancel(ctx)
+	defer cancel()
+	renewErr := make(chan error, 1)
+	renewDone := make(chan struct{})
+	go func() {
+		defer close(renewDone)
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-taskCtx.Done():
+				return
+			case <-ticker.C:
+				if err := refresh(taskCtx); err != nil {
+					select {
+					case renewErr <- err:
+					default:
+					}
+					cancel()
+					return
+				}
+			}
+		}
+	}()
+
+	resp, err := fn(taskCtx)
+	cancel()
+	<-renewDone
+	select {
+	case leaseErr := <-renewErr:
+		return nil, fmt.Errorf("trade task lock renewal failed: %w", leaseErr)
+	default:
+		return resp, err
+	}
 }
 
 func AcquireTaskLock(ctx context.Context, rds *redis.Redis, key, value string) error {

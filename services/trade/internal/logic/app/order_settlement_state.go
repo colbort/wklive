@@ -16,7 +16,7 @@ import (
 
 func beginSystemOrderTermination(ctx context.Context, svcCtx *svc.ServiceContext, orderID int64, reason string, rejectReduceOnly bool) (*models.TTradeOrder, error) {
 	var terminating *models.TTradeOrder
-	err := svcCtx.DB.TransactCtx(ctx, func(txCtx context.Context, session sqlx.Session) error {
+	err := helpers.TransactWithDeadlockRetry(ctx, svcCtx.DB, func(txCtx context.Context, session sqlx.Session) error {
 		orderModel := models.NewTTradeOrderModel(sqlx.NewSqlConnFromSession(session), svcCtx.Config.CacheRedis)
 		current, err := orderModel.FindOneForUpdate(txCtx, orderID)
 		if err != nil {

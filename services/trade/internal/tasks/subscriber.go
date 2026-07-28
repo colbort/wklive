@@ -7,6 +7,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/tasks"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/logic/helpers"
 	logic "wklive/services/trade/internal/logic/task"
 	"wklive/services/trade/internal/svc"
 
@@ -14,8 +15,8 @@ import (
 )
 
 func StartTaskSubscriber(ctx context.Context, svcCtx *svc.ServiceContext) {
-	go func() {
-		if err := tasks.SubscribeService(ctx, svcCtx.TaskSubscriber, tasks.ServiceTrade, func(ctx context.Context, msg tasks.Message) error {
+	go helpers.RunSubscriberWithRestart(ctx, "trade task subscriber", func() error {
+		return tasks.SubscribeService(ctx, svcCtx.TaskSubscriber, tasks.ServiceTrade, func(ctx context.Context, msg tasks.Message) error {
 			logx.WithContext(ctx).Infof(
 				"trade task received, action=%s jobId=%d tenantId=%d messageId=%s createdAt=%d",
 				msg.Action, msg.JobID, msg.TenantID, msg.ID, msg.CreatedAt,
@@ -35,32 +36,53 @@ func StartTaskSubscriber(ctx context.Context, svcCtx *svc.ServiceContext) {
 				msg.Action, msg.JobID, msg.TenantID, msg.ID,
 			)
 			return nil
-		}); err != nil && ctx.Err() == nil {
-			logx.Errorf("trade task subscriber stopped: %v", err)
-		}
-	}()
+		})
+	})
 }
 
 func handleTask(ctx context.Context, svcCtx *svc.ServiceContext, msg tasks.Message) error {
 	req := &trade.TradeTaskReq{TenantId: msg.TenantID}
-
-	switch msg.Action {
-	case tasks.ActionTradeProcessOrderMatching:
-		return checkResp(logic.NewProcessOrderMatchingLogic(ctx, svcCtx).ProcessOrderMatching(req))
-	case tasks.ActionTradeProcessPositions:
-		return checkResp(logic.NewProcessPositionsLogic(ctx, svcCtx).ProcessPositions(req))
-	case tasks.ActionTradeProcessContractSettlements:
-		return checkResp(logic.NewProcessContractSettlementsLogic(ctx, svcCtx).ProcessContractSettlements(req))
-	case tasks.ActionTradeProcessSecondsSettlements:
-		return checkResp(logic.NewProcessSecondsSettlementsTaskLogic(ctx, svcCtx).ProcessSecondsSettlements(req))
-	case tasks.ActionTradeProcessTradeEvents:
-		return checkResp(logic.NewProcessTradeEventsLogic(ctx, svcCtx).ProcessTradeEvents(req))
-	case tasks.ActionTradeExpireRiskLimits:
-		return checkResp(logic.NewExpireRiskLimitsLogic(ctx, svcCtx).ExpireRiskLimits(req))
-	case tasks.ActionTradeArchiveLiquidityOrders:
-		return checkResp(logic.NewArchiveLiquidityOrdersLogic(ctx, svcCtx).ArchiveLiquidityOrders(req))
-	default:
+	handler := taskHandlerFor(msg.Action)
+	if handler == nil {
 		logx.Errorf("unknown trade task action: %s", msg.Action)
+		return fmt.Errorf("unknown trade task action: %s", msg.Action)
+	}
+	return checkResp(handler(ctx, svcCtx, req))
+}
+
+type taskHandler func(context.Context, *svc.ServiceContext, *trade.TradeTaskReq) (*trade.TradeTaskResp, error)
+
+func taskHandlerFor(action string) taskHandler {
+	switch action {
+	case tasks.ActionTradeProcessOrderMatching:
+		return func(ctx context.Context, svcCtx *svc.ServiceContext, req *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
+			return logic.NewProcessOrderMatchingLogic(ctx, svcCtx).ProcessOrderMatching(req)
+		}
+	case tasks.ActionTradeProcessPositions:
+		return func(ctx context.Context, svcCtx *svc.ServiceContext, req *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
+			return logic.NewProcessPositionsLogic(ctx, svcCtx).ProcessPositions(req)
+		}
+	case tasks.ActionTradeProcessContractSettlements:
+		return func(ctx context.Context, svcCtx *svc.ServiceContext, req *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
+			return logic.NewProcessContractSettlementsLogic(ctx, svcCtx).ProcessContractSettlements(req)
+		}
+	case tasks.ActionTradeProcessSecondsSettlements:
+		return func(ctx context.Context, svcCtx *svc.ServiceContext, req *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
+			return logic.NewProcessSecondsSettlementsTaskLogic(ctx, svcCtx).ProcessSecondsSettlements(req)
+		}
+	case tasks.ActionTradeProcessTradeEvents:
+		return func(ctx context.Context, svcCtx *svc.ServiceContext, req *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
+			return logic.NewProcessTradeEventsLogic(ctx, svcCtx).ProcessTradeEvents(req)
+		}
+	case tasks.ActionTradeExpireRiskLimits:
+		return func(ctx context.Context, svcCtx *svc.ServiceContext, req *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
+			return logic.NewExpireRiskLimitsLogic(ctx, svcCtx).ExpireRiskLimits(req)
+		}
+	case tasks.ActionTradeArchiveLiquidityOrders:
+		return func(ctx context.Context, svcCtx *svc.ServiceContext, req *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
+			return logic.NewArchiveLiquidityOrdersLogic(ctx, svcCtx).ArchiveLiquidityOrders(req)
+		}
+	default:
 		return nil
 	}
 }

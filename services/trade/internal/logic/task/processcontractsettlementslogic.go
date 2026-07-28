@@ -32,7 +32,8 @@ func NewProcessContractSettlementsLogic(ctx context.Context, svcCtx *svc.Service
 
 // 合约结算（永续资金费率/交割合约）；秒合约是独立产品，不属于 contract_type。
 func (l *ProcessContractSettlementsLogic) ProcessContractSettlements(in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
-	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_contract_settlements", func() (*trade.TradeTaskResp, error) {
+	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_contract_settlements", func(taskCtx context.Context) (*trade.TradeTaskResp, error) {
+		l.ctx = taskCtx
 		var result error
 		if err := NewProcessFundingSettlementsLogic(l.ctx, l.svcCtx).Process(in.GetTenantId()); err != nil {
 			result = errors.Join(result, fmt.Errorf("funding settlements: %w", err))
