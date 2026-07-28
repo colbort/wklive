@@ -10,7 +10,6 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 const (
@@ -25,6 +24,7 @@ type contractOrderFillAudit struct {
 	OrderNo           string          `db:"order_no"`
 	Status            int64           `db:"status"`
 	ContractValueType int64           `db:"contract_value_type"`
+	PriceScale        int64           `db:"price_scale"`
 	OrderQty          decimal.Decimal `db:"order_qty"`
 	OrderFilledQty    decimal.Decimal `db:"order_filled_qty"`
 	OrderFilledAmount decimal.Decimal `db:"order_filled_amount"`
@@ -74,6 +74,7 @@ SELECT
   o.order_no,
   o.status,
   o.contract_value_type,
+  s.price_scale,
   o.qty AS order_qty,
   o.filled_qty AS order_filled_qty,
   o.filled_amount AS order_filled_amount,
@@ -90,9 +91,10 @@ SELECT
     ELSE SUM(f.price*f.qty)/SUM(f.qty)
   END,0) AS fill_avg_price
 FROM t_trade_order o
+JOIN t_trade_symbol s ON s.tenant_id=o.tenant_id AND s.id=o.symbol_id
 LEFT JOIN t_trade_fill f ON f.tenant_id=o.tenant_id AND f.order_id=o.id
 WHERE o.product_type=? AND o.id>? AND o.update_times<=?` + tenantClause + `
-GROUP BY o.tenant_id,o.id,o.order_no,o.status,o.contract_value_type,o.qty,o.filled_qty,
+GROUP BY o.tenant_id,o.id,o.order_no,o.status,o.contract_value_type,s.price_scale,o.qty,o.filled_qty,
          o.filled_amount,o.canceled_qty,o.avg_price,o.fee
 ORDER BY o.id
 LIMIT ?`
@@ -117,7 +119,7 @@ func orderFillAuditDifferences(row *contractOrderFillAudit) []string {
 	if !row.OrderFee.Equal(row.FillFee) {
 		differences = append(differences, "fee")
 	}
-	if row.FillQty.IsPositive() && !row.OrderAvgPrice.Equal(row.FillAvgPrice) {
+	if row.FillQty.IsPositive() && !pricesEqualAtScale(row.OrderAvgPrice, row.FillAvgPrice, row.PriceScale) {
 		differences = append(differences, "avg_price")
 	}
 	if row.OrderFilledQty.Add(row.OrderCanceledQty).GreaterThan(row.OrderQty) {
@@ -127,6 +129,16 @@ func orderFillAuditDifferences(row *contractOrderFillAudit) []string {
 		differences = append(differences, "filled_status_without_full_qty")
 	}
 	return differences
+}
+
+func pricesEqualAtScale(left, right decimal.Decimal, scale int64) bool {
+	if scale < 0 {
+		scale = 0
+	}
+	if scale > 18 {
+		scale = 18
+	}
+	return left.Round(int32(scale)).Equal(right.Round(int32(scale)))
 }
 
 func (l *ReconcileContractAssetFlowsLogic) persistOrderFillAudit(row *contractOrderFillAudit, now int64) error {
@@ -143,7 +155,7 @@ func (l *ReconcileContractAssetFlowsLogic) persistOrderFillAudit(row *contractOr
 	actual := fmt.Sprintf("fills=%d qty=%s amount=%s avg=%s fee=%s",
 		row.FillCount, row.FillQty, row.FillAmount, row.FillAvgPrice, row.FillFee)
 	detail := "Order/Fill mismatch fields: " + strings.Join(differences, ",")
-	if err := l.svcCtx.ContractReconcileIssueModel.RecordFinding(l.ctx, &models.TContractReconciliationIssue{
+	if err := l.recordContractReconciliationFinding(&models.TContractReconciliationIssue{
 		TenantId:      row.TenantId,
 		IssueKey:      issueKey,
 		CheckType:     orderFillCheck,
@@ -159,8 +171,6 @@ func (l *ReconcileContractAssetFlowsLogic) persistOrderFillAudit(row *contractOr
 	}); err != nil {
 		return err
 	}
-	logx.WithContext(l.ctx).Errorf("contract reconciliation issue key=%s expected=%s actual=%s detail=%s",
-		issueKey, expected, actual, detail)
 	return nil
 }
 

@@ -227,10 +227,7 @@ func (l *ProcessFundingSettlementsLogic) lockFundingInputs(c *models.TTradeSymbo
 		return decimal.Zero, decimal.Zero, decimal.Zero, "", err
 	}
 	category, market, _ := parseQuoteSource(c.MarkPriceSource)
-	indexSource := c.IndexSymbol
-	if category != "" && market != "" && len(parseParts(indexSource)) < 3 {
-		indexSource = category + ":" + market + ":" + indexSource
-	}
+	indexSource := qualifyFundingIndexSource(category, market, c.IndexSymbol)
 	indexQ, _, err := quotes.getValidQuotesAtKind("INDEX_PRICE", indexSource, c.SymbolId, settlementTime, 30_000)
 	if err != nil {
 		return decimal.Zero, decimal.Zero, decimal.Zero, "", err
@@ -290,16 +287,19 @@ func maxInt64(a, b int64) int64 {
 	}
 	return b
 }
-func parseParts(v string) []string {
-	_, m, s := parseQuoteSource(v)
-	r := []string{}
-	if m != "" {
-		r = append(r, m)
+func qualifyFundingIndexSource(category, market, source string) string {
+	source = strings.TrimSpace(source)
+	parts := strings.Split(source, ":")
+	switch {
+	case len(parts) >= 3:
+		return source
+	case len(parts) == 2 && category != "":
+		return category + ":" + source
+	case len(parts) == 1 && category != "" && market != "":
+		return category + ":" + market + ":" + source
+	default:
+		return source
 	}
-	if s != "" {
-		r = append(r, s)
-	}
-	return r
 }
 
 func (l *ProcessFundingSettlementsLogic) settlePending(tenantID int64) error {

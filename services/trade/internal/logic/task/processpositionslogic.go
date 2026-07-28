@@ -3,15 +3,53 @@ package tasklogic
 import (
 	"context"
 	"errors"
-	"wklive/services/trade/internal/logic/helpers"
+	"fmt"
+	"sync"
 
 	"wklive/common/utils"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/logic/helpers"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
+
+const markQuoteRetryBackoffMs int64 = 30_000
+
+type markQuoteRetryGate struct {
+	mu         sync.Mutex
+	retryAfter map[string]int64
+}
+
+func newMarkQuoteRetryGate() *markQuoteRetryGate {
+	return &markQuoteRetryGate{retryAfter: make(map[string]int64)}
+}
+
+func (g *markQuoteRetryGate) allow(key string, now int64) bool {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	retryAt, found := g.retryAfter[key]
+	if !found || retryAt <= now {
+		delete(g.retryAfter, key)
+		return true
+	}
+	return false
+}
+
+func (g *markQuoteRetryGate) fail(key string, now int64) {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	g.retryAfter[key] = now + markQuoteRetryBackoffMs
+}
+
+func (g *markQuoteRetryGate) success(key string) {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	delete(g.retryAfter, key)
+}
+
+var processMarkQuoteRetryGate = newMarkQuoteRetryGate()
 
 type ProcessPositionsLogic struct {
 	ctx    context.Context
@@ -42,6 +80,14 @@ func (l *ProcessPositionsLogic) ProcessPositions(in *trade.TradeTaskReq) (*trade
 }
 
 func (l *ProcessPositionsLogic) refreshMarkPrices(in *trade.TradeTaskReq) error {
+	type quoteLookup struct {
+		quote *marketQuoteSnapshot
+		ok    bool
+	}
+	// A symbol can have several user/side positions. Resolve its authoritative
+	// MARK once per scan and share the result instead of issuing one archive RPC
+	// per position.
+	quotes := make(map[string]quoteLookup)
 	cursor := int64(0)
 	for {
 		positions, _, err := l.svcCtx.ContractPositionModel.FindPage(l.ctx, models.ContractPositionPageFilter{TenantId: in.GetTenantId()}, cursor, 100)
@@ -53,7 +99,7 @@ func (l *ProcessPositionsLogic) refreshMarkPrices(in *trade.TradeTaskReq) error 
 		}
 		for _, position := range positions {
 			cursor = position.Id
-			if !position.Qty.IsPositive() {
+			if !position.Qty.IsPositive() || position.Status != int64(trade.PositionStatus_POSITION_STATUS_NORMAL) {
 				continue
 			}
 			contract, err := l.svcCtx.TradeSymbolContractModel.FindOneByTenantIdSymbolId(l.ctx, position.TenantId, position.SymbolId)
@@ -63,11 +109,34 @@ func (l *ProcessPositionsLogic) refreshMarkPrices(in *trade.TradeTaskReq) error 
 			if err != nil {
 				return err
 			}
-			quote, err := NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).getValidQuoteKind("MARK_PRICE", contract.MarkPriceSource, position.SymbolId, 30_000)
-			if err != nil {
-				l.Errorf("skip stale mark price, positionId=%d err=%v", position.Id, err)
+
+			quoteKey := fmt.Sprintf("%d:%d:%s", position.TenantId, position.SymbolId, contract.MarkPriceSource)
+			lookup, found := quotes[quoteKey]
+			if !found {
+				now := utils.NowMillis()
+				if !processMarkQuoteRetryGate.allow(quoteKey, now) {
+					quotes[quoteKey] = quoteLookup{}
+					continue
+				}
+				quote, quoteErr := NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).
+					getValidQuoteKind("MARK_PRICE", contract.MarkPriceSource, position.SymbolId, 30_000)
+				if quoteErr != nil {
+					processMarkQuoteRetryGate.fail(quoteKey, now)
+					l.Errorf(
+						"skip stale mark price, tenantId=%d symbolId=%d source=%s err=%v",
+						position.TenantId, position.SymbolId, contract.MarkPriceSource, quoteErr,
+					)
+					quotes[quoteKey] = quoteLookup{}
+					continue
+				}
+				processMarkQuoteRetryGate.success(quoteKey)
+				lookup = quoteLookup{quote: quote, ok: true}
+				quotes[quoteKey] = lookup
+			}
+			if !lookup.ok {
 				continue
 			}
+			quote := lookup.quote
 			position.MarkPrice = helpers.MustParseFloat(quote.LastPrice)
 			position.MarkSnapshotId = quote.SnapshotID
 			tier, err := NewProcessContractPositionFillsLogic(l.ctx, l.svcCtx).riskTierForPosition(l.ctx, position, contract)
@@ -105,7 +174,7 @@ func (l *ProcessPositionsLogic) forceLiquidation(in *trade.TradeTaskReq) error {
 		}
 		for _, position := range positions {
 			cursor = position.Id
-			if !position.Qty.IsPositive() || !position.MarkPrice.IsPositive() || !position.LiquidationPrice.IsPositive() {
+			if !position.Qty.IsPositive() || position.Status != int64(trade.PositionStatus_POSITION_STATUS_NORMAL) || !position.MarkPrice.IsPositive() || !position.LiquidationPrice.IsPositive() {
 				continue
 			}
 			needLiquidation := (position.PositionSide == int64(trade.PositionSide_POSITION_SIDE_LONG) && position.MarkPrice.LessThanOrEqual(position.LiquidationPrice)) ||

@@ -2,6 +2,7 @@ package generate
 
 import (
 	"context"
+	"crypto/sha256"
 	"fmt"
 	"strings"
 	"time"
@@ -29,9 +30,22 @@ func GenerateNo(rd *redis.Redis, ctx context.Context, business string, prefix st
 
 	orderID := fmt.Sprintf("%s%s%06d", prefix, date, seq)
 	if bizNo != "" {
-		return fmt.Sprintf("%s_%s", orderID, SanitizeBizNo(bizNo)), nil
+		return compactGeneratedNo(fmt.Sprintf("%s_%s", orderID, SanitizeBizNo(bizNo)), 64), nil
 	}
-	return orderID, nil
+	return compactGeneratedNo(orderID, 64), nil
+}
+
+func compactGeneratedNo(value string, maxLen int) string {
+	if maxLen <= 0 || len(value) <= maxLen {
+		return value
+	}
+	digest := sha256.Sum256([]byte(value))
+	hash := fmt.Sprintf("%x", digest[:8])
+	headLen := maxLen - len(hash) - 1
+	if headLen <= 0 {
+		return hash[:maxLen]
+	}
+	return value[:headLen] + "-" + hash
 }
 
 func SanitizeBizNo(bizNo string) string {

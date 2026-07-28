@@ -9,7 +9,6 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 const (
@@ -179,7 +178,7 @@ func (l *ReconcileContractAssetFlowsLogic) persistLiquidationAudit(row *contract
 		row.Status, row.LiquidatedQty, row.PositionQty, row.PositionMargin, row.IsolatedMargin,
 		row.LiquidationHistory, row.CompletionEvent, row.AdlCompletedCount, row.AdlExecutionCount,
 		row.AdlExecutionQty, row.AdlReliefAmount, row.AdlUnreconciledAssets, row.InsuranceFundAmount, insuranceActual)
-	if err := l.svcCtx.ContractReconcileIssueModel.RecordFinding(l.ctx, &models.TContractReconciliationIssue{
+	if err := l.recordContractReconciliationFinding(&models.TContractReconciliationIssue{
 		TenantId: row.TenantId, IssueKey: issueKey, CheckType: liquidationAuditCheck,
 		BizType: "liquidation", BizNo: row.LiquidationNo,
 		ExpectedValue: expected, ActualValue: actual, Detail: detail,
@@ -187,8 +186,6 @@ func (l *ReconcileContractAssetFlowsLogic) persistLiquidationAudit(row *contract
 	}); err != nil {
 		return err
 	}
-	logx.WithContext(l.ctx).Errorf("contract reconciliation issue key=%s expected=%s actual=%s detail=%s",
-		issueKey, expected, actual, detail)
 	return nil
 }
 

@@ -53,7 +53,7 @@ type (
 		Nickname            sql.NullString `db:"nickname"`              // 昵称
 		Avatar              sql.NullString `db:"avatar"`                // 头像
 		PasswordHash        string         `db:"password_hash"`         // 登录密码哈希
-		RegisterType        int64          `db:"register_type"`         // 注册方式：1用户名 2手机号 3邮箱 4游客
+		RegisterType        int64          `db:"register_type"`         // 注册方式：1用户名 2手机号 3邮箱 4游客 5做市账户
 		AccountType         int64          `db:"account_type"`          // 账户类型：1普通用户 2内部做市账户 3平台系统账户
 		Status              int64          `db:"status"`                // 状态：1正常 2禁用 3冻结 4注销
 		MemberLevel         int64          `db:"member_level"`          // 会员等级

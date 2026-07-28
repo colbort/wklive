@@ -11,7 +11,6 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 const (
@@ -108,7 +107,7 @@ func (l *ReconcileContractAssetFlowsLogic) reconcileReservation(row *contractRes
 	}
 	expected := expectedReservationSummary(row)
 	actual := actualAssetFreezeSummary(freeze, len(resp.GetData()))
-	if err = l.svcCtx.ContractReconcileIssueModel.RecordFinding(l.ctx, &models.TContractReconciliationIssue{
+	if err = l.recordContractReconciliationFinding(&models.TContractReconciliationIssue{
 		TenantId:      row.TenantId,
 		IssueKey:      issueKey,
 		CheckType:     reservationFreezeCheck,
@@ -124,8 +123,6 @@ func (l *ReconcileContractAssetFlowsLogic) reconcileReservation(row *contractRes
 	}); err != nil {
 		return err
 	}
-	logx.WithContext(l.ctx).Errorf("contract reconciliation issue key=%s expected=%s actual=%s detail=%s",
-		issueKey, expected, actual, detail)
 	return nil
 }
 

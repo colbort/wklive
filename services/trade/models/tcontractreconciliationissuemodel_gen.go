@@ -56,6 +56,7 @@ type (
 		OccurrenceCount  int64  `db:"occurrence_count"`  // 累计发现次数
 		FirstSeenAt      int64  `db:"first_seen_at"`     // 首次发现时间
 		LastSeenAt       int64  `db:"last_seen_at"`      // 最近发现时间
+		LastAlertAt      int64  `db:"last_alert_at"`     // 最近一次输出或发送告警的时间
 		ResolvedAt       int64  `db:"resolved_at"`       // 恢复时间
 		OperatorId       int64  `db:"operator_id"`       // 人工处理人
 		ResolutionReason string `db:"resolution_reason"` // 处理原因
@@ -127,8 +128,8 @@ func (m *defaultTContractReconciliationIssueModel) Insert(ctx context.Context, d
 	tContractReconciliationIssueIdKey := fmt.Sprintf("%s%v", cacheTContractReconciliationIssueIdPrefix, data.Id)
 	tContractReconciliationIssueTenantIdIssueKeyKey := fmt.Sprintf("%s%v:%v", cacheTContractReconciliationIssueTenantIdIssueKeyPrefix, data.TenantId, data.IssueKey)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractReconciliationIssueRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.IssueKey, data.CheckType, data.BizType, data.BizNo, data.InstructionId, data.ExpectedValue, data.ActualValue, data.Detail, data.Status, data.OccurrenceCount, data.FirstSeenAt, data.LastSeenAt, data.ResolvedAt, data.OperatorId, data.ResolutionReason, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractReconciliationIssueRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.IssueKey, data.CheckType, data.BizType, data.BizNo, data.InstructionId, data.ExpectedValue, data.ActualValue, data.Detail, data.Status, data.OccurrenceCount, data.FirstSeenAt, data.LastSeenAt, data.LastAlertAt, data.ResolvedAt, data.OperatorId, data.ResolutionReason, data.CreateTimes, data.UpdateTimes)
 	}, tContractReconciliationIssueIdKey, tContractReconciliationIssueTenantIdIssueKeyKey)
 	return ret, err
 }
@@ -143,7 +144,7 @@ func (m *defaultTContractReconciliationIssueModel) Update(ctx context.Context, n
 	tContractReconciliationIssueTenantIdIssueKeyKey := fmt.Sprintf("%s%v:%v", cacheTContractReconciliationIssueTenantIdIssueKeyPrefix, data.TenantId, data.IssueKey)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tContractReconciliationIssueRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.IssueKey, newData.CheckType, newData.BizType, newData.BizNo, newData.InstructionId, newData.ExpectedValue, newData.ActualValue, newData.Detail, newData.Status, newData.OccurrenceCount, newData.FirstSeenAt, newData.LastSeenAt, newData.ResolvedAt, newData.OperatorId, newData.ResolutionReason, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.IssueKey, newData.CheckType, newData.BizType, newData.BizNo, newData.InstructionId, newData.ExpectedValue, newData.ActualValue, newData.Detail, newData.Status, newData.OccurrenceCount, newData.FirstSeenAt, newData.LastSeenAt, newData.LastAlertAt, newData.ResolvedAt, newData.OperatorId, newData.ResolutionReason, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tContractReconciliationIssueIdKey, tContractReconciliationIssueTenantIdIssueKeyKey)
 	return err
 }

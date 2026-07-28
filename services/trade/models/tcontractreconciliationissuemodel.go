@@ -2,6 +2,8 @@ package models
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -24,6 +26,7 @@ type (
 	TContractReconciliationIssueModel interface {
 		tContractReconciliationIssueModel
 		RecordFinding(ctx context.Context, issue *TContractReconciliationIssue) error
+		RecordFindingWithAlert(ctx context.Context, issue *TContractReconciliationIssue, minAlertIntervalMs int64) (bool, error)
 		ResolveByKey(ctx context.Context, tenantID int64, issueKey, reason string, now int64) error
 		FindPage(ctx context.Context, filter ContractReconciliationIssuePageFilter, cursor, limit int64) ([]*TContractReconciliationIssue, int64, error)
 		FindOneForUpdate(ctx context.Context, id int64) (*TContractReconciliationIssue, error)
@@ -95,6 +98,107 @@ update_times=VALUES(update_times)`
 		issue.InstructionId, issue.ExpectedValue, issue.ActualValue, issue.Detail,
 		issue.FirstSeenAt, issue.LastSeenAt, issue.CreateTimes, issue.UpdateTimes)
 	return err
+}
+
+// RecordFindingWithAlert persists every observation while reserving an alert
+// only for a new/reopened/changed issue or a periodic unchanged reminder. The
+// decision and last_alert_at update share the issue row lock so multiple Trade
+// instances cannot emit the same alert window.
+func (m *defaultTContractReconciliationIssueModel) RecordFindingWithAlert(
+	ctx context.Context,
+	issue *TContractReconciliationIssue,
+	minAlertIntervalMs int64,
+) (bool, error) {
+	if issue == nil {
+		return false, errors.New("reconciliation issue is nil")
+	}
+	if minAlertIntervalMs < 0 {
+		return false, errors.New("reconciliation alert interval is invalid")
+	}
+	now := issue.LastSeenAt
+	if now <= 0 {
+		now = issue.UpdateTimes
+	}
+	if now <= 0 {
+		return false, errors.New("reconciliation issue observation time is required")
+	}
+
+	var (
+		rowID       int64
+		shouldAlert bool
+	)
+	err := m.TransactCtx(ctx, func(txCtx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		var existing TContractReconciliationIssue
+		query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND issue_key=? LIMIT 1 FOR UPDATE",
+			tContractReconciliationIssueRows, m.table)
+		findErr := conn.QueryRowCtx(txCtx, &existing, query, issue.TenantId, issue.IssueKey)
+		if findErr != nil && !errors.Is(findErr, sql.ErrNoRows) {
+			return findErr
+		}
+		if errors.Is(findErr, sql.ErrNoRows) {
+			shouldAlert = true
+			result, insertErr := conn.ExecCtx(txCtx, `INSERT INTO t_contract_reconciliation_issue
+(tenant_id,issue_key,check_type,biz_type,biz_no,instruction_id,expected_value,actual_value,detail,status,occurrence_count,first_seen_at,last_seen_at,last_alert_at,resolved_at,operator_id,resolution_reason,create_times,update_times)
+VALUES(?,?,?,?,?,?,?,?,?,1,1,?,?,?,0,0,'',?,?)`,
+				issue.TenantId, issue.IssueKey, issue.CheckType, issue.BizType, issue.BizNo,
+				issue.InstructionId, issue.ExpectedValue, issue.ActualValue, issue.Detail,
+				issue.FirstSeenAt, issue.LastSeenAt, now, issue.CreateTimes, issue.UpdateTimes)
+			if insertErr != nil {
+				return insertErr
+			}
+			rowID, insertErr = result.LastInsertId()
+			return insertErr
+		}
+
+		rowID = existing.Id
+		shouldAlert = reconciliationFindingAlertDue(&existing, issue, now, minAlertIntervalMs)
+
+		_, updateErr := conn.ExecCtx(txCtx, `UPDATE t_contract_reconciliation_issue
+SET check_type=?,biz_type=?,biz_no=?,instruction_id=?,expected_value=?,actual_value=?,detail=?,
+    last_seen_at=?,occurrence_count=occurrence_count+1,
+    last_alert_at=IF(?, ?, last_alert_at),
+    status=IF(status=3,3,1),
+    resolved_at=IF(status=3,resolved_at,0),
+    resolution_reason=IF(status=3,resolution_reason,''),
+    update_times=?
+WHERE id=?`,
+			issue.CheckType, issue.BizType, issue.BizNo, issue.InstructionId,
+			issue.ExpectedValue, issue.ActualValue, issue.Detail, issue.LastSeenAt,
+			shouldAlert, now, issue.UpdateTimes, existing.Id)
+		return updateErr
+	})
+	if err != nil {
+		return false, err
+	}
+	return shouldAlert, m.DelCacheCtx(ctx,
+		fmt.Sprintf("%s%v", cacheTContractReconciliationIssueIdPrefix, rowID),
+		fmt.Sprintf("%s%v:%v", cacheTContractReconciliationIssueTenantIdIssueKeyPrefix, issue.TenantId, issue.IssueKey),
+	)
+}
+
+func reconciliationFindingAlertDue(
+	existing, finding *TContractReconciliationIssue,
+	now, minAlertIntervalMs int64,
+) bool {
+	if finding == nil {
+		return false
+	}
+	if existing == nil {
+		return true
+	}
+	if existing.Status == 3 {
+		return false
+	}
+	contentChanged := existing.CheckType != finding.CheckType ||
+		existing.BizType != finding.BizType ||
+		existing.BizNo != finding.BizNo ||
+		existing.InstructionId != finding.InstructionId ||
+		existing.ExpectedValue != finding.ExpectedValue ||
+		existing.ActualValue != finding.ActualValue ||
+		existing.Detail != finding.Detail
+	return existing.Status != 1 || contentChanged || existing.LastAlertAt == 0 ||
+		now-existing.LastAlertAt >= minAlertIntervalMs
 }
 
 func (m *defaultTContractReconciliationIssueModel) ResolveByKey(ctx context.Context, tenantID int64, issueKey, reason string, now int64) error {

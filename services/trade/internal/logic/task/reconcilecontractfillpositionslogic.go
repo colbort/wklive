@@ -10,7 +10,6 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 const (
@@ -156,7 +155,7 @@ func (l *ReconcileContractAssetFlowsLogic) persistFillPositionAudit(row *contrac
 		row.HistoryCount, row.ProjectedQty, row.ProjectedFee, row.IdentityMismatch,
 		row.PriceMismatch, row.TimeMismatch, row.VersionMismatch, row.FeeAssetMismatch)
 	detail := "Fill/Position History mismatch fields: " + strings.Join(differences, ",")
-	if err := l.svcCtx.ContractReconcileIssueModel.RecordFinding(l.ctx, &models.TContractReconciliationIssue{
+	if err := l.recordContractReconciliationFinding(&models.TContractReconciliationIssue{
 		TenantId:      row.TenantId,
 		IssueKey:      issueKey,
 		CheckType:     fillPositionCheck,
@@ -172,7 +171,5 @@ func (l *ReconcileContractAssetFlowsLogic) persistFillPositionAudit(row *contrac
 	}); err != nil {
 		return err
 	}
-	logx.WithContext(l.ctx).Errorf("contract reconciliation issue key=%s expected=%s actual=%s detail=%s",
-		issueKey, expected, actual, detail)
 	return nil
 }

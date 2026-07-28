@@ -836,6 +836,7 @@ CREATE TABLE `t_contract_reconciliation_issue` (
   `occurrence_count` BIGINT NOT NULL DEFAULT 1 COMMENT '累计发现次数',
   `first_seen_at` BIGINT NOT NULL COMMENT '首次发现时间',
   `last_seen_at` BIGINT NOT NULL COMMENT '最近发现时间',
+  `last_alert_at` BIGINT NOT NULL DEFAULT 0 COMMENT '最近一次输出或发送告警的时间',
   `resolved_at` BIGINT NOT NULL DEFAULT 0 COMMENT '恢复时间',
   `operator_id` BIGINT NOT NULL DEFAULT 0 COMMENT '人工处理人',
   `resolution_reason` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '处理原因',

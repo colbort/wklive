@@ -605,6 +605,28 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 			return nil, errors.New("market sell and derivative market order require quantity")
 		}
 	}
+	if symbol.ProductType == int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) &&
+		symbol.ContractValueType == int64(trade.ContractValueType_CONTRACT_VALUE_TYPE_INVERSE) &&
+		orderType == trade.OrderType_ORDER_TYPE_LIMIT &&
+		in.Side == common.Side_SIDE_BUY {
+		orders, err := l.svcCtx.TradeOrderModel.FindOpenMatchOrders(
+			l.ctx,
+			tenantID,
+			symbol.Id,
+			symbol.ProductType,
+			int64(common.Side_SIDE_SELL),
+			helpers.MatchableOrderStatuses(),
+			int64(trade.OrderType_ORDER_TYPE_MARKET),
+			50,
+		)
+		if err != nil {
+			return nil, err
+		}
+		// A lower execution price increases the BTC-denominated margin and fee
+		// of an inverse BUY. Reserve against the lowest currently crossed maker
+		// ask; a non-crossing order still reserves against its own maker price.
+		plan.riskPrice = inverseBuyReservationRiskPrice(price, orders)
+	}
 	if !plan.riskPrice.IsPositive() && qty.IsPositive() {
 		var err error
 		plan.riskPrice, err = l.bestOppositePrice(tenantID, symbol, in.Side)
@@ -737,6 +759,20 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 	_ = triggerKind
 	_ = secondsCfg
 	return plan, nil
+}
+
+func inverseBuyReservationRiskPrice(limitPrice decimal.Decimal, sells []*models.TTradeOrder) decimal.Decimal {
+	riskPrice := limitPrice
+	for _, sell := range sells {
+		if sell == nil || sell.OrderType != int64(trade.OrderType_ORDER_TYPE_LIMIT) ||
+			!sell.Price.IsPositive() || sell.Price.GreaterThan(limitPrice) {
+			continue
+		}
+		if !riskPrice.IsPositive() || sell.Price.LessThan(riskPrice) {
+			riskPrice = sell.Price
+		}
+	}
+	return riskPrice
 }
 
 func nowMillis() int64 { return timeNow().UnixMilli() }

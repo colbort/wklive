@@ -75,3 +75,30 @@ func TestAutomaticLiquidationProductionGate(t *testing.T) {
 		t.Fatal("an already-started money saga must remain recoverable after the gate is disabled")
 	}
 }
+
+func TestSplitLiquidationEquity(t *testing.T) {
+	tests := []struct {
+		name         string
+		equity       string
+		nominalFee   string
+		wantFee      string
+		wantResidual string
+		wantDeficit  string
+	}{
+		{name: "fee and residual", equity: "20", nominalFee: "3", wantFee: "3", wantResidual: "17", wantDeficit: "0"},
+		{name: "fee capped by equity", equity: "2", nominalFee: "3", wantFee: "2", wantResidual: "0", wantDeficit: "0"},
+		{name: "bankruptcy excludes fee", equity: "-5", nominalFee: "3", wantFee: "0", wantResidual: "0", wantDeficit: "5"},
+		{name: "negative fee rejected", equity: "5", nominalFee: "-1", wantFee: "0", wantResidual: "5", wantDeficit: "0"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			fee, residual, deficit := splitLiquidationEquity(
+				decimal.RequireFromString(tt.equity),
+				decimal.RequireFromString(tt.nominalFee),
+			)
+			if fee.String() != tt.wantFee || residual.String() != tt.wantResidual || deficit.String() != tt.wantDeficit {
+				t.Fatalf("got fee=%s residual=%s deficit=%s, want %s/%s/%s", fee, residual, deficit, tt.wantFee, tt.wantResidual, tt.wantDeficit)
+			}
+		})
+	}
+}

@@ -3,6 +3,7 @@ package tasklogic
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"testing"
 	"wklive/services/trade/internal/logic/helpers"
 
@@ -14,6 +15,175 @@ import (
 )
 
 func testDecimal(value int64) decimal.Decimal { return decimal.NewFromInt(value) }
+
+type duplicateFillModel struct {
+	models.TTradeFillModel
+	byFillNo    *models.TTradeFill
+	byMatch     *models.TTradeFill
+	insertCalls int
+}
+
+func (m *duplicateFillModel) FindOneByTenantIdFillNo(context.Context, int64, string) (*models.TTradeFill, error) {
+	if m.byFillNo == nil {
+		return nil, models.ErrNotFound
+	}
+	return m.byFillNo, nil
+}
+
+func (m *duplicateFillModel) FindOneByTenantIdMatchNoOrderId(context.Context, int64, string, int64) (*models.TTradeFill, error) {
+	if m.byMatch == nil {
+		return nil, models.ErrNotFound
+	}
+	return m.byMatch, nil
+}
+
+func (m *duplicateFillModel) Insert(context.Context, *models.TTradeFill) (sql.Result, error) {
+	m.insertCalls++
+	return nil, errors.New("duplicate test must not insert")
+}
+
+type duplicateFillOrderModel struct {
+	models.TTradeOrderModel
+	order       *models.TTradeOrder
+	updateCalls int
+}
+
+func (m *duplicateFillOrderModel) FindOneForUpdate(context.Context, int64) (*models.TTradeOrder, error) {
+	if m.order == nil {
+		return nil, models.ErrNotFound
+	}
+	return m.order, nil
+}
+
+func (m *duplicateFillOrderModel) Update(context.Context, *models.TTradeOrder) error {
+	m.updateCalls++
+	return errors.New("duplicate test must not update")
+}
+
+func duplicateTradeFillFixture() (*models.TTradeOrder, *models.TTradeFill, *trade.TradeFill) {
+	order := &models.TTradeOrder{
+		Id: 10, TenantId: 1, OrderNo: "ORD-1", UserId: 20, SymbolId: 30,
+		ProductType: 2, ContractType: 1, ContractValueType: 1, Side: 1, PositionSide: 2,
+		OrderType: 1, Status: int64(trade.OrderStatus_ORDER_STATUS_FILLED),
+		Price: testDecimal(100), Qty: testDecimal(2), Amount: testDecimal(200),
+		FilledQty: testDecimal(2), FilledAmount: testDecimal(200),
+	}
+	fill := &models.TTradeFill{
+		Id: 40, TenantId: 1, FillNo: "FIL-1", MatchNo: "MAT-1", OrderId: 10, OrderNo: "ORD-1",
+		UserId: 20, SymbolId: 30, ProductType: 2, ContractType: 1, ContractValueType: 1,
+		Side: 1, PositionSide: 2, Price: testDecimal(100), Qty: testDecimal(2),
+		Amount: testDecimal(200), Fee: testDecimal(1), FeeAsset: "USDT", LiquidityType: 2,
+		SettlementStatus: int64(trade.FillSettlementStatus_FILL_SETTLEMENT_STATUS_SETTLED),
+	}
+	retry := &trade.TradeFill{
+		TenantId: 1, FillNo: "FIL-1", MatchNo: "MAT-1", OrderId: 10, OrderNo: "ORD-1",
+		UserId: 20, SymbolId: 30, ProductType: common.ProductType_PRODUCT_TYPE_DERIVATIVE,
+		ContractType:      common.ContractType_CONTRACT_TYPE_PERPETUAL,
+		ContractValueType: trade.ContractValueType_CONTRACT_VALUE_TYPE_LINEAR,
+		Side:              common.Side_SIDE_BUY, PositionSide: trade.PositionSide_POSITION_SIDE_LONG,
+		Price: "100", Qty: "2", Amount: "200", Fee: "1", FeeAsset: "USDT",
+		LiquidityType: trade.LiquidityType_LIQUIDITY_TYPE_TAKER,
+	}
+	return order, fill, retry
+}
+
+func TestRecordOrderFillDuplicateIsIdempotent(t *testing.T) {
+	order, existing, retry := duplicateTradeFillFixture()
+	fillModel := &duplicateFillModel{byFillNo: existing, byMatch: existing}
+	orderModel := &duplicateFillOrderModel{order: order}
+
+	got, gotOrder, err := recordOrderFillWithModels(context.Background(), fillModel, orderModel, retry, 999)
+	if err != nil {
+		t.Fatalf("exact duplicate returned error: %v", err)
+	}
+	if got != existing || gotOrder != order {
+		t.Fatal("exact duplicate must return the existing fill and order")
+	}
+	if fillModel.insertCalls != 0 || orderModel.updateCalls != 0 {
+		t.Fatalf("exact duplicate mutated state: inserts=%d updates=%d", fillModel.insertCalls, orderModel.updateCalls)
+	}
+}
+
+func TestRecordOrderFillDuplicateConflictRejected(t *testing.T) {
+	tests := []struct {
+		name   string
+		mutate func(*trade.TradeFill)
+	}{
+		{name: "same fill number changed quantity", mutate: func(v *trade.TradeFill) { v.Qty = "1" }},
+		{name: "same match order changed fill number", mutate: func(v *trade.TradeFill) { v.FillNo = "FIL-OTHER" }},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			order, existing, retry := duplicateTradeFillFixture()
+			tt.mutate(retry)
+			fillModel := &duplicateFillModel{byMatch: existing}
+			if retry.FillNo == existing.FillNo {
+				fillModel.byFillNo = existing
+			}
+			orderModel := &duplicateFillOrderModel{order: order}
+			_, _, err := recordOrderFillWithModels(context.Background(), fillModel, orderModel, retry, 999)
+			if err == nil {
+				t.Fatal("conflicting duplicate must be rejected")
+			}
+			if fillModel.insertCalls != 0 || orderModel.updateCalls != 0 {
+				t.Fatalf("conflicting duplicate mutated state: inserts=%d updates=%d", fillModel.insertCalls, orderModel.updateCalls)
+			}
+		})
+	}
+}
+
+func TestSameTradeFillIdentity(t *testing.T) {
+	base := &models.TTradeFill{
+		TenantId: 1, FillNo: "FIL-1", MatchNo: "MAT-1", OrderId: 10, OrderNo: "ORD-1",
+		UserId: 20, SymbolId: 30, ProductType: 2, ContractType: 1, ContractValueType: 1,
+		Side: 1, PositionSide: 2, Price: testDecimal(100), Qty: testDecimal(2),
+		Amount: testDecimal(200), Fee: testDecimal(1), FeeAsset: "USDT", LiquidityType: 2,
+		RealizedPnl: decimal.Zero, SettlementStatus: 3, SettledAt: 123,
+	}
+	retry := *base
+	retry.SettlementStatus = 1
+	retry.SettledAt = 0
+	if !sameTradeFillIdentity(base, &retry) {
+		t.Fatal("the same business fill must remain idempotent after settlement fields change")
+	}
+
+	tests := []struct {
+		name   string
+		mutate func(*models.TTradeFill)
+	}{
+		{name: "fill number", mutate: func(v *models.TTradeFill) { v.FillNo = "FIL-2" }},
+		{name: "match number", mutate: func(v *models.TTradeFill) { v.MatchNo = "MAT-2" }},
+		{name: "order", mutate: func(v *models.TTradeFill) { v.OrderId++ }},
+		{name: "price", mutate: func(v *models.TTradeFill) { v.Price = testDecimal(101) }},
+		{name: "quantity", mutate: func(v *models.TTradeFill) { v.Qty = testDecimal(3) }},
+		{name: "amount", mutate: func(v *models.TTradeFill) { v.Amount = testDecimal(300) }},
+		{name: "fee", mutate: func(v *models.TTradeFill) { v.Fee = testDecimal(2) }},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			changed := retry
+			tt.mutate(&changed)
+			if sameTradeFillIdentity(base, &changed) {
+				t.Fatalf("changed %s must be rejected as an idempotency conflict", tt.name)
+			}
+		})
+	}
+}
+
+func TestCompleteFillOrderIdentity(t *testing.T) {
+	fill := &models.TTradeFill{TenantId: 1, FillNo: "FIL-1", MatchNo: "MAT-1"}
+	order := &models.TTradeOrder{
+		Id: 10, OrderNo: "ORD-1", UserId: 20, SymbolId: 30,
+		ProductType: 2, ContractType: 1, ContractValueType: 1, Side: 1, PositionSide: 2,
+	}
+	completeFillOrderIdentity(fill, order)
+	if fill.OrderId != order.Id || fill.OrderNo != order.OrderNo || fill.UserId != order.UserId ||
+		fill.SymbolId != order.SymbolId || fill.ProductType != order.ProductType ||
+		fill.ContractType != order.ContractType || fill.ContractValueType != order.ContractValueType ||
+		fill.Side != order.Side || fill.PositionSide != order.PositionSide {
+		t.Fatalf("fill order identity was not completed: %+v", fill)
+	}
+}
 
 func TestOrderStatusAfterFill(t *testing.T) {
 	tests := []struct {
@@ -430,6 +600,61 @@ func TestTriggeredOrderExecutionType(t *testing.T) {
 	}
 	if got := helpers.TriggeredTimeInForce(&models.TTradeOrder{}); got != int64(trade.TimeInForce_TIME_IN_FORCE_IOC) {
 		t.Fatalf("helpers.TriggeredTimeInForce() = %d, want IOC", got)
+	}
+}
+
+func TestApplyTriggeredOrderStatePersistsAuditTime(t *testing.T) {
+	const triggeredAt = int64(1_785_234_376_503)
+	order := &models.TTradeOrder{
+		OrderType:   int64(trade.OrderType_ORDER_TYPE_MARKET),
+		TimeInForce: int64(trade.TimeInForce_TIME_IN_FORCE_GTC),
+		Status:      int64(trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING),
+	}
+
+	applyTriggeredOrderState(order, triggeredAt)
+
+	if order.OrderType != int64(trade.OrderType_ORDER_TYPE_MARKET) {
+		t.Fatalf("OrderType = %d, want MARKET", order.OrderType)
+	}
+	if order.TimeInForce != int64(trade.TimeInForce_TIME_IN_FORCE_IOC) {
+		t.Fatalf("TimeInForce = %d, want IOC", order.TimeInForce)
+	}
+	if order.Status != int64(trade.OrderStatus_ORDER_STATUS_PENDING) {
+		t.Fatalf("Status = %d, want PENDING", order.Status)
+	}
+	if order.TriggeredAt != triggeredAt || order.UpdateTimes != triggeredAt {
+		t.Fatalf("trigger audit times = (%d, %d), want %d", order.TriggeredAt, order.UpdateTimes, triggeredAt)
+	}
+}
+
+func TestTriggerPriceFromSnapshotUsesRequestedSource(t *testing.T) {
+	snapshot := &models.TTradeMarketSnapshot{
+		Price:      testDecimal(99),
+		MarkPrice:  testDecimal(101),
+		IndexPrice: testDecimal(100),
+	}
+	mark, err := triggerPriceFromSnapshot(snapshot, trade.TriggerType_TRIGGER_TYPE_MARK_PRICE)
+	if err != nil || !mark.Equal(testDecimal(101)) {
+		t.Fatalf("mark trigger price = %s, err=%v, want 101", mark, err)
+	}
+	index, err := triggerPriceFromSnapshot(snapshot, trade.TriggerType_TRIGGER_TYPE_INDEX_PRICE)
+	if err != nil || !index.Equal(testDecimal(100)) {
+		t.Fatalf("index trigger price = %s, err=%v, want 100", index, err)
+	}
+	if got := triggerSourceName(int64(trade.TriggerType_TRIGGER_TYPE_MARK_PRICE)); got != "mark_price" {
+		t.Fatalf("mark trigger source = %q", got)
+	}
+	if got := triggerSourceName(int64(trade.TriggerType_TRIGGER_TYPE_INDEX_PRICE)); got != "index_price" {
+		t.Fatalf("index trigger source = %q", got)
+	}
+}
+
+func TestTriggerPriceFromSnapshotRejectsMissingPrice(t *testing.T) {
+	if _, err := triggerPriceFromSnapshot(nil, trade.TriggerType_TRIGGER_TYPE_MARK_PRICE); err == nil {
+		t.Fatal("nil trigger snapshot should be rejected")
+	}
+	if _, err := triggerPriceFromSnapshot(&models.TTradeMarketSnapshot{}, trade.TriggerType_TRIGGER_TYPE_INDEX_PRICE); err == nil {
+		t.Fatal("zero trigger price should be rejected")
 	}
 }
 

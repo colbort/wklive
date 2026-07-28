@@ -1290,6 +1290,7 @@ const (
 	Asset_TransferAsset_FullMethodName            = "/asset.Asset/TransferAsset"
 	Asset_CoverInsuranceDeficit_FullMethodName    = "/asset.Asset/CoverInsuranceDeficit"
 	Asset_ReverseInsuranceCover_FullMethodName    = "/asset.Asset/ReverseInsuranceCover"
+	Asset_CreditPlatformRevenue_FullMethodName    = "/asset.Asset/CreditPlatformRevenue"
 )
 
 // AssetClient is the client API for Asset service.
@@ -1327,6 +1328,8 @@ type AssetClient interface {
 	// 从租户保险基金账户原子扣减，余额不足时允许部分赔付。
 	CoverInsuranceDeficit(ctx context.Context, in *CoverInsuranceDeficitReq, opts ...grpc.CallOption) (*CoverInsuranceDeficitResp, error)
 	ReverseInsuranceCover(ctx context.Context, in *ReverseInsuranceCoverReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
+	// 将业务手续费原子、幂等计入租户平台手续费收入账户。
+	CreditPlatformRevenue(ctx context.Context, in *CreditPlatformRevenueReq, opts ...grpc.CallOption) (*CreditPlatformRevenueResp, error)
 }
 
 type assetClient struct {
@@ -1487,6 +1490,16 @@ func (c *assetClient) ReverseInsuranceCover(ctx context.Context, in *ReverseInsu
 	return out, nil
 }
 
+func (c *assetClient) CreditPlatformRevenue(ctx context.Context, in *CreditPlatformRevenueReq, opts ...grpc.CallOption) (*CreditPlatformRevenueResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreditPlatformRevenueResp)
+	err := c.cc.Invoke(ctx, Asset_CreditPlatformRevenue_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AssetServer is the server API for Asset service.
 // All implementations must embed UnimplementedAssetServer
 // for forward compatibility.
@@ -1522,6 +1535,8 @@ type AssetServer interface {
 	// 从租户保险基金账户原子扣减，余额不足时允许部分赔付。
 	CoverInsuranceDeficit(context.Context, *CoverInsuranceDeficitReq) (*CoverInsuranceDeficitResp, error)
 	ReverseInsuranceCover(context.Context, *ReverseInsuranceCoverReq) (*ChangeAssetResp, error)
+	// 将业务手续费原子、幂等计入租户平台手续费收入账户。
+	CreditPlatformRevenue(context.Context, *CreditPlatformRevenueReq) (*CreditPlatformRevenueResp, error)
 	mustEmbedUnimplementedAssetServer()
 }
 
@@ -1576,6 +1591,9 @@ func (UnimplementedAssetServer) CoverInsuranceDeficit(context.Context, *CoverIns
 }
 func (UnimplementedAssetServer) ReverseInsuranceCover(context.Context, *ReverseInsuranceCoverReq) (*ChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ReverseInsuranceCover not implemented")
+}
+func (UnimplementedAssetServer) CreditPlatformRevenue(context.Context, *CreditPlatformRevenueReq) (*CreditPlatformRevenueResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreditPlatformRevenue not implemented")
 }
 func (UnimplementedAssetServer) mustEmbedUnimplementedAssetServer() {}
 func (UnimplementedAssetServer) testEmbeddedByValue()               {}
@@ -1868,6 +1886,24 @@ func _Asset_ReverseInsuranceCover_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Asset_CreditPlatformRevenue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreditPlatformRevenueReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetServer).CreditPlatformRevenue(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Asset_CreditPlatformRevenue_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetServer).CreditPlatformRevenue(ctx, req.(*CreditPlatformRevenueReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Asset_ServiceDesc is the grpc.ServiceDesc for Asset service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1934,6 +1970,10 @@ var Asset_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ReverseInsuranceCover",
 			Handler:    _Asset_ReverseInsuranceCover_Handler,
+		},
+		{
+			MethodName: "CreditPlatformRevenue",
+			Handler:    _Asset_CreditPlatformRevenue_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

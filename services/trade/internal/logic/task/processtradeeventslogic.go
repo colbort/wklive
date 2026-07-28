@@ -137,7 +137,10 @@ type triggerPriceKey struct {
 	tenantId    int64
 	symbolId    int64
 	productType int64
+	triggerType int64
 }
+
+const triggerReferenceMaxAgeMillis = int64(30_000)
 
 func (l *ProcessTradeEventsLogic) recoverFreezingOrders(in *trade.TradeTaskReq) error {
 	now := utils.NowMillis()
@@ -236,10 +239,10 @@ func (l *ProcessTradeEventsLogic) triggerWaitingOrders(in *trade.TradeTaskReq) e
 		}
 		for _, order := range orders {
 			cursor = order.Id
-			key := triggerPriceKey{tenantId: order.TenantId, symbolId: order.SymbolId, productType: order.ProductType}
+			key := triggerPriceKey{tenantId: order.TenantId, symbolId: order.SymbolId, productType: order.ProductType, triggerType: order.TriggerType}
 			triggerPrice, ok := priceCache[key]
 			if !ok {
-				triggerPrice, err = l.svcCtx.TradeFillModel.FindLastPrice(l.ctx, order.TenantId, order.SymbolId, order.ProductType)
+				triggerPrice, err = l.triggerReferencePrice(order, now)
 				if errors.Is(err, models.ErrNotFound) {
 					continue
 				}
@@ -251,7 +254,7 @@ func (l *ProcessTradeEventsLogic) triggerWaitingOrders(in *trade.TradeTaskReq) e
 			if !helpers.ShouldTriggerOrder(order, triggerPrice) {
 				continue
 			}
-			if err := l.triggerOrderIfNeeded(order.Id, triggerPrice, now); err != nil {
+			if err := l.triggerOrderIfNeeded(order.Id, triggerPrice, triggerSourceName(order.TriggerType), now); err != nil {
 				return err
 			}
 		}
@@ -261,7 +264,62 @@ func (l *ProcessTradeEventsLogic) triggerWaitingOrders(in *trade.TradeTaskReq) e
 	}
 }
 
-func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPrice decimal.Decimal, now int64) error {
+func (l *ProcessTradeEventsLogic) triggerReferencePrice(order *models.TTradeOrder, now int64) (decimal.Decimal, error) {
+	if order == nil {
+		return decimal.Zero, models.ErrNotFound
+	}
+	switch trade.TriggerType(order.TriggerType) {
+	case trade.TriggerType_TRIGGER_TYPE_MARK_PRICE:
+		snapshot, err := l.svcCtx.TradeMarketSnapshotModel.FindLatestConfirmedKind(l.ctx, order.TenantId, order.SymbolId, "MARK", now-triggerReferenceMaxAgeMillis)
+		if err != nil {
+			return decimal.Zero, err
+		}
+		return triggerPriceFromSnapshot(snapshot, trade.TriggerType_TRIGGER_TYPE_MARK_PRICE)
+	case trade.TriggerType_TRIGGER_TYPE_INDEX_PRICE:
+		snapshot, err := l.svcCtx.TradeMarketSnapshotModel.FindLatestConfirmedKind(l.ctx, order.TenantId, order.SymbolId, "INDEX", now-triggerReferenceMaxAgeMillis)
+		if err != nil {
+			return decimal.Zero, err
+		}
+		return triggerPriceFromSnapshot(snapshot, trade.TriggerType_TRIGGER_TYPE_INDEX_PRICE)
+	default:
+		return l.svcCtx.TradeFillModel.FindLastPrice(l.ctx, order.TenantId, order.SymbolId, order.ProductType)
+	}
+}
+
+func triggerPriceFromSnapshot(snapshot *models.TTradeMarketSnapshot, triggerType trade.TriggerType) (decimal.Decimal, error) {
+	if snapshot == nil {
+		return decimal.Zero, models.ErrNotFound
+	}
+	var price decimal.Decimal
+	switch triggerType {
+	case trade.TriggerType_TRIGGER_TYPE_MARK_PRICE:
+		price = snapshot.MarkPrice
+	case trade.TriggerType_TRIGGER_TYPE_INDEX_PRICE:
+		price = snapshot.IndexPrice
+	default:
+		price = snapshot.Price
+	}
+	if !price.IsPositive() {
+		price = snapshot.Price
+	}
+	if !price.IsPositive() {
+		return decimal.Zero, models.ErrNotFound
+	}
+	return price, nil
+}
+
+func triggerSourceName(triggerType int64) string {
+	switch trade.TriggerType(triggerType) {
+	case trade.TriggerType_TRIGGER_TYPE_MARK_PRICE:
+		return "mark_price"
+	case trade.TriggerType_TRIGGER_TYPE_INDEX_PRICE:
+		return "index_price"
+	default:
+		return "last_price"
+	}
+}
+
+func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPrice decimal.Decimal, triggerSource string, now int64) error {
 	var triggeredOrder *models.TTradeOrder
 	var eventNo string
 	err := helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
@@ -284,16 +342,13 @@ func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPri
 		}
 		ext.TriggeredAt = now
 		ext.TriggerPrice = conv.FloatString(triggerPrice)
-		ext.TriggerSource = "last_price"
+		ext.TriggerSource = triggerSource
 		extValue, err := helpers.MarshalOrderAssetExt(ext)
 		if err != nil {
 			return err
 		}
 		order.BizExt = sql.NullString{String: extValue, Valid: extValue != ""}
-		order.OrderType = helpers.TriggeredOrderExecutionType(order)
-		order.TimeInForce = helpers.TriggeredTimeInForce(order)
-		order.Status = int64(trade.OrderStatus_ORDER_STATUS_PENDING)
-		order.UpdateTimes = now
+		applyTriggeredOrderState(order, now)
 		if err := orderModel.Update(ctx, order); err != nil {
 			return err
 		}
@@ -322,6 +377,17 @@ func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPri
 		l.Errorf("publish triggered order event failed, orderId=%d eventNo=%s err=%v", triggeredOrder.Id, eventNo, err)
 	}
 	return nil
+}
+
+func applyTriggeredOrderState(order *models.TTradeOrder, now int64) {
+	if order == nil {
+		return
+	}
+	order.OrderType = helpers.TriggeredOrderExecutionType(order)
+	order.TimeInForce = helpers.TriggeredTimeInForce(order)
+	order.Status = int64(trade.OrderStatus_ORDER_STATUS_PENDING)
+	order.TriggeredAt = now
+	order.UpdateTimes = now
 }
 
 func (l *ProcessTradeEventsLogic) expireImmediateOrders(in *trade.TradeTaskReq) error {

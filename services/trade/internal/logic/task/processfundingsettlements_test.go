@@ -106,6 +106,25 @@ func TestFundingDifferenceInstructionBalancesUserNet(t *testing.T) {
 	}
 }
 
+func TestQualifyFundingIndexSource(t *testing.T) {
+	tests := []struct {
+		name   string
+		source string
+		want   string
+	}{
+		{name: "fully qualified remains unchanged", source: "crypto:BA:BTCUSDT", want: "crypto:BA:BTCUSDT"},
+		{name: "market and symbol inherit category", source: "BA:BTCUSDT", want: "crypto:BA:BTCUSDT"},
+		{name: "symbol inherits category and market", source: "BTCUSDT", want: "crypto:BA:BTCUSDT"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := qualifyFundingIndexSource("crypto", "BA", tt.source); got != tt.want {
+				t.Fatalf("qualifyFundingIndexSource() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestSettlementInstructionIdentityIncludesSagaBinding(t *testing.T) {
 	base := &models.TTradeSettlementInstruction{TenantId: 1, InstructionNo: "i", BizType: "funding", BizId: "s", BatchNo: "b", PositionId: 2, UserId: 3, Action: 8, Asset: "USDT", Amount: decimal.NewFromInt(1), StepNo: 1}
 	copy := *base

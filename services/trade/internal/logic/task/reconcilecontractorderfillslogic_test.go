@@ -56,3 +56,25 @@ func TestOrderFillAuditInverseAverage(t *testing.T) {
 		t.Fatalf("inverse aggregate with matching harmonic average failed: %v", differences)
 	}
 }
+
+func TestOrderFillAuditAverageUsesConfiguredPriceScale(t *testing.T) {
+	row := &contractOrderFillAudit{
+		PriceScale:        2,
+		OrderQty:          auditDecimal("60"),
+		OrderFilledQty:    auditDecimal("60"),
+		OrderFilledAmount: auditDecimal("6000"),
+		OrderAvgPrice:     auditDecimal("55000"),
+		FillQty:           auditDecimal("60"),
+		FillAmount:        auditDecimal("6000"),
+		FillAvgPrice:      auditDecimal("54999.999999999999999541666666666667"),
+	}
+	if differences := orderFillAuditDifferences(row); len(differences) != 0 {
+		t.Fatalf("sub-price-precision average drift reported as mismatch: %v", differences)
+	}
+
+	row.FillAvgPrice = auditDecimal("55000.01")
+	differences := orderFillAuditDifferences(row)
+	if len(differences) != 1 || differences[0] != "avg_price" {
+		t.Fatalf("material average mismatch was not reported: %v", differences)
+	}
+}

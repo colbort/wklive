@@ -22,7 +22,11 @@ func StartPriceEngine(ctx context.Context, engine *priceengine.Engine) {
 				if errors.Is(err, priceengine.ErrInputUnavailable) {
 					now := time.Now()
 					if lastUnavailableLog.IsZero() || now.Sub(lastUnavailableLog) >= 30*time.Second {
-						logx.Infof("price engine waiting for formula input: %v", err)
+						// Missing authoritative inputs must remain visible with
+						// production logging, but the engine runs every second.
+						// Keep the error actionable without restoring the
+						// previous one-error-per-tick log storm.
+						logx.Errorf("price engine waiting for formula input: %v", err)
 						lastUnavailableLog = now
 					}
 					inputUnavailable = true

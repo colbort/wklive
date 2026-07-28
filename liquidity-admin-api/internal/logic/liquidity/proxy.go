@@ -7,7 +7,7 @@ import (
 	"wklive/liquidity-admin-api/internal/logicutil"
 	"wklive/liquidity-admin-api/internal/svc"
 	"wklive/liquidity-admin-api/internal/types"
-	commonpb "wklive/proto/common"
+	"wklive/proto/common"
 	pb "wklive/proto/liquidity"
 )
 
@@ -35,7 +35,7 @@ func orderList(ctx context.Context, svcCtx *svc.ServiceContext, req *types.Order
 	if external {
 		out, callErr := svcCtx.LiquidityCli.GetExternalOrderList(ctx, &pb.GetExternalOrderListReq{
 			ProviderId: req.ProviderId, ConfigId: req.ConfigId, SymbolId: req.SymbolId,
-			Side: commonpb.Side(req.Side), Status: pb.ExternalOrderStatus(req.Status), Keyword: req.Keyword, Cursor: req.Cursor, Limit: listLimit(req.Limit),
+			Side: common.Side(req.Side), Status: pb.ExternalOrderStatus(req.Status), Keyword: req.Keyword, Cursor: req.Cursor, Limit: listLimit(req.Limit),
 		})
 		if callErr != nil {
 			return nil, callErr
@@ -44,7 +44,7 @@ func orderList(ctx context.Context, svcCtx *svc.ServiceContext, req *types.Order
 	}
 	out, err := svcCtx.LiquidityCli.GetQuoteOrderList(ctx, &pb.GetQuoteOrderListReq{
 		ProviderId: req.ProviderId, ConfigId: req.ConfigId, SymbolId: req.SymbolId,
-		Side: commonpb.Side(req.Side), Status: pb.QuoteOrderStatus(req.Status), Keyword: req.Keyword, Cursor: req.Cursor, Limit: listLimit(req.Limit),
+		Side: common.Side(req.Side), Status: pb.QuoteOrderStatus(req.Status), Keyword: req.Keyword, Cursor: req.Cursor, Limit: listLimit(req.Limit),
 	})
 	if err != nil {
 		return nil, err

@@ -3,8 +3,8 @@ package logicutil
 import (
 	"testing"
 
-	commonpb "wklive/proto/common"
-	liquiditypb "wklive/proto/liquidity"
+	"wklive/proto/common"
+	"wklive/proto/liquidity"
 )
 
 type RespBase struct {
@@ -23,10 +23,10 @@ type testList struct {
 }
 
 func TestConvertMapsProtoBaseAndItems(t *testing.T) {
-	src := &liquiditypb.GetProviderListResp{
-		Base: &commonpb.RespBase{Code: 7, Msg: "ok"},
-		Data: []*liquiditypb.LiquidityProvider{
-			{Id: 12, Status: liquiditypb.ProviderStatus_PROVIDER_STATUS_ENABLED},
+	src := &liquidity.GetProviderListResp{
+		Base: &common.RespBase{Code: 7, Msg: "ok"},
+		Data: []*liquidity.LiquidityProvider{
+			{Id: 12, Status: liquidity.ProviderStatus_PROVIDER_STATUS_ENABLED},
 		},
 	}
 
@@ -35,7 +35,7 @@ func TestConvertMapsProtoBaseAndItems(t *testing.T) {
 		t.Fatalf("base not copied: %+v", got)
 	}
 	if len(got.Data) != 1 || got.Data[0].Id != 12 ||
-		got.Data[0].Status != int32(liquiditypb.ProviderStatus_PROVIDER_STATUS_ENABLED) {
+		got.Data[0].Status != int32(liquidity.ProviderStatus_PROVIDER_STATUS_ENABLED) {
 		t.Fatalf("data not copied: %+v", got.Data)
 	}
 }

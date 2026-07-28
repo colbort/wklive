@@ -129,6 +129,8 @@ func ToBizTypeValue(bizType string) asset.BizType {
 		return asset.BizType_BIZ_TYPE_ACTIVITY
 	case "earn":
 		return asset.BizType_BIZ_TYPE_EARN
+	case "insurance_fund":
+		return asset.BizType_BIZ_TYPE_INSURANCE_FUND
 	default:
 		return asset.BizType_BIZ_TYPE_UNKNOWN
 	}
@@ -152,6 +154,10 @@ func ToSceneTypeValue(sceneType string) asset.SceneType {
 		return asset.SceneType_SCENE_TYPE_TRADE_MATCH
 	case "trade_fee":
 		return asset.SceneType_SCENE_TYPE_TRADE_FEE
+	case "insurance_fund_cover":
+		return asset.SceneType_SCENE_TYPE_INSURANCE_FUND_COVER
+	case "insurance_fund_reversal":
+		return asset.SceneType_SCENE_TYPE_INSURANCE_FUND_REVERSAL
 	case "staking_join":
 		return asset.SceneType_SCENE_TYPE_STAKING_JOIN
 	case "staking_release":
@@ -191,6 +197,8 @@ func FromBizTypeEnum(bizType asset.BizType) string {
 		return "activity"
 	case asset.BizType_BIZ_TYPE_EARN:
 		return "earn"
+	case asset.BizType_BIZ_TYPE_INSURANCE_FUND:
+		return "insurance_fund"
 	default:
 		return ""
 	}
@@ -214,6 +222,10 @@ func FromSceneTypeEnum(sceneType asset.SceneType) string {
 		return "trade_match"
 	case asset.SceneType_SCENE_TYPE_TRADE_FEE:
 		return "trade_fee"
+	case asset.SceneType_SCENE_TYPE_INSURANCE_FUND_COVER:
+		return "insurance_fund_cover"
+	case asset.SceneType_SCENE_TYPE_INSURANCE_FUND_REVERSAL:
+		return "insurance_fund_reversal"
 	case asset.SceneType_SCENE_TYPE_STAKING_JOIN:
 		return "staking_join"
 	case asset.SceneType_SCENE_TYPE_STAKING_RELEASE:

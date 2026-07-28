@@ -111,3 +111,9 @@ func (s *AssetServer) ReverseInsuranceCover(ctx context.Context, in *asset.Rever
 	l := assetlogic.NewReverseInsuranceCoverLogic(ctx, s.svcCtx)
 	return l.ReverseInsuranceCover(in)
 }
+
+// 将业务手续费原子、幂等计入租户平台手续费收入账户。
+func (s *AssetServer) CreditPlatformRevenue(ctx context.Context, in *asset.CreditPlatformRevenueReq) (*asset.CreditPlatformRevenueResp, error) {
+	l := assetlogic.NewCreditPlatformRevenueLogic(ctx, s.svcCtx)
+	return l.CreditPlatformRevenue(in)
+}

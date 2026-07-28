@@ -106,7 +106,11 @@ func (m *defaultTTradeAssetReservationModel) addSettledAmount(ctx context.Contex
 		statusSQL = "CASE WHEN consumed_amount + released_amount + ? = reserved_amount THEN 6 ELSE 5 END"
 	}
 	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
-		query := fmt.Sprintf("UPDATE %s SET %s = %s + ?, status = %s, next_retry_at = 0, last_error_msg = '', version = version + 1, update_times = ? WHERE id = ? AND consumed_amount + released_amount + ? <= reserved_amount", m.table, column, column, statusSQL)
+		// Calculate the status before assigning the settled amount. MySQL
+		// evaluates single-table UPDATE assignments from left to right; putting
+		// the amount assignment first makes statusSQL observe the new value and
+		// add the current amount a second time.
+		query := fmt.Sprintf("UPDATE %s SET status = %s, %s = %s + ?, next_retry_at = 0, last_error_msg = '', version = version + 1, update_times = ? WHERE id = ? AND consumed_amount + released_amount + ? <= reserved_amount", m.table, statusSQL, column, column)
 		if column == "consumed_amount" {
 			return conn.ExecCtx(ctx, query, amount, amount, amount, updateTimes, id, amount)
 		}

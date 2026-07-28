@@ -22,6 +22,8 @@ type (
 	ChangeAssetResp             = asset.ChangeAssetResp
 	CoverInsuranceDeficitReq    = asset.CoverInsuranceDeficitReq
 	CoverInsuranceDeficitResp   = asset.CoverInsuranceDeficitResp
+	CreditPlatformRevenueReq    = asset.CreditPlatformRevenueReq
+	CreditPlatformRevenueResp   = asset.CreditPlatformRevenueResp
 	CreateAssetCoinConfigReq    = asset.CreateAssetCoinConfigReq
 	DeductFrozenAssetByBizNoReq = asset.DeductFrozenAssetByBizNoReq
 	DeductFrozenAssetReq        = asset.DeductFrozenAssetReq
@@ -117,6 +119,8 @@ type (
 		// 从租户保险基金账户原子扣减，余额不足时允许部分赔付。
 		CoverInsuranceDeficit(ctx context.Context, in *CoverInsuranceDeficitReq, opts ...grpc.CallOption) (*CoverInsuranceDeficitResp, error)
 		ReverseInsuranceCover(ctx context.Context, in *ReverseInsuranceCoverReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
+		// 将业务手续费原子、幂等计入租户平台手续费收入账户。
+		CreditPlatformRevenue(ctx context.Context, in *CreditPlatformRevenueReq, opts ...grpc.CallOption) (*CreditPlatformRevenueResp, error)
 	}
 
 	defaultAsset struct {
@@ -217,4 +221,10 @@ func (m *defaultAsset) CoverInsuranceDeficit(ctx context.Context, in *CoverInsur
 func (m *defaultAsset) ReverseInsuranceCover(ctx context.Context, in *ReverseInsuranceCoverReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
 	client := asset.NewAssetClient(m.cli.Conn())
 	return client.ReverseInsuranceCover(ctx, in, opts...)
+}
+
+// 将业务手续费原子、幂等计入租户平台手续费收入账户。
+func (m *defaultAsset) CreditPlatformRevenue(ctx context.Context, in *CreditPlatformRevenueReq, opts ...grpc.CallOption) (*CreditPlatformRevenueResp, error) {
+	client := asset.NewAssetClient(m.cli.Conn())
+	return client.CreditPlatformRevenue(ctx, in, opts...)
 }

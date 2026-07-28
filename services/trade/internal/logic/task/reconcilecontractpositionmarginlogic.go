@@ -8,7 +8,6 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 const (
@@ -128,7 +127,7 @@ func (l *ReconcileContractAssetFlowsLogic) persistPositionMarginAudit(row *contr
 		row.MarginConsumed, row.MarginReleased, row.MarginConsumed.Sub(row.MarginReleased))
 	actual := fmt.Sprintf("position_margin=%s isolated_margin=%s total=%s",
 		row.PositionMargin, row.IsolatedMargin, row.PositionMargin.Add(row.IsolatedMargin))
-	if err := l.svcCtx.ContractReconcileIssueModel.RecordFinding(l.ctx, &models.TContractReconciliationIssue{
+	if err := l.recordContractReconciliationFinding(&models.TContractReconciliationIssue{
 		TenantId:      row.TenantId,
 		IssueKey:      issueKey,
 		CheckType:     positionMarginCheck,
@@ -144,7 +143,5 @@ func (l *ReconcileContractAssetFlowsLogic) persistPositionMarginAudit(row *contr
 	}); err != nil {
 		return err
 	}
-	logx.WithContext(l.ctx).Errorf("contract reconciliation issue key=%s expected=%s actual=%s detail=%s",
-		issueKey, expected, actual, detail)
 	return nil
 }

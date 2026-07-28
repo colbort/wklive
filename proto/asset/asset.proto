@@ -524,6 +524,9 @@ service Asset {
   // 从租户保险基金账户原子扣减，余额不足时允许部分赔付。
   rpc CoverInsuranceDeficit(CoverInsuranceDeficitReq) returns (CoverInsuranceDeficitResp);
   rpc ReverseInsuranceCover(ReverseInsuranceCoverReq) returns (ChangeAssetResp);
+
+  // 将业务手续费原子、幂等计入租户平台手续费收入账户。
+  rpc CreditPlatformRevenue(CreditPlatformRevenueReq) returns (CreditPlatformRevenueResp);
 }
 
 message AddAvailableReq {
@@ -754,4 +757,22 @@ message ReverseInsuranceCoverReq {
   string liquidation_no = 2;
   string reversal_no = 3;
   string remark = 4;
+}
+
+message CreditPlatformRevenueReq {
+  int64 tenant_id = 1;
+  string coin = 2;
+  string amount = 3;
+  BizType biz_type = 4;
+  SceneType scene_type = 5;
+  int64 biz_id = 6;
+  string biz_no = 7;
+  string remark = 8;
+}
+
+message CreditPlatformRevenueResp {
+  common.RespBase base = 1;
+  int64 platform_account_id = 2;
+  string platform_account_balance = 3;
+  bool idempotent_replay = 4;
 }

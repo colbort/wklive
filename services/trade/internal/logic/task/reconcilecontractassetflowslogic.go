@@ -15,7 +15,6 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 const settlementAssetFlowCheck = "SETTLEMENT_ASSET_FLOW"
@@ -70,7 +69,7 @@ func (l *ReconcileContractAssetFlowsLogic) Process(tenantID int64) error {
 			if reconcileErr != nil {
 				detail = reconcileErr.Error()
 			}
-			if err = l.svcCtx.ContractReconcileIssueModel.RecordFinding(l.ctx, &models.TContractReconciliationIssue{
+			if err = l.recordContractReconciliationFinding(&models.TContractReconciliationIssue{
 				TenantId:      instruction.TenantId,
 				IssueKey:      settlementAssetFlowIssueKey(instruction),
 				CheckType:     settlementAssetFlowCheck,
@@ -87,10 +86,6 @@ func (l *ReconcileContractAssetFlowsLogic) Process(tenantID int64) error {
 			}); err != nil {
 				return err
 			}
-			logx.WithContext(l.ctx).Errorf(
-				"contract reconciliation issue key=%s expected=%s actual=%s detail=%s",
-				settlementAssetFlowIssueKey(instruction), expected, actual, detail,
-			)
 		}
 		if !progressed && len(rows) < 100 {
 			break

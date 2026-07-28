@@ -48,6 +48,22 @@ func NewTBizTradeEventModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.
 	}
 }
 
+// Insert applies defaults that cannot be left to MySQL because the generated
+// model explicitly includes every column in the INSERT statement.
+func (m *customTBizTradeEventModel) Insert(ctx context.Context, data *TBizTradeEvent) (sql.Result, error) {
+	applyBizTradeEventDefaults(data)
+	return m.defaultTBizTradeEventModel.Insert(ctx, data)
+}
+
+func applyBizTradeEventDefaults(data *TBizTradeEvent) {
+	if data == nil {
+		return
+	}
+	if data.PayloadVersion <= 0 {
+		data.PayloadVersion = 1
+	}
+}
+
 func (m *defaultTBizTradeEventModel) FindDispatchable(ctx context.Context, tenantID, now, staleBefore, cursor, limit int64, eventTypes []string) ([]*TBizTradeEvent, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	tenantFilter := ""

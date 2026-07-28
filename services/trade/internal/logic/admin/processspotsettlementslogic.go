@@ -44,6 +44,11 @@ func (l *ProcessFillSettlementsLogic) ProcessFill(fillID int64) error {
 	if fill.SettlementStatus == int64(trade.FillSettlementStatus_FILL_SETTLEMENT_STATUS_SETTLED) {
 		return nil
 	}
+	if fill.ProductType == int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) {
+		if err := NewProcessContractPositionFillsLogic(l.ctx, l.svcCtx).ProcessFill(fill.Id); err != nil {
+			return err
+		}
+	}
 	for step := 0; step < 16; step++ {
 		items, err := l.svcCtx.TradeSettlementInstrModel.FindByFillId(l.ctx, fill.TenantId, fill.Id)
 		if err != nil {
@@ -99,6 +104,15 @@ func (l *ProcessFillSettlementsLogic) Process(tenantID int64) error {
 		}
 		progressed := false
 		for _, item := range items {
+			ready, err := l.instructionReadyAfterPositionProjection(item)
+			if err != nil {
+				return err
+			}
+			if !ready {
+				progressed = true
+				processed++
+				continue
+			}
 			claimed, lease, err := l.svcCtx.TradeSettlementInstrModel.ClaimLease(l.ctx, item.Id, now)
 			if err != nil {
 				return err
@@ -122,6 +136,30 @@ func (l *ProcessFillSettlementsLogic) Process(tenantID int64) error {
 		}
 	}
 	return nil
+}
+
+func (l *ProcessFillSettlementsLogic) instructionReadyAfterPositionProjection(item *models.TTradeSettlementInstruction) (bool, error) {
+	fill, err := l.svcCtx.TradeFillModel.FindOne(l.ctx, item.FillId)
+	if err != nil {
+		return false, err
+	}
+	if fill.ProductType != int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) {
+		return true, nil
+	}
+	if err := NewProcessContractPositionFillsLogic(l.ctx, l.svcCtx).ProcessFill(fill.Id); err != nil {
+		return false, err
+	}
+	items, err := l.svcCtx.TradeSettlementInstrModel.FindByFillId(l.ctx, fill.TenantId, fill.Id)
+	if err != nil {
+		return false, err
+	}
+	for _, candidate := range items {
+		if candidate.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) {
+			continue
+		}
+		return candidate.Id == item.Id, nil
+	}
+	return false, nil
 }
 
 func (l *ProcessFillSettlementsLogic) processInstruction(item *models.TTradeSettlementInstruction) error {

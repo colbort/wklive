@@ -51,7 +51,7 @@ type (
 		CategoryCode    string `db:"category_code"`
 		Market          string `db:"market"`
 		Symbol          string `db:"symbol"`
-		Algorithm       int64  `db:"algorithm"` // 1 weighted mean,2 median,3 premium rate
+		Algorithm       int64  `db:"algorithm"` // 1 weighted mean,2 median,3 premium rate,4 index plus bounded basis
 		FormulaVersion  string `db:"formula_version"`
 		Components      string `db:"components"`
 		MaxLookbackMs   int64  `db:"max_lookback_ms"`

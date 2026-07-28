@@ -55,6 +55,7 @@ func (l *ProcessContractPositionFillsLogic) ProcessFill(fillID int64) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		positionModel := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
 		historyModel := models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis)
+		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis)
 		contractOrderModel := models.NewTTradeOrderContractModel(conn, l.svcCtx.Config.CacheRedis)
 		instructionModel := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
 		eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
@@ -63,7 +64,7 @@ func (l *ProcessContractPositionFillsLogic) ProcessFill(fillID int64) error {
 			return err
 		}
 		if projected > 0 {
-			return nil
+			return syncFillRealizedPnl(ctx, fillModel, historyModel, fill)
 		}
 
 		remaining := fill.Qty
@@ -104,8 +105,23 @@ func (l *ProcessContractPositionFillsLogic) ProcessFill(fillID int64) error {
 				return err
 			}
 		}
-		return nil
+		return syncFillRealizedPnl(ctx, fillModel, historyModel, fill)
 	})
+}
+
+func syncFillRealizedPnl(ctx context.Context, fillModel models.TTradeFillModel, historyModel models.TContractPositionHistoryModel, fill *models.TTradeFill) error {
+	histories, err := historyModel.FindByRefFillId(ctx, fill.TenantId, fill.Id)
+	if err != nil {
+		return err
+	}
+	realized := decimal.Zero
+	for _, history := range histories {
+		realized = realized.Add(history.RealizedPnlDelta)
+	}
+	if fill.RealizedPnl.Equal(realized) {
+		return nil
+	}
+	return fillModel.UpdateRealizedPnl(ctx, fill.Id, realized)
 }
 
 func (l *ProcessContractPositionFillsLogic) applyOpen(ctx context.Context, positionModel models.TContractPositionModel, historyModel models.TContractPositionHistoryModel, eventModel models.TBizTradeEventModel, instructionModel models.TTradeSettlementInstructionModel, fill *models.TTradeFill, contractOrder *models.TTradeOrderContract, contract *models.TTradeSymbolContract, side int64, qty decimal.Decimal) error {

@@ -204,19 +204,22 @@ func (l *ProcessLiquidationsLogic) cancelRiskIncreasingOrders(position *models.T
 }
 
 func (l *ProcessLiquidationsLogic) settleTakeover(position *models.TContractPosition, contract *models.TTradeSymbolContract, liq *models.TContractLiquidation) error {
-	pnl := contractRealizedPnl(position.PositionSide, position.OpenAvgPrice, position.MarkPrice, position.Qty, contract.ContractSize, position.ContractValueType)
-	values, err := contractmath.CalculateTradeValues(position.ContractValueType, position.Qty, contract.ContractSize, position.MarkPrice)
+	values, err := contractmath.CalculateTradeValues(position.ContractValueType, liq.TriggerQty, contract.ContractSize, liq.TriggerMarkPrice)
 	if err != nil {
 		return err
 	}
-	fee := contractmath.RoundDebit(values.SettlementNotional.Mul(contract.LiquidationFeeRate))
-	equity := position.PositionMargin.Add(position.IsolatedMargin).Add(pnl).Sub(fee)
-	if equity.IsPositive() {
-		if err := l.assetChange(position.TenantId, position.UserId, position.MarginAsset, equity, true, liq.Id, liq.LiquidationNo+"-RESIDUAL", "liquidation residual equity"); err != nil {
+	nominalFee := contractmath.RoundDebit(values.SettlementNotional.Mul(contract.LiquidationFeeRate))
+	fee, residual, deficit := splitLiquidationEquity(liq.AccountEquity, nominalFee)
+	if fee.IsPositive() {
+		if err := l.creditPlatformRevenue(position.TenantId, position.MarginAsset, fee, liq); err != nil {
 			return err
 		}
 	}
-	deficit := decimalMaxZero(equity.Neg())
+	if residual.IsPositive() {
+		if err := l.assetChange(position.TenantId, position.UserId, position.MarginAsset, residual, true, liq.Id, liq.LiquidationNo+"-RESIDUAL", "liquidation residual equity"); err != nil {
+			return err
+		}
+	}
 	var fund *models.TContractInsuranceFundAccount
 	if deficit.IsPositive() {
 		fund, err = l.svcCtx.ContractInsuranceFundModel.FindEnabled(l.ctx, position.TenantId, position.SymbolId, position.MarginAsset)
@@ -258,6 +261,17 @@ func (l *ProcessLiquidationsLogic) settleTakeover(position *models.TContractPosi
 		}
 	}
 	return l.completeLiquidation(position, liq, fee)
+}
+
+// splitLiquidationEquity ensures that a liquidation fee can only be collected
+// from positive remaining equity. Insurance and ADL cover bankruptcy loss, not
+// platform fee revenue.
+func splitLiquidationEquity(grossEquity, nominalFee decimal.Decimal) (fee, residual, deficit decimal.Decimal) {
+	positiveEquity := decimalMaxZero(grossEquity)
+	fee = decimalMin(decimalMaxZero(nominalFee), positiveEquity)
+	residual = decimalMaxZero(positiveEquity.Sub(fee))
+	deficit = decimalMaxZero(grossEquity.Neg())
+	return fee, residual, deficit
 }
 
 func (l *ProcessLiquidationsLogic) markLiquidationManual(liq *models.TContractLiquidation, reason string) error {
@@ -378,6 +392,29 @@ func (l *ProcessLiquidationsLogic) assetChange(tenant, user int64, coin string, 
 		return err
 	}
 	return validateLiquidationAssetResponse(resp)
+}
+
+func (l *ProcessLiquidationsLogic) creditPlatformRevenue(tenant int64, coin string, amount decimal.Decimal, liq *models.TContractLiquidation) error {
+	resp, err := l.svcCtx.AssetClient.CreditPlatformRevenue(l.ctx, &asset.CreditPlatformRevenueReq{
+		TenantId:  tenant,
+		Coin:      coin,
+		Amount:    amount.String(),
+		BizType:   asset.BizType_BIZ_TYPE_TRADE,
+		SceneType: asset.SceneType_SCENE_TYPE_TRADE_FEE,
+		BizId:     liq.Id,
+		BizNo:     liq.LiquidationNo + "-FEE",
+		Remark:    "liquidation fee revenue",
+	})
+	if err != nil {
+		return err
+	}
+	if resp == nil || resp.GetBase() == nil {
+		return errors.New("platform revenue returned an empty response")
+	}
+	if resp.GetBase().GetCode() != 200 {
+		return fmt.Errorf("platform revenue rejected: %s", resp.GetBase().GetMsg())
+	}
+	return nil
 }
 
 func validateLiquidationAssetResponse(resp *asset.ChangeAssetResp) error {

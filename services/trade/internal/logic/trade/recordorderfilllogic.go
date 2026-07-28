@@ -83,29 +83,58 @@ func recordOrderFillWithModels(ctx context.Context, fillModel models.TTradeFillM
 	if err != nil {
 		return nil, nil, err
 	}
-	exists, err := fillModel.FindOneByTenantIdFillNo(ctx, fill.TenantId, fill.FillNo)
-	if err != nil && !errors.Is(err, models.ErrNotFound) {
-		return nil, nil, err
-	}
-	if exists != nil {
-		order, findErr := findOrderForFill(ctx, orderModel, in)
-		return exists, order, findErr
-	}
-
 	order, err := findOrderForFill(ctx, orderModel, in)
 	if err != nil {
 		return nil, nil, err
 	}
-	if !helpers.IsMatchableOrderStatus(order.Status) {
-		return nil, nil, i18n.StatusError(ctx, i18n.OperationNotAllowed)
-	}
 	if !fillMatchesOrder(order, fill) {
 		return nil, nil, i18n.StatusError(ctx, i18n.ParamError)
+	}
+	completeFillOrderIdentity(fill, order)
+
+	existsByFillNo, err := fillModel.FindOneByTenantIdFillNo(ctx, fill.TenantId, fill.FillNo)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, nil, err
+	}
+	existsByMatchOrder, err := fillModel.FindOneByTenantIdMatchNoOrderId(ctx, fill.TenantId, fill.MatchNo, fill.OrderId)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return nil, nil, err
+	}
+	if existsByFillNo != nil || existsByMatchOrder != nil {
+		exists := existsByFillNo
+		if exists == nil {
+			exists = existsByMatchOrder
+		}
+		if (existsByFillNo != nil && existsByMatchOrder != nil && existsByFillNo.Id != existsByMatchOrder.Id) ||
+			!sameTradeFillIdentity(exists, fill) {
+			return nil, nil, i18n.StatusError(ctx, i18n.ParamError)
+		}
+		return exists, order, nil
+	}
+
+	if !helpers.IsMatchableOrderStatus(order.Status) {
+		return nil, nil, i18n.StatusError(ctx, i18n.OperationNotAllowed)
 	}
 	if !canApplyOrderFill(order, fill) {
 		return nil, nil, i18n.StatusError(ctx, i18n.ParamError)
 	}
 
+	result, err := fillModel.Insert(ctx, fill)
+	if err != nil {
+		return nil, nil, err
+	}
+	fill.Id, _ = result.LastInsertId()
+	applyFillToOrder(order, fill, now)
+	if err := orderModel.Update(ctx, order); err != nil {
+		return nil, nil, err
+	}
+	return fill, order, nil
+}
+
+func completeFillOrderIdentity(fill *models.TTradeFill, order *models.TTradeOrder) {
+	if fill == nil || order == nil {
+		return
+	}
 	if fill.OrderId <= 0 {
 		fill.OrderId = order.Id
 	}
@@ -133,17 +162,29 @@ func recordOrderFillWithModels(ctx context.Context, fillModel models.TTradeFillM
 	if fill.PositionSide <= 0 {
 		fill.PositionSide = order.PositionSide
 	}
+}
 
-	result, err := fillModel.Insert(ctx, fill)
-	if err != nil {
-		return nil, nil, err
-	}
-	fill.Id, _ = result.LastInsertId()
-	applyFillToOrder(order, fill, now)
-	if err := orderModel.Update(ctx, order); err != nil {
-		return nil, nil, err
-	}
-	return fill, order, nil
+func sameTradeFillIdentity(a, b *models.TTradeFill) bool {
+	return a != nil && b != nil &&
+		a.TenantId == b.TenantId &&
+		a.FillNo == b.FillNo &&
+		a.MatchNo == b.MatchNo &&
+		a.OrderId == b.OrderId &&
+		a.OrderNo == b.OrderNo &&
+		a.UserId == b.UserId &&
+		a.SymbolId == b.SymbolId &&
+		a.ProductType == b.ProductType &&
+		a.ContractType == b.ContractType &&
+		a.ContractValueType == b.ContractValueType &&
+		a.Side == b.Side &&
+		a.PositionSide == b.PositionSide &&
+		a.Price.Equal(b.Price) &&
+		a.Qty.Equal(b.Qty) &&
+		a.Amount.Equal(b.Amount) &&
+		a.Fee.Equal(b.Fee) &&
+		a.FeeAsset == b.FeeAsset &&
+		a.LiquidityType == b.LiquidityType &&
+		a.RealizedPnl.Equal(b.RealizedPnl)
 }
 
 func fillMatchesOrder(order *models.TTradeOrder, fill *models.TTradeFill) bool {
