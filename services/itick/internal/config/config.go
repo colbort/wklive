@@ -39,6 +39,15 @@ type Config struct {
 		// WriteTimeoutMs 是单次 MongoDB 批量写入超时时间，单位毫秒。
 		WriteTimeoutMs int
 	}
+	// SnapshotOutbox 控制权威快照异步发布吞吐。
+	SnapshotOutbox struct {
+		// WorkerCount 是单实例并发发布协程数。
+		WorkerCount int
+		// BatchSize 是单轮最多领取的任务数。
+		BatchSize int64
+		// IdleIntervalMs 是队列暂时为空时的轮询间隔。
+		IdleIntervalMs int
+	}
 	// SnapshotOutboxCleanup 控制已成功发布的权威快照 Outbox 清理任务。
 	// 未配置或配置为非正数时，任务使用代码内置的安全默认值。
 	SnapshotOutboxCleanup struct {

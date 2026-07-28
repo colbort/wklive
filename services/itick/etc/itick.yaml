@@ -36,6 +36,14 @@ KlineWriter:
   FlushIntervalMs: 1000
   WriteTimeoutMs: 5000
 
+SnapshotOutbox:
+  # 单实例并发发布数；积压较大时可按 Redis、Kafka 和 MySQL 容量调整。
+  WorkerCount: 32
+  # 单轮领取数，应不小于 WorkerCount。
+  BatchSize: 512
+  # 队列为空或不足一批时的轮询间隔，单位毫秒。
+  IdleIntervalMs: 100
+
 SnapshotOutboxCleanup:
   # status=3 的成功记录保留时间，单位分钟。
   SuccessRetentionMinutes: 30

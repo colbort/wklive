@@ -86,16 +86,33 @@ func requireOneOutboxRow(result sql.Result, err error) error {
 }
 
 func (m *defaultTItickSnapshotOutboxModel) Health(ctx context.Context) (*SnapshotOutboxHealth, error) {
-	var health SnapshotOutboxHealth
-	query := `SELECT
-		COALESCE(SUM(status=1),0) AS pending_count,
-		COALESCE(SUM(status=2),0) AS processing_count,
-		COALESCE(SUM(status=4),0) AS failed_count,
-		COALESCE(SUM(status=5),0) AS manual_count,
-		COALESCE(MIN(CASE WHEN status IN (1,2,4,5) THEN create_times END),0) AS oldest_open_at
-		FROM t_itick_snapshot_outbox`
-	if err := m.QueryRowNoCacheCtx(ctx, &health, query); err != nil {
+	var rows []struct {
+		Status   int64 `db:"status"`
+		Count    int64 `db:"row_count"`
+		OldestAt int64 `db:"oldest_at"`
+	}
+	query := `SELECT status,COUNT(*) AS row_count,MIN(create_times) AS oldest_at
+		FROM t_itick_snapshot_outbox
+		WHERE status IN (1,2,4,5)
+		GROUP BY status`
+	if err := m.QueryRowsNoCacheCtx(ctx, &rows, query); err != nil {
 		return nil, err
+	}
+	health := SnapshotOutboxHealth{}
+	for _, row := range rows {
+		switch row.Status {
+		case 1:
+			health.PendingCount = row.Count
+		case 2:
+			health.ProcessingCount = row.Count
+		case 4:
+			health.FailedCount = row.Count
+		case 5:
+			health.ManualCount = row.Count
+		}
+		if health.OldestOpenAt == 0 || row.OldestAt < health.OldestOpenAt {
+			health.OldestOpenAt = row.OldestAt
+		}
 	}
 	return &health, nil
 }

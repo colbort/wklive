@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	market "wklive/common/market"
@@ -16,6 +17,13 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
+const (
+	defaultSnapshotOutboxWorkerCount    = 32
+	defaultSnapshotOutboxBatchSize      = int64(512)
+	defaultSnapshotOutboxIdleInterval   = 100 * time.Millisecond
+	defaultSnapshotOutboxHealthInterval = 30 * time.Second
+)
+
 type snapshotOutboxPayload struct {
 	Snapshot *market.SettlementSnapshot `json:"snapshot"`
 	Message  types.ClientMessage        `json:"message"`
@@ -23,22 +31,52 @@ type snapshotOutboxPayload struct {
 }
 
 func StartSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext) {
+	workerCount := svcCtx.Config.SnapshotOutbox.WorkerCount
+	if workerCount <= 0 || workerCount > 256 {
+		workerCount = defaultSnapshotOutboxWorkerCount
+	}
+	batchSize := svcCtx.Config.SnapshotOutbox.BatchSize
+	if batchSize < int64(workerCount) || batchSize > 5000 {
+		batchSize = defaultSnapshotOutboxBatchSize
+	}
+	idleInterval := time.Duration(svcCtx.Config.SnapshotOutbox.IdleIntervalMs) * time.Millisecond
+	if idleInterval <= 0 {
+		idleInterval = defaultSnapshotOutboxIdleInterval
+	}
+
+	// 健康检查独立运行，不能再被一个耗时的发布批次阻塞。
 	go func() {
-		ticker := time.NewTicker(time.Second)
+		ticker := time.NewTicker(defaultSnapshotOutboxHealthInterval)
 		defer ticker.Stop()
-		lastHealthCheck := time.Time{}
+		checkSnapshotOutboxHealth(ctx, svcCtx, time.Now())
 		for {
-			if err := processSnapshotOutbox(ctx, svcCtx); err != nil && ctx.Err() == nil {
-				logx.Errorf("snapshot outbox worker failed: %v", err)
-			}
-			if lastHealthCheck.IsZero() || time.Since(lastHealthCheck) >= 30*time.Second {
-				checkSnapshotOutboxHealth(ctx, svcCtx, time.Now())
-				lastHealthCheck = time.Now()
-			}
 			select {
 			case <-ctx.Done():
 				return
-			case <-ticker.C:
+			case now := <-ticker.C:
+				checkSnapshotOutboxHealth(ctx, svcCtx, now)
+			}
+		}
+	}()
+
+	go func() {
+		for {
+			processed, err := processSnapshotOutbox(ctx, svcCtx, workerCount, batchSize)
+			if err != nil && ctx.Err() == nil {
+				logx.Errorf("snapshot outbox worker failed: %v", err)
+			}
+			// 有满批积压时立即继续，不再固定睡眠一秒。
+			if processed >= batchSize {
+				continue
+			}
+			timer := time.NewTimer(idleInterval)
+			select {
+			case <-ctx.Done():
+				if !timer.Stop() {
+					<-timer.C
+				}
+				return
+			case <-timer.C:
 			}
 		}
 	}()
@@ -71,31 +109,56 @@ func snapshotOutboxUnhealthy(health *models.SnapshotOutboxHealth, oldestAgeMilli
 		(health.PendingCount+health.ProcessingCount > 0 && oldestAgeMillis > int64(time.Minute/time.Millisecond))
 }
 
-func processSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext) error {
+func processSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, workerCount int, batchSize int64) (int64, error) {
 	now := time.Now().UnixMilli()
-	rows, err := svcCtx.SnapshotOutboxModel.FindPending(ctx, now, 100)
+	rows, err := svcCtx.SnapshotOutboxModel.FindPending(ctx, now, batchSize)
 	if err != nil {
-		return err
+		return 0, err
 	}
+	claimedRows := make([]*models.TItickSnapshotOutbox, 0, len(rows))
 	for _, row := range rows {
 		claimed, claimErr := svcCtx.SnapshotOutboxModel.Claim(ctx, row.Id, now)
 		if claimErr != nil {
-			return claimErr
+			return int64(len(claimedRows)), claimErr
 		}
-		if !claimed {
-			continue
-		}
-		if publishErr := publishSnapshotOutbox(ctx, svcCtx, row); publishErr != nil {
-			if markErr := svcCtx.SnapshotOutboxModel.MarkFailure(ctx, row.Id, publishErr.Error(), time.Now().UnixMilli()); markErr != nil {
-				return markErr
-			}
-			continue
-		}
-		if err = svcCtx.SnapshotOutboxModel.MarkSuccess(ctx, row.Id, time.Now().UnixMilli()); err != nil {
-			return err
+		if claimed {
+			claimedRows = append(claimedRows, row)
 		}
 	}
-	return nil
+	if len(claimedRows) == 0 {
+		return 0, nil
+	}
+
+	jobs := make(chan *models.TItickSnapshotOutbox)
+	errs := make(chan error, len(claimedRows))
+	var workers sync.WaitGroup
+	for i := 0; i < workerCount; i++ {
+		workers.Add(1)
+		go func() {
+			defer workers.Done()
+			for row := range jobs {
+				if publishErr := publishSnapshotOutbox(ctx, svcCtx, row); publishErr != nil {
+					if markErr := svcCtx.SnapshotOutboxModel.MarkFailure(ctx, row.Id, publishErr.Error(), time.Now().UnixMilli()); markErr != nil {
+						errs <- markErr
+					}
+					continue
+				}
+				if markErr := svcCtx.SnapshotOutboxModel.MarkSuccess(ctx, row.Id, time.Now().UnixMilli()); markErr != nil {
+					errs <- markErr
+				}
+			}
+		}()
+	}
+	for _, row := range claimedRows {
+		jobs <- row
+	}
+	close(jobs)
+	workers.Wait()
+	close(errs)
+	for workerErr := range errs {
+		return int64(len(claimedRows)), workerErr
+	}
+	return int64(len(claimedRows)), nil
 }
 
 func publishSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, row *models.TItickSnapshotOutbox) error {
