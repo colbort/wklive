@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"database/sql"
@@ -39,9 +40,10 @@ type config struct {
 }
 
 type migration struct {
-	version  string
-	path     string
-	checksum string
+	version      string
+	path         string
+	checksum     string
+	baselineSafe bool
 }
 
 func main() {
@@ -73,9 +75,8 @@ func main() {
 	must(err)
 	if !existed {
 		must(baselineMigrations(ctx, db, migrations))
-	} else {
-		must(applyPendingMigrations(ctx, db, migrations))
 	}
+	must(applyPendingMigrations(ctx, db, migrations))
 
 	must(mergeInitializationData(ctx, db, cfg))
 
@@ -242,9 +243,10 @@ func findMigrations(workspace string) ([]migration, error) {
 			}
 			sum := sha256.Sum256(data)
 			result = append(result, migration{
-				version:  filepath.ToSlash(relative),
-				path:     path,
-				checksum: hex.EncodeToString(sum[:]),
+				version:      filepath.ToSlash(relative),
+				path:         path,
+				checksum:     hex.EncodeToString(sum[:]),
+				baselineSafe: bytes.Contains(data, []byte("-- dbinit:baseline-safe")),
 			})
 		}
 	}
@@ -253,14 +255,25 @@ func findMigrations(workspace string) ([]migration, error) {
 }
 
 func baselineMigrations(ctx context.Context, db *sql.DB, migrations []migration) error {
+	recorded := 0
+	pending := 0
 	for _, item := range migrations {
+		if item.baselineSafe {
+			pending++
+			continue
+		}
 		if _, err := db.ExecContext(ctx,
 			`INSERT INTO schema_migrations(version, checksum, applied_at) VALUES (?, ?, ?)`,
 			item.version, item.checksum, time.Now().UnixMilli()); err != nil {
 			return err
 		}
+		recorded++
 	}
-	log.Printf("recorded current schema as migration baseline")
+	log.Printf(
+		"recorded current schema as migration baseline: recorded=%d pending_safe=%d",
+		recorded,
+		pending,
+	)
 	return nil
 }
 

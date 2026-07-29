@@ -92,6 +92,10 @@ LIQUIDITY_ADMIN_PASSWORD=replace-liquidity-password
 ./deploy.sh db-init
 ```
 
+`./deploy.sh build` 和 `./deploy.sh up` 会逐个构建应用镜像，避免 Compose/Bake
+全量并行编译耗尽 Docker 资源；传入服务名时只构建指定服务。已经构建好镜像时，
+可用 `./deploy.sh start` 直接启动整套 Compose 环境。
+
 已经记录的迁移文件不允许修改；校验和发生变化时初始化会失败，必须新增迁移文件。
 对于没有 `schema_migrations` 的既有数据库，初始化器会将仓库当前迁移记录为基线，
 不会盲目重复执行可能已经落库的 `ALTER TABLE`。
@@ -119,6 +123,18 @@ MYSQL_DATABASE=wklive
 
 也可以使用 `MYSQL_DSN` 提供完整连接串；设置后它优先于以上字段。该命令要求目标
 数据库已经包含业务表；空库请先使用 `./deploy.sh db-init` 完成完整初始化。
+
+需要同时把已有数据库结构升级到仓库当前版本时，使用：
+
+```bash
+./deploy.sh database
+```
+
+`db-upgrade` 是同义命令。该命令不会启动 Compose 内的 MySQL；它会连接上述已有
+MySQL，建立迁移历史、执行明确标记为可安全补齐的结构迁移，然后幂等合并初始化数据。
+首次接管没有 `schema_migrations` 的老库时，历史迁移只登记为基线，不会重放；带有
+`dbinit:baseline-safe` 标记的结构收敛迁移仍会实际执行，因此不会出现“迁移已登记但
+字段仍缺失”的假升级。
 
 ## 配置初始化
 

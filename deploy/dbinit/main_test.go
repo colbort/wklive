@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	mysql "github.com/go-sql-driver/mysql"
@@ -36,5 +38,39 @@ func TestLoadMySqlDSNPrefersExplicitDSN(t *testing.T) {
 	t.Setenv("MYSQL_DSN", dsn)
 	if got := loadMySqlDSN(); got != dsn {
 		t.Fatalf("dsn=%q want=%q", got, dsn)
+	}
+}
+
+func TestFindMigrationsMarksOnlyExplicitBaselineSafeFiles(t *testing.T) {
+	workspace := t.TempDir()
+	migrationsDir := filepath.Join(workspace, "services", "trade", "migrations")
+	if err := os.MkdirAll(migrationsDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	legacyPath := filepath.Join(migrationsDir, "20260728_legacy.sql")
+	safePath := filepath.Join(migrationsDir, "20260729_reconcile.sql")
+	if err := os.WriteFile(legacyPath, []byte("SELECT 1;\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(
+		safePath,
+		[]byte("-- dbinit:baseline-safe\nSELECT 1;\n"),
+		0o644,
+	); err != nil {
+		t.Fatal(err)
+	}
+
+	migrations, err := findMigrations(workspace)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(migrations) != 2 {
+		t.Fatalf("migrations=%d want=2", len(migrations))
+	}
+	if migrations[0].baselineSafe {
+		t.Fatalf("legacy migration unexpectedly baseline safe: %s", migrations[0].version)
+	}
+	if !migrations[1].baselineSafe {
+		t.Fatalf("reconciliation migration not baseline safe: %s", migrations[1].version)
 	}
 }
