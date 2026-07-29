@@ -43,7 +43,14 @@ func validateFinalDeliveryPriceFact(configuredAlgorithm string, quote *marketQuo
 	if strings.TrimSpace(configuredAlgorithm) == "" {
 		return "", "", errors.New("delivery settlement price algorithm is not configured")
 	}
-	return strings.TrimSpace(configuredAlgorithm), formulaVersion, nil
+	configuredAlgorithm = strings.TrimSpace(configuredAlgorithm)
+	if configuredAlgorithm != formulaVersion {
+		return "", "", fmt.Errorf(
+			"delivery formula version mismatch: configured=%s snapshot=%s",
+			configuredAlgorithm, formulaVersion,
+		)
+	}
+	return configuredAlgorithm, formulaVersion, nil
 }
 
 func (l *ProcessDeliverySettlementsLogic) Process(tenantID int64) error {
@@ -222,6 +229,19 @@ func (l *ProcessDeliverySettlementsLogic) ensureBatch(symbol *models.TTradeSymbo
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return err
 	}
+	positions, err := l.svcCtx.ContractPositionModel.FindList(l.ctx, models.ContractPositionPageFilter{TenantId: c.TenantId, SymbolId: c.SymbolId, ContractType: int64(common.ContractType_CONTRACT_TYPE_DELIVERY)})
+	if err != nil {
+		return err
+	}
+	active := positions[:0]
+	for _, p := range positions {
+		if p.Qty.IsPositive() {
+			active = append(active, p)
+		}
+	}
+	if len(active) == 0 {
+		return l.completeEmptyDeliveryBatch(symbol, c)
+	}
 	quote, candidates, err := NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).getValidQuotesAtKind("DELIVERY_PRICE", c.SettlementPriceSource, c.SymbolId, c.DeliveryTime, c.SettlementWindowSeconds*1000)
 	if err != nil {
 		return err
@@ -235,15 +255,8 @@ func (l *ProcessDeliverySettlementsLogic) ensureBatch(symbol *models.TTradeSymbo
 		return fmt.Errorf("delivery quote outside configured settlement window")
 	}
 	price := helpers.MustParseFloat(quote.LastPrice)
-	positions, err := l.svcCtx.ContractPositionModel.FindList(l.ctx, models.ContractPositionPageFilter{TenantId: c.TenantId, SymbolId: c.SymbolId, ContractType: int64(common.ContractType_CONTRACT_TYPE_DELIVERY)})
-	if err != nil {
-		return err
-	}
-	active := positions[:0]
-	for _, p := range positions {
-		if p.Qty.IsPositive() {
-			active = append(active, p)
-		}
+	if !price.IsPositive() {
+		return fmt.Errorf("delivery price must be positive: %q", quote.LastPrice)
 	}
 	now := utils.NowMillis()
 	batchNo := fmt.Sprintf("DLV-%d-%d", c.SymbolId, c.DeliveryTime)
@@ -339,6 +352,43 @@ func (l *ProcessDeliverySettlementsLogic) ensureBatch(symbol *models.TTradeSymbo
 		symbol.Status = int64(trade.SymbolStatus_SYMBOL_STATUS_DISABLED)
 		symbol.UpdateTimes = now
 		return symbolModel.Update(ctx, symbol)
+	})
+}
+
+func (l *ProcessDeliverySettlementsLogic) completeEmptyDeliveryBatch(symbol *models.TTradeSymbol, c *models.TTradeSymbolContract) error {
+	now := utils.NowMillis()
+	batchNo := fmt.Sprintf("DLV-%d-%d", c.SymbolId, c.DeliveryTime)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		bm := tx.ContractDeliveryBatch
+		current, err := bm.FindOneForUpdateByTenantSymbolDelivery(ctx, c.TenantId, c.SymbolId, c.DeliveryTime)
+		if errors.Is(err, models.ErrNotFound) {
+			if _, err = bm.Insert(ctx, &models.TContractDeliveryBatch{
+				TenantId: c.TenantId, BatchNo: batchNo, SymbolId: c.SymbolId,
+				OpenCutoffTime: c.OpenCutoffTime, MatchingStopTime: c.MatchingStopTime,
+				DeliveryTime: c.DeliveryTime, Status: int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_SETTLING),
+				TotalPositions: 0, SettledPositions: 0, CreateTimes: now, UpdateTimes: now,
+			}); err != nil {
+				return err
+			}
+		} else {
+			if err != nil {
+				return err
+			}
+			if current.Status < int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_SETTLING) {
+				current.Status = int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_SETTLING)
+				current.TotalPositions = 0
+				current.SettledPositions = 0
+				current.LastErrorMsg = ""
+				current.Version++
+				current.UpdateTimes = now
+				if err = bm.Update(ctx, current); err != nil {
+					return err
+				}
+			}
+		}
+		symbol.Status = int64(trade.SymbolStatus_SYMBOL_STATUS_DISABLED)
+		symbol.UpdateTimes = now
+		return tx.TradeSymbol.Update(ctx, symbol)
 	})
 }
 

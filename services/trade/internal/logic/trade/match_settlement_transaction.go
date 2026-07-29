@@ -130,7 +130,7 @@ func derivedTradeBizNo(base, suffix string) string {
 	return base[:47] + "-" + fmt.Sprintf("%x", digest[:8])
 }
 
-func buildFillSettlementInstructions(ctx context.Context, _ models.TTradeOrderContractModel, symbol *models.TTradeSymbol, order *models.TTradeOrder, fill *models.TTradeFill) ([]settlementInstructionSpec, error) {
+func buildFillSettlementInstructions(_ context.Context, _ models.TTradeOrderContractModel, symbol *models.TTradeSymbol, order *models.TTradeOrder, fill *models.TTradeFill) ([]settlementInstructionSpec, error) {
 	if order.ProductType == int64(common.ProductType_PRODUCT_TYPE_SPOT) {
 		if order.Side == int64(common.Side_SIDE_BUY) {
 			return []settlementInstructionSpec{

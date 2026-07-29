@@ -100,6 +100,34 @@ LIQUIDITY_ADMIN_PASSWORD=replace-liquidity-password
 对于没有 `schema_migrations` 的既有数据库，初始化器会将仓库当前迁移记录为基线，
 不会盲目重复执行可能已经落库的 `ALTER TABLE`。
 
+## 永续与交割合约生产门禁检查
+
+生产强平和全仓开仓前，先复制只包含审批结果、证据路径及证据 SHA-256 的声明模板。
+该文件不能保存行情源密码、API Key 或访问令牌：
+
+```bash
+cp production-readiness.env.example production-readiness.env
+# 填写生产来源、参数、审批人和演练报告的绝对路径
+./deploy.sh contract-readiness
+```
+
+也可以显式指定另一份声明文件：
+
+```bash
+./deploy.sh contract-readiness /secure/path/production-readiness.env
+```
+
+检查为只读操作，覆盖三源 INDEX/DELIVERY、INDEX_BASIS MARK、FUNDING 公式、
+实时 FINAL_QUOTE 与引擎输出新鲜度、永续/交割产品、保险基金和手续费平台账户、
+历史回放、告警投递、资金权限、灾备演练、Outbox、对账与结算水位，以及 Etcd
+中的两个生产安全开关。预检期间
+`AutomaticLiquidation.Enabled` 和 `CrossMarginTrading.Enabled` 必须仍为
+`false`；全部通过也不会自动打开开关，启用仍须走已批准的发布和回滚流程。
+数据库只读检查由 `deploy/dbinit/models` 中的 readiness model 执行，shell 入口不
+包含业务 SQL。
+四份证据的必填内容和通过标准见
+[`perpetual-delivery-production-evidence-guide.md`](../services/trade/docs/perpetual-delivery-production-evidence-guide.md)。
+
 ### 合并已有 MySQL 的初始化数据
 
 MySQL 已经安装并且 `wklive` Schema 已存在时，可只合并初始化数据，不启动 Compose

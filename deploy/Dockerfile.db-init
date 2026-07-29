@@ -4,10 +4,12 @@ FROM golang:${GO_VERSION}-alpine AS builder
 WORKDIR /src
 COPY deploy/dbinit/go.mod deploy/dbinit/go.sum* ./
 RUN go mod download
-COPY deploy/dbinit/main.go .
+COPY deploy/dbinit/ .
 RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/db-init .
+RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/contract-readiness ./cmd/contract-readiness
 
 FROM alpine:3.23
 RUN apk add --no-cache ca-certificates tzdata
 COPY --from=builder /out/db-init /usr/local/bin/db-init
+COPY --from=builder /out/contract-readiness /usr/local/bin/contract-readiness
 ENTRYPOINT ["/usr/local/bin/db-init"]

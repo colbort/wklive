@@ -1,6 +1,9 @@
 package tasklogic
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
 func TestValidateFinalDeliveryPriceFact(t *testing.T) {
 	quote := &marketQuoteSnapshot{
@@ -8,11 +11,11 @@ func TestValidateFinalDeliveryPriceFact(t *testing.T) {
 		FormulaVersion: "delivery-median-v2",
 		Confirmed:      true,
 	}
-	algorithm, version, err := validateFinalDeliveryPriceFact("median-v2", quote, []*marketQuoteSnapshot{quote})
+	algorithm, version, err := validateFinalDeliveryPriceFact("delivery-median-v2", quote, []*marketQuoteSnapshot{quote})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if algorithm != "median-v2" || version != "delivery-median-v2" {
+	if algorithm != "delivery-median-v2" || version != "delivery-median-v2" {
 		t.Fatalf("unexpected audit facts: algorithm=%s version=%s", algorithm, version)
 	}
 }
@@ -48,5 +51,29 @@ func TestValidateFinalDeliveryPriceFactRequiresAuditMetadata(t *testing.T) {
 				t.Fatal("invalid final delivery price fact was accepted")
 			}
 		})
+	}
+}
+
+func TestValidateFinalDeliveryPriceFactRequiresConfiguredVersionMatch(t *testing.T) {
+	quote := &marketQuoteSnapshot{
+		SnapshotID:     "delivery-snapshot-1",
+		FormulaVersion: "delivery-v2",
+		Confirmed:      true,
+	}
+	if _, _, err := validateFinalDeliveryPriceFact(
+		"delivery-v1", quote, []*marketQuoteSnapshot{quote},
+	); err == nil {
+		t.Fatal("mismatched delivery formula version was accepted")
+	}
+}
+
+func TestDeliveryPriceUnavailableClassification(t *testing.T) {
+	cause := errors.New("missing final quote")
+	err := deliveryPriceUnavailable(cause)
+	if !errors.Is(err, errDeliveryPriceUnavailable) {
+		t.Fatalf("delivery input error lost classification: %v", err)
+	}
+	if errors.Is(errors.New("database unavailable"), errDeliveryPriceUnavailable) {
+		t.Fatal("unrelated infrastructure error was classified as delivery input")
 	}
 }

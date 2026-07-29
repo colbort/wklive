@@ -35,13 +35,13 @@
 - [x] 初始化 `trade.ProcessPositions`；
 - [x] 初始化 `trade.ProcessContractSettlements`；
 - [x] 初始化 `trade.ProcessTradeEvents`；
-- [x] 使用幂等 migration 支持已有环境升级；
-- [x] 验证任务能发布到 Trade Task Subscriber（全新隔离库初始化四个任务，System Job Log 持续记录四类任务成功；Trade 路由及未知 Action 拒绝由单测覆盖）；
+- [x] 使用幂等 migration 支持已有环境升级（不仅补缺失行，也将旧库里已存在但停用、分组错误或仍使用五段 Cron 的五个系统托管任务收敛到当前配置）；
+- [x] 验证任务能发布到 Trade Task Subscriber（迁入存量库后五类任务均产生实时成功 Job Log：撮合、仓位、资金费/交割、事件和秒合约；Trade 路由及未知 Action 拒绝由单测覆盖）；
 - [x] 验证多实例任务锁不会重复执行同一批次（真实扩容为两个 Trade 容器并同时调用同一 `ProcessPositions`：首轮一个实例 86ms 返回 OK，另一个 16ms 返回“已有同步任务正在执行”；随后连续 10 轮均严格每轮 1 个 OK、1 个锁拒绝，执行权在实例间正常切换；验收后恢复单实例）。
 
 完成标准：
 
-1. 新库执行 `system.sql` 后自动存在四个任务；
+1. 新库执行 `system.sql` 后自动存在五个核心 Trade 任务；
 2. 旧库执行 migration 后不重复插入；
 3. System Job Log 能看到任务持续成功；
 4. Trade 服务重启后未完成事件、仓位和结算能够恢复。
@@ -123,7 +123,7 @@ Outbox / Inbox
 
 必须覆盖：
 
-- [x] 无持仓到期（真实 Batch `total_positions=0`、Settlement/Instruction 均为 0，仍完成、归档并投递唯一事件）；
+- [x] 无持仓到期（真实 Batch `total_positions=0`、Settlement/Instruction 均为 0，仍完成、归档并投递唯一事件；迁入旧库的 BTCUSD 空仓 Batch 原因无权威价格停在 PRICE_LOCKING，新状态机在确认未完成订单和活动仓位均为 0 后无需价格即可推进至 ARCHIVED，价格、来源、算法和公式版本保持空事实，不伪造行情）；
 - [x] 存在未完成订单（五种计数状态均已覆盖：三种活动态先撤销，Canceling 等待资金释放，Settlement Pending 等待 Fill/Order 收尾；全部清零后才锁价）；
 - [x] 部分成交订单到期（订单 1 中已成交 0.4、撤销 0.6，Trade 预占消耗 4/释放 6，Asset Freeze 关闭且唯一 Flow=6；随后唯一 Batch 无仓位归档）；
 - [x] 交割价缺失或超出窗口（真实缺价、窗口外报价、窗口内但缺 formula_version 均停在 PRICE_LOCKING 并持久化原因，Settlement/归档为 0；补入合法最终价后自动恢复；非单一最终价拒绝另有单测）；
@@ -153,7 +153,7 @@ Outbox / Inbox
 
 - [x] Order 与 Fill 对账（真实全量循环游标持续完成；按交易对 `price_scale` 归一比较均价后，反向合约约 10^-15 的除法尾差不再误报，历史两条 issue 已自动 RESOLVED；当前验收 Order/Fill 数量、金额、终态无 OPEN 差异）；
 - [x] Fill 与 Position History 对账（真实发现缺失投影并累计 964 次，补齐不可变 History 后三条 issue 均自动 RESOLVED；当前无 OPEN）；
-- [x] Reservation 与 Asset Freeze 对账（全额/部分释放均绑定唯一 Freeze/Flow；曾真实发现缺 Flow 并在恢复执行后自动 RESOLVED，当前无 OPEN）；
+- [x] Reservation 与 Asset Freeze 对账（全额/部分释放均绑定唯一 Freeze/Flow；迁入旧库后又识别出旧版部分扣减提前写终态造成的 10 条真实冻结残留，合计 `244.881575392904534661`。受严格事实条件约束的幂等迁移只恢复 Trade 预留和释放指令，Asset RPC 原子生成 10 条解冻流水；最终 Freeze remain、Reservation remain 和 OPEN issue 均为 0。两条秒合约历史冗余 RELEASE 指令映射到既有 `SECONDS-REFUND` 真实流水后自动 RESOLVED，未补造流水）；
 - [x] Position 保证金与合约钱包对账（真实发现五条无托管流水夹具差异并持续累计，修正资金事实且经过 60 秒稳定窗口后全部自动 RESOLVED；当前无 OPEN）；
 - [x] Funding Settlement 与 Asset Flow 对账（正/负、失败、进程恢复、Asset 先成功等真实批次均以稳定业务号绑定唯一 Flow，Batch 仅在 reconciled_at 后完成）；
 - [x] Delivery Settlement 与 Asset Flow 对账（线性/反向、全额/部分释放和中途重启均绑定唯一 Flow，Batch 仅在全部指令对账后归档）；
@@ -193,7 +193,7 @@ Outbox / Inbox
 - [~] 配置偏离剔除（INDEX/DELIVERY 支持异常剔除；MARK 基差支持对称 BPS 限幅，待参数验收）；
 - [~] 配置平滑、上下限和版本（上一 MARK 加权平滑、基差上下限及不可变公式版本已完成，待生产参数回放）；
 - [~] 完成生产历史回放（离线确定性回放工具及篡改检测单测完成，待导出生产时间段执行）；
-- [x] Snapshot Outbox 回到实时水位（Claim/发布已流水线并发、最终检查点合并、健康日志新增净排空速度和 ETA；64 Worker 部署后完成 50,000 条容量验收，当前实库 `total=0/open=0`，近 10 分钟无 unhealthy、Worker 失败或慢查询日志）；
+- [x] Snapshot Outbox 回到实时水位（Claim/发布已流水线并发、最终检查点合并、健康日志新增净排空速度和 ETA；64 Worker 部署后完成 50,000 条容量验收。迁入库恢复实时行情后最终抽样 Pending/Failed/Manual=0、Processing=12，均为 60 秒内瞬时在途；预检使用与运行时一致的健康口径，允许新鲜在途但拒绝 Failed、Manual 或最老 Pending/Processing 超过 60 秒）；
 - [~] 完成容量、备份和灾备恢复演练（50,000 条 Outbox 容量验收完成；隔离环境完成 28.23 MiB、140 表一致性备份与恢复，逐表差异为 0，并固化恢复手册。生产异地备份、Binlog 时间点恢复、可用区切换及正式 RPO/RTO 仍待生产演练）。
 
 当前 BTCUSDT MARK 和 INDEX 使用相同单一行情，适合技术测试，不适合作为真实资金费来源。
@@ -354,7 +354,7 @@ P1-02 应用与隔离运行验收已完成；生产 `AutomaticLiquidation.Enable
 | 2026-07-29 | P2-01 全仓负权益保险基金与 ADL | 通过 | 父 Saga 新增穿仓缺口、保险承接、ADL 缓释及数量检查点，明细固化缺口分摊、合成破产价和 ADL 结果；保险使用 `symbol_id=0` 的保证金币种默认账户，余额不足时仅从同租户、同标的、反方向的盈利逐仓仓位按既有 ADL 排序接管。隔离租户 910215：Wallet 10 + Margin 10 + UPNL -30，缺口 10 全由保险承接，用户钱包 10→0、基金 100→90；租户 910216：Wallet 20 + Margin 20 + UPNL -60，缺口 20 由保险 5 + ADL 15 覆盖，合成破产价 77.5，两个 SHORT 候选各接管 1、各缓释 7.5、各入账 32.5。两父批次、两明细、四仓位、两保险 Cover、两 ADL Execution、四 Asset 指令/流水均唯一成功；重启后数量不变且指令全部取得唯一 Flow 并完成对账。最终 Trade 镜像 `f3edb89d…` 健康，迁移校验和已登记，Etcd 门禁已恢复并复核为 false |
 | 2026-07-29 | P2-01 全仓成交资金闭环与生产双门禁 | 通过 | 新增 `CrossMarginTrading.Enabled`，增加全仓风险敞口同时要求该开关和 `AutomaticLiquidation.Enabled` 为 true；标准 YAML 与最终 Etcd 均为 false。开仓在用户级续租锁内同步校验未完成账户强平、既有全仓订单、Asset 可用余额、跨仓位保证金/未实现盈亏/维持保证金及 30 秒内不可变 MARK。隔离租户 910217 完成双边全仓开仓并形成各 10 USDT 保证金、0.2 手续费；910219 完成买方 2 张中成交 1、撤销 1，精确消费/释放各 10.2；模式不匹配和无新鲜 MARK 均零写入拒绝。关闸后四个用户仍以 Reduce Only 全部平仓，仓位数量/保证金/冻结归零，钱包均为 99.6；重启前后 Order/Fill/History/Instruction/Flow 数量和金额完全不变 |
 | 2026-07-29 | P2-01 仓位模式持久化与切换并发 | 发现缺陷后修复并通过 | 真实追加单向 NET 开仓时发现成交投影会把仓位实际方向保存为 LONG/SHORT，旧切换逻辑据此误判为双向模式。新增 migration `20260729_add_contract_position_mode.sql`，为当前仓位持久化 `position_mode`；另以 `20260729_fix_contract_position_mode_backfill.sql` 按最近一条可关联订单的 History 回填，避免资金费/交割/强平 History 无 `ref_order_id` 时误留默认值。订单/Fill 的 NET 映射为 ONE_WAY，显式 LONG/SHORT 映射为 HEDGE，开仓复用关闭仓位时允许受控改模，活动仓位及平仓必须严格匹配。协议、App/Admin API 同步返回该字段。实库四个既有单向全仓仓位均回填为 1；全库最终 ONE_WAY=15、HEDGE=26、非法值=0、最近订单历史不一致=0。修复后追加开仓越过模式校验并正确在过期 MARK 门禁处拒绝，证明不再误判 |
-| 2026-07-29 | P0-03 资金费按标的故障隔离 | 发现缺陷后修复并通过 | 历史验收标的的非法 `funding_rate_source=acceptance` 曾令 tenant=0 的全局 `ProcessContractSettlements` 整批失败并由任务消息反复重试。现在权威输入缺失或配置非法只阻断该租户/标的的 Funding Batch，按租户、标的、结算时点 30 秒节流告警并继续扫描后续标的；新镜像中只出现 `skip funding batch` 诊断，不再出现全局 task failed |
+| 2026-07-29 | P0-03 资金费按标的故障隔离 | 发现缺陷后修复并通过 | 历史验收标的的非法 `funding_rate_source=acceptance` 曾令 tenant=0 的全局 `ProcessContractSettlements` 整批失败并由任务消息反复重试。现在权威输入缺失或配置非法只阻断该租户/标的的 Funding Batch，按租户、标的、结算时点 30 秒退避并继续扫描后续标的；退避判断已前移到行情 RPC 之前，底层客户端也不再每秒输出同一错误。新镜像中只出现节流后的 `skip funding batch` 诊断，不再出现全局 task failed |
 | 2026-07-29 | P2-01 双标的 MARK/Asset 并发投影 | 通过 | 隔离租户 910221 的同一 USDT 全仓风险单元包含 LONG 1@100 和 SHORT 2@200。两标的 MARK 更新为 120/170 时，仓位 UPNL 分别为 20/60、维持保证金为 6/17；并发把 Asset 钱包从 100/version1 更新为 120/version2 后，账户快照收敛为 Position Margin=50、UPNL=80、Maintenance=23、Equity=250、Available Margin=200、Risk=0.092、Position Count=2、Asset Version=2。`source_event_no` 与 `tenant/user/USDT/assetVersion2/positionVersionSum8/orderVersionSum0` 的 SHA-256 前 24 字节完全一致；重放后 Position version=4、Snapshot version=4 均不增加。夹具、行情、Trade 快照、缓存和临时客户端已清理，System 恢复健康 |
 | 2026-07-29 | P1-01 Snapshot Outbox 实时水位 | 通过 | Itick Etcd 配置为 WorkerCount=64、BatchSize=512、Idle=100ms；此前 50,000 条容量矩阵完成后，当前实库 total=0/open=0，近 10 分钟无 `snapshot outbox unhealthy`、Worker 失败或 Outbox 慢查询日志 |
 | 2026-07-29 | 备份与灾备恢复演练 | 隔离环境通过，生产演练待执行 | 源库 28.23 MiB、140 张表；静默点 `--single-transaction` 备份 11,975,203 字节/0.50 秒，SHA-256=`1cdd5acc…46470d4`，隔离恢复耗时 2.68 秒。140 张表逐表精确 COUNT 差异=0，46 条迁移、40 个订单、33 个成交、41 个仓位、109 条指令、216 个事件均一致；临时恢复库和文件已销毁，System 恢复 healthy。恢复顺序、事实边界和通过标准见 `perpetual-delivery-disaster-recovery-runbook.md` |
@@ -363,14 +363,25 @@ P1-02 应用与隔离运行验收已完成；生产 `AutomaticLiquidation.Enable
 | 2026-07-28 | 本轮静态回归 | 通过 | 当前工作树重新执行 `services/trade`、`services/asset`、`services/itick`、`services/system` 的 `go test ./...` 全部通过；Trade 的 `internal/logic/task` 与 `models` 额外通过 `go test -race`，MARK 退避和对账告警判断均有单测；协议向后兼容编译通过 |
 | 2026-07-29 | 当前代码树与本机运行态复核 | 代码回归通过；当前环境未部署，不作为运行验收 | 当前代码树重新执行 Trade、Itick、Asset、System、Admin API 和 Trade Proto 的 `go test ./...` 全部通过，Admin UI 使用 Node `20.20.2` 执行 `npm run type-check` 通过。Docker 中仅既有 MySQL 可恢复，其余依赖已停止约 22 小时；该库有 139 张表、无 `schema_migrations` 和全仓强平父/明细表，说明不是当前代码部署。只读查询显示三个 `BA/BTCUSDT` 测试公式仍激活，Snapshot Outbox 为 Pending=29,162、Processing=109、Success=114,969；这与早先容量验收结束时的 `open=0` 属于不同时点。不得用当前离线环境证明实时水位或生产就绪，也不得直接清理积压；恢复验收必须先部署当前迁移和服务，再验证自然排空、对账与安全开关 |
 | 2026-07-29 | Deploy 独立全量环境与已有库初始化命令 | 通过 | `deploy.sh` 新增 `data/merge-data`（只合并菜单、角色、任务和管理员）、`database/db-upgrade`（安全接管已有 MySQL）及 `start`（启动已构建镜像）。首次接管会把 44 个历史迁移登记为基线，并实际执行 2 个带 `dbinit:baseline-safe` 标记的结构收敛迁移；隔离旧结构库连续执行两次均成功，迁移记录=46、关键表=3、关键字段=9、关键约束=5。最终不使用既有容器，以 `deploy` 独立 Volume 全新启动完整 Compose：23 个长期服务全部运行，其中所有带 Healthcheck 的服务均 Healthy；`db-init/config-seed/kafka-init` 均 `Exited (0)`。新库 `fresh=true`、迁移=46、Outbox=0；在该独立库重放 `deploy.sh data` 后管理员仍为 2、四个核心 Trade Job 各 1 条、迁移仍为 46。六类合约对账游标均已完成首轮，OPEN Issue、Settlement Instruction、Funding/Delivery Batch、逐仓/全仓 Liquidation 均为 0。Trade 五类任务 Job Log 全部成功（撮合 47、仓位 121、资金费/交割 120、事件 121、秒合约 4），失败任务=0，核心服务近五分钟无 error/panic/fatal/failed/unhealthy/slowcall/no rows。实际 Etcd 中 `AutomaticLiquidation.Enabled=false`、`CrossMarginTrading.Enabled=false`，Itick Outbox Worker=64/Batch=512。新库没有生产价格公式或业务交易数据，因此该部署证明安装、结构、调度与安全门禁，不替代第 6 节生产价格源、告警、资金权限和灾备验收 |
+| 2026-07-29 | Deploy 单命令冷构建稳定性 | 发现并行资源缺陷后修复并通过 | 原 `deploy.sh up` 把 18 个项目镜像交给 Compose/Bake 并行构建，真实出现 Go 编译进程 `signal: killed`、依赖下载 `unexpected EOF`，一个失败会取消其余构建。脚本现维护明确应用镜像清单，`build` 和 `up` 均逐服务构建，传入服务名时也逐个处理；`start` 保留为已构建镜像的快速启动入口。修改构建上下文后重新执行单条 `./deploy.sh up`，18 个镜像全部真实冷编译成功，无 OOM、无连带取消，随后数据库/Kafka/Etcd 初始化成功并幂等重建服务。最终 23 个长期服务运行且 Healthcheck 全绿，三个初始化容器均 `Exited (0)`；db-init 为 `fresh=false/migrations=46`，核心日志无错误，失败 Trade Job=0、五类 Job 持续成功、Outbox OPEN=0、对账 OPEN=0、未完成 Settlement/Saga=0 |
+| 2026-07-29 | 合约生产门禁可执行预检 | 负向门禁通过，待真实生产材料后执行正向验收 | `deploy.sh contract-readiness` 新增只读预检，不写数据库、不创建夹具、不自动开闸。声明文件使用白名单 `KEY=VALUE` 解析且禁止保存凭据，四类外部报告必须为非空文件且 SHA-256 匹配；检查真实三源 INDEX/DELIVERY、INDEX_BASIS MARK、FUNDING、三源 FINAL_QUOTE 与四类引擎输出的新鲜度、永续/未来交割合约配置、已注资保险基金、手续费账户、默认保险配置、历史回放、告警投递、资金审批、灾备报告、Outbox/对账/结算水位及 Etcd 双开关。声明的每个来源必须在 Authority Registry 中启用并允许 `FINAL_QUOTE`，`price-engine` 也必须获准发布 INDEX/MARK/FUNDING/DELIVERY；INDEX/DELIVERY 的 FINAL_QUOTE 成分集合必须与声明的独立 Authority 集合完全一致，DELIVERY 每个 Authority 的正权重还须逐一匹配，不能用停用、越权、未声明、重复来源或权重漂移通过。DELIVERY 回看窗口必须为整秒，并与交割合约 `settlement_window_seconds` 精确相等，声明的不可变公式版本也必须与 `settlement_price_algorithm` 一致。所有新增数据库查询已从 shell 移入 `deploy/dbinit/models`，独立命令只解析配置并调用 model；model 详细/水位/非法输入测试及命令配置测试通过，shell 已确认不含 SQL。独立新库以带有效证据哈希的 test-only 完整声明触发全部模型查询，因声明来源未注册且真实生产公式、实时行情、合约和账户不存在，精确返回 12 项 FAIL/exit=1；不提供生产声明时精确返回 31 项 FAIL/exit=1。两次均确认双开关保持 false，测试声明随后删除，未将本地文档冒充生产证据 |
+| 2026-07-29 | 现有数据库迁入 Deploy 独立 MySQL | 数据迁移和基础运行通过；存量交割任务配置待修 | 先停止全部业务写入，以 `--single-transaction` 从旧容器导出最新 `wklive`：约 1.3 GiB，SHA-256=`aaa70fb764f0f9ce61cc7c6cef0d4d58507558971759b3671f23a1eb56f0943b`；独立部署空库覆盖前备份为约 1.9 MiB，SHA-256=`fce3f3774486595377e1988a15fecab598a207647eaabf5f1bf784c8bc593c08`。同一源备份先恢复到临时 Schema 核对，再恢复到正式 `wklive`；两次均得到 143 表、46 条迁移、3 条公式、1,653,638 条权威快照、订单 18,599、成交 28、仓位 0、业务事件 37,272，Outbox 状态 1/2/3 分别为 29,162/109/114,969。当前 `db-init` 以 `fresh=false/migrations=46` 幂等完成，23 个长期服务运行、3 个初始化容器 `Exited (0)`，旧 `mysql` 保持停止，Etcd 双开关均为 false。64 Worker 启动后 Pending 由 29,162→24,337→21,722，Processing 稳定为 64，证明积压自然排空。实时 `itick-ws FINAL_QUOTE` 及 MARK/INDEX/FUNDING 已恢复逐秒更新；但存量交割/资金费任务仍反复请求当天 08:00 的 BTCUSDT MARK（30 秒回看无历史值），且 `BTCUSD` 产品缺少权威行情 category/market/symbol，当前不满足合约生产验收，禁止开闸 |
+| 2026-07-29 | 存量 Trade 任务收敛与交割缺源隔离 | 发现迁移兼容及任务刷屏缺陷后修复并通过 | 迁入旧库后发现 `ProcessContractSettlements`、`ProcessOrderMatching` 已存在但停用且属于 DEFAULT 分组，Event/Seconds 仍为旧五段 Cron，导致原 insert-if-missing 初始化无法修复。新增 `20260729_converge_trade_contract_jobs.sql`，连续执行两次 db-init 后迁移记录稳定为 47，五个系统任务各 1 条、全部为 TRADE/启用/当前六段 Cron；重启 System 后，最近窗口 Contract/Position/Event 各持续 20～21 次成功、Matching 8 次、Seconds 每分钟 1 次，失败 0。交割扫描新增按租户/标的/交割时点的输入隔离，只有权威行情/配置错误被跳过，数据库和事务错误仍失败；相同错误不再重复更新 Batch，BTCUSD Batch version 在两个观察窗口始终为 280；资金费和交割的 30 秒 gate 均前移到行情 RPC 前，40 秒窗口分别最多尝试 2 次且无 `trade task failed`。后台现在拒绝裸 `settlement_price_source`、非正窗口、空版本；运行时要求合约版本与 DELIVERY 快照版本一致并拒绝非正价格。Trade 全量测试、相关包 race、System 全量测试、db-init 全量/race/vet 均通过，最终 Trade 镜像 `6db99f2c…d8594c`；存量 BTCUSD Batch 保留 PRICE_LOCKING 审计状态，未伪造价格或强制完成 |
+| 2026-07-29 | 迁入旧库冻结残留与流水对账收口 | 发现旧版资金状态缺陷后修复并通过 | 只读审计发现 10 条 `status=4` 但 `remain_amount>0` 的旧现货冻结，用户资产 `frozen_amount` 与冻结明细汇总严格一致，合计 `244.881575392904534661`；其中手续费实际通过 Asset 可用余额流水扣除，而旧 Trade 预留仍记作冻结消费。恢复前备份相关账务表 29 MiB，SHA-256=`27b6bdaa5e394e15f9ed5b1cabaa9d613e0d8e3caf5f3bd3f4d8c8dafcf9eda2`。新增 baseline-safe 迁移只匹配“终态现货订单 + 异常终态冻结 + 成功手续费指令 + 可用余额扣费流水 + 身份/总额一致”的记录，事务试跑精确命中 10 条；迁移不直接改用户余额或造流水，而是把预留恢复到 Asset 已确认事实并生成稳定 RELEASE 指令。Asset 解冻事务允许恢复 `status=4/remain>0` 的旧记录，Trade 按不可变指令金额调用幂等 RPC。部署镜像 Asset=`e17b56ee…cab745a`、Trade=`99c205d0…7dd2f6` 后，10 条 Freeze 全为 CLOSED/remain=0、10 条 Reservation 全为 RELEASED/remain=0、10 条 RELEASE Flow 金额逐笔一致并完成 reconciled_at。原四条 OPEN 流水问题全部自动 RESOLVED；两条秒合约旧指令只映射既有 `SECONDS-REFUND` 流水，没有重复资金动作。Asset/Trade 全量测试、相关包 race 和 `git diff --check` 全部通过 |
+| 2026-07-29 | 生产预检 Outbox 实时口径 | 发现误判后修复并通过 | 原预检要求 Snapshot Outbox 绝对无 status 1/2/4/5，在实时行情持续写入时会把 12 条新鲜 Processing 误判为积压。数据库查询保持在 `deploy/dbinit/models`，现在输出 Pending/Processing/Failed/Manual/Open/Unhealthy 分项，并与 Itick 运行时采用同一门槛：Failed 或 Manual 立即失败；Pending+Processing 仅在最老记录超过 60 秒时失败。模型新增新鲜在途、过期 Processing 和 Failed 回归测试，db-init 全量、race、vet、shell 语法及补丁检查通过。只读预检复跑后 Outbox、对账、Settlement 与核心服务全部 PASS，失败项由 32 降为 31，剩余均为未提供生产声明、三源行情、资金审批、告警和灾备材料；双生产开关继续保持关闭 |
+| 2026-07-29 | 存量 BTCUSD 零敞口产品退场 | 发现空仓价格门禁缺口后修复并通过 | 停用前只读核对 Symbol 3 永续和 Symbol 5 交割均无 Order、Position、Reservation 或未完成 Instruction；交割仅有一条 `total_positions=0` 的 PRICE_LOCKING Batch。空仓交割现在先确认活动仓位为 0，再以无资金步骤的 SETTLING→COMPLETED→ARCHIVED 状态机完成，不请求或伪造交割价。迁入 Batch 最终 status=8、Symbol=Disabled、settlement_price=0，price source/algorithm/formula version 为空，Settlement=0、Instruction=0，只生成唯一成功 `CONTRACT_SETTLED` 归档事件。旧 BTCUSD 永续通过现有 Admin `UpdateSymbol` API 携带当前完整字段改为 Disabled；Funding 四个生成入口统一跳过 Disabled，但继续处理 Close Only 以保护可能存在的开放仓位。Trade 全量与 task/models race 通过，最终镜像 `8571dd0c…c867e9a`；退场前产品/合约/Batch/事件备份 6.9 MiB，SHA-256=`56954278ce27532a378f8d1fe81118e102f77bc48f803e6b8694a53b28cc3802` |
 
 ## 6. 当前外部依赖与不可代填项
 
+材料内容、哈希和归档要求见
+[`perpetual-delivery-production-evidence-guide.md`](perpetual-delivery-production-evidence-guide.md)；
+材料到齐后以 `deploy.sh contract-readiness` 执行正向验收。
+
 | 门禁 | 当前事实 | 需要提供或确认 |
 | --- | --- | --- |
-| P0-05/P1-01 生产价格源 | `t_itick_price_formula` 当前无生产公式；归档中只有 `price-engine` 生成的验收快照，没有可持续的交易所原始 `FINAL_QUOTE`；BTCUSDT 也只有 16:32、16:39 两组历史 MARK/INDEX/FUNDING | 至少三个真正独立的现货/指数来源标识、市场代码、Symbol 映射、接入凭据和数据许可 |
+| P0-05/P1-01 生产价格源 | 现有库已迁入独立 deploy，三个 `BA/BTCUSDT` 测试公式及 `itick-ws FINAL_QUOTE`、MARK/INDEX/FUNDING 已恢复逐秒更新；这些公式只有单一 BA 输入，不是生产三源。两个无敞口、缺少完整权威行情标识的旧 `BTCUSD` 产品已经安全 Disabled，空仓交割 Batch 已无价格归档 | 至少三个真正独立的现货/指数来源标识、市场代码、Symbol 映射、接入凭据和数据许可；材料到齐后创建新的生产公式和产品配置并执行正向门禁 |
 | 生产 DELIVERY 参数 | 三源门槛、偏差剔除和离线重放技术验收已通过，但不能用虚构来源替代生产市场 | 确认算法（MEDIAN 或 WEIGHTED_MEAN）、每源权重、最大偏差 BPS、锁价窗口和公式版本命名 |
 | 生产历史回放 | 当前没有覆盖交割窗口的三个原始来源历史，无法形成有意义的生产回放报告 | 提供选定合约、至少一个完整交割窗口的原始快照导出，或授权接入相应历史数据源 |
 | P0-06 告警渠道 | 应用已输出结构化差异和 Outbox/Price Engine 健康日志；同一对账差异已按数据库事实节流为首次/变化/重开/30 分钟提醒，隔离环境仍无生产告警平台 | 确认告警平台、规则阈值、值班组、升级链路和通知渠道 |
-| P1-02/P2-01 自动强平资金权限 | 逐仓及全仓正/负权益隔离矩阵已完成，但生产总开关仍保持关闭；租户 900102 的 `LIQUIDATION:1` 是保留的人工处理夹具 | 明确生产保险基金和 `FEE_REVENUE` 账户、资金权限、审批责任人、启用窗口和回滚方案后，方可申请开启 |
+| P1-02/P2-01 自动强平资金权限 | 逐仓及全仓正/负权益隔离矩阵已有归档验收；当前独立 deploy 新库没有强平夹具、生产保险账户或资金流水，Etcd 中自动强平总开关保持关闭 | 明确生产保险基金和 `FEE_REVENUE` 账户、资金权限、审批责任人、启用窗口和回滚方案后，方可申请开启 |
 | 生产备份与灾备 | 隔离环境已完成全库一致性备份、140 表恢复核对和恢复手册；本地容量与恢复流程可执行 | 确认生产 RPO/RTO、备份加密及异地保留策略，并安排 Binlog 时间点恢复、节点/可用区故障切换和回切演练 |

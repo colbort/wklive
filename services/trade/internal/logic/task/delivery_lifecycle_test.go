@@ -1,6 +1,7 @@
 package tasklogic
 
 import (
+	"errors"
 	"testing"
 
 	"wklive/proto/trade"
@@ -29,5 +30,18 @@ func TestDeliveryBatchLifecycleIsMonotonic(t *testing.T) {
 				t.Fatalf("shouldAdvanceDeliveryBatchStatus(%s, %s)=%v want=%v", tt.current, tt.target, got, tt.want)
 			}
 		})
+	}
+}
+
+func TestDeliveryBatchErrorNeedsUpdate(t *testing.T) {
+	cause := errors.New("no valid delivery quote")
+	if deliveryBatchErrorNeedsUpdate(cause.Error(), cause) {
+		t.Fatal("unchanged delivery error should not rewrite the batch")
+	}
+	if !deliveryBatchErrorNeedsUpdate("", cause) {
+		t.Fatal("new delivery error should be persisted")
+	}
+	if deliveryBatchErrorNeedsUpdate("", nil) {
+		t.Fatal("nil delivery error should not update the batch")
 	}
 }

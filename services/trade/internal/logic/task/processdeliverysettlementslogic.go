@@ -25,6 +25,11 @@ type ProcessDeliverySettlementsLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
+var (
+	errDeliveryPriceUnavailable = errors.New("delivery authoritative price unavailable")
+	deliveryInputRetryGate      = newMarkQuoteRetryGate()
+)
+
 func NewProcessDeliverySettlementsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProcessDeliverySettlementsLogic {
 	return &ProcessDeliverySettlementsLogic{ctx: ctx, svcCtx: svcCtx}
 }
@@ -43,7 +48,21 @@ func validateFinalDeliveryPriceFact(configuredAlgorithm string, quote *marketQuo
 	if strings.TrimSpace(configuredAlgorithm) == "" {
 		return "", "", errors.New("delivery settlement price algorithm is not configured")
 	}
-	return strings.TrimSpace(configuredAlgorithm), formulaVersion, nil
+	configuredAlgorithm = strings.TrimSpace(configuredAlgorithm)
+	if configuredAlgorithm != formulaVersion {
+		return "", "", fmt.Errorf(
+			"delivery formula version mismatch: configured=%s snapshot=%s",
+			configuredAlgorithm, formulaVersion,
+		)
+	}
+	return configuredAlgorithm, formulaVersion, nil
+}
+
+func deliveryPriceUnavailable(cause error) error {
+	if cause == nil {
+		return nil
+	}
+	return fmt.Errorf("%w: %v", errDeliveryPriceUnavailable, cause)
 }
 
 func (l *ProcessDeliverySettlementsLogic) Process(tenantID int64) error {
@@ -112,10 +131,25 @@ func (l *ProcessDeliverySettlementsLogic) advanceSymbols(tenantID int64) error {
 			if err := l.ensureLifecycleBatch(c, trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_PRICE_LOCKING); err != nil {
 				return err
 			}
-			if err := l.ensureBatch(symbol, c); err != nil {
-				_ = l.recordDeliveryBatchError(c, err)
-				return err
+			inputKey := fmt.Sprintf("%d:%d:%d", c.TenantId, c.SymbolId, c.DeliveryTime)
+			if !deliveryInputRetryGate.allow(inputKey, now) {
+				continue
 			}
+			if err := l.ensureBatch(symbol, c); err != nil {
+				if !errors.Is(err, errDeliveryPriceUnavailable) {
+					return err
+				}
+				if recordErr := l.recordDeliveryBatchError(c, err); recordErr != nil {
+					return recordErr
+				}
+				deliveryInputRetryGate.fail(inputKey, now)
+				logx.WithContext(l.ctx).Errorf(
+					"skip delivery batch with unavailable authoritative input, tenantId=%d symbolId=%d deliveryTime=%d source=%q err=%v",
+					c.TenantId, c.SymbolId, c.DeliveryTime, c.SettlementPriceSource, err,
+				)
+				continue
+			}
+			deliveryInputRetryGate.success(inputKey)
 		}
 		if len(contracts) < 100 {
 			return nil
@@ -175,11 +209,18 @@ func (l *ProcessDeliverySettlementsLogic) recordDeliveryBatchError(c *models.TTr
 		if err != nil {
 			return err
 		}
+		if !deliveryBatchErrorNeedsUpdate(current.LastErrorMsg, cause) {
+			return nil
+		}
 		current.LastErrorMsg = cause.Error()
 		current.Version++
 		current.UpdateTimes = now
 		return bm.Update(ctx, current)
 	})
+}
+
+func deliveryBatchErrorNeedsUpdate(current string, cause error) bool {
+	return cause != nil && current != cause.Error()
 }
 
 func (l *ProcessDeliverySettlementsLogic) cancelSymbolOrders(symbol *models.TTradeSymbol) error {
@@ -222,19 +263,6 @@ func (l *ProcessDeliverySettlementsLogic) ensureBatch(symbol *models.TTradeSymbo
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return err
 	}
-	quote, candidates, err := NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).getValidQuotesAtKind("DELIVERY_PRICE", c.SettlementPriceSource, c.SymbolId, c.DeliveryTime, c.SettlementWindowSeconds*1000)
-	if err != nil {
-		return err
-	}
-	priceAlgorithm, formulaVersion, err := validateFinalDeliveryPriceFact(c.SettlementPriceAlgorithm, quote, candidates)
-	if err != nil {
-		return err
-	}
-	window := c.SettlementWindowSeconds * 1000
-	if window <= 0 || quote.QuoteTs < c.DeliveryTime-window || quote.QuoteTs > c.DeliveryTime+window {
-		return fmt.Errorf("delivery quote outside configured settlement window")
-	}
-	price := helpers.MustParseFloat(quote.LastPrice)
 	positions, err := l.svcCtx.ContractPositionModel.FindList(l.ctx, models.ContractPositionPageFilter{TenantId: c.TenantId, SymbolId: c.SymbolId, ContractType: int64(common.ContractType_CONTRACT_TYPE_DELIVERY)})
 	if err != nil {
 		return err
@@ -244,6 +272,25 @@ func (l *ProcessDeliverySettlementsLogic) ensureBatch(symbol *models.TTradeSymbo
 		if p.Qty.IsPositive() {
 			active = append(active, p)
 		}
+	}
+	if len(active) == 0 {
+		return l.completeEmptyDeliveryBatch(symbol, c)
+	}
+	quote, candidates, err := NewProcessSecondsSettlementsLogic(l.ctx, l.svcCtx).getValidQuotesAtKind("DELIVERY_PRICE", c.SettlementPriceSource, c.SymbolId, c.DeliveryTime, c.SettlementWindowSeconds*1000)
+	if err != nil {
+		return deliveryPriceUnavailable(err)
+	}
+	priceAlgorithm, formulaVersion, err := validateFinalDeliveryPriceFact(c.SettlementPriceAlgorithm, quote, candidates)
+	if err != nil {
+		return deliveryPriceUnavailable(err)
+	}
+	window := c.SettlementWindowSeconds * 1000
+	if window <= 0 || quote.QuoteTs < c.DeliveryTime-window || quote.QuoteTs > c.DeliveryTime+window {
+		return deliveryPriceUnavailable(errors.New("delivery quote outside configured settlement window"))
+	}
+	price := helpers.MustParseFloat(quote.LastPrice)
+	if !price.IsPositive() {
+		return deliveryPriceUnavailable(fmt.Errorf("delivery price must be positive: %q", quote.LastPrice))
 	}
 	now := utils.NowMillis()
 	batchNo := fmt.Sprintf("DLV-%d-%d", c.SymbolId, c.DeliveryTime)
@@ -339,6 +386,43 @@ func (l *ProcessDeliverySettlementsLogic) ensureBatch(symbol *models.TTradeSymbo
 		symbol.Status = int64(trade.SymbolStatus_SYMBOL_STATUS_DISABLED)
 		symbol.UpdateTimes = now
 		return symbolModel.Update(ctx, symbol)
+	})
+}
+
+func (l *ProcessDeliverySettlementsLogic) completeEmptyDeliveryBatch(symbol *models.TTradeSymbol, c *models.TTradeSymbolContract) error {
+	now := utils.NowMillis()
+	batchNo := fmt.Sprintf("DLV-%d-%d", c.SymbolId, c.DeliveryTime)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		bm := tx.ContractDeliveryBatch
+		current, err := bm.FindOneForUpdateByTenantSymbolDelivery(ctx, c.TenantId, c.SymbolId, c.DeliveryTime)
+		if errors.Is(err, models.ErrNotFound) {
+			if _, err = bm.Insert(ctx, &models.TContractDeliveryBatch{
+				TenantId: c.TenantId, BatchNo: batchNo, SymbolId: c.SymbolId,
+				OpenCutoffTime: c.OpenCutoffTime, MatchingStopTime: c.MatchingStopTime,
+				DeliveryTime: c.DeliveryTime, Status: int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_SETTLING),
+				TotalPositions: 0, SettledPositions: 0, CreateTimes: now, UpdateTimes: now,
+			}); err != nil {
+				return err
+			}
+		} else {
+			if err != nil {
+				return err
+			}
+			if current.Status < int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_SETTLING) {
+				current.Status = int64(trade.DeliveryBatchStatus_DELIVERY_BATCH_STATUS_SETTLING)
+				current.TotalPositions = 0
+				current.SettledPositions = 0
+				current.LastErrorMsg = ""
+				current.Version++
+				current.UpdateTimes = now
+				if err = bm.Update(ctx, current); err != nil {
+					return err
+				}
+			}
+		}
+		symbol.Status = int64(trade.SymbolStatus_SYMBOL_STATUS_DISABLED)
+		symbol.UpdateTimes = now
+		return tx.TradeSymbol.Update(ctx, symbol)
 	})
 }
 

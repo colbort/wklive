@@ -120,7 +120,9 @@ func (m *defaultTAssetFreezeModel) assetFreezeCacheKeys(ctx context.Context, fre
 	}
 }
 
-// 解冻时更新冻结记录：unfreeze_amount += amount，remain_amount -= amount
+// 解冻时更新冻结记录：unfreeze_amount += amount，remain_amount -= amount。
+// status=4 且 remain_amount>0 是旧版部分扣减留下的不一致状态；允许通过正常
+// 解冻事务恢复，确保用户资产、冻结明细和流水仍在同一事务内变化。
 // 当 remain_amount 为 0 时，纯解冻为 3（已解冻），混合扣减/解冻为 5（已关闭）；否则为 2（部分释放）
 func (m *defaultTAssetFreezeModel) UpdateUnfreeze(ctx context.Context, freezeNo string, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	query := fmt.Sprintf(`
@@ -134,7 +136,7 @@ func (m *defaultTAssetFreezeModel) UpdateUnfreeze(ctx context.Context, freezeNo 
 			END,
 			remain_amount = remain_amount - ?,
 			update_times = ?
-		WHERE freeze_no = ? AND status IN (1, 2) AND remain_amount >= ?
+		WHERE freeze_no = ? AND status IN (1, 2, 4) AND remain_amount > 0 AND remain_amount >= ?
 	`, m.table)
 
 	cacheKeys, err := m.assetFreezeCacheKeys(ctx, freezeNo)

@@ -55,7 +55,8 @@ func (l *ProcessFundingSettlementsLogic) createDueBatches(tenantID int64) error 
 			if err != nil {
 				return err
 			}
-			if symbol.ContractType != int64(common.ContractType_CONTRACT_TYPE_PERPETUAL) {
+			if symbol.ContractType != int64(common.ContractType_CONTRACT_TYPE_PERPETUAL) ||
+				symbol.Status == int64(trade.SymbolStatus_SYMBOL_STATUS_DISABLED) {
 				continue
 			}
 			interval := c.FundingIntervalMinutes * 60 * 1000

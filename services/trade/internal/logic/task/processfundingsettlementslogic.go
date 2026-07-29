@@ -28,6 +28,12 @@ type ProcessFundingSettlementsLogic struct {
 	logx.Logger
 }
 
+func fundingSymbolEligible(symbol *models.TTradeSymbol) bool {
+	return symbol != nil &&
+		symbol.ContractType == int64(common.ContractType_CONTRACT_TYPE_PERPETUAL) &&
+		symbol.Status != int64(trade.SymbolStatus_SYMBOL_STATUS_DISABLED)
+}
+
 func NewProcessFundingSettlementsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProcessFundingSettlementsLogic {
 	return &ProcessFundingSettlementsLogic{
 		ctx: ctx, svcCtx: svcCtx, Logger: logx.WithContext(ctx),
@@ -61,7 +67,7 @@ func (l *ProcessFundingSettlementsLogic) createDueBatches(tenantID int64) error 
 			if err != nil {
 				return err
 			}
-			if symbol.ContractType != int64(common.ContractType_CONTRACT_TYPE_PERPETUAL) {
+			if !fundingSymbolEligible(symbol) {
 				continue
 			}
 			interval := c.FundingIntervalMinutes * 60 * 1000
@@ -90,19 +96,20 @@ func (l *ProcessFundingSettlementsLogic) createDueBatches(tenantID int64) error 
 				return err
 			}
 			inputKey := fmt.Sprintf("%d:%d:%d", c.TenantId, c.SymbolId, settlementTime)
+			if !fundingInputRetryGate.allow(inputKey, now) {
+				continue
+			}
 			mark, index, rate, source, err := l.lockFundingInputs(c, settlementTime)
 			if err != nil {
 				// A missing or invalid price configuration belongs to this
 				// symbol only. Keep its batch uncreated, alert with a bounded
 				// cadence, and continue so one bad contract cannot starve all
 				// other tenants and symbols in the global settlement task.
-				if fundingInputRetryGate.allow(inputKey, now) {
-					fundingInputRetryGate.fail(inputKey, now)
-					l.Errorf(
-						"skip funding batch with unavailable authoritative inputs, tenantId=%d symbolId=%d settlementTime=%d source=%q err=%v",
-						c.TenantId, c.SymbolId, settlementTime, c.FundingRateSource, err,
-					)
-				}
+				fundingInputRetryGate.fail(inputKey, now)
+				l.Errorf(
+					"skip funding batch with unavailable authoritative inputs, tenantId=%d symbolId=%d settlementTime=%d source=%q err=%v",
+					c.TenantId, c.SymbolId, settlementTime, c.FundingRateSource, err,
+				)
 				continue
 			}
 			fundingInputRetryGate.success(inputKey)

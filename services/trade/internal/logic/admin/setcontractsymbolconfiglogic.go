@@ -55,10 +55,14 @@ func (l *SetContractSymbolConfigLogic) SetContractSymbolConfig(in *trade.SetCont
 	if err := validation.FundingRateSource(symbol.ContractType, in.FundingRateSource); err != nil {
 		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
 	}
-	if symbol.ContractType == int64(common.ContractType_CONTRACT_TYPE_PERPETUAL) {
-		if err := validation.AuthoritativeQuoteSources("mark_price_source", in.MarkPriceSource); err != nil {
-			return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
-		}
+	if err := validation.ContractPriceSources(
+		symbol.ContractType,
+		in.MarkPriceSource,
+		in.SettlementPriceSource,
+		in.SettlementWindowSeconds,
+		in.SettlementPriceAlgorithm,
+	); err != nil {
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
 	}
 	now := utils.NowMillis()
 	cfg, err := l.svcCtx.TradeSymbolContractModel.FindOneByTenantIdSymbolId(l.ctx, symbol.TenantId, in.SymbolId)

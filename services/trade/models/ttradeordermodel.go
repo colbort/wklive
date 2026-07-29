@@ -52,6 +52,7 @@ type (
 		CountActiveIncompatibleContractMode(ctx context.Context, tenantID, userID, symbolID, marginMode, positionMode int64) (int64, error)
 		CountFreezingCrossMarginOpenings(ctx context.Context, tenantID, userID int64, marginAsset string) (int64, error)
 		FindCrossMarginCancelableOrderIDs(ctx context.Context, tenantID, userID int64, marginAsset string) ([]int64, error)
+		FindTerminalAssetRepairCandidates(ctx context.Context, tenantID, cursor, limit int64, statuses []int64) ([]*TTradeOrder, error)
 		ArchiveZeroFillLiquidityOrders(ctx context.Context, source, canceledStatus, cutoff, batchSize, archivedAt int64) (int64, error)
 	}
 
@@ -133,6 +134,52 @@ ORDER BY o.id`, tenantID, userID, marginAsset); err != nil {
 		ids = append(ids, item.ID)
 	}
 	return ids, nil
+}
+
+// FindTerminalAssetRepairCandidates returns only terminal orders whose durable
+// reservation still has a positive unsettled remainder. Scanning every
+// historical terminal order makes the event recovery task monopolize its
+// distributed lock after a large database import.
+func (m *defaultTTradeOrderModel) FindTerminalAssetRepairCandidates(
+	ctx context.Context,
+	tenantID, cursor, limit int64,
+	statuses []int64,
+) ([]*TTradeOrder, error) {
+	if len(statuses) == 0 {
+		return nil, nil
+	}
+	limit = sqlutil.NormalizeLimit(limit)
+	holders := make([]string, len(statuses))
+	args := make([]any, 0, len(statuses)+4)
+	for i, status := range statuses {
+		holders[i] = "?"
+		args = append(args, status)
+	}
+	query := fmt.Sprintf(
+		`SELECT %s FROM %s o
+WHERE o.status IN (%s)
+  AND o.id>?
+  AND EXISTS (
+    SELECT 1 FROM t_trade_asset_reservation r
+    WHERE r.tenant_id=o.tenant_id AND r.order_id=o.id
+      AND r.reserved_amount>r.consumed_amount+r.released_amount
+  )`,
+		tTradeOrderRows,
+		m.table,
+		strings.Join(holders, ","),
+	)
+	args = append(args, cursor)
+	if tenantID > 0 {
+		query += " AND o.tenant_id=?"
+		args = append(args, tenantID)
+	}
+	query += " ORDER BY o.id ASC LIMIT ?"
+	args = append(args, limit)
+	var rows []*TTradeOrder
+	if err := m.QueryRowsNoCacheCtx(ctx, &rows, query, args...); err != nil {
+		return nil, err
+	}
+	return rows, nil
 }
 
 // NewTTradeOrderModel returns a model for the database table.

@@ -31,7 +31,7 @@ build_images() {
 }
 
 usage() {
-  echo "usage: $0 {up|start|down|restart|build|logs|ps|config|seed|data|merge-data|database|db-upgrade|compose-config|db-init|kafka-init} [service ...]"
+  echo "usage: $0 {up|start|down|restart|build|logs|ps|config|seed|data|merge-data|database|db-upgrade|compose-config|db-init|kafka-init|contract-readiness} [service ...]"
 }
 
 command="${1:-}"
@@ -99,6 +99,9 @@ case "$command" in
     ;;
   kafka-init)
     docker compose -f "$COMPOSE_FILE" run --build --rm kafka-init
+    ;;
+  contract-readiness)
+    "$SCRIPT_DIR/contract-readiness.sh" "$@"
     ;;
   *)
     usage

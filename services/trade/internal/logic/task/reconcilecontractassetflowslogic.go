@@ -116,19 +116,25 @@ func (l *ReconcileContractAssetFlowsLogic) reconcileInstruction(instruction *mod
 	if instruction == nil {
 		return false, "", "nil instruction", errors.New("cannot reconcile nil settlement instruction")
 	}
-	resp, err := l.svcCtx.AssetAdminClient.PageAssetFlows(l.ctx, &asset.PageAssetFlowsReq{
-		TenantId: instruction.TenantId,
-		UserId:   instruction.UserId,
-		Coin:     instruction.Asset,
-		BizType:  asset.BizType_BIZ_TYPE_TRADE,
-		BizNo:    instruction.InstructionNo,
-		Page:     &common.PageReq{Limit: 2},
-	})
+	resp, err := l.queryInstructionAssetFlows(instruction, instruction.InstructionNo)
 	if err != nil {
-		return false, "", "asset query failed", fmt.Errorf("query Asset flow for %s: %w", instruction.InstructionNo, err)
+		return false, "", "asset query failed", err
 	}
-	if resp == nil || resp.GetBase() == nil || resp.GetBase().GetCode() != 200 {
-		return false, "", "asset query rejected", fmt.Errorf("Asset flow query rejected for %s", instruction.InstructionNo)
+	if len(resp.GetData()) == 0 {
+		if refundBizNo, ok := legacySecondsRefundBizNo(instruction); ok {
+			refundResp, refundErr := l.queryInstructionAssetFlows(instruction, refundBizNo)
+			if refundErr != nil {
+				return false, "", "legacy seconds refund query failed", refundErr
+			}
+			if len(refundResp.GetData()) == 1 {
+				flow := refundResp.GetData()[0]
+				actual := actualAssetFlowSummary(flow)
+				if assetFlowMatchesInstructionBizNo(instruction, flow, refundBizNo) {
+					return true, flow.GetFlowNo(), actual, nil
+				}
+				return false, flow.GetFlowNo(), actual, nil
+			}
+		}
 	}
 	if len(resp.GetData()) != 1 {
 		return false, "", fmt.Sprintf("flow_count=%d", len(resp.GetData())), nil
@@ -139,6 +145,24 @@ func (l *ReconcileContractAssetFlowsLogic) reconcileInstruction(instruction *mod
 		return false, flow.GetFlowNo(), actual, nil
 	}
 	return true, flow.GetFlowNo(), actual, nil
+}
+
+func (l *ReconcileContractAssetFlowsLogic) queryInstructionAssetFlows(instruction *models.TTradeSettlementInstruction, bizNo string) (*asset.PageAssetFlowsResp, error) {
+	resp, err := l.svcCtx.AssetAdminClient.PageAssetFlows(l.ctx, &asset.PageAssetFlowsReq{
+		TenantId: instruction.TenantId,
+		UserId:   instruction.UserId,
+		Coin:     instruction.Asset,
+		BizType:  asset.BizType_BIZ_TYPE_TRADE,
+		BizNo:    bizNo,
+		Page:     &common.PageReq{Limit: 2},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("query Asset flow for %s: %w", bizNo, err)
+	}
+	if resp == nil || resp.GetBase() == nil || resp.GetBase().GetCode() != 200 {
+		return nil, fmt.Errorf("Asset flow query rejected for %s", bizNo)
+	}
+	return resp, nil
 }
 
 func settlementAssetFlowIssueKey(instruction *models.TTradeSettlementInstruction) string {
@@ -167,11 +191,15 @@ func expectedAssetFlowOps(action int64) map[asset.AssetOpType]struct{} {
 }
 
 func assetFlowMatchesInstruction(instruction *models.TTradeSettlementInstruction, flow *asset.AssetFlow) bool {
+	return assetFlowMatchesInstructionBizNo(instruction, flow, instruction.InstructionNo)
+}
+
+func assetFlowMatchesInstructionBizNo(instruction *models.TTradeSettlementInstruction, flow *asset.AssetFlow, bizNo string) bool {
 	if instruction == nil || flow == nil ||
 		flow.GetTenantId() != instruction.TenantId ||
 		flow.GetUserId() != instruction.UserId ||
 		flow.GetCoin() != instruction.Asset ||
-		flow.GetBizNo() != instruction.InstructionNo ||
+		flow.GetBizNo() != bizNo ||
 		flow.GetBizType() != asset.BizType_BIZ_TYPE_TRADE {
 		return false
 	}
@@ -181,6 +209,16 @@ func assetFlowMatchesInstruction(instruction *models.TTradeSettlementInstruction
 	}
 	amount, err := decimal.NewFromString(flow.GetChangeAmount())
 	return err == nil && amount.Abs().Equal(instruction.Amount)
+}
+
+func legacySecondsRefundBizNo(instruction *models.TTradeSettlementInstruction) (string, bool) {
+	if instruction == nil ||
+		trade.SettlementInstructionAction(instruction.Action) != trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_RELEASE_FROZEN ||
+		instruction.ReservationNo == "" ||
+		instruction.InstructionNo != instruction.ReservationNo+"-RELEASE" {
+		return "", false
+	}
+	return instruction.ReservationNo + "-SECONDS-REFUND", true
 }
 
 func expectedAssetFlowSummary(instruction *models.TTradeSettlementInstruction) string {

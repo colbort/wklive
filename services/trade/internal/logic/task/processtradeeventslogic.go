@@ -453,15 +453,18 @@ func (l *ProcessTradeEventsLogic) expireOrderIfNeeded(orderID, now int64) (*mode
 
 func (l *ProcessTradeEventsLogic) repairFrozenAssets(in *trade.TradeTaskReq) error {
 	cursor := int64(0)
-	for {
-		orders, _, err := l.svcCtx.TradeOrderModel.FindPage(l.ctx, models.TradeOrderPageFilter{
-			TenantId: in.GetTenantId(),
-			Statuses: []int64{
+	for scanned := 0; scanned < spotSettlementMaxSteps; {
+		orders, err := l.svcCtx.TradeOrderModel.FindTerminalAssetRepairCandidates(
+			l.ctx,
+			in.GetTenantId(),
+			cursor,
+			100,
+			[]int64{
 				int64(trade.OrderStatus_ORDER_STATUS_CANCELED),
 				int64(trade.OrderStatus_ORDER_STATUS_REJECTED),
 				int64(trade.OrderStatus_ORDER_STATUS_EXPIRED),
 			},
-		}, cursor, 100)
+		)
 		if err != nil {
 			return err
 		}
@@ -470,12 +473,17 @@ func (l *ProcessTradeEventsLogic) repairFrozenAssets(in *trade.TradeTaskReq) err
 		}
 		for _, order := range orders {
 			cursor = order.Id
+			scanned++
 			if err := unfreezeRemainingOrderAsset(l.svcCtx, l.ctx, order, "trade frozen asset repair unfreeze"); err != nil {
 				return err
+			}
+			if scanned >= spotSettlementMaxSteps {
+				return nil
 			}
 		}
 		if len(orders) < 100 {
 			return nil
 		}
 	}
+	return nil
 }

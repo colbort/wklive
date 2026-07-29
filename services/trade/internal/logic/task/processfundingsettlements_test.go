@@ -3,11 +3,38 @@ package tasklogic
 import (
 	"testing"
 
+	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
 )
+
+func TestFundingSymbolEligible(t *testing.T) {
+	if fundingSymbolEligible(nil) {
+		t.Fatal("nil symbol must not be eligible")
+	}
+	symbol := &models.TTradeSymbol{
+		ContractType: int64(common.ContractType_CONTRACT_TYPE_PERPETUAL),
+		Status:       int64(trade.SymbolStatus_SYMBOL_STATUS_ENABLED),
+	}
+	if !fundingSymbolEligible(symbol) {
+		t.Fatal("enabled perpetual symbol was rejected")
+	}
+	symbol.Status = int64(trade.SymbolStatus_SYMBOL_STATUS_CLOSE_ONLY)
+	if !fundingSymbolEligible(symbol) {
+		t.Fatal("close-only perpetual symbol with possible open positions was rejected")
+	}
+	symbol.Status = int64(trade.SymbolStatus_SYMBOL_STATUS_DISABLED)
+	if fundingSymbolEligible(symbol) {
+		t.Fatal("disabled perpetual symbol was accepted")
+	}
+	symbol.Status = int64(trade.SymbolStatus_SYMBOL_STATUS_ENABLED)
+	symbol.ContractType = int64(common.ContractType_CONTRACT_TYPE_DELIVERY)
+	if fundingSymbolEligible(symbol) {
+		t.Fatal("delivery symbol was accepted for funding")
+	}
+}
 
 func TestCalculateFundingFeeMatrix(t *testing.T) {
 	tests := []struct {

@@ -70,3 +70,45 @@ func TestSettlementAssetFlowIssueKeyIsStable(t *testing.T) {
 		t.Fatalf("issue key changed across database identity: %s != %s", first, second)
 	}
 }
+
+func TestLegacySecondsRefundMatchesReleaseInstruction(t *testing.T) {
+	instruction := &models.TTradeSettlementInstruction{
+		TenantId:      1,
+		InstructionNo: "TRD-1-RELEASE",
+		ReservationNo: "TRD-1",
+		UserId:        2,
+		Action:        int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_RELEASE_FROZEN),
+		Asset:         "USDT",
+		Amount:        decimal.RequireFromString("10"),
+	}
+	bizNo, ok := legacySecondsRefundBizNo(instruction)
+	if !ok || bizNo != "TRD-1-SECONDS-REFUND" {
+		t.Fatalf("legacySecondsRefundBizNo()=(%q,%t)", bizNo, ok)
+	}
+	flow := &asset.AssetFlow{
+		FlowNo:       "FLOW-1",
+		TenantId:     1,
+		UserId:       2,
+		Coin:         "USDT",
+		BizType:      asset.BizType_BIZ_TYPE_TRADE,
+		BizNo:        bizNo,
+		OpType:       asset.AssetOpType_ASSET_OP_TYPE_UNFREEZE,
+		ChangeAmount: "10.000000000000000000",
+	}
+	if !assetFlowMatchesInstructionBizNo(instruction, flow, bizNo) {
+		t.Fatal("matching legacy seconds refund was rejected")
+	}
+	if assetFlowMatchesInstruction(instruction, flow) {
+		t.Fatal("legacy refund must not pass the exact instruction matcher")
+	}
+
+	instruction.Amount = decimal.RequireFromString("9")
+	if assetFlowMatchesInstructionBizNo(instruction, flow, bizNo) {
+		t.Fatal("legacy refund amount mismatch was accepted")
+	}
+	instruction.Amount = decimal.RequireFromString("10")
+	instruction.InstructionNo = "OTHER-RELEASE"
+	if _, ok = legacySecondsRefundBizNo(instruction); ok {
+		t.Fatal("unrelated release instruction received a seconds refund alias")
+	}
+}

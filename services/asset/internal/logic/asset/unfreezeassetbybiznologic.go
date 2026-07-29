@@ -55,7 +55,7 @@ func (l *UnfreezeAssetByBizNoLogic) UnfreezeAssetByBizNo(in *asset.UnfreezeAsset
 		return nil, err
 	}
 	if unfreezeRemaining {
-		if !freeze.RemainAmount.IsPositive() || (freeze.Status != 1 && freeze.Status != 2) {
+		if !freezeAllowsUnfreeze(freeze.Status, freeze.RemainAmount) {
 			return &asset.ChangeAssetResp{Base: helper.OkResp(), Data: &asset.ChangeAssetData{BizNo: in.BizNo}}, nil
 		}
 		unfreezeAmount = conv.FloatString(freeze.RemainAmount)

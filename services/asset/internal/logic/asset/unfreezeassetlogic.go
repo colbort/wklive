@@ -12,6 +12,7 @@ import (
 	"wklive/services/asset/internal/svc"
 	"wklive/services/asset/models"
 
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -71,7 +72,7 @@ func (l *UnfreezeAssetLogic) UnfreezeAsset(in *asset.UnfreezeAssetReq) (*asset.C
 				return err
 			}
 		}
-		if freeze.Status != 1 && freeze.Status != 2 {
+		if !freezeAllowsUnfreeze(freeze.Status, freeze.RemainAmount) {
 			return i18n.StatusError(ctx, i18n.FreezeRecordNotReleasable)
 		}
 		if amount.GreaterThan(freeze.RemainAmount) {
@@ -122,4 +123,8 @@ func (l *UnfreezeAssetLogic) UnfreezeAsset(in *asset.UnfreezeAssetReq) (*asset.C
 	}
 
 	return &asset.ChangeAssetResp{Base: helper.OkResp(), Data: &asset.ChangeAssetData{BizNo: in.BizNo, Asset: helpers.ToUserAssetProto(after)}}, nil
+}
+
+func freezeAllowsUnfreeze(status int64, remain decimal.Decimal) bool {
+	return status == 1 || status == 2 || status == 4 && remain.IsPositive()
 }

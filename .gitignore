@@ -11,5 +11,7 @@ dist/
 
 *.tsbuildinfo
 
+/deploy/production-readiness.env
+
 android/
 ios/
