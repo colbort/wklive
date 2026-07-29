@@ -35,7 +35,7 @@ func NotificationsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		client := ws.NewConnection(svcCtx.NotificationHub, conn, claims.UserId, claims.Username)
+		client := ws.NewConnection(svcCtx.NotificationHub, conn, claims.UserId, claims.Username, )
 		svcCtx.NotificationHub.Register(client)
 		connected, _ := json.Marshal(notify.Event{
 			ID:        "connected",

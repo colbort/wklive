@@ -7,6 +7,9 @@ export const ADMIN_NOTIFICATION_EVENT_TYPES = {
   USER_IDENTITY_SUBMIT: 'user_identity_submit',
   RECHARGE: 'recharge',
   WITHDRAW: 'withdraw',
+  CONTRACT_RECONCILIATION: 'contract_reconciliation',
+  PRICE_ENGINE_INPUT: 'price_engine_input',
+  SNAPSHOT_OUTBOX: 'snapshot_outbox',
 } as const
 
 export type AdminNotificationEventType =
@@ -40,12 +43,15 @@ const voiceTextMap: Record<AdminNotificationEventType, string> = {
   [ADMIN_NOTIFICATION_EVENT_TYPES.USER_IDENTITY_SUBMIT]: '有新的实名认证提交',
   [ADMIN_NOTIFICATION_EVENT_TYPES.RECHARGE]: '有新的充值订单',
   [ADMIN_NOTIFICATION_EVENT_TYPES.WITHDRAW]: '有新的提现订单',
+  [ADMIN_NOTIFICATION_EVENT_TYPES.CONTRACT_RECONCILIATION]: '发现合约对账差异',
+  [ADMIN_NOTIFICATION_EVENT_TYPES.PRICE_ENGINE_INPUT]: '价格引擎输入异常',
+  [ADMIN_NOTIFICATION_EVENT_TYPES.SNAPSHOT_OUTBOX]: '行情快照队列异常',
 }
 
-function buildWebsocketUrl(token: string) {
-  const url = new URL('/admin/ws/notifications', ENV.API_BASE_URL)
+function buildWebsocketUrl() {
+  const apiBase = new URL(ENV.API_BASE_URL, window.location.origin)
+  const url = new URL('/admin/ws/notifications', apiBase)
   url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:'
-  url.searchParams.set('token', token)
   return url.toString()
 }
 
@@ -78,7 +84,10 @@ class AdminNotificationService {
     this.clearReconnectTimer()
     this.bindUnlockEvents()
 
-    const socket = new WebSocket(buildWebsocketUrl(auth.token))
+    const socket = new WebSocket(buildWebsocketUrl(), [
+      'wklive-admin-notifications',
+      `bearer.${auth.token}`,
+    ])
     this.socket = socket
 
     socket.onopen = () => {

@@ -1,0 +1,42 @@
+{
+  "record_count": 360,
+  "formula_count": 3,
+  "first_target_time": 1785316270000,
+  "last_target_time": 1785316389000,
+  "expected_interval_ms": 1000,
+  "formulas": [
+    {
+      "formula_no": "BTCUSDT-FUNDING-v1",
+      "formula_version": "v1",
+      "record_count": 120,
+      "first_target_time": 1785316270000,
+      "last_target_time": 1785316389000,
+      "minimum_output_price": "0",
+      "maximum_output_price": "0",
+      "minimum_accepted_input_count": 2,
+      "rejected_input_count": 0
+    },
+    {
+      "formula_no": "BTCUSDT-INDEX-v1",
+      "formula_version": "v1",
+      "record_count": 120,
+      "first_target_time": 1785316270000,
+      "last_target_time": 1785316389000,
+      "minimum_output_price": "64446.1",
+      "maximum_output_price": "64461.42",
+      "minimum_accepted_input_count": 1,
+      "rejected_input_count": 0
+    },
+    {
+      "formula_no": "BTCUSDT-MARK-v1",
+      "formula_version": "v1",
+      "record_count": 120,
+      "first_target_time": 1785316270000,
+      "last_target_time": 1785316389000,
+      "minimum_output_price": "64446.1",
+      "maximum_output_price": "64461.42",
+      "minimum_accepted_input_count": 1,
+      "rejected_input_count": 0
+    }
+  ]
+}

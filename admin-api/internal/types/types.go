@@ -172,6 +172,23 @@ type AuditWithdrawOrderReq struct {
 	Remark   string `json:"remark,optional"`
 }
 
+type AuthorityRegistryData struct {
+	Id           int64    `json:"id"`
+	Authority    string   `json:"authority"`
+	ProviderCode string   `json:"providerCode"`
+	ProducerType string   `json:"producerType"`
+	AllowedKinds []string `json:"allowedKinds"`
+	Status       int32    `json:"status"`
+	Version      int64    `json:"version"`
+	CreateTimes  int64    `json:"createTimes"`
+	UpdateTimes  int64    `json:"updateTimes"`
+}
+
+type AuthorityRegistryResp struct {
+	RespBase
+	Data AuthorityRegistryData `json:"data"`
+}
+
 type BatchUpsertTenantCategoriesReq struct {
 	TenantId int64                `json:"tenantId"`
 	Data     []TenantCategoryItem `json:"data"`
@@ -2035,6 +2052,20 @@ type ListAccountsResp struct {
 	Data []OptionAccount `json:"data"`
 }
 
+type ListAuthorityRegistriesReq struct {
+	PageReq
+	Authority    string `form:"authority,optional"`
+	ProviderCode string `form:"providerCode,optional"`
+	ProducerType string `form:"producerType,optional"`
+	SnapshotKind string `form:"snapshotKind,optional"`
+	Status       int32  `form:"status,optional"`
+}
+
+type ListAuthorityRegistriesResp struct {
+	RespBase
+	Data []AuthorityRegistryData `json:"data"`
+}
+
 type ListBillsReq struct {
 	PageReq
 	TenantId        int64     `form:"tenantId,optional"`
@@ -3504,6 +3535,16 @@ type RiskUserTradeLimit struct {
 	Remark               string `json:"remark"`
 	CreateTimes          int64  `json:"createTimes"`
 	UpdateTimes          int64  `json:"updateTimes"`
+}
+
+type SetAuthorityRegistryReq struct {
+	Id           int64    `json:"id,optional"`
+	Authority    string   `json:"authority"`
+	ProviderCode string   `json:"providerCode"`
+	ProducerType string   `json:"producerType"`
+	AllowedKinds []string `json:"allowedKinds"`
+	Status       int32    `json:"status"`
+	Version      int64    `json:"version,optional"`
 }
 
 type SetContractRiskLimitTierReq struct {

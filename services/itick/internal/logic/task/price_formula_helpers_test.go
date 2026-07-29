@@ -34,8 +34,8 @@ func TestNormalizePriceFormulaRejectsNonPositiveWeight(t *testing.T) {
 func TestNormalizeDeliveryFormulaRequiresThreeAcceptedInputs(t *testing.T) {
 	components := []*itick.PriceFormulaComponent{
 		{Authority: "itick-ws", SnapshotKind: "FINAL_QUOTE", Market: "BA", Symbol: "BTCUSDT", Weight: "1"},
-		{Authority: "itick-ws", SnapshotKind: "FINAL_QUOTE", Market: "BB", Symbol: "BTCUSDT", Weight: "1"},
-		{Authority: "itick-ws", SnapshotKind: "FINAL_QUOTE", Market: "BC", Symbol: "BTCUSDT", Weight: "1"},
+		{Authority: "source-b", SnapshotKind: "FINAL_QUOTE", Market: "BB", Symbol: "BTCUSDT", Weight: "1"},
+		{Authority: "source-c", SnapshotKind: "FINAL_QUOTE", Market: "BC", Symbol: "BTCUSDT", Weight: "1"},
 	}
 	req := &itick.CreatePriceFormulaReq{
 		FormulaNo: "delivery-v1", FormulaVersion: "v1", Authority: "price-engine",
@@ -91,7 +91,7 @@ func TestNormalizeIndexBasisMarkFormula(t *testing.T) {
 	}
 }
 
-func TestNormalizeIndexFormulaRequiresThreeDistinctMarkets(t *testing.T) {
+func TestNormalizeIndexFormulaRequiresThreeDistinctAuthorities(t *testing.T) {
 	req := &itick.CreatePriceFormulaReq{
 		FormulaNo: "BTCUSDT-INDEX-v2", FormulaVersion: "v2", Authority: "price-engine",
 		SnapshotKind: "INDEX", CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT",
@@ -99,13 +99,18 @@ func TestNormalizeIndexFormulaRequiresThreeDistinctMarkets(t *testing.T) {
 		MaxLookbackMs: 30000, MinInputCount: 3, IntervalMs: 1000,
 		Components: []*itick.PriceFormulaComponent{
 			{Authority: "itick-ws", SnapshotKind: "FINAL_QUOTE", CategoryCode: "crypto", Market: "SOURCE_A", Symbol: "BTCUSDT", Weight: "1"},
-			{Authority: "itick-ws", SnapshotKind: "FINAL_QUOTE", CategoryCode: "crypto", Market: "SOURCE_B", Symbol: "BTCUSDT", Weight: "1"},
-			{Authority: "itick-rest", SnapshotKind: "FINAL_QUOTE", CategoryCode: "crypto", Market: "SOURCE_C", Symbol: "BTCUSDT", Weight: "1"},
+			{Authority: "source-b", SnapshotKind: "FINAL_QUOTE", CategoryCode: "crypto", Market: "SOURCE_B", Symbol: "BTCUSDT", Weight: "1"},
+			{Authority: "source-c", SnapshotKind: "FINAL_QUOTE", CategoryCode: "crypto", Market: "SOURCE_C", Symbol: "BTCUSDT", Weight: "1"},
 		},
 	}
 	if _, err := normalizePriceFormulaReq(req); err != nil {
 		t.Fatalf("valid three-source INDEX rejected: %v", err)
 	}
+	req.Components[2].Authority = "itick-ws"
+	if _, err := normalizePriceFormulaReq(req); err == nil {
+		t.Fatal("same INDEX authority with a different market accepted")
+	}
+	req.Components[2].Authority = "source-c"
 	req.Components[2] = req.Components[1]
 	if _, err := normalizePriceFormulaReq(req); err == nil {
 		t.Fatal("duplicate INDEX source accepted")

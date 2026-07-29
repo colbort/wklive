@@ -71,7 +71,10 @@ func main() {
 	tasks.StartSnapshotOutboxCleanup(ctx, svcCtx)
 	tasks.StartAuthoritativeSnapshotRebuild(ctx, svcCtx)
 	tasks.StartLegacyAuthoritativeCacheCleanup(ctx, svcCtx)
-	tasks.StartPriceEngine(ctx, svcCtx.PriceEngine)
+	if err := tasks.StartExternalQuoteSources(ctx, svcCtx); err != nil {
+		panic(err)
+	}
+	tasks.StartPriceEngine(ctx, svcCtx.PriceEngine, svcCtx.OperationalAlertNotifier)
 	holidaySync := calendar.NewHolidaySyncService(ctx, c.Itick.ApiUrl, svcCtx.ItickRestClient,
 		svcCtx.MarketCalendarModel, svcCtx.MarketHolidayModel, svcCtx.MarketCalendarResolver,
 		utils.NewRedisLock(svcCtx.LockRedis), 24*time.Hour)

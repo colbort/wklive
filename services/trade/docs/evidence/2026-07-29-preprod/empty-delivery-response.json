@@ -1,0 +1,9 @@
+{
+  "code": 200,
+  "msg": "OK",
+  "total": 0,
+  "hasNext": false,
+  "hasPrev": false,
+  "nextCursor": 0,
+  "prevCursor": 0
+}

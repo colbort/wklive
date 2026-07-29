@@ -170,13 +170,27 @@ fi
 
 if [ -f "$READINESS_FILE" ]; then
   PRODUCTION_PRICE_SOURCE_IDS=$(read_setting PRODUCTION_PRICE_SOURCE_IDS)
+  PRODUCTION_PRICE_SOURCE_MARKETS=$(read_setting PRODUCTION_PRICE_SOURCE_MARKETS)
   PRICE_SOURCE_CREDENTIALS_APPROVED=$(read_setting PRICE_SOURCE_CREDENTIALS_APPROVED)
+  PRICE_SOURCE_ACCESS_MODE=$(read_setting PRICE_SOURCE_ACCESS_MODE)
   PRICE_SOURCE_LICENSE_APPROVED=$(read_setting PRICE_SOURCE_LICENSE_APPROVED)
   PRODUCTION_CATEGORY_CODE=$(read_setting PRODUCTION_CATEGORY_CODE)
   PRODUCTION_MARKET=$(read_setting PRODUCTION_MARKET)
   PRODUCTION_PRICE_SYMBOL=$(read_setting PRODUCTION_PRICE_SYMBOL)
   PRODUCTION_PERPETUAL_SYMBOL=$(read_setting PRODUCTION_PERPETUAL_SYMBOL)
   PRODUCTION_DELIVERY_SYMBOL=$(read_setting PRODUCTION_DELIVERY_SYMBOL)
+  INDEX_ALGORITHM=$(read_setting INDEX_ALGORITHM)
+  INDEX_SOURCE_WEIGHTS=$(read_setting INDEX_SOURCE_WEIGHTS)
+  INDEX_MAX_DEVIATION_BPS=$(read_setting INDEX_MAX_DEVIATION_BPS)
+  INDEX_FORMULA_VERSION=$(read_setting INDEX_FORMULA_VERSION)
+  PERPETUAL_PRICE_AUTHORITY=$(read_setting PERPETUAL_PRICE_AUTHORITY)
+  PERPETUAL_PRICE_MARKET=$(read_setting PERPETUAL_PRICE_MARKET)
+  MARK_FORMULA_VERSION=$(read_setting MARK_FORMULA_VERSION)
+  MARK_MAX_BASIS_BPS=$(read_setting MARK_MAX_BASIS_BPS)
+  MARK_CURRENT_WEIGHT=$(read_setting MARK_CURRENT_WEIGHT)
+  MARK_PREVIOUS_WEIGHT=$(read_setting MARK_PREVIOUS_WEIGHT)
+  FUNDING_FORMULA_VERSION=$(read_setting FUNDING_FORMULA_VERSION)
+  PRICE_FORMULA_INTERVAL_MS=$(read_setting PRICE_FORMULA_INTERVAL_MS)
   DELIVERY_ALGORITHM=$(read_setting DELIVERY_ALGORITHM)
   DELIVERY_SOURCE_WEIGHTS=$(read_setting DELIVERY_SOURCE_WEIGHTS)
   DELIVERY_MAX_DEVIATION_BPS=$(read_setting DELIVERY_MAX_DEVIATION_BPS)
@@ -204,13 +218,27 @@ if [ -f "$READINESS_FILE" ]; then
   DR_EXERCISE_REPORT_SHA256=$(read_setting DR_EXERCISE_REPORT_SHA256)
 else
   PRODUCTION_PRICE_SOURCE_IDS=""
+  PRODUCTION_PRICE_SOURCE_MARKETS=""
   PRICE_SOURCE_CREDENTIALS_APPROVED=""
+  PRICE_SOURCE_ACCESS_MODE=""
   PRICE_SOURCE_LICENSE_APPROVED=""
   PRODUCTION_CATEGORY_CODE=""
   PRODUCTION_MARKET=""
   PRODUCTION_PRICE_SYMBOL=""
   PRODUCTION_PERPETUAL_SYMBOL=""
   PRODUCTION_DELIVERY_SYMBOL=""
+  INDEX_ALGORITHM=""
+  INDEX_SOURCE_WEIGHTS=""
+  INDEX_MAX_DEVIATION_BPS=""
+  INDEX_FORMULA_VERSION=""
+  PERPETUAL_PRICE_AUTHORITY=""
+  PERPETUAL_PRICE_MARKET=""
+  MARK_FORMULA_VERSION=""
+  MARK_MAX_BASIS_BPS=""
+  MARK_CURRENT_WEIGHT=""
+  MARK_PREVIOUS_WEIGHT=""
+  FUNDING_FORMULA_VERSION=""
+  PRICE_FORMULA_INTERVAL_MS=""
   DELIVERY_ALGORITHM=""
   DELIVERY_SOURCE_WEIGHTS=""
   DELIVERY_MAX_DEVIATION_BPS=""
@@ -275,13 +303,109 @@ else
   fail "at least three declared independent production price sources"
 fi
 
-require_true "$PRICE_SOURCE_CREDENTIALS_APPROVED" "price-source credentials approved"
+credentials_check_deferred=false
+if [ "$PRICE_SOURCE_CREDENTIALS_APPROVED" = "true" ]; then
+  pass "price-source credentials approved"
+elif [ "$PRICE_SOURCE_ACCESS_MODE" = "PUBLIC_NO_CREDENTIALS" ]; then
+  # The database-backed check below must prove every declared Authority is a
+  # PUBLIC_REST producer before this factual no-credential mode can pass.
+  credentials_check_deferred=true
+else
+  fail "price-source credentials approved or explicitly not required"
+fi
 require_true "$PRICE_SOURCE_LICENSE_APPROVED" "price-source data licenses approved"
 require_value "$PRODUCTION_CATEGORY_CODE" "production category code declared"
 require_value "$PRODUCTION_MARKET" "production market declared"
 require_value "$PRODUCTION_PRICE_SYMBOL" "production price symbol declared"
 require_value "$PRODUCTION_PERPETUAL_SYMBOL" "production perpetual symbol declared"
 require_value "$PRODUCTION_DELIVERY_SYMBOL" "production delivery symbol declared"
+
+source_market_count=$(
+  printf '%s\n' "$PRODUCTION_PRICE_SOURCE_MARKETS" |
+    awk -F, '{
+      for (i = 1; i <= NF; i++) {
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", $i)
+        if ($i != "") count++
+      }
+    } END { print count + 0 }'
+)
+source_markets_valid=true
+old_ifs=$IFS
+IFS=,
+for source_market in $PRODUCTION_PRICE_SOURCE_MARKETS; do
+  source_market=$(printf '%s\n' "$source_market" | awk '{$1=$1; print}')
+  if ! valid_token "$source_market"; then
+    source_markets_valid=false
+  fi
+done
+IFS=$old_ifs
+if [ "$source_market_count" -eq "$source_count" ] && [ "$source_markets_valid" = "true" ]; then
+  pass "source markets match declared source authorities"
+else
+  fail "source markets match declared source authorities"
+fi
+
+case "$INDEX_ALGORITHM" in
+  WEIGHTED_MEAN)
+    INDEX_ALGORITHM_NUMBER=1
+    pass "INDEX algorithm approved"
+    ;;
+  MEDIAN)
+    INDEX_ALGORITHM_NUMBER=2
+    pass "INDEX algorithm approved"
+    ;;
+  *)
+    INDEX_ALGORITHM_NUMBER=0
+    fail "INDEX algorithm approved (MEDIAN or WEIGHTED_MEAN)"
+    ;;
+esac
+index_weights_valid=$(
+  printf '%s\n' "$INDEX_SOURCE_WEIGHTS" |
+    awk -F, -v expected="$source_count" '
+      BEGIN { valid = (expected >= 3) }
+      {
+        if ($0 == "") valid = 0
+        if (NF != expected) valid = 0
+        for (i = 1; i <= NF; i++) {
+          gsub(/^[[:space:]]+|[[:space:]]+$/, "", $i)
+          if ($i !~ /^[0-9]+([.][0-9]+)?$/ || $i + 0 <= 0) valid = 0
+        }
+      }
+      END { print valid }
+    '
+)
+if [ "$index_weights_valid" -eq 1 ]; then
+  pass "INDEX positive source weights match declared sources"
+else
+  fail "INDEX positive source weights match declared sources"
+fi
+require_positive_integer "$INDEX_MAX_DEVIATION_BPS" "INDEX maximum deviation approved"
+require_value "$INDEX_FORMULA_VERSION" "INDEX immutable formula version declared"
+require_value "$PERPETUAL_PRICE_AUTHORITY" "MARK perpetual source authority declared"
+require_value "$PERPETUAL_PRICE_MARKET" "MARK perpetual source market declared"
+require_value "$MARK_FORMULA_VERSION" "MARK immutable formula version declared"
+require_positive_integer "$MARK_MAX_BASIS_BPS" "MARK maximum basis approved"
+mark_weights_valid=$(
+  printf '%s,%s\n' "$MARK_CURRENT_WEIGHT" "$MARK_PREVIOUS_WEIGHT" |
+    awk -F, '
+      BEGIN { valid = 1 }
+      {
+        if (NF != 2) valid = 0
+        for (i = 1; i <= NF; i++) {
+          gsub(/^[[:space:]]+|[[:space:]]+$/, "", $i)
+          if ($i !~ /^[0-9]+([.][0-9]+)?$/ || $i + 0 <= 0) valid = 0
+        }
+      }
+      END { print valid }
+    '
+)
+if [ "$mark_weights_valid" -eq 1 ]; then
+  pass "MARK current and previous weights approved"
+else
+  fail "MARK current and previous weights approved"
+fi
+require_value "$FUNDING_FORMULA_VERSION" "FUNDING immutable formula version declared"
+require_positive_integer "$PRICE_FORMULA_INTERVAL_MS" "price formula interval approved"
 
 case "$DELIVERY_ALGORITHM" in
   WEIGHTED_MEAN)
@@ -390,12 +514,14 @@ fi
 tokens_valid=true
 for token in "$PRODUCTION_CATEGORY_CODE" "$PRODUCTION_MARKET" "$PRODUCTION_PRICE_SYMBOL" \
   "$PRODUCTION_PERPETUAL_SYMBOL" "$PRODUCTION_DELIVERY_SYMBOL" "$PRODUCTION_SETTLEMENT_COIN" \
-  "$DELIVERY_FORMULA_VERSION"; do
+  "$INDEX_FORMULA_VERSION" "$PERPETUAL_PRICE_AUTHORITY" "$PERPETUAL_PRICE_MARKET" \
+  "$MARK_FORMULA_VERSION" "$FUNDING_FORMULA_VERSION" "$DELIVERY_FORMULA_VERSION"; do
   if ! valid_token "$token"; then
     tokens_valid=false
   fi
 done
-if [ "$source_ids_valid" != "true" ] || [ "$source_count" -lt 3 ]; then
+if [ "$source_ids_valid" != "true" ] || [ "$source_count" -lt 3 ] ||
+   [ "$source_markets_valid" != "true" ] || [ "$source_market_count" -ne "$source_count" ]; then
   tokens_valid=false
 fi
 case "$PRODUCTION_TENANT_ID" in
@@ -403,17 +529,19 @@ case "$PRODUCTION_TENANT_ID" in
     tokens_valid=false
     ;;
 esac
-for numeric_value in "$DELIVERY_MAX_DEVIATION_BPS" "$DELIVERY_LOCK_WINDOW_MS"; do
+for numeric_value in "$INDEX_MAX_DEVIATION_BPS" "$MARK_MAX_BASIS_BPS" \
+  "$PRICE_FORMULA_INTERVAL_MS" "$DELIVERY_MAX_DEVIATION_BPS" "$DELIVERY_LOCK_WINDOW_MS"; do
   case "$numeric_value" in
     ''|*[!0-9]*|0)
       tokens_valid=false
       ;;
   esac
 done
-if [ "$DELIVERY_ALGORITHM_NUMBER" -eq 0 ]; then
+if [ "$INDEX_ALGORITHM_NUMBER" -eq 0 ] || [ "$DELIVERY_ALGORITHM_NUMBER" -eq 0 ]; then
   tokens_valid=false
 fi
-if [ "$weights_valid" -ne 1 ]; then
+if [ "$index_weights_valid" -ne 1 ] || [ "$mark_weights_valid" -ne 1 ] ||
+   [ "$weights_valid" -ne 1 ]; then
   tokens_valid=false
 fi
 case "$DELIVERY_LOCK_WINDOW_MS" in
@@ -438,14 +566,27 @@ db_output=$(
     --entrypoint /usr/local/bin/contract-readiness \
     -e "READINESS_DETAILED=$readiness_detailed" \
     -e "READINESS_SOURCE_AUTHORITIES=$PRODUCTION_PRICE_SOURCE_IDS" \
+    -e "READINESS_SOURCE_MARKETS=$PRODUCTION_PRICE_SOURCE_MARKETS" \
+    -e "READINESS_INDEX_SOURCE_WEIGHTS=$INDEX_SOURCE_WEIGHTS" \
     -e "READINESS_SOURCE_WEIGHTS=$DELIVERY_SOURCE_WEIGHTS" \
     -e "READINESS_CATEGORY_CODE=$PRODUCTION_CATEGORY_CODE" \
     -e "READINESS_MARKET=$PRODUCTION_MARKET" \
     -e "READINESS_PRICE_SYMBOL=$PRODUCTION_PRICE_SYMBOL" \
     -e "READINESS_PERPETUAL_SYMBOL=$PRODUCTION_PERPETUAL_SYMBOL" \
     -e "READINESS_DELIVERY_SYMBOL=$PRODUCTION_DELIVERY_SYMBOL" \
+    -e "READINESS_PERPETUAL_PRICE_AUTHORITY=$PERPETUAL_PRICE_AUTHORITY" \
+    -e "READINESS_PERPETUAL_PRICE_MARKET=$PERPETUAL_PRICE_MARKET" \
     -e "READINESS_TENANT_ID=$PRODUCTION_TENANT_ID" \
     -e "READINESS_SETTLEMENT_COIN=$PRODUCTION_SETTLEMENT_COIN" \
+    -e "READINESS_INDEX_ALGORITHM=$INDEX_ALGORITHM_NUMBER" \
+    -e "READINESS_INDEX_FORMULA_VERSION=$INDEX_FORMULA_VERSION" \
+    -e "READINESS_INDEX_MAX_DEVIATION_BPS=$INDEX_MAX_DEVIATION_BPS" \
+    -e "READINESS_MARK_FORMULA_VERSION=$MARK_FORMULA_VERSION" \
+    -e "READINESS_MARK_MAX_BASIS_BPS=$MARK_MAX_BASIS_BPS" \
+    -e "READINESS_MARK_CURRENT_WEIGHT=$MARK_CURRENT_WEIGHT" \
+    -e "READINESS_MARK_PREVIOUS_WEIGHT=$MARK_PREVIOUS_WEIGHT" \
+    -e "READINESS_FUNDING_FORMULA_VERSION=$FUNDING_FORMULA_VERSION" \
+    -e "READINESS_FORMULA_INTERVAL_MS=$PRICE_FORMULA_INTERVAL_MS" \
     -e "READINESS_DELIVERY_ALGORITHM=$DELIVERY_ALGORITHM_NUMBER" \
     -e "READINESS_FORMULA_VERSION=$DELIVERY_FORMULA_VERSION" \
     -e "READINESS_MAX_LOOKBACK_MS=$DELIVERY_LOCK_WINDOW_MS" \
@@ -466,7 +607,19 @@ if [ "$tokens_valid" = "true" ]; then
   else
     fail "price, contract, and fund configuration can be inspected"
   fi
-  if [ "$(db_number READINESS_DB_ACTIVE_SOURCE_AUTHORITIES 0)" -eq "$source_count" ]; then pass "declared source authorities are active for FINAL_QUOTE"; else fail "declared source authorities are active for FINAL_QUOTE"; fi
+  if [ "$(db_number READINESS_DB_ACTIVE_SOURCE_AUTHORITIES 0)" -eq "$source_count" ] &&
+     [ "$(db_number READINESS_DB_DISTINCT_SOURCE_PROVIDERS 0)" -eq "$source_count" ]; then
+    pass "declared source authorities are active and provider-independent for FINAL_QUOTE"
+  else
+    fail "declared source authorities are active and provider-independent for FINAL_QUOTE"
+  fi
+  if [ "$credentials_check_deferred" = "true" ]; then
+    if [ "$(db_number READINESS_DB_PUBLIC_REST_SOURCE_AUTHORITIES 0)" -eq "$source_count" ]; then
+      pass "declared price sources are PUBLIC_REST and require no credentials"
+    else
+      fail "PUBLIC_NO_CREDENTIALS requires every declared source to be PUBLIC_REST"
+    fi
+  fi
   if [ "$(db_number READINESS_DB_PRICE_ENGINE_AUTHORITY 0)" -gt 0 ]; then pass "price-engine authority can publish all contract price kinds"; else fail "price-engine authority can publish all contract price kinds"; fi
   if [ "$(db_number READINESS_DB_INDEX_FORMULAS 0)" -gt 0 ]; then pass "active three-source INDEX formula"; else fail "active three-source INDEX formula"; fi
   if [ "$(db_number READINESS_DB_MARK_FORMULAS 0)" -gt 0 ]; then pass "active INDEX_BASIS MARK formula"; else fail "active INDEX_BASIS MARK formula"; fi

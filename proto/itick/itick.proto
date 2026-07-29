@@ -482,6 +482,47 @@ message InitTenantItickDisplayData {
 // Versioned Price Engine formulas
 // ====================
 
+message AuthorityRegistryData {
+  int64 id = 1;
+  string authority = 2;
+  string producer_type = 3;
+  repeated string allowed_kinds = 4;
+  common.Enable status = 5;
+  int64 version = 6;
+  int64 create_times = 7;
+  int64 update_times = 8;
+  string provider_code = 9;
+}
+
+message SetAuthorityRegistryReq {
+  int64 id = 1;
+  string authority = 2;
+  string producer_type = 3;
+  repeated string allowed_kinds = 4;
+  common.Enable status = 5;
+  int64 version = 6;
+  string provider_code = 7;
+}
+
+message AuthorityRegistryResp {
+  common.RespBase base = 1;
+  AuthorityRegistryData data = 2;
+}
+
+message ListAuthorityRegistriesReq {
+  common.PageReq page = 1;
+  string authority = 2;
+  string producer_type = 3;
+  string snapshot_kind = 4;
+  common.Enable status = 5;
+  string provider_code = 6;
+}
+
+message ListAuthorityRegistriesResp {
+  common.RespBase base = 1;
+  repeated AuthorityRegistryData data = 2;
+}
+
 message PriceFormulaComponent {
   string authority = 1;
   string snapshot_kind = 2;
@@ -648,6 +689,10 @@ service Admin {
 
   // 初始化租户展示配置
   rpc InitTenantItickDisplay(InitTenantItickDisplayReq) returns (InitTenantItickDisplayResp);
+
+  // Authority、provider_code 和 producer_type 创建后不可修改；数据库写入由 model 完成。
+  rpc SetAuthorityRegistry(SetAuthorityRegistryReq) returns (AuthorityRegistryResp);
+  rpc ListAuthorityRegistries(ListAuthorityRegistriesReq) returns (ListAuthorityRegistriesResp);
 
   // Price Engine 公式内容不可原地修改，变更必须创建新版本。
   rpc CreatePriceFormula(CreatePriceFormulaReq) returns (PriceFormulaResp);

@@ -1,0 +1,53 @@
+{
+  "record_count": 240,
+  "formula_count": 4,
+  "first_target_time": 1785326018000,
+  "last_target_time": 1785326077000,
+  "expected_interval_ms": 1000,
+  "formulas": [
+    {
+      "formula_no": "BTCUSDT-DELIVERY-production-v1",
+      "formula_version": "delivery-v1",
+      "record_count": 60,
+      "first_target_time": 1785326018000,
+      "last_target_time": 1785326077000,
+      "minimum_output_price": "64462",
+      "maximum_output_price": "64465.23",
+      "minimum_accepted_input_count": 3,
+      "rejected_input_count": 0
+    },
+    {
+      "formula_no": "BTCUSDT-FUNDING-production-v1",
+      "formula_version": "production-funding-v1",
+      "record_count": 60,
+      "first_target_time": 1785326018000,
+      "last_target_time": 1785326077000,
+      "minimum_output_price": "-0.000514179769193",
+      "maximum_output_price": "-0.0004752110655716",
+      "minimum_accepted_input_count": 2,
+      "rejected_input_count": 0
+    },
+    {
+      "formula_no": "BTCUSDT-INDEX-production-v1",
+      "formula_version": "production-index-v1",
+      "record_count": 60,
+      "first_target_time": 1785326018000,
+      "last_target_time": 1785326077000,
+      "minimum_output_price": "64462",
+      "maximum_output_price": "64465.23",
+      "minimum_accepted_input_count": 3,
+      "rejected_input_count": 0
+    },
+    {
+      "formula_no": "BTCUSDT-MARK-production-v2",
+      "formula_version": "production-mark-v2",
+      "record_count": 60,
+      "first_target_time": 1785326018000,
+      "last_target_time": 1785326077000,
+      "minimum_output_price": "64431.366944291126704",
+      "maximum_output_price": "64434.4715594267245199",
+      "minimum_accepted_input_count": 3,
+      "rejected_input_count": 0
+    }
+  ]
+}

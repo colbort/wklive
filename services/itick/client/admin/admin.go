@@ -14,6 +14,8 @@ import (
 )
 
 type (
+	AuthorityRegistryData          = itick.AuthorityRegistryData
+	AuthorityRegistryResp          = itick.AuthorityRegistryResp
 	BatchGetQuoteReq               = itick.BatchGetQuoteReq
 	BatchGetQuoteResp              = itick.BatchGetQuoteResp
 	BatchUpsertTenantCategoriesReq = itick.BatchUpsertTenantCategoriesReq
@@ -50,6 +52,8 @@ type (
 	InitTenantItickDisplayResp     = itick.InitTenantItickDisplayResp
 	KlineInterval                  = itick.KlineInterval
 	KlineIntervalsResp             = itick.KlineIntervalsResp
+	ListAuthorityRegistriesReq     = itick.ListAuthorityRegistriesReq
+	ListAuthorityRegistriesResp    = itick.ListAuthorityRegistriesResp
 	ListCategoriesReq              = itick.ListCategoriesReq
 	ListCategoriesResp             = itick.ListCategoriesResp
 	ListPriceFormulasReq           = itick.ListPriceFormulasReq
@@ -74,6 +78,7 @@ type (
 	PushReply                      = itick.PushReply
 	RetrySnapshotOutboxReq         = itick.RetrySnapshotOutboxReq
 	RevokeAuthoritativeSnapshotReq = itick.RevokeAuthoritativeSnapshotReq
+	SetAuthorityRegistryReq        = itick.SetAuthorityRegistryReq
 	SnapshotOutboxData             = itick.SnapshotOutboxData
 	SubscribeRequest               = itick.SubscribeRequest
 	SubscribeTopic                 = itick.SubscribeTopic
@@ -140,6 +145,9 @@ type (
 		GetTenantProduct(ctx context.Context, in *GetTenantProductReq, opts ...grpc.CallOption) (*GetTenantProductResp, error)
 		// 初始化租户展示配置
 		InitTenantItickDisplay(ctx context.Context, in *InitTenantItickDisplayReq, opts ...grpc.CallOption) (*InitTenantItickDisplayResp, error)
+		// Authority、provider_code 和 producer_type 创建后不可修改；数据库写入由 model 完成。
+		SetAuthorityRegistry(ctx context.Context, in *SetAuthorityRegistryReq, opts ...grpc.CallOption) (*AuthorityRegistryResp, error)
+		ListAuthorityRegistries(ctx context.Context, in *ListAuthorityRegistriesReq, opts ...grpc.CallOption) (*ListAuthorityRegistriesResp, error)
 		// Price Engine 公式内容不可原地修改，变更必须创建新版本。
 		CreatePriceFormula(ctx context.Context, in *CreatePriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error)
 		GetPriceFormula(ctx context.Context, in *PriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error)
@@ -297,6 +305,17 @@ func (m *defaultAdmin) GetTenantProduct(ctx context.Context, in *GetTenantProduc
 func (m *defaultAdmin) InitTenantItickDisplay(ctx context.Context, in *InitTenantItickDisplayReq, opts ...grpc.CallOption) (*InitTenantItickDisplayResp, error) {
 	client := itick.NewAdminClient(m.cli.Conn())
 	return client.InitTenantItickDisplay(ctx, in, opts...)
+}
+
+// Authority、provider_code 和 producer_type 创建后不可修改；数据库写入由 model 完成。
+func (m *defaultAdmin) SetAuthorityRegistry(ctx context.Context, in *SetAuthorityRegistryReq, opts ...grpc.CallOption) (*AuthorityRegistryResp, error) {
+	client := itick.NewAdminClient(m.cli.Conn())
+	return client.SetAuthorityRegistry(ctx, in, opts...)
+}
+
+func (m *defaultAdmin) ListAuthorityRegistries(ctx context.Context, in *ListAuthorityRegistriesReq, opts ...grpc.CallOption) (*ListAuthorityRegistriesResp, error) {
+	client := itick.NewAdminClient(m.cli.Conn())
+	return client.ListAuthorityRegistries(ctx, in, opts...)
 }
 
 // Price Engine 公式内容不可原地修改，变更必须创建新版本。

@@ -45,6 +45,56 @@ type EvaluationAudit struct {
 
 var ErrInputUnavailable = errors.New("price engine input unavailable")
 
+type InputUnavailableError struct {
+	FormulaNo    string
+	Authority    string
+	Kind         string
+	CategoryCode string
+	Market       string
+	Symbol       string
+	Target       int64
+	Detail       string
+}
+
+func (e *InputUnavailableError) Error() string {
+	identity := fmt.Sprintf(
+		"formula=%s authority=%s kind=%s category=%s market=%s symbol=%s",
+		e.FormulaNo,
+		e.Authority,
+		e.Kind,
+		e.CategoryCode,
+		e.Market,
+		e.Symbol,
+	)
+	if e.Authority == "" {
+		identity = fmt.Sprintf("formula=%s", e.FormulaNo)
+	}
+	if e.Target > 0 {
+		identity += fmt.Sprintf(" target=%d", e.Target)
+	}
+	if e.Detail != "" {
+		identity += ": " + e.Detail
+	}
+	return ErrInputUnavailable.Error() + ": " + identity
+}
+
+func (e *InputUnavailableError) Unwrap() error {
+	return ErrInputUnavailable
+}
+
+func (e *InputUnavailableError) AlertFingerprint() string {
+	return fmt.Sprintf(
+		"formula=%s;authority=%s;kind=%s;category=%s;market=%s;symbol=%s;detail=%s",
+		e.FormulaNo,
+		e.Authority,
+		e.Kind,
+		e.CategoryCode,
+		e.Market,
+		e.Symbol,
+		e.Detail,
+	)
+}
+
 type Archive interface {
 	FindAtOrBefore(context.Context, string, string, string, string, string, int64, int64) (*models.TItickAuthoritativeSnapshot, error)
 	InsertImmutableAndEnqueue(context.Context, *models.TItickAuthoritativeSnapshot, string) error
@@ -129,19 +179,36 @@ func (e *Engine) evaluate(ctx context.Context, f *models.TItickPriceFormula, tar
 		}
 		row, err := e.archive.FindAtOrBefore(ctx, c.Authority, kind, c.CategoryCode, c.Market, c.Symbol, lookupTarget, target-f.MaxLookbackMs)
 		if err != nil {
-			return fmt.Errorf("%w: formula=%s authority=%s kind=%s category=%s market=%s symbol=%s target=%d: %v",
-				ErrInputUnavailable, f.FormulaNo, c.Authority, kind, c.CategoryCode, c.Market, c.Symbol, target, err)
+			return &InputUnavailableError{
+				FormulaNo:    f.FormulaNo,
+				Authority:    c.Authority,
+				Kind:         kind,
+				CategoryCode: c.CategoryCode,
+				Market:       c.Market,
+				Symbol:       c.Symbol,
+				Target:       target,
+				Detail:       err.Error(),
+			}
 		}
 		if strings.TrimSpace(row.SnapshotId) == "" {
-			return fmt.Errorf("%w: formula=%s authority=%s kind=%s returned empty snapshot id",
-				ErrInputUnavailable, f.FormulaNo, c.Authority, kind)
+			return &InputUnavailableError{
+				FormulaNo: f.FormulaNo,
+				Authority: c.Authority,
+				Kind:      kind,
+				Detail:    "returned empty snapshot id",
+			}
 		}
 		weight, err := decimal.NewFromString(c.Weight)
 		if err != nil {
 			return err
 		}
 		inputs = append(inputs, Input{Price: row.Price, Weight: weight, SnapshotID: row.SnapshotId})
-		if row.SourceTimestamp < sourceTime {
+		isPreviousMark := itick.PriceAlgorithm(f.Algorithm) ==
+			itick.PriceAlgorithm_PRICE_ALGORITHM_INDEX_BASIS && componentIndex == 2
+		// Previous MARK is a smoothing state, not a current market observation.
+		// Recursively inheriting its source time makes every next MARK older
+		// until the lookback window expires and the formula deadlocks.
+		if !isPreviousMark && row.SourceTimestamp < sourceTime {
 			sourceTime = row.SourceTimestamp
 		}
 	}
@@ -154,8 +221,16 @@ func (e *Engine) evaluate(ctx context.Context, f *models.TItickPriceFormula, tar
 	}
 	minInputCount := effectiveMinInputCount(f)
 	if int64(len(inputs)) < minInputCount {
-		return fmt.Errorf("%w: formula=%s accepted=%d required=%d rejected=%d target=%d",
-			ErrInputUnavailable, f.FormulaNo, len(inputs), minInputCount, len(rejectedInputs), target)
+		return &InputUnavailableError{
+			FormulaNo: f.FormulaNo,
+			Target:    target,
+			Detail: fmt.Sprintf(
+				"accepted=%d required=%d rejected=%d",
+				len(inputs),
+				minInputCount,
+				len(rejectedInputs),
+			),
+		}
 	}
 	var price decimal.Decimal
 	var rawBasis, appliedBasis decimal.Decimal

@@ -1,0 +1,9 @@
+{
+  "code": 400,
+  "msg": "开始交易时间必须晚于上线时间",
+  "total": 0,
+  "hasNext": false,
+  "hasPrev": false,
+  "nextCursor": 0,
+  "prevCursor": 0
+}

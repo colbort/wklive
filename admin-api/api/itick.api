@@ -420,6 +420,50 @@ type InitTenantItickDisplayResp {
 	data InitTenantItickDisplayData `json:"data"`
 }
 
+// ====================
+// 权威行情来源注册表
+// ====================
+type AuthorityRegistryData {
+	id           int64    `json:"id"`
+	authority    string   `json:"authority"`
+	providerCode string   `json:"providerCode"`
+	producerType string   `json:"producerType"`
+	allowedKinds []string `json:"allowedKinds"`
+	status       int32    `json:"status"`
+	version      int64    `json:"version"`
+	createTimes  int64    `json:"createTimes"`
+	updateTimes  int64    `json:"updateTimes"`
+}
+
+type SetAuthorityRegistryReq {
+	id           int64    `json:"id,optional"`
+	authority    string   `json:"authority"`
+	providerCode string   `json:"providerCode"`
+	producerType string   `json:"producerType"`
+	allowedKinds []string `json:"allowedKinds"`
+	status       int32    `json:"status"`
+	version      int64    `json:"version,optional"`
+}
+
+type AuthorityRegistryResp {
+	RespBase
+	data AuthorityRegistryData `json:"data"`
+}
+
+type ListAuthorityRegistriesReq {
+	PageReq
+	authority    string `form:"authority,optional"`
+	providerCode string `form:"providerCode,optional"`
+	producerType string `form:"producerType,optional"`
+	snapshotKind string `form:"snapshotKind,optional"`
+	status       int32  `form:"status,optional"`
+}
+
+type ListAuthorityRegistriesResp {
+	RespBase
+	data []AuthorityRegistryData `json:"data"`
+}
+
 type PriceFormulaComponent {
 	authority    string `json:"authority"`
 	snapshotKind string `json:"snapshotKind"`
@@ -628,6 +672,12 @@ service admin {
 	// 初始化租户展示配置
 	@handler InitTenantItickDisplay
 	post /tenant-display/init (InitTenantItickDisplayReq) returns (InitTenantItickDisplayResp)
+
+	@handler SetAuthorityRegistry
+	post /authorities (SetAuthorityRegistryReq) returns (AuthorityRegistryResp)
+
+	@handler ListAuthorityRegistries
+	get /authorities (ListAuthorityRegistriesReq) returns (ListAuthorityRegistriesResp)
 
 	@handler CreatePriceFormula
 	post /price-formulas (CreatePriceFormulaReq) returns (PriceFormulaResp)

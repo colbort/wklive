@@ -1,0 +1,84 @@
+Docker disk preflight: available=7378828KiB required=4194304KiB
+Contract production readiness (read-only)
+Attestation file: /Users/sky/local/go/src/wklive/deploy/production-readiness.env
+
+PASS  production readiness attestation exists
+PASS  at least three declared independent production price sources
+FAIL  price-source data licenses approved (must be true)
+PASS  production category code declared
+PASS  production market declared
+PASS  production price symbol declared
+PASS  production perpetual symbol declared
+PASS  production delivery symbol declared
+PASS  source markets match declared source authorities
+PASS  INDEX algorithm approved
+PASS  INDEX positive source weights match declared sources
+PASS  INDEX maximum deviation approved
+PASS  INDEX immutable formula version declared
+PASS  MARK perpetual source authority declared
+PASS  MARK perpetual source market declared
+PASS  MARK immutable formula version declared
+PASS  MARK maximum basis approved
+PASS  MARK current and previous weights approved
+PASS  FUNDING immutable formula version declared
+PASS  price formula interval approved
+PASS  DELIVERY algorithm approved
+PASS  DELIVERY positive source weights match declared sources
+PASS  DELIVERY maximum deviation approved
+PASS  DELIVERY lock window approved
+PASS  DELIVERY immutable formula version declared
+PASS  production historical replay report attached
+PASS  production alert platform declared
+FAIL  production on-call team declared
+FAIL  production alert escalation policy declared
+PASS  production alert delivery test report attached
+PASS  production tenant declared
+PASS  production settlement coin declared
+FAIL  insurance and fee account permissions approved (must be true)
+FAIL  fund-account approver declared
+FAIL  automatic-liquidation enable window declared
+PASS  automatic-liquidation rollback plan attached
+FAIL  production RPO approved (must be a positive integer)
+FAIL  production RTO approved (must be a positive integer)
+FAIL  backup encryption declared
+FAIL  offsite backup location declared
+PASS  production DR exercise report attached
+
+Live deploy checks
+PASS  Compose service mysql is healthy
+PASS  Compose service etcd is healthy
+PASS  Compose service itick-rpc is healthy
+PASS  Compose service trade-rpc is healthy
+PASS  Compose service asset-rpc is healthy
+PASS  Compose service system-rpc is healthy
+PASS  Compose initializer db-init completed successfully
+PASS  Compose initializer config-seed completed successfully
+PASS  Compose initializer kafka-init completed successfully
+PASS  AutomaticLiquidation remains closed during preflight
+PASS  CrossMarginTrading remains closed during preflight
+ Image wklive-db-init Building 
+ Image wklive-db-init Built 
+ Container wklive-db-init-run-85e10a3080f5 Creating 
+ Container wklive-db-init-run-85e10a3080f5 Created 
+PASS  model-backed database readiness inspection succeeded
+PASS  price, contract, and fund configuration can be inspected
+PASS  declared source authorities are active and provider-independent for FINAL_QUOTE
+PASS  declared price sources are PUBLIC_REST and require no credentials
+PASS  price-engine authority can publish all contract price kinds
+PASS  active three-source INDEX formula
+PASS  active INDEX_BASIS MARK formula
+PASS  active FUNDING formula
+PASS  active three-source DELIVERY formula
+PASS  three declared FINAL_QUOTE sources are fresh
+PASS  INDEX/MARK/FUNDING/DELIVERY outputs are fresh
+FAIL  funded active INSURANCE_FUND account
+PASS  active FEE_REVENUE account
+PASS  enabled production perpetual contract configuration
+FAIL  enabled future production delivery contract configuration
+PASS  active default contract insurance configuration
+PASS  operational backlog can be inspected
+PASS  Snapshot Outbox is healthy (fresh in-flight records are allowed)
+PASS  contract reconciliation has no open issue
+PASS  settlement instructions have no open record
+
+NOT READY: 12 prerequisite(s) failed. Production gates must remain closed.

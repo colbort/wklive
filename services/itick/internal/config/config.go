@@ -19,7 +19,10 @@ type Config struct {
 	} `json:"Mysql" yaml:"Mysql"`
 	Itick   ItickConf
 	Runtime ItickRuntimeConf
-	Mongo   struct {
+	// ExternalQuotes are independent public market-data producers used by the
+	// contract price engine. They publish only FINAL_QUOTE snapshots.
+	ExternalQuotes []ExternalQuoteSourceConf
+	Mongo          struct {
 		Url string
 		Db  string
 	}
@@ -77,6 +80,22 @@ type Config struct {
 		// LegacyCleanupIntervalSeconds is the delay between legacy cleanup batches.
 		LegacyCleanupIntervalSeconds int
 	}
+}
+
+type ExternalQuoteSourceConf struct {
+	Enabled         bool
+	Authority       string
+	ProviderCode    string
+	Adapter         string
+	BaseURL         string
+	CategoryCode    string
+	Market          string
+	Symbol          string
+	UpstreamSymbol  string
+	IntervalMs      int
+	TimeoutMs       int
+	MaxSourceAgeMs  int64
+	MaxFutureSkewMs int64
 }
 
 type ItickRuntimeConf struct {

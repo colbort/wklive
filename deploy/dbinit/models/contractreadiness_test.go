@@ -16,16 +16,27 @@ func TestContractReadinessModelInspectDetailed(t *testing.T) {
 
 	input := validReadinessInput()
 	mock.ExpectQuery(`(?s)FROM t_itick_authority_registry`).
-		WithArgs("source-a", "source-b", "source-c").
-		WillReturnRows(sqlmock.NewRows([]string{"sources", "price_engine"}).AddRow(3, 1))
+		WithArgs(
+			"source-a", "source-b", "source-c",
+			"source-a", "source-b", "source-c",
+			"source-a", "source-b", "source-c",
+		).
+		WillReturnRows(sqlmock.NewRows([]string{"sources", "providers", "public_rest", "price_engine"}).AddRow(3, 3, 3, 1))
 	mock.ExpectQuery(`(?s)FROM t_itick_price_formula AS f`).
 		WithArgs(
+			2, "index-v1", int64(30000), int64(200), 3, int64(1000), 3,
+			"source-a", "market-a", "1",
+			"source-b", "market-b", "1",
+			"source-c", "market-c", "1",
 			3,
-			"source-a", "source-b", "source-c",
-			3,
+			"mark-v2", int64(30000), int64(200), int64(1000),
+			"1", "perpetual-source", "PERPETUAL", "1", "4",
+			"funding-v1", int64(30000), int64(1000),
 			2, "delivery-v1", int64(30000), int64(200),
-			3,
-			"source-a", "1", "source-b", "1", "source-c", "1",
+			3, int64(1000), 3,
+			"source-a", "market-a", "1",
+			"source-b", "market-b", "1",
+			"source-c", "market-c", "1",
 			3,
 			"crypto", "BA", "BTCUSDT",
 		).
@@ -64,6 +75,8 @@ func TestContractReadinessModelInspectDetailed(t *testing.T) {
 	}
 	if !result.Detailed ||
 		result.ActiveSourceAuthorityCount != 3 ||
+		result.DistinctSourceProviderCount != 3 ||
+		result.PublicRestSourceCount != 3 ||
 		result.PriceEngineAuthorityCount != 1 ||
 		result.IndexFormulaCount != 1 ||
 		result.MarkFormulaCount != 1 ||
@@ -232,13 +245,22 @@ func TestPlaceholdersAndStringArgs(t *testing.T) {
 	if len(args) != 3 || args[0] != "prefix" || args[1] != "a" || args[2] != "b" {
 		t.Fatalf("unexpected args: %#v", args)
 	}
-	if got := sourceWeightPredicate(2); got !=
-		"(j.authority=? AND j.weight=CAST(? AS DECIMAL(36,18))) OR "+
-			"(j.authority=? AND j.weight=CAST(? AS DECIMAL(36,18)))" {
+	if got := sourceIdentityWeightPredicate(2); got !=
+		"(j.authority=? AND j.market=? AND j.category_code=f.category_code AND j.symbol=f.symbol "+
+			"AND j.weight=CAST(? AS DECIMAL(36,18))) OR "+
+			"(j.authority=? AND j.market=? AND j.category_code=f.category_code AND j.symbol=f.symbol "+
+			"AND j.weight=CAST(? AS DECIMAL(36,18)))" {
 		t.Fatalf("unexpected source-weight predicate: %q", got)
 	}
-	args = appendSourceWeightArgs(nil, []string{"a", "b"}, []string{"1", "2"})
-	if len(args) != 4 || args[0] != "a" || args[1] != "1" || args[2] != "b" || args[3] != "2" {
+	args = appendSourceIdentityWeightArgs(
+		nil,
+		[]string{"a", "b"},
+		[]string{"market-a", "market-b"},
+		[]string{"1", "2"},
+	)
+	if len(args) != 6 ||
+		args[0] != "a" || args[1] != "market-a" || args[2] != "1" ||
+		args[3] != "b" || args[4] != "market-b" || args[5] != "2" {
 		t.Fatalf("unexpected source-weight args: %#v", args)
 	}
 }
@@ -246,14 +268,27 @@ func TestPlaceholdersAndStringArgs(t *testing.T) {
 func validReadinessInput() ContractReadinessInput {
 	return ContractReadinessInput{
 		SourceAuthorities:       []string{"source-a", "source-b", "source-c"},
+		SourceMarkets:           []string{"market-a", "market-b", "market-c"},
+		IndexSourceWeights:      []string{"1", "1", "1"},
 		DeliverySourceWeights:   []string{"1", "1", "1"},
 		CategoryCode:            "crypto",
 		Market:                  "BA",
 		PriceSymbol:             "BTCUSDT",
 		PerpetualSymbol:         "BTCUSDT-PERP",
 		DeliverySymbol:          "BTCUSDT-20260925",
+		PerpetualPriceAuthority: "perpetual-source",
+		PerpetualPriceMarket:    "PERPETUAL",
 		TenantID:                900101,
 		SettlementCoin:          "USDT",
+		IndexAlgorithm:          2,
+		IndexFormulaVersion:     "index-v1",
+		IndexMaxDeviationBps:    200,
+		MarkFormulaVersion:      "mark-v2",
+		MarkMaxBasisBps:         200,
+		MarkCurrentWeight:       "1",
+		MarkPreviousWeight:      "4",
+		FundingFormulaVersion:   "funding-v1",
+		PriceFormulaIntervalMs:  1000,
 		DeliveryAlgorithm:       2,
 		DeliveryFormulaVersion:  "delivery-v1",
 		DeliveryMaxLookbackMs:   30000,

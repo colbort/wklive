@@ -10,7 +10,9 @@ import (
 	"sync/atomic"
 	"time"
 
+	"wklive/common/alert"
 	market "wklive/common/market"
+	"wklive/common/notify"
 	"wklive/services/itick/internal/market/types"
 	"wklive/services/itick/internal/svc"
 	"wklive/services/itick/models"
@@ -50,13 +52,20 @@ func StartSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext) {
 		ticker := time.NewTicker(defaultSnapshotOutboxHealthInterval)
 		defer ticker.Stop()
 		var previous *snapshotOutboxHealthSample
-		previous = checkSnapshotOutboxHealth(ctx, svcCtx, time.Now(), previous)
+		var alertTracker alert.DeliveryTracker
+		previous = checkSnapshotOutboxHealth(ctx, svcCtx, time.Now(), previous, &alertTracker)
 		for {
 			select {
 			case <-ctx.Done():
 				return
 			case now := <-ticker.C:
-				previous = checkSnapshotOutboxHealth(ctx, svcCtx, now, previous)
+				previous = checkSnapshotOutboxHealth(
+					ctx,
+					svcCtx,
+					now,
+					previous,
+					&alertTracker,
+				)
 			}
 		}
 	}()
@@ -89,11 +98,30 @@ type snapshotOutboxHealthSample struct {
 	openRows int64
 }
 
-func checkSnapshotOutboxHealth(ctx context.Context, svcCtx *svc.ServiceContext, now time.Time, previous *snapshotOutboxHealthSample) *snapshotOutboxHealthSample {
+func checkSnapshotOutboxHealth(
+	ctx context.Context,
+	svcCtx *svc.ServiceContext,
+	now time.Time,
+	previous *snapshotOutboxHealthSample,
+	alertTracker *alert.DeliveryTracker,
+) *snapshotOutboxHealthSample {
 	health, err := svcCtx.SnapshotOutboxModel.Health(ctx)
 	if err != nil {
 		if ctx.Err() == nil {
 			logx.Errorf("snapshot outbox health query failed: %v", err)
+			if publishErr := publishSnapshotOutboxHealthAlert(
+				ctx,
+				svcCtx.OperationalAlertNotifier,
+				alert.StateFiring,
+				"snapshot-outbox-health-query",
+				fmt.Sprintf("health query failed: %v", err),
+				nil,
+				0,
+				0,
+				now.UnixMilli(),
+			); publishErr != nil {
+				logx.Errorf("publish snapshot outbox health-query alert failed: %v", publishErr)
+			}
 		}
 		return previous
 	}
@@ -103,12 +131,106 @@ func checkSnapshotOutboxHealth(ctx context.Context, svcCtx *svc.ServiceContext, 
 		oldestAge = now.UnixMilli() - health.OldestOpenAt
 	}
 	if !snapshotOutboxUnhealthy(health, oldestAge) {
+		if alertTracker.ShouldPublishResolved(now, operationalAlertRetryInterval) {
+			publishErr := publishSnapshotOutboxHealthAlert(
+				ctx,
+				svcCtx.OperationalAlertNotifier,
+				alert.StateResolved,
+				"snapshot-outbox",
+				"snapshot outbox returned to the healthy freshness window",
+				health,
+				0,
+				-1,
+				now.UnixMilli(),
+			)
+			alertTracker.MarkResolvedAttempt(now, publishErr == nil)
+			if publishErr != nil {
+				logx.Errorf("publish snapshot outbox recovery alert failed: %v", publishErr)
+			}
+		}
 		return current
 	}
 	drainPerSecond, etaSeconds := snapshotOutboxDrainMetrics(previous, current)
 	logx.Errorf("snapshot outbox unhealthy pending=%d processing=%d failed=%d manual=%d oldest_open_age_ms=%d drain_per_sec=%.2f eta_seconds=%d",
 		health.PendingCount, health.ProcessingCount, health.FailedCount, health.ManualCount, oldestAge, drainPerSecond, etaSeconds)
+	fingerprint := snapshotOutboxAlertFingerprint(health, oldestAge)
+	if alertTracker.ShouldPublishFiring(
+		fingerprint,
+		now,
+		operationalAlertReminderInterval,
+		operationalAlertRetryInterval,
+	) {
+		publishErr := publishSnapshotOutboxHealthAlert(
+			ctx,
+			svcCtx.OperationalAlertNotifier,
+			alert.StateFiring,
+			"snapshot-outbox",
+			"snapshot outbox has failed/manual or stale open records",
+			health,
+			oldestAge,
+			etaSeconds,
+			now.UnixMilli(),
+		)
+		alertTracker.MarkFiringAttempt(fingerprint, now, publishErr == nil)
+		if publishErr != nil {
+			logx.Errorf("publish snapshot outbox unhealthy alert failed: %v", publishErr)
+		}
+	}
 	return current
+}
+
+func snapshotOutboxAlertFingerprint(
+	health *models.SnapshotOutboxHealth,
+	oldestAgeMillis int64,
+) string {
+	if health == nil {
+		return "health=nil"
+	}
+	return fmt.Sprintf(
+		"failed=%t;manual=%t;stale=%t",
+		health.FailedCount > 0,
+		health.ManualCount > 0,
+		health.PendingCount+health.ProcessingCount > 0 &&
+			oldestAgeMillis > int64(time.Minute/time.Millisecond),
+	)
+}
+
+func publishSnapshotOutboxHealthAlert(
+	ctx context.Context,
+	notifier alert.Notifier,
+	state string,
+	key string,
+	message string,
+	health *models.SnapshotOutboxHealth,
+	oldestAge int64,
+	etaSeconds int64,
+	now int64,
+) error {
+	title := "Snapshot Outbox 异常"
+	if state == alert.StateResolved {
+		title = "Snapshot Outbox 恢复"
+	}
+	at := alert.New(
+		alert.TypeSnapshotOutbox,
+		state,
+		notify.EventLevelError,
+		"itick",
+		key,
+		title,
+		message,
+		now,
+	)
+	if health != nil {
+		at.Data = map[string]any{
+			"pending":       health.PendingCount,
+			"processing":    health.ProcessingCount,
+			"failed":        health.FailedCount,
+			"manual":        health.ManualCount,
+			"oldestOpenAge": oldestAge,
+			"etaSeconds":    etaSeconds,
+		}
+	}
+	return alert.Notify(ctx, notifier, at)
 }
 
 func snapshotOutboxDrainMetrics(previous, current *snapshotOutboxHealthSample) (float64, int64) {

@@ -14,6 +14,8 @@ import (
 )
 
 type (
+	AuthorityRegistryData          = itick.AuthorityRegistryData
+	AuthorityRegistryResp          = itick.AuthorityRegistryResp
 	BatchGetQuoteReq               = itick.BatchGetQuoteReq
 	BatchGetQuoteResp              = itick.BatchGetQuoteResp
 	BatchUpsertTenantCategoriesReq = itick.BatchUpsertTenantCategoriesReq
@@ -50,6 +52,8 @@ type (
 	InitTenantItickDisplayResp     = itick.InitTenantItickDisplayResp
 	KlineInterval                  = itick.KlineInterval
 	KlineIntervalsResp             = itick.KlineIntervalsResp
+	ListAuthorityRegistriesReq     = itick.ListAuthorityRegistriesReq
+	ListAuthorityRegistriesResp    = itick.ListAuthorityRegistriesResp
 	ListCategoriesReq              = itick.ListCategoriesReq
 	ListCategoriesResp             = itick.ListCategoriesResp
 	ListPriceFormulasReq           = itick.ListPriceFormulasReq
@@ -74,6 +78,7 @@ type (
 	PushReply                      = itick.PushReply
 	RetrySnapshotOutboxReq         = itick.RetrySnapshotOutboxReq
 	RevokeAuthoritativeSnapshotReq = itick.RevokeAuthoritativeSnapshotReq
+	SetAuthorityRegistryReq        = itick.SetAuthorityRegistryReq
 	SnapshotOutboxData             = itick.SnapshotOutboxData
 	SubscribeRequest               = itick.SubscribeRequest
 	SubscribeTopic                 = itick.SubscribeTopic

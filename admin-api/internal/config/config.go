@@ -4,7 +4,7 @@
 package config
 
 import (
-	"wklive/common/mq/kafka"
+	mq "wklive/common/mq/kafka"
 	"wklive/common/reqenc"
 
 	"github.com/zeromicro/go-zero/core/stores/redis"

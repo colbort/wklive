@@ -29,7 +29,7 @@ func NewGetPlatformAccountLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 // 查询平台账户
 func (l *GetPlatformAccountLogic) GetPlatformAccount(in *asset.GetPlatformAccountReq) (*asset.PlatformAccountResp, error) {
 	typeName, coin := normalizePlatformAccount(in.GetAccountType(), in.GetCoin())
-	if in.GetTenantId() <= 0 || typeName != insuranceFundAccountType || coin == "" {
+	if in.GetTenantId() <= 0 || !isConfigurablePlatformAccountType(typeName) || coin == "" {
 		return nil, fmt.Errorf("invalid platform account")
 	}
 	row, err := models.NewTAssetPlatformAccountModel(l.svcCtx.DB, l.svcCtx.Config.CacheRedis).FindOneByTenantIdAccountTypeCoin(l.ctx, in.GetTenantId(), typeName, coin)

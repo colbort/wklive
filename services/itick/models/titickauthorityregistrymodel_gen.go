@@ -44,6 +44,7 @@ type (
 	TItickAuthorityRegistry struct {
 		Id           int64  `db:"id"`
 		Authority    string `db:"authority"`
+		ProviderCode string `db:"provider_code"` // 独立数据供应商标识；同一供应商不同传输通道必须相同
 		ProducerType string `db:"producer_type"` // ITICK_WS/ITICK_REST/PRICE_ENGINE
 		AllowedKinds string `db:"allowed_kinds"` // 允许发布的快照类型
 		Status       int64  `db:"status"`        // 1启用 2禁用
@@ -116,8 +117,8 @@ func (m *defaultTItickAuthorityRegistryModel) Insert(ctx context.Context, data *
 	tItickAuthorityRegistryAuthorityKey := fmt.Sprintf("%s%v", cacheTItickAuthorityRegistryAuthorityPrefix, data.Authority)
 	tItickAuthorityRegistryIdKey := fmt.Sprintf("%s%v", cacheTItickAuthorityRegistryIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, tItickAuthorityRegistryRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Authority, data.ProducerType, data.AllowedKinds, data.Status, data.Version, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickAuthorityRegistryRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.Authority, data.ProviderCode, data.ProducerType, data.AllowedKinds, data.Status, data.Version, data.CreateTimes, data.UpdateTimes)
 	}, tItickAuthorityRegistryAuthorityKey, tItickAuthorityRegistryIdKey)
 	return ret, err
 }
@@ -132,7 +133,7 @@ func (m *defaultTItickAuthorityRegistryModel) Update(ctx context.Context, newDat
 	tItickAuthorityRegistryIdKey := fmt.Sprintf("%s%v", cacheTItickAuthorityRegistryIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickAuthorityRegistryRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.Authority, newData.ProducerType, newData.AllowedKinds, newData.Status, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.Authority, newData.ProviderCode, newData.ProducerType, newData.AllowedKinds, newData.Status, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tItickAuthorityRegistryAuthorityKey, tItickAuthorityRegistryIdKey)
 	return err
 }

@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"os"
 	"time"
+
+	"wklive/common/alert"
+	"wklive/common/alert/adminnotify"
 	cache "wklive/common/market"
 	mq "wklive/common/mq/kafka"
 	"wklive/services/trade/internal/config"
@@ -25,6 +28,7 @@ type ServiceContext struct {
 	Redis                        *redis.Redis
 	TaskSubscriber               *mq.Subscriber
 	TradeEventPublisher          *mq.Publisher
+	OperationalAlertNotifier     alert.Notifier
 	TradeEventSubscriber         *mq.Subscriber
 	TradeEventInstanceID         string
 	TradeSymbolModel             models.TTradeSymbolModel
@@ -96,6 +100,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Redis:                        redis.MustNewRedis(c.Redis.RedisConf),
 		TaskSubscriber:               taskSubscriber,
 		TradeEventPublisher:          tradeEventPublisher,
+		OperationalAlertNotifier:     adminnotify.New(tradeEventPublisher),
 		TradeEventSubscriber:         tradeEventSubscriber,
 		TradeEventInstanceID:         instanceID,
 		TradeSymbolModel:             models.NewTTradeSymbolModel(conn, c.CacheRedis),

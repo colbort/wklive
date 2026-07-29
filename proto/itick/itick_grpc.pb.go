@@ -550,6 +550,8 @@ const (
 	Admin_BatchUpsertTenantProducts_FullMethodName   = "/itick.Admin/BatchUpsertTenantProducts"
 	Admin_GetTenantProduct_FullMethodName            = "/itick.Admin/GetTenantProduct"
 	Admin_InitTenantItickDisplay_FullMethodName      = "/itick.Admin/InitTenantItickDisplay"
+	Admin_SetAuthorityRegistry_FullMethodName        = "/itick.Admin/SetAuthorityRegistry"
+	Admin_ListAuthorityRegistries_FullMethodName     = "/itick.Admin/ListAuthorityRegistries"
 	Admin_CreatePriceFormula_FullMethodName          = "/itick.Admin/CreatePriceFormula"
 	Admin_GetPriceFormula_FullMethodName             = "/itick.Admin/GetPriceFormula"
 	Admin_ListPriceFormulas_FullMethodName           = "/itick.Admin/ListPriceFormulas"
@@ -613,6 +615,9 @@ type AdminClient interface {
 	GetTenantProduct(ctx context.Context, in *GetTenantProductReq, opts ...grpc.CallOption) (*GetTenantProductResp, error)
 	// 初始化租户展示配置
 	InitTenantItickDisplay(ctx context.Context, in *InitTenantItickDisplayReq, opts ...grpc.CallOption) (*InitTenantItickDisplayResp, error)
+	// Authority、provider_code 和 producer_type 创建后不可修改；数据库写入由 model 完成。
+	SetAuthorityRegistry(ctx context.Context, in *SetAuthorityRegistryReq, opts ...grpc.CallOption) (*AuthorityRegistryResp, error)
+	ListAuthorityRegistries(ctx context.Context, in *ListAuthorityRegistriesReq, opts ...grpc.CallOption) (*ListAuthorityRegistriesResp, error)
 	// Price Engine 公式内容不可原地修改，变更必须创建新版本。
 	CreatePriceFormula(ctx context.Context, in *CreatePriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error)
 	GetPriceFormula(ctx context.Context, in *PriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error)
@@ -861,6 +866,26 @@ func (c *adminClient) InitTenantItickDisplay(ctx context.Context, in *InitTenant
 	return out, nil
 }
 
+func (c *adminClient) SetAuthorityRegistry(ctx context.Context, in *SetAuthorityRegistryReq, opts ...grpc.CallOption) (*AuthorityRegistryResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AuthorityRegistryResp)
+	err := c.cc.Invoke(ctx, Admin_SetAuthorityRegistry_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ListAuthorityRegistries(ctx context.Context, in *ListAuthorityRegistriesReq, opts ...grpc.CallOption) (*ListAuthorityRegistriesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAuthorityRegistriesResp)
+	err := c.cc.Invoke(ctx, Admin_ListAuthorityRegistries_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *adminClient) CreatePriceFormula(ctx context.Context, in *CreatePriceFormulaReq, opts ...grpc.CallOption) (*PriceFormulaResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PriceFormulaResp)
@@ -985,6 +1010,9 @@ type AdminServer interface {
 	GetTenantProduct(context.Context, *GetTenantProductReq) (*GetTenantProductResp, error)
 	// 初始化租户展示配置
 	InitTenantItickDisplay(context.Context, *InitTenantItickDisplayReq) (*InitTenantItickDisplayResp, error)
+	// Authority、provider_code 和 producer_type 创建后不可修改；数据库写入由 model 完成。
+	SetAuthorityRegistry(context.Context, *SetAuthorityRegistryReq) (*AuthorityRegistryResp, error)
+	ListAuthorityRegistries(context.Context, *ListAuthorityRegistriesReq) (*ListAuthorityRegistriesResp, error)
 	// Price Engine 公式内容不可原地修改，变更必须创建新版本。
 	CreatePriceFormula(context.Context, *CreatePriceFormulaReq) (*PriceFormulaResp, error)
 	GetPriceFormula(context.Context, *PriceFormulaReq) (*PriceFormulaResp, error)
@@ -1071,6 +1099,12 @@ func (UnimplementedAdminServer) GetTenantProduct(context.Context, *GetTenantProd
 }
 func (UnimplementedAdminServer) InitTenantItickDisplay(context.Context, *InitTenantItickDisplayReq) (*InitTenantItickDisplayResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method InitTenantItickDisplay not implemented")
+}
+func (UnimplementedAdminServer) SetAuthorityRegistry(context.Context, *SetAuthorityRegistryReq) (*AuthorityRegistryResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetAuthorityRegistry not implemented")
+}
+func (UnimplementedAdminServer) ListAuthorityRegistries(context.Context, *ListAuthorityRegistriesReq) (*ListAuthorityRegistriesResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListAuthorityRegistries not implemented")
 }
 func (UnimplementedAdminServer) CreatePriceFormula(context.Context, *CreatePriceFormulaReq) (*PriceFormulaResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreatePriceFormula not implemented")
@@ -1528,6 +1562,42 @@ func _Admin_InitTenantItickDisplay_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_SetAuthorityRegistry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetAuthorityRegistryReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).SetAuthorityRegistry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_SetAuthorityRegistry_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).SetAuthorityRegistry(ctx, req.(*SetAuthorityRegistryReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ListAuthorityRegistries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAuthorityRegistriesReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListAuthorityRegistries(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListAuthorityRegistries_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListAuthorityRegistries(ctx, req.(*ListAuthorityRegistriesReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Admin_CreatePriceFormula_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreatePriceFormulaReq)
 	if err := dec(in); err != nil {
@@ -1752,6 +1822,14 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "InitTenantItickDisplay",
 			Handler:    _Admin_InitTenantItickDisplay_Handler,
+		},
+		{
+			MethodName: "SetAuthorityRegistry",
+			Handler:    _Admin_SetAuthorityRegistry_Handler,
+		},
+		{
+			MethodName: "ListAuthorityRegistries",
+			Handler:    _Admin_ListAuthorityRegistries_Handler,
 		},
 		{
 			MethodName: "CreatePriceFormula",

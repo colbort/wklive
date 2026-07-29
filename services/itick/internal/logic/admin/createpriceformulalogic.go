@@ -39,10 +39,21 @@ func (l *CreatePriceFormulaLogic) CreatePriceFormula(in *itick.CreatePriceFormul
 	if err != nil || outputAuthority == nil || !outputAuthority.Allows(in.SnapshotKind) {
 		return nil, errors.New("output authority is not enabled for snapshot kind")
 	}
+	requireIndependentProviders := in.SnapshotKind == "INDEX" || in.SnapshotKind == "DELIVERY"
+	providers := make(map[string]struct{}, len(components))
 	for _, component := range components {
 		authority, findErr := l.svcCtx.AuthorityRegistryModel.FindEnabled(l.ctx, component.Authority)
 		if findErr != nil || authority == nil || !authority.Allows(component.Kind) {
 			return nil, errors.New("component authority is not enabled for snapshot kind")
+		}
+		if requireIndependentProviders {
+			if authority.ProviderCode == "" {
+				return nil, errors.New("component authority provider_code is required")
+			}
+			if _, exists := providers[authority.ProviderCode]; exists {
+				return nil, errors.New("INDEX and DELIVERY components must use independent providers")
+			}
+			providers[authority.ProviderCode] = struct{}{}
 		}
 	}
 	raw, err := json.Marshal(components)

@@ -1,0 +1,55 @@
+=== RUN   TestCalculate
+--- PASS: TestCalculate (0.00s)
+=== RUN   TestDeviationAuditPreservesCompleteInputSet
+--- PASS: TestDeviationAuditPreservesCompleteInputSet (0.00s)
+=== RUN   TestDeliverySnapshotIDIsDeterministicFromAuditFact
+--- PASS: TestDeliverySnapshotIDIsDeterministicFromAuditFact (0.00s)
+=== RUN   TestIndexBasisMarkAppliesSymmetricCap
+=== RUN   TestIndexBasisMarkAppliesSymmetricCap/inside_cap
+=== RUN   TestIndexBasisMarkAppliesSymmetricCap/positive_basis_capped
+=== RUN   TestIndexBasisMarkAppliesSymmetricCap/negative_basis_capped
+=== RUN   TestIndexBasisMarkAppliesSymmetricCap/zero_basis
+--- PASS: TestIndexBasisMarkAppliesSymmetricCap (0.00s)
+    --- PASS: TestIndexBasisMarkAppliesSymmetricCap/inside_cap (0.00s)
+    --- PASS: TestIndexBasisMarkAppliesSymmetricCap/positive_basis_capped (0.00s)
+    --- PASS: TestIndexBasisMarkAppliesSymmetricCap/negative_basis_capped (0.00s)
+    --- PASS: TestIndexBasisMarkAppliesSymmetricCap/zero_basis (0.00s)
+=== RUN   TestIndexBasisRejectsMissingRiskBound
+--- PASS: TestIndexBasisRejectsMissingRiskBound (0.00s)
+=== RUN   TestIndexBasisSmoothsWithPreviousMark
+--- PASS: TestIndexBasisSmoothsWithPreviousMark (0.00s)
+=== RUN   TestDeliveryRequiresThreeAcceptedInputsAfterDeviation
+--- PASS: TestDeliveryRequiresThreeAcceptedInputsAfterDeviation (0.00s)
+=== RUN   TestDuplicateSnapshotIDsDoNotCountAsIndependentInputs
+--- PASS: TestDuplicateSnapshotIDsDoNotCountAsIndependentInputs (0.00s)
+=== RUN   TestReplayEvaluationAuditRejectsTamperedOutput
+--- PASS: TestReplayEvaluationAuditRejectsTamperedOutput (0.00s)
+=== RUN   TestDeliveryDoesNotPublishWhenDeviationLeavesFewerThanThreeInputs
+--- PASS: TestDeliveryDoesNotPublishWhenDeviationLeavesFewerThanThreeInputs (0.00s)
+=== RUN   TestIndexBasisPublishesBoundedAuditableMark
+--- PASS: TestIndexBasisPublishesBoundedAuditableMark (0.00s)
+=== RUN   TestIndexBasisSmoothingReadsOnlyPreviousMark
+--- PASS: TestIndexBasisSmoothingReadsOnlyPreviousMark (0.00s)
+=== RUN   TestReplayEvaluationAuditWindowReportsContiguousFormulaGroups
+--- PASS: TestReplayEvaluationAuditWindowReportsContiguousFormulaGroups (0.00s)
+=== RUN   TestReplayEvaluationAuditWindowRejectsGapAndDuplicate
+--- PASS: TestReplayEvaluationAuditWindowRejectsGapAndDuplicate (0.00s)
+=== RUN   TestReplayEvaluationAuditRejectsTamperedInputPartition
+--- PASS: TestReplayEvaluationAuditRejectsTamperedInputPartition (0.00s)
+PASS
+ok  	wklive/services/itick/internal/priceengine	0.021s
+?   	wklive/services/itick/internal/logic/itick	[no test files]
+=== RUN   TestNormalizePriceFormulaReq
+--- PASS: TestNormalizePriceFormulaReq (0.00s)
+=== RUN   TestNormalizePriceFormulaRejectsInvalidPremium
+--- PASS: TestNormalizePriceFormulaRejectsInvalidPremium (0.00s)
+=== RUN   TestNormalizePriceFormulaRejectsNonPositiveWeight
+--- PASS: TestNormalizePriceFormulaRejectsNonPositiveWeight (0.00s)
+=== RUN   TestNormalizeDeliveryFormulaRequiresThreeAcceptedInputs
+--- PASS: TestNormalizeDeliveryFormulaRequiresThreeAcceptedInputs (0.00s)
+=== RUN   TestNormalizeIndexBasisMarkFormula
+--- PASS: TestNormalizeIndexBasisMarkFormula (0.00s)
+=== RUN   TestNormalizeIndexFormulaRequiresThreeDistinctMarkets
+--- PASS: TestNormalizeIndexFormulaRequiresThreeDistinctMarkets (0.00s)
+PASS
+ok  	wklive/services/itick/internal/logic/task	0.041s

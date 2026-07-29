@@ -205,6 +205,8 @@ services:
       - ..:/workspace:ro
       - ./seed-etcd.sh:/deploy/seed-etcd.sh:ro
       - ./config:/deploy-config:ro
+    secrets:
+      - itick_token
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -465,6 +467,8 @@ services:
       args:
         SERVICE_DIR: admin-api
     command: ["-etcd", "etcd:2379"]
+    secrets:
+      - operational_alert_webhook
     ports:
       - "8888:8888"
 
@@ -489,6 +493,12 @@ services:
 networks:
   backend:
     driver: bridge
+
+secrets:
+  itick_token:
+    file: ./secrets/itick_token
+  operational_alert_webhook:
+    file: ./secrets/operational_alert_webhook
 
 volumes:
   etcd-data:

@@ -24,8 +24,8 @@
 | 交割结算 | `[x]` 隔离环境完整生命周期与故障矩阵已实跑 | 自动归档仍受生产 DELIVERY 价格源门禁约束 |
 | 自动强平 | `[x]` P1-02 逐仓及 P2-01 全仓矩阵已完成 | 生产总开关保持关闭，待生产告警和资金权限确认 |
 | 保险基金与 ADL | `[x]` 逐仓及全仓资金、排序和恢复矩阵已完成 | 生产总开关保持关闭，待生产账户和资金权限确认 |
-| Price Engine | `[~]` 技术链路已运行 | 当前单一行情配置仅用于测试 |
-| 跨服务对账 | `[~]` 订单、仓位、资金费、交割、逐仓及全仓强平专项闭环已实跑 | 生产告警平台接入仍是门禁 |
+| Price Engine | `[x]` 三独立公开行情、四类不可变公式和确定性回放已运行 | 技术验收完成；数据许可和风控参数签批仍是生产门禁 |
+| 跨服务对账 | `[~]` 专项闭环及 Kafka/Admin 结构化告警链路已实跑 | 外部值班通知、确认回执和升级链路仍是生产门禁 |
 
 ## 3. 实施顺序
 
@@ -134,9 +134,9 @@ Outbox / Inbox
 
 ### P0-05 交割价格
 
-- [~] Price Engine 输出 `DELIVERY` 快照（隔离四源公式已真实出价并发布，仍待生产独立市场源配置验收）；
+- [x] Price Engine 输出 `DELIVERY` 快照（三个独立公开市场来源持续出价，生产候选 `delivery-v1` 已逐秒发布并完成 60 秒确定性回放）；
 - [x] 固化窗口内完整输入集合（真实 DELIVERY 审计固化 all=4、accepted=3、rejected=1，每项绑定不可变 Snapshot ID）；
-- [~] 支持多样本中位数或加权平均（中位数真实四源出价为 100；加权平均已有自动化测试，仍待生产参数回放）；
+- [x] 支持多样本中位数或加权平均（生产候选三源 MEDIAN 已连续运行和回放；四源异常剔除及 WEIGHTED_MEAN 由自动化测试覆盖）；
 - [x] 固化异常剔除摘要（200 BPS 下来源 150 被剔除，缺第 4 源时明确 `accepted=2 required=3 rejected=1` 且输出为 0；补入来源 99 后审计仍保留被剔除输入）；
 - [x] 公式版本、目标时点和来源快照可审计（真实输出固化公式 `acceptance-delivery-3source-v1`、毫秒目标时点和四个输入 Snapshot ID）；
 - [x] 使用原输入集合确定性重放（离线工具读取实库不可变审计重算为 100；仅把审计输出改成 101 后以 output mismatch 拒绝）；
@@ -159,7 +159,7 @@ Outbox / Inbox
 - [x] Delivery Settlement 与 Asset Flow 对账（线性/反向、全额/部分释放和中途重启均绑定唯一 Flow，Batch 仅在全部指令对账后归档）；
 - [x] 强平、保险基金和 ADL 对账（全额强平、保险全额/部分/不足/冲正、ADL 两阶段恢复、父 Saga 和部分强平终态均已实跑；专项扫描核对仓位、历史、完成事件、保险承接、ADL 数量及 Asset 流水，隔离验收无 OPEN 差异）；
 - [x] 差异持久化（真实 issue 以稳定 key 跨周期累计至 30～794 次，修复事实后由扫描任务自动写 status=RESOLVED/resolved_at/reason；非强平 OPEN=0）；
-- [~] 差异告警（数据库行锁内固化 `last_alert_at`：首次、恢复后重开、内容变化立即告警，未变化每 30 分钟提醒；真实 `LIQUIDATION:1` 在 67 秒内继续扫描 13 次但新容器仅输出 1 条；仍待接入生产告警平台、值班组和升级规则）；
+- [~] 差异告警（数据库行锁内固化 `last_alert_at`：首次、恢复后重开、内容变化立即告警，未变化每 30 分钟提醒；现已投递到 Kafka `admin.notifications` 并由 Admin 消费组转发后台 WebSocket。发送失败按 tenant/issue key/reserved time 条件释放预约，下一轮可重试且旧任务不能清除新预约；对账真实通道验收 offset 4，后台 WS 又以真实系统管理员完成 `101` 握手并收到 offset 22 的明确测试事件，当前消费组 23/23、lag=0。WS 已拒绝 URL 令牌和缺失 Origin，并按事件权限、租户及系统管理员身份过滤。外部 Webhook 按当前决定保持关闭，仍待生产值班组、外部通知确认和未确认升级规则）；
 - [x] 带操作人、原因和请求号的人工处理入口（真实 Admin RPC 验证租户元数据覆盖请求租户、缺操作人拒绝、OPEN 忽略成功、重复忽略拒绝；状态=IGNORED、操作人 `990001`、原因、解决时间和唯一 `TRE` 审计事件全部落库，隔离夹具随后精确清理）。
 
 完成标准：
@@ -188,15 +188,18 @@ Outbox / Inbox
 
 ### P1-01 Price Engine 生产配置
 
-- [~] INDEX 使用至少三个独立市场来源（新公式强制三种独立来源且运行时按 Snapshot ID 去重，待生产源配置）；
-- [~] MARK 使用指数价及溢价/基差（`INDEX_BASIS` 代码、协议、迁移、管理端和单测完成，待生产 v2 配置回放）；
-- [~] 配置偏离剔除（INDEX/DELIVERY 支持异常剔除；MARK 基差支持对称 BPS 限幅，待参数验收）；
-- [~] 配置平滑、上下限和版本（上一 MARK 加权平滑、基差上下限及不可变公式版本已完成，待生产参数回放）；
-- [~] 完成生产历史回放（离线确定性回放工具及篡改检测单测完成，待导出生产时间段执行）；
+- [x] Authority Registry 可通过管理协议查询/配置，价格公式输出及成分下拉按启用状态和 `allowed_kinds` 动态筛选；`authority`、独立供应商标识 `provider_code` 和生产者类型创建后不可修改，乐观锁保护更新，仍被激活公式引用时禁止停用或移除类型；
+- [x] INDEX 使用至少三个独立供应商来源（`binance-public/BINANCE`、`okx-public/OKX`、`bybit-public/BYBIT` 三源 MEDIAN 已逐秒运行；公式创建、运行去重和 readiness model 同时核对 Authority、`provider_code`、市场映射、权重、版本、窗口与周期）；
+- [x] MARK 使用指数价及溢价/基差（生产候选 `production-mark-v2` 使用三源 INDEX、`binance-futures-public/BINANCE_PERP` 和上一 MARK；修复前值源时间递归老化后连续运行并完成回放）；
+- [x] 配置偏离剔除（INDEX/DELIVERY 为 200 BPS，MARK 使用对称 200 BPS 基差限幅；实际审计和异常/输入不足自动化测试均通过，生产参数签批仍为 `[!]`）；
+- [x] 配置平滑、上下限和版本（MARK 当前值/前值权重为 1:4，INDEX、MARK、FUNDING、DELIVERY 均使用不可变候选版本；严格模型逐项核对实际 JSON 成分及参数）；
+- [x] 完成生产候选历史回放（2026-07-29 19:53:38～19:54:37 共 240 条不可变审计，四类公式各 60 条、严格 1 秒连续、断档 0，覆盖两个 30 秒交割窗口并确定性回放 PASS；数据许可和执行/复核审批仍为 `[!]`）；
 - [x] Snapshot Outbox 回到实时水位（Claim/发布已流水线并发、最终检查点合并、健康日志新增净排空速度和 ETA；64 Worker 部署后完成 50,000 条容量验收。迁入库恢复实时行情后最终抽样 Pending/Failed/Manual=0、Processing=12，均为 60 秒内瞬时在途；预检使用与运行时一致的健康口径，允许新鲜在途但拒绝 Failed、Manual 或最老 Pending/Processing 超过 60 秒）；
 - [~] 完成容量、备份和灾备恢复演练（50,000 条 Outbox 容量验收完成；隔离环境完成 28.23 MiB、140 表一致性备份与恢复，逐表差异为 0，并固化恢复手册。生产异地备份、Binlog 时间点恢复、可用区切换及正式 RPO/RTO 仍待生产演练）。
 
-当前 BTCUSDT MARK 和 INDEX 使用相同单一行情，适合技术测试，不适合作为真实资金费来源。
+当前 BTCUSDT INDEX 使用三个独立公开现货来源，MARK 使用该 INDEX 与 Binance
+永续行情并进行 1:4 平滑，FUNDING 使用 MARK/INDEX。技术运行与回放已经通过；
+在数据许可、参数签批和资金门禁完成前仍不得作为正式资金费与交割开闸依据。
 
 ### P1-02 强平、保险基金和 ADL
 
@@ -213,7 +216,7 @@ Outbox / Inbox
 - [x] ADL 数量上限（执行总量同时受候选数量、被接管剩余数量和剩余缺口限制）；
 - [x] ADL Asset/Position 两阶段恢复（真实从 PREPARED/PROCESSING 及 ASSET_DONE 两个故障点恢复，Asset 流水保持唯一）；
 - [x] Liquidation 父 Saga 恢复（ADL 子执行完成后父记录恢复为 COMPLETED，关闭破产仓位并生成唯一完成事件）；
-- [x] 日终对账与差异告警（强平专项全量循环游标、稳定差异键、自动恢复和结构化节流告警已完成；部分强平终态真实扫描完成且无 OPEN 差异。生产告警平台接入仍作为 P0-06 上线门禁）；
+- [x] 日终对账与差异告警（强平专项全量循环游标、稳定差异键、自动恢复和结构化节流告警已完成；部分强平终态真实扫描完成且无 OPEN 差异。Kafka/Admin 技术链路已接入，生产外部值班通知、确认与升级仍作为 P0-06 上线门禁）；
 
 P1-02 应用与隔离运行验收已完成；生产 `AutomaticLiquidation.Enabled` 仍必须保持 `false`，直到生产价格源、告警平台、保险基金账户及资金权限完成审批和演练。
 
@@ -370,18 +373,114 @@ P1-02 应用与隔离运行验收已完成；生产 `AutomaticLiquidation.Enable
 | 2026-07-29 | 迁入旧库冻结残留与流水对账收口 | 发现旧版资金状态缺陷后修复并通过 | 只读审计发现 10 条 `status=4` 但 `remain_amount>0` 的旧现货冻结，用户资产 `frozen_amount` 与冻结明细汇总严格一致，合计 `244.881575392904534661`；其中手续费实际通过 Asset 可用余额流水扣除，而旧 Trade 预留仍记作冻结消费。恢复前备份相关账务表 29 MiB，SHA-256=`27b6bdaa5e394e15f9ed5b1cabaa9d613e0d8e3caf5f3bd3f4d8c8dafcf9eda2`。新增 baseline-safe 迁移只匹配“终态现货订单 + 异常终态冻结 + 成功手续费指令 + 可用余额扣费流水 + 身份/总额一致”的记录，事务试跑精确命中 10 条；迁移不直接改用户余额或造流水，而是把预留恢复到 Asset 已确认事实并生成稳定 RELEASE 指令。Asset 解冻事务允许恢复 `status=4/remain>0` 的旧记录，Trade 按不可变指令金额调用幂等 RPC。部署镜像 Asset=`e17b56ee…cab745a`、Trade=`99c205d0…7dd2f6` 后，10 条 Freeze 全为 CLOSED/remain=0、10 条 Reservation 全为 RELEASED/remain=0、10 条 RELEASE Flow 金额逐笔一致并完成 reconciled_at。原四条 OPEN 流水问题全部自动 RESOLVED；两条秒合约旧指令只映射既有 `SECONDS-REFUND` 流水，没有重复资金动作。Asset/Trade 全量测试、相关包 race 和 `git diff --check` 全部通过 |
 | 2026-07-29 | 生产预检 Outbox 实时口径 | 发现误判后修复并通过 | 原预检要求 Snapshot Outbox 绝对无 status 1/2/4/5，在实时行情持续写入时会把 12 条新鲜 Processing 误判为积压。数据库查询保持在 `deploy/dbinit/models`，现在输出 Pending/Processing/Failed/Manual/Open/Unhealthy 分项，并与 Itick 运行时采用同一门槛：Failed 或 Manual 立即失败；Pending+Processing 仅在最老记录超过 60 秒时失败。模型新增新鲜在途、过期 Processing 和 Failed 回归测试，db-init 全量、race、vet、shell 语法及补丁检查通过。只读预检复跑后 Outbox、对账、Settlement 与核心服务全部 PASS，失败项由 32 降为 31，剩余均为未提供生产声明、三源行情、资金审批、告警和灾备材料；双生产开关继续保持关闭 |
 | 2026-07-29 | 存量 BTCUSD 零敞口产品退场 | 发现空仓价格门禁缺口后修复并通过 | 停用前只读核对 Symbol 3 永续和 Symbol 5 交割均无 Order、Position、Reservation 或未完成 Instruction；交割仅有一条 `total_positions=0` 的 PRICE_LOCKING Batch。空仓交割现在先确认活动仓位为 0，再以无资金步骤的 SETTLING→COMPLETED→ARCHIVED 状态机完成，不请求或伪造交割价。迁入 Batch 最终 status=8、Symbol=Disabled、settlement_price=0，price source/algorithm/formula version 为空，Settlement=0、Instruction=0，只生成唯一成功 `CONTRACT_SETTLED` 归档事件。旧 BTCUSD 永续通过现有 Admin `UpdateSymbol` API 携带当前完整字段改为 Disabled；Funding 四个生成入口统一跳过 Disabled，但继续处理 Close Only 以保护可能存在的开放仓位。Trade 全量与 task/models race 通过，最终镜像 `8571dd0c…c867e9a`；退场前产品/合约/Batch/事件备份 6.9 MiB，SHA-256=`56954278ce27532a378f8d1fe81118e102f77bc48f803e6b8694a53b28cc3802` |
+| 2026-07-29 | 平台手续费账户与默认保险配置补齐 | 部分生产事实通过；资金审批和注资待完成 | 通过现有 Admin API 配置时发现 Asset 只允许 `INSURANCE_FUND`，且迁入旧库仍有 Proto 已 `reserved` 的 `fund_user_id` 必填列。Asset 设置/查询现允许模型声明的三种平台账户，人工余额调整仍只允许保险基金；baseline-safe 迁移保留旧字段和值，仅增加兼容默认值并收敛当前约束。`deploy.sh db-upgrade` 后迁移=49，Asset RPC 镜像 `e6658b82…e7bd880` Healthy。管理接口成功创建 `tenant=1/USDT/FEE_REVENUE`（id=2、余额=0）及 `symbol_id=0/USDT` 默认保险配置（id=1、ADL 关闭），GET 读回一致；无资金划转，双风险开关仍为 false。Asset、Trade、dbinit 全量测试通过。只读门禁仍为 33 PASS/14 FAIL，因为保险基金未注资及外部审批/三源材料未提供，未使用测试值冒充生产事实。详见 `evidence/2026-07-29-preprod/platform-account-bootstrap-report.md` |
+| 2026-07-29 | BTCUSDT 2026-09-25 交割合约停用态配置 | 完整配置已落库并保持停用，待生产三源和审批后启用 | 依据旧产品备注和生产声明模板，通过 Admin API 新建 `BTCUSDT-20260925`（Symbol 7，Disabled），交割时点为 2026-09-25 16:00 Asia/Hong_Kong；15:00 停止开仓、15:30 停止撮合、30 秒 DELIVERY 窗口、版本 `delivery-v1`。合约、逐仓 1/2/5/10/20/50/100 倍（默认 1 倍）及 0～1,000,000 USDT 风险档位均成功读回；开多/开空关闭，平仓方向保留，全仓不支持。Order、Position、Position History 均为 0。test-only 详细门禁确认手续费账户、默认保险和永续配置 PASS；交割因停用而 FAIL，符合开闸前安全预期。详见 `evidence/2026-07-29-preprod/delivery-symbol-bootstrap-report.md` |
+| 2026-07-29 | P1-01 Authority Registry 管理入口与动态下拉 | 通过 | Proto、Itick RPC 和 Admin API 新增 Authority 查询/设置；所有注册表 SQL 均位于 Itick models。创建时规范化 Authority/producer/type，更新使用 version 乐观锁，名称与 producer 不可变；停用或移除类型前由 model 扫描激活公式，真实尝试停用 `itick-ws` 被 `authority is referenced by active price formulas` 拒绝，状态/version 保持 1/0。Admin UI 价格公式页不再硬编码三个 Authority，输出按目标类型筛选，成分类型取自注册表。RBAC 菜单 483/484 经 migration 50 落库并刷新管理员单条权限缓存；ALL、FINAL_QUOTE、MARK 三类查询分别返回 3、2、1 条正确记录。Itick/Admin 全量 Go 测试、Admin UI type-check 和补丁检查通过；镜像 `a5d626ad…81734d`、`b6a80f1e…c1949d` Healthy。未创建虚假第三来源。详见 `evidence/2026-07-29-preprod/authority-registry-management-report.md` |
+| 2026-07-29 | P1-01 独立供应商硬门禁 | 通过（负向门禁）；待真实三供应商正向验收 | Authority Registry 新增不可为空且创建后不可修改的 `provider_code`，迁移 51 将 `itick-ws`、`itick-rest` 同时归为 `ITICK`，`price-engine` 归为 `PRICE_ENGINE`。INDEX/DELIVERY 创建同时要求 Authority 和 provider 均唯一，不能再用同一供应商的 WebSocket/REST 通道凑三源；生产就绪模型同时核对启用 Authority 数和 `COUNT(DISTINCT provider_code)`。运行态管理接口返回三条记录及供应商映射，以 `itick-ws + itick-rest + 第三 Authority` 创建 INDEX 被 `INDEX and DELIVERY components must use independent providers` 拒绝，公式落库数为 0。新 Itick/Admin 镜像 `5513ea58…aaaf`、`b2899d87…d641` Healthy；迁移、全量 Go 测试、Admin UI type-check/Prettier 和预生产 14 项负向门禁通过。详见 `evidence/2026-07-29-preprod/authority-registry-management-report.md` |
+| 2026-07-29 | Deploy Docker 磁盘预检与数据库保护 | 通过 | Itick/Admin 镜像切换时真实发现 Docker 虚拟盘耗尽导致 Mongo WiredTiger `No space left on device`、exit 133；仅回收 2.135 GB 未引用悬空镜像后，Mongo 从最后检查点恢复，数据卷和 MySQL 事实保留。`deploy.sh` 新增 `disk-check`，所有构建入口在每个镜像前默认要求 4 GiB 可用空间，低于阈值或阈值非法时在构建前失败；`up/start` 只清理带 Wklive Compose 标签的悬空镜像，不删除容器或 Volume。当前阈值正向 exit 0、不可满足及非法阈值均 exit 1，Mongo 保持 Healthy，迁移=51、Authority=3、行情事实仍可读。当前虚拟盘约 4.74 GiB 可用，完整重建前仍应扩容或人工确认清理其他项目资源。详见 `evidence/2026-07-29-preprod/deploy-disk-preflight-report.md` |
+| 2026-07-29 | Authority Registry 可视化管理与生产候选参数 | 通过；真实外部审批保持关闭 | 价格公式页新增受 RBAC 控制的“行情来源管理”，可查询、新增、编辑允许类型及启停；Authority、`provider_code`、`producer_type` 编辑态只读，禁用前二次确认，后端继续执行乐观锁和激活公式引用保护，保存后动态刷新公式下拉。中英文文案、type-check、Prettier、2,070 模块生产构建和 Vite 首页/页面模块 HTTP 200 均通过，运行 Admin API 返回 3 条正确 Registry。按用户确认固定候选技术参数，发现并修正预生产声明的交割 Symbol/版本为 `BTCUSDT-20260925`/`delivery-v1`，同时生成 Git 忽略的默认 `deploy/production-readiness.env`；真实供应商、许可、资金、告警和灾备审批仍为 false/空。默认门禁精确保持 14 FAIL/exit 1，交割产品和双风险开关未启用。详见 `evidence/2026-07-29-preprod/authority-registry-ui-report.md` |
+| 2026-07-29 | iTick 凭据外置化 | 通过；生产凭据审批仍未通过 | 将受版本控制 YAML 中的 iTick Token 改为 `__ITICK_TOKEN__` 占位符，现有值迁移至 Git 忽略、权限 `0600` 的 `deploy/secrets/itick_token`；Compose 以 Docker Secret 挂载，`config-seed` 校验后仅在写入 Etcd 时注入，缺失 Secret 明确失败。Compose 渲染、shell 语法、缺失凭据负向测试及仓库原值扫描通过；实际重新导入 17 个 Etcd 配置键并重启 iTick 后服务 Healthy，最近两分钟 `itick-ws FINAL_QUOTE` 105 条、INDEX/MARK/FUNDING 各 120 条，近三分钟无鉴权或引擎错误。此项不把真实供应商凭据和数据许可审批改为通过。详见 `evidence/2026-07-29-preprod/itick-credential-externalization-report.md` |
+| 2026-07-29 | 三独立公开行情与四类生产候选公式 | 技术验收通过；上线仍受 12 项真实门禁保护 | 通过受限 HTTPS 适配器接入 Binance、OKX、Bybit 三个独立现货来源，并接入 Binance 永续作为 MARK 基差输入；四个来源均注册为 `PUBLIC_REST`，同一 Binance 供应商的现货与永续正确复用 `provider_code=BINANCE`。通过 Admin API 创建并激活三源 MEDIAN INDEX、INDEX_BASIS MARK v2、FUNDING 和三源 MEDIAN DELIVERY `delivery-v1`。运行中修复 Binance REST 可省略 `s` 字段的解析差异，以及上一 MARK 源时间递归老化导致约 30 秒停更的问题；全量 Itick 测试通过，修复后连续越过旧故障窗口。导出 60 秒、240 条不可变审计，四个公式各 60 条、1 秒严格连续、断档 0、回放 PASS。就绪模型新增 `PUBLIC_NO_CREDENTIALS` 数据库事实校验，并进一步逐项核对来源市场映射、INDEX 算法/版本/权重、MARK 永续来源/基差/1:4 平滑、FUNDING 版本以及所有公式的窗口和周期；错误 MARK 权重使 MARK 匹配数归零，错误 OKX 市场使 INDEX/DELIVERY 匹配数归零。最终只读门禁为 60 PASS/12 FAIL，数据许可、值班/升级、资金审批与注资、启用窗口、RPO/RTO、加密、异地位置和交割产品启用继续失败，双风险开关保持 false。详见 `evidence/2026-07-29-preprod/three-source-price-replay-report.md`、`strict-formula-readiness-report.md` 与 `contract-readiness-output.txt` |
+| 2026-07-29 | 三类运行告警 Kafka/Admin 投递 | 技术链路通过；外部值班门禁保持关闭 | Snapshot Outbox 停止 Kafka 后真实形成 Failed 积压，投递失败按 30 秒重试；Kafka 恢复后 offset 2 发送 firing，排空后 offset 3 发送 resolved。Price Engine 通过正式 Admin API 创建/撤销缺源公式，首次演练发现 target 时间造成每秒重复并改为稳定结构化指纹，v3 最终严格产生 offset 19 firing 与 offset 20 resolved。合约对账发送明确标记的 acceptanceTest 通道事件至 offset 4，业务路径单测覆盖成功预约、Kafka 失败 CAS 释放及双错误；Admin 消费组最终 21/21、lag=0。三类告警统一支持首次、内容变化、30 分钟提醒、恢复和发送失败重试，iTick/Trade 全量及 race 测试通过，镜像 `5753afb1…ea52a`、`99b7e886…baf93` Healthy。外部值班组、一级渠道、通知确认与未确认升级仍未提供。详见 `evidence/2026-07-29-preprod/contract-operational-alert-delivery-report.md` |
+| 2026-07-29 | Admin WebSocket 安全与运行验收 | 通过；仅代表在线后台通道 | WebSocket 不再接受 URL 查询参数令牌，缺少 Origin 返回 403；真实系统管理员通过固定子协议携带短期 JWT，握手返回 101 且服务端只回显固定协议。握手前读取最新用户详情和权限，Hub 按通知类型权限、租户和系统管理员身份过滤。向 Kafka 投递明确标记 `acceptanceTest=true` 的 Snapshot Outbox 事件后，同一连接实际收到 offset 22，当前 Admin 消费组 23/23、lag=0。Admin API 全量测试、Admin UI type-check/Prettier 通过，新镜像 `909eb263…38b5b` Healthy。外部 Webhook 按当前决定保持关闭，WS 不替代离线值班确认与升级回执。详见 `evidence/2026-07-29-preprod/contract-operational-alert-delivery-report.md` |
 
 ## 6. 当前外部依赖与不可代填项
 
 材料内容、哈希和归档要求见
 [`perpetual-delivery-production-evidence-guide.md`](perpetual-delivery-production-evidence-guide.md)；
+12 个失败项的责任人、回填字段、配置步骤和完成顺序见
+[`perpetual-delivery-production-go-live-actions.md`](perpetual-delivery-production-go-live-actions.md)；
 材料到齐后以 `deploy.sh contract-readiness` 执行正向验收。
 
 | 门禁 | 当前事实 | 需要提供或确认 |
 | --- | --- | --- |
-| P0-05/P1-01 生产价格源 | 现有库已迁入独立 deploy，三个 `BA/BTCUSDT` 测试公式及 `itick-ws FINAL_QUOTE`、MARK/INDEX/FUNDING 已恢复逐秒更新；这些公式只有单一 BA 输入，不是生产三源。两个无敞口、缺少完整权威行情标识的旧 `BTCUSD` 产品已经安全 Disabled，空仓交割 Batch 已无价格归档 | 至少三个真正独立的现货/指数来源标识、市场代码、Symbol 映射、接入凭据和数据许可；材料到齐后创建新的生产公式和产品配置并执行正向门禁 |
-| 生产 DELIVERY 参数 | 三源门槛、偏差剔除和离线重放技术验收已通过，但不能用虚构来源替代生产市场 | 确认算法（MEDIAN 或 WEIGHTED_MEAN）、每源权重、最大偏差 BPS、锁价窗口和公式版本命名 |
-| 生产历史回放 | 当前没有覆盖交割窗口的三个原始来源历史，无法形成有意义的生产回放报告 | 提供选定合约、至少一个完整交割窗口的原始快照导出，或授权接入相应历史数据源 |
-| P0-06 告警渠道 | 应用已输出结构化差异和 Outbox/Price Engine 健康日志；同一对账差异已按数据库事实节流为首次/变化/重开/30 分钟提醒，隔离环境仍无生产告警平台 | 确认告警平台、规则阈值、值班组、升级链路和通知渠道 |
-| P1-02/P2-01 自动强平资金权限 | 逐仓及全仓正/负权益隔离矩阵已有归档验收；当前独立 deploy 新库没有强平夹具、生产保险账户或资金流水，Etcd 中自动强平总开关保持关闭 | 明确生产保险基金和 `FEE_REVENUE` 账户、资金权限、审批责任人、启用窗口和回滚方案后，方可申请开启 |
+| P0-05/P1-01 生产价格源 | Binance、OKX、Bybit 三个独立公开现货 Authority 已持续产生 `FINAL_QUOTE`；Binance 永续单独作为 MARK 市场输入但与现货共用 `provider_code=BINANCE`，不会重复计数。三源 INDEX、MARK v2、FUNDING、DELIVERY `delivery-v1` 均逐秒运行，模型终检确认来源启用、供应商独立且输出新鲜。公开端点无需 API Key，由数据库 `PUBLIC_REST` 事实门禁验证 | 提供三家数据许可/合同及法务审批；确认公开端点生产接入方式和风控参数。无需填写或保存不存在的 API 凭据 |
+| 生产 DELIVERY 参数 | 候选参数已配置为三源 MEDIAN、权重 `1,1,1`、最大偏差 200 BPS、30 秒窗口、版本 `delivery-v1`，运行与回放均通过 | 风控对上述候选参数签批；如调整必须创建不可变新版本并重新回放 |
+| 生产历史回放 | 已归档 60 秒三源真实公开行情窗口，四类公式共 240 条、严格 1 秒连续、断档 0，覆盖两个完整 30 秒交割锁价窗口，确定性回放 PASS | 补充数据许可、执行人、复核人和审批编号后作为生产发布材料归档 |
+| P0-06 告警渠道 | 三类告警已统一投递 Kafka `admin.notifications`，Admin 消费并广播 `/admin/ws/notifications`；Outbox 和 Price Engine 的 firing/resolved 真实演练通过，对账通道实际投递且业务失败重试已测试；后台 WS 使用真实系统管理员完成鉴权握手和 offset 22 事件接收，当前消费组 23/23、lag=0；URL 令牌、Origin、事件权限和租户隔离均已收紧。外部 Webhook 当前保持关闭 | 提供生产值班组、一级外部渠道、确认回执、未确认升级链路和最终责任人 |
+| P1-02/P2-01 自动强平资金权限 | 逐仓及全仓正/负权益隔离矩阵已有归档验收；`tenant=1/USDT` 的保险基金账户、`FEE_REVENUE` 账户及 `symbol_id=0` 默认保险配置已经通过管理接口补齐，但两个平台账户余额均为 0、ADL 关闭，Etcd 中自动强平总开关保持关闭 | 明确保险基金最低水位和注资金额，完成资金权限与审批责任人、启用窗口及回滚方案后，使用幂等管理接口注资并重新验收 |
 | 生产备份与灾备 | 隔离环境已完成全库一致性备份、140 表恢复核对和恢复手册；本地容量与恢复流程可执行 | 确认生产 RPO/RTO、备份加密及异地保留策略，并安排 Binlog 时间点恢复、节点/可用区故障切换和回切演练 |
+
+## 7. 2026-07-29 当前 Deploy 预生产验收
+
+用户已确认将当前完整 Deploy 环境作为预生产验收环境。本节只改变预生产技术结论，
+不把技术运行证据替代数据许可、资金和运维审批，也不放宽第 6 节生产门禁。
+
+证据目录：
+[`evidence/2026-07-29-preprod`](evidence/2026-07-29-preprod)。
+全部文件哈希见
+[`SHA256SUMS`](evidence/2026-07-29-preprod/SHA256SUMS)。
+
+### 7.1 九项未完成项逐项结论
+
+| 原未完成项 | 预生产执行结果 | 预生产结论 | 生产上线门禁 |
+| --- | --- | --- | --- |
+| P0-05 DELIVERY 使用独立来源实际输出 | Binance、OKX、Bybit 三个独立公开来源已由生产候选 `delivery-v1` 每秒实际出价；60 秒窗口 60 条、最少接受 3、断档 0、回放 PASS | `[x]` 运行链路与算法通过；`[!]` 数据许可和产品启用未通过 | 完成三家数据许可及发布审批后再启用交割产品 |
+| P0-05 中位数/加权平均参数 | 三源 MEDIAN、权重 `1,1,1`、200 BPS、30 秒窗口已运行和回放；WEIGHTED_MEAN 与偏离剔除测试均 PASS | `[x]` 预生产技术通过 | 风控签批候选参数；变更时创建新版本并重放 |
+| P0-06 告警投递 | 三类事件已进入 Kafka/Admin：Outbox 真实 Kafka 故障后 firing/resolved，Price Engine 正式 API 缺源/撤销后各一条 firing/resolved，对账 acceptanceTest 通道事件；后台 WS 以真实系统管理员完成 101 握手并实际收到 offset 22 的 Snapshot Outbox 验收事件，当前消费组 23/23、lag=0。发送失败重试、稳定指纹、30 分钟提醒、恢复去重、权限和租户过滤均有自动化测试 | `[x]` 应用告警平台和后台 WS 技术验收通过；`[!]` 外部值班通知按当前决定暂不考虑 | 后续需要生产启用时，再提供值班组、一级渠道、通知回执、未确认升级和最终责任人 |
+| P1-01 三源 INDEX | 生产候选 `production-index-v1` 使用 Binance、OKX、Bybit 三个不同 Authority/provider，MEDIAN 最少 3；60 秒 60 条严格连续，最少接受 3 | `[x]` 约束、实际运行和确定性回放通过；`[!]` 数据许可待批 | 完成数据许可和参数签批 |
+| P1-01 INDEX_BASIS MARK | `production-mark-v2` 使用三源 INDEX、Binance 永续和上一 MARK；运行发现并修复前值源时间递归老化，已连续越过旧 30 秒故障边界并完成回放 | `[x]` 不可变版本和实际运行通过 | 风控签批 ±200 BPS 与当前值 1/前值 4 |
+| P1-01 偏离剔除 | 实际三源窗口 accepted=3/rejected=0；异常偏离、剔除后输入不足与篡改拒绝由自动化测试覆盖 | `[x]` 预生产技术通过 | 用获批历史分布确认 200 BPS |
+| P1-01 平滑、上下限和版本 | INDEX_BASIS 对称限幅、前值平滑、不可变 v2、30 秒以上持续新鲜及回放全部 PASS | `[x]` 预生产技术通过 | 审批平滑权重、上下限和正式版本 |
+| P1-01 历史回放 | 导出 2026-07-29 19:53:38～19:54:37 的 240 条不可变审计；INDEX/MARK/FUNDING/DELIVERY 各 60 条，1 秒严格连续、断档 0，确定性回放 PASS | `[x]` 三源且覆盖两个完整交割锁价窗口；`[!]` 生产审批元数据待补 | 补充数据许可、执行/复核/审批信息并随发布单归档 |
+| P1-01 容量、备份和灾备 | 短暂停止 iTick/Trade/Asset/System；1,388,380,350-byte 备份恢复到新临时库，143 张表精确 `COUNT(*)` 差异为 0；恢复后六个核心服务健康、未完成指令/OPEN 对账/不健康 Outbox 均为 0 | `[x]` 单机预生产备份恢复通过 | 生产执行异地备份、Binlog/PITR、可用区切换/回切及正式 RPO/RTO |
+
+### 7.2 当前事实与硬门禁
+
+只读检查确认：
+
+- Authority Registry 已注册并启用 `binance-public`、`okx-public`、
+  `bybit-public` 三个独立 `PUBLIC_REST` 现货 Authority，以及
+  `binance-futures-public` 永续 Authority；Binance 两条通道同属 `BINANCE`；
+- Authority Registry 管理接口和公式动态下拉已经部署；来源身份由官方 HTTPS
+  域名/固定路径白名单和数据库 `provider_code` 共同约束；
+- 当前激活三源 INDEX、INDEX_BASIS MARK v2、FUNDING 和三源 DELIVERY
+  `delivery-v1`，四类输出持续新鲜；
+- `tenant_id=1` 的 USDT `INSURANCE_FUND` 账户可用余额为 0；
+- 当前存在启用的 USDT `FEE_REVENUE` 平台账户，但可用余额为 0；
+- 当前存在 `symbol_id=0` 的 USDT 默认保险配置，ADL 保持关闭；
+- 原交割产品 `symbol_id=4` 缺少对应 `t_trade_symbol_contract` 参数事实；
+  在确认 Order、Position、Delivery Batch、Reservation 和 Settlement Instruction
+  均为 0 后，已通过现有 Admin API 停用；
+- 当前已有参数完整但停用的 `BTCUSDT-20260925` 交割产品，禁止在 DELIVERY
+  公式、资金和外部审批门禁通过前启用；
+- `AutomaticLiquidation.Enabled=false`；
+- `CrossMarginTrading.Enabled=false`。
+
+因此自动强平、全仓新增风险、生产资金费和生产交割均不得开闸。
+强平启用前置条件、回滚阈值及处置步骤见
+[`liquidation-rollback-plan.md`](evidence/2026-07-29-preprod/liquidation-rollback-plan.md)。
+空壳交割产品停用的请求、首次现行时间校验拒绝、成功响应和前后详情见
+[`empty-delivery-disable-report.md`](evidence/2026-07-29-preprod/empty-delivery-disable-report.md)。
+
+### 7.3 只读生产门禁终检
+
+以当前三源预生产证据文件执行 `deploy.sh contract-readiness`：
+
+- PASS：60；
+- FAIL：12；
+- 最终：`NOT READY`，退出码 1；
+- 六个核心服务健康；
+- db-init、config-seed、kafka-init 均成功；
+- Snapshot Outbox 健康；
+- OPEN 合约对账差异为 0；
+- 未完成 Settlement Instruction 为 0；
+- 两个生产风险开关保持关闭。
+
+12 个失败均为真实生产前置条件未满足：行情数据许可、外部值班与升级策略、
+保险/手续费账户资金权限和审批、保险基金注资、自动强平启用窗口、正式 RPO/RTO、
+备份加密、异地位置，以及交割产品启用。公开行情端点无需凭据，门禁已由数据库确认
+三个声明 Authority 均为启用的 `PUBLIC_REST`，不再要求填写不存在的密钥审批。
+
+完整输出见
+[`contract-readiness-output.txt`](evidence/2026-07-29-preprod/contract-readiness-output.txt)。
+
+### 7.4 预生产验收结论
+
+- 永续与交割合约应用、资金、恢复、对账及安全门禁：预生产技术验收通过；
+- Price Engine 三独立公开来源、四类公式持续运行与确定性回放：通过；
+- 三源 MEDIAN DELIVERY、INDEX_BASIS MARK v2 与失败边界：技术测试通过；
+- Outbox、Price Engine、合约对账的 Kafka/Admin 告警技术链路与故障恢复：通过；
+- 单机全库备份、隔离恢复和 143 表精确比对：通过；
+- 行情数据许可、外部值班通知/升级送达、已注资保险基金及生产异地灾备：未通过；
+- 上线结论：`NOT READY`，生产门禁继续关闭。

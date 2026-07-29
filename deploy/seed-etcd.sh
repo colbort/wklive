@@ -7,6 +7,7 @@ COMMON_CONFIG="${COMMON_CONFIG:-/deploy-config/common.yaml}"
 MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:-123456}"
 MONGO_ROOT_PASSWORD="${MONGO_ROOT_PASSWORD:-openIM123}"
 JWT_ACCESS_SECRET="${JWT_ACCESS_SECRET:-change-this-secret-before-production}"
+ITICK_TOKEN_FILE="${ITICK_TOKEN_FILE:-/run/secrets/itick_token}"
 
 validate_secret() {
   name="$1"
@@ -28,6 +29,18 @@ check_etcd() {
   fi
 }
 
+load_file_secret() {
+  name="$1"
+  file="$2"
+  if [ ! -r "$file" ]; then
+    echo "$name secret file is missing or unreadable: $file" >&2
+    exit 1
+  fi
+  value=$(sed -n '1p' "$file")
+  validate_secret "$name" "$value"
+  printf '%s' "$value"
+}
+
 render_config() {
   sed \
     -e 's#127\.0\.0\.1:2379#etcd:2379#g' \
@@ -38,6 +51,7 @@ render_config() {
     -e "s#123456#${MYSQL_ROOT_PASSWORD}#g" \
     -e "s#openIM123#${MONGO_ROOT_PASSWORD}#g" \
     -e "s#change-this-secret-before-production#${JWT_ACCESS_SECRET}#g" \
+    -e "s#__ITICK_TOKEN__#${ITICK_TOKEN}#g" \
     "$1"
 }
 
@@ -51,6 +65,7 @@ put_file() {
 validate_secret MYSQL_ROOT_PASSWORD "$MYSQL_ROOT_PASSWORD"
 validate_secret MONGO_ROOT_PASSWORD "$MONGO_ROOT_PASSWORD"
 validate_secret JWT_ACCESS_SECRET "$JWT_ACCESS_SECRET"
+ITICK_TOKEN=$(load_file_secret ITICK_TOKEN "$ITICK_TOKEN_FILE")
 check_etcd
 
 put_file /wklive/common/config "$COMMON_CONFIG"

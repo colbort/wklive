@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"wklive/common/alert"
+	"wklive/common/alert/adminnotify"
 	mq "wklive/common/mq/kafka"
 	"wklive/services/itick/internal/config"
 	"wklive/services/itick/internal/market/calendar"
@@ -38,6 +40,7 @@ type ServiceContext struct {
 	LockRedis                   *redis.Client
 	TaskSubscriber              *mq.Subscriber
 	SnapshotPublisher           *mq.Publisher
+	OperationalAlertNotifier    alert.Notifier
 	Cache                       cache.Cache
 	Factory                     *models.CoinKlineModelFactory
 	Writer                      *klinewriter.BatchWriter
@@ -55,15 +58,26 @@ type ServiceContext struct {
 	PriceFormulaModel           models.TItickPriceFormulaModel
 	PriceEngine                 *priceengine.Engine
 	AuthorityRegistryModel      AuthorityRegistryStore
+	AuthorityRegistryAdminModel AuthorityRegistryAdminStore
 	ItickKlineSyncProgressModel models.TItickKlineSyncProgressModel
 	MarketCalendarModel         models.TItickMarketCalendarModel
 	MarketHolidayModel          models.TItickMarketHolidayModel
 	MarketCalendarResolver      *calendar.Resolver
 	ItickRestClient             *itickrest.Client
+	AuthoritativeQuoteHandler   func(context.Context, types.ClientMessage, *types.QuotePayload) error
 }
 
 type AuthorityRegistryStore interface {
 	FindEnabled(context.Context, string) (*models.TItickAuthorityRegistry, error)
+}
+
+type AuthorityRegistryAdminStore interface {
+	Create(context.Context, *models.TItickAuthorityRegistry) (int64, error)
+	FindOne(context.Context, int64) (*models.TItickAuthorityRegistry, error)
+	FindOneByAuthority(context.Context, string) (*models.TItickAuthorityRegistry, error)
+	FindPage(context.Context, models.AuthorityRegistryFilter, int64, int64) ([]*models.TItickAuthorityRegistry, int64, error)
+	CountActiveFormulaReferences(context.Context, string) (int64, error)
+	UpdateConfigVersioned(context.Context, int64, int64, string, int64, int64) (bool, error)
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -138,7 +152,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		marketDataCache,
 		itickRestClient,
 	)
-	itickManager.SetQuoteHandler(func(_ context.Context, msg types.ClientMessage, payload *types.QuotePayload) error {
+	authoritativeQuoteHandler := func(_ context.Context, msg types.ClientMessage, payload *types.QuotePayload) error {
 		rpcCtx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 		defer cancel()
 		if err := validateAuthoritativeQuoteInput(payload); err != nil {
@@ -172,7 +186,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 			return nil
 		}
 		return errors.New("unreachable non-authoritative quote branch")
-	})
+	}
+	itickManager.SetQuoteHandler(authoritativeQuoteHandler)
 
 	return &ServiceContext{
 		Config:                      c,
@@ -182,6 +197,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		LockRedis:                   lockRedis,
 		TaskSubscriber:              taskSubscriber,
 		SnapshotPublisher:           snapshotPublisher,
+		OperationalAlertNotifier:    adminnotify.New(snapshotPublisher),
 		Cache:                       cache.New(c.CacheRedis, syncx.NewSingleFlight(), cache.NewStat("quote"), redis.Nil),
 		Factory:                     factory,
 		Writer:                      writer,
@@ -197,11 +213,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		PriceFormulaModel:           priceFormulaModel,
 		PriceEngine:                 priceengine.New(priceFormulaModel, authoritativeSnapshotModel),
 		AuthorityRegistryModel:      authorityRegistryModel,
+		AuthorityRegistryAdminModel: authorityRegistryModel,
 		ItickKlineSyncProgressModel: itickKlineSyncProgressModel,
 		MarketCalendarModel:         marketCalendarModel,
 		MarketHolidayModel:          marketHolidayModel,
 		MarketCalendarResolver:      marketCalendarResolver,
 		ItickRestClient:             itickRestClient,
+		AuthoritativeQuoteHandler:   authoritativeQuoteHandler,
 	}
 }
 

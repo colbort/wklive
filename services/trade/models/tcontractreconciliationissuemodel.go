@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -27,6 +29,7 @@ type (
 		tContractReconciliationIssueModel
 		RecordFinding(ctx context.Context, issue *TContractReconciliationIssue) error
 		RecordFindingWithAlert(ctx context.Context, issue *TContractReconciliationIssue, minAlertIntervalMs int64) (bool, error)
+		ReleaseAlertReservation(ctx context.Context, tenantID int64, issueKey string, reservedAt int64) error
 		ResolveByKey(ctx context.Context, tenantID int64, issueKey, reason string, now int64) error
 		FindPage(ctx context.Context, filter ContractReconciliationIssuePageFilter, cursor, limit int64) ([]*TContractReconciliationIssue, int64, error)
 		FindOneForUpdate(ctx context.Context, id int64) (*TContractReconciliationIssue, error)
@@ -175,6 +178,26 @@ WHERE id=?`,
 		fmt.Sprintf("%s%v", cacheTContractReconciliationIssueIdPrefix, rowID),
 		fmt.Sprintf("%s%v:%v", cacheTContractReconciliationIssueTenantIdIssueKeyPrefix, issue.TenantId, issue.IssueKey),
 	)
+}
+
+// ReleaseAlertReservation makes a synchronously failed notification eligible
+// for the next reconciliation pass. The reserved timestamp is a fencing token:
+// an older publisher cannot clear a newer instance's successful reservation.
+func (m *defaultTContractReconciliationIssueModel) ReleaseAlertReservation(
+	ctx context.Context,
+	tenantID int64,
+	issueKey string,
+	reservedAt int64,
+) error {
+	if tenantID <= 0 || strings.TrimSpace(issueKey) == "" || reservedAt <= 0 {
+		return errors.New("reconciliation alert reservation identity is invalid")
+	}
+	_, err := m.ExecNoCacheCtx(ctx, `
+UPDATE t_contract_reconciliation_issue
+SET last_alert_at=0,update_times=?
+WHERE tenant_id=? AND issue_key=? AND status=1 AND last_alert_at=?`,
+		time.Now().UnixMilli(), tenantID, issueKey, reservedAt)
+	return err
 }
 
 func reconciliationFindingAlertDue(

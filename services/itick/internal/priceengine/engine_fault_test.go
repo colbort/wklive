@@ -51,10 +51,11 @@ func TestTemporaryMissingInputDoesNotPublishSnapshot(t *testing.T) {
 }
 
 type pricedArchive struct {
-	prices   map[string]string
-	lookups  map[string]int64
-	inserted int
-	last     *models.TItickAuthoritativeSnapshot
+	prices      map[string]string
+	sourceTimes map[string]int64
+	lookups     map[string]int64
+	inserted    int
+	last        *models.TItickAuthoritativeSnapshot
 }
 
 func (a *pricedArchive) FindAtOrBefore(_ context.Context, _, _, _, market, _ string, target, _ int64) (*models.TItickAuthoritativeSnapshot, error) {
@@ -66,10 +67,14 @@ func (a *pricedArchive) FindAtOrBefore(_ context.Context, _, _, _, market, _ str
 	if !ok {
 		return nil, sql.ErrNoRows
 	}
+	sourceTimestamp := target
+	if configured, exists := a.sourceTimes[market]; exists {
+		sourceTimestamp = configured
+	}
 	return &models.TItickAuthoritativeSnapshot{
 		SnapshotId:      "snapshot-" + market,
 		Price:           decimal.RequireFromString(price),
-		SourceTimestamp: target,
+		SourceTimestamp: sourceTimestamp,
 	}, nil
 }
 
@@ -153,6 +158,8 @@ func TestIndexBasisSmoothingReadsOnlyPreviousMark(t *testing.T) {
 	const target = int64(1785217333000)
 	archive := &pricedArchive{prices: map[string]string{
 		"INDEX": "100", "PERPETUAL": "110", "PREVIOUS": "100",
+	}, sourceTimes: map[string]int64{
+		"INDEX": target - 100, "PERPETUAL": target - 50, "PREVIOUS": target - 20_000,
 	}}
 	engine := &Engine{archive: archive}
 	formula := &models.TItickPriceFormula{
@@ -175,6 +182,13 @@ func TestIndexBasisSmoothingReadsOnlyPreviousMark(t *testing.T) {
 	}
 	if archive.last == nil || !archive.last.Price.Equal(decimal.RequireFromString("100.4")) {
 		t.Fatalf("smoothed MARK=%v want=100.4", archive.last)
+	}
+	if archive.last.SourceTimestamp != target-100 {
+		t.Fatalf(
+			"smoothed MARK source time=%d want current market minimum=%d",
+			archive.last.SourceTimestamp,
+			target-100,
+		)
 	}
 	if replayed, err := ReplayEvaluationAudit([]byte(archive.last.RawPayload)); err != nil ||
 		!replayed.Equal(decimal.RequireFromString("100.4")) {

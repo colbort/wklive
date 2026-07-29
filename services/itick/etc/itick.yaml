@@ -13,7 +13,7 @@ Etcd:
 Itick:
   ApiUrl: https://api.itick.org
   WSUrl: wss://api.itick.org
-  Token: 5093272afb5241dfa3fd5505937289804447d9d6941547b2ab45929024c0fd4b
+  Token: "__ITICK_TOKEN__"
   # 所有 iTick REST 接口共享这一份全局额度，不区分请求路径。
   RestRateLimitPerMinute: 100
   RestRateLimitBurst: 1
@@ -25,6 +25,62 @@ Runtime:
   RepairBatchSize: 10
   BuildingBucketTtlMinutes: 120
   WsKlineStaleSeconds: 30
+
+# 三个独立交易所的公开现货成交价用于 INDEX/DELIVERY；Binance 永续成交价
+# 单独用于 MARK 基差。全部端点无需 API Key，但生产数据许可仍须单独审批。
+ExternalQuotes:
+  - Enabled: true
+    Authority: binance-public
+    ProviderCode: BINANCE
+    Adapter: BINANCE_SPOT_AGG_TRADES
+    BaseURL: https://api.binance.com/api/v3/aggTrades
+    CategoryCode: crypto
+    Market: BINANCE
+    Symbol: BTCUSDT
+    UpstreamSymbol: BTCUSDT
+    IntervalMs: 1000
+    TimeoutMs: 3000
+    MaxSourceAgeMs: 30000
+    MaxFutureSkewMs: 5000
+  - Enabled: true
+    Authority: okx-public
+    ProviderCode: OKX
+    Adapter: OKX_SPOT_TICKER
+    BaseURL: https://www.okx.com/api/v5/market/ticker
+    CategoryCode: crypto
+    Market: OKX
+    Symbol: BTCUSDT
+    UpstreamSymbol: BTC-USDT
+    IntervalMs: 1000
+    TimeoutMs: 3000
+    MaxSourceAgeMs: 30000
+    MaxFutureSkewMs: 5000
+  - Enabled: true
+    Authority: bybit-public
+    ProviderCode: BYBIT
+    Adapter: BYBIT_SPOT_RECENT_TRADE
+    BaseURL: https://api.bybit.com/v5/market/recent-trade
+    CategoryCode: crypto
+    Market: BYBIT
+    Symbol: BTCUSDT
+    UpstreamSymbol: BTCUSDT
+    IntervalMs: 1000
+    TimeoutMs: 3000
+    MaxSourceAgeMs: 30000
+    MaxFutureSkewMs: 5000
+  - Enabled: true
+    Authority: binance-futures-public
+    ProviderCode: BINANCE
+    Adapter: BINANCE_FUTURES_AGG_TRADES
+    BaseURL: https://fapi.binance.com/fapi/v1/aggTrades
+    CategoryCode: crypto
+    Market: BINANCE_PERP
+    Symbol: BTCUSDT
+    UpstreamSymbol: BTCUSDT
+    IntervalMs: 1000
+    TimeoutMs: 3000
+    MaxSourceAgeMs: 30000
+    MaxFutureSkewMs: 5000
 
 Mongo:
   Url: "mongodb://root:openIM123@127.0.0.1:27017/stock?authSource=admin"

@@ -75,12 +75,24 @@ func normalizePriceFormulaReq(in *itick.CreatePriceFormulaReq) ([]priceengine.Co
 				return nil, errors.New("INDEX components must be independent FINAL_QUOTE authorities")
 			}
 		}
-		if distinctPriceSourceCount(components) != len(components) {
-			return nil, errors.New("INDEX components must identify distinct sources")
+		if distinctAuthorityCount(components) != len(components) {
+			return nil, errors.New("INDEX components must identify distinct authorities")
 		}
 	}
-	if in.SnapshotKind == "DELIVERY" && distinctPriceSourceCount(components) != len(components) {
-		return nil, errors.New("DELIVERY components must identify distinct sources")
+	if in.SnapshotKind == "DELIVERY" {
+		if len(components) < 3 ||
+			(in.Algorithm != itick.PriceAlgorithm_PRICE_ALGORITHM_MEDIAN &&
+				in.Algorithm != itick.PriceAlgorithm_PRICE_ALGORITHM_WEIGHTED_MEAN) {
+			return nil, errors.New("DELIVERY requires MEDIAN or WEIGHTED_MEAN with at least 3 accepted sources")
+		}
+		for _, component := range components {
+			if component.Kind != "FINAL_QUOTE" || component.Authority == in.Authority {
+				return nil, errors.New("DELIVERY components must be independent FINAL_QUOTE authorities")
+			}
+		}
+		if distinctAuthorityCount(components) != len(components) {
+			return nil, errors.New("DELIVERY components must identify distinct authorities")
+		}
 	}
 	if in.Algorithm == itick.PriceAlgorithm_PRICE_ALGORITHM_INDEX_BASIS {
 		if in.SnapshotKind != "MARK" || in.MaxDeviationBps <= 0 ||
@@ -95,14 +107,10 @@ func normalizePriceFormulaReq(in *itick.CreatePriceFormulaReq) ([]priceengine.Co
 	return components, nil
 }
 
-func distinctPriceSourceCount(components []priceengine.Component) int {
+func distinctAuthorityCount(components []priceengine.Component) int {
 	sources := make(map[string]struct{}, len(components))
 	for _, component := range components {
-		key := strings.Join([]string{
-			component.Authority, component.Kind, component.CategoryCode,
-			component.Market, component.Symbol,
-		}, "\x00")
-		sources[key] = struct{}{}
+		sources[component.Authority] = struct{}{}
 	}
 	return len(sources)
 }

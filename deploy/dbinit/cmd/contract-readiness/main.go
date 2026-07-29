@@ -42,6 +42,22 @@ func loadInput(detailed bool) (models.ContractReadinessInput, error) {
 	if err != nil {
 		return models.ContractReadinessInput{}, err
 	}
+	indexAlgorithm, err := parsePositiveInt64("READINESS_INDEX_ALGORITHM")
+	if err != nil {
+		return models.ContractReadinessInput{}, err
+	}
+	indexMaxDeviation, err := parsePositiveInt64("READINESS_INDEX_MAX_DEVIATION_BPS")
+	if err != nil {
+		return models.ContractReadinessInput{}, err
+	}
+	markMaxBasis, err := parsePositiveInt64("READINESS_MARK_MAX_BASIS_BPS")
+	if err != nil {
+		return models.ContractReadinessInput{}, err
+	}
+	formulaInterval, err := parsePositiveInt64("READINESS_FORMULA_INTERVAL_MS")
+	if err != nil {
+		return models.ContractReadinessInput{}, err
+	}
 	algorithm, err := parsePositiveInt64("READINESS_DELIVERY_ALGORITHM")
 	if err != nil {
 		return models.ContractReadinessInput{}, err
@@ -58,14 +74,27 @@ func loadInput(detailed bool) (models.ContractReadinessInput, error) {
 	weights := splitValues(os.Getenv("READINESS_SOURCE_WEIGHTS"))
 	return models.ContractReadinessInput{
 		SourceAuthorities:       sources,
+		SourceMarkets:           splitValues(os.Getenv("READINESS_SOURCE_MARKETS")),
+		IndexSourceWeights:      splitValues(os.Getenv("READINESS_INDEX_SOURCE_WEIGHTS")),
 		DeliverySourceWeights:   weights,
 		CategoryCode:            strings.TrimSpace(os.Getenv("READINESS_CATEGORY_CODE")),
 		Market:                  strings.TrimSpace(os.Getenv("READINESS_MARKET")),
 		PriceSymbol:             strings.TrimSpace(os.Getenv("READINESS_PRICE_SYMBOL")),
 		PerpetualSymbol:         strings.TrimSpace(os.Getenv("READINESS_PERPETUAL_SYMBOL")),
 		DeliverySymbol:          strings.TrimSpace(os.Getenv("READINESS_DELIVERY_SYMBOL")),
+		PerpetualPriceAuthority: strings.TrimSpace(os.Getenv("READINESS_PERPETUAL_PRICE_AUTHORITY")),
+		PerpetualPriceMarket:    strings.TrimSpace(os.Getenv("READINESS_PERPETUAL_PRICE_MARKET")),
 		TenantID:                tenantID,
 		SettlementCoin:          strings.TrimSpace(os.Getenv("READINESS_SETTLEMENT_COIN")),
+		IndexAlgorithm:          int(indexAlgorithm),
+		IndexFormulaVersion:     strings.TrimSpace(os.Getenv("READINESS_INDEX_FORMULA_VERSION")),
+		IndexMaxDeviationBps:    indexMaxDeviation,
+		MarkFormulaVersion:      strings.TrimSpace(os.Getenv("READINESS_MARK_FORMULA_VERSION")),
+		MarkMaxBasisBps:         markMaxBasis,
+		MarkCurrentWeight:       strings.TrimSpace(os.Getenv("READINESS_MARK_CURRENT_WEIGHT")),
+		MarkPreviousWeight:      strings.TrimSpace(os.Getenv("READINESS_MARK_PREVIOUS_WEIGHT")),
+		FundingFormulaVersion:   strings.TrimSpace(os.Getenv("READINESS_FUNDING_FORMULA_VERSION")),
+		PriceFormulaIntervalMs:  formulaInterval,
 		DeliveryAlgorithm:       int(algorithm),
 		DeliveryFormulaVersion:  strings.TrimSpace(os.Getenv("READINESS_FORMULA_VERSION")),
 		DeliveryMaxLookbackMs:   maxLookback,
@@ -132,6 +161,8 @@ func splitValues(value string) []string {
 func printResult(result models.ContractReadinessResult) {
 	fmt.Printf("READINESS_DB_DETAILED=%t\n", result.Detailed)
 	fmt.Printf("READINESS_DB_ACTIVE_SOURCE_AUTHORITIES=%d\n", result.ActiveSourceAuthorityCount)
+	fmt.Printf("READINESS_DB_DISTINCT_SOURCE_PROVIDERS=%d\n", result.DistinctSourceProviderCount)
+	fmt.Printf("READINESS_DB_PUBLIC_REST_SOURCE_AUTHORITIES=%d\n", result.PublicRestSourceCount)
 	fmt.Printf("READINESS_DB_PRICE_ENGINE_AUTHORITY=%d\n", result.PriceEngineAuthorityCount)
 	fmt.Printf("READINESS_DB_INDEX_FORMULAS=%d\n", result.IndexFormulaCount)
 	fmt.Printf("READINESS_DB_MARK_FORMULAS=%d\n", result.MarkFormulaCount)

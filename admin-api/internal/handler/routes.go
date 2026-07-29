@@ -166,6 +166,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: itick.RevokeAuthoritativeSnapshotHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodPost,
+				Path:    "/authorities",
+				Handler: itick.SetAuthorityRegistryHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/authorities",
+				Handler: itick.ListAuthorityRegistriesHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodGet,
 				Path:    "/categories",
 				Handler: itick.ListCategoriesHandler(serverCtx),

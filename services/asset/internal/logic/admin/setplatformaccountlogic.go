@@ -33,7 +33,7 @@ func NewSetPlatformAccountLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 // 设置平台账户（保险基金等，不属于任何用户）
 func (l *SetPlatformAccountLogic) SetPlatformAccount(in *asset.SetPlatformAccountReq) (*asset.PlatformAccountResp, error) {
 	typeName, coin := normalizePlatformAccount(in.GetAccountType(), in.GetCoin())
-	if in.GetTenantId() <= 0 || typeName != insuranceFundAccountType || coin == "" {
+	if in.GetTenantId() <= 0 || !isConfigurablePlatformAccountType(typeName) || coin == "" {
 		return nil, fmt.Errorf("invalid platform account")
 	}
 	status := int64(in.GetStatus())

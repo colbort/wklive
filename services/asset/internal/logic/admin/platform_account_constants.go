@@ -1,3 +1,16 @@
 package adminlogic
 
-const insuranceFundAccountType = "INSURANCE_FUND"
+const (
+	insuranceFundAccountType     = "INSURANCE_FUND"
+	fundingDifferenceAccountType = "FUNDING_DIFFERENCE"
+	feeRevenueAccountType        = "FEE_REVENUE"
+)
+
+func isConfigurablePlatformAccountType(accountType string) bool {
+	switch accountType {
+	case insuranceFundAccountType, fundingDifferenceAccountType, feeRevenueAccountType:
+		return true
+	default:
+		return false
+	}
+}

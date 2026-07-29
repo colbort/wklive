@@ -690,6 +690,8 @@ VALUES
 (480, 400, 1, '价格公式', 2, 'GET', '/itick/price-formulas', 'itick:price-formula:list', 'itick/price-formulas', 'DataAnalysis', 480),
 (481, 480, 1, '创建价格公式版本', 3, 'POST', '/itick/price-formulas', 'itick:price-formula:create', '', '', 481),
 (482, 480, 1, '切换价格公式状态', 3, 'PUT', '/itick/price-formulas/{id}/status', 'itick:price-formula:status', '', '', 482),
+(483, 480, 1, '查询权威行情来源', 3, 'GET', '/itick/authorities', 'itick:authority:list', '', '', 483),
+(484, 480, 1, '配置权威行情来源', 3, 'POST', '/itick/authorities', 'itick:authority:set', '', '', 484),
 (490, 400, 1, '快照发布任务', 2, 'GET', '/itick/snapshot-outbox', 'itick:snapshot-outbox:list', 'itick/snapshot-outbox', 'Promotion', 490),
 (491, 490, 1, '重试快照发布任务', 3, 'POST', '/itick/snapshot-outbox/{id}/retry', 'itick:snapshot-outbox:retry', '', '', 491),
 (492, 490, 1, '撤销权威快照', 3, 'POST', '/itick/authoritative-snapshots/revoke', 'itick:authoritative-snapshot:revoke', '', '', 492);

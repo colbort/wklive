@@ -161,6 +161,17 @@ func (s *AdminServer) InitTenantItickDisplay(ctx context.Context, in *itick.Init
 	return l.InitTenantItickDisplay(in)
 }
 
+// Authority、provider_code 和 producer_type 创建后不可修改；数据库写入由 model 完成。
+func (s *AdminServer) SetAuthorityRegistry(ctx context.Context, in *itick.SetAuthorityRegistryReq) (*itick.AuthorityRegistryResp, error) {
+	l := adminlogic.NewSetAuthorityRegistryLogic(ctx, s.svcCtx)
+	return l.SetAuthorityRegistry(in)
+}
+
+func (s *AdminServer) ListAuthorityRegistries(ctx context.Context, in *itick.ListAuthorityRegistriesReq) (*itick.ListAuthorityRegistriesResp, error) {
+	l := adminlogic.NewListAuthorityRegistriesLogic(ctx, s.svcCtx)
+	return l.ListAuthorityRegistries(in)
+}
+
 // Price Engine 公式内容不可原地修改，变更必须创建新版本。
 func (s *AdminServer) CreatePriceFormula(ctx context.Context, in *itick.CreatePriceFormulaReq) (*itick.PriceFormulaResp, error) {
 	l := adminlogic.NewCreatePriceFormulaLogic(ctx, s.svcCtx)

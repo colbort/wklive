@@ -14,6 +14,9 @@
 cd deploy
 cp .env.example .env
 # 修改 .env 中两个后台的初始密码
+mkdir -p secrets
+umask 077
+printf '%s\n' '从密钥系统取得的 iTick Token' > secrets/itick_token
 ./deploy.sh compose-config
 ./deploy.sh up
 ./deploy.sh ps
@@ -96,6 +99,19 @@ LIQUIDITY_ADMIN_PASSWORD=replace-liquidity-password
 全量并行编译耗尽 Docker 资源；传入服务名时只构建指定服务。已经构建好镜像时，
 可用 `./deploy.sh start` 直接启动整套 Compose 环境。
 
+存在运行中的 Compose 容器时，所有会触发镜像构建的命令都会在每次构建前检查
+Docker 虚拟盘，默认至少保留 4 GiB，防止构建过程挤占 MySQL/Mongo 持久化写入空间：
+
+```bash
+./deploy.sh disk-check
+# 如宿主机容量规划要求更高，可按 KiB 调大，但不能设为 0
+DOCKER_MIN_FREE_KB=8388608 ./deploy.sh disk-check
+```
+
+空间不足时命令会在构建前失败，不会自动删除数据库卷。`up` 结束后只清理带
+`com.docker.compose.project=wklive` 标签且已经悬空的旧镜像，不删除在用镜像、
+容器或 Volume。首次冷部署尚无运行容器时会明确跳过虚拟盘预检。
+
 已经记录的迁移文件不允许修改；校验和发生变化时初始化会失败，必须新增迁移文件。
 对于没有 `schema_migrations` 的既有数据库，初始化器会将仓库当前迁移记录为基线，
 不会盲目重复执行可能已经落库的 `ALTER TABLE`。
@@ -111,6 +127,12 @@ cp production-readiness.env.example production-readiness.env
 ./deploy.sh contract-readiness
 ```
 
+如果声明的全部行情 Authority 都是无需凭据的公开 REST 端点，可设置
+`PRICE_SOURCE_ACCESS_MODE=PUBLIC_NO_CREDENTIALS`。该模式不会仅凭声明放行：
+readiness model 必须从 Authority Registry 确认每个来源都已启用、类型为
+`PUBLIC_REST` 且供应商相互独立。行情数据许可仍由
+`PRICE_SOURCE_LICENSE_APPROVED` 单独控制。
+
 也可以显式指定另一份声明文件：
 
 ```bash
@@ -125,6 +147,9 @@ cp production-readiness.env.example production-readiness.env
 `false`；全部通过也不会自动打开开关，启用仍须走已批准的发布和回滚流程。
 数据库只读检查由 `deploy/dbinit/models` 中的 readiness model 执行，shell 入口不
 包含业务 SQL。
+公式检查不仅核对输出类型：还会核对来源 Authority 与市场一一映射、INDEX 算法/
+版本/权重、MARK 永续来源/版本/基差上限/平滑权重、FUNDING 版本，以及所有公式的
+回看窗口和执行周期。
 四份证据的必填内容和通过标准见
 [`perpetual-delivery-production-evidence-guide.md`](../services/trade/docs/perpetual-delivery-production-evidence-guide.md)。
 
@@ -167,7 +192,10 @@ MySQL，建立迁移历史、执行明确标记为可安全补齐的结构迁移
 ## 配置初始化
 
 `config-seed` 会读取项目中各服务的 `etc/*.yaml`，把本机地址转换为 Compose
-服务名后写入 Etcd。修改 YAML 后可重新执行：
+服务名，并从 Docker Secret `/run/secrets/itick_token` 注入 iTick Token 后写入
+Etcd。仓库中的 YAML 只保留 `__ITICK_TOKEN__` 占位符，真实 Token 必须放在 Git
+忽略且权限为 `0600` 的 `deploy/secrets/itick_token`，不得提交到仓库。修改 YAML
+或轮换 Token 后可重新执行：
 
 ```bash
 ./deploy.sh config
@@ -186,8 +214,9 @@ ETCD_ENDPOINT=http://192.0.2.10:2379
 仅检查和渲染 Compose 配置时使用 `./deploy.sh compose-config`。
 
 公共配置位于 `deploy/config/common.yaml`。MySQL、MongoDB 和 JWT 密钥由 `.env`
-覆盖；当前脚本为避免配置转义错误，只接受字母、数字、点、下划线和连字符。默认值仅
-适合本地环境，生产部署必须换成随机密钥并使用独立的密钥管理方案。
+覆盖，iTick Token 由 Docker Secret 文件注入；当前脚本为避免配置转义错误，只接受
+字母、数字、点、下划线和连字符。默认值仅适合本地环境，生产部署必须换成随机密钥并
+使用独立的密钥管理方案。
 
 删除 MySQL 数据卷会触发全量重新初始化；该操作会清空数据库，只能在确认不需要现有
 数据后执行。

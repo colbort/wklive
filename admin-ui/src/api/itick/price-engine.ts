@@ -1,6 +1,38 @@
 import { get, post, put } from '@/utils/request'
 import type { RespBase } from '@/services'
 
+export type AuthorityRegistry = {
+  id: number
+  authority: string
+  providerCode: string
+  producerType: string
+  allowedKinds: string[]
+  status: number
+  version: number
+  createTimes: number
+  updateTimes: number
+}
+
+export type SetAuthorityRegistryReq = {
+  id?: number
+  authority: string
+  providerCode: string
+  producerType: string
+  allowedKinds: string[]
+  status: 1 | 2
+  version?: number
+}
+
+export type ListAuthorityRegistriesReq = {
+  authority?: string
+  providerCode?: string
+  producerType?: string
+  snapshotKind?: string
+  status?: number
+  cursor?: number
+  limit?: number
+}
+
 export type PriceFormulaComponent = {
   authority: string
   snapshotKind: string
@@ -65,6 +97,18 @@ export type ListSnapshotOutboxReq = {
   snapshotId?: string
   cursor?: number
   limit?: number
+}
+
+export function apiListAuthorityRegistries(
+  params: ListAuthorityRegistriesReq,
+): Promise<RespBase<AuthorityRegistry[]>> {
+  return get<AuthorityRegistry[]>('/admin/itick/authorities', params)
+}
+
+export function apiSetAuthorityRegistry(
+  params: SetAuthorityRegistryReq,
+): Promise<RespBase<AuthorityRegistry>> {
+  return post<AuthorityRegistry>('/admin/itick/authorities', params)
 }
 
 export function apiListPriceFormulas(

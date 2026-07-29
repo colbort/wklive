@@ -12,6 +12,7 @@ dist/
 *.tsbuildinfo
 
 /deploy/production-readiness.env
+/deploy/secrets/
 
 android/
 ios/

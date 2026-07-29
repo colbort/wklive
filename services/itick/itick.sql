@@ -146,6 +146,7 @@ DROP TABLE IF EXISTS `t_itick_authority_registry`;
 CREATE TABLE `t_itick_authority_registry` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `authority` VARCHAR(32) NOT NULL,
+  `provider_code` VARCHAR(32) NOT NULL COMMENT '独立数据供应商标识；同一供应商不同传输通道必须相同',
   `producer_type` VARCHAR(32) NOT NULL COMMENT 'ITICK_WS/ITICK_REST/PRICE_ENGINE',
   `allowed_kinds` JSON NOT NULL COMMENT '允许发布的快照类型',
   `status` TINYINT NOT NULL DEFAULT 1 COMMENT '1启用 2禁用',
@@ -154,18 +155,30 @@ CREATE TABLE `t_itick_authority_registry` (
   `update_times` BIGINT NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_authority` (`authority`),
-  CONSTRAINT `chk_authority_registry` CHECK (`status` IN (1,2) AND `version` >= 0)
+  CONSTRAINT `chk_authority_registry` CHECK (CHAR_LENGTH(`provider_code`) > 0 AND `status` IN (1,2) AND `version` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权威行情生产方注册表';
 
 INSERT INTO `t_itick_authority_registry`
-(`authority`,`producer_type`,`allowed_kinds`,`status`,`version`,`create_times`,`update_times`)
-VALUES ('itick-ws','ITICK_WS',JSON_ARRAY('FINAL_QUOTE'),1,0,0,0)
-ON DUPLICATE KEY UPDATE `producer_type`=VALUES(`producer_type`),`allowed_kinds`=VALUES(`allowed_kinds`);
+(`authority`,`provider_code`,`producer_type`,`allowed_kinds`,`status`,`version`,`create_times`,`update_times`)
+VALUES ('itick-ws','ITICK','ITICK_WS',JSON_ARRAY('FINAL_QUOTE'),1,0,0,0)
+ON DUPLICATE KEY UPDATE `provider_code`=VALUES(`provider_code`),`producer_type`=VALUES(`producer_type`),`allowed_kinds`=VALUES(`allowed_kinds`);
 
 INSERT INTO `t_itick_authority_registry`
-(`authority`,`producer_type`,`allowed_kinds`,`status`,`version`,`create_times`,`update_times`)
-VALUES ('itick-rest','ITICK_REST',JSON_ARRAY('FINAL_QUOTE'),1,0,0,0)
-ON DUPLICATE KEY UPDATE `producer_type`=VALUES(`producer_type`),`allowed_kinds`=VALUES(`allowed_kinds`);
+(`authority`,`provider_code`,`producer_type`,`allowed_kinds`,`status`,`version`,`create_times`,`update_times`)
+VALUES ('itick-rest','ITICK','ITICK_REST',JSON_ARRAY('FINAL_QUOTE'),1,0,0,0)
+ON DUPLICATE KEY UPDATE `provider_code`=VALUES(`provider_code`),`producer_type`=VALUES(`producer_type`),`allowed_kinds`=VALUES(`allowed_kinds`);
+
+INSERT INTO `t_itick_authority_registry`
+(`authority`,`provider_code`,`producer_type`,`allowed_kinds`,`status`,`version`,`create_times`,`update_times`)
+VALUES
+  ('binance-public','BINANCE','PUBLIC_REST',JSON_ARRAY('FINAL_QUOTE'),1,0,0,0),
+  ('okx-public','OKX','PUBLIC_REST',JSON_ARRAY('FINAL_QUOTE'),1,0,0,0),
+  ('bybit-public','BYBIT','PUBLIC_REST',JSON_ARRAY('FINAL_QUOTE'),1,0,0,0),
+  ('binance-futures-public','BINANCE','PUBLIC_REST',JSON_ARRAY('FINAL_QUOTE'),1,0,0,0)
+ON DUPLICATE KEY UPDATE
+  `provider_code`=VALUES(`provider_code`),
+  `producer_type`=VALUES(`producer_type`),
+  `allowed_kinds`=VALUES(`allowed_kinds`);
 
 DROP TABLE IF EXISTS `t_itick_authoritative_snapshot`;
 CREATE TABLE `t_itick_authoritative_snapshot` (
@@ -232,9 +245,9 @@ CREATE TABLE `t_itick_price_formula` (
   CONSTRAINT `chk_price_formula` CHECK (`snapshot_kind` IN ('MARK','INDEX','FUNDING','DELIVERY') AND `algorithm` IN (1,2,3,4) AND `max_lookback_ms` > 0 AND `min_input_count` > 0 AND `interval_ms` > 0 AND `status` IN (1,2,3))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='版本化权威价格公式';
 
-INSERT INTO `t_itick_authority_registry` (`authority`,`producer_type`,`allowed_kinds`,`status`,`version`,`create_times`,`update_times`)
-VALUES ('price-engine','PRICE_ENGINE',JSON_ARRAY('MARK','INDEX','FUNDING','DELIVERY'),1,0,0,0)
-ON DUPLICATE KEY UPDATE `producer_type`=VALUES(`producer_type`),`allowed_kinds`=VALUES(`allowed_kinds`);
+INSERT INTO `t_itick_authority_registry` (`authority`,`provider_code`,`producer_type`,`allowed_kinds`,`status`,`version`,`create_times`,`update_times`)
+VALUES ('price-engine','PRICE_ENGINE','PRICE_ENGINE',JSON_ARRAY('MARK','INDEX','FUNDING','DELIVERY'),1,0,0,0)
+ON DUPLICATE KEY UPDATE `provider_code`=VALUES(`provider_code`),`producer_type`=VALUES(`producer_type`),`allowed_kinds`=VALUES(`allowed_kinds`);
 
 DROP TABLE IF EXISTS `t_itick_kline_sync_progress`;
 CREATE TABLE `t_itick_kline_sync_progress` (

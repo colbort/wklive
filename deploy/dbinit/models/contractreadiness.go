@@ -11,14 +11,27 @@ import (
 
 type ContractReadinessInput struct {
 	SourceAuthorities       []string
+	SourceMarkets           []string
+	IndexSourceWeights      []string
 	DeliverySourceWeights   []string
 	CategoryCode            string
 	Market                  string
 	PriceSymbol             string
 	PerpetualSymbol         string
 	DeliverySymbol          string
+	PerpetualPriceAuthority string
+	PerpetualPriceMarket    string
 	TenantID                int64
 	SettlementCoin          string
+	IndexAlgorithm          int
+	IndexFormulaVersion     string
+	IndexMaxDeviationBps    int64
+	MarkFormulaVersion      string
+	MarkMaxBasisBps         int64
+	MarkCurrentWeight       string
+	MarkPreviousWeight      string
+	FundingFormulaVersion   string
+	PriceFormulaIntervalMs  int64
 	DeliveryAlgorithm       int
 	DeliveryFormulaVersion  string
 	DeliveryMaxLookbackMs   int64
@@ -26,28 +39,30 @@ type ContractReadinessInput struct {
 }
 
 type ContractReadinessResult struct {
-	Detailed                   bool
-	ActiveSourceAuthorityCount int64
-	PriceEngineAuthorityCount  int64
-	IndexFormulaCount          int64
-	MarkFormulaCount           int64
-	FundingFormulaCount        int64
-	DeliveryFormulaCount       int64
-	FreshSourceCount           int64
-	FreshOutputKindCount       int64
-	InsuranceFundCount         int64
-	FeeRevenueCount            int64
-	PerpetualContractCount     int64
-	DeliveryContractCount      int64
-	InsuranceConfigCount       int64
-	PendingOutboxCount         int64
-	ProcessingOutboxCount      int64
-	FailedOutboxCount          int64
-	ManualOutboxCount          int64
-	OpenOutboxCount            int64
-	UnhealthyOutboxCount       int64
-	OpenReconciliationCount    int64
-	OpenSettlementCount        int64
+	Detailed                    bool
+	ActiveSourceAuthorityCount  int64
+	DistinctSourceProviderCount int64
+	PublicRestSourceCount       int64
+	PriceEngineAuthorityCount   int64
+	IndexFormulaCount           int64
+	MarkFormulaCount            int64
+	FundingFormulaCount         int64
+	DeliveryFormulaCount        int64
+	FreshSourceCount            int64
+	FreshOutputKindCount        int64
+	InsuranceFundCount          int64
+	FeeRevenueCount             int64
+	PerpetualContractCount      int64
+	DeliveryContractCount       int64
+	InsuranceConfigCount        int64
+	PendingOutboxCount          int64
+	ProcessingOutboxCount       int64
+	FailedOutboxCount           int64
+	ManualOutboxCount           int64
+	OpenOutboxCount             int64
+	UnhealthyOutboxCount        int64
+	OpenReconciliationCount     int64
+	OpenSettlementCount         int64
 }
 
 type ContractReadinessModel interface {
@@ -101,27 +116,41 @@ func validateContractReadinessInput(input ContractReadinessInput) error {
 	if len(input.SourceAuthorities) < 3 {
 		return errors.New("at least three source authorities are required")
 	}
+	if len(input.SourceMarkets) != len(input.SourceAuthorities) {
+		return errors.New("source markets must match source authorities")
+	}
+	if len(input.IndexSourceWeights) != len(input.SourceAuthorities) {
+		return errors.New("index source weights must match source authorities")
+	}
 	if len(input.DeliverySourceWeights) != len(input.SourceAuthorities) {
 		return errors.New("delivery source weights must match source authorities")
 	}
-	for _, weight := range input.DeliverySourceWeights {
+	weights := append([]string(nil), input.IndexSourceWeights...)
+	weights = append(weights, input.DeliverySourceWeights...)
+	weights = append(weights, input.MarkCurrentWeight, input.MarkPreviousWeight)
+	for _, weight := range weights {
 		value, ok := new(big.Rat).SetString(weight)
 		if !ok || value.Sign() <= 0 {
-			return errors.New("delivery source weights must be positive decimals")
+			return errors.New("price formula weights must be positive decimals")
 		}
 	}
 	if input.CategoryCode == "" || input.Market == "" || input.PriceSymbol == "" ||
 		input.PerpetualSymbol == "" || input.DeliverySymbol == "" ||
+		input.PerpetualPriceAuthority == "" || input.PerpetualPriceMarket == "" ||
 		input.TenantID <= 0 || input.SettlementCoin == "" ||
+		input.IndexFormulaVersion == "" || input.IndexMaxDeviationBps <= 0 ||
+		input.MarkFormulaVersion == "" || input.MarkMaxBasisBps <= 0 ||
+		input.FundingFormulaVersion == "" || input.PriceFormulaIntervalMs <= 0 ||
 		input.DeliveryFormulaVersion == "" || input.DeliveryMaxLookbackMs <= 0 ||
 		input.DeliveryMaxDeviationBps <= 0 {
-		return errors.New("production price, contract, tenant, and delivery dimensions are required")
+		return errors.New("production price, formula, contract, and tenant dimensions are required")
 	}
 	if input.DeliveryMaxLookbackMs%1000 != 0 {
 		return errors.New("delivery max lookback must use whole seconds")
 	}
-	if input.DeliveryAlgorithm != 1 && input.DeliveryAlgorithm != 2 {
-		return errors.New("delivery algorithm must be weighted mean or median")
+	if input.IndexAlgorithm != 1 && input.IndexAlgorithm != 2 ||
+		input.DeliveryAlgorithm != 1 && input.DeliveryAlgorithm != 2 {
+		return errors.New("index and delivery algorithms must be weighted mean or median")
 	}
 	return nil
 }
@@ -138,6 +167,17 @@ SELECT
    WHERE status=1
      AND authority IN (%s)
      AND JSON_CONTAINS(allowed_kinds, JSON_QUOTE('FINAL_QUOTE'))),
+  (SELECT COUNT(DISTINCT provider_code)
+   FROM t_itick_authority_registry
+   WHERE status=1
+     AND authority IN (%s)
+     AND JSON_CONTAINS(allowed_kinds, JSON_QUOTE('FINAL_QUOTE'))),
+  (SELECT COUNT(*)
+   FROM t_itick_authority_registry
+   WHERE status=1
+     AND authority IN (%s)
+     AND producer_type='PUBLIC_REST'
+     AND JSON_CONTAINS(allowed_kinds, JSON_QUOTE('FINAL_QUOTE'))),
   (SELECT COUNT(*)
    FROM t_itick_authority_registry
    WHERE status=1
@@ -147,10 +187,16 @@ SELECT
      AND JSON_CONTAINS(allowed_kinds, JSON_QUOTE('FUNDING'))
      AND JSON_CONTAINS(allowed_kinds, JSON_QUOTE('DELIVERY')))`,
 		placeholders(len(input.SourceAuthorities)),
+		placeholders(len(input.SourceAuthorities)),
+		placeholders(len(input.SourceAuthorities)),
 	)
 	args := appendStringArgs(nil, input.SourceAuthorities)
+	args = appendStringArgs(args, input.SourceAuthorities)
+	args = appendStringArgs(args, input.SourceAuthorities)
 	return m.db.QueryRowContext(ctx, query, args...).Scan(
 		&result.ActiveSourceAuthorityCount,
+		&result.DistinctSourceProviderCount,
+		&result.PublicRestSourceCount,
 		&result.PriceEngineAuthorityCount,
 	)
 }
@@ -160,13 +206,17 @@ func (m *defaultContractReadinessModel) inspectFormulas(
 	input ContractReadinessInput,
 	result *ContractReadinessResult,
 ) error {
-	sourcePlaceholders := placeholders(len(input.SourceAuthorities))
-	weightedSourcePredicate := sourceWeightPredicate(len(input.SourceAuthorities))
+	indexSourcePredicate := sourceIdentityWeightPredicate(len(input.SourceAuthorities))
+	deliverySourcePredicate := sourceIdentityWeightPredicate(len(input.SourceAuthorities))
 	query := fmt.Sprintf(`
 SELECT
   COALESCE(SUM(f.snapshot_kind='INDEX'
-    AND f.algorithm IN (1,2)
-    AND f.min_input_count>=3
+    AND f.algorithm=?
+    AND f.formula_version=?
+    AND f.max_lookback_ms=?
+    AND f.max_deviation_bps=?
+    AND f.min_input_count=?
+    AND f.interval_ms=?
     AND JSON_LENGTH(f.components)=?
     AND (SELECT COUNT(DISTINCT j.authority)
          FROM JSON_TABLE(f.components, '$[*]' COLUMNS(
@@ -174,20 +224,75 @@ SELECT
            authority VARCHAR(32) PATH '$.authority',
            category_code VARCHAR(64) PATH '$.category_code',
            market VARCHAR(32) PATH '$.market',
-           symbol VARCHAR(64) PATH '$.symbol'
+           symbol VARCHAR(64) PATH '$.symbol',
+           weight DECIMAL(36,18) PATH '$.weight'
          )) AS j
          WHERE j.kind='FINAL_QUOTE'
-           AND j.authority IN (%s))=?),0),
-  COALESCE(SUM(f.snapshot_kind='MARK' AND f.algorithm=4),0),
-  COALESCE(SUM(f.snapshot_kind='FUNDING' AND f.algorithm=3),0),
+           AND (%s))=?),0),
+  COALESCE(SUM(f.snapshot_kind='MARK'
+    AND f.algorithm=4
+    AND f.formula_version=?
+    AND f.max_lookback_ms=?
+    AND f.max_deviation_bps=?
+    AND f.min_input_count=3
+    AND f.interval_ms=?
+    AND JSON_LENGTH(f.components)=3
+    AND (SELECT COUNT(DISTINCT j.kind)
+         FROM JSON_TABLE(f.components, '$[*]' COLUMNS(
+           kind VARCHAR(32) PATH '$.kind',
+           authority VARCHAR(32) PATH '$.authority',
+           category_code VARCHAR(64) PATH '$.category_code',
+           market VARCHAR(32) PATH '$.market',
+           symbol VARCHAR(64) PATH '$.symbol',
+           weight DECIMAL(36,18) PATH '$.weight'
+         )) AS j
+         WHERE (j.kind='INDEX'
+             AND j.authority='price-engine'
+             AND j.category_code=f.category_code
+             AND j.market=f.market
+             AND j.symbol=f.symbol
+             AND j.weight=CAST(? AS DECIMAL(36,18)))
+            OR (j.kind='FINAL_QUOTE'
+             AND j.authority=?
+             AND j.category_code=f.category_code
+             AND j.market=?
+             AND j.symbol=f.symbol
+             AND j.weight=CAST(? AS DECIMAL(36,18)))
+            OR (j.kind='MARK'
+             AND j.authority='price-engine'
+             AND j.category_code=f.category_code
+             AND j.market=f.market
+             AND j.symbol=f.symbol
+             AND j.weight=CAST(? AS DECIMAL(36,18))))=3),0),
+  COALESCE(SUM(f.snapshot_kind='FUNDING'
+    AND f.algorithm=3
+    AND f.formula_version=?
+    AND f.max_lookback_ms=?
+    AND f.min_input_count=2
+    AND f.interval_ms=?
+    AND JSON_LENGTH(f.components)=2
+    AND (SELECT COUNT(DISTINCT j.kind)
+         FROM JSON_TABLE(f.components, '$[*]' COLUMNS(
+           kind VARCHAR(32) PATH '$.kind',
+           authority VARCHAR(32) PATH '$.authority',
+           category_code VARCHAR(64) PATH '$.category_code',
+           market VARCHAR(32) PATH '$.market',
+           symbol VARCHAR(64) PATH '$.symbol'
+         )) AS j
+         WHERE j.kind IN ('MARK','INDEX')
+           AND j.authority='price-engine'
+           AND j.category_code=f.category_code
+           AND j.market=f.market
+           AND j.symbol=f.symbol)=2),0),
   COALESCE(SUM(f.snapshot_kind='DELIVERY'
     AND f.algorithm=?
     AND f.formula_version=?
     AND f.max_lookback_ms=?
     AND f.max_deviation_bps=?
-    AND f.min_input_count>=3
+    AND f.min_input_count=?
+    AND f.interval_ms=?
     AND JSON_LENGTH(f.components)=?
-    AND (SELECT COUNT(*)
+    AND (SELECT COUNT(DISTINCT j.authority)
          FROM JSON_TABLE(f.components, '$[*]' COLUMNS(
            kind VARCHAR(32) PATH '$.kind',
            authority VARCHAR(32) PATH '$.authority',
@@ -202,19 +307,53 @@ FROM t_itick_price_formula AS f
 WHERE f.status=1
   AND f.category_code=?
   AND f.market=?
-  AND f.symbol=?`, sourcePlaceholders, weightedSourcePredicate)
-	args := make([]any, 0, len(input.SourceAuthorities)*3+11)
-	args = append(args, len(input.SourceAuthorities))
-	args = appendStringArgs(args, input.SourceAuthorities)
-	args = append(args, len(input.SourceAuthorities))
+  AND f.symbol=?`, indexSourcePredicate, deliverySourcePredicate)
+	args := make([]any, 0, len(input.SourceAuthorities)*6+32)
+	args = append(args,
+		input.IndexAlgorithm,
+		input.IndexFormulaVersion,
+		input.DeliveryMaxLookbackMs,
+		input.IndexMaxDeviationBps,
+		len(input.SourceAuthorities),
+		input.PriceFormulaIntervalMs,
+		len(input.SourceAuthorities),
+	)
+	args = appendSourceIdentityWeightArgs(
+		args,
+		input.SourceAuthorities,
+		input.SourceMarkets,
+		input.IndexSourceWeights,
+	)
+	args = append(args,
+		len(input.SourceAuthorities),
+		input.MarkFormulaVersion,
+		input.DeliveryMaxLookbackMs,
+		input.MarkMaxBasisBps,
+		input.PriceFormulaIntervalMs,
+		input.MarkCurrentWeight,
+		input.PerpetualPriceAuthority,
+		input.PerpetualPriceMarket,
+		input.MarkCurrentWeight,
+		input.MarkPreviousWeight,
+		input.FundingFormulaVersion,
+		input.DeliveryMaxLookbackMs,
+		input.PriceFormulaIntervalMs,
+	)
 	args = append(args,
 		input.DeliveryAlgorithm,
 		input.DeliveryFormulaVersion,
 		input.DeliveryMaxLookbackMs,
 		input.DeliveryMaxDeviationBps,
 		len(input.SourceAuthorities),
+		input.PriceFormulaIntervalMs,
+		len(input.SourceAuthorities),
 	)
-	args = appendSourceWeightArgs(args, input.SourceAuthorities, input.DeliverySourceWeights)
+	args = appendSourceIdentityWeightArgs(
+		args,
+		input.SourceAuthorities,
+		input.SourceMarkets,
+		input.DeliverySourceWeights,
+	)
 	args = append(args, len(input.SourceAuthorities))
 	args = append(args, input.CategoryCode, input.Market, input.PriceSymbol)
 	return m.db.QueryRowContext(ctx, query, args...).Scan(
@@ -405,13 +544,20 @@ func appendStringArgs(args []any, values []string) []any {
 	return args
 }
 
-func sourceWeightPredicate(count int) string {
-	return strings.TrimSuffix(strings.Repeat("(j.authority=? AND j.weight=CAST(? AS DECIMAL(36,18))) OR ", count), " OR ")
+func sourceIdentityWeightPredicate(count int) string {
+	return strings.TrimSuffix(
+		strings.Repeat(
+			"(j.authority=? AND j.market=? AND j.category_code=f.category_code "+
+				"AND j.symbol=f.symbol AND j.weight=CAST(? AS DECIMAL(36,18))) OR ",
+			count,
+		),
+		" OR ",
+	)
 }
 
-func appendSourceWeightArgs(args []any, authorities, weights []string) []any {
+func appendSourceIdentityWeightArgs(args []any, authorities, markets, weights []string) []any {
 	for index, authority := range authorities {
-		args = append(args, authority, weights[index])
+		args = append(args, authority, markets[index], weights[index])
 	}
 	return args
 }

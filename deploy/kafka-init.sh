@@ -15,6 +15,7 @@ topics=(
   wklive.chat.app.events
   wklive.chat.admin.events
   system.scheduled-tasks.dlq
+  admin.notifications.dlq
   trade.domain-events.dlq
   user.business-events.dlq
   market.authoritative-snapshot.v1.dlq

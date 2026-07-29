@@ -8,14 +8,27 @@
 声明文件只保存审批结论、业务维度、证据绝对路径和 SHA-256，不得保存行情源密码、
 API Key、访问令牌或数据库凭据。
 
+Deploy 中的 iTick Token 必须通过 Git 忽略且权限为 `0600` 的
+`deploy/secrets/itick_token` 以 Docker Secret 注入；受版本控制的服务 YAML 只能
+保留占位符。生产环境应由正式密钥系统生成或挂载同一路径文件，不能把真实 Token
+回填到 YAML、`.env`、readiness 声明、报告或发布单中。需要凭据的来源即使已安全
+注入，也不等于 `PRICE_SOURCE_CREDENTIALS_APPROVED=true`，该字段仍须有真实审批
+材料。若所有声明来源本身都是无需凭据的公开 REST 端点，可配置
+`PRICE_SOURCE_ACCESS_MODE=PUBLIC_NO_CREDENTIALS`；门禁会从 Authority Registry
+核对每个来源均为启用的 `PUBLIC_REST`，不能仅靠声明绕过凭据审批。数据许可仍须
+单独审批。
+
 ## 2. 历史价格回放报告
 
 报告至少包含：
 
 - 环境、品类、市场、价格 Symbol、永续 Symbol、交割 Symbol；
-- 三个以上真正独立来源的 Authority、市场和 Symbol 映射；
+- 三个以上真正独立供应商的 Authority、`provider_code`、市场和 Symbol 映射；
+- 同一供应商的 WebSocket、REST 或其他传输通道必须填写相同 `provider_code`，
+  不得作为多个独立来源申报；
 - Authority 的顺序必须与声明的 DELIVERY 权重顺序一一对应，公式不得包含声明外来源；
-- 数据许可或使用批准编号，以及凭据接入批准编号；
+- 数据许可或使用批准编号；需要凭据时还须提供凭据接入批准编号，无凭据公开端点须
+  记录 `PUBLIC_NO_CREDENTIALS` 及 Registry 校验结果；
 - 回放开始/结束时间，必须覆盖至少一个完整交割锁价窗口；
 - INDEX、MARK、FUNDING、DELIVERY 的公式编号、不可变版本、算法和参数；
 - DELIVERY 回看窗口与交割合约 `settlement_window_seconds` 的一致性，以及公式版本与

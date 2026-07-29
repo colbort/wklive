@@ -1,0 +1,21 @@
+{
+  "tenantId": 1,
+  "id": 4,
+  "displaySymbol": "BTC/USDT",
+  "status": 2,
+  "priceScale": 2,
+  "qtyScale": 4,
+  "minPrice": "0.01",
+  "maxPrice": "1000000",
+  "priceTick": "0.01",
+  "minQty": "0.0001",
+  "maxQty": "100",
+  "qtyStep": "0.0001",
+  "minNotional": "5",
+  "maxNotional": "1000000",
+  "listingTime": 1784736000,
+  "tradingStartTime": 1784736001,
+  "tradingEndTime": 1784908800,
+  "sort": 0,
+  "remark": "BTCUSDT线性季度交割合约，2026-09-25交割 [disabled: missing contract configuration]"
+}
