@@ -361,6 +361,7 @@ P1-02 应用与隔离运行验收已完成；生产 `AutomaticLiquidation.Enable
 | 2026-07-29 | 本轮全仓收口回归 | 通过 | `services/trade go test ./...` 全部通过；helpers/admin/app/task/tasks/models 的 `go test -race` 全部通过；Admin API 全量测试通过，App API 业务包编译通过（根包网络测试需监听 `:7777`）。迁移由 db-init 正式执行并登记；最终 Trade 镜像 `440d4984…` 健康，两个生产安全开关均为 false |
 | 2026-07-29 | P1-01 历史窗口批量确定性回放 | 工具与自动化测试完成，待生产数据执行 | `cmd/price-replay` 从单条扩展为单文件/多文件、JSON 数组及 JSONL 批量回放；`--interval-ms` 按公式版本拒绝目标时点未对齐、重复和断档，`--json` 输出记录数、公式数、时点/价格范围、最少有效输入与剔除数。单条回放同时新增完整输入与采用/剔除分区、`min_input_count` 防篡改校验；Price Engine 与命令测试通过。该能力不替代第 6 节要求的真实三源交割窗口数据 |
 | 2026-07-28 | 本轮静态回归 | 通过 | 当前工作树重新执行 `services/trade`、`services/asset`、`services/itick`、`services/system` 的 `go test ./...` 全部通过；Trade 的 `internal/logic/task` 与 `models` 额外通过 `go test -race`，MARK 退避和对账告警判断均有单测；协议向后兼容编译通过 |
+| 2026-07-29 | 当前代码树与本机运行态复核 | 代码回归通过；当前环境未部署，不作为运行验收 | 当前代码树重新执行 Trade、Itick、Asset、System、Admin API 和 Trade Proto 的 `go test ./...` 全部通过，Admin UI 使用 Node `20.20.2` 执行 `npm run type-check` 通过。Docker 中仅既有 MySQL 可恢复，其余依赖已停止约 22 小时；该库有 139 张表、无 `schema_migrations` 和全仓强平父/明细表，说明不是当前代码部署。只读查询显示三个 `BA/BTCUSDT` 测试公式仍激活，Snapshot Outbox 为 Pending=29,162、Processing=109、Success=114,969；这与早先容量验收结束时的 `open=0` 属于不同时点。不得用当前离线环境证明实时水位或生产就绪，也不得直接清理积压；恢复验收必须先部署当前迁移和服务，再验证自然排空、对账与安全开关 |
 
 ## 6. 当前外部依赖与不可代填项
 

@@ -9,13 +9,14 @@ import (
 	"fmt"
 	"io/fs"
 	"log"
+	"net"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
 	"time"
 
-	_ "github.com/go-sql-driver/mysql"
+	mysql "github.com/go-sql-driver/mysql"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -34,6 +35,7 @@ type config struct {
 	AdminPassword          string
 	LiquidityAdminUsername string
 	LiquidityAdminPassword string
+	DataOnly               bool
 }
 
 type migration struct {
@@ -50,6 +52,14 @@ func main() {
 	ctx := context.Background()
 	fresh, err := isFreshDatabase(ctx, db)
 	must(err)
+	if cfg.DataOnly {
+		if fresh {
+			log.Fatal("data merge requires an initialized database schema; run db-init first")
+		}
+		must(mergeInitializationData(ctx, db, cfg))
+		log.Printf("database initialization data merged")
+		return
+	}
 	if fresh {
 		must(loadBaseSchemas(ctx, db, cfg.Workspace))
 	}
@@ -67,23 +77,20 @@ func main() {
 		must(applyPendingMigrations(ctx, db, migrations))
 	}
 
-	must(seedMenus(ctx, db, filepath.Join(cfg.Workspace, "init.sql")))
-	must(applySystemDataMigrations(ctx, db, cfg.Workspace))
-	must(seedAdministrator(ctx, db, 1, cfg.AdminUsername, cfg.AdminPassword, "超级管理员", "super_admin", "超级管理员"))
-	must(seedAdministrator(ctx, db, 2, cfg.LiquidityAdminUsername, cfg.LiquidityAdminPassword, "做市管理员", "liquidity_admin", "做市管理后台管理员"))
+	must(mergeInitializationData(ctx, db, cfg))
 
 	log.Printf("database initialization completed: fresh=%t migrations=%d", fresh, len(migrations))
 }
 
 func loadConfig() config {
-	mysqlPassword := getenv("MYSQL_ROOT_PASSWORD", "123456")
 	cfg := config{
-		DSN:                    fmt.Sprintf("root:%s@tcp(mysql:3306)/wklive?charset=utf8mb4&parseTime=true&loc=Local&multiStatements=true", mysqlPassword),
+		DSN:                    loadMySqlDSN(),
 		Workspace:              getenv("WORKSPACE", "/workspace"),
 		AdminUsername:          getenv("ADMIN_USERNAME", "admin"),
 		AdminPassword:          os.Getenv("ADMIN_PASSWORD"),
 		LiquidityAdminUsername: getenv("LIQUIDITY_ADMIN_USERNAME", "liquidityadmin"),
 		LiquidityAdminPassword: os.Getenv("LIQUIDITY_ADMIN_PASSWORD"),
+		DataOnly:               strings.EqualFold(getenv("DB_INIT_MODE", "full"), "data"),
 	}
 	validateCredential("ADMIN_USERNAME", cfg.AdminUsername, 3)
 	validateCredential("ADMIN_PASSWORD", cfg.AdminPassword, 12)
@@ -92,10 +99,56 @@ func loadConfig() config {
 	return cfg
 }
 
+func loadMySqlDSN() string {
+	if dsn := strings.TrimSpace(os.Getenv("MYSQL_DSN")); dsn != "" {
+		return dsn
+	}
+
+	defaultHost := "mysql"
+	if strings.EqualFold(getenv("DB_INIT_TARGET", "compose"), "external") {
+		defaultHost = getenv("MYSQL_EXTERNAL_HOST", "host.docker.internal")
+	}
+	password := strings.TrimSpace(os.Getenv("MYSQL_PASSWORD"))
+	if password == "" {
+		password = getenv("MYSQL_ROOT_PASSWORD", "123456")
+	}
+
+	cfg := mysql.NewConfig()
+	cfg.User = getenv("MYSQL_USER", "root")
+	cfg.Passwd = password
+	cfg.Net = "tcp"
+	cfg.Addr = net.JoinHostPort(getenv("MYSQL_HOST", defaultHost), getenv("MYSQL_PORT", "3306"))
+	cfg.DBName = getenv("MYSQL_DATABASE", "wklive")
+	cfg.Params = map[string]string{"charset": "utf8mb4"}
+	cfg.ParseTime = true
+	cfg.Loc = time.Local
+	cfg.MultiStatements = true
+	return cfg.FormatDSN()
+}
+
 func validateCredential(name, value string, min int) {
 	if len(strings.TrimSpace(value)) < min {
 		log.Fatalf("%s must contain at least %d characters", name, min)
 	}
+}
+
+func mergeInitializationData(ctx context.Context, db *sql.DB, cfg config) error {
+	if err := seedMenus(ctx, db, filepath.Join(cfg.Workspace, "init.sql")); err != nil {
+		return err
+	}
+	if err := applySystemDataMigrations(ctx, db, cfg.Workspace); err != nil {
+		return err
+	}
+	if err := seedAdministrator(
+		ctx, db, 1, cfg.AdminUsername, cfg.AdminPassword,
+		"超级管理员", "super_admin", "超级管理员",
+	); err != nil {
+		return err
+	}
+	return seedAdministrator(
+		ctx, db, 2, cfg.LiquidityAdminUsername, cfg.LiquidityAdminPassword,
+		"做市管理员", "liquidity_admin", "做市管理后台管理员",
+	)
 }
 
 func waitForDB(dsn string) *sql.DB {
@@ -268,6 +321,9 @@ func applySystemDataMigrations(ctx context.Context, db *sql.DB, workspace string
 		"20260725_add_liquidity_provider_provision_permission.sql",
 		"20260725_remove_tenant_pay_platform_menu.sql",
 		"20260727_add_liquidity_strategy_detail_update_permissions.sql",
+		"20260728_add_contract_reconciliation_admin_menu.sql",
+		"20260728_add_cross_account_liquidation_admin_menu.sql",
+		"20260728_add_trade_contract_jobs.sql",
 	}
 	for _, name := range files {
 		path := filepath.Join(workspace, "services", "system", "migrations", name)

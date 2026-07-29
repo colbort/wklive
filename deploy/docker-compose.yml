@@ -159,6 +159,13 @@ services:
       context: ..
       dockerfile: deploy/Dockerfile.db-init
     environment:
+      MYSQL_DSN: ${MYSQL_DSN:-}
+      MYSQL_HOST: ${MYSQL_HOST:-}
+      MYSQL_EXTERNAL_HOST: ${MYSQL_EXTERNAL_HOST:-host.docker.internal}
+      MYSQL_PORT: ${MYSQL_PORT:-3306}
+      MYSQL_USER: ${MYSQL_USER:-root}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-wklive}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-123456}
       ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:?ADMIN_PASSWORD must be set in deploy/.env}
@@ -169,6 +176,8 @@ services:
         condition: service_healthy
     volumes:
       - ..:/workspace:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - backend
 

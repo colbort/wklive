@@ -96,6 +96,30 @@ LIQUIDITY_ADMIN_PASSWORD=replace-liquidity-password
 对于没有 `schema_migrations` 的既有数据库，初始化器会将仓库当前迁移记录为基线，
 不会盲目重复执行可能已经落库的 `ALTER TABLE`。
 
+### 合并已有 MySQL 的初始化数据
+
+MySQL 已经安装并且 `wklive` Schema 已存在时，可只合并初始化数据，不启动 Compose
+中的 MySQL，也不执行建表和结构迁移：
+
+```bash
+./deploy.sh data
+```
+
+`data` 会幂等执行基础菜单、菜单/角色/定时任务数据迁移，并创建或更新两个后台管理员；
+`merge-data` 是同义命令。容器默认通过 `host.docker.internal:3306` 连接宿主机，
+连接信息可在 `deploy/.env` 中设置：
+
+```dotenv
+MYSQL_EXTERNAL_HOST=host.docker.internal
+MYSQL_PORT=3306
+MYSQL_USER=root
+MYSQL_PASSWORD=your-password
+MYSQL_DATABASE=wklive
+```
+
+也可以使用 `MYSQL_DSN` 提供完整连接串；设置后它优先于以上字段。该命令要求目标
+数据库已经包含业务表；空库请先使用 `./deploy.sh db-init` 完成完整初始化。
+
 ## 配置初始化
 
 `config-seed` 会读取项目中各服务的 `etc/*.yaml`，把本机地址转换为 Compose
