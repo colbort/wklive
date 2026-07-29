@@ -733,7 +733,7 @@ type Interval struct {
 	KType int32  `json:"kType"`
 }
 
-type ItickCategory struct {
+type MarketCategory struct {
 	Id           int64  `json:"id"`
 	CategoryType int64  `json:"categoryType"`
 	CategoryCode string `json:"categoryCode"`
@@ -747,7 +747,7 @@ type ItickCategory struct {
 	UpdateTimes  int64  `json:"updateTimes"`
 }
 
-type ItickProduct struct {
+type MarketProduct struct {
 	Id           int64  `json:"id"`
 	CategoryType int64  `json:"categoryType"`
 	CategoryCode string `json:"categoryCode"`
@@ -768,7 +768,7 @@ type ItickProduct struct {
 	UpdateTimes  int64  `json:"updateTimes"`
 }
 
-type ItickTenantCategory struct {
+type MarketTenantCategory struct {
 	Id           int64  `json:"id"`
 	TenantId     int64  `json:"tenantId"`
 	CategoryId   int64  `json:"categoryId"`
@@ -784,7 +784,7 @@ type ItickTenantCategory struct {
 	Icon         string `json:"icon"`
 }
 
-type ItickTenantProduct struct {
+type MarketTenantProduct struct {
 	Id           int64  `json:"id"`
 	TenantId     int64  `json:"tenantId"`
 	ProductId    int64  `json:"productId"`
@@ -1060,7 +1060,7 @@ type ListVisibleCategoriesReq struct {
 
 type ListVisibleCategoriesResp struct {
 	RespBase
-	Data []ItickTenantCategory `json:"data"`
+	Data []MarketTenantCategory `json:"data"`
 }
 
 type ListVisibleProductsReq struct {
@@ -1073,7 +1073,7 @@ type ListVisibleProductsReq struct {
 
 type ListVisibleProductsResp struct {
 	RespBase
-	Data []ItickTenantProduct `json:"data"`
+	Data []MarketTenantProduct `json:"data"`
 }
 
 type LoginData struct {
@@ -2371,7 +2371,7 @@ type WithdrawOrder struct {
 	UpdateTimes  int64  `json:"updateTimes"`
 }
 
-type WsItickReq struct {
+type WsMarketReq struct {
 	Id string `path:"id"`
 }
 

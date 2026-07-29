@@ -5,13 +5,13 @@ import BottomDrawer from '@/components/common/BottomDrawer.vue'
 import AppIcon from '@/components/common/AppIcon.vue'
 import QuoteRow from '@/components/markets/QuoteRow.vue'
 import { useI18n } from '@/i18n'
-import type { ItickTenantCategory, ItickTenantProduct } from '@/types/itick'
+import type { MarketTenantCategory, MarketTenantProduct } from '@/types/market'
 import type { TradeSymbol } from '@/types/trade'
 import { marketCategoryLabel } from '@/utils/marketCategory'
 
 type ProductSheetRow = {
   key: string
-  product: ItickTenantProduct
+  product: MarketTenantProduct
   price: string
   changeValue?: string
   changePercent?: string
@@ -27,8 +27,8 @@ type TradeMarketMode =
   | 'perpetual-inverse'
 
 defineProps<{
-  selectedCategory: ItickTenantCategory | null
-  selectedProduct: ItickTenantProduct | null
+  selectedCategory: MarketTenantCategory | null
+  selectedProduct: MarketTenantProduct | null
   selectedTradeSymbol: TradeSymbol | null
   selectedProductKey: string
   tradeMarketMode: TradeMarketMode
@@ -45,7 +45,7 @@ defineProps<{
 const emit = defineEmits<{
   (e: 'open-product-menu'): void
   (e: 'close-product-sheet'): void
-  (e: 'select-product', product: ItickTenantProduct): void
+  (e: 'select-product', product: MarketTenantProduct): void
   (e: 'select-trade-market-mode', mode: TradeMarketMode): void
 }>()
 

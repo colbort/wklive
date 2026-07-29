@@ -15,14 +15,14 @@ func TestContractReadinessModelInspectDetailed(t *testing.T) {
 	defer db.Close()
 
 	input := validReadinessInput()
-	mock.ExpectQuery(`(?s)FROM t_itick_authority_registry`).
+	mock.ExpectQuery(`(?s)FROM t_market_authority_registry`).
 		WithArgs(
 			"source-a", "source-b", "source-c",
 			"source-a", "source-b", "source-c",
 			"source-a", "source-b", "source-c",
 		).
 		WillReturnRows(sqlmock.NewRows([]string{"sources", "providers", "public_rest", "price_engine"}).AddRow(3, 3, 3, 1))
-	mock.ExpectQuery(`(?s)FROM t_itick_price_formula AS f`).
+	mock.ExpectQuery(`(?s)FROM t_market_price_formula AS f`).
 		WithArgs(
 			2, "index-v1", int64(30000), int64(200), 3, int64(1000), 3,
 			"source-a", "market-a", "1",
@@ -42,7 +42,7 @@ func TestContractReadinessModelInspectDetailed(t *testing.T) {
 		).
 		WillReturnRows(sqlmock.NewRows([]string{"index", "mark", "funding", "delivery"}).
 			AddRow(1, 1, 1, 1))
-	mock.ExpectQuery(`(?s)JOIN t_itick_authoritative_snapshot AS s`).
+	mock.ExpectQuery(`(?s)JOIN t_market_authoritative_snapshot AS s`).
 		WithArgs(
 			"crypto", "BA", "BTCUSDT",
 			"source-a", "source-b", "source-c",
@@ -65,7 +65,7 @@ func TestContractReadinessModelInspectDetailed(t *testing.T) {
 	mock.ExpectQuery(`(?s)FROM t_contract_insurance_fund_account`).
 		WithArgs(int64(900101), "USDT").
 		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
-	mock.ExpectQuery(`(?s)FROM t_itick_snapshot_outbox`).
+	mock.ExpectQuery(`(?s)FROM t_market_snapshot_outbox`).
 		WillReturnRows(sqlmock.NewRows([]string{"pending", "processing", "failed", "manual", "oldest", "server_now", "reconciliation", "settlement"}).
 			AddRow(0, 0, 0, 0, 0, 1_000_000, 0, 0))
 
@@ -107,7 +107,7 @@ func TestContractReadinessModelInspectOpenOnly(t *testing.T) {
 	}
 	defer db.Close()
 
-	mock.ExpectQuery(`(?s)FROM t_itick_snapshot_outbox`).
+	mock.ExpectQuery(`(?s)FROM t_market_snapshot_outbox`).
 		WillReturnRows(sqlmock.NewRows([]string{"pending", "processing", "failed", "manual", "oldest", "server_now", "reconciliation", "settlement"}).
 			AddRow(1, 1, 0, 0, 900_000, 910_000, 3, 4))
 	result, err := NewContractReadinessModel(db).Inspect(
@@ -156,7 +156,7 @@ func TestContractReadinessModelInspectRejectsStaleOrFailedOutbox(t *testing.T) {
 				t.Fatal(err)
 			}
 			defer db.Close()
-			mock.ExpectQuery(`(?s)FROM t_itick_snapshot_outbox`).WillReturnRows(tt.row)
+			mock.ExpectQuery(`(?s)FROM t_market_snapshot_outbox`).WillReturnRows(tt.row)
 			result, err := NewContractReadinessModel(db).Inspect(context.Background(), ContractReadinessInput{}, false)
 			if err != nil {
 				t.Fatal(err)

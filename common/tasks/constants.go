@@ -4,20 +4,20 @@ import (
 	"context"
 	"fmt"
 	"time"
-	"wklive/common/mq/kafka"
+	mq "wklive/common/mq/kafka"
 )
 
 const (
 	channel = "system:scheduled-tasks"
 
-	ServiceItick     = "itick"
+	ServiceMarket     = "market"
 	ServiceLiquidity = "liquidity"
 	ServiceOption    = "option"
 	ServiceStaking   = "staking"
 	ServiceTrade     = "trade"
 
-	ActionItickSyncProducts = "SyncProducts"
-	ActionItickSyncKlines   = "SyncKlines"
+	ActionMarketSyncProducts = "SyncProducts"
+	ActionMarketSyncKlines   = "SyncKlines"
 
 	ActionOptionProcessContractLifecycle = "ProcessContractLifecycle"
 	ActionOptionCleanMarketSnapshots     = "CleanMarketSnapshots"

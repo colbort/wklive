@@ -38,7 +38,7 @@
 ├─ services           # gRPC 业务微服务
 │  ├─ asset          # 资产服务
 │  ├─ chat           # 客服服务
-│  ├─ itick          # 行情与产品数据服务
+│  ├─ market          # 行情与产品数据服务
 │  ├─ option         # 期权服务
 │  ├─ payment        # 支付服务
 │  ├─ staking        # 质押服务
@@ -49,7 +49,7 @@
 │  ├─ asset
 │  ├─ chat
 │  ├─ common
-│  ├─ itick
+│  ├─ market
 │  ├─ option
 │  ├─ payment
 │  ├─ staking
@@ -155,12 +155,12 @@ PaymentRpc:
     - "127.0.0.1:2379"
     Key: payment.rpc
 
-ItickRpc:
+MarketRpc:
   rpcType: zrpc
   Etcd:
     Hosts:
     - "127.0.0.1:2379"
-    Key: itick.rpc
+    Key: market.rpc
 
 AssetRpc:
   rpcType: zrpc
@@ -219,12 +219,12 @@ PaymentRpc:
     - "127.0.0.1:2379"
     Key: payment.rpc
 
-ItickRpc:
+MarketRpc:
   rpcType: zrpc
   Etcd:
     Hosts:
     - "127.0.0.1:2379"
-    Key: itick.rpc
+    Key: market.rpc
 
 AssetRpc:
   rpcType: zrpc
@@ -265,12 +265,12 @@ Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: system.rpc
-ItickRpc:
+MarketRpc:
   rpcType: zrpc
   Etcd:
     Hosts:
     - "127.0.0.1:2379"
-    Key: itick.rpc
+    Key: market.rpc
 ```
 
 ### user-rpc 微服务配置 /wklive/user-rpc/config
@@ -292,16 +292,16 @@ SystemRpc:
     Key: system.rpc   
 ```
 
-### itick-rpc 微服务配置 /wklive/itick-rpc/config
+### market-rpc 微服务配置 /wklive/market-rpc/config
 
 ```
-Name: itick.rpc
+Name: market.rpc
 ListenOn: 0.0.0.0:8082
 Mode: dev
 Etcd:
   Hosts:
   - 127.0.0.1:2379
-  Key: itick.rpc
+  Key: market.rpc
 
 SystemRpc:
   rpcType: zrpc
@@ -310,9 +310,9 @@ SystemRpc:
     - "127.0.0.1:2379"
     Key: system.rpc
 
-Itick:
-  ApiUrl: https://api.itick.org
-  WSUrl: wss://api.itick.org
+Market:
+  ApiUrl: https://api.market.org
+  WSUrl: wss://api.market.org
   Token: 5093272afb5241dfa3fd5505937289804447d9d6941547b2ab45929024c0fd4b
 
 Mongo:

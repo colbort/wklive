@@ -206,7 +206,7 @@ services:
       - ./seed-etcd.sh:/deploy/seed-etcd.sh:ro
       - ./config:/deploy-config:ro
     secrets:
-      - itick_token
+      - market_token
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -239,7 +239,7 @@ services:
     command: ["-etcd", "etcd:2379"]
     expose: ["8081"]
 
-  itick-rpc:
+  market-rpc:
     <<: *go-service
     environment:
       TZ: ${TZ:-Asia/Hong_Kong}
@@ -247,7 +247,7 @@ services:
     build:
       <<: *go-build
       args:
-        SERVICE_DIR: services/itick
+        SERVICE_DIR: services/market
     command: ["-etcd", "etcd:2379"]
     expose: ["8082"]
 
@@ -316,7 +316,7 @@ services:
     depends_on:
       asset-rpc:
         condition: service_healthy
-      itick-rpc:
+      market-rpc:
         condition: service_healthy
     build:
       <<: *go-build
@@ -345,7 +345,7 @@ services:
     depends_on:
       asset-rpc:
         condition: service_healthy
-      itick-rpc:
+      market-rpc:
         condition: service_healthy
       trade-rpc:
         condition: service_healthy
@@ -384,7 +384,7 @@ services:
         condition: service_completed_successfully
       asset-rpc:
         condition: service_healthy
-      itick-rpc:
+      market-rpc:
         condition: service_healthy
       option-rpc:
         condition: service_healthy
@@ -448,7 +448,7 @@ services:
         condition: service_healthy
       chat-rpc:
         condition: service_healthy
-      itick-rpc:
+      market-rpc:
         condition: service_healthy
       option-rpc:
         condition: service_healthy
@@ -495,8 +495,8 @@ networks:
     driver: bridge
 
 secrets:
-  itick_token:
-    file: ./secrets/itick_token
+  market_token:
+    file: ./secrets/market_token
   operational_alert_webhook:
     file: ./secrets/operational_alert_webhook
 

@@ -9,7 +9,7 @@
 - 环境、版本号和执行时间；
 - `tenant_id`、`order_no`、`fill_no`、`batch_no`、`instruction_no`、`event_no`；
 - 注入前、故障期间、恢复后的 SQL 结果；
-- Trade、Asset、Itick、System 日志和 trace；
+- Trade、Asset、Market、System 日志和 trace；
 - 最终对账异常是否自动恢复。
 
 未取得本手册要求的证据，不得将 P0-07 标记为完成。
@@ -76,7 +76,7 @@ position.avail_qty + position.frozen_qty <= position.qty
 
 注入：
 
-1. 仅阻断 Trade/Itick 到 Redis 的连接，不阻断 MySQL；
+1. 仅阻断 Trade/Market 到 Redis 的连接，不阻断 MySQL；
 2. 创建一笔隔离保证金合约委托并产生 Fill；
 3. 保持故障超过一次任务扫描周期后恢复 Redis。
 
@@ -244,7 +244,7 @@ position.avail_qty + position.frozen_qty <= position.qty
 
 ```sql
 SELECT status, COUNT(*) AS row_count, MIN(create_times) AS oldest_at
-FROM t_itick_snapshot_outbox
+FROM t_market_snapshot_outbox
 WHERE status IN (1,2,4,5)
 GROUP BY status;
 ```

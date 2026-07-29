@@ -1,0 +1,90 @@
+package applogic
+
+import (
+	"context"
+	"sort"
+	"wklive/services/market/internal/logic/helpers"
+
+	"wklive/common/helper"
+	"wklive/common/i18n"
+	"wklive/common/pageutil"
+	"wklive/common/utils"
+	"wklive/proto/market"
+	"wklive/services/market/internal/svc"
+	"wklive/services/market/models"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type ListVisibleCategoriesLogic struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+}
+
+func NewListVisibleCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListVisibleCategoriesLogic {
+	return &ListVisibleCategoriesLogic{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+	}
+}
+
+// 获取允许显示的产品类型
+func (l *ListVisibleCategoriesLogic) ListVisibleCategories(in *market.ListVisibleCategoriesReq) (*market.ListVisibleCategoriesResp, error) {
+	tenantID, err := utils.GetTenantIdFromMd(l.ctx)
+	if err != nil || tenantID <= 0 {
+		return &market.ListVisibleCategoriesResp{
+			Base: helper.ErrResp(i18n.InvalidRequest, i18n.Translate(i18n.InvalidRequest, l.ctx)),
+		}, nil
+	}
+	items, total, err := l.svcCtx.MarketTenantCategoryModel.FindPage(l.ctx, tenantID, in.Page.Cursor, in.Page.Limit)
+	if err != nil {
+		return nil, err
+	}
+
+	categories, err := l.svcCtx.MarketCategoryModel.FindAll(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	categoryMap := make(map[int64]*models.TMarketCategory, len(categories))
+	for _, category := range categories {
+		categoryMap[category.Id] = category
+	}
+
+	sort.Slice(items, func(i, j int) bool {
+		if items[i].Sort == items[j].Sort {
+			return items[i].Id < items[j].Id
+		}
+		return items[i].Sort < items[j].Sort
+	})
+
+	limit := pageutil.NormalizeLimit(in.Page.Limit)
+	data := make([]*market.MarketTenantCategory, 0)
+	for _, item := range items {
+		category := categoryMap[item.CategoryId]
+		if category == nil {
+			continue
+		}
+		if item.Enabled != 1 || item.AppVisible != 1 {
+			continue
+		}
+		if category.Enabled != 1 || category.AppVisible != 1 {
+			continue
+		}
+		if item.Id <= in.Page.Cursor || int64(len(data)) >= limit {
+			continue
+		}
+		data = append(data, helpers.ToTenantCategoryProto(item, category))
+	}
+
+	lastID := int64(0)
+	if len(data) > 0 {
+		lastID = data[len(data)-1].Id
+	}
+
+	return &market.ListVisibleCategoriesResp{
+		Base: pageutil.Base(in.Page.Cursor, in.Page.Limit, len(data), total, lastID),
+		Data: data,
+	}, nil
+}

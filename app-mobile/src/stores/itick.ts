@@ -5,21 +5,21 @@ import {
   apiGetQuote,
   apiListVisibleCategories,
   apiListVisibleProducts,
-} from '@/api/itick'
+} from '@/api/market'
 import type {
   GetKlineReq,
   GetQuoteReq,
-  ItickTenantCategory,
-  ItickTenantProduct,
+  MarketTenantCategory,
+  MarketTenantProduct,
   Kline,
   ListVisibleCategoriesReq,
   ListVisibleProductsReq,
   Quote,
-} from '@/types/itick'
+} from '@/types/market'
 
-export const useItickStore = defineStore('itick', () => {
-  const categories = ref<ItickTenantCategory[]>([])
-  const products = ref<ItickTenantProduct[]>([])
+export const useMarketStore = defineStore('market', () => {
+  const categories = ref<MarketTenantCategory[]>([])
+  const products = ref<MarketTenantProduct[]>([])
   const klines = ref<Kline[]>([])
   const currentQuote = ref<Quote | null>(null)
   const loading = ref(false)

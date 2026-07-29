@@ -5,7 +5,7 @@ import (
 
 	mq "wklive/common/mq/kafka"
 	"wklive/proto/asset"
-	"wklive/proto/itick"
+	"wklive/proto/market"
 	"wklive/proto/trade"
 	"wklive/proto/user"
 	"wklive/services/liquidity/internal/config"
@@ -34,7 +34,7 @@ type ServiceContext struct {
 	EventInboxModel        models.TLiquidityEventInboxModel
 	EventOutboxModel       models.TLiquidityEventOutboxModel
 	TradeClient            trade.TradeClient
-	ItickClient            itick.ItickClient
+	MarketClient            market.MarketClient
 	UserClient             user.UserClient
 	AssetClient            asset.AssetClient
 	InternalMarketMaker    provider.InternalMarketMaker
@@ -45,7 +45,7 @@ type ServiceContext struct {
 func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 	tradeClient := zrpc.MustNewClient(c.TradeRpc)
-	itickClient := zrpc.MustNewClient(c.ItickRpc)
+	marketClient := zrpc.MustNewClient(c.MarketRpc)
 	userClient := zrpc.MustNewClient(c.UserRpc)
 	assetClient := zrpc.MustNewClient(c.AssetRpc)
 	mqConfig := mq.ForService(c.MQ, c.Name)
@@ -75,7 +75,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		EventInboxModel:        models.NewTLiquidityEventInboxModel(conn, c.CacheRedis),
 		EventOutboxModel:       models.NewTLiquidityEventOutboxModel(conn, c.CacheRedis),
 		TradeClient:            trade.NewTradeClient(tradeClient.Conn()),
-		ItickClient:            itick.NewItickClient(itickClient.Conn()),
+		MarketClient:            market.NewMarketClient(marketClient.Conn()),
 		UserClient:             user.NewUserClient(userClient.Conn()),
 		AssetClient:            asset.NewAssetClient(assetClient.Conn()),
 		InternalMarketMaker:    provider.NewTradeInternalMarketMaker(trade.NewTradeClient(tradeClient.Conn())),

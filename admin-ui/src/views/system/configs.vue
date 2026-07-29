@@ -181,7 +181,7 @@
         </template>
 
         <template v-else-if="formData.configKey === 'ITICK_CONFIG'">
-          <ItickConfigComponent v-model="itickConfigForm" />
+          <MarketConfigComponent v-model="marketConfigForm" />
         </template>
 
         <template v-else-if="formData.configKey === 'RECHARGE_CONFIG'">
@@ -243,7 +243,7 @@ import type { SysConfigItem, SysConfigCreateReq, OptionItem } from '@/services'
 import type {
   SystemCore,
   ObjectStorageConfig,
-  ItickConfig,
+  MarketConfig,
   RechargeConfig,
   WithdrawConfig,
   EmailConfig,
@@ -256,7 +256,7 @@ import { useForm } from '@/composables/useForm'
 import { formatDate } from '@/utils'
 import SystemCoreConfigComponent from './components/SystemCoreConfig.vue'
 import ObjectStorageConfigComponent from './components/ObjectStorageConfig.vue'
-import ItickConfigComponent from './components/ItickConfig.vue'
+import MarketConfigComponent from './components/MarketConfig.vue'
 import RechargeConfigComponent from './components/RechargeConfig.vue'
 import WithdrawConfigComponent from './components/WithdrawConfig.vue'
 import EmailConfigComponent from './components/EmailConfig.vue'
@@ -343,7 +343,7 @@ const objectStorageForm = ref<ObjectStorageConfig>({
   oss_domain: '',
 })
 
-const itickConfigForm = ref<ItickConfig>({
+const marketConfigForm = ref<MarketConfig>({
   api_url: '',
   api_token: '',
   ws_url: '',
@@ -496,7 +496,7 @@ function resetTypeForms() {
     oss_type: 1,
     oss_domain: '',
   }
-  itickConfigForm.value = {
+  marketConfigForm.value = {
     api_url: '',
     api_token: '',
     ws_url: '',
@@ -592,7 +592,7 @@ function handleConfigKeyChange(value: string) {
     }
     formData.configValue = ''
   } else if (value === 'ITICK_CONFIG') {
-    itickConfigForm.value = {
+    marketConfigForm.value = {
       api_url: '',
       api_token: '',
       ws_url: '',
@@ -735,7 +735,7 @@ function handleEdit(row: SysConfigItem) {
   } else if (row.configKey === 'ITICK_CONFIG') {
     try {
       const parsed = JSON.parse(row.configValue || '{}')
-      itickConfigForm.value = {
+      marketConfigForm.value = {
         api_url: parsed.api_url || '',
         api_token: parsed.api_token || '',
         ws_url: parsed.ws_url || '',
@@ -747,7 +747,7 @@ function handleEdit(row: SysConfigItem) {
         ws_kline_stale_seconds: parsed.ws_kline_stale_seconds || 30,
       }
     } catch {
-      itickConfigForm.value = {
+      marketConfigForm.value = {
         api_url: '',
         api_token: '',
         ws_url: '',
@@ -924,13 +924,13 @@ async function handleSubmit() {
       formData.configValue = JSON.stringify(objectStorageForm.value)
     } else if (formData.configKey === 'ITICK_CONFIG') {
       if (
-        !itickConfigForm.value.api_url ||
-        !itickConfigForm.value.api_token ||
-        !itickConfigForm.value.ws_url
+        !marketConfigForm.value.api_url ||
+        !marketConfigForm.value.api_token ||
+        !marketConfigForm.value.ws_url
       ) {
         throw new Error(t('validation.required'))
       }
-      formData.configValue = JSON.stringify(itickConfigForm.value)
+      formData.configValue = JSON.stringify(marketConfigForm.value)
     } else if (formData.configKey === 'RECHARGE_CONFIG') {
       formData.configValue = JSON.stringify(rechargeConfigForm.value)
     } else if (formData.configKey === 'WITHDRAW_CONFIG') {

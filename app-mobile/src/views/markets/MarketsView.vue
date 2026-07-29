@@ -9,7 +9,7 @@ import type { MarketTopTab, MarketTopTabItem } from '@/components/markets/types'
 import { getAccessToken } from '@/api/http'
 import { useTradingDesk } from '@/composables/useTradingDesk'
 import { t } from '@/i18n'
-import type { ItickTenantProduct } from '@/types/itick'
+import type { MarketTenantProduct } from '@/types/market'
 import { marketCategoryLabel } from '@/utils/marketCategory'
 
 const topTabs: MarketTopTabItem[] = [
@@ -58,7 +58,7 @@ const {
   tickLimit: 12,
 })
 
-function openProductChart(product: ItickTenantProduct) {
+function openProductChart(product: MarketTenantProduct) {
   selectProduct(product)
   activeTopTab.value = 'chart'
 }

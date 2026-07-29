@@ -945,7 +945,7 @@ export default {
     '480': '价格公式',
     '490': '快照发布任务',
   },
-  itick: {
+  market: {
     categories: '分类管理',
     categoryType: '分类类型',
     pleaseInputCategoryType: '请输入分类类型',

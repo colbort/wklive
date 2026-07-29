@@ -2,15 +2,15 @@ import type { RespBase, BaseService, OptionGroup } from '@/services'
 import { getCoreOptions } from '@/stores/core'
 
 import {
-  apiItickProductList,
-  apiItickProductCreate,
-  apiItickProductUpdate,
-  apiItickProductDetail,
-  apiItickProductKline,
-  apiSyncItickProductKlineHistory,
-} from '@/api/itick/products'
+  apiMarketProductList,
+  apiMarketProductCreate,
+  apiMarketProductUpdate,
+  apiMarketProductDetail,
+  apiMarketProductKline,
+  apiSyncMarketProductKlineHistory,
+} from '@/api/market/products'
 
-export type ItickProduct = {
+export type MarketProduct = {
   id: number
   categoryType: number
   categoryName: string
@@ -111,28 +111,28 @@ export class ProductsService implements BaseService {
     return getCoreOptions()
   }
 
-  async getList(params: ListProductsReq): Promise<RespBase<ItickProduct[]>> {
-    return apiItickProductList(params)
+  async getList(params: ListProductsReq): Promise<RespBase<MarketProduct[]>> {
+    return apiMarketProductList(params)
   }
 
   async create(params: CreateProductReq): Promise<RespBase> {
-    return apiItickProductCreate(params)
+    return apiMarketProductCreate(params)
   }
 
   async update(id: string | number, params: Partial<UpdateProductReq>): Promise<RespBase> {
-    return apiItickProductUpdate({ id: Number(id), ...params })
+    return apiMarketProductUpdate({ id: Number(id), ...params })
   }
 
-  async detail(id: number): Promise<RespBase<ItickProduct>> {
-    return apiItickProductDetail(id)
+  async detail(id: number): Promise<RespBase<MarketProduct>> {
+    return apiMarketProductDetail(id)
   }
 
   async kline(params: GetProductKlineReq): Promise<RespBase<Kline[]>> {
-    return apiItickProductKline(params)
+    return apiMarketProductKline(params)
   }
 
   async syncKlineHistory(params: SyncProductKlineHistoryReq): Promise<SyncProductKlineHistoryResp> {
-    return apiSyncItickProductKlineHistory(params)
+    return apiSyncMarketProductKlineHistory(params)
   }
 }
 

@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { useI18n } from '@/i18n'
-import type { ItickTenantCategory, ItickTenantProduct, ItickWsConnectionState } from '@/types/itick'
+import type { MarketTenantCategory, MarketTenantProduct, MarketWsConnectionState } from '@/types/market'
 import { marketCategoryCodeLabel, marketCategoryLabel } from '@/utils/marketCategory'
 import QuoteRow from './QuoteRow.vue'
 import type { MarketRow } from './types'
 
 defineProps<{
-  categories: ItickTenantCategory[]
+  categories: MarketTenantCategory[]
   selectedCategoryType: number | null
   selectedCategoryName: string
   selectedCategoryCode: string
-  wsState: ItickWsConnectionState
+  wsState: MarketWsConnectionState
   wsError: string
   loading: boolean
   rows: MarketRow[]
@@ -20,7 +20,7 @@ defineProps<{
 
 const emit = defineEmits<{
   selectCategory: [categoryType: number]
-  selectProduct: [product: ItickTenantProduct]
+  selectProduct: [product: MarketTenantProduct]
 }>()
 
 const { t } = useI18n()

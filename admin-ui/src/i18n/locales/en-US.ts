@@ -947,7 +947,7 @@ export default {
     '480': 'Price Formulas',
     '490': 'Snapshot Outbox',
   },
-  itick: {
+  market: {
     categories: 'Categories',
     categoryType: 'Category Type',
     pleaseInputCategoryType: 'Please input category type',

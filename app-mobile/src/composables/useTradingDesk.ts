@@ -1,38 +1,38 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch, type ComputedRef } from 'vue'
 
-import { buildItickWsUrl } from '@/api/itick'
+import { buildMarketWsUrl } from '@/api/market'
 import { getTenantCode } from '@/api/http'
 import { getLocale, t } from '@/i18n'
-import { useItickStore } from '@/stores/itick'
+import { useMarketStore } from '@/stores/market'
 import { useSystemStore } from '@/stores/system'
 import type { Interval } from '@/types/core'
 import type {
   DepthLevel,
   DepthPayload,
-  ItickTenantProduct,
-  ItickWsConnectionState,
-  ItickWsPongMessage,
-  ItickWsServerMessage,
-  ItickWsSubscribeMessage,
-  ItickWsTopicConfig,
+  MarketTenantProduct,
+  MarketWsConnectionState,
+  MarketWsPongMessage,
+  MarketWsServerMessage,
+  MarketWsSubscribeMessage,
+  MarketWsTopicConfig,
   KlinePayload,
   QuotePayload,
   TickPayload,
-} from '@/types/itick'
+} from '@/types/market'
 
 const DEFAULT_INTERVAL = '1m'
 const DEFAULT_K_TYPE = 1
 const KLINE_LIMIT = 180
 const PING_INTERVAL_MS = 20000
 const RECONNECT_DELAY_MS = 2500
-const DEPTH_CACHE_PREFIX = 'itick:last-depth:v1'
-const QUOTE_CACHE_PREFIX = 'itick:last-quote:v1'
+const DEPTH_CACHE_PREFIX = 'market:last-depth:v1'
+const QUOTE_CACHE_PREFIX = 'market:last-quote:v1'
 
 export function useTradingDesk(options: {
   detailVisible: ComputedRef<boolean>
   tickLimit?: number
 }) {
-  const store = useItickStore()
+  const store = useMarketStore()
   const systemStore = useSystemStore()
 
   const tickLimit = options.tickLimit ?? 12
@@ -45,7 +45,7 @@ export function useTradingDesk(options: {
   const tickSnapshot = ref<TickPayload[]>([])
   const klineSnapshot = ref<KlinePayload[]>([])
   const quoteMap = ref<Record<string, QuotePayload>>({})
-  const wsState = ref<ItickWsConnectionState>('closed')
+  const wsState = ref<MarketWsConnectionState>('closed')
   const wsError = ref('')
   const viewingLatestKlinePage = ref(true)
   const oldestLoadedKlineTs = ref(0)
@@ -332,7 +332,7 @@ export function useTradingDesk(options: {
     selectedCategoryType.value = categoryType
   }
 
-  function selectProduct(product: ItickTenantProduct) {
+  function selectProduct(product: MarketTenantProduct) {
     selectedProductKey.value = productKey(product)
   }
 
@@ -361,7 +361,7 @@ export function useTradingDesk(options: {
 
   function connectSocket() {
     wsId.value = createWsId()
-    const url = buildItickWsUrl(wsId.value)
+    const url = buildMarketWsUrl(wsId.value)
 
     stopReconnectTimer()
     reconnectEnabled = false
@@ -456,13 +456,13 @@ export function useTradingDesk(options: {
     })
   }
 
-  function getQuoteTopics(): ItickWsTopicConfig[] {
+  function getQuoteTopics(): MarketWsTopicConfig[] {
     return products.value
       .map((product) => productTopic(product, 'quote'))
-      .filter((topic): topic is ItickWsTopicConfig => Boolean(topic))
+      .filter((topic): topic is MarketWsTopicConfig => Boolean(topic))
   }
 
-  function getSelectedDetailTopics(): ItickWsTopicConfig[] {
+  function getSelectedDetailTopics(): MarketWsTopicConfig[] {
     if (!options.detailVisible.value) return []
     const selected = selectedProduct.value
     if (!selected) return []
@@ -482,14 +482,14 @@ export function useTradingDesk(options: {
     ]
   }
 
-  function sendJson(payload: ItickWsSubscribeMessage | { type: 'ping'; clientTs: number }) {
+  function sendJson(payload: MarketWsSubscribeMessage | { type: 'ping'; clientTs: number }) {
     if (!socket || socket.readyState !== WebSocket.OPEN) return
     socket.send(JSON.stringify(payload))
   }
 
   function handleSocketMessage(raw: string) {
     try {
-      const message = JSON.parse(raw) as ItickWsPongMessage | ItickWsServerMessage<unknown>
+      const message = JSON.parse(raw) as MarketWsPongMessage | MarketWsServerMessage<unknown>
       if ('type' in message && message.type === 'pong') return
       if (!('topic' in message)) return
 
@@ -536,7 +536,7 @@ export function useTradingDesk(options: {
     }
   }
 
-  function productKey(product: Pick<ItickTenantProduct, 'market' | 'symbol'>) {
+  function productKey(product: Pick<MarketTenantProduct, 'market' | 'symbol'>) {
     return productKeyByFields(product.market, product.symbol)
   }
 
@@ -544,7 +544,7 @@ export function useTradingDesk(options: {
     return `${String(market || '').toUpperCase()}::${String(symbol || '').toUpperCase()}`
   }
 
-  function productTopic(product: ItickTenantProduct, topic: ItickWsTopicConfig['topic']) {
+  function productTopic(product: MarketTenantProduct, topic: MarketWsTopicConfig['topic']) {
     const categoryCode = product.categoryCode || selectedCategoryCode.value
     if (!categoryCode || !product.market || !product.symbol) return null
 
@@ -556,7 +556,7 @@ export function useTradingDesk(options: {
     }
   }
 
-  function dedupeTopics(items: ItickWsTopicConfig[]) {
+  function dedupeTopics(items: MarketWsTopicConfig[]) {
     const seen = new Set<string>()
     return items.filter((item) => {
       const key = [
@@ -572,7 +572,7 @@ export function useTradingDesk(options: {
     })
   }
 
-  function coinGlyph(product: ItickTenantProduct) {
+  function coinGlyph(product: MarketTenantProduct) {
     const coin = product.baseCoin || product.symbol.slice(0, 3) || product.displayName
     return coin.slice(0, 1).toUpperCase()
   }

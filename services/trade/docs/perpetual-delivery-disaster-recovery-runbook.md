@@ -26,7 +26,7 @@ FROM t_biz_trade_event
 GROUP BY event_status;
 
 SELECT status, COUNT(*)
-FROM t_itick_snapshot_outbox
+FROM t_market_snapshot_outbox
 GROUP BY status;
 
 SELECT COUNT(*) AS open_reconciliation_issues
@@ -101,8 +101,8 @@ t_contract_delivery_settlement
 t_contract_liquidation
 t_contract_account_liquidation
 t_contract_reconciliation_issue
-t_itick_authoritative_snapshot
-t_itick_snapshot_outbox
+t_market_authoritative_snapshot
+t_market_snapshot_outbox
 ```
 
 任何缺表、迁移数不一致、核心事实行数不一致或约束创建失败都判定恢复失败。

@@ -1,0 +1,310 @@
+syntax = "v1"
+
+import "common.api"
+
+// 产品类型配置
+type MarketCategory {
+	id           int64  `json:"id"`
+	categoryType int64  `json:"categoryType"`
+	categoryCode string `json:"categoryCode"`
+	categoryName string `json:"categoryName"`
+	enabled      int64  `json:"enabled"`
+	appVisible   int64  `json:"appVisible"`
+	sort         int64  `json:"sort"`
+	icon         string `json:"icon"`
+	remark       string `json:"remark"`
+	createTimes  int64  `json:"createTimes"`
+	updateTimes  int64  `json:"updateTimes"`
+}
+
+// 产品
+type MarketProduct {
+	id           int64  `json:"id"`
+	categoryType int64  `json:"categoryType"`
+	categoryCode string `json:"categoryCode"`
+	categoryName string `json:"categoryName"`
+	market       string `json:"market"` //
+	symbol       string `json:"symbol"` //
+	code         string `json:"code"` // 第三方原始 code
+	name         string `json:"name"`
+	displayName  string `json:"displayName"`
+	baseCoin     string `json:"baseCoin"`
+	quoteCoin    string `json:"quoteCoin"`
+	enabled      int64  `json:"enabled"`
+	appVisible   int64  `json:"appVisible"`
+	sort         int64  `json:"sort"`
+	icon         string `json:"icon"`
+	remark       string `json:"remark"`
+	createTimes  int64  `json:"createTimes"`
+	updateTimes  int64  `json:"updateTimes"`
+}
+
+// K线
+type Kline {
+	categoryCode string `json:"categoryCode"`
+	market       string `json:"market"`
+	symbol       string `json:"symbol"`
+	kType        int64  `json:"kType"`
+	ts           int64  `json:"ts"`
+	open         string `json:"open"`
+	high         string `json:"high"`
+	low          string `json:"low"`
+	close        string `json:"close"`
+	volume       string `json:"volume"`
+	turnover     string `json:"turnover"`
+}
+
+// 深度档位
+type DepthLevel {
+	price  string `json:"price"`
+	volume string `json:"volume"`
+}
+
+// 深度
+type Depth {
+	categoryCode string       `json:"categoryCode"`
+	market       string       `json:"market"`
+	symbol       string       `json:"symbol"`
+	asks         []DepthLevel `json:"asks"`
+	bids         []DepthLevel `json:"bids"`
+	ts           int64        `json:"ts"`
+}
+
+// 实时报价
+type Quote {
+	categoryCode   string `json:"categoryCode"`
+	market         string `json:"market"`
+	symbol         string `json:"symbol"`
+	lastPrice      string `json:"lastPrice"`
+	openPrice      string `json:"openPrice"`
+	highPrice      string `json:"highPrice"`
+	lowPrice       string `json:"lowPrice"`
+	prevClosePrice string `json:"prevClosePrice"`
+	changeValue    string `json:"changeValue"`
+	changeRate     string `json:"changeRate"`
+	volume         string `json:"volume"`
+	turnover       string `json:"turnover"`
+	quoteTs        int64  `json:"quoteTs"`
+	tradeStatus    int64  `json:"tradeStatus"`
+}
+
+type MarketTenantCategory {
+	id          int64  `json:"id"`
+	tenantId    int64  `json:"tenantId"`
+	categoryId  int64  `json:"categoryId"`
+	enabled     int64  `json:"enabled"`
+	appVisible  int64  `json:"appVisible"`
+	sort        int64  `json:"sort"`
+	remark      string `json:"remark"`
+	createTimes int64  `json:"createTimes"`
+	updateTimes int64  `json:"updateTimes"`
+	// 冗余返回字段，方便前端展示
+	categoryType int64  `json:"categoryType"`
+	categoryCode string `json:"categoryCode"`
+	categoryName string `json:"categoryName"`
+	icon         string `json:"icon"`
+}
+
+type MarketTenantProduct {
+	id          int64  `json:"id"`
+	tenantId    int64  `json:"tenantId"`
+	productId   int64  `json:"productId"`
+	enabled     int64  `json:"enabled"`
+	appVisible  int64  `json:"appVisible"`
+	sort        int64  `json:"sort"`
+	remark      string `json:"remark"`
+	createTimes int64  `json:"createTimes"`
+	updateTimes int64  `json:"updateTimes"`
+	// 冗余返回字段，方便前端展示
+	categoryType int64  `json:"categoryType"`
+	categoryCode string `json:"categoryCode"`
+	categoryName string `json:"categoryName"`
+	market       string `json:"market"`
+	symbol       string `json:"symbol"`
+	code         string `json:"code"`
+	name         string `json:"name"`
+	displayName  string `json:"displayName"`
+	baseCoin     string `json:"baseCoin"`
+	quoteCoin    string `json:"quoteCoin"`
+	icon         string `json:"icon"`
+}
+
+// ====================
+// 产品类型 & 产品
+// ====================
+// message ListVisibleCategoriesReq {
+// }
+type ListVisibleCategoriesReq {
+	PageReq
+}
+
+type ListVisibleCategoriesResp {
+	RespBase
+	data []MarketTenantCategory `json:"data"`
+}
+
+type ListVisibleProductsReq {
+	PageReq
+	categoryType int64  `form:"categoryType,optional"`
+	categoryCode string `form:"categoryCode,optional"`
+	market       string `form:"market,optional"`
+	keyword      string `json:"keyword,optional"`
+}
+
+type ListVisibleProductsResp {
+	RespBase
+	data []MarketTenantProduct `json:"data"`
+}
+
+// ====================
+// K线
+// ====================
+type GetKlineReq {
+	categoryCode string `form:"categoryCode"`
+	market       string `form:"market"`
+	symbol       string `form:"symbol"`
+	kType        int64  `form:"kType"`
+	endTs        int64  `form:"endTs"`
+	limit        int64  `form:"limit"`
+}
+
+type GetKlineResp {
+	RespBase
+	data []Kline `json:"data"`
+}
+
+// ====================
+// 实时报价
+// ====================
+type GetQuoteReq {
+	categoryCode string `json:"categoryCode"`
+	market       string `json:"market"`
+	symbol       string `json:"symbol"`
+}
+
+type GetQuoteResp {
+	RespBase
+	data Quote `json:"data"`
+}
+
+type MarketSymbol {
+	categoryCode string `json:"categoryCode"`
+	market       string `json:"market"`
+	symbol       string `json:"symbol"`
+}
+
+type BatchGetQuoteReq {
+	categoryCode string         `json:"categoryCode"`
+	market       string         `json:"market"`
+	data         []MarketSymbol `json:"data"`
+}
+
+type BatchGetQuoteResp {
+	RespBase
+	data []Quote `json:"data"`
+}
+
+type GetAuthoritativeSnapshotReq {
+	authority     string `form:"authority"`
+	categoryCode  string `form:"categoryCode"`
+	market        string `form:"market"`
+	symbol        string `form:"symbol"`
+	targetTime    int64  `form:"targetTime"`
+	maxLookbackMs int64  `form:"maxLookbackMs"`
+	snapshotKind  string `form:"snapshotKind"`
+}
+
+type AuthoritativeSnapshot {
+	snapshotId        string `json:"snapshotId"`
+	authority         string `json:"authority"`
+	snapshotKind      string `json:"snapshotKind"`
+	categoryCode      string `json:"categoryCode"`
+	market            string `json:"market"`
+	symbol            string `json:"symbol"`
+	price             string `json:"price" validate:"decimal_65_30"`
+	sourceTimestamp   int64  `json:"sourceTimestamp"`
+	snapshotTimestamp int64  `json:"snapshotTimestamp"`
+	revision          int64  `json:"revision"`
+	formulaVersion    string `json:"formulaVersion"`
+	rawPayload        string `json:"rawPayload"`
+}
+
+type GetAuthoritativeSnapshotResp {
+	RespBase
+	data AuthoritativeSnapshot `json:"data"`
+}
+
+type KlineInterval {
+	name  string `json:"name"`
+	kType int32  `json:"kType"`
+}
+
+type KlineIntervalsResp {
+	data []KlineInterval `json:"data"`
+}
+
+type WsMarketReq {
+	id string `path:"id"`
+}
+
+type WsTickTopic {
+	topic        string `json:"topic"`
+	categoryCode string `json:"categoryCode"`
+	symbol       string `json:"symbol"`
+	market       string `json:"market,optional"`
+	interval     string `json:"interval,optional"`
+}
+
+type WsMessage {
+	Type         string        `json:"type"`
+	ClientTs     int64         `json:"clientTs,omitempty"` // 客户端毫秒时间戳
+	ServerTs     int64         `json:"serverTs,omitempty"` // 服务端毫秒时间戳
+	Topics       []WsTickTopic `json:"topics,omitempty"`
+	Code         int           `json:"code,omitempty"`
+	Message      string        `json:"message,omitempty"`
+	Topic        string        `json:"topic,omitempty"`
+	categoryCode string        `json:"categoryCode,omitempty"`
+	Symbol       string        `json:"symbol,omitempty"`
+	Market       string        `json:"market,omitempty"`
+	Interval     string        `json:"interval,omitempty"`
+	Payload      []byte        `json:"payload,omitempty"`
+}
+
+@server (
+	prefix:     /app/market
+	group:      market
+	middleware: PublicRateLimit
+)
+service app {
+	// 获取允许显示的产品类型
+	@handler ListVisibleCategories
+	get /categories (ListVisibleCategoriesReq) returns (ListVisibleCategoriesResp)
+
+	// 获取允许显示的产品
+	@handler ListVisibleProducts
+	get /products (ListVisibleProductsReq) returns (ListVisibleProductsResp)
+
+	// 获取K线
+	@handler GetKline
+	get /kline (GetKlineReq) returns (GetKlineResp)
+
+	// 获取最新报价
+	@handler GetQuote
+	get /quote (GetQuoteReq) returns (GetQuoteResp)
+
+	// 批量获取最新报价
+	@handler BatchGetQuote
+	get /batch/quote (BatchGetQuoteReq) returns (BatchGetQuoteResp)
+
+	// 按业务时刻读取永久归档的权威快照
+	@handler GetAuthoritativeSnapshot
+	get /authoritative-snapshot (GetAuthoritativeSnapshotReq) returns (GetAuthoritativeSnapshotResp)
+
+	// 获取 K 线粒度
+	@handler GetKlineIntervals
+	get /kline-intervals returns (KlineIntervalsResp)
+
+	@handler TickWsHandler
+	get /ws/:id (WsMarketReq)
+}
+

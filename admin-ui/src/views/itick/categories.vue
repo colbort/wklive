@@ -1,7 +1,7 @@
 <template>
-  <div class="itick-categories module-page">
+  <div class="market-categories module-page">
     <CrudQueryCard :model="queryParams" @search="loadList" @reset="resetQuery">
-      <el-form-item :label="t('itick.categoryType')">
+      <el-form-item :label="t('market.categoryType')">
         <el-select
           v-model="queryParams.categoryType"
           :placeholder="t('common.pleaseSelect')"
@@ -17,7 +17,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item :label="t('itick.enabledStatus')">
+      <el-form-item :label="t('market.enabledStatus')">
         <el-select
           v-model="queryParams.enabled"
           :placeholder="t('common.pleaseSelect')"
@@ -33,7 +33,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item :label="t('itick.appVisible')">
+      <el-form-item :label="t('market.appVisible')">
         <el-select
           v-model="queryParams.appVisible"
           :placeholder="t('common.pleaseSelect')"
@@ -50,7 +50,7 @@
       </el-form-item>
 
       <template #actions>
-        <el-button v-perm="'itick:category:add'" type="primary" @click="handleAdd">
+        <el-button v-perm="'market:category:add'" type="primary" @click="handleAdd">
           <el-icon><Plus /></el-icon>
           {{ t('common.add') }}
         </el-button>
@@ -59,15 +59,15 @@
 
     <el-card class="table-card" shadow="never">
       <el-table v-loading="loading" :data="list" stripe>
-        <el-table-column :label="t('itick.categoryType')" width="120">
+        <el-table-column :label="t('market.categoryType')" width="120">
           <template #default="{ row }">
             {{ getOptionValueLabel(optionGroups, 'categoryType', row.categoryType, t) }}
           </template>
         </el-table-column>
-        <el-table-column :label="t('itick.categoryCode')" prop="categoryCode" min-width="140" />
-        <el-table-column :label="t('itick.categoryName')" prop="categoryName" min-width="160" />
+        <el-table-column :label="t('market.categoryCode')" prop="categoryCode" min-width="140" />
+        <el-table-column :label="t('market.categoryName')" prop="categoryName" min-width="160" />
 
-        <el-table-column :label="t('itick.enabledStatus')" width="100">
+        <el-table-column :label="t('market.enabledStatus')" width="100">
           <template #default="{ row }">
             <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
               {{ getOptionValueLabel(optionGroups, 'enabled', row.enabled, t) }}
@@ -75,7 +75,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('itick.appVisible')" width="100">
+        <el-table-column :label="t('market.appVisible')" width="100">
           <template #default="{ row }">
             <el-tag :type="row.appVisible === 1 ? 'success' : 'warning'">
               {{ getOptionValueLabel(optionGroups, 'visible', row.appVisible, t) }}
@@ -83,7 +83,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('itick.syncPriority')" width="110">
+        <el-table-column :label="t('market.syncPriority')" width="110">
           <template #default="{ row }">
             <el-tag :type="syncPriorityTagType(row.syncPriority)">
               {{ getSyncPriorityLabel(row.syncPriority) }}
@@ -117,7 +117,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('itick.updateTimes')" min-width="170">
+        <el-table-column :label="t('market.updateTimes')" min-width="170">
           <template #default="{ row }">
             {{ formatDate(row.updateTimes) }}
           </template>
@@ -131,15 +131,15 @@
         >
           <template #default="{ row }">
             <el-button
-              v-perm="'itick:category:detail'"
+              v-perm="'market:category:detail'"
               link
               type="primary"
               @click="handleDetail(row)"
             >
-              {{ t('itick.detail') }}
+              {{ t('market.detail') }}
             </el-button>
             <el-button
-              v-perm="'itick:category:update'"
+              v-perm="'market:category:update'"
               link
               type="primary"
               @click="handleEdit(row)"
@@ -147,12 +147,12 @@
               {{ t('common.edit') }}
             </el-button>
             <el-button
-              v-perm="'itick:category:syncProducts'"
+              v-perm="'market:category:syncProducts'"
               link
               type="warning"
               @click="handleSync(row)"
             >
-              {{ t('itick.syncProducts') }}
+              {{ t('market.syncProducts') }}
             </el-button>
           </template>
         </el-table-column>
@@ -171,7 +171,7 @@
 
     <el-dialog
       v-model="formDialogVisible"
-      :title="formMode === 'add' ? t('itick.addCategory') : t('itick.editCategory')"
+      :title="formMode === 'add' ? t('market.addCategory') : t('market.editCategory')"
       width="620px"
     >
       <el-form
@@ -182,7 +182,7 @@
       >
         <el-form-item
           v-if="formMode === 'add'"
-          :label="t('itick.categoryType')"
+          :label="t('market.categoryType')"
           prop="categoryType"
         >
           <el-select
@@ -199,16 +199,16 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item :label="t('itick.categoryName')" prop="categoryName">
+        <el-form-item :label="t('market.categoryName')" prop="categoryName">
           <el-input
             v-model="form.categoryName"
-            :placeholder="t('itick.pleaseInputCategoryName')"
+            :placeholder="t('market.pleaseInputCategoryName')"
             maxlength="50"
             show-word-limit
           />
         </el-form-item>
 
-        <el-form-item :label="t('itick.enabledStatus')" prop="enabled">
+        <el-form-item :label="t('market.enabledStatus')" prop="enabled">
           <el-select v-model="form.enabled" style="width: 100%">
             <el-option
               v-for="item in enabledFormOptions"
@@ -219,7 +219,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item :label="t('itick.appVisible')" prop="appVisible">
+        <el-form-item :label="t('market.appVisible')" prop="appVisible">
           <el-select v-model="form.appVisible" style="width: 100%">
             <el-option
               v-for="item in visibleFormOptions"
@@ -230,7 +230,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item :label="t('itick.syncPriority')" prop="syncPriority">
+        <el-form-item :label="t('market.syncPriority')" prop="syncPriority">
           <el-select v-model="form.syncPriority" style="width: 100%">
             <el-option
               v-for="item in syncPriorityFormOptions"
@@ -271,7 +271,7 @@
               accept="image/*"
             >
               <el-button type="primary" :loading="submitLoading">
-                {{ t('itick.uploadImage') }}
+                {{ t('market.uploadImage') }}
               </el-button>
             </el-upload>
           </div>
@@ -294,7 +294,7 @@
           {{ t('common.cancel') }}
         </el-button>
         <el-button
-          v-perm="formMode === 'add' ? 'itick:category:add' : 'itick:category:update'"
+          v-perm="formMode === 'add' ? 'market:category:add' : 'market:category:update'"
           type="primary"
           :loading="submitLoading"
           @click="submitForm"
@@ -304,27 +304,27 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="detailDialogVisible" :title="t('itick.categoryDetail')" width="700px">
+    <el-dialog v-model="detailDialogVisible" :title="t('market.categoryDetail')" width="700px">
       <el-descriptions v-loading="detailLoading" :column="2" border>
         <el-descriptions-item label="ID">
           {{ detail.id ?? '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.categoryType')">
+        <el-descriptions-item :label="t('market.categoryType')">
           {{ getOptionValueLabel(optionGroups, 'categoryType', detail.categoryType, t) || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.categoryCode')">
+        <el-descriptions-item :label="t('market.categoryCode')">
           {{ detail.categoryCode || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.categoryName')">
+        <el-descriptions-item :label="t('market.categoryName')">
           {{ detail.categoryName || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.enabledStatus')">
+        <el-descriptions-item :label="t('market.enabledStatus')">
           {{ getOptionValueLabel(optionGroups, 'enabled', detail.enabled, t) || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.appVisible')">
+        <el-descriptions-item :label="t('market.appVisible')">
           {{ getOptionValueLabel(optionGroups, 'visible', detail.appVisible, t) || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.syncPriority')">
+        <el-descriptions-item :label="t('market.syncPriority')">
           {{ getSyncPriorityLabel(detail.syncPriority) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('common.sort')">
@@ -349,7 +349,7 @@
         <el-descriptions-item :label="t('common.createTimes')">
           {{ formatDate(detail?.createTimes ?? 0) }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.updateTimes')">
+        <el-descriptions-item :label="t('market.updateTimes')">
           {{ formatDate(detail?.updateTimes ?? 0) }}
         </el-descriptions-item>
       </el-descriptions>
@@ -375,9 +375,9 @@ import type { OptionGroup } from '@/services'
 import { apiUploadFile } from '@/api/system/upload'
 import {
   categoriesService,
-  type ItickCategory,
+  type MarketCategory,
   type ListCategoriesReq,
-} from '@/services/itick/CategoriesService'
+} from '@/services/market/CategoriesService'
 import { formatDate } from '@/utils'
 import {
   findFormOptionGroup,
@@ -435,8 +435,8 @@ const {
 
 const submitLoading = ref(false)
 const detailLoading = ref(false)
-const list = ref<ItickCategory[]>([])
-const detail = ref<Partial<ItickCategory>>({})
+const list = ref<MarketCategory[]>([])
+const detail = ref<Partial<MarketCategory>>({})
 const optionGroups = ref<OptionGroup[]>([])
 const formDialogVisible = ref(false)
 const detailDialogVisible = ref(false)
@@ -462,14 +462,14 @@ const syncPriorityTagType = (value?: number) => {
 }
 
 const rules: FormRules<FormData> = {
-  categoryType: [{ required: true, message: t('itick.pleaseInputCategoryType'), trigger: 'blur' }],
-  categoryName: [{ required: true, message: t('itick.pleaseInputCategoryName'), trigger: 'blur' }],
-  enabled: [{ required: true, message: t('itick.pleaseSelectEnabledStatus'), trigger: 'change' }],
-  appVisible: [{ required: true, message: t('itick.pleaseSelectAppVisible'), trigger: 'change' }],
+  categoryType: [{ required: true, message: t('market.pleaseInputCategoryType'), trigger: 'blur' }],
+  categoryName: [{ required: true, message: t('market.pleaseInputCategoryName'), trigger: 'blur' }],
+  enabled: [{ required: true, message: t('market.pleaseSelectEnabledStatus'), trigger: 'change' }],
+  appVisible: [{ required: true, message: t('market.pleaseSelectAppVisible'), trigger: 'change' }],
   syncPriority: [
-    { required: true, message: t('itick.pleaseSelectSyncPriority'), trigger: 'change' },
+    { required: true, message: t('market.pleaseSelectSyncPriority'), trigger: 'change' },
   ],
-  sort: [{ required: true, message: t('itick.pleaseInputSort'), trigger: 'blur' }],
+  sort: [{ required: true, message: t('market.pleaseInputSort'), trigger: 'blur' }],
 }
 
 const cleanedQueryParams = computed<ListCategoriesReq>(() => {
@@ -536,7 +536,7 @@ const handleAdd = async () => {
   formRef.value?.clearValidate()
 }
 
-const handleEdit = async (row: ItickCategory) => {
+const handleEdit = async (row: MarketCategory) => {
   formMode.value = 'edit'
   resetForm()
 
@@ -564,7 +564,7 @@ const handleEdit = async (row: ItickCategory) => {
   }
 }
 
-const handleDetail = async (row: ItickCategory) => {
+const handleDetail = async (row: MarketCategory) => {
   detailDialogVisible.value = true
   detailLoading.value = true
   detail.value = {}
@@ -649,10 +649,10 @@ const submitForm = async () => {
   }
 }
 
-const handleSync = async (row: ItickCategory) => {
+const handleSync = async (row: MarketCategory) => {
   try {
     const res = await categoriesService.syncProducts({ id: row.id })
-    ElMessage.success(t('itick.syncTaskSubmittedWithTaskNo', { taskNo: res?.data || '-' }))
+    ElMessage.success(t('market.syncTaskSubmittedWithTaskNo', { taskNo: res?.data || '-' }))
   } catch {
     ElMessage.error(t('common.operationFailed'))
   }

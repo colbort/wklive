@@ -4,7 +4,7 @@ import (
 	"wklive/app-api/internal/types"
 	"wklive/proto/asset"
 	"wklive/proto/common"
-	"wklive/proto/itick"
+	"wklive/proto/market"
 	"wklive/proto/option"
 	"wklive/proto/payment"
 	"wklive/proto/staking"
@@ -21,7 +21,7 @@ func CoreOptions() []types.OptionsGroup {
 	options = append(options, TradeOptions()...)
 	options = append(options, OptionOptions()...)
 	options = append(options, StakingOptions()...)
-	options = append(options, ItickOptions()...)
+	options = append(options, MarketOptions()...)
 	return options
 }
 
@@ -106,9 +106,9 @@ func StakingOptions() []types.OptionsGroup {
 	}
 }
 
-func ItickOptions() []types.OptionsGroup {
+func MarketOptions() []types.OptionsGroup {
 	return []types.OptionsGroup{
-		EnumGroup("categoryType", "产品类型", itick.CategoryType_CATEGORY_TYPE_UNKNOWN.Descriptor()),
-		EnumGroup("klineType", "K线周期", itick.KlineType_KLINE_TYPE_UNKNOWN.Descriptor()),
+		EnumGroup("categoryType", "产品类型", market.CategoryType_CATEGORY_TYPE_UNKNOWN.Descriptor()),
+		EnumGroup("klineType", "K线周期", market.KlineType_KLINE_TYPE_UNKNOWN.Descriptor()),
 	}
 }

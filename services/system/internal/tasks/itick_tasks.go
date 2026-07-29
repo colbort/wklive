@@ -9,14 +9,14 @@ import (
 )
 
 func init() {
-	cronx.Register("itick.SyncProducts", "同步Itick产品", syncItickProducts)
-	cronx.Register("itick.SyncKlines", "同步Itick K线", syncItickKlines)
+	cronx.Register("market.SyncProducts", "同步Market产品", syncMarketProducts)
+	cronx.Register("market.SyncKlines", "同步Market K线", syncMarketKlines)
 }
 
-func syncItickProducts(ctx context.Context, job *models.SysJob) error {
-	return publishTask(ctx, job, tasks.ServiceItick, tasks.ActionItickSyncProducts)
+func syncMarketProducts(ctx context.Context, job *models.SysJob) error {
+	return publishTask(ctx, job, tasks.ServiceMarket, tasks.ActionMarketSyncProducts)
 }
 
-func syncItickKlines(ctx context.Context, job *models.SysJob) error {
-	return publishTask(ctx, job, tasks.ServiceItick, tasks.ActionItickSyncKlines)
+func syncMarketKlines(ctx context.Context, job *models.SysJob) error {
+	return publishTask(ctx, job, tasks.ServiceMarket, tasks.ActionMarketSyncKlines)
 }

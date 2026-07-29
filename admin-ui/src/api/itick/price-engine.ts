@@ -102,39 +102,39 @@ export type ListSnapshotOutboxReq = {
 export function apiListAuthorityRegistries(
   params: ListAuthorityRegistriesReq,
 ): Promise<RespBase<AuthorityRegistry[]>> {
-  return get<AuthorityRegistry[]>('/admin/itick/authorities', params)
+  return get<AuthorityRegistry[]>('/admin/market/authorities', params)
 }
 
 export function apiSetAuthorityRegistry(
   params: SetAuthorityRegistryReq,
 ): Promise<RespBase<AuthorityRegistry>> {
-  return post<AuthorityRegistry>('/admin/itick/authorities', params)
+  return post<AuthorityRegistry>('/admin/market/authorities', params)
 }
 
 export function apiListPriceFormulas(
   params: ListPriceFormulasReq,
 ): Promise<RespBase<PriceFormula[]>> {
-  return get<PriceFormula[]>('/admin/itick/price-formulas', params)
+  return get<PriceFormula[]>('/admin/market/price-formulas', params)
 }
 
 export function apiCreatePriceFormula(
   params: CreatePriceFormulaReq,
 ): Promise<RespBase<PriceFormula>> {
-  return post<PriceFormula>('/admin/itick/price-formulas', params)
+  return post<PriceFormula>('/admin/market/price-formulas', params)
 }
 
 export function apiChangePriceFormulaStatus(id: number, status: 1 | 3): Promise<RespBase> {
-  return put(`/admin/itick/price-formulas/${id}/status`, { status })
+  return put(`/admin/market/price-formulas/${id}/status`, { status })
 }
 
 export function apiListSnapshotOutbox(
   params: ListSnapshotOutboxReq,
 ): Promise<RespBase<SnapshotOutbox[]>> {
-  return get<SnapshotOutbox[]>('/admin/itick/snapshot-outbox', params)
+  return get<SnapshotOutbox[]>('/admin/market/snapshot-outbox', params)
 }
 
 export function apiRetrySnapshotOutbox(id: number): Promise<RespBase> {
-  return post(`/admin/itick/snapshot-outbox/${id}/retry`)
+  return post(`/admin/market/snapshot-outbox/${id}/retry`)
 }
 
 export function apiRevokeAuthoritativeSnapshot(params: {
@@ -142,5 +142,5 @@ export function apiRevokeAuthoritativeSnapshot(params: {
   replacementSnapshotId?: string
   reason: string
 }): Promise<RespBase> {
-  return post('/admin/itick/authoritative-snapshots/revoke', params)
+  return post('/admin/market/authoritative-snapshots/revoke', params)
 }

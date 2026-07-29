@@ -1147,7 +1147,7 @@ type GetCategoryReq struct {
 
 type GetCategoryResp struct {
 	RespBase
-	Data ItickCategory `json:"data"`
+	Data MarketCategory `json:"data"`
 }
 
 type GetContractReconciliationIssueListReq struct {
@@ -1517,7 +1517,7 @@ type GetProductReq struct {
 
 type GetProductResp struct {
 	RespBase
-	Data ItickProduct `json:"data"`
+	Data MarketProduct `json:"data"`
 }
 
 type GetRechargeNotifyLogReq struct {
@@ -1685,7 +1685,7 @@ type GetTenantCategoryReq struct {
 
 type GetTenantCategoryResp struct {
 	RespBase
-	Data ItickTenantCategory `json:"data"`
+	Data MarketTenantCategory `json:"data"`
 }
 
 type GetTenantPayAccountReq struct {
@@ -1725,7 +1725,7 @@ type GetTenantProductReq struct {
 
 type GetTenantProductResp struct {
 	RespBase
-	Data ItickTenantProduct `json:"data"`
+	Data MarketTenantProduct `json:"data"`
 }
 
 type GetTradeEventDetailReq struct {
@@ -1921,19 +1921,19 @@ type IgnoreContractReconciliationIssueReq struct {
 	Reason   string `json:"reason"`
 }
 
-type InitTenantItickDisplayData struct {
+type InitTenantMarketDisplayData struct {
 	CategoryCount int64 `json:"categoryCount"`
 	ProductCount  int64 `json:"productCount"`
 }
 
-type InitTenantItickDisplayReq struct {
+type InitTenantMarketDisplayReq struct {
 	TenantId  int64 `json:"tenantId"`
 	Overwrite int64 `json:"overwrite"` // 是否覆盖已有配置
 }
 
-type InitTenantItickDisplayResp struct {
+type InitTenantMarketDisplayResp struct {
 	RespBase
-	Data InitTenantItickDisplayData `json:"data"`
+	Data InitTenantMarketDisplayData `json:"data"`
 }
 
 type InsuranceFundAccount struct {
@@ -1948,7 +1948,7 @@ type InsuranceFundAccount struct {
 	UpdateTimes int64  `json:"updateTimes"`
 }
 
-type ItickCategory struct {
+type MarketCategory struct {
 	Id           int64  `json:"id"`
 	CategoryType int64  `json:"categoryType"`
 	CategoryCode string `json:"categoryCode"`
@@ -1963,7 +1963,7 @@ type ItickCategory struct {
 	UpdateTimes  int64  `json:"updateTimes"`
 }
 
-type ItickProduct struct {
+type MarketProduct struct {
 	Id           int64  `json:"id"`
 	CategoryType int64  `json:"categoryType"`
 	CategoryCode string `json:"categoryCode"`
@@ -1985,7 +1985,7 @@ type ItickProduct struct {
 	UpdateTimes  int64  `json:"updateTimes"`
 }
 
-type ItickTenantCategory struct {
+type MarketTenantCategory struct {
 	Id           int64  `json:"id"`
 	TenantId     int64  `json:"tenantId"`
 	CategoryId   int64  `json:"categoryId"`
@@ -2001,7 +2001,7 @@ type ItickTenantCategory struct {
 	TenantName   string `json:"tenantName"`
 }
 
-type ItickTenantProduct struct {
+type MarketTenantProduct struct {
 	Id           int64  `json:"id"`
 	TenantId     int64  `json:"tenantId"`
 	ProductId    int64  `json:"productId"`
@@ -2090,7 +2090,7 @@ type ListCategoriesReq struct {
 
 type ListCategoriesResp struct {
 	RespBase
-	Data []ItickCategory `json:"data"`
+	Data []MarketCategory `json:"data"`
 }
 
 type ListContractsReq struct {
@@ -2277,7 +2277,7 @@ type ListProductsReq struct {
 
 type ListProductsResp struct {
 	RespBase
-	Data []ItickProduct `json:"data"`
+	Data []MarketProduct `json:"data"`
 }
 
 type ListRechargeNotifyLogsReq struct {
@@ -2354,7 +2354,7 @@ type ListTenantCategoriesReq struct {
 
 type ListTenantCategoriesResp struct {
 	RespBase
-	Data []ItickTenantCategory `json:"data"`
+	Data []MarketTenantCategory `json:"data"`
 }
 
 type ListTenantPayAccountsReq struct {
@@ -2410,7 +2410,7 @@ type ListTenantProductsReq struct {
 
 type ListTenantProductsResp struct {
 	RespBase
-	Data []ItickTenantProduct `json:"data"`
+	Data []MarketTenantProduct `json:"data"`
 }
 
 type ListTradesReq struct {

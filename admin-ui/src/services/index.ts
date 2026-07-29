@@ -12,10 +12,10 @@ export { TenantsService, tenantsService } from './system/TenantsService'
 export { TenantDomainsService, tenantDomainsService } from './system/TenantDomainsService'
 export { ChatMerchantsService, chatMerchantsService } from './system/ChatMerchantsService'
 export { VerificationCodeService, verificationCodeService } from './system/VerificationCodeService'
-export { CategoriesService, categoriesService } from './itick/CategoriesService'
-export { ProductsService, productsService } from './itick/ProductsService'
-export { TenantCategoriesService, tenantCategoriesService } from './itick/TenantCategoriesService'
-export { TenantProductsService, tenantProductsService } from './itick/TenantProductsService'
+export { CategoriesService, categoriesService } from './market/CategoriesService'
+export { ProductsService, productsService } from './market/ProductsService'
+export { TenantCategoriesService, tenantCategoriesService } from './market/TenantCategoriesService'
+export { TenantProductsService, tenantProductsService } from './market/TenantProductsService'
 export { CatalogService, catalogService } from './payment/CatalogService'
 export { TenantService, tenantService } from './payment/TenantService'
 export { RechargeService, rechargeService } from './payment/RechargeService'
@@ -124,43 +124,43 @@ export type {
 
 export type {
   ListCategoriesReq,
-  ItickCategory,
+  MarketCategory,
   CreateCategoryReq,
   UpdateCategoryReq,
   SyncCategoryProductsReq,
   SyncCategoryProductsResp,
-} from './itick/CategoriesService'
+} from './market/CategoriesService'
 
 export type {
   ListProductsReq,
-  ItickProduct,
+  MarketProduct,
   CreateProductReq,
   UpdateProductReq,
   GetProductKlineReq,
   Kline,
   SyncProductKlineHistoryReq,
   SyncProductKlineHistoryResp,
-} from './itick/ProductsService'
+} from './market/ProductsService'
 
 export type {
-  ItickTenantCategory,
+  MarketTenantCategory,
   CreateTenantCategoryReq,
   UpdateTenantCategoryReq,
   TenantCategoryItem,
   BatchUpsertTenantCategoriesReq,
   ListTenantCategoriesReq,
-} from './itick/TenantCategoriesService'
+} from './market/TenantCategoriesService'
 
 export type {
-  ItickTenantProduct,
+  MarketTenantProduct,
   CreateTenantProductReq,
   UpdateTenantProductReq,
   TenantProductItem,
   BatchUpsertTenantProductsReq,
   ListTenantProductsReq,
-  InitTenantItickDisplayReq,
-  InitTenantItickDisplayResp,
-} from './itick/TenantProductsService'
+  InitTenantMarketDisplayReq,
+  InitTenantMarketDisplayResp,
+} from './market/TenantProductsService'
 export type {
   PayPlatform,
   PayProduct,

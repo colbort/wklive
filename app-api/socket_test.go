@@ -20,11 +20,11 @@ var upgrader = websocket.Upgrader{
 }
 
 func TestSocket(t *testing.T) {
-	http.HandleFunc("/app/itick/ws/itick", tickWsHandler)
+	http.HandleFunc("/app/market/ws/market", tickWsHandler)
 
 	addr := ":7777"
 	log.Printf("websocket test server listening on %s\n", addr)
-	log.Printf("ws url: ws://127.0.0.1%s/app/itick/ws/itick\n", addr)
+	log.Printf("ws url: ws://127.0.0.1%s/app/market/ws/market\n", addr)
 
 	if err := http.ListenAndServe(addr, nil); err != nil {
 		log.Fatal(err)

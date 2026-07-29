@@ -163,23 +163,23 @@ func (m *defaultContractReadinessModel) inspectAuthorities(
 	query := fmt.Sprintf(`
 SELECT
   (SELECT COUNT(*)
-   FROM t_itick_authority_registry
+   FROM t_market_authority_registry
    WHERE status=1
      AND authority IN (%s)
      AND JSON_CONTAINS(allowed_kinds, JSON_QUOTE('FINAL_QUOTE'))),
   (SELECT COUNT(DISTINCT provider_code)
-   FROM t_itick_authority_registry
+   FROM t_market_authority_registry
    WHERE status=1
      AND authority IN (%s)
      AND JSON_CONTAINS(allowed_kinds, JSON_QUOTE('FINAL_QUOTE'))),
   (SELECT COUNT(*)
-   FROM t_itick_authority_registry
+   FROM t_market_authority_registry
    WHERE status=1
      AND authority IN (%s)
      AND producer_type='PUBLIC_REST'
      AND JSON_CONTAINS(allowed_kinds, JSON_QUOTE('FINAL_QUOTE'))),
   (SELECT COUNT(*)
-   FROM t_itick_authority_registry
+   FROM t_market_authority_registry
    WHERE status=1
      AND authority='price-engine'
      AND JSON_CONTAINS(allowed_kinds, JSON_QUOTE('INDEX'))
@@ -303,7 +303,7 @@ SELECT
          )) AS j
          WHERE j.kind='FINAL_QUOTE'
            AND (%s))=?),0)
-FROM t_itick_price_formula AS f
+FROM t_market_price_formula AS f
 WHERE f.status=1
   AND f.category_code=?
   AND f.market=?
@@ -372,7 +372,7 @@ func (m *defaultContractReadinessModel) inspectLivePrices(
 	query := fmt.Sprintf(`
 SELECT
   (SELECT COUNT(DISTINCT j.authority)
-   FROM t_itick_price_formula AS f
+   FROM t_market_price_formula AS f
    JOIN JSON_TABLE(f.components, '$[*]' COLUMNS(
      kind VARCHAR(32) PATH '$.kind',
      authority VARCHAR(32) PATH '$.authority',
@@ -380,7 +380,7 @@ SELECT
      market VARCHAR(32) PATH '$.market',
      symbol VARCHAR(64) PATH '$.symbol'
    )) AS j
-   JOIN t_itick_authoritative_snapshot AS s
+   JOIN t_market_authoritative_snapshot AS s
      ON s.authority=j.authority
     AND s.snapshot_kind=j.kind
     AND s.category_code=j.category_code
@@ -395,7 +395,7 @@ SELECT
      AND j.kind='FINAL_QUOTE'
      AND j.authority IN (%s)),
   (SELECT COUNT(DISTINCT s.snapshot_kind)
-   FROM t_itick_authoritative_snapshot AS s
+   FROM t_market_authoritative_snapshot AS s
    WHERE s.authority='price-engine'
      AND s.snapshot_kind IN ('INDEX','MARK','FUNDING','DELIVERY')
      AND s.category_code=?
@@ -509,7 +509,7 @@ SELECT
   CAST(UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3))*1000 AS UNSIGNED),
   (SELECT COUNT(*) FROM t_contract_reconciliation_issue WHERE status=1),
   (SELECT COUNT(*) FROM t_trade_settlement_instruction WHERE status IN (1,2,4,5))
-FROM t_itick_snapshot_outbox`
+FROM t_market_snapshot_outbox`
 	var oldestOpenAt, serverNow int64
 	err := m.db.QueryRowContext(ctx, query).Scan(
 		&result.PendingOutboxCount,

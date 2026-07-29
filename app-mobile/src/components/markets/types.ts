@@ -1,4 +1,4 @@
-import type { ItickTenantProduct, QuotePayload } from '@/types/itick'
+import type { MarketTenantProduct, QuotePayload } from '@/types/market'
 
 export type MarketTopTab = 'watchlist' | 'markets' | 'chart'
 
@@ -9,7 +9,7 @@ export interface MarketTopTabItem {
 
 export interface MarketRow {
   key: string
-  product: ItickTenantProduct
+  product: MarketTenantProduct
   quote: QuotePayload | null
   changeRate: number
   direction: 'up' | 'down' | 'flat'

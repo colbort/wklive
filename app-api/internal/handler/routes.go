@@ -9,7 +9,7 @@ import (
 	asset "wklive/app-api/internal/handler/asset"
 	chat "wklive/app-api/internal/handler/chat"
 	core "wklive/app-api/internal/handler/core"
-	itick "wklive/app-api/internal/handler/itick"
+	market "wklive/app-api/internal/handler/market"
 	option "wklive/app-api/internal/handler/option"
 	payment "wklive/app-api/internal/handler/payment"
 	staking "wklive/app-api/internal/handler/staking"
@@ -112,46 +112,46 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				{
 					Method:  http.MethodGet,
 					Path:    "/authoritative-snapshot",
-					Handler: itick.GetAuthoritativeSnapshotHandler(serverCtx),
+					Handler: market.GetAuthoritativeSnapshotHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
 					Path:    "/batch/quote",
-					Handler: itick.BatchGetQuoteHandler(serverCtx),
+					Handler: market.BatchGetQuoteHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
 					Path:    "/categories",
-					Handler: itick.ListVisibleCategoriesHandler(serverCtx),
+					Handler: market.ListVisibleCategoriesHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
 					Path:    "/kline",
-					Handler: itick.GetKlineHandler(serverCtx),
+					Handler: market.GetKlineHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
 					Path:    "/kline-intervals",
-					Handler: itick.GetKlineIntervalsHandler(serverCtx),
+					Handler: market.GetKlineIntervalsHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
 					Path:    "/products",
-					Handler: itick.ListVisibleProductsHandler(serverCtx),
+					Handler: market.ListVisibleProductsHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
 					Path:    "/quote",
-					Handler: itick.GetQuoteHandler(serverCtx),
+					Handler: market.GetQuoteHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
 					Path:    "/ws/:id",
-					Handler: itick.TickWsHandler(serverCtx),
+					Handler: market.TickWsHandler(serverCtx),
 				},
 			}...,
 		),
-		rest.WithPrefix("/app/itick"),
+		rest.WithPrefix("/app/market"),
 	)
 
 	server.AddRoutes(

@@ -6,32 +6,32 @@ import type {
   UpdateTenantCategoryReq,
   BatchUpsertTenantCategoriesReq,
   ListTenantCategoriesReq,
-  ItickTenantCategory,
+  MarketTenantCategory,
 } from '@/services'
 
-export function apiItickTenantCategoryList(
+export function apiMarketTenantCategoryList(
   params: ListTenantCategoriesReq,
-): Promise<RespBase<ItickTenantCategory[]>> {
-  return get<ItickTenantCategory[]>('/admin/itick/tenant-categories', params)
+): Promise<RespBase<MarketTenantCategory[]>> {
+  return get<MarketTenantCategory[]>('/admin/market/tenant-categories', params)
 }
 
-export function apiItickTenantCategoryCreate(params: CreateTenantCategoryReq): Promise<RespBase> {
-  return post('/admin/itick/tenant-categories', params)
+export function apiMarketTenantCategoryCreate(params: CreateTenantCategoryReq): Promise<RespBase> {
+  return post('/admin/market/tenant-categories', params)
 }
 
-export function apiItickTenantCategoryUpdate(params: UpdateTenantCategoryReq): Promise<RespBase> {
-  return put('/admin/itick/tenant-categories', params)
+export function apiMarketTenantCategoryUpdate(params: UpdateTenantCategoryReq): Promise<RespBase> {
+  return put('/admin/market/tenant-categories', params)
 }
 
-export function apiItickTenantCategoryBatchUpsert(
+export function apiMarketTenantCategoryBatchUpsert(
   params: BatchUpsertTenantCategoriesReq,
 ): Promise<RespBase> {
-  return post('/admin/itick/tenant-categories/batch', params)
+  return post('/admin/market/tenant-categories/batch', params)
 }
 
-export function apiItickTenantCategoryDetail(
+export function apiMarketTenantCategoryDetail(
   id: number,
   tenantId: number,
-): Promise<RespBase<ItickTenantCategory>> {
-  return get<ItickTenantCategory>('/admin/itick/tenant-categories/${id}', { tenantId })
+): Promise<RespBase<MarketTenantCategory>> {
+  return get<MarketTenantCategory>('/admin/market/tenant-categories/${id}', { tenantId })
 }

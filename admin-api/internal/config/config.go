@@ -22,7 +22,7 @@ type Config struct {
 	ChatRpc           zrpc.RpcClientConf
 	UserRpc           zrpc.RpcClientConf
 	PaymentRpc        zrpc.RpcClientConf
-	ItickRpc          zrpc.RpcClientConf
+	MarketRpc          zrpc.RpcClientConf
 	AssetRpc          zrpc.RpcClientConf
 	OptionRpc         zrpc.RpcClientConf
 	StakingRpc        zrpc.RpcClientConf

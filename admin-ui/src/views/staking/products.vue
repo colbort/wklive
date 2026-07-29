@@ -212,7 +212,7 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="detailVisible" :title="t('itick.detail')" width="760px">
+    <el-dialog v-model="detailVisible" :title="t('market.detail')" width="760px">
       <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
     </el-dialog>
   </div>

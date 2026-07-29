@@ -5,7 +5,7 @@
 当前阶段仅包含：
 
 - 可启动的 RPC/健康检查骨架；
-- `trade.rpc`、`asset.rpc`、`itick.rpc` 依赖配置；
+- `trade.rpc`、`asset.rpc`、`market.rpc` 依赖配置；
 - MySQL 8.0 数据库设计；
 - SQL 设计说明。
 

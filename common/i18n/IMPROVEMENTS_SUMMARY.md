@@ -36,7 +36,7 @@
 - PageAssetLocks
 - PageUserAssets
 
-#### Itick 服务 (2个方法)
+#### Market 服务 (2个方法)
 - ListProducts
 - ListCategories
 

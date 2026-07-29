@@ -1,7 +1,7 @@
 <template>
   <div class="module-page snapshot-outbox-page">
     <CrudQueryCard :model="query" @search="load" @reset="reset">
-      <el-form-item class="operation-query-item" :label="t('itick.snapshotId')">
+      <el-form-item class="operation-query-item" :label="t('market.snapshotId')">
         <el-input v-model="query.snapshotId" clearable class="snapshot-id-control" />
       </el-form-item>
       <el-form-item class="operation-query-item" :label="t('common.status')">
@@ -20,7 +20,7 @@
         <el-table-column prop="id" :label="t('common.id')" width="80" />
         <el-table-column
           prop="snapshotId"
-          :label="t('itick.snapshotId')"
+          :label="t('market.snapshotId')"
           min-width="560"
           show-overflow-tooltip
         />
@@ -31,20 +31,20 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="retryCount" :label="t('itick.retryCount')" width="100" />
-        <el-table-column :label="t('itick.redisPublishedAt')" min-width="180">
+        <el-table-column prop="retryCount" :label="t('market.retryCount')" width="100" />
+        <el-table-column :label="t('market.redisPublishedAt')" min-width="180">
           <template #default="{ row }">
             {{ formatTime(row.redisPublishedAt) }}
           </template>
         </el-table-column>
-        <el-table-column :label="t('itick.optionPublishedAt')" min-width="180">
+        <el-table-column :label="t('market.optionPublishedAt')" min-width="180">
           <template #default="{ row }">
             {{ formatTime(row.eventPublishedAt) }}
           </template>
         </el-table-column>
         <el-table-column
           prop="lastErrorMsg"
-          :label="t('itick.lastErrorMsg')"
+          :label="t('market.lastErrorMsg')"
           min-width="220"
           show-overflow-tooltip
         />
@@ -57,20 +57,20 @@
           <template #default="{ row }">
             <el-button
               v-if="row.status === 4 || row.status === 5"
-              v-perm="'itick:snapshot-outbox:retry'"
+              v-perm="'market:snapshot-outbox:retry'"
               link
               type="warning"
               @click="retry(row)"
             >
-              {{ t('itick.retry') }}
+              {{ t('market.retry') }}
             </el-button>
             <el-button
-              v-perm="'itick:authoritative-snapshot:revoke'"
+              v-perm="'market:authoritative-snapshot:revoke'"
               link
               type="danger"
               @click="openRevoke(row)"
             >
-              {{ t('itick.revoke') }}
+              {{ t('market.revoke') }}
             </el-button>
           </template>
         </el-table-column>
@@ -85,15 +85,15 @@
         @limit-change="resetAndLoad(load)"
       />
     </el-card>
-    <el-dialog v-model="revokeVisible" :title="t('itick.revokeSnapshot')" width="560px">
+    <el-dialog v-model="revokeVisible" :title="t('market.revokeSnapshot')" width="560px">
       <el-form :model="revokeForm" label-width="180px">
-        <el-form-item :label="t('itick.snapshotId')">
+        <el-form-item :label="t('market.snapshotId')">
           <el-input v-model="revokeForm.snapshotId" disabled />
         </el-form-item>
-        <el-form-item :label="t('itick.replacementSnapshotId')">
+        <el-form-item :label="t('market.replacementSnapshotId')">
           <el-input v-model="revokeForm.replacementSnapshotId" />
         </el-form-item>
-        <el-form-item :label="t('itick.reason')" required>
+        <el-form-item :label="t('market.reason')" required>
           <el-input v-model="revokeForm.reason" type="textarea" :rows="3" />
         </el-form-item>
       </el-form>
@@ -101,7 +101,7 @@
         <el-button @click="revokeVisible = false">
           {{ t('common.cancel') }}
         </el-button><el-button type="danger" :loading="revoking" @click="revoke">
-          {{ t('itick.revoke') }}
+          {{ t('market.revoke') }}
         </el-button>
       </template>
     </el-dialog>
@@ -119,7 +119,7 @@ import {
   apiRetrySnapshotOutbox,
   apiRevokeAuthoritativeSnapshot,
   type SnapshotOutbox,
-} from '@/api/itick/price-engine'
+} from '@/api/market/price-engine'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
@@ -131,7 +131,7 @@ const loading = ref(false),
 const query = reactive({ status: undefined as number | undefined, snapshotId: '' })
 const revokeForm = reactive({ snapshotId: '', replacementSnapshotId: '', reason: '' })
 const statuses = computed(() =>
-  [1, 2, 3, 4, 5].map((value) => ({ value, label: t(`itick.outboxStatus${value}`) })),
+  [1, 2, 3, 4, 5].map((value) => ({ value, label: t(`market.outboxStatus${value}`) })),
 )
 function statusLabel(status: number) {
   return statuses.value.find((item) => item.value === status)?.label || String(status)
@@ -168,7 +168,7 @@ function reset() {
   resetAndLoad(load)
 }
 async function retry(row: SnapshotOutbox) {
-  await ElMessageBox.confirm(t('itick.retryOutboxConfirm'))
+  await ElMessageBox.confirm(t('market.retryOutboxConfirm'))
   await apiRetrySnapshotOutbox(row.id)
   ElMessage.success(t('common.success'))
   load()
@@ -179,7 +179,7 @@ function openRevoke(row: SnapshotOutbox) {
 }
 async function revoke() {
   if (!revokeForm.reason.trim()) {
-    ElMessage.warning(t('itick.revokeReasonRequired'))
+    ElMessage.warning(t('market.revokeReasonRequired'))
     return
   }
   revoking.value = true

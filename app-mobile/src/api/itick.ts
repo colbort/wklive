@@ -1,1 +1,1 @@
-export * from '@wklive/api/api/itick'
+export * from '@wklive/api/api/market'

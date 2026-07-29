@@ -477,7 +477,7 @@ require_evidence_file "$DR_EXERCISE_REPORT" "$DR_EXERCISE_REPORT_SHA256" "produc
 
 printf '\nLive deploy checks\n'
 if docker compose -f "$COMPOSE_FILE" ps >/dev/null 2>&1; then
-  for service_name in mysql etcd itick-rpc trade-rpc asset-rpc system-rpc; do
+  for service_name in mysql etcd market-rpc trade-rpc asset-rpc system-rpc; do
     check_service "$service_name"
   done
   for service_name in db-init config-seed kafka-init; do

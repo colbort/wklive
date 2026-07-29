@@ -116,6 +116,6 @@ replace wklive/proto/common => ../../proto/common
 
 replace wklive/proto/asset => ../../proto/asset
 
-replace wklive/proto/itick => ../../proto/itick
+replace wklive/proto/market => ../../proto/market
 
 replace wklive/common => ../../common

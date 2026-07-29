@@ -183,7 +183,7 @@ func (b *MarketDataCache) Set(ctx context.Context, msg ClientMessage, payload an
 
 func klineCachePriority(source string) int {
 	switch source {
-	case "itick_ws":
+	case "market_ws":
 		return 300
 	case "derived":
 		return 200
@@ -242,9 +242,9 @@ func (b *MarketDataCache) ReadMany(ctx context.Context, msgs []ClientMessage) ([
 func marketDataKey(msg ClientMessage) string {
 	msg = NormalizeClientMessage(msg)
 	if msg.Topic == TopicKline {
-		return fmt.Sprintf("itick:v1:kline:%s:%s:%s:%s", msg.CategoryCode, msg.Market, msg.Symbol, msg.Interval)
+		return fmt.Sprintf("market:v1:kline:%s:%s:%s:%s", msg.CategoryCode, msg.Market, msg.Symbol, msg.Interval)
 	}
-	return fmt.Sprintf("itick:%s:%s:%s:%s", msg.Topic, msg.CategoryCode, msg.Market, msg.Symbol)
+	return fmt.Sprintf("market:%s:%s:%s:%s", msg.Topic, msg.CategoryCode, msg.Market, msg.Symbol)
 }
 
 func marketDataTTL(topic Topic) time.Duration {

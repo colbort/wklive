@@ -16,7 +16,7 @@ import menuIcon from '../../assets/home/menu.svg'
 import clientDownloadIcon from '../../assets/home/link_1.svg'
 import supportIcon from '../../assets/home/link_2.svg'
 import languageIcon from '../../assets/home/link_4.svg'
-import { ItickTenantProduct } from '@wklive/api/types/itick'
+import { MarketTenantProduct } from '@wklive/api/types/market'
 
 type NavItem = {
   path: RouteLocationRaw
@@ -60,7 +60,7 @@ function buildCategoryPath(categoryCode: string) {
   }
 }
 
-function buildProductPath(product: ItickTenantProduct) {
+function buildProductPath(product: MarketTenantProduct) {
   return {
     path: '/markets',
     query: {
@@ -76,7 +76,7 @@ function getCoinClass(index: number) {
   return coinClasses[index % coinClasses.length]
 }
 
-function mapProductsToPreviewItems(products: ItickTenantProduct[], startIndex = 0) {
+function mapProductsToPreviewItems(products: MarketTenantProduct[], startIndex = 0) {
   return products.map((product, index) => ({
     path: buildProductPath(product),
     symbol: product.symbol,

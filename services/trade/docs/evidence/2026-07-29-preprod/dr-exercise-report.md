@@ -7,7 +7,7 @@
 - 源数据库：`wklive`
 - 恢复目标：脚本生成且预检不存在的 `wklive_dr_verify_*` 临时数据库
 - 恢复目标处置：逐表核验完成后已删除
-- 停写范围：`itick-rpc`、`trade-rpc`、`asset-rpc`、`system-rpc`
+- 停写范围：`market-rpc`、`trade-rpc`、`asset-rpc`、`system-rpc`
 - 操作原则：不覆盖源库，不删除持久卷，自动强平和全仓开关保持关闭
 
 ## 2. 备份与恢复证据
@@ -42,8 +42,8 @@
 | `t_contract_funding_batch` | 1 | 1 | PASS |
 | `t_contract_delivery_batch` | 1 | 1 | PASS |
 | `t_contract_reconciliation_issue` | 4 | 4 | PASS |
-| `t_itick_authoritative_snapshot` | 1,724,478 | 1,724,478 | PASS |
-| `t_itick_snapshot_outbox` | 26,255 | 26,255 | PASS |
+| `t_market_authoritative_snapshot` | 1,724,478 | 1,724,478 | PASS |
+| `t_market_snapshot_outbox` | 26,255 | 26,255 | PASS |
 
 全部 143 张基础表均使用精确 `COUNT(*)` 比较，不使用
 `information_schema.TABLES.table_rows` 的估算值。

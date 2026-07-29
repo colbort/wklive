@@ -59,7 +59,7 @@ export type SystemCore = {
   app_must_google_f2a: number // 客户端必须开启google验证码：1启用 2禁用
 }
 
-export type ItickConfig = {
+export type MarketConfig = {
   api_url: string // ITICK API地址
   api_token: string // ITICK API密钥
   ws_url: string // ITICK WebSocket地址

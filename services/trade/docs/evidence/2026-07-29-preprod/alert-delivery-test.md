@@ -25,7 +25,7 @@
 
 原始水位样本：`alert-outbox-samples.tsv`
 
-原始 iTick 日志：`alert-itick.log`
+原始 iTick 日志：`alert-market.log`
 
 - 水位样本 SHA-256：
   `1f02f46f2683cf6a65f081387084877743dc7661f3391e72dd5593a970efdafc`

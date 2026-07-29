@@ -19,18 +19,18 @@ import { getLocale, useI18n } from '@/i18n'
 import type { Interval } from '@/types/core'
 import type {
   DepthPayload,
-  ItickTenantProduct,
+  MarketTenantProduct,
   KlinePayload,
   QuotePayload,
   TickPayload,
-} from '@/types/itick'
+} from '@/types/market'
 import QuoteRow from './QuoteRow.vue'
 import type { MarketRow } from './types'
 
 type DetailTab = 'market' | 'depth' | 'trades'
 
 const props = defineProps<{
-  products: ItickTenantProduct[]
+  products: MarketTenantProduct[]
   rows: MarketRow[]
   categoryName: string
   selectedProductKey: string
@@ -139,7 +139,7 @@ const klineChartData = computed<KLineData[]>(() =>
     })),
 )
 
-function productKey(product: Pick<ItickTenantProduct, 'market' | 'symbol'>) {
+function productKey(product: Pick<MarketTenantProduct, 'market' | 'symbol'>) {
   return `${String(product.market || '').toUpperCase()}::${String(product.symbol || '').toUpperCase()}`
 }
 

@@ -5,11 +5,11 @@ import TradeOrdersPanel from '@/components/trades/OrdersPanel.vue'
 import TradeSubmitPanel from '@/components/trades/SubmitPanel.vue'
 import type {
   DepthPayload,
-  ItickTenantCategory,
-  ItickTenantProduct,
+  MarketTenantCategory,
+  MarketTenantProduct,
   QuotePayload,
   TickPayload,
-} from '@/types/itick'
+} from '@/types/market'
 import type {
   TradeOrder,
   TradeSymbol,
@@ -21,7 +21,7 @@ import type {
 
 type ProductSheetRow = {
   key: string
-  product: ItickTenantProduct
+  product: MarketTenantProduct
   price: string
   change: string
   direction: 'up' | 'down' | 'flat'
@@ -43,8 +43,8 @@ type TradeSymbolDetail = {
 }
 
 defineProps<{
-  selectedCategory: ItickTenantCategory | null
-  selectedProduct: ItickTenantProduct | null
+  selectedCategory: MarketTenantCategory | null
+  selectedProduct: MarketTenantProduct | null
   selectedProductKey: string
   tradeMarketMode: TradeMarketMode
   tradeMarketModeLabel: string
@@ -90,7 +90,7 @@ defineProps<{
 const emit = defineEmits<{
   (e: 'open-product-menu'): void
   (e: 'close-product-sheet'): void
-  (e: 'select-product', product: ItickTenantProduct): void
+  (e: 'select-product', product: MarketTenantProduct): void
   (e: 'select-trade-market-mode', mode: TradeMarketMode): void
   (e: 'update:orderMode', value: 'market' | 'limit'): void
   (e: 'update:tradePrice', value: string): void

@@ -14,8 +14,8 @@ func CheckConfig(key string, value string) error {
 		var systemCore system.SystemCore
 		return json.Unmarshal([]byte(value), &systemCore)
 	case system.SysConfigType_ITICK_CONFIG.String():
-		var itickConfig system.ItickConfig
-		return json.Unmarshal([]byte(value), &itickConfig)
+		var marketConfig system.MarketConfig
+		return json.Unmarshal([]byte(value), &marketConfig)
 	case system.SysConfigType_RECHARGE_CONFIG.String():
 		var rechargeConfig system.RechargeConfig
 		return json.Unmarshal([]byte(value), &rechargeConfig)

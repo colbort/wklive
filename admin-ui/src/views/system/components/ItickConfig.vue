@@ -1,5 +1,5 @@
 <template>
-  <div class="itick-config">
+  <div class="market-config">
     <el-form-item :label="t('system.apiUrl')" prop="api_url">
       <el-input
         v-model="form.api_url"
@@ -43,18 +43,18 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { ItickConfig } from '@/services/system/ConfigService'
+import type { MarketConfig } from '@/services/system/ConfigService'
 
 const { t } = useI18n()
 
 interface Props {
-  modelValue: ItickConfig
+  modelValue: MarketConfig
 }
 
 const props = defineProps<Props>()
 
 const emit = defineEmits<{
-  'update:modelValue': [value: ItickConfig]
+  'update:modelValue': [value: MarketConfig]
 }>()
 
 const form = computed({

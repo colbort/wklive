@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"wklive/proto/common"
-	"wklive/proto/itick"
 	"wklive/proto/liquidity"
 	"wklive/services/liquidity/internal/svc"
 	"wklive/services/liquidity/models"
@@ -120,8 +119,8 @@ func prepareInternalQuoteCycle(ctx context.Context, svcCtx *svc.ServiceContext, 
 }
 
 func loadReferenceQuote(ctx context.Context, svcCtx *svc.ServiceContext, config *models.TLiquiditySymbolConfig, targetTime int64) (*referenceQuote, error) {
-	if svcCtx.ItickClient == nil {
-		return nil, errors.New("itick client is not configured")
+	if svcCtx.MarketClient == nil {
+		return nil, errors.New("market client is not configured")
 	}
 	kind := strings.ToUpper(strings.TrimSpace(config.ReferencePriceKind))
 	if kind == "" || kind == "MARK_PRICE" {
@@ -147,7 +146,7 @@ func loadReferenceQuote(ctx context.Context, svcCtx *svc.ServiceContext, config 
 	candidates := make([]*referenceQuote, 0, len(sources))
 	for _, source := range sources {
 		category, market, symbol := parseReferenceSource(source, config.Symbol)
-		resp, err := svcCtx.ItickClient.GetAuthoritativeSnapshot(ctx, &itick.GetAuthoritativeSnapshotReq{
+		resp, err := svcCtx.MarketClient.GetAuthoritativeSnapshot(ctx, &market.GetAuthoritativeSnapshotReq{
 			Authority: authority, CategoryCode: category, Market: market, Symbol: symbol,
 			TargetTime: targetTime, MaxLookbackMs: validity, SnapshotKind: kind,
 		})

@@ -4,22 +4,22 @@ import (
 	"context"
 
 	"wklive/proto/common"
-	"wklive/proto/itick"
+	"wklive/proto/market"
 
 	"google.golang.org/grpc"
 )
 
 type authoritativeSnapshotClientStub struct {
-	request *itick.GetAuthoritativeSnapshotReq
+	request *market.GetAuthoritativeSnapshotReq
 }
 
-func (s *authoritativeSnapshotClientStub) GetAuthoritativeSnapshot(_ context.Context, in *itick.GetAuthoritativeSnapshotReq, _ ...grpc.CallOption) (*itick.GetAuthoritativeSnapshotResp, error) {
+func (s *authoritativeSnapshotClientStub) GetAuthoritativeSnapshot(_ context.Context, in *market.GetAuthoritativeSnapshotReq, _ ...grpc.CallOption) (*market.GetAuthoritativeSnapshotResp, error) {
 	s.request = in
-	return &itick.GetAuthoritativeSnapshotResp{
+	return &market.GetAuthoritativeSnapshotResp{
 		Base: &common.RespBase{Code: 200},
-		Data: &itick.AuthoritativeSnapshot{
+		Data: &market.AuthoritativeSnapshot{
 			SnapshotId:        "snapshot-1",
-			Authority:         "itick-ws",
+			Authority:         "market-ws",
 			SnapshotKind:      "FINAL_QUOTE",
 			CategoryCode:      "crypto",
 			Market:            "BA",

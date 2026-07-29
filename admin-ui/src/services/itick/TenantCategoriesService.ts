@@ -2,14 +2,14 @@ import type { RespBase, BaseService, OptionGroup } from '@/services'
 import { getCoreOptions } from '@/stores/core'
 
 import {
-  apiItickTenantCategoryBatchUpsert,
-  apiItickTenantCategoryCreate,
-  apiItickTenantCategoryDetail,
-  apiItickTenantCategoryList,
-  apiItickTenantCategoryUpdate,
-} from '@/api/itick/tenant-categories'
+  apiMarketTenantCategoryBatchUpsert,
+  apiMarketTenantCategoryCreate,
+  apiMarketTenantCategoryDetail,
+  apiMarketTenantCategoryList,
+  apiMarketTenantCategoryUpdate,
+} from '@/api/market/tenant-categories'
 
-export type ItickTenantCategory = {
+export type MarketTenantCategory = {
   id: number
   tenantId: number
   categoryId: number
@@ -72,24 +72,24 @@ export class TenantCategoriesService implements BaseService {
     return getCoreOptions()
   }
 
-  async getList(params: ListTenantCategoriesReq): Promise<RespBase<ItickTenantCategory[]>> {
-    return apiItickTenantCategoryList(params)
+  async getList(params: ListTenantCategoriesReq): Promise<RespBase<MarketTenantCategory[]>> {
+    return apiMarketTenantCategoryList(params)
   }
 
   async create(params: CreateTenantCategoryReq): Promise<RespBase> {
-    return apiItickTenantCategoryCreate(params)
+    return apiMarketTenantCategoryCreate(params)
   }
 
   async update(id: string | number, params: Partial<UpdateTenantCategoryReq>): Promise<RespBase> {
-    return apiItickTenantCategoryUpdate({ id: Number(id), ...params } as UpdateTenantCategoryReq)
+    return apiMarketTenantCategoryUpdate({ id: Number(id), ...params } as UpdateTenantCategoryReq)
   }
 
-  async detail(id: number, tenantId: number): Promise<RespBase<ItickTenantCategory>> {
-    return apiItickTenantCategoryDetail(id, tenantId)
+  async detail(id: number, tenantId: number): Promise<RespBase<MarketTenantCategory>> {
+    return apiMarketTenantCategoryDetail(id, tenantId)
   }
 
   async batchUpsert(params: BatchUpsertTenantCategoriesReq): Promise<RespBase> {
-    return apiItickTenantCategoryBatchUpsert(params)
+    return apiMarketTenantCategoryBatchUpsert(params)
   }
 }
 

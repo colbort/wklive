@@ -122,7 +122,7 @@ make gen
 make gen-model
 ```
 
-生成 MongoDB 消息 model 时，可以单独使用 goctl 的 Mongo model 能力，或参考 `services/itick/models` 里的 Mongo model 写法手动维护。消息模型建议放在 `services/chat/models` 下，和 MySQL model 分文件管理。
+生成 MongoDB 消息 model 时，可以单独使用 goctl 的 Mongo model 能力，或参考 `services/market/models` 里的 Mongo model 写法手动维护。消息模型建议放在 `services/chat/models` 下，和 MySQL model 分文件管理。
 
 ## 启动
 

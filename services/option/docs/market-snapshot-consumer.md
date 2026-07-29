@@ -1,11 +1,11 @@
 # Option 权威行情 Kafka 消费
 
 Option 通过 consumer group `option-market-quote-v1` 消费
-`market.authoritative-snapshot.v1`，不再接受 Itick 的 `SyncMarketQuote` RPC。
+`market.authoritative-snapshot.v1`，不再接受 Market 的 `SyncMarketQuote` RPC。
 
 ## 一致性与幂等
 
-- Itick 使用 Outbox 保证行情事件最终发布。
+- Market 使用 Outbox 保证行情事件最终发布。
 - Kafka 提供至少一次投递，重复事件是正常情况。
 - Option 以 `(snapshot_id, contract_id)` 为唯一键逐合约 Claim。
 - Claim、当前行情更新和行情快照写入处于同一个数据库事务。

@@ -1,11 +1,11 @@
 <template>
-  <div class="itick-tenant-products module-page">
+  <div class="market-tenant-products module-page">
     <CrudQueryCard :model="queryParams" @search="loadList" @reset="resetQuery">
       <el-form-item :label="t('common.tenantId')">
         <TenantSelect v-model="queryParams.tenantId" class="tenant-select-filter" />
       </el-form-item>
 
-      <el-form-item :label="t('itick.categoryType')">
+      <el-form-item :label="t('market.categoryType')">
         <el-select v-model="queryParams.categoryType" clearable style="width: 180px">
           <el-option
             v-for="item in categoryTypeOptions"
@@ -16,17 +16,17 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item :label="t('itick.market')">
+      <el-form-item :label="t('market.market')">
         <el-input
           v-model="queryParams.market"
-          :placeholder="t('itick.pleaseInputMarket')"
+          :placeholder="t('market.pleaseInputMarket')"
           clearable
           style="width: 180px"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
 
-      <el-form-item :label="t('itick.keyword')">
+      <el-form-item :label="t('market.keyword')">
         <el-input
           v-model="queryParams.keyword"
           placeholder="name / symbol / code"
@@ -36,7 +36,7 @@
         />
       </el-form-item>
 
-      <el-form-item :label="t('itick.enabledStatus')">
+      <el-form-item :label="t('market.enabledStatus')">
         <el-select v-model="queryParams.enabled" clearable style="width: 180px">
           <el-option
             v-for="item in enabledOptions"
@@ -47,7 +47,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item :label="t('itick.appVisible')">
+      <el-form-item :label="t('market.appVisible')">
         <el-select v-model="queryParams.appVisible" clearable style="width: 180px">
           <el-option
             v-for="item in visibleOptions"
@@ -59,25 +59,25 @@
       </el-form-item>
 
       <template #actions>
-        <el-button v-perm="'itick:tenant-itick:add'" type="primary" @click="handleAdd">
+        <el-button v-perm="'market:tenant-market:add'" type="primary" @click="handleAdd">
           {{ t('common.add') }}
         </el-button>
         <el-button
-          v-perm="'itick:tenant-itick:batchUpsert'"
+          v-perm="'market:tenant-market:batchUpsert'"
           :disabled="!queryParams.tenantId"
           @click="openBatchDialog"
         >
           <el-icon><EditPen /></el-icon>
-          {{ t('itick.batchTenantProducts') }}
+          {{ t('market.batchTenantProducts') }}
         </el-button>
         <el-button
-          v-perm="'itick:tenant-display:init'"
+          v-perm="'market:tenant-display:init'"
           :disabled="!queryParams.tenantId"
           type="warning"
           @click="openInitDialog"
         >
           <el-icon><Operation /></el-icon>
-          {{ t('itick.initDisplay') }}
+          {{ t('market.initDisplay') }}
         </el-button>
       </template>
     </CrudQueryCard>
@@ -86,20 +86,20 @@
       <el-table v-loading="loading" :data="list" stripe>
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="tenantId" :label="t('common.tenantId')" width="100" />
-        <el-table-column prop="productId" :label="t('itick.productId')" width="100" />
-        <el-table-column :label="t('itick.categoryType')" width="120">
+        <el-table-column prop="productId" :label="t('market.productId')" width="100" />
+        <el-table-column :label="t('market.categoryType')" width="120">
           <template #default="{ row }">
             {{ getOptionValueLabel(optionGroups, 'categoryType', row.categoryType, t) }}
           </template>
         </el-table-column>
-        <el-table-column prop="categoryName" :label="t('itick.categoryName')" min-width="120" />
-        <el-table-column prop="market" :label="t('itick.market')" width="100" />
-        <el-table-column prop="symbol" :label="t('itick.symbol')" min-width="120" />
-        <el-table-column prop="code" :label="t('itick.code')" min-width="120" />
-        <el-table-column prop="name" :label="t('itick.name')" min-width="140" />
-        <el-table-column prop="displayName" :label="t('itick.displayName')" min-width="140" />
+        <el-table-column prop="categoryName" :label="t('market.categoryName')" min-width="120" />
+        <el-table-column prop="market" :label="t('market.market')" width="100" />
+        <el-table-column prop="symbol" :label="t('market.symbol')" min-width="120" />
+        <el-table-column prop="code" :label="t('market.code')" min-width="120" />
+        <el-table-column prop="name" :label="t('market.name')" min-width="140" />
+        <el-table-column prop="displayName" :label="t('market.displayName')" min-width="140" />
 
-        <el-table-column :label="t('itick.enabledStatus')" width="100">
+        <el-table-column :label="t('market.enabledStatus')" width="100">
           <template #default="{ row }">
             <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
               {{ getOptionValueLabel(optionGroups, 'enabled', row.enabled, t) }}
@@ -107,7 +107,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column :label="t('itick.appVisible')" width="100">
+        <el-table-column :label="t('market.appVisible')" width="100">
           <template #default="{ row }">
             <el-tag :type="row.appVisible === 1 ? 'success' : 'warning'">
               {{ getOptionValueLabel(optionGroups, 'visible', row.appVisible, t) }}
@@ -139,7 +139,7 @@
             {{ formatDate(row.createTimes) }}
           </template>
         </el-table-column>
-        <el-table-column :label="t('itick.updateTimes')" min-width="170">
+        <el-table-column :label="t('market.updateTimes')" min-width="170">
           <template #default="{ row }">
             {{ formatDate(row.updateTimes) }}
           </template>
@@ -152,7 +152,7 @@
         >
           <template #default="{ row }">
             <el-button
-              v-perm="'itick:tenant-itick:detail'"
+              v-perm="'market:tenant-market:detail'"
               link
               type="primary"
               @click="handleDetail(row)"
@@ -160,7 +160,7 @@
               {{ t('common.detail') }}
             </el-button>
             <el-button
-              v-perm="'itick:tenant-itick:update'"
+              v-perm="'market:tenant-market:update'"
               link
               type="primary"
               @click="handleEdit(row)"
@@ -184,7 +184,7 @@
 
     <el-dialog
       v-model="formDialogVisible"
-      :title="formMode === 'add' ? t('itick.addTenantProduct') : t('itick.editTenantProduct')"
+      :title="formMode === 'add' ? t('market.addTenantProduct') : t('market.editTenantProduct')"
       width="640px"
     >
       <el-form
@@ -197,7 +197,7 @@
           <TenantSelect v-model="form.tenantId" :disabled="formMode === 'edit'" />
         </el-form-item>
 
-        <el-form-item v-if="formMode === 'add'" :label="t('itick.product')" prop="productId">
+        <el-form-item v-if="formMode === 'add'" :label="t('market.product')" prop="productId">
           <div class="product-field">
             <el-select
               v-model="form.productId"
@@ -207,7 +207,7 @@
               clearable
               :loading="productOptionsLoading"
               :remote-method="handleProductRemoteSearch"
-              :placeholder="t('itick.pleaseSelectProduct')"
+              :placeholder="t('market.pleaseSelectProduct')"
               popper-class="tenant-product-select-popper"
               style="width: 100%"
               @visible-change="handleProductSelectVisibleChange"
@@ -234,12 +234,12 @@
               </template>
             </el-select>
             <el-button @click="openProductPicker('single')">
-              {{ t('itick.selectFromProducts') }}
+              {{ t('market.selectFromProducts') }}
             </el-button>
           </div>
         </el-form-item>
 
-        <el-form-item :label="t('itick.enabledStatus')" prop="enabled">
+        <el-form-item :label="t('market.enabledStatus')" prop="enabled">
           <el-select v-model="form.enabled" style="width: 100%">
             <el-option
               v-for="item in enabledFormOptions"
@@ -250,7 +250,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item :label="t('itick.appVisible')" prop="appVisible">
+        <el-form-item :label="t('market.appVisible')" prop="appVisible">
           <el-select v-model="form.appVisible" style="width: 100%">
             <el-option
               v-for="item in visibleFormOptions"
@@ -261,12 +261,12 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item v-if="formMode === 'edit'" :label="t('itick.displayName')" prop="displayName">
+        <el-form-item v-if="formMode === 'edit'" :label="t('market.displayName')" prop="displayName">
           <el-input
             v-model="form.displayName"
             maxlength="128"
             show-word-limit
-            :placeholder="t('itick.displayName')"
+            :placeholder="t('market.displayName')"
           />
         </el-form-item>
 
@@ -297,7 +297,7 @@
           {{ t('common.cancel') }}
         </el-button>
         <el-button
-          v-perm="formMode === 'add' ? 'itick:tenant-itick:add' : 'itick:tenant-itick:update'"
+          v-perm="formMode === 'add' ? 'market:tenant-market:add' : 'market:tenant-market:update'"
           type="primary"
           :loading="submitLoading"
           @click="submitForm"
@@ -307,7 +307,7 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="detailDialogVisible" :title="t('itick.tenantProductDetail')" width="840px">
+    <el-dialog v-model="detailDialogVisible" :title="t('market.tenantProductDetail')" width="840px">
       <el-descriptions v-loading="detailLoading" :column="2" border>
         <el-descriptions-item label="ID">
           {{ detail.id ?? '-' }}
@@ -315,34 +315,34 @@
         <el-descriptions-item :label="t('common.tenantId')">
           {{ detail.tenantId ?? '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.productId')">
+        <el-descriptions-item :label="t('market.productId')">
           {{ detail.productId ?? '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.categoryType')">
+        <el-descriptions-item :label="t('market.categoryType')">
           {{ getOptionValueLabel(optionGroups, 'categoryType', detail.categoryType, t) || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.categoryName')">
+        <el-descriptions-item :label="t('market.categoryName')">
           {{ detail.categoryName || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.market')">
+        <el-descriptions-item :label="t('market.market')">
           {{ detail.market || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.symbol')">
+        <el-descriptions-item :label="t('market.symbol')">
           {{ detail.symbol || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.code')">
+        <el-descriptions-item :label="t('market.code')">
           {{ detail.code || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.name')">
+        <el-descriptions-item :label="t('market.name')">
           {{ detail.name || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.displayName')">
+        <el-descriptions-item :label="t('market.displayName')">
           {{ detail.displayName || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.baseCoin')">
+        <el-descriptions-item :label="t('market.baseCoin')">
           {{ detail.baseCoin || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.quoteCoin')">
+        <el-descriptions-item :label="t('market.quoteCoin')">
           {{ detail.quoteCoin || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('common.icon')">
@@ -358,10 +358,10 @@
           </div>
           <span v-else>-</span>
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.enabledStatus')">
+        <el-descriptions-item :label="t('market.enabledStatus')">
           {{ getOptionValueLabel(optionGroups, 'enabled', detail.enabled, t) || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.appVisible')">
+        <el-descriptions-item :label="t('market.appVisible')">
           {{ getOptionValueLabel(optionGroups, 'visible', detail.appVisible, t) || '-' }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('common.sort')">
@@ -373,7 +373,7 @@
         <el-descriptions-item :label="t('common.createTimes')">
           {{ formatDate(detail.createTimes ?? 0) }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.updateTimes')">
+        <el-descriptions-item :label="t('market.updateTimes')">
           {{ formatDate(detail.updateTimes ?? 0) }}
         </el-descriptions-item>
       </el-descriptions>
@@ -385,20 +385,20 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="batchDialogVisible" :title="t('itick.batchTenantProducts')" width="980px">
+    <el-dialog v-model="batchDialogVisible" :title="t('market.batchTenantProducts')" width="980px">
       <div class="batch-toolbar">
         <div class="batch-tip">
-          {{ t('itick.batchSaveTip') }}
+          {{ t('market.batchSaveTip') }}
         </div>
         <div class="batch-actions">
           <el-button type="primary" @click="openProductPicker('batch')">
-            {{ t('itick.selectProducts') }}
+            {{ t('market.selectProducts') }}
           </el-button>
           <el-button @click="appendBatchRow">
             {{ t('common.add') }}
           </el-button>
           <el-button
-            v-perm="'itick:tenant-itick:batchUpsert'"
+            v-perm="'market:tenant-market:batchUpsert'"
             type="primary"
             :loading="batchSubmitting"
             @click="submitBatch"
@@ -409,7 +409,7 @@
       </div>
 
       <el-table :data="batchRows" border>
-        <el-table-column :label="t('itick.product')" min-width="260">
+        <el-table-column :label="t('market.product')" min-width="260">
           <template #default="{ row }">
             <el-select
               v-model="row.productId"
@@ -419,7 +419,7 @@
               clearable
               :loading="productOptionsLoading"
               :remote-method="handleProductRemoteSearch"
-              :placeholder="t('itick.pleaseSelectProduct')"
+              :placeholder="t('market.pleaseSelectProduct')"
               popper-class="tenant-product-select-popper"
               style="width: 100%"
               @visible-change="handleProductSelectVisibleChange"
@@ -447,7 +447,7 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column :label="t('itick.enabledStatus')" min-width="130">
+        <el-table-column :label="t('market.enabledStatus')" min-width="130">
           <template #default="{ row }">
             <el-select v-model="row.enabled" style="width: 100%">
               <el-option
@@ -459,7 +459,7 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column :label="t('itick.appVisible')" min-width="130">
+        <el-table-column :label="t('market.appVisible')" min-width="130">
           <template #default="{ row }">
             <el-select v-model="row.appVisible" style="width: 100%">
               <el-option
@@ -504,7 +504,7 @@
 
     <el-dialog
       v-model="productPickerVisible"
-      :title="t('itick.productPicker')"
+      :title="t('market.productPicker')"
       width="980px"
       class="product-picker-dialog"
     >
@@ -512,7 +512,7 @@
         <el-select
           v-model="productOptionFilters.categoryType"
           clearable
-          :placeholder="t('itick.categoryType')"
+          :placeholder="t('market.categoryType')"
           style="width: 180px"
           @change="reloadProductOptions"
         >
@@ -526,14 +526,14 @@
         <el-input
           v-model="productOptionFilters.market"
           clearable
-          :placeholder="t('itick.pleaseInputMarket')"
+          :placeholder="t('market.pleaseInputMarket')"
           style="width: 160px"
           @keyup.enter="reloadProductOptions"
         />
         <el-input
           v-model="productOptionSymbol"
           clearable
-          :placeholder="t('itick.symbol')"
+          :placeholder="t('market.symbol')"
           style="width: 220px"
           @keyup.enter="reloadProductOptions"
         />
@@ -544,7 +544,7 @@
           {{ t('common.reset') }}
         </el-button>
         <span class="product-picker-count">
-          {{ t('itick.selectedProducts', { count: selectedPickerProducts.length }) }}
+          {{ t('market.selectedProducts', { count: selectedPickerProducts.length }) }}
         </span>
       </div>
 
@@ -559,19 +559,19 @@
       >
         <el-table-column type="selection" width="48" reserve-selection />
         <el-table-column prop="id" label="ID" width="90" />
-        <el-table-column prop="categoryName" :label="t('itick.categoryName')" min-width="130" />
-        <el-table-column prop="market" :label="t('itick.market')" width="90" />
-        <el-table-column prop="symbol" :label="t('itick.symbol')" min-width="130" />
-        <el-table-column prop="name" :label="t('itick.name')" min-width="150" />
-        <el-table-column prop="displayName" :label="t('itick.displayName')" min-width="150" />
-        <el-table-column :label="t('itick.enabledStatus')" width="100">
+        <el-table-column prop="categoryName" :label="t('market.categoryName')" min-width="130" />
+        <el-table-column prop="market" :label="t('market.market')" width="90" />
+        <el-table-column prop="symbol" :label="t('market.symbol')" min-width="130" />
+        <el-table-column prop="name" :label="t('market.name')" min-width="150" />
+        <el-table-column prop="displayName" :label="t('market.displayName')" min-width="150" />
+        <el-table-column :label="t('market.enabledStatus')" width="100">
           <template #default="{ row }">
             <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
               {{ getOptionValueLabel(optionGroups, 'enabled', row.enabled, t) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column :label="t('itick.appVisible')" width="100">
+        <el-table-column :label="t('market.appVisible')" width="100">
           <template #default="{ row }">
             <el-tag :type="row.appVisible === 1 ? 'success' : 'warning'">
               {{ getOptionValueLabel(optionGroups, 'visible', row.appVisible, t) }}
@@ -600,17 +600,17 @@
           :disabled="!selectedPickerProducts.length"
           @click="confirmProductPicker"
         >
-          {{ t('itick.addSelectedProducts') }}
+          {{ t('market.addSelectedProducts') }}
         </el-button>
       </template>
     </el-dialog>
 
-    <el-dialog v-model="initDialogVisible" :title="t('itick.initTenantDisplay')" width="520px">
+    <el-dialog v-model="initDialogVisible" :title="t('market.initTenantDisplay')" width="520px">
       <el-form label-width="110px">
         <el-form-item :label="t('common.tenantId')">
           <TenantSelect v-model="initForm.tenantId" />
         </el-form-item>
-        <el-form-item :label="t('itick.overwriteExistingConfig')">
+        <el-form-item :label="t('market.overwriteExistingConfig')">
           <el-radio-group v-model="initForm.overwrite">
             <el-radio :value="0">
               {{ t('common.no') }}
@@ -627,12 +627,12 @@
           {{ t('common.cancel') }}
         </el-button>
         <el-button
-          v-perm="'itick:tenant-display:init'"
+          v-perm="'market:tenant-display:init'"
           type="primary"
           :loading="initSubmitting"
           @click="submitInit"
         >
-          {{ t('itick.startInit') }}
+          {{ t('market.startInit') }}
         </el-button>
       </template>
     </el-dialog>
@@ -651,14 +651,14 @@ import { buildSystemAssetUrl, useSystemCore } from '@/composables/useSystemCore'
 import type { OptionGroup } from '@/services'
 import {
   productsService,
-  type ItickProduct as BaseItickProduct,
-} from '@/services/itick/ProductsService'
+  type MarketProduct as BaseMarketProduct,
+} from '@/services/market/ProductsService'
 import {
   tenantProductsService,
-  type ItickTenantProduct,
+  type MarketTenantProduct,
   type ListTenantProductsReq,
   type TenantProductItem,
-} from '@/services/itick/TenantProductsService'
+} from '@/services/market/TenantProductsService'
 import { formatDate } from '@/utils'
 import {
   findFormOptionGroup,
@@ -717,9 +717,9 @@ const {
   },
 })
 
-const list = ref<ItickTenantProduct[]>([])
-const detail = ref<Partial<ItickTenantProduct>>({})
-const productOptions = ref<BaseItickProduct[]>([])
+const list = ref<MarketTenantProduct[]>([])
+const detail = ref<Partial<MarketTenantProduct>>({})
+const productOptions = ref<BaseMarketProduct[]>([])
 const productOptionsLoading = ref(false)
 const productOptionSymbol = ref('')
 const productOptionPagination = reactive({
@@ -748,7 +748,7 @@ const productPickerVisible = ref(false)
 const formMode = ref<'add' | 'edit'>('add')
 const productPickerMode = ref<'single' | 'batch'>('batch')
 const batchRows = ref<TenantProductItem[]>([])
-const selectedPickerProductMap = reactive(new Map<number, BaseItickProduct>())
+const selectedPickerProductMap = reactive(new Map<number, BaseMarketProduct>())
 const selectedPickerProducts = computed(() => Array.from(selectedPickerProductMap.values()))
 const productPickerTableRef = ref()
 const categoryTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'categoryType'))
@@ -764,10 +764,10 @@ const initForm = reactive({
 let productOptionsScrollEl: HTMLElement | null = null
 
 const rules: FormRules<FormData> = {
-  tenantId: [{ required: true, message: t('itick.pleaseInputTenantId'), trigger: 'blur' }],
-  productId: [{ required: true, message: t('itick.pleaseSelectProduct'), trigger: 'change' }],
-  enabled: [{ required: true, message: t('itick.pleaseSelectEnabledStatus'), trigger: 'change' }],
-  appVisible: [{ required: true, message: t('itick.pleaseSelectAppVisible'), trigger: 'change' }],
+  tenantId: [{ required: true, message: t('market.pleaseInputTenantId'), trigger: 'blur' }],
+  productId: [{ required: true, message: t('market.pleaseSelectProduct'), trigger: 'change' }],
+  enabled: [{ required: true, message: t('market.pleaseSelectEnabledStatus'), trigger: 'change' }],
+  appVisible: [{ required: true, message: t('market.pleaseSelectAppVisible'), trigger: 'change' }],
 }
 
 const cleanedQueryParams = computed<ListTenantProductsReq>(() => {
@@ -804,7 +804,7 @@ const loadList = async () => {
     list.value = res?.data || []
     updateFromResponse(res)
   }).catch(() => {
-    ElMessage.error(t('itick.loadFailed'))
+    ElMessage.error(t('market.loadFailed'))
   })
 }
 
@@ -813,7 +813,7 @@ const loadOptions = async () => {
     const res = await tenantProductsService.getOptions()
     optionGroups.value = res.data || []
   } catch {
-    ElMessage.error(t('itick.loadOptionsFailed'))
+    ElMessage.error(t('market.loadOptionsFailed'))
   }
 }
 
@@ -852,7 +852,7 @@ const loadProductOptions = async (
     productOptionPagination.nextCursor = res.nextCursor
     productOptionPagination.prevCursor = res.prevCursor
   } catch {
-    ElMessage.error(t('itick.loadOptionsFailed'))
+    ElMessage.error(t('market.loadOptionsFailed'))
   } finally {
     productOptionsLoading.value = false
   }
@@ -863,9 +863,9 @@ const reloadProductOptions = () => {
   return loadProductOptions(productOptionSymbol.value, undefined)
 }
 
-const mergeProductOptions = (current: BaseItickProduct[], incoming: BaseItickProduct[]) => {
+const mergeProductOptions = (current: BaseMarketProduct[], incoming: BaseMarketProduct[]) => {
   const seen = new Set<number>()
-  const merged: BaseItickProduct[] = []
+  const merged: BaseMarketProduct[] = []
   const combined = [...current, ...incoming]
 
   combined.forEach((item) => {
@@ -961,7 +961,7 @@ const detachProductOptionsScroll = () => {
   productOptionsScrollEl = null
 }
 
-const formatProductOption = (item: BaseItickProduct) => {
+const formatProductOption = (item: BaseMarketProduct) => {
   const title = item.name || item.displayName || item.symbol
   return `${item.id} - ${title} (${item.market}/${item.symbol})`
 }
@@ -985,7 +985,7 @@ const resetProductPickerFilters = () => {
   reloadProductOptions()
 }
 
-const handleProductPickerSelectionChange = (rows: BaseItickProduct[]) => {
+const handleProductPickerSelectionChange = (rows: BaseMarketProduct[]) => {
   const visibleIds = new Set(productOptions.value.map((item) => item.id))
   const selectedIds = new Set(rows.map((item) => item.id))
 
@@ -1073,7 +1073,7 @@ const handleAdd = async () => {
   formRef.value?.clearValidate()
 }
 
-const handleEdit = async (row: ItickTenantProduct) => {
+const handleEdit = async (row: MarketTenantProduct) => {
   formMode.value = 'edit'
   resetForm()
   try {
@@ -1093,11 +1093,11 @@ const handleEdit = async (row: ItickTenantProduct) => {
     await nextTick()
     formRef.value?.clearValidate()
   } catch {
-    ElMessage.error(t('itick.loadDetailFailed'))
+    ElMessage.error(t('market.loadDetailFailed'))
   }
 }
 
-const handleDetail = async (row: ItickTenantProduct) => {
+const handleDetail = async (row: MarketTenantProduct) => {
   detailDialogVisible.value = true
   detailLoading.value = true
   detail.value = {}
@@ -1105,7 +1105,7 @@ const handleDetail = async (row: ItickTenantProduct) => {
     const res = await tenantProductsService.detail(row.id, row.tenantId)
     detail.value = res?.data || {}
   } catch {
-    ElMessage.error(t('itick.loadDetailFailed'))
+    ElMessage.error(t('market.loadDetailFailed'))
   } finally {
     detailLoading.value = false
   }
@@ -1127,7 +1127,7 @@ const submitForm = async () => {
         sort: form.sort,
         remark: form.remark,
       })
-      ElMessage.success(t('itick.createdSuccess'))
+      ElMessage.success(t('market.createdSuccess'))
     } else {
       await tenantProductsService.update(form.id as number, {
         tenantId: Number(form.tenantId),
@@ -1137,13 +1137,13 @@ const submitForm = async () => {
         sort: form.sort,
         remark: form.remark,
       })
-      ElMessage.success(t('itick.updatedSuccess'))
+      ElMessage.success(t('market.updatedSuccess'))
     }
 
     formDialogVisible.value = false
     loadList()
   } catch {
-    ElMessage.error(t(formMode.value === 'add' ? 'itick.createdFailed' : 'itick.updatedFailed'))
+    ElMessage.error(t(formMode.value === 'add' ? 'market.createdFailed' : 'market.updatedFailed'))
   } finally {
     submitLoading.value = false
   }
@@ -1182,7 +1182,7 @@ const removeBatchRow = (index: number) => {
 const submitBatch = async () => {
   const tenantId = Number(queryParams.tenantId)
   if (!tenantId) {
-    ElMessage.warning(t('itick.pleaseInputTenantFirst'))
+    ElMessage.warning(t('market.pleaseInputTenantFirst'))
     return
   }
 
@@ -1203,11 +1203,11 @@ const submitBatch = async () => {
       tenantId,
       data: cleaned,
     })
-    ElMessage.success(t('itick.batchSavedSuccess'))
+    ElMessage.success(t('market.batchSavedSuccess'))
     batchDialogVisible.value = false
     loadList()
   } catch {
-    ElMessage.error(t('itick.batchSavedFailed'))
+    ElMessage.error(t('market.batchSavedFailed'))
   } finally {
     batchSubmitting.value = false
   }
@@ -1221,7 +1221,7 @@ const openInitDialog = () => {
 
 const submitInit = async () => {
   if (!initForm.tenantId) {
-    ElMessage.warning(t('itick.pleaseInputTenantId'))
+    ElMessage.warning(t('market.pleaseInputTenantId'))
     return
   }
 
@@ -1232,7 +1232,7 @@ const submitInit = async () => {
       overwrite: Number(initForm.overwrite),
     })
     ElMessage.success(
-      t('itick.initSuccess', {
+      t('market.initSuccess', {
         categoryCount: res?.data?.categoryCount || 0,
         productCount: res?.data?.productCount || 0,
       }),
@@ -1240,7 +1240,7 @@ const submitInit = async () => {
     initDialogVisible.value = false
     loadList()
   } catch {
-    ElMessage.error(t('itick.initFailed'))
+    ElMessage.error(t('market.initFailed'))
   } finally {
     initSubmitting.value = false
   }

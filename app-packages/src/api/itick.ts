@@ -10,12 +10,12 @@ import type {
   ListVisibleCategoriesResp,
   ListVisibleProductsReq,
   ListVisibleProductsResp,
-} from '../types/itick'
+} from '../types/market'
 
 export async function apiListVisibleCategories(
   params: ListVisibleCategoriesReq,
 ): Promise<ApiResp<ListVisibleCategoriesResp>> {
-  const { data } = await http.get<ApiResp<ListVisibleCategoriesResp>>('/itick/categories', {
+  const { data } = await http.get<ApiResp<ListVisibleCategoriesResp>>('/market/categories', {
     params: compactParams(params),
   })
   return data
@@ -24,21 +24,21 @@ export async function apiListVisibleCategories(
 export async function apiListVisibleProducts(
   params: ListVisibleProductsReq,
 ): Promise<ApiResp<ListVisibleProductsResp>> {
-  const { data } = await http.get<ApiResp<ListVisibleProductsResp>>('/itick/products', {
+  const { data } = await http.get<ApiResp<ListVisibleProductsResp>>('/market/products', {
     params: compactParams(params),
   })
   return data
 }
 
 export async function apiGetKline(params: GetKlineReq): Promise<ApiResp<GetKlineResp>> {
-  const { data } = await http.get<ApiResp<GetKlineResp>>('/itick/kline', {
+  const { data } = await http.get<ApiResp<GetKlineResp>>('/market/kline', {
     params: compactParams(params),
   })
   return data
 }
 
 export async function apiGetQuote(params: GetQuoteReq): Promise<ApiResp<GetQuoteResp>> {
-  const { data } = await http.get<ApiResp<GetQuoteResp>>('/itick/quote', {
+  const { data } = await http.get<ApiResp<GetQuoteResp>>('/market/quote', {
     params: compactParams(params),
   })
   return data
@@ -48,7 +48,7 @@ function isLoopbackHost(hostname: string) {
   return ['localhost', '127.0.0.1', '0.0.0.0', '::1', '[::1]'].includes(hostname)
 }
 
-function resolveItickWsBaseUrl(baseUrl?: string) {
+function resolveMarketWsBaseUrl(baseUrl?: string) {
   if (baseUrl) return baseUrl
 
   const envBaseUrl = getApiBaseUrl()
@@ -66,11 +66,11 @@ function resolveItickWsBaseUrl(baseUrl?: string) {
   return envBaseUrl
 }
 
-export function buildItickWsUrl(id: string, baseUrl?: string) {
-  const resolvedBaseUrl = resolveItickWsBaseUrl(baseUrl)
+export function buildMarketWsUrl(id: string, baseUrl?: string) {
+  const resolvedBaseUrl = resolveMarketWsBaseUrl(baseUrl)
   const parsed = new URL(resolvedBaseUrl)
   const protocol = parsed.protocol === 'https:' ? 'wss:' : 'ws:'
   const apiBasePath = getApiBasePath().replace(/\/+$/, '')
 
-  return `${protocol}//${parsed.host}${apiBasePath}/itick/ws/${id}`
+  return `${protocol}//${parsed.host}${apiBasePath}/market/ws/${id}`
 }

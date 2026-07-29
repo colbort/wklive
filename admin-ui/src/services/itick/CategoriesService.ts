@@ -2,14 +2,14 @@ import type { RespBase, BaseService, OptionGroup } from '@/services'
 import { getCoreOptions } from '@/stores/core'
 
 import {
-  apiItickCategoryList,
-  apiItickCategoryCreate,
-  apiItickCategoryUpdate,
-  apiItickCategoryDetail,
+  apiMarketCategoryList,
+  apiMarketCategoryCreate,
+  apiMarketCategoryUpdate,
+  apiMarketCategoryDetail,
   apiSyncCategoryProducts,
-} from '@/api/itick/categories'
+} from '@/api/market/categories'
 
-export type ItickCategory = {
+export type MarketCategory = {
   id: number
   categoryType: number
   categoryCode: string
@@ -67,20 +67,20 @@ export class CategoriesService implements BaseService {
     return getCoreOptions()
   }
 
-  async getList(params: ListCategoriesReq): Promise<RespBase<ItickCategory[]>> {
-    return apiItickCategoryList(params)
+  async getList(params: ListCategoriesReq): Promise<RespBase<MarketCategory[]>> {
+    return apiMarketCategoryList(params)
   }
 
   async create(params: CreateCategoryReq): Promise<RespBase> {
-    return apiItickCategoryCreate(params)
+    return apiMarketCategoryCreate(params)
   }
 
   async update(id: string | number, params: Partial<UpdateCategoryReq>): Promise<RespBase> {
-    return apiItickCategoryUpdate({ id: Number(id), ...params })
+    return apiMarketCategoryUpdate({ id: Number(id), ...params })
   }
 
-  async detail(id: number): Promise<RespBase<ItickCategory>> {
-    return apiItickCategoryDetail(id)
+  async detail(id: number): Promise<RespBase<MarketCategory>> {
+    return apiMarketCategoryDetail(id)
   }
 
   async syncProducts(params: SyncCategoryProductsReq): Promise<RespBase<SyncCategoryProductsResp>> {

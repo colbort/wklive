@@ -3,16 +3,16 @@
 ## 1. 结论
 
 2026-07-29 将 iTick Token 从受版本控制的
-`services/itick/etc/itick.yaml` 移出。YAML 现在只保留
+`services/market/etc/market.yaml` 移出。YAML 现在只保留
 `__ITICK_TOKEN__` 占位符；Deploy 使用 Docker Secret
-`/run/secrets/itick_token`，由 `config-seed` 在写入 Etcd 前注入。
+`/run/secrets/market_token`，由 `config-seed` 在写入 Etcd 前注入。
 
 本次改动只改进凭据保管和运行时注入方式，不代表行情凭据、数据许可或供应商生产审批
 已经通过；对应 readiness 字段继续保持 `false`。
 
 ## 2. 安全边界
 
-- 本机 Secret 文件为 `deploy/secrets/itick_token`；
+- 本机 Secret 文件为 `deploy/secrets/market_token`；
 - `deploy/secrets/` 已由 Git 忽略；
 - Secret 文件权限为 `0600`；
 - 受版本控制文件中已找不到迁移前的 Token 值；
@@ -31,7 +31,7 @@
 
 关键文件 SHA-256：
 
-- `services/itick/etc/itick.yaml`：
+- `services/market/etc/market.yaml`：
   `b9d14ad2f73c8263ad6e4a6baf91caedaf245e2911452329f5abab0a52ae2e6e`
 - `deploy/seed-etcd.sh`：
   `dc9c1e9f75a6b35f6eb93144f7ad1474d7a1d20282b9d8cd8b3468fff5282f7e`
@@ -46,12 +46,12 @@
 - `config-seed` 镜像构建成功；
 - 17 个 Etcd 配置键全部写入成功；
 - Etcd 中 iTick 配置不含占位符且 Token 字段非空；
-- 重启 `itick-rpc` 后 Healthcheck 为 `healthy`；
-- 最近两分钟持续写入 `itick-ws FINAL_QUOTE` 以及
+- 重启 `market-rpc` 后 Healthcheck 为 `healthy`；
+- 最近两分钟持续写入 `market-ws FINAL_QUOTE` 以及
   `price-engine INDEX/MARK/FUNDING`；
 - 最近三分钟未出现 panic、fatal、鉴权失败或 Price Engine 执行失败日志。
 - 完整只读生产门禁仍为 33 PASS / 14 FAIL / exit 1，两个生产风险开关保持关闭；
   14 个真实外部前置条件没有因本次凭据迁移被错误放行。
 
-验收查询时，`itick-ws FINAL_QUOTE` 最近两分钟 105 条，
+验收查询时，`market-ws FINAL_QUOTE` 最近两分钟 105 条，
 INDEX/MARK/FUNDING 各 120 条，证明 Secret 注入后的实时行情和价格引擎链路持续工作。

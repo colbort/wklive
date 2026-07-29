@@ -128,7 +128,7 @@ replace wklive/proto/system => ../../proto/system
 
 replace wklive/common => ../../common
 
-replace wklive/proto/itick => ../../proto/itick
+replace wklive/proto/market => ../../proto/market
 
 replace wklive/proto/option => ../../proto/option
 

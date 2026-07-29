@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package market;
+
+option go_package = "wklive/proto/market;market";
+
+// 产品类型
+enum CategoryType {
+  CATEGORY_TYPE_UNKNOWN = 0;
+  CATEGORY_TYPE_FOREX = 1;
+  CATEGORY_TYPE_CRYPTO = 2;
+  CATEGORY_TYPE_STOCK = 3;
+  CATEGORY_TYPE_FUTURE = 4;
+  CATEGORY_TYPE_INDICES = 5;
+  CATEGORY_TYPE_FUND = 6;
+}
+
+// K线周期
+enum KlineType {
+  KLINE_TYPE_UNKNOWN = 0;
+  KLINE_TYPE_1M = 1;
+  KLINE_TYPE_5M = 2;
+  KLINE_TYPE_15M = 3;
+  KLINE_TYPE_30M = 4;
+  KLINE_TYPE_60M = 5;
+  KLINE_TYPE_1D = 8;
+  KLINE_TYPE_1W = 9;
+  KLINE_TYPE_1MO = 10;
+  KLINE_TYPE_1Y = 11;
+}
+
+// K线同步优先级
+enum SyncKlinePriority {
+  SYNC_KLINE_PRIORITY_UNKNOWN = 0;
+  SYNC_KLINE_PRIORITY_HIGH = 1;
+  SYNC_KLINE_PRIORITY_NORMAL = 2;
+  SYNC_KLINE_PRIORITY_LOW = 3;
+}
+
+// 价格公式计算算法
+enum PriceAlgorithm {
+  PRICE_ALGORITHM_UNKNOWN = 0;
+  PRICE_ALGORITHM_WEIGHTED_MEAN = 1;
+  PRICE_ALGORITHM_MEDIAN = 2;
+  PRICE_ALGORITHM_PREMIUM_RATE = 3;
+  // MARK = INDEX * (1 + clamp((PERPETUAL_QUOTE-INDEX)/INDEX, +/- max_deviation_bps)).
+  PRICE_ALGORITHM_INDEX_BASIS = 4;
+}

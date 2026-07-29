@@ -1,0 +1,40 @@
+package applogic
+
+import (
+	"context"
+
+	"wklive/proto/market"
+	"wklive/services/market/internal/pkg/utils"
+	"wklive/services/market/internal/svc"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type GetKlineIntervalsLogic struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+}
+
+func NewGetKlineIntervalsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetKlineIntervalsLogic {
+	return &GetKlineIntervalsLogic{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+	}
+}
+
+// 获取 kline 粒度
+func (l *GetKlineIntervalsLogic) GetKlineIntervals(in *market.Empty) (*market.KlineIntervalsResp, error) {
+
+	data := make([]*market.KlineInterval, 0, len(utils.KlineIntervals))
+	for _, v := range utils.KlineIntervals {
+		data = append(data, &market.KlineInterval{
+			Name:  v.Name,
+			KType: int32(v.KType), // 看你 proto 这里类型是不是 int32
+		})
+	}
+	return &market.KlineIntervalsResp{
+		Data: data,
+	}, nil
+}

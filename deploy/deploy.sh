@@ -6,7 +6,7 @@ COMPOSE_FILE="$SCRIPT_DIR/docker-compose.yml"
 BUILD_SERVICES="
 db-init
 config-seed
-itick-rpc
+market-rpc
 system-rpc
 user-rpc
 asset-rpc

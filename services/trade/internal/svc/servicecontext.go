@@ -14,7 +14,7 @@ import (
 	"wklive/services/trade/models"
 
 	"wklive/proto/asset"
-	"wklive/proto/itick"
+	"wklive/proto/market"
 
 	v9 "github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -73,7 +73,7 @@ type ServiceContext struct {
 	ContractReconcileCursorModel models.TContractReconciliationCursorModel
 	AssetClient                  asset.AssetClient
 	AssetAdminClient             asset.AdminClient
-	ItickClient                  itick.ItickClient
+	MarketClient                  market.MarketClient
 	MarketDataCache              *cache.MarketDataCache
 	TradeMarketSnapshotModel     models.TTradeMarketSnapshotModel
 	DelayQueue                   *delayqueue.Queue
@@ -82,7 +82,7 @@ type ServiceContext struct {
 func NewServiceContext(c config.Config) *ServiceContext {
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 	assetCli := zrpc.MustNewClient(c.AssetRpc)
-	itickCli := zrpc.MustNewClient(c.ItickRpc)
+	marketCli := zrpc.MustNewClient(c.MarketRpc)
 	marketRedis := v9.NewClient(&v9.Options{Addr: c.CacheRedis[0].Host, Username: c.CacheRedis[0].User, Password: c.CacheRedis[0].Pass})
 	mqConfig := mq.ForService(c.MQ, c.Name)
 	taskSubscriber := mq.MustNewSubscriber(mqConfig, "trade-tasks")
@@ -145,7 +145,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ContractReconcileCursorModel: models.NewTContractReconciliationCursorModel(conn, c.CacheRedis),
 		AssetClient:                  asset.NewAssetClient(assetCli.Conn()),
 		AssetAdminClient:             asset.NewAdminClient(assetCli.Conn()),
-		ItickClient:                  itick.NewItickClient(itickCli.Conn()),
+		MarketClient:                  market.NewMarketClient(marketCli.Conn()),
 		MarketDataCache:              cache.NewMarketDataCache(marketRedis),
 		TradeMarketSnapshotModel:     models.NewTTradeMarketSnapshotModel(conn, c.CacheRedis),
 		DelayQueue:                   delayQueue,

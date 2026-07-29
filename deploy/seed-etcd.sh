@@ -7,7 +7,7 @@ COMMON_CONFIG="${COMMON_CONFIG:-/deploy-config/common.yaml}"
 MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:-123456}"
 MONGO_ROOT_PASSWORD="${MONGO_ROOT_PASSWORD:-openIM123}"
 JWT_ACCESS_SECRET="${JWT_ACCESS_SECRET:-change-this-secret-before-production}"
-ITICK_TOKEN_FILE="${ITICK_TOKEN_FILE:-/run/secrets/itick_token}"
+ITICK_TOKEN_FILE="${ITICK_TOKEN_FILE:-/run/secrets/market_token}"
 
 validate_secret() {
   name="$1"
@@ -77,7 +77,7 @@ put_file /wklive/liquidity-admin-api/config "$WORKSPACE/liquidity-admin-api/etc/
 put_file /wklive/payment-api/config "$WORKSPACE/payment-api/etc/payment-api.yaml"
 put_file /wklive/asset-rpc/config "$WORKSPACE/services/asset/etc/asset.yaml"
 put_file /wklive/chat-rpc/config "$WORKSPACE/services/chat/etc/chat.yaml"
-put_file /wklive/itick-rpc/config "$WORKSPACE/services/itick/etc/itick.yaml"
+put_file /wklive/market-rpc/config "$WORKSPACE/services/market/etc/market.yaml"
 put_file /wklive/liquidity-rpc/config "$WORKSPACE/services/liquidity/etc/liquidity.yaml"
 put_file /wklive/option-rpc/config "$WORKSPACE/services/option/etc/option.yaml"
 put_file /wklive/payment-rpc/config "$WORKSPACE/services/payment/etc/payment.yaml"

@@ -3,7 +3,7 @@ import { get, post, put } from '@/utils/request'
 import type {
   RespBase,
   ListProductsReq,
-  ItickProduct,
+  MarketProduct,
   CreateProductReq,
   UpdateProductReq,
   GetProductKlineReq,
@@ -12,31 +12,31 @@ import type {
   SyncProductKlineHistoryResp,
 } from '@/services'
 
-export function apiItickProductList(params: ListProductsReq): Promise<RespBase<ItickProduct[]>> {
-  return get<ItickProduct[]>('/admin/itick/products', params)
+export function apiMarketProductList(params: ListProductsReq): Promise<RespBase<MarketProduct[]>> {
+  return get<MarketProduct[]>('/admin/market/products', params)
 }
 
-export function apiSyncItickProductKlineHistory(
+export function apiSyncMarketProductKlineHistory(
   params: SyncProductKlineHistoryReq,
 ): Promise<SyncProductKlineHistoryResp> {
   return post(
-    '/admin/itick/product/kline/sync-history',
+    '/admin/market/product/kline/sync-history',
     params,
   ) as Promise<SyncProductKlineHistoryResp>
 }
 
-export function apiItickProductCreate(params: CreateProductReq): Promise<RespBase> {
-  return post('/admin/itick/products', params)
+export function apiMarketProductCreate(params: CreateProductReq): Promise<RespBase> {
+  return post('/admin/market/products', params)
 }
 
-export function apiItickProductUpdate(params: UpdateProductReq): Promise<RespBase> {
-  return put('/admin/itick/products', params)
+export function apiMarketProductUpdate(params: UpdateProductReq): Promise<RespBase> {
+  return put('/admin/market/products', params)
 }
 
-export function apiItickProductDetail(id: number): Promise<RespBase<ItickProduct>> {
-  return get<ItickProduct>(`/admin/itick/products/${id}`)
+export function apiMarketProductDetail(id: number): Promise<RespBase<MarketProduct>> {
+  return get<MarketProduct>(`/admin/market/products/${id}`)
 }
 
-export function apiItickProductKline(params: GetProductKlineReq): Promise<RespBase<Kline[]>> {
-  return get<Kline[]>('/admin/itick/product/kline', params)
+export function apiMarketProductKline(params: GetProductKlineReq): Promise<RespBase<Kline[]>> {
+  return get<Kline[]>('/admin/market/product/kline', params)
 }

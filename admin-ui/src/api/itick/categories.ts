@@ -3,33 +3,33 @@ import { get, post, put } from '@/utils/request'
 import type {
   RespBase,
   ListCategoriesReq,
-  ItickCategory,
+  MarketCategory,
   CreateCategoryReq,
   UpdateCategoryReq,
   SyncCategoryProductsReq,
   SyncCategoryProductsResp,
 } from '@/services'
 
-export function apiItickCategoryList(
+export function apiMarketCategoryList(
   params: ListCategoriesReq,
-): Promise<RespBase<ItickCategory[]>> {
-  return get<ItickCategory[]>('/admin/itick/categories', params)
+): Promise<RespBase<MarketCategory[]>> {
+  return get<MarketCategory[]>('/admin/market/categories', params)
 }
 
-export function apiItickCategoryCreate(params: CreateCategoryReq): Promise<RespBase> {
-  return post('/admin/itick/categories', params)
+export function apiMarketCategoryCreate(params: CreateCategoryReq): Promise<RespBase> {
+  return post('/admin/market/categories', params)
 }
 
-export function apiItickCategoryUpdate(params: UpdateCategoryReq): Promise<RespBase> {
-  return put('/admin/itick/categories', params)
+export function apiMarketCategoryUpdate(params: UpdateCategoryReq): Promise<RespBase> {
+  return put('/admin/market/categories', params)
 }
 
-export function apiItickCategoryDetail(id: number): Promise<RespBase<ItickCategory>> {
-  return get<ItickCategory>(`/admin/itick/categories/${id}`)
+export function apiMarketCategoryDetail(id: number): Promise<RespBase<MarketCategory>> {
+  return get<MarketCategory>(`/admin/market/categories/${id}`)
 }
 
 export function apiSyncCategoryProducts(
   params: SyncCategoryProductsReq,
 ): Promise<RespBase<SyncCategoryProductsResp>> {
-  return post<SyncCategoryProductsResp>('/admin/itick/categories/sync-products', params)
+  return post<SyncCategoryProductsResp>('/admin/market/categories/sync-products', params)
 }

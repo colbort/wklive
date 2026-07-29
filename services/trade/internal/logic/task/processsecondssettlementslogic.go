@@ -15,7 +15,6 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/proto/common"
-	"wklive/proto/itick"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/domain/contractmath"
 	"wklive/services/trade/internal/svc"
@@ -473,10 +472,10 @@ func (l *ProcessSecondsSettlementsLogic) getOneValidQuote(kind, source string, s
 }
 
 func (l *ProcessSecondsSettlementsLogic) findAuthoritativeSnapshotInArchive(authority, kind, category, market, symbol string, targetTime, validity int64) (*cache.SettlementSnapshot, error) {
-	if l.svcCtx.ItickClient == nil {
-		return nil, errors.New("itick archive client is not configured")
+	if l.svcCtx.MarketClient == nil {
+		return nil, errors.New("market archive client is not configured")
 	}
-	resp, err := l.svcCtx.ItickClient.GetAuthoritativeSnapshot(l.ctx, &itick.GetAuthoritativeSnapshotReq{
+	resp, err := l.svcCtx.MarketClient.GetAuthoritativeSnapshot(l.ctx, &market.GetAuthoritativeSnapshotReq{
 		Authority:     authority,
 		SnapshotKind:  kind,
 		CategoryCode:  category,

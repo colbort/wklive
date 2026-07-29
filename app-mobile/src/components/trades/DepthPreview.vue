@@ -5,13 +5,13 @@ import { useI18n } from '@/i18n'
 import type {
   DepthLevel,
   DepthPayload,
-  ItickTenantProduct,
+  MarketTenantProduct,
   QuotePayload,
   TickPayload,
-} from '@/types/itick'
+} from '@/types/market'
 
 const props = defineProps<{
-  selectedProduct: ItickTenantProduct | null
+  selectedProduct: MarketTenantProduct | null
   depthSnapshot: DepthPayload | null
   selectedQuote: QuotePayload | null
   tickSnapshot: TickPayload[]

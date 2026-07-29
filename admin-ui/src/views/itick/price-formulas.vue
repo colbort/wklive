@@ -1,13 +1,13 @@
 <template>
   <div class="module-page price-formula-page">
     <CrudQueryCard :model="query" @search="load" @reset="reset">
-      <el-form-item class="operation-query-item" :label="t('itick.authority')">
+      <el-form-item class="operation-query-item" :label="t('market.authority')">
         <el-input v-model="query.authority" clearable class="operation-query-control" />
       </el-form-item>
-      <el-form-item class="operation-query-item" :label="t('itick.snapshotKind')">
+      <el-form-item class="operation-query-item" :label="t('market.snapshotKind')">
         <el-input v-model="query.snapshotKind" clearable class="operation-query-control" />
       </el-form-item>
-      <el-form-item class="operation-query-item" :label="t('itick.symbol')">
+      <el-form-item class="operation-query-item" :label="t('market.symbol')">
         <el-input v-model="query.symbol" clearable class="operation-query-control" />
       </el-form-item>
       <el-form-item class="operation-query-item" :label="t('common.status')">
@@ -21,27 +21,27 @@
         </el-select>
       </el-form-item>
       <template #actions>
-        <el-button v-perm="'itick:authority:list'" @click="openAuthorityManager">
-          {{ t('itick.manageAuthorities') }}
+        <el-button v-perm="'market:authority:list'" @click="openAuthorityManager">
+          {{ t('market.manageAuthorities') }}
         </el-button>
-        <el-button v-perm="'itick:price-formula:create'" type="primary" @click="openCreate">
-          {{ t('itick.createFormula') }}
+        <el-button v-perm="'market:price-formula:create'" type="primary" @click="openCreate">
+          {{ t('market.createFormula') }}
         </el-button>
       </template>
     </CrudQueryCard>
 
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="rows" stripe>
-        <el-table-column prop="formulaNo" :label="t('itick.formulaNo')" min-width="200" />
-        <el-table-column prop="authority" :label="t('itick.authority')" min-width="130" />
-        <el-table-column prop="snapshotKind" :label="t('itick.snapshotKind')" min-width="140" />
-        <el-table-column prop="symbol" :label="t('itick.symbol')" min-width="120" />
-        <el-table-column prop="algorithm" :label="t('itick.algorithm')" min-width="140">
+        <el-table-column prop="formulaNo" :label="t('market.formulaNo')" min-width="200" />
+        <el-table-column prop="authority" :label="t('market.authority')" min-width="130" />
+        <el-table-column prop="snapshotKind" :label="t('market.snapshotKind')" min-width="140" />
+        <el-table-column prop="symbol" :label="t('market.symbol')" min-width="120" />
+        <el-table-column prop="algorithm" :label="t('market.algorithm')" min-width="140">
           <template #default="{ row }">
             {{ algorithmLabel(row.algorithm) }}
           </template>
         </el-table-column>
-        <el-table-column prop="formulaVersion" :label="t('itick.formulaVersion')" min-width="130" />
+        <el-table-column prop="formulaVersion" :label="t('market.formulaVersion')" min-width="130" />
         <el-table-column :label="t('common.status')" width="110">
           <template #default="{ row }">
             <el-tag :type="formulaStatusType(row.status)">
@@ -49,7 +49,7 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="lastTargetTime" :label="t('itick.lastTargetTime')" min-width="170">
+        <el-table-column prop="lastTargetTime" :label="t('market.lastTargetTime')" min-width="170">
           <template #default="{ row }">
             {{ formatTime(row.lastTargetTime) }}
           </template>
@@ -61,21 +61,21 @@
             </el-button>
             <el-button
               v-if="row.status !== 1 && row.status !== 3"
-              v-perm="'itick:price-formula:status'"
+              v-perm="'market:price-formula:status'"
               link
               type="success"
               @click="changeStatus(row, 1)"
             >
-              {{ t('itick.activate') }}
+              {{ t('market.activate') }}
             </el-button>
             <el-button
               v-if="row.status !== 3"
-              v-perm="'itick:price-formula:status'"
+              v-perm="'market:price-formula:status'"
               link
               type="danger"
               @click="changeStatus(row, 3)"
             >
-              {{ t('itick.revoke') }}
+              {{ t('market.revoke') }}
             </el-button>
           </template>
         </el-table-column>
@@ -93,19 +93,19 @@
 
     <el-dialog
       v-model="authorityManagerVisible"
-      :title="t('itick.manageAuthorities')"
+      :title="t('market.manageAuthorities')"
       width="1000px"
     >
       <div class="authority-toolbar">
-        <el-button v-perm="'itick:authority:set'" type="primary" @click="openAuthorityCreate">
-          {{ t('itick.createAuthority') }}
+        <el-button v-perm="'market:authority:set'" type="primary" @click="openAuthorityCreate">
+          {{ t('market.createAuthority') }}
         </el-button>
       </div>
       <el-table v-loading="authorityLoading" :data="authorityRows" stripe>
-        <el-table-column prop="authority" :label="t('itick.authority')" min-width="140" />
-        <el-table-column prop="providerCode" :label="t('itick.providerCode')" min-width="140" />
-        <el-table-column prop="producerType" :label="t('itick.producerType')" min-width="150" />
-        <el-table-column :label="t('itick.allowedKinds')" min-width="280">
+        <el-table-column prop="authority" :label="t('market.authority')" min-width="140" />
+        <el-table-column prop="providerCode" :label="t('market.providerCode')" min-width="140" />
+        <el-table-column prop="producerType" :label="t('market.producerType')" min-width="150" />
+        <el-table-column :label="t('market.allowedKinds')" min-width="280">
           <template #default="{ row }">
             <el-tag
               v-for="kind in row.allowedKinds"
@@ -127,7 +127,7 @@
         <el-table-column :label="t('common.actions')" width="90" fixed="right">
           <template #default="{ row }">
             <el-button
-              v-perm="'itick:authority:set'"
+              v-perm="'market:authority:set'"
               link
               type="primary"
               @click="openAuthorityEdit(row)"
@@ -146,29 +146,29 @@
 
     <el-dialog
       v-model="authorityEditorVisible"
-      :title="authorityForm.id ? t('itick.editAuthority') : t('itick.createAuthority')"
+      :title="authorityForm.id ? t('market.editAuthority') : t('market.createAuthority')"
       width="620px"
       append-to-body
     >
       <el-alert
         v-if="authorityForm.id"
-        :title="t('itick.authorityImmutableHint')"
+        :title="t('market.authorityImmutableHint')"
         type="warning"
         :closable="false"
         show-icon
         class="authority-alert"
       />
       <el-form :model="authorityForm" label-width="150px">
-        <el-form-item :label="t('itick.authority')" required>
+        <el-form-item :label="t('market.authority')" required>
           <el-input v-model="authorityForm.authority" :disabled="Boolean(authorityForm.id)" />
         </el-form-item>
-        <el-form-item :label="t('itick.providerCode')" required>
+        <el-form-item :label="t('market.providerCode')" required>
           <el-input v-model="authorityForm.providerCode" :disabled="Boolean(authorityForm.id)" />
         </el-form-item>
-        <el-form-item :label="t('itick.producerType')" required>
+        <el-form-item :label="t('market.producerType')" required>
           <el-input v-model="authorityForm.producerType" :disabled="Boolean(authorityForm.id)" />
         </el-form-item>
-        <el-form-item :label="t('itick.allowedKinds')" required>
+        <el-form-item :label="t('market.allowedKinds')" required>
           <el-checkbox-group v-model="authorityForm.allowedKinds">
             <el-checkbox v-for="kind in authorityKinds" :key="kind" :value="kind">
               {{ kind }}
@@ -177,8 +177,8 @@
         </el-form-item>
         <el-form-item :label="t('common.status')" required>
           <el-radio-group v-model="authorityForm.status">
-            <el-radio :value="1">{{ t('itick.authorityEnabled') }}</el-radio>
-            <el-radio :value="2">{{ t('itick.authorityDisabled') }}</el-radio>
+            <el-radio :value="1">{{ t('market.authorityEnabled') }}</el-radio>
+            <el-radio :value="2">{{ t('market.authorityDisabled') }}</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -192,21 +192,21 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="dialogVisible" :title="t('itick.createFormula')" width="900px">
+    <el-dialog v-model="dialogVisible" :title="t('market.createFormula')" width="900px">
       <el-form :model="form" label-width="150px">
         <el-row :gutter="16">
           <el-col :span="12">
-            <el-form-item :label="t('itick.formulaNo')" required>
+            <el-form-item :label="t('market.formulaNo')" required>
               <el-input v-model="form.formulaNo" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="t('itick.formulaVersion')" required>
+            <el-form-item :label="t('market.formulaVersion')" required>
               <el-input v-model="form.formulaVersion" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="t('itick.authority')" required>
+            <el-form-item :label="t('market.authority')" required>
               <el-select v-model="form.authority" style="width: 100%">
                 <el-option
                   v-for="item in outputAuthorities"
@@ -218,7 +218,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="t('itick.snapshotKind')" required>
+            <el-form-item :label="t('market.snapshotKind')" required>
               <el-select
                 v-model="form.snapshotKind"
                 style="width: 100%"
@@ -234,7 +234,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item :label="t('itick.categoryCode')">
+            <el-form-item :label="t('market.categoryCode')">
               <el-select v-model="form.categoryCode" filterable clearable style="width: 100%">
                 <el-option
                   v-for="item in categoryOptions"
@@ -246,17 +246,17 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item :label="t('itick.market')">
+            <el-form-item :label="t('market.market')">
               <el-input v-model="form.market" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item :label="t('itick.symbol')" required>
+            <el-form-item :label="t('market.symbol')" required>
               <el-input v-model="form.symbol" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="t('itick.algorithm')" required>
+            <el-form-item :label="t('market.algorithm')" required>
               <el-select v-model="form.algorithm" style="width: 100%">
                 <el-option
                   v-for="algorithm in algorithms"
@@ -268,22 +268,22 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="t('itick.activateOnCreate')">
+            <el-form-item :label="t('market.activateOnCreate')">
               <el-switch v-model="form.activate" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item :label="t('itick.maxLookbackMs')">
+            <el-form-item :label="t('market.maxLookbackMs')">
               <el-input-number v-model="form.maxLookbackMs" :min="1" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item :label="t('itick.maxDeviationBps')">
+            <el-form-item :label="t('market.maxDeviationBps')">
               <el-input-number v-model="form.maxDeviationBps" :min="0" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item :label="t('itick.minInputCount')">
+            <el-form-item :label="t('market.minInputCount')">
               <el-input-number
                 v-model="form.minInputCount"
                 :min="1"
@@ -292,14 +292,14 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item :label="t('itick.intervalMs')">
+            <el-form-item :label="t('market.intervalMs')">
               <el-input-number v-model="form.intervalMs" :min="1" />
             </el-form-item>
           </el-col>
         </el-row>
-        <el-divider>{{ t('itick.components') }}</el-divider>
+        <el-divider>{{ t('market.components') }}</el-divider>
         <el-table :data="form.components" border>
-          <el-table-column :label="t('itick.authority')">
+          <el-table-column :label="t('market.authority')">
             <template #default="{ row }">
               <el-select
                 v-model="row.authority"
@@ -315,7 +315,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column :label="t('itick.snapshotKind')">
+          <el-table-column :label="t('market.snapshotKind')">
             <template #default="{ row }">
               <el-select v-model="row.snapshotKind" style="width: 100%">
                 <el-option
@@ -327,7 +327,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column :label="t('itick.categoryCode')">
+          <el-table-column :label="t('market.categoryCode')">
             <template #default="{ row }">
               <el-select v-model="row.categoryCode" filterable clearable style="width: 100%">
                 <el-option
@@ -339,17 +339,17 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column :label="t('itick.market')">
+          <el-table-column :label="t('market.market')">
             <template #default="{ row }">
               <el-input v-model="row.market" />
             </template>
           </el-table-column>
-          <el-table-column :label="t('itick.symbol')">
+          <el-table-column :label="t('market.symbol')">
             <template #default="{ row }">
               <el-input v-model="row.symbol" />
             </template>
           </el-table-column>
-          <el-table-column :label="t('itick.weight')" width="130">
+          <el-table-column :label="t('market.weight')" width="130">
             <template #default="{ row }">
               <el-input v-model="row.weight" />
             </template>
@@ -363,7 +363,7 @@
           </el-table-column>
         </el-table>
         <el-button class="component-add" @click="addComponent">
-          {{ t('itick.addComponent') }}
+          {{ t('market.addComponent') }}
         </el-button>
       </el-form>
       <template #footer>
@@ -374,30 +374,30 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="detailVisible" :title="t('itick.formulaDetail')" width="900px">
+    <el-dialog v-model="detailVisible" :title="t('market.formulaDetail')" width="900px">
       <el-descriptions v-if="detail" :column="2" border>
-        <el-descriptions-item :label="t('itick.formulaNo')">
+        <el-descriptions-item :label="t('market.formulaNo')">
           {{ detail.formulaNo }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.formulaVersion')">
+        <el-descriptions-item :label="t('market.formulaVersion')">
           {{ detail.formulaVersion }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.authority')">
+        <el-descriptions-item :label="t('market.authority')">
           {{ detail.authority }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.snapshotKind')">
+        <el-descriptions-item :label="t('market.snapshotKind')">
           {{ detail.snapshotKind }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.categoryCode')">
+        <el-descriptions-item :label="t('market.categoryCode')">
           {{ detail.categoryCode || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.market')">
+        <el-descriptions-item :label="t('market.market')">
           {{ detail.market || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.symbol')">
+        <el-descriptions-item :label="t('market.symbol')">
           {{ detail.symbol }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.algorithm')">
+        <el-descriptions-item :label="t('market.algorithm')">
           {{ algorithmLabel(detail.algorithm) }}
         </el-descriptions-item>
         <el-descriptions-item :label="t('common.status')">
@@ -405,30 +405,30 @@
             {{ formulaStatusLabel(detail.status) }}
           </el-tag>
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.lastTargetTime')">
+        <el-descriptions-item :label="t('market.lastTargetTime')">
           {{ formatTime(detail.lastTargetTime) }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.maxLookbackMs')">
+        <el-descriptions-item :label="t('market.maxLookbackMs')">
           {{ detail.maxLookbackMs }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.maxDeviationBps')">
+        <el-descriptions-item :label="t('market.maxDeviationBps')">
           {{ detail.maxDeviationBps }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.minInputCount')">
+        <el-descriptions-item :label="t('market.minInputCount')">
           {{ detail.minInputCount }}
         </el-descriptions-item>
-        <el-descriptions-item :label="t('itick.intervalMs')">
+        <el-descriptions-item :label="t('market.intervalMs')">
           {{ detail.intervalMs }}
         </el-descriptions-item>
       </el-descriptions>
-      <el-divider>{{ t('itick.components') }}</el-divider>
+      <el-divider>{{ t('market.components') }}</el-divider>
       <el-table :data="detail?.components || []" border>
-        <el-table-column prop="authority" :label="t('itick.authority')" min-width="130" />
-        <el-table-column prop="snapshotKind" :label="t('itick.snapshotKind')" min-width="130" />
-        <el-table-column prop="categoryCode" :label="t('itick.categoryCode')" min-width="120" />
-        <el-table-column prop="market" :label="t('itick.market')" min-width="100" />
-        <el-table-column prop="symbol" :label="t('itick.symbol')" min-width="120" />
-        <el-table-column prop="weight" :label="t('itick.weight')" width="100" />
+        <el-table-column prop="authority" :label="t('market.authority')" min-width="130" />
+        <el-table-column prop="snapshotKind" :label="t('market.snapshotKind')" min-width="130" />
+        <el-table-column prop="categoryCode" :label="t('market.categoryCode')" min-width="120" />
+        <el-table-column prop="market" :label="t('market.market')" min-width="100" />
+        <el-table-column prop="symbol" :label="t('market.symbol')" min-width="120" />
+        <el-table-column prop="weight" :label="t('market.weight')" width="100" />
       </el-table>
       <template #footer>
         <el-button @click="detailVisible = false">
@@ -448,8 +448,8 @@ import { usePagination } from '@/composables'
 import { getCoreOptions } from '@/stores/core'
 import type { OptionGroup } from '@/services'
 import { findOptionGroup, getOptionLabel } from '@/utils/options'
-import { apiItickCategoryList } from '@/api/itick/categories'
-import type { ItickCategory } from '@/services/itick/CategoriesService'
+import { apiMarketCategoryList } from '@/api/market/categories'
+import type { MarketCategory } from '@/services/market/CategoriesService'
 import {
   apiChangePriceFormulaStatus,
   apiCreatePriceFormula,
@@ -460,7 +460,7 @@ import {
   type CreatePriceFormulaReq,
   type PriceFormula,
   type SetAuthorityRegistryReq,
-} from '@/api/itick/price-engine'
+} from '@/api/market/price-engine'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
@@ -484,7 +484,7 @@ const query = reactive({
   status: undefined as number | undefined,
 })
 const optionGroups = ref<OptionGroup[]>([])
-const categories = ref<ItickCategory[]>([])
+const categories = ref<MarketCategory[]>([])
 const authorityRegistries = ref<AuthorityRegistry[]>([])
 const authorityKinds = ['FINAL_QUOTE', 'INDEX', 'MARK', 'FUNDING', 'DELIVERY']
 const formulaSnapshotKindOrder = ['MARK', 'INDEX', 'FUNDING', 'DELIVERY']
@@ -501,9 +501,9 @@ const algorithms = computed(() =>
   })),
 )
 const formulaStatuses = computed(() => [
-  { value: 1, label: t('itick.active') },
-  { value: 2, label: t('itick.inactive') },
-  { value: 3, label: t('itick.revoked') },
+  { value: 1, label: t('market.active') },
+  { value: 2, label: t('market.inactive') },
+  { value: 3, label: t('market.revoked') },
 ])
 const emptyAuthorityForm = (): SetAuthorityRegistryReq => ({
   authority: '',
@@ -548,7 +548,7 @@ function formulaStatusLabel(status: number) {
   return formulaStatuses.value.find((item) => item.value === status)?.label || String(status)
 }
 function authorityStatusLabel(status: number) {
-  return status === 1 ? t('itick.authorityEnabled') : t('itick.authorityDisabled')
+  return status === 1 ? t('market.authorityEnabled') : t('market.authorityDisabled')
 }
 function algorithmLabel(algorithm: number) {
   return algorithms.value.find((item) => item.value === algorithm)?.label || algorithm
@@ -556,7 +556,7 @@ function algorithmLabel(algorithm: number) {
 async function loadOptions() {
   const [coreOptions, categoryList, authorityList] = await Promise.all([
     getCoreOptions(),
-    apiItickCategoryList({ enabled: 1, cursor: 0, limit: 100 }),
+    apiMarketCategoryList({ enabled: 1, cursor: 0, limit: 100 }),
     apiListAuthorityRegistries({ status: 1, cursor: 0, limit: 200 }),
   ])
   optionGroups.value = coreOptions.data || []
@@ -609,11 +609,11 @@ async function saveAuthority() {
     !authorityForm.producerType.trim() ||
     authorityForm.allowedKinds.length === 0
   ) {
-    ElMessage.warning(t('itick.authorityRequired'))
+    ElMessage.warning(t('market.authorityRequired'))
     return
   }
   if (authorityForm.id && authorityOriginalStatus.value === 1 && authorityForm.status === 2) {
-    await ElMessageBox.confirm(t('itick.disableAuthorityConfirm'))
+    await ElMessageBox.confirm(t('market.disableAuthorityConfirm'))
   }
   authoritySaving.value = true
   try {
@@ -670,7 +670,7 @@ function openDetail(row: PriceFormula) {
 }
 function addComponent() {
   const preferred = enabledAuthorityRegistries.value.find(
-    (item) => item.authority === 'itick-ws' && item.allowedKinds.includes('FINAL_QUOTE'),
+    (item) => item.authority === 'market-ws' && item.allowedKinds.includes('FINAL_QUOTE'),
   )
   const registry =
     preferred ||
@@ -715,7 +715,7 @@ async function save() {
     !form.formulaVersion ||
     form.components.length === 0
   ) {
-    ElMessage.warning(t('itick.formulaRequired'))
+    ElMessage.warning(t('market.formulaRequired'))
     return
   }
   saving.value = true
@@ -730,7 +730,7 @@ async function save() {
 }
 async function changeStatus(row: PriceFormula, status: 1 | 3) {
   await ElMessageBox.confirm(
-    status === 1 ? t('itick.activateFormulaConfirm') : t('itick.revokeFormulaConfirm'),
+    status === 1 ? t('market.activateFormulaConfirm') : t('market.revokeFormulaConfirm'),
   )
   await apiChangePriceFormulaStatus(row.id, status)
   ElMessage.success(t('common.success'))

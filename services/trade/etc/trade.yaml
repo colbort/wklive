@@ -12,13 +12,13 @@ AssetRpc:
     - 127.0.0.1:2379
     Key: asset.rpc
 
-ItickRpc:
+MarketRpc:
   Etcd:
     Hosts:
     - 127.0.0.1:2379
-    Key: itick.rpc
+    Key: market.rpc
 
-MarketAuthority: itick-ws
+MarketAuthority: market-ws
 PriceEngineAuthority: price-engine
 
 DelayQueue:

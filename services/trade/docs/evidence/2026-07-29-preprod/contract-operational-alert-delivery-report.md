@@ -10,9 +10,9 @@
 - Admin API 镜像：
   `sha256:909eb263393579250611e2099b9bf7ddab82df674442b6422fa86c81c6338b5b`
 - iTick 镜像：
-  `sha256:5753afb14162e512a50b85d66dc2bebf860458d47fc2ec05c6446235dd7ea52a`
+  `sha256:f2cb7632dcc0373c8c8f73aaab8b65cefc36a9a8db3197abe2ddaed137bae131`
 - Trade 镜像：
-  `sha256:99b7e886d5f46b96eb1eeb34a7ed8bbe3f72ba6122282fdfd7592b7905bbaf93`
+  `sha256:8ecbd11b517d2591a4d2207a0c66904a83c3c3fd5bab9687c46de74bd3132530`
 
 本报告验证应用到 Kafka、Admin 消费组和后台 WebSocket 广播入口的技术链路。
 生产值班组、短信/电话/IM 通知渠道、确认回执及未确认升级链路尚未提供，因此本报告
@@ -113,18 +113,43 @@ firing（offset 5～18）。随后改为结构化 `InputUnavailableError`，告�
 Admin WebSocket 是在线后台的尽力实时通道，不提供离线值班确认、消息 ACK 或升级
 回执；这些能力仍属于未完成的生产外部通知门禁。
 
+### 4.5 通知接口解耦
+
+告警生产逻辑已从“频道 + 任意消息”的发布器迁移为传输无关的
+`common/alert.Notifier`：
+
+- `alert.Notify` 统一校验领域告警后调用接口；
+- `alert.NotifierFunc` 支持使用函数快速实现通道；
+- `alert.MultiNotifier` 可组合多个实现，逐个尝试并汇总失败；
+- 稳定的 `Alert.ID` 是各实现重试时的幂等键；
+- 当前 Kafka/Admin 转换独立位于 `common/alert/adminnotify`；
+- iTick 和 Trade 的 ServiceContext 只注入 `alert.Notifier`，任务代码不再依赖
+  Kafka Channel、Admin Event 或 WebSocket；
+- 后续邮件、短信或 IM 通知只需新增 `Notifier` 实现，不修改 Price Engine、
+  Snapshot Outbox 或合约对账逻辑。
+
+重新构建部署后，iTick 镜像 `f2cb7632…e131`、Trade 镜像
+`8ecbd11b…2530` 均为 Healthy，近五分钟未发现
+`error/panic/fatal/failed/unhealthy`。
+
 ## 5. 自动化验证
 
-- `common/alert`：首次、失败重试、内容变化、30 分钟提醒、恢复重试；
-- `services/itick/internal/priceengine`：结构化缺源错误与既有计算回归；
-- `services/itick/internal/tasks`：Price/Outbox 事件及稳定指纹；
+- `common/alert`：领域校验、接口调用、组合器全通道尝试及多错误汇总；
+- `common/alert/adminnotify`：Admin Event 转换、恢复级别和发布失败；
+- `common/alert.DeliveryTracker`：首次、失败重试、内容变化、30 分钟提醒、恢复重试；
+- `services/market/internal/priceengine`：结构化缺源错误与既有计算回归；
+- `services/market/internal/tasks`：Price/Outbox 事件及稳定指纹；
 - `services/trade/internal/logic/task`：对账告警投递与预约释放；
 - `admin-api/internal/ws`：事件权限、租户隔离、系统级告警和 Origin 策略；
 - `admin-api/internal/handler/ws`：固定子协议令牌解析、查询参数令牌拒绝；
 - iTick、Trade 全量 `go test ./...` 通过；
 - iTick、Trade 告警相关包 `go test -race` 通过；
 - Admin API `go test ./...` 全量通过；
-- Admin UI `vue-tsc --noEmit` 和通知相关文件 Prettier 检查通过。
+- Admin UI `vue-tsc --noEmit` 和通知相关文件 Prettier 检查通过；
+- `common`、iTick、Trade 全量 `go test ./...` 通过；
+- `common/alert/...`、iTick `internal/tasks`、Trade
+  `internal/logic/task` 的 `go test -race` 通过；
+- 新接口及两个服务相关包 `go vet` 通过。
 
 ## 6. 结论
 

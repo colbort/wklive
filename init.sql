@@ -653,48 +653,48 @@ VALUES (400, 0, 1, 'ITICK数据管理', 1, 'Goods', 400);
 INSERT INTO sys_menu (id, parent_id, app_scope, name, menu_type, method, path, perms, component, icon, sort)
 VALUES
 -- 产品类型管理
-(401, 400, 1, '产品类型列表', 2, 'GET', '/itick/categories', 'itick:category:list', 'itick/categories', 'Menu', 401),
-(402, 401, 1, '创建产品类型', 3, 'POST', '/itick/categories', 'itick:category:add', '', '', 402),
-(403, 401, 1, '更新产品类型', 3, 'PUT', '/itick/categories', 'itick:category:update', '', '', 403),
-(404, 401, 1, '获取产品类型详情', 3, 'GET', '/itick/categories/{id}', 'itick:category:detail', '', '', 404),
-(405, 401, 1, '同步类型下的产品', 3, 'POST', '/itick/categories/sync-products', 'itick:category:syncProducts', '', '', 405),
-(406, 401, 1, '同步任务状态', 3, 'GET', '/itick/sync-tasks/{taskNo}/status', 'itick:sync-task:status', '', '', 406),
+(401, 400, 1, '产品类型列表', 2, 'GET', '/market/categories', 'market:category:list', 'market/categories', 'Menu', 401),
+(402, 401, 1, '创建产品类型', 3, 'POST', '/market/categories', 'market:category:add', '', '', 402),
+(403, 401, 1, '更新产品类型', 3, 'PUT', '/market/categories', 'market:category:update', '', '', 403),
+(404, 401, 1, '获取产品类型详情', 3, 'GET', '/market/categories/{id}', 'market:category:detail', '', '', 404),
+(405, 401, 1, '同步类型下的产品', 3, 'POST', '/market/categories/sync-products', 'market:category:syncProducts', '', '', 405),
+(406, 401, 1, '同步任务状态', 3, 'GET', '/market/sync-tasks/{taskNo}/status', 'market:sync-task:status', '', '', 406),
 
 -- 产品管理 320
-(420, 400, 1, '产品列表', 2, 'GET', '/itick/products', 'itick:product:list', 'itick/products', 'Goods', 420),
-(421, 420, 1, '创建产品', 3, 'POST', '/itick/products', 'itick:product:add', '', '', 421),
-(422, 420, 1, '更新产品', 3, 'PUT', '/itick/products', 'itick:product:update', '', '', 422),
-(423, 420, 1, '获取产品详情', 3, 'GET', '/itick/products/{id}', 'itick:product:detail', '', '', 423),
-(424, 420, 1, 'K线查看', 3, 'GET', '/itick/product/kline', 'itick:kline:view', '', '', 424),
-(425, 420, 1, '同步产品历史K线', 3, 'POST', '/itick/product/kline/sync-history', 'itick:kline:syncHistory', '', '', 425),
+(420, 400, 1, '产品列表', 2, 'GET', '/market/products', 'market:product:list', 'market/products', 'Goods', 420),
+(421, 420, 1, '创建产品', 3, 'POST', '/market/products', 'market:product:add', '', '', 421),
+(422, 420, 1, '更新产品', 3, 'PUT', '/market/products', 'market:product:update', '', '', 422),
+(423, 420, 1, '获取产品详情', 3, 'GET', '/market/products/{id}', 'market:product:detail', '', '', 423),
+(424, 420, 1, 'K线查看', 3, 'GET', '/market/product/kline', 'market:kline:view', '', '', 424),
+(425, 420, 1, '同步产品历史K线', 3, 'POST', '/market/product/kline/sync-history', 'market:kline:syncHistory', '', '', 425),
 
 -- 租户产品类型管理 330
-(430, 400, 1, '租户产品类型列表', 2, 'GET', '/itick/tenant-categories', 'itick:tenant-category:list', 'itick/tenant-categories', 'OfficeBuilding', 430),
-(431, 430, 1, '创建租户产品类型', 3, 'POST', '/itick/tenant-categories', 'itick:tenant-category:add', '', '', 431),
-(432, 430, 1, '更新租户产品类型', 3, 'PUT', '/itick/tenant-categories', 'itick:tenant-category:update', '', '', 432),
-(433, 430, 1, '批量更新租户产品类型', 3, 'POST', '/itick/tenant-categories/batch', 'itick:tenant-category:batchUpsert', '', '', 433),
-(434, 430, 1, '获取租户产品类型详情', 3, 'GET', '/itick/tenant-categories/{id}', 'itick:tenant-category:detail', '', '', 434),
+(430, 400, 1, '租户产品类型列表', 2, 'GET', '/market/tenant-categories', 'market:tenant-category:list', 'market/tenant-categories', 'OfficeBuilding', 430),
+(431, 430, 1, '创建租户产品类型', 3, 'POST', '/market/tenant-categories', 'market:tenant-category:add', '', '', 431),
+(432, 430, 1, '更新租户产品类型', 3, 'PUT', '/market/tenant-categories', 'market:tenant-category:update', '', '', 432),
+(433, 430, 1, '批量更新租户产品类型', 3, 'POST', '/market/tenant-categories/batch', 'market:tenant-category:batchUpsert', '', '', 433),
+(434, 430, 1, '获取租户产品类型详情', 3, 'GET', '/market/tenant-categories/{id}', 'market:tenant-category:detail', '', '', 434),
 
 -- 租户产品管理 350
-(450, 400, 1, '租户产品列表', 2, 'GET', '/itick/tenant-products', 'itick:tenant-itick:list', 'itick/tenant-products', 'Grid', 450),
-(451, 450, 1, '创建租户产品', 3, 'POST', '/itick/tenant-products', 'itick:tenant-itick:add', '', '', 451),
-(452, 450, 1, '更新租户产品', 3, 'PUT', '/itick/tenant-products', 'itick:tenant-itick:update', '', '', 452),
-(453, 450, 1, '批量更新租户产品', 3, 'POST', '/itick/tenant-products/batch', 'itick:tenant-itick:batchUpsert', '', '', 453),
-(454, 450, 1, '获取租户产品详情', 3, 'GET', '/itick/tenant-products/{id}', 'itick:tenant-itick:detail', '', '', 454),
+(450, 400, 1, '租户产品列表', 2, 'GET', '/market/tenant-products', 'market:tenant-market:list', 'market/tenant-products', 'Grid', 450),
+(451, 450, 1, '创建租户产品', 3, 'POST', '/market/tenant-products', 'market:tenant-market:add', '', '', 451),
+(452, 450, 1, '更新租户产品', 3, 'PUT', '/market/tenant-products', 'market:tenant-market:update', '', '', 452),
+(453, 450, 1, '批量更新租户产品', 3, 'POST', '/market/tenant-products/batch', 'market:tenant-market:batchUpsert', '', '', 453),
+(454, 450, 1, '获取租户产品详情', 3, 'GET', '/market/tenant-products/{id}', 'market:tenant-market:detail', '', '', 454),
 
 -- 初始化租户展示配置
-(470, 400, 1, '初始化租户展示配置', 2, 'POST', '/itick/tenant-display/init', 'itick:tenant-display:init', 'itick/tenant-display-init', 'Setting', 470);
+(470, 400, 1, '初始化租户展示配置', 2, 'POST', '/market/tenant-display/init', 'market:tenant-display:init', 'market/tenant-display-init', 'Setting', 470);
 
 INSERT INTO sys_menu (id, parent_id, app_scope, name, menu_type, method, path, perms, component, icon, sort)
 VALUES
-(480, 400, 1, '价格公式', 2, 'GET', '/itick/price-formulas', 'itick:price-formula:list', 'itick/price-formulas', 'DataAnalysis', 480),
-(481, 480, 1, '创建价格公式版本', 3, 'POST', '/itick/price-formulas', 'itick:price-formula:create', '', '', 481),
-(482, 480, 1, '切换价格公式状态', 3, 'PUT', '/itick/price-formulas/{id}/status', 'itick:price-formula:status', '', '', 482),
-(483, 480, 1, '查询权威行情来源', 3, 'GET', '/itick/authorities', 'itick:authority:list', '', '', 483),
-(484, 480, 1, '配置权威行情来源', 3, 'POST', '/itick/authorities', 'itick:authority:set', '', '', 484),
-(490, 400, 1, '快照发布任务', 2, 'GET', '/itick/snapshot-outbox', 'itick:snapshot-outbox:list', 'itick/snapshot-outbox', 'Promotion', 490),
-(491, 490, 1, '重试快照发布任务', 3, 'POST', '/itick/snapshot-outbox/{id}/retry', 'itick:snapshot-outbox:retry', '', '', 491),
-(492, 490, 1, '撤销权威快照', 3, 'POST', '/itick/authoritative-snapshots/revoke', 'itick:authoritative-snapshot:revoke', '', '', 492);
+(480, 400, 1, '价格公式', 2, 'GET', '/market/price-formulas', 'market:price-formula:list', 'market/price-formulas', 'DataAnalysis', 480),
+(481, 480, 1, '创建价格公式版本', 3, 'POST', '/market/price-formulas', 'market:price-formula:create', '', '', 481),
+(482, 480, 1, '切换价格公式状态', 3, 'PUT', '/market/price-formulas/{id}/status', 'market:price-formula:status', '', '', 482),
+(483, 480, 1, '查询权威行情来源', 3, 'GET', '/market/authorities', 'market:authority:list', '', '', 483),
+(484, 480, 1, '配置权威行情来源', 3, 'POST', '/market/authorities', 'market:authority:set', '', '', 484),
+(490, 400, 1, '快照发布任务', 2, 'GET', '/market/snapshot-outbox', 'market:snapshot-outbox:list', 'market/snapshot-outbox', 'Promotion', 490),
+(491, 490, 1, '重试快照发布任务', 3, 'POST', '/market/snapshot-outbox/{id}/retry', 'market:snapshot-outbox:retry', '', '', 491),
+(492, 490, 1, '撤销权威快照', 3, 'POST', '/market/authoritative-snapshots/revoke', 'market:authoritative-snapshot:revoke', '', '', 492);
 
 
 -- 资产（asset）

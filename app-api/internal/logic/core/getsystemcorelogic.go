@@ -11,7 +11,7 @@ import (
 	"wklive/app-api/internal/svc"
 	"wklive/app-api/internal/types"
 	"wklive/proto/common"
-	"wklive/proto/itick"
+	"wklive/proto/market"
 	"wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -37,7 +37,7 @@ func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err
 	coreKey := system.SysConfigType_SYSTEM_CORE
 	storageKey := system.SysConfigType_OBJECT_STORAGE
 	var coreConfig, storageConfig *system.SysConfigDetailResp
-	var intervalsResult *itick.KlineIntervalsResp
+	var intervalsResult *market.KlineIntervalsResp
 	err = mr.Finish(
 		func() error {
 			var callErr error
@@ -55,7 +55,7 @@ func (l *GetSystemCoreLogic) GetSystemCore() (resp *types.GetSystemCoreResp, err
 		},
 		func() error {
 			var callErr error
-			intervalsResult, callErr = l.svcCtx.ItickCli.GetKlineIntervals(l.ctx, &itick.Empty{})
+			intervalsResult, callErr = l.svcCtx.MarketCli.GetKlineIntervals(l.ctx, &market.Empty{})
 			return callErr
 		},
 	)

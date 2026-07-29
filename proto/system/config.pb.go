@@ -7,12 +7,13 @@
 package system
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
 	common "wklive/proto/common"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -483,7 +484,7 @@ func (x *ObjectStorageConfig) GetOssDomain() string {
 	return ""
 }
 
-type ItickConfig struct {
+type MarketConfig struct {
 	state                    protoimpl.MessageState `protogen:"open.v1"`
 	ApiUrl                   string                 `protobuf:"bytes,1,opt,name=api_url,json=apiUrl,proto3" json:"api_url,omitempty"`                                                            // ITICK API地址
 	ApiToken                 string                 `protobuf:"bytes,2,opt,name=api_token,json=apiToken,proto3" json:"api_token,omitempty"`                                                      // ITICK API密钥
@@ -498,20 +499,20 @@ type ItickConfig struct {
 	sizeCache                protoimpl.SizeCache
 }
 
-func (x *ItickConfig) Reset() {
-	*x = ItickConfig{}
+func (x *MarketConfig) Reset() {
+	*x = MarketConfig{}
 	mi := &file_proto_system_config_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ItickConfig) String() string {
+func (x *MarketConfig) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ItickConfig) ProtoMessage() {}
+func (*MarketConfig) ProtoMessage() {}
 
-func (x *ItickConfig) ProtoReflect() protoreflect.Message {
+func (x *MarketConfig) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_system_config_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -523,68 +524,68 @@ func (x *ItickConfig) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ItickConfig.ProtoReflect.Descriptor instead.
-func (*ItickConfig) Descriptor() ([]byte, []int) {
+// Deprecated: Use MarketConfig.ProtoReflect.Descriptor instead.
+func (*MarketConfig) Descriptor() ([]byte, []int) {
 	return file_proto_system_config_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *ItickConfig) GetApiUrl() string {
+func (x *MarketConfig) GetApiUrl() string {
 	if x != nil {
 		return x.ApiUrl
 	}
 	return ""
 }
 
-func (x *ItickConfig) GetApiToken() string {
+func (x *MarketConfig) GetApiToken() string {
 	if x != nil {
 		return x.ApiToken
 	}
 	return ""
 }
 
-func (x *ItickConfig) GetWsUrl() string {
+func (x *MarketConfig) GetWsUrl() string {
 	if x != nil {
 		return x.WsUrl
 	}
 	return ""
 }
 
-func (x *ItickConfig) GetReconcileIntervalMinutes() int32 {
+func (x *MarketConfig) GetReconcileIntervalMinutes() int32 {
 	if x != nil {
 		return x.ReconcileIntervalMinutes
 	}
 	return 0
 }
 
-func (x *ItickConfig) GetReconcileWindowBars() int32 {
+func (x *MarketConfig) GetReconcileWindowBars() int32 {
 	if x != nil {
 		return x.ReconcileWindowBars
 	}
 	return 0
 }
 
-func (x *ItickConfig) GetGapScanIntervalMinutes() int32 {
+func (x *MarketConfig) GetGapScanIntervalMinutes() int32 {
 	if x != nil {
 		return x.GapScanIntervalMinutes
 	}
 	return 0
 }
 
-func (x *ItickConfig) GetRepairBatchSize() int32 {
+func (x *MarketConfig) GetRepairBatchSize() int32 {
 	if x != nil {
 		return x.RepairBatchSize
 	}
 	return 0
 }
 
-func (x *ItickConfig) GetBuildingBucketTtlMinutes() int32 {
+func (x *MarketConfig) GetBuildingBucketTtlMinutes() int32 {
 	if x != nil {
 		return x.BuildingBucketTtlMinutes
 	}
 	return 0
 }
 
-func (x *ItickConfig) GetWsKlineStaleSeconds() int32 {
+func (x *MarketConfig) GetWsKlineStaleSeconds() int32 {
 	if x != nil {
 		return x.WsKlineStaleSeconds
 	}
@@ -1079,7 +1080,7 @@ const file_proto_system_config_proto_rawDesc = "" +
 	"\boss_type\x18\x04 \x01(\x03R\aossType\x12\x1d\n" +
 	"\n" +
 	"oss_domain\x18\x05 \x01(\tR\tossDomain\"\xa7\x03\n" +
-	"\vItickConfig\x12\x17\n" +
+	"\vMarketConfig\x12\x17\n" +
 	"\aapi_url\x18\x01 \x01(\tR\x06apiUrl\x12\x1b\n" +
 	"\tapi_token\x18\x02 \x01(\tR\bapiToken\x12\x15\n" +
 	"\x06ws_url\x18\x03 \x01(\tR\x05wsUrl\x12<\n" +
@@ -1154,7 +1155,7 @@ var file_proto_system_config_proto_goTypes = []any{
 	(*TencentCosConfig)(nil),    // 3: system.TencentCosConfig
 	(*MinioConfig)(nil),         // 4: system.MinioConfig
 	(*ObjectStorageConfig)(nil), // 5: system.ObjectStorageConfig
-	(*ItickConfig)(nil),         // 6: system.ItickConfig
+	(*MarketConfig)(nil),         // 6: system.MarketConfig
 	(*RechargeConfig)(nil),      // 7: system.RechargeConfig
 	(*WithdrawConfig)(nil),      // 8: system.WithdrawConfig
 	(*EmailConfig)(nil),         // 9: system.EmailConfig

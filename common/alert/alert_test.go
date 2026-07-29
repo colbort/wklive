@@ -21,7 +21,7 @@ func TestNotifyValidatesAndUsesInterface(t *testing.T) {
 		TypeSnapshotOutbox,
 		StateFiring,
 		"error",
-		"itick",
+		"market",
 		"snapshot-outbox",
 		"Snapshot Outbox unhealthy",
 		"pending rows exceeded the freshness window",
@@ -40,7 +40,7 @@ func TestNotifyRejectsMissingNotifierAndInvalidAlert(t *testing.T) {
 	if err := Notify(context.Background(), nil, Alert{}); !errors.Is(err, ErrNotifierRequired) {
 		t.Fatalf("nil notifier error=%v", err)
 	}
-	value := New(TypeSnapshotOutbox, StateFiring, "error", "itick", "key", "title", "message", 1234)
+	value := New(TypeSnapshotOutbox, StateFiring, "error", "market", "key", "title", "message", 1234)
 	value.State = "unknown"
 	if err := Notify(context.Background(), &capturedNotifier{}, value); err == nil {
 		t.Fatal("expected invalid state error")
@@ -49,7 +49,7 @@ func TestNotifyRejectsMissingNotifierAndInvalidAlert(t *testing.T) {
 
 func TestNotifyReturnsImplementationError(t *testing.T) {
 	notifierErr := errors.New("notification unavailable")
-	value := New(TypeSnapshotOutbox, StateFiring, "error", "itick", "key", "title", "message", 1234)
+	value := New(TypeSnapshotOutbox, StateFiring, "error", "market", "key", "title", "message", 1234)
 	if err := Notify(
 		context.Background(),
 		&capturedNotifier{err: notifierErr},
@@ -60,7 +60,7 @@ func TestNotifyReturnsImplementationError(t *testing.T) {
 }
 
 func TestMultiNotifierAttemptsEveryImplementation(t *testing.T) {
-	value := New(TypeSnapshotOutbox, StateFiring, "error", "itick", "key", "title", "message", 1234)
+	value := New(TypeSnapshotOutbox, StateFiring, "error", "market", "key", "title", "message", 1234)
 	var calls []string
 	firstErr := errors.New("webhook unavailable")
 	notifier := NewMultiNotifier(
@@ -85,7 +85,7 @@ func TestMultiNotifierAttemptsEveryImplementation(t *testing.T) {
 }
 
 func TestMultiNotifierRequiresAnImplementation(t *testing.T) {
-	value := New(TypeSnapshotOutbox, StateFiring, "error", "itick", "key", "title", "message", 1234)
+	value := New(TypeSnapshotOutbox, StateFiring, "error", "market", "key", "title", "message", 1234)
 	if err := Notify(
 		context.Background(),
 		NewMultiNotifier(),

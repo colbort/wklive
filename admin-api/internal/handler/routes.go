@@ -9,7 +9,7 @@ import (
 	asset "wklive/admin-api/internal/handler/asset"
 	auth_private "wklive/admin-api/internal/handler/auth_private"
 	auth_public "wklive/admin-api/internal/handler/auth_public"
-	itick "wklive/admin-api/internal/handler/itick"
+	market "wklive/admin-api/internal/handler/market"
 	option "wklive/admin-api/internal/handler/option"
 	payment "wklive/admin-api/internal/handler/payment"
 	security "wklive/admin-api/internal/handler/security"
@@ -163,166 +163,166 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				Method:  http.MethodPost,
 				Path:    "/authoritative-snapshots/revoke",
-				Handler: itick.RevokeAuthoritativeSnapshotHandler(serverCtx),
+				Handler: market.RevokeAuthoritativeSnapshotHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/authorities",
-				Handler: itick.SetAuthorityRegistryHandler(serverCtx),
+				Handler: market.SetAuthorityRegistryHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/authorities",
-				Handler: itick.ListAuthorityRegistriesHandler(serverCtx),
+				Handler: market.ListAuthorityRegistriesHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/categories",
-				Handler: itick.ListCategoriesHandler(serverCtx),
+				Handler: market.ListCategoriesHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/categories",
-				Handler: itick.CreateCategoryHandler(serverCtx),
+				Handler: market.CreateCategoryHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPut,
 				Path:    "/categories",
-				Handler: itick.UpdateCategoryHandler(serverCtx),
+				Handler: market.UpdateCategoryHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/categories/:id",
-				Handler: itick.GetCategoryHandler(serverCtx),
+				Handler: market.GetCategoryHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/categories/sync-products",
-				Handler: itick.SyncCategoryProductsHandler(serverCtx),
+				Handler: market.SyncCategoryProductsHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/price-formulas",
-				Handler: itick.CreatePriceFormulaHandler(serverCtx),
+				Handler: market.CreatePriceFormulaHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/price-formulas",
-				Handler: itick.ListPriceFormulasHandler(serverCtx),
+				Handler: market.ListPriceFormulasHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/price-formulas/:id",
-				Handler: itick.GetPriceFormulaHandler(serverCtx),
+				Handler: market.GetPriceFormulaHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPut,
 				Path:    "/price-formulas/:id/status",
-				Handler: itick.ChangePriceFormulaStatusHandler(serverCtx),
+				Handler: market.ChangePriceFormulaStatusHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/product/kline",
-				Handler: itick.GetProductKlineHandler(serverCtx),
+				Handler: market.GetProductKlineHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/product/kline/sync-history",
-				Handler: itick.SyncProductKlineHistoryHandler(serverCtx),
+				Handler: market.SyncProductKlineHistoryHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/products",
-				Handler: itick.ListProductsHandler(serverCtx),
+				Handler: market.ListProductsHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/products",
-				Handler: itick.CreateProductHandler(serverCtx),
+				Handler: market.CreateProductHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPut,
 				Path:    "/products",
-				Handler: itick.UpdateProductHandler(serverCtx),
+				Handler: market.UpdateProductHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/products/:id",
-				Handler: itick.GetProductHandler(serverCtx),
+				Handler: market.GetProductHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/snapshot-outbox",
-				Handler: itick.ListSnapshotOutboxHandler(serverCtx),
+				Handler: market.ListSnapshotOutboxHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/snapshot-outbox/:id/retry",
-				Handler: itick.RetrySnapshotOutboxHandler(serverCtx),
+				Handler: market.RetrySnapshotOutboxHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/sync-tasks/:taskNo/status",
-				Handler: itick.GetSyncTaskStatusHandler(serverCtx),
+				Handler: market.GetSyncTaskStatusHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/tenant-categories",
-				Handler: itick.ListTenantCategoriesHandler(serverCtx),
+				Handler: market.ListTenantCategoriesHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/tenant-categories",
-				Handler: itick.CreateTenantCategoryHandler(serverCtx),
+				Handler: market.CreateTenantCategoryHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPut,
 				Path:    "/tenant-categories",
-				Handler: itick.UpdateTenantCategoryHandler(serverCtx),
+				Handler: market.UpdateTenantCategoryHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/tenant-categories/:id",
-				Handler: itick.GetTenantCategoryHandler(serverCtx),
+				Handler: market.GetTenantCategoryHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/tenant-categories/batch",
-				Handler: itick.BatchUpsertTenantCategoriesHandler(serverCtx),
+				Handler: market.BatchUpsertTenantCategoriesHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/tenant-display/init",
-				Handler: itick.InitTenantItickDisplayHandler(serverCtx),
+				Handler: market.InitTenantMarketDisplayHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/tenant-products",
-				Handler: itick.ListTenantProductsHandler(serverCtx),
+				Handler: market.ListTenantProductsHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/tenant-products",
-				Handler: itick.CreateTenantProductHandler(serverCtx),
+				Handler: market.CreateTenantProductHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPut,
 				Path:    "/tenant-products",
-				Handler: itick.UpdateTenantProductHandler(serverCtx),
+				Handler: market.UpdateTenantProductHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/tenant-products/:id",
-				Handler: itick.GetTenantProductHandler(serverCtx),
+				Handler: market.GetTenantProductHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/tenant-products/batch",
-				Handler: itick.BatchUpsertTenantProductsHandler(serverCtx),
+				Handler: market.BatchUpsertTenantProductsHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
-		rest.WithPrefix("/admin/itick"),
+		rest.WithPrefix("/admin/market"),
 	)
 
 	server.AddRoutes(

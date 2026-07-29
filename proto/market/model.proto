@@ -1,0 +1,148 @@
+syntax = "proto3";
+
+package market;
+
+import "proto/common/common.proto";
+import "proto/market/enum.proto";
+
+option go_package = "wklive/proto/market;market";
+
+// 产品类型配置
+message MarketCategory {
+  int64 id = 1;
+  market.CategoryType category_type = 2;
+  string category_code = 3;
+  string category_name = 4;
+  common.Enable enabled = 5; // 启用状态 0表示全部，1表示启用，2表示禁用
+  common.Switch app_visible = 6; // APP可见开关 0表示全部，1表示显示，2表示隐藏
+  market.SyncKlinePriority sync_priority = 7; // K线同步优先级
+  int64 sort = 8;
+  string icon = 9;
+  string remark = 10;
+  int64 create_times = 11;
+  int64 update_times = 12;
+}
+
+// 产品
+message MarketProduct {
+  int64 id = 1;
+  market.CategoryType category_type = 2;
+  string category_code = 3;
+  string category_name = 4;
+  string market = 5; // binance / hk / us / forex ...
+  string symbol = 6; // BTCUSDT / AAPL / EURUSD
+  string code = 7; // 第三方原始 code
+  string name = 8;
+  string display_name = 9;
+  string base_coin = 10;
+  string quote_coin = 11;
+  common.Enable enabled = 12; // 启用状态 0表示全部，1表示启用，2表示禁用
+  common.Switch app_visible = 13; // APP可见开关 0表示全部，1表示显示，2表示隐藏
+  market.SyncKlinePriority sync_priority = 14; // K线同步优先级
+  int64 sort = 15;
+  string icon = 16;
+  string remark = 17;
+  int64 create_times = 18;
+  int64 update_times = 19;
+}
+
+// K线
+message Kline {
+  string category_code = 1;
+  string market = 2;
+  string symbol = 3;
+  market.KlineType k_type = 4;
+  int64 ts = 5;
+  string open = 6;
+  string high = 7;
+  string low = 8;
+  string close = 9;
+  string volume = 10;
+  string turnover = 11;
+  string source = 12;
+  int64 revision = 13;
+  bool is_closed = 14;
+  bool confirmed = 15;
+  int32 actual_count = 16;
+  int32 expected_count = 17;
+}
+
+// 实时报价
+message Quote {
+  string category_code = 1;
+  string symbol = 2;
+  string last_price = 3;
+  string open_price = 4;
+  string high_price = 5;
+  string low_price = 6;
+  string prev_close_price = 7;
+  string change_value = 8;
+  string change_rate = 9;
+  string volume = 10;
+  string turnover = 11;
+  int64 quote_ts = 12;
+  int64 trade_status = 13;
+  string market = 14;
+}
+
+// 权威行情快照。作为 App/Internal RPC 的公共响应数据，RPC 顶层出入参
+// 仍分别声明在各自的 service proto 中，兼容 goctl 的代码生成约束。
+message AuthoritativeSnapshot {
+  string snapshot_id = 1;
+  string authority = 2;
+  string snapshot_kind = 3;
+  string category_code = 4;
+  string market = 5;
+  string symbol = 6;
+  string price = 7;
+  int64 source_timestamp = 8;
+  int64 snapshot_timestamp = 9;
+  int64 revision = 10;
+  string formula_version = 11;
+  string raw_payload = 12;
+}
+
+message MarketTenantCategory {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 category_id = 3;
+  common.Enable enabled = 4; // 启用状态 0表示全部，1表示启用，2表示禁用
+  common.Switch app_visible = 5; // APP可见开关 0表示全部，1表示显示，2表示隐藏
+  int64 sort = 6;
+  string remark = 7;
+  int64 create_times = 8;
+  int64 update_times = 9;
+
+  // 冗余返回字段，方便前端展示
+  market.CategoryType category_type = 10;
+  string category_name = 11;
+  string icon = 12;
+  reserved 13;
+  string category_code = 14;
+}
+
+message MarketTenantProduct {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 product_id = 3;
+  common.Enable enabled = 4; // 启用状态 0表示全部，1表示启用，2表示禁用
+  common.Switch app_visible = 5; // APP可见开关 0表示全部，1表示显示，2表示隐藏
+  int64 sort = 6;
+  string remark = 7;
+  int64 create_times = 8;
+  int64 update_times = 9;
+
+  // 冗余返回字段，方便前端展示
+  market.CategoryType category_type = 10;
+  string category_name = 11;
+  string market = 12;
+  string symbol = 13;
+  string code = 14;
+  string name = 15;
+  string display_name = 16;
+  string base_coin = 17;
+  string quote_coin = 18;
+  string icon = 19;
+  reserved 20;
+  string category_code = 21;
+}

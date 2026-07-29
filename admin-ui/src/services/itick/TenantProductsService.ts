@@ -2,15 +2,15 @@ import type { RespBase, BaseService, OptionGroup } from '@/services'
 import { getCoreOptions } from '@/stores/core'
 
 import {
-  apiInitTenantItickDisplay,
-  apiItickTenantProductBatchUpsert,
-  apiItickTenantProductCreate,
-  apiItickTenantProductDetail,
-  apiItickTenantProductList,
-  apiItickTenantProductUpdate,
-} from '@/api/itick/tenant-products'
+  apiInitTenantMarketDisplay,
+  apiMarketTenantProductBatchUpsert,
+  apiMarketTenantProductCreate,
+  apiMarketTenantProductDetail,
+  apiMarketTenantProductList,
+  apiMarketTenantProductUpdate,
+} from '@/api/market/tenant-products'
 
-export type ItickTenantProduct = {
+export type MarketTenantProduct = {
   id: number
   tenantId: number
   productId: number
@@ -76,12 +76,12 @@ export type ListTenantProductsReq = {
   limit?: number
 }
 
-export type InitTenantItickDisplayReq = {
+export type InitTenantMarketDisplayReq = {
   tenantId: number
   overwrite: number
 }
 
-export type InitTenantItickDisplayResp = {
+export type InitTenantMarketDisplayResp = {
   categoryCount: number
   productCount: number
 }
@@ -93,30 +93,30 @@ export class TenantProductsService implements BaseService {
     return getCoreOptions()
   }
 
-  async getList(params: ListTenantProductsReq): Promise<RespBase<ItickTenantProduct[]>> {
-    return apiItickTenantProductList(params)
+  async getList(params: ListTenantProductsReq): Promise<RespBase<MarketTenantProduct[]>> {
+    return apiMarketTenantProductList(params)
   }
 
   async create(params: CreateTenantProductReq): Promise<RespBase> {
-    return apiItickTenantProductCreate(params)
+    return apiMarketTenantProductCreate(params)
   }
 
   async update(id: string | number, params: Partial<UpdateTenantProductReq>): Promise<RespBase> {
-    return apiItickTenantProductUpdate({ id: Number(id), ...params } as UpdateTenantProductReq)
+    return apiMarketTenantProductUpdate({ id: Number(id), ...params } as UpdateTenantProductReq)
   }
 
-  async detail(id: number, tenantId: number): Promise<RespBase<ItickTenantProduct>> {
-    return apiItickTenantProductDetail(id, tenantId)
+  async detail(id: number, tenantId: number): Promise<RespBase<MarketTenantProduct>> {
+    return apiMarketTenantProductDetail(id, tenantId)
   }
 
   async batchUpsert(params: BatchUpsertTenantProductsReq): Promise<RespBase> {
-    return apiItickTenantProductBatchUpsert(params)
+    return apiMarketTenantProductBatchUpsert(params)
   }
 
   async initDisplay(
-    params: InitTenantItickDisplayReq,
-  ): Promise<RespBase<InitTenantItickDisplayResp>> {
-    return apiInitTenantItickDisplay(params)
+    params: InitTenantMarketDisplayReq,
+  ): Promise<RespBase<InitTenantMarketDisplayResp>> {
+    return apiInitTenantMarketDisplay(params)
   }
 }
 

@@ -37,7 +37,7 @@
         >
           <template #default="{ row }">
             <el-button link type="primary" @click="showDetail(row)">
-              {{ t('itick.detail') }}
+              {{ t('market.detail') }}
             </el-button>
           </template>
         </el-table-column>
@@ -54,7 +54,7 @@
       />
     </el-card>
 
-    <el-dialog v-model="detailVisible" :title="t('itick.detail')" width="760px">
+    <el-dialog v-model="detailVisible" :title="t('market.detail')" width="760px">
       <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
     </el-dialog>
   </div>

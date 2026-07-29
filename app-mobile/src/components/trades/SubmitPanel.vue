@@ -5,7 +5,7 @@ import { apiGetCoreOptions } from '@/api/core'
 import BottomDrawer from '@/components/common/BottomDrawer.vue'
 import { optionText, useOptions } from '@/composables/useOptions'
 import { useI18n } from '@/i18n'
-import type { ItickTenantProduct } from '@/types/itick'
+import type { MarketTenantProduct } from '@/types/market'
 import type {
   TradeSymbol,
   TradeSymbolContract,
@@ -24,7 +24,7 @@ type TradeSymbolDetail = {
 }
 
 const props = defineProps<{
-  selectedProduct: ItickTenantProduct | null
+  selectedProduct: MarketTenantProduct | null
   tradeKind: 'stock' | 'option' | 'forex' | 'commodity' | 'crypto'
   orderMode: 'market' | 'limit'
   selectedTradeSymbol: TradeSymbol | null

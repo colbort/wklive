@@ -6,40 +6,40 @@ import type {
   UpdateTenantProductReq,
   BatchUpsertTenantProductsReq,
   ListTenantProductsReq,
-  ItickTenantProduct,
-  InitTenantItickDisplayReq,
-  InitTenantItickDisplayResp,
+  MarketTenantProduct,
+  InitTenantMarketDisplayReq,
+  InitTenantMarketDisplayResp,
 } from '@/services'
 
-export function apiItickTenantProductList(
+export function apiMarketTenantProductList(
   params: ListTenantProductsReq,
-): Promise<RespBase<ItickTenantProduct[]>> {
-  return get<ItickTenantProduct[]>('/admin/itick/tenant-products', params)
+): Promise<RespBase<MarketTenantProduct[]>> {
+  return get<MarketTenantProduct[]>('/admin/market/tenant-products', params)
 }
 
-export function apiItickTenantProductCreate(params: CreateTenantProductReq): Promise<RespBase> {
-  return post('/admin/itick/tenant-products', params)
+export function apiMarketTenantProductCreate(params: CreateTenantProductReq): Promise<RespBase> {
+  return post('/admin/market/tenant-products', params)
 }
 
-export function apiItickTenantProductUpdate(params: UpdateTenantProductReq): Promise<RespBase> {
-  return put('/admin/itick/tenant-products', params)
+export function apiMarketTenantProductUpdate(params: UpdateTenantProductReq): Promise<RespBase> {
+  return put('/admin/market/tenant-products', params)
 }
 
-export function apiItickTenantProductBatchUpsert(
+export function apiMarketTenantProductBatchUpsert(
   params: BatchUpsertTenantProductsReq,
 ): Promise<RespBase> {
-  return post('/admin/itick/tenant-products/batch', params)
+  return post('/admin/market/tenant-products/batch', params)
 }
 
-export function apiItickTenantProductDetail(
+export function apiMarketTenantProductDetail(
   id: number,
   tenantId: number,
-): Promise<RespBase<ItickTenantProduct>> {
-  return get<ItickTenantProduct>(`/admin/itick/tenant-products/${id}`, { tenantId })
+): Promise<RespBase<MarketTenantProduct>> {
+  return get<MarketTenantProduct>(`/admin/market/tenant-products/${id}`, { tenantId })
 }
 
-export function apiInitTenantItickDisplay(
-  params: InitTenantItickDisplayReq,
-): Promise<RespBase<InitTenantItickDisplayResp>> {
-  return post<InitTenantItickDisplayResp>('/admin/itick/tenant-display/init', params)
+export function apiInitTenantMarketDisplay(
+  params: InitTenantMarketDisplayReq,
+): Promise<RespBase<InitTenantMarketDisplayResp>> {
+  return post<InitTenantMarketDisplayResp>('/admin/market/tenant-display/init', params)
 }

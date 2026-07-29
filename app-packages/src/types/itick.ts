@@ -3,7 +3,7 @@ export interface PageReq {
   limit?: number
 }
 
-export interface ItickCategory {
+export interface MarketCategory {
   id: number
   categoryType: number
   categoryCode: string
@@ -17,7 +17,7 @@ export interface ItickCategory {
   updateTimes: number
 }
 
-export interface ItickProduct {
+export interface MarketProduct {
   id: number
   categoryType: number
   categoryCode: string
@@ -85,7 +85,7 @@ export interface Quote {
   tradeStatus: number
 }
 
-export interface ItickTenantCategory {
+export interface MarketTenantCategory {
   id: number
   tenantId: number
   categoryId: number
@@ -101,7 +101,7 @@ export interface ItickTenantCategory {
   icon: string
 }
 
-export interface ItickTenantProduct {
+export interface MarketTenantProduct {
   id: number
   tenantId: number
   productId: number
@@ -128,7 +128,7 @@ export interface ListVisibleCategoriesReq extends PageReq {
   tenantCode: string
 }
 
-export type ListVisibleCategoriesResp = ItickTenantCategory[]
+export type ListVisibleCategoriesResp = MarketTenantCategory[]
 
 export interface ListVisibleProductsReq extends PageReq {
   categoryType?: number
@@ -138,7 +138,7 @@ export interface ListVisibleProductsReq extends PageReq {
   tenantCode: string
 }
 
-export type ListVisibleProductsResp = ItickTenantProduct[]
+export type ListVisibleProductsResp = MarketTenantProduct[]
 
 export interface GetKlineReq {
   categoryCode: string
@@ -173,29 +173,29 @@ export interface BatchGetQuoteReq {
 
 export type BatchGetQuoteResp = Quote[]
 
-export type ItickWsTopic = 'quote' | 'depth' | 'tick' | 'kline'
+export type MarketWsTopic = 'quote' | 'depth' | 'tick' | 'kline'
 
-export type ItickWsConnectionState = 'connecting' | 'open' | 'closed'
+export type MarketWsConnectionState = 'connecting' | 'open' | 'closed'
 
-export interface ItickWsTopicConfig {
-  topic: ItickWsTopic
+export interface MarketWsTopicConfig {
+  topic: MarketWsTopic
   categoryCode: string
   symbol: string
   market: string
   interval?: string
 }
 
-export interface ItickWsSubscribeMessage {
+export interface MarketWsSubscribeMessage {
   type: 'subscribe'
-  topics: ItickWsTopicConfig[]
+  topics: MarketWsTopicConfig[]
 }
 
-export interface ItickWsPingMessage {
+export interface MarketWsPingMessage {
   type: 'ping'
   clientTs: number
 }
 
-export interface ItickWsPongMessage {
+export interface MarketWsPongMessage {
   type: 'pong'
   clientTs: number
   serverTs: number
@@ -238,8 +238,8 @@ export interface KlinePayload {
   ts: number
 }
 
-export interface ItickWsServerMessage<TPayload = unknown> {
-  topic: ItickWsTopic
+export interface MarketWsServerMessage<TPayload = unknown> {
+  topic: MarketWsTopic
   categoryCode: string
   symbol: string
   market?: string

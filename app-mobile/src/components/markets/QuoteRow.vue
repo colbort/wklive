@@ -3,12 +3,12 @@ import { computed } from 'vue'
 
 import { getLocale, useI18n } from '@/i18n'
 import { useSystemStore } from '@/stores/system'
-import type { ItickTenantProduct, QuotePayload } from '@/types/itick'
+import type { MarketTenantProduct, QuotePayload } from '@/types/market'
 import { resolveSystemAssetUrl } from '@/utils/assetUrl'
 
 const props = withDefaults(
   defineProps<{
-    product: ItickTenantProduct
+    product: MarketTenantProduct
     quote?: QuotePayload | null
     changeRate?: number
     priceText?: string
@@ -30,7 +30,7 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{
-  select: [product: ItickTenantProduct]
+  select: [product: MarketTenantProduct]
 }>()
 
 const { t } = useI18n()
@@ -56,11 +56,11 @@ function formatPercent(value: number) {
   return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`
 }
 
-function productIconText(product: ItickTenantProduct) {
+function productIconText(product: MarketTenantProduct) {
   return (product.baseCoin || product.symbol || product.code || '?').slice(0, 2).toUpperCase()
 }
 
-function productDisplayName(product: ItickTenantProduct) {
+function productDisplayName(product: MarketTenantProduct) {
   return product.displayName || product.symbol || product.code || '--'
 }
 

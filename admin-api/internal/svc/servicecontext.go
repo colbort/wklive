@@ -16,7 +16,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/proto/chat"
-	"wklive/proto/itick"
+	"wklive/proto/market"
 	"wklive/proto/option"
 	"wklive/proto/payment"
 	"wklive/proto/staking"
@@ -36,7 +36,7 @@ type ServiceContext struct {
 	ChatCli           chat.PlatformClient
 	UserCli           user.AdminClient
 	PaymentCli        payment.AdminClient
-	ItickCli          itick.AdminClient
+	MarketCli          market.AdminClient
 	AssetCli          asset.AdminClient
 	OptionCli         option.AdminClient
 	StakingCli        staking.AdminClient
@@ -79,7 +79,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	chatCli := zrpc.MustNewClient(c.ChatRpc, options)
 	userCli := zrpc.MustNewClient(c.UserRpc, options)
 	paymentCli := zrpc.MustNewClient(c.PaymentRpc, options)
-	itickCli := zrpc.MustNewClient(c.ItickRpc, options)
+	marketCli := zrpc.MustNewClient(c.MarketRpc, options)
 	assetCli := zrpc.MustNewClient(c.AssetRpc, options)
 	optionCli := zrpc.MustNewClient(c.OptionRpc, options)
 	stakingCli := zrpc.MustNewClient(c.StakingRpc, options)
@@ -100,7 +100,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ChatCli:         chat.NewPlatformClient(chatCli.Conn()),
 		UserCli:         user.NewAdminClient(userCli.Conn()),
 		PaymentCli:      payment.NewAdminClient(paymentCli.Conn()),
-		ItickCli:        itick.NewAdminClient(itickCli.Conn()),
+		MarketCli:        market.NewAdminClient(marketCli.Conn()),
 		AssetCli:        asset.NewAdminClient(assetCli.Conn()),
 		OptionCli:       option.NewAdminClient(optionCli.Conn()),
 		StakingCli:      staking.NewAdminClient(stakingCli.Conn()),

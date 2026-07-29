@@ -39,7 +39,7 @@
 
 ### 3.1 Authority Registry 与实时来源
 
-- Authority 已具备 `GET/POST /admin/itick/authorities` 管理入口，价格公式页面从
+- Authority 已具备 `GET/POST /admin/market/authorities` 管理入口，价格公式页面从
   注册表动态加载，不再使用硬编码列表；
 - 至少三个 Authority 状态启用；
 - 每个 Authority 的 `allowed_kinds` 包含 `FINAL_QUOTE`；

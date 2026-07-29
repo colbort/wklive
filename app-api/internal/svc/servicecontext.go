@@ -14,7 +14,7 @@ import (
 	mq "wklive/common/mq/kafka"
 	"wklive/common/utils"
 	"wklive/proto/asset"
-	"wklive/proto/itick"
+	"wklive/proto/market"
 	"wklive/proto/option"
 	"wklive/proto/payment"
 	"wklive/proto/staking"
@@ -39,7 +39,7 @@ type ServiceContext struct {
 	SystemCli               system.AppClient
 	UserCli                 user.AppClient
 	PaymentCli              payment.AppClient
-	ItickCli                itick.AppClient
+	MarketCli                market.AppClient
 	AssetCli                asset.AppClient
 	OptionCli               option.AppClient
 	StakingCli              staking.AppClient
@@ -82,7 +82,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	systemCli := zrpc.MustNewClient(c.SystemRpc, options)
 	userCli := zrpc.MustNewClient(c.UserRpc, options)
 	paymentCli := zrpc.MustNewClient(c.PaymentRpc, options)
-	itickCli := zrpc.MustNewClient(c.ItickRpc, options)
+	marketCli := zrpc.MustNewClient(c.MarketRpc, options)
 	assetCli := zrpc.MustNewClient(c.AssetRpc, options)
 	optionCli := zrpc.MustNewClient(c.OptionRpc, options)
 	stakingCli := zrpc.MustNewClient(c.StakingRpc, options)
@@ -106,7 +106,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		SystemCli:               system.NewAppClient(systemCli.Conn()),
 		UserCli:                 user.NewAppClient(userCli.Conn()),
 		PaymentCli:              payment.NewAppClient(paymentCli.Conn()),
-		ItickCli:                itick.NewAppClient(itickCli.Conn()),
+		MarketCli:                market.NewAppClient(marketCli.Conn()),
 		AssetCli:                asset.NewAppClient(assetCli.Conn()),
 		OptionCli:               option.NewAppClient(optionCli.Conn()),
 		StakingCli:              staking.NewAppClient(stakingCli.Conn()),
