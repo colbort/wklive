@@ -254,6 +254,61 @@ type CommonResp struct {
 	RespBase
 }
 
+type ContractAccountLiquidation struct {
+	Id                    int64  `json:"id"`
+	LiquidationNo         string `json:"liquidationNo"`
+	UserId                int64  `json:"userId"`
+	MarginAsset           string `json:"marginAsset"`
+	MarginSnapshotId      int64  `json:"marginSnapshotId"`
+	MarginSnapshotVersion int64  `json:"marginSnapshotVersion"`
+	AssetVersion          int64  `json:"assetVersion"`
+	WalletBalance         string `json:"walletBalance" validate:"decimal_36_18"`
+	PositionMargin        string `json:"positionMargin" validate:"decimal_36_18"`
+	MaintenanceMargin     string `json:"maintenanceMargin" validate:"decimal_36_18"`
+	AccountEquity         string `json:"accountEquity" validate:"decimal_36_18"`
+	RiskRate              string `json:"riskRate"`
+	GrossSettlement       string `json:"grossSettlement" validate:"decimal_36_18"`
+	LiquidationFee        string `json:"liquidationFee" validate:"decimal_36_18"`
+	UserCredit            string `json:"userCredit" validate:"decimal_36_18"`
+	UserDebit             string `json:"userDebit" validate:"decimal_36_18"`
+	DeficitAmount         string `json:"deficitAmount" validate:"decimal_36_18"`
+	InsuranceFundAmount   string `json:"insuranceFundAmount" validate:"decimal_36_18"`
+	AdlReliefAmount       string `json:"adlReliefAmount" validate:"decimal_36_18"`
+	AdlQty                string `json:"adlQty" validate:"decimal_36_18"`
+	PositionCount         int64  `json:"positionCount"`
+	Status                int64  `json:"status"`
+	Reason                string `json:"reason"`
+	StartedAt             int64  `json:"startedAt"`
+	CompletedAt           int64  `json:"completedAt"`
+	Version               int64  `json:"version"`
+	CreateTimes           int64  `json:"createTimes"`
+	UpdateTimes           int64  `json:"updateTimes"`
+}
+
+type ContractAccountLiquidationItem struct {
+	Id                   int64  `json:"id"`
+	AccountLiquidationId int64  `json:"accountLiquidationId"`
+	LiquidationNo        string `json:"liquidationNo"`
+	PositionId           int64  `json:"positionId"`
+	PositionVersion      int64  `json:"positionVersion"`
+	SymbolId             int64  `json:"symbolId"`
+	PositionSide         int64  `json:"positionSide"`
+	TriggerQty           string `json:"triggerQty" validate:"decimal_36_18"`
+	TriggerMarkPrice     string `json:"triggerMarkPrice" validate:"decimal_36_18"`
+	TriggerSnapshotId    string `json:"triggerSnapshotId"`
+	PositionMargin       string `json:"positionMargin" validate:"decimal_36_18"`
+	MaintenanceMargin    string `json:"maintenanceMargin" validate:"decimal_36_18"`
+	RealizedPnl          string `json:"realizedPnl" validate:"decimal_36_18"`
+	LiquidationFee       string `json:"liquidationFee" validate:"decimal_36_18"`
+	DeficitAmount        string `json:"deficitAmount" validate:"decimal_36_18"`
+	BankruptcyPrice      string `json:"bankruptcyPrice" validate:"decimal_36_18"`
+	AdlReliefAmount      string `json:"adlReliefAmount" validate:"decimal_36_18"`
+	AdlQty               string `json:"adlQty" validate:"decimal_36_18"`
+	Status               int64  `json:"status"`
+	CreateTimes          int64  `json:"createTimes"`
+	UpdateTimes          int64  `json:"updateTimes"`
+}
+
 type ContractDeliveryBatch struct {
 	Id               int64  `json:"id"`
 	BatchNo          string `json:"batchNo"`
@@ -384,22 +439,28 @@ type ContractLiquidation struct {
 }
 
 type ContractMarginSnapshot struct {
-	Id               int64  `json:"id"`
-	TenantId         int64  `json:"tenantId"`
-	UserId           int64  `json:"userId"`
-	MarginAsset      string `json:"marginAsset"`
-	WalletBalance    string `json:"walletBalance" validate:"decimal_36_18"`
-	AvailableBalance string `json:"availableBalance" validate:"decimal_36_18"`
-	FrozenBalance    string `json:"frozenBalance" validate:"decimal_36_18"`
-	PositionMargin   string `json:"positionMargin" validate:"decimal_36_18"`
-	OrderMargin      string `json:"orderMargin" validate:"decimal_36_18"`
-	UnrealizedPnl    string `json:"unrealizedPnl" validate:"decimal_36_18"`
-	RealizedPnl      string `json:"realizedPnl" validate:"decimal_36_18"`
-	Version          int64  `json:"version"`
-	CreateTimes      int64  `json:"createTimes"`
-	UpdateTimes      int64  `json:"updateTimes"`
-	SourceEventNo    string `json:"sourceEventNo"`
-	SnapshotTime     int64  `json:"snapshotTime"`
+	Id                int64  `json:"id"`
+	TenantId          int64  `json:"tenantId"`
+	UserId            int64  `json:"userId"`
+	MarginAsset       string `json:"marginAsset"`
+	WalletBalance     string `json:"walletBalance" validate:"decimal_36_18"`
+	AvailableBalance  string `json:"availableBalance" validate:"decimal_36_18"`
+	FrozenBalance     string `json:"frozenBalance" validate:"decimal_36_18"`
+	PositionMargin    string `json:"positionMargin" validate:"decimal_36_18"`
+	OrderMargin       string `json:"orderMargin" validate:"decimal_36_18"`
+	MaintenanceMargin string `json:"maintenanceMargin" validate:"decimal_36_18"`
+	AccountEquity     string `json:"accountEquity" validate:"decimal_36_18"`
+	AvailableMargin   string `json:"availableMargin" validate:"decimal_36_18"`
+	RiskRate          string `json:"riskRate" validate:"decimal_20_10"`
+	PositionCount     int64  `json:"positionCount"`
+	AssetVersion      int64  `json:"assetVersion"`
+	UnrealizedPnl     string `json:"unrealizedPnl" validate:"decimal_36_18"`
+	RealizedPnl       string `json:"realizedPnl" validate:"decimal_36_18"`
+	Version           int64  `json:"version"`
+	CreateTimes       int64  `json:"createTimes"`
+	UpdateTimes       int64  `json:"updateTimes"`
+	SourceEventNo     string `json:"sourceEventNo"`
+	SnapshotTime      int64  `json:"snapshotTime"`
 }
 
 type ContractPosition struct {
@@ -410,6 +471,7 @@ type ContractPosition struct {
 	ContractType      int64  `json:"contractType"`
 	ContractValueType int64  `json:"contractValueType"`
 	PositionSide      int64  `json:"positionSide"`
+	PositionMode      int64  `json:"positionMode"`
 	MarginMode        int64  `json:"marginMode"`
 	Leverage          int64  `json:"leverage"`
 	Qty               string `json:"qty" validate:"decimal_36_18"`
@@ -979,6 +1041,32 @@ type FreezeAssetReq struct {
 	BizNo      string `json:"bizNo"`
 	Remark     string `json:"remark,optional"`
 	OperatorId int64  `json:"operatorId"`
+}
+
+type GetAccountLiquidationDetailReq struct {
+	TenantId int64 `form:"tenantId,optional"`
+	Id       int64 `form:"id"`
+}
+
+type GetAccountLiquidationDetailResp struct {
+	RespBase
+	Data                   ContractAccountLiquidation       `json:"data"`
+	Items                  []ContractAccountLiquidationItem `json:"items"`
+	SettlementInstructions []TradeSettlementInstruction     `json:"settlementInstructions"`
+}
+
+type GetAccountLiquidationListReq struct {
+	PageReq
+	TenantId    int64     `form:"tenantId,optional"`
+	UserId      int64     `form:"userId,optional"`
+	MarginAsset string    `form:"marginAsset,optional"`
+	Status      int64     `form:"status,optional"`
+	TimeRange   TimeRange `form:"timeRange,optional"`
+}
+
+type GetAccountLiquidationListResp struct {
+	RespBase
+	Data []ContractAccountLiquidation `json:"data"`
 }
 
 type GetAccountReq struct {
@@ -3279,6 +3367,12 @@ type RespBase struct {
 	HasPrev    bool   `json:"hasPrev,optional"`
 	NextCursor int64  `json:"nextCursor,optional"`
 	PrevCursor int64  `json:"prevCursor,optional"`
+}
+
+type RetryAccountLiquidationReq struct {
+	TenantId int64  `json:"tenantId,optional"`
+	Id       int64  `json:"id"`
+	Reason   string `json:"reason"`
 }
 
 type RetryNotifyReq struct {

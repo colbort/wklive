@@ -33,6 +33,31 @@ func TestLiquidationAuditMatchesCompletedSaga(t *testing.T) {
 	}
 }
 
+func TestLiquidationAuditMatchesPartialRecovered(t *testing.T) {
+	row := contractLiquidationAudit{
+		Status:             int64(trade.LiquidationStatus_LIQUIDATION_STATUS_PARTIAL_RECOVERED),
+		TriggerQty:         decimal.NewFromInt(10),
+		LiquidatedQty:      decimal.NewFromInt(5),
+		CompletedAt:        1,
+		PositionQty:        decimal.NewFromInt(5),
+		PositionStatus:     int64(trade.PositionStatus_POSITION_STATUS_NORMAL),
+		LiquidationHistory: 1,
+		CompletionEvent:    1,
+	}
+	if matched, detail := liquidationAuditMatches(&row); !matched {
+		t.Fatalf("partial recovered liquidation should match: %s", detail)
+	}
+	row.PositionQty = decimal.NewFromInt(6)
+	if matched, _ := liquidationAuditMatches(&row); matched {
+		t.Fatal("partial liquidation with wrong remaining quantity must fail")
+	}
+	row.PositionQty = decimal.NewFromInt(5)
+	row.InsuranceFundAmount = decimal.NewFromInt(1)
+	if matched, _ := liquidationAuditMatches(&row); matched {
+		t.Fatal("partial liquidation must not consume insurance fund")
+	}
+}
+
 func TestLiquidationAuditRejectsBrokenADLAndPosition(t *testing.T) {
 	row := completedLiquidationAudit()
 	row.AdlUnreconciledAssets = 1

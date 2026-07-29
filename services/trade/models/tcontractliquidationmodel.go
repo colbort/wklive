@@ -35,7 +35,7 @@ func NewTContractLiquidationModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...
 
 func (m *defaultTContractLiquidationModel) FindActiveByPosition(ctx context.Context, tenantID, positionID int64) (*TContractLiquidation, error) {
 	var row TContractLiquidation
-	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND position_id = ? AND status IN (1,2,3,5,6,7) ORDER BY id DESC LIMIT 1", tContractLiquidationRows, m.table)
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND position_id = ? AND status IN (1,2,5,6,7) ORDER BY id DESC LIMIT 1", tContractLiquidationRows, m.table)
 	err := m.QueryRowNoCacheCtx(ctx, &row, query, tenantID, positionID)
 	switch err {
 	case nil:
@@ -61,7 +61,7 @@ func (m *defaultTContractLiquidationModel) FindRecoverable(ctx context.Context, 
 		limit = 100
 	}
 	var rows []*TContractLiquidation
-	query := fmt.Sprintf("SELECT %s FROM %s WHERE status IN (1,2,3,5,6) ORDER BY update_times,id LIMIT ?", tContractLiquidationRows, m.table)
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE status IN (1,2,5,6) ORDER BY update_times,id LIMIT ?", tContractLiquidationRows, m.table)
 	if err := m.QueryRowsNoCacheCtx(ctx, &rows, query, limit); err != nil {
 		return nil, err
 	}

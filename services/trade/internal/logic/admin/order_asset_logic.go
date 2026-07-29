@@ -14,7 +14,6 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 // assetFreezeError distinguishes an explicit Asset rejection from an RPC
@@ -76,10 +75,9 @@ func unfreezeRemainingOrderAsset(svcCtx *svc.ServiceContext, ctx context.Context
 	}
 	var instructionID int64
 	now := utils.NowMillis()
-	err := helpers.TransactWithDeadlockRetry(ctx, svcCtx.DB, func(txCtx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		reservationModel := models.NewTTradeAssetReservationModel(conn, svcCtx.Config.CacheRedis)
-		instructionModel := models.NewTTradeSettlementInstructionModel(conn, svcCtx.Config.CacheRedis)
+	err := svcCtx.TransactionModel.Transact(ctx, func(txCtx context.Context, tx *models.TransactionModels) error {
+		reservationModel := tx.TradeAssetReservation
+		instructionModel := tx.TradeSettlementInstruction
 		reservation, err := reservationModel.FindOneByReservationNoForUpdate(txCtx, order.TenantId, order.OrderNo)
 		if errors.Is(err, models.ErrNotFound) {
 			return nil
@@ -114,8 +112,8 @@ func unfreezeRemainingOrderAsset(svcCtx *svc.ServiceContext, ctx context.Context
 		return err
 	}
 	if instructionID == 0 {
-		return helpers.TransactWithDeadlockRetry(ctx, svcCtx.DB, func(txCtx context.Context, session sqlx.Session) error {
-			_, err := finalizeOrderTermination(txCtx, sqlx.NewSqlConnFromSession(session), svcCtx, order.Id, utils.NowMillis())
+		return svcCtx.TransactionModel.Transact(ctx, func(txCtx context.Context, tx *models.TransactionModels) error {
+			_, err := finalizeOrderTermination(txCtx, tx, order.Id, utils.NowMillis())
 			return err
 		})
 	}

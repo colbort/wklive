@@ -22,6 +22,13 @@ type (
 		PositionSide int64
 	}
 
+	CrossMarginOpeningAggregate struct {
+		PositionMargin    decimal.Decimal `db:"position_margin"`
+		MaintenanceMargin decimal.Decimal `db:"maintenance_margin"`
+		UnrealizedPnl     decimal.Decimal `db:"unrealized_pnl"`
+		StaleMarkCount    int64           `db:"stale_mark_count"`
+	}
+
 	// TContractPositionModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTContractPositionModel.
 	TContractPositionModel interface {
@@ -29,8 +36,12 @@ type (
 		FindPage(ctx context.Context, filter ContractPositionPageFilter, cursor int64, limit int64) ([]*TContractPosition, int64, error)
 		FindList(ctx context.Context, filter ContractPositionPageFilter) ([]*TContractPosition, error)
 		FindActiveListForUpdate(ctx context.Context, tenantID, symbolID int64) ([]*TContractPosition, error)
+		FindCrossRiskUnitForUpdate(ctx context.Context, tenantID, userID int64, marginAsset string) ([]*TContractPosition, error)
 		FindOneForUpdate(ctx context.Context, id int64) (*TContractPosition, error)
 		FindOneForUpdateByTenantUserSymbolSideMode(ctx context.Context, tenantID, userID, symbolID, positionSide, marginMode int64) (*TContractPosition, error)
+		CountActiveIncompatibleMode(ctx context.Context, tenantID, userID, symbolID, marginMode, positionMode int64) (int64, error)
+		CountOpenRiskUnit(ctx context.Context, tenantID, userID, symbolID int64) (int64, error)
+		FindCrossMarginOpeningAggregate(ctx context.Context, tenantID, userID int64, marginAsset string, minMarkTime int64) (*CrossMarginOpeningAggregate, error)
 		ReserveCloseQty(ctx context.Context, id, version int64, qty decimal.Decimal, updateTimes int64) error
 		ReleaseCloseQty(ctx context.Context, id int64, qty decimal.Decimal, updateTimes int64) error
 		UpdateMarkRiskCAS(ctx context.Context, data *TContractPosition, expectedVersion, updateTimes int64) (bool, error)
@@ -40,6 +51,63 @@ type (
 		*defaultTContractPositionModel
 	}
 )
+
+func (m *defaultTContractPositionModel) CountActiveIncompatibleMode(
+	ctx context.Context, tenantID, userID, symbolID, marginMode, positionMode int64,
+) (int64, error) {
+	var count int64
+	err := m.QueryRowNoCacheCtx(ctx, &count, `SELECT COUNT(1)
+FROM t_contract_position
+WHERE tenant_id=? AND user_id=? AND symbol_id=? AND qty>0
+  AND status IN (1,2,3,4,6)
+  AND (margin_mode<>? OR position_mode<>?)`,
+		tenantID, userID, symbolID, marginMode, positionMode)
+	return count, err
+}
+
+func (m *defaultTContractPositionModel) CountOpenRiskUnit(
+	ctx context.Context, tenantID, userID, symbolID int64,
+) (int64, error) {
+	query := `SELECT COUNT(1) FROM t_contract_position
+WHERE tenant_id=? AND user_id=? AND status IN (1,2,3,4,6) AND qty>0`
+	args := []any{tenantID, userID}
+	if symbolID > 0 {
+		query += " AND symbol_id=?"
+		args = append(args, symbolID)
+	}
+	var count int64
+	err := m.QueryRowNoCacheCtx(ctx, &count, query, args...)
+	return count, err
+}
+
+func (m *defaultTContractPositionModel) FindCrossMarginOpeningAggregate(
+	ctx context.Context, tenantID, userID int64, marginAsset string, minMarkTime int64,
+) (*CrossMarginOpeningAggregate, error) {
+	var aggregate CrossMarginOpeningAggregate
+	err := m.QueryRowNoCacheCtx(ctx, &aggregate, `SELECT
+  COALESCE(SUM(p.position_margin),0) AS position_margin,
+  COALESCE(SUM(p.maintenance_margin),0) AS maintenance_margin,
+  COALESCE(SUM(p.unrealized_pnl),0) AS unrealized_pnl,
+  COALESCE(SUM(CASE
+    WHEN p.mark_snapshot_id='' OR NOT EXISTS (
+      SELECT 1
+      FROM t_trade_market_snapshot s
+      WHERE s.tenant_id=p.tenant_id
+        AND s.symbol_id=p.symbol_id
+        AND s.snapshot_id=p.mark_snapshot_id
+        AND s.snapshot_kind='MARK'
+        AND s.confirmed=1
+        AND s.source_timestamp>=?
+    ) THEN 1 ELSE 0 END),0) AS stale_mark_count
+FROM t_contract_position p
+WHERE p.tenant_id=? AND p.user_id=? AND p.margin_asset=?
+  AND p.margin_mode=1 AND p.status=1 AND p.qty>0`,
+		minMarkTime, tenantID, userID, marginAsset)
+	if err != nil {
+		return nil, err
+	}
+	return &aggregate, nil
+}
 
 // NewTContractPositionModel returns a model for the database table.
 func NewTContractPositionModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TContractPositionModel {
@@ -81,6 +149,15 @@ func (m *defaultTContractPositionModel) FindActiveListForUpdate(ctx context.Cont
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND symbol_id = ? AND status = 1 AND qty > 0 ORDER BY id FOR UPDATE", tContractPositionRows, m.table)
 	var positions []*TContractPosition
 	if err := m.QueryRowsNoCacheCtx(ctx, &positions, query, tenantID, symbolID); err != nil {
+		return nil, err
+	}
+	return positions, nil
+}
+
+func (m *defaultTContractPositionModel) FindCrossRiskUnitForUpdate(ctx context.Context, tenantID, userID int64, marginAsset string) ([]*TContractPosition, error) {
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND user_id=? AND margin_asset=? AND margin_mode=1 AND status=1 AND qty>0 ORDER BY id FOR UPDATE", tContractPositionRows, m.table)
+	var positions []*TContractPosition
+	if err := m.QueryRowsNoCacheCtx(ctx, &positions, query, tenantID, userID, marginAsset); err != nil {
 		return nil, err
 	}
 	return positions, nil

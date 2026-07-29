@@ -105,6 +105,7 @@ const currentColumns: CurrentColumn[] = [
   { prop: 'userId', label: t('trade.userId'), width: 100 },
   { prop: 'symbolId', label: t('trade.symbolId'), width: 100 },
   { prop: 'positionSide', label: t('trade.positionSide'), width: 100 },
+  { prop: 'positionMode', label: t('trade.positionMode'), width: 100 },
   { prop: 'qty', label: t('option.positionQty') },
   { prop: 'unrealizedPnl', label: t('option.unrealizedPnl') },
 ]

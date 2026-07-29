@@ -17,7 +17,6 @@ import (
 
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type ProcessLiquidationsLogic struct {
@@ -121,10 +120,9 @@ func shouldHoldLiquidationForManual(enabled bool, status int64) bool {
 
 func (l *ProcessLiquidationsLogic) lockRiskUnit(position *models.TContractPosition, liq *models.TContractLiquidation) (*models.TContractPosition, error) {
 	var locked *models.TContractPosition
-	err := helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
-		lm := models.NewTContractLiquidationModel(conn, l.svcCtx.Config.CacheRedis)
+	err := l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		pm := tx.ContractPosition
+		lm := tx.ContractLiquidation
 		current, err := pm.FindOneForUpdateByTenantUserSymbolSideMode(ctx, position.TenantId, position.UserId, position.SymbolId, position.PositionSide, position.MarginMode)
 		if err != nil {
 			return err
@@ -262,8 +260,8 @@ func (l *ProcessLiquidationsLogic) settleTakeover(position *models.TContractPosi
 
 func (l *ProcessLiquidationsLogic) markLiquidationManual(liq *models.TContractLiquidation, reason string) error {
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		lm := models.NewTContractLiquidationModel(sqlx.NewSqlConnFromSession(session), l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		lm := tx.ContractLiquidation
 		current, err := lm.FindOneForUpdate(ctx, liq.Id)
 		if err != nil {
 			return err
@@ -292,8 +290,8 @@ func (l *ProcessLiquidationsLogic) markLiquidationManual(liq *models.TContractLi
 
 func (l *ProcessLiquidationsLogic) checkpointLiquidation(liq *models.TContractLiquidation, status trade.LiquidationStatus, insuranceAmount, adlQty decimal.Decimal) error {
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		lm := models.NewTContractLiquidationModel(sqlx.NewSqlConnFromSession(session), l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		lm := tx.ContractLiquidation
 		current, err := lm.FindOneForUpdate(ctx, liq.Id)
 		if err != nil {
 			return err
@@ -469,9 +467,8 @@ func (l *ProcessLiquidationsLogic) prepareADLExecution(candidate, bankrupt *mode
 	now := utils.NowMillis()
 	executionNo := fmt.Sprintf("%s-ADL-%d", liq.LiquidationNo, candidate.Id)
 	var prepared *models.TContractAdlExecution
-	err := helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
+	err := l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		pm := tx.ContractPosition
 		current, err := pm.FindOneForUpdateByTenantUserSymbolSideMode(ctx, candidate.TenantId, candidate.UserId, candidate.SymbolId, candidate.PositionSide, candidate.MarginMode)
 		if err != nil {
 			return err
@@ -489,11 +486,11 @@ func (l *ProcessLiquidationsLogic) prepareADLExecution(candidate, bankrupt *mode
 			return err
 		}
 		prepared = &models.TContractAdlExecution{TenantId: current.TenantId, ExecutionNo: executionNo, LiquidationId: liq.Id, LiquidationNo: liq.LiquidationNo, PositionId: current.Id, UserId: current.UserId, PositionVersion: current.Version, Qty: qty, PositionMarginRelease: positionMargin, IsolatedMarginRelease: isolatedMargin, RealizedPnl: pnl, AssetCredit: credit, Asset: current.MarginAsset, BankruptcyPrice: bankrupt.BankruptcyPrice, ReliefAmount: relief, Status: 1, CreateTimes: now, UpdateTimes: now}
-		if _, err = models.NewTContractAdlExecutionModel(conn, l.svcCtx.Config.CacheRedis).Insert(ctx, prepared); err != nil {
+		if _, err = tx.ContractAdlExecution.Insert(ctx, prepared); err != nil {
 			return err
 		}
 		if credit.IsPositive() {
-			return insertSettlementInstructionIdempotent(ctx, models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis), &models.TTradeSettlementInstruction{TenantId: current.TenantId, InstructionNo: executionNo, BizType: "adl", BizId: executionNo, BatchNo: liq.LiquidationNo, PositionId: current.Id, UserId: current.UserId, Action: int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE), Asset: current.MarginAsset, Amount: credit, StepNo: 1, Status: int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now})
+			return insertSettlementInstructionIdempotent(ctx, tx.TradeSettlementInstruction, &models.TTradeSettlementInstruction{TenantId: current.TenantId, InstructionNo: executionNo, BizType: "adl", BizId: executionNo, BatchNo: liq.LiquidationNo, PositionId: current.Id, UserId: current.UserId, Action: int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE), Asset: current.MarginAsset, Amount: credit, StepNo: 1, Status: int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now})
 		}
 		return nil
 	})
@@ -524,8 +521,8 @@ func (l *ProcessLiquidationsLogic) runADLExecution(execution *models.TContractAd
 		instruction.UpdateTimes = lease
 		if err = executeSimpleAssetInstruction(l.ctx, l.svcCtx, instruction, "automatic deleveraging"); err != nil {
 			cause := err
-			if markErr := failContractSagaInstruction(l.ctx, l.svcCtx, instruction, cause, func(ctx context.Context, conn sqlx.SqlConn, current *models.TTradeSettlementInstruction, manual bool, now int64) error {
-				em := models.NewTContractAdlExecutionModel(conn, l.svcCtx.Config.CacheRedis)
+			if markErr := failContractSagaInstruction(l.ctx, l.svcCtx, instruction, cause, func(ctx context.Context, tx *models.TransactionModels, current *models.TTradeSettlementInstruction, manual bool, now int64) error {
+				em := tx.ContractAdlExecution
 				e, findErr := em.FindOneByExecutionNo(ctx, current.TenantId, current.BizId)
 				if findErr != nil {
 					return findErr
@@ -546,9 +543,8 @@ func (l *ProcessLiquidationsLogic) runADLExecution(execution *models.TContractAd
 
 func (l *ProcessLiquidationsLogic) completeADLExecution(execution *models.TContractAdlExecution, instruction *models.TTradeSettlementInstruction) error {
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		em := models.NewTContractAdlExecutionModel(conn, l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		em := tx.ContractAdlExecution
 		e, err := em.FindOneForUpdate(ctx, execution.Id)
 		if err != nil {
 			return err
@@ -556,7 +552,7 @@ func (l *ProcessLiquidationsLogic) completeADLExecution(execution *models.TContr
 		if e.Status == 3 {
 			return nil
 		}
-		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
+		pm := tx.ContractPosition
 		current, err := pm.FindOneForUpdate(ctx, e.PositionId)
 		if err != nil {
 			return err
@@ -565,7 +561,7 @@ func (l *ProcessLiquidationsLogic) completeADLExecution(execution *models.TContr
 			return errors.New("ADL reserved position changed")
 		}
 		if instruction != nil {
-			im := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
+			im := tx.TradeSettlementInstruction
 			i, lockErr := im.FindOneForUpdate(ctx, instruction.Id)
 			if lockErr != nil {
 				return lockErr
@@ -593,7 +589,7 @@ func (l *ProcessLiquidationsLogic) completeADLExecution(execution *models.TContr
 		if err = pm.Update(ctx, current); err != nil {
 			return err
 		}
-		if err = writeSystemPositionHistory(ctx, models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis), before, current, e.CreateTimes, e.ExecutionNo, trade.PositionActionType_POSITION_ACTION_TYPE_LIQUIDATION, e.RealizedPnl, decimal.Zero, e.BankruptcyPrice, "automatic deleveraging"); err != nil {
+		if err = writeSystemPositionHistory(ctx, tx.ContractPositionHistory, before, current, e.CreateTimes, e.ExecutionNo, trade.PositionActionType_POSITION_ACTION_TYPE_LIQUIDATION, e.RealizedPnl, decimal.Zero, e.BankruptcyPrice, "automatic deleveraging"); err != nil {
 			return err
 		}
 		e.Status, e.LastErrorMsg, e.UpdateTimes = 3, "", now
@@ -603,12 +599,11 @@ func (l *ProcessLiquidationsLogic) completeADLExecution(execution *models.TContr
 
 func (l *ProcessLiquidationsLogic) completeLiquidation(position *models.TContractPosition, liq *models.TContractLiquidation, fee decimal.Decimal) error {
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
-		lm := models.NewTContractLiquidationModel(conn, l.svcCtx.Config.CacheRedis)
-		em := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
-		hm := models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		pm := tx.ContractPosition
+		lm := tx.ContractLiquidation
+		em := tx.BizTradeEvent
+		hm := tx.ContractPositionHistory
 		current, err := pm.FindOneForUpdateByTenantUserSymbolSideMode(ctx, position.TenantId, position.UserId, position.SymbolId, position.PositionSide, position.MarginMode)
 		if err != nil {
 			return err

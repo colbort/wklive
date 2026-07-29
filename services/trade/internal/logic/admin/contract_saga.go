@@ -14,7 +14,6 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type contractAssetStep struct {
@@ -94,11 +93,10 @@ func executeSimpleAssetInstruction(ctx context.Context, svcCtx *svc.ServiceConte
 	return nil
 }
 
-func failContractSagaInstruction(ctx context.Context, svcCtx *svc.ServiceContext, item *models.TTradeSettlementInstruction, cause error, updateBiz func(context.Context, sqlx.SqlConn, *models.TTradeSettlementInstruction, bool, int64) error) error {
+func failContractSagaInstruction(ctx context.Context, svcCtx *svc.ServiceContext, item *models.TTradeSettlementInstruction, cause error, updateBiz func(context.Context, *models.TransactionModels, *models.TTradeSettlementInstruction, bool, int64) error) error {
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(ctx, svcCtx.DB, func(txCtx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		im := models.NewTTradeSettlementInstructionModel(conn, svcCtx.Config.CacheRedis)
+	return svcCtx.TransactionModel.Transact(ctx, func(txCtx context.Context, tx *models.TransactionModels) error {
+		im := tx.TradeSettlementInstruction
 		current, err := im.FindOneForUpdate(txCtx, item.Id)
 		if err != nil {
 			return err
@@ -117,6 +115,6 @@ func failContractSagaInstruction(ctx context.Context, svcCtx *svc.ServiceContext
 		if err = im.Update(txCtx, current); err != nil {
 			return err
 		}
-		return updateBiz(txCtx, conn, current, manual, now)
+		return updateBiz(txCtx, tx, current, manual, now)
 	})
 }

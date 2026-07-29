@@ -43,9 +43,10 @@ func (l *SetContractRiskLimitTierLogic) SetContractRiskLimitTier(in *trade.SetCo
 	if in.TierNo <= 0 || in.MaxLeverage <= 0 || floor.IsNegative() || (capValue.IsPositive() && !capValue.GreaterThan(floor)) || maintenance.IsNegative() || initial.LessThan(maintenance) || maintenanceAmount.IsNegative() {
 		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, "invalid risk tier")}, nil
 	}
-	var overlap int64
-	query := "SELECT COUNT(1) FROM t_contract_risk_limit_tier WHERE tenant_id=? AND symbol_id=? AND id<>? AND tier_no<>? AND (notional_cap=0 OR notional_cap>?) AND (?=0 OR notional_floor<?)"
-	if err := l.svcCtx.DB.QueryRowCtx(l.ctx, &overlap, query, tenantID, in.SymbolId, in.Id, in.TierNo, floor, capValue, capValue); err != nil {
+	overlap, err := l.svcCtx.ContractRiskLimitTierModel.CountOverlapping(
+		l.ctx, tenantID, in.SymbolId, in.Id, in.TierNo, floor, capValue,
+	)
+	if err != nil {
 		return nil, err
 	}
 	if overlap > 0 {

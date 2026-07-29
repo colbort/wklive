@@ -5,6 +5,7 @@ import (
 	"wklive/proto/asset"
 	"wklive/proto/common"
 	"wklive/proto/trade"
+	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
 )
@@ -76,6 +77,31 @@ func TestAutomaticLiquidationProductionGate(t *testing.T) {
 	}
 }
 
+func TestPositionRequiresLiquidation(t *testing.T) {
+	long := &models.TContractPosition{
+		PositionSide:     int64(trade.PositionSide_POSITION_SIDE_LONG),
+		Qty:              decimal.NewFromInt(1),
+		MarkPrice:        decimal.NewFromInt(95),
+		LiquidationPrice: decimal.NewFromInt(96),
+	}
+	if !positionRequiresLiquidation(long) {
+		t.Fatal("long below liquidation price must be liquidated")
+	}
+	long.MarkPrice = decimal.NewFromInt(97)
+	if positionRequiresLiquidation(long) {
+		t.Fatal("recovered long position must not create another liquidation")
+	}
+	short := &models.TContractPosition{
+		PositionSide:     int64(trade.PositionSide_POSITION_SIDE_SHORT),
+		Qty:              decimal.NewFromInt(1),
+		MarkPrice:        decimal.NewFromInt(105),
+		LiquidationPrice: decimal.NewFromInt(104),
+	}
+	if !positionRequiresLiquidation(short) {
+		t.Fatal("short above liquidation price must be liquidated")
+	}
+}
+
 func TestSplitLiquidationEquity(t *testing.T) {
 	tests := []struct {
 		name         string
@@ -100,5 +126,61 @@ func TestSplitLiquidationEquity(t *testing.T) {
 				t.Fatalf("got fee=%s residual=%s deficit=%s, want %s/%s/%s", fee, residual, deficit, tt.wantFee, tt.wantResidual, tt.wantDeficit)
 			}
 		})
+	}
+}
+
+func TestBuildPartialLiquidationPlanRequiresLowerTierRecovery(t *testing.T) {
+	position := &models.TContractPosition{
+		ContractValueType: int64(trade.ContractValueType_CONTRACT_VALUE_TYPE_LINEAR),
+		PositionSide:      int64(trade.PositionSide_POSITION_SIDE_LONG),
+		MarginMode:        int64(trade.MarginMode_MARGIN_MODE_ISOLATED),
+		Qty:               decimal.NewFromInt(10),
+		AvailQty:          decimal.NewFromInt(10),
+		OpenAvgPrice:      decimal.NewFromInt(100),
+		MarkPrice:         decimal.NewFromInt(96),
+		PositionMargin:    decimal.NewFromInt(100),
+		UnrealizedPnl:     decimal.NewFromInt(-40),
+	}
+	contract := &models.TTradeSymbolContract{
+		ContractSize:       decimal.NewFromInt(1),
+		LiquidationFeeRate: decimal.RequireFromString("0.01"),
+	}
+	symbol := &models.TTradeSymbol{QtyStep: decimal.NewFromInt(1)}
+	current := &models.TContractRiskLimitTier{TierNo: 2, NotionalFloor: decimal.NewFromInt(500), MaintenanceMarginRate: decimal.RequireFromString("0.1"), Enabled: 1}
+	lower := &models.TContractRiskLimitTier{TierNo: 1, NotionalCap: decimal.NewFromInt(500), MaintenanceMarginRate: decimal.RequireFromString("0.01"), Enabled: 1}
+
+	plan := buildPartialLiquidationPlan(position, contract, symbol, current, []*models.TContractRiskLimitTier{lower, current})
+	if plan == nil {
+		t.Fatal("expected lower-tier partial liquidation plan")
+	}
+	if !plan.liquidatedQty.Equal(decimal.NewFromInt(5)) ||
+		!plan.after.Qty.Equal(decimal.NewFromInt(5)) ||
+		!plan.after.PositionMargin.Equal(decimal.NewFromInt(50)) ||
+		!plan.after.UnrealizedPnl.Equal(decimal.NewFromInt(-20)) ||
+		!plan.fee.Equal(decimal.RequireFromString("4.8")) ||
+		!plan.availableCredit.Equal(decimal.RequireFromString("25.2")) ||
+		!positionRiskRecovered(plan.after) {
+		t.Fatalf("unexpected partial plan: %+v after=%+v", plan, plan.after)
+	}
+}
+
+func TestBuildPartialLiquidationPlanFallsBackWhenRiskStaysUnsafe(t *testing.T) {
+	position := &models.TContractPosition{
+		ContractValueType: int64(trade.ContractValueType_CONTRACT_VALUE_TYPE_LINEAR),
+		PositionSide:      int64(trade.PositionSide_POSITION_SIDE_LONG),
+		MarginMode:        int64(trade.MarginMode_MARGIN_MODE_ISOLATED),
+		Qty:               decimal.NewFromInt(10),
+		AvailQty:          decimal.NewFromInt(10),
+		OpenAvgPrice:      decimal.NewFromInt(100),
+		MarkPrice:         decimal.NewFromInt(80),
+		PositionMargin:    decimal.NewFromInt(100),
+		UnrealizedPnl:     decimal.NewFromInt(-200),
+	}
+	contract := &models.TTradeSymbolContract{ContractSize: decimal.NewFromInt(1), LiquidationFeeRate: decimal.RequireFromString("0.01")}
+	symbol := &models.TTradeSymbol{QtyStep: decimal.NewFromInt(1)}
+	current := &models.TContractRiskLimitTier{TierNo: 2, Enabled: 1}
+	lower := &models.TContractRiskLimitTier{TierNo: 1, NotionalCap: decimal.NewFromInt(500), MaintenanceMarginRate: decimal.RequireFromString("0.01"), Enabled: 1}
+	if plan := buildPartialLiquidationPlan(position, contract, symbol, current, []*models.TContractRiskLimitTier{lower, current}); plan != nil {
+		t.Fatalf("unsafe partial liquidation must fall back to full takeover: %+v", plan)
 	}
 }

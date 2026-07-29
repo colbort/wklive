@@ -18,7 +18,6 @@ import (
 
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type ProcessDeliverySettlementsLogic struct {
@@ -129,9 +128,8 @@ func (l *ProcessDeliverySettlementsLogic) ensureLifecycleBatch(c *models.TTradeS
 		return errors.New("delivery lifecycle requires a delivery contract")
 	}
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		bm := models.NewTContractDeliveryBatchModel(conn, l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		bm := tx.ContractDeliveryBatch
 		current, err := bm.FindOneForUpdateByTenantSymbolDelivery(ctx, c.TenantId, c.SymbolId, c.DeliveryTime)
 		if errors.Is(err, models.ErrNotFound) {
 			_, err = bm.Insert(ctx, &models.TContractDeliveryBatch{
@@ -171,8 +169,8 @@ func (l *ProcessDeliverySettlementsLogic) recordDeliveryBatchError(c *models.TTr
 		return nil
 	}
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		bm := models.NewTContractDeliveryBatchModel(sqlx.NewSqlConnFromSession(session), l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		bm := tx.ContractDeliveryBatch
 		current, err := bm.FindOneForUpdateByTenantSymbolDelivery(ctx, c.TenantId, c.SymbolId, c.DeliveryTime)
 		if err != nil {
 			return err
@@ -250,13 +248,12 @@ func (l *ProcessDeliverySettlementsLogic) ensureBatch(symbol *models.TTradeSymbo
 	now := utils.NowMillis()
 	batchNo := fmt.Sprintf("DLV-%d-%d", c.SymbolId, c.DeliveryTime)
 	raw, _ := normalizeJSON(map[string]any{"quote": quote, "configured_algorithm": c.SettlementPriceAlgorithm, "trade_policy": priceAlgorithm})
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		bm := models.NewTContractDeliveryBatchModel(conn, l.svcCtx.Config.CacheRedis)
-		sm := models.NewTContractDeliverySettlementModel(conn, l.svcCtx.Config.CacheRedis)
-		im := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
-		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
-		symbolModel := models.NewTTradeSymbolModel(conn, l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		bm := tx.ContractDeliveryBatch
+		sm := tx.ContractDeliverySettlement
+		im := tx.TradeSettlementInstruction
+		pm := tx.ContractPosition
+		symbolModel := tx.TradeSymbol
 		currentBatch, err := bm.FindOneForUpdateByTenantSymbolDelivery(ctx, c.TenantId, c.SymbolId, c.DeliveryTime)
 		var batchID int64
 		if errors.Is(err, models.ErrNotFound) {
@@ -328,7 +325,7 @@ func (l *ProcessDeliverySettlementsLogic) ensureBatch(symbol *models.TTradeSymbo
 				locked.ClosedAt = now
 				locked.Version++
 				locked.UpdateTimes = now
-				if err = writeSystemPositionHistory(ctx, models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis), before, locked, c.DeliveryTime, settlementNo, trade.PositionActionType_POSITION_ACTION_TYPE_SETTLEMENT, pnl, fee, price, "delivery settlement without asset step"); err != nil {
+				if err = writeSystemPositionHistory(ctx, tx.ContractPositionHistory, before, locked, c.DeliveryTime, settlementNo, trade.PositionActionType_POSITION_ACTION_TYPE_SETTLEMENT, pnl, fee, price, "delivery settlement without asset step"); err != nil {
 					return err
 				}
 			} else {
@@ -404,9 +401,8 @@ func (l *ProcessDeliverySettlementsLogic) executeDeliveryInstruction(item *model
 		return err
 	}
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		im := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		im := tx.TradeSettlementInstruction
 		currentInstruction, err := im.FindOneForUpdate(ctx, item.Id)
 		if err != nil {
 			return err
@@ -425,9 +421,9 @@ func (l *ProcessDeliverySettlementsLogic) executeDeliveryInstruction(item *model
 		if err != nil || unfinished > 0 {
 			return err
 		}
-		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
-		sm := models.NewTContractDeliverySettlementModel(conn, l.svcCtx.Config.CacheRedis)
-		hm := models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis)
+		pm := tx.ContractPosition
+		sm := tx.ContractDeliverySettlement
+		hm := tx.ContractPositionHistory
 		current, err := pm.FindOneForUpdateByTenantUserSymbolSideMode(ctx, position.TenantId, position.UserId, position.SymbolId, position.PositionSide, position.MarginMode)
 		if err != nil {
 			return err
@@ -460,8 +456,8 @@ func (l *ProcessDeliverySettlementsLogic) executeDeliveryInstruction(item *model
 }
 
 func (l *ProcessDeliverySettlementsLogic) failDeliveryInstruction(item *models.TTradeSettlementInstruction, cause error) error {
-	return failContractSagaInstruction(l.ctx, l.svcCtx, item, cause, func(ctx context.Context, conn sqlx.SqlConn, current *models.TTradeSettlementInstruction, manual bool, now int64) error {
-		sm := models.NewTContractDeliverySettlementModel(conn, l.svcCtx.Config.CacheRedis)
+	return failContractSagaInstruction(l.ctx, l.svcCtx, item, cause, func(ctx context.Context, tx *models.TransactionModels, current *models.TTradeSettlementInstruction, manual bool, now int64) error {
+		sm := tx.ContractDeliverySettlement
 		row, err := sm.FindOneByTenantIdSettlementNo(ctx, current.TenantId, current.BizId)
 		if err != nil {
 			return err
@@ -522,10 +518,9 @@ func (l *ProcessDeliverySettlementsLogic) archiveCompletedBatches(tenantID int64
 	}
 	for _, batch := range batches {
 		now := utils.NowMillis()
-		if err = helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-			conn := sqlx.NewSqlConnFromSession(session)
-			batchModel := models.NewTContractDeliveryBatchModel(conn, l.svcCtx.Config.CacheRedis)
-			eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
+		if err = l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+			batchModel := tx.ContractDeliveryBatch
+			eventModel := tx.BizTradeEvent
 			current, findErr := batchModel.FindOne(ctx, batch.Id)
 			if findErr != nil {
 				return findErr

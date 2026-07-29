@@ -34,7 +34,12 @@ LiquidityOrderArchive:
   RetentionDays: 30
   BatchSize: 500
 
-# P1-02 完成前必须保持 false；false 时仅生成待人工处理的强平事实，
-# 不会自动执行保险基金赔付或 ADL。
+# P1-02 隔离验收已完成；生产价格源、告警、保险账户和资金权限
+# 获批并演练前仍必须保持 false。false 时只生成待人工处理事实。
 AutomaticLiquidation:
+  Enabled: false
+
+# 全仓下单资金闭环验收完成后再由发布审批打开；平仓不受此开关影响。
+# 新增全仓风险敞口还会同时要求 AutomaticLiquidation.Enabled=true。
+CrossMarginTrading:
   Enabled: false

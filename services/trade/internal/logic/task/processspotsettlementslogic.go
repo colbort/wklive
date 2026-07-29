@@ -15,7 +15,6 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 const (
@@ -288,12 +287,11 @@ func (l *ProcessFillSettlementsLogic) executeAssetInstruction(item *models.TTrad
 
 func (l *ProcessFillSettlementsLogic) markSucceeded(item *models.TTradeSettlementInstruction, fill *models.TTradeFill, order *models.TTradeOrder) error {
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		instructionModel := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
-		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis)
-		reservationModel := models.NewTTradeAssetReservationModel(conn, l.svcCtx.Config.CacheRedis)
-		eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		instructionModel := tx.TradeSettlementInstruction
+		fillModel := tx.TradeFill
+		reservationModel := tx.TradeAssetReservation
+		eventModel := tx.BizTradeEvent
 
 		current, err := instructionModel.FindOneForUpdate(ctx, item.Id)
 		if err != nil {
@@ -383,10 +381,10 @@ func (l *ProcessFillSettlementsLogic) markSucceeded(item *models.TTradeSettlemen
 		if err := insertMatchOutboxEvent(ctx, eventModel, order, derivedTradeBizNo(fill.FillNo, "SETTLED"), eventType, fill.FillNo, "fill", "{}", now); err != nil {
 			return err
 		}
-		if _, err := finalizeOrderTermination(ctx, conn, l.svcCtx, order.Id, now); err != nil {
+		if _, err := finalizeOrderTermination(ctx, tx, order.Id, now); err != nil {
 			return err
 		}
-		return finalizeSettledOrder(ctx, conn, l.svcCtx, order.Id, now)
+		return finalizeSettledOrder(ctx, tx, order.Id, now)
 	})
 }
 
@@ -395,12 +393,11 @@ func (l *ProcessFillSettlementsLogic) settleFillIfReady(fill *models.TTradeFill)
 		return nil
 	}
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis)
-		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
-		instructionModel := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
-		eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		fillModel := tx.TradeFill
+		orderModel := tx.TradeOrder
+		instructionModel := tx.TradeSettlementInstruction
+		eventModel := tx.BizTradeEvent
 		instructions, err := instructionModel.FindByFillId(ctx, fill.TenantId, fill.Id)
 		if err != nil {
 			return err
@@ -442,10 +439,10 @@ func (l *ProcessFillSettlementsLogic) settleFillIfReady(fill *models.TTradeFill)
 		if err := insertMatchOutboxEvent(ctx, eventModel, order, derivedTradeBizNo(fill.FillNo, "SETTLED"), eventType, fill.FillNo, "fill", "{}", now); err != nil {
 			return err
 		}
-		if _, err := finalizeOrderTermination(ctx, conn, l.svcCtx, order.Id, now); err != nil {
+		if _, err := finalizeOrderTermination(ctx, tx, order.Id, now); err != nil {
 			return err
 		}
-		return finalizeSettledOrder(ctx, conn, l.svcCtx, order.Id, now)
+		return finalizeSettledOrder(ctx, tx, order.Id, now)
 	})
 }
 
@@ -479,11 +476,10 @@ func ensureFillRemainderRelease(ctx context.Context, instructionModel models.TTr
 
 func (l *ProcessFillSettlementsLogic) markFailed(item *models.TTradeSettlementInstruction, cause error) error {
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		instructionModel := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
-		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis)
-		reservationModel := models.NewTTradeAssetReservationModel(conn, l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		instructionModel := tx.TradeSettlementInstruction
+		fillModel := tx.TradeFill
+		reservationModel := tx.TradeAssetReservation
 		current, err := instructionModel.FindOneForUpdate(ctx, item.Id)
 		if err != nil {
 			return err

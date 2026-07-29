@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"wklive/common/utils"
-	"wklive/proto/trade"
 	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
@@ -53,39 +52,10 @@ func (l *ReconcileContractAssetFlowsLogic) reconcilePositionMarginCustody(tenant
 }
 
 func (l *ReconcileContractAssetFlowsLogic) findContractPositionMarginAudits(tenantID, cursor, cutoff int64, limit int) ([]*contractPositionMarginAudit, error) {
-	tenantClause := ""
-	args := []any{
-		int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_ADJUST_MARGIN),
-		int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS),
-		int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_RELEASE_MARGIN),
-		int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS),
-		int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS),
-		int64(trade.PositionActionType_POSITION_ACTION_TYPE_LIQUIDATION),
-		cursor,
-		cutoff,
-	}
-	if tenantID > 0 {
-		tenantClause = " AND p.tenant_id=?"
-		args = append(args, tenantID)
-	}
-	args = append(args, limit)
-	query := `
-SELECT
-  p.id,p.tenant_id,p.user_id,p.symbol_id,p.margin_asset,p.position_margin,p.isolated_margin,
-  COALESCE(SUM(CASE WHEN i.action=? AND i.status=? AND i.reconciled_at>0 THEN i.amount ELSE 0 END),0) AS margin_consumed,
-  COALESCE(SUM(CASE WHEN i.action=? AND i.status=? AND i.reconciled_at>0 THEN i.amount ELSE 0 END),0) AS margin_released,
-  COALESCE(SUM(CASE WHEN i.id IS NOT NULL AND (i.status<>? OR i.reconciled_at=0) AND i.action IN (6,7) THEN 1 ELSE 0 END),0) AS unfinished_count,
-  COALESCE((SELECT COUNT(1) FROM t_contract_position_history h
-            WHERE h.tenant_id=p.tenant_id AND h.position_id=p.id AND h.action_type=?),0) AS liquidation_count
-FROM t_contract_position p
-LEFT JOIN t_trade_settlement_instruction i
-  ON i.tenant_id=p.tenant_id AND i.position_id=p.id AND i.action IN (6,7)
-WHERE p.id>? AND p.update_times<=?` + tenantClause + `
-GROUP BY p.id,p.tenant_id,p.user_id,p.symbol_id,p.margin_asset,p.position_margin,p.isolated_margin
-ORDER BY p.id
-LIMIT ?`
 	var rows []*contractPositionMarginAudit
-	if err := l.svcCtx.DB.QueryRowsCtx(l.ctx, &rows, query, args...); err != nil {
+	if err := l.svcCtx.ContractReconcileCursorModel.FindContractPositionMarginAudits(
+		l.ctx, &rows, tenantID, cursor, cutoff, limit,
+	); err != nil {
 		return nil, err
 	}
 	return rows, nil

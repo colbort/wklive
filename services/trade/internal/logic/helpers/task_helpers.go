@@ -119,6 +119,24 @@ func AcquireTaskLock(ctx context.Context, rds *redis.Redis, key, value string) e
 	return nil
 }
 
+// AcquireRenewingTaskLock returns an idempotent-style release closure for
+// request-scoped critical sections that may outlive the base Redis TTL.
+func AcquireRenewingTaskLock(
+	ctx context.Context,
+	rds *redis.Redis,
+	key, value string,
+) (func() error, error) {
+	if err := AcquireTaskLock(ctx, rds, key, value); err != nil {
+		return nil, err
+	}
+	lockCtx, cancel := context.WithCancel(ctx)
+	go AutoRenewTaskLock(lockCtx, rds, key, value)
+	return func() error {
+		cancel()
+		return ReleaseTaskLock(context.Background(), rds, key, value)
+	}, nil
+}
+
 func AutoRenewTaskLock(ctx context.Context, rds *redis.Redis, key, value string) {
 	ticker := time.NewTicker(tradeTaskLockRenewInterval)
 	defer ticker.Stop()

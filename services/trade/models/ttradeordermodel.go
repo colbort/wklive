@@ -48,6 +48,10 @@ type (
 		FindOneByTenantIdOrderNoForUpdate(ctx context.Context, tenantId int64, orderNo string) (*TTradeOrder, error)
 		FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId, userId int64, clientOrderId sql.NullString) (*TTradeOrder, error)
 		CountBySymbolStatuses(ctx context.Context, tenantID, symbolID int64, statuses []int64) (int64, error)
+		CountOpenContractRiskUnit(ctx context.Context, tenantID, userID, symbolID int64) (int64, error)
+		CountActiveIncompatibleContractMode(ctx context.Context, tenantID, userID, symbolID, marginMode, positionMode int64) (int64, error)
+		CountFreezingCrossMarginOpenings(ctx context.Context, tenantID, userID int64, marginAsset string) (int64, error)
+		FindCrossMarginCancelableOrderIDs(ctx context.Context, tenantID, userID int64, marginAsset string) ([]int64, error)
 		ArchiveZeroFillLiquidityOrders(ctx context.Context, source, canceledStatus, cutoff, batchSize, archivedAt int64) (int64, error)
 	}
 
@@ -55,6 +59,81 @@ type (
 		*defaultTTradeOrderModel
 	}
 )
+
+func (m *defaultTTradeOrderModel) CountOpenContractRiskUnit(
+	ctx context.Context, tenantID, userID, symbolID int64,
+) (int64, error) {
+	query := `SELECT COUNT(1) FROM t_trade_order
+WHERE tenant_id=? AND user_id=? AND product_type=2
+  AND status IN (1,2,7,8,9,10,11)`
+	args := []any{tenantID, userID}
+	if symbolID > 0 {
+		query += " AND symbol_id=?"
+		args = append(args, symbolID)
+	}
+	var count int64
+	err := m.QueryRowNoCacheCtx(ctx, &count, query, args...)
+	return count, err
+}
+
+func (m *defaultTTradeOrderModel) CountActiveIncompatibleContractMode(
+	ctx context.Context, tenantID, userID, symbolID, marginMode, positionMode int64,
+) (int64, error) {
+	var count int64
+	err := m.QueryRowNoCacheCtx(ctx, &count, `SELECT COUNT(1)
+FROM t_trade_order o
+JOIN t_trade_order_contract c
+  ON c.tenant_id=o.tenant_id AND c.order_id=o.id
+WHERE o.tenant_id=? AND o.user_id=? AND o.symbol_id=?
+  AND o.status IN (1,2,7,8,9,10,11)
+  AND (
+    c.margin_mode<>? OR
+    (?=1 AND o.position_side<>3) OR
+    (?=2 AND o.position_side=3)
+  )`,
+		tenantID, userID, symbolID, marginMode, positionMode, positionMode)
+	return count, err
+}
+
+func (m *defaultTTradeOrderModel) CountFreezingCrossMarginOpenings(
+	ctx context.Context, tenantID, userID int64, marginAsset string,
+) (int64, error) {
+	var count int64
+	err := m.QueryRowNoCacheCtx(ctx, &count, `SELECT COUNT(1)
+FROM t_trade_order o
+JOIN t_trade_order_contract c
+  ON c.tenant_id=o.tenant_id AND c.order_id=o.id
+JOIN t_trade_asset_reservation r
+  ON r.tenant_id=o.tenant_id AND r.order_id=o.id
+WHERE o.tenant_id=? AND o.user_id=? AND c.margin_asset=?
+  AND c.margin_mode=1 AND c.margin_amount>0
+  AND o.status=7 AND r.status=1`,
+		tenantID, userID, marginAsset)
+	return count, err
+}
+
+func (m *defaultTTradeOrderModel) FindCrossMarginCancelableOrderIDs(
+	ctx context.Context, tenantID, userID int64, marginAsset string,
+) ([]int64, error) {
+	type row struct {
+		ID int64 `db:"id"`
+	}
+	var rows []*row
+	if err := m.QueryRowsNoCacheCtx(ctx, &rows, `SELECT o.id
+FROM t_trade_order o
+JOIN t_trade_order_contract c
+  ON c.tenant_id=o.tenant_id AND c.order_id=o.id
+WHERE o.tenant_id=? AND o.user_id=? AND c.margin_mode=1 AND c.margin_asset=?
+  AND o.status IN (1,2,8)
+ORDER BY o.id`, tenantID, userID, marginAsset); err != nil {
+		return nil, err
+	}
+	ids := make([]int64, 0, len(rows))
+	for _, item := range rows {
+		ids = append(ids, item.ID)
+	}
+	return ids, nil
+}
 
 // NewTTradeOrderModel returns a model for the database table.
 func NewTTradeOrderModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TTradeOrderModel {

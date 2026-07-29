@@ -14,7 +14,6 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type RetrySettlementInstructionLogic struct {
@@ -43,8 +42,8 @@ func (l *RetrySettlementInstructionLogic) RetrySettlementInstruction(in *trade.R
 		return nil, err
 	}
 	notFound, invalidStatus := false, false
-	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
-		notFound, invalidStatus, err = retrySettlementInstructionTx(ctx, sqlx.NewSqlConnFromSession(session), l.svcCtx, in, tenantID, operatorID, eventNo, utils.NowMillis())
+	err = l.svcCtx.TransactionModel.TransactOnce(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		notFound, invalidStatus, err = retrySettlementInstructionTx(ctx, tx, in, tenantID, operatorID, eventNo, utils.NowMillis())
 		return err
 	})
 	if err != nil {
@@ -59,8 +58,8 @@ func (l *RetrySettlementInstructionLogic) RetrySettlementInstruction(in *trade.R
 	return &trade.CommonResp{Base: helper.OkResp()}, nil
 }
 
-func retrySettlementInstructionTx(ctx context.Context, conn sqlx.SqlConn, svcCtx *svc.ServiceContext, in *trade.RetrySettlementInstructionReq, tenantID, operatorID int64, eventNo string, now int64) (bool, bool, error) {
-	instructionModel := models.NewTTradeSettlementInstructionModel(conn, svcCtx.Config.CacheRedis)
+func retrySettlementInstructionTx(ctx context.Context, tx *models.TransactionModels, in *trade.RetrySettlementInstructionReq, tenantID, operatorID int64, eventNo string, now int64) (bool, bool, error) {
+	instructionModel := tx.TradeSettlementInstruction
 	item, err := instructionModel.FindOneForUpdate(ctx, in.Id)
 	if errors.Is(err, models.ErrNotFound) || (err == nil && item.TenantId != tenantID) {
 		return true, false, nil
@@ -75,6 +74,6 @@ func retrySettlementInstructionTx(ctx context.Context, conn sqlx.SqlConn, svcCtx
 	if err = instructionModel.Update(ctx, item); err != nil {
 		return false, false, err
 	}
-	_, err = models.NewTBizTradeEventModel(conn, svcCtx.Config.CacheRedis).Insert(ctx, &models.TBizTradeEvent{TenantId: tenantID, EventNo: eventNo, EventType: "SETTLEMENT_INSTRUCTION_RETRY_REQUESTED", BizId: item.InstructionNo, BizType: "settlement_instruction", UserId: item.UserId, OperatorId: operatorID, Source: int64(trade.SourceType_SOURCE_TYPE_ADMIN), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: helpers.NormalizeTradeEventJSON(in.Reason), CreateTimes: now, UpdateTimes: now})
+	_, err = tx.BizTradeEvent.Insert(ctx, &models.TBizTradeEvent{TenantId: tenantID, EventNo: eventNo, EventType: "SETTLEMENT_INSTRUCTION_RETRY_REQUESTED", BizId: item.InstructionNo, BizType: "settlement_instruction", UserId: item.UserId, OperatorId: operatorID, Source: int64(trade.SourceType_SOURCE_TYPE_ADMIN), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: helpers.NormalizeTradeEventJSON(in.Reason), CreateTimes: now, UpdateTimes: now})
 	return false, false, err
 }

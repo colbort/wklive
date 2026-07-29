@@ -21,6 +21,8 @@ type (
 	CheckOrderRiskReq                      = trade.CheckOrderRiskReq
 	CheckOrderRiskResp                     = trade.CheckOrderRiskResp
 	CommonResp                             = trade.CommonResp
+	ContractAccountLiquidation             = trade.ContractAccountLiquidation
+	ContractAccountLiquidationItem         = trade.ContractAccountLiquidationItem
 	ContractDeliveryBatch                  = trade.ContractDeliveryBatch
 	ContractDeliverySettlement             = trade.ContractDeliverySettlement
 	ContractFundingBatch                   = trade.ContractFundingBatch
@@ -30,6 +32,10 @@ type (
 	ContractRiskLimitTier                  = trade.ContractRiskLimitTier
 	CreateSymbolReq                        = trade.CreateSymbolReq
 	CreateTradeEventReq                    = trade.CreateTradeEventReq
+	GetAccountLiquidationDetailReq         = trade.GetAccountLiquidationDetailReq
+	GetAccountLiquidationDetailResp        = trade.GetAccountLiquidationDetailResp
+	GetAccountLiquidationListReq           = trade.GetAccountLiquidationListReq
+	GetAccountLiquidationListResp          = trade.GetAccountLiquidationListResp
 	GetAssetReservationListReq             = trade.GetAssetReservationListReq
 	GetAssetReservationListResp            = trade.GetAssetReservationListResp
 	GetCancelLogListAdminReq               = trade.GetCancelLogListAdminReq
@@ -124,6 +130,7 @@ type (
 	PlaceOrderResp                         = trade.PlaceOrderResp
 	RecordOrderFillReq                     = trade.RecordOrderFillReq
 	RecordPositionHistoryReq               = trade.RecordPositionHistoryReq
+	RetryAccountLiquidationReq             = trade.RetryAccountLiquidationReq
 	RetrySettlementInstructionReq          = trade.RetrySettlementInstructionReq
 	RetryTradeEventReq                     = trade.RetryTradeEventReq
 	SetContractRiskLimitTierReq            = trade.SetContractRiskLimitTierReq
@@ -229,6 +236,10 @@ type (
 		GetDeliverySettlementList(ctx context.Context, in *GetDeliverySettlementListReq, opts ...grpc.CallOption) (*GetDeliverySettlementListResp, error)
 		// 强平、秒合约价格与结算异常（只读）
 		GetLiquidationList(ctx context.Context, in *GetLiquidationListReq, opts ...grpc.CallOption) (*GetLiquidationListResp, error)
+		GetAccountLiquidationList(ctx context.Context, in *GetAccountLiquidationListReq, opts ...grpc.CallOption) (*GetAccountLiquidationListResp, error)
+		GetAccountLiquidationDetail(ctx context.Context, in *GetAccountLiquidationDetailReq, opts ...grpc.CallOption) (*GetAccountLiquidationDetailResp, error)
+		// 仅允许重试人工状态；不得修改强平金额或直接标记完成
+		RetryAccountLiquidation(ctx context.Context, in *RetryAccountLiquidationReq, opts ...grpc.CallOption) (*CommonResp, error)
 		GetSecondsPriceSnapshotList(ctx context.Context, in *GetSecondsPriceSnapshotListReq, opts ...grpc.CallOption) (*GetSecondsPriceSnapshotListResp, error)
 		GetAssetReservationList(ctx context.Context, in *GetAssetReservationListReq, opts ...grpc.CallOption) (*GetAssetReservationListResp, error)
 		GetSettlementInstructionList(ctx context.Context, in *GetSettlementInstructionListReq, opts ...grpc.CallOption) (*GetSettlementInstructionListResp, error)
@@ -495,6 +506,22 @@ func (m *defaultAdmin) GetDeliverySettlementList(ctx context.Context, in *GetDel
 func (m *defaultAdmin) GetLiquidationList(ctx context.Context, in *GetLiquidationListReq, opts ...grpc.CallOption) (*GetLiquidationListResp, error) {
 	client := trade.NewAdminClient(m.cli.Conn())
 	return client.GetLiquidationList(ctx, in, opts...)
+}
+
+func (m *defaultAdmin) GetAccountLiquidationList(ctx context.Context, in *GetAccountLiquidationListReq, opts ...grpc.CallOption) (*GetAccountLiquidationListResp, error) {
+	client := trade.NewAdminClient(m.cli.Conn())
+	return client.GetAccountLiquidationList(ctx, in, opts...)
+}
+
+func (m *defaultAdmin) GetAccountLiquidationDetail(ctx context.Context, in *GetAccountLiquidationDetailReq, opts ...grpc.CallOption) (*GetAccountLiquidationDetailResp, error) {
+	client := trade.NewAdminClient(m.cli.Conn())
+	return client.GetAccountLiquidationDetail(ctx, in, opts...)
+}
+
+// 仅允许重试人工状态；不得修改强平金额或直接标记完成
+func (m *defaultAdmin) RetryAccountLiquidation(ctx context.Context, in *RetryAccountLiquidationReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := trade.NewAdminClient(m.cli.Conn())
+	return client.RetryAccountLiquidation(ctx, in, opts...)
 }
 
 func (m *defaultAdmin) GetSecondsPriceSnapshotList(ctx context.Context, in *GetSecondsPriceSnapshotListReq, opts ...grpc.CallOption) (*GetSecondsPriceSnapshotListResp, error) {

@@ -1073,6 +1073,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodGet,
+				Path:    "/account-liquidations",
+				Handler: trade.GetAccountLiquidationListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/account-liquidations/detail",
+				Handler: trade.GetAccountLiquidationDetailHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/account-liquidations/retry",
+				Handler: trade.RetryAccountLiquidationHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/cancel-logs",
 				Handler: trade.GetCancelLogListAdminHandler(serverCtx),
 			},

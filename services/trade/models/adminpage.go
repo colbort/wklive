@@ -16,6 +16,7 @@ type AdminPageFilter struct {
 	SnapshotType int64
 	BizType      string
 	BizId        string
+	MarginAsset  string
 	TimeStart    int64
 	TimeEnd      int64
 }
@@ -33,6 +34,7 @@ func adminPageBuilder(filter AdminPageFilter, timeColumn string) *sqlutil.PageQu
 	b.EqInt64("snapshot_type", filter.SnapshotType)
 	b.EqString("biz_type", filter.BizType)
 	b.EqString("biz_id", filter.BizId)
+	b.EqString("margin_asset", filter.MarginAsset)
 	if timeColumn != "" {
 		b.GteInt64(timeColumn, filter.TimeStart)
 		b.LteInt64(timeColumn, filter.TimeEnd)

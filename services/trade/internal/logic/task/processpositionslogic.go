@@ -72,8 +72,18 @@ func (l *ProcessPositionsLogic) ProcessPositions(in *trade.TradeTaskReq) (*trade
 		if err := l.refreshMarkPrices(in); err != nil {
 			return nil, err
 		}
+		var result error
+		if err := l.refreshCrossMarginSnapshots(in.GetTenantId()); err != nil {
+			result = errors.Join(result, fmt.Errorf("cross margin risk projection: %w", err))
+		}
+		if err := NewProcessCrossMarginLiquidationsLogic(l.ctx, l.svcCtx).ProcessRiskSnapshots(in.GetTenantId()); err != nil {
+			result = errors.Join(result, fmt.Errorf("cross margin account liquidation: %w", err))
+		}
 		if err := l.forceLiquidation(in); err != nil {
-			return nil, err
+			result = errors.Join(result, err)
+		}
+		if result != nil {
+			return nil, result
 		}
 		return helpers.OkTaskResp(), nil
 	})
@@ -137,6 +147,7 @@ func (l *ProcessPositionsLogic) refreshMarkPrices(in *trade.TradeTaskReq) error 
 				continue
 			}
 			quote := lookup.quote
+			beforeRisk := *position
 			position.MarkPrice = helpers.MustParseFloat(quote.LastPrice)
 			position.MarkSnapshotId = quote.SnapshotID
 			tier, err := NewProcessContractPositionFillsLogic(l.ctx, l.svcCtx).riskTierForPosition(l.ctx, position, contract)
@@ -145,6 +156,9 @@ func (l *ProcessPositionsLogic) refreshMarkPrices(in *trade.TradeTaskReq) error 
 			}
 			expectedVersion := position.Version
 			recalculatePositionRisk(position, contract, tier)
+			if markRiskProjectionEqual(&beforeRisk, position) {
+				continue
+			}
 			updated, err := l.svcCtx.ContractPositionModel.UpdateMarkRiskCAS(l.ctx, position, expectedVersion, utils.NowMillis())
 			if err != nil {
 				return err
@@ -162,6 +176,18 @@ func (l *ProcessPositionsLogic) refreshMarkPrices(in *trade.TradeTaskReq) error 
 	}
 }
 
+func markRiskProjectionEqual(before, after *models.TContractPosition) bool {
+	return before != nil && after != nil &&
+		before.MarkSnapshotId == after.MarkSnapshotId &&
+		before.MarkPrice.Equal(after.MarkPrice) &&
+		before.MaintenanceMargin.Equal(after.MaintenanceMargin) &&
+		before.UnrealizedPnl.Equal(after.UnrealizedPnl) &&
+		before.LiquidationPrice.Equal(after.LiquidationPrice) &&
+		before.BankruptcyPrice.Equal(after.BankruptcyPrice) &&
+		before.RiskRate.Equal(after.RiskRate) &&
+		before.AdlRank == after.AdlRank
+}
+
 func (l *ProcessPositionsLogic) forceLiquidation(in *trade.TradeTaskReq) error {
 	cursor := int64(0)
 	for {
@@ -177,9 +203,7 @@ func (l *ProcessPositionsLogic) forceLiquidation(in *trade.TradeTaskReq) error {
 			if !position.Qty.IsPositive() || position.Status != int64(trade.PositionStatus_POSITION_STATUS_NORMAL) || !position.MarkPrice.IsPositive() || !position.LiquidationPrice.IsPositive() {
 				continue
 			}
-			needLiquidation := (position.PositionSide == int64(trade.PositionSide_POSITION_SIDE_LONG) && position.MarkPrice.LessThanOrEqual(position.LiquidationPrice)) ||
-				(position.PositionSide == int64(trade.PositionSide_POSITION_SIDE_SHORT) && position.MarkPrice.GreaterThanOrEqual(position.LiquidationPrice))
-			if !needLiquidation {
+			if !positionRequiresLiquidation(position) {
 				continue
 			}
 			if err := NewProcessLiquidationsLogic(l.ctx, l.svcCtx).ProcessPosition(position.Id); err != nil {

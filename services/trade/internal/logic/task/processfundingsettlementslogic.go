@@ -17,16 +17,21 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
+
+var fundingInputRetryGate = newMarkQuoteRetryGate()
 
 type ProcessFundingSettlementsLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
+	logx.Logger
 }
 
 func NewProcessFundingSettlementsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProcessFundingSettlementsLogic {
-	return &ProcessFundingSettlementsLogic{ctx: ctx, svcCtx: svcCtx}
+	return &ProcessFundingSettlementsLogic{
+		ctx: ctx, svcCtx: svcCtx, Logger: logx.WithContext(ctx),
+	}
 }
 
 func (l *ProcessFundingSettlementsLogic) Process(tenantID int64) error {
@@ -84,10 +89,23 @@ func (l *ProcessFundingSettlementsLogic) createDueBatches(tenantID int64) error 
 			} else if !errors.Is(err, models.ErrNotFound) {
 				return err
 			}
+			inputKey := fmt.Sprintf("%d:%d:%d", c.TenantId, c.SymbolId, settlementTime)
 			mark, index, rate, source, err := l.lockFundingInputs(c, settlementTime)
 			if err != nil {
-				return err
+				// A missing or invalid price configuration belongs to this
+				// symbol only. Keep its batch uncreated, alert with a bounded
+				// cadence, and continue so one bad contract cannot starve all
+				// other tenants and symbols in the global settlement task.
+				if fundingInputRetryGate.allow(inputKey, now) {
+					fundingInputRetryGate.fail(inputKey, now)
+					l.Errorf(
+						"skip funding batch with unavailable authoritative inputs, tenantId=%d symbolId=%d settlementTime=%d source=%q err=%v",
+						c.TenantId, c.SymbolId, settlementTime, c.FundingRateSource, err,
+					)
+				}
+				continue
 			}
+			fundingInputRetryGate.success(inputKey)
 			fundingFact, err := l.svcCtx.TradeMarketSnapshotModel.FindOneByTenantIdSymbolIdSnapshotId(l.ctx, c.TenantId, c.SymbolId, source)
 			if err != nil {
 				return fmt.Errorf("reload immutable funding input fact: %w", err)
@@ -96,14 +114,13 @@ func (l *ProcessFundingSettlementsLogic) createDueBatches(tenantID int64) error 
 				return errors.New("immutable funding input fact has no formula version")
 			}
 			batchNo := fmt.Sprintf("FND-%d-%d", c.SymbolId, settlementTime)
-			if err := helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-				conn := sqlx.NewSqlConnFromSession(session)
-				bm := models.NewTContractFundingBatchModel(conn, l.svcCtx.Config.CacheRedis)
-				sm := models.NewTContractFundingSettlementModel(conn, l.svcCtx.Config.CacheRedis)
-				pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
+			if err := l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+				bm := tx.ContractFundingBatch
+				sm := tx.ContractFundingSettlement
+				pm := tx.ContractPosition
 				var active []*models.TContractPosition
 				if recoverHistory {
-					history, historyErr := models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis).FindLatestBySymbolAt(ctx, c.TenantId, c.SymbolId, settlementTime)
+					history, historyErr := tx.ContractPositionHistory.FindLatestBySymbolAt(ctx, c.TenantId, c.SymbolId, settlementTime)
 					if historyErr != nil {
 						return historyErr
 					}
@@ -120,7 +137,7 @@ func (l *ProcessFundingSettlementsLogic) createDueBatches(tenantID int64) error 
 				}
 				batchID, _ := res.LastInsertId()
 				feeTotals := make(map[string]decimal.Decimal)
-				im := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
+				im := tx.TradeSettlementInstruction
 				for _, p := range active {
 					if p.MarginAsset == "" {
 						return fmt.Errorf("funding position %d has no immutable margin asset", p.Id)
@@ -409,9 +426,8 @@ func (l *ProcessFundingSettlementsLogic) validateFundingUserInstruction(item *mo
 
 func (l *ProcessFundingSettlementsLogic) completeFundingInstruction(item *models.TTradeSettlementInstruction) error {
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		im := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		im := tx.TradeSettlementInstruction
 		current, err := im.FindOneForUpdate(ctx, item.Id)
 		if err != nil || current.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) {
 			return err
@@ -420,11 +436,11 @@ func (l *ProcessFundingSettlementsLogic) completeFundingInstruction(item *models
 			return errors.New("funding instruction lease lost")
 		}
 		if current.PositionId > 0 {
-			settlement, findErr := models.NewTContractFundingSettlementModel(conn, l.svcCtx.Config.CacheRedis).FindOneByTenantIdSettlementNo(ctx, current.TenantId, current.BizId)
+			settlement, findErr := tx.ContractFundingSettlement.FindOneByTenantIdSettlementNo(ctx, current.TenantId, current.BizId)
 			if findErr != nil {
 				return findErr
 			}
-			if err = l.completeFundingInSession(ctx, conn, settlement, now); err != nil {
+			if err = l.completeFundingInSession(ctx, tx, settlement, now); err != nil {
 				return err
 			}
 		}
@@ -435,8 +451,8 @@ func (l *ProcessFundingSettlementsLogic) completeFundingInstruction(item *models
 
 func (l *ProcessFundingSettlementsLogic) failFundingInstruction(item *models.TTradeSettlementInstruction, cause error) error {
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		im := models.NewTTradeSettlementInstructionModel(sqlx.NewSqlConnFromSession(session), l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		im := tx.TradeSettlementInstruction
 		current, err := im.FindOneForUpdate(ctx, item.Id)
 		if err != nil {
 			return err
@@ -455,7 +471,7 @@ func (l *ProcessFundingSettlementsLogic) failFundingInstruction(item *models.TTr
 			return err
 		}
 		if current.PositionId > 0 {
-			sm := models.NewTContractFundingSettlementModel(sqlx.NewSqlConnFromSession(session), l.svcCtx.Config.CacheRedis)
+			sm := tx.ContractFundingSettlement
 			settlement, findErr := sm.FindOneByTenantIdSettlementNo(ctx, current.TenantId, current.BizId)
 			if findErr != nil {
 				return findErr
@@ -476,16 +492,15 @@ func (l *ProcessFundingSettlementsLogic) failFundingInstruction(item *models.TTr
 
 func (l *ProcessFundingSettlementsLogic) completeFunding(row *models.TContractFundingSettlement) error {
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		return l.completeFundingInSession(ctx, conn, row, now)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		return l.completeFundingInSession(ctx, tx, row, now)
 	})
 }
 
-func (l *ProcessFundingSettlementsLogic) completeFundingInSession(ctx context.Context, conn sqlx.SqlConn, row *models.TContractFundingSettlement, now int64) error {
-	sm := models.NewTContractFundingSettlementModel(conn, l.svcCtx.Config.CacheRedis)
-	pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
-	hm := models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis)
+func (l *ProcessFundingSettlementsLogic) completeFundingInSession(ctx context.Context, tx *models.TransactionModels, row *models.TContractFundingSettlement, now int64) error {
+	sm := tx.ContractFundingSettlement
+	pm := tx.ContractPosition
+	hm := tx.ContractPositionHistory
 	current, err := pm.FindOneForUpdate(ctx, row.PositionId)
 	if err != nil {
 		return err

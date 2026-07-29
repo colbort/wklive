@@ -27,6 +27,9 @@ func StartADLRecovery(ctx context.Context, svcCtx *svc.ServiceContext) {
 				if err := logic.NewProcessLiquidationsLogic(ctx, svcCtx).RecoverLiquidations(100); err != nil {
 					logx.Errorf("liquidation saga recovery scan failed: %v", err)
 				}
+				if err := logic.NewProcessCrossMarginLiquidationsLogic(ctx, svcCtx).Recover(0, 100); err != nil {
+					logx.Errorf("cross margin account liquidation recovery scan failed: %v", err)
+				}
 			}
 		}
 	}()

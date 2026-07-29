@@ -257,6 +257,73 @@ export type GetLiquidationListReq = TradePageReq & {
   timeRange?: TimeRange
 }
 export type GetLiquidationListResp = RespBase<ContractLiquidation[]>
+export type ContractAccountLiquidation = {
+  id: number
+  liquidationNo: string
+  userId: number
+  marginAsset: string
+  marginSnapshotId: number
+  marginSnapshotVersion: number
+  assetVersion: number
+  walletBalance: string
+  positionMargin: string
+  maintenanceMargin: string
+  accountEquity: string
+  riskRate: string
+  grossSettlement: string
+  liquidationFee: string
+  userCredit: string
+  userDebit: string
+  deficitAmount: string
+  insuranceFundAmount: string
+  adlReliefAmount: string
+  adlQty: string
+  positionCount: number
+  status: number
+  reason: string
+  startedAt: number
+  completedAt: number
+  version: number
+  createTimes: number
+  updateTimes: number
+}
+export type ContractAccountLiquidationItem = {
+  id: number
+  accountLiquidationId: number
+  liquidationNo: string
+  positionId: number
+  positionVersion: number
+  symbolId: number
+  positionSide: number
+  triggerQty: string
+  triggerMarkPrice: string
+  triggerSnapshotId: string
+  positionMargin: string
+  maintenanceMargin: string
+  realizedPnl: string
+  liquidationFee: string
+  deficitAmount: string
+  bankruptcyPrice: string
+  adlReliefAmount: string
+  adlQty: string
+  status: number
+  createTimes: number
+  updateTimes: number
+}
+export type GetAccountLiquidationListReq = TradePageReq & {
+  tenantId?: number
+  userId?: number
+  marginAsset?: string
+  status?: number
+  timeRange?: TimeRange
+}
+export type GetAccountLiquidationListResp = RespBase<ContractAccountLiquidation[]>
+export type GetAccountLiquidationDetailReq = { tenantId?: number; id: number }
+export type GetAccountLiquidationDetailResp = RespBase<ContractAccountLiquidation> & {
+  items: ContractAccountLiquidationItem[]
+  settlementInstructions: TradeSettlementInstruction[]
+}
+export type RetryAccountLiquidationReq = { tenantId?: number; id: number; reason: string }
 export type TradeSecondsPriceSnapshot = {
   id: number
   orderId: number
@@ -663,6 +730,7 @@ export type ContractPosition = {
   contractType: number
   contractValueType: number
   positionSide: number
+  positionMode: number
   marginMode: number
   leverage: number
   qty: string

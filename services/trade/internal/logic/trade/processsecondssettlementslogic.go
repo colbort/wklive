@@ -22,7 +22,6 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 const secondsWorkBatchSize = int64(100)
@@ -94,9 +93,8 @@ func (l *ProcessSecondsSettlementsLogic) processActivations(tenantID int64) erro
 			return l.moveSecondsToRefund(item, "invalid start quote: "+err.Error())
 		}
 		now = utils.NowMillis()
-		return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
-			conn := sqlx.NewSqlConnFromSession(session)
-			model := models.NewTTradeOrderSecondsModel(conn, l.svcCtx.Config.CacheRedis)
+		return l.svcCtx.TransactionModel.TransactOnce(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+			model := tx.TradeOrderSeconds
 			current, err := model.FindOneForUpdate(ctx, item.Id)
 			if err != nil {
 				return err
@@ -116,7 +114,7 @@ func (l *ProcessSecondsSettlementsLogic) processActivations(tenantID int64) erro
 				return err
 			}
 			for _, candidate := range candidates {
-				if err := insertSecondsPriceSnapshot(ctx, conn, l.svcCtx, current, candidate, trade.SecondsPriceSnapshotType_SECONDS_PRICE_SNAPSHOT_TYPE_START, candidate == quote); err != nil {
+				if err := insertSecondsPriceSnapshot(ctx, tx, current, candidate, trade.SecondsPriceSnapshotType_SECONDS_PRICE_SNAPSHOT_TYPE_START, candidate == quote); err != nil {
 					return err
 				}
 			}
@@ -164,11 +162,10 @@ func (l *ProcessSecondsSettlementsLogic) processSettlements(tenantID int64) erro
 				}
 			}
 			now = utils.NowMillis()
-			return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
-				conn := sqlx.NewSqlConnFromSession(session)
-				secondsModel := models.NewTTradeOrderSecondsModel(conn, l.svcCtx.Config.CacheRedis)
-				orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
-				eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
+			return l.svcCtx.TransactionModel.TransactOnce(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+				secondsModel := tx.TradeOrderSeconds
+				orderModel := tx.TradeOrder
+				eventModel := tx.BizTradeEvent
 				current, err := secondsModel.FindOneForUpdate(ctx, item.Id)
 				if err != nil {
 					return err
@@ -209,11 +206,11 @@ func (l *ProcessSecondsSettlementsLogic) processSettlements(tenantID int64) erro
 					return err
 				}
 				for _, candidate := range candidates {
-					if err := insertSecondsPriceSnapshot(ctx, conn, l.svcCtx, current, candidate, trade.SecondsPriceSnapshotType_SECONDS_PRICE_SNAPSHOT_TYPE_SETTLEMENT_CANDIDATE, false); err != nil {
+					if err := insertSecondsPriceSnapshot(ctx, tx, current, candidate, trade.SecondsPriceSnapshotType_SECONDS_PRICE_SNAPSHOT_TYPE_SETTLEMENT_CANDIDATE, false); err != nil {
 						return err
 					}
 				}
-				return insertSecondsPriceSnapshot(ctx, conn, l.svcCtx, current, quote, trade.SecondsPriceSnapshotType_SECONDS_PRICE_SNAPSHOT_TYPE_FINAL_SETTLEMENT, true)
+				return insertSecondsPriceSnapshot(ctx, tx, current, quote, trade.SecondsPriceSnapshotType_SECONDS_PRICE_SNAPSHOT_TYPE_FINAL_SETTLEMENT, true)
 			})
 		}); err != nil {
 			return err
@@ -238,11 +235,10 @@ func (l *ProcessSecondsSettlementsLogic) processRefunds(tenantID int64) error {
 			return err
 		}
 		now = utils.NowMillis()
-		return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
-			conn := sqlx.NewSqlConnFromSession(session)
-			secondsModel := models.NewTTradeOrderSecondsModel(conn, l.svcCtx.Config.CacheRedis)
-			orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
-			eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
+		return l.svcCtx.TransactionModel.TransactOnce(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+			secondsModel := tx.TradeOrderSeconds
+			orderModel := tx.TradeOrder
+			eventModel := tx.BizTradeEvent
 			current, err := secondsModel.FindOneForUpdate(ctx, item.Id)
 			if err != nil {
 				return err
@@ -314,8 +310,8 @@ func scanSecondsWork(fetch func(int64) ([]*models.SecondsOrderWorkItem, error), 
 }
 
 func (l *ProcessSecondsSettlementsLogic) moveSecondsToRefund(item *models.SecondsOrderWorkItem, reason string) error {
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
-		model := models.NewTTradeOrderSecondsModel(sqlx.NewSqlConnFromSession(session), l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.TransactOnce(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		model := tx.TradeOrderSeconds
 		current, err := model.FindOneForUpdate(ctx, item.Id)
 		if err != nil {
 			return err
@@ -589,12 +585,12 @@ func validateSecondsAssetResponse(action string, response secondsAssetResponse) 
 	}
 	return nil
 }
-func insertSecondsPriceSnapshot(ctx context.Context, conn sqlx.SqlConn, svcCtx *svc.ServiceContext, order *models.TTradeOrderSeconds, q *marketQuoteSnapshot, typ trade.SecondsPriceSnapshotType, selected bool) error {
+func insertSecondsPriceSnapshot(ctx context.Context, tx *models.TransactionModels, order *models.TTradeOrderSeconds, q *marketQuoteSnapshot, typ trade.SecondsPriceSnapshotType, selected bool) error {
 	raw, _ := json.Marshal(q)
 	yes := int64(common.YesNo_YES_NO_NO)
 	if selected {
 		yes = int64(common.YesNo_YES_NO_YES)
 	}
-	_, err := models.NewTTradeSecondsPriceSnapshotModel(conn, svcCtx.Config.CacheRedis).Insert(ctx, &models.TTradeSecondsPriceSnapshot{TenantId: order.TenantId, OrderId: order.Id, SnapshotType: int64(typ), Source: quoteSource(q), Price: helpers.MustParseFloat(q.LastPrice), QuoteTime: q.QuoteTs, ReceivedAt: q.ReceivedAt, Algorithm: order.PriceAlgorithm, IsSelected: yes, RawPayload: sql.NullString{String: string(raw), Valid: true}, CreateTimes: utils.NowMillis()})
+	_, err := tx.TradeSecondsPriceSnapshot.Insert(ctx, &models.TTradeSecondsPriceSnapshot{TenantId: order.TenantId, OrderId: order.Id, SnapshotType: int64(typ), Source: quoteSource(q), Price: helpers.MustParseFloat(q.LastPrice), QuoteTime: q.QuoteTs, ReceivedAt: q.ReceivedAt, Algorithm: order.PriceAlgorithm, IsSelected: yes, RawPayload: sql.NullString{String: string(raw), Valid: true}, CreateTimes: utils.NowMillis()})
 	return err
 }

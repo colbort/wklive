@@ -221,21 +221,40 @@ MARK          = weighted_mean(raw_mark, PREVIOUS_MARK)
 ### 4.3 历史确定性回放
 
 新生成的 Price Engine 审计会在 `raw_payload` 中固化 `output_price`、完整输入、
-采用/剔除输入及算法参数。导出单条 `raw_payload` 为 JSON 文件后执行：
+采用/剔除输入及算法参数。工具接受单个 JSON、JSON 数组、JSONL 以及多个文件。
+导出单条 `raw_payload` 为 JSON 文件后执行：
 
 ```bash
 cd services/itick
 go run ./cmd/price-replay /path/to/evaluation-audit.json
 ```
 
-成功输出：
+生产历史窗口应导出为 JSON 数组或 JSONL，并显式校验公式计算周期。例如每秒公式：
+
+```bash
+go run ./cmd/price-replay \
+  --interval-ms 1000 \
+  --json \
+  /path/to/delivery-window.jsonl > /path/to/replay-report.json
+```
+
+成功输出会汇总审计记录数、公式版本数、目标时点范围、价格范围、最少有效输入数和
+被剔除输入总数。开启 `--interval-ms` 后，每个 `formula_no + formula_version` 必须满足：
+
+- `target_time` 对计算周期对齐；
+- 不存在重复目标时点；
+- 相邻目标时点严格连续，不允许窗口缺口。
+
+单条成功输出：
 
 ```text
 replay verified: price=...
 ```
 
 工具只读取不可变审计，不读取当前公式表或实时行情；记录输出被修改、采用输入出现重复
-Snapshot ID、算法参数缺失或重算结果不一致时会返回非零状态。
+Snapshot ID、有效输入低于 `min_input_count`、完整输入与采用/剔除摘要不一致、算法参数
+缺失、重算结果不一致、窗口重复或断档时都会返回非零状态。JSON 报告可直接作为生产
+变更单和交割窗口验收附件。
 
 ### 4.4 FUNDING 资金费率
 

@@ -19,12 +19,28 @@ type (
 		tContractRiskLimitTierModel
 		FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractRiskLimitTier, int64, error)
 		FindByNotional(ctx context.Context, tenantId, symbolId int64, notional decimal.Decimal) (*TContractRiskLimitTier, error)
+		CountOverlapping(ctx context.Context, tenantID, symbolID, excludeID, excludeTierNo int64, floor, capValue decimal.Decimal) (int64, error)
 	}
 
 	customTContractRiskLimitTierModel struct {
 		*defaultTContractRiskLimitTierModel
 	}
 )
+
+func (m *defaultTContractRiskLimitTierModel) CountOverlapping(
+	ctx context.Context,
+	tenantID, symbolID, excludeID, excludeTierNo int64,
+	floor, capValue decimal.Decimal,
+) (int64, error) {
+	var count int64
+	err := m.QueryRowNoCacheCtx(ctx, &count, `SELECT COUNT(1)
+FROM t_contract_risk_limit_tier
+WHERE tenant_id=? AND symbol_id=? AND id<>? AND tier_no<>?
+  AND (notional_cap=0 OR notional_cap>?)
+  AND (?=0 OR notional_floor<?)`,
+		tenantID, symbolID, excludeID, excludeTierNo, floor, capValue, capValue)
+	return count, err
+}
 
 // NewTContractRiskLimitTierModel returns a model for the database table.
 func NewTContractRiskLimitTierModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TContractRiskLimitTierModel {

@@ -298,6 +298,7 @@ type ContractPosition {
 	contractType      int64  `json:"contractType"`
 	contractValueType int64  `json:"contractValueType"`
 	positionSide      int64  `json:"positionSide"`
+	positionMode      int64  `json:"positionMode"`
 	marginMode        int64  `json:"marginMode"`
 	leverage          int64  `json:"leverage"`
 	qty               string `json:"qty" validate:"decimal_36_18"`
@@ -370,6 +371,12 @@ type ContractMarginSnapshot {
 	frozenBalance    string `json:"frozenBalance" validate:"decimal_36_18"`
 	positionMargin   string `json:"positionMargin" validate:"decimal_36_18"`
 	orderMargin      string `json:"orderMargin" validate:"decimal_36_18"`
+	maintenanceMargin string `json:"maintenanceMargin" validate:"decimal_36_18"`
+	accountEquity     string `json:"accountEquity" validate:"decimal_36_18"`
+	availableMargin   string `json:"availableMargin" validate:"decimal_36_18"`
+	riskRate          string `json:"riskRate" validate:"decimal_20_10"`
+	positionCount     int64  `json:"positionCount"`
+	assetVersion      int64  `json:"assetVersion"`
 	unrealizedPnl    string `json:"unrealizedPnl" validate:"decimal_36_18"`
 	realizedPnl      string `json:"realizedPnl" validate:"decimal_36_18"`
 	version          int64  `json:"version"`
@@ -1293,6 +1300,93 @@ type GetLiquidationListResp {
 	data []ContractLiquidation `json:"data"`
 }
 
+type ContractAccountLiquidation {
+	id                    int64  `json:"id"`
+	liquidationNo         string `json:"liquidationNo"`
+	userId                int64  `json:"userId"`
+	marginAsset           string `json:"marginAsset"`
+	marginSnapshotId      int64  `json:"marginSnapshotId"`
+	marginSnapshotVersion int64  `json:"marginSnapshotVersion"`
+	assetVersion          int64  `json:"assetVersion"`
+	walletBalance         string `json:"walletBalance" validate:"decimal_36_18"`
+	positionMargin        string `json:"positionMargin" validate:"decimal_36_18"`
+	maintenanceMargin     string `json:"maintenanceMargin" validate:"decimal_36_18"`
+	accountEquity         string `json:"accountEquity" validate:"decimal_36_18"`
+	riskRate              string `json:"riskRate"`
+	grossSettlement       string `json:"grossSettlement" validate:"decimal_36_18"`
+	liquidationFee        string `json:"liquidationFee" validate:"decimal_36_18"`
+	userCredit            string `json:"userCredit" validate:"decimal_36_18"`
+	userDebit             string `json:"userDebit" validate:"decimal_36_18"`
+	deficitAmount         string `json:"deficitAmount" validate:"decimal_36_18"`
+	insuranceFundAmount   string `json:"insuranceFundAmount" validate:"decimal_36_18"`
+	adlReliefAmount       string `json:"adlReliefAmount" validate:"decimal_36_18"`
+	adlQty                string `json:"adlQty" validate:"decimal_36_18"`
+	positionCount         int64  `json:"positionCount"`
+	status                int64  `json:"status"`
+	reason                string `json:"reason"`
+	startedAt             int64  `json:"startedAt"`
+	completedAt           int64  `json:"completedAt"`
+	version               int64  `json:"version"`
+	createTimes           int64  `json:"createTimes"`
+	updateTimes           int64  `json:"updateTimes"`
+}
+
+type ContractAccountLiquidationItem {
+	id                   int64  `json:"id"`
+	accountLiquidationId int64  `json:"accountLiquidationId"`
+	liquidationNo        string `json:"liquidationNo"`
+	positionId           int64  `json:"positionId"`
+	positionVersion      int64  `json:"positionVersion"`
+	symbolId             int64  `json:"symbolId"`
+	positionSide         int64  `json:"positionSide"`
+	triggerQty           string `json:"triggerQty" validate:"decimal_36_18"`
+	triggerMarkPrice     string `json:"triggerMarkPrice" validate:"decimal_36_18"`
+	triggerSnapshotId    string `json:"triggerSnapshotId"`
+	positionMargin       string `json:"positionMargin" validate:"decimal_36_18"`
+	maintenanceMargin    string `json:"maintenanceMargin" validate:"decimal_36_18"`
+	realizedPnl          string `json:"realizedPnl" validate:"decimal_36_18"`
+	liquidationFee       string `json:"liquidationFee" validate:"decimal_36_18"`
+	deficitAmount       string `json:"deficitAmount" validate:"decimal_36_18"`
+	bankruptcyPrice     string `json:"bankruptcyPrice" validate:"decimal_36_18"`
+	adlReliefAmount     string `json:"adlReliefAmount" validate:"decimal_36_18"`
+	adlQty              string `json:"adlQty" validate:"decimal_36_18"`
+	status               int64  `json:"status"`
+	createTimes          int64  `json:"createTimes"`
+	updateTimes          int64  `json:"updateTimes"`
+}
+
+type GetAccountLiquidationListReq {
+	PageReq
+	tenantId   int64     `form:"tenantId,optional"`
+	userId     int64     `form:"userId,optional"`
+	marginAsset string    `form:"marginAsset,optional"`
+	status     int64     `form:"status,optional"`
+	timeRange  TimeRange `form:"timeRange,optional"`
+}
+
+type GetAccountLiquidationListResp {
+	RespBase
+	data []ContractAccountLiquidation `json:"data"`
+}
+
+type GetAccountLiquidationDetailReq {
+	tenantId int64 `form:"tenantId,optional"`
+	id       int64 `form:"id"`
+}
+
+type GetAccountLiquidationDetailResp {
+	RespBase
+	data                   ContractAccountLiquidation       `json:"data"`
+	items                  []ContractAccountLiquidationItem `json:"items"`
+	settlementInstructions []TradeSettlementInstruction     `json:"settlementInstructions"`
+}
+
+type RetryAccountLiquidationReq {
+	tenantId int64  `json:"tenantId,optional"`
+	id       int64  `json:"id"`
+	reason   string `json:"reason"`
+}
+
 type TradeSecondsPriceSnapshot {
 	id           int64  `json:"id"`
 	orderId      int64  `json:"orderId"`
@@ -1562,6 +1656,15 @@ service admin {
 	@handler GetLiquidationList
 	get /liquidations (GetLiquidationListReq) returns (GetLiquidationListResp)
 
+	@handler GetAccountLiquidationList
+	get /account-liquidations (GetAccountLiquidationListReq) returns (GetAccountLiquidationListResp)
+
+	@handler GetAccountLiquidationDetail
+	get /account-liquidations/detail (GetAccountLiquidationDetailReq) returns (GetAccountLiquidationDetailResp)
+
+	@handler RetryAccountLiquidation
+	post /account-liquidations/retry (RetryAccountLiquidationReq) returns (CommonResp)
+
 	@handler GetSecondsPriceSnapshotList
 	get /seconds/price-snapshots (GetSecondsPriceSnapshotListReq) returns (GetSecondsPriceSnapshotListResp)
 
@@ -1589,4 +1692,3 @@ service admin {
 	@handler GetMarketSnapshotList
 	get /market-snapshots (GetMarketSnapshotListReq) returns (GetMarketSnapshotListResp)
 }
-

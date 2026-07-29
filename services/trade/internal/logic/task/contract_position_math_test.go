@@ -88,3 +88,52 @@ func TestRiskTierMaintenanceAmountAndCrossBoundary(t *testing.T) {
 		t.Fatal("cross position must not use isolated liquidation approximation")
 	}
 }
+
+func TestMarkRiskProjectionEqual(t *testing.T) {
+	before := &models.TContractPosition{
+		MarkPrice:         decimal.NewFromInt(110),
+		MarkSnapshotId:    "mark-v1",
+		MaintenanceMargin: decimal.RequireFromString("3.4"),
+		UnrealizedPnl:     decimal.NewFromInt(20),
+		LiquidationPrice:  decimal.RequireFromString("81.1224489795918367"),
+		BankruptcyPrice:   decimal.NewFromInt(80),
+		RiskRate:          decimal.RequireFromString("0.0566666667"),
+		AdlRank:           7,
+	}
+	after := *before
+	if !markRiskProjectionEqual(before, &after) {
+		t.Fatal("identical mark projection must not cause a version-only database write")
+	}
+	after.MaintenanceMargin = decimal.RequireFromString("3.5")
+	if markRiskProjectionEqual(before, &after) {
+		t.Fatal("changed tier-derived risk must still be persisted for the same mark")
+	}
+}
+
+func TestADLPriorityRank(t *testing.T) {
+	profitable := &models.TContractPosition{
+		MarginMode:     int64(trade.MarginMode_MARGIN_MODE_ISOLATED),
+		PositionMargin: decimal.NewFromInt(20),
+		UnrealizedPnl:  decimal.NewFromInt(20),
+	}
+	if got := adlPriorityRank(profitable, decimal.NewFromInt(120)); got != 3_000_000 {
+		t.Fatalf("ADL rank = %d, want 3000000", got)
+	}
+
+	lessProfitable := *profitable
+	lessProfitable.UnrealizedPnl = decimal.NewFromInt(10)
+	if got := adlPriorityRank(&lessProfitable, decimal.NewFromInt(110)); got != 1_833_333 {
+		t.Fatalf("lower-profit ADL rank = %d, want 1833333", got)
+	}
+
+	cross := *profitable
+	cross.MarginMode = int64(trade.MarginMode_MARGIN_MODE_CROSS)
+	if got := adlPriorityRank(&cross, decimal.NewFromInt(120)); got != 0 {
+		t.Fatalf("cross position ADL rank = %d, want 0", got)
+	}
+
+	profitable.UnrealizedPnl = decimal.NewFromInt(-1)
+	if got := adlPriorityRank(profitable, decimal.NewFromInt(120)); got != 0 {
+		t.Fatalf("losing position ADL rank = %d, want 0", got)
+	}
+}

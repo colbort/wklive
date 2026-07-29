@@ -15,7 +15,6 @@ import (
 
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 // ProcessContractPositionFillsLogic projects derivative Fills into positions.
@@ -51,14 +50,13 @@ func (l *ProcessContractPositionFillsLogic) ProcessFill(fillID int64) error {
 		return err
 	}
 
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		positionModel := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
-		historyModel := models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis)
-		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis)
-		contractOrderModel := models.NewTTradeOrderContractModel(conn, l.svcCtx.Config.CacheRedis)
-		instructionModel := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
-		eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		positionModel := tx.ContractPosition
+		historyModel := tx.ContractPositionHistory
+		fillModel := tx.TradeFill
+		contractOrderModel := tx.TradeOrderContract
+		instructionModel := tx.TradeSettlementInstruction
+		eventModel := tx.BizTradeEvent
 		projected, err := historyModel.CountByRefFillId(ctx, fill.TenantId, fill.Id)
 		if err != nil {
 			return err
@@ -222,8 +220,16 @@ func (l *ProcessContractPositionFillsLogic) applyOpen(ctx context.Context, posit
 		return err
 	}
 	now := utils.NowMillis()
+	positionMode, err := helpers.ContractPositionMode(trade.PositionSide(fill.PositionSide))
+	if err != nil {
+		return err
+	}
 	if position == nil {
-		position = &models.TContractPosition{TenantId: fill.TenantId, UserId: fill.UserId, SymbolId: fill.SymbolId, ContractType: fill.ContractType, ContractValueType: fill.ContractValueType, PositionSide: side, MarginMode: contractOrder.MarginMode, Status: int64(trade.PositionStatus_POSITION_STATUS_NORMAL), Leverage: contractOrder.Leverage, MarginAsset: contractOrder.MarginAsset, CreateTimes: now}
+		position = &models.TContractPosition{TenantId: fill.TenantId, UserId: fill.UserId, SymbolId: fill.SymbolId, ContractType: fill.ContractType, ContractValueType: fill.ContractValueType, PositionSide: side, PositionMode: int64(positionMode), MarginMode: contractOrder.MarginMode, Status: int64(trade.PositionStatus_POSITION_STATUS_NORMAL), Leverage: contractOrder.Leverage, MarginAsset: contractOrder.MarginAsset, CreateTimes: now}
+	} else if position.Qty.IsPositive() && position.PositionMode != int64(positionMode) {
+		return fmt.Errorf("position mode mismatch: position=%d stored=%d fill=%d", position.Id, position.PositionMode, positionMode)
+	} else if position.Qty.IsZero() {
+		position.PositionMode = int64(positionMode)
 	}
 	before := cloneContractPosition(position)
 	values, err := contractmath.CalculateTradeValues(fill.ContractValueType, qty, contract.ContractSize, fill.Price)
@@ -297,6 +303,13 @@ func (l *ProcessContractPositionFillsLogic) applyClose(ctx context.Context, posi
 	}
 	if err != nil {
 		return decimal.Zero, err
+	}
+	positionMode, err := helpers.ContractPositionMode(trade.PositionSide(fill.PositionSide))
+	if err != nil {
+		return decimal.Zero, err
+	}
+	if position.PositionMode != int64(positionMode) {
+		return decimal.Zero, fmt.Errorf("position mode mismatch: position=%d stored=%d fill=%d", position.Id, position.PositionMode, positionMode)
 	}
 	qty := decimalMin(position.Qty, requested)
 	if !qty.IsPositive() {
@@ -447,11 +460,13 @@ func recalculatePositionRisk(position *models.TContractPosition, contract *model
 		// Cross liquidation is account-level and requires wallet equity plus all
 		// positions sharing the margin asset. Never persist an isolated-position
 		// approximation that could trigger an incorrect liquidation.
+		position.AdlRank = 0
 		position.RiskRate = decimal.Zero
 		position.BankruptcyPrice = decimal.Zero
 		position.LiquidationPrice = decimal.Zero
 		return
 	}
+	position.AdlRank = adlPriorityRank(position, values.SettlementNotional)
 	equity := position.PositionMargin.Add(position.IsolatedMargin).Add(position.UnrealizedPnl)
 	if equity.IsPositive() {
 		position.RiskRate = position.MaintenanceMargin.Div(equity)
@@ -459,6 +474,37 @@ func recalculatePositionRisk(position *models.TContractPosition, contract *model
 		position.RiskRate = decimal.Zero
 	}
 	position.BankruptcyPrice, position.LiquidationPrice = contractRiskPricesWithMaintenance(position, contract, maintenanceRate, maintenanceAmount)
+}
+
+// ADL priority follows the common profit-rate × effective-leverage model.
+// Persisting a scaled score makes candidate ordering deterministic across
+// workers and restarts; losing, zero-margin and unsupported cross positions
+// never receive a positive priority.
+func adlPriorityRank(position *models.TContractPosition, settlementNotional decimal.Decimal) int64 {
+	if position == nil || position.MarginMode != int64(trade.MarginMode_MARGIN_MODE_ISOLATED) ||
+		!position.UnrealizedPnl.IsPositive() || !settlementNotional.IsPositive() {
+		return 0
+	}
+	margin := position.PositionMargin.Add(position.IsolatedMargin)
+	equity := margin.Add(position.UnrealizedPnl)
+	if !margin.IsPositive() || !equity.IsPositive() {
+		return 0
+	}
+	score := position.UnrealizedPnl.Div(margin).
+		Mul(settlementNotional.Div(equity)).
+		Mul(decimal.NewFromInt(1_000_000))
+	if !score.IsPositive() {
+		return 0
+	}
+	const maxRank int64 = 2_147_483_647
+	if score.GreaterThanOrEqual(decimal.NewFromInt(maxRank)) {
+		return maxRank
+	}
+	rank := score.IntPart()
+	if rank < 1 {
+		return 1
+	}
+	return rank
 }
 
 func contractRiskPrices(position *models.TContractPosition, contract *models.TTradeSymbolContract) (decimal.Decimal, decimal.Decimal) {

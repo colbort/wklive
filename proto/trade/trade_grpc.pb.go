@@ -608,6 +608,9 @@ const (
 	Admin_GetDeliveryBatchList_FullMethodName               = "/trade.Admin/GetDeliveryBatchList"
 	Admin_GetDeliverySettlementList_FullMethodName          = "/trade.Admin/GetDeliverySettlementList"
 	Admin_GetLiquidationList_FullMethodName                 = "/trade.Admin/GetLiquidationList"
+	Admin_GetAccountLiquidationList_FullMethodName          = "/trade.Admin/GetAccountLiquidationList"
+	Admin_GetAccountLiquidationDetail_FullMethodName        = "/trade.Admin/GetAccountLiquidationDetail"
+	Admin_RetryAccountLiquidation_FullMethodName            = "/trade.Admin/RetryAccountLiquidation"
 	Admin_GetSecondsPriceSnapshotList_FullMethodName        = "/trade.Admin/GetSecondsPriceSnapshotList"
 	Admin_GetAssetReservationList_FullMethodName            = "/trade.Admin/GetAssetReservationList"
 	Admin_GetSettlementInstructionList_FullMethodName       = "/trade.Admin/GetSettlementInstructionList"
@@ -705,6 +708,10 @@ type AdminClient interface {
 	GetDeliverySettlementList(ctx context.Context, in *GetDeliverySettlementListReq, opts ...grpc.CallOption) (*GetDeliverySettlementListResp, error)
 	// 强平、秒合约价格与结算异常（只读）
 	GetLiquidationList(ctx context.Context, in *GetLiquidationListReq, opts ...grpc.CallOption) (*GetLiquidationListResp, error)
+	GetAccountLiquidationList(ctx context.Context, in *GetAccountLiquidationListReq, opts ...grpc.CallOption) (*GetAccountLiquidationListResp, error)
+	GetAccountLiquidationDetail(ctx context.Context, in *GetAccountLiquidationDetailReq, opts ...grpc.CallOption) (*GetAccountLiquidationDetailResp, error)
+	// 仅允许重试人工状态；不得修改强平金额或直接标记完成
+	RetryAccountLiquidation(ctx context.Context, in *RetryAccountLiquidationReq, opts ...grpc.CallOption) (*CommonResp, error)
 	GetSecondsPriceSnapshotList(ctx context.Context, in *GetSecondsPriceSnapshotListReq, opts ...grpc.CallOption) (*GetSecondsPriceSnapshotListResp, error)
 	GetAssetReservationList(ctx context.Context, in *GetAssetReservationListReq, opts ...grpc.CallOption) (*GetAssetReservationListResp, error)
 	GetSettlementInstructionList(ctx context.Context, in *GetSettlementInstructionListReq, opts ...grpc.CallOption) (*GetSettlementInstructionListResp, error)
@@ -1136,6 +1143,36 @@ func (c *adminClient) GetLiquidationList(ctx context.Context, in *GetLiquidation
 	return out, nil
 }
 
+func (c *adminClient) GetAccountLiquidationList(ctx context.Context, in *GetAccountLiquidationListReq, opts ...grpc.CallOption) (*GetAccountLiquidationListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAccountLiquidationListResp)
+	err := c.cc.Invoke(ctx, Admin_GetAccountLiquidationList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) GetAccountLiquidationDetail(ctx context.Context, in *GetAccountLiquidationDetailReq, opts ...grpc.CallOption) (*GetAccountLiquidationDetailResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAccountLiquidationDetailResp)
+	err := c.cc.Invoke(ctx, Admin_GetAccountLiquidationDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) RetryAccountLiquidation(ctx context.Context, in *RetryAccountLiquidationReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, Admin_RetryAccountLiquidation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *adminClient) GetSecondsPriceSnapshotList(ctx context.Context, in *GetSecondsPriceSnapshotListReq, opts ...grpc.CallOption) (*GetSecondsPriceSnapshotListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetSecondsPriceSnapshotListResp)
@@ -1312,6 +1349,10 @@ type AdminServer interface {
 	GetDeliverySettlementList(context.Context, *GetDeliverySettlementListReq) (*GetDeliverySettlementListResp, error)
 	// 强平、秒合约价格与结算异常（只读）
 	GetLiquidationList(context.Context, *GetLiquidationListReq) (*GetLiquidationListResp, error)
+	GetAccountLiquidationList(context.Context, *GetAccountLiquidationListReq) (*GetAccountLiquidationListResp, error)
+	GetAccountLiquidationDetail(context.Context, *GetAccountLiquidationDetailReq) (*GetAccountLiquidationDetailResp, error)
+	// 仅允许重试人工状态；不得修改强平金额或直接标记完成
+	RetryAccountLiquidation(context.Context, *RetryAccountLiquidationReq) (*CommonResp, error)
 	GetSecondsPriceSnapshotList(context.Context, *GetSecondsPriceSnapshotListReq) (*GetSecondsPriceSnapshotListResp, error)
 	GetAssetReservationList(context.Context, *GetAssetReservationListReq) (*GetAssetReservationListResp, error)
 	GetSettlementInstructionList(context.Context, *GetSettlementInstructionListReq) (*GetSettlementInstructionListResp, error)
@@ -1455,6 +1496,15 @@ func (UnimplementedAdminServer) GetDeliverySettlementList(context.Context, *GetD
 }
 func (UnimplementedAdminServer) GetLiquidationList(context.Context, *GetLiquidationListReq) (*GetLiquidationListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetLiquidationList not implemented")
+}
+func (UnimplementedAdminServer) GetAccountLiquidationList(context.Context, *GetAccountLiquidationListReq) (*GetAccountLiquidationListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAccountLiquidationList not implemented")
+}
+func (UnimplementedAdminServer) GetAccountLiquidationDetail(context.Context, *GetAccountLiquidationDetailReq) (*GetAccountLiquidationDetailResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAccountLiquidationDetail not implemented")
+}
+func (UnimplementedAdminServer) RetryAccountLiquidation(context.Context, *RetryAccountLiquidationReq) (*CommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method RetryAccountLiquidation not implemented")
 }
 func (UnimplementedAdminServer) GetSecondsPriceSnapshotList(context.Context, *GetSecondsPriceSnapshotListReq) (*GetSecondsPriceSnapshotListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetSecondsPriceSnapshotList not implemented")
@@ -2242,6 +2292,60 @@ func _Admin_GetLiquidationList_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_GetAccountLiquidationList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAccountLiquidationListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).GetAccountLiquidationList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_GetAccountLiquidationList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).GetAccountLiquidationList(ctx, req.(*GetAccountLiquidationListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_GetAccountLiquidationDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAccountLiquidationDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).GetAccountLiquidationDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_GetAccountLiquidationDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).GetAccountLiquidationDetail(ctx, req.(*GetAccountLiquidationDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_RetryAccountLiquidation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RetryAccountLiquidationReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).RetryAccountLiquidation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_RetryAccountLiquidation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).RetryAccountLiquidation(ctx, req.(*RetryAccountLiquidationReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Admin_GetSecondsPriceSnapshotList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetSecondsPriceSnapshotListReq)
 	if err := dec(in); err != nil {
@@ -2574,6 +2678,18 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetLiquidationList",
 			Handler:    _Admin_GetLiquidationList_Handler,
+		},
+		{
+			MethodName: "GetAccountLiquidationList",
+			Handler:    _Admin_GetAccountLiquidationList_Handler,
+		},
+		{
+			MethodName: "GetAccountLiquidationDetail",
+			Handler:    _Admin_GetAccountLiquidationDetail_Handler,
+		},
+		{
+			MethodName: "RetryAccountLiquidation",
+			Handler:    _Admin_RetryAccountLiquidation_Handler,
 		},
 		{
 			MethodName: "GetSecondsPriceSnapshotList",

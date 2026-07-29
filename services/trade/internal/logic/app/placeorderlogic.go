@@ -22,11 +22,11 @@ import (
 	"wklive/services/trade/internal/domain/contractmath"
 	"wklive/services/trade/internal/realtime"
 	"wklive/services/trade/internal/svc"
+	"wklive/services/trade/internal/validation"
 	"wklive/services/trade/models"
 
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -169,7 +169,11 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		}
 	}
 	leverage := int64(1)
-	if helpers.IsDerivativeProduct(common.ProductType(symbol.ProductType)) {
+	derivativeCloseOnly := symbol.ProductType == int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) &&
+		(in.IsReduceOnly == common.YesNo_YES_NO_YES ||
+			in.PositionSide != trade.PositionSide_POSITION_SIDE_NET &&
+				isClosingFill(int64(in.PositionSide), int64(in.Side)))
+	if helpers.IsDerivativeProduct(common.ProductType(symbol.ProductType)) && !derivativeCloseOnly {
 		var ok bool
 		leverage, ok, err = helpers.EnsureConfiguredLeverage(l.ctx, l.svcCtx.SymbolLeverageCfgModel, l.svcCtx.SymbolLeverageDefaultModel, configTenantId, symbol, in.MarginMode, in.Leverage)
 		if err != nil {
@@ -179,11 +183,72 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 			return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
 	}
+	derivativeOpening := symbol.ProductType == int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE) &&
+		!derivativeCloseOnly
+	if derivativeOpening {
+		globalModeLockKey := fmt.Sprintf(
+			"trade:contract-mode:%d:%d:0",
+			tenantId, userId,
+		)
+		globalModeLockValue := fmt.Sprintf("%d:%d:global", userId, time.Now().UnixNano())
+		releaseGlobalModeLock, lockErr := helpers.AcquireRenewingTaskLock(
+			l.ctx, l.svcCtx.Redis, globalModeLockKey, globalModeLockValue,
+		)
+		if lockErr != nil {
+			return &trade.PlaceOrderResp{
+				Base: helper.ErrResp(i18n.OperationNotAllowed, "contract account mode is being updated; retry"),
+			}, nil
+		}
+		defer func() {
+			if releaseErr := releaseGlobalModeLock(); releaseErr != nil {
+				l.Errorf("release global contract mode lock failed, key=%s err=%v", globalModeLockKey, releaseErr)
+			}
+		}()
+
+		modeLockKey := fmt.Sprintf(
+			"trade:contract-mode:%d:%d:%d",
+			tenantId, userId, symbol.Id,
+		)
+		modeLockValue := fmt.Sprintf("%d:%d:mode", userId, time.Now().UnixNano())
+		releaseModeLock, lockErr := helpers.AcquireRenewingTaskLock(
+			l.ctx, l.svcCtx.Redis, modeLockKey, modeLockValue,
+		)
+		if lockErr != nil {
+			return &trade.PlaceOrderResp{
+				Base: helper.ErrResp(i18n.OperationNotAllowed, "contract account mode is being updated; retry"),
+			}, nil
+		}
+		defer func() {
+			if releaseErr := releaseModeLock(); releaseErr != nil {
+				l.Errorf("release contract mode order lock failed, key=%s err=%v", modeLockKey, releaseErr)
+			}
+		}()
+	}
+	if derivativeOpening && in.MarginMode == trade.MarginMode_MARGIN_MODE_CROSS {
+		crossLockKey := fmt.Sprintf(
+			"trade:cross-order:%d:%d:%s",
+			tenantId, userId, helpers.MarginAssetForSymbol(symbol),
+		)
+		crossLockValue := fmt.Sprintf("%d:%d:cross", userId, time.Now().UnixNano())
+		releaseCrossLock, lockErr := helpers.AcquireRenewingTaskLock(
+			l.ctx, l.svcCtx.Redis, crossLockKey, crossLockValue,
+		)
+		if lockErr != nil {
+			return &trade.PlaceOrderResp{
+				Base: helper.ErrResp(i18n.OperationNotAllowed, "cross margin account is being updated; retry"),
+			}, nil
+		}
+		defer func() {
+			if releaseErr := releaseCrossLock(); releaseErr != nil {
+				l.Errorf("release cross margin order lock failed, key=%s err=%v", crossLockKey, releaseErr)
+			}
+		}()
+	}
 	plan, err := l.preparePlaceOrder(tenantId, userId, symbol, secondsCfg, in, orderType, triggerKind, timeInForce, leverage, price, qty, amount)
 	if err != nil {
 		return &trade.PlaceOrderResp{Base: helper.ErrResp(i18n.OperationNotAllowed, err.Error())}, nil
 	}
-	price, qty, amount = plan.price, plan.qty, plan.notional
+	price, qty, amount, leverage = plan.price, plan.qty, plan.notional, plan.leverage
 
 	orderNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "TRD", "")
 	if err != nil {
@@ -232,14 +297,13 @@ func (l *PlaceOrderLogic) PlaceOrder(in *trade.PlaceOrderReq) (*trade.PlaceOrder
 		frozenAmount decimal.Decimal
 		freezeNo     string
 	)
-	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
-		spotModel := models.NewTTradeOrderSpotModel(conn, l.svcCtx.Config.CacheRedis)
-		contractModel := models.NewTTradeOrderContractModel(conn, l.svcCtx.Config.CacheRedis)
-		secondsModel := models.NewTTradeOrderSecondsModel(conn, l.svcCtx.Config.CacheRedis)
-		reservationModel := models.NewTTradeAssetReservationModel(conn, l.svcCtx.Config.CacheRedis)
-		positionModel := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
+	err = l.svcCtx.TransactionModel.TransactOnce(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		orderModel := tx.TradeOrder
+		spotModel := tx.TradeOrderSpot
+		contractModel := tx.TradeOrderContract
+		secondsModel := tx.TradeOrderSeconds
+		reservationModel := tx.TradeAssetReservation
+		positionModel := tx.ContractPosition
 
 		res, err := orderModel.Insert(ctx, order)
 		if err != nil {
@@ -363,12 +427,11 @@ func (l *PlaceOrderLogic) finalizeAcceptedOrder(order *models.TTradeOrder, freez
 		return err
 	}
 	now := utils.NowMillis()
-	if err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
-		reservationModel := models.NewTTradeAssetReservationModel(conn, l.svcCtx.Config.CacheRedis)
-		secondsModel := models.NewTTradeOrderSecondsModel(conn, l.svcCtx.Config.CacheRedis)
-		eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
+	if err := l.svcCtx.TransactionModel.TransactOnce(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		orderModel := tx.TradeOrder
+		reservationModel := tx.TradeAssetReservation
+		secondsModel := tx.TradeOrderSeconds
+		eventModel := tx.BizTradeEvent
 
 		order.BizExt = sql.NullString{String: extValue, Valid: extValue != ""}
 		order.Status = helpers.StatusAfterFreeze(triggerKind)
@@ -453,12 +516,11 @@ func (l *PlaceOrderLogic) markAssetReservationRetry(order *models.TTradeOrder, c
 
 func (l *PlaceOrderLogic) rejectOrderAfterFreezeFailure(order *models.TTradeOrder, plan *placeOrderPlan, cause error) error {
 	now := utils.NowMillis()
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
-		reservationModel := models.NewTTradeAssetReservationModel(conn, l.svcCtx.Config.CacheRedis)
-		positionModel := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
-		eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.TransactOnce(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		orderModel := tx.TradeOrder
+		reservationModel := tx.TradeAssetReservation
+		positionModel := tx.ContractPosition
+		eventModel := tx.BizTradeEvent
 
 		order.Status = int64(trade.OrderStatus_ORDER_STATUS_REJECTED)
 		order.CancelReason = fmt.Sprintf("asset freeze rejected: %v", cause)
@@ -524,6 +586,7 @@ type placeOrderPlan struct {
 	price            decimal.Decimal
 	qty              decimal.Decimal
 	notional         decimal.Decimal
+	leverage         int64
 	riskPrice        decimal.Decimal
 	frozenAsset      string
 	frozenAmount     decimal.Decimal
@@ -562,7 +625,10 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 		return nil, err
 	}
 
-	plan := &placeOrderPlan{price: price, qty: qty, notional: amount, riskPrice: price}
+	plan := &placeOrderPlan{
+		price: price, qty: qty, notional: amount,
+		riskPrice: price, leverage: leverage,
+	}
 	if symbol.ProductType == int64(common.ProductType_PRODUCT_TYPE_SECONDS) {
 		if err := validateSymbolNotional(symbol, amount); err != nil {
 			return nil, err
@@ -663,16 +729,15 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 		if err != nil {
 			return nil, err
 		}
-		// Cross margin is account-level risk. It cannot be accepted until wallet
-		// equity, open-order margin and every position sharing the margin asset are
-		// continuously projected from Asset and mark-price events. Silently using
-		// the isolated-position formula here would permit orders that cannot be
-		// liquidated correctly.
-		if in.MarginMode == trade.MarginMode_MARGIN_MODE_CROSS {
-			return nil, errors.New("cross margin is temporarily unavailable: account-level risk projection is not enabled")
-		}
-		if in.MarginMode != trade.MarginMode_MARGIN_MODE_ISOLATED {
-			return nil, errors.New("invalid derivative margin mode")
+		isHedgeClose := in.PositionSide != trade.PositionSide_POSITION_SIDE_NET &&
+			isClosingFill(int64(in.PositionSide), int64(in.Side))
+		isCloseOnly := in.IsReduceOnly == common.YesNo_YES_NO_YES || isHedgeClose
+		if err := validation.ContractOrderMarginMode(
+			cfg, in.MarginMode, isCloseOnly,
+			l.svcCtx.Config.CrossMarginTrading.Enabled,
+			l.svcCtx.Config.AutomaticLiquidation.Enabled,
+		); err != nil {
+			return nil, err
 		}
 		if symbol.ContractType != int64(common.ContractType_CONTRACT_TYPE_PERPETUAL) && symbol.ContractType != int64(common.ContractType_CONTRACT_TYPE_DELIVERY) {
 			return nil, errors.New("invalid derivative contract type")
@@ -691,14 +756,19 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 		if !qty.IsPositive() || !plan.riskPrice.IsPositive() || leverage <= 0 {
 			return nil, errors.New("derivative order requires quantity, risk price and leverage")
 		}
-		if cfg.SupportIsolated != 1 {
-			return nil, errors.New("margin mode is not supported")
-		}
 		if in.PositionSide != trade.PositionSide_POSITION_SIDE_NET && in.PositionSide != trade.PositionSide_POSITION_SIDE_LONG && in.PositionSide != trade.PositionSide_POSITION_SIDE_SHORT {
 			return nil, errors.New("invalid derivative position side")
 		}
 		if err := validateContractSideSwitch(cfg, in); err != nil {
 			return nil, err
+		}
+		if !isCloseOnly {
+			if err := helpers.ValidateContractOpeningMode(
+				l.ctx, l.svcCtx, tenantID, userID, symbol.Id,
+				in.MarginMode, in.PositionSide,
+			); err != nil {
+				return nil, err
+			}
 		}
 		values, err := contractmath.CalculateTradeValues(symbol.ContractValueType, qty, cfg.ContractSize, plan.riskPrice)
 		if err != nil {
@@ -723,9 +793,19 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 			plan.riskTierID = tier.Id
 		}
 		fee := contractmath.CalculateFee(values, cfg.TakerFeeRate)
+		maintenanceRate := cfg.MaintenanceMarginRate
+		maintenanceAmount := decimal.Zero
+		if tier != nil {
+			maintenanceRate = tier.MaintenanceMarginRate
+			maintenanceAmount = tier.MaintenanceAmount
+		}
+		orderMaintenance := contractmath.RoundDebit(values.SettlementNotional.Mul(maintenanceRate)).
+			Sub(maintenanceAmount)
+		if orderMaintenance.IsNegative() {
+			orderMaintenance = decimal.Zero
+		}
 		plan.frozenAsset = helpers.MarginAssetForSymbol(symbol)
-		isHedgeClose := in.PositionSide != trade.PositionSide_POSITION_SIDE_NET && isClosingFill(int64(in.PositionSide), int64(in.Side))
-		if in.IsReduceOnly == common.YesNo_YES_NO_YES || isHedgeClose {
+		if isCloseOnly {
 			lookupSide := int64(in.PositionSide)
 			if in.PositionSide == trade.PositionSide_POSITION_SIDE_NET {
 				lookupSide, _ = netPositionSides(int64(in.Side))
@@ -734,6 +814,10 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 			if findErr != nil {
 				return nil, errors.New("no matching position available to close")
 			}
+			positionMode, modeErr := helpers.ContractPositionMode(in.PositionSide)
+			if modeErr != nil || position.PositionMode != int64(positionMode) {
+				return nil, errors.New("no matching position available in the requested position mode")
+			}
 			if position.Status != 1 || position.AvailQty.LessThan(qty) {
 				return nil, errors.New("insufficient available position quantity")
 			}
@@ -741,9 +825,18 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 			plan.reservedCloseQty = qty
 			plan.positionID = position.Id
 			plan.positionVersion = position.Version
+			plan.leverage = position.Leverage
 			plan.frozenAmount = fee
 		} else {
 			plan.frozenAmount = plan.marginAmount.Add(fee)
+			if in.MarginMode == trade.MarginMode_MARGIN_MODE_CROSS {
+				if err := helpers.ValidateCrossMarginOpeningCapacity(
+					l.ctx, l.svcCtx, tenantID, userID, plan.frozenAsset,
+					plan.marginAmount, fee, orderMaintenance,
+				); err != nil {
+					return nil, err
+				}
+			}
 		}
 	default:
 		return nil, errors.New("unsupported product type")

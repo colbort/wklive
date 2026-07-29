@@ -2145,6 +2145,70 @@ func (ContractReconciliationIssueStatus) EnumDescriptor() ([]byte, []int) {
 	return file_proto_trade_enum_proto_rawDescGZIP(), []int{36}
 }
 
+type AccountLiquidationStatus int32
+
+const (
+	AccountLiquidationStatus_ACCOUNT_LIQUIDATION_STATUS_UNKNOWN        AccountLiquidationStatus = 0
+	AccountLiquidationStatus_ACCOUNT_LIQUIDATION_STATUS_PENDING        AccountLiquidationStatus = 1
+	AccountLiquidationStatus_ACCOUNT_LIQUIDATION_STATUS_ASSET_SETTLING AccountLiquidationStatus = 2
+	AccountLiquidationStatus_ACCOUNT_LIQUIDATION_STATUS_CLOSING        AccountLiquidationStatus = 3
+	AccountLiquidationStatus_ACCOUNT_LIQUIDATION_STATUS_COMPLETED      AccountLiquidationStatus = 4
+	AccountLiquidationStatus_ACCOUNT_LIQUIDATION_STATUS_MANUAL_REVIEW  AccountLiquidationStatus = 5
+	AccountLiquidationStatus_ACCOUNT_LIQUIDATION_STATUS_INSURANCE_FUND AccountLiquidationStatus = 6
+	AccountLiquidationStatus_ACCOUNT_LIQUIDATION_STATUS_ADL            AccountLiquidationStatus = 7
+)
+
+// Enum value maps for AccountLiquidationStatus.
+var (
+	AccountLiquidationStatus_name = map[int32]string{
+		0: "ACCOUNT_LIQUIDATION_STATUS_UNKNOWN",
+		1: "ACCOUNT_LIQUIDATION_STATUS_PENDING",
+		2: "ACCOUNT_LIQUIDATION_STATUS_ASSET_SETTLING",
+		3: "ACCOUNT_LIQUIDATION_STATUS_CLOSING",
+		4: "ACCOUNT_LIQUIDATION_STATUS_COMPLETED",
+		5: "ACCOUNT_LIQUIDATION_STATUS_MANUAL_REVIEW",
+		6: "ACCOUNT_LIQUIDATION_STATUS_INSURANCE_FUND",
+		7: "ACCOUNT_LIQUIDATION_STATUS_ADL",
+	}
+	AccountLiquidationStatus_value = map[string]int32{
+		"ACCOUNT_LIQUIDATION_STATUS_UNKNOWN":        0,
+		"ACCOUNT_LIQUIDATION_STATUS_PENDING":        1,
+		"ACCOUNT_LIQUIDATION_STATUS_ASSET_SETTLING": 2,
+		"ACCOUNT_LIQUIDATION_STATUS_CLOSING":        3,
+		"ACCOUNT_LIQUIDATION_STATUS_COMPLETED":      4,
+		"ACCOUNT_LIQUIDATION_STATUS_MANUAL_REVIEW":  5,
+		"ACCOUNT_LIQUIDATION_STATUS_INSURANCE_FUND": 6,
+		"ACCOUNT_LIQUIDATION_STATUS_ADL":            7,
+	}
+)
+
+func (x AccountLiquidationStatus) Enum() *AccountLiquidationStatus {
+	p := new(AccountLiquidationStatus)
+	*p = x
+	return p
+}
+
+func (x AccountLiquidationStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AccountLiquidationStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_trade_enum_proto_enumTypes[37].Descriptor()
+}
+
+func (AccountLiquidationStatus) Type() protoreflect.EnumType {
+	return &file_proto_trade_enum_proto_enumTypes[37]
+}
+
+func (x AccountLiquidationStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AccountLiquidationStatus.Descriptor instead.
+func (AccountLiquidationStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_trade_enum_proto_rawDescGZIP(), []int{37}
+}
+
 var File_proto_trade_enum_proto protoreflect.FileDescriptor
 
 const file_proto_trade_enum_proto_rawDesc = "" +
@@ -2404,7 +2468,16 @@ const file_proto_trade_enum_proto_rawDesc = "" +
 	",CONTRACT_RECONCILIATION_ISSUE_STATUS_UNKNOWN\x10\x00\x12-\n" +
 	")CONTRACT_RECONCILIATION_ISSUE_STATUS_OPEN\x10\x01\x121\n" +
 	"-CONTRACT_RECONCILIATION_ISSUE_STATUS_RESOLVED\x10\x02\x120\n" +
-	",CONTRACT_RECONCILIATION_ISSUE_STATUS_IGNORED\x10\x03B\x1aZ\x18wklive/proto/trade;tradeb\x06proto3"
+	",CONTRACT_RECONCILIATION_ISSUE_STATUS_IGNORED\x10\x03*\xec\x02\n" +
+	"\x18AccountLiquidationStatus\x12&\n" +
+	"\"ACCOUNT_LIQUIDATION_STATUS_UNKNOWN\x10\x00\x12&\n" +
+	"\"ACCOUNT_LIQUIDATION_STATUS_PENDING\x10\x01\x12-\n" +
+	")ACCOUNT_LIQUIDATION_STATUS_ASSET_SETTLING\x10\x02\x12&\n" +
+	"\"ACCOUNT_LIQUIDATION_STATUS_CLOSING\x10\x03\x12(\n" +
+	"$ACCOUNT_LIQUIDATION_STATUS_COMPLETED\x10\x04\x12,\n" +
+	"(ACCOUNT_LIQUIDATION_STATUS_MANUAL_REVIEW\x10\x05\x12-\n" +
+	")ACCOUNT_LIQUIDATION_STATUS_INSURANCE_FUND\x10\x06\x12\"\n" +
+	"\x1eACCOUNT_LIQUIDATION_STATUS_ADL\x10\aB\x1aZ\x18wklive/proto/trade;tradeb\x06proto3"
 
 var (
 	file_proto_trade_enum_proto_rawDescOnce sync.Once
@@ -2418,7 +2491,7 @@ func file_proto_trade_enum_proto_rawDescGZIP() []byte {
 	return file_proto_trade_enum_proto_rawDescData
 }
 
-var file_proto_trade_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 37)
+var file_proto_trade_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 38)
 var file_proto_trade_enum_proto_goTypes = []any{
 	(ContractValueType)(0),                 // 0: trade.ContractValueType
 	(SymbolStatus)(0),                      // 1: trade.SymbolStatus
@@ -2457,6 +2530,7 @@ var file_proto_trade_enum_proto_goTypes = []any{
 	(DeliveryBatchStatus)(0),               // 34: trade.DeliveryBatchStatus
 	(DeliverySettlementStatus)(0),          // 35: trade.DeliverySettlementStatus
 	(ContractReconciliationIssueStatus)(0), // 36: trade.ContractReconciliationIssueStatus
+	(AccountLiquidationStatus)(0),          // 37: trade.AccountLiquidationStatus
 }
 var file_proto_trade_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -2476,7 +2550,7 @@ func file_proto_trade_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_trade_enum_proto_rawDesc), len(file_proto_trade_enum_proto_rawDesc)),
-			NumEnums:      37,
+			NumEnums:      38,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

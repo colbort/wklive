@@ -66,6 +66,12 @@ import type {
   ContractLiquidation,
   GetLiquidationListReq,
   GetLiquidationListResp,
+  ContractAccountLiquidation,
+  GetAccountLiquidationListReq,
+  GetAccountLiquidationListResp,
+  GetAccountLiquidationDetailReq,
+  GetAccountLiquidationDetailResp,
+  RetryAccountLiquidationReq,
   TradeSecondsPriceSnapshot,
   GetSecondsPriceSnapshotListReq,
   GetSecondsPriceSnapshotListResp,
@@ -278,6 +284,27 @@ export function apiTradeListLiquidations(
   params: GetLiquidationListReq,
 ): Promise<GetLiquidationListResp> {
   return get<ContractLiquidation[]>('/admin/trade/liquidations', params)
+}
+
+export function apiTradeListAccountLiquidations(
+  params: GetAccountLiquidationListReq,
+): Promise<GetAccountLiquidationListResp> {
+  return get<ContractAccountLiquidation[]>('/admin/trade/account-liquidations', params)
+}
+
+export function apiTradeGetAccountLiquidationDetail(
+  params: GetAccountLiquidationDetailReq,
+): Promise<GetAccountLiquidationDetailResp> {
+  return get<ContractAccountLiquidation>(
+    '/admin/trade/account-liquidations/detail',
+    params,
+  ) as Promise<GetAccountLiquidationDetailResp>
+}
+
+export function apiTradeRetryAccountLiquidation(
+  params: RetryAccountLiquidationReq,
+): Promise<RespBase> {
+  return post('/admin/trade/account-liquidations/retry', params)
 }
 
 export function apiTradeListSecondsPriceSnapshots(

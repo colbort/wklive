@@ -16,7 +16,6 @@ import (
 
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type ProcessTradeEventsLogic struct {
@@ -77,8 +76,8 @@ func (l *ProcessTradeEventsLogic) recoverSettlementPendingOrders(in *trade.Trade
 		}
 		for _, order := range orders {
 			cursor = order.Id
-			if err := helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-				return finalizeSettledOrder(ctx, sqlx.NewSqlConnFromSession(session), l.svcCtx, order.Id, utils.NowMillis())
+			if err := l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+				return finalizeSettledOrder(ctx, tx, order.Id, utils.NowMillis())
 			}); err != nil {
 				return err
 			}
@@ -322,10 +321,9 @@ func triggerSourceName(triggerType int64) string {
 func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPrice decimal.Decimal, triggerSource string, now int64) error {
 	var triggeredOrder *models.TTradeOrder
 	var eventNo string
-	err := helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
-		eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
+	err := l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		orderModel := tx.TradeOrder
+		eventModel := tx.BizTradeEvent
 		order, err := orderModel.FindOneForUpdate(ctx, orderID)
 		if err != nil {
 			return err
@@ -427,9 +425,8 @@ func (l *ProcessTradeEventsLogic) expireImmediateOrders(in *trade.TradeTaskReq) 
 
 func (l *ProcessTradeEventsLogic) expireOrderIfNeeded(orderID, now int64) (*models.TTradeOrder, error) {
 	var expiredOrder *models.TTradeOrder
-	err := helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
+	err := l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		orderModel := tx.TradeOrder
 		order, err := orderModel.FindOneForUpdate(ctx, orderID)
 		if err != nil {
 			return err

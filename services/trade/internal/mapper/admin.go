@@ -28,6 +28,36 @@ func DeliverySettlementProto(v *models.TContractDeliverySettlement) *trade.Contr
 func LiquidationProto(v *models.TContractLiquidation) *trade.ContractLiquidation {
 	return &trade.ContractLiquidation{Id: v.Id, LiquidationNo: v.LiquidationNo, PositionId: v.PositionId, UserId: v.UserId, SymbolId: v.SymbolId, PositionSide: trade.PositionSide(v.PositionSide), MarginMode: trade.MarginMode(v.MarginMode), TriggerMarkPrice: v.TriggerMarkPrice.String(), TriggerIndexPrice: v.TriggerIndexPrice.String(), TriggerSnapshotId: v.TriggerSnapshotId, TriggerQty: v.TriggerQty.String(), LiquidatedQty: v.LiquidatedQty.String(), MaintenanceMargin: v.MaintenanceMargin.String(), AccountEquity: v.AccountEquity.String(), BankruptcyPrice: v.BankruptcyPrice.String(), LiquidationFee: v.LiquidationFee.String(), InsuranceFundAmount: v.InsuranceFundAmount.String(), AdlQty: v.AdlQty.String(), Status: trade.LiquidationStatus(v.Status), Reason: v.Reason, StartedAt: v.StartedAt, CompletedAt: v.CompletedAt, CreateTimes: v.CreateTimes, UpdateTimes: v.UpdateTimes}
 }
+func AccountLiquidationProto(v *models.TContractAccountLiquidation) *trade.ContractAccountLiquidation {
+	return &trade.ContractAccountLiquidation{
+		Id: v.Id, LiquidationNo: v.LiquidationNo, UserId: v.UserId, MarginAsset: v.MarginAsset,
+		MarginSnapshotId: v.MarginSnapshotId, MarginSnapshotVersion: v.MarginSnapshotVersion,
+		AssetVersion: v.AssetVersion, WalletBalance: v.WalletBalance.String(),
+		PositionMargin: v.PositionMargin.String(), MaintenanceMargin: v.MaintenanceMargin.String(),
+		AccountEquity: v.AccountEquity.String(), RiskRate: v.RiskRate.String(),
+		GrossSettlement: v.GrossSettlement.String(), LiquidationFee: v.LiquidationFee.String(),
+		UserCredit: v.UserCredit.String(), UserDebit: v.UserDebit.String(),
+		DeficitAmount: v.DeficitAmount.String(), InsuranceFundAmount: v.InsuranceFundAmount.String(),
+		AdlReliefAmount: v.AdlReliefAmount.String(), AdlQty: v.AdlQty.String(),
+		PositionCount: v.PositionCount,
+		Status:        trade.AccountLiquidationStatus(v.Status), Reason: v.Reason,
+		StartedAt: v.StartedAt, CompletedAt: v.CompletedAt, Version: v.Version,
+		CreateTimes: v.CreateTimes, UpdateTimes: v.UpdateTimes,
+	}
+}
+func AccountLiquidationItemProto(v *models.TContractAccountLiquidationItem) *trade.ContractAccountLiquidationItem {
+	return &trade.ContractAccountLiquidationItem{
+		Id: v.Id, AccountLiquidationId: v.AccountLiquidationId, LiquidationNo: v.LiquidationNo,
+		PositionId: v.PositionId, PositionVersion: v.PositionVersion, SymbolId: v.SymbolId,
+		PositionSide: trade.PositionSide(v.PositionSide), TriggerQty: v.TriggerQty.String(),
+		TriggerMarkPrice: v.TriggerMarkPrice.String(), TriggerSnapshotId: v.TriggerSnapshotId,
+		PositionMargin: v.PositionMargin.String(), MaintenanceMargin: v.MaintenanceMargin.String(),
+		RealizedPnl: v.RealizedPnl.String(), LiquidationFee: v.LiquidationFee.String(),
+		DeficitAmount: v.DeficitAmount.String(), BankruptcyPrice: v.BankruptcyPrice.String(),
+		AdlReliefAmount: v.AdlReliefAmount.String(), AdlQty: v.AdlQty.String(),
+		Status: v.Status, CreateTimes: v.CreateTimes, UpdateTimes: v.UpdateTimes,
+	}
+}
 func SecondsPriceProto(v *models.TTradeSecondsPriceSnapshot) *trade.TradeSecondsPriceSnapshot {
 	raw := ""
 	if v.RawPayload.Valid {

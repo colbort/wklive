@@ -2763,6 +2763,7 @@ type ContractPosition struct {
 	LastFundingTime   int64                  `protobuf:"varint,29,opt,name=last_funding_time,json=lastFundingTime,proto3" json:"last_funding_time,omitempty"`
 	ClosedAt          int64                  `protobuf:"varint,30,opt,name=closed_at,json=closedAt,proto3" json:"closed_at,omitempty"`
 	MarkSnapshotId    string                 `protobuf:"bytes,31,opt,name=mark_snapshot_id,json=markSnapshotId,proto3" json:"mark_snapshot_id,omitempty"`
+	PositionMode      PositionMode           `protobuf:"varint,32,opt,name=position_mode,json=positionMode,proto3,enum=trade.PositionMode" json:"position_mode,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -3012,6 +3013,13 @@ func (x *ContractPosition) GetMarkSnapshotId() string {
 		return x.MarkSnapshotId
 	}
 	return ""
+}
+
+func (x *ContractPosition) GetPositionMode() PositionMode {
+	if x != nil {
+		return x.PositionMode
+	}
+	return PositionMode_POSITION_MODE_UNKNOWN
 }
 
 type ContractPositionHistory struct {
@@ -3315,25 +3323,31 @@ func (x *ContractPositionHistory) GetContractValueType() ContractValueType {
 }
 
 type ContractMarginSnapshot struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId         int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId           int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	MarginAsset      string                 `protobuf:"bytes,5,opt,name=margin_asset,json=marginAsset,proto3" json:"margin_asset,omitempty"`
-	WalletBalance    string                 `protobuf:"bytes,6,opt,name=wallet_balance,json=walletBalance,proto3" json:"wallet_balance,omitempty"`
-	AvailableBalance string                 `protobuf:"bytes,7,opt,name=available_balance,json=availableBalance,proto3" json:"available_balance,omitempty"`
-	FrozenBalance    string                 `protobuf:"bytes,8,opt,name=frozen_balance,json=frozenBalance,proto3" json:"frozen_balance,omitempty"`
-	PositionMargin   string                 `protobuf:"bytes,9,opt,name=position_margin,json=positionMargin,proto3" json:"position_margin,omitempty"`
-	OrderMargin      string                 `protobuf:"bytes,10,opt,name=order_margin,json=orderMargin,proto3" json:"order_margin,omitempty"`
-	UnrealizedPnl    string                 `protobuf:"bytes,11,opt,name=unrealized_pnl,json=unrealizedPnl,proto3" json:"unrealized_pnl,omitempty"`
-	RealizedPnl      string                 `protobuf:"bytes,12,opt,name=realized_pnl,json=realizedPnl,proto3" json:"realized_pnl,omitempty"`
-	Version          int64                  `protobuf:"varint,13,opt,name=version,proto3" json:"version,omitempty"`
-	CreateTimes      int64                  `protobuf:"varint,14,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes      int64                  `protobuf:"varint,15,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
-	SourceEventNo    string                 `protobuf:"bytes,16,opt,name=source_event_no,json=sourceEventNo,proto3" json:"source_event_no,omitempty"`
-	SnapshotTime     int64                  `protobuf:"varint,17,opt,name=snapshot_time,json=snapshotTime,proto3" json:"snapshot_time,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Id                int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId          int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId            int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	MarginAsset       string                 `protobuf:"bytes,5,opt,name=margin_asset,json=marginAsset,proto3" json:"margin_asset,omitempty"`
+	WalletBalance     string                 `protobuf:"bytes,6,opt,name=wallet_balance,json=walletBalance,proto3" json:"wallet_balance,omitempty"`
+	AvailableBalance  string                 `protobuf:"bytes,7,opt,name=available_balance,json=availableBalance,proto3" json:"available_balance,omitempty"`
+	FrozenBalance     string                 `protobuf:"bytes,8,opt,name=frozen_balance,json=frozenBalance,proto3" json:"frozen_balance,omitempty"`
+	PositionMargin    string                 `protobuf:"bytes,9,opt,name=position_margin,json=positionMargin,proto3" json:"position_margin,omitempty"`
+	OrderMargin       string                 `protobuf:"bytes,10,opt,name=order_margin,json=orderMargin,proto3" json:"order_margin,omitempty"`
+	UnrealizedPnl     string                 `protobuf:"bytes,11,opt,name=unrealized_pnl,json=unrealizedPnl,proto3" json:"unrealized_pnl,omitempty"`
+	RealizedPnl       string                 `protobuf:"bytes,12,opt,name=realized_pnl,json=realizedPnl,proto3" json:"realized_pnl,omitempty"`
+	Version           int64                  `protobuf:"varint,13,opt,name=version,proto3" json:"version,omitempty"`
+	CreateTimes       int64                  `protobuf:"varint,14,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	UpdateTimes       int64                  `protobuf:"varint,15,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	SourceEventNo     string                 `protobuf:"bytes,16,opt,name=source_event_no,json=sourceEventNo,proto3" json:"source_event_no,omitempty"`
+	SnapshotTime      int64                  `protobuf:"varint,17,opt,name=snapshot_time,json=snapshotTime,proto3" json:"snapshot_time,omitempty"`
+	MaintenanceMargin string                 `protobuf:"bytes,18,opt,name=maintenance_margin,json=maintenanceMargin,proto3" json:"maintenance_margin,omitempty"`
+	AccountEquity     string                 `protobuf:"bytes,19,opt,name=account_equity,json=accountEquity,proto3" json:"account_equity,omitempty"`
+	AvailableMargin   string                 `protobuf:"bytes,20,opt,name=available_margin,json=availableMargin,proto3" json:"available_margin,omitempty"`
+	RiskRate          string                 `protobuf:"bytes,21,opt,name=risk_rate,json=riskRate,proto3" json:"risk_rate,omitempty"`
+	PositionCount     int64                  `protobuf:"varint,22,opt,name=position_count,json=positionCount,proto3" json:"position_count,omitempty"`
+	AssetVersion      int64                  `protobuf:"varint,23,opt,name=asset_version,json=assetVersion,proto3" json:"asset_version,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *ContractMarginSnapshot) Reset() {
@@ -3474,6 +3488,48 @@ func (x *ContractMarginSnapshot) GetSourceEventNo() string {
 func (x *ContractMarginSnapshot) GetSnapshotTime() int64 {
 	if x != nil {
 		return x.SnapshotTime
+	}
+	return 0
+}
+
+func (x *ContractMarginSnapshot) GetMaintenanceMargin() string {
+	if x != nil {
+		return x.MaintenanceMargin
+	}
+	return ""
+}
+
+func (x *ContractMarginSnapshot) GetAccountEquity() string {
+	if x != nil {
+		return x.AccountEquity
+	}
+	return ""
+}
+
+func (x *ContractMarginSnapshot) GetAvailableMargin() string {
+	if x != nil {
+		return x.AvailableMargin
+	}
+	return ""
+}
+
+func (x *ContractMarginSnapshot) GetRiskRate() string {
+	if x != nil {
+		return x.RiskRate
+	}
+	return ""
+}
+
+func (x *ContractMarginSnapshot) GetPositionCount() int64 {
+	if x != nil {
+		return x.PositionCount
+	}
+	return 0
+}
+
+func (x *ContractMarginSnapshot) GetAssetVersion() int64 {
+	if x != nil {
+		return x.AssetVersion
 	}
 	return 0
 }
@@ -4918,7 +4974,7 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\auser_id\x18\x05 \x01(\x03R\x06userId\x128\n" +
 	"\rcancel_source\x18\x06 \x01(\x0e2\x13.trade.CancelSourceR\fcancelSource\x12#\n" +
 	"\rcancel_reason\x18\a \x01(\tR\fcancelReason\x12!\n" +
-	"\fcreate_times\x18\b \x01(\x03R\vcreateTimes\"\x97\t\n" +
+	"\fcreate_times\x18\b \x01(\x03R\vcreateTimes\"\xd1\t\n" +
 	"\x10ContractPosition\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -4954,7 +5010,8 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\trisk_rate\x18\x1c \x01(\tR\briskRate\x12*\n" +
 	"\x11last_funding_time\x18\x1d \x01(\x03R\x0flastFundingTime\x12\x1b\n" +
 	"\tclosed_at\x18\x1e \x01(\x03R\bclosedAt\x12(\n" +
-	"\x10mark_snapshot_id\x18\x1f \x01(\tR\x0emarkSnapshotId\"\xea\n" +
+	"\x10mark_snapshot_id\x18\x1f \x01(\tR\x0emarkSnapshotId\x128\n" +
+	"\rposition_mode\x18  \x01(\x0e2\x13.trade.PositionModeR\fpositionMode\"\xea\n" +
 	"\n" +
 	"\x17ContractPositionHistory\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
@@ -4996,7 +5053,7 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\x06source\x18\x1e \x01(\x0e2\x11.trade.SourceTypeR\x06source\x12\x16\n" +
 	"\x06remark\x18\x1f \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18  \x01(\x03R\vcreateTimes\x12H\n" +
-	"\x13contract_value_type\x18! \x01(\x0e2\x18.trade.ContractValueTypeR\x11contractValueType\"\xc5\x04\n" +
+	"\x13contract_value_type\x18! \x01(\x0e2\x18.trade.ContractValueTypeR\x11contractValueType\"\xaf\x06\n" +
 	"\x16ContractMarginSnapshot\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -5014,7 +5071,13 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\fcreate_times\x18\x0e \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\x0f \x01(\x03R\vupdateTimes\x12&\n" +
 	"\x0fsource_event_no\x18\x10 \x01(\tR\rsourceEventNo\x12#\n" +
-	"\rsnapshot_time\x18\x11 \x01(\x03R\fsnapshotTimeJ\x04\b\x04\x10\x05\"\xe1\x03\n" +
+	"\rsnapshot_time\x18\x11 \x01(\x03R\fsnapshotTime\x12-\n" +
+	"\x12maintenance_margin\x18\x12 \x01(\tR\x11maintenanceMargin\x12%\n" +
+	"\x0eaccount_equity\x18\x13 \x01(\tR\raccountEquity\x12)\n" +
+	"\x10available_margin\x18\x14 \x01(\tR\x0favailableMargin\x12\x1b\n" +
+	"\trisk_rate\x18\x15 \x01(\tR\briskRate\x12%\n" +
+	"\x0eposition_count\x18\x16 \x01(\x03R\rpositionCount\x12#\n" +
+	"\rasset_version\x18\x17 \x01(\x03R\fassetVersionJ\x04\b\x04\x10\x05\"\xe1\x03\n" +
 	"\x16ContractLeverageConfig\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -5286,36 +5349,37 @@ var file_proto_trade_model_proto_depIdxs = []int32{
 	35, // 48: trade.ContractPosition.margin_mode:type_name -> trade.MarginMode
 	30, // 49: trade.ContractPosition.contract_value_type:type_name -> trade.ContractValueType
 	53, // 50: trade.ContractPosition.status:type_name -> trade.PositionStatus
-	29, // 51: trade.ContractPositionHistory.contract_type:type_name -> common.ContractType
-	37, // 52: trade.ContractPositionHistory.position_side:type_name -> trade.PositionSide
-	54, // 53: trade.ContractPositionHistory.action_type:type_name -> trade.PositionActionType
-	55, // 54: trade.ContractPositionHistory.source:type_name -> trade.SourceType
-	30, // 55: trade.ContractPositionHistory.contract_value_type:type_name -> trade.ContractValueType
-	35, // 56: trade.ContractLeverageConfig.margin_mode:type_name -> trade.MarginMode
-	55, // 57: trade.ContractLeverageConfig.source:type_name -> trade.SourceType
-	32, // 58: trade.ContractLeverageConfig.enabled:type_name -> common.Enable
-	35, // 59: trade.TradeSymbolLeverageConfig.margin_mode:type_name -> trade.MarginMode
-	32, // 60: trade.TradeSymbolLeverageConfig.enabled:type_name -> common.Enable
-	28, // 61: trade.RiskUserTradeLimit.product_type:type_name -> common.ProductType
-	32, // 62: trade.RiskUserTradeLimit.trade_enabled:type_name -> common.Enable
-	32, // 63: trade.RiskUserTradeLimit.only_reduce_only:type_name -> common.Enable
-	56, // 64: trade.RiskUserTradeLimit.risk_level:type_name -> trade.RiskLevel
-	55, // 65: trade.RiskUserTradeLimit.source:type_name -> trade.SourceType
-	32, // 66: trade.RiskUserTradeLimit.enabled:type_name -> common.Enable
-	55, // 67: trade.RiskUserSymbolLimit.source:type_name -> trade.SourceType
-	32, // 68: trade.RiskUserSymbolLimit.enabled:type_name -> common.Enable
-	28, // 69: trade.RiskOrderCheckLog.product_type:type_name -> common.ProductType
-	57, // 70: trade.RiskOrderCheckLog.check_type:type_name -> trade.RiskCheckType
-	58, // 71: trade.RiskOrderCheckLog.check_result:type_name -> trade.RiskCheckResult
-	55, // 72: trade.RiskOrderCheckLog.source:type_name -> trade.SourceType
-	28, // 73: trade.BizTradeEvent.product_type:type_name -> common.ProductType
-	55, // 74: trade.BizTradeEvent.source:type_name -> trade.SourceType
-	59, // 75: trade.BizTradeEvent.event_status:type_name -> trade.EventStatus
-	76, // [76:76] is the sub-list for method output_type
-	76, // [76:76] is the sub-list for method input_type
-	76, // [76:76] is the sub-list for extension type_name
-	76, // [76:76] is the sub-list for extension extendee
-	0,  // [0:76] is the sub-list for field type_name
+	34, // 51: trade.ContractPosition.position_mode:type_name -> trade.PositionMode
+	29, // 52: trade.ContractPositionHistory.contract_type:type_name -> common.ContractType
+	37, // 53: trade.ContractPositionHistory.position_side:type_name -> trade.PositionSide
+	54, // 54: trade.ContractPositionHistory.action_type:type_name -> trade.PositionActionType
+	55, // 55: trade.ContractPositionHistory.source:type_name -> trade.SourceType
+	30, // 56: trade.ContractPositionHistory.contract_value_type:type_name -> trade.ContractValueType
+	35, // 57: trade.ContractLeverageConfig.margin_mode:type_name -> trade.MarginMode
+	55, // 58: trade.ContractLeverageConfig.source:type_name -> trade.SourceType
+	32, // 59: trade.ContractLeverageConfig.enabled:type_name -> common.Enable
+	35, // 60: trade.TradeSymbolLeverageConfig.margin_mode:type_name -> trade.MarginMode
+	32, // 61: trade.TradeSymbolLeverageConfig.enabled:type_name -> common.Enable
+	28, // 62: trade.RiskUserTradeLimit.product_type:type_name -> common.ProductType
+	32, // 63: trade.RiskUserTradeLimit.trade_enabled:type_name -> common.Enable
+	32, // 64: trade.RiskUserTradeLimit.only_reduce_only:type_name -> common.Enable
+	56, // 65: trade.RiskUserTradeLimit.risk_level:type_name -> trade.RiskLevel
+	55, // 66: trade.RiskUserTradeLimit.source:type_name -> trade.SourceType
+	32, // 67: trade.RiskUserTradeLimit.enabled:type_name -> common.Enable
+	55, // 68: trade.RiskUserSymbolLimit.source:type_name -> trade.SourceType
+	32, // 69: trade.RiskUserSymbolLimit.enabled:type_name -> common.Enable
+	28, // 70: trade.RiskOrderCheckLog.product_type:type_name -> common.ProductType
+	57, // 71: trade.RiskOrderCheckLog.check_type:type_name -> trade.RiskCheckType
+	58, // 72: trade.RiskOrderCheckLog.check_result:type_name -> trade.RiskCheckResult
+	55, // 73: trade.RiskOrderCheckLog.source:type_name -> trade.SourceType
+	28, // 74: trade.BizTradeEvent.product_type:type_name -> common.ProductType
+	55, // 75: trade.BizTradeEvent.source:type_name -> trade.SourceType
+	59, // 76: trade.BizTradeEvent.event_status:type_name -> trade.EventStatus
+	77, // [77:77] is the sub-list for method output_type
+	77, // [77:77] is the sub-list for method input_type
+	77, // [77:77] is the sub-list for extension type_name
+	77, // [77:77] is the sub-list for extension extendee
+	0,  // [0:77] is the sub-list for field type_name
 }
 
 func init() { file_proto_trade_model_proto_init() }

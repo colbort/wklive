@@ -43,7 +43,7 @@ func (s *TaskServer) ProcessContractSettlements(ctx context.Context, in *trade.T
 
 // 秒合约激活与到期结算
 func (s *TaskServer) ProcessSecondsSettlements(ctx context.Context, in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
-	l := tasklogic.NewProcessSecondsSettlementsTaskLogic(ctx, s.svcCtx)
+	l := tasklogic.NewProcessSecondsSettlementsLogic(ctx, s.svcCtx)
 	return l.ProcessSecondsSettlements(in)
 }
 

@@ -14,7 +14,6 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 const reservationReleaseBatchSize = int64(100)
@@ -146,10 +145,9 @@ func (l *ProcessReservationReleasesLogic) executeClaimed(item *models.TTradeSett
 
 func (l *ProcessReservationReleasesLogic) markSucceeded(item *models.TTradeSettlementInstruction) error {
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		instructionModel := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
-		reservationModel := models.NewTTradeAssetReservationModel(conn, l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		instructionModel := tx.TradeSettlementInstruction
+		reservationModel := tx.TradeAssetReservation
 		current, err := instructionModel.FindOneForUpdate(ctx, item.Id)
 		if err != nil {
 			return err
@@ -178,17 +176,16 @@ func (l *ProcessReservationReleasesLogic) markSucceeded(item *models.TTradeSettl
 		if err := instructionModel.Update(ctx, current); err != nil {
 			return err
 		}
-		_, err = finalizeOrderTermination(ctx, conn, l.svcCtx, item.OrderId, now)
+		_, err = finalizeOrderTermination(ctx, tx, item.OrderId, now)
 		return err
 	})
 }
 
 func (l *ProcessReservationReleasesLogic) markFailed(item *models.TTradeSettlementInstruction, cause error) error {
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		instructionModel := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
-		reservationModel := models.NewTTradeAssetReservationModel(conn, l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		instructionModel := tx.TradeSettlementInstruction
+		reservationModel := tx.TradeAssetReservation
 		current, err := instructionModel.FindOneForUpdate(ctx, item.Id)
 		if err != nil {
 			return err

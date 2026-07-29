@@ -16,7 +16,6 @@ import (
 
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type RecordOrderFillLogic struct {
@@ -46,13 +45,12 @@ func (l *RecordOrderFillLogic) RecordOrderFill(in *trade.RecordOrderFillReq) (*t
 		in.Fill.MatchNo = matchNo
 	}
 	now := utils.NowMillis()
-	err := helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis)
-		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
-		instructionModel := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
-		eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
-		contractOrderModel := models.NewTTradeOrderContractModel(conn, l.svcCtx.Config.CacheRedis)
+	err := l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		fillModel := tx.TradeFill
+		orderModel := tx.TradeOrder
+		instructionModel := tx.TradeSettlementInstruction
+		eventModel := tx.BizTradeEvent
+		contractOrderModel := tx.TradeOrderContract
 		fill, order, err := recordOrderFillWithModels(ctx, fillModel, orderModel, in.Fill, now)
 		if err != nil || order == nil {
 			return err

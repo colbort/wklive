@@ -238,6 +238,9 @@ INSERT INTO `sys_role_menu` (`tenant_id`, `role_id`, `menu_id`) VALUES
 (0, 1, 1190),
 (0, 1, 1191),
 (0, 1, 1192),
+(0, 1, 1195),
+(0, 1, 1196),
+(0, 1, 1197),
 (0, 1, 10000),
 (0, 1, 10100),
 (0, 1, 10101),
@@ -501,6 +504,9 @@ INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 (0, 2, 1190),
 (0, 2, 1191),
 (0, 2, 1192),
+(0, 2, 1195),
+(0, 2, 1196),
+(0, 2, 1197),
 
 -- 系统管理
 (0, 2, 10000),
@@ -816,7 +822,10 @@ VALUES
 (1191, 1000, 1, '结算指令', 2, 'GET', '/trade/operations/settlement-instructions', 'trade:operation:settlement-instruction:list', 'trade/settlement-instructions', 'Operation', 1191),
 (1192, 1191, 1, '重试结算指令', 3, 'POST', '/trade/operations/settlement-instructions/retry', 'trade:operation:settlement-instruction:retry', '', '', 1192),
 (1193, 1000, 1, '合约资产对账异常', 2, 'GET', '/trade/operations/reconciliation-issues', 'trade:operation:reconciliation-issue:list', 'trade/reconciliation-issues', 'Warning', 1193),
-(1194, 1193, 1, '忽略合约资产对账异常', 3, 'POST', '/trade/operations/reconciliation-issues/ignore', 'trade:operation:reconciliation-issue:ignore', '', '', 1194);
+(1194, 1193, 1, '忽略合约资产对账异常', 3, 'POST', '/trade/operations/reconciliation-issues/ignore', 'trade:operation:reconciliation-issue:ignore', '', '', 1194),
+(1195, 1000, 1, '全仓账户强平', 2, 'GET', '/trade/account-liquidations', 'trade:account-liquidation:list', 'trade/account-liquidations', 'WarningFilled', 1195),
+(1196, 1195, 1, '全仓账户强平详情', 3, 'GET', '/trade/account-liquidations/detail', 'trade:account-liquidation:detail', '', '', 1196),
+(1197, 1195, 1, '重试全仓账户强平', 3, 'POST', '/trade/account-liquidations/retry', 'trade:account-liquidation:retry', '', '', 1197);
 
 
 

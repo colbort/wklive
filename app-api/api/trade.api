@@ -252,6 +252,7 @@ type ContractPosition {
 	contractType      int64  `json:"contractType"`
 	contractValueType int64  `json:"contractValueType"`
 	positionSide      int64  `json:"positionSide"`
+	positionMode      int64  `json:"positionMode"`
 	marginMode        int64  `json:"marginMode"`
 	leverage          int64  `json:"leverage"` // 杠杆倍数
 	qty               string `json:"qty" validate:"decimal_36_18"`
@@ -281,6 +282,12 @@ type ContractMarginSnapshot {
 	frozenBalance    string `json:"frozenBalance" validate:"decimal_36_18"`
 	positionMargin   string `json:"positionMargin" validate:"decimal_36_18"`
 	orderMargin      string `json:"orderMargin" validate:"decimal_36_18"`
+	maintenanceMargin string `json:"maintenanceMargin" validate:"decimal_36_18"`
+	accountEquity     string `json:"accountEquity" validate:"decimal_36_18"`
+	availableMargin   string `json:"availableMargin" validate:"decimal_36_18"`
+	riskRate          string `json:"riskRate" validate:"decimal_20_10"`
+	positionCount     int64  `json:"positionCount"`
+	assetVersion      int64  `json:"assetVersion"`
 	unrealizedPnl    string `json:"unrealizedPnl" validate:"decimal_36_18"`
 	realizedPnl      string `json:"realizedPnl" validate:"decimal_36_18"`
 	version          int64  `json:"version"`

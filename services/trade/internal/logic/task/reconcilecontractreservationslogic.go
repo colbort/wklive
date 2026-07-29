@@ -56,23 +56,10 @@ func (l *ReconcileContractAssetFlowsLogic) reconcileReservations(tenantID int64)
 }
 
 func (l *ReconcileContractAssetFlowsLogic) findContractReservationAudits(tenantID, cursor, cutoff int64, limit int) ([]*contractReservationAudit, error) {
-	tenantClause := ""
-	args := []any{int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE), cursor, cutoff}
-	if tenantID > 0 {
-		tenantClause = " AND r.tenant_id=?"
-		args = append(args, tenantID)
-	}
-	args = append(args, limit)
-	query := `
-SELECT r.id,r.tenant_id,r.order_id,o.order_no,o.user_id,r.reservation_no,r.asset,
-       r.reserved_amount,r.consumed_amount,r.released_amount,r.status
-FROM t_trade_asset_reservation r
-JOIN t_trade_order o ON o.tenant_id=r.tenant_id AND o.id=r.order_id
-WHERE o.product_type=? AND r.id>? AND r.update_times<=?` + tenantClause + `
-ORDER BY r.id
-LIMIT ?`
 	var rows []*contractReservationAudit
-	if err := l.svcCtx.DB.QueryRowsCtx(l.ctx, &rows, query, args...); err != nil {
+	if err := l.svcCtx.ContractReconcileCursorModel.FindContractReservationAudits(
+		l.ctx, &rows, tenantID, cursor, cutoff, limit,
+	); err != nil {
 		return nil, err
 	}
 	return rows, nil

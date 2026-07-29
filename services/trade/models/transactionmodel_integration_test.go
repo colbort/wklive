@@ -1,4 +1,4 @@
-package helpers
+package models
 
 import (
 	"context"
@@ -47,7 +47,7 @@ func TestDeadlockRetryAgainstMySQL(t *testing.T) {
 	firstLocks.Add(2)
 	releaseSecondLock := make(chan struct{})
 	run := func(worker, firstID, secondID int) error {
-		return TransactWithDeadlockRetry(ctx, db, func(txCtx context.Context, session sqlx.Session) error {
+		return transactWithRetry(ctx, transactionMaxAttempts, transactionRetryBase, db.TransactCtx, func(txCtx context.Context, session sqlx.Session) error {
 			attempt := attempts[worker].Add(1)
 			conn := sqlx.NewSqlConnFromSession(session)
 			if _, err := conn.ExecCtx(txCtx, "UPDATE "+table+" SET value = value + 1 WHERE id = ?", firstID); err != nil {
@@ -90,7 +90,7 @@ func TestDeadlockRetryAgainstMySQL(t *testing.T) {
 	if attempts[0].Load() == 1 && attempts[1].Load() == 1 {
 		t.Fatalf("expected a real deadlock retry, attempts=(%d,%d)", attempts[0].Load(), attempts[1].Load())
 	}
-	if attempts[0].Load() > contractTransactionMaxAttempts || attempts[1].Load() > contractTransactionMaxAttempts {
+	if attempts[0].Load() > transactionMaxAttempts || attempts[1].Load() > transactionMaxAttempts {
 		t.Fatalf("retry bound exceeded: attempts=(%d,%d)", attempts[0].Load(), attempts[1].Load())
 	}
 }
@@ -156,7 +156,7 @@ func TestDeadlockRetryWithContractFactsAgainstMySQL(t *testing.T) {
 	firstLocks.Add(2)
 	releaseSecondLock := make(chan struct{})
 	run := func(worker int, positionFirst bool) error {
-		return TransactWithDeadlockRetry(ctx, db, func(txCtx context.Context, session sqlx.Session) error {
+		return transactWithRetry(ctx, transactionMaxAttempts, transactionRetryBase, db.TransactCtx, func(txCtx context.Context, session sqlx.Session) error {
 			attempt := attempts[worker].Add(1)
 			conn := sqlx.NewSqlConnFromSession(session)
 			updatePosition := func() error {
@@ -229,7 +229,7 @@ func TestDeadlockRetryWithContractFactsAgainstMySQL(t *testing.T) {
 	if attempts[0].Load() == 1 && attempts[1].Load() == 1 {
 		t.Fatalf("expected a real deadlock retry, attempts=(%d,%d)", attempts[0].Load(), attempts[1].Load())
 	}
-	if attempts[0].Load() > contractTransactionMaxAttempts || attempts[1].Load() > contractTransactionMaxAttempts {
+	if attempts[0].Load() > transactionMaxAttempts || attempts[1].Load() > transactionMaxAttempts {
 		t.Fatalf("retry bound exceeded: attempts=(%d,%d)", attempts[0].Load(), attempts[1].Load())
 	}
 	t.Logf(

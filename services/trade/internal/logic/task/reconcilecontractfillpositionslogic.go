@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"wklive/common/utils"
-	"wklive/proto/common"
 	"wklive/proto/trade"
 	"wklive/services/trade/models"
 
@@ -64,38 +63,10 @@ func (l *ReconcileContractAssetFlowsLogic) reconcileFillPositionHistories(tenant
 }
 
 func (l *ReconcileContractAssetFlowsLogic) findContractFillPositionAudits(tenantID, cursor, cutoff int64, limit int) ([]*contractFillPositionAudit, error) {
-	tenantClause := ""
-	args := []any{int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE), cursor, cutoff}
-	if tenantID > 0 {
-		tenantClause = " AND f.tenant_id=?"
-		args = append(args, tenantID)
-	}
-	args = append(args, limit)
-	query := `
-SELECT
-  f.id,f.tenant_id,f.fill_no,f.order_id,f.user_id,f.symbol_id,f.position_side,
-  f.qty AS fill_qty,f.price AS fill_price,f.fee AS fill_fee,f.fee_asset,
-  f.create_times AS fill_create_times,
-  COUNT(h.id) AS history_count,
-  COALESCE(SUM(ABS(h.after_qty-h.before_qty)),0) AS projected_qty,
-  COALESCE(SUM(h.fee_delta),0) AS projected_fee,
-  COALESCE(SUM(CASE WHEN h.tenant_id<>f.tenant_id OR h.user_id<>f.user_id OR
-                              h.symbol_id<>f.symbol_id OR h.ref_order_id<>f.order_id OR
-                              h.ref_fill_id<>f.id THEN 1 ELSE 0 END),0) AS identity_mismatch,
-  COALESCE(SUM(CASE WHEN h.mark_price<>f.price THEN 1 ELSE 0 END),0) AS price_mismatch,
-  COALESCE(SUM(CASE WHEN h.business_time<>f.create_times THEN 1 ELSE 0 END),0) AS time_mismatch,
-  COALESCE(SUM(CASE WHEN h.after_version<>h.before_version+1 THEN 1 ELSE 0 END),0) AS version_mismatch,
-  COALESCE(SUM(CASE WHEN f.fee<>0 AND h.fee_asset<>f.fee_asset THEN 1 ELSE 0 END),0) AS fee_asset_mismatch
-FROM t_trade_fill f
-LEFT JOIN t_contract_position_history h
-  ON h.tenant_id=f.tenant_id AND h.ref_fill_id=f.id
-WHERE f.product_type=? AND f.id>? AND f.create_times<=?` + tenantClause + `
-GROUP BY f.id,f.tenant_id,f.fill_no,f.order_id,f.user_id,f.symbol_id,f.position_side,
-         f.qty,f.price,f.fee,f.fee_asset,f.create_times
-ORDER BY f.id
-LIMIT ?`
 	var rows []*contractFillPositionAudit
-	if err := l.svcCtx.DB.QueryRowsCtx(l.ctx, &rows, query, args...); err != nil {
+	if err := l.svcCtx.ContractReconcileCursorModel.FindContractFillPositionAudits(
+		l.ctx, &rows, tenantID, cursor, cutoff, limit,
+	); err != nil {
 		return nil, err
 	}
 	return rows, nil

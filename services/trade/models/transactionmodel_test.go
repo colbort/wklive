@@ -1,4 +1,4 @@
-package helpers
+package models
 
 import (
 	"context"
@@ -19,7 +19,7 @@ func TestDeadlockTransactionRetriesThenSucceeds(t *testing.T) {
 		}
 		return nil
 	}
-	if err := transactWithDeadlockRetry(context.Background(), 3, 0, runner, func(context.Context, sqlx.Session) error {
+	if err := transactWithRetry(context.Background(), 3, 0, runner, func(context.Context, sqlx.Session) error {
 		return nil
 	}); err != nil {
 		t.Fatal(err)
@@ -35,7 +35,7 @@ func TestLockWaitTimeoutIsBounded(t *testing.T) {
 		attempts++
 		return &mysql.MySQLError{Number: 1205, Message: "lock wait timeout"}
 	}
-	err := transactWithDeadlockRetry(context.Background(), 3, 0, runner, func(context.Context, sqlx.Session) error {
+	err := transactWithRetry(context.Background(), 3, 0, runner, func(context.Context, sqlx.Session) error {
 		return nil
 	})
 	if err == nil || attempts != 3 {
@@ -50,7 +50,7 @@ func TestBusinessTransactionErrorIsNotRetried(t *testing.T) {
 		attempts++
 		return want
 	}
-	err := transactWithDeadlockRetry(context.Background(), 3, time.Millisecond, runner, func(context.Context, sqlx.Session) error {
+	err := transactWithRetry(context.Background(), 3, time.Millisecond, runner, func(context.Context, sqlx.Session) error {
 		return nil
 	})
 	if !errors.Is(err, want) || attempts != 1 {

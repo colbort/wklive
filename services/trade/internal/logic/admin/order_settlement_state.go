@@ -10,14 +10,12 @@ import (
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
-
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 func beginSystemOrderTermination(ctx context.Context, svcCtx *svc.ServiceContext, orderID int64, reason string, rejectReduceOnly bool) (*models.TTradeOrder, error) {
 	var terminating *models.TTradeOrder
-	err := helpers.TransactWithDeadlockRetry(ctx, svcCtx.DB, func(txCtx context.Context, session sqlx.Session) error {
-		orderModel := models.NewTTradeOrderModel(sqlx.NewSqlConnFromSession(session), svcCtx.Config.CacheRedis)
+	err := svcCtx.TransactionModel.Transact(ctx, func(txCtx context.Context, tx *models.TransactionModels) error {
+		orderModel := tx.TradeOrder
 		current, err := orderModel.FindOneForUpdate(txCtx, orderID)
 		if err != nil {
 			return err
@@ -39,14 +37,14 @@ func beginSystemOrderTermination(ctx context.Context, svcCtx *svc.ServiceContext
 	return terminating, err
 }
 
-func finalizeOrderTermination(ctx context.Context, conn sqlx.SqlConn, svcCtx *svc.ServiceContext, orderID int64, now int64) (bool, error) {
-	orderModel := models.NewTTradeOrderModel(conn, svcCtx.Config.CacheRedis)
-	reservationModel := models.NewTTradeAssetReservationModel(conn, svcCtx.Config.CacheRedis)
-	instructionModel := models.NewTTradeSettlementInstructionModel(conn, svcCtx.Config.CacheRedis)
-	fillModel := models.NewTTradeFillModel(conn, svcCtx.Config.CacheRedis)
-	contractOrderModel := models.NewTTradeOrderContractModel(conn, svcCtx.Config.CacheRedis)
-	positionModel := models.NewTContractPositionModel(conn, svcCtx.Config.CacheRedis)
-	eventModel := models.NewTBizTradeEventModel(conn, svcCtx.Config.CacheRedis)
+func finalizeOrderTermination(ctx context.Context, tx *models.TransactionModels, orderID int64, now int64) (bool, error) {
+	orderModel := tx.TradeOrder
+	reservationModel := tx.TradeAssetReservation
+	instructionModel := tx.TradeSettlementInstruction
+	fillModel := tx.TradeFill
+	contractOrderModel := tx.TradeOrderContract
+	positionModel := tx.ContractPosition
+	eventModel := tx.BizTradeEvent
 
 	order, err := orderModel.FindOneForUpdate(ctx, orderID)
 	if err != nil {
@@ -112,12 +110,12 @@ func finalizeOrderTermination(ctx context.Context, conn sqlx.SqlConn, svcCtx *sv
 	return true, nil
 }
 
-func finalizeSettledOrder(ctx context.Context, conn sqlx.SqlConn, svcCtx *svc.ServiceContext, orderID int64, now int64) error {
-	orderModel := models.NewTTradeOrderModel(conn, svcCtx.Config.CacheRedis)
-	reservationModel := models.NewTTradeAssetReservationModel(conn, svcCtx.Config.CacheRedis)
-	instructionModel := models.NewTTradeSettlementInstructionModel(conn, svcCtx.Config.CacheRedis)
-	fillModel := models.NewTTradeFillModel(conn, svcCtx.Config.CacheRedis)
-	eventModel := models.NewTBizTradeEventModel(conn, svcCtx.Config.CacheRedis)
+func finalizeSettledOrder(ctx context.Context, tx *models.TransactionModels, orderID int64, now int64) error {
+	orderModel := tx.TradeOrder
+	reservationModel := tx.TradeAssetReservation
+	instructionModel := tx.TradeSettlementInstruction
+	fillModel := tx.TradeFill
+	eventModel := tx.BizTradeEvent
 	order, err := orderModel.FindOneForUpdate(ctx, orderID)
 	if err != nil {
 		return err

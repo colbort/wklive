@@ -64,52 +64,10 @@ func (l *ReconcileContractAssetFlowsLogic) reconcileLiquidations(tenantID int64)
 }
 
 func (l *ReconcileContractAssetFlowsLogic) findContractLiquidationAudits(tenantID, cursor, cutoff int64, limit int) ([]*contractLiquidationAudit, error) {
-	tenantClause := ""
-	args := []any{
-		int64(trade.PositionActionType_POSITION_ACTION_TYPE_LIQUIDATION),
-		int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS),
-		cursor,
-		cutoff,
-	}
-	if tenantID > 0 {
-		tenantClause = " AND q.tenant_id=?"
-		args = append(args, tenantID)
-	}
-	args = append(args, limit)
-	query := `
-SELECT
-  q.id,q.tenant_id,q.liquidation_no,q.position_id,q.status,q.trigger_qty,q.liquidated_qty,
-  q.insurance_fund_amount,q.adl_qty,q.completed_at,
-  COALESCE(p.qty,0) AS position_qty,COALESCE(p.position_margin,0) AS position_margin,
-  COALESCE(p.isolated_margin,0) AS isolated_margin,COALESCE(p.status,0) AS position_status,
-  COALESCE(p.margin_asset,'') AS margin_asset,
-  COALESCE((SELECT COUNT(1) FROM t_contract_position_history h
-            WHERE h.tenant_id=q.tenant_id AND h.position_id=q.position_id
-              AND h.action_key=q.liquidation_no AND h.action_type=?),0) AS liquidation_history,
-  COALESCE((SELECT COUNT(1) FROM t_biz_trade_event e
-            WHERE e.tenant_id=q.tenant_id AND e.event_no=CONCAT(q.liquidation_no,'-COMPLETED')),0) AS completion_event,
-  COALESCE((SELECT COUNT(1) FROM t_contract_adl_execution a
-            WHERE a.tenant_id=q.tenant_id AND a.liquidation_id=q.id),0) AS adl_execution_count,
-  COALESCE((SELECT SUM(a.status=3) FROM t_contract_adl_execution a
-            WHERE a.tenant_id=q.tenant_id AND a.liquidation_id=q.id),0) AS adl_completed_count,
-  COALESCE((SELECT SUM(a.status IN (4,5)) FROM t_contract_adl_execution a
-            WHERE a.tenant_id=q.tenant_id AND a.liquidation_id=q.id),0) AS adl_failed_count,
-  COALESCE((SELECT SUM(CASE WHEN a.status=3 THEN a.qty ELSE 0 END) FROM t_contract_adl_execution a
-            WHERE a.tenant_id=q.tenant_id AND a.liquidation_id=q.id),0) AS adl_execution_qty,
-  COALESCE((SELECT SUM(CASE WHEN a.status=3 THEN a.relief_amount ELSE 0 END) FROM t_contract_adl_execution a
-            WHERE a.tenant_id=q.tenant_id AND a.liquidation_id=q.id),0) AS adl_relief_amount,
-  COALESCE((SELECT COUNT(1) FROM t_contract_adl_execution a
-            LEFT JOIN t_trade_settlement_instruction i
-              ON i.tenant_id=a.tenant_id AND i.instruction_no=a.execution_no
-            WHERE a.tenant_id=q.tenant_id AND a.liquidation_id=q.id AND a.asset_credit>0
-              AND (i.id IS NULL OR i.status<>? OR i.reconciled_at=0)),0) AS adl_unreconciled_assets
-FROM t_contract_liquidation q
-LEFT JOIN t_contract_position p ON p.tenant_id=q.tenant_id AND p.id=q.position_id
-WHERE q.id>? AND q.update_times<=?` + tenantClause + `
-ORDER BY q.id
-LIMIT ?`
 	var rows []*contractLiquidationAudit
-	if err := l.svcCtx.DB.QueryRowsCtx(l.ctx, &rows, query, args...); err != nil {
+	if err := l.svcCtx.ContractReconcileCursorModel.FindContractLiquidationAudits(
+		l.ctx, &rows, tenantID, cursor, cutoff, limit,
+	); err != nil {
 		return nil, err
 	}
 	return rows, nil
@@ -118,6 +76,23 @@ LIMIT ?`
 func liquidationAuditMatches(row *contractLiquidationAudit) (bool, string) {
 	if row == nil {
 		return false, "liquidation audit row is nil"
+	}
+	partial := row.Status == int64(trade.LiquidationStatus_LIQUIDATION_STATUS_PARTIAL_RECOVERED)
+	if partial {
+		if row.CompletedAt <= 0 || !row.LiquidatedQty.IsPositive() || !row.LiquidatedQty.LessThan(row.TriggerQty) {
+			return false, "partial liquidation has invalid completion time or quantity"
+		}
+		if !row.PositionQty.Equal(row.TriggerQty.Sub(row.LiquidatedQty)) ||
+			row.PositionStatus != int64(trade.PositionStatus_POSITION_STATUS_NORMAL) {
+			return false, "partial liquidation did not restore the expected open position"
+		}
+		if row.LiquidationHistory != 1 || row.CompletionEvent != 1 {
+			return false, "partial liquidation requires exactly one position history and completion event"
+		}
+		if row.AdlExecutionCount != 0 || !row.AdlQty.IsZero() || !row.InsuranceFundAmount.IsZero() {
+			return false, "partial liquidation must not use insurance fund or ADL"
+		}
+		return true, ""
 	}
 	completed := row.Status == int64(trade.LiquidationStatus_LIQUIDATION_STATUS_COMPLETED)
 	if !completed {
@@ -165,11 +140,12 @@ func (l *ReconcileContractAssetFlowsLogic) persistLiquidationAudit(row *contract
 		}
 	}
 	if matched {
-		if row.Status != int64(trade.LiquidationStatus_LIQUIDATION_STATUS_COMPLETED) {
+		if row.Status != int64(trade.LiquidationStatus_LIQUIDATION_STATUS_COMPLETED) &&
+			row.Status != int64(trade.LiquidationStatus_LIQUIDATION_STATUS_PARTIAL_RECOVERED) {
 			return nil
 		}
 		return l.svcCtx.ContractReconcileIssueModel.ResolveByKey(
-			l.ctx, row.TenantId, issueKey, "Liquidation, insurance checkpoint and ADL records are internally consistent", now,
+			l.ctx, row.TenantId, issueKey, "Liquidation terminal state, insurance checkpoint and ADL records are internally consistent", now,
 		)
 	}
 	expected := fmt.Sprintf("trigger_qty=%s closed_position=true history=1 event=1 adl_qty=%s adl_assets_reconciled=true",

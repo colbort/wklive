@@ -267,6 +267,22 @@ func (s *AdminServer) GetLiquidationList(ctx context.Context, in *trade.GetLiqui
 	return l.GetLiquidationList(in)
 }
 
+func (s *AdminServer) GetAccountLiquidationList(ctx context.Context, in *trade.GetAccountLiquidationListReq) (*trade.GetAccountLiquidationListResp, error) {
+	l := adminlogic.NewGetAccountLiquidationListLogic(ctx, s.svcCtx)
+	return l.GetAccountLiquidationList(in)
+}
+
+func (s *AdminServer) GetAccountLiquidationDetail(ctx context.Context, in *trade.GetAccountLiquidationDetailReq) (*trade.GetAccountLiquidationDetailResp, error) {
+	l := adminlogic.NewGetAccountLiquidationDetailLogic(ctx, s.svcCtx)
+	return l.GetAccountLiquidationDetail(in)
+}
+
+// 仅允许重试人工状态；不得修改强平金额或直接标记完成
+func (s *AdminServer) RetryAccountLiquidation(ctx context.Context, in *trade.RetryAccountLiquidationReq) (*trade.CommonResp, error) {
+	l := adminlogic.NewRetryAccountLiquidationLogic(ctx, s.svcCtx)
+	return l.RetryAccountLiquidation(in)
+}
+
 func (s *AdminServer) GetSecondsPriceSnapshotList(ctx context.Context, in *trade.GetSecondsPriceSnapshotListReq) (*trade.GetSecondsPriceSnapshotListResp, error) {
 	l := adminlogic.NewGetSecondsPriceSnapshotListLogic(ctx, s.svcCtx)
 	return l.GetSecondsPriceSnapshotList(in)

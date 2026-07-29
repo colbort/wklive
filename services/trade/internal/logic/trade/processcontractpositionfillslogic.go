@@ -15,7 +15,6 @@ import (
 
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 // ProcessContractPositionFillsLogic projects derivative Fills into positions.
@@ -51,14 +50,13 @@ func (l *ProcessContractPositionFillsLogic) ProcessFill(fillID int64) error {
 		return err
 	}
 
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		positionModel := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
-		historyModel := models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis)
-		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis)
-		contractOrderModel := models.NewTTradeOrderContractModel(conn, l.svcCtx.Config.CacheRedis)
-		instructionModel := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
-		eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		positionModel := tx.ContractPosition
+		historyModel := tx.ContractPositionHistory
+		fillModel := tx.TradeFill
+		contractOrderModel := tx.TradeOrderContract
+		instructionModel := tx.TradeSettlementInstruction
+		eventModel := tx.BizTradeEvent
 		projected, err := historyModel.CountByRefFillId(ctx, fill.TenantId, fill.Id)
 		if err != nil {
 			return err
@@ -139,8 +137,16 @@ func (l *ProcessContractPositionFillsLogic) applyOpen(ctx context.Context, posit
 		return err
 	}
 	now := utils.NowMillis()
+	positionMode, err := helpers.ContractPositionMode(trade.PositionSide(fill.PositionSide))
+	if err != nil {
+		return err
+	}
 	if position == nil {
-		position = &models.TContractPosition{TenantId: fill.TenantId, UserId: fill.UserId, SymbolId: fill.SymbolId, ContractType: fill.ContractType, ContractValueType: fill.ContractValueType, PositionSide: side, MarginMode: contractOrder.MarginMode, Status: int64(trade.PositionStatus_POSITION_STATUS_NORMAL), Leverage: contractOrder.Leverage, MarginAsset: contractOrder.MarginAsset, CreateTimes: now}
+		position = &models.TContractPosition{TenantId: fill.TenantId, UserId: fill.UserId, SymbolId: fill.SymbolId, ContractType: fill.ContractType, ContractValueType: fill.ContractValueType, PositionSide: side, PositionMode: int64(positionMode), MarginMode: contractOrder.MarginMode, Status: int64(trade.PositionStatus_POSITION_STATUS_NORMAL), Leverage: contractOrder.Leverage, MarginAsset: contractOrder.MarginAsset, CreateTimes: now}
+	} else if position.Qty.IsPositive() && position.PositionMode != int64(positionMode) {
+		return fmt.Errorf("position mode mismatch: position=%d stored=%d fill=%d", position.Id, position.PositionMode, positionMode)
+	} else if position.Qty.IsZero() {
+		position.PositionMode = int64(positionMode)
 	}
 	before := cloneContractPosition(position)
 	values, err := contractmath.CalculateTradeValues(fill.ContractValueType, qty, contract.ContractSize, fill.Price)
@@ -208,6 +214,13 @@ func (l *ProcessContractPositionFillsLogic) applyClose(ctx context.Context, posi
 	}
 	if err != nil {
 		return decimal.Zero, err
+	}
+	positionMode, err := helpers.ContractPositionMode(trade.PositionSide(fill.PositionSide))
+	if err != nil {
+		return decimal.Zero, err
+	}
+	if position.PositionMode != int64(positionMode) {
+		return decimal.Zero, fmt.Errorf("position mode mismatch: position=%d stored=%d fill=%d", position.Id, position.PositionMode, positionMode)
 	}
 	qty := decimalMin(position.Qty, requested)
 	if !qty.IsPositive() {

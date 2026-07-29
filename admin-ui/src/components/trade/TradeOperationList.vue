@@ -36,12 +36,7 @@
           controls-position="right"
           class="query-field"
         />
-        <el-input
-          v-else
-          v-model="query[field]"
-          clearable
-          class="query-field"
-        />
+        <el-input v-else v-model="query[field]" clearable class="query-field" />
       </el-form-item>
       <template v-if="$slots.actions" #actions>
         <slot name="actions" />
@@ -88,12 +83,34 @@
           </template>
         </el-table-column>
         <el-table-column
-          v-if="kind === 'instructions' || kind === 'reconciliationIssues'"
+          v-if="
+            kind === 'instructions' ||
+            kind === 'reconciliationIssues' ||
+            kind === 'accountLiquidations'
+          "
           :label="t('common.actions')"
-          width="110"
+          width="170"
           fixed="right"
         >
           <template #default="{ row }">
+            <el-button
+              v-if="kind === 'accountLiquidations'"
+              v-perm="'trade:account-liquidation:detail'"
+              link
+              type="primary"
+              @click="openAccountLiquidationDetail(row)"
+            >
+              {{ t('common.detail') }}
+            </el-button>
+            <el-button
+              v-if="kind === 'accountLiquidations' && row.status === 5"
+              v-perm="'trade:account-liquidation:retry'"
+              link
+              type="warning"
+              @click="retryAccountLiquidation(row)"
+            >
+              {{ t('trade.retry') }}
+            </el-button>
             <el-button
               v-if="kind === 'instructions' && (row.status === 4 || row.status === 5)"
               v-perm="'trade:operation:settlement-instruction:retry'"
@@ -125,6 +142,90 @@
         @limit-change="resetAndLoad(load)"
       />
     </el-card>
+    <el-dialog
+      v-model="accountDetailVisible"
+      :title="t('trade.accountLiquidationDetail')"
+      width="86%"
+      destroy-on-close
+    >
+      <div v-loading="accountDetailLoading">
+        <el-descriptions v-if="accountDetail" :column="3" border>
+          <el-descriptions-item
+            v-for="field in accountSummaryFields"
+            :key="field"
+            :label="t(`trade.${field}`)"
+          >
+            <el-tag
+              v-if="field === 'status'"
+              :type="statusTagType(Number(accountDetail[field]))"
+              effect="light"
+              size="small"
+            >
+              {{ formatStatus(field, accountDetail[field]) }}
+            </el-tag>
+            <template v-else>{{ formatValue(field, accountDetail[field]) }}</template>
+          </el-descriptions-item>
+        </el-descriptions>
+        <el-divider>{{ t('trade.accountLiquidationItems') }}</el-divider>
+        <el-table :data="accountItems" stripe>
+          <el-table-column prop="positionId" :label="t('trade.positionId')" min-width="130" />
+          <el-table-column prop="symbolId" :label="t('trade.symbolId')" min-width="130" />
+          <el-table-column prop="triggerQty" :label="t('trade.triggerQty')" min-width="130" />
+          <el-table-column
+            prop="triggerMarkPrice"
+            :label="t('trade.triggerMarkPrice')"
+            min-width="150"
+          />
+          <el-table-column
+            prop="positionMargin"
+            :label="t('trade.positionMargin')"
+            min-width="150"
+          />
+          <el-table-column prop="realizedPnl" :label="t('trade.realizedPnl')" min-width="140" />
+          <el-table-column
+            prop="liquidationFee"
+            :label="t('trade.liquidationFee')"
+            min-width="140"
+          />
+          <el-table-column
+            prop="deficitAmount"
+            :label="t('trade.deficitAmount')"
+            min-width="140"
+          />
+          <el-table-column
+            prop="bankruptcyPrice"
+            :label="t('trade.bankruptcyPrice')"
+            min-width="150"
+          />
+          <el-table-column
+            prop="adlReliefAmount"
+            :label="t('trade.adlReliefAmount')"
+            min-width="150"
+          />
+          <el-table-column prop="adlQty" :label="t('trade.adlQty')" min-width="120" />
+          <el-table-column prop="status" :label="t('trade.status')" min-width="100" />
+        </el-table>
+        <el-divider>{{ t('trade.settlementInstructions') }}</el-divider>
+        <el-table :data="accountInstructions" stripe>
+          <el-table-column prop="instructionNo" :label="t('trade.instructionNo')" min-width="220" />
+          <el-table-column prop="action" :label="t('trade.action')" min-width="130">
+            <template #default="{ row }">
+              {{ optionValueLabel('settlementInstructionAction', Number(row.action)) }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="amount" :label="t('trade.amount')" min-width="130" />
+          <el-table-column prop="status" :label="t('trade.status')" min-width="100" />
+          <el-table-column prop="retryCount" :label="t('trade.retryCount')" min-width="110" />
+          <el-table-column prop="assetFlowNo" :label="t('trade.assetFlowNo')" min-width="220" />
+          <el-table-column
+            prop="lastErrorMsg"
+            :label="t('trade.lastErrorMsg')"
+            min-width="220"
+            show-overflow-tooltip
+          />
+        </el-table>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -139,8 +240,16 @@ import UserSelect from '@/components/UserSelect.vue'
 import { usePagination } from '@/composables'
 import { formatDate } from '@/utils'
 import { findFormOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
-import { tradeService, type OptionGroup } from '@/services'
 import {
+  tradeService,
+  type ContractAccountLiquidation,
+  type ContractAccountLiquidationItem,
+  type OptionGroup,
+  type TradeSettlementInstruction,
+} from '@/services'
+import {
+  apiTradeGetAccountLiquidationDetail,
+  apiTradeListAccountLiquidations,
   apiTradeListAssetReservations,
   apiTradeListDeliveryBatches,
   apiTradeListDeliverySettlements,
@@ -153,6 +262,7 @@ import {
   apiTradeListContractReconciliationIssues,
   apiTradeIgnoreContractReconciliationIssue,
   apiTradeRetrySettlementInstruction,
+  apiTradeRetryAccountLiquidation,
 } from '@/api/trade'
 type TradeOperationRecord = Record<string, string | number | null | undefined>
 type ListApi = (params: Record<string, unknown>) => Promise<any>
@@ -164,6 +274,7 @@ type Kind =
   | 'deliveryBatches'
   | 'deliverySettlements'
   | 'liquidations'
+  | 'accountLiquidations'
   | 'snapshots'
   | 'reservations'
   | 'instructions'
@@ -174,6 +285,11 @@ const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad }
   usePagination<number>(20)
 const loading = ref(false),
   rows = ref<TradeOperationRecord[]>([])
+const accountDetailVisible = ref(false)
+const accountDetailLoading = ref(false)
+const accountDetail = ref<ContractAccountLiquidation | null>(null)
+const accountItems = ref<ContractAccountLiquidationItem[]>([])
+const accountInstructions = ref<TradeSettlementInstruction[]>([])
 const optionGroups = ref<OptionGroup[]>([])
 const query = reactive<Record<string, any>>({
   tenantId: undefined,
@@ -189,6 +305,7 @@ const query = reactive<Record<string, any>>({
   bizId: '',
   checkType: '',
   bizNo: '',
+  marginAsset: '',
 })
 const configs: Record<Kind, { filters: string[]; columns: string[]; api: ListApi }> = {
   riskTiers: {
@@ -288,6 +405,28 @@ const configs: Record<Kind, { filters: string[]; columns: string[]; api: ListApi
     ],
     api: apiTradeListLiquidations as unknown as ListApi,
   },
+  accountLiquidations: {
+    filters: ['userId', 'marginAsset', 'status'],
+    columns: [
+      'liquidationNo',
+      'userId',
+      'marginAsset',
+      'accountEquity',
+      'maintenanceMargin',
+      'riskRate',
+      'positionCount',
+      'grossSettlement',
+      'deficitAmount',
+      'insuranceFundAmount',
+      'adlReliefAmount',
+      'adlQty',
+      'liquidationFee',
+      'status',
+      'reason',
+      'completedAt',
+    ],
+    api: apiTradeListAccountLiquidations as unknown as ListApi,
+  },
   snapshots: {
     filters: ['orderId', 'snapshotType'],
     columns: [
@@ -370,8 +509,7 @@ const statusOptionGroup = computed(() => {
 })
 function params() {
   const p: Record<string, any> = { cursor: pagination.cursor, limit: pagination.limit }
-  for (const k of ['tenantId', ...filters])
-    if (query[k] !== '' && query[k] != null) p[k] = query[k]
+  for (const k of ['tenantId', ...filters]) if (query[k] !== '' && query[k] != null) p[k] = query[k]
   return p
 }
 async function load() {
@@ -386,7 +524,10 @@ async function load() {
 }
 function reset() {
   Object.keys(query).forEach(
-    (k) => (query[k] = ['bizType', 'bizId', 'checkType', 'bizNo'].includes(k) ? '' : undefined),
+    (k) =>
+      (query[k] = ['bizType', 'bizId', 'checkType', 'bizNo', 'marginAsset'].includes(k)
+        ? ''
+        : undefined),
   )
   resetAndLoad(load)
 }
@@ -402,6 +543,16 @@ function filterOptions(field: string) {
       { value: 1, label: t('trade.reconciliationOpen') },
       { value: 2, label: t('trade.reconciliationResolved') },
       { value: 3, label: t('trade.reconciliationIgnored') },
+    ]
+  if (field === 'status' && props.kind === 'accountLiquidations')
+    return [
+      { value: 1, label: t('trade.accountLiquidationPending') },
+      { value: 2, label: t('trade.accountLiquidationAssetSettling') },
+      { value: 3, label: t('trade.accountLiquidationClosing') },
+      { value: 4, label: t('trade.accountLiquidationCompleted') },
+      { value: 5, label: t('trade.accountLiquidationManual') },
+      { value: 6, label: t('trade.accountLiquidationInsuranceFund') },
+      { value: 7, label: t('trade.accountLiquidationADL') },
     ]
   if (field === 'status' && statusOptionGroup.value)
     return optionSelectItems(statusOptionGroup.value)
@@ -457,6 +608,12 @@ function statusTagType(value: number) {
     if (value === 1) return 'danger'
     return 'info'
   }
+  if (props.kind === 'accountLiquidations') {
+    if (value === 4) return 'success'
+    if (value === 5) return 'danger'
+    if ((value >= 1 && value <= 3) || value === 6 || value === 7) return 'warning'
+    return 'info'
+  }
   if (value === 1 || value === 3) return 'success'
   if (value === 4 || value === 5) return 'danger'
   if (value === 2) return 'warning'
@@ -470,6 +627,15 @@ function formatStatus(key: string, value: unknown) {
     if (Number(value) === 1) return t('trade.reconciliationOpen')
     if (Number(value) === 2) return t('trade.reconciliationResolved')
     if (Number(value) === 3) return t('trade.reconciliationIgnored')
+  }
+  if (key === 'status' && props.kind === 'accountLiquidations') {
+    if (Number(value) === 1) return t('trade.accountLiquidationPending')
+    if (Number(value) === 2) return t('trade.accountLiquidationAssetSettling')
+    if (Number(value) === 3) return t('trade.accountLiquidationClosing')
+    if (Number(value) === 4) return t('trade.accountLiquidationCompleted')
+    if (Number(value) === 5) return t('trade.accountLiquidationManual')
+    if (Number(value) === 6) return t('trade.accountLiquidationInsuranceFund')
+    if (Number(value) === 7) return t('trade.accountLiquidationADL')
   }
   return formatValue(key, value)
 }
@@ -503,6 +669,59 @@ async function ignoreIssue(row: TradeOperationRecord) {
   })
   ElMessage.success(t('common.success'))
   load()
+}
+type AccountSummaryField = Extract<keyof ContractAccountLiquidation, string>
+const accountSummaryFields: AccountSummaryField[] = [
+  'liquidationNo',
+  'userId',
+  'marginAsset',
+  'marginSnapshotId',
+  'assetVersion',
+  'walletBalance',
+  'positionMargin',
+  'maintenanceMargin',
+  'accountEquity',
+  'riskRate',
+  'grossSettlement',
+  'liquidationFee',
+  'userCredit',
+  'userDebit',
+  'deficitAmount',
+  'insuranceFundAmount',
+  'adlReliefAmount',
+  'adlQty',
+  'positionCount',
+  'status',
+  'reason',
+  'startedAt',
+  'completedAt',
+]
+async function openAccountLiquidationDetail(row: TradeOperationRecord) {
+  accountDetailVisible.value = true
+  accountDetailLoading.value = true
+  try {
+    const res = await apiTradeGetAccountLiquidationDetail({
+      id: Number(row.id),
+      tenantId: query.tenantId,
+    })
+    accountDetail.value = res.data ?? null
+    accountItems.value = res.items || []
+    accountInstructions.value = res.settlementInstructions || []
+  } finally {
+    accountDetailLoading.value = false
+  }
+}
+async function retryAccountLiquidation(row: TradeOperationRecord) {
+  const { value } = await ElMessageBox.prompt(t('trade.retryReason'), t('trade.retry'), {
+    inputValidator: (v) => !!v?.trim() || t('trade.retryReasonRequired'),
+  })
+  await apiTradeRetryAccountLiquidation({
+    id: Number(row.id),
+    tenantId: query.tenantId,
+    reason: value.trim(),
+  })
+  ElMessage.success(t('common.success'))
+  await load()
 }
 onMounted(async () => {
   const optionsResponse = await tradeService.getOptions()

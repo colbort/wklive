@@ -87,3 +87,33 @@ func ContractSupportsMarginMode(config *models.TTradeSymbolContract, marginMode 
 		return false
 	}
 }
+
+func ContractOrderMarginMode(
+	config *models.TTradeSymbolContract,
+	marginMode trade.MarginMode,
+	closeOnly, crossTradingEnabled, automaticLiquidationEnabled bool,
+) error {
+	if closeOnly &&
+		(marginMode == trade.MarginMode_MARGIN_MODE_CROSS ||
+			marginMode == trade.MarginMode_MARGIN_MODE_ISOLATED) {
+		// Product support and leverage groups gate new exposure. Existing
+		// positions must always retain a risk-reducing exit path.
+		return nil
+	}
+	if !ContractSupportsMarginMode(config, marginMode) {
+		switch marginMode {
+		case trade.MarginMode_MARGIN_MODE_CROSS:
+			return errors.New("cross margin mode is not supported")
+		case trade.MarginMode_MARGIN_MODE_ISOLATED:
+			return errors.New("isolated margin mode is not supported")
+		default:
+			return errors.New("invalid derivative margin mode")
+		}
+	}
+	if marginMode == trade.MarginMode_MARGIN_MODE_CROSS &&
+		!closeOnly &&
+		(!crossTradingEnabled || !automaticLiquidationEnabled) {
+		return errors.New("cross margin opening is disabled by the production safety gate")
+	}
+	return nil
+}

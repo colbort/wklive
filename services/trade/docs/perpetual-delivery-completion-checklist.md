@@ -18,14 +18,14 @@
 | 模块 | 当前状态 | 生产结论 |
 | --- | --- | --- |
 | 合约下单与撮合 | `[x]` P0-02 基础矩阵及 P0-07 故障门禁已完成 | 仍受 P0-05 生产价格源和 P0-06 强平告警门禁约束 |
-| 逐仓仓位投影 | `[x]` 永续/交割线性、反向及并发故障矩阵已实跑 | P0-07 已完成；全仓和自动强平仍禁止开放 |
-| 全仓 | `[!]` 未实现账户级风险闭环 | 禁止开放 |
-| 永续资金费 | `[~]` Batch、Settlement、Saga 已实现 | 禁止生产任务 |
-| 交割结算 | `[~]` 生命周期主体已实现 | 禁止自动归档 |
-| 自动强平 | `[~]` 主体已实现 | 禁止真实资金处理 |
-| 保险基金与 ADL | `[~]` 主体已实现 | 禁止生产启用 |
+| 逐仓仓位投影 | `[x]` 永续/交割线性、反向及并发故障矩阵已实跑 | P0-07 已完成；自动强平生产门禁仍保持关闭 |
+| 全仓 | `[x]` 下单、部分成交/撤单、平仓、账户风险、正/负权益强平、专项对账、模式切换及后台处置均已完成 | 技术验收完成；生产仍由双安全开关和外部审批门禁保护 |
+| 永续资金费 | `[x]` 隔离环境完整资金与故障矩阵已实跑 | 生产任务仍受 P1-01 价格源及 P0-06 告警门禁约束 |
+| 交割结算 | `[x]` 隔离环境完整生命周期与故障矩阵已实跑 | 自动归档仍受生产 DELIVERY 价格源门禁约束 |
+| 自动强平 | `[x]` P1-02 逐仓及 P2-01 全仓矩阵已完成 | 生产总开关保持关闭，待生产告警和资金权限确认 |
+| 保险基金与 ADL | `[x]` 逐仓及全仓资金、排序和恢复矩阵已完成 | 生产总开关保持关闭，待生产账户和资金权限确认 |
 | Price Engine | `[~]` 技术链路已运行 | 当前单一行情配置仅用于测试 |
-| 跨服务对账 | `[~]` 订单/仓位/资金费/交割核心闭环已实跑 | 强平专项与生产告警仍是门禁 |
+| 跨服务对账 | `[~]` 订单、仓位、资金费、交割、逐仓及全仓强平专项闭环已实跑 | 生产告警平台接入仍是门禁 |
 
 ## 3. 实施顺序
 
@@ -157,7 +157,7 @@ Outbox / Inbox
 - [x] Position 保证金与合约钱包对账（真实发现五条无托管流水夹具差异并持续累计，修正资金事实且经过 60 秒稳定窗口后全部自动 RESOLVED；当前无 OPEN）；
 - [x] Funding Settlement 与 Asset Flow 对账（正/负、失败、进程恢复、Asset 先成功等真实批次均以稳定业务号绑定唯一 Flow，Batch 仅在 reconciled_at 后完成）；
 - [x] Delivery Settlement 与 Asset Flow 对账（线性/反向、全额/部分释放和中途重启均绑定唯一 Flow，Batch 仅在全部指令对账后归档）；
-- [~] 强平、保险基金和 ADL 对账（代码及迁移已部署，运行态真实发现并持续累计 `LIQUIDATION:1` 的强平终态、仓位、历史、完成事件、ADL 与保险赔付差异；仍待 P1-02 正常完成、保险承接和 ADL 三类生产等价矩阵）；
+- [x] 强平、保险基金和 ADL 对账（全额强平、保险全额/部分/不足/冲正、ADL 两阶段恢复、父 Saga 和部分强平终态均已实跑；专项扫描核对仓位、历史、完成事件、保险承接、ADL 数量及 Asset 流水，隔离验收无 OPEN 差异）；
 - [x] 差异持久化（真实 issue 以稳定 key 跨周期累计至 30～794 次，修复事实后由扫描任务自动写 status=RESOLVED/resolved_at/reason；非强平 OPEN=0）；
 - [~] 差异告警（数据库行锁内固化 `last_alert_at`：首次、恢复后重开、内容变化立即告警，未变化每 30 分钟提醒；真实 `LIQUIDATION:1` 在 67 秒内继续扫描 13 次但新容器仅输出 1 条；仍待接入生产告警平台、值班组和升级规则）；
 - [x] 带操作人、原因和请求号的人工处理入口（真实 Admin RPC 验证租户元数据覆盖请求租户、缺操作人拒绝、OPEN 忽略成功、重复忽略拒绝；状态=IGNORED、操作人 `990001`、原因、解决时间和唯一 `TRE` 审计事件全部落库，隔离夹具随后精确清理）。
@@ -193,42 +193,42 @@ Outbox / Inbox
 - [~] 配置偏离剔除（INDEX/DELIVERY 支持异常剔除；MARK 基差支持对称 BPS 限幅，待参数验收）；
 - [~] 配置平滑、上下限和版本（上一 MARK 加权平滑、基差上下限及不可变公式版本已完成，待生产参数回放）；
 - [~] 完成生产历史回放（离线确定性回放工具及篡改检测单测完成，待导出生产时间段执行）；
-- [~] Snapshot Outbox 回到实时水位（Claim/发布已流水线并发、最终检查点合并、健康日志新增净排空速度和 ETA，待部署观察归零）；
-- [ ] 完成容量、备份和灾备恢复演练。
+- [x] Snapshot Outbox 回到实时水位（Claim/发布已流水线并发、最终检查点合并、健康日志新增净排空速度和 ETA；64 Worker 部署后完成 50,000 条容量验收，当前实库 `total=0/open=0`，近 10 分钟无 unhealthy、Worker 失败或慢查询日志）；
+- [~] 完成容量、备份和灾备恢复演练（50,000 条 Outbox 容量验收完成；隔离环境完成 28.23 MiB、140 表一致性备份与恢复，逐表差异为 0，并固化恢复手册。生产异地备份、Binlog 时间点恢复、可用区切换及正式 RPO/RTO 仍待生产演练）。
 
 当前 BTCUSDT MARK 和 INDEX 使用相同单一行情，适合技术测试，不适合作为真实资金费来源。
 
 ### P1-02 强平、保险基金和 ADL
 
-- [ ] 标记价格驱动风险重算；
-- [ ] 撤销增加风险的活动订单；
-- [ ] 部分强平；
-- [ ] 全部强平；
-- [ ] 强平手续费；
+- [x] 标记价格驱动风险重算（真实 `price-engine/MARK` 110 快照驱动仓位风险投影；重复读取同一投影不再产生版本写放大）；
+- [x] 撤销活动订单（普通开仓单释放 10 USDT Asset 冻结；Reduce-Only 单释放 0.25 Position 可平数量；两者均在接管前撤销）；
+- [x] 部分强平（真实风险档从第二档降至第一档：逐仓 LONG 10@100、MARK 96、保证金 100 时风险率 1.6；部分减仓 5 后剩余 5、保证金 50、未实现盈亏 -20、风险率 0.16、状态恢复 NORMAL；用户残值 25.2、平台手续费 4.8，各唯一流水）；
+- [x] 全部强平（隔离线性永续仓位 1→0，Position/History/Liquidation/Completed Event 各唯一；同仓位重放无新增事实）；
+- [x] 强平手续费（触发权益 5 中手续费 0.95 原子计入 Asset `FEE_REVENUE`，用户残值 4.05；穿仓时手续费被限制为 0，不进入保险基金缺口）；
 - [x] 保险基金全额赔付（真实 Asset RPC：请求 30、承接 30、余额 100→70；同业务号重放不重复扣款）；
 - [x] 保险基金部分赔付（真实 Asset RPC：请求 50、仅承接可用余额 20、剩余缺口 30、余额 20→0）；
 - [x] 保险基金不足（真实 Asset RPC：余额为 0 时请求 10、承接 0、缺口 10，不生成零金额流水）；
 - [x] 保险基金冲正（30 全额返还 70→100；同冲正号重放不重复入账，不同冲正号被拒绝）；
-- [ ] ADL 候选排序；
-- [ ] ADL 数量上限；
-- [ ] ADL Asset/Position 两阶段恢复；
-- [ ] Liquidation 父 Saga 恢复；
-- [ ] 日终对账与差异告警。
+- [x] ADL 候选排序（按盈利率 × 有效杠杆生成持久化优先级；仅逐仓候选可参与，优先级相同时按 Position ID 稳定排序）；
+- [x] ADL 数量上限（执行总量同时受候选数量、被接管剩余数量和剩余缺口限制）；
+- [x] ADL Asset/Position 两阶段恢复（真实从 PREPARED/PROCESSING 及 ASSET_DONE 两个故障点恢复，Asset 流水保持唯一）；
+- [x] Liquidation 父 Saga 恢复（ADL 子执行完成后父记录恢复为 COMPLETED，关闭破产仓位并生成唯一完成事件）；
+- [x] 日终对账与差异告警（强平专项全量循环游标、稳定差异键、自动恢复和结构化节流告警已完成；部分强平终态真实扫描完成且无 OPEN 差异。生产告警平台接入仍作为 P0-06 上线门禁）；
 
-在本项完成前，风险扫描最多生成待人工处理事实，不允许自动执行真实资金赔付和 ADL。
+P1-02 应用与隔离运行验收已完成；生产 `AutomaticLiquidation.Enabled` 仍必须保持 `false`，直到生产价格源、告警平台、保险基金账户及资金权限完成审批和演练。
 
 ### P2-01 全仓
 
-- [ ] 账户级权益快照；
-- [ ] 同结算资产仓位共享保证金；
-- [ ] 未成交订单保证金占用；
-- [ ] 账户级维持保证金；
-- [ ] 账户级风险率；
-- [ ] 账户级强平；
-- [ ] Asset 与 Mark Price 持续投影；
-- [ ] 全仓与逐仓切换规则。
+- [x] 账户级权益快照（按租户、用户和保证金币种聚合 Asset 钱包、全仓仓位保证金与未实现盈亏；迁移、版本化模型、任务投影及 Admin RPC 审计字段已完成）；
+- [x] 同结算资产仓位共享保证金（全仓开仓时由 Trade 在用户级分布式锁内同步读取 Asset 钱包、同结算资产全部开放仓位、活动订单和新鲜 MARK 风险投影；完整成交、部分成交后撤单、关闸平仓及资金释放均已真实验收）；
+- [x] 未成交订单保证金占用（真实 Pending 全仓订单的 30 USDT Reservation 与 Asset Frozen 均进入快照，`order_margin=30`）；
+- [x] 账户级维持保证金（真实两个仓位分别为 5/6，账户快照聚合为 11）；
+- [x] 账户级风险率（真实 Wallet 100 + Position Margin 30 + UPNL -20 = Equity 110，Risk=11/110=0.1；非正权益使用可存储上限值并有单测）；
+- [x] 账户级强平（已按租户、用户、保证金币种建立父 Saga 和仓位明细，支持先撤同风险单元全部活动订单、释放 Reservation、行锁复核账户风险、一次接管全部全仓仓位、净额结算用户钱包、独立幂等结算手续费及失败退避恢复；负权益增加 `INSURANCE_FUND`、`ADL` 持久化阶段，使用资产级默认保险配置 `symbol_id=0`，按冻结亏损分摊剩余缺口并固化合成破产价。ADL 子执行以负的账户明细 ID 作为内部命名空间，与逐仓强平正 ID 隔离；父、明细、保险赔付、ADL 执行和 Asset 流水均进入专项对账。正权益双仓、保险全额、保险部分后 ADL、重启幂等、后台详情及门禁保护重试均已验收）；
+- [x] Asset 与 Mark Price 持续投影（`ProcessPositions` 每轮从 Asset RPC 读取钱包版本，并在 MARK 更新后聚合跨仓位风险；风险单元现为开放仓位、活动订单和历史快照的并集，可投影仅有挂单的账户并清零已消失单元的旧快照。真实双标的 MARK 与 Asset 版本并发验收后收敛到同一不可变版本哈希，重复执行无写放大）；
+- [x] 全仓与逐仓切换规则（用户全局模式锁、标的模式锁与全仓账户锁顺序固定；存在不兼容开放仓位或活动订单时拒绝切换；仓位持久化 `position_mode`，不再以实际 LONG/SHORT 方向猜测单向/双向模式；开仓受双门禁保护，Reduce Only 平仓不受门禁影响但必须匹配仓位模式）；
 
-在本项完成前，下单接口继续拒绝 `CROSS`。
+全仓技术链路已经完成，但生产默认仍不开放新增风险：`CrossMarginTrading.Enabled=false` 且 `AutomaticLiquidation.Enabled=false`，只有两者同时开启才接受增加全仓敞口的订单。Reduce Only 平仓始终保留；关闭自动强平开关只阻止创建新的账户强平 Saga，已完成 Asset 副作用的 Saga 仍允许幂等恢复，避免遗留中间态。
 
 ## 4. 上线门禁
 
@@ -342,6 +342,24 @@ Outbox / Inbox
 | 2026-07-28 | P0-04 缺价负向夹具收口 | 通过 | 四个已证明“缺最终 DELIVERY 快照时失败关闭”的 `ACCEPT-DLV-LINEAR`、`ACCEPT-DLV-LINEAR-IOC`、`ACCEPT-BTC-USD-DLV-RPC/FIX` 批次均保持 settlement_price=0、Settlement/Instruction=0，并精确转入 MANUAL_REVIEW=7；错误原因追加验收处置说明、模型缓存键清除。收口后非终态 Delivery Batch=0，30 秒窗口 DELIVERY 重试日志=0，不伪造行情、不继续自动结算 |
 | 2026-07-28 | MARK 缺源按标的合并与退避 | 发现验收持仓刷屏后修复并通过 | 32 个开放 Position 分属 21 个租户/Symbol；修复前每个仓位都调用归档并输出错误，修复后同一扫描共享一次 MARK 查询结果，失败键按 tenant/symbol/source 退避 30 秒。新镜像首轮严格每个 Symbol 1 条，共 21 条；三仓位 Symbol=991800 的连续重试间隔为 34.197 秒和 30.074 秒，仓位任务仍持续执行且无无审计价格兜底 |
 | 2026-07-28 | P1-02 保险基金承接与冲正矩阵 | 发现审计缺口后修复并通过 | 隔离平台账户经真实 Asset RPC 完成全额 30/30、部分 20/50、余额不足 0/10、同号幂等、30 冲正及不同冲正号拒绝；账户、Cover、Idempotent、Platform Flow 数量和金额守恒。验收发现 Proto 已有保险基金枚举但字符串映射缺失，导致 `biz_type/scene_type` 为空；补齐双向映射、单测及精确历史回填，部署镜像 `bc6b4b15…` 后重建事实，4 条幂等记录和 3 条资金流水审计维度全部非空且各唯一 |
+| 2026-07-28 | P1-02 全额强平与手续费 | 发现资金缺口后修复并通过 | 原实现只在 Trade 记录手续费且把手续费加入穿仓缺口；新增 Asset `CreditPlatformRevenue`，以平台流水唯一键原子幂等计入 `FEE_REVENUE`，同号重放不重复、改金额拒绝。强平改用冻结的 Trigger Qty/Mark/Equity 计算，只从正权益收取手续费，保险/ADL 仅承接真实负权益；LIQUIDATING 仓位不再被后续 MARK 扫描改写。隔离 LONG 1@100、MARK 95、保证金 10 实跑：权益 5、手续费 0.95、用户残值 4.05、仓位 1→0，Liquidation/History/Event/User Flow/Platform Flow 各 1；重放数量不变。Trade 镜像 `b633c5a1…`、Asset 镜像 `2669ca2b…`，Etcd 生产门禁始终为 false；夹具和临时程序已精确清理 |
+| 2026-07-28 | P1-02 强平前活动订单撤销 | 发现 Reduce-Only 遗留风险后修复并通过 | 原实现只撤增加风险的订单，全部接管后 Reduce-Only 订单及可平数量预占会遗留；全部接管现先撤销该风险单元所有活动订单。隔离实跑同时放置普通 BUY 1（Asset 冻结 10）和 Reduce-Only SELL 0.25（Position frozen_qty 0.25）：普通单经唯一释放指令/Asset Flow 解冻 10，Reservation=RELEASED、Freeze=UNFROZEN；Reduce-Only 的 `reserved_close_qty` 与 Position frozen_qty 均归零；两单均 CANCELED、原因 `risk liquidation`、事件各唯一，随后仓位才 1→0。重放后 Order/Instruction/Liquidation/History/Event/Asset Flow 数量保持 2/1/1/1/3/2；Trade 镜像 `c1e3a2d2…`，夹具和缓存已清理 |
+| 2026-07-28 | P1-02 标记价格驱动风险重算 | 发现写放大后修复并通过 | 隔离租户真实写入 `price-engine/MARK` 权威快照并调用 Trade `ProcessPositions`：线性逐仓 LONG 2@100、保证金 40、MARK 110 后，快照 ID 固定为 `accept-risk-mark-110-v2`，未实现盈亏=20、风险档维持保证金=3.4、破产价=80、强平价=81.1224489795918367、风险率=0.0566666667，仓位保持 NORMAL 且 Liquidation=0；Trade 同时落下唯一不可变 Market Snapshot。实跑发现旧实现对同一投影每次扫描都递增 Position version，增加无效写入和 CAS 冲突；新增完整风险投影相等判断后，同一 MARK 连续重放版本稳定为 11。单测通过，Trade 镜像 `582a8c27…` |
+| 2026-07-28 | P1-02 ADL 与父 Liquidation Saga | 连续发现边界缺陷后修复并通过 | 补齐基于“盈利率 × 有效杠杆”的持久化 ADL 优先级，并排除尚未具备账户级权益的全仓候选；将 Asset 成功独立持久化为 ASSET_DONE，再单独提交 Position 投影。首次实跑在 Asset 已入账后发现新 Execution 未回填自增 ID，修复后从真实 PREPARED/PROCESSING 故障点幂等恢复，40 USDT 流水始终唯一；随后在 ASSET_DONE 恢复零仓位时发现正数量前置条件，补齐零仓风险清零并再次恢复成功。最终无故障矩阵中，被接管 LONG 2 的缺口 15 由两个逐仓 SHORT 各减 1、各缓释 7.5；更高优先级 Position=99920603（ID 更大）先执行，证明排序生效；超高 rank 的全仓候选保持原样。候选资产分别入账 40/50，Execution/Instruction/Asset Flow=2/2/2，部分减仓候选的 Qty 2→1、Margin 40→20、UPnL 75→37.5 及风险字段同步重算；父 Liquidation 的 trigger/liquidated/adl qty 均为 2，破产仓位及所有风险字段清零，History=3、Completed Event=1。重放数量不变；Trade 恢复后事件已投递、两条指令均取得唯一 Asset Flow 并完成对账。最终镜像 `9e1abc44…`，生产门禁仍为 false |
+| 2026-07-28 | P1-02 部分强平与专项对账 | 发现终态恢复缺口后修复并通过 | 按下一风险档名义价值上限和数量步长计算减仓量，仅在减仓后权益高于维持保证金、风险率低于 1 且 MARK 脱离强平线时采用部分强平，否则回退全部接管。隔离 LONG 10@100、MARK 96 从第二档减至第一档：Qty 10→5、Margin 100→50、UPnL -40→-20、Realized PnL=-20、Maintenance=4.8、Risk=0.16、Liquidation Price=90.9090909090909091，仓位恢复 NORMAL；用户残值 25.2、平台 `FEE_REVENUE` 4.8，Liquidation=PARTIAL_RECOVERED、History/Event/User Flow/Platform Flow 各 1，保险与 ADL 均为 0。重启及安全仓位重放后 Position version=7、五类事实数量均不变。修复 PARTIAL_RECOVERED 不再被恢复查询当作活动态，并使专项对账能够自动解决执行中遗留差异；真实全量循环游标完成、OPEN issue=0。最终 Trade 镜像 `acc582db…`，生产门禁保持 false |
+| 2026-07-28 | P2-01 全仓账户级风险投影 | 第一阶段通过，交易门禁保持关闭 | 扩展 `t_contract_margin_snapshot` 固化账户维持保证金、权益、可用保证金、风险率、仓位数及 Asset 版本；`ProcessPositions` 按租户/用户/保证金币种聚合开放全仓仓位和未结订单 Reservation，经 Asset Admin RPC 读取合约钱包，输入未变化时不递增快照版本。隔离租户 910208 真实预置同一 USDT 风险单元的两个全仓仓位及一个 30 USDT Pending 订单：Wallet=100/Available=70/Frozen=30、Position Margin=30、Order Margin=30、UPnL=-20、Maintenance=11，得到 Equity=110、Available Margin=50、Risk=0.1、Position Count=2、Asset Version=5；重复任务后 snapshot version 保持 1，单仓 liquidation/bankruptcy/risk/adl 字段继续为 0。新增字段通过正式 Admin RPC 返回；另修复配置假启用入口，真实 RPC 分别以“账户级强平未启用”和“存在仓位或活动订单”拒绝 CROSS 配置及模式切换。最终 Trade 镜像 `dad9722e…`；`CROSS` 下单拒绝未移除 |
+| 2026-07-28 | P2-01 全仓正权益账户强平 | 第二阶段通过，负权益路径仍关闭 | 新增 `t_contract_account_liquidation` 父 Saga 和明细表；扫描账户风险率不低于 1 的全仓快照，自动强平开启时先撤同保证金币种的活动订单并释放 Reservation，再在事务内锁定风险单元、重算风险并接管全部仓位。用户正权益按账户净额生成唯一 Asset 指令，手续费使用独立持久化指令、指数退避和平台流水幂等入账；关闭总开关后，已经进入资金/关仓阶段的 Saga 仍可恢复。隔离租户 910212 双仓实跑：用户钱包 100→118、平台 `FEE_REVENUE` 0→2、两仓和两明细均关闭、History=2；平台账户缺失时手续费指令持续退避且用户流水不重复，补齐账户并将开关恢复 false 后父 Saga 自动完成。迁移版本 42，最终 Trade 镜像 `4a89ad36…`，生产开关为 false。负权益账户当前明确转人工，待账户级保险基金/ADL和后台处置闭环 |
+| 2026-07-28 | P2-01 全仓账户强平专项对账 | 通过 | 新增 `CROSS_ACCOUNT_LIQUIDATION` 全量循环扫描，按父 Saga 校验明细数及终态、仓位清零、唯一强平历史、唯一完成事件、父子金额守恒、用户净额 Asset 指令和平台手续费指令；活动 Saga 延后，人工状态形成稳定差异。隔离租户 910213 故意缺完成事件后，稳定键 `CROSS_ACCOUNT_LIQUIDATION:99121301` 连续累计发现；补齐事件后同一差异自动转 RESOLVED，父/明细/仓位/历史/事件/指令全部一致。Trade 镜像 `ba49f5b7…`，生产自动强平门禁仍为 false，验收夹具已清零 |
+| 2026-07-28 | P2-01 全仓账户强平后台处置 | 通过 | 新增 Trade/Admin API 的账户强平列表、详情和人工重试，详情同时返回父 Saga、接管仓位明细和结算指令；管理端增加独立菜单、详情按钮、明细/指令弹窗及中英文状态。重试只接受 `MANUAL_REVIEW`，要求可信后台操作人和原因，只重置失败资金指令并恢复正确 Saga 阶段，不能修改金额或直接标记完成；总开关关闭时强制拒绝。隔离租户 910214 真实 RPC 验收：列表/详情均返回预期人工记录，重试返回 `automatic liquidation gate is disabled` 且事实未变。菜单 1195～1197 及角色授权已由幂等迁移落库；最终 Trade 镜像 `9d218f65…`，夹具和临时客户端已清零 |
+| 2026-07-29 | P2-01 全仓负权益保险基金与 ADL | 通过 | 父 Saga 新增穿仓缺口、保险承接、ADL 缓释及数量检查点，明细固化缺口分摊、合成破产价和 ADL 结果；保险使用 `symbol_id=0` 的保证金币种默认账户，余额不足时仅从同租户、同标的、反方向的盈利逐仓仓位按既有 ADL 排序接管。隔离租户 910215：Wallet 10 + Margin 10 + UPNL -30，缺口 10 全由保险承接，用户钱包 10→0、基金 100→90；租户 910216：Wallet 20 + Margin 20 + UPNL -60，缺口 20 由保险 5 + ADL 15 覆盖，合成破产价 77.5，两个 SHORT 候选各接管 1、各缓释 7.5、各入账 32.5。两父批次、两明细、四仓位、两保险 Cover、两 ADL Execution、四 Asset 指令/流水均唯一成功；重启后数量不变且指令全部取得唯一 Flow 并完成对账。最终 Trade 镜像 `f3edb89d…` 健康，迁移校验和已登记，Etcd 门禁已恢复并复核为 false |
+| 2026-07-29 | P2-01 全仓成交资金闭环与生产双门禁 | 通过 | 新增 `CrossMarginTrading.Enabled`，增加全仓风险敞口同时要求该开关和 `AutomaticLiquidation.Enabled` 为 true；标准 YAML 与最终 Etcd 均为 false。开仓在用户级续租锁内同步校验未完成账户强平、既有全仓订单、Asset 可用余额、跨仓位保证金/未实现盈亏/维持保证金及 30 秒内不可变 MARK。隔离租户 910217 完成双边全仓开仓并形成各 10 USDT 保证金、0.2 手续费；910219 完成买方 2 张中成交 1、撤销 1，精确消费/释放各 10.2；模式不匹配和无新鲜 MARK 均零写入拒绝。关闸后四个用户仍以 Reduce Only 全部平仓，仓位数量/保证金/冻结归零，钱包均为 99.6；重启前后 Order/Fill/History/Instruction/Flow 数量和金额完全不变 |
+| 2026-07-29 | P2-01 仓位模式持久化与切换并发 | 发现缺陷后修复并通过 | 真实追加单向 NET 开仓时发现成交投影会把仓位实际方向保存为 LONG/SHORT，旧切换逻辑据此误判为双向模式。新增 migration `20260729_add_contract_position_mode.sql`，为当前仓位持久化 `position_mode`；另以 `20260729_fix_contract_position_mode_backfill.sql` 按最近一条可关联订单的 History 回填，避免资金费/交割/强平 History 无 `ref_order_id` 时误留默认值。订单/Fill 的 NET 映射为 ONE_WAY，显式 LONG/SHORT 映射为 HEDGE，开仓复用关闭仓位时允许受控改模，活动仓位及平仓必须严格匹配。协议、App/Admin API 同步返回该字段。实库四个既有单向全仓仓位均回填为 1；全库最终 ONE_WAY=15、HEDGE=26、非法值=0、最近订单历史不一致=0。修复后追加开仓越过模式校验并正确在过期 MARK 门禁处拒绝，证明不再误判 |
+| 2026-07-29 | P0-03 资金费按标的故障隔离 | 发现缺陷后修复并通过 | 历史验收标的的非法 `funding_rate_source=acceptance` 曾令 tenant=0 的全局 `ProcessContractSettlements` 整批失败并由任务消息反复重试。现在权威输入缺失或配置非法只阻断该租户/标的的 Funding Batch，按租户、标的、结算时点 30 秒节流告警并继续扫描后续标的；新镜像中只出现 `skip funding batch` 诊断，不再出现全局 task failed |
+| 2026-07-29 | P2-01 双标的 MARK/Asset 并发投影 | 通过 | 隔离租户 910221 的同一 USDT 全仓风险单元包含 LONG 1@100 和 SHORT 2@200。两标的 MARK 更新为 120/170 时，仓位 UPNL 分别为 20/60、维持保证金为 6/17；并发把 Asset 钱包从 100/version1 更新为 120/version2 后，账户快照收敛为 Position Margin=50、UPNL=80、Maintenance=23、Equity=250、Available Margin=200、Risk=0.092、Position Count=2、Asset Version=2。`source_event_no` 与 `tenant/user/USDT/assetVersion2/positionVersionSum8/orderVersionSum0` 的 SHA-256 前 24 字节完全一致；重放后 Position version=4、Snapshot version=4 均不增加。夹具、行情、Trade 快照、缓存和临时客户端已清理，System 恢复健康 |
+| 2026-07-29 | P1-01 Snapshot Outbox 实时水位 | 通过 | Itick Etcd 配置为 WorkerCount=64、BatchSize=512、Idle=100ms；此前 50,000 条容量矩阵完成后，当前实库 total=0/open=0，近 10 分钟无 `snapshot outbox unhealthy`、Worker 失败或 Outbox 慢查询日志 |
+| 2026-07-29 | 备份与灾备恢复演练 | 隔离环境通过，生产演练待执行 | 源库 28.23 MiB、140 张表；静默点 `--single-transaction` 备份 11,975,203 字节/0.50 秒，SHA-256=`1cdd5acc…46470d4`，隔离恢复耗时 2.68 秒。140 张表逐表精确 COUNT 差异=0，46 条迁移、40 个订单、33 个成交、41 个仓位、109 条指令、216 个事件均一致；临时恢复库和文件已销毁，System 恢复 healthy。恢复顺序、事实边界和通过标准见 `perpetual-delivery-disaster-recovery-runbook.md` |
+| 2026-07-29 | 本轮全仓收口回归 | 通过 | `services/trade go test ./...` 全部通过；helpers/admin/app/task/tasks/models 的 `go test -race` 全部通过；Admin API 全量测试通过，App API 业务包编译通过（根包网络测试需监听 `:7777`）。迁移由 db-init 正式执行并登记；最终 Trade 镜像 `440d4984…` 健康，两个生产安全开关均为 false |
+| 2026-07-29 | P1-01 历史窗口批量确定性回放 | 工具与自动化测试完成，待生产数据执行 | `cmd/price-replay` 从单条扩展为单文件/多文件、JSON 数组及 JSONL 批量回放；`--interval-ms` 按公式版本拒绝目标时点未对齐、重复和断档，`--json` 输出记录数、公式数、时点/价格范围、最少有效输入与剔除数。单条回放同时新增完整输入与采用/剔除分区、`min_input_count` 防篡改校验；Price Engine 与命令测试通过。该能力不替代第 6 节要求的真实三源交割窗口数据 |
 | 2026-07-28 | 本轮静态回归 | 通过 | 当前工作树重新执行 `services/trade`、`services/asset`、`services/itick`、`services/system` 的 `go test ./...` 全部通过；Trade 的 `internal/logic/task` 与 `models` 额外通过 `go test -race`，MARK 退避和对账告警判断均有单测；协议向后兼容编译通过 |
 
 ## 6. 当前外部依赖与不可代填项
@@ -352,4 +370,5 @@ Outbox / Inbox
 | 生产 DELIVERY 参数 | 三源门槛、偏差剔除和离线重放技术验收已通过，但不能用虚构来源替代生产市场 | 确认算法（MEDIAN 或 WEIGHTED_MEAN）、每源权重、最大偏差 BPS、锁价窗口和公式版本命名 |
 | 生产历史回放 | 当前没有覆盖交割窗口的三个原始来源历史，无法形成有意义的生产回放报告 | 提供选定合约、至少一个完整交割窗口的原始快照导出，或授权接入相应历史数据源 |
 | P0-06 告警渠道 | 应用已输出结构化差异和 Outbox/Price Engine 健康日志；同一对账差异已按数据库事实节流为首次/变化/重开/30 分钟提醒，隔离环境仍无生产告警平台 | 确认告警平台、规则阈值、值班组、升级链路和通知渠道 |
-| P1-02 自动强平资金权限 | 自动强平门禁保持关闭；当前唯一 OPEN issue 是租户 900102 的 `LIQUIDATION:1` 人工处理夹具 | 在 P1-02 全矩阵完成前不提供真实保险基金/ADL 资金权限；仅允许人工审计 |
+| P1-02/P2-01 自动强平资金权限 | 逐仓及全仓正/负权益隔离矩阵已完成，但生产总开关仍保持关闭；租户 900102 的 `LIQUIDATION:1` 是保留的人工处理夹具 | 明确生产保险基金和 `FEE_REVENUE` 账户、资金权限、审批责任人、启用窗口和回滚方案后，方可申请开启 |
+| 生产备份与灾备 | 隔离环境已完成全库一致性备份、140 表恢复核对和恢复手册；本地容量与恢复流程可执行 | 确认生产 RPO/RTO、备份加密及异地保留策略，并安排 Binlog 时间点恢复、节点/可用区故障切换和回切演练 |

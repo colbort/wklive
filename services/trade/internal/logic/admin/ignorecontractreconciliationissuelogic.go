@@ -15,7 +15,6 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type IgnoreContractReconciliationIssueLogic struct {
@@ -48,9 +47,8 @@ func (l *IgnoreContractReconciliationIssueLogic) IgnoreContractReconciliationIss
 	}
 	notFound, invalidStatus := false, false
 	now := utils.NowMillis()
-	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		issueModel := models.NewTContractReconciliationIssueModel(conn, l.svcCtx.Config.CacheRedis)
+	err = l.svcCtx.TransactionModel.TransactOnce(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		issueModel := tx.ContractReconciliationIssue
 		issue, findErr := issueModel.FindOneForUpdate(ctx, in.GetId())
 		if errors.Is(findErr, models.ErrNotFound) || (findErr == nil && issue.TenantId != tenantID) {
 			notFound = true
@@ -71,7 +69,7 @@ func (l *IgnoreContractReconciliationIssueLogic) IgnoreContractReconciliationIss
 		if updateErr := issueModel.Update(ctx, issue); updateErr != nil {
 			return updateErr
 		}
-		_, insertErr := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis).Insert(ctx, &models.TBizTradeEvent{
+		_, insertErr := tx.BizTradeEvent.Insert(ctx, &models.TBizTradeEvent{
 			TenantId:      tenantID,
 			EventNo:       eventNo,
 			EventType:     "CONTRACT_RECONCILIATION_ISSUE_IGNORED",

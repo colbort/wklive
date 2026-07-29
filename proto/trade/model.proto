@@ -353,6 +353,7 @@ message ContractPosition {
   int64 last_funding_time = 29;
   int64 closed_at = 30;
   string mark_snapshot_id = 31;
+  PositionMode position_mode = 32;
 }
 
 message ContractPositionHistory {
@@ -408,6 +409,12 @@ message ContractMarginSnapshot {
   int64 update_times = 15;
   string source_event_no = 16;
   int64 snapshot_time = 17;
+  string maintenance_margin = 18;
+  string account_equity = 19;
+  string available_margin = 20;
+  string risk_rate = 21;
+  int64 position_count = 22;
+  int64 asset_version = 23;
   reserved 4;
 }
 

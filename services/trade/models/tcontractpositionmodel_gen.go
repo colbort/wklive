@@ -51,6 +51,7 @@ type (
 		ContractType      int64           `db:"contract_type"`       // 合约期限类型：1永续 2交割
 		ContractValueType int64           `db:"contract_value_type"` // 合约价值类型：1线性 2反向
 		PositionSide      int64           `db:"position_side"`       // 持仓方向：1净持仓 2多 3空
+		PositionMode      int64           `db:"position_mode"`       // 持仓模式：1单向 2双向
 		MarginMode        int64           `db:"margin_mode"`         // 保证金模式：1全仓 2逐仓
 		Status            int64           `db:"status"`              // 持仓状态：1正常 2待强平 3强平中 4交割中 5已关闭 6人工处理
 		Leverage          int64           `db:"leverage"`            // 当前杠杆倍数
@@ -141,8 +142,8 @@ func (m *defaultTContractPositionModel) Insert(ctx context.Context, data *TContr
 	tContractPositionIdKey := fmt.Sprintf("%s%v", cacheTContractPositionIdPrefix, data.Id)
 	tContractPositionTenantIdUserIdSymbolIdPositionSideMarginModeKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTContractPositionTenantIdUserIdSymbolIdPositionSideMarginModePrefix, data.TenantId, data.UserId, data.SymbolId, data.PositionSide, data.MarginMode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractPositionRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.SymbolId, data.ContractType, data.ContractValueType, data.PositionSide, data.MarginMode, data.Status, data.Leverage, data.Qty, data.AvailQty, data.FrozenQty, data.OpenAvgPrice, data.MarkPrice, data.MarkSnapshotId, data.MarginAsset, data.PositionMargin, data.MaintenanceMargin, data.IsolatedMargin, data.UnrealizedPnl, data.RealizedPnl, data.LiquidationPrice, data.BankruptcyPrice, data.RiskRate, data.AdlRank, data.LastFundingTime, data.ClosedAt, data.Version, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractPositionRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.SymbolId, data.ContractType, data.ContractValueType, data.PositionSide, data.PositionMode, data.MarginMode, data.Status, data.Leverage, data.Qty, data.AvailQty, data.FrozenQty, data.OpenAvgPrice, data.MarkPrice, data.MarkSnapshotId, data.MarginAsset, data.PositionMargin, data.MaintenanceMargin, data.IsolatedMargin, data.UnrealizedPnl, data.RealizedPnl, data.LiquidationPrice, data.BankruptcyPrice, data.RiskRate, data.AdlRank, data.LastFundingTime, data.ClosedAt, data.Version, data.CreateTimes, data.UpdateTimes)
 	}, tContractPositionIdKey, tContractPositionTenantIdUserIdSymbolIdPositionSideMarginModeKey)
 	return ret, err
 }
@@ -157,7 +158,7 @@ func (m *defaultTContractPositionModel) Update(ctx context.Context, newData *TCo
 	tContractPositionTenantIdUserIdSymbolIdPositionSideMarginModeKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTContractPositionTenantIdUserIdSymbolIdPositionSideMarginModePrefix, data.TenantId, data.UserId, data.SymbolId, data.PositionSide, data.MarginMode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tContractPositionRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.SymbolId, newData.ContractType, newData.ContractValueType, newData.PositionSide, newData.MarginMode, newData.Status, newData.Leverage, newData.Qty, newData.AvailQty, newData.FrozenQty, newData.OpenAvgPrice, newData.MarkPrice, newData.MarkSnapshotId, newData.MarginAsset, newData.PositionMargin, newData.MaintenanceMargin, newData.IsolatedMargin, newData.UnrealizedPnl, newData.RealizedPnl, newData.LiquidationPrice, newData.BankruptcyPrice, newData.RiskRate, newData.AdlRank, newData.LastFundingTime, newData.ClosedAt, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.SymbolId, newData.ContractType, newData.ContractValueType, newData.PositionSide, newData.PositionMode, newData.MarginMode, newData.Status, newData.Leverage, newData.Qty, newData.AvailQty, newData.FrozenQty, newData.OpenAvgPrice, newData.MarkPrice, newData.MarkSnapshotId, newData.MarginAsset, newData.PositionMargin, newData.MaintenanceMargin, newData.IsolatedMargin, newData.UnrealizedPnl, newData.RealizedPnl, newData.LiquidationPrice, newData.BankruptcyPrice, newData.RiskRate, newData.AdlRank, newData.LastFundingTime, newData.ClosedAt, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tContractPositionIdKey, tContractPositionTenantIdUserIdSymbolIdPositionSideMarginModeKey)
 	return err
 }

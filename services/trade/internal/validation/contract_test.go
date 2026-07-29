@@ -74,3 +74,32 @@ func TestContractSupportsMarginMode(t *testing.T) {
 		t.Fatal("unknown margin mode was accepted")
 	}
 }
+
+func TestContractOrderMarginModeGate(t *testing.T) {
+	config := &models.TTradeSymbolContract{SupportCross: 1, SupportIsolated: 1}
+	if err := ContractOrderMarginMode(
+		config, trade.MarginMode_MARGIN_MODE_CROSS,
+		false, false, false,
+	); err == nil {
+		t.Fatal("cross opening must remain closed when production gates are off")
+	}
+	if err := ContractOrderMarginMode(
+		config, trade.MarginMode_MARGIN_MODE_CROSS,
+		true, false, false,
+	); err != nil {
+		t.Fatalf("cross close must remain available while gates are off: %v", err)
+	}
+	if err := ContractOrderMarginMode(
+		config, trade.MarginMode_MARGIN_MODE_CROSS,
+		false, true, true,
+	); err != nil {
+		t.Fatalf("cross opening rejected after both gates were enabled: %v", err)
+	}
+	config.SupportCross = 0
+	if err := ContractOrderMarginMode(
+		config, trade.MarginMode_MARGIN_MODE_CROSS,
+		true, true, true,
+	); err != nil {
+		t.Fatalf("disabled cross support must not trap an existing position: %v", err)
+	}
+}

@@ -204,8 +204,15 @@ func ReplayEvaluationAudit(raw []byte) (decimal.Decimal, error) {
 		return decimal.Zero, fmt.Errorf("decode evaluation audit: %w", err)
 	}
 	if strings.TrimSpace(audit.FormulaNo) == "" || strings.TrimSpace(audit.FormulaVersion) == "" ||
-		audit.TargetTime <= 0 || len(audit.AcceptedInputs) == 0 || strings.TrimSpace(audit.OutputPrice) == "" {
+		audit.TargetTime <= 0 || len(audit.AllInputs) == 0 || len(audit.AcceptedInputs) == 0 ||
+		audit.MinInputCount <= 0 || strings.TrimSpace(audit.OutputPrice) == "" {
 		return decimal.Zero, errors.New("evaluation audit is incomplete")
+	}
+	if int64(len(audit.AcceptedInputs)) < audit.MinInputCount {
+		return decimal.Zero, fmt.Errorf(
+			"evaluation audit accepted inputs below minimum: accepted=%d required=%d",
+			len(audit.AcceptedInputs), audit.MinInputCount,
+		)
 	}
 	seen := make(map[string]struct{}, len(audit.AcceptedInputs))
 	for _, input := range audit.AcceptedInputs {
@@ -218,6 +225,20 @@ func ReplayEvaluationAudit(raw []byte) (decimal.Decimal, error) {
 		seen[input.SnapshotID] = struct{}{}
 	}
 	algorithm := itick.PriceAlgorithm(audit.Algorithm)
+	expectedAccepted, expectedRejected := deduplicateInputsWithAudit(
+		append([]Input(nil), audit.AllInputs...),
+	)
+	if algorithm != itick.PriceAlgorithm_PRICE_ALGORITHM_INDEX_BASIS {
+		var deviationRejected []Input
+		expectedAccepted, deviationRejected = filterDeviationWithAudit(
+			expectedAccepted, audit.MaxDeviationBps,
+		)
+		expectedRejected = append(expectedRejected, deviationRejected...)
+	}
+	if !equalAuditInputs(expectedAccepted, audit.AcceptedInputs) ||
+		!equalAuditInputs(expectedRejected, audit.RejectedInputs) {
+		return decimal.Zero, errors.New("evaluation audit accepted/rejected input partition mismatch")
+	}
 	var replayed decimal.Decimal
 	var err error
 	if algorithm == itick.PriceAlgorithm_PRICE_ALGORITHM_INDEX_BASIS {
@@ -236,6 +257,20 @@ func ReplayEvaluationAudit(raw []byte) (decimal.Decimal, error) {
 		return decimal.Zero, fmt.Errorf("evaluation audit output mismatch: replayed=%s recorded=%s", replayed, expected)
 	}
 	return replayed, nil
+}
+
+func equalAuditInputs(left, right []Input) bool {
+	if len(left) != len(right) {
+		return false
+	}
+	for index := range left {
+		if left[index].SnapshotID != right[index].SnapshotID ||
+			!left[index].Price.Equal(right[index].Price) ||
+			!left[index].Weight.Equal(right[index].Weight) {
+			return false
+		}
+	}
+	return true
 }
 
 func deduplicateInputsWithAudit(inputs []Input) ([]Input, []Input) {

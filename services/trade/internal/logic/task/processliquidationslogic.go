@@ -17,7 +17,6 @@ import (
 
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type ProcessLiquidationsLogic struct {
@@ -77,6 +76,9 @@ func (l *ProcessLiquidationsLogic) ProcessPosition(positionID int64) error {
 	}
 	liquidation, err := l.svcCtx.ContractLiquidationModel.FindActiveByPosition(l.ctx, position.TenantId, position.Id)
 	if errors.Is(err, models.ErrNotFound) {
+		if !positionRequiresLiquidation(position) {
+			return nil
+		}
 		liqNo := fmt.Sprintf("LIQ-%d-%d", position.Id, position.Version)
 		now := utils.NowMillis()
 		equity := position.PositionMargin.Add(position.IsolatedMargin).Add(position.UnrealizedPnl)
@@ -109,10 +111,20 @@ func (l *ProcessLiquidationsLogic) ProcessPosition(positionID int64) error {
 	if lockedPosition == nil {
 		return nil
 	}
-	if err := l.cancelRiskIncreasingOrders(lockedPosition); err != nil {
+	if err := l.cancelLiquidationOrders(lockedPosition); err != nil {
 		return err
 	}
 	return l.settleTakeover(lockedPosition, contract, liquidation)
+}
+
+func positionRequiresLiquidation(position *models.TContractPosition) bool {
+	if position == nil || !position.Qty.IsPositive() || !position.MarkPrice.IsPositive() || !position.LiquidationPrice.IsPositive() {
+		return false
+	}
+	if position.PositionSide == int64(trade.PositionSide_POSITION_SIDE_LONG) {
+		return position.MarkPrice.LessThanOrEqual(position.LiquidationPrice)
+	}
+	return position.MarkPrice.GreaterThanOrEqual(position.LiquidationPrice)
 }
 
 func shouldHoldLiquidationForManual(enabled bool, status int64) bool {
@@ -121,10 +133,9 @@ func shouldHoldLiquidationForManual(enabled bool, status int64) bool {
 
 func (l *ProcessLiquidationsLogic) lockRiskUnit(position *models.TContractPosition, liq *models.TContractLiquidation) (*models.TContractPosition, error) {
 	var locked *models.TContractPosition
-	err := helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
-		lm := models.NewTContractLiquidationModel(conn, l.svcCtx.Config.CacheRedis)
+	err := l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		pm := tx.ContractPosition
+		lm := tx.ContractLiquidation
 		current, err := pm.FindOneForUpdateByTenantUserSymbolSideMode(ctx, position.TenantId, position.UserId, position.SymbolId, position.PositionSide, position.MarginMode)
 		if err != nil {
 			return err
@@ -167,7 +178,10 @@ func (l *ProcessLiquidationsLogic) lockRiskUnit(position *models.TContractPositi
 	return locked, err
 }
 
-func (l *ProcessLiquidationsLogic) cancelRiskIncreasingOrders(position *models.TContractPosition) error {
+// A full takeover must remove every active order for the risk unit. In
+// particular, reduce-only orders are no longer executable after the position
+// is closed and their reserved close quantity must be released first.
+func (l *ProcessLiquidationsLogic) cancelLiquidationOrders(position *models.TContractPosition) error {
 	cursor := int64(0)
 	for {
 		statuses := append(helpers.MatchableOrderStatuses(), int64(trade.OrderStatus_ORDER_STATUS_TRIGGER_WAITING))
@@ -180,10 +194,7 @@ func (l *ProcessLiquidationsLogic) cancelRiskIncreasingOrders(position *models.T
 		}
 		for _, o := range orders {
 			cursor = o.Id
-			if o.IsReduceOnly == int64(common.YesNo_YES_NO_YES) {
-				continue
-			}
-			terminating, err := beginSystemOrderTermination(l.ctx, l.svcCtx, o.Id, "risk liquidation", true)
+			terminating, err := beginSystemOrderTermination(l.ctx, l.svcCtx, o.Id, "risk liquidation", false)
 			if err != nil {
 				return err
 			}
@@ -204,6 +215,13 @@ func (l *ProcessLiquidationsLogic) cancelRiskIncreasingOrders(position *models.T
 }
 
 func (l *ProcessLiquidationsLogic) settleTakeover(position *models.TContractPosition, contract *models.TTradeSymbolContract, liq *models.TContractLiquidation) error {
+	partial, err := l.tryPartialTakeover(position, contract, liq)
+	if err != nil {
+		return err
+	}
+	if partial {
+		return nil
+	}
 	values, err := contractmath.CalculateTradeValues(position.ContractValueType, liq.TriggerQty, contract.ContractSize, liq.TriggerMarkPrice)
 	if err != nil {
 		return err
@@ -263,6 +281,178 @@ func (l *ProcessLiquidationsLogic) settleTakeover(position *models.TContractPosi
 	return l.completeLiquidation(position, liq, fee)
 }
 
+type partialLiquidationPlan struct {
+	after            *models.TContractPosition
+	liquidatedQty    decimal.Decimal
+	marginRelease    decimal.Decimal
+	isolatedRelease  decimal.Decimal
+	realizedPnl      decimal.Decimal
+	fee              decimal.Decimal
+	availableCredit  decimal.Decimal
+	targetTierNumber int64
+}
+
+func (l *ProcessLiquidationsLogic) tryPartialTakeover(position *models.TContractPosition, contract *models.TTradeSymbolContract, liq *models.TContractLiquidation) (bool, error) {
+	values, err := contractmath.CalculateTradeValues(position.ContractValueType, liq.TriggerQty, contract.ContractSize, liq.TriggerMarkPrice)
+	if err != nil {
+		return false, err
+	}
+	currentTier, err := l.svcCtx.ContractRiskLimitTierModel.FindByNotional(l.ctx, position.TenantId, position.SymbolId, values.QuoteNotional)
+	if errors.Is(err, models.ErrNotFound) {
+		return false, nil
+	}
+	if err != nil {
+		return false, err
+	}
+	tiers, _, err := l.svcCtx.ContractRiskLimitTierModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: position.TenantId, SymbolId: position.SymbolId, Enabled: 1}, 0, 100)
+	if err != nil {
+		return false, err
+	}
+	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, position.SymbolId)
+	if err != nil {
+		return false, err
+	}
+	plan := buildPartialLiquidationPlan(position, contract, symbol, currentTier, tiers)
+	if plan == nil {
+		return false, nil
+	}
+	if plan.fee.IsPositive() {
+		if err = l.creditPlatformRevenueByBizNo(position.TenantId, position.MarginAsset, plan.fee, liq.Id, liq.LiquidationNo+"-PARTIAL-FEE", "partial liquidation fee revenue"); err != nil {
+			return false, err
+		}
+	}
+	if plan.availableCredit.IsPositive() {
+		if err = l.assetChange(position.TenantId, position.UserId, position.MarginAsset, plan.availableCredit, true, liq.Id, liq.LiquidationNo+"-PARTIAL-RESIDUAL", "partial liquidation released equity"); err != nil {
+			return false, err
+		}
+	}
+	if err = l.completePartialLiquidation(position, liq, plan); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func buildPartialLiquidationPlan(position *models.TContractPosition, contract *models.TTradeSymbolContract, symbol *models.TTradeSymbol, currentTier *models.TContractRiskLimitTier, tiers []*models.TContractRiskLimitTier) *partialLiquidationPlan {
+	if position == nil || contract == nil || symbol == nil || currentTier == nil || currentTier.TierNo <= 1 || !symbol.QtyStep.IsPositive() {
+		return nil
+	}
+	sort.SliceStable(tiers, func(i, j int) bool { return tiers[i].TierNo > tiers[j].TierNo })
+	for _, tier := range tiers {
+		if tier == nil || tier.Enabled != 1 || tier.TierNo >= currentTier.TierNo || !tier.NotionalCap.IsPositive() {
+			continue
+		}
+		var targetQty decimal.Decimal
+		if position.ContractValueType == int64(trade.ContractValueType_CONTRACT_VALUE_TYPE_INVERSE) {
+			targetQty = tier.NotionalCap.Div(contract.ContractSize)
+		} else {
+			targetQty = tier.NotionalCap.Div(contract.ContractSize.Mul(position.MarkPrice))
+		}
+		targetQty = targetQty.Div(symbol.QtyStep).Floor().Mul(symbol.QtyStep)
+		if !targetQty.IsPositive() || !targetQty.LessThan(position.Qty) {
+			continue
+		}
+		liquidatedQty := position.Qty.Sub(targetQty)
+		marginRelease, isolatedRelease := adlMarginRelease(position.PositionMargin, position.IsolatedMargin, liquidatedQty, position.Qty)
+		realized := contractRealizedPnl(position.PositionSide, position.OpenAvgPrice, position.MarkPrice, liquidatedQty, contract.ContractSize, position.ContractValueType)
+		closedValues, err := contractmath.CalculateTradeValues(position.ContractValueType, liquidatedQty, contract.ContractSize, position.MarkPrice)
+		if err != nil {
+			continue
+		}
+		fee := contractmath.RoundDebit(closedValues.SettlementNotional.Mul(contract.LiquidationFeeRate))
+		releasedEquity := marginRelease.Add(isolatedRelease).Add(realized)
+		if releasedEquity.LessThan(fee) {
+			// A partial close that consumes margin belonging to the remaining
+			// position cannot safely restore the risk unit. Fall back to full
+			// takeover where insurance/ADL are available.
+			continue
+		}
+		after := cloneContractPosition(position)
+		after.Qty = targetQty
+		after.AvailQty = decimalMin(after.AvailQty, targetQty)
+		after.FrozenQty = decimal.Zero
+		after.PositionMargin = decimalMaxZero(after.PositionMargin.Sub(marginRelease))
+		after.IsolatedMargin = decimalMaxZero(after.IsolatedMargin.Sub(isolatedRelease))
+		after.RealizedPnl = after.RealizedPnl.Add(realized)
+		recalculatePositionRisk(after, contract, tier)
+		if !positionRiskRecovered(after) {
+			continue
+		}
+		return &partialLiquidationPlan{
+			after:            after,
+			liquidatedQty:    liquidatedQty,
+			marginRelease:    marginRelease,
+			isolatedRelease:  isolatedRelease,
+			realizedPnl:      realized,
+			fee:              fee,
+			availableCredit:  releasedEquity.Sub(fee),
+			targetTierNumber: tier.TierNo,
+		}
+	}
+	return nil
+}
+
+func positionRiskRecovered(position *models.TContractPosition) bool {
+	if position == nil || !position.Qty.IsPositive() {
+		return false
+	}
+	equity := position.PositionMargin.Add(position.IsolatedMargin).Add(position.UnrealizedPnl)
+	if !equity.GreaterThan(position.MaintenanceMargin) || !position.RiskRate.LessThan(decimal.NewFromInt(1)) {
+		return false
+	}
+	if position.PositionSide == int64(trade.PositionSide_POSITION_SIDE_LONG) {
+		return position.MarkPrice.GreaterThan(position.LiquidationPrice)
+	}
+	return position.MarkPrice.LessThan(position.LiquidationPrice)
+}
+
+func (l *ProcessLiquidationsLogic) completePartialLiquidation(position *models.TContractPosition, liq *models.TContractLiquidation, plan *partialLiquidationPlan) error {
+	now := utils.NowMillis()
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		pm := tx.ContractPosition
+		lm := tx.ContractLiquidation
+		hm := tx.ContractPositionHistory
+		em := tx.BizTradeEvent
+		current, err := pm.FindOneForUpdate(ctx, position.Id)
+		if err != nil {
+			return err
+		}
+		currentLiquidation, err := lm.FindOneForUpdate(ctx, liq.Id)
+		if err != nil {
+			return err
+		}
+		if currentLiquidation.Status == int64(trade.LiquidationStatus_LIQUIDATION_STATUS_PARTIAL_RECOVERED) {
+			return nil
+		}
+		if current.Status != int64(trade.PositionStatus_POSITION_STATUS_LIQUIDATING) ||
+			current.Version != position.Version || !current.Qty.Equal(liq.TriggerQty) {
+			return errors.New("position changed before partial liquidation commit")
+		}
+		before := cloneContractPosition(current)
+		after := cloneContractPosition(plan.after)
+		after.Status = int64(trade.PositionStatus_POSITION_STATUS_NORMAL)
+		after.Version = current.Version + 1
+		after.UpdateTimes = now
+		if err = pm.Update(ctx, after); err != nil {
+			return err
+		}
+		if err = writeSystemPositionHistory(ctx, hm, before, after, liq.CreateTimes, liq.LiquidationNo, trade.PositionActionType_POSITION_ACTION_TYPE_LIQUIDATION, plan.realizedPnl, plan.fee, liq.TriggerMarkPrice, "partial liquidation recovered risk tier"); err != nil {
+			return err
+		}
+		currentLiquidation.LiquidatedQty = plan.liquidatedQty
+		currentLiquidation.LiquidationFee = plan.fee
+		currentLiquidation.Status = int64(trade.LiquidationStatus_LIQUIDATION_STATUS_PARTIAL_RECOVERED)
+		currentLiquidation.Reason = fmt.Sprintf("partial liquidation restored risk at tier %d", plan.targetTierNumber)
+		currentLiquidation.CompletedAt = now
+		currentLiquidation.Version++
+		currentLiquidation.UpdateTimes = now
+		if err = lm.Update(ctx, currentLiquidation); err != nil {
+			return err
+		}
+		_, err = em.Insert(ctx, &models.TBizTradeEvent{TenantId: liq.TenantId, EventNo: liq.LiquidationNo + "-COMPLETED", EventType: "LIQUIDATION_PARTIAL_RECOVERED", BizId: liq.LiquidationNo, BizType: "liquidation", UserId: liq.UserId, SymbolId: liq.SymbolId, ProductType: int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE), Source: int64(trade.SourceType_SOURCE_TYPE_TASK), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: "{}", CreateTimes: now, UpdateTimes: now})
+		return err
+	})
+}
+
 // splitLiquidationEquity ensures that a liquidation fee can only be collected
 // from positive remaining equity. Insurance and ADL cover bankruptcy loss, not
 // platform fee revenue.
@@ -276,8 +466,8 @@ func splitLiquidationEquity(grossEquity, nominalFee decimal.Decimal) (fee, resid
 
 func (l *ProcessLiquidationsLogic) markLiquidationManual(liq *models.TContractLiquidation, reason string) error {
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		lm := models.NewTContractLiquidationModel(sqlx.NewSqlConnFromSession(session), l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		lm := tx.ContractLiquidation
 		current, err := lm.FindOneForUpdate(ctx, liq.Id)
 		if err != nil {
 			return err
@@ -306,8 +496,8 @@ func (l *ProcessLiquidationsLogic) markLiquidationManual(liq *models.TContractLi
 
 func (l *ProcessLiquidationsLogic) checkpointLiquidation(liq *models.TContractLiquidation, status trade.LiquidationStatus, insuranceAmount, adlQty decimal.Decimal) error {
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		lm := models.NewTContractLiquidationModel(sqlx.NewSqlConnFromSession(session), l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		lm := tx.ContractLiquidation
 		current, err := lm.FindOneForUpdate(ctx, liq.Id)
 		if err != nil {
 			return err
@@ -395,15 +585,19 @@ func (l *ProcessLiquidationsLogic) assetChange(tenant, user int64, coin string, 
 }
 
 func (l *ProcessLiquidationsLogic) creditPlatformRevenue(tenant int64, coin string, amount decimal.Decimal, liq *models.TContractLiquidation) error {
+	return l.creditPlatformRevenueByBizNo(tenant, coin, amount, liq.Id, liq.LiquidationNo+"-FEE", "liquidation fee revenue")
+}
+
+func (l *ProcessLiquidationsLogic) creditPlatformRevenueByBizNo(tenant int64, coin string, amount decimal.Decimal, bizID int64, bizNo, remark string) error {
 	resp, err := l.svcCtx.AssetClient.CreditPlatformRevenue(l.ctx, &asset.CreditPlatformRevenueReq{
 		TenantId:  tenant,
 		Coin:      coin,
 		Amount:    amount.String(),
 		BizType:   asset.BizType_BIZ_TYPE_TRADE,
 		SceneType: asset.SceneType_SCENE_TYPE_TRADE_FEE,
-		BizId:     liq.Id,
-		BizNo:     liq.LiquidationNo + "-FEE",
-		Remark:    "liquidation fee revenue",
+		BizId:     bizID,
+		BizNo:     bizNo,
+		Remark:    remark,
 	})
 	if err != nil {
 		return err
@@ -457,10 +651,18 @@ func (l *ProcessLiquidationsLogic) executeADL(bankrupt *models.TContractPosition
 		return positions[i].AdlRank > positions[j].AdlRank
 	})
 	remaining := decimalMaxZero(deficit.Sub(relieved))
-	remainingQty := decimalMaxZero(bankrupt.Qty.Sub(liq.AdlQty))
+	recordedQty := liq.AdlQty
+	if done.GreaterThan(recordedQty) {
+		recordedQty = done
+	}
+	remainingQty := decimalMaxZero(bankrupt.Qty.Sub(recordedQty))
 	for _, candidate := range positions {
 		_, alreadyUsed := used[candidate.Id]
-		if alreadyUsed || candidate.Id == bankrupt.Id || !candidate.Qty.IsPositive() || candidate.PositionSide == bankrupt.PositionSide || candidate.Status != int64(trade.PositionStatus_POSITION_STATUS_NORMAL) || !remainingQty.IsPositive() {
+		if alreadyUsed || candidate.Id == bankrupt.Id || !candidate.Qty.IsPositive() ||
+			candidate.PositionSide == bankrupt.PositionSide ||
+			candidate.MarginMode != int64(trade.MarginMode_MARGIN_MODE_ISOLATED) ||
+			candidate.Status != int64(trade.PositionStatus_POSITION_STATUS_NORMAL) ||
+			!remainingQty.IsPositive() {
 			continue
 		}
 		markPnl := contractRealizedPnl(candidate.PositionSide, candidate.OpenAvgPrice, bankrupt.MarkPrice, candidate.Qty, contract.ContractSize, candidate.ContractValueType)
@@ -506,9 +708,8 @@ func (l *ProcessLiquidationsLogic) prepareADLExecution(candidate, bankrupt *mode
 	now := utils.NowMillis()
 	executionNo := fmt.Sprintf("%s-ADL-%d", liq.LiquidationNo, candidate.Id)
 	var prepared *models.TContractAdlExecution
-	err := helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
+	err := l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		pm := tx.ContractPosition
 		current, err := pm.FindOneForUpdateByTenantUserSymbolSideMode(ctx, candidate.TenantId, candidate.UserId, candidate.SymbolId, candidate.PositionSide, candidate.MarginMode)
 		if err != nil {
 			return err
@@ -526,11 +727,16 @@ func (l *ProcessLiquidationsLogic) prepareADLExecution(candidate, bankrupt *mode
 			return err
 		}
 		prepared = &models.TContractAdlExecution{TenantId: current.TenantId, ExecutionNo: executionNo, LiquidationId: liq.Id, LiquidationNo: liq.LiquidationNo, PositionId: current.Id, UserId: current.UserId, PositionVersion: current.Version, Qty: qty, PositionMarginRelease: positionMargin, IsolatedMarginRelease: isolatedMargin, RealizedPnl: pnl, AssetCredit: credit, Asset: current.MarginAsset, BankruptcyPrice: bankrupt.BankruptcyPrice, ReliefAmount: relief, Status: 1, CreateTimes: now, UpdateTimes: now}
-		if _, err = models.NewTContractAdlExecutionModel(conn, l.svcCtx.Config.CacheRedis).Insert(ctx, prepared); err != nil {
+		result, insertErr := tx.ContractAdlExecution.Insert(ctx, prepared)
+		if insertErr != nil {
+			return insertErr
+		}
+		prepared.Id, err = result.LastInsertId()
+		if err != nil {
 			return err
 		}
 		if credit.IsPositive() {
-			return insertSettlementInstructionIdempotent(ctx, models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis), &models.TTradeSettlementInstruction{TenantId: current.TenantId, InstructionNo: executionNo, BizType: "adl", BizId: executionNo, BatchNo: liq.LiquidationNo, PositionId: current.Id, UserId: current.UserId, Action: int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE), Asset: current.MarginAsset, Amount: credit, StepNo: 1, Status: int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now})
+			return insertSettlementInstructionIdempotent(ctx, tx.TradeSettlementInstruction, &models.TTradeSettlementInstruction{TenantId: current.TenantId, InstructionNo: executionNo, BizType: "adl", BizId: executionNo, BatchNo: liq.LiquidationNo, PositionId: current.Id, UserId: current.UserId, Action: int64(trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CREDIT_AVAILABLE), Asset: current.MarginAsset, Amount: credit, StepNo: 1, Status: int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_PENDING), NextRetryAt: now, CreateTimes: now, UpdateTimes: now})
 		}
 		return nil
 	})
@@ -541,12 +747,16 @@ func (l *ProcessLiquidationsLogic) runADLExecution(execution *models.TContractAd
 	if execution.Status == 3 {
 		return nil
 	}
-	var instruction *models.TTradeSettlementInstruction
 	if execution.AssetCredit.IsPositive() {
-		var err error
-		instruction, err = l.svcCtx.TradeSettlementInstrModel.FindOneByTenantIdInstructionNo(l.ctx, execution.TenantId, execution.ExecutionNo)
+		instruction, err := l.svcCtx.TradeSettlementInstrModel.FindOneByTenantIdInstructionNo(l.ctx, execution.TenantId, execution.ExecutionNo)
 		if err != nil {
 			return err
+		}
+		if execution.Status == 2 {
+			if instruction.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) {
+				return errors.New("ADL asset checkpoint has no successful instruction")
+			}
+			return l.completeADLExecution(execution)
 		}
 		claimed, lease, err := l.svcCtx.TradeSettlementInstrModel.ClaimLease(l.ctx, instruction.Id, utils.NowMillis())
 		if err != nil {
@@ -554,15 +764,18 @@ func (l *ProcessLiquidationsLogic) runADLExecution(execution *models.TContractAd
 		}
 		if !claimed {
 			if instruction.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) {
-				return l.completeADLExecution(execution, nil)
+				if err = l.checkpointADLAssetDone(execution, instruction); err != nil {
+					return err
+				}
+				return l.completeADLExecution(execution)
 			}
 			return fmt.Errorf("ADL instruction is not claimable: status=%d", instruction.Status)
 		}
 		instruction.UpdateTimes = lease
 		if err = executeSimpleAssetInstruction(l.ctx, l.svcCtx, instruction, "automatic deleveraging"); err != nil {
 			cause := err
-			if markErr := failContractSagaInstruction(l.ctx, l.svcCtx, instruction, cause, func(ctx context.Context, conn sqlx.SqlConn, current *models.TTradeSettlementInstruction, manual bool, now int64) error {
-				em := models.NewTContractAdlExecutionModel(conn, l.svcCtx.Config.CacheRedis)
+			if markErr := failContractSagaInstruction(l.ctx, l.svcCtx, instruction, cause, func(ctx context.Context, tx *models.TransactionModels, current *models.TTradeSettlementInstruction, manual bool, now int64) error {
+				em := tx.ContractAdlExecution
 				e, findErr := em.FindOneByExecutionNo(ctx, current.TenantId, current.BizId)
 				if findErr != nil {
 					return findErr
@@ -577,15 +790,20 @@ func (l *ProcessLiquidationsLogic) runADLExecution(execution *models.TContractAd
 			}
 			return cause
 		}
+		if err = l.checkpointADLAssetDone(execution, instruction); err != nil {
+			return err
+		}
 	}
-	return l.completeADLExecution(execution, instruction)
+	return l.completeADLExecution(execution)
 }
 
-func (l *ProcessLiquidationsLogic) completeADLExecution(execution *models.TContractAdlExecution, instruction *models.TTradeSettlementInstruction) error {
+// checkpointADLAssetDone durably separates the external Asset side effect from
+// the local Position projection. A crash after this commit resumes from status
+// ASSET_DONE without issuing another credit.
+func (l *ProcessLiquidationsLogic) checkpointADLAssetDone(execution *models.TContractAdlExecution, instruction *models.TTradeSettlementInstruction) error {
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		em := models.NewTContractAdlExecutionModel(conn, l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		em := tx.ContractAdlExecution
 		e, err := em.FindOneForUpdate(ctx, execution.Id)
 		if err != nil {
 			return err
@@ -593,20 +811,12 @@ func (l *ProcessLiquidationsLogic) completeADLExecution(execution *models.TContr
 		if e.Status == 3 {
 			return nil
 		}
-		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
-		current, err := pm.FindOneForUpdate(ctx, e.PositionId)
+		im := tx.TradeSettlementInstruction
+		i, err := im.FindOneForUpdate(ctx, instruction.Id)
 		if err != nil {
 			return err
 		}
-		if current.Status != int64(trade.PositionStatus_POSITION_STATUS_LIQUIDATING) || current.Version != e.PositionVersion || current.Qty.LessThan(e.Qty) {
-			return errors.New("ADL reserved position changed")
-		}
-		if instruction != nil {
-			im := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
-			i, lockErr := im.FindOneForUpdate(ctx, instruction.Id)
-			if lockErr != nil {
-				return lockErr
-			}
+		if i.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) {
 			if !settlementInstructionLeaseOwned(i, instruction) {
 				return errors.New("ADL instruction lease lost")
 			}
@@ -614,7 +824,47 @@ func (l *ProcessLiquidationsLogic) completeADLExecution(execution *models.TContr
 			if err = im.Update(ctx, i); err != nil {
 				return err
 			}
-			e.Status = 2
+		}
+		e.Status, e.LastErrorMsg, e.UpdateTimes = 2, "", now
+		return em.Update(ctx, e)
+	})
+}
+
+func (l *ProcessLiquidationsLogic) completeADLExecution(execution *models.TContractAdlExecution) error {
+	now := utils.NowMillis()
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		em := tx.ContractAdlExecution
+		e, err := em.FindOneForUpdate(ctx, execution.Id)
+		if err != nil {
+			return err
+		}
+		if e.Status == 3 {
+			return nil
+		}
+		if e.AssetCredit.IsPositive() {
+			if e.Status != 2 {
+				return errors.New("ADL position projection requires ASSET_DONE checkpoint")
+			}
+			im := tx.TradeSettlementInstruction
+			instruction, findErr := im.FindOneByTenantIdInstructionNo(ctx, e.TenantId, e.ExecutionNo)
+			if findErr != nil {
+				return findErr
+			}
+			currentInstruction, lockErr := im.FindOneForUpdate(ctx, instruction.Id)
+			if lockErr != nil {
+				return lockErr
+			}
+			if currentInstruction.Status != int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) {
+				return errors.New("ADL position projection requires successful Asset instruction")
+			}
+		}
+		pm := tx.ContractPosition
+		current, err := pm.FindOneForUpdate(ctx, e.PositionId)
+		if err != nil {
+			return err
+		}
+		if current.Status != int64(trade.PositionStatus_POSITION_STATUS_LIQUIDATING) || current.Version != e.PositionVersion || current.Qty.LessThan(e.Qty) {
+			return errors.New("ADL reserved position changed")
 		}
 		before := cloneContractPosition(current)
 		current.Qty = current.Qty.Sub(e.Qty)
@@ -622,7 +872,34 @@ func (l *ProcessLiquidationsLogic) completeADLExecution(execution *models.TContr
 		current.PositionMargin = decimalMaxZero(current.PositionMargin.Sub(e.PositionMarginRelease))
 		current.IsolatedMargin = decimalMaxZero(current.IsolatedMargin.Sub(e.IsolatedMarginRelease))
 		current.RealizedPnl = current.RealizedPnl.Add(e.RealizedPnl)
-		current.AdlRank, current.Version, current.UpdateTimes = 0, current.Version+1, now
+		if current.Qty.IsPositive() {
+			contract, err := tx.TradeSymbolContract.
+				FindOneByTenantIdSymbolId(ctx, current.TenantId, current.SymbolId)
+			if err != nil {
+				return err
+			}
+			values, err := contractmath.CalculateTradeValues(current.ContractValueType, current.Qty, contract.ContractSize, current.MarkPrice)
+			if err != nil {
+				return err
+			}
+			tier, tierErr := tx.ContractRiskLimitTier.
+				FindByNotional(ctx, current.TenantId, current.SymbolId, values.QuoteNotional)
+			if tierErr != nil && !errors.Is(tierErr, models.ErrNotFound) {
+				return tierErr
+			}
+			if errors.Is(tierErr, models.ErrNotFound) {
+				tier = nil
+			}
+			recalculatePositionRisk(current, contract, tier)
+		} else {
+			current.MaintenanceMargin = decimal.Zero
+			current.UnrealizedPnl = decimal.Zero
+			current.LiquidationPrice = decimal.Zero
+			current.BankruptcyPrice = decimal.Zero
+			current.RiskRate = decimal.Zero
+			current.AdlRank = 0
+		}
+		current.Version, current.UpdateTimes = current.Version+1, now
 		current.Status = int64(trade.PositionStatus_POSITION_STATUS_NORMAL)
 		if current.Qty.IsZero() {
 			current.Status, current.ClosedAt = int64(trade.PositionStatus_POSITION_STATUS_CLOSED), now
@@ -630,7 +907,7 @@ func (l *ProcessLiquidationsLogic) completeADLExecution(execution *models.TContr
 		if err = pm.Update(ctx, current); err != nil {
 			return err
 		}
-		if err = writeSystemPositionHistory(ctx, models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis), before, current, e.CreateTimes, e.ExecutionNo, trade.PositionActionType_POSITION_ACTION_TYPE_LIQUIDATION, e.RealizedPnl, decimal.Zero, e.BankruptcyPrice, "automatic deleveraging"); err != nil {
+		if err = writeSystemPositionHistory(ctx, tx.ContractPositionHistory, before, current, e.CreateTimes, e.ExecutionNo, trade.PositionActionType_POSITION_ACTION_TYPE_LIQUIDATION, e.RealizedPnl, decimal.Zero, e.BankruptcyPrice, "automatic deleveraging"); err != nil {
 			return err
 		}
 		e.Status, e.LastErrorMsg, e.UpdateTimes = 3, "", now
@@ -640,12 +917,11 @@ func (l *ProcessLiquidationsLogic) completeADLExecution(execution *models.TContr
 
 func (l *ProcessLiquidationsLogic) completeLiquidation(position *models.TContractPosition, liq *models.TContractLiquidation, fee decimal.Decimal) error {
 	now := utils.NowMillis()
-	return helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		pm := models.NewTContractPositionModel(conn, l.svcCtx.Config.CacheRedis)
-		lm := models.NewTContractLiquidationModel(conn, l.svcCtx.Config.CacheRedis)
-		em := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
-		hm := models.NewTContractPositionHistoryModel(conn, l.svcCtx.Config.CacheRedis)
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		pm := tx.ContractPosition
+		lm := tx.ContractLiquidation
+		em := tx.BizTradeEvent
+		hm := tx.ContractPositionHistory
 		current, err := pm.FindOneForUpdateByTenantUserSymbolSideMode(ctx, position.TenantId, position.UserId, position.SymbolId, position.PositionSide, position.MarginMode)
 		if err != nil {
 			return err
@@ -664,6 +940,8 @@ func (l *ProcessLiquidationsLogic) completeLiquidation(position *models.TContrac
 		current.Qty, current.AvailQty, current.FrozenQty = decimal.Zero, decimal.Zero, decimal.Zero
 		current.PositionMargin, current.IsolatedMargin, current.MaintenanceMargin = decimal.Zero, decimal.Zero, decimal.Zero
 		current.UnrealizedPnl = decimal.Zero
+		current.LiquidationPrice, current.BankruptcyPrice, current.RiskRate = decimal.Zero, decimal.Zero, decimal.Zero
+		current.AdlRank = 0
 		current.Status = int64(trade.PositionStatus_POSITION_STATUS_CLOSED)
 		current.ClosedAt = now
 		current.Version++

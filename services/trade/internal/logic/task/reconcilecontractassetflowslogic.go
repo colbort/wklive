@@ -106,6 +106,9 @@ func (l *ReconcileContractAssetFlowsLogic) Process(tenantID int64) error {
 	if err := l.reconcileLiquidations(tenantID); err != nil {
 		result = errors.Join(result, fmt.Errorf("Liquidation/insurance/ADL reconciliation: %w", err))
 	}
+	if err := l.reconcileCrossAccountLiquidations(tenantID); err != nil {
+		result = errors.Join(result, fmt.Errorf("Cross account liquidation reconciliation: %w", err))
+	}
 	return result
 }
 

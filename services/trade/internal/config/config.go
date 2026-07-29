@@ -33,4 +33,9 @@ type Config struct {
 		// and ADL production gate has been fully accepted.
 		Enabled bool
 	}
+	CrossMarginTrading struct {
+		// Enabled allows only exposure-increasing CROSS orders. Reduce-only
+		// exits remain available even while this production gate is closed.
+		Enabled bool
+	}
 }

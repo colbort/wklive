@@ -328,6 +328,10 @@ service Admin {
   rpc GetDeliverySettlementList(GetDeliverySettlementListReq) returns (GetDeliverySettlementListResp);
   // 强平、秒合约价格与结算异常（只读）
   rpc GetLiquidationList(GetLiquidationListReq) returns (GetLiquidationListResp);
+  rpc GetAccountLiquidationList(GetAccountLiquidationListReq) returns (GetAccountLiquidationListResp);
+  rpc GetAccountLiquidationDetail(GetAccountLiquidationDetailReq) returns (GetAccountLiquidationDetailResp);
+  // 仅允许重试人工状态；不得修改强平金额或直接标记完成
+  rpc RetryAccountLiquidation(RetryAccountLiquidationReq) returns (CommonResp);
   rpc GetSecondsPriceSnapshotList(GetSecondsPriceSnapshotListReq) returns (GetSecondsPriceSnapshotListResp);
   rpc GetAssetReservationList(GetAssetReservationListReq) returns (GetAssetReservationListResp);
   rpc GetSettlementInstructionList(GetSettlementInstructionListReq) returns (GetSettlementInstructionListResp);
@@ -1053,6 +1057,87 @@ message GetLiquidationListReq {
 message GetLiquidationListResp {
   common.RespBase base = 1;
   repeated ContractLiquidation data = 2;
+}
+
+message ContractAccountLiquidation {
+  int64 id = 1;
+  string liquidation_no = 2;
+  int64 user_id = 3;
+  string margin_asset = 4;
+  int64 margin_snapshot_id = 5;
+  int64 margin_snapshot_version = 6;
+  int64 asset_version = 7;
+  string wallet_balance = 8;
+  string position_margin = 9;
+  string maintenance_margin = 10;
+  string account_equity = 11;
+  string risk_rate = 12;
+  string gross_settlement = 13;
+  string liquidation_fee = 14;
+  string user_credit = 15;
+  string user_debit = 16;
+  string insurance_fund_amount = 17;
+  int64 position_count = 18;
+  AccountLiquidationStatus status = 19;
+  string reason = 20;
+  int64 started_at = 21;
+  int64 completed_at = 22;
+  int64 version = 23;
+  int64 create_times = 24;
+  int64 update_times = 25;
+  string deficit_amount = 26;
+  string adl_relief_amount = 27;
+  string adl_qty = 28;
+}
+message ContractAccountLiquidationItem {
+  int64 id = 1;
+  int64 account_liquidation_id = 2;
+  string liquidation_no = 3;
+  int64 position_id = 4;
+  int64 position_version = 5;
+  int64 symbol_id = 6;
+  PositionSide position_side = 7;
+  string trigger_qty = 8;
+  string trigger_mark_price = 9;
+  string trigger_snapshot_id = 10;
+  string position_margin = 11;
+  string maintenance_margin = 12;
+  string realized_pnl = 13;
+  string liquidation_fee = 14;
+  int64 status = 15;
+  int64 create_times = 16;
+  int64 update_times = 17;
+  string deficit_amount = 18;
+  string bankruptcy_price = 19;
+  string adl_relief_amount = 20;
+  string adl_qty = 21;
+}
+message GetAccountLiquidationListReq {
+  int64 tenant_id = 1;
+  common.PageReq page = 2;
+  int64 user_id = 3;
+  string margin_asset = 4;
+  AccountLiquidationStatus status = 5;
+  TimeRange time_range = 6;
+}
+message GetAccountLiquidationListResp {
+  common.RespBase base = 1;
+  repeated ContractAccountLiquidation data = 2;
+}
+message GetAccountLiquidationDetailReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+}
+message GetAccountLiquidationDetailResp {
+  common.RespBase base = 1;
+  ContractAccountLiquidation data = 2;
+  repeated ContractAccountLiquidationItem items = 3;
+  repeated TradeSettlementInstruction settlement_instructions = 4;
+}
+message RetryAccountLiquidationReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  string reason = 3;
 }
 
 message TradeSecondsPriceSnapshot {

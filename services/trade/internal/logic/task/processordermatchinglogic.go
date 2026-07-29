@@ -20,7 +20,6 @@ import (
 
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 const (
@@ -235,13 +234,12 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 	matched := false
 	matchedOrderIDs := make(map[int64]struct{})
 	var createdFillEvents []realtime.Event
-	err = helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		fillModel := models.NewTTradeFillModel(conn, l.svcCtx.Config.CacheRedis)
-		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
-		instructionModel := models.NewTTradeSettlementInstructionModel(conn, l.svcCtx.Config.CacheRedis)
-		eventModel := models.NewTBizTradeEventModel(conn, l.svcCtx.Config.CacheRedis)
-		contractOrderModel := models.NewTTradeOrderContractModel(conn, l.svcCtx.Config.CacheRedis)
+	err = l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		fillModel := tx.TradeFill
+		orderModel := tx.TradeOrder
+		instructionModel := tx.TradeSettlementInstruction
+		eventModel := tx.BizTradeEvent
+		contractOrderModel := tx.TradeOrderContract
 
 		buy, err := orderModel.FindOneForUpdate(ctx, plan.BuyOrder.Id)
 		if err != nil {
@@ -769,9 +767,8 @@ func postOnlyWouldTakeTop(order *models.TTradeOrder, buys, sells []*models.TTrad
 func (l *ProcessOrderMatchingLogic) cancelOpenOrderNow(orderID int64, reason string) (*models.TTradeOrder, error) {
 	now := utils.NowMillis()
 	var canceledOrder *models.TTradeOrder
-	err := helpers.TransactWithDeadlockRetry(l.ctx, l.svcCtx.DB, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
+	err := l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		orderModel := tx.TradeOrder
 		order, err := orderModel.FindOneForUpdate(ctx, orderID)
 		if err != nil {
 			return err

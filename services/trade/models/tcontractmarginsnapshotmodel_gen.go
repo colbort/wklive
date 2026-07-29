@@ -46,22 +46,28 @@ type (
 	}
 
 	TContractMarginSnapshot struct {
-		Id               int64           `db:"id"`                // 主键ID
-		TenantId         int64           `db:"tenant_id"`         // 租户ID
-		UserId           int64           `db:"user_id"`           // 用户ID
-		MarginAsset      string          `db:"margin_asset"`      // 保证金币种
-		WalletBalance    decimal.Decimal `db:"wallet_balance"`    // Asset账户余额快照，不作为资金账本
-		AvailableBalance decimal.Decimal `db:"available_balance"` // Asset可用余额快照
-		FrozenBalance    decimal.Decimal `db:"frozen_balance"`    // Asset冻结余额快照
-		PositionMargin   decimal.Decimal `db:"position_margin"`   // 仓位占用保证金
-		OrderMargin      decimal.Decimal `db:"order_margin"`      // 挂单占用保证金
-		UnrealizedPnl    decimal.Decimal `db:"unrealized_pnl"`    // 未实现盈亏
-		RealizedPnl      decimal.Decimal `db:"realized_pnl"`      // 已实现盈亏
-		SourceEventNo    sql.NullString  `db:"source_event_no"`   // 最新Asset事件号，用于投影幂等
-		SnapshotTime     int64           `db:"snapshot_time"`     // 快照业务时间
-		Version          int64           `db:"version"`           // 乐观锁版本号
-		CreateTimes      int64           `db:"create_times"`      // 创建时间，毫秒时间戳
-		UpdateTimes      int64           `db:"update_times"`      // 更新时间，毫秒时间戳
+		Id                int64           `db:"id"`                 // 主键ID
+		TenantId          int64           `db:"tenant_id"`          // 租户ID
+		UserId            int64           `db:"user_id"`            // 用户ID
+		MarginAsset       string          `db:"margin_asset"`       // 保证金币种
+		WalletBalance     decimal.Decimal `db:"wallet_balance"`     // Asset账户余额快照，不作为资金账本
+		AvailableBalance  decimal.Decimal `db:"available_balance"`  // Asset可用余额快照
+		FrozenBalance     decimal.Decimal `db:"frozen_balance"`     // Asset冻结余额快照
+		PositionMargin    decimal.Decimal `db:"position_margin"`    // 仓位占用保证金
+		OrderMargin       decimal.Decimal `db:"order_margin"`       // 挂单占用保证金
+		MaintenanceMargin decimal.Decimal `db:"maintenance_margin"` // 同保证金币种全仓持仓维持保证金合计
+		AccountEquity     decimal.Decimal `db:"account_equity"`     // 钱包余额、全仓仓位保证金与未实现盈亏合计
+		AvailableMargin   decimal.Decimal `db:"available_margin"`   // Asset可用余额叠加全仓未实现盈亏后的风险可用额
+		RiskRate          decimal.Decimal `db:"risk_rate"`          // 账户级维持保证金/账户权益；非正权益使用上限值
+		PositionCount     int64           `db:"position_count"`     // 参与当前快照的开放全仓仓位数
+		AssetVersion      int64           `db:"asset_version"`      // 生成快照时读取的Asset账户版本
+		UnrealizedPnl     decimal.Decimal `db:"unrealized_pnl"`     // 未实现盈亏
+		RealizedPnl       decimal.Decimal `db:"realized_pnl"`       // 已实现盈亏
+		SourceEventNo     sql.NullString  `db:"source_event_no"`    // 最新Asset事件号，用于投影幂等
+		SnapshotTime      int64           `db:"snapshot_time"`      // 快照业务时间
+		Version           int64           `db:"version"`            // 乐观锁版本号
+		CreateTimes       int64           `db:"create_times"`       // 创建时间，毫秒时间戳
+		UpdateTimes       int64           `db:"update_times"`       // 更新时间，毫秒时间戳
 	}
 )
 
@@ -150,8 +156,8 @@ func (m *defaultTContractMarginSnapshotModel) Insert(ctx context.Context, data *
 	tContractMarginSnapshotTenantIdSourceEventNoKey := fmt.Sprintf("%s%v:%v", cacheTContractMarginSnapshotTenantIdSourceEventNoPrefix, data.TenantId, data.SourceEventNo)
 	tContractMarginSnapshotTenantIdUserIdMarginAssetKey := fmt.Sprintf("%s%v:%v:%v", cacheTContractMarginSnapshotTenantIdUserIdMarginAssetPrefix, data.TenantId, data.UserId, data.MarginAsset)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractMarginSnapshotRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.MarginAsset, data.WalletBalance, data.AvailableBalance, data.FrozenBalance, data.PositionMargin, data.OrderMargin, data.UnrealizedPnl, data.RealizedPnl, data.SourceEventNo, data.SnapshotTime, data.Version, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tContractMarginSnapshotRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.MarginAsset, data.WalletBalance, data.AvailableBalance, data.FrozenBalance, data.PositionMargin, data.OrderMargin, data.MaintenanceMargin, data.AccountEquity, data.AvailableMargin, data.RiskRate, data.PositionCount, data.AssetVersion, data.UnrealizedPnl, data.RealizedPnl, data.SourceEventNo, data.SnapshotTime, data.Version, data.CreateTimes, data.UpdateTimes)
 	}, tContractMarginSnapshotIdKey, tContractMarginSnapshotTenantIdSourceEventNoKey, tContractMarginSnapshotTenantIdUserIdMarginAssetKey)
 	return ret, err
 }
@@ -167,7 +173,7 @@ func (m *defaultTContractMarginSnapshotModel) Update(ctx context.Context, newDat
 	tContractMarginSnapshotTenantIdUserIdMarginAssetKey := fmt.Sprintf("%s%v:%v:%v", cacheTContractMarginSnapshotTenantIdUserIdMarginAssetPrefix, data.TenantId, data.UserId, data.MarginAsset)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tContractMarginSnapshotRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.MarginAsset, newData.WalletBalance, newData.AvailableBalance, newData.FrozenBalance, newData.PositionMargin, newData.OrderMargin, newData.UnrealizedPnl, newData.RealizedPnl, newData.SourceEventNo, newData.SnapshotTime, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.MarginAsset, newData.WalletBalance, newData.AvailableBalance, newData.FrozenBalance, newData.PositionMargin, newData.OrderMargin, newData.MaintenanceMargin, newData.AccountEquity, newData.AvailableMargin, newData.RiskRate, newData.PositionCount, newData.AssetVersion, newData.UnrealizedPnl, newData.RealizedPnl, newData.SourceEventNo, newData.SnapshotTime, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tContractMarginSnapshotIdKey, tContractMarginSnapshotTenantIdSourceEventNoKey, tContractMarginSnapshotTenantIdUserIdMarginAssetKey)
 	return err
 }

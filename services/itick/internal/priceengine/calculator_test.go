@@ -167,13 +167,15 @@ func TestReplayEvaluationAuditRejectsTamperedOutput(t *testing.T) {
 		FormulaNo: "BTCUSDT-INDEX-v2", FormulaVersion: "v2",
 		Algorithm:  int64(itick.PriceAlgorithm_PRICE_ALGORITHM_MEDIAN),
 		TargetTime: 1785217333000,
-		AcceptedInputs: []Input{
+		AllInputs: []Input{
 			{Price: decimal.NewFromInt(99), Weight: decimal.NewFromInt(1), SnapshotID: "a"},
 			{Price: decimal.NewFromInt(100), Weight: decimal.NewFromInt(1), SnapshotID: "b"},
 			{Price: decimal.NewFromInt(101), Weight: decimal.NewFromInt(1), SnapshotID: "c"},
 		},
-		OutputPrice: "100",
+		MinInputCount: 3,
+		OutputPrice:   "100",
 	}
+	audit.AcceptedInputs = append([]Input(nil), audit.AllInputs...)
 	raw, _ := json.Marshal(audit)
 	price, err := ReplayEvaluationAudit(raw)
 	if err != nil || !price.Equal(decimal.NewFromInt(100)) {

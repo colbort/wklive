@@ -430,6 +430,7 @@ CREATE TABLE `t_contract_position` (
   `contract_type` TINYINT NOT NULL COMMENT '合约期限类型：1永续 2交割',
   `contract_value_type` TINYINT NOT NULL COMMENT '合约价值类型：1线性 2反向',
   `position_side` TINYINT NOT NULL COMMENT '持仓方向：1净持仓 2多 3空',
+  `position_mode` TINYINT NOT NULL DEFAULT 1 COMMENT '持仓模式：1单向 2双向',
   `margin_mode` TINYINT NOT NULL COMMENT '保证金模式：1全仓 2逐仓',
   `status` TINYINT NOT NULL DEFAULT 1 COMMENT '持仓状态：1正常 2待强平 3强平中 4交割中 5已关闭 6人工处理',
   `leverage` INT NOT NULL DEFAULT 1 COMMENT '当前杠杆倍数',
@@ -459,7 +460,7 @@ CREATE TABLE `t_contract_position` (
   KEY `idx_tenant_symbol_contract` (`tenant_id`, `symbol_id`, `contract_type`),
   KEY `idx_tenant_status_symbol` (`tenant_id`, `status`, `symbol_id`),
   KEY `idx_tenant_user_contract_value` (`tenant_id`, `user_id`, `contract_value_type`),
-  CONSTRAINT `chk_position_dimensions` CHECK (`contract_type` IN (1, 2) AND `contract_value_type` IN (1, 2) AND `position_side` IN (1, 2, 3) AND `margin_mode` IN (1, 2) AND `status` BETWEEN 1 AND 6 AND `leverage` > 0),
+  CONSTRAINT `chk_position_dimensions` CHECK (`contract_type` IN (1, 2) AND `contract_value_type` IN (1, 2) AND `position_side` IN (1, 2, 3) AND `position_mode` IN (1, 2) AND `margin_mode` IN (1, 2) AND `status` BETWEEN 1 AND 6 AND `leverage` > 0),
   CONSTRAINT `chk_position_quantities` CHECK (`qty` >= 0 AND `avail_qty` >= 0 AND `frozen_qty` >= 0 AND `avail_qty` + `frozen_qty` <= `qty` AND `position_margin` >= 0 AND `maintenance_margin` >= 0 AND `isolated_margin` >= 0 AND `risk_rate` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合约当前持仓表';
 
@@ -474,6 +475,12 @@ CREATE TABLE `t_contract_margin_snapshot` (
   `frozen_balance` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT 'Asset冻结余额快照',
   `position_margin` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '仓位占用保证金',
   `order_margin` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '挂单占用保证金',
+  `maintenance_margin` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '同保证金币种全仓持仓维持保证金合计',
+  `account_equity` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '钱包余额、全仓仓位保证金与未实现盈亏合计',
+  `available_margin` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT 'Asset可用余额叠加全仓未实现盈亏后的风险可用额',
+  `risk_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT '账户级维持保证金/账户权益；非正权益使用上限值',
+  `position_count` INT NOT NULL DEFAULT 0 COMMENT '参与当前快照的开放全仓仓位数',
+  `asset_version` BIGINT NOT NULL DEFAULT 0 COMMENT '生成快照时读取的Asset账户版本',
   `unrealized_pnl` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '未实现盈亏',
   `realized_pnl` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '已实现盈亏',
   `source_event_no` VARCHAR(64) DEFAULT NULL COMMENT '最新Asset事件号，用于投影幂等',
@@ -484,8 +491,75 @@ CREATE TABLE `t_contract_margin_snapshot` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_user_margin_asset` (`tenant_id`, `user_id`, `margin_asset`),
   UNIQUE KEY `uk_tenant_source_event` (`tenant_id`, `source_event_no`),
-  CONSTRAINT `chk_margin_snapshot_balances` CHECK (`wallet_balance` >= 0 AND `available_balance` >= 0 AND `frozen_balance` >= 0 AND `position_margin` >= 0 AND `order_margin` >= 0 AND `version` >= 0)
+  CONSTRAINT `chk_margin_snapshot_balances` CHECK (`wallet_balance` >= 0 AND `available_balance` >= 0 AND `frozen_balance` >= 0 AND `position_margin` >= 0 AND `order_margin` >= 0 AND `maintenance_margin` >= 0 AND `risk_rate` >= 0 AND `position_count` >= 0 AND `asset_version` >= 0 AND `version` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='合约风控保证金投影；Asset为资金账本唯一事实源';
+
+DROP TABLE IF EXISTS `t_contract_account_liquidation_item`;
+DROP TABLE IF EXISTS `t_contract_account_liquidation`;
+CREATE TABLE `t_contract_account_liquidation` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL COMMENT '租户ID',
+  `liquidation_no` VARCHAR(64) NOT NULL COMMENT '账户强平批次号',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `margin_asset` VARCHAR(32) NOT NULL COMMENT '全仓风险单元保证金币种',
+  `margin_snapshot_id` BIGINT NOT NULL COMMENT '触发风险快照ID',
+  `margin_snapshot_version` BIGINT NOT NULL COMMENT '触发风险快照版本',
+  `asset_version` BIGINT NOT NULL DEFAULT 0 COMMENT '触发时Asset账户版本',
+  `wallet_balance` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '触发时Asset账户余额',
+  `position_margin` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '触发时仓位保证金合计',
+  `maintenance_margin` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '触发时维持保证金合计',
+  `account_equity` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '触发时账户权益，可为负',
+  `risk_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT '触发时账户风险率',
+  `gross_settlement` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '仓位保证金与未实现盈亏的接管净额',
+  `liquidation_fee` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '账户强平手续费合计',
+  `user_credit` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '应返还用户可用余额',
+  `user_debit` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '应从用户可用余额扣除',
+  `deficit_amount` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '用户余额扣尽后的账户穿仓缺口',
+  `insurance_fund_amount` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '保险基金承接金额',
+  `adl_relief_amount` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT 'ADL累计缓释金额',
+  `adl_qty` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT 'ADL累计接管数量',
+  `position_count` INT NOT NULL DEFAULT 0 COMMENT '接管仓位数',
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1待接管 2资金结算中 3待关仓 4已完成 5人工处理 6保险承接 7自动减仓',
+  `reason` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '触发、恢复或人工处理原因',
+  `started_at` BIGINT NOT NULL DEFAULT 0 COMMENT '开始时间',
+  `completed_at` BIGINT NOT NULL DEFAULT 0 COMMENT '完成时间',
+  `version` BIGINT NOT NULL DEFAULT 0 COMMENT '并发版本号',
+  `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_tenant_account_liquidation_no` (`tenant_id`,`liquidation_no`),
+  KEY `idx_cross_account_active` (`tenant_id`,`user_id`,`margin_asset`,`status`,`update_times`),
+  CONSTRAINT `chk_cross_account_liquidation` CHECK (`margin_snapshot_id` > 0 AND `margin_snapshot_version` > 0 AND `asset_version` >= 0 AND `wallet_balance` >= 0 AND `position_margin` >= 0 AND `maintenance_margin` >= 0 AND `risk_rate` >= 0 AND `liquidation_fee` >= 0 AND `user_credit` >= 0 AND `user_debit` >= 0 AND `deficit_amount` >= 0 AND `insurance_fund_amount` >= 0 AND `adl_relief_amount` >= 0 AND `adl_qty` >= 0 AND `position_count` >= 0 AND `status` IN (1,2,3,4,5,6,7) AND `version` >= 0)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='全仓账户级强平父Saga';
+
+CREATE TABLE `t_contract_account_liquidation_item` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL COMMENT '租户ID',
+  `account_liquidation_id` BIGINT NOT NULL COMMENT '账户强平批次ID',
+  `liquidation_no` VARCHAR(64) NOT NULL COMMENT '账户强平批次号',
+  `position_id` BIGINT NOT NULL COMMENT '接管仓位ID',
+  `position_version` BIGINT NOT NULL COMMENT '接管后的仓位版本',
+  `symbol_id` BIGINT NOT NULL COMMENT '交易标的ID',
+  `position_side` TINYINT NOT NULL COMMENT '仓位方向',
+  `trigger_qty` DECIMAL(36,18) NOT NULL COMMENT '接管数量',
+  `trigger_mark_price` DECIMAL(36,18) NOT NULL COMMENT '接管标记价格',
+  `trigger_snapshot_id` VARCHAR(64) NOT NULL COMMENT '接管标记价格快照',
+  `position_margin` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '释放仓位保证金',
+  `maintenance_margin` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '接管维持保证金',
+  `realized_pnl` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '按接管标记价实现盈亏',
+  `liquidation_fee` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '分摊强平手续费',
+  `deficit_amount` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '分摊到仓位的ADL目标缺口',
+  `bankruptcy_price` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '按分摊缺口冻结的合成破产价',
+  `adl_relief_amount` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '仓位ADL累计缓释金额',
+  `adl_qty` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '仓位ADL累计接管数量',
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1已锁定 2已关仓',
+  `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_cross_account_position` (`tenant_id`,`account_liquidation_id`,`position_id`),
+  KEY `idx_cross_account_items` (`tenant_id`,`liquidation_no`,`status`,`id`),
+  CONSTRAINT `chk_cross_account_liquidation_item` CHECK (`position_version` > 0 AND `position_side` IN (1,2,3) AND `trigger_qty` > 0 AND `trigger_mark_price` > 0 AND `position_margin` >= 0 AND `maintenance_margin` >= 0 AND `liquidation_fee` >= 0 AND `deficit_amount` >= 0 AND `bankruptcy_price` >= 0 AND `adl_relief_amount` >= 0 AND `adl_qty` >= 0 AND `status` IN (1,2))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='全仓账户级强平仓位明细';
 
 DROP TABLE IF EXISTS `t_contract_position_history`;
 CREATE TABLE `t_contract_position_history` (

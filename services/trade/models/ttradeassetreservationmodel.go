@@ -24,12 +24,29 @@ type (
 		BeginRelease(ctx context.Context, id int64, updateTimes int64) (bool, error)
 		MarkSettlementFailure(ctx context.Context, id, retryStatus int64, terminal bool, nextRetryAt int64, message string, updateTimes int64) error
 		FindOneByReservationNoForUpdate(ctx context.Context, tenantID int64, reservationNo string) (*TTradeAssetReservation, error)
+		CountUnsettledCrossMarginByRiskUnit(ctx context.Context, tenantID, userID int64, marginAsset string) (int64, error)
 	}
 
 	customTTradeAssetReservationModel struct {
 		*defaultTTradeAssetReservationModel
 	}
 )
+
+func (m *defaultTTradeAssetReservationModel) CountUnsettledCrossMarginByRiskUnit(
+	ctx context.Context, tenantID, userID int64, marginAsset string,
+) (int64, error) {
+	var count int64
+	err := m.QueryRowNoCacheCtx(ctx, &count, `SELECT COUNT(1)
+FROM t_trade_asset_reservation r
+JOIN t_trade_order_contract c
+  ON c.tenant_id=r.tenant_id AND c.order_id=r.order_id
+JOIN t_trade_order o
+  ON o.tenant_id=r.tenant_id AND o.id=r.order_id
+WHERE r.tenant_id=? AND o.user_id=? AND c.margin_mode=1 AND c.margin_asset=?
+  AND r.reserved_amount>r.consumed_amount+r.released_amount`,
+		tenantID, userID, marginAsset)
+	return count, err
+}
 
 // NewTTradeAssetReservationModel returns a model for the database table.
 func NewTTradeAssetReservationModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TTradeAssetReservationModel {

@@ -232,22 +232,28 @@ type ContractLeverageConfig struct {
 }
 
 type ContractMarginSnapshot struct {
-	Id               int64  `json:"id"`
-	TenantId         int64  `json:"tenantId"`
-	UserId           int64  `json:"userId"`
-	MarginAsset      string `json:"marginAsset"`
-	WalletBalance    string `json:"walletBalance" validate:"decimal_36_18"`
-	AvailableBalance string `json:"availableBalance" validate:"decimal_36_18"`
-	FrozenBalance    string `json:"frozenBalance" validate:"decimal_36_18"`
-	PositionMargin   string `json:"positionMargin" validate:"decimal_36_18"`
-	OrderMargin      string `json:"orderMargin" validate:"decimal_36_18"`
-	UnrealizedPnl    string `json:"unrealizedPnl" validate:"decimal_36_18"`
-	RealizedPnl      string `json:"realizedPnl" validate:"decimal_36_18"`
-	Version          int64  `json:"version"`
-	SourceEventNo    string `json:"sourceEventNo"`
-	SnapshotTime     int64  `json:"snapshotTime"`
-	CreateTimes      int64  `json:"createTimes"`
-	UpdateTimes      int64  `json:"updateTimes"`
+	Id                int64  `json:"id"`
+	TenantId          int64  `json:"tenantId"`
+	UserId            int64  `json:"userId"`
+	MarginAsset       string `json:"marginAsset"`
+	WalletBalance     string `json:"walletBalance" validate:"decimal_36_18"`
+	AvailableBalance  string `json:"availableBalance" validate:"decimal_36_18"`
+	FrozenBalance     string `json:"frozenBalance" validate:"decimal_36_18"`
+	PositionMargin    string `json:"positionMargin" validate:"decimal_36_18"`
+	OrderMargin       string `json:"orderMargin" validate:"decimal_36_18"`
+	MaintenanceMargin string `json:"maintenanceMargin" validate:"decimal_36_18"`
+	AccountEquity     string `json:"accountEquity" validate:"decimal_36_18"`
+	AvailableMargin   string `json:"availableMargin" validate:"decimal_36_18"`
+	RiskRate          string `json:"riskRate" validate:"decimal_20_10"`
+	PositionCount     int64  `json:"positionCount"`
+	AssetVersion      int64  `json:"assetVersion"`
+	UnrealizedPnl     string `json:"unrealizedPnl" validate:"decimal_36_18"`
+	RealizedPnl       string `json:"realizedPnl" validate:"decimal_36_18"`
+	Version           int64  `json:"version"`
+	SourceEventNo     string `json:"sourceEventNo"`
+	SnapshotTime      int64  `json:"snapshotTime"`
+	CreateTimes       int64  `json:"createTimes"`
+	UpdateTimes       int64  `json:"updateTimes"`
 }
 
 type ContractPosition struct {
@@ -258,6 +264,7 @@ type ContractPosition struct {
 	ContractType      int64  `json:"contractType"`
 	ContractValueType int64  `json:"contractValueType"`
 	PositionSide      int64  `json:"positionSide"`
+	PositionMode      int64  `json:"positionMode"`
 	MarginMode        int64  `json:"marginMode"`
 	Leverage          int64  `json:"leverage"` // 杠杆倍数
 	Qty               string `json:"qty" validate:"decimal_36_18"`

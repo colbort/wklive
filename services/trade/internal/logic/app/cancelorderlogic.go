@@ -14,7 +14,6 @@ import (
 	"wklive/services/trade/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type CancelOrderLogic struct {
@@ -62,10 +61,9 @@ func (l *CancelOrderLogic) CancelOrder(in *trade.CancelOrderReq) (*trade.UserCom
 		return nil, err
 	}
 	var canceledOrder *models.TTradeOrder
-	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		orderModel := models.NewTTradeOrderModel(conn, l.svcCtx.Config.CacheRedis)
-		cancelLogModel := models.NewTTradeCancelLogModel(conn, l.svcCtx.Config.CacheRedis)
+	err = l.svcCtx.TransactionModel.TransactOnce(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		orderModel := tx.TradeOrder
+		cancelLogModel := tx.TradeCancelLog
 
 		locked, err := orderModel.FindOneForUpdate(ctx, item.Id)
 		if err != nil {

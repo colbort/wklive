@@ -68,7 +68,7 @@ func taskHandlerFor(action string) taskHandler {
 		}
 	case tasks.ActionTradeProcessSecondsSettlements:
 		return func(ctx context.Context, svcCtx *svc.ServiceContext, req *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
-			return logic.NewProcessSecondsSettlementsTaskLogic(ctx, svcCtx).ProcessSecondsSettlements(req)
+			return logic.NewProcessSecondsSettlementsLogic(ctx, svcCtx).ProcessSecondsSettlements(req)
 		}
 	case tasks.ActionTradeProcessTradeEvents:
 		return func(ctx context.Context, svcCtx *svc.ServiceContext, req *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
