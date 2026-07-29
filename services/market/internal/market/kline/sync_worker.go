@@ -403,8 +403,8 @@ func (w *SyncKlinesWorker) getBatchKlines(ctx context.Context, apiURL, token, ca
 	}
 	defer resp.Body.Close()
 	var out struct {
-		Code int                         `json:"code"`
-		Msg  string                      `json:"msg"`
+		Code int                          `json:"code"`
+		Msg  string                       `json:"msg"`
 		Data map[string][]MarketKlineItem `json:"data"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
@@ -552,8 +552,8 @@ func (w *SyncKlinesWorker) bulkUpsertKlines(category, interval string, list []*m
 }
 
 type MarketKlineResponse struct {
-	Code int              `json:"code"`
-	Msg  string           `json:"msg"`
+	Code int               `json:"code"`
+	Msg  string            `json:"msg"`
 	Data []MarketKlineItem `json:"data"`
 }
 

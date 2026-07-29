@@ -8,7 +8,7 @@ import (
 	"context"
 
 	"wklive/proto/market"
-	tasklogic "wklive/services/market/internal/logic/task"
+	"wklive/services/market/internal/logic/task"
 	"wklive/services/market/internal/svc"
 )
 

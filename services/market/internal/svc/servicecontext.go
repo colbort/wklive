@@ -32,39 +32,39 @@ import (
 )
 
 type ServiceContext struct {
-	Config                      config.Config
+	Config                       config.Config
 	MarketRuntimeConfig          *config.MarketRuntimeConf
 	MarketManager                *client.MarketManager
-	MarketDataCache             *icache.MarketDataCache
-	DataCache                   *redis.Client
-	LockRedis                   *redis.Client
-	TaskSubscriber              *mq.Subscriber
-	SnapshotPublisher           *mq.Publisher
-	OperationalAlertNotifier    alert.Notifier
-	Cache                       cache.Cache
-	Factory                     *models.CoinKlineModelFactory
-	Writer                      *klinewriter.BatchWriter
-	RebuildDerivedKlines        func([]*models.CoinKline) error
-	RebuildHistoricalKlines     func([]*models.CoinKline) error
+	MarketDataCache              *icache.MarketDataCache
+	DataCache                    *redis.Client
+	LockRedis                    *redis.Client
+	TaskSubscriber               *mq.Subscriber
+	SnapshotPublisher            *mq.Publisher
+	OperationalAlertNotifier     alert.Notifier
+	Cache                        cache.Cache
+	Factory                      *models.CoinKlineModelFactory
+	Writer                       *klinewriter.BatchWriter
+	RebuildDerivedKlines         func([]*models.CoinKline) error
+	RebuildHistoricalKlines      func([]*models.CoinKline) error
 	MarketCategoryModel          models.TMarketCategoryModel
 	MarketProductModel           models.TMarketProductModel
 	MarketTenantCategoryModel    models.TMarketTenantCategoryModel
 	MarketTenantProductModel     models.TMarketTenantProductModel
 	MarketSyncTaskModel          models.TMarketSyncTaskModel
 	MarketQuoteModel             models.TMarketQuoteModel
-	AuthoritativeSnapshotModel  models.TMarketAuthoritativeSnapshotModel
-	SnapshotOutboxModel         models.TMarketSnapshotOutboxModel
-	SnapshotRevocationModel     models.TMarketSnapshotRevocationModel
-	PriceFormulaModel           models.TMarketPriceFormulaModel
-	PriceEngine                 *priceengine.Engine
-	AuthorityRegistryModel      AuthorityRegistryStore
-	AuthorityRegistryAdminModel AuthorityRegistryAdminStore
+	AuthoritativeSnapshotModel   models.TMarketAuthoritativeSnapshotModel
+	SnapshotOutboxModel          models.TMarketSnapshotOutboxModel
+	SnapshotRevocationModel      models.TMarketSnapshotRevocationModel
+	PriceFormulaModel            models.TMarketPriceFormulaModel
+	PriceEngine                  *priceengine.Engine
+	AuthorityRegistryModel       AuthorityRegistryStore
+	AuthorityRegistryAdminModel  AuthorityRegistryAdminStore
 	MarketKlineSyncProgressModel models.TMarketKlineSyncProgressModel
-	MarketCalendarModel         models.TMarketMarketCalendarModel
-	MarketHolidayModel          models.TMarketMarketHolidayModel
-	MarketCalendarResolver      *calendar.Resolver
+	MarketCalendarModel          models.TMarketMarketCalendarModel
+	MarketHolidayModel           models.TMarketMarketHolidayModel
+	MarketCalendarResolver       *calendar.Resolver
 	MarketRestClient             *marketrest.Client
-	AuthoritativeQuoteHandler   func(context.Context, types.ClientMessage, *types.QuotePayload) error
+	AuthoritativeQuoteHandler    func(context.Context, types.ClientMessage, *types.QuotePayload) error
 }
 
 type AuthorityRegistryStore interface {
@@ -190,36 +190,36 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	marketManager.SetQuoteHandler(authoritativeQuoteHandler)
 
 	return &ServiceContext{
-		Config:                      c,
+		Config:                       c,
 		MarketManager:                marketManager,
-		MarketDataCache:             marketDataCache,
-		DataCache:                   dataCache,
-		LockRedis:                   lockRedis,
-		TaskSubscriber:              taskSubscriber,
-		SnapshotPublisher:           snapshotPublisher,
-		OperationalAlertNotifier:    adminnotify.New(snapshotPublisher),
-		Cache:                       cache.New(c.CacheRedis, syncx.NewSingleFlight(), cache.NewStat("quote"), redis.Nil),
-		Factory:                     factory,
-		Writer:                      writer,
+		MarketDataCache:              marketDataCache,
+		DataCache:                    dataCache,
+		LockRedis:                    lockRedis,
+		TaskSubscriber:               taskSubscriber,
+		SnapshotPublisher:            snapshotPublisher,
+		OperationalAlertNotifier:     adminnotify.New(snapshotPublisher),
+		Cache:                        cache.New(c.CacheRedis, syncx.NewSingleFlight(), cache.NewStat("quote"), redis.Nil),
+		Factory:                      factory,
+		Writer:                       writer,
 		MarketCategoryModel:          marketCategoryModel,
 		MarketProductModel:           marketProductModel,
 		MarketTenantCategoryModel:    marketTenantCategoryModel,
 		MarketTenantProductModel:     marketTenantProductModel,
 		MarketSyncTaskModel:          marketSyncTaskModel,
 		MarketQuoteModel:             marketQuoteModel,
-		AuthoritativeSnapshotModel:  authoritativeSnapshotModel,
-		SnapshotOutboxModel:         snapshotOutboxModel,
-		SnapshotRevocationModel:     snapshotRevocationModel,
-		PriceFormulaModel:           priceFormulaModel,
-		PriceEngine:                 priceengine.New(priceFormulaModel, authoritativeSnapshotModel),
-		AuthorityRegistryModel:      authorityRegistryModel,
-		AuthorityRegistryAdminModel: authorityRegistryModel,
+		AuthoritativeSnapshotModel:   authoritativeSnapshotModel,
+		SnapshotOutboxModel:          snapshotOutboxModel,
+		SnapshotRevocationModel:      snapshotRevocationModel,
+		PriceFormulaModel:            priceFormulaModel,
+		PriceEngine:                  priceengine.New(priceFormulaModel, authoritativeSnapshotModel),
+		AuthorityRegistryModel:       authorityRegistryModel,
+		AuthorityRegistryAdminModel:  authorityRegistryModel,
 		MarketKlineSyncProgressModel: marketKlineSyncProgressModel,
-		MarketCalendarModel:         marketCalendarModel,
-		MarketHolidayModel:          marketHolidayModel,
-		MarketCalendarResolver:      marketCalendarResolver,
+		MarketCalendarModel:          marketCalendarModel,
+		MarketHolidayModel:           marketHolidayModel,
+		MarketCalendarResolver:       marketCalendarResolver,
 		MarketRestClient:             marketRestClient,
-		AuthoritativeQuoteHandler:   authoritativeQuoteHandler,
+		AuthoritativeQuoteHandler:    authoritativeQuoteHandler,
 	}
 }
 

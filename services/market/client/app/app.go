@@ -47,9 +47,9 @@ type (
 	GetTenantCategoryResp          = market.GetTenantCategoryResp
 	GetTenantProductReq            = market.GetTenantProductReq
 	GetTenantProductResp           = market.GetTenantProductResp
-	InitTenantMarketDisplayData     = market.InitTenantMarketDisplayData
-	InitTenantMarketDisplayReq      = market.InitTenantMarketDisplayReq
-	InitTenantMarketDisplayResp     = market.InitTenantMarketDisplayResp
+	InitTenantMarketDisplayData    = market.InitTenantMarketDisplayData
+	InitTenantMarketDisplayReq     = market.InitTenantMarketDisplayReq
+	InitTenantMarketDisplayResp    = market.InitTenantMarketDisplayResp
 	KlineInterval                  = market.KlineInterval
 	KlineIntervalsResp             = market.KlineIntervalsResp
 	ListAuthorityRegistriesReq     = market.ListAuthorityRegistriesReq

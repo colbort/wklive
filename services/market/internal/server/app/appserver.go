@@ -8,7 +8,7 @@ import (
 	"context"
 
 	"wklive/proto/market"
-	applogic "wklive/services/market/internal/logic/app"
+	"wklive/services/market/internal/logic/app"
 	"wklive/services/market/internal/svc"
 )
 
