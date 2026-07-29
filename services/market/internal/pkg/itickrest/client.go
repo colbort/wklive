@@ -1,4 +1,4 @@
-package marketrest
+package itickrest
 
 import (
 	"context"

@@ -230,7 +230,7 @@ func (w *SyncCategoryProductsWorker) getSymbolList(ctx context.Context, apiURL, 
 	q.Set("code", "")
 	base.RawQuery = q.Encode()
 
-	resp, err := w.svcCtx.MarketRestClient.Get(ctx, base.String())
+	resp, err := w.svcCtx.ITickRestClient.Get(ctx, base.String())
 	if err != nil {
 		return nil, i18n.StatusError(ctx, i18n.ServiceUnavailable)
 	}

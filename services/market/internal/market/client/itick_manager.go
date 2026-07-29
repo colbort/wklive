@@ -13,7 +13,7 @@ import (
 
 	"wklive/services/market/internal/market/cache"
 	"wklive/services/market/internal/market/types"
-	"wklive/services/market/internal/pkg/marketrest"
+	"wklive/services/market/internal/pkg/itickrest"
 	"wklive/services/market/internal/pkg/utils"
 	"wklive/services/market/models"
 
@@ -34,7 +34,7 @@ type MarketManager struct {
 	preheater   *cache.MarketDataPreheater
 
 	mu      sync.RWMutex
-	clients map[string]*MarketWsClient
+	clients map[string]*ITickWsClient
 
 	startMu sync.Mutex
 	started bool
@@ -109,7 +109,7 @@ func (m *MarketManager) refreshActiveProductSubscriptions(ctx context.Context, w
 		byCategory[msg.CategoryCode][cache.BuildTopicKey(msg)] = msg
 	}
 	m.mu.RLock()
-	clients := make(map[string]*MarketWsClient, len(m.clients))
+	clients := make(map[string]*ITickWsClient, len(m.clients))
 	for category, cli := range m.clients {
 		clients[category] = cli
 	}
@@ -191,7 +191,7 @@ func NewMarketManager(
 	busRedis *redis.Client,
 	lockRedis *redis.Client,
 	marketCache *cache.MarketDataCache,
-	restClient *marketrest.Client,
+	restClient *itickrest.Client,
 ) *MarketManager {
 	return &MarketManager{
 		wsUrl:           wsUrl,
@@ -202,7 +202,7 @@ func NewMarketManager(
 		lockRedis:       lockRedis,
 		marketCache:     marketCache,
 		preheater:       cache.NewMarketDataPreheater(apiURL, marketCache, restClient),
-		clients:         make(map[string]*MarketWsClient),
+		clients:         make(map[string]*ITickWsClient),
 		recoveryRunning: make(map[string]bool),
 	}
 }
@@ -213,7 +213,7 @@ func (m *MarketManager) Load(ctx context.Context) error {
 		return err
 	}
 
-	newClients := make(map[string]*MarketWsClient)
+	newClients := make(map[string]*ITickWsClient)
 	connectLimiter := NewRedisConnectLimiter(m.lockRedis)
 
 	for _, item := range categories {
@@ -285,7 +285,7 @@ func (m *MarketManager) Start(ctx context.Context) error {
 	m.startMu.Unlock()
 
 	m.mu.RLock()
-	clients := make([]*MarketWsClient, 0, len(m.clients))
+	clients := make([]*ITickWsClient, 0, len(m.clients))
 	for _, cli := range m.clients {
 		clients = append(clients, cli)
 	}

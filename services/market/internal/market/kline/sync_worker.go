@@ -397,7 +397,7 @@ func (w *SyncKlinesWorker) getBatchKlines(ctx context.Context, apiURL, token, ca
 		q.Set("exchange", exchange)
 	}
 	base.RawQuery = q.Encode()
-	resp, err := w.svcCtx.MarketRestClient.Get(ctx, base.String())
+	resp, err := w.svcCtx.ITickRestClient.Get(ctx, base.String())
 	if err != nil {
 		return nil, err
 	}
@@ -611,7 +611,7 @@ func (w *SyncKlinesWorker) getSingleKline(
 		q.Set("et", strconv.FormatInt(et, 10))
 	}
 	base.RawQuery = q.Encode()
-	resp, err := w.svcCtx.MarketRestClient.Get(ctx, base.String())
+	resp, err := w.svcCtx.ITickRestClient.Get(ctx, base.String())
 	if err != nil {
 		return nil, err
 	}

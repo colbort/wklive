@@ -81,7 +81,7 @@ kline@5, kline@8, kline@9, kline@10
 
 内部先使用 `1m/5m/15m/30m/1h/1d/1w/1mo`，发送前由 `IntervalToStream` 转换成 iTick 的 `kline@N`。
 
-订阅按 `categoryCode` 分给对应的 `MarketWsClient`，保存在进程内存 `desiredSubs`。它是完整快照替换，不是逐条追加。连接认证成功、订阅变化或重连后，`syncDesiredSubscriptions` 负责退订旧组合、订阅新组合。
+订阅按 `categoryCode` 分给对应的 `ITickWsClient`，保存在进程内存 `desiredSubs`。它是完整快照替换，不是逐条追加。连接认证成功、订阅变化或重连后，`syncDesiredSubscriptions` 负责退订旧组合、订阅新组合。
 
 服务启动、创建/更新/批量更新租户产品时会刷新订阅集合。
 

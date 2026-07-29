@@ -6,8 +6,7 @@ import (
 	"net/http"
 	"strings"
 	"testing"
-
-	"wklive/services/market/internal/pkg/marketrest"
+	"wklive/services/market/internal/pkg/itickrest"
 )
 
 type roundTripFunc func(*http.Request) (*http.Response, error)
@@ -15,7 +14,7 @@ type roundTripFunc func(*http.Request) (*http.Response, error)
 func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) { return f(req) }
 
 func TestHolidaySyncFetch(t *testing.T) {
-	restClient := marketrest.New("token", nil, &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+	restClient := itickrest.New("token", nil, &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
 		if r.URL.Path != "/symbol/v2/holidays" || r.URL.Query().Get("code") != "HK" {
 			t.Fatalf("unexpected request: %s", r.URL.String())
 		}

@@ -15,8 +15,8 @@ import (
 	"wklive/services/market/internal/market/calendar"
 	"wklive/services/market/internal/market/client"
 	"wklive/services/market/internal/market/types"
+	"wklive/services/market/internal/pkg/itickrest"
 	"wklive/services/market/internal/pkg/klinewriter"
-	"wklive/services/market/internal/pkg/marketrest"
 	"wklive/services/market/internal/priceengine"
 	"wklive/services/market/models"
 
@@ -63,7 +63,7 @@ type ServiceContext struct {
 	MarketCalendarModel          models.TMarketMarketCalendarModel
 	MarketHolidayModel           models.TMarketMarketHolidayModel
 	MarketCalendarResolver       *calendar.Resolver
-	MarketRestClient             *marketrest.Client
+	ITickRestClient              *itickrest.Client
 	AuthoritativeQuoteHandler    func(context.Context, types.ClientMessage, *types.QuotePayload) error
 }
 
@@ -90,7 +90,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		restRateBurst = 1
 	}
 	marketRestLimiter := rate.NewLimiter(rate.Limit(float64(restRatePerMinute)/60.0), restRateBurst)
-	marketRestClient := marketrest.New(c.Market.Token, marketRestLimiter, nil)
+	iTickRestClient := itickrest.New(c.Market.Token, marketRestLimiter, nil)
 
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 
@@ -150,7 +150,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		dataCache,
 		lockRedis,
 		marketDataCache,
-		marketRestClient,
+		iTickRestClient,
 	)
 	authoritativeQuoteHandler := func(_ context.Context, msg types.ClientMessage, payload *types.QuotePayload) error {
 		rpcCtx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -218,7 +218,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		MarketCalendarModel:          marketCalendarModel,
 		MarketHolidayModel:           marketHolidayModel,
 		MarketCalendarResolver:       marketCalendarResolver,
-		MarketRestClient:             marketRestClient,
+		ITickRestClient:              iTickRestClient,
 		AuthoritativeQuoteHandler:    authoritativeQuoteHandler,
 	}
 }

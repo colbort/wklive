@@ -48,7 +48,7 @@ func (e *wsHandshakeError) Error() string {
 
 func (e *wsHandshakeError) Unwrap() error { return e.err }
 
-type MarketWsClient struct {
+type ITickWsClient struct {
 	url          string
 	token        string
 	categoryCode string
@@ -80,8 +80,8 @@ func NewMarketWsClient(
 	marketCache *cache.MarketDataCache,
 	locker *RedisLeaderLock,
 	connectLimiter *RedisConnectLimiter,
-) *MarketWsClient {
-	return &MarketWsClient{
+) *ITickWsClient {
+	return &ITickWsClient{
 		url:          url,
 		token:        token,
 		categoryCode: categoryCode,
@@ -96,20 +96,20 @@ func NewMarketWsClient(
 	}
 }
 
-func (c *MarketWsClient) Start(ctx context.Context) {
+func (c *ITickWsClient) Start(ctx context.Context) {
 	if !atomic.CompareAndSwapInt32(&c.started, 0, 1) {
 		return
 	}
 	go c.leaderLoop(ctx)
 }
 
-func (c *MarketWsClient) HasDesiredSubscriptions() bool {
+func (c *ITickWsClient) HasDesiredSubscriptions() bool {
 	c.subMu.Lock()
 	defer c.subMu.Unlock()
 	return len(c.desiredSubs) > 0
 }
 
-func (c *MarketWsClient) leaderLoop(ctx context.Context) {
+func (c *ITickWsClient) leaderLoop(ctx context.Context) {
 	for {
 		if ctx.Err() != nil {
 			return
@@ -171,7 +171,7 @@ func (c *MarketWsClient) leaderLoop(ctx context.Context) {
 	}
 }
 
-func (c *MarketWsClient) renewLoop(ctx context.Context, token string, lostCh chan<- struct{}, cancel context.CancelFunc) {
+func (c *ITickWsClient) renewLoop(ctx context.Context, token string, lostCh chan<- struct{}, cancel context.CancelFunc) {
 	ticker := time.NewTicker(defaultLeaderRenewGap)
 	defer ticker.Stop()
 
@@ -195,7 +195,7 @@ func (c *MarketWsClient) renewLoop(ctx context.Context, token string, lostCh cha
 	}
 }
 
-func (c *MarketWsClient) handleLeaderLost(lostCh chan<- struct{}, cancel context.CancelFunc) {
+func (c *ITickWsClient) handleLeaderLost(lostCh chan<- struct{}, cancel context.CancelFunc) {
 	select {
 	case lostCh <- struct{}{}:
 	default:
@@ -204,7 +204,7 @@ func (c *MarketWsClient) handleLeaderLost(lostCh chan<- struct{}, cancel context
 	c.closeConn()
 }
 
-func (c *MarketWsClient) runAsLeader(ctx context.Context) error {
+func (c *ITickWsClient) runAsLeader(ctx context.Context) error {
 	reconnectDelay := defaultReconnectDelay
 	for {
 		if ctx.Err() != nil {
@@ -277,11 +277,11 @@ func (c *MarketWsClient) runAsLeader(ctx context.Context) error {
 	}
 }
 
-func (c *MarketWsClient) SetReconnectHandler(handler func(string)) {
+func (c *ITickWsClient) SetReconnectHandler(handler func(string)) {
 	c.onReconnect = handler
 }
 
-func (c *MarketWsClient) connect() error {
+func (c *ITickWsClient) connect() error {
 	header := http.Header{}
 	header.Set("token", c.token)
 
@@ -325,7 +325,7 @@ func parseRetryAfter(value string) time.Duration {
 	return 30 * time.Second
 }
 
-func (c *MarketWsClient) keepaliveLoop(conn *websocket.Conn) {
+func (c *ITickWsClient) keepaliveLoop(conn *websocket.Conn) {
 	ticker := time.NewTicker(defaultPingPeriod)
 	defer ticker.Stop()
 
@@ -346,7 +346,7 @@ func (c *MarketWsClient) keepaliveLoop(conn *websocket.Conn) {
 	}
 }
 
-func (c *MarketWsClient) readLoop(ctx context.Context) error {
+func (c *ITickWsClient) readLoop(ctx context.Context) error {
 	c.mu.RLock()
 	conn := c.conn
 	c.mu.RUnlock()
@@ -375,7 +375,7 @@ func isNormalWsClose(err error) bool {
 	return websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway)
 }
 
-func (c *MarketWsClient) waitAuthenticated(ctx context.Context) error {
+func (c *ITickWsClient) waitAuthenticated(ctx context.Context) error {
 	c.mu.RLock()
 	conn := c.conn
 	c.mu.RUnlock()
@@ -434,7 +434,7 @@ func (c *MarketWsClient) waitAuthenticated(ctx context.Context) error {
 	}
 }
 
-func (c *MarketWsClient) handleUpstreamMessage(ctx context.Context, data []byte) {
+func (c *ITickWsClient) handleUpstreamMessage(ctx context.Context, data []byte) {
 	var env types.UpstreamEnvelope
 	if err := json.Unmarshal(data, &env); err != nil {
 		logx.Errorf("market ws unmarshal envelope failed: %v", err)
@@ -444,7 +444,7 @@ func (c *MarketWsClient) handleUpstreamMessage(ctx context.Context, data []byte)
 	c.handleUpstreamEnvelope(ctx, env)
 }
 
-func (c *MarketWsClient) handleUpstreamEnvelope(ctx context.Context, env types.UpstreamEnvelope) {
+func (c *ITickWsClient) handleUpstreamEnvelope(ctx context.Context, env types.UpstreamEnvelope) {
 	if env.ResAc != "" {
 		switch env.ResAc {
 		case "auth", "subscribe", "unsubscribe":
@@ -563,11 +563,11 @@ func rawDecimalToken(data json.RawMessage, field string) string {
 	return raw
 }
 
-func (c *MarketWsClient) restoreSubscriptions(_ context.Context) error {
+func (c *ITickWsClient) restoreSubscriptions(_ context.Context) error {
 	return c.syncDesiredSubscriptions()
 }
 
-func (c *MarketWsClient) replaceDesiredSubscriptions(items map[string]types.ClientMessage) error {
+func (c *ITickWsClient) replaceDesiredSubscriptions(items map[string]types.ClientMessage) error {
 	next := make(map[string]types.ClientMessage, len(items))
 	for key, msg := range items {
 		if _, _, err := c.buildMarketSubscribe(msg); err != nil {
@@ -592,7 +592,7 @@ func (c *MarketWsClient) replaceDesiredSubscriptions(items map[string]types.Clie
 	return c.syncDesiredSubscriptions()
 }
 
-func (c *MarketWsClient) syncDesiredSubscriptions() error {
+func (c *ITickWsClient) syncDesiredSubscriptions() error {
 	c.subMu.Lock()
 	desired := make(map[string]types.ClientMessage, len(c.desiredSubs))
 	for key, msg := range c.desiredSubs {
@@ -723,7 +723,7 @@ func roundDepthVolume(value float64) float64 {
 	return math.Round(value*1e5) / 1e5
 }
 
-func (c *MarketWsClient) buildSubscriptionGroups(items map[string]types.ClientMessage) (map[string]string, error) {
+func (c *ITickWsClient) buildSubscriptionGroups(items map[string]types.ClientMessage) (map[string]string, error) {
 	groupSets := make(map[string]map[string]struct{})
 	for key, msg := range items {
 		params, types, err := c.buildMarketSubscribe(msg)
@@ -756,7 +756,7 @@ func (c *MarketWsClient) buildSubscriptionGroups(items map[string]types.ClientMe
 	return groups, nil
 }
 
-func (c *MarketWsClient) buildMarketSubscribe(msg types.ClientMessage) (string, string, error) {
+func (c *ITickWsClient) buildMarketSubscribe(msg types.ClientMessage) (string, string, error) {
 	if msg.Symbol == "" || msg.Market == "" {
 		return "", "", errors.New("symbol or market is empty")
 	}
@@ -784,7 +784,7 @@ func (c *MarketWsClient) buildMarketSubscribe(msg types.ClientMessage) (string, 
 	return params, tys, nil
 }
 
-func (c *MarketWsClient) subscribe(params string, tys string) error {
+func (c *ITickWsClient) subscribe(params string, tys string) error {
 	req := types.SubscribeReq{
 		Ac:     "subscribe",
 		Params: params,
@@ -799,7 +799,7 @@ func (c *MarketWsClient) subscribe(params string, tys string) error {
 	return nil
 }
 
-func (c *MarketWsClient) unsubscribe(params string, tys string) error {
+func (c *ITickWsClient) unsubscribe(params string, tys string) error {
 	req := types.UnsubscribeReq{
 		Ac:     "unsubscribe",
 		Params: params,
@@ -814,7 +814,7 @@ func (c *MarketWsClient) unsubscribe(params string, tys string) error {
 	return nil
 }
 
-func (c *MarketWsClient) writeJSON(v any) error {
+func (c *ITickWsClient) writeJSON(v any) error {
 	c.mu.RLock()
 	conn := c.conn
 	c.mu.RUnlock()
@@ -830,7 +830,7 @@ func (c *MarketWsClient) writeJSON(v any) error {
 	return conn.WriteJSON(v)
 }
 
-func (c *MarketWsClient) writePing(conn *websocket.Conn) error {
+func (c *ITickWsClient) writePing(conn *websocket.Conn) error {
 	ts := strconv.FormatInt(cutils.NowMillis(), 10)
 	req := types.PingReq{
 		Ac:     "ping",
@@ -849,11 +849,11 @@ func (c *MarketWsClient) writePing(conn *websocket.Conn) error {
 	return conn.WriteJSON(req)
 }
 
-func (c *MarketWsClient) IsLeader() bool {
+func (c *ITickWsClient) IsLeader() bool {
 	return atomic.LoadInt32(&c.leader) == 1
 }
 
-func (c *MarketWsClient) canSyncSubscriptions() bool {
+func (c *ITickWsClient) canSyncSubscriptions() bool {
 	if !c.IsLeader() || atomic.LoadInt32(&c.authenticated) != 1 {
 		return false
 	}
@@ -862,7 +862,7 @@ func (c *MarketWsClient) canSyncSubscriptions() bool {
 	return c.conn != nil
 }
 
-func (c *MarketWsClient) closeConn() {
+func (c *ITickWsClient) closeConn() {
 	atomic.StoreInt32(&c.authenticated, 0)
 	c.mu.Lock()
 	conn := c.conn
@@ -875,7 +875,7 @@ func (c *MarketWsClient) closeConn() {
 	}
 }
 
-func (c *MarketWsClient) resetUpstreamGroups() {
+func (c *ITickWsClient) resetUpstreamGroups() {
 	c.subMu.Lock()
 	defer c.subMu.Unlock()
 

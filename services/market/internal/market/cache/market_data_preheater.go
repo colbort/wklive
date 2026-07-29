@@ -8,8 +8,11 @@ import (
 	"path"
 	"strings"
 	"sync"
+
+	// "wklive/services/market/internal/market/client"
+
 	"wklive/services/market/internal/market/types"
-	"wklive/services/market/internal/pkg/marketrest"
+	"wklive/services/market/internal/pkg/itickrest"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/mr"
@@ -18,12 +21,12 @@ import (
 type MarketDataPreheater struct {
 	apiURL      string
 	cache       *MarketDataCache
-	restClient  *marketrest.Client
+	restClient  *itickrest.Client
 	mu          sync.RWMutex
 	unsupported map[string]struct{}
 }
 
-func NewMarketDataPreheater(apiURL string, cache *MarketDataCache, restClient *marketrest.Client) *MarketDataPreheater {
+func NewMarketDataPreheater(apiURL string, cache *MarketDataCache, restClient *itickrest.Client) *MarketDataPreheater {
 	return &MarketDataPreheater{
 		apiURL:      strings.TrimRight(strings.TrimSpace(apiURL), "/"),
 		cache:       cache,

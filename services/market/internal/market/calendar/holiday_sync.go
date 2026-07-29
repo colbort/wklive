@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"wklive/services/market/internal/pkg/marketrest"
+	"wklive/services/market/internal/pkg/itickrest"
 	"wklive/services/market/internal/pkg/utils"
 	"wklive/services/market/models"
 
@@ -32,7 +32,7 @@ type HolidaySyncService struct {
 	holiday    models.TMarketMarketHolidayModel
 	resolver   *Resolver
 	lock       *utils.RedisLock
-	restClient *marketrest.Client
+	restClient *itickrest.Client
 	interval   time.Duration
 	wg         sync.WaitGroup
 }
@@ -55,7 +55,7 @@ type holidayAPIItem struct {
 func NewHolidaySyncService(
 	parent context.Context,
 	apiURL string,
-	restClient *marketrest.Client,
+	restClient *itickrest.Client,
 	calendar models.TMarketMarketCalendarModel,
 	holiday models.TMarketMarketHolidayModel,
 	resolver *Resolver,

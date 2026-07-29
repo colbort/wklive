@@ -75,7 +75,7 @@ func main() {
 		panic(err)
 	}
 	tasks.StartPriceEngine(ctx, svcCtx.PriceEngine, svcCtx.OperationalAlertNotifier)
-	holidaySync := calendar.NewHolidaySyncService(ctx, c.Market.ApiUrl, svcCtx.MarketRestClient,
+	holidaySync := calendar.NewHolidaySyncService(ctx, c.Market.ApiUrl, svcCtx.ITickRestClient,
 		svcCtx.MarketCalendarModel, svcCtx.MarketHolidayModel, svcCtx.MarketCalendarResolver,
 		utils.NewRedisLock(svcCtx.LockRedis), 24*time.Hour)
 	holidaySync.Start()
