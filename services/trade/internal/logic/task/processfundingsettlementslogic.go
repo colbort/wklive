@@ -23,6 +23,7 @@ import (
 const (
 	noPositionFundingPriceSource    = "NO_POSITION_HISTORY"
 	noPositionFundingFormulaVersion = "no-position-v1"
+	noPositionFundingGraceMs        = int64(5 * 60 * 1000)
 )
 
 var fundingInputRetryGate = newMarkQuoteRetryGate()
@@ -107,9 +108,9 @@ func (l *ProcessFundingSettlementsLogic) createDueBatches(tenantID int64) error 
 			// A past funding point with no position facts has no monetary
 			// effect. Record an explicit completed empty batch so the
 			// scheduler can advance without inventing an authoritative price.
-			// The current funding point still follows the normal price-lock
-			// path, leaving time for delayed position events to arrive.
-			if recoverHistory && settlementTime < currentSettlementTime {
+			// A grace period after the boundary leaves time for delayed
+			// position events to arrive before declaring the point empty.
+			if recoverHistory && fundingPointPastGrace(settlementTime, now) {
 				history, historyErr := l.svcCtx.ContractPositionHistModel.FindLatestBySymbolAt(
 					l.ctx, c.TenantId, c.SymbolId, settlementTime,
 				)
@@ -219,6 +220,10 @@ func (l *ProcessFundingSettlementsLogic) createDueBatches(tenantID int64) error 
 			return nil
 		}
 	}
+}
+
+func fundingPointPastGrace(settlementTime, now int64) bool {
+	return settlementTime > 0 && now >= settlementTime+noPositionFundingGraceMs
 }
 
 func newNoPositionFundingBatch(c *models.TTradeSymbolContract, settlementTime, now int64) *models.TContractFundingBatch {

@@ -198,6 +198,19 @@ func TestFundingPositionsFromHistoryUsesSettlementFacts(t *testing.T) {
 	}
 }
 
+func TestFundingPointPastGrace(t *testing.T) {
+	const settlementTime = int64(1785340800000)
+	if fundingPointPastGrace(settlementTime, settlementTime+noPositionFundingGraceMs-1) {
+		t.Fatal("funding point became empty-eligible before the grace period elapsed")
+	}
+	if !fundingPointPastGrace(settlementTime, settlementTime+noPositionFundingGraceMs) {
+		t.Fatal("funding point did not become empty-eligible after the grace period")
+	}
+	if fundingPointPastGrace(0, settlementTime+noPositionFundingGraceMs) {
+		t.Fatal("invalid settlement time became empty-eligible")
+	}
+}
+
 func TestNewNoPositionFundingBatchIsExplicitAndNonMonetary(t *testing.T) {
 	contract := &models.TTradeSymbolContract{TenantId: 7, SymbolId: 11}
 	const (
