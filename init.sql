@@ -380,7 +380,7 @@ INSERT INTO sys_role_menu (tenant_id, role_id, menu_id) VALUES
 (0, 2, 310),
 (0, 2, 311),
 
--- ITICK数据管理：排除平台产品类型、平台产品，只保留租户相关
+-- Market数据管理：排除平台产品类型、平台产品，只保留租户相关
 (0, 2, 400),
 (0, 2, 401),
 (0, 2, 404),
@@ -648,7 +648,7 @@ VALUES
 
 
 INSERT INTO sys_menu (id, parent_id, app_scope, name, menu_type, icon, sort)
-VALUES (400, 0, 1, 'ITICK数据管理', 1, 'Goods', 400);
+VALUES (400, 0, 1, 'Market数据管理', 1, 'Goods', 400);
 
 INSERT INTO sys_menu (id, parent_id, app_scope, name, menu_type, method, path, perms, component, icon, sort)
 VALUES

@@ -869,7 +869,7 @@ export default {
     '310': 'Recharge Transactions',
 
     // ===== ITICK =====
-    '400': 'ITICK Data',
+    '400': 'Market Data',
     '401': 'Categories',
     '420': 'Products',
     '430': 'Tenant Categories',
