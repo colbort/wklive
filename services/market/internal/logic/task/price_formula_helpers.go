@@ -37,10 +37,13 @@ func normalizePriceFormulaReq(in *market.CreatePriceFormulaReq) ([]priceengine.C
 	}
 	if in.MinInputCount == 0 {
 		in.MinInputCount = int64(len(in.Components))
+		if in.Algorithm == market.PriceAlgorithm_PRICE_ALGORITHM_INDEX_BASIS {
+			in.MinInputCount = 2
+		}
 	}
 	if in.MinInputCount < 1 || in.MinInputCount > int64(len(in.Components)) ||
 		in.Algorithm == market.PriceAlgorithm_PRICE_ALGORITHM_PREMIUM_RATE && in.MinInputCount != 2 ||
-		in.Algorithm == market.PriceAlgorithm_PRICE_ALGORITHM_INDEX_BASIS && in.MinInputCount != int64(len(in.Components)) {
+		in.Algorithm == market.PriceAlgorithm_PRICE_ALGORITHM_INDEX_BASIS && in.MinInputCount != 2 {
 		return nil, errors.New("min_input_count must be within components and formula-required inputs must all be present")
 	}
 	if in.SnapshotKind == "DELIVERY" && in.MinInputCount < 3 {

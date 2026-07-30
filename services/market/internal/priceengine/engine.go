@@ -3,6 +3,7 @@ package priceengine
 import (
 	"context"
 	"crypto/sha256"
+	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -28,19 +29,20 @@ type Component struct {
 }
 
 type EvaluationAudit struct {
-	FormulaNo        string  `json:"formula_no"`
-	FormulaVersion   string  `json:"formula_version"`
-	Algorithm        int64   `json:"algorithm"`
-	TargetTime       int64   `json:"target_time"`
-	AllInputs        []Input `json:"all_inputs"`
-	AcceptedInputs   []Input `json:"accepted_inputs"`
-	RejectedInputs   []Input `json:"rejected_inputs"`
-	MaxDeviationBps  int64   `json:"max_deviation_bps"`
-	MinInputCount    int64   `json:"min_input_count"`
-	RawBasisRate     string  `json:"raw_basis_rate,omitempty"`
-	AppliedBasisRate string  `json:"applied_basis_rate,omitempty"`
-	UnsmoothedMark   string  `json:"unsmoothed_mark,omitempty"`
-	OutputPrice      string  `json:"output_price"`
+	FormulaNo          string  `json:"formula_no"`
+	FormulaVersion     string  `json:"formula_version"`
+	Algorithm          int64   `json:"algorithm"`
+	TargetTime         int64   `json:"target_time"`
+	AllInputs          []Input `json:"all_inputs"`
+	AcceptedInputs     []Input `json:"accepted_inputs"`
+	RejectedInputs     []Input `json:"rejected_inputs"`
+	MaxDeviationBps    int64   `json:"max_deviation_bps"`
+	MinInputCount      int64   `json:"min_input_count"`
+	RawBasisRate       string  `json:"raw_basis_rate,omitempty"`
+	AppliedBasisRate   string  `json:"applied_basis_rate,omitempty"`
+	UnsmoothedMark     string  `json:"unsmoothed_mark,omitempty"`
+	SmoothingBootstrap bool    `json:"smoothing_bootstrap,omitempty"`
+	OutputPrice        string  `json:"output_price"`
 }
 
 var ErrInputUnavailable = errors.New("price engine input unavailable")
@@ -166,6 +168,7 @@ func (e *Engine) evaluate(ctx context.Context, f *models.TItickPriceFormula, tar
 	}
 	inputs := make([]Input, 0, len(components))
 	sourceTime := target
+	smoothingBootstrap := false
 	for componentIndex, c := range components {
 		kind := strings.ToUpper(strings.TrimSpace(c.Kind))
 		if kind == "" {
@@ -179,6 +182,18 @@ func (e *Engine) evaluate(ctx context.Context, f *models.TItickPriceFormula, tar
 		}
 		row, err := e.archive.FindAtOrBefore(ctx, c.Authority, kind, c.CategoryCode, c.Market, c.Symbol, lookupTarget, target-f.MaxLookbackMs)
 		if err != nil {
+			isPreviousMark := market.PriceAlgorithm(f.Algorithm) ==
+				market.PriceAlgorithm_PRICE_ALGORITHM_INDEX_BASIS && componentIndex == 2
+			if isPreviousMark &&
+				(errors.Is(err, models.ErrNotFound) || errors.Is(err, sql.ErrNoRows)) {
+				// Previous MARK is optional smoothing state. After a service
+				// restart or an input outage longer than max_lookback_ms, the
+				// state can legitimately be absent. Bootstrap once from the
+				// two current market inputs so the formula can recover instead
+				// of deadlocking forever on its own stale output.
+				smoothingBootstrap = true
+				continue
+			}
 			return &InputUnavailableError{
 				FormulaNo:    f.FormulaNo,
 				Authority:    c.Authority,
@@ -258,6 +273,7 @@ func (e *Engine) evaluate(ctx context.Context, f *models.TItickPriceFormula, tar
 		audit.RawBasisRate = rawBasis.String()
 		audit.AppliedBasisRate = appliedBasis.String()
 		audit.UnsmoothedMark = inputs[0].Price.Mul(decimal.NewFromInt(1).Add(appliedBasis)).String()
+		audit.SmoothingBootstrap = smoothingBootstrap
 	}
 	audit.OutputPrice = price.String()
 	raw, err := json.Marshal(audit)

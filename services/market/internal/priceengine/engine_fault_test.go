@@ -172,7 +172,7 @@ func TestIndexBasisSmoothingReadsOnlyPreviousMark(t *testing.T) {
 			{"authority":"itick-ws","kind":"FINAL_QUOTE","category_code":"crypto","market":"PERPETUAL","symbol":"BTCUSDT","weight":"1"},
 			{"authority":"price-engine","kind":"MARK","category_code":"crypto","market":"PREVIOUS","symbol":"BTCUSDT","weight":"4"}
 		]`,
-		MaxLookbackMs: 30_000, MaxDeviationBps: 200, MinInputCount: 3,
+		MaxLookbackMs: 30_000, MaxDeviationBps: 200, MinInputCount: 2,
 	}
 	if err := engine.evaluate(context.Background(), formula, target); err != nil {
 		t.Fatal(err)
@@ -193,5 +193,47 @@ func TestIndexBasisSmoothingReadsOnlyPreviousMark(t *testing.T) {
 	if replayed, err := ReplayEvaluationAudit([]byte(archive.last.RawPayload)); err != nil ||
 		!replayed.Equal(decimal.RequireFromString("100.4")) {
 		t.Fatalf("replayed smoothed MARK=%s err=%v", replayed, err)
+	}
+}
+
+func TestIndexBasisSmoothingBootstrapsWhenPreviousMarkIsMissing(t *testing.T) {
+	const target = int64(1785217333000)
+	archive := &pricedArchive{
+		prices: map[string]string{
+			"INDEX": "100", "PERPETUAL": "110",
+		},
+		sourceTimes: map[string]int64{
+			"INDEX": target - 100, "PERPETUAL": target - 50,
+		},
+	}
+	engine := &Engine{archive: archive}
+	formula := &models.TItickPriceFormula{
+		FormulaNo: "BTCUSDT-MARK-v3", FormulaVersion: "v3",
+		Authority: "price-engine", SnapshotKind: "MARK",
+		CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT",
+		Algorithm: int64(market.PriceAlgorithm_PRICE_ALGORITHM_INDEX_BASIS),
+		Components: `[
+			{"authority":"price-engine","kind":"INDEX","category_code":"crypto","market":"INDEX","symbol":"BTCUSDT","weight":"1"},
+			{"authority":"itick-ws","kind":"FINAL_QUOTE","category_code":"crypto","market":"PERPETUAL","symbol":"BTCUSDT","weight":"1"},
+			{"authority":"price-engine","kind":"MARK","category_code":"crypto","market":"PREVIOUS","symbol":"BTCUSDT","weight":"4"}
+		]`,
+		MaxLookbackMs: 30_000, MaxDeviationBps: 200, MinInputCount: 2,
+	}
+	if err := engine.evaluate(context.Background(), formula, target); err != nil {
+		t.Fatal(err)
+	}
+	if archive.last == nil || !archive.last.Price.Equal(decimal.NewFromInt(102)) {
+		t.Fatalf("bootstrap MARK=%v want=102", archive.last)
+	}
+	var audit EvaluationAudit
+	if err := json.Unmarshal([]byte(archive.last.RawPayload), &audit); err != nil {
+		t.Fatal(err)
+	}
+	if !audit.SmoothingBootstrap || len(audit.AcceptedInputs) != 2 {
+		t.Fatalf("unexpected bootstrap audit: %+v", audit)
+	}
+	replayed, err := ReplayEvaluationAudit([]byte(archive.last.RawPayload))
+	if err != nil || !replayed.Equal(decimal.NewFromInt(102)) {
+		t.Fatalf("replayed bootstrap MARK=%s err=%v", replayed, err)
 	}
 }

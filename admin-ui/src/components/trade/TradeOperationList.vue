@@ -36,7 +36,12 @@
           controls-position="right"
           class="query-field"
         />
-        <el-input v-else v-model="query[field]" clearable class="query-field" />
+        <el-input
+          v-else
+          v-model="query[field]"
+          clearable
+          class="query-field"
+        />
       </el-form-item>
       <template v-if="$slots.actions" #actions>
         <slot name="actions" />
@@ -85,8 +90,8 @@
         <el-table-column
           v-if="
             kind === 'instructions' ||
-            kind === 'reconciliationIssues' ||
-            kind === 'accountLiquidations'
+              kind === 'reconciliationIssues' ||
+              kind === 'accountLiquidations'
           "
           :label="t('common.actions')"
           width="170"
@@ -163,7 +168,9 @@
             >
               {{ formatStatus(field, accountDetail[field]) }}
             </el-tag>
-            <template v-else>{{ formatValue(field, accountDetail[field]) }}</template>
+            <template v-else>
+              {{ formatValue(field, accountDetail[field]) }}
+            </template>
           </el-descriptions-item>
         </el-descriptions>
         <el-divider>{{ t('trade.accountLiquidationItems') }}</el-divider>
@@ -187,11 +194,7 @@
             :label="t('trade.liquidationFee')"
             min-width="140"
           />
-          <el-table-column
-            prop="deficitAmount"
-            :label="t('trade.deficitAmount')"
-            min-width="140"
-          />
+          <el-table-column prop="deficitAmount" :label="t('trade.deficitAmount')" min-width="140" />
           <el-table-column
             prop="bankruptcyPrice"
             :label="t('trade.bankruptcyPrice')"

@@ -227,7 +227,9 @@
           {{ t('common.cancel') }}
         </el-button>
         <el-button
-          v-perm="formMode === 'add' ? 'market:tenant-category:add' : 'market:tenant-category:update'"
+          v-perm="
+            formMode === 'add' ? 'market:tenant-category:add' : 'market:tenant-category:update'
+          "
           type="primary"
           :loading="submitLoading"
           @click="submitForm"
@@ -237,7 +239,11 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="detailDialogVisible" :title="t('market.tenantCategoryDetail')" width="700px">
+    <el-dialog
+      v-model="detailDialogVisible"
+      :title="t('market.tenantCategoryDetail')"
+      width="700px"
+    >
       <el-descriptions v-loading="detailLoading" :column="2" border>
         <el-descriptions-item label="ID">
           {{ detail.id ?? '-' }}
@@ -294,7 +300,11 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="batchDialogVisible" :title="t('market.batchTenantCategories')" width="920px">
+    <el-dialog
+      v-model="batchDialogVisible"
+      :title="t('market.batchTenantCategories')"
+      width="920px"
+    >
       <div class="batch-toolbar">
         <div class="batch-tip">
           {{ t('market.batchSaveTip') }}

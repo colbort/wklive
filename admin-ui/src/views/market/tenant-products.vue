@@ -261,7 +261,11 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item v-if="formMode === 'edit'" :label="t('market.displayName')" prop="displayName">
+        <el-form-item
+          v-if="formMode === 'edit'"
+          :label="t('market.displayName')"
+          prop="displayName"
+        >
           <el-input
             v-model="form.displayName"
             maxlength="128"

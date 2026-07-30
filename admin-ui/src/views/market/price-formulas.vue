@@ -41,7 +41,11 @@
             {{ algorithmLabel(row.algorithm) }}
           </template>
         </el-table-column>
-        <el-table-column prop="formulaVersion" :label="t('market.formulaVersion')" min-width="130" />
+        <el-table-column
+          prop="formulaVersion"
+          :label="t('market.formulaVersion')"
+          min-width="130"
+        />
         <el-table-column :label="t('common.status')" width="110">
           <template #default="{ row }">
             <el-tag :type="formulaStatusType(row.status)">
@@ -177,8 +181,12 @@
         </el-form-item>
         <el-form-item :label="t('common.status')" required>
           <el-radio-group v-model="authorityForm.status">
-            <el-radio :value="1">{{ t('market.authorityEnabled') }}</el-radio>
-            <el-radio :value="2">{{ t('market.authorityDisabled') }}</el-radio>
+            <el-radio :value="1">
+              {{ t('market.authorityEnabled') }}
+            </el-radio>
+            <el-radio :value="2">
+              {{ t('market.authorityDisabled') }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -235,7 +243,12 @@
           </el-col>
           <el-col :span="8">
             <el-form-item :label="t('market.categoryCode')">
-              <el-select v-model="form.categoryCode" filterable clearable style="width: 100%">
+              <el-select
+                v-model="form.categoryCode"
+                filterable
+                clearable
+                style="width: 100%"
+              >
                 <el-option
                   v-for="item in categoryOptions"
                   :key="item.value"
@@ -257,7 +270,11 @@
           </el-col>
           <el-col :span="12">
             <el-form-item :label="t('market.algorithm')" required>
-              <el-select v-model="form.algorithm" style="width: 100%">
+              <el-select
+                v-model="form.algorithm"
+                style="width: 100%"
+                @change="handleAlgorithmChange"
+              >
                 <el-option
                   v-for="algorithm in algorithms"
                   :key="algorithm.value"
@@ -288,6 +305,7 @@
                 v-model="form.minInputCount"
                 :min="1"
                 :max="Math.max(1, form.components.length)"
+                :disabled="form.algorithm === INDEX_BASIS_ALGORITHM"
               />
             </el-form-item>
           </el-col>
@@ -329,7 +347,12 @@
           </el-table-column>
           <el-table-column :label="t('market.categoryCode')">
             <template #default="{ row }">
-              <el-select v-model="row.categoryCode" filterable clearable style="width: 100%">
+              <el-select
+                v-model="row.categoryCode"
+                filterable
+                clearable
+                style="width: 100%"
+              >
                 <el-option
                   v-for="item in categoryOptions"
                   :key="item.value"
@@ -367,8 +390,9 @@
         </el-button>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false"> {{ t('common.cancel') }} </el-button
-        ><el-button type="primary" :loading="saving" @click="save">
+        <el-button @click="dialogVisible = false">
+          {{ t('common.cancel') }}
+        </el-button><el-button type="primary" :loading="saving" @click="save">
           {{ t('common.confirm') }}
         </el-button>
       </template>
@@ -488,6 +512,7 @@ const categories = ref<MarketCategory[]>([])
 const authorityRegistries = ref<AuthorityRegistry[]>([])
 const authorityKinds = ['FINAL_QUOTE', 'INDEX', 'MARK', 'FUNDING', 'DELIVERY']
 const formulaSnapshotKindOrder = ['MARK', 'INDEX', 'FUNDING', 'DELIVERY']
+const INDEX_BASIS_ALGORITHM = 4
 const categoryOptions = computed(() =>
   categories.value.map((item) => ({
     value: item.categoryCode,
@@ -698,6 +723,13 @@ function handleOutputSnapshotKindChange() {
   const authority = outputAuthorities.value.find((item) => item.authority === form.authority)
   if (!authority) {
     form.authority = outputAuthorities.value[0]?.authority || ''
+  }
+}
+function handleAlgorithmChange() {
+  if (form.algorithm === INDEX_BASIS_ALGORITHM) {
+    // INDEX and the independent perpetual quote are the two mandatory live
+    // inputs. The previous MARK is optional smoothing state used after bootstrap.
+    form.minInputCount = 2
   }
 }
 function handleComponentAuthorityChange(row: CreatePriceFormulaReq['components'][number]) {

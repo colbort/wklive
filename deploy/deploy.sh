@@ -83,7 +83,7 @@ build_images() {
 }
 
 usage() {
-  echo "usage: $0 {up|start|down|restart|build|logs|ps|disk-check|config|seed|data|merge-data|database|db-upgrade|compose-config|db-init|kafka-init|contract-readiness} [service ...]"
+  echo "usage: $0 {up|start|down|restart|build|logs|ps|disk-check|config|seed|data|merge-data|database|db-upgrade|compose-config|db-init|kafka-init|contract-readiness|contract-dr-pitr-smoke} [service ...]"
 }
 
 command="${1:-}"
@@ -162,6 +162,9 @@ case "$command" in
   contract-readiness)
     check_docker_disk "${DOCKER_READINESS_MIN_FREE_KB:-2097152}" "DOCKER_READINESS_MIN_FREE_KB"
     "$SCRIPT_DIR/contract-readiness.sh" "$@"
+    ;;
+  contract-dr-pitr-smoke)
+    "$SCRIPT_DIR/contract-dr-pitr-smoke.sh" "$@"
     ;;
   *)
     usage

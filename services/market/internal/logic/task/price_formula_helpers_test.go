@@ -81,10 +81,15 @@ func TestNormalizeIndexBasisMarkFormula(t *testing.T) {
 		Authority: "price-engine", SnapshotKind: "MARK", CategoryCode: "crypto",
 		Market: "BA", Symbol: "BTCUSDT", Weight: "4",
 	})
-	req.MinInputCount = 3
+	req.MinInputCount = 2
 	if _, err := normalizePriceFormulaReq(req); err != nil {
 		t.Fatalf("valid smoothed INDEX_BASIS rejected: %v", err)
 	}
+	req.MinInputCount = 3
+	if _, err := normalizePriceFormulaReq(req); err == nil {
+		t.Fatal("previous MARK smoothing state was counted as a required market input")
+	}
+	req.MinInputCount = 2
 	req.Components[2].Authority = "itick-ws"
 	if _, err := normalizePriceFormulaReq(req); err == nil {
 		t.Fatal("previous MARK from non-output authority accepted")

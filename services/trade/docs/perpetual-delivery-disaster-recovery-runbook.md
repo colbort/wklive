@@ -107,6 +107,25 @@ t_itick_snapshot_outbox
 
 任何缺表、迁移数不一致、核心事实行数不一致或约束创建失败都判定恢复失败。
 
+### 4.1 Binlog 精确位点冒烟
+
+Deploy 提供只操作两个固定隔离临时库的 ROW Binlog 精确位点冒烟命令：
+
+```bash
+cd deploy
+./deploy.sh contract-dr-pitr-smoke
+```
+
+命令先确认 `wklive_dr_pitr_probe` 和 `wklive_dr_pitr_restore` 均不存在，再建立同构
+测试表：恢复点前写入事实 1，记录 Binlog 文件及停止位点，恢复点后再写入事实 2。
+随后从远端 Binlog 流按起止位点重放到恢复库，重放会话关闭 Binlog，避免恢复事实
+再次写入源 Binlog。只有源库为 2 条、恢复库严格只有事实 1、事实 2 未越过停止位点
+时才输出 `DR_PITR_SMOKE_RESULT=PASS`。无论成功失败，命令都只清理这两个临时库，
+不读取或修改 `wklive` 业务表。
+
+该命令验证 ROW Binlog、客户端兼容性、位点截断和库名重写链路，不能替代全库恢复、
+异地存储、节点/可用区切换或生产 RPO/RTO 演练。
+
 ## 5. 服务恢复顺序
 
 1. 恢复 MySQL、Asset 数据库及不可变行情归档；

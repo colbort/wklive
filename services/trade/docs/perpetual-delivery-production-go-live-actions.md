@@ -77,7 +77,7 @@ Authority 均为启用的 `PUBLIC_REST` 时才通过。公开访问不替代第 
 - INDEX/MARK/FUNDING/DELIVERY 四类输出均在回看窗口内持续新鲜；
 - 历史回放覆盖至少一个完整交割锁价窗口。
 
-当前四个生产候选公式已经激活：三源 MEDIAN INDEX、INDEX_BASIS MARK v2、FUNDING
+当前四个生产候选公式已经激活：三源 MEDIAN INDEX、INDEX_BASIS MARK v3、FUNDING
 和三源 MEDIAN DELIVERY `delivery-v1`。60 秒窗口共 240 条不可变审计，四类公式
 各 60 条、1 秒严格连续、断档为 0，确定性回放通过。readiness model 还会逐项核对
 来源市场映射、INDEX 算法/版本/权重、MARK 永续来源/基差/1:4 平滑、FUNDING

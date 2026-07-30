@@ -680,7 +680,12 @@ onMounted(fetchCreateOptions)
           min-width="150"
           show-overflow-tooltip
         />
-        <el-table-column prop="username" :label="t('users.username')" min-width="140" />
+        <el-table-column
+          prop="username"
+          :label="t('users.username')"
+          min-width="140"
+          show-overflow-tooltip
+        />
         <el-table-column
           prop="nickname"
           :label="t('users.nickname')"
@@ -746,57 +751,70 @@ onMounted(fetchCreateOptions)
                 <el-dropdown-menu>
                   <el-dropdown-item
                     v-if="auth.hasPerm('users:user:detail')"
+                    :disabled="row.isGuest"
                     @click="showDetail(row)"
                   >
                     {{ t('common.detail') }}
                   </el-dropdown-item>
-                  <el-dropdown-item v-if="auth.hasPerm('users:user:update')" @click="openEdit(row)">
+                  <el-dropdown-item
+                    v-if="auth.hasPerm('users:user:update')"
+                    :disabled="row.isGuest"
+                    @click="openEdit(row)"
+                  >
                     {{ t('common.edit') }}
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="auth.hasPerm('users:user:update:status')"
+                    :disabled="row.isGuest"
                     @click="updateSimpleValue(row, 'status')"
                   >
                     {{ t('users.modifyStatus') }}
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="auth.hasPerm('users:user:update:level')"
+                    :disabled="row.isGuest"
                     @click="updateSimpleValue(row, 'memberLevel')"
                   >
                     {{ t('users.modifyMemberLevel') }}
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="auth.hasPerm('users:user:update:risklevel')"
+                    :disabled="row.isGuest"
                     @click="updateSimpleValue(row, 'riskLevel')"
                   >
                     {{ t('users.modifyRiskLevel') }}
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="auth.hasPerm('users:user:reset:loginpwd')"
+                    :disabled="row.isGuest"
                     @click="openPassword(row, 'login')"
                   >
                     {{ t('users.resetLoginPassword') }}
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="auth.hasPerm('users:user:reset:paypwd')"
+                    :disabled="row.isGuest"
                     @click="openPassword(row, 'pay')"
                   >
                     {{ t('users.resetPayPassword') }}
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="auth.hasPerm('users:user:unlock')"
+                    :disabled="row.isGuest"
                     @click="quickAction(row, 'unlock')"
                   >
                     {{ t('users.unlock') }}
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="auth.hasPerm('users:user:reset:google2fa')"
+                    :disabled="row.isGuest"
                     @click="quickAction(row, 'reset2fa')"
                   >
                     {{ t('users.reset2fa') }}
                   </el-dropdown-item>
                   <el-dropdown-item
                     v-if="auth.hasPerm('users:user:delete')"
+                    :disabled="row.isGuest"
                     @click="quickAction(row, 'delete')"
                   >
                     <span style="color: var(--el-color-danger)">{{ t('common.delete') }}</span>

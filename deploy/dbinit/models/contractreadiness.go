@@ -235,7 +235,7 @@ SELECT
     AND f.formula_version=?
     AND f.max_lookback_ms=?
     AND f.max_deviation_bps=?
-    AND f.min_input_count=3
+    AND f.min_input_count=2
     AND f.interval_ms=?
     AND JSON_LENGTH(f.components)=3
     AND (SELECT COUNT(DISTINCT j.kind)
