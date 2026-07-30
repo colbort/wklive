@@ -28,9 +28,21 @@ type ServiceContext struct {
 	OptionTradeModel               models.TOptionTradeModel
 	OptionPositionModel            models.TOptionPositionModel
 	OptionExerciseModel            models.TOptionExerciseModel
+	OptionExerciseAssignmentModel  models.TOptionExerciseAssignmentModel
 	OptionSettlementModel          models.TOptionSettlementModel
+	OptionSettlementPriceModel     models.TOptionSettlementPriceModel
+	OptionSettlementBatchModel     models.TOptionSettlementBatchModel
+	OptionSettlementDetailModel    models.TOptionSettlementDetailModel
+	OptionReconciliationIssueModel models.TOptionReconciliationIssueModel
 	OptionAccountModel             models.TOptionAccountModel
 	OptionBillModel                models.TOptionBillModel
+	OptionAssetInstructionModel    models.TOptionAssetInstructionModel
+	OptionOutboxModel              models.TOptionOutboxModel
+	OptionInboxModel               models.TOptionInboxModel
+	OptionMarginLotModel           models.TOptionMarginLotModel
+	OptionRiskAccountModel         models.TOptionRiskAccountModel
+	OptionLiquidationModel         models.TOptionLiquidationModel
+	OptionInsuranceFundFlowModel   models.TOptionInsuranceFundFlowModel
 	AssetClient                    asset.AssetClient
 	DelayQueue                     *delayqueue.Queue
 }
@@ -61,9 +73,21 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		OptionTradeModel:               models.NewTOptionTradeModel(conn, c.CacheRedis),
 		OptionPositionModel:            models.NewTOptionPositionModel(conn, c.CacheRedis),
 		OptionExerciseModel:            models.NewTOptionExerciseModel(conn, c.CacheRedis),
+		OptionExerciseAssignmentModel:  models.NewTOptionExerciseAssignmentModel(conn, c.CacheRedis),
 		OptionSettlementModel:          models.NewTOptionSettlementModel(conn, c.CacheRedis),
+		OptionSettlementPriceModel:     models.NewTOptionSettlementPriceModel(conn, c.CacheRedis),
+		OptionSettlementBatchModel:     models.NewTOptionSettlementBatchModel(conn, c.CacheRedis),
+		OptionSettlementDetailModel:    models.NewTOptionSettlementDetailModel(conn, c.CacheRedis),
+		OptionReconciliationIssueModel: models.NewTOptionReconciliationIssueModel(conn, c.CacheRedis),
 		OptionAccountModel:             models.NewTOptionAccountModel(conn, c.CacheRedis),
 		OptionBillModel:                models.NewTOptionBillModel(conn, c.CacheRedis),
+		OptionAssetInstructionModel:    models.NewTOptionAssetInstructionModel(conn, c.CacheRedis),
+		OptionOutboxModel:              models.NewTOptionOutboxModel(conn, c.CacheRedis),
+		OptionInboxModel:               models.NewTOptionInboxModel(conn, c.CacheRedis),
+		OptionMarginLotModel:           models.NewTOptionMarginLotModel(conn, c.CacheRedis),
+		OptionRiskAccountModel:         models.NewTOptionRiskAccountModel(conn, c.CacheRedis),
+		OptionLiquidationModel:         models.NewTOptionLiquidationModel(conn, c.CacheRedis),
+		OptionInsuranceFundFlowModel:   models.NewTOptionInsuranceFundFlowModel(conn, c.CacheRedis),
 		AssetClient:                    asset.NewAssetClient(assetCli.Conn()),
 		DelayQueue:                     queue,
 	}

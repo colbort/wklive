@@ -482,6 +482,12 @@ message ManualChangeAssetData {
 
 // 内部资产服务
 service Asset {
+  // 内部查询指定钱包余额，供风险引擎读取统一资产账本。
+  rpc GetAssetBalance(GetUserAssetDetailReq) returns (GetUserAssetDetailResp);
+
+  // 按幂等业务键查询资产流水，用于业务服务对账。
+  rpc GetAssetFlowByBizNo(GetAssetFlowByBizNoReq) returns (GetAssetFlowByBizNoResp);
+
   // 增加可用余额
   rpc AddAvailable(AddAvailableReq) returns (ChangeAssetResp);
 
@@ -527,6 +533,18 @@ service Asset {
 
   // 将业务手续费原子、幂等计入租户平台手续费收入账户。
   rpc CreditPlatformRevenue(CreditPlatformRevenueReq) returns (CreditPlatformRevenueResp);
+}
+
+message GetAssetFlowByBizNoReq {
+  int64 tenant_id = 1;
+  BizType biz_type = 2;
+  SceneType scene_type = 3;
+  string biz_no = 4;
+}
+
+message GetAssetFlowByBizNoResp {
+  common.RespBase base = 1;
+  AssetFlow data = 2;
 }
 
 message AddAvailableReq {

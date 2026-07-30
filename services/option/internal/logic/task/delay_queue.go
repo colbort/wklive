@@ -62,12 +62,26 @@ func handleDelayMessage(ctx context.Context, svcCtx *svc.ServiceContext, message
 		if err := logic.expireContractOrders(contract, now); err != nil {
 			return err
 		}
+		pendingExercise, err := svcCtx.OptionExerciseModel.HasPendingByContract(
+			ctx, contract.TenantId, contract.Id,
+		)
+		if err != nil || pendingExercise {
+			return err
+		}
+		settlementPrice, err := logic.lockSettlementPrice(contract, now)
+		if err != nil || settlementPrice == nil ||
+			settlementPrice.Status != int64(option.SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_CONFIRMED) {
+			return err
+		}
 		if contract.IsAutoExercise == 1 {
-			if err := logic.autoExerciseContract(contract, now); err != nil {
+			if err := logic.autoExerciseContract(contract, settlementPrice.DeliveryPrice, now); err != nil {
 				return err
 			}
 		}
-		return logic.settleContract(contract, now)
+		if contract.DeliverTime > now {
+			return nil
+		}
+		return logic.settleContract(contract, settlementPrice, now)
 	default:
 		return nil
 	}

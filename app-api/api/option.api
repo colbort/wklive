@@ -29,6 +29,18 @@ type OptionContract {
 	isDeleted        int64  `json:"isDeleted"` // 是否删除
 	createTimes      int64  `json:"createTimes"` // 创建时间
 	updateTimes      int64  `json:"updateTimes"` // 更新时间
+	makerFeeRate     string `json:"makerFeeRate" validate:"decimal_20_10"`
+	takerFeeRate     string `json:"takerFeeRate" validate:"decimal_20_10"`
+	exerciseFeeRate  string `json:"exerciseFeeRate" validate:"decimal_20_10"`
+	feeUserId        int64  `json:"feeUserId"`
+	feeAccountId     int64  `json:"feeAccountId"`
+	sellerMarginMode int64  `json:"sellerMarginMode"`
+	initialMarginRate string `json:"initialMarginRate" validate:"decimal_20_10"`
+	maintenanceMarginRate string `json:"maintenanceMarginRate" validate:"decimal_20_10"`
+	minMarginRate string `json:"minMarginRate" validate:"decimal_20_10"`
+	liquidationFeeRate string `json:"liquidationFeeRate" validate:"decimal_20_10"`
+	insuranceUserId int64 `json:"insuranceUserId"`
+	insuranceAccountId int64 `json:"insuranceAccountId"`
 }
 
 type OptionMarket {
@@ -109,6 +121,7 @@ type OptionTrade {
 	sellFee          string `json:"sellFee" validate:"decimal_32_16"`
 	feeCoin          string `json:"feeCoin"`
 	makerSide        int64  `json:"makerSide"`
+	matchSequence    int64  `json:"matchSequence"`
 	tradeTime        int64  `json:"tradeTime"`
 	createTimes      int64  `json:"createTimes"` // 创建时间
 }
@@ -254,11 +267,13 @@ type OptionPlaceOrderReq {
 	side           int64  `json:"side"`
 	positionEffect int64  `json:"positionEffect"`
 	orderType      int64  `json:"orderType"`
-	price          string `json:"price" validate:"required,decimal_gte_zero,decimal_32_16"`
+	price          string `json:"price,optional" validate:"decimal_gt_zero,decimal_32_16"`
 	qty            string `json:"qty" validate:"required,decimal_gt_zero,decimal_32_16"`
 	clientOrderId  string `json:"clientOrderId,optional"` // 客户端订单号
 	reduceOnly     int64  `json:"reduceOnly,optional"` // 是否只减仓：1是 2否
 	mmp            int64  `json:"mmp,optional"` // 是否做市商保护：1是 2否
+	protectionPrice string `json:"protectionPrice,optional" validate:"decimal_gt_zero,decimal_32_16"`
+	maxTurnover     string `json:"maxTurnover,optional" validate:"decimal_gt_zero,decimal_32_16"`
 }
 
 type PlaceOrderData {
@@ -461,4 +476,3 @@ service app {
 	@handler Exercise
 	post /exercise (ExerciseReq) returns (ExerciseResp)
 }
-

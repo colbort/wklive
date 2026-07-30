@@ -301,6 +301,17 @@ VALUES
 ('做市报价刷新', 'LIQUIDITY', 'liquidity.RefreshQuotes', '*/1 * * * * *', 1, '扫描运行中的做市配置并按各配置刷新间隔撤旧挂新', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
 ('做市报价恢复', 'LIQUIDITY', 'liquidity.RecoverQuoteOrders', '*/10 * * * * *', 1, '恢复提交结果不确定的内部做市报价状态', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
 
+INSERT INTO sys_job
+(`job_name`, `job_group`, `invoke_target`, `cron_expression`, `status`, `remark`, `create_by`, `create_times`, `update_by`, `update_times`)
+VALUES
+('期权资产指令处理', 'OPTION', 'option.ProcessAssetInstructions', '*/1 * * * * *', 1, '每秒执行和恢复期权资产指令', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
+('期权成交持仓事件处理', 'OPTION', 'option.ProcessTradeEvents', '*/1 * * * * *', 1, '每秒按合约撮合序号更新期权持仓', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
+('期权卖方风险账户扫描', 'OPTION', 'option.ProcessRiskAccounts', '*/1 * * * * *', 1, '每秒聚合卖方权益、维持保证金与风险率', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
+('期权卖方强平处理', 'OPTION', 'option.ProcessLiquidations', '*/1 * * * * *', 1, '每秒执行卖方强平和保险账户接管', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
+('期权主动行权清算', 'OPTION', 'option.ProcessExercises', '*/1 * * * * *', 1, '每秒处理美式主动行权空头指派和资金清算', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
+('期权合约生命周期', 'OPTION', 'option.ProcessContractLifecycle', '*/1 * * * * *', 1, '每秒处理期权上市、到期、行权和结算', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
+('期权行情快照清理', 'OPTION', 'option.CleanMarketSnapshots', '0 10 3 * * *', 1, '每日清理超过保留期的期权行情快照', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
+
 
 -- =============================
 -- 定时任务日志表

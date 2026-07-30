@@ -25,6 +25,14 @@ import type {
   OptionContractDetail,
   OptionExercise,
   OptionExerciseDetail,
+  OptionForceCancelContractOrdersReq,
+  OptionRetryAssetInstructionReq,
+  OptionRetryTradeEventReq,
+  OptionRetryLiquidationReq,
+  OptionRiskAccount,
+  OptionLiquidation,
+  ListOptionRiskAccountsReq,
+  ListOptionLiquidationsReq,
   OptionMarket,
   OptionMarketSnapshot,
   OptionOrder,
@@ -60,6 +68,42 @@ export function apiOptionCreateContract(
 
 export function apiOptionUpdateContract(params: UpdateContractReq): Promise<OptionAdminCommonResp> {
   return post('/admin/option/contracts/update', params)
+}
+
+export function apiOptionForceCancelContractOrders(
+  params: OptionForceCancelContractOrdersReq,
+): Promise<OptionAdminCommonResp> {
+  return post('/admin/option/contracts/force-cancel-orders', params)
+}
+
+export function apiOptionRetryAssetInstruction(
+  params: OptionRetryAssetInstructionReq,
+): Promise<OptionAdminCommonResp> {
+  return post('/admin/option/recovery/asset-instructions/retry', params)
+}
+
+export function apiOptionRetryTradeEvent(
+  params: OptionRetryTradeEventReq,
+): Promise<OptionAdminCommonResp> {
+  return post('/admin/option/recovery/trade-events/retry', params)
+}
+
+export function apiOptionListRiskAccounts(
+  params: ListOptionRiskAccountsReq,
+): Promise<RespBase<OptionRiskAccount[]>> {
+  return get<OptionRiskAccount[]>('/admin/option/risk/accounts', params)
+}
+
+export function apiOptionListLiquidations(
+  params: ListOptionLiquidationsReq,
+): Promise<RespBase<OptionLiquidation[]>> {
+  return get<OptionLiquidation[]>('/admin/option/risk/liquidations', params)
+}
+
+export function apiOptionRetryLiquidation(
+  params: OptionRetryLiquidationReq,
+): Promise<OptionAdminCommonResp> {
+  return post('/admin/option/risk/liquidations/retry', params)
 }
 
 export function apiOptionGetMarket(params: GetMarketReq): Promise<RespBase<OptionMarket>> {

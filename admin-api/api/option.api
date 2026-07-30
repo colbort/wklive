@@ -27,6 +27,18 @@ type OptionContract {
 	isDeleted        int64  `json:"isDeleted"`
 	createTimes      int64  `json:"createTimes"`
 	updateTimes      int64  `json:"updateTimes"`
+	makerFeeRate     string `json:"makerFeeRate" validate:"decimal_20_10"`
+	takerFeeRate     string `json:"takerFeeRate" validate:"decimal_20_10"`
+	exerciseFeeRate  string `json:"exerciseFeeRate" validate:"decimal_20_10"`
+	feeUserId        int64  `json:"feeUserId"`
+	feeAccountId     int64  `json:"feeAccountId"`
+	sellerMarginMode int64  `json:"sellerMarginMode"`
+	initialMarginRate string `json:"initialMarginRate" validate:"decimal_20_10"`
+	maintenanceMarginRate string `json:"maintenanceMarginRate" validate:"decimal_20_10"`
+	minMarginRate string `json:"minMarginRate" validate:"decimal_20_10"`
+	liquidationFeeRate string `json:"liquidationFeeRate" validate:"decimal_20_10"`
+	insuranceUserId int64 `json:"insuranceUserId"`
+	insuranceAccountId int64 `json:"insuranceAccountId"`
 }
 
 type OptionMarket {
@@ -127,6 +139,7 @@ type OptionTrade {
 	sellFee          string `json:"sellFee" validate:"decimal_32_16"`
 	feeCoin          string `json:"feeCoin"`
 	makerSide        int64  `json:"makerSide"`
+	matchSequence    int64  `json:"matchSequence"`
 	tradeTime        int64  `json:"tradeTime"`
 	createTimes      int64  `json:"createTimes"`
 }
@@ -234,6 +247,50 @@ type OptionBill {
 	createTimes   int64  `json:"createTimes"`
 }
 
+type OptionRiskAccount {
+	id                int64  `json:"id"`
+	tenantId          int64  `json:"tenantId"`
+	userId            int64  `json:"userId"`
+	accountId         int64  `json:"accountId"`
+	settleCoin        string `json:"settleCoin"`
+	equity            string `json:"equity"`
+	positionMargin    string `json:"positionMargin"`
+	maintenanceMargin string `json:"maintenanceMargin"`
+	unrealizedPnl     string `json:"unrealizedPnl"`
+	riskRate          string `json:"riskRate"`
+	status            int64  `json:"status"`
+	lastCalcTime      int64  `json:"lastCalcTime"`
+	createTimes       int64  `json:"createTimes"`
+	updateTimes       int64  `json:"updateTimes"`
+}
+
+type OptionLiquidation {
+	id                  int64  `json:"id"`
+	tenantId            int64  `json:"tenantId"`
+	liquidationNo       string `json:"liquidationNo"`
+	userId              int64  `json:"userId"`
+	accountId           int64  `json:"accountId"`
+	contractId          int64  `json:"contractId"`
+	positionId          int64  `json:"positionId"`
+	quantity            string `json:"quantity"`
+	markPrice           string `json:"markPrice"`
+	maintenanceMargin   string `json:"maintenanceMargin"`
+	equity              string `json:"equity"`
+	deficitAmount       string `json:"deficitAmount"`
+	liquidationFee      string `json:"liquidationFee"`
+	status              int64  `json:"status"`
+	retryCount          int64  `json:"retryCount"`
+	lastErrorMsg        string `json:"lastErrorMsg"`
+	collateralAmount    string `json:"collateralAmount"`
+	insuranceFundAmount string `json:"insuranceFundAmount"`
+	remainingDeficit    string `json:"remainingDeficit"`
+	takeoverPositionId  int64  `json:"takeoverPositionId"`
+	completedAt         int64  `json:"completedAt"`
+	insuranceAttempt    int64  `json:"insuranceAttempt"`
+	createTimes         int64  `json:"createTimes"`
+	updateTimes         int64  `json:"updateTimes"`
+}
+
 type OptionContractDetail {
 	contract OptionContract `json:"contract"`
 	market   OptionMarket   `json:"market"`
@@ -288,6 +345,18 @@ type CreateContractReq {
 	status           int64  `json:"status"`
 	sort             int64  `json:"sort"`
 	remark           string `json:"remark,optional"`
+	makerFeeRate     string `json:"makerFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	takerFeeRate     string `json:"takerFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	exerciseFeeRate  string `json:"exerciseFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	feeUserId        int64  `json:"feeUserId,optional"`
+	feeAccountId     int64  `json:"feeAccountId,optional"`
+	sellerMarginMode int64 `json:"sellerMarginMode,optional"`
+	initialMarginRate string `json:"initialMarginRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	maintenanceMarginRate string `json:"maintenanceMarginRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	minMarginRate string `json:"minMarginRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	liquidationFeeRate string `json:"liquidationFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	insuranceUserId int64 `json:"insuranceUserId,optional"`
+	insuranceAccountId int64 `json:"insuranceAccountId,optional"`
 }
 
 type CreateContractResp {
@@ -320,6 +389,18 @@ type UpdateContractReq {
 	sort             int64  `json:"sort"`
 	remark           string `json:"remark,optional"`
 	isDeleted        int64  `json:"isDeleted"`
+	makerFeeRate     string `json:"makerFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	takerFeeRate     string `json:"takerFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	exerciseFeeRate  string `json:"exerciseFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	feeUserId        int64  `json:"feeUserId,optional"`
+	feeAccountId     int64  `json:"feeAccountId,optional"`
+	sellerMarginMode int64 `json:"sellerMarginMode,optional"`
+	initialMarginRate string `json:"initialMarginRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	maintenanceMarginRate string `json:"maintenanceMarginRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	minMarginRate string `json:"minMarginRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	liquidationFeeRate string `json:"liquidationFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	insuranceUserId int64 `json:"insuranceUserId,optional"`
+	insuranceAccountId int64 `json:"insuranceAccountId,optional"`
 }
 
 type OptionAdminCommonResp {
@@ -582,6 +663,56 @@ type ListBillsResp {
 	data []OptionBill `json:"data"`
 }
 
+type OptionForceCancelContractOrdersReq {
+	tenantId  int64  `json:"tenantId"`
+	contractId int64 `json:"contractId"`
+	reason    string `json:"reason,optional"`
+}
+
+type OptionRetryAssetInstructionReq {
+	tenantId     int64 `json:"tenantId"`
+	instructionId int64 `json:"instructionId"`
+}
+
+type OptionRetryTradeEventReq {
+	tenantId int64 `json:"tenantId"`
+	eventId  int64 `json:"eventId"`
+}
+
+type ListOptionRiskAccountsReq {
+	PageReq
+	tenantId   int64  `form:"tenantId,optional"`
+	userId     int64  `form:"userId,optional"`
+	accountId  int64  `form:"accountId,optional"`
+	settleCoin string `form:"settleCoin,optional"`
+	status     int64  `form:"status,optional"`
+}
+
+type ListOptionRiskAccountsResp {
+	RespBase
+	data []OptionRiskAccount `json:"data"`
+}
+
+type ListOptionLiquidationsReq {
+	PageReq
+	tenantId     int64 `form:"tenantId,optional"`
+	userId       int64 `form:"userId,optional"`
+	accountId    int64 `form:"accountId,optional"`
+	contractId   int64 `form:"contractId,optional"`
+	positionId   int64 `form:"positionId,optional"`
+	status       int64 `form:"status,optional"`
+}
+
+type ListOptionLiquidationsResp {
+	RespBase
+	data []OptionLiquidation `json:"data"`
+}
+
+type OptionRetryLiquidationReq {
+	tenantId     int64 `json:"tenantId"`
+	liquidationId int64 `json:"liquidationId"`
+}
+
 @server (
 	prefix: /admin/option
 	group:  option
@@ -650,5 +781,22 @@ service admin {
 
 	@handler ListBills
 	get /bills (ListBillsReq) returns (ListBillsResp)
-}
 
+	@handler ForceCancelContractOrders
+	post /contracts/force-cancel-orders (OptionForceCancelContractOrdersReq) returns (OptionAdminCommonResp)
+
+	@handler RetryAssetInstruction
+	post /recovery/asset-instructions/retry (OptionRetryAssetInstructionReq) returns (OptionAdminCommonResp)
+
+	@handler RetryTradeEvent
+	post /recovery/trade-events/retry (OptionRetryTradeEventReq) returns (OptionAdminCommonResp)
+
+	@handler ListRiskAccounts
+	get /risk/accounts (ListOptionRiskAccountsReq) returns (ListOptionRiskAccountsResp)
+
+	@handler ListLiquidations
+	get /risk/liquidations (ListOptionLiquidationsReq) returns (ListOptionLiquidationsResp)
+
+	@handler RetryLiquidation
+	post /risk/liquidations/retry (OptionRetryLiquidationReq) returns (OptionAdminCommonResp)
+}

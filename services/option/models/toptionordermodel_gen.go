@@ -25,9 +25,8 @@ var (
 	tOptionOrderRowsExpectAutoSet   = strings.Join(stringx.Remove(tOptionOrderFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tOptionOrderRowsWithPlaceHolder = strings.Join(stringx.Remove(tOptionOrderFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTOptionOrderIdPrefix                          = "cache:tOptionOrder:id:"
-	cacheTOptionOrderTenantIdOrderNoPrefix             = "cache:tOptionOrder:tenantId:orderNo:"
-	cacheTOptionOrderTenantIdUserIdClientOrderIdPrefix = "cache:tOptionOrder:tenantId:userId:clientOrderId:"
+	cacheTOptionOrderIdPrefix              = "cache:tOptionOrder:id:"
+	cacheTOptionOrderTenantIdOrderNoPrefix = "cache:tOptionOrder:tenantId:orderNo:"
 )
 
 type (
@@ -35,7 +34,6 @@ type (
 		Insert(ctx context.Context, data *TOptionOrder) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TOptionOrder, error)
 		FindOneByTenantIdOrderNo(ctx context.Context, tenantId int64, orderNo string) (*TOptionOrder, error)
-		FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId int64, userId int64, clientOrderId string) (*TOptionOrder, error)
 		Update(ctx context.Context, data *TOptionOrder) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -93,11 +91,10 @@ func (m *defaultTOptionOrderModel) Delete(ctx context.Context, id int64) error {
 
 	tOptionOrderIdKey := fmt.Sprintf("%s%v", cacheTOptionOrderIdPrefix, id)
 	tOptionOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
-	tOptionOrderTenantIdUserIdClientOrderIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionOrderTenantIdUserIdClientOrderIdPrefix, data.TenantId, data.UserId, data.ClientOrderId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tOptionOrderIdKey, tOptionOrderTenantIdOrderNoKey, tOptionOrderTenantIdUserIdClientOrderIdKey)
+	}, tOptionOrderIdKey, tOptionOrderTenantIdOrderNoKey)
 	return err
 }
 
@@ -138,34 +135,13 @@ func (m *defaultTOptionOrderModel) FindOneByTenantIdOrderNo(ctx context.Context,
 	}
 }
 
-func (m *defaultTOptionOrderModel) FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId int64, userId int64, clientOrderId string) (*TOptionOrder, error) {
-	tOptionOrderTenantIdUserIdClientOrderIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionOrderTenantIdUserIdClientOrderIdPrefix, tenantId, userId, clientOrderId)
-	var resp TOptionOrder
-	err := m.QueryRowIndexCtx(ctx, &resp, tOptionOrderTenantIdUserIdClientOrderIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? and `client_order_id` = ? limit 1", tOptionOrderRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId, clientOrderId); err != nil {
-			return nil, err
-		}
-		return resp.Id, nil
-	}, m.queryPrimary)
-	switch err {
-	case nil:
-		return &resp, nil
-	case sqlc.ErrNotFound:
-		return nil, ErrNotFound
-	default:
-		return nil, err
-	}
-}
-
 func (m *defaultTOptionOrderModel) Insert(ctx context.Context, data *TOptionOrder) (sql.Result, error) {
 	tOptionOrderIdKey := fmt.Sprintf("%s%v", cacheTOptionOrderIdPrefix, data.Id)
 	tOptionOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
-	tOptionOrderTenantIdUserIdClientOrderIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionOrderTenantIdUserIdClientOrderIdPrefix, data.TenantId, data.UserId, data.ClientOrderId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionOrderRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.UserId, data.AccountId, data.ContractId, data.UnderlyingSymbol, data.Side, data.PositionEffect, data.OrderType, data.Price, data.Qty, data.FilledQty, data.UnfilledQty, data.AvgPrice, data.Turnover, data.Fee, data.FeeCoin, data.MarginAmount, data.Source, data.ClientOrderId, data.ReduceOnly, data.Mmp, data.Status, data.CancelReason, data.MatchTime, data.CancelTime, data.CreateTimes, data.UpdateTimes)
-	}, tOptionOrderIdKey, tOptionOrderTenantIdOrderNoKey, tOptionOrderTenantIdUserIdClientOrderIdKey)
+	}, tOptionOrderIdKey, tOptionOrderTenantIdOrderNoKey)
 	return ret, err
 }
 
@@ -177,11 +153,10 @@ func (m *defaultTOptionOrderModel) Update(ctx context.Context, newData *TOptionO
 
 	tOptionOrderIdKey := fmt.Sprintf("%s%v", cacheTOptionOrderIdPrefix, data.Id)
 	tOptionOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
-	tOptionOrderTenantIdUserIdClientOrderIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionOrderTenantIdUserIdClientOrderIdPrefix, data.TenantId, data.UserId, data.ClientOrderId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionOrderRowsWithPlaceHolder)
 		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderNo, newData.UserId, newData.AccountId, newData.ContractId, newData.UnderlyingSymbol, newData.Side, newData.PositionEffect, newData.OrderType, newData.Price, newData.Qty, newData.FilledQty, newData.UnfilledQty, newData.AvgPrice, newData.Turnover, newData.Fee, newData.FeeCoin, newData.MarginAmount, newData.Source, newData.ClientOrderId, newData.ReduceOnly, newData.Mmp, newData.Status, newData.CancelReason, newData.MatchTime, newData.CancelTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tOptionOrderIdKey, tOptionOrderTenantIdOrderNoKey, tOptionOrderTenantIdUserIdClientOrderIdKey)
+	}, tOptionOrderIdKey, tOptionOrderTenantIdOrderNoKey)
 	return err
 }
 

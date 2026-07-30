@@ -22,9 +22,9 @@ type (
 	ChangeAssetResp             = asset.ChangeAssetResp
 	CoverInsuranceDeficitReq    = asset.CoverInsuranceDeficitReq
 	CoverInsuranceDeficitResp   = asset.CoverInsuranceDeficitResp
+	CreateAssetCoinConfigReq    = asset.CreateAssetCoinConfigReq
 	CreditPlatformRevenueReq    = asset.CreditPlatformRevenueReq
 	CreditPlatformRevenueResp   = asset.CreditPlatformRevenueResp
-	CreateAssetCoinConfigReq    = asset.CreateAssetCoinConfigReq
 	DeductFrozenAssetByBizNoReq = asset.DeductFrozenAssetByBizNoReq
 	DeductFrozenAssetReq        = asset.DeductFrozenAssetReq
 	DeductLockedAssetByBizNoReq = asset.DeductLockedAssetByBizNoReq
@@ -35,6 +35,10 @@ type (
 	FreezeAssetReq              = asset.FreezeAssetReq
 	FreezeAssetResp             = asset.FreezeAssetResp
 	GetAssetCoinConfigReq       = asset.GetAssetCoinConfigReq
+	GetAssetFlowByBizNoReq      = asset.GetAssetFlowByBizNoReq
+	GetAssetFlowByBizNoResp     = asset.GetAssetFlowByBizNoResp
+	GetInsuranceCoverReq        = asset.GetInsuranceCoverReq
+	GetInsuranceCoverResp       = asset.GetInsuranceCoverResp
 	GetMyAssetReq               = asset.GetMyAssetReq
 	GetMyAssetResp              = asset.GetMyAssetResp
 	GetMyAssetSummaryReq        = asset.GetMyAssetSummaryReq
@@ -90,6 +94,10 @@ type (
 	UpdateAssetCoinConfigReq    = asset.UpdateAssetCoinConfigReq
 
 	Asset interface {
+		// 内部查询指定钱包余额，供风险引擎读取统一资产账本。
+		GetAssetBalance(ctx context.Context, in *GetUserAssetDetailReq, opts ...grpc.CallOption) (*GetUserAssetDetailResp, error)
+		// 按幂等业务键查询资产流水，用于业务服务对账。
+		GetAssetFlowByBizNo(ctx context.Context, in *GetAssetFlowByBizNoReq, opts ...grpc.CallOption) (*GetAssetFlowByBizNoResp, error)
 		// 增加可用余额
 		AddAvailable(ctx context.Context, in *AddAvailableReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 		// 扣减可用余额
@@ -132,6 +140,18 @@ func NewAsset(cli zrpc.Client) Asset {
 	return &defaultAsset{
 		cli: cli,
 	}
+}
+
+// 内部查询指定钱包余额，供风险引擎读取统一资产账本。
+func (m *defaultAsset) GetAssetBalance(ctx context.Context, in *GetUserAssetDetailReq, opts ...grpc.CallOption) (*GetUserAssetDetailResp, error) {
+	client := asset.NewAssetClient(m.cli.Conn())
+	return client.GetAssetBalance(ctx, in, opts...)
+}
+
+// 按幂等业务键查询资产流水，用于业务服务对账。
+func (m *defaultAsset) GetAssetFlowByBizNo(ctx context.Context, in *GetAssetFlowByBizNoReq, opts ...grpc.CallOption) (*GetAssetFlowByBizNoResp, error) {
+	client := asset.NewAssetClient(m.cli.Conn())
+	return client.GetAssetFlowByBizNo(ctx, in, opts...)
 }
 
 // 增加可用余额

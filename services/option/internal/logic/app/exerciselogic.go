@@ -14,7 +14,6 @@ import (
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
-	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -67,6 +66,10 @@ func (l *ExerciseLogic) Exercise(in *option.ExerciseReq) (*option.ExerciseResp, 
 		}
 		return nil, err
 	}
+	if contract.ExerciseStyle != int64(option.ExerciseStyle_EXERCISE_STYLE_AMERICAN) ||
+		contract.SettlementType != int64(option.SettlementType_SETTLEMENT_TYPE_CASH) {
+		return &option.ExerciseResp{Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx))}, nil
+	}
 
 	exerciseQty, err := conv.ParseDecimalField(in.ExerciseQty)
 	if err != nil || !exerciseQty.IsPositive() {
@@ -79,8 +82,8 @@ func (l *ExerciseLogic) Exercise(in *option.ExerciseReq) (*option.ExerciseResp, 
 		return &option.ExerciseResp{Base: helper.ErrResp(i18n.ExercisableQuantityExceeded, i18n.Translate(i18n.ExercisableQuantityExceeded, l.ctx))}, nil
 	}
 	now := time.Now().Unix()
-	if contract.ExerciseStyle == int64(option.ExerciseStyle_EXERCISE_STYLE_EUROPEAN) && now < contract.ExpireTime {
-		return &option.ExerciseResp{Base: helper.ErrResp(i18n.EuropeanOptionNotExpired, i18n.Translate(i18n.EuropeanOptionNotExpired, l.ctx))}, nil
+	if now < contract.ListTime || now >= contract.ExpireTime {
+		return &option.ExerciseResp{Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx))}, nil
 	}
 	market, err := l.svcCtx.OptionMarketModel.FindOneByTenantIdContractId(l.ctx, tenantId, contract.Id)
 	if err != nil {
@@ -90,6 +93,10 @@ func (l *ExerciseLogic) Exercise(in *option.ExerciseReq) (*option.ExerciseResp, 
 		return nil, err
 	}
 	settlementPrice := market.UnderlyingPrice
+	if !settlementPrice.IsPositive() || market.SnapshotTime <= 0 ||
+		market.SnapshotTime > now || now-market.SnapshotTime > 30 {
+		return &option.ExerciseResp{Base: helper.ErrResp(i18n.MarketNotFound, i18n.Translate(i18n.MarketNotFound, l.ctx))}, nil
+	}
 	profitAmount := optionSettlementPayoff(contract, settlementPrice, exerciseQty)
 	if !profitAmount.IsPositive() {
 		return &option.ExerciseResp{Base: helper.ErrResp(i18n.OptionNotInTheMoney, i18n.Translate(i18n.OptionNotInTheMoney, l.ctx))}, nil
@@ -113,11 +120,10 @@ func (l *ExerciseLogic) Exercise(in *option.ExerciseReq) (*option.ExerciseResp, 
 		SettlementPrice: settlementPrice,
 		ExerciseAmount:  optionExerciseAmount(contract, exerciseQty),
 		ProfitAmount:    profitAmount,
-		Fee:             decimal.Zero,
+		Fee:             profitAmount.Mul(contract.ExerciseFeeRate).Round(16),
 		FeeCoin:         contract.SettleCoin,
-		Status:          int64(option.ExerciseStatus_EXERCISE_STATUS_DONE),
+		Status:          int64(option.ExerciseStatus_EXERCISE_STATUS_PENDING),
 		ExerciseTime:    now,
-		FinishTime:      now,
 		CreateTimes:     now,
 		UpdateTimes:     now,
 	}
@@ -126,9 +132,21 @@ func (l *ExerciseLogic) Exercise(in *option.ExerciseReq) (*option.ExerciseResp, 
 		conn := sqlx.NewSqlConnFromSession(session)
 		exerciseModel := models.NewTOptionExerciseModel(conn, l.svcCtx.Config.CacheRedis)
 		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis)
-		accountModel := models.NewTOptionAccountModel(conn, l.svcCtx.Config.CacheRedis)
-		billModel := models.NewTOptionBillModel(conn, l.svcCtx.Config.CacheRedis)
-
+		current, err := positionModel.FindOneForUpdate(ctx, position.Id)
+		if err != nil {
+			return err
+		}
+		if current.Status != int64(option.PositionStatus_POSITION_STATUS_HOLDING) ||
+			current.AvailableQty.LessThan(exerciseQty) ||
+			current.ExerciseableQty.LessThan(exerciseQty) {
+			return i18n.StatusError(ctx, i18n.ExercisableQuantityExceeded)
+		}
+		current.AvailableQty = current.AvailableQty.Sub(exerciseQty)
+		current.FrozenQty = current.FrozenQty.Add(exerciseQty)
+		current.UpdateTimes = now
+		if err := positionModel.Update(ctx, current); err != nil {
+			return err
+		}
 		result, err := exerciseModel.Insert(ctx, item)
 		if err != nil {
 			return err
@@ -139,25 +157,7 @@ func (l *ExerciseLogic) Exercise(in *option.ExerciseReq) (*option.ExerciseResp, 
 		}
 		item.Id = id
 
-		position.PositionQty = decimal.Max(position.PositionQty.Sub(exerciseQty), decimal.Zero)
-		position.AvailableQty = decimal.Max(position.AvailableQty.Sub(exerciseQty), decimal.Zero)
-		position.ExerciseableQty = decimal.Max(position.ExerciseableQty.Sub(exerciseQty), decimal.Zero)
-		position.PositionValue = position.MarkPrice.Mul(position.PositionQty).Mul(optionMultiplier(contract))
-		position.RealizedPnl = position.RealizedPnl.Add(profitAmount)
-		position.UpdateTimes = now
-		if !position.PositionQty.IsPositive() {
-			position.PositionQty = decimal.Zero
-			position.AvailableQty = decimal.Zero
-			position.FrozenQty = decimal.Zero
-			position.ExerciseableQty = decimal.Zero
-			position.PositionValue = decimal.Zero
-			position.UnrealizedPnl = decimal.Zero
-			position.Status = int64(option.PositionStatus_POSITION_STATUS_EXERCISED)
-		}
-		if err := positionModel.Update(ctx, position); err != nil {
-			return err
-		}
-		return applyOptionAccountDelta(ctx, accountModel, billModel, tenantId, userId, in.AccountId, contract.SettleCoin, profitAmount, int64(option.BillRefType_BILL_REF_TYPE_EXERCISE), id, item.ExerciseNo, "option exercise profit", true, now)
+		return nil
 	})
 	if err != nil {
 		return nil, err

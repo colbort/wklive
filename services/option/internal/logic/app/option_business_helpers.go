@@ -23,7 +23,7 @@ func optionMultiplier(contract *models.TOptionContract) decimal.Decimal {
 }
 
 func optionTurnover(contract *models.TOptionContract, price, qty decimal.Decimal) decimal.Decimal {
-	return price.Mul(qty).Mul(optionMultiplier(contract))
+	return price.Mul(qty).Mul(optionMultiplier(contract)).Round(16)
 }
 
 func oppositeOrderSide(side int64) int64 {
@@ -244,11 +244,36 @@ func optionIntrinsicValue(contract *models.TOptionContract, deliveryPrice decima
 }
 
 func optionSettlementPayoff(contract *models.TOptionContract, deliveryPrice, qty decimal.Decimal) decimal.Decimal {
-	return optionIntrinsicValue(contract, deliveryPrice).Mul(qty).Mul(optionMultiplier(contract))
+	return optionIntrinsicValue(contract, deliveryPrice).Mul(qty).Mul(optionMultiplier(contract)).Round(16)
 }
 
 func optionExerciseAmount(contract *models.TOptionContract, qty decimal.Decimal) decimal.Decimal {
-	return contract.StrikePrice.Mul(qty).Mul(optionMultiplier(contract))
+	return contract.StrikePrice.Mul(qty).Mul(optionMultiplier(contract)).Round(16)
+}
+
+func optionSellerMargin(contract *models.TOptionContract, underlyingPrice, premiumPrice, qty decimal.Decimal, maintenance bool) decimal.Decimal {
+	if contract == nil || !underlyingPrice.IsPositive() || !premiumPrice.IsPositive() || !qty.IsPositive() {
+		return decimal.Zero
+	}
+	rate := contract.InitialMarginRate
+	if maintenance {
+		rate = contract.MaintenanceMarginRate
+	}
+	multiplier := optionMultiplier(contract)
+	underlyingNotional := underlyingPrice.Mul(qty).Mul(multiplier)
+	strikeNotional := contract.StrikePrice.Mul(qty).Mul(multiplier)
+	_ = premiumPrice // premium is credited separately and is not double-counted as frozen collateral
+
+	otm := decimal.Zero
+	minimumBase := contract.MinMarginRate.Mul(underlyingNotional)
+	if contract.OptionType == int64(option.OptionType_OPTION_TYPE_CALL) {
+		otm = decimal.Max(strikeNotional.Sub(underlyingNotional), decimal.Zero)
+	} else {
+		otm = decimal.Max(underlyingNotional.Sub(strikeNotional), decimal.Zero)
+		minimumBase = contract.MinMarginRate.Mul(strikeNotional)
+	}
+	riskBase := decimal.Max(rate.Mul(underlyingNotional).Sub(otm), minimumBase)
+	return riskBase.Round(16)
 }
 
 func applyOptionAccountDelta(ctx context.Context, accountModel models.TOptionAccountModel, billModel models.TOptionBillModel, tenantId, userId, accountId int64, coin string, amount decimal.Decimal, refType, refId int64, bizNo, remark string, realized bool, now int64) error {

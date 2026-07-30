@@ -65,34 +65,78 @@ func (l *CreateContractLogic) CreateContract(in *option.CreateContractReq) (*opt
 	if err != nil {
 		return &option.CreateContractResp{Base: helper.ErrResp(i18n.MultiplierFormatError, i18n.Translate(i18n.MultiplierFormatError, l.ctx))}, nil
 	}
+	makerFeeRate, err := parseOptionalOptionRate(in.MakerFeeRate)
+	if err != nil {
+		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	takerFeeRate, err := parseOptionalOptionRate(in.TakerFeeRate)
+	if err != nil {
+		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	exerciseFeeRate, err := parseOptionalOptionRate(in.ExerciseFeeRate)
+	if err != nil {
+		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	initialMarginRate, err := parseOptionalOptionRate(in.InitialMarginRate)
+	if err != nil {
+		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	maintenanceMarginRate, err := parseOptionalOptionRate(in.MaintenanceMarginRate)
+	if err != nil {
+		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	minMarginRate, err := parseOptionalOptionRate(in.MinMarginRate)
+	if err != nil {
+		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	liquidationFeeRate, err := parseOptionalOptionRate(in.LiquidationFeeRate)
+	if err != nil {
+		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	sellerMarginMode := in.SellerMarginMode
+	if sellerMarginMode == option.SellerMarginMode_SELLER_MARGIN_MODE_UNKNOWN {
+		sellerMarginMode = option.SellerMarginMode_SELLER_MARGIN_MODE_DISABLED
+	}
 
 	now := time.Now().Unix()
 	item := &models.TOptionContract{
-		TenantId:         in.TenantId,
-		ContractCode:     in.ContractCode,
-		UnderlyingSymbol: in.UnderlyingSymbol,
-		SettleCoin:       in.SettleCoin,
-		QuoteCoin:        in.QuoteCoin,
-		OptionType:       int64(in.OptionType),
-		ExerciseStyle:    int64(in.ExerciseStyle),
-		SettlementType:   int64(in.SettlementType),
-		StrikePrice:      strikePrice,
-		ContractUnit:     contractUnit,
-		MinOrderQty:      minOrderQty,
-		MaxOrderQty:      maxOrderQty,
-		PriceTick:        priceTick,
-		QtyStep:          qtyStep,
-		Multiplier:       multiplier,
-		ListTime:         in.ListTime,
-		ExpireTime:       in.ExpireTime,
-		DeliverTime:      in.DeliverTime,
-		IsAutoExercise:   int64(in.IsAutoExercise),
-		Status:           int64(in.Status),
-		Sort:             int64(in.Sort),
-		Remark:           in.Remark,
-		IsDeleted:        int64(common.YesNo_YES_NO_NO),
-		CreateTimes:      now,
-		UpdateTimes:      now,
+		TenantId:          in.TenantId,
+		ContractCode:      in.ContractCode,
+		UnderlyingSymbol:  in.UnderlyingSymbol,
+		SettleCoin:        in.SettleCoin,
+		QuoteCoin:         in.QuoteCoin,
+		OptionType:        int64(in.OptionType),
+		ExerciseStyle:     int64(in.ExerciseStyle),
+		SettlementType:    int64(in.SettlementType),
+		StrikePrice:       strikePrice,
+		ContractUnit:      contractUnit,
+		MinOrderQty:       minOrderQty,
+		MaxOrderQty:       maxOrderQty,
+		PriceTick:         priceTick,
+		QtyStep:           qtyStep,
+		Multiplier:        multiplier,
+		ListTime:          in.ListTime,
+		ExpireTime:        in.ExpireTime,
+		DeliverTime:       in.DeliverTime,
+		IsAutoExercise:    int64(in.IsAutoExercise),
+		MakerFeeRate:      makerFeeRate,
+		TakerFeeRate:      takerFeeRate,
+		ExerciseFeeRate:   exerciseFeeRate,
+		FeeUserId:         in.FeeUserId,
+		FeeAccountId:      in.FeeAccountId,
+		SellerMarginMode:  int64(sellerMarginMode),
+		InitialMarginRate: initialMarginRate, MaintenanceMarginRate: maintenanceMarginRate,
+		MinMarginRate: minMarginRate, LiquidationFeeRate: liquidationFeeRate,
+		InsuranceUserId: in.InsuranceUserId, InsuranceAccountId: in.InsuranceAccountId,
+		Status:      int64(in.Status),
+		Sort:        int64(in.Sort),
+		Remark:      in.Remark,
+		IsDeleted:   int64(common.YesNo_YES_NO_NO),
+		CreateTimes: now,
+		UpdateTimes: now,
+	}
+	if !validateSupportedContract(item) {
+		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 
 	result, err := l.svcCtx.OptionContractModel.Insert(l.ctx, item)

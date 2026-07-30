@@ -1275,6 +1275,8 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
+	Asset_GetAssetBalance_FullMethodName          = "/asset.Asset/GetAssetBalance"
+	Asset_GetAssetFlowByBizNo_FullMethodName      = "/asset.Asset/GetAssetFlowByBizNo"
 	Asset_AddAvailable_FullMethodName             = "/asset.Asset/AddAvailable"
 	Asset_SubAvailable_FullMethodName             = "/asset.Asset/SubAvailable"
 	Asset_FreezeAsset_FullMethodName              = "/asset.Asset/FreezeAsset"
@@ -1299,6 +1301,10 @@ const (
 //
 // 内部资产服务
 type AssetClient interface {
+	// 内部查询指定钱包余额，供风险引擎读取统一资产账本。
+	GetAssetBalance(ctx context.Context, in *GetUserAssetDetailReq, opts ...grpc.CallOption) (*GetUserAssetDetailResp, error)
+	// 按幂等业务键查询资产流水，用于业务服务对账。
+	GetAssetFlowByBizNo(ctx context.Context, in *GetAssetFlowByBizNoReq, opts ...grpc.CallOption) (*GetAssetFlowByBizNoResp, error)
 	// 增加可用余额
 	AddAvailable(ctx context.Context, in *AddAvailableReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
 	// 扣减可用余额
@@ -1338,6 +1344,26 @@ type assetClient struct {
 
 func NewAssetClient(cc grpc.ClientConnInterface) AssetClient {
 	return &assetClient{cc}
+}
+
+func (c *assetClient) GetAssetBalance(ctx context.Context, in *GetUserAssetDetailReq, opts ...grpc.CallOption) (*GetUserAssetDetailResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserAssetDetailResp)
+	err := c.cc.Invoke(ctx, Asset_GetAssetBalance_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *assetClient) GetAssetFlowByBizNo(ctx context.Context, in *GetAssetFlowByBizNoReq, opts ...grpc.CallOption) (*GetAssetFlowByBizNoResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAssetFlowByBizNoResp)
+	err := c.cc.Invoke(ctx, Asset_GetAssetFlowByBizNo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *assetClient) AddAvailable(ctx context.Context, in *AddAvailableReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
@@ -1506,6 +1532,10 @@ func (c *assetClient) CreditPlatformRevenue(ctx context.Context, in *CreditPlatf
 //
 // 内部资产服务
 type AssetServer interface {
+	// 内部查询指定钱包余额，供风险引擎读取统一资产账本。
+	GetAssetBalance(context.Context, *GetUserAssetDetailReq) (*GetUserAssetDetailResp, error)
+	// 按幂等业务键查询资产流水，用于业务服务对账。
+	GetAssetFlowByBizNo(context.Context, *GetAssetFlowByBizNoReq) (*GetAssetFlowByBizNoResp, error)
 	// 增加可用余额
 	AddAvailable(context.Context, *AddAvailableReq) (*ChangeAssetResp, error)
 	// 扣减可用余额
@@ -1547,6 +1577,12 @@ type AssetServer interface {
 // pointer dereference when methods are called.
 type UnimplementedAssetServer struct{}
 
+func (UnimplementedAssetServer) GetAssetBalance(context.Context, *GetUserAssetDetailReq) (*GetUserAssetDetailResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAssetBalance not implemented")
+}
+func (UnimplementedAssetServer) GetAssetFlowByBizNo(context.Context, *GetAssetFlowByBizNoReq) (*GetAssetFlowByBizNoResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAssetFlowByBizNo not implemented")
+}
 func (UnimplementedAssetServer) AddAvailable(context.Context, *AddAvailableReq) (*ChangeAssetResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddAvailable not implemented")
 }
@@ -1614,6 +1650,42 @@ func RegisterAssetServer(s grpc.ServiceRegistrar, srv AssetServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&Asset_ServiceDesc, srv)
+}
+
+func _Asset_GetAssetBalance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserAssetDetailReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetServer).GetAssetBalance(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Asset_GetAssetBalance_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetServer).GetAssetBalance(ctx, req.(*GetUserAssetDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Asset_GetAssetFlowByBizNo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAssetFlowByBizNoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetServer).GetAssetFlowByBizNo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Asset_GetAssetFlowByBizNo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetServer).GetAssetFlowByBizNo(ctx, req.(*GetAssetFlowByBizNoReq))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Asset_AddAvailable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -1911,6 +1983,14 @@ var Asset_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "asset.Asset",
 	HandlerType: (*AssetServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetAssetBalance",
+			Handler:    _Asset_GetAssetBalance_Handler,
+		},
+		{
+			MethodName: "GetAssetFlowByBizNo",
+			Handler:    _Asset_GetAssetFlowByBizNo_Handler,
+		},
 		{
 			MethodName: "AddAvailable",
 			Handler:    _Asset_AddAvailable_Handler,

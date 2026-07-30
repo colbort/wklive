@@ -364,6 +364,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
+				Path:    "/contracts/force-cancel-orders",
+				Handler: option.ForceCancelContractOrdersHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
 				Path:    "/contracts/update",
 				Handler: option.UpdateContractHandler(serverCtx),
 			},
@@ -411,6 +416,31 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/positions/detail",
 				Handler: option.GetPositionHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/recovery/asset-instructions/retry",
+				Handler: option.RetryAssetInstructionHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/recovery/trade-events/retry",
+				Handler: option.RetryTradeEventHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/risk/accounts",
+				Handler: option.ListRiskAccountsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/risk/liquidations",
+				Handler: option.ListLiquidationsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/risk/liquidations/retry",
+				Handler: option.RetryLiquidationHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,

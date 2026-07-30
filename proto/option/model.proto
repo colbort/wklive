@@ -34,6 +34,18 @@ message OptionContract {
   common.YesNo is_deleted = 24; // 是否删除
   int64 create_times = 25;
   int64 update_times = 26;
+  string maker_fee_rate = 27;
+  string taker_fee_rate = 28;
+  string exercise_fee_rate = 29;
+  int64 fee_user_id = 30;
+  int64 fee_account_id = 31;
+  SellerMarginMode seller_margin_mode = 32;
+  string initial_margin_rate = 33;
+  string maintenance_margin_rate = 34;
+  string min_margin_rate = 35;
+  string liquidation_fee_rate = 36;
+  int64 insurance_user_id = 37;
+  int64 insurance_account_id = 38;
 }
 
 message OptionMarket {
@@ -136,6 +148,7 @@ message OptionTrade {
   common.Side maker_side = 20; // maker方向
   int64 trade_time = 21;
   int64 create_times = 22;
+  int64 match_sequence = 23;
 }
 
 message OptionPosition {
@@ -187,6 +200,23 @@ message OptionExercise {
   int64 update_times = 21;
 }
 
+message OptionExerciseAssignment {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 exercise_id = 3;
+  string exercise_no = 4;
+  int64 long_position_id = 5;
+  int64 short_position_id = 6;
+  int64 short_user_id = 7;
+  int64 short_account_id = 8;
+  string quantity = 9;
+  string payoff = 10;
+  ExerciseAssignmentStatus status = 11;
+  string instruction_no = 12;
+  int64 create_times = 13;
+  int64 update_times = 14;
+}
+
 message OptionSettlement {
   int64 id = 1;
   int64 tenant_id = 2;
@@ -204,6 +234,75 @@ message OptionSettlement {
   string remark = 14;
   int64 create_times = 15;
   int64 update_times = 16;
+}
+
+message OptionSettlementPrice {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 contract_id = 3;
+  string price_source = 4;
+  int64 window_start = 5;
+  int64 window_end = 6;
+  int64 sample_count = 7;
+  string calculation_method = 8;
+  string delivery_price = 9;
+  string source_snapshot_ids = 10;
+  int64 version = 11;
+  SettlementPriceStatus status = 12;
+  int64 confirmed_by = 13;
+  int64 confirmed_at = 14;
+  int64 create_times = 15;
+  int64 update_times = 16;
+}
+
+message OptionSettlementBatch {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string batch_no = 3;
+  int64 contract_id = 4;
+  int64 settlement_price_id = 5;
+  string total_credit = 6;
+  string total_debit = 7;
+  int64 instruction_count = 8;
+  int64 success_count = 9;
+  SettlementBatchStatus status = 10;
+  string last_error_msg = 11;
+  int64 create_times = 12;
+  int64 update_times = 13;
+}
+
+message OptionSettlementPositionDetail {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 batch_id = 3;
+  string batch_no = 4;
+  int64 contract_id = 5;
+  int64 position_id = 6;
+  int64 user_id = 7;
+  int64 account_id = 8;
+  common.PositionSide side = 9;
+  string quantity = 10;
+  string payoff = 11;
+  SettlementDetailDirection direction = 12;
+  string instruction_no = 13;
+  int64 create_times = 14;
+}
+
+message OptionReconciliationIssue {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string issue_key = 3;
+  ReconciliationCheckType check_type = 4;
+  string biz_no = 5;
+  int64 instruction_id = 6;
+  string expected_value = 7;
+  string actual_value = 8;
+  string detail = 9;
+  ReconciliationIssueStatus status = 10;
+  int64 occurrence_count = 11;
+  int64 resolved_at = 12;
+  int64 create_times = 13;
+  int64 update_times = 14;
 }
 
 message OptionAccount {
@@ -241,6 +340,141 @@ message OptionBill {
   int64 create_times = 13;
 }
 
+message OptionAssetInstruction {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string instruction_no = 3;
+  string biz_no = 4;
+  int64 order_id = 5;
+  int64 trade_id = 6;
+  int64 position_id = 7;
+  int64 user_id = 8;
+  int64 account_id = 9;
+  AssetInstructionAction action = 10;
+  string target_biz_no = 11;
+  string coin = 12;
+  string amount = 13;
+  int64 step_no = 14;
+  AssetInstructionStatus status = 15;
+  int64 retry_count = 16;
+  int64 next_retry_at = 17;
+  string last_error_msg = 18;
+  int64 create_times = 19;
+  int64 update_times = 20;
+  string asset_flow_no = 21;
+  AssetReconciliationStatus reconciliation_status = 22;
+  int64 reconciled_at = 23;
+  int64 margin_lot_id = 24;
+  int64 liquidation_id = 25;
+}
+
+message OptionOutboxEvent {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string event_no = 3;
+  OptionEventType event_type = 4;
+  int64 contract_id = 5;
+  int64 trade_id = 6;
+  int64 match_sequence = 7;
+  OptionEventStatus status = 8;
+  int64 retry_count = 9;
+  int64 next_retry_at = 10;
+  string last_error_msg = 11;
+  int64 create_times = 12;
+  int64 update_times = 13;
+}
+
+message OptionInboxEvent {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string event_no = 3;
+  OptionEventType event_type = 4;
+  int64 contract_id = 5;
+  int64 trade_id = 6;
+  int64 match_sequence = 7;
+  OptionInboxStatus status = 8;
+  string last_error_msg = 9;
+  int64 create_times = 10;
+  int64 update_times = 11;
+}
+
+message OptionMarginLot {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  int64 account_id = 4;
+  int64 contract_id = 5;
+  int64 position_id = 6;
+  int64 order_id = 7;
+  int64 trade_id = 8;
+  string freeze_biz_no = 9;
+  string quantity = 10;
+  string initial_margin = 11;
+  string remaining_margin = 12;
+  MarginLotStatus status = 13;
+  int64 create_times = 14;
+  int64 update_times = 15;
+  string remaining_quantity = 16;
+  string pending_margin = 17;
+}
+
+message OptionRiskAccount {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  int64 account_id = 4;
+  string settle_coin = 5;
+  string equity = 6;
+  string position_margin = 7;
+  string maintenance_margin = 8;
+  string unrealized_pnl = 9;
+  string risk_rate = 10;
+  RiskAccountStatus status = 11;
+  int64 last_calc_time = 12;
+  int64 create_times = 13;
+  int64 update_times = 14;
+}
+
+message OptionLiquidation {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string liquidation_no = 3;
+  int64 user_id = 4;
+  int64 account_id = 5;
+  int64 contract_id = 6;
+  int64 position_id = 7;
+  string quantity = 8;
+  string mark_price = 9;
+  string maintenance_margin = 10;
+  string equity = 11;
+  string deficit_amount = 12;
+  string liquidation_fee = 13;
+  LiquidationStatus status = 14;
+  int64 retry_count = 15;
+  string last_error_msg = 16;
+  int64 create_times = 17;
+  int64 update_times = 18;
+  string collateral_amount = 19;
+  string insurance_fund_amount = 20;
+  string remaining_deficit = 21;
+  int64 takeover_position_id = 22;
+  int64 completed_at = 23;
+  int64 insurance_attempt = 24;
+}
+
+message OptionInsuranceFundFlow {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string flow_no = 3;
+  int64 contract_id = 4;
+  int64 liquidation_id = 5;
+  InsuranceFundFlowType flow_type = 6;
+  string coin = 7;
+  string amount = 8;
+  string asset_flow_no = 9;
+  int64 create_times = 10;
+}
+
 message OptionContractDetail {
   OptionContract contract = 1;
   OptionMarket market = 2;
@@ -265,6 +499,8 @@ message OptionTradeDetail {
 message OptionExerciseDetail {
   OptionExercise exercise = 1;
   OptionContract contract = 2;
+  repeated OptionExerciseAssignment assignments = 3;
+  repeated OptionAssetInstruction asset_instructions = 4;
 }
 
 message OptionSettlementDetail {

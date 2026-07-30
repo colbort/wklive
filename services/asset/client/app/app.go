@@ -23,6 +23,8 @@ type (
 	CoverInsuranceDeficitReq    = asset.CoverInsuranceDeficitReq
 	CoverInsuranceDeficitResp   = asset.CoverInsuranceDeficitResp
 	CreateAssetCoinConfigReq    = asset.CreateAssetCoinConfigReq
+	CreditPlatformRevenueReq    = asset.CreditPlatformRevenueReq
+	CreditPlatformRevenueResp   = asset.CreditPlatformRevenueResp
 	DeductFrozenAssetByBizNoReq = asset.DeductFrozenAssetByBizNoReq
 	DeductFrozenAssetReq        = asset.DeductFrozenAssetReq
 	DeductLockedAssetByBizNoReq = asset.DeductLockedAssetByBizNoReq
@@ -33,6 +35,10 @@ type (
 	FreezeAssetReq              = asset.FreezeAssetReq
 	FreezeAssetResp             = asset.FreezeAssetResp
 	GetAssetCoinConfigReq       = asset.GetAssetCoinConfigReq
+	GetAssetFlowByBizNoReq      = asset.GetAssetFlowByBizNoReq
+	GetAssetFlowByBizNoResp     = asset.GetAssetFlowByBizNoResp
+	GetInsuranceCoverReq        = asset.GetInsuranceCoverReq
+	GetInsuranceCoverResp       = asset.GetInsuranceCoverResp
 	GetMyAssetReq               = asset.GetMyAssetReq
 	GetMyAssetResp              = asset.GetMyAssetResp
 	GetMyAssetSummaryReq        = asset.GetMyAssetSummaryReq

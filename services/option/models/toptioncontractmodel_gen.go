@@ -44,32 +44,44 @@ type (
 	}
 
 	TOptionContract struct {
-		Id               int64           `db:"id"`                // 主键ID
-		TenantId         int64           `db:"tenant_id"`         // 租户ID
-		ContractCode     string          `db:"contract_code"`     // 合约编码，如 BTC-20260630-50000-C
-		UnderlyingSymbol string          `db:"underlying_symbol"` // 标的资产，如 BTCUSDT
-		SettleCoin       string          `db:"settle_coin"`       // 结算币种，如 USDT
-		QuoteCoin        string          `db:"quote_coin"`        // 报价币种，如 USDT
-		OptionType       int64           `db:"option_type"`       // 期权类型：1看涨 2看跌
-		ExerciseStyle    int64           `db:"exercise_style"`    // 行权方式：1欧式 2美式
-		SettlementType   int64           `db:"settlement_type"`   // 结算方式：1现金结算 2实物交割
-		StrikePrice      decimal.Decimal `db:"strike_price"`      // 行权价
-		ContractUnit     decimal.Decimal `db:"contract_unit"`     // 每张合约对应标的数量
-		MinOrderQty      decimal.Decimal `db:"min_order_qty"`     // 最小下单数量
-		MaxOrderQty      decimal.Decimal `db:"max_order_qty"`     // 最大下单数量
-		PriceTick        decimal.Decimal `db:"price_tick"`        // 最小价格变动单位
-		QtyStep          decimal.Decimal `db:"qty_step"`          // 最小数量变动单位
-		Multiplier       decimal.Decimal `db:"multiplier"`        // 合约乘数
-		ListTime         int64           `db:"list_time"`         // 上市时间
-		ExpireTime       int64           `db:"expire_time"`       // 到期时间
-		DeliverTime      int64           `db:"deliver_time"`      // 交割/结算时间
-		IsAutoExercise   int64           `db:"is_auto_exercise"`  // 是否自动行权：1是 2否
-		Status           int64           `db:"status"`            // 状态：0未知 1待上市 2可交易 3暂停交易 4已到期 5已结算 6已下线
-		Sort             int64           `db:"sort"`              // 排序值
-		Remark           string          `db:"remark"`            // 备注
-		IsDeleted        int64           `db:"is_deleted"`        // 是否删除：1是 2否
-		CreateTimes      int64           `db:"create_times"`      // 创建时间
-		UpdateTimes      int64           `db:"update_times"`      // 更新时间
+		Id                    int64           `db:"id"`                      // 主键ID
+		TenantId              int64           `db:"tenant_id"`               // 租户ID
+		ContractCode          string          `db:"contract_code"`           // 合约编码，如 BTC-20260630-50000-C
+		UnderlyingSymbol      string          `db:"underlying_symbol"`       // 标的资产，如 BTCUSDT
+		SettleCoin            string          `db:"settle_coin"`             // 结算币种，如 USDT
+		QuoteCoin             string          `db:"quote_coin"`              // 报价币种，如 USDT
+		OptionType            int64           `db:"option_type"`             // 期权类型：1看涨 2看跌
+		ExerciseStyle         int64           `db:"exercise_style"`          // 行权方式：1欧式 2美式
+		SettlementType        int64           `db:"settlement_type"`         // 结算方式：1现金结算 2实物交割
+		StrikePrice           decimal.Decimal `db:"strike_price"`            // 行权价
+		ContractUnit          decimal.Decimal `db:"contract_unit"`           // 每张合约对应标的数量
+		MinOrderQty           decimal.Decimal `db:"min_order_qty"`           // 最小下单数量
+		MaxOrderQty           decimal.Decimal `db:"max_order_qty"`           // 最大下单数量
+		PriceTick             decimal.Decimal `db:"price_tick"`              // 最小价格变动单位
+		QtyStep               decimal.Decimal `db:"qty_step"`                // 最小数量变动单位
+		Multiplier            decimal.Decimal `db:"multiplier"`              // 合约乘数
+		ListTime              int64           `db:"list_time"`               // 上市时间
+		ExpireTime            int64           `db:"expire_time"`             // 到期时间
+		DeliverTime           int64           `db:"deliver_time"`            // 交割/结算时间
+		IsAutoExercise        int64           `db:"is_auto_exercise"`        // 是否自动行权：1是 2否
+		MakerFeeRate          decimal.Decimal `db:"maker_fee_rate"`          // Maker成交手续费率
+		TakerFeeRate          decimal.Decimal `db:"taker_fee_rate"`          // Taker成交手续费率
+		ExerciseFeeRate       decimal.Decimal `db:"exercise_fee_rate"`       // 行权手续费率
+		FeeUserId             int64           `db:"fee_user_id"`             // 平台手续费归集用户ID
+		FeeAccountId          int64           `db:"fee_account_id"`          // 平台手续费归集Option账户ID
+		SellerMarginMode      int64           `db:"seller_margin_mode"`      // 卖方保证金模式：1关闭 2逐仓 3组合
+		InitialMarginRate     decimal.Decimal `db:"initial_margin_rate"`     // 卖方初始保证金率
+		MaintenanceMarginRate decimal.Decimal `db:"maintenance_margin_rate"` // 卖方维持保证金率
+		MinMarginRate         decimal.Decimal `db:"min_margin_rate"`         // 卖方最低保证金率
+		LiquidationFeeRate    decimal.Decimal `db:"liquidation_fee_rate"`    // 强平手续费率
+		InsuranceUserId       int64           `db:"insurance_user_id"`       // 保险基金用户ID
+		InsuranceAccountId    int64           `db:"insurance_account_id"`    // 保险基金Option账户ID
+		Status                int64           `db:"status"`                  // 状态：0未知 1待上市 2可交易 3暂停交易 4已到期 5已结算 6已下线
+		Sort                  int64           `db:"sort"`                    // 排序值
+		Remark                string          `db:"remark"`                  // 备注
+		IsDeleted             int64           `db:"is_deleted"`              // 是否删除：1是 2否
+		CreateTimes           int64           `db:"create_times"`            // 创建时间
+		UpdateTimes           int64           `db:"update_times"`            // 更新时间
 	}
 )
 
@@ -136,8 +148,8 @@ func (m *defaultTOptionContractModel) Insert(ctx context.Context, data *TOptionC
 	tOptionContractIdKey := fmt.Sprintf("%s%v", cacheTOptionContractIdPrefix, data.Id)
 	tOptionContractTenantIdContractCodeKey := fmt.Sprintf("%s%v:%v", cacheTOptionContractTenantIdContractCodePrefix, data.TenantId, data.ContractCode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionContractRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.ContractCode, data.UnderlyingSymbol, data.SettleCoin, data.QuoteCoin, data.OptionType, data.ExerciseStyle, data.SettlementType, data.StrikePrice, data.ContractUnit, data.MinOrderQty, data.MaxOrderQty, data.PriceTick, data.QtyStep, data.Multiplier, data.ListTime, data.ExpireTime, data.DeliverTime, data.IsAutoExercise, data.Status, data.Sort, data.Remark, data.IsDeleted, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionContractRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.ContractCode, data.UnderlyingSymbol, data.SettleCoin, data.QuoteCoin, data.OptionType, data.ExerciseStyle, data.SettlementType, data.StrikePrice, data.ContractUnit, data.MinOrderQty, data.MaxOrderQty, data.PriceTick, data.QtyStep, data.Multiplier, data.ListTime, data.ExpireTime, data.DeliverTime, data.IsAutoExercise, data.MakerFeeRate, data.TakerFeeRate, data.ExerciseFeeRate, data.FeeUserId, data.FeeAccountId, data.SellerMarginMode, data.InitialMarginRate, data.MaintenanceMarginRate, data.MinMarginRate, data.LiquidationFeeRate, data.InsuranceUserId, data.InsuranceAccountId, data.Status, data.Sort, data.Remark, data.IsDeleted, data.CreateTimes, data.UpdateTimes)
 	}, tOptionContractIdKey, tOptionContractTenantIdContractCodeKey)
 	return ret, err
 }
@@ -152,7 +164,7 @@ func (m *defaultTOptionContractModel) Update(ctx context.Context, newData *TOpti
 	tOptionContractTenantIdContractCodeKey := fmt.Sprintf("%s%v:%v", cacheTOptionContractTenantIdContractCodePrefix, data.TenantId, data.ContractCode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionContractRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.ContractCode, newData.UnderlyingSymbol, newData.SettleCoin, newData.QuoteCoin, newData.OptionType, newData.ExerciseStyle, newData.SettlementType, newData.StrikePrice, newData.ContractUnit, newData.MinOrderQty, newData.MaxOrderQty, newData.PriceTick, newData.QtyStep, newData.Multiplier, newData.ListTime, newData.ExpireTime, newData.DeliverTime, newData.IsAutoExercise, newData.Status, newData.Sort, newData.Remark, newData.IsDeleted, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.ContractCode, newData.UnderlyingSymbol, newData.SettleCoin, newData.QuoteCoin, newData.OptionType, newData.ExerciseStyle, newData.SettlementType, newData.StrikePrice, newData.ContractUnit, newData.MinOrderQty, newData.MaxOrderQty, newData.PriceTick, newData.QtyStep, newData.Multiplier, newData.ListTime, newData.ExpireTime, newData.DeliverTime, newData.IsAutoExercise, newData.MakerFeeRate, newData.TakerFeeRate, newData.ExerciseFeeRate, newData.FeeUserId, newData.FeeAccountId, newData.SellerMarginMode, newData.InitialMarginRate, newData.MaintenanceMarginRate, newData.MinMarginRate, newData.LiquidationFeeRate, newData.InsuranceUserId, newData.InsuranceAccountId, newData.Status, newData.Sort, newData.Remark, newData.IsDeleted, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tOptionContractIdKey, tOptionContractTenantIdContractCodeKey)
 	return err
 }

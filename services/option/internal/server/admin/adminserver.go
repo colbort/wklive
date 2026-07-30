@@ -148,3 +148,45 @@ func (s *AdminServer) ListBills(ctx context.Context, in *option.ListBillsReq) (*
 	l := adminlogic.NewListBillsLogic(ctx, s.svcCtx)
 	return l.ListBills(in)
 }
+
+// 暂停合约后强制撤销全部活动订单
+func (s *AdminServer) ForceCancelContractOrders(ctx context.Context, in *option.ForceCancelContractOrdersReq) (*option.CommonResp, error) {
+	l := adminlogic.NewForceCancelContractOrdersLogic(ctx, s.svcCtx)
+	return l.ForceCancelContractOrders(in)
+}
+
+// 将失败或人工处理的资产指令重新置为待执行
+func (s *AdminServer) RetryAssetInstruction(ctx context.Context, in *option.RetryAssetInstructionReq) (*option.CommonResp, error) {
+	l := adminlogic.NewRetryAssetInstructionLogic(ctx, s.svcCtx)
+	return l.RetryAssetInstruction(in)
+}
+
+// 将失败或人工处理的成交持仓事件重新置为待执行
+func (s *AdminServer) RetryTradeEvent(ctx context.Context, in *option.RetryTradeEventReq) (*option.CommonResp, error) {
+	l := adminlogic.NewRetryTradeEventLogic(ctx, s.svcCtx)
+	return l.RetryTradeEvent(in)
+}
+
+// 分页查询卖方风险账户
+func (s *AdminServer) ListRiskAccounts(ctx context.Context, in *option.ListRiskAccountsReq) (*option.ListRiskAccountsResp, error) {
+	l := adminlogic.NewListRiskAccountsLogic(ctx, s.svcCtx)
+	return l.ListRiskAccounts(in)
+}
+
+// 分页查询强平记录
+func (s *AdminServer) ListLiquidations(ctx context.Context, in *option.ListLiquidationsReq) (*option.ListLiquidationsResp, error) {
+	l := adminlogic.NewListLiquidationsLogic(ctx, s.svcCtx)
+	return l.ListLiquidations(in)
+}
+
+// 将失败或人工处理的强平记录重新置为待执行
+func (s *AdminServer) RetryLiquidation(ctx context.Context, in *option.RetryLiquidationReq) (*option.CommonResp, error) {
+	l := adminlogic.NewRetryLiquidationLogic(ctx, s.svcCtx)
+	return l.RetryLiquidation(in)
+}
+
+// 按行权单重试失败或人工处理的资产指令
+func (s *AdminServer) RetryExercise(ctx context.Context, in *option.RetryExerciseReq) (*option.CommonResp, error) {
+	l := adminlogic.NewRetryExerciseLogic(ctx, s.svcCtx)
+	return l.RetryExercise(in)
+}

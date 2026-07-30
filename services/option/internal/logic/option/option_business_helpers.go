@@ -23,7 +23,7 @@ func optionMultiplier(contract *models.TOptionContract) decimal.Decimal {
 }
 
 func optionTurnover(contract *models.TOptionContract, price, qty decimal.Decimal) decimal.Decimal {
-	return price.Mul(qty).Mul(optionMultiplier(contract))
+	return price.Mul(qty).Mul(optionMultiplier(contract)).Round(16)
 }
 
 func oppositeOrderSide(side int64) int64 {
@@ -244,11 +244,11 @@ func optionIntrinsicValue(contract *models.TOptionContract, deliveryPrice decima
 }
 
 func optionSettlementPayoff(contract *models.TOptionContract, deliveryPrice, qty decimal.Decimal) decimal.Decimal {
-	return optionIntrinsicValue(contract, deliveryPrice).Mul(qty).Mul(optionMultiplier(contract))
+	return optionIntrinsicValue(contract, deliveryPrice).Mul(qty).Mul(optionMultiplier(contract)).Round(16)
 }
 
 func optionExerciseAmount(contract *models.TOptionContract, qty decimal.Decimal) decimal.Decimal {
-	return contract.StrikePrice.Mul(qty).Mul(optionMultiplier(contract))
+	return contract.StrikePrice.Mul(qty).Mul(optionMultiplier(contract)).Round(16)
 }
 
 func applyOptionAccountDelta(ctx context.Context, accountModel models.TOptionAccountModel, billModel models.TOptionBillModel, tenantId, userId, accountId int64, coin string, amount decimal.Decimal, refType, refId int64, bizNo, remark string, realized bool, now int64) error {

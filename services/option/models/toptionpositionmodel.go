@@ -26,12 +26,22 @@ type (
 	TOptionPositionModel interface {
 		tOptionPositionModel
 		FindPage(ctx context.Context, filter OptionPositionPageFilter, cursor int64, limit int64) ([]*TOptionPosition, int64, error)
+		FindOneForUpdate(ctx context.Context, id int64) (*TOptionPosition, error)
 	}
 
 	customTOptionPositionModel struct {
 		*defaultTOptionPositionModel
 	}
 )
+
+func (m *defaultTOptionPositionModel) FindOneForUpdate(ctx context.Context, id int64) (*TOptionPosition, error) {
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1 FOR UPDATE", tOptionPositionRows, m.table)
+	var item TOptionPosition
+	if err := m.QueryRowNoCacheCtx(ctx, &item, query, id); err != nil {
+		return nil, err
+	}
+	return &item, nil
+}
 
 // NewTOptionPositionModel returns a model for the database table.
 func NewTOptionPositionModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TOptionPositionModel {

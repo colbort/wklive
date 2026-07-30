@@ -89,6 +89,10 @@ message PlaceOrderReq {
   string client_order_id = 8;
   common.YesNo reduce_only = 9; // 是否只减仓
   common.YesNo mmp = 10; // 是否做市商保护单
+  // 市价保护单的最差成交价。MARKET 必填；其他订单类型不得填写。
+  string protection_price = 11;
+  // 市价买入开仓允许消费的最大结算币金额。MARKET 买入开仓必填。
+  string max_turnover = 12;
 }
 
 message PlaceOrderResp {
@@ -291,10 +295,86 @@ service Admin {
 
   // 分页查询资金流水列表
   rpc ListBills(ListBillsReq) returns (ListBillsResp);
+
+  // 暂停合约后强制撤销全部活动订单
+  rpc ForceCancelContractOrders(ForceCancelContractOrdersReq) returns (CommonResp);
+
+  // 将失败或人工处理的资产指令重新置为待执行
+  rpc RetryAssetInstruction(RetryAssetInstructionReq) returns (CommonResp);
+
+  // 将失败或人工处理的成交持仓事件重新置为待执行
+  rpc RetryTradeEvent(RetryTradeEventReq) returns (CommonResp);
+
+  // 分页查询卖方风险账户
+  rpc ListRiskAccounts(ListRiskAccountsReq) returns (ListRiskAccountsResp);
+
+  // 分页查询强平记录
+  rpc ListLiquidations(ListLiquidationsReq) returns (ListLiquidationsResp);
+
+  // 将失败或人工处理的强平记录重新置为待执行
+  rpc RetryLiquidation(RetryLiquidationReq) returns (CommonResp);
+
+  // 按行权单重试失败或人工处理的资产指令
+  rpc RetryExercise(RetryExerciseReq) returns (CommonResp);
 }
 
 message CommonResp {
   common.RespBase base = 1;
+}
+
+message ForceCancelContractOrdersReq {
+  int64 tenant_id = 1;
+  int64 contract_id = 2;
+  string reason = 3;
+}
+
+message RetryAssetInstructionReq {
+  int64 tenant_id = 1;
+  int64 instruction_id = 2;
+}
+
+message RetryTradeEventReq {
+  int64 tenant_id = 1;
+  int64 event_id = 2;
+}
+
+message ListRiskAccountsReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 account_id = 3;
+  string settle_coin = 4;
+  RiskAccountStatus status = 5;
+  common.PageReq page = 6;
+}
+
+message ListRiskAccountsResp {
+  common.RespBase base = 1;
+  repeated OptionRiskAccount data = 2;
+}
+
+message ListLiquidationsReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 account_id = 3;
+  int64 contract_id = 4;
+  int64 position_id = 5;
+  LiquidationStatus status = 6;
+  common.PageReq page = 7;
+}
+
+message ListLiquidationsResp {
+  common.RespBase base = 1;
+  repeated OptionLiquidation data = 2;
+}
+
+message RetryLiquidationReq {
+  int64 tenant_id = 1;
+  int64 liquidation_id = 2;
+}
+
+message RetryExerciseReq {
+  int64 tenant_id = 1;
+  int64 exercise_id = 2;
 }
 
 message CreateContractReq {
@@ -320,6 +400,18 @@ message CreateContractReq {
   ContractStatus status = 20;
   int64 sort = 21;
   string remark = 22;
+  string maker_fee_rate = 23;
+  string taker_fee_rate = 24;
+  string exercise_fee_rate = 25;
+  int64 fee_user_id = 26;
+  int64 fee_account_id = 27;
+  SellerMarginMode seller_margin_mode = 28;
+  string initial_margin_rate = 29;
+  string maintenance_margin_rate = 30;
+  string min_margin_rate = 31;
+  string liquidation_fee_rate = 32;
+  int64 insurance_user_id = 33;
+  int64 insurance_account_id = 34;
 }
 
 message CreateContractResp {
@@ -352,6 +444,18 @@ message UpdateContractReq {
   int64 sort = 22;
   string remark = 23;
   common.YesNo is_deleted = 24; // 是否删除
+  string maker_fee_rate = 25;
+  string taker_fee_rate = 26;
+  string exercise_fee_rate = 27;
+  int64 fee_user_id = 28;
+  int64 fee_account_id = 29;
+  SellerMarginMode seller_margin_mode = 30;
+  string initial_margin_rate = 31;
+  string maintenance_margin_rate = 32;
+  string min_margin_rate = 33;
+  string liquidation_fee_rate = 34;
+  int64 insurance_user_id = 35;
+  int64 insurance_account_id = 36;
 }
 
 message GetContractReq {
@@ -619,6 +723,16 @@ message OptionTaskResp {
 // 定时任务
 // ====================
 service Task {
+  // 执行并重试 Option 资产指令
+  rpc ProcessAssetInstructions(OptionTaskReq) returns (OptionTaskResp);
+  // 按合约撮合序号消费成交持仓事件
+  rpc ProcessTradeEvents(OptionTaskReq) returns (OptionTaskResp);
+  // 聚合卖方持仓、资产权益与行情，刷新风险账户
+  rpc ProcessRiskAccounts(OptionTaskReq) returns (OptionTaskResp);
+  // 执行卖方逐仓强平及保险账户接管
+  rpc ProcessLiquidations(OptionTaskReq) returns (OptionTaskResp);
+  // 处理美式主动行权的空头指派和资金清算
+  rpc ProcessExercises(OptionTaskReq) returns (OptionTaskResp);
   // 期权合约生命周期处理（状态流转/订单过期/自动行权/到期结算）
   rpc ProcessContractLifecycle(OptionTaskReq) returns (OptionTaskResp);
   // 期权行情快照归档/清理

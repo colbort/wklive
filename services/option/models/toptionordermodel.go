@@ -8,6 +8,8 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"wklive/common/sqlutil"
+	"wklive/proto/common"
+	"wklive/proto/option"
 )
 
 var _ TOptionOrderModel = (*customTOptionOrderModel)(nil)
@@ -34,13 +36,37 @@ type (
 	TOptionOrderModel interface {
 		tOptionOrderModel
 		FindPage(ctx context.Context, filter OptionOrderPageFilter, cursor int64, limit int64) ([]*TOptionOrder, int64, error)
-		FindMatchableOrders(ctx context.Context, tenantId, contractId, side int64, price decimal.Decimal, limit int64) ([]*TOptionOrder, error)
+		FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId, userId int64, clientOrderId string) (*TOptionOrder, error)
+		FindOneForUpdate(ctx context.Context, id int64) (*TOptionOrder, error)
+		FindMatchableOrders(ctx context.Context, tenantId, contractId, side, excludeUserId, excludeAccountId int64, price decimal.Decimal, limit int64) ([]*TOptionOrder, error)
+		FindAllMatchableOrders(ctx context.Context, tenantId, contractId, side, excludeUserId, excludeAccountId int64, price decimal.Decimal) ([]*TOptionOrder, error)
 	}
 
 	customTOptionOrderModel struct {
 		*defaultTOptionOrderModel
 	}
 )
+
+func (m *defaultTOptionOrderModel) FindOneForUpdate(ctx context.Context, id int64) (*TOptionOrder, error) {
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1 FOR UPDATE", tOptionOrderRows, m.table)
+	var item TOptionOrder
+	if err := m.QueryRowNoCacheCtx(ctx, &item, query, id); err != nil {
+		return nil, err
+	}
+	return &item, nil
+}
+
+func (m *defaultTOptionOrderModel) FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId, userId int64, clientOrderId string) (*TOptionOrder, error) {
+	if clientOrderId == "" {
+		return nil, ErrNotFound
+	}
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND user_id = ? AND client_order_id = ? LIMIT 1", tOptionOrderRows, m.table)
+	var item TOptionOrder
+	if err := m.QueryRowNoCacheCtx(ctx, &item, query, tenantId, userId, clientOrderId); err != nil {
+		return nil, err
+	}
+	return &item, nil
+}
 
 // NewTOptionOrderModel returns a model for the database table.
 func NewTOptionOrderModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TOptionOrderModel {
@@ -92,7 +118,7 @@ func (m *defaultTOptionOrderModel) FindPage(ctx context.Context, filter OptionOr
 	return list, total, nil
 }
 
-func (m *defaultTOptionOrderModel) FindMatchableOrders(ctx context.Context, tenantId, contractId, side int64, price decimal.Decimal, limit int64) ([]*TOptionOrder, error) {
+func (m *defaultTOptionOrderModel) FindMatchableOrders(ctx context.Context, tenantId, contractId, side, excludeUserId, excludeAccountId int64, price decimal.Decimal, limit int64) ([]*TOptionOrder, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	priceClause := "price <= ?"
@@ -104,6 +130,7 @@ func (m *defaultTOptionOrderModel) FindMatchableOrders(ctx context.Context, tena
 
 	query := fmt.Sprintf(`SELECT %s FROM %s
 WHERE tenant_id = ? AND contract_id = ? AND side = ?
+  AND NOT (user_id = ? AND account_id = ?)
   AND status IN (?, ?) AND unfilled_qty > 0 AND %s
 ORDER BY %s LIMIT ? FOR UPDATE`, tOptionOrderRows, m.table, priceClause, orderBy)
 
@@ -112,8 +139,10 @@ ORDER BY %s LIMIT ? FOR UPDATE`, tOptionOrderRows, m.table, priceClause, orderBy
 		tenantId,
 		contractId,
 		side,
-		1,
-		2,
+		excludeUserId,
+		excludeAccountId,
+		int64(option.OrderStatus_ORDER_STATUS_PENDING),
+		int64(option.OrderStatus_ORDER_STATUS_PART_FILLED),
 		price,
 		limit,
 	)
@@ -122,4 +151,26 @@ ORDER BY %s LIMIT ? FOR UPDATE`, tOptionOrderRows, m.table, priceClause, orderBy
 	}
 
 	return list, nil
+}
+
+func (m *defaultTOptionOrderModel) FindAllMatchableOrders(ctx context.Context, tenantId, contractId, side, excludeUserId, excludeAccountId int64, price decimal.Decimal) ([]*TOptionOrder, error) {
+	priceClause := "price <= ?"
+	orderBy := "price ASC, id ASC"
+	if side == int64(common.Side_SIDE_BUY) {
+		priceClause = "price >= ?"
+		orderBy = "price DESC, id ASC"
+	}
+	query := fmt.Sprintf(`SELECT %s FROM %s
+WHERE tenant_id = ? AND contract_id = ? AND side = ?
+  AND NOT (user_id = ? AND account_id = ?)
+  AND status IN (?, ?) AND unfilled_qty > 0 AND %s
+ORDER BY %s FOR UPDATE`, tOptionOrderRows, m.table, priceClause, orderBy)
+	var list []*TOptionOrder
+	err := m.QueryRowsNoCacheCtx(ctx, &list, query,
+		tenantId, contractId, side, excludeUserId, excludeAccountId,
+		int64(option.OrderStatus_ORDER_STATUS_PENDING),
+		int64(option.OrderStatus_ORDER_STATUS_PART_FILLED),
+		price,
+	)
+	return list, err
 }

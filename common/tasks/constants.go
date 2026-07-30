@@ -10,7 +10,7 @@ import (
 const (
 	channel = "system:scheduled-tasks"
 
-	ServiceMarket     = "market"
+	ServiceMarket    = "market"
 	ServiceLiquidity = "liquidity"
 	ServiceOption    = "option"
 	ServiceStaking   = "staking"
@@ -21,6 +21,11 @@ const (
 
 	ActionOptionProcessContractLifecycle = "ProcessContractLifecycle"
 	ActionOptionCleanMarketSnapshots     = "CleanMarketSnapshots"
+	ActionOptionProcessAssetInstructions = "ProcessAssetInstructions"
+	ActionOptionProcessTradeEvents       = "ProcessTradeEvents"
+	ActionOptionProcessRiskAccounts      = "ProcessRiskAccounts"
+	ActionOptionProcessLiquidations      = "ProcessLiquidations"
+	ActionOptionProcessExercises         = "ProcessExercises"
 
 	ActionStakingProcessRewardsAndSettleOrders = "ProcessRewardsAndSettleOrders"
 

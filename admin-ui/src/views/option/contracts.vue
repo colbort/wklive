@@ -137,6 +137,15 @@
             >
               {{ t('option.editMarket') }}
             </el-button>
+            <el-button
+              v-if="row.contract?.status === 3"
+              v-perm="'option:contract:update'"
+              link
+              type="danger"
+              @click="forceCancelOrders(row)"
+            >
+              {{ t('option.forceCancelOrders') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -224,6 +233,45 @@
           </el-form-item>
           <el-form-item :label="t('option.multiplier')">
             <el-input v-model="contractForm.multiplier" />
+          </el-form-item>
+          <el-form-item :label="t('option.makerFeeRate')">
+            <el-input v-model="contractForm.makerFeeRate" />
+          </el-form-item>
+          <el-form-item :label="t('option.takerFeeRate')">
+            <el-input v-model="contractForm.takerFeeRate" />
+          </el-form-item>
+          <el-form-item :label="t('option.exerciseFeeRate')">
+            <el-input v-model="contractForm.exerciseFeeRate" />
+          </el-form-item>
+          <el-form-item :label="t('option.feeUserId')">
+            <el-input-number v-model="contractForm.feeUserId" :min="0" :precision="0" />
+          </el-form-item>
+          <el-form-item :label="t('option.feeAccountId')">
+            <el-input-number v-model="contractForm.feeAccountId" :min="0" :precision="0" />
+          </el-form-item>
+          <el-form-item :label="t('option.sellerMarginMode')">
+            <el-select v-model="contractForm.sellerMarginMode" style="width: 100%">
+              <el-option :label="t('option.marginDisabled')" :value="1" />
+              <el-option :label="t('option.marginIsolated')" :value="2" />
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="t('option.initialMarginRate')">
+            <el-input v-model="contractForm.initialMarginRate" />
+          </el-form-item>
+          <el-form-item :label="t('option.maintenanceMarginRate')">
+            <el-input v-model="contractForm.maintenanceMarginRate" />
+          </el-form-item>
+          <el-form-item :label="t('option.minMarginRate')">
+            <el-input v-model="contractForm.minMarginRate" />
+          </el-form-item>
+          <el-form-item :label="t('option.liquidationFeeRate')">
+            <el-input v-model="contractForm.liquidationFeeRate" />
+          </el-form-item>
+          <el-form-item :label="t('option.insuranceUserId')">
+            <el-input-number v-model="contractForm.insuranceUserId" :min="0" :precision="0" />
+          </el-form-item>
+          <el-form-item :label="t('option.insuranceAccountId')">
+            <el-input-number v-model="contractForm.insuranceAccountId" :min="0" :precision="0" />
           </el-form-item>
           <el-form-item :label="t('option.listTime')">
             <el-date-picker
@@ -530,7 +578,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   optionService,
   type OptionContractDetail,
@@ -590,6 +638,18 @@ const contractForm = reactive<UpdateContractReq>({
   priceTick: '',
   qtyStep: '',
   multiplier: '',
+  makerFeeRate: '0',
+  takerFeeRate: '0',
+  exerciseFeeRate: '0',
+  feeUserId: 0,
+  feeAccountId: 0,
+  sellerMarginMode: 1,
+  initialMarginRate: '0',
+  maintenanceMarginRate: '0',
+  minMarginRate: '0',
+  liquidationFeeRate: '0',
+  insuranceUserId: 0,
+  insuranceAccountId: 0,
   listTime: 0,
   expireTime: 0,
   deliverTime: 0,
@@ -763,6 +823,18 @@ const resetContractForm = () => {
     priceTick: '',
     qtyStep: '',
     multiplier: '',
+    makerFeeRate: '0',
+    takerFeeRate: '0',
+    exerciseFeeRate: '0',
+    feeUserId: 0,
+    feeAccountId: 0,
+    sellerMarginMode: 1,
+    initialMarginRate: '0',
+    maintenanceMarginRate: '0',
+    minMarginRate: '0',
+    liquidationFeeRate: '0',
+    insuranceUserId: 0,
+    insuranceAccountId: 0,
     listTime: 0,
     expireTime: 0,
     deliverTime: 0,
@@ -772,6 +844,21 @@ const resetContractForm = () => {
     remark: '',
     isDeleted: 2,
   })
+}
+
+const forceCancelOrders = async (row: OptionContractDetail) => {
+  await ElMessageBox.confirm(
+    t('option.forceCancelOrdersConfirm'),
+    t('option.forceCancelOrders'),
+    { type: 'warning' },
+  )
+  await optionService.forceCancelContractOrders({
+    tenantId: row.contract.tenantId,
+    contractId: row.contract.id,
+    reason: 'ADMIN_FORCE_CANCEL',
+  })
+  ElMessage.success(t('common.operationSuccess'))
+  await loadList()
 }
 
 const resetMarketForm = () => {

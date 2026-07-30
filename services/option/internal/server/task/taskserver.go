@@ -23,6 +23,36 @@ func NewTaskServer(svcCtx *svc.ServiceContext) *TaskServer {
 	}
 }
 
+// 执行并重试 Option 资产指令
+func (s *TaskServer) ProcessAssetInstructions(ctx context.Context, in *option.OptionTaskReq) (*option.OptionTaskResp, error) {
+	l := tasklogic.NewProcessAssetInstructionsLogic(ctx, s.svcCtx)
+	return l.ProcessAssetInstructions(in)
+}
+
+// 按合约撮合序号消费成交持仓事件
+func (s *TaskServer) ProcessTradeEvents(ctx context.Context, in *option.OptionTaskReq) (*option.OptionTaskResp, error) {
+	l := tasklogic.NewProcessTradeEventsLogic(ctx, s.svcCtx)
+	return l.ProcessTradeEvents(in)
+}
+
+// 聚合卖方持仓、资产权益与行情，刷新风险账户
+func (s *TaskServer) ProcessRiskAccounts(ctx context.Context, in *option.OptionTaskReq) (*option.OptionTaskResp, error) {
+	l := tasklogic.NewProcessRiskAccountsLogic(ctx, s.svcCtx)
+	return l.ProcessRiskAccounts(in)
+}
+
+// 执行卖方逐仓强平及保险账户接管
+func (s *TaskServer) ProcessLiquidations(ctx context.Context, in *option.OptionTaskReq) (*option.OptionTaskResp, error) {
+	l := tasklogic.NewProcessLiquidationsLogic(ctx, s.svcCtx)
+	return l.ProcessLiquidations(in)
+}
+
+// 处理美式主动行权的空头指派和资金清算
+func (s *TaskServer) ProcessExercises(ctx context.Context, in *option.OptionTaskReq) (*option.OptionTaskResp, error) {
+	l := tasklogic.NewProcessExercisesLogic(ctx, s.svcCtx)
+	return l.ProcessExercises(in)
+}
+
 // 期权合约生命周期处理（状态流转/订单过期/自动行权/到期结算）
 func (s *TaskServer) ProcessContractLifecycle(ctx context.Context, in *option.OptionTaskReq) (*option.OptionTaskResp, error) {
 	l := tasklogic.NewProcessContractLifecycleLogic(ctx, s.svcCtx)

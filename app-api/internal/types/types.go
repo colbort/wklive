@@ -733,80 +733,6 @@ type Interval struct {
 	KType int32  `json:"kType"`
 }
 
-type MarketCategory struct {
-	Id           int64  `json:"id"`
-	CategoryType int64  `json:"categoryType"`
-	CategoryCode string `json:"categoryCode"`
-	CategoryName string `json:"categoryName"`
-	Enabled      int64  `json:"enabled"`
-	AppVisible   int64  `json:"appVisible"`
-	Sort         int64  `json:"sort"`
-	Icon         string `json:"icon"`
-	Remark       string `json:"remark"`
-	CreateTimes  int64  `json:"createTimes"`
-	UpdateTimes  int64  `json:"updateTimes"`
-}
-
-type MarketProduct struct {
-	Id           int64  `json:"id"`
-	CategoryType int64  `json:"categoryType"`
-	CategoryCode string `json:"categoryCode"`
-	CategoryName string `json:"categoryName"`
-	Market       string `json:"market"` //
-	Symbol       string `json:"symbol"` //
-	Code         string `json:"code"`   // 第三方原始 code
-	Name         string `json:"name"`
-	DisplayName  string `json:"displayName"`
-	BaseCoin     string `json:"baseCoin"`
-	QuoteCoin    string `json:"quoteCoin"`
-	Enabled      int64  `json:"enabled"`
-	AppVisible   int64  `json:"appVisible"`
-	Sort         int64  `json:"sort"`
-	Icon         string `json:"icon"`
-	Remark       string `json:"remark"`
-	CreateTimes  int64  `json:"createTimes"`
-	UpdateTimes  int64  `json:"updateTimes"`
-}
-
-type MarketTenantCategory struct {
-	Id           int64  `json:"id"`
-	TenantId     int64  `json:"tenantId"`
-	CategoryId   int64  `json:"categoryId"`
-	Enabled      int64  `json:"enabled"`
-	AppVisible   int64  `json:"appVisible"`
-	Sort         int64  `json:"sort"`
-	Remark       string `json:"remark"`
-	CreateTimes  int64  `json:"createTimes"`
-	UpdateTimes  int64  `json:"updateTimes"`
-	CategoryType int64  `json:"categoryType"`
-	CategoryCode string `json:"categoryCode"`
-	CategoryName string `json:"categoryName"`
-	Icon         string `json:"icon"`
-}
-
-type MarketTenantProduct struct {
-	Id           int64  `json:"id"`
-	TenantId     int64  `json:"tenantId"`
-	ProductId    int64  `json:"productId"`
-	Enabled      int64  `json:"enabled"`
-	AppVisible   int64  `json:"appVisible"`
-	Sort         int64  `json:"sort"`
-	Remark       string `json:"remark"`
-	CreateTimes  int64  `json:"createTimes"`
-	UpdateTimes  int64  `json:"updateTimes"`
-	CategoryType int64  `json:"categoryType"`
-	CategoryCode string `json:"categoryCode"`
-	CategoryName string `json:"categoryName"`
-	Market       string `json:"market"`
-	Symbol       string `json:"symbol"`
-	Code         string `json:"code"`
-	Name         string `json:"name"`
-	DisplayName  string `json:"displayName"`
-	BaseCoin     string `json:"baseCoin"`
-	QuoteCoin    string `json:"quoteCoin"`
-	Icon         string `json:"icon"`
-}
-
 type Kline struct {
 	CategoryCode string `json:"categoryCode"`
 	Market       string `json:"market"`
@@ -1094,10 +1020,84 @@ type LoginResp struct {
 	Data LoginData `json:"data"`
 }
 
+type MarketCategory struct {
+	Id           int64  `json:"id"`
+	CategoryType int64  `json:"categoryType"`
+	CategoryCode string `json:"categoryCode"`
+	CategoryName string `json:"categoryName"`
+	Enabled      int64  `json:"enabled"`
+	AppVisible   int64  `json:"appVisible"`
+	Sort         int64  `json:"sort"`
+	Icon         string `json:"icon"`
+	Remark       string `json:"remark"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateTimes  int64  `json:"updateTimes"`
+}
+
+type MarketProduct struct {
+	Id           int64  `json:"id"`
+	CategoryType int64  `json:"categoryType"`
+	CategoryCode string `json:"categoryCode"`
+	CategoryName string `json:"categoryName"`
+	Market       string `json:"market"` //
+	Symbol       string `json:"symbol"` //
+	Code         string `json:"code"`   // 第三方原始 code
+	Name         string `json:"name"`
+	DisplayName  string `json:"displayName"`
+	BaseCoin     string `json:"baseCoin"`
+	QuoteCoin    string `json:"quoteCoin"`
+	Enabled      int64  `json:"enabled"`
+	AppVisible   int64  `json:"appVisible"`
+	Sort         int64  `json:"sort"`
+	Icon         string `json:"icon"`
+	Remark       string `json:"remark"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateTimes  int64  `json:"updateTimes"`
+}
+
 type MarketSymbol struct {
 	CategoryCode string `json:"categoryCode"`
 	Market       string `json:"market"`
 	Symbol       string `json:"symbol"`
+}
+
+type MarketTenantCategory struct {
+	Id           int64  `json:"id"`
+	TenantId     int64  `json:"tenantId"`
+	CategoryId   int64  `json:"categoryId"`
+	Enabled      int64  `json:"enabled"`
+	AppVisible   int64  `json:"appVisible"`
+	Sort         int64  `json:"sort"`
+	Remark       string `json:"remark"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateTimes  int64  `json:"updateTimes"`
+	CategoryType int64  `json:"categoryType"`
+	CategoryCode string `json:"categoryCode"`
+	CategoryName string `json:"categoryName"`
+	Icon         string `json:"icon"`
+}
+
+type MarketTenantProduct struct {
+	Id           int64  `json:"id"`
+	TenantId     int64  `json:"tenantId"`
+	ProductId    int64  `json:"productId"`
+	Enabled      int64  `json:"enabled"`
+	AppVisible   int64  `json:"appVisible"`
+	Sort         int64  `json:"sort"`
+	Remark       string `json:"remark"`
+	CreateTimes  int64  `json:"createTimes"`
+	UpdateTimes  int64  `json:"updateTimes"`
+	CategoryType int64  `json:"categoryType"`
+	CategoryCode string `json:"categoryCode"`
+	CategoryName string `json:"categoryName"`
+	Market       string `json:"market"`
+	Symbol       string `json:"symbol"`
+	Code         string `json:"code"`
+	Name         string `json:"name"`
+	DisplayName  string `json:"displayName"`
+	BaseCoin     string `json:"baseCoin"`
+	QuoteCoin    string `json:"quoteCoin"`
+	Icon         string `json:"icon"`
 }
 
 type MyOrderDetailReq struct {
@@ -1183,32 +1183,44 @@ type OptionCancelOrderReq struct {
 }
 
 type OptionContract struct {
-	Id               int64  `json:"id"`               // 主键ID
-	TenantId         int64  `json:"tenantId"`         // 租户ID
-	ContractCode     string `json:"contractCode"`     // 合约编码
-	UnderlyingSymbol string `json:"underlyingSymbol"` // 标的符号
-	SettleCoin       string `json:"settleCoin"`       // 结算币种
-	QuoteCoin        string `json:"quoteCoin"`        // 计价币种
-	OptionType       int64  `json:"optionType"`
-	ExerciseStyle    int64  `json:"exerciseStyle"`
-	SettlementType   int64  `json:"settlementType"`
-	StrikePrice      string `json:"strikePrice" validate:"decimal_32_16"`
-	ContractUnit     string `json:"contractUnit" validate:"decimal_32_16"`
-	MinOrderQty      string `json:"minOrderQty" validate:"decimal_32_16"`
-	MaxOrderQty      string `json:"maxOrderQty" validate:"decimal_32_16"`
-	PriceTick        string `json:"priceTick" validate:"decimal_32_16"`
-	QtyStep          string `json:"qtyStep" validate:"decimal_32_16"`
-	Multiplier       string `json:"multiplier" validate:"decimal_32_16"`
-	ListTime         int64  `json:"listTime"`
-	ExpireTime       int64  `json:"expireTime"`
-	DeliverTime      int64  `json:"deliverTime"`
-	IsAutoExercise   int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
-	Status           int64  `json:"status"`
-	Sort             int64  `json:"sort"`        // 排序
-	Remark           string `json:"remark"`      // 备注
-	IsDeleted        int64  `json:"isDeleted"`   // 是否删除
-	CreateTimes      int64  `json:"createTimes"` // 创建时间
-	UpdateTimes      int64  `json:"updateTimes"` // 更新时间
+	Id                    int64  `json:"id"`               // 主键ID
+	TenantId              int64  `json:"tenantId"`         // 租户ID
+	ContractCode          string `json:"contractCode"`     // 合约编码
+	UnderlyingSymbol      string `json:"underlyingSymbol"` // 标的符号
+	SettleCoin            string `json:"settleCoin"`       // 结算币种
+	QuoteCoin             string `json:"quoteCoin"`        // 计价币种
+	OptionType            int64  `json:"optionType"`
+	ExerciseStyle         int64  `json:"exerciseStyle"`
+	SettlementType        int64  `json:"settlementType"`
+	StrikePrice           string `json:"strikePrice" validate:"decimal_32_16"`
+	ContractUnit          string `json:"contractUnit" validate:"decimal_32_16"`
+	MinOrderQty           string `json:"minOrderQty" validate:"decimal_32_16"`
+	MaxOrderQty           string `json:"maxOrderQty" validate:"decimal_32_16"`
+	PriceTick             string `json:"priceTick" validate:"decimal_32_16"`
+	QtyStep               string `json:"qtyStep" validate:"decimal_32_16"`
+	Multiplier            string `json:"multiplier" validate:"decimal_32_16"`
+	ListTime              int64  `json:"listTime"`
+	ExpireTime            int64  `json:"expireTime"`
+	DeliverTime           int64  `json:"deliverTime"`
+	IsAutoExercise        int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
+	Status                int64  `json:"status"`
+	Sort                  int64  `json:"sort"`        // 排序
+	Remark                string `json:"remark"`      // 备注
+	IsDeleted             int64  `json:"isDeleted"`   // 是否删除
+	CreateTimes           int64  `json:"createTimes"` // 创建时间
+	UpdateTimes           int64  `json:"updateTimes"` // 更新时间
+	MakerFeeRate          string `json:"makerFeeRate" validate:"decimal_20_10"`
+	TakerFeeRate          string `json:"takerFeeRate" validate:"decimal_20_10"`
+	ExerciseFeeRate       string `json:"exerciseFeeRate" validate:"decimal_20_10"`
+	FeeUserId             int64  `json:"feeUserId"`
+	FeeAccountId          int64  `json:"feeAccountId"`
+	SellerMarginMode      int64  `json:"sellerMarginMode"`
+	InitialMarginRate     string `json:"initialMarginRate" validate:"decimal_20_10"`
+	MaintenanceMarginRate string `json:"maintenanceMarginRate" validate:"decimal_20_10"`
+	MinMarginRate         string `json:"minMarginRate" validate:"decimal_20_10"`
+	LiquidationFeeRate    string `json:"liquidationFeeRate" validate:"decimal_20_10"`
+	InsuranceUserId       int64  `json:"insuranceUserId"`
+	InsuranceAccountId    int64  `json:"insuranceAccountId"`
 }
 
 type OptionContractDetail struct {
@@ -1319,16 +1331,18 @@ type OptionOrderDetail struct {
 }
 
 type OptionPlaceOrderReq struct {
-	AccountId      int64  `json:"accountId"`  // 账户ID
-	ContractId     int64  `json:"contractId"` // 合约ID
-	Side           int64  `json:"side"`
-	PositionEffect int64  `json:"positionEffect"`
-	OrderType      int64  `json:"orderType"`
-	Price          string `json:"price" validate:"required,decimal_gte_zero,decimal_32_16"`
-	Qty            string `json:"qty" validate:"required,decimal_gt_zero,decimal_32_16"`
-	ClientOrderId  string `json:"clientOrderId,optional"` // 客户端订单号
-	ReduceOnly     int64  `json:"reduceOnly,optional"`    // 是否只减仓：1是 2否
-	Mmp            int64  `json:"mmp,optional"`           // 是否做市商保护：1是 2否
+	AccountId       int64  `json:"accountId"`  // 账户ID
+	ContractId      int64  `json:"contractId"` // 合约ID
+	Side            int64  `json:"side"`
+	PositionEffect  int64  `json:"positionEffect"`
+	OrderType       int64  `json:"orderType"`
+	Price           string `json:"price,optional" validate:"decimal_gt_zero,decimal_32_16"`
+	Qty             string `json:"qty" validate:"required,decimal_gt_zero,decimal_32_16"`
+	ClientOrderId   string `json:"clientOrderId,optional"` // 客户端订单号
+	ReduceOnly      int64  `json:"reduceOnly,optional"`    // 是否只减仓：1是 2否
+	Mmp             int64  `json:"mmp,optional"`           // 是否做市商保护：1是 2否
+	ProtectionPrice string `json:"protectionPrice,optional" validate:"decimal_gt_zero,decimal_32_16"`
+	MaxTurnover     string `json:"maxTurnover,optional" validate:"decimal_gt_zero,decimal_32_16"`
 }
 
 type OptionPlaceOrderResp struct {
@@ -1388,6 +1402,7 @@ type OptionTrade struct {
 	SellFee          string `json:"sellFee" validate:"decimal_32_16"`
 	FeeCoin          string `json:"feeCoin"`
 	MakerSide        int64  `json:"makerSide"`
+	MatchSequence    int64  `json:"matchSequence"`
 	TradeTime        int64  `json:"tradeTime"`
 	CreateTimes      int64  `json:"createTimes"` // 创建时间
 }

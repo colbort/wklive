@@ -25,14 +25,16 @@ var (
 	tOptionTradeRowsExpectAutoSet   = strings.Join(stringx.Remove(tOptionTradeFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tOptionTradeRowsWithPlaceHolder = strings.Join(stringx.Remove(tOptionTradeFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTOptionTradeIdPrefix              = "cache:tOptionTrade:id:"
-	cacheTOptionTradeTenantIdTradeNoPrefix = "cache:tOptionTrade:tenantId:tradeNo:"
+	cacheTOptionTradeIdPrefix                              = "cache:tOptionTrade:id:"
+	cacheTOptionTradeTenantIdContractIdMatchSequencePrefix = "cache:tOptionTrade:tenantId:contractId:matchSequence:"
+	cacheTOptionTradeTenantIdTradeNoPrefix                 = "cache:tOptionTrade:tenantId:tradeNo:"
 )
 
 type (
 	tOptionTradeModel interface {
 		Insert(ctx context.Context, data *TOptionTrade) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TOptionTrade, error)
+		FindOneByTenantIdContractIdMatchSequence(ctx context.Context, tenantId int64, contractId int64, matchSequence int64) (*TOptionTrade, error)
 		FindOneByTenantIdTradeNo(ctx context.Context, tenantId int64, tradeNo string) (*TOptionTrade, error)
 		Update(ctx context.Context, data *TOptionTrade) error
 		Delete(ctx context.Context, id int64) error
@@ -64,6 +66,7 @@ type (
 		SellFee          decimal.Decimal `db:"sell_fee"`          // 卖方手续费
 		FeeCoin          string          `db:"fee_coin"`          // 手续费币种
 		MakerSide        int64           `db:"maker_side"`        // maker方向：1买 2卖
+		MatchSequence    int64           `db:"match_sequence"`    // 合约内严格递增撮合序号
 		TradeTime        int64           `db:"trade_time"`        // 成交时间
 		CreateTimes      int64           `db:"create_times"`      // 创建时间
 	}
@@ -83,11 +86,12 @@ func (m *defaultTOptionTradeModel) Delete(ctx context.Context, id int64) error {
 	}
 
 	tOptionTradeIdKey := fmt.Sprintf("%s%v", cacheTOptionTradeIdPrefix, id)
+	tOptionTradeTenantIdContractIdMatchSequenceKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionTradeTenantIdContractIdMatchSequencePrefix, data.TenantId, data.ContractId, data.MatchSequence)
 	tOptionTradeTenantIdTradeNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionTradeTenantIdTradeNoPrefix, data.TenantId, data.TradeNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tOptionTradeIdKey, tOptionTradeTenantIdTradeNoKey)
+	}, tOptionTradeIdKey, tOptionTradeTenantIdContractIdMatchSequenceKey, tOptionTradeTenantIdTradeNoKey)
 	return err
 }
 
@@ -98,6 +102,26 @@ func (m *defaultTOptionTradeModel) FindOne(ctx context.Context, id int64) (*TOpt
 		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tOptionTradeRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+func (m *defaultTOptionTradeModel) FindOneByTenantIdContractIdMatchSequence(ctx context.Context, tenantId int64, contractId int64, matchSequence int64) (*TOptionTrade, error) {
+	tOptionTradeTenantIdContractIdMatchSequenceKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionTradeTenantIdContractIdMatchSequencePrefix, tenantId, contractId, matchSequence)
+	var resp TOptionTrade
+	err := m.QueryRowIndexCtx(ctx, &resp, tOptionTradeTenantIdContractIdMatchSequenceKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `contract_id` = ? and `match_sequence` = ? limit 1", tOptionTradeRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, contractId, matchSequence); err != nil {
+			return nil, err
+		}
+		return resp.Id, nil
+	}, m.queryPrimary)
 	switch err {
 	case nil:
 		return &resp, nil
@@ -130,11 +154,12 @@ func (m *defaultTOptionTradeModel) FindOneByTenantIdTradeNo(ctx context.Context,
 
 func (m *defaultTOptionTradeModel) Insert(ctx context.Context, data *TOptionTrade) (sql.Result, error) {
 	tOptionTradeIdKey := fmt.Sprintf("%s%v", cacheTOptionTradeIdPrefix, data.Id)
+	tOptionTradeTenantIdContractIdMatchSequenceKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionTradeTenantIdContractIdMatchSequencePrefix, data.TenantId, data.ContractId, data.MatchSequence)
 	tOptionTradeTenantIdTradeNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionTradeTenantIdTradeNoPrefix, data.TenantId, data.TradeNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionTradeRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.TradeNo, data.ContractId, data.UnderlyingSymbol, data.BuyOrderId, data.BuyOrderNo, data.BuyUserId, data.BuyAccountId, data.SellOrderId, data.SellOrderNo, data.SellUserId, data.SellAccountId, data.Price, data.Qty, data.Turnover, data.BuyFee, data.SellFee, data.FeeCoin, data.MakerSide, data.TradeTime, data.CreateTimes)
-	}, tOptionTradeIdKey, tOptionTradeTenantIdTradeNoKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionTradeRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.TradeNo, data.ContractId, data.UnderlyingSymbol, data.BuyOrderId, data.BuyOrderNo, data.BuyUserId, data.BuyAccountId, data.SellOrderId, data.SellOrderNo, data.SellUserId, data.SellAccountId, data.Price, data.Qty, data.Turnover, data.BuyFee, data.SellFee, data.FeeCoin, data.MakerSide, data.MatchSequence, data.TradeTime, data.CreateTimes)
+	}, tOptionTradeIdKey, tOptionTradeTenantIdContractIdMatchSequenceKey, tOptionTradeTenantIdTradeNoKey)
 	return ret, err
 }
 
@@ -145,11 +170,12 @@ func (m *defaultTOptionTradeModel) Update(ctx context.Context, newData *TOptionT
 	}
 
 	tOptionTradeIdKey := fmt.Sprintf("%s%v", cacheTOptionTradeIdPrefix, data.Id)
+	tOptionTradeTenantIdContractIdMatchSequenceKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionTradeTenantIdContractIdMatchSequencePrefix, data.TenantId, data.ContractId, data.MatchSequence)
 	tOptionTradeTenantIdTradeNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionTradeTenantIdTradeNoPrefix, data.TenantId, data.TradeNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionTradeRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.TradeNo, newData.ContractId, newData.UnderlyingSymbol, newData.BuyOrderId, newData.BuyOrderNo, newData.BuyUserId, newData.BuyAccountId, newData.SellOrderId, newData.SellOrderNo, newData.SellUserId, newData.SellAccountId, newData.Price, newData.Qty, newData.Turnover, newData.BuyFee, newData.SellFee, newData.FeeCoin, newData.MakerSide, newData.TradeTime, newData.CreateTimes, newData.Id)
-	}, tOptionTradeIdKey, tOptionTradeTenantIdTradeNoKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.TradeNo, newData.ContractId, newData.UnderlyingSymbol, newData.BuyOrderId, newData.BuyOrderNo, newData.BuyUserId, newData.BuyAccountId, newData.SellOrderId, newData.SellOrderNo, newData.SellUserId, newData.SellAccountId, newData.Price, newData.Qty, newData.Turnover, newData.BuyFee, newData.SellFee, newData.FeeCoin, newData.MakerSide, newData.MatchSequence, newData.TradeTime, newData.CreateTimes, newData.Id)
+	}, tOptionTradeIdKey, tOptionTradeTenantIdContractIdMatchSequenceKey, tOptionTradeTenantIdTradeNoKey)
 	return err
 }
 

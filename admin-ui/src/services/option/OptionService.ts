@@ -10,6 +10,12 @@ import {
   apiOptionGetPosition,
   apiOptionGetSettlement,
   apiOptionGetTrade,
+  apiOptionForceCancelContractOrders,
+  apiOptionRetryAssetInstruction,
+  apiOptionRetryTradeEvent,
+  apiOptionListRiskAccounts,
+  apiOptionListLiquidations,
+  apiOptionRetryLiquidation,
   apiOptionListAccounts,
   apiOptionListBills,
   apiOptionListContracts,
@@ -57,6 +63,18 @@ export type OptionContract = {
   isDeleted: number // 是否删除：1是 2否
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
+  makerFeeRate: string
+  takerFeeRate: string
+  exerciseFeeRate: string
+  feeUserId: number
+  feeAccountId: number
+  sellerMarginMode: number
+  initialMarginRate: string
+  maintenanceMarginRate: string
+  minMarginRate: string
+  liquidationFeeRate: string
+  insuranceUserId: number
+  insuranceAccountId: number
 }
 
 export type OptionMarket = {
@@ -157,6 +175,7 @@ export type OptionTrade = {
   sellFee: string
   feeCoin: string
   makerSide: number
+  matchSequence: number
   tradeTime: number
   createTimes: number // 创建时间
 }
@@ -301,6 +320,22 @@ export type CreateContractReq = Omit<
 >
 
 export type UpdateContractReq = Omit<OptionContract, 'createTimes' | 'updateTimes'>
+
+export type OptionForceCancelContractOrdersReq = {
+  tenantId: number
+  contractId: number
+  reason?: string
+}
+
+export type OptionRetryAssetInstructionReq = {
+  tenantId: number
+  instructionId: number
+}
+
+export type OptionRetryTradeEventReq = {
+  tenantId: number
+  eventId: number
+}
 
 export type GetContractReq = {
   tenantId?: number // 租户ID
@@ -454,6 +489,76 @@ export type ListBillsReq = {
   createTimeRange?: TimeRange
 }
 
+export type OptionRiskAccount = {
+  id: number
+  tenantId: number
+  userId: number
+  accountId: number
+  settleCoin: string
+  equity: string
+  positionMargin: string
+  maintenanceMargin: string
+  unrealizedPnl: string
+  riskRate: string
+  status: number
+  lastCalcTime: number
+  createTimes: number
+  updateTimes: number
+}
+
+export type OptionLiquidation = {
+  id: number
+  tenantId: number
+  liquidationNo: string
+  userId: number
+  accountId: number
+  contractId: number
+  positionId: number
+  quantity: string
+  markPrice: string
+  maintenanceMargin: string
+  equity: string
+  deficitAmount: string
+  liquidationFee: string
+  status: number
+  retryCount: number
+  lastErrorMsg: string
+  collateralAmount: string
+  insuranceFundAmount: string
+  remainingDeficit: string
+  takeoverPositionId: number
+  completedAt: number
+  insuranceAttempt: number
+  createTimes: number
+  updateTimes: number
+}
+
+export type ListOptionRiskAccountsReq = {
+  cursor?: number
+  limit?: number
+  tenantId?: number
+  userId?: number
+  accountId?: number
+  settleCoin?: string
+  status?: number
+}
+
+export type ListOptionLiquidationsReq = {
+  cursor?: number
+  limit?: number
+  tenantId?: number
+  userId?: number
+  accountId?: number
+  contractId?: number
+  positionId?: number
+  status?: number
+}
+
+export type OptionRetryLiquidationReq = {
+  tenantId: number
+  liquidationId: number
+}
+
 export class OptionService {
   getOptions(): Promise<RespBase<OptionGroup[]>> {
     return getCoreOptions()
@@ -473,6 +578,30 @@ export class OptionService {
 
   updateContract(params: UpdateContractReq) {
     return apiOptionUpdateContract(params)
+  }
+
+  forceCancelContractOrders(params: OptionForceCancelContractOrdersReq) {
+    return apiOptionForceCancelContractOrders(params)
+  }
+
+  retryAssetInstruction(params: OptionRetryAssetInstructionReq) {
+    return apiOptionRetryAssetInstruction(params)
+  }
+
+  retryTradeEvent(params: OptionRetryTradeEventReq) {
+    return apiOptionRetryTradeEvent(params)
+  }
+
+  listRiskAccounts(params: ListOptionRiskAccountsReq) {
+    return apiOptionListRiskAccounts(params)
+  }
+
+  listLiquidations(params: ListOptionLiquidationsReq) {
+    return apiOptionListLiquidations(params)
+  }
+
+  retryLiquidation(params: OptionRetryLiquidationReq) {
+    return apiOptionRetryLiquidation(params)
   }
 
   getMarket(params: GetMarketReq) {

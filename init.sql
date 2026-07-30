@@ -746,7 +746,10 @@ VALUES
 (690, 600, 1, '账户列表', 2, 'GET', '/option/accounts', 'option:account:list', 'option/accounts', 'Avatar', 690),
 (691, 690, 1, '获取账户详情', 3, 'GET', '/option/accounts/detail', 'option:account:detail', '', '', 691),
 (700, 600, 1, '账单列表', 2, 'GET', '/option/bills', 'option:bill:list', 'option/bills', 'Document', 700),
-(701, 700, 1, '获取账单详情', 3, 'GET', '/option/bills/detail', 'option:bill:detail', '', '', 701);
+(701, 700, 1, '获取账单详情', 3, 'GET', '/option/bills/detail', 'option:bill:detail', '', '', 701),
+(710, 600, 1, '风险与强平', 2, 'GET', '/option/risk/accounts', 'option:risk:list', 'option/risk', 'Warning', 710),
+(711, 710, 1, '查询强平记录', 3, 'GET', '/option/risk/liquidations', 'option:liquidation:list', '', '', 711),
+(712, 710, 1, '重试强平', 3, 'POST', '/option/risk/liquidations/retry', 'option:liquidation:retry', '', '', 712);
 
 -- 质押（staking）
 INSERT INTO sys_menu (id, parent_id, app_scope, name, menu_type, icon, sort)

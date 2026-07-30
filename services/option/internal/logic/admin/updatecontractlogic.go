@@ -38,6 +38,7 @@ func (l *UpdateContractLogic) UpdateContract(in *option.UpdateContractReq) (*opt
 		}
 		return nil, err
 	}
+	original := *item
 	allowTenantUpdate, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, item.TenantId)
 	if err != nil {
 		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
@@ -149,6 +150,70 @@ func (l *UpdateContractLogic) UpdateContract(in *option.UpdateContractReq) (*opt
 	if in.IsAutoExercise != 0 {
 		item.IsAutoExercise = int64(in.IsAutoExercise)
 	}
+	if in.MakerFeeRate != "" {
+		value, err := parseOptionalOptionRate(in.MakerFeeRate)
+		if err != nil {
+			return &option.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		}
+		item.MakerFeeRate = value
+	}
+	if in.TakerFeeRate != "" {
+		value, err := parseOptionalOptionRate(in.TakerFeeRate)
+		if err != nil {
+			return &option.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		}
+		item.TakerFeeRate = value
+	}
+	if in.ExerciseFeeRate != "" {
+		value, err := parseOptionalOptionRate(in.ExerciseFeeRate)
+		if err != nil {
+			return &option.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		}
+		item.ExerciseFeeRate = value
+	}
+	if in.FeeUserId != 0 {
+		item.FeeUserId = in.FeeUserId
+	}
+	if in.FeeAccountId != 0 {
+		item.FeeAccountId = in.FeeAccountId
+	}
+	if in.SellerMarginMode != option.SellerMarginMode_SELLER_MARGIN_MODE_UNKNOWN {
+		item.SellerMarginMode = int64(in.SellerMarginMode)
+	}
+	if in.InitialMarginRate != "" {
+		value, err := parseOptionalOptionRate(in.InitialMarginRate)
+		if err != nil {
+			return &option.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		}
+		item.InitialMarginRate = value
+	}
+	if in.MaintenanceMarginRate != "" {
+		value, err := parseOptionalOptionRate(in.MaintenanceMarginRate)
+		if err != nil {
+			return &option.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		}
+		item.MaintenanceMarginRate = value
+	}
+	if in.MinMarginRate != "" {
+		value, err := parseOptionalOptionRate(in.MinMarginRate)
+		if err != nil {
+			return &option.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		}
+		item.MinMarginRate = value
+	}
+	if in.LiquidationFeeRate != "" {
+		value, err := parseOptionalOptionRate(in.LiquidationFeeRate)
+		if err != nil {
+			return &option.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		}
+		item.LiquidationFeeRate = value
+	}
+	if in.InsuranceUserId != 0 {
+		item.InsuranceUserId = in.InsuranceUserId
+	}
+	if in.InsuranceAccountId != 0 {
+		item.InsuranceAccountId = in.InsuranceAccountId
+	}
 	if in.Status != 0 {
 		item.Status = int64(in.Status)
 	}
@@ -160,6 +225,13 @@ func (l *UpdateContractLogic) UpdateContract(in *option.UpdateContractReq) (*opt
 	}
 	if in.IsDeleted != 0 {
 		item.IsDeleted = int64(in.IsDeleted)
+	}
+	if !validateSupportedContract(item) {
+		return &option.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	if original.Status != int64(option.ContractStatus_CONTRACT_STATUS_PENDING) &&
+		!economicContractFieldsEqual(&original, item) {
+		return &option.CommonResp{Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx))}, nil
 	}
 	item.UpdateTimes = time.Now().Unix()
 

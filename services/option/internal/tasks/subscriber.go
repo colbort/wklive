@@ -29,6 +29,16 @@ func handleTask(ctx context.Context, svcCtx *svc.ServiceContext, msg tasks.Messa
 	req := &option.OptionTaskReq{TenantId: msg.TenantID}
 
 	switch msg.Action {
+	case tasks.ActionOptionProcessAssetInstructions:
+		return checkResp(logic.NewProcessAssetInstructionsLogic(ctx, svcCtx).ProcessAssetInstructions(req))
+	case tasks.ActionOptionProcessTradeEvents:
+		return checkResp(logic.NewProcessTradeEventsLogic(ctx, svcCtx).ProcessTradeEvents(req))
+	case tasks.ActionOptionProcessRiskAccounts:
+		return checkResp(logic.NewProcessRiskAccountsLogic(ctx, svcCtx).ProcessRiskAccounts(req))
+	case tasks.ActionOptionProcessLiquidations:
+		return checkResp(logic.NewProcessLiquidationsLogic(ctx, svcCtx).ProcessLiquidations(req))
+	case tasks.ActionOptionProcessExercises:
+		return checkResp(logic.NewProcessExercisesLogic(ctx, svcCtx).ProcessExercises(req))
 	case tasks.ActionOptionProcessContractLifecycle:
 		return checkResp(logic.NewProcessContractLifecycleLogic(ctx, svcCtx).ProcessContractLifecycle(req))
 	case tasks.ActionOptionCleanMarketSnapshots:

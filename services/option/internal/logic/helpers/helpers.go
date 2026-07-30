@@ -111,32 +111,44 @@ func ToContractProto(item *models.TOptionContract) *option.OptionContract {
 		return nil
 	}
 	return &option.OptionContract{
-		Id:               item.Id,
-		TenantId:         item.TenantId,
-		ContractCode:     item.ContractCode,
-		UnderlyingSymbol: item.UnderlyingSymbol,
-		SettleCoin:       item.SettleCoin,
-		QuoteCoin:        item.QuoteCoin,
-		OptionType:       option.OptionType(item.OptionType),
-		ExerciseStyle:    option.ExerciseStyle(item.ExerciseStyle),
-		SettlementType:   option.SettlementType(item.SettlementType),
-		StrikePrice:      conv.FloatString(item.StrikePrice),
-		ContractUnit:     conv.FloatString(item.ContractUnit),
-		MinOrderQty:      conv.FloatString(item.MinOrderQty),
-		MaxOrderQty:      conv.FloatString(item.MaxOrderQty),
-		PriceTick:        conv.FloatString(item.PriceTick),
-		QtyStep:          conv.FloatString(item.QtyStep),
-		Multiplier:       conv.FloatString(item.Multiplier),
-		ListTime:         item.ListTime,
-		ExpireTime:       item.ExpireTime,
-		DeliverTime:      item.DeliverTime,
-		IsAutoExercise:   common.YesNo(item.IsAutoExercise),
-		Status:           option.ContractStatus(item.Status),
-		Sort:             item.Sort,
-		Remark:           item.Remark,
-		IsDeleted:        common.YesNo(item.IsDeleted),
-		CreateTimes:      item.CreateTimes,
-		UpdateTimes:      item.UpdateTimes,
+		Id:                    item.Id,
+		TenantId:              item.TenantId,
+		ContractCode:          item.ContractCode,
+		UnderlyingSymbol:      item.UnderlyingSymbol,
+		SettleCoin:            item.SettleCoin,
+		QuoteCoin:             item.QuoteCoin,
+		OptionType:            option.OptionType(item.OptionType),
+		ExerciseStyle:         option.ExerciseStyle(item.ExerciseStyle),
+		SettlementType:        option.SettlementType(item.SettlementType),
+		StrikePrice:           conv.FloatString(item.StrikePrice),
+		ContractUnit:          conv.FloatString(item.ContractUnit),
+		MinOrderQty:           conv.FloatString(item.MinOrderQty),
+		MaxOrderQty:           conv.FloatString(item.MaxOrderQty),
+		PriceTick:             conv.FloatString(item.PriceTick),
+		QtyStep:               conv.FloatString(item.QtyStep),
+		Multiplier:            conv.FloatString(item.Multiplier),
+		ListTime:              item.ListTime,
+		ExpireTime:            item.ExpireTime,
+		DeliverTime:           item.DeliverTime,
+		IsAutoExercise:        common.YesNo(item.IsAutoExercise),
+		Status:                option.ContractStatus(item.Status),
+		Sort:                  item.Sort,
+		Remark:                item.Remark,
+		IsDeleted:             common.YesNo(item.IsDeleted),
+		CreateTimes:           item.CreateTimes,
+		UpdateTimes:           item.UpdateTimes,
+		MakerFeeRate:          conv.FloatString(item.MakerFeeRate),
+		TakerFeeRate:          conv.FloatString(item.TakerFeeRate),
+		ExerciseFeeRate:       conv.FloatString(item.ExerciseFeeRate),
+		FeeUserId:             item.FeeUserId,
+		FeeAccountId:          item.FeeAccountId,
+		SellerMarginMode:      option.SellerMarginMode(item.SellerMarginMode),
+		InitialMarginRate:     conv.FloatString(item.InitialMarginRate),
+		MaintenanceMarginRate: conv.FloatString(item.MaintenanceMarginRate),
+		MinMarginRate:         conv.FloatString(item.MinMarginRate),
+		LiquidationFeeRate:    conv.FloatString(item.LiquidationFeeRate),
+		InsuranceUserId:       item.InsuranceUserId,
+		InsuranceAccountId:    item.InsuranceAccountId,
 	}
 }
 
@@ -286,6 +298,7 @@ func ToTradeProto(item *models.TOptionTrade) *option.OptionTrade {
 		SellFee:          conv.FloatString(item.SellFee),
 		FeeCoin:          item.FeeCoin,
 		MakerSide:        common.Side(item.MakerSide),
+		MatchSequence:    item.MatchSequence,
 		TradeTime:        item.TradeTime,
 		CreateTimes:      item.CreateTimes,
 	}
@@ -347,6 +360,40 @@ func ToExerciseProto(item *models.TOptionExercise) *option.OptionExercise {
 		FinishTime:      item.FinishTime,
 		CreateTimes:     item.CreateTimes,
 		UpdateTimes:     item.UpdateTimes,
+	}
+}
+
+func ToExerciseAssignmentProto(item *models.TOptionExerciseAssignment) *option.OptionExerciseAssignment {
+	if item == nil {
+		return nil
+	}
+	return &option.OptionExerciseAssignment{
+		Id: item.Id, TenantId: item.TenantId, ExerciseId: item.ExerciseId,
+		ExerciseNo: item.ExerciseNo, LongPositionId: item.LongPositionId,
+		ShortPositionId: item.ShortPositionId, ShortUserId: item.ShortUserId,
+		ShortAccountId: item.ShortAccountId, Quantity: conv.FloatString(item.Quantity),
+		Payoff: conv.FloatString(item.Payoff), Status: option.ExerciseAssignmentStatus(item.Status),
+		InstructionNo: item.InstructionNo, CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
+	}
+}
+
+func ToAssetInstructionProto(item *models.TOptionAssetInstruction) *option.OptionAssetInstruction {
+	if item == nil {
+		return nil
+	}
+	return &option.OptionAssetInstruction{
+		Id: item.Id, TenantId: item.TenantId, InstructionNo: item.InstructionNo,
+		BizNo: item.BizNo, OrderId: item.OrderId, TradeId: item.TradeId,
+		PositionId: item.PositionId, UserId: item.UserId, AccountId: item.AccountId,
+		Action: option.AssetInstructionAction(item.Action), TargetBizNo: item.TargetBizNo,
+		Coin: item.Coin, Amount: conv.FloatString(item.Amount), StepNo: item.StepNo,
+		Status: option.AssetInstructionStatus(item.Status), RetryCount: item.RetryCount,
+		NextRetryAt: item.NextRetryAt, LastErrorMsg: item.LastErrorMsg,
+		CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
+		AssetFlowNo: item.AssetFlowNo,
+		ReconciliationStatus: option.AssetReconciliationStatus(item.ReconciliationStatus),
+		ReconciledAt: item.ReconciledAt, MarginLotId: item.MarginLotId,
+		LiquidationId: item.LiquidationId,
 	}
 }
 
@@ -419,6 +466,43 @@ func ToBillProto(item *models.TOptionBill) *option.OptionBill {
 	}
 }
 
+func ToRiskAccountProto(item *models.TOptionRiskAccount) *option.OptionRiskAccount {
+	if item == nil {
+		return nil
+	}
+	return &option.OptionRiskAccount{
+		Id: item.Id, TenantId: item.TenantId, UserId: item.UserId, AccountId: item.AccountId,
+		SettleCoin: item.SettleCoin, Equity: conv.FloatString(item.Equity),
+		PositionMargin:    conv.FloatString(item.PositionMargin),
+		MaintenanceMargin: conv.FloatString(item.MaintenanceMargin),
+		UnrealizedPnl:     conv.FloatString(item.UnrealizedPnl),
+		RiskRate:          conv.FloatString(item.RiskRate), Status: option.RiskAccountStatus(item.Status),
+		LastCalcTime: item.LastCalcTime, CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
+	}
+}
+
+func ToLiquidationProto(item *models.TOptionLiquidation) *option.OptionLiquidation {
+	if item == nil {
+		return nil
+	}
+	return &option.OptionLiquidation{
+		Id: item.Id, TenantId: item.TenantId, LiquidationNo: item.LiquidationNo,
+		UserId: item.UserId, AccountId: item.AccountId, ContractId: item.ContractId,
+		PositionId: item.PositionId, Quantity: conv.FloatString(item.Quantity),
+		MarkPrice:         conv.FloatString(item.MarkPrice),
+		MaintenanceMargin: conv.FloatString(item.MaintenanceMargin),
+		Equity:            conv.FloatString(item.Equity), DeficitAmount: conv.FloatString(item.DeficitAmount),
+		LiquidationFee: conv.FloatString(item.LiquidationFee),
+		Status:         option.LiquidationStatus(item.Status), RetryCount: item.RetryCount,
+		LastErrorMsg: item.LastErrorMsg, CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
+		CollateralAmount:    conv.FloatString(item.CollateralAmount),
+		InsuranceFundAmount: conv.FloatString(item.InsuranceFundAmount),
+		RemainingDeficit:    conv.FloatString(item.RemainingDeficit),
+		TakeoverPositionId:  item.TakeoverPositionId, CompletedAt: item.CompletedAt,
+		InsuranceAttempt: item.InsuranceAttempt,
+	}
+}
+
 func BuildContractDetail(ctx context.Context, svcCtx *svc.ServiceContext, contract *models.TOptionContract) (*option.OptionContractDetail, error) {
 	market, err := FindMarketIgnoreNotFound(ctx, svcCtx, contract.TenantId, contract.Id)
 	if err != nil {
@@ -467,7 +551,25 @@ func BuildExerciseDetail(ctx context.Context, svcCtx *svc.ServiceContext, item *
 	if err != nil {
 		return nil, err
 	}
-	return &option.OptionExerciseDetail{Exercise: ToExerciseProto(item), Contract: ToContractProto(contract)}, nil
+	assignments, err := svcCtx.OptionExerciseAssignmentModel.FindByExercise(ctx, item.TenantId, item.Id)
+	if err != nil {
+		return nil, err
+	}
+	instructions, err := svcCtx.OptionAssetInstructionModel.FindByBizNo(ctx, item.TenantId, item.ExerciseNo)
+	if err != nil {
+		return nil, err
+	}
+	result := &option.OptionExerciseDetail{
+		Exercise: ToExerciseProto(item),
+		Contract: ToContractProto(contract),
+	}
+	for _, assignment := range assignments {
+		result.Assignments = append(result.Assignments, ToExerciseAssignmentProto(assignment))
+	}
+	for _, instruction := range instructions {
+		result.AssetInstructions = append(result.AssetInstructions, ToAssetInstructionProto(instruction))
+	}
+	return result, nil
 }
 
 func BuildSettlementDetail(ctx context.Context, svcCtx *svc.ServiceContext, item *models.TOptionSettlement) (*option.OptionSettlementDetail, error) {

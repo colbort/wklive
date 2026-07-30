@@ -401,6 +401,9 @@ const (
 	OrderStatus_ORDER_STATUS_CANCELED    OrderStatus = 4 // 已撤单
 	OrderStatus_ORDER_STATUS_REJECTED    OrderStatus = 5 // 拒单
 	OrderStatus_ORDER_STATUS_EXPIRED     OrderStatus = 6 // 已过期
+	OrderStatus_ORDER_STATUS_FUNDING     OrderStatus = 7 // 资金冻结中，禁止进入订单簿
+	OrderStatus_ORDER_STATUS_CANCELING   OrderStatus = 8 // 撤单资金处理中
+	OrderStatus_ORDER_STATUS_EXPIRING    OrderStatus = 9 // 到期撤单资金处理中
 )
 
 // Enum value maps for OrderStatus.
@@ -413,6 +416,9 @@ var (
 		4: "ORDER_STATUS_CANCELED",
 		5: "ORDER_STATUS_REJECTED",
 		6: "ORDER_STATUS_EXPIRED",
+		7: "ORDER_STATUS_FUNDING",
+		8: "ORDER_STATUS_CANCELING",
+		9: "ORDER_STATUS_EXPIRING",
 	}
 	OrderStatus_value = map[string]int32{
 		"ORDER_STATUS_UNKNOWN":     0,
@@ -422,6 +428,9 @@ var (
 		"ORDER_STATUS_CANCELED":    4,
 		"ORDER_STATUS_REJECTED":    5,
 		"ORDER_STATUS_EXPIRED":     6,
+		"ORDER_STATUS_FUNDING":     7,
+		"ORDER_STATUS_CANCELING":   8,
+		"ORDER_STATUS_EXPIRING":    9,
 	}
 )
 
@@ -450,6 +459,282 @@ func (x OrderStatus) Number() protoreflect.EnumNumber {
 // Deprecated: Use OrderStatus.Descriptor instead.
 func (OrderStatus) EnumDescriptor() ([]byte, []int) {
 	return file_proto_option_enum_proto_rawDescGZIP(), []int{7}
+}
+
+// Option 发往 Asset 的资金指令动作。
+type AssetInstructionAction int32
+
+const (
+	AssetInstructionAction_ASSET_INSTRUCTION_ACTION_UNKNOWN          AssetInstructionAction = 0
+	AssetInstructionAction_ASSET_INSTRUCTION_ACTION_FREEZE           AssetInstructionAction = 1 // 冻结可用余额
+	AssetInstructionAction_ASSET_INSTRUCTION_ACTION_DEDUCT_FROZEN    AssetInstructionAction = 2 // 消费订单冻结
+	AssetInstructionAction_ASSET_INSTRUCTION_ACTION_RELEASE_FROZEN   AssetInstructionAction = 3 // 释放订单冻结
+	AssetInstructionAction_ASSET_INSTRUCTION_ACTION_CREDIT_AVAILABLE AssetInstructionAction = 4 // 增加可用余额
+	AssetInstructionAction_ASSET_INSTRUCTION_ACTION_DEBIT_AVAILABLE  AssetInstructionAction = 5 // 扣减可用余额
+)
+
+// Enum value maps for AssetInstructionAction.
+var (
+	AssetInstructionAction_name = map[int32]string{
+		0: "ASSET_INSTRUCTION_ACTION_UNKNOWN",
+		1: "ASSET_INSTRUCTION_ACTION_FREEZE",
+		2: "ASSET_INSTRUCTION_ACTION_DEDUCT_FROZEN",
+		3: "ASSET_INSTRUCTION_ACTION_RELEASE_FROZEN",
+		4: "ASSET_INSTRUCTION_ACTION_CREDIT_AVAILABLE",
+		5: "ASSET_INSTRUCTION_ACTION_DEBIT_AVAILABLE",
+	}
+	AssetInstructionAction_value = map[string]int32{
+		"ASSET_INSTRUCTION_ACTION_UNKNOWN":          0,
+		"ASSET_INSTRUCTION_ACTION_FREEZE":           1,
+		"ASSET_INSTRUCTION_ACTION_DEDUCT_FROZEN":    2,
+		"ASSET_INSTRUCTION_ACTION_RELEASE_FROZEN":   3,
+		"ASSET_INSTRUCTION_ACTION_CREDIT_AVAILABLE": 4,
+		"ASSET_INSTRUCTION_ACTION_DEBIT_AVAILABLE":  5,
+	}
+)
+
+func (x AssetInstructionAction) Enum() *AssetInstructionAction {
+	p := new(AssetInstructionAction)
+	*p = x
+	return p
+}
+
+func (x AssetInstructionAction) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AssetInstructionAction) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_option_enum_proto_enumTypes[8].Descriptor()
+}
+
+func (AssetInstructionAction) Type() protoreflect.EnumType {
+	return &file_proto_option_enum_proto_enumTypes[8]
+}
+
+func (x AssetInstructionAction) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AssetInstructionAction.Descriptor instead.
+func (AssetInstructionAction) EnumDescriptor() ([]byte, []int) {
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{8}
+}
+
+type AssetInstructionStatus int32
+
+const (
+	AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_UNKNOWN       AssetInstructionStatus = 0
+	AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING       AssetInstructionStatus = 1 // 待执行
+	AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PROCESSING    AssetInstructionStatus = 2 // 执行中
+	AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS       AssetInstructionStatus = 3 // 执行成功
+	AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_FAILED        AssetInstructionStatus = 4 // 等待重试
+	AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_MANUAL_REVIEW AssetInstructionStatus = 5 // 人工处理
+	AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_CANCELED      AssetInstructionStatus = 6 // 尚未执行即取消
+)
+
+// Enum value maps for AssetInstructionStatus.
+var (
+	AssetInstructionStatus_name = map[int32]string{
+		0: "ASSET_INSTRUCTION_STATUS_UNKNOWN",
+		1: "ASSET_INSTRUCTION_STATUS_PENDING",
+		2: "ASSET_INSTRUCTION_STATUS_PROCESSING",
+		3: "ASSET_INSTRUCTION_STATUS_SUCCESS",
+		4: "ASSET_INSTRUCTION_STATUS_FAILED",
+		5: "ASSET_INSTRUCTION_STATUS_MANUAL_REVIEW",
+		6: "ASSET_INSTRUCTION_STATUS_CANCELED",
+	}
+	AssetInstructionStatus_value = map[string]int32{
+		"ASSET_INSTRUCTION_STATUS_UNKNOWN":       0,
+		"ASSET_INSTRUCTION_STATUS_PENDING":       1,
+		"ASSET_INSTRUCTION_STATUS_PROCESSING":    2,
+		"ASSET_INSTRUCTION_STATUS_SUCCESS":       3,
+		"ASSET_INSTRUCTION_STATUS_FAILED":        4,
+		"ASSET_INSTRUCTION_STATUS_MANUAL_REVIEW": 5,
+		"ASSET_INSTRUCTION_STATUS_CANCELED":      6,
+	}
+)
+
+func (x AssetInstructionStatus) Enum() *AssetInstructionStatus {
+	p := new(AssetInstructionStatus)
+	*p = x
+	return p
+}
+
+func (x AssetInstructionStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AssetInstructionStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_option_enum_proto_enumTypes[9].Descriptor()
+}
+
+func (AssetInstructionStatus) Type() protoreflect.EnumType {
+	return &file_proto_option_enum_proto_enumTypes[9]
+}
+
+func (x AssetInstructionStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AssetInstructionStatus.Descriptor instead.
+func (AssetInstructionStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{9}
+}
+
+type AssetReconciliationStatus int32
+
+const (
+	AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_UNKNOWN  AssetReconciliationStatus = 0
+	AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_PENDING  AssetReconciliationStatus = 1
+	AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_MATCHED  AssetReconciliationStatus = 2
+	AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_MISMATCH AssetReconciliationStatus = 3
+)
+
+// Enum value maps for AssetReconciliationStatus.
+var (
+	AssetReconciliationStatus_name = map[int32]string{
+		0: "ASSET_RECONCILIATION_STATUS_UNKNOWN",
+		1: "ASSET_RECONCILIATION_STATUS_PENDING",
+		2: "ASSET_RECONCILIATION_STATUS_MATCHED",
+		3: "ASSET_RECONCILIATION_STATUS_MISMATCH",
+	}
+	AssetReconciliationStatus_value = map[string]int32{
+		"ASSET_RECONCILIATION_STATUS_UNKNOWN":  0,
+		"ASSET_RECONCILIATION_STATUS_PENDING":  1,
+		"ASSET_RECONCILIATION_STATUS_MATCHED":  2,
+		"ASSET_RECONCILIATION_STATUS_MISMATCH": 3,
+	}
+)
+
+func (x AssetReconciliationStatus) Enum() *AssetReconciliationStatus {
+	p := new(AssetReconciliationStatus)
+	*p = x
+	return p
+}
+
+func (x AssetReconciliationStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AssetReconciliationStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_option_enum_proto_enumTypes[10].Descriptor()
+}
+
+func (AssetReconciliationStatus) Type() protoreflect.EnumType {
+	return &file_proto_option_enum_proto_enumTypes[10]
+}
+
+func (x AssetReconciliationStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AssetReconciliationStatus.Descriptor instead.
+func (AssetReconciliationStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{10}
+}
+
+type ReconciliationCheckType int32
+
+const (
+	ReconciliationCheckType_RECONCILIATION_CHECK_TYPE_UNKNOWN            ReconciliationCheckType = 0
+	ReconciliationCheckType_RECONCILIATION_CHECK_TYPE_ASSET_FLOW         ReconciliationCheckType = 1
+	ReconciliationCheckType_RECONCILIATION_CHECK_TYPE_BALANCE_MIRROR     ReconciliationCheckType = 2
+	ReconciliationCheckType_RECONCILIATION_CHECK_TYPE_SETTLEMENT_BALANCE ReconciliationCheckType = 3
+)
+
+// Enum value maps for ReconciliationCheckType.
+var (
+	ReconciliationCheckType_name = map[int32]string{
+		0: "RECONCILIATION_CHECK_TYPE_UNKNOWN",
+		1: "RECONCILIATION_CHECK_TYPE_ASSET_FLOW",
+		2: "RECONCILIATION_CHECK_TYPE_BALANCE_MIRROR",
+		3: "RECONCILIATION_CHECK_TYPE_SETTLEMENT_BALANCE",
+	}
+	ReconciliationCheckType_value = map[string]int32{
+		"RECONCILIATION_CHECK_TYPE_UNKNOWN":            0,
+		"RECONCILIATION_CHECK_TYPE_ASSET_FLOW":         1,
+		"RECONCILIATION_CHECK_TYPE_BALANCE_MIRROR":     2,
+		"RECONCILIATION_CHECK_TYPE_SETTLEMENT_BALANCE": 3,
+	}
+)
+
+func (x ReconciliationCheckType) Enum() *ReconciliationCheckType {
+	p := new(ReconciliationCheckType)
+	*p = x
+	return p
+}
+
+func (x ReconciliationCheckType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ReconciliationCheckType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_option_enum_proto_enumTypes[11].Descriptor()
+}
+
+func (ReconciliationCheckType) Type() protoreflect.EnumType {
+	return &file_proto_option_enum_proto_enumTypes[11]
+}
+
+func (x ReconciliationCheckType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ReconciliationCheckType.Descriptor instead.
+func (ReconciliationCheckType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{11}
+}
+
+type ReconciliationIssueStatus int32
+
+const (
+	ReconciliationIssueStatus_RECONCILIATION_ISSUE_STATUS_UNKNOWN  ReconciliationIssueStatus = 0
+	ReconciliationIssueStatus_RECONCILIATION_ISSUE_STATUS_OPEN     ReconciliationIssueStatus = 1
+	ReconciliationIssueStatus_RECONCILIATION_ISSUE_STATUS_RESOLVED ReconciliationIssueStatus = 2
+	ReconciliationIssueStatus_RECONCILIATION_ISSUE_STATUS_IGNORED  ReconciliationIssueStatus = 3
+)
+
+// Enum value maps for ReconciliationIssueStatus.
+var (
+	ReconciliationIssueStatus_name = map[int32]string{
+		0: "RECONCILIATION_ISSUE_STATUS_UNKNOWN",
+		1: "RECONCILIATION_ISSUE_STATUS_OPEN",
+		2: "RECONCILIATION_ISSUE_STATUS_RESOLVED",
+		3: "RECONCILIATION_ISSUE_STATUS_IGNORED",
+	}
+	ReconciliationIssueStatus_value = map[string]int32{
+		"RECONCILIATION_ISSUE_STATUS_UNKNOWN":  0,
+		"RECONCILIATION_ISSUE_STATUS_OPEN":     1,
+		"RECONCILIATION_ISSUE_STATUS_RESOLVED": 2,
+		"RECONCILIATION_ISSUE_STATUS_IGNORED":  3,
+	}
+)
+
+func (x ReconciliationIssueStatus) Enum() *ReconciliationIssueStatus {
+	p := new(ReconciliationIssueStatus)
+	*p = x
+	return p
+}
+
+func (x ReconciliationIssueStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ReconciliationIssueStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_option_enum_proto_enumTypes[12].Descriptor()
+}
+
+func (ReconciliationIssueStatus) Type() protoreflect.EnumType {
+	return &file_proto_option_enum_proto_enumTypes[12]
+}
+
+func (x ReconciliationIssueStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ReconciliationIssueStatus.Descriptor instead.
+func (ReconciliationIssueStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{12}
 }
 
 type PositionStatus int32
@@ -494,11 +779,11 @@ func (x PositionStatus) String() string {
 }
 
 func (PositionStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_option_enum_proto_enumTypes[8].Descriptor()
+	return file_proto_option_enum_proto_enumTypes[13].Descriptor()
 }
 
 func (PositionStatus) Type() protoreflect.EnumType {
-	return &file_proto_option_enum_proto_enumTypes[8]
+	return &file_proto_option_enum_proto_enumTypes[13]
 }
 
 func (x PositionStatus) Number() protoreflect.EnumNumber {
@@ -507,7 +792,7 @@ func (x PositionStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use PositionStatus.Descriptor instead.
 func (PositionStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_option_enum_proto_rawDescGZIP(), []int{8}
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{13}
 }
 
 type ExerciseType int32
@@ -543,11 +828,11 @@ func (x ExerciseType) String() string {
 }
 
 func (ExerciseType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_option_enum_proto_enumTypes[9].Descriptor()
+	return file_proto_option_enum_proto_enumTypes[14].Descriptor()
 }
 
 func (ExerciseType) Type() protoreflect.EnumType {
-	return &file_proto_option_enum_proto_enumTypes[9]
+	return &file_proto_option_enum_proto_enumTypes[14]
 }
 
 func (x ExerciseType) Number() protoreflect.EnumNumber {
@@ -556,7 +841,7 @@ func (x ExerciseType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ExerciseType.Descriptor instead.
 func (ExerciseType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_option_enum_proto_rawDescGZIP(), []int{9}
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{14}
 }
 
 type ExerciseStatus int32
@@ -598,11 +883,11 @@ func (x ExerciseStatus) String() string {
 }
 
 func (ExerciseStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_option_enum_proto_enumTypes[10].Descriptor()
+	return file_proto_option_enum_proto_enumTypes[15].Descriptor()
 }
 
 func (ExerciseStatus) Type() protoreflect.EnumType {
-	return &file_proto_option_enum_proto_enumTypes[10]
+	return &file_proto_option_enum_proto_enumTypes[15]
 }
 
 func (x ExerciseStatus) Number() protoreflect.EnumNumber {
@@ -611,7 +896,62 @@ func (x ExerciseStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ExerciseStatus.Descriptor instead.
 func (ExerciseStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_option_enum_proto_rawDescGZIP(), []int{10}
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{15}
+}
+
+type ExerciseAssignmentStatus int32
+
+const (
+	ExerciseAssignmentStatus_EXERCISE_ASSIGNMENT_STATUS_UNKNOWN       ExerciseAssignmentStatus = 0
+	ExerciseAssignmentStatus_EXERCISE_ASSIGNMENT_STATUS_PENDING       ExerciseAssignmentStatus = 1
+	ExerciseAssignmentStatus_EXERCISE_ASSIGNMENT_STATUS_DONE          ExerciseAssignmentStatus = 2
+	ExerciseAssignmentStatus_EXERCISE_ASSIGNMENT_STATUS_FAILED        ExerciseAssignmentStatus = 3
+	ExerciseAssignmentStatus_EXERCISE_ASSIGNMENT_STATUS_MANUAL_REVIEW ExerciseAssignmentStatus = 4
+)
+
+// Enum value maps for ExerciseAssignmentStatus.
+var (
+	ExerciseAssignmentStatus_name = map[int32]string{
+		0: "EXERCISE_ASSIGNMENT_STATUS_UNKNOWN",
+		1: "EXERCISE_ASSIGNMENT_STATUS_PENDING",
+		2: "EXERCISE_ASSIGNMENT_STATUS_DONE",
+		3: "EXERCISE_ASSIGNMENT_STATUS_FAILED",
+		4: "EXERCISE_ASSIGNMENT_STATUS_MANUAL_REVIEW",
+	}
+	ExerciseAssignmentStatus_value = map[string]int32{
+		"EXERCISE_ASSIGNMENT_STATUS_UNKNOWN":       0,
+		"EXERCISE_ASSIGNMENT_STATUS_PENDING":       1,
+		"EXERCISE_ASSIGNMENT_STATUS_DONE":          2,
+		"EXERCISE_ASSIGNMENT_STATUS_FAILED":        3,
+		"EXERCISE_ASSIGNMENT_STATUS_MANUAL_REVIEW": 4,
+	}
+)
+
+func (x ExerciseAssignmentStatus) Enum() *ExerciseAssignmentStatus {
+	p := new(ExerciseAssignmentStatus)
+	*p = x
+	return p
+}
+
+func (x ExerciseAssignmentStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ExerciseAssignmentStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_option_enum_proto_enumTypes[16].Descriptor()
+}
+
+func (ExerciseAssignmentStatus) Type() protoreflect.EnumType {
+	return &file_proto_option_enum_proto_enumTypes[16]
+}
+
+func (x ExerciseAssignmentStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ExerciseAssignmentStatus.Descriptor instead.
+func (ExerciseAssignmentStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{16}
 }
 
 type SettlementStatus int32
@@ -653,11 +993,11 @@ func (x SettlementStatus) String() string {
 }
 
 func (SettlementStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_option_enum_proto_enumTypes[11].Descriptor()
+	return file_proto_option_enum_proto_enumTypes[17].Descriptor()
 }
 
 func (SettlementStatus) Type() protoreflect.EnumType {
-	return &file_proto_option_enum_proto_enumTypes[11]
+	return &file_proto_option_enum_proto_enumTypes[17]
 }
 
 func (x SettlementStatus) Number() protoreflect.EnumNumber {
@@ -666,7 +1006,621 @@ func (x SettlementStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SettlementStatus.Descriptor instead.
 func (SettlementStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_option_enum_proto_rawDescGZIP(), []int{11}
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{17}
+}
+
+type SettlementPriceStatus int32
+
+const (
+	SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_UNKNOWN   SettlementPriceStatus = 0
+	SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_PENDING   SettlementPriceStatus = 1 // 等待有效价格
+	SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_CONFIRMED SettlementPriceStatus = 2 // 已锁定，不可变
+	SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_REJECTED  SettlementPriceStatus = 3 // 价格被拒绝
+)
+
+// Enum value maps for SettlementPriceStatus.
+var (
+	SettlementPriceStatus_name = map[int32]string{
+		0: "SETTLEMENT_PRICE_STATUS_UNKNOWN",
+		1: "SETTLEMENT_PRICE_STATUS_PENDING",
+		2: "SETTLEMENT_PRICE_STATUS_CONFIRMED",
+		3: "SETTLEMENT_PRICE_STATUS_REJECTED",
+	}
+	SettlementPriceStatus_value = map[string]int32{
+		"SETTLEMENT_PRICE_STATUS_UNKNOWN":   0,
+		"SETTLEMENT_PRICE_STATUS_PENDING":   1,
+		"SETTLEMENT_PRICE_STATUS_CONFIRMED": 2,
+		"SETTLEMENT_PRICE_STATUS_REJECTED":  3,
+	}
+)
+
+func (x SettlementPriceStatus) Enum() *SettlementPriceStatus {
+	p := new(SettlementPriceStatus)
+	*p = x
+	return p
+}
+
+func (x SettlementPriceStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SettlementPriceStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_option_enum_proto_enumTypes[18].Descriptor()
+}
+
+func (SettlementPriceStatus) Type() protoreflect.EnumType {
+	return &file_proto_option_enum_proto_enumTypes[18]
+}
+
+func (x SettlementPriceStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SettlementPriceStatus.Descriptor instead.
+func (SettlementPriceStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{18}
+}
+
+type SettlementBatchStatus int32
+
+const (
+	SettlementBatchStatus_SETTLEMENT_BATCH_STATUS_UNKNOWN              SettlementBatchStatus = 0
+	SettlementBatchStatus_SETTLEMENT_BATCH_STATUS_WAITING_PRICE        SettlementBatchStatus = 1
+	SettlementBatchStatus_SETTLEMENT_BATCH_STATUS_PRICE_LOCKED         SettlementBatchStatus = 2
+	SettlementBatchStatus_SETTLEMENT_BATCH_STATUS_CALCULATING          SettlementBatchStatus = 3
+	SettlementBatchStatus_SETTLEMENT_BATCH_STATUS_INSTRUCTIONS_CREATED SettlementBatchStatus = 4
+	SettlementBatchStatus_SETTLEMENT_BATCH_STATUS_ASSET_PROCESSING     SettlementBatchStatus = 5
+	SettlementBatchStatus_SETTLEMENT_BATCH_STATUS_RECONCILING          SettlementBatchStatus = 6
+	SettlementBatchStatus_SETTLEMENT_BATCH_STATUS_DONE                 SettlementBatchStatus = 7
+	SettlementBatchStatus_SETTLEMENT_BATCH_STATUS_FAILED               SettlementBatchStatus = 8
+)
+
+// Enum value maps for SettlementBatchStatus.
+var (
+	SettlementBatchStatus_name = map[int32]string{
+		0: "SETTLEMENT_BATCH_STATUS_UNKNOWN",
+		1: "SETTLEMENT_BATCH_STATUS_WAITING_PRICE",
+		2: "SETTLEMENT_BATCH_STATUS_PRICE_LOCKED",
+		3: "SETTLEMENT_BATCH_STATUS_CALCULATING",
+		4: "SETTLEMENT_BATCH_STATUS_INSTRUCTIONS_CREATED",
+		5: "SETTLEMENT_BATCH_STATUS_ASSET_PROCESSING",
+		6: "SETTLEMENT_BATCH_STATUS_RECONCILING",
+		7: "SETTLEMENT_BATCH_STATUS_DONE",
+		8: "SETTLEMENT_BATCH_STATUS_FAILED",
+	}
+	SettlementBatchStatus_value = map[string]int32{
+		"SETTLEMENT_BATCH_STATUS_UNKNOWN":              0,
+		"SETTLEMENT_BATCH_STATUS_WAITING_PRICE":        1,
+		"SETTLEMENT_BATCH_STATUS_PRICE_LOCKED":         2,
+		"SETTLEMENT_BATCH_STATUS_CALCULATING":          3,
+		"SETTLEMENT_BATCH_STATUS_INSTRUCTIONS_CREATED": 4,
+		"SETTLEMENT_BATCH_STATUS_ASSET_PROCESSING":     5,
+		"SETTLEMENT_BATCH_STATUS_RECONCILING":          6,
+		"SETTLEMENT_BATCH_STATUS_DONE":                 7,
+		"SETTLEMENT_BATCH_STATUS_FAILED":               8,
+	}
+)
+
+func (x SettlementBatchStatus) Enum() *SettlementBatchStatus {
+	p := new(SettlementBatchStatus)
+	*p = x
+	return p
+}
+
+func (x SettlementBatchStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SettlementBatchStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_option_enum_proto_enumTypes[19].Descriptor()
+}
+
+func (SettlementBatchStatus) Type() protoreflect.EnumType {
+	return &file_proto_option_enum_proto_enumTypes[19]
+}
+
+func (x SettlementBatchStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SettlementBatchStatus.Descriptor instead.
+func (SettlementBatchStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{19}
+}
+
+type SettlementDetailDirection int32
+
+const (
+	SettlementDetailDirection_SETTLEMENT_DETAIL_DIRECTION_UNKNOWN SettlementDetailDirection = 0
+	SettlementDetailDirection_SETTLEMENT_DETAIL_DIRECTION_CREDIT  SettlementDetailDirection = 1 // 多头应收
+	SettlementDetailDirection_SETTLEMENT_DETAIL_DIRECTION_DEBIT   SettlementDetailDirection = 2 // 空头应付
+	SettlementDetailDirection_SETTLEMENT_DETAIL_DIRECTION_ABANDON SettlementDetailDirection = 3 // 价外放弃
+)
+
+// Enum value maps for SettlementDetailDirection.
+var (
+	SettlementDetailDirection_name = map[int32]string{
+		0: "SETTLEMENT_DETAIL_DIRECTION_UNKNOWN",
+		1: "SETTLEMENT_DETAIL_DIRECTION_CREDIT",
+		2: "SETTLEMENT_DETAIL_DIRECTION_DEBIT",
+		3: "SETTLEMENT_DETAIL_DIRECTION_ABANDON",
+	}
+	SettlementDetailDirection_value = map[string]int32{
+		"SETTLEMENT_DETAIL_DIRECTION_UNKNOWN": 0,
+		"SETTLEMENT_DETAIL_DIRECTION_CREDIT":  1,
+		"SETTLEMENT_DETAIL_DIRECTION_DEBIT":   2,
+		"SETTLEMENT_DETAIL_DIRECTION_ABANDON": 3,
+	}
+)
+
+func (x SettlementDetailDirection) Enum() *SettlementDetailDirection {
+	p := new(SettlementDetailDirection)
+	*p = x
+	return p
+}
+
+func (x SettlementDetailDirection) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SettlementDetailDirection) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_option_enum_proto_enumTypes[20].Descriptor()
+}
+
+func (SettlementDetailDirection) Type() protoreflect.EnumType {
+	return &file_proto_option_enum_proto_enumTypes[20]
+}
+
+func (x SettlementDetailDirection) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SettlementDetailDirection.Descriptor instead.
+func (SettlementDetailDirection) EnumDescriptor() ([]byte, []int) {
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{20}
+}
+
+type OptionEventType int32
+
+const (
+	OptionEventType_OPTION_EVENT_TYPE_UNKNOWN        OptionEventType = 0
+	OptionEventType_OPTION_EVENT_TYPE_TRADE_POSITION OptionEventType = 1
+)
+
+// Enum value maps for OptionEventType.
+var (
+	OptionEventType_name = map[int32]string{
+		0: "OPTION_EVENT_TYPE_UNKNOWN",
+		1: "OPTION_EVENT_TYPE_TRADE_POSITION",
+	}
+	OptionEventType_value = map[string]int32{
+		"OPTION_EVENT_TYPE_UNKNOWN":        0,
+		"OPTION_EVENT_TYPE_TRADE_POSITION": 1,
+	}
+)
+
+func (x OptionEventType) Enum() *OptionEventType {
+	p := new(OptionEventType)
+	*p = x
+	return p
+}
+
+func (x OptionEventType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (OptionEventType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_option_enum_proto_enumTypes[21].Descriptor()
+}
+
+func (OptionEventType) Type() protoreflect.EnumType {
+	return &file_proto_option_enum_proto_enumTypes[21]
+}
+
+func (x OptionEventType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use OptionEventType.Descriptor instead.
+func (OptionEventType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{21}
+}
+
+type OptionEventStatus int32
+
+const (
+	OptionEventStatus_OPTION_EVENT_STATUS_UNKNOWN       OptionEventStatus = 0
+	OptionEventStatus_OPTION_EVENT_STATUS_PENDING       OptionEventStatus = 1
+	OptionEventStatus_OPTION_EVENT_STATUS_PROCESSING    OptionEventStatus = 2
+	OptionEventStatus_OPTION_EVENT_STATUS_SUCCESS       OptionEventStatus = 3
+	OptionEventStatus_OPTION_EVENT_STATUS_FAILED        OptionEventStatus = 4
+	OptionEventStatus_OPTION_EVENT_STATUS_MANUAL_REVIEW OptionEventStatus = 5
+)
+
+// Enum value maps for OptionEventStatus.
+var (
+	OptionEventStatus_name = map[int32]string{
+		0: "OPTION_EVENT_STATUS_UNKNOWN",
+		1: "OPTION_EVENT_STATUS_PENDING",
+		2: "OPTION_EVENT_STATUS_PROCESSING",
+		3: "OPTION_EVENT_STATUS_SUCCESS",
+		4: "OPTION_EVENT_STATUS_FAILED",
+		5: "OPTION_EVENT_STATUS_MANUAL_REVIEW",
+	}
+	OptionEventStatus_value = map[string]int32{
+		"OPTION_EVENT_STATUS_UNKNOWN":       0,
+		"OPTION_EVENT_STATUS_PENDING":       1,
+		"OPTION_EVENT_STATUS_PROCESSING":    2,
+		"OPTION_EVENT_STATUS_SUCCESS":       3,
+		"OPTION_EVENT_STATUS_FAILED":        4,
+		"OPTION_EVENT_STATUS_MANUAL_REVIEW": 5,
+	}
+)
+
+func (x OptionEventStatus) Enum() *OptionEventStatus {
+	p := new(OptionEventStatus)
+	*p = x
+	return p
+}
+
+func (x OptionEventStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (OptionEventStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_option_enum_proto_enumTypes[22].Descriptor()
+}
+
+func (OptionEventStatus) Type() protoreflect.EnumType {
+	return &file_proto_option_enum_proto_enumTypes[22]
+}
+
+func (x OptionEventStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use OptionEventStatus.Descriptor instead.
+func (OptionEventStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{22}
+}
+
+type OptionInboxStatus int32
+
+const (
+	OptionInboxStatus_OPTION_INBOX_STATUS_UNKNOWN    OptionInboxStatus = 0
+	OptionInboxStatus_OPTION_INBOX_STATUS_PROCESSING OptionInboxStatus = 1
+	OptionInboxStatus_OPTION_INBOX_STATUS_SUCCESS    OptionInboxStatus = 2
+	OptionInboxStatus_OPTION_INBOX_STATUS_FAILED     OptionInboxStatus = 3
+)
+
+// Enum value maps for OptionInboxStatus.
+var (
+	OptionInboxStatus_name = map[int32]string{
+		0: "OPTION_INBOX_STATUS_UNKNOWN",
+		1: "OPTION_INBOX_STATUS_PROCESSING",
+		2: "OPTION_INBOX_STATUS_SUCCESS",
+		3: "OPTION_INBOX_STATUS_FAILED",
+	}
+	OptionInboxStatus_value = map[string]int32{
+		"OPTION_INBOX_STATUS_UNKNOWN":    0,
+		"OPTION_INBOX_STATUS_PROCESSING": 1,
+		"OPTION_INBOX_STATUS_SUCCESS":    2,
+		"OPTION_INBOX_STATUS_FAILED":     3,
+	}
+)
+
+func (x OptionInboxStatus) Enum() *OptionInboxStatus {
+	p := new(OptionInboxStatus)
+	*p = x
+	return p
+}
+
+func (x OptionInboxStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (OptionInboxStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_option_enum_proto_enumTypes[23].Descriptor()
+}
+
+func (OptionInboxStatus) Type() protoreflect.EnumType {
+	return &file_proto_option_enum_proto_enumTypes[23]
+}
+
+func (x OptionInboxStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use OptionInboxStatus.Descriptor instead.
+func (OptionInboxStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{23}
+}
+
+type SellerMarginMode int32
+
+const (
+	SellerMarginMode_SELLER_MARGIN_MODE_UNKNOWN   SellerMarginMode = 0
+	SellerMarginMode_SELLER_MARGIN_MODE_DISABLED  SellerMarginMode = 1
+	SellerMarginMode_SELLER_MARGIN_MODE_ISOLATED  SellerMarginMode = 2
+	SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO SellerMarginMode = 3
+)
+
+// Enum value maps for SellerMarginMode.
+var (
+	SellerMarginMode_name = map[int32]string{
+		0: "SELLER_MARGIN_MODE_UNKNOWN",
+		1: "SELLER_MARGIN_MODE_DISABLED",
+		2: "SELLER_MARGIN_MODE_ISOLATED",
+		3: "SELLER_MARGIN_MODE_PORTFOLIO",
+	}
+	SellerMarginMode_value = map[string]int32{
+		"SELLER_MARGIN_MODE_UNKNOWN":   0,
+		"SELLER_MARGIN_MODE_DISABLED":  1,
+		"SELLER_MARGIN_MODE_ISOLATED":  2,
+		"SELLER_MARGIN_MODE_PORTFOLIO": 3,
+	}
+)
+
+func (x SellerMarginMode) Enum() *SellerMarginMode {
+	p := new(SellerMarginMode)
+	*p = x
+	return p
+}
+
+func (x SellerMarginMode) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SellerMarginMode) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_option_enum_proto_enumTypes[24].Descriptor()
+}
+
+func (SellerMarginMode) Type() protoreflect.EnumType {
+	return &file_proto_option_enum_proto_enumTypes[24]
+}
+
+func (x SellerMarginMode) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SellerMarginMode.Descriptor instead.
+func (SellerMarginMode) EnumDescriptor() ([]byte, []int) {
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{24}
+}
+
+type MarginLotStatus int32
+
+const (
+	MarginLotStatus_MARGIN_LOT_STATUS_UNKNOWN   MarginLotStatus = 0
+	MarginLotStatus_MARGIN_LOT_STATUS_ACTIVE    MarginLotStatus = 1
+	MarginLotStatus_MARGIN_LOT_STATUS_RELEASING MarginLotStatus = 2
+	MarginLotStatus_MARGIN_LOT_STATUS_CONSUMING MarginLotStatus = 3
+	MarginLotStatus_MARGIN_LOT_STATUS_RELEASED  MarginLotStatus = 4
+	MarginLotStatus_MARGIN_LOT_STATUS_CONSUMED  MarginLotStatus = 5
+	MarginLotStatus_MARGIN_LOT_STATUS_RESOLVED  MarginLotStatus = 6
+)
+
+// Enum value maps for MarginLotStatus.
+var (
+	MarginLotStatus_name = map[int32]string{
+		0: "MARGIN_LOT_STATUS_UNKNOWN",
+		1: "MARGIN_LOT_STATUS_ACTIVE",
+		2: "MARGIN_LOT_STATUS_RELEASING",
+		3: "MARGIN_LOT_STATUS_CONSUMING",
+		4: "MARGIN_LOT_STATUS_RELEASED",
+		5: "MARGIN_LOT_STATUS_CONSUMED",
+		6: "MARGIN_LOT_STATUS_RESOLVED",
+	}
+	MarginLotStatus_value = map[string]int32{
+		"MARGIN_LOT_STATUS_UNKNOWN":   0,
+		"MARGIN_LOT_STATUS_ACTIVE":    1,
+		"MARGIN_LOT_STATUS_RELEASING": 2,
+		"MARGIN_LOT_STATUS_CONSUMING": 3,
+		"MARGIN_LOT_STATUS_RELEASED":  4,
+		"MARGIN_LOT_STATUS_CONSUMED":  5,
+		"MARGIN_LOT_STATUS_RESOLVED":  6,
+	}
+)
+
+func (x MarginLotStatus) Enum() *MarginLotStatus {
+	p := new(MarginLotStatus)
+	*p = x
+	return p
+}
+
+func (x MarginLotStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (MarginLotStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_option_enum_proto_enumTypes[25].Descriptor()
+}
+
+func (MarginLotStatus) Type() protoreflect.EnumType {
+	return &file_proto_option_enum_proto_enumTypes[25]
+}
+
+func (x MarginLotStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use MarginLotStatus.Descriptor instead.
+func (MarginLotStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{25}
+}
+
+type RiskAccountStatus int32
+
+const (
+	RiskAccountStatus_RISK_ACCOUNT_STATUS_UNKNOWN     RiskAccountStatus = 0
+	RiskAccountStatus_RISK_ACCOUNT_STATUS_NORMAL      RiskAccountStatus = 1
+	RiskAccountStatus_RISK_ACCOUNT_STATUS_MARGIN_CALL RiskAccountStatus = 2
+	RiskAccountStatus_RISK_ACCOUNT_STATUS_LIQUIDATING RiskAccountStatus = 3
+	RiskAccountStatus_RISK_ACCOUNT_STATUS_BANKRUPT    RiskAccountStatus = 4
+	RiskAccountStatus_RISK_ACCOUNT_STATUS_RESTRICTED  RiskAccountStatus = 5
+)
+
+// Enum value maps for RiskAccountStatus.
+var (
+	RiskAccountStatus_name = map[int32]string{
+		0: "RISK_ACCOUNT_STATUS_UNKNOWN",
+		1: "RISK_ACCOUNT_STATUS_NORMAL",
+		2: "RISK_ACCOUNT_STATUS_MARGIN_CALL",
+		3: "RISK_ACCOUNT_STATUS_LIQUIDATING",
+		4: "RISK_ACCOUNT_STATUS_BANKRUPT",
+		5: "RISK_ACCOUNT_STATUS_RESTRICTED",
+	}
+	RiskAccountStatus_value = map[string]int32{
+		"RISK_ACCOUNT_STATUS_UNKNOWN":     0,
+		"RISK_ACCOUNT_STATUS_NORMAL":      1,
+		"RISK_ACCOUNT_STATUS_MARGIN_CALL": 2,
+		"RISK_ACCOUNT_STATUS_LIQUIDATING": 3,
+		"RISK_ACCOUNT_STATUS_BANKRUPT":    4,
+		"RISK_ACCOUNT_STATUS_RESTRICTED":  5,
+	}
+)
+
+func (x RiskAccountStatus) Enum() *RiskAccountStatus {
+	p := new(RiskAccountStatus)
+	*p = x
+	return p
+}
+
+func (x RiskAccountStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (RiskAccountStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_option_enum_proto_enumTypes[26].Descriptor()
+}
+
+func (RiskAccountStatus) Type() protoreflect.EnumType {
+	return &file_proto_option_enum_proto_enumTypes[26]
+}
+
+func (x RiskAccountStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use RiskAccountStatus.Descriptor instead.
+func (RiskAccountStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{26}
+}
+
+type LiquidationStatus int32
+
+const (
+	LiquidationStatus_LIQUIDATION_STATUS_UNKNOWN       LiquidationStatus = 0
+	LiquidationStatus_LIQUIDATION_STATUS_PENDING       LiquidationStatus = 1
+	LiquidationStatus_LIQUIDATION_STATUS_EXECUTING     LiquidationStatus = 2
+	LiquidationStatus_LIQUIDATION_STATUS_DONE          LiquidationStatus = 3
+	LiquidationStatus_LIQUIDATION_STATUS_FAILED        LiquidationStatus = 4
+	LiquidationStatus_LIQUIDATION_STATUS_BANKRUPT      LiquidationStatus = 5
+	LiquidationStatus_LIQUIDATION_STATUS_MANUAL_REVIEW LiquidationStatus = 6
+)
+
+// Enum value maps for LiquidationStatus.
+var (
+	LiquidationStatus_name = map[int32]string{
+		0: "LIQUIDATION_STATUS_UNKNOWN",
+		1: "LIQUIDATION_STATUS_PENDING",
+		2: "LIQUIDATION_STATUS_EXECUTING",
+		3: "LIQUIDATION_STATUS_DONE",
+		4: "LIQUIDATION_STATUS_FAILED",
+		5: "LIQUIDATION_STATUS_BANKRUPT",
+		6: "LIQUIDATION_STATUS_MANUAL_REVIEW",
+	}
+	LiquidationStatus_value = map[string]int32{
+		"LIQUIDATION_STATUS_UNKNOWN":       0,
+		"LIQUIDATION_STATUS_PENDING":       1,
+		"LIQUIDATION_STATUS_EXECUTING":     2,
+		"LIQUIDATION_STATUS_DONE":          3,
+		"LIQUIDATION_STATUS_FAILED":        4,
+		"LIQUIDATION_STATUS_BANKRUPT":      5,
+		"LIQUIDATION_STATUS_MANUAL_REVIEW": 6,
+	}
+)
+
+func (x LiquidationStatus) Enum() *LiquidationStatus {
+	p := new(LiquidationStatus)
+	*p = x
+	return p
+}
+
+func (x LiquidationStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (LiquidationStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_option_enum_proto_enumTypes[27].Descriptor()
+}
+
+func (LiquidationStatus) Type() protoreflect.EnumType {
+	return &file_proto_option_enum_proto_enumTypes[27]
+}
+
+func (x LiquidationStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use LiquidationStatus.Descriptor instead.
+func (LiquidationStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{27}
+}
+
+type InsuranceFundFlowType int32
+
+const (
+	InsuranceFundFlowType_INSURANCE_FUND_FLOW_TYPE_UNKNOWN         InsuranceFundFlowType = 0
+	InsuranceFundFlowType_INSURANCE_FUND_FLOW_TYPE_LIQUIDATION_FEE InsuranceFundFlowType = 1
+	InsuranceFundFlowType_INSURANCE_FUND_FLOW_TYPE_DEFICIT_COVER   InsuranceFundFlowType = 2
+	InsuranceFundFlowType_INSURANCE_FUND_FLOW_TYPE_MANUAL_DEPOSIT  InsuranceFundFlowType = 3
+	InsuranceFundFlowType_INSURANCE_FUND_FLOW_TYPE_MANUAL_WITHDRAW InsuranceFundFlowType = 4
+)
+
+// Enum value maps for InsuranceFundFlowType.
+var (
+	InsuranceFundFlowType_name = map[int32]string{
+		0: "INSURANCE_FUND_FLOW_TYPE_UNKNOWN",
+		1: "INSURANCE_FUND_FLOW_TYPE_LIQUIDATION_FEE",
+		2: "INSURANCE_FUND_FLOW_TYPE_DEFICIT_COVER",
+		3: "INSURANCE_FUND_FLOW_TYPE_MANUAL_DEPOSIT",
+		4: "INSURANCE_FUND_FLOW_TYPE_MANUAL_WITHDRAW",
+	}
+	InsuranceFundFlowType_value = map[string]int32{
+		"INSURANCE_FUND_FLOW_TYPE_UNKNOWN":         0,
+		"INSURANCE_FUND_FLOW_TYPE_LIQUIDATION_FEE": 1,
+		"INSURANCE_FUND_FLOW_TYPE_DEFICIT_COVER":   2,
+		"INSURANCE_FUND_FLOW_TYPE_MANUAL_DEPOSIT":  3,
+		"INSURANCE_FUND_FLOW_TYPE_MANUAL_WITHDRAW": 4,
+	}
+)
+
+func (x InsuranceFundFlowType) Enum() *InsuranceFundFlowType {
+	p := new(InsuranceFundFlowType)
+	*p = x
+	return p
+}
+
+func (x InsuranceFundFlowType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (InsuranceFundFlowType) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_option_enum_proto_enumTypes[28].Descriptor()
+}
+
+func (InsuranceFundFlowType) Type() protoreflect.EnumType {
+	return &file_proto_option_enum_proto_enumTypes[28]
+}
+
+func (x InsuranceFundFlowType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use InsuranceFundFlowType.Descriptor instead.
+func (InsuranceFundFlowType) EnumDescriptor() ([]byte, []int) {
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{28}
 }
 
 type ExerciseResult int32
@@ -705,11 +1659,11 @@ func (x ExerciseResult) String() string {
 }
 
 func (ExerciseResult) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_option_enum_proto_enumTypes[12].Descriptor()
+	return file_proto_option_enum_proto_enumTypes[29].Descriptor()
 }
 
 func (ExerciseResult) Type() protoreflect.EnumType {
-	return &file_proto_option_enum_proto_enumTypes[12]
+	return &file_proto_option_enum_proto_enumTypes[29]
 }
 
 func (x ExerciseResult) Number() protoreflect.EnumNumber {
@@ -718,7 +1672,7 @@ func (x ExerciseResult) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ExerciseResult.Descriptor instead.
 func (ExerciseResult) EnumDescriptor() ([]byte, []int) {
-	return file_proto_option_enum_proto_rawDescGZIP(), []int{12}
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{29}
 }
 
 type AccountStatus int32
@@ -757,11 +1711,11 @@ func (x AccountStatus) String() string {
 }
 
 func (AccountStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_option_enum_proto_enumTypes[13].Descriptor()
+	return file_proto_option_enum_proto_enumTypes[30].Descriptor()
 }
 
 func (AccountStatus) Type() protoreflect.EnumType {
-	return &file_proto_option_enum_proto_enumTypes[13]
+	return &file_proto_option_enum_proto_enumTypes[30]
 }
 
 func (x AccountStatus) Number() protoreflect.EnumNumber {
@@ -770,7 +1724,7 @@ func (x AccountStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AccountStatus.Descriptor instead.
 func (AccountStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_option_enum_proto_rawDescGZIP(), []int{13}
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{30}
 }
 
 type BillRefType int32
@@ -818,11 +1772,11 @@ func (x BillRefType) String() string {
 }
 
 func (BillRefType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_option_enum_proto_enumTypes[14].Descriptor()
+	return file_proto_option_enum_proto_enumTypes[31].Descriptor()
 }
 
 func (BillRefType) Type() protoreflect.EnumType {
-	return &file_proto_option_enum_proto_enumTypes[14]
+	return &file_proto_option_enum_proto_enumTypes[31]
 }
 
 func (x BillRefType) Number() protoreflect.EnumNumber {
@@ -831,7 +1785,7 @@ func (x BillRefType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use BillRefType.Descriptor instead.
 func (BillRefType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_option_enum_proto_rawDescGZIP(), []int{14}
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{31}
 }
 
 var File_proto_option_enum_proto protoreflect.FileDescriptor
@@ -876,7 +1830,7 @@ const file_proto_option_enum_proto_rawDesc = "" +
 	"\x10ORDER_SOURCE_APP\x10\x01\x12\x14\n" +
 	"\x10ORDER_SOURCE_WEB\x10\x02\x12\x14\n" +
 	"\x10ORDER_SOURCE_API\x10\x03\x12\x16\n" +
-	"\x12ORDER_SOURCE_ADMIN\x10\x04*\xc8\x01\n" +
+	"\x12ORDER_SOURCE_ADMIN\x10\x04*\x99\x02\n" +
 	"\vOrderStatus\x12\x18\n" +
 	"\x14ORDER_STATUS_UNKNOWN\x10\x00\x12\x18\n" +
 	"\x14ORDER_STATUS_PENDING\x10\x01\x12\x1c\n" +
@@ -884,7 +1838,40 @@ const file_proto_option_enum_proto_rawDesc = "" +
 	"\x13ORDER_STATUS_FILLED\x10\x03\x12\x19\n" +
 	"\x15ORDER_STATUS_CANCELED\x10\x04\x12\x19\n" +
 	"\x15ORDER_STATUS_REJECTED\x10\x05\x12\x18\n" +
-	"\x14ORDER_STATUS_EXPIRED\x10\x06*\xbf\x01\n" +
+	"\x14ORDER_STATUS_EXPIRED\x10\x06\x12\x18\n" +
+	"\x14ORDER_STATUS_FUNDING\x10\a\x12\x1a\n" +
+	"\x16ORDER_STATUS_CANCELING\x10\b\x12\x19\n" +
+	"\x15ORDER_STATUS_EXPIRING\x10\t*\x99\x02\n" +
+	"\x16AssetInstructionAction\x12$\n" +
+	" ASSET_INSTRUCTION_ACTION_UNKNOWN\x10\x00\x12#\n" +
+	"\x1fASSET_INSTRUCTION_ACTION_FREEZE\x10\x01\x12*\n" +
+	"&ASSET_INSTRUCTION_ACTION_DEDUCT_FROZEN\x10\x02\x12+\n" +
+	"'ASSET_INSTRUCTION_ACTION_RELEASE_FROZEN\x10\x03\x12-\n" +
+	")ASSET_INSTRUCTION_ACTION_CREDIT_AVAILABLE\x10\x04\x12,\n" +
+	"(ASSET_INSTRUCTION_ACTION_DEBIT_AVAILABLE\x10\x05*\xab\x02\n" +
+	"\x16AssetInstructionStatus\x12$\n" +
+	" ASSET_INSTRUCTION_STATUS_UNKNOWN\x10\x00\x12$\n" +
+	" ASSET_INSTRUCTION_STATUS_PENDING\x10\x01\x12'\n" +
+	"#ASSET_INSTRUCTION_STATUS_PROCESSING\x10\x02\x12$\n" +
+	" ASSET_INSTRUCTION_STATUS_SUCCESS\x10\x03\x12#\n" +
+	"\x1fASSET_INSTRUCTION_STATUS_FAILED\x10\x04\x12*\n" +
+	"&ASSET_INSTRUCTION_STATUS_MANUAL_REVIEW\x10\x05\x12%\n" +
+	"!ASSET_INSTRUCTION_STATUS_CANCELED\x10\x06*\xc0\x01\n" +
+	"\x19AssetReconciliationStatus\x12'\n" +
+	"#ASSET_RECONCILIATION_STATUS_UNKNOWN\x10\x00\x12'\n" +
+	"#ASSET_RECONCILIATION_STATUS_PENDING\x10\x01\x12'\n" +
+	"#ASSET_RECONCILIATION_STATUS_MATCHED\x10\x02\x12(\n" +
+	"$ASSET_RECONCILIATION_STATUS_MISMATCH\x10\x03*\xca\x01\n" +
+	"\x17ReconciliationCheckType\x12%\n" +
+	"!RECONCILIATION_CHECK_TYPE_UNKNOWN\x10\x00\x12(\n" +
+	"$RECONCILIATION_CHECK_TYPE_ASSET_FLOW\x10\x01\x12,\n" +
+	"(RECONCILIATION_CHECK_TYPE_BALANCE_MIRROR\x10\x02\x120\n" +
+	",RECONCILIATION_CHECK_TYPE_SETTLEMENT_BALANCE\x10\x03*\xbd\x01\n" +
+	"\x19ReconciliationIssueStatus\x12'\n" +
+	"#RECONCILIATION_ISSUE_STATUS_UNKNOWN\x10\x00\x12$\n" +
+	" RECONCILIATION_ISSUE_STATUS_OPEN\x10\x01\x12(\n" +
+	"$RECONCILIATION_ISSUE_STATUS_RESOLVED\x10\x02\x12'\n" +
+	"#RECONCILIATION_ISSUE_STATUS_IGNORED\x10\x03*\xbf\x01\n" +
 	"\x0ePositionStatus\x12\x1b\n" +
 	"\x17POSITION_STATUS_UNKNOWN\x10\x00\x12\x1b\n" +
 	"\x17POSITION_STATUS_HOLDING\x10\x01\x12\x1a\n" +
@@ -901,13 +1888,88 @@ const file_proto_option_enum_proto_rawDesc = "" +
 	"\x17EXERCISE_STATUS_PENDING\x10\x01\x12\x18\n" +
 	"\x14EXERCISE_STATUS_DONE\x10\x02\x12\x1c\n" +
 	"\x18EXERCISE_STATUS_REJECTED\x10\x03\x12\x1c\n" +
-	"\x18EXERCISE_STATUS_CANCELED\x10\x04*\xac\x01\n" +
+	"\x18EXERCISE_STATUS_CANCELED\x10\x04*\xe4\x01\n" +
+	"\x18ExerciseAssignmentStatus\x12&\n" +
+	"\"EXERCISE_ASSIGNMENT_STATUS_UNKNOWN\x10\x00\x12&\n" +
+	"\"EXERCISE_ASSIGNMENT_STATUS_PENDING\x10\x01\x12#\n" +
+	"\x1fEXERCISE_ASSIGNMENT_STATUS_DONE\x10\x02\x12%\n" +
+	"!EXERCISE_ASSIGNMENT_STATUS_FAILED\x10\x03\x12,\n" +
+	"(EXERCISE_ASSIGNMENT_STATUS_MANUAL_REVIEW\x10\x04*\xac\x01\n" +
 	"\x10SettlementStatus\x12\x1d\n" +
 	"\x19SETTLEMENT_STATUS_UNKNOWN\x10\x00\x12\x1d\n" +
 	"\x19SETTLEMENT_STATUS_PENDING\x10\x01\x12 \n" +
 	"\x1cSETTLEMENT_STATUS_PROCESSING\x10\x02\x12\x1a\n" +
 	"\x16SETTLEMENT_STATUS_DONE\x10\x03\x12\x1c\n" +
-	"\x18SETTLEMENT_STATUS_FAILED\x10\x04*\x8c\x01\n" +
+	"\x18SETTLEMENT_STATUS_FAILED\x10\x04*\xae\x01\n" +
+	"\x15SettlementPriceStatus\x12#\n" +
+	"\x1fSETTLEMENT_PRICE_STATUS_UNKNOWN\x10\x00\x12#\n" +
+	"\x1fSETTLEMENT_PRICE_STATUS_PENDING\x10\x01\x12%\n" +
+	"!SETTLEMENT_PRICE_STATUS_CONFIRMED\x10\x02\x12$\n" +
+	" SETTLEMENT_PRICE_STATUS_REJECTED\x10\x03*\x89\x03\n" +
+	"\x15SettlementBatchStatus\x12#\n" +
+	"\x1fSETTLEMENT_BATCH_STATUS_UNKNOWN\x10\x00\x12)\n" +
+	"%SETTLEMENT_BATCH_STATUS_WAITING_PRICE\x10\x01\x12(\n" +
+	"$SETTLEMENT_BATCH_STATUS_PRICE_LOCKED\x10\x02\x12'\n" +
+	"#SETTLEMENT_BATCH_STATUS_CALCULATING\x10\x03\x120\n" +
+	",SETTLEMENT_BATCH_STATUS_INSTRUCTIONS_CREATED\x10\x04\x12,\n" +
+	"(SETTLEMENT_BATCH_STATUS_ASSET_PROCESSING\x10\x05\x12'\n" +
+	"#SETTLEMENT_BATCH_STATUS_RECONCILING\x10\x06\x12 \n" +
+	"\x1cSETTLEMENT_BATCH_STATUS_DONE\x10\a\x12\"\n" +
+	"\x1eSETTLEMENT_BATCH_STATUS_FAILED\x10\b*\xbc\x01\n" +
+	"\x19SettlementDetailDirection\x12'\n" +
+	"#SETTLEMENT_DETAIL_DIRECTION_UNKNOWN\x10\x00\x12&\n" +
+	"\"SETTLEMENT_DETAIL_DIRECTION_CREDIT\x10\x01\x12%\n" +
+	"!SETTLEMENT_DETAIL_DIRECTION_DEBIT\x10\x02\x12'\n" +
+	"#SETTLEMENT_DETAIL_DIRECTION_ABANDON\x10\x03*V\n" +
+	"\x0fOptionEventType\x12\x1d\n" +
+	"\x19OPTION_EVENT_TYPE_UNKNOWN\x10\x00\x12$\n" +
+	" OPTION_EVENT_TYPE_TRADE_POSITION\x10\x01*\xe1\x01\n" +
+	"\x11OptionEventStatus\x12\x1f\n" +
+	"\x1bOPTION_EVENT_STATUS_UNKNOWN\x10\x00\x12\x1f\n" +
+	"\x1bOPTION_EVENT_STATUS_PENDING\x10\x01\x12\"\n" +
+	"\x1eOPTION_EVENT_STATUS_PROCESSING\x10\x02\x12\x1f\n" +
+	"\x1bOPTION_EVENT_STATUS_SUCCESS\x10\x03\x12\x1e\n" +
+	"\x1aOPTION_EVENT_STATUS_FAILED\x10\x04\x12%\n" +
+	"!OPTION_EVENT_STATUS_MANUAL_REVIEW\x10\x05*\x99\x01\n" +
+	"\x11OptionInboxStatus\x12\x1f\n" +
+	"\x1bOPTION_INBOX_STATUS_UNKNOWN\x10\x00\x12\"\n" +
+	"\x1eOPTION_INBOX_STATUS_PROCESSING\x10\x01\x12\x1f\n" +
+	"\x1bOPTION_INBOX_STATUS_SUCCESS\x10\x02\x12\x1e\n" +
+	"\x1aOPTION_INBOX_STATUS_FAILED\x10\x03*\x96\x01\n" +
+	"\x10SellerMarginMode\x12\x1e\n" +
+	"\x1aSELLER_MARGIN_MODE_UNKNOWN\x10\x00\x12\x1f\n" +
+	"\x1bSELLER_MARGIN_MODE_DISABLED\x10\x01\x12\x1f\n" +
+	"\x1bSELLER_MARGIN_MODE_ISOLATED\x10\x02\x12 \n" +
+	"\x1cSELLER_MARGIN_MODE_PORTFOLIO\x10\x03*\xf0\x01\n" +
+	"\x0fMarginLotStatus\x12\x1d\n" +
+	"\x19MARGIN_LOT_STATUS_UNKNOWN\x10\x00\x12\x1c\n" +
+	"\x18MARGIN_LOT_STATUS_ACTIVE\x10\x01\x12\x1f\n" +
+	"\x1bMARGIN_LOT_STATUS_RELEASING\x10\x02\x12\x1f\n" +
+	"\x1bMARGIN_LOT_STATUS_CONSUMING\x10\x03\x12\x1e\n" +
+	"\x1aMARGIN_LOT_STATUS_RELEASED\x10\x04\x12\x1e\n" +
+	"\x1aMARGIN_LOT_STATUS_CONSUMED\x10\x05\x12\x1e\n" +
+	"\x1aMARGIN_LOT_STATUS_RESOLVED\x10\x06*\xe4\x01\n" +
+	"\x11RiskAccountStatus\x12\x1f\n" +
+	"\x1bRISK_ACCOUNT_STATUS_UNKNOWN\x10\x00\x12\x1e\n" +
+	"\x1aRISK_ACCOUNT_STATUS_NORMAL\x10\x01\x12#\n" +
+	"\x1fRISK_ACCOUNT_STATUS_MARGIN_CALL\x10\x02\x12#\n" +
+	"\x1fRISK_ACCOUNT_STATUS_LIQUIDATING\x10\x03\x12 \n" +
+	"\x1cRISK_ACCOUNT_STATUS_BANKRUPT\x10\x04\x12\"\n" +
+	"\x1eRISK_ACCOUNT_STATUS_RESTRICTED\x10\x05*\xf8\x01\n" +
+	"\x11LiquidationStatus\x12\x1e\n" +
+	"\x1aLIQUIDATION_STATUS_UNKNOWN\x10\x00\x12\x1e\n" +
+	"\x1aLIQUIDATION_STATUS_PENDING\x10\x01\x12 \n" +
+	"\x1cLIQUIDATION_STATUS_EXECUTING\x10\x02\x12\x1b\n" +
+	"\x17LIQUIDATION_STATUS_DONE\x10\x03\x12\x1d\n" +
+	"\x19LIQUIDATION_STATUS_FAILED\x10\x04\x12\x1f\n" +
+	"\x1bLIQUIDATION_STATUS_BANKRUPT\x10\x05\x12$\n" +
+	" LIQUIDATION_STATUS_MANUAL_REVIEW\x10\x06*\xf2\x01\n" +
+	"\x15InsuranceFundFlowType\x12$\n" +
+	" INSURANCE_FUND_FLOW_TYPE_UNKNOWN\x10\x00\x12,\n" +
+	"(INSURANCE_FUND_FLOW_TYPE_LIQUIDATION_FEE\x10\x01\x12*\n" +
+	"&INSURANCE_FUND_FLOW_TYPE_DEFICIT_COVER\x10\x02\x12+\n" +
+	"'INSURANCE_FUND_FLOW_TYPE_MANUAL_DEPOSIT\x10\x03\x12,\n" +
+	"(INSURANCE_FUND_FLOW_TYPE_MANUAL_WITHDRAW\x10\x04*\x8c\x01\n" +
 	"\x0eExerciseResult\x12\x1b\n" +
 	"\x17EXERCISE_RESULT_UNKNOWN\x10\x00\x12\x18\n" +
 	"\x14EXERCISE_RESULT_NONE\x10\x01\x12!\n" +
@@ -939,23 +2001,40 @@ func file_proto_option_enum_proto_rawDescGZIP() []byte {
 	return file_proto_option_enum_proto_rawDescData
 }
 
-var file_proto_option_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 15)
+var file_proto_option_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 32)
 var file_proto_option_enum_proto_goTypes = []any{
-	(OptionType)(0),       // 0: option.OptionType
-	(ExerciseStyle)(0),    // 1: option.ExerciseStyle
-	(SettlementType)(0),   // 2: option.SettlementType
-	(ContractStatus)(0),   // 3: option.ContractStatus
-	(PositionEffect)(0),   // 4: option.PositionEffect
-	(OrderType)(0),        // 5: option.OrderType
-	(OrderSource)(0),      // 6: option.OrderSource
-	(OrderStatus)(0),      // 7: option.OrderStatus
-	(PositionStatus)(0),   // 8: option.PositionStatus
-	(ExerciseType)(0),     // 9: option.ExerciseType
-	(ExerciseStatus)(0),   // 10: option.ExerciseStatus
-	(SettlementStatus)(0), // 11: option.SettlementStatus
-	(ExerciseResult)(0),   // 12: option.ExerciseResult
-	(AccountStatus)(0),    // 13: option.AccountStatus
-	(BillRefType)(0),      // 14: option.BillRefType
+	(OptionType)(0),                // 0: option.OptionType
+	(ExerciseStyle)(0),             // 1: option.ExerciseStyle
+	(SettlementType)(0),            // 2: option.SettlementType
+	(ContractStatus)(0),            // 3: option.ContractStatus
+	(PositionEffect)(0),            // 4: option.PositionEffect
+	(OrderType)(0),                 // 5: option.OrderType
+	(OrderSource)(0),               // 6: option.OrderSource
+	(OrderStatus)(0),               // 7: option.OrderStatus
+	(AssetInstructionAction)(0),    // 8: option.AssetInstructionAction
+	(AssetInstructionStatus)(0),    // 9: option.AssetInstructionStatus
+	(AssetReconciliationStatus)(0), // 10: option.AssetReconciliationStatus
+	(ReconciliationCheckType)(0),   // 11: option.ReconciliationCheckType
+	(ReconciliationIssueStatus)(0), // 12: option.ReconciliationIssueStatus
+	(PositionStatus)(0),            // 13: option.PositionStatus
+	(ExerciseType)(0),              // 14: option.ExerciseType
+	(ExerciseStatus)(0),            // 15: option.ExerciseStatus
+	(ExerciseAssignmentStatus)(0),  // 16: option.ExerciseAssignmentStatus
+	(SettlementStatus)(0),          // 17: option.SettlementStatus
+	(SettlementPriceStatus)(0),     // 18: option.SettlementPriceStatus
+	(SettlementBatchStatus)(0),     // 19: option.SettlementBatchStatus
+	(SettlementDetailDirection)(0), // 20: option.SettlementDetailDirection
+	(OptionEventType)(0),           // 21: option.OptionEventType
+	(OptionEventStatus)(0),         // 22: option.OptionEventStatus
+	(OptionInboxStatus)(0),         // 23: option.OptionInboxStatus
+	(SellerMarginMode)(0),          // 24: option.SellerMarginMode
+	(MarginLotStatus)(0),           // 25: option.MarginLotStatus
+	(RiskAccountStatus)(0),         // 26: option.RiskAccountStatus
+	(LiquidationStatus)(0),         // 27: option.LiquidationStatus
+	(InsuranceFundFlowType)(0),     // 28: option.InsuranceFundFlowType
+	(ExerciseResult)(0),            // 29: option.ExerciseResult
+	(AccountStatus)(0),             // 30: option.AccountStatus
+	(BillRefType)(0),               // 31: option.BillRefType
 }
 var file_proto_option_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -975,7 +2054,7 @@ func file_proto_option_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_option_enum_proto_rawDesc), len(file_proto_option_enum_proto_rawDesc)),
-			NumEnums:      15,
+			NumEnums:      32,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

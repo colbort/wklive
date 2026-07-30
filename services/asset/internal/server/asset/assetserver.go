@@ -23,6 +23,18 @@ func NewAssetServer(svcCtx *svc.ServiceContext) *AssetServer {
 	}
 }
 
+// 内部查询指定钱包余额，供风险引擎读取统一资产账本。
+func (s *AssetServer) GetAssetBalance(ctx context.Context, in *asset.GetUserAssetDetailReq) (*asset.GetUserAssetDetailResp, error) {
+	l := assetlogic.NewGetAssetBalanceLogic(ctx, s.svcCtx)
+	return l.GetAssetBalance(in)
+}
+
+// 按幂等业务键查询资产流水，用于业务服务对账。
+func (s *AssetServer) GetAssetFlowByBizNo(ctx context.Context, in *asset.GetAssetFlowByBizNoReq) (*asset.GetAssetFlowByBizNoResp, error) {
+	l := assetlogic.NewGetAssetFlowByBizNoLogic(ctx, s.svcCtx)
+	return l.GetAssetFlowByBizNo(in)
+}
+
 // 增加可用余额
 func (s *AssetServer) AddAvailable(ctx context.Context, in *asset.AddAvailableReq) (*asset.ChangeAssetResp, error) {
 	l := assetlogic.NewAddAvailableLogic(ctx, s.svcCtx)
