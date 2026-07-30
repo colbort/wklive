@@ -22,9 +22,9 @@ func parseOptionalOptionRate(value string) (decimal.Decimal, error) {
 	return rate, nil
 }
 
-// validateSupportedContract only enables cash-settled contracts. European
-// contracts auto exercise at expiry; American contracts may also be exercised
-// early through the asynchronous assignment/clearing task.
+// validateSupportedContract exposes only combinations whose clearing and risk
+// paths are implemented. Cash supports European and American exercise; physical
+// delivery is restricted to European, auto-exercised, fully covered contracts.
 func validateSupportedContract(item *models.TOptionContract) bool {
 	if item == nil || item.TenantId <= 0 ||
 		strings.TrimSpace(item.ContractCode) == "" ||
