@@ -40,12 +40,33 @@ type (
 		FindOneForUpdate(ctx context.Context, id int64) (*TOptionOrder, error)
 		FindMatchableOrders(ctx context.Context, tenantId, contractId, side, excludeUserId, excludeAccountId int64, price decimal.Decimal, limit int64) ([]*TOptionOrder, error)
 		FindAllMatchableOrders(ctx context.Context, tenantId, contractId, side, excludeUserId, excludeAccountId int64, price decimal.Decimal) ([]*TOptionOrder, error)
+		FindPortfolioRiskOrders(ctx context.Context, tenantId, userId, accountId int64) ([]*TOptionOrder, error)
 	}
 
 	customTOptionOrderModel struct {
 		*defaultTOptionOrderModel
 	}
 )
+
+func (m *defaultTOptionOrderModel) FindPortfolioRiskOrders(
+	ctx context.Context,
+	tenantId, userId, accountId int64,
+) ([]*TOptionOrder, error) {
+	query := fmt.Sprintf(`SELECT %s FROM %s
+WHERE tenant_id = ? AND user_id = ? AND account_id = ? AND side = ?
+  AND status IN (?,?,?,?,?) AND unfilled_qty > 0
+ORDER BY id FOR UPDATE`, tOptionOrderRows, m.table)
+	var list []*TOptionOrder
+	err := m.QueryRowsNoCacheCtx(ctx, &list, query,
+		tenantId, userId, accountId, int64(common.Side_SIDE_SELL),
+		int64(option.OrderStatus_ORDER_STATUS_FUNDING),
+		int64(option.OrderStatus_ORDER_STATUS_PENDING),
+		int64(option.OrderStatus_ORDER_STATUS_PART_FILLED),
+		int64(option.OrderStatus_ORDER_STATUS_CANCELING),
+		int64(option.OrderStatus_ORDER_STATUS_EXPIRING),
+	)
+	return list, err
+}
 
 func (m *defaultTOptionOrderModel) FindOneForUpdate(ctx context.Context, id int64) (*TOptionOrder, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1 FOR UPDATE", tOptionOrderRows, m.table)

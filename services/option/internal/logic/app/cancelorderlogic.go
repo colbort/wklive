@@ -100,7 +100,7 @@ func (l *CancelOrderLogic) CancelOrder(in *option.CancelOrderReq) (*option.UserC
 				TenantId: item.TenantId, InstructionNo: item.OrderNo + "-CANCEL-RELEASE",
 				BizNo: item.OrderNo, OrderId: item.Id, UserId: item.UserId, AccountId: item.AccountId,
 				Action:      int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_RELEASE_FROZEN),
-				TargetBizNo: item.OrderNo, Coin: item.FeeCoin, Amount: item.MarginAmount,
+				TargetBizNo: item.OrderNo, Coin: OptionOrderMarginCoin(item), Amount: item.MarginAmount,
 				StepNo: 2, Status: int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING),
 				ReconciliationStatus: int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_PENDING),
 				CreateTimes:          now, UpdateTimes: now,

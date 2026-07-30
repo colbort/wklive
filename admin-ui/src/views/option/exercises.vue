@@ -69,6 +69,17 @@
 
     <el-dialog v-model="detailVisible" :title="t('option.detail')" width="760px">
       <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
+      <template #footer>
+        <el-button
+          v-if="detailData && 'exercise' in detailData && detailData.exercise.status === 1"
+          v-perm="'option:exercise:retry'"
+          type="warning"
+          :loading="retrying"
+          @click="retryExercise"
+        >
+          {{ t('option.retryExercise') }}
+        </el-button>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -76,6 +87,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { usePagination } from '@/composables'
 import { optionService, type OptionExercise, type OptionExerciseDetail } from '@/services'
 import TenantSelect from '@/components/TenantSelect.vue'
@@ -91,6 +103,7 @@ const loading = ref(false)
 const rows = ref<OptionExercise[]>([])
 const detailVisible = ref(false)
 const detailData = ref<OptionExerciseDetail | OptionExercise | null>(null)
+const retrying = ref(false)
 const query = reactive({
   tenantId: undefined as number | undefined,
   userId: undefined as number | undefined,
@@ -133,6 +146,27 @@ const showDetail = async (row: OptionExercise) => {
       })
     ).data || row
   detailVisible.value = true
+}
+
+const retryExercise = async () => {
+  if (!detailData.value || !('exercise' in detailData.value)) return
+  const exercise = detailData.value.exercise
+  await ElMessageBox.confirm(
+    t('option.retryExerciseConfirm'),
+    t('option.retryExercise'),
+    { type: 'warning' },
+  )
+  retrying.value = true
+  try {
+    await optionService.retryExercise({
+      tenantId: exercise.tenantId,
+      exerciseId: exercise.id,
+    })
+    ElMessage.success(t('option.retrySubmitted'))
+    await showDetail(exercise)
+  } finally {
+    retrying.value = false
+  }
 }
 
 function handleLimitChange() {

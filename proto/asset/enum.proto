@@ -31,6 +31,7 @@ enum BizType {
   BIZ_TYPE_ACTIVITY = 7; // 活动
   BIZ_TYPE_EARN = 8; // 理财
   BIZ_TYPE_INSURANCE_FUND = 9; // 合约保险基金
+  BIZ_TYPE_PLATFORM_BACKSTOP = 10; // 平台穿仓兜底负债
 }
 
 // 业务场景
@@ -50,6 +51,7 @@ enum SceneType {
   SCENE_TYPE_TRADE_FEE = 14; // 手续费
   SCENE_TYPE_INSURANCE_FUND_COVER = 15; // 保险基金穿仓赔付
   SCENE_TYPE_INSURANCE_FUND_REVERSAL = 16; // 保险基金赔付冲正
+  SCENE_TYPE_PLATFORM_BACKSTOP_COVER = 17; // 平台兜底穿仓赔付
 
   // staking / earn
   SCENE_TYPE_STAKING_JOIN = 21; // 参与锁仓

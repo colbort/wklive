@@ -5,6 +5,7 @@ import {
   apiOptionGetBill,
   apiOptionGetContract,
   apiOptionGetExercise,
+  apiOptionRetryExercise,
   apiOptionGetMarket,
   apiOptionGetOrder,
   apiOptionGetPosition,
@@ -12,6 +13,7 @@ import {
   apiOptionGetTrade,
   apiOptionForceCancelContractOrders,
   apiOptionRetryAssetInstruction,
+  apiOptionRetrySettlementInstruction,
   apiOptionRetryTradeEvent,
   apiOptionListRiskAccounts,
   apiOptionListLiquidations,
@@ -41,6 +43,7 @@ export type OptionContract = {
   tenantId: number // 租户ID
   contractCode: string // 合约编码
   underlyingSymbol: string // 标的符号
+  underlyingCoin: string
   settleCoin: string
   quoteCoin: string
   optionType: number
@@ -75,6 +78,8 @@ export type OptionContract = {
   liquidationFeeRate: string
   insuranceUserId: number
   insuranceAccountId: number
+  liquidationDeficitPolicy: number
+  physicalDeliveryPolicy: number
 }
 
 export type OptionMarket = {
@@ -229,6 +234,51 @@ export type OptionExercise = {
   updateTimes: number
 }
 
+export type OptionExerciseAssignment = {
+  id: number
+  tenantId: number
+  exerciseId: number
+  exerciseNo: string
+  longPositionId: number
+  shortPositionId: number
+  shortUserId: number
+  shortAccountId: number
+  quantity: string
+  payoff: string
+  status: number
+  instructionNo: string
+  createTimes: number
+  updateTimes: number
+}
+
+export type OptionAssetInstruction = {
+  id: number
+  tenantId: number
+  instructionNo: string
+  bizNo: string
+  orderId: number
+  tradeId: number
+  positionId: number
+  userId: number
+  accountId: number
+  action: number
+  targetBizNo: string
+  coin: string
+  amount: string
+  stepNo: number
+  status: number
+  retryCount: number
+  nextRetryAt: number
+  lastErrorMsg: string
+  createTimes: number
+  updateTimes: number
+  assetFlowNo: string
+  reconciliationStatus: number
+  reconciledAt: number
+  marginLotId: number
+  liquidationId: number
+}
+
 export type OptionSettlement = {
   id: number
   tenantId: number
@@ -307,11 +357,33 @@ export type OptionTradeDetail = {
 export type OptionExerciseDetail = {
   exercise: OptionExercise
   contract: OptionContract
+  assignments: OptionExerciseAssignment[]
+  assetInstructions: OptionAssetInstruction[]
 }
 
 export type OptionSettlementDetail = {
   settlement: OptionSettlement
   contract: OptionContract
+  batch: {
+    id: number
+    batchNo: string
+    instructionCount: number
+    successCount: number
+    status: number
+    lastErrorMsg: string
+  }
+  positionDetails: Array<{
+    positionId: number
+    userId: number
+    accountId: number
+    side: number
+    quantity: string
+    deliveryCoin: string
+    deliveryQuantity: string
+    paymentCoin: string
+    paymentAmount: string
+  }>
+  assetInstructions: OptionAssetInstruction[]
 }
 
 export type CreateContractReq = Omit<
@@ -332,9 +404,20 @@ export type OptionRetryAssetInstructionReq = {
   instructionId: number
 }
 
+export type OptionRetrySettlementInstructionReq = {
+  tenantId: number
+  settlementId: number
+  instructionId: number
+}
+
 export type OptionRetryTradeEventReq = {
   tenantId: number
   eventId: number
+}
+
+export type OptionRetryExerciseReq = {
+  tenantId: number
+  exerciseId: number
 }
 
 export type GetContractReq = {
@@ -501,6 +584,9 @@ export type OptionRiskAccount = {
   unrealizedPnl: string
   riskRate: string
   status: number
+  portfolioRiskMethod: number
+  portfolioScenarioLoss: string
+  portfolioShortFloor: string
   lastCalcTime: number
   createTimes: number
   updateTimes: number
@@ -529,6 +615,8 @@ export type OptionLiquidation = {
   takeoverPositionId: number
   completedAt: number
   insuranceAttempt: number
+  backstopAmount: string
+  deficitResolution: number
   createTimes: number
   updateTimes: number
 }
@@ -586,6 +674,10 @@ export class OptionService {
 
   retryAssetInstruction(params: OptionRetryAssetInstructionReq) {
     return apiOptionRetryAssetInstruction(params)
+  }
+
+  retrySettlementInstruction(params: OptionRetrySettlementInstructionReq) {
+    return apiOptionRetrySettlementInstruction(params)
   }
 
   retryTradeEvent(params: OptionRetryTradeEventReq) {
@@ -646,6 +738,10 @@ export class OptionService {
 
   getExercise(params: GetExerciseReq) {
     return apiOptionGetExercise(params)
+  }
+
+  retryExercise(params: OptionRetryExerciseReq) {
+    return apiOptionRetryExercise(params)
   }
 
   listSettlements(params: ListSettlementsReq) {

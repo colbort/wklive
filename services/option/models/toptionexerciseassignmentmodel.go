@@ -19,6 +19,7 @@ type (
 		tOptionExerciseAssignmentModel
 		FindByExercise(ctx context.Context, tenantId, exerciseId int64) ([]*TOptionExerciseAssignment, error)
 		ResetForRetry(ctx context.Context, tenantId, exerciseId, now int64) error
+		SetPendingStatus(ctx context.Context, tenantId, exerciseId, now int64, status option.ExerciseAssignmentStatus) error
 	}
 
 	customTOptionExerciseAssignmentModel struct {
@@ -45,6 +46,20 @@ WHERE tenant_id = ? AND exercise_id = ? AND status IN (?, ?)`,
 		tenantId, exerciseId,
 		int64(option.ExerciseAssignmentStatus_EXERCISE_ASSIGNMENT_STATUS_FAILED),
 		int64(option.ExerciseAssignmentStatus_EXERCISE_ASSIGNMENT_STATUS_MANUAL_REVIEW),
+	)
+	return err
+}
+
+func (m *defaultTOptionExerciseAssignmentModel) SetPendingStatus(
+	ctx context.Context,
+	tenantId, exerciseId, now int64,
+	status option.ExerciseAssignmentStatus,
+) error {
+	_, err := m.ExecNoCacheCtx(ctx, `UPDATE t_option_exercise_assignment
+SET status = ?, update_times = ?
+WHERE tenant_id = ? AND exercise_id = ? AND status <> ?`,
+		int64(status), now, tenantId, exerciseId,
+		int64(option.ExerciseAssignmentStatus_EXERCISE_ASSIGNMENT_STATUS_DONE),
 	)
 	return err
 }

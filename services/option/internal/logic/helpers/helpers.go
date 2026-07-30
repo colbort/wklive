@@ -115,6 +115,7 @@ func ToContractProto(item *models.TOptionContract) *option.OptionContract {
 		TenantId:              item.TenantId,
 		ContractCode:          item.ContractCode,
 		UnderlyingSymbol:      item.UnderlyingSymbol,
+		UnderlyingCoin:        item.UnderlyingCoin,
 		SettleCoin:            item.SettleCoin,
 		QuoteCoin:             item.QuoteCoin,
 		OptionType:            option.OptionType(item.OptionType),
@@ -149,6 +150,10 @@ func ToContractProto(item *models.TOptionContract) *option.OptionContract {
 		LiquidationFeeRate:    conv.FloatString(item.LiquidationFeeRate),
 		InsuranceUserId:       item.InsuranceUserId,
 		InsuranceAccountId:    item.InsuranceAccountId,
+		LiquidationDeficitPolicy: option.LiquidationDeficitPolicy(
+			item.LiquidationDeficitPolicy,
+		),
+		PhysicalDeliveryPolicy: option.PhysicalDeliveryPolicy(item.PhysicalDeliveryPolicy),
 	}
 }
 
@@ -260,6 +265,7 @@ func ToOrderProto(item *models.TOptionOrder) *option.OptionOrder {
 		Fee:              conv.FloatString(item.Fee),
 		FeeCoin:          item.FeeCoin,
 		MarginAmount:     conv.FloatString(item.MarginAmount),
+		MarginCoin:       item.MarginCoin,
 		Source:           option.OrderSource(item.Source),
 		ClientOrderId:    item.ClientOrderId,
 		ReduceOnly:       common.YesNo(item.ReduceOnly),
@@ -477,7 +483,10 @@ func ToRiskAccountProto(item *models.TOptionRiskAccount) *option.OptionRiskAccou
 		MaintenanceMargin: conv.FloatString(item.MaintenanceMargin),
 		UnrealizedPnl:     conv.FloatString(item.UnrealizedPnl),
 		RiskRate:          conv.FloatString(item.RiskRate), Status: option.RiskAccountStatus(item.Status),
-		LastCalcTime: item.LastCalcTime, CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
+		PortfolioRiskMethod:   option.PortfolioRiskMethod(item.PortfolioRiskMethod),
+		PortfolioScenarioLoss: conv.FloatString(item.PortfolioScenarioLoss),
+		PortfolioShortFloor:   conv.FloatString(item.PortfolioShortFloor),
+		LastCalcTime:          item.LastCalcTime, CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
 	}
 }
 
@@ -499,7 +508,8 @@ func ToLiquidationProto(item *models.TOptionLiquidation) *option.OptionLiquidati
 		InsuranceFundAmount: conv.FloatString(item.InsuranceFundAmount),
 		RemainingDeficit:    conv.FloatString(item.RemainingDeficit),
 		TakeoverPositionId:  item.TakeoverPositionId, CompletedAt: item.CompletedAt,
-		InsuranceAttempt: item.InsuranceAttempt,
+		InsuranceAttempt: item.InsuranceAttempt, BackstopAmount: conv.FloatString(item.BackstopAmount),
+		DeficitResolution: option.LiquidationDeficitResolution(item.DeficitResolution),
 	}
 }
 
@@ -577,5 +587,45 @@ func BuildSettlementDetail(ctx context.Context, svcCtx *svc.ServiceContext, item
 	if err != nil {
 		return nil, err
 	}
-	return &option.OptionSettlementDetail{Settlement: ToSettlementProto(item), Contract: ToContractProto(contract)}, nil
+	batch, err := svcCtx.OptionSettlementBatchModel.FindOneByTenantIdBatchNo(ctx, item.TenantId, item.SettlementNo)
+	if err != nil {
+		return nil, err
+	}
+	details, err := svcCtx.OptionSettlementDetailModel.FindByBatch(ctx, item.TenantId, batch.Id)
+	if err != nil {
+		return nil, err
+	}
+	instructions, err := svcCtx.OptionAssetInstructionModel.FindByBizNo(ctx, item.TenantId, item.SettlementNo)
+	if err != nil {
+		return nil, err
+	}
+	result := &option.OptionSettlementDetail{
+		Settlement: ToSettlementProto(item),
+		Contract:   ToContractProto(contract),
+		Batch: &option.OptionSettlementBatch{
+			Id: batch.Id, TenantId: batch.TenantId, BatchNo: batch.BatchNo,
+			ContractId: batch.ContractId, SettlementPriceId: batch.SettlementPriceId,
+			TotalCredit: conv.FloatString(batch.TotalCredit), TotalDebit: conv.FloatString(batch.TotalDebit),
+			InstructionCount: batch.InstructionCount, SuccessCount: batch.SuccessCount,
+			Status: option.SettlementBatchStatus(batch.Status), LastErrorMsg: batch.LastErrorMsg,
+			CreateTimes: batch.CreateTimes, UpdateTimes: batch.UpdateTimes,
+		},
+	}
+	for _, detail := range details {
+		result.PositionDetails = append(result.PositionDetails, &option.OptionSettlementPositionDetail{
+			Id: detail.Id, TenantId: detail.TenantId, BatchId: detail.BatchId,
+			BatchNo: detail.BatchNo, ContractId: detail.ContractId, PositionId: detail.PositionId,
+			UserId: detail.UserId, AccountId: detail.AccountId,
+			Side: common.PositionSide(detail.Side), Quantity: conv.FloatString(detail.Quantity),
+			Payoff:        conv.FloatString(detail.Payoff),
+			Direction:     option.SettlementDetailDirection(detail.Direction),
+			InstructionNo: detail.InstructionNo, CreateTimes: detail.CreateTimes,
+			DeliveryCoin: detail.DeliveryCoin, DeliveryQuantity: conv.FloatString(detail.DeliveryQuantity),
+			PaymentCoin: detail.PaymentCoin, PaymentAmount: conv.FloatString(detail.PaymentAmount),
+		})
+	}
+	for _, instruction := range instructions {
+		result.AssetInstructions = append(result.AssetInstructions, ToAssetInstructionProto(instruction))
+	}
+	return result, nil
 }

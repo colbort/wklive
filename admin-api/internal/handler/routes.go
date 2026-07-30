@@ -383,6 +383,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: option.GetExerciseHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodPost,
+				Path:    "/exercises/retry",
+				Handler: option.RetryExerciseHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodGet,
 				Path:    "/market/detail",
 				Handler: option.GetMarketHandler(serverCtx),
@@ -451,6 +456,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/settlements/detail",
 				Handler: option.GetSettlementHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/settlements/retry-instruction",
+				Handler: option.RetrySettlementInstructionHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,

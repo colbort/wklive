@@ -171,7 +171,8 @@ func (l *PlaceOrderLogic) matchOrder(contract *models.TOptionContract, order *mo
 					if _, err := marginLotModel.Insert(ctx, &models.TOptionMarginLot{
 						TenantId: sellOrder.TenantId, UserId: sellOrder.UserId, AccountId: sellOrder.AccountId,
 						ContractId: sellOrder.ContractId, OrderId: sellOrder.Id, TradeId: trade.Id,
-						FreezeBizNo: sellOrder.OrderNo, Quantity: tradeQty, RemainingQuantity: tradeQty,
+						FreezeBizNo: sellOrder.OrderNo, CollateralCoin: OptionOrderMarginCoin(sellOrder),
+						Quantity: tradeQty, RemainingQuantity: tradeQty,
 						InitialMargin: sellerMargin, RemainingMargin: sellerMargin,
 						Status:      int64(option.MarginLotStatus_MARGIN_LOT_STATUS_ACTIVE),
 						CreateTimes: now, UpdateTimes: now,
@@ -273,7 +274,7 @@ func cancelImmediateOrder(ctx context.Context, positionModel models.TOptionPosit
 			TenantId: order.TenantId, InstructionNo: order.OrderNo + "-IMMEDIATE-RELEASE",
 			BizNo: order.OrderNo, OrderId: order.Id, UserId: order.UserId, AccountId: order.AccountId,
 			Action:      int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_RELEASE_FROZEN),
-			TargetBizNo: order.OrderNo, Coin: order.FeeCoin, Amount: order.MarginAmount,
+			TargetBizNo: order.OrderNo, Coin: OptionOrderMarginCoin(order), Amount: order.MarginAmount,
 			StepNo: 2, Status: int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING),
 			ReconciliationStatus: int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_PENDING),
 			CreateTimes:          now, UpdateTimes: now,
@@ -340,7 +341,6 @@ func consumeBuyOrderReservation(order *models.TOptionOrder, turnover decimal.Dec
 
 func allocateSellerMargin(order *models.TOptionOrder, fillQty, unfilledBefore decimal.Decimal) decimal.Decimal {
 	if order == nil || order.Side != int64(common.Side_SIDE_SELL) ||
-		order.PositionEffect != int64(option.PositionEffect_POSITION_EFFECT_OPEN) ||
 		!order.MarginAmount.IsPositive() || !fillQty.IsPositive() || !unfilledBefore.IsPositive() {
 		return decimal.Zero
 	}
@@ -351,6 +351,16 @@ func allocateSellerMargin(order *models.TOptionOrder, fillQty, unfilledBefore de
 	allocated = decimal.Min(allocated, order.MarginAmount)
 	order.MarginAmount = decimal.Max(order.MarginAmount.Sub(allocated), decimal.Zero)
 	return allocated
+}
+
+func OptionOrderMarginCoin(order *models.TOptionOrder) string {
+	if order != nil && order.MarginCoin != "" {
+		return order.MarginCoin
+	}
+	if order != nil {
+		return order.FeeCoin
+	}
+	return ""
 }
 
 func optionTradeFees(contract *models.TOptionContract, turnover decimal.Decimal, makerSide int64) (buyFee, sellFee decimal.Decimal) {

@@ -57,6 +57,11 @@
       <el-form :model="platformForm" label-width="150">
         <el-form-item :label="t('trade.tenantId')">
           <TenantSelect v-model="platformForm.tenantId" />
+        </el-form-item><el-form-item :label="t('trade.accountType')">
+          <el-select v-model="platformForm.accountType" style="width: 100%">
+            <el-option label="INSURANCE_FUND" value="INSURANCE_FUND" />
+            <el-option label="OPTION_BACKSTOP" value="OPTION_BACKSTOP" />
+          </el-select>
         </el-form-item><el-form-item :label="t('trade.settleAsset')">
           <el-input v-model="platformForm.coin" />
         </el-form-item><el-form-item :label="t('trade.availableAmount')">
@@ -68,7 +73,10 @@
           <el-radio-group v-model="platformForm.direction">
             <el-radio-button :value="1">
               {{ t('trade.increase') }}
-            </el-radio-button><el-radio-button :value="2">
+            </el-radio-button><el-radio-button
+              v-if="platformForm.accountType === 'INSURANCE_FUND'"
+              :value="2"
+            >
               {{ t('trade.decrease') }}
             </el-radio-button>
           </el-radio-group>
@@ -92,7 +100,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
@@ -132,6 +140,13 @@ const adl = computed({
   get: () => form.adlEnabled === 1,
   set: (v) => (form.adlEnabled = v ? 1 : 2),
 })
+watch(
+  () => platformForm.accountType,
+  (accountType) => {
+    if (accountType === 'OPTION_BACKSTOP') platformForm.direction = 1
+    platformAccount.value = undefined
+  },
+)
 async function load() {
   loading.value = true
   try {

@@ -1,5 +1,18 @@
-ALTER TABLE `t_option_trade`
-  ADD COLUMN `match_sequence` BIGINT NOT NULL DEFAULT 0 COMMENT '合约内严格递增撮合序号' AFTER `maker_side`;
+SET @option_match_sequence_column_sql = (
+  SELECT IF(
+    EXISTS (
+      SELECT 1 FROM information_schema.columns
+      WHERE table_schema = DATABASE() AND table_name = 't_option_trade'
+        AND column_name = 'match_sequence'
+    ),
+    'SELECT 1',
+    'ALTER TABLE `t_option_trade`
+       ADD COLUMN `match_sequence` BIGINT NOT NULL DEFAULT 0 COMMENT ''合约内严格递增撮合序号'' AFTER `maker_side`'
+  )
+);
+PREPARE option_match_sequence_column_stmt FROM @option_match_sequence_column_sql;
+EXECUTE option_match_sequence_column_stmt;
+DEALLOCATE PREPARE option_match_sequence_column_stmt;
 
 UPDATE `t_option_trade` AS target
 JOIN (
@@ -11,8 +24,21 @@ JOIN (
 ) AS ranked ON ranked.id = target.id
 SET target.match_sequence = ranked.sequence_no;
 
-ALTER TABLE `t_option_trade`
-  ADD UNIQUE KEY `uk_tenant_contract_match_sequence` (`tenant_id`, `contract_id`, `match_sequence`);
+SET @option_match_sequence_index_sql = (
+  SELECT IF(
+    EXISTS (
+      SELECT 1 FROM information_schema.statistics
+      WHERE table_schema = DATABASE() AND table_name = 't_option_trade'
+        AND index_name = 'uk_tenant_contract_match_sequence'
+    ),
+    'SELECT 1',
+    'ALTER TABLE `t_option_trade`
+       ADD UNIQUE KEY `uk_tenant_contract_match_sequence` (`tenant_id`, `contract_id`, `match_sequence`)'
+  )
+);
+PREPARE option_match_sequence_index_stmt FROM @option_match_sequence_index_sql;
+EXECUTE option_match_sequence_index_stmt;
+DEALLOCATE PREPARE option_match_sequence_index_stmt;
 
 CREATE TABLE IF NOT EXISTS `t_option_match_sequence` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',

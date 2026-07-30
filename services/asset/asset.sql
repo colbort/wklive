@@ -175,7 +175,7 @@ CREATE TABLE `t_asset_insurance_cover` (
 CREATE TABLE `t_asset_platform_account` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `tenant_id` BIGINT NOT NULL,
-  `account_type` VARCHAR(32) NOT NULL COMMENT 'INSURANCE_FUND/FUNDING_DIFFERENCE/FEE_REVENUE',
+  `account_type` VARCHAR(32) NOT NULL COMMENT 'INSURANCE_FUND/FUNDING_DIFFERENCE/FEE_REVENUE/OPTION_BACKSTOP',
   `coin` VARCHAR(32) NOT NULL,
   `available_amount` DECIMAL(36,18) NOT NULL DEFAULT 0,
   `frozen_amount` DECIMAL(36,18) NOT NULL DEFAULT 0,
@@ -186,7 +186,7 @@ CREATE TABLE `t_asset_platform_account` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_type_coin` (`tenant_id`,`account_type`,`coin`),
   KEY `idx_platform_account_status` (`tenant_id`,`status`,`account_type`),
-  CONSTRAINT `chk_asset_platform_account` CHECK (`tenant_id` > 0 AND `account_type` <> '' AND `coin` <> '' AND `available_amount` >= 0 AND `frozen_amount` >= 0 AND `status` IN (1,2) AND `version` >= 0)
+  CONSTRAINT `chk_asset_platform_account` CHECK (`tenant_id` > 0 AND `account_type` <> '' AND `coin` <> '' AND (`account_type` = 'OPTION_BACKSTOP' OR `available_amount` >= 0) AND `frozen_amount` >= 0 AND `status` IN (1,2) AND `version` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Asset平台自有资金账户';
 
 CREATE TABLE `t_asset_platform_flow` (
@@ -208,5 +208,22 @@ CREATE TABLE `t_asset_platform_flow` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_platform_flow_biz` (`tenant_id`,`platform_account_id`,`scene_type`,`biz_no`),
   KEY `idx_platform_flow_account_time` (`platform_account_id`,`create_times`),
-  CONSTRAINT `chk_asset_platform_flow` CHECK (`op_type` IN (1,2) AND `amount` > 0 AND `before_available` >= 0 AND `after_available` >= 0)
+  CONSTRAINT `chk_asset_platform_flow` CHECK (`op_type` IN (1,2) AND `amount` > 0 AND (`account_type` = 'OPTION_BACKSTOP' OR (`before_available` >= 0 AND `after_available` >= 0)))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Asset平台自有资金流水';
+
+CREATE TABLE `t_asset_backstop_cover` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `tenant_id` BIGINT NOT NULL,
+  `platform_account_id` BIGINT NOT NULL,
+  `coin` VARCHAR(32) NOT NULL,
+  `liquidation_id` BIGINT NOT NULL,
+  `liquidation_no` VARCHAR(96) NOT NULL,
+  `covered_amount` DECIMAL(36,18) NOT NULL,
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '1已赔付',
+  `create_times` BIGINT NOT NULL,
+  `update_times` BIGINT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_backstop_liquidation_no` (`tenant_id`,`liquidation_no`),
+  KEY `idx_backstop_account_time` (`tenant_id`,`platform_account_id`,`coin`,`create_times`),
+  CONSTRAINT `chk_asset_backstop_cover` CHECK (`covered_amount` > 0 AND `status` = 1)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='平台兜底穿仓赔付及幂等结果';

@@ -23,7 +23,45 @@ func validContractForTest() *models.TOptionContract {
 		Multiplier: decimal.NewFromInt(1), ListTime: 100, ExpireTime: 200, DeliverTime: 210,
 		IsAutoExercise:   int64(common.YesNo_YES_NO_YES),
 		SellerMarginMode: int64(option.SellerMarginMode_SELLER_MARGIN_MODE_DISABLED),
-		Status:           int64(option.ContractStatus_CONTRACT_STATUS_PENDING),
+		LiquidationDeficitPolicy: int64(
+			option.LiquidationDeficitPolicy_LIQUIDATION_DEFICIT_POLICY_MANUAL_REVIEW,
+		),
+		Status: int64(option.ContractStatus_CONTRACT_STATUS_PENDING),
+	}
+}
+
+func TestValidateSupportedContractDeficitPolicy(t *testing.T) {
+	item := validContractForTest()
+	item.SellerMarginMode = int64(option.SellerMarginMode_SELLER_MARGIN_MODE_ISOLATED)
+	item.InitialMarginRate = decimal.RequireFromString("0.2")
+	item.MaintenanceMarginRate = decimal.RequireFromString("0.1")
+	item.MinMarginRate = decimal.RequireFromString("0.05")
+	item.InsuranceUserId = 10
+	item.InsuranceAccountId = 20
+	item.LiquidationDeficitPolicy = int64(
+		option.LiquidationDeficitPolicy_LIQUIDATION_DEFICIT_POLICY_PLATFORM_BACKSTOP,
+	)
+	if !validateSupportedContract(item) {
+		t.Fatal("isolated contract with platform backstop should be valid")
+	}
+	item.LiquidationDeficitPolicy = int64(
+		option.LiquidationDeficitPolicy_LIQUIDATION_DEFICIT_POLICY_UNKNOWN,
+	)
+	if validateSupportedContract(item) {
+		t.Fatal("unknown liquidation deficit policy must be rejected")
+	}
+}
+
+func TestValidateSupportedPortfolioContract(t *testing.T) {
+	item := validContractForTest()
+	item.SellerMarginMode = int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO)
+	item.InitialMarginRate = decimal.RequireFromString("0.2")
+	item.MaintenanceMarginRate = decimal.RequireFromString("0.1")
+	item.MinMarginRate = decimal.RequireFromString("0.05")
+	item.InsuranceUserId = 10
+	item.InsuranceAccountId = 20
+	if !validateSupportedContract(item) {
+		t.Fatal("portfolio contract with complete risk parameters should be supported")
 	}
 }
 
@@ -35,8 +73,15 @@ func TestValidateSupportedContract(t *testing.T) {
 
 	physical := *item
 	physical.SettlementType = int64(option.SettlementType_SETTLEMENT_TYPE_PHYSICAL)
+	physical.UnderlyingCoin = "BTC"
+	physical.SellerMarginMode = int64(option.SellerMarginMode_SELLER_MARGIN_MODE_COVERED_DELIVERY)
+	physical.PhysicalDeliveryPolicy = int64(option.PhysicalDeliveryPolicy_PHYSICAL_DELIVERY_POLICY_STRICT)
+	if !validateSupportedContract(&physical) {
+		t.Fatal("strict fully covered physical settlement should be supported")
+	}
+	physical.UnderlyingCoin = ""
 	if validateSupportedContract(&physical) {
-		t.Fatal("physical settlement must be rejected before delivery support exists")
+		t.Fatal("physical settlement without an underlying coin must be rejected")
 	}
 
 	american := *item

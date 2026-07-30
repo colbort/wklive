@@ -60,6 +60,29 @@
 
     <el-dialog v-model="detailVisible" :title="t('option.detail')" width="760px">
       <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
+      <el-table
+        v-if="detailData && 'assetInstructions' in detailData"
+        :data="detailData.assetInstructions"
+        size="small"
+      >
+        <el-table-column prop="instructionNo" :label="t('option.instructionNo')" min-width="220" />
+        <el-table-column prop="coin" :label="t('option.coin')" width="90" />
+        <el-table-column prop="amount" :label="t('option.amount')" min-width="120" />
+        <el-table-column prop="status" :label="t('common.status')" width="80" />
+        <el-table-column :label="t('common.actions')" width="100">
+          <template #default="{ row }">
+            <el-button
+              v-if="[4, 5].includes(row.status)"
+              v-perm="'option:settlement-instruction:retry'"
+              link
+              type="warning"
+              @click="retryInstruction(row.id)"
+            >
+              {{ t('option.retry') }}
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </el-dialog>
   </div>
 </template>
@@ -67,6 +90,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { ElMessage } from 'element-plus'
 import { usePagination } from '@/composables'
 import { optionService, type OptionSettlement, type OptionSettlementDetail } from '@/services'
 import TenantSelect from '@/components/TenantSelect.vue'
@@ -123,6 +147,17 @@ const showDetail = async (row: OptionSettlement) => {
       })
     ).data || row
   detailVisible.value = true
+}
+
+const retryInstruction = async (instructionId: number) => {
+  if (!detailData.value || !('settlement' in detailData.value)) return
+  await optionService.retrySettlementInstruction({
+    tenantId: detailData.value.settlement.tenantId,
+    settlementId: detailData.value.settlement.id,
+    instructionId,
+  })
+  ElMessage.success(t('common.success'))
+  await showDetail(detailData.value.settlement)
 }
 
 function handleLimitChange() {

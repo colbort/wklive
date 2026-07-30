@@ -3,44 +3,47 @@ syntax = "v1"
 import "common.api"
 
 type OptionContract {
-	id               int64  `json:"id"` // 主键ID
-	tenantId         int64  `json:"tenantId"` // 租户ID
-	contractCode     string `json:"contractCode"` // 合约编码
-	underlyingSymbol string `json:"underlyingSymbol"` // 标的符号
-	settleCoin       string `json:"settleCoin"` // 结算币种
-	quoteCoin        string `json:"quoteCoin"` // 计价币种
-	optionType       int64  `json:"optionType"`
-	exerciseStyle    int64  `json:"exerciseStyle"`
-	settlementType   int64  `json:"settlementType"`
-	strikePrice      string `json:"strikePrice" validate:"decimal_32_16"`
-	contractUnit     string `json:"contractUnit" validate:"decimal_32_16"`
-	minOrderQty      string `json:"minOrderQty" validate:"decimal_32_16"`
-	maxOrderQty      string `json:"maxOrderQty" validate:"decimal_32_16"`
-	priceTick        string `json:"priceTick" validate:"decimal_32_16"`
-	qtyStep          string `json:"qtyStep" validate:"decimal_32_16"`
-	multiplier       string `json:"multiplier" validate:"decimal_32_16"`
-	listTime         int64  `json:"listTime"`
-	expireTime       int64  `json:"expireTime"`
-	deliverTime      int64  `json:"deliverTime"`
-	isAutoExercise   int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
-	status           int64  `json:"status"`
-	sort             int64  `json:"sort"` // 排序
-	remark           string `json:"remark"` // 备注
-	isDeleted        int64  `json:"isDeleted"` // 是否删除
-	createTimes      int64  `json:"createTimes"` // 创建时间
-	updateTimes      int64  `json:"updateTimes"` // 更新时间
-	makerFeeRate     string `json:"makerFeeRate" validate:"decimal_20_10"`
-	takerFeeRate     string `json:"takerFeeRate" validate:"decimal_20_10"`
-	exerciseFeeRate  string `json:"exerciseFeeRate" validate:"decimal_20_10"`
-	feeUserId        int64  `json:"feeUserId"`
-	feeAccountId     int64  `json:"feeAccountId"`
-	sellerMarginMode int64  `json:"sellerMarginMode"`
-	initialMarginRate string `json:"initialMarginRate" validate:"decimal_20_10"`
-	maintenanceMarginRate string `json:"maintenanceMarginRate" validate:"decimal_20_10"`
-	minMarginRate string `json:"minMarginRate" validate:"decimal_20_10"`
-	liquidationFeeRate string `json:"liquidationFeeRate" validate:"decimal_20_10"`
-	insuranceUserId int64 `json:"insuranceUserId"`
-	insuranceAccountId int64 `json:"insuranceAccountId"`
+	id                       int64  `json:"id"` // 主键ID
+	tenantId                 int64  `json:"tenantId"` // 租户ID
+	contractCode             string `json:"contractCode"` // 合约编码
+	underlyingSymbol         string `json:"underlyingSymbol"` // 标的符号
+	underlyingCoin           string `json:"underlyingCoin"` // 实物交割标的币种
+	settleCoin               string `json:"settleCoin"` // 结算币种
+	quoteCoin                string `json:"quoteCoin"` // 计价币种
+	optionType               int64  `json:"optionType"`
+	exerciseStyle            int64  `json:"exerciseStyle"`
+	settlementType           int64  `json:"settlementType"`
+	strikePrice              string `json:"strikePrice" validate:"decimal_32_16"`
+	contractUnit             string `json:"contractUnit" validate:"decimal_32_16"`
+	minOrderQty              string `json:"minOrderQty" validate:"decimal_32_16"`
+	maxOrderQty              string `json:"maxOrderQty" validate:"decimal_32_16"`
+	priceTick                string `json:"priceTick" validate:"decimal_32_16"`
+	qtyStep                  string `json:"qtyStep" validate:"decimal_32_16"`
+	multiplier               string `json:"multiplier" validate:"decimal_32_16"`
+	listTime                 int64  `json:"listTime"`
+	expireTime               int64  `json:"expireTime"`
+	deliverTime              int64  `json:"deliverTime"`
+	isAutoExercise           int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
+	status                   int64  `json:"status"`
+	sort                     int64  `json:"sort"` // 排序
+	remark                   string `json:"remark"` // 备注
+	isDeleted                int64  `json:"isDeleted"` // 是否删除
+	createTimes              int64  `json:"createTimes"` // 创建时间
+	updateTimes              int64  `json:"updateTimes"` // 更新时间
+	makerFeeRate             string `json:"makerFeeRate" validate:"decimal_20_10"`
+	takerFeeRate             string `json:"takerFeeRate" validate:"decimal_20_10"`
+	exerciseFeeRate          string `json:"exerciseFeeRate" validate:"decimal_20_10"`
+	feeUserId                int64  `json:"feeUserId"`
+	feeAccountId             int64  `json:"feeAccountId"`
+	sellerMarginMode         int64  `json:"sellerMarginMode"`
+	initialMarginRate        string `json:"initialMarginRate" validate:"decimal_20_10"`
+	maintenanceMarginRate    string `json:"maintenanceMarginRate" validate:"decimal_20_10"`
+	minMarginRate            string `json:"minMarginRate" validate:"decimal_20_10"`
+	liquidationFeeRate       string `json:"liquidationFeeRate" validate:"decimal_20_10"`
+	insuranceUserId          int64  `json:"insuranceUserId"`
+	insuranceAccountId       int64  `json:"insuranceAccountId"`
+	liquidationDeficitPolicy int64  `json:"liquidationDeficitPolicy"`
+	physicalDeliveryPolicy   int64  `json:"physicalDeliveryPolicy"`
 }
 
 type OptionMarket {
@@ -88,6 +91,7 @@ type OptionOrder {
 	fee              string `json:"fee" validate:"decimal_32_16"`
 	feeCoin          string `json:"feeCoin"`
 	marginAmount     string `json:"marginAmount" validate:"decimal_32_16"`
+	marginCoin       string `json:"marginCoin"`
 	source           int64  `json:"source"`
 	clientOrderId    string `json:"clientOrderId"`
 	reduceOnly       int64  `json:"reduceOnly"` // 是否只减仓：1是 2否
@@ -262,16 +266,16 @@ type GetContractDetailResp {
 }
 
 type OptionPlaceOrderReq {
-	accountId      int64  `json:"accountId"` // 账户ID
-	contractId     int64  `json:"contractId"` // 合约ID
-	side           int64  `json:"side"`
-	positionEffect int64  `json:"positionEffect"`
-	orderType      int64  `json:"orderType"`
-	price          string `json:"price,optional" validate:"decimal_gt_zero,decimal_32_16"`
-	qty            string `json:"qty" validate:"required,decimal_gt_zero,decimal_32_16"`
-	clientOrderId  string `json:"clientOrderId,optional"` // 客户端订单号
-	reduceOnly     int64  `json:"reduceOnly,optional"` // 是否只减仓：1是 2否
-	mmp            int64  `json:"mmp,optional"` // 是否做市商保护：1是 2否
+	accountId       int64  `json:"accountId"` // 账户ID
+	contractId      int64  `json:"contractId"` // 合约ID
+	side            int64  `json:"side"`
+	positionEffect  int64  `json:"positionEffect"`
+	orderType       int64  `json:"orderType"`
+	price           string `json:"price,optional" validate:"decimal_gt_zero,decimal_32_16"`
+	qty             string `json:"qty" validate:"required,decimal_gt_zero,decimal_32_16"`
+	clientOrderId   string `json:"clientOrderId,optional"` // 客户端订单号
+	reduceOnly      int64  `json:"reduceOnly,optional"` // 是否只减仓：1是 2否
+	mmp             int64  `json:"mmp,optional"` // 是否做市商保护：1是 2否
 	protectionPrice string `json:"protectionPrice,optional" validate:"decimal_gt_zero,decimal_32_16"`
 	maxTurnover     string `json:"maxTurnover,optional" validate:"decimal_gt_zero,decimal_32_16"`
 }
@@ -476,3 +480,4 @@ service app {
 	@handler Exercise
 	post /exercise (ExerciseReq) returns (ExerciseResp)
 }
+

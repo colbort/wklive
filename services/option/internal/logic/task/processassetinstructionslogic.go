@@ -504,8 +504,9 @@ func (l *ProcessAssetInstructionsLogic) completeLiquidationTransition(item *mode
 				TenantId: liq.TenantId, UserId: contract.InsuranceUserId,
 				AccountId: contract.InsuranceAccountId, ContractId: contract.Id,
 				PositionId: takeover.Id, TradeId: -liq.Id,
-				FreezeBizNo: liq.LiquidationNo + "-TAKEOVER-MARGIN",
-				Quantity:    liq.Quantity, RemainingQuantity: liq.Quantity,
+				FreezeBizNo:    liq.LiquidationNo + "-TAKEOVER-MARGIN",
+				CollateralCoin: contract.SettleCoin,
+				Quantity:       liq.Quantity, RemainingQuantity: liq.Quantity,
 				InitialMargin: takeoverMargin, RemainingMargin: takeoverMargin,
 				Status:      int64(option.MarginLotStatus_MARGIN_LOT_STATUS_ACTIVE),
 				CreateTimes: now, UpdateTimes: now,
@@ -604,7 +605,29 @@ func (l *ProcessAssetInstructionsLogic) markInstructionFailed(item *models.TOpti
 	}
 	item.LastErrorMsg = cause.Error()
 	item.UpdateTimes = time.Now().Unix()
-	return l.svcCtx.OptionAssetInstructionModel.Update(l.ctx, item)
+	if err := l.svcCtx.OptionAssetInstructionModel.Update(l.ctx, item); err != nil {
+		return err
+	}
+	if item.Status != int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_MANUAL_REVIEW) ||
+		item.BizNo == "" {
+		return nil
+	}
+	exercise, err := l.svcCtx.OptionExerciseModel.FindOneByTenantIdExerciseNo(
+		l.ctx, item.TenantId, item.BizNo,
+	)
+	if errors.Is(err, models.ErrNotFound) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	return l.svcCtx.OptionExerciseAssignmentModel.SetPendingStatus(
+		l.ctx,
+		exercise.TenantId,
+		exercise.Id,
+		item.UpdateTimes,
+		option.ExerciseAssignmentStatus_EXERCISE_ASSIGNMENT_STATUS_MANUAL_REVIEW,
+	)
 }
 
 func (l *ProcessAssetInstructionsLogic) completeFundingTransition(item *models.TOptionAssetInstruction) error {
@@ -654,7 +677,7 @@ func (l *ProcessAssetInstructionsLogic) completeFundingTransition(item *models.T
 				TenantId: current.TenantId, InstructionNo: current.OrderNo + "-FUNDING-RELEASE",
 				BizNo: current.OrderNo, OrderId: current.Id, UserId: current.UserId, AccountId: current.AccountId,
 				Action:      int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_RELEASE_FROZEN),
-				TargetBizNo: current.OrderNo, Coin: current.FeeCoin, Amount: current.MarginAmount,
+				TargetBizNo: current.OrderNo, Coin: applogic.OptionOrderMarginCoin(current), Amount: current.MarginAmount,
 				StepNo: 2, Status: int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING),
 				ReconciliationStatus: int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_PENDING),
 				CreateTimes:          now, UpdateTimes: now,

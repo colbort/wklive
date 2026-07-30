@@ -44,20 +44,24 @@ type (
 	}
 
 	TOptionSettlementDetail struct {
-		Id            int64           `db:"id"`             // 主键ID
-		TenantId      int64           `db:"tenant_id"`      // 租户ID
-		BatchId       int64           `db:"batch_id"`       // 结算批次ID
-		BatchNo       string          `db:"batch_no"`       // 结算批次号
-		ContractId    int64           `db:"contract_id"`    // 期权合约ID
-		PositionId    int64           `db:"position_id"`    // 持仓ID
-		UserId        int64           `db:"user_id"`        // 用户ID
-		AccountId     int64           `db:"account_id"`     // Option账户ID
-		Side          int64           `db:"side"`           // 持仓方向：1多头 2空头
-		Quantity      decimal.Decimal `db:"quantity"`       // 结算数量
-		Payoff        decimal.Decimal `db:"payoff"`         // 绝对结算金额
-		Direction     int64           `db:"direction"`      // 方向：1应收 2应付 3放弃
-		InstructionNo string          `db:"instruction_no"` // 关联资产指令号
-		CreateTimes   int64           `db:"create_times"`   // 创建时间
+		Id               int64           `db:"id"`                // 主键ID
+		TenantId         int64           `db:"tenant_id"`         // 租户ID
+		BatchId          int64           `db:"batch_id"`          // 结算批次ID
+		BatchNo          string          `db:"batch_no"`          // 结算批次号
+		ContractId       int64           `db:"contract_id"`       // 期权合约ID
+		PositionId       int64           `db:"position_id"`       // 持仓ID
+		UserId           int64           `db:"user_id"`           // 用户ID
+		AccountId        int64           `db:"account_id"`        // Option账户ID
+		Side             int64           `db:"side"`              // 持仓方向：1多头 2空头
+		Quantity         decimal.Decimal `db:"quantity"`          // 结算数量
+		Payoff           decimal.Decimal `db:"payoff"`            // 绝对结算金额
+		Direction        int64           `db:"direction"`         // 方向：1应收 2应付 3放弃
+		InstructionNo    string          `db:"instruction_no"`    // 关联资产指令号
+		DeliveryCoin     string          `db:"delivery_coin"`     // 实物交割标的币种
+		DeliveryQuantity decimal.Decimal `db:"delivery_quantity"` // 实物交割标的数量
+		PaymentCoin      string          `db:"payment_coin"`      // 行权款币种
+		PaymentAmount    decimal.Decimal `db:"payment_amount"`    // 行权款金额
+		CreateTimes      int64           `db:"create_times"`      // 创建时间
 	}
 )
 
@@ -124,8 +128,8 @@ func (m *defaultTOptionSettlementDetailModel) Insert(ctx context.Context, data *
 	tOptionSettlementDetailIdKey := fmt.Sprintf("%s%v", cacheTOptionSettlementDetailIdPrefix, data.Id)
 	tOptionSettlementDetailTenantIdBatchIdPositionIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionSettlementDetailTenantIdBatchIdPositionIdPrefix, data.TenantId, data.BatchId, data.PositionId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionSettlementDetailRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.BatchId, data.BatchNo, data.ContractId, data.PositionId, data.UserId, data.AccountId, data.Side, data.Quantity, data.Payoff, data.Direction, data.InstructionNo, data.CreateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionSettlementDetailRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.BatchId, data.BatchNo, data.ContractId, data.PositionId, data.UserId, data.AccountId, data.Side, data.Quantity, data.Payoff, data.Direction, data.InstructionNo, data.DeliveryCoin, data.DeliveryQuantity, data.PaymentCoin, data.PaymentAmount, data.CreateTimes)
 	}, tOptionSettlementDetailIdKey, tOptionSettlementDetailTenantIdBatchIdPositionIdKey)
 	return ret, err
 }
@@ -140,7 +144,7 @@ func (m *defaultTOptionSettlementDetailModel) Update(ctx context.Context, newDat
 	tOptionSettlementDetailTenantIdBatchIdPositionIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionSettlementDetailTenantIdBatchIdPositionIdPrefix, data.TenantId, data.BatchId, data.PositionId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionSettlementDetailRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.BatchId, newData.BatchNo, newData.ContractId, newData.PositionId, newData.UserId, newData.AccountId, newData.Side, newData.Quantity, newData.Payoff, newData.Direction, newData.InstructionNo, newData.CreateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.BatchId, newData.BatchNo, newData.ContractId, newData.PositionId, newData.UserId, newData.AccountId, newData.Side, newData.Quantity, newData.Payoff, newData.Direction, newData.InstructionNo, newData.DeliveryCoin, newData.DeliveryQuantity, newData.PaymentCoin, newData.PaymentAmount, newData.CreateTimes, newData.Id)
 	}, tOptionSettlementDetailIdKey, tOptionSettlementDetailTenantIdBatchIdPositionIdKey)
 	return err
 }

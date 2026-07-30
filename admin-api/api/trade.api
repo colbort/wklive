@@ -362,28 +362,28 @@ type ContractPositionHistory {
 }
 
 type ContractMarginSnapshot {
-	id               int64  `json:"id"`
-	tenantId         int64  `json:"tenantId"`
-	userId           int64  `json:"userId"`
-	marginAsset      string `json:"marginAsset"`
-	walletBalance    string `json:"walletBalance" validate:"decimal_36_18"`
-	availableBalance string `json:"availableBalance" validate:"decimal_36_18"`
-	frozenBalance    string `json:"frozenBalance" validate:"decimal_36_18"`
-	positionMargin   string `json:"positionMargin" validate:"decimal_36_18"`
-	orderMargin      string `json:"orderMargin" validate:"decimal_36_18"`
+	id                int64  `json:"id"`
+	tenantId          int64  `json:"tenantId"`
+	userId            int64  `json:"userId"`
+	marginAsset       string `json:"marginAsset"`
+	walletBalance     string `json:"walletBalance" validate:"decimal_36_18"`
+	availableBalance  string `json:"availableBalance" validate:"decimal_36_18"`
+	frozenBalance     string `json:"frozenBalance" validate:"decimal_36_18"`
+	positionMargin    string `json:"positionMargin" validate:"decimal_36_18"`
+	orderMargin       string `json:"orderMargin" validate:"decimal_36_18"`
 	maintenanceMargin string `json:"maintenanceMargin" validate:"decimal_36_18"`
 	accountEquity     string `json:"accountEquity" validate:"decimal_36_18"`
 	availableMargin   string `json:"availableMargin" validate:"decimal_36_18"`
 	riskRate          string `json:"riskRate" validate:"decimal_20_10"`
 	positionCount     int64  `json:"positionCount"`
 	assetVersion      int64  `json:"assetVersion"`
-	unrealizedPnl    string `json:"unrealizedPnl" validate:"decimal_36_18"`
-	realizedPnl      string `json:"realizedPnl" validate:"decimal_36_18"`
-	version          int64  `json:"version"`
-	createTimes      int64  `json:"createTimes"`
-	updateTimes      int64  `json:"updateTimes"`
-	sourceEventNo    string `json:"sourceEventNo"`
-	snapshotTime     int64  `json:"snapshotTime"`
+	unrealizedPnl     string `json:"unrealizedPnl" validate:"decimal_36_18"`
+	realizedPnl       string `json:"realizedPnl" validate:"decimal_36_18"`
+	version           int64  `json:"version"`
+	createTimes       int64  `json:"createTimes"`
+	updateTimes       int64  `json:"updateTimes"`
+	sourceEventNo     string `json:"sourceEventNo"`
+	snapshotTime      int64  `json:"snapshotTime"`
 }
 
 type ContractLeverageConfig {
@@ -1346,10 +1346,10 @@ type ContractAccountLiquidationItem {
 	maintenanceMargin    string `json:"maintenanceMargin" validate:"decimal_36_18"`
 	realizedPnl          string `json:"realizedPnl" validate:"decimal_36_18"`
 	liquidationFee       string `json:"liquidationFee" validate:"decimal_36_18"`
-	deficitAmount       string `json:"deficitAmount" validate:"decimal_36_18"`
-	bankruptcyPrice     string `json:"bankruptcyPrice" validate:"decimal_36_18"`
-	adlReliefAmount     string `json:"adlReliefAmount" validate:"decimal_36_18"`
-	adlQty              string `json:"adlQty" validate:"decimal_36_18"`
+	deficitAmount        string `json:"deficitAmount" validate:"decimal_36_18"`
+	bankruptcyPrice      string `json:"bankruptcyPrice" validate:"decimal_36_18"`
+	adlReliefAmount      string `json:"adlReliefAmount" validate:"decimal_36_18"`
+	adlQty               string `json:"adlQty" validate:"decimal_36_18"`
 	status               int64  `json:"status"`
 	createTimes          int64  `json:"createTimes"`
 	updateTimes          int64  `json:"updateTimes"`
@@ -1357,11 +1357,11 @@ type ContractAccountLiquidationItem {
 
 type GetAccountLiquidationListReq {
 	PageReq
-	tenantId   int64     `form:"tenantId,optional"`
-	userId     int64     `form:"userId,optional"`
+	tenantId    int64     `form:"tenantId,optional"`
+	userId      int64     `form:"userId,optional"`
 	marginAsset string    `form:"marginAsset,optional"`
-	status     int64     `form:"status,optional"`
-	timeRange  TimeRange `form:"timeRange,optional"`
+	status      int64     `form:"status,optional"`
+	timeRange   TimeRange `form:"timeRange,optional"`
 }
 
 type GetAccountLiquidationListResp {
@@ -1692,3 +1692,4 @@ service admin {
 	@handler GetMarketSnapshotList
 	get /market-snapshots (GetMarketSnapshotListReq) returns (GetMarketSnapshotListResp)
 }
+

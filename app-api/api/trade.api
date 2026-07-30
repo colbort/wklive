@@ -273,28 +273,28 @@ type ContractPosition {
 }
 
 type ContractMarginSnapshot {
-	id               int64  `json:"id"`
-	tenantId         int64  `json:"tenantId"`
-	userId           int64  `json:"userId"`
-	marginAsset      string `json:"marginAsset"`
-	walletBalance    string `json:"walletBalance" validate:"decimal_36_18"`
-	availableBalance string `json:"availableBalance" validate:"decimal_36_18"`
-	frozenBalance    string `json:"frozenBalance" validate:"decimal_36_18"`
-	positionMargin   string `json:"positionMargin" validate:"decimal_36_18"`
-	orderMargin      string `json:"orderMargin" validate:"decimal_36_18"`
+	id                int64  `json:"id"`
+	tenantId          int64  `json:"tenantId"`
+	userId            int64  `json:"userId"`
+	marginAsset       string `json:"marginAsset"`
+	walletBalance     string `json:"walletBalance" validate:"decimal_36_18"`
+	availableBalance  string `json:"availableBalance" validate:"decimal_36_18"`
+	frozenBalance     string `json:"frozenBalance" validate:"decimal_36_18"`
+	positionMargin    string `json:"positionMargin" validate:"decimal_36_18"`
+	orderMargin       string `json:"orderMargin" validate:"decimal_36_18"`
 	maintenanceMargin string `json:"maintenanceMargin" validate:"decimal_36_18"`
 	accountEquity     string `json:"accountEquity" validate:"decimal_36_18"`
 	availableMargin   string `json:"availableMargin" validate:"decimal_36_18"`
 	riskRate          string `json:"riskRate" validate:"decimal_20_10"`
 	positionCount     int64  `json:"positionCount"`
 	assetVersion      int64  `json:"assetVersion"`
-	unrealizedPnl    string `json:"unrealizedPnl" validate:"decimal_36_18"`
-	realizedPnl      string `json:"realizedPnl" validate:"decimal_36_18"`
-	version          int64  `json:"version"`
-	sourceEventNo    string `json:"sourceEventNo"`
-	snapshotTime     int64  `json:"snapshotTime"`
-	createTimes      int64  `json:"createTimes"`
-	updateTimes      int64  `json:"updateTimes"`
+	unrealizedPnl     string `json:"unrealizedPnl" validate:"decimal_36_18"`
+	realizedPnl       string `json:"realizedPnl" validate:"decimal_36_18"`
+	version           int64  `json:"version"`
+	sourceEventNo     string `json:"sourceEventNo"`
+	snapshotTime      int64  `json:"snapshotTime"`
+	createTimes       int64  `json:"createTimes"`
+	updateTimes       int64  `json:"updateTimes"`
 }
 
 type ContractLeverageConfig {
@@ -522,6 +522,7 @@ service app {
 	@handler GetLeverageConfig
 	get /leverage-config (GetLeverageConfigReq) returns (GetLeverageConfigResp)
 }
+
 @server (
 	prefix:     /app/trade
 	group:      trade
@@ -541,3 +542,4 @@ service app {
 	@handler SetLeverage
 	post /leverage (SetLeverageReq) returns (TradeAppCommonResp)
 }
+

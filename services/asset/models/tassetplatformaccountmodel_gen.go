@@ -46,7 +46,7 @@ type (
 	TAssetPlatformAccount struct {
 		Id              int64           `db:"id"`
 		TenantId        int64           `db:"tenant_id"`
-		AccountType     string          `db:"account_type"` // INSURANCE_FUND/FUNDING_DIFFERENCE/FEE_REVENUE
+		AccountType     string          `db:"account_type"` // INSURANCE_FUND/FUNDING_DIFFERENCE/FEE_REVENUE/OPTION_BACKSTOP
 		Coin            string          `db:"coin"`
 		AvailableAmount decimal.Decimal `db:"available_amount"`
 		FrozenAmount    decimal.Decimal `db:"frozen_amount"`

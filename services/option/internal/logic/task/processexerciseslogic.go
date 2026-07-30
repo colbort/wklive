@@ -274,6 +274,11 @@ func createExerciseShortInstructions(
 	quantity, payoff decimal.Decimal,
 	now int64,
 ) (string, error) {
+	if contract.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) {
+		return createPortfolioExerciseShortInstructions(
+			ctx, instructionModel, marginLotModel, contract, exercise, short, payoff, now,
+		)
+	}
 	lots, err := marginLotModel.FindClosableByPosition(ctx, exercise.TenantId, short.Id)
 	if err != nil {
 		return "", err
@@ -346,6 +351,76 @@ func createExerciseShortInstructions(
 	}
 	if quantityLeft.IsPositive() {
 		return "", fmt.Errorf("insufficient margin lot quantity for exercise assignment: %s", quantityLeft)
+	}
+	if payoffLeft.IsPositive() {
+		instructionNo := fmt.Sprintf("%s-S%d-DEBIT-AVAILABLE", exercise.ExerciseNo, short.Id)
+		if err := insertExerciseInstruction(ctx, instructionModel, &models.TOptionAssetInstruction{
+			TenantId: exercise.TenantId, InstructionNo: instructionNo,
+			BizNo: exercise.ExerciseNo, PositionId: short.Id,
+			UserId: short.UserId, AccountId: short.AccountId,
+			Action: int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_DEBIT_AVAILABLE),
+			Coin:   contract.SettleCoin, Amount: payoffLeft,
+			StepNo: 1, CreateTimes: now, UpdateTimes: now,
+		}); err != nil {
+			return "", err
+		}
+		if firstInstruction == "" {
+			firstInstruction = instructionNo
+		}
+	}
+	return firstInstruction, nil
+}
+
+func createPortfolioExerciseShortInstructions(
+	ctx context.Context,
+	instructionModel models.TOptionAssetInstructionModel,
+	marginLotModel models.TOptionMarginLotModel,
+	contract *models.TOptionContract,
+	exercise *models.TOptionExercise,
+	short *models.TOptionPosition,
+	payoff decimal.Decimal,
+	now int64,
+) (string, error) {
+	lots, err := marginLotModel.FindPortfolioActiveByAccount(
+		ctx, exercise.TenantId, short.UserId, short.AccountId, contract.SettleCoin,
+	)
+	if err != nil {
+		return "", err
+	}
+	payoffLeft := payoff
+	firstInstruction := ""
+	for _, lot := range lots {
+		if !payoffLeft.IsPositive() {
+			break
+		}
+		if lot.PendingMargin.IsPositive() {
+			return "", errors.New("portfolio exercise margin lot has pending amount")
+		}
+		deduct := decimal.Min(lot.RemainingMargin, payoffLeft)
+		if !deduct.IsPositive() {
+			continue
+		}
+		instructionNo := fmt.Sprintf("%s-S%d-PL%d-DEDUCT", exercise.ExerciseNo, short.Id, lot.Id)
+		if err := insertExerciseInstruction(ctx, instructionModel, &models.TOptionAssetInstruction{
+			TenantId: exercise.TenantId, InstructionNo: instructionNo,
+			BizNo: exercise.ExerciseNo, PositionId: short.Id, MarginLotId: lot.Id,
+			UserId: short.UserId, AccountId: short.AccountId,
+			Action:      int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_DEDUCT_FROZEN),
+			TargetBizNo: lot.FreezeBizNo, Coin: contract.SettleCoin, Amount: deduct,
+			StepNo: 1, CreateTimes: now, UpdateTimes: now,
+		}); err != nil {
+			return "", err
+		}
+		if firstInstruction == "" {
+			firstInstruction = instructionNo
+		}
+		lot.PendingMargin = lot.PendingMargin.Add(deduct)
+		lot.Status = int64(option.MarginLotStatus_MARGIN_LOT_STATUS_CONSUMING)
+		lot.UpdateTimes = now
+		if err := marginLotModel.Update(ctx, lot); err != nil {
+			return "", err
+		}
+		payoffLeft = payoffLeft.Sub(deduct)
 	}
 	if payoffLeft.IsPositive() {
 		instructionNo := fmt.Sprintf("%s-S%d-DEBIT-AVAILABLE", exercise.ExerciseNo, short.Id)

@@ -35,7 +35,11 @@ func (l *AdjustPlatformAccountLogic) AdjustPlatformAccount(in *asset.AdjustPlatf
 	typeName, coin := normalizePlatformAccount(in.GetAccountType(), in.GetCoin())
 	requestNo := strings.TrimSpace(in.GetRequestNo())
 	amount, err := conv.ParseDecimalField(in.GetAmount())
-	if err != nil || !amount.IsPositive() || in.GetTenantId() <= 0 || typeName != insuranceFundAccountType || coin == "" || requestNo == "" || (in.GetDirection() != 1 && in.GetDirection() != 2) {
+	validDirection := in.GetDirection() == 1 || in.GetDirection() == 2
+	validAccountOperation := typeName == insuranceFundAccountType ||
+		(typeName == optionBackstopAccountType && in.GetDirection() == 1)
+	if err != nil || !amount.IsPositive() || in.GetTenantId() <= 0 ||
+		!validAccountOperation || coin == "" || requestNo == "" || !validDirection {
 		return nil, fmt.Errorf("invalid platform account adjustment")
 	}
 	var result *models.TAssetPlatformAccount

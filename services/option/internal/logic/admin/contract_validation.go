@@ -39,8 +39,23 @@ func validateSupportedContract(item *models.TOptionContract) bool {
 	}
 	if (item.ExerciseStyle != int64(option.ExerciseStyle_EXERCISE_STYLE_EUROPEAN) &&
 		item.ExerciseStyle != int64(option.ExerciseStyle_EXERCISE_STYLE_AMERICAN)) ||
-		item.SettlementType != int64(option.SettlementType_SETTLEMENT_TYPE_CASH) ||
 		item.IsAutoExercise != int64(common.YesNo_YES_NO_YES) {
+		return false
+	}
+	switch option.SettlementType(item.SettlementType) {
+	case option.SettlementType_SETTLEMENT_TYPE_CASH:
+		if item.PhysicalDeliveryPolicy != int64(option.PhysicalDeliveryPolicy_PHYSICAL_DELIVERY_POLICY_UNKNOWN) {
+			return false
+		}
+	case option.SettlementType_SETTLEMENT_TYPE_PHYSICAL:
+		if item.ExerciseStyle != int64(option.ExerciseStyle_EXERCISE_STYLE_EUROPEAN) ||
+			strings.TrimSpace(item.UnderlyingCoin) == "" ||
+			strings.EqualFold(item.UnderlyingCoin, item.SettleCoin) ||
+			item.PhysicalDeliveryPolicy != int64(option.PhysicalDeliveryPolicy_PHYSICAL_DELIVERY_POLICY_STRICT) ||
+			item.ExerciseFeeRate.IsPositive() {
+			return false
+		}
+	default:
 		return false
 	}
 	if !item.StrikePrice.IsPositive() || !item.ContractUnit.IsPositive() ||
@@ -62,13 +77,38 @@ func validateSupportedContract(item *models.TOptionContract) bool {
 	}
 	switch option.SellerMarginMode(item.SellerMarginMode) {
 	case option.SellerMarginMode_SELLER_MARGIN_MODE_DISABLED:
-	case option.SellerMarginMode_SELLER_MARGIN_MODE_ISOLATED:
+		if item.LiquidationDeficitPolicy !=
+			int64(option.LiquidationDeficitPolicy_LIQUIDATION_DEFICIT_POLICY_MANUAL_REVIEW) {
+			return false
+		}
+	case option.SellerMarginMode_SELLER_MARGIN_MODE_ISOLATED,
+		option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO:
+		if item.SettlementType != int64(option.SettlementType_SETTLEMENT_TYPE_CASH) {
+			return false
+		}
 		if !item.InitialMarginRate.IsPositive() || !item.MaintenanceMarginRate.IsPositive() ||
 			!item.MinMarginRate.IsPositive() ||
 			item.InitialMarginRate.LessThan(item.MaintenanceMarginRate) ||
 			item.MaintenanceMarginRate.LessThan(item.MinMarginRate) ||
 			item.LiquidationFeeRate.IsNegative() ||
 			item.InsuranceUserId <= 0 || item.InsuranceAccountId <= 0 {
+			return false
+		}
+		switch option.LiquidationDeficitPolicy(item.LiquidationDeficitPolicy) {
+		case option.LiquidationDeficitPolicy_LIQUIDATION_DEFICIT_POLICY_MANUAL_REVIEW,
+			option.LiquidationDeficitPolicy_LIQUIDATION_DEFICIT_POLICY_PLATFORM_BACKSTOP:
+		default:
+			return false
+		}
+		if item.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) &&
+			item.ExerciseStyle != int64(option.ExerciseStyle_EXERCISE_STYLE_EUROPEAN) {
+			// Removing a long protection leg through early exercise needs a
+			// separate pre-exercise margin admission flow. V1 stays European.
+			return false
+		}
+	case option.SellerMarginMode_SELLER_MARGIN_MODE_COVERED_DELIVERY:
+		if item.SettlementType != int64(option.SettlementType_SETTLEMENT_TYPE_PHYSICAL) ||
+			item.LiquidationDeficitPolicy != int64(option.LiquidationDeficitPolicy_LIQUIDATION_DEFICIT_POLICY_MANUAL_REVIEW) {
 			return false
 		}
 	default:
@@ -93,6 +133,7 @@ func economicContractFieldsEqual(left, right *models.TOptionContract) bool {
 	return left.TenantId == right.TenantId &&
 		left.ContractCode == right.ContractCode &&
 		left.UnderlyingSymbol == right.UnderlyingSymbol &&
+		left.UnderlyingCoin == right.UnderlyingCoin &&
 		left.SettleCoin == right.SettleCoin &&
 		left.QuoteCoin == right.QuoteCoin &&
 		left.OptionType == right.OptionType &&
@@ -120,5 +161,7 @@ func economicContractFieldsEqual(left, right *models.TOptionContract) bool {
 		left.MinMarginRate.Equal(right.MinMarginRate) &&
 		left.LiquidationFeeRate.Equal(right.LiquidationFeeRate) &&
 		left.InsuranceUserId == right.InsuranceUserId &&
-		left.InsuranceAccountId == right.InsuranceAccountId
+		left.InsuranceAccountId == right.InsuranceAccountId &&
+		left.LiquidationDeficitPolicy == right.LiquidationDeficitPolicy &&
+		left.PhysicalDeliveryPolicy == right.PhysicalDeliveryPolicy
 }

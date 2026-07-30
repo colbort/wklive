@@ -19,12 +19,37 @@ type (
 		tOptionRiskAccountModel
 		FindByTenant(ctx context.Context, tenantId int64) ([]*TOptionRiskAccount, error)
 		FindPage(ctx context.Context, filter OptionRiskAccountPageFilter, cursor, limit int64) ([]*TOptionRiskAccount, int64, error)
+		EnsureAndFindOneForUpdate(ctx context.Context, tenantId, userId, accountId int64, settleCoin string, now int64) (*TOptionRiskAccount, error)
 	}
 
 	customTOptionRiskAccountModel struct {
 		*defaultTOptionRiskAccountModel
 	}
 )
+
+func (m *defaultTOptionRiskAccountModel) EnsureAndFindOneForUpdate(
+	ctx context.Context,
+	tenantId, userId, accountId int64,
+	settleCoin string,
+	now int64,
+) (*TOptionRiskAccount, error) {
+	if _, err := m.ExecNoCacheCtx(ctx, `
+INSERT IGNORE INTO t_option_risk_account
+(tenant_id,user_id,account_id,settle_coin,status,create_times,update_times)
+VALUES (?,?,?,?,?,?,?)`,
+		tenantId, userId, accountId, settleCoin, 1, now, now,
+	); err != nil {
+		return nil, err
+	}
+	query := fmt.Sprintf(`SELECT %s FROM %s
+WHERE tenant_id = ? AND user_id = ? AND account_id = ? AND settle_coin = ?
+LIMIT 1 FOR UPDATE`, tOptionRiskAccountRows, m.table)
+	var item TOptionRiskAccount
+	if err := m.QueryRowNoCacheCtx(ctx, &item, query, tenantId, userId, accountId, settleCoin); err != nil {
+		return nil, err
+	}
+	return &item, nil
+}
 
 type OptionRiskAccountPageFilter struct {
 	TenantId   int64

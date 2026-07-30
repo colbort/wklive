@@ -21,6 +21,21 @@ ON DUPLICATE KEY UPDATE
   `order_id` = VALUES(`order_id`),
   `order_no` = VALUES(`order_no`);
 
-ALTER TABLE `t_option_order`
-  DROP INDEX `uk_tenant_uid_client_order_id`,
-  ADD KEY `idx_tenant_uid_client_order_id` (`tenant_id`, `user_id`, `client_order_id`);
+SET @option_client_order_index_sql = (
+  SELECT IF(
+    EXISTS (
+      SELECT 1
+      FROM information_schema.statistics
+      WHERE table_schema = DATABASE()
+        AND table_name = 't_option_order'
+        AND index_name = 'uk_tenant_uid_client_order_id'
+    ),
+    'ALTER TABLE `t_option_order`
+       DROP INDEX `uk_tenant_uid_client_order_id`,
+       ADD KEY `idx_tenant_uid_client_order_id` (`tenant_id`, `user_id`, `client_order_id`)',
+    'SELECT 1'
+  )
+);
+PREPARE option_client_order_index_stmt FROM @option_client_order_index_sql;
+EXECUTE option_client_order_index_stmt;
+DEALLOCATE PREPARE option_client_order_index_stmt;

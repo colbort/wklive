@@ -749,7 +749,9 @@ VALUES
 (701, 700, 1, '获取账单详情', 3, 'GET', '/option/bills/detail', 'option:bill:detail', '', '', 701),
 (710, 600, 1, '风险与强平', 2, 'GET', '/option/risk/accounts', 'option:risk:list', 'option/risk', 'Warning', 710),
 (711, 710, 1, '查询强平记录', 3, 'GET', '/option/risk/liquidations', 'option:liquidation:list', '', '', 711),
-(712, 710, 1, '重试强平', 3, 'POST', '/option/risk/liquidations/retry', 'option:liquidation:retry', '', '', 712);
+(712, 710, 1, '重试强平', 3, 'POST', '/option/risk/liquidations/retry', 'option:liquidation:retry', '', '', 712),
+(713, 670, 1, '重试行权清算', 3, 'POST', '/option/exercises/retry', 'option:exercise:retry', '', '', 713),
+(714, 680, 1, '重试结算资产指令', 3, 'POST', '/option/settlements/retry-instruction', 'option:settlement-instruction:retry', '', '', 714);
 
 -- 质押（staking）
 INSERT INTO sys_menu (id, parent_id, app_scope, name, menu_type, icon, sort)

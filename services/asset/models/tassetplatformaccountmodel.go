@@ -20,6 +20,7 @@ type (
 		FindOneForUpdate(ctx context.Context, tenantID int64, accountType, coin string) (*TAssetPlatformAccount, error)
 		AddAvailable(ctx context.Context, id int64, amount decimal.Decimal, now int64) error
 		SubAvailable(ctx context.Context, id int64, amount decimal.Decimal, now int64) (bool, error)
+		SubAvailableAllowNegative(ctx context.Context, id int64, amount decimal.Decimal, now int64) (bool, error)
 	}
 
 	customTAssetPlatformAccountModel struct {
@@ -65,6 +66,30 @@ func (m *defaultTAssetPlatformAccountModel) SubAvailable(ctx context.Context, id
 	uniqueKey := fmt.Sprintf("%s%v:%v:%v", cacheTAssetPlatformAccountTenantIdAccountTypeCoinPrefix, item.TenantId, item.AccountType, item.Coin)
 	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, "UPDATE t_asset_platform_account SET available_amount=available_amount-?,version=version+1,update_times=? WHERE id=? AND status=1 AND available_amount>=?", amount, now, id, amount)
+	}, idKey, uniqueKey)
+	if err != nil {
+		return false, err
+	}
+	affected, err := result.RowsAffected()
+	return affected == 1, err
+}
+
+func (m *defaultTAssetPlatformAccountModel) SubAvailableAllowNegative(
+	ctx context.Context,
+	id int64,
+	amount decimal.Decimal,
+	now int64,
+) (bool, error) {
+	item, err := m.findOneNoCache(ctx, id)
+	if err != nil {
+		return false, err
+	}
+	idKey := fmt.Sprintf("%s%v", cacheTAssetPlatformAccountIdPrefix, id)
+	uniqueKey := fmt.Sprintf("%s%v:%v:%v", cacheTAssetPlatformAccountTenantIdAccountTypeCoinPrefix, item.TenantId, item.AccountType, item.Coin)
+	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
+		return conn.ExecCtx(ctx, `UPDATE t_asset_platform_account
+SET available_amount=available_amount-?,version=version+1,update_times=?
+WHERE id=? AND status=1 AND account_type='OPTION_BACKSTOP'`, amount, now, id)
 	}, idKey, uniqueKey)
 	if err != nil {
 		return false, err

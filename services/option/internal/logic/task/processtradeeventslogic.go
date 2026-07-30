@@ -156,7 +156,9 @@ func (l *ProcessTradeEventsLogic) processOneTradeEvent(event *models.TOptionOutb
 			}
 		}
 		if sellOrder.Side == int64(common.Side_SIDE_SELL) &&
-			sellOrder.PositionEffect == int64(option.PositionEffect_POSITION_EFFECT_OPEN) {
+			sellOrder.PositionEffect == int64(option.PositionEffect_POSITION_EFFECT_OPEN) &&
+			(contract.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_ISOLATED) ||
+				contract.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_COVERED_DELIVERY)) {
 			lot, err := marginLotModel.FindOneByTenantIdTradeId(ctx, trade.TenantId, trade.Id)
 			if err != nil {
 				return err
@@ -226,13 +228,17 @@ func createCloseMarginReleaseInstructions(
 			releaseAmount = availableMargin.Mul(closeQty).Div(lot.RemainingQuantity).Round(16)
 		}
 		if releaseAmount.IsPositive() {
+			collateralCoin := lot.CollateralCoin
+			if collateralCoin == "" {
+				collateralCoin = contract.SettleCoin
+			}
 			if _, err := instructionModel.Insert(ctx, &models.TOptionAssetInstruction{
 				TenantId: trade.TenantId, InstructionNo: fmt.Sprintf("%s-MARGIN-%d", trade.TradeNo, lot.Id),
 				BizNo: trade.TradeNo, OrderId: order.Id, TradeId: trade.Id,
 				PositionId: position.Id, MarginLotId: lot.Id,
 				UserId: order.UserId, AccountId: order.AccountId,
 				Action:      int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_RELEASE_FROZEN),
-				TargetBizNo: lot.FreezeBizNo, Coin: contract.SettleCoin, Amount: releaseAmount,
+				TargetBizNo: lot.FreezeBizNo, Coin: collateralCoin, Amount: releaseAmount,
 				StepNo: 1, Status: int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING),
 				ReconciliationStatus: int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_PENDING),
 				CreateTimes:          now, UpdateTimes: now,

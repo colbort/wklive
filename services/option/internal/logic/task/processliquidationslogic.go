@@ -33,7 +33,7 @@ func NewProcessLiquidationsLogic(ctx context.Context, svcCtx *svc.ServiceContext
 	}
 }
 
-// 执行卖方逐仓强平及保险账户接管
+// 执行卖方强平及保险账户接管
 func (l *ProcessLiquidationsLogic) ProcessLiquidations(in *option.OptionTaskReq) (*option.OptionTaskResp, error) {
 	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_liquidations", func() (*option.OptionTaskResp, error) {
 		items, err := l.svcCtx.OptionLiquidationModel.FindRunnable(l.ctx, in.TenantId, 100)
@@ -100,18 +100,34 @@ func (l *ProcessLiquidationsLogic) processOne(item *models.TOptionLiquidation) e
 	if err != nil {
 		return l.failLiquidation(current, err)
 	}
-	covered, err := l.coverDeficit(current, plan.deficit, plan.contract)
+	useBackstop := plan.contract.LiquidationDeficitPolicy ==
+		int64(option.LiquidationDeficitPolicy_LIQUIDATION_DEFICIT_POLICY_PLATFORM_BACKSTOP)
+	insuranceCovered, err := l.coverDeficit(current, plan.deficit, plan.contract, useBackstop)
 	if err != nil {
 		return l.failLiquidation(current, err)
 	}
-	if !covered.Equal(plan.deficit) {
-		return l.markLiquidationManual(current, plan.deficit.Sub(covered),
-			"insurance fund insufficient; takeover was not started")
+	remaining := decimal.Max(plan.deficit.Sub(insuranceCovered), decimal.Zero)
+	backstopCovered := decimal.Zero
+	if remaining.IsPositive() {
+		if !useBackstop {
+			return l.markLiquidationManual(current, remaining,
+				"insurance fund insufficient; contract requires manual deficit resolution")
+		}
+		backstopCovered, err = l.coverPlatformBackstop(current, remaining, plan.contract)
+		if err != nil {
+			return l.failLiquidation(current, err)
+		}
+		if !backstopCovered.Equal(remaining) {
+			return l.failLiquidation(current, errors.New("platform backstop did not cover the full deficit"))
+		}
 	}
-	if err := validateLiquidationPlanBalance(plan, covered); err != nil {
+	totalCovered := insuranceCovered.Add(backstopCovered)
+	if err := validateLiquidationPlanBalance(plan, totalCovered); err != nil {
 		return l.failLiquidation(current, err)
 	}
-	if err := l.createLiquidationInstructions(current, plan, covered); err != nil {
+	if err := l.createLiquidationInstructions(
+		current, plan, insuranceCovered, backstopCovered,
+	); err != nil {
 		return l.failLiquidation(current, err)
 	}
 	return nil
@@ -147,7 +163,8 @@ func (l *ProcessLiquidationsLogic) buildLiquidationPlan(liq *models.TOptionLiqui
 	if err != nil {
 		return nil, err
 	}
-	if contract.SellerMarginMode != int64(option.SellerMarginMode_SELLER_MARGIN_MODE_ISOLATED) ||
+	if (contract.SellerMarginMode != int64(option.SellerMarginMode_SELLER_MARGIN_MODE_ISOLATED) &&
+		contract.SellerMarginMode != int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO)) ||
 		contract.InsuranceUserId <= 0 || contract.InsuranceAccountId <= 0 {
 		return nil, errors.New("option liquidation insurance takeover account is not configured")
 	}
@@ -161,7 +178,14 @@ func (l *ProcessLiquidationsLogic) buildLiquidationPlan(liq *models.TOptionLiqui
 		return nil, errors.New("option liquidation position is no longer active")
 	}
 	quantity := decimal.Min(liq.Quantity, position.PositionQty)
-	lots, err := l.svcCtx.OptionMarginLotModel.FindActiveByPosition(l.ctx, liq.TenantId, position.Id)
+	var lots []*models.TOptionMarginLot
+	if contract.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) {
+		lots, err = l.svcCtx.OptionMarginLotModel.FindPortfolioActiveByAccount(
+			l.ctx, liq.TenantId, position.UserId, position.AccountId, contract.SettleCoin,
+		)
+	} else {
+		lots, err = l.svcCtx.OptionMarginLotModel.FindActiveByPosition(l.ctx, liq.TenantId, position.Id)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -187,11 +211,12 @@ func (l *ProcessLiquidationsLogic) coverDeficit(
 	liq *models.TOptionLiquidation,
 	deficit decimal.Decimal,
 	contract *models.TOptionContract,
+	retainPartial bool,
 ) (decimal.Decimal, error) {
 	if !deficit.IsPositive() {
 		return decimal.Zero, nil
 	}
-	flowNo := fmt.Sprintf("%s-INSURANCE-A%d", liq.LiquidationNo, liq.InsuranceAttempt)
+	flowNo := liquidationInsuranceFlowNo(liq, retainPartial)
 	flow, err := l.svcCtx.OptionInsuranceFundFlowModel.FindOneByTenantIdFlowNo(l.ctx, liq.TenantId, flowNo)
 	if err == nil {
 		return flow.Amount, nil
@@ -218,7 +243,7 @@ func (l *ProcessLiquidationsLogic) coverDeficit(
 	if err != nil || !covered.Add(remaining).Equal(deficit) {
 		return decimal.Zero, errors.New("invalid option insurance remainder")
 	}
-	if remaining.IsPositive() && covered.IsPositive() {
+	if remaining.IsPositive() && covered.IsPositive() && !retainPartial {
 		reverse, reverseErr := l.svcCtx.AssetClient.ReverseInsuranceCover(l.ctx, &asset.ReverseInsuranceCoverReq{
 			TenantId: liq.TenantId, LiquidationNo: flowNo,
 			ReversalNo: flowNo + "-REVERSE", Remark: "reverse partial option insurance cover",
@@ -243,10 +268,52 @@ func (l *ProcessLiquidationsLogic) coverDeficit(
 	return covered, nil
 }
 
+func (l *ProcessLiquidationsLogic) coverPlatformBackstop(
+	liq *models.TOptionLiquidation,
+	deficit decimal.Decimal,
+	contract *models.TOptionContract,
+) (decimal.Decimal, error) {
+	if !deficit.IsPositive() {
+		return decimal.Zero, nil
+	}
+	resp, err := l.svcCtx.AssetClient.CoverPlatformBackstopDeficit(
+		l.ctx,
+		&asset.CoverPlatformBackstopDeficitReq{
+			TenantId: liq.TenantId, Coin: contract.SettleCoin,
+			RequestedAmount: deficit.String(), LiquidationId: liq.Id,
+			LiquidationNo: liquidationBackstopFlowNo(liq),
+			Remark:        "option liquidation platform backstop liability",
+		},
+	)
+	if err != nil {
+		return decimal.Zero, err
+	}
+	if resp == nil || resp.GetBase() == nil || resp.GetBase().GetCode() != 200 {
+		return decimal.Zero, errors.New("option platform backstop cover rejected")
+	}
+	covered, err := decimal.NewFromString(resp.GetCoveredAmount())
+	if err != nil || !covered.Equal(deficit) {
+		return decimal.Zero, errors.New("invalid option platform backstop coverage")
+	}
+	return covered, nil
+}
+
+func liquidationInsuranceFlowNo(liq *models.TOptionLiquidation, retainPartial bool) string {
+	if retainPartial {
+		return liq.LiquidationNo + "-INSURANCE-BACKSTOP"
+	}
+	return fmt.Sprintf("%s-INSURANCE-A%d", liq.LiquidationNo, liq.InsuranceAttempt)
+}
+
+func liquidationBackstopFlowNo(liq *models.TOptionLiquidation) string {
+	return liq.LiquidationNo + "-BACKSTOP"
+}
+
 func (l *ProcessLiquidationsLogic) createLiquidationInstructions(
 	liq *models.TOptionLiquidation,
 	plan *optionLiquidationPlan,
-	covered decimal.Decimal,
+	insuranceCovered decimal.Decimal,
+	backstopCovered decimal.Decimal,
 ) error {
 	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
@@ -276,18 +343,30 @@ func (l *ProcessLiquidationsLogic) createLiquidationInstructions(
 			position.PositionQty.LessThan(plan.quantity) {
 			return errors.New("option liquidation position changed during preparation")
 		}
-		lots, err := marginLotModel.FindActiveByPosition(ctx, current.TenantId, position.Id)
+		var lots []*models.TOptionMarginLot
+		if plan.contract.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) {
+			lots, err = marginLotModel.FindPortfolioActiveByAccount(
+				ctx, current.TenantId, position.UserId, position.AccountId, plan.contract.SettleCoin,
+			)
+		} else {
+			lots, err = marginLotModel.FindActiveByPosition(ctx, current.TenantId, position.Id)
+		}
 		if err != nil {
 			return err
 		}
 		now := time.Now().Unix()
 		deductLeft := plan.collateral
+		portfolioMode := plan.contract.SellerMarginMode ==
+			int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO)
 		for _, lot := range lots {
 			if lot.PendingMargin.IsPositive() {
 				return errors.New("option liquidation margin lot changed during preparation")
 			}
 			deduct := decimal.Min(lot.RemainingMargin, deductLeft)
-			release := lot.RemainingMargin.Sub(deduct)
+			release := decimal.Zero
+			if !portfolioMode {
+				release = lot.RemainingMargin.Sub(deduct)
+			}
 			if deduct.IsPositive() {
 				if err := insertLiquidationInstruction(ctx, instructionModel, &models.TOptionAssetInstruction{
 					TenantId:      current.TenantId,
@@ -315,16 +394,21 @@ func (l *ProcessLiquidationsLogic) createLiquidationInstructions(
 					return err
 				}
 			}
-			lot.PendingMargin = lot.RemainingMargin
-			lot.RemainingQuantity = decimal.Zero
+			lot.PendingMargin = lot.PendingMargin.Add(deduct).Add(release)
+			if !portfolioMode {
+				lot.RemainingQuantity = decimal.Zero
+			}
 			if deduct.IsPositive() {
 				lot.Status = int64(option.MarginLotStatus_MARGIN_LOT_STATUS_CONSUMING)
-			} else {
+			} else if release.IsPositive() {
 				lot.Status = int64(option.MarginLotStatus_MARGIN_LOT_STATUS_RELEASING)
 			}
 			lot.UpdateTimes = now
 			if err := marginLotModel.Update(ctx, lot); err != nil {
 				return err
+			}
+			if portfolioMode && !deductLeft.IsPositive() {
+				break
 			}
 		}
 		if deductLeft.IsPositive() {
@@ -368,14 +452,36 @@ func (l *ProcessLiquidationsLogic) createLiquidationInstructions(
 		}
 		current.Quantity = plan.quantity
 		current.CollateralAmount = plan.collateral
-		current.InsuranceFundAmount = covered
+		current.InsuranceFundAmount = insuranceCovered
+		current.BackstopAmount = backstopCovered
 		current.DeficitAmount = plan.deficit
 		current.RemainingDeficit = decimal.Zero
+		current.DeficitResolution = int64(liquidationDeficitResolution(
+			plan.deficit, insuranceCovered, backstopCovered,
+		))
 		current.LiquidationFee = plan.fee
 		current.LastErrorMsg = ""
 		current.UpdateTimes = now
 		return liquidationModel.Update(ctx, current)
 	})
+}
+
+func liquidationDeficitResolution(
+	deficit, insuranceCovered, backstopCovered decimal.Decimal,
+) option.LiquidationDeficitResolution {
+	if !deficit.IsPositive() {
+		return option.LiquidationDeficitResolution_LIQUIDATION_DEFICIT_RESOLUTION_NONE
+	}
+	if insuranceCovered.IsPositive() && backstopCovered.IsPositive() {
+		return option.LiquidationDeficitResolution_LIQUIDATION_DEFICIT_RESOLUTION_INSURANCE_AND_BACKSTOP
+	}
+	if backstopCovered.IsPositive() {
+		return option.LiquidationDeficitResolution_LIQUIDATION_DEFICIT_RESOLUTION_PLATFORM_BACKSTOP
+	}
+	if insuranceCovered.IsPositive() {
+		return option.LiquidationDeficitResolution_LIQUIDATION_DEFICIT_RESOLUTION_INSURANCE_FUND
+	}
+	return option.LiquidationDeficitResolution_LIQUIDATION_DEFICIT_RESOLUTION_MANUAL_REVIEW
 }
 
 func insertLiquidationInstruction(
@@ -517,6 +623,9 @@ func (l *ProcessLiquidationsLogic) markLiquidationManual(
 	}
 	current.Status = int64(option.LiquidationStatus_LIQUIDATION_STATUS_MANUAL_REVIEW)
 	current.RemainingDeficit = decimal.Max(remaining, decimal.Zero)
+	current.DeficitResolution = int64(
+		option.LiquidationDeficitResolution_LIQUIDATION_DEFICIT_RESOLUTION_MANUAL_REVIEW,
+	)
 	current.LastErrorMsg = reason
 	current.UpdateTimes = time.Now().Unix()
 	return l.svcCtx.OptionLiquidationModel.Update(l.ctx, current)

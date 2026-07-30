@@ -53,6 +53,7 @@ type (
 		OrderId           int64           `db:"order_id"`           // 卖出开仓订单ID
 		TradeId           int64           `db:"trade_id"`           // 成交ID
 		FreezeBizNo       string          `db:"freeze_biz_no"`      // Asset冻结业务号
+		CollateralCoin    string          `db:"collateral_coin"`    // 该批次实际冻结的担保资产币种
 		Quantity          decimal.Decimal `db:"quantity"`           // 批次数量
 		RemainingQuantity decimal.Decimal `db:"remaining_quantity"` // 尚未平仓的批次数量
 		InitialMargin     decimal.Decimal `db:"initial_margin"`     // 分配的初始保证金
@@ -127,8 +128,8 @@ func (m *defaultTOptionMarginLotModel) Insert(ctx context.Context, data *TOption
 	tOptionMarginLotIdKey := fmt.Sprintf("%s%v", cacheTOptionMarginLotIdPrefix, data.Id)
 	tOptionMarginLotTenantIdTradeIdKey := fmt.Sprintf("%s%v:%v", cacheTOptionMarginLotTenantIdTradeIdPrefix, data.TenantId, data.TradeId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionMarginLotRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.AccountId, data.ContractId, data.PositionId, data.OrderId, data.TradeId, data.FreezeBizNo, data.Quantity, data.RemainingQuantity, data.InitialMargin, data.RemainingMargin, data.PendingMargin, data.Status, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionMarginLotRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.AccountId, data.ContractId, data.PositionId, data.OrderId, data.TradeId, data.FreezeBizNo, data.CollateralCoin, data.Quantity, data.RemainingQuantity, data.InitialMargin, data.RemainingMargin, data.PendingMargin, data.Status, data.CreateTimes, data.UpdateTimes)
 	}, tOptionMarginLotIdKey, tOptionMarginLotTenantIdTradeIdKey)
 	return ret, err
 }
@@ -143,7 +144,7 @@ func (m *defaultTOptionMarginLotModel) Update(ctx context.Context, newData *TOpt
 	tOptionMarginLotTenantIdTradeIdKey := fmt.Sprintf("%s%v:%v", cacheTOptionMarginLotTenantIdTradeIdPrefix, data.TenantId, data.TradeId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionMarginLotRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.AccountId, newData.ContractId, newData.PositionId, newData.OrderId, newData.TradeId, newData.FreezeBizNo, newData.Quantity, newData.RemainingQuantity, newData.InitialMargin, newData.RemainingMargin, newData.PendingMargin, newData.Status, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.AccountId, newData.ContractId, newData.PositionId, newData.OrderId, newData.TradeId, newData.FreezeBizNo, newData.CollateralCoin, newData.Quantity, newData.RemainingQuantity, newData.InitialMargin, newData.RemainingMargin, newData.PendingMargin, newData.Status, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tOptionMarginLotIdKey, tOptionMarginLotTenantIdTradeIdKey)
 	return err
 }

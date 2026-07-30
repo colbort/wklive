@@ -177,6 +177,12 @@
           <el-form-item :label="t('option.underlying')">
             <el-input v-model="contractForm.underlyingSymbol" />
           </el-form-item>
+          <el-form-item
+            v-if="contractForm.settlementType === 2"
+            :label="t('option.underlyingCoin')"
+          >
+            <el-input v-model="contractForm.underlyingCoin" />
+          </el-form-item>
           <el-form-item :label="t('option.settleCoin')">
             <el-input v-model="contractForm.settleCoin" />
           </el-form-item>
@@ -253,6 +259,16 @@
             <el-select v-model="contractForm.sellerMarginMode" style="width: 100%">
               <el-option :label="t('option.marginDisabled')" :value="1" />
               <el-option :label="t('option.marginIsolated')" :value="2" />
+              <el-option :label="t('option.marginPortfolio')" :value="3" />
+              <el-option :label="t('option.marginCoveredDelivery')" :value="4" />
+            </el-select>
+          </el-form-item>
+          <el-form-item
+            v-if="contractForm.settlementType === 2"
+            :label="t('option.physicalDeliveryPolicy')"
+          >
+            <el-select v-model="contractForm.physicalDeliveryPolicy" style="width: 100%">
+              <el-option :label="t('option.physicalDeliveryStrict')" :value="1" />
             </el-select>
           </el-form-item>
           <el-form-item :label="t('option.initialMarginRate')">
@@ -272,6 +288,16 @@
           </el-form-item>
           <el-form-item :label="t('option.insuranceAccountId')">
             <el-input-number v-model="contractForm.insuranceAccountId" :min="0" :precision="0" />
+          </el-form-item>
+          <el-form-item :label="t('option.liquidationDeficitPolicy')">
+            <el-select v-model="contractForm.liquidationDeficitPolicy" style="width: 100%">
+              <el-option :label="t('option.deficitManualReview')" :value="1" />
+              <el-option
+                :label="t('option.deficitPlatformBackstop')"
+                :value="2"
+                :disabled="contractForm.sellerMarginMode === 1"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item :label="t('option.listTime')">
             <el-date-picker
@@ -465,6 +491,13 @@
           <el-descriptions-item :label="t('option.autoExercise')">
             {{ optionLabel('yesNo', detailData.contract.isAutoExercise) }}
           </el-descriptions-item>
+          <el-descriptions-item :label="t('option.liquidationDeficitPolicy')">
+            {{
+              detailData.contract.liquidationDeficitPolicy === 2
+                ? t('option.deficitPlatformBackstop')
+                : t('option.deficitManualReview')
+            }}
+          </el-descriptions-item>
           <el-descriptions-item :label="t('option.settleCoin')">
             {{ detailData.contract.settleCoin || '-' }}
           </el-descriptions-item>
@@ -575,7 +608,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -626,6 +659,7 @@ const contractForm = reactive<UpdateContractReq>({
   tenantId: 0,
   contractCode: '',
   underlyingSymbol: '',
+  underlyingCoin: '',
   settleCoin: '',
   quoteCoin: '',
   optionType: 0,
@@ -650,6 +684,8 @@ const contractForm = reactive<UpdateContractReq>({
   liquidationFeeRate: '0',
   insuranceUserId: 0,
   insuranceAccountId: 0,
+  liquidationDeficitPolicy: 1,
+  physicalDeliveryPolicy: 0,
   listTime: 0,
   expireTime: 0,
   deliverTime: 0,
@@ -681,6 +717,32 @@ const marketForm = reactive<UpdateMarketReq>({
   pricingModel: '',
   snapshotTime: 0,
 })
+
+watch(
+  () => contractForm.sellerMarginMode,
+  (mode) => {
+    if (mode === 1) contractForm.liquidationDeficitPolicy = 1
+    if (mode === 3) contractForm.exerciseStyle = 1
+  },
+)
+
+watch(
+  () => contractForm.settlementType,
+  (settlementType) => {
+    if (settlementType === 2) {
+      contractForm.exerciseStyle = 1
+      contractForm.isAutoExercise = 1
+      contractForm.sellerMarginMode = 4
+      contractForm.physicalDeliveryPolicy = 1
+      contractForm.exerciseFeeRate = '0'
+      contractForm.liquidationDeficitPolicy = 1
+    } else {
+      contractForm.underlyingCoin = ''
+      contractForm.physicalDeliveryPolicy = 0
+      if (contractForm.sellerMarginMode === 4) contractForm.sellerMarginMode = 1
+    }
+  },
+)
 
 const optionTypeOptions = computed(() => findOptionGroup(optionGroups.value, 'optionType'))
 const exerciseStyleOptions = computed(() => findOptionGroup(optionGroups.value, 'exerciseStyle'))
@@ -811,6 +873,7 @@ const resetContractForm = () => {
     tenantId: 0,
     contractCode: '',
     underlyingSymbol: '',
+    underlyingCoin: '',
     settleCoin: '',
     quoteCoin: '',
     optionType: firstBusinessOptionValue(optionTypeOptions.value),
@@ -835,6 +898,8 @@ const resetContractForm = () => {
     liquidationFeeRate: '0',
     insuranceUserId: 0,
     insuranceAccountId: 0,
+    liquidationDeficitPolicy: 1,
+    physicalDeliveryPolicy: 0,
     listTime: 0,
     expireTime: 0,
     deliverTime: 0,

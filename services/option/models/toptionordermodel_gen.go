@@ -63,6 +63,7 @@ type (
 		Fee              decimal.Decimal `db:"fee"`               // 手续费
 		FeeCoin          string          `db:"fee_coin"`          // 手续费币种
 		MarginAmount     decimal.Decimal `db:"margin_amount"`     // 冻结保证金
+		MarginCoin       string          `db:"margin_coin"`       // 订单冻结资产币种
 		Source           int64           `db:"source"`            // 订单来源：1APP 2WEB 3API 4ADMIN
 		ClientOrderId    string          `db:"client_order_id"`   // 客户端订单号
 		ReduceOnly       int64           `db:"reduce_only"`       // 是否只减仓：1是 2否
@@ -139,8 +140,8 @@ func (m *defaultTOptionOrderModel) Insert(ctx context.Context, data *TOptionOrde
 	tOptionOrderIdKey := fmt.Sprintf("%s%v", cacheTOptionOrderIdPrefix, data.Id)
 	tOptionOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionOrderRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.UserId, data.AccountId, data.ContractId, data.UnderlyingSymbol, data.Side, data.PositionEffect, data.OrderType, data.Price, data.Qty, data.FilledQty, data.UnfilledQty, data.AvgPrice, data.Turnover, data.Fee, data.FeeCoin, data.MarginAmount, data.Source, data.ClientOrderId, data.ReduceOnly, data.Mmp, data.Status, data.CancelReason, data.MatchTime, data.CancelTime, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionOrderRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.UserId, data.AccountId, data.ContractId, data.UnderlyingSymbol, data.Side, data.PositionEffect, data.OrderType, data.Price, data.Qty, data.FilledQty, data.UnfilledQty, data.AvgPrice, data.Turnover, data.Fee, data.FeeCoin, data.MarginAmount, data.MarginCoin, data.Source, data.ClientOrderId, data.ReduceOnly, data.Mmp, data.Status, data.CancelReason, data.MatchTime, data.CancelTime, data.CreateTimes, data.UpdateTimes)
 	}, tOptionOrderIdKey, tOptionOrderTenantIdOrderNoKey)
 	return ret, err
 }
@@ -155,7 +156,7 @@ func (m *defaultTOptionOrderModel) Update(ctx context.Context, newData *TOptionO
 	tOptionOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionOrderRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderNo, newData.UserId, newData.AccountId, newData.ContractId, newData.UnderlyingSymbol, newData.Side, newData.PositionEffect, newData.OrderType, newData.Price, newData.Qty, newData.FilledQty, newData.UnfilledQty, newData.AvgPrice, newData.Turnover, newData.Fee, newData.FeeCoin, newData.MarginAmount, newData.Source, newData.ClientOrderId, newData.ReduceOnly, newData.Mmp, newData.Status, newData.CancelReason, newData.MatchTime, newData.CancelTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderNo, newData.UserId, newData.AccountId, newData.ContractId, newData.UnderlyingSymbol, newData.Side, newData.PositionEffect, newData.OrderType, newData.Price, newData.Qty, newData.FilledQty, newData.UnfilledQty, newData.AvgPrice, newData.Turnover, newData.Fee, newData.FeeCoin, newData.MarginAmount, newData.MarginCoin, newData.Source, newData.ClientOrderId, newData.ReduceOnly, newData.Mmp, newData.Status, newData.CancelReason, newData.MatchTime, newData.CancelTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tOptionOrderIdKey, tOptionOrderTenantIdOrderNoKey)
 	return err
 }

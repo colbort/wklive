@@ -74,6 +74,9 @@ func (l *UpdateContractLogic) UpdateContract(in *option.UpdateContractReq) (*opt
 	if in.UnderlyingSymbol != "" {
 		item.UnderlyingSymbol = in.UnderlyingSymbol
 	}
+	if in.UnderlyingCoin != "" {
+		item.UnderlyingCoin = in.UnderlyingCoin
+	}
 	if in.SettleCoin != "" {
 		item.SettleCoin = in.SettleCoin
 	}
@@ -213,6 +216,12 @@ func (l *UpdateContractLogic) UpdateContract(in *option.UpdateContractReq) (*opt
 	}
 	if in.InsuranceAccountId != 0 {
 		item.InsuranceAccountId = in.InsuranceAccountId
+	}
+	if in.LiquidationDeficitPolicy != option.LiquidationDeficitPolicy_LIQUIDATION_DEFICIT_POLICY_UNKNOWN {
+		item.LiquidationDeficitPolicy = int64(in.LiquidationDeficitPolicy)
+	}
+	if in.PhysicalDeliveryPolicy != option.PhysicalDeliveryPolicy_PHYSICAL_DELIVERY_POLICY_UNKNOWN {
+		item.PhysicalDeliveryPolicy = int64(in.PhysicalDeliveryPolicy)
 	}
 	if in.Status != 0 {
 		item.Status = int64(in.Status)

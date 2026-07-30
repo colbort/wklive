@@ -357,10 +357,10 @@ func (l *ProcessContractLifecycleLogic) settleContract(contract *models.TOptionC
 	if market != nil {
 		theoreticalPrice = market.TheoreticalPrice
 		iv = market.Iv
-		if (contract.OptionType == int64(option.OptionType_OPTION_TYPE_CALL) && deliveryPrice.GreaterThan(contract.StrikePrice)) ||
-			(contract.OptionType == int64(option.OptionType_OPTION_TYPE_PUT) && deliveryPrice.LessThan(contract.StrikePrice)) {
-			isITM = int64(common.YesNo_YES_NO_YES)
-		}
+	}
+	if (contract.OptionType == int64(option.OptionType_OPTION_TYPE_CALL) && deliveryPrice.GreaterThan(contract.StrikePrice)) ||
+		(contract.OptionType == int64(option.OptionType_OPTION_TYPE_PUT) && deliveryPrice.LessThan(contract.StrikePrice)) {
+		isITM = int64(common.YesNo_YES_NO_YES)
 	}
 	exerciseResult := int64(option.ExerciseResult_EXERCISE_RESULT_NONE)
 	if contract.IsAutoExercise == int64(common.YesNo_YES_NO_YES) {
@@ -469,6 +469,12 @@ type optionSettlementSummary struct {
 }
 
 func settleContractPositions(ctx context.Context, positionModel models.TOptionPositionModel, detailModel models.TOptionSettlementDetailModel, instructionModel models.TOptionAssetInstructionModel, marginLotModel models.TOptionMarginLotModel, contract *models.TOptionContract, batchId int64, settlementNo string, deliveryPrice decimal.Decimal, now int64) (optionSettlementSummary, error) {
+	if contract.SettlementType == int64(option.SettlementType_SETTLEMENT_TYPE_PHYSICAL) {
+		return settlePhysicalContractPositions(
+			ctx, positionModel, detailModel, instructionModel, marginLotModel,
+			contract, batchId, settlementNo, deliveryPrice, now,
+		)
+	}
 	cursor := int64(0)
 	summary := optionSettlementSummary{}
 	for {
@@ -588,7 +594,274 @@ func settleContractPositions(ctx context.Context, positionModel models.TOptionPo
 	}
 }
 
+func settlePhysicalContractPositions(
+	ctx context.Context,
+	positionModel models.TOptionPositionModel,
+	detailModel models.TOptionSettlementDetailModel,
+	instructionModel models.TOptionAssetInstructionModel,
+	marginLotModel models.TOptionMarginLotModel,
+	contract *models.TOptionContract,
+	batchId int64,
+	settlementNo string,
+	deliveryPrice decimal.Decimal,
+	now int64,
+) (optionSettlementSummary, error) {
+	if contract.PhysicalDeliveryPolicy != int64(option.PhysicalDeliveryPolicy_PHYSICAL_DELIVERY_POLICY_STRICT) ||
+		contract.SellerMarginMode != int64(option.SellerMarginMode_SELLER_MARGIN_MODE_COVERED_DELIVERY) ||
+		contract.UnderlyingCoin == "" {
+		return optionSettlementSummary{}, errors.New("physical delivery contract is not strictly collateralized")
+	}
+	itm := optionIntrinsicValue(contract, deliveryPrice).IsPositive()
+	cursor := int64(0)
+	summary := optionSettlementSummary{}
+	longDelivery, shortDelivery := decimal.Zero, decimal.Zero
+	for {
+		positions, _, err := positionModel.FindPage(ctx, models.OptionPositionPageFilter{
+			ContractId: contract.Id,
+			Statuses: []int64{
+				int64(option.PositionStatus_POSITION_STATUS_HOLDING),
+				int64(option.PositionStatus_POSITION_STATUS_EXPIRED),
+			},
+		}, cursor, 100)
+		if err != nil {
+			return optionSettlementSummary{}, err
+		}
+		for _, position := range positions {
+			cursor = position.Id
+			qty := position.PositionQty
+			deliveryQty := qty.Mul(optionMultiplier(contract)).Round(16)
+			paymentAmount := optionExerciseAmount(contract, qty)
+			instructionNo := ""
+			direction := option.SettlementDetailDirection_SETTLEMENT_DETAIL_DIRECTION_ABANDON
+			count := int64(0)
+			if itm && position.Side == int64(common.PositionSide_POSITION_SIDE_LONG) {
+				direction = option.SettlementDetailDirection_SETTLEMENT_DETAIL_DIRECTION_CREDIT
+				instructionNo, count, err = createPhysicalLongInstructions(
+					ctx, instructionModel, contract, position, settlementNo,
+					deliveryQty, paymentAmount, now,
+				)
+				longDelivery = longDelivery.Add(deliveryQty)
+				summary.totalCredit = summary.totalCredit.Add(paymentAmount)
+			} else if position.Side == int64(common.PositionSide_POSITION_SIDE_SHORT) {
+				if itm {
+					direction = option.SettlementDetailDirection_SETTLEMENT_DETAIL_DIRECTION_DEBIT
+					shortDelivery = shortDelivery.Add(deliveryQty)
+					summary.totalDebit = summary.totalDebit.Add(paymentAmount)
+				}
+				instructionNo, count, err = createCoveredShortSettlementInstructions(
+					ctx, instructionModel, marginLotModel, contract, position,
+					settlementNo, deliveryQty, paymentAmount, itm, now,
+				)
+			}
+			if err != nil {
+				return optionSettlementSummary{}, err
+			}
+			summary.instructionCount += count
+
+			position.PositionQty = decimal.Zero
+			position.AvailableQty = decimal.Zero
+			position.FrozenQty = decimal.Zero
+			position.PositionValue = decimal.Zero
+			position.MarginAmount = decimal.Zero
+			position.MaintenanceMargin = decimal.Zero
+			position.UnrealizedPnl = decimal.Zero
+			position.ExerciseableQty = decimal.Zero
+			position.Status = int64(option.PositionStatus_POSITION_STATUS_SETTLED)
+			position.LastCalcTime = now
+			position.UpdateTimes = now
+			if err := positionModel.Update(ctx, position); err != nil {
+				return optionSettlementSummary{}, err
+			}
+			auditDeliveryQty, auditPaymentAmount := deliveryQty, paymentAmount
+			if !itm {
+				auditDeliveryQty = decimal.Zero
+				auditPaymentAmount = decimal.Zero
+			}
+			if _, err := detailModel.Insert(ctx, &models.TOptionSettlementDetail{
+				TenantId: position.TenantId, BatchId: batchId, BatchNo: settlementNo,
+				ContractId: contract.Id, PositionId: position.Id, UserId: position.UserId,
+				AccountId: position.AccountId, Side: position.Side, Quantity: qty,
+				Direction: int64(direction), InstructionNo: instructionNo,
+				DeliveryCoin: contract.UnderlyingCoin, DeliveryQuantity: auditDeliveryQty,
+				PaymentCoin: contract.SettleCoin, PaymentAmount: auditPaymentAmount,
+				CreateTimes: now,
+			}); err != nil {
+				return optionSettlementSummary{}, err
+			}
+		}
+		if len(positions) < 100 {
+			break
+		}
+	}
+	if itm && !longDelivery.Equal(shortDelivery) {
+		return optionSettlementSummary{}, fmt.Errorf(
+			"physical delivery quantity is not balanced: contractId=%d long=%s short=%s",
+			contract.Id, longDelivery, shortDelivery,
+		)
+	}
+	return summary, validateOptionSettlementBalance(contract.Id, summary)
+}
+
+func createPhysicalLongInstructions(
+	ctx context.Context,
+	instructionModel models.TOptionAssetInstructionModel,
+	contract *models.TOptionContract,
+	position *models.TOptionPosition,
+	settlementNo string,
+	deliveryQty, paymentAmount decimal.Decimal,
+	now int64,
+) (string, int64, error) {
+	debitCoin, debitAmount, creditCoin, creditAmount := physicalLongAssetLegs(
+		contract, deliveryQty, paymentAmount,
+	)
+	debitNo := fmt.Sprintf("%s-P%d-PHYSICAL-DEBIT", settlementNo, position.Id)
+	if _, err := instructionModel.Insert(ctx, &models.TOptionAssetInstruction{
+		TenantId: position.TenantId, InstructionNo: debitNo,
+		BizNo: settlementNo, PositionId: position.Id, UserId: position.UserId, AccountId: position.AccountId,
+		Action: int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_DEBIT_AVAILABLE),
+		Coin:   debitCoin, Amount: debitAmount, StepNo: 1,
+		Status:               int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING),
+		ReconciliationStatus: int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_PENDING),
+		CreateTimes:          now, UpdateTimes: now,
+	}); err != nil {
+		return "", 0, err
+	}
+	creditNo := fmt.Sprintf("%s-P%d-PHYSICAL-CREDIT", settlementNo, position.Id)
+	if _, err := instructionModel.Insert(ctx, &models.TOptionAssetInstruction{
+		TenantId: position.TenantId, InstructionNo: creditNo,
+		BizNo: settlementNo, PositionId: position.Id, UserId: position.UserId, AccountId: position.AccountId,
+		Action: int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_CREDIT_AVAILABLE),
+		Coin:   creditCoin, Amount: creditAmount, StepNo: 2,
+		Status:               int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING),
+		ReconciliationStatus: int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_PENDING),
+		CreateTimes:          now, UpdateTimes: now,
+	}); err != nil {
+		return "", 0, err
+	}
+	return debitNo, 2, nil
+}
+
+func physicalLongAssetLegs(
+	contract *models.TOptionContract,
+	deliveryQty, paymentAmount decimal.Decimal,
+) (debitCoin string, debitAmount decimal.Decimal, creditCoin string, creditAmount decimal.Decimal) {
+	debitCoin, debitAmount = contract.SettleCoin, paymentAmount
+	creditCoin, creditAmount = contract.UnderlyingCoin, deliveryQty
+	if contract.OptionType == int64(option.OptionType_OPTION_TYPE_PUT) {
+		debitCoin, debitAmount = contract.UnderlyingCoin, deliveryQty
+		creditCoin, creditAmount = contract.SettleCoin, paymentAmount
+	}
+	return
+}
+
+func createCoveredShortSettlementInstructions(
+	ctx context.Context,
+	instructionModel models.TOptionAssetInstructionModel,
+	marginLotModel models.TOptionMarginLotModel,
+	contract *models.TOptionContract,
+	position *models.TOptionPosition,
+	settlementNo string,
+	deliveryQty, paymentAmount decimal.Decimal,
+	itm bool,
+	now int64,
+) (string, int64, error) {
+	lots, err := marginLotModel.FindClosableByPosition(ctx, position.TenantId, position.Id)
+	if err != nil {
+		return "", 0, err
+	}
+	expectedCoin, expectedAmount := contract.UnderlyingCoin, deliveryQty
+	creditCoin, creditAmount := contract.SettleCoin, paymentAmount
+	if contract.OptionType == int64(option.OptionType_OPTION_TYPE_PUT) {
+		expectedCoin, expectedAmount = contract.SettleCoin, paymentAmount
+		creditCoin, creditAmount = contract.UnderlyingCoin, deliveryQty
+	}
+	firstInstruction := ""
+	count := int64(0)
+	totalCollateral := decimal.Zero
+	for _, lot := range lots {
+		if lot.PendingMargin.IsPositive() {
+			return "", 0, errors.New("physical delivery margin lot has pending amount")
+		}
+		coin := lot.CollateralCoin
+		if coin == "" {
+			coin = contract.SettleCoin
+		}
+		if coin != expectedCoin {
+			return "", 0, fmt.Errorf("physical delivery collateral coin mismatch: lotId=%d", lot.Id)
+		}
+		amount := lot.RemainingMargin
+		totalCollateral = totalCollateral.Add(amount)
+		if !amount.IsPositive() {
+			continue
+		}
+		action := option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_RELEASE_FROZEN
+		suffix := "RELEASE"
+		if itm {
+			action = option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_DEDUCT_FROZEN
+			suffix = "DEDUCT"
+		}
+		instructionNo := fmt.Sprintf("%s-P%d-L%d-%s", settlementNo, position.Id, lot.Id, suffix)
+		if _, err := instructionModel.Insert(ctx, &models.TOptionAssetInstruction{
+			TenantId: position.TenantId, InstructionNo: instructionNo,
+			BizNo: settlementNo, PositionId: position.Id, MarginLotId: lot.Id,
+			UserId: position.UserId, AccountId: position.AccountId,
+			Action: int64(action), TargetBizNo: lot.FreezeBizNo,
+			Coin: coin, Amount: amount, StepNo: 1,
+			Status:               int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING),
+			ReconciliationStatus: int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_PENDING),
+			CreateTimes:          now, UpdateTimes: now,
+		}); err != nil {
+			return "", 0, err
+		}
+		if firstInstruction == "" {
+			firstInstruction = instructionNo
+		}
+		count++
+		lot.PendingMargin = lot.PendingMargin.Add(amount)
+		lot.RemainingQuantity = decimal.Zero
+		if itm {
+			lot.Status = int64(option.MarginLotStatus_MARGIN_LOT_STATUS_CONSUMING)
+		} else {
+			lot.Status = int64(option.MarginLotStatus_MARGIN_LOT_STATUS_RELEASING)
+		}
+		lot.UpdateTimes = now
+		if err := marginLotModel.Update(ctx, lot); err != nil {
+			return "", 0, err
+		}
+	}
+	if itm && !totalCollateral.Equal(expectedAmount) {
+		return "", 0, fmt.Errorf(
+			"physical delivery is not fully collateralized: positionId=%d expected=%s actual=%s",
+			position.Id, expectedAmount, totalCollateral,
+		)
+	}
+	if itm {
+		creditNo := fmt.Sprintf("%s-P%d-PHYSICAL-CREDIT", settlementNo, position.Id)
+		if _, err := instructionModel.Insert(ctx, &models.TOptionAssetInstruction{
+			TenantId: position.TenantId, InstructionNo: creditNo,
+			BizNo: settlementNo, PositionId: position.Id, UserId: position.UserId, AccountId: position.AccountId,
+			Action: int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_CREDIT_AVAILABLE),
+			Coin:   creditCoin, Amount: creditAmount, StepNo: 2,
+			Status:               int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING),
+			ReconciliationStatus: int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_PENDING),
+			CreateTimes:          now, UpdateTimes: now,
+		}); err != nil {
+			return "", 0, err
+		}
+		if firstInstruction == "" {
+			firstInstruction = creditNo
+		}
+		count++
+	}
+	return firstInstruction, count, nil
+}
+
 func createShortSettlementInstructions(ctx context.Context, instructionModel models.TOptionAssetInstructionModel, marginLotModel models.TOptionMarginLotModel, contract *models.TOptionContract, position *models.TOptionPosition, settlementNo string, payoff decimal.Decimal, now int64) (string, int64, error) {
+	if contract.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) {
+		return createPortfolioShortSettlementInstructions(
+			ctx, instructionModel, marginLotModel, contract, position, settlementNo, payoff, now,
+		)
+	}
 	lots, err := marginLotModel.FindActiveByPosition(ctx, position.TenantId, position.Id)
 	if err != nil {
 		return "", 0, err
@@ -645,6 +918,82 @@ func createShortSettlementInstructions(ctx context.Context, instructionModel mod
 		}
 		lot.PendingMargin = lot.PendingMargin.Add(deduct).Add(release)
 		lot.RemainingQuantity = decimal.Zero
+		lot.UpdateTimes = now
+		if err := marginLotModel.Update(ctx, lot); err != nil {
+			return "", 0, err
+		}
+	}
+	if remainingPayoff.IsPositive() {
+		instructionNo := fmt.Sprintf("%s-P%d-DEBIT-AVAILABLE", settlementNo, position.Id)
+		if _, err := instructionModel.Insert(ctx, &models.TOptionAssetInstruction{
+			TenantId: position.TenantId, InstructionNo: instructionNo,
+			BizNo: settlementNo, PositionId: position.Id, UserId: position.UserId, AccountId: position.AccountId,
+			Action: int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_DEBIT_AVAILABLE),
+			Coin:   contract.SettleCoin, Amount: remainingPayoff, StepNo: 1,
+			Status:               int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING),
+			ReconciliationStatus: int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_PENDING),
+			CreateTimes:          now, UpdateTimes: now,
+		}); err != nil {
+			return "", 0, err
+		}
+		if firstInstructionNo == "" {
+			firstInstructionNo = instructionNo
+		}
+		count++
+	}
+	return firstInstructionNo, count, nil
+}
+
+func createPortfolioShortSettlementInstructions(
+	ctx context.Context,
+	instructionModel models.TOptionAssetInstructionModel,
+	marginLotModel models.TOptionMarginLotModel,
+	contract *models.TOptionContract,
+	position *models.TOptionPosition,
+	settlementNo string,
+	payoff decimal.Decimal,
+	now int64,
+) (string, int64, error) {
+	lots, err := marginLotModel.FindPortfolioActiveByAccount(
+		ctx, position.TenantId, position.UserId, position.AccountId, contract.SettleCoin,
+	)
+	if err != nil {
+		return "", 0, err
+	}
+	remainingPayoff := payoff
+	firstInstructionNo := ""
+	count := int64(0)
+	for _, lot := range lots {
+		if !remainingPayoff.IsPositive() {
+			break
+		}
+		if lot.PendingMargin.IsPositive() {
+			return "", 0, errors.New("portfolio settlement margin lot has pending amount")
+		}
+		deduct := decimal.Min(lot.RemainingMargin, remainingPayoff)
+		if !deduct.IsPositive() {
+			continue
+		}
+		instructionNo := fmt.Sprintf("%s-P%d-PL%d-MARGIN-DEDUCT", settlementNo, position.Id, lot.Id)
+		if _, err := instructionModel.Insert(ctx, &models.TOptionAssetInstruction{
+			TenantId: position.TenantId, InstructionNo: instructionNo,
+			BizNo: settlementNo, PositionId: position.Id, MarginLotId: lot.Id,
+			UserId: position.UserId, AccountId: position.AccountId,
+			Action:      int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_DEDUCT_FROZEN),
+			TargetBizNo: lot.FreezeBizNo, Coin: contract.SettleCoin, Amount: deduct, StepNo: 1,
+			Status:               int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING),
+			ReconciliationStatus: int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_PENDING),
+			CreateTimes:          now, UpdateTimes: now,
+		}); err != nil {
+			return "", 0, err
+		}
+		if firstInstructionNo == "" {
+			firstInstructionNo = instructionNo
+		}
+		count++
+		remainingPayoff = remainingPayoff.Sub(deduct)
+		lot.PendingMargin = lot.PendingMargin.Add(deduct)
+		lot.Status = int64(option.MarginLotStatus_MARGIN_LOT_STATUS_CONSUMING)
 		lot.UpdateTimes = now
 		if err := marginLotModel.Update(ctx, lot); err != nil {
 			return "", 0, err

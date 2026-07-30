@@ -132,6 +132,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *option.PlaceOrderReq) (*option.PlaceOrd
 	}
 
 	marginAmount := decimal.Zero
+	marginCoin := contract.SettleCoin
 	// Every buy order pays premium, including buy-to-close. It must be funded
 	// before entering matching; position effect only controls position changes.
 	if in.Side == common.Side_SIDE_BUY {
@@ -145,18 +146,36 @@ func (l *PlaceOrderLogic) PlaceOrder(in *option.PlaceOrderReq) (*option.PlaceOrd
 			marginAmount = maxTurnover
 		}
 	} else if in.PositionEffect == option.PositionEffect_POSITION_EFFECT_OPEN {
-		if contract.SellerMarginMode != int64(option.SellerMarginMode_SELLER_MARGIN_MODE_ISOLATED) {
+		switch option.SellerMarginMode(contract.SellerMarginMode) {
+		case option.SellerMarginMode_SELLER_MARGIN_MODE_ISOLATED:
+			market, findErr := l.svcCtx.OptionMarketModel.FindOneByTenantIdContractId(l.ctx, tenantId, contract.Id)
+			now := time.Now().Unix()
+			if findErr != nil || market.UnderlyingPrice.IsPositive() == false ||
+				market.SnapshotTime <= 0 || market.SnapshotTime > now || now-market.SnapshotTime > 30 {
+				return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.ContractNotTradable, i18n.Translate(i18n.ContractNotTradable, l.ctx))}, nil
+			}
+			marginAmount = optionSellerMargin(contract, market.UnderlyingPrice, price, qty, false)
+			if !marginAmount.IsPositive() {
+				return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+			}
+		case option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO:
+			// Account-level incremental risk is calculated under the risk-account
+			// row lock in the order transaction below.
+		case option.SellerMarginMode_SELLER_MARGIN_MODE_COVERED_DELIVERY:
+			if contract.SettlementType != int64(option.SettlementType_SETTLEMENT_TYPE_PHYSICAL) {
+				return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx))}, nil
+			}
+			if contract.OptionType == int64(option.OptionType_OPTION_TYPE_CALL) {
+				marginCoin = contract.UnderlyingCoin
+				marginAmount = qty.Mul(optionMultiplier(contract)).Round(16)
+			} else {
+				marginAmount = contract.StrikePrice.Mul(qty).Mul(optionMultiplier(contract)).Round(16)
+			}
+			if marginCoin == "" || !marginAmount.IsPositive() {
+				return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+			}
+		default:
 			return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx))}, nil
-		}
-		market, findErr := l.svcCtx.OptionMarketModel.FindOneByTenantIdContractId(l.ctx, tenantId, contract.Id)
-		now := time.Now().Unix()
-		if findErr != nil || market.UnderlyingPrice.IsPositive() == false ||
-			market.SnapshotTime <= 0 || market.SnapshotTime > now || now-market.SnapshotTime > 30 {
-			return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.ContractNotTradable, i18n.Translate(i18n.ContractNotTradable, l.ctx))}, nil
-		}
-		marginAmount = optionSellerMargin(contract, market.UnderlyingPrice, price, qty, false)
-		if !marginAmount.IsPositive() {
-			return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 		}
 	}
 
@@ -199,6 +218,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *option.PlaceOrderReq) (*option.PlaceOrd
 		Fee:              decimal.Zero,
 		FeeCoin:          contract.SettleCoin,
 		MarginAmount:     marginAmount,
+		MarginCoin:       marginCoin,
 		Source:           int64(option.OrderSource_ORDER_SOURCE_APP),
 		ClientOrderId:    in.ClientOrderId,
 		ReduceOnly:       int64(in.ReduceOnly),
@@ -214,6 +234,22 @@ func (l *PlaceOrderLogic) PlaceOrder(in *option.PlaceOrderReq) (*option.PlaceOrd
 		clientOrderKeyModel := models.NewTOptionClientOrderKeyModel(conn, l.svcCtx.Config.CacheRedis)
 		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis)
 		instructionModel := models.NewTOptionAssetInstructionModel(conn, l.svcCtx.Config.CacheRedis)
+		if contract.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) &&
+			order.Side == int64(common.Side_SIDE_SELL) {
+			portfolioMargin, err := calculatePortfolioOrderMargin(
+				ctx, l.svcCtx, conn, order, contract, now,
+			)
+			if err != nil {
+				return err
+			}
+			marginAmount = portfolioMargin
+			order.MarginAmount = portfolioMargin
+			if portfolioMargin.IsPositive() {
+				order.Status = int64(option.OrderStatus_ORDER_STATUS_FUNDING)
+			} else {
+				order.Status = int64(option.OrderStatus_ORDER_STATUS_PENDING)
+			}
+		}
 		result, err := orderModel.Insert(ctx, order)
 		if err != nil {
 			return err
@@ -240,7 +276,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *option.PlaceOrderReq) (*option.PlaceOrd
 				TenantId: tenantId, InstructionNo: order.OrderNo + "-FREEZE",
 				BizNo: order.OrderNo, OrderId: order.Id, UserId: userId, AccountId: in.AccountId,
 				Action:      int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_FREEZE),
-				TargetBizNo: order.OrderNo, Coin: contract.SettleCoin, Amount: marginAmount,
+				TargetBizNo: order.OrderNo, Coin: marginCoin, Amount: marginAmount,
 				StepNo: 1, Status: int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING),
 				ReconciliationStatus: int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_PENDING),
 				CreateTimes:          now, UpdateTimes: now,

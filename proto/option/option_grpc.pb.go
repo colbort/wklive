@@ -647,34 +647,35 @@ var App_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Admin_CreateContract_FullMethodName            = "/option.Admin/CreateContract"
-	Admin_UpdateContract_FullMethodName            = "/option.Admin/UpdateContract"
-	Admin_GetContract_FullMethodName               = "/option.Admin/GetContract"
-	Admin_ListContracts_FullMethodName             = "/option.Admin/ListContracts"
-	Admin_UpdateMarket_FullMethodName              = "/option.Admin/UpdateMarket"
-	Admin_GetMarket_FullMethodName                 = "/option.Admin/GetMarket"
-	Admin_ListMarketSnapshots_FullMethodName       = "/option.Admin/ListMarketSnapshots"
-	Admin_GetOrder_FullMethodName                  = "/option.Admin/GetOrder"
-	Admin_ListOrders_FullMethodName                = "/option.Admin/ListOrders"
-	Admin_GetTrade_FullMethodName                  = "/option.Admin/GetTrade"
-	Admin_ListTrades_FullMethodName                = "/option.Admin/ListTrades"
-	Admin_GetPosition_FullMethodName               = "/option.Admin/GetPosition"
-	Admin_ListPositions_FullMethodName             = "/option.Admin/ListPositions"
-	Admin_GetExercise_FullMethodName               = "/option.Admin/GetExercise"
-	Admin_ListExercises_FullMethodName             = "/option.Admin/ListExercises"
-	Admin_GetSettlement_FullMethodName             = "/option.Admin/GetSettlement"
-	Admin_ListSettlements_FullMethodName           = "/option.Admin/ListSettlements"
-	Admin_GetAccount_FullMethodName                = "/option.Admin/GetAccount"
-	Admin_ListAccounts_FullMethodName              = "/option.Admin/ListAccounts"
-	Admin_GetBill_FullMethodName                   = "/option.Admin/GetBill"
-	Admin_ListBills_FullMethodName                 = "/option.Admin/ListBills"
-	Admin_ForceCancelContractOrders_FullMethodName = "/option.Admin/ForceCancelContractOrders"
-	Admin_RetryAssetInstruction_FullMethodName     = "/option.Admin/RetryAssetInstruction"
-	Admin_RetryTradeEvent_FullMethodName           = "/option.Admin/RetryTradeEvent"
-	Admin_ListRiskAccounts_FullMethodName          = "/option.Admin/ListRiskAccounts"
-	Admin_ListLiquidations_FullMethodName          = "/option.Admin/ListLiquidations"
-	Admin_RetryLiquidation_FullMethodName          = "/option.Admin/RetryLiquidation"
-	Admin_RetryExercise_FullMethodName             = "/option.Admin/RetryExercise"
+	Admin_CreateContract_FullMethodName             = "/option.Admin/CreateContract"
+	Admin_UpdateContract_FullMethodName             = "/option.Admin/UpdateContract"
+	Admin_GetContract_FullMethodName                = "/option.Admin/GetContract"
+	Admin_ListContracts_FullMethodName              = "/option.Admin/ListContracts"
+	Admin_UpdateMarket_FullMethodName               = "/option.Admin/UpdateMarket"
+	Admin_GetMarket_FullMethodName                  = "/option.Admin/GetMarket"
+	Admin_ListMarketSnapshots_FullMethodName        = "/option.Admin/ListMarketSnapshots"
+	Admin_GetOrder_FullMethodName                   = "/option.Admin/GetOrder"
+	Admin_ListOrders_FullMethodName                 = "/option.Admin/ListOrders"
+	Admin_GetTrade_FullMethodName                   = "/option.Admin/GetTrade"
+	Admin_ListTrades_FullMethodName                 = "/option.Admin/ListTrades"
+	Admin_GetPosition_FullMethodName                = "/option.Admin/GetPosition"
+	Admin_ListPositions_FullMethodName              = "/option.Admin/ListPositions"
+	Admin_GetExercise_FullMethodName                = "/option.Admin/GetExercise"
+	Admin_ListExercises_FullMethodName              = "/option.Admin/ListExercises"
+	Admin_GetSettlement_FullMethodName              = "/option.Admin/GetSettlement"
+	Admin_ListSettlements_FullMethodName            = "/option.Admin/ListSettlements"
+	Admin_GetAccount_FullMethodName                 = "/option.Admin/GetAccount"
+	Admin_ListAccounts_FullMethodName               = "/option.Admin/ListAccounts"
+	Admin_GetBill_FullMethodName                    = "/option.Admin/GetBill"
+	Admin_ListBills_FullMethodName                  = "/option.Admin/ListBills"
+	Admin_ForceCancelContractOrders_FullMethodName  = "/option.Admin/ForceCancelContractOrders"
+	Admin_RetryAssetInstruction_FullMethodName      = "/option.Admin/RetryAssetInstruction"
+	Admin_RetryTradeEvent_FullMethodName            = "/option.Admin/RetryTradeEvent"
+	Admin_ListRiskAccounts_FullMethodName           = "/option.Admin/ListRiskAccounts"
+	Admin_ListLiquidations_FullMethodName           = "/option.Admin/ListLiquidations"
+	Admin_RetryLiquidation_FullMethodName           = "/option.Admin/RetryLiquidation"
+	Admin_RetryExercise_FullMethodName              = "/option.Admin/RetryExercise"
+	Admin_RetrySettlementInstruction_FullMethodName = "/option.Admin/RetrySettlementInstruction"
 )
 
 // AdminClient is the client API for Admin service.
@@ -739,6 +740,8 @@ type AdminClient interface {
 	RetryLiquidation(ctx context.Context, in *RetryLiquidationReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 按行权单重试失败或人工处理的资产指令
 	RetryExercise(ctx context.Context, in *RetryExerciseReq, opts ...grpc.CallOption) (*CommonResp, error)
+	// 校验归属后重试结算批次中的失败资产指令
+	RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*CommonResp, error)
 }
 
 type adminClient struct {
@@ -1029,6 +1032,16 @@ func (c *adminClient) RetryExercise(ctx context.Context, in *RetryExerciseReq, o
 	return out, nil
 }
 
+func (c *adminClient) RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, Admin_RetrySettlementInstruction_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminServer is the server API for Admin service.
 // All implementations must embed UnimplementedAdminServer
 // for forward compatibility.
@@ -1091,6 +1104,8 @@ type AdminServer interface {
 	RetryLiquidation(context.Context, *RetryLiquidationReq) (*CommonResp, error)
 	// 按行权单重试失败或人工处理的资产指令
 	RetryExercise(context.Context, *RetryExerciseReq) (*CommonResp, error)
+	// 校验归属后重试结算批次中的失败资产指令
+	RetrySettlementInstruction(context.Context, *RetrySettlementInstructionReq) (*CommonResp, error)
 	mustEmbedUnimplementedAdminServer()
 }
 
@@ -1184,6 +1199,9 @@ func (UnimplementedAdminServer) RetryLiquidation(context.Context, *RetryLiquidat
 }
 func (UnimplementedAdminServer) RetryExercise(context.Context, *RetryExerciseReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RetryExercise not implemented")
+}
+func (UnimplementedAdminServer) RetrySettlementInstruction(context.Context, *RetrySettlementInstructionReq) (*CommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method RetrySettlementInstruction not implemented")
 }
 func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
 func (UnimplementedAdminServer) testEmbeddedByValue()               {}
@@ -1710,6 +1728,24 @@ func _Admin_RetryExercise_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_RetrySettlementInstruction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RetrySettlementInstructionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).RetrySettlementInstruction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_RetrySettlementInstruction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).RetrySettlementInstruction(ctx, req.(*RetrySettlementInstructionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1828,6 +1864,10 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RetryExercise",
 			Handler:    _Admin_RetryExercise_Handler,
+		},
+		{
+			MethodName: "RetrySettlementInstruction",
+			Handler:    _Admin_RetrySettlementInstruction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -190,3 +190,9 @@ func (s *AdminServer) RetryExercise(ctx context.Context, in *option.RetryExercis
 	l := adminlogic.NewRetryExerciseLogic(ctx, s.svcCtx)
 	return l.RetryExercise(in)
 }
+
+// 校验归属后重试结算批次中的失败资产指令
+func (s *AdminServer) RetrySettlementInstruction(ctx context.Context, in *option.RetrySettlementInstructionReq) (*option.CommonResp, error) {
+	l := adminlogic.NewRetrySettlementInstructionLogic(ctx, s.svcCtx)
+	return l.RetrySettlementInstruction(in)
+}

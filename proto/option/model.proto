@@ -46,6 +46,9 @@ message OptionContract {
   string liquidation_fee_rate = 36;
   int64 insurance_user_id = 37;
   int64 insurance_account_id = 38;
+  LiquidationDeficitPolicy liquidation_deficit_policy = 39;
+  string underlying_coin = 40;
+  PhysicalDeliveryPolicy physical_delivery_policy = 41;
 }
 
 message OptionMarket {
@@ -123,6 +126,7 @@ message OptionOrder {
   int64 cancel_time = 27;
   int64 create_times = 28;
   int64 update_times = 29;
+  string margin_coin = 30;
 }
 
 message OptionTrade {
@@ -286,6 +290,10 @@ message OptionSettlementPositionDetail {
   SettlementDetailDirection direction = 12;
   string instruction_no = 13;
   int64 create_times = 14;
+  string delivery_coin = 15;
+  string delivery_quantity = 16;
+  string payment_coin = 17;
+  string payment_amount = 18;
 }
 
 message OptionReconciliationIssue {
@@ -433,6 +441,9 @@ message OptionRiskAccount {
   int64 last_calc_time = 12;
   int64 create_times = 13;
   int64 update_times = 14;
+  PortfolioRiskMethod portfolio_risk_method = 15;
+  string portfolio_scenario_loss = 16;
+  string portfolio_short_floor = 17;
 }
 
 message OptionLiquidation {
@@ -460,6 +471,8 @@ message OptionLiquidation {
   int64 takeover_position_id = 22;
   int64 completed_at = 23;
   int64 insurance_attempt = 24;
+  string backstop_amount = 25;
+  LiquidationDeficitResolution deficit_resolution = 26;
 }
 
 message OptionInsuranceFundFlow {
@@ -506,4 +519,7 @@ message OptionExerciseDetail {
 message OptionSettlementDetail {
   OptionSettlement settlement = 1;
   OptionContract contract = 2;
+  OptionSettlementBatch batch = 3;
+  repeated OptionSettlementPositionDetail position_details = 4;
+  repeated OptionAssetInstruction asset_instructions = 5;
 }

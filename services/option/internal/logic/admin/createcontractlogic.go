@@ -97,12 +97,17 @@ func (l *CreateContractLogic) CreateContract(in *option.CreateContractReq) (*opt
 	if sellerMarginMode == option.SellerMarginMode_SELLER_MARGIN_MODE_UNKNOWN {
 		sellerMarginMode = option.SellerMarginMode_SELLER_MARGIN_MODE_DISABLED
 	}
+	deficitPolicy := in.LiquidationDeficitPolicy
+	if deficitPolicy == option.LiquidationDeficitPolicy_LIQUIDATION_DEFICIT_POLICY_UNKNOWN {
+		deficitPolicy = option.LiquidationDeficitPolicy_LIQUIDATION_DEFICIT_POLICY_MANUAL_REVIEW
+	}
 
 	now := time.Now().Unix()
 	item := &models.TOptionContract{
 		TenantId:          in.TenantId,
 		ContractCode:      in.ContractCode,
 		UnderlyingSymbol:  in.UnderlyingSymbol,
+		UnderlyingCoin:    in.UnderlyingCoin,
 		SettleCoin:        in.SettleCoin,
 		QuoteCoin:         in.QuoteCoin,
 		OptionType:        int64(in.OptionType),
@@ -128,12 +133,14 @@ func (l *CreateContractLogic) CreateContract(in *option.CreateContractReq) (*opt
 		InitialMarginRate: initialMarginRate, MaintenanceMarginRate: maintenanceMarginRate,
 		MinMarginRate: minMarginRate, LiquidationFeeRate: liquidationFeeRate,
 		InsuranceUserId: in.InsuranceUserId, InsuranceAccountId: in.InsuranceAccountId,
-		Status:      int64(in.Status),
-		Sort:        int64(in.Sort),
-		Remark:      in.Remark,
-		IsDeleted:   int64(common.YesNo_YES_NO_NO),
-		CreateTimes: now,
-		UpdateTimes: now,
+		LiquidationDeficitPolicy: int64(deficitPolicy),
+		PhysicalDeliveryPolicy:   int64(in.PhysicalDeliveryPolicy),
+		Status:                   int64(in.Status),
+		Sort:                     int64(in.Sort),
+		Remark:                   in.Remark,
+		IsDeleted:                int64(common.YesNo_YES_NO_NO),
+		CreateTimes:              now,
+		UpdateTimes:              now,
 	}
 	if !validateSupportedContract(item) {
 		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil

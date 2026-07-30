@@ -24,6 +24,16 @@
           :label="t('option.maintenanceMargin')"
           min-width="150"
         />
+        <el-table-column
+          prop="portfolioScenarioLoss"
+          :label="t('option.portfolioScenarioLoss')"
+          min-width="160"
+        />
+        <el-table-column
+          prop="portfolioShortFloor"
+          :label="t('option.portfolioShortFloor')"
+          min-width="160"
+        />
         <el-table-column prop="riskRate" :label="t('option.riskRate')" min-width="120" />
         <el-table-column prop="status" :label="t('option.status')" width="90" />
       </el-table>
@@ -41,6 +51,16 @@
           prop="insuranceFundAmount"
           :label="t('option.insuranceFund')"
           min-width="140"
+        />
+        <el-table-column
+          prop="backstopAmount"
+          :label="t('option.platformBackstop')"
+          min-width="130"
+        />
+        <el-table-column
+          prop="deficitResolution"
+          :label="t('option.deficitResolution')"
+          min-width="130"
         />
         <el-table-column prop="remainingDeficit" :label="t('option.deficit')" min-width="120" />
         <el-table-column prop="status" :label="t('option.status')" width="90" />

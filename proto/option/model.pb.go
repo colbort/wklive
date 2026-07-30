@@ -23,47 +23,50 @@ const (
 )
 
 type OptionContract struct {
-	state                 protoimpl.MessageState `protogen:"open.v1"`
-	Id                    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId              int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	ContractCode          string                 `protobuf:"bytes,3,opt,name=contract_code,json=contractCode,proto3" json:"contract_code,omitempty"`
-	UnderlyingSymbol      string                 `protobuf:"bytes,4,opt,name=underlying_symbol,json=underlyingSymbol,proto3" json:"underlying_symbol,omitempty"`
-	SettleCoin            string                 `protobuf:"bytes,5,opt,name=settle_coin,json=settleCoin,proto3" json:"settle_coin,omitempty"`
-	QuoteCoin             string                 `protobuf:"bytes,6,opt,name=quote_coin,json=quoteCoin,proto3" json:"quote_coin,omitempty"`
-	OptionType            OptionType             `protobuf:"varint,7,opt,name=option_type,json=optionType,proto3,enum=option.OptionType" json:"option_type,omitempty"`
-	ExerciseStyle         ExerciseStyle          `protobuf:"varint,8,opt,name=exercise_style,json=exerciseStyle,proto3,enum=option.ExerciseStyle" json:"exercise_style,omitempty"`
-	SettlementType        SettlementType         `protobuf:"varint,9,opt,name=settlement_type,json=settlementType,proto3,enum=option.SettlementType" json:"settlement_type,omitempty"`
-	StrikePrice           string                 `protobuf:"bytes,10,opt,name=strike_price,json=strikePrice,proto3" json:"strike_price,omitempty"`
-	ContractUnit          string                 `protobuf:"bytes,11,opt,name=contract_unit,json=contractUnit,proto3" json:"contract_unit,omitempty"`
-	MinOrderQty           string                 `protobuf:"bytes,12,opt,name=min_order_qty,json=minOrderQty,proto3" json:"min_order_qty,omitempty"`
-	MaxOrderQty           string                 `protobuf:"bytes,13,opt,name=max_order_qty,json=maxOrderQty,proto3" json:"max_order_qty,omitempty"`
-	PriceTick             string                 `protobuf:"bytes,14,opt,name=price_tick,json=priceTick,proto3" json:"price_tick,omitempty"`
-	QtyStep               string                 `protobuf:"bytes,15,opt,name=qty_step,json=qtyStep,proto3" json:"qty_step,omitempty"`
-	Multiplier            string                 `protobuf:"bytes,16,opt,name=multiplier,proto3" json:"multiplier,omitempty"`
-	ListTime              int64                  `protobuf:"varint,17,opt,name=list_time,json=listTime,proto3" json:"list_time,omitempty"`
-	ExpireTime            int64                  `protobuf:"varint,18,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`
-	DeliverTime           int64                  `protobuf:"varint,19,opt,name=deliver_time,json=deliverTime,proto3" json:"deliver_time,omitempty"`
-	IsAutoExercise        common.YesNo           `protobuf:"varint,20,opt,name=is_auto_exercise,json=isAutoExercise,proto3,enum=common.YesNo" json:"is_auto_exercise,omitempty"` // 是否自动行权
-	Status                ContractStatus         `protobuf:"varint,21,opt,name=status,proto3,enum=option.ContractStatus" json:"status,omitempty"`
-	Sort                  int64                  `protobuf:"varint,22,opt,name=sort,proto3" json:"sort,omitempty"`
-	Remark                string                 `protobuf:"bytes,23,opt,name=remark,proto3" json:"remark,omitempty"`
-	IsDeleted             common.YesNo           `protobuf:"varint,24,opt,name=is_deleted,json=isDeleted,proto3,enum=common.YesNo" json:"is_deleted,omitempty"` // 是否删除
-	CreateTimes           int64                  `protobuf:"varint,25,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes           int64                  `protobuf:"varint,26,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
-	MakerFeeRate          string                 `protobuf:"bytes,27,opt,name=maker_fee_rate,json=makerFeeRate,proto3" json:"maker_fee_rate,omitempty"`
-	TakerFeeRate          string                 `protobuf:"bytes,28,opt,name=taker_fee_rate,json=takerFeeRate,proto3" json:"taker_fee_rate,omitempty"`
-	ExerciseFeeRate       string                 `protobuf:"bytes,29,opt,name=exercise_fee_rate,json=exerciseFeeRate,proto3" json:"exercise_fee_rate,omitempty"`
-	FeeUserId             int64                  `protobuf:"varint,30,opt,name=fee_user_id,json=feeUserId,proto3" json:"fee_user_id,omitempty"`
-	FeeAccountId          int64                  `protobuf:"varint,31,opt,name=fee_account_id,json=feeAccountId,proto3" json:"fee_account_id,omitempty"`
-	SellerMarginMode      SellerMarginMode       `protobuf:"varint,32,opt,name=seller_margin_mode,json=sellerMarginMode,proto3,enum=option.SellerMarginMode" json:"seller_margin_mode,omitempty"`
-	InitialMarginRate     string                 `protobuf:"bytes,33,opt,name=initial_margin_rate,json=initialMarginRate,proto3" json:"initial_margin_rate,omitempty"`
-	MaintenanceMarginRate string                 `protobuf:"bytes,34,opt,name=maintenance_margin_rate,json=maintenanceMarginRate,proto3" json:"maintenance_margin_rate,omitempty"`
-	MinMarginRate         string                 `protobuf:"bytes,35,opt,name=min_margin_rate,json=minMarginRate,proto3" json:"min_margin_rate,omitempty"`
-	LiquidationFeeRate    string                 `protobuf:"bytes,36,opt,name=liquidation_fee_rate,json=liquidationFeeRate,proto3" json:"liquidation_fee_rate,omitempty"`
-	InsuranceUserId       int64                  `protobuf:"varint,37,opt,name=insurance_user_id,json=insuranceUserId,proto3" json:"insurance_user_id,omitempty"`
-	InsuranceAccountId    int64                  `protobuf:"varint,38,opt,name=insurance_account_id,json=insuranceAccountId,proto3" json:"insurance_account_id,omitempty"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
+	state                    protoimpl.MessageState   `protogen:"open.v1"`
+	Id                       int64                    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId                 int64                    `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	ContractCode             string                   `protobuf:"bytes,3,opt,name=contract_code,json=contractCode,proto3" json:"contract_code,omitempty"`
+	UnderlyingSymbol         string                   `protobuf:"bytes,4,opt,name=underlying_symbol,json=underlyingSymbol,proto3" json:"underlying_symbol,omitempty"`
+	SettleCoin               string                   `protobuf:"bytes,5,opt,name=settle_coin,json=settleCoin,proto3" json:"settle_coin,omitempty"`
+	QuoteCoin                string                   `protobuf:"bytes,6,opt,name=quote_coin,json=quoteCoin,proto3" json:"quote_coin,omitempty"`
+	OptionType               OptionType               `protobuf:"varint,7,opt,name=option_type,json=optionType,proto3,enum=option.OptionType" json:"option_type,omitempty"`
+	ExerciseStyle            ExerciseStyle            `protobuf:"varint,8,opt,name=exercise_style,json=exerciseStyle,proto3,enum=option.ExerciseStyle" json:"exercise_style,omitempty"`
+	SettlementType           SettlementType           `protobuf:"varint,9,opt,name=settlement_type,json=settlementType,proto3,enum=option.SettlementType" json:"settlement_type,omitempty"`
+	StrikePrice              string                   `protobuf:"bytes,10,opt,name=strike_price,json=strikePrice,proto3" json:"strike_price,omitempty"`
+	ContractUnit             string                   `protobuf:"bytes,11,opt,name=contract_unit,json=contractUnit,proto3" json:"contract_unit,omitempty"`
+	MinOrderQty              string                   `protobuf:"bytes,12,opt,name=min_order_qty,json=minOrderQty,proto3" json:"min_order_qty,omitempty"`
+	MaxOrderQty              string                   `protobuf:"bytes,13,opt,name=max_order_qty,json=maxOrderQty,proto3" json:"max_order_qty,omitempty"`
+	PriceTick                string                   `protobuf:"bytes,14,opt,name=price_tick,json=priceTick,proto3" json:"price_tick,omitempty"`
+	QtyStep                  string                   `protobuf:"bytes,15,opt,name=qty_step,json=qtyStep,proto3" json:"qty_step,omitempty"`
+	Multiplier               string                   `protobuf:"bytes,16,opt,name=multiplier,proto3" json:"multiplier,omitempty"`
+	ListTime                 int64                    `protobuf:"varint,17,opt,name=list_time,json=listTime,proto3" json:"list_time,omitempty"`
+	ExpireTime               int64                    `protobuf:"varint,18,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`
+	DeliverTime              int64                    `protobuf:"varint,19,opt,name=deliver_time,json=deliverTime,proto3" json:"deliver_time,omitempty"`
+	IsAutoExercise           common.YesNo             `protobuf:"varint,20,opt,name=is_auto_exercise,json=isAutoExercise,proto3,enum=common.YesNo" json:"is_auto_exercise,omitempty"` // 是否自动行权
+	Status                   ContractStatus           `protobuf:"varint,21,opt,name=status,proto3,enum=option.ContractStatus" json:"status,omitempty"`
+	Sort                     int64                    `protobuf:"varint,22,opt,name=sort,proto3" json:"sort,omitempty"`
+	Remark                   string                   `protobuf:"bytes,23,opt,name=remark,proto3" json:"remark,omitempty"`
+	IsDeleted                common.YesNo             `protobuf:"varint,24,opt,name=is_deleted,json=isDeleted,proto3,enum=common.YesNo" json:"is_deleted,omitempty"` // 是否删除
+	CreateTimes              int64                    `protobuf:"varint,25,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	UpdateTimes              int64                    `protobuf:"varint,26,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	MakerFeeRate             string                   `protobuf:"bytes,27,opt,name=maker_fee_rate,json=makerFeeRate,proto3" json:"maker_fee_rate,omitempty"`
+	TakerFeeRate             string                   `protobuf:"bytes,28,opt,name=taker_fee_rate,json=takerFeeRate,proto3" json:"taker_fee_rate,omitempty"`
+	ExerciseFeeRate          string                   `protobuf:"bytes,29,opt,name=exercise_fee_rate,json=exerciseFeeRate,proto3" json:"exercise_fee_rate,omitempty"`
+	FeeUserId                int64                    `protobuf:"varint,30,opt,name=fee_user_id,json=feeUserId,proto3" json:"fee_user_id,omitempty"`
+	FeeAccountId             int64                    `protobuf:"varint,31,opt,name=fee_account_id,json=feeAccountId,proto3" json:"fee_account_id,omitempty"`
+	SellerMarginMode         SellerMarginMode         `protobuf:"varint,32,opt,name=seller_margin_mode,json=sellerMarginMode,proto3,enum=option.SellerMarginMode" json:"seller_margin_mode,omitempty"`
+	InitialMarginRate        string                   `protobuf:"bytes,33,opt,name=initial_margin_rate,json=initialMarginRate,proto3" json:"initial_margin_rate,omitempty"`
+	MaintenanceMarginRate    string                   `protobuf:"bytes,34,opt,name=maintenance_margin_rate,json=maintenanceMarginRate,proto3" json:"maintenance_margin_rate,omitempty"`
+	MinMarginRate            string                   `protobuf:"bytes,35,opt,name=min_margin_rate,json=minMarginRate,proto3" json:"min_margin_rate,omitempty"`
+	LiquidationFeeRate       string                   `protobuf:"bytes,36,opt,name=liquidation_fee_rate,json=liquidationFeeRate,proto3" json:"liquidation_fee_rate,omitempty"`
+	InsuranceUserId          int64                    `protobuf:"varint,37,opt,name=insurance_user_id,json=insuranceUserId,proto3" json:"insurance_user_id,omitempty"`
+	InsuranceAccountId       int64                    `protobuf:"varint,38,opt,name=insurance_account_id,json=insuranceAccountId,proto3" json:"insurance_account_id,omitempty"`
+	LiquidationDeficitPolicy LiquidationDeficitPolicy `protobuf:"varint,39,opt,name=liquidation_deficit_policy,json=liquidationDeficitPolicy,proto3,enum=option.LiquidationDeficitPolicy" json:"liquidation_deficit_policy,omitempty"`
+	UnderlyingCoin           string                   `protobuf:"bytes,40,opt,name=underlying_coin,json=underlyingCoin,proto3" json:"underlying_coin,omitempty"`
+	PhysicalDeliveryPolicy   PhysicalDeliveryPolicy   `protobuf:"varint,41,opt,name=physical_delivery_policy,json=physicalDeliveryPolicy,proto3,enum=option.PhysicalDeliveryPolicy" json:"physical_delivery_policy,omitempty"`
+	unknownFields            protoimpl.UnknownFields
+	sizeCache                protoimpl.SizeCache
 }
 
 func (x *OptionContract) Reset() {
@@ -360,6 +363,27 @@ func (x *OptionContract) GetInsuranceAccountId() int64 {
 		return x.InsuranceAccountId
 	}
 	return 0
+}
+
+func (x *OptionContract) GetLiquidationDeficitPolicy() LiquidationDeficitPolicy {
+	if x != nil {
+		return x.LiquidationDeficitPolicy
+	}
+	return LiquidationDeficitPolicy_LIQUIDATION_DEFICIT_POLICY_UNKNOWN
+}
+
+func (x *OptionContract) GetUnderlyingCoin() string {
+	if x != nil {
+		return x.UnderlyingCoin
+	}
+	return ""
+}
+
+func (x *OptionContract) GetPhysicalDeliveryPolicy() PhysicalDeliveryPolicy {
+	if x != nil {
+		return x.PhysicalDeliveryPolicy
+	}
+	return PhysicalDeliveryPolicy_PHYSICAL_DELIVERY_POLICY_UNKNOWN
 }
 
 type OptionMarket struct {
@@ -777,6 +801,7 @@ type OptionOrder struct {
 	CancelTime       int64                  `protobuf:"varint,27,opt,name=cancel_time,json=cancelTime,proto3" json:"cancel_time,omitempty"`
 	CreateTimes      int64                  `protobuf:"varint,28,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes      int64                  `protobuf:"varint,29,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	MarginCoin       string                 `protobuf:"bytes,30,opt,name=margin_coin,json=marginCoin,proto3" json:"margin_coin,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -1012,6 +1037,13 @@ func (x *OptionOrder) GetUpdateTimes() int64 {
 		return x.UpdateTimes
 	}
 	return 0
+}
+
+func (x *OptionOrder) GetMarginCoin() string {
+	if x != nil {
+		return x.MarginCoin
+	}
+	return ""
 }
 
 type OptionTrade struct {
@@ -2267,23 +2299,27 @@ func (x *OptionSettlementBatch) GetUpdateTimes() int64 {
 }
 
 type OptionSettlementPositionDetail struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Id            int64                     `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId      int64                     `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	BatchId       int64                     `protobuf:"varint,3,opt,name=batch_id,json=batchId,proto3" json:"batch_id,omitempty"`
-	BatchNo       string                    `protobuf:"bytes,4,opt,name=batch_no,json=batchNo,proto3" json:"batch_no,omitempty"`
-	ContractId    int64                     `protobuf:"varint,5,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
-	PositionId    int64                     `protobuf:"varint,6,opt,name=position_id,json=positionId,proto3" json:"position_id,omitempty"`
-	UserId        int64                     `protobuf:"varint,7,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	AccountId     int64                     `protobuf:"varint,8,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
-	Side          common.PositionSide       `protobuf:"varint,9,opt,name=side,proto3,enum=common.PositionSide" json:"side,omitempty"`
-	Quantity      string                    `protobuf:"bytes,10,opt,name=quantity,proto3" json:"quantity,omitempty"`
-	Payoff        string                    `protobuf:"bytes,11,opt,name=payoff,proto3" json:"payoff,omitempty"`
-	Direction     SettlementDetailDirection `protobuf:"varint,12,opt,name=direction,proto3,enum=option.SettlementDetailDirection" json:"direction,omitempty"`
-	InstructionNo string                    `protobuf:"bytes,13,opt,name=instruction_no,json=instructionNo,proto3" json:"instruction_no,omitempty"`
-	CreateTimes   int64                     `protobuf:"varint,14,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState    `protogen:"open.v1"`
+	Id               int64                     `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId         int64                     `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	BatchId          int64                     `protobuf:"varint,3,opt,name=batch_id,json=batchId,proto3" json:"batch_id,omitempty"`
+	BatchNo          string                    `protobuf:"bytes,4,opt,name=batch_no,json=batchNo,proto3" json:"batch_no,omitempty"`
+	ContractId       int64                     `protobuf:"varint,5,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
+	PositionId       int64                     `protobuf:"varint,6,opt,name=position_id,json=positionId,proto3" json:"position_id,omitempty"`
+	UserId           int64                     `protobuf:"varint,7,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	AccountId        int64                     `protobuf:"varint,8,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	Side             common.PositionSide       `protobuf:"varint,9,opt,name=side,proto3,enum=common.PositionSide" json:"side,omitempty"`
+	Quantity         string                    `protobuf:"bytes,10,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	Payoff           string                    `protobuf:"bytes,11,opt,name=payoff,proto3" json:"payoff,omitempty"`
+	Direction        SettlementDetailDirection `protobuf:"varint,12,opt,name=direction,proto3,enum=option.SettlementDetailDirection" json:"direction,omitempty"`
+	InstructionNo    string                    `protobuf:"bytes,13,opt,name=instruction_no,json=instructionNo,proto3" json:"instruction_no,omitempty"`
+	CreateTimes      int64                     `protobuf:"varint,14,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	DeliveryCoin     string                    `protobuf:"bytes,15,opt,name=delivery_coin,json=deliveryCoin,proto3" json:"delivery_coin,omitempty"`
+	DeliveryQuantity string                    `protobuf:"bytes,16,opt,name=delivery_quantity,json=deliveryQuantity,proto3" json:"delivery_quantity,omitempty"`
+	PaymentCoin      string                    `protobuf:"bytes,17,opt,name=payment_coin,json=paymentCoin,proto3" json:"payment_coin,omitempty"`
+	PaymentAmount    string                    `protobuf:"bytes,18,opt,name=payment_amount,json=paymentAmount,proto3" json:"payment_amount,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *OptionSettlementPositionDetail) Reset() {
@@ -2412,6 +2448,34 @@ func (x *OptionSettlementPositionDetail) GetCreateTimes() int64 {
 		return x.CreateTimes
 	}
 	return 0
+}
+
+func (x *OptionSettlementPositionDetail) GetDeliveryCoin() string {
+	if x != nil {
+		return x.DeliveryCoin
+	}
+	return ""
+}
+
+func (x *OptionSettlementPositionDetail) GetDeliveryQuantity() string {
+	if x != nil {
+		return x.DeliveryQuantity
+	}
+	return ""
+}
+
+func (x *OptionSettlementPositionDetail) GetPaymentCoin() string {
+	if x != nil {
+		return x.PaymentCoin
+	}
+	return ""
+}
+
+func (x *OptionSettlementPositionDetail) GetPaymentAmount() string {
+	if x != nil {
+		return x.PaymentAmount
+	}
+	return ""
 }
 
 type OptionReconciliationIssue struct {
@@ -3539,23 +3603,26 @@ func (x *OptionMarginLot) GetPendingMargin() string {
 }
 
 type OptionRiskAccount struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	Id                int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId          int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	UserId            int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	AccountId         int64                  `protobuf:"varint,4,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
-	SettleCoin        string                 `protobuf:"bytes,5,opt,name=settle_coin,json=settleCoin,proto3" json:"settle_coin,omitempty"`
-	Equity            string                 `protobuf:"bytes,6,opt,name=equity,proto3" json:"equity,omitempty"`
-	PositionMargin    string                 `protobuf:"bytes,7,opt,name=position_margin,json=positionMargin,proto3" json:"position_margin,omitempty"`
-	MaintenanceMargin string                 `protobuf:"bytes,8,opt,name=maintenance_margin,json=maintenanceMargin,proto3" json:"maintenance_margin,omitempty"`
-	UnrealizedPnl     string                 `protobuf:"bytes,9,opt,name=unrealized_pnl,json=unrealizedPnl,proto3" json:"unrealized_pnl,omitempty"`
-	RiskRate          string                 `protobuf:"bytes,10,opt,name=risk_rate,json=riskRate,proto3" json:"risk_rate,omitempty"`
-	Status            RiskAccountStatus      `protobuf:"varint,11,opt,name=status,proto3,enum=option.RiskAccountStatus" json:"status,omitempty"`
-	LastCalcTime      int64                  `protobuf:"varint,12,opt,name=last_calc_time,json=lastCalcTime,proto3" json:"last_calc_time,omitempty"`
-	CreateTimes       int64                  `protobuf:"varint,13,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes       int64                  `protobuf:"varint,14,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state                 protoimpl.MessageState `protogen:"open.v1"`
+	Id                    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId              int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId                int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	AccountId             int64                  `protobuf:"varint,4,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	SettleCoin            string                 `protobuf:"bytes,5,opt,name=settle_coin,json=settleCoin,proto3" json:"settle_coin,omitempty"`
+	Equity                string                 `protobuf:"bytes,6,opt,name=equity,proto3" json:"equity,omitempty"`
+	PositionMargin        string                 `protobuf:"bytes,7,opt,name=position_margin,json=positionMargin,proto3" json:"position_margin,omitempty"`
+	MaintenanceMargin     string                 `protobuf:"bytes,8,opt,name=maintenance_margin,json=maintenanceMargin,proto3" json:"maintenance_margin,omitempty"`
+	UnrealizedPnl         string                 `protobuf:"bytes,9,opt,name=unrealized_pnl,json=unrealizedPnl,proto3" json:"unrealized_pnl,omitempty"`
+	RiskRate              string                 `protobuf:"bytes,10,opt,name=risk_rate,json=riskRate,proto3" json:"risk_rate,omitempty"`
+	Status                RiskAccountStatus      `protobuf:"varint,11,opt,name=status,proto3,enum=option.RiskAccountStatus" json:"status,omitempty"`
+	LastCalcTime          int64                  `protobuf:"varint,12,opt,name=last_calc_time,json=lastCalcTime,proto3" json:"last_calc_time,omitempty"`
+	CreateTimes           int64                  `protobuf:"varint,13,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	UpdateTimes           int64                  `protobuf:"varint,14,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	PortfolioRiskMethod   PortfolioRiskMethod    `protobuf:"varint,15,opt,name=portfolio_risk_method,json=portfolioRiskMethod,proto3,enum=option.PortfolioRiskMethod" json:"portfolio_risk_method,omitempty"`
+	PortfolioScenarioLoss string                 `protobuf:"bytes,16,opt,name=portfolio_scenario_loss,json=portfolioScenarioLoss,proto3" json:"portfolio_scenario_loss,omitempty"`
+	PortfolioShortFloor   string                 `protobuf:"bytes,17,opt,name=portfolio_short_floor,json=portfolioShortFloor,proto3" json:"portfolio_short_floor,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
 }
 
 func (x *OptionRiskAccount) Reset() {
@@ -3686,32 +3753,55 @@ func (x *OptionRiskAccount) GetUpdateTimes() int64 {
 	return 0
 }
 
+func (x *OptionRiskAccount) GetPortfolioRiskMethod() PortfolioRiskMethod {
+	if x != nil {
+		return x.PortfolioRiskMethod
+	}
+	return PortfolioRiskMethod_PORTFOLIO_RISK_METHOD_UNKNOWN
+}
+
+func (x *OptionRiskAccount) GetPortfolioScenarioLoss() string {
+	if x != nil {
+		return x.PortfolioScenarioLoss
+	}
+	return ""
+}
+
+func (x *OptionRiskAccount) GetPortfolioShortFloor() string {
+	if x != nil {
+		return x.PortfolioShortFloor
+	}
+	return ""
+}
+
 type OptionLiquidation struct {
-	state               protoimpl.MessageState `protogen:"open.v1"`
-	Id                  int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId            int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	LiquidationNo       string                 `protobuf:"bytes,3,opt,name=liquidation_no,json=liquidationNo,proto3" json:"liquidation_no,omitempty"`
-	UserId              int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	AccountId           int64                  `protobuf:"varint,5,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
-	ContractId          int64                  `protobuf:"varint,6,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
-	PositionId          int64                  `protobuf:"varint,7,opt,name=position_id,json=positionId,proto3" json:"position_id,omitempty"`
-	Quantity            string                 `protobuf:"bytes,8,opt,name=quantity,proto3" json:"quantity,omitempty"`
-	MarkPrice           string                 `protobuf:"bytes,9,opt,name=mark_price,json=markPrice,proto3" json:"mark_price,omitempty"`
-	MaintenanceMargin   string                 `protobuf:"bytes,10,opt,name=maintenance_margin,json=maintenanceMargin,proto3" json:"maintenance_margin,omitempty"`
-	Equity              string                 `protobuf:"bytes,11,opt,name=equity,proto3" json:"equity,omitempty"`
-	DeficitAmount       string                 `protobuf:"bytes,12,opt,name=deficit_amount,json=deficitAmount,proto3" json:"deficit_amount,omitempty"`
-	LiquidationFee      string                 `protobuf:"bytes,13,opt,name=liquidation_fee,json=liquidationFee,proto3" json:"liquidation_fee,omitempty"`
-	Status              LiquidationStatus      `protobuf:"varint,14,opt,name=status,proto3,enum=option.LiquidationStatus" json:"status,omitempty"`
-	RetryCount          int64                  `protobuf:"varint,15,opt,name=retry_count,json=retryCount,proto3" json:"retry_count,omitempty"`
-	LastErrorMsg        string                 `protobuf:"bytes,16,opt,name=last_error_msg,json=lastErrorMsg,proto3" json:"last_error_msg,omitempty"`
-	CreateTimes         int64                  `protobuf:"varint,17,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes         int64                  `protobuf:"varint,18,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
-	CollateralAmount    string                 `protobuf:"bytes,19,opt,name=collateral_amount,json=collateralAmount,proto3" json:"collateral_amount,omitempty"`
-	InsuranceFundAmount string                 `protobuf:"bytes,20,opt,name=insurance_fund_amount,json=insuranceFundAmount,proto3" json:"insurance_fund_amount,omitempty"`
-	RemainingDeficit    string                 `protobuf:"bytes,21,opt,name=remaining_deficit,json=remainingDeficit,proto3" json:"remaining_deficit,omitempty"`
-	TakeoverPositionId  int64                  `protobuf:"varint,22,opt,name=takeover_position_id,json=takeoverPositionId,proto3" json:"takeover_position_id,omitempty"`
-	CompletedAt         int64                  `protobuf:"varint,23,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
-	InsuranceAttempt    int64                  `protobuf:"varint,24,opt,name=insurance_attempt,json=insuranceAttempt,proto3" json:"insurance_attempt,omitempty"`
+	state               protoimpl.MessageState       `protogen:"open.v1"`
+	Id                  int64                        `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId            int64                        `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	LiquidationNo       string                       `protobuf:"bytes,3,opt,name=liquidation_no,json=liquidationNo,proto3" json:"liquidation_no,omitempty"`
+	UserId              int64                        `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	AccountId           int64                        `protobuf:"varint,5,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	ContractId          int64                        `protobuf:"varint,6,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
+	PositionId          int64                        `protobuf:"varint,7,opt,name=position_id,json=positionId,proto3" json:"position_id,omitempty"`
+	Quantity            string                       `protobuf:"bytes,8,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	MarkPrice           string                       `protobuf:"bytes,9,opt,name=mark_price,json=markPrice,proto3" json:"mark_price,omitempty"`
+	MaintenanceMargin   string                       `protobuf:"bytes,10,opt,name=maintenance_margin,json=maintenanceMargin,proto3" json:"maintenance_margin,omitempty"`
+	Equity              string                       `protobuf:"bytes,11,opt,name=equity,proto3" json:"equity,omitempty"`
+	DeficitAmount       string                       `protobuf:"bytes,12,opt,name=deficit_amount,json=deficitAmount,proto3" json:"deficit_amount,omitempty"`
+	LiquidationFee      string                       `protobuf:"bytes,13,opt,name=liquidation_fee,json=liquidationFee,proto3" json:"liquidation_fee,omitempty"`
+	Status              LiquidationStatus            `protobuf:"varint,14,opt,name=status,proto3,enum=option.LiquidationStatus" json:"status,omitempty"`
+	RetryCount          int64                        `protobuf:"varint,15,opt,name=retry_count,json=retryCount,proto3" json:"retry_count,omitempty"`
+	LastErrorMsg        string                       `protobuf:"bytes,16,opt,name=last_error_msg,json=lastErrorMsg,proto3" json:"last_error_msg,omitempty"`
+	CreateTimes         int64                        `protobuf:"varint,17,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	UpdateTimes         int64                        `protobuf:"varint,18,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	CollateralAmount    string                       `protobuf:"bytes,19,opt,name=collateral_amount,json=collateralAmount,proto3" json:"collateral_amount,omitempty"`
+	InsuranceFundAmount string                       `protobuf:"bytes,20,opt,name=insurance_fund_amount,json=insuranceFundAmount,proto3" json:"insurance_fund_amount,omitempty"`
+	RemainingDeficit    string                       `protobuf:"bytes,21,opt,name=remaining_deficit,json=remainingDeficit,proto3" json:"remaining_deficit,omitempty"`
+	TakeoverPositionId  int64                        `protobuf:"varint,22,opt,name=takeover_position_id,json=takeoverPositionId,proto3" json:"takeover_position_id,omitempty"`
+	CompletedAt         int64                        `protobuf:"varint,23,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
+	InsuranceAttempt    int64                        `protobuf:"varint,24,opt,name=insurance_attempt,json=insuranceAttempt,proto3" json:"insurance_attempt,omitempty"`
+	BackstopAmount      string                       `protobuf:"bytes,25,opt,name=backstop_amount,json=backstopAmount,proto3" json:"backstop_amount,omitempty"`
+	DeficitResolution   LiquidationDeficitResolution `protobuf:"varint,26,opt,name=deficit_resolution,json=deficitResolution,proto3,enum=option.LiquidationDeficitResolution" json:"deficit_resolution,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -3912,6 +4002,20 @@ func (x *OptionLiquidation) GetInsuranceAttempt() int64 {
 		return x.InsuranceAttempt
 	}
 	return 0
+}
+
+func (x *OptionLiquidation) GetBackstopAmount() string {
+	if x != nil {
+		return x.BackstopAmount
+	}
+	return ""
+}
+
+func (x *OptionLiquidation) GetDeficitResolution() LiquidationDeficitResolution {
+	if x != nil {
+		return x.DeficitResolution
+	}
+	return LiquidationDeficitResolution_LIQUIDATION_DEFICIT_RESOLUTION_UNKNOWN
 }
 
 type OptionInsuranceFundFlow struct {
@@ -4315,11 +4419,14 @@ func (x *OptionExerciseDetail) GetAssetInstructions() []*OptionAssetInstruction 
 }
 
 type OptionSettlementDetail struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Settlement    *OptionSettlement      `protobuf:"bytes,1,opt,name=settlement,proto3" json:"settlement,omitempty"`
-	Contract      *OptionContract        `protobuf:"bytes,2,opt,name=contract,proto3" json:"contract,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state             protoimpl.MessageState            `protogen:"open.v1"`
+	Settlement        *OptionSettlement                 `protobuf:"bytes,1,opt,name=settlement,proto3" json:"settlement,omitempty"`
+	Contract          *OptionContract                   `protobuf:"bytes,2,opt,name=contract,proto3" json:"contract,omitempty"`
+	Batch             *OptionSettlementBatch            `protobuf:"bytes,3,opt,name=batch,proto3" json:"batch,omitempty"`
+	PositionDetails   []*OptionSettlementPositionDetail `protobuf:"bytes,4,rep,name=position_details,json=positionDetails,proto3" json:"position_details,omitempty"`
+	AssetInstructions []*OptionAssetInstruction         `protobuf:"bytes,5,rep,name=asset_instructions,json=assetInstructions,proto3" json:"asset_instructions,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *OptionSettlementDetail) Reset() {
@@ -4366,11 +4473,32 @@ func (x *OptionSettlementDetail) GetContract() *OptionContract {
 	return nil
 }
 
+func (x *OptionSettlementDetail) GetBatch() *OptionSettlementBatch {
+	if x != nil {
+		return x.Batch
+	}
+	return nil
+}
+
+func (x *OptionSettlementDetail) GetPositionDetails() []*OptionSettlementPositionDetail {
+	if x != nil {
+		return x.PositionDetails
+	}
+	return nil
+}
+
+func (x *OptionSettlementDetail) GetAssetInstructions() []*OptionAssetInstruction {
+	if x != nil {
+		return x.AssetInstructions
+	}
+	return nil
+}
+
 var File_proto_option_model_proto protoreflect.FileDescriptor
 
 const file_proto_option_model_proto_rawDesc = "" +
 	"\n" +
-	"\x18proto/option/model.proto\x12\x06option\x1a\x19proto/common/common.proto\x1a\x17proto/option/enum.proto\"\xfd\v\n" +
+	"\x18proto/option/model.proto\x12\x06option\x1a\x19proto/common/common.proto\x1a\x17proto/option/enum.proto\"\xe0\r\n" +
 	"\x0eOptionContract\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12#\n" +
@@ -4418,7 +4546,10 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\x0fmin_margin_rate\x18# \x01(\tR\rminMarginRate\x120\n" +
 	"\x14liquidation_fee_rate\x18$ \x01(\tR\x12liquidationFeeRate\x12*\n" +
 	"\x11insurance_user_id\x18% \x01(\x03R\x0finsuranceUserId\x120\n" +
-	"\x14insurance_account_id\x18& \x01(\x03R\x12insuranceAccountId\"\xa2\x05\n" +
+	"\x14insurance_account_id\x18& \x01(\x03R\x12insuranceAccountId\x12^\n" +
+	"\x1aliquidation_deficit_policy\x18' \x01(\x0e2 .option.LiquidationDeficitPolicyR\x18liquidationDeficitPolicy\x12'\n" +
+	"\x0funderlying_coin\x18( \x01(\tR\x0eunderlyingCoin\x12X\n" +
+	"\x18physical_delivery_policy\x18) \x01(\x0e2\x1e.option.PhysicalDeliveryPolicyR\x16physicalDeliveryPolicy\"\xa2\x05\n" +
 	"\fOptionMarket\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -4468,7 +4599,7 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\x04vega\x18\x0e \x01(\tR\x04vega\x12\x10\n" +
 	"\x03rho\x18\x0f \x01(\tR\x03rho\x12#\n" +
 	"\rsnapshot_time\x18\x10 \x01(\x03R\fsnapshotTime\x12!\n" +
-	"\fcreate_times\x18\x11 \x01(\x03R\vcreateTimes\"\xe3\a\n" +
+	"\fcreate_times\x18\x11 \x01(\x03R\vcreateTimes\"\x84\b\n" +
 	"\vOptionOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
@@ -4506,7 +4637,9 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\vcancel_time\x18\x1b \x01(\x03R\n" +
 	"cancelTime\x12!\n" +
 	"\fcreate_times\x18\x1c \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x1d \x01(\x03R\vupdateTimes\"\xe8\x05\n" +
+	"\fupdate_times\x18\x1d \x01(\x03R\vupdateTimes\x12\x1f\n" +
+	"\vmargin_coin\x18\x1e \x01(\tR\n" +
+	"marginCoin\"\xe8\x05\n" +
 	"\vOptionTrade\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
@@ -4668,7 +4801,7 @@ const file_proto_option_model_proto_rawDesc = "" +
 	" \x01(\x0e2\x1d.option.SettlementBatchStatusR\x06status\x12$\n" +
 	"\x0elast_error_msg\x18\v \x01(\tR\flastErrorMsg\x12!\n" +
 	"\fcreate_times\x18\f \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\r \x01(\x03R\vupdateTimes\"\xe6\x03\n" +
+	"\fupdate_times\x18\r \x01(\x03R\vupdateTimes\"\x82\x05\n" +
 	"\x1eOptionSettlementPositionDetail\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
@@ -4687,7 +4820,11 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\x06payoff\x18\v \x01(\tR\x06payoff\x12?\n" +
 	"\tdirection\x18\f \x01(\x0e2!.option.SettlementDetailDirectionR\tdirection\x12%\n" +
 	"\x0einstruction_no\x18\r \x01(\tR\rinstructionNo\x12!\n" +
-	"\fcreate_times\x18\x0e \x01(\x03R\vcreateTimes\"\x92\x04\n" +
+	"\fcreate_times\x18\x0e \x01(\x03R\vcreateTimes\x12#\n" +
+	"\rdelivery_coin\x18\x0f \x01(\tR\fdeliveryCoin\x12+\n" +
+	"\x11delivery_quantity\x18\x10 \x01(\tR\x10deliveryQuantity\x12!\n" +
+	"\fpayment_coin\x18\x11 \x01(\tR\vpaymentCoin\x12%\n" +
+	"\x0epayment_amount\x18\x12 \x01(\tR\rpaymentAmount\"\x92\x04\n" +
 	"\x19OptionReconciliationIssue\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1b\n" +
@@ -4827,7 +4964,7 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\fcreate_times\x18\x0e \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\x0f \x01(\x03R\vupdateTimes\x12-\n" +
 	"\x12remaining_quantity\x18\x10 \x01(\tR\x11remainingQuantity\x12%\n" +
-	"\x0epending_margin\x18\x11 \x01(\tR\rpendingMargin\"\xec\x03\n" +
+	"\x0epending_margin\x18\x11 \x01(\tR\rpendingMargin\"\xa9\x05\n" +
 	"\x11OptionRiskAccount\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -4845,7 +4982,10 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\x06status\x18\v \x01(\x0e2\x19.option.RiskAccountStatusR\x06status\x12$\n" +
 	"\x0elast_calc_time\x18\f \x01(\x03R\flastCalcTime\x12!\n" +
 	"\fcreate_times\x18\r \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x0e \x01(\x03R\vupdateTimes\"\x83\a\n" +
+	"\fupdate_times\x18\x0e \x01(\x03R\vupdateTimes\x12O\n" +
+	"\x15portfolio_risk_method\x18\x0f \x01(\x0e2\x1b.option.PortfolioRiskMethodR\x13portfolioRiskMethod\x126\n" +
+	"\x17portfolio_scenario_loss\x18\x10 \x01(\tR\x15portfolioScenarioLoss\x122\n" +
+	"\x15portfolio_short_floor\x18\x11 \x01(\tR\x13portfolioShortFloor\"\x81\b\n" +
 	"\x11OptionLiquidation\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12%\n" +
@@ -4876,7 +5016,9 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\x11remaining_deficit\x18\x15 \x01(\tR\x10remainingDeficit\x120\n" +
 	"\x14takeover_position_id\x18\x16 \x01(\x03R\x12takeoverPositionId\x12!\n" +
 	"\fcompleted_at\x18\x17 \x01(\x03R\vcompletedAt\x12+\n" +
-	"\x11insurance_attempt\x18\x18 \x01(\x03R\x10insuranceAttempt\"\xd6\x02\n" +
+	"\x11insurance_attempt\x18\x18 \x01(\x03R\x10insuranceAttempt\x12'\n" +
+	"\x0fbackstop_amount\x18\x19 \x01(\tR\x0ebackstopAmount\x12S\n" +
+	"\x12deficit_resolution\x18\x1a \x01(\x0e2$.option.LiquidationDeficitResolutionR\x11deficitResolution\"\xd6\x02\n" +
 	"\x17OptionInsuranceFundFlow\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -4907,12 +5049,15 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\bexercise\x18\x01 \x01(\v2\x16.option.OptionExerciseR\bexercise\x122\n" +
 	"\bcontract\x18\x02 \x01(\v2\x16.option.OptionContractR\bcontract\x12B\n" +
 	"\vassignments\x18\x03 \x03(\v2 .option.OptionExerciseAssignmentR\vassignments\x12M\n" +
-	"\x12asset_instructions\x18\x04 \x03(\v2\x1e.option.OptionAssetInstructionR\x11assetInstructions\"\x86\x01\n" +
+	"\x12asset_instructions\x18\x04 \x03(\v2\x1e.option.OptionAssetInstructionR\x11assetInstructions\"\xdd\x02\n" +
 	"\x16OptionSettlementDetail\x128\n" +
 	"\n" +
 	"settlement\x18\x01 \x01(\v2\x18.option.OptionSettlementR\n" +
 	"settlement\x122\n" +
-	"\bcontract\x18\x02 \x01(\v2\x16.option.OptionContractR\bcontractB\x1cZ\x1awklive/proto/option;optionb\x06proto3"
+	"\bcontract\x18\x02 \x01(\v2\x16.option.OptionContractR\bcontract\x123\n" +
+	"\x05batch\x18\x03 \x01(\v2\x1d.option.OptionSettlementBatchR\x05batch\x12Q\n" +
+	"\x10position_details\x18\x04 \x03(\v2&.option.OptionSettlementPositionDetailR\x0fpositionDetails\x12M\n" +
+	"\x12asset_instructions\x18\x05 \x03(\v2\x1e.option.OptionAssetInstructionR\x11assetInstructionsB\x1cZ\x1awklive/proto/option;optionb\x06proto3"
 
 var (
 	file_proto_option_model_proto_rawDescOnce sync.Once
@@ -4962,35 +5107,39 @@ var file_proto_option_model_proto_goTypes = []any{
 	(common.YesNo)(0),                      // 31: common.YesNo
 	(ContractStatus)(0),                    // 32: option.ContractStatus
 	(SellerMarginMode)(0),                  // 33: option.SellerMarginMode
-	(common.Side)(0),                       // 34: common.Side
-	(PositionEffect)(0),                    // 35: option.PositionEffect
-	(OrderType)(0),                         // 36: option.OrderType
-	(OrderSource)(0),                       // 37: option.OrderSource
-	(OrderStatus)(0),                       // 38: option.OrderStatus
-	(common.PositionSide)(0),               // 39: common.PositionSide
-	(PositionStatus)(0),                    // 40: option.PositionStatus
-	(ExerciseType)(0),                      // 41: option.ExerciseType
-	(ExerciseStatus)(0),                    // 42: option.ExerciseStatus
-	(ExerciseAssignmentStatus)(0),          // 43: option.ExerciseAssignmentStatus
-	(ExerciseResult)(0),                    // 44: option.ExerciseResult
-	(SettlementStatus)(0),                  // 45: option.SettlementStatus
-	(SettlementPriceStatus)(0),             // 46: option.SettlementPriceStatus
-	(SettlementBatchStatus)(0),             // 47: option.SettlementBatchStatus
-	(SettlementDetailDirection)(0),         // 48: option.SettlementDetailDirection
-	(ReconciliationCheckType)(0),           // 49: option.ReconciliationCheckType
-	(ReconciliationIssueStatus)(0),         // 50: option.ReconciliationIssueStatus
-	(AccountStatus)(0),                     // 51: option.AccountStatus
-	(BillRefType)(0),                       // 52: option.BillRefType
-	(AssetInstructionAction)(0),            // 53: option.AssetInstructionAction
-	(AssetInstructionStatus)(0),            // 54: option.AssetInstructionStatus
-	(AssetReconciliationStatus)(0),         // 55: option.AssetReconciliationStatus
-	(OptionEventType)(0),                   // 56: option.OptionEventType
-	(OptionEventStatus)(0),                 // 57: option.OptionEventStatus
-	(OptionInboxStatus)(0),                 // 58: option.OptionInboxStatus
-	(MarginLotStatus)(0),                   // 59: option.MarginLotStatus
-	(RiskAccountStatus)(0),                 // 60: option.RiskAccountStatus
-	(LiquidationStatus)(0),                 // 61: option.LiquidationStatus
-	(InsuranceFundFlowType)(0),             // 62: option.InsuranceFundFlowType
+	(LiquidationDeficitPolicy)(0),          // 34: option.LiquidationDeficitPolicy
+	(PhysicalDeliveryPolicy)(0),            // 35: option.PhysicalDeliveryPolicy
+	(common.Side)(0),                       // 36: common.Side
+	(PositionEffect)(0),                    // 37: option.PositionEffect
+	(OrderType)(0),                         // 38: option.OrderType
+	(OrderSource)(0),                       // 39: option.OrderSource
+	(OrderStatus)(0),                       // 40: option.OrderStatus
+	(common.PositionSide)(0),               // 41: common.PositionSide
+	(PositionStatus)(0),                    // 42: option.PositionStatus
+	(ExerciseType)(0),                      // 43: option.ExerciseType
+	(ExerciseStatus)(0),                    // 44: option.ExerciseStatus
+	(ExerciseAssignmentStatus)(0),          // 45: option.ExerciseAssignmentStatus
+	(ExerciseResult)(0),                    // 46: option.ExerciseResult
+	(SettlementStatus)(0),                  // 47: option.SettlementStatus
+	(SettlementPriceStatus)(0),             // 48: option.SettlementPriceStatus
+	(SettlementBatchStatus)(0),             // 49: option.SettlementBatchStatus
+	(SettlementDetailDirection)(0),         // 50: option.SettlementDetailDirection
+	(ReconciliationCheckType)(0),           // 51: option.ReconciliationCheckType
+	(ReconciliationIssueStatus)(0),         // 52: option.ReconciliationIssueStatus
+	(AccountStatus)(0),                     // 53: option.AccountStatus
+	(BillRefType)(0),                       // 54: option.BillRefType
+	(AssetInstructionAction)(0),            // 55: option.AssetInstructionAction
+	(AssetInstructionStatus)(0),            // 56: option.AssetInstructionStatus
+	(AssetReconciliationStatus)(0),         // 57: option.AssetReconciliationStatus
+	(OptionEventType)(0),                   // 58: option.OptionEventType
+	(OptionEventStatus)(0),                 // 59: option.OptionEventStatus
+	(OptionInboxStatus)(0),                 // 60: option.OptionInboxStatus
+	(MarginLotStatus)(0),                   // 61: option.MarginLotStatus
+	(RiskAccountStatus)(0),                 // 62: option.RiskAccountStatus
+	(PortfolioRiskMethod)(0),               // 63: option.PortfolioRiskMethod
+	(LiquidationStatus)(0),                 // 64: option.LiquidationStatus
+	(LiquidationDeficitResolution)(0),      // 65: option.LiquidationDeficitResolution
+	(InsuranceFundFlowType)(0),             // 66: option.InsuranceFundFlowType
 }
 var file_proto_option_model_proto_depIdxs = []int32{
 	28, // 0: option.OptionContract.option_type:type_name -> option.OptionType
@@ -5000,61 +5149,68 @@ var file_proto_option_model_proto_depIdxs = []int32{
 	32, // 4: option.OptionContract.status:type_name -> option.ContractStatus
 	31, // 5: option.OptionContract.is_deleted:type_name -> common.YesNo
 	33, // 6: option.OptionContract.seller_margin_mode:type_name -> option.SellerMarginMode
-	34, // 7: option.OptionOrder.side:type_name -> common.Side
-	35, // 8: option.OptionOrder.position_effect:type_name -> option.PositionEffect
-	36, // 9: option.OptionOrder.order_type:type_name -> option.OrderType
-	37, // 10: option.OptionOrder.source:type_name -> option.OrderSource
-	31, // 11: option.OptionOrder.reduce_only:type_name -> common.YesNo
-	31, // 12: option.OptionOrder.mmp:type_name -> common.YesNo
-	38, // 13: option.OptionOrder.status:type_name -> option.OrderStatus
-	34, // 14: option.OptionTrade.maker_side:type_name -> common.Side
-	39, // 15: option.OptionPosition.side:type_name -> common.PositionSide
-	40, // 16: option.OptionPosition.status:type_name -> option.PositionStatus
-	41, // 17: option.OptionExercise.exercise_type:type_name -> option.ExerciseType
-	42, // 18: option.OptionExercise.status:type_name -> option.ExerciseStatus
-	43, // 19: option.OptionExerciseAssignment.status:type_name -> option.ExerciseAssignmentStatus
-	31, // 20: option.OptionSettlement.is_itm:type_name -> common.YesNo
-	44, // 21: option.OptionSettlement.exercise_result:type_name -> option.ExerciseResult
-	45, // 22: option.OptionSettlement.status:type_name -> option.SettlementStatus
-	46, // 23: option.OptionSettlementPrice.status:type_name -> option.SettlementPriceStatus
-	47, // 24: option.OptionSettlementBatch.status:type_name -> option.SettlementBatchStatus
-	39, // 25: option.OptionSettlementPositionDetail.side:type_name -> common.PositionSide
-	48, // 26: option.OptionSettlementPositionDetail.direction:type_name -> option.SettlementDetailDirection
-	49, // 27: option.OptionReconciliationIssue.check_type:type_name -> option.ReconciliationCheckType
-	50, // 28: option.OptionReconciliationIssue.status:type_name -> option.ReconciliationIssueStatus
-	51, // 29: option.OptionAccount.status:type_name -> option.AccountStatus
-	52, // 30: option.OptionBill.ref_type:type_name -> option.BillRefType
-	53, // 31: option.OptionAssetInstruction.action:type_name -> option.AssetInstructionAction
-	54, // 32: option.OptionAssetInstruction.status:type_name -> option.AssetInstructionStatus
-	55, // 33: option.OptionAssetInstruction.reconciliation_status:type_name -> option.AssetReconciliationStatus
-	56, // 34: option.OptionOutboxEvent.event_type:type_name -> option.OptionEventType
-	57, // 35: option.OptionOutboxEvent.status:type_name -> option.OptionEventStatus
-	56, // 36: option.OptionInboxEvent.event_type:type_name -> option.OptionEventType
-	58, // 37: option.OptionInboxEvent.status:type_name -> option.OptionInboxStatus
-	59, // 38: option.OptionMarginLot.status:type_name -> option.MarginLotStatus
-	60, // 39: option.OptionRiskAccount.status:type_name -> option.RiskAccountStatus
-	61, // 40: option.OptionLiquidation.status:type_name -> option.LiquidationStatus
-	62, // 41: option.OptionInsuranceFundFlow.flow_type:type_name -> option.InsuranceFundFlowType
-	0,  // 42: option.OptionContractDetail.contract:type_name -> option.OptionContract
-	1,  // 43: option.OptionContractDetail.market:type_name -> option.OptionMarket
-	5,  // 44: option.OptionPositionDetail.position:type_name -> option.OptionPosition
-	0,  // 45: option.OptionPositionDetail.contract:type_name -> option.OptionContract
-	1,  // 46: option.OptionPositionDetail.market:type_name -> option.OptionMarket
-	3,  // 47: option.OptionOrderDetail.order:type_name -> option.OptionOrder
-	0,  // 48: option.OptionOrderDetail.contract:type_name -> option.OptionContract
-	4,  // 49: option.OptionTradeDetail.trade:type_name -> option.OptionTrade
-	0,  // 50: option.OptionTradeDetail.contract:type_name -> option.OptionContract
-	6,  // 51: option.OptionExerciseDetail.exercise:type_name -> option.OptionExercise
-	0,  // 52: option.OptionExerciseDetail.contract:type_name -> option.OptionContract
-	7,  // 53: option.OptionExerciseDetail.assignments:type_name -> option.OptionExerciseAssignment
-	15, // 54: option.OptionExerciseDetail.asset_instructions:type_name -> option.OptionAssetInstruction
-	8,  // 55: option.OptionSettlementDetail.settlement:type_name -> option.OptionSettlement
-	0,  // 56: option.OptionSettlementDetail.contract:type_name -> option.OptionContract
-	57, // [57:57] is the sub-list for method output_type
-	57, // [57:57] is the sub-list for method input_type
-	57, // [57:57] is the sub-list for extension type_name
-	57, // [57:57] is the sub-list for extension extendee
-	0,  // [0:57] is the sub-list for field type_name
+	34, // 7: option.OptionContract.liquidation_deficit_policy:type_name -> option.LiquidationDeficitPolicy
+	35, // 8: option.OptionContract.physical_delivery_policy:type_name -> option.PhysicalDeliveryPolicy
+	36, // 9: option.OptionOrder.side:type_name -> common.Side
+	37, // 10: option.OptionOrder.position_effect:type_name -> option.PositionEffect
+	38, // 11: option.OptionOrder.order_type:type_name -> option.OrderType
+	39, // 12: option.OptionOrder.source:type_name -> option.OrderSource
+	31, // 13: option.OptionOrder.reduce_only:type_name -> common.YesNo
+	31, // 14: option.OptionOrder.mmp:type_name -> common.YesNo
+	40, // 15: option.OptionOrder.status:type_name -> option.OrderStatus
+	36, // 16: option.OptionTrade.maker_side:type_name -> common.Side
+	41, // 17: option.OptionPosition.side:type_name -> common.PositionSide
+	42, // 18: option.OptionPosition.status:type_name -> option.PositionStatus
+	43, // 19: option.OptionExercise.exercise_type:type_name -> option.ExerciseType
+	44, // 20: option.OptionExercise.status:type_name -> option.ExerciseStatus
+	45, // 21: option.OptionExerciseAssignment.status:type_name -> option.ExerciseAssignmentStatus
+	31, // 22: option.OptionSettlement.is_itm:type_name -> common.YesNo
+	46, // 23: option.OptionSettlement.exercise_result:type_name -> option.ExerciseResult
+	47, // 24: option.OptionSettlement.status:type_name -> option.SettlementStatus
+	48, // 25: option.OptionSettlementPrice.status:type_name -> option.SettlementPriceStatus
+	49, // 26: option.OptionSettlementBatch.status:type_name -> option.SettlementBatchStatus
+	41, // 27: option.OptionSettlementPositionDetail.side:type_name -> common.PositionSide
+	50, // 28: option.OptionSettlementPositionDetail.direction:type_name -> option.SettlementDetailDirection
+	51, // 29: option.OptionReconciliationIssue.check_type:type_name -> option.ReconciliationCheckType
+	52, // 30: option.OptionReconciliationIssue.status:type_name -> option.ReconciliationIssueStatus
+	53, // 31: option.OptionAccount.status:type_name -> option.AccountStatus
+	54, // 32: option.OptionBill.ref_type:type_name -> option.BillRefType
+	55, // 33: option.OptionAssetInstruction.action:type_name -> option.AssetInstructionAction
+	56, // 34: option.OptionAssetInstruction.status:type_name -> option.AssetInstructionStatus
+	57, // 35: option.OptionAssetInstruction.reconciliation_status:type_name -> option.AssetReconciliationStatus
+	58, // 36: option.OptionOutboxEvent.event_type:type_name -> option.OptionEventType
+	59, // 37: option.OptionOutboxEvent.status:type_name -> option.OptionEventStatus
+	58, // 38: option.OptionInboxEvent.event_type:type_name -> option.OptionEventType
+	60, // 39: option.OptionInboxEvent.status:type_name -> option.OptionInboxStatus
+	61, // 40: option.OptionMarginLot.status:type_name -> option.MarginLotStatus
+	62, // 41: option.OptionRiskAccount.status:type_name -> option.RiskAccountStatus
+	63, // 42: option.OptionRiskAccount.portfolio_risk_method:type_name -> option.PortfolioRiskMethod
+	64, // 43: option.OptionLiquidation.status:type_name -> option.LiquidationStatus
+	65, // 44: option.OptionLiquidation.deficit_resolution:type_name -> option.LiquidationDeficitResolution
+	66, // 45: option.OptionInsuranceFundFlow.flow_type:type_name -> option.InsuranceFundFlowType
+	0,  // 46: option.OptionContractDetail.contract:type_name -> option.OptionContract
+	1,  // 47: option.OptionContractDetail.market:type_name -> option.OptionMarket
+	5,  // 48: option.OptionPositionDetail.position:type_name -> option.OptionPosition
+	0,  // 49: option.OptionPositionDetail.contract:type_name -> option.OptionContract
+	1,  // 50: option.OptionPositionDetail.market:type_name -> option.OptionMarket
+	3,  // 51: option.OptionOrderDetail.order:type_name -> option.OptionOrder
+	0,  // 52: option.OptionOrderDetail.contract:type_name -> option.OptionContract
+	4,  // 53: option.OptionTradeDetail.trade:type_name -> option.OptionTrade
+	0,  // 54: option.OptionTradeDetail.contract:type_name -> option.OptionContract
+	6,  // 55: option.OptionExerciseDetail.exercise:type_name -> option.OptionExercise
+	0,  // 56: option.OptionExerciseDetail.contract:type_name -> option.OptionContract
+	7,  // 57: option.OptionExerciseDetail.assignments:type_name -> option.OptionExerciseAssignment
+	15, // 58: option.OptionExerciseDetail.asset_instructions:type_name -> option.OptionAssetInstruction
+	8,  // 59: option.OptionSettlementDetail.settlement:type_name -> option.OptionSettlement
+	0,  // 60: option.OptionSettlementDetail.contract:type_name -> option.OptionContract
+	10, // 61: option.OptionSettlementDetail.batch:type_name -> option.OptionSettlementBatch
+	11, // 62: option.OptionSettlementDetail.position_details:type_name -> option.OptionSettlementPositionDetail
+	15, // 63: option.OptionSettlementDetail.asset_instructions:type_name -> option.OptionAssetInstruction
+	64, // [64:64] is the sub-list for method output_type
+	64, // [64:64] is the sub-list for method input_type
+	64, // [64:64] is the sub-list for extension type_name
+	64, // [64:64] is the sub-list for extension extendee
+	0,  // [0:64] is the sub-list for field type_name
 }
 
 func init() { file_proto_option_model_proto_init() }

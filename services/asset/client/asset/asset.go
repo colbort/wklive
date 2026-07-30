@@ -14,84 +14,86 @@ import (
 )
 
 type (
-	AddAssetReq                 = asset.AddAssetReq
-	AddAvailableReq             = asset.AddAvailableReq
-	AdjustPlatformAccountReq    = asset.AdjustPlatformAccountReq
-	AssetCoinConfigResp         = asset.AssetCoinConfigResp
-	ChangeAssetData             = asset.ChangeAssetData
-	ChangeAssetResp             = asset.ChangeAssetResp
-	CoverInsuranceDeficitReq    = asset.CoverInsuranceDeficitReq
-	CoverInsuranceDeficitResp   = asset.CoverInsuranceDeficitResp
-	CreateAssetCoinConfigReq    = asset.CreateAssetCoinConfigReq
-	CreditPlatformRevenueReq    = asset.CreditPlatformRevenueReq
-	CreditPlatformRevenueResp   = asset.CreditPlatformRevenueResp
-	DeductFrozenAssetByBizNoReq = asset.DeductFrozenAssetByBizNoReq
-	DeductFrozenAssetReq        = asset.DeductFrozenAssetReq
-	DeductLockedAssetByBizNoReq = asset.DeductLockedAssetByBizNoReq
-	DeductLockedAssetReq        = asset.DeductLockedAssetReq
-	DeleteAssetCoinConfigReq    = asset.DeleteAssetCoinConfigReq
-	DeleteAssetCoinConfigResp   = asset.DeleteAssetCoinConfigResp
-	FreezeAssetData             = asset.FreezeAssetData
-	FreezeAssetReq              = asset.FreezeAssetReq
-	FreezeAssetResp             = asset.FreezeAssetResp
-	GetAssetCoinConfigReq       = asset.GetAssetCoinConfigReq
-	GetAssetFlowByBizNoReq      = asset.GetAssetFlowByBizNoReq
-	GetAssetFlowByBizNoResp     = asset.GetAssetFlowByBizNoResp
-	GetInsuranceCoverReq        = asset.GetInsuranceCoverReq
-	GetInsuranceCoverResp       = asset.GetInsuranceCoverResp
-	GetMyAssetReq               = asset.GetMyAssetReq
-	GetMyAssetResp              = asset.GetMyAssetResp
-	GetMyAssetSummaryReq        = asset.GetMyAssetSummaryReq
-	GetMyAssetSummaryResp       = asset.GetMyAssetSummaryResp
-	GetPlatformAccountReq       = asset.GetPlatformAccountReq
-	GetUserAssetDetailReq       = asset.GetUserAssetDetailReq
-	GetUserAssetDetailResp      = asset.GetUserAssetDetailResp
-	ListAssetCoinConfigsReq     = asset.ListAssetCoinConfigsReq
-	ListAssetCoinConfigsResp    = asset.ListAssetCoinConfigsResp
-	ListMyAssetFlowsReq         = asset.ListMyAssetFlowsReq
-	ListMyAssetFlowsResp        = asset.ListMyAssetFlowsResp
-	ListMyAssetsReq             = asset.ListMyAssetsReq
-	ListMyAssetsResp            = asset.ListMyAssetsResp
-	ListMyFreezesReq            = asset.ListMyFreezesReq
-	ListMyFreezesResp           = asset.ListMyFreezesResp
-	ListMyLocksReq              = asset.ListMyLocksReq
-	ListMyLocksResp             = asset.ListMyLocksResp
-	LockAssetData               = asset.LockAssetData
-	LockAssetReq                = asset.LockAssetReq
-	LockAssetResp               = asset.LockAssetResp
-	ManualChangeAssetData       = asset.ManualChangeAssetData
-	ManualChangeAssetResp       = asset.ManualChangeAssetResp
-	ManualFreezeAssetReq        = asset.ManualFreezeAssetReq
-	ManualLockAssetReq          = asset.ManualLockAssetReq
-	ManualUnfreezeAssetReq      = asset.ManualUnfreezeAssetReq
-	ManualUnlockAssetReq        = asset.ManualUnlockAssetReq
-	PageAssetCoinConfigsReq     = asset.PageAssetCoinConfigsReq
-	PageAssetCoinConfigsResp    = asset.PageAssetCoinConfigsResp
-	PageAssetFlowsReq           = asset.PageAssetFlowsReq
-	PageAssetFlowsResp          = asset.PageAssetFlowsResp
-	PageAssetFreezesReq         = asset.PageAssetFreezesReq
-	PageAssetFreezesResp        = asset.PageAssetFreezesResp
-	PageAssetLocksReq           = asset.PageAssetLocksReq
-	PageAssetLocksResp          = asset.PageAssetLocksResp
-	PageUserAssetsReq           = asset.PageUserAssetsReq
-	PageUserAssetsResp          = asset.PageUserAssetsResp
-	PlatformAccount             = asset.PlatformAccount
-	PlatformAccountResp         = asset.PlatformAccountResp
-	ReverseInsuranceCoverReq    = asset.ReverseInsuranceCoverReq
-	SetPlatformAccountReq       = asset.SetPlatformAccountReq
-	SubAssetReq                 = asset.SubAssetReq
-	SubAvailableReq             = asset.SubAvailableReq
-	TransferAssetData           = asset.TransferAssetData
-	TransferAssetReq            = asset.TransferAssetReq
-	TransferAssetResp           = asset.TransferAssetResp
-	TransferMyAssetData         = asset.TransferMyAssetData
-	TransferMyAssetReq          = asset.TransferMyAssetReq
-	TransferMyAssetResp         = asset.TransferMyAssetResp
-	UnfreezeAssetByBizNoReq     = asset.UnfreezeAssetByBizNoReq
-	UnfreezeAssetReq            = asset.UnfreezeAssetReq
-	UnlockAssetByBizNoReq       = asset.UnlockAssetByBizNoReq
-	UnlockAssetReq              = asset.UnlockAssetReq
-	UpdateAssetCoinConfigReq    = asset.UpdateAssetCoinConfigReq
+	AddAssetReq                      = asset.AddAssetReq
+	AddAvailableReq                  = asset.AddAvailableReq
+	AdjustPlatformAccountReq         = asset.AdjustPlatformAccountReq
+	AssetCoinConfigResp              = asset.AssetCoinConfigResp
+	ChangeAssetData                  = asset.ChangeAssetData
+	ChangeAssetResp                  = asset.ChangeAssetResp
+	CoverInsuranceDeficitReq         = asset.CoverInsuranceDeficitReq
+	CoverInsuranceDeficitResp        = asset.CoverInsuranceDeficitResp
+	CoverPlatformBackstopDeficitReq  = asset.CoverPlatformBackstopDeficitReq
+	CoverPlatformBackstopDeficitResp = asset.CoverPlatformBackstopDeficitResp
+	CreateAssetCoinConfigReq         = asset.CreateAssetCoinConfigReq
+	CreditPlatformRevenueReq         = asset.CreditPlatformRevenueReq
+	CreditPlatformRevenueResp        = asset.CreditPlatformRevenueResp
+	DeductFrozenAssetByBizNoReq      = asset.DeductFrozenAssetByBizNoReq
+	DeductFrozenAssetReq             = asset.DeductFrozenAssetReq
+	DeductLockedAssetByBizNoReq      = asset.DeductLockedAssetByBizNoReq
+	DeductLockedAssetReq             = asset.DeductLockedAssetReq
+	DeleteAssetCoinConfigReq         = asset.DeleteAssetCoinConfigReq
+	DeleteAssetCoinConfigResp        = asset.DeleteAssetCoinConfigResp
+	FreezeAssetData                  = asset.FreezeAssetData
+	FreezeAssetReq                   = asset.FreezeAssetReq
+	FreezeAssetResp                  = asset.FreezeAssetResp
+	GetAssetCoinConfigReq            = asset.GetAssetCoinConfigReq
+	GetAssetFlowByBizNoReq           = asset.GetAssetFlowByBizNoReq
+	GetAssetFlowByBizNoResp          = asset.GetAssetFlowByBizNoResp
+	GetInsuranceCoverReq             = asset.GetInsuranceCoverReq
+	GetInsuranceCoverResp            = asset.GetInsuranceCoverResp
+	GetMyAssetReq                    = asset.GetMyAssetReq
+	GetMyAssetResp                   = asset.GetMyAssetResp
+	GetMyAssetSummaryReq             = asset.GetMyAssetSummaryReq
+	GetMyAssetSummaryResp            = asset.GetMyAssetSummaryResp
+	GetPlatformAccountReq            = asset.GetPlatformAccountReq
+	GetUserAssetDetailReq            = asset.GetUserAssetDetailReq
+	GetUserAssetDetailResp           = asset.GetUserAssetDetailResp
+	ListAssetCoinConfigsReq          = asset.ListAssetCoinConfigsReq
+	ListAssetCoinConfigsResp         = asset.ListAssetCoinConfigsResp
+	ListMyAssetFlowsReq              = asset.ListMyAssetFlowsReq
+	ListMyAssetFlowsResp             = asset.ListMyAssetFlowsResp
+	ListMyAssetsReq                  = asset.ListMyAssetsReq
+	ListMyAssetsResp                 = asset.ListMyAssetsResp
+	ListMyFreezesReq                 = asset.ListMyFreezesReq
+	ListMyFreezesResp                = asset.ListMyFreezesResp
+	ListMyLocksReq                   = asset.ListMyLocksReq
+	ListMyLocksResp                  = asset.ListMyLocksResp
+	LockAssetData                    = asset.LockAssetData
+	LockAssetReq                     = asset.LockAssetReq
+	LockAssetResp                    = asset.LockAssetResp
+	ManualChangeAssetData            = asset.ManualChangeAssetData
+	ManualChangeAssetResp            = asset.ManualChangeAssetResp
+	ManualFreezeAssetReq             = asset.ManualFreezeAssetReq
+	ManualLockAssetReq               = asset.ManualLockAssetReq
+	ManualUnfreezeAssetReq           = asset.ManualUnfreezeAssetReq
+	ManualUnlockAssetReq             = asset.ManualUnlockAssetReq
+	PageAssetCoinConfigsReq          = asset.PageAssetCoinConfigsReq
+	PageAssetCoinConfigsResp         = asset.PageAssetCoinConfigsResp
+	PageAssetFlowsReq                = asset.PageAssetFlowsReq
+	PageAssetFlowsResp               = asset.PageAssetFlowsResp
+	PageAssetFreezesReq              = asset.PageAssetFreezesReq
+	PageAssetFreezesResp             = asset.PageAssetFreezesResp
+	PageAssetLocksReq                = asset.PageAssetLocksReq
+	PageAssetLocksResp               = asset.PageAssetLocksResp
+	PageUserAssetsReq                = asset.PageUserAssetsReq
+	PageUserAssetsResp               = asset.PageUserAssetsResp
+	PlatformAccount                  = asset.PlatformAccount
+	PlatformAccountResp              = asset.PlatformAccountResp
+	ReverseInsuranceCoverReq         = asset.ReverseInsuranceCoverReq
+	SetPlatformAccountReq            = asset.SetPlatformAccountReq
+	SubAssetReq                      = asset.SubAssetReq
+	SubAvailableReq                  = asset.SubAvailableReq
+	TransferAssetData                = asset.TransferAssetData
+	TransferAssetReq                 = asset.TransferAssetReq
+	TransferAssetResp                = asset.TransferAssetResp
+	TransferMyAssetData              = asset.TransferMyAssetData
+	TransferMyAssetReq               = asset.TransferMyAssetReq
+	TransferMyAssetResp              = asset.TransferMyAssetResp
+	UnfreezeAssetByBizNoReq          = asset.UnfreezeAssetByBizNoReq
+	UnfreezeAssetReq                 = asset.UnfreezeAssetReq
+	UnlockAssetByBizNoReq            = asset.UnlockAssetByBizNoReq
+	UnlockAssetReq                   = asset.UnlockAssetReq
+	UpdateAssetCoinConfigReq         = asset.UpdateAssetCoinConfigReq
 
 	Asset interface {
 		// 内部查询指定钱包余额，供风险引擎读取统一资产账本。
@@ -127,6 +129,7 @@ type (
 		// 从租户保险基金账户原子扣减，余额不足时允许部分赔付。
 		CoverInsuranceDeficit(ctx context.Context, in *CoverInsuranceDeficitReq, opts ...grpc.CallOption) (*CoverInsuranceDeficitResp, error)
 		ReverseInsuranceCover(ctx context.Context, in *ReverseInsuranceCoverReq, opts ...grpc.CallOption) (*ChangeAssetResp, error)
+		CoverPlatformBackstopDeficit(ctx context.Context, in *CoverPlatformBackstopDeficitReq, opts ...grpc.CallOption) (*CoverPlatformBackstopDeficitResp, error)
 		// 将业务手续费原子、幂等计入租户平台手续费收入账户。
 		CreditPlatformRevenue(ctx context.Context, in *CreditPlatformRevenueReq, opts ...grpc.CallOption) (*CreditPlatformRevenueResp, error)
 	}
@@ -241,6 +244,11 @@ func (m *defaultAsset) CoverInsuranceDeficit(ctx context.Context, in *CoverInsur
 func (m *defaultAsset) ReverseInsuranceCover(ctx context.Context, in *ReverseInsuranceCoverReq, opts ...grpc.CallOption) (*ChangeAssetResp, error) {
 	client := asset.NewAssetClient(m.cli.Conn())
 	return client.ReverseInsuranceCover(ctx, in, opts...)
+}
+
+func (m *defaultAsset) CoverPlatformBackstopDeficit(ctx context.Context, in *CoverPlatformBackstopDeficitReq, opts ...grpc.CallOption) (*CoverPlatformBackstopDeficitResp, error) {
+	client := asset.NewAssetClient(m.cli.Conn())
+	return client.CoverPlatformBackstopDeficit(ctx, in, opts...)
 }
 
 // 将业务手续费原子、幂等计入租户平台手续费收入账户。

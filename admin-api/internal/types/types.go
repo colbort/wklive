@@ -633,40 +633,43 @@ type CreateCategoryReq struct {
 }
 
 type CreateContractReq struct {
-	TenantId              int64  `json:"tenantId"`
-	ContractCode          string `json:"contractCode"`
-	UnderlyingSymbol      string `json:"underlyingSymbol"`
-	SettleCoin            string `json:"settleCoin"`
-	QuoteCoin             string `json:"quoteCoin"`
-	OptionType            int64  `json:"optionType"`
-	ExerciseStyle         int64  `json:"exerciseStyle"`
-	SettlementType        int64  `json:"settlementType"`
-	StrikePrice           string `json:"strikePrice" validate:"required,decimal_gt_zero,decimal_32_16"`
-	ContractUnit          string `json:"contractUnit" validate:"required,decimal_gt_zero,decimal_32_16"`
-	MinOrderQty           string `json:"minOrderQty" validate:"required,decimal_gte_zero,decimal_32_16"`
-	MaxOrderQty           string `json:"maxOrderQty" validate:"required,decimal_gte_zero,decimal_32_16"`
-	PriceTick             string `json:"priceTick" validate:"required,decimal_gt_zero,decimal_32_16"`
-	QtyStep               string `json:"qtyStep" validate:"required,decimal_gt_zero,decimal_32_16"`
-	Multiplier            string `json:"multiplier" validate:"required,decimal_gt_zero,decimal_32_16"`
-	ListTime              int64  `json:"listTime"`
-	ExpireTime            int64  `json:"expireTime"`
-	DeliverTime           int64  `json:"deliverTime"`
-	IsAutoExercise        int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
-	Status                int64  `json:"status"`
-	Sort                  int64  `json:"sort"`
-	Remark                string `json:"remark,optional"`
-	MakerFeeRate          string `json:"makerFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
-	TakerFeeRate          string `json:"takerFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
-	ExerciseFeeRate       string `json:"exerciseFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
-	FeeUserId             int64  `json:"feeUserId,optional"`
-	FeeAccountId          int64  `json:"feeAccountId,optional"`
-	SellerMarginMode      int64  `json:"sellerMarginMode,optional"`
-	InitialMarginRate     string `json:"initialMarginRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
-	MaintenanceMarginRate string `json:"maintenanceMarginRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
-	MinMarginRate         string `json:"minMarginRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
-	LiquidationFeeRate    string `json:"liquidationFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
-	InsuranceUserId       int64  `json:"insuranceUserId,optional"`
-	InsuranceAccountId    int64  `json:"insuranceAccountId,optional"`
+	TenantId                 int64  `json:"tenantId"`
+	ContractCode             string `json:"contractCode"`
+	UnderlyingSymbol         string `json:"underlyingSymbol"`
+	UnderlyingCoin           string `json:"underlyingCoin,optional"`
+	SettleCoin               string `json:"settleCoin"`
+	QuoteCoin                string `json:"quoteCoin"`
+	OptionType               int64  `json:"optionType"`
+	ExerciseStyle            int64  `json:"exerciseStyle"`
+	SettlementType           int64  `json:"settlementType"`
+	StrikePrice              string `json:"strikePrice" validate:"required,decimal_gt_zero,decimal_32_16"`
+	ContractUnit             string `json:"contractUnit" validate:"required,decimal_gt_zero,decimal_32_16"`
+	MinOrderQty              string `json:"minOrderQty" validate:"required,decimal_gte_zero,decimal_32_16"`
+	MaxOrderQty              string `json:"maxOrderQty" validate:"required,decimal_gte_zero,decimal_32_16"`
+	PriceTick                string `json:"priceTick" validate:"required,decimal_gt_zero,decimal_32_16"`
+	QtyStep                  string `json:"qtyStep" validate:"required,decimal_gt_zero,decimal_32_16"`
+	Multiplier               string `json:"multiplier" validate:"required,decimal_gt_zero,decimal_32_16"`
+	ListTime                 int64  `json:"listTime"`
+	ExpireTime               int64  `json:"expireTime"`
+	DeliverTime              int64  `json:"deliverTime"`
+	IsAutoExercise           int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
+	Status                   int64  `json:"status"`
+	Sort                     int64  `json:"sort"`
+	Remark                   string `json:"remark,optional"`
+	MakerFeeRate             string `json:"makerFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	TakerFeeRate             string `json:"takerFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	ExerciseFeeRate          string `json:"exerciseFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	FeeUserId                int64  `json:"feeUserId,optional"`
+	FeeAccountId             int64  `json:"feeAccountId,optional"`
+	SellerMarginMode         int64  `json:"sellerMarginMode,optional"`
+	InitialMarginRate        string `json:"initialMarginRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	MaintenanceMarginRate    string `json:"maintenanceMarginRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	MinMarginRate            string `json:"minMarginRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	LiquidationFeeRate       string `json:"liquidationFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	InsuranceUserId          int64  `json:"insuranceUserId,optional"`
+	InsuranceAccountId       int64  `json:"insuranceAccountId,optional"`
+	LiquidationDeficitPolicy int64  `json:"liquidationDeficitPolicy,optional"`
+	PhysicalDeliveryPolicy   int64  `json:"physicalDeliveryPolicy,optional"`
 }
 
 type CreateContractResp struct {
@@ -2727,6 +2730,34 @@ type OptionAdminCommonResp struct {
 	RespBase
 }
 
+type OptionAssetInstruction struct {
+	Id                   int64  `json:"id"`
+	TenantId             int64  `json:"tenantId"`
+	InstructionNo        string `json:"instructionNo"`
+	BizNo                string `json:"bizNo"`
+	OrderId              int64  `json:"orderId"`
+	TradeId              int64  `json:"tradeId"`
+	PositionId           int64  `json:"positionId"`
+	UserId               int64  `json:"userId"`
+	AccountId            int64  `json:"accountId"`
+	Action               int64  `json:"action"`
+	TargetBizNo          string `json:"targetBizNo"`
+	Coin                 string `json:"coin"`
+	Amount               string `json:"amount" validate:"decimal_32_16"`
+	StepNo               int64  `json:"stepNo"`
+	Status               int64  `json:"status"`
+	RetryCount           int64  `json:"retryCount"`
+	NextRetryAt          int64  `json:"nextRetryAt"`
+	LastErrorMsg         string `json:"lastErrorMsg"`
+	CreateTimes          int64  `json:"createTimes"`
+	UpdateTimes          int64  `json:"updateTimes"`
+	AssetFlowNo          string `json:"assetFlowNo"`
+	ReconciliationStatus int64  `json:"reconciliationStatus"`
+	ReconciledAt         int64  `json:"reconciledAt"`
+	MarginLotId          int64  `json:"marginLotId"`
+	LiquidationId        int64  `json:"liquidationId"`
+}
+
 type OptionBill struct {
 	Id            int64  `json:"id"`
 	TenantId      int64  `json:"tenantId"`
@@ -2744,44 +2775,47 @@ type OptionBill struct {
 }
 
 type OptionContract struct {
-	Id                    int64  `json:"id"`
-	TenantId              int64  `json:"tenantId"`
-	ContractCode          string `json:"contractCode"`
-	UnderlyingSymbol      string `json:"underlyingSymbol"`
-	SettleCoin            string `json:"settleCoin"`
-	QuoteCoin             string `json:"quoteCoin"`
-	OptionType            int64  `json:"optionType"`
-	ExerciseStyle         int64  `json:"exerciseStyle"`
-	SettlementType        int64  `json:"settlementType"`
-	StrikePrice           string `json:"strikePrice" validate:"decimal_32_16"`
-	ContractUnit          string `json:"contractUnit" validate:"decimal_32_16"`
-	MinOrderQty           string `json:"minOrderQty" validate:"decimal_32_16"`
-	MaxOrderQty           string `json:"maxOrderQty" validate:"decimal_32_16"`
-	PriceTick             string `json:"priceTick" validate:"decimal_32_16"`
-	QtyStep               string `json:"qtyStep" validate:"decimal_32_16"`
-	Multiplier            string `json:"multiplier" validate:"decimal_32_16"`
-	ListTime              int64  `json:"listTime"`
-	ExpireTime            int64  `json:"expireTime"`
-	DeliverTime           int64  `json:"deliverTime"`
-	IsAutoExercise        int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
-	Status                int64  `json:"status"`
-	Sort                  int64  `json:"sort"`
-	Remark                string `json:"remark"`
-	IsDeleted             int64  `json:"isDeleted"`
-	CreateTimes           int64  `json:"createTimes"`
-	UpdateTimes           int64  `json:"updateTimes"`
-	MakerFeeRate          string `json:"makerFeeRate" validate:"decimal_20_10"`
-	TakerFeeRate          string `json:"takerFeeRate" validate:"decimal_20_10"`
-	ExerciseFeeRate       string `json:"exerciseFeeRate" validate:"decimal_20_10"`
-	FeeUserId             int64  `json:"feeUserId"`
-	FeeAccountId          int64  `json:"feeAccountId"`
-	SellerMarginMode      int64  `json:"sellerMarginMode"`
-	InitialMarginRate     string `json:"initialMarginRate" validate:"decimal_20_10"`
-	MaintenanceMarginRate string `json:"maintenanceMarginRate" validate:"decimal_20_10"`
-	MinMarginRate         string `json:"minMarginRate" validate:"decimal_20_10"`
-	LiquidationFeeRate    string `json:"liquidationFeeRate" validate:"decimal_20_10"`
-	InsuranceUserId       int64  `json:"insuranceUserId"`
-	InsuranceAccountId    int64  `json:"insuranceAccountId"`
+	Id                       int64  `json:"id"`
+	TenantId                 int64  `json:"tenantId"`
+	ContractCode             string `json:"contractCode"`
+	UnderlyingSymbol         string `json:"underlyingSymbol"`
+	UnderlyingCoin           string `json:"underlyingCoin"`
+	SettleCoin               string `json:"settleCoin"`
+	QuoteCoin                string `json:"quoteCoin"`
+	OptionType               int64  `json:"optionType"`
+	ExerciseStyle            int64  `json:"exerciseStyle"`
+	SettlementType           int64  `json:"settlementType"`
+	StrikePrice              string `json:"strikePrice" validate:"decimal_32_16"`
+	ContractUnit             string `json:"contractUnit" validate:"decimal_32_16"`
+	MinOrderQty              string `json:"minOrderQty" validate:"decimal_32_16"`
+	MaxOrderQty              string `json:"maxOrderQty" validate:"decimal_32_16"`
+	PriceTick                string `json:"priceTick" validate:"decimal_32_16"`
+	QtyStep                  string `json:"qtyStep" validate:"decimal_32_16"`
+	Multiplier               string `json:"multiplier" validate:"decimal_32_16"`
+	ListTime                 int64  `json:"listTime"`
+	ExpireTime               int64  `json:"expireTime"`
+	DeliverTime              int64  `json:"deliverTime"`
+	IsAutoExercise           int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
+	Status                   int64  `json:"status"`
+	Sort                     int64  `json:"sort"`
+	Remark                   string `json:"remark"`
+	IsDeleted                int64  `json:"isDeleted"`
+	CreateTimes              int64  `json:"createTimes"`
+	UpdateTimes              int64  `json:"updateTimes"`
+	MakerFeeRate             string `json:"makerFeeRate" validate:"decimal_20_10"`
+	TakerFeeRate             string `json:"takerFeeRate" validate:"decimal_20_10"`
+	ExerciseFeeRate          string `json:"exerciseFeeRate" validate:"decimal_20_10"`
+	FeeUserId                int64  `json:"feeUserId"`
+	FeeAccountId             int64  `json:"feeAccountId"`
+	SellerMarginMode         int64  `json:"sellerMarginMode"`
+	InitialMarginRate        string `json:"initialMarginRate" validate:"decimal_20_10"`
+	MaintenanceMarginRate    string `json:"maintenanceMarginRate" validate:"decimal_20_10"`
+	MinMarginRate            string `json:"minMarginRate" validate:"decimal_20_10"`
+	LiquidationFeeRate       string `json:"liquidationFeeRate" validate:"decimal_20_10"`
+	InsuranceUserId          int64  `json:"insuranceUserId"`
+	InsuranceAccountId       int64  `json:"insuranceAccountId"`
+	LiquidationDeficitPolicy int64  `json:"liquidationDeficitPolicy"`
+	PhysicalDeliveryPolicy   int64  `json:"physicalDeliveryPolicy"`
 }
 
 type OptionContractDetail struct {
@@ -2813,9 +2847,28 @@ type OptionExercise struct {
 	UpdateTimes     int64  `json:"updateTimes"`
 }
 
+type OptionExerciseAssignment struct {
+	Id              int64  `json:"id"`
+	TenantId        int64  `json:"tenantId"`
+	ExerciseId      int64  `json:"exerciseId"`
+	ExerciseNo      string `json:"exerciseNo"`
+	LongPositionId  int64  `json:"longPositionId"`
+	ShortPositionId int64  `json:"shortPositionId"`
+	ShortUserId     int64  `json:"shortUserId"`
+	ShortAccountId  int64  `json:"shortAccountId"`
+	Quantity        string `json:"quantity" validate:"decimal_32_16"`
+	Payoff          string `json:"payoff" validate:"decimal_32_16"`
+	Status          int64  `json:"status"`
+	InstructionNo   string `json:"instructionNo"`
+	CreateTimes     int64  `json:"createTimes"`
+	UpdateTimes     int64  `json:"updateTimes"`
+}
+
 type OptionExerciseDetail struct {
-	Exercise OptionExercise `json:"exercise"`
-	Contract OptionContract `json:"contract"`
+	Exercise          OptionExercise             `json:"exercise"`
+	Contract          OptionContract             `json:"contract"`
+	Assignments       []OptionExerciseAssignment `json:"assignments"`
+	AssetInstructions []OptionAssetInstruction   `json:"assetInstructions"`
 }
 
 type OptionForceCancelContractOrdersReq struct {
@@ -2847,6 +2900,8 @@ type OptionLiquidation struct {
 	TakeoverPositionId  int64  `json:"takeoverPositionId"`
 	CompletedAt         int64  `json:"completedAt"`
 	InsuranceAttempt    int64  `json:"insuranceAttempt"`
+	BackstopAmount      string `json:"backstopAmount"`
+	DeficitResolution   int64  `json:"deficitResolution"`
 	CreateTimes         int64  `json:"createTimes"`
 	UpdateTimes         int64  `json:"updateTimes"`
 }
@@ -2916,6 +2971,7 @@ type OptionOrder struct {
 	Fee              string `json:"fee" validate:"decimal_32_16"`
 	FeeCoin          string `json:"feeCoin"`
 	MarginAmount     string `json:"marginAmount" validate:"decimal_32_16"`
+	MarginCoin       string `json:"marginCoin"`
 	Source           int64  `json:"source"`
 	ClientOrderId    string `json:"clientOrderId"`
 	ReduceOnly       int64  `json:"reduceOnly"` // 是否只减仓：1是 2否
@@ -2934,28 +2990,31 @@ type OptionOrderDetail struct {
 }
 
 type OptionPosition struct {
-	Id                int64  `json:"id"`
-	TenantId          int64  `json:"tenantId"`
-	UserId            int64  `json:"userId"`
-	AccountId         int64  `json:"accountId"`
-	ContractId        int64  `json:"contractId"`
-	UnderlyingSymbol  string `json:"underlyingSymbol"`
-	Side              int64  `json:"side"`
-	PositionQty       string `json:"positionQty" validate:"decimal_32_16"`
-	AvailableQty      string `json:"availableQty" validate:"decimal_32_16"`
-	FrozenQty         string `json:"frozenQty" validate:"decimal_32_16"`
-	OpenAvgPrice      string `json:"openAvgPrice" validate:"decimal_32_16"`
-	MarkPrice         string `json:"markPrice" validate:"decimal_32_16"`
-	PositionValue     string `json:"positionValue" validate:"decimal_32_16"`
-	MarginAmount      string `json:"marginAmount" validate:"decimal_32_16"`
-	MaintenanceMargin string `json:"maintenanceMargin" validate:"decimal_32_16"`
-	UnrealizedPnl     string `json:"unrealizedPnl" validate:"decimal_32_16"`
-	RealizedPnl       string `json:"realizedPnl" validate:"decimal_32_16"`
-	ExerciseableQty   string `json:"exerciseableQty" validate:"decimal_32_16"`
-	Status            int64  `json:"status"`
-	LastCalcTime      int64  `json:"lastCalcTime"`
-	CreateTimes       int64  `json:"createTimes"`
-	UpdateTimes       int64  `json:"updateTimes"`
+	Id                    int64  `json:"id"`
+	TenantId              int64  `json:"tenantId"`
+	UserId                int64  `json:"userId"`
+	AccountId             int64  `json:"accountId"`
+	ContractId            int64  `json:"contractId"`
+	UnderlyingSymbol      string `json:"underlyingSymbol"`
+	Side                  int64  `json:"side"`
+	PositionQty           string `json:"positionQty" validate:"decimal_32_16"`
+	AvailableQty          string `json:"availableQty" validate:"decimal_32_16"`
+	FrozenQty             string `json:"frozenQty" validate:"decimal_32_16"`
+	OpenAvgPrice          string `json:"openAvgPrice" validate:"decimal_32_16"`
+	MarkPrice             string `json:"markPrice" validate:"decimal_32_16"`
+	PositionValue         string `json:"positionValue" validate:"decimal_32_16"`
+	MarginAmount          string `json:"marginAmount" validate:"decimal_32_16"`
+	MaintenanceMargin     string `json:"maintenanceMargin" validate:"decimal_32_16"`
+	UnrealizedPnl         string `json:"unrealizedPnl" validate:"decimal_32_16"`
+	RealizedPnl           string `json:"realizedPnl" validate:"decimal_32_16"`
+	ExerciseableQty       string `json:"exerciseableQty" validate:"decimal_32_16"`
+	Status                int64  `json:"status"`
+	PortfolioRiskMethod   int64  `json:"portfolioRiskMethod"`
+	PortfolioScenarioLoss string `json:"portfolioScenarioLoss"`
+	PortfolioShortFloor   string `json:"portfolioShortFloor"`
+	LastCalcTime          int64  `json:"lastCalcTime"`
+	CreateTimes           int64  `json:"createTimes"`
+	UpdateTimes           int64  `json:"updateTimes"`
 }
 
 type OptionPositionDetail struct {
@@ -2969,9 +3028,20 @@ type OptionRetryAssetInstructionReq struct {
 	InstructionId int64 `json:"instructionId"`
 }
 
+type OptionRetryExerciseReq struct {
+	TenantId   int64 `json:"tenantId"`
+	ExerciseId int64 `json:"exerciseId"`
+}
+
 type OptionRetryLiquidationReq struct {
 	TenantId      int64 `json:"tenantId"`
 	LiquidationId int64 `json:"liquidationId"`
+}
+
+type OptionRetrySettlementInstructionReq struct {
+	TenantId      int64 `json:"tenantId"`
+	SettlementId  int64 `json:"settlementId"`
+	InstructionId int64 `json:"instructionId"`
 }
 
 type OptionRetryTradeEventReq struct {
@@ -3015,9 +3085,49 @@ type OptionSettlement struct {
 	UpdateTimes      int64  `json:"updateTimes"`
 }
 
+type OptionSettlementBatch struct {
+	Id                int64  `json:"id"`
+	TenantId          int64  `json:"tenantId"`
+	BatchNo           string `json:"batchNo"`
+	ContractId        int64  `json:"contractId"`
+	SettlementPriceId int64  `json:"settlementPriceId"`
+	TotalCredit       string `json:"totalCredit" validate:"decimal_32_16"`
+	TotalDebit        string `json:"totalDebit" validate:"decimal_32_16"`
+	InstructionCount  int64  `json:"instructionCount"`
+	SuccessCount      int64  `json:"successCount"`
+	Status            int64  `json:"status"`
+	LastErrorMsg      string `json:"lastErrorMsg"`
+	CreateTimes       int64  `json:"createTimes"`
+	UpdateTimes       int64  `json:"updateTimes"`
+}
+
 type OptionSettlementDetail struct {
-	Settlement OptionSettlement `json:"settlement"`
-	Contract   OptionContract   `json:"contract"`
+	Settlement        OptionSettlement                 `json:"settlement"`
+	Contract          OptionContract                   `json:"contract"`
+	Batch             OptionSettlementBatch            `json:"batch"`
+	PositionDetails   []OptionSettlementPositionDetail `json:"positionDetails"`
+	AssetInstructions []OptionAssetInstruction         `json:"assetInstructions"`
+}
+
+type OptionSettlementPositionDetail struct {
+	Id               int64  `json:"id"`
+	TenantId         int64  `json:"tenantId"`
+	BatchId          int64  `json:"batchId"`
+	BatchNo          string `json:"batchNo"`
+	ContractId       int64  `json:"contractId"`
+	PositionId       int64  `json:"positionId"`
+	UserId           int64  `json:"userId"`
+	AccountId        int64  `json:"accountId"`
+	Side             int64  `json:"side"`
+	Quantity         string `json:"quantity" validate:"decimal_32_16"`
+	Payoff           string `json:"payoff" validate:"decimal_32_16"`
+	Direction        int64  `json:"direction"`
+	InstructionNo    string `json:"instructionNo"`
+	CreateTimes      int64  `json:"createTimes"`
+	DeliveryCoin     string `json:"deliveryCoin"`
+	DeliveryQuantity string `json:"deliveryQuantity" validate:"decimal_32_16"`
+	PaymentCoin      string `json:"paymentCoin"`
+	PaymentAmount    string `json:"paymentAmount" validate:"decimal_32_16"`
 }
 
 type OptionTrade struct {
@@ -5109,42 +5219,45 @@ type UpdateCategoryReq struct {
 }
 
 type UpdateContractReq struct {
-	Id                    int64  `json:"id"`
-	TenantId              int64  `json:"tenantId"`
-	ContractCode          string `json:"contractCode"`
-	UnderlyingSymbol      string `json:"underlyingSymbol"`
-	SettleCoin            string `json:"settleCoin"`
-	QuoteCoin             string `json:"quoteCoin"`
-	OptionType            int64  `json:"optionType"`
-	ExerciseStyle         int64  `json:"exerciseStyle"`
-	SettlementType        int64  `json:"settlementType"`
-	StrikePrice           string `json:"strikePrice" validate:"decimal_gte_zero,decimal_32_16"`
-	ContractUnit          string `json:"contractUnit" validate:"decimal_gte_zero,decimal_32_16"`
-	MinOrderQty           string `json:"minOrderQty" validate:"decimal_gte_zero,decimal_32_16"`
-	MaxOrderQty           string `json:"maxOrderQty" validate:"decimal_gte_zero,decimal_32_16"`
-	PriceTick             string `json:"priceTick" validate:"decimal_gte_zero,decimal_32_16"`
-	QtyStep               string `json:"qtyStep" validate:"decimal_gte_zero,decimal_32_16"`
-	Multiplier            string `json:"multiplier" validate:"decimal_gte_zero,decimal_32_16"`
-	ListTime              int64  `json:"listTime"`
-	ExpireTime            int64  `json:"expireTime"`
-	DeliverTime           int64  `json:"deliverTime"`
-	IsAutoExercise        int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
-	Status                int64  `json:"status"`
-	Sort                  int64  `json:"sort"`
-	Remark                string `json:"remark,optional"`
-	IsDeleted             int64  `json:"isDeleted"`
-	MakerFeeRate          string `json:"makerFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
-	TakerFeeRate          string `json:"takerFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
-	ExerciseFeeRate       string `json:"exerciseFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
-	FeeUserId             int64  `json:"feeUserId,optional"`
-	FeeAccountId          int64  `json:"feeAccountId,optional"`
-	SellerMarginMode      int64  `json:"sellerMarginMode,optional"`
-	InitialMarginRate     string `json:"initialMarginRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
-	MaintenanceMarginRate string `json:"maintenanceMarginRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
-	MinMarginRate         string `json:"minMarginRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
-	LiquidationFeeRate    string `json:"liquidationFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
-	InsuranceUserId       int64  `json:"insuranceUserId,optional"`
-	InsuranceAccountId    int64  `json:"insuranceAccountId,optional"`
+	Id                       int64  `json:"id"`
+	TenantId                 int64  `json:"tenantId"`
+	ContractCode             string `json:"contractCode"`
+	UnderlyingSymbol         string `json:"underlyingSymbol"`
+	UnderlyingCoin           string `json:"underlyingCoin,optional"`
+	SettleCoin               string `json:"settleCoin"`
+	QuoteCoin                string `json:"quoteCoin"`
+	OptionType               int64  `json:"optionType"`
+	ExerciseStyle            int64  `json:"exerciseStyle"`
+	SettlementType           int64  `json:"settlementType"`
+	StrikePrice              string `json:"strikePrice" validate:"decimal_gte_zero,decimal_32_16"`
+	ContractUnit             string `json:"contractUnit" validate:"decimal_gte_zero,decimal_32_16"`
+	MinOrderQty              string `json:"minOrderQty" validate:"decimal_gte_zero,decimal_32_16"`
+	MaxOrderQty              string `json:"maxOrderQty" validate:"decimal_gte_zero,decimal_32_16"`
+	PriceTick                string `json:"priceTick" validate:"decimal_gte_zero,decimal_32_16"`
+	QtyStep                  string `json:"qtyStep" validate:"decimal_gte_zero,decimal_32_16"`
+	Multiplier               string `json:"multiplier" validate:"decimal_gte_zero,decimal_32_16"`
+	ListTime                 int64  `json:"listTime"`
+	ExpireTime               int64  `json:"expireTime"`
+	DeliverTime              int64  `json:"deliverTime"`
+	IsAutoExercise           int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
+	Status                   int64  `json:"status"`
+	Sort                     int64  `json:"sort"`
+	Remark                   string `json:"remark,optional"`
+	IsDeleted                int64  `json:"isDeleted"`
+	MakerFeeRate             string `json:"makerFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	TakerFeeRate             string `json:"takerFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	ExerciseFeeRate          string `json:"exerciseFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	FeeUserId                int64  `json:"feeUserId,optional"`
+	FeeAccountId             int64  `json:"feeAccountId,optional"`
+	SellerMarginMode         int64  `json:"sellerMarginMode,optional"`
+	InitialMarginRate        string `json:"initialMarginRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	MaintenanceMarginRate    string `json:"maintenanceMarginRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	MinMarginRate            string `json:"minMarginRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	LiquidationFeeRate       string `json:"liquidationFeeRate,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	InsuranceUserId          int64  `json:"insuranceUserId,optional"`
+	InsuranceAccountId       int64  `json:"insuranceAccountId,optional"`
+	LiquidationDeficitPolicy int64  `json:"liquidationDeficitPolicy,optional"`
+	PhysicalDeliveryPolicy   int64  `json:"physicalDeliveryPolicy,optional"`
 }
 
 type UpdateCryptoRechargeAddressReq struct {

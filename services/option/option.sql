@@ -10,6 +10,7 @@ CREATE TABLE `t_option_contract` (
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
   `contract_code` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '合约编码，如 BTC-20260630-50000-C',
   `underlying_symbol` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '标的资产，如 BTCUSDT',
+  `underlying_coin` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '实物交割标的币种，如 BTC',
   `settle_coin` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '结算币种，如 USDT',
   `quote_coin` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '报价币种，如 USDT',
   `option_type` TINYINT NOT NULL DEFAULT 0 COMMENT '期权类型：1看涨 2看跌',
@@ -38,6 +39,8 @@ CREATE TABLE `t_option_contract` (
   `liquidation_fee_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT '强平手续费率',
   `insurance_user_id` BIGINT NOT NULL DEFAULT 0 COMMENT '保险基金用户ID',
   `insurance_account_id` BIGINT NOT NULL DEFAULT 0 COMMENT '保险基金Option账户ID',
+  `liquidation_deficit_policy` TINYINT NOT NULL DEFAULT 1 COMMENT '保险不足策略：1人工 2平台兜底',
+  `physical_delivery_policy` TINYINT NOT NULL DEFAULT 0 COMMENT '实物交割策略：0不适用 1严格全额交收',
   `status` TINYINT NOT NULL DEFAULT 0 COMMENT '状态：0未知 1待上市 2可交易 3暂停交易 4已到期 5已结算 6已下线',
   `sort` INT NOT NULL DEFAULT 0 COMMENT '排序值',
   `remark` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '备注',
@@ -145,6 +148,7 @@ CREATE TABLE `t_option_order` (
   `fee` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '手续费',
   `fee_coin` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '手续费币种',
   `margin_amount` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '冻结保证金',
+  `margin_coin` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '订单冻结资产币种',
   `source` TINYINT NOT NULL DEFAULT 0 COMMENT '订单来源：1APP 2WEB 3API 4ADMIN',
   `client_order_id` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '客户端订单号',
   `reduce_only` TINYINT NOT NULL DEFAULT 2 COMMENT '是否只减仓：1是 2否',
@@ -279,6 +283,7 @@ CREATE TABLE `t_option_margin_lot` (
   `order_id` BIGINT NOT NULL DEFAULT 0 COMMENT '卖出开仓订单ID',
   `trade_id` BIGINT NOT NULL DEFAULT 0 COMMENT '成交ID',
   `freeze_biz_no` VARCHAR(96) NOT NULL DEFAULT '' COMMENT 'Asset冻结业务号',
+  `collateral_coin` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '该批次实际冻结的担保资产币种',
   `quantity` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '批次数量',
   `remaining_quantity` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '尚未平仓的批次数量',
   `initial_margin` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '分配的初始保证金',
@@ -325,6 +330,9 @@ CREATE TABLE `t_option_risk_account` (
   `unrealized_pnl` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '未实现盈亏',
   `risk_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT '维持保证金/权益',
   `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1正常 2追保 3强平中 4破产 5限制',
+  `portfolio_risk_method` TINYINT NOT NULL DEFAULT 0 COMMENT '组合风险算法：0无 1到期损益情景V1',
+  `portfolio_scenario_loss` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '组合价格情景最大损失',
+  `portfolio_short_floor` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '组合裸空头最低保证金',
   `last_calc_time` BIGINT NOT NULL DEFAULT 0 COMMENT '最后计算时间',
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
@@ -333,6 +341,8 @@ CREATE TABLE `t_option_risk_account` (
   KEY `idx_risk_account_status` (`tenant_id`, `status`, `id`),
   CONSTRAINT `chk_option_risk_account` CHECK (
     `position_margin` >= 0 AND `maintenance_margin` >= 0
+    AND `portfolio_risk_method` IN (0,1)
+    AND `portfolio_scenario_loss` >= 0 AND `portfolio_short_floor` >= 0
     AND `risk_rate` >= 0 AND `status` IN (1,2,3,4,5)
   )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权卖方风险账户';
@@ -360,6 +370,8 @@ CREATE TABLE `t_option_liquidation` (
   `takeover_position_id` BIGINT NOT NULL DEFAULT 0 COMMENT '保险账户接管持仓ID',
   `completed_at` BIGINT NOT NULL DEFAULT 0 COMMENT '完成时间',
   `insurance_attempt` INT NOT NULL DEFAULT 0 COMMENT '保险基金人工重试代次',
+  `backstop_amount` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '平台兜底负债金额',
+  `deficit_resolution` TINYINT NOT NULL DEFAULT 1 COMMENT '缺口处置：1无 2保险 3平台兜底 4保险加兜底 5人工',
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
@@ -369,6 +381,7 @@ CREATE TABLE `t_option_liquidation` (
   CONSTRAINT `chk_option_liquidation` CHECK (
     `quantity` > 0 AND `deficit_amount` >= 0 AND `liquidation_fee` >= 0
     AND `status` IN (1,2,3,4,5,6) AND `retry_count` >= 0 AND `insurance_attempt` >= 0
+    AND `backstop_amount` >= 0 AND `deficit_resolution` IN (1,2,3,4,5)
   )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权强平记录';
 
@@ -682,6 +695,10 @@ CREATE TABLE `t_option_settlement_detail` (
   `payoff` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '绝对结算金额',
   `direction` TINYINT NOT NULL DEFAULT 0 COMMENT '方向：1应收 2应付 3放弃',
   `instruction_no` VARCHAR(96) NOT NULL DEFAULT '' COMMENT '关联资产指令号',
+  `delivery_coin` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '实物交割标的币种',
+  `delivery_quantity` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '实物交割标的数量',
+  `payment_coin` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '行权款币种',
+  `payment_amount` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '行权款金额',
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_settlement_detail_position` (`tenant_id`, `batch_id`, `position_id`),

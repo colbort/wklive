@@ -40,3 +40,50 @@ func TestValidateLiquidationPlanBalance(t *testing.T) {
 		t.Fatal("unbalanced plan accepted")
 	}
 }
+
+func TestLiquidationDeficitResolution(t *testing.T) {
+	deficit := decimal.NewFromInt(10)
+	tests := []struct {
+		name      string
+		insurance decimal.Decimal
+		backstop  decimal.Decimal
+		want      option.LiquidationDeficitResolution
+	}{
+		{
+			name: "insurance", insurance: decimal.NewFromInt(10),
+			want: option.LiquidationDeficitResolution_LIQUIDATION_DEFICIT_RESOLUTION_INSURANCE_FUND,
+		},
+		{
+			name: "backstop", backstop: decimal.NewFromInt(10),
+			want: option.LiquidationDeficitResolution_LIQUIDATION_DEFICIT_RESOLUTION_PLATFORM_BACKSTOP,
+		},
+		{
+			name: "combined", insurance: decimal.NewFromInt(4), backstop: decimal.NewFromInt(6),
+			want: option.LiquidationDeficitResolution_LIQUIDATION_DEFICIT_RESOLUTION_INSURANCE_AND_BACKSTOP,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := liquidationDeficitResolution(deficit, tt.insurance, tt.backstop)
+			if got != tt.want {
+				t.Fatalf("resolution=%v want=%v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestLiquidationCoverageFlowNumbersAreReplaySafe(t *testing.T) {
+	liq := &models.TOptionLiquidation{LiquidationNo: "OLQ-1", InsuranceAttempt: 2}
+	if got := liquidationInsuranceFlowNo(liq, false); got != "OLQ-1-INSURANCE-A2" {
+		t.Fatalf("manual insurance flow=%q", got)
+	}
+	firstInsurance := liquidationInsuranceFlowNo(liq, true)
+	firstBackstop := liquidationBackstopFlowNo(liq)
+	liq.InsuranceAttempt++
+	if got := liquidationInsuranceFlowNo(liq, true); got != firstInsurance {
+		t.Fatalf("backstop-mode insurance key changed across retry: %q -> %q", firstInsurance, got)
+	}
+	if got := liquidationBackstopFlowNo(liq); got != firstBackstop {
+		t.Fatalf("backstop key changed across retry: %q -> %q", firstBackstop, got)
+	}
+}

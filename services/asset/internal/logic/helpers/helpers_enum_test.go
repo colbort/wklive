@@ -44,3 +44,18 @@ func TestInsuranceFundSceneTypeMapping(t *testing.T) {
 		})
 	}
 }
+
+func TestPlatformBackstopEnumMappings(t *testing.T) {
+	if got := FromBizTypeEnum(asset.BizType_BIZ_TYPE_PLATFORM_BACKSTOP); got != "platform_backstop" {
+		t.Fatalf("FromBizTypeEnum() = %q", got)
+	}
+	if got := ToBizTypeValue("platform_backstop"); got != asset.BizType_BIZ_TYPE_PLATFORM_BACKSTOP {
+		t.Fatalf("ToBizTypeValue() = %v", got)
+	}
+	if got := FromSceneTypeEnum(asset.SceneType_SCENE_TYPE_PLATFORM_BACKSTOP_COVER); got != "platform_backstop_cover" {
+		t.Fatalf("FromSceneTypeEnum() = %q", got)
+	}
+	if got := ToSceneTypeValue("platform_backstop_cover"); got != asset.SceneType_SCENE_TYPE_PLATFORM_BACKSTOP_COVER {
+		t.Fatalf("ToSceneTypeValue() = %v", got)
+	}
+}

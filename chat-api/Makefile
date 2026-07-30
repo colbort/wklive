@@ -1,6 +1,6 @@
 API_FILE := api/core.api
 
-GOCTL ?= goctl
+GOCTL ?= $(shell go env GOPATH)/bin/goctl
 
 .PHONY: gen check fmt clean verify fmt-api
 

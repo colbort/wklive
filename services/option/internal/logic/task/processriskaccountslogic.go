@@ -10,11 +10,13 @@ import (
 	"wklive/proto/common"
 	"wklive/proto/option"
 	"wklive/services/option/internal/logic/helpers"
+	optionrisk "wklive/services/option/internal/risk"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type ProcessRiskAccountsLogic struct {
@@ -75,7 +77,6 @@ func (l *ProcessRiskAccountsLogic) collectRiskGroups(tenantID int64) ([]*optionR
 	for {
 		positions, _, err := l.svcCtx.OptionPositionModel.FindPage(l.ctx, models.OptionPositionPageFilter{
 			TenantId: tenantID,
-			Side:     int64(common.PositionSide_POSITION_SIDE_SHORT),
 			Status:   int64(option.PositionStatus_POSITION_STATUS_HOLDING),
 		}, cursor, 100)
 		if err != nil {
@@ -87,7 +88,12 @@ func (l *ProcessRiskAccountsLogic) collectRiskGroups(tenantID int64) ([]*optionR
 			if err != nil {
 				return nil, err
 			}
-			if contract.SellerMarginMode != int64(option.SellerMarginMode_SELLER_MARGIN_MODE_ISOLATED) {
+			if contract.SellerMarginMode != int64(option.SellerMarginMode_SELLER_MARGIN_MODE_ISOLATED) &&
+				contract.SellerMarginMode != int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) {
+				continue
+			}
+			if contract.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_ISOLATED) &&
+				position.Side != int64(common.PositionSide_POSITION_SIDE_SHORT) {
 				continue
 			}
 			market, err := l.svcCtx.OptionMarketModel.FindOneByTenantIdContractId(l.ctx, position.TenantId, position.ContractId)
@@ -144,23 +150,66 @@ func (l *ProcessRiskAccountsLogic) refreshRiskGroup(group *optionRiskGroup) erro
 	positionMargin := decimal.Zero
 	maintenanceMargin := decimal.Zero
 	unrealizedPnL := decimal.Zero
+	portfolioLegs := make(map[int64]optionrisk.PortfolioLeg)
 	for _, item := range group.positions {
 		position := item.position
 		position.MarkPrice = item.market.MarkPrice
 		position.PositionValue = item.market.MarkPrice.Mul(position.PositionQty).Mul(optionMultiplier(item.contract)).Round(16)
-		position.UnrealizedPnl = position.OpenAvgPrice.Sub(item.market.MarkPrice).
-			Mul(position.PositionQty).Mul(optionMultiplier(item.contract)).Round(16)
-		position.MaintenanceMargin = optionTaskSellerMargin(
-			item.contract, item.market.UnderlyingPrice, item.market.MarkPrice, position.PositionQty,
-		)
+		if position.Side == int64(common.PositionSide_POSITION_SIDE_LONG) {
+			position.UnrealizedPnl = item.market.MarkPrice.Sub(position.OpenAvgPrice).
+				Mul(position.PositionQty).Mul(optionMultiplier(item.contract)).Round(16)
+		} else {
+			position.UnrealizedPnl = position.OpenAvgPrice.Sub(item.market.MarkPrice).
+				Mul(position.PositionQty).Mul(optionMultiplier(item.contract)).Round(16)
+		}
+		if item.contract.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_ISOLATED) {
+			position.MaintenanceMargin = optionTaskSellerMargin(
+				item.contract, item.market.UnderlyingPrice, item.market.MarkPrice, position.PositionQty,
+			)
+			positionMargin = positionMargin.Add(position.MarginAmount)
+			maintenanceMargin = maintenanceMargin.Add(position.MaintenanceMargin)
+		} else {
+			position.MaintenanceMargin = decimal.Zero
+			leg := portfolioLegs[item.contract.Id]
+			leg.Contract = item.contract
+			leg.Market = item.market
+			if position.Side == int64(common.PositionSide_POSITION_SIDE_LONG) {
+				leg.LongQuantity = leg.LongQuantity.Add(position.PositionQty)
+			} else {
+				leg.ShortQuantity = leg.ShortQuantity.Add(position.PositionQty)
+			}
+			portfolioLegs[item.contract.Id] = leg
+		}
 		position.LastCalcTime = now
 		position.UpdateTimes = now
 		if err := l.svcCtx.OptionPositionModel.Update(l.ctx, position); err != nil {
 			return err
 		}
-		positionMargin = positionMargin.Add(position.MarginAmount)
-		maintenanceMargin = maintenanceMargin.Add(position.MaintenanceMargin)
 		unrealizedPnL = unrealizedPnL.Add(position.UnrealizedPnl)
+	}
+	portfolioMethod := option.PortfolioRiskMethod_PORTFOLIO_RISK_METHOD_UNKNOWN
+	portfolioScenarioLoss := decimal.Zero
+	portfolioShortFloor := decimal.Zero
+	portfolioInitialRequirement := decimal.Zero
+	if len(portfolioLegs) > 0 {
+		legs := make([]optionrisk.PortfolioLeg, 0, len(portfolioLegs))
+		for _, leg := range portfolioLegs {
+			legs = append(legs, leg)
+		}
+		initialResult, err := optionrisk.EvaluatePortfolio(legs, false)
+		if err != nil {
+			return err
+		}
+		maintenanceResult, err := optionrisk.EvaluatePortfolio(legs, true)
+		if err != nil {
+			return err
+		}
+		positionMargin = positionMargin.Add(initialResult.Requirement)
+		portfolioInitialRequirement = initialResult.Requirement
+		maintenanceMargin = maintenanceMargin.Add(maintenanceResult.Requirement)
+		portfolioMethod = option.PortfolioRiskMethod_PORTFOLIO_RISK_METHOD_EXPIRY_SCENARIO_V1
+		portfolioScenarioLoss = maintenanceResult.ScenarioLoss
+		portfolioShortFloor = maintenanceResult.ShortFloor
 	}
 	equity := totalAsset.Add(unrealizedPnL).Round(16)
 	riskRate := decimal.Zero
@@ -189,9 +238,14 @@ func (l *ProcessRiskAccountsLogic) refreshRiskGroup(group *optionRiskGroup) erro
 			TenantId: group.key.tenantID, UserId: group.key.userID, AccountId: group.key.accountID,
 			SettleCoin: group.key.coin, Equity: equity, PositionMargin: positionMargin,
 			MaintenanceMargin: maintenanceMargin, UnrealizedPnl: unrealizedPnL, RiskRate: riskRate,
+			PortfolioRiskMethod:   int64(portfolioMethod),
+			PortfolioScenarioLoss: portfolioScenarioLoss, PortfolioShortFloor: portfolioShortFloor,
 			Status: int64(status), LastCalcTime: now, CreateTimes: now, UpdateTimes: now,
 		})
 		if err != nil {
+			return err
+		}
+		if err := l.rebalancePortfolioCollateral(group, portfolioInitialRequirement, now); err != nil {
 			return err
 		}
 		return l.ensureLiquidations(group, status, equity, maintenanceMargin, now)
@@ -201,13 +255,102 @@ func (l *ProcessRiskAccountsLogic) refreshRiskGroup(group *optionRiskGroup) erro
 	current.MaintenanceMargin = maintenanceMargin
 	current.UnrealizedPnl = unrealizedPnL
 	current.RiskRate = riskRate
+	current.PortfolioRiskMethod = int64(portfolioMethod)
+	current.PortfolioScenarioLoss = portfolioScenarioLoss
+	current.PortfolioShortFloor = portfolioShortFloor
 	current.Status = int64(status)
 	current.LastCalcTime = now
 	current.UpdateTimes = now
 	if err := l.svcCtx.OptionRiskAccountModel.Update(l.ctx, current); err != nil {
 		return err
 	}
+	if err := l.rebalancePortfolioCollateral(group, portfolioInitialRequirement, now); err != nil {
+		return err
+	}
 	return l.ensureLiquidations(group, status, equity, maintenanceMargin, now)
+}
+
+func (l *ProcessRiskAccountsLogic) rebalancePortfolioCollateral(
+	group *optionRiskGroup,
+	required decimal.Decimal,
+	now int64,
+) error {
+	if group == nil {
+		return nil
+	}
+	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		riskAccountModel := models.NewTOptionRiskAccountModel(conn, l.svcCtx.Config.CacheRedis)
+		orderModel := models.NewTOptionOrderModel(conn, l.svcCtx.Config.CacheRedis)
+		contractModel := models.NewTOptionContractModel(conn, l.svcCtx.Config.CacheRedis)
+		marginLotModel := models.NewTOptionMarginLotModel(conn, l.svcCtx.Config.CacheRedis)
+		instructionModel := models.NewTOptionAssetInstructionModel(conn, l.svcCtx.Config.CacheRedis)
+		if _, err := riskAccountModel.EnsureAndFindOneForUpdate(
+			ctx, group.key.tenantID, group.key.userID, group.key.accountID, group.key.coin, now,
+		); err != nil {
+			return err
+		}
+		orders, err := orderModel.FindPortfolioRiskOrders(
+			ctx, group.key.tenantID, group.key.userID, group.key.accountID,
+		)
+		if err != nil {
+			return err
+		}
+		for _, order := range orders {
+			contract, err := contractModel.FindOne(ctx, order.ContractId)
+			if err != nil {
+				return err
+			}
+			if contract.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) &&
+				contract.SettleCoin == group.key.coin {
+				// Do not release pool collateral while a risk-increasing order
+				// remains live; its full-fill scenario is evaluated at admission.
+				return nil
+			}
+		}
+		lots, err := marginLotModel.FindPortfolioActiveByAccount(
+			ctx, group.key.tenantID, group.key.userID, group.key.accountID, group.key.coin,
+		)
+		if err != nil {
+			return err
+		}
+		available := decimal.Zero
+		for _, lot := range lots {
+			available = available.Add(decimal.Max(lot.RemainingMargin.Sub(lot.PendingMargin), decimal.Zero))
+		}
+		excess := decimal.Max(available.Sub(required), decimal.Zero)
+		for _, lot := range lots {
+			if !excess.IsPositive() {
+				break
+			}
+			lotAvailable := decimal.Max(lot.RemainingMargin.Sub(lot.PendingMargin), decimal.Zero)
+			release := decimal.Min(lotAvailable, excess)
+			if !release.IsPositive() {
+				continue
+			}
+			instructionNo := fmt.Sprintf("PMR-%d-%d-L%d", group.key.accountID, time.Now().UnixNano(), lot.Id)
+			if _, err := instructionModel.Insert(ctx, &models.TOptionAssetInstruction{
+				TenantId: group.key.tenantID, InstructionNo: instructionNo,
+				BizNo: instructionNo, MarginLotId: lot.Id,
+				UserId: group.key.userID, AccountId: group.key.accountID,
+				Action:      int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_RELEASE_FROZEN),
+				TargetBizNo: lot.FreezeBizNo, Coin: group.key.coin, Amount: release,
+				StepNo: 1, Status: int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING),
+				ReconciliationStatus: int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_PENDING),
+				CreateTimes:          now, UpdateTimes: now,
+			}); err != nil {
+				return err
+			}
+			lot.PendingMargin = lot.PendingMargin.Add(release)
+			lot.Status = int64(option.MarginLotStatus_MARGIN_LOT_STATUS_RELEASING)
+			lot.UpdateTimes = now
+			if err := marginLotModel.Update(ctx, lot); err != nil {
+				return err
+			}
+			excess = excess.Sub(release)
+		}
+		return nil
+	})
 }
 
 func (l *ProcessRiskAccountsLogic) resetInactiveRiskAccounts(tenantID int64, groups []*optionRiskGroup) error {
@@ -228,10 +371,18 @@ func (l *ProcessRiskAccountsLogic) resetInactiveRiskAccounts(tenantID int64, gro
 		if _, ok := active[key]; ok {
 			continue
 		}
+		if account.PortfolioRiskMethod != int64(option.PortfolioRiskMethod_PORTFOLIO_RISK_METHOD_UNKNOWN) {
+			if err := l.rebalancePortfolioCollateral(&optionRiskGroup{key: key}, decimal.Zero, now); err != nil {
+				return err
+			}
+		}
 		account.PositionMargin = decimal.Zero
 		account.MaintenanceMargin = decimal.Zero
 		account.UnrealizedPnl = decimal.Zero
 		account.RiskRate = decimal.Zero
+		account.PortfolioRiskMethod = int64(option.PortfolioRiskMethod_PORTFOLIO_RISK_METHOD_UNKNOWN)
+		account.PortfolioScenarioLoss = decimal.Zero
+		account.PortfolioShortFloor = decimal.Zero
 		account.Status = int64(option.RiskAccountStatus_RISK_ACCOUNT_STATUS_NORMAL)
 		account.LastCalcTime = now
 		account.UpdateTimes = now
@@ -254,6 +405,13 @@ func (l *ProcessRiskAccountsLogic) ensureLiquidations(
 	}
 	deficit := decimal.Max(maintenanceMargin.Sub(equity), decimal.Zero).Round(16)
 	for _, item := range group.positions {
+		if item.position.Side != int64(common.PositionSide_POSITION_SIDE_SHORT) {
+			continue
+		}
+		if item.contract.Status != int64(option.ContractStatus_CONTRACT_STATUS_TRADING) &&
+			item.contract.Status != int64(option.ContractStatus_CONTRACT_STATUS_PAUSED) {
+			continue
+		}
 		_, err := l.svcCtx.OptionLiquidationModel.FindOpenByPosition(
 			l.ctx, item.position.TenantId, item.position.Id,
 		)
@@ -272,7 +430,10 @@ func (l *ProcessRiskAccountsLogic) ensureLiquidations(
 			Quantity: item.position.PositionQty, MarkPrice: item.market.MarkPrice,
 			MaintenanceMargin: item.position.MaintenanceMargin, Equity: equity,
 			DeficitAmount: deficit, LiquidationFee: fee,
-			Status:      int64(option.LiquidationStatus_LIQUIDATION_STATUS_PENDING),
+			Status: int64(option.LiquidationStatus_LIQUIDATION_STATUS_PENDING),
+			DeficitResolution: int64(
+				option.LiquidationDeficitResolution_LIQUIDATION_DEFICIT_RESOLUTION_NONE,
+			),
 			CreateTimes: now, UpdateTimes: now,
 		}); err != nil {
 			return err

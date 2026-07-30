@@ -1,11 +1,24 @@
-ALTER TABLE `t_option_contract`
-  ADD COLUMN `seller_margin_mode` TINYINT NOT NULL DEFAULT 1 COMMENT '卖方保证金模式：1关闭 2逐仓 3组合' AFTER `fee_account_id`,
-  ADD COLUMN `initial_margin_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT '卖方初始保证金率' AFTER `seller_margin_mode`,
-  ADD COLUMN `maintenance_margin_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT '卖方维持保证金率' AFTER `initial_margin_rate`,
-  ADD COLUMN `min_margin_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT '卖方最低保证金率' AFTER `maintenance_margin_rate`,
-  ADD COLUMN `liquidation_fee_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT '强平手续费率' AFTER `min_margin_rate`,
-  ADD COLUMN `insurance_user_id` BIGINT NOT NULL DEFAULT 0 COMMENT '保险基金用户ID' AFTER `liquidation_fee_rate`,
-  ADD COLUMN `insurance_account_id` BIGINT NOT NULL DEFAULT 0 COMMENT '保险基金Option账户ID' AFTER `insurance_user_id`;
+SET @option_seller_risk_sql = (
+  SELECT IF(
+    EXISTS (
+      SELECT 1 FROM information_schema.columns
+      WHERE table_schema = DATABASE() AND table_name = 't_option_contract'
+        AND column_name = 'seller_margin_mode'
+    ),
+    'SELECT 1',
+    'ALTER TABLE `t_option_contract`
+       ADD COLUMN `seller_margin_mode` TINYINT NOT NULL DEFAULT 1 COMMENT ''卖方保证金模式：1关闭 2逐仓 3组合'' AFTER `fee_account_id`,
+       ADD COLUMN `initial_margin_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT ''卖方初始保证金率'' AFTER `seller_margin_mode`,
+       ADD COLUMN `maintenance_margin_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT ''卖方维持保证金率'' AFTER `initial_margin_rate`,
+       ADD COLUMN `min_margin_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT ''卖方最低保证金率'' AFTER `maintenance_margin_rate`,
+       ADD COLUMN `liquidation_fee_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT ''强平手续费率'' AFTER `min_margin_rate`,
+       ADD COLUMN `insurance_user_id` BIGINT NOT NULL DEFAULT 0 COMMENT ''保险基金用户ID'' AFTER `liquidation_fee_rate`,
+       ADD COLUMN `insurance_account_id` BIGINT NOT NULL DEFAULT 0 COMMENT ''保险基金Option账户ID'' AFTER `insurance_user_id`'
+  )
+);
+PREPARE option_seller_risk_stmt FROM @option_seller_risk_sql;
+EXECUTE option_seller_risk_stmt;
+DEALLOCATE PREPARE option_seller_risk_stmt;
 
 CREATE TABLE IF NOT EXISTS `t_option_margin_lot` (
   `id` BIGINT NOT NULL AUTO_INCREMENT, `tenant_id` BIGINT NOT NULL DEFAULT 0,

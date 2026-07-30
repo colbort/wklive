@@ -66,6 +66,8 @@ type (
 		TakeoverPositionId  int64           `db:"takeover_position_id"`  // 保险账户接管持仓ID
 		CompletedAt         int64           `db:"completed_at"`          // 完成时间
 		InsuranceAttempt    int64           `db:"insurance_attempt"`     // 保险基金人工重试代次
+		BackstopAmount      decimal.Decimal `db:"backstop_amount"`       // 平台兜底负债金额
+		DeficitResolution   int64           `db:"deficit_resolution"`    // 缺口处置：1无 2保险 3平台兜底 4保险加兜底 5人工
 		CreateTimes         int64           `db:"create_times"`          // 创建时间
 		UpdateTimes         int64           `db:"update_times"`          // 更新时间
 	}
@@ -134,8 +136,8 @@ func (m *defaultTOptionLiquidationModel) Insert(ctx context.Context, data *TOpti
 	tOptionLiquidationIdKey := fmt.Sprintf("%s%v", cacheTOptionLiquidationIdPrefix, data.Id)
 	tOptionLiquidationTenantIdLiquidationNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionLiquidationTenantIdLiquidationNoPrefix, data.TenantId, data.LiquidationNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionLiquidationRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.LiquidationNo, data.UserId, data.AccountId, data.ContractId, data.PositionId, data.Quantity, data.MarkPrice, data.MaintenanceMargin, data.Equity, data.DeficitAmount, data.LiquidationFee, data.Status, data.RetryCount, data.LastErrorMsg, data.CollateralAmount, data.InsuranceFundAmount, data.RemainingDeficit, data.TakeoverPositionId, data.CompletedAt, data.InsuranceAttempt, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionLiquidationRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.LiquidationNo, data.UserId, data.AccountId, data.ContractId, data.PositionId, data.Quantity, data.MarkPrice, data.MaintenanceMargin, data.Equity, data.DeficitAmount, data.LiquidationFee, data.Status, data.RetryCount, data.LastErrorMsg, data.CollateralAmount, data.InsuranceFundAmount, data.RemainingDeficit, data.TakeoverPositionId, data.CompletedAt, data.InsuranceAttempt, data.BackstopAmount, data.DeficitResolution, data.CreateTimes, data.UpdateTimes)
 	}, tOptionLiquidationIdKey, tOptionLiquidationTenantIdLiquidationNoKey)
 	return ret, err
 }
@@ -150,7 +152,7 @@ func (m *defaultTOptionLiquidationModel) Update(ctx context.Context, newData *TO
 	tOptionLiquidationTenantIdLiquidationNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionLiquidationTenantIdLiquidationNoPrefix, data.TenantId, data.LiquidationNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionLiquidationRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.LiquidationNo, newData.UserId, newData.AccountId, newData.ContractId, newData.PositionId, newData.Quantity, newData.MarkPrice, newData.MaintenanceMargin, newData.Equity, newData.DeficitAmount, newData.LiquidationFee, newData.Status, newData.RetryCount, newData.LastErrorMsg, newData.CollateralAmount, newData.InsuranceFundAmount, newData.RemainingDeficit, newData.TakeoverPositionId, newData.CompletedAt, newData.InsuranceAttempt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.LiquidationNo, newData.UserId, newData.AccountId, newData.ContractId, newData.PositionId, newData.Quantity, newData.MarkPrice, newData.MaintenanceMargin, newData.Equity, newData.DeficitAmount, newData.LiquidationFee, newData.Status, newData.RetryCount, newData.LastErrorMsg, newData.CollateralAmount, newData.InsuranceFundAmount, newData.RemainingDeficit, newData.TakeoverPositionId, newData.CompletedAt, newData.InsuranceAttempt, newData.BackstopAmount, newData.DeficitResolution, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tOptionLiquidationIdKey, tOptionLiquidationTenantIdLiquidationNoKey)
 	return err
 }

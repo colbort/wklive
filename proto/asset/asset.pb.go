@@ -5926,6 +5926,166 @@ func (x *ReverseInsuranceCoverReq) GetRemark() string {
 	return ""
 }
 
+type CoverPlatformBackstopDeficitReq struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	TenantId        int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Coin            string                 `protobuf:"bytes,2,opt,name=coin,proto3" json:"coin,omitempty"`
+	RequestedAmount string                 `protobuf:"bytes,3,opt,name=requested_amount,json=requestedAmount,proto3" json:"requested_amount,omitempty"`
+	LiquidationId   int64                  `protobuf:"varint,4,opt,name=liquidation_id,json=liquidationId,proto3" json:"liquidation_id,omitempty"`
+	LiquidationNo   string                 `protobuf:"bytes,5,opt,name=liquidation_no,json=liquidationNo,proto3" json:"liquidation_no,omitempty"`
+	Remark          string                 `protobuf:"bytes,6,opt,name=remark,proto3" json:"remark,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *CoverPlatformBackstopDeficitReq) Reset() {
+	*x = CoverPlatformBackstopDeficitReq{}
+	mi := &file_proto_asset_asset_proto_msgTypes[76]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CoverPlatformBackstopDeficitReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CoverPlatformBackstopDeficitReq) ProtoMessage() {}
+
+func (x *CoverPlatformBackstopDeficitReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_asset_asset_proto_msgTypes[76]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CoverPlatformBackstopDeficitReq.ProtoReflect.Descriptor instead.
+func (*CoverPlatformBackstopDeficitReq) Descriptor() ([]byte, []int) {
+	return file_proto_asset_asset_proto_rawDescGZIP(), []int{76}
+}
+
+func (x *CoverPlatformBackstopDeficitReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *CoverPlatformBackstopDeficitReq) GetCoin() string {
+	if x != nil {
+		return x.Coin
+	}
+	return ""
+}
+
+func (x *CoverPlatformBackstopDeficitReq) GetRequestedAmount() string {
+	if x != nil {
+		return x.RequestedAmount
+	}
+	return ""
+}
+
+func (x *CoverPlatformBackstopDeficitReq) GetLiquidationId() int64 {
+	if x != nil {
+		return x.LiquidationId
+	}
+	return 0
+}
+
+func (x *CoverPlatformBackstopDeficitReq) GetLiquidationNo() string {
+	if x != nil {
+		return x.LiquidationNo
+	}
+	return ""
+}
+
+func (x *CoverPlatformBackstopDeficitReq) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
+type CoverPlatformBackstopDeficitResp struct {
+	state                  protoimpl.MessageState `protogen:"open.v1"`
+	Base                   *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	CoveredAmount          string                 `protobuf:"bytes,2,opt,name=covered_amount,json=coveredAmount,proto3" json:"covered_amount,omitempty"`
+	IdempotentReplay       bool                   `protobuf:"varint,3,opt,name=idempotent_replay,json=idempotentReplay,proto3" json:"idempotent_replay,omitempty"`
+	PlatformAccountId      int64                  `protobuf:"varint,4,opt,name=platform_account_id,json=platformAccountId,proto3" json:"platform_account_id,omitempty"`
+	PlatformAccountBalance string                 `protobuf:"bytes,5,opt,name=platform_account_balance,json=platformAccountBalance,proto3" json:"platform_account_balance,omitempty"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
+}
+
+func (x *CoverPlatformBackstopDeficitResp) Reset() {
+	*x = CoverPlatformBackstopDeficitResp{}
+	mi := &file_proto_asset_asset_proto_msgTypes[77]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CoverPlatformBackstopDeficitResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CoverPlatformBackstopDeficitResp) ProtoMessage() {}
+
+func (x *CoverPlatformBackstopDeficitResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_asset_asset_proto_msgTypes[77]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CoverPlatformBackstopDeficitResp.ProtoReflect.Descriptor instead.
+func (*CoverPlatformBackstopDeficitResp) Descriptor() ([]byte, []int) {
+	return file_proto_asset_asset_proto_rawDescGZIP(), []int{77}
+}
+
+func (x *CoverPlatformBackstopDeficitResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *CoverPlatformBackstopDeficitResp) GetCoveredAmount() string {
+	if x != nil {
+		return x.CoveredAmount
+	}
+	return ""
+}
+
+func (x *CoverPlatformBackstopDeficitResp) GetIdempotentReplay() bool {
+	if x != nil {
+		return x.IdempotentReplay
+	}
+	return false
+}
+
+func (x *CoverPlatformBackstopDeficitResp) GetPlatformAccountId() int64 {
+	if x != nil {
+		return x.PlatformAccountId
+	}
+	return 0
+}
+
+func (x *CoverPlatformBackstopDeficitResp) GetPlatformAccountBalance() string {
+	if x != nil {
+		return x.PlatformAccountBalance
+	}
+	return ""
+}
+
 type CreditPlatformRevenueReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
@@ -5942,7 +6102,7 @@ type CreditPlatformRevenueReq struct {
 
 func (x *CreditPlatformRevenueReq) Reset() {
 	*x = CreditPlatformRevenueReq{}
-	mi := &file_proto_asset_asset_proto_msgTypes[76]
+	mi := &file_proto_asset_asset_proto_msgTypes[78]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5954,7 +6114,7 @@ func (x *CreditPlatformRevenueReq) String() string {
 func (*CreditPlatformRevenueReq) ProtoMessage() {}
 
 func (x *CreditPlatformRevenueReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_asset_proto_msgTypes[76]
+	mi := &file_proto_asset_asset_proto_msgTypes[78]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5967,7 +6127,7 @@ func (x *CreditPlatformRevenueReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreditPlatformRevenueReq.ProtoReflect.Descriptor instead.
 func (*CreditPlatformRevenueReq) Descriptor() ([]byte, []int) {
-	return file_proto_asset_asset_proto_rawDescGZIP(), []int{76}
+	return file_proto_asset_asset_proto_rawDescGZIP(), []int{78}
 }
 
 func (x *CreditPlatformRevenueReq) GetTenantId() int64 {
@@ -6038,7 +6198,7 @@ type CreditPlatformRevenueResp struct {
 
 func (x *CreditPlatformRevenueResp) Reset() {
 	*x = CreditPlatformRevenueResp{}
-	mi := &file_proto_asset_asset_proto_msgTypes[77]
+	mi := &file_proto_asset_asset_proto_msgTypes[79]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6050,7 +6210,7 @@ func (x *CreditPlatformRevenueResp) String() string {
 func (*CreditPlatformRevenueResp) ProtoMessage() {}
 
 func (x *CreditPlatformRevenueResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_asset_asset_proto_msgTypes[77]
+	mi := &file_proto_asset_asset_proto_msgTypes[79]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6063,7 +6223,7 @@ func (x *CreditPlatformRevenueResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreditPlatformRevenueResp.ProtoReflect.Descriptor instead.
 func (*CreditPlatformRevenueResp) Descriptor() ([]byte, []int) {
-	return file_proto_asset_asset_proto_rawDescGZIP(), []int{77}
+	return file_proto_asset_asset_proto_rawDescGZIP(), []int{79}
 }
 
 func (x *CreditPlatformRevenueResp) GetBase() *common.RespBase {
@@ -6639,7 +6799,20 @@ const file_proto_asset_asset_proto_rawDesc = "" +
 	"\x0eliquidation_no\x18\x02 \x01(\tR\rliquidationNo\x12\x1f\n" +
 	"\vreversal_no\x18\x03 \x01(\tR\n" +
 	"reversalNo\x12\x16\n" +
-	"\x06remark\x18\x04 \x01(\tR\x06remark\"\x85\x02\n" +
+	"\x06remark\x18\x04 \x01(\tR\x06remark\"\xe3\x01\n" +
+	"\x1fCoverPlatformBackstopDeficitReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x12\n" +
+	"\x04coin\x18\x02 \x01(\tR\x04coin\x12)\n" +
+	"\x10requested_amount\x18\x03 \x01(\tR\x0frequestedAmount\x12%\n" +
+	"\x0eliquidation_id\x18\x04 \x01(\x03R\rliquidationId\x12%\n" +
+	"\x0eliquidation_no\x18\x05 \x01(\tR\rliquidationNo\x12\x16\n" +
+	"\x06remark\x18\x06 \x01(\tR\x06remark\"\x86\x02\n" +
+	" CoverPlatformBackstopDeficitResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12%\n" +
+	"\x0ecovered_amount\x18\x02 \x01(\tR\rcoveredAmount\x12+\n" +
+	"\x11idempotent_replay\x18\x03 \x01(\bR\x10idempotentReplay\x12.\n" +
+	"\x13platform_account_id\x18\x04 \x01(\x03R\x11platformAccountId\x128\n" +
+	"\x18platform_account_balance\x18\x05 \x01(\tR\x16platformAccountBalance\"\x85\x02\n" +
 	"\x18CreditPlatformRevenueReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x12\n" +
 	"\x04coin\x18\x02 \x01(\tR\x04coin\x12\x16\n" +
@@ -6685,8 +6858,7 @@ const file_proto_asset_asset_proto_rawDesc = "" +
 	"\vUnlockAsset\x12\x1b.asset.ManualUnlockAssetReq\x1a\x1c.asset.ManualChangeAssetResp\x12N\n" +
 	"\x12SetPlatformAccount\x12\x1c.asset.SetPlatformAccountReq\x1a\x1a.asset.PlatformAccountResp\x12N\n" +
 	"\x12GetPlatformAccount\x12\x1c.asset.GetPlatformAccountReq\x1a\x1a.asset.PlatformAccountResp\x12T\n" +
-	"\x15AdjustPlatformAccount\x12\x1f.asset.AdjustPlatformAccountReq\x1a\x1a.asset.PlatformAccountResp2\xd1\n" +
-	"\n" +
+	"\x15AdjustPlatformAccount\x12\x1f.asset.AdjustPlatformAccountReq\x1a\x1a.asset.PlatformAccountResp2\xc2\v\n" +
 	"\x05Asset\x12N\n" +
 	"\x0fGetAssetBalance\x12\x1c.asset.GetUserAssetDetailReq\x1a\x1d.asset.GetUserAssetDetailResp\x12T\n" +
 	"\x13GetAssetFlowByBizNo\x12\x1d.asset.GetAssetFlowByBizNoReq\x1a\x1e.asset.GetAssetFlowByBizNoResp\x12>\n" +
@@ -6704,7 +6876,8 @@ const file_proto_asset_asset_proto_rawDesc = "" +
 	"\x18DeductLockedAssetByBizNo\x12\".asset.DeductLockedAssetByBizNoReq\x1a\x16.asset.ChangeAssetResp\x12B\n" +
 	"\rTransferAsset\x12\x17.asset.TransferAssetReq\x1a\x18.asset.TransferAssetResp\x12Z\n" +
 	"\x15CoverInsuranceDeficit\x12\x1f.asset.CoverInsuranceDeficitReq\x1a .asset.CoverInsuranceDeficitResp\x12P\n" +
-	"\x15ReverseInsuranceCover\x12\x1f.asset.ReverseInsuranceCoverReq\x1a\x16.asset.ChangeAssetResp\x12Z\n" +
+	"\x15ReverseInsuranceCover\x12\x1f.asset.ReverseInsuranceCoverReq\x1a\x16.asset.ChangeAssetResp\x12o\n" +
+	"\x1cCoverPlatformBackstopDeficit\x12&.asset.CoverPlatformBackstopDeficitReq\x1a'.asset.CoverPlatformBackstopDeficitResp\x12Z\n" +
 	"\x15CreditPlatformRevenue\x12\x1f.asset.CreditPlatformRevenueReq\x1a .asset.CreditPlatformRevenueRespB\x1aZ\x18wklive/proto/asset;assetb\x06proto3"
 
 var (
@@ -6719,366 +6892,371 @@ func file_proto_asset_asset_proto_rawDescGZIP() []byte {
 	return file_proto_asset_asset_proto_rawDescData
 }
 
-var file_proto_asset_asset_proto_msgTypes = make([]protoimpl.MessageInfo, 78)
+var file_proto_asset_asset_proto_msgTypes = make([]protoimpl.MessageInfo, 80)
 var file_proto_asset_asset_proto_goTypes = []any{
-	(*ListAssetCoinConfigsReq)(nil),     // 0: asset.ListAssetCoinConfigsReq
-	(*ListAssetCoinConfigsResp)(nil),    // 1: asset.ListAssetCoinConfigsResp
-	(*GetMyAssetSummaryReq)(nil),        // 2: asset.GetMyAssetSummaryReq
-	(*GetMyAssetSummaryResp)(nil),       // 3: asset.GetMyAssetSummaryResp
-	(*ListMyAssetsReq)(nil),             // 4: asset.ListMyAssetsReq
-	(*ListMyAssetsResp)(nil),            // 5: asset.ListMyAssetsResp
-	(*GetMyAssetReq)(nil),               // 6: asset.GetMyAssetReq
-	(*GetMyAssetResp)(nil),              // 7: asset.GetMyAssetResp
-	(*ListMyAssetFlowsReq)(nil),         // 8: asset.ListMyAssetFlowsReq
-	(*ListMyAssetFlowsResp)(nil),        // 9: asset.ListMyAssetFlowsResp
-	(*ListMyFreezesReq)(nil),            // 10: asset.ListMyFreezesReq
-	(*ListMyFreezesResp)(nil),           // 11: asset.ListMyFreezesResp
-	(*ListMyLocksReq)(nil),              // 12: asset.ListMyLocksReq
-	(*ListMyLocksResp)(nil),             // 13: asset.ListMyLocksResp
-	(*TransferMyAssetReq)(nil),          // 14: asset.TransferMyAssetReq
-	(*TransferMyAssetResp)(nil),         // 15: asset.TransferMyAssetResp
-	(*TransferMyAssetData)(nil),         // 16: asset.TransferMyAssetData
-	(*PlatformAccount)(nil),             // 17: asset.PlatformAccount
-	(*SetPlatformAccountReq)(nil),       // 18: asset.SetPlatformAccountReq
-	(*GetPlatformAccountReq)(nil),       // 19: asset.GetPlatformAccountReq
-	(*AdjustPlatformAccountReq)(nil),    // 20: asset.AdjustPlatformAccountReq
-	(*PlatformAccountResp)(nil),         // 21: asset.PlatformAccountResp
-	(*CreateAssetCoinConfigReq)(nil),    // 22: asset.CreateAssetCoinConfigReq
-	(*UpdateAssetCoinConfigReq)(nil),    // 23: asset.UpdateAssetCoinConfigReq
-	(*DeleteAssetCoinConfigReq)(nil),    // 24: asset.DeleteAssetCoinConfigReq
-	(*GetAssetCoinConfigReq)(nil),       // 25: asset.GetAssetCoinConfigReq
-	(*PageAssetCoinConfigsReq)(nil),     // 26: asset.PageAssetCoinConfigsReq
-	(*AssetCoinConfigResp)(nil),         // 27: asset.AssetCoinConfigResp
-	(*PageAssetCoinConfigsResp)(nil),    // 28: asset.PageAssetCoinConfigsResp
-	(*DeleteAssetCoinConfigResp)(nil),   // 29: asset.DeleteAssetCoinConfigResp
-	(*PageUserAssetsReq)(nil),           // 30: asset.PageUserAssetsReq
-	(*PageUserAssetsResp)(nil),          // 31: asset.PageUserAssetsResp
-	(*GetUserAssetDetailReq)(nil),       // 32: asset.GetUserAssetDetailReq
-	(*GetUserAssetDetailResp)(nil),      // 33: asset.GetUserAssetDetailResp
-	(*PageAssetFlowsReq)(nil),           // 34: asset.PageAssetFlowsReq
-	(*PageAssetFlowsResp)(nil),          // 35: asset.PageAssetFlowsResp
-	(*GetInsuranceCoverReq)(nil),        // 36: asset.GetInsuranceCoverReq
-	(*GetInsuranceCoverResp)(nil),       // 37: asset.GetInsuranceCoverResp
-	(*PageAssetFreezesReq)(nil),         // 38: asset.PageAssetFreezesReq
-	(*PageAssetFreezesResp)(nil),        // 39: asset.PageAssetFreezesResp
-	(*PageAssetLocksReq)(nil),           // 40: asset.PageAssetLocksReq
-	(*PageAssetLocksResp)(nil),          // 41: asset.PageAssetLocksResp
-	(*AddAssetReq)(nil),                 // 42: asset.AddAssetReq
-	(*SubAssetReq)(nil),                 // 43: asset.SubAssetReq
-	(*ManualFreezeAssetReq)(nil),        // 44: asset.ManualFreezeAssetReq
-	(*ManualUnfreezeAssetReq)(nil),      // 45: asset.ManualUnfreezeAssetReq
-	(*ManualLockAssetReq)(nil),          // 46: asset.ManualLockAssetReq
-	(*ManualUnlockAssetReq)(nil),        // 47: asset.ManualUnlockAssetReq
-	(*ManualChangeAssetResp)(nil),       // 48: asset.ManualChangeAssetResp
-	(*ManualChangeAssetData)(nil),       // 49: asset.ManualChangeAssetData
-	(*GetAssetFlowByBizNoReq)(nil),      // 50: asset.GetAssetFlowByBizNoReq
-	(*GetAssetFlowByBizNoResp)(nil),     // 51: asset.GetAssetFlowByBizNoResp
-	(*AddAvailableReq)(nil),             // 52: asset.AddAvailableReq
-	(*SubAvailableReq)(nil),             // 53: asset.SubAvailableReq
-	(*FreezeAssetReq)(nil),              // 54: asset.FreezeAssetReq
-	(*FreezeAssetResp)(nil),             // 55: asset.FreezeAssetResp
-	(*FreezeAssetData)(nil),             // 56: asset.FreezeAssetData
-	(*UnfreezeAssetReq)(nil),            // 57: asset.UnfreezeAssetReq
-	(*UnfreezeAssetByBizNoReq)(nil),     // 58: asset.UnfreezeAssetByBizNoReq
-	(*DeductFrozenAssetReq)(nil),        // 59: asset.DeductFrozenAssetReq
-	(*DeductFrozenAssetByBizNoReq)(nil), // 60: asset.DeductFrozenAssetByBizNoReq
-	(*LockAssetReq)(nil),                // 61: asset.LockAssetReq
-	(*LockAssetResp)(nil),               // 62: asset.LockAssetResp
-	(*LockAssetData)(nil),               // 63: asset.LockAssetData
-	(*UnlockAssetReq)(nil),              // 64: asset.UnlockAssetReq
-	(*UnlockAssetByBizNoReq)(nil),       // 65: asset.UnlockAssetByBizNoReq
-	(*DeductLockedAssetReq)(nil),        // 66: asset.DeductLockedAssetReq
-	(*DeductLockedAssetByBizNoReq)(nil), // 67: asset.DeductLockedAssetByBizNoReq
-	(*TransferAssetReq)(nil),            // 68: asset.TransferAssetReq
-	(*TransferAssetResp)(nil),           // 69: asset.TransferAssetResp
-	(*TransferAssetData)(nil),           // 70: asset.TransferAssetData
-	(*ChangeAssetResp)(nil),             // 71: asset.ChangeAssetResp
-	(*ChangeAssetData)(nil),             // 72: asset.ChangeAssetData
-	(*CoverInsuranceDeficitReq)(nil),    // 73: asset.CoverInsuranceDeficitReq
-	(*CoverInsuranceDeficitResp)(nil),   // 74: asset.CoverInsuranceDeficitResp
-	(*ReverseInsuranceCoverReq)(nil),    // 75: asset.ReverseInsuranceCoverReq
-	(*CreditPlatformRevenueReq)(nil),    // 76: asset.CreditPlatformRevenueReq
-	(*CreditPlatformRevenueResp)(nil),   // 77: asset.CreditPlatformRevenueResp
-	(common.WalletType)(0),              // 78: common.WalletType
-	(AssetCoinOperationType)(0),         // 79: asset.AssetCoinOperationType
-	(AssetCoinType)(0),                  // 80: asset.AssetCoinType
-	(*common.RespBase)(nil),             // 81: common.RespBase
-	(*AssetCoinConfig)(nil),             // 82: asset.AssetCoinConfig
-	(*UserAssetSummary)(nil),            // 83: asset.UserAssetSummary
-	(*UserAsset)(nil),                   // 84: asset.UserAsset
-	(BizType)(0),                        // 85: asset.BizType
-	(SceneType)(0),                      // 86: asset.SceneType
-	(*common.TimeRange)(nil),            // 87: common.TimeRange
-	(*common.PageReq)(nil),              // 88: common.PageReq
-	(*AssetFlow)(nil),                   // 89: asset.AssetFlow
-	(FreezeStatus)(0),                   // 90: asset.FreezeStatus
-	(*AssetFreeze)(nil),                 // 91: asset.AssetFreeze
-	(LockStatus)(0),                     // 92: asset.LockStatus
-	(*AssetLock)(nil),                   // 93: asset.AssetLock
-	(common.Enable)(0),                  // 94: common.Enable
-	(common.ChainCode)(0),               // 95: common.ChainCode
-	(common.Switch)(0),                  // 96: common.Switch
+	(*ListAssetCoinConfigsReq)(nil),          // 0: asset.ListAssetCoinConfigsReq
+	(*ListAssetCoinConfigsResp)(nil),         // 1: asset.ListAssetCoinConfigsResp
+	(*GetMyAssetSummaryReq)(nil),             // 2: asset.GetMyAssetSummaryReq
+	(*GetMyAssetSummaryResp)(nil),            // 3: asset.GetMyAssetSummaryResp
+	(*ListMyAssetsReq)(nil),                  // 4: asset.ListMyAssetsReq
+	(*ListMyAssetsResp)(nil),                 // 5: asset.ListMyAssetsResp
+	(*GetMyAssetReq)(nil),                    // 6: asset.GetMyAssetReq
+	(*GetMyAssetResp)(nil),                   // 7: asset.GetMyAssetResp
+	(*ListMyAssetFlowsReq)(nil),              // 8: asset.ListMyAssetFlowsReq
+	(*ListMyAssetFlowsResp)(nil),             // 9: asset.ListMyAssetFlowsResp
+	(*ListMyFreezesReq)(nil),                 // 10: asset.ListMyFreezesReq
+	(*ListMyFreezesResp)(nil),                // 11: asset.ListMyFreezesResp
+	(*ListMyLocksReq)(nil),                   // 12: asset.ListMyLocksReq
+	(*ListMyLocksResp)(nil),                  // 13: asset.ListMyLocksResp
+	(*TransferMyAssetReq)(nil),               // 14: asset.TransferMyAssetReq
+	(*TransferMyAssetResp)(nil),              // 15: asset.TransferMyAssetResp
+	(*TransferMyAssetData)(nil),              // 16: asset.TransferMyAssetData
+	(*PlatformAccount)(nil),                  // 17: asset.PlatformAccount
+	(*SetPlatformAccountReq)(nil),            // 18: asset.SetPlatformAccountReq
+	(*GetPlatformAccountReq)(nil),            // 19: asset.GetPlatformAccountReq
+	(*AdjustPlatformAccountReq)(nil),         // 20: asset.AdjustPlatformAccountReq
+	(*PlatformAccountResp)(nil),              // 21: asset.PlatformAccountResp
+	(*CreateAssetCoinConfigReq)(nil),         // 22: asset.CreateAssetCoinConfigReq
+	(*UpdateAssetCoinConfigReq)(nil),         // 23: asset.UpdateAssetCoinConfigReq
+	(*DeleteAssetCoinConfigReq)(nil),         // 24: asset.DeleteAssetCoinConfigReq
+	(*GetAssetCoinConfigReq)(nil),            // 25: asset.GetAssetCoinConfigReq
+	(*PageAssetCoinConfigsReq)(nil),          // 26: asset.PageAssetCoinConfigsReq
+	(*AssetCoinConfigResp)(nil),              // 27: asset.AssetCoinConfigResp
+	(*PageAssetCoinConfigsResp)(nil),         // 28: asset.PageAssetCoinConfigsResp
+	(*DeleteAssetCoinConfigResp)(nil),        // 29: asset.DeleteAssetCoinConfigResp
+	(*PageUserAssetsReq)(nil),                // 30: asset.PageUserAssetsReq
+	(*PageUserAssetsResp)(nil),               // 31: asset.PageUserAssetsResp
+	(*GetUserAssetDetailReq)(nil),            // 32: asset.GetUserAssetDetailReq
+	(*GetUserAssetDetailResp)(nil),           // 33: asset.GetUserAssetDetailResp
+	(*PageAssetFlowsReq)(nil),                // 34: asset.PageAssetFlowsReq
+	(*PageAssetFlowsResp)(nil),               // 35: asset.PageAssetFlowsResp
+	(*GetInsuranceCoverReq)(nil),             // 36: asset.GetInsuranceCoverReq
+	(*GetInsuranceCoverResp)(nil),            // 37: asset.GetInsuranceCoverResp
+	(*PageAssetFreezesReq)(nil),              // 38: asset.PageAssetFreezesReq
+	(*PageAssetFreezesResp)(nil),             // 39: asset.PageAssetFreezesResp
+	(*PageAssetLocksReq)(nil),                // 40: asset.PageAssetLocksReq
+	(*PageAssetLocksResp)(nil),               // 41: asset.PageAssetLocksResp
+	(*AddAssetReq)(nil),                      // 42: asset.AddAssetReq
+	(*SubAssetReq)(nil),                      // 43: asset.SubAssetReq
+	(*ManualFreezeAssetReq)(nil),             // 44: asset.ManualFreezeAssetReq
+	(*ManualUnfreezeAssetReq)(nil),           // 45: asset.ManualUnfreezeAssetReq
+	(*ManualLockAssetReq)(nil),               // 46: asset.ManualLockAssetReq
+	(*ManualUnlockAssetReq)(nil),             // 47: asset.ManualUnlockAssetReq
+	(*ManualChangeAssetResp)(nil),            // 48: asset.ManualChangeAssetResp
+	(*ManualChangeAssetData)(nil),            // 49: asset.ManualChangeAssetData
+	(*GetAssetFlowByBizNoReq)(nil),           // 50: asset.GetAssetFlowByBizNoReq
+	(*GetAssetFlowByBizNoResp)(nil),          // 51: asset.GetAssetFlowByBizNoResp
+	(*AddAvailableReq)(nil),                  // 52: asset.AddAvailableReq
+	(*SubAvailableReq)(nil),                  // 53: asset.SubAvailableReq
+	(*FreezeAssetReq)(nil),                   // 54: asset.FreezeAssetReq
+	(*FreezeAssetResp)(nil),                  // 55: asset.FreezeAssetResp
+	(*FreezeAssetData)(nil),                  // 56: asset.FreezeAssetData
+	(*UnfreezeAssetReq)(nil),                 // 57: asset.UnfreezeAssetReq
+	(*UnfreezeAssetByBizNoReq)(nil),          // 58: asset.UnfreezeAssetByBizNoReq
+	(*DeductFrozenAssetReq)(nil),             // 59: asset.DeductFrozenAssetReq
+	(*DeductFrozenAssetByBizNoReq)(nil),      // 60: asset.DeductFrozenAssetByBizNoReq
+	(*LockAssetReq)(nil),                     // 61: asset.LockAssetReq
+	(*LockAssetResp)(nil),                    // 62: asset.LockAssetResp
+	(*LockAssetData)(nil),                    // 63: asset.LockAssetData
+	(*UnlockAssetReq)(nil),                   // 64: asset.UnlockAssetReq
+	(*UnlockAssetByBizNoReq)(nil),            // 65: asset.UnlockAssetByBizNoReq
+	(*DeductLockedAssetReq)(nil),             // 66: asset.DeductLockedAssetReq
+	(*DeductLockedAssetByBizNoReq)(nil),      // 67: asset.DeductLockedAssetByBizNoReq
+	(*TransferAssetReq)(nil),                 // 68: asset.TransferAssetReq
+	(*TransferAssetResp)(nil),                // 69: asset.TransferAssetResp
+	(*TransferAssetData)(nil),                // 70: asset.TransferAssetData
+	(*ChangeAssetResp)(nil),                  // 71: asset.ChangeAssetResp
+	(*ChangeAssetData)(nil),                  // 72: asset.ChangeAssetData
+	(*CoverInsuranceDeficitReq)(nil),         // 73: asset.CoverInsuranceDeficitReq
+	(*CoverInsuranceDeficitResp)(nil),        // 74: asset.CoverInsuranceDeficitResp
+	(*ReverseInsuranceCoverReq)(nil),         // 75: asset.ReverseInsuranceCoverReq
+	(*CoverPlatformBackstopDeficitReq)(nil),  // 76: asset.CoverPlatformBackstopDeficitReq
+	(*CoverPlatformBackstopDeficitResp)(nil), // 77: asset.CoverPlatformBackstopDeficitResp
+	(*CreditPlatformRevenueReq)(nil),         // 78: asset.CreditPlatformRevenueReq
+	(*CreditPlatformRevenueResp)(nil),        // 79: asset.CreditPlatformRevenueResp
+	(common.WalletType)(0),                   // 80: common.WalletType
+	(AssetCoinOperationType)(0),              // 81: asset.AssetCoinOperationType
+	(AssetCoinType)(0),                       // 82: asset.AssetCoinType
+	(*common.RespBase)(nil),                  // 83: common.RespBase
+	(*AssetCoinConfig)(nil),                  // 84: asset.AssetCoinConfig
+	(*UserAssetSummary)(nil),                 // 85: asset.UserAssetSummary
+	(*UserAsset)(nil),                        // 86: asset.UserAsset
+	(BizType)(0),                             // 87: asset.BizType
+	(SceneType)(0),                           // 88: asset.SceneType
+	(*common.TimeRange)(nil),                 // 89: common.TimeRange
+	(*common.PageReq)(nil),                   // 90: common.PageReq
+	(*AssetFlow)(nil),                        // 91: asset.AssetFlow
+	(FreezeStatus)(0),                        // 92: asset.FreezeStatus
+	(*AssetFreeze)(nil),                      // 93: asset.AssetFreeze
+	(LockStatus)(0),                          // 94: asset.LockStatus
+	(*AssetLock)(nil),                        // 95: asset.AssetLock
+	(common.Enable)(0),                       // 96: common.Enable
+	(common.ChainCode)(0),                    // 97: common.ChainCode
+	(common.Switch)(0),                       // 98: common.Switch
 }
 var file_proto_asset_asset_proto_depIdxs = []int32{
-	78,  // 0: asset.ListAssetCoinConfigsReq.wallet_type:type_name -> common.WalletType
-	79,  // 1: asset.ListAssetCoinConfigsReq.operation_type:type_name -> asset.AssetCoinOperationType
-	80,  // 2: asset.ListAssetCoinConfigsReq.coin_type:type_name -> asset.AssetCoinType
-	81,  // 3: asset.ListAssetCoinConfigsResp.base:type_name -> common.RespBase
-	82,  // 4: asset.ListAssetCoinConfigsResp.data:type_name -> asset.AssetCoinConfig
-	81,  // 5: asset.GetMyAssetSummaryResp.base:type_name -> common.RespBase
-	83,  // 6: asset.GetMyAssetSummaryResp.data:type_name -> asset.UserAssetSummary
-	78,  // 7: asset.ListMyAssetsReq.wallet_type:type_name -> common.WalletType
-	81,  // 8: asset.ListMyAssetsResp.base:type_name -> common.RespBase
-	84,  // 9: asset.ListMyAssetsResp.data:type_name -> asset.UserAsset
-	78,  // 10: asset.GetMyAssetReq.wallet_type:type_name -> common.WalletType
-	81,  // 11: asset.GetMyAssetResp.base:type_name -> common.RespBase
-	84,  // 12: asset.GetMyAssetResp.data:type_name -> asset.UserAsset
-	78,  // 13: asset.ListMyAssetFlowsReq.wallet_type:type_name -> common.WalletType
-	85,  // 14: asset.ListMyAssetFlowsReq.biz_type:type_name -> asset.BizType
-	86,  // 15: asset.ListMyAssetFlowsReq.scene_type:type_name -> asset.SceneType
-	87,  // 16: asset.ListMyAssetFlowsReq.time_range:type_name -> common.TimeRange
-	88,  // 17: asset.ListMyAssetFlowsReq.page:type_name -> common.PageReq
-	81,  // 18: asset.ListMyAssetFlowsResp.base:type_name -> common.RespBase
-	89,  // 19: asset.ListMyAssetFlowsResp.data:type_name -> asset.AssetFlow
-	78,  // 20: asset.ListMyFreezesReq.wallet_type:type_name -> common.WalletType
-	90,  // 21: asset.ListMyFreezesReq.status:type_name -> asset.FreezeStatus
-	88,  // 22: asset.ListMyFreezesReq.page:type_name -> common.PageReq
-	81,  // 23: asset.ListMyFreezesResp.base:type_name -> common.RespBase
-	91,  // 24: asset.ListMyFreezesResp.data:type_name -> asset.AssetFreeze
-	78,  // 25: asset.ListMyLocksReq.wallet_type:type_name -> common.WalletType
-	92,  // 26: asset.ListMyLocksReq.status:type_name -> asset.LockStatus
-	88,  // 27: asset.ListMyLocksReq.page:type_name -> common.PageReq
-	81,  // 28: asset.ListMyLocksResp.base:type_name -> common.RespBase
-	93,  // 29: asset.ListMyLocksResp.data:type_name -> asset.AssetLock
-	78,  // 30: asset.TransferMyAssetReq.from_wallet_type:type_name -> common.WalletType
-	78,  // 31: asset.TransferMyAssetReq.to_wallet_type:type_name -> common.WalletType
-	81,  // 32: asset.TransferMyAssetResp.base:type_name -> common.RespBase
+	80,  // 0: asset.ListAssetCoinConfigsReq.wallet_type:type_name -> common.WalletType
+	81,  // 1: asset.ListAssetCoinConfigsReq.operation_type:type_name -> asset.AssetCoinOperationType
+	82,  // 2: asset.ListAssetCoinConfigsReq.coin_type:type_name -> asset.AssetCoinType
+	83,  // 3: asset.ListAssetCoinConfigsResp.base:type_name -> common.RespBase
+	84,  // 4: asset.ListAssetCoinConfigsResp.data:type_name -> asset.AssetCoinConfig
+	83,  // 5: asset.GetMyAssetSummaryResp.base:type_name -> common.RespBase
+	85,  // 6: asset.GetMyAssetSummaryResp.data:type_name -> asset.UserAssetSummary
+	80,  // 7: asset.ListMyAssetsReq.wallet_type:type_name -> common.WalletType
+	83,  // 8: asset.ListMyAssetsResp.base:type_name -> common.RespBase
+	86,  // 9: asset.ListMyAssetsResp.data:type_name -> asset.UserAsset
+	80,  // 10: asset.GetMyAssetReq.wallet_type:type_name -> common.WalletType
+	83,  // 11: asset.GetMyAssetResp.base:type_name -> common.RespBase
+	86,  // 12: asset.GetMyAssetResp.data:type_name -> asset.UserAsset
+	80,  // 13: asset.ListMyAssetFlowsReq.wallet_type:type_name -> common.WalletType
+	87,  // 14: asset.ListMyAssetFlowsReq.biz_type:type_name -> asset.BizType
+	88,  // 15: asset.ListMyAssetFlowsReq.scene_type:type_name -> asset.SceneType
+	89,  // 16: asset.ListMyAssetFlowsReq.time_range:type_name -> common.TimeRange
+	90,  // 17: asset.ListMyAssetFlowsReq.page:type_name -> common.PageReq
+	83,  // 18: asset.ListMyAssetFlowsResp.base:type_name -> common.RespBase
+	91,  // 19: asset.ListMyAssetFlowsResp.data:type_name -> asset.AssetFlow
+	80,  // 20: asset.ListMyFreezesReq.wallet_type:type_name -> common.WalletType
+	92,  // 21: asset.ListMyFreezesReq.status:type_name -> asset.FreezeStatus
+	90,  // 22: asset.ListMyFreezesReq.page:type_name -> common.PageReq
+	83,  // 23: asset.ListMyFreezesResp.base:type_name -> common.RespBase
+	93,  // 24: asset.ListMyFreezesResp.data:type_name -> asset.AssetFreeze
+	80,  // 25: asset.ListMyLocksReq.wallet_type:type_name -> common.WalletType
+	94,  // 26: asset.ListMyLocksReq.status:type_name -> asset.LockStatus
+	90,  // 27: asset.ListMyLocksReq.page:type_name -> common.PageReq
+	83,  // 28: asset.ListMyLocksResp.base:type_name -> common.RespBase
+	95,  // 29: asset.ListMyLocksResp.data:type_name -> asset.AssetLock
+	80,  // 30: asset.TransferMyAssetReq.from_wallet_type:type_name -> common.WalletType
+	80,  // 31: asset.TransferMyAssetReq.to_wallet_type:type_name -> common.WalletType
+	83,  // 32: asset.TransferMyAssetResp.base:type_name -> common.RespBase
 	16,  // 33: asset.TransferMyAssetResp.data:type_name -> asset.TransferMyAssetData
-	84,  // 34: asset.TransferMyAssetData.from_asset:type_name -> asset.UserAsset
-	84,  // 35: asset.TransferMyAssetData.to_asset:type_name -> asset.UserAsset
-	94,  // 36: asset.PlatformAccount.status:type_name -> common.Enable
-	94,  // 37: asset.SetPlatformAccountReq.status:type_name -> common.Enable
-	81,  // 38: asset.PlatformAccountResp.base:type_name -> common.RespBase
+	86,  // 34: asset.TransferMyAssetData.from_asset:type_name -> asset.UserAsset
+	86,  // 35: asset.TransferMyAssetData.to_asset:type_name -> asset.UserAsset
+	96,  // 36: asset.PlatformAccount.status:type_name -> common.Enable
+	96,  // 37: asset.SetPlatformAccountReq.status:type_name -> common.Enable
+	83,  // 38: asset.PlatformAccountResp.base:type_name -> common.RespBase
 	17,  // 39: asset.PlatformAccountResp.data:type_name -> asset.PlatformAccount
-	78,  // 40: asset.CreateAssetCoinConfigReq.wallet_type:type_name -> common.WalletType
-	80,  // 41: asset.CreateAssetCoinConfigReq.coin_type:type_name -> asset.AssetCoinType
-	95,  // 42: asset.CreateAssetCoinConfigReq.chain_code:type_name -> common.ChainCode
-	96,  // 43: asset.CreateAssetCoinConfigReq.app_visible:type_name -> common.Switch
-	96,  // 44: asset.CreateAssetCoinConfigReq.recharge_enabled:type_name -> common.Switch
-	96,  // 45: asset.CreateAssetCoinConfigReq.withdraw_enabled:type_name -> common.Switch
-	96,  // 46: asset.CreateAssetCoinConfigReq.transfer_enabled:type_name -> common.Switch
-	94,  // 47: asset.CreateAssetCoinConfigReq.enabled:type_name -> common.Enable
-	78,  // 48: asset.UpdateAssetCoinConfigReq.wallet_type:type_name -> common.WalletType
-	80,  // 49: asset.UpdateAssetCoinConfigReq.coin_type:type_name -> asset.AssetCoinType
-	95,  // 50: asset.UpdateAssetCoinConfigReq.chain_code:type_name -> common.ChainCode
-	96,  // 51: asset.UpdateAssetCoinConfigReq.app_visible:type_name -> common.Switch
-	96,  // 52: asset.UpdateAssetCoinConfigReq.recharge_enabled:type_name -> common.Switch
-	96,  // 53: asset.UpdateAssetCoinConfigReq.withdraw_enabled:type_name -> common.Switch
-	96,  // 54: asset.UpdateAssetCoinConfigReq.transfer_enabled:type_name -> common.Switch
-	94,  // 55: asset.UpdateAssetCoinConfigReq.enabled:type_name -> common.Enable
-	78,  // 56: asset.PageAssetCoinConfigsReq.wallet_type:type_name -> common.WalletType
-	80,  // 57: asset.PageAssetCoinConfigsReq.coin_type:type_name -> asset.AssetCoinType
-	96,  // 58: asset.PageAssetCoinConfigsReq.app_visible:type_name -> common.Switch
-	96,  // 59: asset.PageAssetCoinConfigsReq.recharge_enabled:type_name -> common.Switch
-	96,  // 60: asset.PageAssetCoinConfigsReq.withdraw_enabled:type_name -> common.Switch
-	96,  // 61: asset.PageAssetCoinConfigsReq.transfer_enabled:type_name -> common.Switch
-	94,  // 62: asset.PageAssetCoinConfigsReq.enabled:type_name -> common.Enable
-	88,  // 63: asset.PageAssetCoinConfigsReq.page:type_name -> common.PageReq
-	95,  // 64: asset.PageAssetCoinConfigsReq.chain_code:type_name -> common.ChainCode
-	81,  // 65: asset.AssetCoinConfigResp.base:type_name -> common.RespBase
-	82,  // 66: asset.AssetCoinConfigResp.data:type_name -> asset.AssetCoinConfig
-	81,  // 67: asset.PageAssetCoinConfigsResp.base:type_name -> common.RespBase
-	82,  // 68: asset.PageAssetCoinConfigsResp.data:type_name -> asset.AssetCoinConfig
-	81,  // 69: asset.DeleteAssetCoinConfigResp.base:type_name -> common.RespBase
-	78,  // 70: asset.PageUserAssetsReq.wallet_type:type_name -> common.WalletType
-	94,  // 71: asset.PageUserAssetsReq.enabled:type_name -> common.Enable
-	88,  // 72: asset.PageUserAssetsReq.page:type_name -> common.PageReq
-	81,  // 73: asset.PageUserAssetsResp.base:type_name -> common.RespBase
-	84,  // 74: asset.PageUserAssetsResp.data:type_name -> asset.UserAsset
-	78,  // 75: asset.GetUserAssetDetailReq.wallet_type:type_name -> common.WalletType
-	81,  // 76: asset.GetUserAssetDetailResp.base:type_name -> common.RespBase
-	84,  // 77: asset.GetUserAssetDetailResp.data:type_name -> asset.UserAsset
-	78,  // 78: asset.PageAssetFlowsReq.wallet_type:type_name -> common.WalletType
-	85,  // 79: asset.PageAssetFlowsReq.biz_type:type_name -> asset.BizType
-	86,  // 80: asset.PageAssetFlowsReq.scene_type:type_name -> asset.SceneType
-	87,  // 81: asset.PageAssetFlowsReq.time_range:type_name -> common.TimeRange
-	88,  // 82: asset.PageAssetFlowsReq.page:type_name -> common.PageReq
-	81,  // 83: asset.PageAssetFlowsResp.base:type_name -> common.RespBase
-	89,  // 84: asset.PageAssetFlowsResp.data:type_name -> asset.AssetFlow
-	81,  // 85: asset.GetInsuranceCoverResp.base:type_name -> common.RespBase
-	78,  // 86: asset.PageAssetFreezesReq.wallet_type:type_name -> common.WalletType
-	85,  // 87: asset.PageAssetFreezesReq.biz_type:type_name -> asset.BizType
-	90,  // 88: asset.PageAssetFreezesReq.status:type_name -> asset.FreezeStatus
-	88,  // 89: asset.PageAssetFreezesReq.page:type_name -> common.PageReq
-	81,  // 90: asset.PageAssetFreezesResp.base:type_name -> common.RespBase
-	91,  // 91: asset.PageAssetFreezesResp.data:type_name -> asset.AssetFreeze
-	78,  // 92: asset.PageAssetLocksReq.wallet_type:type_name -> common.WalletType
-	85,  // 93: asset.PageAssetLocksReq.biz_type:type_name -> asset.BizType
-	92,  // 94: asset.PageAssetLocksReq.status:type_name -> asset.LockStatus
-	88,  // 95: asset.PageAssetLocksReq.page:type_name -> common.PageReq
-	81,  // 96: asset.PageAssetLocksResp.base:type_name -> common.RespBase
-	93,  // 97: asset.PageAssetLocksResp.data:type_name -> asset.AssetLock
-	78,  // 98: asset.AddAssetReq.wallet_type:type_name -> common.WalletType
-	78,  // 99: asset.SubAssetReq.wallet_type:type_name -> common.WalletType
-	78,  // 100: asset.ManualFreezeAssetReq.wallet_type:type_name -> common.WalletType
-	78,  // 101: asset.ManualLockAssetReq.wallet_type:type_name -> common.WalletType
-	81,  // 102: asset.ManualChangeAssetResp.base:type_name -> common.RespBase
+	80,  // 40: asset.CreateAssetCoinConfigReq.wallet_type:type_name -> common.WalletType
+	82,  // 41: asset.CreateAssetCoinConfigReq.coin_type:type_name -> asset.AssetCoinType
+	97,  // 42: asset.CreateAssetCoinConfigReq.chain_code:type_name -> common.ChainCode
+	98,  // 43: asset.CreateAssetCoinConfigReq.app_visible:type_name -> common.Switch
+	98,  // 44: asset.CreateAssetCoinConfigReq.recharge_enabled:type_name -> common.Switch
+	98,  // 45: asset.CreateAssetCoinConfigReq.withdraw_enabled:type_name -> common.Switch
+	98,  // 46: asset.CreateAssetCoinConfigReq.transfer_enabled:type_name -> common.Switch
+	96,  // 47: asset.CreateAssetCoinConfigReq.enabled:type_name -> common.Enable
+	80,  // 48: asset.UpdateAssetCoinConfigReq.wallet_type:type_name -> common.WalletType
+	82,  // 49: asset.UpdateAssetCoinConfigReq.coin_type:type_name -> asset.AssetCoinType
+	97,  // 50: asset.UpdateAssetCoinConfigReq.chain_code:type_name -> common.ChainCode
+	98,  // 51: asset.UpdateAssetCoinConfigReq.app_visible:type_name -> common.Switch
+	98,  // 52: asset.UpdateAssetCoinConfigReq.recharge_enabled:type_name -> common.Switch
+	98,  // 53: asset.UpdateAssetCoinConfigReq.withdraw_enabled:type_name -> common.Switch
+	98,  // 54: asset.UpdateAssetCoinConfigReq.transfer_enabled:type_name -> common.Switch
+	96,  // 55: asset.UpdateAssetCoinConfigReq.enabled:type_name -> common.Enable
+	80,  // 56: asset.PageAssetCoinConfigsReq.wallet_type:type_name -> common.WalletType
+	82,  // 57: asset.PageAssetCoinConfigsReq.coin_type:type_name -> asset.AssetCoinType
+	98,  // 58: asset.PageAssetCoinConfigsReq.app_visible:type_name -> common.Switch
+	98,  // 59: asset.PageAssetCoinConfigsReq.recharge_enabled:type_name -> common.Switch
+	98,  // 60: asset.PageAssetCoinConfigsReq.withdraw_enabled:type_name -> common.Switch
+	98,  // 61: asset.PageAssetCoinConfigsReq.transfer_enabled:type_name -> common.Switch
+	96,  // 62: asset.PageAssetCoinConfigsReq.enabled:type_name -> common.Enable
+	90,  // 63: asset.PageAssetCoinConfigsReq.page:type_name -> common.PageReq
+	97,  // 64: asset.PageAssetCoinConfigsReq.chain_code:type_name -> common.ChainCode
+	83,  // 65: asset.AssetCoinConfigResp.base:type_name -> common.RespBase
+	84,  // 66: asset.AssetCoinConfigResp.data:type_name -> asset.AssetCoinConfig
+	83,  // 67: asset.PageAssetCoinConfigsResp.base:type_name -> common.RespBase
+	84,  // 68: asset.PageAssetCoinConfigsResp.data:type_name -> asset.AssetCoinConfig
+	83,  // 69: asset.DeleteAssetCoinConfigResp.base:type_name -> common.RespBase
+	80,  // 70: asset.PageUserAssetsReq.wallet_type:type_name -> common.WalletType
+	96,  // 71: asset.PageUserAssetsReq.enabled:type_name -> common.Enable
+	90,  // 72: asset.PageUserAssetsReq.page:type_name -> common.PageReq
+	83,  // 73: asset.PageUserAssetsResp.base:type_name -> common.RespBase
+	86,  // 74: asset.PageUserAssetsResp.data:type_name -> asset.UserAsset
+	80,  // 75: asset.GetUserAssetDetailReq.wallet_type:type_name -> common.WalletType
+	83,  // 76: asset.GetUserAssetDetailResp.base:type_name -> common.RespBase
+	86,  // 77: asset.GetUserAssetDetailResp.data:type_name -> asset.UserAsset
+	80,  // 78: asset.PageAssetFlowsReq.wallet_type:type_name -> common.WalletType
+	87,  // 79: asset.PageAssetFlowsReq.biz_type:type_name -> asset.BizType
+	88,  // 80: asset.PageAssetFlowsReq.scene_type:type_name -> asset.SceneType
+	89,  // 81: asset.PageAssetFlowsReq.time_range:type_name -> common.TimeRange
+	90,  // 82: asset.PageAssetFlowsReq.page:type_name -> common.PageReq
+	83,  // 83: asset.PageAssetFlowsResp.base:type_name -> common.RespBase
+	91,  // 84: asset.PageAssetFlowsResp.data:type_name -> asset.AssetFlow
+	83,  // 85: asset.GetInsuranceCoverResp.base:type_name -> common.RespBase
+	80,  // 86: asset.PageAssetFreezesReq.wallet_type:type_name -> common.WalletType
+	87,  // 87: asset.PageAssetFreezesReq.biz_type:type_name -> asset.BizType
+	92,  // 88: asset.PageAssetFreezesReq.status:type_name -> asset.FreezeStatus
+	90,  // 89: asset.PageAssetFreezesReq.page:type_name -> common.PageReq
+	83,  // 90: asset.PageAssetFreezesResp.base:type_name -> common.RespBase
+	93,  // 91: asset.PageAssetFreezesResp.data:type_name -> asset.AssetFreeze
+	80,  // 92: asset.PageAssetLocksReq.wallet_type:type_name -> common.WalletType
+	87,  // 93: asset.PageAssetLocksReq.biz_type:type_name -> asset.BizType
+	94,  // 94: asset.PageAssetLocksReq.status:type_name -> asset.LockStatus
+	90,  // 95: asset.PageAssetLocksReq.page:type_name -> common.PageReq
+	83,  // 96: asset.PageAssetLocksResp.base:type_name -> common.RespBase
+	95,  // 97: asset.PageAssetLocksResp.data:type_name -> asset.AssetLock
+	80,  // 98: asset.AddAssetReq.wallet_type:type_name -> common.WalletType
+	80,  // 99: asset.SubAssetReq.wallet_type:type_name -> common.WalletType
+	80,  // 100: asset.ManualFreezeAssetReq.wallet_type:type_name -> common.WalletType
+	80,  // 101: asset.ManualLockAssetReq.wallet_type:type_name -> common.WalletType
+	83,  // 102: asset.ManualChangeAssetResp.base:type_name -> common.RespBase
 	49,  // 103: asset.ManualChangeAssetResp.data:type_name -> asset.ManualChangeAssetData
-	84,  // 104: asset.ManualChangeAssetData.asset:type_name -> asset.UserAsset
-	85,  // 105: asset.GetAssetFlowByBizNoReq.biz_type:type_name -> asset.BizType
-	86,  // 106: asset.GetAssetFlowByBizNoReq.scene_type:type_name -> asset.SceneType
-	81,  // 107: asset.GetAssetFlowByBizNoResp.base:type_name -> common.RespBase
-	89,  // 108: asset.GetAssetFlowByBizNoResp.data:type_name -> asset.AssetFlow
-	78,  // 109: asset.AddAvailableReq.wallet_type:type_name -> common.WalletType
-	85,  // 110: asset.AddAvailableReq.biz_type:type_name -> asset.BizType
-	86,  // 111: asset.AddAvailableReq.scene_type:type_name -> asset.SceneType
-	78,  // 112: asset.SubAvailableReq.wallet_type:type_name -> common.WalletType
-	85,  // 113: asset.SubAvailableReq.biz_type:type_name -> asset.BizType
-	86,  // 114: asset.SubAvailableReq.scene_type:type_name -> asset.SceneType
-	78,  // 115: asset.FreezeAssetReq.wallet_type:type_name -> common.WalletType
-	85,  // 116: asset.FreezeAssetReq.biz_type:type_name -> asset.BizType
-	86,  // 117: asset.FreezeAssetReq.scene_type:type_name -> asset.SceneType
-	81,  // 118: asset.FreezeAssetResp.base:type_name -> common.RespBase
+	86,  // 104: asset.ManualChangeAssetData.asset:type_name -> asset.UserAsset
+	87,  // 105: asset.GetAssetFlowByBizNoReq.biz_type:type_name -> asset.BizType
+	88,  // 106: asset.GetAssetFlowByBizNoReq.scene_type:type_name -> asset.SceneType
+	83,  // 107: asset.GetAssetFlowByBizNoResp.base:type_name -> common.RespBase
+	91,  // 108: asset.GetAssetFlowByBizNoResp.data:type_name -> asset.AssetFlow
+	80,  // 109: asset.AddAvailableReq.wallet_type:type_name -> common.WalletType
+	87,  // 110: asset.AddAvailableReq.biz_type:type_name -> asset.BizType
+	88,  // 111: asset.AddAvailableReq.scene_type:type_name -> asset.SceneType
+	80,  // 112: asset.SubAvailableReq.wallet_type:type_name -> common.WalletType
+	87,  // 113: asset.SubAvailableReq.biz_type:type_name -> asset.BizType
+	88,  // 114: asset.SubAvailableReq.scene_type:type_name -> asset.SceneType
+	80,  // 115: asset.FreezeAssetReq.wallet_type:type_name -> common.WalletType
+	87,  // 116: asset.FreezeAssetReq.biz_type:type_name -> asset.BizType
+	88,  // 117: asset.FreezeAssetReq.scene_type:type_name -> asset.SceneType
+	83,  // 118: asset.FreezeAssetResp.base:type_name -> common.RespBase
 	56,  // 119: asset.FreezeAssetResp.data:type_name -> asset.FreezeAssetData
-	84,  // 120: asset.FreezeAssetData.asset:type_name -> asset.UserAsset
-	85,  // 121: asset.UnfreezeAssetReq.biz_type:type_name -> asset.BizType
-	86,  // 122: asset.UnfreezeAssetReq.scene_type:type_name -> asset.SceneType
-	85,  // 123: asset.UnfreezeAssetByBizNoReq.target_biz_type:type_name -> asset.BizType
-	85,  // 124: asset.UnfreezeAssetByBizNoReq.biz_type:type_name -> asset.BizType
-	86,  // 125: asset.UnfreezeAssetByBizNoReq.scene_type:type_name -> asset.SceneType
-	85,  // 126: asset.DeductFrozenAssetReq.biz_type:type_name -> asset.BizType
-	86,  // 127: asset.DeductFrozenAssetReq.scene_type:type_name -> asset.SceneType
-	85,  // 128: asset.DeductFrozenAssetByBizNoReq.target_biz_type:type_name -> asset.BizType
-	85,  // 129: asset.DeductFrozenAssetByBizNoReq.biz_type:type_name -> asset.BizType
-	86,  // 130: asset.DeductFrozenAssetByBizNoReq.scene_type:type_name -> asset.SceneType
-	78,  // 131: asset.LockAssetReq.wallet_type:type_name -> common.WalletType
-	85,  // 132: asset.LockAssetReq.biz_type:type_name -> asset.BizType
-	86,  // 133: asset.LockAssetReq.scene_type:type_name -> asset.SceneType
-	81,  // 134: asset.LockAssetResp.base:type_name -> common.RespBase
+	86,  // 120: asset.FreezeAssetData.asset:type_name -> asset.UserAsset
+	87,  // 121: asset.UnfreezeAssetReq.biz_type:type_name -> asset.BizType
+	88,  // 122: asset.UnfreezeAssetReq.scene_type:type_name -> asset.SceneType
+	87,  // 123: asset.UnfreezeAssetByBizNoReq.target_biz_type:type_name -> asset.BizType
+	87,  // 124: asset.UnfreezeAssetByBizNoReq.biz_type:type_name -> asset.BizType
+	88,  // 125: asset.UnfreezeAssetByBizNoReq.scene_type:type_name -> asset.SceneType
+	87,  // 126: asset.DeductFrozenAssetReq.biz_type:type_name -> asset.BizType
+	88,  // 127: asset.DeductFrozenAssetReq.scene_type:type_name -> asset.SceneType
+	87,  // 128: asset.DeductFrozenAssetByBizNoReq.target_biz_type:type_name -> asset.BizType
+	87,  // 129: asset.DeductFrozenAssetByBizNoReq.biz_type:type_name -> asset.BizType
+	88,  // 130: asset.DeductFrozenAssetByBizNoReq.scene_type:type_name -> asset.SceneType
+	80,  // 131: asset.LockAssetReq.wallet_type:type_name -> common.WalletType
+	87,  // 132: asset.LockAssetReq.biz_type:type_name -> asset.BizType
+	88,  // 133: asset.LockAssetReq.scene_type:type_name -> asset.SceneType
+	83,  // 134: asset.LockAssetResp.base:type_name -> common.RespBase
 	63,  // 135: asset.LockAssetResp.data:type_name -> asset.LockAssetData
-	84,  // 136: asset.LockAssetData.asset:type_name -> asset.UserAsset
-	85,  // 137: asset.UnlockAssetReq.biz_type:type_name -> asset.BizType
-	86,  // 138: asset.UnlockAssetReq.scene_type:type_name -> asset.SceneType
-	85,  // 139: asset.UnlockAssetByBizNoReq.target_biz_type:type_name -> asset.BizType
-	85,  // 140: asset.UnlockAssetByBizNoReq.biz_type:type_name -> asset.BizType
-	86,  // 141: asset.UnlockAssetByBizNoReq.scene_type:type_name -> asset.SceneType
-	85,  // 142: asset.DeductLockedAssetReq.biz_type:type_name -> asset.BizType
-	86,  // 143: asset.DeductLockedAssetReq.scene_type:type_name -> asset.SceneType
-	85,  // 144: asset.DeductLockedAssetByBizNoReq.target_biz_type:type_name -> asset.BizType
-	85,  // 145: asset.DeductLockedAssetByBizNoReq.biz_type:type_name -> asset.BizType
-	86,  // 146: asset.DeductLockedAssetByBizNoReq.scene_type:type_name -> asset.SceneType
-	78,  // 147: asset.TransferAssetReq.from_wallet_type:type_name -> common.WalletType
-	78,  // 148: asset.TransferAssetReq.to_wallet_type:type_name -> common.WalletType
-	85,  // 149: asset.TransferAssetReq.biz_type:type_name -> asset.BizType
-	86,  // 150: asset.TransferAssetReq.scene_type:type_name -> asset.SceneType
-	81,  // 151: asset.TransferAssetResp.base:type_name -> common.RespBase
+	86,  // 136: asset.LockAssetData.asset:type_name -> asset.UserAsset
+	87,  // 137: asset.UnlockAssetReq.biz_type:type_name -> asset.BizType
+	88,  // 138: asset.UnlockAssetReq.scene_type:type_name -> asset.SceneType
+	87,  // 139: asset.UnlockAssetByBizNoReq.target_biz_type:type_name -> asset.BizType
+	87,  // 140: asset.UnlockAssetByBizNoReq.biz_type:type_name -> asset.BizType
+	88,  // 141: asset.UnlockAssetByBizNoReq.scene_type:type_name -> asset.SceneType
+	87,  // 142: asset.DeductLockedAssetReq.biz_type:type_name -> asset.BizType
+	88,  // 143: asset.DeductLockedAssetReq.scene_type:type_name -> asset.SceneType
+	87,  // 144: asset.DeductLockedAssetByBizNoReq.target_biz_type:type_name -> asset.BizType
+	87,  // 145: asset.DeductLockedAssetByBizNoReq.biz_type:type_name -> asset.BizType
+	88,  // 146: asset.DeductLockedAssetByBizNoReq.scene_type:type_name -> asset.SceneType
+	80,  // 147: asset.TransferAssetReq.from_wallet_type:type_name -> common.WalletType
+	80,  // 148: asset.TransferAssetReq.to_wallet_type:type_name -> common.WalletType
+	87,  // 149: asset.TransferAssetReq.biz_type:type_name -> asset.BizType
+	88,  // 150: asset.TransferAssetReq.scene_type:type_name -> asset.SceneType
+	83,  // 151: asset.TransferAssetResp.base:type_name -> common.RespBase
 	70,  // 152: asset.TransferAssetResp.data:type_name -> asset.TransferAssetData
-	84,  // 153: asset.TransferAssetData.from_asset:type_name -> asset.UserAsset
-	84,  // 154: asset.TransferAssetData.to_asset:type_name -> asset.UserAsset
-	81,  // 155: asset.ChangeAssetResp.base:type_name -> common.RespBase
+	86,  // 153: asset.TransferAssetData.from_asset:type_name -> asset.UserAsset
+	86,  // 154: asset.TransferAssetData.to_asset:type_name -> asset.UserAsset
+	83,  // 155: asset.ChangeAssetResp.base:type_name -> common.RespBase
 	72,  // 156: asset.ChangeAssetResp.data:type_name -> asset.ChangeAssetData
-	84,  // 157: asset.ChangeAssetData.asset:type_name -> asset.UserAsset
-	81,  // 158: asset.CoverInsuranceDeficitResp.base:type_name -> common.RespBase
-	85,  // 159: asset.CreditPlatformRevenueReq.biz_type:type_name -> asset.BizType
-	86,  // 160: asset.CreditPlatformRevenueReq.scene_type:type_name -> asset.SceneType
-	81,  // 161: asset.CreditPlatformRevenueResp.base:type_name -> common.RespBase
-	0,   // 162: asset.App.ListAssetCoinConfigs:input_type -> asset.ListAssetCoinConfigsReq
-	2,   // 163: asset.App.GetMyAssetSummary:input_type -> asset.GetMyAssetSummaryReq
-	4,   // 164: asset.App.ListMyAssets:input_type -> asset.ListMyAssetsReq
-	6,   // 165: asset.App.GetMyAsset:input_type -> asset.GetMyAssetReq
-	8,   // 166: asset.App.ListMyAssetFlows:input_type -> asset.ListMyAssetFlowsReq
-	10,  // 167: asset.App.ListMyFreezes:input_type -> asset.ListMyFreezesReq
-	12,  // 168: asset.App.ListMyLocks:input_type -> asset.ListMyLocksReq
-	14,  // 169: asset.App.TransferMyAsset:input_type -> asset.TransferMyAssetReq
-	22,  // 170: asset.Admin.CreateAssetCoinConfig:input_type -> asset.CreateAssetCoinConfigReq
-	23,  // 171: asset.Admin.UpdateAssetCoinConfig:input_type -> asset.UpdateAssetCoinConfigReq
-	24,  // 172: asset.Admin.DeleteAssetCoinConfig:input_type -> asset.DeleteAssetCoinConfigReq
-	25,  // 173: asset.Admin.GetAssetCoinConfig:input_type -> asset.GetAssetCoinConfigReq
-	26,  // 174: asset.Admin.PageAssetCoinConfigs:input_type -> asset.PageAssetCoinConfigsReq
-	30,  // 175: asset.Admin.PageUserAssets:input_type -> asset.PageUserAssetsReq
-	32,  // 176: asset.Admin.GetUserAssetDetail:input_type -> asset.GetUserAssetDetailReq
-	34,  // 177: asset.Admin.PageAssetFlows:input_type -> asset.PageAssetFlowsReq
-	36,  // 178: asset.Admin.GetInsuranceCover:input_type -> asset.GetInsuranceCoverReq
-	38,  // 179: asset.Admin.PageAssetFreezes:input_type -> asset.PageAssetFreezesReq
-	40,  // 180: asset.Admin.PageAssetLocks:input_type -> asset.PageAssetLocksReq
-	42,  // 181: asset.Admin.AddAsset:input_type -> asset.AddAssetReq
-	43,  // 182: asset.Admin.SubAsset:input_type -> asset.SubAssetReq
-	44,  // 183: asset.Admin.FreezeAsset:input_type -> asset.ManualFreezeAssetReq
-	45,  // 184: asset.Admin.UnfreezeAsset:input_type -> asset.ManualUnfreezeAssetReq
-	46,  // 185: asset.Admin.LockAsset:input_type -> asset.ManualLockAssetReq
-	47,  // 186: asset.Admin.UnlockAsset:input_type -> asset.ManualUnlockAssetReq
-	18,  // 187: asset.Admin.SetPlatformAccount:input_type -> asset.SetPlatformAccountReq
-	19,  // 188: asset.Admin.GetPlatformAccount:input_type -> asset.GetPlatformAccountReq
-	20,  // 189: asset.Admin.AdjustPlatformAccount:input_type -> asset.AdjustPlatformAccountReq
-	32,  // 190: asset.Asset.GetAssetBalance:input_type -> asset.GetUserAssetDetailReq
-	50,  // 191: asset.Asset.GetAssetFlowByBizNo:input_type -> asset.GetAssetFlowByBizNoReq
-	52,  // 192: asset.Asset.AddAvailable:input_type -> asset.AddAvailableReq
-	53,  // 193: asset.Asset.SubAvailable:input_type -> asset.SubAvailableReq
-	54,  // 194: asset.Asset.FreezeAsset:input_type -> asset.FreezeAssetReq
-	57,  // 195: asset.Asset.UnfreezeAsset:input_type -> asset.UnfreezeAssetReq
-	58,  // 196: asset.Asset.UnfreezeAssetByBizNo:input_type -> asset.UnfreezeAssetByBizNoReq
-	59,  // 197: asset.Asset.DeductFrozenAsset:input_type -> asset.DeductFrozenAssetReq
-	60,  // 198: asset.Asset.DeductFrozenAssetByBizNo:input_type -> asset.DeductFrozenAssetByBizNoReq
-	61,  // 199: asset.Asset.LockAsset:input_type -> asset.LockAssetReq
-	64,  // 200: asset.Asset.UnlockAsset:input_type -> asset.UnlockAssetReq
-	65,  // 201: asset.Asset.UnlockAssetByBizNo:input_type -> asset.UnlockAssetByBizNoReq
-	66,  // 202: asset.Asset.DeductLockedAsset:input_type -> asset.DeductLockedAssetReq
-	67,  // 203: asset.Asset.DeductLockedAssetByBizNo:input_type -> asset.DeductLockedAssetByBizNoReq
-	68,  // 204: asset.Asset.TransferAsset:input_type -> asset.TransferAssetReq
-	73,  // 205: asset.Asset.CoverInsuranceDeficit:input_type -> asset.CoverInsuranceDeficitReq
-	75,  // 206: asset.Asset.ReverseInsuranceCover:input_type -> asset.ReverseInsuranceCoverReq
-	76,  // 207: asset.Asset.CreditPlatformRevenue:input_type -> asset.CreditPlatformRevenueReq
-	1,   // 208: asset.App.ListAssetCoinConfigs:output_type -> asset.ListAssetCoinConfigsResp
-	3,   // 209: asset.App.GetMyAssetSummary:output_type -> asset.GetMyAssetSummaryResp
-	5,   // 210: asset.App.ListMyAssets:output_type -> asset.ListMyAssetsResp
-	7,   // 211: asset.App.GetMyAsset:output_type -> asset.GetMyAssetResp
-	9,   // 212: asset.App.ListMyAssetFlows:output_type -> asset.ListMyAssetFlowsResp
-	11,  // 213: asset.App.ListMyFreezes:output_type -> asset.ListMyFreezesResp
-	13,  // 214: asset.App.ListMyLocks:output_type -> asset.ListMyLocksResp
-	15,  // 215: asset.App.TransferMyAsset:output_type -> asset.TransferMyAssetResp
-	27,  // 216: asset.Admin.CreateAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
-	27,  // 217: asset.Admin.UpdateAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
-	29,  // 218: asset.Admin.DeleteAssetCoinConfig:output_type -> asset.DeleteAssetCoinConfigResp
-	27,  // 219: asset.Admin.GetAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
-	28,  // 220: asset.Admin.PageAssetCoinConfigs:output_type -> asset.PageAssetCoinConfigsResp
-	31,  // 221: asset.Admin.PageUserAssets:output_type -> asset.PageUserAssetsResp
-	33,  // 222: asset.Admin.GetUserAssetDetail:output_type -> asset.GetUserAssetDetailResp
-	35,  // 223: asset.Admin.PageAssetFlows:output_type -> asset.PageAssetFlowsResp
-	37,  // 224: asset.Admin.GetInsuranceCover:output_type -> asset.GetInsuranceCoverResp
-	39,  // 225: asset.Admin.PageAssetFreezes:output_type -> asset.PageAssetFreezesResp
-	41,  // 226: asset.Admin.PageAssetLocks:output_type -> asset.PageAssetLocksResp
-	48,  // 227: asset.Admin.AddAsset:output_type -> asset.ManualChangeAssetResp
-	48,  // 228: asset.Admin.SubAsset:output_type -> asset.ManualChangeAssetResp
-	48,  // 229: asset.Admin.FreezeAsset:output_type -> asset.ManualChangeAssetResp
-	48,  // 230: asset.Admin.UnfreezeAsset:output_type -> asset.ManualChangeAssetResp
-	48,  // 231: asset.Admin.LockAsset:output_type -> asset.ManualChangeAssetResp
-	48,  // 232: asset.Admin.UnlockAsset:output_type -> asset.ManualChangeAssetResp
-	21,  // 233: asset.Admin.SetPlatformAccount:output_type -> asset.PlatformAccountResp
-	21,  // 234: asset.Admin.GetPlatformAccount:output_type -> asset.PlatformAccountResp
-	21,  // 235: asset.Admin.AdjustPlatformAccount:output_type -> asset.PlatformAccountResp
-	33,  // 236: asset.Asset.GetAssetBalance:output_type -> asset.GetUserAssetDetailResp
-	51,  // 237: asset.Asset.GetAssetFlowByBizNo:output_type -> asset.GetAssetFlowByBizNoResp
-	71,  // 238: asset.Asset.AddAvailable:output_type -> asset.ChangeAssetResp
-	71,  // 239: asset.Asset.SubAvailable:output_type -> asset.ChangeAssetResp
-	55,  // 240: asset.Asset.FreezeAsset:output_type -> asset.FreezeAssetResp
-	71,  // 241: asset.Asset.UnfreezeAsset:output_type -> asset.ChangeAssetResp
-	71,  // 242: asset.Asset.UnfreezeAssetByBizNo:output_type -> asset.ChangeAssetResp
-	71,  // 243: asset.Asset.DeductFrozenAsset:output_type -> asset.ChangeAssetResp
-	71,  // 244: asset.Asset.DeductFrozenAssetByBizNo:output_type -> asset.ChangeAssetResp
-	62,  // 245: asset.Asset.LockAsset:output_type -> asset.LockAssetResp
-	71,  // 246: asset.Asset.UnlockAsset:output_type -> asset.ChangeAssetResp
-	71,  // 247: asset.Asset.UnlockAssetByBizNo:output_type -> asset.ChangeAssetResp
-	71,  // 248: asset.Asset.DeductLockedAsset:output_type -> asset.ChangeAssetResp
-	71,  // 249: asset.Asset.DeductLockedAssetByBizNo:output_type -> asset.ChangeAssetResp
-	69,  // 250: asset.Asset.TransferAsset:output_type -> asset.TransferAssetResp
-	74,  // 251: asset.Asset.CoverInsuranceDeficit:output_type -> asset.CoverInsuranceDeficitResp
-	71,  // 252: asset.Asset.ReverseInsuranceCover:output_type -> asset.ChangeAssetResp
-	77,  // 253: asset.Asset.CreditPlatformRevenue:output_type -> asset.CreditPlatformRevenueResp
-	208, // [208:254] is the sub-list for method output_type
-	162, // [162:208] is the sub-list for method input_type
-	162, // [162:162] is the sub-list for extension type_name
-	162, // [162:162] is the sub-list for extension extendee
-	0,   // [0:162] is the sub-list for field type_name
+	86,  // 157: asset.ChangeAssetData.asset:type_name -> asset.UserAsset
+	83,  // 158: asset.CoverInsuranceDeficitResp.base:type_name -> common.RespBase
+	83,  // 159: asset.CoverPlatformBackstopDeficitResp.base:type_name -> common.RespBase
+	87,  // 160: asset.CreditPlatformRevenueReq.biz_type:type_name -> asset.BizType
+	88,  // 161: asset.CreditPlatformRevenueReq.scene_type:type_name -> asset.SceneType
+	83,  // 162: asset.CreditPlatformRevenueResp.base:type_name -> common.RespBase
+	0,   // 163: asset.App.ListAssetCoinConfigs:input_type -> asset.ListAssetCoinConfigsReq
+	2,   // 164: asset.App.GetMyAssetSummary:input_type -> asset.GetMyAssetSummaryReq
+	4,   // 165: asset.App.ListMyAssets:input_type -> asset.ListMyAssetsReq
+	6,   // 166: asset.App.GetMyAsset:input_type -> asset.GetMyAssetReq
+	8,   // 167: asset.App.ListMyAssetFlows:input_type -> asset.ListMyAssetFlowsReq
+	10,  // 168: asset.App.ListMyFreezes:input_type -> asset.ListMyFreezesReq
+	12,  // 169: asset.App.ListMyLocks:input_type -> asset.ListMyLocksReq
+	14,  // 170: asset.App.TransferMyAsset:input_type -> asset.TransferMyAssetReq
+	22,  // 171: asset.Admin.CreateAssetCoinConfig:input_type -> asset.CreateAssetCoinConfigReq
+	23,  // 172: asset.Admin.UpdateAssetCoinConfig:input_type -> asset.UpdateAssetCoinConfigReq
+	24,  // 173: asset.Admin.DeleteAssetCoinConfig:input_type -> asset.DeleteAssetCoinConfigReq
+	25,  // 174: asset.Admin.GetAssetCoinConfig:input_type -> asset.GetAssetCoinConfigReq
+	26,  // 175: asset.Admin.PageAssetCoinConfigs:input_type -> asset.PageAssetCoinConfigsReq
+	30,  // 176: asset.Admin.PageUserAssets:input_type -> asset.PageUserAssetsReq
+	32,  // 177: asset.Admin.GetUserAssetDetail:input_type -> asset.GetUserAssetDetailReq
+	34,  // 178: asset.Admin.PageAssetFlows:input_type -> asset.PageAssetFlowsReq
+	36,  // 179: asset.Admin.GetInsuranceCover:input_type -> asset.GetInsuranceCoverReq
+	38,  // 180: asset.Admin.PageAssetFreezes:input_type -> asset.PageAssetFreezesReq
+	40,  // 181: asset.Admin.PageAssetLocks:input_type -> asset.PageAssetLocksReq
+	42,  // 182: asset.Admin.AddAsset:input_type -> asset.AddAssetReq
+	43,  // 183: asset.Admin.SubAsset:input_type -> asset.SubAssetReq
+	44,  // 184: asset.Admin.FreezeAsset:input_type -> asset.ManualFreezeAssetReq
+	45,  // 185: asset.Admin.UnfreezeAsset:input_type -> asset.ManualUnfreezeAssetReq
+	46,  // 186: asset.Admin.LockAsset:input_type -> asset.ManualLockAssetReq
+	47,  // 187: asset.Admin.UnlockAsset:input_type -> asset.ManualUnlockAssetReq
+	18,  // 188: asset.Admin.SetPlatformAccount:input_type -> asset.SetPlatformAccountReq
+	19,  // 189: asset.Admin.GetPlatformAccount:input_type -> asset.GetPlatformAccountReq
+	20,  // 190: asset.Admin.AdjustPlatformAccount:input_type -> asset.AdjustPlatformAccountReq
+	32,  // 191: asset.Asset.GetAssetBalance:input_type -> asset.GetUserAssetDetailReq
+	50,  // 192: asset.Asset.GetAssetFlowByBizNo:input_type -> asset.GetAssetFlowByBizNoReq
+	52,  // 193: asset.Asset.AddAvailable:input_type -> asset.AddAvailableReq
+	53,  // 194: asset.Asset.SubAvailable:input_type -> asset.SubAvailableReq
+	54,  // 195: asset.Asset.FreezeAsset:input_type -> asset.FreezeAssetReq
+	57,  // 196: asset.Asset.UnfreezeAsset:input_type -> asset.UnfreezeAssetReq
+	58,  // 197: asset.Asset.UnfreezeAssetByBizNo:input_type -> asset.UnfreezeAssetByBizNoReq
+	59,  // 198: asset.Asset.DeductFrozenAsset:input_type -> asset.DeductFrozenAssetReq
+	60,  // 199: asset.Asset.DeductFrozenAssetByBizNo:input_type -> asset.DeductFrozenAssetByBizNoReq
+	61,  // 200: asset.Asset.LockAsset:input_type -> asset.LockAssetReq
+	64,  // 201: asset.Asset.UnlockAsset:input_type -> asset.UnlockAssetReq
+	65,  // 202: asset.Asset.UnlockAssetByBizNo:input_type -> asset.UnlockAssetByBizNoReq
+	66,  // 203: asset.Asset.DeductLockedAsset:input_type -> asset.DeductLockedAssetReq
+	67,  // 204: asset.Asset.DeductLockedAssetByBizNo:input_type -> asset.DeductLockedAssetByBizNoReq
+	68,  // 205: asset.Asset.TransferAsset:input_type -> asset.TransferAssetReq
+	73,  // 206: asset.Asset.CoverInsuranceDeficit:input_type -> asset.CoverInsuranceDeficitReq
+	75,  // 207: asset.Asset.ReverseInsuranceCover:input_type -> asset.ReverseInsuranceCoverReq
+	76,  // 208: asset.Asset.CoverPlatformBackstopDeficit:input_type -> asset.CoverPlatformBackstopDeficitReq
+	78,  // 209: asset.Asset.CreditPlatformRevenue:input_type -> asset.CreditPlatformRevenueReq
+	1,   // 210: asset.App.ListAssetCoinConfigs:output_type -> asset.ListAssetCoinConfigsResp
+	3,   // 211: asset.App.GetMyAssetSummary:output_type -> asset.GetMyAssetSummaryResp
+	5,   // 212: asset.App.ListMyAssets:output_type -> asset.ListMyAssetsResp
+	7,   // 213: asset.App.GetMyAsset:output_type -> asset.GetMyAssetResp
+	9,   // 214: asset.App.ListMyAssetFlows:output_type -> asset.ListMyAssetFlowsResp
+	11,  // 215: asset.App.ListMyFreezes:output_type -> asset.ListMyFreezesResp
+	13,  // 216: asset.App.ListMyLocks:output_type -> asset.ListMyLocksResp
+	15,  // 217: asset.App.TransferMyAsset:output_type -> asset.TransferMyAssetResp
+	27,  // 218: asset.Admin.CreateAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
+	27,  // 219: asset.Admin.UpdateAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
+	29,  // 220: asset.Admin.DeleteAssetCoinConfig:output_type -> asset.DeleteAssetCoinConfigResp
+	27,  // 221: asset.Admin.GetAssetCoinConfig:output_type -> asset.AssetCoinConfigResp
+	28,  // 222: asset.Admin.PageAssetCoinConfigs:output_type -> asset.PageAssetCoinConfigsResp
+	31,  // 223: asset.Admin.PageUserAssets:output_type -> asset.PageUserAssetsResp
+	33,  // 224: asset.Admin.GetUserAssetDetail:output_type -> asset.GetUserAssetDetailResp
+	35,  // 225: asset.Admin.PageAssetFlows:output_type -> asset.PageAssetFlowsResp
+	37,  // 226: asset.Admin.GetInsuranceCover:output_type -> asset.GetInsuranceCoverResp
+	39,  // 227: asset.Admin.PageAssetFreezes:output_type -> asset.PageAssetFreezesResp
+	41,  // 228: asset.Admin.PageAssetLocks:output_type -> asset.PageAssetLocksResp
+	48,  // 229: asset.Admin.AddAsset:output_type -> asset.ManualChangeAssetResp
+	48,  // 230: asset.Admin.SubAsset:output_type -> asset.ManualChangeAssetResp
+	48,  // 231: asset.Admin.FreezeAsset:output_type -> asset.ManualChangeAssetResp
+	48,  // 232: asset.Admin.UnfreezeAsset:output_type -> asset.ManualChangeAssetResp
+	48,  // 233: asset.Admin.LockAsset:output_type -> asset.ManualChangeAssetResp
+	48,  // 234: asset.Admin.UnlockAsset:output_type -> asset.ManualChangeAssetResp
+	21,  // 235: asset.Admin.SetPlatformAccount:output_type -> asset.PlatformAccountResp
+	21,  // 236: asset.Admin.GetPlatformAccount:output_type -> asset.PlatformAccountResp
+	21,  // 237: asset.Admin.AdjustPlatformAccount:output_type -> asset.PlatformAccountResp
+	33,  // 238: asset.Asset.GetAssetBalance:output_type -> asset.GetUserAssetDetailResp
+	51,  // 239: asset.Asset.GetAssetFlowByBizNo:output_type -> asset.GetAssetFlowByBizNoResp
+	71,  // 240: asset.Asset.AddAvailable:output_type -> asset.ChangeAssetResp
+	71,  // 241: asset.Asset.SubAvailable:output_type -> asset.ChangeAssetResp
+	55,  // 242: asset.Asset.FreezeAsset:output_type -> asset.FreezeAssetResp
+	71,  // 243: asset.Asset.UnfreezeAsset:output_type -> asset.ChangeAssetResp
+	71,  // 244: asset.Asset.UnfreezeAssetByBizNo:output_type -> asset.ChangeAssetResp
+	71,  // 245: asset.Asset.DeductFrozenAsset:output_type -> asset.ChangeAssetResp
+	71,  // 246: asset.Asset.DeductFrozenAssetByBizNo:output_type -> asset.ChangeAssetResp
+	62,  // 247: asset.Asset.LockAsset:output_type -> asset.LockAssetResp
+	71,  // 248: asset.Asset.UnlockAsset:output_type -> asset.ChangeAssetResp
+	71,  // 249: asset.Asset.UnlockAssetByBizNo:output_type -> asset.ChangeAssetResp
+	71,  // 250: asset.Asset.DeductLockedAsset:output_type -> asset.ChangeAssetResp
+	71,  // 251: asset.Asset.DeductLockedAssetByBizNo:output_type -> asset.ChangeAssetResp
+	69,  // 252: asset.Asset.TransferAsset:output_type -> asset.TransferAssetResp
+	74,  // 253: asset.Asset.CoverInsuranceDeficit:output_type -> asset.CoverInsuranceDeficitResp
+	71,  // 254: asset.Asset.ReverseInsuranceCover:output_type -> asset.ChangeAssetResp
+	77,  // 255: asset.Asset.CoverPlatformBackstopDeficit:output_type -> asset.CoverPlatformBackstopDeficitResp
+	79,  // 256: asset.Asset.CreditPlatformRevenue:output_type -> asset.CreditPlatformRevenueResp
+	210, // [210:257] is the sub-list for method output_type
+	163, // [163:210] is the sub-list for method input_type
+	163, // [163:163] is the sub-list for extension type_name
+	163, // [163:163] is the sub-list for extension extendee
+	0,   // [0:163] is the sub-list for field type_name
 }
 
 func init() { file_proto_asset_asset_proto_init() }
@@ -7094,7 +7272,7 @@ func file_proto_asset_asset_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_asset_asset_proto_rawDesc), len(file_proto_asset_asset_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   78,
+			NumMessages:   80,
 			NumExtensions: 0,
 			NumServices:   3,
 		},

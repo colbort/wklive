@@ -14,88 +14,89 @@ import (
 )
 
 type (
-	CancelOrderReq               = option.CancelOrderReq
-	CommonResp                   = option.CommonResp
-	CreateContractReq            = option.CreateContractReq
-	CreateContractResp           = option.CreateContractResp
-	ExerciseData                 = option.ExerciseData
-	ExerciseReq                  = option.ExerciseReq
-	ExerciseResp                 = option.ExerciseResp
-	ForceCancelContractOrdersReq = option.ForceCancelContractOrdersReq
-	GetAccountReq                = option.GetAccountReq
-	GetAccountResp               = option.GetAccountResp
-	GetBillReq                   = option.GetBillReq
-	GetBillResp                  = option.GetBillResp
-	GetContractDetailReq         = option.GetContractDetailReq
-	GetContractDetailResp        = option.GetContractDetailResp
-	GetContractReq               = option.GetContractReq
-	GetContractResp              = option.GetContractResp
-	GetExerciseReq               = option.GetExerciseReq
-	GetExerciseResp              = option.GetExerciseResp
-	GetMarketReq                 = option.GetMarketReq
-	GetMarketResp                = option.GetMarketResp
-	GetOrderDetailReq            = option.GetOrderDetailReq
-	GetOrderDetailResp           = option.GetOrderDetailResp
-	GetOrderReq                  = option.GetOrderReq
-	GetOrderResp                 = option.GetOrderResp
-	GetPositionDetailReq         = option.GetPositionDetailReq
-	GetPositionDetailResp        = option.GetPositionDetailResp
-	GetPositionReq               = option.GetPositionReq
-	GetPositionResp              = option.GetPositionResp
-	GetSettlementReq             = option.GetSettlementReq
-	GetSettlementResp            = option.GetSettlementResp
-	GetTradeReq                  = option.GetTradeReq
-	GetTradeResp                 = option.GetTradeResp
-	ListAccountsReq              = option.ListAccountsReq
-	ListAccountsResp             = option.ListAccountsResp
-	ListBillsReq                 = option.ListBillsReq
-	ListBillsResp                = option.ListBillsResp
-	ListContractsReq             = option.ListContractsReq
-	ListContractsResp            = option.ListContractsResp
-	ListCurrentOrdersReq         = option.ListCurrentOrdersReq
-	ListCurrentOrdersResp        = option.ListCurrentOrdersResp
-	ListExercisesReq             = option.ListExercisesReq
-	ListExercisesResp            = option.ListExercisesResp
-	ListHistoryOrdersReq         = option.ListHistoryOrdersReq
-	ListHistoryOrdersResp        = option.ListHistoryOrdersResp
-	ListLiquidationsReq          = option.ListLiquidationsReq
-	ListLiquidationsResp         = option.ListLiquidationsResp
-	ListMarketSnapshotsReq       = option.ListMarketSnapshotsReq
-	ListMarketSnapshotsResp      = option.ListMarketSnapshotsResp
-	ListOrdersReq                = option.ListOrdersReq
-	ListOrdersResp               = option.ListOrdersResp
-	ListPositionsReq             = option.ListPositionsReq
-	ListPositionsResp            = option.ListPositionsResp
-	ListRiskAccountsReq          = option.ListRiskAccountsReq
-	ListRiskAccountsResp         = option.ListRiskAccountsResp
-	ListSettlementsReq           = option.ListSettlementsReq
-	ListSettlementsResp          = option.ListSettlementsResp
-	ListTradesReq                = option.ListTradesReq
-	ListTradesResp               = option.ListTradesResp
-	OptionTaskReq                = option.OptionTaskReq
-	OptionTaskResp               = option.OptionTaskResp
-	PlaceOrderData               = option.PlaceOrderData
-	PlaceOrderReq                = option.PlaceOrderReq
-	PlaceOrderResp               = option.PlaceOrderResp
-	RetryAssetInstructionReq     = option.RetryAssetInstructionReq
-	RetryExerciseReq             = option.RetryExerciseReq
-	RetryLiquidationReq          = option.RetryLiquidationReq
-	RetryTradeEventReq           = option.RetryTradeEventReq
-	UpdateContractReq            = option.UpdateContractReq
-	UpdateMarketReq              = option.UpdateMarketReq
-	UserCommonResp               = option.UserCommonResp
-	UserListAccountsReq          = option.UserListAccountsReq
-	UserListAccountsResp         = option.UserListAccountsResp
-	UserListBillsReq             = option.UserListBillsReq
-	UserListBillsResp            = option.UserListBillsResp
-	UserListContractsReq         = option.UserListContractsReq
-	UserListContractsResp        = option.UserListContractsResp
-	UserListExercisesReq         = option.UserListExercisesReq
-	UserListExercisesResp        = option.UserListExercisesResp
-	UserListPositionsReq         = option.UserListPositionsReq
-	UserListPositionsResp        = option.UserListPositionsResp
-	UserListTradesReq            = option.UserListTradesReq
-	UserListTradesResp           = option.UserListTradesResp
+	CancelOrderReq                = option.CancelOrderReq
+	CommonResp                    = option.CommonResp
+	CreateContractReq             = option.CreateContractReq
+	CreateContractResp            = option.CreateContractResp
+	ExerciseData                  = option.ExerciseData
+	ExerciseReq                   = option.ExerciseReq
+	ExerciseResp                  = option.ExerciseResp
+	ForceCancelContractOrdersReq  = option.ForceCancelContractOrdersReq
+	GetAccountReq                 = option.GetAccountReq
+	GetAccountResp                = option.GetAccountResp
+	GetBillReq                    = option.GetBillReq
+	GetBillResp                   = option.GetBillResp
+	GetContractDetailReq          = option.GetContractDetailReq
+	GetContractDetailResp         = option.GetContractDetailResp
+	GetContractReq                = option.GetContractReq
+	GetContractResp               = option.GetContractResp
+	GetExerciseReq                = option.GetExerciseReq
+	GetExerciseResp               = option.GetExerciseResp
+	GetMarketReq                  = option.GetMarketReq
+	GetMarketResp                 = option.GetMarketResp
+	GetOrderDetailReq             = option.GetOrderDetailReq
+	GetOrderDetailResp            = option.GetOrderDetailResp
+	GetOrderReq                   = option.GetOrderReq
+	GetOrderResp                  = option.GetOrderResp
+	GetPositionDetailReq          = option.GetPositionDetailReq
+	GetPositionDetailResp         = option.GetPositionDetailResp
+	GetPositionReq                = option.GetPositionReq
+	GetPositionResp               = option.GetPositionResp
+	GetSettlementReq              = option.GetSettlementReq
+	GetSettlementResp             = option.GetSettlementResp
+	GetTradeReq                   = option.GetTradeReq
+	GetTradeResp                  = option.GetTradeResp
+	ListAccountsReq               = option.ListAccountsReq
+	ListAccountsResp              = option.ListAccountsResp
+	ListBillsReq                  = option.ListBillsReq
+	ListBillsResp                 = option.ListBillsResp
+	ListContractsReq              = option.ListContractsReq
+	ListContractsResp             = option.ListContractsResp
+	ListCurrentOrdersReq          = option.ListCurrentOrdersReq
+	ListCurrentOrdersResp         = option.ListCurrentOrdersResp
+	ListExercisesReq              = option.ListExercisesReq
+	ListExercisesResp             = option.ListExercisesResp
+	ListHistoryOrdersReq          = option.ListHistoryOrdersReq
+	ListHistoryOrdersResp         = option.ListHistoryOrdersResp
+	ListLiquidationsReq           = option.ListLiquidationsReq
+	ListLiquidationsResp          = option.ListLiquidationsResp
+	ListMarketSnapshotsReq        = option.ListMarketSnapshotsReq
+	ListMarketSnapshotsResp       = option.ListMarketSnapshotsResp
+	ListOrdersReq                 = option.ListOrdersReq
+	ListOrdersResp                = option.ListOrdersResp
+	ListPositionsReq              = option.ListPositionsReq
+	ListPositionsResp             = option.ListPositionsResp
+	ListRiskAccountsReq           = option.ListRiskAccountsReq
+	ListRiskAccountsResp          = option.ListRiskAccountsResp
+	ListSettlementsReq            = option.ListSettlementsReq
+	ListSettlementsResp           = option.ListSettlementsResp
+	ListTradesReq                 = option.ListTradesReq
+	ListTradesResp                = option.ListTradesResp
+	OptionTaskReq                 = option.OptionTaskReq
+	OptionTaskResp                = option.OptionTaskResp
+	PlaceOrderData                = option.PlaceOrderData
+	PlaceOrderReq                 = option.PlaceOrderReq
+	PlaceOrderResp                = option.PlaceOrderResp
+	RetryAssetInstructionReq      = option.RetryAssetInstructionReq
+	RetryExerciseReq              = option.RetryExerciseReq
+	RetryLiquidationReq           = option.RetryLiquidationReq
+	RetrySettlementInstructionReq = option.RetrySettlementInstructionReq
+	RetryTradeEventReq            = option.RetryTradeEventReq
+	UpdateContractReq             = option.UpdateContractReq
+	UpdateMarketReq               = option.UpdateMarketReq
+	UserCommonResp                = option.UserCommonResp
+	UserListAccountsReq           = option.UserListAccountsReq
+	UserListAccountsResp          = option.UserListAccountsResp
+	UserListBillsReq              = option.UserListBillsReq
+	UserListBillsResp             = option.UserListBillsResp
+	UserListContractsReq          = option.UserListContractsReq
+	UserListContractsResp         = option.UserListContractsResp
+	UserListExercisesReq          = option.UserListExercisesReq
+	UserListExercisesResp         = option.UserListExercisesResp
+	UserListPositionsReq          = option.UserListPositionsReq
+	UserListPositionsResp         = option.UserListPositionsResp
+	UserListTradesReq             = option.UserListTradesReq
+	UserListTradesResp            = option.UserListTradesResp
 
 	Admin interface {
 		// 创建期权合约
@@ -154,6 +155,8 @@ type (
 		RetryLiquidation(ctx context.Context, in *RetryLiquidationReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 按行权单重试失败或人工处理的资产指令
 		RetryExercise(ctx context.Context, in *RetryExerciseReq, opts ...grpc.CallOption) (*CommonResp, error)
+		// 校验归属后重试结算批次中的失败资产指令
+		RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*CommonResp, error)
 	}
 
 	defaultAdmin struct {
@@ -333,4 +336,10 @@ func (m *defaultAdmin) RetryLiquidation(ctx context.Context, in *RetryLiquidatio
 func (m *defaultAdmin) RetryExercise(ctx context.Context, in *RetryExerciseReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := option.NewAdminClient(m.cli.Conn())
 	return client.RetryExercise(ctx, in, opts...)
+}
+
+// 校验归属后重试结算批次中的失败资产指令
+func (m *defaultAdmin) RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.RetrySettlementInstruction(ctx, in, opts...)
 }

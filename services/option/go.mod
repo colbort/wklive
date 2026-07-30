@@ -3,6 +3,7 @@ module wklive/services/option
 go 1.26.4
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/go-sql-driver/mysql v1.10.0
 	github.com/shopspring/decimal v1.4.0
 	github.com/zeromicro/go-queue v1.2.2

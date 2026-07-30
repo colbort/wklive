@@ -27,8 +27,10 @@ import type {
   OptionExerciseDetail,
   OptionForceCancelContractOrdersReq,
   OptionRetryAssetInstructionReq,
+  OptionRetrySettlementInstructionReq,
   OptionRetryTradeEventReq,
   OptionRetryLiquidationReq,
+  OptionRetryExerciseReq,
   OptionRiskAccount,
   OptionLiquidation,
   ListOptionRiskAccountsReq,
@@ -80,6 +82,12 @@ export function apiOptionRetryAssetInstruction(
   params: OptionRetryAssetInstructionReq,
 ): Promise<OptionAdminCommonResp> {
   return post('/admin/option/recovery/asset-instructions/retry', params)
+}
+
+export function apiOptionRetrySettlementInstruction(
+  params: OptionRetrySettlementInstructionReq,
+): Promise<OptionAdminCommonResp> {
+  return post('/admin/option/settlements/retry-instruction', params)
 }
 
 export function apiOptionRetryTradeEvent(
@@ -158,6 +166,12 @@ export function apiOptionGetExercise(
   params: GetExerciseReq,
 ): Promise<RespBase<OptionExerciseDetail>> {
   return get<OptionExerciseDetail>('/admin/option/exercises/detail', params)
+}
+
+export function apiOptionRetryExercise(
+  params: OptionRetryExerciseReq,
+): Promise<OptionAdminCommonResp> {
+  return post('/admin/option/exercises/retry', params)
 }
 
 export function apiOptionListSettlements(

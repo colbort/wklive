@@ -17,9 +17,9 @@ type UserEventStreamData {
 }
 
 type UserEventStreamResp {
-	eventType string              `json:"type"`
+	eventType string               `json:"type"`
 	data      *UserEventStreamData `json:"data,omitempty"`
-	serverTs int64               `json:"serverTs"`
+	serverTs  int64                `json:"serverTs"`
 }
 
 @server (
@@ -34,3 +34,4 @@ service app {
 	@handler UserEventStream
 	get /stream/:id (UserEventStreamReq) returns (UserEventStreamResp)
 }
+
