@@ -158,6 +158,9 @@ services:
     build:
       context: ..
       dockerfile: deploy/Dockerfile.db-init
+    env_file:
+      - path: ./secrets/production-operators.env
+        required: false
     environment:
       MYSQL_DSN: ${MYSQL_DSN:-}
       MYSQL_HOST: ${MYSQL_HOST:-}

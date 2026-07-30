@@ -52,7 +52,11 @@
           width="100"
           align="center"
         />
-        <el-table-column prop="configKey" :label="t('system.configKey')" min-width="150" />
+        <el-table-column prop="configKey" :label="t('system.configKey')" min-width="150">
+          <template #default="{ row }">
+            {{ t('options.'+row.configKey) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="configValue" :label="t('system.configValue')" min-width="200">
           <template #default="{ row }">
             <el-tooltip :content="row.configValue" placement="top" popper-class="config-tip">

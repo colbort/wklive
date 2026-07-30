@@ -77,6 +77,12 @@ func loadInput(detailed bool) (models.ContractReadinessInput, error) {
 		SourceMarkets:             splitValues(os.Getenv("READINESS_SOURCE_MARKETS")),
 		IndexSourceWeights:        splitValues(os.Getenv("READINESS_INDEX_SOURCE_WEIGHTS")),
 		DeliverySourceWeights:     weights,
+		ContractOncallAccount:     strings.TrimSpace(os.Getenv("READINESS_CONTRACT_ONCALL_ACCOUNT")),
+		InsuranceOperatorAccount:  strings.TrimSpace(os.Getenv("READINESS_INSURANCE_OPERATOR_ACCOUNT")),
+		DROperatorAccount:         strings.TrimSpace(os.Getenv("READINESS_DR_OPERATOR_ACCOUNT")),
+		DeliveryOperatorAccount:   strings.TrimSpace(os.Getenv("READINESS_DELIVERY_OPERATOR_ACCOUNT")),
+		ProductionReviewerAccount: strings.TrimSpace(os.Getenv("READINESS_PRODUCTION_REVIEWER_ACCOUNT")),
+		ProductionApproverAccount: strings.TrimSpace(os.Getenv("READINESS_PRODUCTION_APPROVER_ACCOUNT")),
 		CategoryCode:              strings.TrimSpace(os.Getenv("READINESS_CATEGORY_CODE")),
 		Market:                    strings.TrimSpace(os.Getenv("READINESS_MARKET")),
 		PriceSymbol:               strings.TrimSpace(os.Getenv("READINESS_PRICE_SYMBOL")),
@@ -176,6 +182,12 @@ func printResult(result models.ContractReadinessResult) {
 	fmt.Printf("READINESS_DB_PERPETUAL_CONTRACTS=%d\n", result.PerpetualContractCount)
 	fmt.Printf("READINESS_DB_DELIVERY_CONTRACTS=%d\n", result.DeliveryContractCount)
 	fmt.Printf("READINESS_DB_INSURANCE_CONFIGS=%d\n", result.InsuranceConfigCount)
+	fmt.Printf("READINESS_DB_CONTRACT_ONCALL_ACCOUNTS=%d\n", result.ContractOncallAccountCount)
+	fmt.Printf("READINESS_DB_INSURANCE_OPERATORS=%d\n", result.InsuranceOperatorCount)
+	fmt.Printf("READINESS_DB_DR_OPERATORS=%d\n", result.DROperatorCount)
+	fmt.Printf("READINESS_DB_DELIVERY_OPERATORS=%d\n", result.DeliveryOperatorCount)
+	fmt.Printf("READINESS_DB_PRODUCTION_REVIEWERS=%d\n", result.ProductionReviewerCount)
+	fmt.Printf("READINESS_DB_PRODUCTION_APPROVERS=%d\n", result.ProductionApproverCount)
 	fmt.Printf("READINESS_DB_PENDING_OUTBOX=%d\n", result.PendingOutboxCount)
 	fmt.Printf("READINESS_DB_PROCESSING_OUTBOX=%d\n", result.ProcessingOutboxCount)
 	fmt.Printf("READINESS_DB_FAILED_OUTBOX=%d\n", result.FailedOutboxCount)

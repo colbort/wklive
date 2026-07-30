@@ -14,6 +14,12 @@ type ContractReadinessInput struct {
 	SourceMarkets             []string
 	IndexSourceWeights        []string
 	DeliverySourceWeights     []string
+	ContractOncallAccount     string
+	InsuranceOperatorAccount  string
+	DROperatorAccount         string
+	DeliveryOperatorAccount   string
+	ProductionReviewerAccount string
+	ProductionApproverAccount string
 	CategoryCode              string
 	Market                    string
 	PriceSymbol               string
@@ -56,6 +62,12 @@ type ContractReadinessResult struct {
 	PerpetualContractCount      int64
 	DeliveryContractCount       int64
 	InsuranceConfigCount        int64
+	ContractOncallAccountCount  int64
+	InsuranceOperatorCount      int64
+	DROperatorCount             int64
+	DeliveryOperatorCount       int64
+	ProductionReviewerCount     int64
+	ProductionApproverCount     int64
 	PendingOutboxCount          int64
 	ProcessingOutboxCount       int64
 	FailedOutboxCount           int64
@@ -106,6 +118,9 @@ func (m *defaultContractReadinessModel) Inspect(
 		if err := m.inspectInsuranceConfig(ctx, input, &result); err != nil {
 			return result, fmt.Errorf("inspect insurance config: %w", err)
 		}
+		if err := m.inspectResponsibilityAccounts(ctx, input, &result); err != nil {
+			return result, fmt.Errorf("inspect responsibility accounts: %w", err)
+		}
 	}
 	if err := m.inspectOpenFacts(ctx, &result); err != nil {
 		return result, fmt.Errorf("inspect open facts: %w", err)
@@ -138,6 +153,9 @@ func validateContractReadinessInput(input ContractReadinessInput) error {
 	if input.CategoryCode == "" || input.Market == "" || input.PriceSymbol == "" ||
 		input.PerpetualSymbol == "" || input.DeliverySymbol == "" ||
 		input.PerpetualPriceAuthority == "" || input.PerpetualPriceMarket == "" ||
+		input.ContractOncallAccount == "" || input.InsuranceOperatorAccount == "" ||
+		input.DROperatorAccount == "" || input.DeliveryOperatorAccount == "" ||
+		input.ProductionReviewerAccount == "" || input.ProductionApproverAccount == "" ||
 		input.TenantID <= 0 || input.SettlementCoin == "" ||
 		input.IndexFormulaVersion == "" || input.IndexMaxDeviationBps <= 0 ||
 		input.MarkFormulaVersion == "" || input.MarkMaxBasisBps <= 0 ||
@@ -535,6 +553,150 @@ WHERE tenant_id=?
   AND status=1`
 	return m.db.QueryRowContext(ctx, query, input.TenantID, input.SettlementCoin).
 		Scan(&result.InsuranceConfigCount)
+}
+
+type responsibilityAccountSpec struct {
+	username           string
+	roleCode           string
+	expectedWriteMenus []int64
+	requiredReadPerms  []string
+}
+
+func (m *defaultContractReadinessModel) inspectResponsibilityAccounts(
+	ctx context.Context,
+	input ContractReadinessInput,
+	result *ContractReadinessResult,
+) error {
+	specs := []responsibilityAccountSpec{
+		{
+			username: input.ContractOncallAccount,
+			roleCode: "contract_oncall",
+			requiredReadPerms: []string{
+				"market:price-formula:list",
+				"market:snapshot-outbox:list",
+				"trade:operation:reconciliation-issue:list",
+			},
+		},
+		{
+			username:           input.InsuranceOperatorAccount,
+			roleCode:           "insurance_fund_operator",
+			expectedWriteMenus: []int64{1182, 1185, 1186},
+		},
+		{
+			username: input.DROperatorAccount,
+			roleCode: "disaster_recovery_operator",
+		},
+		{
+			username:           input.DeliveryOperatorAccount,
+			roleCode:           "delivery_release_operator",
+			expectedWriteMenus: []int64{1015},
+		},
+		{
+			username: input.ProductionReviewerAccount,
+			roleCode: "production_reviewer",
+		},
+		{
+			username: input.ProductionApproverAccount,
+			roleCode: "production_approver",
+		},
+	}
+
+	subqueries := make([]string, 0, len(specs))
+	args := make([]any, 0, len(specs)*4)
+	for _, spec := range specs {
+		subquery, subqueryArgs := responsibilityAccountSubquery(spec)
+		subqueries = append(subqueries, subquery)
+		args = append(args, subqueryArgs...)
+	}
+	query := "SELECT\n  " + strings.Join(subqueries, ",\n  ")
+	return m.db.QueryRowContext(ctx, query, args...).Scan(
+		&result.ContractOncallAccountCount,
+		&result.InsuranceOperatorCount,
+		&result.DROperatorCount,
+		&result.DeliveryOperatorCount,
+		&result.ProductionReviewerCount,
+		&result.ProductionApproverCount,
+	)
+}
+
+func responsibilityAccountSubquery(spec responsibilityAccountSpec) (string, []any) {
+	args := []any{spec.username, spec.roleCode}
+	predicates := []string{
+		"u.tenant_id=0",
+		"u.app_scope=1",
+		"u.enabled=1",
+		"u.username=?",
+		`(SELECT COUNT(*)
+		  FROM sys_user_role owned_ur
+		  JOIN sys_role owned_r ON owned_r.id=owned_ur.role_id
+		  WHERE owned_ur.tenant_id=0
+		    AND owned_ur.user_id=u.id
+		    AND owned_r.tenant_id=0
+		    AND owned_r.app_scope=1
+		    AND owned_r.enabled=1
+		    AND owned_r.code=?)=1`,
+		`(SELECT COUNT(DISTINCT exact_ur.role_id)
+		  FROM sys_user_role exact_ur
+		  WHERE exact_ur.tenant_id=0
+		    AND exact_ur.user_id=u.id)=1`,
+	}
+
+	writeCount := `(SELECT COUNT(DISTINCT write_m.id)
+	  FROM sys_user_role write_ur
+	  JOIN sys_role_menu write_rm ON write_rm.role_id=write_ur.role_id
+	  JOIN sys_menu write_m ON write_m.id=write_rm.menu_id
+	  WHERE write_ur.tenant_id=0
+	    AND write_ur.user_id=u.id
+	    AND write_m.method IN ('POST','PUT','DELETE'))`
+	predicates = append(
+		predicates,
+		fmt.Sprintf("%s=%d", writeCount, len(spec.expectedWriteMenus)),
+	)
+	if len(spec.expectedWriteMenus) > 0 {
+		predicates = append(
+			predicates,
+			fmt.Sprintf(
+				`(SELECT COUNT(DISTINCT expected_write_m.id)
+				  FROM sys_user_role expected_write_ur
+				  JOIN sys_role_menu expected_write_rm
+				    ON expected_write_rm.role_id=expected_write_ur.role_id
+				  JOIN sys_menu expected_write_m
+				    ON expected_write_m.id=expected_write_rm.menu_id
+				  WHERE expected_write_ur.tenant_id=0
+				    AND expected_write_ur.user_id=u.id
+				    AND expected_write_m.id IN (%s))=%d`,
+				placeholders(len(spec.expectedWriteMenus)),
+				len(spec.expectedWriteMenus),
+			),
+		)
+		for _, menuID := range spec.expectedWriteMenus {
+			args = append(args, menuID)
+		}
+	}
+	if len(spec.requiredReadPerms) > 0 {
+		predicates = append(
+			predicates,
+			fmt.Sprintf(
+				`(SELECT COUNT(DISTINCT required_m.perms)
+				  FROM sys_user_role required_ur
+				  JOIN sys_role_menu required_rm ON required_rm.role_id=required_ur.role_id
+				  JOIN sys_menu required_m ON required_m.id=required_rm.menu_id
+				  WHERE required_ur.tenant_id=0
+				    AND required_ur.user_id=u.id
+				    AND required_m.perms IN (%s))=%d`,
+				placeholders(len(spec.requiredReadPerms)),
+				len(spec.requiredReadPerms),
+			),
+		)
+		for _, permission := range spec.requiredReadPerms {
+			args = append(args, permission)
+		}
+	}
+
+	return fmt.Sprintf(
+		"(SELECT COUNT(*) FROM sys_user u WHERE %s)",
+		strings.Join(predicates, "\n    AND "),
+	), args
 }
 
 func (m *defaultContractReadinessModel) inspectOpenFacts(

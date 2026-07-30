@@ -2,19 +2,20 @@ ARG GO_VERSION=1.26.4
 FROM golang:${GO_VERSION}-alpine AS builder
 
 WORKDIR /src
-COPY deploy/dbinit/go.mod deploy/dbinit/go.sum* ./
-RUN --mount=type=cache,target=/go/pkg/mod \
-    go mod download
 COPY deploy/dbinit/ .
-RUN --mount=type=cache,target=/go/pkg/mod \
-    --mount=type=cache,target=/root/.cache/go-build \
-    CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/db-init .
-RUN --mount=type=cache,target=/go/pkg/mod \
-    --mount=type=cache,target=/root/.cache/go-build \
-    CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/contract-readiness ./cmd/contract-readiness
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 GOOS=linux go build -mod=vendor -trimpath -ldflags="-s -w" -o /out/db-init .
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 GOOS=linux go build -mod=vendor -trimpath -ldflags="-s -w" -o /out/contract-readiness ./cmd/contract-readiness
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 GOOS=linux go build -mod=vendor -trimpath -ldflags="-s -w" -o /out/object-storage ./cmd/object-storage
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 GOOS=linux go build -mod=vendor -trimpath -ldflags="-s -w" -o /out/delivery-preflight ./cmd/delivery-preflight
 
 FROM alpine:3.23
 RUN apk add --no-cache ca-certificates tzdata
 COPY --from=builder /out/db-init /usr/local/bin/db-init
 COPY --from=builder /out/contract-readiness /usr/local/bin/contract-readiness
+COPY --from=builder /out/object-storage /usr/local/bin/object-storage
+COPY --from=builder /out/delivery-preflight /usr/local/bin/delivery-preflight
 ENTRYPOINT ["/usr/local/bin/db-init"]

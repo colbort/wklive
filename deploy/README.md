@@ -79,6 +79,8 @@ Consumer Group 由服务首次消费时自动创建，不需要单独初始化�
    迁移中的新增、修正和删除优先于旧的基础菜单。
 6. 创建或更新两个后台管理员，并生成 bcrypt 密码。
 7. 给管理员绑定对应 `app_scope` 的管理角色和全部菜单权限。
+8. 配置了 `secrets/production-operators.env` 时，幂等创建合约生产职责账号并绑定
+   最小权限角色。
 
 后台账号由 `.env` 配置：
 
@@ -94,6 +96,37 @@ LIQUIDITY_ADMIN_PASSWORD=replace-liquidity-password
 ```bash
 ./deploy.sh db-init
 ```
+
+### 合约生产职责账号
+
+永续与交割合约上线使用六个职责分离账号：
+
+| 账号默认名 | 角色 | 写权限 |
+| --- | --- | --- |
+| `contract_oncall` | 合约生产值班 | 无；接收行情、Outbox、对账告警并只读处置事实 |
+| `insurance_operator` | 保险基金操作员 | 保险基金账户配置与幂等调账 |
+| `dr_operator` | 灾备操作员 | 无后台写权限；主机、存储、KMS 权限在基础设施侧配置 |
+| `delivery_operator` | 交割发布操作员 | 合约交易对配置 |
+| `production_reviewer` | 生产发布复核员 | 无 |
+| `production_approver` | 生产发布审批员 | 无 |
+
+初始化方式：
+
+```bash
+mkdir -p secrets
+cp production-operators.env.example secrets/production-operators.env
+chmod 600 secrets/production-operators.env
+# 为六个账号分别设置至少 20 个字符的唯一随机密码
+./deploy.sh db-init
+```
+
+`deploy/secrets/` 已被 Git 忽略。初始化器只在
+`PRODUCTION_OPERATOR_SEED_ENABLED=true` 时读取这些账号；角色定义和权限收敛位于
+`services/system/migrations/20260730_add_contract_production_roles.sql`。重复执行会
+更新昵称、密码和角色权限，不会给复核或审批账号增加写权限。
+
+这些账号用于系统鉴权、操作日志和责任分离，不能替代真实人员排班、资金批准、异地
+存储/KMS 配置或正式发布单。
 
 `./deploy.sh build` 和 `./deploy.sh up` 会逐个构建应用镜像，避免 Compose/Bake
 全量并行编译耗尽 Docker 资源；传入服务名时只构建指定服务。已经构建好镜像时，
@@ -159,11 +192,134 @@ readiness model 必须从 Authority Registry 确认每个来源都已启用、�
 `false`；全部通过也不会自动打开开关，启用仍须走已批准的发布和回滚流程。
 数据库只读检查由 `deploy/dbinit/models` 中的 readiness model 执行，shell 入口不
 包含业务 SQL。
+六个合约生产职责账号也由该模型直接核对 `sys_user`、`sys_role`、
+`sys_user_role`、`sys_role_menu` 和 `sys_menu`：每个账号必须启用且只绑定声明角色；
+值班账号必须具备三类告警读取权限，保险基金操作员只能有 3 个指定写菜单，交割操作员
+只能有 1 个合约配置写菜单，灾备、复核和审批账号不得拥有后台写权限。仅在声明文件中
+填写任意用户名不能通过。
 公式检查不仅核对输出类型：还会核对来源 Authority 与市场一一映射、INDEX 算法/
 版本/权重、MARK 永续来源/版本/基差上限/平滑权重、FUNDING 版本，以及所有公式的
 回看窗口和执行周期。
 四份证据的必填内容和通过标准见
 [`perpetual-delivery-production-evidence-guide.md`](../services/trade/docs/perpetual-delivery-production-evidence-guide.md)。
+
+### 交割合约启用前技术验收
+
+在取得最终产品启用审批前，可对停用态交割合约执行独立的只读技术验收：
+
+```bash
+./deploy.sh contract-delivery-preflight
+# 也可显式指定另一份生产声明
+./deploy.sh contract-delivery-preflight /secure/path/production-readiness.env
+```
+
+该命令要求交割合约仍为停用安全姿态，核对未来交割时间、停开仓/停撮合顺序、逐仓
+杠杆、默认杠杆、连续风险档位、DELIVERY 公式及新鲜快照，并确认该新产品没有 Order、
+Fill、Position、Position History、Reservation、Settlement Instruction、Delivery
+Batch 或 Delivery Settlement 历史事实。所有数据库查询位于
+`deploy/dbinit/models/deliverypreflight.go`。
+
+通过时输出 `DELIVERY_TECHNICAL_PREFLIGHT=PASS`，同时固定输出
+`DELIVERY_PRODUCTION_ENABLE_ALLOWED=false`。这只证明停用态技术配置完整，不能替代
+前四组生产门禁、独立产品发布审批或启用后的完整 `contract-readiness`。
+
+### ROW Binlog PITR 冒烟
+
+在正式全库 PITR 演练前，可先验证当前 MySQL 与客户端能否按 ROW Binlog 精确位点
+恢复：
+
+```bash
+./deploy.sh contract-dr-pitr-smoke
+```
+
+命令只使用 `wklive_dr_pitr_probe` 和 `wklive_dr_pitr_restore` 两个临时数据库，
+存在同名数据库时拒绝覆盖，并明确禁止使用 `wklive`。恢复点前后各写入一条测试事实，
+恢复库必须严格只有恢复点前事实才通过；重放会话不写 Binlog，结束后自动删除两个
+临时库。宿主机需要安装兼容的 `mysql` 和 `mysqlbinlog` 客户端，也可分别通过
+`MYSQL_CLIENT_BIN`、`MYSQLBINLOG_CLIENT_BIN` 指定路径。
+
+该命令不读取业务表，也不能替代加密异地全量备份、全库 PITR、可用区切换/回切和
+正式 RPO/RTO 审批。完整步骤见
+`services/trade/docs/perpetual-delivery-disaster-recovery-runbook.md`。
+
+### 加密异地备份
+
+先用两个固定临时数据库验证完整加密链路：
+
+```bash
+./deploy.sh contract-dr-backup-smoke
+```
+
+烟测使用临时 RSA-3072 收件人证书执行 CMS `AES-256-GCM` 信封加密，模拟远端复制后
+回读密文，核对 SHA-256，再解密恢复到隔离数据库并校验事实；同时篡改密文中间字节，
+只有认证解密明确拒绝才通过。命令结束后自动删除两个临时数据库、明文、密文、临时
+私钥和模拟远端目录。
+
+在明确不上传的情况下，可对当前完整业务库执行本地加密往返校验：
+
+```bash
+./deploy.sh contract-dr-backup-local-verify
+```
+
+该模式使用 `--single-transaction` 只读导出当前业务库，压缩完成后立即删除临时 SQL
+明文，再执行 CMS `AES-256-GCM` 加密、本地复制回读、解密压缩包 SHA-256 核对和密文
+篡改拒绝。它要求在 Git 忽略的安全配置中提供与收件人证书匹配的加密私钥及独立口令
+文件；所有中间文件均位于权限为 `0700` 的临时目录并在退出时清理。该模式不会连接
+对象存储、不会创建恢复库，固定输出 `DR_BACKUP_UPLOAD_PERFORMED=false`。
+
+需要进一步验证当前全库可恢复时，执行：
+
+```bash
+./deploy.sh contract-dr-backup-local-restore-verify
+```
+
+该模式在完成同一套加密往返后，启动 `--network none`、不映射端口的临时
+`mysql:8.4` 容器，并把临时数据目录绑定到宿主受保护目录，不使用生产 MySQL Volume。
+恢复完成后逐张基础表执行精确 `COUNT(*)` 和 `CHECK TABLE`；表数、迁移数必须与源库
+一致。通过后删除临时容器和数据目录。默认至少要求 12 GiB 宿主临时空间，可通过
+`DR_BACKUP_RESTORE_MIN_FREE_KB` 调高，但不能设为 0。
+
+需要在同一隔离环境进一步验证全量快照和真实 ROW Binlog 的精确停止位点时，执行：
+
+```bash
+./deploy.sh contract-dr-backup-local-pitr-restore-verify
+```
+
+该模式仍不上传。它创建本次运行唯一的源库临时探针表，在全量快照前、恢复点内和
+恢复点外分别写入证据事实，从 `mysqldump --source-data=2` 提取快照位点并下载截至
+恢复点的 Binlog 尾段。源探针在尾段截取后立即删除；隔离全库恢复后应用尾段，只有
+快照事实和恢复点事实存在、恢复点外事实不存在，且全部表计数及 `CHECK TABLE` 通过
+才输出 PASS。命令要求主机安装兼容的 `mysqlbinlog`，退出时清理探针、临时容器和
+数据目录。
+
+生产执行只接受 `s3://` 目标，明确拒绝 `file://`，防止把同机目录冒充异地备份：
+
+```bash
+mkdir -p secrets
+cp dr-backup.env.example secrets/dr-backup.env
+chmod 600 secrets/dr-backup.env
+# 对象存储默认读取管理后台 OBJECT_STORAGE.minio；
+# 配置独立私有备份桶、收件人证书、KMS/HSM Key ID、保留期和责任账号
+DR_BACKUP_ENV_FILE="$PWD/secrets/dr-backup.env" ./deploy.sh contract-dr-storage-init
+DR_BACKUP_ENV_FILE="$PWD/secrets/dr-backup.env" ./deploy.sh contract-dr-backup
+```
+
+备份机只需要公开收件人证书；恢复私钥应由 KMS/HSM 或隔离恢复环境托管。命令执行
+`--single-transaction` 全量 dump，先检查 `mysqldump` 的独立退出码，再压缩、加密、
+上传、回读并核对密文；清单记录 Binlog 前后位点、密文/压缩 SQL 哈希、Key ID、
+操作/复核账号及保留期。当前 Compose 可使用容器内与 MySQL 8.4 匹配的客户端；外部
+数据库必须指定兼容的 `mysqldump`。`contract-dr-storage-init` 明确拒绝复用系统附件桶，
+创建独立私有备份桶并启用版本控制；生产备份每次运行前再次验证桶存在、版本控制启用且
+没有公开 bucket policy。对象上传和回读由 Deploy 内置客户端完成，不要求宿主机安装
+AWS CLI，数据库配置读取位于 `deploy/dbinit/models`。
+
+如灾备必须使用独立于业务附件存储的账号，可设置
+`DR_BACKUP_USE_SYSTEM_OBJECT_STORAGE=false`，再在 Git 忽略的 secret 文件中配置独立
+S3-compatible endpoint、bucket 和访问凭据。
+
+本机烟测、全库本地加密往返和隔离全库恢复都不能使 `DR_BACKUP_ENCRYPTION`、
+`DR_OFFSITE_LOCATION` 或生产灾备审批门禁通过。生产仍须在真实异地对象存储执行，
+并在受管密钥环境完成全库 PITR、切换和回切。
 
 ### 合并已有 MySQL 的初始化数据
 

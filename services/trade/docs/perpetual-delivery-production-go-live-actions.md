@@ -5,13 +5,13 @@
 2026-07-30 当前完整 Deploy 环境已经完成预生产技术验收。只读
 `contract-readiness` 最终结果：
 
-- PASS：60；
-- FAIL：17；
+- PASS：75；
+- FAIL：14；
 - 结论：`NOT READY`；
 - `AutomaticLiquidation.Enabled=false`；
 - `CrossMarginTrading.Enabled=false`。
 
-本行动单把 17 个失败项转换为外部负责人可直接交付的材料和配置。任何 API Key、
+本行动单把当前 14 个失败项转换为外部负责人可直接交付的材料和配置。任何 API Key、
 密码、访问令牌或数据库凭据不得写入本文或 `production-readiness.env`。
 
 预生产证据位于
@@ -21,27 +21,29 @@
 2026-07-30 按五组整理的当前事实、官方许可核对和执行前置条件见
 [`evidence/2026-07-30-production-materials`](evidence/2026-07-30-production-materials)。
 
-## 2. 17 个失败项
+## 2. 14 个失败项
+
+合约值班组、告警升级策略和资金账户审批系统身份已经通过六个职责分离账号补齐，
+因此从原 17 项中关闭 3 项；数据库门禁同时核对每个账号的唯一角色和写权限上限，
+任意用户名或超级管理员不能冒充值班、复核或审批身份。系统身份不替代对应的正式
+生产审批。
 
 | # | 当前 FAIL | 负责人 | 必须交付 | readiness 字段或运行事实 |
 | ---: | --- | --- | --- | --- |
 | 1 | 行情数据许可未批准 | 法务/行情负责人 | Binance、OKX、Bybit 的数据使用许可或合同编号 | `PRICE_SOURCE_LICENSE_APPROVED=true` |
 | 2 | 历史回放缺少生产审批引用 | 行情/风控负责人 | 执行、复核、审批完整的发布单或工单引用 | `HISTORICAL_REPLAY_PRODUCTION_APPROVAL_REF` |
-| 3 | 生产值班组为空 | 运维负责人 | 值班组名称、最终责任人和排班入口 | `ALERT_ONCALL_TEAM` |
-| 4 | 告警升级策略为空 | 运维负责人 | 一级渠道、未确认超时、二/三级升级规则 | `ALERT_ESCALATION_POLICY` |
-| 5 | 告警演练缺少生产审批引用 | 运维负责人 | 含平台接收、通知、升级、恢复回执的审批归档 | `ALERT_TEST_PRODUCTION_APPROVAL_REF` |
-| 6 | 保险基金审批水位未声明 | 资金/风控负责人 | 经审批的最低可用余额及审批编号 | `INSURANCE_FUND_MIN_AVAILABLE` 为正数 `DECIMAL(36,18)` |
-| 7 | 保险和手续费账户权限未批准 | 资金/风控负责人 | 账户权限、最低水位和操作范围审批 | `FUND_ACCOUNT_PERMISSION_APPROVED=true` |
-| 8 | 资金账户审批人为空 | 资金负责人 | 保险基金与手续费账户最终审批人 | `FUND_ACCOUNT_APPROVER` |
-| 9 | 自动强平启用窗口为空 | 发布/风控负责人 | 发布单、启用窗口、操作人、复核人 | `LIQUIDATION_ENABLE_WINDOW` |
-| 10 | 强平回滚方案缺少生产审批引用 | 发布/风控负责人 | 完成操作、复核、资金和风险签批的发布单引用 | `LIQUIDATION_ROLLBACK_PRODUCTION_APPROVAL_REF` |
-| 11 | 正式 RPO 未批准 | 基础设施负责人 | 正整数分钟及审批编号 | `DR_RPO_MINUTES` |
-| 12 | 正式 RTO 未批准 | 基础设施负责人 | 正整数分钟及审批编号 | `DR_RTO_MINUTES` |
-| 13 | 备份加密未声明 | 安全/基础设施负责人 | 算法、密钥托管方式、轮换规则 | `DR_BACKUP_ENCRYPTION` |
-| 14 | 异地位置未声明 | 基础设施负责人 | 异地 Region/机房/对象存储位置和保留周期 | `DR_OFFSITE_LOCATION` |
-| 15 | 灾备演练缺少生产审批引用 | 基础设施负责人 | PITR、切换、回切和事实核对的正式审批归档 | `DR_EXERCISE_PRODUCTION_APPROVAL_REF` |
-| 16 | 保险基金未注资 | 资金/风控负责人 | 经审批的最低水位和实际入账证据 | 数据库模型核对启用且余额达到审批水位的 `INSURANCE_FUND` |
-| 17 | 未来交割合约未启用 | 发布/风控负责人 | 在其余门禁全部通过后的独立启用审批 | 数据库模型核对 `BTCUSDT-20260925` 为启用且交割时点仍在未来 |
+| 3 | 告警演练缺少生产审批引用 | 运维负责人 | 含平台接收、通知、升级、恢复回执的审批归档 | `ALERT_TEST_PRODUCTION_APPROVAL_REF` |
+| 4 | 保险基金审批水位未声明 | 资金/风控负责人 | 经审批的最低可用余额及审批编号 | `INSURANCE_FUND_MIN_AVAILABLE` 为正数 `DECIMAL(36,18)` |
+| 5 | 保险和手续费账户权限未批准 | 资金/风控负责人 | 账户权限、最低水位和操作范围审批 | `FUND_ACCOUNT_PERMISSION_APPROVED=true` |
+| 6 | 自动强平启用窗口为空 | 发布/风控负责人 | 发布单、启用窗口、操作人、复核人 | `LIQUIDATION_ENABLE_WINDOW` |
+| 7 | 强平回滚方案缺少生产审批引用 | 发布/风控负责人 | 完成操作、复核、资金和风险签批的发布单引用 | `LIQUIDATION_ROLLBACK_PRODUCTION_APPROVAL_REF` |
+| 8 | 正式 RPO 未批准 | 基础设施负责人 | 正整数分钟及审批编号 | `DR_RPO_MINUTES` |
+| 9 | 正式 RTO 未批准 | 基础设施负责人 | 正整数分钟及审批编号 | `DR_RTO_MINUTES` |
+| 10 | 备份加密未声明 | 安全/基础设施负责人 | 算法、密钥托管方式、轮换规则 | `DR_BACKUP_ENCRYPTION` |
+| 11 | 异地位置未声明 | 基础设施负责人 | 异地 Region/机房/对象存储位置和保留周期 | `DR_OFFSITE_LOCATION` |
+| 12 | 灾备演练缺少生产审批引用 | 基础设施负责人 | PITR、切换、回切和事实核对的正式审批归档 | `DR_EXERCISE_PRODUCTION_APPROVAL_REF` |
+| 13 | 保险基金未注资 | 资金/风控负责人 | 经审批的最低水位和实际入账证据 | 数据库模型核对启用且余额达到审批水位的 `INSURANCE_FUND` |
+| 14 | 未来交割合约未启用 | 发布/风控负责人 | 在其余门禁全部通过后的独立启用审批 | 数据库模型核对 `BTCUSDT-20260925` 为启用且交割时点仍在未来 |
 
 ## 3. 已完成的技术配置与最终开闸条件
 
@@ -82,6 +84,17 @@ Authority 均为启用的 `PUBLIC_REST` 时才通过。公开访问不替代第 
 各 60 条、1 秒严格连续、断档为 0，确定性回放通过。readiness model 还会逐项核对
 来源市场映射、INDEX 算法/版本/权重、MARK 永续来源/基差/1:4 平滑、FUNDING
 版本，以及四类公式的窗口和执行周期，参数漂移不能通过终检。
+
+交割产品在启用审批前可单独执行：
+
+```bash
+cd deploy
+./deploy.sh contract-delivery-preflight
+```
+
+该命令要求产品仍为停用安全姿态，并核对时间窗、逐仓杠杆、风险覆盖、DELIVERY
+公式/快照及 8 类交易与结算事实为 0。通过只代表技术预检完成，输出仍明确为
+`DELIVERY_PRODUCTION_ENABLE_ALLOWED=false`。
 
 ### 3.3 永续和交割产品
 

@@ -15,6 +15,18 @@
 - 当前 Order、Position、Position History 均为 0；
 - 三源 DELIVERY 输出新鲜；
 - 因前四组生产门禁未通过，产品不得启用。
+- 已创建 `delivery_operator`、`production_reviewer` 和
+  `production_approver`，分别承担启用操作、复核和审批系统身份；
+- 只有 `delivery_operator` 具有合约交易对配置写权限，复核和审批账号均为只读。
+- 2026-07-30 18:03:53 HKT 执行独立只读
+  `./deploy.sh contract-delivery-preflight`，结果为
+  `DELIVERY_TECHNICAL_PREFLIGHT=PASS`；
+- 验收同时确认 Order、Fill、Position、Position History、Reservation、Settlement
+  Instruction、Delivery Batch、Delivery Settlement 全部为 0；
+- 验收工具固定输出 `DELIVERY_PRODUCTION_ENABLE_ALLOWED=false`，本次没有启用产品。
+
+完整输出见
+[delivery-preflight-report.md](delivery-preflight-report.md)。
 
 ## 发布前检查
 
@@ -35,4 +47,3 @@
 - 验证行情、下单门禁、到期状态机和取消/释放边界；
 - 保存 Admin 操作日志、前后详情、发布单和终检输出；
 - `READY` 不自动打开自动强平或全仓开关。
-

@@ -195,7 +195,7 @@ Outbox / Inbox
 - [x] 配置平滑、上下限和版本（MARK 当前值/前值权重为 1:4，INDEX、MARK、FUNDING、DELIVERY 均使用不可变候选版本；严格模型逐项核对实际 JSON 成分及参数）；
 - [x] 完成生产候选历史回放（当前 v3 窗口为 2026-07-30 16:24:19～16:25:18，共 240 条不可变审计，四类公式各 60 条、严格 1 秒连续、断档和重复时点均为 0，覆盖两个 30 秒交割窗口并确定性回放 PASS；历史 v2 材料保留，数据许可和执行/复核审批仍为 `[!]`）；
 - [x] Snapshot Outbox 回到实时水位（Claim/发布已流水线并发、最终检查点合并、健康日志新增净排空速度和 ETA；64 Worker 部署后完成 50,000 条容量验收。迁入库恢复实时行情后最终抽样 Pending/Failed/Manual=0、Processing=12，均为 60 秒内瞬时在途；预检使用与运行时一致的健康口径，允许新鲜在途但拒绝 Failed、Manual 或最老 Pending/Processing 超过 60 秒）；
-- [~] 完成容量、备份和灾备恢复演练（50,000 条 Outbox 容量验收完成；隔离环境完成全库一致性备份与 143 表恢复，逐表差异为 0；新增 `deploy.sh contract-dr-pitr-smoke`，两个临时库连续两次完成 ROW Binlog 精确停止位点重放，源 2 条、恢复库严格 1 条，负向拒绝 `wklive` 业务库且自动清理。生产加密异地备份、全库 Binlog PITR、可用区切换及正式 RPO/RTO 仍待生产演练）。
+- [~] 完成容量、备份和灾备恢复演练（50,000 条 Outbox 容量验收完成；历史隔离环境完成 143 表静默恢复和逐表零差异，两个临时库连续两次完成 ROW Binlog 精确停止位点重放；当前完整业务库完成不上传的加密往返及 144 表无网络隔离恢复后，又把 2,128,866,819-byte 加密全量快照与 5,115,329-byte 真实 ROW Binlog 尾段恢复到精确停止位点 `binlog.000014:754376595`，恢复点外事务 `754378816` 未越界；144 张业务表加一张临时证据表共 145 次 `CHECK TABLE` 全部 OK，234 秒通过，源探针、容器和数据目录均清理。用户本次决定不上传；正式 KMS/HSM、外部上传/回读、异地实例切换/回切及获批 RPO/RTO 仍待生产演练）。
 
 当前 BTCUSDT INDEX 使用三个独立公开现货来源，MARK 使用该 INDEX 与 Binance
 永续行情并进行 1:4 平滑，FUNDING 使用 MARK/INDEX。技术运行与回放已经通过；
@@ -272,6 +272,7 @@ P1-02 应用与隔离运行验收已完成；生产 `AutomaticLiquidation.Enable
 | 2026-07-28 | 成交保证金扣款时点修正 | 已修复，待端到端与存量数据验收 | 不再在撮合阶段按整笔 Fill 预生成保证金扣款；改为仓位投影后仅按实际开仓数量生成并绑定 Position；兼容修复未执行的旧 `position_id=0` 指令，纯平仓旧指令删除，已执行冲突拒绝自动修正 |
 | 2026-07-28 | P0-06 对账异常人工处理入口 | 通过 | Trade/Admin API 提供租户隔离的异常列表及忽略接口；真实 RPC 以请求租户 123、可信元数据租户 900199 查询时只返回 900199 夹具；缺操作人返回 1001，操作人 990001 成功忽略，重复忽略返回 1001。数据库固化状态 3、原因、resolved_at，并生成唯一成功 `CONTRACT_RECONCILIATION_ISSUE_IGNORED` 事件；验收记录、事件、缓存和临时客户端均已精确清理 |
 | 2026-07-28 | P0-05 最终交割价边界与审计 | 代码完成，待 Price Engine DELIVERY 配置联调 | Trade 仅接受单个已确认最终 DELIVERY 快照，不再聚合二次定价；Batch 固化快照ID、公式版本、目标时点、配置算法及原始摘要 |
+| 2026-07-30 | 交割合约启用前独立技术验收 | 通过，产品保持停用 | `contract-delivery-preflight` 由 models 只读核对 Symbol 7 的未来时间窗、逐仓杠杆、风险覆盖、DELIVERY 公式/新鲜快照及 Order/Fill/Position/History/Reservation/Instruction/Batch/Settlement 全部为 0；固定输出不允许生产启用 |
 | 2026-07-28 | P0-05 Price Engine 输入审计与确定性重放 | 代码及单测完成，待生产多源配置回放 | `raw_payload` 固化完整/采用/剔除输入；快照 ID 由输出维度、价格和审计事实确定性生成；补充 DELIVERY 多源配置说明；`services/market go test ./internal/priceengine ./internal/tasks ./internal/logic/market` 通过 |
 | 2026-07-28 | P0-05 交割价有效输入门槛 | 代码及管理端完成，待迁移部署与生产三源验收 | 公式新增 `min_input_count`；DELIVERY 运行时强制至少 3 个偏差过滤后的有效来源，不足时拒绝出价；创建/详情页可配置和查看；补充偏差剔除后仅剩 2 源不发布快照的故障测试 |
 | 2026-07-28 | P0-03 资金费能力审计 | 代码与公式单测完成，故障及生产验收未完成 | 正/负/零费率、线性/反向计价、平台差额守恒、批次唯一、指令幂等、租约重试、`last_funding_time` 防重、Position History 及 Asset Flow 对账链路均已落地；未将尚未执行的数据库并发、进程退出和真实 Asset 故障场景标为完成 |
@@ -391,12 +392,13 @@ P1-02 应用与隔离运行验收已完成；生产 `AutomaticLiquidation.Enable
 | 2026-07-30 | MARK 断流自恢复与 v3 不可变公式 | 修复并完成运行及回放验收 | 生产候选 v2 在上游中断超过 30 秒后，上一 MARK 超出回看窗口；引擎又把该平滑状态作为第三个必需实时输入，导致 MARK/FUNDING 永久等待。v3 将 INDEX 与独立永续 FINAL_QUOTE 固定为两个必需实时输入，上一 MARK 仅作可选平滑状态；首条审计明确 `smoothing_bootstrap=true`、accepted=2，下一秒 accepted=3 并恢复 1:4 平滑。通过 Admin API 创建并激活不可变 `production-mark-v3`，v2 自动停用；INDEX/MARK/FUNDING/DELIVERY 均恢复逐秒新鲜。新窗口四类公式各 60 条、共 240 条，严格 1 秒连续且确定性回放 PASS。Market/db-init 全量测试通过，readiness 严格核对 `min_input_count=2`；管理端选择 INDEX_BASIS 时同步固定该值，避免再次错误配置。详见 `evidence/2026-07-30-production-materials/mark-v3-price-replay-report.md` |
 | 2026-07-30 | Docker 磁盘恢复与数据卷保护 | 恢复并通过默认 4 GiB 预检 | Market 镜像切换后 Docker 虚拟盘一度只剩约 1.5 GiB，Mongo WiredTiger checkpoint 明确报 `No space left on device` 并 exit 133，Market 因 Mongo DNS 不可用重启。核对 Mongo 数据卷仅 255 MiB 且未删除任何 Volume；Mongo 从最后检查点完成日志恢复并健康启动，Market 重新入网后健康且 restart=0。仅删除旧部署中已停止、无数据卷的 Logstash 容器及其 1.68 GiB 镜像，并删除无容器引用的 1.32 GiB Kibana 镜像；最终可用空间 4,813,612 KiB，`deploy.sh disk-check` 按默认 4,194,304 KiB 通过，MySQL/Mongo/Market 数据均保留 |
 | 2026-07-30 | ROW Binlog 精确位点 PITR 冒烟 | 隔离临时库重复执行通过 | Deploy 新增 `contract-dr-pitr-smoke`：创建前拒绝任何已存在目标并禁止使用 `wklive`，仅在两个同构临时库写入恢复点前后测试事实；从 MySQL 8.4 ROW Binlog 远端流按文件/起止位点读取，经库名重写重放，并关闭重放会话 Binlog 防止恢复事实回写。最终运行使用 `binlog.000013:691892241..691894421`，源库 2 条、恢复库严格只有 `before-recovery-point` 1 条，恢复点后事实未越界；命令成功/失败均自动清理，结束后临时库数为 0。该项只证明工具链和停止位点，不替代生产全库 PITR、异地存储和可用区切换。详见 `evidence/2026-07-30-production-materials/04-disaster-recovery.md` |
+| 2026-07-30 | 完整清单回归与数据库分层复核 | 当前代码全量通过 | 对 Market、Trade、Asset、System、Admin API 和 Deploy db-init 执行 `go test ./...` 全部通过；Admin WebSocket 测试需要绑定本机临时端口，在允许测试监听后通过。Admin UI `vue-tsc --noEmit` 及 Vite 生产构建通过。静态扫描 Market、Trade、Asset、System、Admin API、App API 的非 `models` Go 文件，没有发现 SELECT/INSERT/UPDATE/DELETE 等直接 SQL；业务查询和更新继续由生成 model 及自定义 model 方法承载。证据目录 SHA-256 全量校验和 `git diff --check` 通过 |
 
 ## 6. 当前外部依赖与不可代填项
 
 材料内容、哈希和归档要求见
 [`perpetual-delivery-production-evidence-guide.md`](perpetual-delivery-production-evidence-guide.md)；
-17 个失败项的责任人、回填字段、配置步骤和完成顺序见
+当前 14 个失败项的责任人、回填字段、配置步骤和完成顺序见
 [`perpetual-delivery-production-go-live-actions.md`](perpetual-delivery-production-go-live-actions.md)；
 材料到齐后以 `deploy.sh contract-readiness` 执行正向验收。
 
@@ -407,7 +409,7 @@ P1-02 应用与隔离运行验收已完成；生产 `AutomaticLiquidation.Enable
 | 生产历史回放 | 已归档 60 秒三源真实公开行情窗口，四类公式共 240 条、严格 1 秒连续、断档 0，覆盖两个完整 30 秒交割锁价窗口，确定性回放 PASS | 补充数据许可、执行人、复核人和审批编号后作为生产发布材料归档 |
 | P0-06 告警渠道 | 三类告警已统一投递 Kafka `admin.notifications`，Admin 消费并广播 `/admin/ws/notifications`；Outbox 和 Price Engine 的 firing/resolved 真实演练通过，对账通道实际投递且业务失败重试已测试；后台 WS 使用真实系统管理员完成鉴权握手和 offset 22 事件接收，当前消费组 23/23、lag=0；URL 令牌、Origin、事件权限和租户隔离均已收紧。外部 Webhook 当前保持关闭 | 提供生产值班组、一级外部渠道、确认回执、未确认升级链路和最终责任人 |
 | P1-02/P2-01 自动强平资金权限 | 逐仓及全仓正/负权益隔离矩阵已有归档验收；`tenant=1/USDT` 的保险基金账户、`FEE_REVENUE` 账户及 `symbol_id=0` 默认保险配置已经通过管理接口补齐，但两个平台账户余额均为 0、ADL 关闭，Etcd 中自动强平总开关保持关闭 | 明确保险基金最低水位和注资金额，完成资金权限与审批责任人、启用窗口及回滚方案后，使用幂等管理接口注资并重新验收 |
-| 生产备份与灾备 | 隔离环境已完成全库一致性备份、140 表恢复核对和恢复手册；本地容量与恢复流程可执行 | 确认生产 RPO/RTO、备份加密及异地保留策略，并安排 Binlog 时间点恢复、节点/可用区故障切换和回切演练 |
+| 生产备份与灾备 | 当前 144 张业务表已完成不上传的 CMS AES-256-GCM 全量备份、无网络隔离恢复；随后以 2,128,866,819-byte 全量快照和 5,115,329-byte 真实 ROW Binlog 尾段恢复到 `binlog.000014:754376595`，恢复点外事务未越界，145 张恢复表全部检查通过并清理；生产命令拒绝本地目标 | 提供真实异地上传/回读和 KMS/HSM，确认生产 RPO/RTO、保留策略，并安排异地实例、节点/可用区故障切换和回切演练 |
 
 ## 7. 2026-07-29 当前 Deploy 预生产验收
 
@@ -492,3 +494,45 @@ P1-02 应用与隔离运行验收已完成；生产 `AutomaticLiquidation.Enable
 - 单机全库备份、隔离恢复和 143 表精确比对：通过；
 - 行情数据许可、外部值班通知/升级送达、已注资保险基金及生产异地灾备：未通过；
 - 上线结论：`NOT READY`，生产门禁继续关闭。
+
+### 7.5 生产职责账号
+
+2026-07-30 已通过部署初始化器新增合约值班、保险基金操作、灾备操作、交割发布操作、
+生产复核和生产审批六个最小权限角色及同名职责账号。六个账号真实登录通过；值班、灾备、
+复核、审批账号无后台写权限，保险基金账号仅有 3 个保险基金写入口，交割操作账号仅有
+1 个合约交易对配置写入口。账号和四组责任映射见
+[`production-responsibility-accounts.md`](evidence/2026-07-30-production-materials/production-responsibility-accounts.md)。
+
+只读终检现直接核对六个账号的启用状态、唯一角色、三类告警读取权限和写权限上限；
+正向六项全部 PASS。把值班账号临时错填为 `admin` 的负向终检准确新增 1 个失败，
+恢复后当前结果为 75 PASS/14 FAIL。
+
+该项关闭系统鉴权和职责分离缺口，但不替代真实人员排班、保险基金注资、异地存储/KMS、
+RPO/RTO 及交割启用发布单。
+
+### 7.6 加密备份工具链
+
+2026-07-30 新增 `deploy.sh contract-dr-backup-smoke`、
+`deploy.sh contract-dr-backup-local-verify`、
+`deploy.sh contract-dr-backup-local-restore-verify`、
+`deploy.sh contract-dr-backup-local-pitr-restore-verify` 和
+`deploy.sh contract-dr-backup`。
+隔离烟测使用 CMS `AES-256-GCM` 完成 dump、压缩、模拟远端回读、认证解密、两条事实
+恢复和密文篡改拒绝；首次发现 MySQL 9.3 客户端错误被管道掩盖后，已改为匹配服务端
+客户端并先独立检查 dump 退出码。最终无告警 PASS，临时数据库数量为 0。生产命令只
+接受 `s3://`，本地目标负向拒绝通过。
+
+不上传模式再对当前完整 `wklive` 执行 1.962 GiB 单事务导出；压缩后立即删除 SQL
+明文，239.79 MiB 密文完成回读、认证解密哈希一致及篡改拒绝，耗时 65 秒，临时文件
+全部清理且 `UPLOAD_PERFORMED=false`。
+
+隔离恢复模式进一步把当前 1.971 GiB SQL 恢复到无网络临时 MySQL 8.4；源/恢复基础
+表均为 144、迁移均为 66，恢复端 4,077,768 行、144 次 `CHECK TABLE` 全部 OK，
+逐表计数指纹已归档，临时容器和宿主数据目录在 PASS 前删除。
+
+全库 PITR 模式再从快照位点 `binlog.000014:751926031` 应用真实 ROW Binlog 至
+`754376595`，恢复点外事务位于 `754378816` 且未进入恢复库；5,115,329-byte 尾段、
+145 张恢复表和 4,099,281 行验证通过，源探针与隔离资源全部清理，未上传任何对象。
+
+该项关闭当前全库可导出、加密往返、隔离恢复及本机真实 Binlog 精确位点恢复的技术
+缺口；真实异地 S3、KMS/HSM、异地实例切换/回切和正式 RPO/RTO 仍是生产门禁。

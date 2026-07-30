@@ -83,7 +83,7 @@ build_images() {
 }
 
 usage() {
-  echo "usage: $0 {up|start|down|restart|build|logs|ps|disk-check|config|seed|data|merge-data|database|db-upgrade|compose-config|db-init|kafka-init|contract-readiness|contract-dr-pitr-smoke} [service ...]"
+  echo "usage: $0 {up|start|down|restart|build|logs|ps|disk-check|config|seed|data|merge-data|database|db-upgrade|compose-config|db-init|kafka-init|contract-readiness|contract-delivery-preflight|contract-dr-pitr-smoke|contract-dr-storage-check|contract-dr-storage-init|contract-dr-backup-smoke|contract-dr-backup-local-verify|contract-dr-backup-local-restore-verify|contract-dr-backup-local-pitr-restore-verify|contract-dr-backup} [service ...]"
 }
 
 command="${1:-}"
@@ -163,8 +163,62 @@ case "$command" in
     check_docker_disk "${DOCKER_READINESS_MIN_FREE_KB:-2097152}" "DOCKER_READINESS_MIN_FREE_KB"
     "$SCRIPT_DIR/contract-readiness.sh" "$@"
     ;;
+  contract-delivery-preflight)
+    check_docker_disk "${DOCKER_READINESS_MIN_FREE_KB:-2097152}" "DOCKER_READINESS_MIN_FREE_KB"
+    "$SCRIPT_DIR/contract-delivery-preflight.sh" "$@"
+    ;;
   contract-dr-pitr-smoke)
     "$SCRIPT_DIR/contract-dr-pitr-smoke.sh" "$@"
+    ;;
+  contract-dr-storage-check|contract-dr-storage-init)
+    dr_env_file="${DR_BACKUP_ENV_FILE:-$SCRIPT_DIR/.env}"
+    if [ ! -f "$dr_env_file" ]; then
+      echo "DR backup environment file does not exist: $dr_env_file" >&2
+      exit 1
+    fi
+    set -a
+    # shellcheck disable=SC1090
+    . "$dr_env_file"
+    set +a
+    dr_bucket="${DR_BACKUP_BUCKET_NAME:-}"
+    if [ -z "$dr_bucket" ]; then
+      echo "DR_BACKUP_BUCKET_NAME is required" >&2
+      exit 1
+    fi
+    if [ "$command" = "contract-dr-storage-init" ]; then
+      check_docker_disk
+      build_images db-init
+    else
+      check_docker_disk "${DOCKER_READINESS_MIN_FREE_KB:-2097152}" \
+        "DOCKER_READINESS_MIN_FREE_KB"
+    fi
+    if [ "$command" = "contract-dr-storage-init" ]; then
+      docker compose -f "$COMPOSE_FILE" run --rm --no-deps \
+        --entrypoint /usr/local/bin/object-storage \
+        -e OBJECT_STORAGE_BUCKET="$dr_bucket" \
+        -e OBJECT_STORAGE_ALLOW_MUTATION=true \
+        db-init ensure-private-versioned
+    fi
+    docker compose -f "$COMPOSE_FILE" run --rm --no-deps \
+      --entrypoint /usr/local/bin/object-storage \
+      -e OBJECT_STORAGE_BUCKET="$dr_bucket" \
+      -e OBJECT_STORAGE_REQUIRE_PRIVATE_VERSIONED=true \
+      db-init inspect
+    ;;
+  contract-dr-backup-smoke)
+    "$SCRIPT_DIR/contract-dr-encrypted-backup.sh" smoke "$@"
+    ;;
+  contract-dr-backup-local-verify)
+    "$SCRIPT_DIR/contract-dr-encrypted-backup.sh" local-verify "$@"
+    ;;
+  contract-dr-backup-local-restore-verify)
+    "$SCRIPT_DIR/contract-dr-encrypted-backup.sh" local-restore-verify "$@"
+    ;;
+  contract-dr-backup-local-pitr-restore-verify)
+    "$SCRIPT_DIR/contract-dr-encrypted-backup.sh" local-pitr-restore-verify "$@"
+    ;;
+  contract-dr-backup)
+    "$SCRIPT_DIR/contract-dr-encrypted-backup.sh" production "$@"
     ;;
   *)
     usage

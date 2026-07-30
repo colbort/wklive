@@ -233,6 +233,12 @@ if [ -f "$READINESS_FILE" ]; then
   ALERT_TEST_REPORT=$(read_setting ALERT_TEST_REPORT)
   ALERT_TEST_REPORT_SHA256=$(read_setting ALERT_TEST_REPORT_SHA256)
   ALERT_TEST_PRODUCTION_APPROVAL_REF=$(read_setting ALERT_TEST_PRODUCTION_APPROVAL_REF)
+  CONTRACT_ONCALL_ACCOUNT=$(read_setting CONTRACT_ONCALL_ACCOUNT)
+  INSURANCE_OPERATOR_ACCOUNT=$(read_setting INSURANCE_OPERATOR_ACCOUNT)
+  DR_OPERATOR_ACCOUNT=$(read_setting DR_OPERATOR_ACCOUNT)
+  DELIVERY_OPERATOR_ACCOUNT=$(read_setting DELIVERY_OPERATOR_ACCOUNT)
+  PRODUCTION_REVIEWER_ACCOUNT=$(read_setting PRODUCTION_REVIEWER_ACCOUNT)
+  PRODUCTION_APPROVER_ACCOUNT=$(read_setting PRODUCTION_APPROVER_ACCOUNT)
   PRODUCTION_TENANT_ID=$(read_setting PRODUCTION_TENANT_ID)
   PRODUCTION_SETTLEMENT_COIN=$(read_setting PRODUCTION_SETTLEMENT_COIN)
   INSURANCE_FUND_MIN_AVAILABLE=$(read_setting INSURANCE_FUND_MIN_AVAILABLE)
@@ -286,6 +292,12 @@ else
   ALERT_TEST_REPORT=""
   ALERT_TEST_REPORT_SHA256=""
   ALERT_TEST_PRODUCTION_APPROVAL_REF=""
+  CONTRACT_ONCALL_ACCOUNT=""
+  INSURANCE_OPERATOR_ACCOUNT=""
+  DR_OPERATOR_ACCOUNT=""
+  DELIVERY_OPERATOR_ACCOUNT=""
+  PRODUCTION_REVIEWER_ACCOUNT=""
+  PRODUCTION_APPROVER_ACCOUNT=""
   PRODUCTION_TENANT_ID=""
   PRODUCTION_SETTLEMENT_COIN=""
   INSURANCE_FUND_MIN_AVAILABLE=""
@@ -501,6 +513,12 @@ require_value "$ALERT_ONCALL_TEAM" "production on-call team declared"
 require_value "$ALERT_ESCALATION_POLICY" "production alert escalation policy declared"
 require_evidence_file "$ALERT_TEST_REPORT" "$ALERT_TEST_REPORT_SHA256" "production alert delivery test report attached"
 require_value "$ALERT_TEST_PRODUCTION_APPROVAL_REF" "alert delivery production approval reference declared"
+require_value "$CONTRACT_ONCALL_ACCOUNT" "contract on-call system account declared"
+require_value "$INSURANCE_OPERATOR_ACCOUNT" "insurance-fund operator system account declared"
+require_value "$DR_OPERATOR_ACCOUNT" "DR operator system account declared"
+require_value "$DELIVERY_OPERATOR_ACCOUNT" "delivery operator system account declared"
+require_value "$PRODUCTION_REVIEWER_ACCOUNT" "production reviewer system account declared"
+require_value "$PRODUCTION_APPROVER_ACCOUNT" "production approver system account declared"
 
 require_positive_integer "$PRODUCTION_TENANT_ID" "production tenant declared"
 require_value "$PRODUCTION_SETTLEMENT_COIN" "production settlement coin declared"
@@ -558,7 +576,9 @@ tokens_valid=true
 for token in "$PRODUCTION_CATEGORY_CODE" "$PRODUCTION_MARKET" "$PRODUCTION_PRICE_SYMBOL" \
   "$PRODUCTION_PERPETUAL_SYMBOL" "$PRODUCTION_DELIVERY_SYMBOL" "$PRODUCTION_SETTLEMENT_COIN" \
   "$INDEX_FORMULA_VERSION" "$PERPETUAL_PRICE_AUTHORITY" "$PERPETUAL_PRICE_MARKET" \
-  "$MARK_FORMULA_VERSION" "$FUNDING_FORMULA_VERSION" "$DELIVERY_FORMULA_VERSION"; do
+  "$MARK_FORMULA_VERSION" "$FUNDING_FORMULA_VERSION" "$DELIVERY_FORMULA_VERSION" \
+  "$CONTRACT_ONCALL_ACCOUNT" "$INSURANCE_OPERATOR_ACCOUNT" "$DR_OPERATOR_ACCOUNT" \
+  "$DELIVERY_OPERATOR_ACCOUNT" "$PRODUCTION_REVIEWER_ACCOUNT" "$PRODUCTION_APPROVER_ACCOUNT"; do
   if ! valid_token "$token"; then
     tokens_valid=false
   fi
@@ -622,6 +642,12 @@ db_output=$(
     -e "READINESS_TENANT_ID=$PRODUCTION_TENANT_ID" \
     -e "READINESS_SETTLEMENT_COIN=$PRODUCTION_SETTLEMENT_COIN" \
     -e "READINESS_INSURANCE_FUND_MIN_AVAILABLE=$INSURANCE_FUND_MIN_AVAILABLE" \
+    -e "READINESS_CONTRACT_ONCALL_ACCOUNT=$CONTRACT_ONCALL_ACCOUNT" \
+    -e "READINESS_INSURANCE_OPERATOR_ACCOUNT=$INSURANCE_OPERATOR_ACCOUNT" \
+    -e "READINESS_DR_OPERATOR_ACCOUNT=$DR_OPERATOR_ACCOUNT" \
+    -e "READINESS_DELIVERY_OPERATOR_ACCOUNT=$DELIVERY_OPERATOR_ACCOUNT" \
+    -e "READINESS_PRODUCTION_REVIEWER_ACCOUNT=$PRODUCTION_REVIEWER_ACCOUNT" \
+    -e "READINESS_PRODUCTION_APPROVER_ACCOUNT=$PRODUCTION_APPROVER_ACCOUNT" \
     -e "READINESS_INDEX_ALGORITHM=$INDEX_ALGORITHM_NUMBER" \
     -e "READINESS_INDEX_FORMULA_VERSION=$INDEX_FORMULA_VERSION" \
     -e "READINESS_INDEX_MAX_DEVIATION_BPS=$INDEX_MAX_DEVIATION_BPS" \
@@ -679,6 +705,12 @@ if [ "$tokens_valid" = "true" ]; then
   if [ "$(db_number READINESS_DB_PERPETUAL_CONTRACTS 0)" -gt 0 ]; then pass "enabled production perpetual contract configuration"; else fail "enabled production perpetual contract configuration"; fi
   if [ "$(db_number READINESS_DB_DELIVERY_CONTRACTS 0)" -gt 0 ]; then pass "enabled future production delivery contract configuration"; else fail "enabled future production delivery contract configuration"; fi
   if [ "$(db_number READINESS_DB_INSURANCE_CONFIGS 0)" -gt 0 ]; then pass "active default contract insurance configuration"; else fail "active default contract insurance configuration"; fi
+  if [ "$(db_number READINESS_DB_CONTRACT_ONCALL_ACCOUNTS 0)" -eq 1 ]; then pass "contract on-call account has its exact role and read-only alert permissions"; else fail "contract on-call account has its exact role and read-only alert permissions"; fi
+  if [ "$(db_number READINESS_DB_INSURANCE_OPERATORS 0)" -eq 1 ]; then pass "insurance-fund operator has only the three approved write menus"; else fail "insurance-fund operator has only the three approved write menus"; fi
+  if [ "$(db_number READINESS_DB_DR_OPERATORS 0)" -eq 1 ]; then pass "DR operator has its exact role and no admin write permission"; else fail "DR operator has its exact role and no admin write permission"; fi
+  if [ "$(db_number READINESS_DB_DELIVERY_OPERATORS 0)" -eq 1 ]; then pass "delivery operator has only the contract configuration write menu"; else fail "delivery operator has only the contract configuration write menu"; fi
+  if [ "$(db_number READINESS_DB_PRODUCTION_REVIEWERS 0)" -eq 1 ]; then pass "production reviewer has its exact role and no admin write permission"; else fail "production reviewer has its exact role and no admin write permission"; fi
+  if [ "$(db_number READINESS_DB_PRODUCTION_APPROVERS 0)" -eq 1 ]; then pass "production approver has its exact role and no admin write permission"; else fail "production approver has its exact role and no admin write permission"; fi
 else
   fail "live formula and fund-account dimensions are valid"
 fi

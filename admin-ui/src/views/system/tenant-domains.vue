@@ -214,6 +214,7 @@ function migrationStat(row: SysTenantDomainItem, field: keyof SysTenantDomainGue
 async function loadList() {
   if (!queryForm.tenantId) {
     list.value = []
+    ElMessage.warning('请选择租户')
     return
   }
   await withLoading(async () => {

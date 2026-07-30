@@ -10,6 +10,12 @@ func TestLoadInputDetailed(t *testing.T) {
 	t.Setenv("READINESS_SOURCE_MARKETS", " market-a,market-b,market-c ")
 	t.Setenv("READINESS_INDEX_SOURCE_WEIGHTS", " 1,2,3 ")
 	t.Setenv("READINESS_SOURCE_WEIGHTS", " 1,2,3 ")
+	t.Setenv("READINESS_CONTRACT_ONCALL_ACCOUNT", "contract_oncall")
+	t.Setenv("READINESS_INSURANCE_OPERATOR_ACCOUNT", "insurance_operator")
+	t.Setenv("READINESS_DR_OPERATOR_ACCOUNT", "dr_operator")
+	t.Setenv("READINESS_DELIVERY_OPERATOR_ACCOUNT", "delivery_operator")
+	t.Setenv("READINESS_PRODUCTION_REVIEWER_ACCOUNT", "production_reviewer")
+	t.Setenv("READINESS_PRODUCTION_APPROVER_ACCOUNT", "production_approver")
 	t.Setenv("READINESS_CATEGORY_CODE", "crypto")
 	t.Setenv("READINESS_MARKET", "BA")
 	t.Setenv("READINESS_PRICE_SYMBOL", "BTCUSDT")
@@ -47,6 +53,14 @@ func TestLoadInputDetailed(t *testing.T) {
 	if !reflect.DeepEqual(input.SourceMarkets, []string{"market-a", "market-b", "market-c"}) ||
 		!reflect.DeepEqual(input.IndexSourceWeights, []string{"1", "2", "3"}) {
 		t.Fatalf("unexpected source dimensions: %+v", input)
+	}
+	if input.ContractOncallAccount != "contract_oncall" ||
+		input.InsuranceOperatorAccount != "insurance_operator" ||
+		input.DROperatorAccount != "dr_operator" ||
+		input.DeliveryOperatorAccount != "delivery_operator" ||
+		input.ProductionReviewerAccount != "production_reviewer" ||
+		input.ProductionApproverAccount != "production_approver" {
+		t.Fatalf("unexpected responsibility accounts: %+v", input)
 	}
 	if input.TenantID != 900101 ||
 		input.InsuranceFundMinAvailable != "100000" ||

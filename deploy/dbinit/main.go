@@ -36,7 +36,15 @@ type config struct {
 	AdminPassword          string
 	LiquidityAdminUsername string
 	LiquidityAdminPassword string
+	ProductionOperators    []operatorCredential
 	DataOnly               bool
+}
+
+type operatorCredential struct {
+	Username string
+	Password string
+	Nickname string
+	RoleCode string
 }
 
 type migration struct {
@@ -97,7 +105,49 @@ func loadConfig() config {
 	validateCredential("ADMIN_PASSWORD", cfg.AdminPassword, 12)
 	validateCredential("LIQUIDITY_ADMIN_USERNAME", cfg.LiquidityAdminUsername, 3)
 	validateCredential("LIQUIDITY_ADMIN_PASSWORD", cfg.LiquidityAdminPassword, 12)
+	if strings.EqualFold(getenv("PRODUCTION_OPERATOR_SEED_ENABLED", "false"), "true") {
+		cfg.ProductionOperators = []operatorCredential{
+			loadOperatorCredential(
+				"CONTRACT_ONCALL", "contract_oncall", "合约生产值班", "contract_oncall",
+			),
+			loadOperatorCredential(
+				"INSURANCE_OPERATOR", "insurance_operator", "保险基金操作员", "insurance_fund_operator",
+			),
+			loadOperatorCredential(
+				"DR_OPERATOR", "dr_operator", "灾备操作员", "disaster_recovery_operator",
+			),
+			loadOperatorCredential(
+				"DELIVERY_OPERATOR", "delivery_operator", "交割发布操作员", "delivery_release_operator",
+			),
+			loadOperatorCredential(
+				"PRODUCTION_REVIEWER", "production_reviewer", "生产发布复核员", "production_reviewer",
+			),
+			loadOperatorCredential(
+				"PRODUCTION_APPROVER", "production_approver", "生产发布审批员", "production_approver",
+			),
+		}
+	}
 	return cfg
+}
+
+func loadOperatorCredential(
+	prefix string,
+	defaultUsername string,
+	nickname string,
+	roleCode string,
+) operatorCredential {
+	usernameKey := prefix + "_USERNAME"
+	passwordKey := prefix + "_PASSWORD"
+	username := getenv(usernameKey, defaultUsername)
+	password := os.Getenv(passwordKey)
+	validateCredential(usernameKey, username, 3)
+	validateCredential(passwordKey, password, 20)
+	return operatorCredential{
+		Username: username,
+		Password: password,
+		Nickname: nickname,
+		RoleCode: roleCode,
+	}
 }
 
 func loadMySqlDSN() string {
@@ -146,10 +196,18 @@ func mergeInitializationData(ctx context.Context, db *sql.DB, cfg config) error 
 	); err != nil {
 		return err
 	}
-	return seedAdministrator(
+	if err := seedAdministrator(
 		ctx, db, 2, cfg.LiquidityAdminUsername, cfg.LiquidityAdminPassword,
 		"做市管理员", "liquidity_admin", "做市管理后台管理员",
-	)
+	); err != nil {
+		return err
+	}
+	for _, operator := range cfg.ProductionOperators {
+		if err := seedScopedOperator(ctx, db, operator); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func waitForDB(dsn string) *sql.DB {
@@ -368,6 +426,7 @@ func applySystemDataMigrations(ctx context.Context, db *sql.DB, workspace string
 		"20260728_add_cross_account_liquidation_admin_menu.sql",
 		"20260728_add_trade_contract_jobs.sql",
 		"20260729_add_itick_authority_registry_permissions.sql",
+		"20260730_add_contract_production_roles.sql",
 	}
 	for _, name := range files {
 		path := filepath.Join(workspace, "services", "system", "migrations", name)
@@ -455,6 +514,69 @@ func seedAdministrator(
 		return err
 	}
 	log.Printf("seeded administrator: scope=%d username=%s", appScope, username)
+	return nil
+}
+
+func seedScopedOperator(ctx context.Context, db *sql.DB, operator operatorCredential) error {
+	hash, err := bcrypt.GenerateFromPassword([]byte(operator.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	now := time.Now().UnixMilli()
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	var roleID int64
+	if err = tx.QueryRowContext(ctx, `
+		SELECT id
+		FROM sys_role
+		WHERE tenant_id = 0 AND app_scope = 1 AND code = ? AND enabled = 1`,
+		operator.RoleCode).Scan(&roleID); err != nil {
+		return fmt.Errorf("find production role %s: %w", operator.RoleCode, err)
+	}
+
+	_, err = tx.ExecContext(ctx, `
+		INSERT INTO sys_user
+		  (tenant_id, app_scope, user_type, is_owner, username, password, nickname, avatar,
+		   enabled, google_secret, google_enabled, perms_ver, last_login_ip, last_login_at,
+		   create_by, create_times, update_times)
+		VALUES (0, 1, 1, 2, ?, ?, ?, '', 1, '', 2, 1, '', 0, 0, ?, ?)
+		ON DUPLICATE KEY UPDATE
+		  password = VALUES(password), nickname = VALUES(nickname), enabled = 1,
+		  app_scope = 1, update_times = VALUES(update_times)`,
+		operator.Username, string(hash), operator.Nickname, now, now)
+	if err != nil {
+		return err
+	}
+
+	var userID int64
+	if err = tx.QueryRowContext(ctx,
+		`SELECT id FROM sys_user WHERE tenant_id = 0 AND app_scope = 1 AND username = ?`,
+		operator.Username).Scan(&userID); err != nil {
+		return err
+	}
+	if _, err = tx.ExecContext(ctx, `
+		DELETE FROM sys_user_role
+		WHERE tenant_id = 0 AND user_id = ? AND role_id <> ?`,
+		userID, roleID); err != nil {
+		return err
+	}
+	if _, err = tx.ExecContext(ctx,
+		`INSERT IGNORE INTO sys_user_role(tenant_id, user_id, role_id) VALUES (0, ?, ?)`,
+		userID, roleID); err != nil {
+		return err
+	}
+	if err = tx.Commit(); err != nil {
+		return err
+	}
+	log.Printf(
+		"seeded production operator: username=%s role=%s",
+		operator.Username,
+		operator.RoleCode,
+	)
 	return nil
 }
 

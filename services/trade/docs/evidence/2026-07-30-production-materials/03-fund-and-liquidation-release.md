@@ -11,6 +11,9 @@
 - 管理入口 `POST /admin/asset/platform-accounts/adjust` 支持唯一
   `requestNo` 的幂等保险基金调账；
 - 当前没有经资金/风控审批的最低水位或注资金额。
+- 已创建 `insurance_operator`、`production_reviewer` 和
+  `production_approver`，分别承担操作、复核和审批系统身份；
+- `insurance_operator` 仅有保险基金 3 个写入口；复核和审批账号均无写权限。
 
 ## 注资约束
 
@@ -42,4 +45,3 @@
 7. 填写 `FUND_ACCOUNT_PERMISSION_APPROVED=true`、`FUND_ACCOUNT_APPROVER`、
    `LIQUIDATION_ENABLE_WINDOW` 和
    `LIQUIDATION_ROLLBACK_PRODUCTION_APPROVAL_REF`。
-

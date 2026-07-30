@@ -1,7 +1,7 @@
 <template>
   <div class="object-storage-config">
     <el-tabs v-model="activeTab" class="config-tabs" @tab-click="handleTabClick">
-      <el-tab-pane label="Aliyun OSS" name="aliyun">
+      <el-tab-pane :label="t('system.aliyunOss')" name="aliyun">
         <el-card shadow="never" class="config-card">
           <el-row :gutter="20">
             <el-col :span="12">
@@ -51,7 +51,7 @@
           </el-row>
         </el-card>
       </el-tab-pane>
-      <el-tab-pane label="Tencent COS" name="tencent">
+      <el-tab-pane :label="t('system.tencentCos')" name="tencent">
         <el-card shadow="never" class="config-card">
           <el-row :gutter="20">
             <el-col :span="12">
@@ -101,7 +101,7 @@
           </el-row>
         </el-card>
       </el-tab-pane>
-      <el-tab-pane label="MinIO" name="minio">
+      <el-tab-pane :label="t('system.minio')" name="minio">
         <el-card shadow="never" class="config-card">
           <el-row :gutter="20">
             <el-col :span="12">

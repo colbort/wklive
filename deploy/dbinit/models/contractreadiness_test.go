@@ -65,6 +65,22 @@ func TestContractReadinessModelInspectDetailed(t *testing.T) {
 	mock.ExpectQuery(`(?s)FROM t_contract_insurance_fund_account`).
 		WithArgs(int64(900101), "USDT").
 		WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
+	mock.ExpectQuery(`(?s)SELECT.*FROM sys_user u WHERE`).
+		WithArgs(
+			"contract_oncall", "contract_oncall",
+			"market:price-formula:list",
+			"market:snapshot-outbox:list",
+			"trade:operation:reconciliation-issue:list",
+			"insurance_operator", "insurance_fund_operator",
+			int64(1182), int64(1185), int64(1186),
+			"dr_operator", "disaster_recovery_operator",
+			"delivery_operator", "delivery_release_operator", int64(1015),
+			"production_reviewer", "production_reviewer",
+			"production_approver", "production_approver",
+		).
+		WillReturnRows(sqlmock.NewRows([]string{
+			"oncall", "insurance", "dr", "delivery", "reviewer", "approver",
+		}).AddRow(1, 1, 1, 1, 1, 1))
 	mock.ExpectQuery(`(?s)FROM t_itick_snapshot_outbox`).
 		WillReturnRows(sqlmock.NewRows([]string{"pending", "processing", "failed", "manual", "oldest", "server_now", "reconciliation", "settlement"}).
 			AddRow(0, 0, 0, 0, 0, 1_000_000, 0, 0))
@@ -89,6 +105,12 @@ func TestContractReadinessModelInspectDetailed(t *testing.T) {
 		result.PerpetualContractCount != 1 ||
 		result.DeliveryContractCount != 1 ||
 		result.InsuranceConfigCount != 1 ||
+		result.ContractOncallAccountCount != 1 ||
+		result.InsuranceOperatorCount != 1 ||
+		result.DROperatorCount != 1 ||
+		result.DeliveryOperatorCount != 1 ||
+		result.ProductionReviewerCount != 1 ||
+		result.ProductionApproverCount != 1 ||
 		result.OpenOutboxCount != 0 ||
 		result.UnhealthyOutboxCount != 0 ||
 		result.OpenReconciliationCount != 0 ||
@@ -291,6 +313,12 @@ func validReadinessInput() ContractReadinessInput {
 		SourceMarkets:             []string{"market-a", "market-b", "market-c"},
 		IndexSourceWeights:        []string{"1", "1", "1"},
 		DeliverySourceWeights:     []string{"1", "1", "1"},
+		ContractOncallAccount:     "contract_oncall",
+		InsuranceOperatorAccount:  "insurance_operator",
+		DROperatorAccount:         "dr_operator",
+		DeliveryOperatorAccount:   "delivery_operator",
+		ProductionReviewerAccount: "production_reviewer",
+		ProductionApproverAccount: "production_approver",
 		CategoryCode:              "crypto",
 		Market:                    "BA",
 		PriceSymbol:               "BTCUSDT",
