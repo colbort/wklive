@@ -311,7 +311,16 @@ func (l *ProcessAssetInstructionsLogic) completeExerciseTransition(item *models.
 	if item.BizNo == "" {
 		return nil
 	}
-	exercise, err := l.svcCtx.OptionExerciseModel.FindOneByTenantIdExerciseNo(l.ctx, item.TenantId, item.BizNo)
+	return completeExerciseIfReady(l.ctx, l.svcCtx, item.TenantId, item.BizNo)
+}
+
+func completeExerciseIfReady(
+	ctx context.Context,
+	svcCtx *svc.ServiceContext,
+	tenantId int64,
+	exerciseNo string,
+) error {
+	exercise, err := svcCtx.OptionExerciseModel.FindOneByTenantIdExerciseNo(ctx, tenantId, exerciseNo)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			return nil
@@ -321,7 +330,7 @@ func (l *ProcessAssetInstructionsLogic) completeExerciseTransition(item *models.
 	if exercise.Status == int64(option.ExerciseStatus_EXERCISE_STATUS_DONE) {
 		return nil
 	}
-	instructions, err := l.svcCtx.OptionAssetInstructionModel.FindByBizNo(l.ctx, item.TenantId, item.BizNo)
+	instructions, err := svcCtx.OptionAssetInstructionModel.FindByBizNo(ctx, tenantId, exerciseNo)
 	if err != nil {
 		return err
 	}
@@ -333,10 +342,10 @@ func (l *ProcessAssetInstructionsLogic) completeExerciseTransition(item *models.
 			return nil
 		}
 	}
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	return svcCtx.DB.TransactCtx(ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		exerciseModel := models.NewTOptionExerciseModel(conn, l.svcCtx.Config.CacheRedis)
-		assignmentModel := models.NewTOptionExerciseAssignmentModel(conn, l.svcCtx.Config.CacheRedis)
+		exerciseModel := models.NewTOptionExerciseModel(conn, svcCtx.Config.CacheRedis)
+		assignmentModel := models.NewTOptionExerciseAssignmentModel(conn, svcCtx.Config.CacheRedis)
 		current, err := exerciseModel.FindOneForUpdate(ctx, exercise.Id)
 		if err != nil {
 			return err

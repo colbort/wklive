@@ -390,9 +390,9 @@ func ToAssetInstructionProto(item *models.TOptionAssetInstruction) *option.Optio
 		Status: option.AssetInstructionStatus(item.Status), RetryCount: item.RetryCount,
 		NextRetryAt: item.NextRetryAt, LastErrorMsg: item.LastErrorMsg,
 		CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
-		AssetFlowNo: item.AssetFlowNo,
+		AssetFlowNo:          item.AssetFlowNo,
 		ReconciliationStatus: option.AssetReconciliationStatus(item.ReconciliationStatus),
-		ReconciledAt: item.ReconciledAt, MarginLotId: item.MarginLotId,
+		ReconciledAt:         item.ReconciledAt, MarginLotId: item.MarginLotId,
 		LiquidationId: item.LiquidationId,
 	}
 }

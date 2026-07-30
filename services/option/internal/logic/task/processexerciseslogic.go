@@ -46,6 +46,9 @@ func (l *ProcessExercisesLogic) ProcessExercises(in *option.OptionTaskReq) (*opt
 				return nil, err
 			}
 			if len(assignments) > 0 {
+				if err := completeExerciseIfReady(l.ctx, l.svcCtx, item.TenantId, item.ExerciseNo); err != nil {
+					l.Errorf("reconcile pending option exercise failed, exerciseNo=%s err=%v", item.ExerciseNo, err)
+				}
 				continue
 			}
 			if err := l.cancelAssignedShortCloseOrders(item); err != nil {
