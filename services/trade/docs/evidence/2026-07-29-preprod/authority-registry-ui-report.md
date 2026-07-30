@@ -66,8 +66,8 @@ API Key；两个真实 iTick 通道、两项审批 false、资金/告警/灾备�
 
 | Authority | Provider | Producer | 状态 |
 | --- | --- | --- | --- |
-| `market-ws` | `ITICK` | `ITICK_WS` | Enabled |
-| `market-rest` | `ITICK` | `ITICK_REST` | Enabled |
+| `itick-ws` | `ITICK` | `ITICK_WS` | Enabled |
+| `itick-rest` | `ITICK` | `ITICK_REST` | Enabled |
 | `price-engine` | `PRICE_ENGINE` | `PRICE_ENGINE` | Enabled |
 
 默认生产候选声明复跑：

@@ -54,7 +54,7 @@ func (m *defaultTMarketSnapshotOutboxModel) DeleteSucceededBefore(ctx context.Co
 	if limit <= 0 || limit > 10000 {
 		limit = 5000
 	}
-	result, err := m.ExecNoCacheCtx(ctx, `DELETE FROM t_market_snapshot_outbox
+	result, err := m.ExecNoCacheCtx(ctx, `DELETE FROM t_itick_snapshot_outbox
 		WHERE status=3 AND update_times<? ORDER BY id LIMIT ?`, cutoff, limit)
 	if err != nil {
 		return 0, err
@@ -63,12 +63,12 @@ func (m *defaultTMarketSnapshotOutboxModel) DeleteSucceededBefore(ctx context.Co
 }
 
 func (m *defaultTMarketSnapshotOutboxModel) MarkRedisPublished(ctx context.Context, id, now int64) error {
-	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_market_snapshot_outbox SET redis_published_at=CASE WHEN redis_published_at=0 THEN ? ELSE redis_published_at END,update_times=? WHERE id=? AND status=2", now, now, id)
+	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET redis_published_at=CASE WHEN redis_published_at=0 THEN ? ELSE redis_published_at END,update_times=? WHERE id=? AND status=2", now, now, id)
 	return requireOneOutboxRow(result, err)
 }
 
 func (m *defaultTMarketSnapshotOutboxModel) MarkEventPublished(ctx context.Context, id, now int64) error {
-	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_market_snapshot_outbox SET event_published_at=CASE WHEN event_published_at=0 THEN ? ELSE event_published_at END,update_times=? WHERE id=? AND status=2", now, now, id)
+	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET event_published_at=CASE WHEN event_published_at=0 THEN ? ELSE event_published_at END,update_times=? WHERE id=? AND status=2", now, now, id)
 	return requireOneOutboxRow(result, err)
 }
 
@@ -77,7 +77,7 @@ func (m *defaultTMarketSnapshotOutboxModel) MarkEventPublished(ctx context.Conte
 // Redis checkpoint is durable, so success never hides an incomplete Redis
 // publication.
 func (m *defaultTMarketSnapshotOutboxModel) CompleteAfterEventPublished(ctx context.Context, id, now int64) error {
-	result, err := m.ExecNoCacheCtx(ctx, `UPDATE t_market_snapshot_outbox
+	result, err := m.ExecNoCacheCtx(ctx, `UPDATE t_itick_snapshot_outbox
 		SET event_published_at=CASE WHEN event_published_at=0 THEN ? ELSE event_published_at END,
 		    status=3,next_retry_at=0,last_error_msg='',update_times=?
 		WHERE id=? AND status=2 AND redis_published_at>0`, now, now, id)
@@ -105,7 +105,7 @@ func (m *defaultTMarketSnapshotOutboxModel) Health(ctx context.Context) (*Snapsh
 		OldestAt int64 `db:"oldest_at"`
 	}
 	query := `SELECT status,COUNT(*) AS row_count,MIN(create_times) AS oldest_at
-		FROM t_market_snapshot_outbox
+		FROM t_itick_snapshot_outbox
 		WHERE status IN (1,2,4,5)
 		GROUP BY status`
 	if err := m.QueryRowsNoCacheCtx(ctx, &rows, query); err != nil {
@@ -145,12 +145,12 @@ func (m *defaultTMarketSnapshotOutboxModel) FindPage(ctx context.Context, status
 		args, countArgs = append(args, snapshotID), append(countArgs, snapshotID)
 	}
 	var total int64
-	if err := m.QueryRowNoCacheCtx(ctx, &total, "SELECT COUNT(1) FROM t_market_snapshot_outbox WHERE "+countWhere, countArgs...); err != nil {
+	if err := m.QueryRowNoCacheCtx(ctx, &total, "SELECT COUNT(1) FROM t_itick_snapshot_outbox WHERE "+countWhere, countArgs...); err != nil {
 		return nil, 0, err
 	}
 	args = append(args, limit)
 	var rows []*TMarketSnapshotOutbox
-	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tMarketSnapshotOutboxRows+" FROM t_market_snapshot_outbox WHERE "+where+" ORDER BY id LIMIT ?", args...)
+	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tMarketSnapshotOutboxRows+" FROM t_itick_snapshot_outbox WHERE "+where+" ORDER BY id LIMIT ?", args...)
 	return rows, total, err
 }
 
@@ -159,7 +159,7 @@ func (m *defaultTMarketSnapshotOutboxModel) RetryFailed(ctx context.Context, id,
 	if err != nil {
 		return err
 	}
-	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_market_snapshot_outbox SET status=1,next_retry_at=?,last_error_msg='',update_times=? WHERE id=? AND status IN (4,5)", now, now, id)
+	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET status=1,next_retry_at=?,last_error_msg='',update_times=? WHERE id=? AND status IN (4,5)", now, now, id)
 	if err != nil {
 		return err
 	}
@@ -178,11 +178,11 @@ func (m *defaultTMarketSnapshotOutboxModel) RetryFailed(ctx context.Context, id,
 
 func (m *defaultTMarketSnapshotOutboxModel) FindPending(ctx context.Context, now, limit int64) ([]*TMarketSnapshotOutbox, error) {
 	var rows []*TMarketSnapshotOutbox
-	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tMarketSnapshotOutboxRows+" FROM t_market_snapshot_outbox WHERE ((status IN (1,4) AND next_retry_at<=?) OR (status=2 AND update_times<=?)) ORDER BY id LIMIT ?", now, now-60000, limit)
+	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tMarketSnapshotOutboxRows+" FROM t_itick_snapshot_outbox WHERE ((status IN (1,4) AND next_retry_at<=?) OR (status=2 AND update_times<=?)) ORDER BY id LIMIT ?", now, now-60000, limit)
 	return rows, err
 }
 func (m *defaultTMarketSnapshotOutboxModel) Claim(ctx context.Context, id, now int64) (bool, error) {
-	r, e := m.ExecNoCacheCtx(ctx, "UPDATE t_market_snapshot_outbox SET status=2,update_times=? WHERE id=? AND ((status IN (1,4) AND next_retry_at<=?) OR (status=2 AND update_times<=?))", now, id, now, now-60000)
+	r, e := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET status=2,update_times=? WHERE id=? AND ((status IN (1,4) AND next_retry_at<=?) OR (status=2 AND update_times<=?))", now, id, now, now-60000)
 	if e != nil {
 		return false, e
 	}
@@ -190,12 +190,12 @@ func (m *defaultTMarketSnapshotOutboxModel) Claim(ctx context.Context, id, now i
 	return n == 1, e
 }
 func (m *defaultTMarketSnapshotOutboxModel) MarkSuccess(ctx context.Context, id, now int64) error {
-	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_market_snapshot_outbox SET status=3,next_retry_at=0,last_error_msg='',update_times=? WHERE id=? AND status=2 AND redis_published_at>0 AND event_published_at>0", now, id)
+	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET status=3,next_retry_at=0,last_error_msg='',update_times=? WHERE id=? AND status=2 AND redis_published_at>0 AND event_published_at>0", now, id)
 	return requireOneOutboxRow(result, err)
 }
 func (m *defaultTMarketSnapshotOutboxModel) MarkFailure(ctx context.Context, id int64, msg string, now int64) error {
 	var retries int64
-	if e := m.QueryRowNoCacheCtx(ctx, &retries, "SELECT retry_count FROM t_market_snapshot_outbox WHERE id=?", id); e != nil {
+	if e := m.QueryRowNoCacheCtx(ctx, &retries, "SELECT retry_count FROM t_itick_snapshot_outbox WHERE id=?", id); e != nil {
 		return e
 	}
 	retries++
@@ -203,7 +203,7 @@ func (m *defaultTMarketSnapshotOutboxModel) MarkFailure(ctx context.Context, id 
 	if retries >= 20 {
 		status, next = 5, 0
 	}
-	r, e := m.ExecNoCacheCtx(ctx, "UPDATE t_market_snapshot_outbox SET status=?,retry_count=?,next_retry_at=?,last_error_msg=?,update_times=? WHERE id=? AND status=2", status, retries, next, msg, now, id)
+	r, e := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET status=?,retry_count=?,next_retry_at=?,last_error_msg=?,update_times=? WHERE id=? AND status=2", status, retries, next, msg, now, id)
 	if e != nil {
 		return e
 	}

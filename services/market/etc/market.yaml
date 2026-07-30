@@ -10,9 +10,9 @@ Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: market.rpc
-Market:
-  ApiUrl: https://api.market.org
-  WSUrl: wss://api.market.org
+Itick:
+  ApiUrl: https://api.itick.org
+  WSUrl: wss://api.itick.org
   Token: "__ITICK_TOKEN__"
   # 所有 iTick REST 接口共享这一份全局额度，不区分请求路径。
   RestRateLimitPerMinute: 100

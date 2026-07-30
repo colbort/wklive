@@ -670,7 +670,7 @@ function openDetail(row: PriceFormula) {
 }
 function addComponent() {
   const preferred = enabledAuthorityRegistries.value.find(
-    (item) => item.authority === 'market-ws' && item.allowedKinds.includes('FINAL_QUOTE'),
+    (item) => item.authority === 'itick-ws' && item.allowedKinds.includes('FINAL_QUOTE'),
   )
   const registry =
     preferred ||

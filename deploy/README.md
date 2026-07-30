@@ -16,7 +16,7 @@ cp .env.example .env
 # 修改 .env 中两个后台的初始密码
 mkdir -p secrets
 umask 077
-printf '%s\n' '从密钥系统取得的 iTick Token' > secrets/market_token
+printf '%s\n' '从密钥系统取得的 iTick Token' > secrets/itick_token
 ./deploy.sh compose-config
 ./deploy.sh up
 ./deploy.sh ps
@@ -192,9 +192,9 @@ MySQL，建立迁移历史、执行明确标记为可安全补齐的结构迁移
 ## 配置初始化
 
 `config-seed` 会读取项目中各服务的 `etc/*.yaml`，把本机地址转换为 Compose
-服务名，并从 Docker Secret `/run/secrets/market_token` 注入 iTick Token 后写入
+服务名，并从 Docker Secret `/run/secrets/itick_token` 注入 iTick Token 后写入
 Etcd。仓库中的 YAML 只保留 `__ITICK_TOKEN__` 占位符，真实 Token 必须放在 Git
-忽略且权限为 `0600` 的 `deploy/secrets/market_token`，不得提交到仓库。修改 YAML
+忽略且权限为 `0600` 的 `deploy/secrets/itick_token`，不得提交到仓库。修改 YAML
 或轮换 Token 后可重新执行：
 
 ```bash

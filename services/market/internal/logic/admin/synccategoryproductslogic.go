@@ -149,7 +149,7 @@ func (w *SyncCategoryProductsWorker) doSync(in *market.SyncCategoryProductsReq) 
 }
 
 func (w *SyncCategoryProductsWorker) syncMarketProducts(category *models.TMarketCategory, market string) error {
-	resp, err := w.getSymbolList(w.ctx, w.svcCtx.Config.Market.ApiUrl, w.svcCtx.Config.Market.Token, category.CategoryCode, market)
+	resp, err := w.getSymbolList(w.ctx, w.svcCtx.Config.Itick.ApiUrl, w.svcCtx.Config.Itick.Token, category.CategoryCode, market)
 	if err != nil {
 		return err
 	}
@@ -185,7 +185,7 @@ type SymbolItem struct {
 }
 
 // GetSymbolList 调用 iTick Symbol List API。
-// apiURL 例如: https://api.market.org
+// apiURL 例如: https://api.itick.org
 // token  : iTick token
 // category: stock/forex/indices/crypto/future/fund
 // market : HK/US/BA/GB/CN ...

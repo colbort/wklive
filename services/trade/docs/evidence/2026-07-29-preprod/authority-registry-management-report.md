@@ -34,16 +34,16 @@
 ### 2.3 管理端
 
 - 价格公式创建页删除硬编码的
-  `market-ws / market-rest / price-engine`；
+  `itick-ws / itick-rest / price-engine`；
 - 输出 Authority 按所选输出快照类型和 `allowed_kinds` 过滤；
 - 成分 Authority 和成分快照类型直接取启用注册表；
-- 默认优先选择允许 `FINAL_QUOTE` 的 `market-ws`，不存在时使用第一个合法来源；
+- 默认优先选择允许 `FINAL_QUOTE` 的 `itick-ws`，不存在时使用第一个合法来源；
 - 页面展示 `Authority (provider code / producer type)`，明确供应商和传输通道。
 
 ### 2.4 独立供应商门禁
 
 - Registry 表新增必填 `provider_code`；
-- baseline-safe migration 将 `market-ws` 和 `market-rest` 同时回填为 `ITICK`，
+- baseline-safe migration 将 `itick-ws` 和 `itick-rest` 同时回填为 `ITICK`，
   `price-engine` 回填为 `PRICE_ENGINE`；
 - INDEX 和 DELIVERY 公式仍要求至少三个不同 Authority，并新增至少三个不同
   `provider_code` 的服务端校验；
@@ -91,7 +91,7 @@
 
 两个容器均为 Healthy。部署切换时 Docker 空间耗尽令 Mongo 以 133 退出；只清理
 2.135 GB 未被容器引用的悬空镜像层后，Mongo 从最后检查点成功恢复且数据卷保留。
-Market 启动首个目标时点曾等待输入一次，随后 `market-ws` 恢复至亚秒级、
+Market 启动首个目标时点曾等待输入一次，随后 `itick-ws` 恢复至亚秒级、
 INDEX/MARK/FUNDING 持续生成；Outbox 仅保留约 1～2 秒的新鲜 Pending/Processing，
 Failed/Manual 为 0，恢复后的检查窗口无 unhealthy、evaluation failed、slowcall、
 panic 或 fatal。
@@ -100,8 +100,8 @@ panic 或 fatal。
 
 | Authority | provider_code | producer_type | allowed_kinds |
 | --- | --- | --- | --- |
-| `market-ws` | `ITICK` | `ITICK_WS` | `FINAL_QUOTE` |
-| `market-rest` | `ITICK` | `ITICK_REST` | `FINAL_QUOTE` |
+| `itick-ws` | `ITICK` | `ITICK_WS` | `FINAL_QUOTE` |
+| `itick-rest` | `ITICK` | `ITICK_REST` | `FINAL_QUOTE` |
 | `price-engine` | `PRICE_ENGINE` | `PRICE_ENGINE` | `MARK/INDEX/FUNDING/DELIVERY` |
 
 当前 `price-engine` 允许 `MARK/INDEX/FUNDING/DELIVERY`；两个 iTick 来源只允许
@@ -109,7 +109,7 @@ panic 或 fatal。
 
 无副作用保护测试：
 
-1. 请求把 `market-ws` 从 Enabled 改为 Disabled；
+1. 请求把 `itick-ws` 从 Enabled 改为 Disabled；
 2. API 返回代码 `100001` 和
    `authority is referenced by active price formulas`；
 3. 再次查询确认 `status=1`、`version=0`、allowed kinds 未变化。
@@ -118,7 +118,7 @@ panic 或 fatal。
 
 独立供应商负向保护测试：
 
-1. 以 `market-ws`、`market-rest` 和一个第三 Authority 请求创建三成分 INDEX；
+1. 以 `itick-ws`、`itick-rest` 和一个第三 Authority 请求创建三成分 INDEX；
 2. 前两个 Authority 均启用且允许 `FINAL_QUOTE`，但 `provider_code` 都是 `ITICK`；
 3. API 返回代码 `100001` 和
    `INDEX and DELIVERY components must use independent providers`；

@@ -484,7 +484,7 @@ func (x *ObjectStorageConfig) GetOssDomain() string {
 	return ""
 }
 
-type MarketConfig struct {
+type ITickConfig struct {
 	state                    protoimpl.MessageState `protogen:"open.v1"`
 	ApiUrl                   string                 `protobuf:"bytes,1,opt,name=api_url,json=apiUrl,proto3" json:"api_url,omitempty"`                                                            // ITICK API地址
 	ApiToken                 string                 `protobuf:"bytes,2,opt,name=api_token,json=apiToken,proto3" json:"api_token,omitempty"`                                                      // ITICK API密钥
@@ -499,20 +499,20 @@ type MarketConfig struct {
 	sizeCache                protoimpl.SizeCache
 }
 
-func (x *MarketConfig) Reset() {
-	*x = MarketConfig{}
+func (x *ITickConfig) Reset() {
+	*x = ITickConfig{}
 	mi := &file_proto_system_config_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *MarketConfig) String() string {
+func (x *ITickConfig) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*MarketConfig) ProtoMessage() {}
+func (*ITickConfig) ProtoMessage() {}
 
-func (x *MarketConfig) ProtoReflect() protoreflect.Message {
+func (x *ITickConfig) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_system_config_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -524,68 +524,68 @@ func (x *MarketConfig) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use MarketConfig.ProtoReflect.Descriptor instead.
-func (*MarketConfig) Descriptor() ([]byte, []int) {
+// Deprecated: Use ITickConfig.ProtoReflect.Descriptor instead.
+func (*ITickConfig) Descriptor() ([]byte, []int) {
 	return file_proto_system_config_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *MarketConfig) GetApiUrl() string {
+func (x *ITickConfig) GetApiUrl() string {
 	if x != nil {
 		return x.ApiUrl
 	}
 	return ""
 }
 
-func (x *MarketConfig) GetApiToken() string {
+func (x *ITickConfig) GetApiToken() string {
 	if x != nil {
 		return x.ApiToken
 	}
 	return ""
 }
 
-func (x *MarketConfig) GetWsUrl() string {
+func (x *ITickConfig) GetWsUrl() string {
 	if x != nil {
 		return x.WsUrl
 	}
 	return ""
 }
 
-func (x *MarketConfig) GetReconcileIntervalMinutes() int32 {
+func (x *ITickConfig) GetReconcileIntervalMinutes() int32 {
 	if x != nil {
 		return x.ReconcileIntervalMinutes
 	}
 	return 0
 }
 
-func (x *MarketConfig) GetReconcileWindowBars() int32 {
+func (x *ITickConfig) GetReconcileWindowBars() int32 {
 	if x != nil {
 		return x.ReconcileWindowBars
 	}
 	return 0
 }
 
-func (x *MarketConfig) GetGapScanIntervalMinutes() int32 {
+func (x *ITickConfig) GetGapScanIntervalMinutes() int32 {
 	if x != nil {
 		return x.GapScanIntervalMinutes
 	}
 	return 0
 }
 
-func (x *MarketConfig) GetRepairBatchSize() int32 {
+func (x *ITickConfig) GetRepairBatchSize() int32 {
 	if x != nil {
 		return x.RepairBatchSize
 	}
 	return 0
 }
 
-func (x *MarketConfig) GetBuildingBucketTtlMinutes() int32 {
+func (x *ITickConfig) GetBuildingBucketTtlMinutes() int32 {
 	if x != nil {
 		return x.BuildingBucketTtlMinutes
 	}
 	return 0
 }
 
-func (x *MarketConfig) GetWsKlineStaleSeconds() int32 {
+func (x *ITickConfig) GetWsKlineStaleSeconds() int32 {
 	if x != nil {
 		return x.WsKlineStaleSeconds
 	}
@@ -1080,7 +1080,7 @@ const file_proto_system_config_proto_rawDesc = "" +
 	"\boss_type\x18\x04 \x01(\x03R\aossType\x12\x1d\n" +
 	"\n" +
 	"oss_domain\x18\x05 \x01(\tR\tossDomain\"\xa7\x03\n" +
-	"\vMarketConfig\x12\x17\n" +
+	"\vItickConfig\x12\x17\n" +
 	"\aapi_url\x18\x01 \x01(\tR\x06apiUrl\x12\x1b\n" +
 	"\tapi_token\x18\x02 \x01(\tR\bapiToken\x12\x15\n" +
 	"\x06ws_url\x18\x03 \x01(\tR\x05wsUrl\x12<\n" +
@@ -1155,7 +1155,7 @@ var file_proto_system_config_proto_goTypes = []any{
 	(*TencentCosConfig)(nil),    // 3: system.TencentCosConfig
 	(*MinioConfig)(nil),         // 4: system.MinioConfig
 	(*ObjectStorageConfig)(nil), // 5: system.ObjectStorageConfig
-	(*MarketConfig)(nil),         // 6: system.MarketConfig
+	(*ITickConfig)(nil),         // 6: system.ITickConfig
 	(*RechargeConfig)(nil),      // 7: system.RechargeConfig
 	(*WithdrawConfig)(nil),      // 8: system.WithdrawConfig
 	(*EmailConfig)(nil),         // 9: system.EmailConfig

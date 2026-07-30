@@ -78,14 +78,14 @@ func (m *defaultTMarketMarketCalendarModel) Resolve(ctx context.Context, categor
 func (m *defaultTMarketMarketCalendarModel) FindSessions(ctx context.Context, calendarID int64) ([]*TMarketMarketSession, error) {
 	var out []*TMarketMarketSession
 	err := m.QueryRowsNoCacheCtx(ctx, &out, `SELECT `+tMarketMarketSessionRows+`
-		FROM t_market_market_session WHERE calendar_id=? ORDER BY sort,id`, calendarID)
+		FROM t_itick_market_session WHERE calendar_id=? ORDER BY sort,id`, calendarID)
 	return out, err
 }
 
 func (m *defaultTMarketMarketCalendarModel) FindHoliday(ctx context.Context, calendarID int64, date time.Time) (*TMarketMarketHoliday, error) {
 	var out TMarketMarketHoliday
 	err := m.QueryRowNoCacheCtx(ctx, &out, `SELECT `+tMarketMarketHolidayRows+`
-		FROM t_market_market_holiday WHERE calendar_id=? AND trade_date=? LIMIT 1`, calendarID, date.Format("2006-01-02"))
+		FROM t_itick_market_holiday WHERE calendar_id=? AND trade_date=? LIMIT 1`, calendarID, date.Format("2006-01-02"))
 	if errors.Is(err, sql.ErrNoRows) || errors.Is(err, sqlx.ErrNotFound) {
 		return nil, nil
 	}

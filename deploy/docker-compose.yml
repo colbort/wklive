@@ -206,7 +206,7 @@ services:
       - ./seed-etcd.sh:/deploy/seed-etcd.sh:ro
       - ./config:/deploy-config:ro
     secrets:
-      - market_token
+      - itick_token
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -495,8 +495,8 @@ networks:
     driver: bridge
 
 secrets:
-  market_token:
-    file: ./secrets/market_token
+  itick_token:
+    file: ./secrets/itick_token
   operational_alert_webhook:
     file: ./secrets/operational_alert_webhook
 

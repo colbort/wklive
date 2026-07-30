@@ -11,7 +11,7 @@
 - `FUNDING`：资金费率；
 - `DELIVERY`：交割价格。
 
-价格公式输出统一使用 `price-engine` 作为权威来源。原始行情通常来自 `market-ws` 或 `market-rest` 的 `FINAL_QUOTE` 快照。
+价格公式输出统一使用 `price-engine` 作为权威来源。原始行情通常来自 `itick-ws` 或 `itick-rest` 的 `FINAL_QUOTE` 快照。
 
 ## 2. 公式依赖关系
 
@@ -58,8 +58,8 @@
 
 | 权威来源 | 允许的快照类型 |
 | --- | --- |
-| `market-ws` | `FINAL_QUOTE` |
-| `market-rest` | `FINAL_QUOTE` |
+| `itick-ws` | `FINAL_QUOTE` |
+| `itick-rest` | `FINAL_QUOTE` |
 | `price-engine` | `MARK`、`INDEX`、`FUNDING`、`DELIVERY` |
 
 创建公式时，输出权威来源固定为 `price-engine`。公式成分可以引用原始行情，也可以引用其他 Price Engine 生成的上游快照。
@@ -100,7 +100,7 @@ interval_ms     = 1000
   "algorithm": "WEIGHTED_MEAN",
   "components": [
     {
-      "authority": "market-ws",
+      "authority": "itick-ws",
       "kind": "FINAL_QUOTE",
       "category_code": "crypto",
       "market": "BA",
@@ -139,7 +139,7 @@ interval_ms     = 1000
       "weight": "1"
     },
     {
-      "authority": "market-ws",
+      "authority": "itick-ws",
       "kind": "FINAL_QUOTE",
       "category_code": "crypto",
       "market": "BA",
@@ -194,7 +194,7 @@ MARK          = weighted_mean(raw_mark, PREVIOUS_MARK)
   "algorithm": "MEDIAN",
   "components": [
     {
-      "authority": "market-ws",
+      "authority": "itick-ws",
       "kind": "FINAL_QUOTE",
       "category_code": "crypto",
       "market": "BA",
@@ -325,7 +325,7 @@ FUNDING = (101000 - 100000) / 100000
   "algorithm": "MEDIAN",
   "components": [
     {
-      "authority": "market-ws",
+      "authority": "itick-ws",
       "kind": "FINAL_QUOTE",
       "category_code": "crypto",
       "market": "SOURCE_A",
@@ -333,7 +333,7 @@ FUNDING = (101000 - 100000) / 100000
       "weight": "1"
     },
     {
-      "authority": "market-ws",
+      "authority": "itick-ws",
       "kind": "FINAL_QUOTE",
       "category_code": "crypto",
       "market": "SOURCE_B",
@@ -341,7 +341,7 @@ FUNDING = (101000 - 100000) / 100000
       "weight": "1"
     },
     {
-      "authority": "market-ws",
+      "authority": "itick-ws",
       "kind": "FINAL_QUOTE",
       "category_code": "crypto",
       "market": "SOURCE_C",
@@ -375,7 +375,7 @@ FUNDING = (101000 - 100000) / 100000
 - Snapshot Outbox 发布；
 - Trade 服务读取资金费快照。
 
-但当前 MARK 和 INDEX 都只使用同一个 `market-ws / FINAL_QUOTE` 输入。单成分情况下，加权平均与中位数结果相同，因此：
+但当前 MARK 和 INDEX 都只使用同一个 `itick-ws / FINAL_QUOTE` 输入。单成分情况下，加权平均与中位数结果相同，因此：
 
 ```text
 MARK ≈ INDEX
@@ -455,7 +455,7 @@ SELECT
   symbol,
   price,
   FROM_UNIXTIME(source_timestamp / 1000) AS source_time
-FROM t_market_authoritative_snapshot
+FROM t_itick_authoritative_snapshot
 WHERE category_code = 'crypto'
   AND market = 'BA'
   AND symbol = 'BTCUSDT'
@@ -479,7 +479,7 @@ SELECT
   max_deviation_bps,
   interval_ms,
   last_target_time
-FROM t_market_price_formula
+FROM t_itick_price_formula
 WHERE status = 1
 ORDER BY id;
 ```

@@ -47,11 +47,11 @@ iTick WebSocket kline@N
 活跃产品由 `TMarketProductModel.FindActivePage` 查询，条件是：
 
 ```sql
-t_market_product.enabled = 1
+t_itick_product.enabled = 1
 AND EXISTS (
   SELECT 1
-  FROM t_market_tenant_product
-  WHERE product_id = t_market_product.id
+  FROM t_itick_tenant_product
+  WHERE product_id = t_itick_product.id
     AND enabled = 1
 )
 ```
@@ -187,7 +187,7 @@ while true:
 1. 历史同步只处理管理员指定的周期。
 2. 如果管理员同步的是 `1m`，每页成功落库后会通过 `DerivedWorker` 等待受影响高周期重算完成；失败会终止历史同步并返回错误。
 3. 管理员直接同步其他周期时只 upsert 指定周期，不再反向影响低周期或其他周期。
-4. 当前历史同步没有更新 `t_market_kline_sync_progress`，进度表主要由 5 分钟校正流程推进。
+4. 当前历史同步没有更新 `t_itick_kline_sync_progress`，进度表主要由 5 分钟校正流程推进。
 5. 单次请求可能持续很久；当前没有保留期边界、取消任务记录或断点续传水位。
 
 ## 5. Tick 实时生成 1m
@@ -325,8 +325,8 @@ turnover = sum(源 K 线 turnover)
 ### 6.4 市场时间边界
 
 - `5m/15m/30m/1h`：固定宽度切桶；
-- `1d/1w/1mo/1y`：通过 `t_market_market_calendar` 的 IANA 时区、交易日偏移和周起始日计算；
-- `t_market_market_session` 保存交易时段，`t_market_market_holiday` 保存休市和特殊交易日，为缺口扫描提供判断基础；
+- `1d/1w/1mo/1y`：通过 `t_itick_market_calendar` 的 IANA 时区、交易日偏移和周起始日计算；
+- `t_itick_market_session` 保存交易时段，`t_itick_market_holiday` 保存休市和特殊交易日，为缺口扫描提供判断基础；
 - 未配置市场日历时安全回退 UTC、周一为周起始日。
 
 Resolver 按 `category + market + exchange` 查找定义并缓存；目前派生 K 线模型未保存 exchange，因此派生链使用 `category + market` 的默认日历记录，配置时必须为各市场提供 exchange 为空的默认行。
@@ -335,7 +335,7 @@ Resolver 按 `category + market + exchange` 查找定义并缓存；目前派生
 
 `HolidaySyncService` 在服务启动时立即执行一次，此后每 24 小时执行一次。多实例通过 Redis 锁 `market:market_calendar:holiday_sync` 互斥。
 
-同步范围来自 `KlineCategoryRegions["stock"]`，再通过 `StockHolidayRegionCodes` 转成 `/symbol/v2/holidays` 的 code；`SZ/SH` 合并为 `CN`，相同 code 只请求一次。响应中的 `z` 用于确保 `stock + market + 默认 exchange` Calendar 存在并更新时区，`d/v` 按 `calendar_id + trade_date` 幂等写入 `t_market_market_holiday`，`day_type` 固定为 `closed`。同步只 upsert，不删除接口本次未返回的历史记录；成功写入后主动清空 Resolver 日历和 Holiday 缓存。
+同步范围来自 `KlineCategoryRegions["stock"]`，再通过 `StockHolidayRegionCodes` 转成 `/symbol/v2/holidays` 的 code；`SZ/SH` 合并为 `CN`，相同 code 只请求一次。响应中的 `z` 用于确保 `stock + market + 默认 exchange` Calendar 存在并更新时区，`d/v` 按 `calendar_id + trade_date` 幂等写入 `t_itick_market_holiday`，`day_type` 固定为 `closed`。同步只 upsert，不删除接口本次未返回的历史记录；成功写入后主动清空 Resolver 日历和 Holiday 缓存。
 
 接口字段 `t` 是市场标准交易时段描述，不作为节假日当天开放时间写入。正常 Session 仍需独立初始化和确认。
 
@@ -358,7 +358,7 @@ ActionMarketSyncKlines
 1. 校验 iTick API URL 和 Token；
 2. 根据 `apiURL + token` 生成 Redis lock key；
 3. 获取 30 秒分布式锁；
-4. 新增 `t_market_sync_task`，类型为 `reconcile_klines`；
+4. 新增 `t_itick_sync_task`，类型为 `reconcile_klines`；
 5. 启动最多 10 分钟的后台 goroutine；
 6. worker 每 10 秒续租，TTL 30 秒；
 7. 完成、失败或 panic 时更新任务状态并释放锁。
@@ -430,7 +430,7 @@ DerivedAggregator.Rebuild
         ↓
 更新高周期 MongoDB 和 Redis
         ↓
-更新 t_market_kline_sync_progress
+更新 t_itick_kline_sync_progress
 ```
 
 进度记录当前更新：

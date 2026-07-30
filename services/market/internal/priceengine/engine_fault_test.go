@@ -34,7 +34,7 @@ func TestTemporaryMissingInputDoesNotPublishSnapshot(t *testing.T) {
 		FormulaNo: "BTCUSDT-DELIVERY-v1", SnapshotKind: "DELIVERY",
 		CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT",
 		Algorithm:     int64(market.PriceAlgorithm_PRICE_ALGORITHM_MEDIAN),
-		Components:    `[{"authority":"market-ws","kind":"FINAL_QUOTE","category_code":"crypto","market":"BA","symbol":"BTCUSDT","weight":"1"}]`,
+		Components:    `[{"authority":"itick-ws","kind":"FINAL_QUOTE","category_code":"crypto","market":"BA","symbol":"BTCUSDT","weight":"1"}]`,
 		MaxLookbackMs: 30_000,
 	}
 	err := engine.evaluate(context.Background(), formula, 1785217333000)
@@ -45,7 +45,7 @@ func TestTemporaryMissingInputDoesNotPublishSnapshot(t *testing.T) {
 		t.Fatalf("missing input published %d snapshots", archive.inserted)
 	}
 	if !strings.Contains(err.Error(), "formula=BTCUSDT-DELIVERY-v1") ||
-		!strings.Contains(err.Error(), "authority=market-ws") {
+		!strings.Contains(err.Error(), "authority=itick-ws") {
 		t.Fatalf("missing input error is not diagnosable: %v", err)
 	}
 }
@@ -97,9 +97,9 @@ func TestDeliveryDoesNotPublishWhenDeviationLeavesFewerThanThreeInputs(t *testin
 		CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT",
 		Algorithm: int64(market.PriceAlgorithm_PRICE_ALGORITHM_MEDIAN),
 		Components: `[
-			{"authority":"market-ws","kind":"FINAL_QUOTE","category_code":"crypto","market":"SOURCE_A","symbol":"BTCUSDT","weight":"1"},
-			{"authority":"market-ws","kind":"FINAL_QUOTE","category_code":"crypto","market":"SOURCE_B","symbol":"BTCUSDT","weight":"1"},
-			{"authority":"market-ws","kind":"FINAL_QUOTE","category_code":"crypto","market":"SOURCE_C","symbol":"BTCUSDT","weight":"1"}
+			{"authority":"itick-ws","kind":"FINAL_QUOTE","category_code":"crypto","market":"SOURCE_A","symbol":"BTCUSDT","weight":"1"},
+			{"authority":"itick-ws","kind":"FINAL_QUOTE","category_code":"crypto","market":"SOURCE_B","symbol":"BTCUSDT","weight":"1"},
+			{"authority":"itick-ws","kind":"FINAL_QUOTE","category_code":"crypto","market":"SOURCE_C","symbol":"BTCUSDT","weight":"1"}
 		]`,
 		MaxLookbackMs: 30_000, MaxDeviationBps: 200, MinInputCount: 3,
 	}
@@ -128,7 +128,7 @@ func TestIndexBasisPublishesBoundedAuditableMark(t *testing.T) {
 		Algorithm: int64(market.PriceAlgorithm_PRICE_ALGORITHM_INDEX_BASIS),
 		Components: `[
 			{"authority":"price-engine","kind":"INDEX","category_code":"crypto","market":"INDEX","symbol":"BTCUSDT","weight":"1"},
-			{"authority":"market-ws","kind":"FINAL_QUOTE","category_code":"crypto","market":"PERPETUAL","symbol":"BTCUSDT","weight":"1"}
+			{"authority":"itick-ws","kind":"FINAL_QUOTE","category_code":"crypto","market":"PERPETUAL","symbol":"BTCUSDT","weight":"1"}
 		]`,
 		MaxLookbackMs: 30_000, MaxDeviationBps: 200, MinInputCount: 2,
 	}
@@ -169,7 +169,7 @@ func TestIndexBasisSmoothingReadsOnlyPreviousMark(t *testing.T) {
 		Algorithm: int64(market.PriceAlgorithm_PRICE_ALGORITHM_INDEX_BASIS),
 		Components: `[
 			{"authority":"price-engine","kind":"INDEX","category_code":"crypto","market":"INDEX","symbol":"BTCUSDT","weight":"1"},
-			{"authority":"market-ws","kind":"FINAL_QUOTE","category_code":"crypto","market":"PERPETUAL","symbol":"BTCUSDT","weight":"1"},
+			{"authority":"itick-ws","kind":"FINAL_QUOTE","category_code":"crypto","market":"PERPETUAL","symbol":"BTCUSDT","weight":"1"},
 			{"authority":"price-engine","kind":"MARK","category_code":"crypto","market":"PREVIOUS","symbol":"BTCUSDT","weight":"4"}
 		]`,
 		MaxLookbackMs: 30_000, MaxDeviationBps: 200, MinInputCount: 3,

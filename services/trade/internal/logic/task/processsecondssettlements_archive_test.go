@@ -19,7 +19,7 @@ func (s *authoritativeSnapshotClientStub) GetAuthoritativeSnapshot(_ context.Con
 		Base: &common.RespBase{Code: 200},
 		Data: &market.AuthoritativeSnapshot{
 			SnapshotId:        "snapshot-1",
-			Authority:         "market-ws",
+			Authority:         "itick-ws",
 			SnapshotKind:      "FINAL_QUOTE",
 			CategoryCode:      "crypto",
 			Market:            "BA",

@@ -11,7 +11,7 @@ func TestRestQuoteIsAuthoritativeAndExact(t *testing.T) {
 	if !ok {
 		t.Fatal("REST quote payload type mismatch")
 	}
-	if payload.Authority != "market-rest" || payload.LastPriceText != "1.250000000000000001" {
+	if payload.Authority != "itick-rest" || payload.LastPriceText != "1.250000000000000001" {
 		t.Fatalf("REST quote lost authority or precision: %+v", payload)
 	}
 }

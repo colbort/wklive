@@ -64,7 +64,7 @@ type (
 func newTMarketAuthoritativeSnapshotModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketAuthoritativeSnapshotModel {
 	return &defaultTMarketAuthoritativeSnapshotModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
-		table:      "`t_market_authoritative_snapshot`",
+		table:      "`t_itick_authoritative_snapshot`",
 	}
 }
 

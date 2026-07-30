@@ -46,7 +46,7 @@ func NewTMarketAuthoritativeSnapshotModel(conn sqlx.SqlConn, c cache.CacheConf, 
 func (m *defaultTMarketAuthoritativeSnapshotModel) FindProductKeys(ctx context.Context) ([]AuthoritativeSnapshotProductKey, error) {
 	var rows []AuthoritativeSnapshotProductKey
 	err := m.QueryRowsNoCacheCtx(ctx, &rows, `SELECT DISTINCT authority,snapshot_kind,category_code,market,symbol
-FROM t_market_authoritative_snapshot
+FROM t_itick_authoritative_snapshot
 ORDER BY authority,snapshot_kind,category_code,market,symbol`)
 	return rows, err
 }
@@ -56,14 +56,14 @@ func (m *defaultTMarketAuthoritativeSnapshotModel) FindAfterID(ctx context.Conte
 		limit = 500
 	}
 	var rows []*TMarketAuthoritativeSnapshot
-	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tMarketAuthoritativeSnapshotRows+" FROM t_market_authoritative_snapshot WHERE id>? ORDER BY id LIMIT ?", afterID, limit)
+	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tMarketAuthoritativeSnapshotRows+" FROM t_itick_authoritative_snapshot WHERE id>? ORDER BY id LIMIT ?", afterID, limit)
 	return rows, err
 }
 
 func (m *defaultTMarketAuthoritativeSnapshotModel) InsertImmutableAndEnqueue(ctx context.Context, row *TMarketAuthoritativeSnapshot, payload string) error {
 	return m.TransactCtx(ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
-		result, err := conn.ExecCtx(ctx, `INSERT INTO t_market_authoritative_snapshot
+		result, err := conn.ExecCtx(ctx, `INSERT INTO t_itick_authoritative_snapshot
 (snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times)
 VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE snapshot_id=snapshot_id`, row.SnapshotId, row.Authority, row.SnapshotKind, row.CategoryCode, row.Market, row.Symbol, row.Price, row.SourceTimestamp, row.SnapshotTimestamp, row.Revision, row.FormulaVersion, row.RawPayload, row.CreateTimes)
 		if err != nil {
@@ -76,7 +76,7 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE snapshot_id=snapshot_i
 		if affected == 0 {
 			var existing TMarketAuthoritativeSnapshot
 			query := `SELECT id,snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times
-FROM t_market_authoritative_snapshot WHERE snapshot_id=? LIMIT 1`
+FROM t_itick_authoritative_snapshot WHERE snapshot_id=? LIMIT 1`
 			if findErr := conn.QueryRowCtx(ctx, &existing, query, row.SnapshotId); findErr != nil {
 				return findErr
 			}
@@ -87,13 +87,13 @@ FROM t_market_authoritative_snapshot WHERE snapshot_id=? LIMIT 1`
 			}
 			return authoritativeSnapshotConflictError(row)
 		}
-		_, err = conn.ExecCtx(ctx, "INSERT INTO t_market_snapshot_outbox(snapshot_id,payload,status,retry_count,next_retry_at,last_error_msg,create_times,update_times) VALUES(?,?,1,0,0,'',?,?)", row.SnapshotId, payload, row.CreateTimes, row.CreateTimes)
+		_, err = conn.ExecCtx(ctx, "INSERT INTO t_itick_snapshot_outbox(snapshot_id,payload,status,retry_count,next_retry_at,last_error_msg,create_times,update_times) VALUES(?,?,1,0,0,'',?,?)", row.SnapshotId, payload, row.CreateTimes, row.CreateTimes)
 		return err
 	})
 }
 
 func (m *defaultTMarketAuthoritativeSnapshotModel) InsertImmutable(ctx context.Context, row *TMarketAuthoritativeSnapshot) error {
-	result, err := m.ExecNoCacheCtx(ctx, `INSERT INTO t_market_authoritative_snapshot
+	result, err := m.ExecNoCacheCtx(ctx, `INSERT INTO t_itick_authoritative_snapshot
 (snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times)
 VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE snapshot_id=snapshot_id`, row.SnapshotId, row.Authority, row.SnapshotKind, row.CategoryCode, row.Market, row.Symbol, row.Price, row.SourceTimestamp, row.SnapshotTimestamp, row.Revision, row.FormulaVersion, row.RawPayload, row.CreateTimes)
 	if err != nil {
@@ -130,7 +130,7 @@ func authoritativeSnapshotConflictError(row *TMarketAuthoritativeSnapshot) error
 func (m *defaultTMarketAuthoritativeSnapshotModel) findByImmutableKey(ctx context.Context, row *TMarketAuthoritativeSnapshot) (*TMarketAuthoritativeSnapshot, error) {
 	var existing TMarketAuthoritativeSnapshot
 	err := m.QueryRowNoCacheCtx(ctx, &existing, `SELECT id,snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times
-FROM t_market_authoritative_snapshot WHERE authority=? AND snapshot_kind=? AND category_code=? AND market=? AND symbol=? AND source_timestamp=? AND revision=? LIMIT 1`, row.Authority, row.SnapshotKind, row.CategoryCode, row.Market, row.Symbol, row.SourceTimestamp, row.Revision)
+FROM t_itick_authoritative_snapshot WHERE authority=? AND snapshot_kind=? AND category_code=? AND market=? AND symbol=? AND source_timestamp=? AND revision=? LIMIT 1`, row.Authority, row.SnapshotKind, row.CategoryCode, row.Market, row.Symbol, row.SourceTimestamp, row.Revision)
 	if err != nil {
 		return nil, err
 	}
@@ -144,9 +144,9 @@ func sameAuthoritativeSnapshotIdentity(a, b *TMarketAuthoritativeSnapshot) bool 
 func (m *defaultTMarketAuthoritativeSnapshotModel) FindAtOrBefore(ctx context.Context, authority, kind, category, market, symbol string, targetTime, minTime int64) (*TMarketAuthoritativeSnapshot, error) {
 	var row TMarketAuthoritativeSnapshot
 	err := m.QueryRowNoCacheCtx(ctx, &row, `SELECT id,snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times
-FROM t_market_authoritative_snapshot
+FROM t_itick_authoritative_snapshot
 WHERE authority=? AND snapshot_kind=? AND category_code=? AND market=? AND symbol=? AND source_timestamp<=? AND source_timestamp>=?
-	AND NOT EXISTS (SELECT 1 FROM t_market_snapshot_revocation r WHERE r.snapshot_id=t_market_authoritative_snapshot.snapshot_id)
+	AND NOT EXISTS (SELECT 1 FROM t_itick_snapshot_revocation r WHERE r.snapshot_id=t_itick_authoritative_snapshot.snapshot_id)
 ORDER BY source_timestamp DESC,revision DESC,id DESC LIMIT 1`, authority, kind, category, market, symbol, targetTime, minTime)
 	if errors.Is(err, ErrNotFound) {
 		return nil, ErrNotFound

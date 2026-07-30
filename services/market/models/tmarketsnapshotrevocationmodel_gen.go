@@ -53,7 +53,7 @@ type (
 func newTMarketSnapshotRevocationModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketSnapshotRevocationModel {
 	return &defaultTMarketSnapshotRevocationModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
-		table:      "`t_market_snapshot_revocation`",
+		table:      "`t_itick_snapshot_revocation`",
 	}
 }
 

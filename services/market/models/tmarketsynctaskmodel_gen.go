@@ -56,7 +56,7 @@ type (
 func newTMarketSyncTaskModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketSyncTaskModel {
 	return &defaultTMarketSyncTaskModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
-		table:      "`t_market_sync_task`",
+		table:      "`t_itick_sync_task`",
 	}
 }
 

@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS `t_market_category`;
-CREATE TABLE `t_market_category` (
+DROP TABLE IF EXISTS `t_itick_category`;
+CREATE TABLE `t_itick_category` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `category_type` tinyint NOT NULL DEFAULT '0' COMMENT '产品类型: 1-forex 2-crypto 3-stock 4-future 5-indices 6-fund',
   `category_name` varchar(64) NOT NULL DEFAULT '' COMMENT '产品类型名称',
@@ -17,7 +17,7 @@ CREATE TABLE `t_market_category` (
   KEY `idx_enabled_visible_sort` (`enabled`, `app_visible`, `sort`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='market产品类型表';
 
-INSERT INTO `t_market_category` (`id`, `category_type`, `category_name`, `category_code`, `enabled`, `app_visible`, `sort`, `icon`, `remark`, `create_times`, `update_times`) VALUES
+INSERT INTO `t_itick_category` (`id`, `category_type`, `category_name`, `category_code`, `enabled`, `app_visible`, `sort`, `icon`, `remark`, `create_times`, `update_times`) VALUES
 (1, 1, '外汇',     'forex',   1, 1, 1, '', '', UNIX_TIMESTAMP() * 1000, UNIX_TIMESTAMP() * 1000),
 (2, 2, '加密货币', 'crypto',  1, 1, 2, '', '', UNIX_TIMESTAMP() * 1000, UNIX_TIMESTAMP() * 1000),
 (3, 3, '股票',     'stock',   1, 1, 3, '', '', UNIX_TIMESTAMP() * 1000, UNIX_TIMESTAMP() * 1000),
@@ -26,8 +26,8 @@ INSERT INTO `t_market_category` (`id`, `category_type`, `category_name`, `catego
 (6, 6, '基金',     'fund',    1, 1, 6, '', '', UNIX_TIMESTAMP() * 1000, UNIX_TIMESTAMP() * 1000);
 
 
-DROP TABLE IF EXISTS `t_market_product`;
-CREATE TABLE `t_market_product` (
+DROP TABLE IF EXISTS `t_itick_product`;
+CREATE TABLE `t_itick_product` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `category_type` tinyint NOT NULL DEFAULT '0' COMMENT '产品类型: 1-forex 2-crypto 3-stock 4-future 5-indices 6-fund',
   `category_name` varchar(64) NOT NULL DEFAULT '' COMMENT '产品类型名称',
@@ -59,11 +59,11 @@ CREATE TABLE `t_market_product` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='market产品表';
 
 
-DROP TABLE IF EXISTS `t_market_tenant_category`;
-CREATE TABLE `t_market_tenant_category` (
+DROP TABLE IF EXISTS `t_itick_tenant_category`;
+CREATE TABLE `t_itick_tenant_category` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` bigint NOT NULL DEFAULT '0' COMMENT '租户ID',
-  `category_id` bigint NOT NULL DEFAULT '0' COMMENT '产品类型ID, 对应 market_category.id',
+  `category_id` bigint NOT NULL DEFAULT '0' COMMENT '产品类型ID, 对应 t_itick_category.id',
   `enabled` tinyint NOT NULL DEFAULT '1' COMMENT '启用状态: 1-启用 2-禁用',
   `app_visible` tinyint NOT NULL DEFAULT '1' COMMENT 'APP可见开关: 1-显示 2-隐藏',
   `sort` int NOT NULL DEFAULT '0' COMMENT '租户排序, 越小越靠前',
@@ -77,11 +77,11 @@ CREATE TABLE `t_market_tenant_category` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户产品类型可见配置表';
 
 
-DROP TABLE IF EXISTS `t_market_tenant_product`;
-CREATE TABLE `t_market_tenant_product` (
+DROP TABLE IF EXISTS `t_itick_tenant_product`;
+CREATE TABLE `t_itick_tenant_product` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` bigint NOT NULL DEFAULT '0' COMMENT '租户ID',
-  `product_id` bigint NOT NULL DEFAULT '0' COMMENT '产品ID, 对应 market_product.id',
+  `product_id` bigint NOT NULL DEFAULT '0' COMMENT '产品ID, 对应 t_itick_product.id',
   `enabled` tinyint NOT NULL DEFAULT '1' COMMENT '启用状态: 1-启用 2-禁用',
   `app_visible` tinyint NOT NULL DEFAULT '1' COMMENT 'APP可见开关: 1-显示 2-隐藏',
   `display_name` varchar(128) NOT NULL DEFAULT '' COMMENT '租户自定义展示名称，为空时使用产品展示名称',
@@ -96,8 +96,8 @@ CREATE TABLE `t_market_tenant_product` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户产品可见配置表';
 
 
-DROP TABLE IF EXISTS `t_market_sync_task`;
-CREATE TABLE `t_market_sync_task` (
+DROP TABLE IF EXISTS `t_itick_sync_task`;
+CREATE TABLE `t_itick_sync_task` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `task_no` varchar(64) NOT NULL DEFAULT '' COMMENT '任务号',
   `task_type` varchar(64) NOT NULL DEFAULT '' COMMENT '任务类型',
@@ -111,8 +111,8 @@ CREATE TABLE `t_market_sync_task` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-DROP TABLE IF EXISTS `t_market_quote`;
-CREATE TABLE `t_market_quote` (
+DROP TABLE IF EXISTS `t_itick_quote`;
+CREATE TABLE `t_itick_quote` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `category_code` varchar(64) NOT NULL DEFAULT '' COMMENT '产品类型标识, 如 forex/crypto/stock/future/indices/fund',
   `market` varchar(32) NOT NULL DEFAULT '' COMMENT '市场/地区，如 GB',
@@ -142,12 +142,12 @@ CREATE TABLE `t_market_quote` (
   KEY `idx_quote_ts` (`quote_ts`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='market实时报价表';
 
-DROP TABLE IF EXISTS `t_market_authority_registry`;
-CREATE TABLE `t_market_authority_registry` (
+DROP TABLE IF EXISTS `t_itick_authority_registry`;
+CREATE TABLE `t_itick_authority_registry` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `authority` VARCHAR(32) NOT NULL,
   `provider_code` VARCHAR(32) NOT NULL COMMENT '独立数据供应商标识；同一供应商不同传输通道必须相同',
-  `producer_type` VARCHAR(32) NOT NULL COMMENT 'market_WS/market_REST/PRICE_ENGINE',
+  `producer_type` VARCHAR(32) NOT NULL COMMENT 'ITICK_WS/ITICK_REST/PRICE_ENGINE',
   `allowed_kinds` JSON NOT NULL COMMENT '允许发布的快照类型',
   `status` TINYINT NOT NULL DEFAULT 1 COMMENT '1启用 2禁用',
   `version` BIGINT NOT NULL DEFAULT 0,
@@ -158,17 +158,17 @@ CREATE TABLE `t_market_authority_registry` (
   CONSTRAINT `chk_authority_registry` CHECK (CHAR_LENGTH(`provider_code`) > 0 AND `status` IN (1,2) AND `version` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权威行情生产方注册表';
 
-INSERT INTO `t_market_authority_registry`
+INSERT INTO `t_itick_authority_registry`
 (`authority`,`provider_code`,`producer_type`,`allowed_kinds`,`status`,`version`,`create_times`,`update_times`)
-VALUES ('market-ws','market','market_WS',JSON_ARRAY('FINAL_QUOTE'),1,0,0,0)
+VALUES ('itick-ws','ITICK','ITICK_WS',JSON_ARRAY('FINAL_QUOTE'),1,0,0,0)
 ON DUPLICATE KEY UPDATE `provider_code`=VALUES(`provider_code`),`producer_type`=VALUES(`producer_type`),`allowed_kinds`=VALUES(`allowed_kinds`);
 
-INSERT INTO `t_market_authority_registry`
+INSERT INTO `t_itick_authority_registry`
 (`authority`,`provider_code`,`producer_type`,`allowed_kinds`,`status`,`version`,`create_times`,`update_times`)
-VALUES ('market-rest','market','market_REST',JSON_ARRAY('FINAL_QUOTE'),1,0,0,0)
+VALUES ('itick-rest','ITICK','ITICK_REST',JSON_ARRAY('FINAL_QUOTE'),1,0,0,0)
 ON DUPLICATE KEY UPDATE `provider_code`=VALUES(`provider_code`),`producer_type`=VALUES(`producer_type`),`allowed_kinds`=VALUES(`allowed_kinds`);
 
-INSERT INTO `t_market_authority_registry`
+INSERT INTO `t_itick_authority_registry`
 (`authority`,`provider_code`,`producer_type`,`allowed_kinds`,`status`,`version`,`create_times`,`update_times`)
 VALUES
   ('binance-public','BINANCE','PUBLIC_REST',JSON_ARRAY('FINAL_QUOTE'),1,0,0,0),
@@ -180,8 +180,8 @@ ON DUPLICATE KEY UPDATE
   `producer_type`=VALUES(`producer_type`),
   `allowed_kinds`=VALUES(`allowed_kinds`);
 
-DROP TABLE IF EXISTS `t_market_authoritative_snapshot`;
-CREATE TABLE `t_market_authoritative_snapshot` (
+DROP TABLE IF EXISTS `t_itick_authoritative_snapshot`;
+CREATE TABLE `t_itick_authoritative_snapshot` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `snapshot_id` VARCHAR(64) NOT NULL COMMENT '内容哈希ID',
   `authority` VARCHAR(32) NOT NULL COMMENT '权威生产方',
@@ -202,8 +202,8 @@ CREATE TABLE `t_market_authoritative_snapshot` (
   CONSTRAINT `chk_authoritative_snapshot` CHECK ((`snapshot_kind`='FUNDING' OR `price` > 0) AND `source_timestamp` > 0 AND `snapshot_timestamp` > 0 AND `revision` > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='market/Price Engine权威行情永久档案';
 
-DROP TABLE IF EXISTS `t_market_snapshot_outbox`;
-CREATE TABLE `t_market_snapshot_outbox` (
+DROP TABLE IF EXISTS `t_itick_snapshot_outbox`;
+CREATE TABLE `t_itick_snapshot_outbox` (
   `id` BIGINT NOT NULL AUTO_INCREMENT, `snapshot_id` VARCHAR(64) NOT NULL,
   `payload` JSON NOT NULL, `status` TINYINT NOT NULL DEFAULT 1 COMMENT '1 pending 2 processing 3 success 4 failed 5 manual',
   `retry_count` INT NOT NULL DEFAULT 0, `next_retry_at` BIGINT NOT NULL DEFAULT 0,
@@ -216,8 +216,8 @@ CREATE TABLE `t_market_snapshot_outbox` (
   KEY `idx_snapshot_outbox_health` (`status`,`create_times`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权威行情异步发布与Redis修复任务';
 
-DROP TABLE IF EXISTS `t_market_snapshot_revocation`;
-CREATE TABLE `t_market_snapshot_revocation` (
+DROP TABLE IF EXISTS `t_itick_snapshot_revocation`;
+CREATE TABLE `t_itick_snapshot_revocation` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `snapshot_id` VARCHAR(64) NOT NULL,
   `replacement_snapshot_id` VARCHAR(64) NOT NULL DEFAULT '',
@@ -228,8 +228,8 @@ CREATE TABLE `t_market_snapshot_revocation` (
   CONSTRAINT `chk_snapshot_revocation_reason` CHECK (CHAR_LENGTH(`reason`) > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权威快照不可变撤销事实';
 
-DROP TABLE IF EXISTS `t_market_price_formula`;
-CREATE TABLE `t_market_price_formula` (
+DROP TABLE IF EXISTS `t_itick_price_formula`;
+CREATE TABLE `t_itick_price_formula` (
   `id` BIGINT NOT NULL AUTO_INCREMENT, `formula_no` VARCHAR(64) NOT NULL,
   `authority` VARCHAR(32) NOT NULL DEFAULT 'price-engine', `snapshot_kind` VARCHAR(32) NOT NULL,
   `category_code` VARCHAR(64) NOT NULL DEFAULT '', `market` VARCHAR(32) NOT NULL DEFAULT '', `symbol` VARCHAR(64) NOT NULL,
@@ -245,12 +245,12 @@ CREATE TABLE `t_market_price_formula` (
   CONSTRAINT `chk_price_formula` CHECK (`snapshot_kind` IN ('MARK','INDEX','FUNDING','DELIVERY') AND `algorithm` IN (1,2,3,4) AND `max_lookback_ms` > 0 AND `min_input_count` > 0 AND `interval_ms` > 0 AND `status` IN (1,2,3))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='版本化权威价格公式';
 
-INSERT INTO `t_market_authority_registry` (`authority`,`provider_code`,`producer_type`,`allowed_kinds`,`status`,`version`,`create_times`,`update_times`)
+INSERT INTO `t_itick_authority_registry` (`authority`,`provider_code`,`producer_type`,`allowed_kinds`,`status`,`version`,`create_times`,`update_times`)
 VALUES ('price-engine','PRICE_ENGINE','PRICE_ENGINE',JSON_ARRAY('MARK','INDEX','FUNDING','DELIVERY'),1,0,0,0)
 ON DUPLICATE KEY UPDATE `provider_code`=VALUES(`provider_code`),`producer_type`=VALUES(`producer_type`),`allowed_kinds`=VALUES(`allowed_kinds`);
 
-DROP TABLE IF EXISTS `t_market_kline_sync_progress`;
-CREATE TABLE `t_market_kline_sync_progress` (
+DROP TABLE IF EXISTS `t_itick_kline_sync_progress`;
+CREATE TABLE `t_itick_kline_sync_progress` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
 
   `category_code` varchar(32) NOT NULL DEFAULT '' COMMENT '品类代码：stock/forex/indices/crypto/future/fund',
@@ -282,8 +282,8 @@ CREATE TABLE `t_market_kline_sync_progress` (
   KEY `idx_update_times` (`update_times`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='market K线同步进度表';
 
-DROP TABLE IF EXISTS `t_market_market_calendar`;
-CREATE TABLE `t_market_market_calendar` (
+DROP TABLE IF EXISTS `t_itick_market_calendar`;
+CREATE TABLE `t_itick_market_calendar` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `category_code` varchar(32) NOT NULL DEFAULT '',
   `market` varchar(32) NOT NULL DEFAULT '',
@@ -300,8 +300,8 @@ CREATE TABLE `t_market_market_calendar` (
   KEY `idx_enabled` (`enabled`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='market市场交易日历';
 
-DROP TABLE IF EXISTS `t_market_market_session`;
-CREATE TABLE `t_market_market_session` (
+DROP TABLE IF EXISTS `t_itick_market_session`;
+CREATE TABLE `t_itick_market_session` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `calendar_id` bigint NOT NULL,
   `session_type` varchar(32) NOT NULL DEFAULT 'regular',
@@ -313,8 +313,8 @@ CREATE TABLE `t_market_market_session` (
   KEY `idx_calendar_sort` (`calendar_id`,`sort`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='market市场交易时段';
 
-DROP TABLE IF EXISTS `t_market_market_holiday`;
-CREATE TABLE `t_market_market_holiday` (
+DROP TABLE IF EXISTS `t_itick_market_holiday`;
+CREATE TABLE `t_itick_market_holiday` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `calendar_id` bigint NOT NULL,
   `trade_date` date NOT NULL,

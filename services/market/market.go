@@ -75,7 +75,7 @@ func main() {
 		panic(err)
 	}
 	tasks.StartPriceEngine(ctx, svcCtx.PriceEngine, svcCtx.OperationalAlertNotifier)
-	holidaySync := calendar.NewHolidaySyncService(ctx, c.Market.ApiUrl, svcCtx.ITickRestClient,
+	holidaySync := calendar.NewHolidaySyncService(ctx, c.Itick.ApiUrl, svcCtx.ITickRestClient,
 		svcCtx.MarketCalendarModel, svcCtx.MarketHolidayModel, svcCtx.MarketCalendarResolver,
 		utils.NewRedisLock(svcCtx.LockRedis), 24*time.Hour)
 	holidaySync.Start()
@@ -98,16 +98,16 @@ func main() {
 	gapRepair := kline.NewGapRepairService(ctx, svcCtx,
 		time.Duration(svcCtx.MarketRuntimeConfig.GapScanIntervalMinutes)*time.Minute,
 		int(svcCtx.MarketRuntimeConfig.RepairBatchSize))
-	gapRepair.Start(c.Market.ApiUrl, c.Market.Token)
+	gapRepair.Start(c.Itick.ApiUrl, c.Itick.Token)
 	defer gapRepair.Stop()
 	svcCtx.MarketManager.SetReconnectHandler(func(category string) {
 		repairCtx, repairCancel := context.WithTimeout(context.Background(), 30*time.Minute)
 		defer repairCancel()
 		worker := kline.NewSyncKlinesWorker(repairCtx, svcCtx, nil, "", "")
-		if err := worker.RepairAfterReconnect(c.Market.ApiUrl, c.Market.Token, category); err != nil {
+		if err := worker.RepairAfterReconnect(c.Itick.ApiUrl, c.Itick.Token, category); err != nil {
 			log.Printf("repair market klines after ws reconnect failed, category=%s err=%v", category, err)
 		}
-		if err := worker.ReconcileRecent(c.Market.ApiUrl, c.Market.Token, category); err != nil {
+		if err := worker.ReconcileRecent(c.Itick.ApiUrl, c.Itick.Token, category); err != nil {
 			log.Printf("reconcile recent market klines after ws reconnect failed, category=%s err=%v", category, err)
 		}
 	})

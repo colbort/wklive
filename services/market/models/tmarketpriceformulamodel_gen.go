@@ -70,7 +70,7 @@ type (
 func newTMarketPriceFormulaModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketPriceFormulaModel {
 	return &defaultTMarketPriceFormulaModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
-		table:      "`t_market_price_formula`",
+		table:      "`t_itick_price_formula`",
 	}
 }
 

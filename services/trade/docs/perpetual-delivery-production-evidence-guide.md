@@ -9,7 +9,7 @@
 API Key、访问令牌或数据库凭据。
 
 Deploy 中的 iTick Token 必须通过 Git 忽略且权限为 `0600` 的
-`deploy/secrets/market_token` 以 Docker Secret 注入；受版本控制的服务 YAML 只能
+`deploy/secrets/itick_token` 以 Docker Secret 注入；受版本控制的服务 YAML 只能
 保留占位符。生产环境应由正式密钥系统生成或挂载同一路径文件，不能把真实 Token
 回填到 YAML、`.env`、readiness 声明、报告或发布单中。需要凭据的来源即使已安全
 注入，也不等于 `PRICE_SOURCE_CREDENTIALS_APPROVED=true`，该字段仍须有真实审批

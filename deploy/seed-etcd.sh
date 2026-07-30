@@ -7,7 +7,7 @@ COMMON_CONFIG="${COMMON_CONFIG:-/deploy-config/common.yaml}"
 MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:-123456}"
 MONGO_ROOT_PASSWORD="${MONGO_ROOT_PASSWORD:-openIM123}"
 JWT_ACCESS_SECRET="${JWT_ACCESS_SECRET:-change-this-secret-before-production}"
-ITICK_TOKEN_FILE="${ITICK_TOKEN_FILE:-/run/secrets/market_token}"
+ITICK_TOKEN_FILE="${ITICK_TOKEN_FILE:-/run/secrets/itick_token}"
 
 validate_secret() {
   name="$1"

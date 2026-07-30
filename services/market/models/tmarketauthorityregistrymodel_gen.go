@@ -45,7 +45,7 @@ type (
 		Id           int64  `db:"id"`
 		Authority    string `db:"authority"`
 		ProviderCode string `db:"provider_code"` // 独立数据供应商标识；同一供应商不同传输通道必须相同
-		ProducerType string `db:"producer_type"` // market_WS/market_REST/PRICE_ENGINE
+		ProducerType string `db:"producer_type"` // ITICK_WS/ITICK_REST/PRICE_ENGINE
 		AllowedKinds string `db:"allowed_kinds"` // 允许发布的快照类型
 		Status       int64  `db:"status"`        // 1启用 2禁用
 		Version      int64  `db:"version"`
@@ -57,7 +57,7 @@ type (
 func newTMarketAuthorityRegistryModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketAuthorityRegistryModel {
 	return &defaultTMarketAuthorityRegistryModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
-		table:      "`t_market_authority_registry`",
+		table:      "`t_itick_authority_registry`",
 	}
 }
 

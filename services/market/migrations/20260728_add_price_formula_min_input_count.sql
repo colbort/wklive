@@ -4,12 +4,12 @@ SET @column_exists = (
   SELECT COUNT(1)
   FROM information_schema.COLUMNS
   WHERE TABLE_SCHEMA = @schema_name
-    AND TABLE_NAME = 't_market_price_formula'
+    AND TABLE_NAME = 't_itick_price_formula'
     AND COLUMN_NAME = 'min_input_count'
 );
 SET @ddl = IF(
   @column_exists = 0,
-  'ALTER TABLE `t_market_price_formula` ADD COLUMN `min_input_count` INT NOT NULL DEFAULT 1 AFTER `max_deviation_bps`',
+  'ALTER TABLE `t_itick_price_formula` ADD COLUMN `min_input_count` INT NOT NULL DEFAULT 1 AFTER `max_deviation_bps`',
   'SELECT 1'
 );
 PREPARE stmt FROM @ddl;

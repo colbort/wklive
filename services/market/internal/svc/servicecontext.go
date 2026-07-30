@@ -81,16 +81,16 @@ type AuthorityRegistryAdminStore interface {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	restRatePerMinute := c.Market.RestRateLimitPerMinute
+	restRatePerMinute := c.Itick.RestRateLimitPerMinute
 	if restRatePerMinute <= 0 {
 		restRatePerMinute = 100
 	}
-	restRateBurst := c.Market.RestRateLimitBurst
+	restRateBurst := c.Itick.RestRateLimitBurst
 	if restRateBurst <= 0 {
 		restRateBurst = 1
 	}
 	marketRestLimiter := rate.NewLimiter(rate.Limit(float64(restRatePerMinute)/60.0), restRateBurst)
-	iTickRestClient := itickrest.New(c.Market.Token, marketRestLimiter, nil)
+	iTickRestClient := itickrest.New(c.Itick.Token, marketRestLimiter, nil)
 
 	conn := sqlx.NewMysql(c.Mysql.DataSource)
 
@@ -142,9 +142,9 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	)
 
 	marketManager := client.NewMarketManager(
-		c.Market.WSUrl,
-		c.Market.ApiUrl,
-		c.Market.Token,
+		c.Itick.WSUrl,
+		c.Itick.ApiUrl,
+		c.Itick.Token,
 		marketCategoryModel,
 		marketProductModel,
 		dataCache,

@@ -62,10 +62,10 @@ func (m *defaultTMarketPriceFormulaModel) ActivateVersion(ctx context.Context, i
 		if err := session.QueryRowsCtx(ctx, &revisions, query, selected.Authority, selected.SnapshotKind, selected.CategoryCode, selected.Market, selected.Symbol); err != nil {
 			return err
 		}
-		if _, err := session.ExecCtx(ctx, "UPDATE t_market_price_formula SET status=2,version=version+1,update_times=? WHERE authority=? AND snapshot_kind=? AND category_code=? AND market=? AND symbol=? AND status=1 AND id<>?", now, selected.Authority, selected.SnapshotKind, selected.CategoryCode, selected.Market, selected.Symbol, id); err != nil {
+		if _, err := session.ExecCtx(ctx, "UPDATE t_itick_price_formula SET status=2,version=version+1,update_times=? WHERE authority=? AND snapshot_kind=? AND category_code=? AND market=? AND symbol=? AND status=1 AND id<>?", now, selected.Authority, selected.SnapshotKind, selected.CategoryCode, selected.Market, selected.Symbol, id); err != nil {
 			return err
 		}
-		_, err := session.ExecCtx(ctx, "UPDATE t_market_price_formula SET status=1,version=version+1,update_times=? WHERE id=? AND status<>3", now, id)
+		_, err := session.ExecCtx(ctx, "UPDATE t_itick_price_formula SET status=1,version=version+1,update_times=? WHERE id=? AND status<>3", now, id)
 		return err
 	})
 	if err != nil {
@@ -80,7 +80,7 @@ func (m *defaultTMarketPriceFormulaModel) RevokeVersion(ctx context.Context, id,
 	if err != nil {
 		return err
 	}
-	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_market_price_formula SET status=3,version=version+1,update_times=? WHERE id=? AND status<>3", now, id)
+	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_price_formula SET status=3,version=version+1,update_times=? WHERE id=? AND status<>3", now, id)
 	if err != nil {
 		return err
 	}
@@ -129,17 +129,17 @@ func (m *defaultTMarketPriceFormulaModel) FindPage(ctx context.Context, filter P
 	var total int64
 	countWhere := strings.Replace(where, "id>?", "id>0", 1)
 	countArgs := args[1:]
-	if err := m.QueryRowNoCacheCtx(ctx, &total, "SELECT COUNT(1) FROM t_market_price_formula WHERE "+countWhere, countArgs...); err != nil {
+	if err := m.QueryRowNoCacheCtx(ctx, &total, "SELECT COUNT(1) FROM t_itick_price_formula WHERE "+countWhere, countArgs...); err != nil {
 		return nil, 0, err
 	}
 	args = append(args, limit)
 	var rows []*TMarketPriceFormula
-	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tMarketPriceFormulaRows+" FROM t_market_price_formula WHERE "+where+" ORDER BY id LIMIT ?", args...)
+	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tMarketPriceFormulaRows+" FROM t_itick_price_formula WHERE "+where+" ORDER BY id LIMIT ?", args...)
 	return rows, total, err
 }
 
 func (m *defaultTMarketPriceFormulaModel) ReleaseTarget(ctx context.Context, id, claimedRunVersion, target, previous int64) error {
-	_, err := m.ExecNoCacheCtx(ctx, "UPDATE t_market_price_formula SET last_target_time=?,update_times=? WHERE id=? AND run_version=? AND last_target_time=?", previous, time.Now().UnixMilli(), id, claimedRunVersion, target)
+	_, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_price_formula SET last_target_time=?,update_times=? WHERE id=? AND run_version=? AND last_target_time=?", previous, time.Now().UnixMilli(), id, claimedRunVersion, target)
 	return err
 }
 
@@ -150,7 +150,7 @@ func (m *defaultTMarketPriceFormulaModel) FindDue(ctx context.Context, now, limi
 }
 
 func (m *defaultTMarketPriceFormulaModel) ClaimTarget(ctx context.Context, id, runVersion, target, now int64) (bool, error) {
-	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_market_price_formula SET last_target_time=?,run_version=run_version+1,update_times=? WHERE id=? AND run_version=? AND status=1 AND last_target_time<?", target, now, id, runVersion, target)
+	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_price_formula SET last_target_time=?,run_version=run_version+1,update_times=? WHERE id=? AND run_version=? AND status=1 AND last_target_time<?", target, now, id, runVersion, target)
 	if err != nil {
 		return false, err
 	}

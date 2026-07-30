@@ -42,8 +42,8 @@
 | `t_contract_funding_batch` | 1 | 1 | PASS |
 | `t_contract_delivery_batch` | 1 | 1 | PASS |
 | `t_contract_reconciliation_issue` | 4 | 4 | PASS |
-| `t_market_authoritative_snapshot` | 1,724,478 | 1,724,478 | PASS |
-| `t_market_snapshot_outbox` | 26,255 | 26,255 | PASS |
+| `t_itick_authoritative_snapshot` | 1,724,478 | 1,724,478 | PASS |
+| `t_itick_snapshot_outbox` | 26,255 | 26,255 | PASS |
 
 全部 143 张基础表均使用精确 `COUNT(*)` 比较，不使用
 `information_schema.TABLES.table_rows` 的估算值。

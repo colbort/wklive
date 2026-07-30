@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -20,14 +22,39 @@ var upgrader = websocket.Upgrader{
 }
 
 func TestSocket(t *testing.T) {
-	http.HandleFunc("/app/market/ws/market", tickWsHandler)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/app/market/ws/market", tickWsHandler)
+	server := httptest.NewServer(mux)
+	defer server.Close()
 
-	addr := ":7777"
-	log.Printf("websocket test server listening on %s\n", addr)
-	log.Printf("ws url: ws://127.0.0.1%s/app/market/ws/market\n", addr)
+	conn, _, err := websocket.DefaultDialer.Dial(
+		"ws"+strings.TrimPrefix(server.URL, "http")+"/app/market/ws/market",
+		nil,
+	)
+	if err != nil {
+		t.Fatalf("dial market websocket: %v", err)
+	}
+	defer conn.Close()
 
-	if err := http.ListenAndServe(addr, nil); err != nil {
-		log.Fatal(err)
+	var connected Resp
+	if err := conn.ReadJSON(&connected); err != nil {
+		t.Fatalf("read connected message: %v", err)
+	}
+	if connected["type"] != "connected" {
+		t.Fatalf("unexpected connected message: %#v", connected)
+	}
+
+	if err := conn.WriteJSON(Resp{"type": "subscribe", "symbol": "BTCUSDT"}); err != nil {
+		t.Fatalf("write subscribe message: %v", err)
+	}
+	for _, expectedType := range []string{"subscribed", "kline"} {
+		var response Resp
+		if err := conn.ReadJSON(&response); err != nil {
+			t.Fatalf("read %s message: %v", expectedType, err)
+		}
+		if response["type"] != expectedType {
+			t.Fatalf("expected %s message, got %#v", expectedType, response)
+		}
 	}
 }
 

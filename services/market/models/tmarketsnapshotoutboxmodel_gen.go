@@ -59,7 +59,7 @@ type (
 func newTMarketSnapshotOutboxModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketSnapshotOutboxModel {
 	return &defaultTMarketSnapshotOutboxModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
-		table:      "`t_market_snapshot_outbox`",
+		table:      "`t_itick_snapshot_outbox`",
 	}
 }
 

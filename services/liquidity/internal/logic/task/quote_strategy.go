@@ -10,6 +10,7 @@ import (
 
 	"wklive/proto/common"
 	"wklive/proto/liquidity"
+	pb "wklive/proto/market"
 	"wklive/services/liquidity/internal/svc"
 	"wklive/services/liquidity/models"
 
@@ -146,7 +147,7 @@ func loadReferenceQuote(ctx context.Context, svcCtx *svc.ServiceContext, config 
 	candidates := make([]*referenceQuote, 0, len(sources))
 	for _, source := range sources {
 		category, market, symbol := parseReferenceSource(source, config.Symbol)
-		resp, err := svcCtx.MarketClient.GetAuthoritativeSnapshot(ctx, &market.GetAuthoritativeSnapshotReq{
+		resp, err := svcCtx.MarketClient.GetAuthoritativeSnapshot(ctx, &pb.GetAuthoritativeSnapshotReq{
 			Authority: authority, CategoryCode: category, Market: market, Symbol: symbol,
 			TargetTime: targetTime, MaxLookbackMs: validity, SnapshotKind: kind,
 		})

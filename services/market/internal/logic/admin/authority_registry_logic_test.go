@@ -131,7 +131,7 @@ func TestSetAuthorityRegistryRejectsBreakingActiveFormula(t *testing.T) {
 	store := &authorityRegistryAdminStub{
 		row: &models.TMarketAuthorityRegistry{
 			Id:           1,
-			Authority:    "market-ws",
+			Authority:    "itick-ws",
 			ProviderCode: "ITICK",
 			ProducerType: "ITICK_WS",
 			AllowedKinds: `["FINAL_QUOTE"]`,
@@ -146,7 +146,7 @@ func TestSetAuthorityRegistryRejectsBreakingActiveFormula(t *testing.T) {
 	)
 	_, err := logic.SetAuthorityRegistry(&market.SetAuthorityRegistryReq{
 		Id:           1,
-		Authority:    "market-ws",
+		Authority:    "itick-ws",
 		ProviderCode: "ITICK",
 		ProducerType: "ITICK_WS",
 		AllowedKinds: []string{"FINAL_QUOTE"},
@@ -210,14 +210,14 @@ func TestCreateIndexRejectsAuthoritiesFromSameProvider(t *testing.T) {
 			AllowedKinds: `["INDEX"]`,
 			Status:       1,
 		},
-		"market-ws": {
-			Authority:    "market-ws",
+		"itick-ws": {
+			Authority:    "itick-ws",
 			ProviderCode: "ITICK",
 			AllowedKinds: `["FINAL_QUOTE"]`,
 			Status:       1,
 		},
-		"market-rest": {
-			Authority:    "market-rest",
+		"itick-rest": {
+			Authority:    "itick-rest",
 			ProviderCode: "ITICK",
 			AllowedKinds: `["FINAL_QUOTE"]`,
 			Status:       1,
@@ -244,8 +244,8 @@ func TestCreateIndexRejectsAuthoritiesFromSameProvider(t *testing.T) {
 		Algorithm:      market.PriceAlgorithm_PRICE_ALGORITHM_MEDIAN,
 		FormulaVersion: "provider-guard-v1",
 		Components: []*market.PriceFormulaComponent{
-			{Authority: "market-ws", SnapshotKind: "FINAL_QUOTE", Symbol: "BTCUSDT", Weight: "1"},
-			{Authority: "market-rest", SnapshotKind: "FINAL_QUOTE", Symbol: "BTCUSDT", Weight: "1"},
+			{Authority: "itick-ws", SnapshotKind: "FINAL_QUOTE", Symbol: "BTCUSDT", Weight: "1"},
+			{Authority: "itick-rest", SnapshotKind: "FINAL_QUOTE", Symbol: "BTCUSDT", Weight: "1"},
 			{Authority: "source-c", SnapshotKind: "FINAL_QUOTE", Symbol: "BTCUSDT", Weight: "1"},
 		},
 		MaxLookbackMs: 30000,

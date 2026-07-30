@@ -171,7 +171,7 @@ func restPayload(topic types.Topic, data types.UpstreamData) any {
 	switch topic {
 	case types.TopicQuote:
 		return &types.QuotePayload{LastPrice: data.LD, LastPriceText: data.LDText, Open: data.O, High: data.H, Low: data.L,
-			Volume: data.V, Turnover: data.TU, Ts: data.T, Authority: "market-rest"}
+			Volume: data.V, Turnover: data.TU, Ts: data.T, Authority: "itick-rest"}
 	case types.TopicTick:
 		return &types.TickPayload{LastPrice: data.LD, Volume: data.V, Turnover: data.TU, Ts: data.T}
 	case types.TopicDepth:

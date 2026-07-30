@@ -2,7 +2,7 @@
 
 ## 1. 背景
 
-`t_market_snapshot_outbox` 用于可靠发布权威行情快照。权威快照与 Outbox 记录在同一个 MySQL 事务内写入，后台 Worker 再将快照发布到 Redis，并将服务中立的权威行情事件发布到 Kafka `market.authoritative-snapshot.v1`。Option 使用独立 consumer group 异步消费，不再由 Market RPC 调用。
+`t_itick_snapshot_outbox` 用于可靠发布权威行情快照。权威快照与 Outbox 记录在同一个 MySQL 事务内写入，后台 Worker 再将快照发布到 Redis，并将服务中立的权威行情事件发布到 Kafka `market.authoritative-snapshot.v1`。Option 使用独立 consumer group 异步消费，不再由 Market RPC 调用。
 
 当前状态定义如下：
 
@@ -14,7 +14,7 @@
 | `4` | failed | 保留并自动重试 |
 | `5` | manual | 保留并等待人工处理，后续可迁移到 dead-letter 表 |
 
-该表是可靠投递队列，不是权威行情的永久档案。永久档案由 `t_market_authoritative_snapshot` 保存。因此，Outbox 需要实时写入以保证事务一致性，但成功记录不需要长期留存。
+该表是可靠投递队列，不是权威行情的永久档案。永久档案由 `t_itick_authoritative_snapshot` 保存。因此，Outbox 需要实时写入以保证事务一致性，但成功记录不需要长期留存。
 
 ## 2. 容量估算
 
@@ -33,7 +33,7 @@
 
 ## 3. 推荐方案：单张有界活动表
 
-保持 `t_market_snapshot_outbox` 为单张活动表，只长期保存尚未完成的任务：
+保持 `t_itick_snapshot_outbox` 为单张活动表，只长期保存尚未完成的任务：
 
 1. 所有权威快照仍实时写入 Outbox。
 2. Worker 完成 Redis 和 Option 发布后将记录置为 `status=3`。
@@ -67,7 +67,7 @@
 清理 SQL：
 
 ```sql
-DELETE FROM t_market_snapshot_outbox
+DELETE FROM t_itick_snapshot_outbox
 WHERE status = 3
   AND update_times < ?
 ORDER BY id
@@ -77,7 +77,7 @@ LIMIT 5000;
 建议增加清理索引：
 
 ```sql
-ALTER TABLE t_market_snapshot_outbox
+ALTER TABLE t_itick_snapshot_outbox
 ADD INDEX idx_outbox_cleanup (status, update_times, id);
 ```
 
@@ -115,7 +115,7 @@ Kafka 延迟和 MySQL 写入压力。若新入队速度大于完成速度，`dra
 实施自动删除前必须保证：
 
 1. Redis 发布以 `snapshot_id` 或版本号保证重复写入安全。
-2. 永久档案作为生产端去重依据：`t_market_authoritative_snapshot` 已存在相同 `snapshot_id` 时，不再创建新的 Outbox 记录。
+2. 永久档案作为生产端去重依据：`t_itick_authoritative_snapshot` 已存在相同 `snapshot_id` 时，不再创建新的 Outbox 记录。
 3. Option 消费端通过 `t_option_market_snapshot_inbox` 的唯一键 `(snapshot_id, contract_id)` 实现逐合约幂等。Kafka 发布成功但 Outbox checkpoint 失败时允许重复发布，Option 不会重复追加同一合约快照。
 4. 若生产端和消费端都不能保证幂等，应增加独立的轻量去重机制，而不是永久保存包含 JSON payload 的成功 Outbox。
 
@@ -123,7 +123,7 @@ Kafka 延迟和 MySQL 写入压力。若新入队速度大于完成速度，`dra
 
 ## 6. 为什么不推荐按小时分表
 
-不采用 `t_market_snapshot_outbox_YYYYMMDDHH` 形式的小时物理分表，原因如下：
+不采用 `t_itick_snapshot_outbox_YYYYMMDDHH` 形式的小时物理分表，原因如下：
 
 - 每天产生 24 张表，每年产生 8,760 张表。
 - Worker 必须同时扫描当前小时和历史小时的重试任务。
@@ -155,10 +155,10 @@ UNIQUE KEY uk_snapshot_outbox (snapshot_id)
 如果业务确实要求短期查询全部成功投递记录，可采用：
 
 ```text
-t_market_snapshot_outbox
+t_itick_snapshot_outbox
   只保存未完成任务
 
-t_market_snapshot_outbox_success_YYYYMMDDHH
+t_itick_snapshot_outbox_success_YYYYMMDDHH
   保存成功日志，到期直接 DROP TABLE
 ```
 
@@ -177,7 +177,7 @@ Worker 始终只扫描活动表。成功归档应异步执行，不能阻塞行�
 
 ## 9. 与权威快照永久档案的边界
 
-清理 Outbox 只能控制投递队列表的规模。如果普通实时 tick 都写入 `t_market_authoritative_snapshot`，永久档案仍会以每天约 864 万条的速度增长。
+清理 Outbox 只能控制投递队列表的规模。如果普通实时 tick 都写入 `t_itick_authoritative_snapshot`，永久档案仍会以每天约 864 万条的速度增长。
 
 后续需要单独确认权威快照的产生规则：
 
@@ -196,7 +196,7 @@ Worker 始终只扫描活动表。成功归档应异步执行，不能阻塞行�
 3. 低峰期分批清理历史成功记录。
 4. 上线应用内自动清理任务，初始保留时间设为 30 分钟。
 5. 观察至少一个完整业务周期，再决定是否缩短到 10 分钟。
-6. 单独评审 `t_market_authoritative_snapshot` 的生成频率和永久保留策略。
+6. 单独评审 `t_itick_authoritative_snapshot` 的生成频率和永久保留策略。
 
 ## 11. 最终决策
 
@@ -229,8 +229,8 @@ market:authoritative:v3:hot:<authority>:<kind>:<category>:<market>:<symbol>
 历史读取采用两级策略：
 
 1. Trade 结算先查询 Redis v3 热点窗口。
-2. Redis 未命中时，通过 `MarketInternal/GetAuthoritativeSnapshot` 查询 `t_market_authoritative_snapshot`。
-3. MySQL 查询排除 `t_market_snapshot_revocation` 中已经撤销的快照。
+2. Redis 未命中时，通过 `MarketInternal/GetAuthoritativeSnapshot` 查询 `t_itick_authoritative_snapshot`。
+3. MySQL 查询排除 `t_itick_snapshot_revocation` 中已经撤销的快照。
 
 iTick 启动重建只读取每个 `authority + snapshot_kind + product` 的最新快照，不再扫描并发布完整永久档案。重启后的热点历史逐步由实时行情填充，在此期间历史查询通过 MySQL 回源保证可用。
 

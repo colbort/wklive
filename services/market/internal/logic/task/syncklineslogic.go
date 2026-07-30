@@ -36,19 +36,19 @@ func NewSyncKlinesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SyncKl
 // SyncKlines runs the five-minute recent-window reconciliation task.
 // Historical backfill is deliberately not part of this scheduled flow.
 func (l *SyncKlinesLogic) SyncKlines(in *market.SyncKlinesReq) (*market.SyncKlinesResp, error) {
-	if strings.TrimSpace(l.svcCtx.Config.Market.ApiUrl) == "" {
+	if strings.TrimSpace(l.svcCtx.Config.Itick.ApiUrl) == "" {
 		return &market.SyncKlinesResp{
 			Base: helper.ErrResp(i18n.ApiURLRequired, i18n.Translate(i18n.ApiURLRequired, l.ctx)),
 		}, nil
 	}
-	if strings.TrimSpace(l.svcCtx.Config.Market.Token) == "" {
+	if strings.TrimSpace(l.svcCtx.Config.Itick.Token) == "" {
 		return &market.SyncKlinesResp{
 			Base: helper.ErrResp(i18n.ApiTokenRequired, i18n.Translate(i18n.ApiTokenRequired, l.ctx)),
 		}, nil
 	}
 
 	// 业务维度锁，避免相同源重复同步
-	sum := md5.Sum([]byte(strings.TrimSpace(l.svcCtx.Config.Market.ApiUrl) + "|" + strings.TrimSpace(l.svcCtx.Config.Market.Token)))
+	sum := md5.Sum([]byte(strings.TrimSpace(l.svcCtx.Config.Itick.ApiUrl) + "|" + strings.TrimSpace(l.svcCtx.Config.Itick.Token)))
 	lockKey := fmt.Sprintf("market:reconcile_klines:%x", sum)
 	lockValue := fmt.Sprintf("%d", time.Now().UnixNano())
 
@@ -95,7 +95,7 @@ func (l *SyncKlinesLogic) SyncKlines(in *market.SyncKlinesReq) (*market.SyncKlin
 
 		worker := kline.NewSyncKlinesWorker(bgCtx, l.svcCtx, distLock, lockKey, lockValue)
 		worker.RunReconcile(taskNo, apiUrl, token)
-	}(taskNo, l.svcCtx.Config.Market.ApiUrl, l.svcCtx.Config.Market.Token, lockKey, lockValue)
+	}(taskNo, l.svcCtx.Config.Itick.ApiUrl, l.svcCtx.Config.Itick.Token, lockKey, lockValue)
 
 	return &market.SyncKlinesResp{
 		Base: helper.OkResp(),

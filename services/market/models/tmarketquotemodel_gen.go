@@ -67,7 +67,7 @@ type (
 func newTMarketQuoteModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketQuoteModel {
 	return &defaultTMarketQuoteModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
-		table:      "`t_market_quote`",
+		table:      "`t_itick_quote`",
 	}
 }
 

@@ -4,20 +4,20 @@ SET @check_exists = (
   SELECT COUNT(1)
   FROM information_schema.TABLE_CONSTRAINTS
   WHERE CONSTRAINT_SCHEMA = @schema_name
-    AND TABLE_NAME = 't_market_price_formula'
+    AND TABLE_NAME = 't_itick_price_formula'
     AND CONSTRAINT_NAME = 'chk_price_formula'
     AND CONSTRAINT_TYPE = 'CHECK'
 );
 SET @ddl = IF(
   @check_exists > 0,
-  'ALTER TABLE `t_market_price_formula` DROP CHECK `chk_price_formula`',
+  'ALTER TABLE `t_itick_price_formula` DROP CHECK `chk_price_formula`',
   'SELECT 1'
 );
 PREPARE stmt FROM @ddl;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
-ALTER TABLE `t_market_price_formula`
+ALTER TABLE `t_itick_price_formula`
   ADD CONSTRAINT `chk_price_formula`
   CHECK (
     `snapshot_kind` IN ('MARK','INDEX','FUNDING','DELIVERY')

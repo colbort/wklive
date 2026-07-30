@@ -62,7 +62,7 @@ func (r *TMarketAuthorityRegistry) Allows(kind string) bool {
 func (m *defaultTMarketAuthorityRegistryModel) FindEnabled(ctx context.Context, authority string) (*TMarketAuthorityRegistry, error) {
 	var row TMarketAuthorityRegistry
 	err := m.QueryRowNoCacheCtx(ctx, &row, `SELECT id,authority,provider_code,producer_type,allowed_kinds,status,version,create_times,update_times
-FROM t_market_authority_registry WHERE authority=? AND status=1 LIMIT 1`, strings.ToLower(strings.TrimSpace(authority)))
+FROM t_itick_authority_registry WHERE authority=? AND status=1 LIMIT 1`, strings.ToLower(strings.TrimSpace(authority)))
 	if errors.Is(err, sqlx.ErrNotFound) {
 		return nil, ErrNotFound
 	}
@@ -113,7 +113,7 @@ func (m *defaultTMarketAuthorityRegistryModel) FindPage(
 	if err := m.QueryRowNoCacheCtx(
 		ctx,
 		&total,
-		"SELECT COUNT(1) FROM t_market_authority_registry WHERE "+countWhere,
+		"SELECT COUNT(1) FROM t_itick_authority_registry WHERE "+countWhere,
 		countArgs...,
 	); err != nil {
 		return nil, 0, err
@@ -125,7 +125,7 @@ func (m *defaultTMarketAuthorityRegistryModel) FindPage(
 		ctx,
 		&rows,
 		"SELECT "+tMarketAuthorityRegistryRows+
-			" FROM t_market_authority_registry WHERE "+where+" ORDER BY id LIMIT ?",
+			" FROM t_itick_authority_registry WHERE "+where+" ORDER BY id LIMIT ?",
 		args...,
 	)
 	return rows, total, err
@@ -137,7 +137,7 @@ func (m *defaultTMarketAuthorityRegistryModel) CountActiveFormulaReferences(
 ) (int64, error) {
 	const query = `
 SELECT COUNT(1)
-FROM t_market_price_formula AS f
+FROM t_itick_price_formula AS f
 WHERE f.status=1
   AND (
     f.authority=?
@@ -167,7 +167,7 @@ func (m *defaultTMarketAuthorityRegistryModel) UpdateConfigVersioned(
 	}
 	result, err := m.ExecNoCacheCtx(
 		ctx,
-		`UPDATE t_market_authority_registry
+		`UPDATE t_itick_authority_registry
 SET allowed_kinds=?,status=?,version=version+1,update_times=?
 WHERE id=? AND version=?`,
 		allowedKinds,

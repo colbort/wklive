@@ -499,7 +499,7 @@ func (c *ITickWsClient) handleUpstreamEnvelope(ctx context.Context, env types.Up
 			Volume:        d.V,
 			Turnover:      d.TU,
 			Ts:            d.T,
-			Authority:     "market-ws",
+			Authority:     "itick-ws",
 		}
 		if err := c.marketCache.Set(ctx, msg, &payload); err != nil {
 			logx.Errorf("cache market quote failed, category=%s market=%s symbol=%s err=%v", msg.CategoryCode, msg.Market, msg.Symbol, err)

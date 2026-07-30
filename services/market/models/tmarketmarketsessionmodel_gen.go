@@ -53,7 +53,7 @@ type (
 func newTMarketMarketSessionModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketMarketSessionModel {
 	return &defaultTMarketMarketSessionModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
-		table:      "`t_market_market_session`",
+		table:      "`t_itick_market_session`",
 	}
 }
 

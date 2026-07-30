@@ -17,7 +17,7 @@ type Config struct {
 	Mysql      struct {
 		DataSource string
 	} `json:"Mysql" yaml:"Mysql"`
-	Market  MarketConf
+	Itick   ItickConf
 	Runtime MarketRuntimeConf
 	// ExternalQuotes are independent public market-data producers used by the
 	// contract price engine. They publish only FINAL_QUOTE snapshots.
@@ -107,7 +107,7 @@ type MarketRuntimeConf struct {
 	WsKlineStaleSeconds      int64
 }
 
-type MarketConf struct {
+type ItickConf struct {
 	ApiUrl                 string
 	WSUrl                  string
 	Token                  string

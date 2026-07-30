@@ -1,6 +1,6 @@
 -- 注册真实公开交易所行情生产方。只配置公开市场数据连接，不代表数据许可审批通过。
 
-INSERT INTO `t_market_authority_registry`
+INSERT INTO `t_itick_authority_registry`
 (`authority`,`provider_code`,`producer_type`,`allowed_kinds`,`status`,`version`,`create_times`,`update_times`)
 VALUES
   ('binance-public','BINANCE','PUBLIC_REST',JSON_ARRAY('FINAL_QUOTE'),1,0,0,0),

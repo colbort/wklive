@@ -244,7 +244,7 @@ position.avail_qty + position.frozen_qty <= position.qty
 
 ```sql
 SELECT status, COUNT(*) AS row_count, MIN(create_times) AS oldest_at
-FROM t_market_snapshot_outbox
+FROM t_itick_snapshot_outbox
 WHERE status IN (1,2,4,5)
 GROUP BY status;
 ```

@@ -12,8 +12,8 @@
 - 回放工具：`services/market/cmd/price-replay`
 - 期望计算周期：1,000 ms
 
-当前运行配置只有 `market-ws` 单源参与 MARK/INDEX，不具备生产三独立来源条件；
-`market-rest` 已注册但未参与公式，也不存在 DELIVERY 运行公式。本报告将“真实运行窗口
+当前运行配置只有 `itick-ws` 单源参与 MARK/INDEX，不具备生产三独立来源条件；
+`itick-rest` 已注册但未参与公式，也不存在 DELIVERY 运行公式。本报告将“真实运行窗口
 确定性回放”和“三源/DELIVERY/INDEX_BASIS 参数测试”分开记录，不把测试来源冒充
 生产独立市场源。
 

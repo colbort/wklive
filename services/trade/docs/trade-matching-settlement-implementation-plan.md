@@ -22,7 +22,7 @@
 
 > **2026-07-21 Snapshot Outbox 告警修复：** iTick 已增加 Outbox 周期健康聚合；存在 FAILED、MANUAL，或 PENDING/PROCESSING 最老任务超过 60 秒时，每 30 秒输出包含各状态数量和最老任务年龄的结构化错误告警，可直接接入日志告警规则。管理端查询、人工重试、自动租约恢复和 Redis 修复能力保持不变；非 Authority Quote 的产品策略仍待明确。
 
-> **2026-07-21 非 Authority Quote 边界修复：** 行情 Quote 通道已明确采用禁用策略；Quote handler 强制要求非空 Authority 和原始精确十进制价格，缺失任一字段即拒绝并输出结构化错误，不再静默成功或进入 Option 同步。生产 iTick WebSocket Quote 固定携带 `market-ws` Authority；Tick/Depth 等非结算行情缓存不受此限制。
+> **2026-07-21 非 Authority Quote 边界修复：** 行情 Quote 通道已明确采用禁用策略；Quote handler 强制要求非空 Authority 和原始精确十进制价格，缺失任一字段即拒绝并输出结构化错误，不再静默成功或进入 Option 同步。生产 iTick WebSocket Quote 固定携带 `itick-ws` Authority；Tick/Depth 等非结算行情缓存不受此限制。
 
 > **2026-07-21 Trade 并发复审：** Trade 领域事件迁移 Kafka 后已按 `biz_id` 设置稳定分区键，确保同一 Fill 的资产结算和仓位投影事件保持分区内顺序；无业务号时回退 `event_no`。Settlement Instruction 的原子领取新增领取时间 fencing token，现货、资金费、交割、ADL 和预占释放的成功/失败写回均校验租约代次，过期 Worker 不再能够覆盖新 Worker 状态。强平接管改为使用数据库事务内实际锁定的仓位快照，状态或版本冲突时拒绝按旧仓位计算；重复恢复不会再次递增仓位版本，Asset 空响应也不再触发进程 panic。强平撤单和交割停撮撤单会在事务内重新行锁订单并确认活动状态，不能再用扫描阶段的旧对象覆盖并发成交。预占释放恢复任务会扫描 `CANCELING/EXPIRING` 订单，自动重建进程退出前尚未创建的释放指令，并修复遗留订单簿缓存；Redis 订单簿删除失败只记录告警，不再阻塞数据库权威状态后的资金释放 Saga。秒合约结算和退款 Worker 已增加原子 Claim、60 秒租约恢复及 fencing token，退款状态与主订单在同一事务提交；退款、冻结消费和派彩均校验空 Asset 响应，异常响应进入重试而不是导致 Worker panic。
 
@@ -32,7 +32,7 @@
 
 > **2026-07-21 Kafka 消费失败闭环修复：** Trade 实时事件消费者不再忽略解码、事件校验、Inbox Claim/Fail/Complete 或 Outbox 成功/失败写回错误；任一步失败都会返回 Kafka 订阅层进入有限重试，耗尽后写入 DLQ，再提交 offset。业务处理失败会合并原始错误、Inbox 写回错误和 Outbox 写回错误，避免消息被静默确认而数据库停留在 PROCESSING/DELIVERING。
 
-> **2026-07-21 REST Quote 精度与 Authority 修复：** REST 预热/断线补 Quote 的 JSON 解码已同时保留 `float64` 计算值和 `ld` 原始十进制 token，权威归档只使用原始 token；REST Quote 使用独立且已注册的 `market-rest` Authority，不再缺失 Authority，也不再用浮点格式化值冒充源价格。`market-rest` 注册迁移和精度回归测试已补齐。
+> **2026-07-21 REST Quote 精度与 Authority 修复：** REST 预热/断线补 Quote 的 JSON 解码已同时保留 `float64` 计算值和 `ld` 原始十进制 token，权威归档只使用原始 token；REST Quote 使用独立且已注册的 `itick-rest` Authority，不再缺失 Authority，也不再用浮点格式化值冒充源价格。`itick-rest` 注册迁移和精度回归测试已补齐。
 
 > **2026-07-21 人工重试审计原子性修复：** 通用 Settlement Instruction 人工重试已改为事务内行锁目标指令，只有 FAILED/MANUAL_REVIEW 能转回 PENDING；状态重置与 `SETTLEMENT_INSTRUCTION_RETRY_REQUESTED` 审计事件在同一数据库事务提交，事件插入失败会回滚状态，避免资金任务已重开但缺少操作人和原因审计。秒合约因尚未使用 Settlement Instruction，仍需独立的持久化补偿事实。
 
@@ -409,7 +409,7 @@ FREEZING
 仍未通过的验收项：
 
 - 秒合约已改为通过 iTick RPC 读取 MySQL 永久归档的历史 `FINAL_QUOTE`，且 WebSocket 源价格保留原始十进制文本；但该档案仍是原始 Quote，不是专用 Price Engine 结算价；
-- iTick WebSocket 与 REST 预热/断线补行情均保留原始十进制文本；两者分别使用已注册的 `market-ws`、`market-rest` Authority；
+- iTick WebSocket 与 REST 预热/断线补行情均保留原始十进制文本；两者分别使用已注册的 `itick-ws`、`itick-rest` Authority；
 - 起始价和到期价仍是原始 Quote 中位数，不是版本化的异常剔除、成分加权或专用秒合约结算价算法；
 - 任务错过结算窗口时会退款，虽不会直接判输，但仍需明确运营补偿、批量对账和异常率告警标准。
 
@@ -518,15 +518,15 @@ FREEZING
 
 - Quote/Tick 缓存拒绝旧时间戳覆盖新数据；
 - iTick WebSocket 解码时保留源报文原始十进制价格文本，结算快照不再从 `float64` 反向格式化；
-- iTick 以 `authority=market-ws` 发布不可变 `FINAL_QUOTE`，按品类、市场、Symbol 和来源时间建立历史索引；
-- iTick 将快照幂等写入 `t_market_authoritative_snapshot`，Redis 只作为 365 天加速副本；
-- `t_market_authority_registry` 注册生产方、启停状态和允许发布的快照类型；未注册、禁用或越权类型在生产和查询时都会被拒绝；
+- iTick 以 `authority=itick-ws` 发布不可变 `FINAL_QUOTE`，按品类、市场、Symbol 和来源时间建立历史索引；
+- iTick 将快照幂等写入 `t_itick_authoritative_snapshot`，Redis 只作为 365 天加速副本；
+- `t_itick_authority_registry` 注册生产方、启停状态和允许发布的快照类型；未注册、禁用或越权类型在生产和查询时都会被拒绝；
 - iTick App 提供按 Authority、产品、业务目标时刻和最大回看窗口查询永久档案的 RPC；Trade 只通过该 RPC 获取结算输入；
 - 历史查询强制指定 `snapshot_kind`，不同类型使用包含 Kind 的唯一键和索引，不会在同一产品/时刻混读 Quote、Mark、Index 或 Funding；
 - iTick 生成模型的唯一查询方法和缓存键同样包含 `snapshot_kind`，避免模型层重新引入跨 Kind 误读；
 - iTick 源档案允许 30 位小数，Trade 事实表当前只允许 18 位小数；跨服务边界执行显式精度校验，超限失败并阻断结算，不允许数据库静默舍入；
 - 永久档案先于 Redis 和实时 Quote 缓存写入；MySQL 失败时不会发布仅存在缓存的“权威”数据；
-- 权威快照和 `t_market_snapshot_outbox` 在同一 MySQL 事务写入；WebSocket 热路径不再等待 Redis 或 Option RPC；
+- 权威快照和 `t_itick_snapshot_outbox` 在同一 MySQL 事务写入；WebSocket 热路径不再等待 Redis 或 Option RPC；
 - Snapshot Outbox 使用原子领取、60 秒过期租约、指数退避和人工终态；Redis 发布失败会从 MySQL 永久事实自动重建，迁移会为历史快照补建修复任务；
 - 重复写入只有不可变身份完全一致时才视为幂等，同一 Authority/Kind/产品/时刻/修订号出现不同内容会明确报冲突，不再被 `INSERT IGNORE` 静默吞掉；
 - 写入永久档案前校验 `DECIMAL(65,30)` 边界，超过 35 位整数或 30 位小数的源价格会被明确拒绝，不允许数据库静默舍入后参与结算；

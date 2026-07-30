@@ -18,7 +18,7 @@ MarketRpc:
     - 127.0.0.1:2379
     Key: market.rpc
 
-MarketAuthority: market-ws
+MarketAuthority: itick-ws
 PriceEngineAuthority: price-engine
 
 DelayQueue:

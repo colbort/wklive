@@ -50,7 +50,7 @@ func (m *defaultTMarketTenantProductModel) FindPage(ctx context.Context, filter 
 
 	where := builder.Where()
 	args := builder.Args()
-	fromSql := fmt.Sprintf("%s AS tp JOIN `t_market_product` AS p ON p.id = tp.product_id", m.table)
+	fromSql := fmt.Sprintf("%s AS tp JOIN `t_itick_product` AS p ON p.id = tp.product_id", m.table)
 
 	// ---- total ----
 	var total int64

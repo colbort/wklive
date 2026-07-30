@@ -310,9 +310,9 @@ SystemRpc:
     - "127.0.0.1:2379"
     Key: system.rpc
 
-Market:
-  ApiUrl: https://api.market.org
-  WSUrl: wss://api.market.org
+Itick:
+  ApiUrl: https://api.itick.org
+  WSUrl: wss://api.itick.org
   Token: 5093272afb5241dfa3fd5505937289804447d9d6941547b2ab45929024c0fd4b
 
 Mongo:

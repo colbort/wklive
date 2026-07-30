@@ -54,7 +54,7 @@ func (m *defaultTMarketProductModel) FindActivePage(ctx context.Context, cursor,
 	query := fmt.Sprintf(`SELECT %s FROM %s AS p
 		WHERE p.id > ? AND p.enabled = 1
 		AND EXISTS (
-			SELECT 1 FROM t_market_tenant_product AS tp
+			SELECT 1 FROM t_itick_tenant_product AS tp
 			WHERE tp.product_id = p.id AND tp.enabled = 1
 		)
 		ORDER BY p.id ASC LIMIT ?`, qualifyRows("p", tMarketProductRows), m.table)

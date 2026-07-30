@@ -65,7 +65,7 @@ type (
 func newTMarketKlineSyncProgressModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketKlineSyncProgressModel {
 	return &defaultTMarketKlineSyncProgressModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
-		table:      "`t_market_kline_sync_progress`",
+		table:      "`t_itick_kline_sync_progress`",
 	}
 }
 

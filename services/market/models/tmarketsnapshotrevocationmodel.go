@@ -34,6 +34,6 @@ func (m *defaultTMarketSnapshotRevocationModel) FindAfterID(ctx context.Context,
 		limit = 500
 	}
 	var rows []*TMarketSnapshotRevocation
-	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tMarketSnapshotRevocationRows+" FROM t_market_snapshot_revocation WHERE id>? ORDER BY id LIMIT ?", afterID, limit)
+	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tMarketSnapshotRevocationRows+" FROM t_itick_snapshot_revocation WHERE id>? ORDER BY id LIMIT ?", afterID, limit)
 	return rows, err
 }

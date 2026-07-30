@@ -70,7 +70,7 @@ type (
 func newTMarketProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketProductModel {
 	return &defaultTMarketProductModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
-		table:      "`t_market_product`",
+		table:      "`t_itick_product`",
 	}
 }
 

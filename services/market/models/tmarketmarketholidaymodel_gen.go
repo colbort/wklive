@@ -56,7 +56,7 @@ type (
 func newTMarketMarketHolidayModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketMarketHolidayModel {
 	return &defaultTMarketMarketHolidayModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
-		table:      "`t_market_market_holiday`",
+		table:      "`t_itick_market_holiday`",
 	}
 }
 

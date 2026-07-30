@@ -6,12 +6,12 @@ SET @dbinit_exists := (
   SELECT COUNT(*)
   FROM information_schema.columns
   WHERE table_schema = DATABASE()
-    AND table_name = 't_market_price_formula'
+    AND table_name = 't_itick_price_formula'
     AND column_name = 'min_input_count'
 );
 SET @dbinit_sql := IF(
   @dbinit_exists = 0,
-  'ALTER TABLE `t_market_price_formula` ADD COLUMN `min_input_count` INT NOT NULL DEFAULT 1 AFTER `max_deviation_bps`',
+  'ALTER TABLE `t_itick_price_formula` ADD COLUMN `min_input_count` INT NOT NULL DEFAULT 1 AFTER `max_deviation_bps`',
   'SELECT 1'
 );
 PREPARE dbinit_stmt FROM @dbinit_sql;
@@ -22,20 +22,20 @@ SET @dbinit_exists := (
   SELECT COUNT(*)
   FROM information_schema.table_constraints
   WHERE constraint_schema = DATABASE()
-    AND table_name = 't_market_price_formula'
+    AND table_name = 't_itick_price_formula'
     AND constraint_name = 'chk_price_formula'
     AND constraint_type = 'CHECK'
 );
 SET @dbinit_sql := IF(
   @dbinit_exists > 0,
-  'ALTER TABLE `t_market_price_formula` DROP CHECK `chk_price_formula`',
+  'ALTER TABLE `t_itick_price_formula` DROP CHECK `chk_price_formula`',
   'SELECT 1'
 );
 PREPARE dbinit_stmt FROM @dbinit_sql;
 EXECUTE dbinit_stmt;
 DEALLOCATE PREPARE dbinit_stmt;
 
-ALTER TABLE `t_market_price_formula`
+ALTER TABLE `t_itick_price_formula`
   ADD CONSTRAINT `chk_price_formula`
   CHECK (
     `snapshot_kind` IN ('MARK','INDEX','FUNDING','DELIVERY')

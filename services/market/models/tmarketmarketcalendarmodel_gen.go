@@ -59,7 +59,7 @@ type (
 func newTMarketMarketCalendarModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketMarketCalendarModel {
 	return &defaultTMarketMarketCalendarModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
-		table:      "`t_market_market_calendar`",
+		table:      "`t_itick_market_calendar`",
 	}
 }
 
