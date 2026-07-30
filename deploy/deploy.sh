@@ -37,10 +37,11 @@ docker_free_kb() {
 }
 
 check_docker_disk() {
-  minimum_free_kb="${DOCKER_MIN_FREE_KB:-4194304}"
+  minimum_free_kb="${1:-${DOCKER_MIN_FREE_KB:-4194304}}"
+  minimum_name="${2:-DOCKER_MIN_FREE_KB}"
   case "$minimum_free_kb" in
     ''|*[!0-9]*|0)
-      echo "invalid DOCKER_MIN_FREE_KB: expected a positive integer" >&2
+      echo "invalid ${minimum_name}: expected a positive integer" >&2
       return 1
       ;;
   esac
@@ -159,7 +160,7 @@ case "$command" in
     docker compose -f "$COMPOSE_FILE" run --build --rm kafka-init
     ;;
   contract-readiness)
-    check_docker_disk
+    check_docker_disk "${DOCKER_READINESS_MIN_FREE_KB:-2097152}" "DOCKER_READINESS_MIN_FREE_KB"
     "$SCRIPT_DIR/contract-readiness.sh" "$@"
     ;;
   *)

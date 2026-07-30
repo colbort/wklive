@@ -106,6 +106,8 @@ Docker 虚拟盘，默认至少保留 4 GiB，防止构建过程挤占 MySQL/Mon
 ./deploy.sh disk-check
 # 如宿主机容量规划要求更高，可按 KiB 调大，但不能设为 0
 DOCKER_MIN_FREE_KB=8388608 ./deploy.sh disk-check
+# 只调整合约生产门禁检查；默认 2 GiB，不影响构建/部署的 4 GiB 门槛
+DOCKER_READINESS_MIN_FREE_KB=3145728 ./deploy.sh contract-readiness
 ```
 
 空间不足时命令会在构建前失败，不会自动删除数据库卷。`up` 结束后只清理带
@@ -124,7 +126,9 @@ DOCKER_MIN_FREE_KB=8388608 ./deploy.sh disk-check
 ```bash
 cp production-readiness.env.example production-readiness.env
 # 填写生产来源、参数、审批人和演练报告的绝对路径
+# 此命令使用独立的 2 GiB 磁盘保留门槛；构建/部署仍为 4 GiB
 ./deploy.sh contract-readiness
+# 必要时可按 KiB 覆盖：DOCKER_READINESS_MIN_FREE_KB=3145728 ./deploy.sh contract-readiness
 ```
 
 如果声明的全部行情 Authority 都是无需凭据的公开 REST 端点，可设置

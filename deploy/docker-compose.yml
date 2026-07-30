@@ -466,6 +466,8 @@ services:
       <<: *go-build
       args:
         SERVICE_DIR: admin-api
+    volumes:
+      - ./data/admin/avatars/:/app/avatars/
     command: ["-etcd", "etcd:2379"]
     secrets:
       - operational_alert_webhook
