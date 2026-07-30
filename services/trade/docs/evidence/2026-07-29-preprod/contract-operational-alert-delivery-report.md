@@ -137,8 +137,8 @@ Admin WebSocket 是在线后台的尽力实时通道，不提供离线值班确�
 - `common/alert`：领域校验、接口调用、组合器全通道尝试及多错误汇总；
 - `common/alert/adminnotify`：Admin Event 转换、恢复级别和发布失败；
 - `common/alert.DeliveryTracker`：首次、失败重试、内容变化、30 分钟提醒、恢复重试；
-- `services/market/internal/priceengine`：结构化缺源错误与既有计算回归；
-- `services/market/internal/tasks`：Price/Outbox 事件及稳定指纹；
+- `services/itick/internal/priceengine`：结构化缺源错误与既有计算回归；
+- `services/itick/internal/tasks`：Price/Outbox 事件及稳定指纹；
 - `services/trade/internal/logic/task`：对账告警投递与预约释放；
 - `admin-api/internal/ws`：事件权限、租户隔离、系统级告警和 Origin 策略；
 - `admin-api/internal/handler/ws`：固定子协议令牌解析、查询参数令牌拒绝；

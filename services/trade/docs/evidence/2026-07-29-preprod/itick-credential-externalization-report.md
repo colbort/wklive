@@ -3,7 +3,7 @@
 ## 1. 结论
 
 2026-07-29 将 iTick Token 从受版本控制的
-`services/market/etc/market.yaml` 移出。YAML 现在只保留
+`services/itick/etc/itick.yaml` 移出。YAML 现在只保留
 `__ITICK_TOKEN__` 占位符；Deploy 使用 Docker Secret
 `/run/secrets/itick_token`，由 `config-seed` 在写入 Etcd 前注入。
 
@@ -31,7 +31,7 @@
 
 关键文件 SHA-256：
 
-- `services/market/etc/market.yaml`：
+- `services/itick/etc/itick.yaml`：
   `b9d14ad2f73c8263ad6e4a6baf91caedaf245e2911452329f5abab0a52ae2e6e`
 - `deploy/seed-etcd.sh`：
   `dc9c1e9f75a6b35f6eb93144f7ad1474d7a1d20282b9d8cd8b3468fff5282f7e`
@@ -46,7 +46,7 @@
 - `config-seed` 镜像构建成功；
 - 17 个 Etcd 配置键全部写入成功；
 - Etcd 中 iTick 配置不含占位符且 Token 字段非空；
-- 重启 `market-rpc` 后 Healthcheck 为 `healthy`；
+- 重启 `itick-rpc` 后 Healthcheck 为 `healthy`；
 - 最近两分钟持续写入 `itick-ws FINAL_QUOTE` 以及
   `price-engine INDEX/MARK/FUNDING`；
 - 最近三分钟未出现 panic、fatal、鉴权失败或 Price Engine 执行失败日志。

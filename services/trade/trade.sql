@@ -1011,7 +1011,18 @@ CREATE TABLE `t_contract_funding_batch` (
   UNIQUE KEY `uk_tenant_batch_no` (`tenant_id`, `batch_no`),
   UNIQUE KEY `uk_symbol_settlement_time` (`tenant_id`, `symbol_id`, `settlement_time`),
   KEY `idx_funding_batch_status` (`tenant_id`, `status`, `settlement_time`),
-  CONSTRAINT `chk_funding_batch` CHECK (`mark_price` > 0 AND `index_price` >= 0 AND `settlement_time` > 0 AND `status` BETWEEN 1 AND 5 AND `total_positions` >= 0 AND `settled_positions` >= 0 AND `settled_positions` <= `total_positions` AND `version` >= 0)
+  CONSTRAINT `chk_funding_batch` CHECK (
+    (
+      `mark_price` > 0
+      OR (
+        `total_positions` = 0 AND `status` = 3 AND `mark_price` = 0 AND
+        `index_price` = 0 AND `funding_rate` = 0 AND
+        `price_source` = 'NO_POSITION_HISTORY' AND `formula_version` = 'no-position-v1'
+      )
+    ) AND `index_price` >= 0 AND `settlement_time` > 0 AND
+    `status` BETWEEN 1 AND 5 AND `total_positions` >= 0 AND
+    `settled_positions` >= 0 AND `settled_positions` <= `total_positions` AND `version` >= 0
+  )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='永续合约资金费锁定与执行批次';
 
 DROP TABLE IF EXISTS `t_contract_funding_difference_account`;

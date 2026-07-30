@@ -12,7 +12,7 @@ import (
 	"github.com/zeromicro/go-zero/core/stringx"
 )
 
-var _ TItickProductModel = (*customTMarketProductModel)(nil)
+var _ TItickProductModel = (*customTItickProductModel)(nil)
 
 type (
 	MarketProductPageFilter struct {
@@ -26,7 +26,7 @@ type (
 	}
 
 	// TItickProductModel is an interface to be customized, add more methods here,
-	// and implement the added methods in customTMarketProductModel.
+	// and implement the added methods in customTItickProductModel.
 	TItickProductModel interface {
 		tItickProductModel
 		FindPage(ctx context.Context, filter MarketProductPageFilter, cursor int64, limit int64) ([]*TItickProduct, int64, error)
@@ -35,21 +35,21 @@ type (
 		Upsert(ctx context.Context, data *TItickProduct) (sql.Result, error)
 	}
 
-	customTMarketProductModel struct {
-		*defaultTMarketProductModel
+	customTItickProductModel struct {
+		*defaultTItickProductModel
 	}
 )
 
-// NewTMarketProductModel returns a model for the database table.
-func NewTMarketProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickProductModel {
-	return &customTMarketProductModel{
-		defaultTMarketProductModel: newTMarketProductModel(conn, c, opts...),
+// NewTItickProductModel returns a model for the database table.
+func NewTItickProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickProductModel {
+	return &customTItickProductModel{
+		defaultTItickProductModel: newTItickProductModel(conn, c, opts...),
 	}
 }
 
 // FindActivePage returns enabled products referenced by at least one enabled
 // tenant. The EXISTS predicate naturally deduplicates products across tenants.
-func (m *defaultTMarketProductModel) FindActivePage(ctx context.Context, cursor, limit int64) ([]*TItickProduct, error) {
+func (m *defaultTItickProductModel) FindActivePage(ctx context.Context, cursor, limit int64) ([]*TItickProduct, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	query := fmt.Sprintf(`SELECT %s FROM %s AS p
 		WHERE p.id > ? AND p.enabled = 1
@@ -65,7 +65,7 @@ func (m *defaultTMarketProductModel) FindActivePage(ctx context.Context, cursor,
 	return list, nil
 }
 
-func (m *defaultTMarketProductModel) FindPage(ctx context.Context, filter MarketProductPageFilter, cursor int64, limit int64) ([]*TItickProduct, int64, error) {
+func (m *defaultTItickProductModel) FindPage(ctx context.Context, filter MarketProductPageFilter, cursor int64, limit int64) ([]*TItickProduct, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	queryLimit := limit + 1
 
@@ -124,7 +124,7 @@ func (m *defaultTMarketProductModel) FindPage(ctx context.Context, filter Market
 	return list, 0, nil
 }
 
-func (m *defaultTMarketProductModel) FindByIds(ctx context.Context, ids []int64) ([]*TItickProduct, error) {
+func (m *defaultTItickProductModel) FindByIds(ctx context.Context, ids []int64) ([]*TItickProduct, error) {
 	if len(ids) == 0 {
 		return []*TItickProduct{}, nil
 	}
@@ -147,12 +147,12 @@ func (m *defaultTMarketProductModel) FindByIds(ctx context.Context, ids []int64)
 	return list, nil
 }
 
-func (m *defaultTMarketProductModel) Upsert(ctx context.Context, data *TItickProduct) (sql.Result, error) {
+func (m *defaultTItickProductModel) Upsert(ctx context.Context, data *TItickProduct) (sql.Result, error) {
 	tItickProductCategoryTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v",
-		cacheTMarketProductCategoryTypeMarketSymbolPrefix,
+		cacheTItickProductCategoryTypeMarketSymbolPrefix,
 		data.CategoryType, data.Market, data.Symbol,
 	)
-	tItickProductIdKey := fmt.Sprintf("%s%v", cacheTMarketProductIdPrefix, data.Id)
+	tItickProductIdKey := fmt.Sprintf("%s%v", cacheTItickProductIdPrefix, data.Id)
 
 	feilds := strings.Join(stringx.Remove(tItickProductFieldNames, "`id`"), ",")
 

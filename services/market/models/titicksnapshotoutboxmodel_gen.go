@@ -23,8 +23,8 @@ var (
 	tItickSnapshotOutboxRowsExpectAutoSet   = strings.Join(stringx.Remove(tItickSnapshotOutboxFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tItickSnapshotOutboxRowsWithPlaceHolder = strings.Join(stringx.Remove(tItickSnapshotOutboxFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTMarketSnapshotOutboxIdPrefix         = "cache:tItickSnapshotOutbox:id:"
-	cacheTMarketSnapshotOutboxSnapshotIdPrefix = "cache:tItickSnapshotOutbox:snapshotId:"
+	cacheTItickSnapshotOutboxIdPrefix         = "cache:tItickSnapshotOutbox:id:"
+	cacheTItickSnapshotOutboxSnapshotIdPrefix = "cache:tItickSnapshotOutbox:snapshotId:"
 )
 
 type (
@@ -36,7 +36,7 @@ type (
 		Delete(ctx context.Context, id int64) error
 	}
 
-	defaultTMarketSnapshotOutboxModel struct {
+	defaultTItickSnapshotOutboxModel struct {
 		sqlc.CachedConn
 		table string
 	}
@@ -56,21 +56,21 @@ type (
 	}
 )
 
-func newTMarketSnapshotOutboxModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketSnapshotOutboxModel {
-	return &defaultTMarketSnapshotOutboxModel{
+func newTItickSnapshotOutboxModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTItickSnapshotOutboxModel {
+	return &defaultTItickSnapshotOutboxModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
 		table:      "`t_itick_snapshot_outbox`",
 	}
 }
 
-func (m *defaultTMarketSnapshotOutboxModel) Delete(ctx context.Context, id int64) error {
+func (m *defaultTItickSnapshotOutboxModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	tItickSnapshotOutboxIdKey := fmt.Sprintf("%s%v", cacheTMarketSnapshotOutboxIdPrefix, id)
-	tItickSnapshotOutboxSnapshotIdKey := fmt.Sprintf("%s%v", cacheTMarketSnapshotOutboxSnapshotIdPrefix, data.SnapshotId)
+	tItickSnapshotOutboxIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotOutboxIdPrefix, id)
+	tItickSnapshotOutboxSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotOutboxSnapshotIdPrefix, data.SnapshotId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
@@ -78,8 +78,8 @@ func (m *defaultTMarketSnapshotOutboxModel) Delete(ctx context.Context, id int64
 	return err
 }
 
-func (m *defaultTMarketSnapshotOutboxModel) FindOne(ctx context.Context, id int64) (*TItickSnapshotOutbox, error) {
-	tItickSnapshotOutboxIdKey := fmt.Sprintf("%s%v", cacheTMarketSnapshotOutboxIdPrefix, id)
+func (m *defaultTItickSnapshotOutboxModel) FindOne(ctx context.Context, id int64) (*TItickSnapshotOutbox, error) {
+	tItickSnapshotOutboxIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotOutboxIdPrefix, id)
 	var resp TItickSnapshotOutbox
 	err := m.QueryRowCtx(ctx, &resp, tItickSnapshotOutboxIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
 		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickSnapshotOutboxRows, m.table)
@@ -95,8 +95,8 @@ func (m *defaultTMarketSnapshotOutboxModel) FindOne(ctx context.Context, id int6
 	}
 }
 
-func (m *defaultTMarketSnapshotOutboxModel) FindOneBySnapshotId(ctx context.Context, snapshotId string) (*TItickSnapshotOutbox, error) {
-	tItickSnapshotOutboxSnapshotIdKey := fmt.Sprintf("%s%v", cacheTMarketSnapshotOutboxSnapshotIdPrefix, snapshotId)
+func (m *defaultTItickSnapshotOutboxModel) FindOneBySnapshotId(ctx context.Context, snapshotId string) (*TItickSnapshotOutbox, error) {
+	tItickSnapshotOutboxSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotOutboxSnapshotIdPrefix, snapshotId)
 	var resp TItickSnapshotOutbox
 	err := m.QueryRowIndexCtx(ctx, &resp, tItickSnapshotOutboxSnapshotIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
 		query := fmt.Sprintf("select %s from %s where `snapshot_id` = ? limit 1", tItickSnapshotOutboxRows, m.table)
@@ -115,9 +115,9 @@ func (m *defaultTMarketSnapshotOutboxModel) FindOneBySnapshotId(ctx context.Cont
 	}
 }
 
-func (m *defaultTMarketSnapshotOutboxModel) Insert(ctx context.Context, data *TItickSnapshotOutbox) (sql.Result, error) {
-	tItickSnapshotOutboxIdKey := fmt.Sprintf("%s%v", cacheTMarketSnapshotOutboxIdPrefix, data.Id)
-	tItickSnapshotOutboxSnapshotIdKey := fmt.Sprintf("%s%v", cacheTMarketSnapshotOutboxSnapshotIdPrefix, data.SnapshotId)
+func (m *defaultTItickSnapshotOutboxModel) Insert(ctx context.Context, data *TItickSnapshotOutbox) (sql.Result, error) {
+	tItickSnapshotOutboxIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotOutboxIdPrefix, data.Id)
+	tItickSnapshotOutboxSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotOutboxSnapshotIdPrefix, data.SnapshotId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickSnapshotOutboxRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.SnapshotId, data.Payload, data.Status, data.RetryCount, data.NextRetryAt, data.RedisPublishedAt, data.EventPublishedAt, data.LastErrorMsg, data.CreateTimes, data.UpdateTimes)
@@ -125,14 +125,14 @@ func (m *defaultTMarketSnapshotOutboxModel) Insert(ctx context.Context, data *TI
 	return ret, err
 }
 
-func (m *defaultTMarketSnapshotOutboxModel) Update(ctx context.Context, newData *TItickSnapshotOutbox) error {
+func (m *defaultTItickSnapshotOutboxModel) Update(ctx context.Context, newData *TItickSnapshotOutbox) error {
 	data, err := m.FindOne(ctx, newData.Id)
 	if err != nil {
 		return err
 	}
 
-	tItickSnapshotOutboxIdKey := fmt.Sprintf("%s%v", cacheTMarketSnapshotOutboxIdPrefix, data.Id)
-	tItickSnapshotOutboxSnapshotIdKey := fmt.Sprintf("%s%v", cacheTMarketSnapshotOutboxSnapshotIdPrefix, data.SnapshotId)
+	tItickSnapshotOutboxIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotOutboxIdPrefix, data.Id)
+	tItickSnapshotOutboxSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotOutboxSnapshotIdPrefix, data.SnapshotId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickSnapshotOutboxRowsWithPlaceHolder)
 		return conn.ExecCtx(ctx, query, newData.SnapshotId, newData.Payload, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.RedisPublishedAt, newData.EventPublishedAt, newData.LastErrorMsg, newData.CreateTimes, newData.UpdateTimes, newData.Id)
@@ -140,15 +140,15 @@ func (m *defaultTMarketSnapshotOutboxModel) Update(ctx context.Context, newData 
 	return err
 }
 
-func (m *defaultTMarketSnapshotOutboxModel) formatPrimary(primary any) string {
-	return fmt.Sprintf("%s%v", cacheTMarketSnapshotOutboxIdPrefix, primary)
+func (m *defaultTItickSnapshotOutboxModel) formatPrimary(primary any) string {
+	return fmt.Sprintf("%s%v", cacheTItickSnapshotOutboxIdPrefix, primary)
 }
 
-func (m *defaultTMarketSnapshotOutboxModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
+func (m *defaultTItickSnapshotOutboxModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickSnapshotOutboxRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
-func (m *defaultTMarketSnapshotOutboxModel) tableName() string {
+func (m *defaultTItickSnapshotOutboxModel) tableName() string {
 	return m.table
 }

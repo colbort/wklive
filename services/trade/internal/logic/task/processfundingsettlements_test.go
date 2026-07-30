@@ -198,6 +198,34 @@ func TestFundingPositionsFromHistoryUsesSettlementFacts(t *testing.T) {
 	}
 }
 
+func TestNewNoPositionFundingBatchIsExplicitAndNonMonetary(t *testing.T) {
+	contract := &models.TTradeSymbolContract{TenantId: 7, SymbolId: 11}
+	const (
+		settlementTime = int64(1785340800000)
+		now            = int64(1785390000000)
+	)
+
+	batch := newNoPositionFundingBatch(contract, settlementTime, now)
+	if batch.TenantId != contract.TenantId ||
+		batch.SymbolId != contract.SymbolId ||
+		batch.BatchNo != "FND-11-1785340800000" ||
+		batch.SettlementTime != settlementTime {
+		t.Fatalf("unexpected empty batch identity: %+v", batch)
+	}
+	if batch.Status != int64(trade.FundingBatchStatus_FUNDING_BATCH_STATUS_COMPLETED) ||
+		batch.TotalPositions != 0 ||
+		batch.SettledPositions != 0 {
+		t.Fatalf("empty batch did not complete without positions: %+v", batch)
+	}
+	if !batch.MarkPrice.IsZero() || !batch.IndexPrice.IsZero() || !batch.FundingRate.IsZero() {
+		t.Fatalf("empty batch invented monetary inputs: %+v", batch)
+	}
+	if batch.PriceSource != noPositionFundingPriceSource ||
+		batch.FormulaVersion != noPositionFundingFormulaVersion {
+		t.Fatalf("empty batch is not explicitly auditable: %+v", batch)
+	}
+}
+
 func TestFundingInputIdentityBindsAllPriceEngineFacts(t *testing.T) {
 	mark := &marketQuoteSnapshot{SnapshotID: "mark-a"}
 	index := &marketQuoteSnapshot{SnapshotID: "index-a"}

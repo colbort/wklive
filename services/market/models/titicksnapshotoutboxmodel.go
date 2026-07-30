@@ -10,7 +10,7 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TItickSnapshotOutboxModel = (*customTMarketSnapshotOutboxModel)(nil)
+var _ TItickSnapshotOutboxModel = (*customTItickSnapshotOutboxModel)(nil)
 
 type (
 	SnapshotOutboxHealth struct {
@@ -22,7 +22,7 @@ type (
 	}
 
 	// TItickSnapshotOutboxModel is an interface to be customized, add more methods here,
-	// and implement the added methods in customTMarketSnapshotOutboxModel.
+	// and implement the added methods in customTItickSnapshotOutboxModel.
 	TItickSnapshotOutboxModel interface {
 		tItickSnapshotOutboxModel
 		FindPending(context.Context, int64, int64) ([]*TItickSnapshotOutbox, error)
@@ -38,19 +38,19 @@ type (
 		DeleteSucceededBefore(context.Context, int64, int64) (int64, error)
 	}
 
-	customTMarketSnapshotOutboxModel struct {
-		*defaultTMarketSnapshotOutboxModel
+	customTItickSnapshotOutboxModel struct {
+		*defaultTItickSnapshotOutboxModel
 	}
 )
 
-// NewTMarketSnapshotOutboxModel returns a model for the database table.
-func NewTMarketSnapshotOutboxModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickSnapshotOutboxModel {
-	return &customTMarketSnapshotOutboxModel{
-		defaultTMarketSnapshotOutboxModel: newTMarketSnapshotOutboxModel(conn, c, opts...),
+// NewTItickSnapshotOutboxModel returns a model for the database table.
+func NewTItickSnapshotOutboxModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickSnapshotOutboxModel {
+	return &customTItickSnapshotOutboxModel{
+		defaultTItickSnapshotOutboxModel: newTItickSnapshotOutboxModel(conn, c, opts...),
 	}
 }
 
-func (m *defaultTMarketSnapshotOutboxModel) DeleteSucceededBefore(ctx context.Context, cutoff, limit int64) (int64, error) {
+func (m *defaultTItickSnapshotOutboxModel) DeleteSucceededBefore(ctx context.Context, cutoff, limit int64) (int64, error) {
 	if limit <= 0 || limit > 10000 {
 		limit = 5000
 	}
@@ -62,12 +62,12 @@ func (m *defaultTMarketSnapshotOutboxModel) DeleteSucceededBefore(ctx context.Co
 	return result.RowsAffected()
 }
 
-func (m *defaultTMarketSnapshotOutboxModel) MarkRedisPublished(ctx context.Context, id, now int64) error {
+func (m *defaultTItickSnapshotOutboxModel) MarkRedisPublished(ctx context.Context, id, now int64) error {
 	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET redis_published_at=CASE WHEN redis_published_at=0 THEN ? ELSE redis_published_at END,update_times=? WHERE id=? AND status=2", now, now, id)
 	return requireOneOutboxRow(result, err)
 }
 
-func (m *defaultTMarketSnapshotOutboxModel) MarkEventPublished(ctx context.Context, id, now int64) error {
+func (m *defaultTItickSnapshotOutboxModel) MarkEventPublished(ctx context.Context, id, now int64) error {
 	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET event_published_at=CASE WHEN event_published_at=0 THEN ? ELSE event_published_at END,update_times=? WHERE id=? AND status=2", now, now, id)
 	return requireOneOutboxRow(result, err)
 }
@@ -76,7 +76,7 @@ func (m *defaultTMarketSnapshotOutboxModel) MarkEventPublished(ctx context.Conte
 // stage and closes the outbox row. A retry can only reach this method after the
 // Redis checkpoint is durable, so success never hides an incomplete Redis
 // publication.
-func (m *defaultTMarketSnapshotOutboxModel) CompleteAfterEventPublished(ctx context.Context, id, now int64) error {
+func (m *defaultTItickSnapshotOutboxModel) CompleteAfterEventPublished(ctx context.Context, id, now int64) error {
 	result, err := m.ExecNoCacheCtx(ctx, `UPDATE t_itick_snapshot_outbox
 		SET event_published_at=CASE WHEN event_published_at=0 THEN ? ELSE event_published_at END,
 		    status=3,next_retry_at=0,last_error_msg='',update_times=?
@@ -98,7 +98,7 @@ func requireOneOutboxRow(result sql.Result, err error) error {
 	return nil
 }
 
-func (m *defaultTMarketSnapshotOutboxModel) Health(ctx context.Context) (*SnapshotOutboxHealth, error) {
+func (m *defaultTItickSnapshotOutboxModel) Health(ctx context.Context) (*SnapshotOutboxHealth, error) {
 	var rows []struct {
 		Status   int64 `db:"status"`
 		Count    int64 `db:"row_count"`
@@ -130,7 +130,7 @@ func (m *defaultTMarketSnapshotOutboxModel) Health(ctx context.Context) (*Snapsh
 	return &health, nil
 }
 
-func (m *defaultTMarketSnapshotOutboxModel) FindPage(ctx context.Context, status int64, snapshotID string, cursor, limit int64) ([]*TItickSnapshotOutbox, int64, error) {
+func (m *defaultTItickSnapshotOutboxModel) FindPage(ctx context.Context, status int64, snapshotID string, cursor, limit int64) ([]*TItickSnapshotOutbox, int64, error) {
 	if limit <= 0 || limit > 200 {
 		limit = 50
 	}
@@ -154,7 +154,7 @@ func (m *defaultTMarketSnapshotOutboxModel) FindPage(ctx context.Context, status
 	return rows, total, err
 }
 
-func (m *defaultTMarketSnapshotOutboxModel) RetryFailed(ctx context.Context, id, now int64) error {
+func (m *defaultTItickSnapshotOutboxModel) RetryFailed(ctx context.Context, id, now int64) error {
 	row, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -171,17 +171,17 @@ func (m *defaultTMarketSnapshotOutboxModel) RetryFailed(ctx context.Context, id,
 		return sql.ErrNoRows
 	}
 	return m.DelCacheCtx(ctx,
-		fmt.Sprintf("%s%v", cacheTMarketSnapshotOutboxIdPrefix, row.Id),
-		fmt.Sprintf("%s%v", cacheTMarketSnapshotOutboxSnapshotIdPrefix, row.SnapshotId),
+		fmt.Sprintf("%s%v", cacheTItickSnapshotOutboxIdPrefix, row.Id),
+		fmt.Sprintf("%s%v", cacheTItickSnapshotOutboxSnapshotIdPrefix, row.SnapshotId),
 	)
 }
 
-func (m *defaultTMarketSnapshotOutboxModel) FindPending(ctx context.Context, now, limit int64) ([]*TItickSnapshotOutbox, error) {
+func (m *defaultTItickSnapshotOutboxModel) FindPending(ctx context.Context, now, limit int64) ([]*TItickSnapshotOutbox, error) {
 	var rows []*TItickSnapshotOutbox
 	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tItickSnapshotOutboxRows+" FROM t_itick_snapshot_outbox WHERE ((status IN (1,4) AND next_retry_at<=?) OR (status=2 AND update_times<=?)) ORDER BY id LIMIT ?", now, now-60000, limit)
 	return rows, err
 }
-func (m *defaultTMarketSnapshotOutboxModel) Claim(ctx context.Context, id, now int64) (bool, error) {
+func (m *defaultTItickSnapshotOutboxModel) Claim(ctx context.Context, id, now int64) (bool, error) {
 	r, e := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET status=2,update_times=? WHERE id=? AND ((status IN (1,4) AND next_retry_at<=?) OR (status=2 AND update_times<=?))", now, id, now, now-60000)
 	if e != nil {
 		return false, e
@@ -189,11 +189,11 @@ func (m *defaultTMarketSnapshotOutboxModel) Claim(ctx context.Context, id, now i
 	n, e := r.RowsAffected()
 	return n == 1, e
 }
-func (m *defaultTMarketSnapshotOutboxModel) MarkSuccess(ctx context.Context, id, now int64) error {
+func (m *defaultTItickSnapshotOutboxModel) MarkSuccess(ctx context.Context, id, now int64) error {
 	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_snapshot_outbox SET status=3,next_retry_at=0,last_error_msg='',update_times=? WHERE id=? AND status=2 AND redis_published_at>0 AND event_published_at>0", now, id)
 	return requireOneOutboxRow(result, err)
 }
-func (m *defaultTMarketSnapshotOutboxModel) MarkFailure(ctx context.Context, id int64, msg string, now int64) error {
+func (m *defaultTItickSnapshotOutboxModel) MarkFailure(ctx context.Context, id int64, msg string, now int64) error {
 	var retries int64
 	if e := m.QueryRowNoCacheCtx(ctx, &retries, "SELECT retry_count FROM t_itick_snapshot_outbox WHERE id=?", id); e != nil {
 		return e

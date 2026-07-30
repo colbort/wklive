@@ -7,29 +7,29 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TItickSnapshotRevocationModel = (*customTMarketSnapshotRevocationModel)(nil)
+var _ TItickSnapshotRevocationModel = (*customTItickSnapshotRevocationModel)(nil)
 
 type (
 	// TItickSnapshotRevocationModel is an interface to be customized, add more methods here,
-	// and implement the added methods in customTMarketSnapshotRevocationModel.
+	// and implement the added methods in customTItickSnapshotRevocationModel.
 	TItickSnapshotRevocationModel interface {
 		tItickSnapshotRevocationModel
 		FindAfterID(context.Context, int64, int64) ([]*TItickSnapshotRevocation, error)
 	}
 
-	customTMarketSnapshotRevocationModel struct {
-		*defaultTMarketSnapshotRevocationModel
+	customTItickSnapshotRevocationModel struct {
+		*defaultTItickSnapshotRevocationModel
 	}
 )
 
-// NewTMarketSnapshotRevocationModel returns a model for the database table.
-func NewTMarketSnapshotRevocationModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickSnapshotRevocationModel {
-	return &customTMarketSnapshotRevocationModel{
-		defaultTMarketSnapshotRevocationModel: newTMarketSnapshotRevocationModel(conn, c, opts...),
+// NewTItickSnapshotRevocationModel returns a model for the database table.
+func NewTItickSnapshotRevocationModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickSnapshotRevocationModel {
+	return &customTItickSnapshotRevocationModel{
+		defaultTItickSnapshotRevocationModel: newTItickSnapshotRevocationModel(conn, c, opts...),
 	}
 }
 
-func (m *defaultTMarketSnapshotRevocationModel) FindAfterID(ctx context.Context, afterID, limit int64) ([]*TItickSnapshotRevocation, error) {
+func (m *defaultTItickSnapshotRevocationModel) FindAfterID(ctx context.Context, afterID, limit int64) ([]*TItickSnapshotRevocation, error) {
 	if limit <= 0 || limit > 1000 {
 		limit = 500
 	}

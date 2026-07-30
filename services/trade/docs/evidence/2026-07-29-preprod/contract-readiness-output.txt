@@ -47,7 +47,7 @@ PASS  production DR exercise report attached
 Live deploy checks
 PASS  Compose service mysql is healthy
 PASS  Compose service etcd is healthy
-PASS  Compose service market-rpc is healthy
+PASS  Compose service itick-rpc is healthy
 PASS  Compose service trade-rpc is healthy
 PASS  Compose service asset-rpc is healthy
 PASS  Compose service system-rpc is healthy

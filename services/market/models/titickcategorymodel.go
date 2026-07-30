@@ -9,7 +9,7 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TItickCategoryModel = (*customTMarketCategoryModel)(nil)
+var _ TItickCategoryModel = (*customTItickCategoryModel)(nil)
 
 type (
 	MarketCategoryPageFilter struct {
@@ -19,33 +19,33 @@ type (
 	}
 
 	// TItickCategoryModel is an interface to be customized, add more methods here,
-	// and implement the added methods in customTMarketCategoryModel.
+	// and implement the added methods in customTItickCategoryModel.
 	TItickCategoryModel interface {
 		tItickCategoryModel
 		FindAll(ctx context.Context) ([]*TItickCategory, error)
 		FindPage(ctx context.Context, filter MarketCategoryPageFilter, cursor int64, limit int64) ([]*TItickCategory, int64, error)
 	}
 
-	customTMarketCategoryModel struct {
-		*defaultTMarketCategoryModel
+	customTItickCategoryModel struct {
+		*defaultTItickCategoryModel
 	}
 )
 
-// NewTMarketCategoryModel returns a model for the database table.
-func NewTMarketCategoryModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickCategoryModel {
-	return &customTMarketCategoryModel{
-		defaultTMarketCategoryModel: newTMarketCategoryModel(conn, c, opts...),
+// NewTItickCategoryModel returns a model for the database table.
+func NewTItickCategoryModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickCategoryModel {
+	return &customTItickCategoryModel{
+		defaultTItickCategoryModel: newTItickCategoryModel(conn, c, opts...),
 	}
 }
 
-func (m *defaultTMarketCategoryModel) FindAll(ctx context.Context) ([]*TItickCategory, error) {
+func (m *defaultTItickCategoryModel) FindAll(ctx context.Context) ([]*TItickCategory, error) {
 	query := fmt.Sprintf("select %s from %s", tItickCategoryRows, m.table)
 	var resp []*TItickCategory
 	err := m.QueryRowsNoCacheCtx(ctx, &resp, query)
 	return resp, err
 }
 
-func (m *defaultTMarketCategoryModel) FindPage(ctx context.Context, filter MarketCategoryPageFilter, cursor int64, limit int64) ([]*TItickCategory, int64, error) {
+func (m *defaultTItickCategoryModel) FindPage(ctx context.Context, filter MarketCategoryPageFilter, cursor int64, limit int64) ([]*TItickCategory, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()

@@ -23,8 +23,8 @@ var (
 	tItickMarketCalendarRowsExpectAutoSet   = strings.Join(stringx.Remove(tItickMarketCalendarFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tItickMarketCalendarRowsWithPlaceHolder = strings.Join(stringx.Remove(tItickMarketCalendarFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTMarketMarketCalendarIdPrefix                         = "cache:tItickMarketCalendar:id:"
-	cacheTMarketMarketCalendarCategoryCodeMarketExchangePrefix = "cache:tItickMarketCalendar:categoryCode:market:exchange:"
+	cacheTItickMarketCalendarIdPrefix                         = "cache:tItickMarketCalendar:id:"
+	cacheTItickMarketCalendarCategoryCodeMarketExchangePrefix = "cache:tItickMarketCalendar:categoryCode:market:exchange:"
 )
 
 type (
@@ -36,7 +36,7 @@ type (
 		Delete(ctx context.Context, id int64) error
 	}
 
-	defaultTMarketMarketCalendarModel struct {
+	defaultTItickMarketCalendarModel struct {
 		sqlc.CachedConn
 		table string
 	}
@@ -56,21 +56,21 @@ type (
 	}
 )
 
-func newTMarketMarketCalendarModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketMarketCalendarModel {
-	return &defaultTMarketMarketCalendarModel{
+func newTItickMarketCalendarModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTItickMarketCalendarModel {
+	return &defaultTItickMarketCalendarModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
 		table:      "`t_itick_market_calendar`",
 	}
 }
 
-func (m *defaultTMarketMarketCalendarModel) Delete(ctx context.Context, id int64) error {
+func (m *defaultTItickMarketCalendarModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	tItickMarketCalendarCategoryCodeMarketExchangeKey := fmt.Sprintf("%s%v:%v:%v", cacheTMarketMarketCalendarCategoryCodeMarketExchangePrefix, data.CategoryCode, data.Market, data.Exchange)
-	tItickMarketCalendarIdKey := fmt.Sprintf("%s%v", cacheTMarketMarketCalendarIdPrefix, id)
+	tItickMarketCalendarCategoryCodeMarketExchangeKey := fmt.Sprintf("%s%v:%v:%v", cacheTItickMarketCalendarCategoryCodeMarketExchangePrefix, data.CategoryCode, data.Market, data.Exchange)
+	tItickMarketCalendarIdKey := fmt.Sprintf("%s%v", cacheTItickMarketCalendarIdPrefix, id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
@@ -78,8 +78,8 @@ func (m *defaultTMarketMarketCalendarModel) Delete(ctx context.Context, id int64
 	return err
 }
 
-func (m *defaultTMarketMarketCalendarModel) FindOne(ctx context.Context, id int64) (*TItickMarketCalendar, error) {
-	tItickMarketCalendarIdKey := fmt.Sprintf("%s%v", cacheTMarketMarketCalendarIdPrefix, id)
+func (m *defaultTItickMarketCalendarModel) FindOne(ctx context.Context, id int64) (*TItickMarketCalendar, error) {
+	tItickMarketCalendarIdKey := fmt.Sprintf("%s%v", cacheTItickMarketCalendarIdPrefix, id)
 	var resp TItickMarketCalendar
 	err := m.QueryRowCtx(ctx, &resp, tItickMarketCalendarIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
 		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickMarketCalendarRows, m.table)
@@ -95,8 +95,8 @@ func (m *defaultTMarketMarketCalendarModel) FindOne(ctx context.Context, id int6
 	}
 }
 
-func (m *defaultTMarketMarketCalendarModel) FindOneByCategoryCodeMarketExchange(ctx context.Context, categoryCode string, market string, exchange string) (*TItickMarketCalendar, error) {
-	tItickMarketCalendarCategoryCodeMarketExchangeKey := fmt.Sprintf("%s%v:%v:%v", cacheTMarketMarketCalendarCategoryCodeMarketExchangePrefix, categoryCode, market, exchange)
+func (m *defaultTItickMarketCalendarModel) FindOneByCategoryCodeMarketExchange(ctx context.Context, categoryCode string, market string, exchange string) (*TItickMarketCalendar, error) {
+	tItickMarketCalendarCategoryCodeMarketExchangeKey := fmt.Sprintf("%s%v:%v:%v", cacheTItickMarketCalendarCategoryCodeMarketExchangePrefix, categoryCode, market, exchange)
 	var resp TItickMarketCalendar
 	err := m.QueryRowIndexCtx(ctx, &resp, tItickMarketCalendarCategoryCodeMarketExchangeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
 		query := fmt.Sprintf("select %s from %s where `category_code` = ? and `market` = ? and `exchange` = ? limit 1", tItickMarketCalendarRows, m.table)
@@ -115,9 +115,9 @@ func (m *defaultTMarketMarketCalendarModel) FindOneByCategoryCodeMarketExchange(
 	}
 }
 
-func (m *defaultTMarketMarketCalendarModel) Insert(ctx context.Context, data *TItickMarketCalendar) (sql.Result, error) {
-	tItickMarketCalendarCategoryCodeMarketExchangeKey := fmt.Sprintf("%s%v:%v:%v", cacheTMarketMarketCalendarCategoryCodeMarketExchangePrefix, data.CategoryCode, data.Market, data.Exchange)
-	tItickMarketCalendarIdKey := fmt.Sprintf("%s%v", cacheTMarketMarketCalendarIdPrefix, data.Id)
+func (m *defaultTItickMarketCalendarModel) Insert(ctx context.Context, data *TItickMarketCalendar) (sql.Result, error) {
+	tItickMarketCalendarCategoryCodeMarketExchangeKey := fmt.Sprintf("%s%v:%v:%v", cacheTItickMarketCalendarCategoryCodeMarketExchangePrefix, data.CategoryCode, data.Market, data.Exchange)
+	tItickMarketCalendarIdKey := fmt.Sprintf("%s%v", cacheTItickMarketCalendarIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickMarketCalendarRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.CategoryCode, data.Market, data.Exchange, data.Timezone, data.TradingDayOffset, data.WeekStart, data.Enabled, data.Remark, data.CreateTimes, data.UpdateTimes)
@@ -125,14 +125,14 @@ func (m *defaultTMarketMarketCalendarModel) Insert(ctx context.Context, data *TI
 	return ret, err
 }
 
-func (m *defaultTMarketMarketCalendarModel) Update(ctx context.Context, newData *TItickMarketCalendar) error {
+func (m *defaultTItickMarketCalendarModel) Update(ctx context.Context, newData *TItickMarketCalendar) error {
 	data, err := m.FindOne(ctx, newData.Id)
 	if err != nil {
 		return err
 	}
 
-	tItickMarketCalendarCategoryCodeMarketExchangeKey := fmt.Sprintf("%s%v:%v:%v", cacheTMarketMarketCalendarCategoryCodeMarketExchangePrefix, data.CategoryCode, data.Market, data.Exchange)
-	tItickMarketCalendarIdKey := fmt.Sprintf("%s%v", cacheTMarketMarketCalendarIdPrefix, data.Id)
+	tItickMarketCalendarCategoryCodeMarketExchangeKey := fmt.Sprintf("%s%v:%v:%v", cacheTItickMarketCalendarCategoryCodeMarketExchangePrefix, data.CategoryCode, data.Market, data.Exchange)
+	tItickMarketCalendarIdKey := fmt.Sprintf("%s%v", cacheTItickMarketCalendarIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickMarketCalendarRowsWithPlaceHolder)
 		return conn.ExecCtx(ctx, query, newData.CategoryCode, newData.Market, newData.Exchange, newData.Timezone, newData.TradingDayOffset, newData.WeekStart, newData.Enabled, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
@@ -140,15 +140,15 @@ func (m *defaultTMarketMarketCalendarModel) Update(ctx context.Context, newData 
 	return err
 }
 
-func (m *defaultTMarketMarketCalendarModel) formatPrimary(primary any) string {
-	return fmt.Sprintf("%s%v", cacheTMarketMarketCalendarIdPrefix, primary)
+func (m *defaultTItickMarketCalendarModel) formatPrimary(primary any) string {
+	return fmt.Sprintf("%s%v", cacheTItickMarketCalendarIdPrefix, primary)
 }
 
-func (m *defaultTMarketMarketCalendarModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
+func (m *defaultTItickMarketCalendarModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickMarketCalendarRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
-func (m *defaultTMarketMarketCalendarModel) tableName() string {
+func (m *defaultTItickMarketCalendarModel) tableName() string {
 	return m.table
 }

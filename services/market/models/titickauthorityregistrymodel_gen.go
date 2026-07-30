@@ -23,8 +23,8 @@ var (
 	tItickAuthorityRegistryRowsExpectAutoSet   = strings.Join(stringx.Remove(tItickAuthorityRegistryFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tItickAuthorityRegistryRowsWithPlaceHolder = strings.Join(stringx.Remove(tItickAuthorityRegistryFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTMarketAuthorityRegistryIdPrefix        = "cache:tItickAuthorityRegistry:id:"
-	cacheTMarketAuthorityRegistryAuthorityPrefix = "cache:tItickAuthorityRegistry:authority:"
+	cacheTItickAuthorityRegistryIdPrefix        = "cache:tItickAuthorityRegistry:id:"
+	cacheTItickAuthorityRegistryAuthorityPrefix = "cache:tItickAuthorityRegistry:authority:"
 )
 
 type (
@@ -36,7 +36,7 @@ type (
 		Delete(ctx context.Context, id int64) error
 	}
 
-	defaultTMarketAuthorityRegistryModel struct {
+	defaultTItickAuthorityRegistryModel struct {
 		sqlc.CachedConn
 		table string
 	}
@@ -54,21 +54,21 @@ type (
 	}
 )
 
-func newTMarketAuthorityRegistryModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketAuthorityRegistryModel {
-	return &defaultTMarketAuthorityRegistryModel{
+func newTItickAuthorityRegistryModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTItickAuthorityRegistryModel {
+	return &defaultTItickAuthorityRegistryModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
 		table:      "`t_itick_authority_registry`",
 	}
 }
 
-func (m *defaultTMarketAuthorityRegistryModel) Delete(ctx context.Context, id int64) error {
+func (m *defaultTItickAuthorityRegistryModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	tItickAuthorityRegistryAuthorityKey := fmt.Sprintf("%s%v", cacheTMarketAuthorityRegistryAuthorityPrefix, data.Authority)
-	tItickAuthorityRegistryIdKey := fmt.Sprintf("%s%v", cacheTMarketAuthorityRegistryIdPrefix, id)
+	tItickAuthorityRegistryAuthorityKey := fmt.Sprintf("%s%v", cacheTItickAuthorityRegistryAuthorityPrefix, data.Authority)
+	tItickAuthorityRegistryIdKey := fmt.Sprintf("%s%v", cacheTItickAuthorityRegistryIdPrefix, id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
@@ -76,8 +76,8 @@ func (m *defaultTMarketAuthorityRegistryModel) Delete(ctx context.Context, id in
 	return err
 }
 
-func (m *defaultTMarketAuthorityRegistryModel) FindOne(ctx context.Context, id int64) (*TItickAuthorityRegistry, error) {
-	tItickAuthorityRegistryIdKey := fmt.Sprintf("%s%v", cacheTMarketAuthorityRegistryIdPrefix, id)
+func (m *defaultTItickAuthorityRegistryModel) FindOne(ctx context.Context, id int64) (*TItickAuthorityRegistry, error) {
+	tItickAuthorityRegistryIdKey := fmt.Sprintf("%s%v", cacheTItickAuthorityRegistryIdPrefix, id)
 	var resp TItickAuthorityRegistry
 	err := m.QueryRowCtx(ctx, &resp, tItickAuthorityRegistryIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
 		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickAuthorityRegistryRows, m.table)
@@ -93,8 +93,8 @@ func (m *defaultTMarketAuthorityRegistryModel) FindOne(ctx context.Context, id i
 	}
 }
 
-func (m *defaultTMarketAuthorityRegistryModel) FindOneByAuthority(ctx context.Context, authority string) (*TItickAuthorityRegistry, error) {
-	tItickAuthorityRegistryAuthorityKey := fmt.Sprintf("%s%v", cacheTMarketAuthorityRegistryAuthorityPrefix, authority)
+func (m *defaultTItickAuthorityRegistryModel) FindOneByAuthority(ctx context.Context, authority string) (*TItickAuthorityRegistry, error) {
+	tItickAuthorityRegistryAuthorityKey := fmt.Sprintf("%s%v", cacheTItickAuthorityRegistryAuthorityPrefix, authority)
 	var resp TItickAuthorityRegistry
 	err := m.QueryRowIndexCtx(ctx, &resp, tItickAuthorityRegistryAuthorityKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
 		query := fmt.Sprintf("select %s from %s where `authority` = ? limit 1", tItickAuthorityRegistryRows, m.table)
@@ -113,9 +113,9 @@ func (m *defaultTMarketAuthorityRegistryModel) FindOneByAuthority(ctx context.Co
 	}
 }
 
-func (m *defaultTMarketAuthorityRegistryModel) Insert(ctx context.Context, data *TItickAuthorityRegistry) (sql.Result, error) {
-	tItickAuthorityRegistryAuthorityKey := fmt.Sprintf("%s%v", cacheTMarketAuthorityRegistryAuthorityPrefix, data.Authority)
-	tItickAuthorityRegistryIdKey := fmt.Sprintf("%s%v", cacheTMarketAuthorityRegistryIdPrefix, data.Id)
+func (m *defaultTItickAuthorityRegistryModel) Insert(ctx context.Context, data *TItickAuthorityRegistry) (sql.Result, error) {
+	tItickAuthorityRegistryAuthorityKey := fmt.Sprintf("%s%v", cacheTItickAuthorityRegistryAuthorityPrefix, data.Authority)
+	tItickAuthorityRegistryIdKey := fmt.Sprintf("%s%v", cacheTItickAuthorityRegistryIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickAuthorityRegistryRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.Authority, data.ProviderCode, data.ProducerType, data.AllowedKinds, data.Status, data.Version, data.CreateTimes, data.UpdateTimes)
@@ -123,14 +123,14 @@ func (m *defaultTMarketAuthorityRegistryModel) Insert(ctx context.Context, data 
 	return ret, err
 }
 
-func (m *defaultTMarketAuthorityRegistryModel) Update(ctx context.Context, newData *TItickAuthorityRegistry) error {
+func (m *defaultTItickAuthorityRegistryModel) Update(ctx context.Context, newData *TItickAuthorityRegistry) error {
 	data, err := m.FindOne(ctx, newData.Id)
 	if err != nil {
 		return err
 	}
 
-	tItickAuthorityRegistryAuthorityKey := fmt.Sprintf("%s%v", cacheTMarketAuthorityRegistryAuthorityPrefix, data.Authority)
-	tItickAuthorityRegistryIdKey := fmt.Sprintf("%s%v", cacheTMarketAuthorityRegistryIdPrefix, data.Id)
+	tItickAuthorityRegistryAuthorityKey := fmt.Sprintf("%s%v", cacheTItickAuthorityRegistryAuthorityPrefix, data.Authority)
+	tItickAuthorityRegistryIdKey := fmt.Sprintf("%s%v", cacheTItickAuthorityRegistryIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickAuthorityRegistryRowsWithPlaceHolder)
 		return conn.ExecCtx(ctx, query, newData.Authority, newData.ProviderCode, newData.ProducerType, newData.AllowedKinds, newData.Status, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
@@ -138,15 +138,15 @@ func (m *defaultTMarketAuthorityRegistryModel) Update(ctx context.Context, newDa
 	return err
 }
 
-func (m *defaultTMarketAuthorityRegistryModel) formatPrimary(primary any) string {
-	return fmt.Sprintf("%s%v", cacheTMarketAuthorityRegistryIdPrefix, primary)
+func (m *defaultTItickAuthorityRegistryModel) formatPrimary(primary any) string {
+	return fmt.Sprintf("%s%v", cacheTItickAuthorityRegistryIdPrefix, primary)
 }
 
-func (m *defaultTMarketAuthorityRegistryModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
+func (m *defaultTItickAuthorityRegistryModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickAuthorityRegistryRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
-func (m *defaultTMarketAuthorityRegistryModel) tableName() string {
+func (m *defaultTItickAuthorityRegistryModel) tableName() string {
 	return m.table
 }

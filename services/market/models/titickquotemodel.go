@@ -13,7 +13,7 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TItickQuoteModel = (*customTMarketQuoteModel)(nil)
+var _ TItickQuoteModel = (*customTItickQuoteModel)(nil)
 
 type (
 	MarketQuotePageFilter struct {
@@ -22,7 +22,7 @@ type (
 	}
 
 	// TItickQuoteModel is an interface to be customized, add more methods here,
-	// and implement the added methods in customTMarketQuoteModel.
+	// and implement the added methods in customTItickQuoteModel.
 	TItickQuoteModel interface {
 		tItickQuoteModel
 		Upsert(ctx context.Context, data *TItickQuote) (sql.Result, error)
@@ -30,19 +30,19 @@ type (
 		FindQuotes(ctx context.Context, data []*market.MarketSymbol) ([]*TItickQuote, error)
 	}
 
-	customTMarketQuoteModel struct {
-		*defaultTMarketQuoteModel
+	customTItickQuoteModel struct {
+		*defaultTItickQuoteModel
 	}
 )
 
-// NewTMarketQuoteModel returns a model for the database table.
-func NewTMarketQuoteModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickQuoteModel {
-	return &customTMarketQuoteModel{
-		defaultTMarketQuoteModel: newTMarketQuoteModel(conn, c, opts...),
+// NewTItickQuoteModel returns a model for the database table.
+func NewTItickQuoteModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickQuoteModel {
+	return &customTItickQuoteModel{
+		defaultTItickQuoteModel: newTItickQuoteModel(conn, c, opts...),
 	}
 }
 
-func (m *defaultTMarketQuoteModel) Upsert(ctx context.Context, data *TItickQuote) (sql.Result, error) {
+func (m *defaultTItickQuoteModel) Upsert(ctx context.Context, data *TItickQuote) (sql.Result, error) {
 	query := fmt.Sprintf(`
 		INSERT INTO %s (%s)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -61,7 +61,7 @@ func (m *defaultTMarketQuoteModel) Upsert(ctx context.Context, data *TItickQuote
 			update_times = VALUES(update_times)
 	`, m.table, tItickQuoteRowsExpectAutoSet)
 
-	marketQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTMarketQuoteMarketSymbolPrefix, data.Market, data.Symbol)
+	marketQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTItickQuoteMarketSymbolPrefix, data.Market, data.Symbol)
 
 	return m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, query,
@@ -84,7 +84,7 @@ func (m *defaultTMarketQuoteModel) Upsert(ctx context.Context, data *TItickQuote
 	}, marketQuoteMarketSymbolKey)
 }
 
-func (m *defaultTMarketQuoteModel) FindPage(ctx context.Context, filter MarketQuotePageFilter, cursor int64, limit int64) ([]*TItickQuote, int64, error) {
+func (m *defaultTItickQuoteModel) FindPage(ctx context.Context, filter MarketQuotePageFilter, cursor int64, limit int64) ([]*TItickQuote, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -137,7 +137,7 @@ func (m *defaultTMarketQuoteModel) FindPage(ctx context.Context, filter MarketQu
 	return list, total, nil
 }
 
-func (m *defaultTMarketQuoteModel) FindQuotes(ctx context.Context, data []*market.MarketSymbol) ([]*TItickQuote, error) {
+func (m *defaultTItickQuoteModel) FindQuotes(ctx context.Context, data []*market.MarketSymbol) ([]*TItickQuote, error) {
 	if len(data) == 0 {
 		return []*TItickQuote{}, nil
 	}

@@ -11,11 +11,11 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TItickAuthorityRegistryModel = (*customTMarketAuthorityRegistryModel)(nil)
+var _ TItickAuthorityRegistryModel = (*customTItickAuthorityRegistryModel)(nil)
 
 type (
 	// TItickAuthorityRegistryModel is an interface to be customized, add more methods here,
-	// and implement the added methods in customTMarketAuthorityRegistryModel.
+	// and implement the added methods in customTItickAuthorityRegistryModel.
 	TItickAuthorityRegistryModel interface {
 		tItickAuthorityRegistryModel
 		FindEnabled(context.Context, string) (*TItickAuthorityRegistry, error)
@@ -25,8 +25,8 @@ type (
 		UpdateConfigVersioned(context.Context, int64, int64, string, int64, int64) (bool, error)
 	}
 
-	customTMarketAuthorityRegistryModel struct {
-		*defaultTMarketAuthorityRegistryModel
+	customTItickAuthorityRegistryModel struct {
+		*defaultTItickAuthorityRegistryModel
 	}
 
 	AuthorityRegistryFilter struct {
@@ -35,10 +35,10 @@ type (
 	}
 )
 
-// NewTMarketAuthorityRegistryModel returns a model for the database table.
-func NewTMarketAuthorityRegistryModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickAuthorityRegistryModel {
-	return &customTMarketAuthorityRegistryModel{
-		defaultTMarketAuthorityRegistryModel: newTMarketAuthorityRegistryModel(conn, c, opts...),
+// NewTItickAuthorityRegistryModel returns a model for the database table.
+func NewTItickAuthorityRegistryModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickAuthorityRegistryModel {
+	return &customTItickAuthorityRegistryModel{
+		defaultTItickAuthorityRegistryModel: newTItickAuthorityRegistryModel(conn, c, opts...),
 	}
 }
 
@@ -59,7 +59,7 @@ func (r *TItickAuthorityRegistry) Allows(kind string) bool {
 	return false
 }
 
-func (m *defaultTMarketAuthorityRegistryModel) FindEnabled(ctx context.Context, authority string) (*TItickAuthorityRegistry, error) {
+func (m *defaultTItickAuthorityRegistryModel) FindEnabled(ctx context.Context, authority string) (*TItickAuthorityRegistry, error) {
 	var row TItickAuthorityRegistry
 	err := m.QueryRowNoCacheCtx(ctx, &row, `SELECT id,authority,provider_code,producer_type,allowed_kinds,status,version,create_times,update_times
 FROM t_itick_authority_registry WHERE authority=? AND status=1 LIMIT 1`, strings.ToLower(strings.TrimSpace(authority)))
@@ -72,7 +72,7 @@ FROM t_itick_authority_registry WHERE authority=? AND status=1 LIMIT 1`, strings
 	return &row, nil
 }
 
-func (m *defaultTMarketAuthorityRegistryModel) Create(ctx context.Context, row *TItickAuthorityRegistry) (int64, error) {
+func (m *defaultTItickAuthorityRegistryModel) Create(ctx context.Context, row *TItickAuthorityRegistry) (int64, error) {
 	result, err := m.Insert(ctx, row)
 	if err != nil {
 		return 0, err
@@ -80,7 +80,7 @@ func (m *defaultTMarketAuthorityRegistryModel) Create(ctx context.Context, row *
 	return result.LastInsertId()
 }
 
-func (m *defaultTMarketAuthorityRegistryModel) FindPage(
+func (m *defaultTItickAuthorityRegistryModel) FindPage(
 	ctx context.Context,
 	filter AuthorityRegistryFilter,
 	cursor, limit int64,
@@ -131,7 +131,7 @@ func (m *defaultTMarketAuthorityRegistryModel) FindPage(
 	return rows, total, err
 }
 
-func (m *defaultTMarketAuthorityRegistryModel) CountActiveFormulaReferences(
+func (m *defaultTItickAuthorityRegistryModel) CountActiveFormulaReferences(
 	ctx context.Context,
 	authority string,
 ) (int64, error) {
@@ -155,7 +155,7 @@ WHERE f.status=1
 	return count, err
 }
 
-func (m *defaultTMarketAuthorityRegistryModel) UpdateConfigVersioned(
+func (m *defaultTItickAuthorityRegistryModel) UpdateConfigVersioned(
 	ctx context.Context,
 	id, expectedVersion int64,
 	allowedKinds string,
@@ -188,8 +188,8 @@ WHERE id=? AND version=?`,
 	}
 	err = m.DelCacheCtx(
 		ctx,
-		fmt.Sprintf("%s%v", cacheTMarketAuthorityRegistryIdPrefix, row.Id),
-		fmt.Sprintf("%s%v", cacheTMarketAuthorityRegistryAuthorityPrefix, row.Authority),
+		fmt.Sprintf("%s%v", cacheTItickAuthorityRegistryIdPrefix, row.Id),
+		fmt.Sprintf("%s%v", cacheTItickAuthorityRegistryAuthorityPrefix, row.Authority),
 	)
 	return err == nil, err
 }

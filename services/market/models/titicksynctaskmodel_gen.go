@@ -23,8 +23,8 @@ var (
 	tItickSyncTaskRowsExpectAutoSet   = strings.Join(stringx.Remove(tItickSyncTaskFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tItickSyncTaskRowsWithPlaceHolder = strings.Join(stringx.Remove(tItickSyncTaskFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTMarketSyncTaskIdPrefix     = "cache:tItickSyncTask:id:"
-	cacheTMarketSyncTaskTaskNoPrefix = "cache:tItickSyncTask:taskNo:"
+	cacheTItickSyncTaskIdPrefix     = "cache:tItickSyncTask:id:"
+	cacheTItickSyncTaskTaskNoPrefix = "cache:tItickSyncTask:taskNo:"
 )
 
 type (
@@ -36,7 +36,7 @@ type (
 		Delete(ctx context.Context, id int64) error
 	}
 
-	defaultTMarketSyncTaskModel struct {
+	defaultTItickSyncTaskModel struct {
 		sqlc.CachedConn
 		table string
 	}
@@ -53,21 +53,21 @@ type (
 	}
 )
 
-func newTMarketSyncTaskModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketSyncTaskModel {
-	return &defaultTMarketSyncTaskModel{
+func newTItickSyncTaskModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTItickSyncTaskModel {
+	return &defaultTItickSyncTaskModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
 		table:      "`t_itick_sync_task`",
 	}
 }
 
-func (m *defaultTMarketSyncTaskModel) Delete(ctx context.Context, id int64) error {
+func (m *defaultTItickSyncTaskModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	tItickSyncTaskIdKey := fmt.Sprintf("%s%v", cacheTMarketSyncTaskIdPrefix, id)
-	tItickSyncTaskTaskNoKey := fmt.Sprintf("%s%v", cacheTMarketSyncTaskTaskNoPrefix, data.TaskNo)
+	tItickSyncTaskIdKey := fmt.Sprintf("%s%v", cacheTItickSyncTaskIdPrefix, id)
+	tItickSyncTaskTaskNoKey := fmt.Sprintf("%s%v", cacheTItickSyncTaskTaskNoPrefix, data.TaskNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
@@ -75,8 +75,8 @@ func (m *defaultTMarketSyncTaskModel) Delete(ctx context.Context, id int64) erro
 	return err
 }
 
-func (m *defaultTMarketSyncTaskModel) FindOne(ctx context.Context, id int64) (*TItickSyncTask, error) {
-	tItickSyncTaskIdKey := fmt.Sprintf("%s%v", cacheTMarketSyncTaskIdPrefix, id)
+func (m *defaultTItickSyncTaskModel) FindOne(ctx context.Context, id int64) (*TItickSyncTask, error) {
+	tItickSyncTaskIdKey := fmt.Sprintf("%s%v", cacheTItickSyncTaskIdPrefix, id)
 	var resp TItickSyncTask
 	err := m.QueryRowCtx(ctx, &resp, tItickSyncTaskIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
 		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickSyncTaskRows, m.table)
@@ -92,8 +92,8 @@ func (m *defaultTMarketSyncTaskModel) FindOne(ctx context.Context, id int64) (*T
 	}
 }
 
-func (m *defaultTMarketSyncTaskModel) FindOneByTaskNo(ctx context.Context, taskNo string) (*TItickSyncTask, error) {
-	tItickSyncTaskTaskNoKey := fmt.Sprintf("%s%v", cacheTMarketSyncTaskTaskNoPrefix, taskNo)
+func (m *defaultTItickSyncTaskModel) FindOneByTaskNo(ctx context.Context, taskNo string) (*TItickSyncTask, error) {
+	tItickSyncTaskTaskNoKey := fmt.Sprintf("%s%v", cacheTItickSyncTaskTaskNoPrefix, taskNo)
 	var resp TItickSyncTask
 	err := m.QueryRowIndexCtx(ctx, &resp, tItickSyncTaskTaskNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
 		query := fmt.Sprintf("select %s from %s where `task_no` = ? limit 1", tItickSyncTaskRows, m.table)
@@ -112,9 +112,9 @@ func (m *defaultTMarketSyncTaskModel) FindOneByTaskNo(ctx context.Context, taskN
 	}
 }
 
-func (m *defaultTMarketSyncTaskModel) Insert(ctx context.Context, data *TItickSyncTask) (sql.Result, error) {
-	tItickSyncTaskIdKey := fmt.Sprintf("%s%v", cacheTMarketSyncTaskIdPrefix, data.Id)
-	tItickSyncTaskTaskNoKey := fmt.Sprintf("%s%v", cacheTMarketSyncTaskTaskNoPrefix, data.TaskNo)
+func (m *defaultTItickSyncTaskModel) Insert(ctx context.Context, data *TItickSyncTask) (sql.Result, error) {
+	tItickSyncTaskIdKey := fmt.Sprintf("%s%v", cacheTItickSyncTaskIdPrefix, data.Id)
+	tItickSyncTaskTaskNoKey := fmt.Sprintf("%s%v", cacheTItickSyncTaskTaskNoPrefix, data.TaskNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, tItickSyncTaskRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.TaskNo, data.TaskType, data.BizId, data.Status, data.Message, data.CreateTimes, data.UpdateTimes)
@@ -122,14 +122,14 @@ func (m *defaultTMarketSyncTaskModel) Insert(ctx context.Context, data *TItickSy
 	return ret, err
 }
 
-func (m *defaultTMarketSyncTaskModel) Update(ctx context.Context, newData *TItickSyncTask) error {
+func (m *defaultTItickSyncTaskModel) Update(ctx context.Context, newData *TItickSyncTask) error {
 	data, err := m.FindOne(ctx, newData.Id)
 	if err != nil {
 		return err
 	}
 
-	tItickSyncTaskIdKey := fmt.Sprintf("%s%v", cacheTMarketSyncTaskIdPrefix, data.Id)
-	tItickSyncTaskTaskNoKey := fmt.Sprintf("%s%v", cacheTMarketSyncTaskTaskNoPrefix, data.TaskNo)
+	tItickSyncTaskIdKey := fmt.Sprintf("%s%v", cacheTItickSyncTaskIdPrefix, data.Id)
+	tItickSyncTaskTaskNoKey := fmt.Sprintf("%s%v", cacheTItickSyncTaskTaskNoPrefix, data.TaskNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickSyncTaskRowsWithPlaceHolder)
 		return conn.ExecCtx(ctx, query, newData.TaskNo, newData.TaskType, newData.BizId, newData.Status, newData.Message, newData.CreateTimes, newData.UpdateTimes, newData.Id)
@@ -137,15 +137,15 @@ func (m *defaultTMarketSyncTaskModel) Update(ctx context.Context, newData *TItic
 	return err
 }
 
-func (m *defaultTMarketSyncTaskModel) formatPrimary(primary any) string {
-	return fmt.Sprintf("%s%v", cacheTMarketSyncTaskIdPrefix, primary)
+func (m *defaultTItickSyncTaskModel) formatPrimary(primary any) string {
+	return fmt.Sprintf("%s%v", cacheTItickSyncTaskIdPrefix, primary)
 }
 
-func (m *defaultTMarketSyncTaskModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
+func (m *defaultTItickSyncTaskModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickSyncTaskRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
-func (m *defaultTMarketSyncTaskModel) tableName() string {
+func (m *defaultTItickSyncTaskModel) tableName() string {
 	return m.table
 }

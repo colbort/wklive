@@ -5,23 +5,23 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TItickMarketSessionModel = (*customTMarketMarketSessionModel)(nil)
+var _ TItickMarketSessionModel = (*customTItickMarketSessionModel)(nil)
 
 type (
 	// TItickMarketSessionModel is an interface to be customized, add more methods here,
-	// and implement the added methods in customTMarketMarketSessionModel.
+	// and implement the added methods in customTItickMarketSessionModel.
 	TItickMarketSessionModel interface {
 		tItickMarketSessionModel
 	}
 
-	customTMarketMarketSessionModel struct {
-		*defaultTMarketMarketSessionModel
+	customTItickMarketSessionModel struct {
+		*defaultTItickMarketSessionModel
 	}
 )
 
-// NewTMarketMarketSessionModel returns a model for the database table.
-func NewTMarketMarketSessionModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickMarketSessionModel {
-	return &customTMarketMarketSessionModel{
-		defaultTMarketMarketSessionModel: newTMarketMarketSessionModel(conn, c, opts...),
+// NewTItickMarketSessionModel returns a model for the database table.
+func NewTItickMarketSessionModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickMarketSessionModel {
+	return &customTItickMarketSessionModel{
+		defaultTItickMarketSessionModel: newTItickMarketSessionModel(conn, c, opts...),
 	}
 }

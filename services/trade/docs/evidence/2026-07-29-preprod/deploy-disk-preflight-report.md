@@ -4,9 +4,9 @@
 
 - 日期：2026-07-29；
 - 环境：Deploy 独立完整环境；
-- 在构建并切换 Market/Admin 镜像时，Docker 虚拟盘写满；
+- 在构建并切换 Itick/Admin 镜像时，Docker 虚拟盘写满；
 - Mongo WiredTiger 日志写入返回 `No space left on device`，容器以 133 退出；
-- Market/Admin 镜像本身已构建成功，故障发生在 Compose 依赖切换阶段。
+- Itick/Admin 镜像本身已构建成功，故障发生在 Compose 依赖切换阶段。
 
 处置时只执行 `docker image prune --force`，清理 2.135 GB 未被容器引用的悬空
 镜像层。没有删除容器 Volume、Mongo 数据文件或 MySQL 数据。Mongo 随后从最后
@@ -45,7 +45,7 @@
 - Images：47，Active：46；
 - Containers：51，Active：23；
 - Local Volumes：25，Active：25；
-- Mongo、Market、Admin API、Trade、Asset、System 均为 Healthy。
+- Mongo、Itick、Admin API、Trade、Asset、System 均为 Healthy。
 
 ## 4. 结论
 

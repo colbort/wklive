@@ -23,9 +23,9 @@ var (
 	tItickPriceFormulaRowsExpectAutoSet   = strings.Join(stringx.Remove(tItickPriceFormulaFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tItickPriceFormulaRowsWithPlaceHolder = strings.Join(stringx.Remove(tItickPriceFormulaFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTMarketPriceFormulaIdPrefix                                                          = "cache:tItickPriceFormula:id:"
-	cacheTMarketPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionPrefix = "cache:tItickPriceFormula:authority:snapshotKind:categoryCode:market:symbol:formulaVersion:"
-	cacheTMarketPriceFormulaFormulaNoPrefix                                                   = "cache:tItickPriceFormula:formulaNo:"
+	cacheTItickPriceFormulaIdPrefix                                                          = "cache:tItickPriceFormula:id:"
+	cacheTItickPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionPrefix = "cache:tItickPriceFormula:authority:snapshotKind:categoryCode:market:symbol:formulaVersion:"
+	cacheTItickPriceFormulaFormulaNoPrefix                                                   = "cache:tItickPriceFormula:formulaNo:"
 )
 
 type (
@@ -38,7 +38,7 @@ type (
 		Delete(ctx context.Context, id int64) error
 	}
 
-	defaultTMarketPriceFormulaModel struct {
+	defaultTItickPriceFormulaModel struct {
 		sqlc.CachedConn
 		table string
 	}
@@ -67,22 +67,22 @@ type (
 	}
 )
 
-func newTMarketPriceFormulaModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketPriceFormulaModel {
-	return &defaultTMarketPriceFormulaModel{
+func newTItickPriceFormulaModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTItickPriceFormulaModel {
+	return &defaultTItickPriceFormulaModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
 		table:      "`t_itick_price_formula`",
 	}
 }
 
-func (m *defaultTMarketPriceFormulaModel) Delete(ctx context.Context, id int64) error {
+func (m *defaultTItickPriceFormulaModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	tItickPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionKey := fmt.Sprintf("%s%v:%v:%v:%v:%v:%v", cacheTMarketPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionPrefix, data.Authority, data.SnapshotKind, data.CategoryCode, data.Market, data.Symbol, data.FormulaVersion)
-	tItickPriceFormulaFormulaNoKey := fmt.Sprintf("%s%v", cacheTMarketPriceFormulaFormulaNoPrefix, data.FormulaNo)
-	tItickPriceFormulaIdKey := fmt.Sprintf("%s%v", cacheTMarketPriceFormulaIdPrefix, id)
+	tItickPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionKey := fmt.Sprintf("%s%v:%v:%v:%v:%v:%v", cacheTItickPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionPrefix, data.Authority, data.SnapshotKind, data.CategoryCode, data.Market, data.Symbol, data.FormulaVersion)
+	tItickPriceFormulaFormulaNoKey := fmt.Sprintf("%s%v", cacheTItickPriceFormulaFormulaNoPrefix, data.FormulaNo)
+	tItickPriceFormulaIdKey := fmt.Sprintf("%s%v", cacheTItickPriceFormulaIdPrefix, id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
@@ -90,8 +90,8 @@ func (m *defaultTMarketPriceFormulaModel) Delete(ctx context.Context, id int64) 
 	return err
 }
 
-func (m *defaultTMarketPriceFormulaModel) FindOne(ctx context.Context, id int64) (*TItickPriceFormula, error) {
-	tItickPriceFormulaIdKey := fmt.Sprintf("%s%v", cacheTMarketPriceFormulaIdPrefix, id)
+func (m *defaultTItickPriceFormulaModel) FindOne(ctx context.Context, id int64) (*TItickPriceFormula, error) {
+	tItickPriceFormulaIdKey := fmt.Sprintf("%s%v", cacheTItickPriceFormulaIdPrefix, id)
 	var resp TItickPriceFormula
 	err := m.QueryRowCtx(ctx, &resp, tItickPriceFormulaIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
 		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickPriceFormulaRows, m.table)
@@ -107,8 +107,8 @@ func (m *defaultTMarketPriceFormulaModel) FindOne(ctx context.Context, id int64)
 	}
 }
 
-func (m *defaultTMarketPriceFormulaModel) FindOneByAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersion(ctx context.Context, authority string, snapshotKind string, categoryCode string, market string, symbol string, formulaVersion string) (*TItickPriceFormula, error) {
-	tItickPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionKey := fmt.Sprintf("%s%v:%v:%v:%v:%v:%v", cacheTMarketPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionPrefix, authority, snapshotKind, categoryCode, market, symbol, formulaVersion)
+func (m *defaultTItickPriceFormulaModel) FindOneByAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersion(ctx context.Context, authority string, snapshotKind string, categoryCode string, market string, symbol string, formulaVersion string) (*TItickPriceFormula, error) {
+	tItickPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionKey := fmt.Sprintf("%s%v:%v:%v:%v:%v:%v", cacheTItickPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionPrefix, authority, snapshotKind, categoryCode, market, symbol, formulaVersion)
 	var resp TItickPriceFormula
 	err := m.QueryRowIndexCtx(ctx, &resp, tItickPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
 		query := fmt.Sprintf("select %s from %s where `authority` = ? and `snapshot_kind` = ? and `category_code` = ? and `market` = ? and `symbol` = ? and `formula_version` = ? limit 1", tItickPriceFormulaRows, m.table)
@@ -127,8 +127,8 @@ func (m *defaultTMarketPriceFormulaModel) FindOneByAuthoritySnapshotKindCategory
 	}
 }
 
-func (m *defaultTMarketPriceFormulaModel) FindOneByFormulaNo(ctx context.Context, formulaNo string) (*TItickPriceFormula, error) {
-	tItickPriceFormulaFormulaNoKey := fmt.Sprintf("%s%v", cacheTMarketPriceFormulaFormulaNoPrefix, formulaNo)
+func (m *defaultTItickPriceFormulaModel) FindOneByFormulaNo(ctx context.Context, formulaNo string) (*TItickPriceFormula, error) {
+	tItickPriceFormulaFormulaNoKey := fmt.Sprintf("%s%v", cacheTItickPriceFormulaFormulaNoPrefix, formulaNo)
 	var resp TItickPriceFormula
 	err := m.QueryRowIndexCtx(ctx, &resp, tItickPriceFormulaFormulaNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
 		query := fmt.Sprintf("select %s from %s where `formula_no` = ? limit 1", tItickPriceFormulaRows, m.table)
@@ -147,10 +147,10 @@ func (m *defaultTMarketPriceFormulaModel) FindOneByFormulaNo(ctx context.Context
 	}
 }
 
-func (m *defaultTMarketPriceFormulaModel) Insert(ctx context.Context, data *TItickPriceFormula) (sql.Result, error) {
-	tItickPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionKey := fmt.Sprintf("%s%v:%v:%v:%v:%v:%v", cacheTMarketPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionPrefix, data.Authority, data.SnapshotKind, data.CategoryCode, data.Market, data.Symbol, data.FormulaVersion)
-	tItickPriceFormulaFormulaNoKey := fmt.Sprintf("%s%v", cacheTMarketPriceFormulaFormulaNoPrefix, data.FormulaNo)
-	tItickPriceFormulaIdKey := fmt.Sprintf("%s%v", cacheTMarketPriceFormulaIdPrefix, data.Id)
+func (m *defaultTItickPriceFormulaModel) Insert(ctx context.Context, data *TItickPriceFormula) (sql.Result, error) {
+	tItickPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionKey := fmt.Sprintf("%s%v:%v:%v:%v:%v:%v", cacheTItickPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionPrefix, data.Authority, data.SnapshotKind, data.CategoryCode, data.Market, data.Symbol, data.FormulaVersion)
+	tItickPriceFormulaFormulaNoKey := fmt.Sprintf("%s%v", cacheTItickPriceFormulaFormulaNoPrefix, data.FormulaNo)
+	tItickPriceFormulaIdKey := fmt.Sprintf("%s%v", cacheTItickPriceFormulaIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickPriceFormulaRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.FormulaNo, data.Authority, data.SnapshotKind, data.CategoryCode, data.Market, data.Symbol, data.Algorithm, data.FormulaVersion, data.Components, data.MaxLookbackMs, data.MaxDeviationBps, data.MinInputCount, data.IntervalMs, data.LastTargetTime, data.Status, data.Version, data.RunVersion, data.CreateTimes, data.UpdateTimes)
@@ -158,15 +158,15 @@ func (m *defaultTMarketPriceFormulaModel) Insert(ctx context.Context, data *TIti
 	return ret, err
 }
 
-func (m *defaultTMarketPriceFormulaModel) Update(ctx context.Context, newData *TItickPriceFormula) error {
+func (m *defaultTItickPriceFormulaModel) Update(ctx context.Context, newData *TItickPriceFormula) error {
 	data, err := m.FindOne(ctx, newData.Id)
 	if err != nil {
 		return err
 	}
 
-	tItickPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionKey := fmt.Sprintf("%s%v:%v:%v:%v:%v:%v", cacheTMarketPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionPrefix, data.Authority, data.SnapshotKind, data.CategoryCode, data.Market, data.Symbol, data.FormulaVersion)
-	tItickPriceFormulaFormulaNoKey := fmt.Sprintf("%s%v", cacheTMarketPriceFormulaFormulaNoPrefix, data.FormulaNo)
-	tItickPriceFormulaIdKey := fmt.Sprintf("%s%v", cacheTMarketPriceFormulaIdPrefix, data.Id)
+	tItickPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionKey := fmt.Sprintf("%s%v:%v:%v:%v:%v:%v", cacheTItickPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionPrefix, data.Authority, data.SnapshotKind, data.CategoryCode, data.Market, data.Symbol, data.FormulaVersion)
+	tItickPriceFormulaFormulaNoKey := fmt.Sprintf("%s%v", cacheTItickPriceFormulaFormulaNoPrefix, data.FormulaNo)
+	tItickPriceFormulaIdKey := fmt.Sprintf("%s%v", cacheTItickPriceFormulaIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickPriceFormulaRowsWithPlaceHolder)
 		return conn.ExecCtx(ctx, query, newData.FormulaNo, newData.Authority, newData.SnapshotKind, newData.CategoryCode, newData.Market, newData.Symbol, newData.Algorithm, newData.FormulaVersion, newData.Components, newData.MaxLookbackMs, newData.MaxDeviationBps, newData.MinInputCount, newData.IntervalMs, newData.LastTargetTime, newData.Status, newData.Version, newData.RunVersion, newData.CreateTimes, newData.UpdateTimes, newData.Id)
@@ -174,15 +174,15 @@ func (m *defaultTMarketPriceFormulaModel) Update(ctx context.Context, newData *T
 	return err
 }
 
-func (m *defaultTMarketPriceFormulaModel) formatPrimary(primary any) string {
-	return fmt.Sprintf("%s%v", cacheTMarketPriceFormulaIdPrefix, primary)
+func (m *defaultTItickPriceFormulaModel) formatPrimary(primary any) string {
+	return fmt.Sprintf("%s%v", cacheTItickPriceFormulaIdPrefix, primary)
 }
 
-func (m *defaultTMarketPriceFormulaModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
+func (m *defaultTItickPriceFormulaModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickPriceFormulaRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
-func (m *defaultTMarketPriceFormulaModel) tableName() string {
+func (m *defaultTItickPriceFormulaModel) tableName() string {
 	return m.table
 }

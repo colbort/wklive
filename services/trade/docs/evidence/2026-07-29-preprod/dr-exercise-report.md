@@ -7,7 +7,7 @@
 - 源数据库：`wklive`
 - 恢复目标：脚本生成且预检不存在的 `wklive_dr_verify_*` 临时数据库
 - 恢复目标处置：逐表核验完成后已删除
-- 停写范围：`market-rpc`、`trade-rpc`、`asset-rpc`、`system-rpc`
+- 停写范围：`itick-rpc`、`trade-rpc`、`asset-rpc`、`system-rpc`
 - 操作原则：不覆盖源库，不删除持久卷，自动强平和全仓开关保持关闭
 
 ## 2. 备份与恢复证据

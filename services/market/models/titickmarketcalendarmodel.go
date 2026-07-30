@@ -11,11 +11,11 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TItickMarketCalendarModel = (*customTMarketMarketCalendarModel)(nil)
+var _ TItickMarketCalendarModel = (*customTItickMarketCalendarModel)(nil)
 
 type (
 	// TItickMarketCalendarModel is an interface to be customized, add more methods here,
-	// and implement the added methods in customTMarketMarketCalendarModel.
+	// and implement the added methods in customTItickMarketCalendarModel.
 	TItickMarketCalendarModel interface {
 		tItickMarketCalendarModel
 		Resolve(ctx context.Context, category, market, exchange string) (*TItickMarketCalendar, error)
@@ -24,19 +24,19 @@ type (
 		Ensure(ctx context.Context, category, market, exchange, timezone string, now int64) (*TItickMarketCalendar, error)
 	}
 
-	customTMarketMarketCalendarModel struct {
-		*defaultTMarketMarketCalendarModel
+	customTItickMarketCalendarModel struct {
+		*defaultTItickMarketCalendarModel
 	}
 )
 
-// NewTMarketMarketCalendarModel returns a model for the database table.
-func NewTMarketMarketCalendarModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickMarketCalendarModel {
-	return &customTMarketMarketCalendarModel{
-		defaultTMarketMarketCalendarModel: newTMarketMarketCalendarModel(conn, c, opts...),
+// NewTItickMarketCalendarModel returns a model for the database table.
+func NewTItickMarketCalendarModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickMarketCalendarModel {
+	return &customTItickMarketCalendarModel{
+		defaultTItickMarketCalendarModel: newTItickMarketCalendarModel(conn, c, opts...),
 	}
 }
 
-func (m *defaultTMarketMarketCalendarModel) Ensure(ctx context.Context, category, market, exchange, timezone string, now int64) (*TItickMarketCalendar, error) {
+func (m *defaultTItickMarketCalendarModel) Ensure(ctx context.Context, category, market, exchange, timezone string, now int64) (*TItickMarketCalendar, error) {
 	category = strings.ToLower(strings.TrimSpace(category))
 	market = strings.ToUpper(strings.TrimSpace(market))
 	exchange = strings.TrimSpace(exchange)
@@ -61,7 +61,7 @@ func (m *defaultTMarketMarketCalendarModel) Ensure(ctx context.Context, category
 // Resolve uses the exact exchange first and falls back to the market default
 // row (exchange=”). This query intentionally bypasses generated unique-key
 // cache because it can match two candidate keys.
-func (m *defaultTMarketMarketCalendarModel) Resolve(ctx context.Context, category, market, exchange string) (*TItickMarketCalendar, error) {
+func (m *defaultTItickMarketCalendarModel) Resolve(ctx context.Context, category, market, exchange string) (*TItickMarketCalendar, error) {
 	category = strings.ToLower(strings.TrimSpace(category))
 	market = strings.ToUpper(strings.TrimSpace(market))
 	exchange = strings.TrimSpace(exchange)
@@ -75,14 +75,14 @@ func (m *defaultTMarketMarketCalendarModel) Resolve(ctx context.Context, categor
 	return &out, nil
 }
 
-func (m *defaultTMarketMarketCalendarModel) FindSessions(ctx context.Context, calendarID int64) ([]*TItickMarketSession, error) {
+func (m *defaultTItickMarketCalendarModel) FindSessions(ctx context.Context, calendarID int64) ([]*TItickMarketSession, error) {
 	var out []*TItickMarketSession
 	err := m.QueryRowsNoCacheCtx(ctx, &out, `SELECT `+tItickMarketSessionRows+`
 		FROM t_itick_market_session WHERE calendar_id=? ORDER BY sort,id`, calendarID)
 	return out, err
 }
 
-func (m *defaultTMarketMarketCalendarModel) FindHoliday(ctx context.Context, calendarID int64, date time.Time) (*TItickMarketHoliday, error) {
+func (m *defaultTItickMarketCalendarModel) FindHoliday(ctx context.Context, calendarID int64, date time.Time) (*TItickMarketHoliday, error) {
 	var out TItickMarketHoliday
 	err := m.QueryRowNoCacheCtx(ctx, &out, `SELECT `+tItickMarketHolidayRows+`
 		FROM t_itick_market_holiday WHERE calendar_id=? AND trade_date=? LIMIT 1`, calendarID, date.Format("2006-01-02"))

@@ -10,30 +10,30 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TItickSyncTaskModel = (*customTMarketSyncTaskModel)(nil)
+var _ TItickSyncTaskModel = (*customTItickSyncTaskModel)(nil)
 
 type (
 	// TItickSyncTaskModel is an interface to be customized, add more methods here,
-	// and implement the added methods in customTMarketSyncTaskModel.
+	// and implement the added methods in customTItickSyncTaskModel.
 	TItickSyncTaskModel interface {
 		tItickSyncTaskModel
 		FindPage(ctx context.Context, cursor, limit int64) ([]*TItickSyncTask, int64, error)
 		UpdateStatusByTaskNo(ctx context.Context, taskNo string, status int64, message string, updatedAt int64) error
 	}
 
-	customTMarketSyncTaskModel struct {
-		*defaultTMarketSyncTaskModel
+	customTItickSyncTaskModel struct {
+		*defaultTItickSyncTaskModel
 	}
 )
 
-// NewTMarketSyncTaskModel returns a model for the database table.
-func NewTMarketSyncTaskModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickSyncTaskModel {
-	return &customTMarketSyncTaskModel{
-		defaultTMarketSyncTaskModel: newTMarketSyncTaskModel(conn, c, opts...),
+// NewTItickSyncTaskModel returns a model for the database table.
+func NewTItickSyncTaskModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickSyncTaskModel {
+	return &customTItickSyncTaskModel{
+		defaultTItickSyncTaskModel: newTItickSyncTaskModel(conn, c, opts...),
 	}
 }
 
-func (m *defaultTMarketSyncTaskModel) FindPage(ctx context.Context, cursor, limit int64) ([]*TItickSyncTask, int64, error) {
+func (m *defaultTItickSyncTaskModel) FindPage(ctx context.Context, cursor, limit int64) ([]*TItickSyncTask, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -84,7 +84,7 @@ func (m *defaultTMarketSyncTaskModel) FindPage(ctx context.Context, cursor, limi
 	return list, total, nil
 }
 
-func (m *defaultTMarketSyncTaskModel) UpdateStatusByTaskNo(ctx context.Context, taskNo string, status int64, message string, updatedAt int64) error {
+func (m *defaultTItickSyncTaskModel) UpdateStatusByTaskNo(ctx context.Context, taskNo string, status int64, message string, updatedAt int64) error {
 	query := fmt.Sprintf("update %s set status = ?, message = ?, update_times = ? where task_no = ?", m.table)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, query, status, message, updatedAt, taskNo)

@@ -23,7 +23,7 @@ var (
 	tItickMarketSessionRowsExpectAutoSet   = strings.Join(stringx.Remove(tItickMarketSessionFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tItickMarketSessionRowsWithPlaceHolder = strings.Join(stringx.Remove(tItickMarketSessionFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTMarketMarketSessionIdPrefix = "cache:tItickMarketSession:id:"
+	cacheTItickMarketSessionIdPrefix = "cache:tItickMarketSession:id:"
 )
 
 type (
@@ -34,7 +34,7 @@ type (
 		Delete(ctx context.Context, id int64) error
 	}
 
-	defaultTMarketMarketSessionModel struct {
+	defaultTItickMarketSessionModel struct {
 		sqlc.CachedConn
 		table string
 	}
@@ -50,15 +50,15 @@ type (
 	}
 )
 
-func newTMarketMarketSessionModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketMarketSessionModel {
-	return &defaultTMarketMarketSessionModel{
+func newTItickMarketSessionModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTItickMarketSessionModel {
+	return &defaultTItickMarketSessionModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
 		table:      "`t_itick_market_session`",
 	}
 }
 
-func (m *defaultTMarketMarketSessionModel) Delete(ctx context.Context, id int64) error {
-	tItickMarketSessionIdKey := fmt.Sprintf("%s%v", cacheTMarketMarketSessionIdPrefix, id)
+func (m *defaultTItickMarketSessionModel) Delete(ctx context.Context, id int64) error {
+	tItickMarketSessionIdKey := fmt.Sprintf("%s%v", cacheTItickMarketSessionIdPrefix, id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
@@ -66,8 +66,8 @@ func (m *defaultTMarketMarketSessionModel) Delete(ctx context.Context, id int64)
 	return err
 }
 
-func (m *defaultTMarketMarketSessionModel) FindOne(ctx context.Context, id int64) (*TItickMarketSession, error) {
-	tItickMarketSessionIdKey := fmt.Sprintf("%s%v", cacheTMarketMarketSessionIdPrefix, id)
+func (m *defaultTItickMarketSessionModel) FindOne(ctx context.Context, id int64) (*TItickMarketSession, error) {
+	tItickMarketSessionIdKey := fmt.Sprintf("%s%v", cacheTItickMarketSessionIdPrefix, id)
 	var resp TItickMarketSession
 	err := m.QueryRowCtx(ctx, &resp, tItickMarketSessionIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
 		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickMarketSessionRows, m.table)
@@ -83,8 +83,8 @@ func (m *defaultTMarketMarketSessionModel) FindOne(ctx context.Context, id int64
 	}
 }
 
-func (m *defaultTMarketMarketSessionModel) Insert(ctx context.Context, data *TItickMarketSession) (sql.Result, error) {
-	tItickMarketSessionIdKey := fmt.Sprintf("%s%v", cacheTMarketMarketSessionIdPrefix, data.Id)
+func (m *defaultTItickMarketSessionModel) Insert(ctx context.Context, data *TItickMarketSession) (sql.Result, error) {
+	tItickMarketSessionIdKey := fmt.Sprintf("%s%v", cacheTItickMarketSessionIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, tItickMarketSessionRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.CalendarId, data.SessionType, data.StartTime, data.EndTime, data.CrossDay, data.Sort)
@@ -92,8 +92,8 @@ func (m *defaultTMarketMarketSessionModel) Insert(ctx context.Context, data *TIt
 	return ret, err
 }
 
-func (m *defaultTMarketMarketSessionModel) Update(ctx context.Context, data *TItickMarketSession) error {
-	tItickMarketSessionIdKey := fmt.Sprintf("%s%v", cacheTMarketMarketSessionIdPrefix, data.Id)
+func (m *defaultTItickMarketSessionModel) Update(ctx context.Context, data *TItickMarketSession) error {
+	tItickMarketSessionIdKey := fmt.Sprintf("%s%v", cacheTItickMarketSessionIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickMarketSessionRowsWithPlaceHolder)
 		return conn.ExecCtx(ctx, query, data.CalendarId, data.SessionType, data.StartTime, data.EndTime, data.CrossDay, data.Sort, data.Id)
@@ -101,15 +101,15 @@ func (m *defaultTMarketMarketSessionModel) Update(ctx context.Context, data *TIt
 	return err
 }
 
-func (m *defaultTMarketMarketSessionModel) formatPrimary(primary any) string {
-	return fmt.Sprintf("%s%v", cacheTMarketMarketSessionIdPrefix, primary)
+func (m *defaultTItickMarketSessionModel) formatPrimary(primary any) string {
+	return fmt.Sprintf("%s%v", cacheTItickMarketSessionIdPrefix, primary)
 }
 
-func (m *defaultTMarketMarketSessionModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
+func (m *defaultTItickMarketSessionModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickMarketSessionRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
-func (m *defaultTMarketMarketSessionModel) tableName() string {
+func (m *defaultTItickMarketSessionModel) tableName() string {
 	return m.table
 }

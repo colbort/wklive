@@ -9,29 +9,29 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TItickTenantCategoryModel = (*customTMarketTenantCategoryModel)(nil)
+var _ TItickTenantCategoryModel = (*customTItickTenantCategoryModel)(nil)
 
 type (
 	// TItickTenantCategoryModel is an interface to be customized, add more methods here,
-	// and implement the added methods in customTMarketTenantCategoryModel.
+	// and implement the added methods in customTItickTenantCategoryModel.
 	TItickTenantCategoryModel interface {
 		tItickTenantCategoryModel
 		FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TItickTenantCategory, int64, error)
 	}
 
-	customTMarketTenantCategoryModel struct {
-		*defaultTMarketTenantCategoryModel
+	customTItickTenantCategoryModel struct {
+		*defaultTItickTenantCategoryModel
 	}
 )
 
-// NewTMarketTenantCategoryModel returns a model for the database table.
-func NewTMarketTenantCategoryModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickTenantCategoryModel {
-	return &customTMarketTenantCategoryModel{
-		defaultTMarketTenantCategoryModel: newTMarketTenantCategoryModel(conn, c, opts...),
+// NewTItickTenantCategoryModel returns a model for the database table.
+func NewTItickTenantCategoryModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickTenantCategoryModel {
+	return &customTItickTenantCategoryModel{
+		defaultTItickTenantCategoryModel: newTItickTenantCategoryModel(conn, c, opts...),
 	}
 }
 
-func (m *defaultTMarketTenantCategoryModel) FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TItickTenantCategory, int64, error) {
+func (m *defaultTItickTenantCategoryModel) FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TItickTenantCategory, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()

@@ -32,7 +32,7 @@ API Key；两个真实 iTick 通道、两项审批 false、资金/告警/灾备�
 
 价格公式页面新增“行情来源管理”：
 
-- 使用既有 `market:authority:list`、`market:authority:set` RBAC 权限；
+- 使用既有 `itick:authority:list`、`itick:authority:set` RBAC 权限；
 - 列出 Authority、`provider_code`、`producer_type`、允许快照类型和状态；
 - 支持新增来源；
 - 支持修改允许类型和启停状态；

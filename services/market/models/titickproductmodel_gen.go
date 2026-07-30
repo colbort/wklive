@@ -23,8 +23,8 @@ var (
 	tItickProductRowsExpectAutoSet   = strings.Join(stringx.Remove(tItickProductFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tItickProductRowsWithPlaceHolder = strings.Join(stringx.Remove(tItickProductFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTMarketProductIdPrefix                       = "cache:tItickProduct:id:"
-	cacheTMarketProductCategoryTypeMarketSymbolPrefix = "cache:tItickProduct:categoryType:market:symbol:"
+	cacheTItickProductIdPrefix                       = "cache:tItickProduct:id:"
+	cacheTItickProductCategoryTypeMarketSymbolPrefix = "cache:tItickProduct:categoryType:market:symbol:"
 )
 
 type (
@@ -36,7 +36,7 @@ type (
 		Delete(ctx context.Context, id int64) error
 	}
 
-	defaultTMarketProductModel struct {
+	defaultTItickProductModel struct {
 		sqlc.CachedConn
 		table string
 	}
@@ -67,21 +67,21 @@ type (
 	}
 )
 
-func newTMarketProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketProductModel {
-	return &defaultTMarketProductModel{
+func newTItickProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTItickProductModel {
+	return &defaultTItickProductModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
 		table:      "`t_itick_product`",
 	}
 }
 
-func (m *defaultTMarketProductModel) Delete(ctx context.Context, id int64) error {
+func (m *defaultTItickProductModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	tItickProductCategoryTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v", cacheTMarketProductCategoryTypeMarketSymbolPrefix, data.CategoryType, data.Market, data.Symbol)
-	tItickProductIdKey := fmt.Sprintf("%s%v", cacheTMarketProductIdPrefix, id)
+	tItickProductCategoryTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v", cacheTItickProductCategoryTypeMarketSymbolPrefix, data.CategoryType, data.Market, data.Symbol)
+	tItickProductIdKey := fmt.Sprintf("%s%v", cacheTItickProductIdPrefix, id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
@@ -89,8 +89,8 @@ func (m *defaultTMarketProductModel) Delete(ctx context.Context, id int64) error
 	return err
 }
 
-func (m *defaultTMarketProductModel) FindOne(ctx context.Context, id int64) (*TItickProduct, error) {
-	tItickProductIdKey := fmt.Sprintf("%s%v", cacheTMarketProductIdPrefix, id)
+func (m *defaultTItickProductModel) FindOne(ctx context.Context, id int64) (*TItickProduct, error) {
+	tItickProductIdKey := fmt.Sprintf("%s%v", cacheTItickProductIdPrefix, id)
 	var resp TItickProduct
 	err := m.QueryRowCtx(ctx, &resp, tItickProductIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
 		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickProductRows, m.table)
@@ -106,8 +106,8 @@ func (m *defaultTMarketProductModel) FindOne(ctx context.Context, id int64) (*TI
 	}
 }
 
-func (m *defaultTMarketProductModel) FindOneByCategoryTypeMarketSymbol(ctx context.Context, categoryType int64, market string, symbol string) (*TItickProduct, error) {
-	tItickProductCategoryTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v", cacheTMarketProductCategoryTypeMarketSymbolPrefix, categoryType, market, symbol)
+func (m *defaultTItickProductModel) FindOneByCategoryTypeMarketSymbol(ctx context.Context, categoryType int64, market string, symbol string) (*TItickProduct, error) {
+	tItickProductCategoryTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v", cacheTItickProductCategoryTypeMarketSymbolPrefix, categoryType, market, symbol)
 	var resp TItickProduct
 	err := m.QueryRowIndexCtx(ctx, &resp, tItickProductCategoryTypeMarketSymbolKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
 		query := fmt.Sprintf("select %s from %s where `category_type` = ? and `market` = ? and `symbol` = ? limit 1", tItickProductRows, m.table)
@@ -126,9 +126,9 @@ func (m *defaultTMarketProductModel) FindOneByCategoryTypeMarketSymbol(ctx conte
 	}
 }
 
-func (m *defaultTMarketProductModel) Insert(ctx context.Context, data *TItickProduct) (sql.Result, error) {
-	tItickProductCategoryTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v", cacheTMarketProductCategoryTypeMarketSymbolPrefix, data.CategoryType, data.Market, data.Symbol)
-	tItickProductIdKey := fmt.Sprintf("%s%v", cacheTMarketProductIdPrefix, data.Id)
+func (m *defaultTItickProductModel) Insert(ctx context.Context, data *TItickProduct) (sql.Result, error) {
+	tItickProductCategoryTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v", cacheTItickProductCategoryTypeMarketSymbolPrefix, data.CategoryType, data.Market, data.Symbol)
+	tItickProductIdKey := fmt.Sprintf("%s%v", cacheTItickProductIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickProductRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.CategoryType, data.CategoryName, data.CategoryCode, data.Market, data.Symbol, data.Code, data.Name, data.DisplayName, data.Exchange, data.Sector, data.Lug, data.BaseCoin, data.QuoteCoin, data.Enabled, data.AppVisible, data.SyncPriority, data.Sort, data.Icon, data.Remark, data.CreateTimes, data.UpdateTimes)
@@ -136,14 +136,14 @@ func (m *defaultTMarketProductModel) Insert(ctx context.Context, data *TItickPro
 	return ret, err
 }
 
-func (m *defaultTMarketProductModel) Update(ctx context.Context, newData *TItickProduct) error {
+func (m *defaultTItickProductModel) Update(ctx context.Context, newData *TItickProduct) error {
 	data, err := m.FindOne(ctx, newData.Id)
 	if err != nil {
 		return err
 	}
 
-	tItickProductCategoryTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v", cacheTMarketProductCategoryTypeMarketSymbolPrefix, data.CategoryType, data.Market, data.Symbol)
-	tItickProductIdKey := fmt.Sprintf("%s%v", cacheTMarketProductIdPrefix, data.Id)
+	tItickProductCategoryTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v", cacheTItickProductCategoryTypeMarketSymbolPrefix, data.CategoryType, data.Market, data.Symbol)
+	tItickProductIdKey := fmt.Sprintf("%s%v", cacheTItickProductIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickProductRowsWithPlaceHolder)
 		return conn.ExecCtx(ctx, query, newData.CategoryType, newData.CategoryName, newData.CategoryCode, newData.Market, newData.Symbol, newData.Code, newData.Name, newData.DisplayName, newData.Exchange, newData.Sector, newData.Lug, newData.BaseCoin, newData.QuoteCoin, newData.Enabled, newData.AppVisible, newData.SyncPriority, newData.Sort, newData.Icon, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
@@ -151,15 +151,15 @@ func (m *defaultTMarketProductModel) Update(ctx context.Context, newData *TItick
 	return err
 }
 
-func (m *defaultTMarketProductModel) formatPrimary(primary any) string {
-	return fmt.Sprintf("%s%v", cacheTMarketProductIdPrefix, primary)
+func (m *defaultTItickProductModel) formatPrimary(primary any) string {
+	return fmt.Sprintf("%s%v", cacheTItickProductIdPrefix, primary)
 }
 
-func (m *defaultTMarketProductModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
+func (m *defaultTItickProductModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickProductRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
-func (m *defaultTMarketProductModel) tableName() string {
+func (m *defaultTItickProductModel) tableName() string {
 	return m.table
 }

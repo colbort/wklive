@@ -23,8 +23,8 @@ var (
 	tItickTenantProductRowsExpectAutoSet   = strings.Join(stringx.Remove(tItickTenantProductFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tItickTenantProductRowsWithPlaceHolder = strings.Join(stringx.Remove(tItickTenantProductFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTMarketTenantProductIdPrefix                = "cache:tItickTenantProduct:id:"
-	cacheTMarketTenantProductTenantIdProductIdPrefix = "cache:tItickTenantProduct:tenantId:productId:"
+	cacheTItickTenantProductIdPrefix                = "cache:tItickTenantProduct:id:"
+	cacheTItickTenantProductTenantIdProductIdPrefix = "cache:tItickTenantProduct:tenantId:productId:"
 )
 
 type (
@@ -36,7 +36,7 @@ type (
 		Delete(ctx context.Context, id int64) error
 	}
 
-	defaultTMarketTenantProductModel struct {
+	defaultTItickTenantProductModel struct {
 		sqlc.CachedConn
 		table string
 	}
@@ -44,7 +44,7 @@ type (
 	TItickTenantProduct struct {
 		Id          int64  `db:"id"`           // 主键ID
 		TenantId    int64  `db:"tenant_id"`    // 租户ID
-		ProductId   int64  `db:"product_id"`   // 产品ID, 对应 market_product.id
+		ProductId   int64  `db:"product_id"`   // 产品ID, 对应 t_itick_product.id
 		Enabled     int64  `db:"enabled"`      // 启用状态: 1-启用 2-禁用
 		AppVisible  int64  `db:"app_visible"`  // APP可见开关: 1-显示 2-隐藏
 		DisplayName string `db:"display_name"` // 租户自定义展示名称，为空时使用产品展示名称
@@ -55,21 +55,21 @@ type (
 	}
 )
 
-func newTMarketTenantProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketTenantProductModel {
-	return &defaultTMarketTenantProductModel{
+func newTItickTenantProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTItickTenantProductModel {
+	return &defaultTItickTenantProductModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
 		table:      "`t_itick_tenant_product`",
 	}
 }
 
-func (m *defaultTMarketTenantProductModel) Delete(ctx context.Context, id int64) error {
+func (m *defaultTItickTenantProductModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	tItickTenantProductIdKey := fmt.Sprintf("%s%v", cacheTMarketTenantProductIdPrefix, id)
-	tItickTenantProductTenantIdProductIdKey := fmt.Sprintf("%s%v:%v", cacheTMarketTenantProductTenantIdProductIdPrefix, data.TenantId, data.ProductId)
+	tItickTenantProductIdKey := fmt.Sprintf("%s%v", cacheTItickTenantProductIdPrefix, id)
+	tItickTenantProductTenantIdProductIdKey := fmt.Sprintf("%s%v:%v", cacheTItickTenantProductTenantIdProductIdPrefix, data.TenantId, data.ProductId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
@@ -77,8 +77,8 @@ func (m *defaultTMarketTenantProductModel) Delete(ctx context.Context, id int64)
 	return err
 }
 
-func (m *defaultTMarketTenantProductModel) FindOne(ctx context.Context, id int64) (*TItickTenantProduct, error) {
-	tItickTenantProductIdKey := fmt.Sprintf("%s%v", cacheTMarketTenantProductIdPrefix, id)
+func (m *defaultTItickTenantProductModel) FindOne(ctx context.Context, id int64) (*TItickTenantProduct, error) {
+	tItickTenantProductIdKey := fmt.Sprintf("%s%v", cacheTItickTenantProductIdPrefix, id)
 	var resp TItickTenantProduct
 	err := m.QueryRowCtx(ctx, &resp, tItickTenantProductIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
 		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickTenantProductRows, m.table)
@@ -94,8 +94,8 @@ func (m *defaultTMarketTenantProductModel) FindOne(ctx context.Context, id int64
 	}
 }
 
-func (m *defaultTMarketTenantProductModel) FindOneByTenantIdProductId(ctx context.Context, tenantId int64, productId int64) (*TItickTenantProduct, error) {
-	tItickTenantProductTenantIdProductIdKey := fmt.Sprintf("%s%v:%v", cacheTMarketTenantProductTenantIdProductIdPrefix, tenantId, productId)
+func (m *defaultTItickTenantProductModel) FindOneByTenantIdProductId(ctx context.Context, tenantId int64, productId int64) (*TItickTenantProduct, error) {
+	tItickTenantProductTenantIdProductIdKey := fmt.Sprintf("%s%v:%v", cacheTItickTenantProductTenantIdProductIdPrefix, tenantId, productId)
 	var resp TItickTenantProduct
 	err := m.QueryRowIndexCtx(ctx, &resp, tItickTenantProductTenantIdProductIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
 		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `product_id` = ? limit 1", tItickTenantProductRows, m.table)
@@ -114,9 +114,9 @@ func (m *defaultTMarketTenantProductModel) FindOneByTenantIdProductId(ctx contex
 	}
 }
 
-func (m *defaultTMarketTenantProductModel) Insert(ctx context.Context, data *TItickTenantProduct) (sql.Result, error) {
-	tItickTenantProductIdKey := fmt.Sprintf("%s%v", cacheTMarketTenantProductIdPrefix, data.Id)
-	tItickTenantProductTenantIdProductIdKey := fmt.Sprintf("%s%v:%v", cacheTMarketTenantProductTenantIdProductIdPrefix, data.TenantId, data.ProductId)
+func (m *defaultTItickTenantProductModel) Insert(ctx context.Context, data *TItickTenantProduct) (sql.Result, error) {
+	tItickTenantProductIdKey := fmt.Sprintf("%s%v", cacheTItickTenantProductIdPrefix, data.Id)
+	tItickTenantProductTenantIdProductIdKey := fmt.Sprintf("%s%v:%v", cacheTItickTenantProductTenantIdProductIdPrefix, data.TenantId, data.ProductId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickTenantProductRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.TenantId, data.ProductId, data.Enabled, data.AppVisible, data.DisplayName, data.Sort, data.Remark, data.CreateTimes, data.UpdateTimes)
@@ -124,14 +124,14 @@ func (m *defaultTMarketTenantProductModel) Insert(ctx context.Context, data *TIt
 	return ret, err
 }
 
-func (m *defaultTMarketTenantProductModel) Update(ctx context.Context, newData *TItickTenantProduct) error {
+func (m *defaultTItickTenantProductModel) Update(ctx context.Context, newData *TItickTenantProduct) error {
 	data, err := m.FindOne(ctx, newData.Id)
 	if err != nil {
 		return err
 	}
 
-	tItickTenantProductIdKey := fmt.Sprintf("%s%v", cacheTMarketTenantProductIdPrefix, data.Id)
-	tItickTenantProductTenantIdProductIdKey := fmt.Sprintf("%s%v:%v", cacheTMarketTenantProductTenantIdProductIdPrefix, data.TenantId, data.ProductId)
+	tItickTenantProductIdKey := fmt.Sprintf("%s%v", cacheTItickTenantProductIdPrefix, data.Id)
+	tItickTenantProductTenantIdProductIdKey := fmt.Sprintf("%s%v:%v", cacheTItickTenantProductTenantIdProductIdPrefix, data.TenantId, data.ProductId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickTenantProductRowsWithPlaceHolder)
 		return conn.ExecCtx(ctx, query, newData.TenantId, newData.ProductId, newData.Enabled, newData.AppVisible, newData.DisplayName, newData.Sort, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
@@ -139,15 +139,15 @@ func (m *defaultTMarketTenantProductModel) Update(ctx context.Context, newData *
 	return err
 }
 
-func (m *defaultTMarketTenantProductModel) formatPrimary(primary any) string {
-	return fmt.Sprintf("%s%v", cacheTMarketTenantProductIdPrefix, primary)
+func (m *defaultTItickTenantProductModel) formatPrimary(primary any) string {
+	return fmt.Sprintf("%s%v", cacheTItickTenantProductIdPrefix, primary)
 }
 
-func (m *defaultTMarketTenantProductModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
+func (m *defaultTItickTenantProductModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickTenantProductRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
-func (m *defaultTMarketTenantProductModel) tableName() string {
+func (m *defaultTItickTenantProductModel) tableName() string {
 	return m.table
 }

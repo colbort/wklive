@@ -37,8 +37,8 @@
 === RUN   TestReplayEvaluationAuditRejectsTamperedInputPartition
 --- PASS: TestReplayEvaluationAuditRejectsTamperedInputPartition (0.00s)
 PASS
-ok  	wklive/services/market/internal/priceengine	0.021s
-?   	wklive/services/market/internal/logic/market	[no test files]
+ok  	wklive/services/itick/internal/priceengine	0.021s
+?   	wklive/services/itick/internal/logic/itick	[no test files]
 === RUN   TestNormalizePriceFormulaReq
 --- PASS: TestNormalizePriceFormulaReq (0.00s)
 === RUN   TestNormalizePriceFormulaRejectsInvalidPremium
@@ -52,4 +52,4 @@ ok  	wklive/services/market/internal/priceengine	0.021s
 === RUN   TestNormalizeIndexFormulaRequiresThreeDistinctMarkets
 --- PASS: TestNormalizeIndexFormulaRequiresThreeDistinctMarkets (0.00s)
 PASS
-ok  	wklive/services/market/internal/logic/task	0.041s
+ok  	wklive/services/itick/internal/logic/task	0.041s

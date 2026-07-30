@@ -100,7 +100,7 @@ Binance REST `aggTrades` 实际响应可不带 WebSocket 消息中的 `s` 字段
 标准 Docker 构建首次成功；修复版重建时 Go 模块代理对两个既有依赖返回
 `unexpected EOF`。为避免无限等待，使用已运行的标准 iTick 镜像为基础，仅覆盖本机
 交叉编译且测试通过的静态 Linux 二进制。源码和运行二进制对应；网络恢复后可重新执行
-标准 `deploy.sh up market-rpc` 得到同等镜像。
+标准 `deploy.sh up itick-rpc` 得到同等镜像。
 
 ## 7. 尚未通过的生产事实
 

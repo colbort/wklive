@@ -20,6 +20,11 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
+const (
+	noPositionFundingPriceSource    = "NO_POSITION_HISTORY"
+	noPositionFundingFormulaVersion = "no-position-v1"
+)
+
 var fundingInputRetryGate = newMarkQuoteRetryGate()
 
 type ProcessFundingSettlementsLogic struct {
@@ -98,6 +103,29 @@ func (l *ProcessFundingSettlementsLogic) createDueBatches(tenantID int64) error 
 			inputKey := fmt.Sprintf("%d:%d:%d", c.TenantId, c.SymbolId, settlementTime)
 			if !fundingInputRetryGate.allow(inputKey, now) {
 				continue
+			}
+			// A past funding point with no position facts has no monetary
+			// effect. Record an explicit completed empty batch so the
+			// scheduler can advance without inventing an authoritative price.
+			// The current funding point still follows the normal price-lock
+			// path, leaving time for delayed position events to arrive.
+			if recoverHistory && settlementTime < currentSettlementTime {
+				history, historyErr := l.svcCtx.ContractPositionHistModel.FindLatestBySymbolAt(
+					l.ctx, c.TenantId, c.SymbolId, settlementTime,
+				)
+				if historyErr != nil {
+					return historyErr
+				}
+				if len(fundingPositionsFromHistory(history)) == 0 {
+					if _, err = l.svcCtx.ContractFundingBatchModel.Insert(
+						l.ctx, newNoPositionFundingBatch(c, settlementTime, now),
+					); err != nil {
+						return err
+					}
+					fundingInputRetryGate.success(inputKey)
+					l.Infof("completed empty historical funding batch, tenantId=%d symbolId=%d settlementTime=%d", c.TenantId, c.SymbolId, settlementTime)
+					continue
+				}
 			}
 			mark, index, rate, source, err := l.lockFundingInputs(c, settlementTime)
 			if err != nil {
@@ -190,6 +218,25 @@ func (l *ProcessFundingSettlementsLogic) createDueBatches(tenantID int64) error 
 		if len(contracts) < 100 {
 			return nil
 		}
+	}
+}
+
+func newNoPositionFundingBatch(c *models.TTradeSymbolContract, settlementTime, now int64) *models.TContractFundingBatch {
+	return &models.TContractFundingBatch{
+		TenantId:         c.TenantId,
+		BatchNo:          fmt.Sprintf("FND-%d-%d", c.SymbolId, settlementTime),
+		SymbolId:         c.SymbolId,
+		FundingRate:      decimal.Zero,
+		MarkPrice:        decimal.Zero,
+		IndexPrice:       decimal.Zero,
+		PriceSource:      noPositionFundingPriceSource,
+		FormulaVersion:   noPositionFundingFormulaVersion,
+		SettlementTime:   settlementTime,
+		Status:           int64(trade.FundingBatchStatus_FUNDING_BATCH_STATUS_COMPLETED),
+		TotalPositions:   0,
+		SettledPositions: 0,
+		CreateTimes:      now,
+		UpdateTimes:      now,
 	}
 }
 

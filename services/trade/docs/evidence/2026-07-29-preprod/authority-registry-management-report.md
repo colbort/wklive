@@ -8,16 +8,16 @@
 - 独立性目标：Authority 表示发布身份，`provider_code` 表示真实数据供应商；同一
   供应商的 WS/REST 等不同通道不得被计算为多个独立来源；
 - 边界：不创建虚假第三来源，不修改现有公式，不开启交易或生产风险开关；
-- 代码约束：所有数据库查询和写入位于 `services/market/models`。
+- 代码约束：所有数据库查询和写入位于 `services/itick/models`。
 
 ## 2. 实现
 
 ### 2.1 协议和服务
 
-- Market Admin RPC 新增 `SetAuthorityRegistry`、`ListAuthorityRegistries`；
+- Itick Admin RPC 新增 `SetAuthorityRegistry`、`ListAuthorityRegistries`；
 - Admin API 新增：
-  - `GET /admin/market/authorities`；
-  - `POST /admin/market/authorities`；
+  - `GET /admin/itick/authorities`；
+  - `POST /admin/itick/authorities`；
 - 支持按 Authority、provider code、producer type、snapshot kind、状态和游标查询；
 - Authority 自动规范为小写，provider code、producer type 和 snapshot kind
   规范为大写；
@@ -49,22 +49,22 @@
   `provider_code` 的服务端校验；
 - `contract-readiness` 的数据库检查同时返回启用来源数和
   `COUNT(DISTINCT provider_code)`，二者都必须与声明来源数完全相等；
-- 相关数据库查询全部位于 Market models 或 deploy/dbinit models，logic 和 shell
+- 相关数据库查询全部位于 Itick models 或 deploy/dbinit models，logic 和 shell
   不直接执行 SQL。
 
 ### 2.5 RBAC
 
 - 权限迁移：
-  `20260729_add_market_authority_registry_permissions.sql`；
+  `20260729_add_itick_authority_registry_permissions.sql`；
 - migration 数：51；
-- 菜单 483：`GET /market/authorities` / `market:authority:list`；
-- 菜单 484：`POST /market/authorities` / `market:authority:set`；
+- 菜单 483：`GET /itick/authorities` / `itick:authority:list`；
+- 菜单 484：`POST /itick/authorities` / `itick:authority:set`；
 - 迁移后仅删除管理员 `userId=1` 的可重建权限缓存
   `system:user:perms:1`，未清理其他 Redis 或业务数据。
 
 ## 3. 自动化验证
 
-- `services/market go test ./...`：通过；
+- `services/itick go test ./...`：通过；
 - `admin-api go test ./...`：通过；
 - `admin-ui npm run type-check`（Node 20.20.2）：通过；
 - `prettier --check`：通过；
@@ -84,14 +84,14 @@
 
 部署镜像：
 
-- Market RPC：
+- Itick RPC：
   `sha256:5513ea58e5e2b073f370c26f68931017624ae009397e373ea305001efb61aaaf`；
 - Admin API：
   `sha256:b2899d87d2009289372814025f550e69bc39d856a4ff0fd574a557a07cd4d641`。
 
 两个容器均为 Healthy。部署切换时 Docker 空间耗尽令 Mongo 以 133 退出；只清理
 2.135 GB 未被容器引用的悬空镜像层后，Mongo 从最后检查点成功恢复且数据卷保留。
-Market 启动首个目标时点曾等待输入一次，随后 `itick-ws` 恢复至亚秒级、
+Itick 启动首个目标时点曾等待输入一次，随后 `itick-ws` 恢复至亚秒级、
 INDEX/MARK/FUNDING 持续生成；Outbox 仅保留约 1～2 秒的新鲜 Pending/Processing，
 Failed/Manual 为 0，恢复后的检查窗口无 unhealthy、evaluation failed、slowcall、
 panic 或 fatal。

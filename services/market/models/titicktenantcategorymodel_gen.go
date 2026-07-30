@@ -23,8 +23,8 @@ var (
 	tItickTenantCategoryRowsExpectAutoSet   = strings.Join(stringx.Remove(tItickTenantCategoryFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tItickTenantCategoryRowsWithPlaceHolder = strings.Join(stringx.Remove(tItickTenantCategoryFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTMarketTenantCategoryIdPrefix                 = "cache:tItickTenantCategory:id:"
-	cacheTMarketTenantCategoryTenantIdCategoryIdPrefix = "cache:tItickTenantCategory:tenantId:categoryId:"
+	cacheTItickTenantCategoryIdPrefix                 = "cache:tItickTenantCategory:id:"
+	cacheTItickTenantCategoryTenantIdCategoryIdPrefix = "cache:tItickTenantCategory:tenantId:categoryId:"
 )
 
 type (
@@ -36,7 +36,7 @@ type (
 		Delete(ctx context.Context, id int64) error
 	}
 
-	defaultTMarketTenantCategoryModel struct {
+	defaultTItickTenantCategoryModel struct {
 		sqlc.CachedConn
 		table string
 	}
@@ -44,7 +44,7 @@ type (
 	TItickTenantCategory struct {
 		Id          int64  `db:"id"`           // 主键ID
 		TenantId    int64  `db:"tenant_id"`    // 租户ID
-		CategoryId  int64  `db:"category_id"`  // 产品类型ID, 对应 market_category.id
+		CategoryId  int64  `db:"category_id"`  // 产品类型ID, 对应 t_itick_category.id
 		Enabled     int64  `db:"enabled"`      // 启用状态: 1-启用 2-禁用
 		AppVisible  int64  `db:"app_visible"`  // APP可见开关: 1-显示 2-隐藏
 		Sort        int64  `db:"sort"`         // 租户排序, 越小越靠前
@@ -54,21 +54,21 @@ type (
 	}
 )
 
-func newTMarketTenantCategoryModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketTenantCategoryModel {
-	return &defaultTMarketTenantCategoryModel{
+func newTItickTenantCategoryModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTItickTenantCategoryModel {
+	return &defaultTItickTenantCategoryModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
 		table:      "`t_itick_tenant_category`",
 	}
 }
 
-func (m *defaultTMarketTenantCategoryModel) Delete(ctx context.Context, id int64) error {
+func (m *defaultTItickTenantCategoryModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	tItickTenantCategoryIdKey := fmt.Sprintf("%s%v", cacheTMarketTenantCategoryIdPrefix, id)
-	tItickTenantCategoryTenantIdCategoryIdKey := fmt.Sprintf("%s%v:%v", cacheTMarketTenantCategoryTenantIdCategoryIdPrefix, data.TenantId, data.CategoryId)
+	tItickTenantCategoryIdKey := fmt.Sprintf("%s%v", cacheTItickTenantCategoryIdPrefix, id)
+	tItickTenantCategoryTenantIdCategoryIdKey := fmt.Sprintf("%s%v:%v", cacheTItickTenantCategoryTenantIdCategoryIdPrefix, data.TenantId, data.CategoryId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
@@ -76,8 +76,8 @@ func (m *defaultTMarketTenantCategoryModel) Delete(ctx context.Context, id int64
 	return err
 }
 
-func (m *defaultTMarketTenantCategoryModel) FindOne(ctx context.Context, id int64) (*TItickTenantCategory, error) {
-	tItickTenantCategoryIdKey := fmt.Sprintf("%s%v", cacheTMarketTenantCategoryIdPrefix, id)
+func (m *defaultTItickTenantCategoryModel) FindOne(ctx context.Context, id int64) (*TItickTenantCategory, error) {
+	tItickTenantCategoryIdKey := fmt.Sprintf("%s%v", cacheTItickTenantCategoryIdPrefix, id)
 	var resp TItickTenantCategory
 	err := m.QueryRowCtx(ctx, &resp, tItickTenantCategoryIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
 		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickTenantCategoryRows, m.table)
@@ -93,8 +93,8 @@ func (m *defaultTMarketTenantCategoryModel) FindOne(ctx context.Context, id int6
 	}
 }
 
-func (m *defaultTMarketTenantCategoryModel) FindOneByTenantIdCategoryId(ctx context.Context, tenantId int64, categoryId int64) (*TItickTenantCategory, error) {
-	tItickTenantCategoryTenantIdCategoryIdKey := fmt.Sprintf("%s%v:%v", cacheTMarketTenantCategoryTenantIdCategoryIdPrefix, tenantId, categoryId)
+func (m *defaultTItickTenantCategoryModel) FindOneByTenantIdCategoryId(ctx context.Context, tenantId int64, categoryId int64) (*TItickTenantCategory, error) {
+	tItickTenantCategoryTenantIdCategoryIdKey := fmt.Sprintf("%s%v:%v", cacheTItickTenantCategoryTenantIdCategoryIdPrefix, tenantId, categoryId)
 	var resp TItickTenantCategory
 	err := m.QueryRowIndexCtx(ctx, &resp, tItickTenantCategoryTenantIdCategoryIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
 		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `category_id` = ? limit 1", tItickTenantCategoryRows, m.table)
@@ -113,9 +113,9 @@ func (m *defaultTMarketTenantCategoryModel) FindOneByTenantIdCategoryId(ctx cont
 	}
 }
 
-func (m *defaultTMarketTenantCategoryModel) Insert(ctx context.Context, data *TItickTenantCategory) (sql.Result, error) {
-	tItickTenantCategoryIdKey := fmt.Sprintf("%s%v", cacheTMarketTenantCategoryIdPrefix, data.Id)
-	tItickTenantCategoryTenantIdCategoryIdKey := fmt.Sprintf("%s%v:%v", cacheTMarketTenantCategoryTenantIdCategoryIdPrefix, data.TenantId, data.CategoryId)
+func (m *defaultTItickTenantCategoryModel) Insert(ctx context.Context, data *TItickTenantCategory) (sql.Result, error) {
+	tItickTenantCategoryIdKey := fmt.Sprintf("%s%v", cacheTItickTenantCategoryIdPrefix, data.Id)
+	tItickTenantCategoryTenantIdCategoryIdKey := fmt.Sprintf("%s%v:%v", cacheTItickTenantCategoryTenantIdCategoryIdPrefix, data.TenantId, data.CategoryId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickTenantCategoryRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.TenantId, data.CategoryId, data.Enabled, data.AppVisible, data.Sort, data.Remark, data.CreateTimes, data.UpdateTimes)
@@ -123,14 +123,14 @@ func (m *defaultTMarketTenantCategoryModel) Insert(ctx context.Context, data *TI
 	return ret, err
 }
 
-func (m *defaultTMarketTenantCategoryModel) Update(ctx context.Context, newData *TItickTenantCategory) error {
+func (m *defaultTItickTenantCategoryModel) Update(ctx context.Context, newData *TItickTenantCategory) error {
 	data, err := m.FindOne(ctx, newData.Id)
 	if err != nil {
 		return err
 	}
 
-	tItickTenantCategoryIdKey := fmt.Sprintf("%s%v", cacheTMarketTenantCategoryIdPrefix, data.Id)
-	tItickTenantCategoryTenantIdCategoryIdKey := fmt.Sprintf("%s%v:%v", cacheTMarketTenantCategoryTenantIdCategoryIdPrefix, data.TenantId, data.CategoryId)
+	tItickTenantCategoryIdKey := fmt.Sprintf("%s%v", cacheTItickTenantCategoryIdPrefix, data.Id)
+	tItickTenantCategoryTenantIdCategoryIdKey := fmt.Sprintf("%s%v:%v", cacheTItickTenantCategoryTenantIdCategoryIdPrefix, data.TenantId, data.CategoryId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickTenantCategoryRowsWithPlaceHolder)
 		return conn.ExecCtx(ctx, query, newData.TenantId, newData.CategoryId, newData.Enabled, newData.AppVisible, newData.Sort, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
@@ -138,15 +138,15 @@ func (m *defaultTMarketTenantCategoryModel) Update(ctx context.Context, newData 
 	return err
 }
 
-func (m *defaultTMarketTenantCategoryModel) formatPrimary(primary any) string {
-	return fmt.Sprintf("%s%v", cacheTMarketTenantCategoryIdPrefix, primary)
+func (m *defaultTItickTenantCategoryModel) formatPrimary(primary any) string {
+	return fmt.Sprintf("%s%v", cacheTItickTenantCategoryIdPrefix, primary)
 }
 
-func (m *defaultTMarketTenantCategoryModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
+func (m *defaultTItickTenantCategoryModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickTenantCategoryRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
-func (m *defaultTMarketTenantCategoryModel) tableName() string {
+func (m *defaultTItickTenantCategoryModel) tableName() string {
 	return m.table
 }

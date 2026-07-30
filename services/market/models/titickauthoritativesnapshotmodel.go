@@ -9,11 +9,11 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TItickAuthoritativeSnapshotModel = (*customTMarketAuthoritativeSnapshotModel)(nil)
+var _ TItickAuthoritativeSnapshotModel = (*customTItickAuthoritativeSnapshotModel)(nil)
 
 type (
 	// TItickAuthoritativeSnapshotModel is an interface to be customized, add more methods here,
-	// and implement the added methods in customTMarketAuthoritativeSnapshotModel.
+	// and implement the added methods in customTItickAuthoritativeSnapshotModel.
 	TItickAuthoritativeSnapshotModel interface {
 		tItickAuthoritativeSnapshotModel
 		InsertImmutable(context.Context, *TItickAuthoritativeSnapshot) error
@@ -31,19 +31,19 @@ type (
 		Symbol       string `db:"symbol"`
 	}
 
-	customTMarketAuthoritativeSnapshotModel struct {
-		*defaultTMarketAuthoritativeSnapshotModel
+	customTItickAuthoritativeSnapshotModel struct {
+		*defaultTItickAuthoritativeSnapshotModel
 	}
 )
 
-// NewTMarketAuthoritativeSnapshotModel returns a model for the database table.
-func NewTMarketAuthoritativeSnapshotModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickAuthoritativeSnapshotModel {
-	return &customTMarketAuthoritativeSnapshotModel{
-		defaultTMarketAuthoritativeSnapshotModel: newTMarketAuthoritativeSnapshotModel(conn, c, opts...),
+// NewTItickAuthoritativeSnapshotModel returns a model for the database table.
+func NewTItickAuthoritativeSnapshotModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickAuthoritativeSnapshotModel {
+	return &customTItickAuthoritativeSnapshotModel{
+		defaultTItickAuthoritativeSnapshotModel: newTItickAuthoritativeSnapshotModel(conn, c, opts...),
 	}
 }
 
-func (m *defaultTMarketAuthoritativeSnapshotModel) FindProductKeys(ctx context.Context) ([]AuthoritativeSnapshotProductKey, error) {
+func (m *defaultTItickAuthoritativeSnapshotModel) FindProductKeys(ctx context.Context) ([]AuthoritativeSnapshotProductKey, error) {
 	var rows []AuthoritativeSnapshotProductKey
 	err := m.QueryRowsNoCacheCtx(ctx, &rows, `SELECT DISTINCT authority,snapshot_kind,category_code,market,symbol
 FROM t_itick_authoritative_snapshot
@@ -51,7 +51,7 @@ ORDER BY authority,snapshot_kind,category_code,market,symbol`)
 	return rows, err
 }
 
-func (m *defaultTMarketAuthoritativeSnapshotModel) FindAfterID(ctx context.Context, afterID, limit int64) ([]*TItickAuthoritativeSnapshot, error) {
+func (m *defaultTItickAuthoritativeSnapshotModel) FindAfterID(ctx context.Context, afterID, limit int64) ([]*TItickAuthoritativeSnapshot, error) {
 	if limit <= 0 || limit > 1000 {
 		limit = 500
 	}
@@ -60,7 +60,7 @@ func (m *defaultTMarketAuthoritativeSnapshotModel) FindAfterID(ctx context.Conte
 	return rows, err
 }
 
-func (m *defaultTMarketAuthoritativeSnapshotModel) InsertImmutableAndEnqueue(ctx context.Context, row *TItickAuthoritativeSnapshot, payload string) error {
+func (m *defaultTItickAuthoritativeSnapshotModel) InsertImmutableAndEnqueue(ctx context.Context, row *TItickAuthoritativeSnapshot, payload string) error {
 	return m.TransactCtx(ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		result, err := conn.ExecCtx(ctx, `INSERT INTO t_itick_authoritative_snapshot
@@ -92,7 +92,7 @@ FROM t_itick_authoritative_snapshot WHERE snapshot_id=? LIMIT 1`
 	})
 }
 
-func (m *defaultTMarketAuthoritativeSnapshotModel) InsertImmutable(ctx context.Context, row *TItickAuthoritativeSnapshot) error {
+func (m *defaultTItickAuthoritativeSnapshotModel) InsertImmutable(ctx context.Context, row *TItickAuthoritativeSnapshot) error {
 	result, err := m.ExecNoCacheCtx(ctx, `INSERT INTO t_itick_authoritative_snapshot
 (snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times)
 VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE snapshot_id=snapshot_id`, row.SnapshotId, row.Authority, row.SnapshotKind, row.CategoryCode, row.Market, row.Symbol, row.Price, row.SourceTimestamp, row.SnapshotTimestamp, row.Revision, row.FormulaVersion, row.RawPayload, row.CreateTimes)
@@ -127,7 +127,7 @@ func authoritativeSnapshotConflictError(row *TItickAuthoritativeSnapshot) error 
 	return fmt.Errorf("authoritative snapshot immutable-key conflict: authority=%s kind=%s symbol=%s source_timestamp=%d revision=%d", row.Authority, row.SnapshotKind, row.Symbol, row.SourceTimestamp, row.Revision)
 }
 
-func (m *defaultTMarketAuthoritativeSnapshotModel) findByImmutableKey(ctx context.Context, row *TItickAuthoritativeSnapshot) (*TItickAuthoritativeSnapshot, error) {
+func (m *defaultTItickAuthoritativeSnapshotModel) findByImmutableKey(ctx context.Context, row *TItickAuthoritativeSnapshot) (*TItickAuthoritativeSnapshot, error) {
 	var existing TItickAuthoritativeSnapshot
 	err := m.QueryRowNoCacheCtx(ctx, &existing, `SELECT id,snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times
 FROM t_itick_authoritative_snapshot WHERE authority=? AND snapshot_kind=? AND category_code=? AND market=? AND symbol=? AND source_timestamp=? AND revision=? LIMIT 1`, row.Authority, row.SnapshotKind, row.CategoryCode, row.Market, row.Symbol, row.SourceTimestamp, row.Revision)
@@ -141,7 +141,7 @@ func sameAuthoritativeSnapshotIdentity(a, b *TItickAuthoritativeSnapshot) bool {
 	return a != nil && b != nil && a.SnapshotId == b.SnapshotId && a.Authority == b.Authority && a.SnapshotKind == b.SnapshotKind && a.CategoryCode == b.CategoryCode && a.Market == b.Market && a.Symbol == b.Symbol && a.Price.Equal(b.Price) && a.SourceTimestamp == b.SourceTimestamp && a.Revision == b.Revision && a.FormulaVersion == b.FormulaVersion
 }
 
-func (m *defaultTMarketAuthoritativeSnapshotModel) FindAtOrBefore(ctx context.Context, authority, kind, category, market, symbol string, targetTime, minTime int64) (*TItickAuthoritativeSnapshot, error) {
+func (m *defaultTItickAuthoritativeSnapshotModel) FindAtOrBefore(ctx context.Context, authority, kind, category, market, symbol string, targetTime, minTime int64) (*TItickAuthoritativeSnapshot, error) {
 	var row TItickAuthoritativeSnapshot
 	err := m.QueryRowNoCacheCtx(ctx, &row, `SELECT id,snapshot_id,authority,snapshot_kind,category_code,market,symbol,price,source_timestamp,snapshot_timestamp,revision,formula_version,raw_payload,create_times
 FROM t_itick_authoritative_snapshot

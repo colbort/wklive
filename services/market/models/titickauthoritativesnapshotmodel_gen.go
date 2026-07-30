@@ -25,8 +25,8 @@ var (
 	tItickAuthoritativeSnapshotRowsExpectAutoSet   = strings.Join(stringx.Remove(tItickAuthoritativeSnapshotFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tItickAuthoritativeSnapshotRowsWithPlaceHolder = strings.Join(stringx.Remove(tItickAuthoritativeSnapshotFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTMarketAuthoritativeSnapshotIdPrefix         = "cache:tItickAuthoritativeSnapshot:id:"
-	cacheTMarketAuthoritativeSnapshotSnapshotIdPrefix = "cache:tItickAuthoritativeSnapshot:snapshotId:"
+	cacheTItickAuthoritativeSnapshotIdPrefix         = "cache:tItickAuthoritativeSnapshot:id:"
+	cacheTItickAuthoritativeSnapshotSnapshotIdPrefix = "cache:tItickAuthoritativeSnapshot:snapshotId:"
 )
 
 type (
@@ -38,7 +38,7 @@ type (
 		Delete(ctx context.Context, id int64) error
 	}
 
-	defaultTMarketAuthoritativeSnapshotModel struct {
+	defaultTItickAuthoritativeSnapshotModel struct {
 		sqlc.CachedConn
 		table string
 	}
@@ -61,21 +61,21 @@ type (
 	}
 )
 
-func newTMarketAuthoritativeSnapshotModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketAuthoritativeSnapshotModel {
-	return &defaultTMarketAuthoritativeSnapshotModel{
+func newTItickAuthoritativeSnapshotModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTItickAuthoritativeSnapshotModel {
+	return &defaultTItickAuthoritativeSnapshotModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
 		table:      "`t_itick_authoritative_snapshot`",
 	}
 }
 
-func (m *defaultTMarketAuthoritativeSnapshotModel) Delete(ctx context.Context, id int64) error {
+func (m *defaultTItickAuthoritativeSnapshotModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	tItickAuthoritativeSnapshotIdKey := fmt.Sprintf("%s%v", cacheTMarketAuthoritativeSnapshotIdPrefix, id)
-	tItickAuthoritativeSnapshotSnapshotIdKey := fmt.Sprintf("%s%v", cacheTMarketAuthoritativeSnapshotSnapshotIdPrefix, data.SnapshotId)
+	tItickAuthoritativeSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickAuthoritativeSnapshotIdPrefix, id)
+	tItickAuthoritativeSnapshotSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickAuthoritativeSnapshotSnapshotIdPrefix, data.SnapshotId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
@@ -83,8 +83,8 @@ func (m *defaultTMarketAuthoritativeSnapshotModel) Delete(ctx context.Context, i
 	return err
 }
 
-func (m *defaultTMarketAuthoritativeSnapshotModel) FindOne(ctx context.Context, id int64) (*TItickAuthoritativeSnapshot, error) {
-	tItickAuthoritativeSnapshotIdKey := fmt.Sprintf("%s%v", cacheTMarketAuthoritativeSnapshotIdPrefix, id)
+func (m *defaultTItickAuthoritativeSnapshotModel) FindOne(ctx context.Context, id int64) (*TItickAuthoritativeSnapshot, error) {
+	tItickAuthoritativeSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickAuthoritativeSnapshotIdPrefix, id)
 	var resp TItickAuthoritativeSnapshot
 	err := m.QueryRowCtx(ctx, &resp, tItickAuthoritativeSnapshotIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
 		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickAuthoritativeSnapshotRows, m.table)
@@ -100,8 +100,8 @@ func (m *defaultTMarketAuthoritativeSnapshotModel) FindOne(ctx context.Context, 
 	}
 }
 
-func (m *defaultTMarketAuthoritativeSnapshotModel) FindOneBySnapshotId(ctx context.Context, snapshotId string) (*TItickAuthoritativeSnapshot, error) {
-	tItickAuthoritativeSnapshotSnapshotIdKey := fmt.Sprintf("%s%v", cacheTMarketAuthoritativeSnapshotSnapshotIdPrefix, snapshotId)
+func (m *defaultTItickAuthoritativeSnapshotModel) FindOneBySnapshotId(ctx context.Context, snapshotId string) (*TItickAuthoritativeSnapshot, error) {
+	tItickAuthoritativeSnapshotSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickAuthoritativeSnapshotSnapshotIdPrefix, snapshotId)
 	var resp TItickAuthoritativeSnapshot
 	err := m.QueryRowIndexCtx(ctx, &resp, tItickAuthoritativeSnapshotSnapshotIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
 		query := fmt.Sprintf("select %s from %s where `snapshot_id` = ? limit 1", tItickAuthoritativeSnapshotRows, m.table)
@@ -120,9 +120,9 @@ func (m *defaultTMarketAuthoritativeSnapshotModel) FindOneBySnapshotId(ctx conte
 	}
 }
 
-func (m *defaultTMarketAuthoritativeSnapshotModel) Insert(ctx context.Context, data *TItickAuthoritativeSnapshot) (sql.Result, error) {
-	tItickAuthoritativeSnapshotIdKey := fmt.Sprintf("%s%v", cacheTMarketAuthoritativeSnapshotIdPrefix, data.Id)
-	tItickAuthoritativeSnapshotSnapshotIdKey := fmt.Sprintf("%s%v", cacheTMarketAuthoritativeSnapshotSnapshotIdPrefix, data.SnapshotId)
+func (m *defaultTItickAuthoritativeSnapshotModel) Insert(ctx context.Context, data *TItickAuthoritativeSnapshot) (sql.Result, error) {
+	tItickAuthoritativeSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickAuthoritativeSnapshotIdPrefix, data.Id)
+	tItickAuthoritativeSnapshotSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickAuthoritativeSnapshotSnapshotIdPrefix, data.SnapshotId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickAuthoritativeSnapshotRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.SnapshotId, data.Authority, data.SnapshotKind, data.CategoryCode, data.Market, data.Symbol, data.Price, data.SourceTimestamp, data.SnapshotTimestamp, data.Revision, data.FormulaVersion, data.RawPayload, data.CreateTimes)
@@ -130,14 +130,14 @@ func (m *defaultTMarketAuthoritativeSnapshotModel) Insert(ctx context.Context, d
 	return ret, err
 }
 
-func (m *defaultTMarketAuthoritativeSnapshotModel) Update(ctx context.Context, newData *TItickAuthoritativeSnapshot) error {
+func (m *defaultTItickAuthoritativeSnapshotModel) Update(ctx context.Context, newData *TItickAuthoritativeSnapshot) error {
 	data, err := m.FindOne(ctx, newData.Id)
 	if err != nil {
 		return err
 	}
 
-	tItickAuthoritativeSnapshotIdKey := fmt.Sprintf("%s%v", cacheTMarketAuthoritativeSnapshotIdPrefix, data.Id)
-	tItickAuthoritativeSnapshotSnapshotIdKey := fmt.Sprintf("%s%v", cacheTMarketAuthoritativeSnapshotSnapshotIdPrefix, data.SnapshotId)
+	tItickAuthoritativeSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickAuthoritativeSnapshotIdPrefix, data.Id)
+	tItickAuthoritativeSnapshotSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickAuthoritativeSnapshotSnapshotIdPrefix, data.SnapshotId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickAuthoritativeSnapshotRowsWithPlaceHolder)
 		return conn.ExecCtx(ctx, query, newData.SnapshotId, newData.Authority, newData.SnapshotKind, newData.CategoryCode, newData.Market, newData.Symbol, newData.Price, newData.SourceTimestamp, newData.SnapshotTimestamp, newData.Revision, newData.FormulaVersion, newData.RawPayload, newData.CreateTimes, newData.Id)
@@ -145,15 +145,15 @@ func (m *defaultTMarketAuthoritativeSnapshotModel) Update(ctx context.Context, n
 	return err
 }
 
-func (m *defaultTMarketAuthoritativeSnapshotModel) formatPrimary(primary any) string {
-	return fmt.Sprintf("%s%v", cacheTMarketAuthoritativeSnapshotIdPrefix, primary)
+func (m *defaultTItickAuthoritativeSnapshotModel) formatPrimary(primary any) string {
+	return fmt.Sprintf("%s%v", cacheTItickAuthoritativeSnapshotIdPrefix, primary)
 }
 
-func (m *defaultTMarketAuthoritativeSnapshotModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
+func (m *defaultTItickAuthoritativeSnapshotModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickAuthoritativeSnapshotRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
-func (m *defaultTMarketAuthoritativeSnapshotModel) tableName() string {
+func (m *defaultTItickAuthoritativeSnapshotModel) tableName() string {
 	return m.table
 }

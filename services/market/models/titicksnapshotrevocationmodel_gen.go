@@ -23,8 +23,8 @@ var (
 	tItickSnapshotRevocationRowsExpectAutoSet   = strings.Join(stringx.Remove(tItickSnapshotRevocationFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tItickSnapshotRevocationRowsWithPlaceHolder = strings.Join(stringx.Remove(tItickSnapshotRevocationFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTMarketSnapshotRevocationIdPrefix         = "cache:tItickSnapshotRevocation:id:"
-	cacheTMarketSnapshotRevocationSnapshotIdPrefix = "cache:tItickSnapshotRevocation:snapshotId:"
+	cacheTItickSnapshotRevocationIdPrefix         = "cache:tItickSnapshotRevocation:id:"
+	cacheTItickSnapshotRevocationSnapshotIdPrefix = "cache:tItickSnapshotRevocation:snapshotId:"
 )
 
 type (
@@ -36,7 +36,7 @@ type (
 		Delete(ctx context.Context, id int64) error
 	}
 
-	defaultTMarketSnapshotRevocationModel struct {
+	defaultTItickSnapshotRevocationModel struct {
 		sqlc.CachedConn
 		table string
 	}
@@ -50,21 +50,21 @@ type (
 	}
 )
 
-func newTMarketSnapshotRevocationModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTMarketSnapshotRevocationModel {
-	return &defaultTMarketSnapshotRevocationModel{
+func newTItickSnapshotRevocationModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTItickSnapshotRevocationModel {
+	return &defaultTItickSnapshotRevocationModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
 		table:      "`t_itick_snapshot_revocation`",
 	}
 }
 
-func (m *defaultTMarketSnapshotRevocationModel) Delete(ctx context.Context, id int64) error {
+func (m *defaultTItickSnapshotRevocationModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	tItickSnapshotRevocationIdKey := fmt.Sprintf("%s%v", cacheTMarketSnapshotRevocationIdPrefix, id)
-	tItickSnapshotRevocationSnapshotIdKey := fmt.Sprintf("%s%v", cacheTMarketSnapshotRevocationSnapshotIdPrefix, data.SnapshotId)
+	tItickSnapshotRevocationIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotRevocationIdPrefix, id)
+	tItickSnapshotRevocationSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotRevocationSnapshotIdPrefix, data.SnapshotId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
@@ -72,8 +72,8 @@ func (m *defaultTMarketSnapshotRevocationModel) Delete(ctx context.Context, id i
 	return err
 }
 
-func (m *defaultTMarketSnapshotRevocationModel) FindOne(ctx context.Context, id int64) (*TItickSnapshotRevocation, error) {
-	tItickSnapshotRevocationIdKey := fmt.Sprintf("%s%v", cacheTMarketSnapshotRevocationIdPrefix, id)
+func (m *defaultTItickSnapshotRevocationModel) FindOne(ctx context.Context, id int64) (*TItickSnapshotRevocation, error) {
+	tItickSnapshotRevocationIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotRevocationIdPrefix, id)
 	var resp TItickSnapshotRevocation
 	err := m.QueryRowCtx(ctx, &resp, tItickSnapshotRevocationIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
 		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickSnapshotRevocationRows, m.table)
@@ -89,8 +89,8 @@ func (m *defaultTMarketSnapshotRevocationModel) FindOne(ctx context.Context, id 
 	}
 }
 
-func (m *defaultTMarketSnapshotRevocationModel) FindOneBySnapshotId(ctx context.Context, snapshotId string) (*TItickSnapshotRevocation, error) {
-	tItickSnapshotRevocationSnapshotIdKey := fmt.Sprintf("%s%v", cacheTMarketSnapshotRevocationSnapshotIdPrefix, snapshotId)
+func (m *defaultTItickSnapshotRevocationModel) FindOneBySnapshotId(ctx context.Context, snapshotId string) (*TItickSnapshotRevocation, error) {
+	tItickSnapshotRevocationSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotRevocationSnapshotIdPrefix, snapshotId)
 	var resp TItickSnapshotRevocation
 	err := m.QueryRowIndexCtx(ctx, &resp, tItickSnapshotRevocationSnapshotIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
 		query := fmt.Sprintf("select %s from %s where `snapshot_id` = ? limit 1", tItickSnapshotRevocationRows, m.table)
@@ -109,9 +109,9 @@ func (m *defaultTMarketSnapshotRevocationModel) FindOneBySnapshotId(ctx context.
 	}
 }
 
-func (m *defaultTMarketSnapshotRevocationModel) Insert(ctx context.Context, data *TItickSnapshotRevocation) (sql.Result, error) {
-	tItickSnapshotRevocationIdKey := fmt.Sprintf("%s%v", cacheTMarketSnapshotRevocationIdPrefix, data.Id)
-	tItickSnapshotRevocationSnapshotIdKey := fmt.Sprintf("%s%v", cacheTMarketSnapshotRevocationSnapshotIdPrefix, data.SnapshotId)
+func (m *defaultTItickSnapshotRevocationModel) Insert(ctx context.Context, data *TItickSnapshotRevocation) (sql.Result, error) {
+	tItickSnapshotRevocationIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotRevocationIdPrefix, data.Id)
+	tItickSnapshotRevocationSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotRevocationSnapshotIdPrefix, data.SnapshotId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?)", m.table, tItickSnapshotRevocationRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.SnapshotId, data.ReplacementSnapshotId, data.Reason, data.CreateTimes)
@@ -119,14 +119,14 @@ func (m *defaultTMarketSnapshotRevocationModel) Insert(ctx context.Context, data
 	return ret, err
 }
 
-func (m *defaultTMarketSnapshotRevocationModel) Update(ctx context.Context, newData *TItickSnapshotRevocation) error {
+func (m *defaultTItickSnapshotRevocationModel) Update(ctx context.Context, newData *TItickSnapshotRevocation) error {
 	data, err := m.FindOne(ctx, newData.Id)
 	if err != nil {
 		return err
 	}
 
-	tItickSnapshotRevocationIdKey := fmt.Sprintf("%s%v", cacheTMarketSnapshotRevocationIdPrefix, data.Id)
-	tItickSnapshotRevocationSnapshotIdKey := fmt.Sprintf("%s%v", cacheTMarketSnapshotRevocationSnapshotIdPrefix, data.SnapshotId)
+	tItickSnapshotRevocationIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotRevocationIdPrefix, data.Id)
+	tItickSnapshotRevocationSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotRevocationSnapshotIdPrefix, data.SnapshotId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickSnapshotRevocationRowsWithPlaceHolder)
 		return conn.ExecCtx(ctx, query, newData.SnapshotId, newData.ReplacementSnapshotId, newData.Reason, newData.CreateTimes, newData.Id)
@@ -134,15 +134,15 @@ func (m *defaultTMarketSnapshotRevocationModel) Update(ctx context.Context, newD
 	return err
 }
 
-func (m *defaultTMarketSnapshotRevocationModel) formatPrimary(primary any) string {
-	return fmt.Sprintf("%s%v", cacheTMarketSnapshotRevocationIdPrefix, primary)
+func (m *defaultTItickSnapshotRevocationModel) formatPrimary(primary any) string {
+	return fmt.Sprintf("%s%v", cacheTItickSnapshotRevocationIdPrefix, primary)
 }
 
-func (m *defaultTMarketSnapshotRevocationModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
+func (m *defaultTItickSnapshotRevocationModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
 	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickSnapshotRevocationRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
-func (m *defaultTMarketSnapshotRevocationModel) tableName() string {
+func (m *defaultTItickSnapshotRevocationModel) tableName() string {
 	return m.table
 }

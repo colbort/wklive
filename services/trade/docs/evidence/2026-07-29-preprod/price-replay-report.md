@@ -9,7 +9,7 @@
 - 租户：`tenant_id=1`
 - 永续 Symbol：`BTCUSDT`（`symbol_id=2`）
 - 交割 Symbol：`BTCUSDT`（`symbol_id=4`）
-- 回放工具：`services/market/cmd/price-replay`
+- 回放工具：`services/itick/cmd/price-replay`
 - 期望计算周期：1,000 ms
 
 当前运行配置只有 `itick-ws` 单源参与 MARK/INDEX，不具备生产三独立来源条件；

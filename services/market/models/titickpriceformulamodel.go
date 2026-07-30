@@ -12,11 +12,11 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TItickPriceFormulaModel = (*customTMarketPriceFormulaModel)(nil)
+var _ TItickPriceFormulaModel = (*customTItickPriceFormulaModel)(nil)
 
 type (
 	// TItickPriceFormulaModel is an interface to be customized, add more methods here,
-	// and implement the added methods in customTMarketPriceFormulaModel.
+	// and implement the added methods in customTItickPriceFormulaModel.
 	TItickPriceFormulaModel interface {
 		tItickPriceFormulaModel
 		FindDue(context.Context, int64, int64) ([]*TItickPriceFormula, error)
@@ -27,8 +27,8 @@ type (
 		FindPage(context.Context, PriceFormulaFilter, int64, int64) ([]*TItickPriceFormula, int64, error)
 	}
 
-	customTMarketPriceFormulaModel struct {
-		*defaultTMarketPriceFormulaModel
+	customTItickPriceFormulaModel struct {
+		*defaultTItickPriceFormulaModel
 	}
 
 	PriceFormulaFilter struct {
@@ -37,17 +37,17 @@ type (
 	}
 )
 
-// NewTMarketPriceFormulaModel returns a model for the database table.
-func NewTMarketPriceFormulaModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickPriceFormulaModel {
-	return &customTMarketPriceFormulaModel{
-		defaultTMarketPriceFormulaModel: newTMarketPriceFormulaModel(conn, c, opts...),
+// NewTItickPriceFormulaModel returns a model for the database table.
+func NewTItickPriceFormulaModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickPriceFormulaModel {
+	return &customTItickPriceFormulaModel{
+		defaultTItickPriceFormulaModel: newTItickPriceFormulaModel(conn, c, opts...),
 	}
 }
 
 // ActivateVersion atomically makes the selected immutable formula revision the
 // sole active revision for its output. Formula content is changed by inserting
 // a new revision, never by editing the active row in place.
-func (m *defaultTMarketPriceFormulaModel) ActivateVersion(ctx context.Context, id, now int64) error {
+func (m *defaultTItickPriceFormulaModel) ActivateVersion(ctx context.Context, id, now int64) error {
 	var revisions []TItickPriceFormula
 	err := m.TransactCtx(ctx, func(ctx context.Context, session sqlx.Session) error {
 		var selected TItickPriceFormula
@@ -75,7 +75,7 @@ func (m *defaultTMarketPriceFormulaModel) ActivateVersion(ctx context.Context, i
 }
 
 // RevokeVersion is irreversible; revoked revisions cannot be activated again.
-func (m *defaultTMarketPriceFormulaModel) RevokeVersion(ctx context.Context, id, now int64) error {
+func (m *defaultTItickPriceFormulaModel) RevokeVersion(ctx context.Context, id, now int64) error {
 	row, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -98,15 +98,15 @@ func priceFormulaCacheKeys(rows ...TItickPriceFormula) []string {
 	keys := make([]string, 0, len(rows)*3)
 	for _, row := range rows {
 		keys = append(keys,
-			fmt.Sprintf("%s%v", cacheTMarketPriceFormulaIdPrefix, row.Id),
-			fmt.Sprintf("%s%v", cacheTMarketPriceFormulaFormulaNoPrefix, row.FormulaNo),
-			fmt.Sprintf("%s%v:%v:%v:%v:%v:%v", cacheTMarketPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionPrefix, row.Authority, row.SnapshotKind, row.CategoryCode, row.Market, row.Symbol, row.FormulaVersion),
+			fmt.Sprintf("%s%v", cacheTItickPriceFormulaIdPrefix, row.Id),
+			fmt.Sprintf("%s%v", cacheTItickPriceFormulaFormulaNoPrefix, row.FormulaNo),
+			fmt.Sprintf("%s%v:%v:%v:%v:%v:%v", cacheTItickPriceFormulaAuthoritySnapshotKindCategoryCodeMarketSymbolFormulaVersionPrefix, row.Authority, row.SnapshotKind, row.CategoryCode, row.Market, row.Symbol, row.FormulaVersion),
 		)
 	}
 	return keys
 }
 
-func (m *defaultTMarketPriceFormulaModel) FindPage(ctx context.Context, filter PriceFormulaFilter, cursor, limit int64) ([]*TItickPriceFormula, int64, error) {
+func (m *defaultTItickPriceFormulaModel) FindPage(ctx context.Context, filter PriceFormulaFilter, cursor, limit int64) ([]*TItickPriceFormula, int64, error) {
 	if limit <= 0 || limit > 200 {
 		limit = 50
 	}
@@ -138,18 +138,18 @@ func (m *defaultTMarketPriceFormulaModel) FindPage(ctx context.Context, filter P
 	return rows, total, err
 }
 
-func (m *defaultTMarketPriceFormulaModel) ReleaseTarget(ctx context.Context, id, claimedRunVersion, target, previous int64) error {
+func (m *defaultTItickPriceFormulaModel) ReleaseTarget(ctx context.Context, id, claimedRunVersion, target, previous int64) error {
 	_, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_price_formula SET last_target_time=?,update_times=? WHERE id=? AND run_version=? AND last_target_time=?", previous, time.Now().UnixMilli(), id, claimedRunVersion, target)
 	return err
 }
 
-func (m *defaultTMarketPriceFormulaModel) FindDue(ctx context.Context, now, limit int64) ([]*TItickPriceFormula, error) {
+func (m *defaultTItickPriceFormulaModel) FindDue(ctx context.Context, now, limit int64) ([]*TItickPriceFormula, error) {
 	var rows []*TItickPriceFormula
 	err := m.QueryRowsNoCacheCtx(ctx, &rows, fmt.Sprintf("SELECT %s FROM %s WHERE status=1 AND last_target_time+interval_ms<=? ORDER BY id LIMIT ?", tItickPriceFormulaRows, m.table), now, limit)
 	return rows, err
 }
 
-func (m *defaultTMarketPriceFormulaModel) ClaimTarget(ctx context.Context, id, runVersion, target, now int64) (bool, error) {
+func (m *defaultTItickPriceFormulaModel) ClaimTarget(ctx context.Context, id, runVersion, target, now int64) (bool, error) {
 	result, err := m.ExecNoCacheCtx(ctx, "UPDATE t_itick_price_formula SET last_target_time=?,run_version=run_version+1,update_times=? WHERE id=? AND run_version=? AND status=1 AND last_target_time<?", target, now, id, runVersion, target)
 	if err != nil {
 		return false, err

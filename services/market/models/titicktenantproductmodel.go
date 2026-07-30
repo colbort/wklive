@@ -10,7 +10,7 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TItickTenantProductModel = (*customTMarketTenantProductModel)(nil)
+var _ TItickTenantProductModel = (*customTItickTenantProductModel)(nil)
 
 type (
 	TenantProductPageFilter struct {
@@ -21,25 +21,25 @@ type (
 	}
 
 	// TItickTenantProductModel is an interface to be customized, add more methods here,
-	// and implement the added methods in customTMarketTenantProductModel.
+	// and implement the added methods in customTItickTenantProductModel.
 	TItickTenantProductModel interface {
 		tItickTenantProductModel
 		FindPage(ctx context.Context, filter TenantProductPageFilter, cursor int64, limit int64) ([]*TItickTenantProduct, int64, error)
 	}
 
-	customTMarketTenantProductModel struct {
-		*defaultTMarketTenantProductModel
+	customTItickTenantProductModel struct {
+		*defaultTItickTenantProductModel
 	}
 )
 
-// NewTMarketTenantProductModel returns a model for the database table.
-func NewTMarketTenantProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickTenantProductModel {
-	return &customTMarketTenantProductModel{
-		defaultTMarketTenantProductModel: newTMarketTenantProductModel(conn, c, opts...),
+// NewTItickTenantProductModel returns a model for the database table.
+func NewTItickTenantProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickTenantProductModel {
+	return &customTItickTenantProductModel{
+		defaultTItickTenantProductModel: newTItickTenantProductModel(conn, c, opts...),
 	}
 }
 
-func (m *defaultTMarketTenantProductModel) FindPage(ctx context.Context, filter TenantProductPageFilter, cursor int64, limit int64) ([]*TItickTenantProduct, int64, error) {
+func (m *defaultTItickTenantProductModel) FindPage(ctx context.Context, filter TenantProductPageFilter, cursor int64, limit int64) ([]*TItickTenantProduct, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
