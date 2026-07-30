@@ -1,6 +1,7 @@
-import { ElNotification } from 'element-plus'
+import { h } from 'vue'
+import { ElButton, ElNotification } from 'element-plus'
 import { ENV } from '@/config/environment'
-import { useAuthStore } from '@/stores'
+import { useAuthStore } from '@/stores/auth'
 import { logger } from '@/utils/logger'
 
 export const ADMIN_NOTIFICATION_EVENT_TYPES = {
@@ -29,6 +30,17 @@ export type AdminNotificationEvent = {
   bizNo?: string
   data?: Record<string, unknown>
   createdAt: number
+}
+
+type AdminNotificationAckResult = {
+  action: 'ack_result'
+  ok: boolean
+  eventType?: string
+  alertKey?: string
+  tenantId?: number
+  acknowledgedAt?: number
+  acknowledgedBy?: number
+  error?: string
 }
 
 type AudioWindow = Window &
@@ -131,25 +143,87 @@ class AdminNotificationService {
   }
 
   private handleMessage(raw: string) {
-    let event: AdminNotificationEvent
+    let payload: AdminNotificationEvent | AdminNotificationAckResult
     try {
-      event = JSON.parse(raw)
+      payload = JSON.parse(raw)
     } catch (error) {
       logger.warn('Invalid admin notification payload', error)
       return
     }
 
+    if ('action' in payload && payload.action === 'ack_result') {
+      ElNotification({
+        title: payload.ok ? '告警已确认' : '告警确认失败',
+        message: payload.ok ? '确认回执已保存，后续自动升级已停止。' : payload.error || '请重试。',
+        type: payload.ok ? 'success' : 'error',
+        duration: 5000,
+      })
+      return
+    }
+
+    const event = payload as AdminNotificationEvent
     if (!isActionEvent(event.type)) return
 
     this.playVoiceReminder(event)
 
     ElNotification({
       title: event.title || '管理通知',
-      message: event.message,
+      message: this.notificationMessage(event),
       type: event.level || 'info',
-      duration: 8000,
+      duration: this.requiresAcknowledgement(event) ? 0 : 8000,
       showClose: true,
     })
+  }
+
+  private notificationMessage(event: AdminNotificationEvent) {
+    if (!this.requiresAcknowledgement(event)) return event.message
+
+    return h('div', { class: 'admin-notification-message' }, [
+      h('div', event.message),
+      h(
+        ElButton,
+        {
+          type: 'primary',
+          size: 'small',
+          style: 'margin-top: 10px',
+          onClick: () => this.acknowledge(event),
+        },
+        () => '确认收到',
+      ),
+    ])
+  }
+
+  private requiresAcknowledgement(event: AdminNotificationEvent) {
+    const operational =
+      event.type === ADMIN_NOTIFICATION_EVENT_TYPES.CONTRACT_RECONCILIATION ||
+      event.type === ADMIN_NOTIFICATION_EVENT_TYPES.PRICE_ENGINE_INPUT ||
+      event.type === ADMIN_NOTIFICATION_EVENT_TYPES.SNAPSHOT_OUTBOX
+    return operational && event.data?.state === 'firing' && Boolean(this.alertKey(event))
+  }
+
+  private alertKey(event: AdminNotificationEvent) {
+    if (event.bizNo) return event.bizNo
+    const value = event.data?.alertKey
+    return typeof value === 'string' ? value : ''
+  }
+
+  private acknowledge(event: AdminNotificationEvent) {
+    if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+      ElNotification.error({
+        title: '告警确认失败',
+        message: '通知连接已断开，请等待重连后重试。',
+      })
+      return
+    }
+    this.socket.send(
+      JSON.stringify({
+        action: 'ack',
+        eventType: event.type,
+        alertKey: this.alertKey(event),
+        tenantId: event.tenantId || 0,
+        reason: '后台值班人员通过 Admin WebSocket 手动确认',
+      }),
+    )
   }
 
   private playVoiceReminder(event: AdminNotificationEvent) {

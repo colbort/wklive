@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import { computed } from 'vue'
-import type { MenuNode } from '@/stores'
+import type { MenuNode } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'

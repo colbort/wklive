@@ -525,6 +525,80 @@ message LoginUserPermsResp {
   repeated string perms = 1;
 }
 
+message RecordAdminNotificationReq {
+  int64 tenant_id = 1;
+  string event_type = 2;
+  string alert_key = 3;
+  string event_id = 4;
+  string state = 5;
+  string severity = 6;
+  string title = 7;
+  string message = 8;
+  string source = 9;
+  string payload_json = 10;
+  int64 event_time = 11;
+  int64 ack_timeout_ms = 12;
+}
+
+message AcknowledgeAdminNotificationReq {
+  int64 tenant_id = 1;
+  string event_type = 2;
+  string alert_key = 3;
+  int64 user_id = 4;
+  string username = 5;
+  string reason = 6;
+  int64 acknowledged_at = 7;
+}
+
+message ClaimDueAdminNotificationsReq {
+  int64 now = 1;
+  int64 repeat_interval_ms = 2;
+  int64 max_level = 3;
+  int64 limit = 4;
+}
+
+message ReleaseAdminNotificationEscalationReq {
+  int64 id = 1;
+  int64 claimed_level = 2;
+  int64 retry_at = 3;
+  int64 now = 4;
+}
+
+message AdminNotificationIncident {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string event_type = 3;
+  string alert_key = 4;
+  string last_event_id = 5;
+  string severity = 6;
+  string title = 7;
+  string message = 8;
+  string source = 9;
+  string payload_json = 10;
+  int64 status = 11;
+  int64 first_seen_at = 12;
+  int64 last_seen_at = 13;
+  int64 acknowledged_at = 14;
+  int64 acknowledged_by = 15;
+  string acknowledged_username = 16;
+  string acknowledge_reason = 17;
+  int64 escalation_level = 18;
+  int64 last_escalated_at = 19;
+  int64 next_escalate_at = 20;
+  int64 resolved_at = 21;
+  int64 version = 22;
+}
+
+message AdminNotificationIncidentResp {
+  common.RespBase base = 1;
+  AdminNotificationIncident data = 2;
+}
+
+message ClaimDueAdminNotificationsResp {
+  common.RespBase base = 1;
+  repeated AdminNotificationIncident data = 2;
+}
+
 // 系统定时任务
 message SysCronJobItem {
   int64 id = 1;
@@ -780,6 +854,10 @@ service Admin {
   rpc VerificationCodeRecordList(VerificationCodeRecordListReq) returns (VerificationCodeRecordListResp);
   rpc VerificationCodeRecordDetail(VerificationCodeRecordDetailReq) returns (VerificationCodeRecordDetailResp);
   rpc LoginUserPerms(LoginUserPermsReq) returns (LoginUserPermsResp);
+  rpc RecordAdminNotification(RecordAdminNotificationReq) returns (AdminNotificationIncidentResp);
+  rpc AcknowledgeAdminNotification(AcknowledgeAdminNotificationReq) returns (AdminNotificationIncidentResp);
+  rpc ClaimDueAdminNotifications(ClaimDueAdminNotificationsReq) returns (ClaimDueAdminNotificationsResp);
+  rpc ReleaseAdminNotificationEscalation(ReleaseAdminNotificationEscalationReq) returns (RespBase);
   rpc SysCronJobList(SysCronJobListReq) returns (SysCronJobListResp);
   rpc SysCronJobCreate(SysCronJobCreateReq) returns (RespBase);
   rpc SysCronJobUpdate(SysCronJobUpdateReq) returns (RespBase);

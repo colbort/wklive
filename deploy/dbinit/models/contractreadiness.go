@@ -10,32 +10,33 @@ import (
 )
 
 type ContractReadinessInput struct {
-	SourceAuthorities       []string
-	SourceMarkets           []string
-	IndexSourceWeights      []string
-	DeliverySourceWeights   []string
-	CategoryCode            string
-	Market                  string
-	PriceSymbol             string
-	PerpetualSymbol         string
-	DeliverySymbol          string
-	PerpetualPriceAuthority string
-	PerpetualPriceMarket    string
-	TenantID                int64
-	SettlementCoin          string
-	IndexAlgorithm          int
-	IndexFormulaVersion     string
-	IndexMaxDeviationBps    int64
-	MarkFormulaVersion      string
-	MarkMaxBasisBps         int64
-	MarkCurrentWeight       string
-	MarkPreviousWeight      string
-	FundingFormulaVersion   string
-	PriceFormulaIntervalMs  int64
-	DeliveryAlgorithm       int
-	DeliveryFormulaVersion  string
-	DeliveryMaxLookbackMs   int64
-	DeliveryMaxDeviationBps int64
+	SourceAuthorities         []string
+	SourceMarkets             []string
+	IndexSourceWeights        []string
+	DeliverySourceWeights     []string
+	CategoryCode              string
+	Market                    string
+	PriceSymbol               string
+	PerpetualSymbol           string
+	DeliverySymbol            string
+	PerpetualPriceAuthority   string
+	PerpetualPriceMarket      string
+	TenantID                  int64
+	SettlementCoin            string
+	InsuranceFundMinAvailable string
+	IndexAlgorithm            int
+	IndexFormulaVersion       string
+	IndexMaxDeviationBps      int64
+	MarkFormulaVersion        string
+	MarkMaxBasisBps           int64
+	MarkCurrentWeight         string
+	MarkPreviousWeight        string
+	FundingFormulaVersion     string
+	PriceFormulaIntervalMs    int64
+	DeliveryAlgorithm         int
+	DeliveryFormulaVersion    string
+	DeliveryMaxLookbackMs     int64
+	DeliveryMaxDeviationBps   int64
 }
 
 type ContractReadinessResult struct {
@@ -423,17 +424,58 @@ func (m *defaultContractReadinessModel) inspectPlatformAccounts(
 	input ContractReadinessInput,
 	result *ContractReadinessResult,
 ) error {
+	minimumAvailable := normalizeInsuranceFundMinimum(input.InsuranceFundMinAvailable)
 	const query = `
 SELECT
-  COALESCE(SUM(account_type='INSURANCE_FUND' AND status=1 AND available_amount>0),0),
+  COALESCE(SUM(account_type='INSURANCE_FUND'
+    AND status=1
+    AND CAST(? AS DECIMAL(36,18))>0
+    AND available_amount>=CAST(? AS DECIMAL(36,18))),0),
   COALESCE(SUM(account_type='FEE_REVENUE' AND status=1),0)
 FROM t_asset_platform_account
 WHERE tenant_id=?
   AND coin=?`
-	return m.db.QueryRowContext(ctx, query, input.TenantID, input.SettlementCoin).Scan(
+	return m.db.QueryRowContext(
+		ctx,
+		query,
+		minimumAvailable,
+		minimumAvailable,
+		input.TenantID,
+		input.SettlementCoin,
+	).Scan(
 		&result.InsuranceFundCount,
 		&result.FeeRevenueCount,
 	)
+}
+
+func normalizeInsuranceFundMinimum(value string) string {
+	value = strings.TrimSpace(value)
+	parts := strings.Split(value, ".")
+	if len(parts) == 0 || len(parts) > 2 || parts[0] == "" ||
+		len(parts) == 2 && parts[1] == "" {
+		return "0"
+	}
+	for _, part := range parts {
+		if strings.IndexFunc(part, func(r rune) bool { return r < '0' || r > '9' }) >= 0 {
+			return "0"
+		}
+	}
+	integer := strings.TrimLeft(parts[0], "0")
+	if integer == "" {
+		integer = "0"
+	}
+	fractionLength := 0
+	if len(parts) == 2 {
+		fractionLength = len(parts[1])
+	}
+	if len(integer) > 18 || fractionLength > 18 {
+		return "0"
+	}
+	number, ok := new(big.Rat).SetString(value)
+	if !ok || number.Sign() <= 0 {
+		return "0"
+	}
+	return value
 }
 
 func (m *defaultContractReadinessModel) inspectContracts(

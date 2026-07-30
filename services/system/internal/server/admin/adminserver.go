@@ -218,6 +218,26 @@ func (s *AdminServer) LoginUserPerms(ctx context.Context, in *system.LoginUserPe
 	return l.LoginUserPerms(in)
 }
 
+func (s *AdminServer) RecordAdminNotification(ctx context.Context, in *system.RecordAdminNotificationReq) (*system.AdminNotificationIncidentResp, error) {
+	l := adminlogic.NewRecordAdminNotificationLogic(ctx, s.svcCtx)
+	return l.RecordAdminNotification(in)
+}
+
+func (s *AdminServer) AcknowledgeAdminNotification(ctx context.Context, in *system.AcknowledgeAdminNotificationReq) (*system.AdminNotificationIncidentResp, error) {
+	l := adminlogic.NewAcknowledgeAdminNotificationLogic(ctx, s.svcCtx)
+	return l.AcknowledgeAdminNotification(in)
+}
+
+func (s *AdminServer) ClaimDueAdminNotifications(ctx context.Context, in *system.ClaimDueAdminNotificationsReq) (*system.ClaimDueAdminNotificationsResp, error) {
+	l := adminlogic.NewClaimDueAdminNotificationsLogic(ctx, s.svcCtx)
+	return l.ClaimDueAdminNotifications(in)
+}
+
+func (s *AdminServer) ReleaseAdminNotificationEscalation(ctx context.Context, in *system.ReleaseAdminNotificationEscalationReq) (*system.RespBase, error) {
+	l := adminlogic.NewReleaseAdminNotificationEscalationLogic(ctx, s.svcCtx)
+	return l.ReleaseAdminNotificationEscalation(in)
+}
+
 func (s *AdminServer) SysCronJobList(ctx context.Context, in *system.SysCronJobListReq) (*system.SysCronJobListResp, error) {
 	l := adminlogic.NewSysCronJobListLogic(ctx, s.svcCtx)
 	return l.SysCronJobList(in)

@@ -63,6 +63,8 @@ Deploy 中的 iTick Token 必须通过 Git 忽略且权限为 `0600` 的
 
 - 目标租户、结算币种、永续和交割合约；
 - `INSURANCE_FUND`、`FEE_REVENUE` 账户 ID、状态、余额复核和资金权限审批编号；
+- 经审批的保险基金最低可用余额，并与
+  `INSURANCE_FUND_MIN_AVAILABLE` 的 `DECIMAL(36,18)` 声明一致；
 - 合约默认保险配置、ADL 策略和负责人；
 - 启用窗口、发布单、操作人、复核人和审批人；
 - 启用前配置快照及其 SHA-256；
@@ -111,6 +113,11 @@ shasum -a 256 /absolute/path/to/dr-exercise-report.md
 
 Linux 可用 `sha256sum`。将输出的 64 位哈希填入对应 `*_SHA256` 字段。修改证据后必须
 重新审批并重新生成哈希。
+
+四份报告还必须分别填写 `HISTORICAL_REPLAY_PRODUCTION_APPROVAL_REF`、
+`ALERT_TEST_PRODUCTION_APPROVAL_REF`、`LIQUIDATION_ROLLBACK_PRODUCTION_APPROVAL_REF`
+和 `DR_EXERCISE_PRODUCTION_APPROVAL_REF`。引用必须指向目标生产环境或获批同等环境
+的正式发布单、工单或审批归档；“待定”“不适用”和预生产技术验收不能填写为生产审批。
 
 通过标准：
 

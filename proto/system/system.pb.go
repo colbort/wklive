@@ -5111,6 +5111,682 @@ func (x *LoginUserPermsResp) GetPerms() []string {
 	return nil
 }
 
+type RecordAdminNotificationReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	EventType     string                 `protobuf:"bytes,2,opt,name=event_type,json=eventType,proto3" json:"event_type,omitempty"`
+	AlertKey      string                 `protobuf:"bytes,3,opt,name=alert_key,json=alertKey,proto3" json:"alert_key,omitempty"`
+	EventId       string                 `protobuf:"bytes,4,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+	State         string                 `protobuf:"bytes,5,opt,name=state,proto3" json:"state,omitempty"`
+	Severity      string                 `protobuf:"bytes,6,opt,name=severity,proto3" json:"severity,omitempty"`
+	Title         string                 `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
+	Message       string                 `protobuf:"bytes,8,opt,name=message,proto3" json:"message,omitempty"`
+	Source        string                 `protobuf:"bytes,9,opt,name=source,proto3" json:"source,omitempty"`
+	PayloadJson   string                 `protobuf:"bytes,10,opt,name=payload_json,json=payloadJson,proto3" json:"payload_json,omitempty"`
+	EventTime     int64                  `protobuf:"varint,11,opt,name=event_time,json=eventTime,proto3" json:"event_time,omitempty"`
+	AckTimeoutMs  int64                  `protobuf:"varint,12,opt,name=ack_timeout_ms,json=ackTimeoutMs,proto3" json:"ack_timeout_ms,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RecordAdminNotificationReq) Reset() {
+	*x = RecordAdminNotificationReq{}
+	mi := &file_proto_system_system_proto_msgTypes[73]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RecordAdminNotificationReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RecordAdminNotificationReq) ProtoMessage() {}
+
+func (x *RecordAdminNotificationReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_system_system_proto_msgTypes[73]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RecordAdminNotificationReq.ProtoReflect.Descriptor instead.
+func (*RecordAdminNotificationReq) Descriptor() ([]byte, []int) {
+	return file_proto_system_system_proto_rawDescGZIP(), []int{73}
+}
+
+func (x *RecordAdminNotificationReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *RecordAdminNotificationReq) GetEventType() string {
+	if x != nil {
+		return x.EventType
+	}
+	return ""
+}
+
+func (x *RecordAdminNotificationReq) GetAlertKey() string {
+	if x != nil {
+		return x.AlertKey
+	}
+	return ""
+}
+
+func (x *RecordAdminNotificationReq) GetEventId() string {
+	if x != nil {
+		return x.EventId
+	}
+	return ""
+}
+
+func (x *RecordAdminNotificationReq) GetState() string {
+	if x != nil {
+		return x.State
+	}
+	return ""
+}
+
+func (x *RecordAdminNotificationReq) GetSeverity() string {
+	if x != nil {
+		return x.Severity
+	}
+	return ""
+}
+
+func (x *RecordAdminNotificationReq) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *RecordAdminNotificationReq) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *RecordAdminNotificationReq) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
+}
+
+func (x *RecordAdminNotificationReq) GetPayloadJson() string {
+	if x != nil {
+		return x.PayloadJson
+	}
+	return ""
+}
+
+func (x *RecordAdminNotificationReq) GetEventTime() int64 {
+	if x != nil {
+		return x.EventTime
+	}
+	return 0
+}
+
+func (x *RecordAdminNotificationReq) GetAckTimeoutMs() int64 {
+	if x != nil {
+		return x.AckTimeoutMs
+	}
+	return 0
+}
+
+type AcknowledgeAdminNotificationReq struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	TenantId       int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	EventType      string                 `protobuf:"bytes,2,opt,name=event_type,json=eventType,proto3" json:"event_type,omitempty"`
+	AlertKey       string                 `protobuf:"bytes,3,opt,name=alert_key,json=alertKey,proto3" json:"alert_key,omitempty"`
+	UserId         int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Username       string                 `protobuf:"bytes,5,opt,name=username,proto3" json:"username,omitempty"`
+	Reason         string                 `protobuf:"bytes,6,opt,name=reason,proto3" json:"reason,omitempty"`
+	AcknowledgedAt int64                  `protobuf:"varint,7,opt,name=acknowledged_at,json=acknowledgedAt,proto3" json:"acknowledged_at,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *AcknowledgeAdminNotificationReq) Reset() {
+	*x = AcknowledgeAdminNotificationReq{}
+	mi := &file_proto_system_system_proto_msgTypes[74]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AcknowledgeAdminNotificationReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AcknowledgeAdminNotificationReq) ProtoMessage() {}
+
+func (x *AcknowledgeAdminNotificationReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_system_system_proto_msgTypes[74]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AcknowledgeAdminNotificationReq.ProtoReflect.Descriptor instead.
+func (*AcknowledgeAdminNotificationReq) Descriptor() ([]byte, []int) {
+	return file_proto_system_system_proto_rawDescGZIP(), []int{74}
+}
+
+func (x *AcknowledgeAdminNotificationReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *AcknowledgeAdminNotificationReq) GetEventType() string {
+	if x != nil {
+		return x.EventType
+	}
+	return ""
+}
+
+func (x *AcknowledgeAdminNotificationReq) GetAlertKey() string {
+	if x != nil {
+		return x.AlertKey
+	}
+	return ""
+}
+
+func (x *AcknowledgeAdminNotificationReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *AcknowledgeAdminNotificationReq) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *AcknowledgeAdminNotificationReq) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+func (x *AcknowledgeAdminNotificationReq) GetAcknowledgedAt() int64 {
+	if x != nil {
+		return x.AcknowledgedAt
+	}
+	return 0
+}
+
+type ClaimDueAdminNotificationsReq struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Now              int64                  `protobuf:"varint,1,opt,name=now,proto3" json:"now,omitempty"`
+	RepeatIntervalMs int64                  `protobuf:"varint,2,opt,name=repeat_interval_ms,json=repeatIntervalMs,proto3" json:"repeat_interval_ms,omitempty"`
+	MaxLevel         int64                  `protobuf:"varint,3,opt,name=max_level,json=maxLevel,proto3" json:"max_level,omitempty"`
+	Limit            int64                  `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *ClaimDueAdminNotificationsReq) Reset() {
+	*x = ClaimDueAdminNotificationsReq{}
+	mi := &file_proto_system_system_proto_msgTypes[75]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClaimDueAdminNotificationsReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClaimDueAdminNotificationsReq) ProtoMessage() {}
+
+func (x *ClaimDueAdminNotificationsReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_system_system_proto_msgTypes[75]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClaimDueAdminNotificationsReq.ProtoReflect.Descriptor instead.
+func (*ClaimDueAdminNotificationsReq) Descriptor() ([]byte, []int) {
+	return file_proto_system_system_proto_rawDescGZIP(), []int{75}
+}
+
+func (x *ClaimDueAdminNotificationsReq) GetNow() int64 {
+	if x != nil {
+		return x.Now
+	}
+	return 0
+}
+
+func (x *ClaimDueAdminNotificationsReq) GetRepeatIntervalMs() int64 {
+	if x != nil {
+		return x.RepeatIntervalMs
+	}
+	return 0
+}
+
+func (x *ClaimDueAdminNotificationsReq) GetMaxLevel() int64 {
+	if x != nil {
+		return x.MaxLevel
+	}
+	return 0
+}
+
+func (x *ClaimDueAdminNotificationsReq) GetLimit() int64 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+type ReleaseAdminNotificationEscalationReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	ClaimedLevel  int64                  `protobuf:"varint,2,opt,name=claimed_level,json=claimedLevel,proto3" json:"claimed_level,omitempty"`
+	RetryAt       int64                  `protobuf:"varint,3,opt,name=retry_at,json=retryAt,proto3" json:"retry_at,omitempty"`
+	Now           int64                  `protobuf:"varint,4,opt,name=now,proto3" json:"now,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReleaseAdminNotificationEscalationReq) Reset() {
+	*x = ReleaseAdminNotificationEscalationReq{}
+	mi := &file_proto_system_system_proto_msgTypes[76]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReleaseAdminNotificationEscalationReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReleaseAdminNotificationEscalationReq) ProtoMessage() {}
+
+func (x *ReleaseAdminNotificationEscalationReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_system_system_proto_msgTypes[76]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReleaseAdminNotificationEscalationReq.ProtoReflect.Descriptor instead.
+func (*ReleaseAdminNotificationEscalationReq) Descriptor() ([]byte, []int) {
+	return file_proto_system_system_proto_rawDescGZIP(), []int{76}
+}
+
+func (x *ReleaseAdminNotificationEscalationReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ReleaseAdminNotificationEscalationReq) GetClaimedLevel() int64 {
+	if x != nil {
+		return x.ClaimedLevel
+	}
+	return 0
+}
+
+func (x *ReleaseAdminNotificationEscalationReq) GetRetryAt() int64 {
+	if x != nil {
+		return x.RetryAt
+	}
+	return 0
+}
+
+func (x *ReleaseAdminNotificationEscalationReq) GetNow() int64 {
+	if x != nil {
+		return x.Now
+	}
+	return 0
+}
+
+type AdminNotificationIncident struct {
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId             int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	EventType            string                 `protobuf:"bytes,3,opt,name=event_type,json=eventType,proto3" json:"event_type,omitempty"`
+	AlertKey             string                 `protobuf:"bytes,4,opt,name=alert_key,json=alertKey,proto3" json:"alert_key,omitempty"`
+	LastEventId          string                 `protobuf:"bytes,5,opt,name=last_event_id,json=lastEventId,proto3" json:"last_event_id,omitempty"`
+	Severity             string                 `protobuf:"bytes,6,opt,name=severity,proto3" json:"severity,omitempty"`
+	Title                string                 `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
+	Message              string                 `protobuf:"bytes,8,opt,name=message,proto3" json:"message,omitempty"`
+	Source               string                 `protobuf:"bytes,9,opt,name=source,proto3" json:"source,omitempty"`
+	PayloadJson          string                 `protobuf:"bytes,10,opt,name=payload_json,json=payloadJson,proto3" json:"payload_json,omitempty"`
+	Status               int64                  `protobuf:"varint,11,opt,name=status,proto3" json:"status,omitempty"`
+	FirstSeenAt          int64                  `protobuf:"varint,12,opt,name=first_seen_at,json=firstSeenAt,proto3" json:"first_seen_at,omitempty"`
+	LastSeenAt           int64                  `protobuf:"varint,13,opt,name=last_seen_at,json=lastSeenAt,proto3" json:"last_seen_at,omitempty"`
+	AcknowledgedAt       int64                  `protobuf:"varint,14,opt,name=acknowledged_at,json=acknowledgedAt,proto3" json:"acknowledged_at,omitempty"`
+	AcknowledgedBy       int64                  `protobuf:"varint,15,opt,name=acknowledged_by,json=acknowledgedBy,proto3" json:"acknowledged_by,omitempty"`
+	AcknowledgedUsername string                 `protobuf:"bytes,16,opt,name=acknowledged_username,json=acknowledgedUsername,proto3" json:"acknowledged_username,omitempty"`
+	AcknowledgeReason    string                 `protobuf:"bytes,17,opt,name=acknowledge_reason,json=acknowledgeReason,proto3" json:"acknowledge_reason,omitempty"`
+	EscalationLevel      int64                  `protobuf:"varint,18,opt,name=escalation_level,json=escalationLevel,proto3" json:"escalation_level,omitempty"`
+	LastEscalatedAt      int64                  `protobuf:"varint,19,opt,name=last_escalated_at,json=lastEscalatedAt,proto3" json:"last_escalated_at,omitempty"`
+	NextEscalateAt       int64                  `protobuf:"varint,20,opt,name=next_escalate_at,json=nextEscalateAt,proto3" json:"next_escalate_at,omitempty"`
+	ResolvedAt           int64                  `protobuf:"varint,21,opt,name=resolved_at,json=resolvedAt,proto3" json:"resolved_at,omitempty"`
+	Version              int64                  `protobuf:"varint,22,opt,name=version,proto3" json:"version,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *AdminNotificationIncident) Reset() {
+	*x = AdminNotificationIncident{}
+	mi := &file_proto_system_system_proto_msgTypes[77]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminNotificationIncident) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminNotificationIncident) ProtoMessage() {}
+
+func (x *AdminNotificationIncident) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_system_system_proto_msgTypes[77]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminNotificationIncident.ProtoReflect.Descriptor instead.
+func (*AdminNotificationIncident) Descriptor() ([]byte, []int) {
+	return file_proto_system_system_proto_rawDescGZIP(), []int{77}
+}
+
+func (x *AdminNotificationIncident) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *AdminNotificationIncident) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *AdminNotificationIncident) GetEventType() string {
+	if x != nil {
+		return x.EventType
+	}
+	return ""
+}
+
+func (x *AdminNotificationIncident) GetAlertKey() string {
+	if x != nil {
+		return x.AlertKey
+	}
+	return ""
+}
+
+func (x *AdminNotificationIncident) GetLastEventId() string {
+	if x != nil {
+		return x.LastEventId
+	}
+	return ""
+}
+
+func (x *AdminNotificationIncident) GetSeverity() string {
+	if x != nil {
+		return x.Severity
+	}
+	return ""
+}
+
+func (x *AdminNotificationIncident) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *AdminNotificationIncident) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+func (x *AdminNotificationIncident) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
+}
+
+func (x *AdminNotificationIncident) GetPayloadJson() string {
+	if x != nil {
+		return x.PayloadJson
+	}
+	return ""
+}
+
+func (x *AdminNotificationIncident) GetStatus() int64 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+func (x *AdminNotificationIncident) GetFirstSeenAt() int64 {
+	if x != nil {
+		return x.FirstSeenAt
+	}
+	return 0
+}
+
+func (x *AdminNotificationIncident) GetLastSeenAt() int64 {
+	if x != nil {
+		return x.LastSeenAt
+	}
+	return 0
+}
+
+func (x *AdminNotificationIncident) GetAcknowledgedAt() int64 {
+	if x != nil {
+		return x.AcknowledgedAt
+	}
+	return 0
+}
+
+func (x *AdminNotificationIncident) GetAcknowledgedBy() int64 {
+	if x != nil {
+		return x.AcknowledgedBy
+	}
+	return 0
+}
+
+func (x *AdminNotificationIncident) GetAcknowledgedUsername() string {
+	if x != nil {
+		return x.AcknowledgedUsername
+	}
+	return ""
+}
+
+func (x *AdminNotificationIncident) GetAcknowledgeReason() string {
+	if x != nil {
+		return x.AcknowledgeReason
+	}
+	return ""
+}
+
+func (x *AdminNotificationIncident) GetEscalationLevel() int64 {
+	if x != nil {
+		return x.EscalationLevel
+	}
+	return 0
+}
+
+func (x *AdminNotificationIncident) GetLastEscalatedAt() int64 {
+	if x != nil {
+		return x.LastEscalatedAt
+	}
+	return 0
+}
+
+func (x *AdminNotificationIncident) GetNextEscalateAt() int64 {
+	if x != nil {
+		return x.NextEscalateAt
+	}
+	return 0
+}
+
+func (x *AdminNotificationIncident) GetResolvedAt() int64 {
+	if x != nil {
+		return x.ResolvedAt
+	}
+	return 0
+}
+
+func (x *AdminNotificationIncident) GetVersion() int64 {
+	if x != nil {
+		return x.Version
+	}
+	return 0
+}
+
+type AdminNotificationIncidentResp struct {
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Base          *common.RespBase           `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *AdminNotificationIncident `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdminNotificationIncidentResp) Reset() {
+	*x = AdminNotificationIncidentResp{}
+	mi := &file_proto_system_system_proto_msgTypes[78]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdminNotificationIncidentResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdminNotificationIncidentResp) ProtoMessage() {}
+
+func (x *AdminNotificationIncidentResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_system_system_proto_msgTypes[78]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdminNotificationIncidentResp.ProtoReflect.Descriptor instead.
+func (*AdminNotificationIncidentResp) Descriptor() ([]byte, []int) {
+	return file_proto_system_system_proto_rawDescGZIP(), []int{78}
+}
+
+func (x *AdminNotificationIncidentResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *AdminNotificationIncidentResp) GetData() *AdminNotificationIncident {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type ClaimDueAdminNotificationsResp struct {
+	state         protoimpl.MessageState       `protogen:"open.v1"`
+	Base          *common.RespBase             `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          []*AdminNotificationIncident `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ClaimDueAdminNotificationsResp) Reset() {
+	*x = ClaimDueAdminNotificationsResp{}
+	mi := &file_proto_system_system_proto_msgTypes[79]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClaimDueAdminNotificationsResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClaimDueAdminNotificationsResp) ProtoMessage() {}
+
+func (x *ClaimDueAdminNotificationsResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_system_system_proto_msgTypes[79]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClaimDueAdminNotificationsResp.ProtoReflect.Descriptor instead.
+func (*ClaimDueAdminNotificationsResp) Descriptor() ([]byte, []int) {
+	return file_proto_system_system_proto_rawDescGZIP(), []int{79}
+}
+
+func (x *ClaimDueAdminNotificationsResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *ClaimDueAdminNotificationsResp) GetData() []*AdminNotificationIncident {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
 // 系统定时任务
 type SysCronJobItem struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
@@ -5131,7 +5807,7 @@ type SysCronJobItem struct {
 
 func (x *SysCronJobItem) Reset() {
 	*x = SysCronJobItem{}
-	mi := &file_proto_system_system_proto_msgTypes[73]
+	mi := &file_proto_system_system_proto_msgTypes[80]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5143,7 +5819,7 @@ func (x *SysCronJobItem) String() string {
 func (*SysCronJobItem) ProtoMessage() {}
 
 func (x *SysCronJobItem) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[73]
+	mi := &file_proto_system_system_proto_msgTypes[80]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5156,7 +5832,7 @@ func (x *SysCronJobItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysCronJobItem.ProtoReflect.Descriptor instead.
 func (*SysCronJobItem) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{73}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{80}
 }
 
 func (x *SysCronJobItem) GetId() int64 {
@@ -5249,7 +5925,7 @@ type SysCronJobListReq struct {
 
 func (x *SysCronJobListReq) Reset() {
 	*x = SysCronJobListReq{}
-	mi := &file_proto_system_system_proto_msgTypes[74]
+	mi := &file_proto_system_system_proto_msgTypes[81]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5261,7 +5937,7 @@ func (x *SysCronJobListReq) String() string {
 func (*SysCronJobListReq) ProtoMessage() {}
 
 func (x *SysCronJobListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[74]
+	mi := &file_proto_system_system_proto_msgTypes[81]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5274,7 +5950,7 @@ func (x *SysCronJobListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysCronJobListReq.ProtoReflect.Descriptor instead.
 func (*SysCronJobListReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{74}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{81}
 }
 
 func (x *SysCronJobListReq) GetPage() *common.PageReq {
@@ -5322,7 +5998,7 @@ type SysCronJobListResp struct {
 
 func (x *SysCronJobListResp) Reset() {
 	*x = SysCronJobListResp{}
-	mi := &file_proto_system_system_proto_msgTypes[75]
+	mi := &file_proto_system_system_proto_msgTypes[82]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5334,7 +6010,7 @@ func (x *SysCronJobListResp) String() string {
 func (*SysCronJobListResp) ProtoMessage() {}
 
 func (x *SysCronJobListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[75]
+	mi := &file_proto_system_system_proto_msgTypes[82]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5347,7 +6023,7 @@ func (x *SysCronJobListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysCronJobListResp.ProtoReflect.Descriptor instead.
 func (*SysCronJobListResp) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{75}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{82}
 }
 
 func (x *SysCronJobListResp) GetBase() *common.RespBase {
@@ -5378,7 +6054,7 @@ type SysCronJobCreateReq struct {
 
 func (x *SysCronJobCreateReq) Reset() {
 	*x = SysCronJobCreateReq{}
-	mi := &file_proto_system_system_proto_msgTypes[76]
+	mi := &file_proto_system_system_proto_msgTypes[83]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5390,7 +6066,7 @@ func (x *SysCronJobCreateReq) String() string {
 func (*SysCronJobCreateReq) ProtoMessage() {}
 
 func (x *SysCronJobCreateReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[76]
+	mi := &file_proto_system_system_proto_msgTypes[83]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5403,7 +6079,7 @@ func (x *SysCronJobCreateReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysCronJobCreateReq.ProtoReflect.Descriptor instead.
 func (*SysCronJobCreateReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{76}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{83}
 }
 
 func (x *SysCronJobCreateReq) GetJobName() string {
@@ -5463,7 +6139,7 @@ type SysCronJobUpdateReq struct {
 
 func (x *SysCronJobUpdateReq) Reset() {
 	*x = SysCronJobUpdateReq{}
-	mi := &file_proto_system_system_proto_msgTypes[77]
+	mi := &file_proto_system_system_proto_msgTypes[84]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5475,7 +6151,7 @@ func (x *SysCronJobUpdateReq) String() string {
 func (*SysCronJobUpdateReq) ProtoMessage() {}
 
 func (x *SysCronJobUpdateReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[77]
+	mi := &file_proto_system_system_proto_msgTypes[84]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5488,7 +6164,7 @@ func (x *SysCronJobUpdateReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysCronJobUpdateReq.ProtoReflect.Descriptor instead.
 func (*SysCronJobUpdateReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{77}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{84}
 }
 
 func (x *SysCronJobUpdateReq) GetId() int64 {
@@ -5549,7 +6225,7 @@ type SysCronJobDeleteReq struct {
 
 func (x *SysCronJobDeleteReq) Reset() {
 	*x = SysCronJobDeleteReq{}
-	mi := &file_proto_system_system_proto_msgTypes[78]
+	mi := &file_proto_system_system_proto_msgTypes[85]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5561,7 +6237,7 @@ func (x *SysCronJobDeleteReq) String() string {
 func (*SysCronJobDeleteReq) ProtoMessage() {}
 
 func (x *SysCronJobDeleteReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[78]
+	mi := &file_proto_system_system_proto_msgTypes[85]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5574,7 +6250,7 @@ func (x *SysCronJobDeleteReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysCronJobDeleteReq.ProtoReflect.Descriptor instead.
 func (*SysCronJobDeleteReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{78}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{85}
 }
 
 func (x *SysCronJobDeleteReq) GetId() int64 {
@@ -5593,7 +6269,7 @@ type SysCronJobRunReq struct {
 
 func (x *SysCronJobRunReq) Reset() {
 	*x = SysCronJobRunReq{}
-	mi := &file_proto_system_system_proto_msgTypes[79]
+	mi := &file_proto_system_system_proto_msgTypes[86]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5605,7 +6281,7 @@ func (x *SysCronJobRunReq) String() string {
 func (*SysCronJobRunReq) ProtoMessage() {}
 
 func (x *SysCronJobRunReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[79]
+	mi := &file_proto_system_system_proto_msgTypes[86]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5618,7 +6294,7 @@ func (x *SysCronJobRunReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysCronJobRunReq.ProtoReflect.Descriptor instead.
 func (*SysCronJobRunReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{79}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{86}
 }
 
 func (x *SysCronJobRunReq) GetId() int64 {
@@ -5637,7 +6313,7 @@ type SysCronJobStartReq struct {
 
 func (x *SysCronJobStartReq) Reset() {
 	*x = SysCronJobStartReq{}
-	mi := &file_proto_system_system_proto_msgTypes[80]
+	mi := &file_proto_system_system_proto_msgTypes[87]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5649,7 +6325,7 @@ func (x *SysCronJobStartReq) String() string {
 func (*SysCronJobStartReq) ProtoMessage() {}
 
 func (x *SysCronJobStartReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[80]
+	mi := &file_proto_system_system_proto_msgTypes[87]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5662,7 +6338,7 @@ func (x *SysCronJobStartReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysCronJobStartReq.ProtoReflect.Descriptor instead.
 func (*SysCronJobStartReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{80}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{87}
 }
 
 func (x *SysCronJobStartReq) GetId() int64 {
@@ -5681,7 +6357,7 @@ type SysCronJobStopReq struct {
 
 func (x *SysCronJobStopReq) Reset() {
 	*x = SysCronJobStopReq{}
-	mi := &file_proto_system_system_proto_msgTypes[81]
+	mi := &file_proto_system_system_proto_msgTypes[88]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5693,7 +6369,7 @@ func (x *SysCronJobStopReq) String() string {
 func (*SysCronJobStopReq) ProtoMessage() {}
 
 func (x *SysCronJobStopReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[81]
+	mi := &file_proto_system_system_proto_msgTypes[88]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5706,7 +6382,7 @@ func (x *SysCronJobStopReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysCronJobStopReq.ProtoReflect.Descriptor instead.
 func (*SysCronJobStopReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{81}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{88}
 }
 
 func (x *SysCronJobStopReq) GetId() int64 {
@@ -5735,7 +6411,7 @@ type SysCronJobLogItem struct {
 
 func (x *SysCronJobLogItem) Reset() {
 	*x = SysCronJobLogItem{}
-	mi := &file_proto_system_system_proto_msgTypes[82]
+	mi := &file_proto_system_system_proto_msgTypes[89]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5747,7 +6423,7 @@ func (x *SysCronJobLogItem) String() string {
 func (*SysCronJobLogItem) ProtoMessage() {}
 
 func (x *SysCronJobLogItem) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[82]
+	mi := &file_proto_system_system_proto_msgTypes[89]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5760,7 +6436,7 @@ func (x *SysCronJobLogItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysCronJobLogItem.ProtoReflect.Descriptor instead.
 func (*SysCronJobLogItem) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{82}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{89}
 }
 
 func (x *SysCronJobLogItem) GetId() int64 {
@@ -5853,7 +6529,7 @@ type SysCronJobLogListReq struct {
 
 func (x *SysCronJobLogListReq) Reset() {
 	*x = SysCronJobLogListReq{}
-	mi := &file_proto_system_system_proto_msgTypes[83]
+	mi := &file_proto_system_system_proto_msgTypes[90]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5865,7 +6541,7 @@ func (x *SysCronJobLogListReq) String() string {
 func (*SysCronJobLogListReq) ProtoMessage() {}
 
 func (x *SysCronJobLogListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[83]
+	mi := &file_proto_system_system_proto_msgTypes[90]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5878,7 +6554,7 @@ func (x *SysCronJobLogListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysCronJobLogListReq.ProtoReflect.Descriptor instead.
 func (*SysCronJobLogListReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{83}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{90}
 }
 
 func (x *SysCronJobLogListReq) GetPage() *common.PageReq {
@@ -5926,7 +6602,7 @@ type SysCronJobHandler struct {
 
 func (x *SysCronJobHandler) Reset() {
 	*x = SysCronJobHandler{}
-	mi := &file_proto_system_system_proto_msgTypes[84]
+	mi := &file_proto_system_system_proto_msgTypes[91]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5938,7 +6614,7 @@ func (x *SysCronJobHandler) String() string {
 func (*SysCronJobHandler) ProtoMessage() {}
 
 func (x *SysCronJobHandler) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[84]
+	mi := &file_proto_system_system_proto_msgTypes[91]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5951,7 +6627,7 @@ func (x *SysCronJobHandler) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysCronJobHandler.ProtoReflect.Descriptor instead.
 func (*SysCronJobHandler) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{84}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{91}
 }
 
 func (x *SysCronJobHandler) GetInvokeTarget() string {
@@ -5978,7 +6654,7 @@ type SysCronJobHandlersResp struct {
 
 func (x *SysCronJobHandlersResp) Reset() {
 	*x = SysCronJobHandlersResp{}
-	mi := &file_proto_system_system_proto_msgTypes[85]
+	mi := &file_proto_system_system_proto_msgTypes[92]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5990,7 +6666,7 @@ func (x *SysCronJobHandlersResp) String() string {
 func (*SysCronJobHandlersResp) ProtoMessage() {}
 
 func (x *SysCronJobHandlersResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[85]
+	mi := &file_proto_system_system_proto_msgTypes[92]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6003,7 +6679,7 @@ func (x *SysCronJobHandlersResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysCronJobHandlersResp.ProtoReflect.Descriptor instead.
 func (*SysCronJobHandlersResp) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{85}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{92}
 }
 
 func (x *SysCronJobHandlersResp) GetBase() *common.RespBase {
@@ -6030,7 +6706,7 @@ type SysCronJobLogListResp struct {
 
 func (x *SysCronJobLogListResp) Reset() {
 	*x = SysCronJobLogListResp{}
-	mi := &file_proto_system_system_proto_msgTypes[86]
+	mi := &file_proto_system_system_proto_msgTypes[93]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6042,7 +6718,7 @@ func (x *SysCronJobLogListResp) String() string {
 func (*SysCronJobLogListResp) ProtoMessage() {}
 
 func (x *SysCronJobLogListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[86]
+	mi := &file_proto_system_system_proto_msgTypes[93]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6055,7 +6731,7 @@ func (x *SysCronJobLogListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysCronJobLogListResp.ProtoReflect.Descriptor instead.
 func (*SysCronJobLogListResp) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{86}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{93}
 }
 
 func (x *SysCronJobLogListResp) GetBase() *common.RespBase {
@@ -6096,7 +6772,7 @@ type SysTenantItem struct {
 
 func (x *SysTenantItem) Reset() {
 	*x = SysTenantItem{}
-	mi := &file_proto_system_system_proto_msgTypes[87]
+	mi := &file_proto_system_system_proto_msgTypes[94]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6108,7 +6784,7 @@ func (x *SysTenantItem) String() string {
 func (*SysTenantItem) ProtoMessage() {}
 
 func (x *SysTenantItem) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[87]
+	mi := &file_proto_system_system_proto_msgTypes[94]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6121,7 +6797,7 @@ func (x *SysTenantItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysTenantItem.ProtoReflect.Descriptor instead.
 func (*SysTenantItem) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{87}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{94}
 }
 
 func (x *SysTenantItem) GetId() int64 {
@@ -6245,7 +6921,7 @@ type SysTenantListReq struct {
 
 func (x *SysTenantListReq) Reset() {
 	*x = SysTenantListReq{}
-	mi := &file_proto_system_system_proto_msgTypes[88]
+	mi := &file_proto_system_system_proto_msgTypes[95]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6257,7 +6933,7 @@ func (x *SysTenantListReq) String() string {
 func (*SysTenantListReq) ProtoMessage() {}
 
 func (x *SysTenantListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[88]
+	mi := &file_proto_system_system_proto_msgTypes[95]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6270,7 +6946,7 @@ func (x *SysTenantListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysTenantListReq.ProtoReflect.Descriptor instead.
 func (*SysTenantListReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{88}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{95}
 }
 
 func (x *SysTenantListReq) GetPage() *common.PageReq {
@@ -6339,7 +7015,7 @@ type SysTenantListResp struct {
 
 func (x *SysTenantListResp) Reset() {
 	*x = SysTenantListResp{}
-	mi := &file_proto_system_system_proto_msgTypes[89]
+	mi := &file_proto_system_system_proto_msgTypes[96]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6351,7 +7027,7 @@ func (x *SysTenantListResp) String() string {
 func (*SysTenantListResp) ProtoMessage() {}
 
 func (x *SysTenantListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[89]
+	mi := &file_proto_system_system_proto_msgTypes[96]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6364,7 +7040,7 @@ func (x *SysTenantListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysTenantListResp.ProtoReflect.Descriptor instead.
 func (*SysTenantListResp) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{89}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{96}
 }
 
 func (x *SysTenantListResp) GetBase() *common.RespBase {
@@ -6397,7 +7073,7 @@ type SysTenantCreateReq struct {
 
 func (x *SysTenantCreateReq) Reset() {
 	*x = SysTenantCreateReq{}
-	mi := &file_proto_system_system_proto_msgTypes[90]
+	mi := &file_proto_system_system_proto_msgTypes[97]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6409,7 +7085,7 @@ func (x *SysTenantCreateReq) String() string {
 func (*SysTenantCreateReq) ProtoMessage() {}
 
 func (x *SysTenantCreateReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[90]
+	mi := &file_proto_system_system_proto_msgTypes[97]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6422,7 +7098,7 @@ func (x *SysTenantCreateReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysTenantCreateReq.ProtoReflect.Descriptor instead.
 func (*SysTenantCreateReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{90}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{97}
 }
 
 func (x *SysTenantCreateReq) GetUsername() string {
@@ -6497,7 +7173,7 @@ type SysTenantUpdateReq struct {
 
 func (x *SysTenantUpdateReq) Reset() {
 	*x = SysTenantUpdateReq{}
-	mi := &file_proto_system_system_proto_msgTypes[91]
+	mi := &file_proto_system_system_proto_msgTypes[98]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6509,7 +7185,7 @@ func (x *SysTenantUpdateReq) String() string {
 func (*SysTenantUpdateReq) ProtoMessage() {}
 
 func (x *SysTenantUpdateReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[91]
+	mi := &file_proto_system_system_proto_msgTypes[98]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6522,7 +7198,7 @@ func (x *SysTenantUpdateReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysTenantUpdateReq.ProtoReflect.Descriptor instead.
 func (*SysTenantUpdateReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{91}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{98}
 }
 
 func (x *SysTenantUpdateReq) GetId() int64 {
@@ -6590,7 +7266,7 @@ type SysTenantDeleteReq struct {
 
 func (x *SysTenantDeleteReq) Reset() {
 	*x = SysTenantDeleteReq{}
-	mi := &file_proto_system_system_proto_msgTypes[92]
+	mi := &file_proto_system_system_proto_msgTypes[99]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6602,7 +7278,7 @@ func (x *SysTenantDeleteReq) String() string {
 func (*SysTenantDeleteReq) ProtoMessage() {}
 
 func (x *SysTenantDeleteReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[92]
+	mi := &file_proto_system_system_proto_msgTypes[99]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6615,7 +7291,7 @@ func (x *SysTenantDeleteReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysTenantDeleteReq.ProtoReflect.Descriptor instead.
 func (*SysTenantDeleteReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{92}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{99}
 }
 
 func (x *SysTenantDeleteReq) GetId() int64 {
@@ -6635,7 +7311,7 @@ type SysTenantDetailReq struct {
 
 func (x *SysTenantDetailReq) Reset() {
 	*x = SysTenantDetailReq{}
-	mi := &file_proto_system_system_proto_msgTypes[93]
+	mi := &file_proto_system_system_proto_msgTypes[100]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6647,7 +7323,7 @@ func (x *SysTenantDetailReq) String() string {
 func (*SysTenantDetailReq) ProtoMessage() {}
 
 func (x *SysTenantDetailReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[93]
+	mi := &file_proto_system_system_proto_msgTypes[100]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6660,7 +7336,7 @@ func (x *SysTenantDetailReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysTenantDetailReq.ProtoReflect.Descriptor instead.
 func (*SysTenantDetailReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{93}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{100}
 }
 
 func (x *SysTenantDetailReq) GetTenantId() int64 {
@@ -6687,7 +7363,7 @@ type SysTenantDetailResp struct {
 
 func (x *SysTenantDetailResp) Reset() {
 	*x = SysTenantDetailResp{}
-	mi := &file_proto_system_system_proto_msgTypes[94]
+	mi := &file_proto_system_system_proto_msgTypes[101]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6699,7 +7375,7 @@ func (x *SysTenantDetailResp) String() string {
 func (*SysTenantDetailResp) ProtoMessage() {}
 
 func (x *SysTenantDetailResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[94]
+	mi := &file_proto_system_system_proto_msgTypes[101]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6712,7 +7388,7 @@ func (x *SysTenantDetailResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysTenantDetailResp.ProtoReflect.Descriptor instead.
 func (*SysTenantDetailResp) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{94}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{101}
 }
 
 func (x *SysTenantDetailResp) GetBase() *common.RespBase {
@@ -6744,7 +7420,7 @@ type SysTenantDomainItem struct {
 
 func (x *SysTenantDomainItem) Reset() {
 	*x = SysTenantDomainItem{}
-	mi := &file_proto_system_system_proto_msgTypes[95]
+	mi := &file_proto_system_system_proto_msgTypes[102]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6756,7 +7432,7 @@ func (x *SysTenantDomainItem) String() string {
 func (*SysTenantDomainItem) ProtoMessage() {}
 
 func (x *SysTenantDomainItem) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[95]
+	mi := &file_proto_system_system_proto_msgTypes[102]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6769,7 +7445,7 @@ func (x *SysTenantDomainItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysTenantDomainItem.ProtoReflect.Descriptor instead.
 func (*SysTenantDomainItem) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{95}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{102}
 }
 
 func (x *SysTenantDomainItem) GetId() int64 {
@@ -6830,7 +7506,7 @@ type SysTenantDomainListReq struct {
 
 func (x *SysTenantDomainListReq) Reset() {
 	*x = SysTenantDomainListReq{}
-	mi := &file_proto_system_system_proto_msgTypes[96]
+	mi := &file_proto_system_system_proto_msgTypes[103]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6842,7 +7518,7 @@ func (x *SysTenantDomainListReq) String() string {
 func (*SysTenantDomainListReq) ProtoMessage() {}
 
 func (x *SysTenantDomainListReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[96]
+	mi := &file_proto_system_system_proto_msgTypes[103]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6855,7 +7531,7 @@ func (x *SysTenantDomainListReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysTenantDomainListReq.ProtoReflect.Descriptor instead.
 func (*SysTenantDomainListReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{96}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{103}
 }
 
 func (x *SysTenantDomainListReq) GetTenantId() int64 {
@@ -6875,7 +7551,7 @@ type SysTenantDomainListResp struct {
 
 func (x *SysTenantDomainListResp) Reset() {
 	*x = SysTenantDomainListResp{}
-	mi := &file_proto_system_system_proto_msgTypes[97]
+	mi := &file_proto_system_system_proto_msgTypes[104]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6887,7 +7563,7 @@ func (x *SysTenantDomainListResp) String() string {
 func (*SysTenantDomainListResp) ProtoMessage() {}
 
 func (x *SysTenantDomainListResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[97]
+	mi := &file_proto_system_system_proto_msgTypes[104]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6900,7 +7576,7 @@ func (x *SysTenantDomainListResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysTenantDomainListResp.ProtoReflect.Descriptor instead.
 func (*SysTenantDomainListResp) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{97}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{104}
 }
 
 func (x *SysTenantDomainListResp) GetBase() *common.RespBase {
@@ -6929,7 +7605,7 @@ type SysTenantDomainCreateReq struct {
 
 func (x *SysTenantDomainCreateReq) Reset() {
 	*x = SysTenantDomainCreateReq{}
-	mi := &file_proto_system_system_proto_msgTypes[98]
+	mi := &file_proto_system_system_proto_msgTypes[105]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -6941,7 +7617,7 @@ func (x *SysTenantDomainCreateReq) String() string {
 func (*SysTenantDomainCreateReq) ProtoMessage() {}
 
 func (x *SysTenantDomainCreateReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[98]
+	mi := &file_proto_system_system_proto_msgTypes[105]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6954,7 +7630,7 @@ func (x *SysTenantDomainCreateReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysTenantDomainCreateReq.ProtoReflect.Descriptor instead.
 func (*SysTenantDomainCreateReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{98}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{105}
 }
 
 func (x *SysTenantDomainCreateReq) GetTenantId() int64 {
@@ -6997,7 +7673,7 @@ type SysTenantDomainUpdateReq struct {
 
 func (x *SysTenantDomainUpdateReq) Reset() {
 	*x = SysTenantDomainUpdateReq{}
-	mi := &file_proto_system_system_proto_msgTypes[99]
+	mi := &file_proto_system_system_proto_msgTypes[106]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7009,7 +7685,7 @@ func (x *SysTenantDomainUpdateReq) String() string {
 func (*SysTenantDomainUpdateReq) ProtoMessage() {}
 
 func (x *SysTenantDomainUpdateReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[99]
+	mi := &file_proto_system_system_proto_msgTypes[106]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7022,7 +7698,7 @@ func (x *SysTenantDomainUpdateReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysTenantDomainUpdateReq.ProtoReflect.Descriptor instead.
 func (*SysTenantDomainUpdateReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{99}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{106}
 }
 
 func (x *SysTenantDomainUpdateReq) GetId() int64 {
@@ -7062,7 +7738,7 @@ type SysTenantDomainDeleteReq struct {
 
 func (x *SysTenantDomainDeleteReq) Reset() {
 	*x = SysTenantDomainDeleteReq{}
-	mi := &file_proto_system_system_proto_msgTypes[100]
+	mi := &file_proto_system_system_proto_msgTypes[107]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7074,7 +7750,7 @@ func (x *SysTenantDomainDeleteReq) String() string {
 func (*SysTenantDomainDeleteReq) ProtoMessage() {}
 
 func (x *SysTenantDomainDeleteReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[100]
+	mi := &file_proto_system_system_proto_msgTypes[107]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7087,7 +7763,7 @@ func (x *SysTenantDomainDeleteReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SysTenantDomainDeleteReq.ProtoReflect.Descriptor instead.
 func (*SysTenantDomainDeleteReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{100}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{107}
 }
 
 func (x *SysTenantDomainDeleteReq) GetId() int64 {
@@ -7107,7 +7783,7 @@ type ResolveTenantDomainReq struct {
 
 func (x *ResolveTenantDomainReq) Reset() {
 	*x = ResolveTenantDomainReq{}
-	mi := &file_proto_system_system_proto_msgTypes[101]
+	mi := &file_proto_system_system_proto_msgTypes[108]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7119,7 +7795,7 @@ func (x *ResolveTenantDomainReq) String() string {
 func (*ResolveTenantDomainReq) ProtoMessage() {}
 
 func (x *ResolveTenantDomainReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[101]
+	mi := &file_proto_system_system_proto_msgTypes[108]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7132,7 +7808,7 @@ func (x *ResolveTenantDomainReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResolveTenantDomainReq.ProtoReflect.Descriptor instead.
 func (*ResolveTenantDomainReq) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{101}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{108}
 }
 
 func (x *ResolveTenantDomainReq) GetTenantId() int64 {
@@ -7160,7 +7836,7 @@ type ResolveTenantDomainResp struct {
 
 func (x *ResolveTenantDomainResp) Reset() {
 	*x = ResolveTenantDomainResp{}
-	mi := &file_proto_system_system_proto_msgTypes[102]
+	mi := &file_proto_system_system_proto_msgTypes[109]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -7172,7 +7848,7 @@ func (x *ResolveTenantDomainResp) String() string {
 func (*ResolveTenantDomainResp) ProtoMessage() {}
 
 func (x *ResolveTenantDomainResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_system_system_proto_msgTypes[102]
+	mi := &file_proto_system_system_proto_msgTypes[109]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7185,7 +7861,7 @@ func (x *ResolveTenantDomainResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResolveTenantDomainResp.ProtoReflect.Descriptor instead.
 func (*ResolveTenantDomainResp) Descriptor() ([]byte, []int) {
-	return file_proto_system_system_proto_rawDescGZIP(), []int{102}
+	return file_proto_system_system_proto_rawDescGZIP(), []int{109}
 }
 
 func (x *ResolveTenantDomainResp) GetBase() *common.RespBase {
@@ -7614,7 +8290,75 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x11LoginUserPermsReq\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"*\n" +
 	"\x12LoginUserPermsResp\x12\x14\n" +
-	"\x05perms\x18\x01 \x03(\tR\x05perms\"\xe9\x02\n" +
+	"\x05perms\x18\x01 \x03(\tR\x05perms\"\xf2\x02\n" +
+	"\x1aRecordAdminNotificationReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1d\n" +
+	"\n" +
+	"event_type\x18\x02 \x01(\tR\teventType\x12\x1b\n" +
+	"\talert_key\x18\x03 \x01(\tR\balertKey\x12\x19\n" +
+	"\bevent_id\x18\x04 \x01(\tR\aeventId\x12\x14\n" +
+	"\x05state\x18\x05 \x01(\tR\x05state\x12\x1a\n" +
+	"\bseverity\x18\x06 \x01(\tR\bseverity\x12\x14\n" +
+	"\x05title\x18\a \x01(\tR\x05title\x12\x18\n" +
+	"\amessage\x18\b \x01(\tR\amessage\x12\x16\n" +
+	"\x06source\x18\t \x01(\tR\x06source\x12!\n" +
+	"\fpayload_json\x18\n" +
+	" \x01(\tR\vpayloadJson\x12\x1d\n" +
+	"\n" +
+	"event_time\x18\v \x01(\x03R\teventTime\x12$\n" +
+	"\x0eack_timeout_ms\x18\f \x01(\x03R\fackTimeoutMs\"\xf0\x01\n" +
+	"\x1fAcknowledgeAdminNotificationReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1d\n" +
+	"\n" +
+	"event_type\x18\x02 \x01(\tR\teventType\x12\x1b\n" +
+	"\talert_key\x18\x03 \x01(\tR\balertKey\x12\x17\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\x12\x1a\n" +
+	"\busername\x18\x05 \x01(\tR\busername\x12\x16\n" +
+	"\x06reason\x18\x06 \x01(\tR\x06reason\x12'\n" +
+	"\x0facknowledged_at\x18\a \x01(\x03R\x0eacknowledgedAt\"\x92\x01\n" +
+	"\x1dClaimDueAdminNotificationsReq\x12\x10\n" +
+	"\x03now\x18\x01 \x01(\x03R\x03now\x12,\n" +
+	"\x12repeat_interval_ms\x18\x02 \x01(\x03R\x10repeatIntervalMs\x12\x1b\n" +
+	"\tmax_level\x18\x03 \x01(\x03R\bmaxLevel\x12\x14\n" +
+	"\x05limit\x18\x04 \x01(\x03R\x05limit\"\x89\x01\n" +
+	"%ReleaseAdminNotificationEscalationReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
+	"\rclaimed_level\x18\x02 \x01(\x03R\fclaimedLevel\x12\x19\n" +
+	"\bretry_at\x18\x03 \x01(\x03R\aretryAt\x12\x10\n" +
+	"\x03now\x18\x04 \x01(\x03R\x03now\"\xff\x05\n" +
+	"\x19AdminNotificationIncident\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1d\n" +
+	"\n" +
+	"event_type\x18\x03 \x01(\tR\teventType\x12\x1b\n" +
+	"\talert_key\x18\x04 \x01(\tR\balertKey\x12\"\n" +
+	"\rlast_event_id\x18\x05 \x01(\tR\vlastEventId\x12\x1a\n" +
+	"\bseverity\x18\x06 \x01(\tR\bseverity\x12\x14\n" +
+	"\x05title\x18\a \x01(\tR\x05title\x12\x18\n" +
+	"\amessage\x18\b \x01(\tR\amessage\x12\x16\n" +
+	"\x06source\x18\t \x01(\tR\x06source\x12!\n" +
+	"\fpayload_json\x18\n" +
+	" \x01(\tR\vpayloadJson\x12\x16\n" +
+	"\x06status\x18\v \x01(\x03R\x06status\x12\"\n" +
+	"\rfirst_seen_at\x18\f \x01(\x03R\vfirstSeenAt\x12 \n" +
+	"\flast_seen_at\x18\r \x01(\x03R\n" +
+	"lastSeenAt\x12'\n" +
+	"\x0facknowledged_at\x18\x0e \x01(\x03R\x0eacknowledgedAt\x12'\n" +
+	"\x0facknowledged_by\x18\x0f \x01(\x03R\x0eacknowledgedBy\x123\n" +
+	"\x15acknowledged_username\x18\x10 \x01(\tR\x14acknowledgedUsername\x12-\n" +
+	"\x12acknowledge_reason\x18\x11 \x01(\tR\x11acknowledgeReason\x12)\n" +
+	"\x10escalation_level\x18\x12 \x01(\x03R\x0fescalationLevel\x12*\n" +
+	"\x11last_escalated_at\x18\x13 \x01(\x03R\x0flastEscalatedAt\x12(\n" +
+	"\x10next_escalate_at\x18\x14 \x01(\x03R\x0enextEscalateAt\x12\x1f\n" +
+	"\vresolved_at\x18\x15 \x01(\x03R\n" +
+	"resolvedAt\x12\x18\n" +
+	"\aversion\x18\x16 \x01(\x03R\aversion\"|\n" +
+	"\x1dAdminNotificationIncidentResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x125\n" +
+	"\x04data\x18\x02 \x01(\v2!.system.AdminNotificationIncidentR\x04data\"}\n" +
+	"\x1eClaimDueAdminNotificationsResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x125\n" +
+	"\x04data\x18\x02 \x03(\v2!.system.AdminNotificationIncidentR\x04data\"\xe9\x02\n" +
 	"\x0eSysCronJobItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\bjob_name\x18\x02 \x01(\tR\ajobName\x12\x1b\n" +
@@ -7790,7 +8534,7 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x17ResolveTenantDomainResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12?\n" +
 	"\rsource_status\x18\x02 \x01(\x0e2\x1a.system.TenantDomainStatusR\fsourceStatus\x12#\n" +
-	"\rtarget_origin\x18\x03 \x01(\tR\ftargetOrigin2\x9b\x1e\n" +
+	"\rtarget_origin\x18\x03 \x01(\tR\ftargetOrigin2\xc5!\n" +
 	"\x05Admin\x12,\n" +
 	"\x05Login\x12\x10.system.LoginReq\x1a\x11.system.LoginResp\x120\n" +
 	"\n" +
@@ -7831,7 +8575,11 @@ const file_proto_system_system_proto_rawDesc = "" +
 	"\x14TestVerificationCode\x12\x1f.system.TestVerificationCodeReq\x1a\x10.system.RespBase\x12k\n" +
 	"\x1aVerificationCodeRecordList\x12%.system.VerificationCodeRecordListReq\x1a&.system.VerificationCodeRecordListResp\x12q\n" +
 	"\x1cVerificationCodeRecordDetail\x12'.system.VerificationCodeRecordDetailReq\x1a(.system.VerificationCodeRecordDetailResp\x12G\n" +
-	"\x0eLoginUserPerms\x12\x19.system.LoginUserPermsReq\x1a\x1a.system.LoginUserPermsResp\x12G\n" +
+	"\x0eLoginUserPerms\x12\x19.system.LoginUserPermsReq\x1a\x1a.system.LoginUserPermsResp\x12d\n" +
+	"\x17RecordAdminNotification\x12\".system.RecordAdminNotificationReq\x1a%.system.AdminNotificationIncidentResp\x12n\n" +
+	"\x1cAcknowledgeAdminNotification\x12'.system.AcknowledgeAdminNotificationReq\x1a%.system.AdminNotificationIncidentResp\x12k\n" +
+	"\x1aClaimDueAdminNotifications\x12%.system.ClaimDueAdminNotificationsReq\x1a&.system.ClaimDueAdminNotificationsResp\x12e\n" +
+	"\"ReleaseAdminNotificationEscalation\x12-.system.ReleaseAdminNotificationEscalationReq\x1a\x10.system.RespBase\x12G\n" +
 	"\x0eSysCronJobList\x12\x19.system.SysCronJobListReq\x1a\x1a.system.SysCronJobListResp\x12A\n" +
 	"\x10SysCronJobCreate\x12\x1b.system.SysCronJobCreateReq\x1a\x10.system.RespBase\x12A\n" +
 	"\x10SysCronJobUpdate\x12\x1b.system.SysCronJobUpdateReq\x1a\x10.system.RespBase\x12A\n" +
@@ -7873,407 +8621,426 @@ func file_proto_system_system_proto_rawDescGZIP() []byte {
 	return file_proto_system_system_proto_rawDescData
 }
 
-var file_proto_system_system_proto_msgTypes = make([]protoimpl.MessageInfo, 103)
+var file_proto_system_system_proto_msgTypes = make([]protoimpl.MessageInfo, 110)
 var file_proto_system_system_proto_goTypes = []any{
-	(*Empty)(nil),                            // 0: system.Empty
-	(*RespBase)(nil),                         // 1: system.RespBase
-	(*LoginReq)(nil),                         // 2: system.LoginReq
-	(*LoginResp)(nil),                        // 3: system.LoginResp
-	(*LoginData)(nil),                        // 4: system.LoginData
-	(*ProfileUser)(nil),                      // 5: system.ProfileUser
-	(*SysMenuNode)(nil),                      // 6: system.SysMenuNode
-	(*ProfileData)(nil),                      // 7: system.ProfileData
-	(*ProfileResp)(nil),                      // 8: system.ProfileResp
-	(*UpdateProfileReq)(nil),                 // 9: system.UpdateProfileReq
-	(*SysMenuItem)(nil),                      // 10: system.SysMenuItem
-	(*SysMenuTreeReq)(nil),                   // 11: system.SysMenuTreeReq
-	(*SysMenuTreeResp)(nil),                  // 12: system.SysMenuTreeResp
-	(*Google2FAInitReq)(nil),                 // 13: system.Google2FAInitReq
-	(*Google2FAInitResp)(nil),                // 14: system.Google2FAInitResp
-	(*Google2FAInitData)(nil),                // 15: system.Google2FAInitData
-	(*Google2FABindReq)(nil),                 // 16: system.Google2FABindReq
-	(*Google2FAEnableReq)(nil),               // 17: system.Google2FAEnableReq
-	(*Google2FADisableReq)(nil),              // 18: system.Google2FADisableReq
-	(*Google2FAResetReq)(nil),                // 19: system.Google2FAResetReq
-	(*SysUserItem)(nil),                      // 20: system.SysUserItem
-	(*SysUserListReq)(nil),                   // 21: system.SysUserListReq
-	(*SysUserListResp)(nil),                  // 22: system.SysUserListResp
-	(*SysUserDetailReq)(nil),                 // 23: system.SysUserDetailReq
-	(*SysUserDetailResp)(nil),                // 24: system.SysUserDetailResp
-	(*SysUserCreateReq)(nil),                 // 25: system.SysUserCreateReq
-	(*SysUserUpdateReq)(nil),                 // 26: system.SysUserUpdateReq
-	(*SysUserDeleteReq)(nil),                 // 27: system.SysUserDeleteReq
-	(*ChangeUserStatusReq)(nil),              // 28: system.ChangeUserStatusReq
-	(*ResetUserPwdReq)(nil),                  // 29: system.ResetUserPwdReq
-	(*AssignUserRolesReq)(nil),               // 30: system.AssignUserRolesReq
-	(*SysRoleItem)(nil),                      // 31: system.SysRoleItem
-	(*SysRoleListReq)(nil),                   // 32: system.SysRoleListReq
-	(*SysRoleListResp)(nil),                  // 33: system.SysRoleListResp
-	(*SysRoleCreateReq)(nil),                 // 34: system.SysRoleCreateReq
-	(*SysRoleUpdateReq)(nil),                 // 35: system.SysRoleUpdateReq
-	(*SysRoleDeleteReq)(nil),                 // 36: system.SysRoleDeleteReq
-	(*SysRoleGrantReq)(nil),                  // 37: system.SysRoleGrantReq
-	(*SysRoleGrantDetailReq)(nil),            // 38: system.SysRoleGrantDetailReq
-	(*SysRoleGrantDetailResp)(nil),           // 39: system.SysRoleGrantDetailResp
-	(*SysRoleGrantDetailData)(nil),           // 40: system.SysRoleGrantDetailData
-	(*SysPermItem)(nil),                      // 41: system.SysPermItem
-	(*SysPermListResp)(nil),                  // 42: system.SysPermListResp
-	(*SysMenuCreateReq)(nil),                 // 43: system.SysMenuCreateReq
-	(*SysMenuUpdateReq)(nil),                 // 44: system.SysMenuUpdateReq
-	(*SysMenuDeleteReq)(nil),                 // 45: system.SysMenuDeleteReq
-	(*SysMenuListReq)(nil),                   // 46: system.SysMenuListReq
-	(*SysMenuListResp)(nil),                  // 47: system.SysMenuListResp
-	(*LoginLogItem)(nil),                     // 48: system.LoginLogItem
-	(*LoginLogListReq)(nil),                  // 49: system.LoginLogListReq
-	(*LoginLogListResp)(nil),                 // 50: system.LoginLogListResp
-	(*OpLogItem)(nil),                        // 51: system.OpLogItem
-	(*OpLogListReq)(nil),                     // 52: system.OpLogListReq
-	(*OpLogListResp)(nil),                    // 53: system.OpLogListResp
-	(*SysConfigCreateReq)(nil),               // 54: system.SysConfigCreateReq
-	(*SysConfigUpdateReq)(nil),               // 55: system.SysConfigUpdateReq
-	(*SysConfigDeleteReq)(nil),               // 56: system.SysConfigDeleteReq
-	(*SysConfigItem)(nil),                    // 57: system.SysConfigItem
-	(*SysConfigListReq)(nil),                 // 58: system.SysConfigListReq
-	(*SysConfigListResp)(nil),                // 59: system.SysConfigListResp
-	(*SysConfigDetailReq)(nil),               // 60: system.SysConfigDetailReq
-	(*SysConfigDetailResp)(nil),              // 61: system.SysConfigDetailResp
-	(*SysConfigByKeysReq)(nil),               // 62: system.SysConfigByKeysReq
-	(*SysConfigByKeysResp)(nil),              // 63: system.SysConfigByKeysResp
-	(*SendVerificationCodeReq)(nil),          // 64: system.SendVerificationCodeReq
-	(*TestVerificationCodeReq)(nil),          // 65: system.TestVerificationCodeReq
-	(*VerificationCodeRecordItem)(nil),       // 66: system.VerificationCodeRecordItem
-	(*VerificationCodeRecordListReq)(nil),    // 67: system.VerificationCodeRecordListReq
-	(*VerificationCodeRecordListResp)(nil),   // 68: system.VerificationCodeRecordListResp
-	(*VerificationCodeRecordDetailReq)(nil),  // 69: system.VerificationCodeRecordDetailReq
-	(*VerificationCodeRecordDetailResp)(nil), // 70: system.VerificationCodeRecordDetailResp
-	(*LoginUserPermsReq)(nil),                // 71: system.LoginUserPermsReq
-	(*LoginUserPermsResp)(nil),               // 72: system.LoginUserPermsResp
-	(*SysCronJobItem)(nil),                   // 73: system.SysCronJobItem
-	(*SysCronJobListReq)(nil),                // 74: system.SysCronJobListReq
-	(*SysCronJobListResp)(nil),               // 75: system.SysCronJobListResp
-	(*SysCronJobCreateReq)(nil),              // 76: system.SysCronJobCreateReq
-	(*SysCronJobUpdateReq)(nil),              // 77: system.SysCronJobUpdateReq
-	(*SysCronJobDeleteReq)(nil),              // 78: system.SysCronJobDeleteReq
-	(*SysCronJobRunReq)(nil),                 // 79: system.SysCronJobRunReq
-	(*SysCronJobStartReq)(nil),               // 80: system.SysCronJobStartReq
-	(*SysCronJobStopReq)(nil),                // 81: system.SysCronJobStopReq
-	(*SysCronJobLogItem)(nil),                // 82: system.SysCronJobLogItem
-	(*SysCronJobLogListReq)(nil),             // 83: system.SysCronJobLogListReq
-	(*SysCronJobHandler)(nil),                // 84: system.SysCronJobHandler
-	(*SysCronJobHandlersResp)(nil),           // 85: system.SysCronJobHandlersResp
-	(*SysCronJobLogListResp)(nil),            // 86: system.SysCronJobLogListResp
-	(*SysTenantItem)(nil),                    // 87: system.SysTenantItem
-	(*SysTenantListReq)(nil),                 // 88: system.SysTenantListReq
-	(*SysTenantListResp)(nil),                // 89: system.SysTenantListResp
-	(*SysTenantCreateReq)(nil),               // 90: system.SysTenantCreateReq
-	(*SysTenantUpdateReq)(nil),               // 91: system.SysTenantUpdateReq
-	(*SysTenantDeleteReq)(nil),               // 92: system.SysTenantDeleteReq
-	(*SysTenantDetailReq)(nil),               // 93: system.SysTenantDetailReq
-	(*SysTenantDetailResp)(nil),              // 94: system.SysTenantDetailResp
-	(*SysTenantDomainItem)(nil),              // 95: system.SysTenantDomainItem
-	(*SysTenantDomainListReq)(nil),           // 96: system.SysTenantDomainListReq
-	(*SysTenantDomainListResp)(nil),          // 97: system.SysTenantDomainListResp
-	(*SysTenantDomainCreateReq)(nil),         // 98: system.SysTenantDomainCreateReq
-	(*SysTenantDomainUpdateReq)(nil),         // 99: system.SysTenantDomainUpdateReq
-	(*SysTenantDomainDeleteReq)(nil),         // 100: system.SysTenantDomainDeleteReq
-	(*ResolveTenantDomainReq)(nil),           // 101: system.ResolveTenantDomainReq
-	(*ResolveTenantDomainResp)(nil),          // 102: system.ResolveTenantDomainResp
-	(*common.RespBase)(nil),                  // 103: common.RespBase
-	(ApplicationScope)(0),                    // 104: system.ApplicationScope
-	(common.Enable)(0),                       // 105: common.Enable
-	(UserType)(0),                            // 106: system.UserType
-	(common.YesNo)(0),                        // 107: common.YesNo
-	(MenuType)(0),                            // 108: system.MenuType
-	(common.Switch)(0),                       // 109: common.Switch
-	(RequestMethod)(0),                       // 110: system.RequestMethod
-	(*common.PageReq)(nil),                   // 111: common.PageReq
-	(SysConfigType)(0),                       // 112: system.SysConfigType
-	(VerificationCodeChannel)(0),             // 113: system.VerificationCodeChannel
-	(VerificationCodeScene)(0),               // 114: system.VerificationCodeScene
-	(VerificationCodeStatus)(0),              // 115: system.VerificationCodeStatus
-	(JobStatus)(0),                           // 116: system.JobStatus
-	(TenantDomainStatus)(0),                  // 117: system.TenantDomainStatus
+	(*Empty)(nil),                                 // 0: system.Empty
+	(*RespBase)(nil),                              // 1: system.RespBase
+	(*LoginReq)(nil),                              // 2: system.LoginReq
+	(*LoginResp)(nil),                             // 3: system.LoginResp
+	(*LoginData)(nil),                             // 4: system.LoginData
+	(*ProfileUser)(nil),                           // 5: system.ProfileUser
+	(*SysMenuNode)(nil),                           // 6: system.SysMenuNode
+	(*ProfileData)(nil),                           // 7: system.ProfileData
+	(*ProfileResp)(nil),                           // 8: system.ProfileResp
+	(*UpdateProfileReq)(nil),                      // 9: system.UpdateProfileReq
+	(*SysMenuItem)(nil),                           // 10: system.SysMenuItem
+	(*SysMenuTreeReq)(nil),                        // 11: system.SysMenuTreeReq
+	(*SysMenuTreeResp)(nil),                       // 12: system.SysMenuTreeResp
+	(*Google2FAInitReq)(nil),                      // 13: system.Google2FAInitReq
+	(*Google2FAInitResp)(nil),                     // 14: system.Google2FAInitResp
+	(*Google2FAInitData)(nil),                     // 15: system.Google2FAInitData
+	(*Google2FABindReq)(nil),                      // 16: system.Google2FABindReq
+	(*Google2FAEnableReq)(nil),                    // 17: system.Google2FAEnableReq
+	(*Google2FADisableReq)(nil),                   // 18: system.Google2FADisableReq
+	(*Google2FAResetReq)(nil),                     // 19: system.Google2FAResetReq
+	(*SysUserItem)(nil),                           // 20: system.SysUserItem
+	(*SysUserListReq)(nil),                        // 21: system.SysUserListReq
+	(*SysUserListResp)(nil),                       // 22: system.SysUserListResp
+	(*SysUserDetailReq)(nil),                      // 23: system.SysUserDetailReq
+	(*SysUserDetailResp)(nil),                     // 24: system.SysUserDetailResp
+	(*SysUserCreateReq)(nil),                      // 25: system.SysUserCreateReq
+	(*SysUserUpdateReq)(nil),                      // 26: system.SysUserUpdateReq
+	(*SysUserDeleteReq)(nil),                      // 27: system.SysUserDeleteReq
+	(*ChangeUserStatusReq)(nil),                   // 28: system.ChangeUserStatusReq
+	(*ResetUserPwdReq)(nil),                       // 29: system.ResetUserPwdReq
+	(*AssignUserRolesReq)(nil),                    // 30: system.AssignUserRolesReq
+	(*SysRoleItem)(nil),                           // 31: system.SysRoleItem
+	(*SysRoleListReq)(nil),                        // 32: system.SysRoleListReq
+	(*SysRoleListResp)(nil),                       // 33: system.SysRoleListResp
+	(*SysRoleCreateReq)(nil),                      // 34: system.SysRoleCreateReq
+	(*SysRoleUpdateReq)(nil),                      // 35: system.SysRoleUpdateReq
+	(*SysRoleDeleteReq)(nil),                      // 36: system.SysRoleDeleteReq
+	(*SysRoleGrantReq)(nil),                       // 37: system.SysRoleGrantReq
+	(*SysRoleGrantDetailReq)(nil),                 // 38: system.SysRoleGrantDetailReq
+	(*SysRoleGrantDetailResp)(nil),                // 39: system.SysRoleGrantDetailResp
+	(*SysRoleGrantDetailData)(nil),                // 40: system.SysRoleGrantDetailData
+	(*SysPermItem)(nil),                           // 41: system.SysPermItem
+	(*SysPermListResp)(nil),                       // 42: system.SysPermListResp
+	(*SysMenuCreateReq)(nil),                      // 43: system.SysMenuCreateReq
+	(*SysMenuUpdateReq)(nil),                      // 44: system.SysMenuUpdateReq
+	(*SysMenuDeleteReq)(nil),                      // 45: system.SysMenuDeleteReq
+	(*SysMenuListReq)(nil),                        // 46: system.SysMenuListReq
+	(*SysMenuListResp)(nil),                       // 47: system.SysMenuListResp
+	(*LoginLogItem)(nil),                          // 48: system.LoginLogItem
+	(*LoginLogListReq)(nil),                       // 49: system.LoginLogListReq
+	(*LoginLogListResp)(nil),                      // 50: system.LoginLogListResp
+	(*OpLogItem)(nil),                             // 51: system.OpLogItem
+	(*OpLogListReq)(nil),                          // 52: system.OpLogListReq
+	(*OpLogListResp)(nil),                         // 53: system.OpLogListResp
+	(*SysConfigCreateReq)(nil),                    // 54: system.SysConfigCreateReq
+	(*SysConfigUpdateReq)(nil),                    // 55: system.SysConfigUpdateReq
+	(*SysConfigDeleteReq)(nil),                    // 56: system.SysConfigDeleteReq
+	(*SysConfigItem)(nil),                         // 57: system.SysConfigItem
+	(*SysConfigListReq)(nil),                      // 58: system.SysConfigListReq
+	(*SysConfigListResp)(nil),                     // 59: system.SysConfigListResp
+	(*SysConfigDetailReq)(nil),                    // 60: system.SysConfigDetailReq
+	(*SysConfigDetailResp)(nil),                   // 61: system.SysConfigDetailResp
+	(*SysConfigByKeysReq)(nil),                    // 62: system.SysConfigByKeysReq
+	(*SysConfigByKeysResp)(nil),                   // 63: system.SysConfigByKeysResp
+	(*SendVerificationCodeReq)(nil),               // 64: system.SendVerificationCodeReq
+	(*TestVerificationCodeReq)(nil),               // 65: system.TestVerificationCodeReq
+	(*VerificationCodeRecordItem)(nil),            // 66: system.VerificationCodeRecordItem
+	(*VerificationCodeRecordListReq)(nil),         // 67: system.VerificationCodeRecordListReq
+	(*VerificationCodeRecordListResp)(nil),        // 68: system.VerificationCodeRecordListResp
+	(*VerificationCodeRecordDetailReq)(nil),       // 69: system.VerificationCodeRecordDetailReq
+	(*VerificationCodeRecordDetailResp)(nil),      // 70: system.VerificationCodeRecordDetailResp
+	(*LoginUserPermsReq)(nil),                     // 71: system.LoginUserPermsReq
+	(*LoginUserPermsResp)(nil),                    // 72: system.LoginUserPermsResp
+	(*RecordAdminNotificationReq)(nil),            // 73: system.RecordAdminNotificationReq
+	(*AcknowledgeAdminNotificationReq)(nil),       // 74: system.AcknowledgeAdminNotificationReq
+	(*ClaimDueAdminNotificationsReq)(nil),         // 75: system.ClaimDueAdminNotificationsReq
+	(*ReleaseAdminNotificationEscalationReq)(nil), // 76: system.ReleaseAdminNotificationEscalationReq
+	(*AdminNotificationIncident)(nil),             // 77: system.AdminNotificationIncident
+	(*AdminNotificationIncidentResp)(nil),         // 78: system.AdminNotificationIncidentResp
+	(*ClaimDueAdminNotificationsResp)(nil),        // 79: system.ClaimDueAdminNotificationsResp
+	(*SysCronJobItem)(nil),                        // 80: system.SysCronJobItem
+	(*SysCronJobListReq)(nil),                     // 81: system.SysCronJobListReq
+	(*SysCronJobListResp)(nil),                    // 82: system.SysCronJobListResp
+	(*SysCronJobCreateReq)(nil),                   // 83: system.SysCronJobCreateReq
+	(*SysCronJobUpdateReq)(nil),                   // 84: system.SysCronJobUpdateReq
+	(*SysCronJobDeleteReq)(nil),                   // 85: system.SysCronJobDeleteReq
+	(*SysCronJobRunReq)(nil),                      // 86: system.SysCronJobRunReq
+	(*SysCronJobStartReq)(nil),                    // 87: system.SysCronJobStartReq
+	(*SysCronJobStopReq)(nil),                     // 88: system.SysCronJobStopReq
+	(*SysCronJobLogItem)(nil),                     // 89: system.SysCronJobLogItem
+	(*SysCronJobLogListReq)(nil),                  // 90: system.SysCronJobLogListReq
+	(*SysCronJobHandler)(nil),                     // 91: system.SysCronJobHandler
+	(*SysCronJobHandlersResp)(nil),                // 92: system.SysCronJobHandlersResp
+	(*SysCronJobLogListResp)(nil),                 // 93: system.SysCronJobLogListResp
+	(*SysTenantItem)(nil),                         // 94: system.SysTenantItem
+	(*SysTenantListReq)(nil),                      // 95: system.SysTenantListReq
+	(*SysTenantListResp)(nil),                     // 96: system.SysTenantListResp
+	(*SysTenantCreateReq)(nil),                    // 97: system.SysTenantCreateReq
+	(*SysTenantUpdateReq)(nil),                    // 98: system.SysTenantUpdateReq
+	(*SysTenantDeleteReq)(nil),                    // 99: system.SysTenantDeleteReq
+	(*SysTenantDetailReq)(nil),                    // 100: system.SysTenantDetailReq
+	(*SysTenantDetailResp)(nil),                   // 101: system.SysTenantDetailResp
+	(*SysTenantDomainItem)(nil),                   // 102: system.SysTenantDomainItem
+	(*SysTenantDomainListReq)(nil),                // 103: system.SysTenantDomainListReq
+	(*SysTenantDomainListResp)(nil),               // 104: system.SysTenantDomainListResp
+	(*SysTenantDomainCreateReq)(nil),              // 105: system.SysTenantDomainCreateReq
+	(*SysTenantDomainUpdateReq)(nil),              // 106: system.SysTenantDomainUpdateReq
+	(*SysTenantDomainDeleteReq)(nil),              // 107: system.SysTenantDomainDeleteReq
+	(*ResolveTenantDomainReq)(nil),                // 108: system.ResolveTenantDomainReq
+	(*ResolveTenantDomainResp)(nil),               // 109: system.ResolveTenantDomainResp
+	(*common.RespBase)(nil),                       // 110: common.RespBase
+	(ApplicationScope)(0),                         // 111: system.ApplicationScope
+	(common.Enable)(0),                            // 112: common.Enable
+	(UserType)(0),                                 // 113: system.UserType
+	(common.YesNo)(0),                             // 114: common.YesNo
+	(MenuType)(0),                                 // 115: system.MenuType
+	(common.Switch)(0),                            // 116: common.Switch
+	(RequestMethod)(0),                            // 117: system.RequestMethod
+	(*common.PageReq)(nil),                        // 118: common.PageReq
+	(SysConfigType)(0),                            // 119: system.SysConfigType
+	(VerificationCodeChannel)(0),                  // 120: system.VerificationCodeChannel
+	(VerificationCodeScene)(0),                    // 121: system.VerificationCodeScene
+	(VerificationCodeStatus)(0),                   // 122: system.VerificationCodeStatus
+	(JobStatus)(0),                                // 123: system.JobStatus
+	(TenantDomainStatus)(0),                       // 124: system.TenantDomainStatus
 }
 var file_proto_system_system_proto_depIdxs = []int32{
-	103, // 0: system.RespBase.base:type_name -> common.RespBase
-	104, // 1: system.LoginReq.app_scope:type_name -> system.ApplicationScope
-	103, // 2: system.LoginResp.base:type_name -> common.RespBase
+	110, // 0: system.RespBase.base:type_name -> common.RespBase
+	111, // 1: system.LoginReq.app_scope:type_name -> system.ApplicationScope
+	110, // 2: system.LoginResp.base:type_name -> common.RespBase
 	4,   // 3: system.LoginResp.data:type_name -> system.LoginData
-	105, // 4: system.LoginData.google2fa_enabled:type_name -> common.Enable
-	106, // 5: system.LoginData.user_type:type_name -> system.UserType
-	107, // 6: system.LoginData.is_owner:type_name -> common.YesNo
-	104, // 7: system.LoginData.app_scope:type_name -> system.ApplicationScope
-	106, // 8: system.ProfileUser.user_type:type_name -> system.UserType
-	107, // 9: system.ProfileUser.is_owner:type_name -> common.YesNo
-	105, // 10: system.ProfileUser.google2fa_enabled:type_name -> common.Enable
-	104, // 11: system.ProfileUser.app_scope:type_name -> system.ApplicationScope
-	108, // 12: system.SysMenuNode.menu_type:type_name -> system.MenuType
-	109, // 13: system.SysMenuNode.visible:type_name -> common.Switch
-	105, // 14: system.SysMenuNode.enabled:type_name -> common.Enable
+	112, // 4: system.LoginData.google2fa_enabled:type_name -> common.Enable
+	113, // 5: system.LoginData.user_type:type_name -> system.UserType
+	114, // 6: system.LoginData.is_owner:type_name -> common.YesNo
+	111, // 7: system.LoginData.app_scope:type_name -> system.ApplicationScope
+	113, // 8: system.ProfileUser.user_type:type_name -> system.UserType
+	114, // 9: system.ProfileUser.is_owner:type_name -> common.YesNo
+	112, // 10: system.ProfileUser.google2fa_enabled:type_name -> common.Enable
+	111, // 11: system.ProfileUser.app_scope:type_name -> system.ApplicationScope
+	115, // 12: system.SysMenuNode.menu_type:type_name -> system.MenuType
+	116, // 13: system.SysMenuNode.visible:type_name -> common.Switch
+	112, // 14: system.SysMenuNode.enabled:type_name -> common.Enable
 	6,   // 15: system.SysMenuNode.children:type_name -> system.SysMenuNode
-	104, // 16: system.SysMenuNode.app_scope:type_name -> system.ApplicationScope
+	111, // 16: system.SysMenuNode.app_scope:type_name -> system.ApplicationScope
 	5,   // 17: system.ProfileData.user:type_name -> system.ProfileUser
 	6,   // 18: system.ProfileData.menus:type_name -> system.SysMenuNode
-	103, // 19: system.ProfileResp.base:type_name -> common.RespBase
+	110, // 19: system.ProfileResp.base:type_name -> common.RespBase
 	7,   // 20: system.ProfileResp.data:type_name -> system.ProfileData
-	108, // 21: system.SysMenuItem.menu_type:type_name -> system.MenuType
-	110, // 22: system.SysMenuItem.method:type_name -> system.RequestMethod
-	109, // 23: system.SysMenuItem.visible:type_name -> common.Switch
-	105, // 24: system.SysMenuItem.enabled:type_name -> common.Enable
-	104, // 25: system.SysMenuItem.app_scope:type_name -> system.ApplicationScope
-	103, // 26: system.SysMenuTreeResp.base:type_name -> common.RespBase
+	115, // 21: system.SysMenuItem.menu_type:type_name -> system.MenuType
+	117, // 22: system.SysMenuItem.method:type_name -> system.RequestMethod
+	116, // 23: system.SysMenuItem.visible:type_name -> common.Switch
+	112, // 24: system.SysMenuItem.enabled:type_name -> common.Enable
+	111, // 25: system.SysMenuItem.app_scope:type_name -> system.ApplicationScope
+	110, // 26: system.SysMenuTreeResp.base:type_name -> common.RespBase
 	10,  // 27: system.SysMenuTreeResp.data:type_name -> system.SysMenuItem
-	103, // 28: system.Google2FAInitResp.base:type_name -> common.RespBase
+	110, // 28: system.Google2FAInitResp.base:type_name -> common.RespBase
 	15,  // 29: system.Google2FAInitResp.data:type_name -> system.Google2FAInitData
-	105, // 30: system.SysUserItem.enabled:type_name -> common.Enable
-	105, // 31: system.SysUserItem.google2fa_enabled:type_name -> common.Enable
-	106, // 32: system.SysUserItem.user_type:type_name -> system.UserType
-	107, // 33: system.SysUserItem.is_owner:type_name -> common.YesNo
-	104, // 34: system.SysUserItem.app_scope:type_name -> system.ApplicationScope
-	111, // 35: system.SysUserListReq.page:type_name -> common.PageReq
-	105, // 36: system.SysUserListReq.enabled:type_name -> common.Enable
-	104, // 37: system.SysUserListReq.app_scope:type_name -> system.ApplicationScope
-	103, // 38: system.SysUserListResp.base:type_name -> common.RespBase
+	112, // 30: system.SysUserItem.enabled:type_name -> common.Enable
+	112, // 31: system.SysUserItem.google2fa_enabled:type_name -> common.Enable
+	113, // 32: system.SysUserItem.user_type:type_name -> system.UserType
+	114, // 33: system.SysUserItem.is_owner:type_name -> common.YesNo
+	111, // 34: system.SysUserItem.app_scope:type_name -> system.ApplicationScope
+	118, // 35: system.SysUserListReq.page:type_name -> common.PageReq
+	112, // 36: system.SysUserListReq.enabled:type_name -> common.Enable
+	111, // 37: system.SysUserListReq.app_scope:type_name -> system.ApplicationScope
+	110, // 38: system.SysUserListResp.base:type_name -> common.RespBase
 	20,  // 39: system.SysUserListResp.data:type_name -> system.SysUserItem
-	103, // 40: system.SysUserDetailResp.base:type_name -> common.RespBase
+	110, // 40: system.SysUserDetailResp.base:type_name -> common.RespBase
 	20,  // 41: system.SysUserDetailResp.data:type_name -> system.SysUserItem
-	105, // 42: system.SysUserCreateReq.enabled:type_name -> common.Enable
-	106, // 43: system.SysUserCreateReq.user_type:type_name -> system.UserType
-	107, // 44: system.SysUserCreateReq.is_owner:type_name -> common.YesNo
-	104, // 45: system.SysUserCreateReq.app_scope:type_name -> system.ApplicationScope
-	105, // 46: system.SysUserUpdateReq.enabled:type_name -> common.Enable
-	106, // 47: system.SysUserUpdateReq.user_type:type_name -> system.UserType
-	107, // 48: system.SysUserUpdateReq.is_owner:type_name -> common.YesNo
-	104, // 49: system.SysUserUpdateReq.app_scope:type_name -> system.ApplicationScope
-	105, // 50: system.ChangeUserStatusReq.enabled:type_name -> common.Enable
-	105, // 51: system.SysRoleItem.enabled:type_name -> common.Enable
-	104, // 52: system.SysRoleItem.app_scope:type_name -> system.ApplicationScope
-	111, // 53: system.SysRoleListReq.page:type_name -> common.PageReq
-	105, // 54: system.SysRoleListReq.enabled:type_name -> common.Enable
-	104, // 55: system.SysRoleListReq.app_scope:type_name -> system.ApplicationScope
-	103, // 56: system.SysRoleListResp.base:type_name -> common.RespBase
+	112, // 42: system.SysUserCreateReq.enabled:type_name -> common.Enable
+	113, // 43: system.SysUserCreateReq.user_type:type_name -> system.UserType
+	114, // 44: system.SysUserCreateReq.is_owner:type_name -> common.YesNo
+	111, // 45: system.SysUserCreateReq.app_scope:type_name -> system.ApplicationScope
+	112, // 46: system.SysUserUpdateReq.enabled:type_name -> common.Enable
+	113, // 47: system.SysUserUpdateReq.user_type:type_name -> system.UserType
+	114, // 48: system.SysUserUpdateReq.is_owner:type_name -> common.YesNo
+	111, // 49: system.SysUserUpdateReq.app_scope:type_name -> system.ApplicationScope
+	112, // 50: system.ChangeUserStatusReq.enabled:type_name -> common.Enable
+	112, // 51: system.SysRoleItem.enabled:type_name -> common.Enable
+	111, // 52: system.SysRoleItem.app_scope:type_name -> system.ApplicationScope
+	118, // 53: system.SysRoleListReq.page:type_name -> common.PageReq
+	112, // 54: system.SysRoleListReq.enabled:type_name -> common.Enable
+	111, // 55: system.SysRoleListReq.app_scope:type_name -> system.ApplicationScope
+	110, // 56: system.SysRoleListResp.base:type_name -> common.RespBase
 	31,  // 57: system.SysRoleListResp.data:type_name -> system.SysRoleItem
-	105, // 58: system.SysRoleCreateReq.enabled:type_name -> common.Enable
-	104, // 59: system.SysRoleCreateReq.app_scope:type_name -> system.ApplicationScope
-	105, // 60: system.SysRoleUpdateReq.enabled:type_name -> common.Enable
-	104, // 61: system.SysRoleUpdateReq.app_scope:type_name -> system.ApplicationScope
-	103, // 62: system.SysRoleGrantDetailResp.base:type_name -> common.RespBase
+	112, // 58: system.SysRoleCreateReq.enabled:type_name -> common.Enable
+	111, // 59: system.SysRoleCreateReq.app_scope:type_name -> system.ApplicationScope
+	112, // 60: system.SysRoleUpdateReq.enabled:type_name -> common.Enable
+	111, // 61: system.SysRoleUpdateReq.app_scope:type_name -> system.ApplicationScope
+	110, // 62: system.SysRoleGrantDetailResp.base:type_name -> common.RespBase
 	40,  // 63: system.SysRoleGrantDetailResp.data:type_name -> system.SysRoleGrantDetailData
-	110, // 64: system.SysPermItem.method:type_name -> system.RequestMethod
-	104, // 65: system.SysPermItem.app_scope:type_name -> system.ApplicationScope
-	103, // 66: system.SysPermListResp.base:type_name -> common.RespBase
+	117, // 64: system.SysPermItem.method:type_name -> system.RequestMethod
+	111, // 65: system.SysPermItem.app_scope:type_name -> system.ApplicationScope
+	110, // 66: system.SysPermListResp.base:type_name -> common.RespBase
 	41,  // 67: system.SysPermListResp.data:type_name -> system.SysPermItem
-	108, // 68: system.SysMenuCreateReq.menu_type:type_name -> system.MenuType
-	110, // 69: system.SysMenuCreateReq.method:type_name -> system.RequestMethod
-	109, // 70: system.SysMenuCreateReq.visible:type_name -> common.Switch
-	105, // 71: system.SysMenuCreateReq.enabled:type_name -> common.Enable
-	104, // 72: system.SysMenuCreateReq.app_scope:type_name -> system.ApplicationScope
-	108, // 73: system.SysMenuUpdateReq.menu_type:type_name -> system.MenuType
-	110, // 74: system.SysMenuUpdateReq.method:type_name -> system.RequestMethod
-	109, // 75: system.SysMenuUpdateReq.visible:type_name -> common.Switch
-	105, // 76: system.SysMenuUpdateReq.enabled:type_name -> common.Enable
-	104, // 77: system.SysMenuUpdateReq.app_scope:type_name -> system.ApplicationScope
-	111, // 78: system.SysMenuListReq.page:type_name -> common.PageReq
-	108, // 79: system.SysMenuListReq.menu_type:type_name -> system.MenuType
-	105, // 80: system.SysMenuListReq.enabled:type_name -> common.Enable
-	109, // 81: system.SysMenuListReq.visible:type_name -> common.Switch
-	104, // 82: system.SysMenuListReq.app_scope:type_name -> system.ApplicationScope
-	103, // 83: system.SysMenuListResp.base:type_name -> common.RespBase
+	115, // 68: system.SysMenuCreateReq.menu_type:type_name -> system.MenuType
+	117, // 69: system.SysMenuCreateReq.method:type_name -> system.RequestMethod
+	116, // 70: system.SysMenuCreateReq.visible:type_name -> common.Switch
+	112, // 71: system.SysMenuCreateReq.enabled:type_name -> common.Enable
+	111, // 72: system.SysMenuCreateReq.app_scope:type_name -> system.ApplicationScope
+	115, // 73: system.SysMenuUpdateReq.menu_type:type_name -> system.MenuType
+	117, // 74: system.SysMenuUpdateReq.method:type_name -> system.RequestMethod
+	116, // 75: system.SysMenuUpdateReq.visible:type_name -> common.Switch
+	112, // 76: system.SysMenuUpdateReq.enabled:type_name -> common.Enable
+	111, // 77: system.SysMenuUpdateReq.app_scope:type_name -> system.ApplicationScope
+	118, // 78: system.SysMenuListReq.page:type_name -> common.PageReq
+	115, // 79: system.SysMenuListReq.menu_type:type_name -> system.MenuType
+	112, // 80: system.SysMenuListReq.enabled:type_name -> common.Enable
+	116, // 81: system.SysMenuListReq.visible:type_name -> common.Switch
+	111, // 82: system.SysMenuListReq.app_scope:type_name -> system.ApplicationScope
+	110, // 83: system.SysMenuListResp.base:type_name -> common.RespBase
 	10,  // 84: system.SysMenuListResp.data:type_name -> system.SysMenuItem
-	111, // 85: system.LoginLogListReq.page:type_name -> common.PageReq
-	103, // 86: system.LoginLogListResp.base:type_name -> common.RespBase
+	118, // 85: system.LoginLogListReq.page:type_name -> common.PageReq
+	110, // 86: system.LoginLogListResp.base:type_name -> common.RespBase
 	48,  // 87: system.LoginLogListResp.data:type_name -> system.LoginLogItem
-	110, // 88: system.OpLogItem.method:type_name -> system.RequestMethod
-	111, // 89: system.OpLogListReq.page:type_name -> common.PageReq
-	110, // 90: system.OpLogListReq.method:type_name -> system.RequestMethod
-	103, // 91: system.OpLogListResp.base:type_name -> common.RespBase
+	117, // 88: system.OpLogItem.method:type_name -> system.RequestMethod
+	118, // 89: system.OpLogListReq.page:type_name -> common.PageReq
+	117, // 90: system.OpLogListReq.method:type_name -> system.RequestMethod
+	110, // 91: system.OpLogListResp.base:type_name -> common.RespBase
 	51,  // 92: system.OpLogListResp.data:type_name -> system.OpLogItem
-	111, // 93: system.SysConfigListReq.page:type_name -> common.PageReq
-	103, // 94: system.SysConfigListResp.base:type_name -> common.RespBase
+	118, // 93: system.SysConfigListReq.page:type_name -> common.PageReq
+	110, // 94: system.SysConfigListResp.base:type_name -> common.RespBase
 	57,  // 95: system.SysConfigListResp.data:type_name -> system.SysConfigItem
-	112, // 96: system.SysConfigDetailReq.config_key:type_name -> system.SysConfigType
-	103, // 97: system.SysConfigDetailResp.base:type_name -> common.RespBase
+	119, // 96: system.SysConfigDetailReq.config_key:type_name -> system.SysConfigType
+	110, // 97: system.SysConfigDetailResp.base:type_name -> common.RespBase
 	57,  // 98: system.SysConfigDetailResp.data:type_name -> system.SysConfigItem
-	103, // 99: system.SysConfigByKeysResp.base:type_name -> common.RespBase
+	110, // 99: system.SysConfigByKeysResp.base:type_name -> common.RespBase
 	57,  // 100: system.SysConfigByKeysResp.data:type_name -> system.SysConfigItem
-	113, // 101: system.SendVerificationCodeReq.channel:type_name -> system.VerificationCodeChannel
-	114, // 102: system.SendVerificationCodeReq.scene:type_name -> system.VerificationCodeScene
-	113, // 103: system.TestVerificationCodeReq.channel:type_name -> system.VerificationCodeChannel
-	114, // 104: system.TestVerificationCodeReq.scene:type_name -> system.VerificationCodeScene
-	113, // 105: system.VerificationCodeRecordItem.channel:type_name -> system.VerificationCodeChannel
-	114, // 106: system.VerificationCodeRecordItem.scene:type_name -> system.VerificationCodeScene
-	115, // 107: system.VerificationCodeRecordItem.status:type_name -> system.VerificationCodeStatus
-	111, // 108: system.VerificationCodeRecordListReq.page:type_name -> common.PageReq
-	113, // 109: system.VerificationCodeRecordListReq.channel:type_name -> system.VerificationCodeChannel
-	114, // 110: system.VerificationCodeRecordListReq.scene:type_name -> system.VerificationCodeScene
-	115, // 111: system.VerificationCodeRecordListReq.status:type_name -> system.VerificationCodeStatus
-	103, // 112: system.VerificationCodeRecordListResp.base:type_name -> common.RespBase
+	120, // 101: system.SendVerificationCodeReq.channel:type_name -> system.VerificationCodeChannel
+	121, // 102: system.SendVerificationCodeReq.scene:type_name -> system.VerificationCodeScene
+	120, // 103: system.TestVerificationCodeReq.channel:type_name -> system.VerificationCodeChannel
+	121, // 104: system.TestVerificationCodeReq.scene:type_name -> system.VerificationCodeScene
+	120, // 105: system.VerificationCodeRecordItem.channel:type_name -> system.VerificationCodeChannel
+	121, // 106: system.VerificationCodeRecordItem.scene:type_name -> system.VerificationCodeScene
+	122, // 107: system.VerificationCodeRecordItem.status:type_name -> system.VerificationCodeStatus
+	118, // 108: system.VerificationCodeRecordListReq.page:type_name -> common.PageReq
+	120, // 109: system.VerificationCodeRecordListReq.channel:type_name -> system.VerificationCodeChannel
+	121, // 110: system.VerificationCodeRecordListReq.scene:type_name -> system.VerificationCodeScene
+	122, // 111: system.VerificationCodeRecordListReq.status:type_name -> system.VerificationCodeStatus
+	110, // 112: system.VerificationCodeRecordListResp.base:type_name -> common.RespBase
 	66,  // 113: system.VerificationCodeRecordListResp.data:type_name -> system.VerificationCodeRecordItem
-	103, // 114: system.VerificationCodeRecordDetailResp.base:type_name -> common.RespBase
+	110, // 114: system.VerificationCodeRecordDetailResp.base:type_name -> common.RespBase
 	66,  // 115: system.VerificationCodeRecordDetailResp.data:type_name -> system.VerificationCodeRecordItem
-	116, // 116: system.SysCronJobItem.status:type_name -> system.JobStatus
-	111, // 117: system.SysCronJobListReq.page:type_name -> common.PageReq
-	116, // 118: system.SysCronJobListReq.status:type_name -> system.JobStatus
-	103, // 119: system.SysCronJobListResp.base:type_name -> common.RespBase
-	73,  // 120: system.SysCronJobListResp.data:type_name -> system.SysCronJobItem
-	116, // 121: system.SysCronJobCreateReq.status:type_name -> system.JobStatus
-	116, // 122: system.SysCronJobUpdateReq.status:type_name -> system.JobStatus
-	111, // 123: system.SysCronJobLogListReq.page:type_name -> common.PageReq
-	103, // 124: system.SysCronJobHandlersResp.base:type_name -> common.RespBase
-	84,  // 125: system.SysCronJobHandlersResp.data:type_name -> system.SysCronJobHandler
-	103, // 126: system.SysCronJobLogListResp.base:type_name -> common.RespBase
-	82,  // 127: system.SysCronJobLogListResp.data:type_name -> system.SysCronJobLogItem
-	105, // 128: system.SysTenantItem.enabled:type_name -> common.Enable
-	111, // 129: system.SysTenantListReq.page:type_name -> common.PageReq
-	105, // 130: system.SysTenantListReq.enabled:type_name -> common.Enable
-	103, // 131: system.SysTenantListResp.base:type_name -> common.RespBase
-	87,  // 132: system.SysTenantListResp.data:type_name -> system.SysTenantItem
-	105, // 133: system.SysTenantCreateReq.enabled:type_name -> common.Enable
-	105, // 134: system.SysTenantUpdateReq.enabled:type_name -> common.Enable
-	103, // 135: system.SysTenantDetailResp.base:type_name -> common.RespBase
-	87,  // 136: system.SysTenantDetailResp.data:type_name -> system.SysTenantItem
-	117, // 137: system.SysTenantDomainItem.status:type_name -> system.TenantDomainStatus
-	103, // 138: system.SysTenantDomainListResp.base:type_name -> common.RespBase
-	95,  // 139: system.SysTenantDomainListResp.data:type_name -> system.SysTenantDomainItem
-	117, // 140: system.SysTenantDomainCreateReq.status:type_name -> system.TenantDomainStatus
-	117, // 141: system.SysTenantDomainUpdateReq.status:type_name -> system.TenantDomainStatus
-	103, // 142: system.ResolveTenantDomainResp.base:type_name -> common.RespBase
-	117, // 143: system.ResolveTenantDomainResp.source_status:type_name -> system.TenantDomainStatus
-	2,   // 144: system.Admin.Login:input_type -> system.LoginReq
-	0,   // 145: system.Admin.GetProfile:input_type -> system.Empty
-	9,   // 146: system.Admin.UpdateProfile:input_type -> system.UpdateProfileReq
-	13,  // 147: system.Admin.Google2FAInit:input_type -> system.Google2FAInitReq
-	16,  // 148: system.Admin.Google2FABind:input_type -> system.Google2FABindReq
-	17,  // 149: system.Admin.Google2FAEnable:input_type -> system.Google2FAEnableReq
-	18,  // 150: system.Admin.Google2FADisable:input_type -> system.Google2FADisableReq
-	19,  // 151: system.Admin.Google2FAReset:input_type -> system.Google2FAResetReq
-	21,  // 152: system.Admin.SysUserList:input_type -> system.SysUserListReq
-	23,  // 153: system.Admin.SysUserDetail:input_type -> system.SysUserDetailReq
-	25,  // 154: system.Admin.SysUserCreate:input_type -> system.SysUserCreateReq
-	26,  // 155: system.Admin.SysUserUpdate:input_type -> system.SysUserUpdateReq
-	27,  // 156: system.Admin.SysUserDelete:input_type -> system.SysUserDeleteReq
-	28,  // 157: system.Admin.ChangeUserStatus:input_type -> system.ChangeUserStatusReq
-	29,  // 158: system.Admin.ResetUserPwd:input_type -> system.ResetUserPwdReq
-	30,  // 159: system.Admin.AssignUserRoles:input_type -> system.AssignUserRolesReq
-	32,  // 160: system.Admin.SysRoleList:input_type -> system.SysRoleListReq
-	34,  // 161: system.Admin.SysRoleCreate:input_type -> system.SysRoleCreateReq
-	35,  // 162: system.Admin.SysRoleUpdate:input_type -> system.SysRoleUpdateReq
-	36,  // 163: system.Admin.SysRoleDelete:input_type -> system.SysRoleDeleteReq
-	37,  // 164: system.Admin.SysRoleGrant:input_type -> system.SysRoleGrantReq
-	38,  // 165: system.Admin.SysRoleGrantDetail:input_type -> system.SysRoleGrantDetailReq
-	0,   // 166: system.Admin.SysPermList:input_type -> system.Empty
-	11,  // 167: system.Admin.GetMenuTree:input_type -> system.SysMenuTreeReq
-	43,  // 168: system.Admin.SysMenuCreate:input_type -> system.SysMenuCreateReq
-	44,  // 169: system.Admin.SysMenuUpdate:input_type -> system.SysMenuUpdateReq
-	45,  // 170: system.Admin.SysMenuDelete:input_type -> system.SysMenuDeleteReq
-	46,  // 171: system.Admin.SysMenuList:input_type -> system.SysMenuListReq
-	49,  // 172: system.Admin.LoginLogList:input_type -> system.LoginLogListReq
-	52,  // 173: system.Admin.OpLogList:input_type -> system.OpLogListReq
-	54,  // 174: system.Admin.SysConfigCreate:input_type -> system.SysConfigCreateReq
-	55,  // 175: system.Admin.SysConfigUpdate:input_type -> system.SysConfigUpdateReq
-	56,  // 176: system.Admin.SysConfigDelete:input_type -> system.SysConfigDeleteReq
-	58,  // 177: system.Admin.SysConfigList:input_type -> system.SysConfigListReq
-	60,  // 178: system.Admin.SysConfigDetail:input_type -> system.SysConfigDetailReq
-	65,  // 179: system.Admin.TestVerificationCode:input_type -> system.TestVerificationCodeReq
-	67,  // 180: system.Admin.VerificationCodeRecordList:input_type -> system.VerificationCodeRecordListReq
-	69,  // 181: system.Admin.VerificationCodeRecordDetail:input_type -> system.VerificationCodeRecordDetailReq
-	71,  // 182: system.Admin.LoginUserPerms:input_type -> system.LoginUserPermsReq
-	74,  // 183: system.Admin.SysCronJobList:input_type -> system.SysCronJobListReq
-	76,  // 184: system.Admin.SysCronJobCreate:input_type -> system.SysCronJobCreateReq
-	77,  // 185: system.Admin.SysCronJobUpdate:input_type -> system.SysCronJobUpdateReq
-	78,  // 186: system.Admin.SysCronJobDelete:input_type -> system.SysCronJobDeleteReq
-	79,  // 187: system.Admin.SysCronJobRun:input_type -> system.SysCronJobRunReq
-	80,  // 188: system.Admin.SysCronJobStart:input_type -> system.SysCronJobStartReq
-	81,  // 189: system.Admin.SysCronJobStop:input_type -> system.SysCronJobStopReq
-	0,   // 190: system.Admin.SysCronJobHandlers:input_type -> system.Empty
-	83,  // 191: system.Admin.SysCronJobLogList:input_type -> system.SysCronJobLogListReq
-	90,  // 192: system.Admin.SysTenantCreate:input_type -> system.SysTenantCreateReq
-	91,  // 193: system.Admin.SysTenantUpdate:input_type -> system.SysTenantUpdateReq
-	92,  // 194: system.Admin.SysTenantDelete:input_type -> system.SysTenantDeleteReq
-	88,  // 195: system.Admin.SysTenantList:input_type -> system.SysTenantListReq
-	93,  // 196: system.Admin.SysTenantDetail:input_type -> system.SysTenantDetailReq
-	96,  // 197: system.Admin.SysTenantDomainList:input_type -> system.SysTenantDomainListReq
-	98,  // 198: system.Admin.SysTenantDomainCreate:input_type -> system.SysTenantDomainCreateReq
-	99,  // 199: system.Admin.SysTenantDomainUpdate:input_type -> system.SysTenantDomainUpdateReq
-	100, // 200: system.Admin.SysTenantDomainDelete:input_type -> system.SysTenantDomainDeleteReq
-	60,  // 201: system.App.SysConfigDetail:input_type -> system.SysConfigDetailReq
-	64,  // 202: system.App.SendVerificationCode:input_type -> system.SendVerificationCodeReq
-	93,  // 203: system.App.SysTenantDetail:input_type -> system.SysTenantDetailReq
-	60,  // 204: system.System.SysConfigDetail:input_type -> system.SysConfigDetailReq
-	62,  // 205: system.System.SysConfigByKeys:input_type -> system.SysConfigByKeysReq
-	88,  // 206: system.System.SysTenantList:input_type -> system.SysTenantListReq
-	93,  // 207: system.System.SysTenantDetail:input_type -> system.SysTenantDetailReq
-	101, // 208: system.System.ResolveTenantDomain:input_type -> system.ResolveTenantDomainReq
-	3,   // 209: system.Admin.Login:output_type -> system.LoginResp
-	8,   // 210: system.Admin.GetProfile:output_type -> system.ProfileResp
-	1,   // 211: system.Admin.UpdateProfile:output_type -> system.RespBase
-	14,  // 212: system.Admin.Google2FAInit:output_type -> system.Google2FAInitResp
-	1,   // 213: system.Admin.Google2FABind:output_type -> system.RespBase
-	1,   // 214: system.Admin.Google2FAEnable:output_type -> system.RespBase
-	1,   // 215: system.Admin.Google2FADisable:output_type -> system.RespBase
-	1,   // 216: system.Admin.Google2FAReset:output_type -> system.RespBase
-	22,  // 217: system.Admin.SysUserList:output_type -> system.SysUserListResp
-	24,  // 218: system.Admin.SysUserDetail:output_type -> system.SysUserDetailResp
-	1,   // 219: system.Admin.SysUserCreate:output_type -> system.RespBase
-	1,   // 220: system.Admin.SysUserUpdate:output_type -> system.RespBase
-	1,   // 221: system.Admin.SysUserDelete:output_type -> system.RespBase
-	1,   // 222: system.Admin.ChangeUserStatus:output_type -> system.RespBase
-	1,   // 223: system.Admin.ResetUserPwd:output_type -> system.RespBase
-	1,   // 224: system.Admin.AssignUserRoles:output_type -> system.RespBase
-	33,  // 225: system.Admin.SysRoleList:output_type -> system.SysRoleListResp
-	1,   // 226: system.Admin.SysRoleCreate:output_type -> system.RespBase
-	1,   // 227: system.Admin.SysRoleUpdate:output_type -> system.RespBase
-	1,   // 228: system.Admin.SysRoleDelete:output_type -> system.RespBase
-	1,   // 229: system.Admin.SysRoleGrant:output_type -> system.RespBase
-	39,  // 230: system.Admin.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
-	42,  // 231: system.Admin.SysPermList:output_type -> system.SysPermListResp
-	12,  // 232: system.Admin.GetMenuTree:output_type -> system.SysMenuTreeResp
-	1,   // 233: system.Admin.SysMenuCreate:output_type -> system.RespBase
-	1,   // 234: system.Admin.SysMenuUpdate:output_type -> system.RespBase
-	1,   // 235: system.Admin.SysMenuDelete:output_type -> system.RespBase
-	47,  // 236: system.Admin.SysMenuList:output_type -> system.SysMenuListResp
-	50,  // 237: system.Admin.LoginLogList:output_type -> system.LoginLogListResp
-	53,  // 238: system.Admin.OpLogList:output_type -> system.OpLogListResp
-	1,   // 239: system.Admin.SysConfigCreate:output_type -> system.RespBase
-	1,   // 240: system.Admin.SysConfigUpdate:output_type -> system.RespBase
-	1,   // 241: system.Admin.SysConfigDelete:output_type -> system.RespBase
-	59,  // 242: system.Admin.SysConfigList:output_type -> system.SysConfigListResp
-	61,  // 243: system.Admin.SysConfigDetail:output_type -> system.SysConfigDetailResp
-	1,   // 244: system.Admin.TestVerificationCode:output_type -> system.RespBase
-	68,  // 245: system.Admin.VerificationCodeRecordList:output_type -> system.VerificationCodeRecordListResp
-	70,  // 246: system.Admin.VerificationCodeRecordDetail:output_type -> system.VerificationCodeRecordDetailResp
-	72,  // 247: system.Admin.LoginUserPerms:output_type -> system.LoginUserPermsResp
-	75,  // 248: system.Admin.SysCronJobList:output_type -> system.SysCronJobListResp
-	1,   // 249: system.Admin.SysCronJobCreate:output_type -> system.RespBase
-	1,   // 250: system.Admin.SysCronJobUpdate:output_type -> system.RespBase
-	1,   // 251: system.Admin.SysCronJobDelete:output_type -> system.RespBase
-	1,   // 252: system.Admin.SysCronJobRun:output_type -> system.RespBase
-	1,   // 253: system.Admin.SysCronJobStart:output_type -> system.RespBase
-	1,   // 254: system.Admin.SysCronJobStop:output_type -> system.RespBase
-	85,  // 255: system.Admin.SysCronJobHandlers:output_type -> system.SysCronJobHandlersResp
-	86,  // 256: system.Admin.SysCronJobLogList:output_type -> system.SysCronJobLogListResp
-	1,   // 257: system.Admin.SysTenantCreate:output_type -> system.RespBase
-	1,   // 258: system.Admin.SysTenantUpdate:output_type -> system.RespBase
-	1,   // 259: system.Admin.SysTenantDelete:output_type -> system.RespBase
-	89,  // 260: system.Admin.SysTenantList:output_type -> system.SysTenantListResp
-	94,  // 261: system.Admin.SysTenantDetail:output_type -> system.SysTenantDetailResp
-	97,  // 262: system.Admin.SysTenantDomainList:output_type -> system.SysTenantDomainListResp
-	1,   // 263: system.Admin.SysTenantDomainCreate:output_type -> system.RespBase
-	1,   // 264: system.Admin.SysTenantDomainUpdate:output_type -> system.RespBase
-	1,   // 265: system.Admin.SysTenantDomainDelete:output_type -> system.RespBase
-	61,  // 266: system.App.SysConfigDetail:output_type -> system.SysConfigDetailResp
-	1,   // 267: system.App.SendVerificationCode:output_type -> system.RespBase
-	94,  // 268: system.App.SysTenantDetail:output_type -> system.SysTenantDetailResp
-	61,  // 269: system.System.SysConfigDetail:output_type -> system.SysConfigDetailResp
-	63,  // 270: system.System.SysConfigByKeys:output_type -> system.SysConfigByKeysResp
-	89,  // 271: system.System.SysTenantList:output_type -> system.SysTenantListResp
-	94,  // 272: system.System.SysTenantDetail:output_type -> system.SysTenantDetailResp
-	102, // 273: system.System.ResolveTenantDomain:output_type -> system.ResolveTenantDomainResp
-	209, // [209:274] is the sub-list for method output_type
-	144, // [144:209] is the sub-list for method input_type
-	144, // [144:144] is the sub-list for extension type_name
-	144, // [144:144] is the sub-list for extension extendee
-	0,   // [0:144] is the sub-list for field type_name
+	110, // 116: system.AdminNotificationIncidentResp.base:type_name -> common.RespBase
+	77,  // 117: system.AdminNotificationIncidentResp.data:type_name -> system.AdminNotificationIncident
+	110, // 118: system.ClaimDueAdminNotificationsResp.base:type_name -> common.RespBase
+	77,  // 119: system.ClaimDueAdminNotificationsResp.data:type_name -> system.AdminNotificationIncident
+	123, // 120: system.SysCronJobItem.status:type_name -> system.JobStatus
+	118, // 121: system.SysCronJobListReq.page:type_name -> common.PageReq
+	123, // 122: system.SysCronJobListReq.status:type_name -> system.JobStatus
+	110, // 123: system.SysCronJobListResp.base:type_name -> common.RespBase
+	80,  // 124: system.SysCronJobListResp.data:type_name -> system.SysCronJobItem
+	123, // 125: system.SysCronJobCreateReq.status:type_name -> system.JobStatus
+	123, // 126: system.SysCronJobUpdateReq.status:type_name -> system.JobStatus
+	118, // 127: system.SysCronJobLogListReq.page:type_name -> common.PageReq
+	110, // 128: system.SysCronJobHandlersResp.base:type_name -> common.RespBase
+	91,  // 129: system.SysCronJobHandlersResp.data:type_name -> system.SysCronJobHandler
+	110, // 130: system.SysCronJobLogListResp.base:type_name -> common.RespBase
+	89,  // 131: system.SysCronJobLogListResp.data:type_name -> system.SysCronJobLogItem
+	112, // 132: system.SysTenantItem.enabled:type_name -> common.Enable
+	118, // 133: system.SysTenantListReq.page:type_name -> common.PageReq
+	112, // 134: system.SysTenantListReq.enabled:type_name -> common.Enable
+	110, // 135: system.SysTenantListResp.base:type_name -> common.RespBase
+	94,  // 136: system.SysTenantListResp.data:type_name -> system.SysTenantItem
+	112, // 137: system.SysTenantCreateReq.enabled:type_name -> common.Enable
+	112, // 138: system.SysTenantUpdateReq.enabled:type_name -> common.Enable
+	110, // 139: system.SysTenantDetailResp.base:type_name -> common.RespBase
+	94,  // 140: system.SysTenantDetailResp.data:type_name -> system.SysTenantItem
+	124, // 141: system.SysTenantDomainItem.status:type_name -> system.TenantDomainStatus
+	110, // 142: system.SysTenantDomainListResp.base:type_name -> common.RespBase
+	102, // 143: system.SysTenantDomainListResp.data:type_name -> system.SysTenantDomainItem
+	124, // 144: system.SysTenantDomainCreateReq.status:type_name -> system.TenantDomainStatus
+	124, // 145: system.SysTenantDomainUpdateReq.status:type_name -> system.TenantDomainStatus
+	110, // 146: system.ResolveTenantDomainResp.base:type_name -> common.RespBase
+	124, // 147: system.ResolveTenantDomainResp.source_status:type_name -> system.TenantDomainStatus
+	2,   // 148: system.Admin.Login:input_type -> system.LoginReq
+	0,   // 149: system.Admin.GetProfile:input_type -> system.Empty
+	9,   // 150: system.Admin.UpdateProfile:input_type -> system.UpdateProfileReq
+	13,  // 151: system.Admin.Google2FAInit:input_type -> system.Google2FAInitReq
+	16,  // 152: system.Admin.Google2FABind:input_type -> system.Google2FABindReq
+	17,  // 153: system.Admin.Google2FAEnable:input_type -> system.Google2FAEnableReq
+	18,  // 154: system.Admin.Google2FADisable:input_type -> system.Google2FADisableReq
+	19,  // 155: system.Admin.Google2FAReset:input_type -> system.Google2FAResetReq
+	21,  // 156: system.Admin.SysUserList:input_type -> system.SysUserListReq
+	23,  // 157: system.Admin.SysUserDetail:input_type -> system.SysUserDetailReq
+	25,  // 158: system.Admin.SysUserCreate:input_type -> system.SysUserCreateReq
+	26,  // 159: system.Admin.SysUserUpdate:input_type -> system.SysUserUpdateReq
+	27,  // 160: system.Admin.SysUserDelete:input_type -> system.SysUserDeleteReq
+	28,  // 161: system.Admin.ChangeUserStatus:input_type -> system.ChangeUserStatusReq
+	29,  // 162: system.Admin.ResetUserPwd:input_type -> system.ResetUserPwdReq
+	30,  // 163: system.Admin.AssignUserRoles:input_type -> system.AssignUserRolesReq
+	32,  // 164: system.Admin.SysRoleList:input_type -> system.SysRoleListReq
+	34,  // 165: system.Admin.SysRoleCreate:input_type -> system.SysRoleCreateReq
+	35,  // 166: system.Admin.SysRoleUpdate:input_type -> system.SysRoleUpdateReq
+	36,  // 167: system.Admin.SysRoleDelete:input_type -> system.SysRoleDeleteReq
+	37,  // 168: system.Admin.SysRoleGrant:input_type -> system.SysRoleGrantReq
+	38,  // 169: system.Admin.SysRoleGrantDetail:input_type -> system.SysRoleGrantDetailReq
+	0,   // 170: system.Admin.SysPermList:input_type -> system.Empty
+	11,  // 171: system.Admin.GetMenuTree:input_type -> system.SysMenuTreeReq
+	43,  // 172: system.Admin.SysMenuCreate:input_type -> system.SysMenuCreateReq
+	44,  // 173: system.Admin.SysMenuUpdate:input_type -> system.SysMenuUpdateReq
+	45,  // 174: system.Admin.SysMenuDelete:input_type -> system.SysMenuDeleteReq
+	46,  // 175: system.Admin.SysMenuList:input_type -> system.SysMenuListReq
+	49,  // 176: system.Admin.LoginLogList:input_type -> system.LoginLogListReq
+	52,  // 177: system.Admin.OpLogList:input_type -> system.OpLogListReq
+	54,  // 178: system.Admin.SysConfigCreate:input_type -> system.SysConfigCreateReq
+	55,  // 179: system.Admin.SysConfigUpdate:input_type -> system.SysConfigUpdateReq
+	56,  // 180: system.Admin.SysConfigDelete:input_type -> system.SysConfigDeleteReq
+	58,  // 181: system.Admin.SysConfigList:input_type -> system.SysConfigListReq
+	60,  // 182: system.Admin.SysConfigDetail:input_type -> system.SysConfigDetailReq
+	65,  // 183: system.Admin.TestVerificationCode:input_type -> system.TestVerificationCodeReq
+	67,  // 184: system.Admin.VerificationCodeRecordList:input_type -> system.VerificationCodeRecordListReq
+	69,  // 185: system.Admin.VerificationCodeRecordDetail:input_type -> system.VerificationCodeRecordDetailReq
+	71,  // 186: system.Admin.LoginUserPerms:input_type -> system.LoginUserPermsReq
+	73,  // 187: system.Admin.RecordAdminNotification:input_type -> system.RecordAdminNotificationReq
+	74,  // 188: system.Admin.AcknowledgeAdminNotification:input_type -> system.AcknowledgeAdminNotificationReq
+	75,  // 189: system.Admin.ClaimDueAdminNotifications:input_type -> system.ClaimDueAdminNotificationsReq
+	76,  // 190: system.Admin.ReleaseAdminNotificationEscalation:input_type -> system.ReleaseAdminNotificationEscalationReq
+	81,  // 191: system.Admin.SysCronJobList:input_type -> system.SysCronJobListReq
+	83,  // 192: system.Admin.SysCronJobCreate:input_type -> system.SysCronJobCreateReq
+	84,  // 193: system.Admin.SysCronJobUpdate:input_type -> system.SysCronJobUpdateReq
+	85,  // 194: system.Admin.SysCronJobDelete:input_type -> system.SysCronJobDeleteReq
+	86,  // 195: system.Admin.SysCronJobRun:input_type -> system.SysCronJobRunReq
+	87,  // 196: system.Admin.SysCronJobStart:input_type -> system.SysCronJobStartReq
+	88,  // 197: system.Admin.SysCronJobStop:input_type -> system.SysCronJobStopReq
+	0,   // 198: system.Admin.SysCronJobHandlers:input_type -> system.Empty
+	90,  // 199: system.Admin.SysCronJobLogList:input_type -> system.SysCronJobLogListReq
+	97,  // 200: system.Admin.SysTenantCreate:input_type -> system.SysTenantCreateReq
+	98,  // 201: system.Admin.SysTenantUpdate:input_type -> system.SysTenantUpdateReq
+	99,  // 202: system.Admin.SysTenantDelete:input_type -> system.SysTenantDeleteReq
+	95,  // 203: system.Admin.SysTenantList:input_type -> system.SysTenantListReq
+	100, // 204: system.Admin.SysTenantDetail:input_type -> system.SysTenantDetailReq
+	103, // 205: system.Admin.SysTenantDomainList:input_type -> system.SysTenantDomainListReq
+	105, // 206: system.Admin.SysTenantDomainCreate:input_type -> system.SysTenantDomainCreateReq
+	106, // 207: system.Admin.SysTenantDomainUpdate:input_type -> system.SysTenantDomainUpdateReq
+	107, // 208: system.Admin.SysTenantDomainDelete:input_type -> system.SysTenantDomainDeleteReq
+	60,  // 209: system.App.SysConfigDetail:input_type -> system.SysConfigDetailReq
+	64,  // 210: system.App.SendVerificationCode:input_type -> system.SendVerificationCodeReq
+	100, // 211: system.App.SysTenantDetail:input_type -> system.SysTenantDetailReq
+	60,  // 212: system.System.SysConfigDetail:input_type -> system.SysConfigDetailReq
+	62,  // 213: system.System.SysConfigByKeys:input_type -> system.SysConfigByKeysReq
+	95,  // 214: system.System.SysTenantList:input_type -> system.SysTenantListReq
+	100, // 215: system.System.SysTenantDetail:input_type -> system.SysTenantDetailReq
+	108, // 216: system.System.ResolveTenantDomain:input_type -> system.ResolveTenantDomainReq
+	3,   // 217: system.Admin.Login:output_type -> system.LoginResp
+	8,   // 218: system.Admin.GetProfile:output_type -> system.ProfileResp
+	1,   // 219: system.Admin.UpdateProfile:output_type -> system.RespBase
+	14,  // 220: system.Admin.Google2FAInit:output_type -> system.Google2FAInitResp
+	1,   // 221: system.Admin.Google2FABind:output_type -> system.RespBase
+	1,   // 222: system.Admin.Google2FAEnable:output_type -> system.RespBase
+	1,   // 223: system.Admin.Google2FADisable:output_type -> system.RespBase
+	1,   // 224: system.Admin.Google2FAReset:output_type -> system.RespBase
+	22,  // 225: system.Admin.SysUserList:output_type -> system.SysUserListResp
+	24,  // 226: system.Admin.SysUserDetail:output_type -> system.SysUserDetailResp
+	1,   // 227: system.Admin.SysUserCreate:output_type -> system.RespBase
+	1,   // 228: system.Admin.SysUserUpdate:output_type -> system.RespBase
+	1,   // 229: system.Admin.SysUserDelete:output_type -> system.RespBase
+	1,   // 230: system.Admin.ChangeUserStatus:output_type -> system.RespBase
+	1,   // 231: system.Admin.ResetUserPwd:output_type -> system.RespBase
+	1,   // 232: system.Admin.AssignUserRoles:output_type -> system.RespBase
+	33,  // 233: system.Admin.SysRoleList:output_type -> system.SysRoleListResp
+	1,   // 234: system.Admin.SysRoleCreate:output_type -> system.RespBase
+	1,   // 235: system.Admin.SysRoleUpdate:output_type -> system.RespBase
+	1,   // 236: system.Admin.SysRoleDelete:output_type -> system.RespBase
+	1,   // 237: system.Admin.SysRoleGrant:output_type -> system.RespBase
+	39,  // 238: system.Admin.SysRoleGrantDetail:output_type -> system.SysRoleGrantDetailResp
+	42,  // 239: system.Admin.SysPermList:output_type -> system.SysPermListResp
+	12,  // 240: system.Admin.GetMenuTree:output_type -> system.SysMenuTreeResp
+	1,   // 241: system.Admin.SysMenuCreate:output_type -> system.RespBase
+	1,   // 242: system.Admin.SysMenuUpdate:output_type -> system.RespBase
+	1,   // 243: system.Admin.SysMenuDelete:output_type -> system.RespBase
+	47,  // 244: system.Admin.SysMenuList:output_type -> system.SysMenuListResp
+	50,  // 245: system.Admin.LoginLogList:output_type -> system.LoginLogListResp
+	53,  // 246: system.Admin.OpLogList:output_type -> system.OpLogListResp
+	1,   // 247: system.Admin.SysConfigCreate:output_type -> system.RespBase
+	1,   // 248: system.Admin.SysConfigUpdate:output_type -> system.RespBase
+	1,   // 249: system.Admin.SysConfigDelete:output_type -> system.RespBase
+	59,  // 250: system.Admin.SysConfigList:output_type -> system.SysConfigListResp
+	61,  // 251: system.Admin.SysConfigDetail:output_type -> system.SysConfigDetailResp
+	1,   // 252: system.Admin.TestVerificationCode:output_type -> system.RespBase
+	68,  // 253: system.Admin.VerificationCodeRecordList:output_type -> system.VerificationCodeRecordListResp
+	70,  // 254: system.Admin.VerificationCodeRecordDetail:output_type -> system.VerificationCodeRecordDetailResp
+	72,  // 255: system.Admin.LoginUserPerms:output_type -> system.LoginUserPermsResp
+	78,  // 256: system.Admin.RecordAdminNotification:output_type -> system.AdminNotificationIncidentResp
+	78,  // 257: system.Admin.AcknowledgeAdminNotification:output_type -> system.AdminNotificationIncidentResp
+	79,  // 258: system.Admin.ClaimDueAdminNotifications:output_type -> system.ClaimDueAdminNotificationsResp
+	1,   // 259: system.Admin.ReleaseAdminNotificationEscalation:output_type -> system.RespBase
+	82,  // 260: system.Admin.SysCronJobList:output_type -> system.SysCronJobListResp
+	1,   // 261: system.Admin.SysCronJobCreate:output_type -> system.RespBase
+	1,   // 262: system.Admin.SysCronJobUpdate:output_type -> system.RespBase
+	1,   // 263: system.Admin.SysCronJobDelete:output_type -> system.RespBase
+	1,   // 264: system.Admin.SysCronJobRun:output_type -> system.RespBase
+	1,   // 265: system.Admin.SysCronJobStart:output_type -> system.RespBase
+	1,   // 266: system.Admin.SysCronJobStop:output_type -> system.RespBase
+	92,  // 267: system.Admin.SysCronJobHandlers:output_type -> system.SysCronJobHandlersResp
+	93,  // 268: system.Admin.SysCronJobLogList:output_type -> system.SysCronJobLogListResp
+	1,   // 269: system.Admin.SysTenantCreate:output_type -> system.RespBase
+	1,   // 270: system.Admin.SysTenantUpdate:output_type -> system.RespBase
+	1,   // 271: system.Admin.SysTenantDelete:output_type -> system.RespBase
+	96,  // 272: system.Admin.SysTenantList:output_type -> system.SysTenantListResp
+	101, // 273: system.Admin.SysTenantDetail:output_type -> system.SysTenantDetailResp
+	104, // 274: system.Admin.SysTenantDomainList:output_type -> system.SysTenantDomainListResp
+	1,   // 275: system.Admin.SysTenantDomainCreate:output_type -> system.RespBase
+	1,   // 276: system.Admin.SysTenantDomainUpdate:output_type -> system.RespBase
+	1,   // 277: system.Admin.SysTenantDomainDelete:output_type -> system.RespBase
+	61,  // 278: system.App.SysConfigDetail:output_type -> system.SysConfigDetailResp
+	1,   // 279: system.App.SendVerificationCode:output_type -> system.RespBase
+	101, // 280: system.App.SysTenantDetail:output_type -> system.SysTenantDetailResp
+	61,  // 281: system.System.SysConfigDetail:output_type -> system.SysConfigDetailResp
+	63,  // 282: system.System.SysConfigByKeys:output_type -> system.SysConfigByKeysResp
+	96,  // 283: system.System.SysTenantList:output_type -> system.SysTenantListResp
+	101, // 284: system.System.SysTenantDetail:output_type -> system.SysTenantDetailResp
+	109, // 285: system.System.ResolveTenantDomain:output_type -> system.ResolveTenantDomainResp
+	217, // [217:286] is the sub-list for method output_type
+	148, // [148:217] is the sub-list for method input_type
+	148, // [148:148] is the sub-list for extension type_name
+	148, // [148:148] is the sub-list for extension extendee
+	0,   // [0:148] is the sub-list for field type_name
 }
 
 func init() { file_proto_system_system_proto_init() }
@@ -8284,14 +9051,14 @@ func file_proto_system_system_proto_init() {
 	file_proto_system_enum_proto_init()
 	file_proto_system_system_proto_msgTypes[9].OneofWrappers = []any{}
 	file_proto_system_system_proto_msgTypes[60].OneofWrappers = []any{}
-	file_proto_system_system_proto_msgTypes[93].OneofWrappers = []any{}
+	file_proto_system_system_proto_msgTypes[100].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_system_system_proto_rawDesc), len(file_proto_system_system_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   103,
+			NumMessages:   110,
 			NumExtensions: 0,
 			NumServices:   3,
 		},

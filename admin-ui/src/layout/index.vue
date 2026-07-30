@@ -5,7 +5,7 @@ import TopBar from './top-bar.vue'
 import { useSystemCore } from '@/composables/useSystemCore'
 import { buildAssetUrl } from '@/utils/file-url'
 import { adminNotificationService } from '@/services/system/AdminNotificationService'
-import { useAuthStore } from '@/stores'
+import { useAuthStore } from '@/stores/auth'
 
 const collapsed = ref(false)
 const { systemCore, loadSystemCore } = useSystemCore()

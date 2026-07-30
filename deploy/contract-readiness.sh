@@ -48,6 +48,34 @@ require_positive_integer() {
   esac
 }
 
+is_positive_decimal() {
+  decimal_value="$1"
+  LC_ALL=C awk -v value="$decimal_value" '
+    BEGIN {
+      if (value !~ /^[0-9]+([.][0-9]+)?$/ || value + 0 <= 0) {
+        exit 1
+      }
+      split(value, parts, ".")
+      integer = parts[1]
+      sub(/^0+/, "", integer)
+      if (integer == "") integer = "0"
+      if (length(integer) > 18 || length(parts[2]) > 18) {
+        exit 1
+      }
+    }
+  '
+}
+
+require_positive_decimal() {
+  variable_value="$1"
+  description="$2"
+  if is_positive_decimal "$variable_value"; then
+    pass "$description"
+  else
+    fail "$description (must be a positive DECIMAL(36,18))"
+  fi
+}
+
 require_evidence_file() {
   evidence_file="$1"
   expected_sha256="$2"
@@ -198,24 +226,29 @@ if [ -f "$READINESS_FILE" ]; then
   DELIVERY_FORMULA_VERSION=$(read_setting DELIVERY_FORMULA_VERSION)
   HISTORICAL_REPLAY_REPORT=$(read_setting HISTORICAL_REPLAY_REPORT)
   HISTORICAL_REPLAY_REPORT_SHA256=$(read_setting HISTORICAL_REPLAY_REPORT_SHA256)
+  HISTORICAL_REPLAY_PRODUCTION_APPROVAL_REF=$(read_setting HISTORICAL_REPLAY_PRODUCTION_APPROVAL_REF)
   ALERT_PLATFORM=$(read_setting ALERT_PLATFORM)
   ALERT_ONCALL_TEAM=$(read_setting ALERT_ONCALL_TEAM)
   ALERT_ESCALATION_POLICY=$(read_setting ALERT_ESCALATION_POLICY)
   ALERT_TEST_REPORT=$(read_setting ALERT_TEST_REPORT)
   ALERT_TEST_REPORT_SHA256=$(read_setting ALERT_TEST_REPORT_SHA256)
+  ALERT_TEST_PRODUCTION_APPROVAL_REF=$(read_setting ALERT_TEST_PRODUCTION_APPROVAL_REF)
   PRODUCTION_TENANT_ID=$(read_setting PRODUCTION_TENANT_ID)
   PRODUCTION_SETTLEMENT_COIN=$(read_setting PRODUCTION_SETTLEMENT_COIN)
+  INSURANCE_FUND_MIN_AVAILABLE=$(read_setting INSURANCE_FUND_MIN_AVAILABLE)
   FUND_ACCOUNT_PERMISSION_APPROVED=$(read_setting FUND_ACCOUNT_PERMISSION_APPROVED)
   FUND_ACCOUNT_APPROVER=$(read_setting FUND_ACCOUNT_APPROVER)
   LIQUIDATION_ENABLE_WINDOW=$(read_setting LIQUIDATION_ENABLE_WINDOW)
   LIQUIDATION_ROLLBACK_PLAN=$(read_setting LIQUIDATION_ROLLBACK_PLAN)
   LIQUIDATION_ROLLBACK_PLAN_SHA256=$(read_setting LIQUIDATION_ROLLBACK_PLAN_SHA256)
+  LIQUIDATION_ROLLBACK_PRODUCTION_APPROVAL_REF=$(read_setting LIQUIDATION_ROLLBACK_PRODUCTION_APPROVAL_REF)
   DR_RPO_MINUTES=$(read_setting DR_RPO_MINUTES)
   DR_RTO_MINUTES=$(read_setting DR_RTO_MINUTES)
   DR_BACKUP_ENCRYPTION=$(read_setting DR_BACKUP_ENCRYPTION)
   DR_OFFSITE_LOCATION=$(read_setting DR_OFFSITE_LOCATION)
   DR_EXERCISE_REPORT=$(read_setting DR_EXERCISE_REPORT)
   DR_EXERCISE_REPORT_SHA256=$(read_setting DR_EXERCISE_REPORT_SHA256)
+  DR_EXERCISE_PRODUCTION_APPROVAL_REF=$(read_setting DR_EXERCISE_PRODUCTION_APPROVAL_REF)
 else
   PRODUCTION_PRICE_SOURCE_IDS=""
   PRODUCTION_PRICE_SOURCE_MARKETS=""
@@ -246,24 +279,29 @@ else
   DELIVERY_FORMULA_VERSION=""
   HISTORICAL_REPLAY_REPORT=""
   HISTORICAL_REPLAY_REPORT_SHA256=""
+  HISTORICAL_REPLAY_PRODUCTION_APPROVAL_REF=""
   ALERT_PLATFORM=""
   ALERT_ONCALL_TEAM=""
   ALERT_ESCALATION_POLICY=""
   ALERT_TEST_REPORT=""
   ALERT_TEST_REPORT_SHA256=""
+  ALERT_TEST_PRODUCTION_APPROVAL_REF=""
   PRODUCTION_TENANT_ID=""
   PRODUCTION_SETTLEMENT_COIN=""
+  INSURANCE_FUND_MIN_AVAILABLE=""
   FUND_ACCOUNT_PERMISSION_APPROVED=""
   FUND_ACCOUNT_APPROVER=""
   LIQUIDATION_ENABLE_WINDOW=""
   LIQUIDATION_ROLLBACK_PLAN=""
   LIQUIDATION_ROLLBACK_PLAN_SHA256=""
+  LIQUIDATION_ROLLBACK_PRODUCTION_APPROVAL_REF=""
   DR_RPO_MINUTES=""
   DR_RTO_MINUTES=""
   DR_BACKUP_ENCRYPTION=""
   DR_OFFSITE_LOCATION=""
   DR_EXERCISE_REPORT=""
   DR_EXERCISE_REPORT_SHA256=""
+  DR_EXERCISE_PRODUCTION_APPROVAL_REF=""
 fi
 
 source_count=$(
@@ -456,24 +494,29 @@ case "$DELIVERY_LOCK_WINDOW_MS" in
 esac
 require_value "$DELIVERY_FORMULA_VERSION" "DELIVERY immutable formula version declared"
 require_evidence_file "$HISTORICAL_REPLAY_REPORT" "$HISTORICAL_REPLAY_REPORT_SHA256" "production historical replay report attached"
+require_value "$HISTORICAL_REPLAY_PRODUCTION_APPROVAL_REF" "historical replay production approval reference declared"
 
 require_value "$ALERT_PLATFORM" "production alert platform declared"
 require_value "$ALERT_ONCALL_TEAM" "production on-call team declared"
 require_value "$ALERT_ESCALATION_POLICY" "production alert escalation policy declared"
 require_evidence_file "$ALERT_TEST_REPORT" "$ALERT_TEST_REPORT_SHA256" "production alert delivery test report attached"
+require_value "$ALERT_TEST_PRODUCTION_APPROVAL_REF" "alert delivery production approval reference declared"
 
 require_positive_integer "$PRODUCTION_TENANT_ID" "production tenant declared"
 require_value "$PRODUCTION_SETTLEMENT_COIN" "production settlement coin declared"
+require_positive_decimal "$INSURANCE_FUND_MIN_AVAILABLE" "approved insurance-fund minimum available balance declared"
 require_true "$FUND_ACCOUNT_PERMISSION_APPROVED" "insurance and fee account permissions approved"
 require_value "$FUND_ACCOUNT_APPROVER" "fund-account approver declared"
 require_value "$LIQUIDATION_ENABLE_WINDOW" "automatic-liquidation enable window declared"
 require_evidence_file "$LIQUIDATION_ROLLBACK_PLAN" "$LIQUIDATION_ROLLBACK_PLAN_SHA256" "automatic-liquidation rollback plan attached"
+require_value "$LIQUIDATION_ROLLBACK_PRODUCTION_APPROVAL_REF" "liquidation rollback production approval reference declared"
 
 require_positive_integer "$DR_RPO_MINUTES" "production RPO approved"
 require_positive_integer "$DR_RTO_MINUTES" "production RTO approved"
 require_value "$DR_BACKUP_ENCRYPTION" "backup encryption declared"
 require_value "$DR_OFFSITE_LOCATION" "offsite backup location declared"
 require_evidence_file "$DR_EXERCISE_REPORT" "$DR_EXERCISE_REPORT_SHA256" "production DR exercise report attached"
+require_value "$DR_EXERCISE_PRODUCTION_APPROVAL_REF" "DR exercise production approval reference declared"
 
 printf '\nLive deploy checks\n'
 if docker compose -f "$COMPOSE_FILE" ps >/dev/null 2>&1; then
@@ -578,6 +621,7 @@ db_output=$(
     -e "READINESS_PERPETUAL_PRICE_MARKET=$PERPETUAL_PRICE_MARKET" \
     -e "READINESS_TENANT_ID=$PRODUCTION_TENANT_ID" \
     -e "READINESS_SETTLEMENT_COIN=$PRODUCTION_SETTLEMENT_COIN" \
+    -e "READINESS_INSURANCE_FUND_MIN_AVAILABLE=$INSURANCE_FUND_MIN_AVAILABLE" \
     -e "READINESS_INDEX_ALGORITHM=$INDEX_ALGORITHM_NUMBER" \
     -e "READINESS_INDEX_FORMULA_VERSION=$INDEX_FORMULA_VERSION" \
     -e "READINESS_INDEX_MAX_DEVIATION_BPS=$INDEX_MAX_DEVIATION_BPS" \
@@ -629,7 +673,7 @@ if [ "$tokens_valid" = "true" ]; then
   if [ "$(db_number READINESS_DB_FRESH_SOURCES 0)" -ge 3 ]; then pass "three declared FINAL_QUOTE sources are fresh"; else fail "three declared FINAL_QUOTE sources are fresh"; fi
   if [ "$(db_number READINESS_DB_FRESH_OUTPUT_KINDS 0)" -eq 4 ]; then pass "INDEX/MARK/FUNDING/DELIVERY outputs are fresh"; else fail "INDEX/MARK/FUNDING/DELIVERY outputs are fresh"; fi
 
-  if [ "$(db_number READINESS_DB_INSURANCE_FUNDS 0)" -gt 0 ]; then pass "funded active INSURANCE_FUND account"; else fail "funded active INSURANCE_FUND account"; fi
+  if [ "$(db_number READINESS_DB_INSURANCE_FUNDS 0)" -gt 0 ]; then pass "active INSURANCE_FUND account meets approved minimum balance"; else fail "active INSURANCE_FUND account meets approved minimum balance"; fi
   if [ "$(db_number READINESS_DB_FEE_REVENUE 0)" -gt 0 ]; then pass "active FEE_REVENUE account"; else fail "active FEE_REVENUE account"; fi
 
   if [ "$(db_number READINESS_DB_PERPETUAL_CONTRACTS 0)" -gt 0 ]; then pass "enabled production perpetual contract configuration"; else fail "enabled production perpetual contract configuration"; fi

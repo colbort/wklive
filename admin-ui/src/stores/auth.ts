@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { get, post } from '@/utils/request'
-import type { RespBase } from '@/services'
+import type { RespBase } from '@/services/BaseService'
 
 // response payload returned by login endpoint
 export type LoginResp = {

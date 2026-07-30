@@ -1,6 +1,6 @@
 import { createMemoryHistory, createRouter, type RouteRecordRaw } from 'vue-router'
 import { staticRoutes } from './staticRoutes'
-import { useAuthStore } from '@/stores'
+import { useAuthStore } from '@/stores/auth'
 import { getSystemCore } from '@/stores/core'
 import { buildRoutesFromMenus } from './dynamic'
 
@@ -45,7 +45,7 @@ function ensureNotFoundRoute() {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('@/views/error/404.vue'),
-    meta: { public: true, titleKey: 'route.notFound' },
+    meta: { titleKey: 'route.notFound' },
   })
 }
 
@@ -58,6 +58,38 @@ function addDynamicRoutes(routes: RouteRecordRaw[]) {
   })
   ensureNotFoundRoute()
   dynamicAdded = true
+}
+
+function isAvailableAuthorizedPath(path: string) {
+  if (!path.startsWith('/') || path.startsWith('//') || path.startsWith('/login')) {
+    return false
+  }
+
+  const resolved = router.resolve(path)
+  return (
+    resolved.matched.length > 0 && !resolved.matched.some((record) => record.name === 'NotFound')
+  )
+}
+
+export function resolvePostLoginPath(
+  requestedPath: string,
+  menus: Parameters<typeof buildRoutesFromMenus>[0],
+) {
+  if (!dynamicAdded) {
+    addDynamicRoutes(buildRoutesFromMenus(menus))
+  }
+
+  const requested = requestedPath.trim()
+  const candidates = requested && requested !== '/' ? [requested] : [getSavedMemoryRoute()]
+  candidates.push('/home')
+
+  for (const candidate of candidates) {
+    if (candidate && isAvailableAuthorizedPath(candidate)) {
+      return candidate
+    }
+  }
+
+  return '/home'
 }
 
 export function resetDynamicRoutes() {
@@ -121,7 +153,10 @@ router.beforeEach(async (to) => {
   if (isGoogle2faBindPage) return true
 
   if (to.path === '/') {
-    return { path: getSavedMemoryRoute() || '/home', replace: true }
+    return {
+      path: resolvePostLoginPath(getSavedMemoryRoute(), auth.menus),
+      replace: true,
+    }
   }
 
   if (!dynamicAdded) {
@@ -133,5 +168,6 @@ router.beforeEach(async (to) => {
 })
 
 router.afterEach((to) => {
+  if (to.name === 'NotFound') return
   saveMemoryRoute(to.fullPath)
 })

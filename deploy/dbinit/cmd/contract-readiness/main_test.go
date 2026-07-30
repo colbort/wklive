@@ -19,6 +19,7 @@ func TestLoadInputDetailed(t *testing.T) {
 	t.Setenv("READINESS_PERPETUAL_PRICE_MARKET", "PERPETUAL")
 	t.Setenv("READINESS_TENANT_ID", "900101")
 	t.Setenv("READINESS_SETTLEMENT_COIN", "USDT")
+	t.Setenv("READINESS_INSURANCE_FUND_MIN_AVAILABLE", "100000")
 	t.Setenv("READINESS_INDEX_ALGORITHM", "2")
 	t.Setenv("READINESS_INDEX_FORMULA_VERSION", "index-v1")
 	t.Setenv("READINESS_INDEX_MAX_DEVIATION_BPS", "200")
@@ -48,6 +49,7 @@ func TestLoadInputDetailed(t *testing.T) {
 		t.Fatalf("unexpected source dimensions: %+v", input)
 	}
 	if input.TenantID != 900101 ||
+		input.InsuranceFundMinAvailable != "100000" ||
 		input.IndexAlgorithm != 2 ||
 		input.DeliveryAlgorithm != 2 ||
 		input.IndexMaxDeviationBps != 200 ||

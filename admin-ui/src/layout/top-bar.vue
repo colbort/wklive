@@ -2,7 +2,7 @@
 import { computed, ref, nextTick, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { setLocale, type Locale } from '@/i18n'
-import { useAuthStore, apiUpdateProfile, type MenuNode } from '@/stores'
+import { useAuthStore, apiUpdateProfile, type MenuNode } from '@/stores/auth'
 import { useRoute, useRouter } from 'vue-router'
 import { Expand, Fold, User, Setting, Lock } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'

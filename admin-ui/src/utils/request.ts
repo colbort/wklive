@@ -4,7 +4,7 @@
  */
 
 import axios, { AxiosRequestConfig, type AxiosInstance, type Method } from 'axios'
-import { useAuthStore } from '@/stores'
+import { useAuthStore } from '@/stores/auth'
 import type { RespBase } from '@/services'
 import { ENV } from '@/config/environment'
 import { logger } from '@/utils/logger'

@@ -50,7 +50,7 @@ func TestContractReadinessModelInspectDetailed(t *testing.T) {
 		).
 		WillReturnRows(sqlmock.NewRows([]string{"sources", "outputs"}).AddRow(3, 4))
 	mock.ExpectQuery(`(?s)FROM t_asset_platform_account`).
-		WithArgs(int64(900101), "USDT").
+		WithArgs("100000", "100000", int64(900101), "USDT").
 		WillReturnRows(sqlmock.NewRows([]string{"insurance", "fee"}).AddRow(1, 1))
 	mock.ExpectQuery(`(?s)settlement_window_seconds\*1000=\?.*settlement_price_algorithm=\?.*FROM t_trade_symbol AS s`).
 		WithArgs(
@@ -265,33 +265,54 @@ func TestPlaceholdersAndStringArgs(t *testing.T) {
 	}
 }
 
+func TestNormalizeInsuranceFundMinimum(t *testing.T) {
+	tests := map[string]string{
+		"100000":                "100000",
+		"0.000000000000000001":  "0.000000000000000001",
+		" 001.2500 ":            "001.2500",
+		"":                      "0",
+		"0":                     "0",
+		"-1":                    "0",
+		"1.":                    "0",
+		"1.0000000000000000001": "0",
+		"1000000000000000000":   "0",
+		"not-a-number":          "0",
+	}
+	for input, want := range tests {
+		if got := normalizeInsuranceFundMinimum(input); got != want {
+			t.Fatalf("normalizeInsuranceFundMinimum(%q)=%q want=%q", input, got, want)
+		}
+	}
+}
+
 func validReadinessInput() ContractReadinessInput {
 	return ContractReadinessInput{
-		SourceAuthorities:       []string{"source-a", "source-b", "source-c"},
-		SourceMarkets:           []string{"market-a", "market-b", "market-c"},
-		IndexSourceWeights:      []string{"1", "1", "1"},
-		DeliverySourceWeights:   []string{"1", "1", "1"},
-		CategoryCode:            "crypto",
-		Market:                  "BA",
-		PriceSymbol:             "BTCUSDT",
-		PerpetualSymbol:         "BTCUSDT-PERP",
-		DeliverySymbol:          "BTCUSDT-20260925",
-		PerpetualPriceAuthority: "perpetual-source",
-		PerpetualPriceMarket:    "PERPETUAL",
-		TenantID:                900101,
-		SettlementCoin:          "USDT",
-		IndexAlgorithm:          2,
-		IndexFormulaVersion:     "index-v1",
-		IndexMaxDeviationBps:    200,
-		MarkFormulaVersion:      "mark-v2",
-		MarkMaxBasisBps:         200,
-		MarkCurrentWeight:       "1",
-		MarkPreviousWeight:      "4",
-		FundingFormulaVersion:   "funding-v1",
-		PriceFormulaIntervalMs:  1000,
-		DeliveryAlgorithm:       2,
-		DeliveryFormulaVersion:  "delivery-v1",
-		DeliveryMaxLookbackMs:   30000,
-		DeliveryMaxDeviationBps: 200,
+		SourceAuthorities:         []string{"source-a", "source-b", "source-c"},
+		SourceMarkets:             []string{"market-a", "market-b", "market-c"},
+		IndexSourceWeights:        []string{"1", "1", "1"},
+		DeliverySourceWeights:     []string{"1", "1", "1"},
+		CategoryCode:              "crypto",
+		Market:                    "BA",
+		PriceSymbol:               "BTCUSDT",
+		PerpetualSymbol:           "BTCUSDT-PERP",
+		DeliverySymbol:            "BTCUSDT-20260925",
+		PerpetualPriceAuthority:   "perpetual-source",
+		PerpetualPriceMarket:      "PERPETUAL",
+		TenantID:                  900101,
+		SettlementCoin:            "USDT",
+		InsuranceFundMinAvailable: "100000",
+		IndexAlgorithm:            2,
+		IndexFormulaVersion:       "index-v1",
+		IndexMaxDeviationBps:      200,
+		MarkFormulaVersion:        "mark-v2",
+		MarkMaxBasisBps:           200,
+		MarkCurrentWeight:         "1",
+		MarkPreviousWeight:        "4",
+		FundingFormulaVersion:     "funding-v1",
+		PriceFormulaIntervalMs:    1000,
+		DeliveryAlgorithm:         2,
+		DeliveryFormulaVersion:    "delivery-v1",
+		DeliveryMaxLookbackMs:     30000,
+		DeliveryMaxDeviationBps:   200,
 	}
 }

@@ -469,8 +469,6 @@ services:
     volumes:
       - ./data/admin/avatars/:/app/avatars/
     command: ["-etcd", "etcd:2379"]
-    secrets:
-      - operational_alert_webhook
     ports:
       - "8888:8888"
 
@@ -499,8 +497,6 @@ networks:
 secrets:
   itick_token:
     file: ./secrets/itick_token
-  operational_alert_webhook:
-    file: ./secrets/operational_alert_webhook
 
 volumes:
   etcd-data:

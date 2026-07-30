@@ -1,6 +1,21 @@
 package ws
 
-import "github.com/zeromicro/go-zero/core/logx"
+import (
+	"encoding/json"
+
+	"wklive/common/notify"
+
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+var eventPermissions = map[string]string{
+	notify.EventTypeUserIdentitySubmit: "users:user:identities:list",
+	notify.EventTypeRecharge:           "payment:recharge-order:list",
+	notify.EventTypeWithdraw:           "payment:withdraw-order:list",
+	"contract_reconciliation":          "trade:operation:reconciliation-issue:list",
+	"price_engine_input":               "market:price-formula:list",
+	"snapshot_outbox":                  "market:snapshot-outbox:list",
+}
 
 type Hub struct {
 	register   chan *Connection
@@ -29,7 +44,15 @@ func (h *Hub) Run() {
 				close(client.Send)
 			}
 		case payload := <-h.broadcast:
+			var event notify.Event
+			if err := json.Unmarshal(payload, &event); err != nil || event.ID == "" || event.Type == "" {
+				logx.Errorf("drop invalid admin ws event: %v", err)
+				continue
+			}
 			for client := range h.clients {
+				if !client.CanReceive(event) {
+					continue
+				}
 				select {
 				case client.Send <- payload:
 				default:
@@ -39,6 +62,27 @@ func (h *Hub) Run() {
 			}
 		}
 	}
+}
+
+func (c *Connection) CanReceive(event notify.Event) bool {
+	if c == nil {
+		return false
+	}
+	if c.IsSystemAdmin {
+		return true
+	}
+	if event.TenantID == 0 && isOperationalEvent(event.Type) {
+		return false
+	}
+	if event.TenantID != 0 && event.TenantID != c.TenantId {
+		return false
+	}
+	requiredPermission, known := eventPermissions[event.Type]
+	if !known {
+		return false
+	}
+	_, allowed := c.Permissions[requiredPermission]
+	return allowed
 }
 
 func (h *Hub) BroadcastRaw(payload []byte) {

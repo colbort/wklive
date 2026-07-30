@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 
 	"wklive/admin-api/internal/config"
 	"wklive/admin-api/internal/ws"
@@ -36,12 +37,13 @@ type ServiceContext struct {
 	ChatCli           chat.PlatformClient
 	UserCli           user.AdminClient
 	PaymentCli        payment.AdminClient
-	MarketCli          market.AdminClient
+	MarketCli         market.AdminClient
 	AssetCli          asset.AdminClient
 	OptionCli         option.AdminClient
 	StakingCli        staking.AdminClient
 	TradeCli          trade.AdminClient
 	NotificationHub   *ws.Hub
+	NotificationStore *ws.NotificationStore
 	RequestEncryption *reqenc.Service
 }
 
@@ -84,28 +86,43 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	optionCli := zrpc.MustNewClient(c.OptionRpc, options)
 	stakingCli := zrpc.MustNewClient(c.StakingRpc, options)
 	tradeCli := zrpc.MustNewClient(c.TradeRpc, options)
+	systemAdminClient := system.NewAdminClient(systemCli.Conn())
 	notificationHub := ws.NewHub()
 	go notificationHub.Run()
+	var notificationStore *ws.NotificationStore
 	if len(c.MQ.Brokers) > 0 {
+		mqConfig := mq.ForService(c.MQ, c.Name)
+		notificationStore = ws.NewNotificationStore(
+			systemAdminClient,
+			mq.MustNewPublisher(mqConfig),
+			ws.NotificationStoreConfig{
+				AckTimeout:       time.Duration(c.NotificationWS.AckTimeoutMinutes) * time.Minute,
+				EscalationRepeat: time.Duration(c.NotificationWS.EscalationIntervalMinutes) * time.Minute,
+				EscalationMax:    c.NotificationWS.EscalationMaxLevel,
+				EscalationPoll:   time.Duration(c.NotificationWS.EscalationPollSeconds) * time.Second,
+			},
+		)
 		groupID := "admin-notifications-" + hostname()
-		subscriber := mq.MustNewBroadcastSubscriber(c.MQ, groupID)
-		go ws.SubscribeMQ(context.Background(), subscriber, notificationHub)
+		subscriber := mq.MustNewBroadcastSubscriber(mqConfig, groupID)
+		go ws.SubscribeMQ(context.Background(), subscriber, notificationHub, notificationStore)
+		go notificationStore.RunEscalation(context.Background())
 	} else {
 		logx.Info("admin notification mq is not configured, skip subscription")
 	}
 
 	return &ServiceContext{
-		Config:          c,
-		SystemCli:       system.NewAdminClient(systemCli.Conn()),
-		ChatCli:         chat.NewPlatformClient(chatCli.Conn()),
-		UserCli:         user.NewAdminClient(userCli.Conn()),
-		PaymentCli:      payment.NewAdminClient(paymentCli.Conn()),
-		MarketCli:        market.NewAdminClient(marketCli.Conn()),
-		AssetCli:        asset.NewAdminClient(assetCli.Conn()),
-		OptionCli:       option.NewAdminClient(optionCli.Conn()),
-		StakingCli:      staking.NewAdminClient(stakingCli.Conn()),
-		TradeCli:        trade.NewAdminClient(tradeCli.Conn()),
-		NotificationHub: notificationHub,
+		Config:            c,
+		SystemCli:         systemAdminClient,
+		ChatCli:           chat.NewPlatformClient(chatCli.Conn()),
+		UserCli:           user.NewAdminClient(userCli.Conn()),
+		PaymentCli:        payment.NewAdminClient(paymentCli.Conn()),
+		MarketCli:         market.NewAdminClient(marketCli.Conn()),
+		AssetCli:          asset.NewAdminClient(assetCli.Conn()),
+		OptionCli:         option.NewAdminClient(optionCli.Conn()),
+		StakingCli:        staking.NewAdminClient(stakingCli.Conn()),
+		TradeCli:          trade.NewAdminClient(tradeCli.Conn()),
+		NotificationHub:   notificationHub,
+		NotificationStore: notificationStore,
 	}
 }
 

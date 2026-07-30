@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"context"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -11,24 +12,45 @@ const (
 	writeWait      = 10 * time.Second
 	pongWait       = 60 * time.Second
 	pingPeriod     = (pongWait * 9) / 10
-	maxMessageSize = 1024
+	maxMessageSize = 4096
 )
 
 type Connection struct {
-	Hub      *Hub
-	Conn     *websocket.Conn
-	Send     chan []byte
-	UserId   int64
-	Username string
+	Hub           *Hub
+	Conn          *websocket.Conn
+	Send          chan []byte
+	UserId        int64
+	Username      string
+	TenantId      int64
+	IsSystemAdmin bool
+	Permissions   map[string]struct{}
+	Store         *NotificationStore
 }
 
-func NewConnection(hub *Hub, conn *websocket.Conn, userId int64, username string) *Connection {
+func NewConnection(
+	hub *Hub,
+	conn *websocket.Conn,
+	userId int64,
+	username string,
+	tenantId int64,
+	isSystemAdmin bool,
+	permissions []string,
+	store *NotificationStore,
+) *Connection {
+	permissionSet := make(map[string]struct{}, len(permissions))
+	for _, permission := range permissions {
+		permissionSet[permission] = struct{}{}
+	}
 	return &Connection{
-		Hub:      hub,
-		Conn:     conn,
-		Send:     make(chan []byte, 32),
-		UserId:   userId,
-		Username: username,
+		Hub:           hub,
+		Conn:          conn,
+		Send:          make(chan []byte, 32),
+		UserId:        userId,
+		Username:      username,
+		TenantId:      tenantId,
+		IsSystemAdmin: isSystemAdmin,
+		Permissions:   permissionSet,
+		Store:         store,
 	}
 }
 
@@ -45,10 +67,23 @@ func (c *Connection) ReadPump() {
 	})
 
 	for {
-		if _, _, err := c.Conn.NextReader(); err != nil {
+		messageType, payload, err := c.Conn.ReadMessage()
+		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				logx.Errorf("admin ws read failed, userId=%d err=%v", c.UserId, err)
 			}
+			return
+		}
+		if messageType != websocket.TextMessage || c.Store == nil {
+			continue
+		}
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		response := c.Store.HandleClientMessage(ctx, c, payload)
+		cancel()
+		select {
+		case c.Send <- response:
+		default:
+			logx.Errorf("admin ws response queue is full, userId=%d", c.UserId)
 			return
 		}
 	}

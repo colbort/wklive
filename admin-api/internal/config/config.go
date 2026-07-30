@@ -18,11 +18,19 @@ type Config struct {
 		AccessSecret string
 		AccessExpire int64
 	} `json:"Jwt" yaml:"Jwt"`
+	NotificationWS struct {
+		AllowedOrigins            []string
+		AllowMissingOrigin        bool
+		AckTimeoutMinutes         int64
+		EscalationIntervalMinutes int64
+		EscalationMaxLevel        int64
+		EscalationPollSeconds     int64
+	} `json:"NotificationWS" yaml:"NotificationWS"`
 	SystemRpc         zrpc.RpcClientConf
 	ChatRpc           zrpc.RpcClientConf
 	UserRpc           zrpc.RpcClientConf
 	PaymentRpc        zrpc.RpcClientConf
-	MarketRpc          zrpc.RpcClientConf
+	MarketRpc         zrpc.RpcClientConf
 	AssetRpc          zrpc.RpcClientConf
 	OptionRpc         zrpc.RpcClientConf
 	StakingRpc        zrpc.RpcClientConf

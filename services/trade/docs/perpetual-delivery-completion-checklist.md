@@ -386,12 +386,14 @@ P1-02 应用与隔离运行验收已完成；生产 `AutomaticLiquidation.Enable
 | 2026-07-29 | `common/alert` 通知接口化 | 通过 | 告警生产逻辑由固定 `MessagePublisher` 迁移为传输无关的 `alert.Notifier`，统一入口负责领域校验；新增 `NotifierFunc` 和尝试全部通道、汇总错误的 `MultiNotifier`，稳定 `Alert.ID` 作为实现幂等键。现有 Kafka/Admin 转换移至独立 `common/alert/adminnotify` 实现，iTick/Trade 业务及测试只依赖领域接口。`common`、iTick、Trade 全量测试、相关 race 和 vet 均通过；新 iTick `f2cb7632…e131`、Trade `8ecbd11b…2530` 镜像部署 Healthy，错误日志为空。后续新增通知方式只需实现接口，不修改告警生产逻辑。详见 `common/alert/README.md` 和 `evidence/2026-07-29-preprod/contract-operational-alert-delivery-report.md` |
 | 2026-07-30 | iTick 服务更名为 Market 与 model 命名收敛 | 通过 | 服务目录、模块、Proto/RPC、Etcd、Compose、Admin API/UI 与 RBAC 统一为 `market`；上游供应商身份、`itick-ws/itick-rest` Authority、iTick API 地址和 Secret 名称保持不变。物理表仍为 `t_itick_*`，因此 goctl 生成文件、类型、默认实现、缓存前缀及构造函数统一保持 `titick...`/`TItick...`，避免生成器再次产出重复 model；业务层变量继续使用 Market 语义。Market 全量测试通过，镜像 `a060536e…eb4c` 部署 Healthy，INDEX/MARK/FUNDING/DELIVERY 生产候选输出延迟约 2～4 秒 |
 | 2026-07-30 | 零仓位历史资金费缺口推进 | 发现定时任务边界缺陷后修复并通过 | 数据迁移后的 00:00、08:00 资金费时点处于历史行情空洞，30 秒内不存在 MARK，任务虽按标的 30 秒退避但会一直追补同一时点。修复后只在结算边界已过去 5 分钟且不可变 Position History 确认开放仓位为 0 时，生成 `NO_POSITION_HISTORY/no-position-v1` 的 COMPLETED 空批次；Mark/Index/Funding 均保持 0，不调用资金步骤、不伪造价格。有仓位时仍强制使用 30 秒内 MARK/INDEX/FUNDING，不放宽价格门禁。迁移 55 收紧 CHECK，仅允许该显式零仓位形态使用零价格；运行已形成 00:00、08:00 两条 total/settled=0 的空批次，合约 Job 连续成功且历史 MARK 重试停止。Trade task/models/internal、db-init 全量测试通过，Trade 镜像 `d910f128…0bab` Healthy |
+| 2026-07-30 | 保险基金审批水位硬门禁 | 发现终检过宽后修复并通过负向验收 | 完成清单要求保险基金余额达到经审批最低水位，但旧 readiness 仅检查 `available_amount>0`，极小金额也可能误放行。声明新增正数 `DECIMAL(36,18)` 的 `INSURANCE_FUND_MIN_AVAILABLE`，db-init model 按租户、币种和该水位查询，非法、零值、超 18 位整数或小数均归零并保持失败。Go 全量测试、shell 语法和真实 Compose 只读终检通过；其他 60 项 PASS 未被隐藏，当前明确为 60 PASS/13 FAIL，保险基金余额仍为 0、交割合约仍停用、双风险开关仍为 false |
+| 2026-07-30 | 四份生产证据审批引用门禁 | 发现证据真实性缺口后修复并通过负向验收 | 当前历史回放、告警、强平回滚和灾备文件均为预生产报告，正文明确包含“生产审批待提供”“待签署”或“不适用”，但旧 readiness 只校验文件非空和 SHA-256，仍会显示四项 PASS。声明及终检现分别要求四个 `*_PRODUCTION_APPROVAL_REF`，引用目标生产或获批同等环境的正式发布单、工单或审批归档；本机字段保持空，不用预生产技术验收冒充生产批准。Shell 语法与真实 Compose 只读终检通过，数据库详细检查和原有 60 项 PASS 均保留，当前为 60 PASS/17 FAIL，双风险开关保持 false |
 
 ## 6. 当前外部依赖与不可代填项
 
 材料内容、哈希和归档要求见
 [`perpetual-delivery-production-evidence-guide.md`](perpetual-delivery-production-evidence-guide.md)；
-12 个失败项的责任人、回填字段、配置步骤和完成顺序见
+17 个失败项的责任人、回填字段、配置步骤和完成顺序见
 [`perpetual-delivery-production-go-live-actions.md`](perpetual-delivery-production-go-live-actions.md)；
 材料到齐后以 `deploy.sh contract-readiness` 执行正向验收。
 

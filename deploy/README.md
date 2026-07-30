@@ -131,6 +131,14 @@ cp production-readiness.env.example production-readiness.env
 # 必要时可按 KiB 覆盖：DOCKER_READINESS_MIN_FREE_KB=3145728 ./deploy.sh contract-readiness
 ```
 
+`INSURANCE_FUND_MIN_AVAILABLE` 必须填写经资金/风控审批的正数最低水位，
+格式为 `DECIMAL(36,18)`；数据库中同租户、同币种的启用保险基金账户可用余额
+必须达到该水位。任意非零余额不再视为资金门禁通过。
+
+四份生产证据除文件和 SHA-256 外，还必须填写各自的
+`*_PRODUCTION_APPROVAL_REF`，指向正式发布单、工单或审批归档。当前预生产报告中的
+“待签署”或“不适用”不能作为生产审批引用。
+
 如果声明的全部行情 Authority 都是无需凭据的公开 REST 端点，可设置
 `PRICE_SOURCE_ACCESS_MODE=PUBLIC_NO_CREDENTIALS`。该模式不会仅凭声明放行：
 readiness model 必须从 Authority Registry 确认每个来源都已启用、类型为

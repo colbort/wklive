@@ -1,5 +1,5 @@
 import type { App, DirectiveBinding } from 'vue'
-import { useAuthStore } from '@/stores'
+import { useAuthStore } from '@/stores/auth'
 
 type PermValue = string | string[] | undefined
 

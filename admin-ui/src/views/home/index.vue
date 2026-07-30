@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/stores'
+import { useAuthStore } from '@/stores/auth'
 import { useI18n } from 'vue-i18n'
 const auth = useAuthStore()
 const { t } = useI18n()

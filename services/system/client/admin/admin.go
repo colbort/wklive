@@ -14,109 +14,116 @@ import (
 )
 
 type (
-	AssignUserRolesReq               = system.AssignUserRolesReq
-	ChangeUserStatusReq              = system.ChangeUserStatusReq
-	Empty                            = system.Empty
-	Google2FABindReq                 = system.Google2FABindReq
-	Google2FADisableReq              = system.Google2FADisableReq
-	Google2FAEnableReq               = system.Google2FAEnableReq
-	Google2FAInitData                = system.Google2FAInitData
-	Google2FAInitReq                 = system.Google2FAInitReq
-	Google2FAInitResp                = system.Google2FAInitResp
-	Google2FAResetReq                = system.Google2FAResetReq
-	LoginData                        = system.LoginData
-	LoginLogItem                     = system.LoginLogItem
-	LoginLogListReq                  = system.LoginLogListReq
-	LoginLogListResp                 = system.LoginLogListResp
-	LoginReq                         = system.LoginReq
-	LoginResp                        = system.LoginResp
-	LoginUserPermsReq                = system.LoginUserPermsReq
-	LoginUserPermsResp               = system.LoginUserPermsResp
-	OpLogItem                        = system.OpLogItem
-	OpLogListReq                     = system.OpLogListReq
-	OpLogListResp                    = system.OpLogListResp
-	ProfileData                      = system.ProfileData
-	ProfileResp                      = system.ProfileResp
-	ProfileUser                      = system.ProfileUser
-	ResetUserPwdReq                  = system.ResetUserPwdReq
-	ResolveTenantDomainReq           = system.ResolveTenantDomainReq
-	ResolveTenantDomainResp          = system.ResolveTenantDomainResp
-	RespBase                         = system.RespBase
-	SendVerificationCodeReq          = system.SendVerificationCodeReq
-	SysConfigByKeysReq               = system.SysConfigByKeysReq
-	SysConfigByKeysResp              = system.SysConfigByKeysResp
-	SysConfigCreateReq               = system.SysConfigCreateReq
-	SysConfigDeleteReq               = system.SysConfigDeleteReq
-	SysConfigDetailReq               = system.SysConfigDetailReq
-	SysConfigDetailResp              = system.SysConfigDetailResp
-	SysConfigItem                    = system.SysConfigItem
-	SysConfigListReq                 = system.SysConfigListReq
-	SysConfigListResp                = system.SysConfigListResp
-	SysConfigUpdateReq               = system.SysConfigUpdateReq
-	SysCronJobCreateReq              = system.SysCronJobCreateReq
-	SysCronJobDeleteReq              = system.SysCronJobDeleteReq
-	SysCronJobHandler                = system.SysCronJobHandler
-	SysCronJobHandlersResp           = system.SysCronJobHandlersResp
-	SysCronJobItem                   = system.SysCronJobItem
-	SysCronJobListReq                = system.SysCronJobListReq
-	SysCronJobListResp               = system.SysCronJobListResp
-	SysCronJobLogItem                = system.SysCronJobLogItem
-	SysCronJobLogListReq             = system.SysCronJobLogListReq
-	SysCronJobLogListResp            = system.SysCronJobLogListResp
-	SysCronJobRunReq                 = system.SysCronJobRunReq
-	SysCronJobStartReq               = system.SysCronJobStartReq
-	SysCronJobStopReq                = system.SysCronJobStopReq
-	SysCronJobUpdateReq              = system.SysCronJobUpdateReq
-	SysMenuCreateReq                 = system.SysMenuCreateReq
-	SysMenuDeleteReq                 = system.SysMenuDeleteReq
-	SysMenuItem                      = system.SysMenuItem
-	SysMenuListReq                   = system.SysMenuListReq
-	SysMenuListResp                  = system.SysMenuListResp
-	SysMenuNode                      = system.SysMenuNode
-	SysMenuTreeReq                   = system.SysMenuTreeReq
-	SysMenuTreeResp                  = system.SysMenuTreeResp
-	SysMenuUpdateReq                 = system.SysMenuUpdateReq
-	SysPermItem                      = system.SysPermItem
-	SysPermListResp                  = system.SysPermListResp
-	SysRoleCreateReq                 = system.SysRoleCreateReq
-	SysRoleDeleteReq                 = system.SysRoleDeleteReq
-	SysRoleGrantDetailData           = system.SysRoleGrantDetailData
-	SysRoleGrantDetailReq            = system.SysRoleGrantDetailReq
-	SysRoleGrantDetailResp           = system.SysRoleGrantDetailResp
-	SysRoleGrantReq                  = system.SysRoleGrantReq
-	SysRoleItem                      = system.SysRoleItem
-	SysRoleListReq                   = system.SysRoleListReq
-	SysRoleListResp                  = system.SysRoleListResp
-	SysRoleUpdateReq                 = system.SysRoleUpdateReq
-	SysTenantCreateReq               = system.SysTenantCreateReq
-	SysTenantDeleteReq               = system.SysTenantDeleteReq
-	SysTenantDetailReq               = system.SysTenantDetailReq
-	SysTenantDetailResp              = system.SysTenantDetailResp
-	SysTenantDomainCreateReq         = system.SysTenantDomainCreateReq
-	SysTenantDomainDeleteReq         = system.SysTenantDomainDeleteReq
-	SysTenantDomainItem              = system.SysTenantDomainItem
-	SysTenantDomainListReq           = system.SysTenantDomainListReq
-	SysTenantDomainListResp          = system.SysTenantDomainListResp
-	SysTenantDomainUpdateReq         = system.SysTenantDomainUpdateReq
-	SysTenantItem                    = system.SysTenantItem
-	SysTenantListReq                 = system.SysTenantListReq
-	SysTenantListResp                = system.SysTenantListResp
-	SysTenantUpdateReq               = system.SysTenantUpdateReq
-	SysUserCreateReq                 = system.SysUserCreateReq
-	SysUserDeleteReq                 = system.SysUserDeleteReq
-	SysUserDetailReq                 = system.SysUserDetailReq
-	SysUserDetailResp                = system.SysUserDetailResp
-	SysUserItem                      = system.SysUserItem
-	SysUserListReq                   = system.SysUserListReq
-	SysUserListResp                  = system.SysUserListResp
-	SysUserUpdateReq                 = system.SysUserUpdateReq
-	TestVerificationCodeReq          = system.TestVerificationCodeReq
-	UpdateProfileReq                 = system.UpdateProfileReq
-	VerificationCodeRecordDetailReq  = system.VerificationCodeRecordDetailReq
-	VerificationCodeRecordDetailResp = system.VerificationCodeRecordDetailResp
-	VerificationCodeRecordItem       = system.VerificationCodeRecordItem
-	VerificationCodeRecordListReq    = system.VerificationCodeRecordListReq
-	VerificationCodeRecordListResp   = system.VerificationCodeRecordListResp
+	AcknowledgeAdminNotificationReq       = system.AcknowledgeAdminNotificationReq
+	AdminNotificationIncident             = system.AdminNotificationIncident
+	AdminNotificationIncidentResp         = system.AdminNotificationIncidentResp
+	AssignUserRolesReq                    = system.AssignUserRolesReq
+	ChangeUserStatusReq                   = system.ChangeUserStatusReq
+	ClaimDueAdminNotificationsReq         = system.ClaimDueAdminNotificationsReq
+	ClaimDueAdminNotificationsResp        = system.ClaimDueAdminNotificationsResp
+	Empty                                 = system.Empty
+	Google2FABindReq                      = system.Google2FABindReq
+	Google2FADisableReq                   = system.Google2FADisableReq
+	Google2FAEnableReq                    = system.Google2FAEnableReq
+	Google2FAInitData                     = system.Google2FAInitData
+	Google2FAInitReq                      = system.Google2FAInitReq
+	Google2FAInitResp                     = system.Google2FAInitResp
+	Google2FAResetReq                     = system.Google2FAResetReq
+	LoginData                             = system.LoginData
+	LoginLogItem                          = system.LoginLogItem
+	LoginLogListReq                       = system.LoginLogListReq
+	LoginLogListResp                      = system.LoginLogListResp
+	LoginReq                              = system.LoginReq
+	LoginResp                             = system.LoginResp
+	LoginUserPermsReq                     = system.LoginUserPermsReq
+	LoginUserPermsResp                    = system.LoginUserPermsResp
+	OpLogItem                             = system.OpLogItem
+	OpLogListReq                          = system.OpLogListReq
+	OpLogListResp                         = system.OpLogListResp
+	ProfileData                           = system.ProfileData
+	ProfileResp                           = system.ProfileResp
+	ProfileUser                           = system.ProfileUser
+	RecordAdminNotificationReq            = system.RecordAdminNotificationReq
+	ReleaseAdminNotificationEscalationReq = system.ReleaseAdminNotificationEscalationReq
+	ResetUserPwdReq                       = system.ResetUserPwdReq
+	ResolveTenantDomainReq                = system.ResolveTenantDomainReq
+	ResolveTenantDomainResp               = system.ResolveTenantDomainResp
+	RespBase                              = system.RespBase
+	SendVerificationCodeReq               = system.SendVerificationCodeReq
+	SysConfigByKeysReq                    = system.SysConfigByKeysReq
+	SysConfigByKeysResp                   = system.SysConfigByKeysResp
+	SysConfigCreateReq                    = system.SysConfigCreateReq
+	SysConfigDeleteReq                    = system.SysConfigDeleteReq
+	SysConfigDetailReq                    = system.SysConfigDetailReq
+	SysConfigDetailResp                   = system.SysConfigDetailResp
+	SysConfigItem                         = system.SysConfigItem
+	SysConfigListReq                      = system.SysConfigListReq
+	SysConfigListResp                     = system.SysConfigListResp
+	SysConfigUpdateReq                    = system.SysConfigUpdateReq
+	SysCronJobCreateReq                   = system.SysCronJobCreateReq
+	SysCronJobDeleteReq                   = system.SysCronJobDeleteReq
+	SysCronJobHandler                     = system.SysCronJobHandler
+	SysCronJobHandlersResp                = system.SysCronJobHandlersResp
+	SysCronJobItem                        = system.SysCronJobItem
+	SysCronJobListReq                     = system.SysCronJobListReq
+	SysCronJobListResp                    = system.SysCronJobListResp
+	SysCronJobLogItem                     = system.SysCronJobLogItem
+	SysCronJobLogListReq                  = system.SysCronJobLogListReq
+	SysCronJobLogListResp                 = system.SysCronJobLogListResp
+	SysCronJobRunReq                      = system.SysCronJobRunReq
+	SysCronJobStartReq                    = system.SysCronJobStartReq
+	SysCronJobStopReq                     = system.SysCronJobStopReq
+	SysCronJobUpdateReq                   = system.SysCronJobUpdateReq
+	SysMenuCreateReq                      = system.SysMenuCreateReq
+	SysMenuDeleteReq                      = system.SysMenuDeleteReq
+	SysMenuItem                           = system.SysMenuItem
+	SysMenuListReq                        = system.SysMenuListReq
+	SysMenuListResp                       = system.SysMenuListResp
+	SysMenuNode                           = system.SysMenuNode
+	SysMenuTreeReq                        = system.SysMenuTreeReq
+	SysMenuTreeResp                       = system.SysMenuTreeResp
+	SysMenuUpdateReq                      = system.SysMenuUpdateReq
+	SysPermItem                           = system.SysPermItem
+	SysPermListResp                       = system.SysPermListResp
+	SysRoleCreateReq                      = system.SysRoleCreateReq
+	SysRoleDeleteReq                      = system.SysRoleDeleteReq
+	SysRoleGrantDetailData                = system.SysRoleGrantDetailData
+	SysRoleGrantDetailReq                 = system.SysRoleGrantDetailReq
+	SysRoleGrantDetailResp                = system.SysRoleGrantDetailResp
+	SysRoleGrantReq                       = system.SysRoleGrantReq
+	SysRoleItem                           = system.SysRoleItem
+	SysRoleListReq                        = system.SysRoleListReq
+	SysRoleListResp                       = system.SysRoleListResp
+	SysRoleUpdateReq                      = system.SysRoleUpdateReq
+	SysTenantCreateReq                    = system.SysTenantCreateReq
+	SysTenantDeleteReq                    = system.SysTenantDeleteReq
+	SysTenantDetailReq                    = system.SysTenantDetailReq
+	SysTenantDetailResp                   = system.SysTenantDetailResp
+	SysTenantDomainCreateReq              = system.SysTenantDomainCreateReq
+	SysTenantDomainDeleteReq              = system.SysTenantDomainDeleteReq
+	SysTenantDomainItem                   = system.SysTenantDomainItem
+	SysTenantDomainListReq                = system.SysTenantDomainListReq
+	SysTenantDomainListResp               = system.SysTenantDomainListResp
+	SysTenantDomainUpdateReq              = system.SysTenantDomainUpdateReq
+	SysTenantItem                         = system.SysTenantItem
+	SysTenantListReq                      = system.SysTenantListReq
+	SysTenantListResp                     = system.SysTenantListResp
+	SysTenantUpdateReq                    = system.SysTenantUpdateReq
+	SysUserCreateReq                      = system.SysUserCreateReq
+	SysUserDeleteReq                      = system.SysUserDeleteReq
+	SysUserDetailReq                      = system.SysUserDetailReq
+	SysUserDetailResp                     = system.SysUserDetailResp
+	SysUserItem                           = system.SysUserItem
+	SysUserListReq                        = system.SysUserListReq
+	SysUserListResp                       = system.SysUserListResp
+	SysUserUpdateReq                      = system.SysUserUpdateReq
+	TestVerificationCodeReq               = system.TestVerificationCodeReq
+	UpdateProfileReq                      = system.UpdateProfileReq
+	VerificationCodeRecordDetailReq       = system.VerificationCodeRecordDetailReq
+	VerificationCodeRecordDetailResp      = system.VerificationCodeRecordDetailResp
+	VerificationCodeRecordItem            = system.VerificationCodeRecordItem
+	VerificationCodeRecordListReq         = system.VerificationCodeRecordListReq
+	VerificationCodeRecordListResp        = system.VerificationCodeRecordListResp
 
 	Admin interface {
 		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
@@ -158,6 +165,10 @@ type (
 		VerificationCodeRecordList(ctx context.Context, in *VerificationCodeRecordListReq, opts ...grpc.CallOption) (*VerificationCodeRecordListResp, error)
 		VerificationCodeRecordDetail(ctx context.Context, in *VerificationCodeRecordDetailReq, opts ...grpc.CallOption) (*VerificationCodeRecordDetailResp, error)
 		LoginUserPerms(ctx context.Context, in *LoginUserPermsReq, opts ...grpc.CallOption) (*LoginUserPermsResp, error)
+		RecordAdminNotification(ctx context.Context, in *RecordAdminNotificationReq, opts ...grpc.CallOption) (*AdminNotificationIncidentResp, error)
+		AcknowledgeAdminNotification(ctx context.Context, in *AcknowledgeAdminNotificationReq, opts ...grpc.CallOption) (*AdminNotificationIncidentResp, error)
+		ClaimDueAdminNotifications(ctx context.Context, in *ClaimDueAdminNotificationsReq, opts ...grpc.CallOption) (*ClaimDueAdminNotificationsResp, error)
+		ReleaseAdminNotificationEscalation(ctx context.Context, in *ReleaseAdminNotificationEscalationReq, opts ...grpc.CallOption) (*RespBase, error)
 		SysCronJobList(ctx context.Context, in *SysCronJobListReq, opts ...grpc.CallOption) (*SysCronJobListResp, error)
 		SysCronJobCreate(ctx context.Context, in *SysCronJobCreateReq, opts ...grpc.CallOption) (*RespBase, error)
 		SysCronJobUpdate(ctx context.Context, in *SysCronJobUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
@@ -382,6 +393,26 @@ func (m *defaultAdmin) VerificationCodeRecordDetail(ctx context.Context, in *Ver
 func (m *defaultAdmin) LoginUserPerms(ctx context.Context, in *LoginUserPermsReq, opts ...grpc.CallOption) (*LoginUserPermsResp, error) {
 	client := system.NewAdminClient(m.cli.Conn())
 	return client.LoginUserPerms(ctx, in, opts...)
+}
+
+func (m *defaultAdmin) RecordAdminNotification(ctx context.Context, in *RecordAdminNotificationReq, opts ...grpc.CallOption) (*AdminNotificationIncidentResp, error) {
+	client := system.NewAdminClient(m.cli.Conn())
+	return client.RecordAdminNotification(ctx, in, opts...)
+}
+
+func (m *defaultAdmin) AcknowledgeAdminNotification(ctx context.Context, in *AcknowledgeAdminNotificationReq, opts ...grpc.CallOption) (*AdminNotificationIncidentResp, error) {
+	client := system.NewAdminClient(m.cli.Conn())
+	return client.AcknowledgeAdminNotification(ctx, in, opts...)
+}
+
+func (m *defaultAdmin) ClaimDueAdminNotifications(ctx context.Context, in *ClaimDueAdminNotificationsReq, opts ...grpc.CallOption) (*ClaimDueAdminNotificationsResp, error) {
+	client := system.NewAdminClient(m.cli.Conn())
+	return client.ClaimDueAdminNotifications(ctx, in, opts...)
+}
+
+func (m *defaultAdmin) ReleaseAdminNotificationEscalation(ctx context.Context, in *ReleaseAdminNotificationEscalationReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewAdminClient(m.cli.Conn())
+	return client.ReleaseAdminNotificationEscalation(ctx, in, opts...)
 }
 
 func (m *defaultAdmin) SysCronJobList(ctx context.Context, in *SysCronJobListReq, opts ...grpc.CallOption) (*SysCronJobListResp, error) {

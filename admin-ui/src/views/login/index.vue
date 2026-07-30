@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router'
-import { useAuthStore } from '@/stores'
+import { useAuthStore } from '@/stores/auth'
+import { resolvePostLoginPath } from '@/router'
 import { useI18n } from 'vue-i18n'
 import { useForm, useLoading } from '@/composables'
 
@@ -28,8 +29,10 @@ async function submit() {
         googleCode: form.googleCode || undefined,
       })
       await auth.fetchProfile()
-      const redirect = (route.query.redirect as string) || '/home'
-      router.replace(redirect)
+      const requestedRedirect = Array.isArray(route.query.redirect)
+        ? route.query.redirect[0] || ''
+        : String(route.query.redirect || '')
+      await router.replace(resolvePostLoginPath(requestedRedirect, auth.menus))
     } catch (e: unknown) {
       alert(e)
     }
@@ -62,12 +65,7 @@ async function submit() {
           <el-input v-model="form.googleCode" />
         </el-form-item>
 
-        <el-button
-          type="primary"
-          :loading="loading"
-          style="width: 100%"
-          @click="submit"
-        >
+        <el-button type="primary" :loading="loading" style="width: 100%" @click="submit">
           {{ t('auth.submit') }}
         </el-button>
       </el-form>

@@ -19,63 +19,67 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Admin_Login_FullMethodName                        = "/system.Admin/Login"
-	Admin_GetProfile_FullMethodName                   = "/system.Admin/GetProfile"
-	Admin_UpdateProfile_FullMethodName                = "/system.Admin/UpdateProfile"
-	Admin_Google2FAInit_FullMethodName                = "/system.Admin/Google2FAInit"
-	Admin_Google2FABind_FullMethodName                = "/system.Admin/Google2FABind"
-	Admin_Google2FAEnable_FullMethodName              = "/system.Admin/Google2FAEnable"
-	Admin_Google2FADisable_FullMethodName             = "/system.Admin/Google2FADisable"
-	Admin_Google2FAReset_FullMethodName               = "/system.Admin/Google2FAReset"
-	Admin_SysUserList_FullMethodName                  = "/system.Admin/SysUserList"
-	Admin_SysUserDetail_FullMethodName                = "/system.Admin/SysUserDetail"
-	Admin_SysUserCreate_FullMethodName                = "/system.Admin/SysUserCreate"
-	Admin_SysUserUpdate_FullMethodName                = "/system.Admin/SysUserUpdate"
-	Admin_SysUserDelete_FullMethodName                = "/system.Admin/SysUserDelete"
-	Admin_ChangeUserStatus_FullMethodName             = "/system.Admin/ChangeUserStatus"
-	Admin_ResetUserPwd_FullMethodName                 = "/system.Admin/ResetUserPwd"
-	Admin_AssignUserRoles_FullMethodName              = "/system.Admin/AssignUserRoles"
-	Admin_SysRoleList_FullMethodName                  = "/system.Admin/SysRoleList"
-	Admin_SysRoleCreate_FullMethodName                = "/system.Admin/SysRoleCreate"
-	Admin_SysRoleUpdate_FullMethodName                = "/system.Admin/SysRoleUpdate"
-	Admin_SysRoleDelete_FullMethodName                = "/system.Admin/SysRoleDelete"
-	Admin_SysRoleGrant_FullMethodName                 = "/system.Admin/SysRoleGrant"
-	Admin_SysRoleGrantDetail_FullMethodName           = "/system.Admin/SysRoleGrantDetail"
-	Admin_SysPermList_FullMethodName                  = "/system.Admin/SysPermList"
-	Admin_GetMenuTree_FullMethodName                  = "/system.Admin/GetMenuTree"
-	Admin_SysMenuCreate_FullMethodName                = "/system.Admin/SysMenuCreate"
-	Admin_SysMenuUpdate_FullMethodName                = "/system.Admin/SysMenuUpdate"
-	Admin_SysMenuDelete_FullMethodName                = "/system.Admin/SysMenuDelete"
-	Admin_SysMenuList_FullMethodName                  = "/system.Admin/SysMenuList"
-	Admin_LoginLogList_FullMethodName                 = "/system.Admin/LoginLogList"
-	Admin_OpLogList_FullMethodName                    = "/system.Admin/OpLogList"
-	Admin_SysConfigCreate_FullMethodName              = "/system.Admin/SysConfigCreate"
-	Admin_SysConfigUpdate_FullMethodName              = "/system.Admin/SysConfigUpdate"
-	Admin_SysConfigDelete_FullMethodName              = "/system.Admin/SysConfigDelete"
-	Admin_SysConfigList_FullMethodName                = "/system.Admin/SysConfigList"
-	Admin_SysConfigDetail_FullMethodName              = "/system.Admin/SysConfigDetail"
-	Admin_TestVerificationCode_FullMethodName         = "/system.Admin/TestVerificationCode"
-	Admin_VerificationCodeRecordList_FullMethodName   = "/system.Admin/VerificationCodeRecordList"
-	Admin_VerificationCodeRecordDetail_FullMethodName = "/system.Admin/VerificationCodeRecordDetail"
-	Admin_LoginUserPerms_FullMethodName               = "/system.Admin/LoginUserPerms"
-	Admin_SysCronJobList_FullMethodName               = "/system.Admin/SysCronJobList"
-	Admin_SysCronJobCreate_FullMethodName             = "/system.Admin/SysCronJobCreate"
-	Admin_SysCronJobUpdate_FullMethodName             = "/system.Admin/SysCronJobUpdate"
-	Admin_SysCronJobDelete_FullMethodName             = "/system.Admin/SysCronJobDelete"
-	Admin_SysCronJobRun_FullMethodName                = "/system.Admin/SysCronJobRun"
-	Admin_SysCronJobStart_FullMethodName              = "/system.Admin/SysCronJobStart"
-	Admin_SysCronJobStop_FullMethodName               = "/system.Admin/SysCronJobStop"
-	Admin_SysCronJobHandlers_FullMethodName           = "/system.Admin/SysCronJobHandlers"
-	Admin_SysCronJobLogList_FullMethodName            = "/system.Admin/SysCronJobLogList"
-	Admin_SysTenantCreate_FullMethodName              = "/system.Admin/SysTenantCreate"
-	Admin_SysTenantUpdate_FullMethodName              = "/system.Admin/SysTenantUpdate"
-	Admin_SysTenantDelete_FullMethodName              = "/system.Admin/SysTenantDelete"
-	Admin_SysTenantList_FullMethodName                = "/system.Admin/SysTenantList"
-	Admin_SysTenantDetail_FullMethodName              = "/system.Admin/SysTenantDetail"
-	Admin_SysTenantDomainList_FullMethodName          = "/system.Admin/SysTenantDomainList"
-	Admin_SysTenantDomainCreate_FullMethodName        = "/system.Admin/SysTenantDomainCreate"
-	Admin_SysTenantDomainUpdate_FullMethodName        = "/system.Admin/SysTenantDomainUpdate"
-	Admin_SysTenantDomainDelete_FullMethodName        = "/system.Admin/SysTenantDomainDelete"
+	Admin_Login_FullMethodName                              = "/system.Admin/Login"
+	Admin_GetProfile_FullMethodName                         = "/system.Admin/GetProfile"
+	Admin_UpdateProfile_FullMethodName                      = "/system.Admin/UpdateProfile"
+	Admin_Google2FAInit_FullMethodName                      = "/system.Admin/Google2FAInit"
+	Admin_Google2FABind_FullMethodName                      = "/system.Admin/Google2FABind"
+	Admin_Google2FAEnable_FullMethodName                    = "/system.Admin/Google2FAEnable"
+	Admin_Google2FADisable_FullMethodName                   = "/system.Admin/Google2FADisable"
+	Admin_Google2FAReset_FullMethodName                     = "/system.Admin/Google2FAReset"
+	Admin_SysUserList_FullMethodName                        = "/system.Admin/SysUserList"
+	Admin_SysUserDetail_FullMethodName                      = "/system.Admin/SysUserDetail"
+	Admin_SysUserCreate_FullMethodName                      = "/system.Admin/SysUserCreate"
+	Admin_SysUserUpdate_FullMethodName                      = "/system.Admin/SysUserUpdate"
+	Admin_SysUserDelete_FullMethodName                      = "/system.Admin/SysUserDelete"
+	Admin_ChangeUserStatus_FullMethodName                   = "/system.Admin/ChangeUserStatus"
+	Admin_ResetUserPwd_FullMethodName                       = "/system.Admin/ResetUserPwd"
+	Admin_AssignUserRoles_FullMethodName                    = "/system.Admin/AssignUserRoles"
+	Admin_SysRoleList_FullMethodName                        = "/system.Admin/SysRoleList"
+	Admin_SysRoleCreate_FullMethodName                      = "/system.Admin/SysRoleCreate"
+	Admin_SysRoleUpdate_FullMethodName                      = "/system.Admin/SysRoleUpdate"
+	Admin_SysRoleDelete_FullMethodName                      = "/system.Admin/SysRoleDelete"
+	Admin_SysRoleGrant_FullMethodName                       = "/system.Admin/SysRoleGrant"
+	Admin_SysRoleGrantDetail_FullMethodName                 = "/system.Admin/SysRoleGrantDetail"
+	Admin_SysPermList_FullMethodName                        = "/system.Admin/SysPermList"
+	Admin_GetMenuTree_FullMethodName                        = "/system.Admin/GetMenuTree"
+	Admin_SysMenuCreate_FullMethodName                      = "/system.Admin/SysMenuCreate"
+	Admin_SysMenuUpdate_FullMethodName                      = "/system.Admin/SysMenuUpdate"
+	Admin_SysMenuDelete_FullMethodName                      = "/system.Admin/SysMenuDelete"
+	Admin_SysMenuList_FullMethodName                        = "/system.Admin/SysMenuList"
+	Admin_LoginLogList_FullMethodName                       = "/system.Admin/LoginLogList"
+	Admin_OpLogList_FullMethodName                          = "/system.Admin/OpLogList"
+	Admin_SysConfigCreate_FullMethodName                    = "/system.Admin/SysConfigCreate"
+	Admin_SysConfigUpdate_FullMethodName                    = "/system.Admin/SysConfigUpdate"
+	Admin_SysConfigDelete_FullMethodName                    = "/system.Admin/SysConfigDelete"
+	Admin_SysConfigList_FullMethodName                      = "/system.Admin/SysConfigList"
+	Admin_SysConfigDetail_FullMethodName                    = "/system.Admin/SysConfigDetail"
+	Admin_TestVerificationCode_FullMethodName               = "/system.Admin/TestVerificationCode"
+	Admin_VerificationCodeRecordList_FullMethodName         = "/system.Admin/VerificationCodeRecordList"
+	Admin_VerificationCodeRecordDetail_FullMethodName       = "/system.Admin/VerificationCodeRecordDetail"
+	Admin_LoginUserPerms_FullMethodName                     = "/system.Admin/LoginUserPerms"
+	Admin_RecordAdminNotification_FullMethodName            = "/system.Admin/RecordAdminNotification"
+	Admin_AcknowledgeAdminNotification_FullMethodName       = "/system.Admin/AcknowledgeAdminNotification"
+	Admin_ClaimDueAdminNotifications_FullMethodName         = "/system.Admin/ClaimDueAdminNotifications"
+	Admin_ReleaseAdminNotificationEscalation_FullMethodName = "/system.Admin/ReleaseAdminNotificationEscalation"
+	Admin_SysCronJobList_FullMethodName                     = "/system.Admin/SysCronJobList"
+	Admin_SysCronJobCreate_FullMethodName                   = "/system.Admin/SysCronJobCreate"
+	Admin_SysCronJobUpdate_FullMethodName                   = "/system.Admin/SysCronJobUpdate"
+	Admin_SysCronJobDelete_FullMethodName                   = "/system.Admin/SysCronJobDelete"
+	Admin_SysCronJobRun_FullMethodName                      = "/system.Admin/SysCronJobRun"
+	Admin_SysCronJobStart_FullMethodName                    = "/system.Admin/SysCronJobStart"
+	Admin_SysCronJobStop_FullMethodName                     = "/system.Admin/SysCronJobStop"
+	Admin_SysCronJobHandlers_FullMethodName                 = "/system.Admin/SysCronJobHandlers"
+	Admin_SysCronJobLogList_FullMethodName                  = "/system.Admin/SysCronJobLogList"
+	Admin_SysTenantCreate_FullMethodName                    = "/system.Admin/SysTenantCreate"
+	Admin_SysTenantUpdate_FullMethodName                    = "/system.Admin/SysTenantUpdate"
+	Admin_SysTenantDelete_FullMethodName                    = "/system.Admin/SysTenantDelete"
+	Admin_SysTenantList_FullMethodName                      = "/system.Admin/SysTenantList"
+	Admin_SysTenantDetail_FullMethodName                    = "/system.Admin/SysTenantDetail"
+	Admin_SysTenantDomainList_FullMethodName                = "/system.Admin/SysTenantDomainList"
+	Admin_SysTenantDomainCreate_FullMethodName              = "/system.Admin/SysTenantDomainCreate"
+	Admin_SysTenantDomainUpdate_FullMethodName              = "/system.Admin/SysTenantDomainUpdate"
+	Admin_SysTenantDomainDelete_FullMethodName              = "/system.Admin/SysTenantDomainDelete"
 )
 
 // AdminClient is the client API for Admin service.
@@ -125,6 +129,10 @@ type AdminClient interface {
 	VerificationCodeRecordList(ctx context.Context, in *VerificationCodeRecordListReq, opts ...grpc.CallOption) (*VerificationCodeRecordListResp, error)
 	VerificationCodeRecordDetail(ctx context.Context, in *VerificationCodeRecordDetailReq, opts ...grpc.CallOption) (*VerificationCodeRecordDetailResp, error)
 	LoginUserPerms(ctx context.Context, in *LoginUserPermsReq, opts ...grpc.CallOption) (*LoginUserPermsResp, error)
+	RecordAdminNotification(ctx context.Context, in *RecordAdminNotificationReq, opts ...grpc.CallOption) (*AdminNotificationIncidentResp, error)
+	AcknowledgeAdminNotification(ctx context.Context, in *AcknowledgeAdminNotificationReq, opts ...grpc.CallOption) (*AdminNotificationIncidentResp, error)
+	ClaimDueAdminNotifications(ctx context.Context, in *ClaimDueAdminNotificationsReq, opts ...grpc.CallOption) (*ClaimDueAdminNotificationsResp, error)
+	ReleaseAdminNotificationEscalation(ctx context.Context, in *ReleaseAdminNotificationEscalationReq, opts ...grpc.CallOption) (*RespBase, error)
 	SysCronJobList(ctx context.Context, in *SysCronJobListReq, opts ...grpc.CallOption) (*SysCronJobListResp, error)
 	SysCronJobCreate(ctx context.Context, in *SysCronJobCreateReq, opts ...grpc.CallOption) (*RespBase, error)
 	SysCronJobUpdate(ctx context.Context, in *SysCronJobUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
@@ -543,6 +551,46 @@ func (c *adminClient) LoginUserPerms(ctx context.Context, in *LoginUserPermsReq,
 	return out, nil
 }
 
+func (c *adminClient) RecordAdminNotification(ctx context.Context, in *RecordAdminNotificationReq, opts ...grpc.CallOption) (*AdminNotificationIncidentResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminNotificationIncidentResp)
+	err := c.cc.Invoke(ctx, Admin_RecordAdminNotification_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) AcknowledgeAdminNotification(ctx context.Context, in *AcknowledgeAdminNotificationReq, opts ...grpc.CallOption) (*AdminNotificationIncidentResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminNotificationIncidentResp)
+	err := c.cc.Invoke(ctx, Admin_AcknowledgeAdminNotification_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ClaimDueAdminNotifications(ctx context.Context, in *ClaimDueAdminNotificationsReq, opts ...grpc.CallOption) (*ClaimDueAdminNotificationsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ClaimDueAdminNotificationsResp)
+	err := c.cc.Invoke(ctx, Admin_ClaimDueAdminNotifications_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ReleaseAdminNotificationEscalation(ctx context.Context, in *ReleaseAdminNotificationEscalationReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, Admin_ReleaseAdminNotificationEscalation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *adminClient) SysCronJobList(ctx context.Context, in *SysCronJobListReq, opts ...grpc.CallOption) (*SysCronJobListResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SysCronJobListResp)
@@ -770,6 +818,10 @@ type AdminServer interface {
 	VerificationCodeRecordList(context.Context, *VerificationCodeRecordListReq) (*VerificationCodeRecordListResp, error)
 	VerificationCodeRecordDetail(context.Context, *VerificationCodeRecordDetailReq) (*VerificationCodeRecordDetailResp, error)
 	LoginUserPerms(context.Context, *LoginUserPermsReq) (*LoginUserPermsResp, error)
+	RecordAdminNotification(context.Context, *RecordAdminNotificationReq) (*AdminNotificationIncidentResp, error)
+	AcknowledgeAdminNotification(context.Context, *AcknowledgeAdminNotificationReq) (*AdminNotificationIncidentResp, error)
+	ClaimDueAdminNotifications(context.Context, *ClaimDueAdminNotificationsReq) (*ClaimDueAdminNotificationsResp, error)
+	ReleaseAdminNotificationEscalation(context.Context, *ReleaseAdminNotificationEscalationReq) (*RespBase, error)
 	SysCronJobList(context.Context, *SysCronJobListReq) (*SysCronJobListResp, error)
 	SysCronJobCreate(context.Context, *SysCronJobCreateReq) (*RespBase, error)
 	SysCronJobUpdate(context.Context, *SysCronJobUpdateReq) (*RespBase, error)
@@ -914,6 +966,18 @@ func (UnimplementedAdminServer) VerificationCodeRecordDetail(context.Context, *V
 }
 func (UnimplementedAdminServer) LoginUserPerms(context.Context, *LoginUserPermsReq) (*LoginUserPermsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method LoginUserPerms not implemented")
+}
+func (UnimplementedAdminServer) RecordAdminNotification(context.Context, *RecordAdminNotificationReq) (*AdminNotificationIncidentResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method RecordAdminNotification not implemented")
+}
+func (UnimplementedAdminServer) AcknowledgeAdminNotification(context.Context, *AcknowledgeAdminNotificationReq) (*AdminNotificationIncidentResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method AcknowledgeAdminNotification not implemented")
+}
+func (UnimplementedAdminServer) ClaimDueAdminNotifications(context.Context, *ClaimDueAdminNotificationsReq) (*ClaimDueAdminNotificationsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ClaimDueAdminNotifications not implemented")
+}
+func (UnimplementedAdminServer) ReleaseAdminNotificationEscalation(context.Context, *ReleaseAdminNotificationEscalationReq) (*RespBase, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReleaseAdminNotificationEscalation not implemented")
 }
 func (UnimplementedAdminServer) SysCronJobList(context.Context, *SysCronJobListReq) (*SysCronJobListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysCronJobList not implemented")
@@ -1692,6 +1756,78 @@ func _Admin_LoginUserPerms_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_RecordAdminNotification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RecordAdminNotificationReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).RecordAdminNotification(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_RecordAdminNotification_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).RecordAdminNotification(ctx, req.(*RecordAdminNotificationReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_AcknowledgeAdminNotification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AcknowledgeAdminNotificationReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).AcknowledgeAdminNotification(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_AcknowledgeAdminNotification_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).AcknowledgeAdminNotification(ctx, req.(*AcknowledgeAdminNotificationReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ClaimDueAdminNotifications_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ClaimDueAdminNotificationsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ClaimDueAdminNotifications(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ClaimDueAdminNotifications_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ClaimDueAdminNotifications(ctx, req.(*ClaimDueAdminNotificationsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ReleaseAdminNotificationEscalation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReleaseAdminNotificationEscalationReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ReleaseAdminNotificationEscalation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ReleaseAdminNotificationEscalation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ReleaseAdminNotificationEscalation(ctx, req.(*ReleaseAdminNotificationEscalationReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Admin_SysCronJobList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SysCronJobListReq)
 	if err := dec(in); err != nil {
@@ -2178,6 +2314,22 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LoginUserPerms",
 			Handler:    _Admin_LoginUserPerms_Handler,
+		},
+		{
+			MethodName: "RecordAdminNotification",
+			Handler:    _Admin_RecordAdminNotification_Handler,
+		},
+		{
+			MethodName: "AcknowledgeAdminNotification",
+			Handler:    _Admin_AcknowledgeAdminNotification_Handler,
+		},
+		{
+			MethodName: "ClaimDueAdminNotifications",
+			Handler:    _Admin_ClaimDueAdminNotifications_Handler,
+		},
+		{
+			MethodName: "ReleaseAdminNotificationEscalation",
+			Handler:    _Admin_ReleaseAdminNotificationEscalation_Handler,
 		},
 		{
 			MethodName: "SysCronJobList",

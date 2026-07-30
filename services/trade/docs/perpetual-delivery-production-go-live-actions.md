@@ -2,38 +2,46 @@
 
 ## 1. 当前结论
 
-2026-07-29 当前完整 Deploy 环境已经完成预生产技术验收。只读
+2026-07-30 当前完整 Deploy 环境已经完成预生产技术验收。只读
 `contract-readiness` 最终结果：
 
 - PASS：60；
-- FAIL：12；
+- FAIL：17；
 - 结论：`NOT READY`；
 - `AutomaticLiquidation.Enabled=false`；
 - `CrossMarginTrading.Enabled=false`。
 
-本行动单把 12 个失败项转换为外部负责人可直接交付的材料和配置。任何 API Key、
+本行动单把 17 个失败项转换为外部负责人可直接交付的材料和配置。任何 API Key、
 密码、访问令牌或数据库凭据不得写入本文或 `production-readiness.env`。
 
 预生产证据位于
 [`evidence/2026-07-29-preprod`](evidence/2026-07-29-preprod)，完整哈希见
 [`SHA256SUMS`](evidence/2026-07-29-preprod/SHA256SUMS)。
 
-## 2. 12 个失败项
+2026-07-30 按五组整理的当前事实、官方许可核对和执行前置条件见
+[`evidence/2026-07-30-production-materials`](evidence/2026-07-30-production-materials)。
+
+## 2. 17 个失败项
 
 | # | 当前 FAIL | 负责人 | 必须交付 | readiness 字段或运行事实 |
 | ---: | --- | --- | --- | --- |
 | 1 | 行情数据许可未批准 | 法务/行情负责人 | Binance、OKX、Bybit 的数据使用许可或合同编号 | `PRICE_SOURCE_LICENSE_APPROVED=true` |
-| 2 | 生产值班组为空 | 运维负责人 | 值班组名称、最终责任人和排班入口 | `ALERT_ONCALL_TEAM` |
-| 3 | 告警升级策略为空 | 运维负责人 | 一级渠道、未确认超时、二/三级升级规则 | `ALERT_ESCALATION_POLICY` |
-| 4 | 保险和手续费账户权限未批准 | 资金/风控负责人 | 账户权限、最低水位和操作范围审批 | `FUND_ACCOUNT_PERMISSION_APPROVED=true` |
-| 5 | 资金账户审批人为空 | 资金负责人 | 保险基金与手续费账户最终审批人 | `FUND_ACCOUNT_APPROVER` |
-| 6 | 自动强平启用窗口为空 | 发布/风控负责人 | 发布单、启用窗口、操作人、复核人 | `LIQUIDATION_ENABLE_WINDOW` |
-| 7 | 正式 RPO 未批准 | 基础设施负责人 | 正整数分钟及审批编号 | `DR_RPO_MINUTES` |
-| 8 | 正式 RTO 未批准 | 基础设施负责人 | 正整数分钟及审批编号 | `DR_RTO_MINUTES` |
-| 9 | 备份加密未声明 | 安全/基础设施负责人 | 算法、密钥托管方式、轮换规则 | `DR_BACKUP_ENCRYPTION` |
-| 10 | 异地位置未声明 | 基础设施负责人 | 异地 Region/机房/对象存储位置和保留周期 | `DR_OFFSITE_LOCATION` |
-| 11 | 保险基金未注资 | 资金/风控负责人 | 经审批的最低水位和实际入账证据 | 数据库模型核对启用且余额大于 0 的 `INSURANCE_FUND` |
-| 12 | 未来交割合约未启用 | 发布/风控负责人 | 在其余门禁全部通过后的独立启用审批 | 数据库模型核对 `BTCUSDT-20260925` 为启用且交割时点仍在未来 |
+| 2 | 历史回放缺少生产审批引用 | 行情/风控负责人 | 执行、复核、审批完整的发布单或工单引用 | `HISTORICAL_REPLAY_PRODUCTION_APPROVAL_REF` |
+| 3 | 生产值班组为空 | 运维负责人 | 值班组名称、最终责任人和排班入口 | `ALERT_ONCALL_TEAM` |
+| 4 | 告警升级策略为空 | 运维负责人 | 一级渠道、未确认超时、二/三级升级规则 | `ALERT_ESCALATION_POLICY` |
+| 5 | 告警演练缺少生产审批引用 | 运维负责人 | 含平台接收、通知、升级、恢复回执的审批归档 | `ALERT_TEST_PRODUCTION_APPROVAL_REF` |
+| 6 | 保险基金审批水位未声明 | 资金/风控负责人 | 经审批的最低可用余额及审批编号 | `INSURANCE_FUND_MIN_AVAILABLE` 为正数 `DECIMAL(36,18)` |
+| 7 | 保险和手续费账户权限未批准 | 资金/风控负责人 | 账户权限、最低水位和操作范围审批 | `FUND_ACCOUNT_PERMISSION_APPROVED=true` |
+| 8 | 资金账户审批人为空 | 资金负责人 | 保险基金与手续费账户最终审批人 | `FUND_ACCOUNT_APPROVER` |
+| 9 | 自动强平启用窗口为空 | 发布/风控负责人 | 发布单、启用窗口、操作人、复核人 | `LIQUIDATION_ENABLE_WINDOW` |
+| 10 | 强平回滚方案缺少生产审批引用 | 发布/风控负责人 | 完成操作、复核、资金和风险签批的发布单引用 | `LIQUIDATION_ROLLBACK_PRODUCTION_APPROVAL_REF` |
+| 11 | 正式 RPO 未批准 | 基础设施负责人 | 正整数分钟及审批编号 | `DR_RPO_MINUTES` |
+| 12 | 正式 RTO 未批准 | 基础设施负责人 | 正整数分钟及审批编号 | `DR_RTO_MINUTES` |
+| 13 | 备份加密未声明 | 安全/基础设施负责人 | 算法、密钥托管方式、轮换规则 | `DR_BACKUP_ENCRYPTION` |
+| 14 | 异地位置未声明 | 基础设施负责人 | 异地 Region/机房/对象存储位置和保留周期 | `DR_OFFSITE_LOCATION` |
+| 15 | 灾备演练缺少生产审批引用 | 基础设施负责人 | PITR、切换、回切和事实核对的正式审批归档 | `DR_EXERCISE_PRODUCTION_APPROVAL_REF` |
+| 16 | 保险基金未注资 | 资金/风控负责人 | 经审批的最低水位和实际入账证据 | 数据库模型核对启用且余额达到审批水位的 `INSURANCE_FUND` |
+| 17 | 未来交割合约未启用 | 发布/风控负责人 | 在其余门禁全部通过后的独立启用审批 | 数据库模型核对 `BTCUSDT-20260925` 为启用且交割时点仍在未来 |
 
 ## 3. 已完成的技术配置与最终开闸条件
 
@@ -96,6 +104,8 @@ Authority 均为启用的 `PUBLIC_REST` 时才通过。公开访问不替代第 
   通过；
 - 同租户、同结算币种存在启用的 `INSURANCE_FUND` 平台账户；
 - 保险基金可用余额大于经审批的最低水位；
+- 在 readiness 声明中填写同一审批水位
+  `INSURANCE_FUND_MIN_AVAILABLE`，终检按数据库实际余额逐币种核对；
 - 存在启用的 `FEE_REVENUE` 平台账户；
 - 存在 `symbol_id=0`、同结算币种的默认保险配置；
 - 明确 `fund_user_id`、钱包类型、ADL 是否启用及负责人；
@@ -107,10 +117,10 @@ Authority 均为启用的 `PUBLIC_REST` 时才通过。公开访问不替代第 
 
 | 证据 | 最低内容 | readiness 字段 |
 | --- | --- | --- |
-| 历史价格回放报告 | 三源映射、完整交割窗口、四类公式、断档/剔除/延迟、原始 JSON 输出、执行/复核/审批 | `HISTORICAL_REPLAY_REPORT`、`*_SHA256` |
-| 告警投递测试报告 | Outbox、Price Engine 缺源、对账差异三类事件；平台接收、通知、升级和恢复回执 | `ALERT_TEST_REPORT`、`*_SHA256` |
-| 强平启用与回滚方案 | 账户、水位、启用顺序、观察项、自动阈值、人工回滚、执行/复核/审批 | `LIQUIDATION_ROLLBACK_PLAN`、`*_SHA256` |
-| 生产灾备报告 | 异地备份、GTID/Binlog、PITR、可用区切换/回切、事实表核对、RPO/RTO | `DR_EXERCISE_REPORT`、`*_SHA256` |
+| 历史价格回放报告 | 三源映射、完整交割窗口、四类公式、断档/剔除/延迟、原始 JSON 输出、执行/复核/审批 | `HISTORICAL_REPLAY_REPORT`、`*_SHA256`、`HISTORICAL_REPLAY_PRODUCTION_APPROVAL_REF` |
+| 告警投递测试报告 | Outbox、Price Engine 缺源、对账差异三类事件；平台接收、通知、升级和恢复回执 | `ALERT_TEST_REPORT`、`*_SHA256`、`ALERT_TEST_PRODUCTION_APPROVAL_REF` |
+| 强平启用与回滚方案 | 账户、水位、启用顺序、观察项、自动阈值、人工回滚、执行/复核/审批 | `LIQUIDATION_ROLLBACK_PLAN`、`*_SHA256`、`LIQUIDATION_ROLLBACK_PRODUCTION_APPROVAL_REF` |
+| 生产灾备报告 | 异地备份、GTID/Binlog、PITR、可用区切换/回切、事实表核对、RPO/RTO | `DR_EXERCISE_REPORT`、`*_SHA256`、`DR_EXERCISE_PRODUCTION_APPROVAL_REF` |
 
 详细格式见
 [`perpetual-delivery-production-evidence-guide.md`](perpetual-delivery-production-evidence-guide.md)。

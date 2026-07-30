@@ -18,9 +18,7 @@ export function buildRoutesFromMenus(menus: MenuNode[]): RouteRecordRaw[] {
 
   const dfs = (nodes: MenuNode[]) => {
     for (const n of sortChildren(nodes)) {
-      console.warn('processing menu node', n, 'path', n.path, 'component', n.component)
       if (n.enabled !== 1 || n.visible !== 1) continue
-      console.warn('processing menu node', n)
       if (n.menuType === 2 && n.path) {
         const comp = resolveView(n.component)
         routes.push({
@@ -29,7 +27,7 @@ export function buildRoutesFromMenus(menus: MenuNode[]): RouteRecordRaw[] {
           component: (comp as unknown) || (() => import('@/views/error/missing-view.vue')),
           meta: {
             title: n.name,
-            titleKey: `menu.${n.id}`, // ✅ 方便后期做 i18n：有 key 用 key，否则回退 name
+            titleKey: `menu.${n.id}`,
             icon: n.icon,
             menuId: n.id,
             missing: comp ? '' : n.component,

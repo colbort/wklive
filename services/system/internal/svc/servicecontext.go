@@ -32,6 +32,7 @@ type ServiceContext struct {
 	JobLogModel                 models.SysJobLogModel
 	TenantMode                  models.SysTenantModel
 	TenantDomainModel           models.SysTenantDomainModel
+	AdminNotificationModel      models.SysAdminNotificationIncidentModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -64,5 +65,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		JobLogModel:                 jobLogModel,
 		TenantMode:                  models.NewSysTenantModel(conn, c.CacheRedis),
 		TenantDomainModel:           models.NewSysTenantDomainModel(conn),
+		AdminNotificationModel:      models.NewSysAdminNotificationIncidentModel(conn, c.CacheRedis),
 	}
 }

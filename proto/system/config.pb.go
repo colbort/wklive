@@ -7,13 +7,12 @@
 package system
 
 import (
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
 	common "wklive/proto/common"
-
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -1080,7 +1079,7 @@ const file_proto_system_config_proto_rawDesc = "" +
 	"\boss_type\x18\x04 \x01(\x03R\aossType\x12\x1d\n" +
 	"\n" +
 	"oss_domain\x18\x05 \x01(\tR\tossDomain\"\xa7\x03\n" +
-	"\vItickConfig\x12\x17\n" +
+	"\vITickConfig\x12\x17\n" +
 	"\aapi_url\x18\x01 \x01(\tR\x06apiUrl\x12\x1b\n" +
 	"\tapi_token\x18\x02 \x01(\tR\bapiToken\x12\x15\n" +
 	"\x06ws_url\x18\x03 \x01(\tR\x05wsUrl\x12<\n" +

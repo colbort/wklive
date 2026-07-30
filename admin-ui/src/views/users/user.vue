@@ -21,7 +21,7 @@ import {
   getOptionLabel,
   getOptionValueLabel,
 } from '@/utils/options'
-import { useAuthStore } from '@/stores'
+import { useAuthStore } from '@/stores/auth'
 import TenantSelect from '@/components/TenantSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
