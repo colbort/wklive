@@ -49,7 +49,7 @@ func (l *InitTenantMarketDisplayLogic) InitTenantMarketDisplay(in *market.InitTe
 	// 	}
 
 	// 	if exist == nil {
-	// 		_, err = l.svcCtx.MarketTenantCategoryModel.Insert(l.ctx, &models.TMarketTenantCategory{
+	// 		_, err = l.svcCtx.MarketTenantCategoryModel.Insert(l.ctx, &models.TItickTenantCategory{
 	// 			TenantId:    in.TenantId,
 	// 			CategoryId:  category.Id,
 	// 			Enabled:     category.Enabled,
@@ -90,7 +90,7 @@ func (l *InitTenantMarketDisplayLogic) InitTenantMarketDisplay(in *market.InitTe
 	// 	}
 
 	// 	if exist == nil {
-	// 		_, err = l.svcCtx.MarketTenantProductModel.Insert(l.ctx, &models.TMarketTenantProduct{
+	// 		_, err = l.svcCtx.MarketTenantProductModel.Insert(l.ctx, &models.TItickTenantProduct{
 	// 			TenantId:    in.TenantId,
 	// 			ProductId:   product.Id,
 	// 			Enabled:     product.Enabled,

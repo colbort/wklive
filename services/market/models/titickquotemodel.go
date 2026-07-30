@@ -13,7 +13,7 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TMarketQuoteModel = (*customTMarketQuoteModel)(nil)
+var _ TItickQuoteModel = (*customTMarketQuoteModel)(nil)
 
 type (
 	MarketQuotePageFilter struct {
@@ -21,13 +21,13 @@ type (
 		Symbol   string
 	}
 
-	// TMarketQuoteModel is an interface to be customized, add more methods here,
+	// TItickQuoteModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTMarketQuoteModel.
-	TMarketQuoteModel interface {
-		tMarketQuoteModel
-		Upsert(ctx context.Context, data *TMarketQuote) (sql.Result, error)
-		FindPage(ctx context.Context, filter MarketQuotePageFilter, cursor int64, limit int64) ([]*TMarketQuote, int64, error)
-		FindQuotes(ctx context.Context, data []*market.MarketSymbol) ([]*TMarketQuote, error)
+	TItickQuoteModel interface {
+		tItickQuoteModel
+		Upsert(ctx context.Context, data *TItickQuote) (sql.Result, error)
+		FindPage(ctx context.Context, filter MarketQuotePageFilter, cursor int64, limit int64) ([]*TItickQuote, int64, error)
+		FindQuotes(ctx context.Context, data []*market.MarketSymbol) ([]*TItickQuote, error)
 	}
 
 	customTMarketQuoteModel struct {
@@ -36,13 +36,13 @@ type (
 )
 
 // NewTMarketQuoteModel returns a model for the database table.
-func NewTMarketQuoteModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TMarketQuoteModel {
+func NewTMarketQuoteModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickQuoteModel {
 	return &customTMarketQuoteModel{
 		defaultTMarketQuoteModel: newTMarketQuoteModel(conn, c, opts...),
 	}
 }
 
-func (m *defaultTMarketQuoteModel) Upsert(ctx context.Context, data *TMarketQuote) (sql.Result, error) {
+func (m *defaultTMarketQuoteModel) Upsert(ctx context.Context, data *TItickQuote) (sql.Result, error) {
 	query := fmt.Sprintf(`
 		INSERT INTO %s (%s)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -59,7 +59,7 @@ func (m *defaultTMarketQuoteModel) Upsert(ctx context.Context, data *TMarketQuot
 			quote_ts = VALUES(quote_ts),
 			trade_status = VALUES(trade_status),
 			update_times = VALUES(update_times)
-	`, m.table, tMarketQuoteRowsExpectAutoSet)
+	`, m.table, tItickQuoteRowsExpectAutoSet)
 
 	marketQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTMarketQuoteMarketSymbolPrefix, data.Market, data.Symbol)
 
@@ -84,7 +84,7 @@ func (m *defaultTMarketQuoteModel) Upsert(ctx context.Context, data *TMarketQuot
 	}, marketQuoteMarketSymbolKey)
 }
 
-func (m *defaultTMarketQuoteModel) FindPage(ctx context.Context, filter MarketQuotePageFilter, cursor int64, limit int64) ([]*TMarketQuote, int64, error) {
+func (m *defaultTMarketQuoteModel) FindPage(ctx context.Context, filter MarketQuotePageFilter, cursor int64, limit int64) ([]*TItickQuote, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -113,7 +113,7 @@ func (m *defaultTMarketQuoteModel) FindPage(ctx context.Context, filter MarketQu
 			WHERE %s
 			ORDER BY id DESC
 			LIMIT ?`,
-			tMarketQuoteRows, m.table, where,
+			tItickQuoteRows, m.table, where,
 		)
 		listArgs = append(listArgs, limit)
 	} else {
@@ -124,12 +124,12 @@ func (m *defaultTMarketQuoteModel) FindPage(ctx context.Context, filter MarketQu
 			WHERE %s AND id < ?
 			ORDER BY id DESC
 			LIMIT ?`,
-			tMarketQuoteRows, m.table, where,
+			tItickQuoteRows, m.table, where,
 		)
 		listArgs = append(listArgs, cursor, limit)
 	}
 
-	var list []*TMarketQuote
+	var list []*TItickQuote
 	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
 		return nil, 0, err
 	}
@@ -137,12 +137,12 @@ func (m *defaultTMarketQuoteModel) FindPage(ctx context.Context, filter MarketQu
 	return list, total, nil
 }
 
-func (m *defaultTMarketQuoteModel) FindQuotes(ctx context.Context, data []*market.MarketSymbol) ([]*TMarketQuote, error) {
+func (m *defaultTMarketQuoteModel) FindQuotes(ctx context.Context, data []*market.MarketSymbol) ([]*TItickQuote, error) {
 	if len(data) == 0 {
-		return []*TMarketQuote{}, nil
+		return []*TItickQuote{}, nil
 	}
 
-	list := make([]*TMarketQuote, 0)
+	list := make([]*TItickQuote, 0)
 
 	for _, item := range data {
 		market := item.Market

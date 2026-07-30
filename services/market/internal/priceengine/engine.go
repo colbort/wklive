@@ -96,15 +96,15 @@ func (e *InputUnavailableError) AlertFingerprint() string {
 }
 
 type Archive interface {
-	FindAtOrBefore(context.Context, string, string, string, string, string, int64, int64) (*models.TMarketAuthoritativeSnapshot, error)
-	InsertImmutableAndEnqueue(context.Context, *models.TMarketAuthoritativeSnapshot, string) error
+	FindAtOrBefore(context.Context, string, string, string, string, string, int64, int64) (*models.TItickAuthoritativeSnapshot, error)
+	InsertImmutableAndEnqueue(context.Context, *models.TItickAuthoritativeSnapshot, string) error
 }
 type Engine struct {
-	formulas models.TMarketPriceFormulaModel
+	formulas models.TItickPriceFormulaModel
 	archive  Archive
 }
 
-func New(formulas models.TMarketPriceFormulaModel, archive Archive) *Engine {
+func New(formulas models.TItickPriceFormulaModel, archive Archive) *Engine {
 	return &Engine{formulas: formulas, archive: archive}
 }
 
@@ -139,7 +139,7 @@ func (e *Engine) RunOnce(ctx context.Context, now int64) error {
 	return firstErr
 }
 
-func (e *Engine) evaluate(ctx context.Context, f *models.TMarketPriceFormula, target int64) error {
+func (e *Engine) evaluate(ctx context.Context, f *models.TItickPriceFormula, target int64) error {
 	var components []Component
 	if err := json.Unmarshal([]byte(f.Components), &components); err != nil {
 		return err
@@ -267,7 +267,7 @@ func (e *Engine) evaluate(ctx context.Context, f *models.TMarketPriceFormula, ta
 	id := deterministicSnapshotID(f, price, raw)
 	s := &pb.SettlementSnapshot{SnapshotID: id, Kind: f.SnapshotKind, CategoryCode: f.CategoryCode, Market: f.Market, Symbol: f.Symbol, Price: price.String(), Source: "price-engine", SourceTimestamp: sourceTime, SnapshotTimestamp: time.Now().UnixMilli(), Revision: target, FormulaVersion: f.FormulaVersion, Authority: f.Authority, Confirmed: true}
 	payload, _ := json.Marshal(map[string]any{"snapshot": s})
-	return e.archive.InsertImmutableAndEnqueue(ctx, &models.TMarketAuthoritativeSnapshot{SnapshotId: id, Authority: f.Authority, SnapshotKind: f.SnapshotKind, CategoryCode: f.CategoryCode, Market: f.Market, Symbol: f.Symbol, Price: price, SourceTimestamp: sourceTime, SnapshotTimestamp: s.SnapshotTimestamp, Revision: target, FormulaVersion: f.FormulaVersion, RawPayload: string(raw), CreateTimes: s.SnapshotTimestamp}, string(payload))
+	return e.archive.InsertImmutableAndEnqueue(ctx, &models.TItickAuthoritativeSnapshot{SnapshotId: id, Authority: f.Authority, SnapshotKind: f.SnapshotKind, CategoryCode: f.CategoryCode, Market: f.Market, Symbol: f.Symbol, Price: price, SourceTimestamp: sourceTime, SnapshotTimestamp: s.SnapshotTimestamp, Revision: target, FormulaVersion: f.FormulaVersion, RawPayload: string(raw), CreateTimes: s.SnapshotTimestamp}, string(payload))
 }
 
 // ReplayEvaluationAudit recalculates a published formula solely from its
@@ -363,7 +363,7 @@ func deduplicateInputsWithAudit(inputs []Input) ([]Input, []Input) {
 	return accepted, rejected
 }
 
-func effectiveMinInputCount(f *models.TMarketPriceFormula) int64 {
+func effectiveMinInputCount(f *models.TItickPriceFormula) int64 {
 	if f == nil {
 		return 1
 	}
@@ -408,7 +408,7 @@ func filterDeviationWithAudit(in []Input, bps int64) ([]Input, []Input) {
 	return out, rejected
 }
 
-func deterministicSnapshotID(f *models.TMarketPriceFormula, price decimal.Decimal, raw []byte) string {
+func deterministicSnapshotID(f *models.TItickPriceFormula, price decimal.Decimal, raw []byte) string {
 	sum := sha256.Sum256(append([]byte(f.Authority+"|"+f.SnapshotKind+"|"+f.CategoryCode+"|"+f.Market+"|"+f.Symbol+"|"+price.String()+"|"), raw...))
 	return hex.EncodeToString(sum[:])
 }

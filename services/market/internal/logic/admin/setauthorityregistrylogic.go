@@ -57,7 +57,7 @@ func (l *SetAuthorityRegistryLogic) SetAuthorityRegistry(in *market.SetAuthority
 		} else if !errors.Is(findErr, models.ErrNotFound) {
 			return nil, findErr
 		}
-		row := &models.TMarketAuthorityRegistry{
+		row := &models.TItickAuthorityRegistry{
 			Authority:    authority,
 			ProviderCode: providerCode,
 			ProducerType: producerType,

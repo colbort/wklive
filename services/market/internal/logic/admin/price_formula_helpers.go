@@ -115,7 +115,7 @@ func distinctAuthorityCount(components []priceengine.Component) int {
 	return len(sources)
 }
 
-func toPriceFormulaProto(row *models.TMarketPriceFormula) *market.PriceFormulaData {
+func toPriceFormulaProto(row *models.TItickPriceFormula) *market.PriceFormulaData {
 	if row == nil {
 		return nil
 	}

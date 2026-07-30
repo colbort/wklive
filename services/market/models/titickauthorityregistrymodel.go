@@ -11,16 +11,16 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TMarketAuthorityRegistryModel = (*customTMarketAuthorityRegistryModel)(nil)
+var _ TItickAuthorityRegistryModel = (*customTMarketAuthorityRegistryModel)(nil)
 
 type (
-	// TMarketAuthorityRegistryModel is an interface to be customized, add more methods here,
+	// TItickAuthorityRegistryModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTMarketAuthorityRegistryModel.
-	TMarketAuthorityRegistryModel interface {
-		tMarketAuthorityRegistryModel
-		FindEnabled(context.Context, string) (*TMarketAuthorityRegistry, error)
-		Create(context.Context, *TMarketAuthorityRegistry) (int64, error)
-		FindPage(context.Context, AuthorityRegistryFilter, int64, int64) ([]*TMarketAuthorityRegistry, int64, error)
+	TItickAuthorityRegistryModel interface {
+		tItickAuthorityRegistryModel
+		FindEnabled(context.Context, string) (*TItickAuthorityRegistry, error)
+		Create(context.Context, *TItickAuthorityRegistry) (int64, error)
+		FindPage(context.Context, AuthorityRegistryFilter, int64, int64) ([]*TItickAuthorityRegistry, int64, error)
 		CountActiveFormulaReferences(context.Context, string) (int64, error)
 		UpdateConfigVersioned(context.Context, int64, int64, string, int64, int64) (bool, error)
 	}
@@ -36,13 +36,13 @@ type (
 )
 
 // NewTMarketAuthorityRegistryModel returns a model for the database table.
-func NewTMarketAuthorityRegistryModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TMarketAuthorityRegistryModel {
+func NewTMarketAuthorityRegistryModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickAuthorityRegistryModel {
 	return &customTMarketAuthorityRegistryModel{
 		defaultTMarketAuthorityRegistryModel: newTMarketAuthorityRegistryModel(conn, c, opts...),
 	}
 }
 
-func (r *TMarketAuthorityRegistry) Allows(kind string) bool {
+func (r *TItickAuthorityRegistry) Allows(kind string) bool {
 	if r == nil || r.Status != 1 {
 		return false
 	}
@@ -59,8 +59,8 @@ func (r *TMarketAuthorityRegistry) Allows(kind string) bool {
 	return false
 }
 
-func (m *defaultTMarketAuthorityRegistryModel) FindEnabled(ctx context.Context, authority string) (*TMarketAuthorityRegistry, error) {
-	var row TMarketAuthorityRegistry
+func (m *defaultTMarketAuthorityRegistryModel) FindEnabled(ctx context.Context, authority string) (*TItickAuthorityRegistry, error) {
+	var row TItickAuthorityRegistry
 	err := m.QueryRowNoCacheCtx(ctx, &row, `SELECT id,authority,provider_code,producer_type,allowed_kinds,status,version,create_times,update_times
 FROM t_itick_authority_registry WHERE authority=? AND status=1 LIMIT 1`, strings.ToLower(strings.TrimSpace(authority)))
 	if errors.Is(err, sqlx.ErrNotFound) {
@@ -72,7 +72,7 @@ FROM t_itick_authority_registry WHERE authority=? AND status=1 LIMIT 1`, strings
 	return &row, nil
 }
 
-func (m *defaultTMarketAuthorityRegistryModel) Create(ctx context.Context, row *TMarketAuthorityRegistry) (int64, error) {
+func (m *defaultTMarketAuthorityRegistryModel) Create(ctx context.Context, row *TItickAuthorityRegistry) (int64, error) {
 	result, err := m.Insert(ctx, row)
 	if err != nil {
 		return 0, err
@@ -84,7 +84,7 @@ func (m *defaultTMarketAuthorityRegistryModel) FindPage(
 	ctx context.Context,
 	filter AuthorityRegistryFilter,
 	cursor, limit int64,
-) ([]*TMarketAuthorityRegistry, int64, error) {
+) ([]*TItickAuthorityRegistry, int64, error) {
 	if limit <= 0 || limit > 200 {
 		limit = 50
 	}
@@ -120,11 +120,11 @@ func (m *defaultTMarketAuthorityRegistryModel) FindPage(
 	}
 
 	args = append(args, limit)
-	var rows []*TMarketAuthorityRegistry
+	var rows []*TItickAuthorityRegistry
 	err := m.QueryRowsNoCacheCtx(
 		ctx,
 		&rows,
-		"SELECT "+tMarketAuthorityRegistryRows+
+		"SELECT "+tItickAuthorityRegistryRows+
 			" FROM t_itick_authority_registry WHERE "+where+" ORDER BY id LIMIT ?",
 		args...,
 	)

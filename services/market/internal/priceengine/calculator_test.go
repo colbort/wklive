@@ -36,7 +36,7 @@ func TestDeviationAuditPreservesCompleteInputSet(t *testing.T) {
 }
 
 func TestDeliverySnapshotIDIsDeterministicFromAuditFact(t *testing.T) {
-	formula := &models.TMarketPriceFormula{
+	formula := &models.TItickPriceFormula{
 		Authority:      "price-engine",
 		SnapshotKind:   "DELIVERY",
 		CategoryCode:   "crypto",
@@ -141,7 +141,7 @@ func TestIndexBasisSmoothsWithPreviousMark(t *testing.T) {
 }
 
 func TestDeliveryRequiresThreeAcceptedInputsAfterDeviation(t *testing.T) {
-	formula := &models.TMarketPriceFormula{SnapshotKind: "DELIVERY", MinInputCount: 1}
+	formula := &models.TItickPriceFormula{SnapshotKind: "DELIVERY", MinInputCount: 1}
 	if got := effectiveMinInputCount(formula); got != 3 {
 		t.Fatalf("effective delivery minimum=%d, want 3", got)
 	}

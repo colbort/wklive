@@ -12,19 +12,19 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TMarketPriceFormulaModel = (*customTMarketPriceFormulaModel)(nil)
+var _ TItickPriceFormulaModel = (*customTMarketPriceFormulaModel)(nil)
 
 type (
-	// TMarketPriceFormulaModel is an interface to be customized, add more methods here,
+	// TItickPriceFormulaModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTMarketPriceFormulaModel.
-	TMarketPriceFormulaModel interface {
-		tMarketPriceFormulaModel
-		FindDue(context.Context, int64, int64) ([]*TMarketPriceFormula, error)
+	TItickPriceFormulaModel interface {
+		tItickPriceFormulaModel
+		FindDue(context.Context, int64, int64) ([]*TItickPriceFormula, error)
 		ClaimTarget(context.Context, int64, int64, int64, int64) (bool, error)
 		ReleaseTarget(context.Context, int64, int64, int64, int64) error
 		ActivateVersion(context.Context, int64, int64) error
 		RevokeVersion(context.Context, int64, int64) error
-		FindPage(context.Context, PriceFormulaFilter, int64, int64) ([]*TMarketPriceFormula, int64, error)
+		FindPage(context.Context, PriceFormulaFilter, int64, int64) ([]*TItickPriceFormula, int64, error)
 	}
 
 	customTMarketPriceFormulaModel struct {
@@ -38,7 +38,7 @@ type (
 )
 
 // NewTMarketPriceFormulaModel returns a model for the database table.
-func NewTMarketPriceFormulaModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TMarketPriceFormulaModel {
+func NewTMarketPriceFormulaModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickPriceFormulaModel {
 	return &customTMarketPriceFormulaModel{
 		defaultTMarketPriceFormulaModel: newTMarketPriceFormulaModel(conn, c, opts...),
 	}
@@ -48,17 +48,17 @@ func NewTMarketPriceFormulaModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...c
 // sole active revision for its output. Formula content is changed by inserting
 // a new revision, never by editing the active row in place.
 func (m *defaultTMarketPriceFormulaModel) ActivateVersion(ctx context.Context, id, now int64) error {
-	var revisions []TMarketPriceFormula
+	var revisions []TItickPriceFormula
 	err := m.TransactCtx(ctx, func(ctx context.Context, session sqlx.Session) error {
-		var selected TMarketPriceFormula
-		query := fmt.Sprintf("SELECT %s FROM %s WHERE id=? FOR UPDATE", tMarketPriceFormulaRows, m.table)
+		var selected TItickPriceFormula
+		query := fmt.Sprintf("SELECT %s FROM %s WHERE id=? FOR UPDATE", tItickPriceFormulaRows, m.table)
 		if err := session.QueryRowCtx(ctx, &selected, query, id); err != nil {
 			return err
 		}
 		if selected.Status == 3 {
 			return errors.New("revoked price formula cannot be activated")
 		}
-		query = fmt.Sprintf("SELECT %s FROM %s WHERE authority=? AND snapshot_kind=? AND category_code=? AND market=? AND symbol=? FOR UPDATE", tMarketPriceFormulaRows, m.table)
+		query = fmt.Sprintf("SELECT %s FROM %s WHERE authority=? AND snapshot_kind=? AND category_code=? AND market=? AND symbol=? FOR UPDATE", tItickPriceFormulaRows, m.table)
 		if err := session.QueryRowsCtx(ctx, &revisions, query, selected.Authority, selected.SnapshotKind, selected.CategoryCode, selected.Market, selected.Symbol); err != nil {
 			return err
 		}
@@ -94,7 +94,7 @@ func (m *defaultTMarketPriceFormulaModel) RevokeVersion(ctx context.Context, id,
 	return m.DelCacheCtx(ctx, priceFormulaCacheKeys(*row)...)
 }
 
-func priceFormulaCacheKeys(rows ...TMarketPriceFormula) []string {
+func priceFormulaCacheKeys(rows ...TItickPriceFormula) []string {
 	keys := make([]string, 0, len(rows)*3)
 	for _, row := range rows {
 		keys = append(keys,
@@ -106,7 +106,7 @@ func priceFormulaCacheKeys(rows ...TMarketPriceFormula) []string {
 	return keys
 }
 
-func (m *defaultTMarketPriceFormulaModel) FindPage(ctx context.Context, filter PriceFormulaFilter, cursor, limit int64) ([]*TMarketPriceFormula, int64, error) {
+func (m *defaultTMarketPriceFormulaModel) FindPage(ctx context.Context, filter PriceFormulaFilter, cursor, limit int64) ([]*TItickPriceFormula, int64, error) {
 	if limit <= 0 || limit > 200 {
 		limit = 50
 	}
@@ -133,8 +133,8 @@ func (m *defaultTMarketPriceFormulaModel) FindPage(ctx context.Context, filter P
 		return nil, 0, err
 	}
 	args = append(args, limit)
-	var rows []*TMarketPriceFormula
-	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tMarketPriceFormulaRows+" FROM t_itick_price_formula WHERE "+where+" ORDER BY id LIMIT ?", args...)
+	var rows []*TItickPriceFormula
+	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tItickPriceFormulaRows+" FROM t_itick_price_formula WHERE "+where+" ORDER BY id LIMIT ?", args...)
 	return rows, total, err
 }
 
@@ -143,9 +143,9 @@ func (m *defaultTMarketPriceFormulaModel) ReleaseTarget(ctx context.Context, id,
 	return err
 }
 
-func (m *defaultTMarketPriceFormulaModel) FindDue(ctx context.Context, now, limit int64) ([]*TMarketPriceFormula, error) {
-	var rows []*TMarketPriceFormula
-	err := m.QueryRowsNoCacheCtx(ctx, &rows, fmt.Sprintf("SELECT %s FROM %s WHERE status=1 AND last_target_time+interval_ms<=? ORDER BY id LIMIT ?", tMarketPriceFormulaRows, m.table), now, limit)
+func (m *defaultTMarketPriceFormulaModel) FindDue(ctx context.Context, now, limit int64) ([]*TItickPriceFormula, error) {
+	var rows []*TItickPriceFormula
+	err := m.QueryRowsNoCacheCtx(ctx, &rows, fmt.Sprintf("SELECT %s FROM %s WHERE status=1 AND last_target_time+interval_ms<=? ORDER BY id LIMIT ?", tItickPriceFormulaRows, m.table), now, limit)
 	return rows, err
 }
 

@@ -117,11 +117,11 @@ func (s *GapRepairService) scanOnce() error {
 	// Scan every closed minute. The five-minute reconciliation remains useful
 	// for correction, but gap detection must not depend on an external scheduler.
 	cutoff := time.Now().UnixMilli()/minuteMs*minuteMs - minuteMs
-	return mr.MapReduceVoid(func(source chan<- *models.TMarketProduct) {
+	return mr.MapReduceVoid(func(source chan<- *models.TItickProduct) {
 		for _, product := range products {
 			source <- product
 		}
-	}, func(product *models.TMarketProduct, writer mr.Writer[error], _ func(error)) {
+	}, func(product *models.TItickProduct, writer mr.Writer[error], _ func(error)) {
 		if err := s.scanProduct(product, cutoff); err != nil {
 			writer.Write(fmt.Errorf("product=%d symbol=%s: %w", product.Id, product.Symbol, err))
 		}
@@ -132,7 +132,7 @@ func (s *GapRepairService) scanOnce() error {
 	}, mr.WithContext(s.ctx), mr.WithWorkers(4))
 }
 
-func (s *GapRepairService) scanProduct(product *models.TMarketProduct, cutoff int64) error {
+func (s *GapRepairService) scanProduct(product *models.TItickProduct, cutoff int64) error {
 	category := strings.ToLower(strings.TrimSpace(product.CategoryCode))
 	market := strings.ToUpper(strings.TrimSpace(product.Market))
 	symbol := strings.ToUpper(strings.TrimSpace(product.Symbol))
@@ -183,7 +183,7 @@ func (s *GapRepairService) scanProduct(product *models.TMarketProduct, cutoff in
 	return s.svcCtx.DataCache.Set(s.ctx, stateKey, raw, 30*24*time.Hour).Err()
 }
 
-func (s *GapRepairService) expectedGapJobs(product *models.TMarketProduct, start, end int64) []GapRepairJob {
+func (s *GapRepairService) expectedGapJobs(product *models.TItickProduct, start, end int64) []GapRepairJob {
 	category := strings.ToLower(strings.TrimSpace(product.CategoryCode))
 	market := strings.ToUpper(strings.TrimSpace(product.Market))
 	exchange := strings.TrimSpace(product.Exchange)

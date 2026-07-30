@@ -20,21 +20,21 @@ import (
 )
 
 var (
-	tMarketQuoteFieldNames          = builder.RawFieldNames(&TMarketQuote{})
-	tMarketQuoteRows                = strings.Join(tMarketQuoteFieldNames, ",")
-	tMarketQuoteRowsExpectAutoSet   = strings.Join(stringx.Remove(tMarketQuoteFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	tMarketQuoteRowsWithPlaceHolder = strings.Join(stringx.Remove(tMarketQuoteFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	tItickQuoteFieldNames          = builder.RawFieldNames(&TItickQuote{})
+	tItickQuoteRows                = strings.Join(tItickQuoteFieldNames, ",")
+	tItickQuoteRowsExpectAutoSet   = strings.Join(stringx.Remove(tItickQuoteFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	tItickQuoteRowsWithPlaceHolder = strings.Join(stringx.Remove(tItickQuoteFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTMarketQuoteIdPrefix           = "cache:tMarketQuote:id:"
-	cacheTMarketQuoteMarketSymbolPrefix = "cache:tMarketQuote:market:symbol:"
+	cacheTMarketQuoteIdPrefix           = "cache:tItickQuote:id:"
+	cacheTMarketQuoteMarketSymbolPrefix = "cache:tItickQuote:market:symbol:"
 )
 
 type (
-	tMarketQuoteModel interface {
-		Insert(ctx context.Context, data *TMarketQuote) (sql.Result, error)
-		FindOne(ctx context.Context, id int64) (*TMarketQuote, error)
-		FindOneByMarketSymbol(ctx context.Context, market string, symbol string) (*TMarketQuote, error)
-		Update(ctx context.Context, data *TMarketQuote) error
+	tItickQuoteModel interface {
+		Insert(ctx context.Context, data *TItickQuote) (sql.Result, error)
+		FindOne(ctx context.Context, id int64) (*TItickQuote, error)
+		FindOneByMarketSymbol(ctx context.Context, market string, symbol string) (*TItickQuote, error)
+		Update(ctx context.Context, data *TItickQuote) error
 		Delete(ctx context.Context, id int64) error
 	}
 
@@ -43,7 +43,7 @@ type (
 		table string
 	}
 
-	TMarketQuote struct {
+	TItickQuote struct {
 		Id             int64           `db:"id"`               // 主键ID
 		CategoryCode   string          `db:"category_code"`    // 产品类型标识, 如 forex/crypto/stock/future/indices/fund
 		Market         string          `db:"market"`           // 市场/地区，如 GB
@@ -77,20 +77,20 @@ func (m *defaultTMarketQuoteModel) Delete(ctx context.Context, id int64) error {
 		return err
 	}
 
-	tMarketQuoteIdKey := fmt.Sprintf("%s%v", cacheTMarketQuoteIdPrefix, id)
-	tMarketQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTMarketQuoteMarketSymbolPrefix, data.Market, data.Symbol)
+	tItickQuoteIdKey := fmt.Sprintf("%s%v", cacheTMarketQuoteIdPrefix, id)
+	tItickQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTMarketQuoteMarketSymbolPrefix, data.Market, data.Symbol)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tMarketQuoteIdKey, tMarketQuoteMarketSymbolKey)
+	}, tItickQuoteIdKey, tItickQuoteMarketSymbolKey)
 	return err
 }
 
-func (m *defaultTMarketQuoteModel) FindOne(ctx context.Context, id int64) (*TMarketQuote, error) {
-	tMarketQuoteIdKey := fmt.Sprintf("%s%v", cacheTMarketQuoteIdPrefix, id)
-	var resp TMarketQuote
-	err := m.QueryRowCtx(ctx, &resp, tMarketQuoteIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
-		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tMarketQuoteRows, m.table)
+func (m *defaultTMarketQuoteModel) FindOne(ctx context.Context, id int64) (*TItickQuote, error) {
+	tItickQuoteIdKey := fmt.Sprintf("%s%v", cacheTMarketQuoteIdPrefix, id)
+	var resp TItickQuote
+	err := m.QueryRowCtx(ctx, &resp, tItickQuoteIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
+		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickQuoteRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
 	switch err {
@@ -103,11 +103,11 @@ func (m *defaultTMarketQuoteModel) FindOne(ctx context.Context, id int64) (*TMar
 	}
 }
 
-func (m *defaultTMarketQuoteModel) FindOneByMarketSymbol(ctx context.Context, market string, symbol string) (*TMarketQuote, error) {
-	tMarketQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTMarketQuoteMarketSymbolPrefix, market, symbol)
-	var resp TMarketQuote
-	err := m.QueryRowIndexCtx(ctx, &resp, tMarketQuoteMarketSymbolKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `market` = ? and `symbol` = ? limit 1", tMarketQuoteRows, m.table)
+func (m *defaultTMarketQuoteModel) FindOneByMarketSymbol(ctx context.Context, market string, symbol string) (*TItickQuote, error) {
+	tItickQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTMarketQuoteMarketSymbolPrefix, market, symbol)
+	var resp TItickQuote
+	err := m.QueryRowIndexCtx(ctx, &resp, tItickQuoteMarketSymbolKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `market` = ? and `symbol` = ? limit 1", tItickQuoteRows, m.table)
 		if err := conn.QueryRowCtx(ctx, &resp, query, market, symbol); err != nil {
 			return nil, err
 		}
@@ -123,28 +123,28 @@ func (m *defaultTMarketQuoteModel) FindOneByMarketSymbol(ctx context.Context, ma
 	}
 }
 
-func (m *defaultTMarketQuoteModel) Insert(ctx context.Context, data *TMarketQuote) (sql.Result, error) {
-	tMarketQuoteIdKey := fmt.Sprintf("%s%v", cacheTMarketQuoteIdPrefix, data.Id)
-	tMarketQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTMarketQuoteMarketSymbolPrefix, data.Market, data.Symbol)
+func (m *defaultTMarketQuoteModel) Insert(ctx context.Context, data *TItickQuote) (sql.Result, error) {
+	tItickQuoteIdKey := fmt.Sprintf("%s%v", cacheTMarketQuoteIdPrefix, data.Id)
+	tItickQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTMarketQuoteMarketSymbolPrefix, data.Market, data.Symbol)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tMarketQuoteRowsExpectAutoSet)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickQuoteRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.CategoryCode, data.Market, data.Symbol, data.LastPrice, data.OpenPrice, data.HighPrice, data.LowPrice, data.PrevClosePrice, data.ChangeValue, data.ChangeRate, data.Volume, data.Turnover, data.QuoteTs, data.TradeStatus, data.CreateTimes, data.UpdateTimes)
-	}, tMarketQuoteIdKey, tMarketQuoteMarketSymbolKey)
+	}, tItickQuoteIdKey, tItickQuoteMarketSymbolKey)
 	return ret, err
 }
 
-func (m *defaultTMarketQuoteModel) Update(ctx context.Context, newData *TMarketQuote) error {
+func (m *defaultTMarketQuoteModel) Update(ctx context.Context, newData *TItickQuote) error {
 	data, err := m.FindOne(ctx, newData.Id)
 	if err != nil {
 		return err
 	}
 
-	tMarketQuoteIdKey := fmt.Sprintf("%s%v", cacheTMarketQuoteIdPrefix, data.Id)
-	tMarketQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTMarketQuoteMarketSymbolPrefix, data.Market, data.Symbol)
+	tItickQuoteIdKey := fmt.Sprintf("%s%v", cacheTMarketQuoteIdPrefix, data.Id)
+	tItickQuoteMarketSymbolKey := fmt.Sprintf("%s%v:%v", cacheTMarketQuoteMarketSymbolPrefix, data.Market, data.Symbol)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tMarketQuoteRowsWithPlaceHolder)
+		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickQuoteRowsWithPlaceHolder)
 		return conn.ExecCtx(ctx, query, newData.CategoryCode, newData.Market, newData.Symbol, newData.LastPrice, newData.OpenPrice, newData.HighPrice, newData.LowPrice, newData.PrevClosePrice, newData.ChangeValue, newData.ChangeRate, newData.Volume, newData.Turnover, newData.QuoteTs, newData.TradeStatus, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tMarketQuoteIdKey, tMarketQuoteMarketSymbolKey)
+	}, tItickQuoteIdKey, tItickQuoteMarketSymbolKey)
 	return err
 }
 
@@ -153,7 +153,7 @@ func (m *defaultTMarketQuoteModel) formatPrimary(primary any) string {
 }
 
 func (m *defaultTMarketQuoteModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
-	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tMarketQuoteRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickQuoteRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 

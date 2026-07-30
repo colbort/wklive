@@ -18,21 +18,21 @@ import (
 )
 
 var (
-	tMarketKlineSyncProgressFieldNames          = builder.RawFieldNames(&TMarketKlineSyncProgress{})
-	tMarketKlineSyncProgressRows                = strings.Join(tMarketKlineSyncProgressFieldNames, ",")
-	tMarketKlineSyncProgressRowsExpectAutoSet   = strings.Join(stringx.Remove(tMarketKlineSyncProgressFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	tMarketKlineSyncProgressRowsWithPlaceHolder = strings.Join(stringx.Remove(tMarketKlineSyncProgressFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	tItickKlineSyncProgressFieldNames          = builder.RawFieldNames(&TItickKlineSyncProgress{})
+	tItickKlineSyncProgressRows                = strings.Join(tItickKlineSyncProgressFieldNames, ",")
+	tItickKlineSyncProgressRowsExpectAutoSet   = strings.Join(stringx.Remove(tItickKlineSyncProgressFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	tItickKlineSyncProgressRowsWithPlaceHolder = strings.Join(stringx.Remove(tItickKlineSyncProgressFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTMarketKlineSyncProgressIdPrefix                               = "cache:tMarketKlineSyncProgress:id:"
-	cacheTMarketKlineSyncProgressCategoryCodeMarketSymbolIntervalPrefix = "cache:tMarketKlineSyncProgress:categoryCode:market:symbol:interval:"
+	cacheTMarketKlineSyncProgressIdPrefix                               = "cache:tItickKlineSyncProgress:id:"
+	cacheTMarketKlineSyncProgressCategoryCodeMarketSymbolIntervalPrefix = "cache:tItickKlineSyncProgress:categoryCode:market:symbol:interval:"
 )
 
 type (
-	tMarketKlineSyncProgressModel interface {
-		Insert(ctx context.Context, data *TMarketKlineSyncProgress) (sql.Result, error)
-		FindOne(ctx context.Context, id int64) (*TMarketKlineSyncProgress, error)
-		FindOneByCategoryCodeMarketSymbolInterval(ctx context.Context, categoryCode string, market string, symbol string, interval string) (*TMarketKlineSyncProgress, error)
-		Update(ctx context.Context, data *TMarketKlineSyncProgress) error
+	tItickKlineSyncProgressModel interface {
+		Insert(ctx context.Context, data *TItickKlineSyncProgress) (sql.Result, error)
+		FindOne(ctx context.Context, id int64) (*TItickKlineSyncProgress, error)
+		FindOneByCategoryCodeMarketSymbolInterval(ctx context.Context, categoryCode string, market string, symbol string, interval string) (*TItickKlineSyncProgress, error)
+		Update(ctx context.Context, data *TItickKlineSyncProgress) error
 		Delete(ctx context.Context, id int64) error
 	}
 
@@ -41,7 +41,7 @@ type (
 		table string
 	}
 
-	TMarketKlineSyncProgress struct {
+	TItickKlineSyncProgress struct {
 		Id              int64  `db:"id"`                // 主键ID
 		CategoryCode    string `db:"category_code"`     // 品类代码：stock/forex/indices/crypto/future/fund
 		Market          string `db:"market"`            // 市场代码：如 US、HK、CN、BA、GB
@@ -75,20 +75,20 @@ func (m *defaultTMarketKlineSyncProgressModel) Delete(ctx context.Context, id in
 		return err
 	}
 
-	tMarketKlineSyncProgressCategoryCodeMarketSymbolIntervalKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTMarketKlineSyncProgressCategoryCodeMarketSymbolIntervalPrefix, data.CategoryCode, data.Market, data.Symbol, data.Interval)
-	tMarketKlineSyncProgressIdKey := fmt.Sprintf("%s%v", cacheTMarketKlineSyncProgressIdPrefix, id)
+	tItickKlineSyncProgressCategoryCodeMarketSymbolIntervalKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTMarketKlineSyncProgressCategoryCodeMarketSymbolIntervalPrefix, data.CategoryCode, data.Market, data.Symbol, data.Interval)
+	tItickKlineSyncProgressIdKey := fmt.Sprintf("%s%v", cacheTMarketKlineSyncProgressIdPrefix, id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tMarketKlineSyncProgressCategoryCodeMarketSymbolIntervalKey, tMarketKlineSyncProgressIdKey)
+	}, tItickKlineSyncProgressCategoryCodeMarketSymbolIntervalKey, tItickKlineSyncProgressIdKey)
 	return err
 }
 
-func (m *defaultTMarketKlineSyncProgressModel) FindOne(ctx context.Context, id int64) (*TMarketKlineSyncProgress, error) {
-	tMarketKlineSyncProgressIdKey := fmt.Sprintf("%s%v", cacheTMarketKlineSyncProgressIdPrefix, id)
-	var resp TMarketKlineSyncProgress
-	err := m.QueryRowCtx(ctx, &resp, tMarketKlineSyncProgressIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
-		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tMarketKlineSyncProgressRows, m.table)
+func (m *defaultTMarketKlineSyncProgressModel) FindOne(ctx context.Context, id int64) (*TItickKlineSyncProgress, error) {
+	tItickKlineSyncProgressIdKey := fmt.Sprintf("%s%v", cacheTMarketKlineSyncProgressIdPrefix, id)
+	var resp TItickKlineSyncProgress
+	err := m.QueryRowCtx(ctx, &resp, tItickKlineSyncProgressIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
+		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickKlineSyncProgressRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
 	switch err {
@@ -101,11 +101,11 @@ func (m *defaultTMarketKlineSyncProgressModel) FindOne(ctx context.Context, id i
 	}
 }
 
-func (m *defaultTMarketKlineSyncProgressModel) FindOneByCategoryCodeMarketSymbolInterval(ctx context.Context, categoryCode string, market string, symbol string, interval string) (*TMarketKlineSyncProgress, error) {
-	tMarketKlineSyncProgressCategoryCodeMarketSymbolIntervalKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTMarketKlineSyncProgressCategoryCodeMarketSymbolIntervalPrefix, categoryCode, market, symbol, interval)
-	var resp TMarketKlineSyncProgress
-	err := m.QueryRowIndexCtx(ctx, &resp, tMarketKlineSyncProgressCategoryCodeMarketSymbolIntervalKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `category_code` = ? and `market` = ? and `symbol` = ? and `interval` = ? limit 1", tMarketKlineSyncProgressRows, m.table)
+func (m *defaultTMarketKlineSyncProgressModel) FindOneByCategoryCodeMarketSymbolInterval(ctx context.Context, categoryCode string, market string, symbol string, interval string) (*TItickKlineSyncProgress, error) {
+	tItickKlineSyncProgressCategoryCodeMarketSymbolIntervalKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTMarketKlineSyncProgressCategoryCodeMarketSymbolIntervalPrefix, categoryCode, market, symbol, interval)
+	var resp TItickKlineSyncProgress
+	err := m.QueryRowIndexCtx(ctx, &resp, tItickKlineSyncProgressCategoryCodeMarketSymbolIntervalKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `category_code` = ? and `market` = ? and `symbol` = ? and `interval` = ? limit 1", tItickKlineSyncProgressRows, m.table)
 		if err := conn.QueryRowCtx(ctx, &resp, query, categoryCode, market, symbol, interval); err != nil {
 			return nil, err
 		}
@@ -121,28 +121,28 @@ func (m *defaultTMarketKlineSyncProgressModel) FindOneByCategoryCodeMarketSymbol
 	}
 }
 
-func (m *defaultTMarketKlineSyncProgressModel) Insert(ctx context.Context, data *TMarketKlineSyncProgress) (sql.Result, error) {
-	tMarketKlineSyncProgressCategoryCodeMarketSymbolIntervalKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTMarketKlineSyncProgressCategoryCodeMarketSymbolIntervalPrefix, data.CategoryCode, data.Market, data.Symbol, data.Interval)
-	tMarketKlineSyncProgressIdKey := fmt.Sprintf("%s%v", cacheTMarketKlineSyncProgressIdPrefix, data.Id)
+func (m *defaultTMarketKlineSyncProgressModel) Insert(ctx context.Context, data *TItickKlineSyncProgress) (sql.Result, error) {
+	tItickKlineSyncProgressCategoryCodeMarketSymbolIntervalKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTMarketKlineSyncProgressCategoryCodeMarketSymbolIntervalPrefix, data.CategoryCode, data.Market, data.Symbol, data.Interval)
+	tItickKlineSyncProgressIdKey := fmt.Sprintf("%s%v", cacheTMarketKlineSyncProgressIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tMarketKlineSyncProgressRowsExpectAutoSet)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickKlineSyncProgressRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.CategoryCode, data.Market, data.Symbol, data.Interval, data.LatestTs, data.ContiguousTs, data.RecentCheckTs, data.OldestTs, data.FullSynced, data.SyncStatus, data.LastSyncMode, data.LastSyncMessage, data.LastSuccessTime, data.LastFailTime, data.CreateTimes, data.UpdateTimes)
-	}, tMarketKlineSyncProgressCategoryCodeMarketSymbolIntervalKey, tMarketKlineSyncProgressIdKey)
+	}, tItickKlineSyncProgressCategoryCodeMarketSymbolIntervalKey, tItickKlineSyncProgressIdKey)
 	return ret, err
 }
 
-func (m *defaultTMarketKlineSyncProgressModel) Update(ctx context.Context, newData *TMarketKlineSyncProgress) error {
+func (m *defaultTMarketKlineSyncProgressModel) Update(ctx context.Context, newData *TItickKlineSyncProgress) error {
 	data, err := m.FindOne(ctx, newData.Id)
 	if err != nil {
 		return err
 	}
 
-	tMarketKlineSyncProgressCategoryCodeMarketSymbolIntervalKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTMarketKlineSyncProgressCategoryCodeMarketSymbolIntervalPrefix, data.CategoryCode, data.Market, data.Symbol, data.Interval)
-	tMarketKlineSyncProgressIdKey := fmt.Sprintf("%s%v", cacheTMarketKlineSyncProgressIdPrefix, data.Id)
+	tItickKlineSyncProgressCategoryCodeMarketSymbolIntervalKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTMarketKlineSyncProgressCategoryCodeMarketSymbolIntervalPrefix, data.CategoryCode, data.Market, data.Symbol, data.Interval)
+	tItickKlineSyncProgressIdKey := fmt.Sprintf("%s%v", cacheTMarketKlineSyncProgressIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tMarketKlineSyncProgressRowsWithPlaceHolder)
+		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickKlineSyncProgressRowsWithPlaceHolder)
 		return conn.ExecCtx(ctx, query, newData.CategoryCode, newData.Market, newData.Symbol, newData.Interval, newData.LatestTs, newData.ContiguousTs, newData.RecentCheckTs, newData.OldestTs, newData.FullSynced, newData.SyncStatus, newData.LastSyncMode, newData.LastSyncMessage, newData.LastSuccessTime, newData.LastFailTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tMarketKlineSyncProgressCategoryCodeMarketSymbolIntervalKey, tMarketKlineSyncProgressIdKey)
+	}, tItickKlineSyncProgressCategoryCodeMarketSymbolIntervalKey, tItickKlineSyncProgressIdKey)
 	return err
 }
 
@@ -151,7 +151,7 @@ func (m *defaultTMarketKlineSyncProgressModel) formatPrimary(primary any) string
 }
 
 func (m *defaultTMarketKlineSyncProgressModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
-	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tMarketKlineSyncProgressRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tItickKlineSyncProgressRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 

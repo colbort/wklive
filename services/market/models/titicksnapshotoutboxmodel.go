@@ -10,7 +10,7 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TMarketSnapshotOutboxModel = (*customTMarketSnapshotOutboxModel)(nil)
+var _ TItickSnapshotOutboxModel = (*customTMarketSnapshotOutboxModel)(nil)
 
 type (
 	SnapshotOutboxHealth struct {
@@ -21,18 +21,18 @@ type (
 		OldestOpenAt    int64 `db:"oldest_open_at"`
 	}
 
-	// TMarketSnapshotOutboxModel is an interface to be customized, add more methods here,
+	// TItickSnapshotOutboxModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTMarketSnapshotOutboxModel.
-	TMarketSnapshotOutboxModel interface {
-		tMarketSnapshotOutboxModel
-		FindPending(context.Context, int64, int64) ([]*TMarketSnapshotOutbox, error)
+	TItickSnapshotOutboxModel interface {
+		tItickSnapshotOutboxModel
+		FindPending(context.Context, int64, int64) ([]*TItickSnapshotOutbox, error)
 		Claim(context.Context, int64, int64) (bool, error)
 		MarkSuccess(context.Context, int64, int64) error
 		MarkFailure(context.Context, int64, string, int64) error
 		MarkRedisPublished(context.Context, int64, int64) error
 		MarkEventPublished(context.Context, int64, int64) error
 		CompleteAfterEventPublished(context.Context, int64, int64) error
-		FindPage(context.Context, int64, string, int64, int64) ([]*TMarketSnapshotOutbox, int64, error)
+		FindPage(context.Context, int64, string, int64, int64) ([]*TItickSnapshotOutbox, int64, error)
 		RetryFailed(context.Context, int64, int64) error
 		Health(context.Context) (*SnapshotOutboxHealth, error)
 		DeleteSucceededBefore(context.Context, int64, int64) (int64, error)
@@ -44,7 +44,7 @@ type (
 )
 
 // NewTMarketSnapshotOutboxModel returns a model for the database table.
-func NewTMarketSnapshotOutboxModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TMarketSnapshotOutboxModel {
+func NewTMarketSnapshotOutboxModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickSnapshotOutboxModel {
 	return &customTMarketSnapshotOutboxModel{
 		defaultTMarketSnapshotOutboxModel: newTMarketSnapshotOutboxModel(conn, c, opts...),
 	}
@@ -130,7 +130,7 @@ func (m *defaultTMarketSnapshotOutboxModel) Health(ctx context.Context) (*Snapsh
 	return &health, nil
 }
 
-func (m *defaultTMarketSnapshotOutboxModel) FindPage(ctx context.Context, status int64, snapshotID string, cursor, limit int64) ([]*TMarketSnapshotOutbox, int64, error) {
+func (m *defaultTMarketSnapshotOutboxModel) FindPage(ctx context.Context, status int64, snapshotID string, cursor, limit int64) ([]*TItickSnapshotOutbox, int64, error) {
 	if limit <= 0 || limit > 200 {
 		limit = 50
 	}
@@ -149,8 +149,8 @@ func (m *defaultTMarketSnapshotOutboxModel) FindPage(ctx context.Context, status
 		return nil, 0, err
 	}
 	args = append(args, limit)
-	var rows []*TMarketSnapshotOutbox
-	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tMarketSnapshotOutboxRows+" FROM t_itick_snapshot_outbox WHERE "+where+" ORDER BY id LIMIT ?", args...)
+	var rows []*TItickSnapshotOutbox
+	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tItickSnapshotOutboxRows+" FROM t_itick_snapshot_outbox WHERE "+where+" ORDER BY id LIMIT ?", args...)
 	return rows, total, err
 }
 
@@ -176,9 +176,9 @@ func (m *defaultTMarketSnapshotOutboxModel) RetryFailed(ctx context.Context, id,
 	)
 }
 
-func (m *defaultTMarketSnapshotOutboxModel) FindPending(ctx context.Context, now, limit int64) ([]*TMarketSnapshotOutbox, error) {
-	var rows []*TMarketSnapshotOutbox
-	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tMarketSnapshotOutboxRows+" FROM t_itick_snapshot_outbox WHERE ((status IN (1,4) AND next_retry_at<=?) OR (status=2 AND update_times<=?)) ORDER BY id LIMIT ?", now, now-60000, limit)
+func (m *defaultTMarketSnapshotOutboxModel) FindPending(ctx context.Context, now, limit int64) ([]*TItickSnapshotOutbox, error) {
+	var rows []*TItickSnapshotOutbox
+	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tItickSnapshotOutboxRows+" FROM t_itick_snapshot_outbox WHERE ((status IN (1,4) AND next_retry_at<=?) OR (status=2 AND update_times<=?)) ORDER BY id LIMIT ?", now, now-60000, limit)
 	return rows, err
 }
 func (m *defaultTMarketSnapshotOutboxModel) Claim(ctx context.Context, id, now int64) (bool, error) {

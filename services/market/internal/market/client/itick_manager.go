@@ -25,8 +25,8 @@ type MarketManager struct {
 	wsUrl string
 	token string
 
-	model        models.TMarketCategoryModel
-	productModel models.TMarketProductModel
+	model        models.TItickCategoryModel
+	productModel models.TItickProductModel
 
 	busRedis    *redis.Client
 	lockRedis   *redis.Client
@@ -186,8 +186,8 @@ func NewMarketManager(
 	wsUrl string,
 	apiURL string,
 	token string,
-	model models.TMarketCategoryModel,
-	productModel models.TMarketProductModel,
+	model models.TItickCategoryModel,
+	productModel models.TItickProductModel,
 	busRedis *redis.Client,
 	lockRedis *redis.Client,
 	marketCache *cache.MarketDataCache,

@@ -9,7 +9,7 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TMarketCategoryModel = (*customTMarketCategoryModel)(nil)
+var _ TItickCategoryModel = (*customTMarketCategoryModel)(nil)
 
 type (
 	MarketCategoryPageFilter struct {
@@ -18,12 +18,12 @@ type (
 		AppVisible   int32
 	}
 
-	// TMarketCategoryModel is an interface to be customized, add more methods here,
+	// TItickCategoryModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTMarketCategoryModel.
-	TMarketCategoryModel interface {
-		tMarketCategoryModel
-		FindAll(ctx context.Context) ([]*TMarketCategory, error)
-		FindPage(ctx context.Context, filter MarketCategoryPageFilter, cursor int64, limit int64) ([]*TMarketCategory, int64, error)
+	TItickCategoryModel interface {
+		tItickCategoryModel
+		FindAll(ctx context.Context) ([]*TItickCategory, error)
+		FindPage(ctx context.Context, filter MarketCategoryPageFilter, cursor int64, limit int64) ([]*TItickCategory, int64, error)
 	}
 
 	customTMarketCategoryModel struct {
@@ -32,20 +32,20 @@ type (
 )
 
 // NewTMarketCategoryModel returns a model for the database table.
-func NewTMarketCategoryModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TMarketCategoryModel {
+func NewTMarketCategoryModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickCategoryModel {
 	return &customTMarketCategoryModel{
 		defaultTMarketCategoryModel: newTMarketCategoryModel(conn, c, opts...),
 	}
 }
 
-func (m *defaultTMarketCategoryModel) FindAll(ctx context.Context) ([]*TMarketCategory, error) {
-	query := fmt.Sprintf("select %s from %s", tMarketCategoryRows, m.table)
-	var resp []*TMarketCategory
+func (m *defaultTMarketCategoryModel) FindAll(ctx context.Context) ([]*TItickCategory, error) {
+	query := fmt.Sprintf("select %s from %s", tItickCategoryRows, m.table)
+	var resp []*TItickCategory
 	err := m.QueryRowsNoCacheCtx(ctx, &resp, query)
 	return resp, err
 }
 
-func (m *defaultTMarketCategoryModel) FindPage(ctx context.Context, filter MarketCategoryPageFilter, cursor int64, limit int64) ([]*TMarketCategory, int64, error) {
+func (m *defaultTMarketCategoryModel) FindPage(ctx context.Context, filter MarketCategoryPageFilter, cursor int64, limit int64) ([]*TItickCategory, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -75,7 +75,7 @@ func (m *defaultTMarketCategoryModel) FindPage(ctx context.Context, filter Marke
 			WHERE %s
 			ORDER BY id DESC
 			LIMIT ?`,
-			tMarketCategoryRows, m.table, where,
+			tItickCategoryRows, m.table, where,
 		)
 		listArgs = append(listArgs, limit)
 	} else {
@@ -86,12 +86,12 @@ func (m *defaultTMarketCategoryModel) FindPage(ctx context.Context, filter Marke
 			WHERE %s AND id < ?
 			ORDER BY id DESC
 			LIMIT ?`,
-			tMarketCategoryRows, m.table, where,
+			tItickCategoryRows, m.table, where,
 		)
 		listArgs = append(listArgs, cursor, limit)
 	}
 
-	var list []*TMarketCategory
+	var list []*TItickCategory
 	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
 		return nil, 0, err
 	}

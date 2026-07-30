@@ -18,11 +18,11 @@ type unavailableArchive struct {
 	inserted int
 }
 
-func (a *unavailableArchive) FindAtOrBefore(context.Context, string, string, string, string, string, int64, int64) (*models.TMarketAuthoritativeSnapshot, error) {
+func (a *unavailableArchive) FindAtOrBefore(context.Context, string, string, string, string, string, int64, int64) (*models.TItickAuthoritativeSnapshot, error) {
 	return nil, sql.ErrNoRows
 }
 
-func (a *unavailableArchive) InsertImmutableAndEnqueue(context.Context, *models.TMarketAuthoritativeSnapshot, string) error {
+func (a *unavailableArchive) InsertImmutableAndEnqueue(context.Context, *models.TItickAuthoritativeSnapshot, string) error {
 	a.inserted++
 	return nil
 }
@@ -30,7 +30,7 @@ func (a *unavailableArchive) InsertImmutableAndEnqueue(context.Context, *models.
 func TestTemporaryMissingInputDoesNotPublishSnapshot(t *testing.T) {
 	archive := &unavailableArchive{}
 	engine := &Engine{archive: archive}
-	formula := &models.TMarketPriceFormula{
+	formula := &models.TItickPriceFormula{
 		FormulaNo: "BTCUSDT-DELIVERY-v1", SnapshotKind: "DELIVERY",
 		CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT",
 		Algorithm:     int64(market.PriceAlgorithm_PRICE_ALGORITHM_MEDIAN),
@@ -55,10 +55,10 @@ type pricedArchive struct {
 	sourceTimes map[string]int64
 	lookups     map[string]int64
 	inserted    int
-	last        *models.TMarketAuthoritativeSnapshot
+	last        *models.TItickAuthoritativeSnapshot
 }
 
-func (a *pricedArchive) FindAtOrBefore(_ context.Context, _, _, _, market, _ string, target, _ int64) (*models.TMarketAuthoritativeSnapshot, error) {
+func (a *pricedArchive) FindAtOrBefore(_ context.Context, _, _, _, market, _ string, target, _ int64) (*models.TItickAuthoritativeSnapshot, error) {
 	if a.lookups == nil {
 		a.lookups = make(map[string]int64)
 	}
@@ -71,14 +71,14 @@ func (a *pricedArchive) FindAtOrBefore(_ context.Context, _, _, _, market, _ str
 	if configured, exists := a.sourceTimes[market]; exists {
 		sourceTimestamp = configured
 	}
-	return &models.TMarketAuthoritativeSnapshot{
+	return &models.TItickAuthoritativeSnapshot{
 		SnapshotId:      "snapshot-" + market,
 		Price:           decimal.RequireFromString(price),
 		SourceTimestamp: sourceTimestamp,
 	}, nil
 }
 
-func (a *pricedArchive) InsertImmutableAndEnqueue(_ context.Context, snapshot *models.TMarketAuthoritativeSnapshot, _ string) error {
+func (a *pricedArchive) InsertImmutableAndEnqueue(_ context.Context, snapshot *models.TItickAuthoritativeSnapshot, _ string) error {
 	a.inserted++
 	a.last = snapshot
 	return nil
@@ -91,7 +91,7 @@ func TestDeliveryDoesNotPublishWhenDeviationLeavesFewerThanThreeInputs(t *testin
 		"SOURCE_C": "150",
 	}}
 	engine := &Engine{archive: archive}
-	formula := &models.TMarketPriceFormula{
+	formula := &models.TItickPriceFormula{
 		FormulaNo: "BTCUSDT-DELIVERY-v1", FormulaVersion: "v1",
 		Authority: "price-engine", SnapshotKind: "DELIVERY",
 		CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT",
@@ -121,7 +121,7 @@ func TestIndexBasisPublishesBoundedAuditableMark(t *testing.T) {
 		"PERPETUAL": "110",
 	}}
 	engine := &Engine{archive: archive}
-	formula := &models.TMarketPriceFormula{
+	formula := &models.TItickPriceFormula{
 		FormulaNo: "BTCUSDT-MARK-v2", FormulaVersion: "v2",
 		Authority: "price-engine", SnapshotKind: "MARK",
 		CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT",
@@ -162,7 +162,7 @@ func TestIndexBasisSmoothingReadsOnlyPreviousMark(t *testing.T) {
 		"INDEX": target - 100, "PERPETUAL": target - 50, "PREVIOUS": target - 20_000,
 	}}
 	engine := &Engine{archive: archive}
-	formula := &models.TMarketPriceFormula{
+	formula := &models.TItickPriceFormula{
 		FormulaNo: "BTCUSDT-MARK-v3", FormulaVersion: "v3",
 		Authority: "price-engine", SnapshotKind: "MARK",
 		CategoryCode: "crypto", Market: "BA", Symbol: "BTCUSDT",

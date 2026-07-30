@@ -51,7 +51,7 @@ func (l *CreateTenantProductLogic) CreateTenantProduct(in *market.CreateTenantPr
 	}
 
 	now := cutils.NowMillis()
-	_, err = l.svcCtx.MarketTenantProductModel.Insert(l.ctx, &models.TMarketTenantProduct{
+	_, err = l.svcCtx.MarketTenantProductModel.Insert(l.ctx, &models.TItickTenantProduct{
 		TenantId:    in.TenantId,
 		ProductId:   in.ProductId,
 		Enabled:     int64(in.Enabled),

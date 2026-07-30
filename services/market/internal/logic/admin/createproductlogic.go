@@ -51,7 +51,7 @@ func (l *CreateProductLogic) CreateProduct(in *market.CreateProductReq) (*market
 	}
 
 	now := cutils.NowMillis()
-	_, err = l.svcCtx.MarketProductModel.Insert(l.ctx, &models.TMarketProduct{
+	_, err = l.svcCtx.MarketProductModel.Insert(l.ctx, &models.TItickProduct{
 		CategoryType: int64(in.CategoryType),
 		CategoryName: category.CategoryName,
 		CategoryCode: category.CategoryCode,

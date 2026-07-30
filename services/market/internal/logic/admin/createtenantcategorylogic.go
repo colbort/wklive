@@ -51,7 +51,7 @@ func (l *CreateTenantCategoryLogic) CreateTenantCategory(in *market.CreateTenant
 	}
 
 	now := cutils.NowMillis()
-	_, err = l.svcCtx.MarketTenantCategoryModel.Insert(l.ctx, &models.TMarketTenantCategory{
+	_, err = l.svcCtx.MarketTenantCategoryModel.Insert(l.ctx, &models.TItickTenantCategory{
 		TenantId:    in.TenantId,
 		CategoryId:  in.CategoryId,
 		Enabled:     int64(in.Enabled),

@@ -37,7 +37,7 @@ func (l *BatchUpsertTenantProductsLogic) BatchUpsertTenantProducts(in *market.Ba
 		return &market.CommonResp{Base: base}, nil
 	}
 
-	current := make([]*models.TMarketTenantProduct, 0)
+	current := make([]*models.TItickTenantProduct, 0)
 	var cursor int64
 	for {
 		page, _, err := l.svcCtx.MarketTenantProductModel.FindPage(l.ctx, models.TenantProductPageFilter{
@@ -52,7 +52,7 @@ func (l *BatchUpsertTenantProductsLogic) BatchUpsertTenantProducts(in *market.Ba
 		}
 		cursor = page[len(page)-1].Id
 	}
-	byProduct := make(map[int64]*models.TMarketTenantProduct, len(current))
+	byProduct := make(map[int64]*models.TItickTenantProduct, len(current))
 	for _, item := range current {
 		byProduct[item.ProductId] = item
 	}
@@ -68,7 +68,7 @@ func (l *BatchUpsertTenantProductsLogic) BatchUpsertTenantProducts(in *market.Ba
 		requested[input.ProductId] = struct{}{}
 		item := byProduct[input.ProductId]
 		if item == nil {
-			_, err := l.svcCtx.MarketTenantProductModel.Insert(l.ctx, &models.TMarketTenantProduct{
+			_, err := l.svcCtx.MarketTenantProductModel.Insert(l.ctx, &models.TItickTenantProduct{
 				TenantId: in.TenantId, ProductId: input.ProductId, Enabled: int64(input.Enabled),
 				AppVisible: int64(input.AppVisible), Sort: input.Sort, Remark: input.Remark,
 				CreateTimes: now, UpdateTimes: now,

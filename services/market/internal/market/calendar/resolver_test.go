@@ -9,26 +9,26 @@ import (
 )
 
 type calendarModelStub struct {
-	row      *models.TMarketMarketCalendar
-	sessions []*models.TMarketMarketSession
-	holiday  *models.TMarketMarketHoliday
+	row      *models.TItickMarketCalendar
+	sessions []*models.TItickMarketSession
+	holiday  *models.TItickMarketHoliday
 }
 
-func (s calendarModelStub) Resolve(context.Context, string, string, string) (*models.TMarketMarketCalendar, error) {
+func (s calendarModelStub) Resolve(context.Context, string, string, string) (*models.TItickMarketCalendar, error) {
 	return s.row, nil
 }
-func (s calendarModelStub) FindSessions(context.Context, int64) ([]*models.TMarketMarketSession, error) {
+func (s calendarModelStub) FindSessions(context.Context, int64) ([]*models.TItickMarketSession, error) {
 	return s.sessions, nil
 }
-func (s calendarModelStub) FindHoliday(context.Context, int64, time.Time) (*models.TMarketMarketHoliday, error) {
+func (s calendarModelStub) FindHoliday(context.Context, int64, time.Time) (*models.TItickMarketHoliday, error) {
 	return s.holiday, nil
 }
 
 func TestIsTradingMinuteHonorsClosedHoliday(t *testing.T) {
 	stub := calendarModelStub{
-		row:      &models.TMarketMarketCalendar{Id: 1, Timezone: "America/New_York", WeekStart: 1},
-		sessions: []*models.TMarketMarketSession{{StartTime: "09:30", EndTime: "16:00"}},
-		holiday:  &models.TMarketMarketHoliday{DayType: "closed"},
+		row:      &models.TItickMarketCalendar{Id: 1, Timezone: "America/New_York", WeekStart: 1},
+		sessions: []*models.TItickMarketSession{{StartTime: "09:30", EndTime: "16:00"}},
+		holiday:  &models.TItickMarketHoliday{DayType: "closed"},
 	}
 	r := NewResolver(stub, time.Minute)
 	ts := time.Date(2026, 7, 14, 14, 0, 0, 0, time.UTC).UnixMilli()
@@ -38,7 +38,7 @@ func TestIsTradingMinuteHonorsClosedHoliday(t *testing.T) {
 }
 
 func TestBucketUsesMarketTimezone(t *testing.T) {
-	r := NewResolver(calendarModelStub{row: &models.TMarketMarketCalendar{Id: 1, Timezone: "America/New_York", WeekStart: 1}}, time.Minute)
+	r := NewResolver(calendarModelStub{row: &models.TItickMarketCalendar{Id: 1, Timezone: "America/New_York", WeekStart: 1}}, time.Minute)
 	ts := time.Date(2026, 7, 14, 16, 0, 0, 0, time.UTC).UnixMilli()
 	start, end := r.Bucket(context.Background(), "stock", "US", "", ts, "1d")
 	want := time.Date(2026, 7, 14, 4, 0, 0, 0, time.UTC).UnixMilli()
@@ -57,8 +57,8 @@ func TestBucketFallsBackToUTC(t *testing.T) {
 }
 
 func TestIsTradingMinuteUsesSession(t *testing.T) {
-	stub := calendarModelStub{row: &models.TMarketMarketCalendar{Id: 1, Timezone: "America/New_York", WeekStart: 1}}
-	stub.sessions = []*models.TMarketMarketSession{{StartTime: "09:30", EndTime: "16:00"}}
+	stub := calendarModelStub{row: &models.TItickMarketCalendar{Id: 1, Timezone: "America/New_York", WeekStart: 1}}
+	stub.sessions = []*models.TItickMarketSession{{StartTime: "09:30", EndTime: "16:00"}}
 	r := NewResolver(stub, time.Minute)
 	if !r.IsTradingMinute(context.Background(), "stock", "US", "", time.Date(2026, 7, 14, 14, 0, 0, 0, time.UTC).UnixMilli()) {
 		t.Fatal("expected regular session minute")

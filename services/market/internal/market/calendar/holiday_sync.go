@@ -28,8 +28,8 @@ type HolidaySyncService struct {
 	ctx        context.Context
 	cancel     context.CancelFunc
 	apiURL     string
-	calendar   models.TMarketMarketCalendarModel
-	holiday    models.TMarketMarketHolidayModel
+	calendar   models.TItickMarketCalendarModel
+	holiday    models.TItickMarketHolidayModel
 	resolver   *Resolver
 	lock       *utils.RedisLock
 	restClient *itickrest.Client
@@ -56,8 +56,8 @@ func NewHolidaySyncService(
 	parent context.Context,
 	apiURL string,
 	restClient *itickrest.Client,
-	calendar models.TMarketMarketCalendarModel,
-	holiday models.TMarketMarketHolidayModel,
+	calendar models.TItickMarketCalendarModel,
+	holiday models.TItickMarketHolidayModel,
 	resolver *Resolver,
 	lock *utils.RedisLock,
 	interval time.Duration,
@@ -172,7 +172,7 @@ func (s *HolidaySyncService) SyncOnce(ctx context.Context) (int, error) {
 					failures = append(failures, fmt.Errorf("code=%s invalid date %q: %w", code, item.Date, err))
 					continue
 				}
-				if err := s.holiday.UpsertByCalendarDate(ctx, &models.TMarketMarketHoliday{
+				if err := s.holiday.UpsertByCalendarDate(ctx, &models.TItickMarketHoliday{
 					CalendarId: calendar.Id, TradeDate: tradeDate, DayType: "closed", Remark: strings.TrimSpace(item.Name),
 				}); err != nil {
 					failures = append(failures, fmt.Errorf("code=%s market=%s date=%s: %w", code, market, item.Date, err))

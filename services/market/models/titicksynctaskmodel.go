@@ -10,14 +10,14 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TMarketSyncTaskModel = (*customTMarketSyncTaskModel)(nil)
+var _ TItickSyncTaskModel = (*customTMarketSyncTaskModel)(nil)
 
 type (
-	// TMarketSyncTaskModel is an interface to be customized, add more methods here,
+	// TItickSyncTaskModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTMarketSyncTaskModel.
-	TMarketSyncTaskModel interface {
-		tMarketSyncTaskModel
-		FindPage(ctx context.Context, cursor, limit int64) ([]*TMarketSyncTask, int64, error)
+	TItickSyncTaskModel interface {
+		tItickSyncTaskModel
+		FindPage(ctx context.Context, cursor, limit int64) ([]*TItickSyncTask, int64, error)
 		UpdateStatusByTaskNo(ctx context.Context, taskNo string, status int64, message string, updatedAt int64) error
 	}
 
@@ -27,13 +27,13 @@ type (
 )
 
 // NewTMarketSyncTaskModel returns a model for the database table.
-func NewTMarketSyncTaskModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TMarketSyncTaskModel {
+func NewTMarketSyncTaskModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickSyncTaskModel {
 	return &customTMarketSyncTaskModel{
 		defaultTMarketSyncTaskModel: newTMarketSyncTaskModel(conn, c, opts...),
 	}
 }
 
-func (m *defaultTMarketSyncTaskModel) FindPage(ctx context.Context, cursor, limit int64) ([]*TMarketSyncTask, int64, error) {
+func (m *defaultTMarketSyncTaskModel) FindPage(ctx context.Context, cursor, limit int64) ([]*TItickSyncTask, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -60,7 +60,7 @@ func (m *defaultTMarketSyncTaskModel) FindPage(ctx context.Context, cursor, limi
 			WHERE %s
 			ORDER BY id DESC
 			LIMIT ?`,
-			tMarketSyncTaskRows, m.table, where,
+			tItickSyncTaskRows, m.table, where,
 		)
 		listArgs = append(listArgs, limit)
 	} else {
@@ -71,12 +71,12 @@ func (m *defaultTMarketSyncTaskModel) FindPage(ctx context.Context, cursor, limi
 			WHERE %s AND id < ?
 			ORDER BY id DESC
 			LIMIT ?`,
-			tMarketSyncTaskRows, m.table, where,
+			tItickSyncTaskRows, m.table, where,
 		)
 		listArgs = append(listArgs, cursor, limit)
 	}
 
-	var list []*TMarketSyncTask
+	var list []*TItickSyncTask
 	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
 		return nil, 0, err
 	}

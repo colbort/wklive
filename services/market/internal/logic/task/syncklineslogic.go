@@ -71,7 +71,7 @@ func (l *SyncKlinesLogic) SyncKlines(in *market.SyncKlinesReq) (*market.SyncKlin
 	taskNo := fmt.Sprintf("reconcile_klines_%d", time.Now().UnixNano())
 	now := cutils.NowMillis()
 
-	_, err := l.svcCtx.MarketSyncTaskModel.Insert(l.ctx, &models.TMarketSyncTask{
+	_, err := l.svcCtx.MarketSyncTaskModel.Insert(l.ctx, &models.TItickSyncTask{
 		TaskNo:      taskNo,
 		TaskType:    "reconcile_klines",
 		BizId:       0,

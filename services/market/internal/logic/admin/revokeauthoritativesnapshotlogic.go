@@ -52,7 +52,7 @@ func (l *RevokeAuthoritativeSnapshotLogic) RevokeAuthoritativeSnapshot(in *marke
 		}
 	} else if !errors.Is(findErr, models.ErrNotFound) {
 		return nil, findErr
-	} else if _, err = l.svcCtx.SnapshotRevocationModel.Insert(l.ctx, &models.TMarketSnapshotRevocation{SnapshotId: original.SnapshotId, ReplacementSnapshotId: strings.TrimSpace(in.ReplacementSnapshotId), Reason: strings.TrimSpace(in.Reason), CreateTimes: utils.NowMillis()}); err != nil {
+	} else if _, err = l.svcCtx.SnapshotRevocationModel.Insert(l.ctx, &models.TItickSnapshotRevocation{SnapshotId: original.SnapshotId, ReplacementSnapshotId: strings.TrimSpace(in.ReplacementSnapshotId), Reason: strings.TrimSpace(in.Reason), CreateTimes: utils.NowMillis()}); err != nil {
 		return nil, err
 	}
 	if err = l.svcCtx.MarketDataCache.RevokeAuthoritativeSnapshot(l.ctx, original.SnapshotId, strings.TrimSpace(in.ReplacementSnapshotId), strings.TrimSpace(in.Reason)); err != nil {

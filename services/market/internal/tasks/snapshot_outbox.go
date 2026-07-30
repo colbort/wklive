@@ -264,7 +264,7 @@ func processSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, work
 		return 0, nil
 	}
 
-	jobs := make(chan *models.TMarketSnapshotOutbox)
+	jobs := make(chan *models.TItickSnapshotOutbox)
 	errs := make(chan error, len(rows))
 	var claimedCount atomic.Int64
 	var workers sync.WaitGroup
@@ -319,7 +319,7 @@ func processSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, work
 // publishSnapshotOutbox returns completed=true when it atomically moved the
 // row to success. completed=false means the caller must close a row whose
 // publication checkpoints were already present from an earlier attempt.
-func publishSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, row *models.TMarketSnapshotOutbox) (bool, error) {
+func publishSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, row *models.TItickSnapshotOutbox) (bool, error) {
 	var payload snapshotOutboxPayload
 	if err := json.Unmarshal([]byte(row.Payload), &payload); err != nil {
 		return false, err

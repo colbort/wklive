@@ -42,7 +42,7 @@ func (l *CreateCategoryLogic) CreateCategory(in *market.CreateCategoryReq) (*mar
 	}
 
 	now := cutils.NowMillis()
-	_, err = l.svcCtx.MarketCategoryModel.Insert(l.ctx, &models.TMarketCategory{
+	_, err = l.svcCtx.MarketCategoryModel.Insert(l.ctx, &models.TItickCategory{
 		CategoryType: int64(in.CategoryType),
 		CategoryName: in.CategoryName,
 		CategoryCode: helpers.CategoryTypeCode(in.CategoryType),

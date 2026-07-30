@@ -115,7 +115,7 @@ func removesAuthorityKind(oldRaw string, next []string) (bool, error) {
 	return false, nil
 }
 
-func authorityRegistryProto(row *models.TMarketAuthorityRegistry) (*market.AuthorityRegistryData, error) {
+func authorityRegistryProto(row *models.TItickAuthorityRegistry) (*market.AuthorityRegistryData, error) {
 	if row == nil {
 		return nil, errors.New("authority registry row is nil")
 	}

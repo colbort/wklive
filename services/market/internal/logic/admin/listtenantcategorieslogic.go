@@ -37,7 +37,7 @@ func (l *ListTenantCategoriesLogic) ListTenantCategories(in *market.ListTenantCa
 	if err != nil {
 		return nil, err
 	}
-	categoryMap := make(map[int64]*models.TMarketCategory, len(categories))
+	categoryMap := make(map[int64]*models.TItickCategory, len(categories))
 	for _, category := range categories {
 		categoryMap[category.Id] = category
 	}

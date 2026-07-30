@@ -16,13 +16,13 @@ type Definition struct {
 	Location         *time.Location
 	TradingDayOffset int
 	WeekStart        time.Weekday
-	Sessions         []*models.TMarketMarketSession
+	Sessions         []*models.TItickMarketSession
 }
 
 type Model interface {
-	Resolve(context.Context, string, string, string) (*models.TMarketMarketCalendar, error)
-	FindSessions(context.Context, int64) ([]*models.TMarketMarketSession, error)
-	FindHoliday(context.Context, int64, time.Time) (*models.TMarketMarketHoliday, error)
+	Resolve(context.Context, string, string, string) (*models.TItickMarketCalendar, error)
+	FindSessions(context.Context, int64) ([]*models.TItickMarketSession, error)
+	FindHoliday(context.Context, int64, time.Time) (*models.TItickMarketHoliday, error)
 }
 
 type cacheItem struct {
@@ -31,7 +31,7 @@ type cacheItem struct {
 }
 
 type holidayItem struct {
-	value   *models.TMarketMarketHoliday
+	value   *models.TItickMarketHoliday
 	expires time.Time
 }
 
@@ -94,7 +94,7 @@ func (r *Resolver) IsTradingMinute(ctx context.Context, category, market, exchan
 	return false
 }
 
-func (r *Resolver) holiday(ctx context.Context, calendarID int64, date time.Time) *models.TMarketMarketHoliday {
+func (r *Resolver) holiday(ctx context.Context, calendarID int64, date time.Time) *models.TItickMarketHoliday {
 	key := fmt.Sprintf("%d:%s", calendarID, date.Format("2006-01-02"))
 	r.mu.RLock()
 	item, ok := r.holidays[key]
@@ -102,7 +102,7 @@ func (r *Resolver) holiday(ctx context.Context, calendarID int64, date time.Time
 	if ok && time.Now().Before(item.expires) {
 		return item.value
 	}
-	var value *models.TMarketMarketHoliday
+	var value *models.TItickMarketHoliday
 	if r.model != nil {
 		value, _ = r.model.FindHoliday(ctx, calendarID, date)
 	}

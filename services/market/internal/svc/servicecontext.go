@@ -46,36 +46,36 @@ type ServiceContext struct {
 	Writer                       *klinewriter.BatchWriter
 	RebuildDerivedKlines         func([]*models.CoinKline) error
 	RebuildHistoricalKlines      func([]*models.CoinKline) error
-	MarketCategoryModel          models.TMarketCategoryModel
-	MarketProductModel           models.TMarketProductModel
-	MarketTenantCategoryModel    models.TMarketTenantCategoryModel
-	MarketTenantProductModel     models.TMarketTenantProductModel
-	MarketSyncTaskModel          models.TMarketSyncTaskModel
-	MarketQuoteModel             models.TMarketQuoteModel
-	AuthoritativeSnapshotModel   models.TMarketAuthoritativeSnapshotModel
-	SnapshotOutboxModel          models.TMarketSnapshotOutboxModel
-	SnapshotRevocationModel      models.TMarketSnapshotRevocationModel
-	PriceFormulaModel            models.TMarketPriceFormulaModel
+	MarketCategoryModel          models.TItickCategoryModel
+	MarketProductModel           models.TItickProductModel
+	MarketTenantCategoryModel    models.TItickTenantCategoryModel
+	MarketTenantProductModel     models.TItickTenantProductModel
+	MarketSyncTaskModel          models.TItickSyncTaskModel
+	MarketQuoteModel             models.TItickQuoteModel
+	AuthoritativeSnapshotModel   models.TItickAuthoritativeSnapshotModel
+	SnapshotOutboxModel          models.TItickSnapshotOutboxModel
+	SnapshotRevocationModel      models.TItickSnapshotRevocationModel
+	PriceFormulaModel            models.TItickPriceFormulaModel
 	PriceEngine                  *priceengine.Engine
 	AuthorityRegistryModel       AuthorityRegistryStore
 	AuthorityRegistryAdminModel  AuthorityRegistryAdminStore
-	MarketKlineSyncProgressModel models.TMarketKlineSyncProgressModel
-	MarketCalendarModel          models.TMarketMarketCalendarModel
-	MarketHolidayModel           models.TMarketMarketHolidayModel
+	MarketKlineSyncProgressModel models.TItickKlineSyncProgressModel
+	MarketCalendarModel          models.TItickMarketCalendarModel
+	MarketHolidayModel           models.TItickMarketHolidayModel
 	MarketCalendarResolver       *calendar.Resolver
 	ITickRestClient              *itickrest.Client
 	AuthoritativeQuoteHandler    func(context.Context, types.ClientMessage, *types.QuotePayload) error
 }
 
 type AuthorityRegistryStore interface {
-	FindEnabled(context.Context, string) (*models.TMarketAuthorityRegistry, error)
+	FindEnabled(context.Context, string) (*models.TItickAuthorityRegistry, error)
 }
 
 type AuthorityRegistryAdminStore interface {
-	Create(context.Context, *models.TMarketAuthorityRegistry) (int64, error)
-	FindOne(context.Context, int64) (*models.TMarketAuthorityRegistry, error)
-	FindOneByAuthority(context.Context, string) (*models.TMarketAuthorityRegistry, error)
-	FindPage(context.Context, models.AuthorityRegistryFilter, int64, int64) ([]*models.TMarketAuthorityRegistry, int64, error)
+	Create(context.Context, *models.TItickAuthorityRegistry) (int64, error)
+	FindOne(context.Context, int64) (*models.TItickAuthorityRegistry, error)
+	FindOneByAuthority(context.Context, string) (*models.TItickAuthorityRegistry, error)
+	FindPage(context.Context, models.AuthorityRegistryFilter, int64, int64) ([]*models.TItickAuthorityRegistry, int64, error)
 	CountActiveFormulaReferences(context.Context, string) (int64, error)
 	UpdateConfigVersioned(context.Context, int64, int64, string, int64, int64) (bool, error)
 }
@@ -179,7 +179,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 				logx.Errorf("encode authoritative quote failed, snapshot=%s", snapshot.SnapshotID)
 				return fmt.Errorf("encode authoritative quote: snapshot=%v outbox=%v price=%v", marshalErr, outboxErr, priceErr)
 			}
-			if snapshotErr = authoritativeSnapshotModel.InsertImmutableAndEnqueue(rpcCtx, &models.TMarketAuthoritativeSnapshot{SnapshotId: snapshot.SnapshotID, Authority: snapshot.Authority, SnapshotKind: snapshot.Kind, CategoryCode: snapshot.CategoryCode, Market: snapshot.Market, Symbol: snapshot.Symbol, Price: price, SourceTimestamp: snapshot.SourceTimestamp, SnapshotTimestamp: snapshot.SnapshotTimestamp, Revision: snapshot.Revision, FormulaVersion: snapshot.FormulaVersion, RawPayload: string(raw), CreateTimes: time.Now().UnixMilli()}, string(outboxPayload)); snapshotErr != nil {
+			if snapshotErr = authoritativeSnapshotModel.InsertImmutableAndEnqueue(rpcCtx, &models.TItickAuthoritativeSnapshot{SnapshotId: snapshot.SnapshotID, Authority: snapshot.Authority, SnapshotKind: snapshot.Kind, CategoryCode: snapshot.CategoryCode, Market: snapshot.Market, Symbol: snapshot.Symbol, Price: price, SourceTimestamp: snapshot.SourceTimestamp, SnapshotTimestamp: snapshot.SnapshotTimestamp, Revision: snapshot.Revision, FormulaVersion: snapshot.FormulaVersion, RawPayload: string(raw), CreateTimes: time.Now().UnixMilli()}, string(outboxPayload)); snapshotErr != nil {
 				logx.Errorf("archive authoritative quote failed, snapshot=%s err=%v", snapshot.SnapshotID, snapshotErr)
 				return snapshotErr
 			}

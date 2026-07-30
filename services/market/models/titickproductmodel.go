@@ -12,7 +12,7 @@ import (
 	"github.com/zeromicro/go-zero/core/stringx"
 )
 
-var _ TMarketProductModel = (*customTMarketProductModel)(nil)
+var _ TItickProductModel = (*customTMarketProductModel)(nil)
 
 type (
 	MarketProductPageFilter struct {
@@ -25,14 +25,14 @@ type (
 		Symbol       string
 	}
 
-	// TMarketProductModel is an interface to be customized, add more methods here,
+	// TItickProductModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTMarketProductModel.
-	TMarketProductModel interface {
-		tMarketProductModel
-		FindPage(ctx context.Context, filter MarketProductPageFilter, cursor int64, limit int64) ([]*TMarketProduct, int64, error)
-		FindByIds(ctx context.Context, ids []int64) ([]*TMarketProduct, error)
-		FindActivePage(ctx context.Context, cursor, limit int64) ([]*TMarketProduct, error)
-		Upsert(ctx context.Context, data *TMarketProduct) (sql.Result, error)
+	TItickProductModel interface {
+		tItickProductModel
+		FindPage(ctx context.Context, filter MarketProductPageFilter, cursor int64, limit int64) ([]*TItickProduct, int64, error)
+		FindByIds(ctx context.Context, ids []int64) ([]*TItickProduct, error)
+		FindActivePage(ctx context.Context, cursor, limit int64) ([]*TItickProduct, error)
+		Upsert(ctx context.Context, data *TItickProduct) (sql.Result, error)
 	}
 
 	customTMarketProductModel struct {
@@ -41,7 +41,7 @@ type (
 )
 
 // NewTMarketProductModel returns a model for the database table.
-func NewTMarketProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TMarketProductModel {
+func NewTMarketProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickProductModel {
 	return &customTMarketProductModel{
 		defaultTMarketProductModel: newTMarketProductModel(conn, c, opts...),
 	}
@@ -49,7 +49,7 @@ func NewTMarketProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.
 
 // FindActivePage returns enabled products referenced by at least one enabled
 // tenant. The EXISTS predicate naturally deduplicates products across tenants.
-func (m *defaultTMarketProductModel) FindActivePage(ctx context.Context, cursor, limit int64) ([]*TMarketProduct, error) {
+func (m *defaultTMarketProductModel) FindActivePage(ctx context.Context, cursor, limit int64) ([]*TItickProduct, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	query := fmt.Sprintf(`SELECT %s FROM %s AS p
 		WHERE p.id > ? AND p.enabled = 1
@@ -57,15 +57,15 @@ func (m *defaultTMarketProductModel) FindActivePage(ctx context.Context, cursor,
 			SELECT 1 FROM t_itick_tenant_product AS tp
 			WHERE tp.product_id = p.id AND tp.enabled = 1
 		)
-		ORDER BY p.id ASC LIMIT ?`, qualifyRows("p", tMarketProductRows), m.table)
-	var list []*TMarketProduct
+		ORDER BY p.id ASC LIMIT ?`, qualifyRows("p", tItickProductRows), m.table)
+	var list []*TItickProduct
 	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, cursor, limit); err != nil {
 		return nil, err
 	}
 	return list, nil
 }
 
-func (m *defaultTMarketProductModel) FindPage(ctx context.Context, filter MarketProductPageFilter, cursor int64, limit int64) ([]*TMarketProduct, int64, error) {
+func (m *defaultTMarketProductModel) FindPage(ctx context.Context, filter MarketProductPageFilter, cursor int64, limit int64) ([]*TItickProduct, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	queryLimit := limit + 1
 
@@ -98,7 +98,7 @@ func (m *defaultTMarketProductModel) FindPage(ctx context.Context, filter Market
 			WHERE %s
 			ORDER BY id DESC
 			LIMIT ?`,
-			tMarketProductRows, m.table, where,
+			tItickProductRows, m.table, where,
 		)
 		listArgs = append(listArgs, queryLimit)
 	} else {
@@ -109,12 +109,12 @@ func (m *defaultTMarketProductModel) FindPage(ctx context.Context, filter Market
 			WHERE %s AND id < ?
 			ORDER BY id DESC
 			LIMIT ?`,
-			tMarketProductRows, m.table, where,
+			tItickProductRows, m.table, where,
 		)
 		listArgs = append(listArgs, cursor, queryLimit)
 	}
 
-	var list []*TMarketProduct
+	var list []*TItickProduct
 	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
 		return nil, 0, err
 	}
@@ -124,9 +124,9 @@ func (m *defaultTMarketProductModel) FindPage(ctx context.Context, filter Market
 	return list, 0, nil
 }
 
-func (m *defaultTMarketProductModel) FindByIds(ctx context.Context, ids []int64) ([]*TMarketProduct, error) {
+func (m *defaultTMarketProductModel) FindByIds(ctx context.Context, ids []int64) ([]*TItickProduct, error) {
 	if len(ids) == 0 {
-		return []*TMarketProduct{}, nil
+		return []*TItickProduct{}, nil
 	}
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -134,12 +134,12 @@ func (m *defaultTMarketProductModel) FindByIds(ctx context.Context, ids []int64)
 
 	query := fmt.Sprintf(
 		"SELECT %s FROM %s WHERE %s",
-		tMarketProductRows,
+		tItickProductRows,
 		m.table,
 		builder.Where(),
 	)
 
-	var list []*TMarketProduct
+	var list []*TItickProduct
 	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, builder.Args()...); err != nil {
 		return nil, err
 	}
@@ -147,14 +147,14 @@ func (m *defaultTMarketProductModel) FindByIds(ctx context.Context, ids []int64)
 	return list, nil
 }
 
-func (m *defaultTMarketProductModel) Upsert(ctx context.Context, data *TMarketProduct) (sql.Result, error) {
-	tMarketProductCategoryTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v",
+func (m *defaultTMarketProductModel) Upsert(ctx context.Context, data *TItickProduct) (sql.Result, error) {
+	tItickProductCategoryTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v",
 		cacheTMarketProductCategoryTypeMarketSymbolPrefix,
 		data.CategoryType, data.Market, data.Symbol,
 	)
-	tMarketProductIdKey := fmt.Sprintf("%s%v", cacheTMarketProductIdPrefix, data.Id)
+	tItickProductIdKey := fmt.Sprintf("%s%v", cacheTMarketProductIdPrefix, data.Id)
 
-	feilds := strings.Join(stringx.Remove(tMarketProductFieldNames, "`id`"), ",")
+	feilds := strings.Join(stringx.Remove(tItickProductFieldNames, "`id`"), ",")
 
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		query := fmt.Sprintf(`
@@ -199,7 +199,7 @@ func (m *defaultTMarketProductModel) Upsert(ctx context.Context, data *TMarketPr
 			data.CreateTimes,
 			data.UpdateTimes,
 		)
-	}, tMarketProductCategoryTypeMarketSymbolKey, tMarketProductIdKey)
+	}, tItickProductCategoryTypeMarketSymbolKey, tItickProductIdKey)
 
 	return ret, err
 }

@@ -282,6 +282,28 @@ func applyPendingMigrations(ctx context.Context, db *sql.DB, migrations []migrat
 		var checksum string
 		err := db.QueryRowContext(ctx,
 			`SELECT checksum FROM schema_migrations WHERE version = ?`, item.version).Scan(&checksum)
+		if errors.Is(err, sql.ErrNoRows) {
+			if legacyVersion, ok := legacyMigrationVersion(item.version); ok {
+				err = db.QueryRowContext(ctx,
+					`SELECT checksum FROM schema_migrations WHERE version = ?`, legacyVersion).Scan(&checksum)
+				switch {
+				case err == nil:
+					if checksum != item.checksum {
+						return fmt.Errorf("applied migration was modified: %s (renamed from %s)",
+							item.version, legacyVersion)
+					}
+					if _, err = db.ExecContext(ctx,
+						`INSERT INTO schema_migrations(version, checksum, applied_at) VALUES (?, ?, ?)`,
+						item.version, item.checksum, time.Now().UnixMilli()); err != nil {
+						return err
+					}
+					log.Printf("recorded renamed migration: %s -> %s", legacyVersion, item.version)
+					continue
+				case !errors.Is(err, sql.ErrNoRows):
+					return err
+				}
+			}
+		}
 		switch {
 		case err == nil:
 			if checksum != item.checksum {
@@ -303,6 +325,14 @@ func applyPendingMigrations(ctx context.Context, db *sql.DB, migrations []migrat
 		}
 	}
 	return nil
+}
+
+func legacyMigrationVersion(version string) (string, bool) {
+	const marketPrefix = "services/market/"
+	if !strings.HasPrefix(version, marketPrefix) {
+		return "", false
+	}
+	return "services/itick/" + strings.TrimPrefix(version, marketPrefix), true
 }
 
 func seedMenus(ctx context.Context, db *sql.DB, path string) error {
@@ -337,7 +367,7 @@ func applySystemDataMigrations(ctx context.Context, db *sql.DB, workspace string
 		"20260728_add_contract_reconciliation_admin_menu.sql",
 		"20260728_add_cross_account_liquidation_admin_menu.sql",
 		"20260728_add_trade_contract_jobs.sql",
-		"20260729_add_market_authority_registry_permissions.sql",
+		"20260729_add_itick_authority_registry_permissions.sql",
 	}
 	for _, name := range files {
 		path := filepath.Join(workspace, "services", "system", "migrations", name)

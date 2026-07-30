@@ -12,15 +12,15 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TMarketKlineSyncProgressModel = (*customTMarketKlineSyncProgressModel)(nil)
+var _ TItickKlineSyncProgressModel = (*customTMarketKlineSyncProgressModel)(nil)
 
 type (
-	// TMarketKlineSyncProgressModel is an interface to be customized, add more methods here,
+	// TItickKlineSyncProgressModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTMarketKlineSyncProgressModel.
-	TMarketKlineSyncProgressModel interface {
-		tMarketKlineSyncProgressModel
-		FindOrCreate(ctx context.Context, categoryCode, market, symbol, interval string) (*TMarketKlineSyncProgress, error)
-		FindOneByCategoryCodeMarketSymbolIntervalNoCache(ctx context.Context, categoryCode, market, symbol, interval string) (*TMarketKlineSyncProgress, error)
+	TItickKlineSyncProgressModel interface {
+		tItickKlineSyncProgressModel
+		FindOrCreate(ctx context.Context, categoryCode, market, symbol, interval string) (*TItickKlineSyncProgress, error)
+		FindOneByCategoryCodeMarketSymbolIntervalNoCache(ctx context.Context, categoryCode, market, symbol, interval string) (*TItickKlineSyncProgress, error)
 		UpdateSyncStart(ctx context.Context, id int64, mode string, now int64) error
 		UpdateSyncSuccess(ctx context.Context, id int64, mode string, latestTs, contiguousTs, recentCheckTs, oldestTs, fullSynced, now int64, message string) error
 		UpdateSyncFail(ctx context.Context, id int64, mode string, now int64, message string) error
@@ -32,13 +32,13 @@ type (
 )
 
 // NewTMarketKlineSyncProgressModel returns a model for the database table.
-func NewTMarketKlineSyncProgressModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TMarketKlineSyncProgressModel {
+func NewTMarketKlineSyncProgressModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickKlineSyncProgressModel {
 	return &customTMarketKlineSyncProgressModel{
 		defaultTMarketKlineSyncProgressModel: newTMarketKlineSyncProgressModel(conn, c, opts...),
 	}
 }
 
-func (m *defaultTMarketKlineSyncProgressModel) FindOrCreate(ctx context.Context, categoryCode, market, symbol, interval string) (*TMarketKlineSyncProgress, error) {
+func (m *defaultTMarketKlineSyncProgressModel) FindOrCreate(ctx context.Context, categoryCode, market, symbol, interval string) (*TItickKlineSyncProgress, error) {
 	exist, err := m.FindOneByCategoryCodeMarketSymbolInterval(ctx, categoryCode, market, symbol, interval)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
@@ -62,9 +62,9 @@ func (m *defaultTMarketKlineSyncProgressModel) FindOrCreate(ctx context.Context,
 	return m.FindOneByCategoryCodeMarketSymbolInterval(ctx, categoryCode, market, symbol, interval)
 }
 
-func (m *defaultTMarketKlineSyncProgressModel) FindOneByCategoryCodeMarketSymbolIntervalNoCache(ctx context.Context, categoryCode, market, symbol, interval string) (*TMarketKlineSyncProgress, error) {
-	var resp TMarketKlineSyncProgress
-	query := fmt.Sprintf("select %s from %s where `category_code` = ? and `market` = ? and `symbol` = ? and `interval` = ? limit 1", tMarketKlineSyncProgressRows, m.table)
+func (m *defaultTMarketKlineSyncProgressModel) FindOneByCategoryCodeMarketSymbolIntervalNoCache(ctx context.Context, categoryCode, market, symbol, interval string) (*TItickKlineSyncProgress, error) {
+	var resp TItickKlineSyncProgress
+	query := fmt.Sprintf("select %s from %s where `category_code` = ? and `market` = ? and `symbol` = ? and `interval` = ? limit 1", tItickKlineSyncProgressRows, m.table)
 	err := m.QueryRowNoCacheCtx(ctx, &resp, query, categoryCode, market, symbol, interval)
 	switch err {
 	case nil:

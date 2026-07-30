@@ -74,3 +74,20 @@ func TestFindMigrationsMarksOnlyExplicitBaselineSafeFiles(t *testing.T) {
 		t.Fatalf("reconciliation migration not baseline safe: %s", migrations[1].version)
 	}
 }
+
+func TestLegacyMigrationVersion(t *testing.T) {
+	got, ok := legacyMigrationVersion(
+		"services/market/migrations/20260722_add_snapshot_outbox_cleanup_index.sql",
+	)
+	if !ok {
+		t.Fatal("market migration should have a legacy version")
+	}
+	const want = "services/itick/migrations/20260722_add_snapshot_outbox_cleanup_index.sql"
+	if got != want {
+		t.Fatalf("legacy version=%q want=%q", got, want)
+	}
+
+	if got, ok = legacyMigrationVersion("services/trade/migrations/20260728_example.sql"); ok {
+		t.Fatalf("trade migration unexpectedly has legacy version: %q", got)
+	}
+}

@@ -44,7 +44,7 @@ iTick WebSocket kline@N
 
 ### 2.1 MySQL 真源
 
-活跃产品由 `TMarketProductModel.FindActivePage` 查询，条件是：
+活跃产品由 `TItickProductModel.FindActivePage` 查询，条件是：
 
 ```sql
 t_itick_product.enabled = 1

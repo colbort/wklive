@@ -28,7 +28,7 @@ func AdminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAl
 	return nil, nil
 }
 
-func ToCategoryProto(item *models.TMarketCategory) *pb.MarketCategory {
+func ToCategoryProto(item *models.TItickCategory) *pb.MarketCategory {
 	if item == nil {
 		return nil
 	}
@@ -48,7 +48,7 @@ func ToCategoryProto(item *models.TMarketCategory) *pb.MarketCategory {
 	}
 }
 
-func ToProductProto(item *models.TMarketProduct) *pb.MarketProduct {
+func ToProductProto(item *models.TItickProduct) *pb.MarketProduct {
 	if item == nil {
 		return nil
 	}
@@ -75,7 +75,7 @@ func ToProductProto(item *models.TMarketProduct) *pb.MarketProduct {
 	}
 }
 
-func ToQuoteProto(item *models.TMarketQuote) *pb.Quote {
+func ToQuoteProto(item *models.TItickQuote) *pb.Quote {
 	if item == nil {
 		return nil
 	}
@@ -144,7 +144,7 @@ func FormatMarketDecimal(value float64) string {
 	return strconv.FormatFloat(value, 'f', -1, 64)
 }
 
-func ToTenantCategoryProto(item *models.TMarketTenantCategory, category *models.TMarketCategory) *pb.MarketTenantCategory {
+func ToTenantCategoryProto(item *models.TItickTenantCategory, category *models.TItickCategory) *pb.MarketTenantCategory {
 	if item == nil {
 		return nil
 	}
@@ -169,7 +169,7 @@ func ToTenantCategoryProto(item *models.TMarketTenantCategory, category *models.
 	return data
 }
 
-func ToTenantProductProto(item *models.TMarketTenantProduct, product *models.TMarketProduct) *pb.MarketTenantProduct {
+func ToTenantProductProto(item *models.TItickTenantProduct, product *models.TItickProduct) *pb.MarketTenantProduct {
 	if item == nil {
 		return nil
 	}

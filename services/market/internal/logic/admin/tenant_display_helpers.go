@@ -9,9 +9,9 @@ import (
 const batchScanPageSize int64 = 500
 const productLookupBatchSize = 500
 
-func collectProductsByIDs(ctx context.Context, model models.TMarketProductModel, ids []int64) (map[int64]*models.TMarketProduct, error) {
+func collectProductsByIDs(ctx context.Context, model models.TItickProductModel, ids []int64) (map[int64]*models.TItickProduct, error) {
 	if len(ids) == 0 {
-		return map[int64]*models.TMarketProduct{}, nil
+		return map[int64]*models.TItickProduct{}, nil
 	}
 
 	uniqueIDs := make([]int64, 0, len(ids))
@@ -27,7 +27,7 @@ func collectProductsByIDs(ctx context.Context, model models.TMarketProductModel,
 		uniqueIDs = append(uniqueIDs, id)
 	}
 
-	out := make(map[int64]*models.TMarketProduct, len(uniqueIDs))
+	out := make(map[int64]*models.TItickProduct, len(uniqueIDs))
 	for start := 0; start < len(uniqueIDs); start += productLookupBatchSize {
 		end := start + productLookupBatchSize
 		if end > len(uniqueIDs) {

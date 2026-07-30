@@ -9,14 +9,14 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
-var _ TMarketTenantCategoryModel = (*customTMarketTenantCategoryModel)(nil)
+var _ TItickTenantCategoryModel = (*customTMarketTenantCategoryModel)(nil)
 
 type (
-	// TMarketTenantCategoryModel is an interface to be customized, add more methods here,
+	// TItickTenantCategoryModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTMarketTenantCategoryModel.
-	TMarketTenantCategoryModel interface {
-		tMarketTenantCategoryModel
-		FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TMarketTenantCategory, int64, error)
+	TItickTenantCategoryModel interface {
+		tItickTenantCategoryModel
+		FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TItickTenantCategory, int64, error)
 	}
 
 	customTMarketTenantCategoryModel struct {
@@ -25,13 +25,13 @@ type (
 )
 
 // NewTMarketTenantCategoryModel returns a model for the database table.
-func NewTMarketTenantCategoryModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TMarketTenantCategoryModel {
+func NewTMarketTenantCategoryModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TItickTenantCategoryModel {
 	return &customTMarketTenantCategoryModel{
 		defaultTMarketTenantCategoryModel: newTMarketTenantCategoryModel(conn, c, opts...),
 	}
 }
 
-func (m *defaultTMarketTenantCategoryModel) FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TMarketTenantCategory, int64, error) {
+func (m *defaultTMarketTenantCategoryModel) FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TItickTenantCategory, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -59,7 +59,7 @@ func (m *defaultTMarketTenantCategoryModel) FindPage(ctx context.Context, tenant
 			WHERE %s
 			ORDER BY id DESC
 			LIMIT ?`,
-			tMarketTenantCategoryRows, m.table, where,
+			tItickTenantCategoryRows, m.table, where,
 		)
 		listArgs = append(listArgs, limit)
 	} else {
@@ -70,12 +70,12 @@ func (m *defaultTMarketTenantCategoryModel) FindPage(ctx context.Context, tenant
 			WHERE %s AND id < ?
 			ORDER BY id DESC
 			LIMIT ?`,
-			tMarketTenantCategoryRows, m.table, where,
+			tItickTenantCategoryRows, m.table, where,
 		)
 		listArgs = append(listArgs, cursor, limit)
 	}
 
-	var list []*TMarketTenantCategory
+	var list []*TItickTenantCategory
 	if err := m.QueryRowsNoCacheCtx(ctx, &list, listSql, listArgs...); err != nil {
 		return nil, 0, err
 	}

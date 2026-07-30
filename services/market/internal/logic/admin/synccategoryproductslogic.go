@@ -53,7 +53,7 @@ func (l *SyncCategoryProductsLogic) SyncCategoryProducts(in *market.SyncCategory
 	now := cutils.NowMillis()
 
 	// 创建任务记录
-	_, err = l.svcCtx.MarketSyncTaskModel.Insert(l.ctx, &models.TMarketSyncTask{
+	_, err = l.svcCtx.MarketSyncTaskModel.Insert(l.ctx, &models.TItickSyncTask{
 		TaskNo:      taskNo,
 		TaskType:    "sync_category_products",
 		BizId:       in.Id,
@@ -148,13 +148,13 @@ func (w *SyncCategoryProductsWorker) doSync(in *market.SyncCategoryProductsReq) 
 	}, mr.WithContext(w.ctx), mr.WithWorkers(2))
 }
 
-func (w *SyncCategoryProductsWorker) syncMarketProducts(category *models.TMarketCategory, market string) error {
+func (w *SyncCategoryProductsWorker) syncMarketProducts(category *models.TItickCategory, market string) error {
 	resp, err := w.getSymbolList(w.ctx, w.svcCtx.Config.Itick.ApiUrl, w.svcCtx.Config.Itick.Token, category.CategoryCode, market)
 	if err != nil {
 		return err
 	}
 	for _, item := range resp.Data {
-		_, err := w.svcCtx.MarketProductModel.Upsert(w.ctx, &models.TMarketProduct{
+		_, err := w.svcCtx.MarketProductModel.Upsert(w.ctx, &models.TItickProduct{
 			CategoryType: category.CategoryType, CategoryName: category.CategoryName, CategoryCode: category.CategoryCode,
 			Market: market, Symbol: item.Code, Code: item.Code, Name: item.Name, DisplayName: item.Name,
 			Exchange: item.Exchange, Sector: item.Sector, Lug: item.Lug, BaseCoin: "", QuoteCoin: "",

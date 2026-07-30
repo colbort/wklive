@@ -130,12 +130,12 @@ type reconcileGroup struct {
 	category string
 	market   string
 	exchange string
-	products []*models.TMarketProduct
+	products []*models.TItickProduct
 }
 
 type reconcileTask struct {
 	group    *reconcileGroup
-	products []*models.TMarketProduct
+	products []*models.TItickProduct
 }
 
 // RunReconcile performs only the bounded recent-window correction used by the
@@ -250,7 +250,7 @@ func (w *SyncKlinesWorker) doReconcile(apiURL, token, onlyCategory string) error
 	}, mr.WithContext(w.ctx), mr.WithWorkers(4))
 }
 
-func (w *SyncKlinesWorker) loadActiveProducts() ([]*models.TMarketProduct, error) {
+func (w *SyncKlinesWorker) loadActiveProducts() ([]*models.TItickProduct, error) {
 	if w.svcCtx.DataCache != nil {
 		members, err := w.svcCtx.DataCache.SMembers(w.ctx, activeProductsKey).Result()
 		if err == nil && len(members) > 0 {
@@ -270,7 +270,7 @@ func (w *SyncKlinesWorker) loadActiveProducts() ([]*models.TMarketProduct, error
 		}
 	}
 
-	var result []*models.TMarketProduct
+	var result []*models.TItickProduct
 	var cursor int64
 	for {
 		page, err := w.svcCtx.MarketProductModel.FindActivePage(w.ctx, cursor, 500)
@@ -286,7 +286,7 @@ func (w *SyncKlinesWorker) loadActiveProducts() ([]*models.TMarketProduct, error
 	return result, nil
 }
 
-func (w *SyncKlinesWorker) reconcileBatch(apiURL, token string, group *reconcileGroup, products []*models.TMarketProduct) error {
+func (w *SyncKlinesWorker) reconcileBatch(apiURL, token string, group *reconcileGroup, products []*models.TItickProduct) error {
 	codes := make([]string, 0, len(products))
 	for _, product := range products {
 		codes = append(codes, product.Symbol)
@@ -317,7 +317,7 @@ func (w *SyncKlinesWorker) reconcileBatch(apiURL, token string, group *reconcile
 	return nil
 }
 
-func (w *SyncKlinesWorker) reconcileProduct(group *reconcileGroup, product *models.TMarketProduct,
+func (w *SyncKlinesWorker) reconcileProduct(group *reconcileGroup, product *models.TItickProduct,
 	data map[string][]MarketKlineItem, interval string, now, lastClosed int64) error {
 	items := data[product.Symbol]
 	if items == nil {

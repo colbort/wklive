@@ -12,8 +12,8 @@ import (
 )
 
 type authorityRegistryAdminStub struct {
-	row          *models.TMarketAuthorityRegistry
-	enabled      map[string]*models.TMarketAuthorityRegistry
+	row          *models.TItickAuthorityRegistry
+	enabled      map[string]*models.TItickAuthorityRegistry
 	references   int64
 	countCalled  bool
 	updateCalled bool
@@ -22,7 +22,7 @@ type authorityRegistryAdminStub struct {
 func (s *authorityRegistryAdminStub) FindEnabled(
 	_ context.Context,
 	authority string,
-) (*models.TMarketAuthorityRegistry, error) {
+) (*models.TItickAuthorityRegistry, error) {
 	row := s.enabled[authority]
 	if row == nil {
 		return nil, models.ErrNotFound
@@ -31,11 +31,11 @@ func (s *authorityRegistryAdminStub) FindEnabled(
 	return &copy, nil
 }
 
-func (s *authorityRegistryAdminStub) Create(context.Context, *models.TMarketAuthorityRegistry) (int64, error) {
+func (s *authorityRegistryAdminStub) Create(context.Context, *models.TItickAuthorityRegistry) (int64, error) {
 	return 9, nil
 }
 
-func (s *authorityRegistryAdminStub) FindOne(context.Context, int64) (*models.TMarketAuthorityRegistry, error) {
+func (s *authorityRegistryAdminStub) FindOne(context.Context, int64) (*models.TItickAuthorityRegistry, error) {
 	if s.row == nil {
 		return nil, models.ErrNotFound
 	}
@@ -43,7 +43,7 @@ func (s *authorityRegistryAdminStub) FindOne(context.Context, int64) (*models.TM
 	return &copy, nil
 }
 
-func (s *authorityRegistryAdminStub) FindOneByAuthority(context.Context, string) (*models.TMarketAuthorityRegistry, error) {
+func (s *authorityRegistryAdminStub) FindOneByAuthority(context.Context, string) (*models.TItickAuthorityRegistry, error) {
 	return nil, models.ErrNotFound
 }
 
@@ -52,7 +52,7 @@ func (s *authorityRegistryAdminStub) FindPage(
 	models.AuthorityRegistryFilter,
 	int64,
 	int64,
-) ([]*models.TMarketAuthorityRegistry, int64, error) {
+) ([]*models.TItickAuthorityRegistry, int64, error) {
 	return nil, 0, nil
 }
 
@@ -129,7 +129,7 @@ func TestSetAuthorityRegistryRejectsBreakingActiveFormula(t *testing.T) {
 	t.Parallel()
 
 	store := &authorityRegistryAdminStub{
-		row: &models.TMarketAuthorityRegistry{
+		row: &models.TItickAuthorityRegistry{
 			Id:           1,
 			Authority:    "itick-ws",
 			ProviderCode: "ITICK",
@@ -165,7 +165,7 @@ func TestSetAuthorityRegistryAllowsNonBreakingExpansion(t *testing.T) {
 	t.Parallel()
 
 	store := &authorityRegistryAdminStub{
-		row: &models.TMarketAuthorityRegistry{
+		row: &models.TItickAuthorityRegistry{
 			Id:           2,
 			Authority:    "source-ws",
 			ProviderCode: "SOURCE",
@@ -203,7 +203,7 @@ func TestSetAuthorityRegistryAllowsNonBreakingExpansion(t *testing.T) {
 func TestCreateIndexRejectsAuthoritiesFromSameProvider(t *testing.T) {
 	t.Parallel()
 
-	enabled := map[string]*models.TMarketAuthorityRegistry{
+	enabled := map[string]*models.TItickAuthorityRegistry{
 		"price-engine": {
 			Authority:    "price-engine",
 			ProviderCode: "PRICE_ENGINE",
