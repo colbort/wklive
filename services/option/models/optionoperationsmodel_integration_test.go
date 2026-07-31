@@ -187,6 +187,43 @@ func TestQueryOptionOperationsMetricsSeededMySQL(t *testing.T) {
 	}
 }
 
+func TestQueryOptionGovernanceMetricsSeededMySQL(t *testing.T) {
+	dsn := os.Getenv("OPTION_OPERATIONS_TEST_DSN")
+	if dsn == "" || os.Getenv("OPTION_GOVERNANCE_METRICS_EXPECT_SEEDED") != "1" {
+		t.Skip("seeded governance metrics MySQL environment is not enabled")
+	}
+	counts, err := queryOptionGovernanceMetricsByTenant(
+		context.Background(), sqlx.NewMysql(dsn), 100000,
+	)
+	if err != nil {
+		t.Fatalf("query governance metrics: %v", err)
+	}
+	expected := []struct {
+		category string
+		count    int64
+		oldest   int64
+	}{
+		{"settlement_price_overdue", 1, 99800},
+		{"settlement_price_invalid", 1, 99900},
+		{"portfolio_risk_config_missing", 1, 0},
+		{"portfolio_risk_version_mismatch", 1, 99800},
+		{"corporate_action_due", 1, 99800},
+		{"corporate_action_exception", 1, 99700},
+		{"contract_series_review_stale", 1, 1000},
+		{"contract_series_invariant_issue", 1, 90000},
+		{"public_chain_pair_issue", 1, 0},
+		{"open_interest_imbalance", 1, 0},
+	}
+	for _, item := range expected {
+		assertOperationsMetric(t, counts, 9, item.category, item.count, item.oldest)
+	}
+	for _, item := range counts {
+		if item.TenantID == 10 {
+			t.Fatalf("healthy tenant emitted governance metric: %+v", item)
+		}
+	}
+}
+
 func assertOperationsMetric(
 	t *testing.T,
 	items []*OptionOperationsMetric,

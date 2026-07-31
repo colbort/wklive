@@ -107,6 +107,11 @@ OR order_price_band_ratio<=0 OR circuit_breaker_ratio<=0)`, "update_times", nil}
 		return nil, nil, fmt.Errorf("query option market freshness metrics: %w", err)
 	}
 	counts = append(counts, marketMetrics...)
+	governanceMetrics, err := queryOptionGovernanceMetricsByTenant(ctx, conn, now)
+	if err != nil {
+		return nil, nil, fmt.Errorf("query option governance metrics: %w", err)
+	}
+	counts = append(counts, governanceMetrics...)
 
 	amounts, err := queryOptionOperationsAmounts(ctx, conn)
 	if err != nil {
@@ -331,6 +336,221 @@ WHERE contract.status=2
 GROUP BY contract.tenant_id
 ORDER BY contract.tenant_id`,
 			args: []any{now},
+		},
+	}
+	result := make([]*OptionOperationsMetric, 0, len(targets))
+	for _, target := range targets {
+		var rows []*optionTenantCountOldest
+		if err := conn.QueryRowsCtx(ctx, &rows, target.query, target.args...); err != nil {
+			return nil, fmt.Errorf("%s: %w", target.category, err)
+		}
+		result = append(result, toOptionOperationsMetrics(rows, target.category)...)
+	}
+	return result, nil
+}
+
+func queryOptionGovernanceMetricsByTenant(
+	ctx context.Context,
+	conn sqlx.SqlConn,
+	now int64,
+) ([]*OptionOperationsMetric, error) {
+	type queryTarget struct {
+		category string
+		query    string
+		args     []any
+	}
+	targets := []queryTarget{
+		{
+			category: "settlement_price_overdue",
+			query: `
+SELECT contract.tenant_id,COUNT(1) count,
+       COALESCE(MIN(contract.expire_time),0) oldest
+FROM t_option_contract contract
+WHERE contract.expire_time>0 AND contract.expire_time<?
+  AND contract.status IN (2,3,4)
+  AND NOT EXISTS (
+    SELECT 1 FROM t_option_settlement_price price
+    WHERE price.tenant_id=contract.tenant_id
+      AND price.contract_id=contract.id AND price.status=2
+  )
+GROUP BY contract.tenant_id
+ORDER BY contract.tenant_id`,
+			args: []any{now - 60},
+		},
+		{
+			category: "settlement_price_invalid",
+			query: `
+SELECT price.tenant_id,COUNT(1) count,
+       COALESCE(MIN(price.confirmed_at),0) oldest
+FROM t_option_settlement_price price
+JOIN t_option_contract contract
+  ON contract.tenant_id=price.tenant_id AND contract.id=price.contract_id
+WHERE price.status=2
+  AND (
+    price.sample_count<contract.settlement_min_samples
+    OR price.price_source<>contract.settlement_price_source
+    OR price.calculation_method<>contract.settlement_price_method
+    OR price.window_end<>contract.expire_time
+    OR price.window_start<>contract.expire_time-contract.settlement_window_seconds
+    OR price.source_snapshot_ids=''
+  )
+GROUP BY price.tenant_id
+ORDER BY price.tenant_id`,
+		},
+		{
+			category: "portfolio_risk_config_missing",
+			query: `
+SELECT tenant_id,COUNT(1) count,0 oldest
+FROM (
+  SELECT position.tenant_id,position.user_id,contract.settle_coin
+  FROM t_option_position position
+  JOIN t_option_contract contract
+    ON contract.tenant_id=position.tenant_id AND contract.id=position.contract_id
+  LEFT JOIN t_option_portfolio_risk_config config
+    ON config.tenant_id=position.tenant_id
+   AND config.settle_coin=contract.settle_coin
+   AND config.status=2
+   AND config.effective_from<=?
+   AND (config.effective_until=0 OR config.effective_until>?)
+  WHERE position.status=1 AND position.position_qty>0
+    AND contract.seller_margin_mode=3 AND config.id IS NULL
+  GROUP BY position.tenant_id,position.user_id,contract.settle_coin
+) missing
+GROUP BY tenant_id
+ORDER BY tenant_id`,
+			args: []any{now, now},
+		},
+		{
+			category: "portfolio_risk_version_mismatch",
+			query: `
+SELECT account.tenant_id,COUNT(1) count,
+       COALESCE(MIN(account.last_calc_time),0) oldest
+FROM t_option_risk_account account
+JOIN t_option_portfolio_risk_config config
+  ON config.tenant_id=account.tenant_id
+ AND config.settle_coin=account.settle_coin
+ AND config.status=2
+ AND config.effective_from<=?
+ AND (config.effective_until=0 OR config.effective_until>?)
+WHERE account.portfolio_risk_method=1
+  AND account.last_calc_time<?
+  AND (
+    account.portfolio_risk_config_id<>config.id
+    OR account.portfolio_risk_config_version<>config.version
+  )
+GROUP BY account.tenant_id
+ORDER BY account.tenant_id`,
+			args: []any{now, now, now - 60},
+		},
+		{
+			category: "corporate_action_due",
+			query: `
+SELECT action.tenant_id,COUNT(1) count,
+       COALESCE(MIN(action.effective_time),0) oldest
+FROM t_option_corporate_action action
+WHERE action.effective_time<=? AND action.status IN (2,4)
+GROUP BY action.tenant_id
+ORDER BY action.tenant_id`,
+			args: []any{now},
+		},
+		{
+			category: "corporate_action_exception",
+			query: `
+SELECT tenant_id,COUNT(1) count,COALESCE(MIN(effective_time),0) oldest
+FROM (
+  SELECT action.tenant_id,action.id,action.effective_time
+  FROM t_option_corporate_action action
+  WHERE action.status IN (6,7)
+  UNION
+  SELECT action.tenant_id,action.id,action.effective_time
+  FROM t_option_corporate_action action
+  JOIN t_option_corporate_action_contract mapping
+    ON mapping.tenant_id=action.tenant_id AND mapping.action_id=action.id
+  LEFT JOIN t_option_contract source_contract
+    ON source_contract.tenant_id=mapping.tenant_id
+   AND source_contract.id=mapping.source_contract_id
+  LEFT JOIN t_option_contract successor_contract
+    ON successor_contract.tenant_id=mapping.tenant_id
+   AND successor_contract.id=mapping.successor_contract_id
+  WHERE action.status IN (2,4,6,7)
+    AND (
+      mapping.status IN (5,6)
+      OR mapping.position_failed>0
+      OR source_contract.id IS NULL OR source_contract.status<>3
+      OR (mapping.successor_contract_id>0
+          AND (successor_contract.id IS NULL OR successor_contract.status<>1))
+    )
+) issues
+GROUP BY tenant_id
+ORDER BY tenant_id`,
+		},
+		{
+			category: "contract_series_review_stale",
+			query: `
+SELECT series.tenant_id,COUNT(1) count,
+       COALESCE(MIN(series.create_times),0) oldest
+FROM t_option_contract_series series
+WHERE series.status=1 AND series.create_times<?
+GROUP BY series.tenant_id
+ORDER BY series.tenant_id`,
+			args: []any{now - 86400},
+		},
+		{
+			category: "contract_series_invariant_issue",
+			query: `
+SELECT tenant_id,COUNT(1) count,COALESCE(MIN(issue_time),0) oldest
+FROM (
+  SELECT series.tenant_id,series.id,series.create_times issue_time
+  FROM t_option_contract_series series
+  WHERE series.status=2
+    AND series.generated_contract_count<>series.expected_contract_count
+  UNION
+  SELECT series.tenant_id,series.id,series.create_times issue_time
+  FROM t_option_contract_series series
+  LEFT JOIN t_option_contract_series_detail detail
+    ON detail.tenant_id=series.tenant_id AND detail.series_id=series.id
+  LEFT JOIN t_option_contract contract
+    ON contract.tenant_id=detail.tenant_id AND contract.id=detail.contract_id
+  WHERE series.status=2
+  GROUP BY series.tenant_id,series.id,series.create_times,
+           series.expected_contract_count,series.launch_status
+  HAVING COUNT(detail.id)<>series.expected_contract_count
+    OR SUM(CASE
+      WHEN contract.id IS NULL
+        OR (series.launch_status<>2 AND contract.status<>1)
+      THEN 1 ELSE 0 END)<>0
+) issues
+GROUP BY tenant_id
+ORDER BY tenant_id`,
+		},
+		{
+			category: "public_chain_pair_issue",
+			query: `
+SELECT tenant_id,COUNT(1) count,0 oldest
+FROM (
+  SELECT tenant_id,underlying_symbol,expire_time,strike_price
+  FROM t_option_contract
+  WHERE status=2 AND is_deleted=2
+  GROUP BY tenant_id,underlying_symbol,expire_time,strike_price
+  HAVING SUM(option_type=1)<>1 OR SUM(option_type=2)<>1
+) issues
+GROUP BY tenant_id
+ORDER BY tenant_id`,
+		},
+		{
+			category: "open_interest_imbalance",
+			query: `
+SELECT tenant_id,COUNT(1) count,0 oldest
+FROM (
+  SELECT tenant_id,contract_id
+  FROM t_option_position
+  WHERE status=1 AND position_qty>0
+  GROUP BY tenant_id,contract_id
+  HAVING SUM(CASE WHEN side=1 THEN position_qty ELSE 0 END)
+      <>SUM(CASE WHEN side=2 THEN position_qty ELSE 0 END)
+) issues
+GROUP BY tenant_id
+ORDER BY tenant_id`,
 		},
 	}
 	result := make([]*OptionOperationsMetric, 0, len(targets))
