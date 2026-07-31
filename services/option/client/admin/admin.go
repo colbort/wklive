@@ -14,89 +14,178 @@ import (
 )
 
 type (
-	CancelOrderReq                = option.CancelOrderReq
-	CommonResp                    = option.CommonResp
-	CreateContractReq             = option.CreateContractReq
-	CreateContractResp            = option.CreateContractResp
-	ExerciseData                  = option.ExerciseData
-	ExerciseReq                   = option.ExerciseReq
-	ExerciseResp                  = option.ExerciseResp
-	ForceCancelContractOrdersReq  = option.ForceCancelContractOrdersReq
-	GetAccountReq                 = option.GetAccountReq
-	GetAccountResp                = option.GetAccountResp
-	GetBillReq                    = option.GetBillReq
-	GetBillResp                   = option.GetBillResp
-	GetContractDetailReq          = option.GetContractDetailReq
-	GetContractDetailResp         = option.GetContractDetailResp
-	GetContractReq                = option.GetContractReq
-	GetContractResp               = option.GetContractResp
-	GetExerciseReq                = option.GetExerciseReq
-	GetExerciseResp               = option.GetExerciseResp
-	GetMarketReq                  = option.GetMarketReq
-	GetMarketResp                 = option.GetMarketResp
-	GetOrderDetailReq             = option.GetOrderDetailReq
-	GetOrderDetailResp            = option.GetOrderDetailResp
-	GetOrderReq                   = option.GetOrderReq
-	GetOrderResp                  = option.GetOrderResp
-	GetPositionDetailReq          = option.GetPositionDetailReq
-	GetPositionDetailResp         = option.GetPositionDetailResp
-	GetPositionReq                = option.GetPositionReq
-	GetPositionResp               = option.GetPositionResp
-	GetSettlementReq              = option.GetSettlementReq
-	GetSettlementResp             = option.GetSettlementResp
-	GetTradeReq                   = option.GetTradeReq
-	GetTradeResp                  = option.GetTradeResp
-	ListAccountsReq               = option.ListAccountsReq
-	ListAccountsResp              = option.ListAccountsResp
-	ListBillsReq                  = option.ListBillsReq
-	ListBillsResp                 = option.ListBillsResp
-	ListContractsReq              = option.ListContractsReq
-	ListContractsResp             = option.ListContractsResp
-	ListCurrentOrdersReq          = option.ListCurrentOrdersReq
-	ListCurrentOrdersResp         = option.ListCurrentOrdersResp
-	ListExercisesReq              = option.ListExercisesReq
-	ListExercisesResp             = option.ListExercisesResp
-	ListHistoryOrdersReq          = option.ListHistoryOrdersReq
-	ListHistoryOrdersResp         = option.ListHistoryOrdersResp
-	ListLiquidationsReq           = option.ListLiquidationsReq
-	ListLiquidationsResp          = option.ListLiquidationsResp
-	ListMarketSnapshotsReq        = option.ListMarketSnapshotsReq
-	ListMarketSnapshotsResp       = option.ListMarketSnapshotsResp
-	ListOrdersReq                 = option.ListOrdersReq
-	ListOrdersResp                = option.ListOrdersResp
-	ListPositionsReq              = option.ListPositionsReq
-	ListPositionsResp             = option.ListPositionsResp
-	ListRiskAccountsReq           = option.ListRiskAccountsReq
-	ListRiskAccountsResp          = option.ListRiskAccountsResp
-	ListSettlementsReq            = option.ListSettlementsReq
-	ListSettlementsResp           = option.ListSettlementsResp
-	ListTradesReq                 = option.ListTradesReq
-	ListTradesResp                = option.ListTradesResp
-	OptionTaskReq                 = option.OptionTaskReq
-	OptionTaskResp                = option.OptionTaskResp
-	PlaceOrderData                = option.PlaceOrderData
-	PlaceOrderReq                 = option.PlaceOrderReq
-	PlaceOrderResp                = option.PlaceOrderResp
-	RetryAssetInstructionReq      = option.RetryAssetInstructionReq
-	RetryExerciseReq              = option.RetryExerciseReq
-	RetryLiquidationReq           = option.RetryLiquidationReq
-	RetrySettlementInstructionReq = option.RetrySettlementInstructionReq
-	RetryTradeEventReq            = option.RetryTradeEventReq
-	UpdateContractReq             = option.UpdateContractReq
-	UpdateMarketReq               = option.UpdateMarketReq
-	UserCommonResp                = option.UserCommonResp
-	UserListAccountsReq           = option.UserListAccountsReq
-	UserListAccountsResp          = option.UserListAccountsResp
-	UserListBillsReq              = option.UserListBillsReq
-	UserListBillsResp             = option.UserListBillsResp
-	UserListContractsReq          = option.UserListContractsReq
-	UserListContractsResp         = option.UserListContractsResp
-	UserListExercisesReq          = option.UserListExercisesReq
-	UserListExercisesResp         = option.UserListExercisesResp
-	UserListPositionsReq          = option.UserListPositionsReq
-	UserListPositionsResp         = option.UserListPositionsResp
-	UserListTradesReq             = option.UserListTradesReq
-	UserListTradesResp            = option.UserListTradesResp
+	ActivateKillSwitchReq              = option.ActivateKillSwitchReq
+	AdminGetUserTradingControlReq      = option.AdminGetUserTradingControlReq
+	AdminGetUserTradingControlResp     = option.AdminGetUserTradingControlResp
+	CancelComboOrderReq                = option.CancelComboOrderReq
+	CancelOrderReq                     = option.CancelOrderReq
+	ComboOrderLegInput                 = option.ComboOrderLegInput
+	CommonResp                         = option.CommonResp
+	ContractSeriesExpiryInput          = option.ContractSeriesExpiryInput
+	ContractSeriesStrikeBandInput      = option.ContractSeriesStrikeBandInput
+	CorporateActionContractInput       = option.CorporateActionContractInput
+	CreateContractReq                  = option.CreateContractReq
+	CreateContractResp                 = option.CreateContractResp
+	CreateContractSeriesReq            = option.CreateContractSeriesReq
+	CreateCorporateActionReq           = option.CreateCorporateActionReq
+	CreatePortfolioRiskConfigReq       = option.CreatePortfolioRiskConfigReq
+	CreateSettlementPriceCorrectionReq = option.CreateSettlementPriceCorrectionReq
+	CreateTradeCorrectionReq           = option.CreateTradeCorrectionReq
+	CreateTradingCalendarReq           = option.CreateTradingCalendarReq
+	ExerciseData                       = option.ExerciseData
+	ExerciseReq                        = option.ExerciseReq
+	ExerciseResp                       = option.ExerciseResp
+	ForceCancelComboOrderReq           = option.ForceCancelComboOrderReq
+	ForceCancelContractOrdersReq       = option.ForceCancelContractOrdersReq
+	GetAccountReq                      = option.GetAccountReq
+	GetAccountResp                     = option.GetAccountResp
+	GetAdminComboOrderReq              = option.GetAdminComboOrderReq
+	GetAdminComboOrderResp             = option.GetAdminComboOrderResp
+	GetBillReq                         = option.GetBillReq
+	GetBillResp                        = option.GetBillResp
+	GetComboOrderReq                   = option.GetComboOrderReq
+	GetComboOrderResp                  = option.GetComboOrderResp
+	GetContractDetailReq               = option.GetContractDetailReq
+	GetContractDetailResp              = option.GetContractDetailResp
+	GetContractReq                     = option.GetContractReq
+	GetContractResp                    = option.GetContractResp
+	GetContractSeriesResp              = option.GetContractSeriesResp
+	GetCorporateActionResp             = option.GetCorporateActionResp
+	GetExerciseInstructionReq          = option.GetExerciseInstructionReq
+	GetExerciseInstructionResp         = option.GetExerciseInstructionResp
+	GetExerciseReq                     = option.GetExerciseReq
+	GetExerciseResp                    = option.GetExerciseResp
+	GetMMPConfigReq                    = option.GetMMPConfigReq
+	GetMMPConfigResp                   = option.GetMMPConfigResp
+	GetMarketReq                       = option.GetMarketReq
+	GetMarketResp                      = option.GetMarketResp
+	GetOperationsOverviewReq           = option.GetOperationsOverviewReq
+	GetOperationsOverviewResp          = option.GetOperationsOverviewResp
+	GetOrderBookReq                    = option.GetOrderBookReq
+	GetOrderBookResp                   = option.GetOrderBookResp
+	GetOrderDetailReq                  = option.GetOrderDetailReq
+	GetOrderDetailResp                 = option.GetOrderDetailResp
+	GetOrderReq                        = option.GetOrderReq
+	GetOrderResp                       = option.GetOrderResp
+	GetPortfolioRiskConfigResp         = option.GetPortfolioRiskConfigResp
+	GetPositionDetailReq               = option.GetPositionDetailReq
+	GetPositionDetailResp              = option.GetPositionDetailResp
+	GetPositionReq                     = option.GetPositionReq
+	GetPositionResp                    = option.GetPositionResp
+	GetSettlementPriceResp             = option.GetSettlementPriceResp
+	GetSettlementReq                   = option.GetSettlementReq
+	GetSettlementResp                  = option.GetSettlementResp
+	GetTradeCorrectionResp             = option.GetTradeCorrectionResp
+	GetTradeReq                        = option.GetTradeReq
+	GetTradeResp                       = option.GetTradeResp
+	GetTradingCalendarResp             = option.GetTradingCalendarResp
+	GetTradingHaltResp                 = option.GetTradingHaltResp
+	GetUserTradingControlReq           = option.GetUserTradingControlReq
+	GetUserTradingControlResp          = option.GetUserTradingControlResp
+	HaltContractTradingReq             = option.HaltContractTradingReq
+	ListAccountsReq                    = option.ListAccountsReq
+	ListAccountsResp                   = option.ListAccountsResp
+	ListAdminComboOrdersReq            = option.ListAdminComboOrdersReq
+	ListAdminComboOrdersResp           = option.ListAdminComboOrdersResp
+	ListAssetInstructionsReq           = option.ListAssetInstructionsReq
+	ListAssetInstructionsResp          = option.ListAssetInstructionsResp
+	ListBillsReq                       = option.ListBillsReq
+	ListBillsResp                      = option.ListBillsResp
+	ListComboOrdersReq                 = option.ListComboOrdersReq
+	ListComboOrdersResp                = option.ListComboOrdersResp
+	ListContractSeriesDetailsReq       = option.ListContractSeriesDetailsReq
+	ListContractSeriesDetailsResp      = option.ListContractSeriesDetailsResp
+	ListContractSeriesReq              = option.ListContractSeriesReq
+	ListContractSeriesResp             = option.ListContractSeriesResp
+	ListContractsReq                   = option.ListContractsReq
+	ListContractsResp                  = option.ListContractsResp
+	ListCorporateActionPositionsReq    = option.ListCorporateActionPositionsReq
+	ListCorporateActionPositionsResp   = option.ListCorporateActionPositionsResp
+	ListCorporateActionsReq            = option.ListCorporateActionsReq
+	ListCorporateActionsResp           = option.ListCorporateActionsResp
+	ListCurrentOrdersReq               = option.ListCurrentOrdersReq
+	ListCurrentOrdersResp              = option.ListCurrentOrdersResp
+	ListExercisesReq                   = option.ListExercisesReq
+	ListExercisesResp                  = option.ListExercisesResp
+	ListHistoryOrdersReq               = option.ListHistoryOrdersReq
+	ListHistoryOrdersResp              = option.ListHistoryOrdersResp
+	ListLiquidationsReq                = option.ListLiquidationsReq
+	ListLiquidationsResp               = option.ListLiquidationsResp
+	ListMMPConfigsReq                  = option.ListMMPConfigsReq
+	ListMMPConfigsResp                 = option.ListMMPConfigsResp
+	ListMarketSnapshotsReq             = option.ListMarketSnapshotsReq
+	ListMarketSnapshotsResp            = option.ListMarketSnapshotsResp
+	ListOptionChainReq                 = option.ListOptionChainReq
+	ListOptionChainResp                = option.ListOptionChainResp
+	ListOrdersReq                      = option.ListOrdersReq
+	ListOrdersResp                     = option.ListOrdersResp
+	ListPhysicalDeliveryUnitsReq       = option.ListPhysicalDeliveryUnitsReq
+	ListPhysicalDeliveryUnitsResp      = option.ListPhysicalDeliveryUnitsResp
+	ListPortfolioRiskConfigsReq        = option.ListPortfolioRiskConfigsReq
+	ListPortfolioRiskConfigsResp       = option.ListPortfolioRiskConfigsResp
+	ListPositionsReq                   = option.ListPositionsReq
+	ListPositionsResp                  = option.ListPositionsResp
+	ListReconciliationIssuesReq        = option.ListReconciliationIssuesReq
+	ListReconciliationIssuesResp       = option.ListReconciliationIssuesResp
+	ListRiskAccountsReq                = option.ListRiskAccountsReq
+	ListRiskAccountsResp               = option.ListRiskAccountsResp
+	ListSettlementPricesReq            = option.ListSettlementPricesReq
+	ListSettlementPricesResp           = option.ListSettlementPricesResp
+	ListSettlementsReq                 = option.ListSettlementsReq
+	ListSettlementsResp                = option.ListSettlementsResp
+	ListTradeCorrectionsReq            = option.ListTradeCorrectionsReq
+	ListTradeCorrectionsResp           = option.ListTradeCorrectionsResp
+	ListTradesReq                      = option.ListTradesReq
+	ListTradesResp                     = option.ListTradesResp
+	ListTradingCalendarsReq            = option.ListTradingCalendarsReq
+	ListTradingCalendarsResp           = option.ListTradingCalendarsResp
+	ListTradingControlEventsReq        = option.ListTradingControlEventsReq
+	ListTradingControlEventsResp       = option.ListTradingControlEventsResp
+	ListTradingHaltsReq                = option.ListTradingHaltsReq
+	ListTradingHaltsResp               = option.ListTradingHaltsResp
+	OptionTaskReq                      = option.OptionTaskReq
+	OptionTaskResp                     = option.OptionTaskResp
+	PlaceComboOrderReq                 = option.PlaceComboOrderReq
+	PlaceComboOrderResp                = option.PlaceComboOrderResp
+	PlaceOrderData                     = option.PlaceOrderData
+	PlaceOrderReq                      = option.PlaceOrderReq
+	PlaceOrderResp                     = option.PlaceOrderResp
+	ReleaseUserKillSwitchReq           = option.ReleaseUserKillSwitchReq
+	ResetMMPConfigReq                  = option.ResetMMPConfigReq
+	ResumeContractTradingReq           = option.ResumeContractTradingReq
+	RetryAssetInstructionReq           = option.RetryAssetInstructionReq
+	RetryExerciseReq                   = option.RetryExerciseReq
+	RetryLiquidationReq                = option.RetryLiquidationReq
+	RetryPhysicalDeliveryUnitReq       = option.RetryPhysicalDeliveryUnitReq
+	RetrySettlementInstructionReq      = option.RetrySettlementInstructionReq
+	RetryTradeEventReq                 = option.RetryTradeEventReq
+	ReviewContractSeriesLaunchReq      = option.ReviewContractSeriesLaunchReq
+	ReviewContractSeriesReq            = option.ReviewContractSeriesReq
+	ReviewCorporateActionReq           = option.ReviewCorporateActionReq
+	ReviewPortfolioRiskConfigReq       = option.ReviewPortfolioRiskConfigReq
+	ReviewSettlementPriceReq           = option.ReviewSettlementPriceReq
+	ReviewTradeCorrectionReq           = option.ReviewTradeCorrectionReq
+	ReviewTradingCalendarReq           = option.ReviewTradingCalendarReq
+	SetExerciseInstructionReq          = option.SetExerciseInstructionReq
+	TradeCorrectionLegInput            = option.TradeCorrectionLegInput
+	TradingCalendarExceptionInput      = option.TradingCalendarExceptionInput
+	TradingCalendarSessionInput        = option.TradingCalendarSessionInput
+	UpdateContractReq                  = option.UpdateContractReq
+	UpdateMarketReq                    = option.UpdateMarketReq
+	UpsertMMPConfigReq                 = option.UpsertMMPConfigReq
+	UserCommonResp                     = option.UserCommonResp
+	UserListAccountsReq                = option.UserListAccountsReq
+	UserListAccountsResp               = option.UserListAccountsResp
+	UserListBillsReq                   = option.UserListBillsReq
+	UserListBillsResp                  = option.UserListBillsResp
+	UserListContractsReq               = option.UserListContractsReq
+	UserListContractsResp              = option.UserListContractsResp
+	UserListExercisesReq               = option.UserListExercisesReq
+	UserListExercisesResp              = option.UserListExercisesResp
+	UserListPositionsReq               = option.UserListPositionsReq
+	UserListPositionsResp              = option.UserListPositionsResp
+	UserListTradesReq                  = option.UserListTradesReq
+	UserListTradesResp                 = option.UserListTradesResp
 
 	Admin interface {
 		// 创建期权合约
@@ -117,6 +206,12 @@ type (
 		GetOrder(ctx context.Context, in *GetOrderReq, opts ...grpc.CallOption) (*GetOrderResp, error)
 		// 分页查询委托订单列表
 		ListOrders(ctx context.Context, in *ListOrdersReq, opts ...grpc.CallOption) (*ListOrdersResp, error)
+		// 分页查询组合父单，供运营按整组处理
+		ListAdminComboOrders(ctx context.Context, in *ListAdminComboOrdersReq, opts ...grpc.CallOption) (*ListAdminComboOrdersResp, error)
+		// 查询组合父单、腿、影子单、成交和资产指令
+		GetAdminComboOrder(ctx context.Context, in *GetAdminComboOrderReq, opts ...grpc.CallOption) (*GetAdminComboOrderResp, error)
+		// 强制撤销一个组合父单；禁止单腿撤销
+		ForceCancelComboOrder(ctx context.Context, in *ForceCancelComboOrderReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取单个成交记录详情
 		GetTrade(ctx context.Context, in *GetTradeReq, opts ...grpc.CallOption) (*GetTradeResp, error)
 		// 分页查询成交记录列表
@@ -133,6 +228,12 @@ type (
 		GetSettlement(ctx context.Context, in *GetSettlementReq, opts ...grpc.CallOption) (*GetSettlementResp, error)
 		// 分页查询到期结算记录列表
 		ListSettlements(ctx context.Context, in *ListSettlementsReq, opts ...grpc.CallOption) (*ListSettlementsResp, error)
+		// 分页查询到期结算价版本
+		ListSettlementPrices(ctx context.Context, in *ListSettlementPricesReq, opts ...grpc.CallOption) (*ListSettlementPricesResp, error)
+		// 创建人工结算价更正草案，必须由另一管理员确认
+		CreateSettlementPriceCorrection(ctx context.Context, in *CreateSettlementPriceCorrectionReq, opts ...grpc.CallOption) (*GetSettlementPriceResp, error)
+		// 确认或拒绝待复核结算价
+		ReviewSettlementPrice(ctx context.Context, in *ReviewSettlementPriceReq, opts ...grpc.CallOption) (*GetSettlementPriceResp, error)
 		// 获取单个账户资产详情
 		GetAccount(ctx context.Context, in *GetAccountReq, opts ...grpc.CallOption) (*GetAccountResp, error)
 		// 分页查询账户资产列表
@@ -145,10 +246,52 @@ type (
 		ForceCancelContractOrders(ctx context.Context, in *ForceCancelContractOrdersReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 将失败或人工处理的资产指令重新置为待执行
 		RetryAssetInstruction(ctx context.Context, in *RetryAssetInstructionReq, opts ...grpc.CallOption) (*CommonResp, error)
+		// 查询运营异常和任务水位汇总
+		GetOperationsOverview(ctx context.Context, in *GetOperationsOverviewReq, opts ...grpc.CallOption) (*GetOperationsOverviewResp, error)
+		// 分页查询资产指令，统一定位失败和人工处理项
+		ListAssetInstructions(ctx context.Context, in *ListAssetInstructionsReq, opts ...grpc.CallOption) (*ListAssetInstructionsResp, error)
+		// 分页查询 Option 与 Asset 对账差异
+		ListReconciliationIssues(ctx context.Context, in *ListReconciliationIssuesReq, opts ...grpc.CallOption) (*ListReconciliationIssuesResp, error)
+		// 创建不可覆盖的交易日历版本草案
+		CreateTradingCalendar(ctx context.Context, in *CreateTradingCalendarReq, opts ...grpc.CallOption) (*GetTradingCalendarResp, error)
+		// 由独立管理员批准或拒绝日历版本
+		ReviewTradingCalendar(ctx context.Context, in *ReviewTradingCalendarReq, opts ...grpc.CallOption) (*GetTradingCalendarResp, error)
+		// 分页查询交易日历版本
+		ListTradingCalendars(ctx context.Context, in *ListTradingCalendarsReq, opts ...grpc.CallOption) (*ListTradingCalendarsResp, error)
+		// 紧急暂停合约交易并撤销活动订单
+		HaltContractTrading(ctx context.Context, in *HaltContractTradingReq, opts ...grpc.CallOption) (*GetTradingHaltResp, error)
+		// 引用原 halt 解除临时休市
+		ResumeContractTrading(ctx context.Context, in *ResumeContractTradingReq, opts ...grpc.CallOption) (*GetTradingHaltResp, error)
+		// 分页查询临时休市记录
+		ListTradingHalts(ctx context.Context, in *ListTradingHaltsReq, opts ...grpc.CallOption) (*ListTradingHaltsResp, error)
+		// 登记不可覆盖的公司行动版本；所有受影响合约立即停牌并撤单
+		CreateCorporateAction(ctx context.Context, in *CreateCorporateActionReq, opts ...grpc.CallOption) (*GetCorporateActionResp, error)
+		// 独立管理员复核公司行动；不支持的事件只能进入人工处理
+		ReviewCorporateAction(ctx context.Context, in *ReviewCorporateActionReq, opts ...grpc.CallOption) (*GetCorporateActionResp, error)
+		// 分页查询公司行动及合约迁移进度
+		ListCorporateActions(ctx context.Context, in *ListCorporateActionsReq, opts ...grpc.CallOption) (*ListCorporateActionsResp, error)
+		// 分页查询逐持仓迁移审计结果
+		ListCorporateActionPositions(ctx context.Context, in *ListCorporateActionPositionsReq, opts ...grpc.CallOption) (*ListCorporateActionPositionsResp, error)
+		// 创建不可覆盖的到期/行权价系列版本草案
+		CreateContractSeries(ctx context.Context, in *CreateContractSeriesReq, opts ...grpc.CallOption) (*GetContractSeriesResp, error)
+		// 独立管理员复核；批准时原子生成全部 PENDING 合约
+		ReviewContractSeries(ctx context.Context, in *ReviewContractSeriesReq, opts ...grpc.CallOption) (*GetContractSeriesResp, error)
+		// 分页查询系列版本
+		ListContractSeries(ctx context.Context, in *ListContractSeriesReq, opts ...grpc.CallOption) (*ListContractSeriesResp, error)
+		// 分页查询系列生成合约谱系
+		ListContractSeriesDetails(ctx context.Context, in *ListContractSeriesDetailsReq, opts ...grpc.CallOption) (*ListContractSeriesDetailsResp, error)
+		// 对已生成系列执行独立上市复核；批准前生命周期必须保持 PENDING
+		ReviewContractSeriesLaunch(ctx context.Context, in *ReviewContractSeriesLaunchReq, opts ...grpc.CallOption) (*GetContractSeriesResp, error)
 		// 将失败或人工处理的成交持仓事件重新置为待执行
 		RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 分页查询卖方风险账户
 		ListRiskAccounts(ctx context.Context, in *ListRiskAccountsReq, opts ...grpc.CallOption) (*ListRiskAccountsResp, error)
+		// 创建不可覆盖的组合保证金参数草案
+		CreatePortfolioRiskConfig(ctx context.Context, in *CreatePortfolioRiskConfigReq, opts ...grpc.CallOption) (*GetPortfolioRiskConfigResp, error)
+		// 由独立管理员批准或拒绝组合保证金参数版本
+		ReviewPortfolioRiskConfig(ctx context.Context, in *ReviewPortfolioRiskConfigReq, opts ...grpc.CallOption) (*GetPortfolioRiskConfigResp, error)
+		// 分页查询组合保证金参数版本
+		ListPortfolioRiskConfigs(ctx context.Context, in *ListPortfolioRiskConfigsReq, opts ...grpc.CallOption) (*ListPortfolioRiskConfigsResp, error)
 		// 分页查询强平记录
 		ListLiquidations(ctx context.Context, in *ListLiquidationsReq, opts ...grpc.CallOption) (*ListLiquidationsResp, error)
 		// 将失败或人工处理的强平记录重新置为待执行
@@ -157,6 +300,28 @@ type (
 		RetryExercise(ctx context.Context, in *RetryExerciseReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 校验归属后重试结算批次中的失败资产指令
 		RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*CommonResp, error)
+		// 人工复核后解除用户 kill switch
+		ReleaseUserKillSwitch(ctx context.Context, in *ReleaseUserKillSwitchReq, opts ...grpc.CallOption) (*CommonResp, error)
+		// 查询用户 kill switch
+		AdminGetUserTradingControl(ctx context.Context, in *AdminGetUserTradingControlReq, opts ...grpc.CallOption) (*AdminGetUserTradingControlResp, error)
+		// 分页查询交易控制审计事件
+		ListTradingControlEvents(ctx context.Context, in *ListTradingControlEventsReq, opts ...grpc.CallOption) (*ListTradingControlEventsResp, error)
+		// 创建异常成交现金更正草案，同时暂停合约并撤销活动订单
+		CreateTradeCorrection(ctx context.Context, in *CreateTradeCorrectionReq, opts ...grpc.CallOption) (*GetTradeCorrectionResp, error)
+		// 由独立管理员批准或拒绝异常成交更正
+		ReviewTradeCorrection(ctx context.Context, in *ReviewTradeCorrectionReq, opts ...grpc.CallOption) (*GetTradeCorrectionResp, error)
+		// 分页查询异常成交更正案件
+		ListTradeCorrections(ctx context.Context, in *ListTradeCorrectionsReq, opts ...grpc.CallOption) (*ListTradeCorrectionsResp, error)
+		// 创建或更新做市商保护参数；任何变更都会撤销该组已有 MMP 报价
+		UpsertMMPConfig(ctx context.Context, in *UpsertMMPConfigReq, opts ...grpc.CallOption) (*GetMMPConfigResp, error)
+		// 人工复核并恢复触发中的 MMP 报价组
+		ResetMMPConfig(ctx context.Context, in *ResetMMPConfigReq, opts ...grpc.CallOption) (*GetMMPConfigResp, error)
+		// 分页查询 MMP 配置和实时窗口状态
+		ListMMPConfigs(ctx context.Context, in *ListMMPConfigsReq, opts ...grpc.CallOption) (*ListMMPConfigsResp, error)
+		// 分页查询实物交割配对单元和失败状态
+		ListPhysicalDeliveryUnits(ctx context.Context, in *ListPhysicalDeliveryUnitsReq, opts ...grpc.CallOption) (*ListPhysicalDeliveryUnitsResp, error)
+		// 人工确认补资后，按原指令号重试一个实物交割单元
+		RetryPhysicalDeliveryUnit(ctx context.Context, in *RetryPhysicalDeliveryUnitReq, opts ...grpc.CallOption) (*CommonResp, error)
 	}
 
 	defaultAdmin struct {
@@ -224,6 +389,24 @@ func (m *defaultAdmin) ListOrders(ctx context.Context, in *ListOrdersReq, opts .
 	return client.ListOrders(ctx, in, opts...)
 }
 
+// 分页查询组合父单，供运营按整组处理
+func (m *defaultAdmin) ListAdminComboOrders(ctx context.Context, in *ListAdminComboOrdersReq, opts ...grpc.CallOption) (*ListAdminComboOrdersResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ListAdminComboOrders(ctx, in, opts...)
+}
+
+// 查询组合父单、腿、影子单、成交和资产指令
+func (m *defaultAdmin) GetAdminComboOrder(ctx context.Context, in *GetAdminComboOrderReq, opts ...grpc.CallOption) (*GetAdminComboOrderResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.GetAdminComboOrder(ctx, in, opts...)
+}
+
+// 强制撤销一个组合父单；禁止单腿撤销
+func (m *defaultAdmin) ForceCancelComboOrder(ctx context.Context, in *ForceCancelComboOrderReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ForceCancelComboOrder(ctx, in, opts...)
+}
+
 // 获取单个成交记录详情
 func (m *defaultAdmin) GetTrade(ctx context.Context, in *GetTradeReq, opts ...grpc.CallOption) (*GetTradeResp, error) {
 	client := option.NewAdminClient(m.cli.Conn())
@@ -272,6 +455,24 @@ func (m *defaultAdmin) ListSettlements(ctx context.Context, in *ListSettlementsR
 	return client.ListSettlements(ctx, in, opts...)
 }
 
+// 分页查询到期结算价版本
+func (m *defaultAdmin) ListSettlementPrices(ctx context.Context, in *ListSettlementPricesReq, opts ...grpc.CallOption) (*ListSettlementPricesResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ListSettlementPrices(ctx, in, opts...)
+}
+
+// 创建人工结算价更正草案，必须由另一管理员确认
+func (m *defaultAdmin) CreateSettlementPriceCorrection(ctx context.Context, in *CreateSettlementPriceCorrectionReq, opts ...grpc.CallOption) (*GetSettlementPriceResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.CreateSettlementPriceCorrection(ctx, in, opts...)
+}
+
+// 确认或拒绝待复核结算价
+func (m *defaultAdmin) ReviewSettlementPrice(ctx context.Context, in *ReviewSettlementPriceReq, opts ...grpc.CallOption) (*GetSettlementPriceResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ReviewSettlementPrice(ctx, in, opts...)
+}
+
 // 获取单个账户资产详情
 func (m *defaultAdmin) GetAccount(ctx context.Context, in *GetAccountReq, opts ...grpc.CallOption) (*GetAccountResp, error) {
 	client := option.NewAdminClient(m.cli.Conn())
@@ -308,6 +509,114 @@ func (m *defaultAdmin) RetryAssetInstruction(ctx context.Context, in *RetryAsset
 	return client.RetryAssetInstruction(ctx, in, opts...)
 }
 
+// 查询运营异常和任务水位汇总
+func (m *defaultAdmin) GetOperationsOverview(ctx context.Context, in *GetOperationsOverviewReq, opts ...grpc.CallOption) (*GetOperationsOverviewResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.GetOperationsOverview(ctx, in, opts...)
+}
+
+// 分页查询资产指令，统一定位失败和人工处理项
+func (m *defaultAdmin) ListAssetInstructions(ctx context.Context, in *ListAssetInstructionsReq, opts ...grpc.CallOption) (*ListAssetInstructionsResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ListAssetInstructions(ctx, in, opts...)
+}
+
+// 分页查询 Option 与 Asset 对账差异
+func (m *defaultAdmin) ListReconciliationIssues(ctx context.Context, in *ListReconciliationIssuesReq, opts ...grpc.CallOption) (*ListReconciliationIssuesResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ListReconciliationIssues(ctx, in, opts...)
+}
+
+// 创建不可覆盖的交易日历版本草案
+func (m *defaultAdmin) CreateTradingCalendar(ctx context.Context, in *CreateTradingCalendarReq, opts ...grpc.CallOption) (*GetTradingCalendarResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.CreateTradingCalendar(ctx, in, opts...)
+}
+
+// 由独立管理员批准或拒绝日历版本
+func (m *defaultAdmin) ReviewTradingCalendar(ctx context.Context, in *ReviewTradingCalendarReq, opts ...grpc.CallOption) (*GetTradingCalendarResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ReviewTradingCalendar(ctx, in, opts...)
+}
+
+// 分页查询交易日历版本
+func (m *defaultAdmin) ListTradingCalendars(ctx context.Context, in *ListTradingCalendarsReq, opts ...grpc.CallOption) (*ListTradingCalendarsResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ListTradingCalendars(ctx, in, opts...)
+}
+
+// 紧急暂停合约交易并撤销活动订单
+func (m *defaultAdmin) HaltContractTrading(ctx context.Context, in *HaltContractTradingReq, opts ...grpc.CallOption) (*GetTradingHaltResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.HaltContractTrading(ctx, in, opts...)
+}
+
+// 引用原 halt 解除临时休市
+func (m *defaultAdmin) ResumeContractTrading(ctx context.Context, in *ResumeContractTradingReq, opts ...grpc.CallOption) (*GetTradingHaltResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ResumeContractTrading(ctx, in, opts...)
+}
+
+// 分页查询临时休市记录
+func (m *defaultAdmin) ListTradingHalts(ctx context.Context, in *ListTradingHaltsReq, opts ...grpc.CallOption) (*ListTradingHaltsResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ListTradingHalts(ctx, in, opts...)
+}
+
+// 登记不可覆盖的公司行动版本；所有受影响合约立即停牌并撤单
+func (m *defaultAdmin) CreateCorporateAction(ctx context.Context, in *CreateCorporateActionReq, opts ...grpc.CallOption) (*GetCorporateActionResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.CreateCorporateAction(ctx, in, opts...)
+}
+
+// 独立管理员复核公司行动；不支持的事件只能进入人工处理
+func (m *defaultAdmin) ReviewCorporateAction(ctx context.Context, in *ReviewCorporateActionReq, opts ...grpc.CallOption) (*GetCorporateActionResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ReviewCorporateAction(ctx, in, opts...)
+}
+
+// 分页查询公司行动及合约迁移进度
+func (m *defaultAdmin) ListCorporateActions(ctx context.Context, in *ListCorporateActionsReq, opts ...grpc.CallOption) (*ListCorporateActionsResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ListCorporateActions(ctx, in, opts...)
+}
+
+// 分页查询逐持仓迁移审计结果
+func (m *defaultAdmin) ListCorporateActionPositions(ctx context.Context, in *ListCorporateActionPositionsReq, opts ...grpc.CallOption) (*ListCorporateActionPositionsResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ListCorporateActionPositions(ctx, in, opts...)
+}
+
+// 创建不可覆盖的到期/行权价系列版本草案
+func (m *defaultAdmin) CreateContractSeries(ctx context.Context, in *CreateContractSeriesReq, opts ...grpc.CallOption) (*GetContractSeriesResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.CreateContractSeries(ctx, in, opts...)
+}
+
+// 独立管理员复核；批准时原子生成全部 PENDING 合约
+func (m *defaultAdmin) ReviewContractSeries(ctx context.Context, in *ReviewContractSeriesReq, opts ...grpc.CallOption) (*GetContractSeriesResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ReviewContractSeries(ctx, in, opts...)
+}
+
+// 分页查询系列版本
+func (m *defaultAdmin) ListContractSeries(ctx context.Context, in *ListContractSeriesReq, opts ...grpc.CallOption) (*ListContractSeriesResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ListContractSeries(ctx, in, opts...)
+}
+
+// 分页查询系列生成合约谱系
+func (m *defaultAdmin) ListContractSeriesDetails(ctx context.Context, in *ListContractSeriesDetailsReq, opts ...grpc.CallOption) (*ListContractSeriesDetailsResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ListContractSeriesDetails(ctx, in, opts...)
+}
+
+// 对已生成系列执行独立上市复核；批准前生命周期必须保持 PENDING
+func (m *defaultAdmin) ReviewContractSeriesLaunch(ctx context.Context, in *ReviewContractSeriesLaunchReq, opts ...grpc.CallOption) (*GetContractSeriesResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ReviewContractSeriesLaunch(ctx, in, opts...)
+}
+
 // 将失败或人工处理的成交持仓事件重新置为待执行
 func (m *defaultAdmin) RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := option.NewAdminClient(m.cli.Conn())
@@ -318,6 +627,24 @@ func (m *defaultAdmin) RetryTradeEvent(ctx context.Context, in *RetryTradeEventR
 func (m *defaultAdmin) ListRiskAccounts(ctx context.Context, in *ListRiskAccountsReq, opts ...grpc.CallOption) (*ListRiskAccountsResp, error) {
 	client := option.NewAdminClient(m.cli.Conn())
 	return client.ListRiskAccounts(ctx, in, opts...)
+}
+
+// 创建不可覆盖的组合保证金参数草案
+func (m *defaultAdmin) CreatePortfolioRiskConfig(ctx context.Context, in *CreatePortfolioRiskConfigReq, opts ...grpc.CallOption) (*GetPortfolioRiskConfigResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.CreatePortfolioRiskConfig(ctx, in, opts...)
+}
+
+// 由独立管理员批准或拒绝组合保证金参数版本
+func (m *defaultAdmin) ReviewPortfolioRiskConfig(ctx context.Context, in *ReviewPortfolioRiskConfigReq, opts ...grpc.CallOption) (*GetPortfolioRiskConfigResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ReviewPortfolioRiskConfig(ctx, in, opts...)
+}
+
+// 分页查询组合保证金参数版本
+func (m *defaultAdmin) ListPortfolioRiskConfigs(ctx context.Context, in *ListPortfolioRiskConfigsReq, opts ...grpc.CallOption) (*ListPortfolioRiskConfigsResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ListPortfolioRiskConfigs(ctx, in, opts...)
 }
 
 // 分页查询强平记录
@@ -342,4 +669,70 @@ func (m *defaultAdmin) RetryExercise(ctx context.Context, in *RetryExerciseReq, 
 func (m *defaultAdmin) RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := option.NewAdminClient(m.cli.Conn())
 	return client.RetrySettlementInstruction(ctx, in, opts...)
+}
+
+// 人工复核后解除用户 kill switch
+func (m *defaultAdmin) ReleaseUserKillSwitch(ctx context.Context, in *ReleaseUserKillSwitchReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ReleaseUserKillSwitch(ctx, in, opts...)
+}
+
+// 查询用户 kill switch
+func (m *defaultAdmin) AdminGetUserTradingControl(ctx context.Context, in *AdminGetUserTradingControlReq, opts ...grpc.CallOption) (*AdminGetUserTradingControlResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.AdminGetUserTradingControl(ctx, in, opts...)
+}
+
+// 分页查询交易控制审计事件
+func (m *defaultAdmin) ListTradingControlEvents(ctx context.Context, in *ListTradingControlEventsReq, opts ...grpc.CallOption) (*ListTradingControlEventsResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ListTradingControlEvents(ctx, in, opts...)
+}
+
+// 创建异常成交现金更正草案，同时暂停合约并撤销活动订单
+func (m *defaultAdmin) CreateTradeCorrection(ctx context.Context, in *CreateTradeCorrectionReq, opts ...grpc.CallOption) (*GetTradeCorrectionResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.CreateTradeCorrection(ctx, in, opts...)
+}
+
+// 由独立管理员批准或拒绝异常成交更正
+func (m *defaultAdmin) ReviewTradeCorrection(ctx context.Context, in *ReviewTradeCorrectionReq, opts ...grpc.CallOption) (*GetTradeCorrectionResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ReviewTradeCorrection(ctx, in, opts...)
+}
+
+// 分页查询异常成交更正案件
+func (m *defaultAdmin) ListTradeCorrections(ctx context.Context, in *ListTradeCorrectionsReq, opts ...grpc.CallOption) (*ListTradeCorrectionsResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ListTradeCorrections(ctx, in, opts...)
+}
+
+// 创建或更新做市商保护参数；任何变更都会撤销该组已有 MMP 报价
+func (m *defaultAdmin) UpsertMMPConfig(ctx context.Context, in *UpsertMMPConfigReq, opts ...grpc.CallOption) (*GetMMPConfigResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.UpsertMMPConfig(ctx, in, opts...)
+}
+
+// 人工复核并恢复触发中的 MMP 报价组
+func (m *defaultAdmin) ResetMMPConfig(ctx context.Context, in *ResetMMPConfigReq, opts ...grpc.CallOption) (*GetMMPConfigResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ResetMMPConfig(ctx, in, opts...)
+}
+
+// 分页查询 MMP 配置和实时窗口状态
+func (m *defaultAdmin) ListMMPConfigs(ctx context.Context, in *ListMMPConfigsReq, opts ...grpc.CallOption) (*ListMMPConfigsResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ListMMPConfigs(ctx, in, opts...)
+}
+
+// 分页查询实物交割配对单元和失败状态
+func (m *defaultAdmin) ListPhysicalDeliveryUnits(ctx context.Context, in *ListPhysicalDeliveryUnitsReq, opts ...grpc.CallOption) (*ListPhysicalDeliveryUnitsResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ListPhysicalDeliveryUnits(ctx, in, opts...)
+}
+
+// 人工确认补资后，按原指令号重试一个实物交割单元
+func (m *defaultAdmin) RetryPhysicalDeliveryUnit(ctx context.Context, in *RetryPhysicalDeliveryUnitReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.RetryPhysicalDeliveryUnit(ctx, in, opts...)
 }

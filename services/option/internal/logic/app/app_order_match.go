@@ -3,11 +3,14 @@ package applogic
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"wklive/common/generate"
 	"wklive/proto/common"
 	"wklive/proto/option"
+	logichelpers "wklive/services/option/internal/logic/helpers"
+	"wklive/services/option/internal/observability"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -21,6 +24,9 @@ import (
 func MatchFundedOrder(ctx context.Context, svcCtx *svc.ServiceContext, order *models.TOptionOrder) error {
 	if order == nil || order.Status != int64(option.OrderStatus_ORDER_STATUS_PENDING) {
 		return nil
+	}
+	if err := rejectComboChildFromSimpleMatcher(order, "funded_entry"); err != nil {
+		return err
 	}
 	contract, err := svcCtx.OptionContractModel.FindOne(ctx, order.ContractId)
 	if err != nil {
@@ -39,13 +45,22 @@ func MatchFundedOrder(ctx context.Context, svcCtx *svc.ServiceContext, order *mo
 }
 
 func (l *PlaceOrderLogic) matchOrder(contract *models.TOptionContract, order *models.TOptionOrder) error {
+	if err := rejectComboChildFromSimpleMatcher(order, "match_entry"); err != nil {
+		return err
+	}
 	if !order.Price.IsPositive() || !order.UnfilledQty.IsPositive() {
 		return nil
 	}
 
 	changedOrders := make(map[int64]*models.TOptionOrder)
+	type mmpGroupKey struct {
+		tenantID, userID, contractID int64
+		groupCode                    string
+	}
+	triggeredMMPGroups := make(map[mmpGroupKey]struct{})
 	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
+		contractModel := models.NewTOptionContractModel(conn, l.svcCtx.Config.CacheRedis)
 		orderModel := models.NewTOptionOrderModel(conn, l.svcCtx.Config.CacheRedis)
 		tradeModel := models.NewTOptionTradeModel(conn, l.svcCtx.Config.CacheRedis)
 		matchSequenceModel := models.NewTOptionMatchSequenceModel(conn, l.svcCtx.Config.CacheRedis)
@@ -54,18 +69,276 @@ func (l *PlaceOrderLogic) matchOrder(contract *models.TOptionContract, order *mo
 		marketModel := models.NewTOptionMarketModel(conn, l.svcCtx.Config.CacheRedis)
 		instructionModel := models.NewTOptionAssetInstructionModel(conn, l.svcCtx.Config.CacheRedis)
 		marginLotModel := models.NewTOptionMarginLotModel(conn, l.svcCtx.Config.CacheRedis)
+		controlEventModel := models.NewTOptionTradingControlEventModel(conn, l.svcCtx.Config.CacheRedis)
+		userControlModel := models.NewTOptionUserTradingControlModel(conn, l.svcCtx.Config.CacheRedis)
 
-		incoming, err := orderModel.FindOne(ctx, order.Id)
+		lockedContract, err := contractModel.FindOneForUpdate(ctx, order.ContractId)
 		if err != nil {
 			return err
 		}
+		lockedMarket, marketErr := marketModel.FindOneByTenantIdContractIdForUpdate(
+			ctx, order.TenantId, order.ContractId,
+		)
+		if marketErr != nil && !errors.Is(marketErr, models.ErrNotFound) {
+			return marketErr
+		}
+		incomingControl, err := userControlModel.EnsureForUpdate(
+			ctx, order.TenantId, order.UserId, time.Now().Unix(),
+		)
+		if err != nil {
+			return err
+		}
+		incoming, err := orderModel.FindOneForUpdate(ctx, order.Id)
+		if err != nil {
+			return err
+		}
+		if err := rejectComboChildFromSimpleMatcher(incoming, "locked_match"); err != nil {
+			return err
+		}
+		if lockedContract.Id != incoming.ContractId ||
+			incomingControl.TenantId != incoming.TenantId ||
+			incomingControl.UserId != incoming.UserId {
+			return errors.New("option matching lock scope does not match incoming order")
+		}
+		switch option.OrderStatus(incoming.Status) {
+		case option.OrderStatus_ORDER_STATUS_PENDING,
+			option.OrderStatus_ORDER_STATUS_PART_FILLED:
+		default:
+			*order = *incoming
+			return nil
+		}
+		now := time.Now().Unix()
+		if errors.Is(marketErr, models.ErrNotFound) ||
+			!logichelpers.IsMarkFresh(lockedMarket, now, 30) ||
+			!lockedMarket.MarkPrice.IsPositive() {
+			if err := cancelImmediateOrder(
+				ctx, positionModel, instructionModel, incoming, controlReasonStaleMark, now,
+			); err != nil {
+				return err
+			}
+			if err := orderModel.Update(ctx, incoming); err != nil {
+				return err
+			}
+			if _, err := controlEventModel.Insert(ctx, &models.TOptionTradingControlEvent{
+				TenantId: incoming.TenantId, UserId: incoming.UserId,
+				ContractId: incoming.ContractId, OrderId: incoming.Id,
+				EventType: "ORDER_CANCELED", Reason: controlReasonStaleMark,
+				Detail:     "fresh positive mark price is required before matching",
+				OperatorId: incoming.UserId, CreateTimes: now,
+			}); err != nil {
+				return err
+			}
+			changedOrders[incoming.Id] = incoming
+			*order = *incoming
+			return nil
+		}
+		if _, _, withinBand := optionOrderPriceBand(
+			incoming.Price, lockedMarket.MarkPrice, lockedContract.OrderPriceBandRatio,
+		); !withinBand {
+			if err := cancelImmediateOrder(
+				ctx, positionModel, instructionModel, incoming, controlReasonPriceBand, now,
+			); err != nil {
+				return err
+			}
+			if err := orderModel.Update(ctx, incoming); err != nil {
+				return err
+			}
+			if _, err := controlEventModel.Insert(ctx, &models.TOptionTradingControlEvent{
+				TenantId: incoming.TenantId, UserId: incoming.UserId,
+				ContractId: incoming.ContractId, OrderId: incoming.Id,
+				EventType: "ORDER_CANCELED", Reason: controlReasonPriceBand,
+				Detail:     fmt.Sprintf("price=%s mark=%s", incoming.Price, lockedMarket.MarkPrice),
+				OperatorId: incoming.UserId, CreateTimes: now,
+			}); err != nil {
+				return err
+			}
+			changedOrders[incoming.Id] = incoming
+			*order = *incoming
+			return nil
+		}
+		if incomingControl.KillSwitch == int64(common.YesNo_YES_NO_YES) {
+			if err := cancelImmediateOrder(
+				ctx, positionModel, instructionModel, incoming, controlReasonKillSwitch, now,
+			); err != nil {
+				return err
+			}
+			if err := orderModel.Update(ctx, incoming); err != nil {
+				return err
+			}
+			if _, err := controlEventModel.Insert(ctx, &models.TOptionTradingControlEvent{
+				TenantId: incoming.TenantId, UserId: incoming.UserId,
+				ContractId: incoming.ContractId, OrderId: incoming.Id,
+				EventType: "ORDER_CANCELED", Reason: controlReasonKillSwitch,
+				Detail:     fmt.Sprintf("activated_at=%d", incomingControl.ActivatedAt),
+				OperatorId: incoming.UserId, CreateTimes: now,
+			}); err != nil {
+				return err
+			}
+			changedOrders[incoming.Id] = incoming
+			*order = *incoming
+			return nil
+		}
+		if lockedContract.TenantId != incoming.TenantId ||
+			lockedContract.Status != int64(option.ContractStatus_CONTRACT_STATUS_TRADING) ||
+			lockedContract.IsDeleted == int64(common.YesNo_YES_NO_YES) ||
+			now < lockedContract.ListTime ||
+			(lockedContract.ExpireTime > 0 && now >= lockedContract.ExpireTime) {
+			if err := cancelImmediateOrder(
+				ctx, positionModel, instructionModel, incoming, controlReasonContractClosed, now,
+			); err != nil {
+				return err
+			}
+			if err := orderModel.Update(ctx, incoming); err != nil {
+				return err
+			}
+			if _, err := controlEventModel.Insert(ctx, &models.TOptionTradingControlEvent{
+				TenantId: incoming.TenantId, UserId: incoming.UserId,
+				ContractId: incoming.ContractId, OrderId: incoming.Id,
+				EventType: "ORDER_CANCELED", Reason: controlReasonContractClosed,
+				Detail:     fmt.Sprintf("contract_status=%d", lockedContract.Status),
+				OperatorId: incoming.UserId, CreateTimes: now,
+			}); err != nil {
+				return err
+			}
+			changedOrders[incoming.Id] = incoming
+			*order = *incoming
+			return nil
+		}
+		contract = lockedContract
+		mmpConfigModel := models.NewTOptionMmpConfigModel(conn, l.svcCtx.Config.CacheRedis)
+		if incoming.Mmp == int64(common.YesNo_YES_NO_YES) {
+			config, configErr := mmpConfigModel.FindForUpdate(
+				ctx, incoming.TenantId, incoming.UserId, incoming.ContractId, incoming.MmpGroup,
+			)
+			if configErr != nil && !errors.Is(configErr, models.ErrNotFound) {
+				return configErr
+			}
+			if configErr != nil ||
+				config.Enabled != int64(common.YesNo_YES_NO_YES) ||
+				config.Status != int64(option.MMPStatus_MMP_STATUS_ACTIVE) {
+				reason := controlReasonMMPNotConfigured
+				if configErr == nil {
+					reason = controlReasonMMPDisabled
+					if config.Status == int64(option.MMPStatus_MMP_STATUS_TRIGGERED) {
+						reason = controlReasonMMPTriggered
+					}
+				}
+				if err := cancelImmediateOrder(
+					ctx, positionModel, instructionModel, incoming, reason, now,
+				); err != nil {
+					return err
+				}
+				if err := orderModel.Update(ctx, incoming); err != nil {
+					return err
+				}
+				if _, err := controlEventModel.Insert(ctx, &models.TOptionTradingControlEvent{
+					TenantId: incoming.TenantId, UserId: incoming.UserId,
+					ContractId: incoming.ContractId, OrderId: incoming.Id,
+					EventType: controlEventMMPOrderCanceled, Reason: reason,
+					Detail:     fmt.Sprintf("group=%s", incoming.MmpGroup),
+					OperatorId: incoming.UserId, CreateTimes: now,
+				}); err != nil {
+					return err
+				}
+				changedOrders[incoming.Id] = incoming
+				*order = *incoming
+				return nil
+			}
+		}
+		selfOrders, err := orderModel.FindCrossingSelfOrders(
+			ctx, incoming.TenantId, incoming.UserId, incoming.ContractId,
+			oppositeOrderSide(incoming.Side), incoming.Price,
+		)
+		if err != nil {
+			return err
+		}
+		if len(selfOrders) > 0 {
+			now := time.Now().Unix()
+			if err := cancelImmediateOrder(
+				ctx, positionModel, instructionModel, incoming, controlReasonSelfTrade, now,
+			); err != nil {
+				return err
+			}
+			if err := orderModel.Update(ctx, incoming); err != nil {
+				return err
+			}
+			if _, err := controlEventModel.Insert(ctx, &models.TOptionTradingControlEvent{
+				TenantId: incoming.TenantId, UserId: incoming.UserId,
+				ContractId: incoming.ContractId, OrderId: incoming.Id,
+				EventType: controlEventSTPPrevented, Reason: controlReasonSelfTrade,
+				Detail:     fmt.Sprintf("crossing_self_order_id=%d count=%d", selfOrders[0].Id, len(selfOrders)),
+				OperatorId: incoming.UserId, CreateTimes: now,
+			}); err != nil {
+				return err
+			}
+			changedOrders[incoming.Id] = incoming
+			*order = *incoming
+			return nil
+		}
+		mmpConfigs := make(map[mmpGroupKey]*models.TOptionMmpConfig)
 		if incoming.OrderType == int64(option.OrderType_ORDER_TYPE_POST_ONLY) ||
 			incoming.OrderType == int64(option.OrderType_ORDER_TYPE_FOK) {
 			candidates, err := orderModel.FindAllMatchableOrders(ctx, incoming.TenantId, incoming.ContractId, oppositeOrderSide(incoming.Side), incoming.UserId, incoming.AccountId, incoming.Price)
 			if err != nil {
 				return err
 			}
-			matchableQty := matchableOptionQty(incoming, candidates)
+			validCandidates := make([]*models.TOptionOrder, 0, len(candidates))
+			for _, candidate := range candidates {
+				if candidate.Mmp != int64(common.YesNo_YES_NO_YES) {
+					validCandidates = append(validCandidates, candidate)
+					continue
+				}
+				key := mmpGroupKey{
+					tenantID: candidate.TenantId, userID: candidate.UserId,
+					contractID: candidate.ContractId, groupCode: candidate.MmpGroup,
+				}
+				config := mmpConfigs[key]
+				if config == nil {
+					config, err = mmpConfigModel.FindForUpdate(
+						ctx, candidate.TenantId, candidate.UserId,
+						candidate.ContractId, candidate.MmpGroup,
+					)
+					if err != nil && !errors.Is(err, models.ErrNotFound) {
+						return err
+					}
+					if err == nil {
+						mmpConfigs[key] = config
+					}
+				}
+				if config != nil &&
+					config.Enabled == int64(common.YesNo_YES_NO_YES) &&
+					config.Status == int64(option.MMPStatus_MMP_STATUS_ACTIVE) {
+					validCandidates = append(validCandidates, candidate)
+					continue
+				}
+				reason := controlReasonMMPNotConfigured
+				if config != nil {
+					reason = controlReasonMMPDisabled
+					if config.Status == int64(option.MMPStatus_MMP_STATUS_TRIGGERED) {
+						reason = controlReasonMMPTriggered
+					}
+				}
+				if err := cancelImmediateOrder(
+					ctx, positionModel, instructionModel, candidate, reason, now,
+				); err != nil {
+					return err
+				}
+				if err := orderModel.Update(ctx, candidate); err != nil {
+					return err
+				}
+				candidateCopy := *candidate
+				changedOrders[candidate.Id] = &candidateCopy
+				if _, err := controlEventModel.Insert(ctx, &models.TOptionTradingControlEvent{
+					TenantId: candidate.TenantId, UserId: candidate.UserId,
+					ContractId: candidate.ContractId, OrderId: candidate.Id,
+					EventType: controlEventMMPOrderCanceled, Reason: reason,
+					Detail:     fmt.Sprintf("group=%s pre_match_filter=true", candidate.MmpGroup),
+					OperatorId: candidate.UserId, CreateTimes: now,
+				}); err != nil {
+					return err
+				}
+			}
+			matchableQty := matchableOptionQty(incoming, validCandidates)
 			if incoming.OrderType == int64(option.OrderType_ORDER_TYPE_POST_ONLY) {
 				if matchableQty.IsPositive() {
 					if err := cancelImmediateOrder(ctx, positionModel, instructionModel, incoming, "POST_ONLY_WOULD_TAKE", time.Now().Unix()); err != nil {
@@ -91,6 +364,7 @@ func (l *PlaceOrderLogic) matchOrder(contract *models.TOptionContract, order *mo
 				return nil
 			}
 		}
+		makerKillSwitch := make(map[int64]bool)
 		for incoming.UnfilledQty.IsPositive() {
 			makers, err := orderModel.FindMatchableOrders(ctx, incoming.TenantId, incoming.ContractId, oppositeOrderSide(incoming.Side), incoming.UserId, incoming.AccountId, incoming.Price, 50)
 			if err != nil {
@@ -108,8 +382,122 @@ func (l *PlaceOrderLogic) matchOrder(contract *models.TOptionContract, order *mo
 				if maker.Id == incoming.Id || !maker.UnfilledQty.IsPositive() {
 					continue
 				}
-				if maker.UserId == incoming.UserId && maker.AccountId == incoming.AccountId {
+				if maker.UserId == incoming.UserId {
 					continue
+				}
+				if _, _, withinBand := optionOrderPriceBand(
+					maker.Price, lockedMarket.MarkPrice, lockedContract.OrderPriceBandRatio,
+				); !withinBand {
+					cancelTime := time.Now().Unix()
+					if err := cancelImmediateOrder(
+						ctx, positionModel, instructionModel, maker, controlReasonPriceBand, cancelTime,
+					); err != nil {
+						return err
+					}
+					if err := orderModel.Update(ctx, maker); err != nil {
+						return err
+					}
+					if _, err := controlEventModel.Insert(ctx, &models.TOptionTradingControlEvent{
+						TenantId: maker.TenantId, UserId: maker.UserId,
+						ContractId: maker.ContractId, OrderId: maker.Id,
+						EventType: "ORDER_CANCELED", Reason: controlReasonPriceBand,
+						Detail:     fmt.Sprintf("maker_price=%s mark=%s", maker.Price, lockedMarket.MarkPrice),
+						OperatorId: maker.UserId, CreateTimes: cancelTime,
+					}); err != nil {
+						return err
+					}
+					makerCopy := *maker
+					changedOrders[maker.Id] = &makerCopy
+					matched = true
+					continue
+				}
+				killed, checked := makerKillSwitch[maker.UserId]
+				if !checked {
+					makerControl, controlErr := userControlModel.EnsureForUpdate(
+						ctx, maker.TenantId, maker.UserId, time.Now().Unix(),
+					)
+					if controlErr != nil {
+						return controlErr
+					}
+					killed = makerControl.KillSwitch == int64(common.YesNo_YES_NO_YES)
+					makerKillSwitch[maker.UserId] = killed
+				}
+				if killed {
+					cancelTime := time.Now().Unix()
+					if err := cancelImmediateOrder(
+						ctx, positionModel, instructionModel, maker, controlReasonKillSwitch, cancelTime,
+					); err != nil {
+						return err
+					}
+					if err := orderModel.Update(ctx, maker); err != nil {
+						return err
+					}
+					if _, err := controlEventModel.Insert(ctx, &models.TOptionTradingControlEvent{
+						TenantId: maker.TenantId, UserId: maker.UserId,
+						ContractId: maker.ContractId, OrderId: maker.Id,
+						EventType: "ORDER_CANCELED", Reason: controlReasonKillSwitch,
+						Detail:     "maker excluded before matching",
+						OperatorId: maker.UserId, CreateTimes: cancelTime,
+					}); err != nil {
+						return err
+					}
+					makerCopy := *maker
+					changedOrders[maker.Id] = &makerCopy
+					matched = true
+					continue
+				}
+				var makerMMPConfig *models.TOptionMmpConfig
+				if maker.Mmp == int64(common.YesNo_YES_NO_YES) {
+					key := mmpGroupKey{
+						tenantID: maker.TenantId, userID: maker.UserId,
+						contractID: maker.ContractId, groupCode: maker.MmpGroup,
+					}
+					makerMMPConfig = mmpConfigs[key]
+					if makerMMPConfig == nil {
+						config, configErr := mmpConfigModel.FindForUpdate(
+							ctx, maker.TenantId, maker.UserId, maker.ContractId, maker.MmpGroup,
+						)
+						if configErr != nil && !errors.Is(configErr, models.ErrNotFound) {
+							return configErr
+						}
+						if configErr == nil {
+							makerMMPConfig = config
+							mmpConfigs[key] = config
+						}
+					}
+					if makerMMPConfig == nil ||
+						makerMMPConfig.Enabled != int64(common.YesNo_YES_NO_YES) ||
+						makerMMPConfig.Status != int64(option.MMPStatus_MMP_STATUS_ACTIVE) {
+						reason := controlReasonMMPNotConfigured
+						if makerMMPConfig != nil {
+							reason = controlReasonMMPDisabled
+							if makerMMPConfig.Status == int64(option.MMPStatus_MMP_STATUS_TRIGGERED) {
+								reason = controlReasonMMPTriggered
+							}
+						}
+						cancelTime := time.Now().Unix()
+						if err := cancelImmediateOrder(
+							ctx, positionModel, instructionModel, maker, reason, cancelTime,
+						); err != nil {
+							return err
+						}
+						if err := orderModel.Update(ctx, maker); err != nil {
+							return err
+						}
+						if _, err := controlEventModel.Insert(ctx, &models.TOptionTradingControlEvent{
+							TenantId: maker.TenantId, UserId: maker.UserId,
+							ContractId: maker.ContractId, OrderId: maker.Id,
+							EventType: controlEventMMPOrderCanceled, Reason: reason,
+							Detail:     fmt.Sprintf("group=%s", maker.MmpGroup),
+							OperatorId: maker.UserId, CreateTimes: cancelTime,
+						}); err != nil {
+							return err
+						}
+						makerCopy := *maker
+						changedOrders[maker.Id] = &makerCopy
+						matched = true
+						continue
+					}
 				}
 
 				tradeQty := decimal.Min(incoming.UnfilledQty, maker.UnfilledQty)
@@ -198,6 +586,44 @@ func (l *PlaceOrderLogic) matchOrder(contract *models.TOptionContract, order *mo
 				if err := createTradeAssetInstructions(ctx, instructionModel, contract, trade, buyOrder, sellOrder, now); err != nil {
 					return err
 				}
+				if makerMMPConfig != nil {
+					triggered, triggerReason := applyMMPFill(
+						makerMMPConfig, maker.Side, tradePrice, tradeQty,
+						lockedMarket.MarkPrice, optionMultiplier(contract),
+						MMPMakerFee(trade, maker.Side), now,
+					)
+					if err := mmpConfigModel.Update(ctx, makerMMPConfig); err != nil {
+						return err
+					}
+					if triggered {
+						key := mmpGroupKey{
+							tenantID: maker.TenantId, userID: maker.UserId,
+							contractID: maker.ContractId, groupCode: maker.MmpGroup,
+						}
+						triggeredMMPGroups[key] = struct{}{}
+						if _, err := controlEventModel.Insert(ctx, &models.TOptionTradingControlEvent{
+							TenantId: maker.TenantId, UserId: maker.UserId,
+							ContractId: maker.ContractId, OrderId: maker.Id,
+							EventType: controlEventMMPTriggered, Reason: triggerReason,
+							Detail: fmt.Sprintf(
+								"group=%s qty=%s count=%d loss=%s mark=%s trade_price=%s",
+								maker.MmpGroup, makerMMPConfig.AccumulatedQty,
+								makerMMPConfig.TradeCount, makerMMPConfig.AccumulatedLoss,
+								lockedMarket.MarkPrice, tradePrice,
+							),
+							OperatorId: maker.UserId, CreateTimes: now,
+						}); err != nil {
+							return err
+						}
+						if maker.UnfilledQty.IsPositive() {
+							if err := cancelImmediateOrder(
+								ctx, positionModel, instructionModel, maker, controlReasonMMPTriggered, now,
+							); err != nil {
+								return err
+							}
+						}
+					}
+				}
 				if err := orderModel.Update(ctx, maker); err != nil {
 					return err
 				}
@@ -208,7 +634,7 @@ func (l *PlaceOrderLogic) matchOrder(contract *models.TOptionContract, order *mo
 				makerCopy := *maker
 				changedOrders[incoming.Id] = &incomingCopy
 				changedOrders[maker.Id] = &makerCopy
-				if err := updateMarketLastTrade(ctx, marketModel, contract, tradePrice, now); err != nil {
+				if err := updateMarketLastTrade(ctx, marketModel, lockedMarket, tradePrice, now); err != nil {
 					return err
 				}
 				matched = true
@@ -233,17 +659,52 @@ func (l *PlaceOrderLogic) matchOrder(contract *models.TOptionContract, order *mo
 	if err != nil {
 		return err
 	}
+	var mmpCancelErr error
+	for key := range triggeredMMPGroups {
+		count, cancelErr := CancelMMPGroupOrders(
+			l.ctx, l.svcCtx, key.tenantID, key.userID, key.contractID,
+			key.groupCode, controlReasonMMPTriggered,
+		)
+		if cancelErr != nil {
+			SetMMPConfigLastError(
+				l.ctx, l.svcCtx, key.tenantID, key.userID, key.contractID,
+				key.groupCode, cancelErr.Error(),
+			)
+			if mmpCancelErr == nil {
+				mmpCancelErr = cancelErr
+			}
+			continue
+		}
+		if eventErr := insertTradingControlEvent(
+			l.ctx, l.svcCtx, l.svcCtx.DB, &models.TOptionTradingControlEvent{
+				TenantId: key.tenantID, UserId: key.userID, ContractId: key.contractID,
+				EventType: controlEventMMPOrderCanceled, Reason: controlReasonMMPTriggered,
+				Detail:     fmt.Sprintf("group=%s canceled=%d", key.groupCode, count),
+				OperatorId: key.userID, CreateTimes: time.Now().Unix(),
+			},
+		); eventErr != nil && mmpCancelErr == nil {
+			mmpCancelErr = eventErr
+		}
+	}
 	for _, changedOrder := range changedOrders {
 		publishOptionOrderChanged(l.ctx, l.svcCtx, changedOrder)
 	}
-	return nil
+	return mmpCancelErr
+}
+
+func rejectComboChildFromSimpleMatcher(order *models.TOptionOrder, path string) error {
+	if order == nil || order.ComboOrderId == 0 {
+		return nil
+	}
+	observability.RecordComboIsolationViolation(order.TenantId, path)
+	return errors.New("combo child order cannot enter the simple order matcher")
 }
 
 func matchableOptionQty(incoming *models.TOptionOrder, candidates []*models.TOptionOrder) decimal.Decimal {
 	total := decimal.Zero
 	for _, candidate := range candidates {
 		if candidate.Id == incoming.Id || !candidate.UnfilledQty.IsPositive() ||
-			(candidate.UserId == incoming.UserId && candidate.AccountId == incoming.AccountId) {
+			candidate.UserId == incoming.UserId {
 			continue
 		}
 		total = total.Add(candidate.UnfilledQty)
@@ -296,33 +757,18 @@ func makerSide(side int64) int64 {
 	return int64(common.Side_SIDE_UNKNOWN)
 }
 
-func updateMarketLastTrade(ctx context.Context, model models.TOptionMarketModel, contract *models.TOptionContract, price decimal.Decimal, now int64) error {
-	market, err := model.FindOneByTenantIdContractId(ctx, contract.TenantId, contract.Id)
-	if err != nil && !errors.Is(err, models.ErrNotFound) {
-		return err
-	}
-	if errors.Is(err, models.ErrNotFound) {
-		_, err = model.Insert(ctx, &models.TOptionMarket{
-			TenantId:   contract.TenantId,
-			ContractId: contract.Id,
-			MarkPrice:  price,
-			LastPrice:  price,
-			// A trade price is not an authoritative underlying quote. Keep the
-			// quote timestamp empty so expiry settlement cannot mistake this
-			// update for a fresh underlying-price snapshot.
-			SnapshotTime:     0,
-			PricingModel:     "trade",
-			CreateTimes:      now,
-			UpdateTimes:      now,
-			TheoreticalPrice: price,
-		})
-		return err
+func updateMarketLastTrade(
+	ctx context.Context,
+	model models.TOptionMarketModel,
+	market *models.TOptionMarket,
+	price decimal.Decimal,
+	now int64,
+) error {
+	if market == nil {
+		return errors.New("locked option market is missing")
 	}
 
 	market.LastPrice = price
-	if !market.MarkPrice.IsPositive() {
-		market.MarkPrice = price
-	}
 	if !market.TheoreticalPrice.IsPositive() {
 		market.TheoreticalPrice = price
 	}
@@ -434,7 +880,7 @@ func createTradeAssetInstructions(ctx context.Context, model models.TOptionAsset
 			BizNo: buyOrder.OrderNo, OrderId: buyOrder.Id, TradeId: trade.Id,
 			UserId: buyOrder.UserId, AccountId: buyOrder.AccountId,
 			Action:      int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_RELEASE_FROZEN),
-			TargetBizNo: buyOrder.OrderNo, Coin: trade.FeeCoin, Amount: buyOrder.MarginAmount,
+			TargetBizNo: buyOrder.OrderNo, Coin: OptionOrderMarginCoin(buyOrder), Amount: buyOrder.MarginAmount,
 			StepNo: 3, Status: int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING),
 			ReconciliationStatus: int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_PENDING),
 			CreateTimes:          now, UpdateTimes: now,

@@ -51,6 +51,12 @@ func (l *CancelOrderLogic) CancelOrder(in *option.CancelOrderReq) (*option.UserC
 	if item.UserId != userId || item.AccountId != in.AccountId {
 		return &option.UserCommonResp{Base: helper.ErrResp(i18n.NoPermissionOperateOrder, i18n.Translate(i18n.NoPermissionOperateOrder, l.ctx))}, nil
 	}
+	if item.ComboOrderId > 0 {
+		return &option.UserCommonResp{Base: helper.ErrResp(
+			i18n.CurrentStatusCannotCancel,
+			"combo child orders must be canceled through CancelComboOrder",
+		)}, nil
+	}
 	if item.Status != int64(option.OrderStatus_ORDER_STATUS_PENDING) && item.Status != int64(option.OrderStatus_ORDER_STATUS_PART_FILLED) {
 		if item.Status != int64(option.OrderStatus_ORDER_STATUS_FUNDING) {
 			return &option.UserCommonResp{Base: helper.ErrResp(i18n.CurrentStatusCannotCancel, i18n.Translate(i18n.CurrentStatusCannotCancel, l.ctx))}, nil

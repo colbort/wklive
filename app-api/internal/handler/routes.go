@@ -159,6 +159,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.PublicRateLimit},
 			[]rest.Route{
 				{
+					// 按标的和精确到期时间查询期权链、24小时成交统计及单边未平仓量
+					Method:  http.MethodGet,
+					Path:    "/chain",
+					Handler: option.ListOptionChainHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodGet,
 					Path:    "/contracts",
 					Handler: option.ListContractsHandler(serverCtx),
@@ -167,6 +173,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/contracts/detail",
 					Handler: option.GetContractDetailHandler(serverCtx),
+				},
+				{
+					// 查询来自 Option 活动限价委托的聚合盘口
+					Method:  http.MethodGet,
+					Path:    "/order-book",
+					Handler: option.GetOrderBookHandler(serverCtx),
 				},
 			}...,
 		),
@@ -188,9 +200,32 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: option.ListBillsHandler(serverCtx),
 				},
 				{
+					// 分页查询当前用户组合订单
+					Method:  http.MethodGet,
+					Path:    "/combo-orders",
+					Handler: option.ListComboOrdersHandler(serverCtx),
+				},
+				{
+					// 获取组合订单及不可变腿
+					Method:  http.MethodGet,
+					Path:    "/combo-orders/detail",
+					Handler: option.GetComboOrderHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/exercise/instruction",
+					Handler: option.GetExerciseInstructionHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodGet,
 					Path:    "/exercises",
 					Handler: option.ListExercisesHandler(serverCtx),
+				},
+				{
+					// 查询当前用户指定做市报价组的 MMP 状态
+					Method:  http.MethodGet,
+					Path:    "/mmp/config",
+					Handler: option.GetMMPConfigHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
@@ -222,6 +257,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/trades",
 					Handler: option.ListTradesHandler(serverCtx),
 				},
+				{
+					// 查询用户期权交易控制
+					Method:  http.MethodGet,
+					Path:    "/trading-control",
+					Handler: option.GetUserTradingControlHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),
@@ -233,9 +274,32 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.SensitiveRateLimit},
 			[]rest.Route{
 				{
+					// 创建2至4腿独立策略簿组合订单
+					Method:  http.MethodPost,
+					Path:    "/combo-orders",
+					Handler: option.PlaceComboOrderHandler(serverCtx),
+				},
+				{
+					// 原子撤销组合父单并释放所有未完成腿冻结
+					Method:  http.MethodPost,
+					Path:    "/combo-orders/cancel",
+					Handler: option.CancelComboOrderHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodPost,
 					Path:    "/exercise",
 					Handler: option.ExerciseHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/exercise/instruction",
+					Handler: option.SetExerciseInstructionHandler(serverCtx),
+				},
+				{
+					// 激活用户期权 kill switch
+					Method:  http.MethodPost,
+					Path:    "/kill-switch",
+					Handler: option.ActivateKillSwitchHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,

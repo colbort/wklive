@@ -55,6 +55,11 @@ func (l *RetrySettlementInstructionLogic) RetrySettlementInstruction(in *option.
 	if forbidden || !allowed {
 		return &option.CommonResp{Base: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
 	}
+	if item.DeliveryUnitId > 0 {
+		return &option.CommonResp{
+			Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx)),
+		}, nil
+	}
 	reset, err := l.svcCtx.OptionAssetInstructionModel.ResetForManualRetry(
 		l.ctx, item.Id, time.Now().Unix(),
 	)

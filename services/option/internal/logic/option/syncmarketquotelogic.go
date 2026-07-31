@@ -143,6 +143,7 @@ func (l *SyncMarketQuoteLogic) syncContractMarket(contract *models.TOptionContra
 			market.TimeValue = decimal.Max(market.MarkPrice.Sub(intrinsicValue), decimal.Zero)
 		}
 		market.SnapshotTime = snapshotTime
+		market.UnderlyingSnapshotTime = snapshotTime
 		market.UpdateTimes = now
 
 		if market.Id == 0 {
@@ -155,7 +156,10 @@ func (l *SyncMarketQuoteLogic) syncContractMarket(contract *models.TOptionContra
 			return err
 		}
 
-		if err := helpers.InsertMarketSnapshot(ctx, snapshotModel, market, now); err != nil {
+		if err := helpers.InsertMarketSnapshot(
+			ctx, snapshotModel, market,
+			helpers.MarketSnapshotSourceUnderlying, snapshotID, now,
+		); err != nil {
 			return err
 		}
 		changed = true

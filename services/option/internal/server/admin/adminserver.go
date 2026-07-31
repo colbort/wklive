@@ -77,6 +77,24 @@ func (s *AdminServer) ListOrders(ctx context.Context, in *option.ListOrdersReq) 
 	return l.ListOrders(in)
 }
 
+// 分页查询组合父单，供运营按整组处理
+func (s *AdminServer) ListAdminComboOrders(ctx context.Context, in *option.ListAdminComboOrdersReq) (*option.ListAdminComboOrdersResp, error) {
+	l := adminlogic.NewListAdminComboOrdersLogic(ctx, s.svcCtx)
+	return l.ListAdminComboOrders(in)
+}
+
+// 查询组合父单、腿、影子单、成交和资产指令
+func (s *AdminServer) GetAdminComboOrder(ctx context.Context, in *option.GetAdminComboOrderReq) (*option.GetAdminComboOrderResp, error) {
+	l := adminlogic.NewGetAdminComboOrderLogic(ctx, s.svcCtx)
+	return l.GetAdminComboOrder(in)
+}
+
+// 强制撤销一个组合父单；禁止单腿撤销
+func (s *AdminServer) ForceCancelComboOrder(ctx context.Context, in *option.ForceCancelComboOrderReq) (*option.CommonResp, error) {
+	l := adminlogic.NewForceCancelComboOrderLogic(ctx, s.svcCtx)
+	return l.ForceCancelComboOrder(in)
+}
+
 // 获取单个成交记录详情
 func (s *AdminServer) GetTrade(ctx context.Context, in *option.GetTradeReq) (*option.GetTradeResp, error) {
 	l := adminlogic.NewGetTradeLogic(ctx, s.svcCtx)
@@ -125,6 +143,24 @@ func (s *AdminServer) ListSettlements(ctx context.Context, in *option.ListSettle
 	return l.ListSettlements(in)
 }
 
+// 分页查询到期结算价版本
+func (s *AdminServer) ListSettlementPrices(ctx context.Context, in *option.ListSettlementPricesReq) (*option.ListSettlementPricesResp, error) {
+	l := adminlogic.NewListSettlementPricesLogic(ctx, s.svcCtx)
+	return l.ListSettlementPrices(in)
+}
+
+// 创建人工结算价更正草案，必须由另一管理员确认
+func (s *AdminServer) CreateSettlementPriceCorrection(ctx context.Context, in *option.CreateSettlementPriceCorrectionReq) (*option.GetSettlementPriceResp, error) {
+	l := adminlogic.NewCreateSettlementPriceCorrectionLogic(ctx, s.svcCtx)
+	return l.CreateSettlementPriceCorrection(in)
+}
+
+// 确认或拒绝待复核结算价
+func (s *AdminServer) ReviewSettlementPrice(ctx context.Context, in *option.ReviewSettlementPriceReq) (*option.GetSettlementPriceResp, error) {
+	l := adminlogic.NewReviewSettlementPriceLogic(ctx, s.svcCtx)
+	return l.ReviewSettlementPrice(in)
+}
+
 // 获取单个账户资产详情
 func (s *AdminServer) GetAccount(ctx context.Context, in *option.GetAccountReq) (*option.GetAccountResp, error) {
 	l := adminlogic.NewGetAccountLogic(ctx, s.svcCtx)
@@ -161,6 +197,114 @@ func (s *AdminServer) RetryAssetInstruction(ctx context.Context, in *option.Retr
 	return l.RetryAssetInstruction(in)
 }
 
+// 查询运营异常和任务水位汇总
+func (s *AdminServer) GetOperationsOverview(ctx context.Context, in *option.GetOperationsOverviewReq) (*option.GetOperationsOverviewResp, error) {
+	l := adminlogic.NewGetOperationsOverviewLogic(ctx, s.svcCtx)
+	return l.GetOperationsOverview(in)
+}
+
+// 分页查询资产指令，统一定位失败和人工处理项
+func (s *AdminServer) ListAssetInstructions(ctx context.Context, in *option.ListAssetInstructionsReq) (*option.ListAssetInstructionsResp, error) {
+	l := adminlogic.NewListAssetInstructionsLogic(ctx, s.svcCtx)
+	return l.ListAssetInstructions(in)
+}
+
+// 分页查询 Option 与 Asset 对账差异
+func (s *AdminServer) ListReconciliationIssues(ctx context.Context, in *option.ListReconciliationIssuesReq) (*option.ListReconciliationIssuesResp, error) {
+	l := adminlogic.NewListReconciliationIssuesLogic(ctx, s.svcCtx)
+	return l.ListReconciliationIssues(in)
+}
+
+// 创建不可覆盖的交易日历版本草案
+func (s *AdminServer) CreateTradingCalendar(ctx context.Context, in *option.CreateTradingCalendarReq) (*option.GetTradingCalendarResp, error) {
+	l := adminlogic.NewCreateTradingCalendarLogic(ctx, s.svcCtx)
+	return l.CreateTradingCalendar(in)
+}
+
+// 由独立管理员批准或拒绝日历版本
+func (s *AdminServer) ReviewTradingCalendar(ctx context.Context, in *option.ReviewTradingCalendarReq) (*option.GetTradingCalendarResp, error) {
+	l := adminlogic.NewReviewTradingCalendarLogic(ctx, s.svcCtx)
+	return l.ReviewTradingCalendar(in)
+}
+
+// 分页查询交易日历版本
+func (s *AdminServer) ListTradingCalendars(ctx context.Context, in *option.ListTradingCalendarsReq) (*option.ListTradingCalendarsResp, error) {
+	l := adminlogic.NewListTradingCalendarsLogic(ctx, s.svcCtx)
+	return l.ListTradingCalendars(in)
+}
+
+// 紧急暂停合约交易并撤销活动订单
+func (s *AdminServer) HaltContractTrading(ctx context.Context, in *option.HaltContractTradingReq) (*option.GetTradingHaltResp, error) {
+	l := adminlogic.NewHaltContractTradingLogic(ctx, s.svcCtx)
+	return l.HaltContractTrading(in)
+}
+
+// 引用原 halt 解除临时休市
+func (s *AdminServer) ResumeContractTrading(ctx context.Context, in *option.ResumeContractTradingReq) (*option.GetTradingHaltResp, error) {
+	l := adminlogic.NewResumeContractTradingLogic(ctx, s.svcCtx)
+	return l.ResumeContractTrading(in)
+}
+
+// 分页查询临时休市记录
+func (s *AdminServer) ListTradingHalts(ctx context.Context, in *option.ListTradingHaltsReq) (*option.ListTradingHaltsResp, error) {
+	l := adminlogic.NewListTradingHaltsLogic(ctx, s.svcCtx)
+	return l.ListTradingHalts(in)
+}
+
+// 登记不可覆盖的公司行动版本；所有受影响合约立即停牌并撤单
+func (s *AdminServer) CreateCorporateAction(ctx context.Context, in *option.CreateCorporateActionReq) (*option.GetCorporateActionResp, error) {
+	l := adminlogic.NewCreateCorporateActionLogic(ctx, s.svcCtx)
+	return l.CreateCorporateAction(in)
+}
+
+// 独立管理员复核公司行动；不支持的事件只能进入人工处理
+func (s *AdminServer) ReviewCorporateAction(ctx context.Context, in *option.ReviewCorporateActionReq) (*option.GetCorporateActionResp, error) {
+	l := adminlogic.NewReviewCorporateActionLogic(ctx, s.svcCtx)
+	return l.ReviewCorporateAction(in)
+}
+
+// 分页查询公司行动及合约迁移进度
+func (s *AdminServer) ListCorporateActions(ctx context.Context, in *option.ListCorporateActionsReq) (*option.ListCorporateActionsResp, error) {
+	l := adminlogic.NewListCorporateActionsLogic(ctx, s.svcCtx)
+	return l.ListCorporateActions(in)
+}
+
+// 分页查询逐持仓迁移审计结果
+func (s *AdminServer) ListCorporateActionPositions(ctx context.Context, in *option.ListCorporateActionPositionsReq) (*option.ListCorporateActionPositionsResp, error) {
+	l := adminlogic.NewListCorporateActionPositionsLogic(ctx, s.svcCtx)
+	return l.ListCorporateActionPositions(in)
+}
+
+// 创建不可覆盖的到期/行权价系列版本草案
+func (s *AdminServer) CreateContractSeries(ctx context.Context, in *option.CreateContractSeriesReq) (*option.GetContractSeriesResp, error) {
+	l := adminlogic.NewCreateContractSeriesLogic(ctx, s.svcCtx)
+	return l.CreateContractSeries(in)
+}
+
+// 独立管理员复核；批准时原子生成全部 PENDING 合约
+func (s *AdminServer) ReviewContractSeries(ctx context.Context, in *option.ReviewContractSeriesReq) (*option.GetContractSeriesResp, error) {
+	l := adminlogic.NewReviewContractSeriesLogic(ctx, s.svcCtx)
+	return l.ReviewContractSeries(in)
+}
+
+// 分页查询系列版本
+func (s *AdminServer) ListContractSeries(ctx context.Context, in *option.ListContractSeriesReq) (*option.ListContractSeriesResp, error) {
+	l := adminlogic.NewListContractSeriesLogic(ctx, s.svcCtx)
+	return l.ListContractSeries(in)
+}
+
+// 分页查询系列生成合约谱系
+func (s *AdminServer) ListContractSeriesDetails(ctx context.Context, in *option.ListContractSeriesDetailsReq) (*option.ListContractSeriesDetailsResp, error) {
+	l := adminlogic.NewListContractSeriesDetailsLogic(ctx, s.svcCtx)
+	return l.ListContractSeriesDetails(in)
+}
+
+// 对已生成系列执行独立上市复核；批准前生命周期必须保持 PENDING
+func (s *AdminServer) ReviewContractSeriesLaunch(ctx context.Context, in *option.ReviewContractSeriesLaunchReq) (*option.GetContractSeriesResp, error) {
+	l := adminlogic.NewReviewContractSeriesLaunchLogic(ctx, s.svcCtx)
+	return l.ReviewContractSeriesLaunch(in)
+}
+
 // 将失败或人工处理的成交持仓事件重新置为待执行
 func (s *AdminServer) RetryTradeEvent(ctx context.Context, in *option.RetryTradeEventReq) (*option.CommonResp, error) {
 	l := adminlogic.NewRetryTradeEventLogic(ctx, s.svcCtx)
@@ -171,6 +315,24 @@ func (s *AdminServer) RetryTradeEvent(ctx context.Context, in *option.RetryTrade
 func (s *AdminServer) ListRiskAccounts(ctx context.Context, in *option.ListRiskAccountsReq) (*option.ListRiskAccountsResp, error) {
 	l := adminlogic.NewListRiskAccountsLogic(ctx, s.svcCtx)
 	return l.ListRiskAccounts(in)
+}
+
+// 创建不可覆盖的组合保证金参数草案
+func (s *AdminServer) CreatePortfolioRiskConfig(ctx context.Context, in *option.CreatePortfolioRiskConfigReq) (*option.GetPortfolioRiskConfigResp, error) {
+	l := adminlogic.NewCreatePortfolioRiskConfigLogic(ctx, s.svcCtx)
+	return l.CreatePortfolioRiskConfig(in)
+}
+
+// 由独立管理员批准或拒绝组合保证金参数版本
+func (s *AdminServer) ReviewPortfolioRiskConfig(ctx context.Context, in *option.ReviewPortfolioRiskConfigReq) (*option.GetPortfolioRiskConfigResp, error) {
+	l := adminlogic.NewReviewPortfolioRiskConfigLogic(ctx, s.svcCtx)
+	return l.ReviewPortfolioRiskConfig(in)
+}
+
+// 分页查询组合保证金参数版本
+func (s *AdminServer) ListPortfolioRiskConfigs(ctx context.Context, in *option.ListPortfolioRiskConfigsReq) (*option.ListPortfolioRiskConfigsResp, error) {
+	l := adminlogic.NewListPortfolioRiskConfigsLogic(ctx, s.svcCtx)
+	return l.ListPortfolioRiskConfigs(in)
 }
 
 // 分页查询强平记录
@@ -195,4 +357,70 @@ func (s *AdminServer) RetryExercise(ctx context.Context, in *option.RetryExercis
 func (s *AdminServer) RetrySettlementInstruction(ctx context.Context, in *option.RetrySettlementInstructionReq) (*option.CommonResp, error) {
 	l := adminlogic.NewRetrySettlementInstructionLogic(ctx, s.svcCtx)
 	return l.RetrySettlementInstruction(in)
+}
+
+// 人工复核后解除用户 kill switch
+func (s *AdminServer) ReleaseUserKillSwitch(ctx context.Context, in *option.ReleaseUserKillSwitchReq) (*option.CommonResp, error) {
+	l := adminlogic.NewReleaseUserKillSwitchLogic(ctx, s.svcCtx)
+	return l.ReleaseUserKillSwitch(in)
+}
+
+// 查询用户 kill switch
+func (s *AdminServer) AdminGetUserTradingControl(ctx context.Context, in *option.AdminGetUserTradingControlReq) (*option.AdminGetUserTradingControlResp, error) {
+	l := adminlogic.NewAdminGetUserTradingControlLogic(ctx, s.svcCtx)
+	return l.AdminGetUserTradingControl(in)
+}
+
+// 分页查询交易控制审计事件
+func (s *AdminServer) ListTradingControlEvents(ctx context.Context, in *option.ListTradingControlEventsReq) (*option.ListTradingControlEventsResp, error) {
+	l := adminlogic.NewListTradingControlEventsLogic(ctx, s.svcCtx)
+	return l.ListTradingControlEvents(in)
+}
+
+// 创建异常成交现金更正草案，同时暂停合约并撤销活动订单
+func (s *AdminServer) CreateTradeCorrection(ctx context.Context, in *option.CreateTradeCorrectionReq) (*option.GetTradeCorrectionResp, error) {
+	l := adminlogic.NewCreateTradeCorrectionLogic(ctx, s.svcCtx)
+	return l.CreateTradeCorrection(in)
+}
+
+// 由独立管理员批准或拒绝异常成交更正
+func (s *AdminServer) ReviewTradeCorrection(ctx context.Context, in *option.ReviewTradeCorrectionReq) (*option.GetTradeCorrectionResp, error) {
+	l := adminlogic.NewReviewTradeCorrectionLogic(ctx, s.svcCtx)
+	return l.ReviewTradeCorrection(in)
+}
+
+// 分页查询异常成交更正案件
+func (s *AdminServer) ListTradeCorrections(ctx context.Context, in *option.ListTradeCorrectionsReq) (*option.ListTradeCorrectionsResp, error) {
+	l := adminlogic.NewListTradeCorrectionsLogic(ctx, s.svcCtx)
+	return l.ListTradeCorrections(in)
+}
+
+// 创建或更新做市商保护参数；任何变更都会撤销该组已有 MMP 报价
+func (s *AdminServer) UpsertMMPConfig(ctx context.Context, in *option.UpsertMMPConfigReq) (*option.GetMMPConfigResp, error) {
+	l := adminlogic.NewUpsertMMPConfigLogic(ctx, s.svcCtx)
+	return l.UpsertMMPConfig(in)
+}
+
+// 人工复核并恢复触发中的 MMP 报价组
+func (s *AdminServer) ResetMMPConfig(ctx context.Context, in *option.ResetMMPConfigReq) (*option.GetMMPConfigResp, error) {
+	l := adminlogic.NewResetMMPConfigLogic(ctx, s.svcCtx)
+	return l.ResetMMPConfig(in)
+}
+
+// 分页查询 MMP 配置和实时窗口状态
+func (s *AdminServer) ListMMPConfigs(ctx context.Context, in *option.ListMMPConfigsReq) (*option.ListMMPConfigsResp, error) {
+	l := adminlogic.NewListMMPConfigsLogic(ctx, s.svcCtx)
+	return l.ListMMPConfigs(in)
+}
+
+// 分页查询实物交割配对单元和失败状态
+func (s *AdminServer) ListPhysicalDeliveryUnits(ctx context.Context, in *option.ListPhysicalDeliveryUnitsReq) (*option.ListPhysicalDeliveryUnitsResp, error) {
+	l := adminlogic.NewListPhysicalDeliveryUnitsLogic(ctx, s.svcCtx)
+	return l.ListPhysicalDeliveryUnits(in)
+}
+
+// 人工确认补资后，按原指令号重试一个实物交割单元
+func (s *AdminServer) RetryPhysicalDeliveryUnit(ctx context.Context, in *option.RetryPhysicalDeliveryUnitReq) (*option.CommonResp, error) {
+	l := adminlogic.NewRetryPhysicalDeliveryUnitLogic(ctx, s.svcCtx)
+	return l.RetryPhysicalDeliveryUnit(in)
 }

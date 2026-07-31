@@ -53,6 +53,8 @@ type (
 		PositionId           int64           `db:"position_id"`           // 持仓ID
 		MarginLotId          int64           `db:"margin_lot_id"`         // 卖方保证金批次ID
 		LiquidationId        int64           `db:"liquidation_id"`        // 强平记录ID
+		DeliveryUnitId       int64           `db:"delivery_unit_id"`      // 实物交割配对单元ID
+		ExecutionGroup       string          `db:"execution_group"`       // 步骤屏障执行域；空值回退biz_no
 		UserId               int64           `db:"user_id"`               // 用户ID
 		AccountId            int64           `db:"account_id"`            // Option账户ID
 		Action               int64           `db:"action"`                // 动作：1冻结 2扣冻结 3释放冻结 4可用入账 5可用扣减
@@ -135,8 +137,8 @@ func (m *defaultTOptionAssetInstructionModel) Insert(ctx context.Context, data *
 	tOptionAssetInstructionIdKey := fmt.Sprintf("%s%v", cacheTOptionAssetInstructionIdPrefix, data.Id)
 	tOptionAssetInstructionTenantIdInstructionNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionAssetInstructionTenantIdInstructionNoPrefix, data.TenantId, data.InstructionNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionAssetInstructionRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.InstructionNo, data.BizNo, data.OrderId, data.TradeId, data.PositionId, data.MarginLotId, data.LiquidationId, data.UserId, data.AccountId, data.Action, data.TargetBizNo, data.Coin, data.Amount, data.StepNo, data.Status, data.RetryCount, data.NextRetryAt, data.LastErrorMsg, data.AssetFlowNo, data.ReconciliationStatus, data.ReconciledAt, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionAssetInstructionRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.InstructionNo, data.BizNo, data.OrderId, data.TradeId, data.PositionId, data.MarginLotId, data.LiquidationId, data.DeliveryUnitId, data.ExecutionGroup, data.UserId, data.AccountId, data.Action, data.TargetBizNo, data.Coin, data.Amount, data.StepNo, data.Status, data.RetryCount, data.NextRetryAt, data.LastErrorMsg, data.AssetFlowNo, data.ReconciliationStatus, data.ReconciledAt, data.CreateTimes, data.UpdateTimes)
 	}, tOptionAssetInstructionIdKey, tOptionAssetInstructionTenantIdInstructionNoKey)
 	return ret, err
 }
@@ -151,7 +153,7 @@ func (m *defaultTOptionAssetInstructionModel) Update(ctx context.Context, newDat
 	tOptionAssetInstructionTenantIdInstructionNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionAssetInstructionTenantIdInstructionNoPrefix, data.TenantId, data.InstructionNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionAssetInstructionRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.InstructionNo, newData.BizNo, newData.OrderId, newData.TradeId, newData.PositionId, newData.MarginLotId, newData.LiquidationId, newData.UserId, newData.AccountId, newData.Action, newData.TargetBizNo, newData.Coin, newData.Amount, newData.StepNo, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.AssetFlowNo, newData.ReconciliationStatus, newData.ReconciledAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.InstructionNo, newData.BizNo, newData.OrderId, newData.TradeId, newData.PositionId, newData.MarginLotId, newData.LiquidationId, newData.DeliveryUnitId, newData.ExecutionGroup, newData.UserId, newData.AccountId, newData.Action, newData.TargetBizNo, newData.Coin, newData.Amount, newData.StepNo, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.AssetFlowNo, newData.ReconciliationStatus, newData.ReconciledAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tOptionAssetInstructionIdKey, tOptionAssetInstructionTenantIdInstructionNoKey)
 	return err
 }

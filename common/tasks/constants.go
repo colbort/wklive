@@ -20,6 +20,7 @@ const (
 	ActionMarketSyncKlines   = "SyncKlines"
 
 	ActionOptionProcessContractLifecycle = "ProcessContractLifecycle"
+	ActionOptionProcessCorporateActions  = "ProcessCorporateActions"
 	ActionOptionCleanMarketSnapshots     = "CleanMarketSnapshots"
 	ActionOptionProcessAssetInstructions = "ProcessAssetInstructions"
 	ActionOptionProcessTradeEvents       = "ProcessTradeEvents"

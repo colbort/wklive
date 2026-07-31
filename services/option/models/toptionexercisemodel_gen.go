@@ -25,8 +25,9 @@ var (
 	tOptionExerciseRowsExpectAutoSet   = strings.Join(stringx.Remove(tOptionExerciseFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tOptionExerciseRowsWithPlaceHolder = strings.Join(stringx.Remove(tOptionExerciseFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTOptionExerciseIdPrefix                 = "cache:tOptionExercise:id:"
-	cacheTOptionExerciseTenantIdExerciseNoPrefix = "cache:tOptionExercise:tenantId:exerciseNo:"
+	cacheTOptionExerciseIdPrefix                             = "cache:tOptionExercise:id:"
+	cacheTOptionExerciseTenantIdExerciseNoPrefix             = "cache:tOptionExercise:tenantId:exerciseNo:"
+	cacheTOptionExerciseTenantIdUserIdClientExerciseIdPrefix = "cache:tOptionExercise:tenantId:userId:clientExerciseId:"
 )
 
 type (
@@ -34,6 +35,7 @@ type (
 		Insert(ctx context.Context, data *TOptionExercise) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TOptionExercise, error)
 		FindOneByTenantIdExerciseNo(ctx context.Context, tenantId int64, exerciseNo string) (*TOptionExercise, error)
+		FindOneByTenantIdUserIdClientExerciseId(ctx context.Context, tenantId int64, userId int64, clientExerciseId string) (*TOptionExercise, error)
 		Update(ctx context.Context, data *TOptionExercise) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -44,27 +46,28 @@ type (
 	}
 
 	TOptionExercise struct {
-		Id              int64           `db:"id"`               // 主键ID
-		TenantId        int64           `db:"tenant_id"`        // 租户ID
-		ExerciseNo      string          `db:"exercise_no"`      // 行权单号
-		UserId          int64           `db:"user_id"`          // 用户ID
-		AccountId       int64           `db:"account_id"`       // 交易账户ID
-		ContractId      int64           `db:"contract_id"`      // 合约ID
-		PositionId      int64           `db:"position_id"`      // 持仓ID
-		ExerciseType    int64           `db:"exercise_type"`    // 行权类型：1用户主动 2系统自动
-		ExerciseQty     decimal.Decimal `db:"exercise_qty"`     // 行权数量
-		StrikePrice     decimal.Decimal `db:"strike_price"`     // 行权价
-		SettlementPrice decimal.Decimal `db:"settlement_price"` // 结算价
-		ExerciseAmount  decimal.Decimal `db:"exercise_amount"`  // 行权金额
-		ProfitAmount    decimal.Decimal `db:"profit_amount"`    // 行权收益
-		Fee             decimal.Decimal `db:"fee"`              // 行权手续费
-		FeeCoin         string          `db:"fee_coin"`         // 手续费币种
-		Status          int64           `db:"status"`           // 状态：0未知 1待处理 2已执行 3已拒绝 4已取消
-		Remark          string          `db:"remark"`           // 备注
-		ExerciseTime    int64           `db:"exercise_time"`    // 行权时间
-		FinishTime      int64           `db:"finish_time"`      // 完成时间
-		CreateTimes     int64           `db:"create_times"`     // 创建时间
-		UpdateTimes     int64           `db:"update_times"`     // 更新时间
+		Id               int64           `db:"id"`                 // 主键ID
+		TenantId         int64           `db:"tenant_id"`          // 租户ID
+		ExerciseNo       string          `db:"exercise_no"`        // 行权单号
+		ClientExerciseId string          `db:"client_exercise_id"` // 客户端行权幂等号；用户主动行权禁止为空
+		UserId           int64           `db:"user_id"`            // 用户ID
+		AccountId        int64           `db:"account_id"`         // 交易账户ID
+		ContractId       int64           `db:"contract_id"`        // 合约ID
+		PositionId       int64           `db:"position_id"`        // 持仓ID
+		ExerciseType     int64           `db:"exercise_type"`      // 行权类型：1用户主动 2系统自动
+		ExerciseQty      decimal.Decimal `db:"exercise_qty"`       // 行权数量
+		StrikePrice      decimal.Decimal `db:"strike_price"`       // 行权价
+		SettlementPrice  decimal.Decimal `db:"settlement_price"`   // 结算价
+		ExerciseAmount   decimal.Decimal `db:"exercise_amount"`    // 行权金额
+		ProfitAmount     decimal.Decimal `db:"profit_amount"`      // 行权收益
+		Fee              decimal.Decimal `db:"fee"`                // 行权手续费
+		FeeCoin          string          `db:"fee_coin"`           // 手续费币种
+		Status           int64           `db:"status"`             // 状态：0未知 1待处理 2已执行 3已拒绝 4已取消
+		Remark           string          `db:"remark"`             // 备注
+		ExerciseTime     int64           `db:"exercise_time"`      // 行权时间
+		FinishTime       int64           `db:"finish_time"`        // 完成时间
+		CreateTimes      int64           `db:"create_times"`       // 创建时间
+		UpdateTimes      int64           `db:"update_times"`       // 更新时间
 	}
 )
 
@@ -83,10 +86,11 @@ func (m *defaultTOptionExerciseModel) Delete(ctx context.Context, id int64) erro
 
 	tOptionExerciseIdKey := fmt.Sprintf("%s%v", cacheTOptionExerciseIdPrefix, id)
 	tOptionExerciseTenantIdExerciseNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionExerciseTenantIdExerciseNoPrefix, data.TenantId, data.ExerciseNo)
+	tOptionExerciseTenantIdUserIdClientExerciseIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionExerciseTenantIdUserIdClientExerciseIdPrefix, data.TenantId, data.UserId, data.ClientExerciseId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tOptionExerciseIdKey, tOptionExerciseTenantIdExerciseNoKey)
+	}, tOptionExerciseIdKey, tOptionExerciseTenantIdExerciseNoKey, tOptionExerciseTenantIdUserIdClientExerciseIdKey)
 	return err
 }
 
@@ -127,13 +131,34 @@ func (m *defaultTOptionExerciseModel) FindOneByTenantIdExerciseNo(ctx context.Co
 	}
 }
 
+func (m *defaultTOptionExerciseModel) FindOneByTenantIdUserIdClientExerciseId(ctx context.Context, tenantId int64, userId int64, clientExerciseId string) (*TOptionExercise, error) {
+	tOptionExerciseTenantIdUserIdClientExerciseIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionExerciseTenantIdUserIdClientExerciseIdPrefix, tenantId, userId, clientExerciseId)
+	var resp TOptionExercise
+	err := m.QueryRowIndexCtx(ctx, &resp, tOptionExerciseTenantIdUserIdClientExerciseIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? and `client_exercise_id` = ? limit 1", tOptionExerciseRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId, clientExerciseId); err != nil {
+			return nil, err
+		}
+		return resp.Id, nil
+	}, m.queryPrimary)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
 func (m *defaultTOptionExerciseModel) Insert(ctx context.Context, data *TOptionExercise) (sql.Result, error) {
 	tOptionExerciseIdKey := fmt.Sprintf("%s%v", cacheTOptionExerciseIdPrefix, data.Id)
 	tOptionExerciseTenantIdExerciseNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionExerciseTenantIdExerciseNoPrefix, data.TenantId, data.ExerciseNo)
+	tOptionExerciseTenantIdUserIdClientExerciseIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionExerciseTenantIdUserIdClientExerciseIdPrefix, data.TenantId, data.UserId, data.ClientExerciseId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionExerciseRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.ExerciseNo, data.UserId, data.AccountId, data.ContractId, data.PositionId, data.ExerciseType, data.ExerciseQty, data.StrikePrice, data.SettlementPrice, data.ExerciseAmount, data.ProfitAmount, data.Fee, data.FeeCoin, data.Status, data.Remark, data.ExerciseTime, data.FinishTime, data.CreateTimes, data.UpdateTimes)
-	}, tOptionExerciseIdKey, tOptionExerciseTenantIdExerciseNoKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionExerciseRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.ExerciseNo, data.ClientExerciseId, data.UserId, data.AccountId, data.ContractId, data.PositionId, data.ExerciseType, data.ExerciseQty, data.StrikePrice, data.SettlementPrice, data.ExerciseAmount, data.ProfitAmount, data.Fee, data.FeeCoin, data.Status, data.Remark, data.ExerciseTime, data.FinishTime, data.CreateTimes, data.UpdateTimes)
+	}, tOptionExerciseIdKey, tOptionExerciseTenantIdExerciseNoKey, tOptionExerciseTenantIdUserIdClientExerciseIdKey)
 	return ret, err
 }
 
@@ -145,10 +170,11 @@ func (m *defaultTOptionExerciseModel) Update(ctx context.Context, newData *TOpti
 
 	tOptionExerciseIdKey := fmt.Sprintf("%s%v", cacheTOptionExerciseIdPrefix, data.Id)
 	tOptionExerciseTenantIdExerciseNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionExerciseTenantIdExerciseNoPrefix, data.TenantId, data.ExerciseNo)
+	tOptionExerciseTenantIdUserIdClientExerciseIdKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionExerciseTenantIdUserIdClientExerciseIdPrefix, data.TenantId, data.UserId, data.ClientExerciseId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionExerciseRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.ExerciseNo, newData.UserId, newData.AccountId, newData.ContractId, newData.PositionId, newData.ExerciseType, newData.ExerciseQty, newData.StrikePrice, newData.SettlementPrice, newData.ExerciseAmount, newData.ProfitAmount, newData.Fee, newData.FeeCoin, newData.Status, newData.Remark, newData.ExerciseTime, newData.FinishTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tOptionExerciseIdKey, tOptionExerciseTenantIdExerciseNoKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.ExerciseNo, newData.ClientExerciseId, newData.UserId, newData.AccountId, newData.ContractId, newData.PositionId, newData.ExerciseType, newData.ExerciseQty, newData.StrikePrice, newData.SettlementPrice, newData.ExerciseAmount, newData.ProfitAmount, newData.Fee, newData.FeeCoin, newData.Status, newData.Remark, newData.ExerciseTime, newData.FinishTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tOptionExerciseIdKey, tOptionExerciseTenantIdExerciseNoKey, tOptionExerciseTenantIdUserIdClientExerciseIdKey)
 	return err
 }
 

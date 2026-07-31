@@ -1,0 +1,50 @@
+groups:
+  - name: wklive-option-combo
+    rules:
+      - alert: OptionComboSimpleBookIsolationViolation
+        expr: increase(wklive_option_combo_isolation_violation_total[5m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A030
+        annotations:
+          summary: Option 组合影子单触达普通盘口或单腿撮合路径
+          description: >-
+            tenant_scope={{ $labels.tenant_scope }}, path={{ $labels.path }}。
+            系统已失败关闭；立即暂停相关组合入口并核对普通盘口、父单和全部影子单。
+
+      - alert: OptionComboDebitBarrierViolation
+        expr: increase(wklive_option_combo_debit_barrier_violation_total[5m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A030
+        annotations:
+          summary: Option 组合持仓事件触达未完成的跨腿扣款屏障
+          description: >-
+            tenant_scope={{ $labels.tenant_scope }}。事务内二次校验已阻止落仓；
+            立即核对 combo_match_no、全部成交腿和 DEDUCT_FROZEN 指令。
+
+      - alert: OptionComboDebitBarrierStale
+        expr: wklive_option_combo_debit_barrier_stale_events > 0
+        for: 2m
+        labels:
+          severity: warning
+          catalog_id: OPT-A030
+        annotations:
+          summary: Option 组合跨腿扣款屏障超龄
+          description: >-
+            tenant_scope={{ $labels.tenant_scope }} 当前有 {{ $value }} 条超过60秒的
+            持仓事件仍被跨腿扣款屏障阻止。
+
+      - alert: OptionComboObservabilityQueryFailure
+        expr: increase(wklive_option_combo_observability_query_failure_total[5m]) > 0
+        for: 0m
+        labels:
+          severity: warning
+          catalog_id: OPT-A030
+        annotations:
+          summary: Option 组合运行时水位查询失败
+          description: >-
+            tenant_scope={{ $labels.tenant_scope }}, query={{ $labels.query }}。
+            当前组合水位可能陈旧，需同时检查数据库与 Option task。

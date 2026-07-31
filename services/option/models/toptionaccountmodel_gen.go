@@ -47,7 +47,7 @@ type (
 		Id               int64           `db:"id"`                // 主键ID
 		TenantId         int64           `db:"tenant_id"`         // 租户ID
 		UserId           int64           `db:"user_id"`           // 用户ID
-		AccountId        int64           `db:"account_id"`        // 交易账户ID
+		AccountId        int64           `db:"account_id"`        // 钱包镜像固定为0，业务账户仅保留在订单/持仓/流水
 		MarginCoin       string          `db:"margin_coin"`       // 保证金币种
 		Balance          decimal.Decimal `db:"balance"`           // 账户余额
 		AvailableBalance decimal.Decimal `db:"available_balance"` // 可用余额

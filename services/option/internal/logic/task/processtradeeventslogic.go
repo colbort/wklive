@@ -9,6 +9,7 @@ import (
 	"wklive/proto/common"
 	"wklive/proto/option"
 	"wklive/services/option/internal/logic/helpers"
+	"wklive/services/option/internal/observability"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -37,6 +38,21 @@ func (l *ProcessTradeEventsLogic) ProcessTradeEvents(in *option.OptionTaskReq) (
 		now := time.Now().Unix()
 		if err := l.svcCtx.OptionOutboxModel.RecoverStale(l.ctx, now-60, now); err != nil {
 			return nil, err
+		}
+		staleBarrierEvents, metricErr := l.svcCtx.OptionOutboxModel.
+			CountStaleComboDebitBarrierBlocked(l.ctx, in.TenantId, now-60)
+		if metricErr != nil {
+			observability.RecordComboObservabilityQueryFailure(
+				in.TenantId, "stale_debit_barrier",
+			)
+			l.Errorf("query stale option combo debit barriers failed: %v", metricErr)
+		} else {
+			observability.SetComboDebitBarrierStaleEvents(in.TenantId, staleBarrierEvents)
+		}
+		if sampleErr := observability.SampleOptionOperationsMetrics(
+			l.ctx, l.svcCtx.DB, now,
+		); sampleErr != nil {
+			l.Errorf("sample option operations metrics failed: %v", sampleErr)
 		}
 		for {
 			events, err := l.svcCtx.OptionOutboxModel.FindRunnable(l.ctx, in.TenantId, now, 100)
@@ -122,6 +138,20 @@ func (l *ProcessTradeEventsLogic) processOneTradeEvent(event *models.TOptionOutb
 			trade.MatchSequence != current.MatchSequence {
 			return errors.New("option trade event does not match trade")
 		}
+		if trade.ComboMatchNo != "" {
+			barrierReady, barrierErr := outboxModel.ComboDebitBarrierReady(
+				ctx, trade.TenantId, trade.ComboMatchNo,
+			)
+			if barrierErr != nil {
+				return barrierErr
+			}
+			if !barrierReady {
+				observability.RecordComboDebitBarrierViolation(trade.TenantId)
+				return fmt.Errorf(
+					"option combo debit barrier is incomplete: %s", trade.ComboMatchNo,
+				)
+			}
+		}
 		contract, err := contractModel.FindOne(ctx, trade.ContractId)
 		if err != nil {
 			return err
@@ -134,10 +164,16 @@ func (l *ProcessTradeEventsLogic) processOneTradeEvent(event *models.TOptionOutb
 		if err != nil {
 			return err
 		}
-		if err := updatePositionByFilledOrder(ctx, positionModel, contract, buyOrder, trade.Price, trade.Qty, trade.TradeTime); err != nil {
+		if err := updatePositionByFilledOrder(
+			ctx, positionModel, contract, buyOrder,
+			trade.Price, trade.Qty, trade.BuyFee, trade.TradeTime,
+		); err != nil {
 			return err
 		}
-		if err := updatePositionByFilledOrder(ctx, positionModel, contract, sellOrder, trade.Price, trade.Qty, trade.TradeTime); err != nil {
+		if err := updatePositionByFilledOrder(
+			ctx, positionModel, contract, sellOrder,
+			trade.Price, trade.Qty, trade.SellFee, trade.TradeTime,
+		); err != nil {
 			return err
 		}
 		if buyOrder.Side == int64(common.Side_SIDE_BUY) &&

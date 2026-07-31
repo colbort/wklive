@@ -3,9 +3,15 @@ package models
 import (
 	"context"
 	"fmt"
+	"strings"
+
+	"wklive/common/sqlutil"
+	"wklive/proto/common"
+	"wklive/proto/option"
+
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TOptionPositionModel = (*customTOptionPositionModel)(nil)
@@ -21,18 +27,118 @@ type (
 		Statuses   []int64
 	}
 
+	OptionOpenInterest struct {
+		ContractId int64           `db:"contract_id"`
+		LongQty    decimal.Decimal `db:"long_qty"`
+		ShortQty   decimal.Decimal `db:"short_qty"`
+		AsOf       int64           `db:"as_of"`
+	}
+
 	// TOptionPositionModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTOptionPositionModel.
 	TOptionPositionModel interface {
 		tOptionPositionModel
 		FindPage(ctx context.Context, filter OptionPositionPageFilter, cursor int64, limit int64) ([]*TOptionPosition, int64, error)
+		FindAssignableShorts(ctx context.Context, tenantId, contractId int64) ([]*TOptionPosition, error)
 		FindOneForUpdate(ctx context.Context, id int64) (*TOptionPosition, error)
+		SumHoldingQty(ctx context.Context, tenantId, userId, contractId, side int64) (decimal.Decimal, error)
+		CountHoldingByContract(ctx context.Context, tenantId, contractId int64) (int64, error)
+		FindHoldingBatch(ctx context.Context, tenantId, contractId, afterId, limit int64) ([]*TOptionPosition, error)
+		FindOpenInterestByContracts(ctx context.Context, tenantId int64, contractIDs []int64) ([]*OptionOpenInterest, error)
 	}
 
 	customTOptionPositionModel struct {
 		*defaultTOptionPositionModel
 	}
 )
+
+func (m *defaultTOptionPositionModel) FindOpenInterestByContracts(
+	ctx context.Context, tenantId int64, contractIDs []int64,
+) ([]*OptionOpenInterest, error) {
+	if len(contractIDs) == 0 {
+		return []*OptionOpenInterest{}, nil
+	}
+	args := make([]any, 0, len(contractIDs)+4)
+	args = append(args,
+		int64(common.PositionSide_POSITION_SIDE_LONG),
+		int64(common.PositionSide_POSITION_SIDE_SHORT),
+		tenantId,
+		int64(option.PositionStatus_POSITION_STATUS_HOLDING),
+	)
+	for _, id := range contractIDs {
+		args = append(args, id)
+	}
+	placeholders := strings.TrimRight(strings.Repeat("?,", len(contractIDs)), ",")
+	query := fmt.Sprintf(`SELECT contract_id,
+  COALESCE(SUM(CASE WHEN side=? THEN position_qty ELSE 0 END),0) AS long_qty,
+  COALESCE(SUM(CASE WHEN side=? THEN position_qty ELSE 0 END),0) AS short_qty,
+  COALESCE(MAX(update_times),0) AS as_of
+FROM %s
+WHERE tenant_id=? AND status=? AND position_qty>0 AND contract_id IN (%s)
+GROUP BY contract_id`, m.table, placeholders)
+	var items []*OptionOpenInterest
+	err := m.QueryRowsNoCacheCtx(ctx, &items, query, args...)
+	return items, err
+}
+
+func (m *defaultTOptionPositionModel) CountHoldingByContract(
+	ctx context.Context, tenantId, contractId int64,
+) (int64, error) {
+	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id=? AND contract_id=? AND status=? AND position_qty>0",
+		m.table)
+	var total int64
+	err := m.QueryRowNoCacheCtx(ctx, &total, query, tenantId, contractId,
+		int64(option.PositionStatus_POSITION_STATUS_HOLDING))
+	return total, err
+}
+
+func (m *defaultTOptionPositionModel) FindHoldingBatch(
+	ctx context.Context, tenantId, contractId, afterId, limit int64,
+) ([]*TOptionPosition, error) {
+	limit = sqlutil.NormalizeLimit(limit)
+	query := fmt.Sprintf(`SELECT %s FROM %s
+WHERE tenant_id=? AND contract_id=? AND status=? AND position_qty>0 AND id>?
+ORDER BY id LIMIT ?`, tOptionPositionRows, m.table)
+	var items []*TOptionPosition
+	err := m.QueryRowsNoCacheCtx(ctx, &items, query, tenantId, contractId,
+		int64(option.PositionStatus_POSITION_STATUS_HOLDING), afterId, limit)
+	return items, err
+}
+
+func (m *defaultTOptionPositionModel) SumHoldingQty(
+	ctx context.Context, tenantId, userId, contractId, side int64,
+) (decimal.Decimal, error) {
+	userClause := ""
+	args := []any{tenantId, contractId, side, int64(option.PositionStatus_POSITION_STATUS_HOLDING)}
+	if userId > 0 {
+		userClause = " AND user_id = ?"
+		args = append(args, userId)
+	}
+	query := fmt.Sprintf(`SELECT COALESCE(SUM(position_qty), 0) AS total FROM %s
+WHERE tenant_id = ? AND contract_id = ? AND side = ? AND status = ?%s`, m.table, userClause)
+	var aggregate decimalAggregate
+	if err := m.QueryRowNoCacheCtx(ctx, &aggregate, query, args...); err != nil {
+		return decimal.Zero, err
+	}
+	return aggregate.Decimal()
+}
+
+func (m *defaultTOptionPositionModel) FindAssignableShorts(
+	ctx context.Context,
+	tenantId, contractId int64,
+) ([]*TOptionPosition, error) {
+	query := fmt.Sprintf(`SELECT %s FROM %s
+WHERE tenant_id = ? AND contract_id = ? AND side = ? AND status = ? AND position_qty > 0
+ORDER BY create_times ASC, id ASC`, tOptionPositionRows, m.table)
+	var list []*TOptionPosition
+	err := m.QueryRowsNoCacheCtx(
+		ctx, &list, query,
+		tenantId, contractId,
+		int64(common.PositionSide_POSITION_SIDE_SHORT),
+		int64(option.PositionStatus_POSITION_STATUS_HOLDING),
+	)
+	return list, err
+}
 
 func (m *defaultTOptionPositionModel) FindOneForUpdate(ctx context.Context, id int64) (*TOptionPosition, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1 FOR UPDATE", tOptionPositionRows, m.table)

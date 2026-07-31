@@ -40,13 +40,14 @@ func (l *ListHistoryOrdersLogic) ListHistoryOrders(in *option.ListHistoryOrdersR
 		return nil, err
 	}
 	filter := models.OptionOrderPageFilter{
-		TenantId:        tenantId,
-		UserId:          userId,
-		AccountId:       in.AccountId,
-		ContractId:      in.ContractId,
-		Status:          int64(in.Status),
-		CreateTimeStart: pageutil.TimeRangeStart(in.CreateTimeRange),
-		CreateTimeEnd:   pageutil.TimeRangeEnd(in.CreateTimeRange),
+		TenantId:             tenantId,
+		UserId:               userId,
+		AccountId:            in.AccountId,
+		ContractId:           in.ContractId,
+		Status:               int64(in.Status),
+		CreateTimeStart:      pageutil.TimeRangeStart(in.CreateTimeRange),
+		CreateTimeEnd:        pageutil.TimeRangeEnd(in.CreateTimeRange),
+		ExcludeComboChildren: true,
 	}
 	if in.Status == 0 {
 		filter.Statuses = []int64{

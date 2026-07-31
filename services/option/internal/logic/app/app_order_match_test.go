@@ -46,6 +46,22 @@ func TestConsumeBuyOrderReservation(t *testing.T) {
 	}
 }
 
+func TestRejectComboChildFromSimpleMatcher(t *testing.T) {
+	if err := rejectComboChildFromSimpleMatcher(nil, "test"); err != nil {
+		t.Fatalf("nil order rejected: %v", err)
+	}
+	if err := rejectComboChildFromSimpleMatcher(&models.TOptionOrder{
+		TenantId: 9, ComboOrderId: 0,
+	}, "test"); err != nil {
+		t.Fatalf("simple order rejected: %v", err)
+	}
+	if err := rejectComboChildFromSimpleMatcher(&models.TOptionOrder{
+		TenantId: 9, ComboOrderId: 99,
+	}, "test"); err == nil {
+		t.Fatal("combo shadow order must be rejected from the simple matcher")
+	}
+}
+
 func TestMatchableOptionQtyExcludesSelfTrading(t *testing.T) {
 	incoming := &models.TOptionOrder{Id: 10, UserId: 20, AccountId: 30}
 	candidates := []*models.TOptionOrder{
@@ -55,7 +71,7 @@ func TestMatchableOptionQtyExcludesSelfTrading(t *testing.T) {
 		{Id: 13, UserId: 21, AccountId: 30, UnfilledQty: decimal.NewFromInt(2)},
 		{Id: 14, UserId: 21, AccountId: 31, UnfilledQty: decimal.Zero},
 	}
-	if got := matchableOptionQty(incoming, candidates); !got.Equal(decimal.NewFromInt(5)) {
+	if got := matchableOptionQty(incoming, candidates); !got.Equal(decimal.NewFromInt(2)) {
 		t.Fatalf("unexpected matchable quantity: %s", got)
 	}
 }

@@ -15,6 +15,7 @@ func init() {
 	cronx.Register("option.ProcessLiquidations", "期权卖方强平处理", runOptionProcessLiquidations)
 	cronx.Register("option.ProcessExercises", "期权主动行权清算", runOptionProcessExercises)
 	cronx.Register("option.ProcessContractLifecycle", "期权合约生命周期处理", runOptionProcessContractLifecycle)
+	cronx.Register("option.ProcessCorporateActions", "期权公司行动持仓迁移", runOptionProcessCorporateActions)
 	cronx.Register("option.CleanMarketSnapshots", "期权行情快照清理", runOptionCleanMarketSnapshots)
 }
 
@@ -40,6 +41,10 @@ func runOptionProcessExercises(ctx context.Context, job *models.SysJob) error {
 
 func runOptionProcessContractLifecycle(ctx context.Context, job *models.SysJob) error {
 	return publishTask(ctx, job, tasks.ServiceOption, tasks.ActionOptionProcessContractLifecycle)
+}
+
+func runOptionProcessCorporateActions(ctx context.Context, job *models.SysJob) error {
+	return publishTask(ctx, job, tasks.ServiceOption, tasks.ActionOptionProcessCorporateActions)
 }
 
 func runOptionCleanMarketSnapshots(ctx context.Context, job *models.SysJob) error {

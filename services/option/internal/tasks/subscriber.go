@@ -41,6 +41,8 @@ func handleTask(ctx context.Context, svcCtx *svc.ServiceContext, msg tasks.Messa
 		return checkResp(logic.NewProcessExercisesLogic(ctx, svcCtx).ProcessExercises(req))
 	case tasks.ActionOptionProcessContractLifecycle:
 		return checkResp(logic.NewProcessContractLifecycleLogic(ctx, svcCtx).ProcessContractLifecycle(req))
+	case tasks.ActionOptionProcessCorporateActions:
+		return checkResp(logic.NewProcessCorporateActionsLogic(ctx, svcCtx).ProcessCorporateActions(req))
 	case tasks.ActionOptionCleanMarketSnapshots:
 		return checkResp(logic.NewCleanMarketSnapshotsLogic(ctx, svcCtx).CleanMarketSnapshots(req))
 	default:

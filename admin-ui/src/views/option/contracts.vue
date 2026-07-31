@@ -109,7 +109,7 @@
         <el-table-column
           :label="t('common.actions')"
           align="center"
-          width="220"
+          width="300"
           fixed="right"
         >
           <template #default="{ row }">
@@ -136,6 +136,14 @@
               @click="openMarketDialog(row)"
             >
               {{ t('option.editMarket') }}
+            </el-button>
+            <el-button
+              v-perm="'option:contract:update'"
+              link
+              type="primary"
+              @click="openSettlementPriceDialog(row)"
+            >
+              {{ t('option.settlementPrices') }}
             </el-button>
             <el-button
               v-if="row.contract?.status === 3"
@@ -173,6 +181,9 @@
           </el-form-item>
           <el-form-item :label="t('option.contractCode')" class="span-2">
             <el-input v-model="contractForm.contractCode" />
+          </el-form-item>
+          <el-form-item :label="t('option.calendarCode')" class="span-2">
+            <el-input v-model="contractForm.tradingCalendarCode" placeholder="CONTINUOUS_24_7" />
           </el-form-item>
           <el-form-item :label="t('option.underlying')">
             <el-input v-model="contractForm.underlyingSymbol" />
@@ -240,6 +251,50 @@
           <el-form-item :label="t('option.multiplier')">
             <el-input v-model="contractForm.multiplier" />
           </el-form-item>
+          <el-form-item :label="t('option.settlementPriceSource')">
+            <el-select v-model="contractForm.settlementPriceSource" style="width: 100%">
+              <el-option label="authoritative-market" value="authoritative-market" />
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="t('option.settlementPriceMethod')">
+            <el-select v-model="contractForm.settlementPriceMethod" style="width: 100%">
+              <el-option label="MEDIAN" value="MEDIAN" />
+            </el-select>
+          </el-form-item>
+          <el-form-item :label="t('option.settlementWindowSeconds')">
+            <el-input-number
+              v-model="contractForm.settlementWindowSeconds"
+              :min="1"
+              :max="3600"
+              :precision="0"
+            />
+          </el-form-item>
+          <el-form-item :label="t('option.settlementMinSamples')">
+            <el-input-number
+              v-model="contractForm.settlementMinSamples"
+              :min="1"
+              :max="1000"
+              :precision="0"
+            />
+          </el-form-item>
+          <el-form-item :label="t('option.autoExerciseThreshold')">
+            <el-input v-model="contractForm.autoExerciseThreshold" />
+          </el-form-item>
+          <el-form-item :label="t('option.maxUserLongQty')">
+            <el-input v-model="contractForm.maxUserLongQty" />
+          </el-form-item>
+          <el-form-item :label="t('option.maxUserShortQty')">
+            <el-input v-model="contractForm.maxUserShortQty" />
+          </el-form-item>
+          <el-form-item :label="t('option.maxOpenInterest')">
+            <el-input v-model="contractForm.maxOpenInterest" />
+          </el-form-item>
+          <el-form-item :label="t('option.orderPriceBandRatio')">
+            <el-input v-model="contractForm.orderPriceBandRatio" placeholder="0.20" />
+          </el-form-item>
+          <el-form-item :label="t('option.circuitBreakerRatio')">
+            <el-input v-model="contractForm.circuitBreakerRatio" placeholder="0.30" />
+          </el-form-item>
           <el-form-item :label="t('option.makerFeeRate')">
             <el-input v-model="contractForm.makerFeeRate" />
           </el-form-item>
@@ -270,6 +325,18 @@
             <el-select v-model="contractForm.physicalDeliveryPolicy" style="width: 100%">
               <el-option :label="t('option.physicalDeliveryStrict')" :value="1" />
             </el-select>
+          </el-form-item>
+          <el-form-item
+            v-if="contractForm.settlementType === 2"
+            :label="t('option.physicalDeliveryCureSeconds')"
+          >
+            <el-input-number
+              v-model="contractForm.physicalDeliveryCureSeconds"
+              :min="300"
+              :max="604800"
+              :step="300"
+              :precision="0"
+            />
           </el-form-item>
           <el-form-item :label="t('option.initialMarginRate')">
             <el-input v-model="contractForm.initialMarginRate" />
@@ -329,6 +396,16 @@
               style="width: 100%"
             />
           </el-form-item>
+          <el-form-item :label="t('option.exerciseCutoffTime')">
+            <el-date-picker
+              v-model="contractExerciseCutoffTime"
+              type="datetime"
+              :placeholder="t('common.pleaseSelect')"
+              format="YYYY-MM-DD HH:mm:ss"
+              clearable
+              style="width: 100%"
+            />
+          </el-form-item>
           <el-form-item :label="t('option.autoExercise')">
             <el-select v-model="contractForm.isAutoExercise" style="width: 100%">
               <el-option
@@ -340,7 +417,7 @@
             </el-select>
           </el-form-item>
           <el-form-item :label="t('common.status')">
-            <el-select v-model="contractForm.status" style="width: 100%">
+            <el-select v-model="contractForm.status" disabled style="width: 100%">
               <el-option
                 v-for="item in contractStatusFormOptions"
                 :key="item.value"
@@ -539,6 +616,27 @@
           <el-descriptions-item :label="t('option.deliverTime')">
             {{ formatDate(detailData.contract.deliverTime || 0) }}
           </el-descriptions-item>
+          <el-descriptions-item :label="t('option.exerciseCutoffTime')">
+            {{ formatDate(detailData.contract.exerciseCutoffTime || 0) }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.autoExerciseThreshold')">
+            {{ detailData.contract.autoExerciseThreshold || '0' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.maxUserLongQty')">
+            {{ detailData.contract.maxUserLongQty || '0' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.maxUserShortQty')">
+            {{ detailData.contract.maxUserShortQty || '0' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.maxOpenInterest')">
+            {{ detailData.contract.maxOpenInterest || '0' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.orderPriceBandRatio')">
+            {{ detailData.contract.orderPriceBandRatio || '0' }}
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.circuitBreakerRatio')">
+            {{ detailData.contract.circuitBreakerRatio || '0' }}
+          </el-descriptions-item>
           <el-descriptions-item :label="t('common.remark')">
             {{ detailData.contract.remark || '-' }}
           </el-descriptions-item>
@@ -604,6 +702,80 @@
         </el-button>
       </template>
     </el-dialog>
+
+    <el-dialog
+      v-model="settlementPriceVisible"
+      :title="t('option.settlementPriceReview')"
+      width="1080px"
+    >
+      <el-table v-loading="settlementPriceLoading" :data="settlementPriceRows" stripe>
+        <el-table-column prop="version" :label="t('option.version')" width="90" />
+        <el-table-column prop="deliveryPrice" :label="t('option.deliveryPrice')" width="150" />
+        <el-table-column
+          prop="priceSource"
+          :label="t('option.settlementPriceSource')"
+          width="170"
+        />
+        <el-table-column
+          prop="calculationMethod"
+          :label="t('option.settlementPriceMethod')"
+          width="120"
+        />
+        <el-table-column prop="sampleCount" :label="t('option.sampleCount')" width="100" />
+        <el-table-column :label="t('common.status')" width="110">
+          <template #default="{ row }">
+            {{ settlementPriceStatusLabel(row.status) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="createdBy" :label="t('option.createdBy')" width="100" />
+        <el-table-column prop="confirmedBy" :label="t('option.confirmedBy')" width="100" />
+        <el-table-column
+          prop="changeReason"
+          :label="t('option.changeReason')"
+          min-width="220"
+          show-overflow-tooltip
+        />
+        <el-table-column :label="t('common.actions')" width="150" fixed="right">
+          <template #default="{ row }">
+            <template v-if="row.status === 1">
+              <el-button link type="success" @click="reviewSettlementPrice(row, true)">
+                {{ t('option.approve') }}
+              </el-button>
+              <el-button link type="danger" @click="reviewSettlementPrice(row, false)">
+                {{ t('option.reject') }}
+              </el-button>
+            </template>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <el-divider>{{ t('option.createSettlementCorrection') }}</el-divider>
+      <el-form label-width="150px">
+        <el-form-item :label="t('option.deliveryPrice')">
+          <el-input v-model="settlementCorrection.deliveryPrice" />
+        </el-form-item>
+        <el-form-item :label="t('option.sourceSnapshotIds')">
+          <el-input
+            v-model="settlementCorrection.sourceSnapshotIds"
+            type="textarea"
+            :rows="2"
+            placeholder="[&quot;snapshot-id-1&quot;,&quot;snapshot-id-2&quot;]"
+          />
+        </el-form-item>
+        <el-form-item :label="t('option.changeReason')">
+          <el-input v-model="settlementCorrection.reason" type="textarea" :rows="2" />
+        </el-form-item>
+        <el-form-item>
+          <el-button
+            type="warning"
+            :loading="submitLoading"
+            @click="createSettlementPriceCorrection"
+          >
+            {{ t('option.submitForReview') }}
+          </el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -615,6 +787,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   optionService,
   type OptionContractDetail,
+  type OptionSettlementPrice,
   type OptionGroup,
   type OptionItem,
   type UpdateContractReq,
@@ -643,6 +816,15 @@ const detailVisible = ref(false)
 const detailData = ref<OptionContractDetail | null>(null)
 const contractVisible = ref(false)
 const marketVisible = ref(false)
+const settlementPriceVisible = ref(false)
+const settlementPriceLoading = ref(false)
+const settlementPriceRows = ref<OptionSettlementPrice[]>([])
+const settlementPriceContract = ref<OptionContractDetail | null>(null)
+const settlementCorrection = reactive({
+  deliveryPrice: '',
+  sourceSnapshotIds: '[]',
+  reason: '',
+})
 const optionGroups = ref<OptionGroup[]>([])
 
 const query = reactive({
@@ -686,9 +868,22 @@ const contractForm = reactive<UpdateContractReq>({
   insuranceAccountId: 0,
   liquidationDeficitPolicy: 1,
   physicalDeliveryPolicy: 0,
+  physicalDeliveryCureSeconds: 0,
+  tradingCalendarCode: 'CONTINUOUS_24_7',
   listTime: 0,
   expireTime: 0,
   deliverTime: 0,
+  exerciseCutoffTime: 0,
+  autoExerciseThreshold: '0',
+  maxUserLongQty: '0',
+  maxUserShortQty: '0',
+  maxOpenInterest: '0',
+  orderPriceBandRatio: '0',
+  circuitBreakerRatio: '0',
+  settlementPriceSource: 'authoritative-market',
+  settlementPriceMethod: 'MEDIAN',
+  settlementWindowSeconds: 60,
+  settlementMinSamples: 3,
   isAutoExercise: 2,
   status: 0,
   sort: 0,
@@ -716,6 +911,9 @@ const marketForm = reactive<UpdateMarketReq>({
   riskFreeRate: '',
   pricingModel: '',
   snapshotTime: 0,
+  underlyingSnapshotTime: 0,
+  markSnapshotTime: 0,
+  greeksSnapshotTime: 0,
 })
 
 watch(
@@ -734,11 +932,16 @@ watch(
       contractForm.isAutoExercise = 1
       contractForm.sellerMarginMode = 4
       contractForm.physicalDeliveryPolicy = 1
+      if (!contractForm.physicalDeliveryCureSeconds) {
+        contractForm.physicalDeliveryCureSeconds = 3600
+      }
       contractForm.exerciseFeeRate = '0'
+      contractForm.autoExerciseThreshold = '0'
       contractForm.liquidationDeficitPolicy = 1
     } else {
       contractForm.underlyingCoin = ''
       contractForm.physicalDeliveryPolicy = 0
+      contractForm.physicalDeliveryCureSeconds = 0
       if (contractForm.sellerMarginMode === 4) contractForm.sellerMarginMode = 1
     }
   },
@@ -828,6 +1031,13 @@ const contractDeliverTime = computed({
   },
 })
 
+const contractExerciseCutoffTime = computed({
+  get: () => timestampToDate(contractForm.exerciseCutoffTime),
+  set: (value: DatePickerValue) => {
+    contractForm.exerciseCutoffTime = dateToUnixSeconds(value)
+  },
+})
+
 const marketSnapshotTime = computed({
   get: () => timestampToDate(marketForm.snapshotTime),
   set: (value: DatePickerValue) => {
@@ -849,6 +1059,81 @@ const contractStatusTagType = (status?: number): TagType => {
       return 'danger'
     default:
       return ''
+  }
+}
+
+const settlementPriceStatusLabel = (status: number) => {
+  const labels: Record<number, string> = {
+    1: t('option.pendingReview'),
+    2: t('option.confirmed'),
+    3: t('option.rejected'),
+    4: t('option.superseded'),
+  }
+  return labels[status] || '-'
+}
+
+const loadSettlementPrices = async () => {
+  const contract = settlementPriceContract.value?.contract
+  if (!contract) return
+  settlementPriceLoading.value = true
+  try {
+    const res = await optionService.listSettlementPrices({
+      tenantId: contract.tenantId,
+      contractId: contract.id,
+      limit: 100,
+    })
+    settlementPriceRows.value = res?.data || []
+  } finally {
+    settlementPriceLoading.value = false
+  }
+}
+
+const openSettlementPriceDialog = async (row: OptionContractDetail) => {
+  settlementPriceContract.value = row
+  Object.assign(settlementCorrection, {
+    deliveryPrice: '',
+    sourceSnapshotIds: '[]',
+    reason: '',
+  })
+  settlementPriceVisible.value = true
+  await loadSettlementPrices()
+}
+
+const reviewSettlementPrice = async (row: OptionSettlementPrice, approve: boolean) => {
+  const result = await ElMessageBox.prompt(
+    approve ? t('option.reviewReasonOptional') : t('option.reviewReasonRequired'),
+    approve ? t('option.approve') : t('option.reject'),
+    { inputType: 'textarea', inputValidator: (value) => approve || Boolean(value?.trim()) },
+  )
+  await optionService.reviewSettlementPrice({
+    tenantId: row.tenantId,
+    settlementPriceId: row.id,
+    approve,
+    reason: result.value?.trim() || undefined,
+  })
+  ElMessage.success(t('common.operationSuccess'))
+  await loadSettlementPrices()
+}
+
+const createSettlementPriceCorrection = async () => {
+  const contract = settlementPriceContract.value?.contract
+  if (!contract) return
+  submitLoading.value = true
+  try {
+    await optionService.createSettlementPriceCorrection({
+      tenantId: contract.tenantId,
+      contractId: contract.id,
+      ...settlementCorrection,
+    })
+    ElMessage.success(t('common.operationSuccess'))
+    Object.assign(settlementCorrection, {
+      deliveryPrice: '',
+      sourceSnapshotIds: '[]',
+      reason: '',
+    })
+    await loadSettlementPrices()
+  } finally {
+    submitLoading.value = false
   }
 }
 
@@ -900,9 +1185,22 @@ const resetContractForm = () => {
     insuranceAccountId: 0,
     liquidationDeficitPolicy: 1,
     physicalDeliveryPolicy: 0,
+    physicalDeliveryCureSeconds: 0,
+    tradingCalendarCode: 'CONTINUOUS_24_7',
     listTime: 0,
     expireTime: 0,
     deliverTime: 0,
+    exerciseCutoffTime: 0,
+    autoExerciseThreshold: '0',
+    maxUserLongQty: '0',
+    maxUserShortQty: '0',
+    maxOpenInterest: '0',
+    orderPriceBandRatio: '0',
+    circuitBreakerRatio: '0',
+    settlementPriceSource: 'authoritative-market',
+    settlementPriceMethod: 'MEDIAN',
+    settlementWindowSeconds: 60,
+    settlementMinSamples: 3,
     isAutoExercise: optionValueByCode(yesNoOptions.value, 'YES_NO_NO', 2),
     status: firstBusinessOptionValue(contractStatusOptions.value),
     sort: 0,
@@ -912,11 +1210,9 @@ const resetContractForm = () => {
 }
 
 const forceCancelOrders = async (row: OptionContractDetail) => {
-  await ElMessageBox.confirm(
-    t('option.forceCancelOrdersConfirm'),
-    t('option.forceCancelOrders'),
-    { type: 'warning' },
-  )
+  await ElMessageBox.confirm(t('option.forceCancelOrdersConfirm'), t('option.forceCancelOrders'), {
+    type: 'warning',
+  })
   await optionService.forceCancelContractOrders({
     tenantId: row.contract.tenantId,
     contractId: row.contract.id,

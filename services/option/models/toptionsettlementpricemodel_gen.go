@@ -25,15 +25,15 @@ var (
 	tOptionSettlementPriceRowsExpectAutoSet   = strings.Join(stringx.Remove(tOptionSettlementPriceFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tOptionSettlementPriceRowsWithPlaceHolder = strings.Join(stringx.Remove(tOptionSettlementPriceFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTOptionSettlementPriceIdPrefix                 = "cache:tOptionSettlementPrice:id:"
-	cacheTOptionSettlementPriceTenantIdContractIdPrefix = "cache:tOptionSettlementPrice:tenantId:contractId:"
+	cacheTOptionSettlementPriceIdPrefix                        = "cache:tOptionSettlementPrice:id:"
+	cacheTOptionSettlementPriceTenantIdContractIdVersionPrefix = "cache:tOptionSettlementPrice:tenantId:contractId:version:"
 )
 
 type (
 	tOptionSettlementPriceModel interface {
 		Insert(ctx context.Context, data *TOptionSettlementPrice) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TOptionSettlementPrice, error)
-		FindOneByTenantIdContractId(ctx context.Context, tenantId int64, contractId int64) (*TOptionSettlementPrice, error)
+		FindOneByTenantIdContractIdVersion(ctx context.Context, tenantId int64, contractId int64, version int64) (*TOptionSettlementPrice, error)
 		Update(ctx context.Context, data *TOptionSettlementPrice) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -55,7 +55,10 @@ type (
 		DeliveryPrice     decimal.Decimal `db:"delivery_price"`      // 最终结算价
 		SourceSnapshotIds string          `db:"source_snapshot_ids"` // 原始快照依据
 		Version           int64           `db:"version"`             // 结算价版本
-		Status            int64           `db:"status"`              // 状态：1等待价格 2已确认 3已拒绝
+		Status            int64           `db:"status"`              // 状态：1待复核 2已确认 3已拒绝 4已被新版本替代
+		SupersedesId      int64           `db:"supersedes_id"`       // 被本版本替代的结算价ID
+		ChangeReason      string          `db:"change_reason"`       // 计算、拒绝或人工更正原因
+		CreatedBy         int64           `db:"created_by"`          // 创建人，0为系统计算
 		ConfirmedBy       int64           `db:"confirmed_by"`        // 确认人，0为系统
 		ConfirmedAt       int64           `db:"confirmed_at"`        // 确认时间
 		CreateTimes       int64           `db:"create_times"`        // 创建时间
@@ -77,11 +80,11 @@ func (m *defaultTOptionSettlementPriceModel) Delete(ctx context.Context, id int6
 	}
 
 	tOptionSettlementPriceIdKey := fmt.Sprintf("%s%v", cacheTOptionSettlementPriceIdPrefix, id)
-	tOptionSettlementPriceTenantIdContractIdKey := fmt.Sprintf("%s%v:%v", cacheTOptionSettlementPriceTenantIdContractIdPrefix, data.TenantId, data.ContractId)
+	tOptionSettlementPriceTenantIdContractIdVersionKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionSettlementPriceTenantIdContractIdVersionPrefix, data.TenantId, data.ContractId, data.Version)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tOptionSettlementPriceIdKey, tOptionSettlementPriceTenantIdContractIdKey)
+	}, tOptionSettlementPriceIdKey, tOptionSettlementPriceTenantIdContractIdVersionKey)
 	return err
 }
 
@@ -102,12 +105,12 @@ func (m *defaultTOptionSettlementPriceModel) FindOne(ctx context.Context, id int
 	}
 }
 
-func (m *defaultTOptionSettlementPriceModel) FindOneByTenantIdContractId(ctx context.Context, tenantId int64, contractId int64) (*TOptionSettlementPrice, error) {
-	tOptionSettlementPriceTenantIdContractIdKey := fmt.Sprintf("%s%v:%v", cacheTOptionSettlementPriceTenantIdContractIdPrefix, tenantId, contractId)
+func (m *defaultTOptionSettlementPriceModel) FindOneByTenantIdContractIdVersion(ctx context.Context, tenantId int64, contractId int64, version int64) (*TOptionSettlementPrice, error) {
+	tOptionSettlementPriceTenantIdContractIdVersionKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionSettlementPriceTenantIdContractIdVersionPrefix, tenantId, contractId, version)
 	var resp TOptionSettlementPrice
-	err := m.QueryRowIndexCtx(ctx, &resp, tOptionSettlementPriceTenantIdContractIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `contract_id` = ? limit 1", tOptionSettlementPriceRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, contractId); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tOptionSettlementPriceTenantIdContractIdVersionKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `contract_id` = ? and `version` = ? limit 1", tOptionSettlementPriceRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, contractId, version); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -124,11 +127,11 @@ func (m *defaultTOptionSettlementPriceModel) FindOneByTenantIdContractId(ctx con
 
 func (m *defaultTOptionSettlementPriceModel) Insert(ctx context.Context, data *TOptionSettlementPrice) (sql.Result, error) {
 	tOptionSettlementPriceIdKey := fmt.Sprintf("%s%v", cacheTOptionSettlementPriceIdPrefix, data.Id)
-	tOptionSettlementPriceTenantIdContractIdKey := fmt.Sprintf("%s%v:%v", cacheTOptionSettlementPriceTenantIdContractIdPrefix, data.TenantId, data.ContractId)
+	tOptionSettlementPriceTenantIdContractIdVersionKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionSettlementPriceTenantIdContractIdVersionPrefix, data.TenantId, data.ContractId, data.Version)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionSettlementPriceRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.ContractId, data.PriceSource, data.WindowStart, data.WindowEnd, data.SampleCount, data.CalculationMethod, data.DeliveryPrice, data.SourceSnapshotIds, data.Version, data.Status, data.ConfirmedBy, data.ConfirmedAt, data.CreateTimes, data.UpdateTimes)
-	}, tOptionSettlementPriceIdKey, tOptionSettlementPriceTenantIdContractIdKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionSettlementPriceRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.ContractId, data.PriceSource, data.WindowStart, data.WindowEnd, data.SampleCount, data.CalculationMethod, data.DeliveryPrice, data.SourceSnapshotIds, data.Version, data.Status, data.SupersedesId, data.ChangeReason, data.CreatedBy, data.ConfirmedBy, data.ConfirmedAt, data.CreateTimes, data.UpdateTimes)
+	}, tOptionSettlementPriceIdKey, tOptionSettlementPriceTenantIdContractIdVersionKey)
 	return ret, err
 }
 
@@ -139,11 +142,11 @@ func (m *defaultTOptionSettlementPriceModel) Update(ctx context.Context, newData
 	}
 
 	tOptionSettlementPriceIdKey := fmt.Sprintf("%s%v", cacheTOptionSettlementPriceIdPrefix, data.Id)
-	tOptionSettlementPriceTenantIdContractIdKey := fmt.Sprintf("%s%v:%v", cacheTOptionSettlementPriceTenantIdContractIdPrefix, data.TenantId, data.ContractId)
+	tOptionSettlementPriceTenantIdContractIdVersionKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionSettlementPriceTenantIdContractIdVersionPrefix, data.TenantId, data.ContractId, data.Version)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionSettlementPriceRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.ContractId, newData.PriceSource, newData.WindowStart, newData.WindowEnd, newData.SampleCount, newData.CalculationMethod, newData.DeliveryPrice, newData.SourceSnapshotIds, newData.Version, newData.Status, newData.ConfirmedBy, newData.ConfirmedAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tOptionSettlementPriceIdKey, tOptionSettlementPriceTenantIdContractIdKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.ContractId, newData.PriceSource, newData.WindowStart, newData.WindowEnd, newData.SampleCount, newData.CalculationMethod, newData.DeliveryPrice, newData.SourceSnapshotIds, newData.Version, newData.Status, newData.SupersedesId, newData.ChangeReason, newData.CreatedBy, newData.ConfirmedBy, newData.ConfirmedAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tOptionSettlementPriceIdKey, tOptionSettlementPriceTenantIdContractIdVersionKey)
 	return err
 }
 

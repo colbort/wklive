@@ -3,72 +3,84 @@ syntax = "v1"
 import "common.api"
 
 type OptionContract {
-	id                       int64  `json:"id"` // 主键ID
-	tenantId                 int64  `json:"tenantId"` // 租户ID
-	contractCode             string `json:"contractCode"` // 合约编码
-	underlyingSymbol         string `json:"underlyingSymbol"` // 标的符号
-	underlyingCoin           string `json:"underlyingCoin"` // 实物交割标的币种
-	settleCoin               string `json:"settleCoin"` // 结算币种
-	quoteCoin                string `json:"quoteCoin"` // 计价币种
-	optionType               int64  `json:"optionType"`
-	exerciseStyle            int64  `json:"exerciseStyle"`
-	settlementType           int64  `json:"settlementType"`
-	strikePrice              string `json:"strikePrice" validate:"decimal_32_16"`
-	contractUnit             string `json:"contractUnit" validate:"decimal_32_16"`
-	minOrderQty              string `json:"minOrderQty" validate:"decimal_32_16"`
-	maxOrderQty              string `json:"maxOrderQty" validate:"decimal_32_16"`
-	priceTick                string `json:"priceTick" validate:"decimal_32_16"`
-	qtyStep                  string `json:"qtyStep" validate:"decimal_32_16"`
-	multiplier               string `json:"multiplier" validate:"decimal_32_16"`
-	listTime                 int64  `json:"listTime"`
-	expireTime               int64  `json:"expireTime"`
-	deliverTime              int64  `json:"deliverTime"`
-	isAutoExercise           int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
-	status                   int64  `json:"status"`
-	sort                     int64  `json:"sort"` // 排序
-	remark                   string `json:"remark"` // 备注
-	isDeleted                int64  `json:"isDeleted"` // 是否删除
-	createTimes              int64  `json:"createTimes"` // 创建时间
-	updateTimes              int64  `json:"updateTimes"` // 更新时间
-	makerFeeRate             string `json:"makerFeeRate" validate:"decimal_20_10"`
-	takerFeeRate             string `json:"takerFeeRate" validate:"decimal_20_10"`
-	exerciseFeeRate          string `json:"exerciseFeeRate" validate:"decimal_20_10"`
-	feeUserId                int64  `json:"feeUserId"`
-	feeAccountId             int64  `json:"feeAccountId"`
-	sellerMarginMode         int64  `json:"sellerMarginMode"`
-	initialMarginRate        string `json:"initialMarginRate" validate:"decimal_20_10"`
-	maintenanceMarginRate    string `json:"maintenanceMarginRate" validate:"decimal_20_10"`
-	minMarginRate            string `json:"minMarginRate" validate:"decimal_20_10"`
-	liquidationFeeRate       string `json:"liquidationFeeRate" validate:"decimal_20_10"`
-	insuranceUserId          int64  `json:"insuranceUserId"`
-	insuranceAccountId       int64  `json:"insuranceAccountId"`
-	liquidationDeficitPolicy int64  `json:"liquidationDeficitPolicy"`
-	physicalDeliveryPolicy   int64  `json:"physicalDeliveryPolicy"`
+	id                          int64  `json:"id"` // 主键ID
+	tenantId                    int64  `json:"tenantId"` // 租户ID
+	contractCode                string `json:"contractCode"` // 合约编码
+	underlyingSymbol            string `json:"underlyingSymbol"` // 标的符号
+	underlyingCoin              string `json:"underlyingCoin"` // 实物交割标的币种
+	settleCoin                  string `json:"settleCoin"` // 结算币种
+	quoteCoin                   string `json:"quoteCoin"` // 计价币种
+	optionType                  int64  `json:"optionType"`
+	exerciseStyle               int64  `json:"exerciseStyle"`
+	settlementType              int64  `json:"settlementType"`
+	strikePrice                 string `json:"strikePrice" validate:"decimal_32_16"`
+	contractUnit                string `json:"contractUnit" validate:"decimal_32_16"`
+	minOrderQty                 string `json:"minOrderQty" validate:"decimal_32_16"`
+	maxOrderQty                 string `json:"maxOrderQty" validate:"decimal_32_16"`
+	priceTick                   string `json:"priceTick" validate:"decimal_32_16"`
+	qtyStep                     string `json:"qtyStep" validate:"decimal_32_16"`
+	multiplier                  string `json:"multiplier" validate:"decimal_32_16"`
+	listTime                    int64  `json:"listTime"`
+	expireTime                  int64  `json:"expireTime"`
+	deliverTime                 int64  `json:"deliverTime"`
+	exerciseCutoffTime          int64  `json:"exerciseCutoffTime"`
+	autoExerciseThreshold       string `json:"autoExerciseThreshold" validate:"decimal_32_16"`
+	maxUserLongQty              string `json:"maxUserLongQty" validate:"decimal_32_16"`
+	maxUserShortQty             string `json:"maxUserShortQty" validate:"decimal_32_16"`
+	maxOpenInterest             string `json:"maxOpenInterest" validate:"decimal_32_16"`
+	orderPriceBandRatio         string `json:"orderPriceBandRatio" validate:"decimal_20_10"`
+	circuitBreakerRatio         string `json:"circuitBreakerRatio" validate:"decimal_20_10"`
+	isAutoExercise              int64  `json:"isAutoExercise"` // 是否自动行权：1是 2否
+	status                      int64  `json:"status"`
+	sort                        int64  `json:"sort"` // 排序
+	remark                      string `json:"remark"` // 备注
+	isDeleted                   int64  `json:"isDeleted"` // 是否删除
+	createTimes                 int64  `json:"createTimes"` // 创建时间
+	updateTimes                 int64  `json:"updateTimes"` // 更新时间
+	makerFeeRate                string `json:"makerFeeRate" validate:"decimal_20_10"`
+	takerFeeRate                string `json:"takerFeeRate" validate:"decimal_20_10"`
+	exerciseFeeRate             string `json:"exerciseFeeRate" validate:"decimal_20_10"`
+	feeUserId                   int64  `json:"feeUserId"`
+	feeAccountId                int64  `json:"feeAccountId"`
+	sellerMarginMode            int64  `json:"sellerMarginMode"`
+	initialMarginRate           string `json:"initialMarginRate" validate:"decimal_20_10"`
+	maintenanceMarginRate       string `json:"maintenanceMarginRate" validate:"decimal_20_10"`
+	minMarginRate               string `json:"minMarginRate" validate:"decimal_20_10"`
+	liquidationFeeRate          string `json:"liquidationFeeRate" validate:"decimal_20_10"`
+	insuranceUserId             int64  `json:"insuranceUserId"`
+	insuranceAccountId          int64  `json:"insuranceAccountId"`
+	liquidationDeficitPolicy    int64  `json:"liquidationDeficitPolicy"`
+	physicalDeliveryPolicy      int64  `json:"physicalDeliveryPolicy"`
+	physicalDeliveryCureSeconds int64  `json:"physicalDeliveryCureSeconds"`
+	tradingCalendarCode         string `json:"tradingCalendarCode"`
 }
 
 type OptionMarket {
-	id               int64  `json:"id"` // 主键ID
-	tenantId         int64  `json:"tenantId"` // 租户ID
-	contractId       int64  `json:"contractId"` // 合约ID
-	underlyingPrice  string `json:"underlyingPrice" validate:"decimal_32_16"`
-	markPrice        string `json:"markPrice" validate:"decimal_32_16"`
-	lastPrice        string `json:"lastPrice" validate:"decimal_32_16"`
-	bidPrice         string `json:"bidPrice" validate:"decimal_32_16"`
-	askPrice         string `json:"askPrice" validate:"decimal_32_16"`
-	theoreticalPrice string `json:"theoreticalPrice" validate:"decimal_32_16"`
-	intrinsicValue   string `json:"intrinsicValue" validate:"decimal_32_16"`
-	timeValue        string `json:"timeValue" validate:"decimal_32_16"`
-	iv               string `json:"iv" validate:"decimal_20_10"`
-	delta            string `json:"delta" validate:"decimal_20_10"`
-	gamma            string `json:"gamma" validate:"decimal_20_10"`
-	theta            string `json:"theta" validate:"decimal_20_10"`
-	vega             string `json:"vega" validate:"decimal_20_10"`
-	rho              string `json:"rho" validate:"decimal_20_10"`
-	riskFreeRate     string `json:"riskFreeRate" validate:"decimal_20_10"`
-	pricingModel     string `json:"pricingModel"`
-	snapshotTime     int64  `json:"snapshotTime"` // 快照时间
-	createTimes      int64  `json:"createTimes"` // 创建时间
-	updateTimes      int64  `json:"updateTimes"` // 更新时间
+	id                     int64  `json:"id"` // 主键ID
+	tenantId               int64  `json:"tenantId"` // 租户ID
+	contractId             int64  `json:"contractId"` // 合约ID
+	underlyingPrice        string `json:"underlyingPrice" validate:"decimal_32_16"`
+	markPrice              string `json:"markPrice" validate:"decimal_32_16"`
+	lastPrice              string `json:"lastPrice" validate:"decimal_32_16"`
+	bidPrice               string `json:"bidPrice" validate:"decimal_32_16"`
+	askPrice               string `json:"askPrice" validate:"decimal_32_16"`
+	theoreticalPrice       string `json:"theoreticalPrice" validate:"decimal_32_16"`
+	intrinsicValue         string `json:"intrinsicValue" validate:"decimal_32_16"`
+	timeValue              string `json:"timeValue" validate:"decimal_32_16"`
+	iv                     string `json:"iv" validate:"decimal_20_10"`
+	delta                  string `json:"delta" validate:"decimal_20_10"`
+	gamma                  string `json:"gamma" validate:"decimal_20_10"`
+	theta                  string `json:"theta" validate:"decimal_20_10"`
+	vega                   string `json:"vega" validate:"decimal_20_10"`
+	rho                    string `json:"rho" validate:"decimal_20_10"`
+	riskFreeRate           string `json:"riskFreeRate" validate:"decimal_20_10"`
+	pricingModel           string `json:"pricingModel"`
+	snapshotTime           int64  `json:"snapshotTime"` // 快照时间
+	underlyingSnapshotTime int64  `json:"underlyingSnapshotTime"`
+	markSnapshotTime       int64  `json:"markSnapshotTime"`
+	greeksSnapshotTime     int64  `json:"greeksSnapshotTime"`
+	createTimes            int64  `json:"createTimes"` // 创建时间
+	updateTimes            int64  `json:"updateTimes"` // 更新时间
 }
 
 type OptionOrder {
@@ -96,6 +108,7 @@ type OptionOrder {
 	clientOrderId    string `json:"clientOrderId"`
 	reduceOnly       int64  `json:"reduceOnly"` // 是否只减仓：1是 2否
 	mmp              int64  `json:"mmp"` // 是否做市商保护：1是 2否
+	mmpGroup         string `json:"mmpGroup"`
 	status           int64  `json:"status"`
 	cancelReason     string `json:"cancelReason"`
 	matchTime        int64  `json:"matchTime"`
@@ -126,57 +139,64 @@ type OptionTrade {
 	feeCoin          string `json:"feeCoin"`
 	makerSide        int64  `json:"makerSide"`
 	matchSequence    int64  `json:"matchSequence"`
+	comboMatchNo     string `json:"comboMatchNo"`
+	comboLegNo       int64  `json:"comboLegNo"`
 	tradeTime        int64  `json:"tradeTime"`
 	createTimes      int64  `json:"createTimes"` // 创建时间
 }
 
 type OptionPosition {
-	id                int64  `json:"id"`
-	tenantId          int64  `json:"tenantId"`
-	userId            int64  `json:"userId"`
-	accountId         int64  `json:"accountId"`
-	contractId        int64  `json:"contractId"`
-	underlyingSymbol  string `json:"underlyingSymbol"`
-	side              int64  `json:"side"`
-	positionQty       string `json:"positionQty" validate:"decimal_32_16"`
-	availableQty      string `json:"availableQty" validate:"decimal_32_16"`
-	frozenQty         string `json:"frozenQty" validate:"decimal_32_16"`
-	openAvgPrice      string `json:"openAvgPrice" validate:"decimal_32_16"`
-	markPrice         string `json:"markPrice" validate:"decimal_32_16"`
-	positionValue     string `json:"positionValue" validate:"decimal_32_16"`
-	marginAmount      string `json:"marginAmount" validate:"decimal_32_16"`
-	maintenanceMargin string `json:"maintenanceMargin" validate:"decimal_32_16"`
-	unrealizedPnl     string `json:"unrealizedPnl" validate:"decimal_32_16"`
-	realizedPnl       string `json:"realizedPnl" validate:"decimal_32_16"`
-	exerciseableQty   string `json:"exerciseableQty" validate:"decimal_32_16"`
-	status            int64  `json:"status"`
-	lastCalcTime      int64  `json:"lastCalcTime"`
-	createTimes       int64  `json:"createTimes"`
-	updateTimes       int64  `json:"updateTimes"`
+	id                    int64  `json:"id"`
+	tenantId              int64  `json:"tenantId"`
+	userId                int64  `json:"userId"`
+	accountId             int64  `json:"accountId"`
+	contractId            int64  `json:"contractId"`
+	underlyingSymbol      string `json:"underlyingSymbol"`
+	side                  int64  `json:"side"`
+	positionQty           string `json:"positionQty" validate:"decimal_32_16"`
+	availableQty          string `json:"availableQty" validate:"decimal_32_16"`
+	frozenQty             string `json:"frozenQty" validate:"decimal_32_16"`
+	openAvgPrice          string `json:"openAvgPrice" validate:"decimal_32_16"`
+	markPrice             string `json:"markPrice" validate:"decimal_32_16"`
+	positionValue         string `json:"positionValue" validate:"decimal_32_16"`
+	marginAmount          string `json:"marginAmount" validate:"decimal_32_16"`
+	maintenanceMargin     string `json:"maintenanceMargin" validate:"decimal_32_16"`
+	unrealizedPnl         string `json:"unrealizedPnl" validate:"decimal_32_16"`
+	realizedPnl           string `json:"realizedPnl" validate:"decimal_32_16"`
+	tradeRealizedPnl      string `json:"tradeRealizedPnl" validate:"decimal_32_16"`
+	settlementRealizedPnl string `json:"settlementRealizedPnl" validate:"decimal_32_16"`
+	feePaid               string `json:"feePaid" validate:"decimal_32_16"`
+	totalReturn           string `json:"totalReturn" validate:"decimal_32_16"`
+	exerciseableQty       string `json:"exerciseableQty" validate:"decimal_32_16"`
+	status                int64  `json:"status"`
+	lastCalcTime          int64  `json:"lastCalcTime"`
+	createTimes           int64  `json:"createTimes"`
+	updateTimes           int64  `json:"updateTimes"`
 }
 
 type OptionExercise {
-	id              int64  `json:"id"`
-	tenantId        int64  `json:"tenantId"`
-	exerciseNo      string `json:"exerciseNo"`
-	userId          int64  `json:"userId"`
-	accountId       int64  `json:"accountId"`
-	contractId      int64  `json:"contractId"`
-	positionId      int64  `json:"positionId"`
-	exerciseType    int64  `json:"exerciseType"`
-	exerciseQty     string `json:"exerciseQty" validate:"decimal_32_16"`
-	strikePrice     string `json:"strikePrice" validate:"decimal_32_16"`
-	settlementPrice string `json:"settlementPrice" validate:"decimal_32_16"`
-	exerciseAmount  string `json:"exerciseAmount" validate:"decimal_32_16"`
-	profitAmount    string `json:"profitAmount" validate:"decimal_32_16"`
-	fee             string `json:"fee" validate:"decimal_32_16"`
-	feeCoin         string `json:"feeCoin"`
-	status          int64  `json:"status"`
-	remark          string `json:"remark"`
-	exerciseTime    int64  `json:"exerciseTime"`
-	finishTime      int64  `json:"finishTime"`
-	createTimes     int64  `json:"createTimes"`
-	updateTimes     int64  `json:"updateTimes"`
+	id               int64  `json:"id"`
+	tenantId         int64  `json:"tenantId"`
+	exerciseNo       string `json:"exerciseNo"`
+	clientExerciseId string `json:"clientExerciseId"`
+	userId           int64  `json:"userId"`
+	accountId        int64  `json:"accountId"`
+	contractId       int64  `json:"contractId"`
+	positionId       int64  `json:"positionId"`
+	exerciseType     int64  `json:"exerciseType"`
+	exerciseQty      string `json:"exerciseQty" validate:"decimal_32_16"`
+	strikePrice      string `json:"strikePrice" validate:"decimal_32_16"`
+	settlementPrice  string `json:"settlementPrice" validate:"decimal_32_16"`
+	exerciseAmount   string `json:"exerciseAmount" validate:"decimal_32_16"`
+	profitAmount     string `json:"profitAmount" validate:"decimal_32_16"`
+	fee              string `json:"fee" validate:"decimal_32_16"`
+	feeCoin          string `json:"feeCoin"`
+	status           int64  `json:"status"`
+	remark           string `json:"remark"`
+	exerciseTime     int64  `json:"exerciseTime"`
+	finishTime       int64  `json:"finishTime"`
+	createTimes      int64  `json:"createTimes"`
+	updateTimes      int64  `json:"updateTimes"`
 }
 
 type OptionAccount {
@@ -217,6 +237,171 @@ type OptionBill {
 type OptionContractDetail {
 	contract OptionContract `json:"contract"`
 	market   OptionMarket   `json:"market"`
+}
+
+type OptionMarketStatistics {
+	contractId            int64  `json:"contractId"`
+	volume24h             string `json:"volume24h" validate:"decimal_32_16"`
+	turnover24h           string `json:"turnover24h" validate:"decimal_32_16"`
+	tradeCount24h         int64  `json:"tradeCount24h"`
+	openInterest          string `json:"openInterest" validate:"decimal_32_16"`
+	longOpenInterest      string `json:"longOpenInterest" validate:"decimal_32_16"`
+	shortOpenInterest     string `json:"shortOpenInterest" validate:"decimal_32_16"`
+	oiBalanced            bool   `json:"oiBalanced"`
+	statisticsWindowStart int64  `json:"statisticsWindowStart"`
+	statisticsAsOf        int64  `json:"statisticsAsOf"`
+	positionAsOf          int64  `json:"positionAsOf"`
+	source                string `json:"source"`
+	openInterestMethod    string `json:"openInterestMethod"`
+}
+
+type OptionChainLeg {
+	contract   OptionContract         `json:"contract"`
+	market     OptionMarket           `json:"market"`
+	statistics OptionMarketStatistics `json:"statistics"`
+}
+
+type OptionChainRow {
+	strikePrice string          `json:"strikePrice"`
+	call        *OptionChainLeg `json:"call,optional"`
+	put         *OptionChainLeg `json:"put,optional"`
+}
+
+type OptionOrderBookLevel {
+	price      string `json:"price" validate:"decimal_32_16"`
+	qty        string `json:"qty" validate:"decimal_32_16"`
+	orderCount int64  `json:"orderCount"`
+}
+
+type OptionOrderBook {
+	contractId        int64                  `json:"contractId"`
+	lastMatchSequence int64                  `json:"lastMatchSequence"`
+	generatedAt       int64                  `json:"generatedAt"`
+	source            string                 `json:"source"`
+	bids              []OptionOrderBookLevel `json:"bids"`
+	asks              []OptionOrderBookLevel `json:"asks"`
+}
+
+type ListOptionChainReq {
+	underlyingSymbol string `form:"underlyingSymbol"`
+	expireTime       int64  `form:"expireTime"`
+	status           int64  `form:"status,optional"`
+}
+
+type ListOptionChainResp {
+	RespBase
+	data                  []OptionChainRow `json:"data"`
+	generatedAt           int64            `json:"generatedAt"`
+	statisticsWindowStart int64            `json:"statisticsWindowStart"`
+}
+
+type GetOrderBookReq {
+	contractId int64 `form:"contractId"`
+	depthLimit int64 `form:"depthLimit,optional" validate:"max=100"`
+}
+
+type GetOrderBookResp {
+	RespBase
+	data OptionOrderBook `json:"data"`
+}
+
+type OptionComboOrder {
+	id                 int64  `json:"id"`
+	tenantId           int64  `json:"tenantId"`
+	comboNo            string `json:"comboNo"`
+	userId             int64  `json:"userId"`
+	accountId          int64  `json:"accountId"`
+	clientComboId      string `json:"clientComboId"`
+	strategyKey        string `json:"strategyKey"`
+	inverseStrategyKey string `json:"inverseStrategyKey"`
+	underlyingSymbol   string `json:"underlyingSymbol"`
+	expireTime         int64  `json:"expireTime"`
+	settleCoin         string `json:"settleCoin"`
+	quoteCoin          string `json:"quoteCoin"`
+	orderType          int64  `json:"orderType"`
+	netPrice           string `json:"netPrice" validate:"decimal_32_16"`
+	qty                string `json:"qty" validate:"decimal_32_16"`
+	filledQty          string `json:"filledQty" validate:"decimal_32_16"`
+	unfilledQty        string `json:"unfilledQty" validate:"decimal_32_16"`
+	status             int64  `json:"status"`
+	payloadHash        string `json:"payloadHash"`
+	cancelReason       string `json:"cancelReason"`
+	cancelTime         int64  `json:"cancelTime"`
+	createTimes        int64  `json:"createTimes"`
+	updateTimes        int64  `json:"updateTimes"`
+}
+
+type OptionComboOrderLeg {
+	id             int64  `json:"id"`
+	tenantId       int64  `json:"tenantId"`
+	comboOrderId   int64  `json:"comboOrderId"`
+	legNo          int64  `json:"legNo"`
+	contractId     int64  `json:"contractId"`
+	side           int64  `json:"side"`
+	positionEffect int64  `json:"positionEffect"`
+	ratio          int64  `json:"ratio"`
+	price          string `json:"price" validate:"decimal_32_16"`
+	qty            string `json:"qty" validate:"decimal_32_16"`
+	filledQty      string `json:"filledQty" validate:"decimal_32_16"`
+	unfilledQty    string `json:"unfilledQty" validate:"decimal_32_16"`
+	childOrderId   int64  `json:"childOrderId"`
+	createTimes    int64  `json:"createTimes"`
+	updateTimes    int64  `json:"updateTimes"`
+}
+
+type OptionComboOrderDetail {
+	comboOrder OptionComboOrder      `json:"comboOrder"`
+	legs       []OptionComboOrderLeg `json:"legs"`
+}
+
+type OptionComboOrderLegInput {
+	contractId     int64  `json:"contractId"`
+	side           int64  `json:"side"`
+	positionEffect int64  `json:"positionEffect"`
+	ratio          int64  `json:"ratio" validate:"min=1,max=8"`
+	price          string `json:"price" validate:"required,decimal_gt_zero,decimal_32_16"`
+}
+
+type OptionPlaceComboOrderReq {
+	accountId     int64                      `json:"accountId"`
+	clientComboId string                     `json:"clientComboId" validate:"required,max=64"`
+	orderType     int64                      `json:"orderType"`
+	qty           string                     `json:"qty" validate:"required,decimal_gt_zero,decimal_32_16"`
+	netPrice      string                     `json:"netPrice" validate:"required,decimal_32_16"`
+	legs          []OptionComboOrderLegInput `json:"legs" validate:"required,min=2,max=4"`
+}
+
+type OptionPlaceComboOrderResp {
+	RespBase
+	data OptionComboOrderDetail `json:"data"`
+}
+
+type OptionCancelComboOrderReq {
+	accountId    int64  `json:"accountId"`
+	comboOrderId int64  `json:"comboOrderId,optional"`
+	comboNo      string `json:"comboNo,optional"`
+}
+
+type OptionGetComboOrderReq {
+	accountId    int64  `form:"accountId"`
+	comboOrderId int64  `form:"comboOrderId,optional"`
+	comboNo      string `form:"comboNo,optional"`
+}
+
+type OptionGetComboOrderResp {
+	RespBase
+	data OptionComboOrderDetail `json:"data"`
+}
+
+type OptionListComboOrdersReq {
+	PageReq
+	accountId int64 `form:"accountId"`
+	status    int64 `form:"status,optional"`
+}
+
+type OptionListComboOrdersResp {
+	RespBase
+	data []OptionComboOrderDetail `json:"data"`
 }
 
 type OptionPositionDetail {
@@ -275,9 +460,10 @@ type OptionPlaceOrderReq {
 	qty             string `json:"qty" validate:"required,decimal_gt_zero,decimal_32_16"`
 	clientOrderId   string `json:"clientOrderId,optional"` // 客户端订单号
 	reduceOnly      int64  `json:"reduceOnly,optional"` // 是否只减仓：1是 2否
-	mmp             int64  `json:"mmp,optional"` // 是否做市商保护：1是 2否
 	protectionPrice string `json:"protectionPrice,optional" validate:"decimal_gt_zero,decimal_32_16"`
 	maxTurnover     string `json:"maxTurnover,optional" validate:"decimal_gt_zero,decimal_32_16"`
+	mmp             int64  `json:"mmp,optional"`
+	mmpGroup        string `json:"mmpGroup,optional" validate:"max=32"`
 }
 
 type PlaceOrderData {
@@ -366,10 +552,11 @@ type GetPositionDetailResp {
 }
 
 type ExerciseReq {
-	accountId   int64  `json:"accountId"`
-	positionId  int64  `json:"positionId"`
-	contractId  int64  `json:"contractId"`
-	exerciseQty string `json:"exerciseQty" validate:"required,decimal_gt_zero,decimal_32_16"`
+	accountId        int64  `json:"accountId"`
+	positionId       int64  `json:"positionId"`
+	contractId       int64  `json:"contractId"`
+	exerciseQty      string `json:"exerciseQty" validate:"required,decimal_gt_zero,decimal_32_16"`
+	clientExerciseId string `json:"clientExerciseId" validate:"required,max=64"`
 }
 
 type ExerciseData {
@@ -380,6 +567,97 @@ type ExerciseData {
 type ExerciseResp {
 	RespBase
 	data ExerciseData `json:"data"`
+}
+
+type OptionExerciseInstruction {
+	id                  int64  `json:"id"`
+	tenantId            int64  `json:"tenantId"`
+	userId              int64  `json:"userId"`
+	accountId           int64  `json:"accountId"`
+	contractId          int64  `json:"contractId"`
+	positionId          int64  `json:"positionId"`
+	clientInstructionId string `json:"clientInstructionId"`
+	instructionType     int64  `json:"instructionType"`
+	version             int64  `json:"version"`
+	status              int64  `json:"status"`
+	supersedesId        int64  `json:"supersedesId"`
+	cutoffTime          int64  `json:"cutoffTime"`
+	createTimes         int64  `json:"createTimes"`
+	updateTimes         int64  `json:"updateTimes"`
+}
+
+type SetExerciseInstructionReq {
+	accountId           int64  `json:"accountId"`
+	positionId          int64  `json:"positionId"`
+	contractId          int64  `json:"contractId"`
+	instructionType     int64  `json:"instructionType"`
+	clientInstructionId string `json:"clientInstructionId" validate:"required,max=64"`
+}
+
+type OptionUserTradingControl {
+	tenantId    int64  `json:"tenantId"`
+	userId      int64  `json:"userId"`
+	killSwitch  int64  `json:"killSwitch"`
+	reason      string `json:"reason"`
+	activatedAt int64  `json:"activatedAt"`
+	releasedAt  int64  `json:"releasedAt"`
+	updateTimes int64  `json:"updateTimes"`
+}
+
+type GetUserTradingControlResp {
+	RespBase
+	data OptionUserTradingControl `json:"data"`
+}
+
+type OptionMMPConfig {
+	id                  int64  `json:"id"`
+	tenantId            int64  `json:"tenantId"`
+	userId              int64  `json:"userId"`
+	contractId          int64  `json:"contractId"`
+	groupCode           string `json:"groupCode"`
+	enabled             int64  `json:"enabled"`
+	qtyThreshold        string `json:"qtyThreshold"`
+	tradeCountThreshold int64  `json:"tradeCountThreshold"`
+	lossThreshold       string `json:"lossThreshold"`
+	windowSeconds       int64  `json:"windowSeconds"`
+	cooldownSeconds     int64  `json:"cooldownSeconds"`
+	status              int64  `json:"status"`
+	windowStart         int64  `json:"windowStart"`
+	accumulatedQty      string `json:"accumulatedQty"`
+	tradeCount          int64  `json:"tradeCount"`
+	accumulatedLoss     string `json:"accumulatedLoss"`
+	triggeredAt         int64  `json:"triggeredAt"`
+	cooldownUntil       int64  `json:"cooldownUntil"`
+	triggerReason       string `json:"triggerReason"`
+	lastErrorMsg        string `json:"lastErrorMsg"`
+	createdBy           int64  `json:"createdBy"`
+	updatedBy           int64  `json:"updatedBy"`
+	createTimes         int64  `json:"createTimes"`
+	updateTimes         int64  `json:"updateTimes"`
+}
+
+type GetMMPConfigReq {
+	contractId int64  `form:"contractId"`
+	groupCode  string `form:"groupCode"`
+}
+
+type GetMMPConfigResp {
+	RespBase
+	data OptionMMPConfig `json:"data"`
+}
+
+type ActivateKillSwitchReq {
+	reason string `json:"reason,optional" validate:"max=255"`
+}
+
+type GetExerciseInstructionReq {
+	accountId  int64 `form:"accountId"`
+	positionId int64 `form:"positionId"`
+}
+
+type GetExerciseInstructionResp {
+	RespBase
+	data OptionExerciseInstruction `json:"data"`
 }
 
 type ListExercisesReq {
@@ -427,6 +705,14 @@ service app {
 
 	@handler GetContractDetail
 	get /contracts/detail (GetContractDetailReq) returns (GetContractDetailResp)
+
+	@doc "按标的和精确到期时间查询期权链、24小时成交统计及单边未平仓量"
+	@handler ListOptionChain
+	get /chain (ListOptionChainReq) returns (ListOptionChainResp)
+
+	@doc "查询来自 Option 活动限价委托的聚合盘口"
+	@handler GetOrderBook
+	get /order-book (GetOrderBookReq) returns (GetOrderBookResp)
 }
 
 @server (
@@ -445,6 +731,14 @@ service app {
 	@handler ListHistoryOrders
 	get /orders/history (ListHistoryOrdersReq) returns (ListHistoryOrdersResp)
 
+	@doc "获取组合订单及不可变腿"
+	@handler GetComboOrder
+	get /combo-orders/detail (OptionGetComboOrderReq) returns (OptionGetComboOrderResp)
+
+	@doc "分页查询当前用户组合订单"
+	@handler ListComboOrders
+	get /combo-orders (OptionListComboOrdersReq) returns (OptionListComboOrdersResp)
+
 	@handler ListTrades
 	get /trades (ListTradesReq) returns (ListTradesResp)
 
@@ -456,6 +750,17 @@ service app {
 
 	@handler ListExercises
 	get /exercises (ListExercisesReq) returns (ListExercisesResp)
+
+	@handler GetExerciseInstruction
+	get /exercise/instruction (GetExerciseInstructionReq) returns (GetExerciseInstructionResp)
+
+	@doc "查询用户期权交易控制"
+	@handler GetUserTradingControl
+	get /trading-control returns (GetUserTradingControlResp)
+
+	@doc "查询当前用户指定做市报价组的 MMP 状态"
+	@handler GetMMPConfig
+	get /mmp/config (GetMMPConfigReq) returns (GetMMPConfigResp)
 
 	@handler ListAccounts
 	get /accounts (ListAccountsReq) returns (ListAccountsResp)
@@ -477,7 +782,21 @@ service app {
 	@handler CancelOrder
 	post /orders/cancel (OptionCancelOrderReq) returns (CommonResp)
 
+	@doc "创建2至4腿独立策略簿组合订单"
+	@handler PlaceComboOrder
+	post /combo-orders (OptionPlaceComboOrderReq) returns (OptionPlaceComboOrderResp)
+
+	@doc "原子撤销组合父单并释放所有未完成腿冻结"
+	@handler CancelComboOrder
+	post /combo-orders/cancel (OptionCancelComboOrderReq) returns (CommonResp)
+
 	@handler Exercise
 	post /exercise (ExerciseReq) returns (ExerciseResp)
-}
 
+	@handler SetExerciseInstruction
+	post /exercise/instruction (SetExerciseInstructionReq) returns (GetExerciseInstructionResp)
+
+	@doc "激活用户期权 kill switch"
+	@handler ActivateKillSwitch
+	post /kill-switch (ActivateKillSwitchReq) returns (GetUserTradingControlResp)
+}

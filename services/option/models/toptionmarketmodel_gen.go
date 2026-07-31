@@ -44,28 +44,31 @@ type (
 	}
 
 	TOptionMarket struct {
-		Id               int64           `db:"id"`                // 主键ID
-		TenantId         int64           `db:"tenant_id"`         // 租户ID
-		ContractId       int64           `db:"contract_id"`       // 合约ID
-		UnderlyingPrice  decimal.Decimal `db:"underlying_price"`  // 标的价格
-		MarkPrice        decimal.Decimal `db:"mark_price"`        // 标记价格/参考权利金
-		LastPrice        decimal.Decimal `db:"last_price"`        // 最新成交价
-		BidPrice         decimal.Decimal `db:"bid_price"`         // 买一价
-		AskPrice         decimal.Decimal `db:"ask_price"`         // 卖一价
-		TheoreticalPrice decimal.Decimal `db:"theoretical_price"` // 理论价/风险定价
-		IntrinsicValue   decimal.Decimal `db:"intrinsic_value"`   // 内在价值
-		TimeValue        decimal.Decimal `db:"time_value"`        // 时间价值
-		Iv               decimal.Decimal `db:"iv"`                // 隐含波动率
-		Delta            decimal.Decimal `db:"delta"`             // Delta
-		Gamma            decimal.Decimal `db:"gamma"`             // Gamma
-		Theta            decimal.Decimal `db:"theta"`             // Theta
-		Vega             decimal.Decimal `db:"vega"`              // Vega
-		Rho              decimal.Decimal `db:"rho"`               // Rho
-		RiskFreeRate     decimal.Decimal `db:"risk_free_rate"`    // 无风险利率
-		PricingModel     string          `db:"pricing_model"`     // 定价模型，如 Black-Scholes
-		SnapshotTime     int64           `db:"snapshot_time"`     // 行情快照时间
-		CreateTimes      int64           `db:"create_times"`      // 创建时间
-		UpdateTimes      int64           `db:"update_times"`      // 更新时间
+		Id                     int64           `db:"id"`                       // 主键ID
+		TenantId               int64           `db:"tenant_id"`                // 租户ID
+		ContractId             int64           `db:"contract_id"`              // 合约ID
+		UnderlyingPrice        decimal.Decimal `db:"underlying_price"`         // 标的价格
+		MarkPrice              decimal.Decimal `db:"mark_price"`               // 标记价格/参考权利金
+		LastPrice              decimal.Decimal `db:"last_price"`               // 最新成交价
+		BidPrice               decimal.Decimal `db:"bid_price"`                // 买一价
+		AskPrice               decimal.Decimal `db:"ask_price"`                // 卖一价
+		TheoreticalPrice       decimal.Decimal `db:"theoretical_price"`        // 理论价/风险定价
+		IntrinsicValue         decimal.Decimal `db:"intrinsic_value"`          // 内在价值
+		TimeValue              decimal.Decimal `db:"time_value"`               // 时间价值
+		Iv                     decimal.Decimal `db:"iv"`                       // 隐含波动率
+		Delta                  decimal.Decimal `db:"delta"`                    // Delta
+		Gamma                  decimal.Decimal `db:"gamma"`                    // Gamma
+		Theta                  decimal.Decimal `db:"theta"`                    // Theta
+		Vega                   decimal.Decimal `db:"vega"`                     // Vega
+		Rho                    decimal.Decimal `db:"rho"`                      // Rho
+		RiskFreeRate           decimal.Decimal `db:"risk_free_rate"`           // 无风险利率
+		PricingModel           string          `db:"pricing_model"`            // 定价模型，如 Black-Scholes
+		SnapshotTime           int64           `db:"snapshot_time"`            // 兼容字段：行情记录最后快照时间
+		UnderlyingSnapshotTime int64           `db:"underlying_snapshot_time"` // 标的价格快照时间
+		MarkSnapshotTime       int64           `db:"mark_snapshot_time"`       // 期权标记价格快照时间
+		GreeksSnapshotTime     int64           `db:"greeks_snapshot_time"`     // IV与Greeks快照时间
+		CreateTimes            int64           `db:"create_times"`             // 创建时间
+		UpdateTimes            int64           `db:"update_times"`             // 更新时间
 	}
 )
 
@@ -132,8 +135,8 @@ func (m *defaultTOptionMarketModel) Insert(ctx context.Context, data *TOptionMar
 	tOptionMarketIdKey := fmt.Sprintf("%s%v", cacheTOptionMarketIdPrefix, data.Id)
 	tOptionMarketTenantIdContractIdKey := fmt.Sprintf("%s%v:%v", cacheTOptionMarketTenantIdContractIdPrefix, data.TenantId, data.ContractId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionMarketRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.ContractId, data.UnderlyingPrice, data.MarkPrice, data.LastPrice, data.BidPrice, data.AskPrice, data.TheoreticalPrice, data.IntrinsicValue, data.TimeValue, data.Iv, data.Delta, data.Gamma, data.Theta, data.Vega, data.Rho, data.RiskFreeRate, data.PricingModel, data.SnapshotTime, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionMarketRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.ContractId, data.UnderlyingPrice, data.MarkPrice, data.LastPrice, data.BidPrice, data.AskPrice, data.TheoreticalPrice, data.IntrinsicValue, data.TimeValue, data.Iv, data.Delta, data.Gamma, data.Theta, data.Vega, data.Rho, data.RiskFreeRate, data.PricingModel, data.SnapshotTime, data.UnderlyingSnapshotTime, data.MarkSnapshotTime, data.GreeksSnapshotTime, data.CreateTimes, data.UpdateTimes)
 	}, tOptionMarketIdKey, tOptionMarketTenantIdContractIdKey)
 	return ret, err
 }
@@ -148,7 +151,7 @@ func (m *defaultTOptionMarketModel) Update(ctx context.Context, newData *TOption
 	tOptionMarketTenantIdContractIdKey := fmt.Sprintf("%s%v:%v", cacheTOptionMarketTenantIdContractIdPrefix, data.TenantId, data.ContractId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionMarketRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.ContractId, newData.UnderlyingPrice, newData.MarkPrice, newData.LastPrice, newData.BidPrice, newData.AskPrice, newData.TheoreticalPrice, newData.IntrinsicValue, newData.TimeValue, newData.Iv, newData.Delta, newData.Gamma, newData.Theta, newData.Vega, newData.Rho, newData.RiskFreeRate, newData.PricingModel, newData.SnapshotTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.ContractId, newData.UnderlyingPrice, newData.MarkPrice, newData.LastPrice, newData.BidPrice, newData.AskPrice, newData.TheoreticalPrice, newData.IntrinsicValue, newData.TimeValue, newData.Iv, newData.Delta, newData.Gamma, newData.Theta, newData.Vega, newData.Rho, newData.RiskFreeRate, newData.PricingModel, newData.SnapshotTime, newData.UnderlyingSnapshotTime, newData.MarkSnapshotTime, newData.GreeksSnapshotTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tOptionMarketIdKey, tOptionMarketTenantIdContractIdKey)
 	return err
 }

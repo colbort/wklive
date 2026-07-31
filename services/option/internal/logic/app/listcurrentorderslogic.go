@@ -40,11 +40,12 @@ func (l *ListCurrentOrdersLogic) ListCurrentOrders(in *option.ListCurrentOrdersR
 		return nil, err
 	}
 	items, total, err := l.svcCtx.OptionOrderModel.FindPage(l.ctx, models.OptionOrderPageFilter{
-		TenantId:   tenantId,
-		UserId:     userId,
-		AccountId:  in.AccountId,
-		ContractId: in.ContractId,
-		Side:       int64(in.Side),
+		TenantId:             tenantId,
+		UserId:               userId,
+		AccountId:            in.AccountId,
+		ContractId:           in.ContractId,
+		Side:                 int64(in.Side),
+		ExcludeComboChildren: true,
 		Statuses: []int64{
 			int64(option.OrderStatus_ORDER_STATUS_PENDING),
 			int64(option.OrderStatus_ORDER_STATUS_PART_FILLED),

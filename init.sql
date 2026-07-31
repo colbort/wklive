@@ -751,7 +751,25 @@ VALUES
 (711, 710, 1, '查询强平记录', 3, 'GET', '/option/risk/liquidations', 'option:liquidation:list', '', '', 711),
 (712, 710, 1, '重试强平', 3, 'POST', '/option/risk/liquidations/retry', 'option:liquidation:retry', '', '', 712),
 (713, 670, 1, '重试行权清算', 3, 'POST', '/option/exercises/retry', 'option:exercise:retry', '', '', 713),
-(714, 680, 1, '重试结算资产指令', 3, 'POST', '/option/settlements/retry-instruction', 'option:settlement-instruction:retry', '', '', 714);
+(714, 680, 1, '重试结算资产指令', 3, 'POST', '/option/settlements/retry-instruction', 'option:settlement-instruction:retry', '', '', 714),
+(715, 710, 1, '解除期权 Kill Switch', 3, 'POST', '/option/trading-controls/release-kill-switch', 'option:trading-control:release', '', '', 715),
+(716, 710, 1, '创建异常成交更正', 3, 'POST', '/option/trade-corrections', 'option:trade-correction:create', '', '', 716),
+(717, 710, 1, '复核异常成交更正', 3, 'POST', '/option/trade-corrections/review', 'option:trade-correction:review', '', '', 717),
+(718, 710, 1, '配置期权 MMP', 3, 'POST', '/option/mmp/config', 'option:mmp:config', '', '', 718),
+(719, 710, 1, '恢复期权 MMP', 3, 'POST', '/option/mmp/reset', 'option:mmp:reset', '', '', 719),
+(720, 710, 1, '查询用户交易控制', 3, 'GET', '/option/trading-controls/detail', 'option:trading-control:detail', '', '', 720),
+(721, 710, 1, '查询交易控制审计', 3, 'GET', '/option/trading-controls/events', 'option:trading-control:event:list', '', '', 721),
+(722, 710, 1, '查询异常成交更正', 3, 'GET', '/option/trade-corrections', 'option:trade-correction:list', '', '', 722),
+(723, 710, 1, '查询期权 MMP', 3, 'GET', '/option/mmp/configs', 'option:mmp:list', '', '', 723),
+(724, 710, 1, '创建组合保证金参数版本', 3, 'POST', '/option/risk/portfolio-configs', 'option:portfolio-risk:create', '', '', 724),
+(725, 710, 1, '复核组合保证金参数版本', 3, 'POST', '/option/risk/portfolio-configs/review', 'option:portfolio-risk:review', '', '', 725),
+(726, 710, 1, '查询组合保证金参数版本', 3, 'GET', '/option/risk/portfolio-configs', 'option:portfolio-risk:list', '', '', 726),
+(727, 680, 1, '查询实物交割单元', 3, 'GET', '/option/physical-delivery/units', 'option:physical-delivery:list', '', '', 727),
+(728, 680, 1, '重试实物交割单元', 3, 'POST', '/option/physical-delivery/units/retry', 'option:physical-delivery:retry', '', '', 728),
+(729, 600, 1, '期权运营工作台', 2, 'GET', '/option/operations/overview', 'option:operations:view', 'option/operations', 'Monitor', 729),
+(730, 729, 1, '查询资产指令', 3, 'GET', '/option/operations/asset-instructions', 'option:operations:asset-list', '', '', 730),
+(731, 729, 1, '查询期权对账差异', 3, 'GET', '/option/operations/reconciliation-issues', 'option:operations:reconciliation-list', '', '', 731),
+(732, 729, 1, '重试异常资产指令', 3, 'POST', '/option/recovery/asset-instructions/retry', 'option:operations:asset-retry', '', '', 732);
 
 -- 质押（staking）
 INSERT INTO sys_menu (id, parent_id, app_scope, name, menu_type, icon, sort)

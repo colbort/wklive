@@ -49,6 +49,232 @@ message OptionContract {
   LiquidationDeficitPolicy liquidation_deficit_policy = 39;
   string underlying_coin = 40;
   PhysicalDeliveryPolicy physical_delivery_policy = 41;
+  string settlement_price_source = 42;
+  string settlement_price_method = 43;
+  int64 settlement_window_seconds = 44;
+  int64 settlement_min_samples = 45;
+  int64 exercise_cutoff_time = 46;
+  string auto_exercise_threshold = 47;
+  string max_user_long_qty = 48;
+  string max_user_short_qty = 49;
+  string max_open_interest = 50;
+  string order_price_band_ratio = 51;
+  string circuit_breaker_ratio = 52;
+  int64 physical_delivery_cure_seconds = 53;
+  string trading_calendar_code = 54;
+}
+
+message OptionTradingCalendarSession {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 calendar_id = 3;
+  int32 weekday = 4; // 0=Sunday
+  int32 open_second = 5;
+  int32 close_second = 6; // 可大于86400表示跨午夜，最大172800
+  int64 create_times = 7;
+}
+
+message OptionTradingCalendarException {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 calendar_id = 3;
+  TradingCalendarExceptionType exception_type = 4;
+  int64 start_time = 5;
+  int64 end_time = 6;
+  string reason = 7;
+  string announcement_ref = 8;
+  int64 create_times = 9;
+}
+
+message OptionTradingCalendar {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string calendar_code = 3;
+  int64 version = 4;
+  TradingCalendarStatus status = 5;
+  string timezone = 6;
+  int64 effective_from = 7;
+  int64 effective_until = 8;
+  int64 supersedes_id = 9;
+  string change_reason = 10;
+  string evidence_ref = 11;
+  int64 created_by = 12;
+  int64 reviewed_by = 13;
+  string review_reason = 14;
+  int64 reviewed_at = 15;
+  int64 create_times = 16;
+  int64 update_times = 17;
+  repeated OptionTradingCalendarSession sessions = 18;
+  repeated OptionTradingCalendarException exceptions = 19;
+}
+
+message OptionTradingHalt {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string halt_no = 3;
+  int64 contract_id = 4;
+  TradingHaltSource source = 5;
+  TradingHaltStatus status = 6;
+  string reason = 7;
+  string evidence_ref = 8;
+  int64 started_at = 9;
+  int64 created_by = 10;
+  int64 cancel_total = 11;
+  int64 cancel_success = 12;
+  int64 cancel_failed = 13;
+  string last_error_msg = 14;
+  int64 lifted_at = 15;
+  int64 lifted_by = 16;
+  string lift_reason = 17;
+  int64 create_times = 18;
+  int64 update_times = 19;
+}
+
+message OptionCorporateActionContract {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 action_id = 3;
+  int64 source_contract_id = 4;
+  int64 successor_contract_id = 5;
+  CorporateActionExecutionMode execution_mode = 6;
+  string quantity_numerator = 7;
+  string quantity_denominator = 8;
+  int64 halt_id = 9;
+  CorporateActionContractStatus status = 10;
+  int64 position_total = 11;
+  int64 position_completed = 12;
+  int64 position_failed = 13;
+  int64 last_position_id = 14;
+  int64 retry_count = 15;
+  string last_error_msg = 16;
+  int64 create_times = 17;
+  int64 update_times = 18;
+}
+
+message OptionCorporateAction {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string event_no = 3;
+  string external_event_ref = 4;
+  int64 version = 5;
+  string underlying_symbol = 6;
+  CorporateActionType action_type = 7;
+  CorporateActionStatus status = 8;
+  int64 announcement_time = 9;
+  int64 ex_time = 10;
+  int64 record_time = 11;
+  int64 effective_time = 12;
+  int64 pay_time = 13;
+  string evidence_ref = 14;
+  string evidence_hash = 15;
+  string description = 16;
+  int64 created_by = 17;
+  int64 reviewed_by = 18;
+  string review_reason = 19;
+  int64 reviewed_at = 20;
+  int64 completed_at = 21;
+  string last_error_msg = 22;
+  int64 create_times = 23;
+  int64 update_times = 24;
+  repeated OptionCorporateActionContract contracts = 25;
+}
+
+message OptionCorporateActionPosition {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 action_id = 3;
+  int64 action_contract_id = 4;
+  int64 source_position_id = 5;
+  int64 successor_position_id = 6;
+  int64 user_id = 7;
+  int64 account_id = 8;
+  int32 side = 9;
+  string source_quantity = 10;
+  string successor_quantity = 11;
+  string source_available_quantity = 12;
+  string successor_available_quantity = 13;
+  string source_open_avg_price = 14;
+  string successor_open_avg_price = 15;
+  string source_effective_multiplier = 16;
+  string successor_effective_multiplier = 17;
+  string cost_basis_before = 18;
+  string cost_basis_after = 19;
+  string cash_difference = 20;
+  CorporateActionPositionStatus status = 21;
+  int64 retry_count = 22;
+  string last_error_msg = 23;
+  int64 completed_at = 24;
+  int64 create_times = 25;
+  int64 update_times = 26;
+}
+
+message OptionContractSeriesExpiry {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 series_id = 3;
+  int64 sequence_no = 4;
+  string cycle_code = 5;
+  int64 list_time = 6;
+  int64 exercise_cutoff_time = 7;
+  int64 expire_time = 8;
+  int64 deliver_time = 9;
+  int64 create_times = 10;
+}
+
+message OptionContractSeriesStrikeBand {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 series_id = 3;
+  int64 sequence_no = 4;
+  string lower_strike = 5;
+  string upper_strike = 6;
+  string strike_step = 7;
+  int64 create_times = 8;
+}
+
+message OptionContractSeriesDetail {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 series_id = 3;
+  int64 expiry_id = 4;
+  OptionType option_type = 5;
+  string strike_price = 6;
+  string contract_code = 7;
+  int64 contract_id = 8;
+  int64 create_times = 9;
+}
+
+message OptionContractSeries {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string request_key = 3;
+  string series_code = 4;
+  int64 version = 5;
+  int64 supersedes_id = 6;
+  ContractSeriesStatus status = 7;
+  int64 template_contract_id = 8;
+  string underlying_symbol = 9;
+  string reference_price = 10;
+  string reference_source = 11;
+  int64 reference_time = 12;
+  string evidence_ref = 13;
+  string change_reason = 14;
+  string payload_hash = 15;
+  int64 expected_contract_count = 16;
+  int64 generated_contract_count = 17;
+  int64 created_by = 18;
+  int64 reviewed_by = 19;
+  string review_reason = 20;
+  int64 reviewed_at = 21;
+  int64 generated_at = 22;
+  int64 create_times = 23;
+  int64 update_times = 24;
+  repeated OptionContractSeriesExpiry expiries = 25;
+  repeated OptionContractSeriesStrikeBand strike_bands = 26;
+  ContractSeriesLaunchStatus launch_status = 27;
+  int64 launch_reviewed_by = 28;
+  string launch_review_reason = 29;
+  int64 launch_reviewed_at = 30;
 }
 
 message OptionMarket {
@@ -74,6 +300,114 @@ message OptionMarket {
   int64 snapshot_time = 20;
   int64 create_times = 21;
   int64 update_times = 22;
+  int64 underlying_snapshot_time = 23;
+  int64 mark_snapshot_time = 24;
+  int64 greeks_snapshot_time = 25;
+}
+
+// 公开市场统计均来自 Option 自身成交和已落仓持仓；OI 为单边未平仓量。
+message OptionMarketStatistics {
+  int64 contract_id = 1;
+  string volume_24h = 2;
+  string turnover_24h = 3;
+  int64 trade_count_24h = 4;
+  string open_interest = 5;
+  string long_open_interest = 6;
+  string short_open_interest = 7;
+  bool oi_balanced = 8;
+  int64 statistics_window_start = 9;
+  int64 statistics_as_of = 10;
+  int64 position_as_of = 11;
+  string source = 12;
+  string open_interest_method = 13;
+}
+
+message OptionChainLeg {
+  OptionContract contract = 1;
+  OptionMarket market = 2;
+  OptionMarketStatistics statistics = 3;
+}
+
+message OptionChainRow {
+  string strike_price = 1;
+  OptionChainLeg call = 2;
+  OptionChainLeg put = 3;
+}
+
+message OptionOrderBookLevel {
+  string price = 1;
+  string qty = 2;
+  int64 order_count = 3;
+}
+
+message OptionOrderBook {
+  int64 contract_id = 1;
+  int64 last_match_sequence = 2;
+  int64 generated_at = 3;
+  string source = 4;
+  repeated OptionOrderBookLevel bids = 5;
+  repeated OptionOrderBookLevel asks = 6;
+}
+
+message OptionComboOrder {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string combo_no = 3;
+  int64 user_id = 4;
+  int64 account_id = 5;
+  string client_combo_id = 6;
+  string strategy_key = 7;
+  string inverse_strategy_key = 8;
+  string underlying_symbol = 9;
+  int64 expire_time = 10;
+  string settle_coin = 11;
+  string quote_coin = 12;
+  ComboOrderType order_type = 13;
+  string net_price = 14;
+  string qty = 15;
+  string filled_qty = 16;
+  string unfilled_qty = 17;
+  ComboOrderStatus status = 18;
+  string payload_hash = 19;
+  string cancel_reason = 20;
+  int64 cancel_time = 21;
+  int64 create_times = 22;
+  int64 update_times = 23;
+}
+
+message OptionComboOrderLeg {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 combo_order_id = 3;
+  int64 leg_no = 4;
+  int64 contract_id = 5;
+  common.Side side = 6;
+  PositionEffect position_effect = 7;
+  int64 ratio = 8;
+  string price = 9;
+  string qty = 10;
+  string filled_qty = 11;
+  string unfilled_qty = 12;
+  int64 child_order_id = 13;
+  int64 create_times = 14;
+  int64 update_times = 15;
+}
+
+message OptionComboOrderDetail {
+  OptionComboOrder combo_order = 1;
+  repeated OptionComboOrderLeg legs = 2;
+}
+
+// 管理端组合单下钻数据。用户端详情不得复用该类型，避免暴露对手方和资金处理信息。
+message OptionAdminComboOrderDetail {
+  OptionComboOrder combo_order = 1;
+  repeated OptionComboOrderLeg legs = 2;
+  repeated OptionOrderDetail child_orders = 3;
+  repeated OptionTradeDetail trades = 4;
+  repeated OptionAssetInstruction asset_instructions = 5;
+  int64 trade_total = 6;
+  int64 asset_instruction_total = 7;
+  bool data_truncated = 8;
 }
 
 message OptionMarketSnapshot {
@@ -94,6 +428,8 @@ message OptionMarketSnapshot {
   string rho = 15;
   int64 snapshot_time = 16;
   int64 create_times = 17;
+  int64 source_type = 18;
+  string source_snapshot_id = 19;
 }
 
 message OptionOrder {
@@ -127,6 +463,9 @@ message OptionOrder {
   int64 create_times = 28;
   int64 update_times = 29;
   string margin_coin = 30;
+  string mmp_group = 31;
+  int64 combo_order_id = 32; // 组合影子单父单；普通单为0
+  int64 combo_leg_no = 33; // 父单内稳定腿号；普通单为0
 }
 
 message OptionTrade {
@@ -153,6 +492,8 @@ message OptionTrade {
   int64 trade_time = 21;
   int64 create_times = 22;
   int64 match_sequence = 23;
+  string combo_match_no = 24;
+  int64 combo_leg_no = 25;
 }
 
 message OptionPosition {
@@ -178,12 +519,17 @@ message OptionPosition {
   int64 last_calc_time = 20;
   int64 create_times = 21;
   int64 update_times = 22;
+  string trade_realized_pnl = 23;
+  string settlement_realized_pnl = 24;
+  string fee_paid = 25;
+  string total_return = 26;
 }
 
 message OptionExercise {
   int64 id = 1;
   int64 tenant_id = 2;
   string exercise_no = 3;
+  string client_exercise_id = 22;
   int64 user_id = 4;
   int64 account_id = 5;
   int64 contract_id = 6;
@@ -219,6 +565,105 @@ message OptionExerciseAssignment {
   string instruction_no = 12;
   int64 create_times = 13;
   int64 update_times = 14;
+}
+
+message OptionExerciseInstruction {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  int64 account_id = 4;
+  int64 contract_id = 5;
+  int64 position_id = 6;
+  string client_instruction_id = 7;
+  ExerciseInstructionType instruction_type = 8;
+  int64 version = 9;
+  ExerciseInstructionStatus status = 10;
+  int64 supersedes_id = 11;
+  int64 cutoff_time = 12;
+  int64 create_times = 13;
+  int64 update_times = 14;
+}
+
+message OptionUserTradingControl {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  common.YesNo kill_switch = 3;
+  string reason = 4;
+  int64 activated_at = 5;
+  int64 released_at = 6;
+  int64 update_times = 7;
+}
+
+message OptionTradingControlEvent {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  int64 contract_id = 4;
+  int64 order_id = 5;
+  string event_type = 6;
+  string reason = 7;
+  string detail = 8;
+  int64 operator_id = 9;
+  int64 create_times = 10;
+}
+
+message OptionTradeCorrectionLeg {
+  int64 id = 1;
+  int64 leg_no = 2;
+  int64 user_id = 3;
+  int64 account_id = 4;
+  string coin = 5;
+  TradeCorrectionLegDirection direction = 6;
+  string amount = 7;
+  string instruction_no = 8;
+}
+
+message OptionTradeCorrection {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string case_no = 3;
+  int64 trade_id = 4;
+  int64 contract_id = 5;
+  TradeCorrectionAction action = 6;
+  TradeCorrectionStatus status = 7;
+  string reason = 8;
+  string evidence_ref = 9;
+  int64 requested_by = 10;
+  int64 reviewed_by = 11;
+  string review_reason = 12;
+  int64 reviewed_at = 13;
+  int64 completed_at = 14;
+  string last_error_msg = 15;
+  int64 create_times = 16;
+  int64 update_times = 17;
+  repeated OptionTradeCorrectionLeg legs = 18;
+}
+
+message OptionMMPConfig {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  int64 contract_id = 4;
+  string group_code = 5;
+  common.YesNo enabled = 6;
+  string qty_threshold = 7;
+  int64 trade_count_threshold = 8;
+  string loss_threshold = 9;
+  int64 window_seconds = 10;
+  int64 cooldown_seconds = 11;
+  MMPStatus status = 12;
+  int64 window_start = 13;
+  string accumulated_qty = 14;
+  int64 trade_count = 15;
+  string accumulated_loss = 16;
+  int64 triggered_at = 17;
+  int64 cooldown_until = 18;
+  string trigger_reason = 19;
+  string last_error_msg = 20;
+  int64 created_by = 21;
+  int64 updated_by = 22;
+  int64 create_times = 23;
+  int64 update_times = 24;
 }
 
 message OptionSettlement {
@@ -257,6 +702,9 @@ message OptionSettlementPrice {
   int64 confirmed_at = 14;
   int64 create_times = 15;
   int64 update_times = 16;
+  int64 supersedes_id = 17;
+  string change_reason = 18;
+  int64 created_by = 19;
 }
 
 message OptionSettlementBatch {
@@ -296,6 +744,35 @@ message OptionSettlementPositionDetail {
   string payment_amount = 18;
 }
 
+message OptionPhysicalDeliveryUnit {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string delivery_unit_no = 3;
+  int64 batch_id = 4;
+  string batch_no = 5;
+  int64 contract_id = 6;
+  int64 long_position_id = 7;
+  int64 long_user_id = 8;
+  int64 long_account_id = 9;
+  int64 short_position_id = 10;
+  int64 short_user_id = 11;
+  int64 short_account_id = 12;
+  string quantity = 13;
+  string delivery_coin = 14;
+  string delivery_quantity = 15;
+  string payment_coin = 16;
+  string payment_amount = 17;
+  PhysicalDeliveryUnitStatus status = 18;
+  int64 cure_deadline = 19;
+  int64 failed_instruction_id = 20;
+  string last_error_msg = 21;
+  int64 completed_at = 22;
+  int64 create_times = 23;
+  int64 update_times = 24;
+  repeated OptionAssetInstruction asset_instructions = 25;
+  int64 manual_retry_count = 26;
+}
+
 message OptionReconciliationIssue {
   int64 id = 1;
   int64 tenant_id = 2;
@@ -317,7 +794,7 @@ message OptionAccount {
   int64 id = 1;
   int64 tenant_id = 2;
   int64 user_id = 3;
-  int64 account_id = 4;
+  int64 account_id = 4; // 固定为0：Asset钱包级镜像，不是业务子账户余额
   string margin_coin = 5;
   string balance = 6;
   string available_balance = 7;
@@ -374,6 +851,49 @@ message OptionAssetInstruction {
   int64 reconciled_at = 23;
   int64 margin_lot_id = 24;
   int64 liquidation_id = 25;
+  int64 delivery_unit_id = 26;
+  string execution_group = 27;
+}
+
+message OptionCoinAmount {
+  string coin = 1;
+  string amount = 2;
+}
+
+message OptionOperationsOverview {
+  int64 generated_at = 1;
+  int64 risk_stale_seconds = 2;
+  int64 asset_pending_count = 3;
+  int64 asset_failed_count = 4;
+  int64 asset_manual_review_count = 5;
+  int64 oldest_asset_instruction_time = 6;
+  int64 open_reconciliation_count = 7;
+  int64 oldest_reconciliation_time = 8;
+  int64 pending_settlement_price_count = 9;
+  int64 stale_risk_account_count = 10;
+  int64 oldest_risk_calc_time = 11;
+  int64 pending_exercise_count = 12;
+  int64 oldest_exercise_time = 13;
+  int64 pending_settlement_count = 14;
+  int64 failed_settlement_count = 15;
+  int64 oldest_settlement_time = 16;
+  int64 pending_liquidation_count = 17;
+  int64 exception_liquidation_count = 18;
+  int64 oldest_liquidation_time = 19;
+  int64 pending_outbox_count = 20;
+  int64 oldest_outbox_time = 21;
+  int64 pending_inbox_count = 22;
+  int64 oldest_inbox_time = 23;
+  int64 physical_exception_count = 24;
+  repeated OptionCoinAmount insurance_ledger = 25;
+  repeated OptionCoinAmount backstop_liability = 26;
+  repeated OptionCoinAmount unresolved_deficit = 27;
+  int64 combo_stale_seconds = 28;
+  int64 combo_stale_count = 29;
+  int64 combo_manual_review_count = 30;
+  int64 oldest_combo_exception_time = 31;
+  int64 combo_invariant_issue_count = 32;
+  int64 combo_incomplete_match_group_count = 33;
 }
 
 message OptionOutboxEvent {
@@ -430,7 +950,7 @@ message OptionRiskAccount {
   int64 id = 1;
   int64 tenant_id = 2;
   int64 user_id = 3;
-  int64 account_id = 4;
+  int64 account_id = 4; // 固定为0：按用户与结算币聚合的钱包风险账户
   string settle_coin = 5;
   string equity = 6;
   string position_margin = 7;
@@ -444,6 +964,38 @@ message OptionRiskAccount {
   PortfolioRiskMethod portfolio_risk_method = 15;
   string portfolio_scenario_loss = 16;
   string portfolio_short_floor = 17;
+  string net_option_value = 18;
+  int64 portfolio_risk_config_id = 19;
+  int64 portfolio_risk_config_version = 20;
+  string portfolio_concentration_addon = 21;
+  string portfolio_liquidity_addon = 22;
+}
+
+message OptionPortfolioRiskConfig {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string settle_coin = 3;
+  int64 version = 4;
+  PortfolioRiskConfigStatus status = 5;
+  PortfolioRiskMethod model_method = 6;
+  string initial_shock_rate = 7;
+  string maintenance_shock_rate = 8;
+  // 逗号分隔的相对价格冲击，如 -1,-0.5,-0.3,0.3,0.5,1,4。
+  string scenario_shocks = 9;
+  string concentration_threshold = 10;
+  string concentration_addon_rate = 11;
+  string liquidity_addon_rate = 12;
+  int64 effective_from = 13;
+  int64 effective_until = 14;
+  int64 supersedes_id = 15;
+  string change_reason = 16;
+  string evidence_ref = 17;
+  int64 created_by = 18;
+  int64 reviewed_by = 19;
+  string review_reason = 20;
+  int64 reviewed_at = 21;
+  int64 create_times = 22;
+  int64 update_times = 23;
 }
 
 message OptionLiquidation {

@@ -30,6 +30,30 @@
           show-overflow-tooltip
         />
         <el-table-column
+          :label="t('option.tradeRealizedPnl')"
+          prop="tradeRealizedPnl"
+          min-width="140"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          :label="t('option.settlementRealizedPnl')"
+          prop="settlementRealizedPnl"
+          min-width="150"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          :label="t('option.feePaid')"
+          prop="feePaid"
+          min-width="110"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          :label="t('option.totalReturn')"
+          prop="totalReturn"
+          min-width="120"
+          show-overflow-tooltip
+        />
+        <el-table-column
           :label="t('common.actions')"
           align="center"
           width="100"

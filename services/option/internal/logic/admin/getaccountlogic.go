@@ -32,7 +32,7 @@ func (l *GetAccountLogic) GetAccount(in *option.GetAccountReq) (*option.GetAccou
 	items, _, err := l.svcCtx.OptionAccountModel.FindPage(l.ctx, models.OptionAccountPageFilter{
 		TenantId:   in.TenantId,
 		UserId:     in.UserId,
-		AccountId:  in.AccountId,
+		AccountId:  0,
 		MarginCoin: in.MarginCoin,
 	}, 0, 1)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {

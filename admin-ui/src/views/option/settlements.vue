@@ -72,11 +72,68 @@
         <el-table-column :label="t('common.actions')" width="100">
           <template #default="{ row }">
             <el-button
-              v-if="[4, 5].includes(row.status)"
+              v-if="[4, 5].includes(row.status) && !row.deliveryUnitId"
               v-perm="'option:settlement-instruction:retry'"
               link
               type="warning"
               @click="retryInstruction(row.id)"
+            >
+              {{ t('option.retry') }}
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-divider v-if="deliveryUnits.length">
+        {{ t('option.physicalDeliveryUnits') }}
+      </el-divider>
+      <el-table v-if="deliveryUnits.length" :data="deliveryUnits" size="small">
+        <el-table-column
+          prop="deliveryUnitNo"
+          :label="t('option.deliveryUnitNo')"
+          min-width="210"
+          show-overflow-tooltip
+        />
+        <el-table-column :label="t('option.longUser')" min-width="120">
+          <template #default="{ row }">
+            {{ row.longUserId }}/{{ row.longAccountId }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('option.shortUser')" min-width="120">
+          <template #default="{ row }">
+            {{ row.shortUserId }}/{{ row.shortAccountId }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="quantity" :label="t('option.quantity')" min-width="90" />
+        <el-table-column :label="t('option.deliveryAsset')" min-width="140">
+          <template #default="{ row }">
+            {{ row.deliveryQuantity }} {{ row.deliveryCoin }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('option.paymentAsset')" min-width="140">
+          <template #default="{ row }">
+            {{ row.paymentAmount }} {{ row.paymentCoin }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="status" :label="t('common.status')" width="80" />
+        <el-table-column prop="cureDeadline" :label="t('option.cureDeadline')" width="170">
+          <template #default="{ row }">
+            {{ row.cureDeadline ? new Date(row.cureDeadline * 1000).toLocaleString() : '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="lastErrorMsg"
+          :label="t('option.lastErrorMsg')"
+          min-width="180"
+          show-overflow-tooltip
+        />
+        <el-table-column :label="t('common.actions')" width="100" fixed="right">
+          <template #default="{ row }">
+            <el-button
+              v-if="[4, 6].includes(row.status)"
+              v-perm="'option:physical-delivery:retry'"
+              link
+              type="warning"
+              @click="retryDeliveryUnit(row)"
             >
               {{ t('option.retry') }}
             </el-button>
@@ -90,9 +147,14 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { usePagination } from '@/composables'
-import { optionService, type OptionSettlement, type OptionSettlementDetail } from '@/services'
+import {
+  optionService,
+  type OptionPhysicalDeliveryUnit,
+  type OptionSettlement,
+  type OptionSettlementDetail,
+} from '@/services'
 import TenantSelect from '@/components/TenantSelect.vue'
 import ContractSelect from '@/components/ContractSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
@@ -105,6 +167,7 @@ const loading = ref(false)
 const rows = ref<OptionSettlement[]>([])
 const detailVisible = ref(false)
 const detailData = ref<OptionSettlementDetail | OptionSettlement | null>(null)
+const deliveryUnits = ref<OptionPhysicalDeliveryUnit[]>([])
 const query = reactive({
   tenantId: undefined as number | undefined,
   contractId: undefined as number | undefined,
@@ -146,6 +209,15 @@ const showDetail = async (row: OptionSettlement) => {
         settlementNo: row.settlementNo,
       })
     ).data || row
+  deliveryUnits.value = []
+  if (detailData.value && 'batch' in detailData.value && detailData.value.batch?.id) {
+    const units = await optionService.listPhysicalDeliveryUnits({
+      tenantId: row.tenantId,
+      batchId: detailData.value.batch.id,
+      limit: 200,
+    })
+    deliveryUnits.value = units?.data || []
+  }
   detailVisible.value = true
 }
 
@@ -158,6 +230,26 @@ const retryInstruction = async (instructionId: number) => {
   })
   ElMessage.success(t('common.success'))
   await showDetail(detailData.value.settlement)
+}
+
+const retryDeliveryUnit = async (row: OptionPhysicalDeliveryUnit) => {
+  const { value } = await ElMessageBox.prompt(
+    t('option.physicalDeliveryRetryReason'),
+    t('option.retry'),
+    {
+      inputType: 'textarea',
+      inputValidator: (input) => Boolean(input?.trim()) || t('option.reasonRequired'),
+    },
+  )
+  await optionService.retryPhysicalDeliveryUnit({
+    tenantId: row.tenantId,
+    deliveryUnitId: row.id,
+    reason: value.trim(),
+  })
+  ElMessage.success(t('common.success'))
+  if (detailData.value && 'settlement' in detailData.value) {
+    await showDetail(detailData.value.settlement)
+  }
 }
 
 function handleLimitChange() {

@@ -16,6 +16,7 @@ type (
 		ContractId    int64
 		SnapshotStart int64
 		SnapshotEnd   int64
+		SourceType    int64
 	}
 
 	// TOptionMarketSnapshotModel is an interface to be customized, add more methods here,
@@ -44,6 +45,7 @@ func (m *defaultTOptionMarketSnapshotModel) FindPage(ctx context.Context, filter
 	builder.EqInt64("contract_id", filter.ContractId)
 	builder.GteInt64("snapshot_time", filter.SnapshotStart)
 	builder.LteInt64("snapshot_time", filter.SnapshotEnd)
+	builder.EqInt64("source_type", filter.SourceType)
 
 	where := builder.Where()
 	args := builder.Args()

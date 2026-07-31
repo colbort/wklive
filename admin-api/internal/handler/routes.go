@@ -348,6 +348,46 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: option.GetBillHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodGet,
+				Path:    "/combo-orders",
+				Handler: option.ListAdminComboOrdersHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/combo-orders/detail",
+				Handler: option.GetAdminComboOrderHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/combo-orders/force-cancel",
+				Handler: option.ForceCancelComboOrderHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/contract-series",
+				Handler: option.CreateContractSeriesHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/contract-series",
+				Handler: option.ListContractSeriesHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/contract-series/details",
+				Handler: option.ListContractSeriesDetailsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/contract-series/launch-review",
+				Handler: option.ReviewContractSeriesLaunchHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/contract-series/review",
+				Handler: option.ReviewContractSeriesHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodPost,
 				Path:    "/contracts",
 				Handler: option.CreateContractHandler(serverCtx),
@@ -371,6 +411,26 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/contracts/update",
 				Handler: option.UpdateContractHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/corporate-actions",
+				Handler: option.CreateCorporateActionHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/corporate-actions",
+				Handler: option.ListCorporateActionsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/corporate-actions/positions",
+				Handler: option.ListCorporateActionPositionsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/corporate-actions/review",
+				Handler: option.ReviewCorporateActionHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
@@ -403,6 +463,36 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: option.UpdateMarketHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodPost,
+				Path:    "/mmp/config",
+				Handler: option.UpsertMMPConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/mmp/configs",
+				Handler: option.ListMMPConfigsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/mmp/reset",
+				Handler: option.ResetMMPConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/operations/asset-instructions",
+				Handler: option.ListAssetInstructionsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/operations/overview",
+				Handler: option.GetOperationsOverviewHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/operations/reconciliation-issues",
+				Handler: option.ListReconciliationIssuesHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodGet,
 				Path:    "/orders",
 				Handler: option.ListOrdersHandler(serverCtx),
@@ -411,6 +501,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/orders/detail",
 				Handler: option.GetOrderHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/physical-delivery/units",
+				Handler: option.ListPhysicalDeliveryUnitsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/physical-delivery/units/retry",
+				Handler: option.RetryPhysicalDeliveryUnitHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
@@ -448,6 +548,36 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: option.RetryLiquidationHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodPost,
+				Path:    "/risk/portfolio-configs",
+				Handler: option.CreatePortfolioRiskConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/risk/portfolio-configs",
+				Handler: option.ListPortfolioRiskConfigsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/risk/portfolio-configs/review",
+				Handler: option.ReviewPortfolioRiskConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/settlement-prices",
+				Handler: option.ListSettlementPricesHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/settlement-prices/corrections",
+				Handler: option.CreateSettlementPriceCorrectionHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/settlement-prices/review",
+				Handler: option.ReviewSettlementPriceHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodGet,
 				Path:    "/settlements",
 				Handler: option.ListSettlementsHandler(serverCtx),
@@ -463,6 +593,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: option.RetrySettlementInstructionHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodPost,
+				Path:    "/trade-corrections",
+				Handler: option.CreateTradeCorrectionHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/trade-corrections",
+				Handler: option.ListTradeCorrectionsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/trade-corrections/review",
+				Handler: option.ReviewTradeCorrectionHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodGet,
 				Path:    "/trades",
 				Handler: option.ListTradesHandler(serverCtx),
@@ -471,6 +616,51 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/trades/detail",
 				Handler: option.GetTradeHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/trading-calendars",
+				Handler: option.CreateTradingCalendarHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/trading-calendars",
+				Handler: option.ListTradingCalendarsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/trading-calendars/review",
+				Handler: option.ReviewTradingCalendarHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/trading-controls/detail",
+				Handler: option.AdminGetUserTradingControlHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/trading-controls/events",
+				Handler: option.ListTradingControlEventsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/trading-controls/release-kill-switch",
+				Handler: option.ReleaseUserKillSwitchHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/trading-halts",
+				Handler: option.HaltContractTradingHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/trading-halts",
+				Handler: option.ListTradingHaltsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/trading-halts/resume",
+				Handler: option.ResumeContractTradingHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),

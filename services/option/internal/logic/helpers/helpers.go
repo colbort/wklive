@@ -111,49 +111,113 @@ func ToContractProto(item *models.TOptionContract) *option.OptionContract {
 		return nil
 	}
 	return &option.OptionContract{
-		Id:                    item.Id,
-		TenantId:              item.TenantId,
-		ContractCode:          item.ContractCode,
-		UnderlyingSymbol:      item.UnderlyingSymbol,
-		UnderlyingCoin:        item.UnderlyingCoin,
-		SettleCoin:            item.SettleCoin,
-		QuoteCoin:             item.QuoteCoin,
-		OptionType:            option.OptionType(item.OptionType),
-		ExerciseStyle:         option.ExerciseStyle(item.ExerciseStyle),
-		SettlementType:        option.SettlementType(item.SettlementType),
-		StrikePrice:           conv.FloatString(item.StrikePrice),
-		ContractUnit:          conv.FloatString(item.ContractUnit),
-		MinOrderQty:           conv.FloatString(item.MinOrderQty),
-		MaxOrderQty:           conv.FloatString(item.MaxOrderQty),
-		PriceTick:             conv.FloatString(item.PriceTick),
-		QtyStep:               conv.FloatString(item.QtyStep),
-		Multiplier:            conv.FloatString(item.Multiplier),
-		ListTime:              item.ListTime,
-		ExpireTime:            item.ExpireTime,
-		DeliverTime:           item.DeliverTime,
-		IsAutoExercise:        common.YesNo(item.IsAutoExercise),
-		Status:                option.ContractStatus(item.Status),
-		Sort:                  item.Sort,
-		Remark:                item.Remark,
-		IsDeleted:             common.YesNo(item.IsDeleted),
-		CreateTimes:           item.CreateTimes,
-		UpdateTimes:           item.UpdateTimes,
-		MakerFeeRate:          conv.FloatString(item.MakerFeeRate),
-		TakerFeeRate:          conv.FloatString(item.TakerFeeRate),
-		ExerciseFeeRate:       conv.FloatString(item.ExerciseFeeRate),
-		FeeUserId:             item.FeeUserId,
-		FeeAccountId:          item.FeeAccountId,
-		SellerMarginMode:      option.SellerMarginMode(item.SellerMarginMode),
-		InitialMarginRate:     conv.FloatString(item.InitialMarginRate),
-		MaintenanceMarginRate: conv.FloatString(item.MaintenanceMarginRate),
-		MinMarginRate:         conv.FloatString(item.MinMarginRate),
-		LiquidationFeeRate:    conv.FloatString(item.LiquidationFeeRate),
-		InsuranceUserId:       item.InsuranceUserId,
-		InsuranceAccountId:    item.InsuranceAccountId,
+		Id:                      item.Id,
+		TenantId:                item.TenantId,
+		ContractCode:            item.ContractCode,
+		UnderlyingSymbol:        item.UnderlyingSymbol,
+		UnderlyingCoin:          item.UnderlyingCoin,
+		SettleCoin:              item.SettleCoin,
+		QuoteCoin:               item.QuoteCoin,
+		OptionType:              option.OptionType(item.OptionType),
+		ExerciseStyle:           option.ExerciseStyle(item.ExerciseStyle),
+		SettlementType:          option.SettlementType(item.SettlementType),
+		StrikePrice:             conv.FloatString(item.StrikePrice),
+		ContractUnit:            conv.FloatString(item.ContractUnit),
+		MinOrderQty:             conv.FloatString(item.MinOrderQty),
+		MaxOrderQty:             conv.FloatString(item.MaxOrderQty),
+		PriceTick:               conv.FloatString(item.PriceTick),
+		QtyStep:                 conv.FloatString(item.QtyStep),
+		Multiplier:              conv.FloatString(item.Multiplier),
+		ListTime:                item.ListTime,
+		ExpireTime:              item.ExpireTime,
+		DeliverTime:             item.DeliverTime,
+		TradingCalendarCode:     item.TradingCalendarCode,
+		ExerciseCutoffTime:      item.ExerciseCutoffTime,
+		AutoExerciseThreshold:   conv.FloatString(item.AutoExerciseThreshold),
+		MaxUserLongQty:          conv.FloatString(item.MaxUserLongQty),
+		MaxUserShortQty:         conv.FloatString(item.MaxUserShortQty),
+		MaxOpenInterest:         conv.FloatString(item.MaxOpenInterest),
+		OrderPriceBandRatio:     conv.FloatString(item.OrderPriceBandRatio),
+		CircuitBreakerRatio:     conv.FloatString(item.CircuitBreakerRatio),
+		SettlementPriceSource:   item.SettlementPriceSource,
+		SettlementPriceMethod:   item.SettlementPriceMethod,
+		SettlementWindowSeconds: item.SettlementWindowSeconds,
+		SettlementMinSamples:    item.SettlementMinSamples,
+		IsAutoExercise:          common.YesNo(item.IsAutoExercise),
+		Status:                  option.ContractStatus(item.Status),
+		Sort:                    item.Sort,
+		Remark:                  item.Remark,
+		IsDeleted:               common.YesNo(item.IsDeleted),
+		CreateTimes:             item.CreateTimes,
+		UpdateTimes:             item.UpdateTimes,
+		MakerFeeRate:            conv.FloatString(item.MakerFeeRate),
+		TakerFeeRate:            conv.FloatString(item.TakerFeeRate),
+		ExerciseFeeRate:         conv.FloatString(item.ExerciseFeeRate),
+		FeeUserId:               item.FeeUserId,
+		FeeAccountId:            item.FeeAccountId,
+		SellerMarginMode:        option.SellerMarginMode(item.SellerMarginMode),
+		InitialMarginRate:       conv.FloatString(item.InitialMarginRate),
+		MaintenanceMarginRate:   conv.FloatString(item.MaintenanceMarginRate),
+		MinMarginRate:           conv.FloatString(item.MinMarginRate),
+		LiquidationFeeRate:      conv.FloatString(item.LiquidationFeeRate),
+		InsuranceUserId:         item.InsuranceUserId,
+		InsuranceAccountId:      item.InsuranceAccountId,
 		LiquidationDeficitPolicy: option.LiquidationDeficitPolicy(
 			item.LiquidationDeficitPolicy,
 		),
-		PhysicalDeliveryPolicy: option.PhysicalDeliveryPolicy(item.PhysicalDeliveryPolicy),
+		PhysicalDeliveryPolicy:      option.PhysicalDeliveryPolicy(item.PhysicalDeliveryPolicy),
+		PhysicalDeliveryCureSeconds: item.PhysicalDeliveryCureSeconds,
+	}
+}
+
+func ToTradingCalendarProto(
+	item *models.TOptionTradingCalendar,
+	sessions []*models.TOptionTradingCalendarSession,
+	exceptions []*models.TOptionTradingCalendarException,
+) *option.OptionTradingCalendar {
+	if item == nil {
+		return nil
+	}
+	result := &option.OptionTradingCalendar{
+		Id: item.Id, TenantId: item.TenantId, CalendarCode: item.CalendarCode,
+		Version: item.Version, Status: option.TradingCalendarStatus(item.Status),
+		Timezone: item.Timezone, EffectiveFrom: item.EffectiveFrom, EffectiveUntil: item.EffectiveUntil,
+		SupersedesId: item.SupersedesId, ChangeReason: item.ChangeReason, EvidenceRef: item.EvidenceRef,
+		CreatedBy: item.CreatedBy, ReviewedBy: item.ReviewedBy, ReviewReason: item.ReviewReason,
+		ReviewedAt: item.ReviewedAt, CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
+		Sessions:   make([]*option.OptionTradingCalendarSession, 0, len(sessions)),
+		Exceptions: make([]*option.OptionTradingCalendarException, 0, len(exceptions)),
+	}
+	for _, session := range sessions {
+		result.Sessions = append(result.Sessions, &option.OptionTradingCalendarSession{
+			Id: session.Id, TenantId: session.TenantId, CalendarId: session.CalendarId,
+			Weekday: int32(session.Weekday), OpenSecond: int32(session.OpenSecond),
+			CloseSecond: int32(session.CloseSecond), CreateTimes: session.CreateTimes,
+		})
+	}
+	for _, exception := range exceptions {
+		result.Exceptions = append(result.Exceptions, &option.OptionTradingCalendarException{
+			Id: exception.Id, TenantId: exception.TenantId, CalendarId: exception.CalendarId,
+			ExceptionType: option.TradingCalendarExceptionType(exception.ExceptionType),
+			StartTime:     exception.StartTime, EndTime: exception.EndTime, Reason: exception.Reason,
+			AnnouncementRef: exception.AnnouncementRef, CreateTimes: exception.CreateTimes,
+		})
+	}
+	return result
+}
+
+func ToTradingHaltProto(item *models.TOptionTradingHalt) *option.OptionTradingHalt {
+	if item == nil {
+		return nil
+	}
+	return &option.OptionTradingHalt{
+		Id: item.Id, TenantId: item.TenantId, HaltNo: item.HaltNo, ContractId: item.ContractId,
+		Source: option.TradingHaltSource(item.Source), Status: option.TradingHaltStatus(item.Status),
+		Reason: item.Reason, EvidenceRef: item.EvidenceRef, StartedAt: item.StartedAt,
+		CreatedBy: item.CreatedBy, CancelTotal: item.CancelTotal, CancelSuccess: item.CancelSuccess,
+		CancelFailed: item.CancelFailed, LastErrorMsg: item.LastErrorMsg, LiftedAt: item.LiftedAt,
+		LiftedBy: item.LiftedBy, LiftReason: item.LiftReason, CreateTimes: item.CreateTimes,
+		UpdateTimes: item.UpdateTimes,
 	}
 }
 
@@ -162,29 +226,135 @@ func ToMarketProto(item *models.TOptionMarket) *option.OptionMarket {
 		return nil
 	}
 	return &option.OptionMarket{
-		Id:               item.Id,
-		TenantId:         item.TenantId,
-		ContractId:       item.ContractId,
-		UnderlyingPrice:  conv.FloatString(item.UnderlyingPrice),
-		MarkPrice:        conv.FloatString(item.MarkPrice),
-		LastPrice:        conv.FloatString(item.LastPrice),
-		BidPrice:         conv.FloatString(item.BidPrice),
-		AskPrice:         conv.FloatString(item.AskPrice),
-		TheoreticalPrice: conv.FloatString(item.TheoreticalPrice),
-		IntrinsicValue:   conv.FloatString(item.IntrinsicValue),
-		TimeValue:        conv.FloatString(item.TimeValue),
-		Iv:               conv.FloatString(item.Iv),
-		Delta:            conv.FloatString(item.Delta),
-		Gamma:            conv.FloatString(item.Gamma),
-		Theta:            conv.FloatString(item.Theta),
-		Vega:             conv.FloatString(item.Vega),
-		Rho:              conv.FloatString(item.Rho),
-		RiskFreeRate:     conv.FloatString(item.RiskFreeRate),
-		PricingModel:     item.PricingModel,
-		SnapshotTime:     item.SnapshotTime,
-		CreateTimes:      item.CreateTimes,
-		UpdateTimes:      item.UpdateTimes,
+		Id:                     item.Id,
+		TenantId:               item.TenantId,
+		ContractId:             item.ContractId,
+		UnderlyingPrice:        conv.FloatString(item.UnderlyingPrice),
+		MarkPrice:              conv.FloatString(item.MarkPrice),
+		LastPrice:              conv.FloatString(item.LastPrice),
+		BidPrice:               conv.FloatString(item.BidPrice),
+		AskPrice:               conv.FloatString(item.AskPrice),
+		TheoreticalPrice:       conv.FloatString(item.TheoreticalPrice),
+		IntrinsicValue:         conv.FloatString(item.IntrinsicValue),
+		TimeValue:              conv.FloatString(item.TimeValue),
+		Iv:                     conv.FloatString(item.Iv),
+		Delta:                  conv.FloatString(item.Delta),
+		Gamma:                  conv.FloatString(item.Gamma),
+		Theta:                  conv.FloatString(item.Theta),
+		Vega:                   conv.FloatString(item.Vega),
+		Rho:                    conv.FloatString(item.Rho),
+		RiskFreeRate:           conv.FloatString(item.RiskFreeRate),
+		PricingModel:           item.PricingModel,
+		SnapshotTime:           item.SnapshotTime,
+		UnderlyingSnapshotTime: item.UnderlyingSnapshotTime,
+		MarkSnapshotTime:       item.MarkSnapshotTime,
+		GreeksSnapshotTime:     item.GreeksSnapshotTime,
+		CreateTimes:            item.CreateTimes,
+		UpdateTimes:            item.UpdateTimes,
 	}
+}
+
+func ToUserTradingControlProto(item *models.TOptionUserTradingControl) *option.OptionUserTradingControl {
+	if item == nil {
+		return nil
+	}
+	return &option.OptionUserTradingControl{
+		TenantId: item.TenantId, UserId: item.UserId,
+		KillSwitch: common.YesNo(item.KillSwitch), Reason: item.Reason,
+		ActivatedAt: item.ActivatedAt, ReleasedAt: item.ReleasedAt, UpdateTimes: item.UpdateTimes,
+	}
+}
+
+func ToTradingControlEventProto(item *models.TOptionTradingControlEvent) *option.OptionTradingControlEvent {
+	if item == nil {
+		return nil
+	}
+	return &option.OptionTradingControlEvent{
+		Id: item.Id, TenantId: item.TenantId, UserId: item.UserId,
+		ContractId: item.ContractId, OrderId: item.OrderId,
+		EventType: item.EventType, Reason: item.Reason, Detail: item.Detail,
+		OperatorId: item.OperatorId, CreateTimes: item.CreateTimes,
+	}
+}
+
+func ToMMPConfigProto(item *models.TOptionMmpConfig) *option.OptionMMPConfig {
+	if item == nil {
+		return nil
+	}
+	return &option.OptionMMPConfig{
+		Id: item.Id, TenantId: item.TenantId, UserId: item.UserId,
+		ContractId: item.ContractId, GroupCode: item.GroupCode,
+		Enabled:             common.YesNo(item.Enabled),
+		QtyThreshold:        conv.FloatString(item.QtyThreshold),
+		TradeCountThreshold: item.TradeCountThreshold,
+		LossThreshold:       conv.FloatString(item.LossThreshold),
+		WindowSeconds:       item.WindowSeconds, CooldownSeconds: item.CooldownSeconds,
+		Status: option.MMPStatus(item.Status), WindowStart: item.WindowStart,
+		AccumulatedQty:  conv.FloatString(item.AccumulatedQty),
+		TradeCount:      item.TradeCount,
+		AccumulatedLoss: conv.FloatString(item.AccumulatedLoss),
+		TriggeredAt:     item.TriggeredAt, CooldownUntil: item.CooldownUntil,
+		TriggerReason: item.TriggerReason, LastErrorMsg: item.LastErrorMsg,
+		CreatedBy: item.CreatedBy, UpdatedBy: item.UpdatedBy,
+		CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
+	}
+}
+
+func ToPortfolioRiskConfigProto(item *models.TOptionPortfolioRiskConfig) *option.OptionPortfolioRiskConfig {
+	if item == nil {
+		return nil
+	}
+	return &option.OptionPortfolioRiskConfig{
+		Id: item.Id, TenantId: item.TenantId, SettleCoin: item.SettleCoin,
+		Version: item.Version, Status: option.PortfolioRiskConfigStatus(item.Status),
+		ModelMethod:            option.PortfolioRiskMethod(item.ModelMethod),
+		InitialShockRate:       conv.FloatString(item.InitialShockRate),
+		MaintenanceShockRate:   conv.FloatString(item.MaintenanceShockRate),
+		ScenarioShocks:         item.ScenarioShocks,
+		ConcentrationThreshold: conv.FloatString(item.ConcentrationThreshold),
+		ConcentrationAddonRate: conv.FloatString(item.ConcentrationAddonRate),
+		LiquidityAddonRate:     conv.FloatString(item.LiquidityAddonRate),
+		EffectiveFrom:          item.EffectiveFrom,
+		EffectiveUntil:         item.EffectiveUntil,
+		SupersedesId:           item.SupersedesId,
+		ChangeReason:           item.ChangeReason,
+		EvidenceRef:            item.EvidenceRef,
+		CreatedBy:              item.CreatedBy,
+		ReviewedBy:             item.ReviewedBy,
+		ReviewReason:           item.ReviewReason,
+		ReviewedAt:             item.ReviewedAt,
+		CreateTimes:            item.CreateTimes,
+		UpdateTimes:            item.UpdateTimes,
+	}
+}
+
+func ToTradeCorrectionProto(
+	item *models.TOptionTradeCorrection,
+	legs []*models.TOptionTradeCorrectionLeg,
+) *option.OptionTradeCorrection {
+	if item == nil {
+		return nil
+	}
+	result := &option.OptionTradeCorrection{
+		Id: item.Id, TenantId: item.TenantId, CaseNo: item.CaseNo,
+		TradeId: item.TradeId, ContractId: item.ContractId,
+		Action: option.TradeCorrectionAction(item.Action),
+		Status: option.TradeCorrectionStatus(item.Status),
+		Reason: item.Reason, EvidenceRef: item.EvidenceRef,
+		RequestedBy: item.RequestedBy, ReviewedBy: item.ReviewedBy,
+		ReviewReason: item.ReviewReason, ReviewedAt: item.ReviewedAt,
+		CompletedAt: item.CompletedAt, LastErrorMsg: item.LastErrorMsg,
+		CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
+		Legs: make([]*option.OptionTradeCorrectionLeg, 0, len(legs)),
+	}
+	for _, leg := range legs {
+		result.Legs = append(result.Legs, &option.OptionTradeCorrectionLeg{
+			Id: leg.Id, LegNo: leg.LegNo, UserId: leg.UserId, AccountId: leg.AccountId,
+			Coin: leg.Coin, Direction: option.TradeCorrectionLegDirection(leg.Direction),
+			Amount: conv.FloatString(leg.Amount), InstructionNo: leg.InstructionNo,
+		})
+	}
+	return result
 }
 
 func ToMarketSnapshotProto(item *models.TOptionMarketSnapshot) *option.OptionMarketSnapshot {
@@ -208,11 +378,27 @@ func ToMarketSnapshotProto(item *models.TOptionMarketSnapshot) *option.OptionMar
 		Vega:             conv.FloatString(item.Vega),
 		Rho:              conv.FloatString(item.Rho),
 		SnapshotTime:     item.SnapshotTime,
+		SourceType:       item.SourceType,
+		SourceSnapshotId: item.SourceSnapshotId,
 		CreateTimes:      item.CreateTimes,
 	}
 }
 
-func InsertMarketSnapshot(ctx context.Context, model models.TOptionMarketSnapshotModel, market *models.TOptionMarket, now int64) error {
+const (
+	MarketSnapshotSourceUnknown    int64 = 0
+	MarketSnapshotSourceUnderlying int64 = 1
+	MarketSnapshotSourceAdmin      int64 = 2
+	MarketSnapshotSourceSettlement int64 = 3
+)
+
+func InsertMarketSnapshot(
+	ctx context.Context,
+	model models.TOptionMarketSnapshotModel,
+	market *models.TOptionMarket,
+	sourceType int64,
+	sourceSnapshotID string,
+	now int64,
+) error {
 	if market == nil {
 		return nil
 	}
@@ -236,6 +422,8 @@ func InsertMarketSnapshot(ctx context.Context, model models.TOptionMarketSnapsho
 		Vega:             market.Vega,
 		Rho:              market.Rho,
 		SnapshotTime:     snapshotTime,
+		SourceType:       sourceType,
+		SourceSnapshotId: sourceSnapshotID,
 		CreateTimes:      now,
 	})
 	return err
@@ -270,6 +458,9 @@ func ToOrderProto(item *models.TOptionOrder) *option.OptionOrder {
 		ClientOrderId:    item.ClientOrderId,
 		ReduceOnly:       common.YesNo(item.ReduceOnly),
 		Mmp:              common.YesNo(item.Mmp),
+		MmpGroup:         item.MmpGroup,
+		ComboOrderId:     item.ComboOrderId,
+		ComboLegNo:       item.ComboLegNo,
 		Status:           option.OrderStatus(item.Status),
 		CancelReason:     item.CancelReason,
 		MatchTime:        item.MatchTime,
@@ -305,6 +496,8 @@ func ToTradeProto(item *models.TOptionTrade) *option.OptionTrade {
 		FeeCoin:          item.FeeCoin,
 		MakerSide:        common.Side(item.MakerSide),
 		MatchSequence:    item.MatchSequence,
+		ComboMatchNo:     item.ComboMatchNo,
+		ComboLegNo:       item.ComboLegNo,
 		TradeTime:        item.TradeTime,
 		CreateTimes:      item.CreateTimes,
 	}
@@ -332,11 +525,17 @@ func ToPositionProto(item *models.TOptionPosition) *option.OptionPosition {
 		MaintenanceMargin: conv.FloatString(item.MaintenanceMargin),
 		UnrealizedPnl:     conv.FloatString(item.UnrealizedPnl),
 		RealizedPnl:       conv.FloatString(item.RealizedPnl),
-		ExerciseableQty:   conv.FloatString(item.ExerciseableQty),
-		Status:            option.PositionStatus(item.Status),
-		LastCalcTime:      item.LastCalcTime,
-		CreateTimes:       item.CreateTimes,
-		UpdateTimes:       item.UpdateTimes,
+		TradeRealizedPnl:  conv.FloatString(item.TradeRealizedPnl),
+		SettlementRealizedPnl: conv.FloatString(
+			item.SettlementRealizedPnl,
+		),
+		FeePaid:         conv.FloatString(item.FeePaid),
+		TotalReturn:     conv.FloatString(item.TotalReturn),
+		ExerciseableQty: conv.FloatString(item.ExerciseableQty),
+		Status:          option.PositionStatus(item.Status),
+		LastCalcTime:    item.LastCalcTime,
+		CreateTimes:     item.CreateTimes,
+		UpdateTimes:     item.UpdateTimes,
 	}
 }
 
@@ -345,27 +544,50 @@ func ToExerciseProto(item *models.TOptionExercise) *option.OptionExercise {
 		return nil
 	}
 	return &option.OptionExercise{
-		Id:              item.Id,
-		TenantId:        item.TenantId,
-		ExerciseNo:      item.ExerciseNo,
-		UserId:          item.UserId,
-		AccountId:       item.AccountId,
-		ContractId:      item.ContractId,
-		PositionId:      item.PositionId,
-		ExerciseType:    option.ExerciseType(item.ExerciseType),
-		ExerciseQty:     conv.FloatString(item.ExerciseQty),
-		StrikePrice:     conv.FloatString(item.StrikePrice),
-		SettlementPrice: conv.FloatString(item.SettlementPrice),
-		ExerciseAmount:  conv.FloatString(item.ExerciseAmount),
-		ProfitAmount:    conv.FloatString(item.ProfitAmount),
-		Fee:             conv.FloatString(item.Fee),
-		FeeCoin:         item.FeeCoin,
-		Status:          option.ExerciseStatus(item.Status),
-		Remark:          item.Remark,
-		ExerciseTime:    item.ExerciseTime,
-		FinishTime:      item.FinishTime,
-		CreateTimes:     item.CreateTimes,
-		UpdateTimes:     item.UpdateTimes,
+		Id:               item.Id,
+		TenantId:         item.TenantId,
+		ExerciseNo:       item.ExerciseNo,
+		ClientExerciseId: item.ClientExerciseId,
+		UserId:           item.UserId,
+		AccountId:        item.AccountId,
+		ContractId:       item.ContractId,
+		PositionId:       item.PositionId,
+		ExerciseType:     option.ExerciseType(item.ExerciseType),
+		ExerciseQty:      conv.FloatString(item.ExerciseQty),
+		StrikePrice:      conv.FloatString(item.StrikePrice),
+		SettlementPrice:  conv.FloatString(item.SettlementPrice),
+		ExerciseAmount:   conv.FloatString(item.ExerciseAmount),
+		ProfitAmount:     conv.FloatString(item.ProfitAmount),
+		Fee:              conv.FloatString(item.Fee),
+		FeeCoin:          item.FeeCoin,
+		Status:           option.ExerciseStatus(item.Status),
+		Remark:           item.Remark,
+		ExerciseTime:     item.ExerciseTime,
+		FinishTime:       item.FinishTime,
+		CreateTimes:      item.CreateTimes,
+		UpdateTimes:      item.UpdateTimes,
+	}
+}
+
+func ToExerciseInstructionProto(item *models.TOptionExerciseInstruction) *option.OptionExerciseInstruction {
+	if item == nil {
+		return nil
+	}
+	return &option.OptionExerciseInstruction{
+		Id:                  item.Id,
+		TenantId:            item.TenantId,
+		UserId:              item.UserId,
+		AccountId:           item.AccountId,
+		ContractId:          item.ContractId,
+		PositionId:          item.PositionId,
+		ClientInstructionId: item.ClientInstructionId,
+		InstructionType:     option.ExerciseInstructionType(item.InstructionType),
+		Version:             item.Version,
+		Status:              option.ExerciseInstructionStatus(item.Status),
+		SupersedesId:        item.SupersedesId,
+		CutoffTime:          item.CutoffTime,
+		CreateTimes:         item.CreateTimes,
+		UpdateTimes:         item.UpdateTimes,
 	}
 }
 
@@ -399,8 +621,36 @@ func ToAssetInstructionProto(item *models.TOptionAssetInstruction) *option.Optio
 		AssetFlowNo:          item.AssetFlowNo,
 		ReconciliationStatus: option.AssetReconciliationStatus(item.ReconciliationStatus),
 		ReconciledAt:         item.ReconciledAt, MarginLotId: item.MarginLotId,
-		LiquidationId: item.LiquidationId,
+		LiquidationId:  item.LiquidationId,
+		DeliveryUnitId: item.DeliveryUnitId, ExecutionGroup: item.ExecutionGroup,
 	}
+}
+
+func ToPhysicalDeliveryUnitProto(
+	item *models.TOptionPhysicalDeliveryUnit,
+	instructions []*models.TOptionAssetInstruction,
+) *option.OptionPhysicalDeliveryUnit {
+	if item == nil {
+		return nil
+	}
+	result := &option.OptionPhysicalDeliveryUnit{
+		Id: item.Id, TenantId: item.TenantId, DeliveryUnitNo: item.DeliveryUnitNo,
+		BatchId: item.BatchId, BatchNo: item.BatchNo, ContractId: item.ContractId,
+		LongPositionId: item.LongPositionId, LongUserId: item.LongUserId,
+		LongAccountId: item.LongAccountId, ShortPositionId: item.ShortPositionId,
+		ShortUserId: item.ShortUserId, ShortAccountId: item.ShortAccountId,
+		Quantity: conv.FloatString(item.Quantity), DeliveryCoin: item.DeliveryCoin,
+		DeliveryQuantity: conv.FloatString(item.DeliveryQuantity), PaymentCoin: item.PaymentCoin,
+		PaymentAmount: conv.FloatString(item.PaymentAmount),
+		Status:        option.PhysicalDeliveryUnitStatus(item.Status), CureDeadline: item.CureDeadline,
+		FailedInstructionId: item.FailedInstructionId, LastErrorMsg: item.LastErrorMsg,
+		CompletedAt: item.CompletedAt, CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
+		ManualRetryCount: item.ManualRetryCount,
+	}
+	for _, instruction := range instructions {
+		result.AssetInstructions = append(result.AssetInstructions, ToAssetInstructionProto(instruction))
+	}
+	return result
 }
 
 func ToSettlementProto(item *models.TOptionSettlement) *option.OptionSettlement {
@@ -424,6 +674,22 @@ func ToSettlementProto(item *models.TOptionSettlement) *option.OptionSettlement 
 		Remark:           item.Remark,
 		CreateTimes:      item.CreateTimes,
 		UpdateTimes:      item.UpdateTimes,
+	}
+}
+
+func ToSettlementPriceProto(item *models.TOptionSettlementPrice) *option.OptionSettlementPrice {
+	if item == nil {
+		return nil
+	}
+	return &option.OptionSettlementPrice{
+		Id: item.Id, TenantId: item.TenantId, ContractId: item.ContractId,
+		PriceSource: item.PriceSource, WindowStart: item.WindowStart, WindowEnd: item.WindowEnd,
+		SampleCount: item.SampleCount, CalculationMethod: item.CalculationMethod,
+		DeliveryPrice: conv.FloatString(item.DeliveryPrice), SourceSnapshotIds: item.SourceSnapshotIds,
+		Version: item.Version, Status: option.SettlementPriceStatus(item.Status),
+		ConfirmedBy: item.ConfirmedBy, ConfirmedAt: item.ConfirmedAt,
+		CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
+		SupersedesId: item.SupersedesId, ChangeReason: item.ChangeReason, CreatedBy: item.CreatedBy,
 	}
 }
 
@@ -479,14 +745,19 @@ func ToRiskAccountProto(item *models.TOptionRiskAccount) *option.OptionRiskAccou
 	return &option.OptionRiskAccount{
 		Id: item.Id, TenantId: item.TenantId, UserId: item.UserId, AccountId: item.AccountId,
 		SettleCoin: item.SettleCoin, Equity: conv.FloatString(item.Equity),
+		NetOptionValue:    conv.FloatString(item.NetOptionValue),
 		PositionMargin:    conv.FloatString(item.PositionMargin),
 		MaintenanceMargin: conv.FloatString(item.MaintenanceMargin),
 		UnrealizedPnl:     conv.FloatString(item.UnrealizedPnl),
 		RiskRate:          conv.FloatString(item.RiskRate), Status: option.RiskAccountStatus(item.Status),
-		PortfolioRiskMethod:   option.PortfolioRiskMethod(item.PortfolioRiskMethod),
-		PortfolioScenarioLoss: conv.FloatString(item.PortfolioScenarioLoss),
-		PortfolioShortFloor:   conv.FloatString(item.PortfolioShortFloor),
-		LastCalcTime:          item.LastCalcTime, CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
+		PortfolioRiskMethod:         option.PortfolioRiskMethod(item.PortfolioRiskMethod),
+		PortfolioRiskConfigId:       item.PortfolioRiskConfigId,
+		PortfolioRiskConfigVersion:  item.PortfolioRiskConfigVersion,
+		PortfolioScenarioLoss:       conv.FloatString(item.PortfolioScenarioLoss),
+		PortfolioShortFloor:         conv.FloatString(item.PortfolioShortFloor),
+		PortfolioConcentrationAddon: conv.FloatString(item.PortfolioConcentrationAddon),
+		PortfolioLiquidityAddon:     conv.FloatString(item.PortfolioLiquidityAddon),
+		LastCalcTime:                item.LastCalcTime, CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
 	}
 }
 

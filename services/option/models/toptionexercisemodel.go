@@ -34,6 +34,7 @@ type (
 		FindPending(ctx context.Context, tenantId int64, limit int64) ([]*TOptionExercise, error)
 		HasPendingByContract(ctx context.Context, tenantId, contractId int64) (bool, error)
 		FindOneForUpdate(ctx context.Context, id int64) (*TOptionExercise, error)
+		FindOneByClientExerciseId(ctx context.Context, tenantId, userId int64, clientExerciseId string) (*TOptionExercise, error)
 	}
 
 	customTOptionExerciseModel struct {
@@ -61,6 +62,22 @@ func (m *defaultTOptionExerciseModel) FindOneForUpdate(ctx context.Context, id i
 	var item TOptionExercise
 	err := m.QueryRowNoCacheCtx(ctx, &item, query, id)
 	return &item, err
+}
+
+func (m *defaultTOptionExerciseModel) FindOneByClientExerciseId(
+	ctx context.Context,
+	tenantId, userId int64,
+	clientExerciseId string,
+) (*TOptionExercise, error) {
+	query := fmt.Sprintf(
+		"SELECT %s FROM %s WHERE tenant_id = ? AND user_id = ? AND client_exercise_id = ? LIMIT 1",
+		tOptionExerciseRows, m.table,
+	)
+	var item TOptionExercise
+	if err := m.QueryRowNoCacheCtx(ctx, &item, query, tenantId, userId, clientExerciseId); err != nil {
+		return nil, err
+	}
+	return &item, nil
 }
 
 func (m *defaultTOptionExerciseModel) HasPendingByContract(ctx context.Context, tenantId, contractId int64) (bool, error) {

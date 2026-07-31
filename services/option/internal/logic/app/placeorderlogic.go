@@ -11,6 +11,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/common"
 	"wklive/proto/option"
+	logichelpers "wklive/services/option/internal/logic/helpers"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -58,13 +59,26 @@ func (l *PlaceOrderLogic) PlaceOrder(in *option.PlaceOrderReq) (*option.PlaceOrd
 	if contract.Status != int64(option.ContractStatus_CONTRACT_STATUS_TRADING) {
 		return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.ContractNotTradable, i18n.Translate(i18n.ContractNotTradable, l.ctx))}, nil
 	}
+	entryNow := time.Now().Unix()
 	if contract.IsDeleted == int64(common.YesNo_YES_NO_YES) ||
-		time.Now().Unix() < contract.ListTime ||
-		(contract.ExpireTime > 0 && time.Now().Unix() >= contract.ExpireTime) {
+		entryNow < contract.ListTime ||
+		(contract.ExpireTime > 0 && entryNow >= contract.ExpireTime) {
+		return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.ContractNotTradable, i18n.Translate(i18n.ContractNotTradable, l.ctx))}, nil
+	}
+	calendarDecision, calendarErr := logichelpers.IsContractTradingOpen(l.ctx, l.svcCtx, contract, entryNow)
+	if calendarErr != nil || calendarDecision == nil || !calendarDecision.Open {
+		reason := "CALENDAR_EVALUATION_FAILED"
+		if calendarDecision != nil && calendarDecision.Reason != "" {
+			reason = calendarDecision.Reason
+		}
+		l.Errorf(
+			"option order entry denied by trading calendar, tenantId=%d contractId=%d reason=%s err=%v",
+			tenantId, contract.Id, reason, calendarErr,
+		)
 		return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.ContractNotTradable, i18n.Translate(i18n.ContractNotTradable, l.ctx))}, nil
 	}
 	riskAccount, riskErr := l.svcCtx.OptionRiskAccountModel.FindOneByTenantIdUserIdAccountIdSettleCoin(
-		l.ctx, tenantId, userId, in.AccountId, contract.SettleCoin,
+		l.ctx, tenantId, userId, 0, contract.SettleCoin,
 	)
 	if riskErr != nil && !errors.Is(riskErr, models.ErrNotFound) {
 		return nil, riskErr
@@ -74,7 +88,9 @@ func (l *PlaceOrderLogic) PlaceOrder(in *option.PlaceOrderReq) (*option.PlaceOrd
 		case option.RiskAccountStatus_RISK_ACCOUNT_STATUS_LIQUIDATING,
 			option.RiskAccountStatus_RISK_ACCOUNT_STATUS_BANKRUPT,
 			option.RiskAccountStatus_RISK_ACCOUNT_STATUS_RESTRICTED:
-			return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx))}, nil
+			if in.PositionEffect != option.PositionEffect_POSITION_EFFECT_CLOSE {
+				return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx))}, nil
+			}
 		case option.RiskAccountStatus_RISK_ACCOUNT_STATUS_MARGIN_CALL:
 			if in.PositionEffect != option.PositionEffect_POSITION_EFFECT_CLOSE {
 				return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx))}, nil
@@ -99,6 +115,19 @@ func (l *PlaceOrderLogic) PlaceOrder(in *option.PlaceOrderReq) (*option.PlaceOrd
 	}
 	if in.ReduceOnly == common.YesNo_YES_NO_YES && in.PositionEffect != option.PositionEffect_POSITION_EFFECT_CLOSE {
 		return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx))}, nil
+	}
+	mmpGroup := ""
+	if in.Mmp == common.YesNo_YES_NO_YES {
+		if in.OrderType != option.OrderType_ORDER_TYPE_POST_ONLY {
+			return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.OperationNotAllowed, controlReasonMMPInvalidOrder)}, nil
+		}
+		var valid bool
+		mmpGroup, valid = NormalizeMMPGroup(in.MmpGroup)
+		if !valid {
+			return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, controlReasonMMPInvalidOrder)}, nil
+		}
+	} else if in.MmpGroup != "" {
+		return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, controlReasonMMPInvalidOrder)}, nil
 	}
 
 	priceField := in.Price
@@ -150,8 +179,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *option.PlaceOrderReq) (*option.PlaceOrd
 		case option.SellerMarginMode_SELLER_MARGIN_MODE_ISOLATED:
 			market, findErr := l.svcCtx.OptionMarketModel.FindOneByTenantIdContractId(l.ctx, tenantId, contract.Id)
 			now := time.Now().Unix()
-			if findErr != nil || market.UnderlyingPrice.IsPositive() == false ||
-				market.SnapshotTime <= 0 || market.SnapshotTime > now || now-market.SnapshotTime > 30 {
+			if findErr != nil || !logichelpers.IsUnderlyingFresh(market, now, 30) {
 				return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.ContractNotTradable, i18n.Translate(i18n.ContractNotTradable, l.ctx))}, nil
 			}
 			marginAmount = optionSellerMargin(contract, market.UnderlyingPrice, price, qty, false)
@@ -222,18 +250,34 @@ func (l *PlaceOrderLogic) PlaceOrder(in *option.PlaceOrderReq) (*option.PlaceOrd
 		Source:           int64(option.OrderSource_ORDER_SOURCE_APP),
 		ClientOrderId:    in.ClientOrderId,
 		ReduceOnly:       int64(in.ReduceOnly),
-		Mmp:              int64(in.Mmp),
+		Mmp:              int64(common.YesNo_YES_NO_NO),
+		MmpGroup:         mmpGroup,
 		Status:           int64(initialStatus),
 		CreateTimes:      now,
 		UpdateTimes:      now,
 	}
+	if in.Mmp == common.YesNo_YES_NO_YES {
+		order.Mmp = int64(common.YesNo_YES_NO_YES)
+	}
 	var id int64
+	var controlRejection *orderControlRejection
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		orderModel := models.NewTOptionOrderModel(conn, l.svcCtx.Config.CacheRedis)
 		clientOrderKeyModel := models.NewTOptionClientOrderKeyModel(conn, l.svcCtx.Config.CacheRedis)
 		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis)
 		instructionModel := models.NewTOptionAssetInstructionModel(conn, l.svcCtx.Config.CacheRedis)
+		lockedContract, rejection, err := evaluateOrderTradingControls(
+			ctx, l.svcCtx, conn, order, now,
+		)
+		if err != nil {
+			return err
+		}
+		if rejection != nil {
+			controlRejection = rejection
+			return nil
+		}
+		contract = lockedContract
 		if contract.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) &&
 			order.Side == int64(common.Side_SIDE_SELL) {
 			portfolioMargin, err := calculatePortfolioOrderMargin(
@@ -306,6 +350,15 @@ func (l *PlaceOrderLogic) PlaceOrder(in *option.PlaceOrderReq) (*option.PlaceOrd
 			return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.QuantityFormatError, i18n.Translate(i18n.QuantityFormatError, l.ctx)), Data: &option.PlaceOrderData{OrderNo: order.OrderNo, OrderId: id}}, nil
 		}
 		return nil, err
+	}
+	if controlRejection != nil {
+		l.Infof(
+			"option trading control metric event=%s reason=%s tenantId=%d userId=%d contractId=%d detail=%s",
+			controlEventOrderRejected, controlRejection.reason, tenantId, userId, in.ContractId, controlRejection.detail,
+		)
+		return &option.PlaceOrderResp{
+			Base: helper.ErrResp(i18n.OperationNotAllowed, controlRejection.reason),
+		}, nil
 	}
 
 	if marginAmount.IsPositive() {

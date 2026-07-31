@@ -6,6 +6,7 @@ import (
 
 	"wklive/proto/asset"
 	"wklive/proto/option"
+	"wklive/services/option/models"
 )
 
 func TestOptionAssetRetryDelay(t *testing.T) {
@@ -23,6 +24,36 @@ func TestOptionAssetRetryDelay(t *testing.T) {
 		if got := optionAssetRetryDelay(test.retry); got != test.want {
 			t.Fatalf("retry=%d got=%s want=%s", test.retry, got, test.want)
 		}
+	}
+}
+
+func TestTradeCorrectionInstructionOutcome(t *testing.T) {
+	success := int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS)
+	pending := int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING)
+	manual := int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_MANUAL_REVIEW)
+
+	allSuccess, manualReview, lastError := tradeCorrectionInstructionOutcome(
+		[]*models.TOptionAssetInstruction{{Status: success}, {Status: success}},
+	)
+	if !allSuccess || manualReview || lastError != "" {
+		t.Fatalf("successful correction summarized incorrectly: %t %t %q", allSuccess, manualReview, lastError)
+	}
+
+	allSuccess, manualReview, _ = tradeCorrectionInstructionOutcome(
+		[]*models.TOptionAssetInstruction{{Status: success}, {Status: pending}},
+	)
+	if allSuccess || manualReview {
+		t.Fatalf("pending correction summarized incorrectly: %t %t", allSuccess, manualReview)
+	}
+
+	allSuccess, manualReview, lastError = tradeCorrectionInstructionOutcome(
+		[]*models.TOptionAssetInstruction{
+			{Status: success},
+			{Status: manual, LastErrorMsg: "insufficient balance"},
+		},
+	)
+	if allSuccess || !manualReview || lastError != "insufficient balance" {
+		t.Fatalf("manual correction summarized incorrectly: %t %t %q", allSuccess, manualReview, lastError)
 	}
 }
 

@@ -1,0 +1,364 @@
+groups:
+  - name: wklive-option-operations
+    rules:
+      - alert: OptionOperationsMetricsMissing
+        expr: >-
+          absent(wklive_option_operations_sample_success)
+          or (wklive_option_operations_sample_success == 0)
+          or (time() - wklive_option_operations_last_success_timestamp_seconds > 45)
+        for: 1m
+        labels:
+          severity: warning
+          catalog_id: OPT-A008
+        annotations:
+          summary: Option 运营指标采样缺失或陈旧
+          description: >-
+            运营水位最近一次成功采样已超过45秒，或采样 SQL 失败。
+            告警期间不得把缺失序列解释为异常已恢复。
+
+      - alert: OptionAssetInstructionException
+        expr: >-
+          wklive_option_operations_count{
+            category=~"asset_failed|asset_manual_review"
+          } > 0
+        for: 0m
+        labels:
+          severity: warning
+          catalog_id: OPT-A006
+        annotations:
+          summary: Option 资产指令失败或进入人工处理
+          description: >-
+            tenant_id={{ $labels.tenant_id }}, category={{ $labels.category }},
+            count={{ $value }}。
+
+      - alert: OptionAssetInstructionStale
+        expr: >-
+          (wklive_option_operations_count{category="asset_pending"} > 0)
+          and
+          (time() - wklive_option_operations_oldest_timestamp_seconds{
+            category="asset_pending"
+          } > 60)
+        for: 1m
+        labels:
+          severity: warning
+          catalog_id: OPT-A006
+        annotations:
+          summary: Option 资产指令积压超过60秒
+          description: tenant_id={{ $labels.tenant_id }}，按原指令号检查和恢复。
+
+      - alert: OptionReconciliationOpen
+        expr: wklive_option_operations_count{category="reconciliation_open"} > 0
+        for: 1m
+        labels:
+          severity: warning
+          catalog_id: OPT-A007
+        annotations:
+          summary: Option/Asset 存在开放对账差异
+          description: tenant_id={{ $labels.tenant_id }}，开放差异数={{ $value }}。
+
+      - alert: OptionRiskAccountStale
+        expr: wklive_option_operations_count{category="risk_account_stale"} > 0
+        for: 1m
+        labels:
+          severity: warning
+          catalog_id: OPT-A004
+        annotations:
+          summary: Option 风险账户扫描陈旧
+          description: tenant_id={{ $labels.tenant_id }}，陈旧账户数={{ $value }}。
+
+      - alert: OptionEventBacklogStale
+        expr: >-
+          (wklive_option_operations_count{
+            category=~"outbox_pending|inbox_pending"
+          } > 0)
+          and
+          (time() - wklive_option_operations_oldest_timestamp_seconds{
+            category=~"outbox_pending|inbox_pending"
+          } > 60)
+        for: 1m
+        labels:
+          severity: warning
+          catalog_id: OPT-A008
+        annotations:
+          summary: Option 事务事件积压超过60秒
+          description: >-
+            tenant_id={{ $labels.tenant_id }}, category={{ $labels.category }},
+            count={{ $value }}。
+
+      - alert: OptionExerciseBacklogStale
+        expr: >-
+          (wklive_option_operations_count{category="exercise_pending"} > 0)
+          and
+          (time() - wklive_option_operations_oldest_timestamp_seconds{
+            category="exercise_pending"
+          } > 60)
+        for: 1m
+        labels:
+          severity: warning
+          catalog_id: OPT-A009
+        annotations:
+          summary: Option 主动行权积压超过60秒
+          description: tenant_id={{ $labels.tenant_id }}，待处理数={{ $value }}。
+
+      - alert: OptionSettlementException
+        expr: wklive_option_operations_count{category="settlement_failed"} > 0
+        for: 0m
+        labels:
+          severity: warning
+          catalog_id: OPT-A012
+        annotations:
+          summary: Option 结算存在失败记录
+          description: tenant_id={{ $labels.tenant_id }}，失败结算数={{ $value }}。
+
+      - alert: OptionSettlementBacklogStale
+        expr: >-
+          (wklive_option_operations_count{category="settlement_pending"} > 0)
+          and
+          (time() - wklive_option_operations_oldest_timestamp_seconds{
+            category="settlement_pending"
+          } > 300)
+        for: 1m
+        labels:
+          severity: warning
+          catalog_id: OPT-A012
+        annotations:
+          summary: Option 结算批次积压超过5分钟
+          description: tenant_id={{ $labels.tenant_id }}，待处理结算数={{ $value }}。
+
+      - alert: OptionLiquidationException
+        expr: wklive_option_operations_count{category="liquidation_exception"} > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A013
+        annotations:
+          summary: Option 强平进入失败、破产或人工处理
+          description: tenant_id={{ $labels.tenant_id }}，异常强平数={{ $value }}。
+
+      - alert: OptionLiquidationBacklogStale
+        expr: >-
+          (wklive_option_operations_count{category="liquidation_pending"} > 0)
+          and
+          (time() - wklive_option_operations_oldest_timestamp_seconds{
+            category="liquidation_pending"
+          } > 60)
+        for: 1m
+        labels:
+          severity: warning
+          catalog_id: OPT-A013
+        annotations:
+          summary: Option 强平积压超过60秒
+          description: tenant_id={{ $labels.tenant_id }}，待处理强平数={{ $value }}。
+
+      - alert: OptionPhysicalDeliveryException
+        expr: >-
+          wklive_option_operations_count{
+            category="physical_delivery_exception"
+          } > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A026
+        annotations:
+          summary: Option 实物交割存在补资、人工或违约单元
+          description: tenant_id={{ $labels.tenant_id }}，异常单元数={{ $value }}。
+
+      - alert: OptionUnresolvedDeficit
+        expr: >-
+          wklive_option_operations_amount{category="unresolved_deficit"} > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A014
+        annotations:
+          summary: Option 存在保险后未解决穿仓缺口
+          description: >-
+            tenant_id={{ $labels.tenant_id }}, coin={{ $labels.coin }},
+            amount={{ $value }}。
+
+      - alert: OptionTradingControlNotConfigured
+        expr: >-
+          wklive_option_operations_count{
+            category=~"trading_control_unconfigured|control_not_configured_recent"
+          } > 0
+        for: 0m
+        labels:
+          severity: warning
+          catalog_id: OPT-A017
+        annotations:
+          summary: Option 交易态合约控制参数缺失
+          description: >-
+            tenant_id={{ $labels.tenant_id }}, category={{ $labels.category }},
+            count={{ $value }}；保持新单失败关闭。
+
+      - alert: OptionPriceBandRejectionBurst
+        expr: >-
+          wklive_option_operations_count{
+            category="price_band_contract_breach"
+          } > 0
+        for: 1m
+        labels:
+          severity: warning
+          catalog_id: OPT-A018
+        annotations:
+          summary: Option 合约一分钟价格带拒单超过20笔
+          description: tenant_id={{ $labels.tenant_id }}，超阈值合约组数={{ $value }}。
+
+      - alert: OptionCircuitBreakerTriggered
+        expr: >-
+          wklive_option_operations_count{category="circuit_breaker_recent"} > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A019
+        annotations:
+          summary: Option 最近五分钟触发熔断
+          description: tenant_id={{ $labels.tenant_id }}，熔断事件数={{ $value }}。
+
+      - alert: OptionPausedContractActiveOrders
+        expr: >-
+          wklive_option_operations_count{
+            category="paused_contract_active_orders"
+          } > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A019
+        annotations:
+          summary: Option 暂停合约30秒后仍有活动或资金中订单
+          description: tenant_id={{ $labels.tenant_id }}，受影响合约数={{ $value }}。
+
+      - alert: OptionKillSwitchActiveOrders
+        expr: >-
+          wklive_option_operations_count{
+            category="kill_switch_active_orders"
+          } > 0
+        for: 0m
+        labels:
+          severity: warning
+          catalog_id: OPT-A020
+        annotations:
+          summary: Option kill switch 启用30秒后仍有活动或资金中订单
+          description: tenant_id={{ $labels.tenant_id }}，受影响用户数={{ $value }}。
+
+      - alert: OptionSTPBurst
+        expr: >-
+          wklive_option_operations_count{
+            category=~"stp_user_breach|stp_tenant_breach"
+          } > 0
+        for: 1m
+        labels:
+          severity: warning
+          catalog_id: OPT-A021
+        annotations:
+          summary: Option STP 五分钟窗口超过用户或租户阈值
+          description: >-
+            tenant_id={{ $labels.tenant_id }}, category={{ $labels.category }},
+            affected={{ $value }}。
+
+      - alert: OptionPositionLimitRejectionBurst
+        expr: >-
+          wklive_option_operations_count{
+            category="position_limit_group_breach"
+          } > 0
+        for: 1m
+        labels:
+          severity: warning
+          catalog_id: OPT-A022
+        annotations:
+          summary: Option 用户/合约限额拒单五分钟超过20笔
+          description: tenant_id={{ $labels.tenant_id }}，超阈值用户合约组数={{ $value }}。
+
+      - alert: OptionTradeCorrectionException
+        expr: >-
+          wklive_option_operations_count{
+            category="trade_correction_exception"
+          } > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A023
+        annotations:
+          summary: Option 异常成交现金更正超龄或人工处理
+          description: tenant_id={{ $labels.tenant_id }}，异常案件数={{ $value }}。
+
+      - alert: OptionMMPException
+        expr: >-
+          wklive_option_operations_count{category="mmp_exception"} > 0
+        for: 0m
+        labels:
+          severity: warning
+          catalog_id: OPT-A024
+        annotations:
+          summary: Option MMP 残余报价、撤单错误或异常禁用
+          description: tenant_id={{ $labels.tenant_id }}，异常报价组数={{ $value }}。
+
+      - alert: OptionUnderlyingMarketStale
+        expr: >-
+          wklive_option_operations_count{
+            category="underlying_market_stale"
+          } > 0
+        for: 0m
+        labels:
+          severity: warning
+          catalog_id: OPT-A001
+        annotations:
+          summary: Option 交易合约标的行情缺失、陈旧或来自未来
+          description: tenant_id={{ $labels.tenant_id }}，受影响合约数={{ $value }}。
+
+      - alert: OptionMarkMarketStale
+        expr: >-
+          wklive_option_operations_count{category="mark_market_stale"} > 0
+        for: 0m
+        labels:
+          severity: warning
+          catalog_id: OPT-A002
+        annotations:
+          summary: Option 交易合约标记价缺失、陈旧或来自未来
+          description: tenant_id={{ $labels.tenant_id }}，受影响合约数={{ $value }}。
+
+      - alert: OptionGreeksMarketInvalid
+        expr: >-
+          wklive_option_operations_count{category="greeks_market_invalid"} > 0
+        for: 1m
+        labels:
+          severity: warning
+          catalog_id: OPT-A003
+        annotations:
+          summary: Option 交易合约 Greeks 时间戳缺失或来自未来
+          description: >-
+            tenant_id={{ $labels.tenant_id }}，受影响合约数={{ $value }}；
+            陈旧阈值仍必须按产品配置后另行加载。
+
+      - alert: OptionRiskScanFailedGroups
+        expr: wklive_option_risk_scan_failed_groups > 0
+        for: 0m
+        labels:
+          severity: warning
+          catalog_id: OPT-A005
+        annotations:
+          summary: Option 最近一次风险扫描存在失败钱包
+          description: tenant_id={{ $labels.tenant_id }}，失败钱包数={{ $value }}。
+
+      - alert: OptionRiskScanFailureRatioHigh
+        expr: wklive_option_risk_scan_failure_ratio > 0.05
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A005
+        annotations:
+          summary: Option 最近一次风险扫描失败比例超过5%
+          description: tenant_id={{ $labels.tenant_id }}，失败比例={{ $value }}。
+
+      - alert: OptionRiskScanExecutionFailure
+        expr: >-
+          increase(wklive_option_risk_scan_execution_failure_total[5m]) > 0
+        for: 0m
+        labels:
+          severity: warning
+          catalog_id: OPT-A005
+        annotations:
+          summary: Option 风险扫描在钱包计算前后发生执行失败
+          description: >-
+            tenant_scope={{ $labels.tenant_scope }}, stage={{ $labels.stage }},
+            five_minute_failures={{ $value }}。

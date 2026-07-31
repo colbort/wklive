@@ -44,23 +44,28 @@ type (
 	}
 
 	TOptionRiskAccount struct {
-		Id                    int64           `db:"id"`                      // 主键ID
-		TenantId              int64           `db:"tenant_id"`               // 租户ID
-		UserId                int64           `db:"user_id"`                 // 用户ID
-		AccountId             int64           `db:"account_id"`              // Option账户ID
-		SettleCoin            string          `db:"settle_coin"`             // 结算币种
-		Equity                decimal.Decimal `db:"equity"`                  // 风险权益
-		PositionMargin        decimal.Decimal `db:"position_margin"`         // 卖方持仓保证金
-		MaintenanceMargin     decimal.Decimal `db:"maintenance_margin"`      // 维持保证金
-		UnrealizedPnl         decimal.Decimal `db:"unrealized_pnl"`          // 未实现盈亏
-		RiskRate              decimal.Decimal `db:"risk_rate"`               // 维持保证金/权益
-		Status                int64           `db:"status"`                  // 状态：1正常 2追保 3强平中 4破产 5限制
-		PortfolioRiskMethod   int64           `db:"portfolio_risk_method"`   // 组合风险算法：0无 1到期损益情景V1
-		PortfolioScenarioLoss decimal.Decimal `db:"portfolio_scenario_loss"` // 组合价格情景最大损失
-		PortfolioShortFloor   decimal.Decimal `db:"portfolio_short_floor"`   // 组合裸空头最低保证金
-		LastCalcTime          int64           `db:"last_calc_time"`          // 最后计算时间
-		CreateTimes           int64           `db:"create_times"`            // 创建时间
-		UpdateTimes           int64           `db:"update_times"`            // 更新时间
+		Id                          int64           `db:"id"`                            // 主键ID
+		TenantId                    int64           `db:"tenant_id"`                     // 租户ID
+		UserId                      int64           `db:"user_id"`                       // 用户ID
+		AccountId                   int64           `db:"account_id"`                    // Option账户ID
+		SettleCoin                  string          `db:"settle_coin"`                   // 结算币种
+		Equity                      decimal.Decimal `db:"equity"`                        // 风险权益
+		NetOptionValue              decimal.Decimal `db:"net_option_value"`              // 多头市值减空头市值
+		PositionMargin              decimal.Decimal `db:"position_margin"`               // 卖方持仓保证金
+		MaintenanceMargin           decimal.Decimal `db:"maintenance_margin"`            // 维持保证金
+		UnrealizedPnl               decimal.Decimal `db:"unrealized_pnl"`                // 未实现盈亏
+		RiskRate                    decimal.Decimal `db:"risk_rate"`                     // 维持保证金/权益
+		Status                      int64           `db:"status"`                        // 状态：1正常 2追保 3强平中 4破产 5限制
+		PortfolioRiskMethod         int64           `db:"portfolio_risk_method"`         // 组合风险算法：0无 1到期损益情景V1
+		PortfolioRiskConfigId       int64           `db:"portfolio_risk_config_id"`      // 本次计算使用的组合风险参数版本ID
+		PortfolioRiskConfigVersion  int64           `db:"portfolio_risk_config_version"` // 本次计算使用的组合风险参数版本号
+		PortfolioScenarioLoss       decimal.Decimal `db:"portfolio_scenario_loss"`       // 组合价格情景最大损失
+		PortfolioShortFloor         decimal.Decimal `db:"portfolio_short_floor"`         // 组合裸空头最低保证金
+		PortfolioConcentrationAddon decimal.Decimal `db:"portfolio_concentration_addon"` // 组合集中度附加保证金
+		PortfolioLiquidityAddon     decimal.Decimal `db:"portfolio_liquidity_addon"`     // 组合流动性附加保证金
+		LastCalcTime                int64           `db:"last_calc_time"`                // 最后计算时间
+		CreateTimes                 int64           `db:"create_times"`                  // 创建时间
+		UpdateTimes                 int64           `db:"update_times"`                  // 更新时间
 	}
 )
 
@@ -127,8 +132,8 @@ func (m *defaultTOptionRiskAccountModel) Insert(ctx context.Context, data *TOpti
 	tOptionRiskAccountIdKey := fmt.Sprintf("%s%v", cacheTOptionRiskAccountIdPrefix, data.Id)
 	tOptionRiskAccountTenantIdUserIdAccountIdSettleCoinKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTOptionRiskAccountTenantIdUserIdAccountIdSettleCoinPrefix, data.TenantId, data.UserId, data.AccountId, data.SettleCoin)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionRiskAccountRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.AccountId, data.SettleCoin, data.Equity, data.PositionMargin, data.MaintenanceMargin, data.UnrealizedPnl, data.RiskRate, data.Status, data.PortfolioRiskMethod, data.PortfolioScenarioLoss, data.PortfolioShortFloor, data.LastCalcTime, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionRiskAccountRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.AccountId, data.SettleCoin, data.Equity, data.NetOptionValue, data.PositionMargin, data.MaintenanceMargin, data.UnrealizedPnl, data.RiskRate, data.Status, data.PortfolioRiskMethod, data.PortfolioRiskConfigId, data.PortfolioRiskConfigVersion, data.PortfolioScenarioLoss, data.PortfolioShortFloor, data.PortfolioConcentrationAddon, data.PortfolioLiquidityAddon, data.LastCalcTime, data.CreateTimes, data.UpdateTimes)
 	}, tOptionRiskAccountIdKey, tOptionRiskAccountTenantIdUserIdAccountIdSettleCoinKey)
 	return ret, err
 }
@@ -143,7 +148,7 @@ func (m *defaultTOptionRiskAccountModel) Update(ctx context.Context, newData *TO
 	tOptionRiskAccountTenantIdUserIdAccountIdSettleCoinKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTOptionRiskAccountTenantIdUserIdAccountIdSettleCoinPrefix, data.TenantId, data.UserId, data.AccountId, data.SettleCoin)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionRiskAccountRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.AccountId, newData.SettleCoin, newData.Equity, newData.PositionMargin, newData.MaintenanceMargin, newData.UnrealizedPnl, newData.RiskRate, newData.Status, newData.PortfolioRiskMethod, newData.PortfolioScenarioLoss, newData.PortfolioShortFloor, newData.LastCalcTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.AccountId, newData.SettleCoin, newData.Equity, newData.NetOptionValue, newData.PositionMargin, newData.MaintenanceMargin, newData.UnrealizedPnl, newData.RiskRate, newData.Status, newData.PortfolioRiskMethod, newData.PortfolioRiskConfigId, newData.PortfolioRiskConfigVersion, newData.PortfolioScenarioLoss, newData.PortfolioShortFloor, newData.PortfolioConcentrationAddon, newData.PortfolioLiquidityAddon, newData.LastCalcTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tOptionRiskAccountIdKey, tOptionRiskAccountTenantIdUserIdAccountIdSettleCoinKey)
 	return err
 }

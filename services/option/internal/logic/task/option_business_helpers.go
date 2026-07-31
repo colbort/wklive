@@ -77,7 +77,7 @@ func applyTradeToOrder(order *models.TOptionOrder, contract *models.TOptionContr
 	order.Status = int64(option.OrderStatus_ORDER_STATUS_PART_FILLED)
 }
 
-func updateOpenPosition(ctx context.Context, model models.TOptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty decimal.Decimal, now int64) error {
+func updateOpenPosition(ctx context.Context, model models.TOptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty, fee decimal.Decimal, now int64) error {
 	side := openPositionSide(order.Side)
 	if side == 0 {
 		return i18n.StatusError(ctx, i18n.ParamError)
@@ -107,6 +107,9 @@ func updateOpenPosition(ctx context.Context, model models.TOptionPositionModel, 
 			MarkPrice:        price,
 			PositionValue:    price.Mul(qty).Mul(multiplier),
 			ExerciseableQty:  exerciseableQty,
+			FeePaid:          fee,
+			RealizedPnl:      fee.Neg(),
+			TotalReturn:      fee.Neg(),
 			Status:           int64(option.PositionStatus_POSITION_STATUS_HOLDING),
 			LastCalcTime:     now,
 			CreateTimes:      now,
@@ -131,12 +134,14 @@ func updateOpenPosition(ctx context.Context, model models.TOptionPositionModel, 
 		pos.UnrealizedPnl = pos.OpenAvgPrice.Sub(pos.MarkPrice).Mul(pos.PositionQty).Mul(multiplier)
 	}
 	pos.Status = int64(option.PositionStatus_POSITION_STATUS_HOLDING)
+	pos.FeePaid = pos.FeePaid.Add(fee)
+	recalculatePositionReturn(pos)
 	pos.LastCalcTime = now
 	pos.UpdateTimes = now
 	return model.Update(ctx, pos)
 }
 
-func updateClosePosition(ctx context.Context, model models.TOptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty decimal.Decimal, now int64) error {
+func updateClosePosition(ctx context.Context, model models.TOptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty, fee decimal.Decimal, now int64) error {
 	side := closePositionSide(order.Side)
 	if side == 0 {
 		return i18n.StatusError(ctx, i18n.ParamError)
@@ -152,12 +157,16 @@ func updateClosePosition(ctx context.Context, model models.TOptionPositionModel,
 
 	reduceQty := decimal.Min(qty, pos.PositionQty)
 	multiplier := optionMultiplier(contract)
+	tradeGross := decimal.Zero
 	if side == int64(common.PositionSide_POSITION_SIDE_LONG) {
-		pos.RealizedPnl = pos.RealizedPnl.Add(price.Sub(pos.OpenAvgPrice).Mul(reduceQty).Mul(multiplier))
+		tradeGross = price.Sub(pos.OpenAvgPrice).Mul(reduceQty).Mul(multiplier)
 		pos.ExerciseableQty = decimal.Max(pos.ExerciseableQty.Sub(reduceQty), decimal.Zero)
 	} else {
-		pos.RealizedPnl = pos.RealizedPnl.Add(pos.OpenAvgPrice.Sub(price).Mul(reduceQty).Mul(multiplier))
+		tradeGross = pos.OpenAvgPrice.Sub(price).Mul(reduceQty).Mul(multiplier)
 	}
+	pos.TradeRealizedPnl = pos.TradeRealizedPnl.Add(tradeGross)
+	pos.FeePaid = pos.FeePaid.Add(fee)
+	recalculatePositionReturn(pos)
 
 	if pos.FrozenQty.GreaterThanOrEqual(reduceQty) {
 		pos.FrozenQty = pos.FrozenQty.Sub(reduceQty)
@@ -183,11 +192,11 @@ func updateClosePosition(ctx context.Context, model models.TOptionPositionModel,
 	return model.Update(ctx, pos)
 }
 
-func updatePositionByFilledOrder(ctx context.Context, model models.TOptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty decimal.Decimal, now int64) error {
+func updatePositionByFilledOrder(ctx context.Context, model models.TOptionPositionModel, contract *models.TOptionContract, order *models.TOptionOrder, price, qty, fee decimal.Decimal, now int64) error {
 	if order.PositionEffect == int64(option.PositionEffect_POSITION_EFFECT_CLOSE) {
-		return updateClosePosition(ctx, model, contract, order, price, qty, now)
+		return updateClosePosition(ctx, model, contract, order, price, qty, fee, now)
 	}
-	return updateOpenPosition(ctx, model, contract, order, price, qty, now)
+	return updateOpenPosition(ctx, model, contract, order, price, qty, fee, now)
 }
 
 func freezeClosePosition(ctx context.Context, model models.TOptionPositionModel, order *models.TOptionOrder, now int64) error {
@@ -249,6 +258,50 @@ func optionSettlementPayoff(contract *models.TOptionContract, deliveryPrice, qty
 
 func optionExerciseAmount(contract *models.TOptionContract, qty decimal.Decimal) decimal.Decimal {
 	return contract.StrikePrice.Mul(qty).Mul(optionMultiplier(contract)).Round(16)
+}
+
+// optionSettlementGrossDelta uses the same mark-to-open convention as a normal
+// close. Fees are recorded separately on the position.
+func optionSettlementGrossDelta(
+	side int64,
+	openAveragePrice, settledPayoff, quantity, multiplier decimal.Decimal,
+) decimal.Decimal {
+	premiumBasis := openAveragePrice.Mul(quantity).Mul(multiplier)
+	switch side {
+	case int64(common.PositionSide_POSITION_SIDE_LONG):
+		return settledPayoff.Sub(premiumBasis).Round(16)
+	case int64(common.PositionSide_POSITION_SIDE_SHORT):
+		return premiumBasis.Sub(settledPayoff).Round(16)
+	default:
+		return decimal.Zero
+	}
+}
+
+func applyPositionSettlementReturn(
+	position *models.TOptionPosition,
+	settledPayoff, exerciseFee, quantity, multiplier decimal.Decimal,
+) {
+	if position == nil || !quantity.IsPositive() {
+		return
+	}
+	position.SettlementRealizedPnl = position.SettlementRealizedPnl.Add(
+		optionSettlementGrossDelta(
+			position.Side, position.OpenAvgPrice, settledPayoff, quantity, multiplier,
+		),
+	)
+	position.FeePaid = position.FeePaid.Add(exerciseFee)
+	recalculatePositionReturn(position)
+}
+
+func recalculatePositionReturn(position *models.TOptionPosition) {
+	if position == nil {
+		return
+	}
+	position.TotalReturn = position.TradeRealizedPnl.
+		Add(position.SettlementRealizedPnl).
+		Sub(position.FeePaid).
+		Round(16)
+	position.RealizedPnl = position.TotalReturn
 }
 
 func applyOptionAccountDelta(ctx context.Context, accountModel models.TOptionAccountModel, billModel models.TOptionBillModel, tenantId, userId, accountId int64, coin string, amount decimal.Decimal, refType, refId int64, bizNo, remark string, realized bool, now int64) error {

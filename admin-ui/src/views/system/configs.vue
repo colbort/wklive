@@ -54,7 +54,7 @@
         />
         <el-table-column prop="configKey" :label="t('system.configKey')" min-width="150">
           <template #default="{ row }">
-            {{ t('options.'+row.configKey) }}
+            {{ t('options.' + row.configKey) }}
           </template>
         </el-table-column>
         <el-table-column prop="configValue" :label="t('system.configValue')" min-width="200">

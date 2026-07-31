@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"time"
 
-	"wklive/proto/common"
 	"wklive/proto/option"
 	"wklive/services/option/internal/logic/helpers"
 	"wklive/services/option/internal/svc"
@@ -51,10 +50,6 @@ func (l *ProcessExercisesLogic) ProcessExercises(in *option.OptionTaskReq) (*opt
 				}
 				continue
 			}
-			if err := l.cancelAssignedShortCloseOrders(item); err != nil {
-				l.Errorf("cancel option exercise close orders failed, exerciseNo=%s err=%v", item.ExerciseNo, err)
-				continue
-			}
 			if err := l.createExerciseClearing(item); err != nil {
 				l.Errorf("create option exercise clearing failed, exerciseNo=%s err=%v", item.ExerciseNo, err)
 			}
@@ -63,40 +58,14 @@ func (l *ProcessExercisesLogic) ProcessExercises(in *option.OptionTaskReq) (*opt
 	})
 }
 
-func (l *ProcessExercisesLogic) cancelAssignedShortCloseOrders(exercise *models.TOptionExercise) error {
-	cursor := int64(0)
-	for {
-		orders, _, err := l.svcCtx.OptionOrderModel.FindPage(l.ctx, models.OptionOrderPageFilter{
-			TenantId: exercise.TenantId, ContractId: exercise.ContractId,
-			Side:           int64(common.Side_SIDE_BUY),
-			PositionEffect: int64(option.PositionEffect_POSITION_EFFECT_CLOSE),
-			Statuses: []int64{
-				int64(option.OrderStatus_ORDER_STATUS_FUNDING),
-				int64(option.OrderStatus_ORDER_STATUS_PENDING),
-				int64(option.OrderStatus_ORDER_STATUS_PART_FILLED),
-			},
-		}, cursor, 100)
-		if err != nil {
-			return err
-		}
-		for _, order := range orders {
-			cursor = order.Id
-			if err := cancelOptionSystemOrder(l.ctx, l.svcCtx, order.Id, "AMERICAN_EXERCISE_ASSIGNMENT"); err != nil {
-				return err
-			}
-		}
-		if len(orders) < 100 {
-			return nil
-		}
-	}
-}
-
 func (l *ProcessExercisesLogic) createExerciseClearing(exercise *models.TOptionExercise) error {
-	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+	var canceledOrders []*models.TOptionOrder
+	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		exerciseModel := models.NewTOptionExerciseModel(conn, l.svcCtx.Config.CacheRedis)
 		assignmentModel := models.NewTOptionExerciseAssignmentModel(conn, l.svcCtx.Config.CacheRedis)
 		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis)
+		orderModel := models.NewTOptionOrderModel(conn, l.svcCtx.Config.CacheRedis)
 		contractModel := models.NewTOptionContractModel(conn, l.svcCtx.Config.CacheRedis)
 		marginLotModel := models.NewTOptionMarginLotModel(conn, l.svcCtx.Config.CacheRedis)
 		instructionModel := models.NewTOptionAssetInstructionModel(conn, l.svcCtx.Config.CacheRedis)
@@ -131,21 +100,11 @@ func (l *ProcessExercisesLogic) createExerciseClearing(exercise *models.TOptionE
 			longPosition.ExerciseableQty.LessThan(current.ExerciseQty) {
 			return errors.New("early exercise long position reservation changed")
 		}
-		shorts, _, err := positionModel.FindPage(ctx, models.OptionPositionPageFilter{
-			TenantId: current.TenantId, ContractId: current.ContractId,
-			Side:   int64(common.PositionSide_POSITION_SIDE_SHORT),
-			Status: int64(option.PositionStatus_POSITION_STATUS_HOLDING),
-		}, 0, 500)
+		shorts, err := positionModel.FindAssignableShorts(
+			ctx, current.TenantId, current.ContractId,
+		)
 		if err != nil {
 			return err
-		}
-		available := decimal.Zero
-		for _, short := range shorts {
-			available = available.Add(short.AvailableQty)
-		}
-		if available.LessThan(current.ExerciseQty) {
-			return fmt.Errorf("insufficient assignable short quantity: have=%s need=%s",
-				available, current.ExerciseQty)
 		}
 		now := time.Now().Unix()
 		remainingQty := current.ExerciseQty
@@ -153,6 +112,25 @@ func (l *ProcessExercisesLogic) createExerciseClearing(exercise *models.TOptionE
 		for _, candidate := range shorts {
 			if !remainingQty.IsPositive() {
 				break
+			}
+			closeOrders, err := orderModel.FindActiveCloseOrdersForUpdate(
+				ctx,
+				candidate.TenantId, candidate.UserId, candidate.AccountId, candidate.ContractId,
+			)
+			if err != nil {
+				return err
+			}
+			for _, closeOrder := range closeOrders {
+				changed, err := cancelOptionSystemOrderInTx(
+					ctx, orderModel, positionModel, instructionModel,
+					closeOrder, "AMERICAN_EXERCISE_ASSIGNMENT", now,
+				)
+				if err != nil {
+					return err
+				}
+				if changed {
+					canceledOrders = append(canceledOrders, closeOrder)
+				}
 			}
 			short, err := positionModel.FindOneForUpdate(ctx, candidate.Id)
 			if err != nil {
@@ -186,7 +164,9 @@ func (l *ProcessExercisesLogic) createExerciseClearing(exercise *models.TOptionE
 			short.PositionQty = decimal.Max(short.PositionQty.Sub(assignQty), decimal.Zero)
 			short.AvailableQty = decimal.Max(short.AvailableQty.Sub(assignQty), decimal.Zero)
 			short.PositionValue = short.MarkPrice.Mul(short.PositionQty).Mul(optionMultiplier(contract)).Round(16)
-			short.RealizedPnl = short.RealizedPnl.Sub(payoff)
+			applyPositionSettlementReturn(
+				short, payoff, decimal.Zero, assignQty, optionMultiplier(contract),
+			)
 			short.UnrealizedPnl = short.OpenAvgPrice.Sub(short.MarkPrice).
 				Mul(short.PositionQty).Mul(optionMultiplier(contract)).Round(16)
 			short.UpdateTimes = now
@@ -205,7 +185,10 @@ func (l *ProcessExercisesLogic) createExerciseClearing(exercise *models.TOptionE
 		}
 		netCredit := current.ProfitAmount.Sub(current.Fee)
 		if remainingQty.IsPositive() {
-			return errors.New("early exercise assignment quantity is incomplete")
+			return fmt.Errorf(
+				"early exercise assignment quantity is incomplete: remaining=%s",
+				remainingQty,
+			)
 		}
 		if err := validateEarlyExerciseBalance(totalDebit, current.ProfitAmount, current.Fee, netCredit); err != nil {
 			return err
@@ -240,7 +223,10 @@ func (l *ProcessExercisesLogic) createExerciseClearing(exercise *models.TOptionE
 		longPosition.ExerciseableQty = decimal.Max(longPosition.ExerciseableQty.Sub(current.ExerciseQty), decimal.Zero)
 		longPosition.PositionValue = longPosition.MarkPrice.Mul(longPosition.PositionQty).
 			Mul(optionMultiplier(contract)).Round(16)
-		longPosition.RealizedPnl = longPosition.RealizedPnl.Add(netCredit)
+		applyPositionSettlementReturn(
+			longPosition, current.ProfitAmount, current.Fee,
+			current.ExerciseQty, optionMultiplier(contract),
+		)
 		longPosition.UnrealizedPnl = longPosition.MarkPrice.Sub(longPosition.OpenAvgPrice).
 			Mul(longPosition.PositionQty).Mul(optionMultiplier(contract)).Round(16)
 		longPosition.UpdateTimes = now
@@ -254,6 +240,13 @@ func (l *ProcessExercisesLogic) createExerciseClearing(exercise *models.TOptionE
 		}
 		return positionModel.Update(ctx, longPosition)
 	})
+	if err != nil {
+		return err
+	}
+	for _, order := range canceledOrders {
+		publishOptionOrderChanged(l.ctx, l.svcCtx, order)
+	}
+	return nil
 }
 
 func validateEarlyExerciseBalance(totalDebit, grossPayoff, fee, netCredit decimal.Decimal) error {

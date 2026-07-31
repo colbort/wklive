@@ -2,7 +2,9 @@ package models
 
 import (
 	"context"
+	"fmt"
 
+	"wklive/common/sqlutil"
 	"wklive/proto/option"
 
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -12,18 +14,57 @@ import (
 var _ TOptionReconciliationIssueModel = (*customTOptionReconciliationIssueModel)(nil)
 
 type (
+	OptionReconciliationIssuePageFilter struct {
+		TenantId  int64
+		BizNo     string
+		CheckType int64
+		Status    int64
+	}
+
 	// TOptionReconciliationIssueModel is an interface to be customized, add more methods here,
 	// and implement the added methods in customTOptionReconciliationIssueModel.
 	TOptionReconciliationIssueModel interface {
 		tOptionReconciliationIssueModel
 		Open(ctx context.Context, item *TOptionReconciliationIssue) error
 		Resolve(ctx context.Context, tenantId int64, issueKey string, now int64) error
+		FindPage(ctx context.Context, filter OptionReconciliationIssuePageFilter, cursor, limit int64) ([]*TOptionReconciliationIssue, int64, error)
 	}
 
 	customTOptionReconciliationIssueModel struct {
 		*defaultTOptionReconciliationIssueModel
 	}
 )
+
+func (m *defaultTOptionReconciliationIssueModel) FindPage(
+	ctx context.Context, filter OptionReconciliationIssuePageFilter, cursor, limit int64,
+) ([]*TOptionReconciliationIssue, int64, error) {
+	limit = sqlutil.NormalizeLimit(limit)
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.EqInt64("tenant_id", filter.TenantId)
+	builder.LikeString("biz_no", filter.BizNo)
+	builder.EqInt64("check_type", filter.CheckType)
+	builder.EqInt64("status", filter.Status)
+	where, args := builder.Where(), builder.Args()
+	var total int64
+	if err := m.QueryRowNoCacheCtx(
+		ctx, &total, fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where), args...,
+	); err != nil {
+		return nil, 0, err
+	}
+	listArgs := append([]any{}, args...)
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s", tOptionReconciliationIssueRows, m.table, where)
+	if cursor > 0 {
+		query += " AND id < ?"
+		listArgs = append(listArgs, cursor)
+	}
+	query += " ORDER BY id DESC LIMIT ?"
+	listArgs = append(listArgs, limit)
+	var items []*TOptionReconciliationIssue
+	if err := m.QueryRowsNoCacheCtx(ctx, &items, query, listArgs...); err != nil {
+		return nil, 0, err
+	}
+	return items, total, nil
+}
 
 // NewTOptionReconciliationIssueModel returns a model for the database table.
 func NewTOptionReconciliationIssueModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TOptionReconciliationIssueModel {

@@ -16,6 +16,24 @@ service App {
   // 获取期权合约详情
   rpc GetContractDetail(GetContractDetailReq) returns (GetContractDetailResp);
 
+  // 按标的和精确到期时间获取期权链、24小时成交统计及未平仓量
+  rpc ListOptionChain(ListOptionChainReq) returns (ListOptionChainResp);
+
+  // 获取来自 Option 活动限价委托的聚合盘口
+  rpc GetOrderBook(GetOrderBookReq) returns (GetOrderBookResp);
+
+  // 创建2至4腿独立策略簿组合订单
+  rpc PlaceComboOrder(PlaceComboOrderReq) returns (PlaceComboOrderResp);
+
+  // 原子撤销未完成组合订单并释放各腿冻结
+  rpc CancelComboOrder(CancelComboOrderReq) returns (UserCommonResp);
+
+  // 获取组合订单及不可变腿
+  rpc GetComboOrder(GetComboOrderReq) returns (GetComboOrderResp);
+
+  // 查询当前用户组合订单
+  rpc ListComboOrders(ListComboOrdersReq) returns (ListComboOrdersResp);
+
   // 提交期权下单请求
   rpc PlaceOrder(PlaceOrderReq) returns (PlaceOrderResp);
 
@@ -42,6 +60,21 @@ service App {
 
   // 发起行权
   rpc Exercise(ExerciseReq) returns (ExerciseResp);
+
+  // 设置到期行权指令；截止时间前可用新幂等号产生新版本
+  rpc SetExerciseInstruction(SetExerciseInstructionReq) returns (GetExerciseInstructionResp);
+
+  // 获取持仓当前生效的到期行权指令
+  rpc GetExerciseInstruction(GetExerciseInstructionReq) returns (GetExerciseInstructionResp);
+
+  // 查询当前用户 kill switch
+  rpc GetUserTradingControl(GetUserTradingControlReq) returns (GetUserTradingControlResp);
+
+  // 激活用户 kill switch；立即阻止新单并撤销全部活动订单
+  rpc ActivateKillSwitch(ActivateKillSwitchReq) returns (GetUserTradingControlResp);
+
+  // 查询当前用户指定做市报价组的 MMP 状态
+  rpc GetMMPConfig(GetMMPConfigReq) returns (GetMMPConfigResp);
 
   // 获取行权记录列表
   rpc ListExercises(UserListExercisesReq) returns (UserListExercisesResp);
@@ -78,8 +111,81 @@ message GetContractDetailResp {
   OptionContractDetail data = 2;
 }
 
-message PlaceOrderReq {
+message ListOptionChainReq {
+  string underlying_symbol = 1;
+  int64 expire_time = 2;
+  ContractStatus status = 3;
+}
+
+message ListOptionChainResp {
+  common.RespBase base = 1;
+  repeated OptionChainRow data = 2;
+  int64 generated_at = 3;
+  int64 statistics_window_start = 4;
+}
+
+message GetOrderBookReq {
+  int64 contract_id = 1;
+  int32 depth_limit = 2;
+}
+
+message GetOrderBookResp {
+  common.RespBase base = 1;
+  OptionOrderBook data = 2;
+}
+
+message ComboOrderLegInput {
+  int64 contract_id = 1;
+  common.Side side = 2;
+  PositionEffect position_effect = 3;
+  int64 ratio = 4;
+  string price = 5;
+}
+
+message PlaceComboOrderReq {
   int64 account_id = 1;
+  string client_combo_id = 2;
+  ComboOrderType order_type = 3;
+  string qty = 4;
+  string net_price = 5;
+  repeated ComboOrderLegInput legs = 6;
+}
+
+message PlaceComboOrderResp {
+  common.RespBase base = 1;
+  OptionComboOrderDetail data = 2;
+}
+
+message CancelComboOrderReq {
+  int64 account_id = 1;
+  int64 combo_order_id = 2;
+  string combo_no = 3;
+}
+
+message GetComboOrderReq {
+  int64 account_id = 1;
+  int64 combo_order_id = 2;
+  string combo_no = 3;
+}
+
+message GetComboOrderResp {
+  common.RespBase base = 1;
+  OptionComboOrderDetail data = 2;
+}
+
+message ListComboOrdersReq {
+  int64 account_id = 1;
+  ComboOrderStatus status = 2;
+  common.PageReq page = 3;
+}
+
+message ListComboOrdersResp {
+  common.RespBase base = 1;
+  repeated OptionComboOrderDetail data = 2;
+}
+
+message PlaceOrderReq {
+  int64 account_id = 1; // 策略/归属维度，不代表独立资金池
   int64 contract_id = 2;
   common.Side side = 3; // 买卖方向
   PositionEffect position_effect = 4;
@@ -93,6 +199,8 @@ message PlaceOrderReq {
   string protection_price = 11;
   // 市价买入开仓允许消费的最大结算币金额。MARKET 买入开仓必填。
   string max_turnover = 12;
+  // MMP 报价组。mmp=YES 时必填，且仅允许 POST_ONLY。
+  string mmp_group = 13;
 }
 
 message PlaceOrderResp {
@@ -185,6 +293,7 @@ message ExerciseReq {
   int64 position_id = 2;
   int64 contract_id = 3;
   string exercise_qty = 4;
+  string client_exercise_id = 5;
 }
 
 message ExerciseResp {
@@ -195,6 +304,45 @@ message ExerciseResp {
 message ExerciseData {
   string exercise_no = 1;
   int64 exercise_id = 2;
+}
+
+message SetExerciseInstructionReq {
+  int64 account_id = 1;
+  int64 position_id = 2;
+  int64 contract_id = 3;
+  ExerciseInstructionType instruction_type = 4;
+  string client_instruction_id = 5;
+}
+
+message GetExerciseInstructionReq {
+  int64 account_id = 1;
+  int64 position_id = 2;
+}
+
+message GetExerciseInstructionResp {
+  common.RespBase base = 1;
+  OptionExerciseInstruction data = 2;
+}
+
+message GetUserTradingControlReq {}
+
+message GetUserTradingControlResp {
+  common.RespBase base = 1;
+  OptionUserTradingControl data = 2;
+}
+
+message GetMMPConfigReq {
+  int64 contract_id = 1;
+  string group_code = 2;
+}
+
+message GetMMPConfigResp {
+  common.RespBase base = 1;
+  OptionMMPConfig data = 2;
+}
+
+message ActivateKillSwitchReq {
+  string reason = 1;
 }
 
 message UserListExercisesReq {
@@ -260,6 +408,15 @@ service Admin {
   // 分页查询委托订单列表
   rpc ListOrders(ListOrdersReq) returns (ListOrdersResp);
 
+  // 分页查询组合父单，供运营按整组处理
+  rpc ListAdminComboOrders(ListAdminComboOrdersReq) returns (ListAdminComboOrdersResp);
+
+  // 查询组合父单、腿、影子单、成交和资产指令
+  rpc GetAdminComboOrder(GetAdminComboOrderReq) returns (GetAdminComboOrderResp);
+
+  // 强制撤销一个组合父单；禁止单腿撤销
+  rpc ForceCancelComboOrder(ForceCancelComboOrderReq) returns (CommonResp);
+
   // 获取单个成交记录详情
   rpc GetTrade(GetTradeReq) returns (GetTradeResp);
 
@@ -284,6 +441,15 @@ service Admin {
   // 分页查询到期结算记录列表
   rpc ListSettlements(ListSettlementsReq) returns (ListSettlementsResp);
 
+  // 分页查询到期结算价版本
+  rpc ListSettlementPrices(ListSettlementPricesReq) returns (ListSettlementPricesResp);
+
+  // 创建人工结算价更正草案，必须由另一管理员确认
+  rpc CreateSettlementPriceCorrection(CreateSettlementPriceCorrectionReq) returns (GetSettlementPriceResp);
+
+  // 确认或拒绝待复核结算价
+  rpc ReviewSettlementPrice(ReviewSettlementPriceReq) returns (GetSettlementPriceResp);
+
   // 获取单个账户资产详情
   rpc GetAccount(GetAccountReq) returns (GetAccountResp);
 
@@ -302,11 +468,74 @@ service Admin {
   // 将失败或人工处理的资产指令重新置为待执行
   rpc RetryAssetInstruction(RetryAssetInstructionReq) returns (CommonResp);
 
+  // 查询运营异常和任务水位汇总
+  rpc GetOperationsOverview(GetOperationsOverviewReq) returns (GetOperationsOverviewResp);
+
+  // 分页查询资产指令，统一定位失败和人工处理项
+  rpc ListAssetInstructions(ListAssetInstructionsReq) returns (ListAssetInstructionsResp);
+
+  // 分页查询 Option 与 Asset 对账差异
+  rpc ListReconciliationIssues(ListReconciliationIssuesReq) returns (ListReconciliationIssuesResp);
+
+  // 创建不可覆盖的交易日历版本草案
+  rpc CreateTradingCalendar(CreateTradingCalendarReq) returns (GetTradingCalendarResp);
+
+  // 由独立管理员批准或拒绝日历版本
+  rpc ReviewTradingCalendar(ReviewTradingCalendarReq) returns (GetTradingCalendarResp);
+
+  // 分页查询交易日历版本
+  rpc ListTradingCalendars(ListTradingCalendarsReq) returns (ListTradingCalendarsResp);
+
+  // 紧急暂停合约交易并撤销活动订单
+  rpc HaltContractTrading(HaltContractTradingReq) returns (GetTradingHaltResp);
+
+  // 引用原 halt 解除临时休市
+  rpc ResumeContractTrading(ResumeContractTradingReq) returns (GetTradingHaltResp);
+
+  // 分页查询临时休市记录
+  rpc ListTradingHalts(ListTradingHaltsReq) returns (ListTradingHaltsResp);
+
+  // 登记不可覆盖的公司行动版本；所有受影响合约立即停牌并撤单
+  rpc CreateCorporateAction(CreateCorporateActionReq) returns (GetCorporateActionResp);
+
+  // 独立管理员复核公司行动；不支持的事件只能进入人工处理
+  rpc ReviewCorporateAction(ReviewCorporateActionReq) returns (GetCorporateActionResp);
+
+  // 分页查询公司行动及合约迁移进度
+  rpc ListCorporateActions(ListCorporateActionsReq) returns (ListCorporateActionsResp);
+
+  // 分页查询逐持仓迁移审计结果
+  rpc ListCorporateActionPositions(ListCorporateActionPositionsReq) returns (ListCorporateActionPositionsResp);
+
+  // 创建不可覆盖的到期/行权价系列版本草案
+  rpc CreateContractSeries(CreateContractSeriesReq) returns (GetContractSeriesResp);
+
+  // 独立管理员复核；批准时原子生成全部 PENDING 合约
+  rpc ReviewContractSeries(ReviewContractSeriesReq) returns (GetContractSeriesResp);
+
+  // 分页查询系列版本
+  rpc ListContractSeries(ListContractSeriesReq) returns (ListContractSeriesResp);
+
+  // 分页查询系列生成合约谱系
+  rpc ListContractSeriesDetails(ListContractSeriesDetailsReq) returns (ListContractSeriesDetailsResp);
+
+  // 对已生成系列执行独立上市复核；批准前生命周期必须保持 PENDING
+  rpc ReviewContractSeriesLaunch(ReviewContractSeriesLaunchReq) returns (GetContractSeriesResp);
+
   // 将失败或人工处理的成交持仓事件重新置为待执行
   rpc RetryTradeEvent(RetryTradeEventReq) returns (CommonResp);
 
   // 分页查询卖方风险账户
   rpc ListRiskAccounts(ListRiskAccountsReq) returns (ListRiskAccountsResp);
+
+  // 创建不可覆盖的组合保证金参数草案
+  rpc CreatePortfolioRiskConfig(CreatePortfolioRiskConfigReq) returns (GetPortfolioRiskConfigResp);
+
+  // 由独立管理员批准或拒绝组合保证金参数版本
+  rpc ReviewPortfolioRiskConfig(ReviewPortfolioRiskConfigReq) returns (GetPortfolioRiskConfigResp);
+
+  // 分页查询组合保证金参数版本
+  rpc ListPortfolioRiskConfigs(ListPortfolioRiskConfigsReq) returns (ListPortfolioRiskConfigsResp);
 
   // 分页查询强平记录
   rpc ListLiquidations(ListLiquidationsReq) returns (ListLiquidationsResp);
@@ -319,10 +548,76 @@ service Admin {
 
   // 校验归属后重试结算批次中的失败资产指令
   rpc RetrySettlementInstruction(RetrySettlementInstructionReq) returns (CommonResp);
+
+  // 人工复核后解除用户 kill switch
+  rpc ReleaseUserKillSwitch(ReleaseUserKillSwitchReq) returns (CommonResp);
+
+  // 查询用户 kill switch
+  rpc AdminGetUserTradingControl(AdminGetUserTradingControlReq) returns (AdminGetUserTradingControlResp);
+
+  // 分页查询交易控制审计事件
+  rpc ListTradingControlEvents(ListTradingControlEventsReq) returns (ListTradingControlEventsResp);
+
+  // 创建异常成交现金更正草案，同时暂停合约并撤销活动订单
+  rpc CreateTradeCorrection(CreateTradeCorrectionReq) returns (GetTradeCorrectionResp);
+
+  // 由独立管理员批准或拒绝异常成交更正
+  rpc ReviewTradeCorrection(ReviewTradeCorrectionReq) returns (GetTradeCorrectionResp);
+
+  // 分页查询异常成交更正案件
+  rpc ListTradeCorrections(ListTradeCorrectionsReq) returns (ListTradeCorrectionsResp);
+
+  // 创建或更新做市商保护参数；任何变更都会撤销该组已有 MMP 报价
+  rpc UpsertMMPConfig(UpsertMMPConfigReq) returns (GetMMPConfigResp);
+
+  // 人工复核并恢复触发中的 MMP 报价组
+  rpc ResetMMPConfig(ResetMMPConfigReq) returns (GetMMPConfigResp);
+
+  // 分页查询 MMP 配置和实时窗口状态
+  rpc ListMMPConfigs(ListMMPConfigsReq) returns (ListMMPConfigsResp);
+
+  // 分页查询实物交割配对单元和失败状态
+  rpc ListPhysicalDeliveryUnits(ListPhysicalDeliveryUnitsReq) returns (ListPhysicalDeliveryUnitsResp);
+
+  // 人工确认补资后，按原指令号重试一个实物交割单元
+  rpc RetryPhysicalDeliveryUnit(RetryPhysicalDeliveryUnitReq) returns (CommonResp);
 }
 
 message CommonResp {
   common.RespBase base = 1;
+}
+
+message ListSettlementPricesReq {
+  int64 tenant_id = 1;
+  int64 contract_id = 2;
+  SettlementPriceStatus status = 3;
+  common.PageReq page = 4;
+}
+
+message ListSettlementPricesResp {
+  common.RespBase base = 1;
+  repeated OptionSettlementPrice data = 2;
+  int64 total = 3;
+}
+
+message GetSettlementPriceResp {
+  common.RespBase base = 1;
+  OptionSettlementPrice data = 2;
+}
+
+message CreateSettlementPriceCorrectionReq {
+  int64 tenant_id = 1;
+  int64 contract_id = 2;
+  string delivery_price = 3;
+  string source_snapshot_ids = 4;
+  string reason = 5;
+}
+
+message ReviewSettlementPriceReq {
+  int64 tenant_id = 1;
+  int64 settlement_price_id = 2;
+  bool approve = 3;
+  string reason = 4;
 }
 
 message ForceCancelContractOrdersReq {
@@ -342,9 +637,385 @@ message RetrySettlementInstructionReq {
   int64 instruction_id = 3;
 }
 
+message ReleaseUserKillSwitchReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  string reason = 3;
+}
+
+message AdminGetUserTradingControlReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+}
+
+message AdminGetUserTradingControlResp {
+  common.RespBase base = 1;
+  OptionUserTradingControl data = 2;
+}
+
+message ListTradingControlEventsReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 contract_id = 3;
+  string event_type = 4;
+  string reason = 5;
+  common.PageReq page = 6;
+}
+
+message ListTradingControlEventsResp {
+  common.RespBase base = 1;
+  repeated OptionTradingControlEvent data = 2;
+}
+
+message TradeCorrectionLegInput {
+  int64 user_id = 1;
+  int64 account_id = 2;
+  string coin = 3;
+  TradeCorrectionLegDirection direction = 4;
+  string amount = 5;
+}
+
+message CreateTradeCorrectionReq {
+  int64 tenant_id = 1;
+  int64 trade_id = 2;
+  TradeCorrectionAction action = 3;
+  string reason = 4;
+  string evidence_ref = 5;
+  repeated TradeCorrectionLegInput legs = 6;
+}
+
+message ReviewTradeCorrectionReq {
+  int64 tenant_id = 1;
+  int64 correction_id = 2;
+  bool approve = 3;
+  string reason = 4;
+}
+
+message GetTradeCorrectionResp {
+  common.RespBase base = 1;
+  OptionTradeCorrection data = 2;
+}
+
+message ListTradeCorrectionsReq {
+  int64 tenant_id = 1;
+  int64 trade_id = 2;
+  int64 contract_id = 3;
+  TradeCorrectionStatus status = 4;
+  common.PageReq page = 5;
+}
+
+message ListTradeCorrectionsResp {
+  common.RespBase base = 1;
+  repeated OptionTradeCorrection data = 2;
+  int64 total = 3;
+}
+
+message UpsertMMPConfigReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 contract_id = 3;
+  string group_code = 4;
+  common.YesNo enabled = 5;
+  string qty_threshold = 6;
+  int64 trade_count_threshold = 7;
+  string loss_threshold = 8;
+  int64 window_seconds = 9;
+  int64 cooldown_seconds = 10;
+  string reason = 11;
+}
+
+message ResetMMPConfigReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 contract_id = 3;
+  string group_code = 4;
+  string reason = 5;
+}
+
+message ListMMPConfigsReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 contract_id = 3;
+  string group_code = 4;
+  MMPStatus status = 5;
+  common.PageReq page = 6;
+}
+
+message ListMMPConfigsResp {
+  common.RespBase base = 1;
+  repeated OptionMMPConfig data = 2;
+  int64 total = 3;
+}
+
 message RetryTradeEventReq {
   int64 tenant_id = 1;
   int64 event_id = 2;
+}
+
+message GetOperationsOverviewReq {
+  int64 tenant_id = 1;
+  // 风险扫描过期阈值；首发默认 60 秒，允许收紧至 10 秒，禁止超过 300 秒。
+  int64 risk_stale_seconds = 2;
+  // 组合父单 FUNDING/CANCELING 超龄阈值；默认 60 秒，允许 10 至 300 秒。
+  int64 combo_stale_seconds = 3;
+}
+
+message GetOperationsOverviewResp {
+  common.RespBase base = 1;
+  OptionOperationsOverview data = 2;
+}
+
+message ListAssetInstructionsReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  string biz_no = 3;
+  AssetInstructionStatus status = 4;
+  AssetReconciliationStatus reconciliation_status = 5;
+  common.PageReq page = 6;
+}
+
+message ListAssetInstructionsResp {
+  common.RespBase base = 1;
+  repeated OptionAssetInstruction data = 2;
+  int64 total = 3;
+}
+
+message ListReconciliationIssuesReq {
+  int64 tenant_id = 1;
+  string biz_no = 2;
+  ReconciliationCheckType check_type = 3;
+  ReconciliationIssueStatus status = 4;
+  common.PageReq page = 5;
+}
+
+message ListReconciliationIssuesResp {
+  common.RespBase base = 1;
+  repeated OptionReconciliationIssue data = 2;
+  int64 total = 3;
+}
+
+message TradingCalendarSessionInput {
+  int32 weekday = 1;
+  int32 open_second = 2;
+  int32 close_second = 3;
+}
+
+message TradingCalendarExceptionInput {
+  TradingCalendarExceptionType exception_type = 1;
+  int64 start_time = 2;
+  int64 end_time = 3;
+  string reason = 4;
+  string announcement_ref = 5;
+}
+
+message CreateTradingCalendarReq {
+  int64 tenant_id = 1;
+  string calendar_code = 2;
+  string timezone = 3;
+  int64 effective_from = 4;
+  string change_reason = 5;
+  string evidence_ref = 6;
+  repeated TradingCalendarSessionInput sessions = 7;
+  repeated TradingCalendarExceptionInput exceptions = 8;
+  // 回滚时可引用历史版本，但仍创建更高版本并重新审批。
+  int64 source_calendar_id = 9;
+}
+
+message ReviewTradingCalendarReq {
+  int64 tenant_id = 1;
+  int64 calendar_id = 2;
+  bool approve = 3;
+  string reason = 4;
+}
+
+message GetTradingCalendarResp {
+  common.RespBase base = 1;
+  OptionTradingCalendar data = 2;
+}
+
+message ListTradingCalendarsReq {
+  int64 tenant_id = 1;
+  string calendar_code = 2;
+  TradingCalendarStatus status = 3;
+  common.PageReq page = 4;
+}
+
+message ListTradingCalendarsResp {
+  common.RespBase base = 1;
+  repeated OptionTradingCalendar data = 2;
+  int64 total = 3;
+}
+
+message HaltContractTradingReq {
+  int64 tenant_id = 1;
+  int64 contract_id = 2;
+  string reason = 3;
+  string evidence_ref = 4;
+}
+
+message ResumeContractTradingReq {
+  int64 tenant_id = 1;
+  int64 halt_id = 2;
+  string reason = 3;
+}
+
+message GetTradingHaltResp {
+  common.RespBase base = 1;
+  OptionTradingHalt data = 2;
+}
+
+message ListTradingHaltsReq {
+  int64 tenant_id = 1;
+  int64 contract_id = 2;
+  TradingHaltStatus status = 3;
+  common.PageReq page = 4;
+}
+
+message ListTradingHaltsResp {
+  common.RespBase base = 1;
+  repeated OptionTradingHalt data = 2;
+  int64 total = 3;
+}
+
+message CorporateActionContractInput {
+  int64 source_contract_id = 1;
+  int64 successor_contract_id = 2;
+  CorporateActionExecutionMode execution_mode = 3;
+  // 正整数十进制字符串；后继数量 = 原数量 * numerator / denominator。
+  string quantity_numerator = 4;
+  string quantity_denominator = 5;
+}
+
+message CreateCorporateActionReq {
+  int64 tenant_id = 1;
+  string event_no = 2;
+  string external_event_ref = 3;
+  string underlying_symbol = 4;
+  CorporateActionType action_type = 5;
+  int64 announcement_time = 6;
+  int64 ex_time = 7;
+  int64 record_time = 8;
+  int64 effective_time = 9;
+  int64 pay_time = 10;
+  string evidence_ref = 11;
+  string evidence_hash = 12;
+  string description = 13;
+  repeated CorporateActionContractInput contracts = 14;
+}
+
+message ReviewCorporateActionReq {
+  int64 tenant_id = 1;
+  int64 action_id = 2;
+  bool approve = 3;
+  string reason = 4;
+}
+
+message GetCorporateActionResp {
+  common.RespBase base = 1;
+  OptionCorporateAction data = 2;
+}
+
+message ListCorporateActionsReq {
+  int64 tenant_id = 1;
+  string underlying_symbol = 2;
+  CorporateActionType action_type = 3;
+  CorporateActionStatus status = 4;
+  common.PageReq page = 5;
+}
+
+message ListCorporateActionsResp {
+  common.RespBase base = 1;
+  repeated OptionCorporateAction data = 2;
+  int64 total = 3;
+}
+
+message ListCorporateActionPositionsReq {
+  int64 tenant_id = 1;
+  int64 action_id = 2;
+  int64 action_contract_id = 3;
+  CorporateActionPositionStatus status = 4;
+  common.PageReq page = 5;
+}
+
+message ListCorporateActionPositionsResp {
+  common.RespBase base = 1;
+  repeated OptionCorporateActionPosition data = 2;
+  int64 total = 3;
+}
+
+message ContractSeriesExpiryInput {
+  int64 sequence_no = 1;
+  string cycle_code = 2;
+  int64 list_time = 3;
+  int64 exercise_cutoff_time = 4;
+  int64 expire_time = 5;
+  int64 deliver_time = 6;
+}
+
+message ContractSeriesStrikeBandInput {
+  int64 sequence_no = 1;
+  string lower_strike = 2;
+  string upper_strike = 3;
+  string strike_step = 4;
+}
+
+message CreateContractSeriesReq {
+  int64 tenant_id = 1;
+  string request_key = 2;
+  string series_code = 3;
+  // 只读取合约经济/风控参数；代码、Call/Put、行权价、时间、状态及租户由系列覆盖。
+  CreateContractReq contract_template = 4;
+  string reference_price = 5;
+  string reference_source = 6;
+  int64 reference_time = 7;
+  string evidence_ref = 8;
+  string change_reason = 9;
+  repeated ContractSeriesExpiryInput expiries = 10;
+  repeated ContractSeriesStrikeBandInput strike_bands = 11;
+}
+
+message ReviewContractSeriesReq {
+  int64 tenant_id = 1;
+  int64 series_id = 2;
+  bool approve = 3;
+  string reason = 4;
+}
+
+message ReviewContractSeriesLaunchReq {
+  int64 tenant_id = 1;
+  int64 series_id = 2;
+  bool approve = 3;
+  string reason = 4;
+}
+
+message GetContractSeriesResp {
+  common.RespBase base = 1;
+  OptionContractSeries data = 2;
+}
+
+message ListContractSeriesReq {
+  int64 tenant_id = 1;
+  string series_code = 2;
+  ContractSeriesStatus status = 3;
+  common.PageReq page = 4;
+}
+
+message ListContractSeriesResp {
+  common.RespBase base = 1;
+  repeated OptionContractSeries data = 2;
+  int64 total = 3;
+}
+
+message ListContractSeriesDetailsReq {
+  int64 tenant_id = 1;
+  int64 series_id = 2;
+  common.PageReq page = 3;
+}
+
+message ListContractSeriesDetailsResp {
+  common.RespBase base = 1;
+  repeated OptionContractSeriesDetail data = 2;
+  int64 total = 3;
 }
 
 message ListRiskAccountsReq {
@@ -359,6 +1030,48 @@ message ListRiskAccountsReq {
 message ListRiskAccountsResp {
   common.RespBase base = 1;
   repeated OptionRiskAccount data = 2;
+}
+
+message CreatePortfolioRiskConfigReq {
+  int64 tenant_id = 1;
+  string settle_coin = 2;
+  PortfolioRiskMethod model_method = 3;
+  string initial_shock_rate = 4;
+  string maintenance_shock_rate = 5;
+  string scenario_shocks = 6;
+  string concentration_threshold = 7;
+  string concentration_addon_rate = 8;
+  string liquidity_addon_rate = 9;
+  int64 effective_from = 10;
+  string change_reason = 11;
+  string evidence_ref = 12;
+  // 可选；回滚时指向被复制参数的历史版本。
+  int64 source_config_id = 13;
+}
+
+message ReviewPortfolioRiskConfigReq {
+  int64 tenant_id = 1;
+  int64 config_id = 2;
+  bool approve = 3;
+  string reason = 4;
+}
+
+message GetPortfolioRiskConfigResp {
+  common.RespBase base = 1;
+  OptionPortfolioRiskConfig data = 2;
+}
+
+message ListPortfolioRiskConfigsReq {
+  int64 tenant_id = 1;
+  string settle_coin = 2;
+  PortfolioRiskConfigStatus status = 3;
+  common.PageReq page = 4;
+}
+
+message ListPortfolioRiskConfigsResp {
+  common.RespBase base = 1;
+  repeated OptionPortfolioRiskConfig data = 2;
+  int64 total = 3;
 }
 
 message ListLiquidationsReq {
@@ -424,6 +1137,19 @@ message CreateContractReq {
   LiquidationDeficitPolicy liquidation_deficit_policy = 35;
   string underlying_coin = 36;
   PhysicalDeliveryPolicy physical_delivery_policy = 37;
+  string settlement_price_source = 38;
+  string settlement_price_method = 39;
+  int64 settlement_window_seconds = 40;
+  int64 settlement_min_samples = 41;
+  int64 exercise_cutoff_time = 42;
+  string auto_exercise_threshold = 43;
+  string max_user_long_qty = 44;
+  string max_user_short_qty = 45;
+  string max_open_interest = 46;
+  string order_price_band_ratio = 47;
+  string circuit_breaker_ratio = 48;
+  int64 physical_delivery_cure_seconds = 49;
+  string trading_calendar_code = 50;
 }
 
 message CreateContractResp {
@@ -471,6 +1197,40 @@ message UpdateContractReq {
   LiquidationDeficitPolicy liquidation_deficit_policy = 37;
   string underlying_coin = 38;
   PhysicalDeliveryPolicy physical_delivery_policy = 39;
+  string settlement_price_source = 40;
+  string settlement_price_method = 41;
+  int64 settlement_window_seconds = 42;
+  int64 settlement_min_samples = 43;
+  int64 exercise_cutoff_time = 44;
+  string auto_exercise_threshold = 45;
+  string max_user_long_qty = 46;
+  string max_user_short_qty = 47;
+  string max_open_interest = 48;
+  string order_price_band_ratio = 49;
+  string circuit_breaker_ratio = 50;
+  int64 physical_delivery_cure_seconds = 51;
+  string trading_calendar_code = 52;
+}
+
+message ListPhysicalDeliveryUnitsReq {
+  int64 tenant_id = 1;
+  int64 contract_id = 2;
+  int64 batch_id = 3;
+  int64 user_id = 4;
+  PhysicalDeliveryUnitStatus status = 5;
+  common.PageReq page = 6;
+}
+
+message ListPhysicalDeliveryUnitsResp {
+  common.RespBase base = 1;
+  repeated OptionPhysicalDeliveryUnit data = 2;
+  int64 total = 3;
+}
+
+message RetryPhysicalDeliveryUnitReq {
+  int64 tenant_id = 1;
+  int64 delivery_unit_id = 2;
+  string reason = 3;
 }
 
 message GetContractReq {
@@ -520,6 +1280,9 @@ message UpdateMarketReq {
   string risk_free_rate = 17;
   string pricing_model = 18;
   int64 snapshot_time = 19;
+  int64 underlying_snapshot_time = 20;
+  int64 mark_snapshot_time = 21;
+  int64 greeks_snapshot_time = 22;
 }
 
 message GetMarketReq {
@@ -573,6 +1336,41 @@ message ListOrdersReq {
 message ListOrdersResp {
   common.RespBase base = 1;
   repeated OptionOrderDetail data = 2;
+}
+
+message ListAdminComboOrdersReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 account_id = 3;
+  string combo_no = 4;
+  string underlying_symbol = 5;
+  ComboOrderStatus status = 6;
+  common.TimeRange create_time_range = 7;
+  common.PageReq page = 8;
+}
+
+message ListAdminComboOrdersResp {
+  common.RespBase base = 1;
+  repeated OptionComboOrderDetail data = 2;
+  int64 total = 3;
+}
+
+message GetAdminComboOrderReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  string combo_no = 3;
+}
+
+message GetAdminComboOrderResp {
+  common.RespBase base = 1;
+  OptionAdminComboOrderDetail data = 2;
+}
+
+message ForceCancelComboOrderReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  string combo_no = 3;
+  string reason = 4;
 }
 
 message GetTradeReq {
@@ -750,6 +1548,8 @@ service Task {
   rpc ProcessExercises(OptionTaskReq) returns (OptionTaskResp);
   // 期权合约生命周期处理（状态流转/订单过期/自动行权/到期结算）
   rpc ProcessContractLifecycle(OptionTaskReq) returns (OptionTaskResp);
+  // 按批次执行已复核且到达生效时间的公司行动迁移
+  rpc ProcessCorporateActions(OptionTaskReq) returns (OptionTaskResp);
   // 期权行情快照归档/清理
   rpc CleanMarketSnapshots(OptionTaskReq) returns (OptionTaskResp);
 }

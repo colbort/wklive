@@ -35,6 +35,42 @@ func (s *AppServer) GetContractDetail(ctx context.Context, in *option.GetContrac
 	return l.GetContractDetail(in)
 }
 
+// 按标的和精确到期时间获取期权链、24小时成交统计及未平仓量
+func (s *AppServer) ListOptionChain(ctx context.Context, in *option.ListOptionChainReq) (*option.ListOptionChainResp, error) {
+	l := applogic.NewListOptionChainLogic(ctx, s.svcCtx)
+	return l.ListOptionChain(in)
+}
+
+// 获取来自 Option 活动限价委托的聚合盘口
+func (s *AppServer) GetOrderBook(ctx context.Context, in *option.GetOrderBookReq) (*option.GetOrderBookResp, error) {
+	l := applogic.NewGetOrderBookLogic(ctx, s.svcCtx)
+	return l.GetOrderBook(in)
+}
+
+// 创建2至4腿独立策略簿组合订单
+func (s *AppServer) PlaceComboOrder(ctx context.Context, in *option.PlaceComboOrderReq) (*option.PlaceComboOrderResp, error) {
+	l := applogic.NewPlaceComboOrderLogic(ctx, s.svcCtx)
+	return l.PlaceComboOrder(in)
+}
+
+// 原子撤销未完成组合订单并释放各腿冻结
+func (s *AppServer) CancelComboOrder(ctx context.Context, in *option.CancelComboOrderReq) (*option.UserCommonResp, error) {
+	l := applogic.NewCancelComboOrderLogic(ctx, s.svcCtx)
+	return l.CancelComboOrder(in)
+}
+
+// 获取组合订单及不可变腿
+func (s *AppServer) GetComboOrder(ctx context.Context, in *option.GetComboOrderReq) (*option.GetComboOrderResp, error) {
+	l := applogic.NewGetComboOrderLogic(ctx, s.svcCtx)
+	return l.GetComboOrder(in)
+}
+
+// 查询当前用户组合订单
+func (s *AppServer) ListComboOrders(ctx context.Context, in *option.ListComboOrdersReq) (*option.ListComboOrdersResp, error) {
+	l := applogic.NewListComboOrdersLogic(ctx, s.svcCtx)
+	return l.ListComboOrders(in)
+}
+
 // 提交期权下单请求
 func (s *AppServer) PlaceOrder(ctx context.Context, in *option.PlaceOrderReq) (*option.PlaceOrderResp, error) {
 	l := applogic.NewPlaceOrderLogic(ctx, s.svcCtx)
@@ -87,6 +123,36 @@ func (s *AppServer) GetPositionDetail(ctx context.Context, in *option.GetPositio
 func (s *AppServer) Exercise(ctx context.Context, in *option.ExerciseReq) (*option.ExerciseResp, error) {
 	l := applogic.NewExerciseLogic(ctx, s.svcCtx)
 	return l.Exercise(in)
+}
+
+// 设置到期行权指令；截止时间前可用新幂等号产生新版本
+func (s *AppServer) SetExerciseInstruction(ctx context.Context, in *option.SetExerciseInstructionReq) (*option.GetExerciseInstructionResp, error) {
+	l := applogic.NewSetExerciseInstructionLogic(ctx, s.svcCtx)
+	return l.SetExerciseInstruction(in)
+}
+
+// 获取持仓当前生效的到期行权指令
+func (s *AppServer) GetExerciseInstruction(ctx context.Context, in *option.GetExerciseInstructionReq) (*option.GetExerciseInstructionResp, error) {
+	l := applogic.NewGetExerciseInstructionLogic(ctx, s.svcCtx)
+	return l.GetExerciseInstruction(in)
+}
+
+// 查询当前用户 kill switch
+func (s *AppServer) GetUserTradingControl(ctx context.Context, in *option.GetUserTradingControlReq) (*option.GetUserTradingControlResp, error) {
+	l := applogic.NewGetUserTradingControlLogic(ctx, s.svcCtx)
+	return l.GetUserTradingControl(in)
+}
+
+// 激活用户 kill switch；立即阻止新单并撤销全部活动订单
+func (s *AppServer) ActivateKillSwitch(ctx context.Context, in *option.ActivateKillSwitchReq) (*option.GetUserTradingControlResp, error) {
+	l := applogic.NewActivateKillSwitchLogic(ctx, s.svcCtx)
+	return l.ActivateKillSwitch(in)
+}
+
+// 查询当前用户指定做市报价组的 MMP 状态
+func (s *AppServer) GetMMPConfig(ctx context.Context, in *option.GetMMPConfigReq) (*option.GetMMPConfigResp, error) {
+	l := applogic.NewGetMMPConfigLogic(ctx, s.svcCtx)
+	return l.GetMMPConfig(in)
 }
 
 // 获取行权记录列表

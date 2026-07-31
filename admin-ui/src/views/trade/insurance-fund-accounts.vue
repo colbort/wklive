@@ -73,10 +73,7 @@
           <el-radio-group v-model="platformForm.direction">
             <el-radio-button :value="1">
               {{ t('trade.increase') }}
-            </el-radio-button><el-radio-button
-              v-if="platformForm.accountType === 'INSURANCE_FUND'"
-              :value="2"
-            >
+            </el-radio-button><el-radio-button v-if="platformForm.accountType === 'INSURANCE_FUND'" :value="2">
               {{ t('trade.decrease') }}
             </el-radio-button>
           </el-radio-group>

@@ -151,11 +151,9 @@ const showDetail = async (row: OptionExercise) => {
 const retryExercise = async () => {
   if (!detailData.value || !('exercise' in detailData.value)) return
   const exercise = detailData.value.exercise
-  await ElMessageBox.confirm(
-    t('option.retryExerciseConfirm'),
-    t('option.retryExercise'),
-    { type: 'warning' },
-  )
+  await ElMessageBox.confirm(t('option.retryExerciseConfirm'), t('option.retryExercise'), {
+    type: 'warning',
+  })
   retrying.value = true
   try {
     await optionService.retryExercise({

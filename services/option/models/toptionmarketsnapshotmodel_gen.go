@@ -42,23 +42,25 @@ type (
 	}
 
 	TOptionMarketSnapshot struct {
-		Id               int64           `db:"id"`                // 主键ID
-		TenantId         int64           `db:"tenant_id"`         // 租户ID
-		ContractId       int64           `db:"contract_id"`       // 合约ID
-		UnderlyingPrice  decimal.Decimal `db:"underlying_price"`  // 标的价格
-		MarkPrice        decimal.Decimal `db:"mark_price"`        // 标记价格
-		LastPrice        decimal.Decimal `db:"last_price"`        // 最新成交价
-		BidPrice         decimal.Decimal `db:"bid_price"`         // 买一价
-		AskPrice         decimal.Decimal `db:"ask_price"`         // 卖一价
-		TheoreticalPrice decimal.Decimal `db:"theoretical_price"` // 理论价
-		Iv               decimal.Decimal `db:"iv"`                // 隐含波动率
-		Delta            decimal.Decimal `db:"delta"`             // Delta
-		Gamma            decimal.Decimal `db:"gamma"`             // Gamma
-		Theta            decimal.Decimal `db:"theta"`             // Theta
-		Vega             decimal.Decimal `db:"vega"`              // Vega
-		Rho              decimal.Decimal `db:"rho"`               // Rho
-		SnapshotTime     int64           `db:"snapshot_time"`     // 快照时间
-		CreateTimes      int64           `db:"create_times"`      // 创建时间
+		Id               int64           `db:"id"`                 // 主键ID
+		TenantId         int64           `db:"tenant_id"`          // 租户ID
+		ContractId       int64           `db:"contract_id"`        // 合约ID
+		UnderlyingPrice  decimal.Decimal `db:"underlying_price"`   // 标的价格
+		MarkPrice        decimal.Decimal `db:"mark_price"`         // 标记价格
+		LastPrice        decimal.Decimal `db:"last_price"`         // 最新成交价
+		BidPrice         decimal.Decimal `db:"bid_price"`          // 买一价
+		AskPrice         decimal.Decimal `db:"ask_price"`          // 卖一价
+		TheoreticalPrice decimal.Decimal `db:"theoretical_price"`  // 理论价
+		Iv               decimal.Decimal `db:"iv"`                 // 隐含波动率
+		Delta            decimal.Decimal `db:"delta"`              // Delta
+		Gamma            decimal.Decimal `db:"gamma"`              // Gamma
+		Theta            decimal.Decimal `db:"theta"`              // Theta
+		Vega             decimal.Decimal `db:"vega"`               // Vega
+		Rho              decimal.Decimal `db:"rho"`                // Rho
+		SnapshotTime     int64           `db:"snapshot_time"`      // 快照时间
+		SourceType       int64           `db:"source_type"`        // 来源：0未知 1权威标的行情 2管理行情 3结算审计
+		SourceSnapshotId string          `db:"source_snapshot_id"` // 来源快照唯一标识
+		CreateTimes      int64           `db:"create_times"`       // 创建时间
 	}
 )
 
@@ -98,8 +100,8 @@ func (m *defaultTOptionMarketSnapshotModel) FindOne(ctx context.Context, id int6
 func (m *defaultTOptionMarketSnapshotModel) Insert(ctx context.Context, data *TOptionMarketSnapshot) (sql.Result, error) {
 	tOptionMarketSnapshotIdKey := fmt.Sprintf("%s%v", cacheTOptionMarketSnapshotIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionMarketSnapshotRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.ContractId, data.UnderlyingPrice, data.MarkPrice, data.LastPrice, data.BidPrice, data.AskPrice, data.TheoreticalPrice, data.Iv, data.Delta, data.Gamma, data.Theta, data.Vega, data.Rho, data.SnapshotTime, data.CreateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionMarketSnapshotRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.ContractId, data.UnderlyingPrice, data.MarkPrice, data.LastPrice, data.BidPrice, data.AskPrice, data.TheoreticalPrice, data.Iv, data.Delta, data.Gamma, data.Theta, data.Vega, data.Rho, data.SnapshotTime, data.SourceType, data.SourceSnapshotId, data.CreateTimes)
 	}, tOptionMarketSnapshotIdKey)
 	return ret, err
 }
@@ -108,7 +110,7 @@ func (m *defaultTOptionMarketSnapshotModel) Update(ctx context.Context, data *TO
 	tOptionMarketSnapshotIdKey := fmt.Sprintf("%s%v", cacheTOptionMarketSnapshotIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionMarketSnapshotRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.ContractId, data.UnderlyingPrice, data.MarkPrice, data.LastPrice, data.BidPrice, data.AskPrice, data.TheoreticalPrice, data.Iv, data.Delta, data.Gamma, data.Theta, data.Vega, data.Rho, data.SnapshotTime, data.CreateTimes, data.Id)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.ContractId, data.UnderlyingPrice, data.MarkPrice, data.LastPrice, data.BidPrice, data.AskPrice, data.TheoreticalPrice, data.Iv, data.Delta, data.Gamma, data.Theta, data.Vega, data.Rho, data.SnapshotTime, data.SourceType, data.SourceSnapshotId, data.CreateTimes, data.Id)
 	}, tOptionMarketSnapshotIdKey)
 	return err
 }

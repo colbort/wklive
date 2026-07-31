@@ -33,7 +33,7 @@ func (l *ListAccountsLogic) ListAccounts(in *option.ListAccountsReq) (*option.Li
 	items, total, err := l.svcCtx.OptionAccountModel.FindPage(l.ctx, models.OptionAccountPageFilter{
 		TenantId:  in.TenantId,
 		UserId:    in.UserId,
-		AccountId: in.AccountId,
+		AccountId: 0,
 		Status:    int64(in.Status),
 	}, cursor, limit)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {

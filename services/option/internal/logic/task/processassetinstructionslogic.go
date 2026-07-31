@@ -16,6 +16,7 @@ import (
 
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
@@ -38,6 +39,14 @@ func (l *ProcessAssetInstructionsLogic) ProcessAssetInstructions(in *option.Opti
 	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_asset_instructions", func() (*option.OptionTaskResp, error) {
 		cursor := int64(0)
 		now := time.Now().Unix()
+		if _, err := l.svcCtx.OptionAssetInstructionModel.RecoverStale(
+			l.ctx, in.TenantId, now-60, now,
+		); err != nil {
+			return nil, err
+		}
+		if err := l.expirePhysicalDeliveryCures(in.TenantId, now); err != nil {
+			return nil, err
+		}
 		for {
 			items, err := l.svcCtx.OptionAssetInstructionModel.FindRunnable(l.ctx, in.TenantId, now, cursor, 100)
 			if err != nil {
@@ -205,13 +214,19 @@ func (l *ProcessAssetInstructionsLogic) syncAccountMirror(item *models.TOptionAs
 		conn := sqlx.NewSqlConnFromSession(session)
 		accountModel := models.NewTOptionAccountModel(conn, l.svcCtx.Config.CacheRedis)
 		billModel := models.NewTOptionBillModel(conn, l.svcCtx.Config.CacheRedis)
-		account, err := accountModel.FindOneByTenantIdUserIdAccountIdMarginCoin(ctx, item.TenantId, item.UserId, item.AccountId, item.Coin)
+		// Asset owns one OPTION wallet per tenant/user/coin. The account mirror
+		// therefore also uses account_id=0; business account_id remains on the
+		// bill and instruction for attribution only.
+		const walletAccountID int64 = 0
+		account, err := accountModel.FindOneByTenantIdUserIdAccountIdMarginCoin(
+			ctx, item.TenantId, item.UserId, walletAccountID, item.Coin,
+		)
 		if err != nil && !errors.Is(err, models.ErrNotFound) {
 			return err
 		}
 		if errors.Is(err, models.ErrNotFound) {
 			account = &models.TOptionAccount{
-				TenantId: item.TenantId, UserId: item.UserId, AccountId: item.AccountId,
+				TenantId: item.TenantId, UserId: item.UserId, AccountId: walletAccountID,
 				MarginCoin: item.Coin, Status: int64(option.AccountStatus_ACCOUNT_STATUS_NORMAL),
 				CreateTimes: now,
 			}
@@ -301,10 +316,112 @@ func (l *ProcessAssetInstructionsLogic) runInstructionCompletion(item *models.TO
 	if err := l.completeExerciseTransition(item); err != nil {
 		return err
 	}
+	if err := l.completePhysicalDeliveryUnitTransition(item); err != nil {
+		return err
+	}
 	if err := l.completeSettlementTransition(item); err != nil {
 		return err
 	}
-	return l.completeLiquidationTransition(item)
+	if err := l.completeLiquidationTransition(item); err != nil {
+		return err
+	}
+	return l.syncTradeCorrectionStatus(item)
+}
+
+func (l *ProcessAssetInstructionsLogic) syncTradeCorrectionStatus(
+	item *models.TOptionAssetInstruction,
+) error {
+	if item == nil || item.BizNo == "" {
+		return nil
+	}
+	correction, err := l.svcCtx.OptionTradeCorrectionModel.FindOneByTenantIdCaseNo(
+		l.ctx, item.TenantId, item.BizNo,
+	)
+	if errors.Is(err, models.ErrNotFound) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	if correction.Status != int64(option.TradeCorrectionStatus_TRADE_CORRECTION_STATUS_EXECUTING) &&
+		correction.Status != int64(option.TradeCorrectionStatus_TRADE_CORRECTION_STATUS_MANUAL_REVIEW) {
+		return nil
+	}
+	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		correctionModel := models.NewTOptionTradeCorrectionModel(conn, l.svcCtx.Config.CacheRedis)
+		instructionModel := models.NewTOptionAssetInstructionModel(conn, l.svcCtx.Config.CacheRedis)
+		eventModel := models.NewTOptionTradingControlEventModel(conn, l.svcCtx.Config.CacheRedis)
+		locked, lockErr := correctionModel.FindOneForUpdate(ctx, correction.Id)
+		if lockErr != nil {
+			return lockErr
+		}
+		if locked.Status != int64(option.TradeCorrectionStatus_TRADE_CORRECTION_STATUS_EXECUTING) &&
+			locked.Status != int64(option.TradeCorrectionStatus_TRADE_CORRECTION_STATUS_MANUAL_REVIEW) {
+			return nil
+		}
+		instructions, findErr := instructionModel.FindByBizNo(ctx, locked.TenantId, locked.CaseNo)
+		if findErr != nil {
+			return findErr
+		}
+		if len(instructions) == 0 {
+			return errors.New("trade correction has no asset instructions")
+		}
+		allSuccess, manualReview, lastError := tradeCorrectionInstructionOutcome(instructions)
+		now := time.Now().Unix()
+		eventType := ""
+		switch {
+		case allSuccess:
+			locked.Status = int64(option.TradeCorrectionStatus_TRADE_CORRECTION_STATUS_COMPLETED)
+			locked.CompletedAt = now
+			locked.LastErrorMsg = ""
+			eventType = "TRADE_CORRECTION_COMPLETED"
+		case manualReview &&
+			locked.Status != int64(option.TradeCorrectionStatus_TRADE_CORRECTION_STATUS_MANUAL_REVIEW):
+			locked.Status = int64(option.TradeCorrectionStatus_TRADE_CORRECTION_STATUS_MANUAL_REVIEW)
+			locked.LastErrorMsg = lastError
+			if len(locked.LastErrorMsg) > 500 {
+				locked.LastErrorMsg = locked.LastErrorMsg[:500]
+			}
+			eventType = "TRADE_CORRECTION_MANUAL_REVIEW"
+		default:
+			return nil
+		}
+		locked.UpdateTimes = now
+		if updateErr := correctionModel.Update(ctx, locked); updateErr != nil {
+			return updateErr
+		}
+		_, insertErr := eventModel.Insert(ctx, &models.TOptionTradingControlEvent{
+			TenantId: locked.TenantId, ContractId: locked.ContractId,
+			EventType: eventType, Reason: "CASH_ADJUSTMENT",
+			Detail: fmt.Sprintf(
+				"case_no=%s trade_id=%d status=%d",
+				locked.CaseNo, locked.TradeId, locked.Status,
+			),
+			OperatorId: locked.ReviewedBy, CreateTimes: now,
+		})
+		return insertErr
+	})
+}
+
+func tradeCorrectionInstructionOutcome(
+	instructions []*models.TOptionAssetInstruction,
+) (allSuccess, manualReview bool, lastError string) {
+	allSuccess = len(instructions) > 0
+	for _, instruction := range instructions {
+		if instruction == nil ||
+			instruction.Status != int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS) {
+			allSuccess = false
+		}
+		if instruction != nil &&
+			instruction.Status == int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_MANUAL_REVIEW) {
+			manualReview = true
+			if instruction.LastErrorMsg != "" {
+				lastError = instruction.LastErrorMsg
+			}
+		}
+	}
+	return allSuccess, manualReview, lastError
 }
 
 func (l *ProcessAssetInstructionsLogic) completeExerciseTransition(item *models.TOptionAssetInstruction) error {
@@ -428,7 +545,9 @@ func (l *ProcessAssetInstructionsLogic) completeLiquidationTransition(item *mode
 		now := time.Now().Unix()
 		multiplier := optionMultiplier(contract)
 		realized := source.OpenAvgPrice.Sub(liq.MarkPrice).Mul(liq.Quantity).Mul(multiplier).Round(16)
-		source.RealizedPnl = source.RealizedPnl.Add(realized)
+		source.TradeRealizedPnl = source.TradeRealizedPnl.Add(realized)
+		source.FeePaid = source.FeePaid.Add(liq.LiquidationFee)
+		recalculatePositionReturn(source)
 		source.PositionQty = decimal.Max(source.PositionQty.Sub(liq.Quantity), decimal.Zero)
 		source.AvailableQty = decimal.Min(source.AvailableQty, source.PositionQty)
 		source.FrozenQty = decimal.Max(source.PositionQty.Sub(source.AvailableQty), decimal.Zero)
@@ -608,6 +727,26 @@ func (l *ProcessAssetInstructionsLogic) markInstructionFailed(item *models.TOpti
 	if err := l.svcCtx.OptionAssetInstructionModel.Update(l.ctx, item); err != nil {
 		return err
 	}
+	if err := l.markPhysicalDeliveryUnitFailed(item, cause); err != nil {
+		return err
+	}
+	if err := l.syncTradeCorrectionStatus(item); err != nil {
+		return err
+	}
+	if item.Status == int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_MANUAL_REVIEW) &&
+		item.OrderId > 0 {
+		order, findErr := l.svcCtx.OptionOrderModel.FindOne(l.ctx, item.OrderId)
+		if findErr != nil && !errors.Is(findErr, models.ErrNotFound) {
+			return findErr
+		}
+		if findErr == nil && order.ComboOrderId > 0 {
+			if markErr := applogic.MarkComboManualReview(
+				l.ctx, l.svcCtx, order.ComboOrderId,
+			); markErr != nil {
+				return markErr
+			}
+		}
+	}
 	if item.Status != int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_MANUAL_REVIEW) ||
 		item.BizNo == "" {
 		return nil
@@ -630,6 +769,223 @@ func (l *ProcessAssetInstructionsLogic) markInstructionFailed(item *models.TOpti
 	)
 }
 
+func (l *ProcessAssetInstructionsLogic) markPhysicalDeliveryUnitFailed(
+	item *models.TOptionAssetInstruction, cause error,
+) error {
+	if item.DeliveryUnitId == 0 {
+		return nil
+	}
+	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		unitModel := models.NewTOptionPhysicalDeliveryUnitModel(conn, l.svcCtx.Config.CacheRedis)
+		eventModel := models.NewTOptionTradingControlEventModel(conn, l.svcCtx.Config.CacheRedis)
+		unit, err := unitModel.FindOneForUpdate(ctx, item.DeliveryUnitId)
+		if err != nil {
+			return err
+		}
+		if unit.Status == int64(option.PhysicalDeliveryUnitStatus_PHYSICAL_DELIVERY_UNIT_STATUS_COMPLETED) {
+			return errors.New("completed physical delivery unit received a failed instruction")
+		}
+		now := time.Now().Unix()
+		nextStatus := option.PhysicalDeliveryUnitStatus_PHYSICAL_DELIVERY_UNIT_STATUS_CURE_REQUIRED
+		eventType := "PHYSICAL_DELIVERY_CURE_REQUIRED"
+		if now >= unit.CureDeadline {
+			nextStatus = option.PhysicalDeliveryUnitStatus_PHYSICAL_DELIVERY_UNIT_STATUS_DEFAULTED
+			eventType = "PHYSICAL_DELIVERY_DEFAULTED"
+			item.Status = int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_MANUAL_REVIEW)
+			item.NextRetryAt = 0
+			if err := models.NewTOptionAssetInstructionModel(
+				conn, l.svcCtx.Config.CacheRedis,
+			).Update(ctx, item); err != nil {
+				return err
+			}
+		} else if item.Status == int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_MANUAL_REVIEW) {
+			nextStatus = option.PhysicalDeliveryUnitStatus_PHYSICAL_DELIVERY_UNIT_STATUS_MANUAL_REVIEW
+			eventType = "PHYSICAL_DELIVERY_MANUAL_REVIEW"
+		}
+		changed := unit.Status != int64(nextStatus)
+		unit.Status = int64(nextStatus)
+		unit.FailedInstructionId = item.Id
+		unit.LastErrorMsg = cause.Error()
+		unit.UpdateTimes = now
+		if err := unitModel.Update(ctx, unit); err != nil {
+			return err
+		}
+		if nextStatus == option.PhysicalDeliveryUnitStatus_PHYSICAL_DELIVERY_UNIT_STATUS_MANUAL_REVIEW ||
+			nextStatus == option.PhysicalDeliveryUnitStatus_PHYSICAL_DELIVERY_UNIT_STATUS_DEFAULTED {
+			if err := markPhysicalDeliveryBatchFailed(
+				ctx, conn, l.svcCtx.Config.CacheRedis, unit, cause.Error(), now,
+			); err != nil {
+				return err
+			}
+		}
+		if !changed {
+			return nil
+		}
+		_, err = eventModel.Insert(ctx, &models.TOptionTradingControlEvent{
+			TenantId: unit.TenantId, UserId: item.UserId, ContractId: unit.ContractId,
+			EventType: eventType, Reason: "ASSET_INSTRUCTION_FAILED",
+			Detail: fmt.Sprintf(
+				"deliveryUnit=%s instruction=%s cureDeadline=%d error=%s",
+				unit.DeliveryUnitNo, item.InstructionNo, unit.CureDeadline, cause.Error(),
+			),
+			CreateTimes: now,
+		})
+		return err
+	})
+}
+
+func (l *ProcessAssetInstructionsLogic) expirePhysicalDeliveryCures(tenantId, now int64) error {
+	for {
+		items, err := l.svcCtx.OptionPhysicalDeliveryUnitModel.FindExpiredCure(
+			l.ctx, tenantId, now, 100,
+		)
+		if err != nil {
+			return err
+		}
+		for _, item := range items {
+			if err := l.expirePhysicalDeliveryUnit(item.Id, now); err != nil {
+				return err
+			}
+		}
+		if len(items) < 100 {
+			return nil
+		}
+	}
+}
+
+func (l *ProcessAssetInstructionsLogic) expirePhysicalDeliveryUnit(unitId, now int64) error {
+	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		unitModel := models.NewTOptionPhysicalDeliveryUnitModel(conn, l.svcCtx.Config.CacheRedis)
+		instructionModel := models.NewTOptionAssetInstructionModel(conn, l.svcCtx.Config.CacheRedis)
+		eventModel := models.NewTOptionTradingControlEventModel(conn, l.svcCtx.Config.CacheRedis)
+		unit, err := unitModel.FindOneForUpdate(ctx, unitId)
+		if err != nil {
+			return err
+		}
+		if unit.CureDeadline > now ||
+			(unit.Status != int64(option.PhysicalDeliveryUnitStatus_PHYSICAL_DELIVERY_UNIT_STATUS_CURE_REQUIRED) &&
+				unit.Status != int64(option.PhysicalDeliveryUnitStatus_PHYSICAL_DELIVERY_UNIT_STATUS_ASSET_PROCESSING)) {
+			return nil
+		}
+		instructions, err := instructionModel.FindByDeliveryUnit(ctx, unit.TenantId, unit.Id)
+		if err != nil {
+			return err
+		}
+		allSucceeded := len(instructions) > 0
+		for _, instruction := range instructions {
+			if instruction.Status != int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS) {
+				allSucceeded = false
+				break
+			}
+		}
+		if allSucceeded {
+			unit.Status = int64(option.PhysicalDeliveryUnitStatus_PHYSICAL_DELIVERY_UNIT_STATUS_COMPLETED)
+			unit.FailedInstructionId = 0
+			unit.LastErrorMsg = ""
+			unit.CompletedAt = now
+			unit.UpdateTimes = now
+			if err := unitModel.Update(ctx, unit); err != nil {
+				return err
+			}
+			_, err = eventModel.Insert(ctx, &models.TOptionTradingControlEvent{
+				TenantId: unit.TenantId, ContractId: unit.ContractId,
+				EventType:   "PHYSICAL_DELIVERY_COMPLETED",
+				Reason:      "DEADLINE_SWEEP_CONFIRMED_ALL_INSTRUCTIONS_SUCCESS",
+				Detail:      fmt.Sprintf("deliveryUnit=%s", unit.DeliveryUnitNo),
+				CreateTimes: now,
+			})
+			return err
+		}
+		failedInstructionId := unit.FailedInstructionId
+		for _, instruction := range instructions {
+			if instruction.Status != int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING) &&
+				instruction.Status != int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_FAILED) {
+				continue
+			}
+			instruction.Status = int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_MANUAL_REVIEW)
+			instruction.NextRetryAt = 0
+			instruction.LastErrorMsg = "PHYSICAL_DELIVERY_CURE_DEADLINE_EXPIRED"
+			instruction.UpdateTimes = now
+			if err := instructionModel.Update(ctx, instruction); err != nil {
+				return err
+			}
+			if failedInstructionId == 0 {
+				failedInstructionId = instruction.Id
+			}
+		}
+		unit.Status = int64(option.PhysicalDeliveryUnitStatus_PHYSICAL_DELIVERY_UNIT_STATUS_DEFAULTED)
+		unit.FailedInstructionId = failedInstructionId
+		unit.LastErrorMsg = "PHYSICAL_DELIVERY_CURE_DEADLINE_EXPIRED"
+		unit.UpdateTimes = now
+		if err := unitModel.Update(ctx, unit); err != nil {
+			return err
+		}
+		if err := markPhysicalDeliveryBatchFailed(
+			ctx, conn, l.svcCtx.Config.CacheRedis, unit,
+			"PHYSICAL_DELIVERY_CURE_DEADLINE_EXPIRED", now,
+		); err != nil {
+			return err
+		}
+		_, err = eventModel.Insert(ctx, &models.TOptionTradingControlEvent{
+			TenantId: unit.TenantId, ContractId: unit.ContractId,
+			EventType: "PHYSICAL_DELIVERY_DEFAULTED", Reason: "CURE_DEADLINE_EXPIRED",
+			Detail: fmt.Sprintf(
+				"deliveryUnit=%s cureDeadline=%d", unit.DeliveryUnitNo, unit.CureDeadline,
+			),
+			CreateTimes: now,
+		})
+		return err
+	})
+}
+
+func (l *ProcessAssetInstructionsLogic) completePhysicalDeliveryUnitTransition(
+	item *models.TOptionAssetInstruction,
+) error {
+	if item.DeliveryUnitId == 0 {
+		return nil
+	}
+	instructions, err := l.svcCtx.OptionAssetInstructionModel.FindByDeliveryUnit(
+		l.ctx, item.TenantId, item.DeliveryUnitId,
+	)
+	if err != nil {
+		return err
+	}
+	for _, instruction := range instructions {
+		if instruction.Status != int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS) {
+			return nil
+		}
+	}
+	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		unitModel := models.NewTOptionPhysicalDeliveryUnitModel(conn, l.svcCtx.Config.CacheRedis)
+		eventModel := models.NewTOptionTradingControlEventModel(conn, l.svcCtx.Config.CacheRedis)
+		unit, err := unitModel.FindOneForUpdate(ctx, item.DeliveryUnitId)
+		if err != nil {
+			return err
+		}
+		if unit.Status == int64(option.PhysicalDeliveryUnitStatus_PHYSICAL_DELIVERY_UNIT_STATUS_COMPLETED) {
+			return nil
+		}
+		now := time.Now().Unix()
+		unit.Status = int64(option.PhysicalDeliveryUnitStatus_PHYSICAL_DELIVERY_UNIT_STATUS_COMPLETED)
+		unit.FailedInstructionId = 0
+		unit.LastErrorMsg = ""
+		unit.CompletedAt = now
+		unit.UpdateTimes = now
+		if err := unitModel.Update(ctx, unit); err != nil {
+			return err
+		}
+		_, err = eventModel.Insert(ctx, &models.TOptionTradingControlEvent{
+			TenantId: unit.TenantId, ContractId: unit.ContractId,
+			EventType: "PHYSICAL_DELIVERY_COMPLETED", Reason: "ALL_ASSET_LEGS_RECONCILED",
+			Detail: "deliveryUnit=" + unit.DeliveryUnitNo, CreateTimes: now,
+		})
+		return err
+	})
+}
+
 func (l *ProcessAssetInstructionsLogic) completeFundingTransition(item *models.TOptionAssetInstruction) error {
 	if item.OrderId == 0 ||
 		item.Action != int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_FREEZE) {
@@ -638,6 +994,9 @@ func (l *ProcessAssetInstructionsLogic) completeFundingTransition(item *models.T
 	order, err := l.svcCtx.OptionOrderModel.FindOne(l.ctx, item.OrderId)
 	if err != nil {
 		return err
+	}
+	if order.ComboOrderId > 0 {
+		return applogic.CompleteComboFunding(l.ctx, l.svcCtx, order.ComboOrderId)
 	}
 	if order.Status == int64(option.OrderStatus_ORDER_STATUS_PENDING) {
 		return applogic.MatchFundedOrder(l.ctx, l.svcCtx, order)
@@ -728,6 +1087,9 @@ func (l *ProcessAssetInstructionsLogic) completeOrderTransition(item *models.TOp
 		return err
 	}
 	publishOptionOrderChanged(l.ctx, l.svcCtx, order)
+	if order.ComboOrderId > 0 {
+		return applogic.FinalizeComboCancellation(l.ctx, l.svcCtx, order.ComboOrderId)
+	}
 	return nil
 }
 
@@ -758,14 +1120,55 @@ func (l *ProcessAssetInstructionsLogic) completeSettlementTransition(item *model
 		}
 		return err
 	}
+	var exceptionUnit *models.TOptionPhysicalDeliveryUnit
+	units, err := l.svcCtx.OptionPhysicalDeliveryUnitModel.FindByBatch(
+		l.ctx, batch.TenantId, batch.Id,
+	)
+	if err != nil {
+		return err
+	}
+	for _, unit := range units {
+		if unit.Status == int64(option.PhysicalDeliveryUnitStatus_PHYSICAL_DELIVERY_UNIT_STATUS_MANUAL_REVIEW) ||
+			unit.Status == int64(option.PhysicalDeliveryUnitStatus_PHYSICAL_DELIVERY_UNIT_STATUS_DEFAULTED) {
+			exceptionUnit = unit
+			break
+		}
+	}
 	batch.SuccessCount = successCount
 	batch.Status = int64(option.SettlementBatchStatus_SETTLEMENT_BATCH_STATUS_ASSET_PROCESSING)
-	if allSucceeded {
+	batch.LastErrorMsg = ""
+	if exceptionUnit != nil {
+		batch.Status = int64(option.SettlementBatchStatus_SETTLEMENT_BATCH_STATUS_FAILED)
+		batch.LastErrorMsg = fmt.Sprintf(
+			"physical delivery unit %s: %s",
+			exceptionUnit.DeliveryUnitNo, exceptionUnit.LastErrorMsg,
+		)
+	} else if allSucceeded {
 		batch.Status = int64(option.SettlementBatchStatus_SETTLEMENT_BATCH_STATUS_RECONCILING)
 	}
 	batch.UpdateTimes = time.Now().Unix()
 	if err := l.svcCtx.OptionSettlementBatchModel.Update(l.ctx, batch); err != nil {
 		return err
+	}
+	if exceptionUnit != nil {
+		settlement, findErr := l.svcCtx.OptionSettlementModel.FindOneByTenantIdSettlementNo(
+			l.ctx, item.TenantId, item.BizNo,
+		)
+		if errors.Is(findErr, models.ErrNotFound) {
+			return nil
+		}
+		if findErr != nil {
+			return findErr
+		}
+		if settlement.Status != int64(option.SettlementStatus_SETTLEMENT_STATUS_DONE) {
+			settlement.Status = int64(option.SettlementStatus_SETTLEMENT_STATUS_FAILED)
+			settlement.Remark = batch.LastErrorMsg
+			settlement.UpdateTimes = batch.UpdateTimes
+			if err := l.svcCtx.OptionSettlementModel.Update(l.ctx, settlement); err != nil {
+				return err
+			}
+		}
+		return nil
 	}
 	if !allSucceeded {
 		return nil
@@ -797,6 +1200,44 @@ func (l *ProcessAssetInstructionsLogic) completeSettlementTransition(item *model
 	batch.Status = int64(option.SettlementBatchStatus_SETTLEMENT_BATCH_STATUS_DONE)
 	batch.UpdateTimes = time.Now().Unix()
 	return l.svcCtx.OptionSettlementBatchModel.Update(l.ctx, batch)
+}
+
+func markPhysicalDeliveryBatchFailed(
+	ctx context.Context,
+	conn sqlx.SqlConn,
+	cacheRedis cache.CacheConf,
+	unit *models.TOptionPhysicalDeliveryUnit,
+	message string,
+	now int64,
+) error {
+	batchModel := models.NewTOptionSettlementBatchModel(conn, cacheRedis)
+	batch, err := batchModel.FindOneByTenantIdBatchNo(ctx, unit.TenantId, unit.BatchNo)
+	if err != nil {
+		return err
+	}
+	batch.Status = int64(option.SettlementBatchStatus_SETTLEMENT_BATCH_STATUS_FAILED)
+	batch.LastErrorMsg = fmt.Sprintf("physical delivery unit %s: %s", unit.DeliveryUnitNo, message)
+	batch.UpdateTimes = now
+	if err := batchModel.Update(ctx, batch); err != nil {
+		return err
+	}
+	settlementModel := models.NewTOptionSettlementModel(conn, cacheRedis)
+	settlement, err := settlementModel.FindOneByTenantIdSettlementNo(
+		ctx, unit.TenantId, unit.BatchNo,
+	)
+	if errors.Is(err, models.ErrNotFound) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	if settlement.Status == int64(option.SettlementStatus_SETTLEMENT_STATUS_DONE) {
+		return errors.New("completed settlement contains a defaulted physical delivery unit")
+	}
+	settlement.Status = int64(option.SettlementStatus_SETTLEMENT_STATUS_FAILED)
+	settlement.Remark = batch.LastErrorMsg
+	settlement.UpdateTimes = now
+	return settlementModel.Update(ctx, settlement)
 }
 
 func (l *ProcessAssetInstructionsLogic) execute(item *models.TOptionAssetInstruction) error {

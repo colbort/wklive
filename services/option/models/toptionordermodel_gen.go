@@ -68,6 +68,9 @@ type (
 		ClientOrderId    string          `db:"client_order_id"`   // 客户端订单号
 		ReduceOnly       int64           `db:"reduce_only"`       // 是否只减仓：1是 2否
 		Mmp              int64           `db:"mmp"`               // 是否做市商保护单：1是 2否
+		MmpGroup         string          `db:"mmp_group"`         // MMP报价组，mmp=1时必填
+		ComboOrderId     int64           `db:"combo_order_id"`    // 组合父单ID；0为普通单
+		ComboLegNo       int64           `db:"combo_leg_no"`      // 组合腿序号；普通单为0
 		Status           int64           `db:"status"`            // 状态：0未知 1待撮合 2部分成交 3完全成交 4已撤单 5拒单 6已过期
 		CancelReason     string          `db:"cancel_reason"`     // 撤单/拒单原因
 		MatchTime        int64           `db:"match_time"`        // 最后成交时间
@@ -140,8 +143,8 @@ func (m *defaultTOptionOrderModel) Insert(ctx context.Context, data *TOptionOrde
 	tOptionOrderIdKey := fmt.Sprintf("%s%v", cacheTOptionOrderIdPrefix, data.Id)
 	tOptionOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionOrderRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.UserId, data.AccountId, data.ContractId, data.UnderlyingSymbol, data.Side, data.PositionEffect, data.OrderType, data.Price, data.Qty, data.FilledQty, data.UnfilledQty, data.AvgPrice, data.Turnover, data.Fee, data.FeeCoin, data.MarginAmount, data.MarginCoin, data.Source, data.ClientOrderId, data.ReduceOnly, data.Mmp, data.Status, data.CancelReason, data.MatchTime, data.CancelTime, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionOrderRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.UserId, data.AccountId, data.ContractId, data.UnderlyingSymbol, data.Side, data.PositionEffect, data.OrderType, data.Price, data.Qty, data.FilledQty, data.UnfilledQty, data.AvgPrice, data.Turnover, data.Fee, data.FeeCoin, data.MarginAmount, data.MarginCoin, data.Source, data.ClientOrderId, data.ReduceOnly, data.Mmp, data.MmpGroup, data.ComboOrderId, data.ComboLegNo, data.Status, data.CancelReason, data.MatchTime, data.CancelTime, data.CreateTimes, data.UpdateTimes)
 	}, tOptionOrderIdKey, tOptionOrderTenantIdOrderNoKey)
 	return ret, err
 }
@@ -156,7 +159,7 @@ func (m *defaultTOptionOrderModel) Update(ctx context.Context, newData *TOptionO
 	tOptionOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionOrderRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderNo, newData.UserId, newData.AccountId, newData.ContractId, newData.UnderlyingSymbol, newData.Side, newData.PositionEffect, newData.OrderType, newData.Price, newData.Qty, newData.FilledQty, newData.UnfilledQty, newData.AvgPrice, newData.Turnover, newData.Fee, newData.FeeCoin, newData.MarginAmount, newData.MarginCoin, newData.Source, newData.ClientOrderId, newData.ReduceOnly, newData.Mmp, newData.Status, newData.CancelReason, newData.MatchTime, newData.CancelTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderNo, newData.UserId, newData.AccountId, newData.ContractId, newData.UnderlyingSymbol, newData.Side, newData.PositionEffect, newData.OrderType, newData.Price, newData.Qty, newData.FilledQty, newData.UnfilledQty, newData.AvgPrice, newData.Turnover, newData.Fee, newData.FeeCoin, newData.MarginAmount, newData.MarginCoin, newData.Source, newData.ClientOrderId, newData.ReduceOnly, newData.Mmp, newData.MmpGroup, newData.ComboOrderId, newData.ComboLegNo, newData.Status, newData.CancelReason, newData.MatchTime, newData.CancelTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tOptionOrderIdKey, tOptionOrderTenantIdOrderNoKey)
 	return err
 }

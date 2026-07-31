@@ -3,6 +3,7 @@ package logicutil
 import (
 	"context"
 	"reflect"
+	"strings"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/grpc"
@@ -325,6 +326,16 @@ func findField(v reflect.Value, name string) (reflect.Value, bool) {
 			if nested, ok := findField(fieldValue, name); ok {
 				return nested, true
 			}
+		}
+	}
+	canonicalName := strings.ToLower(strings.ReplaceAll(name, "_", ""))
+	for i := 0; i < v.NumField(); i++ {
+		fieldType := t.Field(i)
+		if fieldType.PkgPath != "" || fieldType.Anonymous {
+			continue
+		}
+		if strings.ToLower(strings.ReplaceAll(fieldType.Name, "_", "")) == canonicalName {
+			return v.Field(i), true
 		}
 	}
 

@@ -294,7 +294,7 @@ services:
       args:
         SERVICE_DIR: services/option
     command: ["-etcd", "etcd:2379"]
-    expose: ["8085"]
+    expose: ["8085", "9105"]
 
   staking-rpc:
     <<: *go-service

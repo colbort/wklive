@@ -533,65 +533,85 @@ func cancelOptionSystemOrder(ctx context.Context, svcCtx *svc.ServiceContext, or
 		if err != nil {
 			return err
 		}
-		switch option.OrderStatus(order.Status) {
-		case option.OrderStatus_ORDER_STATUS_FUNDING,
-			option.OrderStatus_ORDER_STATUS_PENDING,
-			option.OrderStatus_ORDER_STATUS_PART_FILLED:
-		default:
-			return nil
-		}
 		now := time.Now().Unix()
-		cancelBeforeFreeze := false
-		if order.Status == int64(option.OrderStatus_ORDER_STATUS_FUNDING) {
-			freeze, err := instructionModel.FindOneByTenantIdInstructionNo(txCtx, order.TenantId, order.OrderNo+"-FREEZE")
-			if err != nil {
-				return err
-			}
-			freeze, err = instructionModel.FindOneForUpdate(txCtx, freeze.Id)
-			if err != nil {
-				return err
-			}
-			if freeze.Status == int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING) {
-				freeze.Status = int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_CANCELED)
-				freeze.UpdateTimes = now
-				if err := instructionModel.Update(txCtx, freeze); err != nil {
-					return err
-				}
-				cancelBeforeFreeze = true
-				order.MarginAmount = decimal.Zero
-			}
-		}
-		if err := releaseClosePositionFrozenQty(txCtx, positionModel, order, order.UnfilledQty, now); err != nil {
+		changed, err := cancelOptionSystemOrderInTx(
+			txCtx, orderModel, positionModel, instructionModel, order, reason, now,
+		)
+		if err != nil {
 			return err
 		}
-		order.Status = int64(option.OrderStatus_ORDER_STATUS_CANCELED)
-		if order.MarginAmount.IsPositive() && !cancelBeforeFreeze {
-			order.Status = int64(option.OrderStatus_ORDER_STATUS_CANCELING)
-			if _, err := instructionModel.Insert(txCtx, &models.TOptionAssetInstruction{
-				TenantId: order.TenantId, InstructionNo: order.OrderNo + "-LIQUIDATION-RELEASE",
-				BizNo: order.OrderNo, OrderId: order.Id, UserId: order.UserId, AccountId: order.AccountId,
-				Action:      int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_RELEASE_FROZEN),
-				TargetBizNo: order.OrderNo, Coin: order.FeeCoin, Amount: order.MarginAmount,
-				StepNo: 2, Status: int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING),
-				ReconciliationStatus: int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_PENDING),
-				CreateTimes:          now, UpdateTimes: now,
-			}); err != nil {
-				return err
-			}
+		if changed {
+			canceled = order
 		}
-		order.CancelReason = reason
-		order.CancelTime = now
-		order.UpdateTimes = now
-		if err := orderModel.Update(txCtx, order); err != nil {
-			return err
-		}
-		canceled = order
 		return nil
 	})
 	if err == nil && canceled != nil {
 		applogic.PublishOptionOrderChanged(ctx, svcCtx, canceled)
 	}
 	return err
+}
+
+func cancelOptionSystemOrderInTx(
+	ctx context.Context,
+	orderModel models.TOptionOrderModel,
+	positionModel models.TOptionPositionModel,
+	instructionModel models.TOptionAssetInstructionModel,
+	order *models.TOptionOrder,
+	reason string,
+	now int64,
+) (bool, error) {
+	switch option.OrderStatus(order.Status) {
+	case option.OrderStatus_ORDER_STATUS_FUNDING,
+		option.OrderStatus_ORDER_STATUS_PENDING,
+		option.OrderStatus_ORDER_STATUS_PART_FILLED:
+	default:
+		return false, nil
+	}
+	cancelBeforeFreeze := false
+	if order.Status == int64(option.OrderStatus_ORDER_STATUS_FUNDING) {
+		freeze, err := instructionModel.FindOneByTenantIdInstructionNo(ctx, order.TenantId, order.OrderNo+"-FREEZE")
+		if err != nil {
+			return false, err
+		}
+		freeze, err = instructionModel.FindOneForUpdate(ctx, freeze.Id)
+		if err != nil {
+			return false, err
+		}
+		if freeze.Status == int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING) {
+			freeze.Status = int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_CANCELED)
+			freeze.UpdateTimes = now
+			if err := instructionModel.Update(ctx, freeze); err != nil {
+				return false, err
+			}
+			cancelBeforeFreeze = true
+			order.MarginAmount = decimal.Zero
+		}
+	}
+	if err := releaseClosePositionFrozenQty(ctx, positionModel, order, order.UnfilledQty, now); err != nil {
+		return false, err
+	}
+	order.Status = int64(option.OrderStatus_ORDER_STATUS_CANCELED)
+	if order.MarginAmount.IsPositive() && !cancelBeforeFreeze {
+		order.Status = int64(option.OrderStatus_ORDER_STATUS_CANCELING)
+		if _, err := instructionModel.Insert(ctx, &models.TOptionAssetInstruction{
+			TenantId: order.TenantId, InstructionNo: order.OrderNo + "-LIQUIDATION-RELEASE",
+			BizNo: order.OrderNo, OrderId: order.Id, UserId: order.UserId, AccountId: order.AccountId,
+			Action:      int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_RELEASE_FROZEN),
+			TargetBizNo: order.OrderNo, Coin: applogic.OptionOrderMarginCoin(order), Amount: order.MarginAmount,
+			StepNo: 2, Status: int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING),
+			ReconciliationStatus: int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_PENDING),
+			CreateTimes:          now, UpdateTimes: now,
+		}); err != nil {
+			return false, err
+		}
+	}
+	order.CancelReason = reason
+	order.CancelTime = now
+	order.UpdateTimes = now
+	if err := orderModel.Update(ctx, order); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 func (l *ProcessLiquidationsLogic) failLiquidation(liq *models.TOptionLiquidation, cause error) error {

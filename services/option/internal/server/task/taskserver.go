@@ -59,6 +59,12 @@ func (s *TaskServer) ProcessContractLifecycle(ctx context.Context, in *option.Op
 	return l.ProcessContractLifecycle(in)
 }
 
+// 按批次执行已复核且到达生效时间的公司行动迁移
+func (s *TaskServer) ProcessCorporateActions(ctx context.Context, in *option.OptionTaskReq) (*option.OptionTaskResp, error) {
+	l := tasklogic.NewProcessCorporateActionsLogic(ctx, s.svcCtx)
+	return l.ProcessCorporateActions(in)
+}
+
 // 期权行情快照归档/清理
 func (s *TaskServer) CleanMarketSnapshots(ctx context.Context, in *option.OptionTaskReq) (*option.OptionTaskResp, error) {
 	l := tasklogic.NewCleanMarketSnapshotsLogic(ctx, s.svcCtx)

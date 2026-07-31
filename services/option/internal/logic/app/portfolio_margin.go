@@ -7,6 +7,7 @@ import (
 
 	"wklive/proto/common"
 	"wklive/proto/option"
+	"wklive/services/option/internal/logic/helpers"
 	optionrisk "wklive/services/option/internal/risk"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
@@ -30,16 +31,28 @@ func calculatePortfolioOrderMargin(
 	}
 	riskAccountModel := models.NewTOptionRiskAccountModel(conn, svcCtx.Config.CacheRedis)
 	if _, err := riskAccountModel.EnsureAndFindOneForUpdate(
-		ctx, candidate.TenantId, candidate.UserId, candidate.AccountId, contract.SettleCoin, now,
+		ctx, candidate.TenantId, candidate.UserId, 0, contract.SettleCoin, now,
 	); err != nil {
 		return decimal.Zero, err
+	}
+	configModel := models.NewTOptionPortfolioRiskConfigModel(conn, svcCtx.Config.CacheRedis)
+	configItem, err := configModel.FindActive(ctx, candidate.TenantId, contract.SettleCoin, now)
+	if err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			return decimal.Zero, errors.New("no approved active portfolio risk config")
+		}
+		return decimal.Zero, err
+	}
+	config, err := optionrisk.PortfolioConfigFromModel(configItem)
+	if err != nil {
+		return decimal.Zero, fmt.Errorf("invalid active portfolio risk config %d: %w", configItem.Id, err)
 	}
 
 	legs, err := loadPortfolioLegs(ctx, svcCtx, conn, candidate, contract.SettleCoin, now)
 	if err != nil {
 		return decimal.Zero, err
 	}
-	before, err := optionrisk.EvaluatePortfolio(portfolioLegSlice(legs), false)
+	before, err := optionrisk.EvaluatePortfolio(portfolioLegSlice(legs), false, config)
 	if err != nil {
 		return decimal.Zero, err
 	}
@@ -56,7 +69,7 @@ func calculatePortfolioOrderMargin(
 		leg.LongQuantity = leg.LongQuantity.Sub(candidate.Qty)
 	}
 	legs[contract.Id] = leg
-	after, err := optionrisk.EvaluatePortfolio(portfolioLegSlice(legs), false)
+	after, err := optionrisk.EvaluatePortfolio(portfolioLegSlice(legs), false, config)
 	if err != nil {
 		return decimal.Zero, err
 	}
@@ -79,7 +92,7 @@ func loadPortfolioLegs(
 	cursor := int64(0)
 	for {
 		positions, _, err := positionModel.FindPage(ctx, models.OptionPositionPageFilter{
-			TenantId: candidate.TenantId, UserId: candidate.UserId, AccountId: candidate.AccountId,
+			TenantId: candidate.TenantId, UserId: candidate.UserId,
 			Status: int64(option.PositionStatus_POSITION_STATUS_HOLDING),
 		}, cursor, 100)
 		if err != nil {
@@ -112,7 +125,7 @@ func loadPortfolioLegs(
 	}
 
 	orders, err := orderModel.FindPortfolioRiskOrders(
-		ctx, candidate.TenantId, candidate.UserId, candidate.AccountId,
+		ctx, candidate.TenantId, candidate.UserId, 0,
 	)
 	if err != nil {
 		return nil, err
@@ -156,9 +169,10 @@ func ensurePortfolioLeg(
 	if err != nil {
 		return optionrisk.PortfolioLeg{}, err
 	}
-	if market.SnapshotTime <= 0 || market.SnapshotTime > now || now-market.SnapshotTime > 30 {
+	if !helpers.IsRiskMarketFresh(market, now, 30) {
 		return optionrisk.PortfolioLeg{}, fmt.Errorf(
-			"stale portfolio market, contractId=%d snapshotTime=%d", contract.Id, market.SnapshotTime,
+			"stale portfolio market, contractId=%d underlyingSnapshotTime=%d markSnapshotTime=%d",
+			contract.Id, market.UnderlyingSnapshotTime, market.MarkSnapshotTime,
 		)
 	}
 	leg := optionrisk.PortfolioLeg{Contract: contract, Market: market}

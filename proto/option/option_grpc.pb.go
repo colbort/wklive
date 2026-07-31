@@ -19,20 +19,31 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	App_ListContracts_FullMethodName     = "/option.App/ListContracts"
-	App_GetContractDetail_FullMethodName = "/option.App/GetContractDetail"
-	App_PlaceOrder_FullMethodName        = "/option.App/PlaceOrder"
-	App_CancelOrder_FullMethodName       = "/option.App/CancelOrder"
-	App_GetOrderDetail_FullMethodName    = "/option.App/GetOrderDetail"
-	App_ListCurrentOrders_FullMethodName = "/option.App/ListCurrentOrders"
-	App_ListHistoryOrders_FullMethodName = "/option.App/ListHistoryOrders"
-	App_ListTrades_FullMethodName        = "/option.App/ListTrades"
-	App_ListPositions_FullMethodName     = "/option.App/ListPositions"
-	App_GetPositionDetail_FullMethodName = "/option.App/GetPositionDetail"
-	App_Exercise_FullMethodName          = "/option.App/Exercise"
-	App_ListExercises_FullMethodName     = "/option.App/ListExercises"
-	App_ListAccounts_FullMethodName      = "/option.App/ListAccounts"
-	App_ListBills_FullMethodName         = "/option.App/ListBills"
+	App_ListContracts_FullMethodName          = "/option.App/ListContracts"
+	App_GetContractDetail_FullMethodName      = "/option.App/GetContractDetail"
+	App_ListOptionChain_FullMethodName        = "/option.App/ListOptionChain"
+	App_GetOrderBook_FullMethodName           = "/option.App/GetOrderBook"
+	App_PlaceComboOrder_FullMethodName        = "/option.App/PlaceComboOrder"
+	App_CancelComboOrder_FullMethodName       = "/option.App/CancelComboOrder"
+	App_GetComboOrder_FullMethodName          = "/option.App/GetComboOrder"
+	App_ListComboOrders_FullMethodName        = "/option.App/ListComboOrders"
+	App_PlaceOrder_FullMethodName             = "/option.App/PlaceOrder"
+	App_CancelOrder_FullMethodName            = "/option.App/CancelOrder"
+	App_GetOrderDetail_FullMethodName         = "/option.App/GetOrderDetail"
+	App_ListCurrentOrders_FullMethodName      = "/option.App/ListCurrentOrders"
+	App_ListHistoryOrders_FullMethodName      = "/option.App/ListHistoryOrders"
+	App_ListTrades_FullMethodName             = "/option.App/ListTrades"
+	App_ListPositions_FullMethodName          = "/option.App/ListPositions"
+	App_GetPositionDetail_FullMethodName      = "/option.App/GetPositionDetail"
+	App_Exercise_FullMethodName               = "/option.App/Exercise"
+	App_SetExerciseInstruction_FullMethodName = "/option.App/SetExerciseInstruction"
+	App_GetExerciseInstruction_FullMethodName = "/option.App/GetExerciseInstruction"
+	App_GetUserTradingControl_FullMethodName  = "/option.App/GetUserTradingControl"
+	App_ActivateKillSwitch_FullMethodName     = "/option.App/ActivateKillSwitch"
+	App_GetMMPConfig_FullMethodName           = "/option.App/GetMMPConfig"
+	App_ListExercises_FullMethodName          = "/option.App/ListExercises"
+	App_ListAccounts_FullMethodName           = "/option.App/ListAccounts"
+	App_ListBills_FullMethodName              = "/option.App/ListBills"
 )
 
 // AppClient is the client API for App service.
@@ -45,6 +56,18 @@ type AppClient interface {
 	ListContracts(ctx context.Context, in *UserListContractsReq, opts ...grpc.CallOption) (*UserListContractsResp, error)
 	// 获取期权合约详情
 	GetContractDetail(ctx context.Context, in *GetContractDetailReq, opts ...grpc.CallOption) (*GetContractDetailResp, error)
+	// 按标的和精确到期时间获取期权链、24小时成交统计及未平仓量
+	ListOptionChain(ctx context.Context, in *ListOptionChainReq, opts ...grpc.CallOption) (*ListOptionChainResp, error)
+	// 获取来自 Option 活动限价委托的聚合盘口
+	GetOrderBook(ctx context.Context, in *GetOrderBookReq, opts ...grpc.CallOption) (*GetOrderBookResp, error)
+	// 创建2至4腿独立策略簿组合订单
+	PlaceComboOrder(ctx context.Context, in *PlaceComboOrderReq, opts ...grpc.CallOption) (*PlaceComboOrderResp, error)
+	// 原子撤销未完成组合订单并释放各腿冻结
+	CancelComboOrder(ctx context.Context, in *CancelComboOrderReq, opts ...grpc.CallOption) (*UserCommonResp, error)
+	// 获取组合订单及不可变腿
+	GetComboOrder(ctx context.Context, in *GetComboOrderReq, opts ...grpc.CallOption) (*GetComboOrderResp, error)
+	// 查询当前用户组合订单
+	ListComboOrders(ctx context.Context, in *ListComboOrdersReq, opts ...grpc.CallOption) (*ListComboOrdersResp, error)
 	// 提交期权下单请求
 	PlaceOrder(ctx context.Context, in *PlaceOrderReq, opts ...grpc.CallOption) (*PlaceOrderResp, error)
 	// 撤销期权委托订单
@@ -63,6 +86,16 @@ type AppClient interface {
 	GetPositionDetail(ctx context.Context, in *GetPositionDetailReq, opts ...grpc.CallOption) (*GetPositionDetailResp, error)
 	// 发起行权
 	Exercise(ctx context.Context, in *ExerciseReq, opts ...grpc.CallOption) (*ExerciseResp, error)
+	// 设置到期行权指令；截止时间前可用新幂等号产生新版本
+	SetExerciseInstruction(ctx context.Context, in *SetExerciseInstructionReq, opts ...grpc.CallOption) (*GetExerciseInstructionResp, error)
+	// 获取持仓当前生效的到期行权指令
+	GetExerciseInstruction(ctx context.Context, in *GetExerciseInstructionReq, opts ...grpc.CallOption) (*GetExerciseInstructionResp, error)
+	// 查询当前用户 kill switch
+	GetUserTradingControl(ctx context.Context, in *GetUserTradingControlReq, opts ...grpc.CallOption) (*GetUserTradingControlResp, error)
+	// 激活用户 kill switch；立即阻止新单并撤销全部活动订单
+	ActivateKillSwitch(ctx context.Context, in *ActivateKillSwitchReq, opts ...grpc.CallOption) (*GetUserTradingControlResp, error)
+	// 查询当前用户指定做市报价组的 MMP 状态
+	GetMMPConfig(ctx context.Context, in *GetMMPConfigReq, opts ...grpc.CallOption) (*GetMMPConfigResp, error)
 	// 获取行权记录列表
 	ListExercises(ctx context.Context, in *UserListExercisesReq, opts ...grpc.CallOption) (*UserListExercisesResp, error)
 	// 获取账户资产列表
@@ -93,6 +126,66 @@ func (c *appClient) GetContractDetail(ctx context.Context, in *GetContractDetail
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetContractDetailResp)
 	err := c.cc.Invoke(ctx, App_GetContractDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appClient) ListOptionChain(ctx context.Context, in *ListOptionChainReq, opts ...grpc.CallOption) (*ListOptionChainResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListOptionChainResp)
+	err := c.cc.Invoke(ctx, App_ListOptionChain_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appClient) GetOrderBook(ctx context.Context, in *GetOrderBookReq, opts ...grpc.CallOption) (*GetOrderBookResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOrderBookResp)
+	err := c.cc.Invoke(ctx, App_GetOrderBook_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appClient) PlaceComboOrder(ctx context.Context, in *PlaceComboOrderReq, opts ...grpc.CallOption) (*PlaceComboOrderResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PlaceComboOrderResp)
+	err := c.cc.Invoke(ctx, App_PlaceComboOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appClient) CancelComboOrder(ctx context.Context, in *CancelComboOrderReq, opts ...grpc.CallOption) (*UserCommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UserCommonResp)
+	err := c.cc.Invoke(ctx, App_CancelComboOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appClient) GetComboOrder(ctx context.Context, in *GetComboOrderReq, opts ...grpc.CallOption) (*GetComboOrderResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetComboOrderResp)
+	err := c.cc.Invoke(ctx, App_GetComboOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appClient) ListComboOrders(ctx context.Context, in *ListComboOrdersReq, opts ...grpc.CallOption) (*ListComboOrdersResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListComboOrdersResp)
+	err := c.cc.Invoke(ctx, App_ListComboOrders_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -189,6 +282,56 @@ func (c *appClient) Exercise(ctx context.Context, in *ExerciseReq, opts ...grpc.
 	return out, nil
 }
 
+func (c *appClient) SetExerciseInstruction(ctx context.Context, in *SetExerciseInstructionReq, opts ...grpc.CallOption) (*GetExerciseInstructionResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetExerciseInstructionResp)
+	err := c.cc.Invoke(ctx, App_SetExerciseInstruction_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appClient) GetExerciseInstruction(ctx context.Context, in *GetExerciseInstructionReq, opts ...grpc.CallOption) (*GetExerciseInstructionResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetExerciseInstructionResp)
+	err := c.cc.Invoke(ctx, App_GetExerciseInstruction_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appClient) GetUserTradingControl(ctx context.Context, in *GetUserTradingControlReq, opts ...grpc.CallOption) (*GetUserTradingControlResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserTradingControlResp)
+	err := c.cc.Invoke(ctx, App_GetUserTradingControl_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appClient) ActivateKillSwitch(ctx context.Context, in *ActivateKillSwitchReq, opts ...grpc.CallOption) (*GetUserTradingControlResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserTradingControlResp)
+	err := c.cc.Invoke(ctx, App_ActivateKillSwitch_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appClient) GetMMPConfig(ctx context.Context, in *GetMMPConfigReq, opts ...grpc.CallOption) (*GetMMPConfigResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMMPConfigResp)
+	err := c.cc.Invoke(ctx, App_GetMMPConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *appClient) ListExercises(ctx context.Context, in *UserListExercisesReq, opts ...grpc.CallOption) (*UserListExercisesResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UserListExercisesResp)
@@ -229,6 +372,18 @@ type AppServer interface {
 	ListContracts(context.Context, *UserListContractsReq) (*UserListContractsResp, error)
 	// 获取期权合约详情
 	GetContractDetail(context.Context, *GetContractDetailReq) (*GetContractDetailResp, error)
+	// 按标的和精确到期时间获取期权链、24小时成交统计及未平仓量
+	ListOptionChain(context.Context, *ListOptionChainReq) (*ListOptionChainResp, error)
+	// 获取来自 Option 活动限价委托的聚合盘口
+	GetOrderBook(context.Context, *GetOrderBookReq) (*GetOrderBookResp, error)
+	// 创建2至4腿独立策略簿组合订单
+	PlaceComboOrder(context.Context, *PlaceComboOrderReq) (*PlaceComboOrderResp, error)
+	// 原子撤销未完成组合订单并释放各腿冻结
+	CancelComboOrder(context.Context, *CancelComboOrderReq) (*UserCommonResp, error)
+	// 获取组合订单及不可变腿
+	GetComboOrder(context.Context, *GetComboOrderReq) (*GetComboOrderResp, error)
+	// 查询当前用户组合订单
+	ListComboOrders(context.Context, *ListComboOrdersReq) (*ListComboOrdersResp, error)
 	// 提交期权下单请求
 	PlaceOrder(context.Context, *PlaceOrderReq) (*PlaceOrderResp, error)
 	// 撤销期权委托订单
@@ -247,6 +402,16 @@ type AppServer interface {
 	GetPositionDetail(context.Context, *GetPositionDetailReq) (*GetPositionDetailResp, error)
 	// 发起行权
 	Exercise(context.Context, *ExerciseReq) (*ExerciseResp, error)
+	// 设置到期行权指令；截止时间前可用新幂等号产生新版本
+	SetExerciseInstruction(context.Context, *SetExerciseInstructionReq) (*GetExerciseInstructionResp, error)
+	// 获取持仓当前生效的到期行权指令
+	GetExerciseInstruction(context.Context, *GetExerciseInstructionReq) (*GetExerciseInstructionResp, error)
+	// 查询当前用户 kill switch
+	GetUserTradingControl(context.Context, *GetUserTradingControlReq) (*GetUserTradingControlResp, error)
+	// 激活用户 kill switch；立即阻止新单并撤销全部活动订单
+	ActivateKillSwitch(context.Context, *ActivateKillSwitchReq) (*GetUserTradingControlResp, error)
+	// 查询当前用户指定做市报价组的 MMP 状态
+	GetMMPConfig(context.Context, *GetMMPConfigReq) (*GetMMPConfigResp, error)
 	// 获取行权记录列表
 	ListExercises(context.Context, *UserListExercisesReq) (*UserListExercisesResp, error)
 	// 获取账户资产列表
@@ -268,6 +433,24 @@ func (UnimplementedAppServer) ListContracts(context.Context, *UserListContractsR
 }
 func (UnimplementedAppServer) GetContractDetail(context.Context, *GetContractDetailReq) (*GetContractDetailResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetContractDetail not implemented")
+}
+func (UnimplementedAppServer) ListOptionChain(context.Context, *ListOptionChainReq) (*ListOptionChainResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListOptionChain not implemented")
+}
+func (UnimplementedAppServer) GetOrderBook(context.Context, *GetOrderBookReq) (*GetOrderBookResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetOrderBook not implemented")
+}
+func (UnimplementedAppServer) PlaceComboOrder(context.Context, *PlaceComboOrderReq) (*PlaceComboOrderResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method PlaceComboOrder not implemented")
+}
+func (UnimplementedAppServer) CancelComboOrder(context.Context, *CancelComboOrderReq) (*UserCommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CancelComboOrder not implemented")
+}
+func (UnimplementedAppServer) GetComboOrder(context.Context, *GetComboOrderReq) (*GetComboOrderResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetComboOrder not implemented")
+}
+func (UnimplementedAppServer) ListComboOrders(context.Context, *ListComboOrdersReq) (*ListComboOrdersResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListComboOrders not implemented")
 }
 func (UnimplementedAppServer) PlaceOrder(context.Context, *PlaceOrderReq) (*PlaceOrderResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method PlaceOrder not implemented")
@@ -295,6 +478,21 @@ func (UnimplementedAppServer) GetPositionDetail(context.Context, *GetPositionDet
 }
 func (UnimplementedAppServer) Exercise(context.Context, *ExerciseReq) (*ExerciseResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method Exercise not implemented")
+}
+func (UnimplementedAppServer) SetExerciseInstruction(context.Context, *SetExerciseInstructionReq) (*GetExerciseInstructionResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetExerciseInstruction not implemented")
+}
+func (UnimplementedAppServer) GetExerciseInstruction(context.Context, *GetExerciseInstructionReq) (*GetExerciseInstructionResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetExerciseInstruction not implemented")
+}
+func (UnimplementedAppServer) GetUserTradingControl(context.Context, *GetUserTradingControlReq) (*GetUserTradingControlResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetUserTradingControl not implemented")
+}
+func (UnimplementedAppServer) ActivateKillSwitch(context.Context, *ActivateKillSwitchReq) (*GetUserTradingControlResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ActivateKillSwitch not implemented")
+}
+func (UnimplementedAppServer) GetMMPConfig(context.Context, *GetMMPConfigReq) (*GetMMPConfigResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMMPConfig not implemented")
 }
 func (UnimplementedAppServer) ListExercises(context.Context, *UserListExercisesReq) (*UserListExercisesResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListExercises not implemented")
@@ -358,6 +556,114 @@ func _App_GetContractDetail_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AppServer).GetContractDetail(ctx, req.(*GetContractDetailReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _App_ListOptionChain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListOptionChainReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppServer).ListOptionChain(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: App_ListOptionChain_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppServer).ListOptionChain(ctx, req.(*ListOptionChainReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _App_GetOrderBook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOrderBookReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppServer).GetOrderBook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: App_GetOrderBook_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppServer).GetOrderBook(ctx, req.(*GetOrderBookReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _App_PlaceComboOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PlaceComboOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppServer).PlaceComboOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: App_PlaceComboOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppServer).PlaceComboOrder(ctx, req.(*PlaceComboOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _App_CancelComboOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CancelComboOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppServer).CancelComboOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: App_CancelComboOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppServer).CancelComboOrder(ctx, req.(*CancelComboOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _App_GetComboOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetComboOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppServer).GetComboOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: App_GetComboOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppServer).GetComboOrder(ctx, req.(*GetComboOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _App_ListComboOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListComboOrdersReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppServer).ListComboOrders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: App_ListComboOrders_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppServer).ListComboOrders(ctx, req.(*ListComboOrdersReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -524,6 +830,96 @@ func _App_Exercise_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _App_SetExerciseInstruction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetExerciseInstructionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppServer).SetExerciseInstruction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: App_SetExerciseInstruction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppServer).SetExerciseInstruction(ctx, req.(*SetExerciseInstructionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _App_GetExerciseInstruction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetExerciseInstructionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppServer).GetExerciseInstruction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: App_GetExerciseInstruction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppServer).GetExerciseInstruction(ctx, req.(*GetExerciseInstructionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _App_GetUserTradingControl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserTradingControlReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppServer).GetUserTradingControl(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: App_GetUserTradingControl_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppServer).GetUserTradingControl(ctx, req.(*GetUserTradingControlReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _App_ActivateKillSwitch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ActivateKillSwitchReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppServer).ActivateKillSwitch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: App_ActivateKillSwitch_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppServer).ActivateKillSwitch(ctx, req.(*ActivateKillSwitchReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _App_GetMMPConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMMPConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppServer).GetMMPConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: App_GetMMPConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppServer).GetMMPConfig(ctx, req.(*GetMMPConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _App_ListExercises_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserListExercisesReq)
 	if err := dec(in); err != nil {
@@ -594,6 +990,30 @@ var App_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _App_GetContractDetail_Handler,
 		},
 		{
+			MethodName: "ListOptionChain",
+			Handler:    _App_ListOptionChain_Handler,
+		},
+		{
+			MethodName: "GetOrderBook",
+			Handler:    _App_GetOrderBook_Handler,
+		},
+		{
+			MethodName: "PlaceComboOrder",
+			Handler:    _App_PlaceComboOrder_Handler,
+		},
+		{
+			MethodName: "CancelComboOrder",
+			Handler:    _App_CancelComboOrder_Handler,
+		},
+		{
+			MethodName: "GetComboOrder",
+			Handler:    _App_GetComboOrder_Handler,
+		},
+		{
+			MethodName: "ListComboOrders",
+			Handler:    _App_ListComboOrders_Handler,
+		},
+		{
 			MethodName: "PlaceOrder",
 			Handler:    _App_PlaceOrder_Handler,
 		},
@@ -630,6 +1050,26 @@ var App_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _App_Exercise_Handler,
 		},
 		{
+			MethodName: "SetExerciseInstruction",
+			Handler:    _App_SetExerciseInstruction_Handler,
+		},
+		{
+			MethodName: "GetExerciseInstruction",
+			Handler:    _App_GetExerciseInstruction_Handler,
+		},
+		{
+			MethodName: "GetUserTradingControl",
+			Handler:    _App_GetUserTradingControl_Handler,
+		},
+		{
+			MethodName: "ActivateKillSwitch",
+			Handler:    _App_ActivateKillSwitch_Handler,
+		},
+		{
+			MethodName: "GetMMPConfig",
+			Handler:    _App_GetMMPConfig_Handler,
+		},
+		{
 			MethodName: "ListExercises",
 			Handler:    _App_ListExercises_Handler,
 		},
@@ -647,35 +1087,73 @@ var App_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Admin_CreateContract_FullMethodName             = "/option.Admin/CreateContract"
-	Admin_UpdateContract_FullMethodName             = "/option.Admin/UpdateContract"
-	Admin_GetContract_FullMethodName                = "/option.Admin/GetContract"
-	Admin_ListContracts_FullMethodName              = "/option.Admin/ListContracts"
-	Admin_UpdateMarket_FullMethodName               = "/option.Admin/UpdateMarket"
-	Admin_GetMarket_FullMethodName                  = "/option.Admin/GetMarket"
-	Admin_ListMarketSnapshots_FullMethodName        = "/option.Admin/ListMarketSnapshots"
-	Admin_GetOrder_FullMethodName                   = "/option.Admin/GetOrder"
-	Admin_ListOrders_FullMethodName                 = "/option.Admin/ListOrders"
-	Admin_GetTrade_FullMethodName                   = "/option.Admin/GetTrade"
-	Admin_ListTrades_FullMethodName                 = "/option.Admin/ListTrades"
-	Admin_GetPosition_FullMethodName                = "/option.Admin/GetPosition"
-	Admin_ListPositions_FullMethodName              = "/option.Admin/ListPositions"
-	Admin_GetExercise_FullMethodName                = "/option.Admin/GetExercise"
-	Admin_ListExercises_FullMethodName              = "/option.Admin/ListExercises"
-	Admin_GetSettlement_FullMethodName              = "/option.Admin/GetSettlement"
-	Admin_ListSettlements_FullMethodName            = "/option.Admin/ListSettlements"
-	Admin_GetAccount_FullMethodName                 = "/option.Admin/GetAccount"
-	Admin_ListAccounts_FullMethodName               = "/option.Admin/ListAccounts"
-	Admin_GetBill_FullMethodName                    = "/option.Admin/GetBill"
-	Admin_ListBills_FullMethodName                  = "/option.Admin/ListBills"
-	Admin_ForceCancelContractOrders_FullMethodName  = "/option.Admin/ForceCancelContractOrders"
-	Admin_RetryAssetInstruction_FullMethodName      = "/option.Admin/RetryAssetInstruction"
-	Admin_RetryTradeEvent_FullMethodName            = "/option.Admin/RetryTradeEvent"
-	Admin_ListRiskAccounts_FullMethodName           = "/option.Admin/ListRiskAccounts"
-	Admin_ListLiquidations_FullMethodName           = "/option.Admin/ListLiquidations"
-	Admin_RetryLiquidation_FullMethodName           = "/option.Admin/RetryLiquidation"
-	Admin_RetryExercise_FullMethodName              = "/option.Admin/RetryExercise"
-	Admin_RetrySettlementInstruction_FullMethodName = "/option.Admin/RetrySettlementInstruction"
+	Admin_CreateContract_FullMethodName                  = "/option.Admin/CreateContract"
+	Admin_UpdateContract_FullMethodName                  = "/option.Admin/UpdateContract"
+	Admin_GetContract_FullMethodName                     = "/option.Admin/GetContract"
+	Admin_ListContracts_FullMethodName                   = "/option.Admin/ListContracts"
+	Admin_UpdateMarket_FullMethodName                    = "/option.Admin/UpdateMarket"
+	Admin_GetMarket_FullMethodName                       = "/option.Admin/GetMarket"
+	Admin_ListMarketSnapshots_FullMethodName             = "/option.Admin/ListMarketSnapshots"
+	Admin_GetOrder_FullMethodName                        = "/option.Admin/GetOrder"
+	Admin_ListOrders_FullMethodName                      = "/option.Admin/ListOrders"
+	Admin_ListAdminComboOrders_FullMethodName            = "/option.Admin/ListAdminComboOrders"
+	Admin_GetAdminComboOrder_FullMethodName              = "/option.Admin/GetAdminComboOrder"
+	Admin_ForceCancelComboOrder_FullMethodName           = "/option.Admin/ForceCancelComboOrder"
+	Admin_GetTrade_FullMethodName                        = "/option.Admin/GetTrade"
+	Admin_ListTrades_FullMethodName                      = "/option.Admin/ListTrades"
+	Admin_GetPosition_FullMethodName                     = "/option.Admin/GetPosition"
+	Admin_ListPositions_FullMethodName                   = "/option.Admin/ListPositions"
+	Admin_GetExercise_FullMethodName                     = "/option.Admin/GetExercise"
+	Admin_ListExercises_FullMethodName                   = "/option.Admin/ListExercises"
+	Admin_GetSettlement_FullMethodName                   = "/option.Admin/GetSettlement"
+	Admin_ListSettlements_FullMethodName                 = "/option.Admin/ListSettlements"
+	Admin_ListSettlementPrices_FullMethodName            = "/option.Admin/ListSettlementPrices"
+	Admin_CreateSettlementPriceCorrection_FullMethodName = "/option.Admin/CreateSettlementPriceCorrection"
+	Admin_ReviewSettlementPrice_FullMethodName           = "/option.Admin/ReviewSettlementPrice"
+	Admin_GetAccount_FullMethodName                      = "/option.Admin/GetAccount"
+	Admin_ListAccounts_FullMethodName                    = "/option.Admin/ListAccounts"
+	Admin_GetBill_FullMethodName                         = "/option.Admin/GetBill"
+	Admin_ListBills_FullMethodName                       = "/option.Admin/ListBills"
+	Admin_ForceCancelContractOrders_FullMethodName       = "/option.Admin/ForceCancelContractOrders"
+	Admin_RetryAssetInstruction_FullMethodName           = "/option.Admin/RetryAssetInstruction"
+	Admin_GetOperationsOverview_FullMethodName           = "/option.Admin/GetOperationsOverview"
+	Admin_ListAssetInstructions_FullMethodName           = "/option.Admin/ListAssetInstructions"
+	Admin_ListReconciliationIssues_FullMethodName        = "/option.Admin/ListReconciliationIssues"
+	Admin_CreateTradingCalendar_FullMethodName           = "/option.Admin/CreateTradingCalendar"
+	Admin_ReviewTradingCalendar_FullMethodName           = "/option.Admin/ReviewTradingCalendar"
+	Admin_ListTradingCalendars_FullMethodName            = "/option.Admin/ListTradingCalendars"
+	Admin_HaltContractTrading_FullMethodName             = "/option.Admin/HaltContractTrading"
+	Admin_ResumeContractTrading_FullMethodName           = "/option.Admin/ResumeContractTrading"
+	Admin_ListTradingHalts_FullMethodName                = "/option.Admin/ListTradingHalts"
+	Admin_CreateCorporateAction_FullMethodName           = "/option.Admin/CreateCorporateAction"
+	Admin_ReviewCorporateAction_FullMethodName           = "/option.Admin/ReviewCorporateAction"
+	Admin_ListCorporateActions_FullMethodName            = "/option.Admin/ListCorporateActions"
+	Admin_ListCorporateActionPositions_FullMethodName    = "/option.Admin/ListCorporateActionPositions"
+	Admin_CreateContractSeries_FullMethodName            = "/option.Admin/CreateContractSeries"
+	Admin_ReviewContractSeries_FullMethodName            = "/option.Admin/ReviewContractSeries"
+	Admin_ListContractSeries_FullMethodName              = "/option.Admin/ListContractSeries"
+	Admin_ListContractSeriesDetails_FullMethodName       = "/option.Admin/ListContractSeriesDetails"
+	Admin_ReviewContractSeriesLaunch_FullMethodName      = "/option.Admin/ReviewContractSeriesLaunch"
+	Admin_RetryTradeEvent_FullMethodName                 = "/option.Admin/RetryTradeEvent"
+	Admin_ListRiskAccounts_FullMethodName                = "/option.Admin/ListRiskAccounts"
+	Admin_CreatePortfolioRiskConfig_FullMethodName       = "/option.Admin/CreatePortfolioRiskConfig"
+	Admin_ReviewPortfolioRiskConfig_FullMethodName       = "/option.Admin/ReviewPortfolioRiskConfig"
+	Admin_ListPortfolioRiskConfigs_FullMethodName        = "/option.Admin/ListPortfolioRiskConfigs"
+	Admin_ListLiquidations_FullMethodName                = "/option.Admin/ListLiquidations"
+	Admin_RetryLiquidation_FullMethodName                = "/option.Admin/RetryLiquidation"
+	Admin_RetryExercise_FullMethodName                   = "/option.Admin/RetryExercise"
+	Admin_RetrySettlementInstruction_FullMethodName      = "/option.Admin/RetrySettlementInstruction"
+	Admin_ReleaseUserKillSwitch_FullMethodName           = "/option.Admin/ReleaseUserKillSwitch"
+	Admin_AdminGetUserTradingControl_FullMethodName      = "/option.Admin/AdminGetUserTradingControl"
+	Admin_ListTradingControlEvents_FullMethodName        = "/option.Admin/ListTradingControlEvents"
+	Admin_CreateTradeCorrection_FullMethodName           = "/option.Admin/CreateTradeCorrection"
+	Admin_ReviewTradeCorrection_FullMethodName           = "/option.Admin/ReviewTradeCorrection"
+	Admin_ListTradeCorrections_FullMethodName            = "/option.Admin/ListTradeCorrections"
+	Admin_UpsertMMPConfig_FullMethodName                 = "/option.Admin/UpsertMMPConfig"
+	Admin_ResetMMPConfig_FullMethodName                  = "/option.Admin/ResetMMPConfig"
+	Admin_ListMMPConfigs_FullMethodName                  = "/option.Admin/ListMMPConfigs"
+	Admin_ListPhysicalDeliveryUnits_FullMethodName       = "/option.Admin/ListPhysicalDeliveryUnits"
+	Admin_RetryPhysicalDeliveryUnit_FullMethodName       = "/option.Admin/RetryPhysicalDeliveryUnit"
 )
 
 // AdminClient is the client API for Admin service.
@@ -702,6 +1180,12 @@ type AdminClient interface {
 	GetOrder(ctx context.Context, in *GetOrderReq, opts ...grpc.CallOption) (*GetOrderResp, error)
 	// 分页查询委托订单列表
 	ListOrders(ctx context.Context, in *ListOrdersReq, opts ...grpc.CallOption) (*ListOrdersResp, error)
+	// 分页查询组合父单，供运营按整组处理
+	ListAdminComboOrders(ctx context.Context, in *ListAdminComboOrdersReq, opts ...grpc.CallOption) (*ListAdminComboOrdersResp, error)
+	// 查询组合父单、腿、影子单、成交和资产指令
+	GetAdminComboOrder(ctx context.Context, in *GetAdminComboOrderReq, opts ...grpc.CallOption) (*GetAdminComboOrderResp, error)
+	// 强制撤销一个组合父单；禁止单腿撤销
+	ForceCancelComboOrder(ctx context.Context, in *ForceCancelComboOrderReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取单个成交记录详情
 	GetTrade(ctx context.Context, in *GetTradeReq, opts ...grpc.CallOption) (*GetTradeResp, error)
 	// 分页查询成交记录列表
@@ -718,6 +1202,12 @@ type AdminClient interface {
 	GetSettlement(ctx context.Context, in *GetSettlementReq, opts ...grpc.CallOption) (*GetSettlementResp, error)
 	// 分页查询到期结算记录列表
 	ListSettlements(ctx context.Context, in *ListSettlementsReq, opts ...grpc.CallOption) (*ListSettlementsResp, error)
+	// 分页查询到期结算价版本
+	ListSettlementPrices(ctx context.Context, in *ListSettlementPricesReq, opts ...grpc.CallOption) (*ListSettlementPricesResp, error)
+	// 创建人工结算价更正草案，必须由另一管理员确认
+	CreateSettlementPriceCorrection(ctx context.Context, in *CreateSettlementPriceCorrectionReq, opts ...grpc.CallOption) (*GetSettlementPriceResp, error)
+	// 确认或拒绝待复核结算价
+	ReviewSettlementPrice(ctx context.Context, in *ReviewSettlementPriceReq, opts ...grpc.CallOption) (*GetSettlementPriceResp, error)
 	// 获取单个账户资产详情
 	GetAccount(ctx context.Context, in *GetAccountReq, opts ...grpc.CallOption) (*GetAccountResp, error)
 	// 分页查询账户资产列表
@@ -730,10 +1220,52 @@ type AdminClient interface {
 	ForceCancelContractOrders(ctx context.Context, in *ForceCancelContractOrdersReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 将失败或人工处理的资产指令重新置为待执行
 	RetryAssetInstruction(ctx context.Context, in *RetryAssetInstructionReq, opts ...grpc.CallOption) (*CommonResp, error)
+	// 查询运营异常和任务水位汇总
+	GetOperationsOverview(ctx context.Context, in *GetOperationsOverviewReq, opts ...grpc.CallOption) (*GetOperationsOverviewResp, error)
+	// 分页查询资产指令，统一定位失败和人工处理项
+	ListAssetInstructions(ctx context.Context, in *ListAssetInstructionsReq, opts ...grpc.CallOption) (*ListAssetInstructionsResp, error)
+	// 分页查询 Option 与 Asset 对账差异
+	ListReconciliationIssues(ctx context.Context, in *ListReconciliationIssuesReq, opts ...grpc.CallOption) (*ListReconciliationIssuesResp, error)
+	// 创建不可覆盖的交易日历版本草案
+	CreateTradingCalendar(ctx context.Context, in *CreateTradingCalendarReq, opts ...grpc.CallOption) (*GetTradingCalendarResp, error)
+	// 由独立管理员批准或拒绝日历版本
+	ReviewTradingCalendar(ctx context.Context, in *ReviewTradingCalendarReq, opts ...grpc.CallOption) (*GetTradingCalendarResp, error)
+	// 分页查询交易日历版本
+	ListTradingCalendars(ctx context.Context, in *ListTradingCalendarsReq, opts ...grpc.CallOption) (*ListTradingCalendarsResp, error)
+	// 紧急暂停合约交易并撤销活动订单
+	HaltContractTrading(ctx context.Context, in *HaltContractTradingReq, opts ...grpc.CallOption) (*GetTradingHaltResp, error)
+	// 引用原 halt 解除临时休市
+	ResumeContractTrading(ctx context.Context, in *ResumeContractTradingReq, opts ...grpc.CallOption) (*GetTradingHaltResp, error)
+	// 分页查询临时休市记录
+	ListTradingHalts(ctx context.Context, in *ListTradingHaltsReq, opts ...grpc.CallOption) (*ListTradingHaltsResp, error)
+	// 登记不可覆盖的公司行动版本；所有受影响合约立即停牌并撤单
+	CreateCorporateAction(ctx context.Context, in *CreateCorporateActionReq, opts ...grpc.CallOption) (*GetCorporateActionResp, error)
+	// 独立管理员复核公司行动；不支持的事件只能进入人工处理
+	ReviewCorporateAction(ctx context.Context, in *ReviewCorporateActionReq, opts ...grpc.CallOption) (*GetCorporateActionResp, error)
+	// 分页查询公司行动及合约迁移进度
+	ListCorporateActions(ctx context.Context, in *ListCorporateActionsReq, opts ...grpc.CallOption) (*ListCorporateActionsResp, error)
+	// 分页查询逐持仓迁移审计结果
+	ListCorporateActionPositions(ctx context.Context, in *ListCorporateActionPositionsReq, opts ...grpc.CallOption) (*ListCorporateActionPositionsResp, error)
+	// 创建不可覆盖的到期/行权价系列版本草案
+	CreateContractSeries(ctx context.Context, in *CreateContractSeriesReq, opts ...grpc.CallOption) (*GetContractSeriesResp, error)
+	// 独立管理员复核；批准时原子生成全部 PENDING 合约
+	ReviewContractSeries(ctx context.Context, in *ReviewContractSeriesReq, opts ...grpc.CallOption) (*GetContractSeriesResp, error)
+	// 分页查询系列版本
+	ListContractSeries(ctx context.Context, in *ListContractSeriesReq, opts ...grpc.CallOption) (*ListContractSeriesResp, error)
+	// 分页查询系列生成合约谱系
+	ListContractSeriesDetails(ctx context.Context, in *ListContractSeriesDetailsReq, opts ...grpc.CallOption) (*ListContractSeriesDetailsResp, error)
+	// 对已生成系列执行独立上市复核；批准前生命周期必须保持 PENDING
+	ReviewContractSeriesLaunch(ctx context.Context, in *ReviewContractSeriesLaunchReq, opts ...grpc.CallOption) (*GetContractSeriesResp, error)
 	// 将失败或人工处理的成交持仓事件重新置为待执行
 	RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 分页查询卖方风险账户
 	ListRiskAccounts(ctx context.Context, in *ListRiskAccountsReq, opts ...grpc.CallOption) (*ListRiskAccountsResp, error)
+	// 创建不可覆盖的组合保证金参数草案
+	CreatePortfolioRiskConfig(ctx context.Context, in *CreatePortfolioRiskConfigReq, opts ...grpc.CallOption) (*GetPortfolioRiskConfigResp, error)
+	// 由独立管理员批准或拒绝组合保证金参数版本
+	ReviewPortfolioRiskConfig(ctx context.Context, in *ReviewPortfolioRiskConfigReq, opts ...grpc.CallOption) (*GetPortfolioRiskConfigResp, error)
+	// 分页查询组合保证金参数版本
+	ListPortfolioRiskConfigs(ctx context.Context, in *ListPortfolioRiskConfigsReq, opts ...grpc.CallOption) (*ListPortfolioRiskConfigsResp, error)
 	// 分页查询强平记录
 	ListLiquidations(ctx context.Context, in *ListLiquidationsReq, opts ...grpc.CallOption) (*ListLiquidationsResp, error)
 	// 将失败或人工处理的强平记录重新置为待执行
@@ -742,6 +1274,28 @@ type AdminClient interface {
 	RetryExercise(ctx context.Context, in *RetryExerciseReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 校验归属后重试结算批次中的失败资产指令
 	RetrySettlementInstruction(ctx context.Context, in *RetrySettlementInstructionReq, opts ...grpc.CallOption) (*CommonResp, error)
+	// 人工复核后解除用户 kill switch
+	ReleaseUserKillSwitch(ctx context.Context, in *ReleaseUserKillSwitchReq, opts ...grpc.CallOption) (*CommonResp, error)
+	// 查询用户 kill switch
+	AdminGetUserTradingControl(ctx context.Context, in *AdminGetUserTradingControlReq, opts ...grpc.CallOption) (*AdminGetUserTradingControlResp, error)
+	// 分页查询交易控制审计事件
+	ListTradingControlEvents(ctx context.Context, in *ListTradingControlEventsReq, opts ...grpc.CallOption) (*ListTradingControlEventsResp, error)
+	// 创建异常成交现金更正草案，同时暂停合约并撤销活动订单
+	CreateTradeCorrection(ctx context.Context, in *CreateTradeCorrectionReq, opts ...grpc.CallOption) (*GetTradeCorrectionResp, error)
+	// 由独立管理员批准或拒绝异常成交更正
+	ReviewTradeCorrection(ctx context.Context, in *ReviewTradeCorrectionReq, opts ...grpc.CallOption) (*GetTradeCorrectionResp, error)
+	// 分页查询异常成交更正案件
+	ListTradeCorrections(ctx context.Context, in *ListTradeCorrectionsReq, opts ...grpc.CallOption) (*ListTradeCorrectionsResp, error)
+	// 创建或更新做市商保护参数；任何变更都会撤销该组已有 MMP 报价
+	UpsertMMPConfig(ctx context.Context, in *UpsertMMPConfigReq, opts ...grpc.CallOption) (*GetMMPConfigResp, error)
+	// 人工复核并恢复触发中的 MMP 报价组
+	ResetMMPConfig(ctx context.Context, in *ResetMMPConfigReq, opts ...grpc.CallOption) (*GetMMPConfigResp, error)
+	// 分页查询 MMP 配置和实时窗口状态
+	ListMMPConfigs(ctx context.Context, in *ListMMPConfigsReq, opts ...grpc.CallOption) (*ListMMPConfigsResp, error)
+	// 分页查询实物交割配对单元和失败状态
+	ListPhysicalDeliveryUnits(ctx context.Context, in *ListPhysicalDeliveryUnitsReq, opts ...grpc.CallOption) (*ListPhysicalDeliveryUnitsResp, error)
+	// 人工确认补资后，按原指令号重试一个实物交割单元
+	RetryPhysicalDeliveryUnit(ctx context.Context, in *RetryPhysicalDeliveryUnitReq, opts ...grpc.CallOption) (*CommonResp, error)
 }
 
 type adminClient struct {
@@ -842,6 +1396,36 @@ func (c *adminClient) ListOrders(ctx context.Context, in *ListOrdersReq, opts ..
 	return out, nil
 }
 
+func (c *adminClient) ListAdminComboOrders(ctx context.Context, in *ListAdminComboOrdersReq, opts ...grpc.CallOption) (*ListAdminComboOrdersResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAdminComboOrdersResp)
+	err := c.cc.Invoke(ctx, Admin_ListAdminComboOrders_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) GetAdminComboOrder(ctx context.Context, in *GetAdminComboOrderReq, opts ...grpc.CallOption) (*GetAdminComboOrderResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAdminComboOrderResp)
+	err := c.cc.Invoke(ctx, Admin_GetAdminComboOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ForceCancelComboOrder(ctx context.Context, in *ForceCancelComboOrderReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, Admin_ForceCancelComboOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *adminClient) GetTrade(ctx context.Context, in *GetTradeReq, opts ...grpc.CallOption) (*GetTradeResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetTradeResp)
@@ -922,6 +1506,36 @@ func (c *adminClient) ListSettlements(ctx context.Context, in *ListSettlementsRe
 	return out, nil
 }
 
+func (c *adminClient) ListSettlementPrices(ctx context.Context, in *ListSettlementPricesReq, opts ...grpc.CallOption) (*ListSettlementPricesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListSettlementPricesResp)
+	err := c.cc.Invoke(ctx, Admin_ListSettlementPrices_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) CreateSettlementPriceCorrection(ctx context.Context, in *CreateSettlementPriceCorrectionReq, opts ...grpc.CallOption) (*GetSettlementPriceResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSettlementPriceResp)
+	err := c.cc.Invoke(ctx, Admin_CreateSettlementPriceCorrection_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ReviewSettlementPrice(ctx context.Context, in *ReviewSettlementPriceReq, opts ...grpc.CallOption) (*GetSettlementPriceResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSettlementPriceResp)
+	err := c.cc.Invoke(ctx, Admin_ReviewSettlementPrice_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *adminClient) GetAccount(ctx context.Context, in *GetAccountReq, opts ...grpc.CallOption) (*GetAccountResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetAccountResp)
@@ -982,6 +1596,186 @@ func (c *adminClient) RetryAssetInstruction(ctx context.Context, in *RetryAssetI
 	return out, nil
 }
 
+func (c *adminClient) GetOperationsOverview(ctx context.Context, in *GetOperationsOverviewReq, opts ...grpc.CallOption) (*GetOperationsOverviewResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOperationsOverviewResp)
+	err := c.cc.Invoke(ctx, Admin_GetOperationsOverview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ListAssetInstructions(ctx context.Context, in *ListAssetInstructionsReq, opts ...grpc.CallOption) (*ListAssetInstructionsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAssetInstructionsResp)
+	err := c.cc.Invoke(ctx, Admin_ListAssetInstructions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ListReconciliationIssues(ctx context.Context, in *ListReconciliationIssuesReq, opts ...grpc.CallOption) (*ListReconciliationIssuesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListReconciliationIssuesResp)
+	err := c.cc.Invoke(ctx, Admin_ListReconciliationIssues_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) CreateTradingCalendar(ctx context.Context, in *CreateTradingCalendarReq, opts ...grpc.CallOption) (*GetTradingCalendarResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTradingCalendarResp)
+	err := c.cc.Invoke(ctx, Admin_CreateTradingCalendar_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ReviewTradingCalendar(ctx context.Context, in *ReviewTradingCalendarReq, opts ...grpc.CallOption) (*GetTradingCalendarResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTradingCalendarResp)
+	err := c.cc.Invoke(ctx, Admin_ReviewTradingCalendar_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ListTradingCalendars(ctx context.Context, in *ListTradingCalendarsReq, opts ...grpc.CallOption) (*ListTradingCalendarsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListTradingCalendarsResp)
+	err := c.cc.Invoke(ctx, Admin_ListTradingCalendars_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) HaltContractTrading(ctx context.Context, in *HaltContractTradingReq, opts ...grpc.CallOption) (*GetTradingHaltResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTradingHaltResp)
+	err := c.cc.Invoke(ctx, Admin_HaltContractTrading_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ResumeContractTrading(ctx context.Context, in *ResumeContractTradingReq, opts ...grpc.CallOption) (*GetTradingHaltResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTradingHaltResp)
+	err := c.cc.Invoke(ctx, Admin_ResumeContractTrading_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ListTradingHalts(ctx context.Context, in *ListTradingHaltsReq, opts ...grpc.CallOption) (*ListTradingHaltsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListTradingHaltsResp)
+	err := c.cc.Invoke(ctx, Admin_ListTradingHalts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) CreateCorporateAction(ctx context.Context, in *CreateCorporateActionReq, opts ...grpc.CallOption) (*GetCorporateActionResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCorporateActionResp)
+	err := c.cc.Invoke(ctx, Admin_CreateCorporateAction_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ReviewCorporateAction(ctx context.Context, in *ReviewCorporateActionReq, opts ...grpc.CallOption) (*GetCorporateActionResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCorporateActionResp)
+	err := c.cc.Invoke(ctx, Admin_ReviewCorporateAction_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ListCorporateActions(ctx context.Context, in *ListCorporateActionsReq, opts ...grpc.CallOption) (*ListCorporateActionsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListCorporateActionsResp)
+	err := c.cc.Invoke(ctx, Admin_ListCorporateActions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ListCorporateActionPositions(ctx context.Context, in *ListCorporateActionPositionsReq, opts ...grpc.CallOption) (*ListCorporateActionPositionsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListCorporateActionPositionsResp)
+	err := c.cc.Invoke(ctx, Admin_ListCorporateActionPositions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) CreateContractSeries(ctx context.Context, in *CreateContractSeriesReq, opts ...grpc.CallOption) (*GetContractSeriesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetContractSeriesResp)
+	err := c.cc.Invoke(ctx, Admin_CreateContractSeries_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ReviewContractSeries(ctx context.Context, in *ReviewContractSeriesReq, opts ...grpc.CallOption) (*GetContractSeriesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetContractSeriesResp)
+	err := c.cc.Invoke(ctx, Admin_ReviewContractSeries_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ListContractSeries(ctx context.Context, in *ListContractSeriesReq, opts ...grpc.CallOption) (*ListContractSeriesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListContractSeriesResp)
+	err := c.cc.Invoke(ctx, Admin_ListContractSeries_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ListContractSeriesDetails(ctx context.Context, in *ListContractSeriesDetailsReq, opts ...grpc.CallOption) (*ListContractSeriesDetailsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListContractSeriesDetailsResp)
+	err := c.cc.Invoke(ctx, Admin_ListContractSeriesDetails_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ReviewContractSeriesLaunch(ctx context.Context, in *ReviewContractSeriesLaunchReq, opts ...grpc.CallOption) (*GetContractSeriesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetContractSeriesResp)
+	err := c.cc.Invoke(ctx, Admin_ReviewContractSeriesLaunch_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *adminClient) RetryTradeEvent(ctx context.Context, in *RetryTradeEventReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
@@ -996,6 +1790,36 @@ func (c *adminClient) ListRiskAccounts(ctx context.Context, in *ListRiskAccounts
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListRiskAccountsResp)
 	err := c.cc.Invoke(ctx, Admin_ListRiskAccounts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) CreatePortfolioRiskConfig(ctx context.Context, in *CreatePortfolioRiskConfigReq, opts ...grpc.CallOption) (*GetPortfolioRiskConfigResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPortfolioRiskConfigResp)
+	err := c.cc.Invoke(ctx, Admin_CreatePortfolioRiskConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ReviewPortfolioRiskConfig(ctx context.Context, in *ReviewPortfolioRiskConfigReq, opts ...grpc.CallOption) (*GetPortfolioRiskConfigResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPortfolioRiskConfigResp)
+	err := c.cc.Invoke(ctx, Admin_ReviewPortfolioRiskConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ListPortfolioRiskConfigs(ctx context.Context, in *ListPortfolioRiskConfigsReq, opts ...grpc.CallOption) (*ListPortfolioRiskConfigsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPortfolioRiskConfigsResp)
+	err := c.cc.Invoke(ctx, Admin_ListPortfolioRiskConfigs_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1042,6 +1866,116 @@ func (c *adminClient) RetrySettlementInstruction(ctx context.Context, in *RetryS
 	return out, nil
 }
 
+func (c *adminClient) ReleaseUserKillSwitch(ctx context.Context, in *ReleaseUserKillSwitchReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, Admin_ReleaseUserKillSwitch_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) AdminGetUserTradingControl(ctx context.Context, in *AdminGetUserTradingControlReq, opts ...grpc.CallOption) (*AdminGetUserTradingControlResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AdminGetUserTradingControlResp)
+	err := c.cc.Invoke(ctx, Admin_AdminGetUserTradingControl_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ListTradingControlEvents(ctx context.Context, in *ListTradingControlEventsReq, opts ...grpc.CallOption) (*ListTradingControlEventsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListTradingControlEventsResp)
+	err := c.cc.Invoke(ctx, Admin_ListTradingControlEvents_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) CreateTradeCorrection(ctx context.Context, in *CreateTradeCorrectionReq, opts ...grpc.CallOption) (*GetTradeCorrectionResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTradeCorrectionResp)
+	err := c.cc.Invoke(ctx, Admin_CreateTradeCorrection_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ReviewTradeCorrection(ctx context.Context, in *ReviewTradeCorrectionReq, opts ...grpc.CallOption) (*GetTradeCorrectionResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTradeCorrectionResp)
+	err := c.cc.Invoke(ctx, Admin_ReviewTradeCorrection_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ListTradeCorrections(ctx context.Context, in *ListTradeCorrectionsReq, opts ...grpc.CallOption) (*ListTradeCorrectionsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListTradeCorrectionsResp)
+	err := c.cc.Invoke(ctx, Admin_ListTradeCorrections_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) UpsertMMPConfig(ctx context.Context, in *UpsertMMPConfigReq, opts ...grpc.CallOption) (*GetMMPConfigResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMMPConfigResp)
+	err := c.cc.Invoke(ctx, Admin_UpsertMMPConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ResetMMPConfig(ctx context.Context, in *ResetMMPConfigReq, opts ...grpc.CallOption) (*GetMMPConfigResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMMPConfigResp)
+	err := c.cc.Invoke(ctx, Admin_ResetMMPConfig_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ListMMPConfigs(ctx context.Context, in *ListMMPConfigsReq, opts ...grpc.CallOption) (*ListMMPConfigsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListMMPConfigsResp)
+	err := c.cc.Invoke(ctx, Admin_ListMMPConfigs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ListPhysicalDeliveryUnits(ctx context.Context, in *ListPhysicalDeliveryUnitsReq, opts ...grpc.CallOption) (*ListPhysicalDeliveryUnitsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPhysicalDeliveryUnitsResp)
+	err := c.cc.Invoke(ctx, Admin_ListPhysicalDeliveryUnits_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) RetryPhysicalDeliveryUnit(ctx context.Context, in *RetryPhysicalDeliveryUnitReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, Admin_RetryPhysicalDeliveryUnit_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminServer is the server API for Admin service.
 // All implementations must embed UnimplementedAdminServer
 // for forward compatibility.
@@ -1066,6 +2000,12 @@ type AdminServer interface {
 	GetOrder(context.Context, *GetOrderReq) (*GetOrderResp, error)
 	// 分页查询委托订单列表
 	ListOrders(context.Context, *ListOrdersReq) (*ListOrdersResp, error)
+	// 分页查询组合父单，供运营按整组处理
+	ListAdminComboOrders(context.Context, *ListAdminComboOrdersReq) (*ListAdminComboOrdersResp, error)
+	// 查询组合父单、腿、影子单、成交和资产指令
+	GetAdminComboOrder(context.Context, *GetAdminComboOrderReq) (*GetAdminComboOrderResp, error)
+	// 强制撤销一个组合父单；禁止单腿撤销
+	ForceCancelComboOrder(context.Context, *ForceCancelComboOrderReq) (*CommonResp, error)
 	// 获取单个成交记录详情
 	GetTrade(context.Context, *GetTradeReq) (*GetTradeResp, error)
 	// 分页查询成交记录列表
@@ -1082,6 +2022,12 @@ type AdminServer interface {
 	GetSettlement(context.Context, *GetSettlementReq) (*GetSettlementResp, error)
 	// 分页查询到期结算记录列表
 	ListSettlements(context.Context, *ListSettlementsReq) (*ListSettlementsResp, error)
+	// 分页查询到期结算价版本
+	ListSettlementPrices(context.Context, *ListSettlementPricesReq) (*ListSettlementPricesResp, error)
+	// 创建人工结算价更正草案，必须由另一管理员确认
+	CreateSettlementPriceCorrection(context.Context, *CreateSettlementPriceCorrectionReq) (*GetSettlementPriceResp, error)
+	// 确认或拒绝待复核结算价
+	ReviewSettlementPrice(context.Context, *ReviewSettlementPriceReq) (*GetSettlementPriceResp, error)
 	// 获取单个账户资产详情
 	GetAccount(context.Context, *GetAccountReq) (*GetAccountResp, error)
 	// 分页查询账户资产列表
@@ -1094,10 +2040,52 @@ type AdminServer interface {
 	ForceCancelContractOrders(context.Context, *ForceCancelContractOrdersReq) (*CommonResp, error)
 	// 将失败或人工处理的资产指令重新置为待执行
 	RetryAssetInstruction(context.Context, *RetryAssetInstructionReq) (*CommonResp, error)
+	// 查询运营异常和任务水位汇总
+	GetOperationsOverview(context.Context, *GetOperationsOverviewReq) (*GetOperationsOverviewResp, error)
+	// 分页查询资产指令，统一定位失败和人工处理项
+	ListAssetInstructions(context.Context, *ListAssetInstructionsReq) (*ListAssetInstructionsResp, error)
+	// 分页查询 Option 与 Asset 对账差异
+	ListReconciliationIssues(context.Context, *ListReconciliationIssuesReq) (*ListReconciliationIssuesResp, error)
+	// 创建不可覆盖的交易日历版本草案
+	CreateTradingCalendar(context.Context, *CreateTradingCalendarReq) (*GetTradingCalendarResp, error)
+	// 由独立管理员批准或拒绝日历版本
+	ReviewTradingCalendar(context.Context, *ReviewTradingCalendarReq) (*GetTradingCalendarResp, error)
+	// 分页查询交易日历版本
+	ListTradingCalendars(context.Context, *ListTradingCalendarsReq) (*ListTradingCalendarsResp, error)
+	// 紧急暂停合约交易并撤销活动订单
+	HaltContractTrading(context.Context, *HaltContractTradingReq) (*GetTradingHaltResp, error)
+	// 引用原 halt 解除临时休市
+	ResumeContractTrading(context.Context, *ResumeContractTradingReq) (*GetTradingHaltResp, error)
+	// 分页查询临时休市记录
+	ListTradingHalts(context.Context, *ListTradingHaltsReq) (*ListTradingHaltsResp, error)
+	// 登记不可覆盖的公司行动版本；所有受影响合约立即停牌并撤单
+	CreateCorporateAction(context.Context, *CreateCorporateActionReq) (*GetCorporateActionResp, error)
+	// 独立管理员复核公司行动；不支持的事件只能进入人工处理
+	ReviewCorporateAction(context.Context, *ReviewCorporateActionReq) (*GetCorporateActionResp, error)
+	// 分页查询公司行动及合约迁移进度
+	ListCorporateActions(context.Context, *ListCorporateActionsReq) (*ListCorporateActionsResp, error)
+	// 分页查询逐持仓迁移审计结果
+	ListCorporateActionPositions(context.Context, *ListCorporateActionPositionsReq) (*ListCorporateActionPositionsResp, error)
+	// 创建不可覆盖的到期/行权价系列版本草案
+	CreateContractSeries(context.Context, *CreateContractSeriesReq) (*GetContractSeriesResp, error)
+	// 独立管理员复核；批准时原子生成全部 PENDING 合约
+	ReviewContractSeries(context.Context, *ReviewContractSeriesReq) (*GetContractSeriesResp, error)
+	// 分页查询系列版本
+	ListContractSeries(context.Context, *ListContractSeriesReq) (*ListContractSeriesResp, error)
+	// 分页查询系列生成合约谱系
+	ListContractSeriesDetails(context.Context, *ListContractSeriesDetailsReq) (*ListContractSeriesDetailsResp, error)
+	// 对已生成系列执行独立上市复核；批准前生命周期必须保持 PENDING
+	ReviewContractSeriesLaunch(context.Context, *ReviewContractSeriesLaunchReq) (*GetContractSeriesResp, error)
 	// 将失败或人工处理的成交持仓事件重新置为待执行
 	RetryTradeEvent(context.Context, *RetryTradeEventReq) (*CommonResp, error)
 	// 分页查询卖方风险账户
 	ListRiskAccounts(context.Context, *ListRiskAccountsReq) (*ListRiskAccountsResp, error)
+	// 创建不可覆盖的组合保证金参数草案
+	CreatePortfolioRiskConfig(context.Context, *CreatePortfolioRiskConfigReq) (*GetPortfolioRiskConfigResp, error)
+	// 由独立管理员批准或拒绝组合保证金参数版本
+	ReviewPortfolioRiskConfig(context.Context, *ReviewPortfolioRiskConfigReq) (*GetPortfolioRiskConfigResp, error)
+	// 分页查询组合保证金参数版本
+	ListPortfolioRiskConfigs(context.Context, *ListPortfolioRiskConfigsReq) (*ListPortfolioRiskConfigsResp, error)
 	// 分页查询强平记录
 	ListLiquidations(context.Context, *ListLiquidationsReq) (*ListLiquidationsResp, error)
 	// 将失败或人工处理的强平记录重新置为待执行
@@ -1106,6 +2094,28 @@ type AdminServer interface {
 	RetryExercise(context.Context, *RetryExerciseReq) (*CommonResp, error)
 	// 校验归属后重试结算批次中的失败资产指令
 	RetrySettlementInstruction(context.Context, *RetrySettlementInstructionReq) (*CommonResp, error)
+	// 人工复核后解除用户 kill switch
+	ReleaseUserKillSwitch(context.Context, *ReleaseUserKillSwitchReq) (*CommonResp, error)
+	// 查询用户 kill switch
+	AdminGetUserTradingControl(context.Context, *AdminGetUserTradingControlReq) (*AdminGetUserTradingControlResp, error)
+	// 分页查询交易控制审计事件
+	ListTradingControlEvents(context.Context, *ListTradingControlEventsReq) (*ListTradingControlEventsResp, error)
+	// 创建异常成交现金更正草案，同时暂停合约并撤销活动订单
+	CreateTradeCorrection(context.Context, *CreateTradeCorrectionReq) (*GetTradeCorrectionResp, error)
+	// 由独立管理员批准或拒绝异常成交更正
+	ReviewTradeCorrection(context.Context, *ReviewTradeCorrectionReq) (*GetTradeCorrectionResp, error)
+	// 分页查询异常成交更正案件
+	ListTradeCorrections(context.Context, *ListTradeCorrectionsReq) (*ListTradeCorrectionsResp, error)
+	// 创建或更新做市商保护参数；任何变更都会撤销该组已有 MMP 报价
+	UpsertMMPConfig(context.Context, *UpsertMMPConfigReq) (*GetMMPConfigResp, error)
+	// 人工复核并恢复触发中的 MMP 报价组
+	ResetMMPConfig(context.Context, *ResetMMPConfigReq) (*GetMMPConfigResp, error)
+	// 分页查询 MMP 配置和实时窗口状态
+	ListMMPConfigs(context.Context, *ListMMPConfigsReq) (*ListMMPConfigsResp, error)
+	// 分页查询实物交割配对单元和失败状态
+	ListPhysicalDeliveryUnits(context.Context, *ListPhysicalDeliveryUnitsReq) (*ListPhysicalDeliveryUnitsResp, error)
+	// 人工确认补资后，按原指令号重试一个实物交割单元
+	RetryPhysicalDeliveryUnit(context.Context, *RetryPhysicalDeliveryUnitReq) (*CommonResp, error)
 	mustEmbedUnimplementedAdminServer()
 }
 
@@ -1143,6 +2153,15 @@ func (UnimplementedAdminServer) GetOrder(context.Context, *GetOrderReq) (*GetOrd
 func (UnimplementedAdminServer) ListOrders(context.Context, *ListOrdersReq) (*ListOrdersResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListOrders not implemented")
 }
+func (UnimplementedAdminServer) ListAdminComboOrders(context.Context, *ListAdminComboOrdersReq) (*ListAdminComboOrdersResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListAdminComboOrders not implemented")
+}
+func (UnimplementedAdminServer) GetAdminComboOrder(context.Context, *GetAdminComboOrderReq) (*GetAdminComboOrderResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAdminComboOrder not implemented")
+}
+func (UnimplementedAdminServer) ForceCancelComboOrder(context.Context, *ForceCancelComboOrderReq) (*CommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ForceCancelComboOrder not implemented")
+}
 func (UnimplementedAdminServer) GetTrade(context.Context, *GetTradeReq) (*GetTradeResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTrade not implemented")
 }
@@ -1167,6 +2186,15 @@ func (UnimplementedAdminServer) GetSettlement(context.Context, *GetSettlementReq
 func (UnimplementedAdminServer) ListSettlements(context.Context, *ListSettlementsReq) (*ListSettlementsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListSettlements not implemented")
 }
+func (UnimplementedAdminServer) ListSettlementPrices(context.Context, *ListSettlementPricesReq) (*ListSettlementPricesResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListSettlementPrices not implemented")
+}
+func (UnimplementedAdminServer) CreateSettlementPriceCorrection(context.Context, *CreateSettlementPriceCorrectionReq) (*GetSettlementPriceResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateSettlementPriceCorrection not implemented")
+}
+func (UnimplementedAdminServer) ReviewSettlementPrice(context.Context, *ReviewSettlementPriceReq) (*GetSettlementPriceResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReviewSettlementPrice not implemented")
+}
 func (UnimplementedAdminServer) GetAccount(context.Context, *GetAccountReq) (*GetAccountResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetAccount not implemented")
 }
@@ -1185,11 +2213,74 @@ func (UnimplementedAdminServer) ForceCancelContractOrders(context.Context, *Forc
 func (UnimplementedAdminServer) RetryAssetInstruction(context.Context, *RetryAssetInstructionReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RetryAssetInstruction not implemented")
 }
+func (UnimplementedAdminServer) GetOperationsOverview(context.Context, *GetOperationsOverviewReq) (*GetOperationsOverviewResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetOperationsOverview not implemented")
+}
+func (UnimplementedAdminServer) ListAssetInstructions(context.Context, *ListAssetInstructionsReq) (*ListAssetInstructionsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListAssetInstructions not implemented")
+}
+func (UnimplementedAdminServer) ListReconciliationIssues(context.Context, *ListReconciliationIssuesReq) (*ListReconciliationIssuesResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListReconciliationIssues not implemented")
+}
+func (UnimplementedAdminServer) CreateTradingCalendar(context.Context, *CreateTradingCalendarReq) (*GetTradingCalendarResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateTradingCalendar not implemented")
+}
+func (UnimplementedAdminServer) ReviewTradingCalendar(context.Context, *ReviewTradingCalendarReq) (*GetTradingCalendarResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReviewTradingCalendar not implemented")
+}
+func (UnimplementedAdminServer) ListTradingCalendars(context.Context, *ListTradingCalendarsReq) (*ListTradingCalendarsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTradingCalendars not implemented")
+}
+func (UnimplementedAdminServer) HaltContractTrading(context.Context, *HaltContractTradingReq) (*GetTradingHaltResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method HaltContractTrading not implemented")
+}
+func (UnimplementedAdminServer) ResumeContractTrading(context.Context, *ResumeContractTradingReq) (*GetTradingHaltResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResumeContractTrading not implemented")
+}
+func (UnimplementedAdminServer) ListTradingHalts(context.Context, *ListTradingHaltsReq) (*ListTradingHaltsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTradingHalts not implemented")
+}
+func (UnimplementedAdminServer) CreateCorporateAction(context.Context, *CreateCorporateActionReq) (*GetCorporateActionResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateCorporateAction not implemented")
+}
+func (UnimplementedAdminServer) ReviewCorporateAction(context.Context, *ReviewCorporateActionReq) (*GetCorporateActionResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReviewCorporateAction not implemented")
+}
+func (UnimplementedAdminServer) ListCorporateActions(context.Context, *ListCorporateActionsReq) (*ListCorporateActionsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListCorporateActions not implemented")
+}
+func (UnimplementedAdminServer) ListCorporateActionPositions(context.Context, *ListCorporateActionPositionsReq) (*ListCorporateActionPositionsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListCorporateActionPositions not implemented")
+}
+func (UnimplementedAdminServer) CreateContractSeries(context.Context, *CreateContractSeriesReq) (*GetContractSeriesResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateContractSeries not implemented")
+}
+func (UnimplementedAdminServer) ReviewContractSeries(context.Context, *ReviewContractSeriesReq) (*GetContractSeriesResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReviewContractSeries not implemented")
+}
+func (UnimplementedAdminServer) ListContractSeries(context.Context, *ListContractSeriesReq) (*ListContractSeriesResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListContractSeries not implemented")
+}
+func (UnimplementedAdminServer) ListContractSeriesDetails(context.Context, *ListContractSeriesDetailsReq) (*ListContractSeriesDetailsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListContractSeriesDetails not implemented")
+}
+func (UnimplementedAdminServer) ReviewContractSeriesLaunch(context.Context, *ReviewContractSeriesLaunchReq) (*GetContractSeriesResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReviewContractSeriesLaunch not implemented")
+}
 func (UnimplementedAdminServer) RetryTradeEvent(context.Context, *RetryTradeEventReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RetryTradeEvent not implemented")
 }
 func (UnimplementedAdminServer) ListRiskAccounts(context.Context, *ListRiskAccountsReq) (*ListRiskAccountsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListRiskAccounts not implemented")
+}
+func (UnimplementedAdminServer) CreatePortfolioRiskConfig(context.Context, *CreatePortfolioRiskConfigReq) (*GetPortfolioRiskConfigResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreatePortfolioRiskConfig not implemented")
+}
+func (UnimplementedAdminServer) ReviewPortfolioRiskConfig(context.Context, *ReviewPortfolioRiskConfigReq) (*GetPortfolioRiskConfigResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReviewPortfolioRiskConfig not implemented")
+}
+func (UnimplementedAdminServer) ListPortfolioRiskConfigs(context.Context, *ListPortfolioRiskConfigsReq) (*ListPortfolioRiskConfigsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListPortfolioRiskConfigs not implemented")
 }
 func (UnimplementedAdminServer) ListLiquidations(context.Context, *ListLiquidationsReq) (*ListLiquidationsResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListLiquidations not implemented")
@@ -1202,6 +2293,39 @@ func (UnimplementedAdminServer) RetryExercise(context.Context, *RetryExerciseReq
 }
 func (UnimplementedAdminServer) RetrySettlementInstruction(context.Context, *RetrySettlementInstructionReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RetrySettlementInstruction not implemented")
+}
+func (UnimplementedAdminServer) ReleaseUserKillSwitch(context.Context, *ReleaseUserKillSwitchReq) (*CommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReleaseUserKillSwitch not implemented")
+}
+func (UnimplementedAdminServer) AdminGetUserTradingControl(context.Context, *AdminGetUserTradingControlReq) (*AdminGetUserTradingControlResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminGetUserTradingControl not implemented")
+}
+func (UnimplementedAdminServer) ListTradingControlEvents(context.Context, *ListTradingControlEventsReq) (*ListTradingControlEventsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTradingControlEvents not implemented")
+}
+func (UnimplementedAdminServer) CreateTradeCorrection(context.Context, *CreateTradeCorrectionReq) (*GetTradeCorrectionResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateTradeCorrection not implemented")
+}
+func (UnimplementedAdminServer) ReviewTradeCorrection(context.Context, *ReviewTradeCorrectionReq) (*GetTradeCorrectionResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReviewTradeCorrection not implemented")
+}
+func (UnimplementedAdminServer) ListTradeCorrections(context.Context, *ListTradeCorrectionsReq) (*ListTradeCorrectionsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTradeCorrections not implemented")
+}
+func (UnimplementedAdminServer) UpsertMMPConfig(context.Context, *UpsertMMPConfigReq) (*GetMMPConfigResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpsertMMPConfig not implemented")
+}
+func (UnimplementedAdminServer) ResetMMPConfig(context.Context, *ResetMMPConfigReq) (*GetMMPConfigResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResetMMPConfig not implemented")
+}
+func (UnimplementedAdminServer) ListMMPConfigs(context.Context, *ListMMPConfigsReq) (*ListMMPConfigsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListMMPConfigs not implemented")
+}
+func (UnimplementedAdminServer) ListPhysicalDeliveryUnits(context.Context, *ListPhysicalDeliveryUnitsReq) (*ListPhysicalDeliveryUnitsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListPhysicalDeliveryUnits not implemented")
+}
+func (UnimplementedAdminServer) RetryPhysicalDeliveryUnit(context.Context, *RetryPhysicalDeliveryUnitReq) (*CommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method RetryPhysicalDeliveryUnit not implemented")
 }
 func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
 func (UnimplementedAdminServer) testEmbeddedByValue()               {}
@@ -1386,6 +2510,60 @@ func _Admin_ListOrders_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_ListAdminComboOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAdminComboOrdersReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListAdminComboOrders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListAdminComboOrders_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListAdminComboOrders(ctx, req.(*ListAdminComboOrdersReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_GetAdminComboOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAdminComboOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).GetAdminComboOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_GetAdminComboOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).GetAdminComboOrder(ctx, req.(*GetAdminComboOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ForceCancelComboOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ForceCancelComboOrderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ForceCancelComboOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ForceCancelComboOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ForceCancelComboOrder(ctx, req.(*ForceCancelComboOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Admin_GetTrade_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTradeReq)
 	if err := dec(in); err != nil {
@@ -1530,6 +2708,60 @@ func _Admin_ListSettlements_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_ListSettlementPrices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSettlementPricesReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListSettlementPrices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListSettlementPrices_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListSettlementPrices(ctx, req.(*ListSettlementPricesReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_CreateSettlementPriceCorrection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateSettlementPriceCorrectionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).CreateSettlementPriceCorrection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_CreateSettlementPriceCorrection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).CreateSettlementPriceCorrection(ctx, req.(*CreateSettlementPriceCorrectionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ReviewSettlementPrice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReviewSettlementPriceReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ReviewSettlementPrice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ReviewSettlementPrice_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ReviewSettlementPrice(ctx, req.(*ReviewSettlementPriceReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Admin_GetAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAccountReq)
 	if err := dec(in); err != nil {
@@ -1638,6 +2870,330 @@ func _Admin_RetryAssetInstruction_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_GetOperationsOverview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOperationsOverviewReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).GetOperationsOverview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_GetOperationsOverview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).GetOperationsOverview(ctx, req.(*GetOperationsOverviewReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ListAssetInstructions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAssetInstructionsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListAssetInstructions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListAssetInstructions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListAssetInstructions(ctx, req.(*ListAssetInstructionsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ListReconciliationIssues_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListReconciliationIssuesReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListReconciliationIssues(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListReconciliationIssues_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListReconciliationIssues(ctx, req.(*ListReconciliationIssuesReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_CreateTradingCalendar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTradingCalendarReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).CreateTradingCalendar(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_CreateTradingCalendar_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).CreateTradingCalendar(ctx, req.(*CreateTradingCalendarReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ReviewTradingCalendar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReviewTradingCalendarReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ReviewTradingCalendar(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ReviewTradingCalendar_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ReviewTradingCalendar(ctx, req.(*ReviewTradingCalendarReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ListTradingCalendars_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTradingCalendarsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListTradingCalendars(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListTradingCalendars_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListTradingCalendars(ctx, req.(*ListTradingCalendarsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_HaltContractTrading_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HaltContractTradingReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).HaltContractTrading(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_HaltContractTrading_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).HaltContractTrading(ctx, req.(*HaltContractTradingReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ResumeContractTrading_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResumeContractTradingReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ResumeContractTrading(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ResumeContractTrading_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ResumeContractTrading(ctx, req.(*ResumeContractTradingReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ListTradingHalts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTradingHaltsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListTradingHalts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListTradingHalts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListTradingHalts(ctx, req.(*ListTradingHaltsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_CreateCorporateAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCorporateActionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).CreateCorporateAction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_CreateCorporateAction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).CreateCorporateAction(ctx, req.(*CreateCorporateActionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ReviewCorporateAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReviewCorporateActionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ReviewCorporateAction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ReviewCorporateAction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ReviewCorporateAction(ctx, req.(*ReviewCorporateActionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ListCorporateActions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCorporateActionsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListCorporateActions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListCorporateActions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListCorporateActions(ctx, req.(*ListCorporateActionsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ListCorporateActionPositions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCorporateActionPositionsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListCorporateActionPositions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListCorporateActionPositions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListCorporateActionPositions(ctx, req.(*ListCorporateActionPositionsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_CreateContractSeries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateContractSeriesReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).CreateContractSeries(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_CreateContractSeries_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).CreateContractSeries(ctx, req.(*CreateContractSeriesReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ReviewContractSeries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReviewContractSeriesReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ReviewContractSeries(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ReviewContractSeries_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ReviewContractSeries(ctx, req.(*ReviewContractSeriesReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ListContractSeries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListContractSeriesReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListContractSeries(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListContractSeries_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListContractSeries(ctx, req.(*ListContractSeriesReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ListContractSeriesDetails_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListContractSeriesDetailsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListContractSeriesDetails(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListContractSeriesDetails_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListContractSeriesDetails(ctx, req.(*ListContractSeriesDetailsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ReviewContractSeriesLaunch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReviewContractSeriesLaunchReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ReviewContractSeriesLaunch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ReviewContractSeriesLaunch_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ReviewContractSeriesLaunch(ctx, req.(*ReviewContractSeriesLaunchReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Admin_RetryTradeEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RetryTradeEventReq)
 	if err := dec(in); err != nil {
@@ -1670,6 +3226,60 @@ func _Admin_ListRiskAccounts_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AdminServer).ListRiskAccounts(ctx, req.(*ListRiskAccountsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_CreatePortfolioRiskConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePortfolioRiskConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).CreatePortfolioRiskConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_CreatePortfolioRiskConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).CreatePortfolioRiskConfig(ctx, req.(*CreatePortfolioRiskConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ReviewPortfolioRiskConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReviewPortfolioRiskConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ReviewPortfolioRiskConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ReviewPortfolioRiskConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ReviewPortfolioRiskConfig(ctx, req.(*ReviewPortfolioRiskConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ListPortfolioRiskConfigs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPortfolioRiskConfigsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListPortfolioRiskConfigs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListPortfolioRiskConfigs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListPortfolioRiskConfigs(ctx, req.(*ListPortfolioRiskConfigsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1746,6 +3356,204 @@ func _Admin_RetrySettlementInstruction_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_ReleaseUserKillSwitch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReleaseUserKillSwitchReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ReleaseUserKillSwitch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ReleaseUserKillSwitch_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ReleaseUserKillSwitch(ctx, req.(*ReleaseUserKillSwitchReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_AdminGetUserTradingControl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminGetUserTradingControlReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).AdminGetUserTradingControl(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_AdminGetUserTradingControl_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).AdminGetUserTradingControl(ctx, req.(*AdminGetUserTradingControlReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ListTradingControlEvents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTradingControlEventsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListTradingControlEvents(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListTradingControlEvents_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListTradingControlEvents(ctx, req.(*ListTradingControlEventsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_CreateTradeCorrection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTradeCorrectionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).CreateTradeCorrection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_CreateTradeCorrection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).CreateTradeCorrection(ctx, req.(*CreateTradeCorrectionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ReviewTradeCorrection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReviewTradeCorrectionReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ReviewTradeCorrection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ReviewTradeCorrection_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ReviewTradeCorrection(ctx, req.(*ReviewTradeCorrectionReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ListTradeCorrections_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTradeCorrectionsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListTradeCorrections(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListTradeCorrections_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListTradeCorrections(ctx, req.(*ListTradeCorrectionsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_UpsertMMPConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertMMPConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).UpsertMMPConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_UpsertMMPConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).UpsertMMPConfig(ctx, req.(*UpsertMMPConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ResetMMPConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetMMPConfigReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ResetMMPConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ResetMMPConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ResetMMPConfig(ctx, req.(*ResetMMPConfigReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ListMMPConfigs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListMMPConfigsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListMMPConfigs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListMMPConfigs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListMMPConfigs(ctx, req.(*ListMMPConfigsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ListPhysicalDeliveryUnits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPhysicalDeliveryUnitsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListPhysicalDeliveryUnits(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListPhysicalDeliveryUnits_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListPhysicalDeliveryUnits(ctx, req.(*ListPhysicalDeliveryUnitsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_RetryPhysicalDeliveryUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RetryPhysicalDeliveryUnitReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).RetryPhysicalDeliveryUnit(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_RetryPhysicalDeliveryUnit_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).RetryPhysicalDeliveryUnit(ctx, req.(*RetryPhysicalDeliveryUnitReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1790,6 +3598,18 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Admin_ListOrders_Handler,
 		},
 		{
+			MethodName: "ListAdminComboOrders",
+			Handler:    _Admin_ListAdminComboOrders_Handler,
+		},
+		{
+			MethodName: "GetAdminComboOrder",
+			Handler:    _Admin_GetAdminComboOrder_Handler,
+		},
+		{
+			MethodName: "ForceCancelComboOrder",
+			Handler:    _Admin_ForceCancelComboOrder_Handler,
+		},
+		{
 			MethodName: "GetTrade",
 			Handler:    _Admin_GetTrade_Handler,
 		},
@@ -1822,6 +3642,18 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Admin_ListSettlements_Handler,
 		},
 		{
+			MethodName: "ListSettlementPrices",
+			Handler:    _Admin_ListSettlementPrices_Handler,
+		},
+		{
+			MethodName: "CreateSettlementPriceCorrection",
+			Handler:    _Admin_CreateSettlementPriceCorrection_Handler,
+		},
+		{
+			MethodName: "ReviewSettlementPrice",
+			Handler:    _Admin_ReviewSettlementPrice_Handler,
+		},
+		{
 			MethodName: "GetAccount",
 			Handler:    _Admin_GetAccount_Handler,
 		},
@@ -1846,12 +3678,96 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Admin_RetryAssetInstruction_Handler,
 		},
 		{
+			MethodName: "GetOperationsOverview",
+			Handler:    _Admin_GetOperationsOverview_Handler,
+		},
+		{
+			MethodName: "ListAssetInstructions",
+			Handler:    _Admin_ListAssetInstructions_Handler,
+		},
+		{
+			MethodName: "ListReconciliationIssues",
+			Handler:    _Admin_ListReconciliationIssues_Handler,
+		},
+		{
+			MethodName: "CreateTradingCalendar",
+			Handler:    _Admin_CreateTradingCalendar_Handler,
+		},
+		{
+			MethodName: "ReviewTradingCalendar",
+			Handler:    _Admin_ReviewTradingCalendar_Handler,
+		},
+		{
+			MethodName: "ListTradingCalendars",
+			Handler:    _Admin_ListTradingCalendars_Handler,
+		},
+		{
+			MethodName: "HaltContractTrading",
+			Handler:    _Admin_HaltContractTrading_Handler,
+		},
+		{
+			MethodName: "ResumeContractTrading",
+			Handler:    _Admin_ResumeContractTrading_Handler,
+		},
+		{
+			MethodName: "ListTradingHalts",
+			Handler:    _Admin_ListTradingHalts_Handler,
+		},
+		{
+			MethodName: "CreateCorporateAction",
+			Handler:    _Admin_CreateCorporateAction_Handler,
+		},
+		{
+			MethodName: "ReviewCorporateAction",
+			Handler:    _Admin_ReviewCorporateAction_Handler,
+		},
+		{
+			MethodName: "ListCorporateActions",
+			Handler:    _Admin_ListCorporateActions_Handler,
+		},
+		{
+			MethodName: "ListCorporateActionPositions",
+			Handler:    _Admin_ListCorporateActionPositions_Handler,
+		},
+		{
+			MethodName: "CreateContractSeries",
+			Handler:    _Admin_CreateContractSeries_Handler,
+		},
+		{
+			MethodName: "ReviewContractSeries",
+			Handler:    _Admin_ReviewContractSeries_Handler,
+		},
+		{
+			MethodName: "ListContractSeries",
+			Handler:    _Admin_ListContractSeries_Handler,
+		},
+		{
+			MethodName: "ListContractSeriesDetails",
+			Handler:    _Admin_ListContractSeriesDetails_Handler,
+		},
+		{
+			MethodName: "ReviewContractSeriesLaunch",
+			Handler:    _Admin_ReviewContractSeriesLaunch_Handler,
+		},
+		{
 			MethodName: "RetryTradeEvent",
 			Handler:    _Admin_RetryTradeEvent_Handler,
 		},
 		{
 			MethodName: "ListRiskAccounts",
 			Handler:    _Admin_ListRiskAccounts_Handler,
+		},
+		{
+			MethodName: "CreatePortfolioRiskConfig",
+			Handler:    _Admin_CreatePortfolioRiskConfig_Handler,
+		},
+		{
+			MethodName: "ReviewPortfolioRiskConfig",
+			Handler:    _Admin_ReviewPortfolioRiskConfig_Handler,
+		},
+		{
+			MethodName: "ListPortfolioRiskConfigs",
+			Handler:    _Admin_ListPortfolioRiskConfigs_Handler,
 		},
 		{
 			MethodName: "ListLiquidations",
@@ -1869,6 +3785,50 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "RetrySettlementInstruction",
 			Handler:    _Admin_RetrySettlementInstruction_Handler,
 		},
+		{
+			MethodName: "ReleaseUserKillSwitch",
+			Handler:    _Admin_ReleaseUserKillSwitch_Handler,
+		},
+		{
+			MethodName: "AdminGetUserTradingControl",
+			Handler:    _Admin_AdminGetUserTradingControl_Handler,
+		},
+		{
+			MethodName: "ListTradingControlEvents",
+			Handler:    _Admin_ListTradingControlEvents_Handler,
+		},
+		{
+			MethodName: "CreateTradeCorrection",
+			Handler:    _Admin_CreateTradeCorrection_Handler,
+		},
+		{
+			MethodName: "ReviewTradeCorrection",
+			Handler:    _Admin_ReviewTradeCorrection_Handler,
+		},
+		{
+			MethodName: "ListTradeCorrections",
+			Handler:    _Admin_ListTradeCorrections_Handler,
+		},
+		{
+			MethodName: "UpsertMMPConfig",
+			Handler:    _Admin_UpsertMMPConfig_Handler,
+		},
+		{
+			MethodName: "ResetMMPConfig",
+			Handler:    _Admin_ResetMMPConfig_Handler,
+		},
+		{
+			MethodName: "ListMMPConfigs",
+			Handler:    _Admin_ListMMPConfigs_Handler,
+		},
+		{
+			MethodName: "ListPhysicalDeliveryUnits",
+			Handler:    _Admin_ListPhysicalDeliveryUnits_Handler,
+		},
+		{
+			MethodName: "RetryPhysicalDeliveryUnit",
+			Handler:    _Admin_RetryPhysicalDeliveryUnit_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "proto/option/option.proto",
@@ -1881,6 +3841,7 @@ const (
 	Task_ProcessLiquidations_FullMethodName      = "/option.Task/ProcessLiquidations"
 	Task_ProcessExercises_FullMethodName         = "/option.Task/ProcessExercises"
 	Task_ProcessContractLifecycle_FullMethodName = "/option.Task/ProcessContractLifecycle"
+	Task_ProcessCorporateActions_FullMethodName  = "/option.Task/ProcessCorporateActions"
 	Task_CleanMarketSnapshots_FullMethodName     = "/option.Task/CleanMarketSnapshots"
 )
 
@@ -1904,6 +3865,8 @@ type TaskClient interface {
 	ProcessExercises(ctx context.Context, in *OptionTaskReq, opts ...grpc.CallOption) (*OptionTaskResp, error)
 	// 期权合约生命周期处理（状态流转/订单过期/自动行权/到期结算）
 	ProcessContractLifecycle(ctx context.Context, in *OptionTaskReq, opts ...grpc.CallOption) (*OptionTaskResp, error)
+	// 按批次执行已复核且到达生效时间的公司行动迁移
+	ProcessCorporateActions(ctx context.Context, in *OptionTaskReq, opts ...grpc.CallOption) (*OptionTaskResp, error)
 	// 期权行情快照归档/清理
 	CleanMarketSnapshots(ctx context.Context, in *OptionTaskReq, opts ...grpc.CallOption) (*OptionTaskResp, error)
 }
@@ -1976,6 +3939,16 @@ func (c *taskClient) ProcessContractLifecycle(ctx context.Context, in *OptionTas
 	return out, nil
 }
 
+func (c *taskClient) ProcessCorporateActions(ctx context.Context, in *OptionTaskReq, opts ...grpc.CallOption) (*OptionTaskResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OptionTaskResp)
+	err := c.cc.Invoke(ctx, Task_ProcessCorporateActions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *taskClient) CleanMarketSnapshots(ctx context.Context, in *OptionTaskReq, opts ...grpc.CallOption) (*OptionTaskResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(OptionTaskResp)
@@ -2006,6 +3979,8 @@ type TaskServer interface {
 	ProcessExercises(context.Context, *OptionTaskReq) (*OptionTaskResp, error)
 	// 期权合约生命周期处理（状态流转/订单过期/自动行权/到期结算）
 	ProcessContractLifecycle(context.Context, *OptionTaskReq) (*OptionTaskResp, error)
+	// 按批次执行已复核且到达生效时间的公司行动迁移
+	ProcessCorporateActions(context.Context, *OptionTaskReq) (*OptionTaskResp, error)
 	// 期权行情快照归档/清理
 	CleanMarketSnapshots(context.Context, *OptionTaskReq) (*OptionTaskResp, error)
 	mustEmbedUnimplementedTaskServer()
@@ -2035,6 +4010,9 @@ func (UnimplementedTaskServer) ProcessExercises(context.Context, *OptionTaskReq)
 }
 func (UnimplementedTaskServer) ProcessContractLifecycle(context.Context, *OptionTaskReq) (*OptionTaskResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProcessContractLifecycle not implemented")
+}
+func (UnimplementedTaskServer) ProcessCorporateActions(context.Context, *OptionTaskReq) (*OptionTaskResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ProcessCorporateActions not implemented")
 }
 func (UnimplementedTaskServer) CleanMarketSnapshots(context.Context, *OptionTaskReq) (*OptionTaskResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CleanMarketSnapshots not implemented")
@@ -2168,6 +4146,24 @@ func _Task_ProcessContractLifecycle_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Task_ProcessCorporateActions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OptionTaskReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServer).ProcessCorporateActions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Task_ProcessCorporateActions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServer).ProcessCorporateActions(ctx, req.(*OptionTaskReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Task_CleanMarketSnapshots_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OptionTaskReq)
 	if err := dec(in); err != nil {
@@ -2216,6 +4212,10 @@ var Task_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ProcessContractLifecycle",
 			Handler:    _Task_ProcessContractLifecycle_Handler,
+		},
+		{
+			MethodName: "ProcessCorporateActions",
+			Handler:    _Task_ProcessCorporateActions_Handler,
 		},
 		{
 			MethodName: "CleanMarketSnapshots",

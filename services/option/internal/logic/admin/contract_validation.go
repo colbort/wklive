@@ -6,10 +6,43 @@ import (
 
 	"wklive/proto/common"
 	"wklive/proto/option"
+	logichelpers "wklive/services/option/internal/logic/helpers"
 	"wklive/services/option/models"
 
 	"github.com/shopspring/decimal"
 )
+
+const (
+	defaultSettlementPriceSource   = "authoritative-market"
+	defaultSettlementPriceMethod   = "MEDIAN"
+	defaultSettlementWindowSeconds = int64(60)
+	defaultSettlementMinSamples    = int64(3)
+	minPhysicalCureSeconds         = int64(300)
+	maxPhysicalCureSeconds         = int64(7 * 24 * 60 * 60)
+)
+
+func normalizeSettlementPriceRule(item *models.TOptionContract) {
+	if item == nil {
+		return
+	}
+	if strings.TrimSpace(item.SettlementPriceSource) == "" {
+		item.SettlementPriceSource = defaultSettlementPriceSource
+	}
+	item.SettlementPriceSource = strings.ToLower(strings.TrimSpace(item.SettlementPriceSource))
+	if strings.TrimSpace(item.SettlementPriceMethod) == "" {
+		item.SettlementPriceMethod = defaultSettlementPriceMethod
+	}
+	item.SettlementPriceMethod = strings.ToUpper(strings.TrimSpace(item.SettlementPriceMethod))
+	if item.SettlementWindowSeconds == 0 {
+		item.SettlementWindowSeconds = defaultSettlementWindowSeconds
+	}
+	if item.SettlementMinSamples == 0 {
+		item.SettlementMinSamples = defaultSettlementMinSamples
+	}
+	if item.ExerciseCutoffTime == 0 {
+		item.ExerciseCutoffTime = item.ExpireTime
+	}
+}
 
 func parseOptionalOptionRate(value string) (decimal.Decimal, error) {
 	if strings.TrimSpace(value) == "" {
@@ -26,11 +59,29 @@ func parseOptionalOptionRate(value string) (decimal.Decimal, error) {
 // paths are implemented. Cash supports European and American exercise; physical
 // delivery is restricted to European, auto-exercised, fully covered contracts.
 func validateSupportedContract(item *models.TOptionContract) bool {
-	if item == nil || item.TenantId <= 0 ||
+	normalizeSettlementPriceRule(item)
+	if item == nil {
+		return false
+	}
+	if strings.TrimSpace(item.TradingCalendarCode) == "" {
+		item.TradingCalendarCode = logichelpers.DefaultTradingCalendarCode
+	}
+	calendarCode, validCalendarCode := logichelpers.NormalizeTradingCalendarCode(item.TradingCalendarCode)
+	if !validCalendarCode {
+		return false
+	}
+	item.TradingCalendarCode = calendarCode
+	if item.TenantId <= 0 ||
 		strings.TrimSpace(item.ContractCode) == "" ||
 		strings.TrimSpace(item.UnderlyingSymbol) == "" ||
 		strings.TrimSpace(item.SettleCoin) == "" ||
 		strings.TrimSpace(item.QuoteCoin) == "" {
+		return false
+	}
+	if item.SettlementPriceSource != defaultSettlementPriceSource ||
+		item.SettlementPriceMethod != defaultSettlementPriceMethod ||
+		item.SettlementWindowSeconds < 1 || item.SettlementWindowSeconds > 3600 ||
+		item.SettlementMinSamples < 1 || item.SettlementMinSamples > 1000 {
 		return false
 	}
 	if item.OptionType != int64(option.OptionType_OPTION_TYPE_CALL) &&
@@ -44,7 +95,8 @@ func validateSupportedContract(item *models.TOptionContract) bool {
 	}
 	switch option.SettlementType(item.SettlementType) {
 	case option.SettlementType_SETTLEMENT_TYPE_CASH:
-		if item.PhysicalDeliveryPolicy != int64(option.PhysicalDeliveryPolicy_PHYSICAL_DELIVERY_POLICY_UNKNOWN) {
+		if item.PhysicalDeliveryPolicy != int64(option.PhysicalDeliveryPolicy_PHYSICAL_DELIVERY_POLICY_UNKNOWN) ||
+			item.PhysicalDeliveryCureSeconds != 0 {
 			return false
 		}
 	case option.SettlementType_SETTLEMENT_TYPE_PHYSICAL:
@@ -52,7 +104,9 @@ func validateSupportedContract(item *models.TOptionContract) bool {
 			strings.TrimSpace(item.UnderlyingCoin) == "" ||
 			strings.EqualFold(item.UnderlyingCoin, item.SettleCoin) ||
 			item.PhysicalDeliveryPolicy != int64(option.PhysicalDeliveryPolicy_PHYSICAL_DELIVERY_POLICY_STRICT) ||
-			item.ExerciseFeeRate.IsPositive() {
+			item.ExerciseFeeRate.IsPositive() || item.AutoExerciseThreshold.IsPositive() ||
+			item.PhysicalDeliveryCureSeconds < minPhysicalCureSeconds ||
+			item.PhysicalDeliveryCureSeconds > maxPhysicalCureSeconds {
 			return false
 		}
 	default:
@@ -61,6 +115,23 @@ func validateSupportedContract(item *models.TOptionContract) bool {
 	if !item.StrikePrice.IsPositive() || !item.ContractUnit.IsPositive() ||
 		!item.MinOrderQty.IsPositive() || !item.PriceTick.IsPositive() ||
 		!item.QtyStep.IsPositive() || !item.Multiplier.IsPositive() {
+		return false
+	}
+	if item.AutoExerciseThreshold.IsNegative() {
+		return false
+	}
+	if item.MaxUserLongQty.IsNegative() || item.MaxUserShortQty.IsNegative() ||
+		item.MaxOpenInterest.IsNegative() || item.OrderPriceBandRatio.IsNegative() ||
+		item.OrderPriceBandRatio.GreaterThan(decimal.NewFromInt(1)) ||
+		item.CircuitBreakerRatio.IsNegative() ||
+		item.CircuitBreakerRatio.GreaterThan(decimal.NewFromInt(1)) {
+		return false
+	}
+	if item.Status == int64(option.ContractStatus_CONTRACT_STATUS_TRADING) &&
+		(!item.MaxUserLongQty.IsPositive() || !item.MaxUserShortQty.IsPositive() ||
+			!item.MaxOpenInterest.IsPositive() || !item.OrderPriceBandRatio.IsPositive() ||
+			!item.CircuitBreakerRatio.IsPositive()) {
+		// A live contract must never interpret zero as an unlimited risk control.
 		return false
 	}
 	if item.MaxOrderQty.IsPositive() && item.MaxOrderQty.LessThan(item.MinOrderQty) {
@@ -115,7 +186,9 @@ func validateSupportedContract(item *models.TOptionContract) bool {
 		return false
 	}
 	if item.ListTime <= 0 || item.ExpireTime <= item.ListTime ||
-		item.DeliverTime < item.ExpireTime {
+		item.DeliverTime < item.ExpireTime ||
+		item.ExerciseCutoffTime <= item.ListTime ||
+		item.ExerciseCutoffTime > item.ExpireTime {
 		return false
 	}
 	switch option.ContractStatus(item.Status) {
@@ -149,6 +222,13 @@ func economicContractFieldsEqual(left, right *models.TOptionContract) bool {
 		left.ListTime == right.ListTime &&
 		left.ExpireTime == right.ExpireTime &&
 		left.DeliverTime == right.DeliverTime &&
+		left.TradingCalendarCode == right.TradingCalendarCode &&
+		left.ExerciseCutoffTime == right.ExerciseCutoffTime &&
+		left.AutoExerciseThreshold.Equal(right.AutoExerciseThreshold) &&
+		left.SettlementPriceSource == right.SettlementPriceSource &&
+		left.SettlementPriceMethod == right.SettlementPriceMethod &&
+		left.SettlementWindowSeconds == right.SettlementWindowSeconds &&
+		left.SettlementMinSamples == right.SettlementMinSamples &&
 		left.IsAutoExercise == right.IsAutoExercise &&
 		left.MakerFeeRate.Equal(right.MakerFeeRate) &&
 		left.TakerFeeRate.Equal(right.TakerFeeRate) &&
@@ -163,5 +243,6 @@ func economicContractFieldsEqual(left, right *models.TOptionContract) bool {
 		left.InsuranceUserId == right.InsuranceUserId &&
 		left.InsuranceAccountId == right.InsuranceAccountId &&
 		left.LiquidationDeficitPolicy == right.LiquidationDeficitPolicy &&
-		left.PhysicalDeliveryPolicy == right.PhysicalDeliveryPolicy
+		left.PhysicalDeliveryPolicy == right.PhysicalDeliveryPolicy &&
+		left.PhysicalDeliveryCureSeconds == right.PhysicalDeliveryCureSeconds
 }

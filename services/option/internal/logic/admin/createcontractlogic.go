@@ -9,6 +9,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/proto/common"
 	"wklive/proto/option"
+	logichelpers "wklive/services/option/internal/logic/helpers"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -31,6 +32,11 @@ func NewCreateContractLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Cr
 
 // 创建期权合约
 func (l *CreateContractLogic) CreateContract(in *option.CreateContractReq) (*option.CreateContractResp, error) {
+	if in == nil || in.Status != option.ContractStatus_CONTRACT_STATUS_PENDING {
+		return &option.CreateContractResp{Base: helper.ErrResp(
+			i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx),
+		)}, nil
+	}
 	if _, err := l.svcCtx.OptionContractModel.FindOneByTenantIdContractCode(l.ctx, in.TenantId, in.ContractCode); err == nil {
 		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ContractCodeAlreadyExists, i18n.Translate(i18n.ContractCodeAlreadyExists, l.ctx))}, nil
 	} else if !errors.Is(err, models.ErrNotFound) {
@@ -77,6 +83,30 @@ func (l *CreateContractLogic) CreateContract(in *option.CreateContractReq) (*opt
 	if err != nil {
 		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
+	autoExerciseThreshold, err := conv.ParseDecimalField(in.AutoExerciseThreshold)
+	if err != nil || autoExerciseThreshold.IsNegative() {
+		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	maxUserLongQty, err := conv.ParseDecimalField(in.MaxUserLongQty)
+	if err != nil || maxUserLongQty.IsNegative() {
+		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	maxUserShortQty, err := conv.ParseDecimalField(in.MaxUserShortQty)
+	if err != nil || maxUserShortQty.IsNegative() {
+		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	maxOpenInterest, err := conv.ParseDecimalField(in.MaxOpenInterest)
+	if err != nil || maxOpenInterest.IsNegative() {
+		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	orderPriceBandRatio, err := parseOptionalOptionRate(in.OrderPriceBandRatio)
+	if err != nil {
+		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	circuitBreakerRatio, err := parseOptionalOptionRate(in.CircuitBreakerRatio)
+	if err != nil {
+		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
 	initialMarginRate, err := parseOptionalOptionRate(in.InitialMarginRate)
 	if err != nil {
 		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
@@ -101,46 +131,63 @@ func (l *CreateContractLogic) CreateContract(in *option.CreateContractReq) (*opt
 	if deficitPolicy == option.LiquidationDeficitPolicy_LIQUIDATION_DEFICIT_POLICY_UNKNOWN {
 		deficitPolicy = option.LiquidationDeficitPolicy_LIQUIDATION_DEFICIT_POLICY_MANUAL_REVIEW
 	}
+	tradingCalendarCode := in.TradingCalendarCode
+	if tradingCalendarCode == "" {
+		tradingCalendarCode = logichelpers.DefaultTradingCalendarCode
+	}
 
 	now := time.Now().Unix()
 	item := &models.TOptionContract{
-		TenantId:          in.TenantId,
-		ContractCode:      in.ContractCode,
-		UnderlyingSymbol:  in.UnderlyingSymbol,
-		UnderlyingCoin:    in.UnderlyingCoin,
-		SettleCoin:        in.SettleCoin,
-		QuoteCoin:         in.QuoteCoin,
-		OptionType:        int64(in.OptionType),
-		ExerciseStyle:     int64(in.ExerciseStyle),
-		SettlementType:    int64(in.SettlementType),
-		StrikePrice:       strikePrice,
-		ContractUnit:      contractUnit,
-		MinOrderQty:       minOrderQty,
-		MaxOrderQty:       maxOrderQty,
-		PriceTick:         priceTick,
-		QtyStep:           qtyStep,
-		Multiplier:        multiplier,
-		ListTime:          in.ListTime,
-		ExpireTime:        in.ExpireTime,
-		DeliverTime:       in.DeliverTime,
-		IsAutoExercise:    int64(in.IsAutoExercise),
-		MakerFeeRate:      makerFeeRate,
-		TakerFeeRate:      takerFeeRate,
-		ExerciseFeeRate:   exerciseFeeRate,
-		FeeUserId:         in.FeeUserId,
-		FeeAccountId:      in.FeeAccountId,
-		SellerMarginMode:  int64(sellerMarginMode),
-		InitialMarginRate: initialMarginRate, MaintenanceMarginRate: maintenanceMarginRate,
+		TenantId:                in.TenantId,
+		ContractCode:            in.ContractCode,
+		UnderlyingSymbol:        in.UnderlyingSymbol,
+		UnderlyingCoin:          in.UnderlyingCoin,
+		SettleCoin:              in.SettleCoin,
+		QuoteCoin:               in.QuoteCoin,
+		OptionType:              int64(in.OptionType),
+		ExerciseStyle:           int64(in.ExerciseStyle),
+		SettlementType:          int64(in.SettlementType),
+		StrikePrice:             strikePrice,
+		ContractUnit:            contractUnit,
+		MinOrderQty:             minOrderQty,
+		MaxOrderQty:             maxOrderQty,
+		PriceTick:               priceTick,
+		QtyStep:                 qtyStep,
+		Multiplier:              multiplier,
+		ListTime:                in.ListTime,
+		ExpireTime:              in.ExpireTime,
+		DeliverTime:             in.DeliverTime,
+		TradingCalendarCode:     tradingCalendarCode,
+		ExerciseCutoffTime:      in.ExerciseCutoffTime,
+		AutoExerciseThreshold:   autoExerciseThreshold,
+		MaxUserLongQty:          maxUserLongQty,
+		MaxUserShortQty:         maxUserShortQty,
+		MaxOpenInterest:         maxOpenInterest,
+		OrderPriceBandRatio:     orderPriceBandRatio,
+		CircuitBreakerRatio:     circuitBreakerRatio,
+		SettlementPriceSource:   in.SettlementPriceSource,
+		SettlementPriceMethod:   in.SettlementPriceMethod,
+		SettlementWindowSeconds: in.SettlementWindowSeconds,
+		SettlementMinSamples:    in.SettlementMinSamples,
+		IsAutoExercise:          int64(in.IsAutoExercise),
+		MakerFeeRate:            makerFeeRate,
+		TakerFeeRate:            takerFeeRate,
+		ExerciseFeeRate:         exerciseFeeRate,
+		FeeUserId:               in.FeeUserId,
+		FeeAccountId:            in.FeeAccountId,
+		SellerMarginMode:        int64(sellerMarginMode),
+		InitialMarginRate:       initialMarginRate, MaintenanceMarginRate: maintenanceMarginRate,
 		MinMarginRate: minMarginRate, LiquidationFeeRate: liquidationFeeRate,
 		InsuranceUserId: in.InsuranceUserId, InsuranceAccountId: in.InsuranceAccountId,
-		LiquidationDeficitPolicy: int64(deficitPolicy),
-		PhysicalDeliveryPolicy:   int64(in.PhysicalDeliveryPolicy),
-		Status:                   int64(in.Status),
-		Sort:                     int64(in.Sort),
-		Remark:                   in.Remark,
-		IsDeleted:                int64(common.YesNo_YES_NO_NO),
-		CreateTimes:              now,
-		UpdateTimes:              now,
+		LiquidationDeficitPolicy:    int64(deficitPolicy),
+		PhysicalDeliveryPolicy:      int64(in.PhysicalDeliveryPolicy),
+		PhysicalDeliveryCureSeconds: in.PhysicalDeliveryCureSeconds,
+		Status:                      int64(in.Status),
+		Sort:                        int64(in.Sort),
+		Remark:                      in.Remark,
+		IsDeleted:                   int64(common.YesNo_YES_NO_NO),
+		CreateTimes:                 now,
+		UpdateTimes:                 now,
 	}
 	if !validateSupportedContract(item) {
 		return &option.CreateContractResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil

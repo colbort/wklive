@@ -1,6 +1,10 @@
 Name: option.rpc
 ListenOn: 0.0.0.0:8085
 Mode: dev
+Prometheus:
+  Host: 0.0.0.0
+  Port: 9105
+  Path: /metrics
 Etcd:
   Hosts:
   - 127.0.0.1:2379

@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -13,6 +14,7 @@ import (
 	"wklive/services/option/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type UpdateContractLogic struct {
@@ -150,6 +152,63 @@ func (l *UpdateContractLogic) UpdateContract(in *option.UpdateContractReq) (*opt
 	if in.DeliverTime != 0 {
 		item.DeliverTime = in.DeliverTime
 	}
+	if in.ExerciseCutoffTime != 0 {
+		item.ExerciseCutoffTime = in.ExerciseCutoffTime
+	}
+	if in.AutoExerciseThreshold != "" {
+		value, err := conv.ParseDecimalField(in.AutoExerciseThreshold)
+		if err != nil || value.IsNegative() {
+			return &option.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		}
+		item.AutoExerciseThreshold = value
+	}
+	if in.MaxUserLongQty != "" {
+		value, err := conv.ParseDecimalField(in.MaxUserLongQty)
+		if err != nil || value.IsNegative() {
+			return &option.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		}
+		item.MaxUserLongQty = value
+	}
+	if in.MaxUserShortQty != "" {
+		value, err := conv.ParseDecimalField(in.MaxUserShortQty)
+		if err != nil || value.IsNegative() {
+			return &option.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		}
+		item.MaxUserShortQty = value
+	}
+	if in.MaxOpenInterest != "" {
+		value, err := conv.ParseDecimalField(in.MaxOpenInterest)
+		if err != nil || value.IsNegative() {
+			return &option.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		}
+		item.MaxOpenInterest = value
+	}
+	if in.OrderPriceBandRatio != "" {
+		value, err := parseOptionalOptionRate(in.OrderPriceBandRatio)
+		if err != nil {
+			return &option.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		}
+		item.OrderPriceBandRatio = value
+	}
+	if in.CircuitBreakerRatio != "" {
+		value, err := parseOptionalOptionRate(in.CircuitBreakerRatio)
+		if err != nil {
+			return &option.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+		}
+		item.CircuitBreakerRatio = value
+	}
+	if in.SettlementPriceSource != "" {
+		item.SettlementPriceSource = in.SettlementPriceSource
+	}
+	if in.SettlementPriceMethod != "" {
+		item.SettlementPriceMethod = in.SettlementPriceMethod
+	}
+	if in.SettlementWindowSeconds != 0 {
+		item.SettlementWindowSeconds = in.SettlementWindowSeconds
+	}
+	if in.SettlementMinSamples != 0 {
+		item.SettlementMinSamples = in.SettlementMinSamples
+	}
 	if in.IsAutoExercise != 0 {
 		item.IsAutoExercise = int64(in.IsAutoExercise)
 	}
@@ -223,6 +282,16 @@ func (l *UpdateContractLogic) UpdateContract(in *option.UpdateContractReq) (*opt
 	if in.PhysicalDeliveryPolicy != option.PhysicalDeliveryPolicy_PHYSICAL_DELIVERY_POLICY_UNKNOWN {
 		item.PhysicalDeliveryPolicy = int64(in.PhysicalDeliveryPolicy)
 	}
+	if in.PhysicalDeliveryCureSeconds != 0 {
+		item.PhysicalDeliveryCureSeconds = in.PhysicalDeliveryCureSeconds
+	}
+	if in.TradingCalendarCode != "" {
+		item.TradingCalendarCode = in.TradingCalendarCode
+	}
+	if in.SettlementType == option.SettlementType_SETTLEMENT_TYPE_CASH {
+		item.PhysicalDeliveryPolicy = int64(option.PhysicalDeliveryPolicy_PHYSICAL_DELIVERY_POLICY_UNKNOWN)
+		item.PhysicalDeliveryCureSeconds = 0
+	}
 	if in.Status != 0 {
 		item.Status = int64(in.Status)
 	}
@@ -238,13 +307,108 @@ func (l *UpdateContractLogic) UpdateContract(in *option.UpdateContractReq) (*opt
 	if !validateSupportedContract(item) {
 		return &option.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
+	if original.Status != item.Status {
+		// Contract status is owned by lifecycle and audited halt/resume flows.
+		// Admin parameter updates must never be an alternate listing path.
+		return &option.CommonResp{Base: helper.ErrResp(
+			i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx),
+		)}, nil
+	}
+	if _, seriesErr := l.svcCtx.OptionContractSeriesDetailModel.FindSeriesLaunchByContract(
+		l.ctx, original.TenantId, original.Id,
+	); seriesErr == nil {
+		if !economicContractFieldsEqual(&original, item) ||
+			original.Status != item.Status || original.IsDeleted != item.IsDeleted {
+			// Series-generated economics and admission state are governed by
+			// the immutable series and lifecycle launch gate.
+			return &option.CommonResp{Base: helper.ErrResp(
+				i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx),
+			)}, nil
+		}
+	} else if !errors.Is(seriesErr, models.ErrNotFound) {
+		return nil, seriesErr
+	}
 	if original.Status != int64(option.ContractStatus_CONTRACT_STATUS_PENDING) &&
 		!economicContractFieldsEqual(&original, item) {
 		return &option.CommonResp{Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx))}, nil
 	}
 	item.UpdateTimes = time.Now().Unix()
-
-	if err := l.svcCtx.OptionContractModel.Update(l.ctx, item); err != nil {
+	tradingPolicyChanged := !original.MaxUserLongQty.Equal(item.MaxUserLongQty) ||
+		!original.MaxUserShortQty.Equal(item.MaxUserShortQty) ||
+		!original.MaxOpenInterest.Equal(item.MaxOpenInterest) ||
+		!original.OrderPriceBandRatio.Equal(item.OrderPriceBandRatio) ||
+		!original.CircuitBreakerRatio.Equal(item.CircuitBreakerRatio)
+	statusChanged := original.Status != item.Status
+	operatorID := int64(0)
+	if tradingPolicyChanged || statusChanged {
+		operatorID, err = utils.GetUserIdFromMd(l.ctx)
+		if err != nil {
+			return nil, err
+		}
+	}
+	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		contractModel := models.NewTOptionContractModel(conn, l.svcCtx.Config.CacheRedis)
+		locked, err := contractModel.FindOneForUpdate(ctx, item.Id)
+		if err != nil {
+			return err
+		}
+		if !economicContractFieldsEqual(locked, &original) ||
+			locked.Status != original.Status || locked.Sort != original.Sort ||
+			locked.Remark != original.Remark || locked.IsDeleted != original.IsDeleted ||
+			!locked.MaxUserLongQty.Equal(original.MaxUserLongQty) ||
+			!locked.MaxUserShortQty.Equal(original.MaxUserShortQty) ||
+			!locked.MaxOpenInterest.Equal(original.MaxOpenInterest) ||
+			!locked.OrderPriceBandRatio.Equal(original.OrderPriceBandRatio) ||
+			!locked.CircuitBreakerRatio.Equal(original.CircuitBreakerRatio) {
+			return errors.New("option contract was concurrently updated")
+		}
+		detailModel := models.NewTOptionContractSeriesDetailModel(conn, l.svcCtx.Config.CacheRedis)
+		if _, seriesErr := detailModel.FindSeriesLaunchByContract(
+			ctx, locked.TenantId, locked.Id,
+		); seriesErr == nil {
+			if !economicContractFieldsEqual(locked, item) ||
+				locked.Status != item.Status || locked.IsDeleted != item.IsDeleted {
+				return i18n.StatusError(ctx, i18n.OperationNotAllowed)
+			}
+		} else if !errors.Is(seriesErr, models.ErrNotFound) {
+			return seriesErr
+		}
+		if err := contractModel.Update(ctx, item); err != nil {
+			return err
+		}
+		if !tradingPolicyChanged && !statusChanged {
+			return nil
+		}
+		eventModel := models.NewTOptionTradingControlEventModel(conn, l.svcCtx.Config.CacheRedis)
+		if tradingPolicyChanged {
+			if _, err = eventModel.Insert(ctx, &models.TOptionTradingControlEvent{
+				TenantId: item.TenantId, ContractId: item.Id,
+				EventType: "TRADING_POLICY_UPDATED", Reason: "ADMIN_UPDATE",
+				Detail: fmt.Sprintf(
+					"long:%s->%s short:%s->%s oi:%s->%s band:%s->%s circuit:%s->%s",
+					original.MaxUserLongQty, item.MaxUserLongQty,
+					original.MaxUserShortQty, item.MaxUserShortQty,
+					original.MaxOpenInterest, item.MaxOpenInterest,
+					original.OrderPriceBandRatio, item.OrderPriceBandRatio,
+					original.CircuitBreakerRatio, item.CircuitBreakerRatio,
+				),
+				OperatorId: operatorID, CreateTimes: item.UpdateTimes,
+			}); err != nil {
+				return err
+			}
+		}
+		if statusChanged {
+			_, err = eventModel.Insert(ctx, &models.TOptionTradingControlEvent{
+				TenantId: item.TenantId, ContractId: item.Id,
+				EventType: "CONTRACT_STATUS_UPDATED", Reason: "ADMIN_UPDATE",
+				Detail:     fmt.Sprintf("status:%d->%d", original.Status, item.Status),
+				OperatorId: operatorID, CreateTimes: item.UpdateTimes,
+			})
+		}
+		return err
+	})
+	if err != nil {
 		return nil, err
 	}
 	for _, enqueueErr := range enqueueContractSchedules(l.svcCtx, item) {

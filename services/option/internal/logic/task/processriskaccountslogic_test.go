@@ -25,6 +25,45 @@ func TestOptionTaskSellerMargin(t *testing.T) {
 	}
 }
 
+func TestOptionRiskEquityUsesSignedMarkValue(t *testing.T) {
+	tests := []struct {
+		name           string
+		assetTotal     string
+		netOptionValue string
+		want           string
+	}{
+		{
+			name:           "long premium already paid",
+			assetTotal:     "95",
+			netOptionValue: "5",
+			want:           "100",
+		},
+		{
+			name:           "short premium already received",
+			assetTotal:     "105",
+			netOptionValue: "-5",
+			want:           "100",
+		},
+		{
+			name:           "hedged long and short",
+			assetTotal:     "100",
+			netOptionValue: "0",
+			want:           "100",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := optionRiskEquity(
+				decimal.RequireFromString(tt.assetTotal),
+				decimal.RequireFromString(tt.netOptionValue),
+			)
+			if !got.Equal(decimal.RequireFromString(tt.want)) {
+				t.Fatalf("equity=%s want=%s", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestValidateLiquidationPlanBalance(t *testing.T) {
 	plan := &optionLiquidationPlan{
 		quantity:      decimal.NewFromInt(2),

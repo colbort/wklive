@@ -45,9 +45,22 @@ func (l *RetryAssetInstructionLogic) RetryAssetInstruction(in *option.RetryAsset
 	if forbidden || !allowed {
 		return &option.CommonResp{Base: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
 	}
-	_, err = l.svcCtx.OptionAssetInstructionModel.ResetForManualRetry(l.ctx, item.Id, time.Now().Unix())
+	// 实物交割必须以完整交割单元恢复，防止绕过补资确认、批次状态和操作原因审计。
+	if item.DeliveryUnitId > 0 {
+		return &option.CommonResp{
+			Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx)),
+		}, nil
+	}
+	reset, err := l.svcCtx.OptionAssetInstructionModel.ResetForManualRetry(
+		l.ctx, item.Id, time.Now().Unix(),
+	)
 	if err != nil {
 		return nil, err
+	}
+	if !reset {
+		return &option.CommonResp{
+			Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx)),
+		}, nil
 	}
 	return &option.CommonResp{Base: helper.OkResp()}, nil
 }
