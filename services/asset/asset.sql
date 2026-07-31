@@ -83,6 +83,7 @@ CREATE TABLE `t_asset_flow` (
   KEY `idx_tenant_biz_type_biz_id` (`tenant_id`,`biz_type`,`biz_id`),
   KEY `idx_tenant_biz_no` (`tenant_id`,`biz_no`),
   KEY `idx_tenant_coin_wallet` (`tenant_id`,`coin`,`wallet_type`),
+  KEY `idx_asset_flow_option_reconciliation` (`tenant_id`,`wallet_type`,`create_times`,`id`,`user_id`,`coin`),
   KEY `idx_tenant_change_type` (`tenant_id`,`change_type`),
   KEY `idx_create_time` (`create_times`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='资产流水表';
@@ -208,6 +209,7 @@ CREATE TABLE `t_asset_platform_flow` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_platform_flow_biz` (`tenant_id`,`platform_account_id`,`scene_type`,`biz_no`),
   KEY `idx_platform_flow_account_time` (`platform_account_id`,`create_times`),
+  KEY `idx_platform_flow_option_reconciliation` (`tenant_id`,`account_type`,`create_times`,`id`,`platform_account_id`,`coin`),
   CONSTRAINT `chk_asset_platform_flow` CHECK (`op_type` IN (1,2) AND `amount` > 0 AND (`account_type` = 'OPTION_BACKSTOP' OR (`before_available` >= 0 AND `after_available` >= 0)))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Asset平台自有资金流水';
 

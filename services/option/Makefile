@@ -11,6 +11,7 @@ PROTO_DIR := $(REPO_ROOT)/proto/option
 PROTO_FILE := $(PROTO_DIR)/option.proto
 
 GOCTL ?= $(shell go env GOPATH)/bin/goctl
+MODEL_DDL := option.sql
 
 .PHONY: gen gen-rpc sync-proto fix-imports tidy fmt clean-gen gen-model print-protos clean-main install-goctl
 
@@ -87,8 +88,8 @@ clean-main:
 	@rm -rf optionadmin.go optionapp.go optioninternal.go optiontask.go ./etc/optionadmin.yaml ./etc/optionapp.yaml ./etc/optioninternal.yaml ./etc/optiontask.yaml
 
 .PHONY: gen-model
-gen-model:
+gen-model: $(MODEL_DDL)
 	@$(MAKE) check-goctl
 	@echo "🔧 [services/option] generating decimal-safe models..."
-	@$(GOCTL) model mysql ddl --src option.sql --dir ./models -c
+	@$(GOCTL) model mysql ddl --src $(MODEL_DDL) --dir ./models -c
 	@echo "✅ [services/option] models generated (DECIMAL -> decimal.Decimal)"

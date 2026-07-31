@@ -214,29 +214,10 @@ func (l *ProcessCorporateActionsLogic) validateExecutionGate(
 		halt.Source != int64(option.TradingHaltSource_TRADING_HALT_SOURCE_CORPORATE_ACTION) {
 		return i18n.StatusError(l.ctx, i18n.OperationNotAllowed)
 	}
-	var blocked int64
-	query := `SELECT
-  (SELECT COUNT(1) FROM t_option_order
-    WHERE tenant_id=? AND contract_id=? AND status IN (1,2,7,8,9))
- + (SELECT COUNT(1) FROM t_option_outbox
-    WHERE tenant_id=? AND contract_id=? AND status<>3)
- + (SELECT COUNT(1) FROM t_option_inbox
-    WHERE tenant_id=? AND contract_id=? AND status<>2)
- + (SELECT COUNT(1) FROM t_option_asset_instruction
-    WHERE tenant_id=? AND contract_id=? AND status NOT IN (3,6))
- + (SELECT COUNT(1) FROM t_option_exercise
-    WHERE tenant_id=? AND contract_id=? AND status=1)
- + (SELECT COUNT(1) FROM t_option_liquidation
-    WHERE tenant_id=? AND contract_id=? AND status IN (1,2,4,6))
- + (SELECT COUNT(1) FROM t_option_settlement_batch
-    WHERE tenant_id=? AND contract_id=? AND status<>7)
- + (SELECT COUNT(1) FROM t_option_physical_delivery_unit
-    WHERE tenant_id=? AND contract_id=? AND status NOT IN (5,6)) AS blocked`
-	args := make([]any, 0, 16)
-	for index := 0; index < 8; index++ {
-		args = append(args, mapping.TenantId, mapping.SourceContractId)
-	}
-	if err := l.svcCtx.DB.QueryRowCtx(l.ctx, &blocked, query, args...); err != nil {
+	blocked, err := models.CountCorporateActionExecutionBlockers(
+		l.ctx, l.svcCtx.DB, mapping.TenantId, mapping.SourceContractId,
+	)
+	if err != nil {
 		return err
 	}
 	if blocked > 0 {
@@ -359,7 +340,7 @@ func (l *ProcessCorporateActionsLogic) migratePosition(
 		if err != nil {
 			return err
 		}
-		marginLots, err := findCorporateActionMarginLotsForUpdate(ctx, conn, mapping.TenantId, position.Id)
+		marginLots, err := marginModel.FindRemainingByPositionForUpdate(ctx, mapping.TenantId, position.Id)
 		if err != nil {
 			return err
 		}
@@ -431,17 +412,6 @@ func (l *ProcessCorporateActionsLogic) migratePosition(
 		mapping.UpdateTimes = now
 		return mappingModel.Update(ctx, mapping)
 	})
-}
-
-func findCorporateActionMarginLotsForUpdate(
-	ctx context.Context, conn sqlx.SqlConn, tenantID, positionID int64,
-) ([]*models.TOptionMarginLot, error) {
-	query := `SELECT * FROM t_option_margin_lot
-WHERE tenant_id=? AND position_id=? AND remaining_quantity>0
-ORDER BY id FOR UPDATE`
-	var items []*models.TOptionMarginLot
-	err := conn.QueryRowsCtx(ctx, &items, query, tenantID, positionID)
-	return items, err
 }
 
 func (l *ProcessCorporateActionsLogic) completeMapping(actionID, mappingID, now int64) error {

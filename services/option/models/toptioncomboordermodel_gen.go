@@ -46,27 +46,27 @@ type (
 	}
 
 	TOptionComboOrder struct {
-		Id                 int64           `db:"id"`                   // 主键
-		TenantId           int64           `db:"tenant_id"`            // 租户
-		ComboNo            string          `db:"combo_no"`             // 父单号
-		UserId             int64           `db:"user_id"`              // 用户
-		AccountId          int64           `db:"account_id"`           // 账户
-		ClientComboId      string          `db:"client_combo_id"`      // 客户端幂等号
-		StrategyKey        string          `db:"strategy_key"`         // 策略键
-		InverseStrategyKey string          `db:"inverse_strategy_key"` // 反向策略键
-		UnderlyingSymbol   string          `db:"underlying_symbol"`    // 标的
-		ExpireTime         int64           `db:"expire_time"`          // 到期
-		SettleCoin         string          `db:"settle_coin"`          // 结算币
-		QuoteCoin          string          `db:"quote_coin"`           // 报价币
-		OrderType          int64           `db:"order_type"`           // 类型
-		NetPrice           decimal.Decimal `db:"net_price"`            // 净价
-		Qty                decimal.Decimal `db:"qty"`                  // 数量
-		FilledQty          decimal.Decimal `db:"filled_qty"`           // 成交数量
-		UnfilledQty        decimal.Decimal `db:"unfilled_qty"`         // 未成交数量
-		Status             int64           `db:"status"`               // 状态
-		PayloadHash        string          `db:"payload_hash"`         // 请求摘要
-		CancelReason       string          `db:"cancel_reason"`        // 取消原因
-		CancelTime         int64           `db:"cancel_time"`          // 取消时间
+		Id                 int64           `db:"id"`                   // 主键ID
+		TenantId           int64           `db:"tenant_id"`            // 租户ID
+		ComboNo            string          `db:"combo_no"`             // 组合父单号
+		UserId             int64           `db:"user_id"`              // 用户ID
+		AccountId          int64           `db:"account_id"`           // 业务归属账户ID
+		ClientComboId      string          `db:"client_combo_id"`      // 客户端组合幂等号
+		StrategyKey        string          `db:"strategy_key"`         // 规范化实际方向策略SHA-256
+		InverseStrategyKey string          `db:"inverse_strategy_key"` // 完全反向策略SHA-256
+		UnderlyingSymbol   string          `db:"underlying_symbol"`    // 共同标的
+		ExpireTime         int64           `db:"expire_time"`          // 共同到期时间
+		SettleCoin         string          `db:"settle_coin"`          // 共同结算币
+		QuoteCoin          string          `db:"quote_coin"`           // 共同报价币
+		OrderType          int64           `db:"order_type"`           // 1 LIMIT 2 FOK
+		NetPrice           decimal.Decimal `db:"net_price"`            // 买腿减卖腿的每份组合净价，可为负
+		Qty                decimal.Decimal `db:"qty"`                  // 父单组合份数
+		FilledQty          decimal.Decimal `db:"filled_qty"`           // 已成交组合份数
+		UnfilledQty        decimal.Decimal `db:"unfilled_qty"`         // 未成交组合份数
+		Status             int64           `db:"status"`               // 1资金中 2活动 3部分成交 4完成 5撤销中 6已撤销 7拒绝 8人工
+		PayloadHash        string          `db:"payload_hash"`         // 规范化请求SHA-256
+		CancelReason       string          `db:"cancel_reason"`        // 撤销/拒绝原因
+		CancelTime         int64           `db:"cancel_time"`          // 撤销时间
 		CreateTimes        int64           `db:"create_times"`         // 创建时间
 		UpdateTimes        int64           `db:"update_times"`         // 更新时间
 	}

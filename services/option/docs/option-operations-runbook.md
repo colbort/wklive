@@ -5,13 +5,19 @@
 本手册适用于 Option 合约、行情、下单撮合、资金指令、风险扫描、强平、主动行权、到期结算和实物交割的日常运行与事故处置。
 
 管理端“期权运营工作台”是首要定位入口：先选定租户，核对异常计数和最早时间，再下钻资产指令或
-对账差异。保险字段是 Option 流水累计净额、兜底字段是累计平台负债，二者都不能替代 Asset
-实时余额；涉及资金的关闭操作仍必须附 Asset 流水和日终对账证据。
+对账差异。保险字段只是 Option 原始流水的代数和，兜底字段是累计平台负债，二者都不能替代
+Asset 实时余额。当前表定义要求保险入金为正、出金为负，但缺口赔付写入仍为正；获批修复前，
+保险字段不得解释为净变化或余额。涉及资金的关闭操作仍必须附 Asset 流水和日终对账证据。
 
 生产值班人员不得通过直接修改业务表把失败状态改成成功。所有恢复必须使用幂等任务、管理端恢复接口或经过审批的专用脚本，并保留执行人与证据。
 
 用户公告、到期通知、FAQ 和客服话术使用
 `docs/option-product-operations-pack.md`；其中占位符和法律文本必须在发布前完成审批。
+
+生产发布必须使用 `monitoring/option-production-readiness.env.example` 建立仓库外证明文件，并执行
+`monitoring/option-production-readiness.sh`。脚本校验 53 条规则、17 项索引、日终钱包镜像和完整守恒心跳、证据哈希、功能范围、
+生产监控配置和条件审批；任一失败时交易门禁保持关闭。最终签署使用
+`docs/templates/option-production-readiness-signoff.md`，不得以口头确认代替不可变证据。
 
 ## 2. 角色与职责
 
@@ -156,11 +162,13 @@
 
 ### 6.6 结算价无法生成
 
-1. 保持合约在等待结算状态，不使用 0 价或任务当前价替代。
+1. `OptionSettlementPriceOverdue` 触发时保持合约在等待结算状态，不使用 0 价或任务当前价替代。
 2. 核对正式窗口内不可变样本数量、来源健康和异常值。
 3. 主源失败时只按产品规则中已批准的备用源切换。
 4. 人工价格必须经过计算人、复核人双签，并生成新版本和理由。
-5. 发布后保存输入样本、算法版本、输出、审批和公告。
+5. `OptionSettlementPriceInvalid` 按 SEV-1 阻止结算；核对已确认版本的来源、算法、窗口边界、
+   最小样本数和非空原始快照集合，禁止原地修正。
+6. 发布后保存输入样本、算法版本、输出、审批和公告。
 
 ### 6.7 结算批次部分失败
 
@@ -250,7 +258,8 @@
 
 ### 6.14 组合保证金参数缺失、变更或回滚
 
-1. 出现“无有效组合风险配置”或账户 `RESTRICTED` 时，先按 `tenant_id + settle_coin`
+1. `OptionPortfolioRiskConfigMissing`、`OptionPortfolioRiskVersionMismatch`、出现“无有效组合
+   风险配置”或账户 `RESTRICTED` 时，先按 `tenant_id + settle_coin`
    查询版本状态、有效期和最近审批；不得临时恢复内置默认参数或直接改风险账户状态。
 2. 核对风险账户记录的配置 ID/版本、算法、情景损失、裸空头底线、集中度附加和流动性附加。
    下单与定时扫描必须在同一时点解析到相同版本；不一致按 SEV-1 模型计算错误处理。
@@ -282,60 +291,69 @@
 
 ### 6.16 公司行动停牌、迁移失败和人工处理
 
-1. 收到权威公告后先保存原文件、URL/文号和内容哈希，按
+1. `OptionCorporateActionDue` 表示生效后仍处于批准/执行中，
+   `OptionCorporateActionException` 表示人工/失败、失败持仓、映射或源/后继合约门禁异常；
+   两者均先保持源合约停牌、后继合约禁止上市，再从后台事件和映射下钻。
+2. 收到权威公告后先保存原文件、URL/文号和内容哈希，按
    `docs/templates/corporate-action-case.md` 填写事件、目标市场规则、关键日期和影响合约；
    不得从行情变化自行推导拆分、分红或合并规则。
-2. 后继合约必须先按普通合约流程创建为 `PENDING`。登记公司行动时，源合约停牌和 halt
+3. 后继合约必须先按普通合约流程创建为 `PENDING`。登记公司行动时，源合约停牌和 halt
    在同一事务完成；随后检查活动订单、撤单资金释放和 halt 的 `last_error_msg`。任一残单或
    失败存在时不得复核通过。
-3. 创建人不得复核。复核人核对官方证据哈希、整数分数、原/新有效乘数、数量步长、到期和
+4. 创建人不得复核。复核人核对官方证据哈希、整数分数、原/新有效乘数、数量步长、到期和
    结算类型。只有拆分/反向拆分、单一现金后继和精确换算可选 `AUTO`；其他事件必须
    `MANUAL`，并保持源合约停牌。
-4. 到达生效时间后监控每个映射的 `position_completed/position_total`、稳定持仓游标和错误。
+5. 到达生效时间后监控每个映射的 `position_completed/position_total`、稳定持仓游标和错误。
    执行门禁非 0 时先处理原订单、outbox/inbox、资产指令、行权、强平、结算或实物单元，
    不得删记录或改状态绕过。
-5. 自动迁移使用原 action/mapping/position 幂等键和每批 100 条续跑。单笔事务同时建立后继
+6. 自动迁移使用原 action/mapping/position 幂等键和每批 100 条续跑。单笔事务同时建立后继
    持仓、标记原持仓迁出、失效旧行权指令并重指向 margin lot；禁止释放后重新冻结保证金。
-6. 失败三次或进入人工态时按 SEV-1 建案。核对已完成逐持仓明细，禁止删除或回滚已完成批次；
+7. 失败三次或进入人工态时按 SEV-1 建案。核对已完成逐持仓明细，禁止删除或回滚已完成批次；
    修正经济参数只能发布更高事件版本或经重新审批的补偿方案。
-7. 关闭前必须证明：全部映射完成、旧合约 `OFFLINE`、后继合约仅在日历与行情门禁通过后上市、
+8. 关闭前必须证明：全部映射完成、旧合约 `OFFLINE`、后继合约仅在日历与行情门禁通过后上市、
    首次风险扫描正常、相关钱包解除 `RESTRICTED`、成本基数和逐币保证金/Asset 冻结差额为 0，
    并完成用户、做市商、客服、清算、风控和合规通知。
 
 ### 6.17 合约系列创建、复核和批量草稿异常
 
-1. 使用 `docs/templates/contract-series-approval.md` 收集目标市场规则、参考价原始证据、显式
+1. `OptionContractSeriesReviewStale` 表示待复核超过24小时；确认是否仍有业务有效性，
+   不再需要的版本也必须通过正常拒绝流程留痕。`OptionContractSeriesInvariantIssue` 任意触发
+   均按 SEV-1 冻结整系列上市，不能手工补行或改计数。
+2. 使用 `docs/templates/contract-series-approval.md` 收集目标市场规则、参考价原始证据、显式
    expiry、strike band 和参数模板。系统不会从“每周五”或行情自行推导节假日顺延和价格梯度。
-2. 创建前核对 request key 只用于这一份规范化输入。同 key 同内容可安全重试；同 key 不同内容
+3. 创建前核对 request key 只用于这一份规范化输入。同 key 同内容可安全重试；同 key 不同内容
    必须拒绝。修订使用新 request key 并形成更高 `series_code + version`。
-3. 创建人不得复核。批准前核对预计数量不超过500、每个 expiry/strike 固定一对 Call/Put、
+4. 创建人不得复核。批准前核对预计数量不超过500、每个 expiry/strike 固定一对 Call/Put、
    代码命名不碰撞、UTC 时间仍在未来、模板风控/费用/结算参数完整。
-4. 批准在单一事务生成合约和谱系；任一冲突或校验错误必须保持0条新增。不得人工补插缺失
+5. 批准在单一事务生成合约和谱系；任一冲突或校验错误必须保持0条新增。不得人工补插缺失
    Call/Put、删除错误明细或把系列状态改成已生成。
-5. 成功后核对 `generated_contract_count = expected_contract_count = detail count`，谱系中每个
+6. 成功后核对 `generated_contract_count = expected_contract_count = detail count`，谱系中每个
    `contract_id` 存在且状态为 `PENDING`。不一致立即按 OPT-A028 升级并冻结整个系列上市。
-6. 系列批准不等于上市。对每个合约执行普通上市检查、行情/做市准备和审批；在任何合约失败时
+7. 系列批准不等于上市。对每个合约执行普通上市检查、行情/做市准备和审批；在任何合约失败时
    保持其 `PENDING`，不要为了保持“整齐”而绕过门禁。
    单合约后台也只能创建 `PENDING` 且不能人工改状态；若生命周期持续不上市，依次核对用户多空/OI
    限额、价格带、熔断、标的/标记价及各自快照时间、交易日历和系列上市复核，不得直接改表。
-7. 关闭条件：请求/审批/证据和 payload hash 已归档，数量/Call-Put/谱系核对一致，
+8. 关闭条件：请求/审批/证据和 payload hash 已归档，数量/Call-Put/谱系核对一致，
    所有拟上市合约分别签署上市检查表，未上市合约仍保持 `PENDING`。
 
 ### 6.18 期权链、公开盘口、24h 统计和 OI 异常
 
-1. 使用 `docs/templates/public-market-readiness.md` 固化字段、缓存、限流、SLA 和降级文案。
+1. `OptionPublicChainPairIssue` 表示交易态同一标的/到期/行权价不是恰好一 Call 一 Put；
+   `OptionOpenInterestImbalance` 表示 HOLDING 多空事实不平衡。先按租户下钻，不能用另一租户、
+   缓存或前端结果修补数据库事实。
+2. 使用 `docs/templates/public-market-readiness.md` 固化字段、缓存、限流、SLA 和降级文案。
    未批准前不得让 CDN 长缓存或向外承诺流式 L2 深度。
-2. 链缺腿时先核对同租户、标的、精确到期、行权价、状态和系列谱系；不得复制另一腿行情、
+3. 链缺腿时先核对同租户、标的、精确到期、行权价、状态和系列谱系；不得复制另一腿行情、
    临时改状态或在前端隐藏问题。未上市合约本就不应出现在公开链。
-3. 盘口异常时直接按订单表核对 `PENDING/PART_FILLED` 正余量；`FUNDING` 未入簿，
+4. 盘口异常时直接按订单表核对 `PENDING/PART_FILLED` 正余量；`FUNDING` 未入簿，
    撤单/完成/过期和零余量不应计入。不得用 Market 标的深度填补 Option 深度。
-4. 24h 统计按服务端 Unix 秒和成交时间重算。确认边界、时钟和每笔成交只计一次；
+5. 24h 统计按服务端 Unix 秒和成交时间重算。确认边界、时钟和每笔成交只计一次；
    不按买卖双方双计，也不使用订单委托量代替成交量。
-5. OI 同时核对 `HOLDING` 多头和空头。正常必须相等；不等时以较大侧保守展示并触发
+6. OI 同时核对 `HOLDING` 多头和空头。正常必须相等；不等时以较大侧保守展示并触发
    OPT-A029，排查持仓 outbox/inbox、资产指令和持仓事件，不手工把较小侧补平。
-6. 缓存/CDN 若存在，必须保留 `generated_at`、三类行情快照时间、持仓水位和来源字段；
+7. 缓存/CDN 若存在，必须保留 `generated_at`、三类行情快照时间、持仓水位和来源字段；
    超过批准 TTL 时显示延迟/不可用，不继续展示成实时数据。
-7. 关闭条件：链和谱系一致、盘口与活动订单抽样一致、24h 统计精确一致、多空 OI 相等，
+8. 关闭条件：链和谱系一致、盘口与活动订单抽样一致、24h 统计精确一致、多空 OI 相等，
    连续三个窗口达到 SLA，且缓存清理、用户影响和客服通知证据已归档。
 
 ### 6.19 组合/价差单冻结、残腿和人工处理
@@ -388,6 +406,57 @@
    数据模型和接口。任何“先上线再补规则”的例外都应拒绝。
 6. 关闭条件：未立项请求已有书面拒绝/后置答复和客户通知；已立项请求具备完整规则版本、责任人、
    验收计划和变更审批，在正式实现、预生产验收及上线批准前仍无生产入口。
+
+### 6.21 管理员受治理字段越权修改
+
+1. `OptionAdminEconomicMutationRejected` 任意触发进入 SEV-3 安全审计；
+   `OptionAdminEconomicMutationBurst` 表示同一有限标签组五分钟超过3次，升 SEV-2。
+2. 按 `tenant_scope/object_type/reason` 定位结构化应用日志，再核对租户、合约、管理员、请求来源、
+   网关请求 ID、变更工单和当时对象版本。Prometheus 标签不含管理员/合约 ID，不能只靠指标定位。
+3. `status_bypass` 表示试图绕过 lifecycle/halt/resume，`series_economics` 表示修改系列治理合约，
+   `listed_economics` 表示修改已上市合约经济字段。请求被拒绝不代表凭证和调用来源可信。
+4. 禁止为“消除告警”临时开放更新或直接改表。合法变更必须走对应追加版本、四眼审批、公司行动、
+   合约系列修订或受控 halt/resume 流程。
+5. 应用 Counter 只覆盖经过 Option Admin RPC 的拒绝。直接 SQL 被触发器拒绝时，触发器内审计写入
+   会随失败事务回滚，必须从 MySQL audit/general log、堡垒机或等价数据库安全平台取证。
+6. 关闭条件：确认没有数据变化；凭证、来源和工单已核实；必要时吊销会话/密钥；数据库审计无
+   旁路成功；连续三个窗口无新增并归档安全结论。
+
+### 6.22 日终资金守恒差额
+
+1. 每个业务日按 `docs/templates/option-daily-fund-reconciliation.md` 使用同一 Asset 一致性
+   快照和 Option 截止点，逐租户、逐币、逐用户钱包/平台账户范围复算。未完成快照只能标记
+   `INCOMPLETE`，不得用缺数据算出0。
+2. 非零差额以稳定键 `DAILY:{business_date}:{coin}:{scope}` 写入
+   `t_option_reconciliation_issue(check_type=3,status=OPEN)`；
+   `OptionDailyConservationMismatch` 任意触发按 SEV-1，暂停次日相关产品开放。
+3. 核对期初/期末总额、外部转入转出、Option 业务入扣、人工调整，以及
+   `FEE_REVENUE/OPTION_INSURANCE_FUND/OPTION_PLATFORM_BACKSTOP` 三类平台账户。
+   Option 保险流水和兜底负债只是交叉证据，不是 Asset 余额。
+4. 重跑必须使用同一键并累计发现次数。禁止换业务日期、币种或 scope 生成新键来隐藏旧问题；
+   差额为0后保留原记录并转 `RESOLVED`，不以 `IGNORED` 代替财务解释。
+5. 当前仓库已实现 scope=1 钱包镜像自动任务和零差额成功心跳，但它只比较同一条 MySQL 一致性
+   查询中的 Asset Option 钱包与 `t_option_account`，不能代替期初/期末、平台账户和全部资金流水
+   的 scope=2 守恒。scope=2 Asset/财务生产者及成功心跳未完成前，本项仍不能关闭。
+6. 关闭条件：技术、清算、财务、合规四方签署；逐币差额为0；所有补偿使用受控业务号；
+   原问题已恢复；次日开放审批和全部证据归档。
+
+### 6.23 日终钱包镜像核对失败或缺失
+
+1. `option.ProcessDailyReconciliation` 每小时由 System 触发，但自动任务只在 UTC 00 点窗口执行，
+   快照归属前一 UTC 业务日；该日已有 scope=1 成功 attempt 时跳过。最近一次有差异、执行失败
+   或36小时无成功分别触发 OPT-A031 SEV-1。
+2. 先查 `t_option_reconciliation_run` 的最新 attempt 和 `detail`，再从
+   `t_option_reconciliation_issue(issue_key LIKE 'ACCOUNT_MIRROR:%')` 按币种下钻。运行行不可修改
+   或删除；禁止直接改表制造成功心跳。
+3. 核对 Asset `wallet_type=5` 与 `t_option_account` 的用户/币种覆盖、总额、可用、冻结和锁定；
+   Option 只允许钱包镜像 `account_id=0`，遗留非0账户也会判差异。不要把多个账户相加后抵消。
+4. 调度失败时检查 System cron、Kafka `option-tasks` 消费、MySQL 与 Redis 任务锁。显式 tenant
+   手工触发可在 UTC 00 点窗口外为前一业务日追加 attempt；不得覆盖旧 attempt 或更换日期隐藏失败。
+5. 差异修复必须通过 Asset 正式资金/镜像同步路径，并保留业务号和 Asset 流水；不得直接改
+   `t_option_account`。健康重跑会把旧 `ACCOUNT_MIRROR` 案件转为 `RESOLVED`。
+6. 关闭条件：最新 attempt 为成功、36小时缺失告警恢复、全部镜像案件已恢复、连续三个采样窗口
+   正常并归档运行 ID。该关闭条件不自动关闭 6.22 的 scope=2 完整资金守恒。
 
 ## 7. 恢复验证
 

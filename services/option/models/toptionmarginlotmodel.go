@@ -20,6 +20,7 @@ type (
 		FindActiveByPosition(ctx context.Context, tenantId, positionId int64) ([]*TOptionMarginLot, error)
 		FindClosableByPosition(ctx context.Context, tenantId, positionId int64) ([]*TOptionMarginLot, error)
 		FindPortfolioActiveByAccount(ctx context.Context, tenantId, userId, accountId int64, settleCoin string) ([]*TOptionMarginLot, error)
+		FindRemainingByPositionForUpdate(ctx context.Context, tenantId, positionId int64) ([]*TOptionMarginLot, error)
 		FindOneForUpdate(ctx context.Context, id int64) (*TOptionMarginLot, error)
 	}
 
@@ -27,6 +28,17 @@ type (
 		*defaultTOptionMarginLotModel
 	}
 )
+
+func (m *defaultTOptionMarginLotModel) FindRemainingByPositionForUpdate(
+	ctx context.Context, tenantId, positionId int64,
+) ([]*TOptionMarginLot, error) {
+	query := fmt.Sprintf(`SELECT %s FROM %s
+WHERE tenant_id = ? AND position_id = ? AND remaining_quantity > 0
+ORDER BY id FOR UPDATE`, tOptionMarginLotRows, m.table)
+	var items []*TOptionMarginLot
+	err := m.QueryRowsNoCacheCtx(ctx, &items, query, tenantId, positionId)
+	return items, err
+}
 
 func (m *defaultTOptionMarginLotModel) FindPortfolioActiveByAccount(
 	ctx context.Context,

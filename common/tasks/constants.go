@@ -19,14 +19,15 @@ const (
 	ActionMarketSyncProducts = "SyncProducts"
 	ActionMarketSyncKlines   = "SyncKlines"
 
-	ActionOptionProcessContractLifecycle = "ProcessContractLifecycle"
-	ActionOptionProcessCorporateActions  = "ProcessCorporateActions"
-	ActionOptionCleanMarketSnapshots     = "CleanMarketSnapshots"
-	ActionOptionProcessAssetInstructions = "ProcessAssetInstructions"
-	ActionOptionProcessTradeEvents       = "ProcessTradeEvents"
-	ActionOptionProcessRiskAccounts      = "ProcessRiskAccounts"
-	ActionOptionProcessLiquidations      = "ProcessLiquidations"
-	ActionOptionProcessExercises         = "ProcessExercises"
+	ActionOptionProcessContractLifecycle   = "ProcessContractLifecycle"
+	ActionOptionProcessCorporateActions    = "ProcessCorporateActions"
+	ActionOptionCleanMarketSnapshots       = "CleanMarketSnapshots"
+	ActionOptionProcessAssetInstructions   = "ProcessAssetInstructions"
+	ActionOptionProcessTradeEvents         = "ProcessTradeEvents"
+	ActionOptionProcessRiskAccounts        = "ProcessRiskAccounts"
+	ActionOptionProcessLiquidations        = "ProcessLiquidations"
+	ActionOptionProcessExercises           = "ProcessExercises"
+	ActionOptionProcessDailyReconciliation = "ProcessDailyReconciliation"
 
 	ActionStakingProcessRewardsAndSettleOrders = "ProcessRewardsAndSettleOrders"
 

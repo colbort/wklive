@@ -49,9 +49,9 @@ type (
 		UserId           int64           `db:"user_id"`           // 用户ID
 		AccountId        int64           `db:"account_id"`        // 钱包镜像固定为0，业务账户仅保留在订单/持仓/流水
 		MarginCoin       string          `db:"margin_coin"`       // 保证金币种
-		Balance          decimal.Decimal `db:"balance"`           // 账户余额
-		AvailableBalance decimal.Decimal `db:"available_balance"` // 可用余额
-		FrozenBalance    decimal.Decimal `db:"frozen_balance"`    // 冻结余额
+		Balance          decimal.Decimal `db:"balance"`           // Asset Option钱包总额镜像
+		AvailableBalance decimal.Decimal `db:"available_balance"` // Asset Option钱包可用额镜像
+		FrozenBalance    decimal.Decimal `db:"frozen_balance"`    // Asset Option钱包冻结额镜像
 		PositionMargin   decimal.Decimal `db:"position_margin"`   // 持仓保证金
 		OrderMargin      decimal.Decimal `db:"order_margin"`      // 委托保证金
 		UnrealizedPnl    decimal.Decimal `db:"unrealized_pnl"`    // 未实现盈亏

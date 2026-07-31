@@ -52,9 +52,9 @@ type (
 		RefType       int64           `db:"ref_type"`       // 关联类型：1下单 2成交 3撤单 4行权 5结算 6手续费
 		RefId         int64           `db:"ref_id"`         // 关联ID
 		Coin          string          `db:"coin"`           // 币种
-		ChangeAmount  decimal.Decimal `db:"change_amount"`  // 变动金额，正负都有可能
-		BalanceBefore decimal.Decimal `db:"balance_before"` // 变动前余额
-		BalanceAfter  decimal.Decimal `db:"balance_after"`  // 变动后余额
+		ChangeAmount  decimal.Decimal `db:"change_amount"`  // Asset权威变动金额，正负都有可能
+		BalanceBefore decimal.Decimal `db:"balance_before"` // Asset权威变动前余额
+		BalanceAfter  decimal.Decimal `db:"balance_after"`  // Asset权威变动后余额
 		Remark        string          `db:"remark"`         // 备注
 		CreateTimes   int64           `db:"create_times"`   // 创建时间
 	}

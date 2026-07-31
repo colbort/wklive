@@ -222,6 +222,40 @@ func TestQueryOptionGovernanceMetricsSeededMySQL(t *testing.T) {
 			t.Fatalf("healthy tenant emitted governance metric: %+v", item)
 		}
 	}
+
+	allCounts, _, err := QueryOptionOperationsMetrics(
+		context.Background(), sqlx.NewMysql(dsn), 99940, 99940, 100000,
+	)
+	if err != nil {
+		t.Fatalf("query all operations metrics: %v", err)
+	}
+	assertOperationsMetric(t, allCounts, 9, "daily_conservation_issue", 1, 99950)
+}
+
+func TestQueryOptionRemainingAlertMetricsSeededMySQL(t *testing.T) {
+	dsn := os.Getenv("OPTION_OPERATIONS_TEST_DSN")
+	if dsn == "" || os.Getenv("OPTION_REMAINING_ALERTS_EXPECT_SEEDED") != "1" {
+		t.Skip("seeded remaining-alert metrics MySQL environment is not enabled")
+	}
+	counts, _, err := QueryOptionOperationsMetrics(
+		context.Background(), sqlx.NewMysql(dsn), 99940, 99940, 100000,
+	)
+	if err != nil {
+		t.Fatalf("query remaining alert metrics: %v", err)
+	}
+	assertOperationsMetric(t, counts, 9, "exercise_near_expiry", 1, 99900)
+	assertOperationsMetric(t, counts, 9, "kill_switch_release_failure", 1, 99920)
+	assertOperationsMetric(t, counts, 9, "physical_delivery_exception", 2, 99800)
+	assertOperationsMetric(t, counts, 9, "physical_delivery_overdue", 1, 99900)
+	for _, item := range counts {
+		if item.TenantID == 10 &&
+			(item.Category == "exercise_near_expiry" ||
+				item.Category == "kill_switch_release_failure" ||
+				item.Category == "physical_delivery_exception" ||
+				item.Category == "physical_delivery_overdue") {
+			t.Fatalf("healthy tenant emitted remaining-alert metric: %+v", item)
+		}
+	}
 }
 
 func assertOperationsMetric(

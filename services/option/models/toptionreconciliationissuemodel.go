@@ -27,6 +27,7 @@ type (
 		tOptionReconciliationIssueModel
 		Open(ctx context.Context, item *TOptionReconciliationIssue) error
 		Resolve(ctx context.Context, tenantId int64, issueKey string, now int64) error
+		ResolveOpenByPrefix(ctx context.Context, tenantId int64, issueKeyPrefix string, now int64) error
 		FindPage(ctx context.Context, filter OptionReconciliationIssuePageFilter, cursor, limit int64) ([]*TOptionReconciliationIssue, int64, error)
 	}
 
@@ -92,6 +93,20 @@ SET status=?,resolved_at=?,update_times=?
 WHERE tenant_id=? AND issue_key=? AND status=?`,
 		int64(option.ReconciliationIssueStatus_RECONCILIATION_ISSUE_STATUS_RESOLVED),
 		now, now, tenantId, issueKey,
+		int64(option.ReconciliationIssueStatus_RECONCILIATION_ISSUE_STATUS_OPEN))
+	return err
+}
+
+func (m *customTOptionReconciliationIssueModel) ResolveOpenByPrefix(
+	ctx context.Context, tenantId int64, issueKeyPrefix string, now int64,
+) error {
+	_, err := m.ExecNoCacheCtx(ctx, `UPDATE t_option_reconciliation_issue
+SET status=?,resolved_at=?,update_times=?
+WHERE tenant_id=? AND check_type=? AND issue_key LIKE ? AND status=?`,
+		int64(option.ReconciliationIssueStatus_RECONCILIATION_ISSUE_STATUS_RESOLVED),
+		now, now, tenantId,
+		int64(option.ReconciliationCheckType_RECONCILIATION_CHECK_TYPE_BALANCE_MIRROR),
+		issueKeyPrefix+"%",
 		int64(option.ReconciliationIssueStatus_RECONCILIATION_ISSUE_STATUS_OPEN))
 	return err
 }

@@ -1566,7 +1566,7 @@ export default {
     comboOrderExceptions: '组合父单超龄/人工态',
     comboIntegrityIssues: '组合结构/成交组异常',
     insuranceAndBackstop: '保险、兜底与未解决缺口',
-    insuranceLedger: '保险账本累计净额',
+    insuranceLedger: '保险原始流水代数和（非余额）',
     backstopLiability: '平台兜底累计负债',
     unresolvedDeficit: '未解决穿仓缺口',
     assetInstructionWorkbench: '资产指令恢复工作台',

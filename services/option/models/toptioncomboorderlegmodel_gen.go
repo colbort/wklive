@@ -48,19 +48,19 @@ type (
 	}
 
 	TOptionComboOrderLeg struct {
-		Id             int64           `db:"id"`              // 主键
-		TenantId       int64           `db:"tenant_id"`       // 租户
-		ComboOrderId   int64           `db:"combo_order_id"`  // 父单
-		LegNo          int64           `db:"leg_no"`          // 腿序号
-		ContractId     int64           `db:"contract_id"`     // 合约
-		Side           int64           `db:"side"`            // 方向
-		PositionEffect int64           `db:"position_effect"` // 开平
-		Ratio          int64           `db:"ratio"`           // 比例
-		Price          decimal.Decimal `db:"price"`           // 价格
-		Qty            decimal.Decimal `db:"qty"`             // 数量
-		FilledQty      decimal.Decimal `db:"filled_qty"`      // 成交数量
-		UnfilledQty    decimal.Decimal `db:"unfilled_qty"`    // 未成交数量
-		ChildOrderId   int64           `db:"child_order_id"`  // 影子子单
+		Id             int64           `db:"id"`              // 主键ID
+		TenantId       int64           `db:"tenant_id"`       // 租户ID
+		ComboOrderId   int64           `db:"combo_order_id"`  // 组合父单ID
+		LegNo          int64           `db:"leg_no"`          // 稳定腿序号
+		ContractId     int64           `db:"contract_id"`     // 期权合约ID
+		Side           int64           `db:"side"`            // 1买 2卖
+		PositionEffect int64           `db:"position_effect"` // 首版仅1开仓
+		Ratio          int64           `db:"ratio"`           // 已约分整数比例1至8
+		Price          decimal.Decimal `db:"price"`           // 腿限价
+		Qty            decimal.Decimal `db:"qty"`             // 父单数量乘比例
+		FilledQty      decimal.Decimal `db:"filled_qty"`      // 腿已成交量
+		UnfilledQty    decimal.Decimal `db:"unfilled_qty"`    // 腿未成交量
+		ChildOrderId   int64           `db:"child_order_id"`  // 影子子单ID
 		CreateTimes    int64           `db:"create_times"`    // 创建时间
 		UpdateTimes    int64           `db:"update_times"`    // 更新时间
 	}

@@ -53,7 +53,7 @@ type (
 		Version                int64           `db:"version"`                  // 追加版本号
 		SupersedesId           int64           `db:"supersedes_id"`            // 被替代系列版本ID
 		Status                 int64           `db:"status"`                   // 状态：1待复核 2已生成 3已拒绝
-		TemplateContractId     int64           `db:"template_contract_id"`     // 模板合约ID
+		TemplateContractId     int64           `db:"template_contract_id"`     // 保留字段；V1使用内嵌参数快照
 		TemplateSnapshot       string          `db:"template_snapshot"`        // 创建时的完整模板经济参数快照
 		UnderlyingSymbol       string          `db:"underlying_symbol"`        // 模板标的
 		ReferencePrice         decimal.Decimal `db:"reference_price"`          // 审批参考价快照
@@ -163,8 +163,8 @@ func (m *defaultTOptionContractSeriesModel) Insert(ctx context.Context, data *TO
 	tOptionContractSeriesTenantIdRequestKeyKey := fmt.Sprintf("%s%v:%v", cacheTOptionContractSeriesTenantIdRequestKeyPrefix, data.TenantId, data.RequestKey)
 	tOptionContractSeriesTenantIdSeriesCodeVersionKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionContractSeriesTenantIdSeriesCodeVersionPrefix, data.TenantId, data.SeriesCode, data.Version)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionContractSeriesRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.RequestKey, data.SeriesCode, data.Version, data.SupersedesId, data.Status, data.TemplateContractId, data.TemplateSnapshot, data.UnderlyingSymbol, data.ReferencePrice, data.ReferenceSource, data.ReferenceTime, data.EvidenceRef, data.ChangeReason, data.PayloadHash, data.ExpectedContractCount, data.GeneratedContractCount, data.CreatedBy, data.ReviewedBy, data.ReviewReason, data.ReviewedAt, data.GeneratedAt, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionContractSeriesRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.RequestKey, data.SeriesCode, data.Version, data.SupersedesId, data.Status, data.TemplateContractId, data.TemplateSnapshot, data.UnderlyingSymbol, data.ReferencePrice, data.ReferenceSource, data.ReferenceTime, data.EvidenceRef, data.ChangeReason, data.PayloadHash, data.ExpectedContractCount, data.GeneratedContractCount, data.CreatedBy, data.ReviewedBy, data.ReviewReason, data.ReviewedAt, data.GeneratedAt, data.LaunchStatus, data.LaunchReviewedBy, data.LaunchReviewReason, data.LaunchReviewedAt, data.CreateTimes, data.UpdateTimes)
 	}, tOptionContractSeriesIdKey, tOptionContractSeriesTenantIdRequestKeyKey, tOptionContractSeriesTenantIdSeriesCodeVersionKey)
 	return ret, err
 }
@@ -180,7 +180,7 @@ func (m *defaultTOptionContractSeriesModel) Update(ctx context.Context, newData 
 	tOptionContractSeriesTenantIdSeriesCodeVersionKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionContractSeriesTenantIdSeriesCodeVersionPrefix, data.TenantId, data.SeriesCode, data.Version)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionContractSeriesRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.RequestKey, newData.SeriesCode, newData.Version, newData.SupersedesId, newData.Status, newData.TemplateContractId, newData.TemplateSnapshot, newData.UnderlyingSymbol, newData.ReferencePrice, newData.ReferenceSource, newData.ReferenceTime, newData.EvidenceRef, newData.ChangeReason, newData.PayloadHash, newData.ExpectedContractCount, newData.GeneratedContractCount, newData.CreatedBy, newData.ReviewedBy, newData.ReviewReason, newData.ReviewedAt, newData.GeneratedAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.RequestKey, newData.SeriesCode, newData.Version, newData.SupersedesId, newData.Status, newData.TemplateContractId, newData.TemplateSnapshot, newData.UnderlyingSymbol, newData.ReferencePrice, newData.ReferenceSource, newData.ReferenceTime, newData.EvidenceRef, newData.ChangeReason, newData.PayloadHash, newData.ExpectedContractCount, newData.GeneratedContractCount, newData.CreatedBy, newData.ReviewedBy, newData.ReviewReason, newData.ReviewedAt, newData.GeneratedAt, newData.LaunchStatus, newData.LaunchReviewedBy, newData.LaunchReviewReason, newData.LaunchReviewedAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tOptionContractSeriesIdKey, tOptionContractSeriesTenantIdRequestKeyKey, tOptionContractSeriesTenantIdSeriesCodeVersionKey)
 	return err
 }

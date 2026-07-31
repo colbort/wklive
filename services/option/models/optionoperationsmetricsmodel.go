@@ -51,6 +51,7 @@ func QueryOptionOperationsMetrics(
 		{"asset_failed", "t_option_asset_instruction", "status=4", "create_times", nil},
 		{"asset_manual_review", "t_option_asset_instruction", "status=5", "create_times", nil},
 		{"reconciliation_open", "t_option_reconciliation_issue", "status=1", "create_times", nil},
+		{"daily_conservation_issue", "t_option_reconciliation_issue", "check_type=3 AND status=1", "create_times", nil},
 		{"settlement_price_pending", "t_option_settlement_price", "status=1", "create_times", nil},
 		{"risk_account_stale", "t_option_risk_account", "(last_calc_time=0 OR last_calc_time<?)", "last_calc_time", []any{riskStaleBefore}},
 		{"exercise_pending", "t_option_exercise", "status=1", "create_times", nil},
@@ -61,6 +62,7 @@ func QueryOptionOperationsMetrics(
 		{"outbox_pending", "t_option_outbox", "status IN (1,2,4,5)", "create_times", nil},
 		{"inbox_pending", "t_option_inbox", "status IN (1,3)", "create_times", nil},
 		{"physical_delivery_exception", "t_option_physical_delivery_unit", "status IN (3,4,6)", "create_times", nil},
+		{"physical_delivery_overdue", "t_option_physical_delivery_unit FORCE INDEX (idx_option_physical_delivery_monitor)", "(status=6 OR (status IN (3,4) AND cure_deadline<=?))", "cure_deadline", []any{now}},
 		{"combo_stale", "t_option_combo_order", "status IN (1,5) AND update_times<?", "update_times", []any{comboStaleBefore}},
 		{"combo_manual_review", "t_option_combo_order", "status=8", "update_times", nil},
 		{"trading_control_unconfigured", "t_option_contract", `status=2 AND (
@@ -112,12 +114,149 @@ OR order_price_band_ratio<=0 OR circuit_breaker_ratio<=0)`, "update_times", nil}
 		return nil, nil, fmt.Errorf("query option governance metrics: %w", err)
 	}
 	counts = append(counts, governanceMetrics...)
+	timeSensitiveMetrics, err := queryOptionTimeSensitiveMetricsByTenant(ctx, conn, now)
+	if err != nil {
+		return nil, nil, fmt.Errorf("query option time-sensitive metrics: %w", err)
+	}
+	counts = append(counts, timeSensitiveMetrics...)
+	dailyReconciliationMetrics, err := queryOptionDailyReconciliationMetricsByTenant(ctx, conn, now)
+	if err != nil {
+		return nil, nil, fmt.Errorf("query option daily reconciliation metrics: %w", err)
+	}
+	counts = append(counts, dailyReconciliationMetrics...)
 
 	amounts, err := queryOptionOperationsAmounts(ctx, conn)
 	if err != nil {
 		return nil, nil, err
 	}
 	return counts, amounts, nil
+}
+
+func queryOptionDailyReconciliationMetricsByTenant(
+	ctx context.Context,
+	conn sqlx.SqlConn,
+	now int64,
+) ([]*OptionOperationsMetric, error) {
+	type queryTarget struct {
+		category string
+		query    string
+		args     []any
+	}
+	latestRunCTE := `WITH latest_run AS (
+  SELECT tenant_id,status,completed_at,
+         ROW_NUMBER() OVER (PARTITION BY tenant_id ORDER BY completed_at DESC,id DESC) row_no
+  FROM t_option_reconciliation_run
+  WHERE scope=1
+)
+SELECT tenant_id,1 count,completed_at oldest
+FROM latest_run
+WHERE row_no=1 AND status=?
+ORDER BY tenant_id`
+	targets := []queryTarget{
+		{
+			category: "daily_conservation_heartbeat",
+			query: `WITH active_tenants AS (
+  SELECT tenant_id FROM t_option_contract WHERE is_deleted=2
+  UNION
+  SELECT tenant_id FROM t_option_account
+  UNION
+  SELECT tenant_id FROM t_user_asset WHERE wallet_type=5
+), last_success AS (
+  SELECT tenant_id,MAX(completed_at) completed_at
+  FROM t_option_reconciliation_run
+  WHERE scope=2 AND status=1
+  GROUP BY tenant_id
+)
+SELECT active_tenants.tenant_id,0 count,COALESCE(last_success.completed_at,0) oldest
+FROM active_tenants
+LEFT JOIN last_success ON last_success.tenant_id=active_tenants.tenant_id
+WHERE active_tenants.tenant_id>0
+ORDER BY active_tenants.tenant_id`,
+		},
+		{
+			category: "daily_conservation_heartbeat_missing",
+			query: `WITH active_tenants AS (
+  SELECT tenant_id FROM t_option_contract WHERE is_deleted=2
+  UNION
+  SELECT tenant_id FROM t_option_account
+  UNION
+  SELECT tenant_id FROM t_user_asset WHERE wallet_type=5
+), last_success AS (
+  SELECT tenant_id,MAX(completed_at) completed_at
+  FROM t_option_reconciliation_run
+  WHERE scope=2 AND status=1
+  GROUP BY tenant_id
+)
+SELECT active_tenants.tenant_id,1 count,COALESCE(last_success.completed_at,0) oldest
+FROM active_tenants
+LEFT JOIN last_success ON last_success.tenant_id=active_tenants.tenant_id
+WHERE active_tenants.tenant_id>0
+  AND (last_success.completed_at IS NULL OR last_success.completed_at<?)
+ORDER BY active_tenants.tenant_id`,
+			args: []any{now - 36*60*60},
+		},
+		{
+			category: "daily_mirror_reconciliation_heartbeat",
+			query: `WITH active_tenants AS (
+  SELECT tenant_id FROM t_option_contract WHERE is_deleted=2
+  UNION
+  SELECT tenant_id FROM t_option_account
+  UNION
+  SELECT tenant_id FROM t_user_asset WHERE wallet_type=5
+), last_success AS (
+  SELECT tenant_id,MAX(completed_at) completed_at
+  FROM t_option_reconciliation_run
+  WHERE scope=1 AND status=1
+  GROUP BY tenant_id
+)
+SELECT active_tenants.tenant_id,0 count,COALESCE(last_success.completed_at,0) oldest
+FROM active_tenants
+LEFT JOIN last_success ON last_success.tenant_id=active_tenants.tenant_id
+WHERE active_tenants.tenant_id>0
+ORDER BY active_tenants.tenant_id`,
+		},
+		{
+			category: "daily_mirror_reconciliation_mismatch",
+			query:    latestRunCTE,
+			args:     []any{OptionReconciliationRunMismatch},
+		},
+		{
+			category: "daily_mirror_reconciliation_failed",
+			query:    latestRunCTE,
+			args:     []any{OptionReconciliationRunFailed},
+		},
+		{
+			category: "daily_mirror_reconciliation_missing",
+			query: `WITH active_tenants AS (
+  SELECT tenant_id FROM t_option_contract WHERE is_deleted=2
+  UNION
+  SELECT tenant_id FROM t_option_account
+  UNION
+  SELECT tenant_id FROM t_user_asset WHERE wallet_type=5
+), last_success AS (
+  SELECT tenant_id,MAX(completed_at) completed_at
+  FROM t_option_reconciliation_run
+  WHERE scope=1 AND status=1
+  GROUP BY tenant_id
+)
+SELECT active_tenants.tenant_id,1 count,COALESCE(last_success.completed_at,0) oldest
+FROM active_tenants
+LEFT JOIN last_success ON last_success.tenant_id=active_tenants.tenant_id
+WHERE active_tenants.tenant_id>0
+  AND (last_success.completed_at IS NULL OR last_success.completed_at<?)
+ORDER BY active_tenants.tenant_id`,
+			args: []any{now - 36*60*60},
+		},
+	}
+	result := make([]*OptionOperationsMetric, 0, len(targets))
+	for _, target := range targets {
+		var rows []*optionTenantCountOldest
+		if err := conn.QueryRowsCtx(ctx, &rows, target.query, target.args...); err != nil {
+			return nil, fmt.Errorf("%s: %w", target.category, err)
+		}
+		result = append(result, toOptionOperationsMetrics(rows, target.category)...)
+	}
+	return result, nil
 }
 
 func queryOptionTenantCountOldest(
@@ -242,6 +381,23 @@ ORDER BY control.tenant_id`,
 			args: []any{now - 30},
 		},
 		{
+			category: "kill_switch_release_failure",
+			query: `
+SELECT control.tenant_id,COUNT(DISTINCT instruction.id) count,
+       COALESCE(MIN(instruction.update_times),0) oldest
+FROM t_option_user_trading_control control
+JOIN t_option_asset_instruction instruction
+  FORCE INDEX (idx_option_asset_instruction_control_monitor)
+  ON instruction.tenant_id=control.tenant_id
+ AND instruction.user_id=control.user_id
+WHERE control.kill_switch=1 AND control.activated_at>0
+  AND instruction.action=3 AND instruction.status IN (4,5)
+  AND instruction.create_times>=control.activated_at
+  AND instruction.instruction_no LIKE '%-CONTROL-RELEASE'
+GROUP BY control.tenant_id
+ORDER BY control.tenant_id`,
+		},
+		{
 			category: "mmp_exception",
 			query: `
 SELECT config.tenant_id,COUNT(DISTINCT config.id) count,
@@ -280,6 +436,32 @@ ORDER BY config.tenant_id`,
 		result = append(result, toOptionOperationsMetrics(rows, target.category)...)
 	}
 	return result, nil
+}
+
+func queryOptionTimeSensitiveMetricsByTenant(
+	ctx context.Context,
+	conn sqlx.SqlConn,
+	now int64,
+) ([]*OptionOperationsMetric, error) {
+	var rows []*optionTenantCountOldest
+	err := conn.QueryRowsCtx(ctx, &rows, `
+SELECT contract.tenant_id,COUNT(DISTINCT exercise.id) count,
+       COALESCE(MIN(exercise.create_times),0) oldest
+FROM t_option_contract contract
+  FORCE INDEX (idx_option_contract_lifecycle_monitor)
+JOIN t_option_exercise exercise
+  FORCE INDEX (idx_option_exercise_monitor)
+  ON exercise.tenant_id=contract.tenant_id
+ AND exercise.contract_id=contract.id
+WHERE contract.is_deleted=2 AND contract.status IN (2,3)
+  AND contract.expire_time>? AND contract.expire_time<=?
+  AND exercise.status=1
+GROUP BY contract.tenant_id
+ORDER BY contract.tenant_id`, now, now+1800)
+	if err != nil {
+		return nil, fmt.Errorf("exercise_near_expiry: %w", err)
+	}
+	return toOptionOperationsMetrics(rows, "exercise_near_expiry"), nil
 }
 
 func queryOptionMarketMetricsByTenant(
@@ -406,14 +588,16 @@ FROM (
   FROM t_option_position position
   JOIN t_option_contract contract
     ON contract.tenant_id=position.tenant_id AND contract.id=position.contract_id
-  LEFT JOIN t_option_portfolio_risk_config config
-    ON config.tenant_id=position.tenant_id
-   AND config.settle_coin=contract.settle_coin
-   AND config.status=2
-   AND config.effective_from<=?
-   AND (config.effective_until=0 OR config.effective_until>?)
   WHERE position.status=1 AND position.position_qty>0
-    AND contract.seller_margin_mode=3 AND config.id IS NULL
+    AND contract.seller_margin_mode=3
+    AND NOT EXISTS (
+      SELECT 1 FROM t_option_portfolio_risk_config config
+      WHERE config.tenant_id=position.tenant_id
+        AND config.settle_coin=contract.settle_coin
+        AND config.status IN (2,4)
+        AND config.effective_from<=?
+        AND (config.effective_until=0 OR config.effective_until>?)
+    )
   GROUP BY position.tenant_id,position.user_id,contract.settle_coin
 ) missing
 GROUP BY tenant_id
@@ -427,11 +611,17 @@ SELECT account.tenant_id,COUNT(1) count,
        COALESCE(MIN(account.last_calc_time),0) oldest
 FROM t_option_risk_account account
 JOIN t_option_portfolio_risk_config config
-  ON config.tenant_id=account.tenant_id
- AND config.settle_coin=account.settle_coin
- AND config.status=2
- AND config.effective_from<=?
- AND (config.effective_until=0 OR config.effective_until>?)
+  ON config.id=(
+    SELECT active.id
+    FROM t_option_portfolio_risk_config active
+    WHERE active.tenant_id=account.tenant_id
+      AND active.settle_coin=account.settle_coin
+      AND active.status IN (2,4)
+      AND active.effective_from<=?
+      AND (active.effective_until=0 OR active.effective_until>?)
+    ORDER BY active.effective_from DESC,active.version DESC
+    LIMIT 1
+  )
 WHERE account.portfolio_risk_method=1
   AND account.last_calc_time<?
   AND (

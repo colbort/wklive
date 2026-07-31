@@ -93,6 +93,7 @@ func TestComboMetricsAreRegisteredWithDocumentedNames(t *testing.T) {
 	optionRiskScanFailureRatio.Set(1, "987654321")
 	optionRiskScanLastCompletedTimestamp.Set(1, "987654321")
 	optionRiskScanExecutionFailure.Inc("987654321", "registration_test")
+	RecordAdminRejectedMutation(987654321, "contract", "listed_economics")
 
 	families, err := clientprometheus.DefaultGatherer.Gather()
 	if err != nil {
@@ -114,6 +115,7 @@ func TestComboMetricsAreRegisteredWithDocumentedNames(t *testing.T) {
 		"wklive_option_risk_scan_failure_ratio":                    false,
 		"wklive_option_risk_scan_last_completed_timestamp_seconds": false,
 		"wklive_option_risk_scan_execution_failure_total":          false,
+		"wklive_option_admin_rejected_mutation_total":              false,
 	}
 	for _, family := range families {
 		if _, ok := want[family.GetName()]; ok {

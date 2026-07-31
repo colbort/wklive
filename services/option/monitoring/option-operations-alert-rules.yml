@@ -85,6 +85,21 @@ groups:
             tenant_id={{ $labels.tenant_id }}, category={{ $labels.category }},
             count={{ $value }}。
 
+      - alert: OptionEventBacklogGrowing
+        expr: >-
+          delta(wklive_option_operations_count{
+            category=~"outbox_pending|inbox_pending"
+          }[1m]) > 0
+        for: 3m
+        labels:
+          severity: warning
+          catalog_id: OPT-A008
+        annotations:
+          summary: Option 事务事件积压连续增长
+          description: >-
+            tenant_id={{ $labels.tenant_id }}, category={{ $labels.category }}；
+            最近一分钟净增长连续保持三分钟，请检查消费者吞吐和失败重试。
+
       - alert: OptionExerciseBacklogStale
         expr: >-
           (wklive_option_operations_count{category="exercise_pending"} > 0)
@@ -99,6 +114,19 @@ groups:
         annotations:
           summary: Option 主动行权积压超过60秒
           description: tenant_id={{ $labels.tenant_id }}，待处理数={{ $value }}。
+
+      - alert: OptionExercisePendingNearExpiry
+        expr: >-
+          wklive_option_operations_count{
+            category="exercise_near_expiry"
+          } > 0
+        for: 0m
+        labels:
+          severity: warning
+          catalog_id: OPT-A009
+        annotations:
+          summary: Option 到期前30分钟仍有待处理主动行权
+          description: tenant_id={{ $labels.tenant_id }}，待处理行权数={{ $value }}。
 
       - alert: OptionSettlementException
         expr: wklive_option_operations_count{category="settlement_failed"} > 0
@@ -157,11 +185,24 @@ groups:
           } > 0
         for: 0m
         labels:
-          severity: critical
+          severity: warning
           catalog_id: OPT-A026
         annotations:
           summary: Option 实物交割存在补资、人工或违约单元
           description: tenant_id={{ $labels.tenant_id }}，异常单元数={{ $value }}。
+
+      - alert: OptionPhysicalDeliveryOverdue
+        expr: >-
+          wklive_option_operations_count{
+            category="physical_delivery_overdue"
+          } > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A026
+        annotations:
+          summary: Option 实物交割已逾补资截止或进入违约
+          description: tenant_id={{ $labels.tenant_id }}，逾期/违约单元数={{ $value }}。
 
       - alert: OptionUnresolvedDeficit
         expr: >-
@@ -240,6 +281,19 @@ groups:
         annotations:
           summary: Option kill switch 启用30秒后仍有活动或资金中订单
           description: tenant_id={{ $labels.tenant_id }}，受影响用户数={{ $value }}。
+
+      - alert: OptionKillSwitchReleaseFailure
+        expr: >-
+          wklive_option_operations_count{
+            category="kill_switch_release_failure"
+          } > 0
+        for: 0m
+        labels:
+          severity: warning
+          catalog_id: OPT-A020
+        annotations:
+          summary: Option kill switch 撤单资金释放失败
+          description: tenant_id={{ $labels.tenant_id }}，失败/人工资产指令数={{ $value }}。
 
       - alert: OptionSTPBurst
         expr: >-
@@ -362,3 +416,250 @@ groups:
           description: >-
             tenant_scope={{ $labels.tenant_scope }}, stage={{ $labels.stage }},
             five_minute_failures={{ $value }}。
+
+      - alert: OptionSettlementPriceOverdue
+        expr: >-
+          wklive_option_operations_count{
+            category="settlement_price_overdue"
+          } > 0
+        for: 0m
+        labels:
+          severity: warning
+          catalog_id: OPT-A010
+        annotations:
+          summary: Option 到期窗口结束60秒后仍无已确认结算价
+          description: >-
+            tenant_id={{ $labels.tenant_id }}，受影响合约数={{ $value }}；
+            保持结算等待，不得使用当前价替代。
+
+      - alert: OptionSettlementPriceInvalid
+        expr: >-
+          wklive_option_operations_count{
+            category="settlement_price_invalid"
+          } > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A011
+        annotations:
+          summary: Option 已确认结算价证据不符合合约规则
+          description: >-
+            tenant_id={{ $labels.tenant_id }}，异常快照数={{ $value }}；
+            立即阻止相关结算批次。
+
+      - alert: OptionPortfolioRiskConfigMissing
+        expr: >-
+          wklive_option_operations_count{
+            category="portfolio_risk_config_missing"
+          } > 0
+        for: 0m
+        labels:
+          severity: warning
+          catalog_id: OPT-A025
+        annotations:
+          summary: Option 组合持仓缺少当前有效已批准风险参数
+          description: >-
+            tenant_id={{ $labels.tenant_id }}，受影响钱包/币种组数={{ $value }}；
+            保持组合卖单失败关闭。
+
+      - alert: OptionPortfolioRiskVersionMismatch
+        expr: >-
+          wklive_option_operations_count{
+            category="portfolio_risk_version_mismatch"
+          } > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A025
+        annotations:
+          summary: Option 风险账户使用的组合模型版本落后当前有效版本
+          description: >-
+            tenant_id={{ $labels.tenant_id }}，超两个扫描周期账户数={{ $value }}；
+            保持风险限制并核对扫描器。
+
+      - alert: OptionCorporateActionDue
+        expr: >-
+          wklive_option_operations_count{
+            category="corporate_action_due"
+          } > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A027
+        annotations:
+          summary: Option 公司行动生效后仍未完成
+          description: >-
+            tenant_id={{ $labels.tenant_id }}，到期事件数={{ $value }}；
+            源合约保持停牌，后继合约不得上市。
+
+      - alert: OptionCorporateActionException
+        expr: >-
+          wklive_option_operations_count{
+            category="corporate_action_exception"
+          } > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A027
+        annotations:
+          summary: Option 公司行动执行、映射或合约状态异常
+          description: >-
+            tenant_id={{ $labels.tenant_id }}，异常事件数={{ $value }}；
+            检查人工态、失败持仓及源/后继合约门禁。
+
+      - alert: OptionContractSeriesReviewStale
+        expr: >-
+          wklive_option_operations_count{
+            category="contract_series_review_stale"
+          } > 0
+        for: 1m
+        labels:
+          severity: warning
+          catalog_id: OPT-A028
+        annotations:
+          summary: Option 合约系列待复核超过24小时
+          description: tenant_id={{ $labels.tenant_id }}，积压系列数={{ $value }}。
+
+      - alert: OptionContractSeriesInvariantIssue
+        expr: >-
+          wklive_option_operations_count{
+            category="contract_series_invariant_issue"
+          } > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A028
+        annotations:
+          summary: Option 合约系列数量、谱系或上市状态不一致
+          description: >-
+            tenant_id={{ $labels.tenant_id }}，异常系列数={{ $value }}；
+            冻结该系列全部合约的上市审批。
+
+      - alert: OptionPublicChainPairIssue
+        expr: >-
+          wklive_option_operations_count{
+            category="public_chain_pair_issue"
+          } > 0
+        for: 1m
+        labels:
+          severity: warning
+          catalog_id: OPT-A029
+        annotations:
+          summary: Option 公开链同标的到期行权价 Call/Put 缺腿或重复
+          description: tenant_id={{ $labels.tenant_id }}，异常链节点数={{ $value }}。
+
+      - alert: OptionOpenInterestImbalance
+        expr: >-
+          wklive_option_operations_count{
+            category="open_interest_imbalance"
+          } > 0
+        for: 1m
+        labels:
+          severity: warning
+          catalog_id: OPT-A029
+        annotations:
+          summary: Option HOLDING 多空持仓总量不平衡
+          description: tenant_id={{ $labels.tenant_id }}，异常合约数={{ $value }}。
+
+      - alert: OptionAdminEconomicMutationRejected
+        expr: >-
+          increase(wklive_option_admin_rejected_mutation_total[5m]) > 0
+        for: 0m
+        labels:
+          severity: info
+          catalog_id: OPT-A016
+        annotations:
+          summary: Option 管理员越权修改受治理状态或经济字段被拒绝
+          description: >-
+            tenant_scope={{ $labels.tenant_scope }},
+            object_type={{ $labels.object_type }}, reason={{ $labels.reason }}；
+            五分钟拒绝次数={{ $value }}，保留应用和网关审计。
+
+      - alert: OptionAdminEconomicMutationBurst
+        expr: >-
+          increase(wklive_option_admin_rejected_mutation_total[5m]) > 3
+        for: 0m
+        labels:
+          severity: warning
+          catalog_id: OPT-A016
+        annotations:
+          summary: Option 管理员越权修改尝试五分钟超过3次
+          description: >-
+            tenant_scope={{ $labels.tenant_scope }},
+            object_type={{ $labels.object_type }}, reason={{ $labels.reason }}；
+            升级安全和值班团队调查凭证、来源和变更工单。
+
+      - alert: OptionDailyConservationMismatch
+        expr: >-
+          wklive_option_operations_count{
+            category="daily_conservation_issue"
+          } > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A015
+        annotations:
+          summary: Option/Asset 日终资金守恒差额非零
+          description: >-
+            tenant_id={{ $labels.tenant_id }}，开放日终差额数={{ $value }}；
+            暂停次日相关产品开放并由技术、清算、财务、合规共同核对。
+
+      - alert: OptionDailyConservationHeartbeatMissing
+        expr: >-
+          wklive_option_operations_count{
+            category="daily_conservation_heartbeat_missing"
+          } > 0
+        for: 15m
+        labels:
+          severity: critical
+          catalog_id: OPT-A015
+        annotations:
+          summary: Option/Asset 完整日终资金守恒超过36小时无成功心跳
+          description: >-
+            tenant_id={{ $labels.tenant_id }}；scope=1 钱包镜像成功不能替代本告警，保持次日
+            产品门禁关闭并核对 Asset/财务 scope=2 生产者和不可变证据。
+
+      - alert: OptionDailyMirrorReconciliationMismatch
+        expr: >-
+          wklive_option_operations_count{
+            category="daily_mirror_reconciliation_mismatch"
+          } > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A031
+        annotations:
+          summary: Option 钱包镜像日终核对存在差异
+          description: >-
+            tenant_id={{ $labels.tenant_id }}；最近一次一致性快照发现 Asset Option 钱包与
+            t_option_account 不一致，保持真实资金门禁关闭并从 ACCOUNT_MIRROR 案件下钻。
+
+      - alert: OptionDailyMirrorReconciliationFailed
+        expr: >-
+          wklive_option_operations_count{
+            category="daily_mirror_reconciliation_failed"
+          } > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A031
+        annotations:
+          summary: Option 钱包镜像日终核对执行失败
+          description: >-
+            tenant_id={{ $labels.tenant_id }}；检查数据库可用性、任务日志和不可变运行记录后，
+            使用原租户范围重新执行，不得把失败当作零差额。
+
+      - alert: OptionDailyMirrorReconciliationMissing
+        expr: >-
+          wklive_option_operations_count{
+            category="daily_mirror_reconciliation_missing"
+          } > 0
+        for: 15m
+        labels:
+          severity: critical
+          catalog_id: OPT-A031
+        annotations:
+          summary: Option 钱包镜像超过36小时无成功心跳
+          description: >-
+            tenant_id={{ $labels.tenant_id }}；保持次日产品门禁关闭，核对 System cron、Kafka
+            option-tasks 消费和 t_option_reconciliation_run 后补跑。

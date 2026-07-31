@@ -667,20 +667,16 @@ func (l *ProcessAssetInstructionsLogic) completeMarginLotTransition(item *models
 	return l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		marginLotModel := models.NewTOptionMarginLotModel(conn, l.svcCtx.Config.CacheRedis)
+		applicationModel := models.NewTOptionMarginLotApplicationModel(conn, l.svcCtx.Config.CacheRedis)
 		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis)
-		result, err := conn.ExecCtx(ctx, `INSERT IGNORE INTO t_option_margin_lot_application
-(tenant_id,instruction_id,margin_lot_id,action,amount,create_times)
-VALUES (?,?,?,?,?,?)`,
-			item.TenantId, item.Id, item.MarginLotId, item.Action, item.Amount, time.Now().Unix(),
-		)
+		inserted, err := applicationModel.InsertIgnore(ctx, &models.TOptionMarginLotApplication{
+			TenantId: item.TenantId, InstructionId: item.Id, MarginLotId: item.MarginLotId,
+			Action: item.Action, Amount: item.Amount, CreateTimes: time.Now().Unix(),
+		})
 		if err != nil {
 			return err
 		}
-		affected, err := result.RowsAffected()
-		if err != nil {
-			return err
-		}
-		if affected == 0 {
+		if !inserted {
 			return nil
 		}
 		lot, err := marginLotModel.FindOneForUpdate(ctx, item.MarginLotId)

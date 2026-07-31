@@ -203,6 +203,36 @@ readiness model 必须从 Authority Registry 确认每个来源都已启用、�
 四份证据的必填内容和通过标准见
 [`perpetual-delivery-production-evidence-guide.md`](../services/trade/docs/perpetual-delivery-production-evidence-guide.md)。
 
+## Option 生产门禁检查
+
+Option 使用独立的 fail-closed 证据门禁，但通过统一部署入口执行。仓库提交阶段先验证规则、
+固定标签和监控索引：
+
+```bash
+./deploy.sh option-readiness --repository-only
+```
+
+生产发布前复制声明模板到仓库外安全路径，填入真实报告、最终 Prometheus/Alertmanager 配置、
+功能范围、审批引用和每个文件的 SHA-256：
+
+```bash
+cp ../services/option/monitoring/option-production-readiness.env.example \
+  /secure/path/option-production-readiness.env
+./deploy.sh option-readiness /secure/path/option-production-readiness.env
+```
+
+门禁固定检查 49 条通用规则、4 条组合规则、severity/catalog 完整性、17 项监控索引、日终钱包
+镜像运行迁移/System 调度和既有
+`20260731_zr` 迁移校验和；生产模式还要求 `promtool`/`amtool`、真实告警送达、Asset E2E、
+故障注入、容量、日终对账、数据库审计和值班证据。执行机必须能访问声明的
+`OPTION_METRICS_URL`；门禁会校验关键指标族、最近采样成功且成功时间不超过45秒，并要求生产
+租户 scope=1 钱包镜像核对在36小时内成功，不能只靠
+`OPTION_PRODUCTION_METRICS_TARGET_VERIFIED=true` 放行。卖方、组合保证金、实物交割、组合订单、
+公开行情和 Greeks 依赖功能按声明范围增加专项证据，未批准功能必须显式为 `false`。
+
+任一失败均输出 `NOT READY` 并返回非零，不会自动启用任何 Option 功能。证据填写和签署说明见
+[`option-production-readiness-signoff.md`](../services/option/docs/templates/option-production-readiness-signoff.md)。
+
 ### 交割合约启用前技术验收
 
 在取得最终产品启用审批前，可对停用态交割合约执行独立的只读技术验收：

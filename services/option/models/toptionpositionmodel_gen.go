@@ -66,7 +66,7 @@ type (
 		FeePaid               decimal.Decimal `db:"fee_paid"`                // 归属于持仓的累计交易/行权/强平费用
 		TotalReturn           decimal.Decimal `db:"total_return"`            // 累计已实现总收益=交易+结算-费用
 		ExerciseableQty       decimal.Decimal `db:"exerciseable_qty"`        // 可行权数量
-		Status                int64           `db:"status"`                  // 状态：0未知 1持仓中 2已平仓 3已行权 4已到期 5已结算
+		Status                int64           `db:"status"`                  // 状态：0未知 1持仓中 2已平仓 3已行权 4已到期 5已结算 6公司行动迁出
 		LastCalcTime          int64           `db:"last_calc_time"`          // 上次风控计算时间
 		CreateTimes           int64           `db:"create_times"`            // 创建时间
 		UpdateTimes           int64           `db:"update_times"`            // 更新时间

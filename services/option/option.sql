@@ -66,7 +66,9 @@ CREATE TABLE `t_option_contract` (
   KEY `idx_option_public_chain` (`tenant_id`, `underlying_symbol`, `expire_time`, `status`, `is_deleted`, `strike_price`, `option_type`, `id`),
   KEY `idx_tenant_expire_time` (`tenant_id`, `expire_time`),
   KEY `idx_tenant_status` (`tenant_id`, `status`),
-  KEY `idx_option_contract_monitor` (`status`, `update_times`, `tenant_id`, `id`)
+  KEY `idx_option_contract_monitor` (`status`, `update_times`, `tenant_id`, `id`),
+  KEY `idx_option_contract_lifecycle_monitor` (`status`, `expire_time`, `tenant_id`, `id`),
+  KEY `idx_option_public_chain_monitor` (`status`, `is_deleted`, `tenant_id`, `underlying_symbol`, `expire_time`, `strike_price`, `option_type`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权合约表';
 
 -- =========================================================
@@ -97,12 +99,7 @@ CREATE TABLE `t_option_trading_calendar` (
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_trading_calendar_version` (`tenant_id`,`calendar_code`,`version`),
-  KEY `idx_trading_calendar_effective` (`tenant_id`,`calendar_code`,`status`,`effective_from`,`effective_until`,`id`),
-  CONSTRAINT `chk_option_trading_calendar` CHECK (
-    `tenant_id` > 0 AND `calendar_code` <> '' AND `version` > 0
-    AND `status` IN (1,2,3,4) AND `timezone` <> ''
-    AND (`effective_until` = 0 OR `effective_until` > `effective_from`)
-  )
+  KEY `idx_trading_calendar_effective` (`tenant_id`,`calendar_code`,`status`,`effective_from`,`effective_until`,`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='不可覆盖的期权交易日历版本';
 
 CREATE TABLE `t_option_trading_calendar_session` (
@@ -115,12 +112,7 @@ CREATE TABLE `t_option_trading_calendar_session` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_trading_calendar_session` (`tenant_id`,`calendar_id`,`weekday`,`open_second`,`close_second`),
-  KEY `idx_trading_calendar_session` (`tenant_id`,`calendar_id`,`weekday`,`id`),
-  CONSTRAINT `chk_option_trading_calendar_session` CHECK (
-    `tenant_id` > 0 AND `calendar_id` > 0 AND `weekday` BETWEEN 0 AND 6
-    AND `open_second` BETWEEN 0 AND 86399
-    AND `close_second` > `open_second` AND `close_second` <= 172800
-  )
+  KEY `idx_trading_calendar_session` (`tenant_id`,`calendar_id`,`weekday`,`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权交易日历周会话';
 
 CREATE TABLE `t_option_trading_calendar_exception` (
@@ -134,11 +126,7 @@ CREATE TABLE `t_option_trading_calendar_exception` (
   `announcement_ref` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '公告引用',
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`),
-  KEY `idx_trading_calendar_exception` (`tenant_id`,`calendar_id`,`start_time`,`end_time`,`exception_type`,`id`),
-  CONSTRAINT `chk_option_trading_calendar_exception` CHECK (
-    `tenant_id` > 0 AND `calendar_id` > 0 AND `exception_type` IN (1,2)
-    AND `start_time` > 0 AND `end_time` > `start_time` AND `reason` <> ''
-  )
+  KEY `idx_trading_calendar_exception` (`tenant_id`,`calendar_id`,`start_time`,`end_time`,`exception_type`,`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权交易日历节假日与特别开市窗口';
 
 CREATE TABLE `t_option_trading_halt` (
@@ -165,18 +153,7 @@ CREATE TABLE `t_option_trading_halt` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_trading_halt_no` (`tenant_id`,`halt_no`),
   UNIQUE KEY `uk_trading_halt_active` (`tenant_id`,`active_key`),
-  KEY `idx_trading_halt_contract` (`tenant_id`,`contract_id`,`status`,`id`),
-  CONSTRAINT `chk_option_trading_halt` CHECK (
-    `tenant_id` > 0 AND `halt_no` <> '' AND `active_key` <> '' AND `contract_id` > 0
-    AND `source` IN (1,2,3,4) AND `status` IN (1,2) AND `reason` <> ''
-    AND `started_at` > 0 AND `cancel_total` >= 0 AND `cancel_success` >= 0 AND `cancel_failed` >= 0
-    AND `cancel_success` + `cancel_failed` <= `cancel_total`
-    AND (
-      (`status` = 1 AND `active_key` = CONCAT('CONTRACT:',`contract_id`) AND `lifted_at` = 0 AND `lifted_by` = 0)
-      OR
-      (`status` = 2 AND `active_key` = CONCAT('HALT:',`halt_no`) AND `lifted_at` > 0 AND `lifted_by` >= 0 AND `lift_reason` <> '')
-    )
-  )
+  KEY `idx_trading_halt_contract` (`tenant_id`,`contract_id`,`status`,`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权临时休市与恢复审计';
 
 CREATE TABLE `t_option_corporate_action` (
@@ -209,14 +186,7 @@ CREATE TABLE `t_option_corporate_action` (
   UNIQUE KEY `uk_corporate_action_external_version` (`tenant_id`,`external_event_ref`,`version`),
   KEY `idx_corporate_action_due` (`tenant_id`,`status`,`effective_time`,`id`),
   KEY `idx_corporate_action_underlying` (`tenant_id`,`underlying_symbol`,`id`),
-  CONSTRAINT `chk_option_corporate_action` CHECK (
-    `tenant_id` > 0 AND `event_no` <> '' AND `external_event_ref` <> '' AND `version` > 0
-    AND `underlying_symbol` <> '' AND `action_type` IN (1,2,3,4,5,6,7,8,9,10)
-    AND `status` IN (1,2,3,4,5,6,7)
-    AND `announcement_time` > 0 AND `effective_time` > 0
-    AND `evidence_ref` <> '' AND `evidence_hash` <> '' AND `description` <> ''
-    AND `created_by` > 0
-  )
+  KEY `idx_corporate_action_monitor` (`status`,`effective_time`,`tenant_id`,`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='不可覆盖的期权公司行动事件版本';
 
 CREATE TABLE `t_option_corporate_action_contract` (
@@ -241,15 +211,7 @@ CREATE TABLE `t_option_corporate_action_contract` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_corporate_action_source` (`tenant_id`,`action_id`,`source_contract_id`),
   KEY `idx_corporate_action_contract_status` (`tenant_id`,`action_id`,`status`,`id`),
-  CONSTRAINT `chk_option_corporate_action_contract` CHECK (
-    `tenant_id` > 0 AND `action_id` > 0 AND `source_contract_id` > 0
-    AND `execution_mode` IN (1,2)
-    AND ((`execution_mode` = 1 AND `successor_contract_id` > 0) OR `execution_mode` = 2)
-    AND `quantity_numerator` > 0 AND `quantity_denominator` > 0
-    AND `status` IN (1,2,3,4,5,6)
-    AND `position_total` >= 0 AND `position_completed` >= 0 AND `position_failed` >= 0
-    AND `retry_count` >= 0
-  )
+  KEY `idx_corporate_action_contract_monitor` (`status`,`tenant_id`,`action_id`,`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='公司行动受影响合约及后继映射';
 
 CREATE TABLE `t_option_corporate_action_position` (
@@ -281,16 +243,7 @@ CREATE TABLE `t_option_corporate_action_position` (
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_corporate_action_position` (`tenant_id`,`action_contract_id`,`source_position_id`),
-  KEY `idx_corporate_action_position_status` (`tenant_id`,`action_contract_id`,`status`,`source_position_id`),
-  CONSTRAINT `chk_option_corporate_action_position` CHECK (
-    `tenant_id` > 0 AND `action_id` > 0 AND `action_contract_id` > 0
-    AND `source_position_id` > 0 AND `user_id` > 0 AND `side` IN (1,2)
-    AND `source_quantity` > 0 AND `successor_quantity` > 0
-    AND `source_available_quantity` >= 0 AND `successor_available_quantity` >= 0
-    AND `source_effective_multiplier` > 0 AND `successor_effective_multiplier` > 0
-    AND `cost_basis_before` >= 0 AND `cost_basis_after` >= 0
-    AND `status` IN (1,2,3) AND `retry_count` >= 0
-  )
+  KEY `idx_corporate_action_position_status` (`tenant_id`,`action_contract_id`,`status`,`source_position_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='公司行动逐持仓不可覆盖迁移审计';
 
 CREATE TABLE `t_option_corporate_action_margin_lot` (
@@ -309,15 +262,9 @@ CREATE TABLE `t_option_corporate_action_margin_lot` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_corporate_action_margin_lot` (`tenant_id`,`action_position_id`,`margin_lot_id`),
-  KEY `idx_corporate_action_margin_lot` (`tenant_id`,`margin_lot_id`,`id`),
-  CONSTRAINT `chk_option_corporate_action_margin_lot` CHECK (
-    `tenant_id` > 0 AND `action_position_id` > 0 AND `margin_lot_id` > 0
-    AND `source_contract_id` > 0 AND `successor_contract_id` > 0
-    AND `source_position_id` > 0 AND `successor_position_id` > 0
-    AND `source_quantity` > 0 AND `successor_quantity` > 0
-    AND `source_remaining_quantity` >= 0 AND `successor_remaining_quantity` >= 0
-  )
+  KEY `idx_corporate_action_margin_lot` (`tenant_id`,`margin_lot_id`,`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='公司行动保证金批次换算审计';
+
 
 -- =========================================================
 -- 2. 期权当前行情表
@@ -445,11 +392,7 @@ CREATE TABLE `t_option_order` (
   KEY `idx_tenant_contract_id_status` (`tenant_id`, `contract_id`, `status`),
   KEY `idx_option_public_book` (`tenant_id`, `contract_id`, `status`, `side`, `price`, `id`),
   KEY `idx_option_combo_child` (`tenant_id`, `combo_order_id`, `combo_leg_no`, `id`),
-  KEY `idx_tenant_create_times` (`tenant_id`, `create_times`),
-  CONSTRAINT `chk_option_order_combo_link` CHECK (
-    (`combo_order_id`=0 AND `combo_leg_no`=0)
-    OR (`combo_order_id`>0 AND `combo_leg_no` BETWEEN 1 AND 4)
-  )
+  KEY `idx_tenant_create_times` (`tenant_id`, `create_times`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权委托表';
 
 CREATE TABLE `t_option_client_order_key` (
@@ -462,8 +405,7 @@ CREATE TABLE `t_option_client_order_key` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_user_client_order` (`tenant_id`, `user_id`, `client_order_id`),
-  KEY `idx_tenant_order_id` (`tenant_id`, `order_id`),
-  CONSTRAINT `chk_option_client_order_key` CHECK (`client_order_id` <> '' AND `order_id` > 0)
+  KEY `idx_tenant_order_id` (`tenant_id`, `order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权客户端订单幂等键';
 
 CREATE TABLE `t_option_combo_order` (
@@ -494,16 +436,7 @@ CREATE TABLE `t_option_combo_order` (
   UNIQUE KEY `uk_option_combo_no` (`tenant_id`,`combo_no`),
   UNIQUE KEY `uk_option_combo_client` (`tenant_id`,`user_id`,`client_combo_id`),
   KEY `idx_option_combo_match` (`tenant_id`,`strategy_key`,`status`,`net_price`,`id`),
-  KEY `idx_option_combo_user` (`tenant_id`,`user_id`,`account_id`,`id`),
-  CONSTRAINT `chk_option_combo_order` CHECK (
-    `tenant_id`>0 AND `combo_no`<>'' AND `user_id`>0 AND `account_id`>0
-    AND `client_combo_id`<>'' AND CHAR_LENGTH(`strategy_key`)=64
-    AND CHAR_LENGTH(`inverse_strategy_key`)=64 AND `underlying_symbol`<>''
-    AND `expire_time`>0 AND `settle_coin`<>'' AND `quote_coin`<>''
-    AND `order_type` IN (1,2) AND `qty`>0
-    AND `filled_qty`>=0 AND `unfilled_qty`>=0 AND `filled_qty`+`unfilled_qty`=`qty`
-    AND `status` IN (1,2,3,4,5,6,7,8) AND CHAR_LENGTH(`payload_hash`)=64
-  )
+  KEY `idx_option_combo_user` (`tenant_id`,`user_id`,`account_id`,`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权组合父单';
 
 CREATE TABLE `t_option_combo_order_leg` (
@@ -526,15 +459,9 @@ CREATE TABLE `t_option_combo_order_leg` (
   UNIQUE KEY `uk_option_combo_leg_no` (`tenant_id`,`combo_order_id`,`leg_no`),
   UNIQUE KEY `uk_option_combo_leg_contract` (`tenant_id`,`combo_order_id`,`contract_id`),
   UNIQUE KEY `uk_option_combo_leg_child` (`tenant_id`,`child_order_id`),
-  KEY `idx_option_combo_leg_contract` (`tenant_id`,`contract_id`,`combo_order_id`),
-  CONSTRAINT `chk_option_combo_order_leg` CHECK (
-    `tenant_id`>0 AND `combo_order_id`>0 AND `leg_no` BETWEEN 1 AND 4
-    AND `contract_id`>0 AND `side` IN (1,2) AND `position_effect`=1
-    AND `ratio` BETWEEN 1 AND 8 AND `price`>0 AND `qty`>0
-    AND `filled_qty`>=0 AND `unfilled_qty`>=0 AND `filled_qty`+`unfilled_qty`=`qty`
-    AND `child_order_id`>0
-  )
+  KEY `idx_option_combo_leg_contract` (`tenant_id`,`contract_id`,`combo_order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权组合不可变腿及影子子单';
+
 
 -- =========================================================
 -- 5. 期权成交表
@@ -582,8 +509,7 @@ CREATE TABLE `t_option_match_sequence` (
   `next_sequence` BIGINT NOT NULL DEFAULT 1 COMMENT '下一个撮合序号',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_contract` (`tenant_id`, `contract_id`),
-  CONSTRAINT `chk_option_match_sequence` CHECK (`next_sequence` > 0)
+  UNIQUE KEY `uk_tenant_contract` (`tenant_id`, `contract_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权合约撮合序列';
 
 CREATE TABLE `t_option_outbox` (
@@ -603,11 +529,7 @@ CREATE TABLE `t_option_outbox` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_event_no` (`tenant_id`, `event_no`),
   UNIQUE KEY `uk_tenant_contract_sequence_type` (`tenant_id`, `contract_id`, `match_sequence`, `event_type`),
-  KEY `idx_outbox_retry` (`status`, `next_retry_at`, `id`),
-  CONSTRAINT `chk_option_outbox` CHECK (
-    `event_type` IN (1) AND `match_sequence` > 0
-    AND `status` IN (1,2,3,4,5) AND `retry_count` >= 0
-  )
+  KEY `idx_outbox_retry` (`status`, `next_retry_at`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权事务事件发件箱';
 
 CREATE TABLE `t_option_inbox` (
@@ -624,10 +546,7 @@ CREATE TABLE `t_option_inbox` (
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_event_no` (`tenant_id`, `event_no`),
-  KEY `idx_inbox_contract_sequence` (`tenant_id`, `contract_id`, `match_sequence`),
-  CONSTRAINT `chk_option_inbox` CHECK (
-    `event_type` IN (1) AND `match_sequence` > 0 AND `status` IN (1,2,3)
-  )
+  KEY `idx_inbox_contract_sequence` (`tenant_id`, `contract_id`, `match_sequence`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权事件消费幂等箱';
 
 CREATE TABLE `t_option_margin_lot` (
@@ -655,13 +574,7 @@ CREATE TABLE `t_option_margin_lot` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_trade` (`tenant_id`, `trade_id`),
   KEY `idx_margin_lot_position` (`tenant_id`, `position_id`, `status`, `id`),
-  KEY `idx_margin_lot_order` (`tenant_id`, `order_id`, `status`, `id`),
-  CONSTRAINT `chk_option_margin_lot` CHECK (
-    `quantity` > 0 AND `remaining_quantity` >= 0 AND `remaining_quantity` <= `quantity`
-    AND `initial_margin` > 0 AND `remaining_margin` >= 0 AND `pending_margin` >= 0
-    AND `pending_margin` <= `remaining_margin`
-    AND `status` IN (1,2,3,4,5,6)
-  )
+  KEY `idx_margin_lot_order` (`tenant_id`, `order_id`, `status`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权卖方保证金批次';
 
 CREATE TABLE `t_option_margin_lot_application` (
@@ -674,8 +587,7 @@ CREATE TABLE `t_option_margin_lot_application` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_instruction` (`tenant_id`, `instruction_id`),
-  KEY `idx_application_margin_lot` (`tenant_id`, `margin_lot_id`),
-  CONSTRAINT `chk_margin_lot_application` CHECK (`action` IN (2,3) AND `amount` > 0)
+  KEY `idx_application_margin_lot` (`tenant_id`, `margin_lot_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='保证金批次资产指令应用幂等记录';
 
 CREATE TABLE `t_option_risk_account` (
@@ -704,14 +616,7 @@ CREATE TABLE `t_option_risk_account` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_user_account_coin` (`tenant_id`, `user_id`, `account_id`, `settle_coin`),
   KEY `idx_risk_account_status` (`tenant_id`, `status`, `id`),
-  CONSTRAINT `chk_option_risk_account` CHECK (
-    `position_margin` >= 0 AND `maintenance_margin` >= 0
-    AND `portfolio_risk_method` IN (0,1)
-    AND `portfolio_risk_config_id` >= 0 AND `portfolio_risk_config_version` >= 0
-    AND `portfolio_scenario_loss` >= 0 AND `portfolio_short_floor` >= 0
-    AND `portfolio_concentration_addon` >= 0 AND `portfolio_liquidity_addon` >= 0
-    AND `risk_rate` >= 0 AND `status` IN (1,2,3,4,5)
-  )
+  KEY `idx_option_risk_account_portfolio_monitor` (`portfolio_risk_method`, `last_calc_time`, `tenant_id`, `settle_coin`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权卖方风险账户';
 
 CREATE TABLE `t_option_portfolio_risk_config` (
@@ -741,26 +646,7 @@ CREATE TABLE `t_option_portfolio_risk_config` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_portfolio_risk_config_version` (`tenant_id`, `settle_coin`, `version`),
   KEY `idx_portfolio_risk_config_active` (`tenant_id`, `settle_coin`, `status`, `effective_from`, `effective_until`),
-  CONSTRAINT `chk_option_portfolio_risk_config` CHECK (
-    `tenant_id` > 0 AND `settle_coin` <> '' AND `version` > 0
-    AND `status` IN (1,2,3,4) AND `model_method` = 1
-    AND `initial_shock_rate` > 0 AND `initial_shock_rate` <= 10
-    AND `maintenance_shock_rate` > 0
-    AND `maintenance_shock_rate` <= `initial_shock_rate`
-    AND `scenario_shocks` <> ''
-    AND `concentration_threshold` >= 0
-    AND `concentration_addon_rate` >= 0 AND `concentration_addon_rate` <= 1
-    AND `liquidity_addon_rate` >= 0 AND `liquidity_addon_rate` <= 1
-    AND `effective_from` > 0
-    AND (`effective_until` = 0 OR `effective_until` > `effective_from`)
-    AND `change_reason` <> '' AND `created_by` > 0
-    AND (
-      (`status` = 1 AND `reviewed_by` = 0 AND `reviewed_at` = 0)
-      OR (`status` IN (2,3,4) AND `reviewed_by` > 0
-        AND `reviewed_by` <> `created_by` AND `reviewed_at` > 0)
-    )
-    AND (`status` NOT IN (2,4) OR `evidence_ref` <> '')
-  )
+  KEY `idx_option_portfolio_config_monitor` (`status`, `effective_from`, `effective_until`, `tenant_id`, `settle_coin`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='组合保证金风险模型参数版本';
 
 CREATE TABLE `t_option_liquidation` (
@@ -793,12 +679,7 @@ CREATE TABLE `t_option_liquidation` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_liquidation_no` (`tenant_id`, `liquidation_no`),
   KEY `idx_liquidation_status` (`tenant_id`, `status`, `id`),
-  KEY `idx_liquidation_position` (`tenant_id`, `position_id`, `id`),
-  CONSTRAINT `chk_option_liquidation` CHECK (
-    `quantity` > 0 AND `deficit_amount` >= 0 AND `liquidation_fee` >= 0
-    AND `status` IN (1,2,3,4,5,6) AND `retry_count` >= 0 AND `insurance_attempt` >= 0
-    AND `backstop_amount` >= 0 AND `deficit_resolution` IN (1,2,3,4,5)
-  )
+  KEY `idx_liquidation_position` (`tenant_id`, `position_id`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权强平记录';
 
 CREATE TABLE `t_option_insurance_fund_flow` (
@@ -814,9 +695,9 @@ CREATE TABLE `t_option_insurance_fund_flow` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_flow_no` (`tenant_id`, `flow_no`),
-  KEY `idx_insurance_liquidation` (`tenant_id`, `liquidation_id`),
-  CONSTRAINT `chk_option_insurance_fund_flow` CHECK (`flow_type` IN (1,2,3,4) AND `amount` <> 0)
+  KEY `idx_insurance_liquidation` (`tenant_id`, `liquidation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权保险基金流水';
+
 
 -- =========================================================
 -- 6. 期权持仓表
@@ -852,7 +733,8 @@ CREATE TABLE `t_option_position` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_uid_account_contract_side` (`tenant_id`, `user_id`, `account_id`, `contract_id`, `side`),
   KEY `idx_tenant_contract_id` (`tenant_id`, `contract_id`),
-  KEY `idx_tenant_uid_account` (`tenant_id`, `user_id`, `account_id`)
+  KEY `idx_tenant_uid_account` (`tenant_id`, `user_id`, `account_id`),
+  KEY `idx_option_position_monitor` (`status`, `tenant_id`, `contract_id`, `user_id`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权持仓表';
 
 -- =========================================================
@@ -888,7 +770,7 @@ CREATE TABLE `t_option_exercise` (
   KEY `idx_tenant_uid_account_contract_id` (`tenant_id`, `user_id`, `account_id`, `contract_id`),
   KEY `idx_tenant_position_id` (`tenant_id`, `position_id`),
   KEY `idx_tenant_status` (`tenant_id`, `status`),
-  CONSTRAINT `chk_option_client_exercise_key` CHECK (`exercise_type` <> 1 OR `client_exercise_id` <> '')
+  KEY `idx_option_exercise_monitor` (`status`, `tenant_id`, `contract_id`, `create_times`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权行权表';
 
 CREATE TABLE `t_option_exercise_assignment` (
@@ -908,10 +790,7 @@ CREATE TABLE `t_option_exercise_assignment` (
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_exercise_short_position` (`tenant_id`, `exercise_id`, `short_position_id`),
-  KEY `idx_assignment_exercise` (`tenant_id`, `exercise_id`, `status`, `id`),
-  CONSTRAINT `chk_option_exercise_assignment` CHECK (
-    `quantity` > 0 AND `payoff` > 0 AND `status` IN (1,2,3,4)
-  )
+  KEY `idx_assignment_exercise` (`tenant_id`, `exercise_id`, `status`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权主动行权空头指派';
 
 DROP TABLE IF EXISTS `t_option_exercise_instruction`;
@@ -933,13 +812,7 @@ CREATE TABLE `t_option_exercise_instruction` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_exercise_instruction_client` (`tenant_id`, `user_id`, `client_instruction_id`),
   UNIQUE KEY `uk_exercise_instruction_version` (`tenant_id`, `position_id`, `version`),
-  KEY `idx_exercise_instruction_active` (`tenant_id`, `contract_id`, `position_id`, `status`, `version`),
-  CONSTRAINT `chk_option_exercise_instruction` CHECK (
-    `instruction_type` IN (1,2,3)
-    AND `version` > 0
-    AND `status` IN (1,2)
-    AND `client_instruction_id` <> ''
-  )
+  KEY `idx_exercise_instruction_active` (`tenant_id`, `contract_id`, `position_id`, `status`, `version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权到期行权指令版本';
 
 -- 行权指令经济字段不可变触发器由
@@ -964,10 +837,7 @@ CREATE TABLE `t_option_user_trading_control` (
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_option_user_trading_control` (`tenant_id`, `user_id`),
-  KEY `idx_option_user_control_monitor` (`kill_switch`, `activated_at`, `tenant_id`, `user_id`),
-  CONSTRAINT `chk_option_user_trading_control` CHECK (
-    `tenant_id` > 0 AND `user_id` > 0 AND `kill_switch` IN (1,2)
-  )
+  KEY `idx_option_user_control_monitor` (`kill_switch`, `activated_at`, `tenant_id`, `user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权用户交易控制';
 
 DROP TABLE IF EXISTS `t_option_trading_control_event`;
@@ -986,15 +856,13 @@ CREATE TABLE `t_option_trading_control_event` (
   KEY `idx_option_control_event_contract` (`tenant_id`, `contract_id`, `id`),
   KEY `idx_option_control_event_user` (`tenant_id`, `user_id`, `id`),
   KEY `idx_option_control_event_reason` (`tenant_id`, `event_type`, `reason`, `id`),
-  KEY `idx_option_control_event_monitor` (`event_type`, `reason`, `create_times`, `tenant_id`, `user_id`, `contract_id`),
-  CONSTRAINT `chk_option_trading_control_event` CHECK (
-    `tenant_id` > 0 AND `event_type` <> '' AND `reason` <> ''
-  )
+  KEY `idx_option_control_event_monitor` (`event_type`, `reason`, `create_times`, `tenant_id`, `user_id`, `contract_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权交易控制审计事件';
 
 -- TRADING 参数门禁和审计事件不可修改/删除触发器由
 -- migrations/20260730_ze_option_trading_controls.sql 安装；
 -- 新建数据库后同样必须执行该迁移。
+
 
 -- =========================================================
 -- 8. 期权到期结算表
@@ -1034,9 +902,9 @@ CREATE TABLE `t_option_account` (
   `user_id` BIGINT NOT NULL DEFAULT 0 COMMENT '用户ID',
   `account_id` BIGINT NOT NULL DEFAULT 0 COMMENT '钱包镜像固定为0，业务账户仅保留在订单/持仓/流水',
   `margin_coin` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '保证金币种',
-  `balance` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '账户余额',
-  `available_balance` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '可用余额',
-  `frozen_balance` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '冻结余额',
+  `balance` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT 'Asset Option钱包总额镜像',
+  `available_balance` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT 'Asset Option钱包可用额镜像',
+  `frozen_balance` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT 'Asset Option钱包冻结额镜像',
   `position_margin` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '持仓保证金',
   `order_margin` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '委托保证金',
   `unrealized_pnl` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '未实现盈亏',
@@ -1063,9 +931,9 @@ CREATE TABLE `t_option_bill` (
   `ref_type` TINYINT NOT NULL DEFAULT 0 COMMENT '关联类型：1下单 2成交 3撤单 4行权 5结算 6手续费',
   `ref_id` BIGINT NOT NULL DEFAULT 0 COMMENT '关联ID',
   `coin` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '币种',
-  `change_amount` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '变动金额，正负都有可能',
-  `balance_before` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '变动前余额',
-  `balance_after` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '变动后余额',
+  `change_amount` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT 'Asset权威变动金额，正负都有可能',
+  `balance_before` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT 'Asset权威变动前余额',
+  `balance_after` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT 'Asset权威变动后余额',
   `remark` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '备注',
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`),
@@ -1115,14 +983,8 @@ CREATE TABLE `t_option_asset_instruction` (
   KEY `idx_instruction_margin_lot` (`tenant_id`, `margin_lot_id`),
   KEY `idx_instruction_liquidation` (`tenant_id`, `liquidation_id`, `status`, `id`),
   KEY `idx_instruction_delivery_unit` (`tenant_id`, `delivery_unit_id`, `step_no`, `status`, `id`),
-  CONSTRAINT `chk_option_asset_instruction` CHECK (
-    `action` IN (1,2,3,4,5)
-    AND `amount` > 0
-    AND `step_no` > 0
-    AND `status` IN (1,2,3,4,5,6)
-    AND `retry_count` >= 0
-    AND `reconciliation_status` IN (1,2,3)
-  )
+  KEY `idx_option_asset_instruction_control_monitor`
+    (`action`, `status`, `tenant_id`, `user_id`, `create_times`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Option发送给Asset的幂等资金指令';
 
 -- =========================================================
@@ -1152,12 +1014,7 @@ CREATE TABLE `t_option_settlement_price` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_settlement_price_version` (`tenant_id`, `contract_id`, `version`),
   KEY `idx_settlement_price_status` (`tenant_id`, `status`, `id`),
-  CONSTRAINT `chk_option_settlement_price` CHECK (
-    `status` IN (1,2,3,4)
-    AND `version` > 0
-    AND (`status` <> 2 OR (`delivery_price` > 0 AND `sample_count` > 0 AND `confirmed_at` > 0))
-    AND (`created_by` = 0 OR `confirmed_by` = 0 OR `created_by` <> `confirmed_by`)
-  )
+  KEY `idx_option_settlement_price_monitor` (`status`, `tenant_id`, `contract_id`, `confirmed_at`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权不可变结算价快照';
 
 -- 已确认结算价的经济字段不可变触发器由
@@ -1185,15 +1042,7 @@ CREATE TABLE `t_option_settlement_batch` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_settlement_batch_no` (`tenant_id`, `batch_no`),
   UNIQUE KEY `uk_settlement_batch_contract` (`tenant_id`, `contract_id`),
-  KEY `idx_settlement_batch_status` (`tenant_id`, `status`, `id`),
-  CONSTRAINT `chk_option_settlement_batch` CHECK (
-    `status` IN (1,2,3,4,5,6,7,8)
-    AND `total_credit` >= 0
-    AND `total_debit` >= 0
-    AND `instruction_count` >= 0
-    AND `success_count` >= 0
-    AND `success_count` <= `instruction_count`
-  )
+  KEY `idx_settlement_batch_status` (`tenant_id`, `status`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权结算批次';
 
 DROP TABLE IF EXISTS `t_option_settlement_detail`;
@@ -1218,13 +1067,7 @@ CREATE TABLE `t_option_settlement_detail` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_settlement_detail_position` (`tenant_id`, `batch_id`, `position_id`),
-  KEY `idx_settlement_detail_user` (`tenant_id`, `user_id`, `account_id`, `id`),
-  CONSTRAINT `chk_option_settlement_detail` CHECK (
-    `side` IN (1,2)
-    AND `quantity` >= 0
-    AND `payoff` >= 0
-    AND `direction` IN (1,2,3)
-  )
+  KEY `idx_settlement_detail_user` (`tenant_id`, `user_id`, `account_id`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权逐持仓结算明细';
 
 -- =========================================================
@@ -1261,16 +1104,11 @@ CREATE TABLE `t_option_physical_delivery_unit` (
   UNIQUE KEY `uk_physical_delivery_unit_no` (`tenant_id`, `delivery_unit_no`),
   KEY `idx_physical_delivery_batch` (`tenant_id`, `batch_id`, `id`),
   KEY `idx_physical_delivery_status` (`tenant_id`, `status`, `cure_deadline`, `id`),
+  KEY `idx_option_physical_delivery_monitor` (`status`, `cure_deadline`, `tenant_id`, `id`),
   KEY `idx_physical_delivery_long` (`tenant_id`, `long_user_id`, `long_position_id`, `id`),
-  KEY `idx_physical_delivery_short` (`tenant_id`, `short_user_id`, `short_position_id`, `id`),
-  CONSTRAINT `chk_option_physical_delivery_unit` CHECK (
-    `long_position_id` > 0 AND `short_position_id` > 0
-    AND `quantity` > 0 AND `delivery_quantity` > 0 AND `payment_amount` > 0
-    AND `delivery_coin` <> '' AND `payment_coin` <> '' AND `delivery_coin` <> `payment_coin`
-    AND `status` IN (1,2,3,4,5,6) AND `cure_deadline` > 0
-    AND `manual_retry_count` >= 0
-  )
+  KEY `idx_physical_delivery_short` (`tenant_id`, `short_user_id`, `short_position_id`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='实物交割多空配对执行单元';
+
 
 -- =========================================================
 -- 15. Option 与 Asset 对账差异
@@ -1294,13 +1132,59 @@ CREATE TABLE `t_option_reconciliation_issue` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_option_reconciliation_issue` (`tenant_id`, `issue_key`),
   KEY `idx_option_reconciliation_status` (`tenant_id`, `status`, `id`),
-  KEY `idx_option_reconciliation_instruction` (`tenant_id`, `instruction_id`),
-  CONSTRAINT `chk_option_reconciliation_issue` CHECK (
-    `check_type` IN (1,2,3)
-    AND `status` IN (1,2,3)
-    AND `occurrence_count` > 0
-  )
+  KEY `idx_option_reconciliation_instruction` (`tenant_id`, `instruction_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Option与Asset对账差异';
+
+DROP TABLE IF EXISTS `t_option_reconciliation_run_detail`;
+DROP TABLE IF EXISTS `t_option_reconciliation_run`;
+CREATE TABLE `t_option_reconciliation_run` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `business_date` CHAR(10) NOT NULL DEFAULT '' COMMENT 'UTC业务日期YYYY-MM-DD',
+  `scope` TINYINT NOT NULL DEFAULT 1 COMMENT '范围：1钱包镜像 2完整资金守恒',
+  `attempt_no` INT NOT NULL DEFAULT 1 COMMENT '当日同范围执行序号',
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1成功 2有差异 3执行失败',
+  `snapshot_time` BIGINT NOT NULL DEFAULT 0 COMMENT '一致性快照Unix秒',
+  `snapshot_ref` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '快照或证据引用',
+  `coin_count` BIGINT NOT NULL DEFAULT 0 COMMENT '检查币种数',
+  `account_count` BIGINT NOT NULL DEFAULT 0 COMMENT '检查用户钱包数',
+  `mismatch_count` BIGINT NOT NULL DEFAULT 0 COMMENT '差异用户钱包数',
+  `detail` VARCHAR(1000) NOT NULL DEFAULT '' COMMENT '执行摘要或失败原因',
+  `completed_at` BIGINT NOT NULL DEFAULT 0 COMMENT '完成Unix秒',
+  `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_option_reconciliation_run_attempt` (`tenant_id`,`business_date`,`scope`,`attempt_no`),
+  UNIQUE KEY `uk_option_reconciliation_run_identity` (`id`,`tenant_id`,`business_date`,`scope`),
+  KEY `idx_option_reconciliation_run_latest` (`tenant_id`,`scope`,`completed_at`,`status`,`id`),
+  KEY `idx_option_reconciliation_run_monitor` (`scope`,`status`,`completed_at`,`tenant_id`,`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Option日终对账运行与成功心跳';
+
+CREATE TABLE `t_option_reconciliation_run_detail` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `run_id` BIGINT NOT NULL COMMENT '不可变对账运行ID',
+  `tenant_id` BIGINT NOT NULL COMMENT '租户ID，冗余用于租户隔离查询',
+  `business_date` CHAR(10) NOT NULL COMMENT 'UTC业务日期YYYY-MM-DD',
+  `scope` TINYINT NOT NULL DEFAULT 2 COMMENT '范围，明细当前仅允许完整资金守恒scope=2',
+  `dimension_type` TINYINT NOT NULL COMMENT '维度：1用户钱包逐币 2平台账户逐币 3Option子账逐币',
+  `dimension_key` VARCHAR(96) NOT NULL COMMENT 'coin或account_type:coin稳定键',
+  `opening_amount` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '业务日期期初总额',
+  `external_net` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '充值提现及跨钱包划转净额',
+  `option_net` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT 'Option业务Asset流水净额',
+  `manual_net` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '人工增减净额',
+  `expected_closing` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '期初加三类净额',
+  `actual_closing` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '由一致性截止点反推的实际日终',
+  `difference_amount` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '实际日终减预期日终',
+  `flow_count` BIGINT NOT NULL DEFAULT 0 COMMENT '纳入计算的权威流水数',
+  `mismatch_count` BIGINT NOT NULL DEFAULT 0 COMMENT '余额链、字段恒等式或子账关联异常数',
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1一致 2有差异 3数据不完整',
+  `evidence_ref` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '游标、查询或快照证据引用',
+  `detail` VARCHAR(1000) NOT NULL DEFAULT '' COMMENT '分类和完整性摘要',
+  `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_option_reconciliation_detail_dimension` (`run_id`,`dimension_type`,`dimension_key`),
+  KEY `idx_option_reconciliation_detail_lookup` (`tenant_id`,`business_date`,`scope`,`status`,`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Option完整资金守恒逐维度不可变证据';
 
 -- =========================================================
 -- 15. 异常成交现金更正案件与不可变资金分录
@@ -1329,14 +1213,7 @@ CREATE TABLE `t_option_trade_correction` (
   UNIQUE KEY `uk_option_trade_correction_case` (`tenant_id`, `case_no`),
   KEY `idx_option_trade_correction_trade` (`tenant_id`, `trade_id`, `id`),
   KEY `idx_option_trade_correction_status` (`tenant_id`, `status`, `id`),
-  KEY `idx_option_trade_correction_monitor` (`status`, `update_times`, `tenant_id`, `id`),
-  CONSTRAINT `chk_option_trade_correction` CHECK (
-    `tenant_id` > 0 AND `trade_id` > 0 AND `contract_id` > 0
-    AND `action` = 1 AND `status` IN (1,2,3,4,5)
-    AND `reason` <> '' AND `evidence_ref` <> '' AND `requested_by` > 0
-    AND (`status` = 1 OR (`reviewed_by` > 0 AND `reviewed_by` <> `requested_by` AND `reviewed_at` > 0))
-    AND (`status` <> 4 OR `completed_at` > 0)
-  )
+  KEY `idx_option_trade_correction_monitor` (`status`, `update_times`, `tenant_id`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='异常成交现金更正案件';
 
 CREATE TABLE `t_option_trade_correction_leg` (
@@ -1354,12 +1231,7 @@ CREATE TABLE `t_option_trade_correction_leg` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_option_trade_correction_leg` (`tenant_id`, `correction_id`, `leg_no`),
   UNIQUE KEY `uk_option_trade_correction_instruction` (`tenant_id`, `instruction_no`),
-  KEY `idx_option_trade_correction_leg_user` (`tenant_id`, `user_id`, `account_id`, `id`),
-  CONSTRAINT `chk_option_trade_correction_leg` CHECK (
-    `tenant_id` > 0 AND `correction_id` > 0 AND `leg_no` > 0
-    AND `user_id` > 0 AND `coin` <> '' AND `direction` IN (1,2)
-    AND `amount` > 0 AND `instruction_no` <> ''
-  )
+  KEY `idx_option_trade_correction_leg_user` (`tenant_id`, `user_id`, `account_id`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='异常成交不可变现金更正分录';
 
 -- 案件经济字段、分录及合法状态迁移触发器由
@@ -1398,15 +1270,7 @@ CREATE TABLE `t_option_mmp_config` (
   UNIQUE KEY `uk_option_mmp_config` (`tenant_id`, `user_id`, `contract_id`, `group_code`),
   KEY `idx_option_mmp_status` (`tenant_id`, `status`, `id`),
   KEY `idx_option_mmp_contract` (`tenant_id`, `contract_id`, `id`),
-  KEY `idx_option_mmp_monitor` (`status`, `triggered_at`, `update_times`, `tenant_id`, `id`),
-  CONSTRAINT `chk_option_mmp_config` CHECK (
-    `tenant_id` > 0 AND `user_id` > 0 AND `contract_id` > 0 AND `group_code` <> ''
-    AND `enabled` IN (1,2) AND `status` IN (1,2,3)
-    AND `qty_threshold` >= 0 AND `trade_count_threshold` >= 0 AND `loss_threshold` >= 0
-    AND `window_seconds` > 0 AND `cooldown_seconds` >= 0
-    AND (`enabled` = 2 OR (`qty_threshold` > 0 OR `trade_count_threshold` > 0 OR `loss_threshold` > 0))
-    AND `accumulated_qty` >= 0 AND `trade_count` >= 0 AND `accumulated_loss` >= 0
-  )
+  KEY `idx_option_mmp_monitor` (`status`, `triggered_at`, `update_times`, `tenant_id`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权做市商保护配置与实时窗口';
 
 -- MMP 配置门禁触发器由 migrations/20260730_zg_option_mmp.sql 安装。
@@ -1452,35 +1316,7 @@ CREATE TABLE `t_option_contract_series` (
   UNIQUE KEY `uk_option_contract_series_request` (`tenant_id`, `request_key`),
   UNIQUE KEY `uk_option_contract_series_version` (`tenant_id`, `series_code`, `version`),
   KEY `idx_option_contract_series_status` (`tenant_id`, `status`, `id`),
-  CONSTRAINT `chk_option_contract_series` CHECK (
-    `tenant_id` > 0 AND `request_key` <> '' AND `series_code` <> ''
-    AND `version` > 0 AND `status` IN (1,2,3)
-    AND `template_contract_id` = 0 AND JSON_VALID(`template_snapshot`)
-    AND `underlying_symbol` <> '' AND `reference_price` > 0
-    AND `reference_source` <> '' AND `reference_time` > 0
-    AND `evidence_ref` <> '' AND `change_reason` <> ''
-    AND CHAR_LENGTH(`payload_hash`) = 64
-    AND `expected_contract_count` BETWEEN 2 AND 500
-    AND `generated_contract_count` BETWEEN 0 AND `expected_contract_count`
-    AND `created_by` > 0
-    AND (
-      (`status` = 1 AND `reviewed_by` = 0 AND `reviewed_at` = 0 AND `generated_contract_count` = 0 AND `generated_at` = 0
-          AND `launch_status` = 0 AND `launch_reviewed_by` = 0 AND `launch_reviewed_at` = 0)
-      OR (`status` = 2 AND `reviewed_by` > 0 AND `reviewed_by` <> `created_by`
-          AND `review_reason` <> '' AND `reviewed_at` > 0
-          AND `generated_contract_count` = `expected_contract_count` AND `generated_at` > 0
-          AND (
-            (`launch_status` = 1 AND `launch_reviewed_by` = 0 AND `launch_reviewed_at` = 0)
-            OR (`launch_status` IN (2,3) AND `launch_reviewed_by` > 0
-                AND `launch_reviewed_by` <> `created_by`
-                AND `launch_review_reason` <> '' AND `launch_reviewed_at` > 0)
-          ))
-      OR (`status` = 3 AND `reviewed_by` > 0 AND `reviewed_by` <> `created_by`
-          AND `review_reason` <> '' AND `reviewed_at` > 0
-          AND `generated_contract_count` = 0 AND `generated_at` = 0
-          AND `launch_status` = 0 AND `launch_reviewed_by` = 0 AND `launch_reviewed_at` = 0)
-    )
-  )
+  KEY `idx_option_contract_series_monitor` (`status`, `create_times`, `tenant_id`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='不可变合约系列版本及审批';
 
 CREATE TABLE `t_option_contract_series_expiry` (
@@ -1497,12 +1333,7 @@ CREATE TABLE `t_option_contract_series_expiry` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_option_contract_series_expiry_seq` (`tenant_id`, `series_id`, `sequence_no`),
   UNIQUE KEY `uk_option_contract_series_expiry_time` (`tenant_id`, `series_id`, `expire_time`),
-  KEY `idx_option_contract_series_expiry` (`tenant_id`, `series_id`, `id`),
-  CONSTRAINT `chk_option_contract_series_expiry` CHECK (
-    `tenant_id` > 0 AND `series_id` > 0 AND `sequence_no` > 0 AND `cycle_code` <> ''
-    AND `list_time` > 0 AND `exercise_cutoff_time` > `list_time`
-    AND `expire_time` >= `exercise_cutoff_time` AND `deliver_time` >= `expire_time`
-  )
+  KEY `idx_option_contract_series_expiry` (`tenant_id`, `series_id`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系列显式到期规格';
 
 CREATE TABLE `t_option_contract_series_strike_band` (
@@ -1516,11 +1347,7 @@ CREATE TABLE `t_option_contract_series_strike_band` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_option_contract_series_band_seq` (`tenant_id`, `series_id`, `sequence_no`),
-  KEY `idx_option_contract_series_band` (`tenant_id`, `series_id`, `id`),
-  CONSTRAINT `chk_option_contract_series_band` CHECK (
-    `tenant_id` > 0 AND `series_id` > 0 AND `sequence_no` > 0
-    AND `lower_strike` > 0 AND `upper_strike` >= `lower_strike` AND `strike_step` > 0
-  )
+  KEY `idx_option_contract_series_band` (`tenant_id`, `series_id`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系列绝对行权价梯度';
 
 CREATE TABLE `t_option_contract_series_detail` (
@@ -1537,12 +1364,7 @@ CREATE TABLE `t_option_contract_series_detail` (
   UNIQUE KEY `uk_option_contract_series_detail_leg` (`tenant_id`, `series_id`, `expiry_id`, `option_type`, `strike_price`),
   UNIQUE KEY `uk_option_contract_series_detail_code` (`tenant_id`, `contract_code`),
   UNIQUE KEY `uk_option_contract_series_detail_contract` (`tenant_id`, `contract_id`),
-  KEY `idx_option_contract_series_detail` (`tenant_id`, `series_id`, `id`),
-  CONSTRAINT `chk_option_contract_series_detail` CHECK (
-    `tenant_id` > 0 AND `series_id` > 0 AND `expiry_id` > 0
-    AND `option_type` IN (1,2) AND `strike_price` > 0
-    AND `contract_code` <> '' AND `contract_id` > 0
-  )
+  KEY `idx_option_contract_series_detail` (`tenant_id`, `series_id`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系列生成合约不可变谱系';
 
 -- 系列经济字段、子规格、谱系和合法状态迁移触发器由

@@ -1574,7 +1574,7 @@ export default {
     comboOrderExceptions: 'Stale/Manual Combo Parents',
     comboIntegrityIssues: 'Combo Structure/Match Issues',
     insuranceAndBackstop: 'Insurance, Backstop, and Unresolved Deficit',
-    insuranceLedger: 'Insurance Ledger Net Total',
+    insuranceLedger: 'Insurance Activity Ledger Sum (Not Balance)',
     backstopLiability: 'Cumulative Platform Backstop Liability',
     unresolvedDeficit: 'Unresolved Deficit',
     assetInstructionWorkbench: 'Asset Instruction Recovery',

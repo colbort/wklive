@@ -10,6 +10,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/option"
+	"wklive/services/option/internal/observability"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -310,9 +311,7 @@ func (l *UpdateContractLogic) UpdateContract(in *option.UpdateContractReq) (*opt
 	if original.Status != item.Status {
 		// Contract status is owned by lifecycle and audited halt/resume flows.
 		// Admin parameter updates must never be an alternate listing path.
-		return &option.CommonResp{Base: helper.ErrResp(
-			i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx),
-		)}, nil
+		return l.rejectGovernedContractMutation(&original, "status_bypass")
 	}
 	if _, seriesErr := l.svcCtx.OptionContractSeriesDetailModel.FindSeriesLaunchByContract(
 		l.ctx, original.TenantId, original.Id,
@@ -321,16 +320,14 @@ func (l *UpdateContractLogic) UpdateContract(in *option.UpdateContractReq) (*opt
 			original.Status != item.Status || original.IsDeleted != item.IsDeleted {
 			// Series-generated economics and admission state are governed by
 			// the immutable series and lifecycle launch gate.
-			return &option.CommonResp{Base: helper.ErrResp(
-				i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx),
-			)}, nil
+			return l.rejectGovernedContractMutation(&original, "series_economics")
 		}
 	} else if !errors.Is(seriesErr, models.ErrNotFound) {
 		return nil, seriesErr
 	}
 	if original.Status != int64(option.ContractStatus_CONTRACT_STATUS_PENDING) &&
 		!economicContractFieldsEqual(&original, item) {
-		return &option.CommonResp{Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx))}, nil
+		return l.rejectGovernedContractMutation(&original, "listed_economics")
 	}
 	item.UpdateTimes = time.Now().Unix()
 	tradingPolicyChanged := !original.MaxUserLongQty.Equal(item.MaxUserLongQty) ||
@@ -416,4 +413,22 @@ func (l *UpdateContractLogic) UpdateContract(in *option.UpdateContractReq) (*opt
 	}
 
 	return &option.CommonResp{Base: helper.OkResp()}, nil
+}
+
+func (l *UpdateContractLogic) rejectGovernedContractMutation(
+	contract *models.TOptionContract,
+	reason string,
+) (*option.CommonResp, error) {
+	operatorID, _ := utils.GetUserIdFromMd(l.ctx)
+	observability.RecordAdminRejectedMutation(contract.TenantId, "contract", reason)
+	l.Errorw(
+		"rejected governed option contract mutation",
+		logx.Field("tenantId", contract.TenantId),
+		logx.Field("contractId", contract.Id),
+		logx.Field("operatorId", operatorID),
+		logx.Field("reason", reason),
+	)
+	return &option.CommonResp{Base: helper.ErrResp(
+		i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx),
+	)}, nil
 }

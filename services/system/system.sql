@@ -310,6 +310,7 @@ VALUES
 ('期权卖方强平处理', 'OPTION', 'option.ProcessLiquidations', '*/1 * * * * *', 1, '每秒执行卖方强平和保险账户接管', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
 ('期权主动行权清算', 'OPTION', 'option.ProcessExercises', '*/1 * * * * *', 1, '每秒处理美式主动行权空头指派和资金清算', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
 ('期权合约生命周期', 'OPTION', 'option.ProcessContractLifecycle', '*/1 * * * * *', 1, '每秒处理期权上市、到期、行权和结算', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
+('期权日终钱包镜像对账', 'OPTION', 'option.ProcessDailyReconciliation', '15 5 * * * *', 1, '每小时触发，仅UTC 00点窗口自动关闭前一业务日；成功后跳过，显式租户可受控重跑', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000),
 ('期权行情快照清理', 'OPTION', 'option.CleanMarketSnapshots', '0 10 3 * * *', 1, '每日清理超过保留期的期权行情快照', 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000, 'system', UNIX_TIMESTAMP(CURRENT_TIMESTAMP(3)) * 1000);
 
 

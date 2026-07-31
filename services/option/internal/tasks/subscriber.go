@@ -39,6 +39,8 @@ func handleTask(ctx context.Context, svcCtx *svc.ServiceContext, msg tasks.Messa
 		return checkResp(logic.NewProcessLiquidationsLogic(ctx, svcCtx).ProcessLiquidations(req))
 	case tasks.ActionOptionProcessExercises:
 		return checkResp(logic.NewProcessExercisesLogic(ctx, svcCtx).ProcessExercises(req))
+	case tasks.ActionOptionProcessDailyReconciliation:
+		return checkResp(logic.NewProcessDailyReconciliationLogic(ctx, svcCtx).ProcessDailyReconciliation(req))
 	case tasks.ActionOptionProcessContractLifecycle:
 		return checkResp(logic.NewProcessContractLifecycleLogic(ctx, svcCtx).ProcessContractLifecycle(req))
 	case tasks.ActionOptionProcessCorporateActions:

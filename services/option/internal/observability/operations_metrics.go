@@ -32,7 +32,7 @@ var (
 		Namespace: "wklive",
 		Subsystem: "option",
 		Name:      "operations_amount",
-		Help:      "Current Option insurance, backstop, or unresolved deficit amount.",
+		Help:      "Current Option raw insurance activity sum (not balance), backstop liability, or unresolved deficit amount.",
 		Labels:    []string{"tenant_id", "category", "coin"},
 	})
 	optionOperationsSampleSuccess gaugeVec = metric.NewGaugeVec(&metric.GaugeVecOpts{

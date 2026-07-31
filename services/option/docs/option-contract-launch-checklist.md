@@ -35,6 +35,8 @@
 
 ## 3. 技术门禁
 
+- [ ] `monitoring/option-production-readiness.sh --repository-only` 通过；生产模式使用仓库外
+  attestation 执行后为 `READY`，输出、attestation、生产配置和全部证据 SHA-256 已归档。
 - [ ] `option-remediation-plan.md` 中该产品依赖项均为 `DONE`。
 - [ ] 迁移已在预生产重复执行并核对结构、索引、约束和历史回填。
 - [ ] 批量上币已执行 SER-001～SER-010；尤其并发复核、响应丢失重试、单条冲突整批回滚、
