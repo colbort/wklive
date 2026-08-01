@@ -693,6 +693,7 @@ type CreateContractReq struct {
 	MaxOpenInterest             string `json:"maxOpenInterest,optional" validate:"decimal_gte_zero,decimal_32_16"`
 	OrderPriceBandRatio         string `json:"orderPriceBandRatio,optional" validate:"decimal_gte_zero,decimal_20_10"`
 	CircuitBreakerRatio         string `json:"circuitBreakerRatio,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	GreeksMaxAgeSeconds         int64  `json:"greeksMaxAgeSeconds,optional"`
 	SettlementPriceSource       string `json:"settlementPriceSource,optional"`
 	SettlementPriceMethod       string `json:"settlementPriceMethod,optional"`
 	SettlementWindowSeconds     int64  `json:"settlementWindowSeconds,optional"`
@@ -3277,6 +3278,7 @@ type OptionContract struct {
 	MaxOpenInterest             string `json:"maxOpenInterest" validate:"decimal_32_16"`
 	OrderPriceBandRatio         string `json:"orderPriceBandRatio" validate:"decimal_20_10"`
 	CircuitBreakerRatio         string `json:"circuitBreakerRatio" validate:"decimal_20_10"`
+	GreeksMaxAgeSeconds         int64  `json:"greeksMaxAgeSeconds"`
 	SettlementPriceSource       string `json:"settlementPriceSource"`
 	SettlementPriceMethod       string `json:"settlementPriceMethod"`
 	SettlementWindowSeconds     int64  `json:"settlementWindowSeconds"`
@@ -3656,39 +3658,41 @@ type OptionOperationsOverview struct {
 }
 
 type OptionOrder struct {
-	Id               int64  `json:"id"`
-	TenantId         int64  `json:"tenantId"`
-	OrderNo          string `json:"orderNo"`
-	UserId           int64  `json:"userId"`
-	AccountId        int64  `json:"accountId"`
-	ContractId       int64  `json:"contractId"`
-	UnderlyingSymbol string `json:"underlyingSymbol"`
-	Side             int64  `json:"side"`
-	PositionEffect   int64  `json:"positionEffect"`
-	OrderType        int64  `json:"orderType"`
-	Price            string `json:"price" validate:"decimal_32_16"`
-	Qty              string `json:"qty" validate:"decimal_32_16"`
-	FilledQty        string `json:"filledQty" validate:"decimal_32_16"`
-	UnfilledQty      string `json:"unfilledQty" validate:"decimal_32_16"`
-	AvgPrice         string `json:"avgPrice" validate:"decimal_32_16"`
-	Turnover         string `json:"turnover" validate:"decimal_32_16"`
-	Fee              string `json:"fee" validate:"decimal_32_16"`
-	FeeCoin          string `json:"feeCoin"`
-	MarginAmount     string `json:"marginAmount" validate:"decimal_32_16"`
-	MarginCoin       string `json:"marginCoin"`
-	Source           int64  `json:"source"`
-	ClientOrderId    string `json:"clientOrderId"`
-	ReduceOnly       int64  `json:"reduceOnly"` // 是否只减仓：1是 2否
-	Mmp              int64  `json:"mmp"`        // 是否做市商保护单：1是 2否
-	MmpGroup         string `json:"mmpGroup"`
-	ComboOrderId     int64  `json:"comboOrderId"`
-	ComboLegNo       int64  `json:"comboLegNo"`
-	Status           int64  `json:"status"`
-	CancelReason     string `json:"cancelReason"`
-	MatchTime        int64  `json:"matchTime"`
-	CancelTime       int64  `json:"cancelTime"`
-	CreateTimes      int64  `json:"createTimes"`
-	UpdateTimes      int64  `json:"updateTimes"`
+	Id                         int64  `json:"id"`
+	TenantId                   int64  `json:"tenantId"`
+	OrderNo                    string `json:"orderNo"`
+	UserId                     int64  `json:"userId"`
+	AccountId                  int64  `json:"accountId"`
+	ContractId                 int64  `json:"contractId"`
+	UnderlyingSymbol           string `json:"underlyingSymbol"`
+	Side                       int64  `json:"side"`
+	PositionEffect             int64  `json:"positionEffect"`
+	OrderType                  int64  `json:"orderType"`
+	Price                      string `json:"price" validate:"decimal_32_16"`
+	Qty                        string `json:"qty" validate:"decimal_32_16"`
+	FilledQty                  string `json:"filledQty" validate:"decimal_32_16"`
+	UnfilledQty                string `json:"unfilledQty" validate:"decimal_32_16"`
+	AvgPrice                   string `json:"avgPrice" validate:"decimal_32_16"`
+	Turnover                   string `json:"turnover" validate:"decimal_32_16"`
+	Fee                        string `json:"fee" validate:"decimal_32_16"`
+	FeeCoin                    string `json:"feeCoin"`
+	MarginAmount               string `json:"marginAmount" validate:"decimal_32_16"`
+	MarginCoin                 string `json:"marginCoin"`
+	Source                     int64  `json:"source"`
+	ClientOrderId              string `json:"clientOrderId"`
+	ReduceOnly                 int64  `json:"reduceOnly"` // 是否只减仓：1是 2否
+	Mmp                        int64  `json:"mmp"`        // 是否做市商保护单：1是 2否
+	MmpGroup                   string `json:"mmpGroup"`
+	ComboOrderId               int64  `json:"comboOrderId"`
+	ComboLegNo                 int64  `json:"comboLegNo"`
+	PortfolioRiskConfigId      int64  `json:"portfolioRiskConfigId"`
+	PortfolioRiskConfigVersion int64  `json:"portfolioRiskConfigVersion"`
+	Status                     int64  `json:"status"`
+	CancelReason               string `json:"cancelReason"`
+	MatchTime                  int64  `json:"matchTime"`
+	CancelTime                 int64  `json:"cancelTime"`
+	CreateTimes                int64  `json:"createTimes"`
+	UpdateTimes                int64  `json:"updateTimes"`
 }
 
 type OptionOrderDetail struct {
@@ -3813,8 +3817,9 @@ type OptionReleaseUserKillSwitchReq struct {
 }
 
 type OptionRetryAssetInstructionReq struct {
-	TenantId      int64 `json:"tenantId"`
-	InstructionId int64 `json:"instructionId"`
+	TenantId      int64  `json:"tenantId"`
+	InstructionId int64  `json:"instructionId"`
+	Reason        string `json:"reason" validate:"min=1,max=64"`
 }
 
 type OptionRetryExerciseReq struct {
@@ -3828,9 +3833,10 @@ type OptionRetryLiquidationReq struct {
 }
 
 type OptionRetrySettlementInstructionReq struct {
-	TenantId      int64 `json:"tenantId"`
-	SettlementId  int64 `json:"settlementId"`
-	InstructionId int64 `json:"instructionId"`
+	TenantId      int64  `json:"tenantId"`
+	SettlementId  int64  `json:"settlementId"`
+	InstructionId int64  `json:"instructionId"`
+	Reason        string `json:"reason" validate:"min=1,max=64"`
 }
 
 type OptionRetryTradeEventReq struct {
@@ -6279,6 +6285,7 @@ type UpdateContractReq struct {
 	MaxOpenInterest             string `json:"maxOpenInterest,optional" validate:"decimal_gte_zero,decimal_32_16"`
 	OrderPriceBandRatio         string `json:"orderPriceBandRatio,optional" validate:"decimal_gte_zero,decimal_20_10"`
 	CircuitBreakerRatio         string `json:"circuitBreakerRatio,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	GreeksMaxAgeSeconds         int64  `json:"greeksMaxAgeSeconds,optional"`
 	SettlementPriceSource       string `json:"settlementPriceSource,optional"`
 	SettlementPriceMethod       string `json:"settlementPriceMethod,optional"`
 	SettlementWindowSeconds     int64  `json:"settlementWindowSeconds,optional"`

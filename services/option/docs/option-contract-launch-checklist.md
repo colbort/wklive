@@ -28,6 +28,8 @@
 - [ ] `exercise_cutoff_time` 早于或等于到期且晚于上市；`auto_exercise_threshold` 非负，并与公告精度一致。
 - [ ] `max_user_long_qty`、`max_user_short_qty`、`max_open_interest` 均为经风控批准的正数；0 不表示无限。
 - [ ] `order_price_band_ratio`、`circuit_breaker_ratio` 均为 `(0,1]` 内经审批值，并与行情波动和订单 tick 压测结果一致。
+- [ ] `greeks_max_age_seconds` 为正数，已按
+  `templates/option-market-freshness-approval.md` 完成产品、风控模型、市场运营和技术复核；不得复用未经证明的30秒值。
 - [ ] 新建状态只能是 `PENDING`；后台参数更新不能直接修改状态。上市时标的价和标记价为正、
   各自快照不超过30秒，且生命周期日志显示全部自动门禁通过。
 - [ ] 所有 Unix 时间已从产品时区交叉换算并由第二人复核。
@@ -45,15 +47,21 @@
   `20260730_zd_option_exercise_governance.sql`、`20260730_ze_option_trading_controls.sql`、
   `20260730_zf_option_trade_correction.sql`、`20260730_zg_option_mmp.sql`、
   `20260730_zh_option_portfolio_risk_governance.sql`、
-  `20260730_zi_option_physical_delivery_default.sql`；
+  `20260730_zi_option_physical_delivery_default.sql`、
+  `20260731_zu_option_greeks_freshness.sql`、
+  `20260731_zv_option_order_portfolio_config.sql`、
+  `20260731_zw_option_assignment_pagination.sql`、
+  `20260731_zx_option_margin_coin_evidence.sql`、
+  `20260731_zy_option_settlement_price_evidence.sql`；
   `option.sql` 不包含这些迁移创建的不可变经济字段/控制事件触发器。
 - [ ] Option、Asset、Market、Redis、消息队列和数据库容量/健康正常。
-- [ ] 标的、标记价、Greeks 三类时间戳分别可见，时间同步正常。
+- [ ] 标的、标记价、Greeks 三类时间戳分别可见，时间同步正常；Greeks 在批准阈值边界内显示新鲜，超过一秒显示过期并触发 OPT-A003。
 - [ ] 价格带、用户多空/OI 限额、跨账户 STP、kill switch、熔断及恢复审计已验收。
 - [ ] 如开放 MMP，P1-003 必须为 `DONE`，且已验收报价组、阈值、触发撤单、冷静期、
   人工恢复、权限和审计；否则客户端/做市商权限必须保持关闭。
 - [ ] 如开放组合保证金，P1-004 必须为 `DONE`；当前租户和结算币存在有效已批准版本，
-  回测报告、独立验证、压力结果和回滚演练证据与版本 ID 一致；否则组合卖方入口保持关闭。
+  回测报告、独立验证、压力结果和回滚演练证据与版本 ID 一致；边界测试中新组合卖单保存的
+  准入配置 ID/版本与风险账户快照一致且不可改写；否则组合卖方入口保持关闭。
 - [ ] 如开放实物交割，P1-007 必须为 `DONE`；配对交割单元、先收后付、补资截止、
   人工复核、两币种守恒、通知和最终经济处置均已验收；否则实物合约不得进入交易态。
 - [ ] 异常成交现金更正的暂停、撤单、借贷守恒、四眼复核、先扣后入账、人工重试和不可变审计已验收；不得以人工改表替代。
@@ -69,11 +77,15 @@
 - [ ] MMP 数量/笔数/损失阈值边界、同组全撤、跨组隔离、非 MMP 隔离、冷静期和人工恢复通过。
 - [ ] 异常成交案件创建、申请人自审拒绝、不平分录拒绝、Asset 失败不提前入账、完成后净额为 0 通过。
 - [ ] 多头、空头、价差和跨账户风险权益/保证金通过。
+- [ ] 组合保证金版本切换前后新卖单保存准确配置 ID/版本；缺省、错配和事后改写被数据库拒绝，
+  迁移前 `0/0` 历史单仍可正常撮合/撤单但标记为历史证据不可用。
 - [ ] 行情陈旧、未来时间戳、Asset 超时和消息重放故障注入通过。
 - [ ] 主动行权幂等、步长、净收益、并发指派通过（仅美式）。
 - [ ] AUTO/DNE/相反指令、截止边界、阈值边界、历史版本不可篡改和重启重放通过（仅现金结算）。
 - [ ] 1/500/501/5000 空头 FIFO 指派及未指派订单不受影响通过（仅美式）。
 - [ ] 到期窗口取价、样本不足、确定性重算、结算资产守恒通过。
+- [ ] 已确认自动结算价在使用点按不可变快照 ID 复算一致；错误中位数、窗口、缺失/重复证据
+  均被数据库和生命周期双重阻止；人工更正四眼、版本保留且不被自动算法监控误报。
 - [ ] 实物 Call/Put 的交割币种、资产不足和人工处置通过（仅实物）。
 - [ ] 日终对账与事故恢复演练通过。
 

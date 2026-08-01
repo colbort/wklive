@@ -33,6 +33,7 @@ CREATE TABLE `t_option_contract` (
   `max_open_interest` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '合约单边持仓及开仓委托上限，0表示未配置',
   `order_price_band_ratio` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT '相对新鲜标记价的下单价格带比例，0表示未配置',
   `circuit_breaker_ratio` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT '标记价相对前值跳变熔断比例，0表示未配置',
+  `greeks_max_age_seconds` BIGINT NOT NULL DEFAULT 0 COMMENT 'IV与Greeks最大允许陈旧秒数，0表示未审批/未配置',
   `settlement_price_source` VARCHAR(32) NOT NULL DEFAULT 'authoritative-market' COMMENT '最终结算价来源',
   `settlement_price_method` VARCHAR(16) NOT NULL DEFAULT 'MEDIAN' COMMENT '最终结算价算法',
   `settlement_window_seconds` INT NOT NULL DEFAULT 60 COMMENT '到期前取价窗口秒数',
@@ -43,7 +44,7 @@ CREATE TABLE `t_option_contract` (
   `exercise_fee_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT '行权手续费率',
   `fee_user_id` BIGINT NOT NULL DEFAULT 0 COMMENT '平台手续费归集用户ID',
   `fee_account_id` BIGINT NOT NULL DEFAULT 0 COMMENT '平台手续费归集Option账户ID',
-  `seller_margin_mode` TINYINT NOT NULL DEFAULT 1 COMMENT '卖方保证金模式：1关闭 2逐仓 3组合',
+  `seller_margin_mode` TINYINT NOT NULL DEFAULT 1 COMMENT '卖方保证金模式：1关闭 2逐仓 3组合 4实物全额担保',
   `initial_margin_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT '卖方初始保证金率',
   `maintenance_margin_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT '卖方维持保证金率',
   `min_margin_rate` DECIMAL(20,10) NOT NULL DEFAULT 0 COMMENT '卖方最低保证金率',
@@ -329,7 +330,9 @@ CREATE TABLE `t_option_market_snapshot` (
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`),
   KEY `idx_tenant_contract_snapshot_time` (`tenant_id`, `contract_id`, `snapshot_time`),
-  KEY `idx_contract_source_time` (`tenant_id`, `contract_id`, `source_type`, `snapshot_time`)
+  KEY `idx_contract_source_time` (`tenant_id`, `contract_id`, `source_type`, `snapshot_time`),
+  KEY `idx_option_settlement_snapshot_evidence`
+    (`tenant_id`, `contract_id`, `source_type`, `source_snapshot_id`, `snapshot_time`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权行情快照表';
 
 DROP TABLE IF EXISTS `t_option_market_snapshot_inbox`;
@@ -371,6 +374,8 @@ CREATE TABLE `t_option_order` (
   `fee_coin` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '手续费币种',
   `margin_amount` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '冻结保证金',
   `margin_coin` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '订单冻结资产币种',
+  `portfolio_risk_config_id` BIGINT NOT NULL DEFAULT 0 COMMENT '组合保证金准入采用的参数ID；非组合保证金卖单或迁移前历史单为0',
+  `portfolio_risk_config_version` BIGINT NOT NULL DEFAULT 0 COMMENT '组合保证金准入采用的参数版本；与参数ID成对保存',
   `source` TINYINT NOT NULL DEFAULT 0 COMMENT '订单来源：1APP 2WEB 3API 4ADMIN',
   `client_order_id` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '客户端订单号',
   `reduce_only` TINYINT NOT NULL DEFAULT 2 COMMENT '是否只减仓：1是 2否',
@@ -733,6 +738,7 @@ CREATE TABLE `t_option_position` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_uid_account_contract_side` (`tenant_id`, `user_id`, `account_id`, `contract_id`, `side`),
   KEY `idx_tenant_contract_id` (`tenant_id`, `contract_id`),
+  KEY `idx_option_position_assignment_fifo` (`tenant_id`, `contract_id`, `side`, `status`, `create_times`, `id`),
   KEY `idx_tenant_uid_account` (`tenant_id`, `user_id`, `account_id`),
   KEY `idx_option_position_monitor` (`status`, `tenant_id`, `contract_id`, `user_id`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权持仓表';
@@ -815,7 +821,7 @@ CREATE TABLE `t_option_exercise_instruction` (
   KEY `idx_exercise_instruction_active` (`tenant_id`, `contract_id`, `position_id`, `status`, `version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权到期行权指令版本';
 
--- 行权指令经济字段不可变触发器由
+-- 行权指令经济字段不可变、状态单向迁移及禁止删除触发器由
 -- migrations/20260730_zd_option_exercise_governance.sql 安装；
 -- 新建数据库后同样必须执行该迁移。
 

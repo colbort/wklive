@@ -44,6 +44,7 @@ func (l *SyncMarketQuoteLogic) SyncAuthoritativeSnapshot(event cache.Authoritati
 	if strings.TrimSpace(event.SnapshotID) == "" {
 		return MarketSnapshotConsumeResult{}, errors.New("authoritative snapshot id is required")
 	}
+	event.SnapshotID = strings.TrimSpace(event.SnapshotID)
 	if strings.TrimSpace(event.CategoryCode) == "" {
 		return MarketSnapshotConsumeResult{}, errors.New("market category code is required")
 	}

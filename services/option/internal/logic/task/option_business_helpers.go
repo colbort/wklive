@@ -178,6 +178,13 @@ func updateClosePosition(ctx context.Context, model models.TOptionPositionModel,
 	pos.PositionQty = decimal.Max(pos.PositionQty.Sub(reduceQty), decimal.Zero)
 	pos.MarkPrice = price
 	pos.PositionValue = pos.MarkPrice.Mul(pos.PositionQty).Mul(multiplier)
+	if side == int64(common.PositionSide_POSITION_SIDE_LONG) {
+		pos.UnrealizedPnl = pos.MarkPrice.Sub(pos.OpenAvgPrice).
+			Mul(pos.PositionQty).Mul(multiplier)
+	} else {
+		pos.UnrealizedPnl = pos.OpenAvgPrice.Sub(pos.MarkPrice).
+			Mul(pos.PositionQty).Mul(multiplier)
+	}
 	pos.LastCalcTime = now
 	pos.UpdateTimes = now
 	if !pos.PositionQty.IsPositive() {

@@ -2,7 +2,9 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
+	"strings"
 
 	"wklive/common/sqlutil"
 	"wklive/proto/option"
@@ -10,6 +12,17 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
+
+func (m *customTOptionAssetInstructionModel) Insert(
+	ctx context.Context,
+	data *TOptionAssetInstruction,
+) (sql.Result, error) {
+	if data == nil || strings.TrimSpace(data.Coin) == "" {
+		return nil, fmt.Errorf("option asset instruction coin is required")
+	}
+	data.Coin = strings.TrimSpace(data.Coin)
+	return m.defaultTOptionAssetInstructionModel.Insert(ctx, data)
+}
 
 var _ TOptionAssetInstructionModel = (*customTOptionAssetInstructionModel)(nil)
 

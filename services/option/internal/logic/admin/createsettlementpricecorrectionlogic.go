@@ -2,7 +2,6 @@ package adminlogic
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"strings"
 	"time"
@@ -42,21 +41,13 @@ func (l *CreateSettlementPriceCorrectionLogic) CreateSettlementPriceCorrection(i
 	}
 	price, err := conv.ParseDecimalField(in.DeliveryPrice)
 	reason := strings.TrimSpace(in.Reason)
-	var sourceIDs []string
-	jsonErr := json.Unmarshal([]byte(in.SourceSnapshotIds), &sourceIDs)
+	sourceIDs, canonicalSourceIDs, sourceErr := helpers.NormalizeSettlementPriceSourceIDs(in.SourceSnapshotIds)
 	if in.TenantId <= 0 || in.ContractId <= 0 || operatorID <= 0 ||
 		err != nil || !price.IsPositive() || reason == "" || len(reason) > 500 ||
-		jsonErr != nil || len(sourceIDs) == 0 {
+		sourceErr != nil {
 		return &option.GetSettlementPriceResp{
 			Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
 		}, nil
-	}
-	for _, sourceID := range sourceIDs {
-		if strings.TrimSpace(sourceID) == "" {
-			return &option.GetSettlementPriceResp{
-				Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
-			}, nil
-		}
 	}
 	contract, err := l.svcCtx.OptionContractModel.FindOne(l.ctx, in.ContractId)
 	if err != nil {
@@ -103,13 +94,16 @@ func (l *CreateSettlementPriceCorrectionLogic) CreateSettlementPriceCorrection(i
 		}
 		created = &models.TOptionSettlementPrice{
 			TenantId: in.TenantId, ContractId: in.ContractId,
-			PriceSource: "manual-correction", WindowStart: contract.ExpireTime - contract.SettlementWindowSeconds,
+			PriceSource: helpers.SettlementPriceSourceManual, WindowStart: contract.ExpireTime - contract.SettlementWindowSeconds,
 			WindowEnd: contract.ExpireTime, SampleCount: int64(len(sourceIDs)),
-			CalculationMethod: "MANUAL", DeliveryPrice: price,
-			SourceSnapshotIds: in.SourceSnapshotIds, Version: version,
+			CalculationMethod: helpers.SettlementPriceMethodManual, DeliveryPrice: price,
+			SourceSnapshotIds: canonicalSourceIDs, Version: version,
 			Status:       int64(option.SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_PENDING),
 			SupersedesId: supersedesID, ChangeReason: reason, CreatedBy: operatorID,
 			CreateTimes: now, UpdateTimes: now,
+		}
+		if validationErr := helpers.ValidateSettlementPriceEvidence(contract, created, false); validationErr != nil {
+			return validationErr
 		}
 		result, insertErr := priceModel.Insert(ctx, created)
 		if insertErr != nil {

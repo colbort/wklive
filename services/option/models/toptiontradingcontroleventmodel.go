@@ -71,3 +71,18 @@ func NewTOptionTradingControlEventModel(conn sqlx.SqlConn, c cache.CacheConf, op
 		defaultTOptionTradingControlEventModel: newTOptionTradingControlEventModel(conn, c, opts...),
 	}
 }
+
+// InsertOptionTradingControlEvent appends an immutable audit fact through the
+// caller's SQL connection. Trading admission calls this inside their business
+// transaction so audit durability does not depend on Redis availability.
+func InsertOptionTradingControlEvent(
+	ctx context.Context, conn sqlx.SqlConn, item *TOptionTradingControlEvent,
+) error {
+	_, err := conn.ExecCtx(ctx, `INSERT INTO t_option_trading_control_event
+(tenant_id,user_id,contract_id,order_id,event_type,reason,detail,operator_id,create_times)
+VALUES(?,?,?,?,?,?,?,?,?)`,
+		item.TenantId, item.UserId, item.ContractId, item.OrderId, item.EventType,
+		item.Reason, item.Detail, item.OperatorId, item.CreateTimes,
+	)
+	return err
+}

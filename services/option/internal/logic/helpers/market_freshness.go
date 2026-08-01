@@ -21,6 +21,12 @@ func IsMarkFresh(market *models.TOptionMarket, now, maxAge int64) bool {
 		IsFreshTimestamp(market.MarkSnapshotTime, now, maxAge)
 }
 
+func IsGreeksFresh(market *models.TOptionMarket, now, maxAge int64) bool {
+	return market != nil &&
+		maxAge > 0 &&
+		IsFreshTimestamp(market.GreeksSnapshotTime, now, maxAge)
+}
+
 func IsRiskMarketFresh(market *models.TOptionMarket, now, maxAge int64) bool {
 	return IsUnderlyingFresh(market, now, maxAge) &&
 		IsMarkFresh(market, now, maxAge)

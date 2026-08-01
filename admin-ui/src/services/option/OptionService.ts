@@ -104,6 +104,7 @@ export type OptionContract = {
   maxOpenInterest: string
   orderPriceBandRatio: string
   circuitBreakerRatio: string
+  greeksMaxAgeSeconds: number
   settlementPriceSource: string
   settlementPriceMethod: string
   settlementWindowSeconds: number
@@ -211,6 +212,8 @@ export type OptionOrder = {
   mmpGroup: string
   comboOrderId: number
   comboLegNo: number
+  portfolioRiskConfigId: number
+  portfolioRiskConfigVersion: number
   status: number
   cancelReason: string
   matchTime: number
@@ -863,6 +866,7 @@ export type ListTradeCorrectionsReq = {
 export type OptionRetryAssetInstructionReq = {
   tenantId: number
   instructionId: number
+  reason: string
 }
 
 export type GetOperationsOverviewReq = {
@@ -1278,6 +1282,7 @@ export type OptionRetrySettlementInstructionReq = {
   tenantId: number
   settlementId: number
   instructionId: number
+  reason: string
 }
 
 export type ListPhysicalDeliveryUnitsReq = {

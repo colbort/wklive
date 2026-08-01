@@ -37,3 +37,20 @@ func TestFutureMarketTimestampIsRejected(t *testing.T) {
 		t.Fatal("future timestamp accepted")
 	}
 }
+
+func TestGreeksFreshnessRequiresApprovedPositiveThreshold(t *testing.T) {
+	market := &models.TOptionMarket{GreeksSnapshotTime: 90}
+	if IsGreeksFresh(market, 100, 0) {
+		t.Fatal("unconfigured Greeks threshold must fail closed")
+	}
+	if !IsGreeksFresh(market, 100, 10) {
+		t.Fatal("Greeks timestamp at the approved boundary should be fresh")
+	}
+	if IsGreeksFresh(market, 101, 10) {
+		t.Fatal("Greeks timestamp older than the approved threshold was accepted")
+	}
+	market.GreeksSnapshotTime = 102
+	if IsGreeksFresh(market, 101, 10) {
+		t.Fatal("future Greeks timestamp was accepted")
+	}
+}

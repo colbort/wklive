@@ -93,3 +93,25 @@ func TestValidExerciseInstructionType(t *testing.T) {
 		t.Fatal("unknown instruction accepted")
 	}
 }
+
+func TestAllowsExerciseSubmissionOnlyForListedLifecycle(t *testing.T) {
+	for _, status := range []option.ContractStatus{
+		option.ContractStatus_CONTRACT_STATUS_TRADING,
+		option.ContractStatus_CONTRACT_STATUS_PAUSED,
+	} {
+		if !allowsExerciseSubmission(int64(status)) {
+			t.Fatalf("listed lifecycle status rejected: %s", status)
+		}
+	}
+	for _, status := range []option.ContractStatus{
+		option.ContractStatus_CONTRACT_STATUS_UNKNOWN,
+		option.ContractStatus_CONTRACT_STATUS_PENDING,
+		option.ContractStatus_CONTRACT_STATUS_EXPIRED,
+		option.ContractStatus_CONTRACT_STATUS_SETTLED,
+		option.ContractStatus_CONTRACT_STATUS_OFFLINE,
+	} {
+		if allowsExerciseSubmission(int64(status)) {
+			t.Fatalf("non-listed lifecycle status accepted: %s", status)
+		}
+	}
+}

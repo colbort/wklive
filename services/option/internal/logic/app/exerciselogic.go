@@ -92,6 +92,9 @@ func (l *ExerciseLogic) Exercise(in *option.ExerciseReq) (*option.ExerciseResp, 
 		contract.SettlementType != int64(option.SettlementType_SETTLEMENT_TYPE_CASH) {
 		return &option.ExerciseResp{Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx))}, nil
 	}
+	if !allowsExerciseSubmission(contract.Status) {
+		return &option.ExerciseResp{Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx))}, nil
+	}
 	if blocked, checkErr := l.svcCtx.OptionCorporateActionContractModel.IsContractMigrationActive(
 		l.ctx, contract.TenantId, contract.Id,
 	); checkErr != nil {
@@ -165,8 +168,22 @@ func (l *ExerciseLogic) Exercise(in *option.ExerciseReq) (*option.ExerciseResp, 
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		exerciseModel := models.NewTOptionExerciseModel(conn, l.svcCtx.Config.CacheRedis)
+		contractModel := models.NewTOptionContractModel(conn, l.svcCtx.Config.CacheRedis)
 		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis)
 		actionContractModel := models.NewTOptionCorporateActionContractModel(conn, l.svcCtx.Config.CacheRedis)
+		currentContract, err := contractModel.FindOneForUpdate(ctx, contract.Id)
+		if err != nil {
+			return err
+		}
+		txNow := time.Now().Unix()
+		if currentContract.TenantId != tenantId ||
+			currentContract.ExerciseStyle != int64(option.ExerciseStyle_EXERCISE_STYLE_AMERICAN) ||
+			currentContract.SettlementType != int64(option.SettlementType_SETTLEMENT_TYPE_CASH) ||
+			!allowsExerciseSubmission(currentContract.Status) ||
+			txNow < currentContract.ListTime || currentContract.ExerciseCutoffTime <= 0 ||
+			txNow >= currentContract.ExerciseCutoffTime {
+			return i18n.StatusError(ctx, i18n.OperationNotAllowed)
+		}
 		current, err := positionModel.FindOneForUpdate(ctx, position.Id)
 		if err != nil {
 			return err
@@ -240,6 +257,14 @@ func sameExerciseRequest(item *models.TOptionExercise, in *option.ExerciseReq, q
 		item.PositionId == in.PositionId &&
 		(in.ContractId == 0 || item.ContractId == in.ContractId) &&
 		item.ExerciseQty.Equal(qty)
+}
+
+// Trading halts stop new orders but must not strip an option holder's exercise
+// right. Contracts outside the listed lifecycle cannot accept a new exercise or
+// expiry instruction; expiry processing owns them after the cutoff transition.
+func allowsExerciseSubmission(status int64) bool {
+	return status == int64(option.ContractStatus_CONTRACT_STATUS_TRADING) ||
+		status == int64(option.ContractStatus_CONTRACT_STATUS_PAUSED)
 }
 
 func exerciseReplayResponse(

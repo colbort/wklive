@@ -198,6 +198,9 @@ func (l *UpdateContractLogic) UpdateContract(in *option.UpdateContractReq) (*opt
 		}
 		item.CircuitBreakerRatio = value
 	}
+	if in.GreeksMaxAgeSeconds != 0 {
+		item.GreeksMaxAgeSeconds = in.GreeksMaxAgeSeconds
+	}
 	if in.SettlementPriceSource != "" {
 		item.SettlementPriceSource = in.SettlementPriceSource
 	}
@@ -334,7 +337,8 @@ func (l *UpdateContractLogic) UpdateContract(in *option.UpdateContractReq) (*opt
 		!original.MaxUserShortQty.Equal(item.MaxUserShortQty) ||
 		!original.MaxOpenInterest.Equal(item.MaxOpenInterest) ||
 		!original.OrderPriceBandRatio.Equal(item.OrderPriceBandRatio) ||
-		!original.CircuitBreakerRatio.Equal(item.CircuitBreakerRatio)
+		!original.CircuitBreakerRatio.Equal(item.CircuitBreakerRatio) ||
+		original.GreeksMaxAgeSeconds != item.GreeksMaxAgeSeconds
 	statusChanged := original.Status != item.Status
 	operatorID := int64(0)
 	if tradingPolicyChanged || statusChanged {
@@ -357,7 +361,8 @@ func (l *UpdateContractLogic) UpdateContract(in *option.UpdateContractReq) (*opt
 			!locked.MaxUserShortQty.Equal(original.MaxUserShortQty) ||
 			!locked.MaxOpenInterest.Equal(original.MaxOpenInterest) ||
 			!locked.OrderPriceBandRatio.Equal(original.OrderPriceBandRatio) ||
-			!locked.CircuitBreakerRatio.Equal(original.CircuitBreakerRatio) {
+			!locked.CircuitBreakerRatio.Equal(original.CircuitBreakerRatio) ||
+			locked.GreeksMaxAgeSeconds != original.GreeksMaxAgeSeconds {
 			return errors.New("option contract was concurrently updated")
 		}
 		detailModel := models.NewTOptionContractSeriesDetailModel(conn, l.svcCtx.Config.CacheRedis)
@@ -383,12 +388,13 @@ func (l *UpdateContractLogic) UpdateContract(in *option.UpdateContractReq) (*opt
 				TenantId: item.TenantId, ContractId: item.Id,
 				EventType: "TRADING_POLICY_UPDATED", Reason: "ADMIN_UPDATE",
 				Detail: fmt.Sprintf(
-					"long:%s->%s short:%s->%s oi:%s->%s band:%s->%s circuit:%s->%s",
+					"long:%s->%s short:%s->%s oi:%s->%s band:%s->%s circuit:%s->%s greeksMaxAge:%d->%d",
 					original.MaxUserLongQty, item.MaxUserLongQty,
 					original.MaxUserShortQty, item.MaxUserShortQty,
 					original.MaxOpenInterest, item.MaxOpenInterest,
 					original.OrderPriceBandRatio, item.OrderPriceBandRatio,
 					original.CircuitBreakerRatio, item.CircuitBreakerRatio,
+					original.GreeksMaxAgeSeconds, item.GreeksMaxAgeSeconds,
 				),
 				OperatorId: operatorID, CreateTimes: item.UpdateTimes,
 			}); err != nil {

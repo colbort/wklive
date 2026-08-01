@@ -266,7 +266,7 @@ func createCloseMarginReleaseInstructions(
 		if releaseAmount.IsPositive() {
 			collateralCoin := lot.CollateralCoin
 			if collateralCoin == "" {
-				collateralCoin = contract.SettleCoin
+				return fmt.Errorf("option margin lot collateral coin evidence is missing: lotId=%d", lot.Id)
 			}
 			if _, err := instructionModel.Insert(ctx, &models.TOptionAssetInstruction{
 				TenantId: trade.TenantId, InstructionNo: fmt.Sprintf("%s-MARGIN-%d", trade.TradeNo, lot.Id),

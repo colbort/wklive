@@ -46,6 +46,20 @@ func TestConsumeBuyOrderReservation(t *testing.T) {
 	}
 }
 
+func TestOptionOrderMarginCoinNeverFallsBackToFeeCoin(t *testing.T) {
+	order := &models.TOptionOrder{MarginCoin: "BTC", FeeCoin: "USDT"}
+	if got := OptionOrderMarginCoin(order); got != "BTC" {
+		t.Fatalf("margin coin=%q want BTC", got)
+	}
+	order.MarginCoin = ""
+	if got := OptionOrderMarginCoin(order); got != "" {
+		t.Fatalf("missing margin evidence must fail closed, got fallback %q", got)
+	}
+	if got := OptionOrderMarginCoin(nil); got != "" {
+		t.Fatalf("nil order margin coin=%q want empty", got)
+	}
+}
+
 func TestRejectComboChildFromSimpleMatcher(t *testing.T) {
 	if err := rejectComboChildFromSimpleMatcher(nil, "test"); err != nil {
 		t.Fatalf("nil order rejected: %v", err)

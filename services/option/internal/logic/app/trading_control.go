@@ -18,6 +18,7 @@ import (
 )
 
 const (
+	controlEventOrderEvaluated  = "ORDER_CONTROL_EVALUATED"
 	controlEventOrderRejected   = "ORDER_REJECTED"
 	controlEventKillActivated   = "KILL_SWITCH_ACTIVATED"
 	controlEventKillReleased    = "KILL_SWITCH_RELEASED"
@@ -32,6 +33,7 @@ const (
 	controlReasonUserShortLimit = "USER_SHORT_LIMIT"
 	controlReasonOILimit        = "OPEN_INTEREST_LIMIT"
 	controlReasonSelfTrade      = "SELF_TRADE_PREVENTED"
+	controlReasonEvaluation     = "TRADING_CONTROL"
 )
 
 type orderControlRejection struct {
@@ -48,7 +50,6 @@ func evaluateOrderTradingControls(
 ) (*models.TOptionContract, *orderControlRejection, error) {
 	controlModel := models.NewTOptionUserTradingControlModel(conn, svcCtx.Config.CacheRedis)
 	contractModel := models.NewTOptionContractModel(conn, svcCtx.Config.CacheRedis)
-	eventModel := models.NewTOptionTradingControlEventModel(conn, svcCtx.Config.CacheRedis)
 	marketModel := models.NewTOptionMarketModel(conn, svcCtx.Config.CacheRedis)
 	positionModel := models.NewTOptionPositionModel(conn, svcCtx.Config.CacheRedis)
 	orderModel := models.NewTOptionOrderModel(conn, svcCtx.Config.CacheRedis)
@@ -67,14 +68,17 @@ func evaluateOrderTradingControls(
 		return nil, nil, err
 	}
 	reject := func(reason, detail string) (*models.TOptionContract, *orderControlRejection, error) {
-		if _, insertErr := eventModel.Insert(ctx, &models.TOptionTradingControlEvent{
-			TenantId: order.TenantId, UserId: order.UserId, ContractId: order.ContractId,
-			EventType: controlEventOrderRejected, Reason: reason, Detail: detail,
-			OperatorId: order.UserId, CreateTimes: now,
-		}); insertErr != nil {
+		rejection := &orderControlRejection{reason: reason, detail: detail}
+		if insertErr := recordOrderTradingControlAudit(ctx, conn, order, rejection, now); insertErr != nil {
 			return nil, nil, insertErr
 		}
-		return contract, &orderControlRejection{reason: reason, detail: detail}, nil
+		return contract, rejection, nil
+	}
+	accept := func() (*models.TOptionContract, *orderControlRejection, error) {
+		if insertErr := recordOrderTradingControlAudit(ctx, conn, order, nil, now); insertErr != nil {
+			return nil, nil, insertErr
+		}
+		return contract, nil, nil
 	}
 
 	if contract.TenantId != order.TenantId ||
@@ -126,7 +130,7 @@ func evaluateOrderTradingControls(
 		} else if mmpRejection != nil {
 			return reject(mmpRejection.reason, mmpRejection.detail)
 		}
-		return contract, nil, nil
+		return accept()
 	}
 
 	positionSide := int64(common.PositionSide_POSITION_SIDE_LONG)
@@ -168,7 +172,32 @@ func evaluateOrderTradingControls(
 	} else if mmpRejection != nil {
 		return reject(mmpRejection.reason, mmpRejection.detail)
 	}
-	return contract, nil, nil
+	return accept()
+}
+
+func recordOrderTradingControlAudit(
+	ctx context.Context,
+	conn sqlx.SqlConn,
+	order *models.TOptionOrder,
+	rejection *orderControlRejection,
+	now int64,
+) error {
+	outcome := "accepted"
+	if rejection != nil {
+		outcome = "rejected reason=" + rejection.reason
+		if err := models.InsertOptionTradingControlEvent(ctx, conn, &models.TOptionTradingControlEvent{
+			TenantId: order.TenantId, UserId: order.UserId, ContractId: order.ContractId,
+			OrderId: order.Id, EventType: controlEventOrderRejected, Reason: rejection.reason,
+			Detail: rejection.detail, OperatorId: order.UserId, CreateTimes: now,
+		}); err != nil {
+			return err
+		}
+	}
+	return models.InsertOptionTradingControlEvent(ctx, conn, &models.TOptionTradingControlEvent{
+		TenantId: order.TenantId, UserId: order.UserId, ContractId: order.ContractId,
+		OrderId: order.Id, EventType: controlEventOrderEvaluated, Reason: controlReasonEvaluation,
+		Detail: outcome, OperatorId: order.UserId, CreateTimes: now,
+	})
 }
 
 func optionOrderPriceBand(

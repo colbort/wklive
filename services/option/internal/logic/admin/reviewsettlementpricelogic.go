@@ -50,6 +50,7 @@ func (l *ReviewSettlementPriceLogic) ReviewSettlementPrice(in *option.ReviewSett
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		priceModel := models.NewTOptionSettlementPriceModel(conn, l.svcCtx.Config.CacheRedis)
+		contractModel := models.NewTOptionContractModel(conn, l.svcCtx.Config.CacheRedis)
 		item, findErr := priceModel.FindOneForUpdate(ctx, in.SettlementPriceId)
 		if findErr != nil {
 			return findErr
@@ -65,6 +66,16 @@ func (l *ReviewSettlementPriceLogic) ReviewSettlementPrice(in *option.ReviewSett
 			return i18n.StatusError(ctx, i18n.OperationNotAllowed)
 		}
 		if in.Approve {
+			contract, contractErr := contractModel.FindOne(ctx, item.ContractId)
+			if contractErr != nil {
+				return contractErr
+			}
+			item.Status = int64(option.SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_CONFIRMED)
+			item.ConfirmedBy = operatorID
+			item.ConfirmedAt = now
+			if validationErr := helpers.ValidateSettlementPriceEvidence(contract, item, true); validationErr != nil {
+				return i18n.StatusError(ctx, i18n.OperationNotAllowed)
+			}
 			if item.SupersedesId > 0 {
 				previous, previousErr := priceModel.FindOneForUpdate(ctx, item.SupersedesId)
 				if previousErr != nil {
@@ -79,9 +90,10 @@ func (l *ReviewSettlementPriceLogic) ReviewSettlementPrice(in *option.ReviewSett
 					return previousErr
 				}
 			}
-			item.Status = int64(option.SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_CONFIRMED)
 		} else {
 			item.Status = int64(option.SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_REJECTED)
+			item.ConfirmedBy = operatorID
+			item.ConfirmedAt = now
 		}
 		if reason != "" {
 			if item.ChangeReason != "" {
@@ -90,8 +102,6 @@ func (l *ReviewSettlementPriceLogic) ReviewSettlementPrice(in *option.ReviewSett
 				item.ChangeReason = reason
 			}
 		}
-		item.ConfirmedBy = operatorID
-		item.ConfirmedAt = now
 		item.UpdateTimes = now
 		if updateErr := priceModel.Update(ctx, item); updateErr != nil {
 			return updateErr

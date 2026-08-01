@@ -79,6 +79,13 @@ ALTER TABLE `t_option_order`
   ADD CONSTRAINT `chk_option_order_combo_link` CHECK (
     (`combo_order_id`=0 AND `combo_leg_no`=0)
     OR (`combo_order_id`>0 AND `combo_leg_no` BETWEEN 1 AND 4)
+  ),
+  ADD CONSTRAINT `chk_option_order_portfolio_config_pair` CHECK (
+    (`portfolio_risk_config_id`=0 AND `portfolio_risk_config_version`=0)
+    OR (`portfolio_risk_config_id`>0 AND `portfolio_risk_config_version`>0)
+  ),
+  ADD CONSTRAINT `chk_option_order_margin_coin` CHECK (
+    `margin_amount`=0 OR `margin_coin`<>''
   );
 
 ALTER TABLE `t_option_client_order_key`
@@ -123,7 +130,7 @@ ALTER TABLE `t_option_margin_lot`
     `quantity` > 0 AND `remaining_quantity` >= 0 AND `remaining_quantity` <= `quantity`
     AND `initial_margin` > 0 AND `remaining_margin` >= 0 AND `pending_margin` >= 0
     AND `pending_margin` <= `remaining_margin`
-    AND `status` IN (1,2,3,4,5,6)
+    AND `status` IN (1,2,3,4,5,6) AND `collateral_coin`<>''
   );
 
 ALTER TABLE `t_option_margin_lot_application`
@@ -200,7 +207,7 @@ ALTER TABLE `t_option_trading_control_event`
 ALTER TABLE `t_option_asset_instruction`
   ADD CONSTRAINT `chk_option_asset_instruction` CHECK (
     `action` IN (1,2,3,4,5)
-    AND `amount` > 0
+    AND `coin` <> '' AND `amount` > 0
     AND `step_no` > 0
     AND `status` IN (1,2,3,4,5,6)
     AND `retry_count` >= 0
@@ -211,7 +218,16 @@ ALTER TABLE `t_option_settlement_price`
   ADD CONSTRAINT `chk_option_settlement_price` CHECK (
     `status` IN (1,2,3,4)
     AND `version` > 0
-    AND (`status` <> 2 OR (`delivery_price` > 0 AND `sample_count` > 0 AND `confirmed_at` > 0))
+    AND (`status` NOT IN (1,2) OR (
+      `delivery_price` > 0 AND `sample_count` > 0
+      AND `window_start` > 0 AND `window_end` >= `window_start`
+      AND JSON_VALID(`source_snapshot_ids`)
+      AND JSON_TYPE(IF(JSON_VALID(`source_snapshot_ids`),`source_snapshot_ids`,'[]'))='ARRAY'
+      AND JSON_LENGTH(IF(JSON_VALID(`source_snapshot_ids`),`source_snapshot_ids`,'[]'))=`sample_count`
+      AND ((`price_source`='authoritative-market' AND `calculation_method`='MEDIAN' AND `created_by`=0)
+        OR (`price_source`='manual-correction' AND `calculation_method`='MANUAL' AND `created_by`>0))
+    ))
+    AND (`status` <> 2 OR (`confirmed_by` > 0 AND `confirmed_at` > 0))
     AND (`created_by` = 0 OR `confirmed_by` = 0 OR `created_by` <> `confirmed_by`)
   );
 

@@ -1,9 +1,15 @@
 package applogic
 
 import (
+	"context"
+	"regexp"
 	"testing"
 
+	"wklive/services/option/models"
+
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/shopspring/decimal"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 func TestOptionOrderPriceBandIncludesBoundaries(t *testing.T) {
@@ -46,5 +52,41 @@ func TestOptionExposureLimitExceeded(t *testing.T) {
 	}
 	if !optionExposureLimitExceeded(decimal.Zero, decimal.NewFromInt(1), decimal.Zero) {
 		t.Fatal("zero limit must be treated as unconfigured and rejected")
+	}
+}
+
+func TestRecordOrderTradingControlAuditCountsEveryEvaluation(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	conn := sqlx.NewSqlConnFromDB(db)
+	order := &models.TOptionOrder{Id: 7, TenantId: 9, UserId: 10, ContractId: 11}
+	insertPattern := regexp.QuoteMeta(`INSERT INTO t_option_trading_control_event
+(tenant_id,user_id,contract_id,order_id,event_type,reason,detail,operator_id,create_times)
+VALUES(?,?,?,?,?,?,?,?,?)`)
+	mock.ExpectExec(insertPattern).
+		WithArgs(int64(9), int64(10), int64(11), int64(7),
+			controlEventOrderRejected, controlReasonPriceBand, "outside band", int64(10), int64(1000)).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec(insertPattern).
+		WithArgs(int64(9), int64(10), int64(11), int64(7),
+			controlEventOrderEvaluated, controlReasonEvaluation,
+			"rejected reason=ORDER_PRICE_BAND", int64(10), int64(1000)).
+		WillReturnResult(sqlmock.NewResult(2, 1))
+	if err := recordOrderTradingControlAudit(context.Background(), conn, order,
+		&orderControlRejection{reason: controlReasonPriceBand, detail: "outside band"}, 1000); err != nil {
+		t.Fatalf("record rejected audit: %v", err)
+	}
+	mock.ExpectExec(insertPattern).
+		WithArgs(int64(9), int64(10), int64(11), int64(7),
+			controlEventOrderEvaluated, controlReasonEvaluation, "accepted", int64(10), int64(1001)).
+		WillReturnResult(sqlmock.NewResult(3, 1))
+	if err := recordOrderTradingControlAudit(context.Background(), conn, order, nil, 1001); err != nil {
+		t.Fatalf("record accepted audit: %v", err)
+	}
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Fatal(err)
 	}
 }

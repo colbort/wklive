@@ -2,13 +2,26 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
+	"strings"
 
 	"wklive/proto/option"
 
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
+
+func (m *customTOptionMarginLotModel) Insert(
+	ctx context.Context,
+	data *TOptionMarginLot,
+) (sql.Result, error) {
+	if data == nil || strings.TrimSpace(data.CollateralCoin) == "" {
+		return nil, fmt.Errorf("option margin lot collateral coin is required")
+	}
+	data.CollateralCoin = strings.TrimSpace(data.CollateralCoin)
+	return m.defaultTOptionMarginLotModel.Insert(ctx, data)
+}
 
 var _ TOptionMarginLotModel = (*customTOptionMarginLotModel)(nil)
 

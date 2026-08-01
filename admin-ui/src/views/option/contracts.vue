@@ -295,6 +295,13 @@
           <el-form-item :label="t('option.circuitBreakerRatio')">
             <el-input v-model="contractForm.circuitBreakerRatio" placeholder="0.30" />
           </el-form-item>
+          <el-form-item :label="t('option.greeksMaxAgeSeconds')">
+            <el-input-number
+              v-model="contractForm.greeksMaxAgeSeconds"
+              :min="0"
+              :precision="0"
+            />
+          </el-form-item>
           <el-form-item :label="t('option.makerFeeRate')">
             <el-input v-model="contractForm.makerFeeRate" />
           </el-form-item>
@@ -694,6 +701,51 @@
           <el-descriptions-item :label="t('option.snapshotTime')">
             {{ formatDate(detailData?.market?.snapshotTime || 0) }}
           </el-descriptions-item>
+          <el-descriptions-item :label="t('option.underlyingSnapshotTime')">
+            <span>{{ formatDate(detailData?.market?.underlyingSnapshotTime || 0) }}</span>
+            <el-tag
+              class="market-freshness-tag"
+              :type="marketFreshness(detailData?.market?.underlyingSnapshotTime, 'underlying').type"
+              disable-transitions
+            >
+              {{ marketFreshness(detailData?.market?.underlyingSnapshotTime, 'underlying').label }}
+            </el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.markSnapshotTime')">
+            <span>{{ formatDate(detailData?.market?.markSnapshotTime || 0) }}</span>
+            <el-tag
+              class="market-freshness-tag"
+              :type="marketFreshness(detailData?.market?.markSnapshotTime, 'mark').type"
+              disable-transitions
+            >
+              {{ marketFreshness(detailData?.market?.markSnapshotTime, 'mark').label }}
+            </el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.greeksSnapshotTime')">
+            <span>{{ formatDate(detailData?.market?.greeksSnapshotTime || 0) }}</span>
+            <el-tag
+              class="market-freshness-tag"
+              :type="
+                marketFreshness(
+                  detailData?.market?.greeksSnapshotTime,
+                  'greeks',
+                  detailData?.contract?.greeksMaxAgeSeconds,
+                ).type
+              "
+              disable-transitions
+            >
+              {{
+                marketFreshness(
+                  detailData?.market?.greeksSnapshotTime,
+                  'greeks',
+                  detailData?.contract?.greeksMaxAgeSeconds,
+                ).label
+              }}
+            </el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item :label="t('option.greeksMaxAgeSeconds')">
+            {{ detailData?.contract?.greeksMaxAgeSeconds || t('option.marketThresholdUnconfigured') }}
+          </el-descriptions-item>
         </el-descriptions>
       </div>
       <template #footer>
@@ -880,6 +932,7 @@ const contractForm = reactive<UpdateContractReq>({
   maxOpenInterest: '0',
   orderPriceBandRatio: '0',
   circuitBreakerRatio: '0',
+  greeksMaxAgeSeconds: 0,
   settlementPriceSource: 'authoritative-market',
   settlementPriceMethod: 'MEDIAN',
   settlementWindowSeconds: 60,
@@ -991,6 +1044,33 @@ const optionLabel = (key: string, value?: number | string) => {
 
 type DatePickerValue = Date | string | number | null | undefined
 type TagType = '' | 'success' | 'warning' | 'info' | 'danger'
+type MarketFreshnessKind = 'underlying' | 'mark' | 'greeks'
+
+const marketFreshness = (
+  timestamp: number | undefined,
+  kind: MarketFreshnessKind,
+  configuredMaxAge?: number,
+) => {
+  const now = Math.floor(Date.now() / 1000)
+  if (!timestamp || timestamp <= 0) {
+    return { type: 'danger' as TagType, label: t('option.marketTimestampMissing') }
+  }
+  if (timestamp > now) {
+    return { type: 'danger' as TagType, label: t('option.marketTimestampFuture') }
+  }
+  const age = now - timestamp
+  const maxAge = kind === 'greeks' ? configuredMaxAge || 0 : 30
+  if (kind === 'greeks' && maxAge <= 0) {
+    return {
+      type: 'warning' as TagType,
+      label: t('option.marketThresholdPending', { age }),
+    }
+  }
+  if (age > maxAge) {
+    return { type: 'danger' as TagType, label: t('option.marketTimestampStale', { age }) }
+  }
+  return { type: 'success' as TagType, label: t('option.marketTimestampFresh', { age }) }
+}
 
 const timestampToDate = (timestamp?: number) => {
   if (!timestamp) return null
@@ -1197,6 +1277,7 @@ const resetContractForm = () => {
     maxOpenInterest: '0',
     orderPriceBandRatio: '0',
     circuitBreakerRatio: '0',
+    greeksMaxAgeSeconds: 0,
     settlementPriceSource: 'authoritative-market',
     settlementPriceMethod: 'MEDIAN',
     settlementWindowSeconds: 60,
@@ -1365,6 +1446,10 @@ onMounted(async () => {
 .contract-detail {
   display: grid;
   gap: 18px;
+}
+
+.market-freshness-tag {
+  margin-left: 8px;
 }
 
 .contract-form-grid,

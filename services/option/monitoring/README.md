@@ -13,13 +13,15 @@ Option RPC 在内部端口 `9105` 的 `/metrics` 暴露 Prometheus 指标；业�
   实物交割、穿仓、行情新鲜度、风险扫描、交易控制、熔断、kill switch、STP、限额、
   异常成交、MMP、正式结算价、组合风险版本、公司行动、合约系列、公开链配对和 OI
   水位、管理员受治理字段越权修改审计、已上报日终守恒差额及钱包镜像日终成功/差异/失败
-  及完整资金守恒心跳缺失规则（当前共49条）。
+  、完整资金守恒心跳缺失、保证金币种证据异常及 Asset 重复冻结业务键规则（当前共51条）。
 - `../migrations/20260731_zr_option_operations_monitoring_indexes.sql`：既有14项时间窗口与状态聚合索引；
   该已记录迁移的校验和不可修改。
 - `../migrations/20260731_zs_option_time_sensitive_monitoring_indexes.sql`：近到期行权、kill switch
   释放失败和实物逾期的3项增量索引；现有环境必须继续执行此迁移，可重复运行。
 - `../migrations/20260731_zt_option_daily_reconciliation_run.sql`：不可变日终运行记录、钱包镜像
   零差额成功心跳和后续完整资金守恒证据容器。
+- `../../asset/migrations/20260801_option_freeze_idempotency_evidence.sql`：Option 冻结业务键覆盖
+  索引、唯一历史证据幂等账回填；重复键保留供 `asset_freeze_duplicate`/OPT-A033 人工处置。
 - `option-production-readiness.env.example`：生产范围、审批和不可变证据清单。
 - `option-production-readiness.sh`：fail-closed 上线门禁；`--repository-only` 只校验仓库事实，
   生产模式还会验证证据哈希、功能开关、Prometheus/Alertmanager 配置和条件审批。
@@ -85,8 +87,9 @@ Option RPC 在内部端口 `9105` 的 `/metrics` 暴露 Prometheus 指标；业�
 单用户至少5笔或单租户超过50笔，限额为五分钟内单用户/合约超过20笔。用户、合约和订单明细
 保留在不可变审计表及运营工作台，不作为 Prometheus 标签。
 
-交易态合约的标的与标记价按30秒检查缺失、陈旧和未来时间；Greeks 当前只检查缺失/未来，
-陈旧阈值必须由产品配置后补齐，不能擅用标的/标记价阈值。风险扫描失败率来自每次实际扫描的钱包
+交易态合约的标的与标记价按30秒检查缺失、陈旧和未来时间；Greeks 按合约已批准的
+`greeks_max_age_seconds` 检查，0、缺失、陈旧和未来时间均报警，不擅用标的/标记价阈值。
+风险扫描失败率来自每次实际扫描的钱包
 总数与失败数，不用存量 `RESTRICTED` 账户反推。
 
 治理类固定类别如下：

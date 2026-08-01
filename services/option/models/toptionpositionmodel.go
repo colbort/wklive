@@ -39,7 +39,7 @@ type (
 	TOptionPositionModel interface {
 		tOptionPositionModel
 		FindPage(ctx context.Context, filter OptionPositionPageFilter, cursor int64, limit int64) ([]*TOptionPosition, int64, error)
-		FindAssignableShorts(ctx context.Context, tenantId, contractId int64) ([]*TOptionPosition, error)
+		FindAssignableShortsPage(ctx context.Context, tenantId, contractId, afterCreateTimes, afterId, limit int64) ([]*TOptionPosition, error)
 		FindOneForUpdate(ctx context.Context, id int64) (*TOptionPosition, error)
 		SumHoldingQty(ctx context.Context, tenantId, userId, contractId, side int64) (decimal.Decimal, error)
 		CountHoldingByContract(ctx context.Context, tenantId, contractId int64) (int64, error)
@@ -123,19 +123,24 @@ WHERE tenant_id = ? AND contract_id = ? AND side = ? AND status = ?%s`, m.table,
 	return aggregate.Decimal()
 }
 
-func (m *defaultTOptionPositionModel) FindAssignableShorts(
+func (m *defaultTOptionPositionModel) FindAssignableShortsPage(
 	ctx context.Context,
-	tenantId, contractId int64,
+	tenantId, contractId, afterCreateTimes, afterId, limit int64,
 ) ([]*TOptionPosition, error) {
+	if limit <= 0 || limit > 500 {
+		limit = 500
+	}
 	query := fmt.Sprintf(`SELECT %s FROM %s
 WHERE tenant_id = ? AND contract_id = ? AND side = ? AND status = ? AND position_qty > 0
-ORDER BY create_times ASC, id ASC`, tOptionPositionRows, m.table)
+	  AND (create_times > ? OR (create_times = ? AND id > ?))
+ORDER BY create_times ASC, id ASC LIMIT ?`, tOptionPositionRows, m.table)
 	var list []*TOptionPosition
 	err := m.QueryRowsNoCacheCtx(
 		ctx, &list, query,
 		tenantId, contractId,
 		int64(common.PositionSide_POSITION_SIDE_SHORT),
 		int64(option.PositionStatus_POSITION_STATUS_HOLDING),
+		afterCreateTimes, afterCreateTimes, afterId, limit,
 	)
 	return list, err
 }

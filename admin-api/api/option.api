@@ -28,6 +28,7 @@ type OptionContract {
 	maxOpenInterest             string `json:"maxOpenInterest" validate:"decimal_32_16"`
 	orderPriceBandRatio         string `json:"orderPriceBandRatio" validate:"decimal_20_10"`
 	circuitBreakerRatio         string `json:"circuitBreakerRatio" validate:"decimal_20_10"`
+	greeksMaxAgeSeconds         int64  `json:"greeksMaxAgeSeconds"`
 	settlementPriceSource       string `json:"settlementPriceSource"`
 	settlementPriceMethod       string `json:"settlementPriceMethod"`
 	settlementWindowSeconds     int64  `json:"settlementWindowSeconds"`
@@ -135,6 +136,8 @@ type OptionOrder {
 	mmpGroup         string `json:"mmpGroup"`
 	comboOrderId     int64  `json:"comboOrderId"`
 	comboLegNo       int64  `json:"comboLegNo"`
+	portfolioRiskConfigId      int64  `json:"portfolioRiskConfigId"`
+	portfolioRiskConfigVersion int64  `json:"portfolioRiskConfigVersion"`
 	status           int64  `json:"status"`
 	cancelReason     string `json:"cancelReason"`
 	matchTime        int64  `json:"matchTime"`
@@ -652,6 +655,7 @@ type CreateContractReq {
 	maxOpenInterest             string `json:"maxOpenInterest,optional" validate:"decimal_gte_zero,decimal_32_16"`
 	orderPriceBandRatio         string `json:"orderPriceBandRatio,optional" validate:"decimal_gte_zero,decimal_20_10"`
 	circuitBreakerRatio         string `json:"circuitBreakerRatio,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	greeksMaxAgeSeconds         int64  `json:"greeksMaxAgeSeconds,optional"`
 	settlementPriceSource       string `json:"settlementPriceSource,optional"`
 	settlementPriceMethod       string `json:"settlementPriceMethod,optional"`
 	settlementWindowSeconds     int64  `json:"settlementWindowSeconds,optional"`
@@ -711,6 +715,7 @@ type UpdateContractReq {
 	maxOpenInterest             string `json:"maxOpenInterest,optional" validate:"decimal_gte_zero,decimal_32_16"`
 	orderPriceBandRatio         string `json:"orderPriceBandRatio,optional" validate:"decimal_gte_zero,decimal_20_10"`
 	circuitBreakerRatio         string `json:"circuitBreakerRatio,optional" validate:"decimal_gte_zero,decimal_20_10"`
+	greeksMaxAgeSeconds         int64  `json:"greeksMaxAgeSeconds,optional"`
 	settlementPriceSource       string `json:"settlementPriceSource,optional"`
 	settlementPriceMethod       string `json:"settlementPriceMethod,optional"`
 	settlementWindowSeconds     int64  `json:"settlementWindowSeconds,optional"`
@@ -1275,6 +1280,7 @@ type ListTradeCorrectionsResp {
 type OptionRetryAssetInstructionReq {
 	tenantId      int64 `json:"tenantId"`
 	instructionId int64 `json:"instructionId"`
+	reason        string `json:"reason" validate:"min=1,max=64"`
 }
 
 type GetOperationsOverviewReq {
@@ -1755,6 +1761,7 @@ type OptionRetrySettlementInstructionReq {
 	tenantId      int64 `json:"tenantId"`
 	settlementId  int64 `json:"settlementId"`
 	instructionId int64 `json:"instructionId"`
+	reason        string `json:"reason" validate:"min=1,max=64"`
 }
 
 type ListPhysicalDeliveryUnitsReq {

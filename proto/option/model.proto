@@ -62,6 +62,7 @@ message OptionContract {
   string circuit_breaker_ratio = 52;
   int64 physical_delivery_cure_seconds = 53;
   string trading_calendar_code = 54;
+  int64 greeks_max_age_seconds = 55;
 }
 
 message OptionTradingCalendarSession {
@@ -466,6 +467,8 @@ message OptionOrder {
   string mmp_group = 31;
   int64 combo_order_id = 32; // 组合影子单父单；普通单为0
   int64 combo_leg_no = 33; // 父单内稳定腿号；普通单为0
+  int64 portfolio_risk_config_id = 34; // 组合保证金准入采用的参数ID；0表示不适用或迁移前历史单
+  int64 portfolio_risk_config_version = 35; // 组合保证金准入采用的参数版本
 }
 
 message OptionTrade {

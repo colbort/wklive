@@ -333,6 +333,7 @@ func contractSeriesTemplate(
 		MaxUserLongQty: maxUserLongQty, MaxUserShortQty: maxUserShortQty,
 		MaxOpenInterest: maxOpenInterest, OrderPriceBandRatio: orderPriceBandRatio,
 		CircuitBreakerRatio:     circuitBreakerRatio,
+		GreeksMaxAgeSeconds:     in.GreeksMaxAgeSeconds,
 		SettlementPriceSource:   strings.TrimSpace(in.SettlementPriceSource),
 		SettlementPriceMethod:   strings.TrimSpace(in.SettlementPriceMethod),
 		SettlementWindowSeconds: in.SettlementWindowSeconds,

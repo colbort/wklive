@@ -39,19 +39,23 @@ func TestFindLatestExerciseInstructionLocksNewestVersion(t *testing.T) {
 	}
 }
 
-func TestFindAssignableShortsUsesFIFOWithoutPageLimit(t *testing.T) {
+func TestFindAssignableShortsPageUsesFIFOKeysetPagination(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer db.Close()
 
-	mock.ExpectQuery(`(?s)SELECT .* FROM .*WHERE tenant_id = \? AND contract_id = \?.*ORDER BY create_times ASC, id ASC$`).
+	mock.ExpectQuery(`(?s)SELECT .* FROM .*WHERE tenant_id = \? AND contract_id = \?.*create_times > \? OR \(create_times = \? AND id > \?\).*ORDER BY create_times ASC, id ASC LIMIT \?$`).
 		WithArgs(
 			int64(9),
 			int64(88),
 			int64(common.PositionSide_POSITION_SIDE_SHORT),
 			int64(option.PositionStatus_POSITION_STATUS_HOLDING),
+			int64(100),
+			int64(100),
+			int64(7),
+			int64(500),
 		).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
@@ -61,7 +65,7 @@ func TestFindAssignableShortsUsesFIFOWithoutPageLimit(t *testing.T) {
 			table:      "`t_option_position`",
 		},
 	}
-	items, err := model.FindAssignableShorts(context.Background(), 9, 88)
+	items, err := model.FindAssignableShortsPage(context.Background(), 9, 88, 100, 7, 1000)
 	if err != nil {
 		t.Fatalf("find assignable shorts failed: %v", err)
 	}

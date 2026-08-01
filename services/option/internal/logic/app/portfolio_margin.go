@@ -16,6 +16,12 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
+type portfolioOrderMarginResult struct {
+	margin        decimal.Decimal
+	configID      int64
+	configVersion int64
+}
+
 func calculatePortfolioOrderMargin(
 	ctx context.Context,
 	svcCtx *svc.ServiceContext,
@@ -23,57 +29,61 @@ func calculatePortfolioOrderMargin(
 	candidate *models.TOptionOrder,
 	contract *models.TOptionContract,
 	now int64,
-) (decimal.Decimal, error) {
+) (portfolioOrderMarginResult, error) {
 	if candidate == nil || contract == nil ||
 		contract.SellerMarginMode != int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) ||
 		candidate.Side != int64(common.Side_SIDE_SELL) {
-		return decimal.Zero, nil
+		return portfolioOrderMarginResult{}, nil
 	}
 	riskAccountModel := models.NewTOptionRiskAccountModel(conn, svcCtx.Config.CacheRedis)
 	if _, err := riskAccountModel.EnsureAndFindOneForUpdate(
 		ctx, candidate.TenantId, candidate.UserId, 0, contract.SettleCoin, now,
 	); err != nil {
-		return decimal.Zero, err
+		return portfolioOrderMarginResult{}, err
 	}
 	configModel := models.NewTOptionPortfolioRiskConfigModel(conn, svcCtx.Config.CacheRedis)
 	configItem, err := configModel.FindActive(ctx, candidate.TenantId, contract.SettleCoin, now)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
-			return decimal.Zero, errors.New("no approved active portfolio risk config")
+			return portfolioOrderMarginResult{}, errors.New("no approved active portfolio risk config")
 		}
-		return decimal.Zero, err
+		return portfolioOrderMarginResult{}, err
 	}
 	config, err := optionrisk.PortfolioConfigFromModel(configItem)
 	if err != nil {
-		return decimal.Zero, fmt.Errorf("invalid active portfolio risk config %d: %w", configItem.Id, err)
+		return portfolioOrderMarginResult{}, fmt.Errorf("invalid active portfolio risk config %d: %w", configItem.Id, err)
 	}
 
 	legs, err := loadPortfolioLegs(ctx, svcCtx, conn, candidate, contract.SettleCoin, now)
 	if err != nil {
-		return decimal.Zero, err
+		return portfolioOrderMarginResult{}, err
 	}
 	before, err := optionrisk.EvaluatePortfolio(portfolioLegSlice(legs), false, config)
 	if err != nil {
-		return decimal.Zero, err
+		return portfolioOrderMarginResult{}, err
 	}
 	leg, err := ensurePortfolioLeg(ctx, svcCtx, conn, legs, contract, now)
 	if err != nil {
-		return decimal.Zero, err
+		return portfolioOrderMarginResult{}, err
 	}
 	if candidate.PositionEffect == int64(option.PositionEffect_POSITION_EFFECT_OPEN) {
 		leg.ShortQuantity = leg.ShortQuantity.Add(candidate.Qty)
 	} else {
 		if leg.LongQuantity.LessThan(candidate.Qty) {
-			return decimal.Zero, errors.New("portfolio close order exceeds long position")
+			return portfolioOrderMarginResult{}, errors.New("portfolio close order exceeds long position")
 		}
 		leg.LongQuantity = leg.LongQuantity.Sub(candidate.Qty)
 	}
 	legs[contract.Id] = leg
 	after, err := optionrisk.EvaluatePortfolio(portfolioLegSlice(legs), false, config)
 	if err != nil {
-		return decimal.Zero, err
+		return portfolioOrderMarginResult{}, err
 	}
-	return decimal.Max(after.Requirement.Sub(before.Requirement), decimal.Zero).Round(16), nil
+	return portfolioOrderMarginResult{
+		margin:        decimal.Max(after.Requirement.Sub(before.Requirement), decimal.Zero).Round(16),
+		configID:      configItem.Id,
+		configVersion: configItem.Version,
+	}, nil
 }
 
 func loadPortfolioLegs(

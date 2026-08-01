@@ -222,6 +222,33 @@ func TestQueryOptionPlatformAccountConservationSummariesMySQL(t *testing.T) {
 	}
 }
 
+func TestQueryOptionSubledgerConservationSummariesMySQL(t *testing.T) {
+	dsn := os.Getenv("OPTION_DAILY_RECONCILIATION_TEST_DSN")
+	if dsn == "" {
+		t.Skip("OPTION_DAILY_RECONCILIATION_TEST_DSN is not set")
+	}
+	conn := sqlx.NewMysql(dsn)
+	ctx := context.Background()
+	healthy, err := QueryOptionSubledgerConservationSummaries(ctx, conn, 9, 1000000, 2000000, 2500000)
+	if err != nil || len(healthy) != 1 || healthy[0].AssetFlowCount != 2 ||
+		healthy[0].InstructionCount != 2 || healthy[0].BillCount != 2 || healthy[0].MismatchCount != 0 ||
+		!healthy[0].AssetNet.Equal(decimal.NewFromInt(5)) || !healthy[0].BillNet.Equal(decimal.NewFromInt(5)) {
+		t.Fatalf("healthy subledger=%+v err=%v", healthy, err)
+	}
+	for _, tenantID := range []int64{10, 11, 12, 13} {
+		rows, queryErr := QueryOptionSubledgerConservationSummaries(ctx, conn, tenantID, 1000000, 2000000, 2500000)
+		if queryErr != nil || len(rows) != 1 || rows[0].MismatchCount == 0 {
+			t.Fatalf("tenant %d mismatch rows=%+v err=%v", tenantID, rows, queryErr)
+		}
+	}
+	tiny, err := QueryOptionSubledgerConservationSummaries(ctx, conn, 14, 1000000, 2000000, 2500000)
+	unit := decimal.RequireFromString("0.0000000000000001")
+	if err != nil || len(tiny) != 1 || tiny[0].MismatchCount != 0 ||
+		!tiny[0].AssetNet.Equal(unit) || !tiny[0].BillNet.Equal(unit) || !tiny[0].DifferenceAmount.IsZero() {
+		t.Fatalf("tiny subledger=%+v err=%v", tiny, err)
+	}
+}
+
 func assertConservationDecimal(t *testing.T, name string, got decimal.Decimal, want string) {
 	t.Helper()
 	if !got.Equal(decimal.RequireFromString(want)) {
@@ -318,6 +345,21 @@ func TestOptionDailyReconciliationModelQueriesAndAppendsRun(t *testing.T) {
 	if err != nil || len(platform) != 1 || platform[0].AccountType != "FEE_REVENUE" ||
 		!platform[0].DifferenceAmount.IsZero() {
 		t.Fatalf("platform=%+v err=%v", platform, err)
+	}
+	mock.ExpectQuery("WITH cutoff AS").WithArgs(
+		int64(9), int64(2500000), int64(9), int64(9),
+		int64(9), int64(1000000), int64(2000000),
+		int64(9), int64(1000), int64(2000), int64(1000), int64(2000),
+		int64(9), int64(1000), int64(2000),
+	).WillReturnRows(sqlmock.NewRows([]string{
+		"coin", "asset_flow_count", "instruction_count", "bill_count", "mismatch_count",
+		"max_asset_flow_id", "max_instruction_id", "max_bill_id", "asset_net", "bill_net",
+		"difference_amount",
+	}).AddRow("USDT", 2, 2, 2, 0, 2, 2, 2, "5", "5", "0"))
+	subledger, err := QueryOptionSubledgerConservationSummaries(ctx, conn, 9, 1000000, 2000000, 2500000)
+	if err != nil || len(subledger) != 1 || subledger[0].MismatchCount != 0 ||
+		!subledger[0].DifferenceAmount.IsZero() {
+		t.Fatalf("subledger=%+v err=%v", subledger, err)
 	}
 
 	run := &OptionReconciliationRun{

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"wklive/common/generate"
@@ -800,13 +801,13 @@ func allocateSellerMargin(order *models.TOptionOrder, fillQty, unfilledBefore de
 }
 
 func OptionOrderMarginCoin(order *models.TOptionOrder) string {
-	if order != nil && order.MarginCoin != "" {
-		return order.MarginCoin
+	if order == nil {
+		return ""
 	}
-	if order != nil {
-		return order.FeeCoin
-	}
-	return ""
+	// MarginCoin records the asset that was actually frozen. FeeCoin is not a
+	// safe fallback: a covered physical Call freezes the underlying asset while
+	// fees are denominated in the settlement coin.
+	return strings.TrimSpace(order.MarginCoin)
 }
 
 func optionTradeFees(contract *models.TOptionContract, turnover decimal.Decimal, makerSide int64) (buyFee, sellFee decimal.Decimal) {

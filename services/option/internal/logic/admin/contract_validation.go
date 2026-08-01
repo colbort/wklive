@@ -124,13 +124,14 @@ func validateSupportedContract(item *models.TOptionContract) bool {
 		item.MaxOpenInterest.IsNegative() || item.OrderPriceBandRatio.IsNegative() ||
 		item.OrderPriceBandRatio.GreaterThan(decimal.NewFromInt(1)) ||
 		item.CircuitBreakerRatio.IsNegative() ||
-		item.CircuitBreakerRatio.GreaterThan(decimal.NewFromInt(1)) {
+		item.CircuitBreakerRatio.GreaterThan(decimal.NewFromInt(1)) ||
+		item.GreeksMaxAgeSeconds < 0 {
 		return false
 	}
 	if item.Status == int64(option.ContractStatus_CONTRACT_STATUS_TRADING) &&
 		(!item.MaxUserLongQty.IsPositive() || !item.MaxUserShortQty.IsPositive() ||
 			!item.MaxOpenInterest.IsPositive() || !item.OrderPriceBandRatio.IsPositive() ||
-			!item.CircuitBreakerRatio.IsPositive()) {
+			!item.CircuitBreakerRatio.IsPositive() || item.GreeksMaxAgeSeconds <= 0) {
 		// A live contract must never interpret zero as an unlimited risk control.
 		return false
 	}

@@ -223,10 +223,19 @@ const showDetail = async (row: OptionSettlement) => {
 
 const retryInstruction = async (instructionId: number) => {
   if (!detailData.value || !('settlement' in detailData.value)) return
+  const { value } = await ElMessageBox.prompt(t('option.retryReason'), t('option.retry'), {
+    inputType: 'textarea',
+    inputValidator: (input) => {
+      const reason = input?.trim() || ''
+      if (!reason) return t('option.retryReasonRequired')
+      return Array.from(reason).length <= 64 || t('option.retryReasonTooLong')
+    },
+  })
   await optionService.retrySettlementInstruction({
     tenantId: detailData.value.settlement.tenantId,
     settlementId: detailData.value.settlement.id,
     instructionId,
+    reason: value.trim(),
   })
   ElMessage.success(t('common.success'))
   await showDetail(detailData.value.settlement)

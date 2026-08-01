@@ -544,11 +544,19 @@ func (l *ProcessAssetInstructionsLogic) completeLiquidationTransition(item *mode
 		}
 		now := time.Now().Unix()
 		multiplier := optionMultiplier(contract)
+		takeoverMaintenance := decimal.Zero
+		if source.MaintenanceMargin.IsPositive() && source.PositionQty.IsPositive() {
+			takeoverMaintenance = source.MaintenanceMargin.Mul(liq.Quantity).
+				Div(source.PositionQty).Round(16)
+		}
 		realized := source.OpenAvgPrice.Sub(liq.MarkPrice).Mul(liq.Quantity).Mul(multiplier).Round(16)
 		source.TradeRealizedPnl = source.TradeRealizedPnl.Add(realized)
 		source.FeePaid = source.FeePaid.Add(liq.LiquidationFee)
 		recalculatePositionReturn(source)
 		source.PositionQty = decimal.Max(source.PositionQty.Sub(liq.Quantity), decimal.Zero)
+		source.MaintenanceMargin = decimal.Max(
+			source.MaintenanceMargin.Sub(takeoverMaintenance), decimal.Zero,
+		)
 		source.AvailableQty = decimal.Min(source.AvailableQty, source.PositionQty)
 		source.FrozenQty = decimal.Max(source.PositionQty.Sub(source.AvailableQty), decimal.Zero)
 		source.PositionValue = liq.MarkPrice.Mul(source.PositionQty).Mul(multiplier).Round(16)
@@ -586,8 +594,9 @@ func (l *ProcessAssetInstructionsLogic) completeLiquidationTransition(item *mode
 				PositionQty:      liq.Quantity, AvailableQty: liq.Quantity,
 				OpenAvgPrice: liq.MarkPrice, MarkPrice: liq.MarkPrice,
 				PositionValue: takeoverMargin, MarginAmount: takeoverMargin,
-				Status:       int64(option.PositionStatus_POSITION_STATUS_HOLDING),
-				LastCalcTime: now, CreateTimes: now, UpdateTimes: now,
+				MaintenanceMargin: takeoverMaintenance,
+				Status:            int64(option.PositionStatus_POSITION_STATUS_HOLDING),
+				LastCalcTime:      now, CreateTimes: now, UpdateTimes: now,
 			}
 			result, err := positionModel.Insert(ctx, takeover)
 			if err != nil {
@@ -606,6 +615,7 @@ func (l *ProcessAssetInstructionsLogic) completeLiquidationTransition(item *mode
 			takeover.MarkPrice = liq.MarkPrice
 			takeover.PositionValue = liq.MarkPrice.Mul(nextQty).Mul(multiplier).Round(16)
 			takeover.MarginAmount = takeover.MarginAmount.Add(takeoverMargin)
+			takeover.MaintenanceMargin = takeover.MaintenanceMargin.Add(takeoverMaintenance)
 			takeover.UnrealizedPnl = takeover.OpenAvgPrice.Sub(liq.MarkPrice).Mul(nextQty).Mul(multiplier).Round(16)
 			takeover.Status = int64(option.PositionStatus_POSITION_STATUS_HOLDING)
 			takeover.LastCalcTime = now

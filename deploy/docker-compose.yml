@@ -140,6 +140,7 @@ services:
 
   beanstalk-primary:
     image: schickling/beanstalkd:latest
+    platform: linux/arm64
     restart: unless-stopped
     ports:
       - "11300:11300"
@@ -148,6 +149,7 @@ services:
 
   beanstalk-secondary:
     image: schickling/beanstalkd:latest
+    platform: linux/arm64
     restart: unless-stopped
     ports:
       - "11301:11300"

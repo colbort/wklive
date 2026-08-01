@@ -160,6 +160,10 @@ func TestEconomicContractFieldsEqual(t *testing.T) {
 	if !economicContractFieldsEqual(left, &right) {
 		t.Fatal("operational fields should remain editable")
 	}
+	right.GreeksMaxAgeSeconds = 60
+	if !economicContractFieldsEqual(left, &right) {
+		t.Fatal("approved Greeks freshness is an editable audited control, not contract economics")
+	}
 
 	right.StrikePrice = right.StrikePrice.Add(decimal.NewFromInt(1))
 	if economicContractFieldsEqual(left, &right) {
@@ -198,12 +202,25 @@ func TestTradingContractRequiresExplicitControls(t *testing.T) {
 	item.MaxOpenInterest = decimal.NewFromInt(1000)
 	item.OrderPriceBandRatio = decimal.RequireFromString("0.20")
 	item.CircuitBreakerRatio = decimal.RequireFromString("0.30")
+	item.GreeksMaxAgeSeconds = 60
 	if !validateSupportedContract(item) {
 		t.Fatal("trading contract with complete controls should be accepted")
+	}
+	item.GreeksMaxAgeSeconds = 0
+	if validateSupportedContract(item) {
+		t.Fatal("trading contract without an approved Greeks threshold must be rejected")
 	}
 	item.OrderPriceBandRatio = decimal.RequireFromString("1.01")
 	if validateSupportedContract(item) {
 		t.Fatal("price band ratio above one must be rejected")
+	}
+}
+
+func TestPendingContractRejectsNegativeGreeksThreshold(t *testing.T) {
+	item := validContractForTest()
+	item.GreeksMaxAgeSeconds = -1
+	if validateSupportedContract(item) {
+		t.Fatal("negative Greeks threshold must be rejected in every contract state")
 	}
 }
 

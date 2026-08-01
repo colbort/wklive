@@ -531,8 +531,19 @@ const resetQuery = () => {
 }
 
 const retryInstruction = async (row: OptionAssetInstruction) => {
-  await ElMessageBox.confirm(t('option.retryAssetInstructionConfirm'), t('option.retry'))
-  await optionService.retryAssetInstruction({ tenantId: row.tenantId, instructionId: row.id })
+  const { value } = await ElMessageBox.prompt(t('option.retryReason'), t('option.retry'), {
+    inputType: 'textarea',
+    inputValidator: (input) => {
+      const reason = input?.trim() || ''
+      if (!reason) return t('option.retryReasonRequired')
+      return Array.from(reason).length <= 64 || t('option.retryReasonTooLong')
+    },
+  })
+  await optionService.retryAssetInstruction({
+    tenantId: row.tenantId,
+    instructionId: row.id,
+    reason: value.trim(),
+  })
   ElMessage.success(t('common.success'))
   await refreshAll()
 }

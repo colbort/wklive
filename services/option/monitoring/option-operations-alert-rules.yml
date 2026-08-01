@@ -46,6 +46,32 @@ groups:
           summary: Option 资产指令积压超过60秒
           description: tenant_id={{ $labels.tenant_id }}，按原指令号检查和恢复。
 
+      - alert: OptionMarginCoinEvidenceInvalid
+        expr: >-
+          wklive_option_operations_count{category="margin_coin_invalid"} > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A032
+        annotations:
+          summary: Option 保证金币种证据缺失或与合约不一致
+          description: >-
+            tenant_id={{ $labels.tenant_id }}，异常订单/保证金批次/活动资产指令数={{ $value }}。
+            禁止按手续费币种猜测；暂停相关资金处理并按冻结业务号核对 Asset。
+
+      - alert: OptionAssetFreezeBusinessKeyDuplicate
+        expr: >-
+          wklive_option_operations_count{category="asset_freeze_duplicate"} > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A033
+        annotations:
+          summary: Option 在 Asset 中存在重复冻结业务键
+          description: >-
+            tenant_id={{ $labels.tenant_id }}，重复冻结业务键数={{ $value }}。
+            立即停止相关业务号的资金处理；禁止删除幂等行、改业务号或自动选择冻结记录。
+
       - alert: OptionReconciliationOpen
         expr: wklive_option_operations_count{category="reconciliation_open"} > 0
         for: 1m
@@ -242,8 +268,10 @@ groups:
           severity: warning
           catalog_id: OPT-A018
         annotations:
-          summary: Option 合约一分钟价格带拒单超过20笔
-          description: tenant_id={{ $labels.tenant_id }}，超阈值合约组数={{ $value }}。
+          summary: Option 合约一分钟价格带拒单超过20笔或占请求超过10%
+          description: >-
+            tenant_id={{ $labels.tenant_id }}，超绝对笔数或拒单比例阈值的合约组数={{ $value }}；
+            从不可变交易控制事件下钻请求数、拒绝数和合约。
 
       - alert: OptionCircuitBreakerTriggered
         expr: >-
@@ -379,10 +407,10 @@ groups:
           severity: warning
           catalog_id: OPT-A003
         annotations:
-          summary: Option 交易合约 Greeks 时间戳缺失或来自未来
+          summary: Option 交易合约 Greeks 阈值未配置或时间戳无效/陈旧
           description: >-
             tenant_id={{ $labels.tenant_id }}，受影响合约数={{ $value }}；
-            陈旧阈值仍必须按产品配置后另行加载。
+            按合约核对 greeks_max_age_seconds、发布链路和最近快照时间。
 
       - alert: OptionRiskScanFailedGroups
         expr: wklive_option_risk_scan_failed_groups > 0

@@ -45,6 +45,22 @@
   - 组合保证金订单准入不能通过拆分 `account_id` 获得额外抵扣或重复余额。
   - 跨账户同用户订单不能成交。
   - 单元测试、MySQL 集成测试和 Asset RPC 端到端测试通过。
+- 当前结果：
+  - 新增可重复执行的 `acceptance/run-p0-asset-rpc-e2e.sh`：在隔离 MySQL/Redis 上启动真实
+    Asset gRPC，再运行 Option 风险与资产指令任务。买方 `980+20=1000`、空方
+    `1020-20=1000`、同用户跨两个业务账户 `1000+20-10=1010` 均精确通过；三条风险账户
+    全部固定 `account_id=0`。
+  - 两个业务 `account_id` 分别冻结100/200后只形成一条钱包镜像；四条冻结/释放指令全部成功且
+    对账一致，Asset 冻结/释放各只有两条流水，最终可用额恢复1000、冻结额为0。
+  - 审计发现并修复 Asset `FreezeAsset` 原先缺少幂等门禁：Option 冻结强制非空业务号；相同业务号
+    只接受完全相同的用户、钱包、币种、金额、场景、业务ID和到期时间；迁移前已成功但无幂等行的
+    唯一冻结证据会被接管，重复证据或经济字段变化 fail closed。
+  - `20260801_option_freeze_idempotency_evidence.sql` 为冻结业务键增加覆盖索引，只把唯一 Option
+    历史冻结补为成功幂等账；重复键不自动认领。`asset_freeze_duplicate` 租户水位与 OPT-A033
+    SEV-1 规则主动暴露歧义证据。隔离 MySQL 中迁移连续执行两次，唯一证据补账1、重复证据补账0，
+    异常租户精确输出1个重复键/最早700，非 Option 重复键不污染指标。
+  - 仍待预生产执行 ACCT-002/003、组合保证金跨账户并发、进程断点和生产消息/告警链路，故保持
+    `VERIFYING`。
 
 ### OPT-P0-002 修正净清算权益公式
 
@@ -70,6 +86,16 @@ equity = Asset total
   - 标记价变化一单位时，权益按净 Delta 数量的线性持仓市值变化。
   - 多空同数量同合约完全对冲时，净期权市值为 0。
   - 风险率和强平触发使用新权益。
+- 当前结果：
+  - 除既有公式/屏障单测外，真实 Asset gRPC 已证明权利金完成入账后的买方与卖方在标记价不变时
+    权益均回到1000；跨账户组合按净市值 `+20-10` 只计算一次钱包余额。
+  - 开仓权利金、手续费、真实撮合部分平仓、主动行权、混合 AUTO/DNE 到期和无穿仓逐仓整仓强平的真实 Asset 会计流水已通过，
+    且钱包净变动、剩余/接管仓位市值、持仓分项收益与平台费用守恒。隔离 Call 已从公开
+    `PlaceOrder/CancelOrder` 完成 LIMIT 准入和成交、冻结前/后用户撤单、IOC成交1/2并释放剩余10.4、
+    FOK流动性不足零成交全额释放；共18条新增订单链指令中17条成功对账，1条冻结前合法取消且无流水。
+    逐仓整仓穿仓的保险/平台兜底及响应丢失恢复也已通过。组合保证金、部分强平、市价/管理强撤/全币种
+    及同仓位继续行权/到期/强平仍须按 EQ-003/004 及后续清算用例
+    在预生产执行，故保持 `VERIFYING`。
 
 ### OPT-P0-003 拆分行情来源与新鲜度
 
@@ -88,18 +114,45 @@ equity = Asset total
 - 当前结果：
   - 交易态合约已按租户输出标的/标记价缺失、超过30秒或未来时间的异常合约数和最早时间，
     并落地 OPT-A001/A002 规则；健康租户隔离 MySQL 断言通过。
-  - Greeks 已检测缺失和未来时间并落地基础规则；“超过产品阈值”仍缺合约级批准参数，
-    不擅自复用30秒阈值，因此 OPT-A003 仅部分完成。
+  - 管理端合约详情已分别展示标的价、标记价和 Greeks 快照时间。标的/标记价统一显示缺失、
+    未来、新鲜或超过30秒；Greeks 按合约 `greeks_max_age_seconds` 显示新鲜/过期，值为0时明确
+    显示“阈值待审批”，不把未经批准的默认秒数伪装成健康状态。旧 `snapshot_time` 只作兼容展示。
+  - 合约创建、系列模板、RPC 和后台已接入 Greeks 阈值；交易态与自动上市门禁要求正数。
+    数据库触发器阻止新交易态合约以0绕过，既有交易合约迁移后保留0并立即报警，必须由运营按
+    `docs/templates/option-market-freshness-approval.md` 完成审批后逐合约配置。
+  - OPT-A003 已按逐合约阈值检测未配置、缺失、陈旧和未来时间。当前基础风险模型不使用 Greeks，
+    因此异常只阻止依赖 Greeks 的新功能并告警，不虚构对现有清算权益的影响。
+  - `make gen-model` 已成功同步50张表模型，Option protobuf 和 Admin API 类型也由生成器同步；
+    `20260731_zu_option_greeks_freshness.sql` 在 MySQL 8.4 连续执行两次。隔离验收确认旧交易合约
+    保持0、新交易态0被拒绝、显式60秒可修复；监控确认10秒边界健康、11秒/0/未来/缺行异常。
 
 ### OPT-P0-004 修复保证金释放币种
 
 - 状态：`VERIFYING`
 - 问题：到期、强平和管理强撤部分路径使用 `fee_coin`，实物 Call 实际冻结 `margin_coin/underlying_coin`。
-- 修改范围：所有释放、消耗和对账路径统一使用 `OptionOrderMarginCoin`。
+- 修改范围：订单冻结余额的释放只使用 `order.margin_coin`；成交后保证金批次的释放/消耗只使用
+  `margin_lot.collateral_coin`。两类路径都不得用手续费币或当前合约结算币猜测历史冻结币种。
 - 验收标准：
   - 实物 Call/Put 在用户撤单、IOC/FOK 撤余、到期、管理强撤、强平撤单时均使用正确币种。
   - 重放释放指令不会重复释放。
   - 不存在剩余直接用 `FeeCoin` 处理 `MarginAmount` 的代码路径。
+- 当前结果：
+  - `OptionOrderMarginCoin` 只返回订单实际冻结的 `margin_coin`，不再以手续费币种猜测；
+    资产指令和保证金批次模型在币种为空时写库前 fail-closed，实物交割/平仓释放遇到历史空值
+    也明确失败，不回退结算币。
+  - `20260731_zx_option_margin_coin_evidence.sql` 按合约、方向和保证金模式确定性回填历史订单及
+    margin lot；只修复尚未执行的空币种资产指令，不修改处理中/成功资金历史。数据库触发器校验
+    新订单/批次及历史空值修复，并保护既有非空三类证据不可变；币种按字节比较，避免数据库与
+    客户端连接排序规则不同造成合法写入失败。
+  - `margin_coin_invalid` 租户水位及 OPT-A032 SEV-1 规则暴露无法关联合约、币种错配或活动空币种
+    指令。可确定记录自动修复；不能确定的历史记录必须按原冻结业务号与 Asset 人工核对。
+  - 单元、迁移双执行、实物 Call/Put/普通订单回填、错误币种/空币种拒绝、MMP/组合保证金多触发器
+    共存和健康/异常租户指标由 COIN-001/002 验证。COIN-003 进一步在隔离 MySQL/Redis + 真实
+    Asset gRPC 下证明：实物 Call 的0.25 BTC与实物 Put的300 USDT分别冻结；实际 Option 控制撤单
+    按订单证据生成 BTC/USDT 释放指令，两条均成功且对账一致，订单完成 `CANCELING -> CANCELED`，
+    重跑无新增流水，钱包及 `account_id=0` 镜像恢复。现金 USDT Call 另已覆盖冻结前/后用户撤单、
+    IOC部分成交撤余和FOK不足零成交；实物币种下的用户撤单/IOC/FOK、到期、管理强撤和强平全路径
+    故障注入仍须预生产验收。
 
 ### OPT-P0-005 正式到期结算价
 
@@ -121,6 +174,36 @@ equity = Asset total
     证据集合不符合合约规则”两类水位，并分别绑定 OPT-A010/OPT-A011 规则和查询索引。
   - 隔离库精确计数及健康租户无非0泄漏纳入 OPS-010；生产通知与完整窗口/更正/结算 E2E
     仍是上线证据。
+- 当前实现结果：
+  - 生命周期在使用 `CONFIRMED` 版本前再次校验租户/合约、正式窗口、来源类型、证据 JSON、
+    样本数量、独立复核和价格；自动 `MEDIAN` 还会按不可变快照 ID 重新取样并复算中位数。
+    监控报警不再是唯一保护，任一不一致都会在创建结算批次前 fail closed。
+  - 人工更正以 `manual-correction/MANUAL` 独立治理，证据 ID 规范化、去空/去重，创建人不得
+    自审；合法人工版本不再被自动算法监控误报。拒绝的自动候选在证据完全相同时不会被任务
+    周期性重建，新证据仍可产生下一版本。
+  - `20260731_zy_option_settlement_price_evidence.sql` 在数据库侧复算自动中位数，拒绝错误窗口、
+    缺失/重复快照、重复证据、错误价格和自审，并禁止删除任何结算价版本；专用证据索引支持
+    触发器和监控查询。历史异常不自动覆盖，由 `settlement_price_invalid` 持续暴露。
+  - 隔离 MySQL 8.4 已完成迁移双执行、索引 EXPLAIN、3类历史异常/2类健康版本、自动/人工
+    审批与使用点测试。
+  - PRICE-008 已通过隔离 MySQL/Redis + 当前工作区真实 Asset gRPC：现金 Call 使用到期窗口内
+    `119/120/121` 的已确认中位数 `120`；错误已确认价 `121` 被数据库拒绝，缺少正式价的合约
+    不创建结算。卖方50 USDT冻结金实际扣20、释放30，买方实际入账20，3条指令全部成功并
+    对账；最终钱包120/80、总额200、冻结0，结算/批次/合约完成，重放无重复流水。
+  - SET-001 已覆盖扣款前依赖不可用：卖方扣冻结首次返回 `Unavailable` 后，step 1 保留为
+    `FAILED/retry=1`，step 2成功/流水均为0且买方未入账；恢复后使用原 `instruction_no` 真实扣20，
+    再入账20并释放30。还覆盖真实Asset已扣20并落唯一流水后响应丢失：Option保持失败并阻断
+    step 2，重试同一指令幂等认领原流水而不二次扣款。两场景最终三指令成功且对账、钱包总额
+    200且冻结0。
+  - OPS-006 已覆盖 Asset 真实扣款落流水后执行者在 Option 保存结果前终止；超龄
+    `PROCESSING` 自动恢复使用原指令号认领唯一流水，未增加重试次数或二次扣款。
+  - SET-003 已覆盖余额不足：可用余额扣款连续20次失败进入 `MANUAL_REVIEW` 且step 2无成功/流水；
+    缺原因和缺操作人的重试均拒绝且保留原20次证据。独立业务号补资20后，管理端以
+    `SETTLEMENT_BALANCE_TOPUP_VERIFIED` 和有效操作人恢复原指令；重置与保存原状态、次数和错误的
+    不可变事件同事务提交，事件 UPDATE/DELETE 被数据库拒绝。最终3指令成功对账、补资和结算
+    流水均唯一，钱包总额由外部补资前200变为220且冻结0。
+  - 尚未完成：生产调度与通知、真实容器强杀、费用、部分数量、
+    多账户及大批量到期验收。因此状态仍为 `VERIFYING`，不能只凭仓库门禁开放真实资金。
 
 ### OPT-P0-006 美式行权指派正确性
 
@@ -133,6 +216,16 @@ equity = Asset total
   - 未被指派空头的平仓单不受影响。
   - 并发行权、平仓和任务重放不超分配、不重复扣款。
   - 指派数量总和等于行权数量，资金总扣减等于多头收入加费用。
+- 当前结果：
+  - 主动行权候选按 `(create_times,id)` 升序进行稳定 FIFO 键集分页，每页最多500条；每个
+    候选在撤销其平仓单后重新执行当前读行锁，再按最新 `available_qty` 指派，避免并发行权
+    使用陈旧可用量。达到所需数量后停止读取后续页，数量不足时整个事务回滚。
+  - `idx_option_position_assignment_fifo` 覆盖租户、合约、方向、状态及 FIFO 游标；迁移
+    `20260731_zw_option_assignment_pagination.sql` 可重复执行。
+  - SQL 单测已验证键集游标和500上限；隔离 MySQL 8.4 已验证1/500/501/5000条候选无截断、
+    无重复且跨页排序稳定，长仓、非持有和零数量噪声被排除；索引迁移双执行且 EXPLAIN 命中。
+    `make gen-model`、Option 全量 test/vet 及 models/task race 已通过。真实并发行权/平仓、
+    Asset 扣款与消息重放仍须预生产验收。
 
 ## 4. P1 交易、风险与产品完整性
 
@@ -164,17 +257,22 @@ equity = Asset total
     复核后先执行全部扣款再执行入账，失败进入可重试/人工处理，案件和分录由数据库保证不可篡改。
     不支持删除原成交或通过反向下单伪造撤销。
   - 已增加低基数租户指标和告警规则：交易态缺配置/近5分钟拒单、单合约1分钟价格带拒单
-    超20笔、熔断事件、暂停30秒残单、kill switch 30秒残单、STP 用户/租户窗口、用户合约
+    超20笔或占全部交易控制评估请求超过10%、熔断事件、暂停30秒残单、kill switch 30秒残单、STP 用户/租户窗口、用户合约
     限额拒单窗口、kill switch 关联资金释放失败，以及超龄/人工异常成交更正。业务身份仍从
     不可变事件和工作台下钻。
+  - 普通单和组合腿的每次交易控制评估均追加不可变分母事实，价格带拒单追加分子事实；成功和
+    拒绝同事务提交。组合父事务因腿拒绝回滚时，分子/分母在独立事务原子重记，避免拒单审计丢失。
+    隔离 MySQL 已验证10%边界不触发、超过10%触发、21笔触发，两个时间窗口分支均命中
+    `idx_option_control_event_monitor`。
   - `20260731_zr_option_operations_monitoring_indexes.sql` 提供既有跨租户时间窗口索引且保持
     已记录校验和不变；kill switch 资金释放失败的增量索引由
     `20260731_zs_option_time_sensitive_monitoring_indexes.sql` 提供。
 - 待验证/接入：
   - 限额并发 20 单、启用 kill switch 与成交竞争、熔断批量撤单、跨账户 STP 的 MySQL/消息/Asset E2E 尚未执行。
-  - 异常成交案件创建/并发复核、Asset 成功响应丢失、扣款不足、人工重试、最终资金守恒和用户通知 E2E 尚未执行。
-  - 仓库级指标和规则已实现；价格带“超过请求10%”仍缺全请求分母，生产 Prometheus/
-    Alertmanager 部署、连续恢复、通知路由和案件联动仍归 P1-008。
+  - 结算资产指令的余额不足、20次转人工、补资和带原因/操作人的不可变人工重试已由 SET-003
+    真实 Asset RPC 验证；异常成交案件自身的创建/并发复核、资金执行和用户通知 E2E 尚未执行。
+  - 仓库级指标、价格带请求分母和规则已实现；生产 Prometheus/Alertmanager 部署、连续恢复、
+    通知路由和案件联动仍归 P1-008。
   - 做市商专属集中度限额和 MMP 不在本项内，分别归 P1-004/P1-003。
 
 ### OPT-P1-003 MMP
@@ -222,6 +320,9 @@ equity = Asset total
     新增组合风险的卖单拒绝，存量组合风险账户转 `RESTRICTED`，不得静默回退到旧算法。
   - 风险账户快照保存模型配置 ID/版本、情景损失、裸空头底线、集中度附加和流动性附加，
     使告警、强平复核和历史报告可以还原计算依据。
+  - 组合保证金卖单在订单事务内保存准入时实际解析的配置 ID/版本；两个字段必须同时为正，
+    并与租户、合约结算币及订单创建时点的有效版本一致，插入后不可修改。非组合保证金卖单
+    保持 `0/0`；迁移前历史单不猜测回填，因此 `0/0` 只能表示“不适用或历史证据不可用”。
   - 运营采样按同一 `FindActive` 排序口径定位当前版本：存在组合持仓但无有效参数输出
     `portfolio_risk_config_missing`；风险账户两个扫描周期后仍保存旧 ID/版本输出
     `portfolio_risk_version_mismatch`，后者按 SEV-1 路由。
@@ -231,6 +332,8 @@ equity = Asset total
     流动性附加单调性、缺配置拒绝以及审批人不能等于创建人。
   - 管理端能够创建、审批/拒绝、查询版本，风险账户能够显示实际使用的版本和附加项。
   - 迁移脚本可重复执行，并验证不能直接修改已审批参数。
+  - 新组合保证金卖单缺少、错配或引用非有效版本时数据库拒绝；正确版本落单后，管理端订单
+    可见配置 ID/版本且后续撮合、撤单不得改写。迁移前 `0/0` 历史单仍可正常状态流转。
 - 上线外部证据（仓库不能自行伪造）：
   - 使用生产代表性历史行情和持仓样本完成回测；数据集范围、缺失值处理、阈值依据、
     例外组合和结果摘要归档到版本的 `evidence_ref`。
@@ -251,8 +354,11 @@ equity = Asset total
     跨期限隔离和附加项单调性已有自动化覆盖。
   - 尚缺生产代表性历史回测、独立模型验证签字及预生产真实账户的未来切换/回滚演练；
     对应记录模板为 `docs/templates/option-portfolio-risk-validation-record.md`。
-  - 订单没有持久化准入时解析的配置 ID/版本，因此“同一请求中下单与随后扫描解析版本一致”
-    目前只能由预生产边界切换 E2E 证明，不能用存量 SQL 水位替代。
+  - 订单已持久化准入事务实际解析的配置 ID/版本，数据库校验租户、结算币、版本状态和订单
+    创建时点有效期并保护证据不可变；管理 RPC/API/订单工作台同步展示。迁移脚本
+    `20260731_zv_option_order_portfolio_config.sql` 不回填历史单，避免伪造历史证据。
+  - 仍须在预生产版本切换边界核对新订单证据与风险扫描快照一致；订单证据消除了存量 SQL
+    无法判断准入版本的仓库缺口，但不能替代真实并发、时钟和切换演练。
 
 ### OPT-P1-005 已实现盈亏统一
 
@@ -261,16 +367,43 @@ equity = Asset total
 - 验收标准：四种退出路径对经济等价交易给出一致总收益，并与 Asset 流水总和一致。
 - 当前结果：持仓已独立保存交易毛盈亏、结算毛盈亏、累计费用和总收益；
   `realized_pnl` 保留为兼容字段并等于总收益。历史记录因旧数据无法可靠还原费用和来源，
-  迁移仅把旧 `realized_pnl` 保守归入交易毛盈亏，不能用于历史分项分析。
+  迁移仅把旧 `realized_pnl` 保守归入交易毛盈亏，不能用于历史分项分析。真实 Asset RPC 已覆盖开仓权利金后的完整主动行权和混合 AUTO/DNE 到期：
+  主动行权多头/空头A/空头B总收益 `78/-30/-60`，费用 12；AUTO/DNE/空头总收益 `8/-10/0`，
+  费用 2；两组用户收益加平台费用均为 0，且 `total_return = realized_pnl`。真实撮合部分平仓亦已通过：
+  成交额 15，买/卖费用 `0.6/0.3`，3条资金指令/流水对账；平仓方剩余 1 张，
+  `trade_realized_pnl=5`、`unrealized_pnl=5`、`fee_paid=1.3`、`total_return=realized_pnl=3.7`。
+  测试因此发现并修复了部分减仓后剩余仓位未重算未实现盈亏的缺陷。无穿仓逐仓整仓强平也已通过：
+  原空头保证金扣88/释放12，保险账户入账80并冻结80，平台费8，5指令/5流水全部对账；
+  原空头 `trade_realized=-60`、`fee=8`、`total_return=realized_pnl=-68`，保险接管仓位同步承接维持保证金40。
+  测试发现并修复了接管仓位维持保证金短暂为0的风险窗口。当前 margin lot 转移算法只安全支持整仓接管，
+  部分强平在生成任何资金指令前 fail-closed；待实现按数量拆分 margin lot 后才能开放。
+  穿仓逐仓整仓强平仓库验收也已通过：用户担保50、保险基金15、平台兜底23共同覆盖接管成本80+
+  强平费8；4条资金指令全部成功对账，保险/兜底平台账户与用户钱包合计保持65。保险赔付、平台兜底、
+  担保扣减三个“提交成功但响应丢失”点依次恢复，清算准备重试2次、担保指令重试1次，Asset 覆盖记录、
+  平台流水和用户流水均未重复。审查同时发现旧组合保证金分支会消费账户级 margin lot 却只转移
+  单一仓位，缺少账户级清算集合和剩余组合风险重算；现已在任何资金指令前 fail-closed，真实数据库
+  证明 `FAILED/retry=1`、0指令、仓位2和保证金100不变。组合保证金清算须独立重做，不能把该保护
+  视为功能完成；真实容器强杀和预生产容量仍待验收。
 
 ### OPT-P1-006 行权接口完整性
 
 - 状态：`VERIFYING`
 - 范围：客户端幂等键、`qty_step`、行权截止时间、自动行权阈值、DNE/相反指令、零净收益处理。
-- 验收标准：重复请求只生成一笔行权；非法步长拒绝；截止后拒绝；到期按用户指令和阈值确定性处理。
+- 验收标准：同键20并发只生成一笔行权和一次持仓数量冻结，同键不同经济请求拒绝；
+  仅已上市的 `TRADING/PAUSED` 合约可在截止前提交，`PENDING/EXPIRED/SETTLED/OFFLINE`
+  拒绝；非法步长和零/负净收益拒绝；指令经济字段、已替代状态和历史记录不可改删；
+  空头按 `(create_times,id)` FIFO 和实际行权量承担，所有扣款 = 多头净入账 + 行权费，
+  任务重放不增加指派、资金指令或 Asset 流水。
 - 当前结果：现金结算合约已实现独立截止时间、版本化 AUTO/DNE/相反行权指令、
-  自动行权阈值、零净收益保护和数据库不可篡改约束；到期空头仅按实际行权多头数量
-  FIFO 承担结算。实物交割指令暂不开放，归入 P1-007。
+  自动行权阈值、零净收益保护、事务内生命周期复核和数据库不可改删约束；到期空头仅按
+  实际行权多头数量 FIFO 承担结算，提前行权同比例减少空头维持保证金。
+  隔离 MySQL/Redis + 真实 Asset gRPC 已通过同键20并发、同键不同数量拒绝、两个并发清算、
+  两个空头 FIFO 指派和重放：6条指令/6条流水全部成功对账，空头扣120=多头净入108+手续费12，
+  全部仓位及 margin lot 结清。混合 AUTO/DNE 到期只行权1张：4条指令/4条流水，空头扣20=多头净入18+
+  手续费2，批次借贷20/20。两组场景均已纳入开仓权利金和持仓收益守恒断言。治理迁移连续执行两次，经济字段修改、状态回退和
+  删除均被拒绝。命令：`services/option/acceptance/run-p0-asset-rpc-e2e.sh`。
+  实物交割指令暂不开放，归入 P1-007；预生产501/5000真实Asset容量、平仓竞争、任务强杀、
+  毫秒截止边界、通知和签署仍待执行。
 
 ### OPT-P1-007 实物交割违约规则
 
@@ -311,6 +444,9 @@ equity = Asset total
     实物交割指令在通用和结算单指令入口均被拒绝，必须通过带理由的完整交割单元恢复。
   - 任务启动时会把超过 60 秒的 `PROCESSING` 资产指令按原 ID/指令号恢复为失败待重试，
     覆盖进程在 Asset 调用前后崩溃造成的永久卡单；Asset 幂等和随后的对账决定最终结果。
+    OPS-006 已在隔离 MySQL/Redis 和真实 Asset gRPC 下验证最危险的提交后崩溃点：原指令真实扣20
+    并落唯一流水后遗留超龄 `PROCESSING`，恢复前 step 2无成功/流水且买方未入账；任务自动恢复
+    后用原指令号认领流水，`retry_count=0`且不二次扣款，最终入账20、释放30并保持总额200。
   - 保险展示为 Option 原始流水代数和，平台兜底展示累计负债，另列未解决穿仓缺口；
     这些值只是运营交叉证据，不冒充 Asset 实时余额。表定义要求入金为正、出金为负，但当前
     缺口赔付写入正数，因此保险字段在修复获批前也不得解释为净变化，日终必须逐笔与 Asset
@@ -321,7 +457,8 @@ equity = Asset total
   - `monitoring/option-operations-alert-rules.yml` 已覆盖资产指令、对账、风险账户、事件、行权、
     结算、强平、实物交割、未解决穿仓、行情/风险扫描、交易控制、MMP、结算价、组合模型版本、
     公司行动、合约系列、公开链配对、OI、管理员受治理字段拒绝审计、已上报日终守恒差额，
-    钱包镜像日终差异/失败/36小时缺失，以及完整资金守恒心跳缺失；通用规则共49条。
+    钱包镜像日终差异/失败/36小时缺失、完整资金守恒心跳缺失、保证金币种证据异常和 Asset
+    重复冻结业务键；通用规则共51条。
     查询为固定组数的租户聚合，
     不随租户数产生 N+1 SQL。
   - 权限和动态菜单迁移为 `20260730_zj_option_operations_permissions.sql`。
@@ -348,11 +485,20 @@ equity = Asset total
     恒等式、操作方向、流水链、当前余额及未知分类；平台账户模型已覆盖 `FEE_REVENUE`、
     `INSURANCE_FUND`、`OPTION_BACKSTOP` 的完整流水、人工调账、截止后反推、方向/连续性、身份及
     非零冻结。两类查询均有18位精度和异常隔离库断言，Asset 两张流水表的截止查询索引已双执行并
-    经 EXPLAIN 命中。Option 指令/bill 交叉账及任务写入尚在实现，当前仍不产生 scope=2 成功心跳。
+    经 EXPLAIN 命中。Option 子账模型已对业务日内 Asset `biz_type=option` 流水、资金指令和 bill
+    建立双向唯一核对，验证 action/op/scene、用户、币种、金额、业务号、Asset流水号、前后余额和
+    权威引用；Asset单边、指令单边、重复关联、bill金额错误及合法 `1e-16` 最小指令单位均有隔离库
+    断言。`make gen-model` 已成功生成50张Option表对应的50个模型，新表及18位账务字段类型正确。
+    Scope 2 已接入 `option.ProcessDailyReconciliation`：每个租户独立执行 scope=1 钱包镜像与
+    scope=2 完整守恒，任一范围失败不阻断另一范围；scope=2 在同一 REPEATABLE READ 事务中完成
+    三类复算、运行/逐维度明细追加、旧问题恢复和当前差异重开，Redis 不参与正确性事务。异常使用
+    `DAILY:{business_date}:{dimension_type}:{dimension_key}:2` 稳定键，零差额追加成功心跳；执行失败
+    在事务外追加失败 attempt。隔离 MySQL 已验证“成功→钱包差1→恢复”三次 attempt 为
+    `SUCCESS/MISMATCH/SUCCESS`，明细数均为3，问题单自动转恢复且明细篡改被触发器拒绝。
 - 待接入/验证：生产 Prometheus target 和规则加载、Alertmanager 连续窗口/恢复策略、
   短信/IM/电话通知路由、值班系统案件自动创建，以及预生产积压、恢复、权限隔离和
-  Asset 余额对账演练。A015 的 scope=1 钱包镜像心跳及 scope=2 用户/平台复算模型已补齐，但仍缺
-  Option 指令/bill 交叉账、自动运行写入和成功心跳；scope=1 不能证明完整守恒。
+  Asset 余额对账演练。A015 的 scope=1 钱包镜像和 scope=2 完整资金守恒生产者、不可变证据、
+  差异案件恢复及成功心跳均已补齐；仍须在预生产以真实 Asset RPC/流水、调度和通知完成签署。
 - 资金账本迁移阻断：`t_option_insurance_fund_flow.amount` 定义为入金正、出金负，而
   `DEFICIT_COVER` 当前按正数写入。修正新增写入和历史数据会改变财务账本解释，必须取得财务/
   清算明确批准，并先完成生产备份、按 `asset_flow_no` 逐笔核对、迁移前后逐币复算、灰度验证和
@@ -780,10 +926,12 @@ equity = Asset total
 | Alertmanager SEV-1/2/3 路由样例 | `monitoring/alertmanager.example.yml` | DONE（接收地址和凭证必须由生产配置系统渲染） |
 | Option 生产六方签署单 | `docs/templates/option-production-readiness-signoff.md` | DONE（所有证据通过前保持 DRAFT） |
 | 预生产技术证据包与告警送达记录 | `docs/templates/option-preproduction-evidence-pack.md`、`docs/templates/option-alert-delivery-test.md` | DONE（待真实环境执行并签署） |
-| Option 日终资金守恒记录与数据契约 | `docs/templates/option-daily-fund-reconciliation.md`、`docs/option-daily-conservation-contract.md` | IN PROGRESS（公式、稳定键、不可变逐币明细、证据和签署已定义；scope=1 已自动运行，scope=2 自动计算模型/任务待完成） |
+| Option 日终资金守恒记录与数据契约 | `docs/templates/option-daily-fund-reconciliation.md`、`docs/option-daily-conservation-contract.md` | VERIFYING（公式、稳定键、不可变逐币明细、自动任务、差异恢复和成功心跳已实现；待预生产真实流水、调度、通知和四方签署） |
 | 合约上市检查表 | `docs/option-contract-launch-checklist.md` | DONE |
 | 结算价审批记录模板 | `docs/templates/settlement-price-approval.md` | DONE |
+| 行权截止与到期清算控制记录 | `docs/templates/option-exercise-expiry-control-record.md` | DONE（系统不变量已预填；每个合约的真实时间、用户触达、预生产容量/强杀证据和签字待运营执行） |
 | 风险参数变更模板 | `docs/templates/risk-parameter-change.md` | DONE |
+| 组合保证金参数版本验证、订单准入版本抽样与独立审批记录 | `docs/templates/option-portfolio-risk-validation-record.md` | DONE（历史回测、独立签字和预生产版本切换证据待真实执行；生产门禁要求模型验证与版本切换 E2E 两份哈希证据） |
 | 事故记录模板 | `docs/templates/incident-report.md` | DONE |
 | 日终对账检查表 | `docs/templates/daily-reconciliation.md` | DONE |
 | 生产验收测试计划 | `docs/option-acceptance-test-plan.md` | DONE |
@@ -803,12 +951,12 @@ equity = Asset total
 
 | 编号 | 实现提交/变更 | 迁移 | 自动化测试 | 人工/演练证据 | 审批人 |
 | --- | --- | --- | --- | --- | --- |
-| OPT-P0-001 | 用户钱包级风险键、跨账户持仓/订单/保证金聚合、用户级 STP；账户余额镜像统一为 `account_id=0` | `20260730_zb_option_wallet_account_mirror.sql` | Go 单测、race、vet 已通过；钱包镜像迁移双执行通过；Asset E2E 待执行 | 待验收 | 待审批 |
-| OPT-P0-002 | 净期权市值权益公式与审计字段；建仓等待买方权利金扣款 | `20260730_zc_option_risk_net_value.sql` | 权益恒等式及 outbox 资金屏障单测、迁移双执行已通过；完整会计 E2E 待执行 | 待验收 | 待审批 |
-| OPT-P0-003 | 三类行情时间戳与来源快照、交易态标的/标记价租户水位及 Greeks 无效时间探针 | `20260730_w_option_market_freshness.sql` | helper/logic 单测、迁移双执行、隔离 MySQL 标的陈旧1/标记价陈旧1/Greeks无效1及健康租户0、49条通用规则结构通过 | Greeks 合约级批准阈值、管理端过期状态和生产通知待验收 | 待审批 |
-| OPT-P0-004 | 释放/消耗保证金统一取 `OptionOrderMarginCoin` | 无 | Go 全量单测与静态检查通过；实物全路径 E2E 待执行 | 待验收 | 待审批 |
-| OPT-P0-005 | 合约结算规则、到期窗口不可变样本、中位数算法、双人复核、追加更正版本、后台工作台及逾期/证据异常水位 | `20260730_x_settlement_price_rule.sql`、`20260730_z_option_settlement_price_approval.sql`、`20260731_zr_option_operations_monitoring_indexes.sql` | 中位数、非法样本、四眼复核单测和迁移重复执行通过；隔离库逾期1/证据异常1及健康租户0、分级规则通过 | 完整窗口/更正/结算 E2E 与生产通知待验收 | 待审批 |
-| OPT-P0-006 | FIFO 全量空头指派、只撤候选账户平仓单 | 无 | FIFO 无分页上限 SQL 单测通过；501/5000 并发 E2E 待执行 | 待验收 | 待审批 |
+| OPT-P0-001 | 用户钱包级风险键、跨账户持仓/订单/保证金聚合、用户级 STP；账户余额镜像统一为 `account_id=0`；Asset 冻结业务号幂等、迁移前证据接管及重复业务键水位 | `20260730_zb_option_wallet_account_mirror.sql`、`services/asset/migrations/20260801_option_freeze_idempotency_evidence.sql` | Go 单测/race/vet、钱包镜像及冻结证据迁移双执行；隔离 MySQL/Redis + 真实 Asset gRPC 下三风险账户全为`account_id=0`、两业务账户冻结/释放只形成一条镜像，4指令全成功对账且无重复流水；唯一历史冻结补账1、重复键补账0并触发租户水位；ACCT-002/003及组合并发待执行 | 预生产故障/消息/OPT-A033通知待验收 | 待审批 |
+| OPT-P0-002 | 净期权市值权益公式与审计字段；建仓等待买方权利金扣款 | `20260730_zc_option_risk_net_value.sql` | 公式/outbox屏障单测、迁移双执行；真实 Asset gRPC 精确通过买方`980+20=1000`、空方`1020-20=1000`及跨账户净值`1000+20-10=1010`；隔离 Call LIMIT/用户撤单/IOC部分成交/FOK不足已通过，订单链18条指令中17条成功对账、1条冻结前合法取消；开仓权利金—真实撮合部分平仓/主动行权/到期/无穿仓及穿仓逐仓整仓强平资金与持仓收益 E2E 已通过，保险/平台兜底与三处响应丢失恢复唯一 | 组合保证金/部分强平、市价/管理强撤/全币种及生产级全链待验收 | 待审批 |
+| OPT-P0-003 | 三类行情时间戳与来源快照、合约级 Greeks 阈值、自动上市门禁和三类租户水位 | `20260730_w_option_market_freshness.sql`、`20260731_zu_option_greeks_freshness.sql` | helper/logic 单测、迁移双执行、隔离 MySQL 阈值边界/未配置/过期/未来/缺行及健康租户断言、规则结构和管理端类型检查 | 各生产合约阈值审批、真实发布链路与生产通知待验收 | 待审批 |
+| OPT-P0-004 | 订单冻结余额只取 `margin_coin`，保证金批次只取 `collateral_coin`；历史确定性回填、写入/修复门禁及异常水位 | `20260731_zx_option_margin_coin_evidence.sql` | Go 单元/全量/race/vet、MySQL 双执行、Call/Put/普通单回填、错误写入/改写、MMP/组合保证金触发器共存及健康/异常指标通过；真实 Asset gRPC 下控制撤单分别释放0.25 BTC/300 USDT；现金USDT用户撤单、IOC撤余10.4及FOK不足全额释放也通过，指令、终态、镜像和重跑幂等一致 | 实物币种用户撤单/IOC/FOK、到期、管理强撤、强平及保证金批次全路径待预生产验收 | 待审批 |
+| OPT-P0-005 | 合约结算规则、到期窗口不可变样本、中位数算法、使用点复算门禁、双人复核、追加更正版本、后台工作台及逾期/证据异常水位 | `20260730_x_settlement_price_rule.sql`、`20260730_z_option_settlement_price_approval.sql`、`20260731_zr_option_operations_monitoring_indexes.sql`、`20260731_zy_option_settlement_price_evidence.sql` | 中位数/非法样本/拒绝候选抑制/四眼复核单测；隔离 MySQL 双执行、错误中位数/窗口/重复或缺失证据/自审/删除拒绝、自动和人工健康版本、3条历史异常精确指标、使用点复算及证据索引 EXPLAIN 通过；真实 Asset 到期、扣款调用前失败、成功响应丢失、超龄处理中恢复、余额不足20次转人工及补资恢复均通过，21条总指令成功对账 | 生产调度/通知、费用、部分数量、多账户、真实容器强杀和容量待验收 | 待审批 |
+| OPT-P0-006 | `(create_times,id)` FIFO 键集分页、只撤候选账户平仓单并在使用前重新行锁读取；指派同比例减少维持保证金 | `20260731_zw_option_assignment_pagination.sql` | 1/500/501/5000候选无截断/重复/乱序，迁移双执行与 EXPLAIN；同键20并发只生成1笔、两个并发清算只生成2个FIFO指派，真实Asset 6指令/6流水全部成功对账且重放无新增；501/5000真实Asset和平仓竞争待预生产 | 待验收 | 待审批 |
 | OPT-P2-004 | 公司行动事件/后继合约、停牌撤单、四眼复核、100 条批次持仓与 margin lot 迁移、风险限制、后台工作台及到期/异常水位 | `20260731_zl_option_corporate_action.sql`、`20260731_zm_option_corporate_action_permissions.sql`、`20260731_zr_option_operations_monitoring_indexes.sql` | 精确换算/成本守恒单测与 Option 全量 Go/race/vet、Admin API 编译、Admin UI 类型检查通过；MySQL 双执行、不可变触发器、margin lot 原始身份、权限唯一性及到期1/异常1租户指标通过；5001/Asset E2E 待执行 | 待验收 | 待审批 |
 | OPT-P2-005 | 不可变系列版本、显式 expiry/strike band、请求幂等、四眼生成与独立上市复核、500条原子 PENDING 合约、运行时日历/行情门禁、谱系、管理工作台及积压/不变量水位 | `20260731_zn_option_contract_series.sql`、`20260731_zn_option_contract_series_permissions.sql`、`20260731_zr_option_operations_monitoring_indexes.sql` | 精确梯度/对称/500边界/上市门禁单测及 Option Go/race/vet、Admin API、Admin UI 检查通过；MySQL 双执行、生成/上市四眼、不可变/回退拒绝/冲突回滚、5权限唯一性及积压1/谱系异常1租户指标通过；并发/目标市场时间 E2E 待执行 | 待验收 | 待审批 |
 | OPT-P2-006 | 精确到期期权链、Call/Put 配对、活动委托聚合盘口、24h 成交统计、已落仓单边 OI、质量元数据及事实表水位 | `20260731_zo_option_public_market.sql`、`20260731_zr_option_operations_monitoring_indexes.sql` | 配对/缺腿/OI质量/盘口单测及 Option/App API 编译、App Web 类型检查通过；MySQL 8.4 全量 schema、迁移双执行、聚合口径及缺腿1/OI不平衡1、健康租户0通过；并发/容量/CDN E2E 待执行 | 待验收 | 待审批 |
@@ -816,11 +964,11 @@ equity = Asset total
 | OPT-P1-001 | 单风险钱包失败隔离、保守 `RESTRICTED`、其他钱包继续扫描；实际扫描总数/失败数/比例/完成时间及执行失败指标 | 无 | task/observability 单测、指标注册、失败率/旧租户清零通过；故障注入 E2E 待执行 | 生产抓取、通知升级和跨租户故障演练待验收 | 待审批 |
 | OPT-P1-002 | 原子持仓/OI/价格带准入、标记价跳变熔断、用户 kill switch、跨账户 cancel-taker STP、不可变控制审计；异常成交保留原成交并走平衡现金更正、四眼审批、先扣后入账、后台工作台及租户级阈值指标/规则 | `20260730_ze_option_trading_controls.sql`、`20260730_zf_option_trade_correction.sql`、`20260731_zr_option_operations_monitoring_indexes.sql` | 边界、行情补丁、借贷守恒、参与账户、精度、状态结果和行锁 SQL 单测；全量迁移双执行、四眼/不可变触发器及资金步骤门禁通过；MySQL 窗口阈值/健康租户隔离和索引命中通过；并发/Asset/消息 E2E 待执行 | 熔断、kill switch、STP、异常成交现金更正及生产通知演练待验收 | 待审批 |
 | OPT-P1-003 | 报价组配置、POST_ONLY 准入、maker 数量/笔数/不利损失窗口、触发态、组级撤单、冷静期自动恢复、人工恢复、管理端工作台及异常水位/规则 | `20260730_zg_option_mmp.sql`、`20260731_zr_option_operations_monitoring_indexes.sql` | 阈值边界、窗口重置、买卖不利损失、组名和 SQL 行锁单测；隔离 MySQL 双执行、历史标志归一、成对字段、身份不可变、阈值 CHECK、残单/撤单错误/异常禁用水位通过；并发/Asset/消息 E2E 待执行 | 做市商预生产触发、恢复及通知演练待验收 | 待审批 |
-| OPT-P1-004 | 组合保证金参数版本、四眼审批、未来生效/回滚、情景损失、裸空头底线、集中度/流动性附加、风险快照版本追踪及缺配置/版本落后水位 | `20260730_zh_option_portfolio_risk_governance.sql`、`20260731_zr_option_operations_monitoring_indexes.sql` | 参数校验、审批隔离、场景与附加项单测；隔离 MySQL 双执行、历史不可篡改、缺配置1/版本落后1及健康租户0通过；生产代表性回测、独立验证和预生产切换待执行 | 模型验证、未来切换、准入/扫描版本边界和回滚演练待验收 | 待审批 |
-| OPT-P1-005 | 平仓、提前行权、到期和强平统一写入交易毛盈亏、结算毛盈亏、费用、总收益；管理端展示分项 | `20260730_zd_option_exercise_governance.sql` | 多/空、行权/放弃/阈值分项单测及历史回填通过；Asset 会计 E2E 待执行 | 待验收 | 待审批 |
-| OPT-P1-006 | 客户端幂等键、数量步长、独立截止、AUTO/DNE/相反指令版本、阈值、正净收益、按实际行权量分摊空头 | `20260730_y_option_exercise_idempotency.sql`、`20260730_zd_option_exercise_governance.sql` | 指令决策、重放、FIFO 数量分配、SQL 锁单测通过；全量迁移双执行及不可篡改触发器通过；并发 E2E 待执行 | 现金结算预生产到期演练待验收；实物不适用 | 待审批 |
+| OPT-P1-004 | 组合保证金参数版本、四眼审批、未来生效/回滚、情景损失、裸空头底线、集中度/流动性附加、风险快照版本追踪、订单准入配置证据及缺配置/版本落后水位 | `20260730_zh_option_portfolio_risk_governance.sql`、`20260731_zr_option_operations_monitoring_indexes.sql`、`20260731_zv_option_order_portfolio_config.sql` | 参数校验、审批隔离、场景与附加项单测；隔离 MySQL 双执行、历史不可篡改、订单缺省/错版本/失效边界/不适用/不可改写及历史 `0/0` 流转、缺配置1/版本落后1及健康租户0通过；生产代表性回测、独立验证和预生产切换待执行 | 模型验证、未来切换、准入订单与扫描版本边界和回滚演练待验收 | 待审批 |
+| OPT-P1-005 | 平仓、提前行权、到期和强平统一写入交易毛盈亏、结算毛盈亏、费用、总收益；管理端展示分项 | `20260730_zd_option_exercise_governance.sql` | 多/空、行权/放弃/阈值分项单测及历史回填通过；公开下单准入—撮合—落仓后买/卖持仓费用及总收益分别为`0.4/-0.4`和`0.2/-0.2`；真实 Asset RPC 下主动行权收益`78/-30/-60`加费用12守恒，AUTO/DNE/空头收益`8/-10/0`加费用2守恒；真实撮合部分平仓的3指令/流水对账，剩余仓位`trade/unrealized/fee/total=5/5/1.3/3.7`；无穿仓逐仓整仓强平5指令/流水对账，原空头`trade/fee/total=-60/8/-68`且保险接管仓位维持保证金40；穿仓场景以担保50+保险15+平台23覆盖88，4指令全部对账，三个提交后响应丢失点恢复且用户钱包+平台账户保持65；部分强平在0资金指令前失败关闭 | 组合保证金强平、真实容器强杀和预生产容量待验收 | 待审批 |
+| OPT-P1-006 | 客户端幂等键、数量步长、生命周期与独立截止、AUTO/DNE/相反指令版本、阈值、正净收益、按实际行权量分摊空头、指令不可改删 | `20260730_y_option_exercise_idempotency.sql`、`20260730_zd_option_exercise_governance.sql` | 指令决策/重放/状态门禁/FIFO单测；治理迁移双执行，经济字段改写、SUPERSEDED回退和DELETE均拒绝；真实RPC同键20并发、并发清算、6条提前行权与4条AUTO/DNE到期指令共10条全部成功对账，借贷守恒且重放唯一 | 预生产毫秒截止、不同键替换、大批量、强杀、通知待验收；实物不适用 | 待审批 |
 | OPT-P1-007 | FIFO 配对交割单元、单元级执行屏障、补资/人工/违约状态、逾期停重试、批次失败/恢复联动、不可变事件及管理端查询/重试 | `20260730_zi_option_physical_delivery_default.sql` | 配对分割和步骤屏障单测、Go 全量测试；隔离 MySQL 双执行、合法/非法状态、经济字段不可改/不可删、健康单元隔离和传统屏障兼容通过；真实 Asset/消息/故障注入 E2E 待执行 | Call/Put 实物交割及补资违约演练待验收；最终经济处置待批准 | 待审批 |
-| OPT-P1-008 | 统一运营水位、资产指令和对账差异下钻、原指令恢复、保险原始流水/兜底负债/未解决缺口展示、日终差额、租户级 Prometheus 指标/规则、管理员拒绝审计及权限隔离 | `20260730_zj_option_operations_permissions.sql`、`20260731_zr_option_operations_monitoring_indexes.sql`、`20260731_zs_option_time_sensitive_monitoring_indexes.sql`、`20260731_zt_option_daily_reconciliation_run.sql` | Option/Admin API 编译测试、管理端类型检查通过；隔离 MySQL 跨模块汇总、治理/日终/时间敏感指标及钱包镜像健康/差异/单边缺失/遗留账户/18位小数精度精确断言，运行迁移双执行且 attempt 不可修改/删除；指标注册和拒绝标签边界单测、49条通用告警 YAML；既有14项迁移校验和保持不变，3项增量索引双执行，17项索引 EXPLAIN 命中 | 生产 Prometheus/Alertmanager、数据库审计、通知、积压恢复、公开接口外部探针、Asset/财务 scope=2 完整日终生产者与对账演练待验收；保险缺口赔付符号及历史迁移待财务/清算批准 | 待审批 |
+| OPT-P1-008 | 统一运营水位、资产指令和对账差异下钻、原指令恢复、保险原始流水/兜底负债/未解决缺口展示、日终差额、租户级 Prometheus 指标/规则、管理员拒绝审计及权限隔离 | `20260730_zj_option_operations_permissions.sql`、`20260731_zr_option_operations_monitoring_indexes.sql`、`20260731_zs_option_time_sensitive_monitoring_indexes.sql`、`20260731_zt_option_daily_reconciliation_run.sql`、`20260731_zx_option_margin_coin_evidence.sql`、`services/asset/migrations/20260801_option_freeze_idempotency_evidence.sql` | Option/Admin API 编译测试、管理端类型检查通过；隔离 MySQL 跨模块汇总、治理/日终/时间敏感/保证金币种/重复冻结指标、scope=1钱包镜像及scope=2用户/平台/子账完整资金守恒精确断言；scope=2真实事务闭环依次产生成功/差异/恢复，稳定问题单自动恢复，运行/明细不可修改删除；资产人工重试强制1–64字符原因和有效操作人，重置与原失败状态/次数/错误的不可变事件同事务提交，SET-003真实RPC验证非法请求、补资恢复及事件改删拒绝；指标注册和拒绝标签边界单测、51条通用告警 YAML；既有14项迁移校验和保持不变，增量索引双执行及关键 EXPLAIN 命中 | 生产 Prometheus/Alertmanager、独立数据库安全审计、通知、积压恢复、公开接口外部探针及真实 Asset/财务日终对账演练待验收；保险缺口赔付符号及历史迁移待财务/清算批准 | 待审批 |
 | OPT-P2-001 | 不可变日历代码、版本/四眼审批、IANA 周会话、UTC 例外、双阶段下单准入、人工/熔断 halt、撤单及显式恢复、暂停到期续跑和管理端治理页 | `20260731_zk_option_trading_calendar.sql`、`20260731_zl_option_trading_calendar_permissions.sql` | DST/边界/跨午夜/例外/非法定义单测，Option/Admin/App API 编译与 admin-ui 类型检查、MySQL 8.4 双执行通过；日历触发器专项和未来切换待执行 | 并发暂停、Asset 释放、未来切换、任务重启和权限演练待验收 | 待审批 |
 
 ### 7.1 2026-07-30 仓库级回归证据

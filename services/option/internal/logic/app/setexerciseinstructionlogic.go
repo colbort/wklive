@@ -61,7 +61,8 @@ func (l *SetExerciseInstructionLogic) SetExerciseInstruction(in *option.SetExerc
 		return response, err
 	}
 	now := time.Now().Unix()
-	if now >= contract.ExerciseCutoffTime {
+	if !allowsExerciseSubmission(contract.Status) || now < contract.ListTime ||
+		contract.ExerciseCutoffTime <= 0 || now >= contract.ExerciseCutoffTime {
 		return &option.GetExerciseInstructionResp{
 			Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx)),
 		}, nil
@@ -79,9 +80,23 @@ func (l *SetExerciseInstructionLogic) SetExerciseInstruction(in *option.SetExerc
 	var result *models.TOptionExerciseInstruction
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
+		contractModel := models.NewTOptionContractModel(conn, l.svcCtx.Config.CacheRedis)
 		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis)
 		instructionModel := models.NewTOptionExerciseInstructionModel(conn, l.svcCtx.Config.CacheRedis)
 		actionContractModel := models.NewTOptionCorporateActionContractModel(conn, l.svcCtx.Config.CacheRedis)
+		currentContract, lockErr := contractModel.FindOneForUpdate(ctx, contract.Id)
+		if lockErr != nil {
+			return lockErr
+		}
+		txNow := time.Now().Unix()
+		if currentContract.TenantId != tenantID ||
+			currentContract.SettlementType != int64(option.SettlementType_SETTLEMENT_TYPE_CASH) ||
+			currentContract.IsAutoExercise != int64(common.YesNo_YES_NO_YES) ||
+			!allowsExerciseSubmission(currentContract.Status) ||
+			txNow < currentContract.ListTime || currentContract.ExerciseCutoffTime <= 0 ||
+			txNow >= currentContract.ExerciseCutoffTime {
+			return i18n.StatusError(ctx, i18n.OperationNotAllowed)
+		}
 		currentPosition, lockErr := positionModel.FindOneForUpdate(ctx, position.Id)
 		if lockErr != nil {
 			return lockErr
@@ -135,7 +150,7 @@ func (l *SetExerciseInstructionLogic) SetExerciseInstruction(in *option.SetExerc
 			ClientInstructionId: clientID, InstructionType: int64(in.InstructionType),
 			Version:      version,
 			Status:       int64(option.ExerciseInstructionStatus_EXERCISE_INSTRUCTION_STATUS_ACTIVE),
-			SupersedesId: supersedesID, CutoffTime: contract.ExerciseCutoffTime,
+			SupersedesId: supersedesID, CutoffTime: currentContract.ExerciseCutoffTime,
 			CreateTimes: now, UpdateTimes: now,
 		}
 		insertResult, insertErr := instructionModel.Insert(ctx, result)

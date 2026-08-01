@@ -114,6 +114,7 @@ CREATE TABLE `t_asset_freeze` (
   KEY `idx_tenant_user_id` (`tenant_id`,`user_id`),
   KEY `idx_tenant_biz_type_biz_id` (`tenant_id`,`biz_type`,`biz_id`),
   KEY `idx_tenant_biz_no` (`tenant_id`,`biz_no`),
+  KEY `idx_asset_freeze_option_business_key` (`biz_type`,`tenant_id`,`scene_type`,`biz_no`,`create_times`,`id`),
   KEY `idx_tenant_coin_wallet` (`tenant_id`,`coin`,`wallet_type`),
   KEY `idx_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='资产冻结明细表';

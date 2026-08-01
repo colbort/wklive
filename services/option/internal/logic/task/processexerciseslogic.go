@@ -100,88 +100,114 @@ func (l *ProcessExercisesLogic) createExerciseClearing(exercise *models.TOptionE
 			longPosition.ExerciseableQty.LessThan(current.ExerciseQty) {
 			return errors.New("early exercise long position reservation changed")
 		}
-		shorts, err := positionModel.FindAssignableShorts(
-			ctx, current.TenantId, current.ContractId,
-		)
-		if err != nil {
-			return err
-		}
 		now := time.Now().Unix()
 		remainingQty := current.ExerciseQty
 		totalDebit := decimal.Zero
-		for _, candidate := range shorts {
-			if !remainingQty.IsPositive() {
-				break
-			}
-			closeOrders, err := orderModel.FindActiveCloseOrdersForUpdate(
-				ctx,
-				candidate.TenantId, candidate.UserId, candidate.AccountId, candidate.ContractId,
+		const assignmentPageSize int64 = 500
+		cursorCreateTimes := int64(0)
+		cursorID := int64(0)
+		for remainingQty.IsPositive() {
+			shorts, err := positionModel.FindAssignableShortsPage(
+				ctx, current.TenantId, current.ContractId,
+				cursorCreateTimes, cursorID, assignmentPageSize,
 			)
 			if err != nil {
 				return err
 			}
-			for _, closeOrder := range closeOrders {
-				changed, err := cancelOptionSystemOrderInTx(
-					ctx, orderModel, positionModel, instructionModel,
-					closeOrder, "AMERICAN_EXERCISE_ASSIGNMENT", now,
+			if len(shorts) == 0 {
+				break
+			}
+			for _, candidate := range shorts {
+				cursorCreateTimes = candidate.CreateTimes
+				cursorID = candidate.Id
+				if !remainingQty.IsPositive() {
+					break
+				}
+				closeOrders, err := orderModel.FindActiveCloseOrdersForUpdate(
+					ctx,
+					candidate.TenantId, candidate.UserId, candidate.AccountId, candidate.ContractId,
 				)
 				if err != nil {
 					return err
 				}
-				if changed {
-					canceledOrders = append(canceledOrders, closeOrder)
+				for _, closeOrder := range closeOrders {
+					changed, err := cancelOptionSystemOrderInTx(
+						ctx, orderModel, positionModel, instructionModel,
+						closeOrder, "AMERICAN_EXERCISE_ASSIGNMENT", now,
+					)
+					if err != nil {
+						return err
+					}
+					if changed {
+						canceledOrders = append(canceledOrders, closeOrder)
+					}
 				}
+				// The page query bounds memory and establishes deterministic FIFO candidates.
+				// Re-read each candidate with a current locking read after close-order cancellation,
+				// so concurrent exercises cannot assign stale available quantity.
+				short, err := positionModel.FindOneForUpdate(ctx, candidate.Id)
+				if err != nil {
+					return err
+				}
+				assignQty := decimal.Min(remainingQty, short.AvailableQty)
+				if !assignQty.IsPositive() {
+					continue
+				}
+				payoff := optionSettlementPayoff(contract, current.SettlementPrice, assignQty)
+				if !payoff.IsPositive() {
+					return errors.New("early exercise payoff must be positive")
+				}
+				firstInstruction, err := createExerciseShortInstructions(
+					ctx, instructionModel, marginLotModel, contract, current, short,
+					assignQty, payoff, now,
+				)
+				if err != nil {
+					return err
+				}
+				if _, err := assignmentModel.Insert(ctx, &models.TOptionExerciseAssignment{
+					TenantId: current.TenantId, ExerciseId: current.Id, ExerciseNo: current.ExerciseNo,
+					LongPositionId: longPosition.Id, ShortPositionId: short.Id,
+					ShortUserId: short.UserId, ShortAccountId: short.AccountId,
+					Quantity: assignQty, Payoff: payoff,
+					Status:        int64(option.ExerciseAssignmentStatus_EXERCISE_ASSIGNMENT_STATUS_PENDING),
+					InstructionNo: firstInstruction, CreateTimes: now, UpdateTimes: now,
+				}); err != nil {
+					return err
+				}
+				allocatedMaintenance := decimal.Zero
+				if short.PositionQty.IsPositive() && short.MaintenanceMargin.IsPositive() {
+					allocatedMaintenance = short.MaintenanceMargin.Mul(assignQty).
+						Div(short.PositionQty).Round(16)
+				}
+				short.PositionQty = decimal.Max(short.PositionQty.Sub(assignQty), decimal.Zero)
+				short.AvailableQty = decimal.Max(short.AvailableQty.Sub(assignQty), decimal.Zero)
+				short.MaintenanceMargin = decimal.Max(
+					short.MaintenanceMargin.Sub(allocatedMaintenance), decimal.Zero,
+				)
+				short.PositionValue = short.MarkPrice.Mul(short.PositionQty).Mul(optionMultiplier(contract)).Round(16)
+				applyPositionSettlementReturn(
+					short, payoff, decimal.Zero, assignQty, optionMultiplier(contract),
+				)
+				short.UnrealizedPnl = short.OpenAvgPrice.Sub(short.MarkPrice).
+					Mul(short.PositionQty).Mul(optionMultiplier(contract)).Round(16)
+				short.UpdateTimes = now
+				if short.PositionQty.IsZero() {
+					short.AvailableQty = decimal.Zero
+					short.FrozenQty = decimal.Zero
+					short.PositionValue = decimal.Zero
+					short.MaintenanceMargin = decimal.Zero
+					short.UnrealizedPnl = decimal.Zero
+					short.Status = int64(option.PositionStatus_POSITION_STATUS_EXERCISED)
+				}
+				if err := positionModel.Update(ctx, short); err != nil {
+					return err
+				}
+				totalDebit = totalDebit.Add(payoff)
+				remainingQty = remainingQty.Sub(assignQty)
 			}
-			short, err := positionModel.FindOneForUpdate(ctx, candidate.Id)
-			if err != nil {
-				return err
+			if int64(len(shorts)) < assignmentPageSize {
+				break
 			}
-			assignQty := decimal.Min(remainingQty, short.AvailableQty)
-			if !assignQty.IsPositive() {
-				continue
-			}
-			payoff := optionSettlementPayoff(contract, current.SettlementPrice, assignQty)
-			if !payoff.IsPositive() {
-				return errors.New("early exercise payoff must be positive")
-			}
-			firstInstruction, err := createExerciseShortInstructions(
-				ctx, instructionModel, marginLotModel, contract, current, short,
-				assignQty, payoff, now,
-			)
-			if err != nil {
-				return err
-			}
-			if _, err := assignmentModel.Insert(ctx, &models.TOptionExerciseAssignment{
-				TenantId: current.TenantId, ExerciseId: current.Id, ExerciseNo: current.ExerciseNo,
-				LongPositionId: longPosition.Id, ShortPositionId: short.Id,
-				ShortUserId: short.UserId, ShortAccountId: short.AccountId,
-				Quantity: assignQty, Payoff: payoff,
-				Status:        int64(option.ExerciseAssignmentStatus_EXERCISE_ASSIGNMENT_STATUS_PENDING),
-				InstructionNo: firstInstruction, CreateTimes: now, UpdateTimes: now,
-			}); err != nil {
-				return err
-			}
-			short.PositionQty = decimal.Max(short.PositionQty.Sub(assignQty), decimal.Zero)
-			short.AvailableQty = decimal.Max(short.AvailableQty.Sub(assignQty), decimal.Zero)
-			short.PositionValue = short.MarkPrice.Mul(short.PositionQty).Mul(optionMultiplier(contract)).Round(16)
-			applyPositionSettlementReturn(
-				short, payoff, decimal.Zero, assignQty, optionMultiplier(contract),
-			)
-			short.UnrealizedPnl = short.OpenAvgPrice.Sub(short.MarkPrice).
-				Mul(short.PositionQty).Mul(optionMultiplier(contract)).Round(16)
-			short.UpdateTimes = now
-			if short.PositionQty.IsZero() {
-				short.AvailableQty = decimal.Zero
-				short.FrozenQty = decimal.Zero
-				short.PositionValue = decimal.Zero
-				short.UnrealizedPnl = decimal.Zero
-				short.Status = int64(option.PositionStatus_POSITION_STATUS_EXERCISED)
-			}
-			if err := positionModel.Update(ctx, short); err != nil {
-				return err
-			}
-			totalDebit = totalDebit.Add(payoff)
-			remainingQty = remainingQty.Sub(assignQty)
 		}
 		netCredit := current.ProfitAmount.Sub(current.Fee)
 		if remainingQty.IsPositive() {

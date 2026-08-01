@@ -124,12 +124,91 @@ OR order_price_band_ratio<=0 OR circuit_breaker_ratio<=0)`, "update_times", nil}
 		return nil, nil, fmt.Errorf("query option daily reconciliation metrics: %w", err)
 	}
 	counts = append(counts, dailyReconciliationMetrics...)
+	marginCoinMetrics, err := queryOptionMarginCoinMetricsByTenant(ctx, conn)
+	if err != nil {
+		return nil, nil, fmt.Errorf("query option margin coin evidence metrics: %w", err)
+	}
+	counts = append(counts, marginCoinMetrics...)
+	assetFreezeDuplicateMetrics, err := queryOptionAssetFreezeDuplicateMetricsByTenant(ctx, conn)
+	if err != nil {
+		return nil, nil, fmt.Errorf("query option asset freeze duplicate metrics: %w", err)
+	}
+	counts = append(counts, assetFreezeDuplicateMetrics...)
 
 	amounts, err := queryOptionOperationsAmounts(ctx, conn)
 	if err != nil {
 		return nil, nil, err
 	}
 	return counts, amounts, nil
+}
+
+func queryOptionAssetFreezeDuplicateMetricsByTenant(
+	ctx context.Context,
+	conn sqlx.SqlConn,
+) ([]*OptionOperationsMetric, error) {
+	query := `SELECT tenant_id,COUNT(1) count,COALESCE(MIN(oldest),0) oldest
+FROM (
+  SELECT tenant_id,biz_type,scene_type,biz_no,MIN(create_times) oldest
+  FROM t_asset_freeze FORCE INDEX (idx_asset_freeze_option_business_key)
+  WHERE biz_type='option' AND TRIM(biz_no)<>''
+  GROUP BY tenant_id,biz_type,scene_type,biz_no
+  HAVING COUNT(*)>1
+) duplicate_keys
+GROUP BY tenant_id
+ORDER BY tenant_id`
+	var rows []*optionTenantCountOldest
+	if err := conn.QueryRowsCtx(ctx, &rows, query); err != nil {
+		return nil, err
+	}
+	return toOptionOperationsMetrics(rows, "asset_freeze_duplicate"), nil
+}
+
+func queryOptionMarginCoinMetricsByTenant(
+	ctx context.Context,
+	conn sqlx.SqlConn,
+) ([]*OptionOperationsMetric, error) {
+	query := `SELECT tenant_id,COUNT(1) count,COALESCE(MIN(create_times),0) oldest
+FROM (
+  SELECT order_item.tenant_id,order_item.id,order_item.create_times
+  FROM t_option_order order_item
+  LEFT JOIN t_option_contract contract
+    ON contract.tenant_id=order_item.tenant_id AND contract.id=order_item.contract_id
+  WHERE order_item.margin_amount>0 AND (
+    contract.id IS NULL OR TRIM(order_item.margin_coin)='' OR
+    TRIM(order_item.margin_coin)<>CASE
+      WHEN order_item.side=2 AND order_item.position_effect=1
+           AND contract.seller_margin_mode=4 AND contract.settlement_type=2
+           AND contract.option_type=1
+        THEN contract.underlying_coin
+      ELSE contract.settle_coin
+    END
+  )
+  UNION ALL
+  SELECT lot.tenant_id,lot.id,lot.create_times
+  FROM t_option_margin_lot lot
+  LEFT JOIN t_option_contract contract
+    ON contract.tenant_id=lot.tenant_id AND contract.id=lot.contract_id
+  WHERE lot.remaining_margin>0 AND (
+    contract.id IS NULL OR TRIM(lot.collateral_coin)='' OR
+    TRIM(lot.collateral_coin)<>CASE
+      WHEN contract.seller_margin_mode=4 AND contract.settlement_type=2
+           AND contract.option_type=1
+        THEN contract.underlying_coin
+      ELSE contract.settle_coin
+    END
+  )
+  UNION ALL
+  SELECT instruction.tenant_id,instruction.id,instruction.create_times
+  FROM t_option_asset_instruction instruction
+  WHERE instruction.status IN (1,2,4,5) AND TRIM(instruction.coin)=''
+) invalid_evidence
+GROUP BY tenant_id
+ORDER BY tenant_id`
+	var rows []*optionTenantCountOldest
+	if err := conn.QueryRowsCtx(ctx, &rows, query); err != nil {
+		return nil, err
+	}
+	return toOptionOperationsMetrics(rows, "margin_coin_invalid"), nil
 }
 
 func queryOptionDailyReconciliationMetricsByTenant(
@@ -291,18 +370,30 @@ func queryOptionControlMetricsByTenant(
 		{
 			category: "price_band_contract_breach",
 			query: `
-SELECT tenant_id,COUNT(1) count,COALESCE(MIN(first_time),0) oldest
-FROM (
-  SELECT tenant_id,contract_id,MIN(create_times) first_time
-  FROM t_option_trading_control_event
+WITH recent_facts AS (
+  SELECT tenant_id,contract_id,create_times,1 request_count,0 rejected_count
+  FROM t_option_trading_control_event FORCE INDEX (idx_option_control_event_monitor)
+  WHERE event_type='ORDER_CONTROL_EVALUATED' AND reason='TRADING_CONTROL'
+    AND create_times>=?
+  UNION ALL
+  SELECT tenant_id,contract_id,create_times,0 request_count,1 rejected_count
+  FROM t_option_trading_control_event FORCE INDEX (idx_option_control_event_monitor)
   WHERE event_type='ORDER_REJECTED' AND reason='ORDER_PRICE_BAND'
     AND create_times>=?
+), contract_windows AS (
+  SELECT tenant_id,contract_id,
+    SUM(request_count) request_count,SUM(rejected_count) rejected_count,
+    MIN(CASE WHEN rejected_count=1 THEN create_times END) first_time
+  FROM recent_facts
   GROUP BY tenant_id,contract_id
-  HAVING COUNT(1)>20
-) breaches
+  HAVING rejected_count>20
+    OR (request_count>0 AND rejected_count*10>request_count)
+)
+SELECT tenant_id,COUNT(1) count,COALESCE(MIN(first_time),0) oldest
+FROM contract_windows
 GROUP BY tenant_id
 ORDER BY tenant_id`,
-			args: []any{now - 60},
+			args: []any{now - 60, now - 60},
 		},
 		{
 			category: "stp_user_breach",
@@ -506,18 +597,26 @@ ORDER BY contract.tenant_id`, field)
 		{
 			category: "greeks_market_invalid",
 			query: `
-SELECT contract.tenant_id,COUNT(1) count,0 oldest
+SELECT contract.tenant_id,COUNT(1) count,
+       COALESCE(MIN(CASE
+         WHEN contract.greeks_max_age_seconds>0
+          AND market.greeks_snapshot_time BETWEEN 1 AND ?
+         THEN market.greeks_snapshot_time
+         ELSE 0
+       END),0) oldest
 FROM t_option_contract contract
 LEFT JOIN t_option_market market
   ON market.tenant_id=contract.tenant_id AND market.contract_id=contract.id
 WHERE contract.status=2
   AND (
-    market.id IS NULL OR market.greeks_snapshot_time<=0
+    contract.greeks_max_age_seconds<=0
+    OR market.id IS NULL OR market.greeks_snapshot_time<=0
+    OR market.greeks_snapshot_time < ?-contract.greeks_max_age_seconds
     OR market.greeks_snapshot_time>?
   )
 GROUP BY contract.tenant_id
 ORDER BY contract.tenant_id`,
-			args: []any{now},
+			args: []any{now, now, now},
 		},
 	}
 	result := make([]*OptionOperationsMetric, 0, len(targets))
@@ -562,20 +661,98 @@ ORDER BY contract.tenant_id`,
 		{
 			category: "settlement_price_invalid",
 			query: `
+WITH confirmed_price AS (
+  SELECT price.*,
+         contract.id matched_contract_id,
+         contract.expire_time contract_expire_time,
+         contract.settlement_window_seconds contract_window_seconds,
+         contract.settlement_min_samples contract_min_samples,
+         contract.settlement_price_source contract_price_source,
+         contract.settlement_price_method contract_price_method
+  FROM t_option_settlement_price price
+  LEFT JOIN t_option_contract contract
+    ON contract.tenant_id=price.tenant_id AND contract.id=price.contract_id
+  WHERE price.status=2
+), evidence AS (
+  SELECT price.id price_id,TRIM(item.source_id) source_id
+  FROM confirmed_price price
+  JOIN JSON_TABLE(
+    IF(JSON_VALID(price.source_snapshot_ids),price.source_snapshot_ids,'[]'),
+    '$[*]' COLUMNS(source_id VARCHAR(128) PATH '$')
+  ) item
+), evidence_stats AS (
+  SELECT price_id,COUNT(1) evidence_count,
+         COUNT(DISTINCT CAST(source_id AS BINARY)) unique_count,
+         COALESCE(SUM(source_id=''),0) blank_count
+  FROM evidence
+  GROUP BY price_id
+), automatic_snapshot_matches AS (
+  SELECT evidence.price_id,COUNT(snapshot.id) match_count
+  FROM evidence
+  JOIN confirmed_price price ON price.id=evidence.price_id
+  LEFT JOIN t_option_market_snapshot snapshot
+    ON snapshot.tenant_id=price.tenant_id
+   AND snapshot.contract_id=price.contract_id
+   AND snapshot.source_type=1
+   AND snapshot.snapshot_time BETWEEN price.window_start AND price.window_end
+   AND snapshot.underlying_price>0
+   AND BINARY TRIM(snapshot.source_snapshot_id)=BINARY evidence.source_id
+  GROUP BY evidence.price_id
+), automatic_ranked AS (
+  SELECT evidence.price_id,snapshot.underlying_price,
+         ROW_NUMBER() OVER (
+           PARTITION BY evidence.price_id ORDER BY snapshot.underlying_price,snapshot.id
+         ) row_no,
+         COUNT(1) OVER (PARTITION BY evidence.price_id) row_count
+  FROM evidence
+  JOIN confirmed_price price ON price.id=evidence.price_id
+  JOIN t_option_market_snapshot snapshot
+    ON snapshot.tenant_id=price.tenant_id
+   AND snapshot.contract_id=price.contract_id
+   AND snapshot.source_type=1
+   AND snapshot.snapshot_time BETWEEN price.window_start AND price.window_end
+   AND snapshot.underlying_price>0
+   AND BINARY TRIM(snapshot.source_snapshot_id)=BINARY evidence.source_id
+), automatic_median AS (
+  SELECT price_id,ROUND(AVG(underlying_price),16) delivery_price
+  FROM automatic_ranked
+  WHERE row_no IN (FLOOR((row_count+1)/2),FLOOR((row_count+2)/2))
+  GROUP BY price_id
+)
 SELECT price.tenant_id,COUNT(1) count,
        COALESCE(MIN(price.confirmed_at),0) oldest
-FROM t_option_settlement_price price
-JOIN t_option_contract contract
-  ON contract.tenant_id=price.tenant_id AND contract.id=price.contract_id
-WHERE price.status=2
-  AND (
-    price.sample_count<contract.settlement_min_samples
-    OR price.price_source<>contract.settlement_price_source
-    OR price.calculation_method<>contract.settlement_price_method
-    OR price.window_end<>contract.expire_time
-    OR price.window_start<>contract.expire_time-contract.settlement_window_seconds
-    OR price.source_snapshot_ids=''
-  )
+FROM confirmed_price price
+LEFT JOIN evidence_stats stats ON stats.price_id=price.id
+LEFT JOIN automatic_snapshot_matches matches ON matches.price_id=price.id
+LEFT JOIN automatic_median median_price ON median_price.price_id=price.id
+WHERE price.matched_contract_id IS NULL
+   OR price.confirmed_by<=0 OR price.confirmed_at<=0
+   OR (price.created_by>0 AND price.created_by=price.confirmed_by)
+   OR price.delivery_price<=0 OR price.sample_count<=0
+   OR JSON_VALID(price.source_snapshot_ids)=0
+   OR JSON_TYPE(IF(JSON_VALID(price.source_snapshot_ids),price.source_snapshot_ids,'[]'))<>'ARRAY'
+   OR COALESCE(stats.evidence_count,0)<>price.sample_count
+   OR COALESCE(stats.unique_count,0)<>COALESCE(stats.evidence_count,0)
+   OR COALESCE(stats.blank_count,0)<>0
+   OR price.window_end<>price.contract_expire_time
+   OR price.window_start<>price.contract_expire_time-price.contract_window_seconds
+   OR (
+     BINARY price.price_source=BINARY 'manual-correction'
+     AND (BINARY price.calculation_method<>BINARY 'MANUAL' OR price.created_by<=0)
+   )
+   OR (
+     BINARY price.price_source<>BINARY 'manual-correction'
+     AND (
+       BINARY price.price_source<>BINARY price.contract_price_source
+       OR BINARY price.calculation_method<>BINARY price.contract_price_method
+       OR BINARY price.price_source<>BINARY 'authoritative-market'
+       OR BINARY price.calculation_method<>BINARY 'MEDIAN'
+       OR price.created_by<>0 OR price.sample_count<price.contract_min_samples
+       OR COALESCE(matches.match_count,0)<>price.sample_count
+       OR median_price.delivery_price IS NULL
+       OR price.delivery_price<>median_price.delivery_price
+     )
+   )
 GROUP BY price.tenant_id
 ORDER BY price.tenant_id`,
 		},

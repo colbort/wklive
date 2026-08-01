@@ -23,6 +23,7 @@ func TestSeriesContractLaunchApprovalAndControls(t *testing.T) {
 		MarkPrice:              decimal.NewFromInt(10),
 		UnderlyingSnapshotTime: now,
 		MarkSnapshotTime:       now,
+		GreeksSnapshotTime:     now,
 	}
 	if seriesContractLaunchApproved(series) {
 		t.Fatal("series contract must remain pending before independent launch approval")
@@ -40,6 +41,7 @@ func TestSeriesContractLaunchApprovalAndControls(t *testing.T) {
 		MaxOpenInterest:     decimal.NewFromInt(1000),
 		OrderPriceBandRatio: decimal.RequireFromString("0.2"),
 		CircuitBreakerRatio: decimal.RequireFromString("0.3"),
+		GreeksMaxAgeSeconds: 60,
 	}
 	if !contractLaunchControlsReady(contract, market, now) {
 		t.Fatal("complete controls and fresh market should pass runtime launch admission")
@@ -49,6 +51,16 @@ func TestSeriesContractLaunchApprovalAndControls(t *testing.T) {
 		t.Fatal("contract must remain pending when mark price is stale")
 	}
 	market.MarkSnapshotTime = now
+	market.GreeksSnapshotTime = now - 61
+	if contractLaunchControlsReady(contract, market, now) {
+		t.Fatal("contract must remain pending when Greeks exceed the approved threshold")
+	}
+	market.GreeksSnapshotTime = now
+	contract.GreeksMaxAgeSeconds = 0
+	if contractLaunchControlsReady(contract, market, now) {
+		t.Fatal("contract must remain pending when Greeks threshold is unconfigured")
+	}
+	contract.GreeksMaxAgeSeconds = 60
 	contract.MaxOpenInterest = decimal.Zero
 	if contractLaunchControlsReady(contract, market, now) {
 		t.Fatal("contract must remain pending when a mandatory risk control is zero")
@@ -99,6 +111,24 @@ func TestCalculateSettlementMedianIgnoresInvalidPrices(t *testing.T) {
 	}
 	if got := calculateSettlementMedian(samples); !got.Equal(decimal.NewFromInt(101)) {
 		t.Fatalf("median=%s want=101", got)
+	}
+}
+
+func TestRejectedSettlementPriceIsNotRecreatedWithoutNewEvidence(t *testing.T) {
+	latest := &models.TOptionSettlementPrice{
+		PriceSource: "authoritative-market", WindowStart: 940, WindowEnd: 1000,
+		SampleCount: 3, CalculationMethod: "MEDIAN", DeliveryPrice: decimal.NewFromInt(100),
+		SourceSnapshotIds: `["a","b","c"]`,
+		Status:            int64(option.SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_REJECTED),
+	}
+	candidate := *latest
+	candidate.Status = int64(option.SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_PENDING)
+	if !shouldSuppressRejectedSettlementPrice(latest, &candidate) {
+		t.Fatal("identical rejected automatic evidence must not be recreated")
+	}
+	candidate.SourceSnapshotIds = `["a","b","d"]`
+	if shouldSuppressRejectedSettlementPrice(latest, &candidate) {
+		t.Fatal("new immutable evidence must be allowed to create a new review version")
 	}
 }
 

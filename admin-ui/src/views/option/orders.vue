@@ -25,6 +25,15 @@
         />
         <el-table-column :label="t('option.userId')" prop="userId" width="100" />
         <el-table-column :label="t('option.contractId')" prop="contractId" width="100" />
+        <el-table-column :label="t('option.orderPortfolioRiskConfig')" min-width="170">
+          <template #default="{ row }">
+            {{
+              row.portfolioRiskConfigId > 0
+                ? `#${row.portfolioRiskConfigId} / v${row.portfolioRiskConfigVersion}`
+                : '-'
+            }}
+          </template>
+        </el-table-column>
         <el-table-column
           :label="t('option.price')"
           prop="price"

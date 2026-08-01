@@ -3385,6 +3385,7 @@ type RetryAssetInstructionReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	InstructionId int64                  `protobuf:"varint,2,opt,name=instruction_id,json=instructionId,proto3" json:"instruction_id,omitempty"`
+	Reason        string                 `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3433,11 +3434,19 @@ func (x *RetryAssetInstructionReq) GetInstructionId() int64 {
 	return 0
 }
 
+func (x *RetryAssetInstructionReq) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
 type RetrySettlementInstructionReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	SettlementId  int64                  `protobuf:"varint,2,opt,name=settlement_id,json=settlementId,proto3" json:"settlement_id,omitempty"`
 	InstructionId int64                  `protobuf:"varint,3,opt,name=instruction_id,json=instructionId,proto3" json:"instruction_id,omitempty"`
+	Reason        string                 `protobuf:"bytes,4,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3491,6 +3500,13 @@ func (x *RetrySettlementInstructionReq) GetInstructionId() int64 {
 		return x.InstructionId
 	}
 	return 0
+}
+
+func (x *RetrySettlementInstructionReq) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
 }
 
 type ReleaseUserKillSwitchReq struct {
@@ -7955,6 +7971,7 @@ type CreateContractReq struct {
 	CircuitBreakerRatio         string                   `protobuf:"bytes,48,opt,name=circuit_breaker_ratio,json=circuitBreakerRatio,proto3" json:"circuit_breaker_ratio,omitempty"`
 	PhysicalDeliveryCureSeconds int64                    `protobuf:"varint,49,opt,name=physical_delivery_cure_seconds,json=physicalDeliveryCureSeconds,proto3" json:"physical_delivery_cure_seconds,omitempty"`
 	TradingCalendarCode         string                   `protobuf:"bytes,50,opt,name=trading_calendar_code,json=tradingCalendarCode,proto3" json:"trading_calendar_code,omitempty"`
+	GreeksMaxAgeSeconds         int64                    `protobuf:"varint,51,opt,name=greeks_max_age_seconds,json=greeksMaxAgeSeconds,proto3" json:"greeks_max_age_seconds,omitempty"`
 	unknownFields               protoimpl.UnknownFields
 	sizeCache                   protoimpl.SizeCache
 }
@@ -8339,6 +8356,13 @@ func (x *CreateContractReq) GetTradingCalendarCode() string {
 	return ""
 }
 
+func (x *CreateContractReq) GetGreeksMaxAgeSeconds() int64 {
+	if x != nil {
+		return x.GreeksMaxAgeSeconds
+	}
+	return 0
+}
+
 type CreateContractResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -8445,6 +8469,7 @@ type UpdateContractReq struct {
 	CircuitBreakerRatio         string                   `protobuf:"bytes,50,opt,name=circuit_breaker_ratio,json=circuitBreakerRatio,proto3" json:"circuit_breaker_ratio,omitempty"`
 	PhysicalDeliveryCureSeconds int64                    `protobuf:"varint,51,opt,name=physical_delivery_cure_seconds,json=physicalDeliveryCureSeconds,proto3" json:"physical_delivery_cure_seconds,omitempty"`
 	TradingCalendarCode         string                   `protobuf:"bytes,52,opt,name=trading_calendar_code,json=tradingCalendarCode,proto3" json:"trading_calendar_code,omitempty"`
+	GreeksMaxAgeSeconds         int64                    `protobuf:"varint,53,opt,name=greeks_max_age_seconds,json=greeksMaxAgeSeconds,proto3" json:"greeks_max_age_seconds,omitempty"`
 	unknownFields               protoimpl.UnknownFields
 	sizeCache                   protoimpl.SizeCache
 }
@@ -8841,6 +8866,13 @@ func (x *UpdateContractReq) GetTradingCalendarCode() string {
 		return x.TradingCalendarCode
 	}
 	return ""
+}
+
+func (x *UpdateContractReq) GetGreeksMaxAgeSeconds() int64 {
+	if x != nil {
+		return x.GreeksMaxAgeSeconds
+	}
+	return 0
 }
 
 type ListPhysicalDeliveryUnitsReq struct {
@@ -12238,14 +12270,16 @@ const file_proto_option_option_proto_rawDesc = "" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vcontract_id\x18\x02 \x01(\x03R\n" +
 	"contractId\x12\x16\n" +
-	"\x06reason\x18\x03 \x01(\tR\x06reason\"^\n" +
+	"\x06reason\x18\x03 \x01(\tR\x06reason\"v\n" +
 	"\x18RetryAssetInstructionReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12%\n" +
-	"\x0einstruction_id\x18\x02 \x01(\x03R\rinstructionId\"\x88\x01\n" +
+	"\x0einstruction_id\x18\x02 \x01(\x03R\rinstructionId\x12\x16\n" +
+	"\x06reason\x18\x03 \x01(\tR\x06reason\"\xa0\x01\n" +
 	"\x1dRetrySettlementInstructionReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12#\n" +
 	"\rsettlement_id\x18\x02 \x01(\x03R\fsettlementId\x12%\n" +
-	"\x0einstruction_id\x18\x03 \x01(\x03R\rinstructionId\"h\n" +
+	"\x0einstruction_id\x18\x03 \x01(\x03R\rinstructionId\x12\x16\n" +
+	"\x06reason\x18\x04 \x01(\tR\x06reason\"h\n" +
 	"\x18ReleaseUserKillSwitchReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x16\n" +
@@ -12616,7 +12650,7 @@ const file_proto_option_option_proto_rawDesc = "" +
 	"\x10RetryExerciseReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vexercise_id\x18\x02 \x01(\x03R\n" +
-	"exerciseId\"\x91\x12\n" +
+	"exerciseId\"\xc6\x12\n" +
 	"\x11CreateContractReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12#\n" +
 	"\rcontract_code\x18\x02 \x01(\tR\fcontractCode\x12+\n" +
@@ -12675,10 +12709,11 @@ const file_proto_option_option_proto_rawDesc = "" +
 	"\x16order_price_band_ratio\x18/ \x01(\tR\x13orderPriceBandRatio\x122\n" +
 	"\x15circuit_breaker_ratio\x180 \x01(\tR\x13circuitBreakerRatio\x12C\n" +
 	"\x1ephysical_delivery_cure_seconds\x181 \x01(\x03R\x1bphysicalDeliveryCureSeconds\x122\n" +
-	"\x15trading_calendar_code\x182 \x01(\tR\x13tradingCalendarCode\"J\n" +
+	"\x15trading_calendar_code\x182 \x01(\tR\x13tradingCalendarCode\x123\n" +
+	"\x16greeks_max_age_seconds\x183 \x01(\x03R\x13greeksMaxAgeSeconds\"J\n" +
 	"\x12CreateContractResp\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12$\n" +
-	"\x04base\x18\x02 \x01(\v2\x10.common.RespBaseR\x04base\"\xcf\x12\n" +
+	"\x04base\x18\x02 \x01(\v2\x10.common.RespBaseR\x04base\"\x84\x13\n" +
 	"\x11UpdateContractReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12#\n" +
@@ -12740,7 +12775,8 @@ const file_proto_option_option_proto_rawDesc = "" +
 	"\x16order_price_band_ratio\x181 \x01(\tR\x13orderPriceBandRatio\x122\n" +
 	"\x15circuit_breaker_ratio\x182 \x01(\tR\x13circuitBreakerRatio\x12C\n" +
 	"\x1ephysical_delivery_cure_seconds\x183 \x01(\x03R\x1bphysicalDeliveryCureSeconds\x122\n" +
-	"\x15trading_calendar_code\x184 \x01(\tR\x13tradingCalendarCode\"\xf1\x01\n" +
+	"\x15trading_calendar_code\x184 \x01(\tR\x13tradingCalendarCode\x123\n" +
+	"\x16greeks_max_age_seconds\x185 \x01(\x03R\x13greeksMaxAgeSeconds\"\xf1\x01\n" +
 	"\x1cListPhysicalDeliveryUnitsReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1f\n" +
 	"\vcontract_id\x18\x02 \x01(\x03R\n" +

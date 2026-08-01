@@ -93,6 +93,7 @@ func (l *PlaceComboOrderLogic) PlaceComboOrder(in *option.PlaceComboOrderReq) (*
 		PayloadHash: validated.payloadHash, CreateTimes: now, UpdateTimes: now,
 	}
 	var controlRejection *orderControlRejection
+	var controlRejectedOrder *models.TOptionOrder
 	errControlRejected := errors.New("combo order rejected by trading controls")
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
@@ -137,6 +138,7 @@ func (l *PlaceComboOrderLogic) PlaceComboOrder(in *option.PlaceComboOrderReq) (*
 			}
 			if rejection != nil {
 				controlRejection = rejection
+				controlRejectedOrder = child
 				return errControlRejected
 			}
 			if lockedContract.Id != leg.contract.Id {
@@ -179,6 +181,20 @@ func (l *PlaceComboOrderLogic) PlaceComboOrder(in *option.PlaceComboOrderReq) (*
 		return nil
 	})
 	if errors.Is(err, errControlRejected) && controlRejection != nil {
+		// The leg-level audit written by evaluateOrderTradingControls belonged to
+		// the rolled-back combo transaction. Re-append it outside that transaction
+		// so rejected combo requests remain visible to audit and ratio monitoring.
+		if controlRejectedOrder == nil {
+			return nil, errors.New("combo control rejection is missing the rejected leg")
+		}
+		auditErr := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+			return recordOrderTradingControlAudit(
+				ctx, sqlx.NewSqlConnFromSession(session), controlRejectedOrder, controlRejection, now,
+			)
+		})
+		if auditErr != nil {
+			return nil, auditErr
+		}
 		return &option.PlaceComboOrderResp{
 			Base: helper.ErrResp(i18n.OperationNotAllowed, controlRejection.reason),
 		}, nil

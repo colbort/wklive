@@ -280,15 +280,17 @@ func (l *PlaceOrderLogic) PlaceOrder(in *option.PlaceOrderReq) (*option.PlaceOrd
 		contract = lockedContract
 		if contract.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) &&
 			order.Side == int64(common.Side_SIDE_SELL) {
-			portfolioMargin, err := calculatePortfolioOrderMargin(
+			portfolioResult, err := calculatePortfolioOrderMargin(
 				ctx, l.svcCtx, conn, order, contract, now,
 			)
 			if err != nil {
 				return err
 			}
-			marginAmount = portfolioMargin
-			order.MarginAmount = portfolioMargin
-			if portfolioMargin.IsPositive() {
+			marginAmount = portfolioResult.margin
+			order.MarginAmount = portfolioResult.margin
+			order.PortfolioRiskConfigId = portfolioResult.configID
+			order.PortfolioRiskConfigVersion = portfolioResult.configVersion
+			if portfolioResult.margin.IsPositive() {
 				order.Status = int64(option.OrderStatus_ORDER_STATUS_FUNDING)
 			} else {
 				order.Status = int64(option.OrderStatus_ORDER_STATUS_PENDING)

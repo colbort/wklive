@@ -21,6 +21,7 @@ type (
 		WalletType int64
 		Coin       string
 		BizType    string
+		SceneType  string
 		BizNo      string
 		Status     int64
 	}
@@ -57,6 +58,7 @@ func (m *defaultTAssetFreezeModel) FindPage(ctx context.Context, filter AssetFre
 	builder.EqInt64("wallet_type", filter.WalletType)
 	builder.EqString("coin", filter.Coin)
 	builder.EqString("biz_type", filter.BizType)
+	builder.EqString("scene_type", filter.SceneType)
 	builder.EqString("biz_no", filter.BizNo)
 	builder.EqInt64("status", filter.Status)
 

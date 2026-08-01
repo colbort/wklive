@@ -108,3 +108,15 @@ Scope 2 覆盖 `FEE_REVENUE`、`INSURANCE_FUND`、`OPTION_BACKSTOP`。每个
 - 平台账户人工调账与业务流水分栏正确；共享费用账户不丢弃非 Option 流水。
 - 同日重跑 attempt 递增；运行及明细 UPDATE/DELETE 均被数据库拒绝。
 - Scope 2 最近成功超过36小时或不存在时，生产门禁和 OPT-A015 保持失败关闭。
+
+## 8. 仓库实现与证据
+
+- `option.ProcessDailyReconciliation` 已在 UTC 00 点窗口同时生产 scope=1 与 scope=2；两个范围按租户
+  独立失败隔离，非强制调用在当日已有成功 attempt 时跳过。
+- Scope 2 强制校验事务隔离级别为 `REPEATABLE-READ` 或 `SERIALIZABLE`。三类查询、运行、明细、
+  旧问题恢复和当前问题重开位于同一 SQL 事务；Redis 不参与资金核对正确性。
+- 隔离 MySQL 8.4 已按正式迁移加载后执行“健康→当前钱包被改坏→修复”闭环，三个 attempt 状态依次
+  为 `SUCCESS`、`MISMATCH`、`SUCCESS`；每次写入用户钱包、平台账户、Option子账三条证据明细。
+  差异 attempt 精确记录 USDT 差额1和一个不完整钱包维度，恢复 attempt 将同一稳定问题键转为
+  `RESOLVED`；运行/明细触发器已验证拒绝 UPDATE/DELETE。
+- 上述证据是仓库级验收，不替代预生产真实 Asset 流水、调度延迟、容量、通知送达和四方签署。

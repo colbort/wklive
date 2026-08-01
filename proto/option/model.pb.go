@@ -78,6 +78,7 @@ type OptionContract struct {
 	CircuitBreakerRatio         string                   `protobuf:"bytes,52,opt,name=circuit_breaker_ratio,json=circuitBreakerRatio,proto3" json:"circuit_breaker_ratio,omitempty"`
 	PhysicalDeliveryCureSeconds int64                    `protobuf:"varint,53,opt,name=physical_delivery_cure_seconds,json=physicalDeliveryCureSeconds,proto3" json:"physical_delivery_cure_seconds,omitempty"`
 	TradingCalendarCode         string                   `protobuf:"bytes,54,opt,name=trading_calendar_code,json=tradingCalendarCode,proto3" json:"trading_calendar_code,omitempty"`
+	GreeksMaxAgeSeconds         int64                    `protobuf:"varint,55,opt,name=greeks_max_age_seconds,json=greeksMaxAgeSeconds,proto3" json:"greeks_max_age_seconds,omitempty"`
 	unknownFields               protoimpl.UnknownFields
 	sizeCache                   protoimpl.SizeCache
 }
@@ -488,6 +489,13 @@ func (x *OptionContract) GetTradingCalendarCode() string {
 		return x.TradingCalendarCode
 	}
 	return ""
+}
+
+func (x *OptionContract) GetGreeksMaxAgeSeconds() int64 {
+	if x != nil {
+		return x.GreeksMaxAgeSeconds
+	}
+	return 0
 }
 
 type OptionTradingCalendarSession struct {
@@ -3685,42 +3693,44 @@ func (x *OptionMarketSnapshot) GetSourceSnapshotId() string {
 }
 
 type OptionOrder struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId         int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	OrderNo          string                 `protobuf:"bytes,3,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	UserId           int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	AccountId        int64                  `protobuf:"varint,5,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
-	ContractId       int64                  `protobuf:"varint,6,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
-	UnderlyingSymbol string                 `protobuf:"bytes,7,opt,name=underlying_symbol,json=underlyingSymbol,proto3" json:"underlying_symbol,omitempty"`
-	Side             common.Side            `protobuf:"varint,8,opt,name=side,proto3,enum=common.Side" json:"side,omitempty"` // 买卖方向
-	PositionEffect   PositionEffect         `protobuf:"varint,9,opt,name=position_effect,json=positionEffect,proto3,enum=option.PositionEffect" json:"position_effect,omitempty"`
-	OrderType        OrderType              `protobuf:"varint,10,opt,name=order_type,json=orderType,proto3,enum=option.OrderType" json:"order_type,omitempty"`
-	Price            string                 `protobuf:"bytes,11,opt,name=price,proto3" json:"price,omitempty"`
-	Qty              string                 `protobuf:"bytes,12,opt,name=qty,proto3" json:"qty,omitempty"`
-	FilledQty        string                 `protobuf:"bytes,13,opt,name=filled_qty,json=filledQty,proto3" json:"filled_qty,omitempty"`
-	UnfilledQty      string                 `protobuf:"bytes,14,opt,name=unfilled_qty,json=unfilledQty,proto3" json:"unfilled_qty,omitempty"`
-	AvgPrice         string                 `protobuf:"bytes,15,opt,name=avg_price,json=avgPrice,proto3" json:"avg_price,omitempty"`
-	Turnover         string                 `protobuf:"bytes,16,opt,name=turnover,proto3" json:"turnover,omitempty"`
-	Fee              string                 `protobuf:"bytes,17,opt,name=fee,proto3" json:"fee,omitempty"`
-	FeeCoin          string                 `protobuf:"bytes,18,opt,name=fee_coin,json=feeCoin,proto3" json:"fee_coin,omitempty"`
-	MarginAmount     string                 `protobuf:"bytes,19,opt,name=margin_amount,json=marginAmount,proto3" json:"margin_amount,omitempty"`
-	Source           OrderSource            `protobuf:"varint,20,opt,name=source,proto3,enum=option.OrderSource" json:"source,omitempty"`
-	ClientOrderId    string                 `protobuf:"bytes,21,opt,name=client_order_id,json=clientOrderId,proto3" json:"client_order_id,omitempty"`
-	ReduceOnly       common.YesNo           `protobuf:"varint,22,opt,name=reduce_only,json=reduceOnly,proto3,enum=common.YesNo" json:"reduce_only,omitempty"` // 是否只减仓
-	Mmp              common.YesNo           `protobuf:"varint,23,opt,name=mmp,proto3,enum=common.YesNo" json:"mmp,omitempty"`                                 // 是否做市商保护单
-	Status           OrderStatus            `protobuf:"varint,24,opt,name=status,proto3,enum=option.OrderStatus" json:"status,omitempty"`
-	CancelReason     string                 `protobuf:"bytes,25,opt,name=cancel_reason,json=cancelReason,proto3" json:"cancel_reason,omitempty"`
-	MatchTime        int64                  `protobuf:"varint,26,opt,name=match_time,json=matchTime,proto3" json:"match_time,omitempty"`
-	CancelTime       int64                  `protobuf:"varint,27,opt,name=cancel_time,json=cancelTime,proto3" json:"cancel_time,omitempty"`
-	CreateTimes      int64                  `protobuf:"varint,28,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes      int64                  `protobuf:"varint,29,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
-	MarginCoin       string                 `protobuf:"bytes,30,opt,name=margin_coin,json=marginCoin,proto3" json:"margin_coin,omitempty"`
-	MmpGroup         string                 `protobuf:"bytes,31,opt,name=mmp_group,json=mmpGroup,proto3" json:"mmp_group,omitempty"`
-	ComboOrderId     int64                  `protobuf:"varint,32,opt,name=combo_order_id,json=comboOrderId,proto3" json:"combo_order_id,omitempty"` // 组合影子单父单；普通单为0
-	ComboLegNo       int64                  `protobuf:"varint,33,opt,name=combo_leg_no,json=comboLegNo,proto3" json:"combo_leg_no,omitempty"`       // 父单内稳定腿号；普通单为0
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state                      protoimpl.MessageState `protogen:"open.v1"`
+	Id                         int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId                   int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	OrderNo                    string                 `protobuf:"bytes,3,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	UserId                     int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	AccountId                  int64                  `protobuf:"varint,5,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	ContractId                 int64                  `protobuf:"varint,6,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
+	UnderlyingSymbol           string                 `protobuf:"bytes,7,opt,name=underlying_symbol,json=underlyingSymbol,proto3" json:"underlying_symbol,omitempty"`
+	Side                       common.Side            `protobuf:"varint,8,opt,name=side,proto3,enum=common.Side" json:"side,omitempty"` // 买卖方向
+	PositionEffect             PositionEffect         `protobuf:"varint,9,opt,name=position_effect,json=positionEffect,proto3,enum=option.PositionEffect" json:"position_effect,omitempty"`
+	OrderType                  OrderType              `protobuf:"varint,10,opt,name=order_type,json=orderType,proto3,enum=option.OrderType" json:"order_type,omitempty"`
+	Price                      string                 `protobuf:"bytes,11,opt,name=price,proto3" json:"price,omitempty"`
+	Qty                        string                 `protobuf:"bytes,12,opt,name=qty,proto3" json:"qty,omitempty"`
+	FilledQty                  string                 `protobuf:"bytes,13,opt,name=filled_qty,json=filledQty,proto3" json:"filled_qty,omitempty"`
+	UnfilledQty                string                 `protobuf:"bytes,14,opt,name=unfilled_qty,json=unfilledQty,proto3" json:"unfilled_qty,omitempty"`
+	AvgPrice                   string                 `protobuf:"bytes,15,opt,name=avg_price,json=avgPrice,proto3" json:"avg_price,omitempty"`
+	Turnover                   string                 `protobuf:"bytes,16,opt,name=turnover,proto3" json:"turnover,omitempty"`
+	Fee                        string                 `protobuf:"bytes,17,opt,name=fee,proto3" json:"fee,omitempty"`
+	FeeCoin                    string                 `protobuf:"bytes,18,opt,name=fee_coin,json=feeCoin,proto3" json:"fee_coin,omitempty"`
+	MarginAmount               string                 `protobuf:"bytes,19,opt,name=margin_amount,json=marginAmount,proto3" json:"margin_amount,omitempty"`
+	Source                     OrderSource            `protobuf:"varint,20,opt,name=source,proto3,enum=option.OrderSource" json:"source,omitempty"`
+	ClientOrderId              string                 `protobuf:"bytes,21,opt,name=client_order_id,json=clientOrderId,proto3" json:"client_order_id,omitempty"`
+	ReduceOnly                 common.YesNo           `protobuf:"varint,22,opt,name=reduce_only,json=reduceOnly,proto3,enum=common.YesNo" json:"reduce_only,omitempty"` // 是否只减仓
+	Mmp                        common.YesNo           `protobuf:"varint,23,opt,name=mmp,proto3,enum=common.YesNo" json:"mmp,omitempty"`                                 // 是否做市商保护单
+	Status                     OrderStatus            `protobuf:"varint,24,opt,name=status,proto3,enum=option.OrderStatus" json:"status,omitempty"`
+	CancelReason               string                 `protobuf:"bytes,25,opt,name=cancel_reason,json=cancelReason,proto3" json:"cancel_reason,omitempty"`
+	MatchTime                  int64                  `protobuf:"varint,26,opt,name=match_time,json=matchTime,proto3" json:"match_time,omitempty"`
+	CancelTime                 int64                  `protobuf:"varint,27,opt,name=cancel_time,json=cancelTime,proto3" json:"cancel_time,omitempty"`
+	CreateTimes                int64                  `protobuf:"varint,28,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	UpdateTimes                int64                  `protobuf:"varint,29,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	MarginCoin                 string                 `protobuf:"bytes,30,opt,name=margin_coin,json=marginCoin,proto3" json:"margin_coin,omitempty"`
+	MmpGroup                   string                 `protobuf:"bytes,31,opt,name=mmp_group,json=mmpGroup,proto3" json:"mmp_group,omitempty"`
+	ComboOrderId               int64                  `protobuf:"varint,32,opt,name=combo_order_id,json=comboOrderId,proto3" json:"combo_order_id,omitempty"`                                             // 组合影子单父单；普通单为0
+	ComboLegNo                 int64                  `protobuf:"varint,33,opt,name=combo_leg_no,json=comboLegNo,proto3" json:"combo_leg_no,omitempty"`                                                   // 父单内稳定腿号；普通单为0
+	PortfolioRiskConfigId      int64                  `protobuf:"varint,34,opt,name=portfolio_risk_config_id,json=portfolioRiskConfigId,proto3" json:"portfolio_risk_config_id,omitempty"`                // 组合保证金准入采用的参数ID；0表示不适用或迁移前历史单
+	PortfolioRiskConfigVersion int64                  `protobuf:"varint,35,opt,name=portfolio_risk_config_version,json=portfolioRiskConfigVersion,proto3" json:"portfolio_risk_config_version,omitempty"` // 组合保证金准入采用的参数版本
+	unknownFields              protoimpl.UnknownFields
+	sizeCache                  protoimpl.SizeCache
 }
 
 func (x *OptionOrder) Reset() {
@@ -3980,6 +3990,20 @@ func (x *OptionOrder) GetComboOrderId() int64 {
 func (x *OptionOrder) GetComboLegNo() int64 {
 	if x != nil {
 		return x.ComboLegNo
+	}
+	return 0
+}
+
+func (x *OptionOrder) GetPortfolioRiskConfigId() int64 {
+	if x != nil {
+		return x.PortfolioRiskConfigId
+	}
+	return 0
+}
+
+func (x *OptionOrder) GetPortfolioRiskConfigVersion() int64 {
+	if x != nil {
+		return x.PortfolioRiskConfigVersion
 	}
 	return 0
 }
@@ -9253,7 +9277,7 @@ var File_proto_option_model_proto protoreflect.FileDescriptor
 
 const file_proto_option_model_proto_rawDesc = "" +
 	"\n" +
-	"\x18proto/option/model.proto\x12\x06option\x1a\x19proto/common/common.proto\x1a\x17proto/option/enum.proto\"\x92\x13\n" +
+	"\x18proto/option/model.proto\x12\x06option\x1a\x19proto/common/common.proto\x1a\x17proto/option/enum.proto\"\xc7\x13\n" +
 	"\x0eOptionContract\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12#\n" +
@@ -9317,7 +9341,8 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\x16order_price_band_ratio\x183 \x01(\tR\x13orderPriceBandRatio\x122\n" +
 	"\x15circuit_breaker_ratio\x184 \x01(\tR\x13circuitBreakerRatio\x12C\n" +
 	"\x1ephysical_delivery_cure_seconds\x185 \x01(\x03R\x1bphysicalDeliveryCureSeconds\x122\n" +
-	"\x15trading_calendar_code\x186 \x01(\tR\x13tradingCalendarCode\"\xed\x01\n" +
+	"\x15trading_calendar_code\x186 \x01(\tR\x13tradingCalendarCode\x123\n" +
+	"\x16greeks_max_age_seconds\x187 \x01(\x03R\x13greeksMaxAgeSeconds\"\xed\x01\n" +
 	"\x1cOptionTradingCalendarSession\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -9712,7 +9737,7 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\fcreate_times\x18\x11 \x01(\x03R\vcreateTimes\x12\x1f\n" +
 	"\vsource_type\x18\x12 \x01(\x03R\n" +
 	"sourceType\x12,\n" +
-	"\x12source_snapshot_id\x18\x13 \x01(\tR\x10sourceSnapshotId\"\xe9\b\n" +
+	"\x12source_snapshot_id\x18\x13 \x01(\tR\x10sourceSnapshotId\"\xe5\t\n" +
 	"\vOptionOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
@@ -9756,7 +9781,9 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\tmmp_group\x18\x1f \x01(\tR\bmmpGroup\x12$\n" +
 	"\x0ecombo_order_id\x18  \x01(\x03R\fcomboOrderId\x12 \n" +
 	"\fcombo_leg_no\x18! \x01(\x03R\n" +
-	"comboLegNo\"\xb0\x06\n" +
+	"comboLegNo\x127\n" +
+	"\x18portfolio_risk_config_id\x18\" \x01(\x03R\x15portfolioRiskConfigId\x12A\n" +
+	"\x1dportfolio_risk_config_version\x18# \x01(\x03R\x1aportfolioRiskConfigVersion\"\xb0\x06\n" +
 	"\vOptionTrade\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +

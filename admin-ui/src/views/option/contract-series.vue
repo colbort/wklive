@@ -388,6 +388,7 @@ function contractTemplate(source: OptionContractDetail): CreateContractReq {
     maxOpenInterest: item.maxOpenInterest,
     orderPriceBandRatio: item.orderPriceBandRatio,
     circuitBreakerRatio: item.circuitBreakerRatio,
+    greeksMaxAgeSeconds: item.greeksMaxAgeSeconds,
     settlementPriceSource: item.settlementPriceSource,
     settlementPriceMethod: item.settlementPriceMethod,
     settlementWindowSeconds: item.settlementWindowSeconds,

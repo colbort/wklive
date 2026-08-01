@@ -85,6 +85,25 @@ BEGIN
     SIGNAL SQLSTATE '45000'
       SET MESSAGE_TEXT = 'exercise instruction economic fields are immutable; create a new version';
   END IF;
+  IF NOT (
+    OLD.status <=> NEW.status
+    OR (OLD.status = 1 AND NEW.status = 2)
+  ) THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'exercise instruction status may only transition from active to superseded';
+  END IF;
+END$$
+DELIMITER ;
+
+-- 行权选择属于结算审计证据，任何版本都不能物理删除。
+DROP TRIGGER IF EXISTS trg_option_exercise_instruction_no_delete;
+DELIMITER $$
+CREATE TRIGGER trg_option_exercise_instruction_no_delete
+BEFORE DELETE ON t_option_exercise_instruction
+FOR EACH ROW
+BEGIN
+  SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'exercise instruction history cannot be deleted';
 END$$
 DELIMITER ;
 

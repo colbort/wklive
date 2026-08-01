@@ -165,6 +165,7 @@ func (l *CreateContractLogic) CreateContract(in *option.CreateContractReq) (*opt
 		MaxOpenInterest:         maxOpenInterest,
 		OrderPriceBandRatio:     orderPriceBandRatio,
 		CircuitBreakerRatio:     circuitBreakerRatio,
+		GreeksMaxAgeSeconds:     in.GreeksMaxAgeSeconds,
 		SettlementPriceSource:   in.SettlementPriceSource,
 		SettlementPriceMethod:   in.SettlementPriceMethod,
 		SettlementWindowSeconds: in.SettlementWindowSeconds,

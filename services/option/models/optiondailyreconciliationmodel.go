@@ -70,6 +70,20 @@ type OptionPlatformAccountConservationSummary struct {
 	DifferenceAmount     decimal.Decimal `db:"difference_amount"`
 }
 
+type OptionSubledgerConservationSummary struct {
+	Coin             string          `db:"coin"`
+	AssetFlowCount   int64           `db:"asset_flow_count"`
+	InstructionCount int64           `db:"instruction_count"`
+	BillCount        int64           `db:"bill_count"`
+	MismatchCount    int64           `db:"mismatch_count"`
+	MaxAssetFlowID   int64           `db:"max_asset_flow_id"`
+	MaxInstructionID int64           `db:"max_instruction_id"`
+	MaxBillID        int64           `db:"max_bill_id"`
+	AssetNet         decimal.Decimal `db:"asset_net"`
+	BillNet          decimal.Decimal `db:"bill_net"`
+	DifferenceAmount decimal.Decimal `db:"difference_amount"`
+}
+
 type OptionReconciliationRun struct {
 	TenantID      int64
 	BusinessDate  string
@@ -457,6 +471,112 @@ GROUP BY c.account_type,c.coin ORDER BY c.account_type,c.coin`,
 		endMillis,
 		tenantID,
 		tenantID,
+	)
+	return rows, err
+}
+
+func QueryOptionSubledgerConservationSummaries(
+	ctx context.Context, conn sqlx.SqlConn, tenantID, startMillis, endMillis, snapshotMillis int64,
+) ([]*OptionSubledgerConservationSummary, error) {
+	startSeconds, endSeconds := startMillis/1000, endMillis/1000
+	var rows []*OptionSubledgerConservationSummary
+	err := conn.QueryRowsCtx(ctx, &rows, `WITH cutoff AS (
+  SELECT
+    (SELECT COALESCE(MAX(id),0) FROM t_asset_flow
+      WHERE tenant_id=? AND wallet_type=5 AND biz_type='option' AND create_times<?) max_asset_flow_id,
+    (SELECT COALESCE(MAX(id),0) FROM t_option_asset_instruction WHERE tenant_id=?) max_instruction_id,
+    (SELECT COALESCE(MAX(id),0) FROM t_option_bill WHERE tenant_id=?) max_bill_id
+), day_flows AS (
+  SELECT f.*,(f.after_total_amount-f.before_total_amount) total_delta
+  FROM t_asset_flow f CROSS JOIN cutoff c
+  WHERE f.tenant_id=? AND f.wallet_type=5 AND f.biz_type='option'
+    AND f.id<=c.max_asset_flow_id AND f.create_times>=? AND f.create_times<?
+), scoped_instructions AS (
+  SELECT i.* FROM t_option_asset_instruction i CROSS JOIN cutoff c
+  WHERE i.tenant_id=? AND i.id<=c.max_instruction_id AND (
+    EXISTS(SELECT 1 FROM day_flows f WHERE f.flow_no=i.asset_flow_no)
+    OR (i.create_times>=? AND i.create_times<?)
+    OR (i.update_times>=? AND i.update_times<?)
+  )
+), scoped_bills AS (
+  SELECT b.* FROM t_option_bill b CROSS JOIN cutoff c
+  WHERE b.tenant_id=? AND b.id<=c.max_bill_id AND (
+    EXISTS(SELECT 1 FROM scoped_instructions i WHERE i.instruction_no=b.biz_no)
+    OR (b.create_times>=? AND b.create_times<?)
+  )
+), flow_checks AS (
+  SELECT f.coin,1 asset_flow_count,f.total_delta asset_net,
+    CASE WHEN (SELECT COUNT(1) FROM scoped_instructions i WHERE i.asset_flow_no=f.flow_no)<>1
+      OR NOT EXISTS(
+        SELECT 1 FROM scoped_instructions i
+        WHERE i.asset_flow_no=f.flow_no AND i.status=3 AND i.reconciliation_status=2
+          AND i.reconciled_at>0 AND i.user_id=f.user_id AND i.coin=f.coin
+          AND i.amount=f.change_amount AND f.biz_id=i.id
+          AND f.biz_no=CASE WHEN i.action=1
+            THEN COALESCE(NULLIF(i.target_biz_no,''),i.instruction_no) ELSE i.instruction_no END
+          AND ((i.action=1 AND f.op_type=3 AND f.scene_type='place_order')
+            OR (i.action=2 AND f.op_type=7 AND f.scene_type='trade_match')
+            OR (i.action=3 AND f.op_type=4 AND f.scene_type='cancel_order')
+            OR (i.action=4 AND f.op_type=1 AND f.scene_type='trade_match')
+            OR (i.action=5 AND f.op_type=2 AND f.scene_type='trade_match'))
+      ) THEN 1 ELSE 0 END mismatch_count
+  FROM day_flows f
+), instruction_checks AS (
+  SELECT i.coin,1 instruction_count,
+    CASE WHEN (SELECT COUNT(1) FROM day_flows f WHERE f.flow_no=i.asset_flow_no)<>1
+      OR i.status<>3 OR i.reconciliation_status<>2 OR i.reconciled_at<=0 OR i.asset_flow_no=''
+      OR (SELECT COUNT(1) FROM scoped_bills b WHERE b.biz_no=i.instruction_no)<>1
+      OR NOT EXISTS(
+        SELECT 1 FROM day_flows f
+        WHERE f.flow_no=i.asset_flow_no AND f.user_id=i.user_id AND f.coin=i.coin
+          AND f.change_amount=i.amount AND f.biz_id=i.id
+      )
+      OR NOT EXISTS(
+        SELECT 1 FROM scoped_bills b JOIN day_flows f ON f.flow_no=i.asset_flow_no
+        WHERE b.biz_no=i.instruction_no AND b.user_id=i.user_id AND b.coin=i.coin
+          AND b.change_amount=f.total_delta AND b.balance_before=f.before_total_amount
+          AND b.balance_after=f.after_total_amount
+          AND b.remark=CONCAT('Asset authoritative flow ',f.flow_no)
+      ) THEN 1 ELSE 0 END mismatch_count
+  FROM scoped_instructions i
+), bill_checks AS (
+  SELECT b.coin,1 bill_count,b.change_amount bill_net,
+    CASE WHEN (SELECT COUNT(1) FROM scoped_instructions i WHERE i.instruction_no=b.biz_no)<>1
+      OR NOT EXISTS(
+        SELECT 1 FROM scoped_instructions i JOIN day_flows f ON f.flow_no=i.asset_flow_no
+        WHERE i.instruction_no=b.biz_no AND b.user_id=i.user_id AND b.coin=i.coin
+          AND b.change_amount=f.total_delta AND b.balance_before=f.before_total_amount
+          AND b.balance_after=f.after_total_amount
+          AND b.remark=CONCAT('Asset authoritative flow ',f.flow_no)
+      ) THEN 1 ELSE 0 END mismatch_count
+  FROM scoped_bills b
+), coins AS (
+  SELECT coin FROM day_flows UNION SELECT coin FROM scoped_instructions UNION SELECT coin FROM scoped_bills
+), flow_agg AS (
+  SELECT coin,SUM(asset_flow_count) asset_flow_count,SUM(asset_net) asset_net,
+    SUM(mismatch_count) mismatch_count FROM flow_checks GROUP BY coin
+), instruction_agg AS (
+  SELECT coin,SUM(instruction_count) instruction_count,SUM(mismatch_count) mismatch_count
+  FROM instruction_checks GROUP BY coin
+), bill_agg AS (
+  SELECT coin,SUM(bill_count) bill_count,SUM(bill_net) bill_net,SUM(mismatch_count) mismatch_count
+  FROM bill_checks GROUP BY coin
+)
+SELECT coins.coin,COALESCE(f.asset_flow_count,0) asset_flow_count,
+  COALESCE(i.instruction_count,0) instruction_count,COALESCE(b.bill_count,0) bill_count,
+  COALESCE(f.mismatch_count,0)+COALESCE(i.mismatch_count,0)+COALESCE(b.mismatch_count,0) mismatch_count,
+  cutoff.max_asset_flow_id,cutoff.max_instruction_id,cutoff.max_bill_id,
+  COALESCE(f.asset_net,0) asset_net,COALESCE(b.bill_net,0) bill_net,
+  COALESCE(b.bill_net,0)-COALESCE(f.asset_net,0) difference_amount
+FROM coins CROSS JOIN cutoff
+LEFT JOIN flow_agg f ON f.coin=coins.coin
+LEFT JOIN instruction_agg i ON i.coin=coins.coin
+LEFT JOIN bill_agg b ON b.coin=coins.coin
+ORDER BY coins.coin`,
+		tenantID, snapshotMillis, tenantID, tenantID,
+		tenantID, startMillis, endMillis,
+		tenantID, startSeconds, endSeconds, startSeconds, endSeconds,
+		tenantID, startSeconds, endSeconds,
 	)
 	return rows, err
 }

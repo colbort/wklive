@@ -629,12 +629,14 @@ message ForceCancelContractOrdersReq {
 message RetryAssetInstructionReq {
   int64 tenant_id = 1;
   int64 instruction_id = 2;
+  string reason = 3;
 }
 
 message RetrySettlementInstructionReq {
   int64 tenant_id = 1;
   int64 settlement_id = 2;
   int64 instruction_id = 3;
+  string reason = 4;
 }
 
 message ReleaseUserKillSwitchReq {
@@ -1150,6 +1152,7 @@ message CreateContractReq {
   string circuit_breaker_ratio = 48;
   int64 physical_delivery_cure_seconds = 49;
   string trading_calendar_code = 50;
+  int64 greeks_max_age_seconds = 51;
 }
 
 message CreateContractResp {
@@ -1210,6 +1213,7 @@ message UpdateContractReq {
   string circuit_breaker_ratio = 50;
   int64 physical_delivery_cure_seconds = 51;
   string trading_calendar_code = 52;
+  int64 greeks_max_age_seconds = 53;
 }
 
 message ListPhysicalDeliveryUnitsReq {

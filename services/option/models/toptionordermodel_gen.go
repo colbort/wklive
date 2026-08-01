@@ -44,39 +44,41 @@ type (
 	}
 
 	TOptionOrder struct {
-		Id               int64           `db:"id"`                // 主键ID
-		TenantId         int64           `db:"tenant_id"`         // 租户ID
-		OrderNo          string          `db:"order_no"`          // 订单号
-		UserId           int64           `db:"user_id"`           // 用户ID
-		AccountId        int64           `db:"account_id"`        // 交易账户ID
-		ContractId       int64           `db:"contract_id"`       // 期权合约ID
-		UnderlyingSymbol string          `db:"underlying_symbol"` // 标的
-		Side             int64           `db:"side"`              // 买卖方向：1买 2卖
-		PositionEffect   int64           `db:"position_effect"`   // 开平方向：1开仓 2平仓
-		OrderType        int64           `db:"order_type"`        // 订单类型：1限价 2市价 3只做maker 4IOC 5FOK
-		Price            decimal.Decimal `db:"price"`             // 委托价格/权利金
-		Qty              decimal.Decimal `db:"qty"`               // 委托数量
-		FilledQty        decimal.Decimal `db:"filled_qty"`        // 已成交数量
-		UnfilledQty      decimal.Decimal `db:"unfilled_qty"`      // 未成交数量
-		AvgPrice         decimal.Decimal `db:"avg_price"`         // 成交均价
-		Turnover         decimal.Decimal `db:"turnover"`          // 成交额
-		Fee              decimal.Decimal `db:"fee"`               // 手续费
-		FeeCoin          string          `db:"fee_coin"`          // 手续费币种
-		MarginAmount     decimal.Decimal `db:"margin_amount"`     // 冻结保证金
-		MarginCoin       string          `db:"margin_coin"`       // 订单冻结资产币种
-		Source           int64           `db:"source"`            // 订单来源：1APP 2WEB 3API 4ADMIN
-		ClientOrderId    string          `db:"client_order_id"`   // 客户端订单号
-		ReduceOnly       int64           `db:"reduce_only"`       // 是否只减仓：1是 2否
-		Mmp              int64           `db:"mmp"`               // 是否做市商保护单：1是 2否
-		MmpGroup         string          `db:"mmp_group"`         // MMP报价组，mmp=1时必填
-		ComboOrderId     int64           `db:"combo_order_id"`    // 组合父单ID；0为普通单
-		ComboLegNo       int64           `db:"combo_leg_no"`      // 组合腿序号；普通单为0
-		Status           int64           `db:"status"`            // 状态：0未知 1待撮合 2部分成交 3完全成交 4已撤单 5拒单 6已过期
-		CancelReason     string          `db:"cancel_reason"`     // 撤单/拒单原因
-		MatchTime        int64           `db:"match_time"`        // 最后成交时间
-		CancelTime       int64           `db:"cancel_time"`       // 撤单时间
-		CreateTimes      int64           `db:"create_times"`      // 创建时间
-		UpdateTimes      int64           `db:"update_times"`      // 更新时间
+		Id                         int64           `db:"id"`                            // 主键ID
+		TenantId                   int64           `db:"tenant_id"`                     // 租户ID
+		OrderNo                    string          `db:"order_no"`                      // 订单号
+		UserId                     int64           `db:"user_id"`                       // 用户ID
+		AccountId                  int64           `db:"account_id"`                    // 交易账户ID
+		ContractId                 int64           `db:"contract_id"`                   // 期权合约ID
+		UnderlyingSymbol           string          `db:"underlying_symbol"`             // 标的
+		Side                       int64           `db:"side"`                          // 买卖方向：1买 2卖
+		PositionEffect             int64           `db:"position_effect"`               // 开平方向：1开仓 2平仓
+		OrderType                  int64           `db:"order_type"`                    // 订单类型：1限价 2市价 3只做maker 4IOC 5FOK
+		Price                      decimal.Decimal `db:"price"`                         // 委托价格/权利金
+		Qty                        decimal.Decimal `db:"qty"`                           // 委托数量
+		FilledQty                  decimal.Decimal `db:"filled_qty"`                    // 已成交数量
+		UnfilledQty                decimal.Decimal `db:"unfilled_qty"`                  // 未成交数量
+		AvgPrice                   decimal.Decimal `db:"avg_price"`                     // 成交均价
+		Turnover                   decimal.Decimal `db:"turnover"`                      // 成交额
+		Fee                        decimal.Decimal `db:"fee"`                           // 手续费
+		FeeCoin                    string          `db:"fee_coin"`                      // 手续费币种
+		MarginAmount               decimal.Decimal `db:"margin_amount"`                 // 冻结保证金
+		MarginCoin                 string          `db:"margin_coin"`                   // 订单冻结资产币种
+		PortfolioRiskConfigId      int64           `db:"portfolio_risk_config_id"`      // 组合保证金准入采用的参数ID；非组合保证金卖单或迁移前历史单为0
+		PortfolioRiskConfigVersion int64           `db:"portfolio_risk_config_version"` // 组合保证金准入采用的参数版本；与参数ID成对保存
+		Source                     int64           `db:"source"`                        // 订单来源：1APP 2WEB 3API 4ADMIN
+		ClientOrderId              string          `db:"client_order_id"`               // 客户端订单号
+		ReduceOnly                 int64           `db:"reduce_only"`                   // 是否只减仓：1是 2否
+		Mmp                        int64           `db:"mmp"`                           // 是否做市商保护单：1是 2否
+		MmpGroup                   string          `db:"mmp_group"`                     // MMP报价组，mmp=1时必填
+		ComboOrderId               int64           `db:"combo_order_id"`                // 组合父单ID；0为普通单
+		ComboLegNo                 int64           `db:"combo_leg_no"`                  // 组合腿序号；普通单为0
+		Status                     int64           `db:"status"`                        // 状态：0未知 1待撮合 2部分成交 3完全成交 4已撤单 5拒单 6已过期
+		CancelReason               string          `db:"cancel_reason"`                 // 撤单/拒单原因
+		MatchTime                  int64           `db:"match_time"`                    // 最后成交时间
+		CancelTime                 int64           `db:"cancel_time"`                   // 撤单时间
+		CreateTimes                int64           `db:"create_times"`                  // 创建时间
+		UpdateTimes                int64           `db:"update_times"`                  // 更新时间
 	}
 )
 
@@ -143,8 +145,8 @@ func (m *defaultTOptionOrderModel) Insert(ctx context.Context, data *TOptionOrde
 	tOptionOrderIdKey := fmt.Sprintf("%s%v", cacheTOptionOrderIdPrefix, data.Id)
 	tOptionOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionOrderRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.UserId, data.AccountId, data.ContractId, data.UnderlyingSymbol, data.Side, data.PositionEffect, data.OrderType, data.Price, data.Qty, data.FilledQty, data.UnfilledQty, data.AvgPrice, data.Turnover, data.Fee, data.FeeCoin, data.MarginAmount, data.MarginCoin, data.Source, data.ClientOrderId, data.ReduceOnly, data.Mmp, data.MmpGroup, data.ComboOrderId, data.ComboLegNo, data.Status, data.CancelReason, data.MatchTime, data.CancelTime, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionOrderRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.UserId, data.AccountId, data.ContractId, data.UnderlyingSymbol, data.Side, data.PositionEffect, data.OrderType, data.Price, data.Qty, data.FilledQty, data.UnfilledQty, data.AvgPrice, data.Turnover, data.Fee, data.FeeCoin, data.MarginAmount, data.MarginCoin, data.PortfolioRiskConfigId, data.PortfolioRiskConfigVersion, data.Source, data.ClientOrderId, data.ReduceOnly, data.Mmp, data.MmpGroup, data.ComboOrderId, data.ComboLegNo, data.Status, data.CancelReason, data.MatchTime, data.CancelTime, data.CreateTimes, data.UpdateTimes)
 	}, tOptionOrderIdKey, tOptionOrderTenantIdOrderNoKey)
 	return ret, err
 }
@@ -159,7 +161,7 @@ func (m *defaultTOptionOrderModel) Update(ctx context.Context, newData *TOptionO
 	tOptionOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionOrderRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderNo, newData.UserId, newData.AccountId, newData.ContractId, newData.UnderlyingSymbol, newData.Side, newData.PositionEffect, newData.OrderType, newData.Price, newData.Qty, newData.FilledQty, newData.UnfilledQty, newData.AvgPrice, newData.Turnover, newData.Fee, newData.FeeCoin, newData.MarginAmount, newData.MarginCoin, newData.Source, newData.ClientOrderId, newData.ReduceOnly, newData.Mmp, newData.MmpGroup, newData.ComboOrderId, newData.ComboLegNo, newData.Status, newData.CancelReason, newData.MatchTime, newData.CancelTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderNo, newData.UserId, newData.AccountId, newData.ContractId, newData.UnderlyingSymbol, newData.Side, newData.PositionEffect, newData.OrderType, newData.Price, newData.Qty, newData.FilledQty, newData.UnfilledQty, newData.AvgPrice, newData.Turnover, newData.Fee, newData.FeeCoin, newData.MarginAmount, newData.MarginCoin, newData.PortfolioRiskConfigId, newData.PortfolioRiskConfigVersion, newData.Source, newData.ClientOrderId, newData.ReduceOnly, newData.Mmp, newData.MmpGroup, newData.ComboOrderId, newData.ComboLegNo, newData.Status, newData.CancelReason, newData.MatchTime, newData.CancelTime, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tOptionOrderIdKey, tOptionOrderTenantIdOrderNoKey)
 	return err
 }

@@ -168,6 +168,15 @@ func (l *ProcessLiquidationsLogic) buildLiquidationPlan(liq *models.TOptionLiqui
 		contract.InsuranceUserId <= 0 || contract.InsuranceAccountId <= 0 {
 		return nil, errors.New("option liquidation insurance takeover account is not configured")
 	}
+	// Portfolio collateral is shared across contracts and expiries. A safe
+	// takeover must atomically select an account-level liquidation set, rerun
+	// portfolio risk after every fill, and prove that the residual portfolio
+	// remains collateralized. The current transition transfers one position
+	// while consuming account-wide margin lots, so executing it could strand the
+	// remaining portfolio. Keep the unsupported path fail-closed.
+	if contract.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) {
+		return nil, errors.New("portfolio option liquidation is not supported")
+	}
 	position, err := l.svcCtx.OptionPositionModel.FindOne(l.ctx, liq.PositionId)
 	if err != nil {
 		return nil, err
@@ -177,7 +186,14 @@ func (l *ProcessLiquidationsLogic) buildLiquidationPlan(liq *models.TOptionLiqui
 		!position.PositionQty.IsPositive() {
 		return nil, errors.New("option liquidation position is no longer active")
 	}
-	quantity := decimal.Min(liq.Quantity, position.PositionQty)
+	// The current isolated and portfolio margin-lot transitions consume or
+	// release whole collateral lots. Until quantity-proportional lot splitting
+	// is implemented, accepting a partial takeover could leave the remaining
+	// short position under-collateralized.
+	if !liq.Quantity.Equal(position.PositionQty) {
+		return nil, errors.New("partial option liquidation is not supported")
+	}
+	quantity := position.PositionQty
 	var lots []*models.TOptionMarginLot
 	if contract.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) {
 		lots, err = l.svcCtx.OptionMarginLotModel.FindPortfolioActiveByAccount(

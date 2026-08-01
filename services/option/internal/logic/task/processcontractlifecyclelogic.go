@@ -257,7 +257,9 @@ func contractLaunchControlsReady(
 		contract.OrderPriceBandRatio.LessThanOrEqual(decimal.NewFromInt(1)) &&
 		contract.CircuitBreakerRatio.IsPositive() &&
 		contract.CircuitBreakerRatio.LessThanOrEqual(decimal.NewFromInt(1)) &&
-		helpers.IsRiskMarketFresh(market, now, 30)
+		contract.GreeksMaxAgeSeconds > 0 &&
+		helpers.IsRiskMarketFresh(market, now, 30) &&
+		helpers.IsGreeksFresh(market, now, contract.GreeksMaxAgeSeconds)
 }
 
 func (l *ProcessContractLifecycleLogic) processExpiredContracts(now int64) error {
@@ -395,8 +397,15 @@ func (l *ProcessContractLifecycleLogic) lockSettlementPrice(contract *models.TOp
 	item, err := l.svcCtx.OptionSettlementPriceModel.FindLatest(l.ctx, contract.TenantId, contract.Id)
 	if err == nil {
 		switch option.SettlementPriceStatus(item.Status) {
-		case option.SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_PENDING,
-			option.SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_CONFIRMED:
+		case option.SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_PENDING:
+			if validateErr := l.validateSettlementPriceForUse(contract, item, false); validateErr != nil {
+				return nil, fmt.Errorf("pending option settlement price evidence is invalid: %w", validateErr)
+			}
+			return item, nil
+		case option.SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_CONFIRMED:
+			if validateErr := l.validateSettlementPriceForUse(contract, item, true); validateErr != nil {
+				return nil, fmt.Errorf("confirmed option settlement price evidence is invalid: %w", validateErr)
+			}
 			return item, nil
 		case option.SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_REJECTED,
 			option.SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_SUPERSEDED:
@@ -404,6 +413,9 @@ func (l *ProcessContractLifecycleLogic) lockSettlementPrice(contract *models.TOp
 				l.ctx, contract.TenantId, contract.Id,
 			)
 			if confirmedErr == nil {
+				if validateErr := l.validateSettlementPriceForUse(contract, confirmed, true); validateErr != nil {
+					return nil, fmt.Errorf("confirmed option settlement price evidence is invalid: %w", validateErr)
+				}
 				return confirmed, nil
 			}
 			if !errors.Is(confirmedErr, models.ErrNotFound) {
@@ -420,11 +432,11 @@ func (l *ProcessContractLifecycleLogic) lockSettlementPrice(contract *models.TOp
 	}
 	priceSource := strings.ToLower(strings.TrimSpace(contract.SettlementPriceSource))
 	if priceSource == "" {
-		priceSource = "authoritative-market"
+		priceSource = helpers.SettlementPriceSourceAutomatic
 	}
 	method := strings.ToUpper(strings.TrimSpace(contract.SettlementPriceMethod))
 	if method == "" {
-		method = "MEDIAN"
+		method = helpers.SettlementPriceMethodAutomatic
 	}
 	windowSeconds := contract.SettlementWindowSeconds
 	if windowSeconds == 0 {
@@ -434,7 +446,7 @@ func (l *ProcessContractLifecycleLogic) lockSettlementPrice(contract *models.TOp
 	if minSamples == 0 {
 		minSamples = 3
 	}
-	if priceSource != "authoritative-market" || method != "MEDIAN" ||
+	if priceSource != helpers.SettlementPriceSourceAutomatic || method != helpers.SettlementPriceMethodAutomatic ||
 		windowSeconds < 1 || minSamples < 1 {
 		return nil, fmt.Errorf(
 			"unsupported option settlement price rule, contractId=%d source=%s method=%s window=%d minSamples=%d",
@@ -466,6 +478,7 @@ func (l *ProcessContractLifecycleLogic) lockSettlementPrice(contract *models.TOp
 	if item != nil {
 		version = item.Version + 1
 	}
+	latest := item
 	item = &models.TOptionSettlementPrice{
 		TenantId: contract.TenantId, ContractId: contract.Id,
 		PriceSource: priceSource, WindowStart: windowStart,
@@ -477,10 +490,30 @@ func (l *ProcessContractLifecycleLogic) lockSettlementPrice(contract *models.TOp
 		ChangeReason:      "system calculation awaiting independent review",
 		CreateTimes:       now, UpdateTimes: now,
 	}
+	_, canonicalSourceIDs, normalizeErr := helpers.NormalizeSettlementPriceSourceIDs(item.SourceSnapshotIds)
+	if normalizeErr != nil {
+		return nil, normalizeErr
+	}
+	item.SourceSnapshotIds = canonicalSourceIDs
+	if validateErr := helpers.ValidateSettlementPriceEvidence(contract, item, false); validateErr != nil {
+		return nil, fmt.Errorf("calculated option settlement price evidence is invalid: %w", validateErr)
+	}
+	if shouldSuppressRejectedSettlementPrice(latest, item) {
+		// A reviewer rejection must not be undone by recreating the identical
+		// automatic candidate every task cycle. New immutable evidence can still
+		// produce a new version, while an operator may create a manual correction.
+		return latest, nil
+	}
 	result, err := l.svcCtx.OptionSettlementPriceModel.Insert(l.ctx, item)
 	if err != nil {
 		existing, findErr := l.svcCtx.OptionSettlementPriceModel.FindLatest(l.ctx, contract.TenantId, contract.Id)
 		if findErr == nil {
+			requireConfirmed := existing.Status == int64(option.SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_CONFIRMED)
+			if existing.Status == int64(option.SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_PENDING) || requireConfirmed {
+				if validateErr := l.validateSettlementPriceForUse(contract, existing, requireConfirmed); validateErr != nil {
+					return nil, fmt.Errorf("concurrent option settlement price evidence is invalid: %w", validateErr)
+				}
+			}
 			return existing, nil
 		}
 		return nil, err
@@ -490,6 +523,14 @@ func (l *ProcessContractLifecycleLogic) lockSettlementPrice(contract *models.TOp
 		return nil, err
 	}
 	return item, nil
+}
+
+func shouldSuppressRejectedSettlementPrice(
+	latest, candidate *models.TOptionSettlementPrice,
+) bool {
+	return latest != nil &&
+		latest.Status == int64(option.SettlementPriceStatus_SETTLEMENT_PRICE_STATUS_REJECTED) &&
+		helpers.SameSettlementPriceEvidence(latest, candidate)
 }
 
 type settlementPriceSample struct {
@@ -540,6 +581,52 @@ func (l *ProcessContractLifecycleLogic) loadSettlementPriceSamples(
 		return samples[i].snapshotTime < samples[j].snapshotTime
 	})
 	return samples, nil
+}
+
+func (l *ProcessContractLifecycleLogic) validateSettlementPriceForUse(
+	contract *models.TOptionContract,
+	price *models.TOptionSettlementPrice,
+	requireConfirmed bool,
+) error {
+	if err := helpers.ValidateSettlementPriceEvidence(contract, price, requireConfirmed); err != nil {
+		return err
+	}
+	if price.PriceSource != helpers.SettlementPriceSourceAutomatic ||
+		price.CalculationMethod != helpers.SettlementPriceMethodAutomatic {
+		return nil
+	}
+	sourceIDs, _, err := helpers.NormalizeSettlementPriceSourceIDs(price.SourceSnapshotIds)
+	if err != nil {
+		return err
+	}
+	samples, err := l.loadSettlementPriceSamples(contract, price.WindowStart, price.WindowEnd)
+	if err != nil {
+		return err
+	}
+	bySourceID := make(map[string]settlementPriceSample, len(samples))
+	for _, sample := range samples {
+		sourceID := strings.TrimSpace(sample.sourceSnapshotID)
+		if _, duplicate := bySourceID[sourceID]; duplicate {
+			return fmt.Errorf("duplicate authoritative settlement snapshot id: %s", sourceID)
+		}
+		bySourceID[sourceID] = sample
+	}
+	selected := make([]settlementPriceSample, 0, len(sourceIDs))
+	for _, sourceID := range sourceIDs {
+		sample, exists := bySourceID[sourceID]
+		if !exists {
+			return fmt.Errorf("settlement price snapshot evidence is missing: %s", sourceID)
+		}
+		selected = append(selected, sample)
+	}
+	calculated := calculateSettlementMedian(selected)
+	if !calculated.Equal(price.DeliveryPrice) {
+		return fmt.Errorf(
+			"settlement price does not match immutable evidence: stored=%s calculated=%s",
+			price.DeliveryPrice, calculated,
+		)
+	}
+	return nil
 }
 
 func calculateSettlementMedian(samples []settlementPriceSample) decimal.Decimal {
@@ -1341,7 +1428,7 @@ func createPhysicalUnitShortDebits(
 		}
 		coin := lot.CollateralCoin
 		if coin == "" {
-			coin = contract.SettleCoin
+			return "", 0, fmt.Errorf("physical delivery collateral coin evidence is missing: lotId=%d", lot.Id)
 		}
 		if coin != expectedCoin {
 			return "", 0, fmt.Errorf("physical delivery collateral coin mismatch: lotId=%d", lot.Id)
@@ -1434,7 +1521,7 @@ func createCoveredShortSettlementInstructions(
 		}
 		coin := lot.CollateralCoin
 		if coin == "" {
-			coin = contract.SettleCoin
+			return "", 0, fmt.Errorf("physical delivery collateral coin evidence is missing: lotId=%d", lot.Id)
 		}
 		if coin != expectedCoin {
 			return "", 0, fmt.Errorf("physical delivery collateral coin mismatch: lotId=%d", lot.Id)

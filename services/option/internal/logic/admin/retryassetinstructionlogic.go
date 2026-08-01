@@ -3,7 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
-	"time"
+	"strings"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -31,6 +31,10 @@ func NewRetryAssetInstructionLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 将失败或人工处理的资产指令重新置为待执行
 func (l *RetryAssetInstructionLogic) RetryAssetInstruction(in *option.RetryAssetInstructionReq) (*option.CommonResp, error) {
+	reason := strings.TrimSpace(in.Reason)
+	if !validAssetInstructionManualRetryReason(reason) {
+		return &option.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
 	item, err := l.svcCtx.OptionAssetInstructionModel.FindOne(l.ctx, in.InstructionId)
 	if errors.Is(err, models.ErrNotFound) || (err == nil && in.TenantId > 0 && item.TenantId != in.TenantId) {
 		return &option.CommonResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
@@ -51,8 +55,15 @@ func (l *RetryAssetInstructionLogic) RetryAssetInstruction(in *option.RetryAsset
 			Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx)),
 		}, nil
 	}
-	reset, err := l.svcCtx.OptionAssetInstructionModel.ResetForManualRetry(
-		l.ctx, item.Id, time.Now().Unix(),
+	operatorID, err := utils.GetUserIdFromMd(l.ctx)
+	if err != nil {
+		return nil, err
+	}
+	if operatorID <= 0 {
+		return &option.CommonResp{Base: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
+	}
+	reset, err := resetAssetInstructionWithAudit(
+		l.ctx, l.svcCtx, item.Id, item.TenantId, 0, operatorID, reason,
 	)
 	if err != nil {
 		return nil, err
