@@ -783,7 +783,15 @@ func ToLiquidationProto(item *models.TOptionLiquidation) *option.OptionLiquidati
 		RemainingDeficit:    conv.FloatString(item.RemainingDeficit),
 		TakeoverPositionId:  item.TakeoverPositionId, CompletedAt: item.CompletedAt,
 		InsuranceAttempt: item.InsuranceAttempt, BackstopAmount: conv.FloatString(item.BackstopAmount),
-		DeficitResolution: option.LiquidationDeficitResolution(item.DeficitResolution),
+		DeficitResolution:          option.LiquidationDeficitResolution(item.DeficitResolution),
+		LiquidationScope:           option.LiquidationScope(item.LiquidationScope),
+		PortfolioRiskConfigId:      item.PortfolioRiskConfigId,
+		PortfolioRiskConfigVersion: item.PortfolioRiskConfigVersion,
+		PortfolioMaintenanceBefore: conv.FloatString(item.PortfolioMaintenanceBefore),
+		PortfolioMaintenanceAfter:  conv.FloatString(item.PortfolioMaintenanceAfter),
+		PortfolioInitialAfter:      conv.FloatString(item.PortfolioInitialAfter),
+		PortfolioCollateralBefore:  conv.FloatString(item.PortfolioCollateralBefore),
+		PortfolioCollateralAfter:   conv.FloatString(item.PortfolioCollateralAfter),
 	}
 }
 

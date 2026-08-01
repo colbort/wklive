@@ -44,32 +44,40 @@ type (
 	}
 
 	TOptionLiquidation struct {
-		Id                  int64           `db:"id"`                    // 主键ID
-		TenantId            int64           `db:"tenant_id"`             // 租户ID
-		LiquidationNo       string          `db:"liquidation_no"`        // 强平单号
-		UserId              int64           `db:"user_id"`               // 用户ID
-		AccountId           int64           `db:"account_id"`            // Option账户ID
-		ContractId          int64           `db:"contract_id"`           // 期权合约ID
-		PositionId          int64           `db:"position_id"`           // 空头持仓ID
-		Quantity            decimal.Decimal `db:"quantity"`              // 强平数量
-		MarkPrice           decimal.Decimal `db:"mark_price"`            // 触发标记价
-		MaintenanceMargin   decimal.Decimal `db:"maintenance_margin"`    // 触发维持保证金
-		Equity              decimal.Decimal `db:"equity"`                // 触发权益
-		DeficitAmount       decimal.Decimal `db:"deficit_amount"`        // 穿仓缺口
-		LiquidationFee      decimal.Decimal `db:"liquidation_fee"`       // 强平手续费
-		Status              int64           `db:"status"`                // 状态：1待处理 2执行中 3完成 4失败 5破产 6人工
-		RetryCount          int64           `db:"retry_count"`           // 重试次数
-		LastErrorMsg        string          `db:"last_error_msg"`        // 最后错误
-		CollateralAmount    decimal.Decimal `db:"collateral_amount"`     // 本次消费的用户保证金
-		InsuranceFundAmount decimal.Decimal `db:"insurance_fund_amount"` // 保险基金补足金额
-		RemainingDeficit    decimal.Decimal `db:"remaining_deficit"`     // 保险后剩余穿仓
-		TakeoverPositionId  int64           `db:"takeover_position_id"`  // 保险账户接管持仓ID
-		CompletedAt         int64           `db:"completed_at"`          // 完成时间
-		InsuranceAttempt    int64           `db:"insurance_attempt"`     // 保险基金人工重试代次
-		BackstopAmount      decimal.Decimal `db:"backstop_amount"`       // 平台兜底负债金额
-		DeficitResolution   int64           `db:"deficit_resolution"`    // 缺口处置：1无 2保险 3平台兜底 4保险加兜底 5人工
-		CreateTimes         int64           `db:"create_times"`          // 创建时间
-		UpdateTimes         int64           `db:"update_times"`          // 更新时间
+		Id                         int64           `db:"id"`                            // 主键ID
+		TenantId                   int64           `db:"tenant_id"`                     // 租户ID
+		LiquidationNo              string          `db:"liquidation_no"`                // 强平单号
+		UserId                     int64           `db:"user_id"`                       // 用户ID
+		AccountId                  int64           `db:"account_id"`                    // Option账户ID
+		ContractId                 int64           `db:"contract_id"`                   // 期权合约ID
+		PositionId                 int64           `db:"position_id"`                   // 空头持仓ID
+		Quantity                   decimal.Decimal `db:"quantity"`                      // 强平数量
+		MarkPrice                  decimal.Decimal `db:"mark_price"`                    // 触发标记价
+		MaintenanceMargin          decimal.Decimal `db:"maintenance_margin"`            // 触发维持保证金
+		Equity                     decimal.Decimal `db:"equity"`                        // 触发权益
+		DeficitAmount              decimal.Decimal `db:"deficit_amount"`                // 穿仓缺口
+		LiquidationFee             decimal.Decimal `db:"liquidation_fee"`               // 强平手续费
+		Status                     int64           `db:"status"`                        // 状态：1待处理 2执行中 3完成 4失败 5破产 6人工 7快照失效取消
+		RetryCount                 int64           `db:"retry_count"`                   // 重试次数
+		LastErrorMsg               string          `db:"last_error_msg"`                // 最后错误
+		CollateralAmount           decimal.Decimal `db:"collateral_amount"`             // 本次消费的用户保证金
+		InsuranceFundAmount        decimal.Decimal `db:"insurance_fund_amount"`         // 保险基金补足金额
+		RemainingDeficit           decimal.Decimal `db:"remaining_deficit"`             // 保险后剩余穿仓
+		TakeoverPositionId         int64           `db:"takeover_position_id"`          // 保险账户接管持仓ID
+		CompletedAt                int64           `db:"completed_at"`                  // 完成时间
+		InsuranceAttempt           int64           `db:"insurance_attempt"`             // 保险基金人工重试代次
+		BackstopAmount             decimal.Decimal `db:"backstop_amount"`               // 平台兜底负债金额
+		DeficitResolution          int64           `db:"deficit_resolution"`            // 缺口处置：1无 2保险 3平台兜底 4保险加兜底 5人工
+		LiquidationScope           int64           `db:"liquidation_scope"`             // 强平范围：1逐仓仓位 2组合钱包
+		PortfolioRiskConfigId      int64           `db:"portfolio_risk_config_id"`      // 组合强平风险参数快照ID
+		PortfolioRiskConfigVersion int64           `db:"portfolio_risk_config_version"` // 组合强平风险参数版本
+		PortfolioMaintenanceBefore decimal.Decimal `db:"portfolio_maintenance_before"`  // 移除仓位前组合维持保证金
+		PortfolioMaintenanceAfter  decimal.Decimal `db:"portfolio_maintenance_after"`   // 移除仓位后组合维持保证金
+		PortfolioInitialAfter      decimal.Decimal `db:"portfolio_initial_after"`       // 移除仓位后组合初始保证金
+		PortfolioCollateralBefore  decimal.Decimal `db:"portfolio_collateral_before"`   // 组合强平前可用抵押
+		PortfolioCollateralAfter   decimal.Decimal `db:"portfolio_collateral_after"`    // 本次消费后保留的组合抵押
+		CreateTimes                int64           `db:"create_times"`                  // 创建时间
+		UpdateTimes                int64           `db:"update_times"`                  // 更新时间
 	}
 )
 
@@ -136,8 +144,8 @@ func (m *defaultTOptionLiquidationModel) Insert(ctx context.Context, data *TOpti
 	tOptionLiquidationIdKey := fmt.Sprintf("%s%v", cacheTOptionLiquidationIdPrefix, data.Id)
 	tOptionLiquidationTenantIdLiquidationNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionLiquidationTenantIdLiquidationNoPrefix, data.TenantId, data.LiquidationNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionLiquidationRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.LiquidationNo, data.UserId, data.AccountId, data.ContractId, data.PositionId, data.Quantity, data.MarkPrice, data.MaintenanceMargin, data.Equity, data.DeficitAmount, data.LiquidationFee, data.Status, data.RetryCount, data.LastErrorMsg, data.CollateralAmount, data.InsuranceFundAmount, data.RemainingDeficit, data.TakeoverPositionId, data.CompletedAt, data.InsuranceAttempt, data.BackstopAmount, data.DeficitResolution, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionLiquidationRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.LiquidationNo, data.UserId, data.AccountId, data.ContractId, data.PositionId, data.Quantity, data.MarkPrice, data.MaintenanceMargin, data.Equity, data.DeficitAmount, data.LiquidationFee, data.Status, data.RetryCount, data.LastErrorMsg, data.CollateralAmount, data.InsuranceFundAmount, data.RemainingDeficit, data.TakeoverPositionId, data.CompletedAt, data.InsuranceAttempt, data.BackstopAmount, data.DeficitResolution, data.LiquidationScope, data.PortfolioRiskConfigId, data.PortfolioRiskConfigVersion, data.PortfolioMaintenanceBefore, data.PortfolioMaintenanceAfter, data.PortfolioInitialAfter, data.PortfolioCollateralBefore, data.PortfolioCollateralAfter, data.CreateTimes, data.UpdateTimes)
 	}, tOptionLiquidationIdKey, tOptionLiquidationTenantIdLiquidationNoKey)
 	return ret, err
 }
@@ -152,7 +160,7 @@ func (m *defaultTOptionLiquidationModel) Update(ctx context.Context, newData *TO
 	tOptionLiquidationTenantIdLiquidationNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionLiquidationTenantIdLiquidationNoPrefix, data.TenantId, data.LiquidationNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionLiquidationRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.LiquidationNo, newData.UserId, newData.AccountId, newData.ContractId, newData.PositionId, newData.Quantity, newData.MarkPrice, newData.MaintenanceMargin, newData.Equity, newData.DeficitAmount, newData.LiquidationFee, newData.Status, newData.RetryCount, newData.LastErrorMsg, newData.CollateralAmount, newData.InsuranceFundAmount, newData.RemainingDeficit, newData.TakeoverPositionId, newData.CompletedAt, newData.InsuranceAttempt, newData.BackstopAmount, newData.DeficitResolution, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.LiquidationNo, newData.UserId, newData.AccountId, newData.ContractId, newData.PositionId, newData.Quantity, newData.MarkPrice, newData.MaintenanceMargin, newData.Equity, newData.DeficitAmount, newData.LiquidationFee, newData.Status, newData.RetryCount, newData.LastErrorMsg, newData.CollateralAmount, newData.InsuranceFundAmount, newData.RemainingDeficit, newData.TakeoverPositionId, newData.CompletedAt, newData.InsuranceAttempt, newData.BackstopAmount, newData.DeficitResolution, newData.LiquidationScope, newData.PortfolioRiskConfigId, newData.PortfolioRiskConfigVersion, newData.PortfolioMaintenanceBefore, newData.PortfolioMaintenanceAfter, newData.PortfolioInitialAfter, newData.PortfolioCollateralBefore, newData.PortfolioCollateralAfter, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tOptionLiquidationIdKey, tOptionLiquidationTenantIdLiquidationNoKey)
 	return err
 }

@@ -3,6 +3,8 @@ package tasklogic
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"fmt"
 	"sync"
 	"testing"
 	"time"
@@ -193,7 +195,7 @@ func testP0IsolatedShortLiquidationAccounting(
 	processP0Liquidations(t, ctx, serviceCtx)
 	processAssetInstructions(t, ctx, serviceCtx)
 	assertP0LiquidationEvidence(t, ctx, db, liquidation.Id, contract.Id)
-	assertP0PartialLiquidationFailsClosed(t, ctx, db, serviceCtx, contract, now)
+	assertP0PartialLiquidationAccounting(t, ctx, db, assetClient, serviceCtx, now)
 }
 
 func testP0LiquidationDeficitFailureRecovery(
@@ -566,15 +568,20 @@ func assertP0DeficitLiquidationEvidence(
 	}
 }
 
-func assertP0PartialLiquidationFailsClosed(
+func assertP0PartialLiquidationAccounting(
 	t *testing.T,
 	ctx context.Context,
 	db *sql.DB,
+	assetClient asset.AssetClient,
 	serviceCtx *svc.ServiceContext,
-	contract *models.TOptionContract,
 	now int64,
 ) {
 	t.Helper()
+	contract := insertP0LiquidationContract(
+		t, ctx, serviceCtx, "P0-ISOLATED-PARTIAL-LIQUIDATION-CALL", 156, 157, now,
+	)
+	insertP0ExerciseMarket(t, ctx, serviceCtx, contract.Id, "140", "40", now)
+	creditAsset(t, ctx, assetClient, 145, "120", "P0-PARTIAL-LIQUIDATION-SEED")
 	position := insertP0SettlementPosition(t, ctx, serviceCtx, &models.TOptionPosition{
 		TenantId: p0AssetE2ETenantID, UserId: 145, AccountId: 8041,
 		ContractId: contract.Id, UnderlyingSymbol: "BTCUSDT",
@@ -585,115 +592,443 @@ func assertP0PartialLiquidationFailsClosed(
 		Status:      int64(option.PositionStatus_POSITION_STATUS_HOLDING),
 		CreateTimes: now, UpdateTimes: now,
 	})
-	liquidation := &models.TOptionLiquidation{
-		TenantId: p0AssetE2ETenantID, LiquidationNo: "P0-PARTIAL-LIQUIDATION-REJECTED",
-		UserId: 145, AccountId: 8041, ContractId: contract.Id, PositionId: position.Id,
-		Quantity: decimal.NewFromInt(1), MarkPrice: decimal.NewFromInt(40),
-		MaintenanceMargin: decimal.NewFromInt(40), Status: int64(option.LiquidationStatus_LIQUIDATION_STATUS_PENDING),
-		DeficitResolution: int64(option.LiquidationDeficitResolution_LIQUIDATION_DEFICIT_RESOLUTION_NONE),
-		CreateTimes:       now, UpdateTimes: now,
+	lot := insertP0ExerciseMarginLot(
+		t, ctx, serviceCtx, position, "P0-PARTIAL-LIQUIDATION-MARGIN", "2", "100", now,
+	)
+	freezeP0ExerciseMargin(t, ctx, assetClient, position, lot, "100")
+	riskResp, err := NewProcessRiskAccountsLogic(ctx, serviceCtx).ProcessRiskAccounts(&option.OptionTaskReq{
+		TenantId: p0AssetE2ETenantID,
+	})
+	if err != nil {
+		t.Fatalf("generate partial liquidation from risk scan: %v", err)
 	}
-	result, err := serviceCtx.OptionLiquidationModel.Insert(ctx, liquidation)
+	if riskResp == nil || riskResp.Base == nil || riskResp.Base.Code != 200 {
+		t.Fatalf("unexpected partial-liquidation risk response: %+v", riskResp)
+	}
+	liquidation, err := serviceCtx.OptionLiquidationModel.FindOpenByPosition(
+		ctx, p0AssetE2ETenantID, position.Id,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
-	liquidation.Id, err = result.LastInsertId()
+	if !liquidation.Quantity.Equal(decimal.NewFromInt(1)) ||
+		!liquidation.Equity.Equal(decimal.NewFromInt(40)) ||
+		!liquidation.MaintenanceMargin.Equal(decimal.NewFromInt(28)) ||
+		!liquidation.DeficitAmount.Equal(decimal.NewFromInt(16)) ||
+		!liquidation.LiquidationFee.Equal(decimal.NewFromInt(4)) {
+		t.Fatalf("unexpected risk-selected partial liquidation: %+v", liquidation)
+	}
+	processP0Liquidations(t, ctx, serviceCtx)
+	reserved, err := serviceCtx.OptionPositionModel.FindOne(ctx, position.Id)
 	if err != nil {
 		t.Fatal(err)
 	}
-	logic := NewProcessLiquidationsLogic(ctx, serviceCtx)
-	if err := logic.processOne(liquidation); err == nil {
-		t.Fatal("partial liquidation unexpectedly succeeded")
+	reservedLot, err := serviceCtx.OptionMarginLotModel.FindOne(ctx, lot.Id)
+	if err != nil {
+		t.Fatal(err)
 	}
+	if !reserved.PositionQty.Equal(decimal.NewFromInt(2)) ||
+		!reserved.AvailableQty.Equal(decimal.NewFromInt(1)) ||
+		!reserved.FrozenQty.Equal(decimal.NewFromInt(1)) ||
+		!reserved.MarginAmount.Equal(decimal.NewFromInt(100)) ||
+		!reservedLot.RemainingQuantity.Equal(decimal.NewFromInt(1)) ||
+		!reservedLot.RemainingMargin.Equal(decimal.NewFromInt(100)) ||
+		!reservedLot.PendingMargin.Equal(decimal.NewFromInt(50)) {
+		t.Fatalf("partial liquidation was not reserved before funding: position=%+v lot=%+v", reserved, reservedLot)
+	}
+	processAssetInstructions(t, ctx, serviceCtx)
+	processAssetInstructions(t, ctx, serviceCtx)
+	processAssetInstructions(t, ctx, serviceCtx)
 	stored, err := serviceCtx.OptionLiquidationModel.FindOne(ctx, liquidation.Id)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if stored.Status != int64(option.LiquidationStatus_LIQUIDATION_STATUS_FAILED) ||
-		stored.RetryCount != 1 || stored.LastErrorMsg != "partial option liquidation is not supported" {
-		t.Fatalf("unexpected partial liquidation failure evidence: %+v", stored)
+	if stored.Status != int64(option.LiquidationStatus_LIQUIDATION_STATUS_DONE) ||
+		stored.RetryCount != 0 || !stored.CollateralAmount.Equal(decimal.NewFromInt(44)) ||
+		!stored.LiquidationFee.Equal(decimal.NewFromInt(4)) || stored.TakeoverPositionId <= 0 {
+		t.Fatalf("unexpected partial liquidation evidence: %+v", stored)
 	}
-	var instructions int64
+	var instructions, success, reconciled int64
 	if err := db.QueryRowContext(ctx, `SELECT COUNT(*) FROM t_option_asset_instruction
 		WHERE tenant_id=? AND liquidation_id=?`, p0AssetE2ETenantID, liquidation.Id).
 		Scan(&instructions); err != nil {
 		t.Fatal(err)
 	}
-	unchanged, err := serviceCtx.OptionPositionModel.FindOne(ctx, position.Id)
+	if err := db.QueryRowContext(ctx, `SELECT SUM(status=?),SUM(reconciliation_status=?)
+		FROM t_option_asset_instruction WHERE tenant_id=? AND liquidation_id=?`,
+		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS),
+		int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_MATCHED),
+		p0AssetE2ETenantID, liquidation.Id).Scan(&success, &reconciled); err != nil {
+		t.Fatal(err)
+	}
+	remaining, err := serviceCtx.OptionPositionModel.FindOne(ctx, position.Id)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if instructions != 0 || !unchanged.PositionQty.Equal(decimal.NewFromInt(2)) ||
-		!unchanged.MarginAmount.Equal(decimal.NewFromInt(100)) {
-		t.Fatalf("partial liquidation changed protected state instructions=%d position=%+v", instructions, unchanged)
+	assertP0LiquidationPosition(
+		t, remaining, option.PositionStatus_POSITION_STATUS_HOLDING,
+		"1", "50", "28", "40", "-30", "-30", "4", "-34",
+	)
+	remainingLot, err := serviceCtx.OptionMarginLotModel.FindOne(ctx, lot.Id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if instructions != 5 || success != 5 || reconciled != 5 ||
+		!remainingLot.RemainingQuantity.Equal(decimal.NewFromInt(1)) ||
+		!remainingLot.RemainingMargin.Equal(decimal.NewFromInt(50)) ||
+		!remainingLot.PendingMargin.IsZero() ||
+		remainingLot.Status != int64(option.MarginLotStatus_MARGIN_LOT_STATUS_ACTIVE) {
+		t.Fatalf("partial liquidation instructions/lot=%d/%d/%d %+v", instructions, success, reconciled, remainingLot)
+	}
+	takeover, err := serviceCtx.OptionPositionModel.FindOne(ctx, stored.TakeoverPositionId)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assertP0LiquidationPosition(
+		t, takeover, option.PositionStatus_POSITION_STATUS_HOLDING,
+		"1", "40", "28", "40", "0", "0", "0", "0",
+	)
+	takeoverLot, err := serviceCtx.OptionMarginLotModel.FindOneByTenantIdTradeId(
+		ctx, p0AssetE2ETenantID, -liquidation.Id,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !takeoverLot.RemainingQuantity.Equal(decimal.NewFromInt(1)) ||
+		!takeoverLot.RemainingMargin.Equal(decimal.NewFromInt(40)) {
+		t.Fatalf("unexpected partial takeover margin lot: %+v", takeoverLot)
+	}
+	assertWalletAmounts(t, ctx, db, 145, "76.000000000000000000", "26.000000000000000000", "50.000000000000000000")
+	assertWalletAmounts(t, ctx, db, contract.InsuranceUserId, "40.000000000000000000", "0.000000000000000000", "40.000000000000000000")
+	assertWalletAmounts(t, ctx, db, contract.FeeUserId, "4.000000000000000000", "4.000000000000000000", "0.000000000000000000")
+	processP0Liquidations(t, ctx, serviceCtx)
+	processAssetInstructions(t, ctx, serviceCtx)
+	var replayInstructions int64
+	if err := db.QueryRowContext(ctx, `SELECT COUNT(*) FROM t_option_asset_instruction
+		WHERE tenant_id=? AND liquidation_id=?`, p0AssetE2ETenantID, liquidation.Id).
+		Scan(&replayInstructions); err != nil {
+		t.Fatal(err)
+	}
+	if replayInstructions != instructions {
+		t.Fatalf("partial liquidation replay added instructions before/after=%d/%d", instructions, replayInstructions)
 	}
 }
 
-func testP0PortfolioLiquidationFailsClosed(
+func testP0PortfolioLiquidationSequential(
 	t *testing.T,
 	ctx context.Context,
 	db *sql.DB,
+	assetClient asset.AssetClient,
 	serviceCtx *svc.ServiceContext,
 ) {
 	t.Helper()
-	now := time.Now().Unix()
-	contract := insertP0LiquidationContract(
-		t, ctx, serviceCtx, "P0-PORTFOLIO-LIQUIDATION-REJECTED-CALL", 149, 150, now,
+	const (
+		userID          int64 = 151
+		insuranceUserID int64 = 149
+		feeUserID       int64 = 150
 	)
-	contract.SellerMarginMode = int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO)
-	if err := serviceCtx.OptionContractModel.Update(ctx, contract); err != nil {
-		t.Fatalf("enable portfolio margin for fail-closed acceptance: %v", err)
+	now := time.Now().Unix()
+	contractA := insertP0LiquidationContract(
+		t, ctx, serviceCtx, "P0-PORTFOLIO-LIQUIDATION-A-CALL", insuranceUserID, feeUserID, now,
+	)
+	contractB := insertP0LiquidationContract(
+		t, ctx, serviceCtx, "P0-PORTFOLIO-LIQUIDATION-B-CALL", insuranceUserID, feeUserID, now,
+	)
+	contractB.StrikePrice = decimal.NewFromInt(200)
+	for _, contract := range []*models.TOptionContract{contractA, contractB} {
+		contract.SellerMarginMode = int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO)
+		contract.LiquidationDeficitPolicy = int64(
+			option.LiquidationDeficitPolicy_LIQUIDATION_DEFICIT_POLICY_PLATFORM_BACKSTOP,
+		)
+		if err := serviceCtx.OptionContractModel.Update(ctx, contract); err != nil {
+			t.Fatalf("enable portfolio margin for sequential acceptance: %v", err)
+		}
 	}
-	position := insertP0SettlementPosition(t, ctx, serviceCtx, &models.TOptionPosition{
-		TenantId: p0AssetE2ETenantID, UserId: 151, AccountId: 8043,
-		ContractId: contract.Id, UnderlyingSymbol: "BTCUSDT",
-		Side: int64(common.PositionSide_POSITION_SIDE_SHORT), PositionQty: decimal.NewFromInt(2),
-		AvailableQty: decimal.NewFromInt(2), OpenAvgPrice: decimal.NewFromInt(10),
-		MarkPrice: decimal.NewFromInt(40), PositionValue: decimal.NewFromInt(80),
-		MarginAmount: decimal.NewFromInt(100), MaintenanceMargin: decimal.NewFromInt(40),
-		Status:      int64(option.PositionStatus_POSITION_STATUS_HOLDING),
+	insertP0ExerciseMarket(t, ctx, serviceCtx, contractA.Id, "140", "40", now)
+	insertP0ExerciseMarket(t, ctx, serviceCtx, contractB.Id, "140", "5", now)
+
+	config := &models.TOptionPortfolioRiskConfig{
+		TenantId: p0AssetE2ETenantID, SettleCoin: "USDT", Version: 1,
+		Status:               int64(option.PortfolioRiskConfigStatus_PORTFOLIO_RISK_CONFIG_STATUS_APPROVED),
+		ModelMethod:          int64(option.PortfolioRiskMethod_PORTFOLIO_RISK_METHOD_EXPIRY_SCENARIO_V1),
+		InitialShockRate:     decimal.RequireFromString("0.2"),
+		MaintenanceShockRate: decimal.RequireFromString("0.1"),
+		ScenarioShocks:       "-1,-0.2,0,0.2,4", ConcentrationThreshold: decimal.NewFromInt(1000000),
+		EffectiveFrom: now - 60, ChangeReason: "P0 sequential portfolio liquidation",
+		EvidenceRef: "P0-PORTFOLIO-LIQUIDATION", CreatedBy: 9001, ReviewedBy: 9002,
+		ReviewReason: "P0 approved fixture", ReviewedAt: now - 30,
+		CreateTimes: now - 60, UpdateTimes: now - 30,
+	}
+	result, err := serviceCtx.OptionPortfolioRiskConfigModel.Insert(ctx, config)
+	if err != nil {
+		t.Fatalf("insert approved portfolio risk config: %v", err)
+	}
+	config.Id, err = result.LastInsertId()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.ExecContext(ctx, `UPDATE t_asset_platform_account
+		SET available_amount=100,update_times=?
+		WHERE tenant_id=? AND account_type='INSURANCE_FUND' AND coin='USDT'`,
+		now*1000, p0AssetE2ETenantID); err != nil {
+		t.Fatalf("top up portfolio liquidation insurance fund: %v", err)
+	}
+	creditAsset(t, ctx, assetClient, userID, "500", "P0-PORTFOLIO-LIQUIDATION-SEED")
+
+	positionA := insertP0SettlementPosition(t, ctx, serviceCtx, &models.TOptionPosition{
+		TenantId: p0AssetE2ETenantID, UserId: userID, AccountId: 8043,
+		ContractId: contractA.Id, UnderlyingSymbol: "BTCUSDT",
+		Side: int64(common.PositionSide_POSITION_SIDE_SHORT), PositionQty: decimal.NewFromInt(1),
+		AvailableQty: decimal.NewFromInt(1), OpenAvgPrice: decimal.NewFromInt(10),
+		MarkPrice: decimal.NewFromInt(40), PositionValue: decimal.NewFromInt(40),
+		MarginAmount: decimal.NewFromInt(250), Status: int64(option.PositionStatus_POSITION_STATUS_HOLDING),
 		CreateTimes: now, UpdateTimes: now,
 	})
-	liquidation := &models.TOptionLiquidation{
-		TenantId: p0AssetE2ETenantID, LiquidationNo: "P0-PORTFOLIO-LIQUIDATION-REJECTED",
-		UserId: 151, AccountId: 8043, ContractId: contract.Id, PositionId: position.Id,
-		Quantity: decimal.NewFromInt(2), MarkPrice: decimal.NewFromInt(40),
-		MaintenanceMargin: decimal.NewFromInt(40),
-		Status:            int64(option.LiquidationStatus_LIQUIDATION_STATUS_PENDING),
-		DeficitResolution: int64(option.LiquidationDeficitResolution_LIQUIDATION_DEFICIT_RESOLUTION_NONE),
-		CreateTimes:       now, UpdateTimes: now,
+	positionB := insertP0SettlementPosition(t, ctx, serviceCtx, &models.TOptionPosition{
+		TenantId: p0AssetE2ETenantID, UserId: userID, AccountId: 8044,
+		ContractId: contractB.Id, UnderlyingSymbol: "BTCUSDT",
+		Side: int64(common.PositionSide_POSITION_SIDE_SHORT), PositionQty: decimal.NewFromInt(1),
+		AvailableQty: decimal.NewFromInt(1), OpenAvgPrice: decimal.NewFromInt(2),
+		MarkPrice: decimal.NewFromInt(5), PositionValue: decimal.NewFromInt(5),
+		MarginAmount: decimal.NewFromInt(250), Status: int64(option.PositionStatus_POSITION_STATUS_HOLDING),
+		CreateTimes: now, UpdateTimes: now,
+	})
+	for i, position := range []*models.TOptionPosition{positionA, positionB} {
+		lot := insertP0ExerciseMarginLot(
+			t, ctx, serviceCtx, position,
+			fmt.Sprintf("P0-PORTFOLIO-LIQUIDATION-MARGIN-%d", i+1), "1", "250", now,
+		)
+		freezeP0ExerciseMargin(t, ctx, assetClient, position, lot, "250")
 	}
-	result, err := serviceCtx.OptionLiquidationModel.Insert(ctx, liquidation)
+
+	refreshP0PortfolioRiskUser(t, ctx, serviceCtx, userID)
+	first := requireP0PortfolioLiquidations(t, ctx, serviceCtx, userID, 1)[0]
+	assertP0PortfolioLiquidationSnapshot(t, first, config.Id, 1, "500")
+	if first.PositionId != positionA.Id {
+		t.Fatalf("portfolio risk-relief selector chose position=%d want=%d", first.PositionId, positionA.Id)
+	}
+	// A normal market update after trigger must not starve liquidation. The
+	// executor re-evaluates the residual portfolio and retains the larger of
+	// trigger-time and current initial requirements.
+	marketB, err := serviceCtx.OptionMarketModel.FindOneByTenantIdContractId(
+		ctx, p0AssetE2ETenantID, contractB.Id,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
-	liquidation.Id, err = result.LastInsertId()
-	if err != nil {
+	marketB.MarkPrice = decimal.RequireFromString("4.9")
+	marketB.LastPrice = marketB.MarkPrice
+	marketB.TheoreticalPrice = marketB.MarkPrice
+	marketB.MarkSnapshotTime = time.Now().Unix()
+	marketB.SnapshotTime = marketB.MarkSnapshotTime
+	marketB.UpdateTimes = marketB.MarkSnapshotTime
+	if err := serviceCtx.OptionMarketModel.Update(ctx, marketB); err != nil {
+		t.Fatalf("update residual portfolio market before liquidation: %v", err)
+	}
+	processP0Liquidations(t, ctx, serviceCtx)
+	processAssetInstructions(t, ctx, serviceCtx)
+	processAssetInstructions(t, ctx, serviceCtx)
+	processAssetInstructions(t, ctx, serviceCtx)
+	first = requireP0PortfolioLiquidations(t, ctx, serviceCtx, userID, 1)[0]
+	if first.Status != int64(option.LiquidationStatus_LIQUIDATION_STATUS_DONE) {
+		t.Fatalf("first portfolio liquidation not done: %+v", first)
+	}
+	plannedCollateralUse := first.PortfolioCollateralBefore.Sub(first.PortfolioCollateralAfter)
+	if !first.CollateralAmount.LessThan(plannedCollateralUse) {
+		t.Fatalf("current residual requirement did not conservatively reduce collateral use actual/planned=%s/%s",
+			first.CollateralAmount, plannedCollateralUse)
+	}
+	// A second liquidation must not exist until the entire residual wallet has
+	// been recalculated after the first takeover completed.
+	refreshP0PortfolioRiskUser(t, ctx, serviceCtx, userID)
+	items := requireP0PortfolioLiquidations(t, ctx, serviceCtx, userID, 2)
+	second := items[0]
+	if second.Id == first.Id {
+		second = items[1]
+	}
+	if second.PositionId == first.PositionId {
+		t.Fatalf("sequential portfolio liquidation selected the same position twice: %+v %+v", first, second)
+	}
+	assertP0PortfolioLiquidationSnapshot(t, second, config.Id, 1, second.PortfolioCollateralBefore.String())
+	if !second.PortfolioCollateralBefore.GreaterThan(first.PortfolioCollateralAfter) {
+		t.Fatalf("second risk scan did not preserve the higher current collateral floor firstPlanned/secondActual=%s/%s",
+			first.PortfolioCollateralAfter, second.PortfolioCollateralBefore)
+	}
+	processP0Liquidations(t, ctx, serviceCtx)
+	processAssetInstructions(t, ctx, serviceCtx)
+	processAssetInstructions(t, ctx, serviceCtx)
+	processAssetInstructions(t, ctx, serviceCtx)
+	items = requireP0PortfolioLiquidations(t, ctx, serviceCtx, userID, 2)
+	for _, liquidation := range items {
+		if liquidation.Status != int64(option.LiquidationStatus_LIQUIDATION_STATUS_DONE) {
+			t.Fatalf("portfolio liquidation not done: %+v", liquidation)
+		}
+		assertP0PortfolioLiquidationInstructions(t, ctx, db, liquidation.Id)
+	}
+	for _, positionID := range []int64{positionA.Id, positionB.Id} {
+		position, err := serviceCtx.OptionPositionModel.FindOne(ctx, positionID)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if position.Status != int64(option.PositionStatus_POSITION_STATUS_CLOSED) ||
+			!position.PositionQty.IsZero() {
+			t.Fatalf("portfolio liquidation source position not closed: %+v", position)
+		}
+	}
+	// With no residual user positions, the next risk pass releases the exact
+	// collateral remainder rather than silently consuming it.
+	if err := NewProcessRiskAccountsLogic(ctx, serviceCtx).rebalancePortfolioCollateral(
+		&optionRiskGroup{key: optionRiskKey{
+			tenantID: p0AssetE2ETenantID, userID: userID, accountID: 0, coin: "USDT",
+		}}, decimal.Zero, time.Now().Unix(),
+	); err != nil {
+		t.Fatalf("release residual portfolio collateral: %v", err)
+	}
+	processAssetInstructions(t, ctx, serviceCtx)
+	var total, available, frozen decimal.Decimal
+	if err := db.QueryRowContext(ctx, `SELECT total_amount,available_amount,frozen_amount
+		FROM t_user_asset WHERE tenant_id=? AND user_id=? AND wallet_type=? AND coin='USDT'`,
+		p0AssetE2ETenantID, userID, int64(common.WalletType_WALLET_TYPE_OPTION)).
+		Scan(&total, &available, &frozen); err != nil {
 		t.Fatal(err)
 	}
-	if err := NewProcessLiquidationsLogic(ctx, serviceCtx).processOne(liquidation); err == nil {
-		t.Fatal("portfolio liquidation unexpectedly succeeded")
+	if !total.Equal(second.PortfolioCollateralAfter) || !available.Equal(total) || !frozen.IsZero() {
+		t.Fatalf("residual portfolio collateral not released total/available/frozen=%s/%s/%s want=%s/%s/0",
+			total, available, frozen, second.PortfolioCollateralAfter, second.PortfolioCollateralAfter)
 	}
-	stored, err := serviceCtx.OptionLiquidationModel.FindOne(ctx, liquidation.Id)
-	if err != nil {
+	assertP0RecoveredPortfolioLiquidationCanceled(
+		t, ctx, db, assetClient, serviceCtx, contractA, config.Id,
+	)
+}
+
+func assertP0RecoveredPortfolioLiquidationCanceled(
+	t *testing.T,
+	ctx context.Context,
+	db *sql.DB,
+	assetClient asset.AssetClient,
+	serviceCtx *svc.ServiceContext,
+	contract *models.TOptionContract,
+	configID int64,
+) {
+	t.Helper()
+	const recoveredUserID int64 = 155
+	now := time.Now().Unix()
+	creditAsset(t, ctx, assetClient, recoveredUserID, "600", "P0-PORTFOLIO-RECOVERY-SEED")
+	position := insertP0SettlementPosition(t, ctx, serviceCtx, &models.TOptionPosition{
+		TenantId: p0AssetE2ETenantID, UserId: recoveredUserID, AccountId: 8050,
+		ContractId: contract.Id, UnderlyingSymbol: "BTCUSDT",
+		Side: int64(common.PositionSide_POSITION_SIDE_SHORT), PositionQty: decimal.NewFromInt(1),
+		AvailableQty: decimal.NewFromInt(1), OpenAvgPrice: decimal.NewFromInt(10),
+		MarkPrice: decimal.NewFromInt(40), PositionValue: decimal.NewFromInt(40),
+		MarginAmount: decimal.NewFromInt(600), Status: int64(option.PositionStatus_POSITION_STATUS_HOLDING),
+		CreateTimes: now, UpdateTimes: now,
+	})
+	lot := insertP0ExerciseMarginLot(
+		t, ctx, serviceCtx, position, "P0-PORTFOLIO-RECOVERY-MARGIN", "1", "600", now,
+	)
+	freezeP0ExerciseMargin(t, ctx, assetClient, position, lot, "600")
+	refreshP0PortfolioRiskUser(t, ctx, serviceCtx, recoveredUserID)
+	liquidation := requireP0PortfolioLiquidations(t, ctx, serviceCtx, recoveredUserID, 1)[0]
+	assertP0PortfolioLiquidationSnapshot(t, liquidation, configID, 1, "600")
+	creditAsset(t, ctx, assetClient, recoveredUserID, "100", "P0-PORTFOLIO-RECOVERY-TOPUP")
+	probe := NewProcessLiquidationsLogic(ctx, serviceCtx)
+	waiting, err := probe.cancelRiskOrders(liquidation)
+	if err != nil || waiting {
+		t.Fatalf("recovered portfolio liquidation cancellation barrier orders waiting/error=%t/%v", waiting, err)
+	}
+	incomplete, err := probe.hasLiquidationBarrier(liquidation)
+	if err != nil || incomplete {
+		t.Fatalf("recovered portfolio liquidation cancellation barrier incomplete/error=%t/%v", incomplete, err)
+	}
+	wantError := "portfolio liquidation snapshot is stale: wallet recovered above current maintenance requirement"
+	if _, err := probe.buildLiquidationPlan(liquidation); !errors.Is(err, errPortfolioLiquidationSnapshotStale) ||
+		err.Error() != wantError {
+		t.Fatalf("recovered portfolio liquidation pre-execution recheck error=%v want=%q", err, wantError)
+	}
+	processP0Liquidations(t, ctx, serviceCtx)
+	var statusValue, retryCount, instructions int64
+	var lastError string
+	if err := db.QueryRowContext(ctx, `SELECT status,retry_count,last_error_msg
+		FROM t_option_liquidation WHERE tenant_id=? AND id=?`,
+		p0AssetE2ETenantID, liquidation.Id).Scan(&statusValue, &retryCount, &lastError); err != nil {
 		t.Fatal(err)
 	}
-	unchanged, err := serviceCtx.OptionPositionModel.FindOne(ctx, position.Id)
-	if err != nil {
-		t.Fatal(err)
-	}
-	var instructions int64
 	if err := db.QueryRowContext(ctx, `SELECT COUNT(*) FROM t_option_asset_instruction
 		WHERE tenant_id=? AND liquidation_id=?`, p0AssetE2ETenantID, liquidation.Id).
 		Scan(&instructions); err != nil {
 		t.Fatal(err)
 	}
-	if stored.Status != int64(option.LiquidationStatus_LIQUIDATION_STATUS_FAILED) ||
-		stored.RetryCount != 1 || stored.LastErrorMsg != "portfolio option liquidation is not supported" ||
-		instructions != 0 || !unchanged.PositionQty.Equal(decimal.NewFromInt(2)) ||
-		!unchanged.MarginAmount.Equal(decimal.NewFromInt(100)) {
-		t.Fatalf("portfolio liquidation did not fail closed liquidation=%+v instructions=%d position=%+v",
-			stored, instructions, unchanged)
+	if statusValue != int64(option.LiquidationStatus_LIQUIDATION_STATUS_CANCELED) ||
+		retryCount != 0 || instructions != 0 || lastError != wantError {
+		t.Fatalf("recovered portfolio liquidation status/retry/instructions/error=%d/%d/%d/%q",
+			statusValue, retryCount, instructions, lastError)
+	}
+}
+
+func refreshP0PortfolioRiskUser(
+	t *testing.T, ctx context.Context, serviceCtx *svc.ServiceContext, userID int64,
+) {
+	t.Helper()
+	logic := NewProcessRiskAccountsLogic(ctx, serviceCtx)
+	groups, err := logic.collectRiskGroups(p0AssetE2ETenantID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, group := range groups {
+		if group.key.userID == userID && group.key.coin == "USDT" {
+			if err := logic.refreshRiskGroup(group); err != nil {
+				t.Fatalf("refresh portfolio risk user: %v", err)
+			}
+			return
+		}
+	}
+	t.Fatalf("portfolio risk group not found for user %d", userID)
+}
+
+func requireP0PortfolioLiquidations(
+	t *testing.T, ctx context.Context, serviceCtx *svc.ServiceContext, userID int64, want int,
+) []*models.TOptionLiquidation {
+	t.Helper()
+	items, _, err := serviceCtx.OptionLiquidationModel.FindPage(ctx, models.OptionLiquidationPageFilter{
+		TenantId: p0AssetE2ETenantID, UserId: userID,
+	}, 0, 20)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(items) != want {
+		t.Fatalf("portfolio liquidation count=%d want=%d items=%+v", len(items), want, items)
+	}
+	return items
+}
+
+func assertP0PortfolioLiquidationSnapshot(
+	t *testing.T, item *models.TOptionLiquidation, configID, configVersion int64, collateralBefore string,
+) {
+	t.Helper()
+	if item.LiquidationScope != int64(option.LiquidationScope_LIQUIDATION_SCOPE_PORTFOLIO_WALLET) ||
+		item.AccountId != 0 || item.PortfolioRiskConfigId != configID ||
+		item.PortfolioRiskConfigVersion != configVersion ||
+		!item.PortfolioMaintenanceBefore.GreaterThan(item.PortfolioMaintenanceAfter) ||
+		item.PortfolioCollateralAfter.LessThan(item.PortfolioInitialAfter) ||
+		!item.PortfolioCollateralBefore.Equal(decimal.RequireFromString(collateralBefore)) {
+		t.Fatalf("invalid portfolio liquidation snapshot: %+v", item)
+	}
+}
+
+func assertP0PortfolioLiquidationInstructions(
+	t *testing.T, ctx context.Context, db *sql.DB, liquidationID int64,
+) {
+	t.Helper()
+	var total, success, matched int64
+	if err := db.QueryRowContext(ctx, `SELECT COUNT(*),SUM(status=?),SUM(reconciliation_status=?)
+		FROM t_option_asset_instruction WHERE tenant_id=? AND liquidation_id=?`,
+		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS),
+		int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_MATCHED),
+		p0AssetE2ETenantID, liquidationID).Scan(&total, &success, &matched); err != nil {
+		t.Fatal(err)
+	}
+	if total < 3 || success != total || matched != total {
+		t.Fatalf("portfolio liquidation instructions total/success/matched=%d/%d/%d", total, success, matched)
 	}
 }
 

@@ -26,6 +26,7 @@ type (
 		Claim(ctx context.Context, id, now int64) (bool, error)
 		RecoverStale(ctx context.Context, staleBefore, now int64) error
 		HasIncomplete(ctx context.Context, tenantId, contractId int64) (bool, error)
+		HasIncompletePortfolioForWallet(ctx context.Context, tenantId, userId int64, settleCoin string) (bool, error)
 		ResetForManualRetry(ctx context.Context, id, now int64) (bool, error)
 		SumPendingPositionDelta(ctx context.Context, tenantId, userId, contractId, positionSide int64) (decimal.Decimal, error)
 	}
@@ -34,6 +35,26 @@ type (
 		*defaultTOptionOutboxModel
 	}
 )
+
+func (m *defaultTOptionOutboxModel) HasIncompletePortfolioForWallet(
+	ctx context.Context, tenantId, userId int64, settleCoin string,
+) (bool, error) {
+	var count int64
+	err := m.QueryRowNoCacheCtx(ctx, &count, `SELECT COUNT(1)
+FROM t_option_outbox outbox
+JOIN t_option_trade trade
+  ON trade.tenant_id=outbox.tenant_id AND trade.id=outbox.trade_id
+JOIN t_option_contract contract
+  ON contract.tenant_id=trade.tenant_id AND contract.id=trade.contract_id
+WHERE outbox.tenant_id=? AND (trade.buy_user_id=? OR trade.sell_user_id=?)
+  AND contract.settle_coin=? AND contract.seller_margin_mode=?
+  AND outbox.status<>?`,
+		tenantId, userId, userId, settleCoin,
+		int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO),
+		int64(option.OptionEventStatus_OPTION_EVENT_STATUS_SUCCESS),
+	)
+	return count > 0, err
+}
 
 type comboDebitBarrierState struct {
 	TradeLegs     int64 `db:"trade_legs"`

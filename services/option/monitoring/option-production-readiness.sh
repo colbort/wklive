@@ -450,16 +450,81 @@ check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'ioc_partial=' \
   "real Asset RPC gate reports IOC partial-fill evidence"
 check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'fok_insufficient=' \
   "real Asset RPC gate reports FOK all-or-none evidence"
+market_post_only_test="$OPTION_DIR/internal/logic/task/p0_order_market_postonly_rpc_integration_test.go"
+check_contains "$OPTION_DIR/internal/logic/task/p0_asset_rpc_integration_test.go" 'market and post-only funding lifecycle' \
+  "real Asset RPC gate invokes MARKET and POST_ONLY scenarios"
+check_contains "$market_post_only_test" 'ProtectionPrice: "10", MaxTurnover: "12"' \
+  "MARKET gate uses explicit protection price and spend cap"
+check_contains "$market_post_only_test" 'RELEASE-REMAINDER' \
+  "MARKET gate checks release of the unused spend reservation"
+check_contains "$market_post_only_test" 'releaseAmount[.]Equal[(]decimal[.]RequireFromString[(]"1[.]6"[)][)]' \
+  "MARKET gate proves the exact unused reservation amount"
+check_contains "$market_post_only_test" 'POST_ONLY_WOULD_TAKE' \
+  "POST_ONLY crossing order proves maker-only cancellation"
+check_contains "$market_post_only_test" 'POST_ONLY non-crossing order did not rest' \
+  "POST_ONLY non-crossing order must enter the book before user cancel"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'market_protection=' \
+  "real Asset RPC gate reports MARKET protection evidence"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'post_only=' \
+  "real Asset RPC gate reports POST_ONLY maker-only evidence"
+cancel_race_test="$OPTION_DIR/internal/logic/task/p0_order_cancel_concurrency_rpc_integration_test.go"
+check_contains "$OPTION_DIR/internal/logic/task/p0_asset_rpc_integration_test.go" 'admin force cancel and funding race' \
+  "real Asset RPC gate invokes administrative force-cancel and funding-race scenarios"
+check_contains "$OPTION_DIR/internal/logic/app/cancelorderlogic.go" 'FindOneForUpdate' \
+  "public cancellation revalidates the order under a database row lock"
+check_contains "$OPTION_DIR/internal/logic/app/control_cancel.go" 'CancelOrderByControlWithAudit' \
+  "control cancellation exposes the transactional immutable-audit path"
+check_contains "$OPTION_DIR/internal/logic/admin/forcecancelcontractorderslogic.go" 'CancelOrderByControlWithAudit' \
+  "administrative force cancel reuses the unified control-cancel state machine"
+check_contains "$cancel_race_test" 'ADMIN_FORCE_CANCEL_ORDER' \
+  "administrative force cancel records a per-order operator audit event"
+check_contains "$cancel_race_test" 'for round := 0; round < rounds; round[+][+]' \
+  "cancel-versus-funding acceptance repeats the concurrent race"
+check_contains "$cancel_race_test" 'cancelSuccess != 1 [|][|] cancelRejected != 1' \
+  "two concurrent cancellation requests have exactly one winner"
+check_contains "$cancel_race_test" 'duplicateInstructionNos != 0' \
+  "cancel-versus-funding acceptance rejects duplicate instruction identities"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'admin_force_cancel=' \
+  "real Asset RPC gate reports administrative force-cancel evidence"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'cancel_funding_race=' \
+  "real Asset RPC gate reports cancel-versus-funding race evidence"
+multi_instance_test="$OPTION_DIR/internal/logic/task/p0_asset_multi_instance_kill_rpc_integration_test.go"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'TestP0AssetMultiInstanceKillTakeover' \
+  "real Asset RPC gate invokes the independent-process kill/takeover scenario"
+check_contains "$multi_instance_test" 'Process[.]Kill[(][)]' \
+  "multi-instance gate sends a real SIGKILL to the committed worker process"
+check_contains "$multi_instance_test" 'waitP0TaskLeaseExpiry' \
+  "multi-instance gate waits for the killed worker lease to expire naturally"
+check_contains "$multi_instance_test" 'first := startP0AssetWorker' \
+  "multi-instance gate starts the first fresh takeover worker"
+check_contains "$multi_instance_test" 'second := startP0AssetWorker' \
+  "multi-instance gate starts a competing fresh takeover worker"
+check_contains "$multi_instance_test" 'takeoverProxy[.]calls[.]Load[(][)] != 1' \
+  "only one competing takeover worker may reach Asset"
+check_contains "$multi_instance_test" 'retryCount != 0' \
+  "stale recovery must preserve the original retry count"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'multi_instance_kill=' \
+  "real Asset RPC gate reports independent-process takeover evidence"
 check_contains "$OPTION_DIR/internal/logic/task/p0_liquidation_rpc_integration_test.go" 'testP0IsolatedShortLiquidationAccounting' \
   "real Asset RPC gate covers isolated short liquidation accounting"
 check_contains "$OPTION_DIR/internal/logic/task/processassetinstructionslogic.go" 'takeover.MaintenanceMargin = takeover.MaintenanceMargin.Add' \
   "liquidation takeover preserves maintenance margin evidence"
-check_contains "$OPTION_DIR/internal/logic/task/processliquidationslogic.go" 'partial option liquidation is not supported' \
-  "unsafe partial liquidation fails closed"
+check_contains "$OPTION_DIR/internal/logic/task/processliquidationslogic.go" 'allocateIsolatedLiquidationLots' \
+  "isolated partial liquidation allocates margin lots proportionally"
+check_contains "$OPTION_DIR/internal/logic/task/processriskaccountslogic.go" 'selectIsolatedLiquidationCandidate' \
+  "risk scan selects an automatic isolated partial-liquidation quantity"
+check_contains "$OPTION_DIR/internal/logic/task/processriskaccountslogic.go" 'Div[(]reliefPerStep[)][.]Floor[(][)][.]Add' \
+  "partial-liquidation sizing strictly crosses the maintenance boundary"
+check_contains "$OPTION_DIR/models/toptionliquidationmodel.go" 'FindOpenByWallet' \
+  "liquidations are serialized across the whole settlement wallet"
+check_contains "$OPTION_DIR/internal/logic/task/processriskaccountslogic.go" 'isInsuranceInventoryPosition' \
+  "insurance takeover inventory cannot recursively enter customer liquidation"
+check_contains "$OPTION_DIR/internal/logic/task/processliquidationslogic.go" 'position[.]FrozenQty = position[.]FrozenQty[.]Add[(]plan[.]quantity[)]' \
+  "liquidation reserves source position quantity before funding"
 check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'isolated_liquidation=' \
   "real Asset RPC gate reports isolated liquidation evidence"
-check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'partial_liquidation_fail_closed=' \
-  "real Asset RPC gate reports partial-liquidation fail-closed evidence"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'partial_liquidation=' \
+  "real Asset RPC gate reports proportional partial-liquidation evidence"
 check_contains "$OPTION_DIR/internal/logic/task/p0_liquidation_rpc_integration_test.go" 'testP0LiquidationDeficitFailureRecovery' \
   "real Asset RPC gate covers insurance and platform-backstop deficit recovery"
 check_contains "$OPTION_DIR/internal/logic/task/p0_liquidation_rpc_integration_test.go" 'insurance response loss after commit' \
@@ -470,12 +535,47 @@ check_contains "$OPTION_DIR/internal/logic/task/p0_liquidation_rpc_integration_t
   "liquidation gate injects committed collateral-debit response loss"
 check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'deficit_liquidation=' \
   "real Asset RPC gate reports liquidation deficit-recovery evidence"
-check_contains "$OPTION_DIR/internal/logic/task/processliquidationslogic.go" 'portfolio option liquidation is not supported' \
-  "unsafe single-position portfolio liquidation fails closed"
-check_contains "$OPTION_DIR/internal/logic/task/p0_liquidation_rpc_integration_test.go" 'testP0PortfolioLiquidationFailsClosed' \
-  "real Asset RPC gate covers portfolio-liquidation fail-closed behavior"
-check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'portfolio_liquidation_fail_closed=' \
-  "real Asset RPC gate reports portfolio-liquidation fail-closed evidence"
+portfolio_liquidation_migration="$OPTION_DIR/migrations/20260801_option_portfolio_liquidation.sql"
+check_contains "$OPTION_DIR/option.sql" 'liquidation_scope.*组合钱包' \
+  "Option schema records isolated versus portfolio-wallet liquidation scope"
+check_contains "$OPTION_DIR/models/toptionliquidationmodel_gen.go" 'PortfolioMaintenanceBefore.*portfolio_maintenance_before' \
+  "make gen-model synchronized portfolio liquidation evidence"
+check_contains "$REPO_ROOT/proto/option/model.proto" 'portfolio_collateral_after = 34' \
+  "Option RPC exposes portfolio liquidation collateral proof"
+check_contains "$portfolio_liquidation_migration" 'trg_option_liquidation_evidence_insert' \
+  "portfolio liquidation migration validates evidence on insert"
+check_contains "$portfolio_liquidation_migration" 'liquidation identity and portfolio evidence are immutable' \
+  "portfolio liquidation migration protects immutable evidence"
+check_contains "$OPTION_DIR/schema/90_constraints.sql" 'status.*IN [(]1,2,3,4,5,6,7[)]' \
+  "canonical liquidation constraint permits stale-snapshot CANCELED status"
+check_contains "$portfolio_liquidation_migration" 'status.*IN [(]1,2,3,4,5,6,7[)]' \
+  "portfolio liquidation migration upgrades the CANCELED status constraint"
+check_contains "$OPTION_DIR/internal/logic/task/processriskaccountslogic.go" 'selectPortfolioLiquidationCandidate' \
+  "risk scan deterministically selects a risk-reducing portfolio position"
+check_contains "$OPTION_DIR/internal/logic/task/processriskaccountslogic.go" 'collateralAfter[.]LessThan[(]initialAfter[.]Requirement[)]' \
+  "portfolio liquidation creation protects residual initial requirement"
+check_contains "$OPTION_DIR/internal/logic/task/processliquidationslogic.go" 'errPortfolioLiquidationSnapshotStale' \
+  "portfolio liquidation cancels and rebuilds stale risk snapshots"
+check_contains "$OPTION_DIR/models/toptionoutboxmodel.go" 'HasIncompletePortfolioForWallet' \
+  "portfolio liquidation trade-event barrier is scoped to the affected wallet"
+check_contains "$OPTION_DIR/models/toptionassetinstructionmodel.go" 'HasIncompleteForWallet' \
+  "portfolio liquidation asset barrier covers all affected wallet instructions"
+check_contains "$OPTION_DIR/internal/logic/task/processliquidationslogic.go" 'wallet recovered above current maintenance requirement' \
+  "portfolio liquidation stops when current wallet equity has recovered"
+check_contains "$OPTION_DIR/internal/logic/task/processliquidationslogic.go" 'residualCollateralFloor' \
+  "portfolio liquidation rechecks the higher current collateral floor inside preparation"
+check_contains "$OPTION_DIR/internal/logic/task/p0_liquidation_rpc_integration_test.go" 'current residual requirement did not conservatively reduce collateral use' \
+  "real Asset RPC gate covers a post-trigger market change and higher residual requirement"
+check_contains "$OPTION_DIR/internal/logic/task/p0_liquidation_rpc_integration_test.go" 'wallet recovered above current maintenance requirement' \
+  "real Asset RPC gate covers canceling liquidation after wallet recovery"
+check_contains "$OPTION_DIR/models/toptionliquidationmodel.go" 'ExecCtx[(]ctx' \
+  "stale portfolio liquidation cancellation invalidates cached status"
+check_contains "$OPTION_DIR/internal/logic/task/p0_liquidation_rpc_integration_test.go" 'testP0PortfolioLiquidationSequential' \
+  "real Asset RPC gate covers sequential portfolio liquidation"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'portfolio_liquidation_sequential=' \
+  "real Asset RPC gate reports sequential portfolio-liquidation evidence"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'portfolio_liquidation_recovery_cancel=' \
+  "real Asset RPC gate reports wallet-recovery cancellation evidence"
 check_contains "$OPTION_DIR/docs/templates/option-exercise-expiry-control-record.md" '空头 gross 扣款 = 多头净入账 [+] 行权费' \
   "operations pack includes an exercise and expiry conservation record"
 

@@ -2,6 +2,8 @@ package models
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 
 	"wklive/common/sqlutil"
@@ -11,6 +13,72 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
+func (m *customTOptionLiquidationModel) Insert(
+	ctx context.Context, data *TOptionLiquidation,
+) (sql.Result, error) {
+	if data == nil {
+		return nil, errors.New("option liquidation is required")
+	}
+	if data.LiquidationScope == int64(option.LiquidationScope_LIQUIDATION_SCOPE_UNKNOWN) {
+		data.LiquidationScope = int64(option.LiquidationScope_LIQUIDATION_SCOPE_ISOLATED_POSITION)
+	}
+	if err := validateLiquidationEvidence(data); err != nil {
+		return nil, err
+	}
+	return m.defaultTOptionLiquidationModel.Insert(ctx, data)
+}
+
+func (m *customTOptionLiquidationModel) Update(ctx context.Context, data *TOptionLiquidation) error {
+	if data == nil {
+		return errors.New("option liquidation is required")
+	}
+	current, err := m.defaultTOptionLiquidationModel.FindOne(ctx, data.Id)
+	if err != nil {
+		return err
+	}
+	if current.TenantId != data.TenantId || current.LiquidationNo != data.LiquidationNo ||
+		current.UserId != data.UserId || current.AccountId != data.AccountId ||
+		current.ContractId != data.ContractId || current.PositionId != data.PositionId ||
+		!current.Quantity.Equal(data.Quantity) || !current.MarkPrice.Equal(data.MarkPrice) ||
+		current.LiquidationScope != data.LiquidationScope ||
+		current.PortfolioRiskConfigId != data.PortfolioRiskConfigId ||
+		current.PortfolioRiskConfigVersion != data.PortfolioRiskConfigVersion ||
+		!current.PortfolioMaintenanceBefore.Equal(data.PortfolioMaintenanceBefore) ||
+		!current.PortfolioMaintenanceAfter.Equal(data.PortfolioMaintenanceAfter) ||
+		!current.PortfolioInitialAfter.Equal(data.PortfolioInitialAfter) ||
+		!current.PortfolioCollateralBefore.Equal(data.PortfolioCollateralBefore) ||
+		!current.PortfolioCollateralAfter.Equal(data.PortfolioCollateralAfter) {
+		return errors.New("option liquidation identity and risk evidence are immutable")
+	}
+	if err := validateLiquidationEvidence(data); err != nil {
+		return err
+	}
+	return m.defaultTOptionLiquidationModel.Update(ctx, data)
+}
+
+func validateLiquidationEvidence(data *TOptionLiquidation) error {
+	switch option.LiquidationScope(data.LiquidationScope) {
+	case option.LiquidationScope_LIQUIDATION_SCOPE_ISOLATED_POSITION:
+		if data.PortfolioRiskConfigId != 0 || data.PortfolioRiskConfigVersion != 0 ||
+			!data.PortfolioMaintenanceBefore.IsZero() || !data.PortfolioMaintenanceAfter.IsZero() ||
+			!data.PortfolioInitialAfter.IsZero() || !data.PortfolioCollateralBefore.IsZero() ||
+			!data.PortfolioCollateralAfter.IsZero() {
+			return errors.New("isolated liquidation cannot contain portfolio evidence")
+		}
+	case option.LiquidationScope_LIQUIDATION_SCOPE_PORTFOLIO_WALLET:
+		if data.AccountId != 0 || data.PortfolioRiskConfigId <= 0 || data.PortfolioRiskConfigVersion <= 0 ||
+			!data.PortfolioMaintenanceBefore.GreaterThan(data.PortfolioMaintenanceAfter) ||
+			data.PortfolioMaintenanceAfter.IsNegative() || data.PortfolioInitialAfter.IsNegative() ||
+			data.PortfolioCollateralBefore.LessThan(data.PortfolioCollateralAfter) ||
+			data.PortfolioCollateralAfter.LessThan(data.PortfolioInitialAfter) {
+			return errors.New("invalid portfolio liquidation risk and collateral evidence")
+		}
+	default:
+		return errors.New("invalid option liquidation scope")
+	}
+	return nil
+}
+
 var _ TOptionLiquidationModel = (*customTOptionLiquidationModel)(nil)
 
 type (
@@ -19,17 +87,59 @@ type (
 	TOptionLiquidationModel interface {
 		tOptionLiquidationModel
 		FindOpenByPosition(ctx context.Context, tenantId, positionId int64) (*TOptionLiquidation, error)
+		FindOpenByWallet(ctx context.Context, tenantId, userId int64, settleCoin string) (*TOptionLiquidation, error)
+		FindOpenPortfolioByWallet(ctx context.Context, tenantId, userId int64, settleCoin string) (*TOptionLiquidation, error)
 		FindRunnable(ctx context.Context, tenantId int64, limit int64) ([]*TOptionLiquidation, error)
 		FindOneForUpdate(ctx context.Context, id int64) (*TOptionLiquidation, error)
 		Claim(ctx context.Context, id, now int64) (bool, error)
 		FindPage(ctx context.Context, filter OptionLiquidationPageFilter, cursor, limit int64) ([]*TOptionLiquidation, int64, error)
 		ResetForManualRetry(ctx context.Context, id, now int64) (bool, error)
+		CancelStalePortfolio(ctx context.Context, id, now int64, reason string) (bool, error)
 	}
 
 	customTOptionLiquidationModel struct {
 		*defaultTOptionLiquidationModel
 	}
 )
+
+func (m *defaultTOptionLiquidationModel) CancelStalePortfolio(
+	ctx context.Context, id, now int64, reason string,
+) (bool, error) {
+	current, err := m.FindOne(ctx, id)
+	if err != nil {
+		return false, err
+	}
+	idKey := fmt.Sprintf("%s%v", cacheTOptionLiquidationIdPrefix, id)
+	identityKey := fmt.Sprintf("%s%v:%v",
+		cacheTOptionLiquidationTenantIdLiquidationNoPrefix,
+		current.TenantId, current.LiquidationNo,
+	)
+	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
+		return conn.ExecCtx(ctx, `UPDATE t_option_liquidation
+SET status = ?, last_error_msg = ?, update_times = ?
+WHERE id = ? AND liquidation_scope = ? AND status IN (?, ?, ?)`,
+			int64(option.LiquidationStatus_LIQUIDATION_STATUS_CANCELED), reason, now, id,
+			int64(option.LiquidationScope_LIQUIDATION_SCOPE_PORTFOLIO_WALLET),
+			int64(option.LiquidationStatus_LIQUIDATION_STATUS_PENDING),
+			int64(option.LiquidationStatus_LIQUIDATION_STATUS_EXECUTING),
+			int64(option.LiquidationStatus_LIQUIDATION_STATUS_FAILED),
+		)
+	}, idKey, identityKey)
+	if err != nil {
+		return false, err
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+	if rows != 1 {
+		return false, fmt.Errorf(
+			"cancel stale portfolio liquidation %d affected %d rows (status=%d scope=%d)",
+			id, rows, current.Status, current.LiquidationScope,
+		)
+	}
+	return true, nil
+}
 
 type OptionLiquidationPageFilter struct {
 	TenantId   int64
@@ -134,6 +244,51 @@ WHERE tenant_id = ? AND position_id = ? AND status IN (?, ?, ?, ?)
 ORDER BY id DESC LIMIT 1`, tOptionLiquidationRows, m.table)
 	var item TOptionLiquidation
 	err := m.QueryRowNoCacheCtx(ctx, &item, query, tenantId, positionId,
+		int64(option.LiquidationStatus_LIQUIDATION_STATUS_PENDING),
+		int64(option.LiquidationStatus_LIQUIDATION_STATUS_EXECUTING),
+		int64(option.LiquidationStatus_LIQUIDATION_STATUS_FAILED),
+		int64(option.LiquidationStatus_LIQUIDATION_STATUS_MANUAL_REVIEW),
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &item, nil
+}
+
+func (m *defaultTOptionLiquidationModel) FindOpenByWallet(
+	ctx context.Context, tenantId, userId int64, settleCoin string,
+) (*TOptionLiquidation, error) {
+	query := fmt.Sprintf(`SELECT l.* FROM %s l
+JOIN t_option_contract c ON c.tenant_id = l.tenant_id AND c.id = l.contract_id
+WHERE l.tenant_id = ? AND l.user_id = ? AND c.settle_coin = ?
+  AND l.status IN (?, ?, ?, ?)
+ORDER BY l.id DESC LIMIT 1`, m.table)
+	var item TOptionLiquidation
+	err := m.QueryRowNoCacheCtx(ctx, &item, query,
+		tenantId, userId, settleCoin,
+		int64(option.LiquidationStatus_LIQUIDATION_STATUS_PENDING),
+		int64(option.LiquidationStatus_LIQUIDATION_STATUS_EXECUTING),
+		int64(option.LiquidationStatus_LIQUIDATION_STATUS_FAILED),
+		int64(option.LiquidationStatus_LIQUIDATION_STATUS_MANUAL_REVIEW),
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &item, nil
+}
+
+func (m *defaultTOptionLiquidationModel) FindOpenPortfolioByWallet(
+	ctx context.Context, tenantId, userId int64, settleCoin string,
+) (*TOptionLiquidation, error) {
+	query := fmt.Sprintf(`SELECT l.* FROM %s l
+JOIN t_option_contract c ON c.tenant_id = l.tenant_id AND c.id = l.contract_id
+WHERE l.tenant_id = ? AND l.user_id = ? AND c.settle_coin = ?
+  AND l.liquidation_scope = ? AND l.status IN (?, ?, ?, ?)
+ORDER BY l.id DESC LIMIT 1`, m.table)
+	var item TOptionLiquidation
+	err := m.QueryRowNoCacheCtx(ctx, &item, query,
+		tenantId, userId, settleCoin,
+		int64(option.LiquidationScope_LIQUIDATION_SCOPE_PORTFOLIO_WALLET),
 		int64(option.LiquidationStatus_LIQUIDATION_STATUS_PENDING),
 		int64(option.LiquidationStatus_LIQUIDATION_STATUS_EXECUTING),
 		int64(option.LiquidationStatus_LIQUIDATION_STATUS_FAILED),

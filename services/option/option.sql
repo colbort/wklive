@@ -668,7 +668,7 @@ CREATE TABLE `t_option_liquidation` (
   `equity` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '触发权益',
   `deficit_amount` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '穿仓缺口',
   `liquidation_fee` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '强平手续费',
-  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1待处理 2执行中 3完成 4失败 5破产 6人工',
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1待处理 2执行中 3完成 4失败 5破产 6人工 7快照失效取消',
   `retry_count` INT NOT NULL DEFAULT 0 COMMENT '重试次数',
   `last_error_msg` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '最后错误',
   `collateral_amount` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '本次消费的用户保证金',
@@ -679,12 +679,21 @@ CREATE TABLE `t_option_liquidation` (
   `insurance_attempt` INT NOT NULL DEFAULT 0 COMMENT '保险基金人工重试代次',
   `backstop_amount` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '平台兜底负债金额',
   `deficit_resolution` TINYINT NOT NULL DEFAULT 1 COMMENT '缺口处置：1无 2保险 3平台兜底 4保险加兜底 5人工',
+  `liquidation_scope` TINYINT NOT NULL DEFAULT 1 COMMENT '强平范围：1逐仓仓位 2组合钱包',
+  `portfolio_risk_config_id` BIGINT NOT NULL DEFAULT 0 COMMENT '组合强平风险参数快照ID',
+  `portfolio_risk_config_version` BIGINT NOT NULL DEFAULT 0 COMMENT '组合强平风险参数版本',
+  `portfolio_maintenance_before` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '移除仓位前组合维持保证金',
+  `portfolio_maintenance_after` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '移除仓位后组合维持保证金',
+  `portfolio_initial_after` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '移除仓位后组合初始保证金',
+  `portfolio_collateral_before` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '组合强平前可用抵押',
+  `portfolio_collateral_after` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '本次消费后保留的组合抵押',
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_liquidation_no` (`tenant_id`, `liquidation_no`),
   KEY `idx_liquidation_status` (`tenant_id`, `status`, `id`),
-  KEY `idx_liquidation_position` (`tenant_id`, `position_id`, `id`)
+  KEY `idx_liquidation_position` (`tenant_id`, `position_id`, `id`),
+  KEY `idx_liquidation_portfolio_wallet` (`tenant_id`, `user_id`, `liquidation_scope`, `status`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权强平记录';
 
 CREATE TABLE `t_option_insurance_fund_flow` (

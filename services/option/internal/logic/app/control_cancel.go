@@ -2,6 +2,8 @@ package applogic
 
 import (
 	"context"
+	"errors"
+	"strings"
 	"time"
 
 	"wklive/proto/option"
@@ -12,11 +14,44 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
+type ControlCancelAudit struct {
+	EventType  string
+	OperatorID int64
+	Detail     string
+}
+
 // CancelOrderByControl cancels one active order using the same freeze-release
 // semantics as a user cancellation. It is idempotent for terminal orders and
 // is shared by kill switch, circuit breaker and administrative controls.
 func CancelOrderByControl(
 	ctx context.Context, svcCtx *svc.ServiceContext, orderID int64, reason string,
+) (*models.TOptionOrder, error) {
+	return cancelOrderByControl(ctx, svcCtx, orderID, reason, nil)
+}
+
+// CancelOrderByControlWithAudit atomically appends an immutable control event
+// when an active order is canceled. Terminal-order replays are no-ops and do
+// not append duplicate audit evidence.
+func CancelOrderByControlWithAudit(
+	ctx context.Context,
+	svcCtx *svc.ServiceContext,
+	orderID int64,
+	reason string,
+	audit ControlCancelAudit,
+) (*models.TOptionOrder, error) {
+	audit.EventType = strings.TrimSpace(audit.EventType)
+	if audit.EventType == "" || audit.OperatorID <= 0 {
+		return nil, errors.New("control cancellation audit requires event type and operator")
+	}
+	return cancelOrderByControl(ctx, svcCtx, orderID, reason, &audit)
+}
+
+func cancelOrderByControl(
+	ctx context.Context,
+	svcCtx *svc.ServiceContext,
+	orderID int64,
+	reason string,
+	audit *ControlCancelAudit,
 ) (*models.TOptionOrder, error) {
 	initial, err := svcCtx.OptionOrderModel.FindOne(ctx, orderID)
 	if err != nil {
@@ -95,6 +130,19 @@ func CancelOrderByControl(
 		order.UpdateTimes = now
 		if err := orderModel.Update(txCtx, order); err != nil {
 			return err
+		}
+		if audit != nil {
+			eventModel := models.NewTOptionTradingControlEventModel(
+				conn, svcCtx.Config.CacheRedis,
+			)
+			if _, err := eventModel.Insert(txCtx, &models.TOptionTradingControlEvent{
+				TenantId: order.TenantId, UserId: order.UserId,
+				ContractId: order.ContractId, OrderId: order.Id,
+				EventType: audit.EventType, Reason: reason, Detail: audit.Detail,
+				OperatorId: audit.OperatorID, CreateTimes: now,
+			}); err != nil {
+				return err
+			}
 		}
 		canceled = order
 		return nil

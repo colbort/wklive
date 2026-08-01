@@ -33,6 +33,7 @@ type (
 		FindActiveByPosition(ctx context.Context, tenantId, positionId int64) ([]*TOptionMarginLot, error)
 		FindClosableByPosition(ctx context.Context, tenantId, positionId int64) ([]*TOptionMarginLot, error)
 		FindPortfolioActiveByAccount(ctx context.Context, tenantId, userId, accountId int64, settleCoin string) ([]*TOptionMarginLot, error)
+		HasPendingPortfolioByWallet(ctx context.Context, tenantId, userId int64, settleCoin string) (bool, error)
 		FindRemainingByPositionForUpdate(ctx context.Context, tenantId, positionId int64) ([]*TOptionMarginLot, error)
 		FindOneForUpdate(ctx context.Context, id int64) (*TOptionMarginLot, error)
 	}
@@ -41,6 +42,21 @@ type (
 		*defaultTOptionMarginLotModel
 	}
 )
+
+func (m *defaultTOptionMarginLotModel) HasPendingPortfolioByWallet(
+	ctx context.Context, tenantId, userId int64, settleCoin string,
+) (bool, error) {
+	var count int64
+	err := m.QueryRowNoCacheCtx(ctx, &count, `SELECT COUNT(1)
+FROM t_option_margin_lot l
+JOIN t_option_contract c ON c.tenant_id = l.tenant_id AND c.id = l.contract_id
+WHERE l.tenant_id = ? AND l.user_id = ? AND c.settle_coin = ?
+  AND c.seller_margin_mode = ? AND l.pending_margin > 0`,
+		tenantId, userId, settleCoin,
+		int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO),
+	)
+	return count > 0, err
+}
 
 func (m *defaultTOptionMarginLotModel) FindRemainingByPositionForUpdate(
 	ctx context.Context, tenantId, positionId int64,

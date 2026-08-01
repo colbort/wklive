@@ -46,6 +46,7 @@ type (
 		ResetForManualRetry(ctx context.Context, id, now int64) (bool, error)
 		ResetFailedByBizNo(ctx context.Context, tenantId int64, bizNo string, now int64) (int64, error)
 		HasIncompleteMarginForContract(ctx context.Context, tenantId, contractId int64) (bool, error)
+		HasIncompleteForWallet(ctx context.Context, tenantId, userId int64, coin string) (bool, error)
 		FindByLiquidation(ctx context.Context, tenantId, liquidationId int64) ([]*TOptionAssetInstruction, error)
 		FindByDeliveryUnit(ctx context.Context, tenantId, deliveryUnitId int64) ([]*TOptionAssetInstruction, error)
 		FindByComboOrderID(ctx context.Context, tenantId, comboOrderId, limit int64) ([]*TOptionAssetInstruction, int64, error)
@@ -58,6 +59,20 @@ type (
 		*defaultTOptionAssetInstructionModel
 	}
 )
+
+func (m *customTOptionAssetInstructionModel) HasIncompleteForWallet(
+	ctx context.Context, tenantId, userId int64, coin string,
+) (bool, error) {
+	var count int64
+	err := m.QueryRowNoCacheCtx(ctx, &count, `SELECT COUNT(1)
+FROM t_option_asset_instruction
+WHERE tenant_id=? AND user_id=? AND coin=? AND status NOT IN (?, ?)`,
+		tenantId, userId, strings.TrimSpace(coin),
+		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS),
+		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_CANCELED),
+	)
+	return count > 0, err
+}
 
 func (m *defaultTOptionAssetInstructionModel) RecoverStale(
 	ctx context.Context, tenantId, staleBefore, now int64,

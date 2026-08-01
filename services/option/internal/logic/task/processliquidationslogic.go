@@ -11,6 +11,7 @@ import (
 	"wklive/proto/option"
 	applogic "wklive/services/option/internal/logic/app"
 	"wklive/services/option/internal/logic/helpers"
+	optionrisk "wklive/services/option/internal/risk"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -18,6 +19,8 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
+
+var errPortfolioLiquidationSnapshotStale = errors.New("portfolio liquidation snapshot is stale")
 
 type ProcessLiquidationsLogic struct {
 	ctx    context.Context
@@ -75,29 +78,33 @@ func (l *ProcessLiquidationsLogic) processOne(item *models.TOptionLiquidation) e
 		}
 		return nil
 	}
-	if err := l.cancelRiskOrders(current); err != nil {
-		return l.failLiquidation(current, err)
-	}
-	incomplete, err := l.svcCtx.OptionOutboxModel.HasIncomplete(l.ctx, current.TenantId, current.ContractId)
+	waiting, err := l.cancelRiskOrders(current)
 	if err != nil {
 		return l.failLiquidation(current, err)
 	}
-	if incomplete {
-		l.Infof("option liquidation waiting for contract trade events, liquidationNo=%s", current.LiquidationNo)
+	if waiting {
 		return nil
 	}
-	incomplete, err = l.svcCtx.OptionAssetInstructionModel.HasIncompleteMarginForContract(
-		l.ctx, current.TenantId, current.ContractId,
-	)
+	incomplete, err := l.hasLiquidationBarrier(current)
 	if err != nil {
 		return l.failLiquidation(current, err)
 	}
 	if incomplete {
-		l.Infof("option liquidation waiting for margin instructions, liquidationNo=%s", current.LiquidationNo)
+		l.Infof("option liquidation waiting for portfolio barriers, liquidationNo=%s", current.LiquidationNo)
 		return nil
 	}
 	plan, err := l.buildLiquidationPlan(current)
 	if err != nil {
+		if errors.Is(err, errPortfolioLiquidationSnapshotStale) {
+			reason := err.Error()
+			if len(reason) > 500 {
+				reason = reason[:500]
+			}
+			_, cancelErr := l.svcCtx.OptionLiquidationModel.CancelStalePortfolio(
+				l.ctx, current.Id, time.Now().Unix(), reason,
+			)
+			return errors.Join(err, cancelErr)
+		}
 		return l.failLiquidation(current, err)
 	}
 	useBackstop := plan.contract.LiquidationDeficitPolicy ==
@@ -147,15 +154,68 @@ func validateLiquidationPlanBalance(plan *optionLiquidationPlan, covered decimal
 }
 
 type optionLiquidationPlan struct {
-	contract      *models.TOptionContract
-	position      *models.TOptionPosition
-	lots          []*models.TOptionMarginLot
-	quantity      decimal.Decimal
-	takeoverCost  decimal.Decimal
-	fee           decimal.Decimal
-	totalRequired decimal.Decimal
-	collateral    decimal.Decimal
-	deficit       decimal.Decimal
+	contract                *models.TOptionContract
+	position                *models.TOptionPosition
+	lots                    []*models.TOptionMarginLot
+	quantity                decimal.Decimal
+	takeoverCost            decimal.Decimal
+	fee                     decimal.Decimal
+	totalRequired           decimal.Decimal
+	collateral              decimal.Decimal
+	sourceCollateral        decimal.Decimal
+	residualCollateralFloor decimal.Decimal
+	deficit                 decimal.Decimal
+}
+
+type optionLiquidationLotAllocation struct {
+	lot      *models.TOptionMarginLot
+	quantity decimal.Decimal
+	margin   decimal.Decimal
+}
+
+func allocateIsolatedLiquidationLots(
+	lots []*models.TOptionMarginLot,
+	quantity decimal.Decimal,
+) ([]optionLiquidationLotAllocation, decimal.Decimal, error) {
+	if !quantity.IsPositive() {
+		return nil, decimal.Zero, errors.New("option liquidation quantity must be positive")
+	}
+	quantityLeft := quantity
+	allocatedMargin := decimal.Zero
+	allocations := make([]optionLiquidationLotAllocation, 0, len(lots))
+	for _, lot := range lots {
+		if !quantityLeft.IsPositive() {
+			break
+		}
+		if lot == nil || !lot.RemainingQuantity.IsPositive() {
+			continue
+		}
+		if lot.PendingMargin.IsPositive() {
+			return nil, decimal.Zero, errors.New("option liquidation margin lot still has pending amount")
+		}
+		if lot.RemainingMargin.IsNegative() {
+			return nil, decimal.Zero, errors.New("option liquidation margin lot has negative remaining margin")
+		}
+		takeQty := decimal.Min(quantityLeft, lot.RemainingQuantity)
+		takeMargin := lot.RemainingMargin
+		if takeQty.LessThan(lot.RemainingQuantity) {
+			takeMargin = lot.RemainingMargin.Mul(takeQty).Div(lot.RemainingQuantity).Round(16)
+		}
+		if takeMargin.IsNegative() || takeMargin.GreaterThan(lot.RemainingMargin) {
+			return nil, decimal.Zero, errors.New("invalid proportional option liquidation margin allocation")
+		}
+		allocations = append(allocations, optionLiquidationLotAllocation{
+			lot: lot, quantity: takeQty, margin: takeMargin,
+		})
+		allocatedMargin = allocatedMargin.Add(takeMargin)
+		quantityLeft = quantityLeft.Sub(takeQty)
+	}
+	if quantityLeft.IsPositive() {
+		return nil, decimal.Zero, fmt.Errorf(
+			"insufficient option margin lot quantity for liquidation: %s", quantityLeft,
+		)
+	}
+	return allocations, allocatedMargin.Round(16), nil
 }
 
 func (l *ProcessLiquidationsLogic) buildLiquidationPlan(liq *models.TOptionLiquidation) (*optionLiquidationPlan, error) {
@@ -168,15 +228,6 @@ func (l *ProcessLiquidationsLogic) buildLiquidationPlan(liq *models.TOptionLiqui
 		contract.InsuranceUserId <= 0 || contract.InsuranceAccountId <= 0 {
 		return nil, errors.New("option liquidation insurance takeover account is not configured")
 	}
-	// Portfolio collateral is shared across contracts and expiries. A safe
-	// takeover must atomically select an account-level liquidation set, rerun
-	// portfolio risk after every fill, and prove that the residual portfolio
-	// remains collateralized. The current transition transfers one position
-	// while consuming account-wide margin lots, so executing it could strand the
-	// remaining portfolio. Keep the unsupported path fail-closed.
-	if contract.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) {
-		return nil, errors.New("portfolio option liquidation is not supported")
-	}
 	position, err := l.svcCtx.OptionPositionModel.FindOne(l.ctx, liq.PositionId)
 	if err != nil {
 		return nil, err
@@ -186,31 +237,29 @@ func (l *ProcessLiquidationsLogic) buildLiquidationPlan(liq *models.TOptionLiqui
 		!position.PositionQty.IsPositive() {
 		return nil, errors.New("option liquidation position is no longer active")
 	}
-	// The current isolated and portfolio margin-lot transitions consume or
-	// release whole collateral lots. Until quantity-proportional lot splitting
-	// is implemented, accepting a partial takeover could leave the remaining
-	// short position under-collateralized.
-	if !liq.Quantity.Equal(position.PositionQty) {
-		return nil, errors.New("partial option liquidation is not supported")
+	if !liq.Quantity.IsPositive() || liq.Quantity.GreaterThan(position.PositionQty) {
+		return nil, errors.New("invalid option liquidation quantity")
 	}
-	quantity := position.PositionQty
-	var lots []*models.TOptionMarginLot
+	quantity := liq.Quantity
 	if contract.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) {
-		lots, err = l.svcCtx.OptionMarginLotModel.FindPortfolioActiveByAccount(
-			l.ctx, liq.TenantId, position.UserId, position.AccountId, contract.SettleCoin,
-		)
-	} else {
-		lots, err = l.svcCtx.OptionMarginLotModel.FindActiveByPosition(l.ctx, liq.TenantId, position.Id)
+		if !quantity.Equal(position.PositionQty) {
+			return nil, errors.New("partial portfolio liquidation is not supported")
+		}
+		return l.buildPortfolioLiquidationPlan(liq, contract, position)
 	}
+	var lots []*models.TOptionMarginLot
+	lots, err = l.svcCtx.OptionMarginLotModel.FindActiveByPosition(l.ctx, liq.TenantId, position.Id)
 	if err != nil {
 		return nil, err
 	}
-	collateralAvailable := decimal.Zero
 	for _, lot := range lots {
-		if lot.PendingMargin.IsPositive() {
-			return nil, errors.New("option liquidation margin lot still has pending amount")
+		if lot.CollateralCoin != contract.SettleCoin {
+			return nil, errors.New("cross-coin option liquidation requires an approved conversion model")
 		}
-		collateralAvailable = collateralAvailable.Add(lot.RemainingMargin)
+	}
+	_, collateralAvailable, err := allocateIsolatedLiquidationLots(lots, quantity)
+	if err != nil {
+		return nil, err
 	}
 	takeoverCost := liq.MarkPrice.Mul(quantity).Mul(optionMultiplier(contract)).Round(16)
 	fee := takeoverCost.Mul(contract.LiquidationFeeRate).Round(16)
@@ -219,7 +268,185 @@ func (l *ProcessLiquidationsLogic) buildLiquidationPlan(liq *models.TOptionLiqui
 	return &optionLiquidationPlan{
 		contract: contract, position: position, lots: lots, quantity: quantity,
 		takeoverCost: takeoverCost, fee: fee, totalRequired: total,
-		collateral: collateral, deficit: decimal.Max(total.Sub(collateral), decimal.Zero),
+		collateral: collateral, sourceCollateral: collateralAvailable,
+		deficit: decimal.Max(total.Sub(collateral), decimal.Zero),
+	}, nil
+}
+
+func (l *ProcessLiquidationsLogic) buildPortfolioLiquidationPlan(
+	liq *models.TOptionLiquidation,
+	contract *models.TOptionContract,
+	position *models.TOptionPosition,
+) (*optionLiquidationPlan, error) {
+	stale := func(reason string) error {
+		return fmt.Errorf("%w: %s", errPortfolioLiquidationSnapshotStale, reason)
+	}
+	if liq.LiquidationScope != int64(option.LiquidationScope_LIQUIDATION_SCOPE_PORTFOLIO_WALLET) ||
+		liq.AccountId != 0 || liq.PortfolioRiskConfigId <= 0 || liq.PortfolioRiskConfigVersion <= 0 {
+		return nil, errors.New("invalid portfolio liquidation audit snapshot")
+	}
+	if !liq.PortfolioMaintenanceBefore.GreaterThan(liq.PortfolioMaintenanceAfter) ||
+		liq.PortfolioInitialAfter.IsNegative() ||
+		liq.PortfolioCollateralBefore.LessThan(liq.PortfolioCollateralAfter) ||
+		liq.PortfolioCollateralAfter.LessThan(liq.PortfolioInitialAfter) {
+		return nil, errors.New("invalid portfolio liquidation collateral proof")
+	}
+	now := time.Now().Unix()
+	active, err := l.svcCtx.OptionPortfolioRiskConfigModel.FindActive(
+		l.ctx, liq.TenantId, contract.SettleCoin, now,
+	)
+	if err != nil {
+		return nil, err
+	}
+	if active.Id != liq.PortfolioRiskConfigId || active.Version != liq.PortfolioRiskConfigVersion {
+		return nil, stale("approved risk config changed")
+	}
+	config, err := optionrisk.PortfolioConfigFromModel(active)
+	if err != nil {
+		return nil, err
+	}
+	groups, err := NewProcessRiskAccountsLogic(l.ctx, l.svcCtx).collectRiskGroups(liq.TenantId)
+	if err != nil {
+		return nil, err
+	}
+	var group *optionRiskGroup
+	for _, candidateGroup := range groups {
+		if candidateGroup.key.userID == liq.UserId && candidateGroup.key.coin == contract.SettleCoin {
+			group = candidateGroup
+			break
+		}
+	}
+	if group == nil || group.scanErr != nil {
+		return nil, stale("wallet portfolio or fresh market set changed")
+	}
+	legs := make(map[int64]optionrisk.PortfolioLeg)
+	for _, item := range group.positions {
+		if item.contract.SellerMarginMode != int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) {
+			continue
+		}
+		leg := legs[item.contract.Id]
+		leg.Contract = item.contract
+		leg.Market = item.market
+		if item.position.Side == int64(common.PositionSide_POSITION_SIDE_LONG) {
+			leg.LongQuantity = leg.LongQuantity.Add(item.position.PositionQty)
+		} else {
+			leg.ShortQuantity = leg.ShortQuantity.Add(item.position.PositionQty)
+		}
+		legs[item.contract.Id] = leg
+	}
+	legList := make([]optionrisk.PortfolioLeg, 0, len(legs))
+	for _, leg := range legs {
+		legList = append(legList, leg)
+	}
+	maintenanceBefore, err := optionrisk.EvaluatePortfolio(legList, true, config)
+	if err != nil {
+		return nil, err
+	}
+	var selected *optionRiskPosition
+	isolatedMaintenance := decimal.Zero
+	netOptionValue := decimal.Zero
+	for i := range group.positions {
+		item := &group.positions[i]
+		value := item.market.MarkPrice.Mul(item.position.PositionQty).
+			Mul(optionMultiplier(item.contract)).Round(16)
+		if item.position.Side == int64(common.PositionSide_POSITION_SIDE_LONG) {
+			netOptionValue = netOptionValue.Add(value)
+		} else {
+			netOptionValue = netOptionValue.Sub(value)
+			if item.contract.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_ISOLATED) {
+				isolatedMaintenance = isolatedMaintenance.Add(optionTaskSellerMargin(
+					item.contract, item.market.UnderlyingPrice, item.market.MarkPrice, item.position.PositionQty,
+				))
+			}
+		}
+		if item.position.Id == position.Id {
+			selected = item
+		}
+	}
+	if selected == nil || selected.position.Side != int64(common.PositionSide_POSITION_SIDE_SHORT) ||
+		selected.contract.SellerMarginMode != int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) ||
+		!selected.position.PositionQty.Equal(liq.Quantity) {
+		return nil, stale("selected portfolio position changed")
+	}
+	residualLegs := make([]optionrisk.PortfolioLeg, 0, len(legs))
+	for contractID, original := range legs {
+		leg := original
+		if contractID == selected.contract.Id {
+			leg.ShortQuantity = leg.ShortQuantity.Sub(selected.position.PositionQty)
+			if leg.ShortQuantity.IsNegative() {
+				return nil, stale("selected portfolio quantity exceeds current short leg")
+			}
+		}
+		residualLegs = append(residualLegs, leg)
+	}
+	initialAfter, err := optionrisk.EvaluatePortfolio(residualLegs, false, config)
+	if err != nil {
+		return nil, err
+	}
+	maintenanceAfter, err := optionrisk.EvaluatePortfolio(residualLegs, true, config)
+	if err != nil {
+		return nil, err
+	}
+	if !maintenanceBefore.Requirement.GreaterThan(maintenanceAfter.Requirement) {
+		return nil, stale("selected position no longer reduces current portfolio risk")
+	}
+	balance, err := l.svcCtx.AssetClient.GetAssetBalance(l.ctx, &asset.GetUserAssetDetailReq{
+		TenantId: liq.TenantId, UserId: liq.UserId,
+		WalletType: common.WalletType_WALLET_TYPE_OPTION, Coin: contract.SettleCoin,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if balance.GetBase() == nil || balance.GetBase().GetCode() != 200 || balance.GetData() == nil {
+		return nil, errors.New("get portfolio liquidation wallet balance rejected")
+	}
+	totalAsset, err := decimal.NewFromString(balance.GetData().GetTotalAmount())
+	if err != nil {
+		return nil, fmt.Errorf("invalid portfolio liquidation wallet total: %w", err)
+	}
+	currentEquity := optionRiskEquity(totalAsset, netOptionValue)
+	currentMaintenance := isolatedMaintenance.Add(maintenanceBefore.Requirement).Round(16)
+	if currentEquity.GreaterThan(currentMaintenance) {
+		return nil, stale("wallet recovered above current maintenance requirement")
+	}
+	pending, err := l.svcCtx.OptionMarginLotModel.HasPendingPortfolioByWallet(
+		l.ctx, liq.TenantId, liq.UserId, contract.SettleCoin,
+	)
+	if err != nil {
+		return nil, err
+	}
+	if pending {
+		return nil, errors.New("portfolio liquidation margin lot still has pending amount")
+	}
+	lots, err := l.svcCtx.OptionMarginLotModel.FindPortfolioActiveByAccount(
+		l.ctx, liq.TenantId, liq.UserId, 0, contract.SettleCoin,
+	)
+	if err != nil {
+		return nil, err
+	}
+	collateralBefore := decimal.Zero
+	for _, lot := range lots {
+		collateralBefore = collateralBefore.Add(lot.RemainingMargin)
+	}
+	residualFloor := decimal.Max(liq.PortfolioInitialAfter, initialAfter.Requirement).Round(16)
+	if collateralBefore.LessThan(residualFloor) {
+		return nil, stale("current collateral cannot protect residual portfolio")
+	}
+	takeoverCost := liq.MarkPrice.Mul(liq.Quantity).Mul(optionMultiplier(contract)).Round(16)
+	fee := takeoverCost.Mul(contract.LiquidationFeeRate).Round(16)
+	collateral := decimal.Min(
+		decimal.Max(collateralBefore.Sub(residualFloor), decimal.Zero),
+		takeoverCost.Add(fee),
+	)
+	collateralAfter := collateralBefore.Sub(collateral).Round(16)
+	if collateralAfter.LessThan(residualFloor) || !fee.Equal(liq.LiquidationFee) {
+		return nil, stale("portfolio collateral proof or liquidation price changed")
+	}
+	return &optionLiquidationPlan{
+		contract: contract, position: position, lots: lots, quantity: liq.Quantity,
+		takeoverCost: takeoverCost, fee: fee, totalRequired: takeoverCost.Add(fee),
+		collateral: collateral, residualCollateralFloor: residualFloor,
+		deficit: decimal.Max(takeoverCost.Add(fee).Sub(collateral), decimal.Zero),
 	}, nil
 }
 
@@ -360,35 +587,75 @@ func (l *ProcessLiquidationsLogic) createLiquidationInstructions(
 			return errors.New("option liquidation position changed during preparation")
 		}
 		var lots []*models.TOptionMarginLot
+		var isolatedAllocations []optionLiquidationLotAllocation
 		if plan.contract.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) {
 			lots, err = marginLotModel.FindPortfolioActiveByAccount(
-				ctx, current.TenantId, position.UserId, position.AccountId, plan.contract.SettleCoin,
+				ctx, current.TenantId, position.UserId, 0, plan.contract.SettleCoin,
 			)
 		} else {
 			lots, err = marginLotModel.FindActiveByPosition(ctx, current.TenantId, position.Id)
+			if err == nil {
+				for _, lot := range lots {
+					if lot.CollateralCoin != plan.contract.SettleCoin {
+						return errors.New("cross-coin option liquidation requires an approved conversion model")
+					}
+				}
+				var allocated decimal.Decimal
+				isolatedAllocations, allocated, err = allocateIsolatedLiquidationLots(lots, plan.quantity)
+				if err == nil && !allocated.Equal(plan.sourceCollateral) {
+					return errors.New("option liquidation collateral allocation changed during preparation")
+				}
+			}
 		}
 		if err != nil {
 			return err
 		}
-		now := time.Now().Unix()
-		deductLeft := plan.collateral
 		portfolioMode := plan.contract.SellerMarginMode ==
 			int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO)
+		if portfolioMode {
+			currentPool := decimal.Zero
+			for _, lot := range lots {
+				if lot.PendingMargin.IsPositive() {
+					return errors.New("option liquidation margin lot changed during preparation")
+				}
+				currentPool = currentPool.Add(lot.RemainingMargin)
+			}
+			if currentPool.Sub(plan.collateral).LessThan(plan.residualCollateralFloor) {
+				return errors.New("option liquidation would breach residual portfolio collateral floor")
+			}
+		}
+		now := time.Now().Unix()
+		deductLeft := plan.collateral
+		quantityLeft := plan.quantity
+		allocationByLot := make(map[int64]optionLiquidationLotAllocation, len(isolatedAllocations))
+		for _, allocation := range isolatedAllocations {
+			allocationByLot[allocation.lot.Id] = allocation
+		}
 		for _, lot := range lots {
 			if lot.PendingMargin.IsPositive() {
 				return errors.New("option liquidation margin lot changed during preparation")
 			}
-			deduct := decimal.Min(lot.RemainingMargin, deductLeft)
+			allocatedMargin := lot.RemainingMargin
+			allocatedQuantity := decimal.Zero
+			if !portfolioMode {
+				allocation, ok := allocationByLot[lot.Id]
+				if !ok {
+					continue
+				}
+				allocatedMargin = allocation.margin
+				allocatedQuantity = allocation.quantity
+			}
+			deduct := decimal.Min(allocatedMargin, deductLeft)
 			release := decimal.Zero
 			if !portfolioMode {
-				release = lot.RemainingMargin.Sub(deduct)
+				release = allocatedMargin.Sub(deduct)
 			}
 			if deduct.IsPositive() {
 				if err := insertLiquidationInstruction(ctx, instructionModel, &models.TOptionAssetInstruction{
 					TenantId:      current.TenantId,
 					InstructionNo: fmt.Sprintf("%s-L%d-DEDUCT", current.LiquidationNo, lot.Id),
 					BizNo:         current.LiquidationNo, PositionId: position.Id, MarginLotId: lot.Id,
-					LiquidationId: current.Id, UserId: position.UserId, AccountId: position.AccountId,
+					LiquidationId: current.Id, UserId: position.UserId, AccountId: lot.AccountId,
 					Action:      int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_DEDUCT_FROZEN),
 					TargetBizNo: lot.FreezeBizNo, Coin: plan.contract.SettleCoin, Amount: deduct,
 					StepNo: 1, CreateTimes: now, UpdateTimes: now,
@@ -412,12 +679,17 @@ func (l *ProcessLiquidationsLogic) createLiquidationInstructions(
 			}
 			lot.PendingMargin = lot.PendingMargin.Add(deduct).Add(release)
 			if !portfolioMode {
-				lot.RemainingQuantity = decimal.Zero
+				lot.RemainingQuantity = decimal.Max(
+					lot.RemainingQuantity.Sub(allocatedQuantity), decimal.Zero,
+				)
+				quantityLeft = quantityLeft.Sub(allocatedQuantity)
 			}
 			if deduct.IsPositive() {
 				lot.Status = int64(option.MarginLotStatus_MARGIN_LOT_STATUS_CONSUMING)
 			} else if release.IsPositive() {
 				lot.Status = int64(option.MarginLotStatus_MARGIN_LOT_STATUS_RELEASING)
+			} else if lot.RemainingQuantity.IsZero() && lot.RemainingMargin.IsZero() {
+				lot.Status = int64(option.MarginLotStatus_MARGIN_LOT_STATUS_RESOLVED)
 			}
 			lot.UpdateTimes = now
 			if err := marginLotModel.Update(ctx, lot); err != nil {
@@ -429,6 +701,18 @@ func (l *ProcessLiquidationsLogic) createLiquidationInstructions(
 		}
 		if deductLeft.IsPositive() {
 			return errors.New("option liquidation collateral became insufficient")
+		}
+		if !portfolioMode && quantityLeft.IsPositive() {
+			return errors.New("option liquidation margin lot quantity became insufficient")
+		}
+		if position.AvailableQty.LessThan(plan.quantity) {
+			return errors.New("option liquidation position quantity is not available for reservation")
+		}
+		position.AvailableQty = position.AvailableQty.Sub(plan.quantity)
+		position.FrozenQty = position.FrozenQty.Add(plan.quantity)
+		position.UpdateTimes = now
+		if err := positionModel.Update(ctx, position); err != nil {
+			return err
 		}
 		if err := insertLiquidationInstruction(ctx, instructionModel, &models.TOptionAssetInstruction{
 			TenantId: current.TenantId, InstructionNo: current.LiquidationNo + "-TAKEOVER-CREDIT",
@@ -511,8 +795,39 @@ func insertLiquidationInstruction(
 	return err
 }
 
-func (l *ProcessLiquidationsLogic) cancelRiskOrders(liq *models.TOptionLiquidation) error {
+func (l *ProcessLiquidationsLogic) cancelRiskOrders(liq *models.TOptionLiquidation) (bool, error) {
+	if liq.LiquidationScope == int64(option.LiquidationScope_LIQUIDATION_SCOPE_PORTFOLIO_WALLET) {
+		contract, err := l.svcCtx.OptionContractModel.FindOne(l.ctx, liq.ContractId)
+		if err != nil {
+			return false, err
+		}
+		orders, err := l.svcCtx.OptionOrderModel.FindPortfolioRiskOrders(l.ctx, liq.TenantId, liq.UserId, 0)
+		if err != nil {
+			return false, err
+		}
+		waiting := false
+		for _, order := range orders {
+			orderContract, err := l.svcCtx.OptionContractModel.FindOne(l.ctx, order.ContractId)
+			if err != nil {
+				return false, err
+			}
+			if orderContract.SellerMarginMode != int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) ||
+				orderContract.SettleCoin != contract.SettleCoin {
+				continue
+			}
+			waiting = true
+			if order.Status == int64(option.OrderStatus_ORDER_STATUS_FUNDING) ||
+				order.Status == int64(option.OrderStatus_ORDER_STATUS_PENDING) ||
+				order.Status == int64(option.OrderStatus_ORDER_STATUS_PART_FILLED) {
+				if err := cancelOptionSystemOrder(l.ctx, l.svcCtx, order.Id, "PORTFOLIO_RISK_LIQUIDATION"); err != nil {
+					return false, err
+				}
+			}
+		}
+		return waiting, nil
+	}
 	cursor := int64(0)
+	waiting := false
 	for {
 		orders, _, err := l.svcCtx.OptionOrderModel.FindPage(l.ctx, models.OptionOrderPageFilter{
 			TenantId: liq.TenantId, UserId: liq.UserId, AccountId: liq.AccountId,
@@ -524,18 +839,44 @@ func (l *ProcessLiquidationsLogic) cancelRiskOrders(liq *models.TOptionLiquidati
 			},
 		}, cursor, 100)
 		if err != nil {
-			return err
+			return false, err
 		}
 		for _, order := range orders {
 			cursor = order.Id
+			waiting = true
 			if err := cancelOptionSystemOrder(l.ctx, l.svcCtx, order.Id, "RISK_LIQUIDATION"); err != nil {
-				return err
+				return false, err
 			}
 		}
 		if len(orders) < 100 {
-			return nil
+			return waiting, nil
 		}
 	}
+}
+
+func (l *ProcessLiquidationsLogic) hasLiquidationBarrier(liq *models.TOptionLiquidation) (bool, error) {
+	if liq.LiquidationScope != int64(option.LiquidationScope_LIQUIDATION_SCOPE_PORTFOLIO_WALLET) {
+		incomplete, err := l.svcCtx.OptionOutboxModel.HasIncomplete(l.ctx, liq.TenantId, liq.ContractId)
+		if err != nil || incomplete {
+			return incomplete, err
+		}
+		return l.svcCtx.OptionAssetInstructionModel.HasIncompleteMarginForContract(
+			l.ctx, liq.TenantId, liq.ContractId,
+		)
+	}
+	sourceContract, err := l.svcCtx.OptionContractModel.FindOne(l.ctx, liq.ContractId)
+	if err != nil {
+		return false, err
+	}
+	incomplete, err := l.svcCtx.OptionOutboxModel.HasIncompletePortfolioForWallet(
+		l.ctx, liq.TenantId, liq.UserId, sourceContract.SettleCoin,
+	)
+	if err != nil || incomplete {
+		return incomplete, err
+	}
+	return l.svcCtx.OptionAssetInstructionModel.HasIncompleteForWallet(
+		l.ctx, liq.TenantId, liq.UserId, sourceContract.SettleCoin,
+	)
 }
 
 func cancelOptionSystemOrder(ctx context.Context, svcCtx *svc.ServiceContext, orderID int64, reason string) error {

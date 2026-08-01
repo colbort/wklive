@@ -171,7 +171,7 @@ ALTER TABLE `t_option_portfolio_risk_config`
 ALTER TABLE `t_option_liquidation`
   ADD CONSTRAINT `chk_option_liquidation` CHECK (
     `quantity` > 0 AND `deficit_amount` >= 0 AND `liquidation_fee` >= 0
-    AND `status` IN (1,2,3,4,5,6) AND `retry_count` >= 0 AND `insurance_attempt` >= 0
+    AND `status` IN (1,2,3,4,5,6,7) AND `retry_count` >= 0 AND `insurance_attempt` >= 0
     AND `backstop_amount` >= 0 AND `deficit_resolution` IN (1,2,3,4,5)
   );
 

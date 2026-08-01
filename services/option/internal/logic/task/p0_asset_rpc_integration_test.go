@@ -100,8 +100,8 @@ func TestP0AssetRPCEndToEnd(t *testing.T) {
 	t.Run("liquidation deficit backstop failure recovery", func(t *testing.T) {
 		testP0LiquidationDeficitFailureRecovery(t, ctx, db, assetClient, serviceCtx)
 	})
-	t.Run("portfolio liquidation fails closed", func(t *testing.T) {
-		testP0PortfolioLiquidationFailsClosed(t, ctx, db, serviceCtx)
+	t.Run("portfolio liquidation is sequential and preserves residual collateral", func(t *testing.T) {
+		testP0PortfolioLiquidationSequential(t, ctx, db, assetClient, serviceCtx)
 	})
 	t.Run("full order admission to risk accounting", func(t *testing.T) {
 		testP0OrderAdmissionToRiskAccounting(t, ctx, db, assetClient, serviceCtx)
@@ -111,6 +111,9 @@ func TestP0AssetRPCEndToEnd(t *testing.T) {
 	})
 	t.Run("market and post-only funding lifecycle", func(t *testing.T) {
 		testP0MarketAndPostOnlyOrders(t, ctx, db, assetClient, serviceCtx)
+	})
+	t.Run("admin force cancel and funding race", func(t *testing.T) {
+		testP0AdminForceCancelAndFundingRace(t, ctx, db, assetClient, serviceCtx)
 	})
 }
 

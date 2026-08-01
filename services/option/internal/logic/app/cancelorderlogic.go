@@ -63,20 +63,37 @@ func (l *CancelOrderLogic) CancelOrder(in *option.CancelOrderReq) (*option.UserC
 		}
 	}
 
-	wasFunding := item.Status == int64(option.OrderStatus_ORDER_STATUS_FUNDING)
 	now := time.Now().Unix()
-	item.Status = int64(option.OrderStatus_ORDER_STATUS_CANCELED)
-	if item.MarginAmount.IsPositive() {
-		item.Status = int64(option.OrderStatus_ORDER_STATUS_CANCELING)
-	}
-	item.CancelReason = "USER_CANCEL"
-	item.CancelTime = now
-	item.UpdateTimes = now
+	statusRejected := false
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		orderModel := models.NewTOptionOrderModel(conn, l.svcCtx.Config.CacheRedis)
 		positionModel := models.NewTOptionPositionModel(conn, l.svcCtx.Config.CacheRedis)
 		instructionModel := models.NewTOptionAssetInstructionModel(conn, l.svcCtx.Config.CacheRedis)
+		locked, err := orderModel.FindOneForUpdate(ctx, item.Id)
+		if err != nil {
+			return err
+		}
+		if locked.UserId != userId || locked.AccountId != in.AccountId || locked.ComboOrderId > 0 {
+			return errors.New("option order cancellation scope changed while acquiring the lock")
+		}
+		switch option.OrderStatus(locked.Status) {
+		case option.OrderStatus_ORDER_STATUS_FUNDING,
+			option.OrderStatus_ORDER_STATUS_PENDING,
+			option.OrderStatus_ORDER_STATUS_PART_FILLED:
+		default:
+			statusRejected = true
+			return nil
+		}
+		item = locked
+		wasFunding := item.Status == int64(option.OrderStatus_ORDER_STATUS_FUNDING)
+		item.Status = int64(option.OrderStatus_ORDER_STATUS_CANCELED)
+		if item.MarginAmount.IsPositive() {
+			item.Status = int64(option.OrderStatus_ORDER_STATUS_CANCELING)
+		}
+		item.CancelReason = "USER_CANCEL"
+		item.CancelTime = now
+		item.UpdateTimes = now
 		cancelBeforeFreeze := false
 		if wasFunding {
 			freezeInstruction, err := instructionModel.FindOneByTenantIdInstructionNo(ctx, item.TenantId, item.OrderNo+"-FREEZE")
@@ -118,6 +135,12 @@ func (l *CancelOrderLogic) CancelOrder(in *option.CancelOrderReq) (*option.UserC
 	})
 	if err != nil {
 		return nil, err
+	}
+	if statusRejected {
+		return &option.UserCommonResp{Base: helper.ErrResp(
+			i18n.CurrentStatusCannotCancel,
+			i18n.Translate(i18n.CurrentStatusCannotCancel, l.ctx),
+		)}, nil
 	}
 	publishOptionOrderChanged(l.ctx, l.svcCtx, item)
 
