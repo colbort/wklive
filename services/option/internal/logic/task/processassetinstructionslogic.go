@@ -425,7 +425,10 @@ func tradeCorrectionInstructionOutcome(
 }
 
 func (l *ProcessAssetInstructionsLogic) completeExerciseTransition(item *models.TOptionAssetInstruction) error {
-	if item.BizNo == "" {
+	// Every early exercise has a step-2 long credit. Step ordering guarantees
+	// that no exercise can complete while a step-1 short debit is running, so
+	// only terminal-step callbacks need to scan the business completion barrier.
+	if item.BizNo == "" || item.StepNo < 2 {
 		return nil
 	}
 	return completeExerciseIfReady(l.ctx, l.svcCtx, item.TenantId, item.BizNo)
@@ -447,17 +450,12 @@ func completeExerciseIfReady(
 	if exercise.Status == int64(option.ExerciseStatus_EXERCISE_STATUS_DONE) {
 		return nil
 	}
-	instructions, err := svcCtx.OptionAssetInstructionModel.FindByBizNo(ctx, tenantId, exerciseNo)
+	allSucceeded, err := svcCtx.OptionAssetInstructionModel.AllSucceededByBizNo(ctx, tenantId, exerciseNo)
 	if err != nil {
 		return err
 	}
-	if len(instructions) == 0 {
+	if !allSucceeded {
 		return nil
-	}
-	for _, instruction := range instructions {
-		if instruction.Status != int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS) {
-			return nil
-		}
 	}
 	return svcCtx.DB.TransactCtx(ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
@@ -481,12 +479,11 @@ func completeExerciseIfReady(
 		if len(assignments) == 0 {
 			return errors.New("option exercise has no short assignments")
 		}
-		for _, assignment := range assignments {
-			assignment.Status = int64(option.ExerciseAssignmentStatus_EXERCISE_ASSIGNMENT_STATUS_DONE)
-			assignment.UpdateTimes = now
-			if err := assignmentModel.Update(ctx, assignment); err != nil {
-				return err
-			}
+		if err := assignmentModel.SetPendingStatus(
+			ctx, current.TenantId, current.Id, now,
+			option.ExerciseAssignmentStatus_EXERCISE_ASSIGNMENT_STATUS_DONE,
+		); err != nil {
+			return err
 		}
 		current.Status = int64(option.ExerciseStatus_EXERCISE_STATUS_DONE)
 		current.FinishTime = now
@@ -1103,22 +1100,6 @@ func (l *ProcessAssetInstructionsLogic) completeSettlementTransition(item *model
 	if item.BizNo == "" || item.PositionId == 0 {
 		return nil
 	}
-	instructions, err := l.svcCtx.OptionAssetInstructionModel.FindByBizNo(l.ctx, item.TenantId, item.BizNo)
-	if err != nil {
-		return err
-	}
-	if len(instructions) == 0 {
-		return nil
-	}
-	successCount := int64(0)
-	allSucceeded := true
-	for _, instruction := range instructions {
-		if instruction.Status == int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS) {
-			successCount++
-		} else {
-			allSucceeded = false
-		}
-	}
 	batch, err := l.svcCtx.OptionSettlementBatchModel.FindOneByTenantIdBatchNo(l.ctx, item.TenantId, item.BizNo)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
@@ -1126,19 +1107,24 @@ func (l *ProcessAssetInstructionsLogic) completeSettlementTransition(item *model
 		}
 		return err
 	}
-	var exceptionUnit *models.TOptionPhysicalDeliveryUnit
-	units, err := l.svcCtx.OptionPhysicalDeliveryUnitModel.FindByBatch(
-		l.ctx, batch.TenantId, batch.Id,
+	totalCount, successCount, err := l.svcCtx.OptionAssetInstructionModel.SummarizeByBizNo(
+		l.ctx, item.TenantId, item.BizNo,
 	)
 	if err != nil {
 		return err
 	}
-	for _, unit := range units {
-		if unit.Status == int64(option.PhysicalDeliveryUnitStatus_PHYSICAL_DELIVERY_UNIT_STATUS_MANUAL_REVIEW) ||
-			unit.Status == int64(option.PhysicalDeliveryUnitStatus_PHYSICAL_DELIVERY_UNIT_STATUS_DEFAULTED) {
-			exceptionUnit = unit
-			break
-		}
+	if totalCount == 0 {
+		return nil
+	}
+	allSucceeded := successCount == totalCount
+	exceptionUnit, err := l.svcCtx.OptionPhysicalDeliveryUnitModel.FindExceptionByBatch(
+		l.ctx, batch.TenantId, batch.Id,
+	)
+	if err != nil && !errors.Is(err, models.ErrNotFound) {
+		return err
+	}
+	if errors.Is(err, models.ErrNotFound) {
+		exceptionUnit = nil
 	}
 	batch.SuccessCount = successCount
 	batch.Status = int64(option.SettlementBatchStatus_SETTLEMENT_BATCH_STATUS_ASSET_PROCESSING)

@@ -13,11 +13,13 @@ Option RPC 在内部端口 `9105` 的 `/metrics` 暴露 Prometheus 指标；业�
   实物交割、穿仓、行情新鲜度、风险扫描、交易控制、熔断、kill switch、STP、限额、
   异常成交、MMP、正式结算价、组合风险版本、公司行动、合约系列、公开链配对和 OI
   水位、管理员受治理字段越权修改审计、已上报日终守恒差额及钱包镜像日终成功/差异/失败
-  、完整资金守恒心跳缺失、保证金币种证据异常及 Asset 重复冻结业务键规则（当前共51条）。
+  、完整资金守恒心跳缺失、保证金币种证据异常、Asset 重复冻结业务键、组合清算证据/连续失效及保险接管库存规则（当前共57条）。
 - `../migrations/20260731_zr_option_operations_monitoring_indexes.sql`：既有14项时间窗口与状态聚合索引；
   该已记录迁移的校验和不可修改。
 - `../migrations/20260731_zs_option_time_sensitive_monitoring_indexes.sql`：近到期行权、kill switch
   释放失败和实物逾期的3项增量索引；现有环境必须继续执行此迁移，可重复运行。
+- `../migrations/20260801_option_portfolio_liquidation_monitoring.sql`：组合清算重复未终态、证据异常和
+  最近三次快照失效查询的覆盖索引；可重复运行。
 - `../migrations/20260731_zt_option_daily_reconciliation_run.sql`：不可变日终运行记录、钱包镜像
   零差额成功心跳和后续完整资金守恒证据容器。
 - `../../asset/migrations/20260801_option_freeze_idempotency_evidence.sql`：Option 冻结业务键覆盖
@@ -64,7 +66,7 @@ Option RPC 在内部端口 `9105` 的 `/metrics` 暴露 Prometheus 指标；业�
 | `wklive_option_combo_observability_query_failure_total` | Counter | 运行时水位 SQL 失败 |
 | `wklive_option_operations_count` | Gauge | 按租户与有限类别汇总的当前异常/积压数量 |
 | `wklive_option_operations_oldest_timestamp_seconds` | Gauge | 对应类别最早异常的 Unix 秒 |
-| `wklive_option_operations_amount` | Gauge | 按租户、类别、币种汇总的保险原始流水代数和（非余额）/兜底/缺口金额 |
+| `wklive_option_operations_amount` | Gauge | 按租户、类别、币种/标的汇总的保险原始流水代数和（非余额）、兜底/缺口金额及保险接管数量、标记价值、绝对 Delta |
 | `wklive_option_operations_sample_success` | Gauge | 最近一次15秒节流采样是否成功 |
 | `wklive_option_operations_last_success_timestamp_seconds` | Gauge | 最近成功采样 Unix 秒 |
 | `wklive_option_operations_sample_failure_total` | Counter | 采样失败次数 |

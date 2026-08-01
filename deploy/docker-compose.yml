@@ -21,6 +21,24 @@ x-go-build: &go-build
   context: ..
   dockerfile: deploy/Dockerfile.go
 
+x-beanstalk-service: &beanstalk-service
+  image: wklive/beanstalkd:1.13-alpine3.20
+  build:
+    context: .
+    dockerfile: Dockerfile.beanstalkd
+  restart: unless-stopped
+  init: true
+  healthcheck:
+    test:
+      - CMD-SHELL
+      - printf 'stats\r\nquit\r\n' | nc -w 2 127.0.0.1 11300 | grep -q '^OK '
+    interval: 5s
+    timeout: 3s
+    retries: 20
+    start_period: 3s
+  networks:
+    - backend
+
 services:
   etcd:
     image: quay.io/coreos/etcd:v3.7.1
@@ -139,22 +157,18 @@ services:
       - backend
 
   beanstalk-primary:
-    image: schickling/beanstalkd:latest
-    platform: linux/arm64
-    restart: unless-stopped
+    <<: *beanstalk-service
+    volumes:
+      - beanstalk-primary-data:/var/lib/beanstalkd
     ports:
       - "11300:11300"
-    networks:
-      - backend
 
   beanstalk-secondary:
-    image: schickling/beanstalkd:latest
-    platform: linux/arm64
-    restart: unless-stopped
+    <<: *beanstalk-service
+    volumes:
+      - beanstalk-secondary-data:/var/lib/beanstalkd
     ports:
       - "11301:11300"
-    networks:
-      - backend
 
   db-init:
     build:
@@ -504,6 +518,8 @@ secrets:
     file: ./secrets/itick_token
 
 volumes:
+  beanstalk-primary-data:
+  beanstalk-secondary-data:
   etcd-data:
   mysql-data:
   redis-data:

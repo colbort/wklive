@@ -77,6 +77,34 @@ func TestFindAssignableShortsPageUsesFIFOKeysetPagination(t *testing.T) {
 	}
 }
 
+func TestFindPositionByTradingScopeForUpdateLocksRow(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+
+	mock.ExpectQuery(`(?s)SELECT .* FROM .*WHERE tenant_id = \? AND user_id = \? AND account_id = \? AND contract_id = \? AND side = \?.*LIMIT 1 FOR UPDATE$`).
+		WithArgs(int64(9), int64(77), int64(66), int64(88), int64(common.PositionSide_POSITION_SIDE_SHORT)).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}))
+
+	model := &customTOptionPositionModel{
+		defaultTOptionPositionModel: &defaultTOptionPositionModel{
+			CachedConn: sqlc.NewConnWithCache(sqlx.NewSqlConnFromDB(db), nil),
+			table:      "`t_option_position`",
+		},
+	}
+	_, err = model.FindOneByTenantIdUserIdAccountIdContractIdSideForUpdate(
+		context.Background(), 9, 77, 66, 88, int64(common.PositionSide_POSITION_SIDE_SHORT),
+	)
+	if !errors.Is(err, ErrNotFound) {
+		t.Fatalf("find scoped position error=%v want ErrNotFound", err)
+	}
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestResetFailedAssetInstructionsByBizNo(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -113,6 +141,50 @@ func TestResetFailedAssetInstructionsByBizNo(t *testing.T) {
 	}
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestAllAssetInstructionsSucceededByBizNoUsesAggregate(t *testing.T) {
+	for _, testCase := range []struct {
+		name     string
+		complete bool
+	}{
+		{name: "all succeeded", complete: true},
+		{name: "pending remains", complete: false},
+		{name: "no instructions", complete: false},
+	} {
+		t.Run(testCase.name, func(t *testing.T) {
+			db, mock, err := sqlmock.New()
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer db.Close()
+
+			mock.ExpectQuery(`(?s)SELECT.*COUNT\(1\) > 0.*SUM\(status <> \?\).*WHERE tenant_id = \? AND biz_no = \?`).
+				WithArgs(
+					int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS),
+					int64(9),
+					"EX-CAPACITY",
+				).
+				WillReturnRows(sqlmock.NewRows([]string{"complete"}).AddRow(testCase.complete))
+
+			model := &customTOptionAssetInstructionModel{
+				defaultTOptionAssetInstructionModel: &defaultTOptionAssetInstructionModel{
+					CachedConn: sqlc.NewConnWithCache(sqlx.NewSqlConnFromDB(db), nil),
+					table:      "`t_option_asset_instruction`",
+				},
+			}
+			complete, err := model.AllSucceededByBizNo(context.Background(), 9, "EX-CAPACITY")
+			if err != nil {
+				t.Fatalf("check completion: %v", err)
+			}
+			if complete != testCase.complete {
+				t.Fatalf("complete=%v want=%v", complete, testCase.complete)
+			}
+			if err := mock.ExpectationsWereMet(); err != nil {
+				t.Fatal(err)
+			}
+		})
 	}
 }
 

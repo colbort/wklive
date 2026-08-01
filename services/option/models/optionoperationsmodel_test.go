@@ -6,8 +6,119 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
+
+func TestOptionPortfolioLiquidationMetricsExposeDuplicateEvidenceAndCancelStreak(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("sqlmock.New: %v", err)
+	}
+	defer db.Close()
+	conn := sqlx.NewSqlConnFromDB(db)
+
+	mock.ExpectQuery("(?s)liquidation\\.liquidation_scope=2.*liquidation\\.status IN \\(1,2,4,6\\).*HAVING COUNT\\(1\\)>1.*duplicate_wallets").
+		WillReturnRows(sqlmock.NewRows([]string{"tenant_id", "count", "oldest"}).
+			AddRow(9, 2, 700))
+	mock.ExpectQuery("(?s)liquidation_scope=2 AND.*portfolio_maintenance_before<=portfolio_maintenance_after.*portfolio_collateral_after<portfolio_initial_after").
+		WillReturnRows(sqlmock.NewRows([]string{"tenant_id", "count", "oldest"}).
+			AddRow(9, 1, 710))
+	mock.ExpectQuery("(?s)ROW_NUMBER\\(\\) OVER.*sequence_no<=3.*COUNT\\(1\\)=3.*status=7.*cancellation_streaks").
+		WillReturnRows(sqlmock.NewRows([]string{"tenant_id", "count", "oldest"}).
+			AddRow(9, 1, 720))
+
+	metrics, err := queryOptionPortfolioLiquidationMetricsByTenant(context.Background(), conn)
+	if err != nil {
+		t.Fatalf("query portfolio liquidation metrics: %v", err)
+	}
+	assertOperationsMetric(t, metrics, 9, "portfolio_liquidation_duplicate_open", 2, 700)
+	assertOperationsMetric(t, metrics, 9, "portfolio_liquidation_evidence_invalid", 1, 710)
+	assertOperationsMetric(t, metrics, 9, "portfolio_liquidation_cancel_streak", 1, 720)
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Fatalf("unmet SQL expectations: %v", err)
+	}
+}
+
+func TestOptionInsuranceTakeoverMetricsExposeRiskWithoutDoubleCountingLots(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("sqlmock.New: %v", err)
+	}
+	defer db.Close()
+	conn := sqlx.NewSqlConnFromDB(db)
+
+	mock.ExpectQuery("(?s)SELECT position\\.tenant_id,COUNT\\(1\\) count,.*MIN\\(lot\\.create_times\\).*EXISTS.*lot\\.trade_id<0.*GROUP BY position\\.tenant_id").
+		WillReturnRows(sqlmock.NewRows([]string{"tenant_id", "count", "oldest"}).
+			AddRow(9, 2, 700))
+	mock.ExpectQuery("(?s)MIN\\(contract\\.expire_time\\).*contract\\.expire_time<=\\?.*EXISTS.*lot\\.trade_id<0").
+		WithArgs(int64(87400)).
+		WillReturnRows(sqlmock.NewRows([]string{"tenant_id", "count", "oldest"}).
+			AddRow(9, 1, 50000))
+	mock.ExpectQuery("(?s)LEFT JOIN t_option_market market.*market\\.id IS NULL.*contract\\.greeks_max_age_seconds<=0").
+		WithArgs(int64(970), int64(1000), int64(970), int64(1000), int64(1000), int64(1000)).
+		WillReturnRows(sqlmock.NewRows([]string{"tenant_id", "count", "oldest"}).
+			AddRow(9, 1, 800))
+
+	metrics, err := queryOptionInsuranceInventoryMetricsByTenant(
+		context.Background(), conn, 1000,
+	)
+	if err != nil {
+		t.Fatalf("query insurance inventory metrics: %v", err)
+	}
+	assertOperationsMetric(t, metrics, 9, "insurance_takeover_inventory", 2, 700)
+	assertOperationsMetric(t, metrics, 9, "insurance_takeover_expiry_due", 1, 50000)
+	assertOperationsMetric(t, metrics, 9, "insurance_takeover_market_invalid", 1, 800)
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Fatalf("unmet SQL expectations: %v", err)
+	}
+}
+
+func TestOptionInsuranceTakeoverAmountsUseUnderlyingAndMarketDimensions(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("sqlmock.New: %v", err)
+	}
+	defer db.Close()
+	conn := sqlx.NewSqlConnFromDB(db)
+
+	mock.ExpectQuery("(?s)contract\\.underlying_coin coin.*SUM\\(position\\.position_qty\\*contract\\.multiplier\\).*EXISTS.*lot\\.trade_id<0").
+		WillReturnRows(sqlmock.NewRows([]string{"tenant_id", "coin", "amount"}).
+			AddRow(9, "BTC", "0.2"))
+	mock.ExpectQuery("(?s)contract\\.settle_coin coin.*SUM\\(market\\.mark_price\\*position\\.position_qty\\*contract\\.multiplier\\).*EXISTS.*lot\\.trade_id<0").
+		WillReturnRows(sqlmock.NewRows([]string{"tenant_id", "coin", "amount"}).
+			AddRow(9, "USDT", "42.5"))
+	mock.ExpectQuery("(?s)contract\\.underlying_coin coin.*SUM\\(ABS\\(market\\.delta\\)\\*position\\.position_qty\\*contract\\.multiplier\\).*EXISTS.*lot\\.trade_id<0").
+		WillReturnRows(sqlmock.NewRows([]string{"tenant_id", "coin", "amount"}).
+			AddRow(9, "BTC", "0.11"))
+
+	amounts, err := queryOptionInsuranceInventoryAmounts(context.Background(), conn)
+	if err != nil {
+		t.Fatalf("query insurance inventory amounts: %v", err)
+	}
+	want := []struct {
+		category string
+		coin     string
+		amount   string
+	}{
+		{"insurance_takeover_underlying_quantity", "BTC", "0.2"},
+		{"insurance_takeover_mark_value", "USDT", "42.5"},
+		{"insurance_takeover_abs_delta", "BTC", "0.11"},
+	}
+	if len(amounts) != len(want) {
+		t.Fatalf("amounts=%+v want=%+v", amounts, want)
+	}
+	for index, expected := range want {
+		item := amounts[index]
+		if item.TenantID != 9 || item.Category != expected.category || item.Coin != expected.coin ||
+			!item.Amount.Equal(decimal.RequireFromString(expected.amount)) {
+			t.Fatalf("amount[%d]=%+v want=%+v", index, item, expected)
+		}
+	}
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Fatalf("unmet SQL expectations: %v", err)
+	}
+}
 
 func TestOptionComboOperationsQueriesStayTenantScoped(t *testing.T) {
 	db, mock, err := sqlmock.New()

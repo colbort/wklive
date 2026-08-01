@@ -41,6 +41,7 @@ type (
 		FindPage(ctx context.Context, filter OptionPositionPageFilter, cursor int64, limit int64) ([]*TOptionPosition, int64, error)
 		FindAssignableShortsPage(ctx context.Context, tenantId, contractId, afterCreateTimes, afterId, limit int64) ([]*TOptionPosition, error)
 		FindOneForUpdate(ctx context.Context, id int64) (*TOptionPosition, error)
+		FindOneByTenantIdUserIdAccountIdContractIdSideForUpdate(ctx context.Context, tenantId, userId, accountId, contractId, side int64) (*TOptionPosition, error)
 		SumHoldingQty(ctx context.Context, tenantId, userId, contractId, side int64) (decimal.Decimal, error)
 		CountHoldingByContract(ctx context.Context, tenantId, contractId int64) (int64, error)
 		FindHoldingBatch(ctx context.Context, tenantId, contractId, afterId, limit int64) ([]*TOptionPosition, error)
@@ -149,6 +150,21 @@ func (m *defaultTOptionPositionModel) FindOneForUpdate(ctx context.Context, id i
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1 FOR UPDATE", tOptionPositionRows, m.table)
 	var item TOptionPosition
 	if err := m.QueryRowNoCacheCtx(ctx, &item, query, id); err != nil {
+		return nil, err
+	}
+	return &item, nil
+}
+
+func (m *defaultTOptionPositionModel) FindOneByTenantIdUserIdAccountIdContractIdSideForUpdate(
+	ctx context.Context, tenantId, userId, accountId, contractId, side int64,
+) (*TOptionPosition, error) {
+	query := fmt.Sprintf(`SELECT %s FROM %s
+WHERE tenant_id = ? AND user_id = ? AND account_id = ? AND contract_id = ? AND side = ?
+LIMIT 1 FOR UPDATE`, tOptionPositionRows, m.table)
+	var item TOptionPosition
+	if err := m.QueryRowNoCacheCtx(
+		ctx, &item, query, tenantId, userId, accountId, contractId, side,
+	); err != nil {
 		return nil, err
 	}
 	return &item, nil

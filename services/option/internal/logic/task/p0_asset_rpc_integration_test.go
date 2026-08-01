@@ -43,7 +43,7 @@ func TestP0AssetRPCEndToEnd(t *testing.T) {
 		t.Skip("OPTION_P0_ASSET_E2E_DSN, OPTION_P0_ASSET_E2E_RPC_ADDR and OPTION_P0_ASSET_E2E_REDIS_ADDR are required")
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
@@ -73,6 +73,12 @@ func TestP0AssetRPCEndToEnd(t *testing.T) {
 	t.Run("physical call and put margin coin release", func(t *testing.T) {
 		testP0MarginCoinRelease(t, ctx, db, assetClient, serviceCtx)
 	})
+	t.Run("physical Call Put ordinary order coin lifecycle", func(t *testing.T) {
+		testP0PhysicalOrderCoinLifecycle(t, ctx, db, assetClient, serviceCtx)
+	})
+	t.Run("physical delivery Call Put failure isolation and recovery", func(t *testing.T) {
+		testP1PhysicalDeliveryAssetRPC(t, ctx, db, assetClient, serviceCtx)
+	})
 	t.Run("confirmed settlement price to cash settlement", func(t *testing.T) {
 		testP0CashSettlement(t, ctx, db, assetClient, serviceCtx)
 	})
@@ -87,6 +93,9 @@ func TestP0AssetRPCEndToEnd(t *testing.T) {
 	})
 	t.Run("American early exercise concurrency and FIFO", func(t *testing.T) {
 		testP0AmericanExerciseConcurrencyFIFO(t, ctx, db, assetClient, serviceCtx)
+	})
+	t.Run("American exercise races short close orders", func(t *testing.T) {
+		testP0AmericanExerciseCloseOrderRace(t, ctx, db, assetClient, serviceCtx)
 	})
 	t.Run("expiry AUTO DNE actual assignment", func(t *testing.T) {
 		testP0ExpiryAutoDNEActualAssignment(t, ctx, db, assetClient, serviceCtx)
@@ -105,6 +114,9 @@ func TestP0AssetRPCEndToEnd(t *testing.T) {
 	})
 	t.Run("full order admission to risk accounting", func(t *testing.T) {
 		testP0OrderAdmissionToRiskAccounting(t, ctx, db, assetClient, serviceCtx)
+	})
+	t.Run("wallet restriction propagation and cross-account STP", func(t *testing.T) {
+		testP0WalletRestrictionAndCrossAccountSTP(t, ctx, db, assetClient, serviceCtx)
 	})
 	t.Run("user cancel IOC and FOK funding lifecycle", func(t *testing.T) {
 		testP0OrderCancellationAndImmediateTypes(t, ctx, db, assetClient, serviceCtx)

@@ -204,6 +204,98 @@ groups:
           summary: Option 强平积压超过60秒
           description: tenant_id={{ $labels.tenant_id }}，待处理强平数={{ $value }}。
 
+      - alert: OptionPortfolioLiquidationDuplicateOpen
+        expr: >-
+          wklive_option_operations_count{
+            category="portfolio_liquidation_duplicate_open"
+          } > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A034
+        annotations:
+          summary: Option 同一组合保证金钱包存在多笔未终态清算
+          description: >-
+            tenant_id={{ $labels.tenant_id }}，受影响钱包数={{ $value }}。
+            阻止相关钱包新增风险和后续资金步骤，不得人工选择其中一笔继续。
+
+      - alert: OptionPortfolioLiquidationEvidenceInvalid
+        expr: >-
+          wklive_option_operations_count{
+            category="portfolio_liquidation_evidence_invalid"
+          } > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A034
+        annotations:
+          summary: Option 组合清算风险或抵押证据不满足不变量
+          description: >-
+            tenant_id={{ $labels.tenant_id }}，异常记录数={{ $value }}。
+            停止相关资金步骤并核对不可变证据，禁止修改旧记录绕过门禁。
+
+      - alert: OptionPortfolioLiquidationCancelStreak
+        expr: >-
+          wklive_option_operations_count{
+            category="portfolio_liquidation_cancel_streak"
+          } > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A034
+        annotations:
+          summary: Option 同一组合保证金钱包连续三次清算快照失效
+          description: >-
+            tenant_id={{ $labels.tenant_id }}，连续失效钱包数={{ $value }}。
+            暂停自动重建和新增风险，检查行情、配置、仓位、抵押及任务积压后转人工。
+
+      - alert: OptionInsuranceTakeoverInventoryOpen
+        expr: >-
+          (wklive_option_operations_count{category="insurance_takeover_inventory"} > 0)
+          and
+          (time() - wklive_option_operations_oldest_timestamp_seconds{
+            category="insurance_takeover_inventory"
+          } > 60)
+        for: 1m
+        labels:
+          severity: warning
+          catalog_id: OPT-A035
+        annotations:
+          summary: Option 保险接管库存超过60秒仍未退出
+          description: >-
+            tenant_id={{ $labels.tenant_id }}，接管持仓数={{ $value }}。
+            保持风险可见，禁止递归客户强平；按批准流程主动平仓、对冲或人工升级。
+
+      - alert: OptionInsuranceTakeoverExpiryDue
+        expr: >-
+          wklive_option_operations_count{
+            category="insurance_takeover_expiry_due"
+          } > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A036
+        annotations:
+          summary: Option 保险接管库存已到期或将在24小时内到期
+          description: >-
+            tenant_id={{ $labels.tenant_id }}，临期或已到期接管持仓数={{ $value }}。
+            立即停止新增同方向卖方风险，核对结算批次，并按已批准退出工单处置。
+
+      - alert: OptionInsuranceTakeoverMarketInvalid
+        expr: >-
+          wklive_option_operations_count{
+            category="insurance_takeover_market_invalid"
+          } > 0
+        for: 0m
+        labels:
+          severity: critical
+          catalog_id: OPT-A037
+        annotations:
+          summary: Option 保险接管库存缺少有效标记价、标的价或Greeks
+          description: >-
+            tenant_id={{ $labels.tenant_id }}，无法可靠计量的接管持仓数={{ $value }}。
+            暂停新增卖方风险，不得把缺失风险值按零处理，先恢复并复核行情。
+
       - alert: OptionPhysicalDeliveryException
         expr: >-
           wklive_option_operations_count{

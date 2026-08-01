@@ -25,14 +25,14 @@ var (
 		Namespace: "wklive",
 		Subsystem: "option",
 		Name:      "operations_oldest_timestamp_seconds",
-		Help:      "Oldest current Option operational exception or backlog Unix timestamp.",
+		Help:      "Oldest source timestamp or earliest relevant deadline for the current Option operational condition.",
 		Labels:    []string{"tenant_id", "category"},
 	})
 	optionOperationsAmount gaugeVec = metric.NewGaugeVec(&metric.GaugeVecOpts{
 		Namespace: "wklive",
 		Subsystem: "option",
 		Name:      "operations_amount",
-		Help:      "Current Option raw insurance activity sum (not balance), backstop liability, or unresolved deficit amount.",
+		Help:      "Current Option financial amount or insurance takeover exposure by tenant, category, and currency or underlying coin.",
 		Labels:    []string{"tenant_id", "category", "coin"},
 	})
 	optionOperationsSampleSuccess gaugeVec = metric.NewGaugeVec(&metric.GaugeVecOpts{

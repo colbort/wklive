@@ -144,10 +144,10 @@ operations_rules="$SCRIPT_DIR/option-operations-alert-rules.yml"
 combo_rules="$SCRIPT_DIR/option-alert-rules.yml"
 operations_count=$(alert_count "$operations_rules")
 combo_count=$(alert_count "$combo_rules")
-if [ "$operations_count" -eq 51 ]; then
-  pass "51 Option operations alert rules are present"
+if [ "$operations_count" -eq 57 ]; then
+  pass "57 Option operations alert rules are present"
 else
-  fail "51 Option operations alert rules are present (found $operations_count)"
+  fail "57 Option operations alert rules are present (found $operations_count)"
 fi
 if [ "$combo_count" -eq 4 ]; then
   pass "4 Option combo alert rules are present"
@@ -167,11 +167,37 @@ fi
 
 severity_count=$(awk '$1=="severity:"{count++} END{print count+0}' "$operations_rules" "$combo_rules")
 catalog_count=$(awk '$1=="catalog_id:"{count++} END{print count+0}' "$operations_rules" "$combo_rules")
-if [ "$severity_count" -eq 55 ] && [ "$catalog_count" -eq 55 ]; then
-  pass "all 55 Option alerts declare severity and catalog_id"
+if [ "$severity_count" -eq 61 ] && [ "$catalog_count" -eq 61 ]; then
+  pass "all 61 Option alerts declare severity and catalog_id"
 else
-  fail "all 55 Option alerts declare severity and catalog_id (severity=$severity_count catalog=$catalog_count)"
+  fail "all 61 Option alerts declare severity and catalog_id (severity=$severity_count catalog=$catalog_count)"
 fi
+check_contains "$OPTION_DIR/models/optionoperationsmetricsmodel.go" 'portfolio_liquidation_duplicate_open' \
+  "operations metrics expose duplicate open portfolio liquidations"
+check_contains "$OPTION_DIR/models/optionoperationsmetricsmodel.go" 'portfolio_liquidation_evidence_invalid' \
+  "operations metrics expose invalid portfolio liquidation evidence"
+check_contains "$OPTION_DIR/models/optionoperationsmetricsmodel.go" 'portfolio_liquidation_cancel_streak' \
+  "operations metrics expose consecutive stale portfolio cancellations"
+check_contains "$OPTION_DIR/monitoring/option-operations-alert-rules.yml" 'OptionPortfolioLiquidationDuplicateOpen' \
+  "duplicate open portfolio liquidations trigger a critical alert"
+check_contains "$OPTION_DIR/monitoring/option-operations-alert-rules.yml" 'OptionPortfolioLiquidationEvidenceInvalid' \
+  "invalid portfolio liquidation evidence triggers a critical alert"
+check_contains "$OPTION_DIR/monitoring/option-operations-alert-rules.yml" 'OptionPortfolioLiquidationCancelStreak' \
+  "three stale portfolio cancellations trigger a critical alert"
+check_contains "$OPTION_DIR/models/optionoperationsmetricsmodel.go" 'insurance_takeover_inventory' \
+  "operations metrics expose open insurance takeover inventory"
+check_contains "$OPTION_DIR/models/optionoperationsmetricsmodel.go" 'insurance_takeover_underlying_quantity' \
+  "operations metrics expose insurance takeover underlying quantity"
+check_contains "$OPTION_DIR/models/optionoperationsmetricsmodel.go" 'insurance_takeover_mark_value' \
+  "operations metrics expose insurance takeover marked option value"
+check_contains "$OPTION_DIR/models/optionoperationsmetricsmodel.go" 'insurance_takeover_abs_delta' \
+  "operations metrics expose insurance takeover absolute Delta"
+check_contains "$OPTION_DIR/monitoring/option-operations-alert-rules.yml" 'OptionInsuranceTakeoverInventoryOpen' \
+  "open insurance takeover inventory triggers a dedicated alert"
+check_contains "$OPTION_DIR/monitoring/option-operations-alert-rules.yml" 'OptionInsuranceTakeoverExpiryDue' \
+  "insurance takeover inventory near expiry triggers a critical alert"
+check_contains "$OPTION_DIR/monitoring/option-operations-alert-rules.yml" 'OptionInsuranceTakeoverMarketInvalid' \
+  "unreliable insurance takeover valuation triggers a critical alert"
 
 required_indexes='idx_option_contract_monitor
 idx_option_contract_lifecycle_monitor
@@ -189,9 +215,11 @@ idx_option_contract_series_monitor
 idx_option_mmp_monitor
 idx_option_exercise_monitor
 idx_option_asset_instruction_control_monitor
-idx_option_physical_delivery_monitor'
+idx_option_physical_delivery_monitor
+idx_option_liquidation_portfolio_monitor'
 baseline_migration="$OPTION_DIR/migrations/20260731_zr_option_operations_monitoring_indexes.sql"
 incremental_migration="$OPTION_DIR/migrations/20260731_zs_option_time_sensitive_monitoring_indexes.sql"
+portfolio_liquidation_monitoring_migration="$OPTION_DIR/migrations/20260801_option_portfolio_liquidation_monitoring.sql"
 baseline_sha256=$(sha256_file "$baseline_migration") || baseline_sha256=""
 if [ "$baseline_sha256" = "5a0614ceed65d6c17259b49c3e1958f52960b19a1378229a75d28e5812739942" ]; then
   pass "recorded 20260731_zr monitoring migration checksum is unchanged"
@@ -205,6 +233,9 @@ for index_name in $required_indexes; do
     idx_option_exercise_monitor|idx_option_asset_instruction_control_monitor|idx_option_physical_delivery_monitor)
       migration_file="$incremental_migration"
       ;;
+    idx_option_liquidation_portfolio_monitor)
+      migration_file="$portfolio_liquidation_monitoring_migration"
+      ;;
   esac
   if ! grep -q "$index_name" $OPTION_SCHEMA_FILES ||
      ! grep -q "$index_name" "$migration_file"; then
@@ -213,7 +244,7 @@ for index_name in $required_indexes; do
   fi
 done
 if [ "$index_ok" = "true" ]; then
-  pass "all 17 Option monitoring indexes exist in schema and migration"
+  pass "all 18 Option monitoring indexes exist in schema and migration"
 fi
 
 daily_reconciliation_migration="$OPTION_DIR/migrations/20260731_zt_option_daily_reconciliation_run.sql"
@@ -287,8 +318,22 @@ check_contains "$OPTION_DIR/models/toptionpositionmodel.go" 'FindAssignableShort
   "American assignment model exposes bounded candidate pages"
 check_contains "$OPTION_DIR/models/toptionpositionmodel.go" 'create_times > [?].*create_times = [?].*id > [?]' \
   "American assignment model uses a stable FIFO keyset cursor"
+check_contains "$OPTION_DIR/models/toptionpositionmodel.go" 'FindOneByTenantIdUserIdAccountIdContractIdSideForUpdate' \
+  "position model exposes a scoped locking read for close-order mutations"
+check_contains "$OPTION_DIR/models/toptionpositionmodel.go" 'LIMIT 1 FOR UPDATE' \
+  "scoped position mutation read takes a database row lock"
+check_contains "$OPTION_DIR/internal/logic/app/option_business_helpers.go" 'FindOneByTenantIdUserIdAccountIdContractIdSideForUpdate' \
+  "public close-order freeze and release use the position row lock"
+check_contains "$OPTION_DIR/internal/logic/task/option_business_helpers.go" 'FindOneByTenantIdUserIdAccountIdContractIdSideForUpdate' \
+  "assignment-side close-order release uses the position row lock"
 check_contains "$OPTION_DIR/internal/logic/task/processexerciseslogic.go" 'const assignmentPageSize int64 = 500' \
   "American assignment processing bounds each FIFO candidate page"
+check_contains "$OPTION_DIR/models/toptionassetinstructionmodel.go" 'AllSucceededByBizNo' \
+  "American assignment completion uses an aggregate asset-instruction barrier"
+check_contains "$OPTION_DIR/internal/logic/task/processassetinstructionslogic.go" 'AllSucceededByBizNo' \
+  "American assignment completion avoids reloading every instruction per success"
+check_contains "$OPTION_DIR/internal/logic/task/processassetinstructionslogic.go" 'item[.]StepNo < 2' \
+  "American assignment only evaluates its full completion barrier on terminal steps"
 check_contains "$OPTION_DIR/internal/logic/app/exerciselogic.go" 'allowsExerciseSubmission[(]currentContract[.]Status[)]' \
   "American exercise rechecks the listed lifecycle under a contract lock"
 check_contains "$OPTION_DIR/internal/logic/app/setexerciseinstructionlogic.go" 'allowsExerciseSubmission[(]currentContract[.]Status[)]' \
@@ -337,12 +382,58 @@ check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'TestP0AssetRPCE
   "Option repository provides a repeatable real Asset RPC P0 gate"
 check_contains "$OPTION_DIR/internal/logic/task/p0_asset_rpc_integration_test.go" 'testP0MarginCoinRelease' \
   "real Asset RPC gate covers physical Call and Put collateral release"
+physical_order_coin_test="$OPTION_DIR/internal/logic/task/p0_physical_order_coin_rpc_integration_test.go"
+check_contains "$OPTION_DIR/internal/logic/task/p0_asset_rpc_integration_test.go" 'physical Call Put ordinary order coin lifecycle' \
+  "real Asset RPC gate invokes the physical order coin lifecycle"
+check_contains "$physical_order_coin_test" 'ORDER_TYPE_LIMIT' \
+  "physical order coin gate covers LIMIT"
+check_contains "$physical_order_coin_test" 'ORDER_TYPE_MARKET' \
+  "physical order coin gate covers MARKET"
+check_contains "$physical_order_coin_test" 'ORDER_TYPE_POST_ONLY' \
+  "physical order coin gate covers POST_ONLY"
+check_contains "$physical_order_coin_test" 'ORDER_TYPE_IOC' \
+  "physical order coin gate covers IOC"
+check_contains "$physical_order_coin_test" 'ORDER_TYPE_FOK' \
+  "physical order coin gate covers FOK"
+check_contains "$physical_order_coin_test" 'OPTION_TYPE_CALL' \
+  "physical order coin gate covers Call BTC collateral"
+check_contains "$physical_order_coin_test" 'OPTION_TYPE_PUT' \
+  "physical order coin gate covers Put USDT collateral"
+check_contains "$physical_order_coin_test" 'cancelOptionSystemOrder' \
+  "physical order coin gate covers liquidation-side order release"
+check_contains "$physical_order_coin_test" 'NewForceCancelContractOrdersLogic' \
+  "physical order coin gate covers governed admin force cancel"
+check_contains "$physical_order_coin_test" 'expireContractOrders' \
+  "physical order coin gate covers expiry release"
+check_contains "$physical_order_coin_test" 'wrongCoins != 0' \
+  "physical order coin gate rejects any release in the wrong coin"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'physical_order_coin=' \
+  "real Asset RPC gate reports physical order coin evidence"
 check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" '20260731_zx_option_margin_coin_evidence.sql' \
   "real Asset RPC gate installs the collateral-coin database guards"
 check_contains "$OPTION_DIR/internal/logic/task/p0_asset_rpc_integration_test.go" 'testP0CashSettlement' \
   "real Asset RPC gate covers confirmed-price cash settlement"
 check_contains "$OPTION_DIR/internal/logic/task/p0_asset_rpc_integration_test.go" 'assertP0SettlementAssetConservation' \
   "cash settlement gate proves wallet and Asset-flow conservation"
+cash_expiry_capacity_test="$OPTION_DIR/internal/logic/task/p0_cash_expiry_capacity_rpc_integration_test.go"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'TestP0CashExpiryCapacityAssetRPC' \
+  "repeatable acceptance runs the cash-expiry capacity and economics boundary"
+check_contains "$cash_expiry_capacity_test" 'longCount  = 501' \
+  "cash-expiry capacity gate crosses the 500-position page boundary"
+check_contains "$cash_expiry_capacity_test" 'partialQty := decimal.RequireFromString' \
+  "cash-expiry gate covers a partial contract quantity"
+check_contains "$cash_expiry_capacity_test" 'accountCount != 502' \
+  "cash-expiry gate proves distinct account evidence"
+check_contains "$cash_expiry_capacity_test" 'feeCredits != 501' \
+  "cash-expiry gate proves per-position exercise fees"
+check_contains "$cash_expiry_capacity_test" 'walletTotal != "12000.000000000000000000"' \
+  "cash-expiry gate proves complete wallet conservation"
+check_contains "$OPTION_DIR/internal/logic/task/processcontractlifecyclelogic.go" 'const pageSize int64 = 100' \
+  "cash settlement uses the normalized position-page boundary"
+check_contains "$OPTION_DIR/internal/logic/task/processcontractlifecyclelogic.go" 'cursor, pageSize' \
+  "cash settlement traverses every normalized position page"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'cash_expiry_capacity=501' \
+  "real Asset RPC gate reports cash-expiry capacity evidence"
 check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" '20260731_zy_option_settlement_price_evidence.sql' \
   "real Asset RPC gate installs the settlement-price evidence guards"
 check_contains "$OPTION_DIR/internal/logic/task/p0_asset_rpc_integration_test.go" 'assertMissingPriceBlocksSettlement' \
@@ -388,16 +479,70 @@ check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" '20260730_ze_opt
   "real Asset RPC gate installs immutable trading-control audit guards"
 check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'insufficient_balance_manual_retry_events=' \
   "real Asset RPC gate reports balance-topup manual recovery evidence"
+check_contains "$OPTION_DIR/internal/logic/task/p0_asset_rpc_integration_test.go" 'physical delivery Call Put failure isolation and recovery' \
+  "real Asset RPC gate invokes Call and Put physical delivery acceptance"
+check_contains "$OPTION_DIR/internal/logic/task/p1_physical_delivery_rpc_integration_test.go" 'failOnceSubAvailableClient' \
+  "physical delivery acceptance injects a committed-debit response loss"
+check_contains "$OPTION_DIR/internal/logic/task/p1_physical_delivery_rpc_integration_test.go" 'failOnceDeductFrozenClient' \
+  "physical delivery acceptance injects a committed collateral-debit response loss"
+check_contains "$OPTION_DIR/internal/logic/task/p1_physical_delivery_rpc_integration_test.go" 'expirePhysicalDeliveryUnit' \
+  "physical delivery acceptance exercises cure expiry and default"
+check_contains "$OPTION_DIR/internal/logic/task/p1_physical_delivery_rpc_integration_test.go" 'NewRetryPhysicalDeliveryUnitLogic' \
+  "physical delivery acceptance recovers the original unit through the governed admin entry"
+check_contains "$OPTION_DIR/internal/logic/task/p1_physical_delivery_rpc_integration_test.go" 'const workers = 20' \
+  "physical delivery acceptance races twenty governed admin recovery requests"
+check_contains "$OPTION_DIR/internal/logic/task/p1_physical_delivery_rpc_integration_test.go" 'success != 1 \|\| rejected != workers-1' \
+  "physical delivery acceptance requires exactly one admin recovery winner"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'physical_delivery_contract=' \
+  "real Asset RPC gate reports physical delivery unit and instruction evidence"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'TestP1PhysicalDeliveryProcessKillTakeover' \
+  "repeatable acceptance runs physical delivery process-kill takeover"
+check_contains "$OPTION_DIR/internal/logic/task/p1_physical_delivery_process_kill_rpc_integration_test.go" 'Process.Kill' \
+  "physical delivery process gate sends a real SIGKILL after Asset credit commits"
+check_contains "$OPTION_DIR/internal/logic/task/p1_physical_delivery_process_kill_rpc_integration_test.go" 'waitP0TaskLeaseExpiry' \
+  "physical delivery process gate waits for the killed worker lease to expire naturally"
+check_contains "$OPTION_DIR/internal/logic/task/p1_physical_delivery_process_kill_rpc_integration_test.go" 'remainingStatus.*ASSET_INSTRUCTION_STATUS_PENDING' \
+  "physical delivery process gate proves the remaining credit is blocked before takeover"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'physical_delivery_process_kill=' \
+  "real Asset RPC gate reports physical delivery process-takeover evidence"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'TestP1PhysicalDeliveryCapacityAssetRPC' \
+  "repeatable acceptance runs the 501-unit physical delivery capacity boundary"
+check_contains "$OPTION_DIR/internal/logic/task/p1_physical_delivery_capacity_rpc_integration_test.go" 'p1PhysicalDeliveryCapacityUnits = 501' \
+  "physical delivery capacity gate crosses the 100-position page boundary"
+check_contains "$OPTION_DIR/internal/logic/task/p1_physical_delivery_capacity_rpc_integration_test.go" 'p1PhysicalDeliveryCapacityUnits[*]4' \
+  "physical delivery capacity gate requires all 2004 Asset legs"
+check_contains "$OPTION_DIR/models/toptionassetinstructionmodel.go" 'SummarizeByBizNo' \
+  "settlement completion aggregates instruction progress without loading the full batch"
+check_contains "$OPTION_DIR/models/toptionphysicaldeliveryunitmodel.go" 'FindExceptionByBatch' \
+  "physical settlement finds exceptional units with a bounded query"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'physical_delivery_capacity=' \
+  "real Asset RPC gate reports physical delivery capacity evidence"
 check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" '20260730_zd_option_exercise_governance.sql' \
   "real Asset RPC gate installs exercise-instruction governance guards"
 check_contains "$OPTION_DIR/internal/logic/task/p0_asset_rpc_integration_test.go" 'American early exercise concurrency and FIFO' \
   "real Asset RPC gate invokes concurrent American exercise acceptance"
 check_contains "$OPTION_DIR/internal/logic/task/p0_exercise_rpc_integration_test.go" 'results := make[(]chan exerciseResult, 20[)]' \
   "American exercise acceptance submits twenty concurrent idempotent requests"
+check_contains "$OPTION_DIR/internal/logic/task/p0_asset_rpc_integration_test.go" 'American exercise races short close orders' \
+  "real Asset RPC gate invokes the American assignment versus close-order race"
+check_contains "$OPTION_DIR/internal/logic/task/p0_exercise_close_race_rpc_integration_test.go" 'iteration <= 10' \
+  "American assignment acceptance repeats the concurrent close-order race"
+check_contains "$OPTION_DIR/internal/logic/task/p0_exercise_close_race_rpc_integration_test.go" 'AMERICAN_EXERCISE_ASSIGNMENT' \
+  "American assignment acceptance verifies deterministic close-order cancellation"
+check_contains "$OPTION_DIR/internal/logic/task/p0_assignment_capacity_rpc_integration_test.go" 'shortCount != 501 && shortCount != 5000' \
+  "real Asset RPC gate fixes the 501 and 5000 short capacity boundaries"
+check_contains "$OPTION_DIR/internal/logic/task/p0_assignment_capacity_rpc_integration_test.go" 'processAssetInstructions[(]t, ctx, serviceCtx[)]' \
+  "American capacity gate executes clearing through the real Asset instruction path"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'for capacity_shorts in 501 5000' \
+  "repeatable acceptance runs both American assignment capacity boundaries"
 check_contains "$OPTION_DIR/internal/logic/task/p0_exercise_rpc_integration_test.go" 'testP0ExpiryAutoDNEActualAssignment' \
   "real Asset RPC gate covers mixed AUTO and DNE expiry allocation"
 check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'american_exercise=' \
   "real Asset RPC gate reports American exercise evidence"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'american_exercise_close_race=' \
+  "real Asset RPC gate reports American close-order race evidence"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'american_assignment_capacity=' \
+  "real Asset RPC gate reports American assignment capacity evidence"
 check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'expiry_auto_dne=' \
   "real Asset RPC gate reports AUTO and DNE expiry evidence"
 check_contains "$OPTION_DIR/internal/logic/task/p0_partial_close_rpc_integration_test.go" 'testP0PartialCloseTradeAccounting' \
@@ -427,6 +572,32 @@ check_contains "$order_admission_test" 'ClientOrderId: "P0-ORDER-ADMISSION-BUYER
   "order-admission gate replays the client order identity"
 check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'order_admission=' \
   "real Asset RPC gate reports full order-admission evidence"
+check_contains "$OPTION_DIR/internal/logic/task/p0_asset_rpc_integration_test.go" 'wallet restriction propagation and cross-account STP' \
+  "real Asset RPC gate invokes wallet restriction propagation and cross-account STP"
+check_contains "$OPTION_DIR/internal/logic/task/p0_wallet_scope_stp_rpc_integration_test.go" '7101' \
+  "wallet restriction gate checks the first business account"
+check_contains "$OPTION_DIR/internal/logic/task/p0_wallet_scope_stp_rpc_integration_test.go" '7102' \
+  "wallet restriction gate checks a second business account"
+check_contains "$OPTION_DIR/internal/logic/task/p0_wallet_scope_stp_rpc_integration_test.go" 'seller[.]AccountId == buyer[.]AccountId' \
+  "cross-account STP gate proves the maker and taker use different accounts"
+check_contains "$OPTION_DIR/internal/logic/task/p0_wallet_scope_stp_rpc_integration_test.go" 'SELF_TRADE_PREVENTED' \
+  "cross-account STP gate requires cancel-taker evidence"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'wallet_scope_restriction=' \
+  "real Asset RPC gate reports wallet-level restriction evidence"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'cross_account_stp=' \
+  "real Asset RPC gate reports cross-account STP evidence"
+check_contains "$OPTION_DIR/internal/logic/task/p0_wallet_scope_stp_rpc_integration_test.go" 'sync[.]WaitGroup' \
+  "portfolio admission gate starts concurrent cross-account orders"
+check_contains "$OPTION_DIR/internal/logic/task/p0_wallet_scope_stp_rpc_integration_test.go" 'AccountId: 8301' \
+  "portfolio admission gate uses the first business account"
+check_contains "$OPTION_DIR/internal/logic/task/p0_wallet_scope_stp_rpc_integration_test.go" 'AccountId: 8302' \
+  "portfolio admission gate uses a second business account"
+check_contains "$OPTION_DIR/internal/logic/task/p0_wallet_scope_stp_rpc_integration_test.go" 'riskAccounts != 1 \|\| walletAccounts != 1' \
+  "portfolio admission gate requires one wallet-scope risk lock"
+check_contains "$OPTION_DIR/internal/logic/task/p0_wallet_scope_stp_rpc_integration_test.go" 'margin[.]Equal[(]expectedMargin[)]' \
+  "portfolio admission gate matches aggregate governed risk"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'portfolio_cross_account_concurrency=' \
+  "real Asset RPC gate reports concurrent cross-account portfolio evidence"
 order_cancel_test="$OPTION_DIR/internal/logic/task/p0_order_cancel_rpc_integration_test.go"
 check_contains "$OPTION_DIR/internal/logic/task/p0_asset_rpc_integration_test.go" 'user cancel IOC and FOK funding lifecycle' \
   "real Asset RPC gate invokes user-cancel and immediate-order scenarios"
@@ -552,6 +723,12 @@ check_contains "$portfolio_liquidation_migration" 'status.*IN [(]1,2,3,4,5,6,7[)
   "portfolio liquidation migration upgrades the CANCELED status constraint"
 check_contains "$OPTION_DIR/internal/logic/task/processriskaccountslogic.go" 'selectPortfolioLiquidationCandidate' \
   "risk scan deterministically selects a risk-reducing portfolio position"
+check_contains "$OPTION_DIR/internal/logic/task/processriskaccountslogic.go" 'selectPortfolioLiquidationQuantity' \
+  "portfolio liquidation selects quantity with the governed scenario model"
+check_contains "$OPTION_DIR/internal/logic/task/processriskaccountslogic.go" 'equityAfter[.]GreaterThan[(]maintenanceAfterTotal[)]' \
+  "portfolio partial liquidation strictly restores wallet maintenance health"
+check_not_contains "$OPTION_DIR/internal/logic/task/processliquidationslogic.go" 'partial portfolio liquidation is not supported' \
+  "portfolio liquidation execution accepts a governed partial quantity"
 check_contains "$OPTION_DIR/internal/logic/task/processriskaccountslogic.go" 'collateralAfter[.]LessThan[(]initialAfter[.]Requirement[)]' \
   "portfolio liquidation creation protects residual initial requirement"
 check_contains "$OPTION_DIR/internal/logic/task/processliquidationslogic.go" 'errPortfolioLiquidationSnapshotStale' \
@@ -574,6 +751,8 @@ check_contains "$OPTION_DIR/internal/logic/task/p0_liquidation_rpc_integration_t
   "real Asset RPC gate covers sequential portfolio liquidation"
 check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'portfolio_liquidation_sequential=' \
   "real Asset RPC gate reports sequential portfolio-liquidation evidence"
+check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'portfolio_partial_liquidation=' \
+  "real Asset RPC gate reports portfolio partial-liquidation evidence"
 check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'portfolio_liquidation_recovery_cancel=' \
   "real Asset RPC gate reports wallet-recovery cancellation evidence"
 check_contains "$OPTION_DIR/docs/templates/option-exercise-expiry-control-record.md" '空头 gross 扣款 = 多头净入账 [+] 行权费' \
@@ -596,6 +775,27 @@ check_contains "$OPTION_DIR/internal/logic/helpers/settlement_price_evidence.go"
   "settlement price evidence enforces independent confirmation"
 check_contains "$OPTION_DIR/models/optionoperationsmetricsmodel.go" "price_source=BINARY 'manual-correction'" \
   "operations metrics recognize governed manual settlement corrections"
+
+beanstalk_readiness="$REPO_ROOT/deploy/beanstalk-readiness.sh"
+beanstalk_resilience="$REPO_ROOT/deploy/beanstalk-resilience-smoke.sh"
+if [ -x "$beanstalk_resilience" ]; then
+  pass "repository provides the executable isolated Beanstalkd resilience gate"
+else
+  fail "repository provides the executable isolated Beanstalkd resilience gate"
+fi
+if [ ! -x "$beanstalk_readiness" ]; then
+  fail "repository provides the executable native Beanstalkd readiness gate"
+elif [ "$MODE" = "repository" ]; then
+  if "$beanstalk_readiness" --repository-only >/dev/null; then
+    pass "repository Beanstalkd image, WAL and resilience artifacts are pinned and guarded"
+  else
+    fail "repository Beanstalkd image, WAL and resilience artifacts are pinned and guarded"
+  fi
+elif "$beanstalk_readiness" >/dev/null; then
+  pass "production Beanstalkd instances are healthy and match the host architecture"
+else
+  fail "production Beanstalkd instances are healthy and match the host architecture"
+fi
 
 if command -v promtool >/dev/null 2>&1; then
   if promtool check rules "$operations_rules" "$combo_rules" >/dev/null; then

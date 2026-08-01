@@ -242,8 +242,8 @@ func (l *ProcessLiquidationsLogic) buildLiquidationPlan(liq *models.TOptionLiqui
 	}
 	quantity := liq.Quantity
 	if contract.SellerMarginMode == int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) {
-		if !quantity.Equal(position.PositionQty) {
-			return nil, errors.New("partial portfolio liquidation is not supported")
+		if !contract.QtyStep.IsPositive() || !quantity.Mod(contract.QtyStep).IsZero() {
+			return nil, errors.New("portfolio liquidation quantity does not match contract step")
 		}
 		return l.buildPortfolioLiquidationPlan(liq, contract, position)
 	}
@@ -365,14 +365,15 @@ func (l *ProcessLiquidationsLogic) buildPortfolioLiquidationPlan(
 	}
 	if selected == nil || selected.position.Side != int64(common.PositionSide_POSITION_SIDE_SHORT) ||
 		selected.contract.SellerMarginMode != int64(option.SellerMarginMode_SELLER_MARGIN_MODE_PORTFOLIO) ||
-		!selected.position.PositionQty.Equal(liq.Quantity) {
+		selected.position.PositionQty.LessThan(liq.Quantity) ||
+		!selected.contract.QtyStep.IsPositive() || !liq.Quantity.Mod(selected.contract.QtyStep).IsZero() {
 		return nil, stale("selected portfolio position changed")
 	}
 	residualLegs := make([]optionrisk.PortfolioLeg, 0, len(legs))
 	for contractID, original := range legs {
 		leg := original
 		if contractID == selected.contract.Id {
-			leg.ShortQuantity = leg.ShortQuantity.Sub(selected.position.PositionQty)
+			leg.ShortQuantity = leg.ShortQuantity.Sub(liq.Quantity)
 			if leg.ShortQuantity.IsNegative() {
 				return nil, stale("selected portfolio quantity exceeds current short leg")
 			}

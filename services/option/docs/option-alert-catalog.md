@@ -43,7 +43,10 @@
 | OPT-A031 | SEV-1 | 最近钱包镜像核对有差异或执行失败；超过36小时没有成功心跳 | 保持真实资金门禁关闭；按原租户范围补跑 | 值班、Option 技术、清算、Asset | 单条一致性 SQL、不可变 attempt、`ACCOUNT_MIRROR:{coin}` 案件、成功/差异/失败/缺失指标及规则已实现；生产调度、抓取和通知待验收 |
 | OPT-A032 | SEV-1 | 正余额订单或保证金批次的冻结币种缺失/不符合合约，或活动资产指令币种为空 | 停止相关业务号资金处理；禁止以手续费币种或结算币猜测，按原冻结业务号核对 Asset 后人工处置 | 值班、Option 技术、清算、Asset、风控 | 确定性历史回填、新写入触发器、模型 fail-closed、租户级指标和规则已实现；无法关联合约的遗留记录及生产通知待人工处理/接入 |
 | OPT-A033 | SEV-1 | Asset 中同一租户、`option` 业务类型、场景和非空业务号对应多条冻结记录 | 立即停止相关业务号后续资金步骤；不得自动选取、合并、删除冻结或更换业务号 | 值班、Option 技术、Asset、清算、风控、合规 | 运行时重放 fail-closed、唯一历史证据补幂等账、重复键租户水位及规则已实现；生产历史数据清点、通知与逐笔处置待验收 |
-| OPT-A034 | SEV-1 | 同钱包/币种存在多笔未终态组合清算；组合清算风险未下降、实际剩余抵押低于触发/当前初始要求较大值、证据缺失/被改写，或同钱包连续3次失效取消 | 阻止该钱包新增风险和后续资金步骤；保留旧记录，不得手工改回待处理；核对当前权益、行情、仓位、配置、抵押和前序指令后用新快照重建或转人工 | 值班、Option 技术、风控、清算、Asset、合规 | 应用/数据库不可变门禁、执行前动态风险复核、事务内抵押底线、真实RPC行情变化顺序清算和运行手册已实现；租户指标、Prometheus规则、生产通知与连续失效演练待实现 |
+| OPT-A034 | SEV-1 | 同钱包/币种存在多笔未终态组合清算；组合清算风险未下降、抵押/配置证据不满足不变量，或同钱包最近3笔均为快照失效取消 | 阻止该钱包新增风险和后续资金步骤；连续3次取消后停止自动重建；保留旧记录，不得手工改回待处理；核对当前权益、行情、仓位、配置、抵押和前序指令后用新快照重建或转人工 | 值班、Option 技术、风控、清算、Asset、合规 | 应用/数据库不可变门禁、执行前动态风险复核、事务内抵押底线、真实RPC行情变化顺序清算和运行手册已实现；重复未终态钱包、存量证据异常和最近3次取消的租户指标及3条规则已实现；生产通知与真实连续失效演练待验收 |
+| OPT-A035 | SEV-2 | 已完成强平产生的保险接管空头持仓超过60秒仍为`HOLDING`且数量大于0 | 保持库存风险可见；禁止重新进入客户强平并向同一保险账户循环转账；超过批准水位时暂停新增卖方风险 | 值班、风控、清算、保险资金运营、Option 技术 | 保险账户识别、递归强平隔离、租户级持仓数/最早接管时间、标的数量、标记价值和绝对 Delta 指标已实现；逐合约限额、主动平仓/对冲及生产通知待批准和验收 |
+| OPT-A036 | SEV-1 | 保险接管库存已经到期或将在24小时内到期 | 立即停止新增同方向卖方风险；核对到期/结算批次；仅按已批准工单退出或对冲 | 值班、风控、清算、保险资金运营、Option 技术 | 租户级临期/已到期持仓数和最早到期时间、规则已实现；生产通知、逐合约提前量和退出执行待批准和验收 |
+| OPT-A037 | SEV-1 | 保险接管库存缺少有效标记价/标的价，行情超过30秒或来自未来，或 Greeks 未配置、缺失、超逐合约批准时效 | 暂停新增卖方风险；禁止把缺失风险值按零处理；先恢复并复核行情 | 值班、行情、风控、保险资金运营、Option 技术 | 租户级无效计量持仓数和规则已实现；生产通知和故障演练待验收 |
 
 ## 3. 最低 SQL 检测口径
 
@@ -68,6 +71,68 @@ HAVING COUNT(*)>1;
 SELECT tenant_id, settle_coin, status, COUNT(*) AS cnt, MIN(last_calc_time) AS oldest
 FROM t_option_risk_account
 GROUP BY tenant_id, settle_coin, status;
+
+-- 同钱包/结算币重复未终态组合清算；正常结果必须为0行
+SELECT l.tenant_id,l.user_id,c.settle_coin,COUNT(*) AS open_count,MIN(l.create_times) AS oldest
+FROM t_option_liquidation l
+JOIN t_option_contract c ON c.tenant_id=l.tenant_id AND c.id=l.contract_id
+WHERE l.liquidation_scope=2 AND l.status IN (1,2,4,6)
+GROUP BY l.tenant_id,l.user_id,c.settle_coin
+HAVING COUNT(*)>1;
+
+-- 存量组合清算证据不满足代码及数据库不变量；正常结果必须为0行
+SELECT tenant_id,id,liquidation_no,create_times
+FROM t_option_liquidation
+WHERE liquidation_scope=2 AND (
+  account_id<>0 OR portfolio_risk_config_id<=0 OR portfolio_risk_config_version<=0
+  OR portfolio_maintenance_before<=portfolio_maintenance_after
+  OR portfolio_maintenance_after<0 OR portfolio_initial_after<0
+  OR portfolio_collateral_before<portfolio_collateral_after
+  OR portfolio_collateral_after<portfolio_initial_after
+);
+
+-- 同钱包最近三笔组合清算均为快照失效取消；命中后停止自动重建并转人工
+WITH ranked AS (
+  SELECT l.tenant_id,l.user_id,c.settle_coin,l.status,l.update_times,
+         ROW_NUMBER() OVER (
+           PARTITION BY l.tenant_id,l.user_id,c.settle_coin ORDER BY l.id DESC
+         ) AS sequence_no
+  FROM t_option_liquidation l
+  JOIN t_option_contract c ON c.tenant_id=l.tenant_id AND c.id=l.contract_id
+  WHERE l.liquidation_scope=2
+)
+SELECT tenant_id,user_id,settle_coin,MIN(update_times) AS oldest
+FROM ranked
+WHERE sequence_no<=3
+GROUP BY tenant_id,user_id,settle_coin
+HAVING COUNT(*)=3 AND SUM(CASE WHEN status=7 THEN 1 ELSE 0 END)=3;
+
+-- 尚未退出的保险接管库存；EXISTS避免一个仓位的多笔接管lot重复计数；不得重新送入客户强平
+SELECT p.tenant_id, COUNT(*) AS position_count,
+       MIN((SELECT MIN(l.create_times) FROM t_option_margin_lot l
+            WHERE l.tenant_id=p.tenant_id AND l.position_id=p.id AND l.trade_id<0)) AS oldest
+FROM t_option_position p FORCE INDEX (idx_option_position_monitor)
+JOIN t_option_contract c
+  ON c.tenant_id=p.tenant_id AND c.id=p.contract_id
+ AND c.insurance_user_id=p.user_id AND c.insurance_account_id=p.account_id
+WHERE p.status=1 AND p.side=2 AND p.position_qty>0
+  AND EXISTS (SELECT 1 FROM t_option_margin_lot l
+              WHERE l.tenant_id=p.tenant_id AND l.position_id=p.id AND l.trade_id<0)
+GROUP BY p.tenant_id;
+
+-- 接管仓按标的币种的数量和绝对Delta；标记价值同理按结算币种汇总。
+-- 任何行情无效必须同时触发OPT-A037，不得把缺失Delta解释为零风险。
+SELECT p.tenant_id, c.underlying_coin,
+       SUM(p.position_qty*c.multiplier) AS underlying_quantity,
+       SUM(ABS(m.delta)*p.position_qty*c.multiplier) AS absolute_delta
+FROM t_option_position p
+JOIN t_option_contract c ON c.tenant_id=p.tenant_id AND c.id=p.contract_id
+JOIN t_option_market m ON m.tenant_id=p.tenant_id AND m.contract_id=p.contract_id
+WHERE p.status=1 AND p.side=2 AND p.position_qty>0
+  AND c.insurance_user_id=p.user_id AND c.insurance_account_id=p.account_id
+  AND EXISTS (SELECT 1 FROM t_option_margin_lot l
+              WHERE l.tenant_id=p.tenant_id AND l.position_id=p.id AND l.trade_id<0)
+GROUP BY p.tenant_id,c.underlying_coin;
 
 -- 主动行权积压
 SELECT tenant_id, contract_id, COUNT(*) AS cnt, MIN(exercise_time) AS oldest
@@ -230,22 +295,25 @@ Option 任务进程每15秒至多执行一次固定组数的租户聚合查询�
 `:9105/metrics` 暴露通用运营指标：
 
 - `wklive_option_operations_count{tenant_id,category}`：异常/积压数量；
-- `wklive_option_operations_oldest_timestamp_seconds{tenant_id,category}`：最早异常 Unix 秒；
+- `wklive_option_operations_oldest_timestamp_seconds{tenant_id,category}`：最早来源时间或最近相关截止时间 Unix 秒；
 - `wklive_option_operations_amount{tenant_id,category,coin}`：保险原始流水代数和（非余额）、
-  兜底负债和未解决缺口金额；保险缺口赔付符号修复获批前，不得把该保险类别解释为净变化；
+  兜底负债、未解决缺口，以及保险接管标的数量、标记价值和绝对 Delta；保险缺口赔付符号修复
+  获批前，不得把该保险类别解释为净变化；接管风险行情失效时不得把缺失暴露解释为零；
 - `wklive_option_operations_sample_success`、`wklive_option_operations_last_success_timestamp_seconds`
   和 `wklive_option_operations_sample_failure_total{stage}`：采样健康度。
 
 采样失败会保留最后一次成功业务序列，同时把 `sample_success` 置0；成功恢复时对上次存在、本次消失的
 标签显式写0。不得把 SQL 失败或序列消失解释为业务恢复。通用规则见
 `monitoring/option-operations-alert-rules.yml`，覆盖 OPT-A001～A009/A012～A015/
-A017～A029/A031。OPT-A003 在数据库按各交易态合约的批准阈值判断，不把阈值放入标签。
+A017～A029/A031～A037。OPT-A003 在数据库按各交易态合约的批准阈值判断，不把阈值放入标签。
 交易控制/MMP 只输出租户和固定类别：阈值聚合在数据库按
 用户/合约/组计算，具体身份从不可变审计与工作台下钻，禁止作为 Prometheus 标签。
 价格带比例使用每次交易控制评估的不可变事实作为分母；保险流水符号冲突须经财务/清算批准后迁移。
 既有时间窗口查询索引由 `20260731_zr_option_operations_monitoring_indexes.sql` 安装；
 近到期行权、kill switch 释放失败和实物逾期索引由不可覆盖的增量迁移
 `20260731_zs_option_time_sensitive_monitoring_indexes.sql` 安装。
+组合清算重复未终态、证据不变量和最近三次取消查询的覆盖索引由增量迁移
+`20260801_option_portfolio_liquidation_monitoring.sql` 安装。
 日终钱包镜像 attempt 和心跳表由 `20260731_zt_option_daily_reconciliation_run.sql` 安装；
 System 每小时按 UTC 业务日补跑，出现首个成功后当日跳过，显式 tenant 调用仍可生成新 attempt。
 

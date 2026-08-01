@@ -752,7 +752,7 @@ func (l *ProcessRiskAccountsLogic) ensurePortfolioLiquidation(
 	if pending {
 		return nil
 	}
-	candidate, initialAfter, maintenanceAfter, err := selectPortfolioLiquidationCandidate(group, snapshot)
+	candidate, _, _, err := selectPortfolioLiquidationCandidate(group, snapshot)
 	if err != nil {
 		return err
 	}
@@ -769,7 +769,13 @@ func (l *ProcessRiskAccountsLogic) ensurePortfolioLiquidation(
 		}
 		collateralBefore = collateralBefore.Add(lot.RemainingMargin)
 	}
-	takeoverCost := candidate.market.MarkPrice.Mul(candidate.position.PositionQty).
+	quantity, initialAfter, maintenanceAfter, err := selectPortfolioLiquidationQuantity(
+		candidate, snapshot, equity, maintenanceMargin, collateralBefore,
+	)
+	if err != nil {
+		return err
+	}
+	takeoverCost := candidate.market.MarkPrice.Mul(quantity).
 		Mul(optionMultiplier(candidate.contract)).Round(16)
 	fee := takeoverCost.Mul(candidate.contract.LiquidationFeeRate).Round(16)
 	consumable := decimal.Max(collateralBefore.Sub(initialAfter.Requirement), decimal.Zero)
@@ -784,7 +790,7 @@ func (l *ProcessRiskAccountsLogic) ensurePortfolioLiquidation(
 		TenantId: candidate.position.TenantId, LiquidationNo: liquidationNo,
 		UserId: candidate.position.UserId, AccountId: 0,
 		ContractId: candidate.position.ContractId, PositionId: candidate.position.Id,
-		Quantity: candidate.position.PositionQty, MarkPrice: candidate.market.MarkPrice,
+		Quantity: quantity, MarkPrice: candidate.market.MarkPrice,
 		MaintenanceMargin: snapshot.maintenance.Requirement, Equity: equity,
 		DeficitAmount: deficit, LiquidationFee: fee,
 		Status:                     int64(option.LiquidationStatus_LIQUIDATION_STATUS_PENDING),
@@ -800,6 +806,106 @@ func (l *ProcessRiskAccountsLogic) ensurePortfolioLiquidation(
 		CreateTimes:                now, UpdateTimes: now,
 	})
 	return err
+}
+
+const maxPortfolioLiquidationQuantityEvaluations int64 = 100000
+
+func selectPortfolioLiquidationQuantity(
+	candidate *optionRiskPosition,
+	snapshot *portfolioRiskSnapshot,
+	equity, totalMaintenance, collateralBefore decimal.Decimal,
+) (decimal.Decimal, optionrisk.PortfolioResult, optionrisk.PortfolioResult, error) {
+	if candidate == nil || candidate.position == nil || candidate.contract == nil || snapshot == nil {
+		return decimal.Zero, optionrisk.PortfolioResult{}, optionrisk.PortfolioResult{},
+			errors.New("portfolio liquidation candidate and snapshot are required")
+	}
+	positionQty := candidate.position.PositionQty
+	step := candidate.contract.QtyStep
+	if !positionQty.IsPositive() || !step.IsPositive() || !positionQty.Mod(step).IsZero() {
+		return decimal.Zero, optionrisk.PortfolioResult{}, optionrisk.PortfolioResult{},
+			fmt.Errorf("invalid portfolio liquidation quantity or step for position %d", candidate.position.Id)
+	}
+	stepCount := positionQty.Div(step).IntPart()
+	if stepCount <= 0 || stepCount > maxPortfolioLiquidationQuantityEvaluations {
+		return decimal.Zero, optionrisk.PortfolioResult{}, optionrisk.PortfolioResult{},
+			fmt.Errorf("portfolio liquidation quantity grid for position %d has %d steps; limit is %d",
+				candidate.position.Id, stepCount, maxPortfolioLiquidationQuantityEvaluations)
+	}
+	isolatedMaintenance := totalMaintenance.Sub(snapshot.maintenance.Requirement).Round(16)
+	if isolatedMaintenance.IsNegative() {
+		return decimal.Zero, optionrisk.PortfolioResult{}, optionrisk.PortfolioResult{},
+			errors.New("portfolio maintenance exceeds total wallet maintenance")
+	}
+	var fullInitial optionrisk.PortfolioResult
+	var fullMaintenance optionrisk.PortfolioResult
+	for index := int64(1); index <= stepCount; index++ {
+		quantity := step.Mul(decimal.NewFromInt(index)).Round(16)
+		initialAfter, maintenanceAfter, err := evaluatePortfolioAfterShortReduction(
+			snapshot, candidate, quantity,
+		)
+		if err != nil {
+			return decimal.Zero, optionrisk.PortfolioResult{}, optionrisk.PortfolioResult{}, err
+		}
+		if index == stepCount {
+			fullInitial = initialAfter
+			fullMaintenance = maintenanceAfter
+		}
+		if !snapshot.maintenance.Requirement.GreaterThan(maintenanceAfter.Requirement) ||
+			collateralBefore.LessThan(initialAfter.Requirement) {
+			continue
+		}
+		fee := candidate.market.MarkPrice.Mul(quantity).
+			Mul(optionMultiplier(candidate.contract)).Mul(candidate.contract.LiquidationFeeRate).Round(16)
+		equityAfter := equity.Sub(fee).Round(16)
+		maintenanceAfterTotal := isolatedMaintenance.Add(maintenanceAfter.Requirement).Round(16)
+		if equityAfter.GreaterThan(maintenanceAfterTotal) {
+			return quantity, initialAfter, maintenanceAfter, nil
+		}
+	}
+	if !snapshot.maintenance.Requirement.GreaterThan(fullMaintenance.Requirement) {
+		return decimal.Zero, optionrisk.PortfolioResult{}, optionrisk.PortfolioResult{},
+			errors.New("selected full portfolio position no longer reduces maintenance requirement")
+	}
+	return positionQty, fullInitial, fullMaintenance, nil
+}
+
+func evaluatePortfolioAfterShortReduction(
+	snapshot *portfolioRiskSnapshot,
+	candidate *optionRiskPosition,
+	quantity decimal.Decimal,
+) (optionrisk.PortfolioResult, optionrisk.PortfolioResult, error) {
+	if snapshot == nil || candidate == nil || candidate.position == nil ||
+		!quantity.IsPositive() || quantity.GreaterThan(candidate.position.PositionQty) {
+		return optionrisk.PortfolioResult{}, optionrisk.PortfolioResult{},
+			errors.New("invalid portfolio liquidation reduction quantity")
+	}
+	legs := make([]optionrisk.PortfolioLeg, 0, len(snapshot.legs))
+	matched := false
+	for contractID, original := range snapshot.legs {
+		leg := original
+		if contractID == candidate.contract.Id {
+			matched = true
+			leg.ShortQuantity = leg.ShortQuantity.Sub(quantity)
+			if leg.ShortQuantity.IsNegative() {
+				return optionrisk.PortfolioResult{}, optionrisk.PortfolioResult{},
+					errors.New("portfolio liquidation quantity exceeds current short leg")
+			}
+		}
+		legs = append(legs, leg)
+	}
+	if !matched {
+		return optionrisk.PortfolioResult{}, optionrisk.PortfolioResult{},
+			errors.New("portfolio liquidation contract is absent from risk snapshot")
+	}
+	initialAfter, err := optionrisk.EvaluatePortfolio(legs, false, snapshot.config)
+	if err != nil {
+		return optionrisk.PortfolioResult{}, optionrisk.PortfolioResult{}, err
+	}
+	maintenanceAfter, err := optionrisk.EvaluatePortfolio(legs, true, snapshot.config)
+	if err != nil {
+		return optionrisk.PortfolioResult{}, optionrisk.PortfolioResult{}, err
+	}
+	return initialAfter, maintenanceAfter, nil
 }
 
 func (l *ProcessRiskAccountsLogic) cancelPortfolioRiskOrders(group *optionRiskGroup) (bool, error) {
@@ -848,27 +954,9 @@ func selectPortfolioLiquidationCandidate(
 				item.contract.Status != int64(option.ContractStatus_CONTRACT_STATUS_PAUSED)) {
 			continue
 		}
-		legs := make([]optionrisk.PortfolioLeg, 0, len(snapshot.legs))
-		valid := true
-		for contractID, original := range snapshot.legs {
-			leg := original
-			if contractID == item.contract.Id {
-				leg.ShortQuantity = leg.ShortQuantity.Sub(item.position.PositionQty)
-				if leg.ShortQuantity.IsNegative() {
-					valid = false
-					break
-				}
-			}
-			legs = append(legs, leg)
-		}
-		if !valid {
-			continue
-		}
-		initialAfter, err := optionrisk.EvaluatePortfolio(legs, false, snapshot.config)
-		if err != nil {
-			return nil, optionrisk.PortfolioResult{}, optionrisk.PortfolioResult{}, err
-		}
-		maintenanceAfter, err := optionrisk.EvaluatePortfolio(legs, true, snapshot.config)
+		initialAfter, maintenanceAfter, err := evaluatePortfolioAfterShortReduction(
+			snapshot, item, item.position.PositionQty,
+		)
 		if err != nil {
 			return nil, optionrisk.PortfolioResult{}, optionrisk.PortfolioResult{}, err
 		}

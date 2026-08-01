@@ -1037,6 +1037,7 @@ func findCashSettlementPositions(
 	positionModel models.TOptionPositionModel,
 	contractID int64,
 ) ([]*models.TOptionPosition, error) {
+	const pageSize int64 = 100
 	cursor := int64(0)
 	var result []*models.TOptionPosition
 	for {
@@ -1047,12 +1048,12 @@ func findCashSettlementPositions(
 				int64(option.PositionStatus_POSITION_STATUS_EXERCISED),
 				int64(option.PositionStatus_POSITION_STATUS_EXPIRED),
 			},
-		}, cursor, 500)
+		}, cursor, pageSize)
 		if err != nil {
 			return nil, err
 		}
 		result = append(result, items...)
-		if len(items) < 500 {
+		if int64(len(items)) < pageSize {
 			return result, nil
 		}
 		cursor = items[len(items)-1].Id
@@ -1402,7 +1403,7 @@ func createPhysicalUnitShortDebits(
 	ctx context.Context,
 	instructionModel models.TOptionAssetInstructionModel,
 	marginLotModel models.TOptionMarginLotModel,
-	contract *models.TOptionContract,
+	_ *models.TOptionContract,
 	short *models.TOptionPosition,
 	unitId int64,
 	unitNo, settlementNo string,

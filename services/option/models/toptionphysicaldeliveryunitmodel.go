@@ -28,6 +28,7 @@ type (
 		tOptionPhysicalDeliveryUnitModel
 		FindOneForUpdate(ctx context.Context, id int64) (*TOptionPhysicalDeliveryUnit, error)
 		FindByBatch(ctx context.Context, tenantId, batchId int64) ([]*TOptionPhysicalDeliveryUnit, error)
+		FindExceptionByBatch(ctx context.Context, tenantId, batchId int64) (*TOptionPhysicalDeliveryUnit, error)
 		FindExpiredCure(ctx context.Context, tenantId, now, limit int64) ([]*TOptionPhysicalDeliveryUnit, error)
 		FindPage(ctx context.Context, filter OptionPhysicalDeliveryUnitPageFilter, cursor, limit int64) ([]*TOptionPhysicalDeliveryUnit, int64, error)
 	}
@@ -59,6 +60,23 @@ WHERE tenant_id = ? AND batch_id = ? ORDER BY id`, tOptionPhysicalDeliveryUnitRo
 		return nil, err
 	}
 	return items, nil
+}
+
+func (m *defaultTOptionPhysicalDeliveryUnitModel) FindExceptionByBatch(
+	ctx context.Context, tenantId, batchId int64,
+) (*TOptionPhysicalDeliveryUnit, error) {
+	query := fmt.Sprintf(`SELECT %s FROM %s
+WHERE tenant_id = ? AND batch_id = ? AND status IN (?, ?)
+ORDER BY id LIMIT 1`, tOptionPhysicalDeliveryUnitRows, m.table)
+	var item TOptionPhysicalDeliveryUnit
+	if err := m.QueryRowNoCacheCtx(ctx, &item, query,
+		tenantId, batchId,
+		int64(option.PhysicalDeliveryUnitStatus_PHYSICAL_DELIVERY_UNIT_STATUS_MANUAL_REVIEW),
+		int64(option.PhysicalDeliveryUnitStatus_PHYSICAL_DELIVERY_UNIT_STATUS_DEFAULTED),
+	); err != nil {
+		return nil, err
+	}
+	return &item, nil
 }
 
 func (m *defaultTOptionPhysicalDeliveryUnitModel) FindExpiredCure(

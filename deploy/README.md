@@ -24,6 +24,53 @@ printf '%s\n' '从密钥系统取得的 iTick Token' > secrets/itick_token
 
 首次构建需要下载 Go 模块和容器镜像，耗时会比后续启动长。
 
+两个 Beanstalkd 实例由仓库内 `Dockerfile.beanstalkd` 构建：基础 Alpine 多架构清单使用固定
+digest，Beanstalkd 固定为 `1.13-r0`，Compose 不设置主机专用 `platform`。因此 Apple Silicon
+构建 `linux/arm64`，AMD64 Linux 构建 `linux/amd64`，不会再使用 `schickling/beanstalkd:latest`
+的 AMD64 模拟。两个实例分别使用独立 WAL volume，并以 `-f 0` 在确认任务前同步写盘。启动后执行
+以下门禁，验证协议健康、实际镜像架构和 WAL 挂载：
+
+```bash
+./deploy.sh beanstalk-readiness
+```
+
+只检查仓库配置、不要求容器运行时使用：
+
+```bash
+./beanstalk-readiness.sh --repository-only
+```
+
+在隔离临时容器/volume 中执行重建恢复烟测（不连接运行中的业务队列）：
+
+```bash
+./deploy.sh beanstalk-restart-smoke
+```
+
+烟测写入唯一任务，删除整个临时容器，再使用同一临时 WAL volume 重建并取回原任务，结束后只删除
+名称以 `wklive-beanstalk-restart-smoke-<pid>` 标识的临时容器和 volume。
+
+执行积压、连接中断、`SIGKILL` 和 WAL 恢复容量门禁（同样不连接主/备业务队列）：
+
+```bash
+./deploy.sh beanstalk-resilience-smoke
+```
+
+该门禁默认批量写入 1000 个唯一任务，要求写入速率至少 50 jobs/s；它持有一条阻塞连接后强杀
+临时容器，要求客户端在 10 秒内观察到断开，并使用同一临时 WAL volume 重建，要求 15 秒内恢复协议、
+积压计数和全部任务内容。所有容器、volume、tube 和临时文件都以当前进程号隔离并自动清理。
+仓库默认值仅是开发/CI 烟测下限，不能代替生产容量结论。预生产应按已审批峰值提高任务量、收紧 RTO，
+保存命令、宿主架构、镜像 digest 和完整输出，例如：
+
+```bash
+BEANSTALK_RESILIENCE_JOBS=50000 \
+BEANSTALK_RESILIENCE_MIN_PUT_RATE=500 \
+BEANSTALK_RESILIENCE_MAX_RECOVERY_SECONDS=10 \
+./deploy.sh beanstalk-resilience-smoke
+```
+
+可配置项还包括 `BEANSTALK_RESILIENCE_IMAGE` 和
+`BEANSTALK_RESILIENCE_MAX_DISCONNECT_SECONDS`。任务量上限为 50000，参数必须是正整数。
+
 项目使用 Etcd client `3.7.x`，部署固定使用 Etcd `3.7.1`。不要连接旧的
 Etcd `3.5.x`，否则 go-zero RPC resolver 会报告 `old cluster version`。
 

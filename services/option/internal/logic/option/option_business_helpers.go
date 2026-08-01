@@ -199,7 +199,7 @@ func freezeClosePosition(ctx context.Context, model models.TOptionPositionModel,
 	if side == 0 {
 		return i18n.StatusError(ctx, i18n.ParamError)
 	}
-	pos, err := model.FindOneByTenantIdUserIdAccountIdContractIdSide(ctx, order.TenantId, order.UserId, order.AccountId, order.ContractId, side)
+	pos, err := model.FindOneByTenantIdUserIdAccountIdContractIdSideForUpdate(ctx, order.TenantId, order.UserId, order.AccountId, order.ContractId, side)
 	if err != nil {
 		return err
 	}
@@ -222,7 +222,7 @@ func releaseClosePositionFrozenQty(ctx context.Context, model models.TOptionPosi
 	if side == 0 {
 		return i18n.StatusError(ctx, i18n.ParamError)
 	}
-	pos, err := model.FindOneByTenantIdUserIdAccountIdContractIdSide(ctx, order.TenantId, order.UserId, order.AccountId, order.ContractId, side)
+	pos, err := model.FindOneByTenantIdUserIdAccountIdContractIdSideForUpdate(ctx, order.TenantId, order.UserId, order.AccountId, order.ContractId, side)
 	if err != nil {
 		return err
 	}

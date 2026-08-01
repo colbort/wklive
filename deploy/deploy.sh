@@ -4,6 +4,7 @@ set -eu
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 COMPOSE_FILE="$SCRIPT_DIR/docker-compose.yml"
 BUILD_SERVICES="
+beanstalk-primary
 db-init
 config-seed
 market-rpc
@@ -83,7 +84,7 @@ build_images() {
 }
 
 usage() {
-  echo "usage: $0 {up|start|down|restart|build|logs|ps|disk-check|config|seed|data|merge-data|database|db-upgrade|compose-config|db-init|kafka-init|contract-readiness|option-readiness|contract-delivery-preflight|contract-dr-pitr-smoke|contract-dr-storage-check|contract-dr-storage-init|contract-dr-backup-smoke|contract-dr-backup-local-verify|contract-dr-backup-local-restore-verify|contract-dr-backup-local-pitr-restore-verify|contract-dr-backup} [service ...]"
+  echo "usage: $0 {up|start|down|restart|build|logs|ps|disk-check|config|seed|data|merge-data|database|db-upgrade|compose-config|db-init|kafka-init|beanstalk-readiness|beanstalk-restart-smoke|beanstalk-resilience-smoke|contract-readiness|option-readiness|contract-delivery-preflight|contract-dr-pitr-smoke|contract-dr-storage-check|contract-dr-storage-init|contract-dr-backup-smoke|contract-dr-backup-local-verify|contract-dr-backup-local-restore-verify|contract-dr-backup-local-pitr-restore-verify|contract-dr-backup} [service ...]"
 }
 
 command="${1:-}"
@@ -158,6 +159,15 @@ case "$command" in
     ;;
   kafka-init)
     docker compose -f "$COMPOSE_FILE" run --build --rm kafka-init
+    ;;
+  beanstalk-readiness)
+    "$SCRIPT_DIR/beanstalk-readiness.sh" "$@"
+    ;;
+  beanstalk-restart-smoke)
+    "$SCRIPT_DIR/beanstalk-restart-smoke.sh" "$@"
+    ;;
+  beanstalk-resilience-smoke)
+    "$SCRIPT_DIR/beanstalk-resilience-smoke.sh" "$@"
     ;;
   contract-readiness)
     check_docker_disk "${DOCKER_READINESS_MIN_FREE_KB:-2097152}" "DOCKER_READINESS_MIN_FREE_KB"

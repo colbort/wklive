@@ -176,11 +176,38 @@ echo "running Option -> Asset real RPC acceptance"
   OPTION_P0_ASSET_E2E_REDIS_ADDR="$REDIS_ADDR" \
   GOCACHE="$WORK_DIR/go-build-cache" \
     go test ./internal/logic/task -run '^TestP0AssetRPCEndToEnd$' -count=1
+  for capacity_shorts in 501 5000; do
+    OPTION_P0_ASSET_E2E_DSN="root:$MYSQL_PASSWORD@tcp(127.0.0.1:3306)/$DATABASE?charset=utf8mb4&parseTime=true&loc=Local" \
+    OPTION_P0_ASSET_E2E_RPC_ADDR="127.0.0.1:$ASSET_PORT" \
+    OPTION_P0_ASSET_E2E_REDIS_ADDR="$REDIS_ADDR" \
+    OPTION_P0_ASSET_CAPACITY_SHORTS="$capacity_shorts" \
+    GOCACHE="$WORK_DIR/go-build-cache" \
+      go test ./internal/logic/task -run '^TestP0AmericanAssignmentCapacityAssetRPC$' \
+        -count=1 -timeout=25m -v
+  done
+  OPTION_P0_ASSET_E2E_DSN="root:$MYSQL_PASSWORD@tcp(127.0.0.1:3306)/$DATABASE?charset=utf8mb4&parseTime=true&loc=Local" \
+  OPTION_P0_ASSET_E2E_RPC_ADDR="127.0.0.1:$ASSET_PORT" \
+  OPTION_P0_ASSET_E2E_REDIS_ADDR="$REDIS_ADDR" \
+  OPTION_P1_PHYSICAL_CAPACITY_UNITS=501 \
+  GOCACHE="$WORK_DIR/go-build-cache" \
+    go test ./internal/logic/task -run '^TestP1PhysicalDeliveryCapacityAssetRPC$' \
+      -count=1 -timeout=25m -v
+  OPTION_P0_ASSET_E2E_DSN="root:$MYSQL_PASSWORD@tcp(127.0.0.1:3306)/$DATABASE?charset=utf8mb4&parseTime=true&loc=Local" \
+  OPTION_P0_ASSET_E2E_RPC_ADDR="127.0.0.1:$ASSET_PORT" \
+  OPTION_P0_ASSET_E2E_REDIS_ADDR="$REDIS_ADDR" \
+  GOCACHE="$WORK_DIR/go-build-cache" \
+    go test ./internal/logic/task -run '^TestP0CashExpiryCapacityAssetRPC$' \
+      -count=1 -timeout=25m -v
   OPTION_P0_ASSET_E2E_DSN="root:$MYSQL_PASSWORD@tcp(127.0.0.1:3306)/$DATABASE?charset=utf8mb4&parseTime=true&loc=Local" \
   OPTION_P0_ASSET_E2E_RPC_ADDR="127.0.0.1:$ASSET_PORT" \
   OPTION_P0_ASSET_E2E_REDIS_ADDR="$REDIS_ADDR" \
   GOCACHE="$WORK_DIR/go-build-cache" \
     go test ./internal/logic/task -run '^TestP0AssetMultiInstanceKillTakeover$' -count=1 -timeout=90s
+  OPTION_P0_ASSET_E2E_DSN="root:$MYSQL_PASSWORD@tcp(127.0.0.1:3306)/$DATABASE?charset=utf8mb4&parseTime=true&loc=Local" \
+  OPTION_P0_ASSET_E2E_RPC_ADDR="127.0.0.1:$ASSET_PORT" \
+  OPTION_P0_ASSET_E2E_REDIS_ADDR="$REDIS_ADDR" \
+  GOCACHE="$WORK_DIR/go-build-cache" \
+    go test ./internal/logic/task -run '^TestP1PhysicalDeliveryProcessKillTakeover$' -count=1 -timeout=100s -v
 )
 
 echo "verifying evidence and cleanup scope"
@@ -204,6 +231,57 @@ SELECT CONCAT('margin_freeze_flows=',SUM(scene_type='place_order'),
   ' coins=',GROUP_CONCAT(DISTINCT coin ORDER BY coin))
 FROM t_asset_flow
 WHERE tenant_id=996031 AND user_id IN (105,106) AND biz_type='option';
+SELECT CONCAT('physical_order_coin=',IF(contract.option_type=1,'CALL','PUT'),
+  ' orders=',COUNT(DISTINCT orders.id),
+  ' order_types=',COUNT(DISTINCT orders.order_type),
+  ' canceled=',COUNT(DISTINCT IF(orders.status=4,orders.id,NULL)),
+  ' expired=',COUNT(DISTINCT IF(orders.status=6,orders.id,NULL)),
+  ' user_cancel=',COUNT(DISTINCT IF(orders.cancel_reason='USER_CANCEL',orders.id,NULL)),
+  ' liquidation_cancel=',COUNT(DISTINCT IF(orders.cancel_reason='LIQUIDATION',orders.id,NULL)),
+  ' admin_cancel=',COUNT(DISTINCT IF(orders.cancel_reason LIKE 'P0_PHYSICAL_%_ADMIN_CANCEL',orders.id,NULL)),
+  ' instructions=',COUNT(DISTINCT instruction.id),
+  ' success=',COUNT(DISTINCT IF(instruction.status=3,instruction.id,NULL)),
+  ' reconciled=',COUNT(DISTINCT IF(instruction.reconciliation_status=2,instruction.id,NULL)),
+  ' coins=',GROUP_CONCAT(DISTINCT instruction.coin ORDER BY instruction.coin),
+  ' wrong_coin=',COUNT(DISTINCT IF(instruction.coin<>IF(contract.option_type=1,'BTC','USDT'),instruction.id,NULL)),
+  ' freeze=',CAST(SUM(IF(instruction.action=1,instruction.amount,0)) AS CHAR),
+  ' release=',CAST(SUM(IF(instruction.action=3,instruction.amount,0)) AS CHAR),
+  ' flows=',COUNT(DISTINCT flow.id),
+  ' admin_events=',(SELECT COUNT(*) FROM t_option_trading_control_event event
+    JOIN t_option_contract event_contract
+      ON event_contract.tenant_id=event.tenant_id AND event_contract.id=event.contract_id
+    WHERE event_contract.tenant_id=996031
+      AND event_contract.option_type=contract.option_type
+      AND event_contract.contract_code IN ('P0-PHYSICAL-COIN-CALL','P0-PHYSICAL-COIN-PUT')
+      AND event.event_type='ADMIN_FORCE_CANCEL_ORDER'),
+  ' wallet_total=',(SELECT CAST(SUM(wallet.total_amount) AS CHAR) FROM t_user_asset wallet
+    WHERE wallet.tenant_id=996031 AND wallet.wallet_type=5
+      AND wallet.coin=IF(contract.option_type=1,'BTC','USDT')
+      AND ((contract.option_type=1 AND
+              (wallet.user_id BETWEEN 891001 AND 891011 OR wallet.user_id=893001))
+        OR (contract.option_type=2 AND
+              (wallet.user_id BETWEEN 892001 AND 892011 OR wallet.user_id=894001)))),
+  ' wallet_frozen=',(SELECT CAST(SUM(wallet.frozen_amount) AS CHAR) FROM t_user_asset wallet
+    WHERE wallet.tenant_id=996031 AND wallet.wallet_type=5
+      AND wallet.coin=IF(contract.option_type=1,'BTC','USDT')
+      AND ((contract.option_type=1 AND
+              (wallet.user_id BETWEEN 891001 AND 891011 OR wallet.user_id=893001))
+        OR (contract.option_type=2 AND
+              (wallet.user_id BETWEEN 892001 AND 892011 OR wallet.user_id=894001)))))
+FROM t_option_contract contract
+JOIN t_option_order orders
+  ON orders.tenant_id=contract.tenant_id AND orders.contract_id=contract.id
+JOIN t_option_asset_instruction instruction
+  ON instruction.tenant_id=orders.tenant_id AND instruction.order_id=orders.id
+LEFT JOIN t_asset_flow flow
+  ON flow.tenant_id=instruction.tenant_id
+  AND flow.biz_no=CASE WHEN instruction.action=1 THEN instruction.target_biz_no ELSE instruction.instruction_no END
+WHERE contract.tenant_id=996031 AND (
+  contract.contract_code LIKE 'P0-PHYSICAL-COIN-CALL%' OR
+  contract.contract_code LIKE 'P0-PHYSICAL-COIN-PUT%'
+)
+GROUP BY contract.option_type
+ORDER BY contract.option_type;
 SELECT CONCAT('cash_settlement=',s.status,' batch=',b.status,
   ' instructions=',b.instruction_count,' success=',b.success_count,
   ' credit=',CAST(b.total_credit AS CHAR),' debit=',CAST(b.total_debit AS CHAR),
@@ -219,6 +297,111 @@ FROM t_user_asset
 WHERE tenant_id=996031 AND wallet_type=5 AND coin='USDT' AND user_id IN (107,108);
 SELECT CONCAT('missing_price_settlements=',COUNT(*))
 FROM t_option_settlement WHERE tenant_id=996031 AND contract_id=996302;
+SELECT CONCAT('cash_expiry_capacity=501',
+  ' positions=',(SELECT COUNT(*) FROM t_option_position p WHERE p.tenant_id=contract.tenant_id AND p.contract_id=contract.id),
+  ' accounts=',(SELECT COUNT(DISTINCT p.account_id) FROM t_option_position p WHERE p.tenant_id=contract.tenant_id AND p.contract_id=contract.id),
+  ' details=',(SELECT COUNT(*) FROM t_option_settlement_detail d WHERE d.tenant_id=contract.tenant_id AND d.contract_id=contract.id),
+  ' partial_qty=',(SELECT CAST(MIN(d.quantity) AS CHAR) FROM t_option_settlement_detail d WHERE d.tenant_id=contract.tenant_id AND d.contract_id=contract.id AND d.side=1),
+  ' instructions=',COUNT(DISTINCT instruction.id),
+  ' success=',COUNT(DISTINCT IF(instruction.status=3,instruction.id,NULL)),
+  ' reconciled=',COUNT(DISTINCT IF(instruction.reconciliation_status=2,instruction.id,NULL)),
+  ' long_credit=',CAST(SUM(IF(instruction.action=4 AND instruction.user_id BETWEEN 21000 AND 21500,instruction.amount,0)) AS CHAR),
+  ' fee=',CAST(SUM(IF(instruction.action=4 AND instruction.user_id=29999,instruction.amount,0)) AS CHAR),
+  ' debit=',CAST(SUM(IF(instruction.action=2 AND instruction.user_id=22000,instruction.amount,0)) AS CHAR),
+  ' release=',CAST(SUM(IF(instruction.action=3 AND instruction.user_id=22000,instruction.amount,0)) AS CHAR),
+  ' flows=',COUNT(DISTINCT flow.id),
+  ' wallet_total=',(SELECT CAST(SUM(wallet.total_amount) AS CHAR) FROM t_user_asset wallet
+    WHERE wallet.tenant_id=contract.tenant_id AND wallet.wallet_type=5 AND wallet.coin='USDT'
+      AND ((wallet.user_id BETWEEN 21000 AND 21500) OR wallet.user_id IN (22000,29999))),
+  ' wallet_frozen=',(SELECT CAST(SUM(wallet.frozen_amount) AS CHAR) FROM t_user_asset wallet
+    WHERE wallet.tenant_id=contract.tenant_id AND wallet.wallet_type=5 AND wallet.coin='USDT'
+      AND ((wallet.user_id BETWEEN 21000 AND 21500) OR wallet.user_id IN (22000,29999))))
+FROM t_option_contract contract
+JOIN t_option_settlement settlement
+  ON settlement.tenant_id=contract.tenant_id AND settlement.contract_id=contract.id
+JOIN t_option_asset_instruction instruction
+  ON instruction.tenant_id=settlement.tenant_id AND instruction.biz_no=settlement.settlement_no
+LEFT JOIN t_asset_flow flow
+  ON flow.tenant_id=instruction.tenant_id AND flow.biz_no=instruction.instruction_no
+WHERE contract.tenant_id=996031 AND contract.contract_code='P0-CASH-EXPIRY-CAPACITY-501'
+GROUP BY contract.id,contract.tenant_id;
+SELECT CONCAT('physical_delivery_contract=',contract.contract_code,
+  ' settlement=',settlement.status,' batch=',batch.status,' contract_status=',contract.status,
+  ' units=',COUNT(DISTINCT unit.id),
+  ' completed=',COUNT(DISTINCT IF(unit.status=5,unit.id,NULL)),
+  ' manual_retries=',MAX(unit.manual_retry_count),
+  ' instructions=',COUNT(DISTINCT instruction.id),
+  ' success=',COUNT(DISTINCT IF(instruction.status=3,instruction.id,NULL)),
+  ' reconciled=',COUNT(DISTINCT IF(instruction.reconciliation_status=2,instruction.id,NULL)),
+  ' max_retry=',MAX(instruction.retry_count),
+  ' flows=',COUNT(DISTINCT flow.id))
+FROM t_option_contract contract
+JOIN t_option_settlement settlement
+  ON settlement.tenant_id=contract.tenant_id AND settlement.contract_id=contract.id
+JOIN t_option_settlement_batch batch
+  ON batch.tenant_id=settlement.tenant_id AND batch.batch_no=settlement.settlement_no
+JOIN t_option_physical_delivery_unit unit
+  ON unit.tenant_id=contract.tenant_id AND unit.contract_id=contract.id
+JOIN t_option_asset_instruction instruction
+  ON instruction.tenant_id=unit.tenant_id AND instruction.delivery_unit_id=unit.id
+LEFT JOIN t_asset_flow flow
+  ON flow.tenant_id=instruction.tenant_id AND flow.biz_no=instruction.instruction_no
+WHERE contract.tenant_id=996031 AND contract.id IN (997001,997002,997003,997004,999901,999902)
+GROUP BY contract.id,contract.contract_code,contract.status,settlement.status,batch.status
+ORDER BY contract.id;
+SELECT CONCAT('physical_delivery_flow_cardinality_anomalies=',COUNT(*))
+FROM (
+  SELECT instruction.id
+  FROM t_option_asset_instruction instruction
+  JOIN t_option_physical_delivery_unit unit
+    ON unit.tenant_id=instruction.tenant_id AND unit.id=instruction.delivery_unit_id
+  LEFT JOIN t_asset_flow flow
+    ON flow.tenant_id=instruction.tenant_id AND flow.biz_no=instruction.instruction_no
+  WHERE unit.tenant_id=996031 AND unit.contract_id IN (997001,997002,997003,997004,999901,999902)
+  GROUP BY instruction.id
+  HAVING COUNT(flow.id)<>1
+) physical_flow_anomaly;
+SELECT CONCAT('physical_delivery_manual_retry_events=',COUNT(*),
+  ' reason=',COALESCE(MAX(reason),''),
+  ' operator=',COALESCE(MAX(operator_id),0))
+FROM t_option_trading_control_event
+WHERE tenant_id=996031 AND contract_id=997003
+  AND event_type='PHYSICAL_DELIVERY_MANUAL_RETRY';
+SELECT CONCAT('physical_delivery_process_kill=',unit.status,
+  ' instructions=',COUNT(DISTINCT instruction.id),
+  ' success=',COUNT(DISTINCT IF(instruction.status=3,instruction.id,NULL)),
+  ' reconciled=',COUNT(DISTINCT IF(instruction.reconciliation_status=2,instruction.id,NULL)),
+  ' max_retry=',MAX(instruction.retry_count),
+  ' flows=',COUNT(DISTINCT flow.id),
+  ' completion_events=',(
+    SELECT COUNT(*) FROM t_option_trading_control_event event
+    WHERE event.tenant_id=unit.tenant_id AND event.contract_id=unit.contract_id
+      AND event.event_type='PHYSICAL_DELIVERY_COMPLETED'
+  ))
+FROM t_option_physical_delivery_unit unit
+JOIN t_option_asset_instruction instruction
+  ON instruction.tenant_id=unit.tenant_id AND instruction.delivery_unit_id=unit.id
+LEFT JOIN t_asset_flow flow
+  ON flow.tenant_id=instruction.tenant_id AND flow.biz_no=instruction.instruction_no
+WHERE unit.tenant_id=996031 AND unit.contract_id=999901
+GROUP BY unit.id,unit.status;
+SELECT CONCAT('physical_delivery_capacity=',COUNT(DISTINCT unit.id),
+  ' completed=',COUNT(DISTINCT IF(unit.status=5,unit.id,NULL)),
+  ' instructions=',COUNT(DISTINCT instruction.id),
+  ' success=',COUNT(DISTINCT IF(instruction.status=3,instruction.id,NULL)),
+  ' reconciled=',COUNT(DISTINCT IF(instruction.reconciliation_status=2,instruction.id,NULL)),
+  ' flows=',COUNT(DISTINCT flow.id),
+  ' completion_events=',(
+    SELECT COUNT(*) FROM t_option_trading_control_event event
+    WHERE event.tenant_id=996031 AND event.contract_id=999902
+      AND event.event_type='PHYSICAL_DELIVERY_COMPLETED'
+  ))
+FROM t_option_physical_delivery_unit unit
+JOIN t_option_asset_instruction instruction
+  ON instruction.tenant_id=unit.tenant_id AND instruction.delivery_unit_id=unit.id
+LEFT JOIN t_asset_flow flow
+  ON flow.tenant_id=instruction.tenant_id AND flow.biz_no=instruction.instruction_no
+WHERE unit.tenant_id=996031 AND unit.contract_id=999902;
 SELECT CONCAT('settlement_failure_recovery_contract=',s.contract_id,
   ' settlement=',s.status,' batch=',b.status,
   ' instructions=',COUNT(DISTINCT instruction.id),
@@ -319,6 +502,74 @@ LEFT JOIN t_asset_flow f
   ON f.tenant_id=i.tenant_id AND f.biz_no=i.instruction_no
 WHERE e.tenant_id=996031 AND e.client_exercise_id='P0-AMERICAN-EXERCISE-CONCURRENT'
 GROUP BY e.id,e.status;
+SELECT CONCAT('american_exercise_close_race=',COUNT(*),
+  ' done=',SUM(exercise.status=2),
+  ' assignments=',(SELECT COUNT(*) FROM t_option_exercise_assignment assignment
+    JOIN t_option_exercise race_exercise
+      ON race_exercise.tenant_id=assignment.tenant_id AND race_exercise.id=assignment.exercise_id
+    JOIN t_option_contract race_contract
+      ON race_contract.tenant_id=race_exercise.tenant_id AND race_contract.id=race_exercise.contract_id
+    WHERE race_contract.contract_code LIKE 'P0-AMERICAN-CLOSE-RACE-%'),
+  ' assignment_done=',(SELECT COUNT(*) FROM t_option_exercise_assignment assignment
+    JOIN t_option_exercise race_exercise
+      ON race_exercise.tenant_id=assignment.tenant_id AND race_exercise.id=assignment.exercise_id
+    JOIN t_option_contract race_contract
+      ON race_contract.tenant_id=race_exercise.tenant_id AND race_contract.id=race_exercise.contract_id
+    WHERE race_contract.contract_code LIKE 'P0-AMERICAN-CLOSE-RACE-%' AND assignment.status=2),
+  ' close_orders=',(SELECT COUNT(*) FROM t_option_order close_order
+    JOIN t_option_contract race_contract
+      ON race_contract.tenant_id=close_order.tenant_id AND race_contract.id=close_order.contract_id
+    WHERE race_contract.contract_code LIKE 'P0-AMERICAN-CLOSE-RACE-%'),
+  ' assignment_canceled=',(SELECT COUNT(*) FROM t_option_order close_order
+    JOIN t_option_contract race_contract
+      ON race_contract.tenant_id=close_order.tenant_id AND race_contract.id=close_order.contract_id
+    WHERE race_contract.contract_code LIKE 'P0-AMERICAN-CLOSE-RACE-%'
+      AND close_order.status=4 AND close_order.cancel_reason='AMERICAN_EXERCISE_ASSIGNMENT'),
+  ' active_close=',(SELECT COUNT(*) FROM t_option_order close_order
+    JOIN t_option_contract race_contract
+      ON race_contract.tenant_id=close_order.tenant_id AND race_contract.id=close_order.contract_id
+    WHERE race_contract.contract_code LIKE 'P0-AMERICAN-CLOSE-RACE-%'
+      AND close_order.position_effect=2 AND close_order.status IN (7,1,2)),
+  ' instructions=',(SELECT COUNT(*) FROM t_option_asset_instruction instruction
+    JOIN t_option_exercise race_exercise
+      ON race_exercise.tenant_id=instruction.tenant_id AND race_exercise.exercise_no=instruction.biz_no
+    JOIN t_option_contract race_contract
+      ON race_contract.tenant_id=race_exercise.tenant_id AND race_contract.id=race_exercise.contract_id
+    WHERE race_contract.contract_code LIKE 'P0-AMERICAN-CLOSE-RACE-%'),
+  ' success=',(SELECT COUNT(*) FROM t_option_asset_instruction instruction
+    JOIN t_option_exercise race_exercise
+      ON race_exercise.tenant_id=instruction.tenant_id AND race_exercise.exercise_no=instruction.biz_no
+    JOIN t_option_contract race_contract
+      ON race_contract.tenant_id=race_exercise.tenant_id AND race_contract.id=race_exercise.contract_id
+    WHERE race_contract.contract_code LIKE 'P0-AMERICAN-CLOSE-RACE-%' AND instruction.status=3))
+FROM t_option_exercise exercise
+JOIN t_option_contract contract
+  ON contract.tenant_id=exercise.tenant_id AND contract.id=exercise.contract_id
+WHERE contract.tenant_id=996031 AND contract.contract_code LIKE 'P0-AMERICAN-CLOSE-RACE-%';
+SELECT CONCAT('american_assignment_capacity=',SUBSTRING_INDEX(c.contract_code,'-',-1),
+  ' exercise=',e.status,
+  ' assignments=',(SELECT COUNT(*) FROM t_option_exercise_assignment assignment
+    WHERE assignment.tenant_id=e.tenant_id AND assignment.exercise_id=e.id),
+  ' assignment_done=',(SELECT COUNT(*) FROM t_option_exercise_assignment assignment
+    WHERE assignment.tenant_id=e.tenant_id AND assignment.exercise_id=e.id AND assignment.status=2),
+  ' instructions=',(SELECT COUNT(*) FROM t_option_asset_instruction instruction
+    WHERE instruction.tenant_id=e.tenant_id AND instruction.biz_no=e.exercise_no),
+  ' success=',(SELECT COUNT(*) FROM t_option_asset_instruction instruction
+    WHERE instruction.tenant_id=e.tenant_id AND instruction.biz_no=e.exercise_no AND instruction.status=3),
+  ' reconciled=',(SELECT COUNT(*) FROM t_option_asset_instruction instruction
+    WHERE instruction.tenant_id=e.tenant_id AND instruction.biz_no=e.exercise_no
+      AND instruction.reconciliation_status=2),
+  ' flows=',(SELECT COUNT(*) FROM t_asset_flow flow
+    JOIN t_option_asset_instruction instruction
+      ON instruction.tenant_id=flow.tenant_id AND instruction.instruction_no=flow.biz_no
+    WHERE instruction.tenant_id=e.tenant_id AND instruction.biz_no=e.exercise_no))
+FROM t_option_contract c
+JOIN t_option_exercise e
+  ON e.tenant_id=c.tenant_id AND e.contract_id=c.id
+WHERE c.tenant_id=996031 AND c.contract_code IN (
+  'P0-AMERICAN-CAPACITY-501','P0-AMERICAN-CAPACITY-5000'
+)
+ORDER BY CAST(SUBSTRING_INDEX(c.contract_code,'-',-1) AS UNSIGNED);
 SELECT CONCAT('expiry_auto_dne=',s.status,' batch=',b.status,' contract=',c.status,
   ' exercises=',COUNT(DISTINCT e.id),
   ' instructions=',COUNT(DISTINCT i.id),
@@ -427,6 +678,100 @@ SELECT CONCAT('order_admission=',
 FROM t_option_contract contract
 WHERE contract.tenant_id=996031
   AND contract.contract_code='P0-FULL-ORDER-ADMISSION-CALL';
+SELECT CONCAT('wallet_scope_restriction=',
+  ' risk_accounts=',(SELECT COUNT(*) FROM t_option_risk_account risk
+    WHERE risk.tenant_id=contract.tenant_id AND risk.user_id=880001
+      AND risk.account_id=0 AND risk.settle_coin='USDT' AND risk.status=5),
+  ' orders=',(SELECT COUNT(*) FROM t_option_order o
+    WHERE o.tenant_id=contract.tenant_id AND o.contract_id=contract.id),
+  ' client_keys=',(SELECT COUNT(*) FROM t_option_client_order_key k
+    WHERE k.tenant_id=contract.tenant_id AND k.user_id=880001),
+  ' instructions=',(SELECT COUNT(*) FROM t_option_asset_instruction i
+    WHERE i.tenant_id=contract.tenant_id AND i.user_id=880001),
+  ' wallet=',(SELECT CAST(total_amount AS CHAR) FROM t_user_asset wallet
+    WHERE wallet.tenant_id=contract.tenant_id AND wallet.user_id=880001
+      AND wallet.wallet_type=5 AND wallet.coin='USDT'),
+  ' available=',(SELECT CAST(available_amount AS CHAR) FROM t_user_asset wallet
+    WHERE wallet.tenant_id=contract.tenant_id AND wallet.user_id=880001
+      AND wallet.wallet_type=5 AND wallet.coin='USDT'),
+  ' frozen=',(SELECT CAST(frozen_amount AS CHAR) FROM t_user_asset wallet
+    WHERE wallet.tenant_id=contract.tenant_id AND wallet.user_id=880001
+      AND wallet.wallet_type=5 AND wallet.coin='USDT'))
+FROM t_option_contract contract
+WHERE contract.tenant_id=996031
+  AND contract.contract_code='P0-WALLET-RESTRICTION-CALL';
+SELECT CONCAT('cross_account_stp=',
+  ' orders=',(SELECT COUNT(*) FROM t_option_order o
+    WHERE o.tenant_id=contract.tenant_id AND o.contract_id=contract.id),
+  ' canceled=',(SELECT COUNT(*) FROM t_option_order o
+    WHERE o.tenant_id=contract.tenant_id AND o.contract_id=contract.id AND o.status=4),
+  ' accounts=',(SELECT COUNT(DISTINCT account_id) FROM t_option_order o
+    WHERE o.tenant_id=contract.tenant_id AND o.contract_id=contract.id),
+  ' stp_taker=',(SELECT COUNT(*) FROM t_option_order o
+    WHERE o.tenant_id=contract.tenant_id AND o.contract_id=contract.id
+      AND o.cancel_reason='SELF_TRADE_PREVENTED'),
+  ' trades=',(SELECT COUNT(*) FROM t_option_trade trade
+    WHERE trade.tenant_id=contract.tenant_id AND trade.contract_id=contract.id),
+  ' events=',(SELECT COUNT(*) FROM t_option_trading_control_event event
+    WHERE event.tenant_id=contract.tenant_id AND event.contract_id=contract.id
+      AND event.event_type='STP_PREVENTED' AND event.reason='SELF_TRADE_PREVENTED'),
+  ' instructions=',(SELECT COUNT(*) FROM t_option_asset_instruction i
+    JOIN t_option_order o ON o.tenant_id=i.tenant_id AND o.id=i.order_id
+    WHERE o.tenant_id=contract.tenant_id AND o.contract_id=contract.id),
+  ' success=',(SELECT COUNT(*) FROM t_option_asset_instruction i
+    JOIN t_option_order o ON o.tenant_id=i.tenant_id AND o.id=i.order_id
+    WHERE o.tenant_id=contract.tenant_id AND o.contract_id=contract.id AND i.status=3),
+  ' reconciled=',(SELECT COUNT(*) FROM t_option_asset_instruction i
+    JOIN t_option_order o ON o.tenant_id=i.tenant_id AND o.id=i.order_id
+    WHERE o.tenant_id=contract.tenant_id AND o.contract_id=contract.id
+      AND i.reconciliation_status=2),
+  ' flows=',(SELECT COUNT(DISTINCT flow.id) FROM t_option_asset_instruction i
+    JOIN t_option_order o ON o.tenant_id=i.tenant_id AND o.id=i.order_id
+    JOIN t_asset_flow flow ON flow.tenant_id=i.tenant_id
+      AND flow.biz_no=CASE WHEN i.action=1 THEN i.target_biz_no ELSE i.instruction_no END
+    WHERE o.tenant_id=contract.tenant_id AND o.contract_id=contract.id),
+  ' positions=',(SELECT COUNT(*) FROM t_option_position position
+    WHERE position.tenant_id=contract.tenant_id AND position.contract_id=contract.id),
+  ' wallet=',(SELECT CAST(total_amount AS CHAR) FROM t_user_asset wallet
+    WHERE wallet.tenant_id=contract.tenant_id AND wallet.user_id=880002
+      AND wallet.wallet_type=5 AND wallet.coin='USDT'),
+  ' frozen=',(SELECT CAST(frozen_amount AS CHAR) FROM t_user_asset wallet
+    WHERE wallet.tenant_id=contract.tenant_id AND wallet.user_id=880002
+      AND wallet.wallet_type=5 AND wallet.coin='USDT'))
+FROM t_option_contract contract
+WHERE contract.tenant_id=996031
+  AND contract.contract_code='P0-WALLET-SCOPE-STP-CALL';
+SELECT CONCAT('portfolio_cross_account_concurrency=',
+  ' orders=',COUNT(DISTINCT o.id),
+  ' canceled=',COUNT(DISTINCT IF(o.status=4,o.id,NULL)),
+  ' accounts=',COUNT(DISTINCT o.account_id),
+  ' configs=',COUNT(DISTINCT CONCAT(o.portfolio_risk_config_id,':',o.portfolio_risk_config_version)),
+  ' aggregate_margin=',CAST(SUM(IF(i.action=1,i.amount,0)) AS CHAR),
+  ' risk_accounts=',(SELECT COUNT(*) FROM t_option_risk_account risk
+    WHERE risk.tenant_id=996031 AND risk.user_id=880005
+      AND risk.account_id=0 AND risk.settle_coin='USDT'),
+  ' instructions=',COUNT(DISTINCT i.id),
+  ' success=',COUNT(DISTINCT IF(i.status=3,i.id,NULL)),
+  ' reconciled=',COUNT(DISTINCT IF(i.reconciliation_status=2,i.id,NULL)),
+  ' flows=',COUNT(DISTINCT flow.id),
+  ' freeze=',CAST(SUM(IF(i.action=1,i.amount,0)) AS CHAR),
+  ' release=',CAST(SUM(IF(i.action=3,i.amount,0)) AS CHAR),
+  ' wallet=',(SELECT CAST(total_amount AS CHAR) FROM t_user_asset wallet
+    WHERE wallet.tenant_id=996031 AND wallet.user_id=880005
+      AND wallet.wallet_type=5 AND wallet.coin='USDT'),
+  ' available=',(SELECT CAST(available_amount AS CHAR) FROM t_user_asset wallet
+    WHERE wallet.tenant_id=996031 AND wallet.user_id=880005
+      AND wallet.wallet_type=5 AND wallet.coin='USDT'),
+  ' frozen=',(SELECT CAST(frozen_amount AS CHAR) FROM t_user_asset wallet
+    WHERE wallet.tenant_id=996031 AND wallet.user_id=880005
+      AND wallet.wallet_type=5 AND wallet.coin='USDT'))
+FROM t_option_order o
+JOIN t_option_contract c ON c.tenant_id=o.tenant_id AND c.id=o.contract_id
+LEFT JOIN t_option_asset_instruction i ON i.tenant_id=o.tenant_id AND i.order_id=o.id
+LEFT JOIN t_asset_flow flow ON flow.tenant_id=i.tenant_id
+  AND flow.biz_no=CASE WHEN i.action=1 THEN i.target_biz_no ELSE i.instruction_no END
+WHERE c.tenant_id=996031
+  AND c.contract_code IN ('P0-PORTFOLIO-CROSS-ACCOUNT-A','P0-PORTFOLIO-CROSS-ACCOUNT-B');
 SELECT CONCAT('user_cancel=',
   ' orders=',(SELECT COUNT(*) FROM t_option_order o
     WHERE o.tenant_id=contract.tenant_id AND o.contract_id=contract.id),
@@ -838,6 +1183,32 @@ SELECT CONCAT('deficit_liquidation=',liquidation.status,
 FROM t_option_liquidation liquidation
 WHERE liquidation.tenant_id=996031
   AND liquidation.liquidation_no='P0-LIQUIDATION-DEFICIT-RECOVERY';
+SELECT CONCAT('portfolio_partial_liquidation=',liquidation.status,
+  ' quantity=',CAST(liquidation.quantity AS CHAR),
+  ' collateral=',CAST(liquidation.collateral_amount AS CHAR),
+  ' fee=',CAST(liquidation.liquidation_fee AS CHAR),
+  ' instructions=',(SELECT COUNT(*) FROM t_option_asset_instruction instruction
+    WHERE instruction.tenant_id=liquidation.tenant_id AND instruction.liquidation_id=liquidation.id),
+  ' success=',(SELECT COUNT(*) FROM t_option_asset_instruction instruction
+    WHERE instruction.tenant_id=liquidation.tenant_id AND instruction.liquidation_id=liquidation.id AND instruction.status=3),
+  ' source_qty=',CAST(source.position_qty AS CHAR),
+  ' source_margin=',CAST(source.margin_amount AS CHAR),
+  ' source_return=',CAST(source.total_return AS CHAR),
+  ' takeover_qty=',CAST(takeover.position_qty AS CHAR),
+  ' takeover_margin=',CAST(takeover.margin_amount AS CHAR),
+  ' wallet_total=',(SELECT CAST(total_amount AS CHAR) FROM t_user_asset wallet
+    WHERE wallet.tenant_id=996031 AND wallet.user_id=158 AND wallet.wallet_type=5 AND wallet.coin='USDT'),
+  ' wallet_available=',(SELECT CAST(available_amount AS CHAR) FROM t_user_asset wallet
+    WHERE wallet.tenant_id=996031 AND wallet.user_id=158 AND wallet.wallet_type=5 AND wallet.coin='USDT'),
+  ' wallet_frozen=',(SELECT CAST(frozen_amount AS CHAR) FROM t_user_asset wallet
+    WHERE wallet.tenant_id=996031 AND wallet.user_id=158 AND wallet.wallet_type=5 AND wallet.coin='USDT'))
+FROM t_option_liquidation liquidation
+JOIN t_option_position source
+  ON source.tenant_id=liquidation.tenant_id AND source.id=liquidation.position_id
+JOIN t_option_position takeover
+  ON takeover.tenant_id=liquidation.tenant_id AND takeover.id=liquidation.takeover_position_id
+WHERE liquidation.tenant_id=996031 AND liquidation.user_id=158
+  AND liquidation.liquidation_scope=2;
 SELECT CONCAT('portfolio_liquidation_sequential=',COUNT(*),
   ' done=',SUM(liquidation.status=3),
   ' wallet_scope=',SUM(liquidation.liquidation_scope=2 AND liquidation.account_id=0),

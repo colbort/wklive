@@ -188,6 +188,93 @@ func TestQueryOptionOperationsMetricsSeededMySQL(t *testing.T) {
 	}
 }
 
+func TestQueryOptionInsuranceTakeoverMetricsSeededMySQL(t *testing.T) {
+	dsn := os.Getenv("OPTION_INSURANCE_INVENTORY_TEST_DSN")
+	if dsn == "" {
+		t.Skip("OPTION_INSURANCE_INVENTORY_TEST_DSN is not set")
+	}
+	conn := sqlx.NewMysql(dsn)
+	counts, err := queryOptionInsuranceInventoryMetricsByTenant(
+		context.Background(), conn, 1000,
+	)
+	if err != nil {
+		t.Fatalf("query insurance inventory count metrics: %v", err)
+	}
+	assertOperationsMetric(t, counts, 9, "insurance_takeover_inventory", 2, 600)
+	assertOperationsMetric(t, counts, 9, "insurance_takeover_expiry_due", 1, 1200)
+	assertOperationsMetric(t, counts, 9, "insurance_takeover_market_invalid", 1, 900)
+	for _, item := range counts {
+		if item.TenantID == 10 {
+			t.Fatalf("healthy tenant emitted insurance count metric: %+v", item)
+		}
+	}
+
+	amounts, err := queryOptionInsuranceInventoryAmounts(context.Background(), conn)
+	if err != nil {
+		t.Fatalf("query insurance inventory amount metrics: %v", err)
+	}
+	assertOperationsAmountMetric(t, amounts, 9,
+		"insurance_takeover_underlying_quantity", "BTC", "0.2")
+	assertOperationsAmountMetric(t, amounts, 9,
+		"insurance_takeover_underlying_quantity", "ETH", "1")
+	assertOperationsAmountMetric(t, amounts, 9,
+		"insurance_takeover_mark_value", "USDT", "70")
+	assertOperationsAmountMetric(t, amounts, 9,
+		"insurance_takeover_abs_delta", "BTC", "0.1")
+	assertOperationsAmountMetric(t, amounts, 9,
+		"insurance_takeover_abs_delta", "ETH", "0.25")
+	for _, item := range amounts {
+		if item.TenantID == 10 {
+			t.Fatalf("healthy tenant emitted insurance amount metric: %+v", item)
+		}
+	}
+}
+
+func TestQueryOptionPortfolioLiquidationMetricsSeededMySQL(t *testing.T) {
+	dsn := os.Getenv("OPTION_PORTFOLIO_LIQUIDATION_MONITOR_TEST_DSN")
+	if dsn == "" {
+		t.Skip("OPTION_PORTFOLIO_LIQUIDATION_MONITOR_TEST_DSN is not set")
+	}
+	metrics, err := queryOptionPortfolioLiquidationMetricsByTenant(
+		context.Background(), sqlx.NewMysql(dsn),
+	)
+	if err != nil {
+		t.Fatalf("query portfolio liquidation monitoring metrics: %v", err)
+	}
+	assertOperationsMetric(t, metrics, 9,
+		"portfolio_liquidation_duplicate_open", 1, 700)
+	assertOperationsMetric(t, metrics, 9,
+		"portfolio_liquidation_evidence_invalid", 1, 710)
+	assertOperationsMetric(t, metrics, 9,
+		"portfolio_liquidation_cancel_streak", 1, 820)
+	for _, item := range metrics {
+		if item.TenantID == 10 {
+			t.Fatalf("healthy tenant emitted portfolio liquidation metric: %+v", item)
+		}
+	}
+}
+
+func assertOperationsAmountMetric(
+	t *testing.T,
+	metrics []*OptionOperationsAmountMetric,
+	tenantID int64,
+	category, coin, want string,
+) {
+	t.Helper()
+	wantAmount := decimal.RequireFromString(want)
+	for _, item := range metrics {
+		if item.TenantID == tenantID && item.Category == category && item.Coin == coin {
+			if !item.Amount.Equal(wantAmount) {
+				t.Fatalf("tenant=%d category=%s coin=%s amount=%s want=%s",
+					tenantID, category, coin, item.Amount, wantAmount)
+			}
+			return
+		}
+	}
+	t.Fatalf("missing tenant=%d category=%s coin=%s in %+v",
+		tenantID, category, coin, metrics)
+}
+
 func TestQueryOptionControlMetricsPriceBandRatioMySQL(t *testing.T) {
 	dsn := os.Getenv("OPTION_CONTROL_RATIO_TEST_DSN")
 	if dsn == "" {

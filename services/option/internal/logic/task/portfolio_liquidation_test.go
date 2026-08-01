@@ -66,6 +66,87 @@ func TestSelectPortfolioLiquidationCandidateDeterministicTie(t *testing.T) {
 	}
 }
 
+func TestSelectPortfolioLiquidationQuantityUsesScenarioModelAndStrictHealth(t *testing.T) {
+	config := optionrisk.PortfolioConfig{
+		InitialShockRate:     decimal.RequireFromString("0.2"),
+		MaintenanceShockRate: decimal.RequireFromString("0.1"),
+		ScenarioShocks: []decimal.Decimal{
+			decimal.NewFromInt(-1), decimal.RequireFromString("-0.2"), decimal.Zero,
+			decimal.RequireFromString("0.2"), decimal.NewFromInt(4),
+		},
+		ConcentrationThreshold: decimal.NewFromInt(1000000),
+	}
+	contract := portfolioLiquidationTestContract(201)
+	contract.QtyStep = decimal.NewFromInt(1)
+	contract.LiquidationFeeRate = decimal.RequireFromString("0.01")
+	market := portfolioLiquidationTestMarket(contract.Id)
+	position := &models.TOptionPosition{
+		Id: 31, ContractId: contract.Id, Side: int64(common.PositionSide_POSITION_SIDE_SHORT),
+		PositionQty: decimal.NewFromInt(2),
+	}
+	legs := map[int64]optionrisk.PortfolioLeg{
+		contract.Id: {Contract: contract, Market: market, ShortQuantity: decimal.NewFromInt(2)},
+	}
+	initial, err := optionrisk.EvaluatePortfolio([]optionrisk.PortfolioLeg{legs[contract.Id]}, false, config)
+	if err != nil {
+		t.Fatal(err)
+	}
+	maintenance, err := optionrisk.EvaluatePortfolio([]optionrisk.PortfolioLeg{legs[contract.Id]}, true, config)
+	if err != nil {
+		t.Fatal(err)
+	}
+	snapshot := &portfolioRiskSnapshot{
+		config: config, legs: legs, initial: initial, maintenance: maintenance,
+	}
+	candidate := &optionRiskPosition{position: position, contract: contract, market: market}
+	_, afterOne, err := evaluatePortfolioAfterShortReduction(snapshot, candidate, decimal.NewFromInt(1))
+	if err != nil {
+		t.Fatal(err)
+	}
+	feeOne := market.MarkPrice.Mul(contract.LiquidationFeeRate)
+	equity := afterOne.Requirement.Add(feeOne).Add(decimal.NewFromInt(1))
+	if !maintenance.Requirement.GreaterThanOrEqual(equity) {
+		t.Fatalf("fixture does not trigger liquidation maintenance/equity=%s/%s", maintenance.Requirement, equity)
+	}
+	quantity, _, selectedMaintenance, err := selectPortfolioLiquidationQuantity(
+		candidate, snapshot, equity, maintenance.Requirement, initial.Requirement.Add(decimal.NewFromInt(100)),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !quantity.Equal(decimal.NewFromInt(1)) || !selectedMaintenance.Requirement.Equal(afterOne.Requirement) {
+		t.Fatalf("selected quantity/maintenance=%s/%s want=1/%s",
+			quantity, selectedMaintenance.Requirement, afterOne.Requirement)
+	}
+
+	boundaryEquity := afterOne.Requirement.Add(feeOne)
+	quantity, _, _, err = selectPortfolioLiquidationQuantity(
+		candidate, snapshot, boundaryEquity, maintenance.Requirement,
+		initial.Requirement.Add(decimal.NewFromInt(100)),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !quantity.Equal(decimal.NewFromInt(2)) {
+		t.Fatalf("exact maintenance boundary selected quantity=%s want=2", quantity)
+	}
+}
+
+func TestSelectPortfolioLiquidationQuantityRejectsUnboundedGrid(t *testing.T) {
+	contract := portfolioLiquidationTestContract(202)
+	contract.QtyStep = decimal.RequireFromString("0.000001")
+	position := &models.TOptionPosition{
+		Id: 32, Side: int64(common.PositionSide_POSITION_SIDE_SHORT), PositionQty: decimal.NewFromInt(1),
+	}
+	_, _, _, err := selectPortfolioLiquidationQuantity(
+		&optionRiskPosition{position: position, contract: contract, market: portfolioLiquidationTestMarket(contract.Id)},
+		&portfolioRiskSnapshot{}, decimal.Zero, decimal.Zero, decimal.Zero,
+	)
+	if err == nil {
+		t.Fatal("unbounded portfolio liquidation quantity grid unexpectedly accepted")
+	}
+}
+
 func TestAllocateIsolatedLiquidationLotsProportionally(t *testing.T) {
 	lots := []*models.TOptionMarginLot{
 		{Id: 1, RemainingQuantity: decimal.NewFromInt(2), RemainingMargin: decimal.NewFromInt(100)},

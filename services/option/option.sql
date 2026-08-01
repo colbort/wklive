@@ -693,7 +693,9 @@ CREATE TABLE `t_option_liquidation` (
   UNIQUE KEY `uk_tenant_liquidation_no` (`tenant_id`, `liquidation_no`),
   KEY `idx_liquidation_status` (`tenant_id`, `status`, `id`),
   KEY `idx_liquidation_position` (`tenant_id`, `position_id`, `id`),
-  KEY `idx_liquidation_portfolio_wallet` (`tenant_id`, `user_id`, `liquidation_scope`, `status`, `id`)
+  KEY `idx_liquidation_portfolio_wallet` (`tenant_id`, `user_id`, `liquidation_scope`, `status`, `id`),
+  KEY `idx_option_liquidation_portfolio_monitor`
+    (`liquidation_scope`, `tenant_id`, `user_id`, `id`, `status`, `contract_id`, `update_times`, `create_times`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权强平记录';
 
 CREATE TABLE `t_option_insurance_fund_flow` (

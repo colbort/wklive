@@ -41,6 +41,8 @@ type (
 		tOptionAssetInstructionModel
 		FindRunnable(ctx context.Context, tenantId, now, cursor, limit int64) ([]*TOptionAssetInstruction, error)
 		FindByBizNo(ctx context.Context, tenantId int64, bizNo string) ([]*TOptionAssetInstruction, error)
+		SummarizeByBizNo(ctx context.Context, tenantId int64, bizNo string) (total, success int64, err error)
+		AllSucceededByBizNo(ctx context.Context, tenantId int64, bizNo string) (bool, error)
 		FindOneForUpdate(ctx context.Context, id int64) (*TOptionAssetInstruction, error)
 		Claim(ctx context.Context, id, now int64) (bool, error)
 		ResetForManualRetry(ctx context.Context, id, now int64) (bool, error)
@@ -59,6 +61,37 @@ type (
 		*defaultTOptionAssetInstructionModel
 	}
 )
+
+func (m *customTOptionAssetInstructionModel) SummarizeByBizNo(
+	ctx context.Context, tenantId int64, bizNo string,
+) (total, success int64, err error) {
+	var summary struct {
+		Total   int64 `db:"total"`
+		Success int64 `db:"success"`
+	}
+	err = m.QueryRowNoCacheCtx(ctx, &summary, `SELECT COUNT(1) AS total,
+COALESCE(SUM(status = ?), 0) AS success
+FROM t_option_asset_instruction
+WHERE tenant_id = ? AND biz_no = ?`,
+		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS),
+		tenantId, bizNo,
+	)
+	return summary.Total, summary.Success, err
+}
+
+func (m *customTOptionAssetInstructionModel) AllSucceededByBizNo(
+	ctx context.Context, tenantId int64, bizNo string,
+) (bool, error) {
+	var complete bool
+	err := m.QueryRowNoCacheCtx(ctx, &complete, `SELECT
+COUNT(1) > 0 AND COALESCE(SUM(status <> ?), 0) = 0
+FROM t_option_asset_instruction
+WHERE tenant_id = ? AND biz_no = ?`,
+		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS),
+		tenantId, bizNo,
+	)
+	return complete, err
+}
 
 func (m *customTOptionAssetInstructionModel) HasIncompleteForWallet(
 	ctx context.Context, tenantId, userId int64, coin string,

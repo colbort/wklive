@@ -239,7 +239,7 @@ func createCloseMarginReleaseInstructions(
 	ctx context.Context,
 	marginLotModel models.TOptionMarginLotModel,
 	instructionModel models.TOptionAssetInstructionModel,
-	contract *models.TOptionContract,
+	_ *models.TOptionContract,
 	position *models.TOptionPosition,
 	trade *models.TOptionTrade,
 	order *models.TOptionOrder,

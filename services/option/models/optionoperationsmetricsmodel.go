@@ -134,12 +134,205 @@ OR order_price_band_ratio<=0 OR circuit_breaker_ratio<=0)`, "update_times", nil}
 		return nil, nil, fmt.Errorf("query option asset freeze duplicate metrics: %w", err)
 	}
 	counts = append(counts, assetFreezeDuplicateMetrics...)
+	insuranceInventoryMetrics, err := queryOptionInsuranceInventoryMetricsByTenant(ctx, conn, now)
+	if err != nil {
+		return nil, nil, fmt.Errorf("query option insurance takeover inventory metrics: %w", err)
+	}
+	counts = append(counts, insuranceInventoryMetrics...)
+	portfolioLiquidationMetrics, err := queryOptionPortfolioLiquidationMetricsByTenant(ctx, conn)
+	if err != nil {
+		return nil, nil, fmt.Errorf("query option portfolio liquidation metrics: %w", err)
+	}
+	counts = append(counts, portfolioLiquidationMetrics...)
 
 	amounts, err := queryOptionOperationsAmounts(ctx, conn)
 	if err != nil {
 		return nil, nil, err
 	}
 	return counts, amounts, nil
+}
+
+func queryOptionPortfolioLiquidationMetricsByTenant(
+	ctx context.Context,
+	conn sqlx.SqlConn,
+) ([]*OptionOperationsMetric, error) {
+	type countTarget struct {
+		category string
+		query    string
+	}
+	targets := []countTarget{
+		{
+			category: "portfolio_liquidation_duplicate_open",
+			query: `SELECT tenant_id,COUNT(1) count,COALESCE(MIN(oldest),0) oldest
+FROM (
+  SELECT liquidation.tenant_id,liquidation.user_id,contract.settle_coin,
+         MIN(liquidation.create_times) oldest
+  FROM t_option_liquidation liquidation FORCE INDEX (idx_option_liquidation_portfolio_monitor)
+  JOIN t_option_contract contract
+    ON contract.tenant_id=liquidation.tenant_id
+   AND contract.id=liquidation.contract_id
+  WHERE liquidation.liquidation_scope=2
+    AND liquidation.status IN (1,2,4,6)
+  GROUP BY liquidation.tenant_id,liquidation.user_id,contract.settle_coin
+  HAVING COUNT(1)>1
+) duplicate_wallets
+GROUP BY tenant_id
+ORDER BY tenant_id`,
+		},
+		{
+			category: "portfolio_liquidation_evidence_invalid",
+			query: `SELECT tenant_id,COUNT(1) count,COALESCE(MIN(create_times),0) oldest
+FROM t_option_liquidation FORCE INDEX (idx_option_liquidation_portfolio_monitor)
+WHERE liquidation_scope=2 AND (
+  account_id<>0 OR portfolio_risk_config_id<=0 OR portfolio_risk_config_version<=0
+  OR portfolio_maintenance_before<=portfolio_maintenance_after
+  OR portfolio_maintenance_after<0 OR portfolio_initial_after<0
+  OR portfolio_collateral_before<portfolio_collateral_after
+  OR portfolio_collateral_after<portfolio_initial_after
+)
+GROUP BY tenant_id
+ORDER BY tenant_id`,
+		},
+		{
+			category: "portfolio_liquidation_cancel_streak",
+			query: `WITH ranked AS (
+  SELECT liquidation.tenant_id,liquidation.user_id,contract.settle_coin,
+         liquidation.status,liquidation.update_times,
+         ROW_NUMBER() OVER (
+           PARTITION BY liquidation.tenant_id,liquidation.user_id,contract.settle_coin
+           ORDER BY liquidation.id DESC
+         ) sequence_no
+  FROM t_option_liquidation liquidation FORCE INDEX (idx_option_liquidation_portfolio_monitor)
+  JOIN t_option_contract contract
+    ON contract.tenant_id=liquidation.tenant_id
+   AND contract.id=liquidation.contract_id
+  WHERE liquidation.liquidation_scope=2
+), cancellation_streaks AS (
+  SELECT tenant_id,user_id,settle_coin,MIN(update_times) oldest
+  FROM ranked
+  WHERE sequence_no<=3
+  GROUP BY tenant_id,user_id,settle_coin
+  HAVING COUNT(1)=3 AND SUM(CASE WHEN status=7 THEN 1 ELSE 0 END)=3
+)
+SELECT tenant_id,COUNT(1) count,COALESCE(MIN(oldest),0) oldest
+FROM cancellation_streaks
+GROUP BY tenant_id
+ORDER BY tenant_id`,
+		},
+	}
+	result := make([]*OptionOperationsMetric, 0)
+	for _, target := range targets {
+		var rows []*optionTenantCountOldest
+		if err := conn.QueryRowsCtx(ctx, &rows, target.query); err != nil {
+			return nil, fmt.Errorf("%s: %w", target.category, err)
+		}
+		result = append(result, toOptionOperationsMetrics(rows, target.category)...)
+	}
+	return result, nil
+}
+
+func queryOptionInsuranceInventoryMetricsByTenant(
+	ctx context.Context,
+	conn sqlx.SqlConn,
+	now int64,
+) ([]*OptionOperationsMetric, error) {
+	query := `SELECT position.tenant_id,COUNT(1) count,
+       COALESCE(MIN((
+         SELECT MIN(lot.create_times)
+         FROM t_option_margin_lot lot FORCE INDEX (idx_margin_lot_position)
+         WHERE lot.tenant_id=position.tenant_id
+           AND lot.position_id=position.id
+           AND lot.trade_id<0
+       )),0) oldest
+FROM t_option_position position FORCE INDEX (idx_option_position_monitor)
+JOIN t_option_contract contract
+  ON contract.tenant_id=position.tenant_id
+ AND contract.id=position.contract_id
+ AND contract.insurance_user_id=position.user_id
+ AND contract.insurance_account_id=position.account_id
+WHERE position.status=1 AND position.side=2 AND position.position_qty>0
+  AND EXISTS (
+    SELECT 1
+    FROM t_option_margin_lot lot FORCE INDEX (idx_margin_lot_position)
+    WHERE lot.tenant_id=position.tenant_id
+      AND lot.position_id=position.id
+      AND lot.trade_id<0
+  )
+GROUP BY position.tenant_id
+ORDER BY position.tenant_id`
+	var rows []*optionTenantCountOldest
+	if err := conn.QueryRowsCtx(ctx, &rows, query); err != nil {
+		return nil, err
+	}
+	result := toOptionOperationsMetrics(rows, "insurance_takeover_inventory")
+
+	rows = nil
+	if err := conn.QueryRowsCtx(ctx, &rows, `
+SELECT position.tenant_id,COUNT(1) count,
+       COALESCE(MIN(contract.expire_time),0) oldest
+FROM t_option_position position FORCE INDEX (idx_option_position_monitor)
+JOIN t_option_contract contract
+  ON contract.tenant_id=position.tenant_id
+ AND contract.id=position.contract_id
+ AND contract.insurance_user_id=position.user_id
+ AND contract.insurance_account_id=position.account_id
+WHERE position.status=1 AND position.side=2 AND position.position_qty>0
+  AND contract.expire_time<=?
+  AND EXISTS (
+    SELECT 1
+    FROM t_option_margin_lot lot FORCE INDEX (idx_margin_lot_position)
+    WHERE lot.tenant_id=position.tenant_id
+      AND lot.position_id=position.id
+      AND lot.trade_id<0
+  )
+GROUP BY position.tenant_id
+ORDER BY position.tenant_id`, now+86400); err != nil {
+		return nil, fmt.Errorf("insurance_takeover_expiry_due: %w", err)
+	}
+	result = append(result, toOptionOperationsMetrics(rows, "insurance_takeover_expiry_due")...)
+
+	rows = nil
+	if err := conn.QueryRowsCtx(ctx, &rows, `
+SELECT position.tenant_id,COUNT(1) count,
+       COALESCE(MIN(CASE
+         WHEN market.id IS NULL THEN position.update_times
+         WHEN market.mark_snapshot_time<=0 OR market.underlying_snapshot_time<=0
+           OR market.greeks_snapshot_time<=0 THEN position.update_times
+         ELSE LEAST(market.mark_snapshot_time,market.underlying_snapshot_time,
+                    market.greeks_snapshot_time)
+       END),0) oldest
+FROM t_option_position position FORCE INDEX (idx_option_position_monitor)
+JOIN t_option_contract contract
+  ON contract.tenant_id=position.tenant_id
+ AND contract.id=position.contract_id
+ AND contract.insurance_user_id=position.user_id
+ AND contract.insurance_account_id=position.account_id
+LEFT JOIN t_option_market market
+  ON market.tenant_id=position.tenant_id AND market.contract_id=position.contract_id
+WHERE position.status=1 AND position.side=2 AND position.position_qty>0
+  AND EXISTS (
+    SELECT 1
+    FROM t_option_margin_lot lot FORCE INDEX (idx_margin_lot_position)
+    WHERE lot.tenant_id=position.tenant_id
+      AND lot.position_id=position.id
+      AND lot.trade_id<0
+  )
+  AND (
+    market.id IS NULL OR market.mark_price<=0 OR market.underlying_price<=0
+    OR market.mark_snapshot_time<=0 OR market.mark_snapshot_time<?
+    OR market.mark_snapshot_time>?
+    OR market.underlying_snapshot_time<=0 OR market.underlying_snapshot_time<?
+    OR market.underlying_snapshot_time>?
+    OR contract.greeks_max_age_seconds<=0 OR market.greeks_snapshot_time<=0
+    OR market.greeks_snapshot_time<?-contract.greeks_max_age_seconds
+    OR market.greeks_snapshot_time>?
+  )
+GROUP BY position.tenant_id
+ORDER BY position.tenant_id`, now-30, now, now-30, now, now, now); err != nil {
+		return nil, fmt.Errorf("insurance_takeover_market_invalid: %w", err)
+	}
+	result = append(result, toOptionOperationsMetrics(rows, "insurance_takeover_market_invalid")...)
+	return result, nil
 }
 
 func queryOptionAssetFreezeDuplicateMetricsByTenant(
@@ -1063,6 +1256,100 @@ JOIN t_option_contract contract
 WHERE liq.remaining_deficit>0
 GROUP BY liq.tenant_id,contract.settle_coin
 ORDER BY liq.tenant_id,contract.settle_coin`,
+		},
+	}
+	result := make([]*OptionOperationsAmountMetric, 0)
+	for _, target := range targets {
+		var rows []*optionTenantAmount
+		if err := conn.QueryRowsCtx(ctx, &rows, target.query); err != nil {
+			return nil, fmt.Errorf("query option operations amount %s: %w", target.category, err)
+		}
+		for _, row := range rows {
+			result = append(result, &OptionOperationsAmountMetric{
+				TenantID: row.TenantID,
+				Category: target.category,
+				Coin:     row.Coin,
+				Amount:   row.Amount,
+			})
+		}
+	}
+	insuranceInventoryAmounts, err := queryOptionInsuranceInventoryAmounts(ctx, conn)
+	if err != nil {
+		return nil, err
+	}
+	result = append(result, insuranceInventoryAmounts...)
+	return result, nil
+}
+
+func queryOptionInsuranceInventoryAmounts(
+	ctx context.Context,
+	conn sqlx.SqlConn,
+) ([]*OptionOperationsAmountMetric, error) {
+	type amountTarget struct {
+		category string
+		query    string
+	}
+	targets := []amountTarget{
+		{
+			category: "insurance_takeover_underlying_quantity",
+			query: `SELECT position.tenant_id,contract.underlying_coin coin,
+  COALESCE(SUM(position.position_qty*contract.multiplier),0) amount
+FROM t_option_position position FORCE INDEX (idx_option_position_monitor)
+JOIN t_option_contract contract
+  ON contract.tenant_id=position.tenant_id
+ AND contract.id=position.contract_id
+ AND contract.insurance_user_id=position.user_id
+ AND contract.insurance_account_id=position.account_id
+WHERE position.status=1 AND position.side=2 AND position.position_qty>0
+  AND EXISTS (
+    SELECT 1 FROM t_option_margin_lot lot FORCE INDEX (idx_margin_lot_position)
+    WHERE lot.tenant_id=position.tenant_id
+      AND lot.position_id=position.id AND lot.trade_id<0
+  )
+GROUP BY position.tenant_id,contract.underlying_coin
+ORDER BY position.tenant_id,contract.underlying_coin`,
+		},
+		{
+			category: "insurance_takeover_mark_value",
+			query: `SELECT position.tenant_id,contract.settle_coin coin,
+  COALESCE(SUM(market.mark_price*position.position_qty*contract.multiplier),0) amount
+FROM t_option_position position FORCE INDEX (idx_option_position_monitor)
+JOIN t_option_contract contract
+  ON contract.tenant_id=position.tenant_id
+ AND contract.id=position.contract_id
+ AND contract.insurance_user_id=position.user_id
+ AND contract.insurance_account_id=position.account_id
+JOIN t_option_market market
+  ON market.tenant_id=position.tenant_id AND market.contract_id=position.contract_id
+WHERE position.status=1 AND position.side=2 AND position.position_qty>0
+  AND EXISTS (
+    SELECT 1 FROM t_option_margin_lot lot FORCE INDEX (idx_margin_lot_position)
+    WHERE lot.tenant_id=position.tenant_id
+      AND lot.position_id=position.id AND lot.trade_id<0
+  )
+GROUP BY position.tenant_id,contract.settle_coin
+ORDER BY position.tenant_id,contract.settle_coin`,
+		},
+		{
+			category: "insurance_takeover_abs_delta",
+			query: `SELECT position.tenant_id,contract.underlying_coin coin,
+  COALESCE(SUM(ABS(market.delta)*position.position_qty*contract.multiplier),0) amount
+FROM t_option_position position FORCE INDEX (idx_option_position_monitor)
+JOIN t_option_contract contract
+  ON contract.tenant_id=position.tenant_id
+ AND contract.id=position.contract_id
+ AND contract.insurance_user_id=position.user_id
+ AND contract.insurance_account_id=position.account_id
+JOIN t_option_market market
+  ON market.tenant_id=position.tenant_id AND market.contract_id=position.contract_id
+WHERE position.status=1 AND position.side=2 AND position.position_qty>0
+  AND EXISTS (
+    SELECT 1 FROM t_option_margin_lot lot FORCE INDEX (idx_margin_lot_position)
+    WHERE lot.tenant_id=position.tenant_id
+      AND lot.position_id=position.id AND lot.trade_id<0
+  )
+GROUP BY position.tenant_id,contract.underlying_coin
+ORDER BY position.tenant_id,contract.underlying_coin`,
 		},
 	}
 	result := make([]*OptionOperationsAmountMetric, 0)

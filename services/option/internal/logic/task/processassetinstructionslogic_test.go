@@ -27,6 +27,16 @@ func TestOptionAssetRetryDelay(t *testing.T) {
 	}
 }
 
+func TestExerciseCompletionSkipsNonTerminalAssetStep(t *testing.T) {
+	logic := &ProcessAssetInstructionsLogic{}
+	if err := logic.completeExerciseTransition(&models.TOptionAssetInstruction{
+		BizNo:  "EX-CAPACITY",
+		StepNo: 1,
+	}); err != nil {
+		t.Fatalf("step-1 completion should not query the whole exercise: %v", err)
+	}
+}
+
 func TestTradeCorrectionInstructionOutcome(t *testing.T) {
 	success := int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS)
 	pending := int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING)
