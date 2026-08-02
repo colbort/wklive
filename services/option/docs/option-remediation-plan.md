@@ -229,8 +229,9 @@ equity = Asset total
     跨越持仓分页边界。10%行权费下生成1004条真实Asset指令/唯一流水：空头扣10010、释放990，
     多头净入9009、费用账户入1001，批次借贷各10010，钱包总额12000且冻结0，重放无新增。
     该容量门禁发现通用分页器把请求500规范化为100后，现金结算仍用500判断末页而只处理首100条；
-    现统一按实际100条页长遍历到空页，避免大批量到期静默漏结算。最近一次正式全套造数/清算/Asset为
-    `1.011s/1.426s/21.878s`。
+    现统一按实际100条页长遍历到空页，避免大批量到期静默漏结算。2026-08-02 19:06～19:18 HKT
+    `SYNTHETIC_ISOLATED`复验的造数/清算/Asset为`1.101s/1.448s/53.654s`；计时只作为开发机完整性
+    基线，最新权威结果统一见仓库技术证据，不能作为生产SLA。
   - 尚未完成：生产调度与通知、结算生命周期容器编排强杀；毫秒截止跨界已由 EX-007
     真实 MySQL 行锁场景覆盖。
     因此状态为 `REPOSITORY_PASSED / PREPROD_BLOCKED`，不能只凭仓库门禁开放真实资金。
@@ -259,8 +260,9 @@ equity = Asset total
     指派必须存在和全部资金步骤成功的门禁。结算完成检查也先确认真实结算批次，再加载批次指令，
     行权指令不再误走结算全量查询。
   - 隔离MySQL/Redis与真实Asset gRPC已执行501/5000独立空头：分别形成501/5000个FIFO指派和
-    503/5002条资金指令，全部成功、逐笔对账且重放无新增。最近一次正式全套中501场景
-    造数/清算/Asset为`501ms/2.826s/14.341s`；5000场景为`3.257s/27.034s/6m26.656s`。
+    503/5002条资金指令，全部成功、逐笔对账且重放无新增。2026-08-02 19:06～19:18 HKT
+    `SYNTHETIC_ISOLATED`复验中501场景造数/清算/Asset为`404ms/2.772s/14.279s`；5000场景为
+    `3.552s/27.935s/2m50.817s`。
     5000个空头冻结各1全部扣完，
     多头`4501`、费用账户`500`，与初始`5001`守恒。该开发机结果证明边界完整性，不替代预生产SLA。
   - 真实Asset平仓—指派竞争已覆盖1个预置平仓单及10轮同时起跑：形成11个唯一指派、33条成功
@@ -269,11 +271,11 @@ equity = Asset total
   - 行权专用进程强杀已覆盖完整经济链：空头扣冻结40/释放10完成，多头净入36由真实Asset
     提交并落唯一流水后，Option工作进程在保存结果前被`SIGKILL`；目标指令保持
     `PROCESSING/retry=0`，手续费4仍为`PENDING`，行权和指派未提前完成。Redis租约自然等待
-    `29.948s`后两个全新进程竞争，仅一个沿用原指令号认领既有流水并完成手续费。最终行权和
+    `29.956s`后两个全新进程竞争，仅一个沿用原指令号认领既有流水并完成手续费。最终行权和
     唯一指派均DONE，4条指令/流水全部成功对账，钱包`136/60/4`、总额200/冻结0，长短仓、
     margin lot及收益分项终结，无任务锁残留。
-  - 最近一次正式全套501造数/清算/Asset为`501ms/2.826s/14.341s`，5000为
-    `3.257s/27.034s/6m26.656s`；同日其他运行结果仅作开发机完整性波动基线。
+  - 上述复验计时仅作开发机完整性波动基线，最新权威结果统一见
+    `docs/evidence/option-repository-technical-evidence-20260802.md`。
     `make gen-model`不适用（无DDL）；预生产批准SLA、容器编排级强杀/RTO和通知仍须验收。
 
 ### OPT-P0-007 平台兜底运行时硬额度
@@ -399,7 +401,8 @@ equity = Asset total
     触发/组撤单/人工恢复事件各1。`zg` 迁移双执行；无DDL，`make gen-model`不适用。
 - 待验证：
   - 做市商预生产真实策略流量、生产消息与容器编排故障、指标抓取、通知路由和告警恢复演练
-    尚未执行；未完成审批前不得宣称生产可用。
+    尚未执行；专项输入、MMP-PRE-001～008、资金/告警汇总及六方签署已整理到
+    `docs/templates/option-mmp-readiness.md`，未完成审批前不得宣称生产可用。
 
 ### OPT-P1-004 组合保证金模型治理
 
@@ -542,6 +545,8 @@ equity = Asset total
   美式行权专用Asset入账提交后`SIGKILL`、30秒Redis租约自然到期和两个新进程唯一接管也已通过：
   4条指令/流水成功对账、目标入账仅1条、行权/指派DONE、钱包总额200/冻结0。实物交割指令暂不开放，
   归入 P1-007；开发环境501/5000真实Asset容量和平仓竞争已通过，剩余为预生产峰值、容器编排、通知和签署。
+  美式能力启用所需完整合约集合、AMER-PRE-001～010、逐合约控制记录、资金数量守恒和六方签署已整理到
+  `docs/templates/option-american-exercise-readiness.md`。
 
 ### OPT-P1-007 实物交割违约规则
 
@@ -1191,7 +1196,7 @@ equity = Asset total
 | 生产运行与应急手册 | `docs/option-operations-runbook.md` | REPOSITORY_PASSED |
 | 告警目录与阈值 | `docs/option-alert-catalog.md` | REPOSITORY_PASSED |
 | Prometheus 抓取、组合/通用运营规则与部署说明 | `monitoring/` | REPOSITORY_PASSED / PREPROD_BLOCKED（生产 target、接收人和通知演练待部署） |
-| Option fail-closed 生产门禁与证据清单 | `monitoring/option-production-readiness.sh`、`monitoring/option-production-readiness.env.example` | REPOSITORY_PASSED / PREPROD_BLOCKED（已实时校验 metrics 可达性、关键指标族、采样成功与45秒新鲜度；真实报告、哈希和审批只能由预生产/生产提供） |
+| Option fail-closed 生产门禁与证据清单 | `monitoring/option-production-readiness.sh`、`monitoring/option-production-readiness.env.example`、`monitoring/option-product-scope-verify.sh` | REPOSITORY_PASSED / PREPROD_BLOCKED（已实时校验 metrics 可达性、关键指标族、采样成功与45秒新鲜度；`ProductScope`默认关闭并在上市/恢复、订单、组合资金后激活、公开行情和美式行权入口执行，独立校验器逐项比对已哈希渲染YAML并拒绝重复/缺失；真实报告、哈希和审批只能由预生产/生产提供） |
 | 仓库技术证据与可校验哈希清单 | `docs/evidence/option-repository-technical-evidence-20260802.md`、同目录`.sha256` | REPOSITORY_PASSED / RELEASE_IDENTITY_PENDING（明确为REPOSITORY_ONLY且当前工作区非release candidate；不能计入预生产/生产放行） |
 | 发布候选变更范围与脏工作区检查 | `docs/evidence/option-release-candidate-change-inventory-20260802.md`、`monitoring/option-release-scope.sh` | REPOSITORY_PASSED / RELEASE_IDENTITY_PENDING（仅整理/校验范围，不擅自提交或丢弃现有改动；最终发布提交仍须人工逐文件审查并在干净工作区重跑） |
 | Alertmanager SEV-1/2/3 路由样例 | `monitoring/alertmanager.example.yml` | MATERIAL_READY / EXTERNAL_EXECUTION（接收地址和凭证必须由生产配置系统渲染） |
@@ -1215,6 +1220,8 @@ equity = Asset total
 | 日终对账检查表 | `docs/templates/daily-reconciliation.md` | MATERIAL_READY / EXTERNAL_EXECUTION |
 | 生产验收测试计划 | `docs/option-acceptance-test-plan.md` | REPOSITORY_PASSED |
 | 产品公告、FAQ、通知与客服话术底稿 | `docs/option-product-operations-pack.md` | MATERIAL_READY / EXTERNAL_EXECUTION（仅内部未发布模板；系统边界已预填，具体参数、法律文本、联系人、触达计划、预生产证据和审批仍阻断发布） |
+| 运营真实输入、责任方和证据入口总表 | `docs/option-operations-input-checklist.md`、`monitoring/option-operations-input-verify.sh` | MATERIAL_READY / EXTERNAL_EXECUTION（系统硬边界、逐合约参数、市场日历、资金风险、容量通知和专项模板入口已预填；31项固定材料逐条绑定绝对路径/SHA/终态，独立脚本校验8项完成条件、无OPEN/占位/严重问题并从记录反算汇总，按`31 + 10 × 上市合约数`绑定全集；真实值与签署待责任方提供，默认DRAFT） |
+| 上市审批、目标环境与公告/客户端合约集合对账 | `docs/templates/option-contract-set-reconciliation.md`、`monitoring/option-launch-bundle-verify.sh`、`option-launch-bundle-verify-selftest.sh` | MATERIAL_READY / EXTERNAL_EXECUTION（两份无表头原始导出、各自SHA、租户/release、上市窗口和独立复核字段已定义；门禁执行PENDING状态、数量、唯一身份、哈希和三方严格等集比较；一条正常及五条反向样例已固化，真实导出待目标环境及发布副本生成） |
 | 交易日历版本审批模板 | `docs/templates/trading-calendar-approval.md` | MATERIAL_READY / EXTERNAL_EXECUTION |
 | 临时休市与恢复记录 | `docs/templates/trading-halt-record.md` | MATERIAL_READY / EXTERNAL_EXECUTION |
 | 年度交易日历资料与 T-30 复核清单 | `docs/templates/trading-calendar-annual-review.md` | MATERIAL_READY / EXTERNAL_EXECUTION（具体市场日期待业务提供权威来源） |

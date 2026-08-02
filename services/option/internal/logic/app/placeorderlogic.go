@@ -114,6 +114,15 @@ func (l *PlaceOrderLogic) PlaceOrder(in *option.PlaceOrderReq) (*option.PlaceOrd
 		in.PositionEffect != option.PositionEffect_POSITION_EFFECT_CLOSE {
 		return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
+	if ready, reason := logichelpers.OrderProductScopeReady(
+		contract, l.svcCtx.Config.ProductScope, in.Side, in.PositionEffect, in.Mmp,
+	); !ready {
+		l.Errorf(
+			"option order denied by product scope tenantId=%d userId=%d contractId=%d reason=%s",
+			tenantId, userId, contract.Id, reason,
+		)
+		return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.OperationNotAllowed, reason)}, nil
+	}
 	switch in.OrderType {
 	case option.OrderType_ORDER_TYPE_LIMIT,
 		option.OrderType_ORDER_TYPE_MARKET,

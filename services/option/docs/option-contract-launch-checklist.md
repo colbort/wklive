@@ -1,8 +1,20 @@
 # Option 合约上市检查表
 
 OPTION_LAUNCH_CHECKLIST_STATUS: DRAFT
+OPTION_CONTRACT_TENANT_ID: 0
+OPTION_CONTRACT_ID: 0
+OPTION_CONTRACT_CODE: DRAFT
+OPTION_PRODUCT_APPROVAL_REF: DRAFT
+OPTION_TECH_APPROVAL_REF: DRAFT
+OPTION_RISK_APPROVAL_REF: DRAFT
+OPTION_CLEARING_APPROVAL_REF: DRAFT
+OPTION_OPERATIONS_APPROVAL_REF: DRAFT
+OPTION_COMPLIANCE_APPROVAL_REF: DRAFT
 
 只有全部适用项完成、证据哈希固定并取得六方签字后，才可把状态改为 `APPROVED`；签署后的副本不得原地改写。
+归档副本还必须把上述租户、合约 ID 和合约代码改成与生产配置完全一致的真实值；
+六个审批引用必须指向可追溯的工单、签名或归档证据。生产门禁会把身份字段与上市合集逐行
+比较，并要求本模板63个验收项全部保留且勾选。
 
 合约代码：________　租户：________　计划开放时间：________　负责人：________
 
@@ -40,7 +52,7 @@ OPTION_LAUNCH_CHECKLIST_STATUS: DRAFT
 - [ ] 新建状态只能是 `PENDING`；后台参数更新不能直接修改状态。上市时标的价和标记价为正、
   各自快照不超过30秒，且生命周期日志显示全部自动门禁通过。
 - [ ] 所有 Unix 时间已从产品时区交叉换算并由第二人复核。
-- [ ] 未完成能力的功能开关保持关闭。
+- [ ] 未完成能力的运行时功能开关保持关闭；已哈希的Option渲染YAML中`ProductScope`与发布声明逐项一致，独立校验器无重复/缺失且完整PASS。
 
 ## 3. 技术门禁
 

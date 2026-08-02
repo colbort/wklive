@@ -27,6 +27,14 @@ Option RPC 在内部端口 `9105` 的 `/metrics` 暴露 Prometheus 指标；业�
 - `option-production-readiness.env.example`：生产范围、审批和不可变证据清单。
 - `option-production-readiness.sh`：fail-closed 上线门禁；`--repository-only` 只校验仓库事实，
   生产模式还会验证证据哈希、功能开关、Prometheus/Alertmanager 配置和条件审批。
+- `option-evidence-finalization-verify.sh`：生产证据终态校验；拒绝表格占位符、空单元格、未决选择、
+  OPEN/DRAFT行、部署占位符和未勾选验收项，防止只改批准状态或哈希。
+- `option-readiness-attestation-verify.sh`：以`option-production-readiness.env.example`为生产声明schema；
+  拒绝重复/未知/缺失键、非规范赋值和占位路径，确保所有工具读取同一tenant、release与证据身份。
+- `option-operations-input-verify.sh`：校验运营总表的31项固定材料机器记录，逐份验证绝对路径、SHA-256、
+  终态及不适用依据，并结合上市合约数反算批准/不适用汇总。
+- `option-external-contract-intake-verify.sh`：校验外部完整合约CSV的固定22列、唯一代码、产品枚举、币种、
+  正数经济参数、数量上下界、Unix毫秒、五时间顺序和IANA时区。
 
 ## 部署步骤
 

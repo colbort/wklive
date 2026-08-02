@@ -219,7 +219,8 @@ WindowStart = WindowEnd = market.SnapshotTime
 进一步覆盖0.5部分数量、10%行权费和502持仓分页：1004条真实Asset指令全部成功对账，空头扣10010/
 释放990、多头净入9009、费用1001，批次借贷各10010且钱包12000守恒。该门禁发现并修复分页请求
 500被通用上限规范化为100后错误提前结束、只处理首100条持仓的静默漏结算缺陷。正式全套
-造数/清算/Asset为`1.011s/1.426s/21.878s`。
+2026-08-02 `SYNTHETIC_ISOLATED`复验的造数/清算/Asset为`1.101s/1.448s/53.654s`；计时仅作开发机
+完整性基线，最新权威结果见仓库技术证据。
 生产调度/通知和完整容器编排故障注入仍待预生产执行；毫秒截止跨界已由 EX-007 真实行锁场景覆盖。仓库级 SET-001 已进一步证明扣冻结前 RPC
 `Unavailable` 时 step 2不产生成功或流水；真实Asset扣款成功但响应丢失时，Option同样阻断
 step 2，恢复后沿用原指令号认领唯一扣款流水，不发生二次扣款。OPS-006 已验证执行者在真实
@@ -628,7 +629,7 @@ services/option: go test -race ./internal/logic/app ./internal/logic/task ./mode
 services/option: go vet ./...                                         PASS
 admin-api: go test ./... && go vet ./...                              PASS
 admin-ui: npm run type-check（Node 20.20.2）                            PASS
-services/option/acceptance/run-p0-asset-rpc-e2e.sh                    PASS（最终复跑主测试113.879s；9277条：9270条成功并对账、7条冻结前合法取消；加权终态9284）
+services/option/acceptance/run-p0-asset-rpc-e2e.sh                    PASS（2026-08-02 19:06～19:18 HKT合成数据复验；主测试115.718s；9277条：9270条成功并对账、7条冻结前合法取消；加权终态9284）
 services/option/monitoring/option-production-readiness.sh --repository-only  READY
 ```
 

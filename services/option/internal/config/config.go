@@ -39,4 +39,17 @@ type Config struct {
 		// not replace the monetary limits that must be enforced by Asset.
 		Enabled bool
 	}
+	ProductScope ProductScope
+}
+
+// ProductScope contains the production admission switches for optional product
+// capabilities. The zero value is deliberately fail-closed.
+type ProductScope struct {
+	SellerTradingEnabled           bool
+	PortfolioMarginEnabled         bool
+	PhysicalDeliveryEnabled        bool
+	ComplexOrdersEnabled           bool
+	PublicMarketEnabled            bool
+	MMPEnabled                     bool
+	AmericanExerciseEnabled        bool
 }

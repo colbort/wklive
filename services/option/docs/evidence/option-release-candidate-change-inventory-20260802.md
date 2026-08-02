@@ -6,15 +6,23 @@ INVENTORY_STATUS: DYNAMIC_USE_SCOPE_SCRIPT
 
 原172项Option范围变化已在审计期间由外部提交为
 `c73eb294e8ace983fc07f851b39f3a097334904d`；范围脚本分类修正随后进入
-`7a9ae4d9e8671fd0c2a55e03086ae4722cd687b1`。两个提交信息均为
-`修复保险基金流水方向：新行保存正绝对金额，1/3 类流入，2/4 类流出`。Codex未执行这些提交，也未改写索引。
+`7a9ae4d9e8671fd0c2a55e03086ae4722cd687b1`。平台兜底、证据门禁和运营材料又由外部提交为
+`7d81ffcb43b2dc4d1adab70dca3548e4ad8ad191`，当前同时位于`master`和`origin/master`。
+Codex未执行这些提交，也未改写索引。
 
 仓库在审计期间可能继续生成检查点提交，因此本文件不把某个脏文件数量声明为永久事实。每次评审必须以
-`git rev-parse HEAD`和范围脚本输出为准。平台兜底实现及证据门禁复核后的2026-08-02记录中，HEAD为
-`7a9ae4d9`，脚本输出`changed=104 modified=64 added=0 untracked=40`并为`SCOPE_OK`。范围除Option本身外，
-还明确包含P0-007不可拆分的Asset schema/Proto/服务/模型、Admin API/UI和System RBAC依赖；脚本只放行
-这些精确文件或平台兜底专用命名模式，不会把整个Asset或Admin目录泛化为Option范围。没有删除、重命名
-或冲突。最终数量仍以命令实时输出为准。
+`git rev-parse HEAD`和范围脚本输出为准。`7d81ffcb`提交后，本轮继续补强完整合约上市合集、运营输入总表
+及其生产门禁；随后增加逐合约合集校验器，生产门禁不再以“出现一个哈希”推断全集完成。
+随后又补齐审批、目标环境和公告/客户端三方合约集合对账，并把原先只存在于验收文件的产品能力声明
+实现为默认关闭的Option `ProductScope`运行时门禁；生产证据又增加统一终态校验，不能只改批准状态行而
+保留空表格或未决字段；readiness声明也按完整schema拒绝重复、未知、缺失键和占位路径。
+外部责任方首批输入又收敛为一份最小移交包，并提供完整合约CSV机器校验器，明确能力开关和收到资料后的自动执行顺序。
+2026-08-02合成数据复验及权威计时去漂移后，当前脚本输出
+`changed=52 modified=32 added=0 untracked=20`并为`SCOPE_OK`。
+已提交的平台兜底范围明确包含P0-007不可拆分的Asset schema/Proto/服务/模型、Admin API/UI和System
+RBAC依赖；脚本只放行这些精确文件或平台兜底专用命名模式，不会把整个Asset或Admin目录泛化为Option
+范围。当前52项均在`services/option`内，没有删除、重命名或冲突；形成下一提交后仍须以
+`--release-clean`证明最终工作区为0变化。
 
 可重复检查：
 
@@ -54,7 +62,13 @@ services/option/monitoring/option-release-scope.sh --release-clean
 5. 平台兜底：Option运行时开关、上市/恢复/清算门禁、Asset硬额度实现、管理RPC/API/UI、System RBAC、
    政策审批、BST-001～BST-012、渲染配置和生产readiness必须作为一个依赖组；仓库实现与隔离验收已完成，
    真实资本、参数、目标环境证据和签署未完成前禁止开启。
-6. 运营：指标SQL、告警、readiness、Admin UI标签、对账/签署模板和证据哈希必须在最终代码审查后重生；
+6. 可选产品范围：`ProductScope`配置、上市/恢复、普通/组合订单、组合资金后激活、公开行情、美式行权、
+   readiness声明和渲染配置哈希是一个依赖组；未批准能力不得只在文档中写false而运行时放开。
+7. 运营：指标SQL、告警、readiness、Admin UI标签、运营输入31项固定材料逐条哈希/完成项/汇总反算、
+   证据终态校验、
+   readiness声明schema/唯一性校验、
+   对账/签署模板和证据哈希
+   必须在最终代码审查后重生；
    不能先固定旧哈希再修改实现。
 
 ## 4. 生成产物与命令

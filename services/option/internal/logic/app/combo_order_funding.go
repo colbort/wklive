@@ -73,8 +73,11 @@ func CompleteComboFunding(
 		}
 
 		now := time.Now().Unix()
-		admit := true
+		admit := svcCtx.Config.ProductScope.ComplexOrdersEnabled
 		admissionReason := "COMBO_NOT_TRADABLE_AFTER_FUNDING"
+		if !admit {
+			admissionReason = "COMPLEX_ORDERS_DISABLED_AFTER_FUNDING"
+		}
 		rejectAdmission := func(reason string) {
 			if admit && reason != "" {
 				admissionReason = reason
@@ -101,6 +104,14 @@ func CompleteComboFunding(
 				now < contract.ListTime ||
 				(contract.LastTradeTime <= 0 || now >= contract.LastTradeTime) {
 				rejectAdmission("COMBO_CONTRACT_NOT_TRADABLE_AFTER_FUNDING")
+				continue
+			}
+			if ready, reason := logichelpers.OrderProductScopeReady(
+				contract, svcCtx.Config.ProductScope,
+				common.Side(child.Side), option.PositionEffect_POSITION_EFFECT_OPEN,
+				common.YesNo_YES_NO_NO,
+			); !ready {
+				rejectAdmission("COMBO_PRODUCT_SCOPE_AFTER_FUNDING_" + reason)
 				continue
 			}
 			decision, calendarErr := logichelpers.IsContractTradingOpenWithModels(

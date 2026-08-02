@@ -81,6 +81,11 @@ func (l *ResumeContractTradingLogic) ResumeContractTrading(in *option.ResumeCont
 		) && !l.svcCtx.Config.PlatformBackstop.Enabled {
 			return i18n.StatusError(ctx, i18n.OperationNotAllowed)
 		}
+		if ready, _ := helpers.ContractLaunchProductScopeReady(
+			contract, l.svcCtx.Config.ProductScope,
+		); !ready {
+			return i18n.StatusError(ctx, i18n.OperationNotAllowed)
+		}
 		activeOrders, findErr := orderModel.HasUnsafeContractResumeOrders(ctx, contract.TenantId, contract.Id)
 		if findErr != nil {
 			return findErr

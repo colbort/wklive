@@ -38,6 +38,11 @@ func NewExerciseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Exercise
 
 // 发起行权
 func (l *ExerciseLogic) Exercise(in *option.ExerciseReq) (*option.ExerciseResp, error) {
+	if !l.svcCtx.Config.ProductScope.AmericanExerciseEnabled {
+		return &option.ExerciseResp{
+			Base: helper.ErrResp(i18n.OperationNotAllowed, logichelpers.ProductScopeAmericanExerciseDisabled),
+		}, nil
+	}
 	userId, err := utils.GetUserIdFromMd(l.ctx)
 	if err != nil {
 		return nil, err

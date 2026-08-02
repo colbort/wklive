@@ -318,6 +318,15 @@ func (l *ProcessContractLifecycleLogic) listContractIfEligible(
 			)
 			return nil
 		}
+		if ready, reason := helpers.ContractLaunchProductScopeReady(
+			contract, l.svcCtx.Config.ProductScope,
+		); !ready {
+			l.Errorf(
+				"keep option contract pending because product scope is disabled, tenantId=%d contractId=%d reason=%s",
+				contract.TenantId, contract.Id, reason,
+			)
+			return nil
+		}
 		series, seriesErr := seriesDetailModel.FindSeriesLaunchByContract(
 			ctx, contract.TenantId, contract.Id,
 		)

@@ -49,7 +49,10 @@ OPTION_EVIDENCE_STATUS: DRAFT
       拒绝事件在失败事务之外持久化，身份/会话/工单可追踪，旁路成功、采集失败和日志缺口均按
       SEV-1演练，不只依赖应用Counter。
 - [ ] 容量、死锁、恢复时间、消息积压和数据库慢查询均在批准阈值内。
-- [ ] 所有未批准功能开关为 false，API、权限、公告和销售材料均未暴露。
+- [ ] 所有未批准功能开关为 false，API、权限、公告和销售材料均未暴露；已提交Option渲染YAML及
+  SHA-256，`ProductScope`中的卖方、组合保证金、实物、复杂单、公开行情、MMP和美式行权开关与生产
+  门禁声明逐项一致；尚无独立入口的Greeks依赖扩展保持`false`；独立校验器的正常及反向自测通过，
+  目标配置无重复/缺失声明、段或键。
 
 ## 3. 条件门禁
 
@@ -62,6 +65,10 @@ OPTION_EVIDENCE_STATUS: DRAFT
       真实Asset、通知、容器故障和两币种守恒验收；未批准或未实现路径保持无入口。
 - [ ] 组合订单：真实并发、Asset、消息、故障和容量报告已通过，未对外宣称未实现的 legging/拍卖能力。
 - [ ] 公开行情：跨租户、事实表抽样、缓存/CDN TTL、限流、降级和 SLA 外部探针通过。
+- [ ] MMP（仅启用时）：`option-mmp-readiness.md`为`APPROVED`，MMP-PRE-001～008、全集、资金释放、
+      恢复、告警通知和六方签署通过；否则运行时开关为false。
+- [ ] 美式提前行权（仅启用时）：`option-american-exercise-readiness.md`为`APPROVED`，AMER-PRE-001～010、
+      全部批准合约、逐合约控制记录、资金数量守恒、通知和六方签署通过；否则运行时开关为false。
 - [ ] Greeks 功能：合约/产品级陈旧阈值及自动保护经风控模型审批。
 
 ## 4. 证据清单
@@ -69,7 +76,9 @@ OPTION_EVIDENCE_STATUS: DRAFT
 | 证据 | 文件/工单 | SHA-256 | 结论 | 复核人 |
 | --- | --- | --- | --- | --- |
 | 仓库技术基线（不计生产放行） | `docs/evidence/option-repository-technical-evidence-20260802.md`及同目录`.sha256`清单 | 以清单校验结果为准 | 仅仓库通过；当前非release candidate | 不适用 |
-| 本次发布全部合约上市检查表 | `option-contract-launch-checklist.md`逐合约签署副本或不可变签署合集：待填写 | 待填写 | 通过/拒绝 | 待填写 |
+| 本次发布全部合约上市检查表 | `option-contract-launch-bundle.md`、逐合约签署副本及`option-launch-bundle-verify.sh`完整PASS输出：待填写 | 待填写 | 通过/拒绝 | 待填写 |
+| 目标环境与公告/客户端合约集合对账 | `option-contract-set-reconciliation.md`、两份原始导出及各自SHA：待填写 | 待填写 | 通过/拒绝 | 待填写 |
+| 运营真实输入与责任方总表 | `option-operations-input-checklist.md`签署副本、31项固定材料逐份SHA及独立校验器完整PASS输出：待填写 | 待填写 | 通过/拒绝 | 待填写 |
 | 迁移与数据库结构 | 待填写 | 待填写 | 通过/拒绝 | 待填写 |
 | Asset E2E | 待填写 | 待填写 | 通过/拒绝 | 待填写 |
 | 故障注入/重启/消息 | 待填写 | 待填写 | 通过/拒绝 | 待填写 |

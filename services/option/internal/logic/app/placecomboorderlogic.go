@@ -38,6 +38,11 @@ func NewPlaceComboOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *P
 
 // 创建2至4腿独立策略簿组合订单
 func (l *PlaceComboOrderLogic) PlaceComboOrder(in *option.PlaceComboOrderReq) (*option.PlaceComboOrderResp, error) {
+	if !l.svcCtx.Config.ProductScope.ComplexOrdersEnabled {
+		return &option.PlaceComboOrderResp{
+			Base: helper.ErrResp(i18n.OperationNotAllowed, "COMPLEX_ORDERS_DISABLED"),
+		}, nil
+	}
 	userID, err := utils.GetUserIdFromMd(l.ctx)
 	if err != nil {
 		return nil, err

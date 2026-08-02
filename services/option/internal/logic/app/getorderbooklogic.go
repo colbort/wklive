@@ -35,6 +35,11 @@ func NewGetOrderBookLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetO
 
 // 获取来自 Option 活动限价委托的聚合盘口
 func (l *GetOrderBookLogic) GetOrderBook(in *option.GetOrderBookReq) (*option.GetOrderBookResp, error) {
+	if !l.svcCtx.Config.ProductScope.PublicMarketEnabled {
+		return &option.GetOrderBookResp{
+			Base: helper.ErrResp(i18n.OperationNotAllowed, "PUBLIC_MARKET_DISABLED"),
+		}, nil
+	}
 	if in == nil || in.ContractId <= 0 || in.DepthLimit < 0 || in.DepthLimit > 100 {
 		return orderBookParamError(l.ctx), nil
 	}

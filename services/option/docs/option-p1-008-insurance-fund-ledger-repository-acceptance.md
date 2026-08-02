@@ -74,7 +74,7 @@ CASE WHEN flow_type IN (2,4) THEN -ABS(amount) ELSE ABS(amount) END
 - `make gen-model` 已执行，DDL 与生成模型字段注释一致。
 - Option `go test ./...`、`go vet ./...`、`go test -race ./models ./internal/logic/task` 通过。
 - 仓库 production readiness 中本项相关契约、读写、数据库、真实链路和文档检查全部通过；仅 repository mode 预期跳过本机缺失的 `promtool`。
-- 完整 Docker + 真实 Asset RPC 门禁通过；主集成测试 `113.879s`。
+- 完整 Docker + 真实 Asset RPC 门禁通过；2026-08-02 19:06～19:18 HKT `SYNTHETIC_ISOLATED`复验主集成测试 `115.718s`。
 - 资金指令共9277条：9270条成功且已对账，7条冻结前合法取消，加权终态9284。
 - 真实缺口赔付原始金额15、方向归一金额-15；正式汇总为
   `raw_inflow=28.49 raw_outflow=54.10 signed_net=-25.61 nonpositive_rows=0`。

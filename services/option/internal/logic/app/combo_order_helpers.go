@@ -232,6 +232,12 @@ func validateComboOrder(
 		if contract.SellerMarginMode != int64(option.SellerMarginMode_SELLER_MARGIN_MODE_ISOLATED) {
 			return nil, errors.New("combo V1 requires isolated seller margin")
 		}
+		if ready, reason := logichelpers.OrderProductScopeReady(
+			contract, svcCtx.Config.ProductScope, inputLeg.Side,
+			option.PositionEffect_POSITION_EFFECT_OPEN, common.YesNo_YES_NO_NO,
+		); !ready {
+			return nil, fmt.Errorf("combo leg product scope denied: %s", reason)
+		}
 		if contract.PriceTick.IsPositive() && !price.Mod(contract.PriceTick).IsZero() {
 			return nil, errors.New("combo leg price does not follow price_tick")
 		}

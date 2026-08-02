@@ -44,3 +44,14 @@ InsuranceInventoryExit:
 # stay pending and an existing liquidation deficit is routed to manual review.
 PlatformBackstop:
   Enabled: false
+
+# Optional product capabilities are fail-closed. Production must render these
+# values from the approved release scope; readiness verifies the rendered file.
+ProductScope:
+  SellerTradingEnabled: false
+  PortfolioMarginEnabled: false
+  PhysicalDeliveryEnabled: false
+  ComplexOrdersEnabled: false
+  PublicMarketEnabled: false
+  MMPEnabled: false
+  AmericanExerciseEnabled: false

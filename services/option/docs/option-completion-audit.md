@@ -11,8 +11,19 @@ AUDIT_STATUS: REPOSITORY_ACTIONS_COMPLETE / PREPROD_BLOCKED
 Asset RPC证据已经完成；不能据此宣称生产`DONE`，因为真实市场参数、目标环境演练、财务/风险/法律
 批准和最终签署尚未完成。
 
+2026-08-02 19:06～19:18 HKT复验的数据分类为`SYNTHETIC_ISOLATED`：tenant、合约、账户和余额为
+合成数据，Option业务逻辑、Asset gRPC、MySQL、Redis和迁移均为真实链路。该证据足以验收仓库功能、
+事务、幂等、并发、资金守恒与故障接管，但不能代替真实市场规则、生产资本、目标环境或人员批准。
+
 P2-008 RFQ、大宗和正式做市义务不属于首版一般零售期权，当前保持`DEFERRED`且无入口。MMP只是做市
 保护，不等于做市义务。
+
+本次复核关闭了一个P0配置一致性缺口：原生产门禁声明的卖方、组合保证金、实物、复杂单和公开行情等
+开关并未全部进入Option运行时。现已增加默认关闭的`ProductScope`，在合约上市、普通订单、
+组合单、公开行情和美式提前行权入口执行真实门禁，同时补充MMP与美式开关；生产验收必须提交渲染配置及
+SHA-256，脚本逐项比较声明值和运行时值。尚无独立入口的Greeks依赖扩展禁止声明为开启。该修改不涉及
+DDL、Proto或模型，无需运行`make gen-model`。独立`option-product-scope-verify.sh`还要求每项声明、
+`ProductScope`段及七个运行时键恰好出现一次；正常及不匹配、重复、缺失和伪开Greeks反向样例已自动化。
 
 ## 2. 一般期权要求与当前覆盖
 
@@ -53,17 +64,33 @@ P2-008 RFQ、大宗和正式做市义务不属于首版一般零售期权，当�
 
 ## 5. 仓库已补齐的运营材料
 
+运营真实输入、责任方和专项证据入口已汇总到`option-operations-input-checklist.md`，避免由运营人员在
+多份技术台账中自行猜测字段。
+
 | 用途 | 模板/入口 | 默认状态 |
 | --- | --- | --- |
-| 上市与发布 | `option-contract-launch-checklist.md`、`option-production-readiness-signoff.md` | DRAFT |
+| 上市与发布 | `option-contract-launch-checklist.md`、`option-contract-launch-bundle.md`、`option-contract-set-reconciliation.md`、`option-production-readiness-signoff.md` | DRAFT |
 | 市场/日历 | `option-market-freshness-approval.md`、`trading-calendar-approval.md`、`trading-calendar-annual-review.md` | DRAFT |
 | 资金/保险/兜底 | `option-daily-fund-reconciliation.md`、`option-insurance-fund-ledger-production-approval.md`、`option-platform-backstop-policy-approval.md`、`option-platform-backstop-e2e.md` | DRAFT |
 | 风险与交割 | `option-portfolio-risk-validation-record.md`、`option-insurance-inventory-exit-approval.md`、`option-insurance-inventory-exit-execution-record.md`、`option-physical-delivery-default-policy-approval.md` | DRAFT |
 | 运行与安全 | `option-alert-delivery-test.md`、`option-orchestrator-takeover-report.md`、`option-beanstalk-capacity-rto-report.md`、`option-database-security-audit-acceptance.md` | DRAFT |
 | 行情与复杂订单 | `public-market-readiness.md`、`complex-order-readiness.md` | DRAFT |
+| MMP与美式提前行权 | `option-mmp-readiness.md`、`option-american-exercise-readiness.md`及逐合约`option-exercise-expiry-control-record.md` | DRAFT |
 | 无专项模板的报告 | `option-production-evidence-report.md`，每种证据分别复制 | DRAFT |
 
-生产门禁同时校验文件、SHA-256和对应机器可读`APPROVED`状态；仓库模板本身不能直接作为生产证据。
+生产门禁同时校验文件、SHA-256和对应机器可读`APPROVED`状态，并统一拒绝表格占位符、空单元格、
+未决选择、OPEN/DRAFT行及未勾选验收项；仓库模板本身不能直接作为生产证据。
+本次发布还必须提供覆盖全部合约的上市合集及无占位符运营输入总表，避免用单合约抽样或一个总批准引用
+替代逐合约参数复核。`monitoring/option-launch-bundle-verify.sh`按记录数量、唯一身份、租户/release、
+六方审批引用、完整63项检查正文、勾选状态和逐文件SHA-256执行强制校验，并要求审批合集、目标环境
+只读导出和最终公告/客户端导出三方集合完全相同；仅在文档中放一个哈希不能通过。
+`monitoring/option-operations-input-verify.sh`进一步要求31项固定材料各有唯一机器记录，逐份校验绝对路径、
+SHA-256和终态内容；再校验逐合约10组输入、8项完成条件、无OPEN/REJECTED/占位值和严重问题为0。
+多合约总数按`31 + 10 × 合约数`与上市合集绑定，已批准/有依据不适用数量从底层记录反算，不能手工凑平。
+所有由生产readiness引用的报告还会经过`monitoring/option-evidence-finalization-verify.sh`，防止只把
+状态行改为`APPROVED`或重新计算哈希而保留未完成表格。
+readiness声明本身再由`monitoring/option-readiness-attestation-verify.sh`按示例schema校验全部键精确一次，
+拒绝未知/缺失键、非规范赋值和占位路径后才读取，避免重复tenant、release或证据SHA产生歧义。
 
 ## 6. 逐项验收标准
 
@@ -80,7 +107,7 @@ P2-008 RFQ、大宗和正式做市义务不属于首版一般零售期权，当�
 5. 真实Prometheus/Alertmanager、值班案件、IM/电话通知及恢复消息送达，容量和RTO达到批准值。
 6. 产品、技术、Asset/SRE、风控、清算/财务和合规/法务按适用范围签署；文件SHA-256与门禁配置一致。
 7. `monitoring/option-production-readiness.sh`生产模式零失败；随后仍只能在批准变更窗口按租户、合约和
-   单项功能开关逐步开放。
+   单项功能开关逐步开放；Option渲染YAML中的`ProductScope`与门禁声明逐项一致并固定SHA-256。
 
 ## 7. 执行顺序
 
@@ -90,6 +117,12 @@ P2-008 RFQ、大宗和正式做市义务不属于首版一般零售期权，当�
 4. 完成模型、实物违约、公开行情和复杂订单专项验收，关闭全部SEV-1/2及资金差异。
 5. 固定每份报告SHA-256，完成生产签署并运行生产门禁；按能力最小化开放。
 
+外部责任方无需从全部模板中反推首批字段；`option-external-input-handoff.md`已经把产品主体、目标市场、
+完整合约CSV、逐合约参数、五时间、结算/行权、能力范围、环境release、资金决策和六方角色收敛成
+最小移交包。完整合约CSV先由`option-external-contract-intake-verify.sh`检查22列schema、唯一身份、枚举、
+币种、正数经济参数、数量上下界、Unix毫秒和五时间顺序。收到该资料前保持失败关闭，收到后再按本节
+顺序生成真实归档副本。
+
 ## 8. Beanstalk架构警告
 
 Docker Desktop显示`AMD64`表示容器镜像架构与宿主机不一致并可能使用模拟。当前Compose已改为从
@@ -97,3 +130,8 @@ Docker Desktop显示`AMD64`表示容器镜像架构与宿主机不一致并可�
 `linux/amd64`，主/备各自使用独立WAL卷。验收以`deploy/deploy.sh beanstalk-readiness`实际输出和
 容器`Architecture`为准；如果界面仍显示旧的`schickling/beanstalkd`，说明运行的是旧容器，需要按
 正常部署流程重建，而不是忽略警告。
+
+2026-08-02已对当前本机Compose运行态执行`deploy/beanstalk-readiness.sh`：主备均healthy，镜像
+`sha256:ffb07f529a45a56bf456c1920d31297638623ecb4894ac2bb639b99a66eb634e`为`linux/arm64`，两个容器内
+`uname -m`均为`aarch64`且WAL均为Docker volume。因此用户截图中的AMD64模拟警告在当前本机已关闭；
+该结果仍不是目标AMD64节点、批准峰值、24小时长稳或生产RTO证据。

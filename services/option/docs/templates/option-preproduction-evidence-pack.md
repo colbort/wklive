@@ -11,8 +11,8 @@ OPTION_PREPRODUCTION_EVIDENCE_PACK_STATUS: DRAFT
 
 没有专项模板的迁移、真实Asset E2E、通用故障注入、容量、值班、交易日历预生产、组合保证金版本切换
 和保险方向历史核对报告，必须从`option-production-evidence-report.md`分别复制；每种证据使用独立文件，
-真实执行和签署前保持`OPTION_EVIDENCE_STATUS: DRAFT`。保险库存退出、复杂订单和公开行情使用各自专项
-模板，不能用通用模板替代。
+真实执行和签署前保持`OPTION_EVIDENCE_STATUS: DRAFT`。保险库存退出、复杂订单、公开行情、MMP和
+美式提前行权使用各自专项模板，不能用通用模板替代。
 
 ## 1. 环境与可复现性
 
@@ -20,7 +20,8 @@ OPTION_PREPRODUCTION_EVIDENCE_PACK_STATUS: DRAFT
 | --- | --- |
 | 环境/tenant_id | 待填写 |
 | release commit/image digest | 待填写 |
-| 本次全部合约上市检查表路径及SHA-256 | 待填写；每个合约必须为APPROVED |
+| `option-contract-launch-bundle.md`路径及SHA-256 | 待填写；每个明细合约检查表必须为APPROVED，附`option-launch-bundle-verify.sh`完整PASS输出 |
+| `option-contract-set-reconciliation.md`路径及SHA-256 | 待填写；附目标环境/公告原始导出及各自SHA，三方集合必须完全相同 |
 | Option/Asset/Market/消息/DB 版本 | 待填写 |
 | 配置快照及哈希 | 待填写 |
 | 数据集/造数脚本及哈希 | 待填写 |
@@ -50,6 +51,18 @@ OPTION_PREPRODUCTION_EVIDENCE_PACK_STATUS: DRAFT
 `OPT-P0-007`已实现且渲染配置哈希匹配时，才执行BST-001～BST-012并归档逐请求额度占用、平台余额、
 Asset流水、Option缺口、并发时间线、跨日/冲正、告警和日终证据；否则必须证明运行时开关为false、
 相关合约不上市/不恢复且既有缺口转人工。
+
+所有可选产品能力还必须归档目标环境Option渲染YAML和SHA-256，并证明`ProductScope`逐项等于发布门禁
+声明；归档`option-product-scope-verify.sh`完整PASS输出。只在验收文件中写`false`、但运行时配置缺失、
+不同或存在重复声明/段/键，按失败处理。
+
+运营输入总表必须归档`option-operations-input-verify.sh`完整PASS输出：31项固定材料逐份文件/SHA/终态通过，
+8项完成条件全部勾选、无未关闭行、占位值或严重问题；批准数和有依据的不适用数从底层记录反算，
+总数按上市合集的完整合约数机械计算。
+
+若开启MMP，必须归档`option-mmp-readiness.md`并通过MMP-PRE-001～008；若开启美式提前行权，必须归档
+`option-american-exercise-readiness.md`并通过AMER-PRE-001～010，且全部批准美式合约逐一链接已完成的
+`option-exercise-expiry-control-record.md`。两项都不能用仓库测试、单一抽样合约或总开关截图代替。
 
 | 场景 | 幂等业务号 | 注入点 | Option 前后 | Asset 前后 | 差额 | 结论 |
 | --- | --- | --- | --- | --- | --- | --- |

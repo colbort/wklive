@@ -38,6 +38,11 @@ func NewListOptionChainLogic(ctx context.Context, svcCtx *svc.ServiceContext) *L
 
 // 按标的和精确到期时间获取期权链、24小时成交统计及未平仓量
 func (l *ListOptionChainLogic) ListOptionChain(in *option.ListOptionChainReq) (*option.ListOptionChainResp, error) {
+	if !l.svcCtx.Config.ProductScope.PublicMarketEnabled {
+		return &option.ListOptionChainResp{
+			Base: helper.ErrResp(i18n.OperationNotAllowed, "PUBLIC_MARKET_DISABLED"),
+		}, nil
+	}
 	if in == nil || strings.TrimSpace(in.UnderlyingSymbol) == "" || in.ExpireTime <= 0 {
 		return optionChainParamError(l.ctx), nil
 	}

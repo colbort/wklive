@@ -217,6 +217,12 @@ func newP0AssetE2EServiceContext(
 	redisConf := zeroredis.RedisConf{Host: redisAddr, Type: "node"}
 	cacheConf := cache.CacheConf{{RedisConf: redisConf, Weight: 100}}
 	config := optionconfig.Config{CacheRedis: cacheConf}
+	config.ProductScope = optionconfig.ProductScope{
+		SellerTradingEnabled: true, PortfolioMarginEnabled: true,
+		PhysicalDeliveryEnabled: true, ComplexOrdersEnabled: true,
+		PublicMarketEnabled: true, MMPEnabled: true,
+		AmericanExerciseEnabled: true,
+	}
 	// The dedicated liquidation scenarios exercise the repository backstop
 	// recovery path. Production defaults remain fail-closed in option.yaml.
 	config.PlatformBackstop.Enabled = true

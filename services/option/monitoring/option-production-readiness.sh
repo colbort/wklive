@@ -134,6 +134,11 @@ require_evidence_file() {
   else
     fail "$description (SHA-256 mismatch)"
   fi
+  if "$SCRIPT_DIR/option-evidence-finalization-verify.sh" "$evidence_file" >/dev/null 2>&1; then
+    pass "$description has no unresolved finalization fields"
+  else
+    fail "$description has no unresolved finalization fields"
+  fi
 }
 
 check_contains() {
@@ -1318,15 +1323,216 @@ check_contains "$operations_pack" \
 check_contains "$operations_pack" \
   '发布负责人必须对最终发布副本执行占位符检查' \
   "operations pack makes unresolved placeholders a publication blocker"
+check_contains "$operations_pack" \
+  'option-contract-launch-bundle[.]md' \
+  "operations pack requires the full release contract set"
+operations_input="$OPTION_DIR/docs/option-operations-input-checklist.md"
+external_input_handoff="$OPTION_DIR/docs/option-external-input-handoff.md"
+check_contains "$operations_input" \
+  '^OPTION_OPERATIONS_INPUT_STATUS:[[:space:]]*DRAFT$' \
+  "operations input checklist defaults to draft"
+check_contains "$operations_input" \
+  'list < last_trade <= exercise_cutoff <= expire <= deliver' \
+  "operations input checklist preserves all five lifecycle boundaries"
+check_contains "$operations_input" \
+  'DISABLED/PREFUNDED/CREDIT_FLOOR' \
+  "operations input checklist exposes the governed backstop choices"
+check_contains "$operations_input" \
+  'RFQ、大宗和正式做市义务为`DEFERRED`' \
+  "operations input checklist keeps institutional capabilities closed"
+check_contains "$operations_input" \
+  'option-contract-launch-bundle[.]md' \
+  "operations input checklist requires a complete release contract set"
+check_contains "$external_input_handoff" \
+  '^HANDOFF_STATUS:[[:space:]]*WAITING_FOR_EXTERNAL_INPUT$' \
+  "external-input handoff does not claim fabricated completion"
+check_contains "$external_input_handoff" \
+  'contract_code,underlying,call_put,exercise_style,settlement_type' \
+  "external-input handoff defines the complete-contract CSV format"
+check_contains "$external_input_handoff" \
+  'OPTION_GREEKS_DEPENDENT_FEATURES_ENABLED=false' \
+  "external-input handoff keeps unsupported Greeks scope closed"
+check_contains "$external_input_handoff" \
+  '密码、Token、私钥、私人电话、数据库凭证' \
+  "external-input handoff prohibits secret collection"
+contract_intake_verifier="$OPTION_DIR/monitoring/option-external-contract-intake-verify.sh"
+contract_intake_selftest="$OPTION_DIR/monitoring/option-external-contract-intake-verify-selftest.sh"
+if [ -x "$contract_intake_verifier" ]; then
+  pass "external contract-intake verifier is executable"
+else
+  fail "external contract-intake verifier is executable"
+fi
+check_contains "$contract_intake_verifier" 'expected exactly 22 comma-separated fields' \
+  "external contract-intake verifier enforces the governed schema"
+check_contains "$contract_intake_verifier" 'times must satisfy list < last_trade' \
+  "external contract-intake verifier enforces all five lifecycle times"
+check_contains "$contract_intake_verifier" 'contract_code is duplicated' \
+  "external contract-intake verifier rejects duplicate identities"
+if [ -x "$contract_intake_selftest" ] && "$contract_intake_selftest" >/dev/null 2>&1; then
+  pass "external contract-intake verifier positive and negative self-tests pass"
+else
+  fail "external contract-intake verifier positive and negative self-tests pass"
+fi
+operations_input_verifier="$OPTION_DIR/monitoring/option-operations-input-verify.sh"
+operations_input_selftest="$OPTION_DIR/monitoring/option-operations-input-verify-selftest.sh"
+if [ -x "$operations_input_verifier" ]; then
+  pass "operations-input completeness verifier is executable"
+else
+  fail "operations-input completeness verifier is executable"
+fi
+check_contains "$operations_input_verifier" 'approved plus evidenced not-applicable counts' \
+  "operations-input verifier reconciles its final summary"
+check_contains "$operations_input_verifier" 'all eight completion items' \
+  "operations-input verifier requires every completion item"
+check_contains "$operations_input_verifier" 'exactly 31 fixed-material records' \
+  "operations-input verifier requires every fixed-material record"
+check_contains "$operations_input_verifier" 'fixed-material hash mismatch' \
+  "operations-input verifier hashes every fixed-material evidence file"
+check_contains "$operations_input_verifier" 'fixed-material evidence is not finalized' \
+  "operations-input verifier requires finalized fixed-material evidence"
+check_contains "$operations_input_verifier" 'approved count must equal approved fixed-material records' \
+  "operations-input verifier derives its approved summary from evidence records"
+check_contains "$operations_input_verifier" 'launch bundle must be APPROVED exactly once' \
+  "operations-input verifier binds its contract count to an approved launch bundle"
+check_contains "$operations_input_verifier" 'launch bundle record count must match' \
+  "operations-input verifier rejects a count-only launch bundle"
+if [ -x "$operations_input_selftest" ] && "$operations_input_selftest" >/dev/null 2>&1; then
+  pass "operations-input verifier positive and negative self-tests pass"
+else
+  fail "operations-input verifier positive and negative self-tests pass"
+fi
+evidence_finalization_verifier="$OPTION_DIR/monitoring/option-evidence-finalization-verify.sh"
+evidence_finalization_selftest="$OPTION_DIR/monitoring/option-evidence-finalization-verify-selftest.sh"
+if [ -x "$evidence_finalization_verifier" ]; then
+  pass "production-evidence finalization verifier is executable"
+else
+  fail "production-evidence finalization verifier is executable"
+fi
+check_contains "$evidence_finalization_verifier" 'unchecked acceptance item' \
+  "production-evidence verifier rejects unchecked acceptance items"
+check_contains "$evidence_finalization_verifier" 'unresolved table placeholder' \
+  "production-evidence verifier rejects unresolved table placeholders"
+check_contains "$evidence_finalization_verifier" 'empty table cell' \
+  "production-evidence verifier rejects empty table cells"
+if [ -x "$evidence_finalization_selftest" ] && "$evidence_finalization_selftest" >/dev/null 2>&1; then
+  pass "production-evidence finalization verifier positive and negative self-tests pass"
+else
+  fail "production-evidence finalization verifier positive and negative self-tests pass"
+fi
+attestation_verifier="$OPTION_DIR/monitoring/option-readiness-attestation-verify.sh"
+attestation_selftest="$OPTION_DIR/monitoring/option-readiness-attestation-verify-selftest.sh"
+if [ -x "$attestation_verifier" ]; then
+  pass "production-readiness attestation verifier is executable"
+else
+  fail "production-readiness attestation verifier is executable"
+fi
+check_contains "$attestation_verifier" 'attestation contains duplicate keys' \
+  "production-readiness attestation verifier rejects duplicate keys"
+check_contains "$attestation_verifier" 'attestation contains unknown keys' \
+  "production-readiness attestation verifier rejects unknown keys"
+check_contains "$attestation_verifier" 'attestation is missing required keys' \
+  "production-readiness attestation verifier rejects missing keys"
+check_contains "$attestation_verifier" 'attestation contains unresolved placeholder values' \
+  "production-readiness attestation verifier rejects placeholder values"
+if [ -x "$attestation_selftest" ] && "$attestation_selftest" >/dev/null 2>&1; then
+  pass "production-readiness attestation verifier positive and negative self-tests pass"
+else
+  fail "production-readiness attestation verifier positive and negative self-tests pass"
+fi
 check_contains "$launch_checklist" \
   'OPTION_LAUNCH_CHECKLIST_STATUS: DRAFT' \
   "contract launch checklist defaults to draft"
 check_contains "$OPTION_DIR/monitoring/option-production-readiness.env.example" \
   '^OPTION_LAUNCH_CHECKLIST=' \
   "production readiness requires an immutable contract launch checklist"
+check_contains "$OPTION_DIR/monitoring/option-production-readiness.env.example" \
+  '^OPTION_CONTRACT_SET_RECONCILIATION=' \
+  "production readiness requires target/publication contract-set reconciliation"
+check_contains "$OPTION_DIR/monitoring/option-production-readiness.env.example" \
+  '^OPTION_OPERATIONS_INPUT_CHECKLIST=' \
+  "production readiness requires approved operations inputs"
 check_contains "$OPTION_DIR/monitoring/option-production-readiness.sh" \
   'OPTION_LAUNCH_CHECKLIST_STATUS.*APPROVED' \
   "production gate rejects a draft contract launch checklist"
+check_contains "$OPTION_DIR/monitoring/option-production-readiness.sh" \
+  'OPTION_OPERATIONS_INPUT_STATUS.*APPROVED' \
+  "production gate rejects draft operations inputs"
+launch_bundle="$OPTION_DIR/docs/templates/option-contract-launch-bundle.md"
+check_contains "$launch_bundle" \
+  '^OPTION_LAUNCH_CHECKLIST_STATUS:[[:space:]]*DRAFT$' \
+  "release contract-launch bundle defaults to draft"
+check_contains "$launch_bundle" \
+  '^OPTION_LAUNCH_CONTRACT_COUNT:[[:space:]]*0$' \
+  "release contract-launch bundle template contains no fake sample contract"
+check_contains "$launch_bundle" \
+  '本次release/系列生成的全部合约都在表内' \
+  "release contract-launch bundle prohibits representative sampling"
+check_contains "$launch_bundle" \
+  'OPTION_CONTRACT_SERIES_APPROVAL_STATUS: APPROVED' \
+  "release contract-launch bundle binds an approved series when applicable"
+launch_bundle_verifier="$OPTION_DIR/monitoring/option-launch-bundle-verify.sh"
+if [ -x "$launch_bundle_verifier" ]; then
+  pass "release contract-launch verifier is executable"
+else
+  fail "release contract-launch verifier is executable"
+fi
+check_contains "$launch_bundle_verifier" \
+  'record count matches the declared count' \
+  "release contract-launch verifier checks the declared contract count"
+check_contains "$launch_bundle_verifier" \
+  'unique IDs, codes and paths' \
+  "release contract-launch verifier rejects duplicate identities"
+check_contains "$launch_bundle_verifier" \
+  'checklist hash matches' \
+  "release contract-launch verifier hashes every per-contract checklist"
+check_contains "$launch_bundle_verifier" \
+  'OPTION_CONTRACT_TENANT_ID' \
+  "release contract-launch verifier binds each checklist to the production tenant"
+check_contains "$launch_bundle_verifier" \
+  'retains all.*acceptance items' \
+  "release contract-launch verifier rejects deleted checklist items"
+check_contains "$launch_bundle_verifier" \
+  'has no unchecked acceptance item' \
+  "release contract-launch verifier requires every checklist item to pass"
+check_contains "$launch_bundle_verifier" \
+  'retains the exact governed acceptance text' \
+  "release contract-launch verifier rejects altered checklist requirements"
+check_contains "$launch_bundle_verifier" \
+  'OPTION_COMPLIANCE_APPROVAL_REF' \
+  "release contract-launch verifier requires six-party per-contract approvals"
+launch_bundle_selftest="$OPTION_DIR/monitoring/option-launch-bundle-verify-selftest.sh"
+if [ -x "$launch_bundle_selftest" ]; then
+  pass "release contract-launch verifier self-test is executable"
+else
+  fail "release contract-launch verifier self-test is executable"
+fi
+if "$launch_bundle_selftest" >/dev/null 2>&1; then
+  pass "release contract-launch verifier positive and negative self-tests pass"
+else
+  fail "release contract-launch verifier positive and negative self-tests pass"
+fi
+check_contains "$launch_bundle_verifier" \
+  'approved bundle exactly matches the target-environment contract set' \
+  "release contract-launch verifier compares the target-environment set"
+check_contains "$launch_bundle_verifier" \
+  'approved bundle exactly matches the publication contract set' \
+  "release contract-launch verifier compares the publication set"
+contract_set_reconciliation_template="$OPTION_DIR/docs/templates/option-contract-set-reconciliation.md"
+check_contains "$contract_set_reconciliation_template" \
+  '^OPTION_CONTRACT_SET_RECONCILIATION_STATUS:[[:space:]]*DRAFT$' \
+  "contract-set reconciliation template defaults to draft"
+check_contains "$contract_set_reconciliation_template" \
+  'OPTION_TARGET_CONTRACT_SET_SOURCE' \
+  "contract-set reconciliation template declares the target-environment format"
+check_contains "$contract_set_reconciliation_template" \
+  'OPTION_PUBLICATION_CONTRACT_SET_SOURCE' \
+  "contract-set reconciliation template declares the publication format"
+check_contains "$contract_set_reconciliation_template" \
+  '^OPTION_CONTRACT_SET_WINDOW_START_MS:[[:space:]]*0$' \
+  "contract-set reconciliation declares an explicit launch-window start"
+check_contains "$contract_set_reconciliation_template" \
+  'status.*1.*PENDING' \
+  "target-environment export must prove contracts remain pending"
 check_contains "$launch_checklist" \
   'option-release-scope[.]sh --release-clean' \
   "contract launch checklist requires a clean reviewed release identity"
@@ -1460,6 +1666,50 @@ check_contains "$OPTION_DIR/internal/config/config.go" 'PlatformBackstop struct'
   "Option config has an independent platform-backstop runtime gate"
 check_contains "$OPTION_DIR/etc/option.yaml" 'PlatformBackstop:' \
   "Option runtime example declares the platform-backstop gate"
+check_contains "$OPTION_DIR/internal/config/config.go" 'ProductScope ProductScope' \
+  "Option config has a fail-closed optional product scope"
+check_contains "$OPTION_DIR/etc/option.yaml" '^ProductScope:' \
+  "Option runtime example declares optional product scope gates"
+check_contains "$OPTION_DIR/internal/logic/task/processcontractlifecyclelogic.go" \
+  'ContractLaunchProductScopeReady' \
+  "contract listing enforces the optional product scope"
+check_contains "$OPTION_DIR/internal/logic/app/placeorderlogic.go" \
+  'OrderProductScopeReady' \
+  "order admission enforces seller, portfolio, physical and MMP scope"
+check_contains "$OPTION_DIR/internal/logic/app/placecomboorderlogic.go" \
+  'ComplexOrdersEnabled' \
+  "combo order admission enforces complex-order scope"
+check_contains "$OPTION_DIR/internal/logic/app/combo_order_funding.go" \
+  'COMPLEX_ORDERS_DISABLED_AFTER_FUNDING' \
+  "funded combo activation rechecks complex-order scope"
+check_contains "$OPTION_DIR/internal/logic/app/listoptionchainlogic.go" \
+  'PublicMarketEnabled' \
+  "public option-chain admission enforces public-market scope"
+check_contains "$OPTION_DIR/internal/logic/app/getorderbooklogic.go" \
+  'PublicMarketEnabled' \
+  "public order-book admission enforces public-market scope"
+check_contains "$OPTION_DIR/internal/logic/app/exerciselogic.go" \
+  'AmericanExerciseEnabled' \
+  "American exercise admission enforces its runtime scope"
+check_contains "$OPTION_DIR/internal/logic/admin/resumecontracttradinglogic.go" \
+  'ContractLaunchProductScopeReady' \
+  "contract resume rechecks the optional product scope"
+product_scope_verifier="$OPTION_DIR/monitoring/option-product-scope-verify.sh"
+product_scope_selftest="$OPTION_DIR/monitoring/option-product-scope-verify-selftest.sh"
+if [ -x "$product_scope_verifier" ]; then
+  pass "ProductScope release/runtime verifier is executable"
+else
+  fail "ProductScope release/runtime verifier is executable"
+fi
+check_contains "$product_scope_verifier" 'must be declared exactly once' \
+  "ProductScope verifier rejects duplicate or missing release declarations"
+check_contains "$product_scope_verifier" 'ProductScope section must each occur exactly once' \
+  "ProductScope verifier rejects duplicate or missing runtime keys"
+if [ -x "$product_scope_selftest" ] && "$product_scope_selftest" >/dev/null 2>&1; then
+  pass "ProductScope verifier positive and negative self-tests pass"
+else
+  fail "ProductScope verifier positive and negative self-tests pass"
+fi
 check_contains "$OPTION_DIR/internal/logic/task/processliquidationslogic.go" \
   'PlatformBackstop[.]Enabled' \
   "liquidation execution requires the platform-backstop runtime gate"
@@ -1579,6 +1829,16 @@ check_contains "$OPTION_DIR/docs/templates/complex-order-readiness.md" \
 check_contains "$OPTION_DIR/docs/templates/public-market-readiness.md" \
   '^OPTION_PUBLIC_MARKET_READINESS_STATUS:[[:space:]]*DRAFT$' \
   "public-market readiness record defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/option-mmp-readiness.md" \
+  '^OPTION_MMP_READINESS_STATUS:[[:space:]]*DRAFT$' \
+  "MMP target-environment readiness record defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/option-mmp-readiness.md" 'MMP-PRE-008' \
+  "MMP readiness record covers monitoring delivery and recovery"
+check_contains "$OPTION_DIR/docs/templates/option-american-exercise-readiness.md" \
+  '^OPTION_AMERICAN_EXERCISE_READINESS_STATUS:[[:space:]]*DRAFT$' \
+  "American exercise target-environment readiness record defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/option-american-exercise-readiness.md" 'AMER-PRE-010' \
+  "American exercise readiness record covers full lifecycle notification"
 check_contains "$OPTION_DIR/docs/templates/contract-series-approval.md" \
   '^OPTION_CONTRACT_SERIES_APPROVAL_STATUS:[[:space:]]*DRAFT$' \
   "contract-series approval defaults to draft"
@@ -1825,6 +2085,12 @@ if [ -f "$READINESS_FILE" ]; then
 else
   fail "Option production readiness attestation exists ($READINESS_FILE)"
 fi
+if attestation_output=$("$SCRIPT_DIR/option-readiness-attestation-verify.sh" "$READINESS_FILE" 2>&1); then
+  pass "Option production readiness attestation has one exact, unambiguous key set"
+else
+  fail "Option production readiness attestation has one exact, unambiguous key set"
+  printf '%s\n' "$attestation_output" | sed 's/^/      /'
+fi
 
 OPTION_PRODUCTION_TENANT_ID=$(read_setting OPTION_PRODUCTION_TENANT_ID)
 OPTION_RELEASE_COMMIT=$(read_setting OPTION_RELEASE_COMMIT)
@@ -1842,6 +2108,8 @@ OPTION_PHYSICAL_DELIVERY_ENABLED=$(read_setting OPTION_PHYSICAL_DELIVERY_ENABLED
 OPTION_COMPLEX_ORDERS_ENABLED=$(read_setting OPTION_COMPLEX_ORDERS_ENABLED)
 OPTION_PUBLIC_MARKET_ENABLED=$(read_setting OPTION_PUBLIC_MARKET_ENABLED)
 OPTION_GREEKS_DEPENDENT_FEATURES_ENABLED=$(read_setting OPTION_GREEKS_DEPENDENT_FEATURES_ENABLED)
+OPTION_MMP_ENABLED=$(read_setting OPTION_MMP_ENABLED)
+OPTION_AMERICAN_EXERCISE_ENABLED=$(read_setting OPTION_AMERICAN_EXERCISE_ENABLED)
 OPTION_INSURANCE_INVENTORY_EXIT_ENABLED=$(read_setting OPTION_INSURANCE_INVENTORY_EXIT_ENABLED)
 OPTION_INSURANCE_FLOW_SIGN_RESOLVED=$(read_setting OPTION_INSURANCE_FLOW_SIGN_RESOLVED)
 OPTION_BACKSTOP_LIMIT_APPROVED=$(read_setting OPTION_BACKSTOP_LIMIT_APPROVED)
@@ -1987,13 +2255,27 @@ fi
 for feature_flag in OPTION_SELLER_TRADING_ENABLED OPTION_PLATFORM_BACKSTOP_ENABLED OPTION_PORTFOLIO_MARGIN_ENABLED \
   OPTION_PHYSICAL_DELIVERY_ENABLED OPTION_COMPLEX_ORDERS_ENABLED \
   OPTION_PUBLIC_MARKET_ENABLED OPTION_GREEKS_DEPENDENT_FEATURES_ENABLED \
+  OPTION_MMP_ENABLED OPTION_AMERICAN_EXERCISE_ENABLED \
   OPTION_INSURANCE_INVENTORY_EXIT_ENABLED; do
   feature_value=$(read_setting "$feature_flag")
   require_boolean "$feature_value" "$feature_flag explicitly declares release scope"
 done
 
+product_scope_runtime_config=$(read_setting OPTION_PRODUCT_SCOPE_RUNTIME_CONFIG)
+product_scope_runtime_config_sha=$(read_setting OPTION_PRODUCT_SCOPE_RUNTIME_CONFIG_SHA256)
+require_evidence_file "$product_scope_runtime_config" "$product_scope_runtime_config_sha" \
+  "rendered Option product-scope config attached and hash-matched"
+if "$SCRIPT_DIR/option-product-scope-verify.sh" \
+  "$READINESS_FILE" "$product_scope_runtime_config" >/dev/null 2>&1; then
+  pass "rendered Option ProductScope exactly matches the release declaration"
+else
+  fail "rendered Option ProductScope exactly matches the release declaration"
+fi
+
 evidence_names='OPTION_RELEASE_SIGNOFF
 OPTION_LAUNCH_CHECKLIST
+OPTION_CONTRACT_SET_RECONCILIATION
+OPTION_OPERATIONS_INPUT_CHECKLIST
 OPTION_MIGRATION_REPORT
 OPTION_ASSET_E2E_REPORT
 OPTION_FAILURE_INJECTION_REPORT
@@ -2059,9 +2341,25 @@ OPTION_RELEASE_SIGNOFF=$(read_setting OPTION_RELEASE_SIGNOFF)
 check_contains "$OPTION_RELEASE_SIGNOFF" '^OPTION_EVIDENCE_STATUS:[[:space:]]*APPROVED$' \
   "Option release signoff is explicitly APPROVED"
 OPTION_LAUNCH_CHECKLIST=$(read_setting OPTION_LAUNCH_CHECKLIST)
-check_contains "$OPTION_LAUNCH_CHECKLIST" \
-  '^OPTION_LAUNCH_CHECKLIST_STATUS:[[:space:]]*APPROVED$' \
-  "every contract in the release has an explicitly APPROVED launch checklist"
+OPTION_CONTRACT_SET_RECONCILIATION=$(read_setting OPTION_CONTRACT_SET_RECONCILIATION)
+if launch_bundle_output=$("$SCRIPT_DIR/option-launch-bundle-verify.sh" \
+  "$OPTION_LAUNCH_CHECKLIST" "$OPTION_PRODUCTION_TENANT_ID" "$OPTION_RELEASE_COMMIT" \
+  "$OPTION_CONTRACT_SET_RECONCILIATION" 2>&1); then
+  pass "release contract-launch bundle proves every contract approval"
+else
+  fail "release contract-launch bundle proves every contract approval"
+  printf '%s\n' "$launch_bundle_output" | sed 's/^/      /'
+fi
+OPTION_OPERATIONS_INPUT_CHECKLIST=$(read_setting OPTION_OPERATIONS_INPUT_CHECKLIST)
+if operations_input_output=$(
+  "$SCRIPT_DIR/option-operations-input-verify.sh" \
+    "$OPTION_OPERATIONS_INPUT_CHECKLIST" "$OPTION_LAUNCH_CHECKLIST" 2>&1
+); then
+  pass "production operations input checklist is complete and internally reconciled"
+else
+  fail "production operations input checklist is complete and internally reconciled"
+  printf '%s\n' "$operations_input_output" | sed 's/^/      /'
+fi
 
 OPTION_PROMETHEUS_CONFIG=$(read_setting OPTION_PROMETHEUS_CONFIG)
 OPTION_PROMETHEUS_CONFIG_SHA256=$(read_setting OPTION_PROMETHEUS_CONFIG_SHA256)
@@ -2240,6 +2538,28 @@ if [ "$OPTION_PUBLIC_MARKET_ENABLED" = "true" ]; then
   check_contains "$evidence_path" \
     '^OPTION_PUBLIC_MARKET_READINESS_STATUS:[[:space:]]*APPROVED$' \
     "public-market target-environment probe is explicitly APPROVED"
+fi
+if [ "$OPTION_MMP_ENABLED" = "true" ]; then
+  evidence_path=$(read_setting OPTION_MMP_E2E_REPORT)
+  evidence_sha=$(read_setting OPTION_MMP_E2E_REPORT_SHA256)
+  require_evidence_file "$evidence_path" "$evidence_sha" \
+    "MMP target-environment batch/recovery report attached and hash-matched"
+  check_contains "$evidence_path" \
+    '^OPTION_MMP_READINESS_STATUS:[[:space:]]*APPROVED$' \
+    "MMP target-environment readiness is explicitly APPROVED"
+  check_contains "$evidence_path" 'MMP-PRE-008' \
+    "MMP target-environment report retains every mandatory case"
+fi
+if [ "$OPTION_AMERICAN_EXERCISE_ENABLED" = "true" ]; then
+  evidence_path=$(read_setting OPTION_AMERICAN_EXERCISE_E2E_REPORT)
+  evidence_sha=$(read_setting OPTION_AMERICAN_EXERCISE_E2E_REPORT_SHA256)
+  require_evidence_file "$evidence_path" "$evidence_sha" \
+    "American exercise target-environment report attached and hash-matched"
+  check_contains "$evidence_path" \
+    '^OPTION_AMERICAN_EXERCISE_READINESS_STATUS:[[:space:]]*APPROVED$' \
+    "American exercise target-environment readiness is explicitly APPROVED"
+  check_contains "$evidence_path" 'AMER-PRE-010' \
+    "American exercise target-environment report retains every mandatory case"
 fi
 printf '\n'
 if [ "$failures" -eq 0 ]; then

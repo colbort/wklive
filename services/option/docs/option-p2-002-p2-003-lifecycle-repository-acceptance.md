@@ -57,7 +57,7 @@ services/option/acceptance/run-p0-asset-rpc-e2e.sh                    PASS
 
 最近正式隔离 MySQL 8.4、Redis、真实 Asset gRPC 全套验收结果：
 
-- 最终复跑主测试 `113.879s`；总计 9277 条资产指令，9270 条成功且已对账，7 条冻结前合法取消，
+- 2026-08-02 19:06～19:18 HKT `SYNTHETIC_ISOLATED`复验主测试 `115.718s`；总计 9277 条资产指令，9270 条成功且已对账，7 条冻结前合法取消，
   `success + 2*canceled = 9284`。
 - `P0-LAST-TRADE-INDEPENDENT` 使用五个不同时间点。在精确最后交易边界，普通活动单变为
   `CANCELED/CONTRACT_LAST_TRADE_ENDED`，合约保持 `PAUSED`，无提前行权、结算或交割；
