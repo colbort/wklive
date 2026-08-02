@@ -31,7 +31,7 @@ func NewListPortfolioRiskConfigsLogic(ctx context.Context, svcCtx *svc.ServiceCo
 
 // 分页查询组合保证金参数版本
 func (l *ListPortfolioRiskConfigsLogic) ListPortfolioRiskConfigs(in *option.ListPortfolioRiskConfigsReq) (*option.ListPortfolioRiskConfigsResp, error) {
-	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, in.TenantId)
+	tenantId, allowed, forbidden, err := utils.ResolveAdminTenantReadScopeFromMd(l.ctx, in.TenantId)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (l *ListPortfolioRiskConfigsLogic) ListPortfolioRiskConfigs(in *option.List
 	cursor, limit := pageutil.Input(in.Page)
 	items, total, err := l.svcCtx.OptionPortfolioRiskConfigModel.FindPage(
 		l.ctx, models.OptionPortfolioRiskConfigPageFilter{
-			TenantId: in.TenantId, SettleCoin: in.SettleCoin, Status: int64(in.Status),
+			TenantId: tenantId, SettleCoin: in.SettleCoin, Status: int64(in.Status),
 		}, cursor, limit,
 	)
 	if err != nil {

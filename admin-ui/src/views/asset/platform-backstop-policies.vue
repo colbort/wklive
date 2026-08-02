@@ -45,11 +45,15 @@
         <el-table-column prop="coin" :label="t('asset.coin')" width="90" />
         <el-table-column prop="version" :label="t('asset.version')" width="90" />
         <el-table-column :label="t('asset.backstopMode')" width="135">
-          <template #default="{ row }">{{ modeName(row.mode) }}</template>
+          <template #default="{ row }">
+            {{ modeName(row.mode) }}
+          </template>
         </el-table-column>
         <el-table-column :label="t('common.status')" width="110">
           <template #default="{ row }">
-            <el-tag :type="statusTag(row.status)">{{ statusName(row.status) }}</el-tag>
+            <el-tag :type="statusTag(row.status)">
+              {{ statusName(row.status) }}
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -170,7 +174,9 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="createVisible = false">{{ t('common.cancel') }}</el-button>
+        <el-button @click="createVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
         <el-button type="primary" :loading="saving" @click="createPolicy">
           {{ t('common.confirm') }}
         </el-button>

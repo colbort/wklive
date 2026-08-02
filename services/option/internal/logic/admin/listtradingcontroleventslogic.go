@@ -31,7 +31,7 @@ func NewListTradingControlEventsLogic(ctx context.Context, svcCtx *svc.ServiceCo
 
 // 分页查询交易控制审计事件
 func (l *ListTradingControlEventsLogic) ListTradingControlEvents(in *option.ListTradingControlEventsReq) (*option.ListTradingControlEventsResp, error) {
-	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, in.TenantId)
+	tenantId, allowed, forbidden, err := utils.ResolveAdminTenantReadScopeFromMd(l.ctx, in.TenantId)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (l *ListTradingControlEventsLogic) ListTradingControlEvents(in *option.List
 	cursor, limit := pageutil.Input(in.Page)
 	items, total, err := l.svcCtx.OptionTradingControlEventModel.FindPage(
 		l.ctx, models.OptionTradingControlEventPageFilter{
-			TenantId: in.TenantId, UserId: in.UserId, ContractId: in.ContractId,
+			TenantId: tenantId, UserId: in.UserId, ContractId: in.ContractId,
 			EventType: in.EventType, Reason: in.Reason,
 		}, cursor, limit,
 	)

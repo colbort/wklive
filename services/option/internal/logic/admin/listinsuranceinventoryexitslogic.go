@@ -28,11 +28,11 @@ func NewListInsuranceInventoryExitsLogic(ctx context.Context, svcCtx *svc.Servic
 func (l *ListInsuranceInventoryExitsLogic) ListInsuranceInventoryExits(
 	in *option.ListInsuranceInventoryExitsReq,
 ) (*option.ListInsuranceInventoryExitsResp, error) {
-	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, in.TenantId)
+	tenantId, allowed, forbidden, err := utils.ResolveAdminTenantReadScopeFromMd(l.ctx, in.TenantId)
 	if err != nil {
 		return nil, err
 	}
-	if in.TenantId <= 0 || forbidden || !allowed {
+	if forbidden || !allowed {
 		return &option.ListInsuranceInventoryExitsResp{
 			Base: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx)),
 		}, nil
@@ -40,7 +40,7 @@ func (l *ListInsuranceInventoryExitsLogic) ListInsuranceInventoryExits(
 	cursor, limit := pageutil.Input(in.Page)
 	items, total, err := l.svcCtx.OptionInsuranceInventoryExitModel.FindPage(
 		l.ctx, models.OptionInsuranceInventoryExitPageFilter{
-			TenantId: in.TenantId, PositionId: in.PositionId,
+			TenantId: tenantId, PositionId: in.PositionId,
 			ContractId: in.ContractId, Status: int64(in.Status),
 		}, cursor, limit,
 	)

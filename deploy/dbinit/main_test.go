@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	mysql "github.com/go-sql-driver/mysql"
@@ -89,5 +90,40 @@ func TestLegacyMigrationVersion(t *testing.T) {
 
 	if got, ok = legacyMigrationVersion("services/trade/migrations/20260728_example.sql"); ok {
 		t.Fatalf("trade migration unexpectedly has legacy version: %q", got)
+	}
+}
+
+func TestSplitSQLScriptSupportsMySQLDelimiter(t *testing.T) {
+	script := `SET @before = 1;
+DELIMITER $$
+CREATE TRIGGER trg_example BEFORE INSERT ON example
+FOR EACH ROW
+BEGIN
+  SET NEW.value = 1;
+  SET NEW.updated = 2;
+END$$
+CREATE PROCEDURE sp_example()
+BEGIN
+  SELECT 1;
+END$$
+DELIMITER ;
+SET @after = 2;
+`
+
+	statements := splitSQLScript(script)
+	if len(statements) != 4 {
+		t.Fatalf("statements=%d want=4: %#v", len(statements), statements)
+	}
+	if statements[0] != "SET @before = 1;" {
+		t.Fatalf("prefix=%q", statements[0])
+	}
+	if strings.Contains(statements[1], "DELIMITER") || !strings.HasSuffix(statements[1], "END") {
+		t.Fatalf("trigger statement=%q", statements[1])
+	}
+	if !strings.Contains(statements[2], "CREATE PROCEDURE") {
+		t.Fatalf("procedure statement=%q", statements[2])
+	}
+	if statements[3] != "SET @after = 2;" {
+		t.Fatalf("suffix=%q", statements[3])
 	}
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="module-page">
-    <CrudQueryCard :model="query" @search="refresh" @reset="resetQuery">
-      <el-form-item :label="t('option.tenantId')">
+    <CrudQueryCard :model="query" @search="search" @reset="resetQuery">
+      <el-form-item v-if="authStore.isSystemAdmin" :label="t('option.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
       <el-form-item :label="t('option.calendarCode')">
@@ -15,130 +15,139 @@
           <el-option :label="t('option.calendarSuperseded')" :value="4" />
         </el-select>
       </el-form-item>
+      <template #actions>
+        <el-button v-perm="'option:trading-calendar:create'" type="primary" @click="openCreate">
+          {{ t('option.createCalendarVersion') }}
+        </el-button>
+        <el-button v-perm="'option:trading-halt:create'" type="danger" @click="haltVisible = true">
+          {{ t('option.haltTrading') }}
+        </el-button>
+      </template>
     </CrudQueryCard>
 
-    <el-alert
-      v-if="!query.tenantId"
-      :title="t('option.selectTenantForCalendar')"
-      type="info"
-      :closable="false"
-    />
-
-    <template v-else>
-      <el-card shadow="never" class="table-card">
-        <template #header>
-          <div class="card-header">
-            <span>{{ t('option.tradingCalendarGovernance') }}</span>
-            <el-button v-perm="'option:trading-calendar:create'" type="primary" @click="openCreate">
-              {{ t('option.createCalendarVersion') }}
-            </el-button>
-          </div>
-        </template>
-        <el-table v-loading="loading" :data="calendars" stripe>
-          <el-table-column prop="calendarCode" :label="t('option.calendarCode')" min-width="180" />
-          <el-table-column prop="version" :label="t('option.version')" width="80" />
-          <el-table-column prop="timezone" :label="t('option.timezone')" min-width="150" />
-          <el-table-column :label="t('common.status')" width="110">
-            <template #default="{ row }">
-              {{ calendarStatus(row.status) }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('option.effectiveFrom')" min-width="170">
-            <template #default="{ row }">
-              {{ formatTime(row.effectiveFrom) }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('option.weeklySessions')" min-width="260">
-            <template #default="{ row }">
-              {{ sessionSummary(row.sessions) }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('option.exceptionWindows')" min-width="220">
-            <template #default="{ row }">
-              {{ exceptionSummary(row.exceptions) }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="changeReason"
-            :label="t('option.calendarChangeReason')"
-            min-width="180"
-          />
-          <el-table-column prop="evidenceRef" :label="t('option.evidenceRef')" min-width="180" />
-          <el-table-column :label="t('common.actions')" width="160" fixed="right">
-            <template #default="{ row }">
-              <template v-if="row.status === 1">
-                <el-button
-                  v-perm="'option:trading-calendar:review'"
-                  link
-                  type="success"
-                  @click="review(row, true)"
-                >
-                  {{ t('option.approve') }}
-                </el-button>
-                <el-button
-                  v-perm="'option:trading-calendar:review'"
-                  link
-                  type="danger"
-                  @click="review(row, false)"
-                >
-                  {{ t('option.reject') }}
-                </el-button>
-              </template>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-card>
-
-      <el-card shadow="never" class="table-card">
-        <template #header>
-          <div class="card-header">
-            <span>{{ t('option.tradingHalts') }}</span>
-            <el-button
-              v-perm="'option:trading-halt:create'"
-              type="danger"
-              @click="haltVisible = true"
-            >
-              {{ t('option.haltTrading') }}
-            </el-button>
-          </div>
-        </template>
-        <el-table v-loading="loading" :data="halts" stripe>
-          <el-table-column prop="haltNo" :label="t('option.haltNo')" min-width="180" />
-          <el-table-column prop="contractId" :label="t('option.contractId')" width="110" />
-          <el-table-column prop="source" :label="t('option.haltSource')" width="100" />
-          <el-table-column prop="reason" :label="t('option.reason')" min-width="180" />
-          <el-table-column :label="t('option.cancelResult')" min-width="150">
-            <template #default="{ row }">
-              {{ row.cancelSuccess }}/{{ row.cancelTotal }}
-              <span v-if="row.cancelFailed" class="danger">({{ row.cancelFailed }})</span>
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('option.startedAt')" min-width="170">
-            <template #default="{ row }">
-              {{ formatTime(row.startedAt) }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('common.status')" width="100">
-            <template #default="{ row }">
-              {{ row.status === 1 ? t('option.haltActive') : t('option.haltLifted') }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('common.actions')" width="100" fixed="right">
-            <template #default="{ row }">
+    <el-card shadow="never" class="table-card">
+      <el-table v-loading="loading" :data="calendars" stripe>
+        <el-table-column
+          v-if="authStore.isSystemAdmin"
+          prop="tenantId"
+          :label="t('option.tenantId')"
+          width="110"
+        />
+        <el-table-column prop="calendarCode" :label="t('option.calendarCode')" min-width="180" />
+        <el-table-column prop="version" :label="t('option.version')" width="80" />
+        <el-table-column prop="timezone" :label="t('option.timezone')" min-width="150" />
+        <el-table-column :label="t('common.status')" width="110">
+          <template #default="{ row }">
+            {{ calendarStatus(row.status) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('option.effectiveFrom')" min-width="170">
+          <template #default="{ row }">
+            {{ formatTime(row.effectiveFrom) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('option.weeklySessions')" min-width="260">
+          <template #default="{ row }">
+            {{ sessionSummary(row.sessions) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('option.exceptionWindows')" min-width="220">
+          <template #default="{ row }">
+            {{ exceptionSummary(row.exceptions) }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="changeReason"
+          :label="t('option.calendarChangeReason')"
+          min-width="180"
+        />
+        <el-table-column prop="evidenceRef" :label="t('option.evidenceRef')" min-width="180" />
+        <el-table-column :label="t('common.actions')" width="160" fixed="right">
+          <template #default="{ row }">
+            <template v-if="row.status === 1">
               <el-button
-                v-if="row.status === 1"
-                v-perm="'option:trading-halt:resume'"
+                v-perm="'option:trading-calendar:review'"
                 link
                 type="success"
-                @click="resume(row)"
+                @click="review(row, true)"
               >
-                {{ t('option.resumeTrading') }}
+                {{ t('option.approve') }}
+              </el-button>
+              <el-button
+                v-perm="'option:trading-calendar:review'"
+                link
+                type="danger"
+                @click="review(row, false)"
+              >
+                {{ t('option.reject') }}
               </el-button>
             </template>
-          </el-table-column>
-        </el-table>
-      </el-card>
-    </template>
+          </template>
+        </el-table-column>
+      </el-table>
+      <CursorPagination
+        v-model:limit="calendarPagination.pagination.limit"
+        :total="calendarPagination.pagination.total"
+        :has-prev="calendarPagination.pagination.hasPrev"
+        :has-next="calendarPagination.pagination.hasNext"
+        @prev="calendarPagination.prevAndLoad(loadCalendars)"
+        @next="calendarPagination.nextAndLoad(loadCalendars)"
+        @limit-change="calendarPagination.resetAndLoad(loadCalendars)"
+      />
+    </el-card>
+
+    <el-card shadow="never" class="table-card">
+      <el-table v-loading="loading" :data="halts" stripe>
+        <el-table-column
+          v-if="authStore.isSystemAdmin"
+          prop="tenantId"
+          :label="t('option.tenantId')"
+          width="110"
+        />
+        <el-table-column prop="haltNo" :label="t('option.haltNo')" min-width="180" />
+        <el-table-column prop="contractId" :label="t('option.contractId')" width="110" />
+        <el-table-column prop="source" :label="t('option.haltSource')" width="100" />
+        <el-table-column prop="reason" :label="t('option.reason')" min-width="180" />
+        <el-table-column :label="t('option.cancelResult')" min-width="150">
+          <template #default="{ row }">
+            {{ row.cancelSuccess }}/{{ row.cancelTotal }}
+            <span v-if="row.cancelFailed" class="danger">({{ row.cancelFailed }})</span>
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('option.startedAt')" min-width="170">
+          <template #default="{ row }">
+            {{ formatTime(row.startedAt) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('common.status')" width="100">
+          <template #default="{ row }">
+            {{ row.status === 1 ? t('option.haltActive') : t('option.haltLifted') }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('common.actions')" width="100" fixed="right">
+          <template #default="{ row }">
+            <el-button
+              v-if="row.status === 1"
+              v-perm="'option:trading-halt:resume'"
+              link
+              type="success"
+              @click="resume(row)"
+            >
+              {{ t('option.resumeTrading') }}
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <CursorPagination
+        v-model:limit="haltPagination.pagination.limit"
+        :total="haltPagination.pagination.total"
+        :has-prev="haltPagination.pagination.hasPrev"
+        :has-next="haltPagination.pagination.hasNext"
+        @prev="haltPagination.prevAndLoad(loadHalts)"
+        @next="haltPagination.nextAndLoad(loadHalts)"
+        @limit-change="haltPagination.resetAndLoad(loadHalts)"
+      />
+    </el-card>
 
     <el-dialog v-model="createVisible" :title="t('option.createCalendarVersion')" width="680px">
       <el-form :model="calendarForm" label-width="150px">
@@ -209,7 +218,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
@@ -223,16 +232,21 @@ import {
 } from '@/services'
 import TenantSelect from '@/components/TenantSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
+import { useAuthStore } from '@/stores/auth'
+import { usePagination } from '@/composables'
 
 const { t } = useI18n()
+const authStore = useAuthStore()
 const loading = ref(false)
 const saving = ref(false)
 const createVisible = ref(false)
 const haltVisible = ref(false)
 const calendars = ref<OptionTradingCalendar[]>([])
 const halts = ref<OptionTradingHalt[]>([])
+const calendarPagination = usePagination<number>(20)
+const haltPagination = usePagination<number>(20)
 const query = reactive({
-  tenantId: undefined as number | undefined,
+  tenantId: (authStore.isTenantUser ? authStore.profileTenantId : undefined) as number | undefined,
   calendarCode: '',
   status: undefined as number | undefined,
 })
@@ -249,26 +263,46 @@ const calendarForm = reactive({
 const haltForm = reactive({ contractId: 1, reason: '', evidenceRef: '' })
 
 function resetQuery() {
+  query.tenantId = authStore.isTenantUser ? authStore.profileTenantId || undefined : undefined
   query.calendarCode = ''
   query.status = undefined
+  calendarPagination.reset()
+  haltPagination.reset()
   void refresh()
 }
 
+function search() {
+  calendarPagination.reset()
+  haltPagination.reset()
+  void refresh()
+}
+
+async function loadCalendars() {
+  const response = await optionService.listTradingCalendars({
+    tenantId: query.tenantId,
+    calendarCode: query.calendarCode || undefined,
+    status: query.status,
+    cursor: calendarPagination.pagination.cursor,
+    limit: calendarPagination.pagination.limit,
+  })
+  calendars.value = response.data || []
+  calendarPagination.updateFromResponse(response)
+}
+
+async function loadHalts() {
+  const response = await optionService.listTradingHalts({
+    tenantId: query.tenantId,
+    cursor: haltPagination.pagination.cursor,
+    limit: haltPagination.pagination.limit,
+  })
+  halts.value = response.data || []
+  haltPagination.updateFromResponse(response)
+}
+
 async function refresh() {
-  if (!query.tenantId) return
   loading.value = true
   try {
-    const [calendarResp, haltResp] = await Promise.all([
-      optionService.listTradingCalendars({
-        tenantId: query.tenantId,
-        calendarCode: query.calendarCode || undefined,
-        status: query.status,
-        limit: 100,
-      }),
-      optionService.listTradingHalts({ tenantId: query.tenantId, limit: 100 }),
-    ])
-    calendars.value = calendarResp.data || []
-    halts.value = haltResp.data || []
+    await Promise.all([loadCalendars(), loadHalts()])
   } finally {
     loading.value = false
   }
@@ -432,16 +466,13 @@ function exceptionSummary(exceptions: OptionTradingCalendarException[]) {
     )
     .join('; ')
 }
+
+onMounted(refresh)
 </script>
 
 <style scoped>
 .table-card {
   margin-top: 16px;
-}
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 .danger {
   color: var(--el-color-danger);

@@ -857,7 +857,7 @@ type ListOrdersResp {
 
 type ListAdminComboOrdersReq {
 	PageReq
-	tenantId         int64     `form:"tenantId"`
+	tenantId         int64     `form:"tenantId,optional"`
 	userId           int64     `form:"userId,optional"`
 	accountId        int64     `form:"accountId,optional"`
 	comboNo          string    `form:"comboNo,optional"`
@@ -1287,7 +1287,7 @@ type OptionRetryAssetInstructionReq {
 }
 
 type GetOperationsOverviewReq {
-	tenantId         int64 `form:"tenantId"`
+	tenantId         int64 `form:"tenantId,optional"`
 	riskStaleSeconds int64 `form:"riskStaleSeconds,optional"`
 	comboStaleSeconds int64 `form:"comboStaleSeconds,optional"`
 }
@@ -1299,7 +1299,7 @@ type GetOperationsOverviewResp {
 
 type ListAssetInstructionsReq {
 	PageReq
-	tenantId             int64  `form:"tenantId"`
+	tenantId             int64  `form:"tenantId,optional"`
 	userId               int64  `form:"userId,optional"`
 	bizNo                string `form:"bizNo,optional"`
 	status               int64  `form:"status,optional"`
@@ -1314,7 +1314,7 @@ type ListAssetInstructionsResp {
 
 type ListReconciliationIssuesReq {
 	PageReq
-	tenantId  int64  `form:"tenantId"`
+	tenantId  int64  `form:"tenantId,optional"`
 	bizNo     string `form:"bizNo,optional"`
 	checkType int64  `form:"checkType,optional"`
 	status    int64  `form:"status,optional"`
@@ -1410,7 +1410,7 @@ type GetTradingCalendarResp {
 
 type ListTradingCalendarsReq {
 	PageReq
-	tenantId     int64  `form:"tenantId"`
+	tenantId     int64  `form:"tenantId,optional"`
 	calendarCode string `form:"calendarCode,optional"`
 	status       int64  `form:"status,optional"`
 }
@@ -1463,7 +1463,7 @@ type GetTradingHaltResp {
 
 type ListTradingHaltsReq {
 	PageReq
-	tenantId   int64 `form:"tenantId"`
+	tenantId   int64 `form:"tenantId,optional"`
 	contractId int64 `form:"contractId,optional"`
 	status     int64 `form:"status,optional"`
 }
@@ -1562,7 +1562,7 @@ type GetCorporateActionResp {
 
 type ListCorporateActionsReq {
 	PageReq
-	tenantId         int64  `form:"tenantId"`
+	tenantId         int64  `form:"tenantId,optional"`
 	underlyingSymbol string `form:"underlyingSymbol,optional"`
 	actionType       int64  `form:"actionType,optional"`
 	status           int64  `form:"status,optional"`
@@ -1739,7 +1739,7 @@ type GetContractSeriesResp {
 
 type ListContractSeriesReq {
 	PageReq
-	tenantId   int64  `form:"tenantId"`
+	tenantId   int64  `form:"tenantId,optional"`
 	seriesCode string `form:"seriesCode,optional"`
 	status     int64  `form:"status,optional"`
 }

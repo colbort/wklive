@@ -3,7 +3,10 @@ package adminlogic
 import (
 	"context"
 
+	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/option"
 	"wklive/services/option/internal/logic/helpers"
 	"wklive/services/option/internal/svc"
@@ -28,9 +31,18 @@ func NewListLiquidationsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 分页查询强平记录
 func (l *ListLiquidationsLogic) ListLiquidations(in *option.ListLiquidationsReq) (*option.ListLiquidationsResp, error) {
+	tenantId, allowed, forbidden, err := utils.ResolveAdminTenantReadScopeFromMd(l.ctx, in.TenantId)
+	if err != nil {
+		return nil, err
+	}
+	if forbidden || !allowed {
+		return &option.ListLiquidationsResp{
+			Base: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx)),
+		}, nil
+	}
 	cursor, limit := pageutil.Input(in.Page)
 	items, total, err := l.svcCtx.OptionLiquidationModel.FindPage(l.ctx, models.OptionLiquidationPageFilter{
-		TenantId: in.TenantId, UserId: in.UserId, AccountId: in.AccountId,
+		TenantId: tenantId, UserId: in.UserId, AccountId: in.AccountId,
 		ContractId: in.ContractId, PositionId: in.PositionId, Status: int64(in.Status),
 	}, cursor, limit)
 	if err != nil {

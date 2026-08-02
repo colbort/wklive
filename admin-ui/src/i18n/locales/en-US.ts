@@ -1744,6 +1744,7 @@ export default {
     approve: 'Approve',
     reject: 'Reject',
     pendingReview: 'Pending Review',
+    approved: 'Approved',
     confirmed: 'Confirmed',
     rejected: 'Rejected',
     superseded: 'Superseded',

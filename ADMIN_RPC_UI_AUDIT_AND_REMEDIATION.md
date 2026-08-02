@@ -4,7 +4,7 @@
 
 基线提交：`f68b736c840556dafcb10ea8cf8e66ffceb7176a`
 
-状态：`CORE_REMEDIATED / UI_E2E_PENDING`
+状态：`CORE_AND_DATABASE_REMEDIATED / UI_E2E_PENDING`
 
 ## 1. 范围与结论
 
@@ -73,6 +73,24 @@ Chat头像实际由自定义multipart handler完成文件校验、存储并调�
 - Trade保证金快照等4个接口已接回真实RPC。
 - 生产构建出现大包警告：`element-plus`约1.01MB（minified），超过500KB；首屏仍有优化空间。
 - 已按路由懒加载业务页面，但Element Plus整体导入导致公共包偏大。
+
+#### 3.1.1 管理员类型与租户数据边界
+
+中央Admin UI只采用两种数据权限语义：
+
+1. **总后台管理员**（`userType=1`）：列表未选择租户时可查看全部租户数据；选择租户后按租户筛选。
+   新增、修改、审批及风控处置等写操作必须落到一个明确租户，跨租户列表必须展示`tenantId`列。
+2. **租户管理员**（租户主账号`userType=2`、租户管理员`userType=3`）：租户条件由登录资料强制绑定，
+   页面不提供租户切换，所有查询和操作只能作用于自己的租户。
+
+前端公共请求拦截器会覆盖租户管理员请求中已有的`tenantId`，`TenantSelect`也会同步锁定登录租户；
+这只是交互和误操作防线，不能替代RPC鉴权。RPC读接口应使用统一读范围解析：总后台的`tenantId=0`
+表示全部租户，租户管理员的`tenantId=0`自动收口为登录租户，显式请求其他租户则拒绝。写接口继续使用
+严格写范围校验。
+
+本轮已将Option风控中心的风险账户、强平记录、交易控制审计、MMP、异常成交更正、组合保证金配置和
+保险库存退出列表接入服务端读范围解析，并修复风险账户、强平记录原先缺少服务端租户收口的问题。
+其余Admin RPC的“接口可达性401/401”不等同于“租户隔离已验证”，仍需按读/写语义进行专项自动审计。
 
 ### 3.2 Chat Admin UI
 
@@ -150,9 +168,12 @@ Chat头像实际由自定义multipart handler完成文件校验、存储并调�
 | ADM-P1-001 | Asset保险赔付证据查询 | DONE |
 | ADM-P1-002 | Liquidity 15个Admin RPC完整覆盖 | DONE |
 | ADM-P1-003 | Admin RPC覆盖与空逻辑自动校验器 | DONE |
+| ADM-P1-004 | Admin新增接口菜单、RBAC权限与数据库迁移合并 | DONE |
 | ADM-P2-001 | 三套UI类型检查和生产构建 | DONE |
 | ADM-P2-002 | 危险操作、错误态、空态和分页一致性 | PARTIAL |
 | ADM-P2-003 | 公共包拆分 | PARTIAL |
+| ADM-SEC-001 | 中央Admin UI两级管理员租户边界 | DONE |
+| ADM-SEC-002 | 全部Admin RPC读写租户隔离专项审计 | PARTIAL（Option风控中心已完成） |
 
 ## 7. 整改后测试证据
 
@@ -164,6 +185,10 @@ Chat头像实际由自定义multipart handler完成文件校验、存储并调�
 | Liquidity管理API | `go test ./...` | PASS |
 | 10个RPC服务 | 各服务执行`go test ./internal/...` | PASS；同时修复Liquidity OKX测试夹具和Payment DECIMAL边界校验 |
 | 三套管理UI | `./scripts/verify-admin-ui.sh`（Node >= 20） | PASS；包含Chat typing与Liquidity对账假数据组件测试 |
+| 数据库完整升级 | `./deploy/deploy.sh database` | PASS：119个迁移校验完成，连续执行两次均成功 |
+| Liquidity RBAC菜单 | 查询`sys_menu/sys_role_menu` | PASS：34条接口规则、35条做市菜单全部授予`liquidity_admin` |
+| Asset保险覆盖权限 | 查询菜单ID 759及角色授权 | PASS：接口已登记，申请员、复核员、超级管理员均获只读权限 |
+| Option风控租户边界 | `go test ./utils`、`go test ./internal/logic/admin ./models`、中央UI `type-check/build` | PASS：总后台支持全租户列表，租户管理员强制绑定自己的租户 |
 
 依赖安装时发现：`liquidity-admin-ui`有3个npm审计漏洞（1 moderate、2 high），`chat-admin-ui`有4个
 （1 moderate、3 high）。本次未直接执行`npm audit fix --force`，因为它可能升级主版本并引入破坏性变化；
@@ -177,5 +202,17 @@ Chat头像实际由自定义multipart handler完成文件校验、存储并调�
 3. Chat和Liquidity已把应用、Vue、Axios与Element Plus拆成可缓存chunk，主业务chunk明显缩小；但Element Plus
    公共chunk仍约922KB（minified），仍超过500KB。进一步优化需要改为组件级按需引入。
 4. Liquidity新运营动作已经具备确认/原因/防重复提交的主要流程；全站危险动作一致性和错误态仍需继续梳理。
+
+## 9. 数据库与菜单合并说明
+
+本轮不仅补代码路由，也同步处理了已有库升级和全新安装：
+
+1. `init.sql`已合并Liquidity新增15条接口权限、Asset保险覆盖权限，以及此前只存在于迁移文件中的
+   Option交易日历、公司行动、合约系列、组合单、保险库存退出和平台兜底政策菜单。
+2. 新增幂等数据迁移`20260802_zz_admin_extension_permissions.sql`；做市后台采用fail-closed RBAC，未登记
+   菜单的接口会返回405，因此34条受保护路由必须与34条`sys_menu`接口规则一一对应。
+3. `db-init`重复数据迁移清单已覆盖7月30日至8月2日新增的菜单、角色和任务，已有库执行升级不会再漏菜单。
+4. 已恢复被修改的历史Asset迁移checksum，并把兼容逻辑移到新的baseline-safe reconciliation migration。
+5. `db-init`现可解析MySQL CLI的`DELIMITER`脚本，触发器和存储过程迁移可以通过Go驱动执行；相关解析器有单元测试。
 
 整改完成后，本表状态、实际测试命令、结果和仍需真实环境验证的边界必须同步更新。

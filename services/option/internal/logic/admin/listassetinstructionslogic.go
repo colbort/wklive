@@ -31,7 +31,7 @@ func NewListAssetInstructionsLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 分页查询资产指令，统一定位失败和人工处理项
 func (l *ListAssetInstructionsLogic) ListAssetInstructions(in *option.ListAssetInstructionsReq) (*option.ListAssetInstructionsResp, error) {
-	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, in.TenantId)
+	tenantId, allowed, forbidden, err := utils.ResolveAdminTenantReadScopeFromMd(l.ctx, in.TenantId)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (l *ListAssetInstructionsLogic) ListAssetInstructions(in *option.ListAssetI
 	cursor, limit := pageutil.Input(in.Page)
 	items, total, err := l.svcCtx.OptionAssetInstructionModel.FindPage(
 		l.ctx, models.OptionAssetInstructionPageFilter{
-			TenantId: in.TenantId, UserId: in.UserId, BizNo: in.BizNo,
+			TenantId: tenantId, UserId: in.UserId, BizNo: in.BizNo,
 			Status: int64(in.Status), ReconciliationStatus: int64(in.ReconciliationStatus),
 		}, cursor, limit,
 	)

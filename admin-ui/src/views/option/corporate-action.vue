@@ -1,7 +1,7 @@
 <template>
   <div class="module-page">
-    <CrudQueryCard :model="query" @search="refresh" @reset="resetQuery">
-      <el-form-item :label="t('option.tenantId')">
+    <CrudQueryCard :model="query" @search="search" @reset="resetQuery">
+      <el-form-item v-if="authStore.isSystemAdmin" :label="t('option.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
       <el-form-item :label="t('option.underlyingSymbol')">
@@ -27,25 +27,21 @@
           />
         </el-select>
       </el-form-item>
+      <template #actions>
+        <el-button v-perm="'option:corporate-action:create'" type="primary" @click="openCreate">
+          {{ t('option.createCorporateAction') }}
+        </el-button>
+      </template>
     </CrudQueryCard>
 
-    <el-alert
-      v-if="!query.tenantId"
-      :title="t('option.selectTenantForCorporateAction')"
-      type="info"
-      :closable="false"
-    />
-
-    <el-card v-else shadow="never" class="table-card">
-      <template #header>
-        <div class="card-header">
-          <span>{{ t('option.corporateActionGovernance') }}</span>
-          <el-button v-perm="'option:corporate-action:create'" type="primary" @click="openCreate">
-            {{ t('option.createCorporateAction') }}
-          </el-button>
-        </div>
-      </template>
+    <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="actions" stripe>
+        <el-table-column
+          v-if="authStore.isSystemAdmin"
+          prop="tenantId"
+          :label="t('option.tenantId')"
+          width="110"
+        />
         <el-table-column prop="eventNo" :label="t('option.eventNo')" min-width="170" />
         <el-table-column
           prop="externalEventRef"
@@ -113,6 +109,15 @@
           </template>
         </el-table-column>
       </el-table>
+      <CursorPagination
+        v-model:limit="pagination.pagination.limit"
+        :total="pagination.pagination.total"
+        :has-prev="pagination.pagination.hasPrev"
+        :has-next="pagination.pagination.hasNext"
+        @prev="pagination.prevAndLoad(refresh)"
+        @next="pagination.nextAndLoad(refresh)"
+        @limit-change="pagination.resetAndLoad(refresh)"
+      />
     </el-card>
 
     <el-dialog v-model="createVisible" :title="t('option.createCorporateAction')" width="760px">
@@ -203,7 +208,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
@@ -214,8 +219,11 @@ import {
 } from '@/services'
 import TenantSelect from '@/components/TenantSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
+import { useAuthStore } from '@/stores/auth'
+import { usePagination } from '@/composables'
 
 const { t } = useI18n()
+const authStore = useAuthStore()
 const loading = ref(false)
 const saving = ref(false)
 const positionLoading = ref(false)
@@ -223,8 +231,9 @@ const createVisible = ref(false)
 const positionVisible = ref(false)
 const actions = ref<OptionCorporateAction[]>([])
 const positions = ref<OptionCorporateActionPosition[]>([])
+const pagination = usePagination<number>(20)
 const query = reactive({
-  tenantId: undefined as number | undefined,
+  tenantId: (authStore.isTenantUser ? authStore.profileTenantId : undefined) as number | undefined,
   underlyingSymbol: '',
   actionType: undefined as number | undefined,
   status: undefined as number | undefined,
@@ -266,14 +275,18 @@ const statuses = computed(() =>
 )
 
 function resetQuery() {
+  query.tenantId = authStore.isTenantUser ? authStore.profileTenantId || undefined : undefined
   query.underlyingSymbol = ''
   query.actionType = undefined
   query.status = undefined
-  void refresh()
+  pagination.resetAndLoad(refresh)
+}
+
+function search() {
+  pagination.resetAndLoad(refresh)
 }
 
 async function refresh() {
-  if (!query.tenantId) return
   loading.value = true
   try {
     const response = await optionService.listCorporateActions({
@@ -281,9 +294,11 @@ async function refresh() {
       underlyingSymbol: query.underlyingSymbol || undefined,
       actionType: query.actionType,
       status: query.status,
-      limit: 100,
+      cursor: pagination.pagination.cursor,
+      limit: pagination.pagination.limit,
     })
     actions.value = response.data || []
+    pagination.updateFromResponse(response)
   } finally {
     loading.value = false
   }
@@ -390,16 +405,13 @@ function statusName(value: number) {
 function formatTime(value?: number) {
   return value ? new Date(value * 1000).toLocaleString() : '-'
 }
+
+onMounted(refresh)
 </script>
 
 <style scoped>
 .table-card {
   margin-top: 16px;
-}
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 .form-alert {
   margin-bottom: 18px;

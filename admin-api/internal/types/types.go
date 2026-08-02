@@ -1595,7 +1595,7 @@ type GetMarketSnapshotListResp struct {
 }
 
 type GetOperationsOverviewReq struct {
-	TenantId          int64 `form:"tenantId"`
+	TenantId          int64 `form:"tenantId,optional"`
 	RiskStaleSeconds  int64 `form:"riskStaleSeconds,optional"`
 	ComboStaleSeconds int64 `form:"comboStaleSeconds,optional"`
 }
@@ -2251,7 +2251,7 @@ type ListAccountsResp struct {
 
 type ListAdminComboOrdersReq struct {
 	PageReq
-	TenantId         int64     `form:"tenantId"`
+	TenantId         int64     `form:"tenantId,optional"`
 	UserId           int64     `form:"userId,optional"`
 	AccountId        int64     `form:"accountId,optional"`
 	ComboNo          string    `form:"comboNo,optional"`
@@ -2268,7 +2268,7 @@ type ListAdminComboOrdersResp struct {
 
 type ListAssetInstructionsReq struct {
 	PageReq
-	TenantId             int64  `form:"tenantId"`
+	TenantId             int64  `form:"tenantId,optional"`
 	UserId               int64  `form:"userId,optional"`
 	BizNo                string `form:"bizNo,optional"`
 	Status               int64  `form:"status,optional"`
@@ -2336,7 +2336,7 @@ type ListContractSeriesDetailsResp struct {
 
 type ListContractSeriesReq struct {
 	PageReq
-	TenantId   int64  `form:"tenantId"`
+	TenantId   int64  `form:"tenantId,optional"`
 	SeriesCode string `form:"seriesCode,optional"`
 	Status     int64  `form:"status,optional"`
 }
@@ -2379,7 +2379,7 @@ type ListCorporateActionPositionsResp struct {
 
 type ListCorporateActionsReq struct {
 	PageReq
-	TenantId         int64  `form:"tenantId"`
+	TenantId         int64  `form:"tenantId,optional"`
 	UnderlyingSymbol string `form:"underlyingSymbol,optional"`
 	ActionType       int64  `form:"actionType,optional"`
 	Status           int64  `form:"status,optional"`
@@ -2703,7 +2703,7 @@ type ListRechargeOrdersResp struct {
 
 type ListReconciliationIssuesReq struct {
 	PageReq
-	TenantId  int64  `form:"tenantId"`
+	TenantId  int64  `form:"tenantId,optional"`
 	BizNo     string `form:"bizNo,optional"`
 	CheckType int64  `form:"checkType,optional"`
 	Status    int64  `form:"status,optional"`
@@ -2851,7 +2851,7 @@ type ListTradesResp struct {
 
 type ListTradingCalendarsReq struct {
 	PageReq
-	TenantId     int64  `form:"tenantId"`
+	TenantId     int64  `form:"tenantId,optional"`
 	CalendarCode string `form:"calendarCode,optional"`
 	Status       int64  `form:"status,optional"`
 }
@@ -2878,7 +2878,7 @@ type ListTradingControlEventsResp struct {
 
 type ListTradingHaltsReq struct {
 	PageReq
-	TenantId   int64 `form:"tenantId"`
+	TenantId   int64 `form:"tenantId,optional"`
 	ContractId int64 `form:"contractId,optional"`
 	Status     int64 `form:"status,optional"`
 }

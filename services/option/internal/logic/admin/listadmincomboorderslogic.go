@@ -30,12 +30,7 @@ func NewListAdminComboOrdersLogic(ctx context.Context, svcCtx *svc.ServiceContex
 func (l *ListAdminComboOrdersLogic) ListAdminComboOrders(
 	in *option.ListAdminComboOrdersReq,
 ) (*option.ListAdminComboOrdersResp, error) {
-	if in.TenantId <= 0 {
-		return &option.ListAdminComboOrdersResp{
-			Base: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx)),
-		}, nil
-	}
-	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, in.TenantId)
+	tenantId, allowed, forbidden, err := utils.ResolveAdminTenantReadScopeFromMd(l.ctx, in.TenantId)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +43,7 @@ func (l *ListAdminComboOrdersLogic) ListAdminComboOrders(
 	items, total, err := l.svcCtx.OptionComboOrderModel.FindPage(
 		l.ctx,
 		models.OptionComboOrderPageFilter{
-			TenantId: in.TenantId, UserId: in.UserId, AccountId: in.AccountId,
+			TenantId: tenantId, UserId: in.UserId, AccountId: in.AccountId,
 			ComboNo: in.ComboNo, UnderlyingSymbol: in.UnderlyingSymbol,
 			Status:          int64(in.Status),
 			CreateTimeStart: pageutil.TimeRangeStart(in.CreateTimeRange),

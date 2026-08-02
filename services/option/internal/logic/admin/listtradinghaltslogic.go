@@ -31,7 +31,7 @@ func NewListTradingHaltsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 // 分页查询临时休市记录
 func (l *ListTradingHaltsLogic) ListTradingHalts(in *option.ListTradingHaltsReq) (*option.ListTradingHaltsResp, error) {
-	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, in.TenantId)
+	tenantId, allowed, forbidden, err := utils.ResolveAdminTenantReadScopeFromMd(l.ctx, in.TenantId)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (l *ListTradingHaltsLogic) ListTradingHalts(in *option.ListTradingHaltsReq)
 	cursor, limit := pageutil.Input(in.Page)
 	items, total, err := l.svcCtx.OptionTradingHaltModel.FindPage(
 		l.ctx, models.OptionTradingHaltPageFilter{
-			TenantId: in.TenantId, ContractId: in.ContractId, Status: int64(in.Status),
+			TenantId: tenantId, ContractId: in.ContractId, Status: int64(in.Status),
 		}, cursor, limit,
 	)
 	if err != nil {

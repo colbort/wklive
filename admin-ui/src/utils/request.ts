@@ -23,6 +23,14 @@ export const http: AxiosInstance = axios.create({
   },
 })
 
+function forceProfileTenant(value: unknown, tenantId: number) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return
+  const record = value as Record<string, unknown>
+  if (Object.prototype.hasOwnProperty.call(record, 'tenantId')) {
+    record.tenantId = tenantId
+  }
+}
+
 http.interceptors.request.use(
   async (config) => {
     const auth = useAuthStore()
@@ -31,6 +39,13 @@ http.interceptors.request.use(
     }
     if (auth.tenantId) {
       config.headers['x-tenant-id'] = String(auth.tenantId)
+    }
+    // Tenant users never control tenantId themselves. This keeps every admin-ui
+    // request aligned with the authenticated profile even if a page forgets to
+    // initialise its tenant selector. RPC services still enforce the same rule.
+    if (auth.isTenantUser && auth.profileTenantId > 0) {
+      forceProfileTenant(config.params, auth.profileTenantId)
+      forceProfileTenant(config.data, auth.profileTenantId)
     }
     logger.debug(`[${config.method?.toUpperCase()}] ${config.url || ''}`)
     return encryptAxiosRequest(config)

@@ -31,11 +31,11 @@ func NewListTradeCorrectionsLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // 分页查询异常成交更正案件
 func (l *ListTradeCorrectionsLogic) ListTradeCorrections(in *option.ListTradeCorrectionsReq) (*option.ListTradeCorrectionsResp, error) {
-	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, in.TenantId)
+	tenantId, allowed, forbidden, err := utils.ResolveAdminTenantReadScopeFromMd(l.ctx, in.TenantId)
 	if err != nil {
 		return nil, err
 	}
-	if in.TenantId <= 0 || forbidden || !allowed {
+	if forbidden || !allowed {
 		return &option.ListTradeCorrectionsResp{
 			Base: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx)),
 		}, nil
@@ -43,7 +43,7 @@ func (l *ListTradeCorrectionsLogic) ListTradeCorrections(in *option.ListTradeCor
 	cursor, limit := pageutil.Input(in.Page)
 	items, total, err := l.svcCtx.OptionTradeCorrectionModel.FindPage(
 		l.ctx, models.OptionTradeCorrectionPageFilter{
-			TenantId: in.TenantId, TradeId: in.TradeId,
+			TenantId: tenantId, TradeId: in.TradeId,
 			ContractId: in.ContractId, Status: int64(in.Status),
 		}, cursor, limit,
 	)

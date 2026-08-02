@@ -1,7 +1,7 @@
 <template>
   <div class="module-page">
     <CrudQueryCard :model="query" @search="refreshAll" @reset="resetQuery">
-      <el-form-item :label="t('option.tenantId')">
+      <el-form-item v-if="authStore.isSystemAdmin" :label="t('option.tenantId')">
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
       <el-form-item :label="t('option.riskStaleThreshold')">
@@ -45,195 +45,196 @@
       </el-form-item>
     </CrudQueryCard>
 
-    <el-alert
-      v-if="!query.tenantId"
-      :title="t('option.selectTenantForOperations')"
-      type="info"
-      :closable="false"
-    />
-
-    <template v-else>
-      <el-card v-loading="loading" shadow="never" class="table-card">
-        <template #header>
-          <div class="card-header">
-            <span>{{ t('option.operationsOverview') }}</span>
-            <span class="generated-at">{{ formatTime(overview?.generatedAt) }}</span>
-          </div>
-        </template>
-        <div class="metric-grid">
-          <div v-for="metric in metrics" :key="metric.label" class="metric">
-            <span class="metric-label">{{ metric.label }}</span>
-            <strong :class="{ danger: metric.danger }">{{ metric.value }}</strong>
-            <small>{{ formatOldest(metric.oldest) }}</small>
-          </div>
+    <el-card v-loading="loading" shadow="never" class="table-card">
+      <template #header>
+        <div class="card-header">
+          <span>{{ t('option.operationsOverview') }}</span>
+          <span class="generated-at">{{ formatTime(overview?.generatedAt) }}</span>
         </div>
-        <el-divider>{{ t('option.insuranceAndBackstop') }}</el-divider>
-        <el-descriptions :column="3" border>
-          <el-descriptions-item :label="t('option.insuranceLedger')">
-            {{ formatCoinAmounts(overview?.insuranceLedger) }}
-          </el-descriptions-item>
-          <el-descriptions-item :label="t('option.backstopLiability')">
-            {{ formatCoinAmounts(overview?.backstopLiability) }}
-          </el-descriptions-item>
-          <el-descriptions-item :label="t('option.unresolvedDeficit')">
-            {{ formatCoinAmounts(overview?.unresolvedDeficit) }}
-          </el-descriptions-item>
-        </el-descriptions>
-      </el-card>
+      </template>
+      <div class="metric-grid">
+        <div v-for="metric in metrics" :key="metric.label" class="metric">
+          <span class="metric-label">{{ metric.label }}</span>
+          <strong :class="{ danger: metric.danger }">{{ metric.value }}</strong>
+          <small>{{ formatOldest(metric.oldest) }}</small>
+        </div>
+      </div>
+      <el-divider>{{ t('option.insuranceAndBackstop') }}</el-divider>
+      <el-descriptions :column="3" border>
+        <el-descriptions-item :label="t('option.insuranceLedger')">
+          {{ formatCoinAmounts(overview?.insuranceLedger) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('option.backstopLiability')">
+          {{ formatCoinAmounts(overview?.backstopLiability) }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('option.unresolvedDeficit')">
+          {{ formatCoinAmounts(overview?.unresolvedDeficit) }}
+        </el-descriptions-item>
+      </el-descriptions>
+    </el-card>
 
-      <el-card v-loading="loading" shadow="never" class="table-card">
-        <template #header>
-          {{ t('option.comboOrderWorkbench') }}
-        </template>
-        <el-table :data="comboOrders" stripe>
-          <el-table-column prop="comboOrder.comboNo" :label="t('option.comboNo')" min-width="210" />
-          <el-table-column prop="comboOrder.userId" :label="t('option.userId')" width="100" />
-          <el-table-column prop="comboOrder.accountId" :label="t('option.accountId')" width="110" />
-          <el-table-column
-            prop="comboOrder.underlyingSymbol"
-            :label="t('option.underlyingSymbol')"
-            min-width="130"
-          />
-          <el-table-column prop="comboOrder.netPrice" :label="t('option.netPrice')" width="120" />
-          <el-table-column prop="comboOrder.qty" :label="t('option.quantity')" width="110" />
-          <el-table-column prop="comboOrder.filledQty" :label="t('option.filledQty')" width="110" />
-          <el-table-column :label="t('option.comboLegs')" min-width="300">
-            <template #default="{ row }">
-              {{ formatComboLegs(row) }}
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('common.status')" width="120">
-            <template #default="{ row }">
-              <el-tag :type="comboStatusType(row.comboOrder.status)">
-                {{ comboStatusLabel(row.comboOrder.status) }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column :label="t('common.actions')" width="150" fixed="right">
-            <template #default="{ row }">
-              <el-button
-                v-perm="'option:operations:combo-view'"
-                link
-                type="primary"
-                @click="openComboDetail(row)"
-              >
-                {{ t('option.detail') }}
-              </el-button>
-              <el-button
-                v-if="[1, 2, 3].includes(row.comboOrder.status)"
-                v-perm="'option:operations:combo-cancel'"
-                link
-                type="danger"
-                @click="forceCancelCombo(row)"
-              >
-                {{ t('option.forceCancelCombo') }}
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <CursorPagination
-          v-model:limit="comboPage.limit"
-          :total="comboPage.total"
-          :has-prev="comboPage.hasPrev"
-          :has-next="comboPage.hasNext"
-          @prev="comboPrev"
-          @next="comboNext"
-          @limit-change="comboReset"
+    <el-card v-loading="loading" shadow="never" class="table-card">
+      <template #header>
+        {{ t('option.comboOrderWorkbench') }}
+      </template>
+      <el-table :data="comboOrders" stripe>
+        <el-table-column
+          v-if="authStore.isSystemAdmin"
+          prop="comboOrder.tenantId"
+          :label="t('option.tenantId')"
+          width="110"
         />
-      </el-card>
+        <el-table-column prop="comboOrder.comboNo" :label="t('option.comboNo')" min-width="210" />
+        <el-table-column prop="comboOrder.userId" :label="t('option.userId')" width="100" />
+        <el-table-column prop="comboOrder.accountId" :label="t('option.accountId')" width="110" />
+        <el-table-column
+          prop="comboOrder.underlyingSymbol"
+          :label="t('option.underlyingSymbol')"
+          min-width="130"
+        />
+        <el-table-column prop="comboOrder.netPrice" :label="t('option.netPrice')" width="120" />
+        <el-table-column prop="comboOrder.qty" :label="t('option.quantity')" width="110" />
+        <el-table-column prop="comboOrder.filledQty" :label="t('option.filledQty')" width="110" />
+        <el-table-column :label="t('option.comboLegs')" min-width="300">
+          <template #default="{ row }">
+            {{ formatComboLegs(row) }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('common.status')" width="120">
+          <template #default="{ row }">
+            <el-tag :type="comboStatusType(row.comboOrder.status)">
+              {{ comboStatusLabel(row.comboOrder.status) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('common.actions')" width="150" fixed="right">
+          <template #default="{ row }">
+            <el-button
+              v-perm="'option:operations:combo-view'"
+              link
+              type="primary"
+              @click="openComboDetail(row)"
+            >
+              {{ t('option.detail') }}
+            </el-button>
+            <el-button
+              v-if="[1, 2, 3].includes(row.comboOrder.status)"
+              v-perm="'option:operations:combo-cancel'"
+              link
+              type="danger"
+              @click="forceCancelCombo(row)"
+            >
+              {{ t('option.forceCancelCombo') }}
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <CursorPagination
+        v-model:limit="comboPage.limit"
+        :total="comboPage.total"
+        :has-prev="comboPage.hasPrev"
+        :has-next="comboPage.hasNext"
+        @prev="comboPrev"
+        @next="comboNext"
+        @limit-change="comboReset"
+      />
+    </el-card>
 
-      <el-card v-loading="loading" shadow="never" class="table-card">
-        <template #header>
-          {{ t('option.assetInstructionWorkbench') }}
-        </template>
-        <el-table :data="instructions" stripe>
-          <el-table-column
-            prop="instructionNo"
-            :label="t('option.instructionNo')"
-            min-width="220"
-          />
-          <el-table-column prop="bizNo" :label="t('option.bizNo')" min-width="180" />
-          <el-table-column prop="userId" :label="t('option.userId')" width="100" />
-          <el-table-column prop="coin" :label="t('option.coin')" width="90" />
-          <el-table-column prop="amount" :label="t('option.amount')" min-width="130" />
-          <el-table-column prop="stepNo" :label="t('option.stepNo')" width="80" />
-          <el-table-column prop="status" :label="t('common.status')" width="90" />
-          <el-table-column prop="retryCount" :label="t('option.retryCount')" width="90" />
-          <el-table-column
-            prop="lastErrorMsg"
-            :label="t('option.lastErrorMsg')"
-            min-width="220"
-            show-overflow-tooltip
-          />
-          <el-table-column :label="t('common.actions')" width="100" fixed="right">
-            <template #default="{ row }">
-              <el-button
-                v-if="[4, 5].includes(row.status) && !row.deliveryUnitId"
-                v-perm="'option:operations:asset-retry'"
-                link
-                type="warning"
-                @click="retryInstruction(row)"
-              >
-                {{ t('option.retry') }}
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <CursorPagination
-          v-model:limit="instructionPage.limit"
-          :total="instructionPage.total"
-          :has-prev="instructionPage.hasPrev"
-          :has-next="instructionPage.hasNext"
-          @prev="instructionPrev"
-          @next="instructionNext"
-          @limit-change="instructionReset"
+    <el-card v-loading="loading" shadow="never" class="table-card">
+      <template #header>
+        {{ t('option.assetInstructionWorkbench') }}
+      </template>
+      <el-table :data="instructions" stripe>
+        <el-table-column
+          v-if="authStore.isSystemAdmin"
+          prop="tenantId"
+          :label="t('option.tenantId')"
+          width="110"
         />
-      </el-card>
+        <el-table-column prop="instructionNo" :label="t('option.instructionNo')" min-width="220" />
+        <el-table-column prop="bizNo" :label="t('option.bizNo')" min-width="180" />
+        <el-table-column prop="userId" :label="t('option.userId')" width="100" />
+        <el-table-column prop="coin" :label="t('option.coin')" width="90" />
+        <el-table-column prop="amount" :label="t('option.amount')" min-width="130" />
+        <el-table-column prop="stepNo" :label="t('option.stepNo')" width="80" />
+        <el-table-column prop="status" :label="t('common.status')" width="90" />
+        <el-table-column prop="retryCount" :label="t('option.retryCount')" width="90" />
+        <el-table-column
+          prop="lastErrorMsg"
+          :label="t('option.lastErrorMsg')"
+          min-width="220"
+          show-overflow-tooltip
+        />
+        <el-table-column :label="t('common.actions')" width="100" fixed="right">
+          <template #default="{ row }">
+            <el-button
+              v-if="[4, 5].includes(row.status) && !row.deliveryUnitId"
+              v-perm="'option:operations:asset-retry'"
+              link
+              type="warning"
+              @click="retryInstruction(row)"
+            >
+              {{ t('option.retry') }}
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <CursorPagination
+        v-model:limit="instructionPage.limit"
+        :total="instructionPage.total"
+        :has-prev="instructionPage.hasPrev"
+        :has-next="instructionPage.hasNext"
+        @prev="instructionPrev"
+        @next="instructionNext"
+        @limit-change="instructionReset"
+      />
+    </el-card>
 
-      <el-card v-loading="loading" shadow="never" class="table-card">
-        <template #header>
-          {{ t('option.reconciliationWorkbench') }}
-        </template>
-        <el-table :data="issues" stripe>
-          <el-table-column prop="issueKey" :label="t('option.issueKey')" min-width="220" />
-          <el-table-column prop="bizNo" :label="t('option.bizNo')" min-width="170" />
-          <el-table-column prop="checkType" :label="t('option.checkType')" width="100" />
-          <el-table-column prop="status" :label="t('common.status')" width="90" />
-          <el-table-column
-            prop="occurrenceCount"
-            :label="t('option.occurrenceCount')"
-            width="100"
-          />
-          <el-table-column
-            prop="expectedValue"
-            :label="t('option.expectedValue')"
-            min-width="180"
-            show-overflow-tooltip
-          />
-          <el-table-column
-            prop="actualValue"
-            :label="t('option.actualValue')"
-            min-width="180"
-            show-overflow-tooltip
-          />
-          <el-table-column
-            prop="detail"
-            :label="t('option.detail')"
-            min-width="240"
-            show-overflow-tooltip
-          />
-        </el-table>
-        <CursorPagination
-          v-model:limit="issuePage.limit"
-          :total="issuePage.total"
-          :has-prev="issuePage.hasPrev"
-          :has-next="issuePage.hasNext"
-          @prev="issuePrev"
-          @next="issueNext"
-          @limit-change="issueReset"
+    <el-card v-loading="loading" shadow="never" class="table-card">
+      <template #header>
+        {{ t('option.reconciliationWorkbench') }}
+      </template>
+      <el-table :data="issues" stripe>
+        <el-table-column
+          v-if="authStore.isSystemAdmin"
+          prop="tenantId"
+          :label="t('option.tenantId')"
+          width="110"
         />
-      </el-card>
-    </template>
+        <el-table-column prop="issueKey" :label="t('option.issueKey')" min-width="220" />
+        <el-table-column prop="bizNo" :label="t('option.bizNo')" min-width="170" />
+        <el-table-column prop="checkType" :label="t('option.checkType')" width="100" />
+        <el-table-column prop="status" :label="t('common.status')" width="90" />
+        <el-table-column prop="occurrenceCount" :label="t('option.occurrenceCount')" width="100" />
+        <el-table-column
+          prop="expectedValue"
+          :label="t('option.expectedValue')"
+          min-width="180"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="actualValue"
+          :label="t('option.actualValue')"
+          min-width="180"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="detail"
+          :label="t('option.detail')"
+          min-width="240"
+          show-overflow-tooltip
+        />
+      </el-table>
+      <CursorPagination
+        v-model:limit="issuePage.limit"
+        :total="issuePage.total"
+        :has-prev="issuePage.hasPrev"
+        :has-next="issuePage.hasNext"
+        @prev="issuePrev"
+        @next="issueNext"
+        @limit-change="issueReset"
+      />
+    </el-card>
 
     <el-drawer
       v-model="comboDrawerVisible"
@@ -278,7 +279,9 @@
           <el-table-column prop="legNo" :label="t('option.legNo')" width="80" />
           <el-table-column prop="contractId" :label="t('option.contractId')" width="120" />
           <el-table-column :label="t('option.side')" width="90">
-            <template #default="{ row }">{{ row.side === 1 ? 'BUY' : 'SELL' }}</template>
+            <template #default="{ row }">
+              {{ row.side === 1 ? 'BUY' : 'SELL' }}
+            </template>
           </el-table-column>
           <el-table-column prop="ratio" :label="t('option.ratio')" width="80" />
           <el-table-column prop="price" :label="t('option.price')" />
@@ -291,23 +294,35 @@
         <el-table :data="comboDetail.childOrders" stripe>
           <el-table-column prop="order.orderNo" :label="t('option.orderNo')" min-width="210" />
           <el-table-column prop="order.contractId" :label="t('option.contractId')" width="120" />
-          <el-table-column prop="order.marginAmount" :label="t('option.marginAmount')" width="140" />
+          <el-table-column
+            prop="order.marginAmount"
+            :label="t('option.marginAmount')"
+            width="140"
+          />
           <el-table-column prop="order.marginCoin" :label="t('option.coin')" width="100" />
           <el-table-column prop="order.status" :label="t('common.status')" width="90" />
-          <el-table-column prop="order.cancelReason" :label="t('option.cancelReason')" min-width="180" />
+          <el-table-column
+            prop="order.cancelReason"
+            :label="t('option.cancelReason')"
+            min-width="180"
+          />
         </el-table>
 
-        <el-divider>
-          {{ t('option.comboTrades') }} ({{ comboDetail.tradeTotal }})
-        </el-divider>
+        <el-divider> {{ t('option.comboTrades') }} ({{ comboDetail.tradeTotal }}) </el-divider>
         <el-table :data="comboDetail.trades" stripe>
-          <el-table-column prop="trade.comboMatchNo" :label="t('option.comboMatchNo')" min-width="210" />
+          <el-table-column
+            prop="trade.comboMatchNo"
+            :label="t('option.comboMatchNo')"
+            min-width="210"
+          />
           <el-table-column prop="trade.comboLegNo" :label="t('option.legNo')" width="80" />
           <el-table-column prop="trade.contractId" :label="t('option.contractId')" width="120" />
           <el-table-column prop="trade.price" :label="t('option.price')" width="120" />
           <el-table-column prop="trade.qty" :label="t('option.quantity')" width="120" />
           <el-table-column prop="trade.tradeTime" :label="t('option.tradeTime')" min-width="170">
-            <template #default="{ row }">{{ formatTime(row.trade.tradeTime) }}</template>
+            <template #default="{ row }">
+              {{ formatTime(row.trade.tradeTime) }}
+            </template>
           </el-table-column>
         </el-table>
 
@@ -315,7 +330,11 @@
           {{ t('option.assetInstructions') }} ({{ comboDetail.assetInstructionTotal }})
         </el-divider>
         <el-table :data="comboDetail.assetInstructions" stripe>
-          <el-table-column prop="instructionNo" :label="t('option.instructionNo')" min-width="220" />
+          <el-table-column
+            prop="instructionNo"
+            :label="t('option.instructionNo')"
+            min-width="220"
+          />
           <el-table-column prop="orderId" :label="t('option.childOrderId')" width="120" />
           <el-table-column prop="action" :label="t('option.action')" width="90" />
           <el-table-column prop="coin" :label="t('option.coin')" width="90" />
@@ -329,10 +348,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { usePagination } from '@/composables'
+import { useAuthStore } from '@/stores/auth'
 import {
   optionService,
   type OptionAssetInstruction,
@@ -346,6 +366,7 @@ import TenantSelect from '@/components/TenantSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
+const authStore = useAuthStore()
 const loading = ref(false)
 const overview = ref<OptionOperationsOverview>()
 const instructions = ref<OptionAssetInstruction[]>([])
@@ -354,7 +375,7 @@ const comboOrders = ref<OptionComboOrderDetail[]>([])
 const comboDetail = ref<OptionAdminComboOrderDetail>()
 const comboDrawerVisible = ref(false)
 const query = reactive({
-  tenantId: undefined as number | undefined,
+  tenantId: (authStore.isTenantUser ? authStore.profileTenantId : undefined) as number | undefined,
   riskStaleSeconds: 60,
   comboStaleSeconds: 60,
   bizNo: '',
@@ -453,7 +474,6 @@ const metrics = computed(() => {
 })
 
 const loadOverview = async () => {
-  if (!query.tenantId) return
   overview.value = (
     await optionService.getOperationsOverview({
       tenantId: query.tenantId,
@@ -464,7 +484,6 @@ const loadOverview = async () => {
 }
 
 const loadInstructions = async () => {
-  if (!query.tenantId) return
   const res = await optionService.listAssetInstructions({
     tenantId: query.tenantId,
     bizNo: query.bizNo || undefined,
@@ -477,7 +496,6 @@ const loadInstructions = async () => {
 }
 
 const loadIssues = async () => {
-  if (!query.tenantId) return
   const res = await optionService.listReconciliationIssues({
     tenantId: query.tenantId,
     bizNo: query.bizNo || undefined,
@@ -489,7 +507,6 @@ const loadIssues = async () => {
 }
 
 const loadComboOrders = async () => {
-  if (!query.tenantId) return
   const res = await optionService.listAdminComboOrders({
     tenantId: query.tenantId,
     comboNo: query.comboNo || undefined,
@@ -502,7 +519,6 @@ const loadComboOrders = async () => {
 }
 
 const refreshAll = async () => {
-  if (!query.tenantId) return
   loading.value = true
   try {
     await Promise.all([loadOverview(), loadComboOrders(), loadInstructions(), loadIssues()])
@@ -512,7 +528,7 @@ const refreshAll = async () => {
 }
 
 const resetQuery = () => {
-  query.tenantId = undefined
+  query.tenantId = authStore.isTenantUser ? authStore.profileTenantId || undefined : undefined
   query.riskStaleSeconds = 60
   query.comboStaleSeconds = 60
   query.bizNo = ''
@@ -528,6 +544,7 @@ const resetQuery = () => {
   instructionPagination.reset()
   issuePagination.reset()
   comboPagination.reset()
+  void refreshAll()
 }
 
 const retryInstruction = async (row: OptionAssetInstruction) => {
@@ -549,8 +566,7 @@ const retryInstruction = async (row: OptionAssetInstruction) => {
 }
 
 const openComboDetail = async (row: OptionComboOrderDetail) => {
-  const tenantId = query.tenantId
-  if (!tenantId) return
+  const tenantId = row.comboOrder.tenantId
   comboDetail.value = (
     await optionService.getAdminComboOrder({
       tenantId,
@@ -561,8 +577,7 @@ const openComboDetail = async (row: OptionComboOrderDetail) => {
 }
 
 const forceCancelCombo = async (row: OptionComboOrderDetail) => {
-  const tenantId = query.tenantId
-  if (!tenantId) return
+  const tenantId = row.comboOrder.tenantId
   const { value } = await ElMessageBox.prompt(
     t('option.forceCancelComboPrompt'),
     t('option.forceCancelCombo'),
@@ -571,8 +586,7 @@ const forceCancelCombo = async (row: OptionComboOrderDetail) => {
       cancelButtonText: t('common.cancel'),
       inputPattern: /\S+/,
       inputErrorMessage: t('option.forceCancelReasonRequired'),
-      inputValidator: (input) =>
-        input.trim().length <= 200 || t('option.forceCancelReasonTooLong'),
+      inputValidator: (input) => input.trim().length <= 200 || t('option.forceCancelReasonTooLong'),
     },
   )
   await optionService.forceCancelComboOrder({
@@ -626,6 +640,8 @@ const formatOldest = (value?: number) =>
   value ? `${t('option.oldest')}: ${formatTime(value)}` : '-'
 const formatCoinAmounts = (items?: OptionCoinAmount[]) =>
   items?.length ? items.map((item) => `${item.amount} ${item.coin}`).join(', ') : '-'
+
+onMounted(refreshAll)
 </script>
 
 <style scoped>

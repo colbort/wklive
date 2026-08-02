@@ -83,6 +83,10 @@ function mergeTenant(item?: SysTenantItem) {
 }
 
 async function loadTenants(keyword = '') {
+  if (forcedTenantId.value) {
+    await ensureCurrentTenant()
+    return
+  }
   loading.value = true
   try {
     const res = await tenantsService.getList({
@@ -137,11 +141,15 @@ watch(
   () => {
     enforceProfileTenant()
   },
-  { immediate: true },
+  { immediate: true, flush: 'sync' },
 )
 
 onMounted(() => {
   enforceProfileTenant()
-  loadTenants()
+  if (forcedTenantId.value) {
+    ensureCurrentTenant()
+  } else {
+    loadTenants()
+  }
 })
 </script>

@@ -31,7 +31,7 @@ func NewListMMPConfigsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Li
 
 // 分页查询 MMP 配置和实时窗口状态
 func (l *ListMMPConfigsLogic) ListMMPConfigs(in *option.ListMMPConfigsReq) (*option.ListMMPConfigsResp, error) {
-	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, in.TenantId)
+	tenantId, allowed, forbidden, err := utils.ResolveAdminTenantReadScopeFromMd(l.ctx, in.TenantId)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (l *ListMMPConfigsLogic) ListMMPConfigs(in *option.ListMMPConfigsReq) (*opt
 	cursor, limit := pageutil.Input(in.Page)
 	items, total, err := l.svcCtx.OptionMmpConfigModel.FindPage(
 		l.ctx, models.OptionMmpConfigPageFilter{
-			TenantId: in.TenantId, UserId: in.UserId, ContractId: in.ContractId,
+			TenantId: tenantId, UserId: in.UserId, ContractId: in.ContractId,
 			GroupCode: in.GroupCode, Status: int64(in.Status),
 		}, cursor, limit,
 	)

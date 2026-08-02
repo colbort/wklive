@@ -427,6 +427,22 @@ func applySystemDataMigrations(ctx context.Context, db *sql.DB, workspace string
 		"20260728_add_trade_contract_jobs.sql",
 		"20260729_add_itick_authority_registry_permissions.sql",
 		"20260730_add_contract_production_roles.sql",
+		"20260730_add_option_control_permissions.sql",
+		"20260730_add_option_exercise_retry_menu.sql",
+		"20260730_add_option_jobs.sql",
+		"20260730_add_option_risk_menu.sql",
+		"20260730_add_option_settlement_retry_menu.sql",
+		"20260730_zj_option_operations_permissions.sql",
+		"20260731_zl_option_trading_calendar_permissions.sql",
+		"20260731_zm_option_corporate_action_permissions.sql",
+		"20260731_zn_option_contract_series_permissions.sql",
+		"20260731_zq_option_combo_operations_permissions.sql",
+		"20260731_zt_option_daily_reconciliation_job.sql",
+		"20260802_asset_platform_backstop_policy_permissions.sql",
+		"20260802_option_insurance_inventory_exit_permissions.sql",
+		"20260802_zz_admin_extension_permissions.sql",
+		"20260802_zzz_remove_tenant_display_init_menu.sql",
+		"20260802_zzzz_split_option_risk_workbench.sql",
 	}
 	for _, name := range files {
 		path := filepath.Join(workspace, "services", "system", "migrations", name)
@@ -585,8 +601,59 @@ func execSQLFile(ctx context.Context, db *sql.DB, path string) error {
 	if err != nil {
 		return err
 	}
-	_, err = db.ExecContext(ctx, string(data))
-	return err
+	for _, statement := range splitSQLScript(string(data)) {
+		if _, err = db.ExecContext(ctx, statement); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// splitSQLScript removes mysql-client DELIMITER directives and returns
+// executable protocol statements. Ordinary SQL remains grouped so existing
+// multi-statement migrations keep their transaction and session variables;
+// stored programs and triggers using a custom delimiter are emitted one by one.
+func splitSQLScript(script string) []string {
+	var statements []string
+	var current strings.Builder
+	delimiter := ""
+	flush := func() {
+		statement := strings.TrimSpace(current.String())
+		current.Reset()
+		if statement != "" {
+			statements = append(statements, statement)
+		}
+	}
+
+	for _, line := range strings.SplitAfter(script, "\n") {
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(strings.ToUpper(trimmed), "DELIMITER ") {
+			flush()
+			delimiter = strings.TrimSpace(trimmed[len("DELIMITER "):])
+			if delimiter == ";" {
+				delimiter = ""
+			}
+			continue
+		}
+
+		if delimiter == "" {
+			current.WriteString(line)
+			continue
+		}
+
+		lineWithoutNewline := strings.TrimSuffix(line, "\n")
+		lineWithoutNewline = strings.TrimSuffix(lineWithoutNewline, "\r")
+		trimmedRight := strings.TrimRight(lineWithoutNewline, " \t")
+		if strings.HasSuffix(trimmedRight, delimiter) {
+			current.WriteString(strings.TrimSuffix(trimmedRight, delimiter))
+			current.WriteByte('\n')
+			flush()
+			continue
+		}
+		current.WriteString(line)
+	}
+	flush()
+	return statements
 }
 
 func getenv(key, fallback string) string {

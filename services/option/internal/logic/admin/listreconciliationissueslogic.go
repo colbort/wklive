@@ -30,7 +30,7 @@ func NewListReconciliationIssuesLogic(ctx context.Context, svcCtx *svc.ServiceCo
 
 // 分页查询 Option 与 Asset 对账差异
 func (l *ListReconciliationIssuesLogic) ListReconciliationIssues(in *option.ListReconciliationIssuesReq) (*option.ListReconciliationIssuesResp, error) {
-	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, in.TenantId)
+	tenantId, allowed, forbidden, err := utils.ResolveAdminTenantReadScopeFromMd(l.ctx, in.TenantId)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (l *ListReconciliationIssuesLogic) ListReconciliationIssues(in *option.List
 	cursor, limit := pageutil.Input(in.Page)
 	items, total, err := l.svcCtx.OptionReconciliationIssueModel.FindPage(
 		l.ctx, models.OptionReconciliationIssuePageFilter{
-			TenantId: in.TenantId, BizNo: in.BizNo,
+			TenantId: tenantId, BizNo: in.BizNo,
 			CheckType: int64(in.CheckType), Status: int64(in.Status),
 		}, cursor, limit,
 	)

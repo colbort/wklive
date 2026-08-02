@@ -1733,6 +1733,7 @@ export default {
     approve: '确认',
     reject: '拒绝',
     pendingReview: '待复核',
+    approved: '已批准',
     confirmed: '已确认',
     rejected: '已拒绝',
     superseded: '已被新版本替代',

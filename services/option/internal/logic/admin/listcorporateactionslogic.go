@@ -29,7 +29,7 @@ func NewListCorporateActionsLogic(ctx context.Context, svcCtx *svc.ServiceContex
 func (l *ListCorporateActionsLogic) ListCorporateActions(
 	in *option.ListCorporateActionsReq,
 ) (*option.ListCorporateActionsResp, error) {
-	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, in.TenantId)
+	tenantId, allowed, forbidden, err := utils.ResolveAdminTenantReadScopeFromMd(l.ctx, in.TenantId)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func (l *ListCorporateActionsLogic) ListCorporateActions(
 	}
 	cursor, limit := pageutil.Input(in.Page)
 	items, total, err := l.svcCtx.OptionCorporateActionModel.FindPage(l.ctx, models.OptionCorporateActionPageFilter{
-		TenantId: in.TenantId, UnderlyingSymbol: in.UnderlyingSymbol,
+		TenantId: tenantId, UnderlyingSymbol: in.UnderlyingSymbol,
 		ActionType: int64(in.ActionType), Status: int64(in.Status),
 	}, cursor, limit)
 	if err != nil {

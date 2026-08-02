@@ -35,7 +35,7 @@ func (l *ListContractSeriesLogic) ListContractSeries(in *option.ListContractSeri
 			i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx),
 		)}, nil
 	}
-	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, in.TenantId)
+	tenantId, allowed, forbidden, err := utils.ResolveAdminTenantReadScopeFromMd(l.ctx, in.TenantId)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (l *ListContractSeriesLogic) ListContractSeries(in *option.ListContractSeri
 	cursor, limit := pageutil.Input(in.Page)
 	items, total, err := l.svcCtx.OptionContractSeriesModel.FindPage(
 		l.ctx, models.OptionContractSeriesPageFilter{
-			TenantId: in.TenantId, SeriesCode: in.SeriesCode, Status: int64(in.Status),
+			TenantId: tenantId, SeriesCode: in.SeriesCode, Status: int64(in.Status),
 		}, cursor, limit,
 	)
 	if err != nil {

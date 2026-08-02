@@ -31,7 +31,7 @@ func NewListTradingCalendarsLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 // 分页查询交易日历版本
 func (l *ListTradingCalendarsLogic) ListTradingCalendars(in *option.ListTradingCalendarsReq) (*option.ListTradingCalendarsResp, error) {
-	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, in.TenantId)
+	tenantId, allowed, forbidden, err := utils.ResolveAdminTenantReadScopeFromMd(l.ctx, in.TenantId)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (l *ListTradingCalendarsLogic) ListTradingCalendars(in *option.ListTradingC
 	cursor, limit := pageutil.Input(in.Page)
 	items, total, err := l.svcCtx.OptionTradingCalendarModel.FindPage(
 		l.ctx, models.OptionTradingCalendarPageFilter{
-			TenantId: in.TenantId, CalendarCode: code, Status: int64(in.Status),
+			TenantId: tenantId, CalendarCode: code, Status: int64(in.Status),
 		}, cursor, limit,
 	)
 	if err != nil {

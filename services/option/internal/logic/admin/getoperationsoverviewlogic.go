@@ -30,7 +30,7 @@ func NewGetOperationsOverviewLogic(ctx context.Context, svcCtx *svc.ServiceConte
 
 // 查询运营异常和任务水位汇总
 func (l *GetOperationsOverviewLogic) GetOperationsOverview(in *option.GetOperationsOverviewReq) (*option.GetOperationsOverviewResp, error) {
-	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, in.TenantId)
+	tenantId, allowed, forbidden, err := utils.ResolveAdminTenantReadScopeFromMd(l.ctx, in.TenantId)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (l *GetOperationsOverviewLogic) GetOperationsOverview(in *option.GetOperati
 	}
 	now := time.Now().Unix()
 	summary, err := models.QueryOptionOperationsOverview(
-		l.ctx, l.svcCtx.DB, in.TenantId, now-staleSeconds, now-comboStaleSeconds,
+		l.ctx, l.svcCtx.DB, tenantId, now-staleSeconds, now-comboStaleSeconds,
 	)
 	if err != nil {
 		return nil, err
