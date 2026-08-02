@@ -1,5 +1,7 @@
 # Option 风险参数变更记录
 
+OPTION_RISK_PARAMETER_CHANGE_STATUS: DRAFT
+
 变更单号：________　环境：________　计划时间：________
 
 ## 变更内容
@@ -32,3 +34,6 @@
 | 运营/合规（适用时） |  |  |  |
 
 实施结果：________　监控三个窗口正常：[ ]　回滚：[是/否]
+
+只有版本、双人复核、实施结果和连续三个正常监控窗口全部留证时，归档副本才允许改为
+`OPTION_RISK_PARAMETER_CHANGE_STATUS: APPROVED`；回滚或异常未关闭时改为`ROLLED_BACK`或`REJECTED`。

@@ -142,3 +142,27 @@ func (s *AdminServer) AdjustPlatformAccount(ctx context.Context, in *asset.Adjus
 	l := adminlogic.NewAdjustPlatformAccountLogic(ctx, s.svcCtx)
 	return l.AdjustPlatformAccount(in)
 }
+
+// 创建平台兜底资金政策草稿
+func (s *AdminServer) CreatePlatformBackstopPolicy(ctx context.Context, in *asset.CreatePlatformBackstopPolicyReq) (*asset.PlatformBackstopPolicyResp, error) {
+	l := adminlogic.NewCreatePlatformBackstopPolicyLogic(ctx, s.svcCtx)
+	return l.CreatePlatformBackstopPolicy(in)
+}
+
+// 独立管理员复核平台兜底资金政策
+func (s *AdminServer) ReviewPlatformBackstopPolicy(ctx context.Context, in *asset.ReviewPlatformBackstopPolicyReq) (*asset.PlatformBackstopPolicyResp, error) {
+	l := adminlogic.NewReviewPlatformBackstopPolicyLogic(ctx, s.svcCtx)
+	return l.ReviewPlatformBackstopPolicy(in)
+}
+
+// 查询平台兜底资金政策
+func (s *AdminServer) GetPlatformBackstopPolicy(ctx context.Context, in *asset.GetPlatformBackstopPolicyReq) (*asset.PlatformBackstopPolicyResp, error) {
+	l := adminlogic.NewGetPlatformBackstopPolicyLogic(ctx, s.svcCtx)
+	return l.GetPlatformBackstopPolicy(in)
+}
+
+// 分页查询平台兜底资金政策
+func (s *AdminServer) ListPlatformBackstopPolicies(ctx context.Context, in *asset.ListPlatformBackstopPoliciesReq) (*asset.ListPlatformBackstopPoliciesResp, error) {
+	l := adminlogic.NewListPlatformBackstopPoliciesLogic(ctx, s.svcCtx)
+	return l.ListPlatformBackstopPolicies(in)
+}

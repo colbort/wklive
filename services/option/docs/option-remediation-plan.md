@@ -5,7 +5,9 @@
 本文是 `services/option` 的实施台账。设计依据见
 [`option-design-review.md`](option-design-review.md)，运行与应急流程见
 [`option-operations-runbook.md`](option-operations-runbook.md)。当前仓库状态与只能由外部完成的生产
-阻断见 [`option-current-status-and-production-blockers.md`](option-current-status-and-production-blockers.md)。
+阻断见 [`option-current-status-and-production-blockers.md`](option-current-status-and-production-blockers.md)，
+按“仓库已完成/外部待完成/验收证据”归并后的清单见
+[`option-completion-audit.md`](option-completion-audit.md)。
 
 状态定义：
 
@@ -273,6 +275,28 @@ equity = Asset total
   - 最近一次正式全套501造数/清算/Asset为`501ms/2.826s/14.341s`，5000为
     `3.257s/27.034s/6m26.656s`；同日其他运行结果仅作开发机完整性波动基线。
     `make gen-model`不适用（无DDL）；预生产批准SLA、容器编排级强杀/RTO和通知仍须验收。
+
+### OPT-P0-007 平台兜底运行时硬额度
+
+- 状态：`REPOSITORY_PASSED / PREPROD_BLOCKED`
+- 原问题：Option把保险未覆盖的穿仓缺口请求给Asset；旧Asset路径允许`OPTION_BACKSTOP`账户无硬底线
+  负余额，readiness声明无法限制并发实际扣减。正式实现已移除该路径。
+- 已完成的止血措施：Option 新增 `PlatformBackstop.Enabled`，仓库样例默认 `false`；关闭时
+  `PLATFORM_BACKSTOP` 合约不能从PENDING上市、暂停后不能恢复，既有合约剩余缺口转
+  `MANUAL_REVIEW`且不调用Asset。验收夹具必须显式开启，避免把测试能力误当生产默认。
+- 当前实现事实：Asset已实现DISABLED/PREFUNDED/CREDIT_FLOOR不可变政策、异人复核、单请求/
+  UTC日累计/余额底线事务硬边界、cover快照与重放；Admin RPC/API/UI、互斥RBAC及严格触发器已完成。
+  `make gen-model`、`make gen`、全量test/vet、管理端type-check、迁移双执行、直SQL旁路、真实RPC
+  边界/20并发/响应丢失和Option穿仓端到端均通过。
+- 待生产批准：按`docs/templates/option-platform-backstop-policy-approval.md`只能选择预注资准备金、
+  有硬信用底线的批准授信或永久人工处置之一；无限负余额不得批准。
+- 已通过验收：缺失/草稿/拒绝/过期/关闭零副作用；边界等号成功、最小单位越界拒绝；20并发
+  精确10成功/10拒绝；版本切换和补资不清零日额度；提交后响应丢失重放不双扣；跨租户/跨币隔离；
+  数据库不允许直插批准、自审、改删或伪造用量/cover。首版冲正/偿还不释放当日额度。
+- 放行边界：真实模式/资本/额度、目标环境告警/日终/接管报告和六方批准完成前，生产仍必须保持
+  开关关闭、使用`MANUAL_REVIEW`或关闭卖方；仓库通过不能替代经济批准。
+- 详细设计与逐项证据口径：`docs/option-p0-007-platform-backstop-runtime-limit-design.md`、
+  `docs/option-p0-007-repository-acceptance.md`。
 
 ## 4. P1 交易、风险与产品完整性
 
@@ -555,7 +579,7 @@ equity = Asset total
   - 501个独立多头仓位与1个501张全额担保空头跨越100条持仓分页，形成501个独立单元和2004条
     资金指令/流水，全部成功对账、完成事件唯一且重放无新增；完成检查以数据库聚合和异常单元有界查询
     替代每条指令重复加载全批对象，最近一次正式全套造数/清算/Asset为
-    `1.400s/3.866s/1m41.080s`。
+    `1.118s/4.312s/1m44.369s`。
 - 仍需业务批准：补资时长、用户通知渠道/文案、违约罚则、截止后的最终经济处置和适用司法辖区。
 - 待预生产验证：容器编排级强杀/重启、真实告警通知路由，
   以及按批准业务规则执行最终经济处置；开发验收不能替代产品、风控、清算和法务签署。
@@ -869,7 +893,7 @@ equity = Asset total
     参考价快照和模板快照不可覆盖或删除；修订只能新建更高版本并引用 `supersedes_id`。
   - 创建时提交内嵌的 typed 合约参数模板，并通过同一个 `validateSupportedContract` 校验器；
     模板不会作为真实合约入库。参数快照写入系列证据，生成时只允许覆盖租户、合约代码、
-    Call/Put、行权价、四个独立时间点和强制 `PENDING` 状态。
+    Call/Put、行权价、五个独立时间点和强制 `PENDING` 状态。
   - expiry 必须显式提交 UTC 秒值、周期标签、上市、行权截止、到期和交割时间，并满足现有合约
     时间门禁；节假日/DST 调整由运营先按获批交易日历形成最终时间，V1 不做隐式日期推算。
   - strike band 使用精确 `DECIMAL(32,16)` 的闭区间和步长。各 band 不重叠，边界和每个生成价
@@ -938,7 +962,8 @@ equity = Asset total
   - 修改已审批规则、删除规则/生成明细、同人审批和旧版本越权审批均被拒绝。
   - 500 合约边界成功，501 合约在写入前失败；价格计算不使用二进制浮点。
 - 运营待提供：目标市场的正式到期周期、节假日调整惯例、行权价带宽/步长政策、命名规范、
-  权威参考价源及发布时间。仓库将提供审批模板和发布核对清单；资料未批准前只可生成草稿，
+  权威参考价源及发布时间。仓库已提供`docs/templates/contract-series-approval.md`审批模板和
+  `docs/option-contract-launch-checklist.md`发布核对清单；资料未批准前只可生成草稿，
   不得上市。
 
 ### 5.6 OPT-P2-006 期权链、盘口、成交量和 OI
@@ -1163,34 +1188,41 @@ equity = Asset total
 
 | 交付物 | 仓库文件 | 状态 |
 | --- | --- | --- |
-| 生产运行与应急手册 | `docs/option-operations-runbook.md` | DONE |
-| 告警目录与阈值 | `docs/option-alert-catalog.md` | DONE |
-| Prometheus 抓取、组合/通用运营规则与部署说明 | `monitoring/` | DONE（生产 target、接收人和通知演练待部署） |
-| Option fail-closed 生产门禁与证据清单 | `monitoring/option-production-readiness.sh`、`monitoring/option-production-readiness.env.example` | DONE（已实时校验 metrics 可达性、关键指标族、采样成功与45秒新鲜度；真实报告、哈希和审批只能由预生产/生产提供） |
-| 仓库技术证据与可校验哈希清单 | `docs/evidence/option-repository-technical-evidence-20260802.md`、同目录`.sha256` | DONE（明确为REPOSITORY_ONLY且当前工作区非release candidate；不能计入预生产/生产放行） |
-| 发布候选变更范围与脏工作区检查 | `docs/evidence/option-release-candidate-change-inventory-20260802.md`、`monitoring/option-release-scope.sh` | DONE（仅整理/校验范围，不擅自提交或丢弃现有改动；最终发布提交仍须人工逐文件审查并在干净工作区重跑） |
-| Alertmanager SEV-1/2/3 路由样例 | `monitoring/alertmanager.example.yml` | DONE（接收地址和凭证必须由生产配置系统渲染） |
-| Option 生产六方签署单 | `docs/templates/option-production-readiness-signoff.md` | DONE（所有证据通过前保持 DRAFT） |
-| 预生产技术证据包与告警送达记录 | `docs/templates/option-preproduction-evidence-pack.md`、`docs/templates/option-alert-delivery-test.md` | DONE（待真实环境执行并签署） |
+| 生产运行与应急手册 | `docs/option-operations-runbook.md` | REPOSITORY_PASSED |
+| 告警目录与阈值 | `docs/option-alert-catalog.md` | REPOSITORY_PASSED |
+| Prometheus 抓取、组合/通用运营规则与部署说明 | `monitoring/` | REPOSITORY_PASSED / PREPROD_BLOCKED（生产 target、接收人和通知演练待部署） |
+| Option fail-closed 生产门禁与证据清单 | `monitoring/option-production-readiness.sh`、`monitoring/option-production-readiness.env.example` | REPOSITORY_PASSED / PREPROD_BLOCKED（已实时校验 metrics 可达性、关键指标族、采样成功与45秒新鲜度；真实报告、哈希和审批只能由预生产/生产提供） |
+| 仓库技术证据与可校验哈希清单 | `docs/evidence/option-repository-technical-evidence-20260802.md`、同目录`.sha256` | REPOSITORY_PASSED / RELEASE_IDENTITY_PENDING（明确为REPOSITORY_ONLY且当前工作区非release candidate；不能计入预生产/生产放行） |
+| 发布候选变更范围与脏工作区检查 | `docs/evidence/option-release-candidate-change-inventory-20260802.md`、`monitoring/option-release-scope.sh` | REPOSITORY_PASSED / RELEASE_IDENTITY_PENDING（仅整理/校验范围，不擅自提交或丢弃现有改动；最终发布提交仍须人工逐文件审查并在干净工作区重跑） |
+| Alertmanager SEV-1/2/3 路由样例 | `monitoring/alertmanager.example.yml` | MATERIAL_READY / EXTERNAL_EXECUTION（接收地址和凭证必须由生产配置系统渲染） |
+| Option 生产六方签署单 | `docs/templates/option-production-readiness-signoff.md` | MATERIAL_READY / EXTERNAL_EXECUTION（所有证据通过前保持 DRAFT） |
+| 预生产技术证据包与告警送达记录 | `docs/templates/option-preproduction-evidence-pack.md`、`docs/templates/option-alert-delivery-test.md` | MATERIAL_READY / EXTERNAL_EXECUTION（待真实环境执行并签署） |
 | Option 日终资金守恒记录与数据契约 | `docs/templates/option-daily-fund-reconciliation.md`、`docs/option-daily-conservation-contract.md` | REPOSITORY_PASSED / PREPROD_BLOCKED（公式、稳定键、不可变逐币明细、自动任务、差异恢复和成功心跳已实现；待预生产真实流水、调度、通知和四方签署） |
-| 合约上市检查表 | `docs/option-contract-launch-checklist.md` | DONE |
-| 结算价审批记录模板 | `docs/templates/settlement-price-approval.md` | DONE |
-| 行权截止与到期清算控制记录 | `docs/templates/option-exercise-expiry-control-record.md` | DONE（系统不变量已预填；每个合约的真实时间、用户触达、预生产容量/强杀证据和签字待运营执行） |
-| 风险参数变更模板 | `docs/templates/risk-parameter-change.md` | DONE |
-| 组合保证金参数版本验证、订单准入版本抽样与独立审批记录 | `docs/templates/option-portfolio-risk-validation-record.md` | DONE（历史回测、独立签字和预生产版本切换证据待真实执行；生产门禁要求模型验证与版本切换 E2E 两份哈希证据） |
-| 保险库存退出审批、逐申请执行记录与仓库验收报告 | `docs/templates/option-insurance-inventory-exit-approval.md`、`docs/templates/option-insurance-inventory-exit-execution-record.md`、`docs/option-p1-005-insurance-inventory-exit-repository-acceptance.md` | DONE（五项全局硬限额和配置哈希门禁已实现；生产逐合约批准值、真实角色、通知送达和预生产 E2E 仍待签署，功能默认关闭） |
-| 事故记录模板 | `docs/templates/incident-report.md` | DONE |
-| 日终对账检查表 | `docs/templates/daily-reconciliation.md` | DONE |
-| 生产验收测试计划 | `docs/option-acceptance-test-plan.md` | DONE |
-| 产品公告、FAQ、通知与客服话术底稿 | `docs/option-product-operations-pack.md` | DONE |
-| 交易日历版本审批模板 | `docs/templates/trading-calendar-approval.md` | DONE |
-| 临时休市与恢复记录 | `docs/templates/trading-halt-record.md` | DONE |
-| 年度交易日历资料与 T-30 复核清单 | `docs/templates/trading-calendar-annual-review.md` | DONE（具体市场日期待业务提供权威来源） |
-| 公司行动与合约调整案件模板 | `docs/templates/corporate-action-case.md` | DONE（目标市场规则、税费与零碎政策待业务/法务提供） |
-| 合约系列创建、生成与上市复核模板 | `docs/templates/contract-series-approval.md` | DONE（目标市场到期和行权价政策待业务提供） |
-| 公开期权链与盘口上线准备模板 | `docs/templates/public-market-readiness.md` | DONE（字段/SLA/缓存/渠道审批待业务提供） |
-| 组合/价差单上线准备模板 | `docs/templates/complex-order-readiness.md` | DONE（系统首版值已预填；市场规则/SLA/费用/披露待业务审批） |
-| 机构 RFQ/大宗/做市义务准备模板 | `docs/templates/institutional-market-readiness.md` | DONE（能力有意后置；产品/合规/市场规则批准前无交易入口） |
+| 保险基金生产语义审批与历史盘点记录 | `docs/templates/option-insurance-fund-ledger-production-approval.md` | MATERIAL_READY / EXTERNAL_EXECUTION（系统契约、只读盘点SQL、逐笔Asset桥接、逐币影子复算、下游盘点、差异案件、负向/回滚演练和六方签署门禁已预填；真实快照、财务/清算批准及生产证据待执行，默认DRAFT） |
+| 实物交割补资与违约经济处置政策审批 | `docs/templates/option-physical-delivery-default-policy-approval.md` | MATERIAL_READY / EXTERNAL_EXECUTION（系统先收后付/原指令/不垫资边界、补资和通知字段、六类最终处置、逐币会计、权限、申诉、专项预生产和六方签署已预填；真实司法辖区、政策参数及所有批准路径实现/验收待外部执行，默认DRAFT） |
+| 数据库直接SQL与旁路安全审计验收 | `docs/templates/option-database-security-audit-acceptance.md` | MATERIAL_READY / EXTERNAL_EXECUTION（事务外采集、身份链、防篡改/保留、12类拒绝和5类合法对照、告警/采集失败、旁路事故、权限及六方签署已预填；真实MySQL审计/堡垒机/SOC执行待目标环境完成，默认DRAFT） |
+| 平台兜底资金模型、硬额度与工程验收 | `docs/templates/option-platform-backstop-policy-approval.md`、`docs/option-p0-007-repository-acceptance.md` | REPOSITORY_PASSED / PRODUCTION_BLOCKED（三模式、原子硬额度、四眼管理、边界/20并发/重放/旁路及Option E2E已通过；真实模式/资本/额度、告警日终、目标环境报告和六方签署仍待外部完成） |
+| 生产阻断与证据材料覆盖矩阵 | `docs/option-production-blocker-evidence-matrix.md` | MATERIAL_READY / PRODUCTION_BLOCKED（逐阻断映射技术基线、模板、外部输入和状态；仓库可预填材料已齐，全部目标环境执行/签署仍阻断） |
+| 真实编排器故障注入与唯一接管报告 | `docs/templates/option-orchestrator-takeover-report.md` | MATERIAL_READY / EXTERNAL_EXECUTION（真实Pod/容器身份、原租约墙钟、Option/Asset/DB/Redis/队列十类故障、双实例竞争、资金唯一、RTO/告警和五方签署已预填；目标环境执行前默认DRAFT） |
+| Beanstalkd双架构容量、WAL与RTO报告 | `docs/templates/option-beanstalk-capacity-rto-report.md` | MATERIAL_READY / EXTERNAL_EXECUTION（原生ARM64/AMD64、双实例独立WAL、峰值/积压/SIGKILL/业务客户端重连/24h长稳、告警和四方签署已预填；目标环境执行前默认DRAFT） |
+| 合约上市检查表 | `docs/option-contract-launch-checklist.md` | MATERIAL_READY / EXTERNAL_EXECUTION（模板默认为DRAFT；具体合约须补齐参数、证据哈希和六方签署后才能标记APPROVED） |
+| 结算价审批记录模板 | `docs/templates/settlement-price-approval.md` | MATERIAL_READY / EXTERNAL_EXECUTION |
+| 行权截止与到期清算控制记录 | `docs/templates/option-exercise-expiry-control-record.md` | MATERIAL_READY / EXTERNAL_EXECUTION（系统不变量已预填；每个合约的真实时间、用户触达、预生产容量/强杀证据和签字待运营执行） |
+| 风险参数变更模板 | `docs/templates/risk-parameter-change.md` | MATERIAL_READY / EXTERNAL_EXECUTION |
+| 组合保证金参数版本验证、订单准入版本抽样与独立审批记录 | `docs/templates/option-portfolio-risk-validation-record.md` | MATERIAL_READY / EXTERNAL_EXECUTION（历史回测、独立签字和预生产版本切换证据待真实执行；生产门禁要求模型验证与版本切换 E2E 两份哈希证据） |
+| 保险库存退出审批、逐申请执行记录与仓库验收报告 | `docs/templates/option-insurance-inventory-exit-approval.md`、`docs/templates/option-insurance-inventory-exit-execution-record.md`、`docs/option-p1-005-insurance-inventory-exit-repository-acceptance.md` | REPOSITORY_PASSED / PREPROD_BLOCKED（五项全局硬限额和配置哈希门禁已实现；生产逐合约批准值、真实角色、通知送达和预生产 E2E 仍待签署，功能默认关闭） |
+| 事故记录模板 | `docs/templates/incident-report.md` | MATERIAL_READY / EXTERNAL_EXECUTION |
+| 日终对账检查表 | `docs/templates/daily-reconciliation.md` | MATERIAL_READY / EXTERNAL_EXECUTION |
+| 生产验收测试计划 | `docs/option-acceptance-test-plan.md` | REPOSITORY_PASSED |
+| 产品公告、FAQ、通知与客服话术底稿 | `docs/option-product-operations-pack.md` | MATERIAL_READY / EXTERNAL_EXECUTION（仅内部未发布模板；系统边界已预填，具体参数、法律文本、联系人、触达计划、预生产证据和审批仍阻断发布） |
+| 交易日历版本审批模板 | `docs/templates/trading-calendar-approval.md` | MATERIAL_READY / EXTERNAL_EXECUTION |
+| 临时休市与恢复记录 | `docs/templates/trading-halt-record.md` | MATERIAL_READY / EXTERNAL_EXECUTION |
+| 年度交易日历资料与 T-30 复核清单 | `docs/templates/trading-calendar-annual-review.md` | MATERIAL_READY / EXTERNAL_EXECUTION（具体市场日期待业务提供权威来源） |
+| 公司行动与合约调整案件模板 | `docs/templates/corporate-action-case.md` | MATERIAL_READY / EXTERNAL_EXECUTION（目标市场规则、税费与零碎政策待业务/法务提供） |
+| 合约系列创建、生成与上市复核模板 | `docs/templates/contract-series-approval.md` | MATERIAL_READY / EXTERNAL_EXECUTION（目标市场到期和行权价政策待业务提供） |
+| 公开期权链与盘口上线准备模板 | `docs/templates/public-market-readiness.md` | MATERIAL_READY / EXTERNAL_EXECUTION（字段/SLA/缓存/渠道审批待业务提供） |
+| 组合/价差单上线准备模板 | `docs/templates/complex-order-readiness.md` | MATERIAL_READY / EXTERNAL_EXECUTION（系统首版值已预填；市场规则/SLA/费用/披露待业务审批） |
+| 机构 RFQ/大宗/做市义务准备模板 | `docs/templates/institutional-market-readiness.md` | MATERIAL_READY / DEFERRED（能力有意后置；产品/合规/市场规则批准前无交易入口） |
 
 ## 7. 完成证据索引
 

@@ -1,5 +1,7 @@
 # Option 交易日历版本审批记录
 
+OPTION_TRADING_CALENDAR_APPROVAL_STATUS: DRAFT
+
 ## 1. 身份
 
 | 字段 | 内容 |

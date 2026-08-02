@@ -97,6 +97,26 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
+				Path:    "/platform-backstop-policies",
+				Handler: asset.CreatePlatformBackstopPolicyHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/platform-backstop-policies",
+				Handler: asset.ListPlatformBackstopPoliciesHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/platform-backstop-policies/:policyId",
+				Handler: asset.GetPlatformBackstopPolicyHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/platform-backstop-policies/:policyId/review",
+				Handler: asset.ReviewPlatformBackstopPolicyHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
 				Path:    "/sub",
 				Handler: asset.SubAssetHandler(serverCtx),
 			},

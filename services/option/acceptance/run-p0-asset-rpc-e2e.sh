@@ -86,7 +86,8 @@ INSERT INTO t_asset_freeze (
    'P0-MIGRATION-TRADE-DUP',30,0,0,30,1,0,'non-option duplicate B',550,550);
 "
 for migration in \
-  "$REPO_ROOT/services/asset/migrations/20260801_option_freeze_idempotency_evidence.sql"
+  "$REPO_ROOT/services/asset/migrations/20260801_option_freeze_idempotency_evidence.sql" \
+  "$REPO_ROOT/services/asset/migrations/20260802_asset_backstop_policy_limits.sql"
 do
   docker exec -i "$MYSQL_CONTAINER" mysql -uroot "-p$MYSQL_PASSWORD" "$DATABASE" < "$migration"
   docker exec -i "$MYSQL_CONTAINER" mysql -uroot "-p$MYSQL_PASSWORD" "$DATABASE" < "$migration"

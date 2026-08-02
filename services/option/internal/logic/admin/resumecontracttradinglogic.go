@@ -76,6 +76,11 @@ func (l *ResumeContractTradingLogic) ResumeContractTrading(in *option.ResumeCont
 			now < contract.ListTime || contract.LastTradeTime <= 0 || now >= contract.LastTradeTime {
 			return i18n.StatusError(ctx, i18n.OperationNotAllowed)
 		}
+		if contract.LiquidationDeficitPolicy == int64(
+			option.LiquidationDeficitPolicy_LIQUIDATION_DEFICIT_POLICY_PLATFORM_BACKSTOP,
+		) && !l.svcCtx.Config.PlatformBackstop.Enabled {
+			return i18n.StatusError(ctx, i18n.OperationNotAllowed)
+		}
 		activeOrders, findErr := orderModel.HasUnsafeContractResumeOrders(ctx, contract.TenantId, contract.Id)
 		if findErr != nil {
 			return findErr

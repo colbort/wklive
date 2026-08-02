@@ -38,3 +38,9 @@ InsuranceInventoryExit:
   MaxDailyQuantity: "0"
   MaxMarkDeviationRatio: "0"
   MinOrderBookQuantity: "0"
+
+# Keep disabled until Asset enforces an approved per-request, daily and
+# aggregate credit/funding limit. When disabled, PLATFORM_BACKSTOP contracts
+# stay pending and an existing liquidation deficit is routed to manual review.
+PlatformBackstop:
+  Enabled: false

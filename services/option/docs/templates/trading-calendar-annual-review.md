@@ -1,5 +1,7 @@
 # Option 年度交易日历资料与 T-30 复核清单
 
+OPTION_TRADING_CALENDAR_ANNUAL_REVIEW_STATUS: DRAFT
+
 > 本表不预填具体节假日。目标市场、司法辖区和权威来源尚未由业务指定时，猜测日期会形成错误交易窗口。
 > 运营应按每个 `tenant_id + trading_calendar_code + calendar year` 建立一份记录。
 

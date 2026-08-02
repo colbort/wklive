@@ -67,12 +67,13 @@ CASE WHEN flow_type IN (2,4) THEN -ABS(amount) ELSE ABS(amount) END
 - 真实链路：`internal/logic/task/p0_liquidation_rpc_integration_test.go`
 - 正式门禁：`acceptance/run-p0-asset-rpc-e2e.sh`、`monitoring/option-production-readiness.sh`
 - 运营口径：`docs/templates/option-daily-fund-reconciliation.md`、`docs/option-daily-conservation-contract.md`
+- 生产审批与历史盘点：`docs/templates/option-insurance-fund-ledger-production-approval.md`
 
 2026-08-02 仓库正式验收结果：
 
 - `make gen-model` 已执行，DDL 与生成模型字段注释一致。
 - Option `go test ./...`、`go vet ./...`、`go test -race ./models ./internal/logic/task` 通过。
-- 仓库 production readiness 全部通过（本项新增17项检查）；仅 repository mode 预期跳过本机缺失的 `promtool`。
+- 仓库 production readiness 中本项相关契约、读写、数据库、真实链路和文档检查全部通过；仅 repository mode 预期跳过本机缺失的 `promtool`。
 - 完整 Docker + 真实 Asset RPC 门禁通过；主集成测试 `113.879s`。
 - 资金指令共9277条：9270条成功且已对账，7条冻结前合法取消，加权终态9284。
 - 真实缺口赔付原始金额15、方向归一金额-15；正式汇总为

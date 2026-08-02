@@ -67,7 +67,8 @@ npm run type-check (admin-ui)                       PASS
 
 ## 运营交接与仍需补齐的外部证据
 
-以下资料仓库不能代替业务、风控和独立验证人员签署，组合保证金保持`VERIFYING`且不得生产开放：
+以下资料仓库不能代替业务、风控和独立验证人员签署，组合保证金保持
+`REPOSITORY_PASSED / PREPROD_BLOCKED`且不得生产开放：
 
 - [ ] 按`templates/option-portfolio-risk-validation-record.md`归档生产代表性历史回测、极端压力、
   数据范围/缺失处理、结果摘要和文件哈希。

@@ -1,5 +1,7 @@
 # Option Greeks 行情时效阈值审批记录
 
+OPTION_MARKET_FRESHNESS_APPROVAL_STATUS: DRAFT
+
 > 用于 `greeks_max_age_seconds` 的生产取值和变更审批。模板不提供默认秒数；每个值必须由实际
 > 发布频率、端到端延迟、故障保护目标和依赖功能共同证明。完成记录作为合约/系列上市证据归档。
 

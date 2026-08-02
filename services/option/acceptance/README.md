@@ -11,6 +11,19 @@
 services/option/acceptance/run-p0-asset-rpc-e2e.sh
 ```
 
+平台兜底硬额度可先运行三个聚焦门禁；它们分别验证DDL旁路、RBAC职责分离，以及真实Asset RPC的
+三模式边界/20并发/重放/版本切换和Option强平端到端：
+
+```sh
+services/option/acceptance/run-platform-backstop-schema-acceptance.sh
+services/option/acceptance/run-platform-backstop-rbac-acceptance.sh
+services/option/acceptance/run-platform-backstop-rpc-acceptance.sh
+```
+
+三个脚本都只接受白名单隔离数据库名；RPC脚本使用独立临时Redis和Etcd键，构建当前仓库Asset，
+结束时删除本次资源。通过只代表`OPT-P0-007`仓库基线，生产开关仍依赖真实政策、资本、目标环境
+BST/告警/日终证据和六方签署。
+
 脚本只会删除名称匹配 `wklive_option_p0_asset_e2e*` 的隔离数据库、带唯一进程号的临时 Redis
 容器和本次创建的 Etcd 键；默认结束即清理。设置 `OPTION_P0_E2E_KEEP=1` 可保留数据库用于
 人工取证，但 Redis、Etcd 配置和 Asset 进程仍会关闭。
@@ -229,7 +242,7 @@ volume和`-f 0`同步写盘；`deploy/beanstalk-restart-smoke.sh`以隔离临时
   重试仅1路成功、19路拒绝，`manual_retry_count=1` 且不可变审计事件仅1条。
 - 实物容量边界以501个独立多头仓位和1个501张全额担保空头跨越100条持仓分页，形成501个独立单元、
   2004条资金指令/流水，全部成功对账；501个完成事件唯一，重放无新增。造数/清算/Asset为
-  `1.400s/3.866s/1m41.080s`。
+  `1.118s/4.312s/1m44.369s`。
 - CTRL-005/CTRL-006 使用公开下单和真实 Asset RPC 同时构造同一用户的 `FUNDING/PENDING/PART_FILLED`
   订单。启用 kill switch 后冻结前指令合法取消，其余订单进入控制释放；释放完成前管理员解除被
   `OperationNotAllowed` 拒绝，开关保持开启，新单只以 `USER_KILL_SWITCH` 拒绝。资金全部成功对账后

@@ -1,5 +1,7 @@
 # Option 日终资金守恒记录
 
+OPTION_DAILY_RECONCILIATION_STATUS: DRAFT
+
 > 本模板是 OPT-A015 的生产证据格式。金额必须来自同一 Asset 一致性截止点；禁止把
 > Option 运营账本水位当作 Asset 实时余额。没有差额也必须生成成功记录。
 

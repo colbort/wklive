@@ -1,5 +1,7 @@
 # 组合保证金参数版本验证与审批记录
 
+OPTION_PORTFOLIO_MODEL_VALIDATION_STATUS: DRAFT
+
 > 本模板用于 P1-004 的外部证据归档。代码测试不能替代历史回测和独立模型验证。
 > 未填写项不得以“默认通过”处理。
 

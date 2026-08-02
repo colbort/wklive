@@ -1,5 +1,7 @@
 # 现金结算余额不足补资与人工恢复审批单
 
+OPTION_CASH_SETTLEMENT_TOPUP_STATUS: DRAFT
+
 > 适用于现金结算资产指令因余额不足连续失败并进入 `MANUAL_REVIEW` 的场景。此单只批准使用
 > 原指令恢复，不批准改表、换业务号、提前入账或平台临时垫资。完成后导出只读文件并记录
 > SHA-256；生产字段、签名和工单不得使用仓库测试样例代填。
@@ -87,3 +89,6 @@ SET-003 使用租户996031、合约996306：空头冻结50已扣后，可用50�
 进入人工审核。独立业务号补资20后，以原因 `SETTLEMENT_BALANCE_TOPUP_VERIFIED`、operator 9002
 恢复原指令；最终买方220、空方0、合计220、冻结0。补资流水1、原扣款流水1、结算流水3、
 人工重试事件1，事件保存 `fromStatus=5/fromRetryCount=20` 且改删均被拒绝。
+
+只有补资来源、独立Asset流水、原指令恢复、逐币守恒、通知和审批全部完成时，归档副本才允许改为
+`OPTION_CASH_SETTLEMENT_TOPUP_STATUS: APPROVED`；任何差异或较高步骤提前执行必须改为`REJECTED`。

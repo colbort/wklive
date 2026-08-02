@@ -12,9 +12,9 @@ PROTO_FILE := $(PROTO_DIR)/asset.proto
 
 GOCTL ?= $(shell go env GOPATH)/bin/goctl
 
-.PHONY: gen gen-rpc fix-imports tidy fmt clean-gen gen-model print-protos clean-main install-goctl
+.PHONY: gen gen-rpc sync-proto fix-imports tidy fmt clean-gen gen-model print-protos clean-main install-goctl
 
-gen: check-goctl gen-rpc fix-imports fmt tidy clean-gen clean-main
+gen: check-goctl gen-rpc sync-proto fix-imports fmt tidy clean-gen clean-main
 
 check-goctl:
 	@$(GOCTL) --version | grep "1.9.2" >/dev/null || \
@@ -43,6 +43,19 @@ gen-rpc:
 	@$(MAKE) fmt
 	@$(MAKE) tidy
 	@echo "✅ [services/asset] gen-rpc done"
+
+# goctl 在服务目录生成的协议代码只用于生成 zrpc 桩，clean-gen 会删除该临时目录。
+# 显式同步仓库共享的 proto Go 代码，避免 .proto 与 proto/asset/*.pb.go 漂移。
+sync-proto:
+	@command -v protoc >/dev/null || (echo "❌ protoc not found"; exit 1)
+	@command -v protoc-gen-go >/dev/null || (echo "❌ protoc-gen-go not found"; exit 1)
+	@command -v protoc-gen-go-grpc >/dev/null || (echo "❌ protoc-gen-go-grpc not found"; exit 1)
+	@echo "🔧 [services/asset] syncing shared proto Go code..."
+	@cd $(REPO_ROOT) && protoc --proto_path=. \
+		--go_out=. --go_opt=module=wklive \
+		--go-grpc_out=. --go-grpc_opt=module=wklive \
+		proto/asset/enum.proto proto/asset/model.proto proto/asset/asset.proto
+	@echo "✅ [services/asset] shared proto Go code synced"
 
 # 修复 goctl 可能生成的错误 import 路径/别名
 fix-imports:

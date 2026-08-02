@@ -25,6 +25,7 @@ type (
 	CoverPlatformBackstopDeficitReq  = asset.CoverPlatformBackstopDeficitReq
 	CoverPlatformBackstopDeficitResp = asset.CoverPlatformBackstopDeficitResp
 	CreateAssetCoinConfigReq         = asset.CreateAssetCoinConfigReq
+	CreatePlatformBackstopPolicyReq  = asset.CreatePlatformBackstopPolicyReq
 	CreditPlatformRevenueReq         = asset.CreditPlatformRevenueReq
 	CreditPlatformRevenueResp        = asset.CreditPlatformRevenueResp
 	DeductFrozenAssetByBizNoReq      = asset.DeductFrozenAssetByBizNoReq
@@ -46,6 +47,7 @@ type (
 	GetMyAssetSummaryReq             = asset.GetMyAssetSummaryReq
 	GetMyAssetSummaryResp            = asset.GetMyAssetSummaryResp
 	GetPlatformAccountReq            = asset.GetPlatformAccountReq
+	GetPlatformBackstopPolicyReq     = asset.GetPlatformBackstopPolicyReq
 	GetUserAssetDetailReq            = asset.GetUserAssetDetailReq
 	GetUserAssetDetailResp           = asset.GetUserAssetDetailResp
 	ListAssetCoinConfigsReq          = asset.ListAssetCoinConfigsReq
@@ -58,6 +60,8 @@ type (
 	ListMyFreezesResp                = asset.ListMyFreezesResp
 	ListMyLocksReq                   = asset.ListMyLocksReq
 	ListMyLocksResp                  = asset.ListMyLocksResp
+	ListPlatformBackstopPoliciesReq  = asset.ListPlatformBackstopPoliciesReq
+	ListPlatformBackstopPoliciesResp = asset.ListPlatformBackstopPoliciesResp
 	LockAssetData                    = asset.LockAssetData
 	LockAssetReq                     = asset.LockAssetReq
 	LockAssetResp                    = asset.LockAssetResp
@@ -79,7 +83,10 @@ type (
 	PageUserAssetsResp               = asset.PageUserAssetsResp
 	PlatformAccount                  = asset.PlatformAccount
 	PlatformAccountResp              = asset.PlatformAccountResp
+	PlatformBackstopPolicy           = asset.PlatformBackstopPolicy
+	PlatformBackstopPolicyResp       = asset.PlatformBackstopPolicyResp
 	ReverseInsuranceCoverReq         = asset.ReverseInsuranceCoverReq
+	ReviewPlatformBackstopPolicyReq  = asset.ReviewPlatformBackstopPolicyReq
 	SetPlatformAccountReq            = asset.SetPlatformAccountReq
 	SubAssetReq                      = asset.SubAssetReq
 	SubAvailableReq                  = asset.SubAvailableReq

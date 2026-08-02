@@ -1,5 +1,7 @@
 # Option 结算价审批记录
 
+OPTION_SETTLEMENT_PRICE_APPROVAL_STATUS: DRAFT
+
 ## 基本信息
 
 | 字段 | 内容 |
@@ -43,3 +45,6 @@
 | 风控审批 |  |  |  |  |
 
 发布记录 ID：________　发布时间：________　发布后样本哈希：________
+
+只有输入样本、确定性复算、独立复核、发布记录和签署全部完成时，归档副本才允许改为
+`OPTION_SETTLEMENT_PRICE_APPROVAL_STATUS: APPROVED`；拒绝或证据不完整时保持`DRAFT`或改为`REJECTED`。

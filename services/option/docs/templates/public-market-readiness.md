@@ -1,5 +1,7 @@
 # 公开期权链与盘口上线准备记录
 
+OPTION_PUBLIC_MARKET_READINESS_STATUS: DRAFT
+
 > 每个租户/市场首次公开或重大口径变更均填写。占位项未批准时只能内部联调。
 
 ## 1. 范围与责任人

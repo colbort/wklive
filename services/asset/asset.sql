@@ -221,12 +221,86 @@ CREATE TABLE `t_asset_backstop_cover` (
   `coin` VARCHAR(32) NOT NULL,
   `liquidation_id` BIGINT NOT NULL,
   `liquidation_no` VARCHAR(96) NOT NULL,
+  `policy_id` BIGINT NOT NULL DEFAULT 0 COMMENT '0仅表示迁移前历史记录',
+  `policy_version` BIGINT NOT NULL DEFAULT 0,
+  `policy_mode` TINYINT NOT NULL DEFAULT 0 COMMENT '1禁用 2预注资 3信用底线',
   `covered_amount` DECIMAL(36,18) NOT NULL,
+  `daily_used_before` DECIMAL(36,18) NOT NULL DEFAULT 0,
+  `daily_used_after` DECIMAL(36,18) NOT NULL DEFAULT 0,
+  `balance_floor` DECIMAL(36,18) NOT NULL DEFAULT 0,
+  `balance_before` DECIMAL(36,18) NOT NULL DEFAULT 0,
+  `balance_after` DECIMAL(36,18) NOT NULL DEFAULT 0,
   `status` TINYINT NOT NULL DEFAULT 1 COMMENT '1已赔付',
   `create_times` BIGINT NOT NULL,
   `update_times` BIGINT NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_backstop_liquidation_no` (`tenant_id`,`liquidation_no`),
   KEY `idx_backstop_account_time` (`tenant_id`,`platform_account_id`,`coin`,`create_times`),
-  CONSTRAINT `chk_asset_backstop_cover` CHECK (`covered_amount` > 0 AND `status` = 1)
+  KEY `idx_backstop_policy_time` (`tenant_id`,`policy_id`,`create_times`),
+  CONSTRAINT `chk_asset_backstop_cover` CHECK (
+    `covered_amount` > 0 AND `status` = 1
+    AND `policy_id` > 0 AND `policy_version` > 0 AND `policy_mode` IN (2,3)
+    AND `daily_used_before` >= 0 AND `daily_used_after` = `daily_used_before` + `covered_amount`
+    AND `balance_after` = `balance_before` - `covered_amount`
+    AND `balance_after` >= `balance_floor`
+  )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='平台兜底穿仓赔付及幂等结果';
+
+CREATE TABLE `t_asset_backstop_policy` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `tenant_id` BIGINT NOT NULL,
+  `coin` VARCHAR(32) NOT NULL,
+  `request_no` VARCHAR(96) NOT NULL COMMENT '创建幂等键',
+  `version` BIGINT NOT NULL,
+  `mode` TINYINT NOT NULL COMMENT '1禁用 2预注资 3信用底线',
+  `per_request_limit` DECIMAL(36,18) NOT NULL DEFAULT 0,
+  `daily_limit` DECIMAL(36,18) NOT NULL DEFAULT 0,
+  `balance_floor` DECIMAL(36,18) NOT NULL DEFAULT 0,
+  `effective_from` BIGINT NOT NULL COMMENT '毫秒UTC',
+  `effective_until` BIGINT NOT NULL COMMENT '毫秒UTC，有限有效期',
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '1草稿 2批准 3拒绝',
+  `reason` VARCHAR(255) NOT NULL,
+  `evidence_ref` VARCHAR(255) NOT NULL,
+  `created_by` BIGINT NOT NULL,
+  `reviewed_by` BIGINT NOT NULL DEFAULT 0,
+  `review_reason` VARCHAR(255) NOT NULL DEFAULT '',
+  `create_times` BIGINT NOT NULL,
+  `update_times` BIGINT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_backstop_policy_request` (`tenant_id`,`request_no`),
+  UNIQUE KEY `uk_backstop_policy_version` (`tenant_id`,`coin`,`version`),
+  KEY `idx_backstop_policy_effective` (`tenant_id`,`coin`,`status`,`effective_from`,`effective_until`,`version`),
+  CONSTRAINT `chk_asset_backstop_policy` CHECK (
+    `tenant_id` > 0 AND `coin` <> '' AND `request_no` <> '' AND `version` > 0
+    AND `mode` IN (1,2,3) AND `effective_from` > 0 AND `effective_until` > `effective_from`
+    AND `effective_until` - `effective_from` <= 31622400000
+    AND `reason` <> '' AND `evidence_ref` <> '' AND `created_by` > 0
+    AND (
+      (`mode` = 1 AND `per_request_limit` = 0 AND `daily_limit` = 0 AND `balance_floor` = 0)
+      OR (`mode` = 2 AND `per_request_limit` > 0 AND `per_request_limit` <= `daily_limit` AND `balance_floor` = 0)
+      OR (`mode` = 3 AND `per_request_limit` > 0 AND `per_request_limit` <= `daily_limit` AND `balance_floor` < 0)
+    )
+    AND (
+      (`status` = 1 AND `reviewed_by` = 0 AND `review_reason` = '')
+      OR (`status` IN (2,3) AND `reviewed_by` > 0 AND `reviewed_by` <> `created_by` AND `review_reason` <> '')
+    )
+  )
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Option平台兜底版本化资金政策';
+
+CREATE TABLE `t_asset_backstop_usage_daily` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `tenant_id` BIGINT NOT NULL,
+  `coin` VARCHAR(32) NOT NULL,
+  `usage_day` CHAR(8) NOT NULL COMMENT 'Asset服务端UTC YYYYMMDD',
+  `covered_amount` DECIMAL(36,18) NOT NULL,
+  `last_policy_id` BIGINT NOT NULL,
+  `create_times` BIGINT NOT NULL,
+  `update_times` BIGINT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_backstop_usage_day` (`tenant_id`,`coin`,`usage_day`),
+  KEY `idx_backstop_usage_policy` (`tenant_id`,`last_policy_id`,`usage_day`),
+  CONSTRAINT `chk_asset_backstop_usage_daily` CHECK (
+    `tenant_id` > 0 AND `coin` <> '' AND `usage_day` REGEXP '^[0-9]{8}$'
+    AND `covered_amount` > 0 AND `last_policy_id` > 0
+  )
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Option平台兜底UTC日累计硬额度';

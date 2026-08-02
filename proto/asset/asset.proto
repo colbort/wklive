@@ -189,6 +189,28 @@ service Admin {
   rpc GetPlatformAccount(GetPlatformAccountReq) returns (PlatformAccountResp);
   // 幂等调整平台账户余额
   rpc AdjustPlatformAccount(AdjustPlatformAccountReq) returns (PlatformAccountResp);
+  // 创建平台兜底资金政策草稿
+  rpc CreatePlatformBackstopPolicy(CreatePlatformBackstopPolicyReq) returns (PlatformBackstopPolicyResp);
+  // 独立管理员复核平台兜底资金政策
+  rpc ReviewPlatformBackstopPolicy(ReviewPlatformBackstopPolicyReq) returns (PlatformBackstopPolicyResp);
+  // 查询平台兜底资金政策
+  rpc GetPlatformBackstopPolicy(GetPlatformBackstopPolicyReq) returns (PlatformBackstopPolicyResp);
+  // 分页查询平台兜底资金政策
+  rpc ListPlatformBackstopPolicies(ListPlatformBackstopPoliciesReq) returns (ListPlatformBackstopPoliciesResp);
+}
+
+enum PlatformBackstopMode {
+  PLATFORM_BACKSTOP_MODE_UNKNOWN = 0;
+  PLATFORM_BACKSTOP_MODE_DISABLED = 1;
+  PLATFORM_BACKSTOP_MODE_PREFUNDED = 2;
+  PLATFORM_BACKSTOP_MODE_CREDIT_FLOOR = 3;
+}
+
+enum PlatformBackstopPolicyStatus {
+  PLATFORM_BACKSTOP_POLICY_STATUS_UNKNOWN = 0;
+  PLATFORM_BACKSTOP_POLICY_STATUS_DRAFT = 1;
+  PLATFORM_BACKSTOP_POLICY_STATUS_APPROVED = 2;
+  PLATFORM_BACKSTOP_POLICY_STATUS_REJECTED = 3;
 }
 
 message PlatformAccount {
@@ -231,6 +253,72 @@ message AdjustPlatformAccountReq {
 message PlatformAccountResp {
   common.RespBase base = 1;
   PlatformAccount data = 2;
+}
+
+message PlatformBackstopPolicy {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string coin = 3;
+  string request_no = 4;
+  int64 version = 5;
+  PlatformBackstopMode mode = 6;
+  string per_request_limit = 7;
+  string daily_limit = 8;
+  string balance_floor = 9;
+  int64 effective_from = 10;
+  int64 effective_until = 11;
+  PlatformBackstopPolicyStatus status = 12;
+  string reason = 13;
+  string evidence_ref = 14;
+  int64 created_by = 15;
+  int64 reviewed_by = 16;
+  string review_reason = 17;
+  int64 create_times = 18;
+  int64 update_times = 19;
+}
+
+message CreatePlatformBackstopPolicyReq {
+  int64 tenant_id = 1;
+  string coin = 2;
+  string request_no = 3;
+  PlatformBackstopMode mode = 4;
+  string per_request_limit = 5;
+  string daily_limit = 6;
+  string balance_floor = 7;
+  int64 effective_from = 8;
+  int64 effective_until = 9;
+  string reason = 10;
+  string evidence_ref = 11;
+}
+
+message ReviewPlatformBackstopPolicyReq {
+  int64 tenant_id = 1;
+  int64 policy_id = 2;
+  bool approve = 3;
+  string reason = 4;
+}
+
+message GetPlatformBackstopPolicyReq {
+  int64 tenant_id = 1;
+  int64 policy_id = 2;
+}
+
+message ListPlatformBackstopPoliciesReq {
+  int64 tenant_id = 1;
+  string coin = 2;
+  PlatformBackstopPolicyStatus status = 3;
+  common.PageReq page = 4;
+}
+
+message PlatformBackstopPolicyResp {
+  common.RespBase base = 1;
+  PlatformBackstopPolicy data = 2;
+}
+
+message ListPlatformBackstopPoliciesResp {
+  common.RespBase base = 1;
+  repeated PlatformBackstopPolicy data = 2;
+  int64 total = 3;
 }
 
 message CreateAssetCoinConfigReq {
@@ -793,6 +881,10 @@ message CoverPlatformBackstopDeficitResp {
   bool idempotent_replay = 3;
   int64 platform_account_id = 4;
   string platform_account_balance = 5;
+  int64 policy_id = 6;
+  int64 policy_version = 7;
+  PlatformBackstopMode policy_mode = 8;
+  string daily_used_amount = 9;
 }
 
 message CreditPlatformRevenueReq {

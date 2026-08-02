@@ -23,6 +23,10 @@ import type {
   GetPlatformAccountReq,
   SetPlatformAccountReq,
   AdjustPlatformAccountReq,
+  PlatformBackstopPolicy,
+  CreatePlatformBackstopPolicyReq,
+  ReviewPlatformBackstopPolicyReq,
+  ListPlatformBackstopPoliciesReq,
   RespBase,
   UpdateAssetCoinConfigReq,
 } from '@/services'
@@ -127,4 +131,35 @@ export function apiAdjustPlatformAccount(
   params: AdjustPlatformAccountReq,
 ): Promise<RespBase<PlatformAccount>> {
   return post<PlatformAccount>('/admin/asset/platform-accounts/adjust', params)
+}
+
+export function apiCreatePlatformBackstopPolicy(
+  params: CreatePlatformBackstopPolicyReq,
+): Promise<RespBase<PlatformBackstopPolicy>> {
+  return post<PlatformBackstopPolicy>('/admin/asset/platform-backstop-policies', params)
+}
+
+export function apiReviewPlatformBackstopPolicy(
+  params: ReviewPlatformBackstopPolicyReq,
+): Promise<RespBase<PlatformBackstopPolicy>> {
+  const { policyId, ...data } = params
+  return post<PlatformBackstopPolicy>(
+    `/admin/asset/platform-backstop-policies/${policyId}/review`,
+    data,
+  )
+}
+
+export function apiGetPlatformBackstopPolicy(
+  tenantId: number,
+  policyId: number,
+): Promise<RespBase<PlatformBackstopPolicy>> {
+  return get<PlatformBackstopPolicy>(`/admin/asset/platform-backstop-policies/${policyId}`, {
+    tenantId,
+  })
+}
+
+export function apiListPlatformBackstopPolicies(
+  params: ListPlatformBackstopPoliciesReq,
+): Promise<RespBase<PlatformBackstopPolicy[]>> {
+  return get<PlatformBackstopPolicy[]>('/admin/asset/platform-backstop-policies', params)
 }

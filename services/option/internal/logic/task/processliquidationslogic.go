@@ -107,8 +107,8 @@ func (l *ProcessLiquidationsLogic) processOne(item *models.TOptionLiquidation) e
 		}
 		return l.failLiquidation(current, err)
 	}
-	useBackstop := plan.contract.LiquidationDeficitPolicy ==
-		int64(option.LiquidationDeficitPolicy_LIQUIDATION_DEFICIT_POLICY_PLATFORM_BACKSTOP)
+	backstopRequested := contractRequestsPlatformBackstop(plan.contract)
+	useBackstop := platformBackstopRuntimeEnabled(plan.contract, l.svcCtx.Config.PlatformBackstop.Enabled)
 	insuranceCovered, err := l.coverDeficit(current, plan.deficit, plan.contract, useBackstop)
 	if err != nil {
 		return l.failLiquidation(current, err)
@@ -117,8 +117,12 @@ func (l *ProcessLiquidationsLogic) processOne(item *models.TOptionLiquidation) e
 	backstopCovered := decimal.Zero
 	if remaining.IsPositive() {
 		if !useBackstop {
+			reason := "insurance fund insufficient; contract requires manual deficit resolution"
+			if backstopRequested {
+				reason = "platform backstop runtime gate is disabled; manual deficit resolution required"
+			}
 			return l.markLiquidationManual(current, remaining,
-				"insurance fund insufficient; contract requires manual deficit resolution")
+				reason)
 		}
 		backstopCovered, err = l.coverPlatformBackstop(current, remaining, plan.contract)
 		if err != nil {
@@ -138,6 +142,15 @@ func (l *ProcessLiquidationsLogic) processOne(item *models.TOptionLiquidation) e
 		return l.failLiquidation(current, err)
 	}
 	return nil
+}
+
+func contractRequestsPlatformBackstop(contract *models.TOptionContract) bool {
+	return contract != nil && contract.LiquidationDeficitPolicy ==
+		int64(option.LiquidationDeficitPolicy_LIQUIDATION_DEFICIT_POLICY_PLATFORM_BACKSTOP)
+}
+
+func platformBackstopRuntimeEnabled(contract *models.TOptionContract, enabled bool) bool {
+	return enabled && contractRequestsPlatformBackstop(contract)
 }
 
 func validateLiquidationPlanBalance(plan *optionLiquidationPlan, covered decimal.Decimal) error {

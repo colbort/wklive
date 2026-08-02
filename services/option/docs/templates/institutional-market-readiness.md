@@ -1,5 +1,7 @@
 # RFQ、大宗与做市义务上线准备记录
 
+OPTION_INSTITUTIONAL_MARKET_STATUS: DEFERRED
+
 版本：2026-07-31  
 当前系统状态：`DEFERRED`  
 适用范围：机构期权产品立项、设计、预生产验收和上线审批

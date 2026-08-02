@@ -407,26 +407,30 @@ var App_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	Admin_CreateAssetCoinConfig_FullMethodName = "/asset.Admin/CreateAssetCoinConfig"
-	Admin_UpdateAssetCoinConfig_FullMethodName = "/asset.Admin/UpdateAssetCoinConfig"
-	Admin_DeleteAssetCoinConfig_FullMethodName = "/asset.Admin/DeleteAssetCoinConfig"
-	Admin_GetAssetCoinConfig_FullMethodName    = "/asset.Admin/GetAssetCoinConfig"
-	Admin_PageAssetCoinConfigs_FullMethodName  = "/asset.Admin/PageAssetCoinConfigs"
-	Admin_PageUserAssets_FullMethodName        = "/asset.Admin/PageUserAssets"
-	Admin_GetUserAssetDetail_FullMethodName    = "/asset.Admin/GetUserAssetDetail"
-	Admin_PageAssetFlows_FullMethodName        = "/asset.Admin/PageAssetFlows"
-	Admin_GetInsuranceCover_FullMethodName     = "/asset.Admin/GetInsuranceCover"
-	Admin_PageAssetFreezes_FullMethodName      = "/asset.Admin/PageAssetFreezes"
-	Admin_PageAssetLocks_FullMethodName        = "/asset.Admin/PageAssetLocks"
-	Admin_AddAsset_FullMethodName              = "/asset.Admin/AddAsset"
-	Admin_SubAsset_FullMethodName              = "/asset.Admin/SubAsset"
-	Admin_FreezeAsset_FullMethodName           = "/asset.Admin/FreezeAsset"
-	Admin_UnfreezeAsset_FullMethodName         = "/asset.Admin/UnfreezeAsset"
-	Admin_LockAsset_FullMethodName             = "/asset.Admin/LockAsset"
-	Admin_UnlockAsset_FullMethodName           = "/asset.Admin/UnlockAsset"
-	Admin_SetPlatformAccount_FullMethodName    = "/asset.Admin/SetPlatformAccount"
-	Admin_GetPlatformAccount_FullMethodName    = "/asset.Admin/GetPlatformAccount"
-	Admin_AdjustPlatformAccount_FullMethodName = "/asset.Admin/AdjustPlatformAccount"
+	Admin_CreateAssetCoinConfig_FullMethodName        = "/asset.Admin/CreateAssetCoinConfig"
+	Admin_UpdateAssetCoinConfig_FullMethodName        = "/asset.Admin/UpdateAssetCoinConfig"
+	Admin_DeleteAssetCoinConfig_FullMethodName        = "/asset.Admin/DeleteAssetCoinConfig"
+	Admin_GetAssetCoinConfig_FullMethodName           = "/asset.Admin/GetAssetCoinConfig"
+	Admin_PageAssetCoinConfigs_FullMethodName         = "/asset.Admin/PageAssetCoinConfigs"
+	Admin_PageUserAssets_FullMethodName               = "/asset.Admin/PageUserAssets"
+	Admin_GetUserAssetDetail_FullMethodName           = "/asset.Admin/GetUserAssetDetail"
+	Admin_PageAssetFlows_FullMethodName               = "/asset.Admin/PageAssetFlows"
+	Admin_GetInsuranceCover_FullMethodName            = "/asset.Admin/GetInsuranceCover"
+	Admin_PageAssetFreezes_FullMethodName             = "/asset.Admin/PageAssetFreezes"
+	Admin_PageAssetLocks_FullMethodName               = "/asset.Admin/PageAssetLocks"
+	Admin_AddAsset_FullMethodName                     = "/asset.Admin/AddAsset"
+	Admin_SubAsset_FullMethodName                     = "/asset.Admin/SubAsset"
+	Admin_FreezeAsset_FullMethodName                  = "/asset.Admin/FreezeAsset"
+	Admin_UnfreezeAsset_FullMethodName                = "/asset.Admin/UnfreezeAsset"
+	Admin_LockAsset_FullMethodName                    = "/asset.Admin/LockAsset"
+	Admin_UnlockAsset_FullMethodName                  = "/asset.Admin/UnlockAsset"
+	Admin_SetPlatformAccount_FullMethodName           = "/asset.Admin/SetPlatformAccount"
+	Admin_GetPlatformAccount_FullMethodName           = "/asset.Admin/GetPlatformAccount"
+	Admin_AdjustPlatformAccount_FullMethodName        = "/asset.Admin/AdjustPlatformAccount"
+	Admin_CreatePlatformBackstopPolicy_FullMethodName = "/asset.Admin/CreatePlatformBackstopPolicy"
+	Admin_ReviewPlatformBackstopPolicy_FullMethodName = "/asset.Admin/ReviewPlatformBackstopPolicy"
+	Admin_GetPlatformBackstopPolicy_FullMethodName    = "/asset.Admin/GetPlatformBackstopPolicy"
+	Admin_ListPlatformBackstopPolicies_FullMethodName = "/asset.Admin/ListPlatformBackstopPolicies"
 )
 
 // AdminClient is the client API for Admin service.
@@ -475,6 +479,14 @@ type AdminClient interface {
 	GetPlatformAccount(ctx context.Context, in *GetPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error)
 	// 幂等调整平台账户余额
 	AdjustPlatformAccount(ctx context.Context, in *AdjustPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error)
+	// 创建平台兜底资金政策草稿
+	CreatePlatformBackstopPolicy(ctx context.Context, in *CreatePlatformBackstopPolicyReq, opts ...grpc.CallOption) (*PlatformBackstopPolicyResp, error)
+	// 独立管理员复核平台兜底资金政策
+	ReviewPlatformBackstopPolicy(ctx context.Context, in *ReviewPlatformBackstopPolicyReq, opts ...grpc.CallOption) (*PlatformBackstopPolicyResp, error)
+	// 查询平台兜底资金政策
+	GetPlatformBackstopPolicy(ctx context.Context, in *GetPlatformBackstopPolicyReq, opts ...grpc.CallOption) (*PlatformBackstopPolicyResp, error)
+	// 分页查询平台兜底资金政策
+	ListPlatformBackstopPolicies(ctx context.Context, in *ListPlatformBackstopPoliciesReq, opts ...grpc.CallOption) (*ListPlatformBackstopPoliciesResp, error)
 }
 
 type adminClient struct {
@@ -685,6 +697,46 @@ func (c *adminClient) AdjustPlatformAccount(ctx context.Context, in *AdjustPlatf
 	return out, nil
 }
 
+func (c *adminClient) CreatePlatformBackstopPolicy(ctx context.Context, in *CreatePlatformBackstopPolicyReq, opts ...grpc.CallOption) (*PlatformBackstopPolicyResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PlatformBackstopPolicyResp)
+	err := c.cc.Invoke(ctx, Admin_CreatePlatformBackstopPolicy_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ReviewPlatformBackstopPolicy(ctx context.Context, in *ReviewPlatformBackstopPolicyReq, opts ...grpc.CallOption) (*PlatformBackstopPolicyResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PlatformBackstopPolicyResp)
+	err := c.cc.Invoke(ctx, Admin_ReviewPlatformBackstopPolicy_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) GetPlatformBackstopPolicy(ctx context.Context, in *GetPlatformBackstopPolicyReq, opts ...grpc.CallOption) (*PlatformBackstopPolicyResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PlatformBackstopPolicyResp)
+	err := c.cc.Invoke(ctx, Admin_GetPlatformBackstopPolicy_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ListPlatformBackstopPolicies(ctx context.Context, in *ListPlatformBackstopPoliciesReq, opts ...grpc.CallOption) (*ListPlatformBackstopPoliciesResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPlatformBackstopPoliciesResp)
+	err := c.cc.Invoke(ctx, Admin_ListPlatformBackstopPolicies_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminServer is the server API for Admin service.
 // All implementations must embed UnimplementedAdminServer
 // for forward compatibility.
@@ -731,6 +783,14 @@ type AdminServer interface {
 	GetPlatformAccount(context.Context, *GetPlatformAccountReq) (*PlatformAccountResp, error)
 	// 幂等调整平台账户余额
 	AdjustPlatformAccount(context.Context, *AdjustPlatformAccountReq) (*PlatformAccountResp, error)
+	// 创建平台兜底资金政策草稿
+	CreatePlatformBackstopPolicy(context.Context, *CreatePlatformBackstopPolicyReq) (*PlatformBackstopPolicyResp, error)
+	// 独立管理员复核平台兜底资金政策
+	ReviewPlatformBackstopPolicy(context.Context, *ReviewPlatformBackstopPolicyReq) (*PlatformBackstopPolicyResp, error)
+	// 查询平台兜底资金政策
+	GetPlatformBackstopPolicy(context.Context, *GetPlatformBackstopPolicyReq) (*PlatformBackstopPolicyResp, error)
+	// 分页查询平台兜底资金政策
+	ListPlatformBackstopPolicies(context.Context, *ListPlatformBackstopPoliciesReq) (*ListPlatformBackstopPoliciesResp, error)
 	mustEmbedUnimplementedAdminServer()
 }
 
@@ -800,6 +860,18 @@ func (UnimplementedAdminServer) GetPlatformAccount(context.Context, *GetPlatform
 }
 func (UnimplementedAdminServer) AdjustPlatformAccount(context.Context, *AdjustPlatformAccountReq) (*PlatformAccountResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method AdjustPlatformAccount not implemented")
+}
+func (UnimplementedAdminServer) CreatePlatformBackstopPolicy(context.Context, *CreatePlatformBackstopPolicyReq) (*PlatformBackstopPolicyResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreatePlatformBackstopPolicy not implemented")
+}
+func (UnimplementedAdminServer) ReviewPlatformBackstopPolicy(context.Context, *ReviewPlatformBackstopPolicyReq) (*PlatformBackstopPolicyResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReviewPlatformBackstopPolicy not implemented")
+}
+func (UnimplementedAdminServer) GetPlatformBackstopPolicy(context.Context, *GetPlatformBackstopPolicyReq) (*PlatformBackstopPolicyResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPlatformBackstopPolicy not implemented")
+}
+func (UnimplementedAdminServer) ListPlatformBackstopPolicies(context.Context, *ListPlatformBackstopPoliciesReq) (*ListPlatformBackstopPoliciesResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListPlatformBackstopPolicies not implemented")
 }
 func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
 func (UnimplementedAdminServer) testEmbeddedByValue()               {}
@@ -1182,6 +1254,78 @@ func _Admin_AdjustPlatformAccount_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_CreatePlatformBackstopPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePlatformBackstopPolicyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).CreatePlatformBackstopPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_CreatePlatformBackstopPolicy_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).CreatePlatformBackstopPolicy(ctx, req.(*CreatePlatformBackstopPolicyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ReviewPlatformBackstopPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReviewPlatformBackstopPolicyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ReviewPlatformBackstopPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ReviewPlatformBackstopPolicy_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ReviewPlatformBackstopPolicy(ctx, req.(*ReviewPlatformBackstopPolicyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_GetPlatformBackstopPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPlatformBackstopPolicyReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).GetPlatformBackstopPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_GetPlatformBackstopPolicy_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).GetPlatformBackstopPolicy(ctx, req.(*GetPlatformBackstopPolicyReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ListPlatformBackstopPolicies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPlatformBackstopPoliciesReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListPlatformBackstopPolicies(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListPlatformBackstopPolicies_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListPlatformBackstopPolicies(ctx, req.(*ListPlatformBackstopPoliciesReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1268,6 +1412,22 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AdjustPlatformAccount",
 			Handler:    _Admin_AdjustPlatformAccount_Handler,
+		},
+		{
+			MethodName: "CreatePlatformBackstopPolicy",
+			Handler:    _Admin_CreatePlatformBackstopPolicy_Handler,
+		},
+		{
+			MethodName: "ReviewPlatformBackstopPolicy",
+			Handler:    _Admin_ReviewPlatformBackstopPolicy_Handler,
+		},
+		{
+			MethodName: "GetPlatformBackstopPolicy",
+			Handler:    _Admin_GetPlatformBackstopPolicy_Handler,
+		},
+		{
+			MethodName: "ListPlatformBackstopPolicies",
+			Handler:    _Admin_ListPlatformBackstopPolicies_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

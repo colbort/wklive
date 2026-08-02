@@ -11,7 +11,8 @@ P2-001 的仓库实现和真实 Asset RPC 专项已通过，设计符合标准�
 - 紧急 halt 先拒绝新单，再幂等撤销活动单；资金释放完成前禁止恢复；
 - 日历和 halt 只管交易准入，不停止风险、强平、行权、到期和结算义务。
 
-本结论是“仓库验收通过”，不是“生产上线批准”。目标市场、官方年度日历、预生产多实例/网络并发、故障/通知演练和角色签署未完成，状态仍为 `VERIFYING`。
+本结论是“仓库验收通过”，不是“生产上线批准”。目标市场、官方年度日历、预生产多实例/网络并发、
+故障/通知演练和角色签署未完成，状态为 `REPOSITORY_PASSED / PREPROD_BLOCKED`。
 
 ## 2. 验收范围
 
@@ -66,8 +67,8 @@ P2-001 的仓库实现和真实 Asset RPC 专项已通过，设计符合标准�
 新增两个场景合计7条指令：6条成功对账，1条冻结前合法取消。最新完整真实 RPC 门禁为：
 
 ```text
-instructions=9239 success=9234 canceled=5 reconciled=9234
-success + 2*canceled = 9244
+instructions=9277 success=9270 canceled=7 reconciled=9270
+success + 2*canceled = 9284
 ```
 
 ## 4. 验收发现与修复

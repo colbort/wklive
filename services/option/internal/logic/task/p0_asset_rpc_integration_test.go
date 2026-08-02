@@ -217,6 +217,9 @@ func newP0AssetE2EServiceContext(
 	redisConf := zeroredis.RedisConf{Host: redisAddr, Type: "node"}
 	cacheConf := cache.CacheConf{{RedisConf: redisConf, Weight: 100}}
 	config := optionconfig.Config{CacheRedis: cacheConf}
+	// The dedicated liquidation scenarios exercise the repository backstop
+	// recovery path. Production defaults remain fail-closed in option.yaml.
+	config.PlatformBackstop.Enabled = true
 	config.InsuranceInventoryExit.Enabled = true
 	config.InsuranceInventoryExit.MaxQuantityPerRequest = "2"
 	config.InsuranceInventoryExit.MaxPremiumPerRequest = "80"

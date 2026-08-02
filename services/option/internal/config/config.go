@@ -34,4 +34,9 @@ type Config struct {
 		MaxMarkDeviationRatio string
 		MinOrderBookQuantity  string
 	}
+	PlatformBackstop struct {
+		// Enabled is an emergency admission and execution gate only. It does
+		// not replace the monetary limits that must be enforced by Asset.
+		Enabled bool
+	}
 }

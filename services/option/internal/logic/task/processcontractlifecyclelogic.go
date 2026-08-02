@@ -310,6 +310,14 @@ func (l *ProcessContractLifecycleLogic) listContractIfEligible(
 			contract.LastTradeTime <= contract.ListTime || now >= contract.LastTradeTime {
 			return nil
 		}
+		if contractRequestsPlatformBackstop(contract) &&
+			!platformBackstopRuntimeEnabled(contract, l.svcCtx.Config.PlatformBackstop.Enabled) {
+			l.Errorf(
+				"keep option contract pending because platform backstop runtime gate is disabled, tenantId=%d contractId=%d",
+				contract.TenantId, contract.Id,
+			)
+			return nil
+		}
 		series, seriesErr := seriesDetailModel.FindSeriesLaunchByContract(
 			ctx, contract.TenantId, contract.Id,
 		)

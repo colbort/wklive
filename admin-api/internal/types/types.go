@@ -839,6 +839,20 @@ type CreatePayProductReq struct {
 	Remark      string `json:"remark,optional"`
 }
 
+type CreatePlatformBackstopPolicyReq struct {
+	TenantId        int64  `json:"tenantId"`
+	Coin            string `json:"coin"`
+	RequestNo       string `json:"requestNo"`
+	Mode            int64  `json:"mode"`
+	PerRequestLimit string `json:"perRequestLimit" validate:"decimal_36_18"`
+	DailyLimit      string `json:"dailyLimit" validate:"decimal_36_18"`
+	BalanceFloor    string `json:"balanceFloor" validate:"decimal_36_18"`
+	EffectiveFrom   int64  `json:"effectiveFrom"`
+	EffectiveUntil  int64  `json:"effectiveUntil"`
+	Reason          string `json:"reason"`
+	EvidenceRef     string `json:"evidenceRef"`
+}
+
 type CreatePortfolioRiskConfigReq struct {
 	TenantId               int64  `json:"tenantId"`
 	SettleCoin             string `json:"settleCoin" validate:"required,max=16"`
@@ -1650,6 +1664,11 @@ type GetPlatformAccountReq struct {
 	TenantId    int64  `form:"tenantId"`
 	AccountType string `form:"accountType"`
 	Coin        string `form:"coin"`
+}
+
+type GetPlatformBackstopPolicyReq struct {
+	TenantId int64 `form:"tenantId"`
+	PolicyId int64 `path:"policyId"`
 }
 
 type GetPortfolioRiskConfigResp struct {
@@ -2550,6 +2569,19 @@ type ListPhysicalDeliveryUnitsResp struct {
 	RespBase
 	Data  []OptionPhysicalDeliveryUnit `json:"data"`
 	Total int64                        `json:"total"`
+}
+
+type ListPlatformBackstopPoliciesReq struct {
+	PageReq
+	TenantId int64  `form:"tenantId"`
+	Coin     string `form:"coin,optional"`
+	Status   int64  `form:"status,optional"`
+}
+
+type ListPlatformBackstopPoliciesResp struct {
+	RespBase
+	Data  []PlatformBackstopPolicy `json:"data"`
+	Total int64                    `json:"total"`
 }
 
 type ListPortfolioRiskConfigsReq struct {
@@ -4374,6 +4406,33 @@ type PlatformAccountResp struct {
 	Data PlatformAccount `json:"data"`
 }
 
+type PlatformBackstopPolicy struct {
+	Id              int64  `json:"id"`
+	TenantId        int64  `json:"tenantId"`
+	Coin            string `json:"coin"`
+	RequestNo       string `json:"requestNo"`
+	Version         int64  `json:"version"`
+	Mode            int64  `json:"mode"`
+	PerRequestLimit string `json:"perRequestLimit"`
+	DailyLimit      string `json:"dailyLimit"`
+	BalanceFloor    string `json:"balanceFloor"`
+	EffectiveFrom   int64  `json:"effectiveFrom"`
+	EffectiveUntil  int64  `json:"effectiveUntil"`
+	Status          int64  `json:"status"`
+	Reason          string `json:"reason"`
+	EvidenceRef     string `json:"evidenceRef"`
+	CreatedBy       int64  `json:"createdBy"`
+	ReviewedBy      int64  `json:"reviewedBy"`
+	ReviewReason    string `json:"reviewReason"`
+	CreateTimes     int64  `json:"createTimes"`
+	UpdateTimes     int64  `json:"updateTimes"`
+}
+
+type PlatformBackstopPolicyResp struct {
+	RespBase
+	Data PlatformBackstopPolicy `json:"data"`
+}
+
 type PriceFormulaComponent struct {
 	Authority    string `json:"authority"`
 	SnapshotKind string `json:"snapshotKind"`
@@ -4716,6 +4775,13 @@ type ReviewInsuranceInventoryExitReq struct {
 	ExitId   int64  `json:"exitId"`
 	Approve  bool   `json:"approve"`
 	Reason   string `json:"reason" validate:"required,max=500"`
+}
+
+type ReviewPlatformBackstopPolicyReq struct {
+	TenantId int64  `json:"tenantId"`
+	PolicyId int64  `path:"policyId"`
+	Approve  bool   `json:"approve"`
+	Reason   string `json:"reason"`
 }
 
 type ReviewPortfolioRiskConfigReq struct {

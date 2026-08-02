@@ -1,5 +1,7 @@
 # Option 保险接管库存退出执行记录
 
+OPTION_INSURANCE_INVENTORY_EXIT_EXECUTION_STATUS: DRAFT
+
 > 每个退出申请单独归档。该记录用于证明四眼复核、唯一订单、真实资金和剩余库存闭环，不替代批准的限额版本。
 
 ## 1. 身份与审批

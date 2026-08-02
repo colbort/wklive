@@ -1298,12 +1298,365 @@ check_contains "$OPTION_DIR/acceptance/run-p0-asset-rpc-e2e.sh" 'insurance_ledge
 check_contains "$OPTION_DIR/docs/option-p1-008-insurance-fund-ledger-repository-acceptance.md" \
   'REPOSITORY_PASSED / PREPROD_BLOCKED' \
   "insurance-ledger acceptance preserves production approval blockers"
-check_contains "$OPTION_DIR/docs/option-current-status-and-production-blockers.md" \
+check_not_contains "$OPTION_DIR/docs/option-current-status-and-production-blockers.md" \
   '当前未发现新的仓库级资金正确性阻断' \
-  "current status separates repository completion from production evidence"
+  "current status removes the stale no-new-funding-blocker conclusion"
 check_contains "$OPTION_DIR/docs/option-current-status-and-production-blockers.md" \
   'P2-008 RFQ/大宗/做市义务保持 `DEFERRED`' \
   "current status keeps deferred institutional capabilities closed"
+operations_pack="$OPTION_DIR/docs/option-product-operations-pack.md"
+launch_checklist="$OPTION_DIR/docs/option-contract-launch-checklist.md"
+check_contains "$operations_pack" \
+  'OPTION_OPERATIONS_PACK_STATUS: INTERNAL_TEMPLATE_NOT_APPROVED_FOR_PUBLICATION' \
+  "operations pack is explicitly an internal unpublished template"
+check_contains "$operations_pack" \
+  '最后交易时间、主动行权/到期指令截止、到期时间和结算/交割时间是独立边界' \
+  "operations pack explains independent lifecycle boundaries"
+check_contains "$operations_pack" \
+  '不是用户余额' \
+  "operations pack does not present insurance funds as a user guarantee"
+check_contains "$operations_pack" \
+  '发布负责人必须对最终发布副本执行占位符检查' \
+  "operations pack makes unresolved placeholders a publication blocker"
+check_contains "$launch_checklist" \
+  'OPTION_LAUNCH_CHECKLIST_STATUS: DRAFT' \
+  "contract launch checklist defaults to draft"
+check_contains "$OPTION_DIR/monitoring/option-production-readiness.env.example" \
+  '^OPTION_LAUNCH_CHECKLIST=' \
+  "production readiness requires an immutable contract launch checklist"
+check_contains "$OPTION_DIR/monitoring/option-production-readiness.sh" \
+  'OPTION_LAUNCH_CHECKLIST_STATUS.*APPROVED' \
+  "production gate rejects a draft contract launch checklist"
+check_contains "$launch_checklist" \
+  'option-release-scope[.]sh --release-clean' \
+  "contract launch checklist requires a clean reviewed release identity"
+check_contains "$OPTION_DIR/monitoring/option-release-scope.sh" \
+  '20260802_asset_backstop_policy_limits[.]sql' \
+  "release scope includes the Asset platform-backstop schema dependency"
+check_contains "$OPTION_DIR/monitoring/option-release-scope.sh" \
+  'proto/asset/asset[.]proto' \
+  "release scope includes the Asset protocol dependency"
+check_contains "$OPTION_DIR/monitoring/option-release-scope.sh" \
+  'asset_platform_backstop_policy_permissions[.]sql' \
+  "release scope includes the platform-backstop RBAC dependency"
+check_contains "$launch_checklist" \
+  'make gen-model.*make gen' \
+  "contract launch checklist requires both model and protocol generation"
+check_contains "$launch_checklist" \
+  '18 项 Option 监控索引和 61 条 Option 告警规则' \
+  "contract launch checklist uses current monitoring counts"
+check_contains "$launch_checklist" \
+  '正绝对金额[+]类型方向' \
+  "contract launch checklist includes insurance-ledger production approval"
+check_not_contains "$launch_checklist" \
+  '产品依赖项均为 `DONE`' \
+  "contract launch checklist does not confuse repository status with production approval"
+insurance_ledger_approval="$OPTION_DIR/docs/templates/option-insurance-fund-ledger-production-approval.md"
+check_contains "$insurance_ledger_approval" \
+  'OPTION_INSURANCE_LEDGER_APPROVAL_STATUS: DRAFT' \
+  "insurance-ledger production approval defaults to draft"
+check_contains "$insurance_ledger_approval" \
+  'CASE WHEN flow_type IN [(]2,4[)] THEN -ABS[(]amount[)] ELSE ABS[(]amount[)] END' \
+  "insurance-ledger production approval embeds the canonical signed expression"
+check_contains "$insurance_ledger_approval" \
+  't_asset_platform_flow[.]biz_no' \
+  "insurance-ledger production approval records the Asset business-identity bridge"
+check_contains "$insurance_ledger_approval" \
+  '下游消费者盘点' \
+  "insurance-ledger production approval requires downstream consumer inventory"
+check_contains "$insurance_ledger_approval" \
+  '禁止修改/删除原保险流水' \
+  "insurance-ledger production approval prohibits history rewriting"
+check_contains "$OPTION_DIR/docs/option-current-status-and-production-blockers.md" \
+  'option-insurance-fund-ledger-production-approval[.]md' \
+  "current blockers link the insurance-ledger production approval"
+check_contains "$launch_checklist" \
+  'option-insurance-fund-ledger-production-approval[.]md' \
+  "contract launch checklist requires approved insurance-ledger evidence"
+check_contains "$OPTION_DIR/docs/templates/option-production-readiness-signoff.md" \
+  'option-insurance-fund-ledger-production-approval[.]md.*APPROVED' \
+  "production signoff requires approved insurance-ledger evidence"
+physical_default_policy="$OPTION_DIR/docs/templates/option-physical-delivery-default-policy-approval.md"
+physical_default_record="$OPTION_DIR/docs/templates/option-physical-delivery-default-record.md"
+check_contains "$physical_default_policy" \
+  'OPTION_PHYSICAL_DEFAULT_POLICY_STATUS: DRAFT' \
+  "physical-default policy approval defaults to draft"
+check_contains "$physical_default_policy" \
+  '多头应交资产扣可用.*空头担保扣冻结.*多头应收资产入账.*空头应收资产入账' \
+  "physical-default policy preserves the four-leg debit barrier"
+check_contains "$physical_default_policy" \
+  '当前代码没有自动退款、罚款、拍卖、平台承接或放弃行权路径' \
+  "physical-default policy does not claim unsupported disposition paths"
+check_contains "$physical_default_policy" \
+  'D1 补资后继续原交割' \
+  "physical-default policy requires an explicit disposition decision"
+check_contains "$physical_default_policy" \
+  '真实编排器下强杀Option/Asset/队列容器' \
+  "physical-default policy requires orchestrator failure acceptance"
+check_contains "$physical_default_record" \
+  'OPTION_PHYSICAL_DEFAULT_RECORD_STATUS: OPEN' \
+  "physical-default incident record starts open"
+check_contains "$physical_default_record" \
+  'option-physical-delivery-default-policy-approval[.]md' \
+  "physical-default incident record links the approved policy"
+check_contains "$OPTION_DIR/docs/option-current-status-and-production-blockers.md" \
+  'option-physical-delivery-default-policy-approval[.]md' \
+  "current blockers link the physical-default policy approval"
+check_contains "$launch_checklist" \
+  'option-physical-delivery-default-policy-approval[.]md.*APPROVED' \
+  "contract launch checklist requires approved physical-default policy"
+check_contains "$OPTION_DIR/docs/templates/option-production-readiness-signoff.md" \
+  'option-physical-delivery-default-policy-approval[.]md.*APPROVED' \
+  "production signoff requires approved physical-default policy"
+check_contains "$operations_pack" \
+  'option-physical-delivery-default-policy-approval[.]md' \
+  "operations pack binds physical-default notices to approved policy"
+database_audit_template="$OPTION_DIR/docs/templates/option-database-security-audit-acceptance.md"
+check_contains "$database_audit_template" \
+  'OPTION_DATABASE_AUDIT_STATUS: DRAFT' \
+  "database-security audit template defaults to draft"
+check_contains "$database_audit_template" \
+  '失败事务中的应用审计写入会一起回滚' \
+  "database-security audit requires transaction-external evidence"
+check_contains "$database_audit_template" \
+  'DB-AUD-012' \
+  "database-security audit covers direct DML and DDL bypass attempts"
+check_contains "$database_audit_template" \
+  'DB-AUD-N05' \
+  "database-security audit distinguishes direct SQL from application rejection"
+check_contains "$database_audit_template" \
+  '任何未授权写入成功、审计事件缺失、身份无法归属' \
+  "database-security audit treats successful bypass and missing evidence as incidents"
+check_contains "$OPTION_DIR/docs/option-current-status-and-production-blockers.md" \
+  'option-database-security-audit-acceptance[.]md' \
+  "current blockers link the database-security audit acceptance"
+check_contains "$OPTION_DIR/docs/templates/option-preproduction-evidence-pack.md" \
+  'option-database-security-audit-acceptance[.]md' \
+  "preproduction evidence pack requires the database-security audit acceptance"
+check_contains "$OPTION_DIR/docs/templates/option-production-readiness-signoff.md" \
+  'option-database-security-audit-acceptance[.]md.*APPROVED' \
+  "production signoff requires approved database-security audit evidence"
+platform_backstop_template="$OPTION_DIR/docs/templates/option-platform-backstop-policy-approval.md"
+platform_backstop_e2e_template="$OPTION_DIR/docs/templates/option-platform-backstop-e2e.md"
+check_contains "$platform_backstop_template" \
+  'OPTION_PLATFORM_BACKSTOP_APPROVAL_STATUS: DRAFT' \
+  "platform-backstop policy template defaults to draft"
+check_contains "$platform_backstop_template" '无限负余额.*不得批准' \
+  "platform-backstop policy prohibits unlimited negative funding"
+check_contains "$platform_backstop_template" 'BST-012' \
+  "platform-backstop policy covers limits, concurrency, replay and isolation"
+check_contains "$platform_backstop_e2e_template" \
+  'OPTION_PLATFORM_BACKSTOP_E2E_STATUS: DRAFT' \
+  "platform-backstop target-environment E2E template defaults to draft"
+check_contains "$platform_backstop_e2e_template" 'BST-012' \
+  "platform-backstop target-environment E2E template covers final isolation"
+check_contains "$OPTION_DIR/monitoring/option-production-readiness.env.example" \
+  'OPTION_PLATFORM_BACKSTOP_POLICY_ID=0' \
+  "production readiness example binds an exact Asset policy ID"
+check_contains "$OPTION_DIR/monitoring/option-production-readiness.env.example" \
+  'OPTION_PLATFORM_BACKSTOP_POLICY_VERSION=0' \
+  "production readiness example binds an exact Asset policy version"
+check_contains "$OPTION_DIR/internal/config/config.go" 'PlatformBackstop struct' \
+  "Option config has an independent platform-backstop runtime gate"
+check_contains "$OPTION_DIR/etc/option.yaml" 'PlatformBackstop:' \
+  "Option runtime example declares the platform-backstop gate"
+check_contains "$OPTION_DIR/internal/logic/task/processliquidationslogic.go" \
+  'PlatformBackstop[.]Enabled' \
+  "liquidation execution requires the platform-backstop runtime gate"
+check_contains "$OPTION_DIR/internal/logic/task/processliquidationslogic.go" \
+  'platform backstop runtime gate is disabled; manual deficit resolution required' \
+  "disabled platform backstop routes unresolved deficits to manual review"
+check_contains "$OPTION_DIR/internal/logic/task/processcontractlifecyclelogic.go" \
+  'platformBackstopRuntimeEnabled' \
+  "contract listing refuses a disabled platform-backstop policy"
+check_contains "$OPTION_DIR/internal/logic/admin/resumecontracttradinglogic.go" \
+  'PlatformBackstop[.]Enabled' \
+  "contract resume refuses a disabled platform-backstop policy"
+check_contains "$OPTION_DIR/docs/option-current-status-and-production-blockers.md" \
+  'OPT-P0-007' \
+  "current status tracks the platform-backstop repository and production boundary"
+check_contains "$OPTION_DIR/docs/option-p0-007-repository-acceptance.md" \
+  'REPOSITORY_ACCEPTANCE_STATUS: PASSED / PREPROD_BLOCKED' \
+  "platform-backstop repository acceptance passed without claiming production readiness"
+check_contains "$REPO_ROOT/services/asset/internal/logic/asset/coverplatformbackstopdeficitlogic.go" \
+  'SubAvailableWithFloor' \
+  "Asset backstop runtime enforces an atomic approved balance floor"
+check_not_contains "$REPO_ROOT/services/asset/models/tassetplatformaccountmodel.go" \
+  'SubAvailableAllowNegative' \
+  "Asset platform-account model has no unlimited-negative balance method"
+check_not_contains "$REPO_ROOT/services/asset/internal/logic/asset/coverplatformbackstopdeficitlogic.go" \
+  'SubAvailableAllowNegative' \
+  "Asset backstop cover path does not call an unlimited-negative balance method"
+check_contains "$OPTION_DIR/acceptance/run-platform-backstop-rpc-acceptance.sh" \
+  'TestPlatformBackstopRPCLimitsMySQL' \
+  "platform-backstop acceptance runs real RPC boundary and concurrency cases"
+blocker_material_matrix="$OPTION_DIR/docs/option-production-blocker-evidence-matrix.md"
+check_contains "$blocker_material_matrix" \
+  'MATRIX_STATUS: REPOSITORY_MATERIALS_READY / PRODUCTION_BLOCKED' \
+  "production blocker material matrix remains explicitly blocked"
+check_contains "$blocker_material_matrix" 'OPT-P0-007' \
+  "production blocker matrix tracks the platform-backstop external approval gap"
+check_contains "$blocker_material_matrix" 'ORCHESTRATOR_TAKEOVER_REPORT' \
+  "production blocker matrix tracks the orchestrator evidence gap"
+check_contains "$blocker_material_matrix" 'BEANSTALK_CAPACITY_REPORT' \
+  "production blocker matrix tracks the native-capacity evidence gap"
+completion_audit="$OPTION_DIR/docs/option-completion-audit.md"
+check_contains "$completion_audit" \
+  '^AUDIT_STATUS: REPOSITORY_ACTIONS_COMPLETE / PREPROD_BLOCKED$' \
+  "completion audit separates repository completion from production readiness"
+check_contains "$completion_audit" 'make gen-model' \
+  "completion audit makes model generation part of DDL acceptance"
+check_contains "$completion_audit" 'option-production-evidence-report[.]md' \
+  "completion audit links the generic target-environment evidence template"
+check_contains "$OPTION_DIR/docs/templates/option-preproduction-evidence-pack.md" \
+  'option-platform-backstop-policy-approval[.]md' \
+  "preproduction evidence pack separates disabled and enabled backstop evidence"
+check_contains "$OPTION_DIR/docs/templates/option-production-readiness-signoff.md" \
+  'option-platform-backstop-policy-approval[.]md.*APPROVED' \
+  "production signoff requires approved platform-backstop policy when enabled"
+orchestrator_report_template="$OPTION_DIR/docs/templates/option-orchestrator-takeover-report.md"
+check_contains "$orchestrator_report_template" \
+  'OPTION_ORCHESTRATOR_TAKEOVER_STATUS: DRAFT' \
+  "orchestrator takeover report defaults to draft"
+check_contains "$orchestrator_report_template" 'ORC-010' \
+  "orchestrator takeover report covers the complete failure matrix"
+check_contains "$orchestrator_report_template" '不删除或缩短Redis/Etcd租约' \
+  "orchestrator takeover report requires natural lease expiry"
+beanstalk_capacity_template="$OPTION_DIR/docs/templates/option-beanstalk-capacity-rto-report.md"
+check_contains "$beanstalk_capacity_template" \
+  'OPTION_BEANSTALK_CAPACITY_STATUS: DRAFT' \
+  "Beanstalk capacity report defaults to draft"
+check_contains "$beanstalk_capacity_template" 'BS-010' \
+  "Beanstalk capacity report covers native architecture, WAL, kill and long-run cases"
+check_contains "$beanstalk_capacity_template" '是否使用模拟/emulation（必须否）' \
+  "Beanstalk capacity report prohibits emulated architecture evidence"
+check_contains "$OPTION_DIR/docs/templates/option-preproduction-evidence-pack.md" \
+  'option-orchestrator-takeover-report[.]md' \
+  "preproduction evidence pack requires the orchestrator takeover report"
+check_contains "$OPTION_DIR/docs/templates/option-preproduction-evidence-pack.md" \
+  'option-beanstalk-capacity-rto-report[.]md' \
+  "preproduction evidence pack requires the Beanstalk capacity report"
+check_contains "$OPTION_DIR/docs/templates/option-preproduction-evidence-pack.md" \
+  '18 项监控索引存在' \
+  "preproduction evidence pack uses the current monitoring-index count"
+check_not_contains "$OPTION_DIR/docs/templates/option-preproduction-evidence-pack.md" \
+  '17 项监控索引' \
+  "preproduction evidence pack removed the stale monitoring-index count"
+generic_evidence_template="$OPTION_DIR/docs/templates/option-production-evidence-report.md"
+check_contains "$generic_evidence_template" \
+  '^OPTION_EVIDENCE_STATUS:[[:space:]]*DRAFT$' \
+  "generic production-evidence template defaults to draft"
+check_contains "$OPTION_DIR/monitoring/option-production-readiness.env.example" \
+  '^OPTION_INSURANCE_LEDGER_APPROVAL=' \
+  "production readiness declares the seller insurance-ledger approval"
+check_contains "$OPTION_DIR/docs/templates/option-alert-delivery-test.md" \
+  '^OPTION_ALERT_DELIVERY_STATUS:[[:space:]]*DRAFT$' \
+  "alert-delivery template defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/option-daily-fund-reconciliation.md" \
+  '^OPTION_DAILY_RECONCILIATION_STATUS:[[:space:]]*DRAFT$' \
+  "daily-reconciliation template defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/option-market-freshness-approval.md" \
+  '^OPTION_MARKET_FRESHNESS_APPROVAL_STATUS:[[:space:]]*DRAFT$' \
+  "market-freshness approval defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/trading-calendar-approval.md" \
+  '^OPTION_TRADING_CALENDAR_APPROVAL_STATUS:[[:space:]]*DRAFT$' \
+  "trading-calendar approval defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/trading-calendar-annual-review.md" \
+  '^OPTION_TRADING_CALENDAR_ANNUAL_REVIEW_STATUS:[[:space:]]*DRAFT$' \
+  "trading-calendar annual review defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/option-portfolio-risk-validation-record.md" \
+  '^OPTION_PORTFOLIO_MODEL_VALIDATION_STATUS:[[:space:]]*DRAFT$' \
+  "portfolio-model validation defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/option-insurance-inventory-exit-approval.md" \
+  '^OPTION_INSURANCE_INVENTORY_EXIT_APPROVAL_STATUS:[[:space:]]*DRAFT$' \
+  "insurance-inventory exit approval defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/option-insurance-inventory-exit-execution-record.md" \
+  '^OPTION_INSURANCE_INVENTORY_EXIT_EXECUTION_STATUS:[[:space:]]*DRAFT$' \
+  "insurance-inventory exit execution record defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/complex-order-readiness.md" \
+  '^OPTION_COMPLEX_ORDER_READINESS_STATUS:[[:space:]]*DRAFT$' \
+  "complex-order readiness record defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/public-market-readiness.md" \
+  '^OPTION_PUBLIC_MARKET_READINESS_STATUS:[[:space:]]*DRAFT$' \
+  "public-market readiness record defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/contract-series-approval.md" \
+  '^OPTION_CONTRACT_SERIES_APPROVAL_STATUS:[[:space:]]*DRAFT$' \
+  "contract-series approval defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/contract-series-approval.md" \
+  '上市 UTC.*最后交易 UTC.*行权截止 UTC.*到期 UTC.*交割 UTC' \
+  "contract-series approval exposes all five lifecycle times"
+check_not_contains "$OPTION_DIR/docs/templates/contract-series-approval.md" \
+  '到期/最后交易 UTC|list < exercise_cutoff' \
+  "contract-series approval does not collapse last-trade and expiry"
+check_contains "$OPTION_DIR/docs/templates/settlement-price-approval.md" \
+  '^OPTION_SETTLEMENT_PRICE_APPROVAL_STATUS:[[:space:]]*DRAFT$' \
+  "settlement-price approval defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/option-exercise-expiry-control-record.md" \
+  '^OPTION_EXERCISE_EXPIRY_CONTROL_STATUS:[[:space:]]*DRAFT$' \
+  "exercise-expiry control record defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/cash-settlement-topup-recovery-approval.md" \
+  '^OPTION_CASH_SETTLEMENT_TOPUP_STATUS:[[:space:]]*DRAFT$' \
+  "cash-settlement top-up approval defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/corporate-action-case.md" \
+  '^OPTION_CORPORATE_ACTION_CASE_STATUS:[[:space:]]*DRAFT$' \
+  "corporate-action case defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/daily-reconciliation.md" \
+  '^OPTION_DAILY_OPERATIONS_RECONCILIATION_STATUS:[[:space:]]*DRAFT$' \
+  "daily operations reconciliation defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/incident-report.md" \
+  '^OPTION_INCIDENT_STATUS:[[:space:]]*OPEN$' \
+  "incident report starts open"
+check_contains "$OPTION_DIR/docs/templates/institutional-market-readiness.md" \
+  '^OPTION_INSTITUTIONAL_MARKET_STATUS:[[:space:]]*DEFERRED$' \
+  "institutional market readiness remains deferred"
+check_contains "$OPTION_DIR/docs/templates/risk-parameter-change.md" \
+  '^OPTION_RISK_PARAMETER_CHANGE_STATUS:[[:space:]]*DRAFT$' \
+  "risk-parameter change record defaults to draft"
+check_contains "$OPTION_DIR/docs/templates/trading-halt-record.md" \
+  '^OPTION_TRADING_HALT_STATUS:[[:space:]]*OPEN$' \
+  "trading-halt record starts open"
+check_contains "$OPTION_DIR/docs/templates/option-preproduction-evidence-pack.md" \
+  '^OPTION_PREPRODUCTION_EVIDENCE_PACK_STATUS:[[:space:]]*DRAFT$' \
+  "preproduction evidence pack defaults to draft"
+alert_delivery_template="$OPTION_DIR/docs/templates/option-alert-delivery-test.md"
+for alert_id in 005 007 008 009 011 015 016 020 026 029 030; do
+  check_contains "$alert_delivery_template" "OPT-A$alert_id" \
+    "alert-delivery template uses canonical OPT-A$alert_id catalog identity"
+done
+consistency_docs="
+$OPTION_DIR/acceptance/README.md
+$OPTION_DIR/docs/option-acceptance-test-plan.md
+$OPTION_DIR/docs/option-design-review.md
+$OPTION_DIR/docs/option-remediation-plan.md
+$OPTION_DIR/docs/option-p2-002-p2-003-lifecycle-repository-acceptance.md
+"
+for consistency_doc in $consistency_docs; do
+  check_not_contains "$consistency_doc" '118[.]520|1m41[.]080' \
+    "$(basename "$consistency_doc") removed superseded acceptance timings"
+done
+current_status_docs="
+$OPTION_DIR/docs/option-design-review.md
+$OPTION_DIR/docs/option-p1-004-repository-acceptance.md
+$OPTION_DIR/docs/option-p1-005-insurance-inventory-exit-design.md
+$OPTION_DIR/docs/option-p2-001-trading-calendar-repository-acceptance.md
+$OPTION_DIR/docs/option-operations-runbook.md
+"
+for current_status_doc in $current_status_docs; do
+  check_not_contains "$current_status_doc" 'VERIFYING' \
+    "$(basename "$current_status_doc") uses the unified repository/preproduction status"
+done
+check_contains "$OPTION_DIR/docs/option-design-review.md" \
+  '当前共有 195 个顶层 `Test[*]` 测试' \
+  "design review records the current top-level Go test count"
+check_not_contains "$OPTION_DIR/docs/option-design-review.md" \
+  '费用/部分数量/多账户和容量仍待验收|当前缺口赔付写入正数|表定义要求入金为正、出金为负' \
+  "design review removed superseded cash-expiry and insurance-ledger gaps"
+check_contains "$OPTION_DIR/docs/option-p2-001-trading-calendar-repository-acceptance.md" \
+  'instructions=9277 success=9270 canceled=7 reconciled=9270' \
+  "calendar acceptance references the latest full repository gate"
+check_not_contains "$OPTION_DIR/docs/option-p1-008-insurance-fund-ledger-repository-acceptance.md" \
+  '新增17项检查' \
+  "insurance-ledger acceptance avoids a stale readiness-check count"
 repository_evidence="$OPTION_DIR/docs/evidence/option-repository-technical-evidence-20260802.md"
 repository_evidence_manifest="$OPTION_DIR/docs/evidence/option-repository-technical-evidence-20260802.sha256"
 check_contains "$repository_evidence" 'EVIDENCE_SCOPE: REPOSITORY_ONLY' \
@@ -1483,6 +1836,7 @@ OPTION_ZERO_DIFF_HEARTBEAT_ENABLED=$(read_setting OPTION_ZERO_DIFF_HEARTBEAT_ENA
 OPTION_PRODUCTION_METRICS_TARGET_VERIFIED=$(read_setting OPTION_PRODUCTION_METRICS_TARGET_VERIFIED)
 OPTION_METRICS_URL=$(read_setting OPTION_METRICS_URL)
 OPTION_SELLER_TRADING_ENABLED=$(read_setting OPTION_SELLER_TRADING_ENABLED)
+OPTION_PLATFORM_BACKSTOP_ENABLED=$(read_setting OPTION_PLATFORM_BACKSTOP_ENABLED)
 OPTION_PORTFOLIO_MARGIN_ENABLED=$(read_setting OPTION_PORTFOLIO_MARGIN_ENABLED)
 OPTION_PHYSICAL_DELIVERY_ENABLED=$(read_setting OPTION_PHYSICAL_DELIVERY_ENABLED)
 OPTION_COMPLEX_ORDERS_ENABLED=$(read_setting OPTION_COMPLEX_ORDERS_ENABLED)
@@ -1510,6 +1864,9 @@ evidence_path=$(read_setting OPTION_GREEKS_THRESHOLD_APPROVAL)
 evidence_sha=$(read_setting OPTION_GREEKS_THRESHOLD_APPROVAL_SHA256)
 require_evidence_file "$evidence_path" "$evidence_sha" \
   "contract Greeks freshness threshold approval attached and hash-matched"
+check_contains "$evidence_path" \
+  '^OPTION_MARKET_FRESHNESS_APPROVAL_STATUS:[[:space:]]*APPROVED$' \
+  "contract Greeks freshness threshold approval is explicitly APPROVED"
 
 case "$OPTION_METRICS_URL" in
   http://*|https://*) pass "production Option metrics URL declared" ;;
@@ -1627,7 +1984,7 @@ else
   fail "production tenant full-funds reconciliation succeeded within 36 hours"
 fi
 
-for feature_flag in OPTION_SELLER_TRADING_ENABLED OPTION_PORTFOLIO_MARGIN_ENABLED \
+for feature_flag in OPTION_SELLER_TRADING_ENABLED OPTION_PLATFORM_BACKSTOP_ENABLED OPTION_PORTFOLIO_MARGIN_ENABLED \
   OPTION_PHYSICAL_DELIVERY_ENABLED OPTION_COMPLEX_ORDERS_ENABLED \
   OPTION_PUBLIC_MARKET_ENABLED OPTION_GREEKS_DEPENDENT_FEATURES_ENABLED \
   OPTION_INSURANCE_INVENTORY_EXIT_ENABLED; do
@@ -1636,10 +1993,13 @@ for feature_flag in OPTION_SELLER_TRADING_ENABLED OPTION_PORTFOLIO_MARGIN_ENABLE
 done
 
 evidence_names='OPTION_RELEASE_SIGNOFF
+OPTION_LAUNCH_CHECKLIST
 OPTION_MIGRATION_REPORT
 OPTION_ASSET_E2E_REPORT
 OPTION_FAILURE_INJECTION_REPORT
 OPTION_CAPACITY_REPORT
+OPTION_ORCHESTRATOR_TAKEOVER_REPORT
+OPTION_BEANSTALK_CAPACITY_REPORT
 OPTION_ALERT_DELIVERY_REPORT
 OPTION_DAILY_RECONCILIATION_REPORT
 OPTION_DATABASE_AUDIT_REPORT
@@ -1653,9 +2013,55 @@ for evidence_name in $evidence_names; do
   require_evidence_file "$evidence_path" "$evidence_sha" "$evidence_name attached and hash-matched"
 done
 
+generic_approved_evidence_names='OPTION_MIGRATION_REPORT
+OPTION_ASSET_E2E_REPORT
+OPTION_FAILURE_INJECTION_REPORT
+OPTION_CAPACITY_REPORT
+OPTION_ONCALL_ROSTER_REPORT
+OPTION_TRADING_CALENDAR_PREPRODUCTION_REPORT'
+for evidence_name in $generic_approved_evidence_names; do
+  evidence_path=$(read_setting "$evidence_name")
+  check_contains "$evidence_path" '^OPTION_EVIDENCE_STATUS:[[:space:]]*APPROVED$' \
+    "$evidence_name is explicitly APPROVED"
+done
+
+OPTION_ALERT_DELIVERY_REPORT=$(read_setting OPTION_ALERT_DELIVERY_REPORT)
+check_contains "$OPTION_ALERT_DELIVERY_REPORT" \
+  '^OPTION_ALERT_DELIVERY_STATUS:[[:space:]]*APPROVED$' \
+  "production alert-delivery report is explicitly APPROVED"
+OPTION_DAILY_RECONCILIATION_REPORT=$(read_setting OPTION_DAILY_RECONCILIATION_REPORT)
+check_contains "$OPTION_DAILY_RECONCILIATION_REPORT" \
+  '^OPTION_DAILY_RECONCILIATION_STATUS:[[:space:]]*APPROVED$' \
+  "production daily reconciliation report is explicitly APPROVED"
+OPTION_TRADING_CALENDAR_APPROVAL=$(read_setting OPTION_TRADING_CALENDAR_APPROVAL)
+check_contains "$OPTION_TRADING_CALENDAR_APPROVAL" \
+  '^OPTION_TRADING_CALENDAR_APPROVAL_STATUS:[[:space:]]*APPROVED$' \
+  "production trading calendar is explicitly APPROVED"
+OPTION_TRADING_CALENDAR_ANNUAL_REVIEW=$(read_setting OPTION_TRADING_CALENDAR_ANNUAL_REVIEW)
+check_contains "$OPTION_TRADING_CALENDAR_ANNUAL_REVIEW" \
+  '^OPTION_TRADING_CALENDAR_ANNUAL_REVIEW_STATUS:[[:space:]]*APPROVED$' \
+  "production trading-calendar annual review is explicitly APPROVED"
+
+OPTION_DATABASE_AUDIT_REPORT=$(read_setting OPTION_DATABASE_AUDIT_REPORT)
+check_contains "$OPTION_DATABASE_AUDIT_REPORT" \
+  '^OPTION_DATABASE_AUDIT_STATUS:[[:space:]]*APPROVED$' \
+  "production database-security audit report is explicitly APPROVED"
+OPTION_ORCHESTRATOR_TAKEOVER_REPORT=$(read_setting OPTION_ORCHESTRATOR_TAKEOVER_REPORT)
+check_contains "$OPTION_ORCHESTRATOR_TAKEOVER_REPORT" \
+  '^OPTION_ORCHESTRATOR_TAKEOVER_STATUS:[[:space:]]*APPROVED$' \
+  "production orchestrator takeover report is explicitly APPROVED"
+OPTION_BEANSTALK_CAPACITY_REPORT=$(read_setting OPTION_BEANSTALK_CAPACITY_REPORT)
+check_contains "$OPTION_BEANSTALK_CAPACITY_REPORT" \
+  '^OPTION_BEANSTALK_CAPACITY_STATUS:[[:space:]]*APPROVED$' \
+  "production Beanstalk capacity report is explicitly APPROVED"
+
 OPTION_RELEASE_SIGNOFF=$(read_setting OPTION_RELEASE_SIGNOFF)
 check_contains "$OPTION_RELEASE_SIGNOFF" '^OPTION_EVIDENCE_STATUS:[[:space:]]*APPROVED$' \
   "Option release signoff is explicitly APPROVED"
+OPTION_LAUNCH_CHECKLIST=$(read_setting OPTION_LAUNCH_CHECKLIST)
+check_contains "$OPTION_LAUNCH_CHECKLIST" \
+  '^OPTION_LAUNCH_CHECKLIST_STATUS:[[:space:]]*APPROVED$' \
+  "every contract in the release has an explicitly APPROVED launch checklist"
 
 OPTION_PROMETHEUS_CONFIG=$(read_setting OPTION_PROMETHEUS_CONFIG)
 OPTION_PROMETHEUS_CONFIG_SHA256=$(read_setting OPTION_PROMETHEUS_CONFIG_SHA256)
@@ -1700,12 +2106,68 @@ fi
 if [ "$OPTION_SELLER_TRADING_ENABLED" = "true" ]; then
   require_true "$OPTION_INSURANCE_FLOW_SIGN_RESOLVED" \
     "insurance payout sign mismatch resolved before seller trading"
-  require_true "$OPTION_BACKSTOP_LIMIT_APPROVED" \
-    "platform backstop limit approved before seller trading"
+  evidence_path=$(read_setting OPTION_INSURANCE_LEDGER_APPROVAL)
+  evidence_sha=$(read_setting OPTION_INSURANCE_LEDGER_APPROVAL_SHA256)
+  require_evidence_file "$evidence_path" "$evidence_sha" \
+    "insurance ledger production approval attached and hash-matched"
+  check_contains "$evidence_path" \
+    '^OPTION_INSURANCE_LEDGER_APPROVAL_STATUS:[[:space:]]*APPROVED$' \
+    "insurance ledger production policy is explicitly APPROVED"
   evidence_path=$(read_setting OPTION_INSURANCE_SIGN_RESOLUTION_REPORT)
   evidence_sha=$(read_setting OPTION_INSURANCE_SIGN_RESOLUTION_REPORT_SHA256)
   require_evidence_file "$evidence_path" "$evidence_sha" \
     "insurance sign resolution report attached and hash-matched"
+  check_contains "$evidence_path" '^OPTION_EVIDENCE_STATUS:[[:space:]]*APPROVED$' \
+    "insurance sign resolution report is explicitly APPROVED"
+fi
+
+if [ "$OPTION_PLATFORM_BACKSTOP_ENABLED" = "true" ]; then
+  require_true "$OPTION_SELLER_TRADING_ENABLED" \
+    "platform backstop cannot be enabled while seller trading is disabled"
+  require_true "$OPTION_BACKSTOP_LIMIT_APPROVED" \
+    "platform backstop monetary limits approved before runtime enablement"
+  platform_backstop_policy_id=$(read_setting OPTION_PLATFORM_BACKSTOP_POLICY_ID)
+  platform_backstop_policy_version=$(read_setting OPTION_PLATFORM_BACKSTOP_POLICY_VERSION)
+  require_positive_integer "$platform_backstop_policy_id" \
+    "platform backstop exact Asset policy ID declared"
+  require_positive_integer "$platform_backstop_policy_version" \
+    "platform backstop exact Asset policy version declared"
+  evidence_path=$(read_setting OPTION_PLATFORM_BACKSTOP_APPROVAL)
+  evidence_sha=$(read_setting OPTION_PLATFORM_BACKSTOP_APPROVAL_SHA256)
+  require_evidence_file "$evidence_path" "$evidence_sha" \
+    "platform backstop policy approval attached and hash-matched"
+  check_contains "$evidence_path" \
+    '^OPTION_PLATFORM_BACKSTOP_APPROVAL_STATUS:[[:space:]]*APPROVED$' \
+    "platform backstop policy is explicitly APPROVED"
+  evidence_path=$(read_setting OPTION_PLATFORM_BACKSTOP_E2E_REPORT)
+  evidence_sha=$(read_setting OPTION_PLATFORM_BACKSTOP_E2E_REPORT_SHA256)
+  require_evidence_file "$evidence_path" "$evidence_sha" \
+    "platform backstop BST-001 through BST-012 report attached and hash-matched"
+  check_contains "$evidence_path" \
+    '^OPTION_PLATFORM_BACKSTOP_E2E_STATUS:[[:space:]]*APPROVED$' \
+    "platform backstop target-environment E2E is explicitly APPROVED"
+  check_contains "$evidence_path" 'BST-012' \
+    "platform backstop E2E report includes the final isolation case"
+  check_contains "$evidence_path" \
+    "Asset policy ID.*${platform_backstop_policy_id}" \
+    "platform backstop E2E report binds the declared Asset policy ID"
+  check_contains "$evidence_path" \
+    "Asset policy version.*${platform_backstop_policy_version}" \
+    "platform backstop E2E report binds the declared Asset policy version"
+  evidence_path=$(read_setting OPTION_PLATFORM_BACKSTOP_RUNTIME_CONFIG)
+  evidence_sha=$(read_setting OPTION_PLATFORM_BACKSTOP_RUNTIME_CONFIG_SHA256)
+  require_evidence_file "$evidence_path" "$evidence_sha" \
+    "platform backstop rendered runtime config attached and hash-matched"
+  if awk '
+    /^PlatformBackstop:[[:space:]]*$/ { section=1; next }
+    section && /^[^[:space:]]/ { section=0 }
+    section && /^[[:space:]]+Enabled:[[:space:]]*true[[:space:]]*$/ { found=1 }
+    END { exit(found ? 0 : 1) }
+  ' "$evidence_path"; then
+    pass "rendered Option config explicitly enables the platform-backstop section"
+  else
+    fail "rendered Option config explicitly enables the platform-backstop section"
+  fi
 fi
 
 if [ "$OPTION_PORTFOLIO_MARGIN_ENABLED" = "true" ]; then
@@ -1713,20 +2175,31 @@ if [ "$OPTION_PORTFOLIO_MARGIN_ENABLED" = "true" ]; then
   evidence_sha=$(read_setting OPTION_MODEL_VALIDATION_REPORT_SHA256)
   require_evidence_file "$evidence_path" "$evidence_sha" \
     "independent portfolio model validation attached and hash-matched"
+  check_contains "$evidence_path" \
+    '^OPTION_PORTFOLIO_MODEL_VALIDATION_STATUS:[[:space:]]*APPROVED$' \
+    "portfolio model validation is explicitly APPROVED"
   evidence_path=$(read_setting OPTION_PORTFOLIO_VERSION_SWITCH_E2E_REPORT)
   evidence_sha=$(read_setting OPTION_PORTFOLIO_VERSION_SWITCH_E2E_REPORT_SHA256)
   require_evidence_file "$evidence_path" "$evidence_sha" \
     "portfolio version-switch order/scan E2E attached and hash-matched"
+  check_contains "$evidence_path" '^OPTION_EVIDENCE_STATUS:[[:space:]]*APPROVED$' \
+    "portfolio version-switch E2E is explicitly APPROVED"
 fi
 if [ "$OPTION_INSURANCE_INVENTORY_EXIT_ENABLED" = "true" ]; then
   evidence_path=$(read_setting OPTION_INSURANCE_INVENTORY_EXIT_APPROVAL)
   evidence_sha=$(read_setting OPTION_INSURANCE_INVENTORY_EXIT_APPROVAL_SHA256)
   require_evidence_file "$evidence_path" "$evidence_sha" \
     "insurance inventory exit limits and four-eyes approval attached and hash-matched"
+  check_contains "$evidence_path" \
+    '^OPTION_INSURANCE_INVENTORY_EXIT_APPROVAL_STATUS:[[:space:]]*APPROVED$' \
+    "insurance inventory exit policy is explicitly APPROVED"
   evidence_path=$(read_setting OPTION_INSURANCE_INVENTORY_EXIT_E2E_REPORT)
   evidence_sha=$(read_setting OPTION_INSURANCE_INVENTORY_EXIT_E2E_REPORT_SHA256)
   require_evidence_file "$evidence_path" "$evidence_sha" \
     "insurance inventory exit preproduction Asset E2E attached and hash-matched"
+  check_contains "$evidence_path" \
+    '^OPTION_INSURANCE_INVENTORY_EXIT_EXECUTION_STATUS:[[:space:]]*APPROVED$' \
+    "insurance inventory exit preproduction E2E is explicitly APPROVED"
   evidence_path=$(read_setting OPTION_INSURANCE_INVENTORY_EXIT_RUNTIME_CONFIG)
   evidence_sha=$(read_setting OPTION_INSURANCE_INVENTORY_EXIT_RUNTIME_CONFIG_SHA256)
   require_evidence_file "$evidence_path" "$evidence_sha" \
@@ -1746,18 +2219,27 @@ if [ "$OPTION_PHYSICAL_DELIVERY_ENABLED" = "true" ]; then
   evidence_sha=$(read_setting OPTION_PHYSICAL_DELIVERY_APPROVAL_SHA256)
   require_evidence_file "$evidence_path" "$evidence_sha" \
     "physical-delivery default and legal approval attached and hash-matched"
+  check_contains "$evidence_path" \
+    '^OPTION_PHYSICAL_DEFAULT_POLICY_STATUS:[[:space:]]*APPROVED$' \
+    "physical-delivery default policy is explicitly APPROVED"
 fi
 if [ "$OPTION_COMPLEX_ORDERS_ENABLED" = "true" ]; then
   evidence_path=$(read_setting OPTION_COMPLEX_ORDER_E2E_REPORT)
   evidence_sha=$(read_setting OPTION_COMPLEX_ORDER_E2E_REPORT_SHA256)
   require_evidence_file "$evidence_path" "$evidence_sha" \
     "complex-order concurrency/Asset E2E attached and hash-matched"
+  check_contains "$evidence_path" \
+    '^OPTION_COMPLEX_ORDER_READINESS_STATUS:[[:space:]]*APPROVED$' \
+    "complex-order target-environment E2E is explicitly APPROVED"
 fi
 if [ "$OPTION_PUBLIC_MARKET_ENABLED" = "true" ]; then
   evidence_path=$(read_setting OPTION_PUBLIC_MARKET_PROBE_REPORT)
   evidence_sha=$(read_setting OPTION_PUBLIC_MARKET_PROBE_REPORT_SHA256)
   require_evidence_file "$evidence_path" "$evidence_sha" \
     "public market cross-tenant/TTL/SLA probe attached and hash-matched"
+  check_contains "$evidence_path" \
+    '^OPTION_PUBLIC_MARKET_READINESS_STATUS:[[:space:]]*APPROVED$' \
+    "public-market target-environment probe is explicitly APPROVED"
 fi
 printf '\n'
 if [ "$failures" -eq 0 ]; then

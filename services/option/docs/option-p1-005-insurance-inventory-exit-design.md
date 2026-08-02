@@ -89,6 +89,7 @@ Admin API/UI 只在风险运营工作台暴露这些接口。首版执行入口�
 - IOC 部分成交、连续无成交、行情失效、余额不足和临近到期的升级路径；
 - 生产订单、资金指令、Asset 流水、margin lot、收益分项和 Prometheus 指标证据哈希。
 
-在真实预生产演练、独立风控签字和通知送达记录完成前，本能力保持 `VERIFYING`，不得据此宣称保险库存风险已经完全闭环。
+在真实预生产演练、独立风控签字和通知送达记录完成前，本能力保持
+`REPOSITORY_PASSED / PREPROD_BLOCKED`，不得据此宣称保险库存风险已经完全闭环。
 
 仓库实现与验收证据见 `docs/option-p1-005-insurance-inventory-exit-repository-acceptance.md`。

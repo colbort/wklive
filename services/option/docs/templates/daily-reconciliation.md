@@ -1,5 +1,7 @@
 # Option 日终对账检查表
 
+OPTION_DAILY_OPERATIONS_RECONCILIATION_STATUS: DRAFT
+
 日期/时区：________　租户：________　执行人：________　复核人：________
 
 ## 系统水位
@@ -37,3 +39,6 @@
 
 结论：通过 / 有条件通过 / 不通过  
 若差额非 0，必须选择“不通过”并启动事故流程。执行签字：________　复核签字：________
+
+只有所有逐币差额为0、开放问题已关闭且双人签署完成时，归档副本才允许改为
+`OPTION_DAILY_OPERATIONS_RECONCILIATION_STATUS: APPROVED`。

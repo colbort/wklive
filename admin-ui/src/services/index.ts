@@ -240,6 +240,10 @@ export type {
   GetPlatformAccountReq,
   SetPlatformAccountReq,
   AdjustPlatformAccountReq,
+  PlatformBackstopPolicy,
+  CreatePlatformBackstopPolicyReq,
+  ReviewPlatformBackstopPolicyReq,
+  ListPlatformBackstopPoliciesReq,
 } from './asset/AssetService'
 export type {
   OptionAdminCommonResp,

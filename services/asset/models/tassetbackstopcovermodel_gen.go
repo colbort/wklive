@@ -50,7 +50,15 @@ type (
 		Coin              string          `db:"coin"`
 		LiquidationId     int64           `db:"liquidation_id"`
 		LiquidationNo     string          `db:"liquidation_no"`
+		PolicyId          int64           `db:"policy_id"` // 0仅表示迁移前历史记录
+		PolicyVersion     int64           `db:"policy_version"`
+		PolicyMode        int64           `db:"policy_mode"` // 1禁用 2预注资 3信用底线
 		CoveredAmount     decimal.Decimal `db:"covered_amount"`
+		DailyUsedBefore   decimal.Decimal `db:"daily_used_before"`
+		DailyUsedAfter    decimal.Decimal `db:"daily_used_after"`
+		BalanceFloor      decimal.Decimal `db:"balance_floor"`
+		BalanceBefore     decimal.Decimal `db:"balance_before"`
+		BalanceAfter      decimal.Decimal `db:"balance_after"`
 		Status            int64           `db:"status"` // 1已赔付
 		CreateTimes       int64           `db:"create_times"`
 		UpdateTimes       int64           `db:"update_times"`
@@ -120,8 +128,8 @@ func (m *defaultTAssetBackstopCoverModel) Insert(ctx context.Context, data *TAss
 	tAssetBackstopCoverIdKey := fmt.Sprintf("%s%v", cacheTAssetBackstopCoverIdPrefix, data.Id)
 	tAssetBackstopCoverTenantIdLiquidationNoKey := fmt.Sprintf("%s%v:%v", cacheTAssetBackstopCoverTenantIdLiquidationNoPrefix, data.TenantId, data.LiquidationNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tAssetBackstopCoverRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.PlatformAccountId, data.Coin, data.LiquidationId, data.LiquidationNo, data.CoveredAmount, data.Status, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tAssetBackstopCoverRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.PlatformAccountId, data.Coin, data.LiquidationId, data.LiquidationNo, data.PolicyId, data.PolicyVersion, data.PolicyMode, data.CoveredAmount, data.DailyUsedBefore, data.DailyUsedAfter, data.BalanceFloor, data.BalanceBefore, data.BalanceAfter, data.Status, data.CreateTimes, data.UpdateTimes)
 	}, tAssetBackstopCoverIdKey, tAssetBackstopCoverTenantIdLiquidationNoKey)
 	return ret, err
 }
@@ -136,7 +144,7 @@ func (m *defaultTAssetBackstopCoverModel) Update(ctx context.Context, newData *T
 	tAssetBackstopCoverTenantIdLiquidationNoKey := fmt.Sprintf("%s%v:%v", cacheTAssetBackstopCoverTenantIdLiquidationNoPrefix, data.TenantId, data.LiquidationNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tAssetBackstopCoverRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.PlatformAccountId, newData.Coin, newData.LiquidationId, newData.LiquidationNo, newData.CoveredAmount, newData.Status, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.PlatformAccountId, newData.Coin, newData.LiquidationId, newData.LiquidationNo, newData.PolicyId, newData.PolicyVersion, newData.PolicyMode, newData.CoveredAmount, newData.DailyUsedBefore, newData.DailyUsedAfter, newData.BalanceFloor, newData.BalanceBefore, newData.BalanceAfter, newData.Status, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tAssetBackstopCoverIdKey, tAssetBackstopCoverTenantIdLiquidationNoKey)
 	return err
 }

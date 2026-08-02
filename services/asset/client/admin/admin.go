@@ -25,6 +25,7 @@ type (
 	CoverPlatformBackstopDeficitReq  = asset.CoverPlatformBackstopDeficitReq
 	CoverPlatformBackstopDeficitResp = asset.CoverPlatformBackstopDeficitResp
 	CreateAssetCoinConfigReq         = asset.CreateAssetCoinConfigReq
+	CreatePlatformBackstopPolicyReq  = asset.CreatePlatformBackstopPolicyReq
 	CreditPlatformRevenueReq         = asset.CreditPlatformRevenueReq
 	CreditPlatformRevenueResp        = asset.CreditPlatformRevenueResp
 	DeductFrozenAssetByBizNoReq      = asset.DeductFrozenAssetByBizNoReq
@@ -46,6 +47,7 @@ type (
 	GetMyAssetSummaryReq             = asset.GetMyAssetSummaryReq
 	GetMyAssetSummaryResp            = asset.GetMyAssetSummaryResp
 	GetPlatformAccountReq            = asset.GetPlatformAccountReq
+	GetPlatformBackstopPolicyReq     = asset.GetPlatformBackstopPolicyReq
 	GetUserAssetDetailReq            = asset.GetUserAssetDetailReq
 	GetUserAssetDetailResp           = asset.GetUserAssetDetailResp
 	ListAssetCoinConfigsReq          = asset.ListAssetCoinConfigsReq
@@ -58,6 +60,8 @@ type (
 	ListMyFreezesResp                = asset.ListMyFreezesResp
 	ListMyLocksReq                   = asset.ListMyLocksReq
 	ListMyLocksResp                  = asset.ListMyLocksResp
+	ListPlatformBackstopPoliciesReq  = asset.ListPlatformBackstopPoliciesReq
+	ListPlatformBackstopPoliciesResp = asset.ListPlatformBackstopPoliciesResp
 	LockAssetData                    = asset.LockAssetData
 	LockAssetReq                     = asset.LockAssetReq
 	LockAssetResp                    = asset.LockAssetResp
@@ -79,7 +83,10 @@ type (
 	PageUserAssetsResp               = asset.PageUserAssetsResp
 	PlatformAccount                  = asset.PlatformAccount
 	PlatformAccountResp              = asset.PlatformAccountResp
+	PlatformBackstopPolicy           = asset.PlatformBackstopPolicy
+	PlatformBackstopPolicyResp       = asset.PlatformBackstopPolicyResp
 	ReverseInsuranceCoverReq         = asset.ReverseInsuranceCoverReq
+	ReviewPlatformBackstopPolicyReq  = asset.ReviewPlatformBackstopPolicyReq
 	SetPlatformAccountReq            = asset.SetPlatformAccountReq
 	SubAssetReq                      = asset.SubAssetReq
 	SubAvailableReq                  = asset.SubAvailableReq
@@ -136,6 +143,14 @@ type (
 		GetPlatformAccount(ctx context.Context, in *GetPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error)
 		// 幂等调整平台账户余额
 		AdjustPlatformAccount(ctx context.Context, in *AdjustPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error)
+		// 创建平台兜底资金政策草稿
+		CreatePlatformBackstopPolicy(ctx context.Context, in *CreatePlatformBackstopPolicyReq, opts ...grpc.CallOption) (*PlatformBackstopPolicyResp, error)
+		// 独立管理员复核平台兜底资金政策
+		ReviewPlatformBackstopPolicy(ctx context.Context, in *ReviewPlatformBackstopPolicyReq, opts ...grpc.CallOption) (*PlatformBackstopPolicyResp, error)
+		// 查询平台兜底资金政策
+		GetPlatformBackstopPolicy(ctx context.Context, in *GetPlatformBackstopPolicyReq, opts ...grpc.CallOption) (*PlatformBackstopPolicyResp, error)
+		// 分页查询平台兜底资金政策
+		ListPlatformBackstopPolicies(ctx context.Context, in *ListPlatformBackstopPoliciesReq, opts ...grpc.CallOption) (*ListPlatformBackstopPoliciesResp, error)
 	}
 
 	defaultAdmin struct {
@@ -267,4 +282,28 @@ func (m *defaultAdmin) GetPlatformAccount(ctx context.Context, in *GetPlatformAc
 func (m *defaultAdmin) AdjustPlatformAccount(ctx context.Context, in *AdjustPlatformAccountReq, opts ...grpc.CallOption) (*PlatformAccountResp, error) {
 	client := asset.NewAdminClient(m.cli.Conn())
 	return client.AdjustPlatformAccount(ctx, in, opts...)
+}
+
+// 创建平台兜底资金政策草稿
+func (m *defaultAdmin) CreatePlatformBackstopPolicy(ctx context.Context, in *CreatePlatformBackstopPolicyReq, opts ...grpc.CallOption) (*PlatformBackstopPolicyResp, error) {
+	client := asset.NewAdminClient(m.cli.Conn())
+	return client.CreatePlatformBackstopPolicy(ctx, in, opts...)
+}
+
+// 独立管理员复核平台兜底资金政策
+func (m *defaultAdmin) ReviewPlatformBackstopPolicy(ctx context.Context, in *ReviewPlatformBackstopPolicyReq, opts ...grpc.CallOption) (*PlatformBackstopPolicyResp, error) {
+	client := asset.NewAdminClient(m.cli.Conn())
+	return client.ReviewPlatformBackstopPolicy(ctx, in, opts...)
+}
+
+// 查询平台兜底资金政策
+func (m *defaultAdmin) GetPlatformBackstopPolicy(ctx context.Context, in *GetPlatformBackstopPolicyReq, opts ...grpc.CallOption) (*PlatformBackstopPolicyResp, error) {
+	client := asset.NewAdminClient(m.cli.Conn())
+	return client.GetPlatformBackstopPolicy(ctx, in, opts...)
+}
+
+// 分页查询平台兜底资金政策
+func (m *defaultAdmin) ListPlatformBackstopPolicies(ctx context.Context, in *ListPlatformBackstopPoliciesReq, opts ...grpc.CallOption) (*ListPlatformBackstopPoliciesResp, error) {
+	client := asset.NewAdminClient(m.cli.Conn())
+	return client.ListPlatformBackstopPolicies(ctx, in, opts...)
 }

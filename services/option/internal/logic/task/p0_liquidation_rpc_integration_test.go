@@ -462,6 +462,7 @@ func testP0LiquidationDeficitFailureRecovery(
 	insertP0ExerciseMarket(t, ctx, serviceCtx, contract.Id, "140", "40", now)
 	seedP0LiquidationPlatformAccount(t, ctx, db, "INSURANCE_FUND", "15", now)
 	seedP0LiquidationPlatformAccount(t, ctx, db, "OPTION_BACKSTOP", "0", now)
+	seedP0LiquidationBackstopPolicy(t, ctx, db)
 	creditAsset(t, ctx, assetClient, shortUserID, "50", "P0-LIQ-DEFICIT-SHORT-SEED")
 
 	shortPosition := insertP0SettlementPosition(t, ctx, serviceCtx, &models.TOptionPosition{
@@ -590,6 +591,36 @@ func testP0LiquidationDeficitFailureRecovery(
 	}
 	processAssetInstructions(t, ctx, serviceCtx)
 	assertP0DeficitLiquidationEvidence(t, ctx, db, liquidation.Id)
+}
+
+func seedP0LiquidationBackstopPolicy(t *testing.T, ctx context.Context, db *sql.DB) {
+	t.Helper()
+	createdAt := time.Now().UnixMilli()
+	effectiveFrom := time.Now().Add(time.Second).UnixMilli()
+	effectiveUntil := time.UnixMilli(effectiveFrom).Add(24 * time.Hour).UnixMilli()
+	result, err := db.ExecContext(ctx, `INSERT INTO t_asset_backstop_policy
+		(tenant_id,coin,request_no,version,mode,per_request_limit,daily_limit,balance_floor,
+		 effective_from,effective_until,status,reason,evidence_ref,created_by,reviewed_by,
+		 review_reason,create_times,update_times)
+		VALUES (?,'USDT','P0-LIQUIDATION-BACKSTOP-POLICY',1,3,100,1000,-100,?,?,1,
+		 'isolated credit-floor liquidation acceptance','test://p0-liquidation-backstop-policy',
+		 9101,0,'',?,?)`, p0AssetE2ETenantID, effectiveFrom, effectiveUntil, createdAt, createdAt)
+	if err != nil {
+		t.Fatalf("seed backstop policy draft: %v", err)
+	}
+	policyID, err := result.LastInsertId()
+	if err != nil {
+		t.Fatal(err)
+	}
+	reviewedAt := time.Now().UnixMilli()
+	if _, err = db.ExecContext(ctx, `UPDATE t_asset_backstop_policy
+		SET status=2,reviewed_by=9102,review_reason='independent isolated acceptance review',
+		    update_times=? WHERE id=?`, reviewedAt, policyID); err != nil {
+		t.Fatalf("approve backstop policy: %v", err)
+	}
+	if wait := time.Until(time.UnixMilli(effectiveFrom)); wait > 0 {
+		time.Sleep(wait + 25*time.Millisecond)
+	}
 }
 
 func seedP0LiquidationPlatformAccount(
@@ -780,6 +811,50 @@ func assertP0LiquidationPlatformEvidence(
 			insuranceBalance, backstopBalance, insuranceCovers, backstopCovers, optionCoverFlows,
 			wantInsuranceBalance, wantBackstopBalance, wantInsuranceCovers, wantBackstopCovers,
 			wantOptionCoverFlows)
+	}
+	if backstopCovers == 1 {
+		assertP0BackstopGovernanceEvidence(t, ctx, db, liquidationID)
+	}
+}
+
+func assertP0BackstopGovernanceEvidence(
+	t *testing.T,
+	ctx context.Context,
+	db *sql.DB,
+	liquidationID int64,
+) {
+	t.Helper()
+	var policyID, version, mode, statusValue, usagePolicyID int64
+	var dailyBefore, dailyAfter, balanceFloor, balanceBefore, balanceAfter, dailyUsed decimal.Decimal
+	if err := db.QueryRowContext(ctx, `SELECT c.policy_id,c.policy_version,c.policy_mode,
+		c.daily_used_before,c.daily_used_after,c.balance_floor,c.balance_before,c.balance_after,p.status
+		FROM t_asset_backstop_cover c
+		JOIN t_asset_backstop_policy p ON p.id=c.policy_id AND p.tenant_id=c.tenant_id
+		WHERE c.tenant_id=? AND c.liquidation_id=?`, p0AssetE2ETenantID, liquidationID).
+		Scan(&policyID, &version, &mode, &dailyBefore, &dailyAfter, &balanceFloor,
+			&balanceBefore, &balanceAfter, &statusValue); err != nil {
+		t.Fatal(err)
+	}
+	if err := db.QueryRowContext(ctx, `SELECT covered_amount,last_policy_id
+		FROM t_asset_backstop_usage_daily WHERE tenant_id=? AND coin='USDT'`,
+		p0AssetE2ETenantID).Scan(&dailyUsed, &usagePolicyID); err != nil {
+		t.Fatal(err)
+	}
+	if policyID <= 0 || version != 1 || mode != 3 || statusValue != 2 || usagePolicyID != policyID ||
+		!dailyBefore.IsZero() || !dailyAfter.Equal(decimal.NewFromInt(23)) ||
+		!dailyUsed.Equal(decimal.NewFromInt(23)) || !balanceFloor.Equal(decimal.NewFromInt(-100)) ||
+		!balanceBefore.IsZero() || !balanceAfter.Equal(decimal.NewFromInt(-23)) {
+		t.Fatalf("backstop governance evidence policy/version/mode/status/usage_policy=%d/%d/%d/%d/%d daily=%s/%s/%s balance=%s/%s/%s",
+			policyID, version, mode, statusValue, usagePolicyID, dailyBefore, dailyAfter, dailyUsed,
+			balanceFloor, balanceBefore, balanceAfter)
+	}
+	if _, err := db.ExecContext(ctx, `UPDATE t_asset_backstop_cover SET update_times=update_times WHERE tenant_id=? AND liquidation_id=?`,
+		p0AssetE2ETenantID, liquidationID); err == nil {
+		t.Fatal("database allowed governed backstop cover mutation")
+	}
+	if _, err := db.ExecContext(ctx, `DELETE FROM t_asset_backstop_cover WHERE tenant_id=? AND liquidation_id=?`,
+		p0AssetE2ETenantID, liquidationID); err == nil {
+		t.Fatal("database allowed governed backstop cover deletion")
 	}
 }
 

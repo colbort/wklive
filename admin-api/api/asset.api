@@ -384,6 +384,75 @@ type AdjustPlatformAccountReq {
 	remark      string `json:"remark,optional"`
 }
 
+// PlatformBackstopPolicy is an immutable, four-eyes-reviewed runtime funding policy.
+// mode: 1 disabled, 2 prefunded, 3 credit floor.
+// status: 1 draft, 2 approved, 3 rejected.
+type PlatformBackstopPolicy {
+	id              int64  `json:"id"`
+	tenantId        int64  `json:"tenantId"`
+	coin            string `json:"coin"`
+	requestNo       string `json:"requestNo"`
+	version         int64  `json:"version"`
+	mode            int64  `json:"mode"`
+	perRequestLimit string `json:"perRequestLimit"`
+	dailyLimit      string `json:"dailyLimit"`
+	balanceFloor    string `json:"balanceFloor"`
+	effectiveFrom   int64  `json:"effectiveFrom"`
+	effectiveUntil  int64  `json:"effectiveUntil"`
+	status          int64  `json:"status"`
+	reason          string `json:"reason"`
+	evidenceRef     string `json:"evidenceRef"`
+	createdBy       int64  `json:"createdBy"`
+	reviewedBy      int64  `json:"reviewedBy"`
+	reviewReason    string `json:"reviewReason"`
+	createTimes     int64  `json:"createTimes"`
+	updateTimes     int64  `json:"updateTimes"`
+}
+
+type CreatePlatformBackstopPolicyReq {
+	tenantId        int64  `json:"tenantId"`
+	coin            string `json:"coin"`
+	requestNo       string `json:"requestNo"`
+	mode            int64  `json:"mode"`
+	perRequestLimit string `json:"perRequestLimit" validate:"decimal_36_18"`
+	dailyLimit      string `json:"dailyLimit" validate:"decimal_36_18"`
+	balanceFloor    string `json:"balanceFloor" validate:"decimal_36_18"`
+	effectiveFrom   int64  `json:"effectiveFrom"`
+	effectiveUntil  int64  `json:"effectiveUntil"`
+	reason          string `json:"reason"`
+	evidenceRef     string `json:"evidenceRef"`
+}
+
+type ReviewPlatformBackstopPolicyReq {
+	tenantId int64  `json:"tenantId"`
+	policyId int64  `path:"policyId"`
+	approve  bool   `json:"approve"`
+	reason   string `json:"reason"`
+}
+
+type GetPlatformBackstopPolicyReq {
+	tenantId int64 `form:"tenantId"`
+	policyId int64 `path:"policyId"`
+}
+
+type ListPlatformBackstopPoliciesReq {
+	PageReq
+	tenantId int64  `form:"tenantId"`
+	coin     string `form:"coin,optional"`
+	status   int64  `form:"status,optional"`
+}
+
+type PlatformBackstopPolicyResp {
+	RespBase
+	data PlatformBackstopPolicy `json:"data"`
+}
+
+type ListPlatformBackstopPoliciesResp {
+	RespBase
+	data  []PlatformBackstopPolicy `json:"data"`
+	total int64                    `json:"total"`
+}
+
 @server (
 	prefix: /admin/asset
 	group:  asset
@@ -446,5 +515,16 @@ service admin {
 
 	@handler AdjustPlatformAccount
 	post /platform-accounts/adjust (AdjustPlatformAccountReq) returns (PlatformAccountResp)
-}
 
+	@handler CreatePlatformBackstopPolicy
+	post /platform-backstop-policies (CreatePlatformBackstopPolicyReq) returns (PlatformBackstopPolicyResp)
+
+	@handler ReviewPlatformBackstopPolicy
+	post /platform-backstop-policies/:policyId/review (ReviewPlatformBackstopPolicyReq) returns (PlatformBackstopPolicyResp)
+
+	@handler GetPlatformBackstopPolicy
+	get /platform-backstop-policies/:policyId (GetPlatformBackstopPolicyReq) returns (PlatformBackstopPolicyResp)
+
+	@handler ListPlatformBackstopPolicies
+	get /platform-backstop-policies (ListPlatformBackstopPoliciesReq) returns (ListPlatformBackstopPoliciesResp)
+}

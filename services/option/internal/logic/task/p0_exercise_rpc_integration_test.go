@@ -918,7 +918,9 @@ func insertP0ExerciseMarginLot(
 		TenantId: position.TenantId, UserId: position.UserId, AccountId: position.AccountId,
 		ContractId: position.ContractId, PositionId: position.Id,
 		OriginContractId: position.ContractId, OriginPositionId: position.Id,
-		TradeId: -position.Id, FreezeBizNo: freezeBizNo, CollateralCoin: "USDT",
+		// Keep manually seeded trade identities in a namespace disjoint from
+		// liquidation takeover lots, which use -liquidation_id.
+		TradeId: -1_000_000_000 - position.Id, FreezeBizNo: freezeBizNo, CollateralCoin: "USDT",
 		Quantity: decimal.RequireFromString(quantity), RemainingQuantity: decimal.RequireFromString(quantity),
 		InitialMargin: decimal.RequireFromString(margin), RemainingMargin: decimal.RequireFromString(margin),
 		Status: int64(option.MarginLotStatus_MARGIN_LOT_STATUS_ACTIVE), CreateTimes: createTimes, UpdateTimes: createTimes,

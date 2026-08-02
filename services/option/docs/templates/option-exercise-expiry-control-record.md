@@ -1,6 +1,8 @@
 # Option 行权截止与到期清算控制记录
 
-状态：`DRAFT / READY / EXECUTING / COMPLETED / EXCEPTION`
+OPTION_EXERCISE_EXPIRY_CONTROL_STATUS: DRAFT
+
+允许状态：`DRAFT / READY / EXECUTING / COMPLETED / EXCEPTION`。
 
 用途：每个现金结算合约在主动行权截止和到期清算时单独填写。仓库自动化结果只证明代码基线，
 不能替代本记录的预生产/生产事实、用户通知和签字。
@@ -144,3 +146,5 @@
 | 合规/最终批准人 | `[VALUE]` | `[APPROVE/REJECT]` | `[TIME]` | `[HASH]` |
 
 任一必填项缺失、差额非零或签署为 REJECT 时，本合约不得被认定为完成生产行权/到期验收。
+只有全部终态、守恒、重放、通知、日终和六方签署通过时，归档副本才允许标记为
+`OPTION_EXERCISE_EXPIRY_CONTROL_STATUS: COMPLETED`。

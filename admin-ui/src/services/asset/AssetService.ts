@@ -19,6 +19,10 @@ import {
   apiUpdateAssetCoinConfig,
   apiSetPlatformAccount,
   apiAdjustPlatformAccount,
+  apiCreatePlatformBackstopPolicy,
+  apiGetPlatformBackstopPolicy,
+  apiListPlatformBackstopPolicies,
+  apiReviewPlatformBackstopPolicy,
 } from '@/api/asset'
 import { getCoreOptions } from '@/stores/core'
 
@@ -165,6 +169,57 @@ export type AdjustPlatformAccountReq = GetPlatformAccountReq & {
   direction: number
   amount: string
   remark?: string
+}
+
+export type PlatformBackstopPolicy = {
+  id: number
+  tenantId: number
+  coin: string
+  requestNo: string
+  version: number
+  mode: number
+  perRequestLimit: string
+  dailyLimit: string
+  balanceFloor: string
+  effectiveFrom: number
+  effectiveUntil: number
+  status: number
+  reason: string
+  evidenceRef: string
+  createdBy: number
+  reviewedBy: number
+  reviewReason: string
+  createTimes: number
+  updateTimes: number
+}
+
+export type CreatePlatformBackstopPolicyReq = {
+  tenantId: number
+  coin: string
+  requestNo: string
+  mode: number
+  perRequestLimit: string
+  dailyLimit: string
+  balanceFloor: string
+  effectiveFrom: number
+  effectiveUntil: number
+  reason: string
+  evidenceRef: string
+}
+
+export type ReviewPlatformBackstopPolicyReq = {
+  tenantId: number
+  policyId: number
+  approve: boolean
+  reason: string
+}
+
+export type ListPlatformBackstopPoliciesReq = {
+  tenantId: number
+  coin?: string
+  status?: number
+  cursor?: number
+  limit?: number
 }
 
 export type PageUserAssetsReq = {
@@ -381,6 +436,22 @@ export class AssetService {
 
   adjustPlatformAccount(params: AdjustPlatformAccountReq) {
     return apiAdjustPlatformAccount(params)
+  }
+
+  createPlatformBackstopPolicy(params: CreatePlatformBackstopPolicyReq) {
+    return apiCreatePlatformBackstopPolicy(params)
+  }
+
+  reviewPlatformBackstopPolicy(params: ReviewPlatformBackstopPolicyReq) {
+    return apiReviewPlatformBackstopPolicy(params)
+  }
+
+  getPlatformBackstopPolicy(tenantId: number, policyId: number) {
+    return apiGetPlatformBackstopPolicy(tenantId, policyId)
+  }
+
+  listPlatformBackstopPolicies(params: ListPlatformBackstopPoliciesReq) {
+    return apiListPlatformBackstopPolicies(params)
   }
 }
 

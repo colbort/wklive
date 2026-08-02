@@ -211,7 +211,10 @@ tube 上手工复现。预生产任务量、最低写入速率、最大断连时
     快照、两个接管实例ID和响应、OPT-A006触发/恢复时间、业务RTO、前后钱包/镜像及查询原文。
 12. 仓库测试为控制时长，在观察30秒租约真实到期后才把独立的60秒数据库超龄年龄加速为61秒；
     生产签署必须按真实墙钟等待，不得直接改`update_times`、删除Redis锁或重置指令冒充自动接管。
-13. 美式行权接管还必须按完整业务链核对，不能只看单条Asset指令：强杀点之前空头扣冻结/释放腿
+13. 预生产使用`templates/option-orchestrator-takeover-report.md`逐项记录ORC-001～ORC-010；
+    Beanstalk原生架构、独立WAL、业务客户端重连和RTO使用
+    `templates/option-beanstalk-capacity-rto-report.md`，两个报告保持DRAFT直到签署完成。
+14. 美式行权接管还必须按完整业务链核对，不能只看单条Asset指令：强杀点之前空头扣冻结/释放腿
     已成功且对账；多头净入账为`PROCESSING/retry=0`并恰好1条Asset流水；手续费入账仍为PENDING且
     0流水；行权和全部指派仍为PENDING。租约到期、唯一实例接管后，行权/指派必须全部DONE，所有
     指令`SUCCESS/MATCHED`，每个`instruction_no`恰好1条流水，长短仓、margin lot、手续费、收益分项
@@ -327,10 +330,24 @@ tube 上手工复现。预生产任务量、最低写入速率、最大断连时
 
 ### 6.8 保险不足或平台兜底超限
 
-1. 停止新增裸卖风险或提高保证金，不得继续无限形成平台负债。
-2. 核对保险覆盖调用和已用额度。
-3. 由风控、财务和管理层决定补足、减仓或暂停产品。
-4. 任何人工注资或负债调整必须有独立业务号和财务凭证。
+1. 平台兜底仓库实现已通过，但生产默认关闭；目标环境`OPT-P0-007`材料未完成或
+   `option-platform-backstop-policy-approval.md`不是`APPROVED`时，确认渲染配置
+   `PlatformBackstop.Enabled=false`，相关合约不得上市/恢复，剩余缺口进入人工处置。
+2. 发现额度拒绝、配置失效或任何越界迹象时，立即停止新增卖方风险并关闭平台兜底，不得继续形成负债。
+3. 以`liquidation_no`核对保险覆盖、Asset平台流水、单请求/日累计/未偿额度和当前余额；响应丢失只用
+   原业务号查询或重放，不创建替代请求。
+4. 任何成功越界、跨租户/币种占额、额度与流水不一致或审计缺失均按SEV-1，保全Option/Asset/配置/
+   数据库证据，并通知风控、财务、清算、技术和合规。
+5. 由风控、财务和管理层按已批准政策决定补资、减仓、核销或暂停产品；任何人工注资、偿还、冲正或
+   负债调整必须有独立业务号、双人审批和财务凭证，禁止直接改余额或额度计数。
+6. 创建政策使用管理端“平台兜底政策”页面和`platform_backstop_policy_creator`角色；复核必须换用另一个
+   实名账号及`platform_backstop_policy_reviewer`角色。创建人自审、直接改终态或改删已批准政策都应失败。
+7. 开盘前通过Asset管理详情和数据库只读查询记录当前最高有效政策ID/版本、模式、限额、余额底线及
+   有效期，并与审批文件逐项比较。Option请求不会固定政策ID；若测试后出现更高有效版本，原验收立即失效。
+8. 目标环境按`docs/templates/option-platform-backstop-e2e.md`执行BST-001～BST-012，固定原始请求、
+   政策/UTC日用量/cover/流水/余额、20并发、响应丢失、告警送达和日终重算证据。仓库验收报告只能作基线。
+9. 紧急停止应先关闭Option运行开关、停止新增卖方风险，再由异人批准新的`DISABLED`版本；禁止修改旧政策、
+   删除cover/用量/流水或通过补资清零当日累计。恢复必须创建新的有限期版本并重新执行目标环境验收。
 
 ### 6.9 用户 kill switch
 
@@ -476,12 +493,15 @@ ORDER BY version;
    对账时，相关单元的所有入账指令必须保持不可运行；其他单元可以继续。
 3. `CURE_REQUIRED` 时按已批准通知渠道提示用户在 `cure_deadline` 前补足资产。
    自动任务只用原 `instruction_no` 重试，不得创建替代扣款或临时转入平台资金。
+   补资时长、截止边界和迟到补资只能取已`APPROVED`的
+   `docs/templates/option-physical-delivery-default-policy-approval.md`，事故现场不得口头变更。
 4. 截止后仍失败转 `DEFAULTED/MANUAL_REVIEW` 并停止自动重试。保存 Asset 返回、
    余额与流水、重试次数、首次失败/截止时间、用户通知回执和单元内已成功的资产腿。
 5. 用户补资且清算确认后，可从管理端重试原失败指令。若已有扣款成功，先确认该资金仍处于
    待交割清算状态；禁止对成功腿再次扣款或手工把状态改成成功。
 6. 当前安全基线不提供自动退款、自动放弃、罚金、拍卖或平台承接。需要这些经济处置时，
-   必须由产品、风控、清算和法务审批新的规则与会计分录后另行发布；事故现场不得临时决定。
+   必须由产品、风控、清算/财务、运营/客服、技术和合规/法务批准政策、会计分录和用户口径，
+   并在独立工程实现及预生产验收后另行发布；事故现场不得临时决定。
 7. 关闭条件：单元全部指令成功且对账、单元为 `COMPLETED`、批次计数正确、双方通知完成、
    日终两币种资产守恒、事件和人工操作证据完整。
 
@@ -638,7 +658,9 @@ ORDER BY version;
 4. 禁止为“消除告警”临时开放更新或直接改表。合法变更必须走对应追加版本、四眼审批、公司行动、
    合约系列修订或受控 halt/resume 流程。
 5. 应用 Counter 只覆盖经过 Option Admin RPC 的拒绝。直接 SQL 被触发器拒绝时，触发器内审计写入
-   会随失败事务回滚，必须从 MySQL audit/general log、堡垒机或等价数据库安全平台取证。
+   会随失败事务回滚，必须从 MySQL audit/general log、堡垒机或等价数据库安全平台取证；生产前按
+   `docs/templates/option-database-security-audit-acceptance.md`完成12类拒绝、合法对照、采集失败和
+   旁路成功演练，归档`APPROVED`副本及附件哈希。
 6. 关闭条件：确认没有数据变化；凭证、来源和工单已核实；必要时吊销会话/密钥；数据库审计无
    旁路成功；连续三个窗口无新增并归档安全结论。
 
@@ -647,6 +669,8 @@ ORDER BY version;
 1. 每个业务日按 `docs/templates/option-daily-fund-reconciliation.md` 使用同一 Asset 一致性
    快照和 Option 截止点，逐租户、逐币、逐用户钱包/平台账户范围复算。未完成快照只能标记
    `INCOMPLETE`，不得用缺数据算出0。
+   首次启用保险账本新语义或历史范围变化时，还必须完成
+   `docs/templates/option-insurance-fund-ledger-production-approval.md`，不能用日终零差额替代逐笔历史盘点。
 2. 非零差额以稳定键 `DAILY:{business_date}:{dimension_type}:{dimension_key}:2` 写入
    `t_option_reconciliation_issue(check_type=3,status=OPEN)`；
    `OptionDailyConservationMismatch` 任意触发按 SEV-1，暂停次日相关产品开放。
@@ -733,7 +757,8 @@ ORDER BY version;
 6. 恢复只解除halt，不绕过日历；若当前仍在计划闭市，交易准入继续拒绝。恢复后执行一笔可控新单/撤单，
    证明准入、冻结、释放和对账全链路正常；风险扫描、强平、行权、到期和结算在闭市/halt期间也必须持续运行。
 7. 仓库验收基线见 `docs/option-p2-001-trading-calendar-repository-acceptance.md`。当任一年度官方来源、
-   预生产并发证据、权限、通知或负责人签署缺失时，状态必须保持 `VERIFYING`，不得宣布生产就绪。
+   预生产并发证据、权限、通知或负责人签署缺失时，状态必须保持
+   `REPOSITORY_PASSED / PREPROD_BLOCKED`，不得宣布生产就绪。
 
 ## 7. 恢复验证
 
