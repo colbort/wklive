@@ -896,6 +896,14 @@ export default {
     '680': 'Settlements',
     '690': 'Accounts',
     '700': 'Bills',
+    '729': 'Option Operations',
+    '730': 'Asset Instructions',
+    '731': 'Reconciliation Issues',
+    '733': 'Option Trading Sessions',
+    '736': 'Trading Halts',
+    '748': 'Combo Parent Orders',
+    '761': 'Operations Overview',
+    '762': 'Trading Calendars',
 
     // ===== Staking =====
     '800': 'Staking',
@@ -1655,6 +1663,7 @@ export default {
     resumeReason: 'Enter the resume rationale',
     haltNo: 'Halt No.',
     haltSource: 'Source',
+    reason: 'Reason',
     cancelResult: 'Canceled / Total',
     startedAt: 'Started At',
     haltActive: 'Active',
