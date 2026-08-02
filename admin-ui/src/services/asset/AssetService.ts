@@ -10,6 +10,7 @@ import {
   apiDeleteAssetCoinConfig,
   apiGetAssetCoinConfig,
   apiGetPlatformAccount,
+  apiGetInsuranceCover,
   apiPageAssetCoinConfigs,
   apiGetUserAssetDetail,
   apiPageAssetFlows,
@@ -169,6 +170,18 @@ export type AdjustPlatformAccountReq = GetPlatformAccountReq & {
   direction: number
   amount: string
   remark?: string
+}
+
+export type InsuranceCover = {
+  platformAccountId: number
+  coin: string
+  liquidationId: number
+  liquidationNo: string
+  requestedAmount: string
+  coveredAmount: string
+  remainingAmount: string
+  status: number
+  createTimes: number
 }
 
 export type PlatformBackstopPolicy = {
@@ -436,6 +449,10 @@ export class AssetService {
 
   adjustPlatformAccount(params: AdjustPlatformAccountReq) {
     return apiAdjustPlatformAccount(params)
+  }
+
+  getInsuranceCover(params: { tenantId: number; liquidationNo: string }) {
+    return apiGetInsuranceCover(params)
   }
 
   createPlatformBackstopPolicy(params: CreatePlatformBackstopPolicyReq) {

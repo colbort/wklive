@@ -48,7 +48,7 @@ func NewCreateRechargeOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 // 创建充值订单
 func (l *CreateRechargeOrderLogic) CreateRechargeOrder(in *payment.CreateRechargeOrderReq) (*payment.CreateRechargeOrderResp, error) {
-	rechargeAmount, err := conv.ParseDecimalField(in.RechargeAmount)
+	rechargeAmount, err := conv.ParseBoundedDecimalField(in.RechargeAmount, 18, 18)
 	if err != nil || !rechargeAmount.IsPositive() {
 		return &payment.CreateRechargeOrderResp{
 			Base: helper.ErrResp(i18n.AmountMustBePositive, i18n.Translate(i18n.AmountMustBePositive, l.ctx)),

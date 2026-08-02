@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { onBeforeUnmount, ref, watch } from "vue";
 import ChatMessageBubble from "@/components/workbench/ChatMessageBubble.vue";
 import type { ChatMessage, ChatSession } from "@/types/chat";
 
@@ -26,19 +26,40 @@ const emit = defineEmits<{
   close: [];
   send: [content: string];
   sendImage: [file: File];
+  typing: [text: string];
   recallMessage: [message: ChatMessage];
   deleteMessage: [message: ChatMessage];
 }>();
 
 const draft = ref("");
 const imageInput = ref<HTMLInputElement>();
+let typingTimer: number | null = null;
+let typingStopTimer: number | null = null;
+
+function clearTypingTimers() {
+  if (typingTimer !== null) window.clearTimeout(typingTimer);
+  if (typingStopTimer !== null) window.clearTimeout(typingStopTimer);
+  typingTimer = null;
+  typingStopTimer = null;
+}
+
+function handleDraftInput() {
+  if (!props.canReply) return;
+  if (typingTimer !== null) window.clearTimeout(typingTimer);
+  if (typingStopTimer !== null) window.clearTimeout(typingStopTimer);
+  typingTimer = window.setTimeout(() => emit("typing", draft.value), 250);
+  typingStopTimer = window.setTimeout(() => emit("typing", ""), 1500);
+}
 
 watch(
   () => props.session?.sessionNo,
   () => {
+	clearTypingTimers();
     draft.value = "";
   },
 );
+
+onBeforeUnmount(clearTypingTimers);
 
 function isOwnAgentMessage(message: ChatMessage) {
   return (
@@ -191,6 +212,7 @@ function formatNickname(nickname: string) {
         :disabled="!canReply"
         :autosize="{ minRows: 3, maxRows: 4 }"
         :placeholder="activeClosed ? '会话已结束' : activeNeedsAccept ? '请先接待该会话' : '输入回复内容'"
+		@input="handleDraftInput"
         @keydown.ctrl.enter.prevent="submit"
       />
       <div class="composer-actions">

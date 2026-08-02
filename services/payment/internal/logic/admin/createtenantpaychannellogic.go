@@ -69,7 +69,7 @@ func (l *CreateTenantPayChannelLogic) CreateTenantPayChannel(in *payment.CreateT
 		return relationResp, nil
 	}
 
-	feeRate, err := conv.ParseDecimalField(in.FeeRate)
+	feeRate, err := conv.ParseBoundedDecimalField(in.FeeRate, 6, 4)
 	if err != nil {
 		return paymentErrorResp(l.ctx, i18n.InvalidPaymentDecimal), nil
 	}

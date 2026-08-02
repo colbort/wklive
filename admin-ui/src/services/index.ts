@@ -240,6 +240,7 @@ export type {
   GetPlatformAccountReq,
   SetPlatformAccountReq,
   AdjustPlatformAccountReq,
+  InsuranceCover,
   PlatformBackstopPolicy,
   CreatePlatformBackstopPolicyReq,
   ReviewPlatformBackstopPolicyReq,

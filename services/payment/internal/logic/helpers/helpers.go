@@ -71,7 +71,7 @@ func MarkRechargeOrderSuccessAndCredit(ctx context.Context, svcCtx *svc.ServiceC
 		return i18n.StatusError(ctx, i18n.OrderNotFound)
 	}
 	if payAmount.IsPositive() {
-		validatedAmount, err := conv.ParseDecimalField(payAmount.String())
+		validatedAmount, err := conv.ParseBoundedDecimalField(payAmount.String(), 18, 18)
 		if err != nil {
 			return err
 		}

@@ -163,8 +163,9 @@ func (l *MessagesLogic) subscribeStream(ctx context.Context, conn *ws.Connection
 			userState := event.GetUserState()
 			if userState != nil {
 				conn.Receivers.Delete(userState.SessionNo)
+				conn.ReceiverGuests.Delete(userState.SessionNo)
+				logx.Infof("user %d finish session, session no is %s", userState.UserId, userState.SessionNo)
 			}
-			logx.Infof("user %d finish session, session no is %s", userState.UserId, userState.SessionNo)
 		}
 
 		conn.SendEvent(event)
@@ -208,6 +209,7 @@ func (l *MessagesLogic) handleSendAgentMessage(ctx context.Context, conn *ws.Con
 		messageNo := ""
 		if resp.Data != nil && resp.Data.Receiver != nil {
 			conn.Receivers.Store(resp.Data.SessionNo, resp.Data.Receiver)
+			conn.ReceiverGuests.Store(resp.Data.SessionNo, payload.GetIsGuest())
 		}
 		if resp.Data != nil {
 			messageNo = resp.Data.MessageNo
@@ -236,6 +238,7 @@ func (l *MessagesLogic) handleAcceptChatSession(ctx context.Context, conn *ws.Co
 	// 加入接待用户
 	if resp.Data != nil {
 		conn.Receivers.Store(resp.Data.SessionNo, resp.Data.User)
+		conn.ReceiverGuests.Store(resp.Data.SessionNo, payload.GetIsGuest())
 		logx.Infof("user %d accepted, session no is %s\n", resp.Data.User.Id, resp.Data.SessionNo)
 	}
 	conn.SendEvent(&chat.ChatWsResponse{
@@ -281,15 +284,49 @@ func (l *MessagesLogic) handleCloseChatSession(ctx context.Context, conn *ws.Con
 }
 
 func (l *MessagesLogic) handleAgentTyping(ctx context.Context, conn *ws.Connection, payload *chat.ChatTypingPayload) {
-	conn.SendEvent(&chat.ChatWsResponse{
-		Code:      200,
-		Msg:       "",
-		EventType: chat.ChatEventType_CHAT_EVENT_TYPE_TYPING,
-		CreatedAt: utils.NowMillis(),
-		Payload: &chat.ChatWsResponse_Typing{
-			Typing: &chat.ChatTypingPayload{},
-		},
+	if conn == nil {
+		return
+	}
+	if payload == nil || strings.TrimSpace(payload.GetSessionNo()) == "" {
+		conn.SendError("invalid typing payload", "sessionNo is required")
+		return
+	}
+	receiverValue, ok := conn.Receivers.Load(payload.GetSessionNo())
+	if !ok {
+		conn.SendError("failed to send typing status", "session receiver is not available")
+		return
+	}
+	receiver, ok := receiverValue.(*chat.ChatMessageUser)
+	if !ok || receiver.GetId() == 0 {
+		conn.SendError("failed to send typing status", "invalid session receiver")
+		return
+	}
+	isGuest := false
+	if value, exists := conn.ReceiverGuests.Load(payload.GetSessionNo()); exists {
+		isGuest, _ = value.(bool)
+	}
+	payload.SenderId = conn.Sender.GetId()
+	payload.SenderType = chat.ChatSenderType_CHAT_SENDER_TYPE_AGENT
+	if payload.ActionTime == 0 {
+		payload.ActionTime = utils.NowMillis()
+	}
+	resp, err := l.svcCtx.ChatAdminCli.SendAgentTyping(ctx, &chat.SendAgentTypingReq{
+		MerchantId: conn.MerchantId,
+		UserId:     receiver.GetId(),
+		IsGuest:    isGuest,
+		Typing:     payload,
 	})
+	if err != nil {
+		conn.SendError("failed to send typing status", err.Error())
+		return
+	}
+	if resp == nil || resp.GetBase() == nil {
+		conn.SendError("failed to send typing status", "empty chat RPC response")
+		return
+	}
+	if resp.GetBase().GetCode() != 200 {
+		conn.SendError("failed to send typing status", resp.GetBase().GetMsg())
+	}
 }
 
 func (l *MessagesLogic) handleAgentMessageOperate(ctx context.Context, conn *ws.Connection, payload *chat.ChatMessageOperatePayload, operateType chat.ChatMessageOperateType) {

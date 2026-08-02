@@ -16,7 +16,7 @@ func TestPaymentAmountToTextUsesNaturalUnits(t *testing.T) {
 
 func TestParsePaymentAmountRejectsInvalidDatabaseDecimal(t *testing.T) {
 	for _, value := range []string{"abc", "1e3", "1000000000000000000", "1.1234567890123456789"} {
-		if _, err := conv.ParseDecimalField(value); err == nil {
+		if _, err := conv.ParseBoundedDecimalField(value, 18, 18); err == nil {
 			t.Fatalf("expected %q to be rejected", value)
 		}
 	}

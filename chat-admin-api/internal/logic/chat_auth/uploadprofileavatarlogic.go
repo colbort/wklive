@@ -5,6 +5,7 @@ package chat_auth
 
 import (
 	"context"
+	"errors"
 
 	"chat-admin-api/internal/svc"
 	"chat-admin-api/internal/types"
@@ -27,7 +28,8 @@ func NewUploadProfileAvatarLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *UploadProfileAvatarLogic) UploadProfileAvatar() (resp *types.ChatAdminProfileResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	// The multipart handler owns file validation/storage and then calls
+	// UpdateProfileLogic. This generated no-argument logic must never report a
+	// zero-value success if it is invoked directly.
+	return nil, errors.New("profile avatar upload must use the multipart HTTP handler")
 }

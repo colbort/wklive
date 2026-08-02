@@ -63,6 +63,9 @@ export const liquidityApi = {
   providers: (params: PageQuery) =>
     request.get<unknown, ListResponse>("/providers", { params }),
   createProvider: (data: Record<string, unknown>) => request.post("/providers", data),
+  providerDetail: (id: number) => request.get(`/providers/${id}`),
+  updateProvider: (id: number, data: Record<string, unknown>) =>
+    request.put(`/providers/${id}`, data),
   provisionInternalProvider: (data: ProvisionInternalProviderRequest) =>
     request.post("/providers/provision", data),
   testProvider: (id: number) => request.post(`/providers/${id}/test`),
@@ -83,12 +86,40 @@ export const liquidityApi = {
   ) => request.post(`/symbol-configs/${id}/${action}`, { version }),
   quoteOrders: (params: PageQuery) =>
     request.get<unknown, ListResponse>("/quote-orders", { params }),
+  cancelAllQuoteOrders: (id: number, data: Record<string, unknown>) =>
+    request.post(`/symbol-configs/${id}/cancel-quotes`, data),
+  quoteCycles: (params: Record<string, unknown>) =>
+    request.get<unknown, ListResponse>("/quote-cycles", { params }),
   externalOrders: (params: PageQuery) =>
     request.get<unknown, ListResponse>("/external-orders", { params }),
+  externalFills: (params: Record<string, unknown>) =>
+    request.get<unknown, ListResponse>("/external-fills", { params }),
+  cancelExternalOrder: (id: number, data: Record<string, unknown>) =>
+    request.post(`/external-orders/${id}/cancel`, data),
   hedgeTasks: (params: PageQuery) =>
     request.get<unknown, ListResponse>("/hedge-tasks", { params }),
+  createManualHedge: (data: Record<string, unknown>) =>
+    request.post("/hedge-tasks/manual", data),
+  cancelHedgeTask: (id: number, data: Record<string, unknown>) =>
+    request.post(`/hedge-tasks/${id}/cancel`, data),
+  retryHedgeTask: (id: number, data: Record<string, unknown>) =>
+    request.post(`/hedge-tasks/${id}/retry`, data),
+  inventorySnapshots: (params: Record<string, unknown>) =>
+    request.get<unknown, ListResponse>("/inventory-snapshots", { params }),
+  latestInventory: (params: Record<string, unknown>) =>
+    request.get("/inventory-snapshots/latest", { params }),
   riskEvents: (params: PageQuery) =>
     request.get<unknown, ListResponse>("/risk-events", { params }),
+  resolveRiskEvent: (id: number, data: Record<string, unknown>) =>
+    request.post(`/risk-events/${id}/resolve`, data),
   reconcileBatches: (params: PageQuery) =>
     request.get<unknown, ListResponse>("/reconcile-batches", { params }),
+  runReconcile: (data: Record<string, unknown>) =>
+    request.post("/reconcile-batches/run", data),
+  reconcileDetails: (batchId: number, params: Record<string, unknown> = {}) =>
+    request.get<unknown, ListResponse>(`/reconcile-batches/${batchId}/details`, {
+      params,
+    }),
+  resolveReconcileDifference: (id: number, data: Record<string, unknown>) =>
+    request.post(`/reconcile-differences/${id}/resolve`, data),
 };

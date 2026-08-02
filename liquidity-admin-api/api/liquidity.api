@@ -57,6 +57,28 @@ type CreateProviderReq {
 	remark             string `json:"remark,optional"`
 }
 
+type UpdateProviderReq {
+	id                 int64  `path:"id"`
+	providerName       string `json:"providerName"`
+	tradeUserId        int64  `json:"tradeUserId,optional"`
+	venueCode          string `json:"venueCode,optional"`
+	environment        int32  `json:"environment"`
+	credentialRef      string `json:"credentialRef,optional"`
+	accountRef         string `json:"accountRef,optional"`
+	rateLimitPerSecond int32  `json:"rateLimitPerSecond,optional"`
+	remark             string `json:"remark,optional"`
+	version            int64  `json:"version"`
+}
+
+type ProviderDetailReq {
+	id int64 `path:"id"`
+}
+
+type ProviderDetailResp {
+	RespBase
+	data ProviderItem `json:"data"`
+}
+
 type ProvisionInternalProviderReq {
 	symbolId     int64  `json:"symbolId"`
 	providerCode string `json:"providerCode"`
@@ -238,6 +260,46 @@ type SymbolActionReq {
 	reason  string `json:"reason,optional"`
 }
 
+type CancelAllQuoteOrdersReq {
+	id      int64  `path:"id"`
+	version int64  `json:"version,optional"`
+	reason  string `json:"reason"`
+}
+
+type QuoteCycleQuery {
+	configId int64 `form:"configId,optional"`
+	symbolId int64 `form:"symbolId,optional"`
+	status   int32 `form:"status,optional"`
+	startTime int64 `form:"startTime,optional"`
+	endTime int64 `form:"endTime,optional"`
+	cursor int64 `form:"cursor,optional"`
+	limit int32 `form:"limit,optional"`
+}
+
+type QuoteCycleItem {
+	id int64 `json:"id"`
+	cycleNo string `json:"cycleNo"`
+	configId int64 `json:"configId"`
+	symbolId int64 `json:"symbolId"`
+	referencePrice string `json:"referencePrice"`
+	referenceSource string `json:"referenceSource"`
+	referenceTime int64 `json:"referenceTime"`
+	targetBidCount int32 `json:"targetBidCount"`
+	targetAskCount int32 `json:"targetAskCount"`
+	placedBidCount int32 `json:"placedBidCount"`
+	placedAskCount int32 `json:"placedAskCount"`
+	status int32 `json:"status"`
+	lastErrorMsg string `json:"lastErrorMsg"`
+	startedAt int64 `json:"startedAt"`
+	finishedAt int64 `json:"finishedAt"`
+}
+
+type QuoteCycleListResp {
+	RespBase
+	data []QuoteCycleItem `json:"data"`
+	page PageMeta `json:"page"`
+}
+
 type OrderItem {
 	id              int64  `json:"id"`
 	quoteNo         string `json:"quoteNo"`
@@ -267,21 +329,136 @@ type OrderQuery {
 	side       int32 `form:"side,optional"`
 }
 
+type ExternalFillQuery {
+	providerId int64 `form:"providerId,optional"`
+	externalOrderId int64 `form:"externalOrderId,optional"`
+	settlementStatus int32 `form:"settlementStatus,optional"`
+	startTime int64 `form:"startTime,optional"`
+	endTime int64 `form:"endTime,optional"`
+	cursor int64 `form:"cursor,optional"`
+	limit int32 `form:"limit,optional"`
+}
+
+type ExternalFillItem {
+	id int64 `json:"id"`
+	providerId int64 `json:"providerId"`
+	externalOrderId int64 `json:"externalOrderId"`
+	fillNo string `json:"fillNo"`
+	externalTradeId string `json:"externalTradeId"`
+	side int32 `json:"side"`
+	price string `json:"price"`
+	qty string `json:"qty"`
+	amount string `json:"amount"`
+	feeAmount string `json:"feeAmount"`
+	feeAsset string `json:"feeAsset"`
+	tradeTime int64 `json:"tradeTime"`
+	settlementStatus int32 `json:"settlementStatus"`
+	retryCount int32 `json:"retryCount"`
+	lastErrorMsg string `json:"lastErrorMsg"`
+}
+
+type ExternalFillListResp {
+	RespBase
+	data []ExternalFillItem `json:"data"`
+	page PageMeta `json:"page"`
+}
+
+type CancelExternalOrderReq {
+	id int64 `path:"id"`
+	version int64 `json:"version"`
+	reason string `json:"reason"`
+}
+
 type HedgeItem {
 	id           int64  `json:"id"`
 	hedgeNo      string `json:"hedgeNo"`
 	configId     int64  `json:"configId"`
 	providerId   int64  `json:"providerId"`
+	symbolId     int64  `json:"symbolId"`
 	targetQty    string `json:"targetQty"`
 	executedQty  string `json:"executedQty"`
+	avgPrice     string `json:"avgPrice"`
 	status       int32  `json:"status"`
+	retryCount   int32  `json:"retryCount"`
 	lastErrorMsg string `json:"lastErrorMsg"`
+	version      int64  `json:"version"`
 }
 
 type HedgeListResp {
 	RespBase
 	data []HedgeItem `json:"data"`
 	page PageMeta    `json:"page"`
+}
+
+type CreateManualHedgeReq {
+	configId int64 `json:"configId"`
+	providerId int64 `json:"providerId"`
+	side int32 `json:"side"`
+	qty string `json:"qty" validate:"required,decimal_gt_zero,decimal_36_18"`
+	targetExposure string `json:"targetExposure" validate:"decimal_36_18"`
+	remark string `json:"remark,optional"`
+}
+
+type HedgeTaskResp {
+	RespBase
+	data HedgeItem `json:"data"`
+}
+
+type HedgeTaskActionReq {
+	id int64 `path:"id"`
+	version int64 `json:"version"`
+	reason string `json:"reason,optional"`
+}
+
+type InventoryQuery {
+	configId int64 `form:"configId,optional"`
+	providerId int64 `form:"providerId,optional"`
+	source int32 `form:"source,optional"`
+	startTime int64 `form:"startTime,optional"`
+	endTime int64 `form:"endTime,optional"`
+	cursor int64 `form:"cursor,optional"`
+	limit int32 `form:"limit,optional"`
+}
+
+type LatestInventoryReq {
+	configId int64 `form:"configId"`
+	providerId int64 `form:"providerId,optional"`
+	source int32 `form:"source,optional"`
+}
+
+type InventoryItem {
+	id int64 `json:"id"`
+	snapshotNo string `json:"snapshotNo"`
+	configId int64 `json:"configId"`
+	providerId int64 `json:"providerId"`
+	symbolId int64 `json:"symbolId"`
+	baseAsset string `json:"baseAsset"`
+	quoteAsset string `json:"quoteAsset"`
+	baseTotal string `json:"baseTotal"`
+	baseAvailable string `json:"baseAvailable"`
+	baseFrozen string `json:"baseFrozen"`
+	quoteTotal string `json:"quoteTotal"`
+	quoteAvailable string `json:"quoteAvailable"`
+	quoteFrozen string `json:"quoteFrozen"`
+	positionQty string `json:"positionQty"`
+	pendingBuyQty string `json:"pendingBuyQty"`
+	pendingSellQty string `json:"pendingSellQty"`
+	netExposure string `json:"netExposure"`
+	referencePrice string `json:"referencePrice"`
+	exposureNotional string `json:"exposureNotional"`
+	source int32 `json:"source"`
+	snapshotTime int64 `json:"snapshotTime"`
+}
+
+type InventoryListResp {
+	RespBase
+	data []InventoryItem `json:"data"`
+	page PageMeta `json:"page"`
+}
+
+type InventoryResp {
+	RespBase
+	data InventoryItem `json:"data"`
 }
 
 type RiskItem {
@@ -301,6 +478,12 @@ type RiskListResp {
 	page PageMeta   `json:"page"`
 }
 
+type ResolveRiskEventReq {
+	id int64 `path:"id"`
+	status int32 `json:"status"`
+	resolution string `json:"resolution"`
+}
+
 type ReconcileItem {
 	id              int64  `json:"id"`
 	batchNo         string `json:"batchNo"`
@@ -316,6 +499,54 @@ type ReconcileListResp {
 	RespBase
 	data []ReconcileItem `json:"data"`
 	page PageMeta        `json:"page"`
+}
+
+type RunReconcileReq {
+	providerId int64 `json:"providerId"`
+	reconcileType int32 `json:"reconcileType"`
+	windowStart int64 `json:"windowStart"`
+	windowEnd int64 `json:"windowEnd"`
+}
+
+type ReconcileResp {
+	RespBase
+	data ReconcileItem `json:"data"`
+}
+
+type ReconcileDetailQuery {
+	batchId int64 `path:"batchId"`
+	differenceType int32 `form:"differenceType,optional"`
+	status int32 `form:"status,optional"`
+	cursor int64 `form:"cursor,optional"`
+	limit int32 `form:"limit,optional"`
+}
+
+type ReconcileDetailItem {
+	id int64 `json:"id"`
+	batchId int64 `json:"batchId"`
+	differenceNo string `json:"differenceNo"`
+	differenceType int32 `json:"differenceType"`
+	businessType string `json:"businessType"`
+	localReference string `json:"localReference"`
+	externalReference string `json:"externalReference"`
+	localValue string `json:"localValue"`
+	externalValue string `json:"externalValue"`
+	status int32 `json:"status"`
+	resolution string `json:"resolution"`
+	operatorId int64 `json:"operatorId"`
+	resolvedAt int64 `json:"resolvedAt"`
+}
+
+type ReconcileDetailListResp {
+	RespBase
+	data []ReconcileDetailItem `json:"data"`
+	page PageMeta `json:"page"`
+}
+
+type ResolveReconcileDifferenceReq {
+	id int64 `path:"id"`
+	status int32 `json:"status"`
+	resolution string `json:"resolution"`
 }
 
 @server (
@@ -335,6 +566,12 @@ service liquidityAdmin {
 
 	@handler ProviderCreate
 	post /providers (CreateProviderReq) returns (RespBase)
+
+	@handler ProviderUpdate
+	put /providers/:id (UpdateProviderReq) returns (ProviderDetailResp)
+
+	@handler ProviderDetail
+	get /providers/:id (ProviderDetailReq) returns (ProviderDetailResp)
 
 	@handler ProviderProvision
 	post /providers/provision (ProvisionInternalProviderReq) returns (RespBase)
@@ -363,16 +600,54 @@ service liquidityAdmin {
 	@handler QuoteOrderList
 	get /quote-orders (OrderQuery) returns (OrderListResp)
 
+	@handler CancelAllQuoteOrders
+	post /symbol-configs/:id/cancel-quotes (CancelAllQuoteOrdersReq) returns (RespBase)
+
+	@handler QuoteCycleList
+	get /quote-cycles (QuoteCycleQuery) returns (QuoteCycleListResp)
+
 	@handler ExternalOrderList
 	get /external-orders (OrderQuery) returns (OrderListResp)
+
+	@handler ExternalFillList
+	get /external-fills (ExternalFillQuery) returns (ExternalFillListResp)
+
+	@handler CancelExternalOrder
+	post /external-orders/:id/cancel (CancelExternalOrderReq) returns (RespBase)
 
 	@handler HedgeTaskList
 	get /hedge-tasks (PageQuery) returns (HedgeListResp)
 
+	@handler CreateManualHedge
+	post /hedge-tasks/manual (CreateManualHedgeReq) returns (HedgeTaskResp)
+
+	@handler CancelHedgeTask
+	post /hedge-tasks/:id/cancel (HedgeTaskActionReq) returns (RespBase)
+
+	@handler RetryHedgeTask
+	post /hedge-tasks/:id/retry (HedgeTaskActionReq) returns (RespBase)
+
+	@handler InventorySnapshotList
+	get /inventory-snapshots (InventoryQuery) returns (InventoryListResp)
+
+	@handler LatestInventory
+	get /inventory-snapshots/latest (LatestInventoryReq) returns (InventoryResp)
+
 	@handler RiskEventList
 	get /risk-events (PageQuery) returns (RiskListResp)
 
+	@handler ResolveRiskEvent
+	post /risk-events/:id/resolve (ResolveRiskEventReq) returns (RespBase)
+
 	@handler ReconcileBatchList
 	get /reconcile-batches (PageQuery) returns (ReconcileListResp)
-}
 
+	@handler RunReconcile
+	post /reconcile-batches/run (RunReconcileReq) returns (ReconcileResp)
+
+	@handler ReconcileDetailList
+	get /reconcile-batches/:batchId/details (ReconcileDetailQuery) returns (ReconcileDetailListResp)
+
+	@handler ResolveReconcileDifference
+	post /reconcile-differences/:id/resolve (ResolveReconcileDifferenceReq) returns (RespBase)
+}

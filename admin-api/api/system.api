@@ -31,6 +31,10 @@ type SysUserListResp {
 	data []SysUserItem `json:"data"`
 }
 
+type SysUserDetailReq {
+	id int64 `form:"id"`
+}
+
 type SysUserDetailResp {
 	RespBase
 	data SysUserItem `json:"data"`
@@ -696,7 +700,7 @@ service admin {
 	get /users (SysUserListReq) returns (SysUserListResp)
 
 	@handler SysUserDetail
-	get /users/detail returns (SysUserDetailResp)
+	get /users/detail (SysUserDetailReq) returns (SysUserDetailResp)
 
 	@handler SysUserCreate
 	post /users (SysUserCreateReq) returns (RespBase)
@@ -884,4 +888,3 @@ service admin {
 	@handler SysChatMerchantDetail
 	get /chat-merchant/detail (SysChatMerchantDetailReq) returns (SysChatMerchantDetailResp)
 }
-

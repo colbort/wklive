@@ -35,7 +35,7 @@ func validNonNegativeRange(minValue, maxValue int64) bool {
 }
 
 func parseNonNegativeAmount(value string) (decimal.Decimal, error) {
-	amount, err := conv.ParseDecimalField(value)
+	amount, err := conv.ParseBoundedDecimalField(value, 18, 18)
 	if err != nil || amount.IsNegative() {
 		return decimal.Zero, errors.New("invalid non-negative payment amount")
 	}

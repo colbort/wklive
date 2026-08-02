@@ -308,7 +308,7 @@ func createCryptoRechargeTx(ctx context.Context, svcCtx *svc.ServiceContext, in 
 		(in.RequiredConfirmCount > 0 && in.ConfirmCount > in.RequiredConfirmCount) {
 		return paymentErrorResp(ctx, i18n.InvalidPaymentAmountRange), nil
 	}
-	amount, err := conv.ParseDecimalField(in.Amount)
+	amount, err := conv.ParseBoundedDecimalField(in.Amount, 18, 18)
 	if err != nil {
 		return paymentErrorResp(ctx, i18n.InvalidPaymentDecimal), nil
 	}

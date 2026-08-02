@@ -1515,6 +1515,11 @@ type GetFundingSettlementListResp struct {
 	Data []ContractFundingSettlement `json:"data"`
 }
 
+type GetInsuranceCoverReq struct {
+	TenantId      int64  `form:"tenantId"`
+	LiquidationNo string `form:"liquidationNo"`
+}
+
 type GetInsuranceFundAccountListReq struct {
 	PageReq
 	TenantId    int64  `form:"tenantId,optional"`
@@ -2189,6 +2194,19 @@ type InitTenantMarketDisplayReq struct {
 type InitTenantMarketDisplayResp struct {
 	RespBase
 	Data InitTenantMarketDisplayData `json:"data"`
+}
+
+type InsuranceCoverResp struct {
+	RespBase
+	PlatformAccountId int64  `json:"platformAccountId"`
+	Coin              string `json:"coin"`
+	LiquidationId     int64  `json:"liquidationId"`
+	LiquidationNo     string `json:"liquidationNo"`
+	RequestedAmount   string `json:"requestedAmount"`
+	CoveredAmount     string `json:"coveredAmount"`
+	RemainingAmount   string `json:"remainingAmount"`
+	Status            int64  `json:"status"`
+	CreateTimes       int64  `json:"createTimes"`
 }
 
 type InsuranceFundAccount struct {
@@ -5781,6 +5799,10 @@ type SysUserCreateReq struct {
 
 type SysUserDeleteReq struct {
 	Id int64 `path:"id"`
+}
+
+type SysUserDetailReq struct {
+	Id int64 `form:"id"`
 }
 
 type SysUserDetailResp struct {

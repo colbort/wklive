@@ -6,6 +6,7 @@ package trade
 import (
 	"context"
 
+	"wklive/admin-api/internal/logicutil"
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
 
@@ -27,7 +28,5 @@ func NewGetContractUserConfigLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *GetContractUserConfigLogic) GetContractUserConfig(req *types.GetContractUserConfigReq) (resp *types.GetContractUserConfigResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	return logicutil.Proxy[types.GetContractUserConfigResp](l.ctx, req, l.svcCtx.TradeCli.GetContractUserConfig)
 }

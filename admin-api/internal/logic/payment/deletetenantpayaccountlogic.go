@@ -27,7 +27,5 @@ func NewDeleteTenantPayAccountLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 func (l *DeleteTenantPayAccountLogic) DeleteTenantPayAccount(req *types.DeleteTenantPayAccountReq) (resp *types.RespBase, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	return unsupportedDelete("tenant pay account"), nil
 }

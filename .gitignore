@@ -3,6 +3,9 @@ __debug_bin*
 
 yarn.lock
 package-lock.json
+!admin-ui/package-lock.json
+!chat-admin-ui/package-lock.json
+!liquidity-admin-ui/package-lock.json
 
 avatars/
 

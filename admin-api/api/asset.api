@@ -384,6 +384,24 @@ type AdjustPlatformAccountReq {
 	remark      string `json:"remark,optional"`
 }
 
+type GetInsuranceCoverReq {
+	tenantId     int64  `form:"tenantId"`
+	liquidationNo string `form:"liquidationNo"`
+}
+
+type InsuranceCoverResp {
+	RespBase
+	platformAccountId int64  `json:"platformAccountId"`
+	coin              string `json:"coin"`
+	liquidationId     int64  `json:"liquidationId"`
+	liquidationNo     string `json:"liquidationNo"`
+	requestedAmount   string `json:"requestedAmount"`
+	coveredAmount     string `json:"coveredAmount"`
+	remainingAmount   string `json:"remainingAmount"`
+	status            int64  `json:"status"`
+	createTimes       int64  `json:"createTimes"`
+}
+
 // PlatformBackstopPolicy is an immutable, four-eyes-reviewed runtime funding policy.
 // mode: 1 disabled, 2 prefunded, 3 credit floor.
 // status: 1 draft, 2 approved, 3 rejected.
@@ -515,6 +533,9 @@ service admin {
 
 	@handler AdjustPlatformAccount
 	post /platform-accounts/adjust (AdjustPlatformAccountReq) returns (PlatformAccountResp)
+
+	@handler GetInsuranceCover
+	get /insurance-covers (GetInsuranceCoverReq) returns (InsuranceCoverResp)
 
 	@handler CreatePlatformBackstopPolicy
 	post /platform-backstop-policies (CreatePlatformBackstopPolicyReq) returns (PlatformBackstopPolicyResp)

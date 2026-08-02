@@ -506,7 +506,6 @@ function handleUserLeaveWsEvent(payload: ChatUserStatePayload) {
 }
 
 function handleMessageWsEvent(payload: ChatMessage) {
-  console.log("收到消息，消息编号：" + payload.messageNo);
   applyWsSessionMessage(payload);
 }
 
@@ -989,6 +988,20 @@ function send(value: string) {
   });
 }
 
+function sendTyping(text: string) {
+  const sessionNo = activeSession.value?.sessionNo;
+  if (!sessionNo || !canReply.value) return false;
+  return sendWsEvent(
+    createChatWsRequest(chatEventType.TYPING, "typing", {
+      sessionNo,
+      senderId: userId.value,
+      senderType: 2,
+      text: text ? "客服正在输入..." : "",
+      actionTime: Date.now(),
+    }),
+  );
+}
+
 async function sendImage(file: File) {
   if (!canSendResourceMessage()) {
     return false;
@@ -1228,6 +1241,7 @@ function buildAcceptSessionPayload(
       @close="closeSession"
       @send="send"
       @send-image="sendImage"
+	  @typing="sendTyping"
       @recall-message="recallMessage"
       @delete-message="deleteMessage"
     />

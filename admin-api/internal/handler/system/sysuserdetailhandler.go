@@ -9,12 +9,19 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"wklive/admin-api/internal/logic/system"
 	"wklive/admin-api/internal/svc"
+	"wklive/admin-api/internal/types"
 )
 
 func SysUserDetailHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var req types.SysUserDetailReq
+		if err := httpx.Parse(r, &req); err != nil {
+			httpx.ErrorCtx(r.Context(), w, err)
+			return
+		}
+
 		l := system.NewSysUserDetailLogic(r.Context(), svcCtx)
-		resp, err := l.SysUserDetail()
+		resp, err := l.SysUserDetail(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

@@ -6,6 +6,7 @@ package system
 import (
 	"context"
 
+	"wklive/admin-api/internal/logicutil"
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
 
@@ -26,8 +27,6 @@ func NewSysUserDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sys
 	}
 }
 
-func (l *SysUserDetailLogic) SysUserDetail() (resp *types.SysUserDetailResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+func (l *SysUserDetailLogic) SysUserDetail(req *types.SysUserDetailReq) (resp *types.SysUserDetailResp, err error) {
+	return logicutil.Proxy[types.SysUserDetailResp](l.ctx, req, l.svcCtx.SystemCli.SysUserDetail)
 }

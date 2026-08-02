@@ -6,6 +6,7 @@ package trade
 import (
 	"context"
 
+	"wklive/admin-api/internal/logicutil"
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
 
@@ -27,7 +28,5 @@ func NewGetMarginSnapshotListAdminLogic(ctx context.Context, svcCtx *svc.Service
 }
 
 func (l *GetMarginSnapshotListAdminLogic) GetMarginSnapshotListAdmin(req *types.GetMarginSnapshotListAdminReq) (resp *types.GetMarginSnapshotListAdminResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	return logicutil.Proxy[types.GetMarginSnapshotListAdminResp](l.ctx, req, l.svcCtx.TradeCli.GetMarginSnapshotListAdmin)
 }

@@ -3,6 +3,18 @@
 
 package types
 
+type CancelAllQuoteOrdersReq struct {
+	Id      int64  `path:"id"`
+	Version int64  `json:"version,optional"`
+	Reason  string `json:"reason"`
+}
+
+type CancelExternalOrderReq struct {
+	Id      int64  `path:"id"`
+	Version int64  `json:"version"`
+	Reason  string `json:"reason"`
+}
+
 type ConfigOptionsResp struct {
 	RespBase
 	Symbols      []ConfigSymbolOption      `json:"symbols"`
@@ -34,6 +46,15 @@ type ConfigTradingUserOption struct {
 	Username    string `json:"username"`
 }
 
+type CreateManualHedgeReq struct {
+	ConfigId       int64  `json:"configId"`
+	ProviderId     int64  `json:"providerId"`
+	Side           int32  `json:"side"`
+	Qty            string `json:"qty" validate:"required,decimal_gt_zero,decimal_36_18"`
+	TargetExposure string `json:"targetExposure" validate:"decimal_36_18"`
+	Remark         string `json:"remark,optional"`
+}
+
 type CreateProviderReq struct {
 	ProviderCode       string `json:"providerCode"`
 	ProviderName       string `json:"providerName"`
@@ -56,21 +77,121 @@ type DashboardResp struct {
 	PendingRisks     int64 `json:"pendingRisks"`
 }
 
+type ExternalFillItem struct {
+	Id               int64  `json:"id"`
+	ProviderId       int64  `json:"providerId"`
+	ExternalOrderId  int64  `json:"externalOrderId"`
+	FillNo           string `json:"fillNo"`
+	ExternalTradeId  string `json:"externalTradeId"`
+	Side             int32  `json:"side"`
+	Price            string `json:"price"`
+	Qty              string `json:"qty"`
+	Amount           string `json:"amount"`
+	FeeAmount        string `json:"feeAmount"`
+	FeeAsset         string `json:"feeAsset"`
+	TradeTime        int64  `json:"tradeTime"`
+	SettlementStatus int32  `json:"settlementStatus"`
+	RetryCount       int32  `json:"retryCount"`
+	LastErrorMsg     string `json:"lastErrorMsg"`
+}
+
+type ExternalFillListResp struct {
+	RespBase
+	Data []ExternalFillItem `json:"data"`
+	Page PageMeta           `json:"page"`
+}
+
+type ExternalFillQuery struct {
+	ProviderId       int64 `form:"providerId,optional"`
+	ExternalOrderId  int64 `form:"externalOrderId,optional"`
+	SettlementStatus int32 `form:"settlementStatus,optional"`
+	StartTime        int64 `form:"startTime,optional"`
+	EndTime          int64 `form:"endTime,optional"`
+	Cursor           int64 `form:"cursor,optional"`
+	Limit            int32 `form:"limit,optional"`
+}
+
 type HedgeItem struct {
 	Id           int64  `json:"id"`
 	HedgeNo      string `json:"hedgeNo"`
 	ConfigId     int64  `json:"configId"`
 	ProviderId   int64  `json:"providerId"`
+	SymbolId     int64  `json:"symbolId"`
 	TargetQty    string `json:"targetQty"`
 	ExecutedQty  string `json:"executedQty"`
+	AvgPrice     string `json:"avgPrice"`
 	Status       int32  `json:"status"`
+	RetryCount   int32  `json:"retryCount"`
 	LastErrorMsg string `json:"lastErrorMsg"`
+	Version      int64  `json:"version"`
 }
 
 type HedgeListResp struct {
 	RespBase
 	Data []HedgeItem `json:"data"`
 	Page PageMeta    `json:"page"`
+}
+
+type HedgeTaskActionReq struct {
+	Id      int64  `path:"id"`
+	Version int64  `json:"version"`
+	Reason  string `json:"reason,optional"`
+}
+
+type HedgeTaskResp struct {
+	RespBase
+	Data HedgeItem `json:"data"`
+}
+
+type InventoryItem struct {
+	Id               int64  `json:"id"`
+	SnapshotNo       string `json:"snapshotNo"`
+	ConfigId         int64  `json:"configId"`
+	ProviderId       int64  `json:"providerId"`
+	SymbolId         int64  `json:"symbolId"`
+	BaseAsset        string `json:"baseAsset"`
+	QuoteAsset       string `json:"quoteAsset"`
+	BaseTotal        string `json:"baseTotal"`
+	BaseAvailable    string `json:"baseAvailable"`
+	BaseFrozen       string `json:"baseFrozen"`
+	QuoteTotal       string `json:"quoteTotal"`
+	QuoteAvailable   string `json:"quoteAvailable"`
+	QuoteFrozen      string `json:"quoteFrozen"`
+	PositionQty      string `json:"positionQty"`
+	PendingBuyQty    string `json:"pendingBuyQty"`
+	PendingSellQty   string `json:"pendingSellQty"`
+	NetExposure      string `json:"netExposure"`
+	ReferencePrice   string `json:"referencePrice"`
+	ExposureNotional string `json:"exposureNotional"`
+	Source           int32  `json:"source"`
+	SnapshotTime     int64  `json:"snapshotTime"`
+}
+
+type InventoryListResp struct {
+	RespBase
+	Data []InventoryItem `json:"data"`
+	Page PageMeta        `json:"page"`
+}
+
+type InventoryQuery struct {
+	ConfigId   int64 `form:"configId,optional"`
+	ProviderId int64 `form:"providerId,optional"`
+	Source     int32 `form:"source,optional"`
+	StartTime  int64 `form:"startTime,optional"`
+	EndTime    int64 `form:"endTime,optional"`
+	Cursor     int64 `form:"cursor,optional"`
+	Limit      int32 `form:"limit,optional"`
+}
+
+type InventoryResp struct {
+	RespBase
+	Data InventoryItem `json:"data"`
+}
+
+type LatestInventoryReq struct {
+	ConfigId   int64 `form:"configId"`
+	ProviderId int64 `form:"providerId,optional"`
+	Source     int32 `form:"source,optional"`
 }
 
 type LiquidityStrategyLevel struct {
@@ -211,6 +332,15 @@ type ProviderActionReq struct {
 	Id int64 `path:"id"`
 }
 
+type ProviderDetailReq struct {
+	Id int64 `path:"id"`
+}
+
+type ProviderDetailResp struct {
+	RespBase
+	Data ProviderItem `json:"data"`
+}
+
 type ProviderItem struct {
 	Id                   int64  `json:"id"`
 	ProviderCode         string `json:"providerCode"`
@@ -251,6 +381,70 @@ type ProvisionInternalProviderReq struct {
 	Remark       string `json:"remark,optional"`
 }
 
+type QuoteCycleItem struct {
+	Id              int64  `json:"id"`
+	CycleNo         string `json:"cycleNo"`
+	ConfigId        int64  `json:"configId"`
+	SymbolId        int64  `json:"symbolId"`
+	ReferencePrice  string `json:"referencePrice"`
+	ReferenceSource string `json:"referenceSource"`
+	ReferenceTime   int64  `json:"referenceTime"`
+	TargetBidCount  int32  `json:"targetBidCount"`
+	TargetAskCount  int32  `json:"targetAskCount"`
+	PlacedBidCount  int32  `json:"placedBidCount"`
+	PlacedAskCount  int32  `json:"placedAskCount"`
+	Status          int32  `json:"status"`
+	LastErrorMsg    string `json:"lastErrorMsg"`
+	StartedAt       int64  `json:"startedAt"`
+	FinishedAt      int64  `json:"finishedAt"`
+}
+
+type QuoteCycleListResp struct {
+	RespBase
+	Data []QuoteCycleItem `json:"data"`
+	Page PageMeta         `json:"page"`
+}
+
+type QuoteCycleQuery struct {
+	ConfigId  int64 `form:"configId,optional"`
+	SymbolId  int64 `form:"symbolId,optional"`
+	Status    int32 `form:"status,optional"`
+	StartTime int64 `form:"startTime,optional"`
+	EndTime   int64 `form:"endTime,optional"`
+	Cursor    int64 `form:"cursor,optional"`
+	Limit     int32 `form:"limit,optional"`
+}
+
+type ReconcileDetailItem struct {
+	Id                int64  `json:"id"`
+	BatchId           int64  `json:"batchId"`
+	DifferenceNo      string `json:"differenceNo"`
+	DifferenceType    int32  `json:"differenceType"`
+	BusinessType      string `json:"businessType"`
+	LocalReference    string `json:"localReference"`
+	ExternalReference string `json:"externalReference"`
+	LocalValue        string `json:"localValue"`
+	ExternalValue     string `json:"externalValue"`
+	Status            int32  `json:"status"`
+	Resolution        string `json:"resolution"`
+	OperatorId        int64  `json:"operatorId"`
+	ResolvedAt        int64  `json:"resolvedAt"`
+}
+
+type ReconcileDetailListResp struct {
+	RespBase
+	Data []ReconcileDetailItem `json:"data"`
+	Page PageMeta              `json:"page"`
+}
+
+type ReconcileDetailQuery struct {
+	BatchId        int64 `path:"batchId"`
+	DifferenceType int32 `form:"differenceType,optional"`
+	Status         int32 `form:"status,optional"`
+	Cursor         int64 `form:"cursor,optional"`
+	Limit          int32 `form:"limit,optional"`
+}
+
 type ReconcileItem struct {
 	Id              int64  `json:"id"`
 	BatchNo         string `json:"batchNo"`
@@ -266,6 +460,23 @@ type ReconcileListResp struct {
 	RespBase
 	Data []ReconcileItem `json:"data"`
 	Page PageMeta        `json:"page"`
+}
+
+type ReconcileResp struct {
+	RespBase
+	Data ReconcileItem `json:"data"`
+}
+
+type ResolveReconcileDifferenceReq struct {
+	Id         int64  `path:"id"`
+	Status     int32  `json:"status"`
+	Resolution string `json:"resolution"`
+}
+
+type ResolveRiskEventReq struct {
+	Id         int64  `path:"id"`
+	Status     int32  `json:"status"`
+	Resolution string `json:"resolution"`
 }
 
 type RespBase struct {
@@ -293,6 +504,13 @@ type RiskListResp struct {
 	RespBase
 	Data []RiskItem `json:"data"`
 	Page PageMeta   `json:"page"`
+}
+
+type RunReconcileReq struct {
+	ProviderId    int64 `json:"providerId"`
+	ReconcileType int32 `json:"reconcileType"`
+	WindowStart   int64 `json:"windowStart"`
+	WindowEnd     int64 `json:"windowEnd"`
 }
 
 type SaveSymbolConfigReq struct {
@@ -414,4 +632,17 @@ type SymbolConfigListResp struct {
 type TimeRange struct {
 	StartTime int64 `form:"startTime,optional"`
 	EndTime   int64 `form:"endTime,optional"`
+}
+
+type UpdateProviderReq struct {
+	Id                 int64  `path:"id"`
+	ProviderName       string `json:"providerName"`
+	TradeUserId        int64  `json:"tradeUserId,optional"`
+	VenueCode          string `json:"venueCode,optional"`
+	Environment        int32  `json:"environment"`
+	CredentialRef      string `json:"credentialRef,optional"`
+	AccountRef         string `json:"accountRef,optional"`
+	RateLimitPerSecond int32  `json:"rateLimitPerSecond,optional"`
+	Remark             string `json:"remark,optional"`
+	Version            int64  `json:"version"`
 }

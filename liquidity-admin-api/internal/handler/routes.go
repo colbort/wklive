@@ -64,13 +64,48 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
+				Path:    "/external-fills",
+				Handler: liquidity.ExternalFillListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/external-orders",
 				Handler: liquidity.ExternalOrderListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/external-orders/:id/cancel",
+				Handler: liquidity.CancelExternalOrderHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/hedge-tasks",
 				Handler: liquidity.HedgeTaskListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/hedge-tasks/:id/cancel",
+				Handler: liquidity.CancelHedgeTaskHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/hedge-tasks/:id/retry",
+				Handler: liquidity.RetryHedgeTaskHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/hedge-tasks/manual",
+				Handler: liquidity.CreateManualHedgeHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/inventory-snapshots",
+				Handler: liquidity.InventorySnapshotListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/inventory-snapshots/latest",
+				Handler: liquidity.LatestInventoryHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
@@ -81,6 +116,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/providers",
 				Handler: liquidity.ProviderCreateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/providers/:id",
+				Handler: liquidity.ProviderUpdateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/providers/:id",
+				Handler: liquidity.ProviderDetailHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPut,
@@ -99,6 +144,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
+				Path:    "/quote-cycles",
+				Handler: liquidity.QuoteCycleListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/quote-orders",
 				Handler: liquidity.QuoteOrderListHandler(serverCtx),
 			},
@@ -109,8 +159,28 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
+				Path:    "/reconcile-batches/:batchId/details",
+				Handler: liquidity.ReconcileDetailListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/reconcile-batches/run",
+				Handler: liquidity.RunReconcileHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/reconcile-differences/:id/resolve",
+				Handler: liquidity.ResolveReconcileDifferenceHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/risk-events",
 				Handler: liquidity.RiskEventListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/risk-events/:id/resolve",
+				Handler: liquidity.ResolveRiskEventHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
@@ -118,14 +188,14 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: liquidity.SymbolConfigListHandler(serverCtx),
 			},
 			{
-				Method:  http.MethodGet,
-				Path:    "/symbol-configs/:id",
-				Handler: liquidity.SymbolConfigDetailHandler(serverCtx),
-			},
-			{
 				Method:  http.MethodPost,
 				Path:    "/symbol-configs",
 				Handler: liquidity.SymbolConfigCreateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/symbol-configs/:id",
+				Handler: liquidity.SymbolConfigDetailHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPut,
@@ -136,6 +206,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/symbol-configs/:id/:action",
 				Handler: liquidity.SymbolActionHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/symbol-configs/:id/cancel-quotes",
+				Handler: liquidity.CancelAllQuoteOrdersHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Jwt.AccessSecret),

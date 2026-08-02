@@ -27,7 +27,5 @@ func NewDeleteTenantPayChannelRuleLogic(ctx context.Context, svcCtx *svc.Service
 }
 
 func (l *DeleteTenantPayChannelRuleLogic) DeleteTenantPayChannelRule(req *types.DeleteTenantPayChannelRuleReq) (resp *types.RespBase, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	return unsupportedDelete("tenant pay channel rule"), nil
 }

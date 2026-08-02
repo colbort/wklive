@@ -36,7 +36,7 @@ func NewCreateWithdrawOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 // 提现
 func (l *CreateWithdrawOrderLogic) CreateWithdrawOrder(in *payment.CreateWithdrawOrderReq) (*payment.CreateWithdrawOrderResp, error) {
-	amount, err := conv.ParseDecimalField(in.Amount)
+	amount, err := conv.ParseBoundedDecimalField(in.Amount, 18, 18)
 	if err != nil || !amount.IsPositive() {
 		return nil, fmt.Errorf("withdraw amount must be a positive decimal")
 	}

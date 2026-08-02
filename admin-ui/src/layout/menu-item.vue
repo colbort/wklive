@@ -24,7 +24,6 @@ function iconComp(icon?: string) {
 }
 
 function go(path?: string) {
-  console.warn('go to', path)
   if (path) router.push(path)
 }
 

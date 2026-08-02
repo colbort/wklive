@@ -26,8 +26,12 @@ type Connection struct {
 	MerchantId int64                 // 坐席所属商户ID
 	AgentId    int64                 // 坐席ID
 	Receivers  sync.Map              // 坐席接待中的用户
-	OnMessage  func(*Connection, *chat.ChatWsRequest)
-	OnClose    func(*Connection)
+	// ReceiverGuests records whether a session is a guest session. The typing
+	// payload itself does not carry this routing flag, so it must follow the
+	// accepted/sent session state.
+	ReceiverGuests sync.Map
+	OnMessage      func(*Connection, *chat.ChatWsRequest)
+	OnClose        func(*Connection)
 }
 
 func NewConnection(conn *websocket.Conn, sender *chat.ChatMessageUser, merchantId int64, agentId int64, onMessage func(*Connection, *chat.ChatWsRequest), onClose func(*Connection)) *Connection {

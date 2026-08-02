@@ -23,6 +23,7 @@ import type {
   GetPlatformAccountReq,
   SetPlatformAccountReq,
   AdjustPlatformAccountReq,
+  InsuranceCover,
   PlatformBackstopPolicy,
   CreatePlatformBackstopPolicyReq,
   ReviewPlatformBackstopPolicyReq,
@@ -131,6 +132,13 @@ export function apiAdjustPlatformAccount(
   params: AdjustPlatformAccountReq,
 ): Promise<RespBase<PlatformAccount>> {
   return post<PlatformAccount>('/admin/asset/platform-accounts/adjust', params)
+}
+
+export function apiGetInsuranceCover(params: {
+  tenantId: number
+  liquidationNo: string
+}): Promise<RespBase<InsuranceCover>> {
+  return get<InsuranceCover>('/admin/asset/insurance-covers', params)
 }
 
 export function apiCreatePlatformBackstopPolicy(

@@ -22,5 +22,16 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            "element-plus": ["element-plus"],
+            "vue-family": ["vue", "vue-router", "pinia"],
+            axios: ["axios"],
+          },
+        },
+      },
+    },
   };
 });

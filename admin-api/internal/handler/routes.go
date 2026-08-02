@@ -71,6 +71,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: asset.PageAssetFreezesHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodGet,
+				Path:    "/insurance-covers",
+				Handler: asset.GetInsuranceCoverHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodPost,
 				Path:    "/lock",
 				Handler: asset.LockAssetHandler(serverCtx),

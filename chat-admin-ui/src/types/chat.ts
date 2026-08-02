@@ -331,7 +331,7 @@ export interface ChatWsRequestPayloadMap {
   agent: AcceptChatSessionPayload;
   transfer: Record<string, unknown>;
   evaluation: Record<string, unknown>;
-  typing: Record<string, unknown>;
+  typing: ChatTypingPayload;
   receipt: ChatMessageReceiptPayload;
   messageOperate: ChatMessageOperatePayload;
   heartbeat: Record<string, unknown>;
