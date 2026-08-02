@@ -23,6 +23,7 @@ type (
 	// and implement the added methods in customTOptionContractSeriesModel.
 	TOptionContractSeriesModel interface {
 		tOptionContractSeriesModel
+		FindOneByTenantIdRequestKeyNoCache(ctx context.Context, tenantId int64, requestKey string) (*TOptionContractSeries, error)
 		FindLatestForUpdate(ctx context.Context, tenantId int64, seriesCode string) (*TOptionContractSeries, error)
 		FindOneForUpdate(ctx context.Context, id int64) (*TOptionContractSeries, error)
 		FindPage(ctx context.Context, filter OptionContractSeriesPageFilter, cursor, limit int64) ([]*TOptionContractSeries, int64, error)
@@ -32,6 +33,18 @@ type (
 		*defaultTOptionContractSeriesModel
 	}
 )
+
+func (m *defaultTOptionContractSeriesModel) FindOneByTenantIdRequestKeyNoCache(
+	ctx context.Context, tenantId int64, requestKey string,
+) (*TOptionContractSeries, error) {
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND request_key=? LIMIT 1",
+		tOptionContractSeriesRows, m.table)
+	var item TOptionContractSeries
+	if err := m.QueryRowNoCacheCtx(ctx, &item, query, tenantId, requestKey); err != nil {
+		return nil, err
+	}
+	return &item, nil
+}
 
 func (m *defaultTOptionContractSeriesModel) FindLatestForUpdate(
 	ctx context.Context, tenantId int64, seriesCode string,

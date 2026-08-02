@@ -107,7 +107,7 @@ func ensureMMPAdmission(
 			}, nil
 		}
 		orderModel := models.NewTOptionOrderModel(conn, svcCtx.Config.CacheRedis)
-		residual, residualErr := orderModel.FindFirstActiveMMPOrderForUpdate(
+		residual, residualErr := orderModel.FindFirstUnsafeMMPOrderForUpdate(
 			ctx, config.TenantId, config.UserId, config.ContractId, config.GroupCode,
 		)
 		if residualErr != nil && !errors.Is(residualErr, models.ErrNotFound) {
@@ -117,8 +117,8 @@ func ensureMMPAdmission(
 			return &orderControlRejection{
 				reason: controlReasonMMPTriggered,
 				detail: fmt.Sprintf(
-					"cooldown expired but residual order_id=%d requires cancellation",
-					residual.Id,
+					"cooldown expired but unsafe order_id=%d status=%d requires cancellation or Asset release",
+					residual.Id, residual.Status,
 				),
 			}, nil
 		}
@@ -223,27 +223,49 @@ func CancelMMPGroupOrders(
 	tenantID, userID, contractID int64,
 	groupCode, reason string,
 ) (int64, error) {
-	var canceled int64
+	_, canceled, _, err := CancelMMPGroupOrdersReport(
+		ctx, svcCtx, tenantID, userID, contractID, groupCode, reason, false,
+	)
+	return canceled, err
+}
+
+// CancelMMPGroupOrdersReport attempts every active order in the group and
+// returns exact progress. continueOnError is required for protection paths:
+// one malformed or temporarily unavailable order must not leave later quotes
+// live merely because it sorted earlier in the batch.
+func CancelMMPGroupOrdersReport(
+	ctx context.Context,
+	svcCtx *svc.ServiceContext,
+	tenantID, userID, contractID int64,
+	groupCode, reason string,
+	continueOnError bool,
+) (total, success, failed int64, lastErr error) {
 	cursor := int64(0)
 	for {
 		orders, err := svcCtx.OptionOrderModel.FindActiveMMPOrders(
 			ctx, tenantID, userID, contractID, groupCode, cursor, 100,
 		)
 		if err != nil {
-			return canceled, err
+			return total, success, failed, err
 		}
 		for _, order := range orders {
 			cursor = order.Id
+			total++
 			item, err := CancelOrderByControl(ctx, svcCtx, order.Id, reason)
 			if err != nil {
-				return canceled, err
+				failed++
+				lastErr = err
+				if !continueOnError {
+					return total, success, failed, err
+				}
+				continue
 			}
 			if item != nil {
-				canceled++
+				success++
 			}
 		}
 		if len(orders) < 100 {
-			return canceled, nil
+			return total, success, failed, lastErr
 		}
 	}
 }

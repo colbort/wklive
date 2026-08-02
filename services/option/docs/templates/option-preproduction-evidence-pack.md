@@ -3,6 +3,10 @@
 > 可按章节拆分成多个不可变报告，也可用同一签署后的文件作为多个 readiness 证据；每个引用都必须
 > 记录最终 SHA-256。不得把仓库单测结果复制成真实 Asset、消息、故障或容量证据。
 
+仓库已提供`docs/evidence/option-repository-technical-evidence-20260802.md`作为技术基线；其状态明确为
+`REPOSITORY_ONLY / PASSED_NOT_RELEASE_CANDIDATE`。预生产执行人可以引用它确定场景和期望值，但不得
+复制其中tenant、时间、结果或哈希填入本表。预生产证据必须绑定干净release commit/image并重新执行。
+
 ## 1. 环境与可复现性
 
 | 字段 | 值 |

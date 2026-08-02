@@ -13,9 +13,12 @@ import (
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
+	"github.com/go-sql-driver/mysql"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
+
+const contractSeriesCreateMaxAttempts = 5
 
 type CreateContractSeriesLogic struct {
 	ctx    context.Context
@@ -51,7 +54,7 @@ func (l *CreateContractSeriesLogic) CreateContractSeries(in *option.CreateContra
 	if err != nil || operatorID <= 0 {
 		return contractSeriesError(l.ctx, i18n.ParamError), nil
 	}
-	if existing, findErr := l.svcCtx.OptionContractSeriesModel.FindOneByTenantIdRequestKey(
+	if existing, findErr := l.svcCtx.OptionContractSeriesModel.FindOneByTenantIdRequestKeyNoCache(
 		l.ctx, in.TenantId, strings.TrimSpace(in.RequestKey),
 	); findErr == nil {
 		if existing.PayloadHash != prepared.payloadHash {
@@ -63,84 +66,114 @@ func (l *CreateContractSeriesLogic) CreateContractSeries(in *option.CreateContra
 	}
 	now := time.Now().Unix()
 	for _, expiry := range prepared.expiries {
-		if expiry.ExpireTime <= now {
+		if expiry.LastTradeTime <= now {
 			return contractSeriesError(l.ctx, i18n.ParamError), nil
 		}
 	}
 	var created *models.TOptionContractSeries
-	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		seriesModel := models.NewTOptionContractSeriesModel(conn, l.svcCtx.Config.CacheRedis)
-		expiryModel := models.NewTOptionContractSeriesExpiryModel(conn, l.svcCtx.Config.CacheRedis)
-		bandModel := models.NewTOptionContractSeriesStrikeBandModel(conn, l.svcCtx.Config.CacheRedis)
-		version, supersedesID := int64(1), int64(0)
-		latest, findErr := seriesModel.FindLatestForUpdate(ctx, in.TenantId, prepared.seriesCode)
-		if findErr == nil {
-			if latest.Status == int64(option.ContractSeriesStatus_CONTRACT_SERIES_STATUS_PENDING_REVIEW) {
-				return i18n.StatusError(ctx, i18n.OperationNotAllowed)
+	replayed := false
+	for attempt := 0; attempt < contractSeriesCreateMaxAttempts; attempt++ {
+		created, replayed = nil, false
+		err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+			conn := sqlx.NewSqlConnFromSession(session)
+			seriesModel := models.NewTOptionContractSeriesModel(conn, l.svcCtx.Config.CacheRedis)
+			expiryModel := models.NewTOptionContractSeriesExpiryModel(conn, l.svcCtx.Config.CacheRedis)
+			bandModel := models.NewTOptionContractSeriesStrikeBandModel(conn, l.svcCtx.Config.CacheRedis)
+			version, supersedesID := int64(1), int64(0)
+			latest, findErr := seriesModel.FindLatestForUpdate(ctx, in.TenantId, prepared.seriesCode)
+			if findErr == nil {
+				if latest.Status == int64(option.ContractSeriesStatus_CONTRACT_SERIES_STATUS_PENDING_REVIEW) {
+					if latest.RequestKey == prepared.requestKey && latest.PayloadHash == prepared.payloadHash {
+						created, replayed = latest, true
+						return nil
+					}
+					return i18n.StatusError(ctx, i18n.OperationNotAllowed)
+				}
+				version, supersedesID = latest.Version+1, latest.Id
+			} else if !errors.Is(findErr, models.ErrNotFound) {
+				return findErr
 			}
-			version, supersedesID = latest.Version+1, latest.Id
-		} else if !errors.Is(findErr, models.ErrNotFound) {
-			return findErr
-		}
-		created = &models.TOptionContractSeries{
-			TenantId: in.TenantId, RequestKey: prepared.requestKey,
-			SeriesCode: prepared.seriesCode, Version: version, SupersedesId: supersedesID,
-			Status:             int64(option.ContractSeriesStatus_CONTRACT_SERIES_STATUS_PENDING_REVIEW),
-			TemplateContractId: 0, TemplateSnapshot: prepared.templateSnapshot,
-			UnderlyingSymbol: prepared.template.UnderlyingSymbol,
-			ReferencePrice:   prepared.referencePrice, ReferenceSource: prepared.referenceSource,
-			ReferenceTime: in.ReferenceTime, EvidenceRef: prepared.evidenceRef,
-			ChangeReason: prepared.changeReason, PayloadHash: prepared.payloadHash,
-			ExpectedContractCount: prepared.expectedCount, CreatedBy: operatorID,
-			CreateTimes: now, UpdateTimes: now,
-		}
-		result, insertErr := seriesModel.Insert(ctx, created)
-		if insertErr != nil {
-			return insertErr
-		}
-		created.Id, insertErr = result.LastInsertId()
-		if insertErr != nil {
-			return insertErr
-		}
-		for _, expiry := range prepared.expiries {
-			expiry.SeriesId, expiry.CreateTimes = created.Id, now
-			result, insertErr = expiryModel.Insert(ctx, expiry)
+			created = &models.TOptionContractSeries{
+				TenantId: in.TenantId, RequestKey: prepared.requestKey,
+				SeriesCode: prepared.seriesCode, Version: version, SupersedesId: supersedesID,
+				Status:             int64(option.ContractSeriesStatus_CONTRACT_SERIES_STATUS_PENDING_REVIEW),
+				TemplateContractId: 0, TemplateSnapshot: prepared.templateSnapshot,
+				UnderlyingSymbol: prepared.template.UnderlyingSymbol,
+				ReferencePrice:   prepared.referencePrice, ReferenceSource: prepared.referenceSource,
+				ReferenceTime: in.ReferenceTime, EvidenceRef: prepared.evidenceRef,
+				ChangeReason: prepared.changeReason, PayloadHash: prepared.payloadHash,
+				ExpectedContractCount: prepared.expectedCount, CreatedBy: operatorID,
+				CreateTimes: now, UpdateTimes: now,
+			}
+			result, insertErr := seriesModel.Insert(ctx, created)
 			if insertErr != nil {
 				return insertErr
 			}
-			expiry.Id, insertErr = result.LastInsertId()
+			created.Id, insertErr = result.LastInsertId()
 			if insertErr != nil {
 				return insertErr
 			}
+			for _, expiry := range prepared.expiries {
+				expiry.SeriesId, expiry.CreateTimes = created.Id, now
+				result, insertErr = expiryModel.Insert(ctx, expiry)
+				if insertErr != nil {
+					return insertErr
+				}
+				expiry.Id, insertErr = result.LastInsertId()
+				if insertErr != nil {
+					return insertErr
+				}
+			}
+			for _, band := range prepared.bands {
+				band.SeriesId, band.CreateTimes = created.Id, now
+				result, insertErr = bandModel.Insert(ctx, band)
+				if insertErr != nil {
+					return insertErr
+				}
+				band.Id, insertErr = result.LastInsertId()
+				if insertErr != nil {
+					return insertErr
+				}
+			}
+			return nil
+		})
+		if err == nil {
+			break
 		}
-		for _, band := range prepared.bands {
-			band.SeriesId, band.CreateTimes = created.Id, now
-			result, insertErr = bandModel.Insert(ctx, band)
-			if insertErr != nil {
-				return insertErr
-			}
-			band.Id, insertErr = result.LastInsertId()
-			if insertErr != nil {
-				return insertErr
-			}
-		}
-		return nil
-	})
-	if err != nil {
-		// A concurrent retry can win the unique request key. Return that exact
-		// version only when the normalized payload is identical.
-		existing, findErr := l.svcCtx.OptionContractSeriesModel.FindOneByTenantIdRequestKey(
+		// A concurrent transaction can win either the request-key uniqueness
+		// race or the empty-range gap lock. Prefer its committed result before
+		// retrying a deadlock victim.
+		existing, findErr := l.svcCtx.OptionContractSeriesModel.FindOneByTenantIdRequestKeyNoCache(
 			l.ctx, in.TenantId, prepared.requestKey,
 		)
-		if findErr == nil && existing.PayloadHash == prepared.payloadHash {
+		if findErr == nil {
+			if existing.PayloadHash != prepared.payloadHash {
+				return contractSeriesError(l.ctx, i18n.OperationNotAllowed), nil
+			}
 			return l.getContractSeries(existing)
 		}
-		return nil, err
+		if !isRetryableContractSeriesCreateError(err) || attempt == contractSeriesCreateMaxAttempts-1 {
+			return nil, err
+		}
+		timer := time.NewTimer(time.Duration(10*(1<<attempt)) * time.Millisecond)
+		select {
+		case <-l.ctx.Done():
+			timer.Stop()
+			return nil, l.ctx.Err()
+		case <-timer.C:
+		}
+	}
+	if replayed {
+		return l.getContractSeries(created)
 	}
 	return &option.GetContractSeriesResp{
 		Base: helper.OkResp(), Data: toContractSeriesProto(created, prepared.expiries, prepared.bands),
 	}, nil
+}
+
+func isRetryableContractSeriesCreateError(err error) bool {
+	var mysqlErr *mysql.MySQLError
+	return errors.As(err, &mysqlErr) && (mysqlErr.Number == 1213 || mysqlErr.Number == 1205)
 }
 
 func (l *CreateContractSeriesLogic) getContractSeries(

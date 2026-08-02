@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"strings"
-	"time"
 
 	"wklive/common/conv"
 	"wklive/common/generate"
@@ -111,8 +110,9 @@ func (l *ExerciseLogic) Exercise(in *option.ExerciseReq) (*option.ExerciseResp, 
 	if position.AvailableQty.LessThan(exerciseQty) {
 		return &option.ExerciseResp{Base: helper.ErrResp(i18n.ExercisableQuantityExceeded, i18n.Translate(i18n.ExercisableQuantityExceeded, l.ctx))}, nil
 	}
-	now := time.Now().Unix()
-	if now < contract.ListTime || contract.ExerciseCutoffTime <= 0 || now >= contract.ExerciseCutoffTime {
+	nowMillis := utils.NowMillis()
+	now := nowMillis / millisecondsPerSecond
+	if !exerciseSubmissionWindowOpen(contract, nowMillis) {
 		return &option.ExerciseResp{Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx))}, nil
 	}
 	market, err := l.svcCtx.OptionMarketModel.FindOneByTenantIdContractId(l.ctx, tenantId, contract.Id)
@@ -175,13 +175,12 @@ func (l *ExerciseLogic) Exercise(in *option.ExerciseReq) (*option.ExerciseResp, 
 		if err != nil {
 			return err
 		}
-		txNow := time.Now().Unix()
+		txNowMillis := utils.NowMillis()
 		if currentContract.TenantId != tenantId ||
 			currentContract.ExerciseStyle != int64(option.ExerciseStyle_EXERCISE_STYLE_AMERICAN) ||
 			currentContract.SettlementType != int64(option.SettlementType_SETTLEMENT_TYPE_CASH) ||
 			!allowsExerciseSubmission(currentContract.Status) ||
-			txNow < currentContract.ListTime || currentContract.ExerciseCutoffTime <= 0 ||
-			txNow >= currentContract.ExerciseCutoffTime {
+			!exerciseSubmissionWindowOpen(currentContract, txNowMillis) {
 			return i18n.StatusError(ctx, i18n.OperationNotAllowed)
 		}
 		current, err := positionModel.FindOneForUpdate(ctx, position.Id)

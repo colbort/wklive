@@ -59,6 +59,7 @@ type (
 		EffectiveFrom          int64           `db:"effective_from"`           // 生效时间（秒）
 		EffectiveUntil         int64           `db:"effective_until"`          // 失效时间（秒），0为未安排失效
 		SupersedesId           int64           `db:"supersedes_id"`            // 批准后替代的上一版本ID
+		SourceConfigId         int64           `db:"source_config_id"`         // 复制参数的历史版本ID；0表示非复制创建
 		ChangeReason           string          `db:"change_reason"`            // 变更或回滚原因
 		EvidenceRef            string          `db:"evidence_ref"`             // 回测、验证或审批证据引用
 		CreatedBy              int64           `db:"created_by"`               // 创建管理员ID
@@ -133,8 +134,8 @@ func (m *defaultTOptionPortfolioRiskConfigModel) Insert(ctx context.Context, dat
 	tOptionPortfolioRiskConfigIdKey := fmt.Sprintf("%s%v", cacheTOptionPortfolioRiskConfigIdPrefix, data.Id)
 	tOptionPortfolioRiskConfigTenantIdSettleCoinVersionKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionPortfolioRiskConfigTenantIdSettleCoinVersionPrefix, data.TenantId, data.SettleCoin, data.Version)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionPortfolioRiskConfigRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.SettleCoin, data.Version, data.Status, data.ModelMethod, data.InitialShockRate, data.MaintenanceShockRate, data.ScenarioShocks, data.ConcentrationThreshold, data.ConcentrationAddonRate, data.LiquidityAddonRate, data.EffectiveFrom, data.EffectiveUntil, data.SupersedesId, data.ChangeReason, data.EvidenceRef, data.CreatedBy, data.ReviewedBy, data.ReviewReason, data.ReviewedAt, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionPortfolioRiskConfigRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.SettleCoin, data.Version, data.Status, data.ModelMethod, data.InitialShockRate, data.MaintenanceShockRate, data.ScenarioShocks, data.ConcentrationThreshold, data.ConcentrationAddonRate, data.LiquidityAddonRate, data.EffectiveFrom, data.EffectiveUntil, data.SupersedesId, data.SourceConfigId, data.ChangeReason, data.EvidenceRef, data.CreatedBy, data.ReviewedBy, data.ReviewReason, data.ReviewedAt, data.CreateTimes, data.UpdateTimes)
 	}, tOptionPortfolioRiskConfigIdKey, tOptionPortfolioRiskConfigTenantIdSettleCoinVersionKey)
 	return ret, err
 }
@@ -149,7 +150,7 @@ func (m *defaultTOptionPortfolioRiskConfigModel) Update(ctx context.Context, new
 	tOptionPortfolioRiskConfigTenantIdSettleCoinVersionKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionPortfolioRiskConfigTenantIdSettleCoinVersionPrefix, data.TenantId, data.SettleCoin, data.Version)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionPortfolioRiskConfigRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.SettleCoin, newData.Version, newData.Status, newData.ModelMethod, newData.InitialShockRate, newData.MaintenanceShockRate, newData.ScenarioShocks, newData.ConcentrationThreshold, newData.ConcentrationAddonRate, newData.LiquidityAddonRate, newData.EffectiveFrom, newData.EffectiveUntil, newData.SupersedesId, newData.ChangeReason, newData.EvidenceRef, newData.CreatedBy, newData.ReviewedBy, newData.ReviewReason, newData.ReviewedAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.SettleCoin, newData.Version, newData.Status, newData.ModelMethod, newData.InitialShockRate, newData.MaintenanceShockRate, newData.ScenarioShocks, newData.ConcentrationThreshold, newData.ConcentrationAddonRate, newData.LiquidityAddonRate, newData.EffectiveFrom, newData.EffectiveUntil, newData.SupersedesId, newData.SourceConfigId, newData.ChangeReason, newData.EvidenceRef, newData.CreatedBy, newData.ReviewedBy, newData.ReviewReason, newData.ReviewedAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tOptionPortfolioRiskConfigIdKey, tOptionPortfolioRiskConfigTenantIdSettleCoinVersionKey)
 	return err
 }

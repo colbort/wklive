@@ -155,6 +155,7 @@ func (l *CreateContractLogic) CreateContract(in *option.CreateContractReq) (*opt
 		QtyStep:                 qtyStep,
 		Multiplier:              multiplier,
 		ListTime:                in.ListTime,
+		LastTradeTime:           in.LastTradeTime,
 		ExpireTime:              in.ExpireTime,
 		DeliverTime:             in.DeliverTime,
 		TradingCalendarCode:     tradingCalendarCode,

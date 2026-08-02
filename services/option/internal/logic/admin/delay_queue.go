@@ -21,6 +21,14 @@ func enqueueContractSchedules(svcCtx *svc.ServiceContext, contract *models.TOpti
 			errs = append(errs, err)
 		}
 	}
+	if contract.LastTradeTime > time.Now().Unix() {
+		if err := svcCtx.DelayQueue.At(delayqueue.Message{
+			Action: delayqueue.ActionCloseContractTrading, TenantID: contract.TenantId,
+			ContractID: contract.Id, DueAt: contract.LastTradeTime,
+		}, time.Unix(contract.LastTradeTime, 0)); err != nil {
+			errs = append(errs, err)
+		}
+	}
 	if contract.ExpireTime > time.Now().Unix() {
 		if err := svcCtx.DelayQueue.At(delayqueue.Message{
 			Action: delayqueue.ActionExpireContract, TenantID: contract.TenantId,

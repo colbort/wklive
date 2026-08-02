@@ -57,10 +57,10 @@ var (
 	}
 )
 
-func PublishRiskScanResults(results []RiskScanTenantResult, completedAt int64) {
+func PublishRiskScanResults(results []RiskScanTenantResult, completedAt, tenantScopeID int64) {
 	riskScanMetricState.Lock()
 	defer riskScanMetricState.Unlock()
-	next := make(map[string]struct{}, len(results))
+	published := make(map[string]struct{}, len(results))
 	for _, result := range results {
 		if result.TenantID <= 0 {
 			continue
@@ -82,18 +82,26 @@ func PublishRiskScanResults(results []RiskScanTenantResult, completedAt int64) {
 		optionRiskScanFailedGroups.Set(float64(failed), tenantID)
 		optionRiskScanFailureRatio.Set(ratio, tenantID)
 		optionRiskScanLastCompletedTimestamp.Set(float64(completedAt), tenantID)
-		next[tenantID] = struct{}{}
+		published[tenantID] = struct{}{}
+		riskScanMetricState.tenants[tenantID] = struct{}{}
 	}
+	if tenantScopeID > 0 {
+		// A tenant-scoped replay updates only that tenant. The caller supplies an
+		// explicit zero result when it has no active groups.
+		return
+	}
+	// tenantScopeID=0 is the production full-tenant scan and is authoritative
+	// for disappearance: clear series not present in this completed global run.
 	for tenantID := range riskScanMetricState.tenants {
-		if _, ok := next[tenantID]; ok {
+		if _, ok := published[tenantID]; ok {
 			continue
 		}
 		optionRiskScanGroups.Set(0, tenantID)
 		optionRiskScanFailedGroups.Set(0, tenantID)
 		optionRiskScanFailureRatio.Set(0, tenantID)
 		optionRiskScanLastCompletedTimestamp.Set(float64(completedAt), tenantID)
+		delete(riskScanMetricState.tenants, tenantID)
 	}
-	riskScanMetricState.tenants = next
 }
 
 func RecordRiskScanExecutionFailure(tenantID int64, stage string) {

@@ -23,17 +23,27 @@ import (
 )
 
 type PlaceOrderLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx         context.Context
+	svcCtx      *svc.ServiceContext
+	orderSource option.OrderSource
 	logx.Logger
 }
 
 func NewPlaceOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PlaceOrderLogic {
 	return &PlaceOrderLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
+		ctx:         ctx,
+		svcCtx:      svcCtx,
+		orderSource: option.OrderSource_ORDER_SOURCE_APP,
+		Logger:      logx.WithContext(ctx),
 	}
+}
+
+// NewAdministrativePlaceOrderLogic is reserved for governed internal workflows.
+// Public callers cannot select ORDER_SOURCE_ADMIN through PlaceOrderReq.
+func NewAdministrativePlaceOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PlaceOrderLogic {
+	logic := NewPlaceOrderLogic(ctx, svcCtx)
+	logic.orderSource = option.OrderSource_ORDER_SOURCE_ADMIN
+	return logic
 }
 
 // 提交期权下单请求
@@ -62,7 +72,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *option.PlaceOrderReq) (*option.PlaceOrd
 	entryNow := time.Now().Unix()
 	if contract.IsDeleted == int64(common.YesNo_YES_NO_YES) ||
 		entryNow < contract.ListTime ||
-		(contract.ExpireTime > 0 && entryNow >= contract.ExpireTime) {
+		(contract.LastTradeTime <= 0 || entryNow >= contract.LastTradeTime) {
 		return &option.PlaceOrderResp{Base: helper.ErrResp(i18n.ContractNotTradable, i18n.Translate(i18n.ContractNotTradable, l.ctx))}, nil
 	}
 	calendarDecision, calendarErr := logichelpers.IsContractTradingOpen(l.ctx, l.svcCtx, contract, entryNow)
@@ -247,7 +257,7 @@ func (l *PlaceOrderLogic) PlaceOrder(in *option.PlaceOrderReq) (*option.PlaceOrd
 		FeeCoin:          contract.SettleCoin,
 		MarginAmount:     marginAmount,
 		MarginCoin:       marginCoin,
-		Source:           int64(option.OrderSource_ORDER_SOURCE_APP),
+		Source:           int64(l.orderSource),
 		ClientOrderId:    in.ClientOrderId,
 		ReduceOnly:       int64(in.ReduceOnly),
 		Mmp:              int64(common.YesNo_YES_NO_NO),

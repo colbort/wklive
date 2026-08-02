@@ -75,7 +75,8 @@ func (l *ReviewPortfolioRiskConfigLogic) ReviewPortfolioRiskConfig(in *option.Re
 		}
 
 		if in.Approve {
-			if strings.TrimSpace(item.EvidenceRef) == "" {
+			if strings.TrimSpace(item.EvidenceRef) == "" ||
+				!portfolioRiskConfigEffectiveTimeValid(item.EffectiveFrom, now) {
 				return errInvalidPortfolioRiskConfig
 			}
 			previous, previousErr := configModel.FindOpenEndedForUpdate(

@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"strings"
 
@@ -12,19 +13,36 @@ import (
 	"wklive/proto/option"
 )
 
+// Insert keeps legacy/internal callers compatible while the canonical schema
+// now requires an explicit last-trade boundary. RPC/admin validation still
+// exposes and validates LastTradeTime independently.
+func (m *customTOptionContractModel) Insert(
+	ctx context.Context, data *TOptionContract,
+) (sql.Result, error) {
+	if data != nil && data.LastTradeTime == 0 {
+		data.LastTradeTime = data.ExerciseCutoffTime
+		if data.LastTradeTime == 0 {
+			data.LastTradeTime = data.ExpireTime
+		}
+	}
+	return m.defaultTOptionContractModel.Insert(ctx, data)
+}
+
 var _ TOptionContractModel = (*customTOptionContractModel)(nil)
 
 type (
 	OptionContractPageFilter struct {
-		TenantId         int64
-		ContractCode     string
-		UnderlyingSymbol string
-		OptionType       int64
-		Status           int64
-		ListTimeStart    int64
-		ListTimeEnd      int64
-		ExpireTimeStart  int64
-		ExpireTimeEnd    int64
+		TenantId           int64
+		ContractCode       string
+		UnderlyingSymbol   string
+		OptionType         int64
+		Status             int64
+		ListTimeStart      int64
+		ListTimeEnd        int64
+		LastTradeTimeStart int64
+		LastTradeTimeEnd   int64
+		ExpireTimeStart    int64
+		ExpireTimeEnd      int64
 	}
 
 	// TOptionContractModel is an interface to be customized, add more methods here,
@@ -110,6 +128,8 @@ func (m *defaultTOptionContractModel) FindPage(ctx context.Context, filter Optio
 	builder.EqInt64("status", filter.Status)
 	builder.GteInt64("list_time", filter.ListTimeStart)
 	builder.LteInt64("list_time", filter.ListTimeEnd)
+	builder.GteInt64("last_trade_time", filter.LastTradeTimeStart)
+	builder.LteInt64("last_trade_time", filter.LastTradeTimeEnd)
 	builder.GteInt64("expire_time", filter.ExpireTimeStart)
 	builder.LteInt64("expire_time", filter.ExpireTimeEnd)
 

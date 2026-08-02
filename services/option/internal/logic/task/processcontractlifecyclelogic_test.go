@@ -35,9 +35,14 @@ func TestSeriesContractLaunchApprovalAndControls(t *testing.T) {
 		t.Fatal("generated series with independent approval should pass the series approval gate")
 	}
 	contract := &models.TOptionContract{
-		Status:         int64(option.ContractStatus_CONTRACT_STATUS_PENDING),
-		IsDeleted:      int64(common.YesNo_YES_NO_NO),
-		MaxUserLongQty: decimal.NewFromInt(100), MaxUserShortQty: decimal.NewFromInt(100),
+		Status:             int64(option.ContractStatus_CONTRACT_STATUS_PENDING),
+		IsDeleted:          int64(common.YesNo_YES_NO_NO),
+		ListTime:           now - 100,
+		LastTradeTime:      now + 100,
+		ExerciseCutoffTime: now + 200,
+		ExpireTime:         now + 300,
+		DeliverTime:        now + 400,
+		MaxUserLongQty:     decimal.NewFromInt(100), MaxUserShortQty: decimal.NewFromInt(100),
 		MaxOpenInterest:     decimal.NewFromInt(1000),
 		OrderPriceBandRatio: decimal.RequireFromString("0.2"),
 		CircuitBreakerRatio: decimal.RequireFromString("0.3"),

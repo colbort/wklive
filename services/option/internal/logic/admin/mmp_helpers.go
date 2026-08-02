@@ -38,6 +38,7 @@ type mmpConfigInput struct {
 }
 
 var errMMPNotTriggered = errors.New("MMP_NOT_TRIGGERED")
+var errMMPReleasePending = errors.New("MMP_RELEASE_PENDING")
 
 func validateMMPConfigInput(
 	ctx context.Context, in *option.UpsertMMPConfigReq,
@@ -182,6 +183,23 @@ func activateStagedMMPConfig(
 		if err != nil {
 			return err
 		}
+		if eventType == "MMP_MANUAL_RESET" &&
+			item.Status != int64(option.MMPStatus_MMP_STATUS_TRIGGERED) {
+			return errMMPNotTriggered
+		}
+		orderModel := models.NewTOptionOrderModel(conn, svcCtx.Config.CacheRedis)
+		unsafeOrder, unsafeErr := orderModel.FindFirstUnsafeMMPOrderForUpdate(
+			txCtx, input.tenantID, input.userID, input.contractID, input.groupCode,
+		)
+		if unsafeErr != nil && !errors.Is(unsafeErr, models.ErrNotFound) {
+			return unsafeErr
+		}
+		if unsafeOrder != nil {
+			return fmt.Errorf(
+				"%w: order_id=%d status=%d",
+				errMMPReleasePending, unsafeOrder.Id, unsafeOrder.Status,
+			)
+		}
 		if item.Enabled == int64(common.YesNo_YES_NO_YES) {
 			item.Status = int64(option.MMPStatus_MMP_STATUS_ACTIVE)
 		} else {
@@ -242,7 +260,6 @@ func stageMMPReset(
 			item.Status != int64(option.MMPStatus_MMP_STATUS_TRIGGERED) {
 			return errMMPNotTriggered
 		}
-		item.Status = int64(option.MMPStatus_MMP_STATUS_DISABLED)
 		item.LastErrorMsg = ""
 		item.UpdatedBy = input.operatorID
 		item.UpdateTimes = time.Now().Unix()

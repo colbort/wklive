@@ -84,7 +84,7 @@ func evaluateOrderTradingControls(
 	if contract.TenantId != order.TenantId ||
 		contract.Status != int64(option.ContractStatus_CONTRACT_STATUS_TRADING) ||
 		contract.IsDeleted == int64(common.YesNo_YES_NO_YES) ||
-		now < contract.ListTime || (contract.ExpireTime > 0 && now >= contract.ExpireTime) {
+		now < contract.ListTime || contract.LastTradeTime <= 0 || now >= contract.LastTradeTime {
 		return reject(controlReasonContractClosed, "contract is not in its tradable window")
 	}
 	calendarDecision, calendarErr := logichelpers.IsContractTradingOpenWithModels(

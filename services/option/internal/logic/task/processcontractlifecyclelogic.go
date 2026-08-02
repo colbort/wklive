@@ -43,7 +43,7 @@ func (l *ProcessContractLifecycleLogic) ProcessContractLifecycle(in *option.Opti
 		if err := l.syncContracts(option.ContractStatus_CONTRACT_STATUS_PENDING, now, 0, option.ContractStatus_CONTRACT_STATUS_TRADING, now); err != nil {
 			return nil, err
 		}
-		if err := l.syncContracts(option.ContractStatus_CONTRACT_STATUS_TRADING, 0, now, option.ContractStatus_CONTRACT_STATUS_EXPIRED, now); err != nil {
+		if err := l.closeTradingContracts(now); err != nil {
 			return nil, err
 		}
 		if err := l.expirePausedContracts(now); err != nil {
@@ -54,6 +54,95 @@ func (l *ProcessContractLifecycleLogic) ProcessContractLifecycle(in *option.Opti
 		}
 		return helpers.OkTaskResp(), nil
 	})
+}
+
+// closeTradingContracts applies the independent last-trade boundary before
+// expiry processing. PENDING contracts that never passed launch gates are also
+// closed, so they cannot become tradable after their approved window.
+func (l *ProcessContractLifecycleLogic) closeTradingContracts(now int64) error {
+	for _, status := range []option.ContractStatus{
+		option.ContractStatus_CONTRACT_STATUS_PENDING,
+		option.ContractStatus_CONTRACT_STATUS_TRADING,
+		option.ContractStatus_CONTRACT_STATUS_PAUSED,
+	} {
+		cursor := int64(0)
+		for {
+			items, _, err := l.svcCtx.OptionContractModel.FindPage(
+				l.ctx,
+				models.OptionContractPageFilter{
+					Status: int64(status), LastTradeTimeEnd: now,
+				},
+				cursor, 100,
+			)
+			if err != nil {
+				return err
+			}
+			if len(items) == 0 {
+				break
+			}
+			for _, item := range items {
+				cursor = item.Id
+				if err := l.closeContractTrading(
+					item.Id, item.TenantId, item.LastTradeTime, now,
+				); err != nil {
+					return err
+				}
+			}
+			if len(items) < 100 {
+				break
+			}
+		}
+	}
+	return nil
+}
+
+// closeContractTrading is shared by the periodic scanner and delayed message.
+// The row lock serializes the boundary with admission/matching transactions;
+// cancellation then uses the same funding-release state machine as user and
+// emergency-control cancellation. Replays are intentionally idempotent.
+func (l *ProcessContractLifecycleLogic) closeContractTrading(
+	contractID, tenantID, expectedLastTradeTime, now int64,
+) error {
+	eligible := false
+	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		contractModel := models.NewTOptionContractModel(conn, l.svcCtx.Config.CacheRedis)
+		contract, findErr := contractModel.FindOneForUpdate(ctx, contractID)
+		if findErr != nil {
+			return findErr
+		}
+		if contract.TenantId != tenantID ||
+			contract.LastTradeTime != expectedLastTradeTime ||
+			contract.LastTradeTime <= 0 || now < contract.LastTradeTime {
+			return nil
+		}
+		switch option.ContractStatus(contract.Status) {
+		case option.ContractStatus_CONTRACT_STATUS_PENDING,
+			option.ContractStatus_CONTRACT_STATUS_TRADING:
+			eligible = true
+			contract.Status = int64(option.ContractStatus_CONTRACT_STATUS_PAUSED)
+			contract.UpdateTimes = now
+			return contractModel.Update(ctx, contract)
+		case option.ContractStatus_CONTRACT_STATUS_PAUSED:
+			eligible = true
+			return nil
+		default:
+			return nil
+		}
+	})
+	if err != nil {
+		return err
+	}
+	if !eligible {
+		return nil
+	}
+	_, _, failed, cancelErr := applogic.CancelContractOrdersByControlReport(
+		l.ctx, l.svcCtx, tenantID, contractID, "CONTRACT_LAST_TRADE_ENDED", true,
+	)
+	if failed > 0 {
+		return cancelErr
+	}
+	return cancelErr
 }
 
 func (l *ProcessContractLifecycleLogic) expirePausedContracts(now int64) error {
@@ -74,6 +163,23 @@ func (l *ProcessContractLifecycleLogic) expirePausedContracts(now int64) error {
 		}
 		for _, item := range items {
 			cursor = item.Id
+			// Last-trade cancellation can leave Asset release instructions in
+			// flight. Keep the contract PAUSED until every order reaches a safe
+			// terminal state; otherwise expiry settlement could start while an
+			// order reservation is still frozen.
+			unsafeOrders, checkErr := l.svcCtx.OptionOrderModel.HasUnsafeContractResumeOrders(
+				l.ctx, item.TenantId, item.Id,
+			)
+			if checkErr != nil {
+				return checkErr
+			}
+			if unsafeOrders {
+				l.Infof(
+					"keep option contract paused until last-trade order releases finish, tenantId=%d contractId=%d",
+					item.TenantId, item.Id,
+				)
+				continue
+			}
 			blocked, checkErr := l.svcCtx.OptionCorporateActionContractModel.IsContractMigrationActive(
 				l.ctx, item.TenantId, item.Id,
 			)
@@ -159,70 +265,12 @@ func (l *ProcessContractLifecycleLogic) syncContracts(from option.ContractStatus
 		for _, item := range items {
 			cursor = item.Id
 			if to == option.ContractStatus_CONTRACT_STATUS_TRADING {
-				series, seriesErr := l.svcCtx.OptionContractSeriesDetailModel.FindSeriesLaunchByContract(
-					l.ctx, item.TenantId, item.Id,
-				)
-				if seriesErr == nil {
-					if !seriesContractLaunchApproved(series) {
-						l.Infof(
-							"keep series-generated option contract pending until launch approval, tenantId=%d contractId=%d seriesId=%d",
-							item.TenantId, item.Id, series.Id,
-						)
-						continue
-					}
-				} else if !errors.Is(seriesErr, models.ErrNotFound) {
-					return seriesErr
-				}
-				blocked, err := l.svcCtx.OptionCorporateActionContractModel.IsSuccessorBlocked(
-					l.ctx, item.TenantId, item.Id,
-				)
-				if err != nil {
+				if _, err := l.listContractIfEligible(
+					item.Id, item.TenantId, item.ListTime, now,
+				); err != nil {
 					return err
 				}
-				if blocked {
-					l.Infof(
-						"keep option successor contract pending until corporate action completes, tenantId=%d contractId=%d",
-						item.TenantId, item.Id,
-					)
-					continue
-				}
-				market, marketErr := l.svcCtx.OptionMarketModel.FindOneByTenantIdContractId(
-					l.ctx, item.TenantId, item.Id,
-				)
-				if marketErr != nil {
-					if errors.Is(marketErr, models.ErrNotFound) {
-						l.Infof(
-							"keep option contract pending because market is missing, tenantId=%d contractId=%d",
-							item.TenantId, item.Id,
-						)
-						continue
-					}
-					return marketErr
-				}
-				if !contractLaunchControlsReady(item, market, now) {
-					l.Infof(
-						"keep option contract pending because risk controls or market freshness are incomplete, tenantId=%d contractId=%d",
-						item.TenantId, item.Id,
-					)
-					continue
-				}
-				code, valid := helpers.NormalizeTradingCalendarCode(item.TradingCalendarCode)
-				if !valid {
-					l.Errorf(
-						"keep option contract pending because trading calendar code is invalid, tenantId=%d contractId=%d code=%q",
-						item.TenantId, item.Id, item.TradingCalendarCode,
-					)
-					continue
-				}
-				if _, err := l.svcCtx.OptionTradingCalendarModel.FindEffective(
-					l.ctx, item.TenantId, code, now,
-				); err != nil {
-					l.Errorf(
-						"keep option contract pending because no unambiguous effective calendar exists, tenantId=%d contractId=%d code=%s err=%v",
-						item.TenantId, item.Id, code, err,
-					)
-					continue
-				}
+				continue
 			}
 			item.Status = int64(to)
 			item.UpdateTimes = now
@@ -234,6 +282,105 @@ func (l *ProcessContractLifecycleLogic) syncContracts(from option.ContractStatus
 			return nil
 		}
 	}
+}
+
+// listContractIfEligible is the only PENDING -> TRADING transition used by
+// both the periodic scanner and delayed list messages. Keeping the checks in
+// the same row-locked transaction prevents the delay queue from bypassing
+// series approval, corporate-action, market, risk, or calendar gates.
+func (l *ProcessContractLifecycleLogic) listContractIfEligible(
+	contractID, tenantID, expectedListTime, now int64,
+) (bool, error) {
+	listed := false
+	err := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
+		conn := sqlx.NewSqlConnFromSession(session)
+		contractModel := models.NewTOptionContractModel(conn, l.svcCtx.Config.CacheRedis)
+		seriesDetailModel := models.NewTOptionContractSeriesDetailModel(conn, l.svcCtx.Config.CacheRedis)
+		actionContractModel := models.NewTOptionCorporateActionContractModel(conn, l.svcCtx.Config.CacheRedis)
+		marketModel := models.NewTOptionMarketModel(conn, l.svcCtx.Config.CacheRedis)
+		calendarModel := models.NewTOptionTradingCalendarModel(conn, l.svcCtx.Config.CacheRedis)
+
+		contract, findErr := contractModel.FindOneForUpdate(ctx, contractID)
+		if findErr != nil {
+			return findErr
+		}
+		if contract.TenantId != tenantID || contract.ListTime != expectedListTime ||
+			contract.Status != int64(option.ContractStatus_CONTRACT_STATUS_PENDING) ||
+			contract.ListTime <= 0 || now < contract.ListTime ||
+			contract.LastTradeTime <= contract.ListTime || now >= contract.LastTradeTime {
+			return nil
+		}
+		series, seriesErr := seriesDetailModel.FindSeriesLaunchByContract(
+			ctx, contract.TenantId, contract.Id,
+		)
+		if seriesErr == nil {
+			if !seriesContractLaunchApproved(series) {
+				l.Infof(
+					"keep series-generated option contract pending until launch approval, tenantId=%d contractId=%d seriesId=%d",
+					contract.TenantId, contract.Id, series.Id,
+				)
+				return nil
+			}
+		} else if !errors.Is(seriesErr, models.ErrNotFound) {
+			return seriesErr
+		}
+		blocked, findErr := actionContractModel.IsSuccessorBlocked(
+			ctx, contract.TenantId, contract.Id,
+		)
+		if findErr != nil {
+			return findErr
+		}
+		if blocked {
+			l.Infof(
+				"keep option successor contract pending until corporate action completes, tenantId=%d contractId=%d",
+				contract.TenantId, contract.Id,
+			)
+			return nil
+		}
+		market, marketErr := marketModel.FindOneByTenantIdContractId(
+			ctx, contract.TenantId, contract.Id,
+		)
+		if marketErr != nil {
+			if errors.Is(marketErr, models.ErrNotFound) {
+				l.Infof(
+					"keep option contract pending because market is missing, tenantId=%d contractId=%d",
+					contract.TenantId, contract.Id,
+				)
+				return nil
+			}
+			return marketErr
+		}
+		if !contractLaunchControlsReady(contract, market, now) {
+			l.Infof(
+				"keep option contract pending because risk controls or market freshness are incomplete, tenantId=%d contractId=%d",
+				contract.TenantId, contract.Id,
+			)
+			return nil
+		}
+		code, valid := helpers.NormalizeTradingCalendarCode(contract.TradingCalendarCode)
+		if !valid {
+			l.Errorf(
+				"keep option contract pending because trading calendar code is invalid, tenantId=%d contractId=%d code=%q",
+				contract.TenantId, contract.Id, contract.TradingCalendarCode,
+			)
+			return nil
+		}
+		if _, findErr = calendarModel.FindEffective(ctx, contract.TenantId, code, now); findErr != nil {
+			l.Errorf(
+				"keep option contract pending because no unambiguous effective calendar exists, tenantId=%d contractId=%d code=%s err=%v",
+				contract.TenantId, contract.Id, code, findErr,
+			)
+			return nil
+		}
+		contract.Status = int64(option.ContractStatus_CONTRACT_STATUS_TRADING)
+		contract.UpdateTimes = now
+		if updateErr := contractModel.Update(ctx, contract); updateErr != nil {
+			return updateErr
+		}
+		listed = true
+		return nil
+	})
+	return listed, err
 }
 
 func seriesContractLaunchApproved(series *models.TOptionContractSeries) bool {
@@ -258,6 +405,12 @@ func contractLaunchControlsReady(
 		contract.CircuitBreakerRatio.IsPositive() &&
 		contract.CircuitBreakerRatio.LessThanOrEqual(decimal.NewFromInt(1)) &&
 		contract.GreeksMaxAgeSeconds > 0 &&
+		contract.ListTime > 0 &&
+		contract.LastTradeTime > contract.ListTime &&
+		now < contract.LastTradeTime &&
+		contract.ExerciseCutoffTime >= contract.LastTradeTime &&
+		contract.ExpireTime >= contract.ExerciseCutoffTime &&
+		contract.DeliverTime >= contract.ExpireTime &&
 		helpers.IsRiskMarketFresh(market, now, 30) &&
 		helpers.IsGreeksFresh(market, now, contract.GreeksMaxAgeSeconds)
 }

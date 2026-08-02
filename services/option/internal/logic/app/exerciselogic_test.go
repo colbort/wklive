@@ -3,6 +3,7 @@ package applogic
 import (
 	"context"
 	"errors"
+	"math"
 	"testing"
 
 	"wklive/proto/option"
@@ -54,6 +55,33 @@ func TestIsExerciseDuplicateKeyError(t *testing.T) {
 	}
 	if isExerciseDuplicateKeyError(&mysql.MySQLError{Number: 1213}) {
 		t.Fatal("deadlock incorrectly recognized as duplicate key")
+	}
+}
+
+func TestExerciseSubmissionWindowMillisecondBoundary(t *testing.T) {
+	contract := &models.TOptionContract{ListTime: 100, ExerciseCutoffTime: 200}
+	tests := []struct {
+		name      string
+		nowMillis int64
+		want      bool
+	}{
+		{name: "before listing", nowMillis: 99999, want: false},
+		{name: "listing instant", nowMillis: 100000, want: true},
+		{name: "cutoff minus one millisecond", nowMillis: 199999, want: true},
+		{name: "cutoff instant", nowMillis: 200000, want: false},
+		{name: "cutoff plus one millisecond", nowMillis: 200001, want: false},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := exerciseSubmissionWindowOpen(contract, tc.nowMillis); got != tc.want {
+				t.Fatalf("exercise window at %d=%t want=%t", tc.nowMillis, got, tc.want)
+			}
+		})
+	}
+	if exerciseSubmissionWindowOpen(&models.TOptionContract{
+		ListTime: math.MaxInt64, ExerciseCutoffTime: math.MaxInt64,
+	}, 1) {
+		t.Fatal("overflowing exercise timestamps must fail closed")
 	}
 }
 

@@ -64,6 +64,7 @@ type ServiceContext struct {
 	OptionRiskAccountModel              models.TOptionRiskAccountModel
 	OptionPortfolioRiskConfigModel      models.TOptionPortfolioRiskConfigModel
 	OptionLiquidationModel              models.TOptionLiquidationModel
+	OptionInsuranceInventoryExitModel   models.TOptionInsuranceInventoryExitModel
 	OptionInsuranceFundFlowModel        models.TOptionInsuranceFundFlowModel
 	AssetClient                         asset.AssetClient
 	DelayQueue                          *delayqueue.Queue
@@ -131,6 +132,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		OptionRiskAccountModel:              models.NewTOptionRiskAccountModel(conn, c.CacheRedis),
 		OptionPortfolioRiskConfigModel:      models.NewTOptionPortfolioRiskConfigModel(conn, c.CacheRedis),
 		OptionLiquidationModel:              models.NewTOptionLiquidationModel(conn, c.CacheRedis),
+		OptionInsuranceInventoryExitModel:   models.NewTOptionInsuranceInventoryExitModel(conn, c.CacheRedis),
 		OptionInsuranceFundFlowModel:        models.NewTOptionInsuranceFundFlowModel(conn, c.CacheRedis),
 		AssetClient:                         asset.NewAssetClient(assetCli.Conn()),
 		DelayQueue:                          queue,

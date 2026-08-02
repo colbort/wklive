@@ -183,7 +183,7 @@ func (l *PlaceOrderLogic) matchOrder(contract *models.TOptionContract, order *mo
 			lockedContract.Status != int64(option.ContractStatus_CONTRACT_STATUS_TRADING) ||
 			lockedContract.IsDeleted == int64(common.YesNo_YES_NO_YES) ||
 			now < lockedContract.ListTime ||
-			(lockedContract.ExpireTime > 0 && now >= lockedContract.ExpireTime) {
+			(lockedContract.LastTradeTime <= 0 || now >= lockedContract.LastTradeTime) {
 			if err := cancelImmediateOrder(
 				ctx, positionModel, instructionModel, incoming, controlReasonContractClosed, now,
 			); err != nil {
@@ -662,9 +662,9 @@ func (l *PlaceOrderLogic) matchOrder(contract *models.TOptionContract, order *mo
 	}
 	var mmpCancelErr error
 	for key := range triggeredMMPGroups {
-		count, cancelErr := CancelMMPGroupOrders(
+		total, success, failed, cancelErr := CancelMMPGroupOrdersReport(
 			l.ctx, l.svcCtx, key.tenantID, key.userID, key.contractID,
-			key.groupCode, controlReasonMMPTriggered,
+			key.groupCode, controlReasonMMPTriggered, true,
 		)
 		if cancelErr != nil {
 			SetMMPConfigLastError(
@@ -674,13 +674,15 @@ func (l *PlaceOrderLogic) matchOrder(contract *models.TOptionContract, order *mo
 			if mmpCancelErr == nil {
 				mmpCancelErr = cancelErr
 			}
-			continue
 		}
 		if eventErr := insertTradingControlEvent(
 			l.ctx, l.svcCtx, l.svcCtx.DB, &models.TOptionTradingControlEvent{
 				TenantId: key.tenantID, UserId: key.userID, ContractId: key.contractID,
 				EventType: controlEventMMPOrderCanceled, Reason: controlReasonMMPTriggered,
-				Detail:     fmt.Sprintf("group=%s canceled=%d", key.groupCode, count),
+				Detail: fmt.Sprintf(
+					"group=%s total=%d success=%d failed=%d",
+					key.groupCode, total, success, failed,
+				),
 				OperatorId: key.userID, CreateTimes: time.Now().Unix(),
 			},
 		); eventErr != nil && mmpCancelErr == nil {

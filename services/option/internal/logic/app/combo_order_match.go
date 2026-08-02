@@ -223,7 +223,7 @@ func MatchFundedComboOrder(
 				contract.Status != int64(option.ContractStatus_CONTRACT_STATUS_TRADING) ||
 				contract.IsDeleted == int64(common.YesNo_YES_NO_YES) ||
 				now < contract.ListTime ||
-				(contract.ExpireTime > 0 && now >= contract.ExpireTime) ||
+				(contract.LastTradeTime <= 0 || now >= contract.LastTradeTime) ||
 				!logichelpers.IsMarkFresh(market, now, 30) ||
 				!market.MarkPrice.IsPositive() {
 				return cancelComboInsideTx(
@@ -600,14 +600,9 @@ func CancelComboOrderByControl(
 				childCopy := *child
 				changedChildren = append(changedChildren, &childCopy)
 			}
-			parent.Status = int64(option.ComboOrderStatus_COMBO_ORDER_STATUS_CANCELED)
-			if requiresRelease {
-				parent.Status = int64(option.ComboOrderStatus_COMBO_ORDER_STATUS_CANCELING)
-			}
-			parent.CancelReason = reason
-			parent.CancelTime = now
-			parent.UpdateTimes = now
-			return comboModel.Update(txCtx, parent)
+			return transitionComboToCancellation(
+				txCtx, comboModel, parent, requiresRelease, reason, now,
+			)
 		case option.ComboOrderStatus_COMBO_ORDER_STATUS_ACTIVE,
 			option.ComboOrderStatus_COMBO_ORDER_STATUS_PART_FILLED:
 			children, childErr := orderModel.FindComboChildrenForUpdate(
@@ -689,12 +684,33 @@ func cancelComboInsideTx(
 			return err
 		}
 	}
-	parent.Status = int64(option.ComboOrderStatus_COMBO_ORDER_STATUS_CANCELED)
-	if requiresRelease {
-		parent.Status = int64(option.ComboOrderStatus_COMBO_ORDER_STATUS_CANCELING)
-	}
+	return transitionComboToCancellation(
+		ctx, comboModel, parent, requiresRelease, reason, now,
+	)
+}
+
+// transitionComboToCancellation keeps runtime updates aligned with the
+// database state-machine guard. Even when every pending freeze can be canceled
+// locally and no Asset release is needed, the parent must first traverse
+// CANCELING before it reaches the terminal CANCELED state.
+func transitionComboToCancellation(
+	ctx context.Context,
+	comboModel models.TOptionComboOrderModel,
+	parent *models.TOptionComboOrder,
+	requiresRelease bool,
+	reason string,
+	now int64,
+) error {
+	parent.Status = int64(option.ComboOrderStatus_COMBO_ORDER_STATUS_CANCELING)
 	parent.CancelReason = reason
 	parent.CancelTime = now
 	parent.UpdateTimes = now
+	if err := comboModel.Update(ctx, parent); err != nil {
+		return err
+	}
+	if requiresRelease {
+		return nil
+	}
+	parent.Status = int64(option.ComboOrderStatus_COMBO_ORDER_STATUS_CANCELED)
 	return comboModel.Update(ctx, parent)
 }

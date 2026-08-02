@@ -2839,6 +2839,62 @@ func (InsuranceFundFlowType) EnumDescriptor() ([]byte, []int) {
 	return file_proto_option_enum_proto_rawDescGZIP(), []int{50}
 }
 
+// 保险接管库存主动退出申请状态。批准与提交分离，执行时必须重新校验行情和库存。
+type InsuranceInventoryExitStatus int32
+
+const (
+	InsuranceInventoryExitStatus_INSURANCE_INVENTORY_EXIT_STATUS_UNKNOWN        InsuranceInventoryExitStatus = 0
+	InsuranceInventoryExitStatus_INSURANCE_INVENTORY_EXIT_STATUS_PENDING_REVIEW InsuranceInventoryExitStatus = 1
+	InsuranceInventoryExitStatus_INSURANCE_INVENTORY_EXIT_STATUS_APPROVED       InsuranceInventoryExitStatus = 2
+	InsuranceInventoryExitStatus_INSURANCE_INVENTORY_EXIT_STATUS_REJECTED       InsuranceInventoryExitStatus = 3
+	InsuranceInventoryExitStatus_INSURANCE_INVENTORY_EXIT_STATUS_SUBMITTED      InsuranceInventoryExitStatus = 4
+)
+
+// Enum value maps for InsuranceInventoryExitStatus.
+var (
+	InsuranceInventoryExitStatus_name = map[int32]string{
+		0: "INSURANCE_INVENTORY_EXIT_STATUS_UNKNOWN",
+		1: "INSURANCE_INVENTORY_EXIT_STATUS_PENDING_REVIEW",
+		2: "INSURANCE_INVENTORY_EXIT_STATUS_APPROVED",
+		3: "INSURANCE_INVENTORY_EXIT_STATUS_REJECTED",
+		4: "INSURANCE_INVENTORY_EXIT_STATUS_SUBMITTED",
+	}
+	InsuranceInventoryExitStatus_value = map[string]int32{
+		"INSURANCE_INVENTORY_EXIT_STATUS_UNKNOWN":        0,
+		"INSURANCE_INVENTORY_EXIT_STATUS_PENDING_REVIEW": 1,
+		"INSURANCE_INVENTORY_EXIT_STATUS_APPROVED":       2,
+		"INSURANCE_INVENTORY_EXIT_STATUS_REJECTED":       3,
+		"INSURANCE_INVENTORY_EXIT_STATUS_SUBMITTED":      4,
+	}
+)
+
+func (x InsuranceInventoryExitStatus) Enum() *InsuranceInventoryExitStatus {
+	p := new(InsuranceInventoryExitStatus)
+	*p = x
+	return p
+}
+
+func (x InsuranceInventoryExitStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (InsuranceInventoryExitStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_option_enum_proto_enumTypes[51].Descriptor()
+}
+
+func (InsuranceInventoryExitStatus) Type() protoreflect.EnumType {
+	return &file_proto_option_enum_proto_enumTypes[51]
+}
+
+func (x InsuranceInventoryExitStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use InsuranceInventoryExitStatus.Descriptor instead.
+func (InsuranceInventoryExitStatus) EnumDescriptor() ([]byte, []int) {
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{51}
+}
+
 type ExerciseResult int32
 
 const (
@@ -2875,11 +2931,11 @@ func (x ExerciseResult) String() string {
 }
 
 func (ExerciseResult) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_option_enum_proto_enumTypes[51].Descriptor()
+	return file_proto_option_enum_proto_enumTypes[52].Descriptor()
 }
 
 func (ExerciseResult) Type() protoreflect.EnumType {
-	return &file_proto_option_enum_proto_enumTypes[51]
+	return &file_proto_option_enum_proto_enumTypes[52]
 }
 
 func (x ExerciseResult) Number() protoreflect.EnumNumber {
@@ -2888,7 +2944,7 @@ func (x ExerciseResult) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ExerciseResult.Descriptor instead.
 func (ExerciseResult) EnumDescriptor() ([]byte, []int) {
-	return file_proto_option_enum_proto_rawDescGZIP(), []int{51}
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{52}
 }
 
 type AccountStatus int32
@@ -2927,11 +2983,11 @@ func (x AccountStatus) String() string {
 }
 
 func (AccountStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_option_enum_proto_enumTypes[52].Descriptor()
+	return file_proto_option_enum_proto_enumTypes[53].Descriptor()
 }
 
 func (AccountStatus) Type() protoreflect.EnumType {
-	return &file_proto_option_enum_proto_enumTypes[52]
+	return &file_proto_option_enum_proto_enumTypes[53]
 }
 
 func (x AccountStatus) Number() protoreflect.EnumNumber {
@@ -2940,7 +2996,7 @@ func (x AccountStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AccountStatus.Descriptor instead.
 func (AccountStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_option_enum_proto_rawDescGZIP(), []int{52}
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{53}
 }
 
 type BillRefType int32
@@ -2988,11 +3044,11 @@ func (x BillRefType) String() string {
 }
 
 func (BillRefType) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_option_enum_proto_enumTypes[53].Descriptor()
+	return file_proto_option_enum_proto_enumTypes[54].Descriptor()
 }
 
 func (BillRefType) Type() protoreflect.EnumType {
-	return &file_proto_option_enum_proto_enumTypes[53]
+	return &file_proto_option_enum_proto_enumTypes[54]
 }
 
 func (x BillRefType) Number() protoreflect.EnumNumber {
@@ -3001,7 +3057,7 @@ func (x BillRefType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use BillRefType.Descriptor instead.
 func (BillRefType) EnumDescriptor() ([]byte, []int) {
-	return file_proto_option_enum_proto_rawDescGZIP(), []int{53}
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{54}
 }
 
 // 异常成交只允许追加式现金更正，不删除成交或伪造反向成交。
@@ -3035,11 +3091,11 @@ func (x TradeCorrectionAction) String() string {
 }
 
 func (TradeCorrectionAction) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_option_enum_proto_enumTypes[54].Descriptor()
+	return file_proto_option_enum_proto_enumTypes[55].Descriptor()
 }
 
 func (TradeCorrectionAction) Type() protoreflect.EnumType {
-	return &file_proto_option_enum_proto_enumTypes[54]
+	return &file_proto_option_enum_proto_enumTypes[55]
 }
 
 func (x TradeCorrectionAction) Number() protoreflect.EnumNumber {
@@ -3048,7 +3104,7 @@ func (x TradeCorrectionAction) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use TradeCorrectionAction.Descriptor instead.
 func (TradeCorrectionAction) EnumDescriptor() ([]byte, []int) {
-	return file_proto_option_enum_proto_rawDescGZIP(), []int{54}
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{55}
 }
 
 type TradeCorrectionStatus int32
@@ -3093,11 +3149,11 @@ func (x TradeCorrectionStatus) String() string {
 }
 
 func (TradeCorrectionStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_option_enum_proto_enumTypes[55].Descriptor()
+	return file_proto_option_enum_proto_enumTypes[56].Descriptor()
 }
 
 func (TradeCorrectionStatus) Type() protoreflect.EnumType {
-	return &file_proto_option_enum_proto_enumTypes[55]
+	return &file_proto_option_enum_proto_enumTypes[56]
 }
 
 func (x TradeCorrectionStatus) Number() protoreflect.EnumNumber {
@@ -3106,7 +3162,7 @@ func (x TradeCorrectionStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use TradeCorrectionStatus.Descriptor instead.
 func (TradeCorrectionStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_option_enum_proto_rawDescGZIP(), []int{55}
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{56}
 }
 
 type TradeCorrectionLegDirection int32
@@ -3142,11 +3198,11 @@ func (x TradeCorrectionLegDirection) String() string {
 }
 
 func (TradeCorrectionLegDirection) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_option_enum_proto_enumTypes[56].Descriptor()
+	return file_proto_option_enum_proto_enumTypes[57].Descriptor()
 }
 
 func (TradeCorrectionLegDirection) Type() protoreflect.EnumType {
-	return &file_proto_option_enum_proto_enumTypes[56]
+	return &file_proto_option_enum_proto_enumTypes[57]
 }
 
 func (x TradeCorrectionLegDirection) Number() protoreflect.EnumNumber {
@@ -3155,7 +3211,7 @@ func (x TradeCorrectionLegDirection) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use TradeCorrectionLegDirection.Descriptor instead.
 func (TradeCorrectionLegDirection) EnumDescriptor() ([]byte, []int) {
-	return file_proto_option_enum_proto_rawDescGZIP(), []int{56}
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{57}
 }
 
 type MMPStatus int32
@@ -3194,11 +3250,11 @@ func (x MMPStatus) String() string {
 }
 
 func (MMPStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_option_enum_proto_enumTypes[57].Descriptor()
+	return file_proto_option_enum_proto_enumTypes[58].Descriptor()
 }
 
 func (MMPStatus) Type() protoreflect.EnumType {
-	return &file_proto_option_enum_proto_enumTypes[57]
+	return &file_proto_option_enum_proto_enumTypes[58]
 }
 
 func (x MMPStatus) Number() protoreflect.EnumNumber {
@@ -3207,7 +3263,7 @@ func (x MMPStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use MMPStatus.Descriptor instead.
 func (MMPStatus) EnumDescriptor() ([]byte, []int) {
-	return file_proto_option_enum_proto_rawDescGZIP(), []int{57}
+	return file_proto_option_enum_proto_rawDescGZIP(), []int{58}
 }
 
 var File_proto_option_enum_proto protoreflect.FileDescriptor
@@ -3522,7 +3578,13 @@ const file_proto_option_enum_proto_rawDesc = "" +
 	"(INSURANCE_FUND_FLOW_TYPE_LIQUIDATION_FEE\x10\x01\x12*\n" +
 	"&INSURANCE_FUND_FLOW_TYPE_DEFICIT_COVER\x10\x02\x12+\n" +
 	"'INSURANCE_FUND_FLOW_TYPE_MANUAL_DEPOSIT\x10\x03\x12,\n" +
-	"(INSURANCE_FUND_FLOW_TYPE_MANUAL_WITHDRAW\x10\x04*\x8c\x01\n" +
+	"(INSURANCE_FUND_FLOW_TYPE_MANUAL_WITHDRAW\x10\x04*\x8a\x02\n" +
+	"\x1cInsuranceInventoryExitStatus\x12+\n" +
+	"'INSURANCE_INVENTORY_EXIT_STATUS_UNKNOWN\x10\x00\x122\n" +
+	".INSURANCE_INVENTORY_EXIT_STATUS_PENDING_REVIEW\x10\x01\x12,\n" +
+	"(INSURANCE_INVENTORY_EXIT_STATUS_APPROVED\x10\x02\x12,\n" +
+	"(INSURANCE_INVENTORY_EXIT_STATUS_REJECTED\x10\x03\x12-\n" +
+	")INSURANCE_INVENTORY_EXIT_STATUS_SUBMITTED\x10\x04*\x8c\x01\n" +
 	"\x0eExerciseResult\x12\x1b\n" +
 	"\x17EXERCISE_RESULT_UNKNOWN\x10\x00\x12\x18\n" +
 	"\x14EXERCISE_RESULT_NONE\x10\x01\x12!\n" +
@@ -3573,7 +3635,7 @@ func file_proto_option_enum_proto_rawDescGZIP() []byte {
 	return file_proto_option_enum_proto_rawDescData
 }
 
-var file_proto_option_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 58)
+var file_proto_option_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 59)
 var file_proto_option_enum_proto_goTypes = []any{
 	(OptionType)(0),                    // 0: option.OptionType
 	(ExerciseStyle)(0),                 // 1: option.ExerciseStyle
@@ -3626,13 +3688,14 @@ var file_proto_option_enum_proto_goTypes = []any{
 	(LiquidationStatus)(0),             // 48: option.LiquidationStatus
 	(LiquidationScope)(0),              // 49: option.LiquidationScope
 	(InsuranceFundFlowType)(0),         // 50: option.InsuranceFundFlowType
-	(ExerciseResult)(0),                // 51: option.ExerciseResult
-	(AccountStatus)(0),                 // 52: option.AccountStatus
-	(BillRefType)(0),                   // 53: option.BillRefType
-	(TradeCorrectionAction)(0),         // 54: option.TradeCorrectionAction
-	(TradeCorrectionStatus)(0),         // 55: option.TradeCorrectionStatus
-	(TradeCorrectionLegDirection)(0),   // 56: option.TradeCorrectionLegDirection
-	(MMPStatus)(0),                     // 57: option.MMPStatus
+	(InsuranceInventoryExitStatus)(0),  // 51: option.InsuranceInventoryExitStatus
+	(ExerciseResult)(0),                // 52: option.ExerciseResult
+	(AccountStatus)(0),                 // 53: option.AccountStatus
+	(BillRefType)(0),                   // 54: option.BillRefType
+	(TradeCorrectionAction)(0),         // 55: option.TradeCorrectionAction
+	(TradeCorrectionStatus)(0),         // 56: option.TradeCorrectionStatus
+	(TradeCorrectionLegDirection)(0),   // 57: option.TradeCorrectionLegDirection
+	(MMPStatus)(0),                     // 58: option.MMPStatus
 }
 var file_proto_option_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -3652,7 +3715,7 @@ func file_proto_option_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_option_enum_proto_rawDesc), len(file_proto_option_enum_proto_rawDesc)),
-			NumEnums:      58,
+			NumEnums:      59,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

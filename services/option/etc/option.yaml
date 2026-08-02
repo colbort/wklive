@@ -29,3 +29,12 @@ MarketSnapshotInboxCleanup:
   IntervalMinutes: 60
   BatchSize: 5000
   MaxBatchesPerRun: 10
+
+InsuranceInventoryExit:
+  Enabled: false
+  # All five limits are mandatory and must be positive before Enabled can be true.
+  MaxQuantityPerRequest: "0"
+  MaxPremiumPerRequest: "0"
+  MaxDailyQuantity: "0"
+  MaxMarkDeviationRatio: "0"
+  MinOrderBookQuantity: "0"

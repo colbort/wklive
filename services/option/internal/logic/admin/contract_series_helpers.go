@@ -133,9 +133,14 @@ func normalizeContractSeriesExpiries(
 			return nil, fmt.Errorf("nil expiry")
 		}
 		cycleCode := strings.ToUpper(strings.TrimSpace(input.CycleCode))
+		lastTradeTime := input.LastTradeTime
+		if lastTradeTime == 0 {
+			lastTradeTime = input.ExerciseCutoffTime
+		}
 		if input.SequenceNo <= 0 || input.SequenceNo > 999 ||
 			!contractSeriesCyclePattern.MatchString(cycleCode) ||
-			input.ListTime <= 0 || input.ExerciseCutoffTime <= input.ListTime ||
+			input.ListTime <= 0 || lastTradeTime <= input.ListTime ||
+			input.ExerciseCutoffTime < lastTradeTime ||
 			input.ExpireTime < input.ExerciseCutoffTime || input.DeliverTime < input.ExpireTime {
 			return nil, fmt.Errorf("invalid expiry specification")
 		}
@@ -149,8 +154,9 @@ func normalizeContractSeriesExpiries(
 		seenExpiry[input.ExpireTime] = struct{}{}
 		items = append(items, &models.TOptionContractSeriesExpiry{
 			TenantId: tenantID, SequenceNo: input.SequenceNo, CycleCode: cycleCode,
-			ListTime: input.ListTime, ExerciseCutoffTime: input.ExerciseCutoffTime,
-			ExpireTime: input.ExpireTime, DeliverTime: input.DeliverTime,
+			ListTime: input.ListTime, LastTradeTime: lastTradeTime,
+			ExerciseCutoffTime: input.ExerciseCutoffTime,
+			ExpireTime:         input.ExpireTime, DeliverTime: input.DeliverTime,
 		})
 	}
 	sort.Slice(items, func(i, j int) bool { return items[i].SequenceNo < items[j].SequenceNo })
@@ -327,8 +333,9 @@ func contractSeriesTemplate(
 		StrikePrice: referencePrice, ContractUnit: contractUnit,
 		MinOrderQty: minOrderQty, MaxOrderQty: maxOrderQty, PriceTick: priceTick,
 		QtyStep: qtyStep, Multiplier: multiplier,
-		ListTime: expiry.ListTime, ExerciseCutoffTime: expiry.ExerciseCutoffTime,
-		ExpireTime: expiry.ExpireTime, DeliverTime: expiry.DeliverTime,
+		ListTime: expiry.ListTime, LastTradeTime: expiry.LastTradeTime,
+		ExerciseCutoffTime: expiry.ExerciseCutoffTime,
+		ExpireTime:         expiry.ExpireTime, DeliverTime: expiry.DeliverTime,
 		TradingCalendarCode: calendarCode, AutoExerciseThreshold: autoExerciseThreshold,
 		MaxUserLongQty: maxUserLongQty, MaxUserShortQty: maxUserShortQty,
 		MaxOpenInterest: maxOpenInterest, OrderPriceBandRatio: orderPriceBandRatio,
@@ -396,6 +403,7 @@ func cloneSeriesContract(
 	item.OptionType = int64(optionType)
 	item.StrikePrice = strike
 	item.ListTime = expiry.ListTime
+	item.LastTradeTime = expiry.LastTradeTime
 	item.ExerciseCutoffTime = expiry.ExerciseCutoffTime
 	item.ExpireTime = expiry.ExpireTime
 	item.DeliverTime = expiry.DeliverTime
@@ -445,8 +453,9 @@ func toContractSeriesProto(
 		result.Expiries = append(result.Expiries, &option.OptionContractSeriesExpiry{
 			Id: expiry.Id, TenantId: expiry.TenantId, SeriesId: expiry.SeriesId,
 			SequenceNo: expiry.SequenceNo, CycleCode: expiry.CycleCode,
-			ListTime: expiry.ListTime, ExerciseCutoffTime: expiry.ExerciseCutoffTime,
-			ExpireTime: expiry.ExpireTime, DeliverTime: expiry.DeliverTime, CreateTimes: expiry.CreateTimes,
+			ListTime: expiry.ListTime, LastTradeTime: expiry.LastTradeTime,
+			ExerciseCutoffTime: expiry.ExerciseCutoffTime,
+			ExpireTime:         expiry.ExpireTime, DeliverTime: expiry.DeliverTime, CreateTimes: expiry.CreateTimes,
 		})
 	}
 	for _, band := range bands {

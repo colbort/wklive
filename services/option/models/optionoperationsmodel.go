@@ -113,7 +113,7 @@ func QueryOptionOperationsOverview(
 		return nil, err
 	}
 	result.InsuranceLedger, err = queryOptionCoinAmounts(ctx, conn, tenantID, `
-SELECT coin,COALESCE(SUM(amount),0) amount
+SELECT coin,COALESCE(SUM(`+optionInsuranceFundSignedAmountSQL+`),0) amount
 FROM t_option_insurance_fund_flow WHERE %s GROUP BY coin ORDER BY coin`)
 	if err != nil {
 		return nil, err

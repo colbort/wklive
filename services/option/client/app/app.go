@@ -28,10 +28,12 @@ type (
 	CreateContractResp                 = option.CreateContractResp
 	CreateContractSeriesReq            = option.CreateContractSeriesReq
 	CreateCorporateActionReq           = option.CreateCorporateActionReq
+	CreateInsuranceInventoryExitReq    = option.CreateInsuranceInventoryExitReq
 	CreatePortfolioRiskConfigReq       = option.CreatePortfolioRiskConfigReq
 	CreateSettlementPriceCorrectionReq = option.CreateSettlementPriceCorrectionReq
 	CreateTradeCorrectionReq           = option.CreateTradeCorrectionReq
 	CreateTradingCalendarReq           = option.CreateTradingCalendarReq
+	ExecuteInsuranceInventoryExitReq   = option.ExecuteInsuranceInventoryExitReq
 	ExerciseData                       = option.ExerciseData
 	ExerciseReq                        = option.ExerciseReq
 	ExerciseResp                       = option.ExerciseResp
@@ -55,6 +57,7 @@ type (
 	GetExerciseInstructionResp         = option.GetExerciseInstructionResp
 	GetExerciseReq                     = option.GetExerciseReq
 	GetExerciseResp                    = option.GetExerciseResp
+	GetInsuranceInventoryExitResp      = option.GetInsuranceInventoryExitResp
 	GetMMPConfigReq                    = option.GetMMPConfigReq
 	GetMMPConfigResp                   = option.GetMMPConfigResp
 	GetMarketReq                       = option.GetMarketReq
@@ -109,6 +112,8 @@ type (
 	ListExercisesResp                  = option.ListExercisesResp
 	ListHistoryOrdersReq               = option.ListHistoryOrdersReq
 	ListHistoryOrdersResp              = option.ListHistoryOrdersResp
+	ListInsuranceInventoryExitsReq     = option.ListInsuranceInventoryExitsReq
+	ListInsuranceInventoryExitsResp    = option.ListInsuranceInventoryExitsResp
 	ListLiquidationsReq                = option.ListLiquidationsReq
 	ListLiquidationsResp               = option.ListLiquidationsResp
 	ListMMPConfigsReq                  = option.ListMMPConfigsReq
@@ -162,6 +167,7 @@ type (
 	ReviewContractSeriesLaunchReq      = option.ReviewContractSeriesLaunchReq
 	ReviewContractSeriesReq            = option.ReviewContractSeriesReq
 	ReviewCorporateActionReq           = option.ReviewCorporateActionReq
+	ReviewInsuranceInventoryExitReq    = option.ReviewInsuranceInventoryExitReq
 	ReviewPortfolioRiskConfigReq       = option.ReviewPortfolioRiskConfigReq
 	ReviewSettlementPriceReq           = option.ReviewSettlementPriceReq
 	ReviewTradeCorrectionReq           = option.ReviewTradeCorrectionReq

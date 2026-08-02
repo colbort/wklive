@@ -147,6 +147,9 @@ func (l *UpdateContractLogic) UpdateContract(in *option.UpdateContractReq) (*opt
 	if in.ListTime != 0 {
 		item.ListTime = in.ListTime
 	}
+	if in.LastTradeTime != 0 {
+		item.LastTradeTime = in.LastTradeTime
+	}
 	if in.ExpireTime != 0 {
 		item.ExpireTime = in.ExpireTime
 	}

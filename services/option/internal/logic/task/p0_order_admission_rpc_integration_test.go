@@ -154,24 +154,54 @@ func seedP0OpenTradingCalendar(
 	now int64,
 ) {
 	t.Helper()
+	seedOpenTradingCalendarForTenant(t, ctx, db, p0AssetE2ETenantID, calendarCode, now)
+}
+
+func seedOpenTradingCalendarForTenant(
+	t *testing.T,
+	ctx context.Context,
+	db *sql.DB,
+	tenantID int64,
+	calendarCode string,
+	now int64,
+) {
+	t.Helper()
+	var existingID int64
+	err := db.QueryRowContext(ctx, `SELECT id FROM t_option_trading_calendar
+		WHERE tenant_id=? AND calendar_code=? ORDER BY version DESC LIMIT 1`,
+		tenantID, calendarCode,
+	).Scan(&existingID)
+	if err == nil {
+		return
+	}
+	if err != sql.ErrNoRows {
+		t.Fatalf("find trading calendar tenant/code=%d/%s: %v", tenantID, calendarCode, err)
+	}
 	result, err := db.ExecContext(ctx, `INSERT INTO t_option_trading_calendar
 		(tenant_id,calendar_code,version,status,timezone,effective_from,effective_until,
-		 change_reason,evidence_ref,created_by,reviewed_by,review_reason,reviewed_at,create_times,update_times)
-		VALUES (?,?,1,2,'UTC',?,0,'P0 full order admission','P0-E2E',9001,9002,'approved',?,?,?)`,
-		p0AssetE2ETenantID, calendarCode, now-3600, now-1800, now-3600, now-1800,
+		 change_reason,evidence_ref,created_by,create_times,update_times)
+		VALUES (?,?,1,1,'UTC',?,0,'acceptance fixture','P0-E2E',9001,?,?)`,
+		tenantID, calendarCode, now-3600, now-3600, now-3600,
 	)
 	if err != nil {
-		t.Fatalf("insert P0 trading calendar: %v", err)
+		t.Fatalf("insert draft trading calendar tenant/code=%d/%s: %v", tenantID, calendarCode, err)
 	}
 	calendarID, err := result.LastInsertId()
 	if err != nil {
 		t.Fatal(err)
 	}
-	weekday := int64(time.Unix(now, 0).UTC().Weekday())
-	if _, err := db.ExecContext(ctx, `INSERT INTO t_option_trading_calendar_session
-		(tenant_id,calendar_id,weekday,open_second,close_second,create_times)
-		VALUES (?,?,?,0,86400,?)`, p0AssetE2ETenantID, calendarID, weekday, now); err != nil {
-		t.Fatalf("insert P0 trading session: %v", err)
+	for weekday := int64(0); weekday < 7; weekday++ {
+		if _, err := db.ExecContext(ctx, `INSERT INTO t_option_trading_calendar_session
+			(tenant_id,calendar_id,weekday,open_second,close_second,create_times)
+			VALUES (?,?,?,0,86400,?)`, tenantID, calendarID, weekday, now); err != nil {
+			t.Fatalf("insert trading session tenant/code/weekday=%d/%s/%d: %v",
+				tenantID, calendarCode, weekday, err)
+		}
+	}
+	if _, err := db.ExecContext(ctx, `UPDATE t_option_trading_calendar
+		SET status=2,reviewed_by=9002,review_reason='approved fixture',reviewed_at=?,update_times=?
+		WHERE tenant_id=? AND id=? AND status=1`, now-1800, now-1800, tenantID, calendarID); err != nil {
+		t.Fatalf("approve trading calendar tenant/code=%d/%s: %v", tenantID, calendarCode, err)
 	}
 }
 

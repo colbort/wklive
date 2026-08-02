@@ -54,6 +54,7 @@ func (l *ReleaseUserKillSwitchLogic) ReleaseUserKillSwitch(in *option.ReleaseUse
 		}, nil
 	}
 	now := time.Now().Unix()
+	releaseBlocked := false
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)
 		controlModel := models.NewTOptionUserTradingControlModel(conn, l.svcCtx.Config.CacheRedis)
@@ -62,6 +63,17 @@ func (l *ReleaseUserKillSwitchLogic) ReleaseUserKillSwitch(in *option.ReleaseUse
 			return err
 		}
 		if item.KillSwitch == int64(common.YesNo_YES_NO_NO) {
+			return nil
+		}
+		orderModel := models.NewTOptionOrderModel(conn, l.svcCtx.Config.CacheRedis)
+		unsafeOrders, err := orderModel.HasUnsafeKillSwitchReleaseOrders(
+			ctx, in.TenantId, in.UserId,
+		)
+		if err != nil {
+			return err
+		}
+		if unsafeOrders {
+			releaseBlocked = true
 			return nil
 		}
 		item.KillSwitch = int64(common.YesNo_YES_NO_NO)
@@ -89,6 +101,15 @@ func (l *ReleaseUserKillSwitchLogic) ReleaseUserKillSwitch(in *option.ReleaseUse
 	}
 	if err != nil {
 		return nil, err
+	}
+	if releaseBlocked {
+		l.Errorf(
+			"option kill switch release blocked by non-terminal orders, tenantId=%d userId=%d operatorId=%d",
+			in.TenantId, in.UserId, operatorID,
+		)
+		return &option.CommonResp{
+			Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx)),
+		}, nil
 	}
 	l.Infof(
 		"option trading control metric event=%s reason=%s tenantId=%d userId=%d operatorId=%d",

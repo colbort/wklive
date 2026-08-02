@@ -10,6 +10,7 @@ import (
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
+	"github.com/go-sql-driver/mysql"
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -26,7 +27,7 @@ type ControlCancelAudit struct {
 func CancelOrderByControl(
 	ctx context.Context, svcCtx *svc.ServiceContext, orderID int64, reason string,
 ) (*models.TOptionOrder, error) {
-	return cancelOrderByControl(ctx, svcCtx, orderID, reason, nil)
+	return retryControlCancellation(ctx, svcCtx, orderID, reason, nil)
 }
 
 // CancelOrderByControlWithAudit atomically appends an immutable control event
@@ -43,7 +44,43 @@ func CancelOrderByControlWithAudit(
 	if audit.EventType == "" || audit.OperatorID <= 0 {
 		return nil, errors.New("control cancellation audit requires event type and operator")
 	}
-	return cancelOrderByControl(ctx, svcCtx, orderID, reason, &audit)
+	return retryControlCancellation(ctx, svcCtx, orderID, reason, &audit)
+}
+
+const controlCancelMaxAttempts = 5
+
+func retryControlCancellation(
+	ctx context.Context,
+	svcCtx *svc.ServiceContext,
+	orderID int64,
+	reason string,
+	audit *ControlCancelAudit,
+) (*models.TOptionOrder, error) {
+	var lastErr error
+	for attempt := 0; attempt < controlCancelMaxAttempts; attempt++ {
+		order, err := cancelOrderByControl(ctx, svcCtx, orderID, reason, audit)
+		if err == nil {
+			return order, nil
+		}
+		lastErr = err
+		if !isRetryableControlCancelError(err) || attempt == controlCancelMaxAttempts-1 {
+			return nil, err
+		}
+		delay := time.Duration(10*(1<<attempt)) * time.Millisecond
+		timer := time.NewTimer(delay)
+		select {
+		case <-ctx.Done():
+			timer.Stop()
+			return nil, errors.Join(ctx.Err(), lastErr)
+		case <-timer.C:
+		}
+	}
+	return nil, lastErr
+}
+
+func isRetryableControlCancelError(err error) bool {
+	var mysqlErr *mysql.MySQLError
+	return errors.As(err, &mysqlErr) && (mysqlErr.Number == 1213 || mysqlErr.Number == 1205)
 }
 
 func cancelOrderByControl(
@@ -156,6 +193,23 @@ func cancelOrderByControl(
 func CancelContractOrdersByControl(
 	ctx context.Context, svcCtx *svc.ServiceContext, tenantID, contractID int64, reason string,
 ) error {
+	_, _, _, err := CancelContractOrdersByControlReport(
+		ctx, svcCtx, tenantID, contractID, reason, false,
+	)
+	return err
+}
+
+// CancelContractOrdersByControlReport cancels every active order visible in a
+// contract and returns exact per-order progress. continueOnError is used by
+// emergency controls: one malformed or temporarily unavailable order must not
+// prevent later orders in the batch from being made safe.
+func CancelContractOrdersByControlReport(
+	ctx context.Context,
+	svcCtx *svc.ServiceContext,
+	tenantID, contractID int64,
+	reason string,
+	continueOnError bool,
+) (total, success, failed int64, lastErr error) {
 	cursor := int64(0)
 	for {
 		orders, _, err := svcCtx.OptionOrderModel.FindPage(ctx, models.OptionOrderPageFilter{
@@ -167,16 +221,23 @@ func CancelContractOrdersByControl(
 			},
 		}, cursor, 100)
 		if err != nil {
-			return err
+			return total, success, failed, err
 		}
 		for _, order := range orders {
 			cursor = order.Id
+			total++
 			if _, err := CancelOrderByControl(ctx, svcCtx, order.Id, reason); err != nil {
-				return err
+				failed++
+				lastErr = err
+				if !continueOnError {
+					return total, success, failed, err
+				}
+				continue
 			}
+			success++
 		}
 		if len(orders) < 100 {
-			return nil
+			return total, success, failed, lastErr
 		}
 	}
 }

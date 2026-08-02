@@ -129,6 +129,7 @@ func ToContractProto(item *models.TOptionContract) *option.OptionContract {
 		QtyStep:                 conv.FloatString(item.QtyStep),
 		Multiplier:              conv.FloatString(item.Multiplier),
 		ListTime:                item.ListTime,
+		LastTradeTime:           item.LastTradeTime,
 		ExpireTime:              item.ExpireTime,
 		DeliverTime:             item.DeliverTime,
 		TradingCalendarCode:     item.TradingCalendarCode,
@@ -318,6 +319,7 @@ func ToPortfolioRiskConfigProto(item *models.TOptionPortfolioRiskConfig) *option
 		EffectiveFrom:          item.EffectiveFrom,
 		EffectiveUntil:         item.EffectiveUntil,
 		SupersedesId:           item.SupersedesId,
+		SourceConfigId:         item.SourceConfigId,
 		ChangeReason:           item.ChangeReason,
 		EvidenceRef:            item.EvidenceRef,
 		CreatedBy:              item.CreatedBy,
@@ -793,6 +795,39 @@ func ToLiquidationProto(item *models.TOptionLiquidation) *option.OptionLiquidati
 		PortfolioCollateralBefore:  conv.FloatString(item.PortfolioCollateralBefore),
 		PortfolioCollateralAfter:   conv.FloatString(item.PortfolioCollateralAfter),
 	}
+}
+
+func ToInsuranceInventoryExitProto(
+	item *models.TOptionInsuranceInventoryExit,
+) *option.OptionInsuranceInventoryExit {
+	if item == nil {
+		return nil
+	}
+	return &option.OptionInsuranceInventoryExit{
+		Id: item.Id, TenantId: item.TenantId, RequestNo: item.RequestNo,
+		PositionId: item.PositionId, ContractId: item.ContractId,
+		InsuranceUserId: item.InsuranceUserId, InsuranceAccountId: item.InsuranceAccountId,
+		Quantity: conv.FloatString(item.Quantity), LimitPrice: conv.FloatString(item.LimitPrice),
+		Status: option.InsuranceInventoryExitStatus(item.Status),
+		Reason: item.Reason, EvidenceRef: item.EvidenceRef,
+		RequestedBy: item.RequestedBy, ReviewedBy: item.ReviewedBy,
+		ReviewReason: item.ReviewReason, ReviewedAt: item.ReviewedAt,
+		OrderId: item.OrderId, SubmittedBy: item.SubmittedBy, SubmittedAt: item.SubmittedAt,
+		LastErrorMsg: item.LastErrorMsg, CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
+	}
+}
+
+func ApplyInsuranceInventoryExitOrder(
+	exit *option.OptionInsuranceInventoryExit,
+	order *models.TOptionOrder,
+) *option.OptionInsuranceInventoryExit {
+	if exit == nil || order == nil {
+		return exit
+	}
+	exit.OrderStatus = option.OrderStatus(order.Status)
+	exit.FilledQty = conv.FloatString(order.FilledQty)
+	exit.UnfilledQty = conv.FloatString(order.UnfilledQty)
+	return exit
 }
 
 func BuildContractDetail(ctx context.Context, svcCtx *svc.ServiceContext, contract *models.TOptionContract) (*option.OptionContractDetail, error) {

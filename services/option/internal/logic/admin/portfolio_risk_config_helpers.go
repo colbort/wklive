@@ -11,6 +11,11 @@ import (
 )
 
 var errInvalidPortfolioRiskConfig = errors.New("invalid portfolio risk config")
+
+func portfolioRiskConfigEffectiveTimeValid(effectiveFrom, now int64) bool {
+	return effectiveFrom > now
+}
+
 var portfolioSettleCoinPattern = regexp.MustCompile(`^[A-Z0-9]{1,16}$`)
 
 func portfolioConfigParamError(ctx context.Context) *option.GetPortfolioRiskConfigResp {

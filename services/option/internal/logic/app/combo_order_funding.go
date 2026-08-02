@@ -30,6 +30,8 @@ func CompleteComboFunding(
 		orderModel := models.NewTOptionOrderModel(conn, svcCtx.Config.CacheRedis)
 		instructionModel := models.NewTOptionAssetInstructionModel(conn, svcCtx.Config.CacheRedis)
 		contractModel := models.NewTOptionContractModel(conn, svcCtx.Config.CacheRedis)
+		marketModel := models.NewTOptionMarketModel(conn, svcCtx.Config.CacheRedis)
+		userControlModel := models.NewTOptionUserTradingControlModel(conn, svcCtx.Config.CacheRedis)
 		haltModel := models.NewTOptionTradingHaltModel(conn, svcCtx.Config.CacheRedis)
 		calendarModel := models.NewTOptionTradingCalendarModel(conn, svcCtx.Config.CacheRedis)
 		calendarSessionModel := models.NewTOptionTradingCalendarSessionModel(conn, svcCtx.Config.CacheRedis)
@@ -72,6 +74,22 @@ func CompleteComboFunding(
 
 		now := time.Now().Unix()
 		admit := true
+		admissionReason := "COMBO_NOT_TRADABLE_AFTER_FUNDING"
+		rejectAdmission := func(reason string) {
+			if admit && reason != "" {
+				admissionReason = reason
+			}
+			admit = false
+		}
+		userControl, err := userControlModel.EnsureForUpdate(
+			txCtx, current.TenantId, current.UserId, now,
+		)
+		if err != nil {
+			return err
+		}
+		if userControl.KillSwitch == int64(common.YesNo_YES_NO_YES) {
+			rejectAdmission("COMBO_USER_KILL_SWITCH_AFTER_FUNDING")
+		}
 		for _, child := range children {
 			contract, err := contractModel.FindOneForUpdate(txCtx, child.ContractId)
 			if err != nil {
@@ -81,8 +99,8 @@ func CompleteComboFunding(
 				contract.Status != int64(option.ContractStatus_CONTRACT_STATUS_TRADING) ||
 				contract.IsDeleted == int64(common.YesNo_YES_NO_YES) ||
 				now < contract.ListTime ||
-				(contract.ExpireTime > 0 && now >= contract.ExpireTime) {
-				admit = false
+				(contract.LastTradeTime <= 0 || now >= contract.LastTradeTime) {
+				rejectAdmission("COMBO_CONTRACT_NOT_TRADABLE_AFTER_FUNDING")
 				continue
 			}
 			decision, calendarErr := logichelpers.IsContractTradingOpenWithModels(
@@ -90,7 +108,38 @@ func CompleteComboFunding(
 				calendarExceptionModel, contract, now,
 			)
 			if calendarErr != nil || decision == nil || !decision.Open {
-				admit = false
+				rejectAdmission("COMBO_CALENDAR_CLOSED_AFTER_FUNDING")
+				continue
+			}
+			market, marketErr := marketModel.FindOneByTenantIdContractIdForUpdate(
+				txCtx, child.TenantId, child.ContractId,
+			)
+			if marketErr != nil || !logichelpers.IsMarkFresh(market, now, 30) ||
+				!market.MarkPrice.IsPositive() {
+				if marketErr != nil && !errors.Is(marketErr, models.ErrNotFound) {
+					return marketErr
+				}
+				rejectAdmission("COMBO_STALE_MARK_AFTER_FUNDING")
+				continue
+			}
+			if _, _, withinBand := optionOrderPriceBand(
+				child.Price, market.MarkPrice, contract.OrderPriceBandRatio,
+			); !withinBand {
+				rejectAdmission("COMBO_PRICE_BAND_AFTER_FUNDING")
+				continue
+			}
+			if child.Side == int64(common.Side_SIDE_SELL) {
+				if !logichelpers.IsUnderlyingFresh(market, now, 30) ||
+					!market.UnderlyingPrice.IsPositive() {
+					rejectAdmission("COMBO_STALE_UNDERLYING_AFTER_FUNDING")
+					continue
+				}
+				requiredMargin := optionSellerMargin(
+					contract, market.UnderlyingPrice, child.Price, child.UnfilledQty, false,
+				)
+				if !requiredMargin.IsPositive() || child.MarginAmount.LessThan(requiredMargin) {
+					rejectAdmission("COMBO_SELL_MARGIN_INSUFFICIENT_AFTER_FUNDING")
+				}
 			}
 		}
 		for _, child := range children {
@@ -98,7 +147,7 @@ func CompleteComboFunding(
 				child.Status = int64(option.OrderStatus_ORDER_STATUS_PENDING)
 			} else {
 				child.Status = int64(option.OrderStatus_ORDER_STATUS_EXPIRING)
-				child.CancelReason = "COMBO_NOT_TRADABLE_AFTER_FUNDING"
+				child.CancelReason = admissionReason
 				child.CancelTime = now
 				if _, err := instructionModel.Insert(txCtx, &models.TOptionAssetInstruction{
 					TenantId:      child.TenantId,
@@ -132,7 +181,7 @@ func CompleteComboFunding(
 			current.Status = int64(option.ComboOrderStatus_COMBO_ORDER_STATUS_ACTIVE)
 		} else {
 			current.Status = int64(option.ComboOrderStatus_COMBO_ORDER_STATUS_CANCELING)
-			current.CancelReason = "COMBO_NOT_TRADABLE_AFTER_FUNDING"
+			current.CancelReason = admissionReason
 			current.CancelTime = now
 		}
 		current.UpdateTimes = now

@@ -79,8 +79,10 @@ Scope 2 覆盖 `FEE_REVENUE`、`INSURANCE_FUND`、`OPTION_BACKSTOP`。每个
 `biz_type/scene_type/biz_no`。`FEE_REVENUE` 若与其他产品共用，运行必须保留完整账户流水，Option
 子账只做交叉核对，不得从平台实际余额中推测拆分值。
 
-保险赔付历史正负号未获财务/清算批准前，以 Asset 平台流水的 `op_type` 和前后余额为权威；
-`t_option_insurance_fund_flow.amount` 只用于发现符号差异，不能用于改写 Asset 结果。
+`t_option_insurance_fund_flow.amount` 保存业务绝对金额，方向由类型归一：1/3为
+`+ABS(amount)`，2/4为`-ABS(amount)`。该表达式兼容历史正负行且不得触发历史改写。平台账户的
+权威结果仍取 Asset 流水 `op_type`、前后余额及同一截止点；Option 归一值只做逐笔交叉核对，不能
+改写 Asset 结果，也不能替代实际余额。
 
 ## 6. 不可变结果
 

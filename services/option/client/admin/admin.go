@@ -28,10 +28,12 @@ type (
 	CreateContractResp                 = option.CreateContractResp
 	CreateContractSeriesReq            = option.CreateContractSeriesReq
 	CreateCorporateActionReq           = option.CreateCorporateActionReq
+	CreateInsuranceInventoryExitReq    = option.CreateInsuranceInventoryExitReq
 	CreatePortfolioRiskConfigReq       = option.CreatePortfolioRiskConfigReq
 	CreateSettlementPriceCorrectionReq = option.CreateSettlementPriceCorrectionReq
 	CreateTradeCorrectionReq           = option.CreateTradeCorrectionReq
 	CreateTradingCalendarReq           = option.CreateTradingCalendarReq
+	ExecuteInsuranceInventoryExitReq   = option.ExecuteInsuranceInventoryExitReq
 	ExerciseData                       = option.ExerciseData
 	ExerciseReq                        = option.ExerciseReq
 	ExerciseResp                       = option.ExerciseResp
@@ -55,6 +57,7 @@ type (
 	GetExerciseInstructionResp         = option.GetExerciseInstructionResp
 	GetExerciseReq                     = option.GetExerciseReq
 	GetExerciseResp                    = option.GetExerciseResp
+	GetInsuranceInventoryExitResp      = option.GetInsuranceInventoryExitResp
 	GetMMPConfigReq                    = option.GetMMPConfigReq
 	GetMMPConfigResp                   = option.GetMMPConfigResp
 	GetMarketReq                       = option.GetMarketReq
@@ -109,6 +112,8 @@ type (
 	ListExercisesResp                  = option.ListExercisesResp
 	ListHistoryOrdersReq               = option.ListHistoryOrdersReq
 	ListHistoryOrdersResp              = option.ListHistoryOrdersResp
+	ListInsuranceInventoryExitsReq     = option.ListInsuranceInventoryExitsReq
+	ListInsuranceInventoryExitsResp    = option.ListInsuranceInventoryExitsResp
 	ListLiquidationsReq                = option.ListLiquidationsReq
 	ListLiquidationsResp               = option.ListLiquidationsResp
 	ListMMPConfigsReq                  = option.ListMMPConfigsReq
@@ -162,6 +167,7 @@ type (
 	ReviewContractSeriesLaunchReq      = option.ReviewContractSeriesLaunchReq
 	ReviewContractSeriesReq            = option.ReviewContractSeriesReq
 	ReviewCorporateActionReq           = option.ReviewCorporateActionReq
+	ReviewInsuranceInventoryExitReq    = option.ReviewInsuranceInventoryExitReq
 	ReviewPortfolioRiskConfigReq       = option.ReviewPortfolioRiskConfigReq
 	ReviewSettlementPriceReq           = option.ReviewSettlementPriceReq
 	ReviewTradeCorrectionReq           = option.ReviewTradeCorrectionReq
@@ -296,6 +302,14 @@ type (
 		ListLiquidations(ctx context.Context, in *ListLiquidationsReq, opts ...grpc.CallOption) (*ListLiquidationsResp, error)
 		// 将失败或人工处理的强平记录重新置为待执行
 		RetryLiquidation(ctx context.Context, in *RetryLiquidationReq, opts ...grpc.CallOption) (*CommonResp, error)
+		// 创建保险接管库存主动退出的不可变待复核申请
+		CreateInsuranceInventoryExit(ctx context.Context, in *CreateInsuranceInventoryExitReq, opts ...grpc.CallOption) (*GetInsuranceInventoryExitResp, error)
+		// 由独立管理员批准或拒绝保险库存退出申请
+		ReviewInsuranceInventoryExit(ctx context.Context, in *ReviewInsuranceInventoryExitReq, opts ...grpc.CallOption) (*GetInsuranceInventoryExitResp, error)
+		// 重新校验库存和行情后，幂等提交管理来源的IOC减仓单
+		ExecuteInsuranceInventoryExit(ctx context.Context, in *ExecuteInsuranceInventoryExitReq, opts ...grpc.CallOption) (*GetInsuranceInventoryExitResp, error)
+		// 分页查询保险库存退出申请
+		ListInsuranceInventoryExits(ctx context.Context, in *ListInsuranceInventoryExitsReq, opts ...grpc.CallOption) (*ListInsuranceInventoryExitsResp, error)
 		// 按行权单重试失败或人工处理的资产指令
 		RetryExercise(ctx context.Context, in *RetryExerciseReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 校验归属后重试结算批次中的失败资产指令
@@ -657,6 +671,30 @@ func (m *defaultAdmin) ListLiquidations(ctx context.Context, in *ListLiquidation
 func (m *defaultAdmin) RetryLiquidation(ctx context.Context, in *RetryLiquidationReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	client := option.NewAdminClient(m.cli.Conn())
 	return client.RetryLiquidation(ctx, in, opts...)
+}
+
+// 创建保险接管库存主动退出的不可变待复核申请
+func (m *defaultAdmin) CreateInsuranceInventoryExit(ctx context.Context, in *CreateInsuranceInventoryExitReq, opts ...grpc.CallOption) (*GetInsuranceInventoryExitResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.CreateInsuranceInventoryExit(ctx, in, opts...)
+}
+
+// 由独立管理员批准或拒绝保险库存退出申请
+func (m *defaultAdmin) ReviewInsuranceInventoryExit(ctx context.Context, in *ReviewInsuranceInventoryExitReq, opts ...grpc.CallOption) (*GetInsuranceInventoryExitResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ReviewInsuranceInventoryExit(ctx, in, opts...)
+}
+
+// 重新校验库存和行情后，幂等提交管理来源的IOC减仓单
+func (m *defaultAdmin) ExecuteInsuranceInventoryExit(ctx context.Context, in *ExecuteInsuranceInventoryExitReq, opts ...grpc.CallOption) (*GetInsuranceInventoryExitResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ExecuteInsuranceInventoryExit(ctx, in, opts...)
+}
+
+// 分页查询保险库存退出申请
+func (m *defaultAdmin) ListInsuranceInventoryExits(ctx context.Context, in *ListInsuranceInventoryExitsReq, opts ...grpc.CallOption) (*ListInsuranceInventoryExitsResp, error) {
+	client := option.NewAdminClient(m.cli.Conn())
+	return client.ListInsuranceInventoryExits(ctx, in, opts...)
 }
 
 // 按行权单重试失败或人工处理的资产指令

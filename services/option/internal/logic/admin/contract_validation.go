@@ -42,6 +42,9 @@ func normalizeSettlementPriceRule(item *models.TOptionContract) {
 	if item.ExerciseCutoffTime == 0 {
 		item.ExerciseCutoffTime = item.ExpireTime
 	}
+	if item.LastTradeTime == 0 {
+		item.LastTradeTime = item.ExerciseCutoffTime
+	}
 }
 
 func parseOptionalOptionRate(value string) (decimal.Decimal, error) {
@@ -186,10 +189,11 @@ func validateSupportedContract(item *models.TOptionContract) bool {
 	default:
 		return false
 	}
-	if item.ListTime <= 0 || item.ExpireTime <= item.ListTime ||
+	if item.ListTime <= 0 || item.LastTradeTime <= item.ListTime ||
+		item.ExerciseCutoffTime < item.LastTradeTime ||
+		item.ExpireTime < item.ExerciseCutoffTime ||
 		item.DeliverTime < item.ExpireTime ||
-		item.ExerciseCutoffTime <= item.ListTime ||
-		item.ExerciseCutoffTime > item.ExpireTime {
+		item.ExpireTime <= item.ListTime {
 		return false
 	}
 	switch option.ContractStatus(item.Status) {
@@ -221,6 +225,7 @@ func economicContractFieldsEqual(left, right *models.TOptionContract) bool {
 		left.QtyStep.Equal(right.QtyStep) &&
 		left.Multiplier.Equal(right.Multiplier) &&
 		left.ListTime == right.ListTime &&
+		left.LastTradeTime == right.LastTradeTime &&
 		left.ExpireTime == right.ExpireTime &&
 		left.DeliverTime == right.DeliverTime &&
 		left.TradingCalendarCode == right.TradingCalendarCode &&

@@ -50,8 +50,9 @@ type (
 		SequenceNo         int64  `db:"sequence_no"`          // 稳定到期序号
 		CycleCode          string `db:"cycle_code"`           // 运营确认的周期标签
 		ListTime           int64  `db:"list_time"`            // 上市时间
+		LastTradeTime      int64  `db:"last_trade_time"`      // 最后可交易时间
 		ExerciseCutoffTime int64  `db:"exercise_cutoff_time"` // 行权指令截止时间
-		ExpireTime         int64  `db:"expire_time"`          // 到期/最后交易时间
+		ExpireTime         int64  `db:"expire_time"`          // 到期时间
 		DeliverTime        int64  `db:"deliver_time"`         // 交割时间
 		CreateTimes        int64  `db:"create_times"`         // 创建时间
 	}
@@ -142,8 +143,8 @@ func (m *defaultTOptionContractSeriesExpiryModel) Insert(ctx context.Context, da
 	tOptionContractSeriesExpiryTenantIdSeriesIdExpireTimeKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionContractSeriesExpiryTenantIdSeriesIdExpireTimePrefix, data.TenantId, data.SeriesId, data.ExpireTime)
 	tOptionContractSeriesExpiryTenantIdSeriesIdSequenceNoKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionContractSeriesExpiryTenantIdSeriesIdSequenceNoPrefix, data.TenantId, data.SeriesId, data.SequenceNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionContractSeriesExpiryRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.SeriesId, data.SequenceNo, data.CycleCode, data.ListTime, data.ExerciseCutoffTime, data.ExpireTime, data.DeliverTime, data.CreateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionContractSeriesExpiryRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.SeriesId, data.SequenceNo, data.CycleCode, data.ListTime, data.LastTradeTime, data.ExerciseCutoffTime, data.ExpireTime, data.DeliverTime, data.CreateTimes)
 	}, tOptionContractSeriesExpiryIdKey, tOptionContractSeriesExpiryTenantIdSeriesIdExpireTimeKey, tOptionContractSeriesExpiryTenantIdSeriesIdSequenceNoKey)
 	return ret, err
 }
@@ -159,7 +160,7 @@ func (m *defaultTOptionContractSeriesExpiryModel) Update(ctx context.Context, ne
 	tOptionContractSeriesExpiryTenantIdSeriesIdSequenceNoKey := fmt.Sprintf("%s%v:%v:%v", cacheTOptionContractSeriesExpiryTenantIdSeriesIdSequenceNoPrefix, data.TenantId, data.SeriesId, data.SequenceNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionContractSeriesExpiryRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.SeriesId, newData.SequenceNo, newData.CycleCode, newData.ListTime, newData.ExerciseCutoffTime, newData.ExpireTime, newData.DeliverTime, newData.CreateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.SeriesId, newData.SequenceNo, newData.CycleCode, newData.ListTime, newData.LastTradeTime, newData.ExerciseCutoffTime, newData.ExpireTime, newData.DeliverTime, newData.CreateTimes, newData.Id)
 	}, tOptionContractSeriesExpiryIdKey, tOptionContractSeriesExpiryTenantIdSeriesIdExpireTimeKey, tOptionContractSeriesExpiryTenantIdSeriesIdSequenceNoKey)
 	return err
 }

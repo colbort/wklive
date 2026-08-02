@@ -223,7 +223,7 @@ func validateComboOrder(
 			contract.Status != int64(option.ContractStatus_CONTRACT_STATUS_TRADING) ||
 			contract.IsDeleted == int64(common.YesNo_YES_NO_YES) ||
 			now < contract.ListTime ||
-			(contract.ExpireTime > 0 && now >= contract.ExpireTime) {
+			(contract.LastTradeTime <= 0 || now >= contract.LastTradeTime) {
 			return nil, errors.New("combo leg contract is not tradable")
 		}
 		if contract.SettlementType != int64(option.SettlementType_SETTLEMENT_TYPE_CASH) {

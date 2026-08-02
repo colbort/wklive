@@ -55,10 +55,11 @@ func (l *CreatePortfolioRiskConfigLogic) CreatePortfolioRiskConfig(in *option.Cr
 	evidenceRef := strings.TrimSpace(in.EvidenceRef)
 	effectiveFrom := in.EffectiveFrom
 	if effectiveFrom <= 0 {
-		effectiveFrom = now
+		effectiveFrom = now + 300
 	}
 	if in.TenantId <= 0 || operatorID <= 0 || !portfolioSettleCoinPattern.MatchString(settleCoin) ||
-		changeReason == "" || evidenceRef == "" || len(changeReason) > 500 || len(evidenceRef) > 500 {
+		changeReason == "" || evidenceRef == "" || len(changeReason) > 500 || len(evidenceRef) > 500 ||
+		!portfolioRiskConfigEffectiveTimeValid(effectiveFrom, now) {
 		return portfolioConfigParamError(l.ctx), nil
 	}
 
@@ -83,6 +84,7 @@ func (l *CreatePortfolioRiskConfigLogic) CreatePortfolioRiskConfig(in *option.Cr
 		var initialShockRate, maintenanceShockRate, concentrationThreshold,
 			concentrationAddonRate, liquidityAddonRate decimal.Decimal
 		var scenarioShocks string
+		sourceConfigID := int64(0)
 		if in.SourceConfigId > 0 {
 			source, sourceErr := configModel.FindOneForUpdate(ctx, in.SourceConfigId)
 			if sourceErr != nil {
@@ -100,6 +102,7 @@ func (l *CreatePortfolioRiskConfigLogic) CreatePortfolioRiskConfig(in *option.Cr
 			concentrationThreshold = source.ConcentrationThreshold
 			concentrationAddonRate = source.ConcentrationAddonRate
 			liquidityAddonRate = source.LiquidityAddonRate
+			sourceConfigID = source.Id
 		} else {
 			if modelMethod != option.PortfolioRiskMethod_PORTFOLIO_RISK_METHOD_EXPIRY_SCENARIO_V1 {
 				return errInvalidPortfolioRiskConfig
@@ -148,7 +151,8 @@ func (l *CreatePortfolioRiskConfigLogic) CreatePortfolioRiskConfig(in *option.Cr
 			MaintenanceShockRate: maintenanceShockRate, ScenarioShocks: scenarioShocks,
 			ConcentrationThreshold: concentrationThreshold, ConcentrationAddonRate: concentrationAddonRate,
 			LiquidityAddonRate: liquidityAddonRate, EffectiveFrom: effectiveFrom,
-			ChangeReason: changeReason, EvidenceRef: evidenceRef, CreatedBy: operatorID,
+			SourceConfigId: sourceConfigID,
+			ChangeReason:   changeReason, EvidenceRef: evidenceRef, CreatedBy: operatorID,
 			CreateTimes: now, UpdateTimes: now,
 		}
 		result, insertErr := configModel.Insert(ctx, created)

@@ -2,7 +2,10 @@ package adminlogic
 
 import (
 	"context"
+	"errors"
 
+	"wklive/common/helper"
+	"wklive/common/i18n"
 	"wklive/proto/option"
 	applogic "wklive/services/option/internal/logic/app"
 	"wklive/services/option/internal/svc"
@@ -34,9 +37,9 @@ func (l *UpsertMMPConfigLogic) UpsertMMPConfig(in *option.UpsertMMPConfigReq) (*
 	if err != nil {
 		return nil, err
 	}
-	count, err := applogic.CancelMMPGroupOrders(
+	total, success, failed, err := applogic.CancelMMPGroupOrdersReport(
 		l.ctx, l.svcCtx, input.tenantID, input.userID, input.contractID,
-		input.groupCode, "MMP_CONFIG_CHANGED",
+		input.groupCode, "MMP_CONFIG_CHANGED", true,
 	)
 	if err != nil {
 		applogic.SetMMPConfigLastError(
@@ -47,6 +50,11 @@ func (l *UpsertMMPConfigLogic) UpsertMMPConfig(in *option.UpsertMMPConfigReq) (*
 	}
 	item, err := activateStagedMMPConfig(l.ctx, l.svcCtx, input, "")
 	if err != nil {
+		if errors.Is(err, errMMPReleasePending) {
+			return &option.GetMMPConfigResp{
+				Base: helper.ErrResp(i18n.OperationNotAllowed, err.Error()),
+			}, nil
+		}
 		applogic.SetMMPConfigLastError(
 			l.ctx, l.svcCtx, input.tenantID, input.userID, input.contractID,
 			input.groupCode, err.Error(),
@@ -54,9 +62,9 @@ func (l *UpsertMMPConfigLogic) UpsertMMPConfig(in *option.UpsertMMPConfigReq) (*
 		return nil, err
 	}
 	l.Infof(
-		"option mmp configured tenantId=%d userId=%d contractId=%d group=%s enabled=%d canceled=%d configId=%d",
+		"option mmp configured tenantId=%d userId=%d contractId=%d group=%s enabled=%d total=%d success=%d failed=%d configId=%d",
 		input.tenantID, input.userID, input.contractID, input.groupCode,
-		input.enabled, count, staged.Id,
+		input.enabled, total, success, failed, staged.Id,
 	)
 	return mmpConfigResponse(item), nil
 }

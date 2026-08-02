@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"wklive/common/sqlutil"
@@ -33,12 +34,18 @@ func (m *defaultTOptionRiskAccountModel) EnsureAndFindOneForUpdate(
 	settleCoin string,
 	now int64,
 ) (*TOptionRiskAccount, error) {
-	if _, err := m.ExecNoCacheCtx(ctx, `
+	identityKey := fmt.Sprintf("%s%v:%v:%v:%v",
+		cacheTOptionRiskAccountTenantIdUserIdAccountIdSettleCoinPrefix,
+		tenantId, userId, accountId, settleCoin,
+	)
+	if _, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
+		return conn.ExecCtx(ctx, `
 INSERT IGNORE INTO t_option_risk_account
 (tenant_id,user_id,account_id,settle_coin,status,create_times,update_times)
 VALUES (?,?,?,?,?,?,?)`,
-		tenantId, userId, accountId, settleCoin, 1, now, now,
-	); err != nil {
+			tenantId, userId, accountId, settleCoin, 1, now, now,
+		)
+	}, identityKey); err != nil {
 		return nil, err
 	}
 	query := fmt.Sprintf(`SELECT %s FROM %s

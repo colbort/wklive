@@ -11,8 +11,9 @@ import (
 )
 
 const (
-	ActionListContract   = "option_contract_list"
-	ActionExpireContract = "option_contract_expire"
+	ActionListContract         = "option_contract_list"
+	ActionCloseContractTrading = "option_contract_close_trading"
+	ActionExpireContract       = "option_contract_expire"
 )
 
 type Message struct {

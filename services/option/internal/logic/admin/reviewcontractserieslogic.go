@@ -114,7 +114,7 @@ func (l *ReviewContractSeriesLogic) ReviewContractSeries(in *option.ReviewContra
 			return fmt.Errorf("contract series has incomplete specifications")
 		}
 		for _, expiry := range expiries {
-			if expiry.ExpireTime <= now {
+			if expiry.LastTradeTime <= now {
 				return fmt.Errorf("contract series expiry is no longer in the future")
 			}
 		}

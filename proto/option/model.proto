@@ -63,6 +63,7 @@ message OptionContract {
   int64 physical_delivery_cure_seconds = 53;
   string trading_calendar_code = 54;
   int64 greeks_max_age_seconds = 55;
+  int64 last_trade_time = 56;
 }
 
 message OptionTradingCalendarSession {
@@ -220,6 +221,7 @@ message OptionContractSeriesExpiry {
   int64 expire_time = 8;
   int64 deliver_time = 9;
   int64 create_times = 10;
+  int64 last_trade_time = 11;
 }
 
 message OptionContractSeriesStrikeBand {
@@ -999,6 +1001,8 @@ message OptionPortfolioRiskConfig {
   int64 reviewed_at = 21;
   int64 create_times = 22;
   int64 update_times = 23;
+  // 复制参数的历史版本ID；与 supersedes_id（直接被替代版本）语义不同。
+  int64 source_config_id = 24;
 }
 
 message OptionLiquidation {
@@ -1036,6 +1040,34 @@ message OptionLiquidation {
   string portfolio_initial_after = 32;
   string portfolio_collateral_before = 33;
   string portfolio_collateral_after = 34;
+}
+
+message OptionInsuranceInventoryExit {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string request_no = 3;
+  int64 position_id = 4;
+  int64 contract_id = 5;
+  int64 insurance_user_id = 6;
+  int64 insurance_account_id = 7;
+  string quantity = 8;
+  string limit_price = 9;
+  InsuranceInventoryExitStatus status = 10;
+  string reason = 11;
+  string evidence_ref = 12;
+  int64 requested_by = 13;
+  int64 reviewed_by = 14;
+  string review_reason = 15;
+  int64 reviewed_at = 16;
+  int64 order_id = 17;
+  int64 submitted_by = 18;
+  int64 submitted_at = 19;
+  string last_error_msg = 20;
+  int64 create_times = 21;
+  int64 update_times = 22;
+  OrderStatus order_status = 23;
+  string filled_qty = 24;
+  string unfilled_qty = 25;
 }
 
 message OptionInsuranceFundFlow {

@@ -1015,7 +1015,7 @@ func (l *ProcessAssetInstructionsLogic) completeFundingTransition(item *models.T
 	admitToBook := contract.TenantId == order.TenantId &&
 		contract.Status == int64(option.ContractStatus_CONTRACT_STATUS_TRADING) &&
 		contract.IsDeleted != int64(common.YesNo_YES_NO_YES) &&
-		now >= contract.ListTime && (contract.ExpireTime == 0 || now < contract.ExpireTime)
+		now >= contract.ListTime && contract.LastTradeTime > 0 && now < contract.LastTradeTime
 
 	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 		conn := sqlx.NewSqlConnFromSession(session)

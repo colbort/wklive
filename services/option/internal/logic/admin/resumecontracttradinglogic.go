@@ -73,10 +73,10 @@ func (l *ResumeContractTradingLogic) ResumeContractTrading(in *option.ResumeCont
 		}
 		if contract.TenantId != halt.TenantId ||
 			contract.Status != int64(option.ContractStatus_CONTRACT_STATUS_PAUSED) ||
-			now < contract.ListTime || (contract.ExpireTime > 0 && now >= contract.ExpireTime) {
+			now < contract.ListTime || contract.LastTradeTime <= 0 || now >= contract.LastTradeTime {
 			return i18n.StatusError(ctx, i18n.OperationNotAllowed)
 		}
-		activeOrders, findErr := orderModel.HasActiveByContract(ctx, contract.TenantId, contract.Id)
+		activeOrders, findErr := orderModel.HasUnsafeContractResumeOrders(ctx, contract.TenantId, contract.Id)
 		if findErr != nil {
 			return findErr
 		}

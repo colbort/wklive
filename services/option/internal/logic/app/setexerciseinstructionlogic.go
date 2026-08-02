@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"strings"
-	"time"
 
 	"wklive/common/helper"
 	"wklive/common/i18n"
@@ -60,9 +59,10 @@ func (l *SetExerciseInstructionLogic) SetExerciseInstruction(in *option.SetExerc
 	if err != nil || response != nil {
 		return response, err
 	}
-	now := time.Now().Unix()
-	if !allowsExerciseSubmission(contract.Status) || now < contract.ListTime ||
-		contract.ExerciseCutoffTime <= 0 || now >= contract.ExerciseCutoffTime {
+	nowMillis := utils.NowMillis()
+	now := nowMillis / millisecondsPerSecond
+	if !allowsExerciseSubmission(contract.Status) ||
+		!exerciseSubmissionWindowOpen(contract, nowMillis) {
 		return &option.GetExerciseInstructionResp{
 			Base: helper.ErrResp(i18n.OperationNotAllowed, i18n.Translate(i18n.OperationNotAllowed, l.ctx)),
 		}, nil
@@ -88,13 +88,12 @@ func (l *SetExerciseInstructionLogic) SetExerciseInstruction(in *option.SetExerc
 		if lockErr != nil {
 			return lockErr
 		}
-		txNow := time.Now().Unix()
+		txNowMillis := utils.NowMillis()
 		if currentContract.TenantId != tenantID ||
 			currentContract.SettlementType != int64(option.SettlementType_SETTLEMENT_TYPE_CASH) ||
 			currentContract.IsAutoExercise != int64(common.YesNo_YES_NO_YES) ||
 			!allowsExerciseSubmission(currentContract.Status) ||
-			txNow < currentContract.ListTime || currentContract.ExerciseCutoffTime <= 0 ||
-			txNow >= currentContract.ExerciseCutoffTime {
+			!exerciseSubmissionWindowOpen(currentContract, txNowMillis) {
 			return i18n.StatusError(ctx, i18n.OperationNotAllowed)
 		}
 		currentPosition, lockErr := positionModel.FindOneForUpdate(ctx, position.Id)

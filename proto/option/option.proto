@@ -543,6 +543,18 @@ service Admin {
   // 将失败或人工处理的强平记录重新置为待执行
   rpc RetryLiquidation(RetryLiquidationReq) returns (CommonResp);
 
+  // 创建保险接管库存主动退出的不可变待复核申请
+  rpc CreateInsuranceInventoryExit(CreateInsuranceInventoryExitReq) returns (GetInsuranceInventoryExitResp);
+
+  // 由独立管理员批准或拒绝保险库存退出申请
+  rpc ReviewInsuranceInventoryExit(ReviewInsuranceInventoryExitReq) returns (GetInsuranceInventoryExitResp);
+
+  // 重新校验库存和行情后，幂等提交管理来源的IOC减仓单
+  rpc ExecuteInsuranceInventoryExit(ExecuteInsuranceInventoryExitReq) returns (GetInsuranceInventoryExitResp);
+
+  // 分页查询保险库存退出申请
+  rpc ListInsuranceInventoryExits(ListInsuranceInventoryExitsReq) returns (ListInsuranceInventoryExitsResp);
+
   // 按行权单重试失败或人工处理的资产指令
   rpc RetryExercise(RetryExerciseReq) returns (CommonResp);
 
@@ -952,6 +964,7 @@ message ContractSeriesExpiryInput {
   int64 exercise_cutoff_time = 4;
   int64 expire_time = 5;
   int64 deliver_time = 6;
+  int64 last_trade_time = 7;
 }
 
 message ContractSeriesStrikeBandInput {
@@ -1096,6 +1109,46 @@ message RetryLiquidationReq {
   int64 liquidation_id = 2;
 }
 
+message CreateInsuranceInventoryExitReq {
+  int64 tenant_id = 1;
+  int64 position_id = 2;
+  string quantity = 3;
+  string limit_price = 4;
+  string reason = 5;
+  string evidence_ref = 6;
+}
+
+message ReviewInsuranceInventoryExitReq {
+  int64 tenant_id = 1;
+  int64 exit_id = 2;
+  bool approve = 3;
+  string reason = 4;
+}
+
+message ExecuteInsuranceInventoryExitReq {
+  int64 tenant_id = 1;
+  int64 exit_id = 2;
+}
+
+message GetInsuranceInventoryExitResp {
+  common.RespBase base = 1;
+  OptionInsuranceInventoryExit data = 2;
+}
+
+message ListInsuranceInventoryExitsReq {
+  int64 tenant_id = 1;
+  int64 position_id = 2;
+  int64 contract_id = 3;
+  InsuranceInventoryExitStatus status = 4;
+  common.PageReq page = 5;
+}
+
+message ListInsuranceInventoryExitsResp {
+  common.RespBase base = 1;
+  repeated OptionInsuranceInventoryExit data = 2;
+  int64 total = 3;
+}
+
 message RetryExerciseReq {
   int64 tenant_id = 1;
   int64 exercise_id = 2;
@@ -1153,6 +1206,7 @@ message CreateContractReq {
   int64 physical_delivery_cure_seconds = 49;
   string trading_calendar_code = 50;
   int64 greeks_max_age_seconds = 51;
+  int64 last_trade_time = 52;
 }
 
 message CreateContractResp {
@@ -1214,6 +1268,7 @@ message UpdateContractReq {
   int64 physical_delivery_cure_seconds = 51;
   string trading_calendar_code = 52;
   int64 greeks_max_age_seconds = 53;
+  int64 last_trade_time = 54;
 }
 
 message ListPhysicalDeliveryUnitsReq {

@@ -67,6 +67,110 @@
     <el-card v-loading="loading" shadow="never" class="table-card">
       <template #header>
         <div class="card-header">
+          <span>{{ t('option.insuranceInventoryExitWorkbench') }}</span>
+          <el-button
+            v-if="query.tenantId"
+            v-perm="'option:insurance-inventory-exit:create'"
+            type="primary"
+            @click="openInsuranceExitDialog"
+          >
+            {{ t('option.createInsuranceInventoryExit') }}
+          </el-button>
+        </div>
+      </template>
+      <el-alert
+        :title="t('option.insuranceInventoryExitWarning')"
+        type="warning"
+        :closable="false"
+        class="dialog-alert"
+      />
+      <el-alert
+        v-if="!query.tenantId"
+        :title="t('option.selectTenantForControlEvents')"
+        type="info"
+        :closable="false"
+      />
+      <el-table v-else :data="insuranceInventoryExits" stripe>
+        <el-table-column prop="requestNo" :label="t('option.requestNo')" min-width="190" />
+        <el-table-column prop="positionId" :label="t('option.positionId')" width="110" />
+        <el-table-column prop="contractId" :label="t('option.contractId')" width="110" />
+        <el-table-column :label="t('option.exitQuantityAndPrice')" min-width="150">
+          <template #default="{ row }">{{ row.quantity }} @ {{ row.limitPrice }}</template>
+        </el-table-column>
+        <el-table-column :label="t('option.status')" width="110">
+          <template #default="{ row }">
+            <el-tag :type="insuranceExitStatusType(row.status)">
+              {{ insuranceExitStatusLabel(row.status) }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="orderId" :label="t('option.orderId')" width="110">
+          <template #default="{ row }">{{ row.orderId || '—' }}</template>
+        </el-table-column>
+        <el-table-column :label="t('option.exitOrderStatus')" width="120">
+          <template #default="{ row }">
+            {{ row.orderId ? optionOrderStatusLabel(row.orderStatus) : '—' }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('option.exitFillProgress')" min-width="150">
+          <template #default="{ row }">
+            {{ row.orderId ? `${row.filledQty} / ${row.unfilledQty}` : '—' }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('option.insuranceExitReview')" min-width="180">
+          <template #default="{ row }">
+            {{ row.requestedBy }} → {{ row.reviewedBy || '—' }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="evidenceRef"
+          :label="t('option.evidenceRef')"
+          min-width="190"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="lastErrorMsg"
+          :label="t('option.lastError')"
+          min-width="180"
+          show-overflow-tooltip
+        />
+        <el-table-column :label="t('common.actions')" width="220" fixed="right">
+          <template #default="{ row }">
+            <template v-if="row.status === 1">
+              <el-button
+                v-perm="'option:insurance-inventory-exit:review'"
+                link
+                type="success"
+                @click="reviewInsuranceExit(row, true)"
+              >
+                {{ t('option.approve') }}
+              </el-button>
+              <el-button
+                v-perm="'option:insurance-inventory-exit:review'"
+                link
+                type="danger"
+                @click="reviewInsuranceExit(row, false)"
+              >
+                {{ t('option.reject') }}
+              </el-button>
+            </template>
+            <el-button
+              v-if="row.status === 2"
+              v-perm="'option:insurance-inventory-exit:execute'"
+              link
+              type="danger"
+              @click="executeInsuranceExit(row)"
+            >
+              {{ t('option.executeReduceOnlyIOC') }}
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
+
+    <el-card v-loading="loading" shadow="never" class="table-card">
+      <template #header>
+        <div class="card-header">
           <span>{{ t('option.portfolioRiskGovernance') }}</span>
           <el-button
             v-if="query.tenantId"
@@ -130,6 +234,13 @@
           <template #default="{ row }">
             {{ formatControlTime(row.effectiveFrom) }} –
             {{ row.effectiveUntil ? formatControlTime(row.effectiveUntil) : '∞' }}
+          </template>
+        </el-table-column>
+        <el-table-column :label="t('option.portfolioConfigLineage')" min-width="180">
+          <template #default="{ row }">
+            {{ t('option.portfolioConfigSource') }}: {{ row.sourceConfigId || '—' }} /
+            {{ t('option.portfolioConfigSupersedes') }}:
+            {{ row.supersedesId || '—' }}
           </template>
         </el-table-column>
         <el-table-column
@@ -216,7 +327,8 @@
         />
         <el-table-column :label="t('option.mmpWindowState')" min-width="210">
           <template #default="{ row }">
-            {{ row.accumulatedQty }} / {{ row.tradeCount }} / {{ row.accumulatedLoss }}
+            {{ row.accumulatedQty }} / {{ row.tradeCount }} /
+            {{ row.accumulatedLoss }}
           </template>
         </el-table-column>
         <el-table-column
@@ -233,12 +345,7 @@
         />
         <el-table-column :label="t('common.actions')" width="150" fixed="right">
           <template #default="{ row }">
-            <el-button
-              v-perm="'option:mmp:config'"
-              link
-              type="primary"
-              @click="openMMPDialog(row)"
-            >
+            <el-button v-perm="'option:mmp:config'" link type="primary" @click="openMMPDialog(row)">
               {{ t('common.edit') }}
             </el-button>
             <el-button
@@ -266,12 +373,7 @@
         :closable="false"
       />
       <template v-else>
-        <el-descriptions
-          v-if="tradingControl"
-          :column="4"
-          border
-          class="control-summary"
-        >
+        <el-descriptions v-if="tradingControl" :column="4" border class="control-summary">
           <el-descriptions-item :label="t('option.userId')">
             {{ tradingControl.userId }}
           </el-descriptions-item>
@@ -454,6 +556,51 @@
     </el-card>
 
     <el-dialog
+      v-model="insuranceExitDialogVisible"
+      :title="t('option.createInsuranceInventoryExit')"
+      width="680px"
+      destroy-on-close
+    >
+      <el-alert
+        :title="t('option.insuranceInventoryExitApprovalWarning')"
+        type="error"
+        :closable="false"
+        class="dialog-alert"
+      />
+      <el-form :model="insuranceExitForm" label-width="180px">
+        <el-form-item :label="t('option.positionId')" required>
+          <el-input-number v-model="insuranceExitForm.positionId" :min="1" :precision="0" />
+        </el-form-item>
+        <el-form-item :label="t('option.exitQuantity')" required>
+          <el-input v-model="insuranceExitForm.quantity" />
+        </el-form-item>
+        <el-form-item :label="t('option.iocLimitPrice')" required>
+          <el-input v-model="insuranceExitForm.limitPrice" />
+        </el-form-item>
+        <el-form-item :label="t('option.exitReason')" required>
+          <el-input
+            v-model="insuranceExitForm.reason"
+            type="textarea"
+            :rows="2"
+            maxlength="500"
+            show-word-limit
+          />
+        </el-form-item>
+        <el-form-item :label="t('option.evidenceRef')" required>
+          <el-input v-model="insuranceExitForm.evidenceRef" maxlength="500" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="insuranceExitDialogVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
+        <el-button type="danger" :loading="submittingInsuranceExit" @click="submitInsuranceExit">
+          {{ t('common.confirm') }}
+        </el-button>
+      </template>
+    </el-dialog>
+
+    <el-dialog
       v-model="portfolioDialogVisible"
       :title="
         portfolioForm.sourceConfigId
@@ -569,20 +716,10 @@
           <el-input v-model="mmpForm.lossThreshold" />
         </el-form-item>
         <el-form-item :label="t('option.mmpWindowSeconds')" required>
-          <el-input-number
-            v-model="mmpForm.windowSeconds"
-            :min="1"
-            :max="3600"
-            :precision="0"
-          />
+          <el-input-number v-model="mmpForm.windowSeconds" :min="1" :max="3600" :precision="0" />
         </el-form-item>
         <el-form-item :label="t('option.mmpCooldownSeconds')" required>
-          <el-input-number
-            v-model="mmpForm.cooldownSeconds"
-            :min="0"
-            :max="86400"
-            :precision="0"
-          />
+          <el-input-number v-model="mmpForm.cooldownSeconds" :min="0" :max="86400" :precision="0" />
         </el-form-item>
         <el-form-item :label="t('option.controlReason')" required>
           <el-input
@@ -694,6 +831,7 @@ import {
   type OptionUserTradingControl,
   type OptionMMPConfig,
   type OptionPortfolioRiskConfig,
+  type OptionInsuranceInventoryExit,
 } from '@/services'
 import TenantSelect from '@/components/TenantSelect.vue'
 import UserSelect from '@/components/UserSelect.vue'
@@ -709,6 +847,16 @@ const controlEvents = ref<OptionTradingControlEvent[]>([])
 const tradeCorrections = ref<OptionTradeCorrection[]>([])
 const mmpConfigs = ref<OptionMMPConfig[]>([])
 const portfolioConfigs = ref<OptionPortfolioRiskConfig[]>([])
+const insuranceInventoryExits = ref<OptionInsuranceInventoryExit[]>([])
+const insuranceExitDialogVisible = ref(false)
+const submittingInsuranceExit = ref(false)
+const insuranceExitForm = reactive({
+  positionId: 0,
+  quantity: '',
+  limitPrice: '',
+  reason: '',
+  evidenceRef: '',
+})
 const portfolioDialogVisible = ref(false)
 const submittingPortfolio = ref(false)
 const portfolioForm = reactive({
@@ -767,35 +915,43 @@ async function loadAll() {
     tradeCorrections.value = []
     mmpConfigs.value = []
     portfolioConfigs.value = []
+    insuranceInventoryExits.value = []
     if (query.tenantId) {
-      const [eventsResp, correctionsResp, mmpResp, portfolioResp] = await Promise.all([
-        optionService.listTradingControlEvents({
-          tenantId: query.tenantId,
-          userId: query.userId,
-          contractId: query.contractId,
-          limit: 100,
-        }),
-        optionService.listTradeCorrections({
-          tenantId: query.tenantId,
-          contractId: query.contractId,
-          limit: 100,
-        }),
-        optionService.listMMPConfigs({
-          tenantId: query.tenantId,
-          userId: query.userId,
-          contractId: query.contractId,
-          limit: 100,
-        }),
-        optionService.listPortfolioRiskConfigs({
-          tenantId: query.tenantId,
-          settleCoin: query.settleCoin || undefined,
-          limit: 100,
-        }),
-      ])
+      const [eventsResp, correctionsResp, mmpResp, portfolioResp, insuranceExitResp] =
+        await Promise.all([
+          optionService.listTradingControlEvents({
+            tenantId: query.tenantId,
+            userId: query.userId,
+            contractId: query.contractId,
+            limit: 100,
+          }),
+          optionService.listTradeCorrections({
+            tenantId: query.tenantId,
+            contractId: query.contractId,
+            limit: 100,
+          }),
+          optionService.listMMPConfigs({
+            tenantId: query.tenantId,
+            userId: query.userId,
+            contractId: query.contractId,
+            limit: 100,
+          }),
+          optionService.listPortfolioRiskConfigs({
+            tenantId: query.tenantId,
+            settleCoin: query.settleCoin || undefined,
+            limit: 100,
+          }),
+          optionService.listInsuranceInventoryExits({
+            tenantId: query.tenantId,
+            contractId: query.contractId,
+            limit: 100,
+          }),
+        ])
       controlEvents.value = eventsResp.data || []
       tradeCorrections.value = correctionsResp.data || []
       mmpConfigs.value = mmpResp.data || []
       portfolioConfigs.value = portfolioResp.data || []
+      insuranceInventoryExits.value = insuranceExitResp.data || []
       if (query.userId) {
         const controlResp = await optionService.getUserTradingControl({
           tenantId: query.tenantId,
@@ -807,6 +963,113 @@ async function loadAll() {
   } finally {
     loading.value = false
   }
+}
+
+function openInsuranceExitDialog() {
+  if (!query.tenantId) {
+    ElMessage.error(t('option.selectTenantForControlEvents'))
+    return
+  }
+  insuranceExitForm.positionId = 0
+  insuranceExitForm.quantity = ''
+  insuranceExitForm.limitPrice = ''
+  insuranceExitForm.reason = ''
+  insuranceExitForm.evidenceRef = ''
+  insuranceExitDialogVisible.value = true
+}
+
+async function submitInsuranceExit() {
+  if (
+    !query.tenantId ||
+    insuranceExitForm.positionId <= 0 ||
+    Number(insuranceExitForm.quantity) <= 0 ||
+    Number(insuranceExitForm.limitPrice) <= 0 ||
+    !insuranceExitForm.reason.trim() ||
+    !insuranceExitForm.evidenceRef.trim()
+  ) {
+    ElMessage.error(t('option.completeInsuranceInventoryExit'))
+    return
+  }
+  submittingInsuranceExit.value = true
+  try {
+    await optionService.createInsuranceInventoryExit({
+      tenantId: query.tenantId,
+      ...insuranceExitForm,
+      quantity: insuranceExitForm.quantity.trim(),
+      limitPrice: insuranceExitForm.limitPrice.trim(),
+      reason: insuranceExitForm.reason.trim(),
+      evidenceRef: insuranceExitForm.evidenceRef.trim(),
+    })
+    insuranceExitDialogVisible.value = false
+    ElMessage.success(t('common.success'))
+    await loadAll()
+  } finally {
+    submittingInsuranceExit.value = false
+  }
+}
+
+async function reviewInsuranceExit(row: OptionInsuranceInventoryExit, approve: boolean) {
+  const { value } = await ElMessageBox.prompt(
+    approve ? t('option.approveInsuranceExitReason') : t('option.rejectInsuranceExitReason'),
+    approve ? t('option.approve') : t('option.reject'),
+    {
+      inputValidator: (input) => Boolean(input?.trim()) || t('option.reviewReasonRequired'),
+    },
+  )
+  await optionService.reviewInsuranceInventoryExit({
+    tenantId: row.tenantId,
+    exitId: row.id,
+    approve,
+    reason: value.trim(),
+  })
+  ElMessage.success(t('common.success'))
+  await loadAll()
+}
+
+async function executeInsuranceExit(row: OptionInsuranceInventoryExit) {
+  await ElMessageBox.confirm(
+    t('option.executeInsuranceExitConfirm', {
+      quantity: row.quantity,
+      price: row.limitPrice,
+      positionId: row.positionId,
+    }),
+    t('option.executeReduceOnlyIOC'),
+    { type: 'error', confirmButtonText: t('option.executeReduceOnlyIOC') },
+  )
+  await optionService.executeInsuranceInventoryExit({
+    tenantId: row.tenantId,
+    exitId: row.id,
+  })
+  ElMessage.success(t('common.success'))
+  await loadAll()
+}
+
+function insuranceExitStatusLabel(status: number) {
+  return (
+    {
+      1: t('option.pendingReview'),
+      2: t('option.approved'),
+      3: t('option.rejected'),
+      4: t('option.submitted'),
+    }[status] || String(status)
+  )
+}
+
+function insuranceExitStatusType(status: number) {
+  return status === 2 ? 'success' : status === 1 ? 'warning' : status === 3 ? 'danger' : 'info'
+}
+
+function optionOrderStatusLabel(status: number) {
+  return (
+    {
+      1: t('option.orderPendingMatch'),
+      2: t('option.orderPartFilled'),
+      3: t('option.orderFilled'),
+      4: t('option.orderCanceled'),
+      5: t('option.orderRejected'),
+      6: t('option.orderExpired'),
+    }[status] || '—'
+  )
 }
 
 function openPortfolioConfigDialog(source?: OptionPortfolioRiskConfig) {
@@ -822,7 +1085,7 @@ function openPortfolioConfigDialog(source?: OptionPortfolioRiskConfig) {
   portfolioForm.concentrationThreshold = source?.concentrationThreshold || '100000'
   portfolioForm.concentrationAddonRate = source?.concentrationAddonRate || '0.1'
   portfolioForm.liquidityAddonRate = source?.liquidityAddonRate || '0.02'
-  portfolioForm.effectiveFrom = Math.floor(Date.now() / 1000) + 60
+  portfolioForm.effectiveFrom = Math.floor(Date.now() / 1000) + 300
   portfolioForm.changeReason = ''
   portfolioForm.evidenceRef = ''
   portfolioForm.sourceConfigId = source?.id || 0
@@ -862,7 +1125,9 @@ async function reviewPortfolioConfig(row: OptionPortfolioRiskConfig, approve: bo
   const { value } = await ElMessageBox.prompt(
     approve ? t('option.approvePortfolioReason') : t('option.rejectPortfolioReason'),
     approve ? t('option.approve') : t('option.reject'),
-    { inputValidator: (input) => Boolean(input?.trim()) || t('option.reviewReasonRequired') },
+    {
+      inputValidator: (input) => Boolean(input?.trim()) || t('option.reviewReasonRequired'),
+    },
   )
   await optionService.reviewPortfolioRiskConfig({
     tenantId: row.tenantId,
@@ -1055,7 +1320,10 @@ async function submitCorrection() {
       action: 1,
       reason: correctionForm.reason.trim(),
       evidenceRef: correctionForm.evidenceRef.trim(),
-      legs: correctionForm.legs.map((leg) => ({ ...leg, coin: leg.coin.trim() })),
+      legs: correctionForm.legs.map((leg) => ({
+        ...leg,
+        coin: leg.coin.trim(),
+      })),
     })
     correctionDialogVisible.value = false
     ElMessage.success(t('common.success'))
@@ -1069,7 +1337,9 @@ async function reviewCorrection(row: OptionTradeCorrection, approve: boolean) {
   const { value } = await ElMessageBox.prompt(
     approve ? t('option.approveCorrectionReason') : t('option.rejectCorrectionReason'),
     approve ? t('option.approve') : t('option.reject'),
-    { inputValidator: (input) => Boolean(input?.trim()) || t('option.reviewReasonRequired') },
+    {
+      inputValidator: (input) => Boolean(input?.trim()) || t('option.reviewReasonRequired'),
+    },
   )
   await optionService.reviewTradeCorrection({
     tenantId: row.tenantId,

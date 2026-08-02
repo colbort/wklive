@@ -147,14 +147,9 @@ func (l *CancelComboOrderLogic) CancelComboOrder(in *option.CancelComboOrderReq)
 			childCopy := *child
 			changedChildren = append(changedChildren, &childCopy)
 		}
-		current.Status = int64(option.ComboOrderStatus_COMBO_ORDER_STATUS_CANCELED)
-		if requiresRelease {
-			current.Status = int64(option.ComboOrderStatus_COMBO_ORDER_STATUS_CANCELING)
-		}
-		current.CancelReason = "USER_CANCEL"
-		current.CancelTime = now
-		current.UpdateTimes = now
-		if updateErr := comboModel.Update(ctx, current); updateErr != nil {
+		if updateErr := transitionComboToCancellation(
+			ctx, comboModel, current, requiresRelease, "USER_CANCEL", now,
+		); updateErr != nil {
 			return updateErr
 		}
 		*item = *current

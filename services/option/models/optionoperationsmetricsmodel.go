@@ -1231,7 +1231,7 @@ func queryOptionOperationsAmounts(
 	targets := []amountTarget{
 		{
 			category: "insurance_ledger",
-			query: `SELECT tenant_id,coin,COALESCE(SUM(amount),0) amount
+			query: `SELECT tenant_id,coin,COALESCE(SUM(` + optionInsuranceFundSignedAmountSQL + `),0) amount
 FROM t_option_insurance_fund_flow
 GROUP BY tenant_id,coin ORDER BY tenant_id,coin`,
 		},

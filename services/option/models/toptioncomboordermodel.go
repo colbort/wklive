@@ -29,6 +29,7 @@ type (
 	// and implement the added methods in customTOptionComboOrderModel.
 	TOptionComboOrderModel interface {
 		tOptionComboOrderModel
+		FindOneByTenantIdUserIdClientComboIdNoCache(ctx context.Context, tenantId int64, userId int64, clientComboId string) (*TOptionComboOrder, error)
 		FindOneForUpdate(ctx context.Context, id int64) (*TOptionComboOrder, error)
 		FindPage(ctx context.Context, filter OptionComboOrderPageFilter, cursor, limit int64) ([]*TOptionComboOrder, int64, error)
 		FindMatchCandidates(ctx context.Context, tenantId int64, strategyKey string, excludeUserId int64, minNetPrice decimal.Decimal, limit int64) ([]*TOptionComboOrder, error)
@@ -44,6 +45,23 @@ func NewTOptionComboOrderModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cac
 	return &customTOptionComboOrderModel{
 		defaultTOptionComboOrderModel: newTOptionComboOrderModel(conn, c, opts...),
 	}
+}
+
+// FindOneByTenantIdUserIdClientComboIdNoCache is the authoritative lookup for
+// idempotent create/replay. A cached miss must never hide a row committed by a
+// concurrent winner of uk_option_combo_client.
+func (m *defaultTOptionComboOrderModel) FindOneByTenantIdUserIdClientComboIdNoCache(
+	ctx context.Context, tenantId int64, userId int64, clientComboId string,
+) (*TOptionComboOrder, error) {
+	query := fmt.Sprintf(
+		"SELECT %s FROM %s WHERE tenant_id=? AND user_id=? AND client_combo_id=? LIMIT 1",
+		tOptionComboOrderRows, m.table,
+	)
+	var item TOptionComboOrder
+	if err := m.QueryRowNoCacheCtx(ctx, &item, query, tenantId, userId, clientComboId); err != nil {
+		return nil, err
+	}
+	return &item, nil
 }
 
 func (m *defaultTOptionComboOrderModel) FindOneForUpdate(

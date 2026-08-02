@@ -194,6 +194,544 @@ func testP0AmericanExerciseConcurrencyFIFO(
 	assertP0ExerciseCompleted(t, ctx, db, exerciseID, exerciseNo)
 }
 
+type p0ExerciseCallResult struct {
+	resp *option.ExerciseResp
+	err  error
+}
+
+func testP0ExerciseCutoffAndLifecycleRace(
+	t *testing.T,
+	ctx context.Context,
+	db *sql.DB,
+	serviceCtx *svc.ServiceContext,
+) {
+	t.Helper()
+	const (
+		cutoffUserID int64 = 125
+		stateUserID  int64 = 126
+		pausedUserID int64 = 127
+	)
+
+	// The public American exercise passes its optimistic validation, then waits
+	// on the contract row until the exact published cutoff has elapsed. The
+	// transactional recheck must reject it without freezing quantity or writing
+	// an exercise row.
+	now := time.Now().Unix()
+	cutoff := now + 2
+	cutoffContract := insertP0ExerciseContract(
+		t, ctx, serviceCtx, "P0-EXERCISE-CUTOFF-CROSS",
+		option.ExerciseStyle_EXERCISE_STYLE_AMERICAN,
+		option.ContractStatus_CONTRACT_STATUS_TRADING,
+		now-60, cutoff, cutoff+3600, cutoff+3600,
+		common.YesNo_YES_NO_NO, 9201, 9201,
+	)
+	insertP0ExerciseMarket(t, ctx, serviceCtx, cutoffContract.Id, "140", "40", now)
+	cutoffPosition := insertP0SettlementPosition(t, ctx, serviceCtx, &models.TOptionPosition{
+		TenantId: p0AssetE2ETenantID, UserId: cutoffUserID, AccountId: 7125,
+		ContractId: cutoffContract.Id, UnderlyingSymbol: "BTCUSDT",
+		Side: int64(common.PositionSide_POSITION_SIDE_LONG), PositionQty: decimal.NewFromInt(1),
+		AvailableQty: decimal.NewFromInt(1), ExerciseableQty: decimal.NewFromInt(1),
+		OpenAvgPrice: decimal.NewFromInt(10), MarkPrice: decimal.NewFromInt(40),
+		PositionValue: decimal.NewFromInt(40),
+		Status:        int64(option.PositionStatus_POSITION_STATUS_HOLDING),
+		CreateTimes:   now - 30, UpdateTimes: now - 30,
+	})
+	cutoffLock := lockP0ExerciseContract(t, ctx, db, cutoffContract.Id)
+	cutoffCtx := metadata.NewIncomingContext(ctx, metadata.Pairs(
+		utils.CtxKeyTenantId, fmt.Sprint(p0AssetE2ETenantID),
+		utils.CtxKeyUid, fmt.Sprint(cutoffUserID),
+	))
+	cutoffReq := &option.ExerciseReq{
+		AccountId: 7125, ContractId: cutoffContract.Id, PositionId: cutoffPosition.Id,
+		ExerciseQty: "1", ClientExerciseId: "P0-EXERCISE-CUTOFF-CROSS",
+	}
+	cutoffResult := make(chan p0ExerciseCallResult, 1)
+	startedAtMillis := utils.NowMillis()
+	go func() {
+		resp, err := applogic.NewExerciseLogic(cutoffCtx, serviceCtx).Exercise(cutoffReq)
+		cutoffResult <- p0ExerciseCallResult{resp: resp, err: err}
+	}()
+	assertP0ExerciseCallBlocked(t, cutoffResult, 150*time.Millisecond)
+	cutoffMillis := cutoff * 1000
+	if wait := time.Until(time.UnixMilli(cutoffMillis)); wait > 0 {
+		time.Sleep(wait + 2*time.Millisecond)
+	}
+	releasedAtMillis := utils.NowMillis()
+	if err := cutoffLock.Commit(); err != nil {
+		t.Fatalf("release cutoff contract lock: %v", err)
+	}
+	result := waitP0ExerciseResult(t, cutoffResult)
+	if result.err == nil || result.resp != nil {
+		t.Fatalf("cutoff-crossing exercise was not rejected: resp=%+v err=%v", result.resp, result.err)
+	}
+	if startedAtMillis >= cutoffMillis || releasedAtMillis < cutoffMillis {
+		t.Fatalf("cutoff race did not cross boundary: start=%d cutoff=%d release=%d",
+			startedAtMillis, cutoffMillis, releasedAtMillis)
+	}
+	assertP0RejectedExerciseMutation(
+		t, ctx, db, cutoffContract.Id, cutoffPosition.Id, cutoffReq.ClientExerciseId,
+	)
+
+	// The independent last-trade boundary pauses the contract and cancels the
+	// ordinary book, but must not mark the contract expired or start exercise /
+	// settlement before the separately approved expiry time.
+	lastTradeBoundary := time.Now().Unix()
+	lastTradeContract := insertP0ExerciseContract(
+		t, ctx, serviceCtx, "P0-LAST-TRADE-INDEPENDENT",
+		option.ExerciseStyle_EXERCISE_STYLE_EUROPEAN,
+		option.ContractStatus_CONTRACT_STATUS_TRADING,
+		lastTradeBoundary-60, lastTradeBoundary+120,
+		lastTradeBoundary+240, lastTradeBoundary+300,
+		common.YesNo_YES_NO_YES, 9204, 9204,
+	)
+	if _, err := db.ExecContext(ctx, `UPDATE t_option_contract
+		SET last_trade_time=?,update_times=? WHERE id=?`,
+		lastTradeBoundary, lastTradeBoundary, lastTradeContract.Id,
+	); err != nil {
+		t.Fatalf("set independent last-trade boundary: %v", err)
+	}
+	lastTradeContract.LastTradeTime = lastTradeBoundary
+	lastTradeOrder := insertP0MarginOrder(t, ctx, serviceCtx, &models.TOptionOrder{
+		TenantId: p0AssetE2ETenantID, OrderNo: "P0-LAST-TRADE-PENDING-ORDER",
+		UserId: 128, AccountId: 7128, ContractId: lastTradeContract.Id,
+		UnderlyingSymbol: "BTCUSDT", Side: int64(common.Side_SIDE_BUY),
+		PositionEffect: int64(option.PositionEffect_POSITION_EFFECT_OPEN),
+		OrderType:      int64(option.OrderType_ORDER_TYPE_LIMIT), Price: decimal.NewFromInt(10),
+		Qty: decimal.NewFromInt(1), UnfilledQty: decimal.NewFromInt(1),
+		FeeCoin: "USDT", MarginCoin: "USDT",
+		Source:     int64(option.OrderSource_ORDER_SOURCE_APP),
+		ReduceOnly: int64(common.YesNo_YES_NO_NO), Mmp: int64(common.YesNo_YES_NO_NO),
+		Status:      int64(option.OrderStatus_ORDER_STATUS_PENDING),
+		CreateTimes: lastTradeBoundary - 1, UpdateTimes: lastTradeBoundary - 1,
+	})
+	if err := NewProcessContractLifecycleLogic(ctx, serviceCtx).closeContractTrading(
+		lastTradeContract.Id, lastTradeContract.TenantId,
+		lastTradeContract.LastTradeTime, lastTradeBoundary,
+	); err != nil {
+		t.Fatalf("close contract at last-trade boundary: %v", err)
+	}
+	var contractStatus, orderStatus int64
+	var cancelReason string
+	if err := db.QueryRowContext(ctx, `SELECT status FROM t_option_contract WHERE id=?`,
+		lastTradeContract.Id).Scan(&contractStatus); err != nil {
+		t.Fatal(err)
+	}
+	if err := db.QueryRowContext(ctx, `SELECT status,cancel_reason FROM t_option_order WHERE id=?`,
+		lastTradeOrder.Id).Scan(&orderStatus, &cancelReason); err != nil {
+		t.Fatal(err)
+	}
+	if contractStatus != int64(option.ContractStatus_CONTRACT_STATUS_PAUSED) ||
+		orderStatus != int64(option.OrderStatus_ORDER_STATUS_CANCELED) ||
+		cancelReason != "CONTRACT_LAST_TRADE_ENDED" {
+		t.Fatalf("last-trade close state contract/order/reason=%d/%d/%q",
+			contractStatus, orderStatus, cancelReason)
+	}
+	var prematureExercises, prematureSettlements int64
+	if err := db.QueryRowContext(ctx, `SELECT
+		(SELECT COUNT(*) FROM t_option_exercise WHERE contract_id=?),
+		(SELECT COUNT(*) FROM t_option_settlement WHERE contract_id=?)`,
+		lastTradeContract.Id, lastTradeContract.Id,
+	).Scan(&prematureExercises, &prematureSettlements); err != nil {
+		t.Fatal(err)
+	}
+	if prematureExercises != 0 || prematureSettlements != 0 {
+		t.Fatalf("last trade started expiry work early: exercises=%d settlements=%d",
+			prematureExercises, prematureSettlements)
+	}
+
+	// The public expiry instruction also passes its optimistic TRADING check,
+	// then observes a committed TRADING -> EXPIRED transition after acquiring
+	// the same contract lock. No stale instruction may be appended.
+	stateNow := time.Now().Unix()
+	stateContract := insertP0ExerciseContract(
+		t, ctx, serviceCtx, "P0-INSTRUCTION-STATE-CROSS",
+		option.ExerciseStyle_EXERCISE_STYLE_EUROPEAN,
+		option.ContractStatus_CONTRACT_STATUS_TRADING,
+		stateNow-60, stateNow+3600, stateNow+7200, stateNow+7200,
+		common.YesNo_YES_NO_YES, 9202, 9202,
+	)
+	statePosition := insertP0SettlementPosition(t, ctx, serviceCtx, &models.TOptionPosition{
+		TenantId: p0AssetE2ETenantID, UserId: stateUserID, AccountId: 7126,
+		ContractId: stateContract.Id, UnderlyingSymbol: "BTCUSDT",
+		Side: int64(common.PositionSide_POSITION_SIDE_LONG), PositionQty: decimal.NewFromInt(1),
+		AvailableQty: decimal.NewFromInt(1), ExerciseableQty: decimal.NewFromInt(1),
+		Status:      int64(option.PositionStatus_POSITION_STATUS_HOLDING),
+		CreateTimes: stateNow - 30, UpdateTimes: stateNow - 30,
+	})
+	stateLock := lockP0ExerciseContract(t, ctx, db, stateContract.Id)
+	stateCtx := metadata.NewIncomingContext(ctx, metadata.Pairs(
+		utils.CtxKeyTenantId, fmt.Sprint(p0AssetE2ETenantID),
+		utils.CtxKeyUid, fmt.Sprint(stateUserID),
+	))
+	stateReq := &option.SetExerciseInstructionReq{
+		AccountId: 7126, ContractId: stateContract.Id, PositionId: statePosition.Id,
+		ClientInstructionId: "P0-INSTRUCTION-STATE-CROSS",
+		InstructionType:     option.ExerciseInstructionType_EXERCISE_INSTRUCTION_TYPE_DO_NOT_EXERCISE,
+	}
+	type instructionCallResult struct {
+		resp *option.GetExerciseInstructionResp
+		err  error
+	}
+	stateResult := make(chan instructionCallResult, 1)
+	go func() {
+		resp, err := applogic.NewSetExerciseInstructionLogic(stateCtx, serviceCtx).
+			SetExerciseInstruction(stateReq)
+		stateResult <- instructionCallResult{resp: resp, err: err}
+	}()
+	select {
+	case early := <-stateResult:
+		t.Fatalf("state-transition instruction did not wait for contract lock: resp=%+v err=%v", early.resp, early.err)
+	case <-time.After(150 * time.Millisecond):
+	}
+	if _, err := stateLock.ExecContext(ctx, `UPDATE t_option_contract SET status=?,update_times=? WHERE id=?`,
+		int64(option.ContractStatus_CONTRACT_STATUS_EXPIRED), time.Now().Unix(), stateContract.Id,
+	); err != nil {
+		t.Fatalf("transition locked contract to EXPIRED: %v", err)
+	}
+	if err := stateLock.Commit(); err != nil {
+		t.Fatalf("commit locked contract transition: %v", err)
+	}
+	select {
+	case got := <-stateResult:
+		if got.err == nil || got.resp != nil {
+			t.Fatalf("state-crossing instruction was not rejected: resp=%+v err=%v", got.resp, got.err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("state-crossing instruction did not finish after lock release")
+	}
+	assertP0RejectedInstructionMutation(t, ctx, db, stateContract.Id, stateReq.ClientInstructionId)
+
+	// PAUSED preserves the holder's expiry-instruction right when no concurrent
+	// lifecycle transition occurs.
+	pausedNow := time.Now().Unix()
+	pausedContract := insertP0ExerciseContract(
+		t, ctx, serviceCtx, "P0-INSTRUCTION-PAUSED-ACCEPT",
+		option.ExerciseStyle_EXERCISE_STYLE_EUROPEAN,
+		option.ContractStatus_CONTRACT_STATUS_PAUSED,
+		pausedNow-60, pausedNow+3600, pausedNow+7200, pausedNow+7200,
+		common.YesNo_YES_NO_YES, 9203, 9203,
+	)
+	if _, err := db.ExecContext(ctx, `UPDATE t_option_contract
+		SET last_trade_time=?,update_times=? WHERE id=?`,
+		pausedNow-1, pausedNow, pausedContract.Id,
+	); err != nil {
+		t.Fatalf("set paused contract last-trade boundary: %v", err)
+	}
+	pausedContract.LastTradeTime = pausedNow - 1
+	pausedPosition := insertP0SettlementPosition(t, ctx, serviceCtx, &models.TOptionPosition{
+		TenantId: p0AssetE2ETenantID, UserId: pausedUserID, AccountId: 7127,
+		ContractId: pausedContract.Id, UnderlyingSymbol: "BTCUSDT",
+		Side: int64(common.PositionSide_POSITION_SIDE_LONG), PositionQty: decimal.NewFromInt(1),
+		AvailableQty: decimal.NewFromInt(1), ExerciseableQty: decimal.NewFromInt(1),
+		Status:      int64(option.PositionStatus_POSITION_STATUS_HOLDING),
+		CreateTimes: pausedNow - 30, UpdateTimes: pausedNow - 30,
+	})
+	pausedCtx := metadata.NewIncomingContext(ctx, metadata.Pairs(
+		utils.CtxKeyTenantId, fmt.Sprint(p0AssetE2ETenantID),
+		utils.CtxKeyUid, fmt.Sprint(pausedUserID),
+	))
+	pausedResp, err := applogic.NewSetExerciseInstructionLogic(pausedCtx, serviceCtx).
+		SetExerciseInstruction(&option.SetExerciseInstructionReq{
+			AccountId: 7127, ContractId: pausedContract.Id, PositionId: pausedPosition.Id,
+			ClientInstructionId: "P0-INSTRUCTION-PAUSED-ACCEPT",
+			InstructionType:     option.ExerciseInstructionType_EXERCISE_INSTRUCTION_TYPE_DO_NOT_EXERCISE,
+		})
+	if err != nil || pausedResp == nil || pausedResp.GetBase().GetCode() != 200 || pausedResp.Data == nil {
+		t.Fatalf("PAUSED expiry instruction was rejected: resp=%+v err=%v", pausedResp, err)
+	}
+	if _, err := db.ExecContext(ctx, `UPDATE t_option_position SET status=?,update_times=? WHERE id IN (?,?,?)`,
+		int64(option.PositionStatus_POSITION_STATUS_EXPIRED), time.Now().Unix(),
+		cutoffPosition.Id, statePosition.Id, pausedPosition.Id,
+	); err != nil {
+		t.Fatalf("retire exercise race evidence positions: %v", err)
+	}
+
+	t.Logf("exercise_cutoff_boundary=start:%d cutoff:%d release:%d last_trade_status=%d last_trade_order=%d premature_expiry=0 paused_post_trade_instruction=1",
+		startedAtMillis, cutoffMillis, releasedAtMillis, contractStatus, orderStatus)
+}
+
+func lockP0ExerciseContract(t *testing.T, ctx context.Context, db *sql.DB, contractID int64) *sql.Tx {
+	t.Helper()
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var lockedID int64
+	if err := tx.QueryRowContext(ctx, `SELECT id FROM t_option_contract WHERE id=? FOR UPDATE`, contractID).
+		Scan(&lockedID); err != nil {
+		_ = tx.Rollback()
+		t.Fatalf("lock exercise contract %d: %v", contractID, err)
+	}
+	if lockedID != contractID {
+		_ = tx.Rollback()
+		t.Fatalf("locked exercise contract=%d want=%d", lockedID, contractID)
+	}
+	return tx
+}
+
+func assertP0ExerciseCallBlocked(
+	t *testing.T,
+	results <-chan p0ExerciseCallResult,
+	wait time.Duration,
+) {
+	t.Helper()
+	select {
+	case early := <-results:
+		t.Fatalf("cutoff exercise did not wait for contract lock: resp=%+v err=%v", early.resp, early.err)
+	case <-time.After(wait):
+	}
+}
+
+func waitP0ExerciseResult(
+	t *testing.T,
+	results <-chan p0ExerciseCallResult,
+) p0ExerciseCallResult {
+	t.Helper()
+	select {
+	case result := <-results:
+		return result
+	case <-time.After(5 * time.Second):
+		t.Fatal("cutoff exercise did not finish after lock release")
+		return p0ExerciseCallResult{}
+	}
+}
+
+func assertP0RejectedExerciseMutation(
+	t *testing.T,
+	ctx context.Context,
+	db *sql.DB,
+	contractID, positionID int64,
+	clientID string,
+) {
+	t.Helper()
+	var rows int64
+	var available, frozen string
+	if err := db.QueryRowContext(ctx, `SELECT COUNT(*) FROM t_option_exercise
+		WHERE tenant_id=? AND contract_id=? AND client_exercise_id=?`,
+		p0AssetE2ETenantID, contractID, clientID,
+	).Scan(&rows); err != nil {
+		t.Fatal(err)
+	}
+	if err := db.QueryRowContext(ctx, `SELECT CAST(available_qty AS CHAR),CAST(frozen_qty AS CHAR)
+		FROM t_option_position WHERE id=?`, positionID).Scan(&available, &frozen); err != nil {
+		t.Fatal(err)
+	}
+	if rows != 0 || available != "1.0000000000000000" || frozen != "0.0000000000000000" {
+		t.Fatalf("rejected cutoff mutation rows/available/frozen=%d/%s/%s", rows, available, frozen)
+	}
+}
+
+func assertP0RejectedInstructionMutation(
+	t *testing.T,
+	ctx context.Context,
+	db *sql.DB,
+	contractID int64,
+	clientID string,
+) {
+	t.Helper()
+	var rows, status int64
+	if err := db.QueryRowContext(ctx, `SELECT
+		(SELECT COUNT(*) FROM t_option_exercise_instruction WHERE tenant_id=? AND contract_id=? AND client_instruction_id=?),
+		(SELECT status FROM t_option_contract WHERE id=?)`,
+		p0AssetE2ETenantID, contractID, clientID, contractID,
+	).Scan(&rows, &status); err != nil {
+		t.Fatal(err)
+	}
+	if rows != 0 || status != int64(option.ContractStatus_CONTRACT_STATUS_EXPIRED) {
+		t.Fatalf("rejected state mutation rows/status=%d/%d", rows, status)
+	}
+}
+
+func testP0ExerciseInstructionReplacementRace(
+	t *testing.T,
+	ctx context.Context,
+	db *sql.DB,
+	serviceCtx *svc.ServiceContext,
+) {
+	t.Helper()
+	const (
+		userID      int64 = 128
+		accountID   int64 = 7128
+		concurrency       = 20
+	)
+	now := time.Now().Unix()
+	contract := insertP0ExerciseContract(
+		t, ctx, serviceCtx, "P0-INSTRUCTION-REPLACE-RACE",
+		option.ExerciseStyle_EXERCISE_STYLE_EUROPEAN,
+		option.ContractStatus_CONTRACT_STATUS_TRADING,
+		now-60, now+3600, now+7200, now+7200,
+		common.YesNo_YES_NO_YES, 9204, 9204,
+	)
+	position := insertP0SettlementPosition(t, ctx, serviceCtx, &models.TOptionPosition{
+		TenantId: p0AssetE2ETenantID, UserId: userID, AccountId: accountID,
+		ContractId: contract.Id, UnderlyingSymbol: "BTCUSDT",
+		Side: int64(common.PositionSide_POSITION_SIDE_LONG), PositionQty: decimal.NewFromInt(1),
+		AvailableQty: decimal.NewFromInt(1), ExerciseableQty: decimal.NewFromInt(1),
+		Status:      int64(option.PositionStatus_POSITION_STATUS_HOLDING),
+		CreateTimes: now - 30, UpdateTimes: now - 30,
+	})
+	instructionCtx := metadata.NewIncomingContext(ctx, metadata.Pairs(
+		utils.CtxKeyTenantId, fmt.Sprint(p0AssetE2ETenantID),
+		utils.CtxKeyUid, fmt.Sprint(userID),
+	))
+	types := []option.ExerciseInstructionType{
+		option.ExerciseInstructionType_EXERCISE_INSTRUCTION_TYPE_AUTO,
+		option.ExerciseInstructionType_EXERCISE_INSTRUCTION_TYPE_DO_NOT_EXERCISE,
+		option.ExerciseInstructionType_EXERCISE_INSTRUCTION_TYPE_EXERCISE,
+	}
+	type requestEvidence struct {
+		clientID        string
+		instructionType option.ExerciseInstructionType
+		id              int64
+		version         int64
+	}
+	type callResult struct {
+		index int
+		resp  *option.GetExerciseInstructionResp
+		err   error
+	}
+	requests := make([]requestEvidence, concurrency)
+	results := make(chan callResult, concurrency)
+	start := make(chan struct{})
+	var wg sync.WaitGroup
+	for i := 0; i < concurrency; i++ {
+		requests[i] = requestEvidence{
+			clientID:        fmt.Sprintf("P0-INSTRUCTION-REPLACE-%02d", i+1),
+			instructionType: types[i%len(types)],
+		}
+		wg.Add(1)
+		go func(index int) {
+			defer wg.Done()
+			<-start
+			resp, err := applogic.NewSetExerciseInstructionLogic(instructionCtx, serviceCtx).
+				SetExerciseInstruction(&option.SetExerciseInstructionReq{
+					AccountId: accountID, ContractId: contract.Id, PositionId: position.Id,
+					ClientInstructionId: requests[index].clientID,
+					InstructionType:     requests[index].instructionType,
+				})
+			results <- callResult{index: index, resp: resp, err: err}
+		}(i)
+	}
+	close(start)
+	wg.Wait()
+	close(results)
+	for result := range results {
+		if result.err != nil || result.resp == nil || result.resp.GetBase().GetCode() != 200 || result.resp.Data == nil {
+			t.Fatalf("different-key replacement request %d failed: resp=%+v err=%v",
+				result.index, result.resp, result.err)
+		}
+		item := result.resp.Data
+		if item.ClientInstructionId != requests[result.index].clientID ||
+			item.InstructionType != requests[result.index].instructionType ||
+			item.Status != option.ExerciseInstructionStatus_EXERCISE_INSTRUCTION_STATUS_ACTIVE {
+			t.Fatalf("different-key replacement response %d changed: %+v", result.index, item)
+		}
+		requests[result.index].id = item.Id
+		requests[result.index].version = item.Version
+	}
+	assertP0ExerciseInstructionVersionChain(t, ctx, db, contract.Id, position.Id, concurrency)
+
+	// Every original key remains an immutable idempotency identity. Replaying an
+	// old, now-superseded key returns that exact historical version and never
+	// reactivates it or appends a new version.
+	for i := range requests {
+		resp, err := applogic.NewSetExerciseInstructionLogic(instructionCtx, serviceCtx).
+			SetExerciseInstruction(&option.SetExerciseInstructionReq{
+				AccountId: accountID, ContractId: contract.Id, PositionId: position.Id,
+				ClientInstructionId: requests[i].clientID,
+				InstructionType:     requests[i].instructionType,
+			})
+		if err != nil || resp == nil || resp.GetBase().GetCode() != 200 || resp.Data == nil ||
+			resp.Data.Id != requests[i].id || resp.Data.Version != requests[i].version {
+			t.Fatalf("replacement replay %s changed identity: resp=%+v err=%v", requests[i].clientID, resp, err)
+		}
+		expectedStatus := option.ExerciseInstructionStatus_EXERCISE_INSTRUCTION_STATUS_SUPERSEDED
+		if requests[i].version == concurrency {
+			expectedStatus = option.ExerciseInstructionStatus_EXERCISE_INSTRUCTION_STATUS_ACTIVE
+		}
+		if resp.Data.Status != expectedStatus {
+			t.Fatalf("replacement replay %s status=%s want=%s",
+				requests[i].clientID, resp.Data.Status, expectedStatus)
+		}
+	}
+
+	changedType := option.ExerciseInstructionType_EXERCISE_INSTRUCTION_TYPE_AUTO
+	if requests[0].instructionType == changedType {
+		changedType = option.ExerciseInstructionType_EXERCISE_INSTRUCTION_TYPE_DO_NOT_EXERCISE
+	}
+	changedResp, err := applogic.NewSetExerciseInstructionLogic(instructionCtx, serviceCtx).
+		SetExerciseInstruction(&option.SetExerciseInstructionReq{
+			AccountId: accountID, ContractId: contract.Id, PositionId: position.Id,
+			ClientInstructionId: requests[0].clientID, InstructionType: changedType,
+		})
+	if err != nil || changedResp == nil || changedResp.GetBase().GetCode() == 200 {
+		t.Fatalf("replacement key accepted changed economics: resp=%+v err=%v", changedResp, err)
+	}
+	assertP0ExerciseInstructionVersionChain(t, ctx, db, contract.Id, position.Id, concurrency)
+
+	if _, err := db.ExecContext(ctx, `UPDATE t_option_position SET status=?,update_times=? WHERE id=?`,
+		int64(option.PositionStatus_POSITION_STATUS_EXPIRED), time.Now().Unix(), position.Id,
+	); err != nil {
+		t.Fatalf("retire replacement race position: %v", err)
+	}
+	t.Logf("exercise_instruction_replacement_race=requests=%d versions=%d active=1 superseded=%d replays=%d",
+		concurrency, concurrency, concurrency-1, concurrency)
+}
+
+func assertP0ExerciseInstructionVersionChain(
+	t *testing.T,
+	ctx context.Context,
+	db *sql.DB,
+	contractID, positionID int64,
+	want int,
+) {
+	t.Helper()
+	rows, err := db.QueryContext(ctx, `SELECT id,client_instruction_id,version,status,supersedes_id,cutoff_time
+		FROM t_option_exercise_instruction
+		WHERE tenant_id=? AND contract_id=? AND position_id=? ORDER BY version`,
+		p0AssetE2ETenantID, contractID, positionID,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer rows.Close()
+	count := 0
+	var previousID int64
+	clients := make(map[string]struct{}, want)
+	for rows.Next() {
+		var id, version, status, supersedesID, cutoffTime int64
+		var clientID string
+		if err := rows.Scan(&id, &clientID, &version, &status, &supersedesID, &cutoffTime); err != nil {
+			t.Fatal(err)
+		}
+		count++
+		if version != int64(count) || cutoffTime <= 0 {
+			t.Fatalf("replacement version/cutoff at row %d = %d/%d", count, version, cutoffTime)
+		}
+		if count == 1 && supersedesID != 0 || count > 1 && supersedesID != previousID {
+			t.Fatalf("replacement chain row %d supersedes=%d want=%d", count, supersedesID, previousID)
+		}
+		expectedStatus := int64(option.ExerciseInstructionStatus_EXERCISE_INSTRUCTION_STATUS_SUPERSEDED)
+		if count == want {
+			expectedStatus = int64(option.ExerciseInstructionStatus_EXERCISE_INSTRUCTION_STATUS_ACTIVE)
+		}
+		if status != expectedStatus {
+			t.Fatalf("replacement chain row %d status=%d want=%d", count, status, expectedStatus)
+		}
+		if _, exists := clients[clientID]; exists {
+			t.Fatalf("replacement chain duplicated client key %q", clientID)
+		}
+		clients[clientID] = struct{}{}
+		previousID = id
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
+	if count != want || len(clients) != want {
+		t.Fatalf("replacement chain rows/clients=%d/%d want=%d", count, len(clients), want)
+	}
+}
+
 func testP0ExpiryAutoDNEActualAssignment(
 	t *testing.T,
 	ctx context.Context,

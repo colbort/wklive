@@ -26,4 +26,12 @@ type Config struct {
 		BatchSize        int64
 		MaxBatchesPerRun int
 	}
+	InsuranceInventoryExit struct {
+		Enabled               bool
+		MaxQuantityPerRequest string
+		MaxPremiumPerRequest  string
+		MaxDailyQuantity      string
+		MaxMarkDeviationRatio string
+		MinOrderBookQuantity  string
+	}
 }

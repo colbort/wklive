@@ -44,6 +44,11 @@ func (l *ProcessRiskAccountsLogic) ProcessRiskAccounts(in *option.OptionTaskReq)
 		}
 		var groupErrors []error
 		results := make(map[int64]*observability.RiskScanTenantResult)
+		if in.TenantId > 0 {
+			// Each invocation is tenant scoped. Publish an explicit zero result when
+			// this tenant has no active wallet groups without clearing other tenants.
+			results[in.TenantId] = &observability.RiskScanTenantResult{TenantID: in.TenantId}
+		}
 		for _, group := range groups {
 			result := results[group.key.tenantID]
 			if result == nil {
@@ -82,12 +87,15 @@ func (l *ProcessRiskAccountsLogic) ProcessRiskAccounts(in *option.OptionTaskReq)
 		if err := l.resetInactiveRiskAccounts(in.TenantId, groups); err != nil {
 			observability.RecordRiskScanExecutionFailure(in.TenantId, "reset_inactive")
 			groupErrors = append(groupErrors, fmt.Errorf("reset inactive option risk accounts: %w", err))
+			// A scan that failed after wallet evaluation must not advance the
+			// completed timestamp or replace the last complete denominator.
+			return nil, errors.Join(groupErrors...)
 		}
 		published := make([]observability.RiskScanTenantResult, 0, len(results))
 		for _, result := range results {
 			published = append(published, *result)
 		}
-		observability.PublishRiskScanResults(published, time.Now().Unix())
+		observability.PublishRiskScanResults(published, time.Now().Unix(), in.TenantId)
 		if len(groupErrors) > 0 {
 			return nil, errors.Join(groupErrors...)
 		}
@@ -114,6 +122,10 @@ type optionRiskPosition struct {
 type optionRiskGroup struct {
 	key       optionRiskKey
 	positions []optionRiskPosition
+	// A wallet may have thousands of positions in the same migrating contract.
+	// Record one fail-closed reason per contract instead of constructing an
+	// unbounded repeated error chain.
+	migrationContracts map[int64]struct{}
 	// scanErr prevents this whole wallet risk group from being calculated from
 	// a partial or stale market set. Other wallets can still be refreshed.
 	scanErr error
@@ -129,6 +141,8 @@ type portfolioRiskSnapshot struct {
 
 func (l *ProcessRiskAccountsLogic) collectRiskGroups(tenantID int64) ([]*optionRiskGroup, error) {
 	groupMap := make(map[optionRiskKey]*optionRiskGroup)
+	migrationCache := make(map[[2]int64]bool)
+	migrationChecked := make(map[[2]int64]struct{})
 	cursor := int64(0)
 	now := time.Now().Unix()
 	for {
@@ -158,20 +172,29 @@ func (l *ProcessRiskAccountsLogic) collectRiskGroups(tenantID int64) ([]*optionR
 			}
 			group := groupMap[key]
 			if group == nil {
-				group = &optionRiskGroup{key: key}
+				group = &optionRiskGroup{key: key, migrationContracts: make(map[int64]struct{})}
 				groupMap[key] = group
 			}
-			migrationActive, err := l.svcCtx.OptionCorporateActionContractModel.IsContractMigrationActive(
-				l.ctx, position.TenantId, position.ContractId,
-			)
-			if err != nil {
-				return nil, err
+			migrationKey := [2]int64{position.TenantId, position.ContractId}
+			migrationActive := migrationCache[migrationKey]
+			if _, checked := migrationChecked[migrationKey]; !checked {
+				migrationActive, err = l.svcCtx.OptionCorporateActionContractModel.IsContractMigrationActive(
+					l.ctx, position.TenantId, position.ContractId,
+				)
+				if err != nil {
+					return nil, err
+				}
+				migrationCache[migrationKey] = migrationActive
+				migrationChecked[migrationKey] = struct{}{}
 			}
 			if migrationActive {
-				group.scanErr = errors.Join(
-					group.scanErr,
-					fmt.Errorf("corporate action migration active, contractId=%d", contract.Id),
-				)
+				if _, recorded := group.migrationContracts[contract.Id]; !recorded {
+					group.scanErr = errors.Join(
+						group.scanErr,
+						fmt.Errorf("corporate action migration active, contractId=%d", contract.Id),
+					)
+					group.migrationContracts[contract.Id] = struct{}{}
+				}
 				continue
 			}
 			market, err := l.svcCtx.OptionMarketModel.FindOneByTenantIdContractId(

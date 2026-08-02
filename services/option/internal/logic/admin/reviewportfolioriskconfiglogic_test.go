@@ -28,3 +28,24 @@ func TestValidatePortfolioRiskConfigReviewEnforcesFourEyesAndLatestVersion(t *te
 		t.Fatal("approved portfolio risk config must not be reviewed again")
 	}
 }
+
+func TestPortfolioRiskConfigApprovalRequiresFutureEffectiveTime(t *testing.T) {
+	for _, tt := range []struct {
+		name          string
+		effectiveFrom int64
+		now           int64
+		wantValid     bool
+	}{
+		{name: "future", effectiveFrom: 101, now: 100, wantValid: true},
+		{name: "exact boundary", effectiveFrom: 100, now: 100, wantValid: false},
+		{name: "retroactive", effectiveFrom: 99, now: 100, wantValid: false},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			valid := portfolioRiskConfigEffectiveTimeValid(tt.effectiveFrom, tt.now)
+			if valid != tt.wantValid {
+				t.Fatalf("effectiveFrom/now=%d/%d valid=%t want=%t",
+					tt.effectiveFrom, tt.now, valid, tt.wantValid)
+			}
+		})
+	}
+}

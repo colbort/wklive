@@ -80,9 +80,9 @@ func (l *ResetMMPConfigLogic) ResetMMPConfig(in *option.ResetMMPConfigReq) (*opt
 		}
 		return nil, err
 	}
-	count, err := applogic.CancelMMPGroupOrders(
+	total, success, failed, err := applogic.CancelMMPGroupOrdersReport(
 		l.ctx, l.svcCtx, in.TenantId, in.UserId, in.ContractId,
-		groupCode, "MMP_MANUAL_RESET",
+		groupCode, "MMP_MANUAL_RESET", true,
 	)
 	if err != nil {
 		applogic.SetMMPConfigLastError(
@@ -92,14 +92,24 @@ func (l *ResetMMPConfigLogic) ResetMMPConfig(in *option.ResetMMPConfigReq) (*opt
 	}
 	item, err = activateStagedMMPConfig(l.ctx, l.svcCtx, input, "MMP_MANUAL_RESET")
 	if err != nil {
+		if errors.Is(err, errMMPNotTriggered) {
+			return &option.GetMMPConfigResp{
+				Base: helper.ErrResp(i18n.OperationNotAllowed, errMMPNotTriggered.Error()),
+			}, nil
+		}
+		if errors.Is(err, errMMPReleasePending) {
+			return &option.GetMMPConfigResp{
+				Base: helper.ErrResp(i18n.OperationNotAllowed, err.Error()),
+			}, nil
+		}
 		applogic.SetMMPConfigLastError(
 			l.ctx, l.svcCtx, in.TenantId, in.UserId, in.ContractId, groupCode, err.Error(),
 		)
 		return nil, err
 	}
 	l.Infof(
-		"option mmp manual reset tenantId=%d userId=%d contractId=%d group=%s canceled=%d operatorId=%d",
-		in.TenantId, in.UserId, in.ContractId, groupCode, count, operatorID,
+		"option mmp manual reset tenantId=%d userId=%d contractId=%d group=%s total=%d success=%d failed=%d operatorId=%d",
+		in.TenantId, in.UserId, in.ContractId, groupCode, total, success, failed, operatorID,
 	)
 	return mmpConfigResponse(item), nil
 }

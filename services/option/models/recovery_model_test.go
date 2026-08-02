@@ -723,19 +723,21 @@ func TestFindActiveMMPOrdersScopesGroupAndStatus(t *testing.T) {
 	}
 }
 
-func TestFindFirstActiveMMPOrderForUpdateLocksResidual(t *testing.T) {
+func TestFindFirstUnsafeMMPOrderForUpdateLocksTradingAndReleaseStates(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer db.Close()
 
-	mock.ExpectQuery(`(?s)SELECT .* FROM .*WHERE tenant_id = \? AND user_id = \? AND contract_id = \? AND mmp = \? AND mmp_group = \?.*status IN \(\?, \?, \?\).*ORDER BY id LIMIT 1 FOR UPDATE`).
+	mock.ExpectQuery(`(?s)SELECT .* FROM .*WHERE tenant_id = \? AND user_id = \? AND contract_id = \? AND mmp = \? AND mmp_group = \?.*status IN \(\?, \?, \?, \?, \?\).*ORDER BY id LIMIT 1 FOR UPDATE`).
 		WithArgs(
 			int64(9), int64(77), int64(88), int64(common.YesNo_YES_NO_YES), "desk-a",
 			int64(option.OrderStatus_ORDER_STATUS_FUNDING),
 			int64(option.OrderStatus_ORDER_STATUS_PENDING),
 			int64(option.OrderStatus_ORDER_STATUS_PART_FILLED),
+			int64(option.OrderStatus_ORDER_STATUS_CANCELING),
+			int64(option.OrderStatus_ORDER_STATUS_EXPIRING),
 		).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}))
 
@@ -745,7 +747,7 @@ func TestFindFirstActiveMMPOrderForUpdateLocksResidual(t *testing.T) {
 			table:      "`t_option_order`",
 		},
 	}
-	_, err = model.FindFirstActiveMMPOrderForUpdate(context.Background(), 9, 77, 88, "desk-a")
+	_, err = model.FindFirstUnsafeMMPOrderForUpdate(context.Background(), 9, 77, 88, "desk-a")
 	if !errors.Is(err, ErrNotFound) {
 		t.Fatalf("find residual MMP order error=%v want ErrNotFound", err)
 	}

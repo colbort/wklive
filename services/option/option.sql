@@ -24,6 +24,7 @@ CREATE TABLE `t_option_contract` (
   `qty_step` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '最小数量变动单位',
   `multiplier` DECIMAL(32,16) NOT NULL DEFAULT 1 COMMENT '合约乘数',
   `list_time` BIGINT NOT NULL DEFAULT 0 COMMENT '上市时间',
+  `last_trade_time` BIGINT NOT NULL DEFAULT 0 COMMENT '最后可交易时间',
   `expire_time` BIGINT NOT NULL DEFAULT 0 COMMENT '到期时间',
   `deliver_time` BIGINT NOT NULL DEFAULT 0 COMMENT '交割/结算时间',
   `exercise_cutoff_time` BIGINT NOT NULL DEFAULT 0 COMMENT '主动行权及到期指令截止时间',
@@ -66,9 +67,11 @@ CREATE TABLE `t_option_contract` (
   KEY `idx_tenant_underlying_symbol` (`tenant_id`, `underlying_symbol`),
   KEY `idx_option_public_chain` (`tenant_id`, `underlying_symbol`, `expire_time`, `status`, `is_deleted`, `strike_price`, `option_type`, `id`),
   KEY `idx_tenant_expire_time` (`tenant_id`, `expire_time`),
+  KEY `idx_tenant_last_trade_time` (`tenant_id`, `last_trade_time`),
   KEY `idx_tenant_status` (`tenant_id`, `status`),
   KEY `idx_option_contract_monitor` (`status`, `update_times`, `tenant_id`, `id`),
   KEY `idx_option_contract_lifecycle_monitor` (`status`, `expire_time`, `tenant_id`, `id`),
+  KEY `idx_option_contract_last_trade_monitor` (`status`, `last_trade_time`, `tenant_id`, `id`),
   KEY `idx_option_public_chain_monitor` (`status`, `is_deleted`, `tenant_id`, `underlying_symbol`, `expire_time`, `strike_price`, `option_type`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权合约表';
 
@@ -640,6 +643,7 @@ CREATE TABLE `t_option_portfolio_risk_config` (
   `effective_from` BIGINT NOT NULL DEFAULT 0 COMMENT '生效时间（秒）',
   `effective_until` BIGINT NOT NULL DEFAULT 0 COMMENT '失效时间（秒），0为未安排失效',
   `supersedes_id` BIGINT NOT NULL DEFAULT 0 COMMENT '批准后替代的上一版本ID',
+  `source_config_id` BIGINT NOT NULL DEFAULT 0 COMMENT '复制参数的历史版本ID；0表示非复制创建',
   `change_reason` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '变更或回滚原因',
   `evidence_ref` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '回测、验证或审批证据引用',
   `created_by` BIGINT NOT NULL DEFAULT 0 COMMENT '创建管理员ID',
@@ -698,6 +702,38 @@ CREATE TABLE `t_option_liquidation` (
     (`liquidation_scope`, `tenant_id`, `user_id`, `id`, `status`, `contract_id`, `update_times`, `create_times`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权强平记录';
 
+CREATE TABLE `t_option_insurance_inventory_exit` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `request_no` VARCHAR(96) NOT NULL DEFAULT '' COMMENT '保险库存退出申请号',
+  `active_key` VARCHAR(128) NOT NULL DEFAULT '' COMMENT '活动仓位唯一键；终态切换为申请唯一键',
+  `position_id` BIGINT NOT NULL DEFAULT 0 COMMENT '保险接管空头持仓ID',
+  `contract_id` BIGINT NOT NULL DEFAULT 0 COMMENT '期权合约ID',
+  `insurance_user_id` BIGINT NOT NULL DEFAULT 0 COMMENT '保险基金用户ID快照',
+  `insurance_account_id` BIGINT NOT NULL DEFAULT 0 COMMENT '保险基金Option账户ID快照',
+  `quantity` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '申请平仓数量',
+  `limit_price` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT 'IOC买入平仓限价',
+  `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1待复核 2已批准 3已拒绝 4已提交',
+  `reason` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '退出原因',
+  `evidence_ref` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '流动性、风险及审批证据引用',
+  `requested_by` BIGINT NOT NULL DEFAULT 0 COMMENT '申请管理员ID',
+  `reviewed_by` BIGINT NOT NULL DEFAULT 0 COMMENT '复核管理员ID',
+  `review_reason` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '复核意见',
+  `reviewed_at` BIGINT NOT NULL DEFAULT 0 COMMENT '复核时间',
+  `order_id` BIGINT NOT NULL DEFAULT 0 COMMENT '唯一管理来源IOC订单ID',
+  `submitted_by` BIGINT NOT NULL DEFAULT 0 COMMENT '执行管理员ID',
+  `submitted_at` BIGINT NOT NULL DEFAULT 0 COMMENT '订单提交时间',
+  `last_error_msg` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '最近一次执行失败原因',
+  `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
+  `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_option_insurance_exit_request` (`tenant_id`, `request_no`),
+  UNIQUE KEY `uk_option_insurance_exit_active` (`tenant_id`, `active_key`),
+  KEY `idx_option_insurance_exit_order` (`tenant_id`, `order_id`),
+  KEY `idx_option_insurance_exit_position` (`tenant_id`, `position_id`, `id`),
+  KEY `idx_option_insurance_exit_status` (`tenant_id`, `status`, `id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='保险接管库存受控主动退出申请';
+
 CREATE TABLE `t_option_insurance_fund_flow` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
@@ -706,7 +742,7 @@ CREATE TABLE `t_option_insurance_fund_flow` (
   `liquidation_id` BIGINT NOT NULL DEFAULT 0 COMMENT '强平记录ID',
   `flow_type` TINYINT NOT NULL DEFAULT 0 COMMENT '类型：1强平费 2缺口赔付 3人工注资 4人工提取',
   `coin` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '币种',
-  `amount` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '正数入金，负数出金',
+  `amount` DECIMAL(32,16) NOT NULL DEFAULT 0 COMMENT '业务绝对金额，方向由flow_type确定',
   `asset_flow_no` VARCHAR(64) NOT NULL DEFAULT '' COMMENT 'Asset实际流水号',
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`),
@@ -1343,8 +1379,9 @@ CREATE TABLE `t_option_contract_series_expiry` (
   `sequence_no` BIGINT NOT NULL DEFAULT 0 COMMENT '稳定到期序号',
   `cycle_code` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '运营确认的周期标签',
   `list_time` BIGINT NOT NULL DEFAULT 0 COMMENT '上市时间',
+  `last_trade_time` BIGINT NOT NULL DEFAULT 0 COMMENT '最后可交易时间',
   `exercise_cutoff_time` BIGINT NOT NULL DEFAULT 0 COMMENT '行权指令截止时间',
-  `expire_time` BIGINT NOT NULL DEFAULT 0 COMMENT '到期/最后交易时间',
+  `expire_time` BIGINT NOT NULL DEFAULT 0 COMMENT '到期时间',
   `deliver_time` BIGINT NOT NULL DEFAULT 0 COMMENT '交割时间',
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`),

@@ -602,6 +602,7 @@ type ContractSeriesExpiryInput struct {
 	SequenceNo         int64  `json:"sequenceNo" validate:"min=1,max=999"`
 	CycleCode          string `json:"cycleCode" validate:"required,max=32"`
 	ListTime           int64  `json:"listTime"`
+	LastTradeTime      int64  `json:"lastTradeTime"`
 	ExerciseCutoffTime int64  `json:"exerciseCutoffTime"`
 	ExpireTime         int64  `json:"expireTime"`
 	DeliverTime        int64  `json:"deliverTime"`
@@ -684,6 +685,7 @@ type CreateContractReq struct {
 	QtyStep                     string `json:"qtyStep" validate:"required,decimal_gt_zero,decimal_32_16"`
 	Multiplier                  string `json:"multiplier" validate:"required,decimal_gt_zero,decimal_32_16"`
 	ListTime                    int64  `json:"listTime"`
+	LastTradeTime               int64  `json:"lastTradeTime"`
 	ExpireTime                  int64  `json:"expireTime"`
 	DeliverTime                 int64  `json:"deliverTime"`
 	ExerciseCutoffTime          int64  `json:"exerciseCutoffTime"`
@@ -805,6 +807,15 @@ type CreateEncryptionSessionReq struct {
 	Version      string `json:"version"`
 	RsaKid       string `json:"rsaKid"`
 	EncryptedKey string `json:"encryptedKey"`
+}
+
+type CreateInsuranceInventoryExitReq struct {
+	TenantId    int64  `json:"tenantId"`
+	PositionId  int64  `json:"positionId"`
+	Quantity    string `json:"quantity" validate:"required,max=64"`
+	LimitPrice  string `json:"limitPrice" validate:"required,max=64"`
+	Reason      string `json:"reason" validate:"required,max=500"`
+	EvidenceRef string `json:"evidenceRef" validate:"required,max=500"`
 }
 
 type CreatePayPlatformReq struct {
@@ -1188,6 +1199,11 @@ type EncryptionSessionResp struct {
 	Data EncryptionSessionData `json:"data"`
 }
 
+type ExecuteInsuranceInventoryExitReq struct {
+	TenantId int64 `json:"tenantId"`
+	ExitId   int64 `json:"exitId"`
+}
+
 type ForceCancelComboOrderReq struct {
 	TenantId int64  `json:"tenantId"`
 	Id       int64  `json:"id,optional"`
@@ -1496,6 +1512,11 @@ type GetInsuranceFundAccountListReq struct {
 type GetInsuranceFundAccountListResp struct {
 	RespBase
 	Data []InsuranceFundAccount `json:"data"`
+}
+
+type GetInsuranceInventoryExitResp struct {
+	RespBase
+	Data OptionInsuranceInventoryExit `json:"data"`
 }
 
 type GetLiquidationListReq struct {
@@ -2399,6 +2420,20 @@ type ListExercisesResp struct {
 	Data []OptionExerciseDetail `json:"data"`
 }
 
+type ListInsuranceInventoryExitsReq struct {
+	PageReq
+	TenantId   int64 `form:"tenantId"`
+	PositionId int64 `form:"positionId,optional"`
+	ContractId int64 `form:"contractId,optional"`
+	Status     int64 `form:"status,optional"`
+}
+
+type ListInsuranceInventoryExitsResp struct {
+	RespBase
+	Data  []OptionInsuranceInventoryExit `json:"data"`
+	Total int64                          `json:"total"`
+}
+
 type ListMMPConfigsReq struct {
 	PageReq
 	TenantId   int64  `form:"tenantId"`
@@ -3269,6 +3304,7 @@ type OptionContract struct {
 	QtyStep                     string `json:"qtyStep" validate:"decimal_32_16"`
 	Multiplier                  string `json:"multiplier" validate:"decimal_32_16"`
 	ListTime                    int64  `json:"listTime"`
+	LastTradeTime               int64  `json:"lastTradeTime"`
 	ExpireTime                  int64  `json:"expireTime"`
 	DeliverTime                 int64  `json:"deliverTime"`
 	ExerciseCutoffTime          int64  `json:"exerciseCutoffTime"`
@@ -3365,6 +3401,7 @@ type OptionContractSeriesExpiry struct {
 	SequenceNo         int64  `json:"sequenceNo"`
 	CycleCode          string `json:"cycleCode"`
 	ListTime           int64  `json:"listTime"`
+	LastTradeTime      int64  `json:"lastTradeTime"`
 	ExerciseCutoffTime int64  `json:"exerciseCutoffTime"`
 	ExpireTime         int64  `json:"expireTime"`
 	DeliverTime        int64  `json:"deliverTime"`
@@ -3513,6 +3550,34 @@ type OptionForceCancelContractOrdersReq struct {
 	TenantId   int64  `json:"tenantId"`
 	ContractId int64  `json:"contractId"`
 	Reason     string `json:"reason,optional"`
+}
+
+type OptionInsuranceInventoryExit struct {
+	Id                 int64  `json:"id"`
+	TenantId           int64  `json:"tenantId"`
+	RequestNo          string `json:"requestNo"`
+	PositionId         int64  `json:"positionId"`
+	ContractId         int64  `json:"contractId"`
+	InsuranceUserId    int64  `json:"insuranceUserId"`
+	InsuranceAccountId int64  `json:"insuranceAccountId"`
+	Quantity           string `json:"quantity"`
+	LimitPrice         string `json:"limitPrice"`
+	Status             int64  `json:"status"`
+	Reason             string `json:"reason"`
+	EvidenceRef        string `json:"evidenceRef"`
+	RequestedBy        int64  `json:"requestedBy"`
+	ReviewedBy         int64  `json:"reviewedBy"`
+	ReviewReason       string `json:"reviewReason"`
+	ReviewedAt         int64  `json:"reviewedAt"`
+	OrderId            int64  `json:"orderId"`
+	SubmittedBy        int64  `json:"submittedBy"`
+	SubmittedAt        int64  `json:"submittedAt"`
+	LastErrorMsg       string `json:"lastErrorMsg"`
+	CreateTimes        int64  `json:"createTimes"`
+	UpdateTimes        int64  `json:"updateTimes"`
+	OrderStatus        int64  `json:"orderStatus"`
+	FilledQty          string `json:"filledQty"`
+	UnfilledQty        string `json:"unfilledQty"`
 }
 
 type OptionLiquidation struct {
@@ -3745,6 +3810,7 @@ type OptionPortfolioRiskConfig struct {
 	EffectiveFrom          int64  `json:"effectiveFrom"`
 	EffectiveUntil         int64  `json:"effectiveUntil"`
 	SupersedesId           int64  `json:"supersedesId"`
+	SourceConfigId         int64  `json:"sourceConfigId"`
 	ChangeReason           string `json:"changeReason"`
 	EvidenceRef            string `json:"evidenceRef"`
 	CreatedBy              int64  `json:"createdBy"`
@@ -4641,6 +4707,13 @@ type ReviewContractSeriesReq struct {
 type ReviewCorporateActionReq struct {
 	TenantId int64  `json:"tenantId"`
 	ActionId int64  `json:"actionId"`
+	Approve  bool   `json:"approve"`
+	Reason   string `json:"reason" validate:"required,max=500"`
+}
+
+type ReviewInsuranceInventoryExitReq struct {
+	TenantId int64  `json:"tenantId"`
+	ExitId   int64  `json:"exitId"`
 	Approve  bool   `json:"approve"`
 	Reason   string `json:"reason" validate:"required,max=500"`
 }
@@ -6276,6 +6349,7 @@ type UpdateContractReq struct {
 	QtyStep                     string `json:"qtyStep" validate:"decimal_gte_zero,decimal_32_16"`
 	Multiplier                  string `json:"multiplier" validate:"decimal_gte_zero,decimal_32_16"`
 	ListTime                    int64  `json:"listTime"`
+	LastTradeTime               int64  `json:"lastTradeTime"`
 	ExpireTime                  int64  `json:"expireTime"`
 	DeliverTime                 int64  `json:"deliverTime"`
 	ExerciseCutoffTime          int64  `json:"exerciseCutoffTime"`

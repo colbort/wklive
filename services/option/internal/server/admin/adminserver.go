@@ -347,6 +347,30 @@ func (s *AdminServer) RetryLiquidation(ctx context.Context, in *option.RetryLiqu
 	return l.RetryLiquidation(in)
 }
 
+// 创建保险接管库存主动退出的不可变待复核申请
+func (s *AdminServer) CreateInsuranceInventoryExit(ctx context.Context, in *option.CreateInsuranceInventoryExitReq) (*option.GetInsuranceInventoryExitResp, error) {
+	l := adminlogic.NewCreateInsuranceInventoryExitLogic(ctx, s.svcCtx)
+	return l.CreateInsuranceInventoryExit(in)
+}
+
+// 由独立管理员批准或拒绝保险库存退出申请
+func (s *AdminServer) ReviewInsuranceInventoryExit(ctx context.Context, in *option.ReviewInsuranceInventoryExitReq) (*option.GetInsuranceInventoryExitResp, error) {
+	l := adminlogic.NewReviewInsuranceInventoryExitLogic(ctx, s.svcCtx)
+	return l.ReviewInsuranceInventoryExit(in)
+}
+
+// 重新校验库存和行情后，幂等提交管理来源的IOC减仓单
+func (s *AdminServer) ExecuteInsuranceInventoryExit(ctx context.Context, in *option.ExecuteInsuranceInventoryExitReq) (*option.GetInsuranceInventoryExitResp, error) {
+	l := adminlogic.NewExecuteInsuranceInventoryExitLogic(ctx, s.svcCtx)
+	return l.ExecuteInsuranceInventoryExit(in)
+}
+
+// 分页查询保险库存退出申请
+func (s *AdminServer) ListInsuranceInventoryExits(ctx context.Context, in *option.ListInsuranceInventoryExitsReq) (*option.ListInsuranceInventoryExitsResp, error) {
+	l := adminlogic.NewListInsuranceInventoryExitsLogic(ctx, s.svcCtx)
+	return l.ListInsuranceInventoryExits(in)
+}
+
 // 按行权单重试失败或人工处理的资产指令
 func (s *AdminServer) RetryExercise(ctx context.Context, in *option.RetryExerciseReq) (*option.CommonResp, error) {
 	l := adminlogic.NewRetryExerciseLogic(ctx, s.svcCtx)

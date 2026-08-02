@@ -1,6 +1,7 @@
 package adminlogic
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -8,6 +9,7 @@ import (
 	"wklive/proto/option"
 	"wklive/services/option/models"
 
+	"github.com/go-sql-driver/mysql"
 	"github.com/shopspring/decimal"
 )
 
@@ -68,6 +70,20 @@ func TestPrepareContractSeriesDeterministicAndSymmetric(t *testing.T) {
 	}
 	if second.payloadHash != firstHash {
 		t.Fatal("ignored contract identity fields must not change the idempotency payload")
+	}
+}
+
+func TestContractSeriesCreateRetriesOnlyLockVictims(t *testing.T) {
+	for _, number := range []uint16{1213, 1205} {
+		if !isRetryableContractSeriesCreateError(errors.Join(
+			errors.New("create series"), &mysql.MySQLError{Number: number},
+		)) {
+			t.Fatalf("MySQL %d must be retryable", number)
+		}
+	}
+	if isRetryableContractSeriesCreateError(&mysql.MySQLError{Number: 1062}) ||
+		isRetryableContractSeriesCreateError(errors.New("business rejection")) {
+		t.Fatal("non-lock errors must not be retried")
 	}
 }
 

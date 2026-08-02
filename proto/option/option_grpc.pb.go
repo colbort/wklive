@@ -1141,6 +1141,10 @@ const (
 	Admin_ListPortfolioRiskConfigs_FullMethodName        = "/option.Admin/ListPortfolioRiskConfigs"
 	Admin_ListLiquidations_FullMethodName                = "/option.Admin/ListLiquidations"
 	Admin_RetryLiquidation_FullMethodName                = "/option.Admin/RetryLiquidation"
+	Admin_CreateInsuranceInventoryExit_FullMethodName    = "/option.Admin/CreateInsuranceInventoryExit"
+	Admin_ReviewInsuranceInventoryExit_FullMethodName    = "/option.Admin/ReviewInsuranceInventoryExit"
+	Admin_ExecuteInsuranceInventoryExit_FullMethodName   = "/option.Admin/ExecuteInsuranceInventoryExit"
+	Admin_ListInsuranceInventoryExits_FullMethodName     = "/option.Admin/ListInsuranceInventoryExits"
 	Admin_RetryExercise_FullMethodName                   = "/option.Admin/RetryExercise"
 	Admin_RetrySettlementInstruction_FullMethodName      = "/option.Admin/RetrySettlementInstruction"
 	Admin_ReleaseUserKillSwitch_FullMethodName           = "/option.Admin/ReleaseUserKillSwitch"
@@ -1270,6 +1274,14 @@ type AdminClient interface {
 	ListLiquidations(ctx context.Context, in *ListLiquidationsReq, opts ...grpc.CallOption) (*ListLiquidationsResp, error)
 	// 将失败或人工处理的强平记录重新置为待执行
 	RetryLiquidation(ctx context.Context, in *RetryLiquidationReq, opts ...grpc.CallOption) (*CommonResp, error)
+	// 创建保险接管库存主动退出的不可变待复核申请
+	CreateInsuranceInventoryExit(ctx context.Context, in *CreateInsuranceInventoryExitReq, opts ...grpc.CallOption) (*GetInsuranceInventoryExitResp, error)
+	// 由独立管理员批准或拒绝保险库存退出申请
+	ReviewInsuranceInventoryExit(ctx context.Context, in *ReviewInsuranceInventoryExitReq, opts ...grpc.CallOption) (*GetInsuranceInventoryExitResp, error)
+	// 重新校验库存和行情后，幂等提交管理来源的IOC减仓单
+	ExecuteInsuranceInventoryExit(ctx context.Context, in *ExecuteInsuranceInventoryExitReq, opts ...grpc.CallOption) (*GetInsuranceInventoryExitResp, error)
+	// 分页查询保险库存退出申请
+	ListInsuranceInventoryExits(ctx context.Context, in *ListInsuranceInventoryExitsReq, opts ...grpc.CallOption) (*ListInsuranceInventoryExitsResp, error)
 	// 按行权单重试失败或人工处理的资产指令
 	RetryExercise(ctx context.Context, in *RetryExerciseReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 校验归属后重试结算批次中的失败资产指令
@@ -1846,6 +1858,46 @@ func (c *adminClient) RetryLiquidation(ctx context.Context, in *RetryLiquidation
 	return out, nil
 }
 
+func (c *adminClient) CreateInsuranceInventoryExit(ctx context.Context, in *CreateInsuranceInventoryExitReq, opts ...grpc.CallOption) (*GetInsuranceInventoryExitResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetInsuranceInventoryExitResp)
+	err := c.cc.Invoke(ctx, Admin_CreateInsuranceInventoryExit_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ReviewInsuranceInventoryExit(ctx context.Context, in *ReviewInsuranceInventoryExitReq, opts ...grpc.CallOption) (*GetInsuranceInventoryExitResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetInsuranceInventoryExitResp)
+	err := c.cc.Invoke(ctx, Admin_ReviewInsuranceInventoryExit_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ExecuteInsuranceInventoryExit(ctx context.Context, in *ExecuteInsuranceInventoryExitReq, opts ...grpc.CallOption) (*GetInsuranceInventoryExitResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetInsuranceInventoryExitResp)
+	err := c.cc.Invoke(ctx, Admin_ExecuteInsuranceInventoryExit_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ListInsuranceInventoryExits(ctx context.Context, in *ListInsuranceInventoryExitsReq, opts ...grpc.CallOption) (*ListInsuranceInventoryExitsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListInsuranceInventoryExitsResp)
+	err := c.cc.Invoke(ctx, Admin_ListInsuranceInventoryExits_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *adminClient) RetryExercise(ctx context.Context, in *RetryExerciseReq, opts ...grpc.CallOption) (*CommonResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommonResp)
@@ -2090,6 +2142,14 @@ type AdminServer interface {
 	ListLiquidations(context.Context, *ListLiquidationsReq) (*ListLiquidationsResp, error)
 	// 将失败或人工处理的强平记录重新置为待执行
 	RetryLiquidation(context.Context, *RetryLiquidationReq) (*CommonResp, error)
+	// 创建保险接管库存主动退出的不可变待复核申请
+	CreateInsuranceInventoryExit(context.Context, *CreateInsuranceInventoryExitReq) (*GetInsuranceInventoryExitResp, error)
+	// 由独立管理员批准或拒绝保险库存退出申请
+	ReviewInsuranceInventoryExit(context.Context, *ReviewInsuranceInventoryExitReq) (*GetInsuranceInventoryExitResp, error)
+	// 重新校验库存和行情后，幂等提交管理来源的IOC减仓单
+	ExecuteInsuranceInventoryExit(context.Context, *ExecuteInsuranceInventoryExitReq) (*GetInsuranceInventoryExitResp, error)
+	// 分页查询保险库存退出申请
+	ListInsuranceInventoryExits(context.Context, *ListInsuranceInventoryExitsReq) (*ListInsuranceInventoryExitsResp, error)
 	// 按行权单重试失败或人工处理的资产指令
 	RetryExercise(context.Context, *RetryExerciseReq) (*CommonResp, error)
 	// 校验归属后重试结算批次中的失败资产指令
@@ -2287,6 +2347,18 @@ func (UnimplementedAdminServer) ListLiquidations(context.Context, *ListLiquidati
 }
 func (UnimplementedAdminServer) RetryLiquidation(context.Context, *RetryLiquidationReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RetryLiquidation not implemented")
+}
+func (UnimplementedAdminServer) CreateInsuranceInventoryExit(context.Context, *CreateInsuranceInventoryExitReq) (*GetInsuranceInventoryExitResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateInsuranceInventoryExit not implemented")
+}
+func (UnimplementedAdminServer) ReviewInsuranceInventoryExit(context.Context, *ReviewInsuranceInventoryExitReq) (*GetInsuranceInventoryExitResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReviewInsuranceInventoryExit not implemented")
+}
+func (UnimplementedAdminServer) ExecuteInsuranceInventoryExit(context.Context, *ExecuteInsuranceInventoryExitReq) (*GetInsuranceInventoryExitResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ExecuteInsuranceInventoryExit not implemented")
+}
+func (UnimplementedAdminServer) ListInsuranceInventoryExits(context.Context, *ListInsuranceInventoryExitsReq) (*ListInsuranceInventoryExitsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListInsuranceInventoryExits not implemented")
 }
 func (UnimplementedAdminServer) RetryExercise(context.Context, *RetryExerciseReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method RetryExercise not implemented")
@@ -3320,6 +3392,78 @@ func _Admin_RetryLiquidation_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_CreateInsuranceInventoryExit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateInsuranceInventoryExitReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).CreateInsuranceInventoryExit(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_CreateInsuranceInventoryExit_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).CreateInsuranceInventoryExit(ctx, req.(*CreateInsuranceInventoryExitReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ReviewInsuranceInventoryExit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReviewInsuranceInventoryExitReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ReviewInsuranceInventoryExit(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ReviewInsuranceInventoryExit_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ReviewInsuranceInventoryExit(ctx, req.(*ReviewInsuranceInventoryExitReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ExecuteInsuranceInventoryExit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExecuteInsuranceInventoryExitReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ExecuteInsuranceInventoryExit(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ExecuteInsuranceInventoryExit_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ExecuteInsuranceInventoryExit(ctx, req.(*ExecuteInsuranceInventoryExitReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ListInsuranceInventoryExits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListInsuranceInventoryExitsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListInsuranceInventoryExits(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListInsuranceInventoryExits_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListInsuranceInventoryExits(ctx, req.(*ListInsuranceInventoryExitsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Admin_RetryExercise_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RetryExerciseReq)
 	if err := dec(in); err != nil {
@@ -3776,6 +3920,22 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RetryLiquidation",
 			Handler:    _Admin_RetryLiquidation_Handler,
+		},
+		{
+			MethodName: "CreateInsuranceInventoryExit",
+			Handler:    _Admin_CreateInsuranceInventoryExit_Handler,
+		},
+		{
+			MethodName: "ReviewInsuranceInventoryExit",
+			Handler:    _Admin_ReviewInsuranceInventoryExit_Handler,
+		},
+		{
+			MethodName: "ExecuteInsuranceInventoryExit",
+			Handler:    _Admin_ExecuteInsuranceInventoryExit_Handler,
+		},
+		{
+			MethodName: "ListInsuranceInventoryExits",
+			Handler:    _Admin_ListInsuranceInventoryExits_Handler,
 		},
 		{
 			MethodName: "RetryExercise",

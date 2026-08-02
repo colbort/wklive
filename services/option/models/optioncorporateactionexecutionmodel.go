@@ -18,8 +18,24 @@ func CountCorporateActionExecutionBlockers(
     WHERE tenant_id=? AND contract_id=? AND status<>3)
  + (SELECT COUNT(1) FROM t_option_inbox
     WHERE tenant_id=? AND contract_id=? AND status<>2)
- + (SELECT COUNT(1) FROM t_option_asset_instruction
-    WHERE tenant_id=? AND contract_id=? AND status NOT IN (3,6))
+ + (SELECT COUNT(1) FROM t_option_asset_instruction ai
+    LEFT JOIN t_option_order ai_order
+      ON ai_order.tenant_id=ai.tenant_id AND ai_order.id=ai.order_id
+    LEFT JOIN t_option_trade ai_trade
+      ON ai_trade.tenant_id=ai.tenant_id AND ai_trade.id=ai.trade_id
+    LEFT JOIN t_option_position ai_position
+      ON ai_position.tenant_id=ai.tenant_id AND ai_position.id=ai.position_id
+    LEFT JOIN t_option_margin_lot ai_margin_lot
+      ON ai_margin_lot.tenant_id=ai.tenant_id AND ai_margin_lot.id=ai.margin_lot_id
+    LEFT JOIN t_option_liquidation ai_liquidation
+      ON ai_liquidation.tenant_id=ai.tenant_id AND ai_liquidation.id=ai.liquidation_id
+    LEFT JOIN t_option_physical_delivery_unit ai_delivery_unit
+      ON ai_delivery_unit.tenant_id=ai.tenant_id AND ai_delivery_unit.id=ai.delivery_unit_id
+    WHERE ai.tenant_id=? AND ai.status NOT IN (3,6)
+      AND ? IN (
+        ai_order.contract_id, ai_trade.contract_id, ai_position.contract_id,
+        ai_margin_lot.contract_id, ai_liquidation.contract_id, ai_delivery_unit.contract_id
+      ))
  + (SELECT COUNT(1) FROM t_option_exercise
     WHERE tenant_id=? AND contract_id=? AND status=1)
  + (SELECT COUNT(1) FROM t_option_liquidation

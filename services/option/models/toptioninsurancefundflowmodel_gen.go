@@ -51,7 +51,7 @@ type (
 		LiquidationId int64           `db:"liquidation_id"` // 强平记录ID
 		FlowType      int64           `db:"flow_type"`      // 类型：1强平费 2缺口赔付 3人工注资 4人工提取
 		Coin          string          `db:"coin"`           // 币种
-		Amount        decimal.Decimal `db:"amount"`         // 正数入金，负数出金
+		Amount        decimal.Decimal `db:"amount"`         // 业务绝对金额，方向由flow_type确定
 		AssetFlowNo   string          `db:"asset_flow_no"`  // Asset实际流水号
 		CreateTimes   int64           `db:"create_times"`   // 创建时间
 	}

@@ -53,8 +53,10 @@ type (
 		SumActiveOpenQty(ctx context.Context, tenantId, userId, contractId, side int64) (decimal.Decimal, error)
 		FindCrossingSelfOrders(ctx context.Context, tenantId, userId, contractId, side int64, price decimal.Decimal) ([]*TOptionOrder, error)
 		FindActiveMMPOrders(ctx context.Context, tenantId, userId, contractId int64, groupCode string, cursor, limit int64) ([]*TOptionOrder, error)
-		FindFirstActiveMMPOrderForUpdate(ctx context.Context, tenantId, userId, contractId int64, groupCode string) (*TOptionOrder, error)
+		FindFirstUnsafeMMPOrderForUpdate(ctx context.Context, tenantId, userId, contractId int64, groupCode string) (*TOptionOrder, error)
 		HasActiveByContract(ctx context.Context, tenantId, contractId int64) (bool, error)
+		HasUnsafeContractResumeOrders(ctx context.Context, tenantId, contractId int64) (bool, error)
+		HasUnsafeKillSwitchReleaseOrders(ctx context.Context, tenantId, userId int64) (bool, error)
 		FindOrderBookLevels(ctx context.Context, tenantId, contractId, side, limit int64) ([]*OptionOrderBookLevel, error)
 		FindComboChildren(ctx context.Context, tenantId, comboOrderId int64) ([]*TOptionOrder, error)
 		FindComboChildrenForUpdate(ctx context.Context, tenantId, comboOrderId int64) ([]*TOptionOrder, error)
@@ -64,6 +66,51 @@ type (
 		*defaultTOptionOrderModel
 	}
 )
+
+// HasUnsafeContractResumeOrders includes cancellation and expiry transitions:
+// the contract must remain paused until the order reaches a terminal state,
+// because CANCELING/EXPIRING can still have an Asset release in flight.
+func (m *defaultTOptionOrderModel) HasUnsafeContractResumeOrders(
+	ctx context.Context, tenantId, contractId int64,
+) (bool, error) {
+	query := fmt.Sprintf(`SELECT COUNT(1) FROM %s
+WHERE tenant_id=? AND contract_id=? AND status IN (?,?,?,?,?)`, m.table)
+	var count int64
+	if err := m.QueryRowNoCacheCtx(
+		ctx, &count, query, tenantId, contractId,
+		int64(option.OrderStatus_ORDER_STATUS_FUNDING),
+		int64(option.OrderStatus_ORDER_STATUS_PENDING),
+		int64(option.OrderStatus_ORDER_STATUS_PART_FILLED),
+		int64(option.OrderStatus_ORDER_STATUS_CANCELING),
+		int64(option.OrderStatus_ORDER_STATUS_EXPIRING),
+	); err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
+// HasUnsafeKillSwitchReleaseOrders reports whether a user still has an order
+// that can trade or whose cancellation/expiry funds have not reached a
+// terminal state. Callers serialize this check with the user's trading-control
+// row so no new order can pass admission while the kill switch is active.
+func (m *defaultTOptionOrderModel) HasUnsafeKillSwitchReleaseOrders(
+	ctx context.Context, tenantId, userId int64,
+) (bool, error) {
+	query := fmt.Sprintf(`SELECT COUNT(1) FROM %s
+WHERE tenant_id=? AND user_id=? AND status IN (?,?,?,?,?)`, m.table)
+	var count int64
+	if err := m.QueryRowNoCacheCtx(
+		ctx, &count, query, tenantId, userId,
+		int64(option.OrderStatus_ORDER_STATUS_FUNDING),
+		int64(option.OrderStatus_ORDER_STATUS_PENDING),
+		int64(option.OrderStatus_ORDER_STATUS_PART_FILLED),
+		int64(option.OrderStatus_ORDER_STATUS_CANCELING),
+		int64(option.OrderStatus_ORDER_STATUS_EXPIRING),
+	); err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
 
 func (m *defaultTOptionOrderModel) FindOrderBookLevels(
 	ctx context.Context, tenantId, contractId, side, limit int64,
@@ -82,7 +129,7 @@ func (m *defaultTOptionOrderModel) FindOrderBookLevels(
   SUM(CASE WHEN combo_order_id>0 THEN 1 ELSE 0 END) AS combo_order_count
 FROM %s
 WHERE tenant_id=? AND contract_id=? AND side=? AND status IN (?,?)
-  AND combo_order_id=0 AND price>0 AND unfilled_qty>0
+  AND order_type IN (?,?) AND combo_order_id=0 AND price>0 AND unfilled_qty>0
 GROUP BY price
 ORDER BY %s
 LIMIT ?`, m.table, orderBy)
@@ -92,6 +139,8 @@ LIMIT ?`, m.table, orderBy)
 		tenantId, contractId, side,
 		int64(option.OrderStatus_ORDER_STATUS_PENDING),
 		int64(option.OrderStatus_ORDER_STATUS_PART_FILLED),
+		int64(option.OrderType_ORDER_TYPE_LIMIT),
+		int64(option.OrderType_ORDER_TYPE_POST_ONLY),
 		limit,
 	)
 	return items, err
@@ -114,12 +163,16 @@ WHERE tenant_id=? AND contract_id=? AND status IN (?,?,?)`, m.table)
 	return count > 0, nil
 }
 
-func (m *defaultTOptionOrderModel) FindFirstActiveMMPOrderForUpdate(
+// FindFirstUnsafeMMPOrderForUpdate locks the first MMP order that can still
+// trade or whose cancellation/expiry funds have not reached a terminal state.
+// MMP recovery must serialize this check with the config row so the group
+// cannot be reactivated while Asset release is still pending.
+func (m *defaultTOptionOrderModel) FindFirstUnsafeMMPOrderForUpdate(
 	ctx context.Context, tenantId, userId, contractId int64, groupCode string,
 ) (*TOptionOrder, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
 WHERE tenant_id = ? AND user_id = ? AND contract_id = ? AND mmp = ? AND mmp_group = ?
-  AND status IN (?, ?, ?)
+  AND status IN (?, ?, ?, ?, ?)
 ORDER BY id LIMIT 1 FOR UPDATE`, tOptionOrderRows, m.table)
 	var item TOptionOrder
 	if err := m.QueryRowNoCacheCtx(
@@ -128,6 +181,8 @@ ORDER BY id LIMIT 1 FOR UPDATE`, tOptionOrderRows, m.table)
 		int64(option.OrderStatus_ORDER_STATUS_FUNDING),
 		int64(option.OrderStatus_ORDER_STATUS_PENDING),
 		int64(option.OrderStatus_ORDER_STATUS_PART_FILLED),
+		int64(option.OrderStatus_ORDER_STATUS_CANCELING),
+		int64(option.OrderStatus_ORDER_STATUS_EXPIRING),
 	); err != nil {
 		return nil, err
 	}

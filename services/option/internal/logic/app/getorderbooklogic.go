@@ -49,8 +49,7 @@ func (l *GetOrderBookLogic) GetOrderBook(in *option.GetOrderBookReq) (*option.Ge
 	now := time.Now().Unix()
 	var bids, asks []*models.OptionOrderBookLevel
 	var sequence int64
-	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
+	err = withPublicMarketSnapshot(l.ctx, l.svcCtx.DB, func(ctx context.Context, conn sqlx.SqlConn) error {
 		contractModel := models.NewTOptionContractModel(conn, l.svcCtx.Config.CacheRedis)
 		orderModel := models.NewTOptionOrderModel(conn, l.svcCtx.Config.CacheRedis)
 		tradeModel := models.NewTOptionTradeModel(conn, l.svcCtx.Config.CacheRedis)

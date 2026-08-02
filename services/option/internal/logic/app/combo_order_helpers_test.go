@@ -8,9 +8,21 @@ import (
 	"wklive/proto/option"
 	"wklive/services/option/models"
 
+	"github.com/go-sql-driver/mysql"
 	"github.com/shopspring/decimal"
 	"google.golang.org/protobuf/proto"
 )
+
+func TestRetryableComboOrderCreateError(t *testing.T) {
+	for _, number := range []uint16{1213, 1205} {
+		if !isRetryableComboOrderCreateError(&mysql.MySQLError{Number: number}) {
+			t.Fatalf("MySQL %d must be retryable", number)
+		}
+	}
+	if isRetryableComboOrderCreateError(&mysql.MySQLError{Number: 1062}) {
+		t.Fatal("duplicate key must resolve through authoritative replay, not blind retry")
+	}
+}
 
 func TestComboRequestPayloadHashIsCanonicalAndSensitive(t *testing.T) {
 	base := &option.PlaceComboOrderReq{

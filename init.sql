@@ -769,7 +769,11 @@ VALUES
 (729, 600, 1, '期权运营工作台', 2, 'GET', '/option/operations/overview', 'option:operations:view', 'option/operations', 'Monitor', 729),
 (730, 729, 1, '查询资产指令', 3, 'GET', '/option/operations/asset-instructions', 'option:operations:asset-list', '', '', 730),
 (731, 729, 1, '查询期权对账差异', 3, 'GET', '/option/operations/reconciliation-issues', 'option:operations:reconciliation-list', '', '', 731),
-(732, 729, 1, '重试异常资产指令', 3, 'POST', '/option/recovery/asset-instructions/retry', 'option:operations:asset-retry', '', '', 732);
+(732, 729, 1, '重试异常资产指令', 3, 'POST', '/option/recovery/asset-instructions/retry', 'option:operations:asset-retry', '', '', 732),
+(733, 710, 1, '创建保险库存退出申请', 3, 'POST', '/option/risk/insurance-inventory-exits', 'option:insurance-inventory-exit:create', '', '', 733),
+(734, 710, 1, '复核保险库存退出申请', 3, 'POST', '/option/risk/insurance-inventory-exits/review', 'option:insurance-inventory-exit:review', '', '', 734),
+(735, 710, 1, '执行保险库存退出订单', 3, 'POST', '/option/risk/insurance-inventory-exits/execute', 'option:insurance-inventory-exit:execute', '', '', 735),
+(736, 710, 1, '查询保险库存退出申请', 3, 'GET', '/option/risk/insurance-inventory-exits', 'option:insurance-inventory-exit:list', '', '', 736);
 
 -- 质押（staking）
 INSERT INTO sys_menu (id, parent_id, app_scope, name, menu_type, icon, sort)

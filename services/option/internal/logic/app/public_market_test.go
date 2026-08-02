@@ -52,6 +52,12 @@ func TestBuildOptionChainRowsPairsLegsAndExposesOIQuality(t *testing.T) {
 	if rows[1].StrikePrice != "110" || rows[1].Call == nil || rows[1].Put != nil {
 		t.Fatalf("missing put leg must remain explicit: %+v", rows[1])
 	}
+	if rows[1].Call.Market != nil || rows[1].Call.Statistics.Volume_24H != "0" ||
+		rows[1].Call.Statistics.Turnover_24H != "0" ||
+		rows[1].Call.Statistics.OpenInterest != "0" ||
+		!rows[1].Call.Statistics.OiBalanced {
+		t.Fatalf("missing market and facts must remain explicit zero/empty data: %+v", rows[1].Call)
+	}
 	callStats := rows[0].Call.Statistics
 	if callStats.Volume_24H != "3.5" || callStats.Turnover_24H != "17.5" ||
 		callStats.TradeCount_24H != 2 {

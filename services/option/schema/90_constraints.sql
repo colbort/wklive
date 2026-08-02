@@ -159,6 +159,7 @@ ALTER TABLE `t_option_portfolio_risk_config`
     AND `liquidity_addon_rate` >= 0 AND `liquidity_addon_rate` <= 1
     AND `effective_from` > 0
     AND (`effective_until` = 0 OR `effective_until` > `effective_from`)
+    AND `source_config_id` >= 0
     AND `change_reason` <> '' AND `created_by` > 0
     AND (
       (`status` = 1 AND `reviewed_by` = 0 AND `reviewed_at` = 0)
@@ -177,6 +178,32 @@ ALTER TABLE `t_option_liquidation`
 
 ALTER TABLE `t_option_insurance_fund_flow`
   ADD CONSTRAINT `chk_option_insurance_fund_flow` CHECK (`flow_type` IN (1,2,3,4) AND `amount` <> 0);
+
+DROP TRIGGER IF EXISTS `trg_option_insurance_fund_flow_validate_insert`;
+DELIMITER $$
+CREATE TRIGGER `trg_option_insurance_fund_flow_validate_insert`
+BEFORE INSERT ON `t_option_insurance_fund_flow`
+FOR EACH ROW
+BEGIN
+  IF NEW.`tenant_id` <= 0 OR NEW.`flow_no` = '' OR NEW.`flow_type` NOT IN (1,2,3,4)
+    OR NEW.`coin` = '' OR NEW.`amount` <= 0 OR NEW.`asset_flow_no` = '' OR NEW.`create_times` <= 0
+    OR (NEW.`flow_type` IN (1,2) AND (NEW.`contract_id` <= 0 OR NEW.`liquidation_id` <= 0)) THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='invalid option insurance fund flow evidence';
+  END IF;
+END$$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS `trg_option_insurance_fund_flow_no_update`;
+CREATE TRIGGER `trg_option_insurance_fund_flow_no_update`
+BEFORE UPDATE ON `t_option_insurance_fund_flow`
+FOR EACH ROW
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='option insurance fund flow is immutable';
+
+DROP TRIGGER IF EXISTS `trg_option_insurance_fund_flow_no_delete`;
+CREATE TRIGGER `trg_option_insurance_fund_flow_no_delete`
+BEFORE DELETE ON `t_option_insurance_fund_flow`
+FOR EACH ROW
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='option insurance fund flow cannot be deleted';
 
 ALTER TABLE `t_option_exercise`
   ADD CONSTRAINT `chk_option_client_exercise_key` CHECK (`exercise_type` <> 1 OR `client_exercise_id` <> '');
@@ -322,7 +349,15 @@ ALTER TABLE `t_option_mmp_config`
 ALTER TABLE `t_option_contract_series_expiry`
   ADD CONSTRAINT `chk_option_contract_series_expiry` CHECK (
     `tenant_id` > 0 AND `series_id` > 0 AND `sequence_no` > 0 AND `cycle_code` <> ''
-    AND `list_time` > 0 AND `exercise_cutoff_time` > `list_time`
+    AND `list_time` > 0 AND `last_trade_time` > `list_time`
+    AND `exercise_cutoff_time` >= `last_trade_time`
+    AND `expire_time` >= `exercise_cutoff_time` AND `deliver_time` >= `expire_time`
+  );
+
+ALTER TABLE `t_option_contract`
+  ADD CONSTRAINT `chk_option_contract_lifecycle_times` CHECK (
+    `list_time` > 0 AND `last_trade_time` > `list_time`
+    AND `exercise_cutoff_time` >= `last_trade_time`
     AND `expire_time` >= `exercise_cutoff_time` AND `deliver_time` >= `expire_time`
   );
 
@@ -373,6 +408,27 @@ ALTER TABLE `t_option_contract_series`
           AND `review_reason` <> '' AND `reviewed_at` > 0
           AND `generated_contract_count` = 0 AND `generated_at` = 0
           AND `launch_status` = 0 AND `launch_reviewed_by` = 0 AND `launch_reviewed_at` = 0)
+    )
+  );
+
+ALTER TABLE `t_option_insurance_inventory_exit`
+  ADD CONSTRAINT `chk_option_insurance_inventory_exit` CHECK (
+    `tenant_id` > 0 AND `request_no` <> '' AND `active_key` <> ''
+    AND `position_id` > 0 AND `contract_id` > 0
+    AND `insurance_user_id` > 0 AND `insurance_account_id` > 0
+    AND `quantity` > 0 AND `limit_price` > 0 AND `status` IN (1,2,3,4)
+    AND `reason` <> '' AND `evidence_ref` <> '' AND `requested_by` > 0
+    AND `active_key` = IF(`status` IN (1,2),
+      CONCAT('POSITION:', `position_id`), CONCAT('REQUEST:', `request_no`))
+    AND (
+      (`status` = 1 AND `reviewed_by` = 0 AND `reviewed_at` = 0
+        AND `order_id` = 0 AND `submitted_by` = 0 AND `submitted_at` = 0)
+      OR (`status` IN (2,3) AND `reviewed_by` > 0 AND `reviewed_by` <> `requested_by`
+        AND `review_reason` <> '' AND `reviewed_at` > 0
+        AND `order_id` = 0 AND `submitted_by` = 0 AND `submitted_at` = 0)
+      OR (`status` = 4 AND `reviewed_by` > 0 AND `reviewed_by` <> `requested_by`
+        AND `review_reason` <> '' AND `reviewed_at` > 0
+        AND `order_id` > 0 AND `submitted_by` > 0 AND `submitted_at` > 0)
     )
   );
 

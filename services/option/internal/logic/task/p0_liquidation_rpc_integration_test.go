@@ -12,6 +12,8 @@ import (
 	"wklive/proto/asset"
 	"wklive/proto/common"
 	"wklive/proto/option"
+	adminlogic "wklive/services/option/internal/logic/admin"
+	applogic "wklive/services/option/internal/logic/app"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -195,7 +197,242 @@ func testP0IsolatedShortLiquidationAccounting(
 	processP0Liquidations(t, ctx, serviceCtx)
 	processAssetInstructions(t, ctx, serviceCtx)
 	assertP0LiquidationEvidence(t, ctx, db, liquidation.Id, contract.Id)
+	assertP1InsuranceInventoryGovernedExit(
+		t, ctx, db, assetClient, serviceCtx, contract, takeover, takeoverLot,
+		longUserID, insuranceUserID,
+	)
 	assertP0PartialLiquidationAccounting(t, ctx, db, assetClient, serviceCtx, now)
+}
+
+func assertP1InsuranceInventoryGovernedExit(
+	t *testing.T,
+	ctx context.Context,
+	db *sql.DB,
+	assetClient asset.AssetClient,
+	serviceCtx *svc.ServiceContext,
+	contract *models.TOptionContract,
+	takeover *models.TOptionPosition,
+	takeoverLot *models.TOptionMarginLot,
+	longUserID, insuranceUserID int64,
+) {
+	t.Helper()
+	const (
+		creatorID  int64 = 9141
+		reviewerID int64 = 9142
+		executorID int64 = 9143
+	)
+	creditAsset(t, ctx, assetClient, insuranceUserID, "100", "P1-005-INSURANCE-EXIT-PREMIUM-BUDGET")
+	makerResp, err := applogic.NewPlaceOrderLogic(
+		p0OrderUserContext(ctx, longUserID), serviceCtx,
+	).PlaceOrder(&option.PlaceOrderReq{
+		AccountId: 7040, ContractId: contract.Id,
+		Side: common.Side_SIDE_SELL, PositionEffect: option.PositionEffect_POSITION_EFFECT_CLOSE,
+		OrderType: option.OrderType_ORDER_TYPE_LIMIT, Price: "40", Qty: "1",
+		ClientOrderId: "P1-005-INSURANCE-EXIT-LIQUIDITY",
+		ReduceOnly:    common.YesNo_YES_NO_YES,
+	})
+	if err != nil || makerResp == nil || makerResp.Base == nil || makerResp.Base.Code != 200 ||
+		makerResp.Data == nil || makerResp.Data.OrderId <= 0 {
+		t.Fatalf("create insurance-exit maker liquidity response=%+v err=%v", makerResp, err)
+	}
+	createResp, err := adminlogic.NewCreateInsuranceInventoryExitLogic(
+		p0AdminContext(ctx, creatorID, p0AssetE2ETenantID), serviceCtx,
+	).CreateInsuranceInventoryExit(&option.CreateInsuranceInventoryExitReq{
+		TenantId: p0AssetE2ETenantID, PositionId: takeover.Id,
+		Quantity: "2", LimitPrice: "40",
+		Reason:      "reduce concentrated insurance takeover inventory",
+		EvidenceRef: "P1-005-INSURANCE-EXIT-DEPTH-AND-RISK-EVIDENCE",
+	})
+	if err != nil || createResp == nil || createResp.Base == nil || createResp.Base.Code != 200 ||
+		createResp.Data == nil || createResp.Data.Id <= 0 {
+		t.Fatalf("create insurance inventory exit response=%+v err=%v", createResp, err)
+	}
+	exitID := createResp.Data.Id
+	selfReview, err := adminlogic.NewReviewInsuranceInventoryExitLogic(
+		p0AdminContext(ctx, creatorID, p0AssetE2ETenantID), serviceCtx,
+	).ReviewInsuranceInventoryExit(&option.ReviewInsuranceInventoryExitReq{
+		TenantId: p0AssetE2ETenantID, ExitId: exitID, Approve: true,
+		Reason: "creator must not self approve",
+	})
+	if err != nil || selfReview == nil || selfReview.Base == nil || selfReview.Base.Code == 200 {
+		t.Fatalf("insurance inventory exit self-review result=%+v err=%v", selfReview, err)
+	}
+	approved, err := adminlogic.NewReviewInsuranceInventoryExitLogic(
+		p0AdminContext(ctx, reviewerID, p0AssetE2ETenantID), serviceCtx,
+	).ReviewInsuranceInventoryExit(&option.ReviewInsuranceInventoryExitReq{
+		TenantId: p0AssetE2ETenantID, ExitId: exitID, Approve: true,
+		Reason: "independent inventory risk approval",
+	})
+	if err != nil || approved == nil || approved.Base == nil || approved.Base.Code != 200 ||
+		approved.Data == nil || approved.Data.Status !=
+		option.InsuranceInventoryExitStatus_INSURANCE_INVENTORY_EXIT_STATUS_APPROVED {
+		t.Fatalf("approve insurance inventory exit response=%+v err=%v", approved, err)
+	}
+
+	type executeResult struct {
+		resp *option.GetInsuranceInventoryExitResp
+		err  error
+	}
+	results := make(chan executeResult, 20)
+	var wait sync.WaitGroup
+	for index := 0; index < 20; index++ {
+		wait.Add(1)
+		go func() {
+			defer wait.Done()
+			resp, executeErr := adminlogic.NewExecuteInsuranceInventoryExitLogic(
+				p0AdminContext(ctx, executorID, p0AssetE2ETenantID), serviceCtx,
+			).ExecuteInsuranceInventoryExit(&option.ExecuteInsuranceInventoryExitReq{
+				TenantId: p0AssetE2ETenantID, ExitId: exitID,
+			})
+			results <- executeResult{resp: resp, err: executeErr}
+		}()
+	}
+	wait.Wait()
+	close(results)
+	orderID := int64(0)
+	for result := range results {
+		if result.err != nil || result.resp == nil || result.resp.Base == nil ||
+			result.resp.Base.Code != 200 || result.resp.Data == nil ||
+			result.resp.Data.Status != option.InsuranceInventoryExitStatus_INSURANCE_INVENTORY_EXIT_STATUS_SUBMITTED ||
+			result.resp.Data.OrderId <= 0 {
+			t.Fatalf("concurrent insurance exit execution response=%+v err=%v", result.resp, result.err)
+		}
+		if orderID == 0 {
+			orderID = result.resp.Data.OrderId
+		} else if orderID != result.resp.Data.OrderId {
+			t.Fatalf("concurrent insurance exit created orders %d and %d", orderID, result.resp.Data.OrderId)
+		}
+	}
+
+	processAssetInstructions(t, ctx, serviceCtx)
+	processAssetInstructions(t, ctx, serviceCtx)
+	processAssetInstructions(t, ctx, serviceCtx)
+	processP0TradeEvents(t, ctx, serviceCtx)
+	processAssetInstructions(t, ctx, serviceCtx)
+	processAssetInstructions(t, ctx, serviceCtx)
+
+	order, err := serviceCtx.OptionOrderModel.FindOne(ctx, orderID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if order.Source != int64(option.OrderSource_ORDER_SOURCE_ADMIN) ||
+		order.OrderType != int64(option.OrderType_ORDER_TYPE_IOC) ||
+		order.Side != int64(common.Side_SIDE_BUY) ||
+		order.PositionEffect != int64(option.PositionEffect_POSITION_EFFECT_CLOSE) ||
+		order.ReduceOnly != int64(common.YesNo_YES_NO_YES) ||
+		!order.Qty.Equal(decimal.NewFromInt(2)) || !order.FilledQty.Equal(decimal.NewFromInt(1)) ||
+		!order.UnfilledQty.Equal(decimal.NewFromInt(1)) ||
+		order.Status != int64(option.OrderStatus_ORDER_STATUS_CANCELED) {
+		t.Fatalf("unexpected insurance inventory IOC result: %+v", order)
+	}
+	listed, err := adminlogic.NewListInsuranceInventoryExitsLogic(
+		p0AdminContext(ctx, executorID, p0AssetE2ETenantID), serviceCtx,
+	).ListInsuranceInventoryExits(&option.ListInsuranceInventoryExitsReq{
+		TenantId: p0AssetE2ETenantID,
+		Page:     &common.PageReq{Limit: 10},
+	})
+	if err != nil || listed == nil || listed.Base == nil || listed.Base.Code != 200 ||
+		len(listed.Data) != 1 || listed.Data[0].Id != exitID ||
+		listed.Data[0].OrderStatus != option.OrderStatus_ORDER_STATUS_CANCELED ||
+		listed.Data[0].FilledQty != "1" || listed.Data[0].UnfilledQty != "1" {
+		t.Fatalf("list insurance inventory exit response=%+v err=%v", listed, err)
+	}
+	remaining, err := serviceCtx.OptionPositionModel.FindOne(ctx, takeover.Id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !remaining.PositionQty.Equal(decimal.NewFromInt(1)) ||
+		!remaining.AvailableQty.Equal(decimal.NewFromInt(1)) || !remaining.FrozenQty.IsZero() ||
+		!remaining.MarginAmount.Equal(decimal.NewFromInt(40)) ||
+		!remaining.TradeRealizedPnl.IsZero() || !remaining.FeePaid.IsZero() ||
+		!remaining.TotalReturn.IsZero() {
+		t.Fatalf("unexpected insurance inventory after partial IOC exit: %+v", remaining)
+	}
+	remainingLot, err := serviceCtx.OptionMarginLotModel.FindOne(ctx, takeoverLot.Id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !remainingLot.RemainingQuantity.Equal(decimal.NewFromInt(1)) ||
+		!remainingLot.RemainingMargin.Equal(decimal.NewFromInt(40)) ||
+		remainingLot.Status != int64(option.MarginLotStatus_MARGIN_LOT_STATUS_ACTIVE) {
+		t.Fatalf("unexpected insurance margin lot after exit: %+v", remainingLot)
+	}
+	assertWalletAmounts(t, ctx, db, insuranceUserID,
+		"140.000000000000000000", "100.000000000000000000", "40.000000000000000000")
+	assertWalletAmounts(t, ctx, db, longUserID,
+		"120.000000000000000000", "120.000000000000000000", "0.000000000000000000")
+
+	var exits, orders, clientKeys, events, instructions, instructionFlows, budgetFlows int64
+	if err := db.QueryRowContext(ctx, `SELECT
+		(SELECT COUNT(*) FROM t_option_insurance_inventory_exit WHERE id=? AND status=4 AND order_id=?),
+		(SELECT COUNT(*) FROM t_option_order WHERE tenant_id=? AND user_id=? AND client_order_id=?),
+		(SELECT COUNT(*) FROM t_option_client_order_key WHERE tenant_id=? AND user_id=? AND client_order_id=?),
+		(SELECT COUNT(*) FROM t_option_trading_control_event WHERE tenant_id=? AND event_type LIKE 'INSURANCE_EXIT_%'),
+		(SELECT COUNT(*) FROM t_option_asset_instruction WHERE tenant_id=? AND (order_id=? OR margin_lot_id=?)),
+		(SELECT COUNT(DISTINCT flow.id) FROM t_option_asset_instruction instruction
+			JOIN t_asset_flow flow ON flow.tenant_id=instruction.tenant_id
+			AND flow.biz_no=CASE WHEN instruction.action=1
+				THEN instruction.target_biz_no ELSE instruction.instruction_no END
+			WHERE instruction.tenant_id=? AND flow.user_id IN (?,?)
+			AND (instruction.order_id=? OR instruction.margin_lot_id=?)),
+		(SELECT COUNT(*) FROM t_asset_flow WHERE tenant_id=? AND user_id=? AND biz_no=?)`,
+		exitID, orderID,
+		p0AssetE2ETenantID, insuranceUserID, insuranceInventoryExitClientOrderIDForTest(exitID),
+		p0AssetE2ETenantID, insuranceUserID, insuranceInventoryExitClientOrderIDForTest(exitID),
+		p0AssetE2ETenantID,
+		p0AssetE2ETenantID, orderID, takeoverLot.Id,
+		p0AssetE2ETenantID, insuranceUserID, longUserID,
+		orderID, takeoverLot.Id,
+		p0AssetE2ETenantID, insuranceUserID, "P1-005-INSURANCE-EXIT-PREMIUM-BUDGET",
+	).Scan(&exits, &orders, &clientKeys, &events, &instructions, &instructionFlows, &budgetFlows); err != nil {
+		t.Fatal(err)
+	}
+	if exits != 1 || orders != 1 || clientKeys != 1 || events != 3 || instructions != 4 ||
+		instructionFlows != 4 || budgetFlows != 1 {
+		t.Fatalf("insurance exit evidence exits/orders/keys/events/instructions/instruction-flows/budget-flows=%d/%d/%d/%d/%d/%d/%d",
+			exits, orders, clientKeys, events, instructions, instructionFlows, budgetFlows)
+	}
+	reserved, err := serviceCtx.OptionInsuranceInventoryExitModel.SumReservedQuantity(
+		ctx, p0AssetE2ETenantID, contract.Id,
+		time.Date(time.Now().UTC().Year(), time.Now().UTC().Month(), time.Now().UTC().Day(), 0, 0, 0, 0, time.UTC).Unix(),
+	)
+	if err != nil || !reserved.Equal(decimal.NewFromInt(2)) {
+		t.Fatalf("insurance exit UTC daily reservation=%s err=%v", reserved, err)
+	}
+	dailyLimitResp, err := adminlogic.NewCreateInsuranceInventoryExitLogic(
+		p0AdminContext(ctx, creatorID, p0AssetE2ETenantID), serviceCtx,
+	).CreateInsuranceInventoryExit(&option.CreateInsuranceInventoryExitReq{
+		TenantId: p0AssetE2ETenantID, PositionId: takeover.Id,
+		Quantity: "1", LimitPrice: "40",
+		Reason:      "must not exceed the UTC daily insurance exit quantity budget",
+		EvidenceRef: "P1-005-INSURANCE-EXIT-DAILY-LIMIT-EVIDENCE",
+	})
+	if err != nil || dailyLimitResp == nil || dailyLimitResp.Base == nil || dailyLimitResp.Base.Code == 200 {
+		t.Fatalf("insurance exit daily-limit response=%+v err=%v", dailyLimitResp, err)
+	}
+	var exitsAfterLimit, eventsAfterLimit int64
+	if err = db.QueryRowContext(ctx, `SELECT
+		(SELECT COUNT(*) FROM t_option_insurance_inventory_exit WHERE tenant_id=? AND contract_id=?),
+		(SELECT COUNT(*) FROM t_option_trading_control_event WHERE tenant_id=? AND event_type LIKE 'INSURANCE_EXIT_%')`,
+		p0AssetE2ETenantID, contract.Id, p0AssetE2ETenantID,
+	).Scan(&exitsAfterLimit, &eventsAfterLimit); err != nil {
+		t.Fatal(err)
+	}
+	if exitsAfterLimit != 1 || eventsAfterLimit != 3 {
+		t.Fatalf("daily limit created evidence exits/events=%d/%d", exitsAfterLimit, eventsAfterLimit)
+	}
+	if _, err := db.ExecContext(ctx, `UPDATE t_option_insurance_inventory_exit SET quantity=1 WHERE id=?`, exitID); err == nil {
+		t.Fatal("database allowed insurance exit quantity mutation")
+	}
+	if _, err := db.ExecContext(ctx, `DELETE FROM t_option_insurance_inventory_exit WHERE id=?`, exitID); err == nil {
+		t.Fatal("database allowed insurance exit deletion")
+	}
+	t.Logf("P1-005 insurance_exit=%d order=%d filled=1 remaining=1 margin=40 instructions=4 instruction_flows=4 budget_flows=1 concurrent=20",
+		exitID, orderID)
+}
+
+func insuranceInventoryExitClientOrderIDForTest(exitID int64) string {
+	return fmt.Sprintf("INS-EXIT-%d", exitID)
 }
 
 func testP0LiquidationDeficitFailureRecovery(
@@ -503,6 +740,38 @@ func assertP0LiquidationPlatformEvidence(
 	).Scan(&optionCoverFlows); err != nil {
 		t.Fatal(err)
 	}
+	if optionCoverFlows == 1 {
+		var flowID int64
+		var rawAmount, signedAmount decimal.Decimal
+		if err := db.QueryRowContext(ctx, `SELECT id,amount,
+			CASE WHEN flow_type IN (2,4) THEN -ABS(amount) ELSE ABS(amount) END
+			FROM t_option_insurance_fund_flow
+			WHERE tenant_id=? AND liquidation_id=? AND flow_type=?`,
+			p0AssetE2ETenantID, liquidationID,
+			int64(option.InsuranceFundFlowType_INSURANCE_FUND_FLOW_TYPE_DEFICIT_COVER),
+		).Scan(&flowID, &rawAmount, &signedAmount); err != nil {
+			t.Fatal(err)
+		}
+		if !rawAmount.Equal(decimal.NewFromInt(15)) || !signedAmount.Equal(decimal.NewFromInt(-15)) {
+			t.Fatalf("insurance flow raw/signed=%s/%s want=15/-15", rawAmount, signedAmount)
+		}
+		if _, err := db.ExecContext(ctx, `UPDATE t_option_insurance_fund_flow SET amount=amount WHERE id=?`, flowID); err == nil {
+			t.Fatal("insurance fund flow update was not rejected")
+		}
+		if _, err := db.ExecContext(ctx, `DELETE FROM t_option_insurance_fund_flow WHERE id=?`, flowID); err == nil {
+			t.Fatal("insurance fund flow delete was not rejected")
+		}
+	}
+	if _, err := db.ExecContext(ctx, `INSERT INTO t_option_insurance_fund_flow
+		(tenant_id,flow_no,contract_id,liquidation_id,flow_type,coin,amount,asset_flow_no,create_times)
+		VALUES (?,?,?,?,?,'USDT',-1,?,?)`,
+		p0AssetE2ETenantID, fmt.Sprintf("P0-INSURANCE-NEGATIVE-%d", liquidationID),
+		int64(1), liquidationID,
+		int64(option.InsuranceFundFlowType_INSURANCE_FUND_FLOW_TYPE_DEFICIT_COVER),
+		fmt.Sprintf("P0-INSURANCE-NEGATIVE-%d", liquidationID), time.Now().Unix(),
+	); err == nil {
+		t.Fatal("negative insurance fund magnitude was not rejected")
+	}
 	if !insuranceBalance.Equal(decimal.RequireFromString(wantInsuranceBalance)) ||
 		!backstopBalance.Equal(decimal.RequireFromString(wantBackstopBalance)) ||
 		insuranceCovers != wantInsuranceCovers || backstopCovers != wantBackstopCovers ||
@@ -754,15 +1023,14 @@ func testP0PortfolioLiquidationSequential(
 
 	config := &models.TOptionPortfolioRiskConfig{
 		TenantId: p0AssetE2ETenantID, SettleCoin: "USDT", Version: 1,
-		Status:               int64(option.PortfolioRiskConfigStatus_PORTFOLIO_RISK_CONFIG_STATUS_APPROVED),
+		Status:               int64(option.PortfolioRiskConfigStatus_PORTFOLIO_RISK_CONFIG_STATUS_PENDING),
 		ModelMethod:          int64(option.PortfolioRiskMethod_PORTFOLIO_RISK_METHOD_EXPIRY_SCENARIO_V1),
 		InitialShockRate:     decimal.RequireFromString("0.2"),
 		MaintenanceShockRate: decimal.RequireFromString("0.1"),
 		ScenarioShocks:       "-1,-0.2,0,0.2,4", ConcentrationThreshold: decimal.NewFromInt(1000000),
-		EffectiveFrom: now - 60, ChangeReason: "P0 sequential portfolio liquidation",
-		EvidenceRef: "P0-PORTFOLIO-LIQUIDATION", CreatedBy: 9001, ReviewedBy: 9002,
-		ReviewReason: "P0 approved fixture", ReviewedAt: now - 30,
-		CreateTimes: now - 60, UpdateTimes: now - 30,
+		EffectiveFrom: now + 1, ChangeReason: "P0 sequential portfolio liquidation",
+		EvidenceRef: "P0-PORTFOLIO-LIQUIDATION", CreatedBy: 9001,
+		CreateTimes: now, UpdateTimes: now,
 	}
 	result, err := serviceCtx.OptionPortfolioRiskConfigModel.Insert(ctx, config)
 	if err != nil {
@@ -772,6 +1040,14 @@ func testP0PortfolioLiquidationSequential(
 	if err != nil {
 		t.Fatal(err)
 	}
+	config.Status = int64(option.PortfolioRiskConfigStatus_PORTFOLIO_RISK_CONFIG_STATUS_APPROVED)
+	config.ReviewedBy = 9002
+	config.ReviewReason = "P0 approved fixture"
+	config.ReviewedAt = now
+	if err := serviceCtx.OptionPortfolioRiskConfigModel.Update(ctx, config); err != nil {
+		t.Fatalf("approve portfolio risk config fixture: %v", err)
+	}
+	waitP1PortfolioBoundary(t, config.EffectiveFrom)
 	if _, err := db.ExecContext(ctx, `UPDATE t_asset_platform_account
 		SET available_amount=100,update_times=?
 		WHERE tenant_id=? AND account_type='INSURANCE_FUND' AND coin='USDT'`,

@@ -17,6 +17,7 @@ import (
 	optionconfig "wklive/services/option/internal/config"
 	adminlogic "wklive/services/option/internal/logic/admin"
 	applogic "wklive/services/option/internal/logic/app"
+	logichelpers "wklive/services/option/internal/logic/helpers"
 	"wklive/services/option/internal/svc"
 	"wklive/services/option/models"
 
@@ -43,7 +44,7 @@ func TestP0AssetRPCEndToEnd(t *testing.T) {
 		t.Skip("OPTION_P0_ASSET_E2E_DSN, OPTION_P0_ASSET_E2E_RPC_ADDR and OPTION_P0_ASSET_E2E_REDIS_ADDR are required")
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
@@ -63,9 +64,13 @@ func TestP0AssetRPCEndToEnd(t *testing.T) {
 	waitForAssetRPC(t, ctx, assetClient)
 
 	serviceCtx := newP0AssetE2EServiceContext(dsn, redisAddr, assetClient)
+	seedP0OpenTradingCalendar(t, ctx, db, logichelpers.DefaultTradingCalendarCode, time.Now().Unix())
 
 	t.Run("wallet scope and net liquidation equity", func(t *testing.T) {
 		testP0RiskWalletAndEquity(t, ctx, db, assetClient, serviceCtx)
+	})
+	t.Run("risk scan wallet failure isolation and cross-tenant concurrency", func(t *testing.T) {
+		testP1RiskScanFailureIsolation(t, ctx, db, assetClient, serviceCtx)
 	})
 	t.Run("freeze response loss and release replay", func(t *testing.T) {
 		testP0FreezeReleaseReplay(t, ctx, db, assetClient, serviceCtx)
@@ -94,6 +99,12 @@ func TestP0AssetRPCEndToEnd(t *testing.T) {
 	t.Run("American early exercise concurrency and FIFO", func(t *testing.T) {
 		testP0AmericanExerciseConcurrencyFIFO(t, ctx, db, assetClient, serviceCtx)
 	})
+	t.Run("exercise cutoff and lifecycle row-lock races", func(t *testing.T) {
+		testP0ExerciseCutoffAndLifecycleRace(t, ctx, db, serviceCtx)
+	})
+	t.Run("expiry instruction different-key replacement race", func(t *testing.T) {
+		testP0ExerciseInstructionReplacementRace(t, ctx, db, serviceCtx)
+	})
 	t.Run("American exercise races short close orders", func(t *testing.T) {
 		testP0AmericanExerciseCloseOrderRace(t, ctx, db, assetClient, serviceCtx)
 	})
@@ -112,11 +123,41 @@ func TestP0AssetRPCEndToEnd(t *testing.T) {
 	t.Run("portfolio liquidation is sequential and preserves residual collateral", func(t *testing.T) {
 		testP0PortfolioLiquidationSequential(t, ctx, db, assetClient, serviceCtx)
 	})
+	t.Run("portfolio risk versions switch and roll back without retroactive approval", func(t *testing.T) {
+		testP1PortfolioRiskVersionGovernance(t, ctx, db, assetClient, serviceCtx)
+	})
 	t.Run("full order admission to risk accounting", func(t *testing.T) {
 		testP0OrderAdmissionToRiskAccounting(t, ctx, db, assetClient, serviceCtx)
 	})
 	t.Run("wallet restriction propagation and cross-account STP", func(t *testing.T) {
 		testP0WalletRestrictionAndCrossAccountSTP(t, ctx, db, assetClient, serviceCtx)
+	})
+	t.Run("concurrent user and open-interest limits", func(t *testing.T) {
+		testP0ConcurrentTradingLimits(t, ctx, db, assetClient, serviceCtx)
+	})
+	t.Run("kill switch races matching and circuit breaker cancels batches", func(t *testing.T) {
+		testP0EmergencyTradingControls(t, ctx, db, assetClient, serviceCtx)
+	})
+	t.Run("trading calendar future switch and manual halt release barrier", func(t *testing.T) {
+		testP0TradingCalendarGovernance(t, ctx, db, assetClient, serviceCtx)
+	})
+	t.Run("corporate action 5001-position restart and frozen-asset conservation", func(t *testing.T) {
+		testP2CorporateActionCapacityRestart(t, ctx, db, assetClient, serviceCtx)
+	})
+	t.Run("contract series concurrent generation and delayed launch gates", func(t *testing.T) {
+		testP2ContractSeriesCapacityAndLaunch(t, ctx, db, serviceCtx)
+	})
+	t.Run("public chain book statistics OI isolation and capacity", func(t *testing.T) {
+		testP2PublicMarketAcceptance(t, ctx, db, serviceCtx)
+	})
+	t.Run("complex order idempotency controls atomic matching and funding barriers", func(t *testing.T) {
+		testP2ComboOrderAcceptance(t, ctx, db, assetClient, serviceCtx)
+	})
+	t.Run("MMP batch cancellation release barrier and response-loss recovery", func(t *testing.T) {
+		testP1MMPAssetRPC(t, ctx, db, assetClient, serviceCtx)
+	})
+	t.Run("erroneous trade cash correction debit barrier and recovery", func(t *testing.T) {
+		testP1TradeCorrectionAssetRPC(t, ctx, db, assetClient, serviceCtx)
 	})
 	t.Run("user cancel IOC and FOK funding lifecycle", func(t *testing.T) {
 		testP0OrderCancellationAndImmediateTypes(t, ctx, db, assetClient, serviceCtx)
@@ -176,11 +217,19 @@ func newP0AssetE2EServiceContext(
 	redisConf := zeroredis.RedisConf{Host: redisAddr, Type: "node"}
 	cacheConf := cache.CacheConf{{RedisConf: redisConf, Weight: 100}}
 	config := optionconfig.Config{CacheRedis: cacheConf}
+	config.InsuranceInventoryExit.Enabled = true
+	config.InsuranceInventoryExit.MaxQuantityPerRequest = "2"
+	config.InsuranceInventoryExit.MaxPremiumPerRequest = "80"
+	config.InsuranceInventoryExit.MaxDailyQuantity = "2"
+	config.InsuranceInventoryExit.MaxMarkDeviationRatio = "0.01"
+	config.InsuranceInventoryExit.MinOrderBookQuantity = "1"
 	config.Mysql.DataSource = dsn
 	return &svc.ServiceContext{
 		Config: config, DB: conn, Redis: zeroredis.MustNewRedis(redisConf), AssetClient: assetClient,
 		OptionAssetInstructionModel:         models.NewTOptionAssetInstructionModel(conn, cacheConf),
 		OptionOrderModel:                    models.NewTOptionOrderModel(conn, cacheConf),
+		OptionComboOrderModel:               models.NewTOptionComboOrderModel(conn, cacheConf),
+		OptionComboOrderLegModel:            models.NewTOptionComboOrderLegModel(conn, cacheConf),
 		OptionTradeModel:                    models.NewTOptionTradeModel(conn, cacheConf),
 		OptionOutboxModel:                   models.NewTOptionOutboxModel(conn, cacheConf),
 		OptionInboxModel:                    models.NewTOptionInboxModel(conn, cacheConf),
@@ -194,13 +243,22 @@ func newP0AssetE2EServiceContext(
 		OptionExerciseAssignmentModel:       models.NewTOptionExerciseAssignmentModel(conn, cacheConf),
 		OptionExerciseInstructionModel:      models.NewTOptionExerciseInstructionModel(conn, cacheConf),
 		OptionTradeCorrectionModel:          models.NewTOptionTradeCorrectionModel(conn, cacheConf),
+		OptionTradeCorrectionLegModel:       models.NewTOptionTradeCorrectionLegModel(conn, cacheConf),
+		OptionMmpConfigModel:                models.NewTOptionMmpConfigModel(conn, cacheConf),
 		OptionUserTradingControlModel:       models.NewTOptionUserTradingControlModel(conn, cacheConf),
 		OptionTradingControlEventModel:      models.NewTOptionTradingControlEventModel(conn, cacheConf),
 		OptionTradingCalendarModel:          models.NewTOptionTradingCalendarModel(conn, cacheConf),
 		OptionTradingCalendarSessionModel:   models.NewTOptionTradingCalendarSessionModel(conn, cacheConf),
 		OptionTradingCalendarExceptionModel: models.NewTOptionTradingCalendarExceptionModel(conn, cacheConf),
 		OptionTradingHaltModel:              models.NewTOptionTradingHaltModel(conn, cacheConf),
+		OptionCorporateActionModel:          models.NewTOptionCorporateActionModel(conn, cacheConf),
 		OptionCorporateActionContractModel:  models.NewTOptionCorporateActionContractModel(conn, cacheConf),
+		OptionCorporateActionPositionModel:  models.NewTOptionCorporateActionPositionModel(conn, cacheConf),
+		OptionCorporateActionMarginLotModel: models.NewTOptionCorporateActionMarginLotModel(conn, cacheConf),
+		OptionContractSeriesModel:           models.NewTOptionContractSeriesModel(conn, cacheConf),
+		OptionContractSeriesExpiryModel:     models.NewTOptionContractSeriesExpiryModel(conn, cacheConf),
+		OptionContractSeriesStrikeBandModel: models.NewTOptionContractSeriesStrikeBandModel(conn, cacheConf),
+		OptionContractSeriesDetailModel:     models.NewTOptionContractSeriesDetailModel(conn, cacheConf),
 		OptionSettlementPriceModel:          models.NewTOptionSettlementPriceModel(conn, cacheConf),
 		OptionSettlementModel:               models.NewTOptionSettlementModel(conn, cacheConf),
 		OptionSettlementBatchModel:          models.NewTOptionSettlementBatchModel(conn, cacheConf),
@@ -209,6 +267,7 @@ func newP0AssetE2EServiceContext(
 		OptionRiskAccountModel:              models.NewTOptionRiskAccountModel(conn, cacheConf),
 		OptionPortfolioRiskConfigModel:      models.NewTOptionPortfolioRiskConfigModel(conn, cacheConf),
 		OptionLiquidationModel:              models.NewTOptionLiquidationModel(conn, cacheConf),
+		OptionInsuranceInventoryExitModel:   models.NewTOptionInsuranceInventoryExitModel(conn, cacheConf),
 		OptionInsuranceFundFlowModel:        models.NewTOptionInsuranceFundFlowModel(conn, cacheConf),
 	}
 }

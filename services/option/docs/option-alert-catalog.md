@@ -296,9 +296,10 @@ Option 任务进程每15秒至多执行一次固定组数的租户聚合查询�
 
 - `wklive_option_operations_count{tenant_id,category}`：异常/积压数量；
 - `wklive_option_operations_oldest_timestamp_seconds{tenant_id,category}`：最早来源时间或最近相关截止时间 Unix 秒；
-- `wklive_option_operations_amount{tenant_id,category,coin}`：保险原始流水代数和（非余额）、
-  兜底负债、未解决缺口，以及保险接管标的数量、标记价值和绝对 Delta；保险缺口赔付符号修复
-  获批前，不得把该保险类别解释为净变化；接管风险行情失效时不得把缺失暴露解释为零；
+- `wklive_option_operations_amount{tenant_id,category,coin}`：保险按类型归一的净变动（非余额）、
+  兜底负债、未解决缺口，以及保险接管标的数量、标记价值和绝对 Delta；保险类别按1/3类型
+  `+ABS(amount)`、2/4类型`-ABS(amount)`读取，历史行不改写，且不得解释为 Asset 余额；
+  接管风险行情失效时不得把缺失暴露解释为零；
 - `wklive_option_operations_sample_success`、`wklive_option_operations_last_success_timestamp_seconds`
   和 `wklive_option_operations_sample_failure_total{stage}`：采样健康度。
 

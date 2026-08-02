@@ -297,34 +297,15 @@ func (l *UpdateMarketLogic) UpdateMarket(in *option.UpdateMarketReq) (*option.Co
 			"option trading control metric event=CIRCUIT_BREAKER reason=MARK_PRICE_JUMP tenantId=%d contractId=%d",
 			contract.TenantId, contract.Id,
 		)
-		orders, total, findErr := l.svcCtx.OptionOrderModel.FindPage(
-			l.ctx,
-			models.OptionOrderPageFilter{
-				TenantId: contract.TenantId, ContractId: contract.Id,
-				Statuses: []int64{
-					int64(option.OrderStatus_ORDER_STATUS_FUNDING),
-					int64(option.OrderStatus_ORDER_STATUS_PENDING),
-					int64(option.OrderStatus_ORDER_STATUS_PART_FILLED),
-				},
-			},
-			0, 1,
+		total, success, failed, cancelErr := applogic.CancelContractOrdersByControlReport(
+			l.ctx, l.svcCtx, contract.TenantId, contract.Id, "CIRCUIT_BREAKER", true,
 		)
-		_ = orders
-		cancelErr := findErr
-		if cancelErr == nil {
-			cancelErr = applogic.CancelContractOrdersByControl(
-				l.ctx, l.svcCtx, contract.TenantId, contract.Id, "CIRCUIT_BREAKER",
-			)
-		}
 		lastError := ""
-		success, failed := total, int64(0)
 		if cancelErr != nil {
 			lastError = cancelErr.Error()
 			if len(lastError) > 500 {
 				lastError = lastError[:500]
 			}
-			success = 0
-			failed = total
 		}
 		updateErr := l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
 			conn := sqlx.NewSqlConnFromSession(session)

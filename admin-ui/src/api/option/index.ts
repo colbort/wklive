@@ -46,6 +46,11 @@ import type {
   ReviewPortfolioRiskConfigReq,
   ListPortfolioRiskConfigsReq,
   OptionPortfolioRiskConfig,
+  CreateInsuranceInventoryExitReq,
+  ReviewInsuranceInventoryExitReq,
+  ExecuteInsuranceInventoryExitReq,
+  ListInsuranceInventoryExitsReq,
+  OptionInsuranceInventoryExit,
   CreateTradeCorrectionReq,
   ReviewTradeCorrectionReq,
   ListTradeCorrectionsReq,
@@ -186,6 +191,36 @@ export function apiOptionListPortfolioRiskConfigs(
   params: ListPortfolioRiskConfigsReq,
 ): Promise<RespBase<OptionPortfolioRiskConfig[]>> {
   return get<OptionPortfolioRiskConfig[]>('/admin/option/risk/portfolio-configs', params)
+}
+
+export function apiOptionCreateInsuranceInventoryExit(
+  params: CreateInsuranceInventoryExitReq,
+): Promise<RespBase<OptionInsuranceInventoryExit>> {
+  return post<OptionInsuranceInventoryExit>('/admin/option/risk/insurance-inventory-exits', params)
+}
+
+export function apiOptionReviewInsuranceInventoryExit(
+  params: ReviewInsuranceInventoryExitReq,
+): Promise<RespBase<OptionInsuranceInventoryExit>> {
+  return post<OptionInsuranceInventoryExit>(
+    '/admin/option/risk/insurance-inventory-exits/review',
+    params,
+  )
+}
+
+export function apiOptionExecuteInsuranceInventoryExit(
+  params: ExecuteInsuranceInventoryExitReq,
+): Promise<RespBase<OptionInsuranceInventoryExit>> {
+  return post<OptionInsuranceInventoryExit>(
+    '/admin/option/risk/insurance-inventory-exits/execute',
+    params,
+  )
+}
+
+export function apiOptionListInsuranceInventoryExits(
+  params: ListInsuranceInventoryExitsReq,
+): Promise<RespBase<OptionInsuranceInventoryExit[]>> {
+  return get<OptionInsuranceInventoryExit[]>('/admin/option/risk/insurance-inventory-exits', params)
 }
 
 export function apiOptionCreateTradeCorrection(

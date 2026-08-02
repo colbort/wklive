@@ -59,8 +59,7 @@ func (l *ListOptionChainLogic) ListOptionChain(in *option.ListOptionChainReq) (*
 	var markets []*models.TOptionMarket
 	var trades []*models.OptionTradeStatistics
 	var interests []*models.OptionOpenInterest
-	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
+	err = withPublicMarketSnapshot(l.ctx, l.svcCtx.DB, func(ctx context.Context, conn sqlx.SqlConn) error {
 		contractModel := models.NewTOptionContractModel(conn, l.svcCtx.Config.CacheRedis)
 		marketModel := models.NewTOptionMarketModel(conn, l.svcCtx.Config.CacheRedis)
 		tradeModel := models.NewTOptionTradeModel(conn, l.svcCtx.Config.CacheRedis)

@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"strings"
 	"testing"
 
 	"wklive/proto/common"
@@ -25,11 +26,13 @@ func TestSimpleBookQueriesExcludeComboChildren(t *testing.T) {
 			table:      "`t_option_order`",
 		},
 	}
-	mock.ExpectQuery(`(?s)SELECT price, SUM\(unfilled_qty\).*combo_order_count.*WHERE tenant_id=\? AND contract_id=\? AND side=\? AND status IN \(\?,\?\).*combo_order_id=0`).
+	mock.ExpectQuery(`(?s)SELECT price, SUM\(unfilled_qty\).*combo_order_count.*WHERE tenant_id=\? AND contract_id=\? AND side=\? AND status IN \(\?,\?\).*order_type IN \(\?,\?\).*combo_order_id=0`).
 		WithArgs(
 			int64(9), int64(88), int64(common.Side_SIDE_BUY),
 			int64(option.OrderStatus_ORDER_STATUS_PENDING),
 			int64(option.OrderStatus_ORDER_STATUS_PART_FILLED),
+			int64(option.OrderType_ORDER_TYPE_LIMIT),
+			int64(option.OrderType_ORDER_TYPE_POST_ONLY),
 			int64(20),
 		).
 		WillReturnRows(sqlmock.NewRows([]string{"price", "qty", "order_count", "combo_order_count"}))
@@ -90,6 +93,40 @@ func TestComboCandidateQueryUsesInverseStrategyPriceTimePriority(t *testing.T) {
 		t.Fatalf("items=%d want 0", len(items))
 	}
 	if err = mock.ExpectationsWereMet(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestComboIdempotencyLookupBypassesCache(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	model := &defaultTOptionComboOrderModel{
+		CachedConn: sqlc.NewConnWithCache(sqlx.NewSqlConnFromDB(db), nil),
+		table:      "`t_option_combo_order`",
+	}
+	mock.ExpectQuery(`SELECT .* FROM .* WHERE tenant_id=\? AND user_id=\? AND client_combo_id=\? LIMIT 1`).
+		WithArgs(int64(9), int64(10), "same-key").
+		WillReturnRows(sqlmock.NewRows([]string{
+			"id", "tenant_id", "combo_no", "user_id", "account_id", "client_combo_id",
+			"strategy_key", "inverse_strategy_key", "underlying_symbol", "expire_time",
+			"settle_coin", "quote_coin", "order_type", "net_price", "qty", "filled_qty",
+			"unfilled_qty", "status", "payload_hash", "cancel_reason", "cancel_time",
+			"create_times", "update_times",
+		}).AddRow(
+			1, 9, "OC-1", 10, 11, "same-key", strings.Repeat("a", 64), strings.Repeat("b", 64),
+			"BTCUSDT", 2000000000, "USDT", "USDT", 1, "1", "1", "0", "1", 1,
+			strings.Repeat("c", 64), "", 0, 100, 100,
+		))
+	item, err := model.FindOneByTenantIdUserIdClientComboIdNoCache(
+		context.Background(), 9, 10, "same-key",
+	)
+	if err != nil || item == nil || item.Id != 1 {
+		t.Fatalf("no-cache combo lookup item=%+v err=%v", item, err)
+	}
+	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Fatal(err)
 	}
 }

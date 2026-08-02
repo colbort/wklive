@@ -40,24 +40,36 @@ func handleDelayMessage(ctx context.Context, svcCtx *svc.ServiceContext, message
 	logic := NewProcessContractLifecycleLogic(ctx, svcCtx)
 	switch message.Action {
 	case delayqueue.ActionListContract:
-		if contract.ListTime != message.DueAt || now < contract.ListTime ||
-			contract.Status != int64(option.ContractStatus_CONTRACT_STATUS_PENDING) {
+		_, err = logic.listContractIfEligible(
+			message.ContractID, message.TenantID, message.DueAt, now,
+		)
+		return err
+	case delayqueue.ActionCloseContractTrading:
+		if contract.LastTradeTime != message.DueAt || now < contract.LastTradeTime {
 			return nil
 		}
-		contract.Status = int64(option.ContractStatus_CONTRACT_STATUS_TRADING)
-		contract.UpdateTimes = now
-		return svcCtx.OptionContractModel.Update(ctx, contract)
+		return logic.closeContractTrading(
+			message.ContractID, message.TenantID, message.DueAt, now,
+		)
 	case delayqueue.ActionExpireContract:
 		if contract.ExpireTime != message.DueAt || now < contract.ExpireTime ||
 			contract.Status == int64(option.ContractStatus_CONTRACT_STATUS_SETTLED) {
 			return nil
 		}
+		if err := logic.closeContractTrading(
+			message.ContractID, message.TenantID, contract.LastTradeTime, now,
+		); err != nil {
+			return err
+		}
+		if err := logic.expirePausedContracts(now); err != nil {
+			return err
+		}
+		contract, err = svcCtx.OptionContractModel.FindOne(ctx, message.ContractID)
+		if err != nil {
+			return err
+		}
 		if contract.Status != int64(option.ContractStatus_CONTRACT_STATUS_EXPIRED) {
-			contract.Status = int64(option.ContractStatus_CONTRACT_STATUS_EXPIRED)
-			contract.UpdateTimes = now
-			if err := svcCtx.OptionContractModel.Update(ctx, contract); err != nil {
-				return err
-			}
+			return nil
 		}
 		if err := logic.expireContractOrders(contract, now); err != nil {
 			return err

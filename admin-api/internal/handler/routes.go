@@ -538,6 +538,26 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: option.ListRiskAccountsHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodPost,
+				Path:    "/risk/insurance-inventory-exits",
+				Handler: option.CreateInsuranceInventoryExitHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/risk/insurance-inventory-exits",
+				Handler: option.ListInsuranceInventoryExitsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/risk/insurance-inventory-exits/execute",
+				Handler: option.ExecuteInsuranceInventoryExitHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/risk/insurance-inventory-exits/review",
+				Handler: option.ReviewInsuranceInventoryExitHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodGet,
 				Path:    "/risk/liquidations",
 				Handler: option.ListLiquidationsHandler(serverCtx),

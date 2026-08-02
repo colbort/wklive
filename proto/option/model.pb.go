@@ -79,6 +79,7 @@ type OptionContract struct {
 	PhysicalDeliveryCureSeconds int64                    `protobuf:"varint,53,opt,name=physical_delivery_cure_seconds,json=physicalDeliveryCureSeconds,proto3" json:"physical_delivery_cure_seconds,omitempty"`
 	TradingCalendarCode         string                   `protobuf:"bytes,54,opt,name=trading_calendar_code,json=tradingCalendarCode,proto3" json:"trading_calendar_code,omitempty"`
 	GreeksMaxAgeSeconds         int64                    `protobuf:"varint,55,opt,name=greeks_max_age_seconds,json=greeksMaxAgeSeconds,proto3" json:"greeks_max_age_seconds,omitempty"`
+	LastTradeTime               int64                    `protobuf:"varint,56,opt,name=last_trade_time,json=lastTradeTime,proto3" json:"last_trade_time,omitempty"`
 	unknownFields               protoimpl.UnknownFields
 	sizeCache                   protoimpl.SizeCache
 }
@@ -494,6 +495,13 @@ func (x *OptionContract) GetTradingCalendarCode() string {
 func (x *OptionContract) GetGreeksMaxAgeSeconds() int64 {
 	if x != nil {
 		return x.GreeksMaxAgeSeconds
+	}
+	return 0
+}
+
+func (x *OptionContract) GetLastTradeTime() int64 {
+	if x != nil {
+		return x.LastTradeTime
 	}
 	return 0
 }
@@ -1746,6 +1754,7 @@ type OptionContractSeriesExpiry struct {
 	ExpireTime         int64                  `protobuf:"varint,8,opt,name=expire_time,json=expireTime,proto3" json:"expire_time,omitempty"`
 	DeliverTime        int64                  `protobuf:"varint,9,opt,name=deliver_time,json=deliverTime,proto3" json:"deliver_time,omitempty"`
 	CreateTimes        int64                  `protobuf:"varint,10,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	LastTradeTime      int64                  `protobuf:"varint,11,opt,name=last_trade_time,json=lastTradeTime,proto3" json:"last_trade_time,omitempty"`
 	unknownFields      protoimpl.UnknownFields
 	sizeCache          protoimpl.SizeCache
 }
@@ -1846,6 +1855,13 @@ func (x *OptionContractSeriesExpiry) GetDeliverTime() int64 {
 func (x *OptionContractSeriesExpiry) GetCreateTimes() int64 {
 	if x != nil {
 		return x.CreateTimes
+	}
+	return 0
+}
+
+func (x *OptionContractSeriesExpiry) GetLastTradeTime() int64 {
+	if x != nil {
+		return x.LastTradeTime
 	}
 	return 0
 }
@@ -8358,8 +8374,10 @@ type OptionPortfolioRiskConfig struct {
 	ReviewedAt             int64  `protobuf:"varint,21,opt,name=reviewed_at,json=reviewedAt,proto3" json:"reviewed_at,omitempty"`
 	CreateTimes            int64  `protobuf:"varint,22,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes            int64  `protobuf:"varint,23,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
-	unknownFields          protoimpl.UnknownFields
-	sizeCache              protoimpl.SizeCache
+	// 复制参数的历史版本ID；与 supersedes_id（直接被替代版本）语义不同。
+	SourceConfigId int64 `protobuf:"varint,24,opt,name=source_config_id,json=sourceConfigId,proto3" json:"source_config_id,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *OptionPortfolioRiskConfig) Reset() {
@@ -8549,6 +8567,13 @@ func (x *OptionPortfolioRiskConfig) GetCreateTimes() int64 {
 func (x *OptionPortfolioRiskConfig) GetUpdateTimes() int64 {
 	if x != nil {
 		return x.UpdateTimes
+	}
+	return 0
+}
+
+func (x *OptionPortfolioRiskConfig) GetSourceConfigId() int64 {
+	if x != nil {
+		return x.SourceConfigId
 	}
 	return 0
 }
@@ -8861,6 +8886,242 @@ func (x *OptionLiquidation) GetPortfolioCollateralAfter() string {
 	return ""
 }
 
+type OptionInsuranceInventoryExit struct {
+	state              protoimpl.MessageState       `protogen:"open.v1"`
+	Id                 int64                        `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId           int64                        `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	RequestNo          string                       `protobuf:"bytes,3,opt,name=request_no,json=requestNo,proto3" json:"request_no,omitempty"`
+	PositionId         int64                        `protobuf:"varint,4,opt,name=position_id,json=positionId,proto3" json:"position_id,omitempty"`
+	ContractId         int64                        `protobuf:"varint,5,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
+	InsuranceUserId    int64                        `protobuf:"varint,6,opt,name=insurance_user_id,json=insuranceUserId,proto3" json:"insurance_user_id,omitempty"`
+	InsuranceAccountId int64                        `protobuf:"varint,7,opt,name=insurance_account_id,json=insuranceAccountId,proto3" json:"insurance_account_id,omitempty"`
+	Quantity           string                       `protobuf:"bytes,8,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	LimitPrice         string                       `protobuf:"bytes,9,opt,name=limit_price,json=limitPrice,proto3" json:"limit_price,omitempty"`
+	Status             InsuranceInventoryExitStatus `protobuf:"varint,10,opt,name=status,proto3,enum=option.InsuranceInventoryExitStatus" json:"status,omitempty"`
+	Reason             string                       `protobuf:"bytes,11,opt,name=reason,proto3" json:"reason,omitempty"`
+	EvidenceRef        string                       `protobuf:"bytes,12,opt,name=evidence_ref,json=evidenceRef,proto3" json:"evidence_ref,omitempty"`
+	RequestedBy        int64                        `protobuf:"varint,13,opt,name=requested_by,json=requestedBy,proto3" json:"requested_by,omitempty"`
+	ReviewedBy         int64                        `protobuf:"varint,14,opt,name=reviewed_by,json=reviewedBy,proto3" json:"reviewed_by,omitempty"`
+	ReviewReason       string                       `protobuf:"bytes,15,opt,name=review_reason,json=reviewReason,proto3" json:"review_reason,omitempty"`
+	ReviewedAt         int64                        `protobuf:"varint,16,opt,name=reviewed_at,json=reviewedAt,proto3" json:"reviewed_at,omitempty"`
+	OrderId            int64                        `protobuf:"varint,17,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	SubmittedBy        int64                        `protobuf:"varint,18,opt,name=submitted_by,json=submittedBy,proto3" json:"submitted_by,omitempty"`
+	SubmittedAt        int64                        `protobuf:"varint,19,opt,name=submitted_at,json=submittedAt,proto3" json:"submitted_at,omitempty"`
+	LastErrorMsg       string                       `protobuf:"bytes,20,opt,name=last_error_msg,json=lastErrorMsg,proto3" json:"last_error_msg,omitempty"`
+	CreateTimes        int64                        `protobuf:"varint,21,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	UpdateTimes        int64                        `protobuf:"varint,22,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	OrderStatus        OrderStatus                  `protobuf:"varint,23,opt,name=order_status,json=orderStatus,proto3,enum=option.OrderStatus" json:"order_status,omitempty"`
+	FilledQty          string                       `protobuf:"bytes,24,opt,name=filled_qty,json=filledQty,proto3" json:"filled_qty,omitempty"`
+	UnfilledQty        string                       `protobuf:"bytes,25,opt,name=unfilled_qty,json=unfilledQty,proto3" json:"unfilled_qty,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *OptionInsuranceInventoryExit) Reset() {
+	*x = OptionInsuranceInventoryExit{}
+	mi := &file_proto_option_model_proto_msgTypes[51]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OptionInsuranceInventoryExit) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OptionInsuranceInventoryExit) ProtoMessage() {}
+
+func (x *OptionInsuranceInventoryExit) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_option_model_proto_msgTypes[51]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OptionInsuranceInventoryExit.ProtoReflect.Descriptor instead.
+func (*OptionInsuranceInventoryExit) Descriptor() ([]byte, []int) {
+	return file_proto_option_model_proto_rawDescGZIP(), []int{51}
+}
+
+func (x *OptionInsuranceInventoryExit) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *OptionInsuranceInventoryExit) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *OptionInsuranceInventoryExit) GetRequestNo() string {
+	if x != nil {
+		return x.RequestNo
+	}
+	return ""
+}
+
+func (x *OptionInsuranceInventoryExit) GetPositionId() int64 {
+	if x != nil {
+		return x.PositionId
+	}
+	return 0
+}
+
+func (x *OptionInsuranceInventoryExit) GetContractId() int64 {
+	if x != nil {
+		return x.ContractId
+	}
+	return 0
+}
+
+func (x *OptionInsuranceInventoryExit) GetInsuranceUserId() int64 {
+	if x != nil {
+		return x.InsuranceUserId
+	}
+	return 0
+}
+
+func (x *OptionInsuranceInventoryExit) GetInsuranceAccountId() int64 {
+	if x != nil {
+		return x.InsuranceAccountId
+	}
+	return 0
+}
+
+func (x *OptionInsuranceInventoryExit) GetQuantity() string {
+	if x != nil {
+		return x.Quantity
+	}
+	return ""
+}
+
+func (x *OptionInsuranceInventoryExit) GetLimitPrice() string {
+	if x != nil {
+		return x.LimitPrice
+	}
+	return ""
+}
+
+func (x *OptionInsuranceInventoryExit) GetStatus() InsuranceInventoryExitStatus {
+	if x != nil {
+		return x.Status
+	}
+	return InsuranceInventoryExitStatus_INSURANCE_INVENTORY_EXIT_STATUS_UNKNOWN
+}
+
+func (x *OptionInsuranceInventoryExit) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+func (x *OptionInsuranceInventoryExit) GetEvidenceRef() string {
+	if x != nil {
+		return x.EvidenceRef
+	}
+	return ""
+}
+
+func (x *OptionInsuranceInventoryExit) GetRequestedBy() int64 {
+	if x != nil {
+		return x.RequestedBy
+	}
+	return 0
+}
+
+func (x *OptionInsuranceInventoryExit) GetReviewedBy() int64 {
+	if x != nil {
+		return x.ReviewedBy
+	}
+	return 0
+}
+
+func (x *OptionInsuranceInventoryExit) GetReviewReason() string {
+	if x != nil {
+		return x.ReviewReason
+	}
+	return ""
+}
+
+func (x *OptionInsuranceInventoryExit) GetReviewedAt() int64 {
+	if x != nil {
+		return x.ReviewedAt
+	}
+	return 0
+}
+
+func (x *OptionInsuranceInventoryExit) GetOrderId() int64 {
+	if x != nil {
+		return x.OrderId
+	}
+	return 0
+}
+
+func (x *OptionInsuranceInventoryExit) GetSubmittedBy() int64 {
+	if x != nil {
+		return x.SubmittedBy
+	}
+	return 0
+}
+
+func (x *OptionInsuranceInventoryExit) GetSubmittedAt() int64 {
+	if x != nil {
+		return x.SubmittedAt
+	}
+	return 0
+}
+
+func (x *OptionInsuranceInventoryExit) GetLastErrorMsg() string {
+	if x != nil {
+		return x.LastErrorMsg
+	}
+	return ""
+}
+
+func (x *OptionInsuranceInventoryExit) GetCreateTimes() int64 {
+	if x != nil {
+		return x.CreateTimes
+	}
+	return 0
+}
+
+func (x *OptionInsuranceInventoryExit) GetUpdateTimes() int64 {
+	if x != nil {
+		return x.UpdateTimes
+	}
+	return 0
+}
+
+func (x *OptionInsuranceInventoryExit) GetOrderStatus() OrderStatus {
+	if x != nil {
+		return x.OrderStatus
+	}
+	return OrderStatus_ORDER_STATUS_UNKNOWN
+}
+
+func (x *OptionInsuranceInventoryExit) GetFilledQty() string {
+	if x != nil {
+		return x.FilledQty
+	}
+	return ""
+}
+
+func (x *OptionInsuranceInventoryExit) GetUnfilledQty() string {
+	if x != nil {
+		return x.UnfilledQty
+	}
+	return ""
+}
+
 type OptionInsuranceFundFlow struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -8879,7 +9140,7 @@ type OptionInsuranceFundFlow struct {
 
 func (x *OptionInsuranceFundFlow) Reset() {
 	*x = OptionInsuranceFundFlow{}
-	mi := &file_proto_option_model_proto_msgTypes[51]
+	mi := &file_proto_option_model_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8891,7 +9152,7 @@ func (x *OptionInsuranceFundFlow) String() string {
 func (*OptionInsuranceFundFlow) ProtoMessage() {}
 
 func (x *OptionInsuranceFundFlow) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_option_model_proto_msgTypes[51]
+	mi := &file_proto_option_model_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -8904,7 +9165,7 @@ func (x *OptionInsuranceFundFlow) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OptionInsuranceFundFlow.ProtoReflect.Descriptor instead.
 func (*OptionInsuranceFundFlow) Descriptor() ([]byte, []int) {
-	return file_proto_option_model_proto_rawDescGZIP(), []int{51}
+	return file_proto_option_model_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *OptionInsuranceFundFlow) GetId() int64 {
@@ -8987,7 +9248,7 @@ type OptionContractDetail struct {
 
 func (x *OptionContractDetail) Reset() {
 	*x = OptionContractDetail{}
-	mi := &file_proto_option_model_proto_msgTypes[52]
+	mi := &file_proto_option_model_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -8999,7 +9260,7 @@ func (x *OptionContractDetail) String() string {
 func (*OptionContractDetail) ProtoMessage() {}
 
 func (x *OptionContractDetail) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_option_model_proto_msgTypes[52]
+	mi := &file_proto_option_model_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9012,7 +9273,7 @@ func (x *OptionContractDetail) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OptionContractDetail.ProtoReflect.Descriptor instead.
 func (*OptionContractDetail) Descriptor() ([]byte, []int) {
-	return file_proto_option_model_proto_rawDescGZIP(), []int{52}
+	return file_proto_option_model_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *OptionContractDetail) GetContract() *OptionContract {
@@ -9040,7 +9301,7 @@ type OptionPositionDetail struct {
 
 func (x *OptionPositionDetail) Reset() {
 	*x = OptionPositionDetail{}
-	mi := &file_proto_option_model_proto_msgTypes[53]
+	mi := &file_proto_option_model_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9052,7 +9313,7 @@ func (x *OptionPositionDetail) String() string {
 func (*OptionPositionDetail) ProtoMessage() {}
 
 func (x *OptionPositionDetail) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_option_model_proto_msgTypes[53]
+	mi := &file_proto_option_model_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9065,7 +9326,7 @@ func (x *OptionPositionDetail) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OptionPositionDetail.ProtoReflect.Descriptor instead.
 func (*OptionPositionDetail) Descriptor() ([]byte, []int) {
-	return file_proto_option_model_proto_rawDescGZIP(), []int{53}
+	return file_proto_option_model_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *OptionPositionDetail) GetPosition() *OptionPosition {
@@ -9099,7 +9360,7 @@ type OptionOrderDetail struct {
 
 func (x *OptionOrderDetail) Reset() {
 	*x = OptionOrderDetail{}
-	mi := &file_proto_option_model_proto_msgTypes[54]
+	mi := &file_proto_option_model_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9111,7 +9372,7 @@ func (x *OptionOrderDetail) String() string {
 func (*OptionOrderDetail) ProtoMessage() {}
 
 func (x *OptionOrderDetail) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_option_model_proto_msgTypes[54]
+	mi := &file_proto_option_model_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9124,7 +9385,7 @@ func (x *OptionOrderDetail) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OptionOrderDetail.ProtoReflect.Descriptor instead.
 func (*OptionOrderDetail) Descriptor() ([]byte, []int) {
-	return file_proto_option_model_proto_rawDescGZIP(), []int{54}
+	return file_proto_option_model_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *OptionOrderDetail) GetOrder() *OptionOrder {
@@ -9151,7 +9412,7 @@ type OptionTradeDetail struct {
 
 func (x *OptionTradeDetail) Reset() {
 	*x = OptionTradeDetail{}
-	mi := &file_proto_option_model_proto_msgTypes[55]
+	mi := &file_proto_option_model_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9163,7 +9424,7 @@ func (x *OptionTradeDetail) String() string {
 func (*OptionTradeDetail) ProtoMessage() {}
 
 func (x *OptionTradeDetail) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_option_model_proto_msgTypes[55]
+	mi := &file_proto_option_model_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9176,7 +9437,7 @@ func (x *OptionTradeDetail) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OptionTradeDetail.ProtoReflect.Descriptor instead.
 func (*OptionTradeDetail) Descriptor() ([]byte, []int) {
-	return file_proto_option_model_proto_rawDescGZIP(), []int{55}
+	return file_proto_option_model_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *OptionTradeDetail) GetTrade() *OptionTrade {
@@ -9205,7 +9466,7 @@ type OptionExerciseDetail struct {
 
 func (x *OptionExerciseDetail) Reset() {
 	*x = OptionExerciseDetail{}
-	mi := &file_proto_option_model_proto_msgTypes[56]
+	mi := &file_proto_option_model_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9217,7 +9478,7 @@ func (x *OptionExerciseDetail) String() string {
 func (*OptionExerciseDetail) ProtoMessage() {}
 
 func (x *OptionExerciseDetail) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_option_model_proto_msgTypes[56]
+	mi := &file_proto_option_model_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9230,7 +9491,7 @@ func (x *OptionExerciseDetail) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OptionExerciseDetail.ProtoReflect.Descriptor instead.
 func (*OptionExerciseDetail) Descriptor() ([]byte, []int) {
-	return file_proto_option_model_proto_rawDescGZIP(), []int{56}
+	return file_proto_option_model_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *OptionExerciseDetail) GetExercise() *OptionExercise {
@@ -9274,7 +9535,7 @@ type OptionSettlementDetail struct {
 
 func (x *OptionSettlementDetail) Reset() {
 	*x = OptionSettlementDetail{}
-	mi := &file_proto_option_model_proto_msgTypes[57]
+	mi := &file_proto_option_model_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -9286,7 +9547,7 @@ func (x *OptionSettlementDetail) String() string {
 func (*OptionSettlementDetail) ProtoMessage() {}
 
 func (x *OptionSettlementDetail) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_option_model_proto_msgTypes[57]
+	mi := &file_proto_option_model_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -9299,7 +9560,7 @@ func (x *OptionSettlementDetail) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OptionSettlementDetail.ProtoReflect.Descriptor instead.
 func (*OptionSettlementDetail) Descriptor() ([]byte, []int) {
-	return file_proto_option_model_proto_rawDescGZIP(), []int{57}
+	return file_proto_option_model_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *OptionSettlementDetail) GetSettlement() *OptionSettlement {
@@ -9341,7 +9602,7 @@ var File_proto_option_model_proto protoreflect.FileDescriptor
 
 const file_proto_option_model_proto_rawDesc = "" +
 	"\n" +
-	"\x18proto/option/model.proto\x12\x06option\x1a\x19proto/common/common.proto\x1a\x17proto/option/enum.proto\"\xc7\x13\n" +
+	"\x18proto/option/model.proto\x12\x06option\x1a\x19proto/common/common.proto\x1a\x17proto/option/enum.proto\"\xef\x13\n" +
 	"\x0eOptionContract\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12#\n" +
@@ -9406,7 +9667,8 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\x15circuit_breaker_ratio\x184 \x01(\tR\x13circuitBreakerRatio\x12C\n" +
 	"\x1ephysical_delivery_cure_seconds\x185 \x01(\x03R\x1bphysicalDeliveryCureSeconds\x122\n" +
 	"\x15trading_calendar_code\x186 \x01(\tR\x13tradingCalendarCode\x123\n" +
-	"\x16greeks_max_age_seconds\x187 \x01(\x03R\x13greeksMaxAgeSeconds\"\xed\x01\n" +
+	"\x16greeks_max_age_seconds\x187 \x01(\x03R\x13greeksMaxAgeSeconds\x12&\n" +
+	"\x0flast_trade_time\x188 \x01(\x03R\rlastTradeTime\"\xed\x01\n" +
 	"\x1cOptionTradingCalendarSession\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -9562,7 +9824,7 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\x0elast_error_msg\x18\x17 \x01(\tR\flastErrorMsg\x12!\n" +
 	"\fcompleted_at\x18\x18 \x01(\x03R\vcompletedAt\x12!\n" +
 	"\fcreate_times\x18\x19 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x1a \x01(\x03R\vupdateTimes\"\xdc\x02\n" +
+	"\fupdate_times\x18\x1a \x01(\x03R\vupdateTimes\"\x84\x03\n" +
 	"\x1aOptionContractSeriesExpiry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1b\n" +
@@ -9577,7 +9839,8 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"expireTime\x12!\n" +
 	"\fdeliver_time\x18\t \x01(\x03R\vdeliverTime\x12!\n" +
 	"\fcreate_times\x18\n" +
-	" \x01(\x03R\vcreateTimes\"\x95\x02\n" +
+	" \x01(\x03R\vcreateTimes\x12&\n" +
+	"\x0flast_trade_time\x18\v \x01(\x03R\rlastTradeTime\"\x95\x02\n" +
 	"\x1eOptionContractSeriesStrikeBand\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1b\n" +
@@ -10389,7 +10652,7 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\x18portfolio_risk_config_id\x18\x13 \x01(\x03R\x15portfolioRiskConfigId\x12A\n" +
 	"\x1dportfolio_risk_config_version\x18\x14 \x01(\x03R\x1aportfolioRiskConfigVersion\x12B\n" +
 	"\x1dportfolio_concentration_addon\x18\x15 \x01(\tR\x1bportfolioConcentrationAddon\x12:\n" +
-	"\x19portfolio_liquidity_addon\x18\x16 \x01(\tR\x17portfolioLiquidityAddon\"\xb9\a\n" +
+	"\x19portfolio_liquidity_addon\x18\x16 \x01(\tR\x17portfolioLiquidityAddon\"\xe3\a\n" +
 	"\x19OptionPortfolioRiskConfig\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1f\n" +
@@ -10418,7 +10681,8 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\vreviewed_at\x18\x15 \x01(\x03R\n" +
 	"reviewedAt\x12!\n" +
 	"\fcreate_times\x18\x16 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x17 \x01(\x03R\vupdateTimes\"\xfc\v\n" +
+	"\fupdate_times\x18\x17 \x01(\x03R\vupdateTimes\x12(\n" +
+	"\x10source_config_id\x18\x18 \x01(\x03R\x0esourceConfigId\"\xfc\v\n" +
 	"\x11OptionLiquidation\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12%\n" +
@@ -10459,7 +10723,41 @@ const file_proto_option_model_proto_rawDesc = "" +
 	"\x1bportfolio_maintenance_after\x18\x1f \x01(\tR\x19portfolioMaintenanceAfter\x126\n" +
 	"\x17portfolio_initial_after\x18  \x01(\tR\x15portfolioInitialAfter\x12>\n" +
 	"\x1bportfolio_collateral_before\x18! \x01(\tR\x19portfolioCollateralBefore\x12<\n" +
-	"\x1aportfolio_collateral_after\x18\" \x01(\tR\x18portfolioCollateralAfter\"\xd6\x02\n" +
+	"\x1aportfolio_collateral_after\x18\" \x01(\tR\x18portfolioCollateralAfter\"\x91\a\n" +
+	"\x1cOptionInsuranceInventoryExit\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1d\n" +
+	"\n" +
+	"request_no\x18\x03 \x01(\tR\trequestNo\x12\x1f\n" +
+	"\vposition_id\x18\x04 \x01(\x03R\n" +
+	"positionId\x12\x1f\n" +
+	"\vcontract_id\x18\x05 \x01(\x03R\n" +
+	"contractId\x12*\n" +
+	"\x11insurance_user_id\x18\x06 \x01(\x03R\x0finsuranceUserId\x120\n" +
+	"\x14insurance_account_id\x18\a \x01(\x03R\x12insuranceAccountId\x12\x1a\n" +
+	"\bquantity\x18\b \x01(\tR\bquantity\x12\x1f\n" +
+	"\vlimit_price\x18\t \x01(\tR\n" +
+	"limitPrice\x12<\n" +
+	"\x06status\x18\n" +
+	" \x01(\x0e2$.option.InsuranceInventoryExitStatusR\x06status\x12\x16\n" +
+	"\x06reason\x18\v \x01(\tR\x06reason\x12!\n" +
+	"\fevidence_ref\x18\f \x01(\tR\vevidenceRef\x12!\n" +
+	"\frequested_by\x18\r \x01(\x03R\vrequestedBy\x12\x1f\n" +
+	"\vreviewed_by\x18\x0e \x01(\x03R\n" +
+	"reviewedBy\x12#\n" +
+	"\rreview_reason\x18\x0f \x01(\tR\freviewReason\x12\x1f\n" +
+	"\vreviewed_at\x18\x10 \x01(\x03R\n" +
+	"reviewedAt\x12\x19\n" +
+	"\border_id\x18\x11 \x01(\x03R\aorderId\x12!\n" +
+	"\fsubmitted_by\x18\x12 \x01(\x03R\vsubmittedBy\x12!\n" +
+	"\fsubmitted_at\x18\x13 \x01(\x03R\vsubmittedAt\x12$\n" +
+	"\x0elast_error_msg\x18\x14 \x01(\tR\flastErrorMsg\x12!\n" +
+	"\fcreate_times\x18\x15 \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\x16 \x01(\x03R\vupdateTimes\x126\n" +
+	"\forder_status\x18\x17 \x01(\x0e2\x13.option.OrderStatusR\vorderStatus\x12\x1d\n" +
+	"\n" +
+	"filled_qty\x18\x18 \x01(\tR\tfilledQty\x12!\n" +
+	"\funfilled_qty\x18\x19 \x01(\tR\vunfilledQty\"\xd6\x02\n" +
 	"\x17OptionInsuranceFundFlow\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -10512,7 +10810,7 @@ func file_proto_option_model_proto_rawDescGZIP() []byte {
 	return file_proto_option_model_proto_rawDescData
 }
 
-var file_proto_option_model_proto_msgTypes = make([]protoimpl.MessageInfo, 58)
+var file_proto_option_model_proto_msgTypes = make([]protoimpl.MessageInfo, 59)
 var file_proto_option_model_proto_goTypes = []any{
 	(*OptionContract)(nil),                 // 0: option.OptionContract
 	(*OptionTradingCalendarSession)(nil),   // 1: option.OptionTradingCalendarSession
@@ -10565,102 +10863,104 @@ var file_proto_option_model_proto_goTypes = []any{
 	(*OptionRiskAccount)(nil),              // 48: option.OptionRiskAccount
 	(*OptionPortfolioRiskConfig)(nil),      // 49: option.OptionPortfolioRiskConfig
 	(*OptionLiquidation)(nil),              // 50: option.OptionLiquidation
-	(*OptionInsuranceFundFlow)(nil),        // 51: option.OptionInsuranceFundFlow
-	(*OptionContractDetail)(nil),           // 52: option.OptionContractDetail
-	(*OptionPositionDetail)(nil),           // 53: option.OptionPositionDetail
-	(*OptionOrderDetail)(nil),              // 54: option.OptionOrderDetail
-	(*OptionTradeDetail)(nil),              // 55: option.OptionTradeDetail
-	(*OptionExerciseDetail)(nil),           // 56: option.OptionExerciseDetail
-	(*OptionSettlementDetail)(nil),         // 57: option.OptionSettlementDetail
-	(OptionType)(0),                        // 58: option.OptionType
-	(ExerciseStyle)(0),                     // 59: option.ExerciseStyle
-	(SettlementType)(0),                    // 60: option.SettlementType
-	(common.YesNo)(0),                      // 61: common.YesNo
-	(ContractStatus)(0),                    // 62: option.ContractStatus
-	(SellerMarginMode)(0),                  // 63: option.SellerMarginMode
-	(LiquidationDeficitPolicy)(0),          // 64: option.LiquidationDeficitPolicy
-	(PhysicalDeliveryPolicy)(0),            // 65: option.PhysicalDeliveryPolicy
-	(TradingCalendarExceptionType)(0),      // 66: option.TradingCalendarExceptionType
-	(TradingCalendarStatus)(0),             // 67: option.TradingCalendarStatus
-	(TradingHaltSource)(0),                 // 68: option.TradingHaltSource
-	(TradingHaltStatus)(0),                 // 69: option.TradingHaltStatus
-	(CorporateActionExecutionMode)(0),      // 70: option.CorporateActionExecutionMode
-	(CorporateActionContractStatus)(0),     // 71: option.CorporateActionContractStatus
-	(CorporateActionType)(0),               // 72: option.CorporateActionType
-	(CorporateActionStatus)(0),             // 73: option.CorporateActionStatus
-	(CorporateActionPositionStatus)(0),     // 74: option.CorporateActionPositionStatus
-	(ContractSeriesStatus)(0),              // 75: option.ContractSeriesStatus
-	(ContractSeriesLaunchStatus)(0),        // 76: option.ContractSeriesLaunchStatus
-	(ComboOrderType)(0),                    // 77: option.ComboOrderType
-	(ComboOrderStatus)(0),                  // 78: option.ComboOrderStatus
-	(common.Side)(0),                       // 79: common.Side
-	(PositionEffect)(0),                    // 80: option.PositionEffect
-	(OrderType)(0),                         // 81: option.OrderType
-	(OrderSource)(0),                       // 82: option.OrderSource
-	(OrderStatus)(0),                       // 83: option.OrderStatus
-	(common.PositionSide)(0),               // 84: common.PositionSide
-	(PositionStatus)(0),                    // 85: option.PositionStatus
-	(ExerciseType)(0),                      // 86: option.ExerciseType
-	(ExerciseStatus)(0),                    // 87: option.ExerciseStatus
-	(ExerciseAssignmentStatus)(0),          // 88: option.ExerciseAssignmentStatus
-	(ExerciseInstructionType)(0),           // 89: option.ExerciseInstructionType
-	(ExerciseInstructionStatus)(0),         // 90: option.ExerciseInstructionStatus
-	(TradeCorrectionLegDirection)(0),       // 91: option.TradeCorrectionLegDirection
-	(TradeCorrectionAction)(0),             // 92: option.TradeCorrectionAction
-	(TradeCorrectionStatus)(0),             // 93: option.TradeCorrectionStatus
-	(MMPStatus)(0),                         // 94: option.MMPStatus
-	(ExerciseResult)(0),                    // 95: option.ExerciseResult
-	(SettlementStatus)(0),                  // 96: option.SettlementStatus
-	(SettlementPriceStatus)(0),             // 97: option.SettlementPriceStatus
-	(SettlementBatchStatus)(0),             // 98: option.SettlementBatchStatus
-	(SettlementDetailDirection)(0),         // 99: option.SettlementDetailDirection
-	(PhysicalDeliveryUnitStatus)(0),        // 100: option.PhysicalDeliveryUnitStatus
-	(ReconciliationCheckType)(0),           // 101: option.ReconciliationCheckType
-	(ReconciliationIssueStatus)(0),         // 102: option.ReconciliationIssueStatus
-	(AccountStatus)(0),                     // 103: option.AccountStatus
-	(BillRefType)(0),                       // 104: option.BillRefType
-	(AssetInstructionAction)(0),            // 105: option.AssetInstructionAction
-	(AssetInstructionStatus)(0),            // 106: option.AssetInstructionStatus
-	(AssetReconciliationStatus)(0),         // 107: option.AssetReconciliationStatus
-	(OptionEventType)(0),                   // 108: option.OptionEventType
-	(OptionEventStatus)(0),                 // 109: option.OptionEventStatus
-	(OptionInboxStatus)(0),                 // 110: option.OptionInboxStatus
-	(MarginLotStatus)(0),                   // 111: option.MarginLotStatus
-	(RiskAccountStatus)(0),                 // 112: option.RiskAccountStatus
-	(PortfolioRiskMethod)(0),               // 113: option.PortfolioRiskMethod
-	(PortfolioRiskConfigStatus)(0),         // 114: option.PortfolioRiskConfigStatus
-	(LiquidationStatus)(0),                 // 115: option.LiquidationStatus
-	(LiquidationDeficitResolution)(0),      // 116: option.LiquidationDeficitResolution
-	(LiquidationScope)(0),                  // 117: option.LiquidationScope
-	(InsuranceFundFlowType)(0),             // 118: option.InsuranceFundFlowType
+	(*OptionInsuranceInventoryExit)(nil),   // 51: option.OptionInsuranceInventoryExit
+	(*OptionInsuranceFundFlow)(nil),        // 52: option.OptionInsuranceFundFlow
+	(*OptionContractDetail)(nil),           // 53: option.OptionContractDetail
+	(*OptionPositionDetail)(nil),           // 54: option.OptionPositionDetail
+	(*OptionOrderDetail)(nil),              // 55: option.OptionOrderDetail
+	(*OptionTradeDetail)(nil),              // 56: option.OptionTradeDetail
+	(*OptionExerciseDetail)(nil),           // 57: option.OptionExerciseDetail
+	(*OptionSettlementDetail)(nil),         // 58: option.OptionSettlementDetail
+	(OptionType)(0),                        // 59: option.OptionType
+	(ExerciseStyle)(0),                     // 60: option.ExerciseStyle
+	(SettlementType)(0),                    // 61: option.SettlementType
+	(common.YesNo)(0),                      // 62: common.YesNo
+	(ContractStatus)(0),                    // 63: option.ContractStatus
+	(SellerMarginMode)(0),                  // 64: option.SellerMarginMode
+	(LiquidationDeficitPolicy)(0),          // 65: option.LiquidationDeficitPolicy
+	(PhysicalDeliveryPolicy)(0),            // 66: option.PhysicalDeliveryPolicy
+	(TradingCalendarExceptionType)(0),      // 67: option.TradingCalendarExceptionType
+	(TradingCalendarStatus)(0),             // 68: option.TradingCalendarStatus
+	(TradingHaltSource)(0),                 // 69: option.TradingHaltSource
+	(TradingHaltStatus)(0),                 // 70: option.TradingHaltStatus
+	(CorporateActionExecutionMode)(0),      // 71: option.CorporateActionExecutionMode
+	(CorporateActionContractStatus)(0),     // 72: option.CorporateActionContractStatus
+	(CorporateActionType)(0),               // 73: option.CorporateActionType
+	(CorporateActionStatus)(0),             // 74: option.CorporateActionStatus
+	(CorporateActionPositionStatus)(0),     // 75: option.CorporateActionPositionStatus
+	(ContractSeriesStatus)(0),              // 76: option.ContractSeriesStatus
+	(ContractSeriesLaunchStatus)(0),        // 77: option.ContractSeriesLaunchStatus
+	(ComboOrderType)(0),                    // 78: option.ComboOrderType
+	(ComboOrderStatus)(0),                  // 79: option.ComboOrderStatus
+	(common.Side)(0),                       // 80: common.Side
+	(PositionEffect)(0),                    // 81: option.PositionEffect
+	(OrderType)(0),                         // 82: option.OrderType
+	(OrderSource)(0),                       // 83: option.OrderSource
+	(OrderStatus)(0),                       // 84: option.OrderStatus
+	(common.PositionSide)(0),               // 85: common.PositionSide
+	(PositionStatus)(0),                    // 86: option.PositionStatus
+	(ExerciseType)(0),                      // 87: option.ExerciseType
+	(ExerciseStatus)(0),                    // 88: option.ExerciseStatus
+	(ExerciseAssignmentStatus)(0),          // 89: option.ExerciseAssignmentStatus
+	(ExerciseInstructionType)(0),           // 90: option.ExerciseInstructionType
+	(ExerciseInstructionStatus)(0),         // 91: option.ExerciseInstructionStatus
+	(TradeCorrectionLegDirection)(0),       // 92: option.TradeCorrectionLegDirection
+	(TradeCorrectionAction)(0),             // 93: option.TradeCorrectionAction
+	(TradeCorrectionStatus)(0),             // 94: option.TradeCorrectionStatus
+	(MMPStatus)(0),                         // 95: option.MMPStatus
+	(ExerciseResult)(0),                    // 96: option.ExerciseResult
+	(SettlementStatus)(0),                  // 97: option.SettlementStatus
+	(SettlementPriceStatus)(0),             // 98: option.SettlementPriceStatus
+	(SettlementBatchStatus)(0),             // 99: option.SettlementBatchStatus
+	(SettlementDetailDirection)(0),         // 100: option.SettlementDetailDirection
+	(PhysicalDeliveryUnitStatus)(0),        // 101: option.PhysicalDeliveryUnitStatus
+	(ReconciliationCheckType)(0),           // 102: option.ReconciliationCheckType
+	(ReconciliationIssueStatus)(0),         // 103: option.ReconciliationIssueStatus
+	(AccountStatus)(0),                     // 104: option.AccountStatus
+	(BillRefType)(0),                       // 105: option.BillRefType
+	(AssetInstructionAction)(0),            // 106: option.AssetInstructionAction
+	(AssetInstructionStatus)(0),            // 107: option.AssetInstructionStatus
+	(AssetReconciliationStatus)(0),         // 108: option.AssetReconciliationStatus
+	(OptionEventType)(0),                   // 109: option.OptionEventType
+	(OptionEventStatus)(0),                 // 110: option.OptionEventStatus
+	(OptionInboxStatus)(0),                 // 111: option.OptionInboxStatus
+	(MarginLotStatus)(0),                   // 112: option.MarginLotStatus
+	(RiskAccountStatus)(0),                 // 113: option.RiskAccountStatus
+	(PortfolioRiskMethod)(0),               // 114: option.PortfolioRiskMethod
+	(PortfolioRiskConfigStatus)(0),         // 115: option.PortfolioRiskConfigStatus
+	(LiquidationStatus)(0),                 // 116: option.LiquidationStatus
+	(LiquidationDeficitResolution)(0),      // 117: option.LiquidationDeficitResolution
+	(LiquidationScope)(0),                  // 118: option.LiquidationScope
+	(InsuranceInventoryExitStatus)(0),      // 119: option.InsuranceInventoryExitStatus
+	(InsuranceFundFlowType)(0),             // 120: option.InsuranceFundFlowType
 }
 var file_proto_option_model_proto_depIdxs = []int32{
-	58,  // 0: option.OptionContract.option_type:type_name -> option.OptionType
-	59,  // 1: option.OptionContract.exercise_style:type_name -> option.ExerciseStyle
-	60,  // 2: option.OptionContract.settlement_type:type_name -> option.SettlementType
-	61,  // 3: option.OptionContract.is_auto_exercise:type_name -> common.YesNo
-	62,  // 4: option.OptionContract.status:type_name -> option.ContractStatus
-	61,  // 5: option.OptionContract.is_deleted:type_name -> common.YesNo
-	63,  // 6: option.OptionContract.seller_margin_mode:type_name -> option.SellerMarginMode
-	64,  // 7: option.OptionContract.liquidation_deficit_policy:type_name -> option.LiquidationDeficitPolicy
-	65,  // 8: option.OptionContract.physical_delivery_policy:type_name -> option.PhysicalDeliveryPolicy
-	66,  // 9: option.OptionTradingCalendarException.exception_type:type_name -> option.TradingCalendarExceptionType
-	67,  // 10: option.OptionTradingCalendar.status:type_name -> option.TradingCalendarStatus
+	59,  // 0: option.OptionContract.option_type:type_name -> option.OptionType
+	60,  // 1: option.OptionContract.exercise_style:type_name -> option.ExerciseStyle
+	61,  // 2: option.OptionContract.settlement_type:type_name -> option.SettlementType
+	62,  // 3: option.OptionContract.is_auto_exercise:type_name -> common.YesNo
+	63,  // 4: option.OptionContract.status:type_name -> option.ContractStatus
+	62,  // 5: option.OptionContract.is_deleted:type_name -> common.YesNo
+	64,  // 6: option.OptionContract.seller_margin_mode:type_name -> option.SellerMarginMode
+	65,  // 7: option.OptionContract.liquidation_deficit_policy:type_name -> option.LiquidationDeficitPolicy
+	66,  // 8: option.OptionContract.physical_delivery_policy:type_name -> option.PhysicalDeliveryPolicy
+	67,  // 9: option.OptionTradingCalendarException.exception_type:type_name -> option.TradingCalendarExceptionType
+	68,  // 10: option.OptionTradingCalendar.status:type_name -> option.TradingCalendarStatus
 	1,   // 11: option.OptionTradingCalendar.sessions:type_name -> option.OptionTradingCalendarSession
 	2,   // 12: option.OptionTradingCalendar.exceptions:type_name -> option.OptionTradingCalendarException
-	68,  // 13: option.OptionTradingHalt.source:type_name -> option.TradingHaltSource
-	69,  // 14: option.OptionTradingHalt.status:type_name -> option.TradingHaltStatus
-	70,  // 15: option.OptionCorporateActionContract.execution_mode:type_name -> option.CorporateActionExecutionMode
-	71,  // 16: option.OptionCorporateActionContract.status:type_name -> option.CorporateActionContractStatus
-	72,  // 17: option.OptionCorporateAction.action_type:type_name -> option.CorporateActionType
-	73,  // 18: option.OptionCorporateAction.status:type_name -> option.CorporateActionStatus
+	69,  // 13: option.OptionTradingHalt.source:type_name -> option.TradingHaltSource
+	70,  // 14: option.OptionTradingHalt.status:type_name -> option.TradingHaltStatus
+	71,  // 15: option.OptionCorporateActionContract.execution_mode:type_name -> option.CorporateActionExecutionMode
+	72,  // 16: option.OptionCorporateActionContract.status:type_name -> option.CorporateActionContractStatus
+	73,  // 17: option.OptionCorporateAction.action_type:type_name -> option.CorporateActionType
+	74,  // 18: option.OptionCorporateAction.status:type_name -> option.CorporateActionStatus
 	5,   // 19: option.OptionCorporateAction.contracts:type_name -> option.OptionCorporateActionContract
-	74,  // 20: option.OptionCorporateActionPosition.status:type_name -> option.CorporateActionPositionStatus
-	58,  // 21: option.OptionContractSeriesDetail.option_type:type_name -> option.OptionType
-	75,  // 22: option.OptionContractSeries.status:type_name -> option.ContractSeriesStatus
+	75,  // 20: option.OptionCorporateActionPosition.status:type_name -> option.CorporateActionPositionStatus
+	59,  // 21: option.OptionContractSeriesDetail.option_type:type_name -> option.OptionType
+	76,  // 22: option.OptionContractSeries.status:type_name -> option.ContractSeriesStatus
 	8,   // 23: option.OptionContractSeries.expiries:type_name -> option.OptionContractSeriesExpiry
 	9,   // 24: option.OptionContractSeries.strike_bands:type_name -> option.OptionContractSeriesStrikeBand
-	76,  // 25: option.OptionContractSeries.launch_status:type_name -> option.ContractSeriesLaunchStatus
+	77,  // 25: option.OptionContractSeries.launch_status:type_name -> option.ContractSeriesLaunchStatus
 	0,   // 26: option.OptionChainLeg.contract:type_name -> option.OptionContract
 	12,  // 27: option.OptionChainLeg.market:type_name -> option.OptionMarket
 	13,  // 28: option.OptionChainLeg.statistics:type_name -> option.OptionMarketStatistics
@@ -10668,94 +10968,96 @@ var file_proto_option_model_proto_depIdxs = []int32{
 	14,  // 30: option.OptionChainRow.put:type_name -> option.OptionChainLeg
 	16,  // 31: option.OptionOrderBook.bids:type_name -> option.OptionOrderBookLevel
 	16,  // 32: option.OptionOrderBook.asks:type_name -> option.OptionOrderBookLevel
-	77,  // 33: option.OptionComboOrder.order_type:type_name -> option.ComboOrderType
-	78,  // 34: option.OptionComboOrder.status:type_name -> option.ComboOrderStatus
-	79,  // 35: option.OptionComboOrderLeg.side:type_name -> common.Side
-	80,  // 36: option.OptionComboOrderLeg.position_effect:type_name -> option.PositionEffect
+	78,  // 33: option.OptionComboOrder.order_type:type_name -> option.ComboOrderType
+	79,  // 34: option.OptionComboOrder.status:type_name -> option.ComboOrderStatus
+	80,  // 35: option.OptionComboOrderLeg.side:type_name -> common.Side
+	81,  // 36: option.OptionComboOrderLeg.position_effect:type_name -> option.PositionEffect
 	18,  // 37: option.OptionComboOrderDetail.combo_order:type_name -> option.OptionComboOrder
 	19,  // 38: option.OptionComboOrderDetail.legs:type_name -> option.OptionComboOrderLeg
 	18,  // 39: option.OptionAdminComboOrderDetail.combo_order:type_name -> option.OptionComboOrder
 	19,  // 40: option.OptionAdminComboOrderDetail.legs:type_name -> option.OptionComboOrderLeg
-	54,  // 41: option.OptionAdminComboOrderDetail.child_orders:type_name -> option.OptionOrderDetail
-	55,  // 42: option.OptionAdminComboOrderDetail.trades:type_name -> option.OptionTradeDetail
+	55,  // 41: option.OptionAdminComboOrderDetail.child_orders:type_name -> option.OptionOrderDetail
+	56,  // 42: option.OptionAdminComboOrderDetail.trades:type_name -> option.OptionTradeDetail
 	42,  // 43: option.OptionAdminComboOrderDetail.asset_instructions:type_name -> option.OptionAssetInstruction
-	79,  // 44: option.OptionOrder.side:type_name -> common.Side
-	80,  // 45: option.OptionOrder.position_effect:type_name -> option.PositionEffect
-	81,  // 46: option.OptionOrder.order_type:type_name -> option.OrderType
-	82,  // 47: option.OptionOrder.source:type_name -> option.OrderSource
-	61,  // 48: option.OptionOrder.reduce_only:type_name -> common.YesNo
-	61,  // 49: option.OptionOrder.mmp:type_name -> common.YesNo
-	83,  // 50: option.OptionOrder.status:type_name -> option.OrderStatus
-	79,  // 51: option.OptionTrade.maker_side:type_name -> common.Side
-	84,  // 52: option.OptionPosition.side:type_name -> common.PositionSide
-	85,  // 53: option.OptionPosition.status:type_name -> option.PositionStatus
-	86,  // 54: option.OptionExercise.exercise_type:type_name -> option.ExerciseType
-	87,  // 55: option.OptionExercise.status:type_name -> option.ExerciseStatus
-	88,  // 56: option.OptionExerciseAssignment.status:type_name -> option.ExerciseAssignmentStatus
-	89,  // 57: option.OptionExerciseInstruction.instruction_type:type_name -> option.ExerciseInstructionType
-	90,  // 58: option.OptionExerciseInstruction.status:type_name -> option.ExerciseInstructionStatus
-	61,  // 59: option.OptionUserTradingControl.kill_switch:type_name -> common.YesNo
-	91,  // 60: option.OptionTradeCorrectionLeg.direction:type_name -> option.TradeCorrectionLegDirection
-	92,  // 61: option.OptionTradeCorrection.action:type_name -> option.TradeCorrectionAction
-	93,  // 62: option.OptionTradeCorrection.status:type_name -> option.TradeCorrectionStatus
+	80,  // 44: option.OptionOrder.side:type_name -> common.Side
+	81,  // 45: option.OptionOrder.position_effect:type_name -> option.PositionEffect
+	82,  // 46: option.OptionOrder.order_type:type_name -> option.OrderType
+	83,  // 47: option.OptionOrder.source:type_name -> option.OrderSource
+	62,  // 48: option.OptionOrder.reduce_only:type_name -> common.YesNo
+	62,  // 49: option.OptionOrder.mmp:type_name -> common.YesNo
+	84,  // 50: option.OptionOrder.status:type_name -> option.OrderStatus
+	80,  // 51: option.OptionTrade.maker_side:type_name -> common.Side
+	85,  // 52: option.OptionPosition.side:type_name -> common.PositionSide
+	86,  // 53: option.OptionPosition.status:type_name -> option.PositionStatus
+	87,  // 54: option.OptionExercise.exercise_type:type_name -> option.ExerciseType
+	88,  // 55: option.OptionExercise.status:type_name -> option.ExerciseStatus
+	89,  // 56: option.OptionExerciseAssignment.status:type_name -> option.ExerciseAssignmentStatus
+	90,  // 57: option.OptionExerciseInstruction.instruction_type:type_name -> option.ExerciseInstructionType
+	91,  // 58: option.OptionExerciseInstruction.status:type_name -> option.ExerciseInstructionStatus
+	62,  // 59: option.OptionUserTradingControl.kill_switch:type_name -> common.YesNo
+	92,  // 60: option.OptionTradeCorrectionLeg.direction:type_name -> option.TradeCorrectionLegDirection
+	93,  // 61: option.OptionTradeCorrection.action:type_name -> option.TradeCorrectionAction
+	94,  // 62: option.OptionTradeCorrection.status:type_name -> option.TradeCorrectionStatus
 	31,  // 63: option.OptionTradeCorrection.legs:type_name -> option.OptionTradeCorrectionLeg
-	61,  // 64: option.OptionMMPConfig.enabled:type_name -> common.YesNo
-	94,  // 65: option.OptionMMPConfig.status:type_name -> option.MMPStatus
-	61,  // 66: option.OptionSettlement.is_itm:type_name -> common.YesNo
-	95,  // 67: option.OptionSettlement.exercise_result:type_name -> option.ExerciseResult
-	96,  // 68: option.OptionSettlement.status:type_name -> option.SettlementStatus
-	97,  // 69: option.OptionSettlementPrice.status:type_name -> option.SettlementPriceStatus
-	98,  // 70: option.OptionSettlementBatch.status:type_name -> option.SettlementBatchStatus
-	84,  // 71: option.OptionSettlementPositionDetail.side:type_name -> common.PositionSide
-	99,  // 72: option.OptionSettlementPositionDetail.direction:type_name -> option.SettlementDetailDirection
-	100, // 73: option.OptionPhysicalDeliveryUnit.status:type_name -> option.PhysicalDeliveryUnitStatus
+	62,  // 64: option.OptionMMPConfig.enabled:type_name -> common.YesNo
+	95,  // 65: option.OptionMMPConfig.status:type_name -> option.MMPStatus
+	62,  // 66: option.OptionSettlement.is_itm:type_name -> common.YesNo
+	96,  // 67: option.OptionSettlement.exercise_result:type_name -> option.ExerciseResult
+	97,  // 68: option.OptionSettlement.status:type_name -> option.SettlementStatus
+	98,  // 69: option.OptionSettlementPrice.status:type_name -> option.SettlementPriceStatus
+	99,  // 70: option.OptionSettlementBatch.status:type_name -> option.SettlementBatchStatus
+	85,  // 71: option.OptionSettlementPositionDetail.side:type_name -> common.PositionSide
+	100, // 72: option.OptionSettlementPositionDetail.direction:type_name -> option.SettlementDetailDirection
+	101, // 73: option.OptionPhysicalDeliveryUnit.status:type_name -> option.PhysicalDeliveryUnitStatus
 	42,  // 74: option.OptionPhysicalDeliveryUnit.asset_instructions:type_name -> option.OptionAssetInstruction
-	101, // 75: option.OptionReconciliationIssue.check_type:type_name -> option.ReconciliationCheckType
-	102, // 76: option.OptionReconciliationIssue.status:type_name -> option.ReconciliationIssueStatus
-	103, // 77: option.OptionAccount.status:type_name -> option.AccountStatus
-	104, // 78: option.OptionBill.ref_type:type_name -> option.BillRefType
-	105, // 79: option.OptionAssetInstruction.action:type_name -> option.AssetInstructionAction
-	106, // 80: option.OptionAssetInstruction.status:type_name -> option.AssetInstructionStatus
-	107, // 81: option.OptionAssetInstruction.reconciliation_status:type_name -> option.AssetReconciliationStatus
+	102, // 75: option.OptionReconciliationIssue.check_type:type_name -> option.ReconciliationCheckType
+	103, // 76: option.OptionReconciliationIssue.status:type_name -> option.ReconciliationIssueStatus
+	104, // 77: option.OptionAccount.status:type_name -> option.AccountStatus
+	105, // 78: option.OptionBill.ref_type:type_name -> option.BillRefType
+	106, // 79: option.OptionAssetInstruction.action:type_name -> option.AssetInstructionAction
+	107, // 80: option.OptionAssetInstruction.status:type_name -> option.AssetInstructionStatus
+	108, // 81: option.OptionAssetInstruction.reconciliation_status:type_name -> option.AssetReconciliationStatus
 	43,  // 82: option.OptionOperationsOverview.insurance_ledger:type_name -> option.OptionCoinAmount
 	43,  // 83: option.OptionOperationsOverview.backstop_liability:type_name -> option.OptionCoinAmount
 	43,  // 84: option.OptionOperationsOverview.unresolved_deficit:type_name -> option.OptionCoinAmount
-	108, // 85: option.OptionOutboxEvent.event_type:type_name -> option.OptionEventType
-	109, // 86: option.OptionOutboxEvent.status:type_name -> option.OptionEventStatus
-	108, // 87: option.OptionInboxEvent.event_type:type_name -> option.OptionEventType
-	110, // 88: option.OptionInboxEvent.status:type_name -> option.OptionInboxStatus
-	111, // 89: option.OptionMarginLot.status:type_name -> option.MarginLotStatus
-	112, // 90: option.OptionRiskAccount.status:type_name -> option.RiskAccountStatus
-	113, // 91: option.OptionRiskAccount.portfolio_risk_method:type_name -> option.PortfolioRiskMethod
-	114, // 92: option.OptionPortfolioRiskConfig.status:type_name -> option.PortfolioRiskConfigStatus
-	113, // 93: option.OptionPortfolioRiskConfig.model_method:type_name -> option.PortfolioRiskMethod
-	115, // 94: option.OptionLiquidation.status:type_name -> option.LiquidationStatus
-	116, // 95: option.OptionLiquidation.deficit_resolution:type_name -> option.LiquidationDeficitResolution
-	117, // 96: option.OptionLiquidation.liquidation_scope:type_name -> option.LiquidationScope
-	118, // 97: option.OptionInsuranceFundFlow.flow_type:type_name -> option.InsuranceFundFlowType
-	0,   // 98: option.OptionContractDetail.contract:type_name -> option.OptionContract
-	12,  // 99: option.OptionContractDetail.market:type_name -> option.OptionMarket
-	25,  // 100: option.OptionPositionDetail.position:type_name -> option.OptionPosition
-	0,   // 101: option.OptionPositionDetail.contract:type_name -> option.OptionContract
-	12,  // 102: option.OptionPositionDetail.market:type_name -> option.OptionMarket
-	23,  // 103: option.OptionOrderDetail.order:type_name -> option.OptionOrder
-	0,   // 104: option.OptionOrderDetail.contract:type_name -> option.OptionContract
-	24,  // 105: option.OptionTradeDetail.trade:type_name -> option.OptionTrade
-	0,   // 106: option.OptionTradeDetail.contract:type_name -> option.OptionContract
-	26,  // 107: option.OptionExerciseDetail.exercise:type_name -> option.OptionExercise
-	0,   // 108: option.OptionExerciseDetail.contract:type_name -> option.OptionContract
-	27,  // 109: option.OptionExerciseDetail.assignments:type_name -> option.OptionExerciseAssignment
-	42,  // 110: option.OptionExerciseDetail.asset_instructions:type_name -> option.OptionAssetInstruction
-	34,  // 111: option.OptionSettlementDetail.settlement:type_name -> option.OptionSettlement
-	0,   // 112: option.OptionSettlementDetail.contract:type_name -> option.OptionContract
-	36,  // 113: option.OptionSettlementDetail.batch:type_name -> option.OptionSettlementBatch
-	37,  // 114: option.OptionSettlementDetail.position_details:type_name -> option.OptionSettlementPositionDetail
-	42,  // 115: option.OptionSettlementDetail.asset_instructions:type_name -> option.OptionAssetInstruction
-	116, // [116:116] is the sub-list for method output_type
-	116, // [116:116] is the sub-list for method input_type
-	116, // [116:116] is the sub-list for extension type_name
-	116, // [116:116] is the sub-list for extension extendee
-	0,   // [0:116] is the sub-list for field type_name
+	109, // 85: option.OptionOutboxEvent.event_type:type_name -> option.OptionEventType
+	110, // 86: option.OptionOutboxEvent.status:type_name -> option.OptionEventStatus
+	109, // 87: option.OptionInboxEvent.event_type:type_name -> option.OptionEventType
+	111, // 88: option.OptionInboxEvent.status:type_name -> option.OptionInboxStatus
+	112, // 89: option.OptionMarginLot.status:type_name -> option.MarginLotStatus
+	113, // 90: option.OptionRiskAccount.status:type_name -> option.RiskAccountStatus
+	114, // 91: option.OptionRiskAccount.portfolio_risk_method:type_name -> option.PortfolioRiskMethod
+	115, // 92: option.OptionPortfolioRiskConfig.status:type_name -> option.PortfolioRiskConfigStatus
+	114, // 93: option.OptionPortfolioRiskConfig.model_method:type_name -> option.PortfolioRiskMethod
+	116, // 94: option.OptionLiquidation.status:type_name -> option.LiquidationStatus
+	117, // 95: option.OptionLiquidation.deficit_resolution:type_name -> option.LiquidationDeficitResolution
+	118, // 96: option.OptionLiquidation.liquidation_scope:type_name -> option.LiquidationScope
+	119, // 97: option.OptionInsuranceInventoryExit.status:type_name -> option.InsuranceInventoryExitStatus
+	84,  // 98: option.OptionInsuranceInventoryExit.order_status:type_name -> option.OrderStatus
+	120, // 99: option.OptionInsuranceFundFlow.flow_type:type_name -> option.InsuranceFundFlowType
+	0,   // 100: option.OptionContractDetail.contract:type_name -> option.OptionContract
+	12,  // 101: option.OptionContractDetail.market:type_name -> option.OptionMarket
+	25,  // 102: option.OptionPositionDetail.position:type_name -> option.OptionPosition
+	0,   // 103: option.OptionPositionDetail.contract:type_name -> option.OptionContract
+	12,  // 104: option.OptionPositionDetail.market:type_name -> option.OptionMarket
+	23,  // 105: option.OptionOrderDetail.order:type_name -> option.OptionOrder
+	0,   // 106: option.OptionOrderDetail.contract:type_name -> option.OptionContract
+	24,  // 107: option.OptionTradeDetail.trade:type_name -> option.OptionTrade
+	0,   // 108: option.OptionTradeDetail.contract:type_name -> option.OptionContract
+	26,  // 109: option.OptionExerciseDetail.exercise:type_name -> option.OptionExercise
+	0,   // 110: option.OptionExerciseDetail.contract:type_name -> option.OptionContract
+	27,  // 111: option.OptionExerciseDetail.assignments:type_name -> option.OptionExerciseAssignment
+	42,  // 112: option.OptionExerciseDetail.asset_instructions:type_name -> option.OptionAssetInstruction
+	34,  // 113: option.OptionSettlementDetail.settlement:type_name -> option.OptionSettlement
+	0,   // 114: option.OptionSettlementDetail.contract:type_name -> option.OptionContract
+	36,  // 115: option.OptionSettlementDetail.batch:type_name -> option.OptionSettlementBatch
+	37,  // 116: option.OptionSettlementDetail.position_details:type_name -> option.OptionSettlementPositionDetail
+	42,  // 117: option.OptionSettlementDetail.asset_instructions:type_name -> option.OptionAssetInstruction
+	118, // [118:118] is the sub-list for method output_type
+	118, // [118:118] is the sub-list for method input_type
+	118, // [118:118] is the sub-list for extension type_name
+	118, // [118:118] is the sub-list for extension extendee
+	0,   // [0:118] is the sub-list for field type_name
 }
 
 func init() { file_proto_option_model_proto_init() }
@@ -10770,7 +11072,7 @@ func file_proto_option_model_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_option_model_proto_rawDesc), len(file_proto_option_model_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   58,
+			NumMessages:   59,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

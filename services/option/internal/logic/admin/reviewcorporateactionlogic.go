@@ -106,6 +106,7 @@ func (l *ReviewCorporateActionLogic) ReviewCorporateAction(
 					int64(option.OrderStatus_ORDER_STATUS_PENDING),
 					int64(option.OrderStatus_ORDER_STATUS_PART_FILLED),
 					int64(option.OrderStatus_ORDER_STATUS_CANCELING),
+					int64(option.OrderStatus_ORDER_STATUS_EXPIRING),
 				},
 			}, 0, 1)
 			if lockErr != nil {

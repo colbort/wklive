@@ -66,7 +66,7 @@ Option RPC 在内部端口 `9105` 的 `/metrics` 暴露 Prometheus 指标；业�
 | `wklive_option_combo_observability_query_failure_total` | Counter | 运行时水位 SQL 失败 |
 | `wklive_option_operations_count` | Gauge | 按租户与有限类别汇总的当前异常/积压数量 |
 | `wklive_option_operations_oldest_timestamp_seconds` | Gauge | 对应类别最早异常的 Unix 秒 |
-| `wklive_option_operations_amount` | Gauge | 按租户、类别、币种/标的汇总的保险原始流水代数和（非余额）、兜底/缺口金额及保险接管数量、标记价值、绝对 Delta |
+| `wklive_option_operations_amount` | Gauge | 按租户、类别、币种/标的汇总的保险类型归一净变动（1/3为`+ABS`、2/4为`-ABS`，非余额）、兜底/缺口金额及保险接管数量、标记价值、绝对 Delta |
 | `wklive_option_operations_sample_success` | Gauge | 最近一次15秒节流采样是否成功 |
 | `wklive_option_operations_last_success_timestamp_seconds` | Gauge | 最近成功采样 Unix 秒 |
 | `wklive_option_operations_sample_failure_total` | Counter | 采样失败次数 |
