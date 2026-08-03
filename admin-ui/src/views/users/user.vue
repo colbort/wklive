@@ -212,6 +212,46 @@ function getOptionTagClass(groupKey: string, value?: number) {
   return 'option-tag'
 }
 
+type UserOperation =
+  | 'detail'
+  | 'edit'
+  | 'status'
+  | 'memberLevel'
+  | 'riskLevel'
+  | 'resetLoginPassword'
+  | 'resetPayPassword'
+  | 'unlock'
+  | 'reset2fa'
+  | 'delete'
+
+const fullUserOperations = new Set<UserOperation>([
+  'detail',
+  'edit',
+  'status',
+  'memberLevel',
+  'riskLevel',
+  'resetLoginPassword',
+  'resetPayPassword',
+  'unlock',
+  'reset2fa',
+  'delete',
+])
+
+const operationsByRegisterType: Record<number, ReadonlySet<UserOperation>> = {
+  1: fullUserOperations,
+  2: fullUserOperations,
+  3: fullUserOperations,
+  4: new Set<UserOperation>(['detail', 'status', 'delete']),
+  5: new Set<UserOperation>(['detail']),
+}
+
+const fallbackUserOperations = new Set<UserOperation>(['detail', 'status'])
+
+function canUserOperation(row: UserItem, operation: UserOperation) {
+  const operations = operationsByRegisterType[Number(row.registerType)] || fallbackUserOperations
+  return operations.has(operation)
+}
+
 function getBooleanTagClass(value?: number) {
   return Number(value) === 1 ? 'option-tag option-tag--green' : 'option-tag option-tag--red'
 }
@@ -750,71 +790,78 @@ onMounted(fetchCreateOptions)
               <template #dropdown>
                 <el-dropdown-menu>
                   <el-dropdown-item
-                    v-if="auth.hasPerm('users:user:detail')"
-                    :disabled="row.isGuest"
+                    v-if="auth.hasPerm('users:user:detail') && canUserOperation(row, 'detail')"
                     @click="showDetail(row)"
                   >
                     {{ t('common.detail') }}
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-if="auth.hasPerm('users:user:update')"
-                    :disabled="row.isGuest"
+                    v-if="auth.hasPerm('users:user:update') && canUserOperation(row, 'edit')"
                     @click="openEdit(row)"
                   >
                     {{ t('common.edit') }}
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-if="auth.hasPerm('users:user:update:status')"
-                    :disabled="row.isGuest"
+                    v-if="
+                      auth.hasPerm('users:user:update:status') && canUserOperation(row, 'status')
+                    "
                     @click="updateSimpleValue(row, 'status')"
                   >
                     {{ t('users.modifyStatus') }}
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-if="auth.hasPerm('users:user:update:level')"
-                    :disabled="row.isGuest"
+                    v-if="
+                      auth.hasPerm('users:user:update:level') &&
+                        canUserOperation(row, 'memberLevel')
+                    "
                     @click="updateSimpleValue(row, 'memberLevel')"
                   >
                     {{ t('users.modifyMemberLevel') }}
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-if="auth.hasPerm('users:user:update:risklevel')"
-                    :disabled="row.isGuest"
+                    v-if="
+                      auth.hasPerm('users:user:update:risklevel') &&
+                        canUserOperation(row, 'riskLevel')
+                    "
                     @click="updateSimpleValue(row, 'riskLevel')"
                   >
                     {{ t('users.modifyRiskLevel') }}
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-if="auth.hasPerm('users:user:reset:loginpwd')"
-                    :disabled="row.isGuest"
+                    v-if="
+                      auth.hasPerm('users:user:reset:loginpwd') &&
+                        canUserOperation(row, 'resetLoginPassword')
+                    "
                     @click="openPassword(row, 'login')"
                   >
                     {{ t('users.resetLoginPassword') }}
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-if="auth.hasPerm('users:user:reset:paypwd')"
-                    :disabled="row.isGuest"
+                    v-if="
+                      auth.hasPerm('users:user:reset:paypwd') &&
+                        canUserOperation(row, 'resetPayPassword')
+                    "
                     @click="openPassword(row, 'pay')"
                   >
                     {{ t('users.resetPayPassword') }}
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-if="auth.hasPerm('users:user:unlock')"
-                    :disabled="row.isGuest"
+                    v-if="auth.hasPerm('users:user:unlock') && canUserOperation(row, 'unlock')"
                     @click="quickAction(row, 'unlock')"
                   >
                     {{ t('users.unlock') }}
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-if="auth.hasPerm('users:user:reset:google2fa')"
-                    :disabled="row.isGuest"
+                    v-if="
+                      auth.hasPerm('users:user:reset:google2fa') &&
+                        canUserOperation(row, 'reset2fa')
+                    "
                     @click="quickAction(row, 'reset2fa')"
                   >
                     {{ t('users.reset2fa') }}
                   </el-dropdown-item>
                   <el-dropdown-item
-                    v-if="auth.hasPerm('users:user:delete')"
-                    :disabled="row.isGuest"
+                    v-if="auth.hasPerm('users:user:delete') && canUserOperation(row, 'delete')"
                     @click="quickAction(row, 'delete')"
                   >
                     <span style="color: var(--el-color-danger)">{{ t('common.delete') }}</span>
@@ -901,7 +948,7 @@ onMounted(fetchCreateOptions)
           </el-col>
           <el-col :span="12">
             <el-form-item :label="t('users.registerType')">
-              <el-select v-model="editForm.registerType" style="width: 100%">
+              <el-select v-model="editForm.registerType" :disabled="!isCreate" style="width: 100%">
                 <el-option
                   v-for="item in formOptions.registerTypes"
                   :key="item.value"

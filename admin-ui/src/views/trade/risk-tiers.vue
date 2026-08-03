@@ -5,10 +5,7 @@
         <TenantSelect v-model="query.tenantId" />
       </el-form-item>
       <el-form-item :label="t('trade.symbolId')">
-        <SymbolSelect
-          v-model="query.symbolId"
-          :tenant-id="query.tenantId"
-        />
+        <SymbolSelect v-model="query.symbolId" :tenant-id="query.tenantId" />
       </el-form-item>
       <el-form-item :label="t('trade.enabled')">
         <el-select v-model="query.enabled" clearable>
@@ -18,9 +15,7 @@
       </el-form-item>
       <template #actions>
         <el-button v-perm="'trade:risk-tier:update'" type="primary" @click="openCreate">
-          {{
-            t('trade.addRiskTier')
-          }}
+          {{ t('trade.addRiskTier') }}
         </el-button>
       </template>
     </CrudQueryCard>
@@ -42,28 +37,16 @@
           :label="t('trade.maintenanceMarginRate')"
           min-width="180"
         />
-        <el-table-column
-          prop="enabled"
-          :label="t('trade.enabled')"
-          min-width="100"
-        >
+        <el-table-column prop="enabled" :label="t('trade.enabled')" min-width="100">
           <template #default="{ row }">
             <el-tag :type="row.enabled === 1 ? 'success' : 'info'">
-              {{
-                row.enabled === 1 ? t('common.enabled') : t('common.disabled')
-              }}
+              {{ row.enabled === 1 ? t('common.enabled') : t('common.disabled') }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="updateTimes"
-          :label="t('trade.updateTimes')"
-          min-width="190"
-        >
+        <el-table-column prop="updateTimes" :label="t('trade.updateTimes')" min-width="190">
           <template #default="{ row }">
-            {{
-              formatTime(row.updateTimes)
-            }}
+            {{ formatTime(row.updateTimes) }}
           </template>
         </el-table-column>
       </el-table>
@@ -84,16 +67,10 @@
           <TenantSelect v-model="form.tenantId" />
         </el-form-item>
         <el-form-item :label="t('trade.symbolId')">
-          <SymbolSelect
-            v-model="form.symbolId"
-            :tenant-id="form.tenantId"
-          />
+          <SymbolSelect v-model="form.symbolId" :tenant-id="form.tenantId" />
         </el-form-item>
         <el-form-item :label="t('trade.tierNo')">
-          <el-input-number
-            v-model="form.tierNo"
-            :min="1"
-          />
+          <el-input-number v-model="form.tierNo" :min="1" />
         </el-form-item>
         <el-form-item :label="t('trade.notionalFloor')">
           <el-input v-model="form.notionalFloor" />
@@ -102,10 +79,7 @@
           <el-input v-model="form.notionalCap" />
         </el-form-item>
         <el-form-item :label="t('trade.maxLeverage')">
-          <el-input-number
-            v-model="form.maxLeverage"
-            :min="1"
-          />
+          <el-input-number v-model="form.maxLeverage" :min="1" />
         </el-form-item>
         <el-form-item :label="t('trade.initialMarginRate')">
           <el-input v-model="form.initialMarginRate" />
@@ -122,9 +96,7 @@
           {{ t('common.cancel') }}
         </el-button>
         <el-button type="primary" :loading="saving" @click="save">
-          {{
-            t('common.confirm')
-          }}
+          {{ t('common.confirm') }}
         </el-button>
       </template>
     </el-dialog>

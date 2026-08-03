@@ -5,17 +5,10 @@
         <TenantSelect v-model="query.tenantId" />
       </el-form-item>
       <el-form-item :label="t('trade.symbolId')">
-        <SymbolSelect
-          v-model="query.symbolId"
-          :tenant-id="query.tenantId"
-        />
+        <SymbolSelect v-model="query.symbolId" :tenant-id="query.tenantId" />
       </el-form-item>
       <el-form-item :label="t('trade.status')">
-        <el-input-number
-          v-model="query.status"
-          :min="1"
-          :precision="0"
-        />
+        <el-input-number v-model="query.status" :min="1" :precision="0" />
       </el-form-item>
     </CrudQueryCard>
     <el-card shadow="never" class="table-card">
@@ -41,15 +34,9 @@
           min-width="220"
           show-overflow-tooltip
         />
-        <el-table-column
-          prop="deliveryTime"
-          :label="t('trade.deliveryTime')"
-          min-width="190"
-        >
+        <el-table-column prop="deliveryTime" :label="t('trade.deliveryTime')" min-width="190">
           <template #default="{ row }">
-            {{
-              formatTime(row.deliveryTime)
-            }}
+            {{ formatTime(row.deliveryTime) }}
           </template>
         </el-table-column>
         <el-table-column prop="status" :label="t('trade.status')" min-width="100" />

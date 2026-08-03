@@ -22,7 +22,13 @@
         />
         <el-table-column prop="symbolId" :label="t('trade.symbolId')" min-width="110" />
         <el-table-column prop="fundingRate" :label="t('trade.fundingRate')" min-width="130" />
-        <el-table-column prop="markPrice" :label="t('trade.markPrice')" min-width="130" />
+        <el-table-column prop="markPrice" :label="t('trade.markPrice')" min-width="150">
+          <template #default="{ row }">
+            <el-tooltip :content="row.markPrice" placement="top">
+              <span>{{ formatPrice(row.markPrice) }}</span>
+            </el-tooltip>
+          </template>
+        </el-table-column>
         <el-table-column prop="settlementTime" :label="t('trade.settlementTime')" min-width="190">
           <template #default="{ row }">
             {{ formatTime(row.settlementTime) }}
@@ -57,6 +63,7 @@
 
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
+import Decimal from 'decimal.js'
 import { useI18n } from 'vue-i18n'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 import SymbolSelect from '@/components/SymbolSelect.vue'
@@ -93,6 +100,13 @@ function resetQuery() {
 }
 function formatTime(value: number) {
   return value > 0 ? formatDate(value) : '-'
+}
+function formatPrice(value: string) {
+  try {
+    return new Decimal(value || 0).toDecimalPlaces(8).toFixed()
+  } catch {
+    return value || '-'
+  }
 }
 onMounted(load)
 </script>

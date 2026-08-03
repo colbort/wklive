@@ -5,23 +5,13 @@
         <TenantSelect v-model="query.tenantId" />
       </el-form-item>
       <el-form-item :label="t('trade.bizType')">
-        <el-input
-          v-model="query.bizType"
-          clearable
-        />
+        <el-input v-model="query.bizType" clearable />
       </el-form-item>
       <el-form-item :label="t('trade.bizId')">
-        <el-input
-          v-model="query.bizId"
-          clearable
-        />
+        <el-input v-model="query.bizId" clearable />
       </el-form-item>
       <el-form-item :label="t('trade.orderId')">
-        <el-input-number
-          v-model="query.orderId"
-          :min="0"
-          :precision="0"
-        />
+        <el-input-number v-model="query.orderId" :min="0" :precision="0" />
       </el-form-item>
       <el-form-item :label="t('trade.status')">
         <el-select v-model="query.status" clearable>
@@ -52,27 +42,17 @@
         <el-table-column prop="orderId" :label="t('trade.orderId')" min-width="110" />
         <el-table-column prop="positionId" :label="t('trade.positionId')" min-width="110" />
         <el-table-column prop="userId" :label="t('trade.userId')" min-width="100" />
-        <el-table-column
-          prop="action"
-          :label="t('trade.action')"
-          min-width="140"
-        >
+        <el-table-column prop="action" :label="t('trade.action')" min-width="140">
           <template #default="{ row }">
             {{ actionLabel(row.action) }}
           </template>
         </el-table-column>
         <el-table-column prop="asset" :label="t('trade.asset')" min-width="100" />
         <el-table-column prop="amount" :label="t('trade.amount')" min-width="130" />
-        <el-table-column
-          prop="status"
-          :label="t('trade.status')"
-          min-width="130"
-        >
+        <el-table-column prop="status" :label="t('trade.status')" min-width="130">
           <template #default="{ row }">
             <el-tag :type="statusTagType(row.status)">
-              {{
-                statusLabel(row.status)
-              }}
+              {{ statusLabel(row.status) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -89,15 +69,9 @@
           min-width="210"
           show-overflow-tooltip
         />
-        <el-table-column
-          prop="reconciledAt"
-          :label="t('trade.reconciledAt')"
-          min-width="190"
-        >
+        <el-table-column prop="reconciledAt" :label="t('trade.reconciledAt')" min-width="190">
           <template #default="{ row }">
-            {{
-              formatTime(row.reconciledAt)
-            }}
+            {{ formatTime(row.reconciledAt) }}
           </template>
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="90" fixed="right">

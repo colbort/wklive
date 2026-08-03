@@ -5,30 +5,16 @@
         <TenantSelect v-model="query.tenantId" />
       </el-form-item>
       <el-form-item :label="t('trade.userId')">
-        <UserSelect
-          v-model="query.userId"
-          :tenant-id="query.tenantId"
-        />
+        <UserSelect v-model="query.userId" :tenant-id="query.tenantId" />
       </el-form-item>
       <el-form-item :label="t('trade.symbolId')">
-        <SymbolSelect
-          v-model="query.symbolId"
-          :tenant-id="query.tenantId"
-        />
+        <SymbolSelect v-model="query.symbolId" :tenant-id="query.tenantId" />
       </el-form-item>
       <el-form-item :label="t('trade.positionId')">
-        <el-input-number
-          v-model="query.positionId"
-          :min="0"
-          :precision="0"
-        />
+        <el-input-number v-model="query.positionId" :min="0" :precision="0" />
       </el-form-item>
       <el-form-item :label="t('trade.status')">
-        <el-input-number
-          v-model="query.status"
-          :min="1"
-          :precision="0"
-        />
+        <el-input-number v-model="query.status" :min="1" :precision="0" />
       </el-form-item>
     </CrudQueryCard>
     <el-card shadow="never" class="table-card">
@@ -58,15 +44,9 @@
           min-width="180"
           show-overflow-tooltip
         />
-        <el-table-column
-          prop="completedAt"
-          :label="t('trade.completedAt')"
-          min-width="190"
-        >
+        <el-table-column prop="completedAt" :label="t('trade.completedAt')" min-width="190">
           <template #default="{ row }">
-            {{
-              formatTime(row.completedAt)
-            }}
+            {{ formatTime(row.completedAt) }}
           </template>
         </el-table-column>
       </el-table>

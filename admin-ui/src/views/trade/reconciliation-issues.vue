@@ -12,16 +12,10 @@
         </el-select>
       </el-form-item>
       <el-form-item :label="t('trade.checkType')">
-        <el-input
-          v-model="query.checkType"
-          clearable
-        />
+        <el-input v-model="query.checkType" clearable />
       </el-form-item>
       <el-form-item :label="t('trade.bizNo')">
-        <el-input
-          v-model="query.bizNo"
-          clearable
-        />
+        <el-input v-model="query.bizNo" clearable />
       </el-form-item>
     </CrudQueryCard>
     <el-card shadow="never" class="table-card">
@@ -59,16 +53,10 @@
           min-width="220"
           show-overflow-tooltip
         />
-        <el-table-column
-          prop="status"
-          :label="t('trade.status')"
-          min-width="110"
-        >
+        <el-table-column prop="status" :label="t('trade.status')" min-width="110">
           <template #default="{ row }">
             <el-tag :type="statusTagType(row.status)">
-              {{
-                statusLabel(row.status)
-              }}
+              {{ statusLabel(row.status) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -77,22 +65,12 @@
           :label="t('trade.occurrenceCount')"
           min-width="130"
         />
-        <el-table-column
-          prop="firstSeenAt"
-          :label="t('trade.firstSeenAt')"
-          min-width="190"
-        >
+        <el-table-column prop="firstSeenAt" :label="t('trade.firstSeenAt')" min-width="190">
           <template #default="{ row }">
-            {{
-              formatTime(row.firstSeenAt)
-            }}
+            {{ formatTime(row.firstSeenAt) }}
           </template>
         </el-table-column>
-        <el-table-column
-          prop="lastSeenAt"
-          :label="t('trade.lastSeenAt')"
-          min-width="190"
-        >
+        <el-table-column prop="lastSeenAt" :label="t('trade.lastSeenAt')" min-width="190">
           <template #default="{ row }">
             {{ formatTime(row.lastSeenAt) }}
           </template>

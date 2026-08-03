@@ -5,31 +5,16 @@
         <TenantSelect v-model="query.tenantId" />
       </el-form-item>
       <el-form-item :label="t('trade.batchId')">
-        <el-input-number
-          v-model="query.batchId"
-          :min="0"
-          :precision="0"
-        />
+        <el-input-number v-model="query.batchId" :min="0" :precision="0" />
       </el-form-item>
       <el-form-item :label="t('trade.userId')">
-        <UserSelect
-          v-model="query.userId"
-          :tenant-id="query.tenantId"
-        />
+        <UserSelect v-model="query.userId" :tenant-id="query.tenantId" />
       </el-form-item>
       <el-form-item :label="t('trade.positionId')">
-        <el-input-number
-          v-model="query.positionId"
-          :min="0"
-          :precision="0"
-        />
+        <el-input-number v-model="query.positionId" :min="0" :precision="0" />
       </el-form-item>
       <el-form-item :label="t('trade.status')">
-        <el-input-number
-          v-model="query.status"
-          :min="1"
-          :precision="0"
-        />
+        <el-input-number v-model="query.status" :min="1" :precision="0" />
       </el-form-item>
     </CrudQueryCard>
     <el-card shadow="never" class="table-card">
@@ -56,11 +41,7 @@
         <el-table-column prop="realizedPnl" :label="t('trade.realizedPnl')" min-width="130" />
         <el-table-column prop="deliveryFee" :label="t('trade.deliveryFee')" min-width="130" />
         <el-table-column prop="status" :label="t('trade.status')" min-width="100" />
-        <el-table-column
-          prop="settledAt"
-          :label="t('trade.settledAt')"
-          min-width="190"
-        >
+        <el-table-column prop="settledAt" :label="t('trade.settledAt')" min-width="190">
           <template #default="{ row }">
             {{ formatTime(row.settledAt) }}
           </template>

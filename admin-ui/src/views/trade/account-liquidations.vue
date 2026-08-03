@@ -5,16 +5,10 @@
         <TenantSelect v-model="query.tenantId" />
       </el-form-item>
       <el-form-item :label="t('trade.userId')">
-        <UserSelect
-          v-model="query.userId"
-          :tenant-id="query.tenantId"
-        />
+        <UserSelect v-model="query.userId" :tenant-id="query.tenantId" />
       </el-form-item>
       <el-form-item :label="t('trade.marginAsset')">
-        <el-input
-          v-model="query.marginAsset"
-          clearable
-        />
+        <el-input v-model="query.marginAsset" clearable />
       </el-form-item>
       <el-form-item :label="t('trade.status')">
         <el-select v-model="query.status" clearable>
@@ -63,16 +57,10 @@
         />
         <el-table-column prop="adlQty" :label="t('trade.adlQty')" min-width="120" />
         <el-table-column prop="liquidationFee" :label="t('trade.liquidationFee')" min-width="140" />
-        <el-table-column
-          prop="status"
-          :label="t('trade.status')"
-          min-width="150"
-        >
+        <el-table-column prop="status" :label="t('trade.status')" min-width="150">
           <template #default="{ row }">
             <el-tag :type="statusTagType(row.status)">
-              {{
-                statusLabel(row.status)
-              }}
+              {{ statusLabel(row.status) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -82,15 +70,9 @@
           min-width="180"
           show-overflow-tooltip
         />
-        <el-table-column
-          prop="completedAt"
-          :label="t('trade.completedAt')"
-          min-width="190"
-        >
+        <el-table-column prop="completedAt" :label="t('trade.completedAt')" min-width="190">
           <template #default="{ row }">
-            {{
-              formatTime(row.completedAt)
-            }}
+            {{ formatTime(row.completedAt) }}
           </template>
         </el-table-column>
         <el-table-column :label="t('common.actions')" width="150" fixed="right">
@@ -140,9 +122,7 @@
             :label="t(`trade.${field}`)"
           >
             <el-tag v-if="field === 'status'" :type="statusTagType(detail.status)">
-              {{
-                statusLabel(detail.status)
-              }}
+              {{ statusLabel(detail.status) }}
             </el-tag>
             <template v-else>
               {{ formatValue(field, detail[field]) }}
@@ -187,15 +167,9 @@
         <el-divider>{{ t('trade.settlementInstructions') }}</el-divider>
         <el-table :data="instructions" stripe>
           <el-table-column prop="instructionNo" :label="t('trade.instructionNo')" min-width="220" />
-          <el-table-column
-            prop="action"
-            :label="t('trade.action')"
-            min-width="130"
-          >
+          <el-table-column prop="action" :label="t('trade.action')" min-width="130">
             <template #default="{ row }">
-              {{
-                instructionActionLabel(row.action)
-              }}
+              {{ instructionActionLabel(row.action) }}
             </template>
           </el-table-column>
           <el-table-column prop="amount" :label="t('trade.amount')" min-width="130" />

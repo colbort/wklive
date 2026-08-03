@@ -5,18 +5,10 @@
         <TenantSelect v-model="query.tenantId" />
       </el-form-item>
       <el-form-item :label="t('trade.orderId')">
-        <el-input-number
-          v-model="query.orderId"
-          :min="0"
-          :precision="0"
-        />
+        <el-input-number v-model="query.orderId" :min="0" :precision="0" />
       </el-form-item>
       <el-form-item :label="t('trade.snapshotType')">
-        <el-input-number
-          v-model="query.snapshotType"
-          :min="1"
-          :precision="0"
-        />
+        <el-input-number v-model="query.snapshotType" :min="1" :precision="0" />
       </el-form-item>
     </CrudQueryCard>
     <el-card shadow="never" class="table-card">
@@ -31,20 +23,12 @@
           show-overflow-tooltip
         />
         <el-table-column prop="price" :label="t('trade.price')" min-width="130" />
-        <el-table-column
-          prop="quoteTime"
-          :label="t('trade.quoteTime')"
-          min-width="190"
-        >
+        <el-table-column prop="quoteTime" :label="t('trade.quoteTime')" min-width="190">
           <template #default="{ row }">
             {{ formatTime(row.quoteTime) }}
           </template>
         </el-table-column>
-        <el-table-column
-          prop="receivedAt"
-          :label="t('trade.receivedAt')"
-          min-width="190"
-        >
+        <el-table-column prop="receivedAt" :label="t('trade.receivedAt')" min-width="190">
           <template #default="{ row }">
             {{ formatTime(row.receivedAt) }}
           </template>
@@ -53,9 +37,7 @@
         <el-table-column prop="isSelected" :label="t('trade.isSelected')" min-width="110">
           <template #default="{ row }">
             <el-tag :type="row.isSelected === 1 ? 'success' : 'info'">
-              {{
-                row.isSelected === 1 ? t('common.yes') : t('common.no')
-              }}
+              {{ row.isSelected === 1 ? t('common.yes') : t('common.no') }}
             </el-tag>
           </template>
         </el-table-column>

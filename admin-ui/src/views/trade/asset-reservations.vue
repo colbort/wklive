@@ -5,18 +5,10 @@
         <TenantSelect v-model="query.tenantId" />
       </el-form-item>
       <el-form-item :label="t('trade.orderId')">
-        <el-input-number
-          v-model="query.orderId"
-          :min="0"
-          :precision="0"
-        />
+        <el-input-number v-model="query.orderId" :min="0" :precision="0" />
       </el-form-item>
       <el-form-item :label="t('trade.status')">
-        <el-input-number
-          v-model="query.status"
-          :min="1"
-          :precision="0"
-        />
+        <el-input-number v-model="query.status" :min="1" :precision="0" />
       </el-form-item>
     </CrudQueryCard>
     <el-card shadow="never" class="table-card">
@@ -40,15 +32,9 @@
           min-width="220"
           show-overflow-tooltip
         />
-        <el-table-column
-          prop="updateTimes"
-          :label="t('trade.updateTimes')"
-          min-width="190"
-        >
+        <el-table-column prop="updateTimes" :label="t('trade.updateTimes')" min-width="190">
           <template #default="{ row }">
-            {{
-              formatTime(row.updateTimes)
-            }}
+            {{ formatTime(row.updateTimes) }}
           </template>
         </el-table-column>
       </el-table>
