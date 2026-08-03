@@ -55,6 +55,25 @@ func (l *LockAssetLogic) LockAsset(in *asset.LockAssetReq) (*asset.LockAssetResp
 		userAssetModel := models.NewTUserAssetModel(conn, l.svcCtx.Config.CacheRedis)
 		assetLockModel := models.NewTAssetLockModel(conn, l.svcCtx.Config.CacheRedis)
 		assetFlowModel := models.NewTAssetFlowModel(conn, l.svcCtx.Config.CacheRedis)
+		idempotentModel := models.NewTAssetIdempotentModel(conn, l.svcCtx.Config.CacheRedis)
+
+		if in.BizNo != "" {
+			done, err := helpers.PrepareAssetIdempotent(ctx, idempotentModel, in.TenantId, helpers.AssetBizType(in.BizType), helpers.AssetSceneType(in.SceneType), in.BizNo, in.Remark, ts)
+			if err != nil {
+				return err
+			}
+			if done {
+				lock, err = assetLockModel.FindOneByTenantBizNo(ctx, in.TenantId, helpers.AssetBizType(in.BizType), in.BizNo)
+				if err != nil {
+					return err
+				}
+				if lock.UserId != in.UserId || lock.WalletType != int64(in.WalletType) || lock.Coin != in.Coin || !lock.Amount.Equal(amount) {
+					return i18n.StatusError(ctx, i18n.ParamError)
+				}
+				after, err = userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin)
+				return err
+			}
+		}
 
 		before, err := userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin)
 		if err != nil {
@@ -82,6 +101,11 @@ func (l *LockAssetLogic) LockAsset(in *asset.LockAssetReq) (*asset.LockAssetResp
 		flow := helpers.BuildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, helpers.AssetSceneType(in.SceneType), helpers.AssetBizType(in.BizType), helpers.AssetSceneType(in.SceneType), in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_LOCK, amount, before, after, in.Remark, ts)
 		if _, err := assetFlowModel.Insert(ctx, flow); err != nil {
 			return err
+		}
+		if in.BizNo != "" {
+			if err := helpers.CompleteAssetIdempotent(ctx, idempotentModel, in.TenantId, helpers.AssetBizType(in.BizType), helpers.AssetSceneType(in.SceneType), in.BizNo, ts); err != nil {
+				return err
+			}
 		}
 		return nil
 	})

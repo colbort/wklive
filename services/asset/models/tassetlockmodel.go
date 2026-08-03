@@ -29,6 +29,7 @@ type (
 	TAssetLockModel interface {
 		tAssetLockModel
 		FindPage(ctx context.Context, filter AssetLockPageFilter, cursor int64, limit int64) ([]*TAssetLock, int64, error)
+		FindOneByTenantBizNo(ctx context.Context, tenantId int64, bizType, bizNo string) (*TAssetLock, error)
 		// 解锁时更新锁仓记录
 		UpdateUnlock(ctx context.Context, lockNo string, amount decimal.Decimal, updateTimes int64) (bool, error)
 		// 扣减锁仓记录
@@ -45,6 +46,15 @@ func NewTAssetLockModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Opti
 	return &customTAssetLockModel{
 		defaultTAssetLockModel: newTAssetLockModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTAssetLockModel) FindOneByTenantBizNo(ctx context.Context, tenantId int64, bizType, bizNo string) (*TAssetLock, error) {
+	var item TAssetLock
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND biz_type=? AND biz_no=? ORDER BY id DESC LIMIT 1", tAssetLockRows, m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &item, query, tenantId, bizType, bizNo); err != nil {
+		return nil, err
+	}
+	return &item, nil
 }
 
 func (m *defaultTAssetLockModel) FindPage(ctx context.Context, filter AssetLockPageFilter, cursor int64, limit int64) ([]*TAssetLock, int64, error) {
@@ -113,11 +123,11 @@ func (m *defaultTAssetLockModel) UpdateUnlock(ctx context.Context, lockNo string
 			END,
 			remain_amount = remain_amount - ?,
 			update_times = ?
-		WHERE lock_no = ?
+		WHERE lock_no = ? AND remain_amount >= ?
 	`, m.table)
 
 	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
-		return conn.ExecCtx(ctx, query, amount, amount, amount, updateTimes, lockNo)
+		return conn.ExecCtx(ctx, query, amount, amount, amount, updateTimes, lockNo, amount)
 	})
 
 	if err != nil {
@@ -139,11 +149,11 @@ func (m *defaultTAssetLockModel) UpdateDeduct(ctx context.Context, lockNo string
 			END,
 			remain_amount = remain_amount - ?,
 			update_times = ?
-		WHERE lock_no = ?
+		WHERE lock_no = ? AND remain_amount >= ?
 	`, m.table)
 
 	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
-		return conn.ExecCtx(ctx, query, amount, amount, updateTimes, lockNo)
+		return conn.ExecCtx(ctx, query, amount, amount, updateTimes, lockNo, amount)
 	})
 
 	if err != nil {

@@ -1454,6 +1454,8 @@ const (
 	Asset_ReverseInsuranceCover_FullMethodName        = "/asset.Asset/ReverseInsuranceCover"
 	Asset_CoverPlatformBackstopDeficit_FullMethodName = "/asset.Asset/CoverPlatformBackstopDeficit"
 	Asset_CreditPlatformRevenue_FullMethodName        = "/asset.Asset/CreditPlatformRevenue"
+	Asset_PayPlatformExpense_FullMethodName           = "/asset.Asset/PayPlatformExpense"
+	Asset_CollectLockedRevenue_FullMethodName         = "/asset.Asset/CollectLockedRevenue"
 )
 
 // AssetClient is the client API for Asset service.
@@ -1498,6 +1500,10 @@ type AssetClient interface {
 	CoverPlatformBackstopDeficit(ctx context.Context, in *CoverPlatformBackstopDeficitReq, opts ...grpc.CallOption) (*CoverPlatformBackstopDeficitResp, error)
 	// 将业务手续费原子、幂等计入租户平台手续费收入账户。
 	CreditPlatformRevenue(ctx context.Context, in *CreditPlatformRevenueReq, opts ...grpc.CallOption) (*CreditPlatformRevenueResp, error)
+	// 从租户平台资金账户原子、幂等支付到用户钱包。
+	PayPlatformExpense(ctx context.Context, in *PayPlatformExpenseReq, opts ...grpc.CallOption) (*PlatformTransferResp, error)
+	// 从用户锁仓本金原子扣减并计入租户平台收入账户。
+	CollectLockedRevenue(ctx context.Context, in *CollectLockedRevenueReq, opts ...grpc.CallOption) (*PlatformTransferResp, error)
 }
 
 type assetClient struct {
@@ -1698,6 +1704,26 @@ func (c *assetClient) CreditPlatformRevenue(ctx context.Context, in *CreditPlatf
 	return out, nil
 }
 
+func (c *assetClient) PayPlatformExpense(ctx context.Context, in *PayPlatformExpenseReq, opts ...grpc.CallOption) (*PlatformTransferResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PlatformTransferResp)
+	err := c.cc.Invoke(ctx, Asset_PayPlatformExpense_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *assetClient) CollectLockedRevenue(ctx context.Context, in *CollectLockedRevenueReq, opts ...grpc.CallOption) (*PlatformTransferResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PlatformTransferResp)
+	err := c.cc.Invoke(ctx, Asset_CollectLockedRevenue_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AssetServer is the server API for Asset service.
 // All implementations must embed UnimplementedAssetServer
 // for forward compatibility.
@@ -1740,6 +1766,10 @@ type AssetServer interface {
 	CoverPlatformBackstopDeficit(context.Context, *CoverPlatformBackstopDeficitReq) (*CoverPlatformBackstopDeficitResp, error)
 	// 将业务手续费原子、幂等计入租户平台手续费收入账户。
 	CreditPlatformRevenue(context.Context, *CreditPlatformRevenueReq) (*CreditPlatformRevenueResp, error)
+	// 从租户平台资金账户原子、幂等支付到用户钱包。
+	PayPlatformExpense(context.Context, *PayPlatformExpenseReq) (*PlatformTransferResp, error)
+	// 从用户锁仓本金原子扣减并计入租户平台收入账户。
+	CollectLockedRevenue(context.Context, *CollectLockedRevenueReq) (*PlatformTransferResp, error)
 	mustEmbedUnimplementedAssetServer()
 }
 
@@ -1806,6 +1836,12 @@ func (UnimplementedAssetServer) CoverPlatformBackstopDeficit(context.Context, *C
 }
 func (UnimplementedAssetServer) CreditPlatformRevenue(context.Context, *CreditPlatformRevenueReq) (*CreditPlatformRevenueResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreditPlatformRevenue not implemented")
+}
+func (UnimplementedAssetServer) PayPlatformExpense(context.Context, *PayPlatformExpenseReq) (*PlatformTransferResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method PayPlatformExpense not implemented")
+}
+func (UnimplementedAssetServer) CollectLockedRevenue(context.Context, *CollectLockedRevenueReq) (*PlatformTransferResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method CollectLockedRevenue not implemented")
 }
 func (UnimplementedAssetServer) mustEmbedUnimplementedAssetServer() {}
 func (UnimplementedAssetServer) testEmbeddedByValue()               {}
@@ -2170,6 +2206,42 @@ func _Asset_CreditPlatformRevenue_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Asset_PayPlatformExpense_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PayPlatformExpenseReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetServer).PayPlatformExpense(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Asset_PayPlatformExpense_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetServer).PayPlatformExpense(ctx, req.(*PayPlatformExpenseReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Asset_CollectLockedRevenue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CollectLockedRevenueReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AssetServer).CollectLockedRevenue(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Asset_CollectLockedRevenue_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AssetServer).CollectLockedRevenue(ctx, req.(*CollectLockedRevenueReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Asset_ServiceDesc is the grpc.ServiceDesc for Asset service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2252,6 +2324,14 @@ var Asset_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreditPlatformRevenue",
 			Handler:    _Asset_CreditPlatformRevenue_Handler,
+		},
+		{
+			MethodName: "PayPlatformExpense",
+			Handler:    _Asset_PayPlatformExpense_Handler,
+		},
+		{
+			MethodName: "CollectLockedRevenue",
+			Handler:    _Asset_CollectLockedRevenue_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

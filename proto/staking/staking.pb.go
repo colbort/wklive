@@ -239,6 +239,7 @@ type CreateOrderReq struct {
 	StakeAmount   string                 `protobuf:"bytes,2,opt,name=stake_amount,json=stakeAmount,proto3" json:"stake_amount,omitempty"`
 	Source        SourceType             `protobuf:"varint,3,opt,name=source,proto3,enum=staking.SourceType" json:"source,omitempty"`
 	Remark        string                 `protobuf:"bytes,4,opt,name=remark,proto3" json:"remark,omitempty"`
+	RequestNo     string                 `protobuf:"bytes,5,opt,name=request_no,json=requestNo,proto3" json:"request_no,omitempty"` // 客户端生成的幂等号，同一业务重试必须保持不变
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -297,6 +298,13 @@ func (x *CreateOrderReq) GetSource() SourceType {
 func (x *CreateOrderReq) GetRemark() string {
 	if x != nil {
 		return x.Remark
+	}
+	return ""
+}
+
+func (x *CreateOrderReq) GetRequestNo() string {
+	if x != nil {
+		return x.RequestNo
 	}
 	return ""
 }
@@ -734,6 +742,7 @@ type RedeemReq struct {
 	OrderId       int64                  `protobuf:"varint,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
 	RedeemType    RedeemType             `protobuf:"varint,2,opt,name=redeem_type,json=redeemType,proto3,enum=staking.RedeemType" json:"redeem_type,omitempty"`
 	Remark        string                 `protobuf:"bytes,3,opt,name=remark,proto3" json:"remark,omitempty"`
+	RequestNo     string                 `protobuf:"bytes,4,opt,name=request_no,json=requestNo,proto3" json:"request_no,omitempty"` // 客户端生成的幂等号
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -785,6 +794,13 @@ func (x *RedeemReq) GetRedeemType() RedeemType {
 func (x *RedeemReq) GetRemark() string {
 	if x != nil {
 		return x.Remark
+	}
+	return ""
+}
+
+func (x *RedeemReq) GetRequestNo() string {
+	if x != nil {
+		return x.RequestNo
 	}
 	return ""
 }
@@ -1273,7 +1289,6 @@ type ProductCreateReq struct {
 	Status           ProductStatus          `protobuf:"varint,20,opt,name=status,proto3,enum=staking.ProductStatus" json:"status,omitempty"`
 	Sort             int64                  `protobuf:"varint,21,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark           string                 `protobuf:"bytes,22,opt,name=remark,proto3" json:"remark,omitempty"`
-	OperatorUid      int64                  `protobuf:"varint,23,opt,name=operator_uid,json=operatorUid,proto3" json:"operator_uid,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -1462,13 +1477,6 @@ func (x *ProductCreateReq) GetRemark() string {
 	return ""
 }
 
-func (x *ProductCreateReq) GetOperatorUid() int64 {
-	if x != nil {
-		return x.OperatorUid
-	}
-	return 0
-}
-
 type ProductCreateResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
@@ -1546,7 +1554,6 @@ type ProductUpdateReq struct {
 	Status           ProductStatus          `protobuf:"varint,20,opt,name=status,proto3,enum=staking.ProductStatus" json:"status,omitempty"`
 	Sort             int64                  `protobuf:"varint,21,opt,name=sort,proto3" json:"sort,omitempty"`
 	Remark           string                 `protobuf:"bytes,22,opt,name=remark,proto3" json:"remark,omitempty"`
-	OperatorUid      int64                  `protobuf:"varint,23,opt,name=operator_uid,json=operatorUid,proto3" json:"operator_uid,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -1735,13 +1742,6 @@ func (x *ProductUpdateReq) GetRemark() string {
 	return ""
 }
 
-func (x *ProductUpdateReq) GetOperatorUid() int64 {
-	if x != nil {
-		return x.OperatorUid
-	}
-	return 0
-}
-
 type ProductUpdateResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
@@ -1800,7 +1800,6 @@ type ProductChangeStatusReq struct {
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	Status        ProductStatus          `protobuf:"varint,3,opt,name=status,proto3,enum=staking.ProductStatus" json:"status,omitempty"`
-	OperatorUid   int64                  `protobuf:"varint,4,opt,name=operator_uid,json=operatorUid,proto3" json:"operator_uid,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1854,13 +1853,6 @@ func (x *ProductChangeStatusReq) GetStatus() ProductStatus {
 		return x.Status
 	}
 	return ProductStatus_PRODUCT_STATUS_UNKNOWN
-}
-
-func (x *ProductChangeStatusReq) GetOperatorUid() int64 {
-	if x != nil {
-		return x.OperatorUid
-	}
-	return 0
 }
 
 type ProductChangeStatusResp struct {
@@ -2559,7 +2551,7 @@ type ManualRewardReq struct {
 	RewardAmount  string                 `protobuf:"bytes,3,opt,name=reward_amount,json=rewardAmount,proto3" json:"reward_amount,omitempty"`
 	RewardType    RewardType             `protobuf:"varint,4,opt,name=reward_type,json=rewardType,proto3,enum=staking.RewardType" json:"reward_type,omitempty"`
 	Remark        string                 `protobuf:"bytes,5,opt,name=remark,proto3" json:"remark,omitempty"`
-	OperatorUid   int64                  `protobuf:"varint,6,opt,name=operator_uid,json=operatorUid,proto3" json:"operator_uid,omitempty"`
+	RequestNo     string                 `protobuf:"bytes,7,opt,name=request_no,json=requestNo,proto3" json:"request_no,omitempty"` // 后台生成的幂等号
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2629,11 +2621,11 @@ func (x *ManualRewardReq) GetRemark() string {
 	return ""
 }
 
-func (x *ManualRewardReq) GetOperatorUid() int64 {
+func (x *ManualRewardReq) GetRequestNo() string {
 	if x != nil {
-		return x.OperatorUid
+		return x.RequestNo
 	}
-	return 0
+	return ""
 }
 
 type ManualRewardResp struct {
@@ -2699,7 +2691,7 @@ type ManualRedeemReq struct {
 	FeeRate       string                 `protobuf:"bytes,6,opt,name=fee_rate,json=feeRate,proto3" json:"fee_rate,omitempty"`
 	FeeAmount     string                 `protobuf:"bytes,7,opt,name=fee_amount,json=feeAmount,proto3" json:"fee_amount,omitempty"`
 	Remark        string                 `protobuf:"bytes,8,opt,name=remark,proto3" json:"remark,omitempty"`
-	OperatorUid   int64                  `protobuf:"varint,9,opt,name=operator_uid,json=operatorUid,proto3" json:"operator_uid,omitempty"`
+	RequestNo     string                 `protobuf:"bytes,10,opt,name=request_no,json=requestNo,proto3" json:"request_no,omitempty"` // 后台生成的幂等号
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2790,11 +2782,11 @@ func (x *ManualRedeemReq) GetRemark() string {
 	return ""
 }
 
-func (x *ManualRedeemReq) GetOperatorUid() int64 {
+func (x *ManualRedeemReq) GetRequestNo() string {
 	if x != nil {
-		return x.OperatorUid
+		return x.RequestNo
 	}
-	return 0
+	return ""
 }
 
 type ManualRedeemResp struct {
@@ -2857,6 +2849,390 @@ func (x *ManualRedeemResp) GetRedeemNo() string {
 	return ""
 }
 
+type OperationListReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	OperationNo   string                 `protobuf:"bytes,2,opt,name=operation_no,json=operationNo,proto3" json:"operation_no,omitempty"`
+	OrderNo       string                 `protobuf:"bytes,3,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	UserId        int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	OperationType int64                  `protobuf:"varint,5,opt,name=operation_type,json=operationType,proto3" json:"operation_type,omitempty"`
+	Status        int64                  `protobuf:"varint,6,opt,name=status,proto3" json:"status,omitempty"`
+	Page          *common.PageReq        `protobuf:"bytes,7,opt,name=page,proto3" json:"page,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OperationListReq) Reset() {
+	*x = OperationListReq{}
+	mi := &file_proto_staking_staking_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OperationListReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OperationListReq) ProtoMessage() {}
+
+func (x *OperationListReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_staking_staking_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OperationListReq.ProtoReflect.Descriptor instead.
+func (*OperationListReq) Descriptor() ([]byte, []int) {
+	return file_proto_staking_staking_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *OperationListReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *OperationListReq) GetOperationNo() string {
+	if x != nil {
+		return x.OperationNo
+	}
+	return ""
+}
+
+func (x *OperationListReq) GetOrderNo() string {
+	if x != nil {
+		return x.OrderNo
+	}
+	return ""
+}
+
+func (x *OperationListReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *OperationListReq) GetOperationType() int64 {
+	if x != nil {
+		return x.OperationType
+	}
+	return 0
+}
+
+func (x *OperationListReq) GetStatus() int64 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+func (x *OperationListReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+type OperationListResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Data          []*StakeOperation      `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OperationListResp) Reset() {
+	*x = OperationListResp{}
+	mi := &file_proto_staking_staking_proto_msgTypes[41]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OperationListResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OperationListResp) ProtoMessage() {}
+
+func (x *OperationListResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_staking_staking_proto_msgTypes[41]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OperationListResp.ProtoReflect.Descriptor instead.
+func (*OperationListResp) Descriptor() ([]byte, []int) {
+	return file_proto_staking_staking_proto_rawDescGZIP(), []int{41}
+}
+
+func (x *OperationListResp) GetPage() *common.RespBase {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+func (x *OperationListResp) GetData() []*StakeOperation {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type OperationRetryReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Reason        string                 `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OperationRetryReq) Reset() {
+	*x = OperationRetryReq{}
+	mi := &file_proto_staking_staking_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OperationRetryReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OperationRetryReq) ProtoMessage() {}
+
+func (x *OperationRetryReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_staking_staking_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OperationRetryReq.ProtoReflect.Descriptor instead.
+func (*OperationRetryReq) Descriptor() ([]byte, []int) {
+	return file_proto_staking_staking_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *OperationRetryReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *OperationRetryReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *OperationRetryReq) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+type OperationRetryResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Data          int64                  `protobuf:"varint,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OperationRetryResp) Reset() {
+	*x = OperationRetryResp{}
+	mi := &file_proto_staking_staking_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OperationRetryResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OperationRetryResp) ProtoMessage() {}
+
+func (x *OperationRetryResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_staking_staking_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OperationRetryResp.ProtoReflect.Descriptor instead.
+func (*OperationRetryResp) Descriptor() ([]byte, []int) {
+	return file_proto_staking_staking_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *OperationRetryResp) GetPage() *common.RespBase {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+func (x *OperationRetryResp) GetData() int64 {
+	if x != nil {
+		return x.Data
+	}
+	return 0
+}
+
+type ReconciliationListReq struct {
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	TenantId           int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	ReconciliationDate int64                  `protobuf:"varint,2,opt,name=reconciliation_date,json=reconciliationDate,proto3" json:"reconciliation_date,omitempty"`
+	CoinSymbol         string                 `protobuf:"bytes,3,opt,name=coin_symbol,json=coinSymbol,proto3" json:"coin_symbol,omitempty"`
+	Status             int64                  `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
+	Page               *common.PageReq        `protobuf:"bytes,5,opt,name=page,proto3" json:"page,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *ReconciliationListReq) Reset() {
+	*x = ReconciliationListReq{}
+	mi := &file_proto_staking_staking_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReconciliationListReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReconciliationListReq) ProtoMessage() {}
+
+func (x *ReconciliationListReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_staking_staking_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReconciliationListReq.ProtoReflect.Descriptor instead.
+func (*ReconciliationListReq) Descriptor() ([]byte, []int) {
+	return file_proto_staking_staking_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *ReconciliationListReq) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *ReconciliationListReq) GetReconciliationDate() int64 {
+	if x != nil {
+		return x.ReconciliationDate
+	}
+	return 0
+}
+
+func (x *ReconciliationListReq) GetCoinSymbol() string {
+	if x != nil {
+		return x.CoinSymbol
+	}
+	return ""
+}
+
+func (x *ReconciliationListReq) GetStatus() int64 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+func (x *ReconciliationListReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+type ReconciliationListResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          *common.RespBase       `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
+	Data          []*StakeReconciliation `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReconciliationListResp) Reset() {
+	*x = ReconciliationListResp{}
+	mi := &file_proto_staking_staking_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReconciliationListResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReconciliationListResp) ProtoMessage() {}
+
+func (x *ReconciliationListResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_staking_staking_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReconciliationListResp.ProtoReflect.Descriptor instead.
+func (*ReconciliationListResp) Descriptor() ([]byte, []int) {
+	return file_proto_staking_staking_proto_rawDescGZIP(), []int{45}
+}
+
+func (x *ReconciliationListResp) GetPage() *common.RespBase {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+func (x *ReconciliationListResp) GetData() []*StakeReconciliation {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
 type StakingTaskReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
@@ -2866,7 +3242,7 @@ type StakingTaskReq struct {
 
 func (x *StakingTaskReq) Reset() {
 	*x = StakingTaskReq{}
-	mi := &file_proto_staking_staking_proto_msgTypes[40]
+	mi := &file_proto_staking_staking_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2878,7 +3254,7 @@ func (x *StakingTaskReq) String() string {
 func (*StakingTaskReq) ProtoMessage() {}
 
 func (x *StakingTaskReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_staking_staking_proto_msgTypes[40]
+	mi := &file_proto_staking_staking_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2891,7 +3267,7 @@ func (x *StakingTaskReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StakingTaskReq.ProtoReflect.Descriptor instead.
 func (*StakingTaskReq) Descriptor() ([]byte, []int) {
-	return file_proto_staking_staking_proto_rawDescGZIP(), []int{40}
+	return file_proto_staking_staking_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *StakingTaskReq) GetTenantId() int64 {
@@ -2910,7 +3286,7 @@ type StakingTaskResp struct {
 
 func (x *StakingTaskResp) Reset() {
 	*x = StakingTaskResp{}
-	mi := &file_proto_staking_staking_proto_msgTypes[41]
+	mi := &file_proto_staking_staking_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2922,7 +3298,7 @@ func (x *StakingTaskResp) String() string {
 func (*StakingTaskResp) ProtoMessage() {}
 
 func (x *StakingTaskResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_staking_staking_proto_msgTypes[41]
+	mi := &file_proto_staking_staking_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2935,7 +3311,7 @@ func (x *StakingTaskResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StakingTaskResp.ProtoReflect.Descriptor instead.
 func (*StakingTaskResp) Descriptor() ([]byte, []int) {
-	return file_proto_staking_staking_proto_rawDescGZIP(), []int{41}
+	return file_proto_staking_staking_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *StakingTaskResp) GetBase() *common.RespBase {
@@ -2962,13 +3338,15 @@ const file_proto_staking_staking_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"h\n" +
 	"\x15UserProductDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12)\n" +
-	"\x04data\x18\x02 \x01(\v2\x15.staking.StakeProductR\x04data\"\x97\x01\n" +
+	"\x04data\x18\x02 \x01(\v2\x15.staking.StakeProductR\x04data\"\xb6\x01\n" +
 	"\x0eCreateOrderReq\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x01 \x01(\x03R\tproductId\x12!\n" +
 	"\fstake_amount\x18\x02 \x01(\tR\vstakeAmount\x12+\n" +
 	"\x06source\x18\x03 \x01(\x0e2\x13.staking.SourceTypeR\x06source\x12\x16\n" +
-	"\x06remark\x18\x04 \x01(\tR\x06remark\"e\n" +
+	"\x06remark\x18\x04 \x01(\tR\x06remark\x12\x1d\n" +
+	"\n" +
+	"request_no\x18\x05 \x01(\tR\trequestNo\"e\n" +
 	"\x0fCreateOrderResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12,\n" +
 	"\x04data\x18\x02 \x01(\v2\x18.staking.CreateOrderDataR\x04data\"<\n" +
@@ -2995,12 +3373,14 @@ const file_proto_staking_staking_proto_rawDesc = "" +
 	"\x04page\x18\x03 \x01(\v2\x0f.common.PageReqR\x04page\"h\n" +
 	"\x13MyRewardLogListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12+\n" +
-	"\x04data\x18\x02 \x03(\v2\x17.staking.StakeRewardLogR\x04data\"t\n" +
+	"\x04data\x18\x02 \x03(\v2\x17.staking.StakeRewardLogR\x04data\"\x93\x01\n" +
 	"\tRedeemReq\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\x03R\aorderId\x124\n" +
 	"\vredeem_type\x18\x02 \x01(\x0e2\x13.staking.RedeemTypeR\n" +
 	"redeemType\x12\x16\n" +
-	"\x06remark\x18\x03 \x01(\tR\x06remark\"[\n" +
+	"\x06remark\x18\x03 \x01(\tR\x06remark\x12\x1d\n" +
+	"\n" +
+	"request_no\x18\x04 \x01(\tR\trequestNo\"[\n" +
 	"\n" +
 	"RedeemResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12'\n" +
@@ -3033,7 +3413,7 @@ const file_proto_staking_staking_proto_rawDesc = "" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"d\n" +
 	"\x11ProductDetailResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12)\n" +
-	"\x04data\x18\x02 \x01(\v2\x15.staking.StakeProductR\x04data\"\xf7\x06\n" +
+	"\x04data\x18\x02 \x01(\v2\x15.staking.StakeProductR\x04data\"\xda\x06\n" +
 	"\x10ProductCreateReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x1d\n" +
 	"\n" +
@@ -3063,11 +3443,10 @@ const file_proto_staking_staking_proto_rawDesc = "" +
 	"\x11early_redeem_rate\x18\x13 \x01(\tR\x0fearlyRedeemRate\x12.\n" +
 	"\x06status\x18\x14 \x01(\x0e2\x16.staking.ProductStatusR\x06status\x12\x12\n" +
 	"\x04sort\x18\x15 \x01(\x03R\x04sort\x12\x16\n" +
-	"\x06remark\x18\x16 \x01(\tR\x06remark\x12!\n" +
-	"\foperator_uid\x18\x17 \x01(\x03R\voperatorUid\"M\n" +
+	"\x06remark\x18\x16 \x01(\tR\x06remarkJ\x04\b\x17\x10\x18\"M\n" +
 	"\x11ProductCreateResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\x03R\x04data\"\xe8\x06\n" +
+	"\x04data\x18\x02 \x01(\x03R\x04data\"\xcb\x06\n" +
 	"\x10ProductUpdateReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12!\n" +
@@ -3096,16 +3475,14 @@ const file_proto_staking_staking_proto_rawDesc = "" +
 	"\x11early_redeem_rate\x18\x13 \x01(\tR\x0fearlyRedeemRate\x12.\n" +
 	"\x06status\x18\x14 \x01(\x0e2\x16.staking.ProductStatusR\x06status\x12\x12\n" +
 	"\x04sort\x18\x15 \x01(\x03R\x04sort\x12\x16\n" +
-	"\x06remark\x18\x16 \x01(\tR\x06remark\x12!\n" +
-	"\foperator_uid\x18\x17 \x01(\x03R\voperatorUid\"M\n" +
+	"\x06remark\x18\x16 \x01(\tR\x06remarkJ\x04\b\x17\x10\x18\"M\n" +
 	"\x11ProductUpdateResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\x03R\x04data\"\x98\x01\n" +
+	"\x04data\x18\x02 \x01(\x03R\x04data\"{\n" +
 	"\x16ProductChangeStatusReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12.\n" +
-	"\x06status\x18\x03 \x01(\x0e2\x16.staking.ProductStatusR\x06status\x12!\n" +
-	"\foperator_uid\x18\x04 \x01(\x03R\voperatorUid\"S\n" +
+	"\x06status\x18\x03 \x01(\x0e2\x16.staking.ProductStatusR\x06statusJ\x04\b\x04\x10\x05\"S\n" +
 	"\x17ProductChangeStatusResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x12\n" +
 	"\x04data\x18\x02 \x01(\x03R\x04data\"\x98\x04\n" +
@@ -3168,18 +3545,19 @@ const file_proto_staking_staking_proto_rawDesc = "" +
 	" \x01(\v2\x0f.common.PageReqR\x04page\"f\n" +
 	"\x11RedeemLogListResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12+\n" +
-	"\x04data\x18\x02 \x03(\v2\x17.staking.StakeRedeemLogR\x04data\"\xdf\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x17.staking.StakeRedeemLogR\x04data\"\xe1\x01\n" +
 	"\x0fManualRewardReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_id\x18\x02 \x01(\x03R\aorderId\x12#\n" +
 	"\rreward_amount\x18\x03 \x01(\tR\frewardAmount\x124\n" +
 	"\vreward_type\x18\x04 \x01(\x0e2\x13.staking.RewardTypeR\n" +
 	"rewardType\x12\x16\n" +
-	"\x06remark\x18\x05 \x01(\tR\x06remark\x12!\n" +
-	"\foperator_uid\x18\x06 \x01(\x03R\voperatorUid\"L\n" +
+	"\x06remark\x18\x05 \x01(\tR\x06remark\x12\x1d\n" +
+	"\n" +
+	"request_no\x18\a \x01(\tR\trequestNoJ\x04\b\x06\x10\a\"L\n" +
 	"\x10ManualRewardResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\x03R\x04data\"\xbe\x02\n" +
+	"\x04data\x18\x02 \x01(\x03R\x04data\"\xc0\x02\n" +
 	"\x0fManualRedeemReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x19\n" +
 	"\border_id\x18\x02 \x01(\x03R\aorderId\x124\n" +
@@ -3190,12 +3568,43 @@ const file_proto_staking_staking_proto_rawDesc = "" +
 	"\bfee_rate\x18\x06 \x01(\tR\afeeRate\x12\x1d\n" +
 	"\n" +
 	"fee_amount\x18\a \x01(\tR\tfeeAmount\x12\x16\n" +
-	"\x06remark\x18\b \x01(\tR\x06remark\x12!\n" +
-	"\foperator_uid\x18\t \x01(\x03R\voperatorUid\"o\n" +
+	"\x06remark\x18\b \x01(\tR\x06remark\x12\x1d\n" +
+	"\n" +
+	"request_no\x18\n" +
+	" \x01(\tR\trequestNoJ\x04\b\t\x10\n" +
+	"\"o\n" +
 	"\x10ManualRedeemResp\x12$\n" +
 	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x18\n" +
 	"\asuccess\x18\x02 \x01(\x03R\asuccess\x12\x1b\n" +
-	"\tredeem_no\x18\x03 \x01(\tR\bredeemNo\"-\n" +
+	"\tredeem_no\x18\x03 \x01(\tR\bredeemNo\"\xea\x01\n" +
+	"\x10OperationListReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12!\n" +
+	"\foperation_no\x18\x02 \x01(\tR\voperationNo\x12\x19\n" +
+	"\border_no\x18\x03 \x01(\tR\aorderNo\x12\x17\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\x12%\n" +
+	"\x0eoperation_type\x18\x05 \x01(\x03R\roperationType\x12\x16\n" +
+	"\x06status\x18\x06 \x01(\x03R\x06status\x12#\n" +
+	"\x04page\x18\a \x01(\v2\x0f.common.PageReqR\x04page\"f\n" +
+	"\x11OperationListResp\x12$\n" +
+	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12+\n" +
+	"\x04data\x18\x02 \x03(\v2\x17.staking.StakeOperationR\x04data\"X\n" +
+	"\x11OperationRetryReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x16\n" +
+	"\x06reason\x18\x03 \x01(\tR\x06reason\"N\n" +
+	"\x12OperationRetryResp\x12$\n" +
+	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x12\x12\n" +
+	"\x04data\x18\x02 \x01(\x03R\x04data\"\xc3\x01\n" +
+	"\x15ReconciliationListReq\x12\x1b\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12/\n" +
+	"\x13reconciliation_date\x18\x02 \x01(\x03R\x12reconciliationDate\x12\x1f\n" +
+	"\vcoin_symbol\x18\x03 \x01(\tR\n" +
+	"coinSymbol\x12\x16\n" +
+	"\x06status\x18\x04 \x01(\x03R\x06status\x12#\n" +
+	"\x04page\x18\x05 \x01(\v2\x0f.common.PageReqR\x04page\"p\n" +
+	"\x16ReconciliationListResp\x12$\n" +
+	"\x04page\x18\x01 \x01(\v2\x10.common.RespBaseR\x04page\x120\n" +
+	"\x04data\x18\x02 \x03(\v2\x1c.staking.StakeReconciliationR\x04data\"-\n" +
 	"\x0eStakingTaskReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\"7\n" +
 	"\x0fStakingTaskResp\x12$\n" +
@@ -3208,7 +3617,7 @@ const file_proto_staking_staking_proto_rawDesc = "" +
 	"\rMyOrderDetail\x12\x19.staking.MyOrderDetailReq\x1a\x1a.staking.MyOrderDetailResp\x12L\n" +
 	"\x0fMyRewardLogList\x12\x1b.staking.MyRewardLogListReq\x1a\x1c.staking.MyRewardLogListResp\x121\n" +
 	"\x06Redeem\x12\x12.staking.RedeemReq\x1a\x13.staking.RedeemResp\x12L\n" +
-	"\x0fMyRedeemLogList\x12\x1b.staking.MyRedeemLogListReq\x1a\x1c.staking.MyRedeemLogListResp2\x93\x06\n" +
+	"\x0fMyRedeemLogList\x12\x1b.staking.MyRedeemLogListReq\x1a\x1c.staking.MyRedeemLogListResp2\xfd\a\n" +
 	"\x05Admin\x12@\n" +
 	"\vProductList\x12\x17.staking.ProductListReq\x1a\x18.staking.ProductListResp\x12F\n" +
 	"\rProductDetail\x12\x19.staking.ProductDetailReq\x1a\x1a.staking.ProductDetailResp\x12F\n" +
@@ -3220,9 +3629,13 @@ const file_proto_staking_staking_proto_rawDesc = "" +
 	"\rRewardLogList\x12\x19.staking.RewardLogListReq\x1a\x1a.staking.RewardLogListResp\x12F\n" +
 	"\rRedeemLogList\x12\x19.staking.RedeemLogListReq\x1a\x1a.staking.RedeemLogListResp\x12C\n" +
 	"\fManualReward\x12\x18.staking.ManualRewardReq\x1a\x19.staking.ManualRewardResp\x12C\n" +
-	"\fManualRedeem\x12\x18.staking.ManualRedeemReq\x1a\x19.staking.ManualRedeemResp2Z\n" +
+	"\fManualRedeem\x12\x18.staking.ManualRedeemReq\x1a\x19.staking.ManualRedeemResp\x12F\n" +
+	"\rOperationList\x12\x19.staking.OperationListReq\x1a\x1a.staking.OperationListResp\x12I\n" +
+	"\x0eOperationRetry\x12\x1a.staking.OperationRetryReq\x1a\x1b.staking.OperationRetryResp\x12U\n" +
+	"\x12ReconciliationList\x12\x1e.staking.ReconciliationListReq\x1a\x1f.staking.ReconciliationListResp2\xa1\x01\n" +
 	"\x04Task\x12R\n" +
-	"\x1dProcessRewardsAndSettleOrders\x12\x17.staking.StakingTaskReq\x1a\x18.staking.StakingTaskRespB\x1eZ\x1cwklive/proto/staking;stakingb\x06proto3"
+	"\x1dProcessRewardsAndSettleOrders\x12\x17.staking.StakingTaskReq\x1a\x18.staking.StakingTaskResp\x12E\n" +
+	"\x10ReconcileStaking\x12\x17.staking.StakingTaskReq\x1a\x18.staking.StakingTaskRespB\x1eZ\x1cwklive/proto/staking;stakingb\x06proto3"
 
 var (
 	file_proto_staking_staking_proto_rawDescOnce sync.Once
@@ -3236,7 +3649,7 @@ func file_proto_staking_staking_proto_rawDescGZIP() []byte {
 	return file_proto_staking_staking_proto_rawDescData
 }
 
-var file_proto_staking_staking_proto_msgTypes = make([]protoimpl.MessageInfo, 42)
+var file_proto_staking_staking_proto_msgTypes = make([]protoimpl.MessageInfo, 48)
 var file_proto_staking_staking_proto_goTypes = []any{
 	(*UserProductListReq)(nil),      // 0: staking.UserProductListReq
 	(*UserProductListResp)(nil),     // 1: staking.UserProductListResp
@@ -3278,142 +3691,165 @@ var file_proto_staking_staking_proto_goTypes = []any{
 	(*ManualRewardResp)(nil),        // 37: staking.ManualRewardResp
 	(*ManualRedeemReq)(nil),         // 38: staking.ManualRedeemReq
 	(*ManualRedeemResp)(nil),        // 39: staking.ManualRedeemResp
-	(*StakingTaskReq)(nil),          // 40: staking.StakingTaskReq
-	(*StakingTaskResp)(nil),         // 41: staking.StakingTaskResp
-	(ProductType)(0),                // 42: staking.ProductType
-	(*common.PageReq)(nil),          // 43: common.PageReq
-	(*common.RespBase)(nil),         // 44: common.RespBase
-	(*StakeProduct)(nil),            // 45: staking.StakeProduct
-	(SourceType)(0),                 // 46: staking.SourceType
-	(OrderStatus)(0),                // 47: staking.OrderStatus
-	(RedeemType)(0),                 // 48: staking.RedeemType
-	(*StakeOrder)(nil),              // 49: staking.StakeOrder
-	(RewardType)(0),                 // 50: staking.RewardType
-	(*StakeRewardLog)(nil),          // 51: staking.StakeRewardLog
-	(*StakeRedeemLog)(nil),          // 52: staking.StakeRedeemLog
-	(ProductStatus)(0),              // 53: staking.ProductStatus
-	(InterestMode)(0),               // 54: staking.InterestMode
-	(RewardMode)(0),                 // 55: staking.RewardMode
-	(common.YesNo)(0),               // 56: common.YesNo
-	(RewardStatus)(0),               // 57: staking.RewardStatus
-	(RedeemStatus)(0),               // 58: staking.RedeemStatus
+	(*OperationListReq)(nil),        // 40: staking.OperationListReq
+	(*OperationListResp)(nil),       // 41: staking.OperationListResp
+	(*OperationRetryReq)(nil),       // 42: staking.OperationRetryReq
+	(*OperationRetryResp)(nil),      // 43: staking.OperationRetryResp
+	(*ReconciliationListReq)(nil),   // 44: staking.ReconciliationListReq
+	(*ReconciliationListResp)(nil),  // 45: staking.ReconciliationListResp
+	(*StakingTaskReq)(nil),          // 46: staking.StakingTaskReq
+	(*StakingTaskResp)(nil),         // 47: staking.StakingTaskResp
+	(ProductType)(0),                // 48: staking.ProductType
+	(*common.PageReq)(nil),          // 49: common.PageReq
+	(*common.RespBase)(nil),         // 50: common.RespBase
+	(*StakeProduct)(nil),            // 51: staking.StakeProduct
+	(SourceType)(0),                 // 52: staking.SourceType
+	(OrderStatus)(0),                // 53: staking.OrderStatus
+	(RedeemType)(0),                 // 54: staking.RedeemType
+	(*StakeOrder)(nil),              // 55: staking.StakeOrder
+	(RewardType)(0),                 // 56: staking.RewardType
+	(*StakeRewardLog)(nil),          // 57: staking.StakeRewardLog
+	(*StakeRedeemLog)(nil),          // 58: staking.StakeRedeemLog
+	(ProductStatus)(0),              // 59: staking.ProductStatus
+	(InterestMode)(0),               // 60: staking.InterestMode
+	(RewardMode)(0),                 // 61: staking.RewardMode
+	(common.YesNo)(0),               // 62: common.YesNo
+	(RewardStatus)(0),               // 63: staking.RewardStatus
+	(RedeemStatus)(0),               // 64: staking.RedeemStatus
+	(*StakeOperation)(nil),          // 65: staking.StakeOperation
+	(*StakeReconciliation)(nil),     // 66: staking.StakeReconciliation
 }
 var file_proto_staking_staking_proto_depIdxs = []int32{
-	42, // 0: staking.UserProductListReq.product_type:type_name -> staking.ProductType
-	43, // 1: staking.UserProductListReq.page:type_name -> common.PageReq
-	44, // 2: staking.UserProductListResp.base:type_name -> common.RespBase
-	45, // 3: staking.UserProductListResp.data:type_name -> staking.StakeProduct
-	44, // 4: staking.UserProductDetailResp.base:type_name -> common.RespBase
-	45, // 5: staking.UserProductDetailResp.data:type_name -> staking.StakeProduct
-	46, // 6: staking.CreateOrderReq.source:type_name -> staking.SourceType
-	44, // 7: staking.CreateOrderResp.base:type_name -> common.RespBase
-	6,  // 8: staking.CreateOrderResp.data:type_name -> staking.CreateOrderData
-	47, // 9: staking.MyOrderListReq.status:type_name -> staking.OrderStatus
-	48, // 10: staking.MyOrderListReq.redeem_type:type_name -> staking.RedeemType
-	43, // 11: staking.MyOrderListReq.page:type_name -> common.PageReq
-	44, // 12: staking.MyOrderListResp.base:type_name -> common.RespBase
-	49, // 13: staking.MyOrderListResp.data:type_name -> staking.StakeOrder
-	44, // 14: staking.MyOrderDetailResp.base:type_name -> common.RespBase
-	49, // 15: staking.MyOrderDetailResp.data:type_name -> staking.StakeOrder
-	50, // 16: staking.MyRewardLogListReq.reward_type:type_name -> staking.RewardType
-	43, // 17: staking.MyRewardLogListReq.page:type_name -> common.PageReq
-	44, // 18: staking.MyRewardLogListResp.base:type_name -> common.RespBase
-	51, // 19: staking.MyRewardLogListResp.data:type_name -> staking.StakeRewardLog
-	48, // 20: staking.RedeemReq.redeem_type:type_name -> staking.RedeemType
-	44, // 21: staking.RedeemResp.base:type_name -> common.RespBase
-	15, // 22: staking.RedeemResp.data:type_name -> staking.RedeemData
-	43, // 23: staking.MyRedeemLogListReq.page:type_name -> common.PageReq
-	44, // 24: staking.MyRedeemLogListResp.base:type_name -> common.RespBase
-	52, // 25: staking.MyRedeemLogListResp.data:type_name -> staking.StakeRedeemLog
-	42, // 26: staking.ProductListReq.product_type:type_name -> staking.ProductType
-	53, // 27: staking.ProductListReq.status:type_name -> staking.ProductStatus
-	43, // 28: staking.ProductListReq.page:type_name -> common.PageReq
-	44, // 29: staking.ProductListResp.page:type_name -> common.RespBase
-	45, // 30: staking.ProductListResp.data:type_name -> staking.StakeProduct
-	44, // 31: staking.ProductDetailResp.page:type_name -> common.RespBase
-	45, // 32: staking.ProductDetailResp.data:type_name -> staking.StakeProduct
-	42, // 33: staking.ProductCreateReq.product_type:type_name -> staking.ProductType
-	54, // 34: staking.ProductCreateReq.interest_mode:type_name -> staking.InterestMode
-	55, // 35: staking.ProductCreateReq.reward_mode:type_name -> staking.RewardMode
-	56, // 36: staking.ProductCreateReq.allow_early_redeem:type_name -> common.YesNo
-	53, // 37: staking.ProductCreateReq.status:type_name -> staking.ProductStatus
-	44, // 38: staking.ProductCreateResp.page:type_name -> common.RespBase
-	42, // 39: staking.ProductUpdateReq.product_type:type_name -> staking.ProductType
-	54, // 40: staking.ProductUpdateReq.interest_mode:type_name -> staking.InterestMode
-	55, // 41: staking.ProductUpdateReq.reward_mode:type_name -> staking.RewardMode
-	56, // 42: staking.ProductUpdateReq.allow_early_redeem:type_name -> common.YesNo
-	53, // 43: staking.ProductUpdateReq.status:type_name -> staking.ProductStatus
-	44, // 44: staking.ProductUpdateResp.page:type_name -> common.RespBase
-	53, // 45: staking.ProductChangeStatusReq.status:type_name -> staking.ProductStatus
-	44, // 46: staking.ProductChangeStatusResp.page:type_name -> common.RespBase
-	47, // 47: staking.OrderListReq.status:type_name -> staking.OrderStatus
-	48, // 48: staking.OrderListReq.redeem_type:type_name -> staking.RedeemType
-	46, // 49: staking.OrderListReq.source:type_name -> staking.SourceType
-	43, // 50: staking.OrderListReq.page:type_name -> common.PageReq
-	44, // 51: staking.OrderListResp.page:type_name -> common.RespBase
-	49, // 52: staking.OrderListResp.data:type_name -> staking.StakeOrder
-	44, // 53: staking.OrderDetailResp.page:type_name -> common.RespBase
-	49, // 54: staking.OrderDetailResp.data:type_name -> staking.StakeOrder
-	50, // 55: staking.RewardLogListReq.reward_type:type_name -> staking.RewardType
-	57, // 56: staking.RewardLogListReq.reward_status:type_name -> staking.RewardStatus
-	43, // 57: staking.RewardLogListReq.page:type_name -> common.PageReq
-	44, // 58: staking.RewardLogListResp.page:type_name -> common.RespBase
-	51, // 59: staking.RewardLogListResp.data:type_name -> staking.StakeRewardLog
-	48, // 60: staking.RedeemLogListReq.redeem_type:type_name -> staking.RedeemType
-	58, // 61: staking.RedeemLogListReq.redeem_status:type_name -> staking.RedeemStatus
-	43, // 62: staking.RedeemLogListReq.page:type_name -> common.PageReq
-	44, // 63: staking.RedeemLogListResp.page:type_name -> common.RespBase
-	52, // 64: staking.RedeemLogListResp.data:type_name -> staking.StakeRedeemLog
-	50, // 65: staking.ManualRewardReq.reward_type:type_name -> staking.RewardType
-	44, // 66: staking.ManualRewardResp.page:type_name -> common.RespBase
-	48, // 67: staking.ManualRedeemReq.redeem_type:type_name -> staking.RedeemType
-	44, // 68: staking.ManualRedeemResp.page:type_name -> common.RespBase
-	44, // 69: staking.StakingTaskResp.base:type_name -> common.RespBase
-	0,  // 70: staking.App.ProductList:input_type -> staking.UserProductListReq
-	2,  // 71: staking.App.ProductDetail:input_type -> staking.UserProductDetailReq
-	4,  // 72: staking.App.CreateOrder:input_type -> staking.CreateOrderReq
-	7,  // 73: staking.App.MyOrderList:input_type -> staking.MyOrderListReq
-	9,  // 74: staking.App.MyOrderDetail:input_type -> staking.MyOrderDetailReq
-	11, // 75: staking.App.MyRewardLogList:input_type -> staking.MyRewardLogListReq
-	13, // 76: staking.App.Redeem:input_type -> staking.RedeemReq
-	16, // 77: staking.App.MyRedeemLogList:input_type -> staking.MyRedeemLogListReq
-	18, // 78: staking.Admin.ProductList:input_type -> staking.ProductListReq
-	20, // 79: staking.Admin.ProductDetail:input_type -> staking.ProductDetailReq
-	22, // 80: staking.Admin.ProductCreate:input_type -> staking.ProductCreateReq
-	24, // 81: staking.Admin.ProductUpdate:input_type -> staking.ProductUpdateReq
-	26, // 82: staking.Admin.ProductChangeStatus:input_type -> staking.ProductChangeStatusReq
-	28, // 83: staking.Admin.OrderList:input_type -> staking.OrderListReq
-	30, // 84: staking.Admin.OrderDetail:input_type -> staking.OrderDetailReq
-	32, // 85: staking.Admin.RewardLogList:input_type -> staking.RewardLogListReq
-	34, // 86: staking.Admin.RedeemLogList:input_type -> staking.RedeemLogListReq
-	36, // 87: staking.Admin.ManualReward:input_type -> staking.ManualRewardReq
-	38, // 88: staking.Admin.ManualRedeem:input_type -> staking.ManualRedeemReq
-	40, // 89: staking.Task.ProcessRewardsAndSettleOrders:input_type -> staking.StakingTaskReq
-	1,  // 90: staking.App.ProductList:output_type -> staking.UserProductListResp
-	3,  // 91: staking.App.ProductDetail:output_type -> staking.UserProductDetailResp
-	5,  // 92: staking.App.CreateOrder:output_type -> staking.CreateOrderResp
-	8,  // 93: staking.App.MyOrderList:output_type -> staking.MyOrderListResp
-	10, // 94: staking.App.MyOrderDetail:output_type -> staking.MyOrderDetailResp
-	12, // 95: staking.App.MyRewardLogList:output_type -> staking.MyRewardLogListResp
-	14, // 96: staking.App.Redeem:output_type -> staking.RedeemResp
-	17, // 97: staking.App.MyRedeemLogList:output_type -> staking.MyRedeemLogListResp
-	19, // 98: staking.Admin.ProductList:output_type -> staking.ProductListResp
-	21, // 99: staking.Admin.ProductDetail:output_type -> staking.ProductDetailResp
-	23, // 100: staking.Admin.ProductCreate:output_type -> staking.ProductCreateResp
-	25, // 101: staking.Admin.ProductUpdate:output_type -> staking.ProductUpdateResp
-	27, // 102: staking.Admin.ProductChangeStatus:output_type -> staking.ProductChangeStatusResp
-	29, // 103: staking.Admin.OrderList:output_type -> staking.OrderListResp
-	31, // 104: staking.Admin.OrderDetail:output_type -> staking.OrderDetailResp
-	33, // 105: staking.Admin.RewardLogList:output_type -> staking.RewardLogListResp
-	35, // 106: staking.Admin.RedeemLogList:output_type -> staking.RedeemLogListResp
-	37, // 107: staking.Admin.ManualReward:output_type -> staking.ManualRewardResp
-	39, // 108: staking.Admin.ManualRedeem:output_type -> staking.ManualRedeemResp
-	41, // 109: staking.Task.ProcessRewardsAndSettleOrders:output_type -> staking.StakingTaskResp
-	90, // [90:110] is the sub-list for method output_type
-	70, // [70:90] is the sub-list for method input_type
-	70, // [70:70] is the sub-list for extension type_name
-	70, // [70:70] is the sub-list for extension extendee
-	0,  // [0:70] is the sub-list for field type_name
+	48,  // 0: staking.UserProductListReq.product_type:type_name -> staking.ProductType
+	49,  // 1: staking.UserProductListReq.page:type_name -> common.PageReq
+	50,  // 2: staking.UserProductListResp.base:type_name -> common.RespBase
+	51,  // 3: staking.UserProductListResp.data:type_name -> staking.StakeProduct
+	50,  // 4: staking.UserProductDetailResp.base:type_name -> common.RespBase
+	51,  // 5: staking.UserProductDetailResp.data:type_name -> staking.StakeProduct
+	52,  // 6: staking.CreateOrderReq.source:type_name -> staking.SourceType
+	50,  // 7: staking.CreateOrderResp.base:type_name -> common.RespBase
+	6,   // 8: staking.CreateOrderResp.data:type_name -> staking.CreateOrderData
+	53,  // 9: staking.MyOrderListReq.status:type_name -> staking.OrderStatus
+	54,  // 10: staking.MyOrderListReq.redeem_type:type_name -> staking.RedeemType
+	49,  // 11: staking.MyOrderListReq.page:type_name -> common.PageReq
+	50,  // 12: staking.MyOrderListResp.base:type_name -> common.RespBase
+	55,  // 13: staking.MyOrderListResp.data:type_name -> staking.StakeOrder
+	50,  // 14: staking.MyOrderDetailResp.base:type_name -> common.RespBase
+	55,  // 15: staking.MyOrderDetailResp.data:type_name -> staking.StakeOrder
+	56,  // 16: staking.MyRewardLogListReq.reward_type:type_name -> staking.RewardType
+	49,  // 17: staking.MyRewardLogListReq.page:type_name -> common.PageReq
+	50,  // 18: staking.MyRewardLogListResp.base:type_name -> common.RespBase
+	57,  // 19: staking.MyRewardLogListResp.data:type_name -> staking.StakeRewardLog
+	54,  // 20: staking.RedeemReq.redeem_type:type_name -> staking.RedeemType
+	50,  // 21: staking.RedeemResp.base:type_name -> common.RespBase
+	15,  // 22: staking.RedeemResp.data:type_name -> staking.RedeemData
+	49,  // 23: staking.MyRedeemLogListReq.page:type_name -> common.PageReq
+	50,  // 24: staking.MyRedeemLogListResp.base:type_name -> common.RespBase
+	58,  // 25: staking.MyRedeemLogListResp.data:type_name -> staking.StakeRedeemLog
+	48,  // 26: staking.ProductListReq.product_type:type_name -> staking.ProductType
+	59,  // 27: staking.ProductListReq.status:type_name -> staking.ProductStatus
+	49,  // 28: staking.ProductListReq.page:type_name -> common.PageReq
+	50,  // 29: staking.ProductListResp.page:type_name -> common.RespBase
+	51,  // 30: staking.ProductListResp.data:type_name -> staking.StakeProduct
+	50,  // 31: staking.ProductDetailResp.page:type_name -> common.RespBase
+	51,  // 32: staking.ProductDetailResp.data:type_name -> staking.StakeProduct
+	48,  // 33: staking.ProductCreateReq.product_type:type_name -> staking.ProductType
+	60,  // 34: staking.ProductCreateReq.interest_mode:type_name -> staking.InterestMode
+	61,  // 35: staking.ProductCreateReq.reward_mode:type_name -> staking.RewardMode
+	62,  // 36: staking.ProductCreateReq.allow_early_redeem:type_name -> common.YesNo
+	59,  // 37: staking.ProductCreateReq.status:type_name -> staking.ProductStatus
+	50,  // 38: staking.ProductCreateResp.page:type_name -> common.RespBase
+	48,  // 39: staking.ProductUpdateReq.product_type:type_name -> staking.ProductType
+	60,  // 40: staking.ProductUpdateReq.interest_mode:type_name -> staking.InterestMode
+	61,  // 41: staking.ProductUpdateReq.reward_mode:type_name -> staking.RewardMode
+	62,  // 42: staking.ProductUpdateReq.allow_early_redeem:type_name -> common.YesNo
+	59,  // 43: staking.ProductUpdateReq.status:type_name -> staking.ProductStatus
+	50,  // 44: staking.ProductUpdateResp.page:type_name -> common.RespBase
+	59,  // 45: staking.ProductChangeStatusReq.status:type_name -> staking.ProductStatus
+	50,  // 46: staking.ProductChangeStatusResp.page:type_name -> common.RespBase
+	53,  // 47: staking.OrderListReq.status:type_name -> staking.OrderStatus
+	54,  // 48: staking.OrderListReq.redeem_type:type_name -> staking.RedeemType
+	52,  // 49: staking.OrderListReq.source:type_name -> staking.SourceType
+	49,  // 50: staking.OrderListReq.page:type_name -> common.PageReq
+	50,  // 51: staking.OrderListResp.page:type_name -> common.RespBase
+	55,  // 52: staking.OrderListResp.data:type_name -> staking.StakeOrder
+	50,  // 53: staking.OrderDetailResp.page:type_name -> common.RespBase
+	55,  // 54: staking.OrderDetailResp.data:type_name -> staking.StakeOrder
+	56,  // 55: staking.RewardLogListReq.reward_type:type_name -> staking.RewardType
+	63,  // 56: staking.RewardLogListReq.reward_status:type_name -> staking.RewardStatus
+	49,  // 57: staking.RewardLogListReq.page:type_name -> common.PageReq
+	50,  // 58: staking.RewardLogListResp.page:type_name -> common.RespBase
+	57,  // 59: staking.RewardLogListResp.data:type_name -> staking.StakeRewardLog
+	54,  // 60: staking.RedeemLogListReq.redeem_type:type_name -> staking.RedeemType
+	64,  // 61: staking.RedeemLogListReq.redeem_status:type_name -> staking.RedeemStatus
+	49,  // 62: staking.RedeemLogListReq.page:type_name -> common.PageReq
+	50,  // 63: staking.RedeemLogListResp.page:type_name -> common.RespBase
+	58,  // 64: staking.RedeemLogListResp.data:type_name -> staking.StakeRedeemLog
+	56,  // 65: staking.ManualRewardReq.reward_type:type_name -> staking.RewardType
+	50,  // 66: staking.ManualRewardResp.page:type_name -> common.RespBase
+	54,  // 67: staking.ManualRedeemReq.redeem_type:type_name -> staking.RedeemType
+	50,  // 68: staking.ManualRedeemResp.page:type_name -> common.RespBase
+	49,  // 69: staking.OperationListReq.page:type_name -> common.PageReq
+	50,  // 70: staking.OperationListResp.page:type_name -> common.RespBase
+	65,  // 71: staking.OperationListResp.data:type_name -> staking.StakeOperation
+	50,  // 72: staking.OperationRetryResp.page:type_name -> common.RespBase
+	49,  // 73: staking.ReconciliationListReq.page:type_name -> common.PageReq
+	50,  // 74: staking.ReconciliationListResp.page:type_name -> common.RespBase
+	66,  // 75: staking.ReconciliationListResp.data:type_name -> staking.StakeReconciliation
+	50,  // 76: staking.StakingTaskResp.base:type_name -> common.RespBase
+	0,   // 77: staking.App.ProductList:input_type -> staking.UserProductListReq
+	2,   // 78: staking.App.ProductDetail:input_type -> staking.UserProductDetailReq
+	4,   // 79: staking.App.CreateOrder:input_type -> staking.CreateOrderReq
+	7,   // 80: staking.App.MyOrderList:input_type -> staking.MyOrderListReq
+	9,   // 81: staking.App.MyOrderDetail:input_type -> staking.MyOrderDetailReq
+	11,  // 82: staking.App.MyRewardLogList:input_type -> staking.MyRewardLogListReq
+	13,  // 83: staking.App.Redeem:input_type -> staking.RedeemReq
+	16,  // 84: staking.App.MyRedeemLogList:input_type -> staking.MyRedeemLogListReq
+	18,  // 85: staking.Admin.ProductList:input_type -> staking.ProductListReq
+	20,  // 86: staking.Admin.ProductDetail:input_type -> staking.ProductDetailReq
+	22,  // 87: staking.Admin.ProductCreate:input_type -> staking.ProductCreateReq
+	24,  // 88: staking.Admin.ProductUpdate:input_type -> staking.ProductUpdateReq
+	26,  // 89: staking.Admin.ProductChangeStatus:input_type -> staking.ProductChangeStatusReq
+	28,  // 90: staking.Admin.OrderList:input_type -> staking.OrderListReq
+	30,  // 91: staking.Admin.OrderDetail:input_type -> staking.OrderDetailReq
+	32,  // 92: staking.Admin.RewardLogList:input_type -> staking.RewardLogListReq
+	34,  // 93: staking.Admin.RedeemLogList:input_type -> staking.RedeemLogListReq
+	36,  // 94: staking.Admin.ManualReward:input_type -> staking.ManualRewardReq
+	38,  // 95: staking.Admin.ManualRedeem:input_type -> staking.ManualRedeemReq
+	40,  // 96: staking.Admin.OperationList:input_type -> staking.OperationListReq
+	42,  // 97: staking.Admin.OperationRetry:input_type -> staking.OperationRetryReq
+	44,  // 98: staking.Admin.ReconciliationList:input_type -> staking.ReconciliationListReq
+	46,  // 99: staking.Task.ProcessRewardsAndSettleOrders:input_type -> staking.StakingTaskReq
+	46,  // 100: staking.Task.ReconcileStaking:input_type -> staking.StakingTaskReq
+	1,   // 101: staking.App.ProductList:output_type -> staking.UserProductListResp
+	3,   // 102: staking.App.ProductDetail:output_type -> staking.UserProductDetailResp
+	5,   // 103: staking.App.CreateOrder:output_type -> staking.CreateOrderResp
+	8,   // 104: staking.App.MyOrderList:output_type -> staking.MyOrderListResp
+	10,  // 105: staking.App.MyOrderDetail:output_type -> staking.MyOrderDetailResp
+	12,  // 106: staking.App.MyRewardLogList:output_type -> staking.MyRewardLogListResp
+	14,  // 107: staking.App.Redeem:output_type -> staking.RedeemResp
+	17,  // 108: staking.App.MyRedeemLogList:output_type -> staking.MyRedeemLogListResp
+	19,  // 109: staking.Admin.ProductList:output_type -> staking.ProductListResp
+	21,  // 110: staking.Admin.ProductDetail:output_type -> staking.ProductDetailResp
+	23,  // 111: staking.Admin.ProductCreate:output_type -> staking.ProductCreateResp
+	25,  // 112: staking.Admin.ProductUpdate:output_type -> staking.ProductUpdateResp
+	27,  // 113: staking.Admin.ProductChangeStatus:output_type -> staking.ProductChangeStatusResp
+	29,  // 114: staking.Admin.OrderList:output_type -> staking.OrderListResp
+	31,  // 115: staking.Admin.OrderDetail:output_type -> staking.OrderDetailResp
+	33,  // 116: staking.Admin.RewardLogList:output_type -> staking.RewardLogListResp
+	35,  // 117: staking.Admin.RedeemLogList:output_type -> staking.RedeemLogListResp
+	37,  // 118: staking.Admin.ManualReward:output_type -> staking.ManualRewardResp
+	39,  // 119: staking.Admin.ManualRedeem:output_type -> staking.ManualRedeemResp
+	41,  // 120: staking.Admin.OperationList:output_type -> staking.OperationListResp
+	43,  // 121: staking.Admin.OperationRetry:output_type -> staking.OperationRetryResp
+	45,  // 122: staking.Admin.ReconciliationList:output_type -> staking.ReconciliationListResp
+	47,  // 123: staking.Task.ProcessRewardsAndSettleOrders:output_type -> staking.StakingTaskResp
+	47,  // 124: staking.Task.ReconcileStaking:output_type -> staking.StakingTaskResp
+	101, // [101:125] is the sub-list for method output_type
+	77,  // [77:101] is the sub-list for method input_type
+	77,  // [77:77] is the sub-list for extension type_name
+	77,  // [77:77] is the sub-list for extension extendee
+	0,   // [0:77] is the sub-list for field type_name
 }
 
 func init() { file_proto_staking_staking_proto_init() }
@@ -3429,7 +3865,7 @@ func file_proto_staking_staking_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_staking_staking_proto_rawDesc), len(file_proto_staking_staking_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   42,
+			NumMessages:   48,
 			NumExtensions: 0,
 			NumServices:   3,
 		},

@@ -3,22 +3,19 @@ package adminlogic
 import (
 	"context"
 	"errors"
-	"wklive/services/staking/internal/logic/helpers"
 
 	"wklive/common/conv"
 	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/common/i18n"
-	"wklive/common/utils"
-	"wklive/proto/asset"
 	"wklive/proto/common"
 	"wklive/proto/staking"
+	"wklive/services/staking/internal/logic/helpers"
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
 
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type ManualRedeemLogic struct {
@@ -28,36 +25,38 @@ type ManualRedeemLogic struct {
 }
 
 func NewManualRedeemLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ManualRedeemLogic {
-	return &ManualRedeemLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
-	}
+	return &ManualRedeemLogic{ctx: ctx, svcCtx: svcCtx, Logger: logx.WithContext(ctx)}
 }
 
-// 手动赎回
+// ManualRedeem supports full-order redemption only. It uses the same durable
+// operation executor as the user endpoint, so an admin retry cannot duplicate
+// principal, fee or reward movements.
 func (l *ManualRedeemLogic) ManualRedeem(in *staking.ManualRedeemReq) (*staking.ManualRedeemResp, error) {
 	order, err := l.svcCtx.StakeOrderModel.FindOne(l.ctx, in.OrderId)
 	if err != nil {
 		return nil, err
 	}
-	if order == nil || order.TenantId != in.TenantId {
-		return &staking.ManualRedeemResp{Page: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+	if in.TenantId > 0 && order.TenantId != in.TenantId {
+		return manualRedeemNotFound(l.ctx), nil
 	}
-	if base, err := helpers.AdminTenantWriteScopeResp(l.ctx, order.TenantId, i18n.OrderNotFound); err != nil {
-		return nil, err
+	if base, scopeErr := helpers.AdminTenantWriteScopeResp(l.ctx, order.TenantId, i18n.OrderNotFound); scopeErr != nil {
+		return nil, scopeErr
 	} else if base != nil {
 		return &staking.ManualRedeemResp{Page: base}, nil
 	}
-	if order.Status == int64(staking.OrderStatus_ORDER_STATUS_REDEEMED) || order.Status == int64(staking.OrderStatus_ORDER_STATUS_EARLY_REDEEMED) || order.Status == int64(staking.OrderStatus_ORDER_STATUS_CANCELLED) {
-		return &staking.ManualRedeemResp{Page: helper.ErrResp(i18n.StakingOrderCannotRedeem, i18n.Translate(i18n.StakingOrderCannotRedeem, l.ctx))}, nil
+	operatorId, err := helpers.AdminOperatorUserID(l.ctx)
+	if err != nil {
+		return nil, err
 	}
 	if in.RedeemType == staking.RedeemType_REDEEM_TYPE_EARLY && order.AllowEarlyRedeem != int64(common.YesNo_YES_NO_YES) {
 		return &staking.ManualRedeemResp{Page: helper.ErrResp(i18n.EarlyRedeemNotAllowed, i18n.Translate(i18n.EarlyRedeemNotAllowed, l.ctx))}, nil
 	}
+	if in.RedeemType != staking.RedeemType_REDEEM_TYPE_EARLY && in.RedeemType != staking.RedeemType_REDEEM_TYPE_MATURITY && in.RedeemType != staking.RedeemType_REDEEM_TYPE_MANUAL {
+		return &staking.ManualRedeemResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
 
 	redeemAmount, err := conv.ParseDecimalField(in.RedeemAmount)
-	if err != nil || !redeemAmount.IsPositive() || redeemAmount.GreaterThan(order.StakeAmount) {
+	if err != nil || !redeemAmount.Equal(order.StakeAmount) {
 		return &staking.ManualRedeemResp{Page: helper.ErrResp(i18n.RedeemAmountInvalid, i18n.Translate(i18n.RedeemAmountInvalid, l.ctx))}, nil
 	}
 	rewardAmount, err := conv.ParseDecimalField(in.RewardAmount)
@@ -69,167 +68,66 @@ func (l *ManualRedeemLogic) ManualRedeem(in *staking.ManualRedeemReq) (*staking.
 		return &staking.ManualRedeemResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
 	feeAmount, err := conv.ParseDecimalField(in.FeeAmount)
-	if err != nil || feeAmount.IsNegative() {
+	if err != nil || feeAmount.IsNegative() || feeAmount.GreaterThan(order.StakeAmount) {
 		return &staking.ManualRedeemResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
 	}
+	expectedFee := order.StakeAmount.Mul(feeRate).Div(decimal.NewFromInt(100)).RoundDown(8)
+	if !feeAmount.Equal(expectedFee) {
+		return &staking.ManualRedeemResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	spec := helpers.RedeemOperationSpec{
+		RequestNo: in.RequestNo, OperationType: helpers.StakeOperationTypeManualRedeem,
+		RedeemType: in.RedeemType, RewardAmount: rewardAmount, FeeRate: feeRate,
+		FeeAmount: feeAmount, OperatorId: operatorId, Remark: in.Remark,
+	}
+	if existing, findErr := l.svcCtx.StakeOperationModel.FindOneByTenantIdUserIdOperationTypeRequestNo(l.ctx, order.TenantId, order.UserId, helpers.StakeOperationTypeManualRedeem, in.RequestNo); findErr == nil {
+		spec.OperationNo = existing.OperationNo
+		operation, prepareErr := helpers.PrepareRedeemOperation(l.ctx, l.svcCtx, order, spec)
+		if prepareErr != nil {
+			return nil, prepareErr
+		}
+		if err := helpers.ExecuteRedeemOperation(l.ctx, l.svcCtx, operation); err != nil && !errors.Is(err, helpers.ErrStakeOperationProcessing) {
+			return nil, err
+		}
+		if operation.Status != helpers.StakeOperationStatusSucceeded {
+			return manualRedeemProcessing(operation.OperationNo, l.ctx), nil
+		}
+		return &staking.ManualRedeemResp{Page: helper.OkResp(), Success: 1, RedeemNo: operation.OperationNo}, nil
+	} else if !errors.Is(findErr, models.ErrNotFound) {
+		return nil, findErr
+	}
+	if order.Status != int64(staking.OrderStatus_ORDER_STATUS_STAKING) && order.Status != int64(staking.OrderStatus_ORDER_STATUS_EXPIRED) {
+		return &staking.ManualRedeemResp{Page: helper.ErrResp(i18n.StakingOrderCannotRedeem, i18n.Translate(i18n.StakingOrderCannotRedeem, l.ctx))}, nil
+	}
 
-	redeemNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "SKR", "")
+	operationNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "SKR", "")
 	if err != nil {
 		return nil, err
 	}
-	now := utils.NowMillis()
-	unlockAmount := redeemAmount.Sub(feeAmount)
-	if unlockAmount.IsNegative() {
-		unlockAmount = decimal.Zero
+	spec.OperationNo = operationNo
+	operation, err := helpers.PrepareRedeemOperation(l.ctx, l.svcCtx, order, spec)
+	if errors.Is(err, helpers.ErrStakeOperationProcessing) {
+		return manualRedeemProcessing(operationNo, l.ctx), nil
 	}
-	if unlockAmount.IsPositive() {
-		resp, err := l.svcCtx.AssetClient.UnlockAssetByBizNo(l.ctx, &asset.UnlockAssetByBizNoReq{
-			TenantId:      order.TenantId,
-			TargetBizType: asset.BizType_BIZ_TYPE_STAKING,
-			TargetBizNo:   order.OrderNo,
-			Amount:        conv.FloatString(unlockAmount),
-			BizType:       asset.BizType_BIZ_TYPE_STAKING,
-			SceneType:     asset.SceneType_SCENE_TYPE_STAKING_RELEASE,
-			BizId:         order.Id,
-			BizNo:         redeemNo,
-			Remark:        in.Remark,
-		})
-		if err != nil {
-			l.Errorf("staking manual redeem unlock asset rpc failed, tenantId=%d userId=%d orderNo=%s redeemNo=%s amount=%v err=%v",
-				order.TenantId, order.UserId, order.OrderNo, redeemNo, unlockAmount, err)
-			return nil, err
-		}
-		if resp == nil || resp.Base == nil || resp.Base.Code != 200 {
-			l.Errorf("staking manual redeem unlock asset failed, tenantId=%d userId=%d orderNo=%s redeemNo=%s amount=%v msg=%s",
-				order.TenantId, order.UserId, order.OrderNo, redeemNo, unlockAmount, assetBaseMsg(resp))
-			if resp != nil && resp.Base != nil {
-				return &staking.ManualRedeemResp{Page: resp.Base}, nil
-			}
-			return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
-		}
-	}
-	if feeAmount.IsPositive() {
-		resp, err := l.svcCtx.AssetClient.DeductLockedAssetByBizNo(l.ctx, &asset.DeductLockedAssetByBizNoReq{
-			TenantId:      order.TenantId,
-			TargetBizType: asset.BizType_BIZ_TYPE_STAKING,
-			TargetBizNo:   order.OrderNo,
-			Amount:        conv.FloatString(feeAmount),
-			BizType:       asset.BizType_BIZ_TYPE_STAKING,
-			SceneType:     asset.SceneType_SCENE_TYPE_STAKING_RELEASE,
-			BizId:         order.Id,
-			BizNo:         redeemNo,
-			Remark:        "staking manual redeem fee deduct",
-		})
-		if err != nil {
-			l.Errorf("staking manual redeem deduct locked fee rpc failed, tenantId=%d userId=%d orderNo=%s redeemNo=%s amount=%v err=%v",
-				order.TenantId, order.UserId, order.OrderNo, redeemNo, feeAmount, err)
-			return nil, err
-		}
-		if resp == nil || resp.Base == nil || resp.Base.Code != 200 {
-			l.Errorf("staking manual redeem deduct locked fee failed, tenantId=%d userId=%d orderNo=%s redeemNo=%s amount=%v msg=%s",
-				order.TenantId, order.UserId, order.OrderNo, redeemNo, feeAmount, assetBaseMsg(resp))
-			if resp != nil && resp.Base != nil {
-				return &staking.ManualRedeemResp{Page: resp.Base}, nil
-			}
-			return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
-		}
-	}
-	if rewardAmount.IsPositive() {
-		resp, err := l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{
-			TenantId:   order.TenantId,
-			UserId:     order.UserId,
-			WalletType: common.WalletType_WALLET_TYPE_EARN,
-			Coin:       order.RewardCoinSymbol,
-			Amount:     conv.FloatString(rewardAmount),
-			BizType:    asset.BizType_BIZ_TYPE_STAKING,
-			SceneType:  asset.SceneType_SCENE_TYPE_STAKING_REWARD,
-			BizId:      order.Id,
-			BizNo:      redeemNo,
-			Remark:     in.Remark,
-		})
-		if err != nil {
-			l.Errorf("staking manual redeem add reward rpc failed, tenantId=%d userId=%d orderNo=%s redeemNo=%s coin=%s amount=%v err=%v",
-				order.TenantId, order.UserId, order.OrderNo, redeemNo, order.RewardCoinSymbol, rewardAmount, err)
-			return nil, err
-		}
-		if resp == nil || resp.Base == nil || resp.Base.Code != 200 {
-			l.Errorf("staking manual redeem add reward failed, tenantId=%d userId=%d orderNo=%s redeemNo=%s coin=%s amount=%v msg=%s",
-				order.TenantId, order.UserId, order.OrderNo, redeemNo, order.RewardCoinSymbol, rewardAmount, assetBaseMsg(resp))
-			if resp != nil && resp.Base != nil {
-				return &staking.ManualRedeemResp{Page: resp.Base}, nil
-			}
-			return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
-		}
-	}
-
-	product, err := l.svcCtx.StakeProductModel.FindOne(l.ctx, order.ProductId)
-	if err != nil && !errors.Is(err, models.ErrNotFound) {
-		return nil, err
-	}
-	if product != nil {
-		if product.StakedAmount.GreaterThanOrEqual(order.StakeAmount) {
-			product.StakedAmount = product.StakedAmount.Sub(order.StakeAmount)
-		} else {
-			product.StakedAmount = decimal.Zero
-		}
-		product.UpdateUserId = in.OperatorUid
-		product.UpdateTimes = now
-	}
-
-	order.RedeemAmount = redeemAmount
-	order.RedeemFee = feeAmount
-	order.TotalReward = order.TotalReward.Add(rewardAmount)
-	order.PendingReward = decimal.Zero
-	order.RedeemType = int64(in.RedeemType)
-	order.RedeemApplyTimes = now
-	order.RedeemTimes = now
-	if in.RedeemType == staking.RedeemType_REDEEM_TYPE_EARLY || in.RedeemType == staking.RedeemType_REDEEM_TYPE_MANUAL {
-		order.Status = int64(staking.OrderStatus_ORDER_STATUS_EARLY_REDEEMED)
-	} else {
-		order.Status = int64(staking.OrderStatus_ORDER_STATUS_REDEEMED)
-	}
-	order.Remark = in.Remark
-	order.UpdateUserId = in.OperatorUid
-	order.UpdateTimes = now
-	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		redeemLogModel := models.NewTStakeRedeemLogModel(conn, l.svcCtx.Config.CacheRedis)
-		productModel := models.NewTStakeProductModel(conn, l.svcCtx.Config.CacheRedis)
-		orderModel := models.NewTStakeOrderModel(conn, l.svcCtx.Config.CacheRedis)
-
-		if _, err := redeemLogModel.Insert(ctx, &models.TStakeRedeemLog{
-			TenantId:     order.TenantId,
-			OrderId:      order.Id,
-			OrderNo:      order.OrderNo,
-			UserId:       order.UserId,
-			ProductId:    order.ProductId,
-			RedeemNo:     redeemNo,
-			RedeemType:   int64(in.RedeemType),
-			StakeAmount:  order.StakeAmount,
-			RedeemAmount: redeemAmount,
-			RewardAmount: rewardAmount,
-			FeeRate:      feeRate,
-			FeeAmount:    feeAmount,
-			RedeemStatus: int64(staking.RedeemStatus_REDEEM_STATUS_SUCCESS),
-			RedeemTimes:  now,
-			Remark:       in.Remark,
-			CreateUserId: in.OperatorUid,
-			UpdateUserId: in.OperatorUid,
-			CreateTimes:  now,
-			UpdateTimes:  now,
-		}); err != nil {
-			return err
-		}
-		if product != nil {
-			if err := productModel.Update(ctx, product); err != nil {
-				return err
-			}
-		}
-		return orderModel.Update(ctx, order)
-	})
 	if err != nil {
 		return nil, err
 	}
+	if err := helpers.ExecuteRedeemOperation(l.ctx, l.svcCtx, operation); err != nil {
+		if errors.Is(err, helpers.ErrStakeOperationProcessing) {
+			return manualRedeemProcessing(operation.OperationNo, l.ctx), nil
+		}
+		return nil, err
+	}
+	return &staking.ManualRedeemResp{Page: helper.OkResp(), Success: 1, RedeemNo: operation.OperationNo}, nil
+}
 
-	return &staking.ManualRedeemResp{Page: helper.OkResp(), Success: 1, RedeemNo: redeemNo}, nil
+func manualRedeemNotFound(ctx context.Context) *staking.ManualRedeemResp {
+	return &staking.ManualRedeemResp{Page: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, ctx))}
+}
+
+func manualRedeemProcessing(operationNo string, ctx context.Context) *staking.ManualRedeemResp {
+	return &staking.ManualRedeemResp{
+		Page:     helper.ErrResp(i18n.AssetRequestProcessing, i18n.Translate(i18n.AssetRequestProcessing, ctx)),
+		RedeemNo: operationNo,
+	}
 }

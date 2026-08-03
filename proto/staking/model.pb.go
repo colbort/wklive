@@ -285,47 +285,50 @@ func (x *StakeProduct) GetUpdateTimes() int64 {
 
 // 质押订单
 type StakeOrder struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId         int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	OrderNo          string                 `protobuf:"bytes,3,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
-	UserId           int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	ProductId        int64                  `protobuf:"varint,5,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
-	ProductNo        string                 `protobuf:"bytes,6,opt,name=product_no,json=productNo,proto3" json:"product_no,omitempty"`
-	ProductName      string                 `protobuf:"bytes,7,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
-	ProductType      ProductType            `protobuf:"varint,8,opt,name=product_type,json=productType,proto3,enum=staking.ProductType" json:"product_type,omitempty"`
-	CoinName         string                 `protobuf:"bytes,9,opt,name=coin_name,json=coinName,proto3" json:"coin_name,omitempty"`
-	CoinSymbol       string                 `protobuf:"bytes,10,opt,name=coin_symbol,json=coinSymbol,proto3" json:"coin_symbol,omitempty"`
-	RewardCoinName   string                 `protobuf:"bytes,11,opt,name=reward_coin_name,json=rewardCoinName,proto3" json:"reward_coin_name,omitempty"`
-	RewardCoinSymbol string                 `protobuf:"bytes,12,opt,name=reward_coin_symbol,json=rewardCoinSymbol,proto3" json:"reward_coin_symbol,omitempty"`
-	StakeAmount      string                 `protobuf:"bytes,13,opt,name=stake_amount,json=stakeAmount,proto3" json:"stake_amount,omitempty"`
-	Apr              string                 `protobuf:"bytes,14,opt,name=apr,proto3" json:"apr,omitempty"`
-	LockDays         int64                  `protobuf:"varint,15,opt,name=lock_days,json=lockDays,proto3" json:"lock_days,omitempty"`
-	InterestMode     InterestMode           `protobuf:"varint,16,opt,name=interest_mode,json=interestMode,proto3,enum=staking.InterestMode" json:"interest_mode,omitempty"`
-	RewardMode       RewardMode             `protobuf:"varint,17,opt,name=reward_mode,json=rewardMode,proto3,enum=staking.RewardMode" json:"reward_mode,omitempty"`
-	AllowEarlyRedeem common.YesNo           `protobuf:"varint,18,opt,name=allow_early_redeem,json=allowEarlyRedeem,proto3,enum=common.YesNo" json:"allow_early_redeem,omitempty"` // 是否允许提前赎回
-	EarlyRedeemRate  string                 `protobuf:"bytes,19,opt,name=early_redeem_rate,json=earlyRedeemRate,proto3" json:"early_redeem_rate,omitempty"`
-	InterestDays     int64                  `protobuf:"varint,20,opt,name=interest_days,json=interestDays,proto3" json:"interest_days,omitempty"`
-	StartTimes       int64                  `protobuf:"varint,21,opt,name=start_times,json=startTimes,proto3" json:"start_times,omitempty"`
-	EndTimes         int64                  `protobuf:"varint,22,opt,name=end_times,json=endTimes,proto3" json:"end_times,omitempty"`
-	LastRewardTimes  int64                  `protobuf:"varint,23,opt,name=last_reward_times,json=lastRewardTimes,proto3" json:"last_reward_times,omitempty"`
-	NextRewardTimes  int64                  `protobuf:"varint,24,opt,name=next_reward_times,json=nextRewardTimes,proto3" json:"next_reward_times,omitempty"`
-	TotalReward      string                 `protobuf:"bytes,25,opt,name=total_reward,json=totalReward,proto3" json:"total_reward,omitempty"`
-	PendingReward    string                 `protobuf:"bytes,26,opt,name=pending_reward,json=pendingReward,proto3" json:"pending_reward,omitempty"`
-	RedeemAmount     string                 `protobuf:"bytes,27,opt,name=redeem_amount,json=redeemAmount,proto3" json:"redeem_amount,omitempty"`
-	RedeemFee        string                 `protobuf:"bytes,28,opt,name=redeem_fee,json=redeemFee,proto3" json:"redeem_fee,omitempty"`
-	Status           OrderStatus            `protobuf:"varint,29,opt,name=status,proto3,enum=staking.OrderStatus" json:"status,omitempty"`
-	RedeemType       RedeemType             `protobuf:"varint,30,opt,name=redeem_type,json=redeemType,proto3,enum=staking.RedeemType" json:"redeem_type,omitempty"`
-	RedeemApplyTimes int64                  `protobuf:"varint,31,opt,name=redeem_apply_times,json=redeemApplyTimes,proto3" json:"redeem_apply_times,omitempty"`
-	RedeemTimes      int64                  `protobuf:"varint,32,opt,name=redeem_times,json=redeemTimes,proto3" json:"redeem_times,omitempty"`
-	Source           SourceType             `protobuf:"varint,33,opt,name=source,proto3,enum=staking.SourceType" json:"source,omitempty"`
-	Remark           string                 `protobuf:"bytes,34,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreateUserId     int64                  `protobuf:"varint,35,opt,name=create_user_id,json=createUserId,proto3" json:"create_user_id,omitempty"`
-	UpdateUserId     int64                  `protobuf:"varint,36,opt,name=update_user_id,json=updateUserId,proto3" json:"update_user_id,omitempty"`
-	CreateTimes      int64                  `protobuf:"varint,37,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes      int64                  `protobuf:"varint,38,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Id                int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId          int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	OrderNo           string                 `protobuf:"bytes,3,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	UserId            int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ProductId         int64                  `protobuf:"varint,5,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	ProductNo         string                 `protobuf:"bytes,6,opt,name=product_no,json=productNo,proto3" json:"product_no,omitempty"`
+	ProductName       string                 `protobuf:"bytes,7,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
+	ProductType       ProductType            `protobuf:"varint,8,opt,name=product_type,json=productType,proto3,enum=staking.ProductType" json:"product_type,omitempty"`
+	CoinName          string                 `protobuf:"bytes,9,opt,name=coin_name,json=coinName,proto3" json:"coin_name,omitempty"`
+	CoinSymbol        string                 `protobuf:"bytes,10,opt,name=coin_symbol,json=coinSymbol,proto3" json:"coin_symbol,omitempty"`
+	RewardCoinName    string                 `protobuf:"bytes,11,opt,name=reward_coin_name,json=rewardCoinName,proto3" json:"reward_coin_name,omitempty"`
+	RewardCoinSymbol  string                 `protobuf:"bytes,12,opt,name=reward_coin_symbol,json=rewardCoinSymbol,proto3" json:"reward_coin_symbol,omitempty"`
+	StakeAmount       string                 `protobuf:"bytes,13,opt,name=stake_amount,json=stakeAmount,proto3" json:"stake_amount,omitempty"`
+	Apr               string                 `protobuf:"bytes,14,opt,name=apr,proto3" json:"apr,omitempty"`
+	LockDays          int64                  `protobuf:"varint,15,opt,name=lock_days,json=lockDays,proto3" json:"lock_days,omitempty"`
+	InterestMode      InterestMode           `protobuf:"varint,16,opt,name=interest_mode,json=interestMode,proto3,enum=staking.InterestMode" json:"interest_mode,omitempty"`
+	RewardMode        RewardMode             `protobuf:"varint,17,opt,name=reward_mode,json=rewardMode,proto3,enum=staking.RewardMode" json:"reward_mode,omitempty"`
+	AllowEarlyRedeem  common.YesNo           `protobuf:"varint,18,opt,name=allow_early_redeem,json=allowEarlyRedeem,proto3,enum=common.YesNo" json:"allow_early_redeem,omitempty"` // 是否允许提前赎回
+	EarlyRedeemRate   string                 `protobuf:"bytes,19,opt,name=early_redeem_rate,json=earlyRedeemRate,proto3" json:"early_redeem_rate,omitempty"`
+	InterestDays      int64                  `protobuf:"varint,20,opt,name=interest_days,json=interestDays,proto3" json:"interest_days,omitempty"`
+	StartTimes        int64                  `protobuf:"varint,21,opt,name=start_times,json=startTimes,proto3" json:"start_times,omitempty"`
+	EndTimes          int64                  `protobuf:"varint,22,opt,name=end_times,json=endTimes,proto3" json:"end_times,omitempty"`
+	LastRewardTimes   int64                  `protobuf:"varint,23,opt,name=last_reward_times,json=lastRewardTimes,proto3" json:"last_reward_times,omitempty"`
+	NextRewardTimes   int64                  `protobuf:"varint,24,opt,name=next_reward_times,json=nextRewardTimes,proto3" json:"next_reward_times,omitempty"`
+	TotalReward       string                 `protobuf:"bytes,25,opt,name=total_reward,json=totalReward,proto3" json:"total_reward,omitempty"`
+	PendingReward     string                 `protobuf:"bytes,26,opt,name=pending_reward,json=pendingReward,proto3" json:"pending_reward,omitempty"`
+	RedeemAmount      string                 `protobuf:"bytes,27,opt,name=redeem_amount,json=redeemAmount,proto3" json:"redeem_amount,omitempty"`
+	RedeemFee         string                 `protobuf:"bytes,28,opt,name=redeem_fee,json=redeemFee,proto3" json:"redeem_fee,omitempty"`
+	Status            OrderStatus            `protobuf:"varint,29,opt,name=status,proto3,enum=staking.OrderStatus" json:"status,omitempty"`
+	RedeemType        RedeemType             `protobuf:"varint,30,opt,name=redeem_type,json=redeemType,proto3,enum=staking.RedeemType" json:"redeem_type,omitempty"`
+	RedeemApplyTimes  int64                  `protobuf:"varint,31,opt,name=redeem_apply_times,json=redeemApplyTimes,proto3" json:"redeem_apply_times,omitempty"`
+	RedeemTimes       int64                  `protobuf:"varint,32,opt,name=redeem_times,json=redeemTimes,proto3" json:"redeem_times,omitempty"`
+	Source            SourceType             `protobuf:"varint,33,opt,name=source,proto3,enum=staking.SourceType" json:"source,omitempty"`
+	Remark            string                 `protobuf:"bytes,34,opt,name=remark,proto3" json:"remark,omitempty"`
+	CreateUserId      int64                  `protobuf:"varint,35,opt,name=create_user_id,json=createUserId,proto3" json:"create_user_id,omitempty"`
+	UpdateUserId      int64                  `protobuf:"varint,36,opt,name=update_user_id,json=updateUserId,proto3" json:"update_user_id,omitempty"`
+	CreateTimes       int64                  `protobuf:"varint,37,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	UpdateTimes       int64                  `protobuf:"varint,38,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	RequestNo         string                 `protobuf:"bytes,39,opt,name=request_no,json=requestNo,proto3" json:"request_no,omitempty"`
+	Version           int64                  `protobuf:"varint,40,opt,name=version,proto3" json:"version,omitempty"`
+	ActiveOperationNo string                 `protobuf:"bytes,41,opt,name=active_operation_no,json=activeOperationNo,proto3" json:"active_operation_no,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *StakeOrder) Reset() {
@@ -624,6 +627,27 @@ func (x *StakeOrder) GetUpdateTimes() int64 {
 	return 0
 }
 
+func (x *StakeOrder) GetRequestNo() string {
+	if x != nil {
+		return x.RequestNo
+	}
+	return ""
+}
+
+func (x *StakeOrder) GetVersion() int64 {
+	if x != nil {
+		return x.Version
+	}
+	return 0
+}
+
+func (x *StakeOrder) GetActiveOperationNo() string {
+	if x != nil {
+		return x.ActiveOperationNo
+	}
+	return ""
+}
+
 // 收益记录
 type StakeRewardLog struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
@@ -647,6 +671,7 @@ type StakeRewardLog struct {
 	UpdateUserId     int64                  `protobuf:"varint,18,opt,name=update_user_id,json=updateUserId,proto3" json:"update_user_id,omitempty"`
 	CreateTimes      int64                  `protobuf:"varint,19,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes      int64                  `protobuf:"varint,20,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	OperationNo      string                 `protobuf:"bytes,21,opt,name=operation_no,json=operationNo,proto3" json:"operation_no,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -819,6 +844,13 @@ func (x *StakeRewardLog) GetUpdateTimes() int64 {
 		return x.UpdateTimes
 	}
 	return 0
+}
+
+func (x *StakeRewardLog) GetOperationNo() string {
+	if x != nil {
+		return x.OperationNo
+	}
+	return ""
 }
 
 // 赎回记录
@@ -1018,6 +1050,440 @@ func (x *StakeRedeemLog) GetUpdateTimes() int64 {
 	return 0
 }
 
+// 持久化资金操作。后台用于查看跨服务资金步骤、失败原因及恢复状态。
+type StakeOperation struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	UserId          int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	OrderId         int64                  `protobuf:"varint,4,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
+	OrderNo         string                 `protobuf:"bytes,5,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	OperationNo     string                 `protobuf:"bytes,6,opt,name=operation_no,json=operationNo,proto3" json:"operation_no,omitempty"`
+	RequestNo       string                 `protobuf:"bytes,7,opt,name=request_no,json=requestNo,proto3" json:"request_no,omitempty"`
+	OperationType   int64                  `protobuf:"varint,8,opt,name=operation_type,json=operationType,proto3" json:"operation_type,omitempty"`
+	PrincipalAmount string                 `protobuf:"bytes,9,opt,name=principal_amount,json=principalAmount,proto3" json:"principal_amount,omitempty"`
+	RewardAmount    string                 `protobuf:"bytes,10,opt,name=reward_amount,json=rewardAmount,proto3" json:"reward_amount,omitempty"`
+	FeeAmount       string                 `protobuf:"bytes,11,opt,name=fee_amount,json=feeAmount,proto3" json:"fee_amount,omitempty"`
+	PrincipalStatus int64                  `protobuf:"varint,12,opt,name=principal_status,json=principalStatus,proto3" json:"principal_status,omitempty"`
+	RewardStatus    int64                  `protobuf:"varint,13,opt,name=reward_status,json=rewardStatus,proto3" json:"reward_status,omitempty"`
+	FeeStatus       int64                  `protobuf:"varint,14,opt,name=fee_status,json=feeStatus,proto3" json:"fee_status,omitempty"`
+	Status          int64                  `protobuf:"varint,15,opt,name=status,proto3" json:"status,omitempty"`
+	PeriodEnd       int64                  `protobuf:"varint,16,opt,name=period_end,json=periodEnd,proto3" json:"period_end,omitempty"`
+	RetryCount      int64                  `protobuf:"varint,17,opt,name=retry_count,json=retryCount,proto3" json:"retry_count,omitempty"`
+	NextRetryAt     int64                  `protobuf:"varint,18,opt,name=next_retry_at,json=nextRetryAt,proto3" json:"next_retry_at,omitempty"`
+	LastError       string                 `protobuf:"bytes,19,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
+	OperatorUserId  int64                  `protobuf:"varint,20,opt,name=operator_user_id,json=operatorUserId,proto3" json:"operator_user_id,omitempty"`
+	Remark          string                 `protobuf:"bytes,21,opt,name=remark,proto3" json:"remark,omitempty"`
+	Version         int64                  `protobuf:"varint,22,opt,name=version,proto3" json:"version,omitempty"`
+	CreateTimes     int64                  `protobuf:"varint,23,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	UpdateTimes     int64                  `protobuf:"varint,24,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *StakeOperation) Reset() {
+	*x = StakeOperation{}
+	mi := &file_proto_staking_model_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StakeOperation) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StakeOperation) ProtoMessage() {}
+
+func (x *StakeOperation) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_staking_model_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StakeOperation.ProtoReflect.Descriptor instead.
+func (*StakeOperation) Descriptor() ([]byte, []int) {
+	return file_proto_staking_model_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *StakeOperation) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *StakeOperation) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *StakeOperation) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *StakeOperation) GetOrderId() int64 {
+	if x != nil {
+		return x.OrderId
+	}
+	return 0
+}
+
+func (x *StakeOperation) GetOrderNo() string {
+	if x != nil {
+		return x.OrderNo
+	}
+	return ""
+}
+
+func (x *StakeOperation) GetOperationNo() string {
+	if x != nil {
+		return x.OperationNo
+	}
+	return ""
+}
+
+func (x *StakeOperation) GetRequestNo() string {
+	if x != nil {
+		return x.RequestNo
+	}
+	return ""
+}
+
+func (x *StakeOperation) GetOperationType() int64 {
+	if x != nil {
+		return x.OperationType
+	}
+	return 0
+}
+
+func (x *StakeOperation) GetPrincipalAmount() string {
+	if x != nil {
+		return x.PrincipalAmount
+	}
+	return ""
+}
+
+func (x *StakeOperation) GetRewardAmount() string {
+	if x != nil {
+		return x.RewardAmount
+	}
+	return ""
+}
+
+func (x *StakeOperation) GetFeeAmount() string {
+	if x != nil {
+		return x.FeeAmount
+	}
+	return ""
+}
+
+func (x *StakeOperation) GetPrincipalStatus() int64 {
+	if x != nil {
+		return x.PrincipalStatus
+	}
+	return 0
+}
+
+func (x *StakeOperation) GetRewardStatus() int64 {
+	if x != nil {
+		return x.RewardStatus
+	}
+	return 0
+}
+
+func (x *StakeOperation) GetFeeStatus() int64 {
+	if x != nil {
+		return x.FeeStatus
+	}
+	return 0
+}
+
+func (x *StakeOperation) GetStatus() int64 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+func (x *StakeOperation) GetPeriodEnd() int64 {
+	if x != nil {
+		return x.PeriodEnd
+	}
+	return 0
+}
+
+func (x *StakeOperation) GetRetryCount() int64 {
+	if x != nil {
+		return x.RetryCount
+	}
+	return 0
+}
+
+func (x *StakeOperation) GetNextRetryAt() int64 {
+	if x != nil {
+		return x.NextRetryAt
+	}
+	return 0
+}
+
+func (x *StakeOperation) GetLastError() string {
+	if x != nil {
+		return x.LastError
+	}
+	return ""
+}
+
+func (x *StakeOperation) GetOperatorUserId() int64 {
+	if x != nil {
+		return x.OperatorUserId
+	}
+	return 0
+}
+
+func (x *StakeOperation) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
+func (x *StakeOperation) GetVersion() int64 {
+	if x != nil {
+		return x.Version
+	}
+	return 0
+}
+
+func (x *StakeOperation) GetCreateTimes() int64 {
+	if x != nil {
+		return x.CreateTimes
+	}
+	return 0
+}
+
+func (x *StakeOperation) GetUpdateTimes() int64 {
+	if x != nil {
+		return x.UpdateTimes
+	}
+	return 0
+}
+
+// 每日账实对账快照。金额保留数据库原始精度，以字符串传输。
+type StakeReconciliation struct {
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId             int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	ReconciliationDate   int64                  `protobuf:"varint,3,opt,name=reconciliation_date,json=reconciliationDate,proto3" json:"reconciliation_date,omitempty"`
+	CoinSymbol           string                 `protobuf:"bytes,4,opt,name=coin_symbol,json=coinSymbol,proto3" json:"coin_symbol,omitempty"`
+	ActivePrincipal      string                 `protobuf:"bytes,5,opt,name=active_principal,json=activePrincipal,proto3" json:"active_principal,omitempty"`
+	ProductStaked        string                 `protobuf:"bytes,6,opt,name=product_staked,json=productStaked,proto3" json:"product_staked,omitempty"`
+	PositionStaked       string                 `protobuf:"bytes,7,opt,name=position_staked,json=positionStaked,proto3" json:"position_staked,omitempty"`
+	AssetLocked          string                 `protobuf:"bytes,8,opt,name=asset_locked,json=assetLocked,proto3" json:"asset_locked,omitempty"`
+	RewardLogAmount      string                 `protobuf:"bytes,9,opt,name=reward_log_amount,json=rewardLogAmount,proto3" json:"reward_log_amount,omitempty"`
+	RewardPlatformAmount string                 `protobuf:"bytes,10,opt,name=reward_platform_amount,json=rewardPlatformAmount,proto3" json:"reward_platform_amount,omitempty"`
+	FeeLogAmount         string                 `protobuf:"bytes,11,opt,name=fee_log_amount,json=feeLogAmount,proto3" json:"fee_log_amount,omitempty"`
+	FeePlatformAmount    string                 `protobuf:"bytes,12,opt,name=fee_platform_amount,json=feePlatformAmount,proto3" json:"fee_platform_amount,omitempty"`
+	ProductDiff          string                 `protobuf:"bytes,13,opt,name=product_diff,json=productDiff,proto3" json:"product_diff,omitempty"`
+	PositionDiff         string                 `protobuf:"bytes,14,opt,name=position_diff,json=positionDiff,proto3" json:"position_diff,omitempty"`
+	LockDiff             string                 `protobuf:"bytes,15,opt,name=lock_diff,json=lockDiff,proto3" json:"lock_diff,omitempty"`
+	RewardDiff           string                 `protobuf:"bytes,16,opt,name=reward_diff,json=rewardDiff,proto3" json:"reward_diff,omitempty"`
+	FeeDiff              string                 `protobuf:"bytes,17,opt,name=fee_diff,json=feeDiff,proto3" json:"fee_diff,omitempty"`
+	Status               int64                  `protobuf:"varint,18,opt,name=status,proto3" json:"status,omitempty"`
+	Detail               string                 `protobuf:"bytes,19,opt,name=detail,proto3" json:"detail,omitempty"`
+	CreateTimes          int64                  `protobuf:"varint,20,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	UpdateTimes          int64                  `protobuf:"varint,21,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *StakeReconciliation) Reset() {
+	*x = StakeReconciliation{}
+	mi := &file_proto_staking_model_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StakeReconciliation) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StakeReconciliation) ProtoMessage() {}
+
+func (x *StakeReconciliation) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_staking_model_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StakeReconciliation.ProtoReflect.Descriptor instead.
+func (*StakeReconciliation) Descriptor() ([]byte, []int) {
+	return file_proto_staking_model_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *StakeReconciliation) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *StakeReconciliation) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *StakeReconciliation) GetReconciliationDate() int64 {
+	if x != nil {
+		return x.ReconciliationDate
+	}
+	return 0
+}
+
+func (x *StakeReconciliation) GetCoinSymbol() string {
+	if x != nil {
+		return x.CoinSymbol
+	}
+	return ""
+}
+
+func (x *StakeReconciliation) GetActivePrincipal() string {
+	if x != nil {
+		return x.ActivePrincipal
+	}
+	return ""
+}
+
+func (x *StakeReconciliation) GetProductStaked() string {
+	if x != nil {
+		return x.ProductStaked
+	}
+	return ""
+}
+
+func (x *StakeReconciliation) GetPositionStaked() string {
+	if x != nil {
+		return x.PositionStaked
+	}
+	return ""
+}
+
+func (x *StakeReconciliation) GetAssetLocked() string {
+	if x != nil {
+		return x.AssetLocked
+	}
+	return ""
+}
+
+func (x *StakeReconciliation) GetRewardLogAmount() string {
+	if x != nil {
+		return x.RewardLogAmount
+	}
+	return ""
+}
+
+func (x *StakeReconciliation) GetRewardPlatformAmount() string {
+	if x != nil {
+		return x.RewardPlatformAmount
+	}
+	return ""
+}
+
+func (x *StakeReconciliation) GetFeeLogAmount() string {
+	if x != nil {
+		return x.FeeLogAmount
+	}
+	return ""
+}
+
+func (x *StakeReconciliation) GetFeePlatformAmount() string {
+	if x != nil {
+		return x.FeePlatformAmount
+	}
+	return ""
+}
+
+func (x *StakeReconciliation) GetProductDiff() string {
+	if x != nil {
+		return x.ProductDiff
+	}
+	return ""
+}
+
+func (x *StakeReconciliation) GetPositionDiff() string {
+	if x != nil {
+		return x.PositionDiff
+	}
+	return ""
+}
+
+func (x *StakeReconciliation) GetLockDiff() string {
+	if x != nil {
+		return x.LockDiff
+	}
+	return ""
+}
+
+func (x *StakeReconciliation) GetRewardDiff() string {
+	if x != nil {
+		return x.RewardDiff
+	}
+	return ""
+}
+
+func (x *StakeReconciliation) GetFeeDiff() string {
+	if x != nil {
+		return x.FeeDiff
+	}
+	return ""
+}
+
+func (x *StakeReconciliation) GetStatus() int64 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+func (x *StakeReconciliation) GetDetail() string {
+	if x != nil {
+		return x.Detail
+	}
+	return ""
+}
+
+func (x *StakeReconciliation) GetCreateTimes() int64 {
+	if x != nil {
+		return x.CreateTimes
+	}
+	return 0
+}
+
+func (x *StakeReconciliation) GetUpdateTimes() int64 {
+	if x != nil {
+		return x.UpdateTimes
+	}
+	return 0
+}
+
 var File_proto_staking_model_proto protoreflect.FileDescriptor
 
 const file_proto_staking_model_proto_rawDesc = "" +
@@ -1058,7 +1524,7 @@ const file_proto_staking_model_proto_rawDesc = "" +
 	"\x0ecreate_user_id\x18\x19 \x01(\x03R\fcreateUserId\x12$\n" +
 	"\x0eupdate_user_id\x18\x1a \x01(\x03R\fupdateUserId\x12!\n" +
 	"\fcreate_times\x18\x1b \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x1c \x01(\x03R\vupdateTimes\"\x9f\v\n" +
+	"\fupdate_times\x18\x1c \x01(\x03R\vupdateTimes\"\x88\f\n" +
 	"\n" +
 	"StakeOrder\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
@@ -1106,7 +1572,11 @@ const file_proto_staking_model_proto_rawDesc = "" +
 	"\x0ecreate_user_id\x18# \x01(\x03R\fcreateUserId\x12$\n" +
 	"\x0eupdate_user_id\x18$ \x01(\x03R\fupdateUserId\x12!\n" +
 	"\fcreate_times\x18% \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18& \x01(\x03R\vupdateTimes\"\xc9\x05\n" +
+	"\fupdate_times\x18& \x01(\x03R\vupdateTimes\x12\x1d\n" +
+	"\n" +
+	"request_no\x18' \x01(\tR\trequestNo\x12\x18\n" +
+	"\aversion\x18( \x01(\x03R\aversion\x12.\n" +
+	"\x13active_operation_no\x18) \x01(\tR\x11activeOperationNo\"\xec\x05\n" +
 	"\x0eStakeRewardLog\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
@@ -1131,7 +1601,8 @@ const file_proto_staking_model_proto_rawDesc = "" +
 	"\x0ecreate_user_id\x18\x11 \x01(\x03R\fcreateUserId\x12$\n" +
 	"\x0eupdate_user_id\x18\x12 \x01(\x03R\fupdateUserId\x12!\n" +
 	"\fcreate_times\x18\x13 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimes\"\xae\x05\n" +
+	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimes\x12!\n" +
+	"\foperation_no\x18\x15 \x01(\tR\voperationNo\"\xae\x05\n" +
 	"\x0eStakeRedeemLog\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
@@ -1156,7 +1627,64 @@ const file_proto_staking_model_proto_rawDesc = "" +
 	"\x0ecreate_user_id\x18\x11 \x01(\x03R\fcreateUserId\x12$\n" +
 	"\x0eupdate_user_id\x18\x12 \x01(\x03R\fupdateUserId\x12!\n" +
 	"\fcreate_times\x18\x13 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimesB\x1eZ\x1cwklive/proto/staking;stakingb\x06proto3"
+	"\fupdate_times\x18\x14 \x01(\x03R\vupdateTimes\"\x90\x06\n" +
+	"\x0eStakeOperation\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x19\n" +
+	"\border_id\x18\x04 \x01(\x03R\aorderId\x12\x19\n" +
+	"\border_no\x18\x05 \x01(\tR\aorderNo\x12!\n" +
+	"\foperation_no\x18\x06 \x01(\tR\voperationNo\x12\x1d\n" +
+	"\n" +
+	"request_no\x18\a \x01(\tR\trequestNo\x12%\n" +
+	"\x0eoperation_type\x18\b \x01(\x03R\roperationType\x12)\n" +
+	"\x10principal_amount\x18\t \x01(\tR\x0fprincipalAmount\x12#\n" +
+	"\rreward_amount\x18\n" +
+	" \x01(\tR\frewardAmount\x12\x1d\n" +
+	"\n" +
+	"fee_amount\x18\v \x01(\tR\tfeeAmount\x12)\n" +
+	"\x10principal_status\x18\f \x01(\x03R\x0fprincipalStatus\x12#\n" +
+	"\rreward_status\x18\r \x01(\x03R\frewardStatus\x12\x1d\n" +
+	"\n" +
+	"fee_status\x18\x0e \x01(\x03R\tfeeStatus\x12\x16\n" +
+	"\x06status\x18\x0f \x01(\x03R\x06status\x12\x1d\n" +
+	"\n" +
+	"period_end\x18\x10 \x01(\x03R\tperiodEnd\x12\x1f\n" +
+	"\vretry_count\x18\x11 \x01(\x03R\n" +
+	"retryCount\x12\"\n" +
+	"\rnext_retry_at\x18\x12 \x01(\x03R\vnextRetryAt\x12\x1d\n" +
+	"\n" +
+	"last_error\x18\x13 \x01(\tR\tlastError\x12(\n" +
+	"\x10operator_user_id\x18\x14 \x01(\x03R\x0eoperatorUserId\x12\x16\n" +
+	"\x06remark\x18\x15 \x01(\tR\x06remark\x12\x18\n" +
+	"\aversion\x18\x16 \x01(\x03R\aversion\x12!\n" +
+	"\fcreate_times\x18\x17 \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\x18 \x01(\x03R\vupdateTimes\"\x81\x06\n" +
+	"\x13StakeReconciliation\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12/\n" +
+	"\x13reconciliation_date\x18\x03 \x01(\x03R\x12reconciliationDate\x12\x1f\n" +
+	"\vcoin_symbol\x18\x04 \x01(\tR\n" +
+	"coinSymbol\x12)\n" +
+	"\x10active_principal\x18\x05 \x01(\tR\x0factivePrincipal\x12%\n" +
+	"\x0eproduct_staked\x18\x06 \x01(\tR\rproductStaked\x12'\n" +
+	"\x0fposition_staked\x18\a \x01(\tR\x0epositionStaked\x12!\n" +
+	"\fasset_locked\x18\b \x01(\tR\vassetLocked\x12*\n" +
+	"\x11reward_log_amount\x18\t \x01(\tR\x0frewardLogAmount\x124\n" +
+	"\x16reward_platform_amount\x18\n" +
+	" \x01(\tR\x14rewardPlatformAmount\x12$\n" +
+	"\x0efee_log_amount\x18\v \x01(\tR\ffeeLogAmount\x12.\n" +
+	"\x13fee_platform_amount\x18\f \x01(\tR\x11feePlatformAmount\x12!\n" +
+	"\fproduct_diff\x18\r \x01(\tR\vproductDiff\x12#\n" +
+	"\rposition_diff\x18\x0e \x01(\tR\fpositionDiff\x12\x1b\n" +
+	"\tlock_diff\x18\x0f \x01(\tR\blockDiff\x12\x1f\n" +
+	"\vreward_diff\x18\x10 \x01(\tR\n" +
+	"rewardDiff\x12\x19\n" +
+	"\bfee_diff\x18\x11 \x01(\tR\afeeDiff\x12\x16\n" +
+	"\x06status\x18\x12 \x01(\x03R\x06status\x12\x16\n" +
+	"\x06detail\x18\x13 \x01(\tR\x06detail\x12!\n" +
+	"\fcreate_times\x18\x14 \x01(\x03R\vcreateTimes\x12!\n" +
+	"\fupdate_times\x18\x15 \x01(\x03R\vupdateTimesB\x1eZ\x1cwklive/proto/staking;stakingb\x06proto3"
 
 var (
 	file_proto_staking_model_proto_rawDescOnce sync.Once
@@ -1170,41 +1698,43 @@ func file_proto_staking_model_proto_rawDescGZIP() []byte {
 	return file_proto_staking_model_proto_rawDescData
 }
 
-var file_proto_staking_model_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_proto_staking_model_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_proto_staking_model_proto_goTypes = []any{
-	(*StakeProduct)(nil),   // 0: staking.StakeProduct
-	(*StakeOrder)(nil),     // 1: staking.StakeOrder
-	(*StakeRewardLog)(nil), // 2: staking.StakeRewardLog
-	(*StakeRedeemLog)(nil), // 3: staking.StakeRedeemLog
-	(ProductType)(0),       // 4: staking.ProductType
-	(InterestMode)(0),      // 5: staking.InterestMode
-	(RewardMode)(0),        // 6: staking.RewardMode
-	(common.YesNo)(0),      // 7: common.YesNo
-	(ProductStatus)(0),     // 8: staking.ProductStatus
-	(OrderStatus)(0),       // 9: staking.OrderStatus
-	(RedeemType)(0),        // 10: staking.RedeemType
-	(SourceType)(0),        // 11: staking.SourceType
-	(RewardType)(0),        // 12: staking.RewardType
-	(RewardStatus)(0),      // 13: staking.RewardStatus
-	(RedeemStatus)(0),      // 14: staking.RedeemStatus
+	(*StakeProduct)(nil),        // 0: staking.StakeProduct
+	(*StakeOrder)(nil),          // 1: staking.StakeOrder
+	(*StakeRewardLog)(nil),      // 2: staking.StakeRewardLog
+	(*StakeRedeemLog)(nil),      // 3: staking.StakeRedeemLog
+	(*StakeOperation)(nil),      // 4: staking.StakeOperation
+	(*StakeReconciliation)(nil), // 5: staking.StakeReconciliation
+	(ProductType)(0),            // 6: staking.ProductType
+	(InterestMode)(0),           // 7: staking.InterestMode
+	(RewardMode)(0),             // 8: staking.RewardMode
+	(common.YesNo)(0),           // 9: common.YesNo
+	(ProductStatus)(0),          // 10: staking.ProductStatus
+	(OrderStatus)(0),            // 11: staking.OrderStatus
+	(RedeemType)(0),             // 12: staking.RedeemType
+	(SourceType)(0),             // 13: staking.SourceType
+	(RewardType)(0),             // 14: staking.RewardType
+	(RewardStatus)(0),           // 15: staking.RewardStatus
+	(RedeemStatus)(0),           // 16: staking.RedeemStatus
 }
 var file_proto_staking_model_proto_depIdxs = []int32{
-	4,  // 0: staking.StakeProduct.product_type:type_name -> staking.ProductType
-	5,  // 1: staking.StakeProduct.interest_mode:type_name -> staking.InterestMode
-	6,  // 2: staking.StakeProduct.reward_mode:type_name -> staking.RewardMode
-	7,  // 3: staking.StakeProduct.allow_early_redeem:type_name -> common.YesNo
-	8,  // 4: staking.StakeProduct.status:type_name -> staking.ProductStatus
-	4,  // 5: staking.StakeOrder.product_type:type_name -> staking.ProductType
-	5,  // 6: staking.StakeOrder.interest_mode:type_name -> staking.InterestMode
-	6,  // 7: staking.StakeOrder.reward_mode:type_name -> staking.RewardMode
-	7,  // 8: staking.StakeOrder.allow_early_redeem:type_name -> common.YesNo
-	9,  // 9: staking.StakeOrder.status:type_name -> staking.OrderStatus
-	10, // 10: staking.StakeOrder.redeem_type:type_name -> staking.RedeemType
-	11, // 11: staking.StakeOrder.source:type_name -> staking.SourceType
-	12, // 12: staking.StakeRewardLog.reward_type:type_name -> staking.RewardType
-	13, // 13: staking.StakeRewardLog.reward_status:type_name -> staking.RewardStatus
-	10, // 14: staking.StakeRedeemLog.redeem_type:type_name -> staking.RedeemType
-	14, // 15: staking.StakeRedeemLog.redeem_status:type_name -> staking.RedeemStatus
+	6,  // 0: staking.StakeProduct.product_type:type_name -> staking.ProductType
+	7,  // 1: staking.StakeProduct.interest_mode:type_name -> staking.InterestMode
+	8,  // 2: staking.StakeProduct.reward_mode:type_name -> staking.RewardMode
+	9,  // 3: staking.StakeProduct.allow_early_redeem:type_name -> common.YesNo
+	10, // 4: staking.StakeProduct.status:type_name -> staking.ProductStatus
+	6,  // 5: staking.StakeOrder.product_type:type_name -> staking.ProductType
+	7,  // 6: staking.StakeOrder.interest_mode:type_name -> staking.InterestMode
+	8,  // 7: staking.StakeOrder.reward_mode:type_name -> staking.RewardMode
+	9,  // 8: staking.StakeOrder.allow_early_redeem:type_name -> common.YesNo
+	11, // 9: staking.StakeOrder.status:type_name -> staking.OrderStatus
+	12, // 10: staking.StakeOrder.redeem_type:type_name -> staking.RedeemType
+	13, // 11: staking.StakeOrder.source:type_name -> staking.SourceType
+	14, // 12: staking.StakeRewardLog.reward_type:type_name -> staking.RewardType
+	15, // 13: staking.StakeRewardLog.reward_status:type_name -> staking.RewardStatus
+	12, // 14: staking.StakeRedeemLog.redeem_type:type_name -> staking.RedeemType
+	16, // 15: staking.StakeRedeemLog.redeem_status:type_name -> staking.RedeemStatus
 	16, // [16:16] is the sub-list for method output_type
 	16, // [16:16] is the sub-list for method input_type
 	16, // [16:16] is the sub-list for extension type_name
@@ -1224,7 +1754,7 @@ func file_proto_staking_model_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_staking_model_proto_rawDesc), len(file_proto_staking_model_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

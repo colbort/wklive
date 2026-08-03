@@ -10,6 +10,26 @@
       <el-form-item :label="t('staking.productName')">
         <el-input v-model="query.productName" clearable />
       </el-form-item>
+      <el-form-item :label="t('staking.productType')">
+        <el-select v-model="query.productType" clearable>
+          <el-option
+            v-for="item in productTypeFormOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="t('common.status')">
+        <el-select v-model="query.status" clearable>
+          <el-option
+            v-for="item in productStatusFormOptions"
+            :key="item.value"
+            :label="getOptionLabel(t, item.code, item.value)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
       <template #actions>
         <el-button v-perm="'staking:product:add'" type="primary" @click="openProductDialog()">
           {{ t('common.add') }}
@@ -32,20 +52,17 @@
           show-overflow-tooltip
         />
         <el-table-column :label="t('staking.coinSymbol')" prop="coinSymbol" width="120" />
-        <el-table-column
-          prop="apr"
-          label="APR"
-          min-width="120"
-          show-overflow-tooltip
-        />
+        <el-table-column :label="t('staking.productType')" prop="productType" width="110">
+          <template #default="{ row }">
+            {{ optionLabel('stakingProductType', row.productType) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="apr" label="APR" min-width="120" show-overflow-tooltip />
         <el-table-column :label="t('staking.lockDays')" prop="lockDays" width="120" />
-        <el-table-column :label="t('common.status')" prop="status" width="100" />
-        <el-table-column
-          :label="t('common.actions')"
-          align="center"
-          width="220"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.status')" prop="status" width="100">
+          <template #default="{ row }">{{ optionLabel('productStatus', row.status) }}</template>
+        </el-table-column>
+        <el-table-column :label="t('common.actions')" align="center" width="220" fixed="right">
           <template #default="{ row }">
             <el-button
               v-perm="'staking:product:detail'"
@@ -93,7 +110,11 @@
     >
       <el-form label-width="110px">
         <el-form-item :label="t('staking.tenantId')">
-          <TenantSelect v-model="productForm.tenantId" include-system />
+          <TenantSelect
+            v-model="productForm.tenantId"
+            include-system
+            :disabled="productForm.id > 0"
+          />
         </el-form-item>
         <el-form-item :label="t('staking.productNo')">
           <el-input v-model="productForm.productNo" />
@@ -190,9 +211,6 @@
         <el-form-item :label="t('common.sort')">
           <el-input-number v-model="productForm.sort" :min="0" :precision="0" />
         </el-form-item>
-        <el-form-item :label="t('staking.operatorUid')">
-          <el-input-number v-model="productForm.operatorUid" :min="0" :precision="0" />
-        </el-form-item>
         <el-form-item :label="t('common.remark')">
           <el-input v-model="productForm.remark" type="textarea" :rows="3" />
         </el-form-item>
@@ -212,8 +230,82 @@
       </template>
     </el-dialog>
 
+    <el-dialog v-model="statusVisible" :title="t('staking.changeStatus')" width="420px">
+      <el-form label-width="90px">
+        <el-form-item :label="t('common.status')">
+          <el-select v-model="statusForm.status" style="width: 100%">
+            <el-option
+              v-for="item in productStatusFormOptions"
+              :key="item.value"
+              :label="getOptionLabel(t, item.code, item.value)"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="statusVisible = false">{{ t('common.cancel') }}</el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitStatusChange">
+          {{ t('common.confirm') }}
+        </el-button>
+      </template>
+    </el-dialog>
+
     <el-dialog v-model="detailVisible" :title="t('market.detail')" width="760px">
-      <pre class="detail-pre">{{ JSON.stringify(detailData, null, 2) }}</pre>
+      <el-descriptions v-if="detailData" :column="2" border>
+        <el-descriptions-item :label="t('staking.productNo')">{{
+          detailData.productNo
+        }}</el-descriptions-item>
+        <el-descriptions-item :label="t('staking.productName')">{{
+          detailData.productName
+        }}</el-descriptions-item>
+        <el-descriptions-item :label="t('staking.tenantId')">{{
+          detailData.tenantId
+        }}</el-descriptions-item>
+        <el-descriptions-item :label="t('staking.productType')">{{
+          optionLabel('stakingProductType', detailData.productType)
+        }}</el-descriptions-item>
+        <el-descriptions-item :label="t('staking.coinSymbol')">{{
+          detailData.coinSymbol
+        }}</el-descriptions-item>
+        <el-descriptions-item :label="t('staking.rewardCoinSymbol')">{{
+          detailData.rewardCoinSymbol
+        }}</el-descriptions-item>
+        <el-descriptions-item label="APR">{{ detailData.apr }}%</el-descriptions-item>
+        <el-descriptions-item :label="t('staking.lockDays')">{{
+          detailData.lockDays
+        }}</el-descriptions-item>
+        <el-descriptions-item :label="t('staking.interestMode')">{{
+          optionLabel('interestMode', detailData.interestMode)
+        }}</el-descriptions-item>
+        <el-descriptions-item :label="t('staking.rewardMode')">{{
+          optionLabel('rewardMode', detailData.rewardMode)
+        }}</el-descriptions-item>
+        <el-descriptions-item :label="t('staking.allowEarlyRedeem')">{{
+          optionLabel('yesNo', detailData.allowEarlyRedeem)
+        }}</el-descriptions-item>
+        <el-descriptions-item :label="t('staking.minAmount')">{{
+          detailData.minAmount
+        }}</el-descriptions-item>
+        <el-descriptions-item :label="t('staking.maxAmount')">{{
+          detailData.maxAmount
+        }}</el-descriptions-item>
+        <el-descriptions-item :label="t('staking.totalAmount')">{{
+          detailData.totalAmount
+        }}</el-descriptions-item>
+        <el-descriptions-item :label="t('staking.stakedAmount')">{{
+          detailData.stakedAmount
+        }}</el-descriptions-item>
+        <el-descriptions-item :label="t('common.status')">{{
+          optionLabel('productStatus', detailData.status)
+        }}</el-descriptions-item>
+        <el-descriptions-item :label="t('common.updateTimes')">{{
+          formatTime(detailData.updateTimes)
+        }}</el-descriptions-item>
+        <el-descriptions-item :label="t('common.remark')" :span="2">{{
+          detailData.remark || '-'
+        }}</el-descriptions-item>
+      </el-descriptions>
     </el-dialog>
   </div>
 </template>
@@ -222,15 +314,16 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { ProductUpdateReq, stakingService, type OptionGroup, type StakeProduct } from '@/services'
-import { findFormOptionGroup, getOptionLabel } from '@/utils/options'
+import { findFormOptionGroup, getOptionLabel, getOptionValueLabel } from '@/utils/options'
 import TenantSelect from '@/components/TenantSelect.vue'
 import CrudQueryCard from '@/components/common/CrudQueryCard.vue'
 
 const { t } = useI18n()
 const { pagination, updateFromResponse, resetAndLoad, prevAndLoad, nextAndLoad } =
   usePagination<number>(20)
+const formatTime = (value: number) => (value > 0 ? new Date(value).toLocaleString() : '-')
 
 const optionGroups = ref<OptionGroup[]>([])
 const productTypeFormOptions = computed(() =>
@@ -250,14 +343,21 @@ const rows = ref<StakeProduct[]>([])
 const detailVisible = ref(false)
 const detailData = ref<StakeProduct | null>(null)
 const productVisible = ref(false)
+const statusVisible = ref(false)
 
 const query = reactive({
   tenantId: undefined as number | undefined,
   productNo: '',
   productName: '',
   coinSymbol: '',
+  productType: undefined as number | undefined,
+  status: undefined as number | undefined,
   limit: 20,
 })
+
+const statusForm = reactive({ tenantId: 0, id: 0, status: 1 })
+const optionLabel = (key: string, value: number) =>
+  getOptionValueLabel(optionGroups.value, key, value, t)
 
 const productForm = reactive<ProductUpdateReq>({
   id: 0,
@@ -282,7 +382,6 @@ const productForm = reactive<ProductUpdateReq>({
   earlyRedeemRate: '',
   status: 1,
   sort: 0,
-  operatorUid: 0,
   remark: '',
 })
 
@@ -311,7 +410,9 @@ const resetQuery = () => {
   query.productNo = ''
   query.productName = ''
   query.coinSymbol = ''
-  query.limit = 100
+  query.productType = undefined
+  query.status = undefined
+  query.limit = 20
   loadList()
 }
 
@@ -347,7 +448,6 @@ const openProductDialog = (row?: StakeProduct) => {
       earlyRedeemRate: '',
       status: 1,
       sort: 0,
-      operatorUid: 0,
       remark: '',
     },
     row || {},
@@ -369,21 +469,24 @@ const submitProduct = async () => {
 }
 
 const changeStatus = async (row: StakeProduct) => {
-  const { value } = await ElMessageBox.prompt(
-    t('staking.pleaseInputNewStatus'),
-    t('staking.changeStatus'),
-    {
-      inputValue: String(row.status || 0),
-    },
-  )
-  await stakingService.changeProductStatus({
-    tenantId: row.tenantId,
-    id: row.id,
-    status: Number(value),
-    operatorUid: row.updateUserId || 0,
-  })
-  ElMessage.success(t('staking.statusUpdated'))
-  loadList()
+  Object.assign(statusForm, { tenantId: row.tenantId, id: row.id, status: row.status })
+  statusVisible.value = true
+}
+
+const submitStatusChange = async () => {
+  submitLoading.value = true
+  try {
+    await stakingService.changeProductStatus({
+      tenantId: statusForm.tenantId,
+      id: statusForm.id,
+      status: statusForm.status,
+    })
+    ElMessage.success(t('staking.statusUpdated'))
+    statusVisible.value = false
+    loadList()
+  } finally {
+    submitLoading.value = false
+  }
 }
 
 function handleLimitChange() {

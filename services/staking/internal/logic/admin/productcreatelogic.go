@@ -2,12 +2,14 @@ package adminlogic
 
 import (
 	"context"
+	"strings"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/staking"
+	"wklive/services/staking/internal/logic/helpers"
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
 
@@ -31,6 +33,15 @@ func NewProductCreateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pro
 
 // 创建质押产品
 func (l *ProductCreateLogic) ProductCreate(in *staking.ProductCreateReq) (*staking.ProductCreateResp, error) {
+	if base, err := helpers.AdminTenantWriteScopeResp(l.ctx, in.TenantId, i18n.PermissionDenied); err != nil {
+		return nil, err
+	} else if base != nil {
+		return &staking.ProductCreateResp{Page: base}, nil
+	}
+	operatorId, err := helpers.AdminOperatorUserID(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	exists, err := l.svcCtx.StakeProductModel.FindOneByTenantIdProductNo(l.ctx, in.TenantId, in.ProductNo)
 	if err == nil && exists != nil {
 		return &staking.ProductCreateResp{Page: helper.ErrResp(i18n.ProductNoAlreadyExists, i18n.Translate(i18n.ProductNoAlreadyExists, l.ctx))}, nil
@@ -69,15 +80,15 @@ func (l *ProductCreateLogic) ProductCreate(in *staking.ProductCreateReq) (*staki
 	}
 
 	now := utils.NowMillis()
-	res, err := l.svcCtx.StakeProductModel.Insert(l.ctx, &models.TStakeProduct{
+	product := &models.TStakeProduct{
 		TenantId:         in.TenantId,
-		ProductNo:        in.ProductNo,
-		ProductName:      in.ProductName,
+		ProductNo:        strings.TrimSpace(in.ProductNo),
+		ProductName:      strings.TrimSpace(in.ProductName),
 		ProductType:      int64(in.ProductType),
 		CoinName:         in.CoinName,
-		CoinSymbol:       in.CoinSymbol,
+		CoinSymbol:       strings.ToUpper(strings.TrimSpace(in.CoinSymbol)),
 		RewardCoinName:   in.RewardCoinName,
-		RewardCoinSymbol: in.RewardCoinSymbol,
+		RewardCoinSymbol: strings.ToUpper(strings.TrimSpace(in.RewardCoinSymbol)),
 		Apr:              apr,
 		LockDays:         int64(in.LockDays),
 		MinAmount:        minAmount,
@@ -93,11 +104,18 @@ func (l *ProductCreateLogic) ProductCreate(in *staking.ProductCreateReq) (*staki
 		Status:           int64(in.Status),
 		Sort:             int64(in.Sort),
 		Remark:           in.Remark,
-		CreateUserId:     in.OperatorUid,
-		UpdateUserId:     in.OperatorUid,
+		CreateUserId:     operatorId,
+		UpdateUserId:     operatorId,
 		CreateTimes:      now,
 		UpdateTimes:      now,
-	})
+	}
+	if err := helpers.ValidateStakeProduct(product); err != nil {
+		return &staking.ProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	if err := helpers.ValidateStakeFundingAccounts(l.ctx, l.svcCtx, product); err != nil {
+		return &staking.ProductCreateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	res, err := l.svcCtx.StakeProductModel.Insert(l.ctx, product)
 	if err != nil {
 		return nil, err
 	}

@@ -2,12 +2,11 @@ package adminlogic
 
 import (
 	"context"
-	"wklive/services/staking/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/pageutil"
-	"wklive/common/utils"
 	"wklive/proto/staking"
+	"wklive/services/staking/internal/logic/helpers"
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
 
@@ -30,10 +29,12 @@ func NewRedeemLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Red
 
 // 获取赎回记录列表
 func (l *RedeemLogListLogic) RedeemLogList(in *staking.RedeemLogListReq) (*staking.RedeemLogListResp, error) {
-	if in.TenantId <= 0 {
-		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
-			in.TenantId = tenantId
-		}
+	tenantId, base, err := helpers.AdminTenantReadScopeResp(l.ctx, in.TenantId)
+	if err != nil {
+		return nil, err
+	}
+	if base != nil {
+		return &staking.RedeemLogListResp{Page: base}, nil
 	}
 	page := in.GetPage()
 	cursor, limit := int64(0), int64(10)
@@ -43,7 +44,7 @@ func (l *RedeemLogListLogic) RedeemLogList(in *staking.RedeemLogListReq) (*staki
 	items, total, err := l.svcCtx.StakeRedeemLogModel.FindPage(
 		l.ctx,
 		models.StakeRedeemLogPageFilter{
-			TenantId:     in.TenantId,
+			TenantId:     tenantId,
 			UserId:       in.UserId,
 			ProductId:    in.ProductId,
 			OrderNo:      in.OrderNo,

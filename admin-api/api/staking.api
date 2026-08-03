@@ -118,6 +118,57 @@ type StakeRedeemLog {
 	updateTimes  int64  `json:"updateTimes"`
 }
 
+type StakeOperation {
+	id              int64  `json:"id"`
+	tenantId        int64  `json:"tenantId"`
+	userId          int64  `json:"userId"`
+	orderId         int64  `json:"orderId"`
+	orderNo         string `json:"orderNo"`
+	operationNo     string `json:"operationNo"`
+	requestNo       string `json:"requestNo"`
+	operationType   int64  `json:"operationType"`
+	principalAmount string `json:"principalAmount" validate:"decimal_30_8"`
+	rewardAmount    string `json:"rewardAmount" validate:"decimal_30_8"`
+	feeAmount       string `json:"feeAmount" validate:"decimal_30_8"`
+	principalStatus int64  `json:"principalStatus"`
+	rewardStatus    int64  `json:"rewardStatus"`
+	feeStatus       int64  `json:"feeStatus"`
+	status          int64  `json:"status"`
+	periodEnd       int64  `json:"periodEnd"`
+	retryCount      int64  `json:"retryCount"`
+	nextRetryAt     int64  `json:"nextRetryAt"`
+	lastError       string `json:"lastError"`
+	operatorUserId  int64  `json:"operatorUserId"`
+	remark          string `json:"remark"`
+	version         int64  `json:"version"`
+	createTimes     int64  `json:"createTimes"`
+	updateTimes     int64  `json:"updateTimes"`
+}
+
+type StakeReconciliation {
+	id                   int64  `json:"id"`
+	tenantId             int64  `json:"tenantId"`
+	reconciliationDate   int64  `json:"reconciliationDate"`
+	coinSymbol           string `json:"coinSymbol"`
+	activePrincipal      string `json:"activePrincipal"`
+	productStaked        string `json:"productStaked"`
+	positionStaked       string `json:"positionStaked"`
+	assetLocked          string `json:"assetLocked"`
+	rewardLogAmount      string `json:"rewardLogAmount"`
+	rewardPlatformAmount string `json:"rewardPlatformAmount"`
+	feeLogAmount         string `json:"feeLogAmount"`
+	feePlatformAmount    string `json:"feePlatformAmount"`
+	productDiff          string `json:"productDiff"`
+	positionDiff         string `json:"positionDiff"`
+	lockDiff             string `json:"lockDiff"`
+	rewardDiff           string `json:"rewardDiff"`
+	feeDiff              string `json:"feeDiff"`
+	status               int64  `json:"status"`
+	detail               string `json:"detail"`
+	createTimes          int64  `json:"createTimes"`
+	updateTimes          int64  `json:"updateTimes"`
+}
+
 type ProductListReq {
 	PageReq
 	tenantId    int64  `form:"tenantId,optional"`
@@ -166,7 +217,6 @@ type ProductCreateReq {
 	status           int64  `json:"status"`
 	sort             int64  `json:"sort"`
 	remark           string `json:"remark,optional"`
-	operatorUid      int64  `json:"operatorUid"`
 }
 
 type ProductCreateResp {
@@ -197,7 +247,6 @@ type ProductUpdateReq {
 	status           int64  `json:"status"`
 	sort             int64  `json:"sort"`
 	remark           string `json:"remark,optional"`
-	operatorUid      int64  `json:"operatorUid"`
 }
 
 type ProductUpdateResp {
@@ -206,10 +255,9 @@ type ProductUpdateResp {
 }
 
 type ProductChangeStatusReq {
-	tenantId    int64 `json:"tenantId"`
-	id          int64 `json:"id"`
-	status      int64 `json:"status"`
-	operatorUid int64 `json:"operatorUid"`
+	tenantId int64 `json:"tenantId"`
+	id       int64 `json:"id"`
+	status   int64 `json:"status"`
 }
 
 type ProductChangeStatusResp {
@@ -290,7 +338,7 @@ type ManualRewardReq {
 	rewardAmount string `json:"rewardAmount" validate:"required,decimal_gt_zero,decimal_30_8"`
 	rewardType   int64  `json:"rewardType"`
 	remark       string `json:"remark,optional"`
-	operatorUid  int64  `json:"operatorUid"`
+	requestNo    string `json:"requestNo" validate:"required,max=96"`
 }
 
 type ManualRewardResp {
@@ -307,7 +355,7 @@ type ManualRedeemReq {
 	feeRate      string `json:"feeRate" validate:"required,decimal_gte_zero,decimal_10_4"`
 	feeAmount    string `json:"feeAmount" validate:"required,decimal_gte_zero,decimal_30_8"`
 	remark       string `json:"remark,optional"`
-	operatorUid  int64  `json:"operatorUid"`
+	requestNo    string `json:"requestNo" validate:"required,max=96"`
 }
 
 type ManualRedeemData {
@@ -318,6 +366,45 @@ type ManualRedeemData {
 type ManualRedeemResp {
 	RespBase
 	data ManualRedeemData `json:"data"`
+}
+
+type OperationListReq {
+	PageReq
+	tenantId      int64  `form:"tenantId,optional"`
+	operationNo   string `form:"operationNo,optional"`
+	orderNo       string `form:"orderNo,optional"`
+	userId        int64  `form:"userId,optional"`
+	operationType int64  `form:"operationType,optional"`
+	status        int64  `form:"status,optional"`
+}
+
+type OperationListResp {
+	RespBase
+	data []StakeOperation `json:"data"`
+}
+
+type OperationRetryReq {
+	tenantId int64  `json:"tenantId"`
+	id       int64  `json:"id" validate:"required"`
+	reason   string `json:"reason" validate:"required,max=255"`
+}
+
+type OperationRetryResp {
+	RespBase
+	data int64 `json:"data"`
+}
+
+type ReconciliationListReq {
+	PageReq
+	tenantId           int64  `form:"tenantId,optional"`
+	reconciliationDate int64  `form:"reconciliationDate,optional"`
+	coinSymbol         string `form:"coinSymbol,optional"`
+	status             int64  `form:"status,optional"`
+}
+
+type ReconciliationListResp {
+	RespBase
+	data []StakeReconciliation `json:"data"`
 }
 
 @server (
@@ -358,5 +445,13 @@ service admin {
 
 	@handler ManualRedeem
 	post /manual-redeem (ManualRedeemReq) returns (ManualRedeemResp)
-}
 
+	@handler OperationList
+	get /operations (OperationListReq) returns (OperationListResp)
+
+	@handler OperationRetry
+	post /operations/retry (OperationRetryReq) returns (OperationRetryResp)
+
+	@handler ReconciliationList
+	get /reconciliations (ReconciliationListReq) returns (ReconciliationListResp)
+}

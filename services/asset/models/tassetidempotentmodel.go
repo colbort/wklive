@@ -2,7 +2,9 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"wklive/common/sqlutil"
@@ -16,6 +18,7 @@ type (
 	TAssetIdempotentModel interface {
 		tAssetIdempotentModel
 		FindPage(ctx context.Context, cursor int64, limit int64) ([]*TAssetIdempotent, int64, error)
+		MarkSuccess(ctx context.Context, tenantId int64, bizType, sceneType, bizNo string, updateTimes int64) error
 	}
 
 	customTAssetIdempotentModel struct {
@@ -28,6 +31,29 @@ func NewTAssetIdempotentModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cach
 	return &customTAssetIdempotentModel{
 		defaultTAssetIdempotentModel: newTAssetIdempotentModel(conn, c, opts...),
 	}
+}
+
+// MarkSuccess avoids a cached read immediately after Insert. PrepareAssetIdempotent
+// necessarily creates a negative cache entry; reading the same unique key in
+// the same SQL transaction can otherwise return sql.ErrNoRows and roll back a
+// valid asset mutation.
+func (m *defaultTAssetIdempotentModel) MarkSuccess(ctx context.Context, tenantId int64, bizType, sceneType, bizNo string, updateTimes int64) error {
+	key := fmt.Sprintf("%s%v:%v:%v:%v", cacheTAssetIdempotentTenantIdBizTypeSceneTypeBizNoPrefix, tenantId, bizType, sceneType, bizNo)
+	query := fmt.Sprintf("UPDATE %s SET status=?, remark=?, update_times=? WHERE tenant_id=? AND biz_type=? AND scene_type=? AND biz_no=?", m.table)
+	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
+		return conn.ExecCtx(ctx, query, 2, "success", updateTimes, tenantId, bizType, sceneType, bizNo)
+	}, key)
+	if err != nil {
+		return err
+	}
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if affected != 1 {
+		return sql.ErrNoRows
+	}
+	return nil
 }
 
 func (m *defaultTAssetIdempotentModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TAssetIdempotent, int64, error) {

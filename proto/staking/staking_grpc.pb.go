@@ -430,6 +430,9 @@ const (
 	Admin_RedeemLogList_FullMethodName       = "/staking.Admin/RedeemLogList"
 	Admin_ManualReward_FullMethodName        = "/staking.Admin/ManualReward"
 	Admin_ManualRedeem_FullMethodName        = "/staking.Admin/ManualRedeem"
+	Admin_OperationList_FullMethodName       = "/staking.Admin/OperationList"
+	Admin_OperationRetry_FullMethodName      = "/staking.Admin/OperationRetry"
+	Admin_ReconciliationList_FullMethodName  = "/staking.Admin/ReconciliationList"
 )
 
 // AdminClient is the client API for Admin service.
@@ -469,6 +472,14 @@ type AdminClient interface {
 	// 手动赎回
 	// 后台对指定质押订单执行手动赎回操作。
 	ManualRedeem(ctx context.Context, in *ManualRedeemReq, opts ...grpc.CallOption) (*ManualRedeemResp, error)
+	// 获取资金操作列表
+	// 查询申购、收益、赎回等持久化资金操作及其恢复状态。
+	OperationList(ctx context.Context, in *OperationListReq, opts ...grpc.CallOption) (*OperationListResp, error)
+	// 手动重试资金操作
+	// 仅允许重试“可重试失败”或“需人工处理”的操作。
+	OperationRetry(ctx context.Context, in *OperationRetryReq, opts ...grpc.CallOption) (*OperationRetryResp, error)
+	// 获取每日账实对账快照
+	ReconciliationList(ctx context.Context, in *ReconciliationListReq, opts ...grpc.CallOption) (*ReconciliationListResp, error)
 }
 
 type adminClient struct {
@@ -589,6 +600,36 @@ func (c *adminClient) ManualRedeem(ctx context.Context, in *ManualRedeemReq, opt
 	return out, nil
 }
 
+func (c *adminClient) OperationList(ctx context.Context, in *OperationListReq, opts ...grpc.CallOption) (*OperationListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OperationListResp)
+	err := c.cc.Invoke(ctx, Admin_OperationList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) OperationRetry(ctx context.Context, in *OperationRetryReq, opts ...grpc.CallOption) (*OperationRetryResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OperationRetryResp)
+	err := c.cc.Invoke(ctx, Admin_OperationRetry_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ReconciliationList(ctx context.Context, in *ReconciliationListReq, opts ...grpc.CallOption) (*ReconciliationListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReconciliationListResp)
+	err := c.cc.Invoke(ctx, Admin_ReconciliationList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminServer is the server API for Admin service.
 // All implementations must embed UnimplementedAdminServer
 // for forward compatibility.
@@ -626,6 +667,14 @@ type AdminServer interface {
 	// 手动赎回
 	// 后台对指定质押订单执行手动赎回操作。
 	ManualRedeem(context.Context, *ManualRedeemReq) (*ManualRedeemResp, error)
+	// 获取资金操作列表
+	// 查询申购、收益、赎回等持久化资金操作及其恢复状态。
+	OperationList(context.Context, *OperationListReq) (*OperationListResp, error)
+	// 手动重试资金操作
+	// 仅允许重试“可重试失败”或“需人工处理”的操作。
+	OperationRetry(context.Context, *OperationRetryReq) (*OperationRetryResp, error)
+	// 获取每日账实对账快照
+	ReconciliationList(context.Context, *ReconciliationListReq) (*ReconciliationListResp, error)
 	mustEmbedUnimplementedAdminServer()
 }
 
@@ -668,6 +717,15 @@ func (UnimplementedAdminServer) ManualReward(context.Context, *ManualRewardReq) 
 }
 func (UnimplementedAdminServer) ManualRedeem(context.Context, *ManualRedeemReq) (*ManualRedeemResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ManualRedeem not implemented")
+}
+func (UnimplementedAdminServer) OperationList(context.Context, *OperationListReq) (*OperationListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method OperationList not implemented")
+}
+func (UnimplementedAdminServer) OperationRetry(context.Context, *OperationRetryReq) (*OperationRetryResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method OperationRetry not implemented")
+}
+func (UnimplementedAdminServer) ReconciliationList(context.Context, *ReconciliationListReq) (*ReconciliationListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReconciliationList not implemented")
 }
 func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
 func (UnimplementedAdminServer) testEmbeddedByValue()               {}
@@ -888,6 +946,60 @@ func _Admin_ManualRedeem_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_OperationList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OperationListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).OperationList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_OperationList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).OperationList(ctx, req.(*OperationListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_OperationRetry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OperationRetryReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).OperationRetry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_OperationRetry_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).OperationRetry(ctx, req.(*OperationRetryReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ReconciliationList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReconciliationListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ReconciliationList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ReconciliationList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ReconciliationList(ctx, req.(*ReconciliationListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -939,6 +1051,18 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "ManualRedeem",
 			Handler:    _Admin_ManualRedeem_Handler,
 		},
+		{
+			MethodName: "OperationList",
+			Handler:    _Admin_OperationList_Handler,
+		},
+		{
+			MethodName: "OperationRetry",
+			Handler:    _Admin_OperationRetry_Handler,
+		},
+		{
+			MethodName: "ReconciliationList",
+			Handler:    _Admin_ReconciliationList_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "proto/staking/staking.proto",
@@ -946,6 +1070,7 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 
 const (
 	Task_ProcessRewardsAndSettleOrders_FullMethodName = "/staking.Task/ProcessRewardsAndSettleOrders"
+	Task_ReconcileStaking_FullMethodName              = "/staking.Task/ReconcileStaking"
 )
 
 // TaskClient is the client API for Task service.
@@ -958,6 +1083,8 @@ const (
 type TaskClient interface {
 	// 质押收益发放/到期结算
 	ProcessRewardsAndSettleOrders(ctx context.Context, in *StakingTaskReq, opts ...grpc.CallOption) (*StakingTaskResp, error)
+	// 生成质押账实对账快照
+	ReconcileStaking(ctx context.Context, in *StakingTaskReq, opts ...grpc.CallOption) (*StakingTaskResp, error)
 }
 
 type taskClient struct {
@@ -978,6 +1105,16 @@ func (c *taskClient) ProcessRewardsAndSettleOrders(ctx context.Context, in *Stak
 	return out, nil
 }
 
+func (c *taskClient) ReconcileStaking(ctx context.Context, in *StakingTaskReq, opts ...grpc.CallOption) (*StakingTaskResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StakingTaskResp)
+	err := c.cc.Invoke(ctx, Task_ReconcileStaking_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TaskServer is the server API for Task service.
 // All implementations must embed UnimplementedTaskServer
 // for forward compatibility.
@@ -988,6 +1125,8 @@ func (c *taskClient) ProcessRewardsAndSettleOrders(ctx context.Context, in *Stak
 type TaskServer interface {
 	// 质押收益发放/到期结算
 	ProcessRewardsAndSettleOrders(context.Context, *StakingTaskReq) (*StakingTaskResp, error)
+	// 生成质押账实对账快照
+	ReconcileStaking(context.Context, *StakingTaskReq) (*StakingTaskResp, error)
 	mustEmbedUnimplementedTaskServer()
 }
 
@@ -1000,6 +1139,9 @@ type UnimplementedTaskServer struct{}
 
 func (UnimplementedTaskServer) ProcessRewardsAndSettleOrders(context.Context, *StakingTaskReq) (*StakingTaskResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method ProcessRewardsAndSettleOrders not implemented")
+}
+func (UnimplementedTaskServer) ReconcileStaking(context.Context, *StakingTaskReq) (*StakingTaskResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReconcileStaking not implemented")
 }
 func (UnimplementedTaskServer) mustEmbedUnimplementedTaskServer() {}
 func (UnimplementedTaskServer) testEmbeddedByValue()              {}
@@ -1040,6 +1182,24 @@ func _Task_ProcessRewardsAndSettleOrders_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Task_ReconcileStaking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StakingTaskReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServer).ReconcileStaking(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Task_ReconcileStaking_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServer).ReconcileStaking(ctx, req.(*StakingTaskReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Task_ServiceDesc is the grpc.ServiceDesc for Task service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1050,6 +1210,10 @@ var Task_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ProcessRewardsAndSettleOrders",
 			Handler:    _Task_ProcessRewardsAndSettleOrders_Handler,
+		},
+		{
+			MethodName: "ReconcileStaking",
+			Handler:    _Task_ReconcileStaking_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

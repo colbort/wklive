@@ -25,8 +25,9 @@ var (
 	tAssetLockRowsExpectAutoSet   = strings.Join(stringx.Remove(tAssetLockFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tAssetLockRowsWithPlaceHolder = strings.Join(stringx.Remove(tAssetLockFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTAssetLockIdPrefix     = "cache:tAssetLock:id:"
-	cacheTAssetLockLockNoPrefix = "cache:tAssetLock:lockNo:"
+	cacheTAssetLockIdPrefix                   = "cache:tAssetLock:id:"
+	cacheTAssetLockLockNoPrefix               = "cache:tAssetLock:lockNo:"
+	cacheTAssetLockTenantIdBizTypeBizNoPrefix = "cache:tAssetLock:tenantId:bizType:bizNo:"
 )
 
 type (
@@ -34,6 +35,7 @@ type (
 		Insert(ctx context.Context, data *TAssetLock) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TAssetLock, error)
 		FindOneByLockNo(ctx context.Context, lockNo string) (*TAssetLock, error)
+		FindOneByTenantIdBizTypeBizNo(ctx context.Context, tenantId int64, bizType string, bizNo string) (*TAssetLock, error)
 		Update(ctx context.Context, data *TAssetLock) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -82,10 +84,11 @@ func (m *defaultTAssetLockModel) Delete(ctx context.Context, id int64) error {
 
 	tAssetLockIdKey := fmt.Sprintf("%s%v", cacheTAssetLockIdPrefix, id)
 	tAssetLockLockNoKey := fmt.Sprintf("%s%v", cacheTAssetLockLockNoPrefix, data.LockNo)
+	tAssetLockTenantIdBizTypeBizNoKey := fmt.Sprintf("%s%v:%v:%v", cacheTAssetLockTenantIdBizTypeBizNoPrefix, data.TenantId, data.BizType, data.BizNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tAssetLockIdKey, tAssetLockLockNoKey)
+	}, tAssetLockIdKey, tAssetLockLockNoKey, tAssetLockTenantIdBizTypeBizNoKey)
 	return err
 }
 
@@ -126,13 +129,34 @@ func (m *defaultTAssetLockModel) FindOneByLockNo(ctx context.Context, lockNo str
 	}
 }
 
+func (m *defaultTAssetLockModel) FindOneByTenantIdBizTypeBizNo(ctx context.Context, tenantId int64, bizType string, bizNo string) (*TAssetLock, error) {
+	tAssetLockTenantIdBizTypeBizNoKey := fmt.Sprintf("%s%v:%v:%v", cacheTAssetLockTenantIdBizTypeBizNoPrefix, tenantId, bizType, bizNo)
+	var resp TAssetLock
+	err := m.QueryRowIndexCtx(ctx, &resp, tAssetLockTenantIdBizTypeBizNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `biz_type` = ? and `biz_no` = ? limit 1", tAssetLockRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, bizType, bizNo); err != nil {
+			return nil, err
+		}
+		return resp.Id, nil
+	}, m.queryPrimary)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
 func (m *defaultTAssetLockModel) Insert(ctx context.Context, data *TAssetLock) (sql.Result, error) {
 	tAssetLockIdKey := fmt.Sprintf("%s%v", cacheTAssetLockIdPrefix, data.Id)
 	tAssetLockLockNoKey := fmt.Sprintf("%s%v", cacheTAssetLockLockNoPrefix, data.LockNo)
+	tAssetLockTenantIdBizTypeBizNoKey := fmt.Sprintf("%s%v:%v:%v", cacheTAssetLockTenantIdBizTypeBizNoPrefix, data.TenantId, data.BizType, data.BizNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tAssetLockRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.LockNo, data.TenantId, data.UserId, data.WalletType, data.Coin, data.BizType, data.SceneType, data.BizId, data.BizNo, data.Amount, data.UnlockAmount, data.RemainAmount, data.Status, data.StartTime, data.EndTime, data.Remark, data.ExtJson, data.CreateTimes, data.UpdateTimes)
-	}, tAssetLockIdKey, tAssetLockLockNoKey)
+	}, tAssetLockIdKey, tAssetLockLockNoKey, tAssetLockTenantIdBizTypeBizNoKey)
 	return ret, err
 }
 
@@ -144,10 +168,11 @@ func (m *defaultTAssetLockModel) Update(ctx context.Context, newData *TAssetLock
 
 	tAssetLockIdKey := fmt.Sprintf("%s%v", cacheTAssetLockIdPrefix, data.Id)
 	tAssetLockLockNoKey := fmt.Sprintf("%s%v", cacheTAssetLockLockNoPrefix, data.LockNo)
+	tAssetLockTenantIdBizTypeBizNoKey := fmt.Sprintf("%s%v:%v:%v", cacheTAssetLockTenantIdBizTypeBizNoPrefix, data.TenantId, data.BizType, data.BizNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tAssetLockRowsWithPlaceHolder)
 		return conn.ExecCtx(ctx, query, newData.LockNo, newData.TenantId, newData.UserId, newData.WalletType, newData.Coin, newData.BizType, newData.SceneType, newData.BizId, newData.BizNo, newData.Amount, newData.UnlockAmount, newData.RemainAmount, newData.Status, newData.StartTime, newData.EndTime, newData.Remark, newData.ExtJson, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tAssetLockIdKey, tAssetLockLockNoKey)
+	}, tAssetLockIdKey, tAssetLockLockNoKey, tAssetLockTenantIdBizTypeBizNoKey)
 	return err
 }
 

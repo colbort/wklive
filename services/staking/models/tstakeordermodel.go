@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"github.com/shopspring/decimal"
@@ -35,6 +36,8 @@ type (
 		tStakeOrderModel
 		FindPage(ctx context.Context, filter StakeOrderPageFilter, cursor int64, limit int64) ([]*TStakeOrder, int64, error)
 		SumStakeAmountByStatuses(ctx context.Context, tenantID, user_id, productID int64, statuses []int64) (decimal.Decimal, error)
+		ClaimOperation(ctx context.Context, id int64, operationNo string, now int64, allowedStatuses []int64) (bool, error)
+		FindOneForUpdate(ctx context.Context, id int64) (*TStakeOrder, error)
 	}
 
 	customTStakeOrderModel struct {
@@ -47,6 +50,34 @@ func NewTStakeOrderModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Opt
 	return &customTStakeOrderModel{
 		defaultTStakeOrderModel: newTStakeOrderModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTStakeOrderModel) ClaimOperation(ctx context.Context, id int64, operationNo string, now int64, allowedStatuses []int64) (bool, error) {
+	builder := sqlutil.NewPageQueryBuilder()
+	builder.And("id = ?", id)
+	builder.And("active_operation_no = ''")
+	builder.InInt64("status", allowedStatuses)
+	query := fmt.Sprintf("UPDATE %s SET active_operation_no=?,redeem_apply_times=?,version=version+1,update_times=? WHERE %s", m.table, builder.Where())
+	args := []any{operationNo, now, now}
+	args = append(args, builder.Args()...)
+	key := fmt.Sprintf("%s%v", cacheTStakeOrderIdPrefix, id)
+	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
+		return conn.ExecCtx(ctx, query, args...)
+	}, key)
+	if err != nil {
+		return false, err
+	}
+	affected, err := result.RowsAffected()
+	return affected == 1, err
+}
+
+func (m *defaultTStakeOrderModel) FindOneForUpdate(ctx context.Context, id int64) (*TStakeOrder, error) {
+	var item TStakeOrder
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE id=? FOR UPDATE", tStakeOrderRows, m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &item, query, id); err != nil {
+		return nil, err
+	}
+	return &item, nil
 }
 
 func (m *defaultTStakeOrderModel) FindPage(ctx context.Context, filter StakeOrderPageFilter, cursor int64, limit int64) ([]*TStakeOrder, int64, error) {

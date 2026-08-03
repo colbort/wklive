@@ -92,6 +92,31 @@ func GetTenantIdFromCtx(ctx context.Context) (int64, error) {
 	return tenantId, nil
 }
 
+// GetTrustedTenantIdFromCtx returns the tenant embedded in the signed JWT
+// expand claim when it is present. This must take precedence over the legacy
+// x-tenant-id request header so an authenticated client cannot switch tenants.
+// Public requests without a JWT may still use a tenant id previously resolved
+// by trusted server-side middleware.
+func GetTrustedTenantIdFromCtx(ctx context.Context) (int64, error) {
+	if expand, ok := ctx.Value("expand").(string); ok && expand != "" {
+		var claims struct {
+			TenantID       int64 `json:"tid"`
+			LegacyTenantID int64 `json:"tenantId"`
+		}
+		if err := json.Unmarshal([]byte(expand), &claims); err != nil {
+			return 0, fmt.Errorf("decode tenant claim: %w", err)
+		}
+		if claims.TenantID <= 0 {
+			claims.TenantID = claims.LegacyTenantID
+		}
+		if claims.TenantID <= 0 {
+			return 0, errors.New("tenant claim is required")
+		}
+		return claims.TenantID, nil
+	}
+	return GetTenantIdFromCtx(ctx)
+}
+
 func GetUserTypeFromCtx(ctx context.Context) (int64, error) {
 	userType, ok := ctx.Value(CtxKeyUserType).(int64)
 	if !ok {

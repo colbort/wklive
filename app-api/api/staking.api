@@ -145,6 +145,7 @@ type CreateOrderReq {
 	stakeAmount string `json:"stakeAmount" validate:"required,decimal_gt_zero,decimal_30_8"`
 	source      int64  `json:"source"`
 	remark      string `json:"remark,optional"`
+	requestNo   string `json:"requestNo" validate:"required,max=96"`
 }
 
 type CreateOrderData {
@@ -192,6 +193,7 @@ type RedeemReq {
 	orderId    int64  `json:"orderId"`
 	redeemType int64  `json:"redeemType"`
 	remark     string `json:"remark,optional"`
+	requestNo  string `json:"requestNo" validate:"required,max=96"`
 }
 
 type RedeemData {
@@ -260,4 +262,3 @@ service app {
 	@handler Redeem
 	post /redeem (RedeemReq) returns (RedeemResp)
 }
-

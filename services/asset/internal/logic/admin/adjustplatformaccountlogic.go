@@ -37,7 +37,7 @@ func (l *AdjustPlatformAccountLogic) AdjustPlatformAccount(in *asset.AdjustPlatf
 	amount, err := conv.ParseDecimalField(in.GetAmount())
 	validDirection := in.GetDirection() == 1 || in.GetDirection() == 2
 	validAccountOperation := typeName == insuranceFundAccountType ||
-		(typeName == optionBackstopAccountType && in.GetDirection() == 1)
+		((typeName == optionBackstopAccountType || typeName == stakingRewardAccountType) && in.GetDirection() == 1)
 	if err != nil || !amount.IsPositive() || in.GetTenantId() <= 0 ||
 		!validAccountOperation || coin == "" || requestNo == "" || !validDirection {
 		return nil, fmt.Errorf("invalid platform account adjustment")

@@ -30,6 +30,13 @@ func NewProductDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pro
 
 // 获取质押产品详情
 func (l *ProductDetailLogic) ProductDetail(in *staking.ProductDetailReq) (*staking.ProductDetailResp, error) {
+	tenantId, base, err := helpers.AdminTenantReadScopeResp(l.ctx, in.TenantId)
+	if err != nil {
+		return nil, err
+	}
+	if base != nil {
+		return &staking.ProductDetailResp{Page: base}, nil
+	}
 	item, err := l.svcCtx.StakeProductModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
@@ -37,7 +44,7 @@ func (l *ProductDetailLogic) ProductDetail(in *staking.ProductDetailReq) (*staki
 		}
 		return nil, err
 	}
-	if item.TenantId != in.TenantId {
+	if tenantId > 0 && item.TenantId != tenantId {
 		return &staking.ProductDetailResp{Page: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
 	}
 

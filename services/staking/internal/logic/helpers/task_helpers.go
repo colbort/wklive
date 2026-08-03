@@ -140,5 +140,7 @@ func CalcTaskReward(order *models.TStakeOrder, days int64) decimal.Decimal {
 	if order == nil || !order.StakeAmount.IsPositive() || !order.Apr.IsPositive() || days <= 0 {
 		return decimal.Zero
 	}
-	return order.StakeAmount.Mul(order.Apr).Mul(decimal.NewFromInt(days)).Div(decimal.NewFromInt(36500))
+	// Staking ledger columns use DECIMAL(...,8). Round down so the service never
+	// promises or pays more than the persisted accrual.
+	return order.StakeAmount.Mul(order.Apr).Mul(decimal.NewFromInt(days)).Div(decimal.NewFromInt(36500)).RoundDown(8)
 }

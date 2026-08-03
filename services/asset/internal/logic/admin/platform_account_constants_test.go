@@ -14,6 +14,7 @@ func TestIsConfigurablePlatformAccountType(t *testing.T) {
 		{name: "funding difference", accountType: fundingDifferenceAccountType, want: true},
 		{name: "fee revenue", accountType: feeRevenueAccountType, want: true},
 		{name: "option backstop", accountType: optionBackstopAccountType, want: true},
+		{name: "staking reward", accountType: stakingRewardAccountType, want: true},
 		{name: "unknown", accountType: "UNKNOWN", want: false},
 		{name: "empty", accountType: "", want: false},
 	}

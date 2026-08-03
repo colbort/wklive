@@ -134,3 +134,15 @@ func (s *AssetServer) CreditPlatformRevenue(ctx context.Context, in *asset.Credi
 	l := assetlogic.NewCreditPlatformRevenueLogic(ctx, s.svcCtx)
 	return l.CreditPlatformRevenue(in)
 }
+
+// 从租户平台资金账户原子、幂等支付到用户钱包。
+func (s *AssetServer) PayPlatformExpense(ctx context.Context, in *asset.PayPlatformExpenseReq) (*asset.PlatformTransferResp, error) {
+	l := assetlogic.NewPayPlatformExpenseLogic(ctx, s.svcCtx)
+	return l.PayPlatformExpense(in)
+}
+
+// 从用户锁仓本金原子扣减并计入租户平台收入账户。
+func (s *AssetServer) CollectLockedRevenue(ctx context.Context, in *asset.CollectLockedRevenueReq) (*asset.PlatformTransferResp, error) {
+	l := assetlogic.NewCollectLockedRevenueLogic(ctx, s.svcCtx)
+	return l.CollectLockedRevenue(in)
+}

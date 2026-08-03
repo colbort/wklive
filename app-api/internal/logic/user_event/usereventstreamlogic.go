@@ -5,7 +5,6 @@ package user_event
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -86,28 +85,7 @@ func (l *UserEventStreamLogic) UserEventStream(
 }
 
 func tenantIDFromJwtContext(ctx context.Context) (int64, error) {
-	if tenantID, err := utils.GetTenantIdFromCtx(ctx); err == nil && tenantID > 0 {
-		return tenantID, nil
-	}
-
-	expand, ok := ctx.Value("expand").(string)
-	if !ok || expand == "" {
-		return 0, fmt.Errorf("tenant claim is required")
-	}
-	var claims struct {
-		TenantID       int64 `json:"tid"`
-		LegacyTenantID int64 `json:"tenantId"`
-	}
-	if err := json.Unmarshal([]byte(expand), &claims); err != nil {
-		return 0, fmt.Errorf("decode tenant claim: %w", err)
-	}
-	if claims.TenantID <= 0 {
-		claims.TenantID = claims.LegacyTenantID
-	}
-	if claims.TenantID <= 0 {
-		return 0, fmt.Errorf("tenant claim is required")
-	}
-	return claims.TenantID, nil
+	return utils.GetTrustedTenantIdFromCtx(ctx)
 }
 
 func send(

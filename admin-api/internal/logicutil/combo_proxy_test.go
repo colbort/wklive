@@ -7,7 +7,25 @@ import (
 	"wklive/admin-api/internal/types"
 	"wklive/proto/common"
 	"wklive/proto/option"
+	"wklive/proto/staking"
 )
+
+func TestCopyValueMapsLegacyPageResponseBase(t *testing.T) {
+	source := &staking.ProductCreateResp{
+		Page: &common.RespBase{Code: 200, Msg: "success", Total: 7, HasNext: true, NextCursor: 42},
+		Data: 99,
+	}
+	var target types.ProductCreateResp
+	if err := copyValue(reflect.ValueOf(&target), reflect.ValueOf(source)); err != nil {
+		t.Fatal(err)
+	}
+	if target.Code != 200 || target.Msg != "success" || target.Total != 7 || !target.HasNext || target.NextCursor != 42 {
+		t.Fatalf("page response base was not mapped: %+v", target.RespBase)
+	}
+	if target.Data != 99 {
+		t.Fatalf("data=%d want=99", target.Data)
+	}
+}
 
 func TestCopyValuePreservesAdminComboDrillDown(t *testing.T) {
 	source := &option.GetAdminComboOrderResp{

@@ -342,6 +342,7 @@ type CreateOrderReq struct {
 	StakeAmount string `json:"stakeAmount" validate:"required,decimal_gt_zero,decimal_30_8"`
 	Source      int64  `json:"source"`
 	Remark      string `json:"remark,optional"`
+	RequestNo   string `json:"requestNo" validate:"required,max=96"`
 }
 
 type CreateOrderResp struct {
@@ -1804,6 +1805,7 @@ type RedeemReq struct {
 	OrderId    int64  `json:"orderId"`
 	RedeemType int64  `json:"redeemType"`
 	Remark     string `json:"remark,optional"`
+	RequestNo  string `json:"requestNo" validate:"required,max=96"`
 }
 
 type RedeemResp struct {

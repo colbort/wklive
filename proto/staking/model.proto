@@ -79,6 +79,9 @@ message StakeOrder {
   int64 update_user_id = 36;
   int64 create_times = 37;
   int64 update_times = 38;
+  string request_no = 39;
+  int64 version = 40;
+  string active_operation_no = 41;
 }
 
 // 收益记录
@@ -103,6 +106,7 @@ message StakeRewardLog {
   int64 update_user_id = 18;
   int64 create_times = 19;
   int64 update_times = 20;
+  string operation_no = 21;
 }
 
 // 赎回记录
@@ -127,4 +131,57 @@ message StakeRedeemLog {
   int64 update_user_id = 18;
   int64 create_times = 19;
   int64 update_times = 20;
+}
+
+// 持久化资金操作。后台用于查看跨服务资金步骤、失败原因及恢复状态。
+message StakeOperation {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 user_id = 3;
+  int64 order_id = 4;
+  string order_no = 5;
+  string operation_no = 6;
+  string request_no = 7;
+  int64 operation_type = 8;
+  string principal_amount = 9;
+  string reward_amount = 10;
+  string fee_amount = 11;
+  int64 principal_status = 12;
+  int64 reward_status = 13;
+  int64 fee_status = 14;
+  int64 status = 15;
+  int64 period_end = 16;
+  int64 retry_count = 17;
+  int64 next_retry_at = 18;
+  string last_error = 19;
+  int64 operator_user_id = 20;
+  string remark = 21;
+  int64 version = 22;
+  int64 create_times = 23;
+  int64 update_times = 24;
+}
+
+// 每日账实对账快照。金额保留数据库原始精度，以字符串传输。
+message StakeReconciliation {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 reconciliation_date = 3;
+  string coin_symbol = 4;
+  string active_principal = 5;
+  string product_staked = 6;
+  string position_staked = 7;
+  string asset_locked = 8;
+  string reward_log_amount = 9;
+  string reward_platform_amount = 10;
+  string fee_log_amount = 11;
+  string fee_platform_amount = 12;
+  string product_diff = 13;
+  string position_diff = 14;
+  string lock_diff = 15;
+  string reward_diff = 16;
+  string fee_diff = 17;
+  int64 status = 18;
+  string detail = 19;
+  int64 create_times = 20;
+  int64 update_times = 21;
 }

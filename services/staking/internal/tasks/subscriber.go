@@ -30,6 +30,9 @@ func handleTask(ctx context.Context, svcCtx *svc.ServiceContext, msg tasks.Messa
 	case tasks.ActionStakingProcessRewardsAndSettleOrders:
 		req := &staking.StakingTaskReq{TenantId: msg.TenantID}
 		return checkResp(logic.NewProcessRewardsAndSettleOrdersLogic(ctx, svcCtx).ProcessRewardsAndSettleOrders(req))
+	case tasks.ActionStakingReconcile:
+		req := &staking.StakingTaskReq{TenantId: msg.TenantID}
+		return checkResp(logic.NewReconcileStakingLogic(ctx, svcCtx).ReconcileStaking(req))
 	default:
 		logx.Errorf("unknown staking task action: %s", msg.Action)
 		return nil

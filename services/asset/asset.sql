@@ -142,6 +142,7 @@ CREATE TABLE `t_asset_lock` (
   `update_times` bigint NOT NULL DEFAULT 0 COMMENT '更新时间戳(毫秒)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_lock_no` (`lock_no`),
+  UNIQUE KEY `uk_tenant_biz_lock` (`tenant_id`,`biz_type`,`biz_no`),
   KEY `idx_tenant_user_id` (`tenant_id`,`user_id`),
   KEY `idx_tenant_biz_type_biz_id` (`tenant_id`,`biz_type`,`biz_id`),
   KEY `idx_tenant_biz_no` (`tenant_id`,`biz_no`),
@@ -177,7 +178,7 @@ CREATE TABLE `t_asset_insurance_cover` (
 CREATE TABLE `t_asset_platform_account` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `tenant_id` BIGINT NOT NULL,
-  `account_type` VARCHAR(32) NOT NULL COMMENT 'INSURANCE_FUND/FUNDING_DIFFERENCE/FEE_REVENUE/OPTION_BACKSTOP',
+  `account_type` VARCHAR(32) NOT NULL COMMENT 'INSURANCE_FUND/FUNDING_DIFFERENCE/FEE_REVENUE/OPTION_BACKSTOP/STAKING_REWARD',
   `coin` VARCHAR(32) NOT NULL,
   `available_amount` DECIMAL(36,18) NOT NULL DEFAULT 0,
   `frozen_amount` DECIMAL(36,18) NOT NULL DEFAULT 0,

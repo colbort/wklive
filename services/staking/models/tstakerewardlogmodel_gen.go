@@ -25,13 +25,15 @@ var (
 	tStakeRewardLogRowsExpectAutoSet   = strings.Join(stringx.Remove(tStakeRewardLogFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tStakeRewardLogRowsWithPlaceHolder = strings.Join(stringx.Remove(tStakeRewardLogFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTStakeRewardLogIdPrefix = "cache:tStakeRewardLog:id:"
+	cacheTStakeRewardLogIdPrefix                  = "cache:tStakeRewardLog:id:"
+	cacheTStakeRewardLogTenantIdOperationNoPrefix = "cache:tStakeRewardLog:tenantId:operationNo:"
 )
 
 type (
 	tStakeRewardLogModel interface {
 		Insert(ctx context.Context, data *TStakeRewardLog) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TStakeRewardLog, error)
+		FindOneByTenantIdOperationNo(ctx context.Context, tenantId int64, operationNo string) (*TStakeRewardLog, error)
 		Update(ctx context.Context, data *TStakeRewardLog) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -46,6 +48,7 @@ type (
 		TenantId         int64           `db:"tenant_id"`          // 租户ID
 		OrderId          int64           `db:"order_id"`           // 质押订单ID
 		OrderNo          string          `db:"order_no"`           // 质押订单号
+		OperationNo      string          `db:"operation_no"`       // 收益资金操作号
 		UserId           int64           `db:"user_id"`            // 用户ID
 		ProductId        int64           `db:"product_id"`         // 质押产品ID
 		ProductName      string          `db:"product_name"`       // 质押产品名称快照
@@ -55,8 +58,8 @@ type (
 		BeforeReward     decimal.Decimal `db:"before_reward"`      // 发放前累计收益
 		AfterReward      decimal.Decimal `db:"after_reward"`       // 发放后累计收益
 		RewardType       int64           `db:"reward_type"`        // 收益类型：1日收益 2到期收益 3补发收益 4手动发放
-		RewardStatus     int64           `db:"reward_status"`      // 发放状态：1失败 2成功
-		RewardTimes      int64           `db:"reward_times"`       // 收益发放时间戳
+		RewardStatus     int64           `db:"reward_status"`      // 发放状态：1失败 2成功 3处理中
+		RewardTimes      int64           `db:"reward_times"`       // 收益发放时间戳（毫秒）
 		Remark           string          `db:"remark"`             // 备注
 		CreateUserId     int64           `db:"create_user_id"`     // 创建人ID
 		UpdateUserId     int64           `db:"update_user_id"`     // 更新人ID
@@ -73,11 +76,17 @@ func newTStakeRewardLogModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache
 }
 
 func (m *defaultTStakeRewardLogModel) Delete(ctx context.Context, id int64) error {
+	data, err := m.FindOne(ctx, id)
+	if err != nil {
+		return err
+	}
+
 	tStakeRewardLogIdKey := fmt.Sprintf("%s%v", cacheTStakeRewardLogIdPrefix, id)
-	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+	tStakeRewardLogTenantIdOperationNoKey := fmt.Sprintf("%s%v:%v", cacheTStakeRewardLogTenantIdOperationNoPrefix, data.TenantId, data.OperationNo)
+	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tStakeRewardLogIdKey)
+	}, tStakeRewardLogIdKey, tStakeRewardLogTenantIdOperationNoKey)
 	return err
 }
 
@@ -98,21 +107,48 @@ func (m *defaultTStakeRewardLogModel) FindOne(ctx context.Context, id int64) (*T
 	}
 }
 
+func (m *defaultTStakeRewardLogModel) FindOneByTenantIdOperationNo(ctx context.Context, tenantId int64, operationNo string) (*TStakeRewardLog, error) {
+	tStakeRewardLogTenantIdOperationNoKey := fmt.Sprintf("%s%v:%v", cacheTStakeRewardLogTenantIdOperationNoPrefix, tenantId, operationNo)
+	var resp TStakeRewardLog
+	err := m.QueryRowIndexCtx(ctx, &resp, tStakeRewardLogTenantIdOperationNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `operation_no` = ? limit 1", tStakeRewardLogRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, operationNo); err != nil {
+			return nil, err
+		}
+		return resp.Id, nil
+	}, m.queryPrimary)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
 func (m *defaultTStakeRewardLogModel) Insert(ctx context.Context, data *TStakeRewardLog) (sql.Result, error) {
 	tStakeRewardLogIdKey := fmt.Sprintf("%s%v", cacheTStakeRewardLogIdPrefix, data.Id)
+	tStakeRewardLogTenantIdOperationNoKey := fmt.Sprintf("%s%v:%v", cacheTStakeRewardLogTenantIdOperationNoPrefix, data.TenantId, data.OperationNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tStakeRewardLogRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.OrderNo, data.UserId, data.ProductId, data.ProductName, data.CoinSymbol, data.RewardCoinSymbol, data.RewardAmount, data.BeforeReward, data.AfterReward, data.RewardType, data.RewardStatus, data.RewardTimes, data.Remark, data.CreateUserId, data.UpdateUserId, data.CreateTimes, data.UpdateTimes)
-	}, tStakeRewardLogIdKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tStakeRewardLogRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.OrderNo, data.OperationNo, data.UserId, data.ProductId, data.ProductName, data.CoinSymbol, data.RewardCoinSymbol, data.RewardAmount, data.BeforeReward, data.AfterReward, data.RewardType, data.RewardStatus, data.RewardTimes, data.Remark, data.CreateUserId, data.UpdateUserId, data.CreateTimes, data.UpdateTimes)
+	}, tStakeRewardLogIdKey, tStakeRewardLogTenantIdOperationNoKey)
 	return ret, err
 }
 
-func (m *defaultTStakeRewardLogModel) Update(ctx context.Context, data *TStakeRewardLog) error {
+func (m *defaultTStakeRewardLogModel) Update(ctx context.Context, newData *TStakeRewardLog) error {
+	data, err := m.FindOne(ctx, newData.Id)
+	if err != nil {
+		return err
+	}
+
 	tStakeRewardLogIdKey := fmt.Sprintf("%s%v", cacheTStakeRewardLogIdPrefix, data.Id)
-	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+	tStakeRewardLogTenantIdOperationNoKey := fmt.Sprintf("%s%v:%v", cacheTStakeRewardLogTenantIdOperationNoPrefix, data.TenantId, data.OperationNo)
+	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tStakeRewardLogRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderId, data.OrderNo, data.UserId, data.ProductId, data.ProductName, data.CoinSymbol, data.RewardCoinSymbol, data.RewardAmount, data.BeforeReward, data.AfterReward, data.RewardType, data.RewardStatus, data.RewardTimes, data.Remark, data.CreateUserId, data.UpdateUserId, data.CreateTimes, data.UpdateTimes, data.Id)
-	}, tStakeRewardLogIdKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderId, newData.OrderNo, newData.OperationNo, newData.UserId, newData.ProductId, newData.ProductName, newData.CoinSymbol, newData.RewardCoinSymbol, newData.RewardAmount, newData.BeforeReward, newData.AfterReward, newData.RewardType, newData.RewardStatus, newData.RewardTimes, newData.Remark, newData.CreateUserId, newData.UpdateUserId, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tStakeRewardLogIdKey, tStakeRewardLogTenantIdOperationNoKey)
 	return err
 }
 

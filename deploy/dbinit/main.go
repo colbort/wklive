@@ -443,6 +443,10 @@ func applySystemDataMigrations(ctx context.Context, db *sql.DB, workspace string
 		"20260802_zz_admin_extension_permissions.sql",
 		"20260802_zzz_remove_tenant_display_init_menu.sql",
 		"20260802_zzzz_split_option_risk_workbench.sql",
+		"20260803_add_staking_jobs.sql",
+		"20260803_add_staking_operation_menu.sql",
+		"20260803_add_staking_reconciliation_job_menu.sql",
+		"20260803_refresh_staking_admin_permissions.sql",
 	}
 	for _, name := range files {
 		path := filepath.Join(workspace, "services", "system", "migrations", name)

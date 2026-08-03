@@ -2,7 +2,10 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
+
+	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"wklive/common/sqlutil"
@@ -25,6 +28,8 @@ type (
 	TStakeProductModel interface {
 		tStakeProductModel
 		FindPage(ctx context.Context, filter StakeProductPageFilter, cursor int64, limit int64) ([]*TStakeProduct, int64, error)
+		ReserveStakeAmount(ctx context.Context, id int64, amount decimal.Decimal, updateTimes int64) (bool, error)
+		ReleaseStakeAmount(ctx context.Context, id int64, amount decimal.Decimal, updateTimes int64) error
 	}
 
 	customTStakeProductModel struct {
@@ -39,11 +44,37 @@ func NewTStakeProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.O
 	}
 }
 
+func (m *defaultTStakeProductModel) ReserveStakeAmount(ctx context.Context, id int64, amount decimal.Decimal, updateTimes int64) (bool, error) {
+	key := fmt.Sprintf("%s%v", cacheTStakeProductIdPrefix, id)
+	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
+		return conn.ExecCtx(ctx, `UPDATE t_stake_product
+			SET staked_amount=staked_amount+?,update_times=?
+			WHERE id=? AND status=2
+			  AND (total_amount=0 OR staked_amount+?<=total_amount)`, amount, updateTimes, id, amount)
+	}, key)
+	if err != nil {
+		return false, err
+	}
+	affected, err := result.RowsAffected()
+	return affected == 1, err
+}
+
+func (m *defaultTStakeProductModel) ReleaseStakeAmount(ctx context.Context, id int64, amount decimal.Decimal, updateTimes int64) error {
+	key := fmt.Sprintf("%s%v", cacheTStakeProductIdPrefix, id)
+	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
+		return conn.ExecCtx(ctx, `UPDATE t_stake_product
+			SET staked_amount=GREATEST(staked_amount-?,0),update_times=? WHERE id=?`, amount, updateTimes, id)
+	}, key)
+	return err
+}
+
 func (m *defaultTStakeProductModel) FindPage(ctx context.Context, filter StakeProductPageFilter, cursor int64, limit int64) ([]*TStakeProduct, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
-	builder.EqInt64("tenant_id", filter.TenantId)
+	if filter.TenantId > 0 {
+		builder.And("tenant_id = ?", filter.TenantId)
+	}
 	builder.EqString("product_no", filter.ProductNo)
 	if filter.ProductName != "" {
 		builder.LikeString("product_name", filter.ProductName)

@@ -2,12 +2,11 @@ package adminlogic
 
 import (
 	"context"
-	"wklive/services/staking/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/pageutil"
-	"wklive/common/utils"
 	"wklive/proto/staking"
+	"wklive/services/staking/internal/logic/helpers"
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
 
@@ -30,10 +29,12 @@ func NewRewardLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Rew
 
 // 获取收益记录列表
 func (l *RewardLogListLogic) RewardLogList(in *staking.RewardLogListReq) (*staking.RewardLogListResp, error) {
-	if in.TenantId <= 0 {
-		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
-			in.TenantId = tenantId
-		}
+	tenantId, base, err := helpers.AdminTenantReadScopeResp(l.ctx, in.TenantId)
+	if err != nil {
+		return nil, err
+	}
+	if base != nil {
+		return &staking.RewardLogListResp{Page: base}, nil
 	}
 	page := in.GetPage()
 	cursor, limit := int64(0), int64(10)
@@ -43,7 +44,7 @@ func (l *RewardLogListLogic) RewardLogList(in *staking.RewardLogListReq) (*staki
 	items, total, err := l.svcCtx.StakeRewardLogModel.FindPage(
 		l.ctx,
 		models.StakeRewardLogPageFilter{
-			TenantId:     in.TenantId,
+			TenantId:     tenantId,
 			UserId:       in.UserId,
 			ProductId:    in.ProductId,
 			OrderNo:      in.OrderNo,

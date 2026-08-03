@@ -3100,7 +3100,7 @@ type ManualRedeemReq struct {
 	FeeRate      string `json:"feeRate" validate:"required,decimal_gte_zero,decimal_10_4"`
 	FeeAmount    string `json:"feeAmount" validate:"required,decimal_gte_zero,decimal_30_8"`
 	Remark       string `json:"remark,optional"`
-	OperatorUid  int64  `json:"operatorUid"`
+	RequestNo    string `json:"requestNo" validate:"required,max=96"`
 }
 
 type ManualRedeemResp struct {
@@ -3114,7 +3114,7 @@ type ManualRewardReq struct {
 	RewardAmount string `json:"rewardAmount" validate:"required,decimal_gt_zero,decimal_30_8"`
 	RewardType   int64  `json:"rewardType"`
 	Remark       string `json:"remark,optional"`
-	OperatorUid  int64  `json:"operatorUid"`
+	RequestNo    string `json:"requestNo" validate:"required,max=96"`
 }
 
 type ManualRewardResp struct {
@@ -3237,6 +3237,32 @@ type OpLogListReq struct {
 type OpLogListResp struct {
 	RespBase
 	Data []OpLogItem `json:"data"`
+}
+
+type OperationListReq struct {
+	PageReq
+	TenantId      int64  `form:"tenantId,optional"`
+	OperationNo   string `form:"operationNo,optional"`
+	OrderNo       string `form:"orderNo,optional"`
+	UserId        int64  `form:"userId,optional"`
+	OperationType int64  `form:"operationType,optional"`
+	Status        int64  `form:"status,optional"`
+}
+
+type OperationListResp struct {
+	RespBase
+	Data []StakeOperation `json:"data"`
+}
+
+type OperationRetryReq struct {
+	TenantId int64  `json:"tenantId"`
+	Id       int64  `json:"id" validate:"required"`
+	Reason   string `json:"reason" validate:"required,max=255"`
+}
+
+type OperationRetryResp struct {
+	RespBase
+	Data int64 `json:"data"`
 }
 
 type OptionAccount struct {
@@ -4530,10 +4556,9 @@ type PriceFormulaResp struct {
 }
 
 type ProductChangeStatusReq struct {
-	TenantId    int64 `json:"tenantId"`
-	Id          int64 `json:"id"`
-	Status      int64 `json:"status"`
-	OperatorUid int64 `json:"operatorUid"`
+	TenantId int64 `json:"tenantId"`
+	Id       int64 `json:"id"`
+	Status   int64 `json:"status"`
 }
 
 type ProductChangeStatusResp struct {
@@ -4564,7 +4589,6 @@ type ProductCreateReq struct {
 	Status           int64  `json:"status"`
 	Sort             int64  `json:"sort"`
 	Remark           string `json:"remark,optional"`
-	OperatorUid      int64  `json:"operatorUid"`
 }
 
 type ProductCreateResp struct {
@@ -4620,7 +4644,6 @@ type ProductUpdateReq struct {
 	Status           int64  `json:"status"`
 	Sort             int64  `json:"sort"`
 	Remark           string `json:"remark,optional"`
-	OperatorUid      int64  `json:"operatorUid"`
 }
 
 type ProductUpdateResp struct {
@@ -4706,6 +4729,19 @@ type RechargeOrder struct {
 	CreditedTime     int64  `json:"creditedTime"`
 	CreditRetryCount int64  `json:"creditRetryCount"`
 	LastCreditError  string `json:"lastCreditError"`
+}
+
+type ReconciliationListReq struct {
+	PageReq
+	TenantId           int64  `form:"tenantId,optional"`
+	ReconciliationDate int64  `form:"reconciliationDate,optional"`
+	CoinSymbol         string `form:"coinSymbol,optional"`
+	Status             int64  `form:"status,optional"`
+}
+
+type ReconciliationListResp struct {
+	RespBase
+	Data []StakeReconciliation `json:"data"`
 }
 
 type RedeemLogListReq struct {
@@ -5207,6 +5243,33 @@ type SnapshotOutboxData struct {
 	UpdateTimes      int64  `json:"updateTimes"`
 }
 
+type StakeOperation struct {
+	Id              int64  `json:"id"`
+	TenantId        int64  `json:"tenantId"`
+	UserId          int64  `json:"userId"`
+	OrderId         int64  `json:"orderId"`
+	OrderNo         string `json:"orderNo"`
+	OperationNo     string `json:"operationNo"`
+	RequestNo       string `json:"requestNo"`
+	OperationType   int64  `json:"operationType"`
+	PrincipalAmount string `json:"principalAmount" validate:"decimal_30_8"`
+	RewardAmount    string `json:"rewardAmount" validate:"decimal_30_8"`
+	FeeAmount       string `json:"feeAmount" validate:"decimal_30_8"`
+	PrincipalStatus int64  `json:"principalStatus"`
+	RewardStatus    int64  `json:"rewardStatus"`
+	FeeStatus       int64  `json:"feeStatus"`
+	Status          int64  `json:"status"`
+	PeriodEnd       int64  `json:"periodEnd"`
+	RetryCount      int64  `json:"retryCount"`
+	NextRetryAt     int64  `json:"nextRetryAt"`
+	LastError       string `json:"lastError"`
+	OperatorUserId  int64  `json:"operatorUserId"`
+	Remark          string `json:"remark"`
+	Version         int64  `json:"version"`
+	CreateTimes     int64  `json:"createTimes"`
+	UpdateTimes     int64  `json:"updateTimes"`
+}
+
 type StakeOrder struct {
 	Id               int64  `json:"id"`
 	TenantId         int64  `json:"tenantId"`
@@ -5277,6 +5340,30 @@ type StakeProduct struct {
 	UpdateUserId     int64  `json:"updateUserId"`
 	CreateTimes      int64  `json:"createTimes"`
 	UpdateTimes      int64  `json:"updateTimes"`
+}
+
+type StakeReconciliation struct {
+	Id                   int64  `json:"id"`
+	TenantId             int64  `json:"tenantId"`
+	ReconciliationDate   int64  `json:"reconciliationDate"`
+	CoinSymbol           string `json:"coinSymbol"`
+	ActivePrincipal      string `json:"activePrincipal"`
+	ProductStaked        string `json:"productStaked"`
+	PositionStaked       string `json:"positionStaked"`
+	AssetLocked          string `json:"assetLocked"`
+	RewardLogAmount      string `json:"rewardLogAmount"`
+	RewardPlatformAmount string `json:"rewardPlatformAmount"`
+	FeeLogAmount         string `json:"feeLogAmount"`
+	FeePlatformAmount    string `json:"feePlatformAmount"`
+	ProductDiff          string `json:"productDiff"`
+	PositionDiff         string `json:"positionDiff"`
+	LockDiff             string `json:"lockDiff"`
+	RewardDiff           string `json:"rewardDiff"`
+	FeeDiff              string `json:"feeDiff"`
+	Status               int64  `json:"status"`
+	Detail               string `json:"detail"`
+	CreateTimes          int64  `json:"createTimes"`
+	UpdateTimes          int64  `json:"updateTimes"`
 }
 
 type StakeRedeemLog struct {

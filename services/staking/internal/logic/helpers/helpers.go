@@ -26,6 +26,30 @@ func AdminTenantWriteScopeResp(ctx context.Context, currentTenantId int64, notAl
 	return nil, nil
 }
 
+// AdminTenantReadScopeResp returns the effective tenant filter for an admin
+// query. A zero tenant ID is meaningful only for a system administrator and
+// means all tenants.
+func AdminTenantReadScopeResp(ctx context.Context, requestedTenantId int64) (int64, *common.RespBase, error) {
+	tenantId, allowed, forbidden, err := utils.ResolveAdminTenantReadScopeFromMd(ctx, requestedTenantId)
+	if err != nil {
+		return 0, nil, i18n.StatusError(ctx, i18n.UserNotFound)
+	}
+	if forbidden || !allowed {
+		return 0, helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, ctx)), nil
+	}
+	return tenantId, nil, nil
+}
+
+// AdminOperatorUserID reads the actor from trusted RPC metadata. Request
+// payloads must not be allowed to forge audit ownership.
+func AdminOperatorUserID(ctx context.Context) (int64, error) {
+	operatorId, err := utils.GetUserIdFromMd(ctx)
+	if err != nil || operatorId <= 0 {
+		return 0, i18n.StatusError(ctx, i18n.UserNotFound)
+	}
+	return operatorId, nil
+}
+
 func ProductToProto(item *models.TStakeProduct) *staking.StakeProduct {
 	if item == nil {
 		return nil
@@ -67,44 +91,47 @@ func OrderToProto(item *models.TStakeOrder) *staking.StakeOrder {
 		return nil
 	}
 	return &staking.StakeOrder{
-		Id:               item.Id,
-		TenantId:         item.TenantId,
-		OrderNo:          item.OrderNo,
-		UserId:           item.UserId,
-		ProductId:        item.ProductId,
-		ProductNo:        item.ProductNo,
-		ProductName:      item.ProductName,
-		ProductType:      staking.ProductType(item.ProductType),
-		CoinName:         item.CoinName,
-		CoinSymbol:       item.CoinSymbol,
-		RewardCoinName:   item.RewardCoinName,
-		RewardCoinSymbol: item.RewardCoinSymbol,
-		StakeAmount:      conv.FloatString(item.StakeAmount),
-		Apr:              conv.FloatString(item.Apr),
-		LockDays:         item.LockDays,
-		InterestMode:     staking.InterestMode(item.InterestMode),
-		RewardMode:       staking.RewardMode(item.RewardMode),
-		AllowEarlyRedeem: common.YesNo(item.AllowEarlyRedeem),
-		EarlyRedeemRate:  conv.FloatString(item.EarlyRedeemRate),
-		InterestDays:     item.InterestDays,
-		StartTimes:       int64(item.StartTimes),
-		EndTimes:         int64(item.EndTimes),
-		LastRewardTimes:  int64(item.LastRewardTimes),
-		NextRewardTimes:  int64(item.NextRewardTimes),
-		TotalReward:      conv.FloatString(item.TotalReward),
-		PendingReward:    conv.FloatString(item.PendingReward),
-		RedeemAmount:     conv.FloatString(item.RedeemAmount),
-		RedeemFee:        conv.FloatString(item.RedeemFee),
-		Status:           staking.OrderStatus(item.Status),
-		RedeemType:       staking.RedeemType(item.RedeemType),
-		RedeemApplyTimes: int64(item.RedeemApplyTimes),
-		RedeemTimes:      int64(item.RedeemTimes),
-		Source:           staking.SourceType(item.Source),
-		Remark:           item.Remark,
-		CreateUserId:     item.CreateUserId,
-		UpdateUserId:     item.UpdateUserId,
-		CreateTimes:      int64(item.CreateTimes),
-		UpdateTimes:      int64(item.UpdateTimes),
+		Id:                item.Id,
+		TenantId:          item.TenantId,
+		OrderNo:           item.OrderNo,
+		RequestNo:         item.RequestNo,
+		ActiveOperationNo: item.ActiveOperationNo,
+		UserId:            item.UserId,
+		ProductId:         item.ProductId,
+		ProductNo:         item.ProductNo,
+		ProductName:       item.ProductName,
+		ProductType:       staking.ProductType(item.ProductType),
+		CoinName:          item.CoinName,
+		CoinSymbol:        item.CoinSymbol,
+		RewardCoinName:    item.RewardCoinName,
+		RewardCoinSymbol:  item.RewardCoinSymbol,
+		StakeAmount:       conv.FloatString(item.StakeAmount),
+		Apr:               conv.FloatString(item.Apr),
+		LockDays:          item.LockDays,
+		InterestMode:      staking.InterestMode(item.InterestMode),
+		RewardMode:        staking.RewardMode(item.RewardMode),
+		AllowEarlyRedeem:  common.YesNo(item.AllowEarlyRedeem),
+		EarlyRedeemRate:   conv.FloatString(item.EarlyRedeemRate),
+		InterestDays:      item.InterestDays,
+		StartTimes:        int64(item.StartTimes),
+		EndTimes:          int64(item.EndTimes),
+		LastRewardTimes:   int64(item.LastRewardTimes),
+		NextRewardTimes:   int64(item.NextRewardTimes),
+		TotalReward:       conv.FloatString(item.TotalReward),
+		PendingReward:     conv.FloatString(item.PendingReward),
+		RedeemAmount:      conv.FloatString(item.RedeemAmount),
+		RedeemFee:         conv.FloatString(item.RedeemFee),
+		Status:            staking.OrderStatus(item.Status),
+		RedeemType:        staking.RedeemType(item.RedeemType),
+		RedeemApplyTimes:  int64(item.RedeemApplyTimes),
+		RedeemTimes:       int64(item.RedeemTimes),
+		Source:            staking.SourceType(item.Source),
+		Remark:            item.Remark,
+		CreateUserId:      item.CreateUserId,
+		UpdateUserId:      item.UpdateUserId,
+		CreateTimes:       int64(item.CreateTimes),
+		UpdateTimes:       int64(item.UpdateTimes),
+		Version:           item.Version,
 	}
 }
 
@@ -117,6 +144,7 @@ func RewardLogToProto(item *models.TStakeRewardLog) *staking.StakeRewardLog {
 		TenantId:         item.TenantId,
 		OrderId:          item.OrderId,
 		OrderNo:          item.OrderNo,
+		OperationNo:      item.OperationNo,
 		UserId:           item.UserId,
 		ProductId:        item.ProductId,
 		ProductName:      item.ProductName,
@@ -161,6 +189,54 @@ func RedeemLogToProto(item *models.TStakeRedeemLog) *staking.StakeRedeemLog {
 		UpdateUserId: item.UpdateUserId,
 		CreateTimes:  int64(item.CreateTimes),
 		UpdateTimes:  int64(item.UpdateTimes),
+	}
+}
+
+func OperationToProto(item *models.TStakeOperation) *staking.StakeOperation {
+	if item == nil {
+		return nil
+	}
+	return &staking.StakeOperation{
+		Id:              item.Id,
+		TenantId:        item.TenantId,
+		UserId:          item.UserId,
+		OrderId:         item.OrderId,
+		OrderNo:         item.OrderNo,
+		OperationNo:     item.OperationNo,
+		RequestNo:       item.RequestNo,
+		OperationType:   item.OperationType,
+		PrincipalAmount: conv.FloatString(item.PrincipalAmount),
+		RewardAmount:    conv.FloatString(item.RewardAmount),
+		FeeAmount:       conv.FloatString(item.FeeAmount),
+		PrincipalStatus: item.PrincipalStatus,
+		RewardStatus:    item.RewardStatus,
+		FeeStatus:       item.FeeStatus,
+		Status:          item.Status,
+		PeriodEnd:       item.PeriodEnd,
+		RetryCount:      item.RetryCount,
+		NextRetryAt:     item.NextRetryAt,
+		LastError:       item.LastError,
+		OperatorUserId:  item.OperatorUserId,
+		Remark:          item.Remark,
+		Version:         item.Version,
+		CreateTimes:     item.CreateTimes,
+		UpdateTimes:     item.UpdateTimes,
+	}
+}
+
+func ReconciliationToProto(item *models.TStakeReconciliation) *staking.StakeReconciliation {
+	if item == nil {
+		return nil
+	}
+	return &staking.StakeReconciliation{
+		Id: item.Id, TenantId: item.TenantId, ReconciliationDate: item.ReconciliationDate, CoinSymbol: item.CoinSymbol,
+		ActivePrincipal: item.ActivePrincipal.String(), ProductStaked: item.ProductStaked.String(),
+		PositionStaked: item.PositionStaked.String(), AssetLocked: item.AssetLocked.String(),
+		RewardLogAmount: item.RewardLogAmount.String(), RewardPlatformAmount: item.RewardPlatformAmount.String(),
+		FeeLogAmount: item.FeeLogAmount.String(), FeePlatformAmount: item.FeePlatformAmount.String(),
+		ProductDiff: item.ProductDiff.String(), PositionDiff: item.PositionDiff.String(), LockDiff: item.LockDiff.String(),
+		RewardDiff: item.RewardDiff.String(), FeeDiff: item.FeeDiff.String(), Status: item.Status, Detail: item.Detail,
+		CreateTimes: item.CreateTimes, UpdateTimes: item.UpdateTimes,
 	}
 }
 

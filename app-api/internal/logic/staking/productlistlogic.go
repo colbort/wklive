@@ -28,5 +28,9 @@ func NewProductListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Produ
 }
 
 func (l *ProductListLogic) ProductList(req *types.ProductListReq) (resp *types.ProductListResp, err error) {
-	return logicutil.Proxy[types.ProductListResp](l.ctx, req, l.svcCtx.StakingCli.ProductList)
+	ctx, err := resolveTenantContext(l.ctx, l.svcCtx)
+	if err != nil {
+		return logicutil.SystemErrorResp[types.ProductListResp](l.ctx, err)
+	}
+	return logicutil.Proxy[types.ProductListResp](ctx, req, l.svcCtx.StakingCli.ProductList)
 }

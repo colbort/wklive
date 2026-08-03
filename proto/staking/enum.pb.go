@@ -234,6 +234,7 @@ const (
 	OrderStatus_ORDER_STATUS_REDEEMED       OrderStatus = 3 // 已赎回
 	OrderStatus_ORDER_STATUS_EARLY_REDEEMED OrderStatus = 4 // 提前赎回
 	OrderStatus_ORDER_STATUS_CANCELLED      OrderStatus = 5 // 已取消
+	OrderStatus_ORDER_STATUS_PENDING        OrderStatus = 6 // 资金锁仓处理中
 )
 
 // Enum value maps for OrderStatus.
@@ -245,6 +246,7 @@ var (
 		3: "ORDER_STATUS_REDEEMED",
 		4: "ORDER_STATUS_EARLY_REDEEMED",
 		5: "ORDER_STATUS_CANCELLED",
+		6: "ORDER_STATUS_PENDING",
 	}
 	OrderStatus_value = map[string]int32{
 		"ORDER_STATUS_UNKNOWN":        0,
@@ -253,6 +255,7 @@ var (
 		"ORDER_STATUS_REDEEMED":       3,
 		"ORDER_STATUS_EARLY_REDEEMED": 4,
 		"ORDER_STATUS_CANCELLED":      5,
+		"ORDER_STATUS_PENDING":        6,
 	}
 )
 
@@ -399,9 +402,10 @@ func (RewardType) EnumDescriptor() ([]byte, []int) {
 type RewardStatus int32
 
 const (
-	RewardStatus_REWARD_STATUS_UNKNOWN RewardStatus = 0
-	RewardStatus_REWARD_STATUS_FAIL    RewardStatus = 1 // 失败
-	RewardStatus_REWARD_STATUS_SUCCESS RewardStatus = 2 // 成功
+	RewardStatus_REWARD_STATUS_UNKNOWN    RewardStatus = 0
+	RewardStatus_REWARD_STATUS_FAIL       RewardStatus = 1 // 失败
+	RewardStatus_REWARD_STATUS_SUCCESS    RewardStatus = 2 // 成功
+	RewardStatus_REWARD_STATUS_PROCESSING RewardStatus = 3 // 处理中
 )
 
 // Enum value maps for RewardStatus.
@@ -410,11 +414,13 @@ var (
 		0: "REWARD_STATUS_UNKNOWN",
 		1: "REWARD_STATUS_FAIL",
 		2: "REWARD_STATUS_SUCCESS",
+		3: "REWARD_STATUS_PROCESSING",
 	}
 	RewardStatus_value = map[string]int32{
-		"REWARD_STATUS_UNKNOWN": 0,
-		"REWARD_STATUS_FAIL":    1,
-		"REWARD_STATUS_SUCCESS": 2,
+		"REWARD_STATUS_UNKNOWN":    0,
+		"REWARD_STATUS_FAIL":       1,
+		"REWARD_STATUS_SUCCESS":    2,
+		"REWARD_STATUS_PROCESSING": 3,
 	}
 )
 
@@ -576,14 +582,15 @@ const file_proto_staking_enum_proto_rawDesc = "" +
 	"RewardMode\x12\x17\n" +
 	"\x13REWARD_MODE_UNKNOWN\x10\x00\x12\x15\n" +
 	"\x11REWARD_MODE_DAILY\x10\x01\x12\x18\n" +
-	"\x14REWARD_MODE_MATURITY\x10\x02*\xb3\x01\n" +
+	"\x14REWARD_MODE_MATURITY\x10\x02*\xcd\x01\n" +
 	"\vOrderStatus\x12\x18\n" +
 	"\x14ORDER_STATUS_UNKNOWN\x10\x00\x12\x18\n" +
 	"\x14ORDER_STATUS_STAKING\x10\x01\x12\x18\n" +
 	"\x14ORDER_STATUS_EXPIRED\x10\x02\x12\x19\n" +
 	"\x15ORDER_STATUS_REDEEMED\x10\x03\x12\x1f\n" +
 	"\x1bORDER_STATUS_EARLY_REDEEMED\x10\x04\x12\x1a\n" +
-	"\x16ORDER_STATUS_CANCELLED\x10\x05*\x84\x01\n" +
+	"\x16ORDER_STATUS_CANCELLED\x10\x05\x12\x18\n" +
+	"\x14ORDER_STATUS_PENDING\x10\x06*\x84\x01\n" +
 	"\n" +
 	"RedeemType\x12\x17\n" +
 	"\x13REDEEM_TYPE_UNKNOWN\x10\x00\x12\x14\n" +
@@ -597,11 +604,12 @@ const file_proto_staking_enum_proto_rawDesc = "" +
 	"\x11REWARD_TYPE_DAILY\x10\x01\x12\x18\n" +
 	"\x14REWARD_TYPE_MATURITY\x10\x02\x12\x17\n" +
 	"\x13REWARD_TYPE_REISSUE\x10\x03\x12\x16\n" +
-	"\x12REWARD_TYPE_MANUAL\x10\x04*\\\n" +
+	"\x12REWARD_TYPE_MANUAL\x10\x04*z\n" +
 	"\fRewardStatus\x12\x19\n" +
 	"\x15REWARD_STATUS_UNKNOWN\x10\x00\x12\x16\n" +
 	"\x12REWARD_STATUS_FAIL\x10\x01\x12\x19\n" +
-	"\x15REWARD_STATUS_SUCCESS\x10\x02*z\n" +
+	"\x15REWARD_STATUS_SUCCESS\x10\x02\x12\x1c\n" +
+	"\x18REWARD_STATUS_PROCESSING\x10\x03*z\n" +
 	"\fRedeemStatus\x12\x19\n" +
 	"\x15REDEEM_STATUS_UNKNOWN\x10\x00\x12\x16\n" +
 	"\x12REDEEM_STATUS_FAIL\x10\x01\x12\x19\n" +

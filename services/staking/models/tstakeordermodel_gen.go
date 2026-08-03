@@ -25,8 +25,9 @@ var (
 	tStakeOrderRowsExpectAutoSet   = strings.Join(stringx.Remove(tStakeOrderFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tStakeOrderRowsWithPlaceHolder = strings.Join(stringx.Remove(tStakeOrderFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTStakeOrderIdPrefix              = "cache:tStakeOrder:id:"
-	cacheTStakeOrderTenantIdOrderNoPrefix = "cache:tStakeOrder:tenantId:orderNo:"
+	cacheTStakeOrderIdPrefix                      = "cache:tStakeOrder:id:"
+	cacheTStakeOrderTenantIdOrderNoPrefix         = "cache:tStakeOrder:tenantId:orderNo:"
+	cacheTStakeOrderTenantIdUserIdRequestNoPrefix = "cache:tStakeOrder:tenantId:userId:requestNo:"
 )
 
 type (
@@ -34,6 +35,7 @@ type (
 		Insert(ctx context.Context, data *TStakeOrder) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TStakeOrder, error)
 		FindOneByTenantIdOrderNo(ctx context.Context, tenantId int64, orderNo string) (*TStakeOrder, error)
+		FindOneByTenantIdUserIdRequestNo(ctx context.Context, tenantId int64, userId int64, requestNo string) (*TStakeOrder, error)
 		Update(ctx context.Context, data *TStakeOrder) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -44,44 +46,47 @@ type (
 	}
 
 	TStakeOrder struct {
-		Id               int64           `db:"id"`                 // 主键ID
-		TenantId         int64           `db:"tenant_id"`          // 租户ID
-		OrderNo          string          `db:"order_no"`           // 质押订单号
-		UserId           int64           `db:"user_id"`            // 用户ID
-		ProductId        int64           `db:"product_id"`         // 质押产品ID
-		ProductNo        string          `db:"product_no"`         // 质押产品编号快照
-		ProductName      string          `db:"product_name"`       // 质押产品名称快照
-		ProductType      int64           `db:"product_type"`       // 产品类型快照：1活期 2定期
-		CoinName         string          `db:"coin_name"`          // 质押币种名称快照
-		CoinSymbol       string          `db:"coin_symbol"`        // 质押币种符号快照
-		RewardCoinName   string          `db:"reward_coin_name"`   // 收益币种名称快照
-		RewardCoinSymbol string          `db:"reward_coin_symbol"` // 收益币种符号快照
-		StakeAmount      decimal.Decimal `db:"stake_amount"`       // 质押数量
-		Apr              decimal.Decimal `db:"apr"`                // 年化收益率快照
-		LockDays         int64           `db:"lock_days"`          // 锁仓天数快照
-		InterestMode     int64           `db:"interest_mode"`      // 计息方式快照：1按天计息 2到期一次性计息
-		RewardMode       int64           `db:"reward_mode"`        // 发息方式快照：1每日发放 2到期发放
-		AllowEarlyRedeem int64           `db:"allow_early_redeem"` // 是否允许提前赎回快照：1是 2否
-		EarlyRedeemRate  decimal.Decimal `db:"early_redeem_rate"`  // 提前赎回手续费率快照
-		InterestDays     int64           `db:"interest_days"`      // 已计息天数
-		StartTimes       int64           `db:"start_times"`        // 起息时间戳
-		EndTimes         int64           `db:"end_times"`          // 到期时间戳，活期可为0
-		LastRewardTimes  int64           `db:"last_reward_times"`  // 最后一次收益发放时间戳
-		NextRewardTimes  int64           `db:"next_reward_times"`  // 下一次收益发放时间戳
-		TotalReward      decimal.Decimal `db:"total_reward"`       // 累计收益
-		PendingReward    decimal.Decimal `db:"pending_reward"`     // 待发放收益
-		RedeemAmount     decimal.Decimal `db:"redeem_amount"`      // 赎回本金数量
-		RedeemFee        decimal.Decimal `db:"redeem_fee"`         // 赎回手续费
-		Status           int64           `db:"status"`             // 订单状态：1质押中 2已到期 3已赎回 4提前赎回 5已取消
-		RedeemType       int64           `db:"redeem_type"`        // 赎回类型：1未赎回 2到期赎回 3提前赎回 4手动赎回
-		RedeemApplyTimes int64           `db:"redeem_apply_times"` // 申请赎回时间戳
-		RedeemTimes      int64           `db:"redeem_times"`       // 实际赎回时间戳
-		Source           int64           `db:"source"`             // 来源：1后台 2H5 3APP 4API
-		Remark           string          `db:"remark"`             // 备注
-		CreateUserId     int64           `db:"create_user_id"`     // 创建人ID
-		UpdateUserId     int64           `db:"update_user_id"`     // 更新人ID
-		CreateTimes      int64           `db:"create_times"`       // 创建时间戳
-		UpdateTimes      int64           `db:"update_times"`       // 更新时间戳
+		Id                int64           `db:"id"`                  // 主键ID
+		TenantId          int64           `db:"tenant_id"`           // 租户ID
+		OrderNo           string          `db:"order_no"`            // 质押订单号
+		RequestNo         string          `db:"request_no"`          // 创建请求幂等号
+		ActiveOperationNo string          `db:"active_operation_no"` // 当前占用订单的资金操作号
+		UserId            int64           `db:"user_id"`             // 用户ID
+		ProductId         int64           `db:"product_id"`          // 质押产品ID
+		ProductNo         string          `db:"product_no"`          // 质押产品编号快照
+		ProductName       string          `db:"product_name"`        // 质押产品名称快照
+		ProductType       int64           `db:"product_type"`        // 产品类型快照：1活期 2定期
+		CoinName          string          `db:"coin_name"`           // 质押币种名称快照
+		CoinSymbol        string          `db:"coin_symbol"`         // 质押币种符号快照
+		RewardCoinName    string          `db:"reward_coin_name"`    // 收益币种名称快照
+		RewardCoinSymbol  string          `db:"reward_coin_symbol"`  // 收益币种符号快照
+		StakeAmount       decimal.Decimal `db:"stake_amount"`        // 质押数量
+		Apr               decimal.Decimal `db:"apr"`                 // 年化收益率快照
+		LockDays          int64           `db:"lock_days"`           // 锁仓天数快照
+		InterestMode      int64           `db:"interest_mode"`       // 计息方式快照：1按天计息 2到期一次性计息
+		RewardMode        int64           `db:"reward_mode"`         // 发息方式快照：1每日发放 2到期发放
+		AllowEarlyRedeem  int64           `db:"allow_early_redeem"`  // 是否允许提前赎回快照：1是 2否
+		EarlyRedeemRate   decimal.Decimal `db:"early_redeem_rate"`   // 提前赎回手续费率快照
+		InterestDays      int64           `db:"interest_days"`       // 已计息天数
+		StartTimes        int64           `db:"start_times"`         // 起息时间戳（毫秒）
+		EndTimes          int64           `db:"end_times"`           // 到期时间戳（毫秒），活期可为0
+		LastRewardTimes   int64           `db:"last_reward_times"`   // 最后一次收益发放时间戳（毫秒）
+		NextRewardTimes   int64           `db:"next_reward_times"`   // 下一次收益发放时间戳（毫秒）
+		TotalReward       decimal.Decimal `db:"total_reward"`        // 累计收益
+		PendingReward     decimal.Decimal `db:"pending_reward"`      // 待发放收益
+		RedeemAmount      decimal.Decimal `db:"redeem_amount"`       // 赎回本金数量
+		RedeemFee         decimal.Decimal `db:"redeem_fee"`          // 赎回手续费
+		Status            int64           `db:"status"`              // 订单状态：1质押中 2已到期 3已赎回 4提前赎回 5已取消 6锁仓处理中
+		RedeemType        int64           `db:"redeem_type"`         // 赎回类型：1未赎回 2到期赎回 3提前赎回 4手动赎回
+		RedeemApplyTimes  int64           `db:"redeem_apply_times"`  // 申请赎回时间戳（毫秒）
+		RedeemTimes       int64           `db:"redeem_times"`        // 实际赎回时间戳（毫秒）
+		Source            int64           `db:"source"`              // 来源：1后台 2H5 3APP 4API
+		Remark            string          `db:"remark"`              // 备注
+		CreateUserId      int64           `db:"create_user_id"`      // 创建人ID
+		UpdateUserId      int64           `db:"update_user_id"`      // 更新人ID
+		CreateTimes       int64           `db:"create_times"`        // 创建时间戳
+		UpdateTimes       int64           `db:"update_times"`        // 更新时间戳
+		Version           int64           `db:"version"`             // 并发控制版本
 	}
 )
 
@@ -100,10 +105,11 @@ func (m *defaultTStakeOrderModel) Delete(ctx context.Context, id int64) error {
 
 	tStakeOrderIdKey := fmt.Sprintf("%s%v", cacheTStakeOrderIdPrefix, id)
 	tStakeOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTStakeOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
+	tStakeOrderTenantIdUserIdRequestNoKey := fmt.Sprintf("%s%v:%v:%v", cacheTStakeOrderTenantIdUserIdRequestNoPrefix, data.TenantId, data.UserId, data.RequestNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tStakeOrderIdKey, tStakeOrderTenantIdOrderNoKey)
+	}, tStakeOrderIdKey, tStakeOrderTenantIdOrderNoKey, tStakeOrderTenantIdUserIdRequestNoKey)
 	return err
 }
 
@@ -144,13 +150,34 @@ func (m *defaultTStakeOrderModel) FindOneByTenantIdOrderNo(ctx context.Context, 
 	}
 }
 
+func (m *defaultTStakeOrderModel) FindOneByTenantIdUserIdRequestNo(ctx context.Context, tenantId int64, userId int64, requestNo string) (*TStakeOrder, error) {
+	tStakeOrderTenantIdUserIdRequestNoKey := fmt.Sprintf("%s%v:%v:%v", cacheTStakeOrderTenantIdUserIdRequestNoPrefix, tenantId, userId, requestNo)
+	var resp TStakeOrder
+	err := m.QueryRowIndexCtx(ctx, &resp, tStakeOrderTenantIdUserIdRequestNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? and `request_no` = ? limit 1", tStakeOrderRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId, requestNo); err != nil {
+			return nil, err
+		}
+		return resp.Id, nil
+	}, m.queryPrimary)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
 func (m *defaultTStakeOrderModel) Insert(ctx context.Context, data *TStakeOrder) (sql.Result, error) {
 	tStakeOrderIdKey := fmt.Sprintf("%s%v", cacheTStakeOrderIdPrefix, data.Id)
 	tStakeOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTStakeOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
+	tStakeOrderTenantIdUserIdRequestNoKey := fmt.Sprintf("%s%v:%v:%v", cacheTStakeOrderTenantIdUserIdRequestNoPrefix, data.TenantId, data.UserId, data.RequestNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tStakeOrderRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.UserId, data.ProductId, data.ProductNo, data.ProductName, data.ProductType, data.CoinName, data.CoinSymbol, data.RewardCoinName, data.RewardCoinSymbol, data.StakeAmount, data.Apr, data.LockDays, data.InterestMode, data.RewardMode, data.AllowEarlyRedeem, data.EarlyRedeemRate, data.InterestDays, data.StartTimes, data.EndTimes, data.LastRewardTimes, data.NextRewardTimes, data.TotalReward, data.PendingReward, data.RedeemAmount, data.RedeemFee, data.Status, data.RedeemType, data.RedeemApplyTimes, data.RedeemTimes, data.Source, data.Remark, data.CreateUserId, data.UpdateUserId, data.CreateTimes, data.UpdateTimes)
-	}, tStakeOrderIdKey, tStakeOrderTenantIdOrderNoKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tStakeOrderRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.OrderNo, data.RequestNo, data.ActiveOperationNo, data.UserId, data.ProductId, data.ProductNo, data.ProductName, data.ProductType, data.CoinName, data.CoinSymbol, data.RewardCoinName, data.RewardCoinSymbol, data.StakeAmount, data.Apr, data.LockDays, data.InterestMode, data.RewardMode, data.AllowEarlyRedeem, data.EarlyRedeemRate, data.InterestDays, data.StartTimes, data.EndTimes, data.LastRewardTimes, data.NextRewardTimes, data.TotalReward, data.PendingReward, data.RedeemAmount, data.RedeemFee, data.Status, data.RedeemType, data.RedeemApplyTimes, data.RedeemTimes, data.Source, data.Remark, data.CreateUserId, data.UpdateUserId, data.CreateTimes, data.UpdateTimes, data.Version)
+	}, tStakeOrderIdKey, tStakeOrderTenantIdOrderNoKey, tStakeOrderTenantIdUserIdRequestNoKey)
 	return ret, err
 }
 
@@ -162,10 +189,11 @@ func (m *defaultTStakeOrderModel) Update(ctx context.Context, newData *TStakeOrd
 
 	tStakeOrderIdKey := fmt.Sprintf("%s%v", cacheTStakeOrderIdPrefix, data.Id)
 	tStakeOrderTenantIdOrderNoKey := fmt.Sprintf("%s%v:%v", cacheTStakeOrderTenantIdOrderNoPrefix, data.TenantId, data.OrderNo)
+	tStakeOrderTenantIdUserIdRequestNoKey := fmt.Sprintf("%s%v:%v:%v", cacheTStakeOrderTenantIdUserIdRequestNoPrefix, data.TenantId, data.UserId, data.RequestNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tStakeOrderRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderNo, newData.UserId, newData.ProductId, newData.ProductNo, newData.ProductName, newData.ProductType, newData.CoinName, newData.CoinSymbol, newData.RewardCoinName, newData.RewardCoinSymbol, newData.StakeAmount, newData.Apr, newData.LockDays, newData.InterestMode, newData.RewardMode, newData.AllowEarlyRedeem, newData.EarlyRedeemRate, newData.InterestDays, newData.StartTimes, newData.EndTimes, newData.LastRewardTimes, newData.NextRewardTimes, newData.TotalReward, newData.PendingReward, newData.RedeemAmount, newData.RedeemFee, newData.Status, newData.RedeemType, newData.RedeemApplyTimes, newData.RedeemTimes, newData.Source, newData.Remark, newData.CreateUserId, newData.UpdateUserId, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tStakeOrderIdKey, tStakeOrderTenantIdOrderNoKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.OrderNo, newData.RequestNo, newData.ActiveOperationNo, newData.UserId, newData.ProductId, newData.ProductNo, newData.ProductName, newData.ProductType, newData.CoinName, newData.CoinSymbol, newData.RewardCoinName, newData.RewardCoinSymbol, newData.StakeAmount, newData.Apr, newData.LockDays, newData.InterestMode, newData.RewardMode, newData.AllowEarlyRedeem, newData.EarlyRedeemRate, newData.InterestDays, newData.StartTimes, newData.EndTimes, newData.LastRewardTimes, newData.NextRewardTimes, newData.TotalReward, newData.PendingReward, newData.RedeemAmount, newData.RedeemFee, newData.Status, newData.RedeemType, newData.RedeemApplyTimes, newData.RedeemTimes, newData.Source, newData.Remark, newData.CreateUserId, newData.UpdateUserId, newData.CreateTimes, newData.UpdateTimes, newData.Version, newData.Id)
+	}, tStakeOrderIdKey, tStakeOrderTenantIdOrderNoKey, tStakeOrderTenantIdUserIdRequestNoKey)
 	return err
 }
 

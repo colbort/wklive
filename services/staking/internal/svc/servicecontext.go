@@ -13,17 +13,21 @@ import (
 )
 
 type ServiceContext struct {
-	Config              config.Config
-	DB                  sqlx.SqlConn
-	Redis               *redis.Redis
-	TaskSubscriber      *mq.Subscriber
-	UserEventPublisher  *mq.Publisher
-	StakeOrderModel     models.TStakeOrderModel
-	StakeProductModel   models.TStakeProductModel
-	StakeRedeemLogModel models.TStakeRedeemLogModel
-	StakeRewardLogModel models.TStakeRewardLogModel
-	AssetClient         asset.AssetClient
-	DelayQueue          *delayqueue.Queue
+	Config                   config.Config
+	DB                       sqlx.SqlConn
+	Redis                    *redis.Redis
+	TaskSubscriber           *mq.Subscriber
+	UserEventPublisher       *mq.Publisher
+	StakeOrderModel          models.TStakeOrderModel
+	StakeProductModel        models.TStakeProductModel
+	StakeRedeemLogModel      models.TStakeRedeemLogModel
+	StakeRewardLogModel      models.TStakeRewardLogModel
+	StakeOperationModel      models.TStakeOperationModel
+	StakeReconciliationModel models.TStakeReconciliationModel
+	StakeUserPositionModel   models.TStakeUserPositionModel
+	AssetClient              asset.AssetClient
+	AssetAdminClient         asset.AdminClient
+	DelayQueue               *delayqueue.Queue
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -37,16 +41,20 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		panic(err)
 	}
 	return &ServiceContext{
-		Config:              c,
-		DB:                  conn,
-		Redis:               redis.MustNewRedis(c.Redis.RedisConf),
-		TaskSubscriber:      taskSubscriber,
-		UserEventPublisher:  userEventPublisher,
-		StakeOrderModel:     models.NewTStakeOrderModel(conn, c.CacheRedis),
-		StakeProductModel:   models.NewTStakeProductModel(conn, c.CacheRedis),
-		StakeRedeemLogModel: models.NewTStakeRedeemLogModel(conn, c.CacheRedis),
-		StakeRewardLogModel: models.NewTStakeRewardLogModel(conn, c.CacheRedis),
-		AssetClient:         asset.NewAssetClient(assetCli.Conn()),
-		DelayQueue:          queue,
+		Config:                   c,
+		DB:                       conn,
+		Redis:                    redis.MustNewRedis(c.Redis.RedisConf),
+		TaskSubscriber:           taskSubscriber,
+		UserEventPublisher:       userEventPublisher,
+		StakeOrderModel:          models.NewTStakeOrderModel(conn, c.CacheRedis),
+		StakeProductModel:        models.NewTStakeProductModel(conn, c.CacheRedis),
+		StakeRedeemLogModel:      models.NewTStakeRedeemLogModel(conn, c.CacheRedis),
+		StakeRewardLogModel:      models.NewTStakeRewardLogModel(conn, c.CacheRedis),
+		StakeOperationModel:      models.NewTStakeOperationModel(conn, c.CacheRedis),
+		StakeReconciliationModel: models.NewTStakeReconciliationModel(conn, c.CacheRedis),
+		StakeUserPositionModel:   models.NewTStakeUserPositionModel(conn, c.CacheRedis),
+		AssetClient:              asset.NewAssetClient(assetCli.Conn()),
+		AssetAdminClient:         asset.NewAdminClient(assetCli.Conn()),
+		DelayQueue:               queue,
 	}
 }

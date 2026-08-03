@@ -875,7 +875,12 @@ VALUES
 (830, 800, 1, '奖励记录列表', 2, 'GET', '/staking/reward-logs', 'staking:reward-log:list', 'staking/reward-logs', 'Medal', 830),
 (831, 830, 1, '手动发放奖励', 3, 'POST', '/staking/manual-reward', 'staking:reward-log:manual', '', '', 831),
 (840, 800, 1, '赎回记录列表', 2, 'GET', '/staking/redeem-logs', 'staking:redeem-log:list', 'staking/redeem-logs', 'RefreshLeft', 840),
-(841, 840, 1, '手动赎回', 3, 'POST', '/staking/manual-redeem', 'staking:redeem-log:manual', '', '', 841);
+(841, 840, 1, '手动赎回', 3, 'POST', '/staking/manual-redeem', 'staking:redeem-log:manual', '', '', 841),
+(850, 800, 1, '资金操作与恢复', 2, 'GET', '/staking/operations', 'staking:operation:list', 'staking/operations', 'Warning', 850),
+(851, 850, 1, '查询质押资金操作', 3, 'GET', '/staking/operations', 'staking:operation:list', '', '', 851),
+(852, 850, 1, '重试质押资金操作', 3, 'POST', '/staking/operations/retry', 'staking:operation:retry', '', '', 852),
+(860, 800, 1, '质押账实对账', 2, 'GET', '/staking/reconciliations', 'staking:reconciliation:list', 'staking/reconciliations', 'DataAnalysis', 860),
+(861, 860, 1, '查询质押账实对账', 3, 'GET', '/staking/reconciliations', 'staking:reconciliation:list', '', '', 861);
 
 -- 币币交易（trade）
 INSERT INTO sys_menu (id, parent_id, app_scope, name, menu_type, icon, sort)

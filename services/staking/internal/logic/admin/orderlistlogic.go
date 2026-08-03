@@ -2,12 +2,11 @@ package adminlogic
 
 import (
 	"context"
-	"wklive/services/staking/internal/logic/helpers"
 
 	"wklive/common/helper"
 	"wklive/common/pageutil"
-	"wklive/common/utils"
 	"wklive/proto/staking"
+	"wklive/services/staking/internal/logic/helpers"
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
 
@@ -30,10 +29,12 @@ func NewOrderListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrderLi
 
 // 获取质押订单列表
 func (l *OrderListLogic) OrderList(in *staking.OrderListReq) (*staking.OrderListResp, error) {
-	if in.TenantId <= 0 {
-		if tenantId, err := utils.GetTenantIdFromMd(l.ctx); err == nil {
-			in.TenantId = tenantId
-		}
+	tenantId, base, err := helpers.AdminTenantReadScopeResp(l.ctx, in.TenantId)
+	if err != nil {
+		return nil, err
+	}
+	if base != nil {
+		return &staking.OrderListResp{Page: base}, nil
 	}
 	page := in.GetPage()
 	cursor, limit := int64(0), int64(10)
@@ -43,7 +44,7 @@ func (l *OrderListLogic) OrderList(in *staking.OrderListReq) (*staking.OrderList
 	items, total, err := l.svcCtx.StakeOrderModel.FindPage(
 		l.ctx,
 		models.StakeOrderPageFilter{
-			TenantId:    in.TenantId,
+			TenantId:    tenantId,
 			UserId:      in.UserId,
 			ProductId:   in.ProductId,
 			OrderNo:     in.OrderNo,

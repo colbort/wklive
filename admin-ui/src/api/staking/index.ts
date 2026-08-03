@@ -2,6 +2,9 @@ import { get, post } from '@/utils/request'
 import type {
   ManualRedeemReq,
   ManualRewardReq,
+  OperationListReq,
+  OperationRetryReq,
+  ReconciliationListReq,
   OrderDetailReq,
   OrderListReq,
   ProductChangeStatusReq,
@@ -13,6 +16,8 @@ import type {
   RewardLogListReq,
   RespBase,
   StakeOrder,
+  StakeOperation,
+  StakeReconciliation,
   StakeProduct,
   StakeRedeemLog,
   StakeRewardLog,
@@ -66,4 +71,20 @@ export function apiStakingManualReward(params: ManualRewardReq): Promise<RespBas
 
 export function apiStakingManualRedeem(params: ManualRedeemReq): Promise<RespBase<boolean>> {
   return post<boolean>('/admin/staking/manual-redeem', params)
+}
+
+export function apiStakingListOperations(
+  params: OperationListReq,
+): Promise<RespBase<StakeOperation[]>> {
+  return get<StakeOperation[]>('/admin/staking/operations', params)
+}
+
+export function apiStakingRetryOperation(params: OperationRetryReq): Promise<RespBase<number>> {
+  return post<number>('/admin/staking/operations/retry', params)
+}
+
+export function apiStakingListReconciliations(
+  params: ReconciliationListReq,
+): Promise<RespBase<StakeReconciliation[]>> {
+  return get<StakeReconciliation[]>('/admin/staking/reconciliations', params)
 }

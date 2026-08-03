@@ -218,7 +218,7 @@ func copyStruct(dst, src reflect.Value) {
 		}
 
 		targetName := sf.Name
-		if targetName == "Base" {
+		if targetName == "Base" || targetName == "Page" {
 			targetName = "RespBase"
 		}
 
@@ -227,7 +227,7 @@ func copyStruct(dst, src reflect.Value) {
 			continue
 		}
 
-		if sf.Name == "Base" {
+		if sf.Name == "Base" || sf.Name == "Page" {
 			_ = copyValue(dst, srcField)
 		}
 	}

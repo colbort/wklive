@@ -71,6 +71,26 @@ func (l *DeductLockedAssetLogic) DeductLockedAsset(in *asset.DeductLockedAssetRe
 		userAssetModel := models.NewTUserAssetModel(conn, l.svcCtx.Config.CacheRedis)
 		assetLockModel := models.NewTAssetLockModel(conn, l.svcCtx.Config.CacheRedis)
 		assetFlowModel := models.NewTAssetFlowModel(conn, l.svcCtx.Config.CacheRedis)
+		idempotentModel := models.NewTAssetIdempotentModel(conn, l.svcCtx.Config.CacheRedis)
+
+		if in.BizNo != "" {
+			done, err := helpers.PrepareAssetIdempotent(ctx, idempotentModel, in.TenantId, helpers.AssetBizType(in.BizType), helpers.AssetSceneType(in.SceneType), in.BizNo, in.Remark, ts)
+			if err != nil {
+				return err
+			}
+			if done {
+				after, err = userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, lock.TenantId, lock.UserId, lock.WalletType, lock.Coin)
+				return err
+			}
+		}
+
+		lock, err = assetLockModel.FindOneByLockNo(ctx, in.LockNo)
+		if err != nil {
+			return err
+		}
+		if amount.GreaterThan(lock.RemainAmount) {
+			return i18n.StatusError(ctx, i18n.DeductAmountExceedsLocked)
+		}
 
 		before, err := userAssetModel.FindOneByTenantIdUserIdWalletTypeCoin(ctx, lock.TenantId, lock.UserId, lock.WalletType, lock.Coin)
 		if err != nil {
@@ -101,6 +121,11 @@ func (l *DeductLockedAssetLogic) DeductLockedAsset(in *asset.DeductLockedAssetRe
 		flow := helpers.BuildAssetFlowRecord(l.svcCtx, ctx, lock.TenantId, lock.UserId, lock.WalletType, lock.Coin, helpers.AssetSceneType(in.SceneType), helpers.AssetBizType(in.BizType), helpers.AssetSceneType(in.SceneType), in.BizId, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_LOCK_DEDUCT, amount, before, after, in.Remark, ts)
 		if _, err := assetFlowModel.Insert(ctx, flow); err != nil {
 			return err
+		}
+		if in.BizNo != "" {
+			if err := helpers.CompleteAssetIdempotent(ctx, idempotentModel, in.TenantId, helpers.AssetBizType(in.BizType), helpers.AssetSceneType(in.SceneType), in.BizNo, ts); err != nil {
+				return err
+			}
 		}
 		return nil
 	})

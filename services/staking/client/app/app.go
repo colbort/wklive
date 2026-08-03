@@ -29,6 +29,10 @@ type (
 	MyRedeemLogListResp     = staking.MyRedeemLogListResp
 	MyRewardLogListReq      = staking.MyRewardLogListReq
 	MyRewardLogListResp     = staking.MyRewardLogListResp
+	OperationListReq        = staking.OperationListReq
+	OperationListResp       = staking.OperationListResp
+	OperationRetryReq       = staking.OperationRetryReq
+	OperationRetryResp      = staking.OperationRetryResp
 	OrderDetailReq          = staking.OrderDetailReq
 	OrderDetailResp         = staking.OrderDetailResp
 	OrderListReq            = staking.OrderListReq
@@ -43,6 +47,8 @@ type (
 	ProductListResp         = staking.ProductListResp
 	ProductUpdateReq        = staking.ProductUpdateReq
 	ProductUpdateResp       = staking.ProductUpdateResp
+	ReconciliationListReq   = staking.ReconciliationListReq
+	ReconciliationListResp  = staking.ReconciliationListResp
 	RedeemData              = staking.RedeemData
 	RedeemLogListReq        = staking.RedeemLogListReq
 	RedeemLogListResp       = staking.RedeemLogListResp

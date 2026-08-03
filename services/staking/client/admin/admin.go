@@ -29,6 +29,10 @@ type (
 	MyRedeemLogListResp     = staking.MyRedeemLogListResp
 	MyRewardLogListReq      = staking.MyRewardLogListReq
 	MyRewardLogListResp     = staking.MyRewardLogListResp
+	OperationListReq        = staking.OperationListReq
+	OperationListResp       = staking.OperationListResp
+	OperationRetryReq       = staking.OperationRetryReq
+	OperationRetryResp      = staking.OperationRetryResp
 	OrderDetailReq          = staking.OrderDetailReq
 	OrderDetailResp         = staking.OrderDetailResp
 	OrderListReq            = staking.OrderListReq
@@ -43,6 +47,8 @@ type (
 	ProductListResp         = staking.ProductListResp
 	ProductUpdateReq        = staking.ProductUpdateReq
 	ProductUpdateResp       = staking.ProductUpdateResp
+	ReconciliationListReq   = staking.ReconciliationListReq
+	ReconciliationListResp  = staking.ReconciliationListResp
 	RedeemData              = staking.RedeemData
 	RedeemLogListReq        = staking.RedeemLogListReq
 	RedeemLogListResp       = staking.RedeemLogListResp
@@ -80,6 +86,12 @@ type (
 		ManualReward(ctx context.Context, in *ManualRewardReq, opts ...grpc.CallOption) (*ManualRewardResp, error)
 		// 手动赎回
 		ManualRedeem(ctx context.Context, in *ManualRedeemReq, opts ...grpc.CallOption) (*ManualRedeemResp, error)
+		// 获取资金操作列表
+		OperationList(ctx context.Context, in *OperationListReq, opts ...grpc.CallOption) (*OperationListResp, error)
+		// 手动重试资金操作
+		OperationRetry(ctx context.Context, in *OperationRetryReq, opts ...grpc.CallOption) (*OperationRetryResp, error)
+		// 获取每日账实对账快照
+		ReconciliationList(ctx context.Context, in *ReconciliationListReq, opts ...grpc.CallOption) (*ReconciliationListResp, error)
 	}
 
 	defaultAdmin struct {
@@ -157,4 +169,22 @@ func (m *defaultAdmin) ManualReward(ctx context.Context, in *ManualRewardReq, op
 func (m *defaultAdmin) ManualRedeem(ctx context.Context, in *ManualRedeemReq, opts ...grpc.CallOption) (*ManualRedeemResp, error) {
 	client := staking.NewAdminClient(m.cli.Conn())
 	return client.ManualRedeem(ctx, in, opts...)
+}
+
+// 获取资金操作列表
+func (m *defaultAdmin) OperationList(ctx context.Context, in *OperationListReq, opts ...grpc.CallOption) (*OperationListResp, error) {
+	client := staking.NewAdminClient(m.cli.Conn())
+	return client.OperationList(ctx, in, opts...)
+}
+
+// 手动重试资金操作
+func (m *defaultAdmin) OperationRetry(ctx context.Context, in *OperationRetryReq, opts ...grpc.CallOption) (*OperationRetryResp, error) {
+	client := staking.NewAdminClient(m.cli.Conn())
+	return client.OperationRetry(ctx, in, opts...)
+}
+
+// 获取每日账实对账快照
+func (m *defaultAdmin) ReconciliationList(ctx context.Context, in *ReconciliationListReq, opts ...grpc.CallOption) (*ReconciliationListResp, error) {
+	client := staking.NewAdminClient(m.cli.Conn())
+	return client.ReconciliationList(ctx, in, opts...)
 }

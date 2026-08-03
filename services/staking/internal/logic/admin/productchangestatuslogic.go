@@ -8,6 +8,7 @@ import (
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/staking"
+	"wklive/services/staking/internal/logic/helpers"
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
 
@@ -47,9 +48,22 @@ func (l *ProductChangeStatusLogic) ProductChangeStatus(in *staking.ProductChange
 	if !allowed {
 		return &staking.ProductChangeStatusResp{Page: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
 	}
+	if in.TenantId > 0 && item.TenantId != in.TenantId {
+		return &staking.ProductChangeStatusResp{Page: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
+	}
+	operatorId, err := helpers.AdminOperatorUserID(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	item.Status = int64(in.Status)
-	item.UpdateUserId = in.OperatorUid
+	if err := helpers.ValidateStakeProduct(item); err != nil {
+		return &staking.ProductChangeStatusResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	if err := helpers.ValidateStakeFundingAccounts(l.ctx, l.svcCtx, item); err != nil {
+		return &staking.ProductChangeStatusResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	item.UpdateUserId = operatorId
 	item.UpdateTimes = utils.NowMillis()
 	if err := l.svcCtx.StakeProductModel.Update(l.ctx, item); err != nil {
 		return nil, err

@@ -2,20 +2,18 @@ package adminlogic
 
 import (
 	"context"
-	"wklive/services/staking/internal/logic/helpers"
+	"errors"
 
 	"wklive/common/conv"
+	"wklive/common/generate"
 	"wklive/common/helper"
 	"wklive/common/i18n"
-	"wklive/common/utils"
-	"wklive/proto/asset"
-	"wklive/proto/common"
 	"wklive/proto/staking"
+	"wklive/services/staking/internal/logic/helpers"
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 type ManualRewardLogic struct {
@@ -25,102 +23,85 @@ type ManualRewardLogic struct {
 }
 
 func NewManualRewardLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ManualRewardLogic {
-	return &ManualRewardLogic{
-		ctx:    ctx,
-		svcCtx: svcCtx,
-		Logger: logx.WithContext(ctx),
-	}
+	return &ManualRewardLogic{ctx: ctx, svcCtx: svcCtx, Logger: logx.WithContext(ctx)}
 }
 
-// 手动发放收益
+// ManualReward gives every request its own durable operation number. Reusing
+// request_no returns the original result and never records a reward without the
+// matching Asset credit.
 func (l *ManualRewardLogic) ManualReward(in *staking.ManualRewardReq) (*staking.ManualRewardResp, error) {
 	order, err := l.svcCtx.StakeOrderModel.FindOne(l.ctx, in.OrderId)
 	if err != nil {
 		return nil, err
 	}
-	if order == nil || order.TenantId != in.TenantId {
-		return &staking.ManualRewardResp{Page: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
+	if in.TenantId > 0 && order.TenantId != in.TenantId {
+		return manualRewardNotFound(l.ctx), nil
 	}
-	if base, err := helpers.AdminTenantWriteScopeResp(l.ctx, order.TenantId, i18n.OrderNotFound); err != nil {
-		return nil, err
+	if base, scopeErr := helpers.AdminTenantWriteScopeResp(l.ctx, order.TenantId, i18n.OrderNotFound); scopeErr != nil {
+		return nil, scopeErr
 	} else if base != nil {
 		return &staking.ManualRewardResp{Page: base}, nil
 	}
-
+	operatorId, err := helpers.AdminOperatorUserID(l.ctx)
+	if err != nil {
+		return nil, err
+	}
 	rewardAmount, err := conv.ParseDecimalField(in.RewardAmount)
 	if err != nil || !rewardAmount.IsPositive() {
 		return &staking.ManualRewardResp{Page: helper.ErrResp(i18n.RewardAmountInvalid, i18n.Translate(i18n.RewardAmountInvalid, l.ctx))}, nil
 	}
+	if in.RewardType != staking.RewardType_REWARD_TYPE_MANUAL && in.RewardType != staking.RewardType_REWARD_TYPE_REISSUE {
+		return &staking.ManualRewardResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	spec := helpers.RewardOperationSpec{
+		RequestNo: in.RequestNo, OperationType: helpers.StakeOperationTypeManualReward,
+		RewardType: in.RewardType, RewardAmount: rewardAmount, OperatorId: operatorId, Remark: in.Remark,
+	}
+	if existing, findErr := l.svcCtx.StakeOperationModel.FindOneByTenantIdUserIdOperationTypeRequestNo(l.ctx, order.TenantId, order.UserId, helpers.StakeOperationTypeManualReward, in.RequestNo); findErr == nil {
+		spec.OperationNo = existing.OperationNo
+		operation, prepareErr := helpers.PrepareRewardOperation(l.ctx, l.svcCtx, order, spec)
+		if prepareErr != nil {
+			return nil, prepareErr
+		}
+		if err := helpers.ExecuteRewardOperation(l.ctx, l.svcCtx, operation); err != nil && !errors.Is(err, helpers.ErrStakeOperationProcessing) {
+			return nil, err
+		}
+		if operation.Status != helpers.StakeOperationStatusSucceeded {
+			return manualRewardProcessing(l.ctx), nil
+		}
+		return &staking.ManualRewardResp{Page: helper.OkResp(), Data: 1}, nil
+	} else if !errors.Is(findErr, models.ErrNotFound) {
+		return nil, findErr
+	}
+	if order.Status != int64(staking.OrderStatus_ORDER_STATUS_STAKING) && order.Status != int64(staking.OrderStatus_ORDER_STATUS_EXPIRED) {
+		return &staking.ManualRewardResp{Page: helper.ErrResp(i18n.StakingOrderCannotRedeem, i18n.Translate(i18n.StakingOrderCannotRedeem, l.ctx))}, nil
+	}
 
-	now := utils.NowMillis()
-	resp, err := l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{
-		TenantId:   order.TenantId,
-		UserId:     order.UserId,
-		WalletType: common.WalletType_WALLET_TYPE_EARN,
-		Coin:       order.RewardCoinSymbol,
-		Amount:     conv.FloatString(rewardAmount),
-		BizType:    asset.BizType_BIZ_TYPE_STAKING,
-		SceneType:  asset.SceneType_SCENE_TYPE_STAKING_REWARD,
-		BizId:      order.Id,
-		BizNo:      order.OrderNo,
-		Remark:     in.Remark,
-	})
+	operationNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "SKW", "")
 	if err != nil {
-		l.Errorf("staking manual reward add asset rpc failed, tenantId=%d userId=%d orderId=%d orderNo=%s coin=%s amount=%v err=%v",
-			order.TenantId, order.UserId, order.Id, order.OrderNo, order.RewardCoinSymbol, rewardAmount, err)
 		return nil, err
 	}
-	if resp == nil || resp.Base == nil || resp.Base.Code != 200 {
-		l.Errorf("staking manual reward add asset failed, tenantId=%d userId=%d orderId=%d orderNo=%s coin=%s amount=%v msg=%s",
-			order.TenantId, order.UserId, order.Id, order.OrderNo, order.RewardCoinSymbol, rewardAmount, assetBaseMsg(resp))
-		if resp != nil && resp.Base != nil {
-			return &staking.ManualRewardResp{Page: resp.Base}, nil
-		}
-		return nil, i18n.StatusError(l.ctx, i18n.InternalServerError)
+	spec.OperationNo = operationNo
+	operation, err := helpers.PrepareRewardOperation(l.ctx, l.svcCtx, order, spec)
+	if errors.Is(err, helpers.ErrStakeOperationProcessing) {
+		return manualRewardProcessing(l.ctx), nil
 	}
-
-	beforeReward := order.TotalReward
-	afterReward := beforeReward.Add(rewardAmount)
-	order.TotalReward = afterReward
-	order.LastRewardTimes = now
-	order.NextRewardTimes = helpers.CalcNextRewardTime(int64(now), staking.RewardMode(order.RewardMode), int64(order.EndTimes))
-	order.UpdateUserId = in.OperatorUid
-	order.UpdateTimes = now
-	err = l.svcCtx.DB.TransactCtx(l.ctx, func(ctx context.Context, session sqlx.Session) error {
-		conn := sqlx.NewSqlConnFromSession(session)
-		rewardLogModel := models.NewTStakeRewardLogModel(conn, l.svcCtx.Config.CacheRedis)
-		orderModel := models.NewTStakeOrderModel(conn, l.svcCtx.Config.CacheRedis)
-
-		if _, err := rewardLogModel.Insert(ctx, &models.TStakeRewardLog{
-			TenantId:         order.TenantId,
-			OrderId:          order.Id,
-			OrderNo:          order.OrderNo,
-			UserId:           order.UserId,
-			ProductId:        order.ProductId,
-			ProductName:      order.ProductName,
-			CoinSymbol:       order.CoinSymbol,
-			RewardCoinSymbol: order.RewardCoinSymbol,
-			RewardAmount:     rewardAmount,
-			BeforeReward:     beforeReward,
-			AfterReward:      afterReward,
-			RewardType:       int64(in.RewardType),
-			RewardStatus:     int64(staking.RewardStatus_REWARD_STATUS_SUCCESS),
-			RewardTimes:      now,
-			Remark:           in.Remark,
-			CreateUserId:     in.OperatorUid,
-			UpdateUserId:     in.OperatorUid,
-			CreateTimes:      now,
-			UpdateTimes:      now,
-		}); err != nil {
-			return err
-		}
-		return orderModel.Update(ctx, order)
-	})
 	if err != nil {
-		l.Errorf("staking manual reward transaction failed after add asset, tenantId=%d userId=%d orderId=%d orderNo=%s coin=%s amount=%v err=%v",
-			order.TenantId, order.UserId, order.Id, order.OrderNo, order.RewardCoinSymbol, rewardAmount, err)
 		return nil, err
 	}
-
+	if err := helpers.ExecuteRewardOperation(l.ctx, l.svcCtx, operation); err != nil {
+		if errors.Is(err, helpers.ErrStakeOperationProcessing) {
+			return manualRewardProcessing(l.ctx), nil
+		}
+		return nil, err
+	}
 	return &staking.ManualRewardResp{Page: helper.OkResp(), Data: 1}, nil
+}
+
+func manualRewardNotFound(ctx context.Context) *staking.ManualRewardResp {
+	return &staking.ManualRewardResp{Page: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, ctx))}
+}
+
+func manualRewardProcessing(ctx context.Context) *staking.ManualRewardResp {
+	return &staking.ManualRewardResp{Page: helper.ErrResp(i18n.AssetRequestProcessing, i18n.Translate(i18n.AssetRequestProcessing, ctx))}
 }

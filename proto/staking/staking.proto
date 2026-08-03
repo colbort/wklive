@@ -71,6 +71,7 @@ message CreateOrderReq {
   string stake_amount = 2;
   SourceType source = 3;
   string remark = 4;
+  string request_no = 5; // 客户端生成的幂等号，同一业务重试必须保持不变
 }
 
 message CreateOrderResp {
@@ -122,6 +123,7 @@ message RedeemReq {
   int64 order_id = 1;
   RedeemType redeem_type = 2;
   string remark = 3;
+  string request_no = 4; // 客户端生成的幂等号
 }
 
 message RedeemResp {
@@ -190,6 +192,17 @@ service Admin {
   // 手动赎回
   // 后台对指定质押订单执行手动赎回操作。
   rpc ManualRedeem(ManualRedeemReq) returns (ManualRedeemResp);
+
+  // 获取资金操作列表
+  // 查询申购、收益、赎回等持久化资金操作及其恢复状态。
+  rpc OperationList(OperationListReq) returns (OperationListResp);
+
+  // 手动重试资金操作
+  // 仅允许重试“可重试失败”或“需人工处理”的操作。
+  rpc OperationRetry(OperationRetryReq) returns (OperationRetryResp);
+
+  // 获取每日账实对账快照
+  rpc ReconciliationList(ReconciliationListReq) returns (ReconciliationListResp);
 }
 
 // 产品列表
@@ -243,7 +256,7 @@ message ProductCreateReq {
   ProductStatus status = 20;
   int64 sort = 21;
   string remark = 22;
-  int64 operator_uid = 23;
+  reserved 23;
 }
 
 message ProductCreateResp {
@@ -275,7 +288,7 @@ message ProductUpdateReq {
   ProductStatus status = 20;
   int64 sort = 21;
   string remark = 22;
-  int64 operator_uid = 23;
+  reserved 23;
 }
 
 message ProductUpdateResp {
@@ -288,7 +301,7 @@ message ProductChangeStatusReq {
   int64 tenant_id = 1;
   int64 id = 2;
   ProductStatus status = 3;
-  int64 operator_uid = 4;
+  reserved 4;
 }
 
 message ProductChangeStatusResp {
@@ -374,7 +387,8 @@ message ManualRewardReq {
   string reward_amount = 3;
   RewardType reward_type = 4;
   string remark = 5;
-  int64 operator_uid = 6;
+  reserved 6;
+  string request_no = 7; // 后台生成的幂等号
 }
 
 message ManualRewardResp {
@@ -392,13 +406,53 @@ message ManualRedeemReq {
   string fee_rate = 6;
   string fee_amount = 7;
   string remark = 8;
-  int64 operator_uid = 9;
+  reserved 9;
+  string request_no = 10; // 后台生成的幂等号
 }
 
 message ManualRedeemResp {
   common.RespBase page = 1;
   int64 success = 2;
   string redeem_no = 3;
+}
+
+message OperationListReq {
+  int64 tenant_id = 1;
+  string operation_no = 2;
+  string order_no = 3;
+  int64 user_id = 4;
+  int64 operation_type = 5;
+  int64 status = 6;
+  common.PageReq page = 7;
+}
+
+message OperationListResp {
+  common.RespBase page = 1;
+  repeated StakeOperation data = 2;
+}
+
+message OperationRetryReq {
+  int64 tenant_id = 1;
+  int64 id = 2;
+  string reason = 3;
+}
+
+message OperationRetryResp {
+  common.RespBase page = 1;
+  int64 data = 2;
+}
+
+message ReconciliationListReq {
+  int64 tenant_id = 1;
+  int64 reconciliation_date = 2;
+  string coin_symbol = 3;
+  int64 status = 4;
+  common.PageReq page = 5;
+}
+
+message ReconciliationListResp {
+  common.RespBase page = 1;
+  repeated StakeReconciliation data = 2;
 }
 
 message StakingTaskReq {
@@ -415,4 +469,7 @@ message StakingTaskResp {
 service Task {
   // 质押收益发放/到期结算
   rpc ProcessRewardsAndSettleOrders(StakingTaskReq) returns (StakingTaskResp);
+
+  // 生成质押账实对账快照
+  rpc ReconcileStaking(StakingTaskReq) returns (StakingTaskResp);
 }

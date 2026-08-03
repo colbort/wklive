@@ -88,3 +88,21 @@ func (s *AdminServer) ManualRedeem(ctx context.Context, in *staking.ManualRedeem
 	l := adminlogic.NewManualRedeemLogic(ctx, s.svcCtx)
 	return l.ManualRedeem(in)
 }
+
+// 获取资金操作列表
+func (s *AdminServer) OperationList(ctx context.Context, in *staking.OperationListReq) (*staking.OperationListResp, error) {
+	l := adminlogic.NewOperationListLogic(ctx, s.svcCtx)
+	return l.OperationList(in)
+}
+
+// 手动重试资金操作
+func (s *AdminServer) OperationRetry(ctx context.Context, in *staking.OperationRetryReq) (*staking.OperationRetryResp, error) {
+	l := adminlogic.NewOperationRetryLogic(ctx, s.svcCtx)
+	return l.OperationRetry(in)
+}
+
+// 获取每日账实对账快照
+func (s *AdminServer) ReconciliationList(ctx context.Context, in *staking.ReconciliationListReq) (*staking.ReconciliationListResp, error) {
+	l := adminlogic.NewReconciliationListLogic(ctx, s.svcCtx)
+	return l.ReconciliationList(in)
+}

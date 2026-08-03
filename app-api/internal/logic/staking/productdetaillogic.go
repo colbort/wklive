@@ -28,5 +28,9 @@ func NewProductDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pro
 }
 
 func (l *ProductDetailLogic) ProductDetail(req *types.ProductDetailReq) (resp *types.ProductDetailResp, err error) {
-	return logicutil.Proxy[types.ProductDetailResp](l.ctx, req, l.svcCtx.StakingCli.ProductDetail)
+	ctx, err := resolveTenantContext(l.ctx, l.svcCtx)
+	if err != nil {
+		return logicutil.SystemErrorResp[types.ProductDetailResp](l.ctx, err)
+	}
+	return logicutil.Proxy[types.ProductDetailResp](ctx, req, l.svcCtx.StakingCli.ProductDetail)
 }

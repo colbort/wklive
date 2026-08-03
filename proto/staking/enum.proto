@@ -41,6 +41,7 @@ enum OrderStatus {
   ORDER_STATUS_REDEEMED = 3; // 已赎回
   ORDER_STATUS_EARLY_REDEEMED = 4; // 提前赎回
   ORDER_STATUS_CANCELLED = 5; // 已取消
+  ORDER_STATUS_PENDING = 6; // 资金锁仓处理中
 }
 
 // 赎回类型
@@ -66,6 +67,7 @@ enum RewardStatus {
   REWARD_STATUS_UNKNOWN = 0;
   REWARD_STATUS_FAIL = 1; // 失败
   REWARD_STATUS_SUCCESS = 2; // 成功
+  REWARD_STATUS_PROCESSING = 3; // 处理中
 }
 
 // 赎回状态

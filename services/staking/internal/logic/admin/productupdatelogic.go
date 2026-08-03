@@ -3,12 +3,14 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"strings"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
 	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/staking"
+	"wklive/services/staking/internal/logic/helpers"
 	"wklive/services/staking/internal/svc"
 	"wklive/services/staking/models"
 
@@ -38,7 +40,7 @@ func (l *ProductUpdateLogic) ProductUpdate(in *staking.ProductUpdateReq) (*staki
 		}
 		return nil, err
 	}
-	allowTenantUpdate, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, item.TenantId)
+	_, allowed, forbidden, err := utils.ResolveAdminTenantWriteScopeFromMd(l.ctx, item.TenantId)
 	if err != nil {
 		return nil, i18n.StatusError(l.ctx, i18n.UserNotFound)
 	}
@@ -48,8 +50,12 @@ func (l *ProductUpdateLogic) ProductUpdate(in *staking.ProductUpdateReq) (*staki
 	if !allowed {
 		return &staking.ProductUpdateResp{Page: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
 	}
-	if allowTenantUpdate {
-		item.TenantId = in.TenantId
+	if in.TenantId > 0 && item.TenantId != in.TenantId {
+		return &staking.ProductUpdateResp{Page: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx))}, nil
+	}
+	operatorId, err := helpers.AdminOperatorUserID(l.ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	if in.ProductName != "" {
@@ -62,13 +68,13 @@ func (l *ProductUpdateLogic) ProductUpdate(in *staking.ProductUpdateReq) (*staki
 		item.CoinName = in.CoinName
 	}
 	if in.CoinSymbol != "" {
-		item.CoinSymbol = in.CoinSymbol
+		item.CoinSymbol = strings.ToUpper(strings.TrimSpace(in.CoinSymbol))
 	}
 	if in.RewardCoinName != "" {
 		item.RewardCoinName = in.RewardCoinName
 	}
 	if in.RewardCoinSymbol != "" {
-		item.RewardCoinSymbol = in.RewardCoinSymbol
+		item.RewardCoinSymbol = strings.ToUpper(strings.TrimSpace(in.RewardCoinSymbol))
 	}
 	if in.Apr != "" {
 		apr, err := conv.ParseDecimalField(in.Apr)
@@ -140,10 +146,14 @@ func (l *ProductUpdateLogic) ProductUpdate(in *staking.ProductUpdateReq) (*staki
 	if in.Remark != "" {
 		item.Remark = in.Remark
 	}
-	if in.OperatorUid != 0 {
-		item.UpdateUserId = in.OperatorUid
-	}
+	item.UpdateUserId = operatorId
 	item.UpdateTimes = utils.NowMillis()
+	if err := helpers.ValidateStakeProduct(item); err != nil {
+		return &staking.ProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
+	if err := helpers.ValidateStakeFundingAccounts(l.ctx, l.svcCtx, item); err != nil {
+		return &staking.ProductUpdateResp{Page: helper.ErrResp(i18n.ParamError, i18n.Translate(i18n.ParamError, l.ctx))}, nil
+	}
 	if err := l.svcCtx.StakeProductModel.Update(l.ctx, item); err != nil {
 		return nil, err
 	}

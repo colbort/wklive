@@ -28,3 +28,9 @@ func (s *TaskServer) ProcessRewardsAndSettleOrders(ctx context.Context, in *stak
 	l := tasklogic.NewProcessRewardsAndSettleOrdersLogic(ctx, s.svcCtx)
 	return l.ProcessRewardsAndSettleOrders(in)
 }
+
+// 生成质押账实对账快照
+func (s *TaskServer) ReconcileStaking(ctx context.Context, in *staking.StakingTaskReq) (*staking.StakingTaskResp, error) {
+	l := tasklogic.NewReconcileStakingLogic(ctx, s.svcCtx)
+	return l.ReconcileStaking(in)
+}

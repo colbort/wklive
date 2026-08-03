@@ -30,6 +30,7 @@ const (
 	ActionOptionProcessDailyReconciliation = "ProcessDailyReconciliation"
 
 	ActionStakingProcessRewardsAndSettleOrders = "ProcessRewardsAndSettleOrders"
+	ActionStakingReconcile                     = "ReconcileStaking"
 
 	ActionTradeProcessOrderMatching       = "ProcessOrderMatching"
 	ActionTradeProcessPositions           = "ProcessPositions"

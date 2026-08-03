@@ -10,6 +10,9 @@ import {
   apiStakingListRewardLogs,
   apiStakingManualRedeem,
   apiStakingManualReward,
+  apiStakingListOperations,
+  apiStakingRetryOperation,
+  apiStakingListReconciliations,
   apiStakingUpdateProduct,
 } from '@/api/staking'
 import { getCoreOptions } from '@/stores/core'
@@ -84,6 +87,9 @@ export type StakeOrder = {
   updateUserId: number // 更新人ID
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
+  requestNo?: string // 请求幂等号
+  activeOperationNo?: string // 当前资金操作号
+  version?: number // 乐观锁版本
 }
 
 export type StakeRewardLog = {
@@ -107,6 +113,7 @@ export type StakeRewardLog = {
   updateUserId: number // 更新人ID
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
+  operationNo?: string // 资金操作号
 }
 
 export type StakeRedeemLog = {
@@ -130,6 +137,57 @@ export type StakeRedeemLog = {
   updateUserId: number // 更新人ID
   createTimes: number // 创建时间
   updateTimes: number // 更新时间
+}
+
+export type StakeOperation = {
+  id: number
+  tenantId: number
+  userId: number
+  orderId: number
+  orderNo: string
+  operationNo: string
+  requestNo: string
+  operationType: number
+  principalAmount: string
+  rewardAmount: string
+  feeAmount: string
+  principalStatus: number
+  rewardStatus: number
+  feeStatus: number
+  status: number
+  periodEnd: number
+  retryCount: number
+  nextRetryAt: number
+  lastError: string
+  operatorUserId: number
+  remark: string
+  version: number
+  createTimes: number
+  updateTimes: number
+}
+
+export type StakeReconciliation = {
+  id: number
+  tenantId: number
+  reconciliationDate: number
+  coinSymbol: string
+  activePrincipal: string
+  productStaked: string
+  positionStaked: string
+  assetLocked: string
+  rewardLogAmount: string
+  rewardPlatformAmount: string
+  feeLogAmount: string
+  feePlatformAmount: string
+  productDiff: string
+  positionDiff: string
+  lockDiff: string
+  rewardDiff: string
+  feeDiff: string
+  status: number
+  detail: string
+  createTimes: number
+  updateTimes: number
 }
 
 export type ProductListReq = {
@@ -171,7 +229,6 @@ export type ProductCreateReq = {
   status: number // 状态
   sort: number // 排序
   remark?: string // 备注
-  operatorUid: number // 操作人ID
 }
 
 export type ProductUpdateReq = ProductCreateReq & {
@@ -182,7 +239,6 @@ export type ProductChangeStatusReq = {
   tenantId: number // 租户ID
   id: number // 产品ID
   status: number // 状态
-  operatorUid: number // 操作人ID
 }
 
 export type OrderListReq = {
@@ -241,7 +297,7 @@ export type ManualRewardReq = {
   rewardAmount: string // 奖励金额
   rewardType: number // 奖励类型
   remark?: string // 备注
-  operatorUid: number // 操作人ID
+  requestNo: string // 请求幂等号
 }
 
 export type ManualRedeemReq = {
@@ -253,7 +309,33 @@ export type ManualRedeemReq = {
   feeRate: string // 手续费率
   feeAmount: string // 手续费金额
   remark?: string // 备注
-  operatorUid: number // 操作人ID
+  requestNo: string // 请求幂等号
+}
+
+export type OperationListReq = {
+  cursor?: number
+  limit?: number
+  tenantId?: number
+  operationNo?: string
+  orderNo?: string
+  userId?: number
+  operationType?: number
+  status?: number
+}
+
+export type OperationRetryReq = {
+  tenantId: number
+  id: number
+  reason: string
+}
+
+export type ReconciliationListReq = {
+  cursor?: number
+  limit?: number
+  tenantId?: number
+  reconciliationDate?: number
+  coinSymbol?: string
+  status?: number
 }
 
 export class StakingService {
@@ -303,6 +385,18 @@ export class StakingService {
 
   manualRedeem(params: ManualRedeemReq) {
     return apiStakingManualRedeem(params)
+  }
+
+  listOperations(params: OperationListReq) {
+    return apiStakingListOperations(params)
+  }
+
+  retryOperation(params: OperationRetryReq) {
+    return apiStakingRetryOperation(params)
+  }
+
+  listReconciliations(params: ReconciliationListReq) {
+    return apiStakingListReconciliations(params)
   }
 }
 

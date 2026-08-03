@@ -30,6 +30,13 @@ func NewOrderDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Order
 
 // 获取质押订单详情
 func (l *OrderDetailLogic) OrderDetail(in *staking.OrderDetailReq) (*staking.OrderDetailResp, error) {
+	tenantId, base, err := helpers.AdminTenantReadScopeResp(l.ctx, in.TenantId)
+	if err != nil {
+		return nil, err
+	}
+	if base != nil {
+		return &staking.OrderDetailResp{Page: base}, nil
+	}
 	item, err := l.svcCtx.StakeOrderModel.FindOne(l.ctx, in.Id)
 	if err != nil {
 		if errors.Is(err, models.ErrNotFound) {
@@ -37,7 +44,7 @@ func (l *OrderDetailLogic) OrderDetail(in *staking.OrderDetailReq) (*staking.Ord
 		}
 		return nil, err
 	}
-	if item.TenantId != in.TenantId {
+	if tenantId > 0 && item.TenantId != tenantId {
 		return &staking.OrderDetailResp{Page: helper.ErrResp(i18n.OrderNotFound, i18n.Translate(i18n.OrderNotFound, l.ctx))}, nil
 	}
 

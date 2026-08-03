@@ -1009,6 +1009,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
+				Path:    "/operations",
+				Handler: staking.OperationListHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/operations/retry",
+				Handler: staking.OperationRetryHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/orders",
 				Handler: staking.OrderListHandler(serverCtx),
 			},
@@ -1041,6 +1051,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPost,
 				Path:    "/products/update",
 				Handler: staking.ProductUpdateHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/reconciliations",
+				Handler: staking.ReconciliationListHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,

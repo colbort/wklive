@@ -29,6 +29,10 @@ type (
 	MyRedeemLogListResp     = staking.MyRedeemLogListResp
 	MyRewardLogListReq      = staking.MyRewardLogListReq
 	MyRewardLogListResp     = staking.MyRewardLogListResp
+	OperationListReq        = staking.OperationListReq
+	OperationListResp       = staking.OperationListResp
+	OperationRetryReq       = staking.OperationRetryReq
+	OperationRetryResp      = staking.OperationRetryResp
 	OrderDetailReq          = staking.OrderDetailReq
 	OrderDetailResp         = staking.OrderDetailResp
 	OrderListReq            = staking.OrderListReq
@@ -43,6 +47,8 @@ type (
 	ProductListResp         = staking.ProductListResp
 	ProductUpdateReq        = staking.ProductUpdateReq
 	ProductUpdateResp       = staking.ProductUpdateResp
+	ReconciliationListReq   = staking.ReconciliationListReq
+	ReconciliationListResp  = staking.ReconciliationListResp
 	RedeemData              = staking.RedeemData
 	RedeemLogListReq        = staking.RedeemLogListReq
 	RedeemLogListResp       = staking.RedeemLogListResp
@@ -60,6 +66,8 @@ type (
 	Task interface {
 		// 质押收益发放/到期结算
 		ProcessRewardsAndSettleOrders(ctx context.Context, in *StakingTaskReq, opts ...grpc.CallOption) (*StakingTaskResp, error)
+		// 生成质押账实对账快照
+		ReconcileStaking(ctx context.Context, in *StakingTaskReq, opts ...grpc.CallOption) (*StakingTaskResp, error)
 	}
 
 	defaultTask struct {
@@ -77,4 +85,10 @@ func NewTask(cli zrpc.Client) Task {
 func (m *defaultTask) ProcessRewardsAndSettleOrders(ctx context.Context, in *StakingTaskReq, opts ...grpc.CallOption) (*StakingTaskResp, error) {
 	client := staking.NewTaskClient(m.cli.Conn())
 	return client.ProcessRewardsAndSettleOrders(ctx, in, opts...)
+}
+
+// 生成质押账实对账快照
+func (m *defaultTask) ReconcileStaking(ctx context.Context, in *StakingTaskReq, opts ...grpc.CallOption) (*StakingTaskResp, error) {
+	client := staking.NewTaskClient(m.cli.Conn())
+	return client.ReconcileStaking(ctx, in, opts...)
 }

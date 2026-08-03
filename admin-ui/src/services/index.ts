@@ -389,6 +389,11 @@ export type {
   RedeemLogListReq,
   ManualRewardReq,
   ManualRedeemReq,
+  StakeOperation,
+  StakeReconciliation,
+  OperationListReq,
+  OperationRetryReq,
+  ReconciliationListReq,
 } from './staking/StakingService'
 export type {
   TradeSymbol,

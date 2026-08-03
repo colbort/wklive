@@ -132,6 +132,8 @@ export interface CreateOrderReq {
   stakeAmount: string
   source: number
   remark?: string
+  /** 客户端生成的幂等号，同一业务重试必须复用 */
+  requestNo: string
 }
 
 export interface MyOrderListReq extends PageReq {
@@ -152,6 +154,8 @@ export interface RedeemReq {
   orderId: number
   redeemType: number
   remark?: string
+  /** 客户端生成的幂等号，同一业务重试必须复用 */
+  requestNo: string
 }
 
 export interface MyRedeemLogListReq extends PageReq {

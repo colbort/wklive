@@ -61,14 +61,7 @@ func PrepareAssetIdempotent(ctx context.Context, model models.TAssetIdempotentMo
 }
 
 func CompleteAssetIdempotent(ctx context.Context, model models.TAssetIdempotentModel, tenantId int64, bizType, sceneType, bizNo string, ts int64) error {
-	record, err := model.FindOneByTenantIdBizTypeSceneTypeBizNo(ctx, tenantId, bizType, sceneType, bizNo)
-	if err != nil {
-		return err
-	}
-	record.Status = int64(asset.IdempotentStatus_IDEMPOTENT_STATUS_SUCCESS)
-	record.Remark = "success"
-	record.UpdateTimes = ts
-	return model.Update(ctx, record)
+	return model.MarkSuccess(ctx, tenantId, bizType, sceneType, bizNo, ts)
 }
 
 func ToAssetStatus(status int64) common.Enable {

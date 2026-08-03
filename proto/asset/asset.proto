@@ -622,6 +622,12 @@ service Asset {
 
   // 将业务手续费原子、幂等计入租户平台手续费收入账户。
   rpc CreditPlatformRevenue(CreditPlatformRevenueReq) returns (CreditPlatformRevenueResp);
+
+  // 从租户平台资金账户原子、幂等支付到用户钱包。
+  rpc PayPlatformExpense(PayPlatformExpenseReq) returns (PlatformTransferResp);
+
+  // 从用户锁仓本金原子扣减并计入租户平台收入账户。
+  rpc CollectLockedRevenue(CollectLockedRevenueReq) returns (PlatformTransferResp);
 }
 
 message GetAssetFlowByBizNoReq {
@@ -903,4 +909,39 @@ message CreditPlatformRevenueResp {
   int64 platform_account_id = 2;
   string platform_account_balance = 3;
   bool idempotent_replay = 4;
+}
+
+message PayPlatformExpenseReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  common.WalletType wallet_type = 3;
+  string platform_account_type = 4;
+  string coin = 5;
+  string amount = 6;
+  BizType biz_type = 7;
+  SceneType scene_type = 8;
+  int64 biz_id = 9;
+  string biz_no = 10;
+  string remark = 11;
+}
+
+message CollectLockedRevenueReq {
+  int64 tenant_id = 1;
+  BizType target_biz_type = 2;
+  string target_biz_no = 3;
+  string platform_account_type = 4;
+  string amount = 5;
+  BizType biz_type = 6;
+  SceneType scene_type = 7;
+  int64 biz_id = 8;
+  string biz_no = 9;
+  string remark = 10;
+}
+
+message PlatformTransferResp {
+  common.RespBase base = 1;
+  UserAsset asset = 2;
+  int64 platform_account_id = 3;
+  string platform_account_balance = 4;
+  bool idempotent_replay = 5;
 }

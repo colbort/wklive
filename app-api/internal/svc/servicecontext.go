@@ -39,7 +39,7 @@ type ServiceContext struct {
 	SystemCli               system.AppClient
 	UserCli                 user.AppClient
 	PaymentCli              payment.AppClient
-	MarketCli                market.AppClient
+	MarketCli               market.AppClient
 	AssetCli                asset.AppClient
 	OptionCli               option.AppClient
 	StakingCli              staking.AppClient
@@ -64,7 +64,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		if username, err := utils.GetUsernameFromCtx(ctx); err == nil {
 			pairs = append(pairs, utils.CtxKeyUsername, username)
 		}
-		if tenantId, err := utils.GetTenantIdFromCtx(ctx); err == nil {
+		if tenantId, err := utils.GetTrustedTenantIdFromCtx(ctx); err == nil {
 			pairs = append(pairs, utils.CtxKeyTenantId, fmt.Sprintf("%d", tenantId))
 		}
 		if tenantCode, err := utils.GetTenantCodeFromCtx(ctx); err == nil {
@@ -106,7 +106,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		SystemCli:               system.NewAppClient(systemCli.Conn()),
 		UserCli:                 user.NewAppClient(userCli.Conn()),
 		PaymentCli:              payment.NewAppClient(paymentCli.Conn()),
-		MarketCli:                market.NewAppClient(marketCli.Conn()),
+		MarketCli:               market.NewAppClient(marketCli.Conn()),
 		AssetCli:                asset.NewAppClient(assetCli.Conn()),
 		OptionCli:               option.NewAppClient(optionCli.Conn()),
 		StakingCli:              staking.NewAppClient(stakingCli.Conn()),

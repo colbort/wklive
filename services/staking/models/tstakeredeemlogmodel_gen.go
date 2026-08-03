@@ -58,7 +58,7 @@ type (
 		FeeRate      decimal.Decimal `db:"fee_rate"`       // 手续费率
 		FeeAmount    decimal.Decimal `db:"fee_amount"`     // 手续费数量
 		RedeemStatus int64           `db:"redeem_status"`  // 赎回状态：1失败 2成功 3处理中
-		RedeemTimes  int64           `db:"redeem_times"`   // 赎回时间戳
+		RedeemTimes  int64           `db:"redeem_times"`   // 赎回时间戳（毫秒）
 		Remark       string          `db:"remark"`         // 备注
 		CreateUserId int64           `db:"create_user_id"` // 创建人ID
 		UpdateUserId int64           `db:"update_user_id"` // 更新人ID
