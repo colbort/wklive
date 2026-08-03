@@ -887,7 +887,7 @@ export default {
     // ===== Option =====
     '600': 'Options',
     '610': 'Contracts',
-    '620': 'Market Detail',
+    '620': 'Get Market Detail',
     '630': 'Market Snapshots',
     '640': 'Orders',
     '650': 'Trades',

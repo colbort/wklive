@@ -18,7 +18,11 @@
         </el-select>
       </el-form-item>
       <template #actions>
-        <el-button v-perm="'option:contract-series:create'" type="primary" @click="openCreate">
+        <el-button
+          v-perm="'option:contract-series:create'"
+          type="primary"
+          @click="openCreate"
+        >
           {{ t('option.createContractSeries') }}
         </el-button>
       </template>
@@ -321,7 +325,10 @@ async function refresh() {
 }
 
 async function openCreate() {
-  if (!query.tenantId) return
+  if (!query.tenantId) {
+    ElMessage.warning(t('option.selectTenantForContractSeries'))
+    return
+  }
   form.referenceTime = new Date()
   form.expiryLines = defaultExpiryLine()
   form.sourceContractId = undefined
