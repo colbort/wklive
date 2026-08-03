@@ -3825,6 +3825,9 @@ type RiskUserTradeLimit struct {
 	Remark               string                 `protobuf:"bytes,23,opt,name=remark,proto3" json:"remark,omitempty"`
 	CreateTimes          int64                  `protobuf:"varint,24,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes          int64                  `protobuf:"varint,25,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	ContractType         common.ContractType    `protobuf:"varint,26,opt,name=contract_type,json=contractType,proto3,enum=common.ContractType" json:"contract_type,omitempty"`
+	ControlMode          UserTradeControlMode   `protobuf:"varint,27,opt,name=control_mode,json=controlMode,proto3,enum=trade.UserTradeControlMode" json:"control_mode,omitempty"`
+	Version              int64                  `protobuf:"varint,28,opt,name=version,proto3" json:"version,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -4034,6 +4037,27 @@ func (x *RiskUserTradeLimit) GetUpdateTimes() int64 {
 	return 0
 }
 
+func (x *RiskUserTradeLimit) GetContractType() common.ContractType {
+	if x != nil {
+		return x.ContractType
+	}
+	return common.ContractType(0)
+}
+
+func (x *RiskUserTradeLimit) GetControlMode() UserTradeControlMode {
+	if x != nil {
+		return x.ControlMode
+	}
+	return UserTradeControlMode_USER_TRADE_CONTROL_MODE_UNKNOWN
+}
+
+func (x *RiskUserTradeLimit) GetVersion() int64 {
+	if x != nil {
+		return x.Version
+	}
+	return 0
+}
+
 type RiskUserSymbolLimit struct {
 	state               protoimpl.MessageState `protogen:"open.v1"`
 	Id                  int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -4058,6 +4082,8 @@ type RiskUserSymbolLimit struct {
 	Remark              string                 `protobuf:"bytes,21,opt,name=remark,proto3" json:"remark,omitempty"`
 	CreateTimes         int64                  `protobuf:"varint,22,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes         int64                  `protobuf:"varint,23,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	ControlMode         UserTradeControlMode   `protobuf:"varint,24,opt,name=control_mode,json=controlMode,proto3,enum=trade.UserTradeControlMode" json:"control_mode,omitempty"`
+	Version             int64                  `protobuf:"varint,25,opt,name=version,proto3" json:"version,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -4246,6 +4272,220 @@ func (x *RiskUserSymbolLimit) GetUpdateTimes() int64 {
 	return 0
 }
 
+func (x *RiskUserSymbolLimit) GetControlMode() UserTradeControlMode {
+	if x != nil {
+		return x.ControlMode
+	}
+	return UserTradeControlMode_USER_TRADE_CONTROL_MODE_UNKNOWN
+}
+
+func (x *RiskUserSymbolLimit) GetVersion() int64 {
+	if x != nil {
+		return x.Version
+	}
+	return 0
+}
+
+type UserTradeControlEntry struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ScopeType     int64                  `protobuf:"varint,1,opt,name=scope_type,json=scopeType,proto3" json:"scope_type,omitempty"` // 1产品级 2交易对级
+	ProductLimit  *RiskUserTradeLimit    `protobuf:"bytes,2,opt,name=product_limit,json=productLimit,proto3" json:"product_limit,omitempty"`
+	SymbolLimit   *RiskUserSymbolLimit   `protobuf:"bytes,3,opt,name=symbol_limit,json=symbolLimit,proto3" json:"symbol_limit,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserTradeControlEntry) Reset() {
+	*x = UserTradeControlEntry{}
+	mi := &file_proto_trade_model_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserTradeControlEntry) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserTradeControlEntry) ProtoMessage() {}
+
+func (x *UserTradeControlEntry) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_model_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserTradeControlEntry.ProtoReflect.Descriptor instead.
+func (*UserTradeControlEntry) Descriptor() ([]byte, []int) {
+	return file_proto_trade_model_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *UserTradeControlEntry) GetScopeType() int64 {
+	if x != nil {
+		return x.ScopeType
+	}
+	return 0
+}
+
+func (x *UserTradeControlEntry) GetProductLimit() *RiskUserTradeLimit {
+	if x != nil {
+		return x.ProductLimit
+	}
+	return nil
+}
+
+func (x *UserTradeControlEntry) GetSymbolLimit() *RiskUserSymbolLimit {
+	if x != nil {
+		return x.SymbolLimit
+	}
+	return nil
+}
+
+type TradeUserControlAudit struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	ControlId     int64                  `protobuf:"varint,3,opt,name=control_id,json=controlId,proto3" json:"control_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ChangeType    int64                  `protobuf:"varint,5,opt,name=change_type,json=changeType,proto3" json:"change_type,omitempty"`
+	BeforeJson    string                 `protobuf:"bytes,6,opt,name=before_json,json=beforeJson,proto3" json:"before_json,omitempty"`
+	AfterJson     string                 `protobuf:"bytes,7,opt,name=after_json,json=afterJson,proto3" json:"after_json,omitempty"`
+	OperatorId    int64                  `protobuf:"varint,8,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`
+	Source        SourceType             `protobuf:"varint,9,opt,name=source,proto3,enum=trade.SourceType" json:"source,omitempty"`
+	Reason        string                 `protobuf:"bytes,10,opt,name=reason,proto3" json:"reason,omitempty"`
+	RequestId     string                 `protobuf:"bytes,11,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	CreateTimes   int64                  `protobuf:"varint,12,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	ScopeType     int64                  `protobuf:"varint,13,opt,name=scope_type,json=scopeType,proto3" json:"scope_type,omitempty"` // 1产品级 2交易对级
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TradeUserControlAudit) Reset() {
+	*x = TradeUserControlAudit{}
+	mi := &file_proto_trade_model_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TradeUserControlAudit) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TradeUserControlAudit) ProtoMessage() {}
+
+func (x *TradeUserControlAudit) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_trade_model_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TradeUserControlAudit.ProtoReflect.Descriptor instead.
+func (*TradeUserControlAudit) Descriptor() ([]byte, []int) {
+	return file_proto_trade_model_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *TradeUserControlAudit) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *TradeUserControlAudit) GetTenantId() int64 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *TradeUserControlAudit) GetControlId() int64 {
+	if x != nil {
+		return x.ControlId
+	}
+	return 0
+}
+
+func (x *TradeUserControlAudit) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *TradeUserControlAudit) GetChangeType() int64 {
+	if x != nil {
+		return x.ChangeType
+	}
+	return 0
+}
+
+func (x *TradeUserControlAudit) GetBeforeJson() string {
+	if x != nil {
+		return x.BeforeJson
+	}
+	return ""
+}
+
+func (x *TradeUserControlAudit) GetAfterJson() string {
+	if x != nil {
+		return x.AfterJson
+	}
+	return ""
+}
+
+func (x *TradeUserControlAudit) GetOperatorId() int64 {
+	if x != nil {
+		return x.OperatorId
+	}
+	return 0
+}
+
+func (x *TradeUserControlAudit) GetSource() SourceType {
+	if x != nil {
+		return x.Source
+	}
+	return SourceType_SOURCE_TYPE_UNKNOWN
+}
+
+func (x *TradeUserControlAudit) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+func (x *TradeUserControlAudit) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+func (x *TradeUserControlAudit) GetCreateTimes() int64 {
+	if x != nil {
+		return x.CreateTimes
+	}
+	return 0
+}
+
+func (x *TradeUserControlAudit) GetScopeType() int64 {
+	if x != nil {
+		return x.ScopeType
+	}
+	return 0
+}
+
 type RiskOrderCheckLog struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -4272,7 +4512,7 @@ type RiskOrderCheckLog struct {
 
 func (x *RiskOrderCheckLog) Reset() {
 	*x = RiskOrderCheckLog{}
-	mi := &file_proto_trade_model_proto_msgTypes[26]
+	mi := &file_proto_trade_model_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4284,7 +4524,7 @@ func (x *RiskOrderCheckLog) String() string {
 func (*RiskOrderCheckLog) ProtoMessage() {}
 
 func (x *RiskOrderCheckLog) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_model_proto_msgTypes[26]
+	mi := &file_proto_trade_model_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4297,7 +4537,7 @@ func (x *RiskOrderCheckLog) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RiskOrderCheckLog.ProtoReflect.Descriptor instead.
 func (*RiskOrderCheckLog) Descriptor() ([]byte, []int) {
-	return file_proto_trade_model_proto_rawDescGZIP(), []int{26}
+	return file_proto_trade_model_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *RiskOrderCheckLog) GetId() int64 {
@@ -4459,7 +4699,7 @@ type BizTradeEvent struct {
 
 func (x *BizTradeEvent) Reset() {
 	*x = BizTradeEvent{}
-	mi := &file_proto_trade_model_proto_msgTypes[27]
+	mi := &file_proto_trade_model_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4471,7 +4711,7 @@ func (x *BizTradeEvent) String() string {
 func (*BizTradeEvent) ProtoMessage() {}
 
 func (x *BizTradeEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_trade_model_proto_msgTypes[27]
+	mi := &file_proto_trade_model_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4484,7 +4724,7 @@ func (x *BizTradeEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BizTradeEvent.ProtoReflect.Descriptor instead.
 func (*BizTradeEvent) Descriptor() ([]byte, []int) {
-	return file_proto_trade_model_proto_rawDescGZIP(), []int{27}
+	return file_proto_trade_model_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *BizTradeEvent) GetId() int64 {
@@ -5108,7 +5348,7 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\fcreate_times\x18\f \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\r \x01(\x03R\vupdateTimes\x12'\n" +
 	"\x0fleverage_values\x18\x0e \x03(\x03R\x0eleverageValues\x12)\n" +
-	"\x10default_leverage\x18\x0f \x01(\x03R\x0fdefaultLeverageJ\x04\b\x04\x10\x05J\x04\b\x06\x10\aJ\x04\b\a\x10\bJ\x04\b\b\x10\t\"\x8c\b\n" +
+	"\x10default_leverage\x18\x0f \x01(\x03R\x0fdefaultLeverageJ\x04\b\x04\x10\x05J\x04\b\x06\x10\aJ\x04\b\a\x10\bJ\x04\b\b\x10\t\"\xa1\t\n" +
 	"\x12RiskUserTradeLimit\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -5138,7 +5378,10 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\x12effective_end_time\x18\x16 \x01(\x03R\x10effectiveEndTime\x12\x16\n" +
 	"\x06remark\x18\x17 \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x18 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x19 \x01(\x03R\vupdateTimes\"\xf6\x06\n" +
+	"\fupdate_times\x18\x19 \x01(\x03R\vupdateTimes\x129\n" +
+	"\rcontract_type\x18\x1a \x01(\x0e2\x14.common.ContractTypeR\fcontractType\x12>\n" +
+	"\fcontrol_mode\x18\x1b \x01(\x0e2\x1b.trade.UserTradeControlModeR\vcontrolMode\x12\x18\n" +
+	"\aversion\x18\x1c \x01(\x03R\aversion\"\xd0\a\n" +
 	"\x13RiskUserSymbolLimit\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x17\n" +
@@ -5163,7 +5406,36 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\x12effective_end_time\x18\x14 \x01(\x03R\x10effectiveEndTime\x12\x16\n" +
 	"\x06remark\x18\x15 \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x16 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x17 \x01(\x03R\vupdateTimesJ\x04\b\x05\x10\x06\"\xa4\x05\n" +
+	"\fupdate_times\x18\x17 \x01(\x03R\vupdateTimes\x12>\n" +
+	"\fcontrol_mode\x18\x18 \x01(\x0e2\x1b.trade.UserTradeControlModeR\vcontrolMode\x12\x18\n" +
+	"\aversion\x18\x19 \x01(\x03R\aversionJ\x04\b\x05\x10\x06\"\xb5\x01\n" +
+	"\x15UserTradeControlEntry\x12\x1d\n" +
+	"\n" +
+	"scope_type\x18\x01 \x01(\x03R\tscopeType\x12>\n" +
+	"\rproduct_limit\x18\x02 \x01(\v2\x19.trade.RiskUserTradeLimitR\fproductLimit\x12=\n" +
+	"\fsymbol_limit\x18\x03 \x01(\v2\x1a.trade.RiskUserSymbolLimitR\vsymbolLimit\"\xa2\x03\n" +
+	"\x15TradeUserControlAudit\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1d\n" +
+	"\n" +
+	"control_id\x18\x03 \x01(\x03R\tcontrolId\x12\x17\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\x12\x1f\n" +
+	"\vchange_type\x18\x05 \x01(\x03R\n" +
+	"changeType\x12\x1f\n" +
+	"\vbefore_json\x18\x06 \x01(\tR\n" +
+	"beforeJson\x12\x1d\n" +
+	"\n" +
+	"after_json\x18\a \x01(\tR\tafterJson\x12\x1f\n" +
+	"\voperator_id\x18\b \x01(\x03R\n" +
+	"operatorId\x12)\n" +
+	"\x06source\x18\t \x01(\x0e2\x11.trade.SourceTypeR\x06source\x12\x16\n" +
+	"\x06reason\x18\n" +
+	" \x01(\tR\x06reason\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\v \x01(\tR\trequestId\x12!\n" +
+	"\fcreate_times\x18\f \x01(\x03R\vcreateTimes\x12\x1d\n" +
+	"\n" +
+	"scope_type\x18\r \x01(\x03R\tscopeType\"\xa4\x05\n" +
 	"\x11RiskOrderCheckLog\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x19\n" +
@@ -5234,7 +5506,7 @@ func file_proto_trade_model_proto_rawDescGZIP() []byte {
 	return file_proto_trade_model_proto_rawDescData
 }
 
-var file_proto_trade_model_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
+var file_proto_trade_model_proto_msgTypes = make([]protoimpl.MessageInfo, 30)
 var file_proto_trade_model_proto_goTypes = []any{
 	(*TenantReq)(nil),                 // 0: trade.TenantReq
 	(*UserReq)(nil),                   // 1: trade.UserReq
@@ -5262,124 +5534,133 @@ var file_proto_trade_model_proto_goTypes = []any{
 	(*TradeSymbolLeverageConfig)(nil), // 23: trade.TradeSymbolLeverageConfig
 	(*RiskUserTradeLimit)(nil),        // 24: trade.RiskUserTradeLimit
 	(*RiskUserSymbolLimit)(nil),       // 25: trade.RiskUserSymbolLimit
-	(*RiskOrderCheckLog)(nil),         // 26: trade.RiskOrderCheckLog
-	(*BizTradeEvent)(nil),             // 27: trade.BizTradeEvent
-	(common.ProductType)(0),           // 28: common.ProductType
-	(common.ContractType)(0),          // 29: common.ContractType
-	(ContractValueType)(0),            // 30: trade.ContractValueType
-	(SymbolStatus)(0),                 // 31: trade.SymbolStatus
-	(common.Enable)(0),                // 32: common.Enable
-	(SecondsDrawRule)(0),              // 33: trade.SecondsDrawRule
-	(PositionMode)(0),                 // 34: trade.PositionMode
-	(MarginMode)(0),                   // 35: trade.MarginMode
-	(common.Side)(0),                  // 36: common.Side
-	(PositionSide)(0),                 // 37: trade.PositionSide
-	(OrderType)(0),                    // 38: trade.OrderType
-	(TimeInForce)(0),                  // 39: trade.TimeInForce
-	(OrderStatus)(0),                  // 40: trade.OrderStatus
-	(OrderSourceType)(0),              // 41: trade.OrderSourceType
-	(common.YesNo)(0),                 // 42: common.YesNo
-	(TriggerType)(0),                  // 43: trade.TriggerType
-	(TriggerKind)(0),                  // 44: trade.TriggerKind
-	(SecondsDirection)(0),             // 45: trade.SecondsDirection
-	(OrderDisplayStatus)(0),           // 46: trade.OrderDisplayStatus
-	(ClosePositionType)(0),            // 47: trade.ClosePositionType
-	(SecondsResult)(0),                // 48: trade.SecondsResult
-	(SecondsSettlementStatus)(0),      // 49: trade.SecondsSettlementStatus
-	(LiquidityType)(0),                // 50: trade.LiquidityType
-	(FillSettlementStatus)(0),         // 51: trade.FillSettlementStatus
-	(CancelSource)(0),                 // 52: trade.CancelSource
-	(PositionStatus)(0),               // 53: trade.PositionStatus
-	(PositionActionType)(0),           // 54: trade.PositionActionType
-	(SourceType)(0),                   // 55: trade.SourceType
-	(RiskLevel)(0),                    // 56: trade.RiskLevel
-	(RiskCheckType)(0),                // 57: trade.RiskCheckType
-	(RiskCheckResult)(0),              // 58: trade.RiskCheckResult
-	(EventStatus)(0),                  // 59: trade.EventStatus
+	(*UserTradeControlEntry)(nil),     // 26: trade.UserTradeControlEntry
+	(*TradeUserControlAudit)(nil),     // 27: trade.TradeUserControlAudit
+	(*RiskOrderCheckLog)(nil),         // 28: trade.RiskOrderCheckLog
+	(*BizTradeEvent)(nil),             // 29: trade.BizTradeEvent
+	(common.ProductType)(0),           // 30: common.ProductType
+	(common.ContractType)(0),          // 31: common.ContractType
+	(ContractValueType)(0),            // 32: trade.ContractValueType
+	(SymbolStatus)(0),                 // 33: trade.SymbolStatus
+	(common.Enable)(0),                // 34: common.Enable
+	(SecondsDrawRule)(0),              // 35: trade.SecondsDrawRule
+	(PositionMode)(0),                 // 36: trade.PositionMode
+	(MarginMode)(0),                   // 37: trade.MarginMode
+	(common.Side)(0),                  // 38: common.Side
+	(PositionSide)(0),                 // 39: trade.PositionSide
+	(OrderType)(0),                    // 40: trade.OrderType
+	(TimeInForce)(0),                  // 41: trade.TimeInForce
+	(OrderStatus)(0),                  // 42: trade.OrderStatus
+	(OrderSourceType)(0),              // 43: trade.OrderSourceType
+	(common.YesNo)(0),                 // 44: common.YesNo
+	(TriggerType)(0),                  // 45: trade.TriggerType
+	(TriggerKind)(0),                  // 46: trade.TriggerKind
+	(SecondsDirection)(0),             // 47: trade.SecondsDirection
+	(OrderDisplayStatus)(0),           // 48: trade.OrderDisplayStatus
+	(ClosePositionType)(0),            // 49: trade.ClosePositionType
+	(SecondsResult)(0),                // 50: trade.SecondsResult
+	(SecondsSettlementStatus)(0),      // 51: trade.SecondsSettlementStatus
+	(LiquidityType)(0),                // 52: trade.LiquidityType
+	(FillSettlementStatus)(0),         // 53: trade.FillSettlementStatus
+	(CancelSource)(0),                 // 54: trade.CancelSource
+	(PositionStatus)(0),               // 55: trade.PositionStatus
+	(PositionActionType)(0),           // 56: trade.PositionActionType
+	(SourceType)(0),                   // 57: trade.SourceType
+	(RiskLevel)(0),                    // 58: trade.RiskLevel
+	(UserTradeControlMode)(0),         // 59: trade.UserTradeControlMode
+	(RiskCheckType)(0),                // 60: trade.RiskCheckType
+	(RiskCheckResult)(0),              // 61: trade.RiskCheckResult
+	(EventStatus)(0),                  // 62: trade.EventStatus
 }
 var file_proto_trade_model_proto_depIdxs = []int32{
-	28, // 0: trade.TradeSymbol.product_type:type_name -> common.ProductType
-	29, // 1: trade.TradeSymbol.contract_type:type_name -> common.ContractType
-	30, // 2: trade.TradeSymbol.contract_value_type:type_name -> trade.ContractValueType
-	31, // 3: trade.TradeSymbol.status:type_name -> trade.SymbolStatus
-	32, // 4: trade.TradeSymbolSpot.buy_enabled:type_name -> common.Enable
-	32, // 5: trade.TradeSymbolSpot.sell_enabled:type_name -> common.Enable
-	32, // 6: trade.TradeSymbolContract.open_long_enabled:type_name -> common.Enable
-	32, // 7: trade.TradeSymbolContract.open_short_enabled:type_name -> common.Enable
-	32, // 8: trade.TradeSymbolContract.close_long_enabled:type_name -> common.Enable
-	32, // 9: trade.TradeSymbolContract.close_short_enabled:type_name -> common.Enable
-	33, // 10: trade.TradeSymbolSeconds.draw_rule:type_name -> trade.SecondsDrawRule
-	32, // 11: trade.TradeSymbolSeconds.up_enabled:type_name -> common.Enable
-	32, // 12: trade.TradeSymbolSeconds.down_enabled:type_name -> common.Enable
-	32, // 13: trade.TradeSymbolSession.enabled:type_name -> common.Enable
-	28, // 14: trade.TradeUserConfig.product_type:type_name -> common.ProductType
-	32, // 15: trade.TradeUserConfig.trade_enabled:type_name -> common.Enable
-	34, // 16: trade.ContractUserConfig.position_mode:type_name -> trade.PositionMode
-	35, // 17: trade.ContractUserConfig.margin_mode:type_name -> trade.MarginMode
-	28, // 18: trade.TradeOrder.product_type:type_name -> common.ProductType
-	36, // 19: trade.TradeOrder.side:type_name -> common.Side
-	37, // 20: trade.TradeOrder.position_side:type_name -> trade.PositionSide
-	38, // 21: trade.TradeOrder.order_type:type_name -> trade.OrderType
-	39, // 22: trade.TradeOrder.time_in_force:type_name -> trade.TimeInForce
-	40, // 23: trade.TradeOrder.status:type_name -> trade.OrderStatus
-	41, // 24: trade.TradeOrder.source:type_name -> trade.OrderSourceType
-	42, // 25: trade.TradeOrder.is_reduce_only:type_name -> common.YesNo
-	43, // 26: trade.TradeOrder.trigger_type:type_name -> trade.TriggerType
-	44, // 27: trade.TradeOrder.trigger_kind:type_name -> trade.TriggerKind
-	29, // 28: trade.TradeOrder.contract_type:type_name -> common.ContractType
-	30, // 29: trade.TradeOrder.contract_value_type:type_name -> trade.ContractValueType
-	42, // 30: trade.TradeOrder.is_close_position:type_name -> common.YesNo
-	45, // 31: trade.TradeOrder.seconds_direction:type_name -> trade.SecondsDirection
-	46, // 32: trade.TradeOrder.display_status:type_name -> trade.OrderDisplayStatus
-	35, // 33: trade.TradeOrderContract.margin_mode:type_name -> trade.MarginMode
-	47, // 34: trade.TradeOrderContract.close_position_type:type_name -> trade.ClosePositionType
-	45, // 35: trade.TradeOrderSeconds.direction:type_name -> trade.SecondsDirection
-	48, // 36: trade.TradeOrderSeconds.result:type_name -> trade.SecondsResult
-	49, // 37: trade.TradeOrderSeconds.settlement_status:type_name -> trade.SecondsSettlementStatus
-	28, // 38: trade.TradeFill.product_type:type_name -> common.ProductType
-	36, // 39: trade.TradeFill.side:type_name -> common.Side
-	37, // 40: trade.TradeFill.position_side:type_name -> trade.PositionSide
-	50, // 41: trade.TradeFill.liquidity_type:type_name -> trade.LiquidityType
-	29, // 42: trade.TradeFill.contract_type:type_name -> common.ContractType
-	30, // 43: trade.TradeFill.contract_value_type:type_name -> trade.ContractValueType
-	51, // 44: trade.TradeFill.settlement_status:type_name -> trade.FillSettlementStatus
-	52, // 45: trade.TradeCancelLog.cancel_source:type_name -> trade.CancelSource
-	29, // 46: trade.ContractPosition.contract_type:type_name -> common.ContractType
-	37, // 47: trade.ContractPosition.position_side:type_name -> trade.PositionSide
-	35, // 48: trade.ContractPosition.margin_mode:type_name -> trade.MarginMode
-	30, // 49: trade.ContractPosition.contract_value_type:type_name -> trade.ContractValueType
-	53, // 50: trade.ContractPosition.status:type_name -> trade.PositionStatus
-	34, // 51: trade.ContractPosition.position_mode:type_name -> trade.PositionMode
-	29, // 52: trade.ContractPositionHistory.contract_type:type_name -> common.ContractType
-	37, // 53: trade.ContractPositionHistory.position_side:type_name -> trade.PositionSide
-	54, // 54: trade.ContractPositionHistory.action_type:type_name -> trade.PositionActionType
-	55, // 55: trade.ContractPositionHistory.source:type_name -> trade.SourceType
-	30, // 56: trade.ContractPositionHistory.contract_value_type:type_name -> trade.ContractValueType
-	35, // 57: trade.ContractLeverageConfig.margin_mode:type_name -> trade.MarginMode
-	55, // 58: trade.ContractLeverageConfig.source:type_name -> trade.SourceType
-	32, // 59: trade.ContractLeverageConfig.enabled:type_name -> common.Enable
-	35, // 60: trade.TradeSymbolLeverageConfig.margin_mode:type_name -> trade.MarginMode
-	32, // 61: trade.TradeSymbolLeverageConfig.enabled:type_name -> common.Enable
-	28, // 62: trade.RiskUserTradeLimit.product_type:type_name -> common.ProductType
-	32, // 63: trade.RiskUserTradeLimit.trade_enabled:type_name -> common.Enable
-	32, // 64: trade.RiskUserTradeLimit.only_reduce_only:type_name -> common.Enable
-	56, // 65: trade.RiskUserTradeLimit.risk_level:type_name -> trade.RiskLevel
-	55, // 66: trade.RiskUserTradeLimit.source:type_name -> trade.SourceType
-	32, // 67: trade.RiskUserTradeLimit.enabled:type_name -> common.Enable
-	55, // 68: trade.RiskUserSymbolLimit.source:type_name -> trade.SourceType
-	32, // 69: trade.RiskUserSymbolLimit.enabled:type_name -> common.Enable
-	28, // 70: trade.RiskOrderCheckLog.product_type:type_name -> common.ProductType
-	57, // 71: trade.RiskOrderCheckLog.check_type:type_name -> trade.RiskCheckType
-	58, // 72: trade.RiskOrderCheckLog.check_result:type_name -> trade.RiskCheckResult
-	55, // 73: trade.RiskOrderCheckLog.source:type_name -> trade.SourceType
-	28, // 74: trade.BizTradeEvent.product_type:type_name -> common.ProductType
-	55, // 75: trade.BizTradeEvent.source:type_name -> trade.SourceType
-	59, // 76: trade.BizTradeEvent.event_status:type_name -> trade.EventStatus
-	77, // [77:77] is the sub-list for method output_type
-	77, // [77:77] is the sub-list for method input_type
-	77, // [77:77] is the sub-list for extension type_name
-	77, // [77:77] is the sub-list for extension extendee
-	0,  // [0:77] is the sub-list for field type_name
+	30, // 0: trade.TradeSymbol.product_type:type_name -> common.ProductType
+	31, // 1: trade.TradeSymbol.contract_type:type_name -> common.ContractType
+	32, // 2: trade.TradeSymbol.contract_value_type:type_name -> trade.ContractValueType
+	33, // 3: trade.TradeSymbol.status:type_name -> trade.SymbolStatus
+	34, // 4: trade.TradeSymbolSpot.buy_enabled:type_name -> common.Enable
+	34, // 5: trade.TradeSymbolSpot.sell_enabled:type_name -> common.Enable
+	34, // 6: trade.TradeSymbolContract.open_long_enabled:type_name -> common.Enable
+	34, // 7: trade.TradeSymbolContract.open_short_enabled:type_name -> common.Enable
+	34, // 8: trade.TradeSymbolContract.close_long_enabled:type_name -> common.Enable
+	34, // 9: trade.TradeSymbolContract.close_short_enabled:type_name -> common.Enable
+	35, // 10: trade.TradeSymbolSeconds.draw_rule:type_name -> trade.SecondsDrawRule
+	34, // 11: trade.TradeSymbolSeconds.up_enabled:type_name -> common.Enable
+	34, // 12: trade.TradeSymbolSeconds.down_enabled:type_name -> common.Enable
+	34, // 13: trade.TradeSymbolSession.enabled:type_name -> common.Enable
+	30, // 14: trade.TradeUserConfig.product_type:type_name -> common.ProductType
+	34, // 15: trade.TradeUserConfig.trade_enabled:type_name -> common.Enable
+	36, // 16: trade.ContractUserConfig.position_mode:type_name -> trade.PositionMode
+	37, // 17: trade.ContractUserConfig.margin_mode:type_name -> trade.MarginMode
+	30, // 18: trade.TradeOrder.product_type:type_name -> common.ProductType
+	38, // 19: trade.TradeOrder.side:type_name -> common.Side
+	39, // 20: trade.TradeOrder.position_side:type_name -> trade.PositionSide
+	40, // 21: trade.TradeOrder.order_type:type_name -> trade.OrderType
+	41, // 22: trade.TradeOrder.time_in_force:type_name -> trade.TimeInForce
+	42, // 23: trade.TradeOrder.status:type_name -> trade.OrderStatus
+	43, // 24: trade.TradeOrder.source:type_name -> trade.OrderSourceType
+	44, // 25: trade.TradeOrder.is_reduce_only:type_name -> common.YesNo
+	45, // 26: trade.TradeOrder.trigger_type:type_name -> trade.TriggerType
+	46, // 27: trade.TradeOrder.trigger_kind:type_name -> trade.TriggerKind
+	31, // 28: trade.TradeOrder.contract_type:type_name -> common.ContractType
+	32, // 29: trade.TradeOrder.contract_value_type:type_name -> trade.ContractValueType
+	44, // 30: trade.TradeOrder.is_close_position:type_name -> common.YesNo
+	47, // 31: trade.TradeOrder.seconds_direction:type_name -> trade.SecondsDirection
+	48, // 32: trade.TradeOrder.display_status:type_name -> trade.OrderDisplayStatus
+	37, // 33: trade.TradeOrderContract.margin_mode:type_name -> trade.MarginMode
+	49, // 34: trade.TradeOrderContract.close_position_type:type_name -> trade.ClosePositionType
+	47, // 35: trade.TradeOrderSeconds.direction:type_name -> trade.SecondsDirection
+	50, // 36: trade.TradeOrderSeconds.result:type_name -> trade.SecondsResult
+	51, // 37: trade.TradeOrderSeconds.settlement_status:type_name -> trade.SecondsSettlementStatus
+	30, // 38: trade.TradeFill.product_type:type_name -> common.ProductType
+	38, // 39: trade.TradeFill.side:type_name -> common.Side
+	39, // 40: trade.TradeFill.position_side:type_name -> trade.PositionSide
+	52, // 41: trade.TradeFill.liquidity_type:type_name -> trade.LiquidityType
+	31, // 42: trade.TradeFill.contract_type:type_name -> common.ContractType
+	32, // 43: trade.TradeFill.contract_value_type:type_name -> trade.ContractValueType
+	53, // 44: trade.TradeFill.settlement_status:type_name -> trade.FillSettlementStatus
+	54, // 45: trade.TradeCancelLog.cancel_source:type_name -> trade.CancelSource
+	31, // 46: trade.ContractPosition.contract_type:type_name -> common.ContractType
+	39, // 47: trade.ContractPosition.position_side:type_name -> trade.PositionSide
+	37, // 48: trade.ContractPosition.margin_mode:type_name -> trade.MarginMode
+	32, // 49: trade.ContractPosition.contract_value_type:type_name -> trade.ContractValueType
+	55, // 50: trade.ContractPosition.status:type_name -> trade.PositionStatus
+	36, // 51: trade.ContractPosition.position_mode:type_name -> trade.PositionMode
+	31, // 52: trade.ContractPositionHistory.contract_type:type_name -> common.ContractType
+	39, // 53: trade.ContractPositionHistory.position_side:type_name -> trade.PositionSide
+	56, // 54: trade.ContractPositionHistory.action_type:type_name -> trade.PositionActionType
+	57, // 55: trade.ContractPositionHistory.source:type_name -> trade.SourceType
+	32, // 56: trade.ContractPositionHistory.contract_value_type:type_name -> trade.ContractValueType
+	37, // 57: trade.ContractLeverageConfig.margin_mode:type_name -> trade.MarginMode
+	57, // 58: trade.ContractLeverageConfig.source:type_name -> trade.SourceType
+	34, // 59: trade.ContractLeverageConfig.enabled:type_name -> common.Enable
+	37, // 60: trade.TradeSymbolLeverageConfig.margin_mode:type_name -> trade.MarginMode
+	34, // 61: trade.TradeSymbolLeverageConfig.enabled:type_name -> common.Enable
+	30, // 62: trade.RiskUserTradeLimit.product_type:type_name -> common.ProductType
+	34, // 63: trade.RiskUserTradeLimit.trade_enabled:type_name -> common.Enable
+	34, // 64: trade.RiskUserTradeLimit.only_reduce_only:type_name -> common.Enable
+	58, // 65: trade.RiskUserTradeLimit.risk_level:type_name -> trade.RiskLevel
+	57, // 66: trade.RiskUserTradeLimit.source:type_name -> trade.SourceType
+	34, // 67: trade.RiskUserTradeLimit.enabled:type_name -> common.Enable
+	31, // 68: trade.RiskUserTradeLimit.contract_type:type_name -> common.ContractType
+	59, // 69: trade.RiskUserTradeLimit.control_mode:type_name -> trade.UserTradeControlMode
+	57, // 70: trade.RiskUserSymbolLimit.source:type_name -> trade.SourceType
+	34, // 71: trade.RiskUserSymbolLimit.enabled:type_name -> common.Enable
+	59, // 72: trade.RiskUserSymbolLimit.control_mode:type_name -> trade.UserTradeControlMode
+	24, // 73: trade.UserTradeControlEntry.product_limit:type_name -> trade.RiskUserTradeLimit
+	25, // 74: trade.UserTradeControlEntry.symbol_limit:type_name -> trade.RiskUserSymbolLimit
+	57, // 75: trade.TradeUserControlAudit.source:type_name -> trade.SourceType
+	30, // 76: trade.RiskOrderCheckLog.product_type:type_name -> common.ProductType
+	60, // 77: trade.RiskOrderCheckLog.check_type:type_name -> trade.RiskCheckType
+	61, // 78: trade.RiskOrderCheckLog.check_result:type_name -> trade.RiskCheckResult
+	57, // 79: trade.RiskOrderCheckLog.source:type_name -> trade.SourceType
+	30, // 80: trade.BizTradeEvent.product_type:type_name -> common.ProductType
+	57, // 81: trade.BizTradeEvent.source:type_name -> trade.SourceType
+	62, // 82: trade.BizTradeEvent.event_status:type_name -> trade.EventStatus
+	83, // [83:83] is the sub-list for method output_type
+	83, // [83:83] is the sub-list for method input_type
+	83, // [83:83] is the sub-list for extension type_name
+	83, // [83:83] is the sub-list for extension extendee
+	0,  // [0:83] is the sub-list for field type_name
 }
 
 func init() { file_proto_trade_model_proto_init() }
@@ -5394,7 +5675,7 @@ func file_proto_trade_model_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_trade_model_proto_rawDesc), len(file_proto_trade_model_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   28,
+			NumMessages:   30,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

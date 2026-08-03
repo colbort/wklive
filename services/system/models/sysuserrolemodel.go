@@ -110,7 +110,11 @@ func (m *defaultSysUserRoleModel) InsertCtx(ctx context.Context, session sqlx.Se
 }
 
 func (m *defaultSysUserRoleModel) FindLoginUserPerms(ctx context.Context, userId int64, clear bool) ([]string, error) {
-	key := fmt.Sprintf("system:user:perms:%d", userId)
+	var permsVer int64
+	if err := m.QueryRowNoCacheCtx(ctx, &permsVer, "SELECT perms_ver FROM sys_user WHERE id = ?", userId); err != nil {
+		return nil, err
+	}
+	key := fmt.Sprintf("system:user:perms:%d:v%d", userId, permsVer)
 	var perms []string
 	if clear {
 		return m.findLoginUserPermsFromDB(ctx, userId, key)

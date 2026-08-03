@@ -36,12 +36,7 @@
           controls-position="right"
           class="query-field"
         />
-        <el-input
-          v-else
-          v-model="query[field]"
-          clearable
-          class="query-field"
-        />
+        <el-input v-else v-model="query[field]" clearable class="query-field" />
       </el-form-item>
       <template v-if="$slots.actions" #actions>
         <slot name="actions" />
@@ -90,8 +85,8 @@
         <el-table-column
           v-if="
             kind === 'instructions' ||
-              kind === 'reconciliationIssues' ||
-              kind === 'accountLiquidations'
+            kind === 'reconciliationIssues' ||
+            kind === 'accountLiquidations'
           "
           :label="t('common.actions')"
           width="170"
@@ -117,10 +112,11 @@
               {{ t('trade.retry') }}
             </el-button>
             <el-button
-              v-if="kind === 'instructions' && (row.status === 4 || row.status === 5)"
+              v-if="kind === 'instructions'"
               v-perm="'trade:operation:settlement-instruction:retry'"
               link
               type="warning"
+              :disabled="!canRetrySettlementInstruction(row)"
               @click="retry(row)"
             >
               {{ t('trade.retry') }}
@@ -648,6 +644,10 @@ function formatValue(key: string, value: any) {
     return optionValueLabel('settlementInstructionAction', Number(value))
   if (/(Time|Times|At)$/.test(key) && Number(value) > 0) return formatDate(Number(value))
   return value
+}
+function canRetrySettlementInstruction(row: TradeOperationRecord) {
+  const status = Number(row.status)
+  return status === 4 || status === 5
 }
 async function retry(row: TradeOperationRecord) {
   const { value } = await ElMessageBox.prompt(t('trade.retryReason'), t('trade.retry'), {

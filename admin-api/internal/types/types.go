@@ -1182,6 +1182,14 @@ type DepthLevel struct {
 	Volume string `json:"volume"`
 }
 
+type DisableUserTradeControlReq struct {
+	TenantId        int64  `json:"tenantId"`
+	ControlId       int64  `json:"controlId"`
+	ScopeType       int64  `json:"scopeType"`
+	ExpectedVersion int64  `json:"expectedVersion"`
+	Reason          string `json:"reason"`
+}
+
 type EncryptionConfigData struct {
 	Version             string   `json:"version"`
 	Mode                string   `json:"mode"`
@@ -2104,9 +2112,10 @@ type GetUserTradeConfigResp struct {
 }
 
 type GetUserTradeLimitReq struct {
-	TenantId    int64 `form:"tenantId,optional"`
-	UserId      int64 `form:"userId"`
-	ProductType int64 `form:"productType"`
+	TenantId     int64 `form:"tenantId,optional"`
+	UserId       int64 `form:"userId"`
+	ProductType  int64 `form:"productType"`
+	ContractType int64 `form:"contractType,optional"`
 }
 
 type GetUserTradeLimitResp struct {
@@ -2934,6 +2943,35 @@ type ListUserRechargeStatsReq struct {
 type ListUserRechargeStatsResp struct {
 	RespBase
 	Data []UserRechargeStat `json:"data"`
+}
+
+type ListUserTradeControlAuditsReq struct {
+	PageReq
+	TenantId  int64 `form:"tenantId,optional"`
+	ControlId int64 `form:"controlId,optional"`
+	UserId    int64 `form:"userId,optional"`
+	ScopeType int64 `form:"scopeType,optional"`
+}
+
+type ListUserTradeControlAuditsResp struct {
+	RespBase
+	Data []TradeUserControlAudit `json:"data"`
+}
+
+type ListUserTradeControlsReq struct {
+	PageReq
+	TenantId     int64 `form:"tenantId,optional"`
+	UserId       int64 `form:"userId,optional"`
+	ProductType  int64 `form:"productType,optional"`
+	ContractType int64 `form:"contractType,optional"`
+	SymbolId     int64 `form:"symbolId,optional"`
+	Enabled      int64 `form:"enabled,optional"`
+	ScopeType    int64 `form:"scopeType,optional"`
+}
+
+type ListUserTradeControlsResp struct {
+	RespBase
+	Data []UserTradeControlEntry `json:"data"`
 }
 
 type ListUsersReq struct {
@@ -4910,6 +4948,8 @@ type RiskUserSymbolLimit struct {
 	Remark              string `json:"remark"`
 	CreateTimes         int64  `json:"createTimes"`
 	UpdateTimes         int64  `json:"updateTimes"`
+	ControlMode         int64  `json:"controlMode"`
+	Version             int64  `json:"version"`
 }
 
 type RiskUserTradeLimit struct {
@@ -4938,6 +4978,9 @@ type RiskUserTradeLimit struct {
 	Remark               string `json:"remark"`
 	CreateTimes          int64  `json:"createTimes"`
 	UpdateTimes          int64  `json:"updateTimes"`
+	ContractType         int64  `json:"contractType"`
+	ControlMode          int64  `json:"controlMode"`
+	Version              int64  `json:"version"`
 }
 
 type SetAuthorityRegistryReq struct {
@@ -5111,6 +5154,8 @@ type SetUserSymbolLimitReq struct {
 	EffectiveStartTime  int64  `json:"effectiveStartTime"`
 	EffectiveEndTime    int64  `json:"effectiveEndTime"`
 	Remark              string `json:"remark,optional"`
+	ControlMode         int64  `json:"controlMode"`
+	ExpectedVersion     int64  `json:"expectedVersion"`
 }
 
 type SetUserTradeConfigReq struct {
@@ -5144,6 +5189,9 @@ type SetUserTradeLimitReq struct {
 	EffectiveStartTime   int64  `json:"effectiveStartTime"`
 	EffectiveEndTime     int64  `json:"effectiveEndTime"`
 	Remark               string `json:"remark,optional"`
+	ContractType         int64  `json:"contractType"`
+	ControlMode          int64  `json:"controlMode"`
+	ExpectedVersion      int64  `json:"expectedVersion"`
 }
 
 type SnapshotOutboxData struct {
@@ -6348,6 +6396,22 @@ type TradeUserConfig struct {
 	UpdateTimes  int64 `json:"updateTimes"`
 }
 
+type TradeUserControlAudit struct {
+	Id          int64  `json:"id"`
+	TenantId    int64  `json:"tenantId"`
+	ControlId   int64  `json:"controlId"`
+	ScopeType   int64  `json:"scopeType"`
+	UserId      int64  `json:"userId"`
+	ChangeType  int64  `json:"changeType"`
+	BeforeJson  string `json:"beforeJson"`
+	AfterJson   string `json:"afterJson"`
+	OperatorId  int64  `json:"operatorId"`
+	Source      int64  `json:"source"`
+	Reason      string `json:"reason"`
+	RequestId   string `json:"requestId"`
+	CreateTimes int64  `json:"createTimes"`
+}
+
 type TradingCalendarExceptionInput struct {
 	ExceptionType   int64  `json:"exceptionType" validate:"oneof=1 2"`
 	StartTime       int64  `json:"startTime"`
@@ -6943,6 +7007,12 @@ type UserSecurity struct {
 	RiskLevel       int64  `json:"riskLevel"`       // 风控等级：0正常 1关注 2高风险
 	CreateTimes     int64  `json:"createTimes"`     // 创建时间
 	UpdateTimes     int64  `json:"updateTimes"`     // 更新时间
+}
+
+type UserTradeControlEntry struct {
+	ScopeType    int64               `json:"scopeType"`
+	ProductLimit RiskUserTradeLimit  `json:"productLimit,optional"`
+	SymbolLimit  RiskUserSymbolLimit `json:"symbolLimit,optional"`
 }
 
 type VerificationCodeRecordDetailReq struct {

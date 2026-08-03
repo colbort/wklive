@@ -591,6 +591,9 @@ const (
 	Admin_SetUserSymbolLimit_FullMethodName                 = "/trade.Admin/SetUserSymbolLimit"
 	Admin_GetUserTradeLimit_FullMethodName                  = "/trade.Admin/GetUserTradeLimit"
 	Admin_GetUserSymbolLimit_FullMethodName                 = "/trade.Admin/GetUserSymbolLimit"
+	Admin_ListUserTradeControls_FullMethodName              = "/trade.Admin/ListUserTradeControls"
+	Admin_DisableUserTradeControl_FullMethodName            = "/trade.Admin/DisableUserTradeControl"
+	Admin_ListUserTradeControlAudits_FullMethodName         = "/trade.Admin/ListUserTradeControlAudits"
 	Admin_SetUserTradeConfig_FullMethodName                 = "/trade.Admin/SetUserTradeConfig"
 	Admin_GetUserTradeConfig_FullMethodName                 = "/trade.Admin/GetUserTradeConfig"
 	Admin_SetContractUserConfig_FullMethodName              = "/trade.Admin/SetContractUserConfig"
@@ -676,6 +679,12 @@ type AdminClient interface {
 	GetUserTradeLimit(ctx context.Context, in *GetUserTradeLimitReq, opts ...grpc.CallOption) (*GetUserTradeLimitResp, error)
 	// 获取用户交易对限制
 	GetUserSymbolLimit(ctx context.Context, in *GetUserSymbolLimitReq, opts ...grpc.CallOption) (*GetUserSymbolLimitResp, error)
+	// 分页获取统一用户交易控制
+	ListUserTradeControls(ctx context.Context, in *ListUserTradeControlsReq, opts ...grpc.CallOption) (*ListUserTradeControlsResp, error)
+	// 停用用户交易控制
+	DisableUserTradeControl(ctx context.Context, in *DisableUserTradeControlReq, opts ...grpc.CallOption) (*CommonResp, error)
+	// 分页获取用户交易控制审计
+	ListUserTradeControlAudits(ctx context.Context, in *ListUserTradeControlAuditsReq, opts ...grpc.CallOption) (*ListUserTradeControlAuditsResp, error)
 	// 设置用户交易配置
 	SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*CommonResp, error)
 	// 获取用户交易配置
@@ -967,6 +976,36 @@ func (c *adminClient) GetUserSymbolLimit(ctx context.Context, in *GetUserSymbolL
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetUserSymbolLimitResp)
 	err := c.cc.Invoke(ctx, Admin_GetUserSymbolLimit_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ListUserTradeControls(ctx context.Context, in *ListUserTradeControlsReq, opts ...grpc.CallOption) (*ListUserTradeControlsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListUserTradeControlsResp)
+	err := c.cc.Invoke(ctx, Admin_ListUserTradeControls_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) DisableUserTradeControl(ctx context.Context, in *DisableUserTradeControlReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CommonResp)
+	err := c.cc.Invoke(ctx, Admin_DisableUserTradeControl_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ListUserTradeControlAudits(ctx context.Context, in *ListUserTradeControlAuditsReq, opts ...grpc.CallOption) (*ListUserTradeControlAuditsResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListUserTradeControlAuditsResp)
+	err := c.cc.Invoke(ctx, Admin_ListUserTradeControlAudits_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1317,6 +1356,12 @@ type AdminServer interface {
 	GetUserTradeLimit(context.Context, *GetUserTradeLimitReq) (*GetUserTradeLimitResp, error)
 	// 获取用户交易对限制
 	GetUserSymbolLimit(context.Context, *GetUserSymbolLimitReq) (*GetUserSymbolLimitResp, error)
+	// 分页获取统一用户交易控制
+	ListUserTradeControls(context.Context, *ListUserTradeControlsReq) (*ListUserTradeControlsResp, error)
+	// 停用用户交易控制
+	DisableUserTradeControl(context.Context, *DisableUserTradeControlReq) (*CommonResp, error)
+	// 分页获取用户交易控制审计
+	ListUserTradeControlAudits(context.Context, *ListUserTradeControlAuditsReq) (*ListUserTradeControlAuditsResp, error)
 	// 设置用户交易配置
 	SetUserTradeConfig(context.Context, *SetUserTradeConfigReq) (*CommonResp, error)
 	// 获取用户交易配置
@@ -1445,6 +1490,15 @@ func (UnimplementedAdminServer) GetUserTradeLimit(context.Context, *GetUserTrade
 }
 func (UnimplementedAdminServer) GetUserSymbolLimit(context.Context, *GetUserSymbolLimitReq) (*GetUserSymbolLimitResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserSymbolLimit not implemented")
+}
+func (UnimplementedAdminServer) ListUserTradeControls(context.Context, *ListUserTradeControlsReq) (*ListUserTradeControlsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListUserTradeControls not implemented")
+}
+func (UnimplementedAdminServer) DisableUserTradeControl(context.Context, *DisableUserTradeControlReq) (*CommonResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method DisableUserTradeControl not implemented")
+}
+func (UnimplementedAdminServer) ListUserTradeControlAudits(context.Context, *ListUserTradeControlAuditsReq) (*ListUserTradeControlAuditsResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListUserTradeControlAudits not implemented")
 }
 func (UnimplementedAdminServer) SetUserTradeConfig(context.Context, *SetUserTradeConfigReq) (*CommonResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetUserTradeConfig not implemented")
@@ -1982,6 +2036,60 @@ func _Admin_GetUserSymbolLimit_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AdminServer).GetUserSymbolLimit(ctx, req.(*GetUserSymbolLimitReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ListUserTradeControls_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserTradeControlsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListUserTradeControls(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListUserTradeControls_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListUserTradeControls(ctx, req.(*ListUserTradeControlsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_DisableUserTradeControl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DisableUserTradeControlReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).DisableUserTradeControl(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_DisableUserTradeControl_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).DisableUserTradeControl(ctx, req.(*DisableUserTradeControlReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ListUserTradeControlAudits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserTradeControlAuditsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListUserTradeControlAudits(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListUserTradeControlAudits_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListUserTradeControlAudits(ctx, req.(*ListUserTradeControlAuditsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2610,6 +2718,18 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserSymbolLimit",
 			Handler:    _Admin_GetUserSymbolLimit_Handler,
+		},
+		{
+			MethodName: "ListUserTradeControls",
+			Handler:    _Admin_ListUserTradeControls_Handler,
+		},
+		{
+			MethodName: "DisableUserTradeControl",
+			Handler:    _Admin_DisableUserTradeControl_Handler,
+		},
+		{
+			MethodName: "ListUserTradeControlAudits",
+			Handler:    _Admin_ListUserTradeControlAudits_Handler,
 		},
 		{
 			MethodName: "SetUserTradeConfig",

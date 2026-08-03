@@ -48,6 +48,9 @@ type (
 		FindOneByTenantIdOrderNoForUpdate(ctx context.Context, tenantId int64, orderNo string) (*TTradeOrder, error)
 		FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId, userId int64, clientOrderId sql.NullString) (*TTradeOrder, error)
 		CountBySymbolStatuses(ctx context.Context, tenantID, symbolID int64, statuses []int64) (int64, error)
+		CountByUserSymbolStatuses(ctx context.Context, tenantID, userID, symbolID int64, statuses []int64) (int64, error)
+		CountCreatedSince(ctx context.Context, tenantID, userID, productType, contractType, since int64) (int64, error)
+		CountCancelsSince(ctx context.Context, tenantID, userID, productType, contractType, since int64) (int64, error)
 		CountOpenContractRiskUnit(ctx context.Context, tenantID, userID, symbolID int64) (int64, error)
 		CountActiveIncompatibleContractMode(ctx context.Context, tenantID, userID, symbolID, marginMode, positionMode int64) (int64, error)
 		CountFreezingCrossMarginOpenings(ctx context.Context, tenantID, userID int64, marginAsset string) (int64, error)
@@ -60,6 +63,61 @@ type (
 		*defaultTTradeOrderModel
 	}
 )
+
+func (m *defaultTTradeOrderModel) CountByUserSymbolStatuses(
+	ctx context.Context, tenantID, userID, symbolID int64, statuses []int64,
+) (int64, error) {
+	if len(statuses) == 0 {
+		return 0, nil
+	}
+	holders := make([]string, len(statuses))
+	args := []any{tenantID, userID, symbolID}
+	for i, status := range statuses {
+		holders[i] = "?"
+		args = append(args, status)
+	}
+	var total int64
+	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id=? AND user_id=? AND symbol_id=? AND status IN (%s)", m.table, strings.Join(holders, ","))
+	if err := m.QueryRowNoCacheCtx(ctx, &total, query, args...); err != nil {
+		return 0, err
+	}
+	return total, nil
+}
+
+func (m *defaultTTradeOrderModel) CountCreatedSince(
+	ctx context.Context, tenantID, userID, productType, contractType, since int64,
+) (int64, error) {
+	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id=? AND user_id=? AND product_type=? AND create_times>=?", m.table)
+	args := []any{tenantID, userID, productType, since}
+	if productType == 2 && contractType > 0 {
+		query += " AND contract_type=?"
+		args = append(args, contractType)
+	}
+	var total int64
+	if err := m.QueryRowNoCacheCtx(ctx, &total, query, args...); err != nil {
+		return 0, err
+	}
+	return total, nil
+}
+
+func (m *defaultTTradeOrderModel) CountCancelsSince(
+	ctx context.Context, tenantID, userID, productType, contractType, since int64,
+) (int64, error) {
+	query := `SELECT COUNT(1)
+FROM t_trade_cancel_log c
+JOIN t_trade_order o ON o.tenant_id=c.tenant_id AND o.id=c.order_id
+WHERE c.tenant_id=? AND c.user_id=? AND o.product_type=? AND c.create_times>=?`
+	args := []any{tenantID, userID, productType, since}
+	if productType == 2 && contractType > 0 {
+		query += " AND o.contract_type=?"
+		args = append(args, contractType)
+	}
+	var total int64
+	if err := m.QueryRowNoCacheCtx(ctx, &total, query, args...); err != nil {
+		return 0, err
+	}
+	return total, nil
+}
 
 func (m *defaultTTradeOrderModel) CountOpenContractRiskUnit(
 	ctx context.Context, tenantID, userID, symbolID int64,

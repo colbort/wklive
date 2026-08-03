@@ -6,6 +6,8 @@ import (
 	"wklive/services/trade/internal/logic/helpers"
 
 	"wklive/common/helper"
+	"wklive/common/i18n"
+	"wklive/common/utils"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/svc"
 	"wklive/services/trade/models"
@@ -29,7 +31,14 @@ func NewGetUserSymbolLimitLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 // 获取用户交易对限制
 func (l *GetUserSymbolLimitLogic) GetUserSymbolLimit(in *trade.GetUserSymbolLimitReq) (*trade.GetUserSymbolLimitResp, error) {
-	item, err := l.svcCtx.RiskUserSymbolLimitModel.FindOneByTenantIdUserIdSymbolId(l.ctx, in.TenantId, in.UserId, in.SymbolId)
+	tenantID, allowed, forbidden, err := utils.ResolveAdminTenantReadScopeFromMd(l.ctx, in.TenantId)
+	if err != nil {
+		return nil, err
+	}
+	if forbidden || !allowed || tenantID <= 0 {
+		return &trade.GetUserSymbolLimitResp{Base: helper.ErrResp(i18n.PermissionDenied, i18n.Translate(i18n.PermissionDenied, l.ctx))}, nil
+	}
+	item, err := l.svcCtx.RiskUserSymbolLimitModel.FindOneByTenantIdUserIdSymbolId(l.ctx, tenantID, in.UserId, in.SymbolId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

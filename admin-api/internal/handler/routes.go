@@ -1612,6 +1612,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: trade.GetUserTradeConfigHandler(serverCtx),
 			},
 			{
+				Method:  http.MethodGet,
+				Path:    "/user-trade-control-audits",
+				Handler: trade.ListUserTradeControlAuditsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/user-trade-controls",
+				Handler: trade.ListUserTradeControlsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/user-trade-controls/disable",
+				Handler: trade.DisableUserTradeControlHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodPost,
 				Path:    "/user-trade-limit",
 				Handler: trade.SetUserTradeLimitHandler(serverCtx),

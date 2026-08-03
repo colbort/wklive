@@ -2,11 +2,9 @@ package tasklogic
 
 import (
 	"context"
-	"wklive/services/trade/internal/logic/helpers"
 
-	"wklive/common/utils"
-	"wklive/proto/common"
 	"wklive/proto/trade"
+	"wklive/services/trade/internal/logic/helpers"
 	"wklive/services/trade/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -30,7 +28,7 @@ func NewExpireRiskLimitsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 func (l *ExpireRiskLimitsLogic) ExpireRiskLimits(in *trade.TradeTaskReq) (*trade.TradeTaskResp, error) {
 	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "expire_risk_limits", func(taskCtx context.Context) (*trade.TradeTaskResp, error) {
 		l.ctx = taskCtx
-		now := utils.NowMillis()
+		now := expiryNow()
 		cursor := int64(0)
 		for {
 			items, _, err := l.svcCtx.RiskUserTradeLimitModel.FindPage(l.ctx, cursor, 100)
@@ -45,10 +43,8 @@ func (l *ExpireRiskLimitsLogic) ExpireRiskLimits(in *trade.TradeTaskReq) (*trade
 				if in.GetTenantId() > 0 && item.TenantId != in.GetTenantId() {
 					continue
 				}
-				if item.Enabled == helpers.EnableToModel(common.Enable_ENABLE_ENABLED, int64(common.Enable_ENABLE_ENABLED)) && item.EffectiveEndTime > 0 && item.EffectiveEndTime <= now {
-					item.Enabled = helpers.EnableToModel(common.Enable_ENABLE_DISABLED, int64(common.Enable_ENABLE_DISABLED))
-					item.UpdateTimes = now
-					if err := l.svcCtx.RiskUserTradeLimitModel.Update(l.ctx, item); err != nil {
+				if item.EffectiveEndTime > 0 && item.EffectiveEndTime <= now {
+					if _, err := expireProductControl(l.ctx, l.svcCtx, item.Id, in.GetTenantId(), 0, now); err != nil {
 						return nil, err
 					}
 				}
@@ -71,10 +67,8 @@ func (l *ExpireRiskLimitsLogic) ExpireRiskLimits(in *trade.TradeTaskReq) (*trade
 				if in.GetTenantId() > 0 && item.TenantId != in.GetTenantId() {
 					continue
 				}
-				if item.Enabled == helpers.EnableToModel(common.Enable_ENABLE_ENABLED, int64(common.Enable_ENABLE_ENABLED)) && item.EffectiveEndTime > 0 && item.EffectiveEndTime <= now {
-					item.Enabled = helpers.EnableToModel(common.Enable_ENABLE_DISABLED, int64(common.Enable_ENABLE_DISABLED))
-					item.UpdateTimes = now
-					if err := l.svcCtx.RiskUserSymbolLimitModel.Update(l.ctx, item); err != nil {
+				if item.EffectiveEndTime > 0 && item.EffectiveEndTime <= now {
+					if _, err := expireSymbolControl(l.ctx, l.svcCtx, item.Id, in.GetTenantId(), 0, now); err != nil {
 						return nil, err
 					}
 				}

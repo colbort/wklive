@@ -32,6 +32,7 @@ type (
 	ContractRiskLimitTier                  = trade.ContractRiskLimitTier
 	CreateSymbolReq                        = trade.CreateSymbolReq
 	CreateTradeEventReq                    = trade.CreateTradeEventReq
+	DisableUserTradeControlReq             = trade.DisableUserTradeControlReq
 	GetAccountLiquidationDetailReq         = trade.GetAccountLiquidationDetailReq
 	GetAccountLiquidationDetailResp        = trade.GetAccountLiquidationDetailResp
 	GetAccountLiquidationListReq           = trade.GetAccountLiquidationListReq
@@ -125,6 +126,10 @@ type (
 	IgnoreContractReconciliationIssueReq   = trade.IgnoreContractReconciliationIssueReq
 	InsuranceFundAccount                   = trade.InsuranceFundAccount
 	InternalCommonResp                     = trade.InternalCommonResp
+	ListUserTradeControlAuditsReq          = trade.ListUserTradeControlAuditsReq
+	ListUserTradeControlAuditsResp         = trade.ListUserTradeControlAuditsResp
+	ListUserTradeControlsReq               = trade.ListUserTradeControlsReq
+	ListUserTradeControlsResp              = trade.ListUserTradeControlsResp
 	PlaceLiquidityQuoteReq                 = trade.PlaceLiquidityQuoteReq
 	PlaceOrderReq                          = trade.PlaceOrderReq
 	PlaceOrderResp                         = trade.PlaceOrderResp
@@ -204,6 +209,12 @@ type (
 		GetUserTradeLimit(ctx context.Context, in *GetUserTradeLimitReq, opts ...grpc.CallOption) (*GetUserTradeLimitResp, error)
 		// 获取用户交易对限制
 		GetUserSymbolLimit(ctx context.Context, in *GetUserSymbolLimitReq, opts ...grpc.CallOption) (*GetUserSymbolLimitResp, error)
+		// 分页获取统一用户交易控制
+		ListUserTradeControls(ctx context.Context, in *ListUserTradeControlsReq, opts ...grpc.CallOption) (*ListUserTradeControlsResp, error)
+		// 停用用户交易控制
+		DisableUserTradeControl(ctx context.Context, in *DisableUserTradeControlReq, opts ...grpc.CallOption) (*CommonResp, error)
+		// 分页获取用户交易控制审计
+		ListUserTradeControlAudits(ctx context.Context, in *ListUserTradeControlAuditsReq, opts ...grpc.CallOption) (*ListUserTradeControlAuditsResp, error)
 		// 设置用户交易配置
 		SetUserTradeConfig(ctx context.Context, in *SetUserTradeConfigReq, opts ...grpc.CallOption) (*CommonResp, error)
 		// 获取用户交易配置
@@ -406,6 +417,24 @@ func (m *defaultAdmin) GetUserTradeLimit(ctx context.Context, in *GetUserTradeLi
 func (m *defaultAdmin) GetUserSymbolLimit(ctx context.Context, in *GetUserSymbolLimitReq, opts ...grpc.CallOption) (*GetUserSymbolLimitResp, error) {
 	client := trade.NewAdminClient(m.cli.Conn())
 	return client.GetUserSymbolLimit(ctx, in, opts...)
+}
+
+// 分页获取统一用户交易控制
+func (m *defaultAdmin) ListUserTradeControls(ctx context.Context, in *ListUserTradeControlsReq, opts ...grpc.CallOption) (*ListUserTradeControlsResp, error) {
+	client := trade.NewAdminClient(m.cli.Conn())
+	return client.ListUserTradeControls(ctx, in, opts...)
+}
+
+// 停用用户交易控制
+func (m *defaultAdmin) DisableUserTradeControl(ctx context.Context, in *DisableUserTradeControlReq, opts ...grpc.CallOption) (*CommonResp, error) {
+	client := trade.NewAdminClient(m.cli.Conn())
+	return client.DisableUserTradeControl(ctx, in, opts...)
+}
+
+// 分页获取用户交易控制审计
+func (m *defaultAdmin) ListUserTradeControlAudits(ctx context.Context, in *ListUserTradeControlAuditsReq, opts ...grpc.CallOption) (*ListUserTradeControlAuditsResp, error) {
+	client := trade.NewAdminClient(m.cli.Conn())
+	return client.ListUserTradeControlAudits(ctx, in, opts...)
 }
 
 // 设置用户交易配置

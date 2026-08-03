@@ -167,6 +167,24 @@ func (s *AdminServer) GetUserSymbolLimit(ctx context.Context, in *trade.GetUserS
 	return l.GetUserSymbolLimit(in)
 }
 
+// 分页获取统一用户交易控制
+func (s *AdminServer) ListUserTradeControls(ctx context.Context, in *trade.ListUserTradeControlsReq) (*trade.ListUserTradeControlsResp, error) {
+	l := adminlogic.NewListUserTradeControlsLogic(ctx, s.svcCtx)
+	return l.ListUserTradeControls(in)
+}
+
+// 停用用户交易控制
+func (s *AdminServer) DisableUserTradeControl(ctx context.Context, in *trade.DisableUserTradeControlReq) (*trade.CommonResp, error) {
+	l := adminlogic.NewDisableUserTradeControlLogic(ctx, s.svcCtx)
+	return l.DisableUserTradeControl(in)
+}
+
+// 分页获取用户交易控制审计
+func (s *AdminServer) ListUserTradeControlAudits(ctx context.Context, in *trade.ListUserTradeControlAuditsReq) (*trade.ListUserTradeControlAuditsResp, error) {
+	l := adminlogic.NewListUserTradeControlAuditsLogic(ctx, s.svcCtx)
+	return l.ListUserTradeControlAudits(in)
+}
+
 // 设置用户交易配置
 func (s *AdminServer) SetUserTradeConfig(ctx context.Context, in *trade.SetUserTradeConfigReq) (*trade.CommonResp, error) {
 	l := adminlogic.NewSetUserTradeConfigLogic(ctx, s.svcCtx)

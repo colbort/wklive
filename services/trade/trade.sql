@@ -691,6 +691,8 @@ CREATE TABLE `t_risk_user_trade_limit` (
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
   `user_id` BIGINT NOT NULL COMMENT '用户ID',
   `product_type` TINYINT NOT NULL COMMENT '产品大类：1现货 2衍生品 3秒合约',
+  `contract_type` TINYINT NOT NULL DEFAULT 0 COMMENT '合约类型：0不适用/全部 1永续 2交割',
+  `control_mode` TINYINT NOT NULL DEFAULT 1 COMMENT '控制模式：1正常 2只平仓 3仅减仓 4禁用',
   `can_open` TINYINT NOT NULL DEFAULT 1 COMMENT '是否允许开仓/开单：1允许 0禁止',
   `can_close` TINYINT NOT NULL DEFAULT 1 COMMENT '是否允许平仓/卖出：1允许 0禁止',
   `can_cancel` TINYINT NOT NULL DEFAULT 1 COMMENT '是否允许撤单：1允许 0禁止',
@@ -710,13 +712,14 @@ CREATE TABLE `t_risk_user_trade_limit` (
   `effective_start_time` BIGINT NOT NULL DEFAULT 0 COMMENT '限制生效开始时间，毫秒时间戳，0表示立即生效',
   `effective_end_time` BIGINT NOT NULL DEFAULT 0 COMMENT '限制生效结束时间，毫秒时间戳，0表示长期有效',
   `remark` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `version` BIGINT NOT NULL DEFAULT 1 COMMENT '乐观锁版本',
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间，毫秒时间戳',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间，毫秒时间戳',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_tenant_user_product_type` (`tenant_id`, `user_id`, `product_type`),
+  UNIQUE KEY `uk_tenant_user_product_contract` (`tenant_id`, `user_id`, `product_type`, `contract_type`),
   KEY `idx_tenant_trade_enabled` (`tenant_id`, `trade_enabled`),
   KEY `idx_tenant_enabled` (`tenant_id`, `enabled`),
-  CONSTRAINT `chk_user_trade_limit_flags` CHECK (`product_type` IN (1, 2, 3) AND `can_open` IN (0, 1) AND `can_close` IN (0, 1) AND `can_cancel` IN (0, 1) AND `can_trigger_order` IN (0, 1) AND `can_api_trade` IN (0, 1) AND `trade_enabled` IN (1, 2) AND `only_reduce_only` IN (1, 2) AND `enabled` IN (1, 2)),
+  CONSTRAINT `chk_user_trade_limit_flags` CHECK (`product_type` IN (1, 2, 3) AND `contract_type` IN (0, 1, 2) AND (`product_type` = 2 OR `contract_type` = 0) AND `control_mode` IN (1, 2, 3, 4) AND `can_open` IN (0, 1) AND `can_close` IN (0, 1) AND `can_cancel` IN (0, 1) AND `can_trigger_order` IN (0, 1) AND `can_api_trade` IN (0, 1) AND `trade_enabled` IN (1, 2) AND `only_reduce_only` IN (1, 2) AND `enabled` IN (1, 2)),
   CONSTRAINT `chk_user_trade_limit_values` CHECK (`max_open_order_count` >= 0 AND `max_order_count_per_day` >= 0 AND `max_cancel_count_per_day` >= 0 AND `max_open_notional` >= 0 AND `max_position_notional` >= 0 AND (`effective_end_time` = 0 OR `effective_start_time` = 0 OR `effective_end_time` > `effective_start_time`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户交易限制表';
 
@@ -726,6 +729,7 @@ CREATE TABLE `t_risk_user_symbol_limit` (
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
   `user_id` BIGINT NOT NULL COMMENT '用户ID',
   `symbol_id` BIGINT NOT NULL COMMENT '交易标的ID',
+  `control_mode` TINYINT NOT NULL DEFAULT 1 COMMENT '控制模式：1正常 2只平仓 3仅减仓 4禁用',
   `max_position_qty` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '最大持仓数量，0表示不限',
   `max_position_notional` DECIMAL(36,18) NOT NULL DEFAULT 0 COMMENT '最大持仓名义价值，0表示不限',
   `max_open_orders` INT NOT NULL DEFAULT 0 COMMENT '最大挂单数，0表示不限',
@@ -742,14 +746,37 @@ CREATE TABLE `t_risk_user_symbol_limit` (
   `effective_start_time` BIGINT NOT NULL DEFAULT 0 COMMENT '限制生效开始时间，毫秒时间戳',
   `effective_end_time` BIGINT NOT NULL DEFAULT 0 COMMENT '限制生效结束时间，毫秒时间戳',
   `remark` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `version` BIGINT NOT NULL DEFAULT 1 COMMENT '乐观锁版本',
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间，毫秒时间戳',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间，毫秒时间戳',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_user_symbol` (`tenant_id`, `user_id`, `symbol_id`),
   KEY `idx_tenant_symbol` (`tenant_id`, `symbol_id`),
-  CONSTRAINT `chk_user_symbol_limit_values` CHECK (`max_position_qty` >= 0 AND `max_position_notional` >= 0 AND `max_open_orders` >= 0 AND `max_order_qty` >= 0 AND `max_order_notional` >= 0 AND `min_order_qty` >= 0 AND `min_order_notional` >= 0 AND `max_long_position_qty` >= 0 AND `max_short_position_qty` >= 0 AND `price_deviation_rate` >= 0 AND `enabled` IN (1, 2)),
+  CONSTRAINT `chk_user_symbol_limit_values` CHECK (`control_mode` IN (1, 2, 3, 4) AND `max_position_qty` >= 0 AND `max_position_notional` >= 0 AND `max_open_orders` >= 0 AND `max_order_qty` >= 0 AND `max_order_notional` >= 0 AND `min_order_qty` >= 0 AND `min_order_notional` >= 0 AND `max_long_position_qty` >= 0 AND `max_short_position_qty` >= 0 AND `price_deviation_rate` >= 0 AND `enabled` IN (1, 2)),
   CONSTRAINT `chk_user_symbol_limit_time` CHECK (`effective_end_time` = 0 OR `effective_start_time` = 0 OR `effective_end_time` > `effective_start_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户单标的限制表';
+
+DROP TABLE IF EXISTS `t_trade_user_control_audit`;
+CREATE TABLE `t_trade_user_control_audit` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `control_id` BIGINT NOT NULL DEFAULT 0 COMMENT '控制记录ID',
+  `scope_type` TINYINT NOT NULL DEFAULT 1 COMMENT '控制级别：1产品级 2交易对级',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `change_type` TINYINT NOT NULL COMMENT '变更类型：1创建 2更新 3解除 4自动失效 5迁移',
+  `before_json` JSON NULL COMMENT '修改前快照',
+  `after_json` JSON NULL COMMENT '修改后快照',
+  `operator_id` BIGINT NOT NULL DEFAULT 0 COMMENT '操作人ID',
+  `source` TINYINT NOT NULL DEFAULT 3 COMMENT '来源：1系统 2用户 3后台管理 4任务',
+  `reason` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '操作原因',
+  `request_id` VARCHAR(128) NOT NULL DEFAULT '' COMMENT '请求ID',
+  `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间，毫秒时间戳',
+  PRIMARY KEY (`id`),
+  KEY `idx_tenant_user_id` (`tenant_id`, `user_id`, `id`),
+  KEY `idx_control_id` (`scope_type`, `control_id`, `id`),
+  CONSTRAINT `chk_user_control_audit_scope` CHECK (`scope_type` IN (1, 2)),
+  CONSTRAINT `chk_user_control_audit_type` CHECK (`change_type` IN (1, 2, 3, 4, 5))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户交易控制变更审计';
 
 DROP TABLE IF EXISTS `t_risk_order_check_log`;
 CREATE TABLE `t_risk_order_check_log` (

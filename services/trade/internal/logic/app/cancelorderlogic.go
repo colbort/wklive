@@ -60,6 +60,9 @@ func (l *CancelOrderLogic) CancelOrder(in *trade.CancelOrderReq) (*trade.UserCom
 	if err != nil {
 		return nil, err
 	}
+	if err = helpers.CheckUserCancelAllowed(l.ctx, l.svcCtx, item); err != nil {
+		return nil, err
+	}
 	var canceledOrder *models.TTradeOrder
 	err = l.svcCtx.TransactionModel.TransactOnce(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
 		orderModel := tx.TradeOrder

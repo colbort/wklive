@@ -58,6 +58,9 @@ func (l *CancelAllOrdersLogic) CancelAllOrders(in *trade.CancelAllOrdersReq) (*t
 		}
 		for _, item := range list {
 			cursor = item.Id
+			if err = helpers.CheckUserCancelAllowed(l.ctx, l.svcCtx, item); err != nil {
+				return nil, err
+			}
 			var canceledOrder *models.TTradeOrder
 			if err = l.svcCtx.TransactionModel.TransactOnce(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
 				orderModel := tx.TradeOrder

@@ -32,6 +32,7 @@ type (
 	ContractRiskLimitTier                  = trade.ContractRiskLimitTier
 	CreateSymbolReq                        = trade.CreateSymbolReq
 	CreateTradeEventReq                    = trade.CreateTradeEventReq
+	DisableUserTradeControlReq             = trade.DisableUserTradeControlReq
 	GetAccountLiquidationDetailReq         = trade.GetAccountLiquidationDetailReq
 	GetAccountLiquidationDetailResp        = trade.GetAccountLiquidationDetailResp
 	GetAccountLiquidationListReq           = trade.GetAccountLiquidationListReq
@@ -125,6 +126,10 @@ type (
 	IgnoreContractReconciliationIssueReq   = trade.IgnoreContractReconciliationIssueReq
 	InsuranceFundAccount                   = trade.InsuranceFundAccount
 	InternalCommonResp                     = trade.InternalCommonResp
+	ListUserTradeControlAuditsReq          = trade.ListUserTradeControlAuditsReq
+	ListUserTradeControlAuditsResp         = trade.ListUserTradeControlAuditsResp
+	ListUserTradeControlsReq               = trade.ListUserTradeControlsReq
+	ListUserTradeControlsResp              = trade.ListUserTradeControlsResp
 	PlaceLiquidityQuoteReq                 = trade.PlaceLiquidityQuoteReq
 	PlaceOrderReq                          = trade.PlaceOrderReq
 	PlaceOrderResp                         = trade.PlaceOrderResp

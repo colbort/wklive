@@ -442,6 +442,9 @@ type RiskUserTradeLimit {
 	remark               string `json:"remark"`
 	createTimes          int64  `json:"createTimes"`
 	updateTimes          int64  `json:"updateTimes"`
+	contractType        int64  `json:"contractType"`
+	controlMode         int64  `json:"controlMode"`
+	version             int64  `json:"version"`
 }
 
 type RiskUserSymbolLimit {
@@ -467,6 +470,30 @@ type RiskUserSymbolLimit {
 	remark              string `json:"remark"`
 	createTimes         int64  `json:"createTimes"`
 	updateTimes         int64  `json:"updateTimes"`
+	controlMode        int64  `json:"controlMode"`
+	version            int64  `json:"version"`
+}
+
+type UserTradeControlEntry {
+	scopeType    int64               `json:"scopeType"`
+	productLimit RiskUserTradeLimit  `json:"productLimit,optional"`
+	symbolLimit  RiskUserSymbolLimit `json:"symbolLimit,optional"`
+}
+
+type TradeUserControlAudit {
+	id          int64  `json:"id"`
+	tenantId    int64  `json:"tenantId"`
+	controlId   int64  `json:"controlId"`
+	scopeType   int64  `json:"scopeType"`
+	userId      int64  `json:"userId"`
+	changeType  int64  `json:"changeType"`
+	beforeJson  string `json:"beforeJson"`
+	afterJson   string `json:"afterJson"`
+	operatorId  int64  `json:"operatorId"`
+	source      int64  `json:"source"`
+	reason      string `json:"reason"`
+	requestId   string `json:"requestId"`
+	createTimes int64  `json:"createTimes"`
 }
 
 type RiskOrderCheckLog {
@@ -850,6 +877,9 @@ type SetUserTradeLimitReq {
 	effectiveStartTime   int64  `json:"effectiveStartTime"`
 	effectiveEndTime     int64  `json:"effectiveEndTime"`
 	remark               string `json:"remark,optional"`
+	contractType         int64  `json:"contractType"`
+	controlMode          int64  `json:"controlMode"`
+	expectedVersion      int64  `json:"expectedVersion"`
 }
 
 type SetUserSymbolLimitReq {
@@ -872,12 +902,15 @@ type SetUserSymbolLimitReq {
 	effectiveStartTime  int64  `json:"effectiveStartTime"`
 	effectiveEndTime    int64  `json:"effectiveEndTime"`
 	remark              string `json:"remark,optional"`
+	controlMode         int64  `json:"controlMode"`
+	expectedVersion     int64  `json:"expectedVersion"`
 }
 
 type GetUserTradeLimitReq {
 	tenantId    int64 `form:"tenantId,optional"`
 	userId      int64 `form:"userId"`
 	productType int64 `form:"productType"`
+	contractType int64 `form:"contractType,optional"`
 }
 
 type GetUserTradeLimitResp {
@@ -894,6 +927,43 @@ type GetUserSymbolLimitReq {
 type GetUserSymbolLimitResp {
 	RespBase
 	data RiskUserSymbolLimit `json:"data"`
+}
+
+type ListUserTradeControlsReq {
+	PageReq
+	tenantId    int64 `form:"tenantId,optional"`
+	userId      int64 `form:"userId,optional"`
+	productType int64 `form:"productType,optional"`
+	contractType int64 `form:"contractType,optional"`
+	symbolId    int64 `form:"symbolId,optional"`
+	enabled     int64 `form:"enabled,optional"`
+	scopeType   int64 `form:"scopeType,optional"`
+}
+
+type ListUserTradeControlsResp {
+	RespBase
+	data []UserTradeControlEntry `json:"data"`
+}
+
+type DisableUserTradeControlReq {
+	tenantId       int64  `json:"tenantId"`
+	controlId      int64  `json:"controlId"`
+	scopeType      int64  `json:"scopeType"`
+	expectedVersion int64  `json:"expectedVersion"`
+	reason         string `json:"reason"`
+}
+
+type ListUserTradeControlAuditsReq {
+	PageReq
+	tenantId   int64 `form:"tenantId,optional"`
+	controlId  int64 `form:"controlId,optional"`
+	userId     int64 `form:"userId,optional"`
+	scopeType  int64 `form:"scopeType,optional"`
+}
+
+type ListUserTradeControlAuditsResp {
+	RespBase
+	data []TradeUserControlAudit `json:"data"`
 }
 
 type SetUserTradeConfigReq {
@@ -1605,6 +1675,15 @@ service admin {
 	@handler GetUserSymbolLimit
 	get /user-symbol-limit (GetUserSymbolLimitReq) returns (GetUserSymbolLimitResp)
 
+	@handler ListUserTradeControls
+	get /user-trade-controls (ListUserTradeControlsReq) returns (ListUserTradeControlsResp)
+
+	@handler DisableUserTradeControl
+	post /user-trade-controls/disable (DisableUserTradeControlReq) returns (CommonResp)
+
+	@handler ListUserTradeControlAudits
+	get /user-trade-control-audits (ListUserTradeControlAuditsReq) returns (ListUserTradeControlAuditsResp)
+
 	@handler SetUserTradeConfig
 	post /user-trade-config (SetUserTradeConfigReq) returns (CommonResp)
 
@@ -1692,4 +1771,3 @@ service admin {
 	@handler GetMarketSnapshotList
 	get /market-snapshots (GetMarketSnapshotListReq) returns (GetMarketSnapshotListResp)
 }
-

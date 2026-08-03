@@ -10,6 +10,9 @@ import {
   apiTradeGetUserSymbolLimit,
   apiTradeGetUserTradeConfig,
   apiTradeGetUserTradeLimit,
+  apiTradeListUserTradeControls,
+  apiTradeDisableUserTradeControl,
+  apiTradeListUserTradeControlAudits,
   apiTradeListCancelLogs,
   apiTradeListEvents,
   apiTradeListFills,
@@ -853,6 +856,9 @@ export type RiskUserTradeLimit = {
   remark: string
   createTimes: number
   updateTimes: number
+  contractType: number
+  controlMode: number
+  version: number
 }
 
 export type RiskUserSymbolLimit = {
@@ -878,6 +884,55 @@ export type RiskUserSymbolLimit = {
   remark: string
   createTimes: number
   updateTimes: number
+  controlMode: number
+  version: number
+}
+
+export type UserTradeControlEntry = {
+  scopeType: number
+  productLimit?: RiskUserTradeLimit
+  symbolLimit?: RiskUserSymbolLimit
+}
+
+export type TradeUserControlAudit = {
+  id: number
+  tenantId: number
+  controlId: number
+  scopeType: number
+  userId: number
+  changeType: number
+  beforeJson: string
+  afterJson: string
+  operatorId: number
+  source: number
+  reason: string
+  requestId: string
+  createTimes: number
+}
+
+export type ListUserTradeControlsReq = TradePageReq & {
+  tenantId?: number
+  userId?: number
+  productType?: number
+  contractType?: number
+  symbolId?: number
+  enabled?: number
+  scopeType?: number
+}
+
+export type DisableUserTradeControlReq = {
+  tenantId: number
+  controlId: number
+  scopeType: number
+  expectedVersion: number
+  reason: string
+}
+
+export type ListUserTradeControlAuditsReq = TradePageReq & {
+  tenantId?: number
+  controlId?: number
+  userId?: number
+  scopeType?: number
 }
 
 export type RiskOrderCheckLog = {
@@ -1076,15 +1131,21 @@ export type GetCancelLogListAdminReq = {
   timeRange?: TimeRange
 }
 
-export type SetUserTradeLimitReq = Omit<RiskUserTradeLimit, 'id' | 'createTimes' | 'updateTimes'>
+export type SetUserTradeLimitReq = Omit<
+  RiskUserTradeLimit,
+  'id' | 'createTimes' | 'updateTimes' | 'version'
+> & { expectedVersion: number }
 
-export type SetUserSymbolLimitReq = Omit<RiskUserSymbolLimit, 'id' | 'createTimes' | 'updateTimes'>
+export type SetUserSymbolLimitReq = Omit<
+  RiskUserSymbolLimit,
+  'id' | 'createTimes' | 'updateTimes' | 'version'
+> & { expectedVersion: number }
 
 export type GetUserTradeLimitReq = {
   tenantId?: number
   userId?: number
   productType?: number
-  symbolId?: number
+  contractType?: number
 }
 
 export type GetUserSymbolLimitReq = {
@@ -1247,6 +1308,18 @@ export class TradeService {
 
   setUserSymbolLimit(params: SetUserSymbolLimitReq) {
     return apiTradeSetUserSymbolLimit(params)
+  }
+
+  listUserTradeControls(params: ListUserTradeControlsReq) {
+    return apiTradeListUserTradeControls(params)
+  }
+
+  disableUserTradeControl(params: DisableUserTradeControlReq) {
+    return apiTradeDisableUserTradeControl(params)
+  }
+
+  listUserTradeControlAudits(params: ListUserTradeControlAuditsReq) {
+    return apiTradeListUserTradeControlAudits(params)
   }
 
   getUserTradeConfig(params: GetUserTradeConfigReq) {

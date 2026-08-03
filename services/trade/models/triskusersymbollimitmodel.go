@@ -16,6 +16,8 @@ type (
 	TRiskUserSymbolLimitModel interface {
 		tRiskUserSymbolLimitModel
 		FindPage(ctx context.Context, cursor int64, limit int64) ([]*TRiskUserSymbolLimit, int64, error)
+		FindControlPage(ctx context.Context, filter UserTradeControlFilter, cursor int64, limit int64) ([]*TRiskUserSymbolLimit, int64, error)
+		FindOneForUpdate(ctx context.Context, id int64) (*TRiskUserSymbolLimit, error)
 	}
 
 	customTRiskUserSymbolLimitModel struct {
@@ -28,6 +30,42 @@ func NewTRiskUserSymbolLimitModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...
 	return &customTRiskUserSymbolLimitModel{
 		defaultTRiskUserSymbolLimitModel: newTRiskUserSymbolLimitModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTRiskUserSymbolLimitModel) FindOneForUpdate(ctx context.Context, id int64) (*TRiskUserSymbolLimit, error) {
+	var row TRiskUserSymbolLimit
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? FOR UPDATE", tRiskUserSymbolLimitRows, m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &row, query, id); err != nil {
+		return nil, err
+	}
+	return &row, nil
+}
+
+func (m *defaultTRiskUserSymbolLimitModel) FindControlPage(ctx context.Context, filter UserTradeControlFilter, cursor int64, limit int64) ([]*TRiskUserSymbolLimit, int64, error) {
+	limit = sqlutil.NormalizeLimit(limit)
+	b := sqlutil.NewPageQueryBuilder()
+	b.EqInt64("tenant_id", filter.TenantId)
+	b.EqInt64("user_id", filter.UserId)
+	b.EqInt64("symbol_id", filter.SymbolId)
+	b.EqInt64("enabled", filter.Enabled)
+	where, args := b.Where(), b.Args()
+	var total int64
+	if err := m.QueryRowNoCacheCtx(ctx, &total, fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where), args...); err != nil {
+		return nil, 0, err
+	}
+	listArgs := append([]any{}, args...)
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s", tRiskUserSymbolLimitRows, m.table, where)
+	if cursor > 0 {
+		query += " AND id < ?"
+		listArgs = append(listArgs, cursor)
+	}
+	query += " ORDER BY id DESC LIMIT ?"
+	listArgs = append(listArgs, limit)
+	var list []*TRiskUserSymbolLimit
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, listArgs...); err != nil {
+		return nil, 0, err
+	}
+	return list, total, nil
 }
 
 func (m *defaultTRiskUserSymbolLimitModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TRiskUserSymbolLimit, int64, error) {

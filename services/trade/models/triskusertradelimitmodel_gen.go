@@ -25,15 +25,15 @@ var (
 	tRiskUserTradeLimitRowsExpectAutoSet   = strings.Join(stringx.Remove(tRiskUserTradeLimitFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	tRiskUserTradeLimitRowsWithPlaceHolder = strings.Join(stringx.Remove(tRiskUserTradeLimitFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTRiskUserTradeLimitIdPrefix                        = "cache:tRiskUserTradeLimit:id:"
-	cacheTRiskUserTradeLimitTenantIdUserIdProductTypePrefix = "cache:tRiskUserTradeLimit:tenantId:userId:productType:"
+	cacheTRiskUserTradeLimitIdPrefix                                    = "cache:tRiskUserTradeLimit:id:"
+	cacheTRiskUserTradeLimitTenantIdUserIdProductTypeContractTypePrefix = "cache:tRiskUserTradeLimit:tenantId:userId:productType:contractType:"
 )
 
 type (
 	tRiskUserTradeLimitModel interface {
 		Insert(ctx context.Context, data *TRiskUserTradeLimit) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*TRiskUserTradeLimit, error)
-		FindOneByTenantIdUserIdProductType(ctx context.Context, tenantId int64, userId int64, productType int64) (*TRiskUserTradeLimit, error)
+		FindOneByTenantIdUserIdProductTypeContractType(ctx context.Context, tenantId int64, userId int64, productType int64, contractType int64) (*TRiskUserTradeLimit, error)
 		Update(ctx context.Context, data *TRiskUserTradeLimit) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -48,6 +48,8 @@ type (
 		TenantId             int64           `db:"tenant_id"`                // 租户ID
 		UserId               int64           `db:"user_id"`                  // 用户ID
 		ProductType          int64           `db:"product_type"`             // 产品大类：1现货 2衍生品 3秒合约
+		ContractType         int64           `db:"contract_type"`            // 合约类型：0不适用/全部 1永续 2交割
+		ControlMode          int64           `db:"control_mode"`             // 控制模式：1正常 2只平仓 3仅减仓 4禁用
 		CanOpen              int64           `db:"can_open"`                 // 是否允许开仓/开单：1允许 0禁止
 		CanClose             int64           `db:"can_close"`                // 是否允许平仓/卖出：1允许 0禁止
 		CanCancel            int64           `db:"can_cancel"`               // 是否允许撤单：1允许 0禁止
@@ -67,6 +69,7 @@ type (
 		EffectiveStartTime   int64           `db:"effective_start_time"`     // 限制生效开始时间，毫秒时间戳，0表示立即生效
 		EffectiveEndTime     int64           `db:"effective_end_time"`       // 限制生效结束时间，毫秒时间戳，0表示长期有效
 		Remark               string          `db:"remark"`                   // 备注
+		Version              int64           `db:"version"`                  // 乐观锁版本
 		CreateTimes          int64           `db:"create_times"`             // 创建时间，毫秒时间戳
 		UpdateTimes          int64           `db:"update_times"`             // 更新时间，毫秒时间戳
 	}
@@ -86,11 +89,11 @@ func (m *defaultTRiskUserTradeLimitModel) Delete(ctx context.Context, id int64) 
 	}
 
 	tRiskUserTradeLimitIdKey := fmt.Sprintf("%s%v", cacheTRiskUserTradeLimitIdPrefix, id)
-	tRiskUserTradeLimitTenantIdUserIdProductTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTRiskUserTradeLimitTenantIdUserIdProductTypePrefix, data.TenantId, data.UserId, data.ProductType)
+	tRiskUserTradeLimitTenantIdUserIdProductTypeContractTypeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTRiskUserTradeLimitTenantIdUserIdProductTypeContractTypePrefix, data.TenantId, data.UserId, data.ProductType, data.ContractType)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tRiskUserTradeLimitIdKey, tRiskUserTradeLimitTenantIdUserIdProductTypeKey)
+	}, tRiskUserTradeLimitIdKey, tRiskUserTradeLimitTenantIdUserIdProductTypeContractTypeKey)
 	return err
 }
 
@@ -111,12 +114,12 @@ func (m *defaultTRiskUserTradeLimitModel) FindOne(ctx context.Context, id int64)
 	}
 }
 
-func (m *defaultTRiskUserTradeLimitModel) FindOneByTenantIdUserIdProductType(ctx context.Context, tenantId int64, userId int64, productType int64) (*TRiskUserTradeLimit, error) {
-	tRiskUserTradeLimitTenantIdUserIdProductTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTRiskUserTradeLimitTenantIdUserIdProductTypePrefix, tenantId, userId, productType)
+func (m *defaultTRiskUserTradeLimitModel) FindOneByTenantIdUserIdProductTypeContractType(ctx context.Context, tenantId int64, userId int64, productType int64, contractType int64) (*TRiskUserTradeLimit, error) {
+	tRiskUserTradeLimitTenantIdUserIdProductTypeContractTypeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTRiskUserTradeLimitTenantIdUserIdProductTypeContractTypePrefix, tenantId, userId, productType, contractType)
 	var resp TRiskUserTradeLimit
-	err := m.QueryRowIndexCtx(ctx, &resp, tRiskUserTradeLimitTenantIdUserIdProductTypeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? and `product_type` = ? limit 1", tRiskUserTradeLimitRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId, productType); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, tRiskUserTradeLimitTenantIdUserIdProductTypeContractTypeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `user_id` = ? and `product_type` = ? and `contract_type` = ? limit 1", tRiskUserTradeLimitRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, userId, productType, contractType); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -133,11 +136,11 @@ func (m *defaultTRiskUserTradeLimitModel) FindOneByTenantIdUserIdProductType(ctx
 
 func (m *defaultTRiskUserTradeLimitModel) Insert(ctx context.Context, data *TRiskUserTradeLimit) (sql.Result, error) {
 	tRiskUserTradeLimitIdKey := fmt.Sprintf("%s%v", cacheTRiskUserTradeLimitIdPrefix, data.Id)
-	tRiskUserTradeLimitTenantIdUserIdProductTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTRiskUserTradeLimitTenantIdUserIdProductTypePrefix, data.TenantId, data.UserId, data.ProductType)
+	tRiskUserTradeLimitTenantIdUserIdProductTypeContractTypeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTRiskUserTradeLimitTenantIdUserIdProductTypeContractTypePrefix, data.TenantId, data.UserId, data.ProductType, data.ContractType)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tRiskUserTradeLimitRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.ProductType, data.CanOpen, data.CanClose, data.CanCancel, data.CanTriggerOrder, data.CanApiTrade, data.TradeEnabled, data.OnlyReduceOnly, data.MaxOpenOrderCount, data.MaxOrderCountPerDay, data.MaxCancelCountPerDay, data.MaxOpenNotional, data.MaxPositionNotional, data.RiskLevel, data.OperatorId, data.Source, data.Enabled, data.EffectiveStartTime, data.EffectiveEndTime, data.Remark, data.CreateTimes, data.UpdateTimes)
-	}, tRiskUserTradeLimitIdKey, tRiskUserTradeLimitTenantIdUserIdProductTypeKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tRiskUserTradeLimitRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.UserId, data.ProductType, data.ContractType, data.ControlMode, data.CanOpen, data.CanClose, data.CanCancel, data.CanTriggerOrder, data.CanApiTrade, data.TradeEnabled, data.OnlyReduceOnly, data.MaxOpenOrderCount, data.MaxOrderCountPerDay, data.MaxCancelCountPerDay, data.MaxOpenNotional, data.MaxPositionNotional, data.RiskLevel, data.OperatorId, data.Source, data.Enabled, data.EffectiveStartTime, data.EffectiveEndTime, data.Remark, data.Version, data.CreateTimes, data.UpdateTimes)
+	}, tRiskUserTradeLimitIdKey, tRiskUserTradeLimitTenantIdUserIdProductTypeContractTypeKey)
 	return ret, err
 }
 
@@ -148,11 +151,11 @@ func (m *defaultTRiskUserTradeLimitModel) Update(ctx context.Context, newData *T
 	}
 
 	tRiskUserTradeLimitIdKey := fmt.Sprintf("%s%v", cacheTRiskUserTradeLimitIdPrefix, data.Id)
-	tRiskUserTradeLimitTenantIdUserIdProductTypeKey := fmt.Sprintf("%s%v:%v:%v", cacheTRiskUserTradeLimitTenantIdUserIdProductTypePrefix, data.TenantId, data.UserId, data.ProductType)
+	tRiskUserTradeLimitTenantIdUserIdProductTypeContractTypeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTRiskUserTradeLimitTenantIdUserIdProductTypeContractTypePrefix, data.TenantId, data.UserId, data.ProductType, data.ContractType)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tRiskUserTradeLimitRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.ProductType, newData.CanOpen, newData.CanClose, newData.CanCancel, newData.CanTriggerOrder, newData.CanApiTrade, newData.TradeEnabled, newData.OnlyReduceOnly, newData.MaxOpenOrderCount, newData.MaxOrderCountPerDay, newData.MaxCancelCountPerDay, newData.MaxOpenNotional, newData.MaxPositionNotional, newData.RiskLevel, newData.OperatorId, newData.Source, newData.Enabled, newData.EffectiveStartTime, newData.EffectiveEndTime, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tRiskUserTradeLimitIdKey, tRiskUserTradeLimitTenantIdUserIdProductTypeKey)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.UserId, newData.ProductType, newData.ContractType, newData.ControlMode, newData.CanOpen, newData.CanClose, newData.CanCancel, newData.CanTriggerOrder, newData.CanApiTrade, newData.TradeEnabled, newData.OnlyReduceOnly, newData.MaxOpenOrderCount, newData.MaxOrderCountPerDay, newData.MaxCancelCountPerDay, newData.MaxOpenNotional, newData.MaxPositionNotional, newData.RiskLevel, newData.OperatorId, newData.Source, newData.Enabled, newData.EffectiveStartTime, newData.EffectiveEndTime, newData.Remark, newData.Version, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+	}, tRiskUserTradeLimitIdKey, tRiskUserTradeLimitTenantIdUserIdProductTypeContractTypeKey)
 	return err
 }
 

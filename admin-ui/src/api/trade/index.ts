@@ -25,11 +25,16 @@ import type {
   GetUserSymbolLimitReq,
   GetUserTradeConfigReq,
   GetUserTradeLimitReq,
+  ListUserTradeControlsReq,
+  DisableUserTradeControlReq,
+  ListUserTradeControlAuditsReq,
   RespBase,
   RetryTradeEventReq,
   RiskOrderCheckLog,
   RiskUserSymbolLimit,
   RiskUserTradeLimit,
+  UserTradeControlEntry,
+  TradeUserControlAudit,
   SetContractSymbolConfigReq,
   SetSecondsSymbolConfigReq,
   SetSpotSymbolConfigReq,
@@ -204,6 +209,24 @@ export function apiTradeGetUserSymbolLimit(
 
 export function apiTradeSetUserSymbolLimit(params: SetUserSymbolLimitReq): Promise<RespBase> {
   return post('/admin/trade/user-symbol-limit', params)
+}
+
+export function apiTradeListUserTradeControls(
+  params: ListUserTradeControlsReq,
+): Promise<RespBase<UserTradeControlEntry[]>> {
+  return get<UserTradeControlEntry[]>('/admin/trade/user-trade-controls', params)
+}
+
+export function apiTradeDisableUserTradeControl(
+  params: DisableUserTradeControlReq,
+): Promise<RespBase> {
+  return post('/admin/trade/user-trade-controls/disable', params)
+}
+
+export function apiTradeListUserTradeControlAudits(
+  params: ListUserTradeControlAuditsReq,
+): Promise<RespBase<TradeUserControlAudit[]>> {
+  return get<TradeUserControlAudit[]>('/admin/trade/user-trade-control-audits', params)
 }
 
 export function apiTradeGetUserTradeConfig(

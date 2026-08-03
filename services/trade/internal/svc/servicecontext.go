@@ -64,6 +64,7 @@ type ServiceContext struct {
 	SymbolLeverageDefaultModel   models.TTradeSymbolLeverageDefaultModel
 	RiskUserTradeLimitModel      models.TRiskUserTradeLimitModel
 	RiskUserSymbolLimitModel     models.TRiskUserSymbolLimitModel
+	TradeUserControlAuditModel   models.TTradeUserControlAuditModel
 	RiskOrderCheckLogModel       models.TRiskOrderCheckLogModel
 	BizTradeEventModel           models.TBizTradeEventModel
 	TradeEventInboxModel         models.TTradeEventInboxModel
@@ -73,7 +74,7 @@ type ServiceContext struct {
 	ContractReconcileCursorModel models.TContractReconciliationCursorModel
 	AssetClient                  asset.AssetClient
 	AssetAdminClient             asset.AdminClient
-	MarketClient                  market.MarketClient
+	MarketClient                 market.MarketClient
 	MarketDataCache              *cache.MarketDataCache
 	TradeMarketSnapshotModel     models.TTradeMarketSnapshotModel
 	DelayQueue                   *delayqueue.Queue
@@ -136,6 +137,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		SymbolLeverageDefaultModel:   models.NewTTradeSymbolLeverageDefaultModel(conn, c.CacheRedis),
 		RiskUserTradeLimitModel:      models.NewTRiskUserTradeLimitModel(conn, c.CacheRedis),
 		RiskUserSymbolLimitModel:     models.NewTRiskUserSymbolLimitModel(conn, c.CacheRedis),
+		TradeUserControlAuditModel:   models.NewTTradeUserControlAuditModel(conn, c.CacheRedis),
 		RiskOrderCheckLogModel:       models.NewTRiskOrderCheckLogModel(conn, c.CacheRedis),
 		BizTradeEventModel:           models.NewTBizTradeEventModel(conn, c.CacheRedis),
 		TradeEventInboxModel:         models.NewTTradeEventInboxModel(conn, c.CacheRedis),
@@ -145,7 +147,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ContractReconcileCursorModel: models.NewTContractReconciliationCursorModel(conn, c.CacheRedis),
 		AssetClient:                  asset.NewAssetClient(assetCli.Conn()),
 		AssetAdminClient:             asset.NewAdminClient(assetCli.Conn()),
-		MarketClient:                  market.NewMarketClient(marketCli.Conn()),
+		MarketClient:                 market.NewMarketClient(marketCli.Conn()),
 		MarketDataCache:              cache.NewMarketDataCache(marketRedis),
 		TradeMarketSnapshotModel:     models.NewTTradeMarketSnapshotModel(conn, c.CacheRedis),
 		DelayQueue:                   delayQueue,

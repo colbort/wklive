@@ -16,6 +16,19 @@ type (
 	TRiskUserTradeLimitModel interface {
 		tRiskUserTradeLimitModel
 		FindPage(ctx context.Context, cursor int64, limit int64) ([]*TRiskUserTradeLimit, int64, error)
+		FindControlPage(ctx context.Context, filter UserTradeControlFilter, cursor int64, limit int64) ([]*TRiskUserTradeLimit, int64, error)
+		FindOneForUpdate(ctx context.Context, id int64) (*TRiskUserTradeLimit, error)
+	}
+
+	UserTradeControlFilter struct {
+		TenantId     int64
+		UserId       int64
+		ProductType  int64
+		ContractType int64
+		SymbolId     int64
+		Enabled      int64
+		ControlId    int64
+		ScopeType    int64
 	}
 
 	customTRiskUserTradeLimitModel struct {
@@ -28,6 +41,15 @@ func NewTRiskUserTradeLimitModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...c
 	return &customTRiskUserTradeLimitModel{
 		defaultTRiskUserTradeLimitModel: newTRiskUserTradeLimitModel(conn, c, opts...),
 	}
+}
+
+func (m *defaultTRiskUserTradeLimitModel) FindOneForUpdate(ctx context.Context, id int64) (*TRiskUserTradeLimit, error) {
+	var row TRiskUserTradeLimit
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? FOR UPDATE", tRiskUserTradeLimitRows, m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &row, query, id); err != nil {
+		return nil, err
+	}
+	return &row, nil
 }
 
 func (m *defaultTRiskUserTradeLimitModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TRiskUserTradeLimit, int64, error) {
@@ -74,5 +96,35 @@ func (m *defaultTRiskUserTradeLimitModel) FindPage(ctx context.Context, cursor i
 		return nil, 0, err
 	}
 
+	return list, total, nil
+}
+
+func (m *defaultTRiskUserTradeLimitModel) FindControlPage(ctx context.Context, filter UserTradeControlFilter, cursor int64, limit int64) ([]*TRiskUserTradeLimit, int64, error) {
+	limit = sqlutil.NormalizeLimit(limit)
+	b := sqlutil.NewPageQueryBuilder()
+	b.EqInt64("tenant_id", filter.TenantId)
+	b.EqInt64("user_id", filter.UserId)
+	b.EqInt64("product_type", filter.ProductType)
+	if filter.ContractType > 0 {
+		b.EqInt64("contract_type", filter.ContractType)
+	}
+	b.EqInt64("enabled", filter.Enabled)
+	where, args := b.Where(), b.Args()
+	var total int64
+	if err := m.QueryRowNoCacheCtx(ctx, &total, fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where), args...); err != nil {
+		return nil, 0, err
+	}
+	listArgs := append([]any{}, args...)
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s", tRiskUserTradeLimitRows, m.table, where)
+	if cursor > 0 {
+		query += " AND id < ?"
+		listArgs = append(listArgs, cursor)
+	}
+	query += " ORDER BY id DESC LIMIT ?"
+	listArgs = append(listArgs, limit)
+	var list []*TRiskUserTradeLimit
+	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, listArgs...); err != nil {
+		return nil, 0, err
+	}
 	return list, total, nil
 }

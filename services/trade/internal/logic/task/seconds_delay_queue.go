@@ -189,35 +189,11 @@ func handleSecondsDelayMessage(ctx context.Context, svcCtx *svc.ServiceContext, 
 }
 
 func expireTradeRiskMessage(ctx context.Context, svcCtx *svc.ServiceContext, message delayqueue.Message) error {
-	item, err := svcCtx.RiskUserTradeLimitModel.FindOne(ctx, message.EntityID)
-	if errors.Is(err, models.ErrNotFound) {
-		return nil
-	}
-	if err != nil {
-		return err
-	}
-	if item.TenantId != message.TenantID || item.EffectiveEndTime != message.DueAt ||
-		item.EffectiveEndTime > time.Now().UnixMilli() {
-		return nil
-	}
-	item.Enabled = 2
-	item.UpdateTimes = time.Now().UnixMilli()
-	return svcCtx.RiskUserTradeLimitModel.Update(ctx, item)
+	_, err := expireProductControl(ctx, svcCtx, message.EntityID, message.TenantID, message.DueAt, time.Now().UnixMilli())
+	return err
 }
 
 func expireSymbolRiskMessage(ctx context.Context, svcCtx *svc.ServiceContext, message delayqueue.Message) error {
-	item, err := svcCtx.RiskUserSymbolLimitModel.FindOne(ctx, message.EntityID)
-	if errors.Is(err, models.ErrNotFound) {
-		return nil
-	}
-	if err != nil {
-		return err
-	}
-	if item.TenantId != message.TenantID || item.EffectiveEndTime != message.DueAt ||
-		item.EffectiveEndTime > time.Now().UnixMilli() {
-		return nil
-	}
-	item.Enabled = 2
-	item.UpdateTimes = time.Now().UnixMilli()
-	return svcCtx.RiskUserSymbolLimitModel.Update(ctx, item)
+	_, err := expireSymbolControl(ctx, svcCtx, message.EntityID, message.TenantID, message.DueAt, time.Now().UnixMilli())
+	return err
 }

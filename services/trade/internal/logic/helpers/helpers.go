@@ -697,6 +697,9 @@ func RiskUserTradeLimitToProto(item *models.TRiskUserTradeLimit) *trade.RiskUser
 		Remark:               item.Remark,
 		CreateTimes:          item.CreateTimes,
 		UpdateTimes:          item.UpdateTimes,
+		ContractType:         common.ContractType(item.ContractType),
+		ControlMode:          trade.UserTradeControlMode(item.ControlMode),
+		Version:              item.Version,
 	}
 }
 
@@ -727,6 +730,8 @@ func RiskUserSymbolLimitToProto(item *models.TRiskUserSymbolLimit) *trade.RiskUs
 		Remark:              item.Remark,
 		CreateTimes:         item.CreateTimes,
 		UpdateTimes:         item.UpdateTimes,
+		ControlMode:         trade.UserTradeControlMode(item.ControlMode),
+		Version:             item.Version,
 	}
 }
 

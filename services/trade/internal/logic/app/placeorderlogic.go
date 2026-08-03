@@ -621,10 +621,6 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 	if symbol.Status == int64(trade.SymbolStatus_SYMBOL_STATUS_CLOSE_ONLY) && in.IsReduceOnly != common.YesNo_YES_NO_YES {
 		return nil, errors.New("symbol only accepts reduce-only orders")
 	}
-	if err := l.validateUserTradingEnabled(tenantID, userID, symbol); err != nil {
-		return nil, err
-	}
-
 	plan := &placeOrderPlan{
 		price: price, qty: qty, notional: amount,
 		riskPrice: price, leverage: leverage,
@@ -633,7 +629,11 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 		if err := validateSymbolNotional(symbol, amount); err != nil {
 			return nil, err
 		}
-		risk, err := NewCheckOrderRiskLogic(l.ctx, l.svcCtx).CheckOrderRisk(&trade.CheckOrderRiskReq{TenantId: tenantID, UserId: userID, SymbolId: symbol.Id, Amount: amount.String()})
+		risk, err := NewCheckOrderRiskLogic(l.ctx, l.svcCtx).CheckOrderRisk(&trade.CheckOrderRiskReq{
+			TenantId: tenantID, UserId: userID, SymbolId: symbol.Id,
+			Amount: amount.String(), OrderSource: in.OrderSource, TriggerKind: triggerKind,
+			ExposureIncreasing: common.YesNo_YES_NO_YES,
+		})
 		if err != nil {
 			return nil, err
 		}
@@ -701,6 +701,7 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 		}
 	}
 
+	exposureIncreasing := in.Side == common.Side_SIDE_BUY
 	switch common.ProductType(symbol.ProductType) {
 	case common.ProductType_PRODUCT_TYPE_SPOT:
 		cfg, err := l.svcCtx.TradeSymbolSpotModel.FindOneByTenantIdSymbolId(l.ctx, symbol.TenantId, symbol.Id)
@@ -732,6 +733,7 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 		isHedgeClose := in.PositionSide != trade.PositionSide_POSITION_SIDE_NET &&
 			isClosingFill(int64(in.PositionSide), int64(in.Side))
 		isCloseOnly := in.IsReduceOnly == common.YesNo_YES_NO_YES || isHedgeClose
+		exposureIncreasing = !isCloseOnly
 		if err := validation.ContractOrderMarginMode(
 			cfg, in.MarginMode, isCloseOnly,
 			l.svcCtx.Config.CrossMarginTrading.Enabled,
@@ -842,7 +844,20 @@ func (l *PlaceOrderLogic) preparePlaceOrder(
 		return nil, errors.New("unsupported product type")
 	}
 
-	risk, err := NewCheckOrderRiskLogic(l.ctx, l.svcCtx).CheckOrderRisk(&trade.CheckOrderRiskReq{TenantId: tenantID, UserId: userID, SymbolId: symbol.Id, Side: in.Side, Price: plan.riskPrice.String(), Qty: qty.String(), Amount: plan.notional.String()})
+	referencePrice := decimal.Zero
+	if orderType == trade.OrderType_ORDER_TYPE_MARKET {
+		referencePrice = plan.riskPrice
+	} else if current, referenceErr := l.bestOppositePrice(tenantID, symbol, in.Side); referenceErr == nil {
+		referencePrice = current
+	}
+	risk, err := NewCheckOrderRiskLogic(l.ctx, l.svcCtx).CheckOrderRisk(&trade.CheckOrderRiskReq{
+		TenantId: tenantID, UserId: userID, SymbolId: symbol.Id,
+		Side: in.Side, PositionSide: in.PositionSide, OrderType: orderType,
+		Price: plan.riskPrice.String(), Qty: qty.String(), Amount: plan.notional.String(),
+		IsReduceOnly: in.IsReduceOnly, OrderSource: in.OrderSource, TriggerKind: triggerKind,
+		ExposureIncreasing: helpers.YesNo(exposureIncreasing),
+		ReferencePrice:     referencePrice.String(),
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -871,19 +886,6 @@ func inverseBuyReservationRiskPrice(limitPrice decimal.Decimal, sells []*models.
 func nowMillis() int64 { return timeNow().UnixMilli() }
 
 var timeNow = func() time.Time { return time.Now() }
-
-func (l *PlaceOrderLogic) validateUserTradingEnabled(tenantID, userID int64, symbol *models.TTradeSymbol) error {
-	for _, symbolID := range []int64{symbol.Id, 0} {
-		cfg, err := l.svcCtx.TradeUserConfigModel.FindOneByTenantIdUserIdProductTypeSymbolId(l.ctx, tenantID, userID, symbol.ProductType, symbolID)
-		if err != nil && !errors.Is(err, models.ErrNotFound) {
-			return err
-		}
-		if cfg != nil && cfg.TradeEnabled != int64(common.Enable_ENABLE_ENABLED) {
-			return errors.New("user trading is disabled")
-		}
-	}
-	return nil
-}
 
 func validateSymbolOrderIncrements(symbol *models.TTradeSymbol, orderType trade.OrderType, price, qty decimal.Decimal) error {
 	if orderType == trade.OrderType_ORDER_TYPE_LIMIT {

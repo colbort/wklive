@@ -286,6 +286,15 @@ service Admin {
   // 获取用户交易对限制
   rpc GetUserSymbolLimit(GetUserSymbolLimitReq) returns (GetUserSymbolLimitResp);
 
+  // 分页获取统一用户交易控制
+  rpc ListUserTradeControls(ListUserTradeControlsReq) returns (ListUserTradeControlsResp);
+
+  // 停用用户交易控制
+  rpc DisableUserTradeControl(DisableUserTradeControlReq) returns (CommonResp);
+
+  // 分页获取用户交易控制审计
+  rpc ListUserTradeControlAudits(ListUserTradeControlAuditsReq) returns (ListUserTradeControlAuditsResp);
+
   // 设置用户交易配置
   rpc SetUserTradeConfig(SetUserTradeConfigReq) returns (CommonResp);
 
@@ -681,6 +690,9 @@ message SetUserTradeLimitReq {
   int64 effective_start_time = 20;
   int64 effective_end_time = 21;
   string remark = 22;
+  common.ContractType contract_type = 23;
+  UserTradeControlMode control_mode = 24;
+  int64 expected_version = 25;
 }
 
 message SetUserSymbolLimitReq {
@@ -704,12 +716,15 @@ message SetUserSymbolLimitReq {
   int64 effective_start_time = 18;
   int64 effective_end_time = 19;
   string remark = 20;
+  UserTradeControlMode control_mode = 21;
+  int64 expected_version = 22;
 }
 
 message GetUserTradeLimitReq {
   int64 tenant_id = 1;
   int64 user_id = 2;
   common.ProductType product_type = 3;
+  common.ContractType contract_type = 4;
 }
 
 message GetUserTradeLimitResp {
@@ -727,6 +742,43 @@ message GetUserSymbolLimitReq {
 message GetUserSymbolLimitResp {
   common.RespBase base = 1;
   RiskUserSymbolLimit data = 2;
+}
+
+message ListUserTradeControlsReq {
+  int64 tenant_id = 1;
+  common.PageReq page = 2;
+  int64 user_id = 3;
+  common.ProductType product_type = 4;
+  common.ContractType contract_type = 5;
+  int64 symbol_id = 6;
+  common.Enable enabled = 7;
+  int64 scope_type = 8; // 0全部 1产品级 2交易对级
+}
+
+message ListUserTradeControlsResp {
+  common.RespBase base = 1;
+  repeated UserTradeControlEntry data = 2;
+}
+
+message DisableUserTradeControlReq {
+  int64 tenant_id = 1;
+  int64 control_id = 2;
+  int64 scope_type = 3;
+  int64 expected_version = 4;
+  string reason = 5;
+}
+
+message ListUserTradeControlAuditsReq {
+  int64 tenant_id = 1;
+  common.PageReq page = 2;
+  int64 control_id = 3;
+  int64 user_id = 4;
+  int64 scope_type = 5;
+}
+
+message ListUserTradeControlAuditsResp {
+  common.RespBase base = 1;
+  repeated TradeUserControlAudit data = 2;
 }
 
 message SetUserTradeConfigReq {
@@ -1406,6 +1458,12 @@ message CheckOrderRiskReq {
   string price = 8;
   string qty = 9;
   string amount = 10;
+  common.YesNo is_reduce_only = 11;
+  OrderSourceType order_source = 12;
+  TriggerKind trigger_kind = 13;
+  // 由下单域根据具体产品和持仓方向计算，避免把 BUY 错当成所有产品的开仓。
+  common.YesNo exposure_increasing = 14;
+  string reference_price = 15;
 }
 
 message CheckOrderRiskResp {

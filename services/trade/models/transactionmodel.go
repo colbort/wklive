@@ -42,6 +42,9 @@ type TransactionModels struct {
 	TradeOrderContract             TTradeOrderContractModel
 	TradeOrderSeconds              TTradeOrderSecondsModel
 	TradeOrderSpot                 TTradeOrderSpotModel
+	RiskUserTradeLimit             TRiskUserTradeLimitModel
+	RiskUserSymbolLimit            TRiskUserSymbolLimitModel
+	TradeUserControlAudit          TTradeUserControlAuditModel
 	TradeSecondsPriceSnapshot      TTradeSecondsPriceSnapshotModel
 	TradeSettlementInstruction     TTradeSettlementInstructionModel
 	TradeSymbol                    TTradeSymbolModel
@@ -115,6 +118,9 @@ func newTransactionModels(conn sqlx.SqlConn, cacheConfig cache.CacheConf) *Trans
 		TradeOrderContract:             NewTTradeOrderContractModel(conn, cacheConfig),
 		TradeOrderSeconds:              NewTTradeOrderSecondsModel(conn, cacheConfig),
 		TradeOrderSpot:                 NewTTradeOrderSpotModel(conn, cacheConfig),
+		RiskUserTradeLimit:             NewTRiskUserTradeLimitModel(conn, cacheConfig),
+		RiskUserSymbolLimit:            NewTRiskUserSymbolLimitModel(conn, cacheConfig),
+		TradeUserControlAudit:          NewTTradeUserControlAuditModel(conn, cacheConfig),
 		TradeSecondsPriceSnapshot:      NewTTradeSecondsPriceSnapshotModel(conn, cacheConfig),
 		TradeSettlementInstruction:     NewTTradeSettlementInstructionModel(conn, cacheConfig),
 		TradeSymbol:                    NewTTradeSymbolModel(conn, cacheConfig),

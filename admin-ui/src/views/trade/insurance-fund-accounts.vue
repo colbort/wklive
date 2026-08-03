@@ -3,29 +3,34 @@
     <CrudQueryCard :model="query" @search="load" @reset="reset">
       <el-form-item :label="t('trade.tenantId')">
         <TenantSelect v-model="query.tenantId" />
-      </el-form-item><el-form-item :label="t('trade.settleAsset')">
+      </el-form-item>
+      <el-form-item :label="t('trade.settleAsset')">
         <el-input v-model="query.settleAsset" clearable />
-      </el-form-item><el-button v-perm="'trade:insurance-fund-account:update'" type="primary" @click="edit()">
-        {{ t('common.add') }}
-      </el-button><el-button v-perm="'trade:insurance-fund-account:update'" @click="openPlatformAccount">
-        {{ t('trade.platformAccount') }}
-      </el-button>
-    </CrudQueryCard><el-card shadow="never" class="table-card">
+      </el-form-item>
+      <template #actions>
+        <el-button v-perm="'trade:insurance-fund-account:update'" type="primary" @click="edit()">
+          {{ t('common.add') }}
+        </el-button>
+        <el-button v-perm="'trade:insurance-fund-account:update'" @click="openPlatformAccount">
+          {{ t('trade.platformAccount') }}
+        </el-button>
+      </template>
+    </CrudQueryCard>
+    <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="rows" stripe>
-        <el-table-column prop="symbolId" :label="t('trade.symbolId')" /><el-table-column
-          prop="settleAsset"
-          :label="t('trade.settleAsset')"
-        /><el-table-column prop="adlEnabled" :label="t('trade.adlEnabled')" /><el-table-column
-          prop="status"
-          :label="t('trade.status')"
-        /><el-table-column :label="t('common.actions')">
+        <el-table-column prop="symbolId" :label="t('trade.symbolId')" />
+        <el-table-column prop="settleAsset" :label="t('trade.settleAsset')" />
+        <el-table-column prop="adlEnabled" :label="t('trade.adlEnabled')" />
+        <el-table-column prop="status" :label="t('trade.status')" />
+        <el-table-column :label="t('common.actions')">
           <template #default="{ row }">
             <el-button link @click="edit(row)">
               {{ t('common.edit') }}
             </el-button>
           </template>
         </el-table-column>
-      </el-table><CursorPagination
+      </el-table>
+      <CursorPagination
         v-model:limit="pagination.limit"
         :total="pagination.total"
         :has-prev="pagination.hasPrev"
@@ -34,62 +39,78 @@
         @next="nextAndLoad(load)"
         @limit-change="resetAndLoad(load)"
       />
-      >
-    </el-card><el-dialog v-model="visible" :title="t('trade.insuranceFundAccounts')" width="520">
+    </el-card>
+
+    <el-dialog v-model="visible" :title="t('trade.insuranceFundAccounts')" width="520">
       <el-form :model="form" label-width="150">
         <el-form-item :label="t('trade.tenantId')">
           <TenantSelect v-model="form.tenantId" />
-        </el-form-item><el-form-item :label="t('trade.symbolId')">
+        </el-form-item>
+        <el-form-item :label="t('trade.symbolId')">
           <el-input-number v-model="form.symbolId" :min="0" />
-        </el-form-item><el-form-item :label="t('trade.settleAsset')">
+        </el-form-item>
+        <el-form-item :label="t('trade.settleAsset')">
           <el-input v-model="form.settleAsset" />
-        </el-form-item><el-form-item :label="t('trade.adlEnabled')">
+        </el-form-item>
+        <el-form-item :label="t('trade.adlEnabled')">
           <el-switch v-model="adl" />
         </el-form-item>
-      </el-form><template #footer>
+      </el-form>
+      <template #footer>
         <el-button @click="visible = false">
           {{ t('common.cancel') }}
-        </el-button><el-button type="primary" @click="save">
+        </el-button>
+        <el-button type="primary" @click="save">
           {{ t('common.confirm') }}
         </el-button>
       </template>
-    </el-dialog><el-dialog v-model="platformVisible" :title="t('trade.platformAccount')" width="560">
+    </el-dialog>
+
+    <el-dialog v-model="platformVisible" :title="t('trade.platformAccount')" width="560">
       <el-form :model="platformForm" label-width="150">
         <el-form-item :label="t('trade.tenantId')">
           <TenantSelect v-model="platformForm.tenantId" />
-        </el-form-item><el-form-item :label="t('trade.accountType')">
+        </el-form-item>
+        <el-form-item :label="t('trade.accountType')">
           <el-select v-model="platformForm.accountType" style="width: 100%">
             <el-option label="INSURANCE_FUND" value="INSURANCE_FUND" />
             <el-option label="OPTION_BACKSTOP" value="OPTION_BACKSTOP" />
           </el-select>
-        </el-form-item><el-form-item :label="t('trade.settleAsset')">
+        </el-form-item>
+        <el-form-item :label="t('trade.settleAsset')">
           <el-input v-model="platformForm.coin" />
-        </el-form-item><el-form-item :label="t('trade.availableAmount')">
-          <el-input
-            :model-value="platformAccount?.availableAmount || '0'"
-            disabled
-          />
-        </el-form-item><el-form-item :label="t('trade.adjustDirection')">
+        </el-form-item>
+        <el-form-item :label="t('trade.availableAmount')">
+          <el-input :model-value="platformAccount?.availableAmount || '0'" disabled />
+        </el-form-item>
+        <el-form-item :label="t('trade.adjustDirection')">
           <el-radio-group v-model="platformForm.direction">
             <el-radio-button :value="1">
               {{ t('trade.increase') }}
-            </el-radio-button><el-radio-button v-if="platformForm.accountType === 'INSURANCE_FUND'" :value="2">
+            </el-radio-button>
+            <el-radio-button v-if="platformForm.accountType === 'INSURANCE_FUND'" :value="2">
               {{ t('trade.decrease') }}
             </el-radio-button>
           </el-radio-group>
-        </el-form-item><el-form-item :label="t('trade.adjustAmount')">
+        </el-form-item>
+        <el-form-item :label="t('trade.adjustAmount')">
           <el-input v-model="platformForm.amount" />
-        </el-form-item><el-form-item :label="t('trade.requestNo')">
+        </el-form-item>
+        <el-form-item :label="t('trade.requestNo')">
           <el-input v-model="platformForm.requestNo" />
-        </el-form-item><el-form-item :label="t('common.remark')">
+        </el-form-item>
+        <el-form-item :label="t('common.remark')">
           <el-input v-model="platformForm.remark" />
         </el-form-item>
-      </el-form><template #footer>
+      </el-form>
+      <template #footer>
         <el-button @click="loadPlatformAccount">
           {{ t('common.search') }}
-        </el-button><el-button type="primary" @click="createPlatformAccount">
+        </el-button>
+        <el-button type="primary" @click="createPlatformAccount">
           {{ t('trade.createAccount') }}
-        </el-button><el-button type="success" @click="adjustPlatformAccount">
+        </el-button>
+        <el-button type="success" @click="adjustPlatformAccount">
           {{ t('trade.adjustBalance') }}
         </el-button>
       </template>
