@@ -195,9 +195,7 @@
         <el-table-column :label="t('common.detail')" width="90">
           <template #default="{ row }">
             <el-button link type="primary" @click="showDetail(row)">
-              {{
-                t('common.detail')
-              }}
+              {{ t('common.detail') }}
             </el-button>
           </template>
         </el-table-column>
