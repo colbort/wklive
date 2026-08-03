@@ -34,16 +34,24 @@
         <el-table-column prop="version" :label="t('option.version')" width="80" />
         <el-table-column prop="timezone" :label="t('option.timezone')" min-width="150" />
         <el-table-column :label="t('common.status')" width="110">
-          <template #default="{ row }">{{ calendarStatus(row.status) }}</template>
+          <template #default="{ row }">
+            {{ calendarStatus(row.status) }}
+          </template>
         </el-table-column>
         <el-table-column :label="t('option.effectiveFrom')" min-width="170">
-          <template #default="{ row }">{{ formatTime(row.effectiveFrom) }}</template>
+          <template #default="{ row }">
+            {{ formatTime(row.effectiveFrom) }}
+          </template>
         </el-table-column>
         <el-table-column :label="t('option.weeklySessions')" min-width="260">
-          <template #default="{ row }">{{ sessionSummary(row.sessions) }}</template>
+          <template #default="{ row }">
+            {{ sessionSummary(row.sessions) }}
+          </template>
         </el-table-column>
         <el-table-column :label="t('option.exceptionWindows')" min-width="220">
-          <template #default="{ row }">{{ exceptionSummary(row.exceptions) }}</template>
+          <template #default="{ row }">
+            {{ exceptionSummary(row.exceptions) }}
+          </template>
         </el-table-column>
         <el-table-column
           prop="changeReason"
@@ -120,7 +128,9 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="createVisible = false">{{ t('common.cancel') }}</el-button>
+        <el-button @click="createVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
         <el-button type="primary" :loading="saving" @click="createCalendar">
           {{ t('common.confirm') }}
         </el-button>

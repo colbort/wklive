@@ -5,10 +5,20 @@
         <TenantSelect v-model="query.tenantId" class="tenant-select-filter" />
       </el-form-item>
       <el-form-item :label="t('option.riskStaleThreshold')">
-        <el-input-number v-model="query.riskStaleSeconds" :min="10" :max="300" :step="10" />
+        <el-input-number
+          v-model="query.riskStaleSeconds"
+          :min="10"
+          :max="300"
+          :step="10"
+        />
       </el-form-item>
       <el-form-item :label="t('option.comboStaleThreshold')">
-        <el-input-number v-model="query.comboStaleSeconds" :min="10" :max="300" :step="10" />
+        <el-input-number
+          v-model="query.comboStaleSeconds"
+          :min="10"
+          :max="300"
+          :step="10"
+        />
       </el-form-item>
     </CrudQueryCard>
 

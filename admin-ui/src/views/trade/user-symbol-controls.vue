@@ -30,7 +30,9 @@
         <el-table-column prop="userId" :label="t('trade.userId')" width="110" />
         <el-table-column prop="symbolId" :label="t('trade.symbolId')" min-width="130" />
         <el-table-column :label="t('trade.controlMode')" width="150">
-          <template #default="{ row }">{{ controlModeText(row.controlMode) }}</template>
+          <template #default="{ row }">
+            {{ controlModeText(row.controlMode) }}
+          </template>
         </el-table-column>
         <el-table-column :label="t('trade.enabled')" width="100">
           <template #default="{ row }">
@@ -41,9 +43,16 @@
         </el-table-column>
         <el-table-column prop="version" :label="t('trade.version')" width="90" />
         <el-table-column :label="t('trade.effectiveEndTime')" min-width="180">
-          <template #default="{ row }">{{ formatTime(row.effectiveEndTime) }}</template>
+          <template #default="{ row }">
+            {{ formatTime(row.effectiveEndTime) }}
+          </template>
         </el-table-column>
-        <el-table-column :label="t('common.actions')" align="center" width="220" fixed="right">
+        <el-table-column
+          :label="t('common.actions')"
+          align="center"
+          width="220"
+          fixed="right"
+        >
           <template #default="{ row }">
             <el-button
               v-perm="'trade:user-symbol-limit:update'"
@@ -157,7 +166,9 @@
         </div>
       </el-form>
       <template #footer>
-        <el-button @click="editorVisible = false">{{ t('common.cancel') }}</el-button>
+        <el-button @click="editorVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
         <el-button type="primary" :loading="saving" @click="save">
           {{ t('common.confirm') }}
         </el-button>
@@ -177,13 +188,17 @@
           show-overflow-tooltip
         />
         <el-table-column :label="t('trade.createTimes')" min-width="180">
-          <template #default="{ row }">{{ formatTime(row.createTimes) }}</template>
+          <template #default="{ row }">
+            {{ formatTime(row.createTimes) }}
+          </template>
         </el-table-column>
         <el-table-column :label="t('common.detail')" width="90">
           <template #default="{ row }">
-            <el-button link type="primary" @click="showDetail(row)">{{
-              t('common.detail')
-            }}</el-button>
+            <el-button link type="primary" @click="showDetail(row)">
+              {{
+                t('common.detail')
+              }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>

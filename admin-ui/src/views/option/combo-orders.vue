@@ -39,7 +39,9 @@
         <el-table-column prop="comboOrder.qty" :label="t('option.quantity')" width="110" />
         <el-table-column prop="comboOrder.filledQty" :label="t('option.filledQty')" width="120" />
         <el-table-column :label="t('option.comboLegs')" min-width="300">
-          <template #default="{ row }">{{ formatComboLegs(row) }}</template>
+          <template #default="{ row }">
+            {{ formatComboLegs(row) }}
+          </template>
         </el-table-column>
         <el-table-column :label="t('common.status')" width="120">
           <template #default="{ row }">
@@ -124,7 +126,9 @@
           <el-table-column prop="legNo" :label="t('option.legNo')" width="80" />
           <el-table-column prop="contractId" :label="t('option.contractId')" width="120" />
           <el-table-column :label="t('option.side')" width="90">
-            <template #default="{ row }">{{ row.side === 1 ? 'BUY' : 'SELL' }}</template>
+            <template #default="{ row }">
+              {{ row.side === 1 ? 'BUY' : 'SELL' }}
+            </template>
           </el-table-column>
           <el-table-column prop="ratio" :label="t('option.ratio')" width="80" />
           <el-table-column prop="price" :label="t('option.price')" />
@@ -163,7 +167,9 @@
           <el-table-column prop="trade.price" :label="t('option.price')" width="120" />
           <el-table-column prop="trade.qty" :label="t('option.quantity')" width="120" />
           <el-table-column prop="trade.tradeTime" :label="t('option.tradeTime')" min-width="170">
-            <template #default="{ row }">{{ formatTime(row.trade.tradeTime) }}</template>
+            <template #default="{ row }">
+              {{ formatTime(row.trade.tradeTime) }}
+            </template>
           </el-table-column>
         </el-table>
 

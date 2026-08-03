@@ -34,7 +34,9 @@
           </template>
         </el-table-column>
         <el-table-column :label="t('option.startedAt')" min-width="170">
-          <template #default="{ row }">{{ formatTime(row.startedAt) }}</template>
+          <template #default="{ row }">
+            {{ formatTime(row.startedAt) }}
+          </template>
         </el-table-column>
         <el-table-column :label="t('common.status')" width="100">
           <template #default="{ row }">
@@ -79,7 +81,9 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="createVisible = false">{{ t('common.cancel') }}</el-button>
+        <el-button @click="createVisible = false">
+          {{ t('common.cancel') }}
+        </el-button>
         <el-button type="danger" :loading="saving" @click="haltTrading">
           {{ t('common.confirm') }}
         </el-button>

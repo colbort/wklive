@@ -36,7 +36,12 @@
           controls-position="right"
           class="query-field"
         />
-        <el-input v-else v-model="query[field]" clearable class="query-field" />
+        <el-input
+          v-else
+          v-model="query[field]"
+          clearable
+          class="query-field"
+        />
       </el-form-item>
       <template v-if="$slots.actions" #actions>
         <slot name="actions" />
@@ -85,8 +90,8 @@
         <el-table-column
           v-if="
             kind === 'instructions' ||
-            kind === 'reconciliationIssues' ||
-            kind === 'accountLiquidations'
+              kind === 'reconciliationIssues' ||
+              kind === 'accountLiquidations'
           "
           :label="t('common.actions')"
           width="170"
