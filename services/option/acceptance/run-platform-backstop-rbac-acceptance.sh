@@ -3,7 +3,10 @@ set -eu
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 REPO_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/../../.." && pwd)
-COMPOSE_FILE=${OPTION_BACKSTOP_RBAC_COMPOSE_FILE:-$REPO_ROOT/deploy/docker-compose.yml}
+DEPLOY_ROOT="$REPO_ROOT/deploy"
+# shellcheck disable=SC1091
+. "$DEPLOY_ROOT/common/scripts/dev-compose.sh"
+COMPOSE_FILE=${OPTION_BACKSTOP_RBAC_COMPOSE_FILE:-}
 DATABASE=${OPTION_BACKSTOP_RBAC_DATABASE:-wklive_option_backstop_rbac_acceptance}
 MYSQL_PASSWORD=${OPTION_BACKSTOP_RBAC_MYSQL_PASSWORD:-123456}
 
@@ -15,9 +18,10 @@ case "$DATABASE" in
     ;;
 esac
 
-MYSQL_CONTAINER=${OPTION_BACKSTOP_RBAC_MYSQL_CONTAINER:-$(docker compose -f "$COMPOSE_FILE" ps -q mysql)}
+if [ -n "$COMPOSE_FILE" ]; then compose_mysql=$(docker compose -f "$COMPOSE_FILE" ps -q mysql); else compose_mysql=$(dev_compose ps -q mysql); fi
+MYSQL_CONTAINER=${OPTION_BACKSTOP_RBAC_MYSQL_CONTAINER:-$compose_mysql}
 if [ -z "$MYSQL_CONTAINER" ]; then
-  echo "mysql from deploy/docker-compose.yml must already be running" >&2
+  echo "mysql from the development Compose environment must already be running" >&2
   exit 1
 fi
 mysql_cli() {

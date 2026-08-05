@@ -16,12 +16,20 @@ type (
 	TPayOutboxModel interface {
 		tPayOutboxModel
 		FindPending(ctx context.Context, now int64, limit int64) ([]*TPayOutbox, error)
+		ClaimPending(ctx context.Context, workerID string, now int64, limit int64) ([]*TPayOutbox, error)
 	}
 
 	customTPayOutboxModel struct {
 		*defaultTPayOutboxModel
 	}
 )
+
+// NewTPayOutboxModel returns a model for the database table.
+func NewTPayOutboxModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TPayOutboxModel {
+	return &customTPayOutboxModel{
+		defaultTPayOutboxModel: newTPayOutboxModel(conn, c, opts...),
+	}
+}
 
 func (m *customTPayOutboxModel) FindPending(ctx context.Context, now int64, limit int64) ([]*TPayOutbox, error) {
 	if limit <= 0 {
@@ -35,9 +43,7 @@ func (m *customTPayOutboxModel) FindPending(ctx context.Context, now int64, limi
 	return rows, nil
 }
 
-// NewTPayOutboxModel returns a model for the database table.
-func NewTPayOutboxModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) TPayOutboxModel {
-	return &customTPayOutboxModel{
-		defaultTPayOutboxModel: newTPayOutboxModel(conn, c, opts...),
-	}
+// ClaimPending implements [TPayOutboxModel].
+func (m *customTPayOutboxModel) ClaimPending(ctx context.Context, workerID string, now int64, limit int64) ([]*TPayOutbox, error) {
+	panic("unimplemented")
 }

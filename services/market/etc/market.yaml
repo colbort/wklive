@@ -81,6 +81,58 @@ ExternalQuotes:
     TimeoutMs: 3000
     MaxSourceAgeMs: 30000
     MaxFutureSkewMs: 5000
+  - Enabled: true
+    Authority: binance-public
+    ProviderCode: BINANCE
+    Adapter: BINANCE_SPOT_AGG_TRADES
+    BaseURL: https://api.binance.com/api/v3/aggTrades
+    CategoryCode: crypto
+    Market: BINANCE
+    Symbol: ETHUSDT
+    UpstreamSymbol: ETHUSDT
+    IntervalMs: 1000
+    TimeoutMs: 3000
+    MaxSourceAgeMs: 30000
+    MaxFutureSkewMs: 5000
+  - Enabled: true
+    Authority: okx-public
+    ProviderCode: OKX
+    Adapter: OKX_SPOT_TICKER
+    BaseURL: https://www.okx.com/api/v5/market/ticker
+    CategoryCode: crypto
+    Market: OKX
+    Symbol: ETHUSDT
+    UpstreamSymbol: ETH-USDT
+    IntervalMs: 1000
+    TimeoutMs: 3000
+    MaxSourceAgeMs: 30000
+    MaxFutureSkewMs: 5000
+  - Enabled: true
+    Authority: bybit-public
+    ProviderCode: BYBIT
+    Adapter: BYBIT_SPOT_RECENT_TRADE
+    BaseURL: https://api.bybit.com/v5/market/recent-trade
+    CategoryCode: crypto
+    Market: BYBIT
+    Symbol: ETHUSDT
+    UpstreamSymbol: ETHUSDT
+    IntervalMs: 1000
+    TimeoutMs: 3000
+    MaxSourceAgeMs: 30000
+    MaxFutureSkewMs: 5000
+  - Enabled: true
+    Authority: binance-futures-public
+    ProviderCode: BINANCE
+    Adapter: BINANCE_FUTURES_AGG_TRADES
+    BaseURL: https://fapi.binance.com/fapi/v1/aggTrades
+    CategoryCode: crypto
+    Market: BINANCE_PERP
+    Symbol: ETHUSDT
+    UpstreamSymbol: ETHUSDT
+    IntervalMs: 1000
+    TimeoutMs: 3000
+    MaxSourceAgeMs: 30000
+    MaxFutureSkewMs: 5000
 
 Mongo:
   Url: "mongodb://root:openIM123@127.0.0.1:27017/stock?authSource=admin"

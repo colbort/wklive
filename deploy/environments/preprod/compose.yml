@@ -1,0 +1,286 @@
+name: ${PREPROD_PROJECT_NAME:-wklive-preprod}
+
+x-preprod-go: &preprod-go
+  read_only: true
+  cap_drop:
+    - ALL
+  security_opt:
+    - no-new-privileges:true
+  tmpfs:
+    - /tmp:rw,noexec,nosuid,size=64m
+
+x-preprod-web: &preprod-web
+  restart: unless-stopped
+  init: true
+  read_only: true
+  cap_drop:
+    - ALL
+  security_opt:
+    - no-new-privileges:true
+  tmpfs:
+    - /tmp:rw,noexec,nosuid,size=32m
+    - /var/cache/nginx:rw,noexec,nosuid,size=32m
+    - /var/run:rw,noexec,nosuid,size=8m
+    - /etc/nginx/conf.d:rw,noexec,nosuid,size=8m
+  networks:
+    - backend
+
+services:
+  etcd:
+    ports: !override []
+
+  mysql:
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}
+      MYSQL_DATABASE: wklive
+      MYSQL_USER: ${MYSQL_APP_USER:?MYSQL_APP_USER is required}
+      MYSQL_PASSWORD: ${MYSQL_APP_PASSWORD:?MYSQL_APP_PASSWORD is required}
+      TZ: ${TZ:-Asia/Hong_Kong}
+    command: !override
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+      - --skip-name-resolve
+      - --local-infile=OFF
+      - --server-id=1
+      - --log-bin=mysql-bin
+      - --binlog-format=ROW
+      - --binlog-expire-logs-seconds=604800
+    ports: !override []
+
+  redis:
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
+    command: !override
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --requirepass
+      - ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" --no-auth-warning ping | grep -q PONG"]
+    ports: !override []
+
+  mongo:
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?MONGO_ROOT_PASSWORD is required}
+    ports: !override []
+
+  kafka:
+    environment:
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_NUM_PARTITIONS: ${KAFKA_PARTITIONS:-3}
+    ports: !override []
+
+  kafka-init:
+    environment:
+      KAFKA_PARTITIONS: ${KAFKA_PARTITIONS:-3}
+      KAFKA_REPLICATION_FACTOR: "1"
+
+  beanstalk-primary:
+    ports: !override []
+
+  beanstalk-secondary:
+    ports: !override []
+
+  db-init:
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/db-init:${RELEASE_TAG:?RELEASE_TAG is required}
+    volumes: !override []
+    env_file: !override
+      - path: ${PREPROD_OPERATORS_ENV_FILE:?PREPROD_OPERATORS_ENV_FILE is required}
+        required: true
+    environment:
+      MYSQL_DSN: ""
+      MYSQL_HOST: mysql
+      MYSQL_EXTERNAL_HOST: mysql
+      MYSQL_PORT: "3306"
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}
+      MYSQL_DATABASE: wklive
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?ADMIN_PASSWORD is required}
+      LIQUIDITY_ADMIN_USERNAME: ${LIQUIDITY_ADMIN_USERNAME:-liquidityadmin}
+      LIQUIDITY_ADMIN_PASSWORD: ${LIQUIDITY_ADMIN_PASSWORD:?LIQUIDITY_ADMIN_PASSWORD is required}
+      DB_INIT_PROFILE: preprod
+      DB_INIT_PROFILE_SQL: /release/profiles/preprod/bootstrap.sql
+      PREPROD_TENANT_ID: ${PREPROD_TENANT_ID:?PREPROD_TENANT_ID is required}
+      PREPROD_TENANT_CODE: ${PREPROD_TENANT_CODE:?PREPROD_TENANT_CODE is required}
+      PREPROD_TENANT_NAME: ${PREPROD_TENANT_NAME:?PREPROD_TENANT_NAME is required}
+
+  config-seed:
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/config-seed:${RELEASE_TAG:?RELEASE_TAG is required}
+    environment:
+      COMMON_CONFIG: /deploy-config/common.yaml
+      SERVICE_MODE: pre
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}
+      MYSQL_APP_USER: ${MYSQL_APP_USER:?MYSQL_APP_USER is required}
+      MYSQL_APP_PASSWORD: ${MYSQL_APP_PASSWORD:?MYSQL_APP_PASSWORD is required}
+      MONGO_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?MONGO_ROOT_PASSWORD is required}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:?JWT_ACCESS_SECRET is required}
+      ADMIN_ALLOWED_ORIGIN: ${ADMIN_ALLOWED_ORIGIN:?ADMIN_ALLOWED_ORIGIN is required}
+      ADMIN_REQUEST_ENCRYPTION_MODE: ${ADMIN_REQUEST_ENCRYPTION_MODE:-REQUIRED}
+      ADMIN_RSA_PRIVATE_KEY_PATH: /run/secrets/admin_api_private_key
+      ADMIN_SESSION_WRAP_KEY: ${ADMIN_SESSION_WRAP_KEY:?ADMIN_SESSION_WRAP_KEY is required}
+    volumes: !override
+      - ./environments/preprod/config:/deploy-config:ro
+
+  system-rpc:
+    <<: *preprod-go
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/system-rpc:${RELEASE_TAG:?RELEASE_TAG is required}
+
+  user-rpc:
+    <<: *preprod-go
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/user-rpc:${RELEASE_TAG:?RELEASE_TAG is required}
+
+  market-rpc:
+    <<: *preprod-go
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/market-rpc:${RELEASE_TAG:?RELEASE_TAG is required}
+
+  payment-rpc:
+    <<: *preprod-go
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/payment-rpc:${RELEASE_TAG:?RELEASE_TAG is required}
+
+  asset-rpc:
+    <<: *preprod-go
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/asset-rpc:${RELEASE_TAG:?RELEASE_TAG is required}
+
+  option-rpc:
+    <<: *preprod-go
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/option-rpc:${RELEASE_TAG:?RELEASE_TAG is required}
+    ports:
+      - "${PREPROD_BIND_ADDRESS:-127.0.0.1}:${PREPROD_OPTION_METRICS_PORT:-19105}:9105"
+
+  staking-rpc:
+    <<: *preprod-go
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/staking-rpc:${RELEASE_TAG:?RELEASE_TAG is required}
+
+  trade-rpc:
+    <<: *preprod-go
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/trade-rpc:${RELEASE_TAG:?RELEASE_TAG is required}
+
+  chat-rpc:
+    <<: *preprod-go
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/chat-rpc:${RELEASE_TAG:?RELEASE_TAG is required}
+
+  liquidity-rpc:
+    <<: *preprod-go
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/liquidity-rpc:${RELEASE_TAG:?RELEASE_TAG is required}
+
+  payment-api:
+    <<: *preprod-go
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/payment-api:${RELEASE_TAG:?RELEASE_TAG is required}
+    ports: !override
+      - "${PREPROD_BIND_ADDRESS:-127.0.0.1}:${PREPROD_PAYMENT_API_PORT:-13333}:3333"
+
+  app-api:
+    <<: *preprod-go
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/app-api:${RELEASE_TAG:?RELEASE_TAG is required}
+    ports: !override
+      - "${PREPROD_BIND_ADDRESS:-127.0.0.1}:${PREPROD_APP_API_PORT:-15555}:5555"
+
+  chat-admin-api:
+    <<: *preprod-go
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/chat-admin-api:${RELEASE_TAG:?RELEASE_TAG is required}
+    ports: !override
+      - "${PREPROD_BIND_ADDRESS:-127.0.0.1}:${PREPROD_CHAT_ADMIN_API_PORT:-16666}:6666"
+
+  chat-api:
+    <<: *preprod-go
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/chat-api:${RELEASE_TAG:?RELEASE_TAG is required}
+    ports: !override
+      - "${PREPROD_BIND_ADDRESS:-127.0.0.1}:${PREPROD_CHAT_API_PORT:-17777}:7777"
+
+  admin-api:
+    <<: *preprod-go
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/admin-api:${RELEASE_TAG:?RELEASE_TAG is required}
+    secrets:
+      - admin_api_private_key
+    volumes: !override
+      - preprod-admin-avatars:/app/avatars
+    ports: !override
+      - "${PREPROD_BIND_ADDRESS:-127.0.0.1}:${PREPROD_ADMIN_API_PORT:-18888}:8888"
+
+  liquidity-admin-api:
+    <<: *preprod-go
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/liquidity-admin-api:${RELEASE_TAG:?RELEASE_TAG is required}
+    ports: !override
+      - "${PREPROD_BIND_ADDRESS:-127.0.0.1}:${PREPROD_LIQUIDITY_ADMIN_API_PORT:-19999}:9999"
+
+  admin-ui:
+    <<: *preprod-web
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/admin-ui:${RELEASE_TAG:?RELEASE_TAG is required}
+    build:
+      context: ..
+      dockerfile: deploy/common/docker/Dockerfile.web
+      args:
+        UI_DIR: admin-ui
+    environment:
+      API_PATH_PREFIX: /admin/
+      API_UPSTREAM: admin-api:8888
+    depends_on:
+      admin-api:
+        condition: service_healthy
+    ports:
+      - "${PREPROD_BIND_ADDRESS:-127.0.0.1}:${PREPROD_ADMIN_UI_PORT:-18080}:8080"
+
+  app-web:
+    <<: *preprod-web
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/app-web:${RELEASE_TAG:?RELEASE_TAG is required}
+    build:
+      context: ..
+      dockerfile: deploy/common/docker/Dockerfile.web
+      args:
+        UI_DIR: app-web
+    environment:
+      API_PATH_PREFIX: /app/
+      API_UPSTREAM: app-api:5555
+    depends_on:
+      app-api:
+        condition: service_healthy
+    ports:
+      - "${PREPROD_BIND_ADDRESS:-127.0.0.1}:${PREPROD_APP_WEB_PORT:-18081}:8080"
+
+  chat-admin-ui:
+    <<: *preprod-web
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/chat-admin-ui:${RELEASE_TAG:?RELEASE_TAG is required}
+    build:
+      context: ..
+      dockerfile: deploy/common/docker/Dockerfile.web
+      args:
+        UI_DIR: chat-admin-ui
+    environment:
+      API_PATH_PREFIX: /chat/admin/
+      API_UPSTREAM: chat-admin-api:6666
+    depends_on:
+      chat-admin-api:
+        condition: service_healthy
+    ports:
+      - "${PREPROD_BIND_ADDRESS:-127.0.0.1}:${PREPROD_CHAT_ADMIN_UI_PORT:-18082}:8080"
+
+  liquidity-admin-ui:
+    <<: *preprod-web
+    image: ${PREPROD_IMAGE_REGISTRY:-wklive}/liquidity-admin-ui:${RELEASE_TAG:?RELEASE_TAG is required}
+    build:
+      context: ..
+      dockerfile: deploy/common/docker/Dockerfile.web
+      args:
+        UI_DIR: liquidity-admin-ui
+    environment:
+      API_PATH_PREFIX: /admin/liquidity/
+      API_UPSTREAM: liquidity-admin-api:9999
+    depends_on:
+      liquidity-admin-api:
+        condition: service_healthy
+    ports:
+      - "${PREPROD_BIND_ADDRESS:-127.0.0.1}:${PREPROD_LIQUIDITY_ADMIN_UI_PORT:-18083}:8080"
+
+secrets:
+  itick_token:
+    file: ${PREPROD_ITICK_TOKEN_FILE:?PREPROD_ITICK_TOKEN_FILE is required}
+  admin_api_private_key:
+    file: ${PREPROD_ADMIN_RSA_PRIVATE_KEY_FILE:?PREPROD_ADMIN_RSA_PRIVATE_KEY_FILE is required}
+
+volumes:
+  preprod-admin-avatars:

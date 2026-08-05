@@ -95,6 +95,7 @@
     "cSpell.words": [
       "Acks",
       "adminlogic",
+      "adminnotify",
       "alicebob",
       "Aliyun",
       "APIURLIs",
@@ -229,7 +230,8 @@
       "Zrevrange",
       "zrpc",
       "zset"
-    ]
+    ],
+    "window.zoomPerWindow": true
   },
   "tasks": {
     "version": "2.0.0",

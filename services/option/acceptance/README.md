@@ -5,7 +5,8 @@
 
 ## 执行
 
-前置条件：`deploy/docker-compose.yml` 中 MySQL、Etcd 已运行，本机可使用 Docker、Go 和 `nc`。
+前置条件：开发环境的 `deploy/common/compose.base.yml + deploy/environments/dev/compose.yml`
+中 MySQL、Etcd 已运行，本机可使用 Docker、Go 和 `nc`。
 
 ```sh
 services/option/acceptance/run-p0-asset-rpc-e2e.sh
@@ -30,8 +31,8 @@ BST/告警/日终证据和六方签署。
 
 ### Beanstalkd 原生架构门禁
 
-`deploy/docker-compose.yml` 已不再使用仅有 AMD64 的 `schickling/beanstalkd:latest`。两个实例现在由
-仓库内 `Dockerfile.beanstalkd` 从固定 digest 的 Alpine 3.20 多架构清单构建，Beanstalkd 固定为
+开发环境 Compose 已不再使用仅有 AMD64 的 `schickling/beanstalkd:latest`。两个实例现在由
+`deploy/common/docker/Dockerfile.beanstalkd` 从固定 digest 的 Alpine 3.20 多架构清单构建，Beanstalkd 固定为
 `1.13-r0`，且 Compose 不强制 `platform`；Apple Silicon 会生成原生 `linux/arm64` 镜像，AMD64
 Linux 会生成原生 `linux/amd64` 镜像。协议健康与宿主/镜像架构一致性由
 `deploy/beanstalk-readiness.sh` 检查，并接入 Option production readiness。两个实例使用独立 WAL

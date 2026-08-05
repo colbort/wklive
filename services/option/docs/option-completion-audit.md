@@ -126,7 +126,7 @@ readiness声明本身再由`monitoring/option-readiness-attestation-verify.sh`�
 ## 8. Beanstalk架构警告
 
 Docker Desktop显示`AMD64`表示容器镜像架构与宿主机不一致并可能使用模拟。当前Compose已改为从
-`deploy/Dockerfile.beanstalkd`构建`wklive/beanstalkd:1.13-alpine3.20`多架构镜像，未固定
+`deploy/common/docker/Dockerfile.beanstalkd`构建`wklive/beanstalkd:1.13-alpine3.20`多架构镜像，未固定
 `linux/amd64`，主/备各自使用独立WAL卷。验收以`deploy/deploy.sh beanstalk-readiness`实际输出和
 容器`Architecture`为准；如果界面仍显示旧的`schickling/beanstalkd`，说明运行的是旧容器，需要按
 正常部署流程重建，而不是忽略警告。

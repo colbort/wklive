@@ -6,6 +6,8 @@ package-lock.json
 !admin-ui/package-lock.json
 !chat-admin-ui/package-lock.json
 !liquidity-admin-ui/package-lock.json
+!app-web/package-lock.json
+!app-packages/package-lock.json
 
 avatars/
 
@@ -14,7 +16,10 @@ dist/
 
 *.tsbuildinfo
 
-/deploy/production-readiness.env
+/deploy/operations/contract/production-readiness.env
+/deploy/.env.preprod
+/deploy/environments/dev/.env
+/deploy/environments/preprod/.env
 /deploy/secrets/
 
 android/

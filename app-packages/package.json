@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@fingerprintjs/fingerprintjs": "^5.2.0",
-    "axios": "^1.7.0"
+    "axios": "^1.18.0"
   },
   "devDependencies": {
     "typescript": "^5.9.3",

@@ -270,8 +270,8 @@ GROUP BY status;
 
 ## 5. 2026-07-28 隔离环境执行记录
 
-环境：仓库 `deploy/docker-compose.yml` 加
-`deploy/docker-compose.acceptance.yml`，使用独立 Docker Volume。
+环境：仓库 `deploy/common/compose.base.yml`、`deploy/environments/dev/compose.yml` 加
+`deploy/environments/dev/compose.acceptance.yml`，使用独立 Docker Volume。
 
 已取得证据：
 

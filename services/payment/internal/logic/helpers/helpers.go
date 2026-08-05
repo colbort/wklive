@@ -123,7 +123,8 @@ func MarkRechargeOrderSuccessAndCredit(ctx context.Context, svcCtx *svc.ServiceC
 		_, err = outboxModel.Insert(txCtx, &models.TPayOutbox{
 			EventNo: "RECHARGE_CREDIT_" + current.OrderNo, EventType: "PAYMENT_RECHARGE_CREDIT",
 			AggregateType: "RECHARGE_ORDER", AggregateId: current.Id, AggregateNo: current.OrderNo,
-			Payload: string(payload), Status: 1, NextRetryAt: now, CreateTimes: now, UpdateTimes: now,
+			Payload: string(payload), Status: int64(payment.PayOutboxStatus_PAY_OUTBOX_STATUS_PENDING),
+			NextRetryAt: now, CreateTimes: now, UpdateTimes: now,
 		})
 		return err
 	})

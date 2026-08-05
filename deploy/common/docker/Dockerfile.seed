@@ -1,0 +1,23 @@
+FROM quay.io/coreos/etcd:v3.7.1 AS etcd
+
+FROM alpine:3.23
+COPY --from=etcd /usr/local/bin/etcdctl /usr/local/bin/etcdctl
+COPY deploy/common/scripts/seed-etcd.sh /deploy/seed-etcd.sh
+COPY admin-api/etc/admin.yaml /release/admin-api/etc/admin.yaml
+COPY app-api/etc/app.yaml /release/app-api/etc/app.yaml
+COPY chat-admin-api/etc/chatadmin.yaml /release/chat-admin-api/etc/chatadmin.yaml
+COPY chat-api/etc/chat.yaml /release/chat-api/etc/chat.yaml
+COPY liquidity-admin-api/etc/liquidityadmin.yaml /release/liquidity-admin-api/etc/liquidityadmin.yaml
+COPY payment-api/etc/payment-api.yaml /release/payment-api/etc/payment-api.yaml
+COPY services/asset/etc/asset.yaml /release/services/asset/etc/asset.yaml
+COPY services/chat/etc/chat.yaml /release/services/chat/etc/chat.yaml
+COPY services/market/etc/market.yaml /release/services/market/etc/market.yaml
+COPY services/liquidity/etc/liquidity.yaml /release/services/liquidity/etc/liquidity.yaml
+COPY services/option/etc/option.yaml /release/services/option/etc/option.yaml
+COPY services/payment/etc/payment.yaml /release/services/payment/etc/payment.yaml
+COPY services/staking/etc/staking.yaml /release/services/staking/etc/staking.yaml
+COPY services/system/etc/system.yaml /release/services/system/etc/system.yaml
+COPY services/trade/etc/trade.yaml /release/services/trade/etc/trade.yaml
+COPY services/user/etc/user.yaml /release/services/user/etc/user.yaml
+ENV WORKSPACE=/release
+ENTRYPOINT ["/bin/sh", "/deploy/seed-etcd.sh"]

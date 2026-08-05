@@ -3,7 +3,10 @@ set -eu
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 REPO_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/../../.." && pwd)
-COMPOSE_FILE=${OPTION_BACKSTOP_RPC_COMPOSE_FILE:-$REPO_ROOT/deploy/docker-compose.yml}
+DEPLOY_ROOT="$REPO_ROOT/deploy"
+# shellcheck disable=SC1091
+. "$DEPLOY_ROOT/common/scripts/dev-compose.sh"
+COMPOSE_FILE=${OPTION_BACKSTOP_RPC_COMPOSE_FILE:-}
 DATABASE=${OPTION_BACKSTOP_RPC_DATABASE:-wklive_option_backstop_rpc_acceptance}
 MYSQL_PASSWORD=${OPTION_BACKSTOP_RPC_MYSQL_PASSWORD:-123456}
 ASSET_PORT=${OPTION_BACKSTOP_RPC_ASSET_PORT:-18085}
@@ -17,10 +20,13 @@ case "$DATABASE" in
     ;;
 esac
 
-MYSQL_CONTAINER=${OPTION_BACKSTOP_RPC_MYSQL_CONTAINER:-$(docker compose -f "$COMPOSE_FILE" ps -q mysql)}
-ETCD_CONTAINER=${OPTION_BACKSTOP_RPC_ETCD_CONTAINER:-$(docker compose -f "$COMPOSE_FILE" ps -q etcd)}
+compose_ps() {
+  if [ -n "$COMPOSE_FILE" ]; then docker compose -f "$COMPOSE_FILE" ps -q "$1"; else dev_compose ps -q "$1"; fi
+}
+MYSQL_CONTAINER=${OPTION_BACKSTOP_RPC_MYSQL_CONTAINER:-$(compose_ps mysql)}
+ETCD_CONTAINER=${OPTION_BACKSTOP_RPC_ETCD_CONTAINER:-$(compose_ps etcd)}
 if [ -z "$MYSQL_CONTAINER" ] || [ -z "$ETCD_CONTAINER" ]; then
-  echo "mysql and etcd from deploy/docker-compose.yml must already be running" >&2
+  echo "mysql and etcd from the development Compose environment must already be running" >&2
   exit 1
 fi
 if nc -z 127.0.0.1 "$ASSET_PORT" >/dev/null 2>&1; then
