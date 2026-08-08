@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"wklive/admin-api/internal/config"
 	"wklive/proto/system"
 
 	"google.golang.org/grpc"
@@ -28,7 +29,7 @@ func (s *opLogWriterStub) CreateOpLog(
 
 func TestAuditMiddlewareRedactsSecretsAndForcesTenantScope(t *testing.T) {
 	writer := &opLogWriterStub{}
-	middleware := NewAuditMiddleware(writer)
+	middleware := newAuditMiddlewareForTest(t, writer)
 	handler := middleware.Handle(func(w http.ResponseWriter, r *http.Request) {
 		setAuditActor(r.Context(), 12, "tenant-admin", 7)
 		setAuditPermission(r.Context(), "system:user:update")
@@ -74,7 +75,7 @@ func TestAuditMiddlewareRedactsSecretsAndForcesTenantScope(t *testing.T) {
 
 func TestAuditMiddlewareSystemAdminUsesTargetTenant(t *testing.T) {
 	writer := &opLogWriterStub{}
-	middleware := NewAuditMiddleware(writer)
+	middleware := newAuditMiddlewareForTest(t, writer)
 	handler := middleware.Handle(func(w http.ResponseWriter, r *http.Request) {
 		setAuditActor(r.Context(), 1, "admin", 0)
 		setAuditPermission(r.Context(), "option:series:create")
@@ -95,7 +96,7 @@ func TestAuditMiddlewareSystemAdminUsesTargetTenant(t *testing.T) {
 
 func TestAuditMiddlewareSkipsReadOnlyAndExcludedRequests(t *testing.T) {
 	writer := &opLogWriterStub{}
-	middleware := NewAuditMiddleware(writer)
+	middleware := newAuditMiddlewareForTest(t, writer)
 	handler := middleware.Handle(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
@@ -107,4 +108,28 @@ func TestAuditMiddlewareSkipsReadOnlyAndExcludedRequests(t *testing.T) {
 	if len(writer.requests) != 0 {
 		t.Fatalf("read-only or excluded requests must not be audited, got %d", len(writer.requests))
 	}
+}
+
+func TestNewAuditMiddlewareRejectsInvalidConfig(t *testing.T) {
+	if _, err := NewAuditMiddleware(&opLogWriterStub{}, nil); err == nil {
+		t.Fatal("expected empty audit route config to fail")
+	}
+	if _, err := NewAuditMiddleware(&opLogWriterStub{}, []config.AuditRoute{{
+		Method: http.MethodGet,
+		Path:   "/admin/system/users",
+	}}); err == nil {
+		t.Fatal("expected read-only audit route to fail")
+	}
+}
+
+func newAuditMiddlewareForTest(t *testing.T, writer opLogWriter) *AuditMiddleware {
+	t.Helper()
+	middleware, err := NewAuditMiddleware(writer, []config.AuditRoute{
+		{Method: http.MethodPut, Path: "/admin/member/users/:userId/status"},
+		{Method: http.MethodPost, Path: "/admin/option/trading-halts"},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return middleware
 }

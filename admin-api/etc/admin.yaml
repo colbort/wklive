@@ -15,6 +15,113 @@ NotificationWS:
   EscalationMaxLevel: 3
   EscalationPollSeconds: 15
 
+# 只有在这里显式登记的敏感写接口才会写入 sys_op_log。
+# Path 支持 go-zero 风格的 :id 动态路径。
+Audit:
+  Routes:
+    # 系统管理员、权限、配置、任务和租户
+    - {Method: POST, Path: "/admin/system/users/status"}
+    - {Method: POST, Path: "/admin/system/users/resetPwd"}
+    - {Method: POST, Path: "/admin/system/users/assignRoles"}
+    - {Method: POST, Path: "/admin/system/users/google2fa/disable"}
+    - {Method: POST, Path: "/admin/system/users/google2fa/reset"}
+    - {Method: DELETE, Path: "/admin/system/users/:id"}
+    - {Method: POST, Path: "/admin/system/roles/grant"}
+    - {Method: POST, Path: "/admin/system/menus"}
+    - {Method: PUT, Path: "/admin/system/menus"}
+    - {Method: DELETE, Path: "/admin/system/menus/:id"}
+    - {Method: POST, Path: "/admin/system/configs"}
+    - {Method: PUT, Path: "/admin/system/configs"}
+    - {Method: DELETE, Path: "/admin/system/configs/:id"}
+    - {Method: POST, Path: "/admin/system/jobs/:id/run"}
+    - {Method: POST, Path: "/admin/system/jobs/:id/start"}
+    - {Method: POST, Path: "/admin/system/jobs/:id/stop"}
+    - {Method: POST, Path: "/admin/system/tenants"}
+    - {Method: PUT, Path: "/admin/system/tenants"}
+    - {Method: DELETE, Path: "/admin/system/tenants/:id"}
+    - {Method: POST, Path: "/admin/system/tenant-domains"}
+    - {Method: PUT, Path: "/admin/system/tenant-domains"}
+    - {Method: DELETE, Path: "/admin/system/tenant-domains/:id"}
+
+    # 会员身份、安全、风控和银行卡
+    - {Method: PUT, Path: "/admin/member/users/:userId/status"}
+    - {Method: PUT, Path: "/admin/member/users/:userId/level"}
+    - {Method: PUT, Path: "/admin/member/users/:userId/reset-login-password"}
+    - {Method: PUT, Path: "/admin/member/users/:userId/reset-pay-password"}
+    - {Method: PUT, Path: "/admin/member/users/:userId/unlock"}
+    - {Method: PUT, Path: "/admin/member/users/:userId/risk-level"}
+    - {Method: PUT, Path: "/admin/member/users/:userId/reset2fa"}
+    - {Method: DELETE, Path: "/admin/member/users/:userId"}
+    - {Method: PUT, Path: "/admin/member/user-identities/:userId/review"}
+    - {Method: POST, Path: "/admin/member/user-banks"}
+    - {Method: PUT, Path: "/admin/member/user-banks/:id"}
+    - {Method: DELETE, Path: "/admin/member/user-banks/:id"}
+    - {Method: PUT, Path: "/admin/member/user-banks/:id/status"}
+
+    # 资产人工变更和平台资金
+    - {Method: POST, Path: "/admin/asset/add"}
+    - {Method: POST, Path: "/admin/asset/sub"}
+    - {Method: POST, Path: "/admin/asset/freeze"}
+    - {Method: POST, Path: "/admin/asset/unfreeze"}
+    - {Method: POST, Path: "/admin/asset/lock"}
+    - {Method: POST, Path: "/admin/asset/unlock"}
+    - {Method: POST, Path: "/admin/asset/platform-accounts"}
+    - {Method: POST, Path: "/admin/asset/platform-accounts/adjust"}
+    - {Method: POST, Path: "/admin/asset/platform-backstop-policies"}
+    - {Method: POST, Path: "/admin/asset/platform-backstop-policies/:policyId/review"}
+
+    # 支付订单人工干预和钱包配置
+    - {Method: POST, Path: "/admin/payment/recharge-order/:orderNo/close"}
+    - {Method: POST, Path: "/admin/payment/recharge-order/:orderNo/manual-success"}
+    - {Method: POST, Path: "/admin/payment/recharge-order/:orderNo/retry-notify"}
+    - {Method: POST, Path: "/admin/payment/withdraw-order/:orderNo/audit"}
+    - {Method: POST, Path: "/admin/payment/crypto-wallet-account"}
+    - {Method: PUT, Path: "/admin/payment/crypto-wallet-account"}
+
+    # Trade 风控、人工重试和保险基金
+    - {Method: POST, Path: "/admin/trade/user-trade-limit"}
+    - {Method: POST, Path: "/admin/trade/user-symbol-limit"}
+    - {Method: POST, Path: "/admin/trade/user-trade-controls/disable"}
+    - {Method: POST, Path: "/admin/trade/user-trade-config"}
+    - {Method: POST, Path: "/admin/trade/contract-user-config"}
+    - {Method: POST, Path: "/admin/trade/user-leverage-config"}
+    - {Method: POST, Path: "/admin/trade/events/retry"}
+    - {Method: POST, Path: "/admin/trade/risk-tiers"}
+    - {Method: POST, Path: "/admin/trade/account-liquidations/retry"}
+    - {Method: POST, Path: "/admin/trade/operations/settlement-instructions/retry"}
+    - {Method: POST, Path: "/admin/trade/operations/reconciliation-issues/ignore"}
+    - {Method: POST, Path: "/admin/trade/insurance-fund/accounts"}
+
+    # Option 交易、结算、风控及公司行动
+    - {Method: POST, Path: "/admin/option/combo-orders/force-cancel"}
+    - {Method: POST, Path: "/admin/option/exercises/retry"}
+    - {Method: POST, Path: "/admin/option/contracts/force-cancel-orders"}
+    - {Method: POST, Path: "/admin/option/trading-controls/release-kill-switch"}
+    - {Method: POST, Path: "/admin/option/mmp/config"}
+    - {Method: POST, Path: "/admin/option/mmp/reset"}
+    - {Method: POST, Path: "/admin/option/settlement-prices/corrections"}
+    - {Method: POST, Path: "/admin/option/settlement-prices/review"}
+    - {Method: POST, Path: "/admin/option/trade-corrections"}
+    - {Method: POST, Path: "/admin/option/trade-corrections/review"}
+    - {Method: POST, Path: "/admin/option/recovery/asset-instructions/retry"}
+    - {Method: POST, Path: "/admin/option/trading-calendars/review"}
+    - {Method: POST, Path: "/admin/option/trading-halts"}
+    - {Method: POST, Path: "/admin/option/trading-halts/resume"}
+    - {Method: POST, Path: "/admin/option/corporate-actions"}
+    - {Method: POST, Path: "/admin/option/corporate-actions/review"}
+
+    # Staking 产品状态、人工派息/赎回和失败重试
+    - {Method: POST, Path: "/admin/staking/products/status"}
+    - {Method: POST, Path: "/admin/staking/manual-reward"}
+    - {Method: POST, Path: "/admin/staking/manual-redeem"}
+    - {Method: POST, Path: "/admin/staking/operations/retry"}
+
+    # Market 权威行情与快照人工干预
+    - {Method: POST, Path: "/admin/market/authorities"}
+    - {Method: PUT, Path: "/admin/market/price-formulas/:id/status"}
+    - {Method: POST, Path: "/admin/market/snapshot-outbox/:id/retry"}
+    - {Method: POST, Path: "/admin/market/authoritative-snapshots/revoke"}
+
 RequestEncryption:
   Scope: admin-api
   Mode: DISABLED

@@ -26,6 +26,7 @@ type Config struct {
 		EscalationMaxLevel        int64
 		EscalationPollSeconds     int64
 	} `json:"NotificationWS" yaml:"NotificationWS"`
+	Audit             AuditConfig `json:"Audit" yaml:"Audit"`
 	SystemRpc         zrpc.RpcClientConf
 	ChatRpc           zrpc.RpcClientConf
 	UserRpc           zrpc.RpcClientConf
@@ -38,4 +39,13 @@ type Config struct {
 	RedisConf         redis.RedisConf `json:"Redis" yaml:"Redis"`
 	RequestEncryption reqenc.Config   `json:"RequestEncryption" yaml:"RequestEncryption"`
 	MQ                mq.Config       `json:"MQ" yaml:"MQ"`
+}
+
+type AuditConfig struct {
+	Routes []AuditRoute `json:"Routes" yaml:"Routes"`
+}
+
+type AuditRoute struct {
+	Method string `json:"Method" yaml:"Method"`
+	Path   string `json:"Path" yaml:"Path"`
 }

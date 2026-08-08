@@ -69,7 +69,10 @@ func main() {
 	).Handle)
 	requestLogMiddleware := um.NewRequestLogMiddleware("ADMIN-API")
 	server.Use(requestLogMiddleware.Handle)
-	auditMiddleware := middleware.NewAuditMiddleware(ctx.SystemCli)
+	auditMiddleware, err := middleware.NewAuditMiddleware(ctx.SystemCli, c.Audit.Routes)
+	if err != nil {
+		panic(fmt.Sprintf("invalid audit routes: %v", err))
+	}
 	server.Use(auditMiddleware.Handle)
 	rbacMiddleware := middleware.NewRbacMiddleware(ctx)
 	server.Use(rbacMiddleware.Handle)

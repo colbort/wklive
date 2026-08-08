@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"wklive/admin-api/internal/config"
 	"wklive/common/utils"
 	"wklive/proto/system"
 
@@ -26,6 +27,7 @@ type opLogWriter interface {
 
 type AuditMiddleware struct {
 	writer opLogWriter
+	routes []auditRouteSpec
 }
 
 type auditContextKey struct{}
@@ -37,13 +39,17 @@ type auditState struct {
 	permission string
 }
 
-func NewAuditMiddleware(writer opLogWriter) *AuditMiddleware {
-	return &AuditMiddleware{writer: writer}
+func NewAuditMiddleware(writer opLogWriter, configuredRoutes []config.AuditRoute) (*AuditMiddleware, error) {
+	routes, err := buildSensitiveAuditRoutes(configuredRoutes)
+	if err != nil {
+		return nil, err
+	}
+	return &AuditMiddleware{writer: writer, routes: routes}, nil
 }
 
 func (m *AuditMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if m.writer == nil || !shouldAuditRequest(r) {
+		if m.writer == nil || !m.shouldAuditRequest(r) {
 			next(w, r)
 			return
 		}
@@ -108,11 +114,11 @@ func setAuditPermission(ctx context.Context, permission string) {
 	}
 }
 
-func shouldAuditRequest(r *http.Request) bool {
+func (m *AuditMiddleware) shouldAuditRequest(r *http.Request) bool {
 	if r == nil {
 		return false
 	}
-	for _, route := range sensitiveAuditRoutes {
+	for _, route := range m.routes {
 		if route.method == r.Method && route.pattern.MatchString(normalizePath(r.URL.Path)) {
 			return true
 		}
