@@ -84,7 +84,7 @@ func newExternalQuoteRunner(
 	handler func(context.Context, types.ClientMessage, *types.QuotePayload) error,
 ) (*externalQuoteRunner, error) {
 	sources := make([]externalQuoteSource, 0, len(configs))
-	authorities := make(map[string]struct{}, len(configs))
+	sourceIdentities := make(map[string]struct{}, len(configs))
 	for _, sourceConfig := range configs {
 		if !sourceConfig.Enabled {
 			continue
@@ -93,10 +93,17 @@ func newExternalQuoteRunner(
 		if err != nil {
 			return nil, err
 		}
-		if _, exists := authorities[source.Authority]; exists {
-			return nil, fmt.Errorf("duplicate external quote authority: %s", source.Authority)
+		identity := externalQuoteSourceIdentity(source)
+		if _, exists := sourceIdentities[identity]; exists {
+			return nil, fmt.Errorf(
+				"duplicate external quote source: authority=%s category=%s market=%s symbol=%s",
+				source.Authority,
+				source.CategoryCode,
+				source.Market,
+				source.Symbol,
+			)
 		}
-		authorities[source.Authority] = struct{}{}
+		sourceIdentities[identity] = struct{}{}
 		sources = append(sources, source)
 	}
 	if len(sources) == 0 {
@@ -113,6 +120,15 @@ func newExternalQuoteRunner(
 		sources: sources,
 		handler: handler,
 	}, nil
+}
+
+func externalQuoteSourceIdentity(source externalQuoteSource) string {
+	return strings.Join([]string{
+		source.Authority,
+		source.CategoryCode,
+		source.Market,
+		source.Symbol,
+	}, "\x00")
 }
 
 func normalizeExternalQuoteSource(source config.ExternalQuoteSourceConf) (externalQuoteSource, error) {

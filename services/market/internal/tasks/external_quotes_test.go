@@ -142,6 +142,48 @@ func TestExternalQuoteRunnerRequiresThreeIndependentProviders(t *testing.T) {
 	}
 }
 
+func TestExternalQuoteRunnerAllowsAuthorityForMultipleSymbols(t *testing.T) {
+	t.Parallel()
+	configs := []config.ExternalQuoteSourceConf{
+		testExternalQuoteConfig("binance-public", "BINANCE", externalQuoteAdapterBinanceSpot),
+		testExternalQuoteConfig("okx-public", "OKX", externalQuoteAdapterOKXSpot),
+		testExternalQuoteConfig("bybit-public", "BYBIT", externalQuoteAdapterBybitSpot),
+	}
+	secondSymbol := configs[0]
+	secondSymbol.Symbol = "ETHUSDT"
+	secondSymbol.UpstreamSymbol = "ETHUSDT"
+	configs = append(configs, secondSymbol)
+
+	runner, err := newExternalQuoteRunner(
+		configs,
+		func(context.Context, types.ClientMessage, *types.QuotePayload) error { return nil },
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(runner.sources) != 4 {
+		t.Fatalf("unexpected sources: %d", len(runner.sources))
+	}
+}
+
+func TestExternalQuoteRunnerRejectsDuplicateTargetIdentity(t *testing.T) {
+	t.Parallel()
+	configs := []config.ExternalQuoteSourceConf{
+		testExternalQuoteConfig("binance-public", "BINANCE", externalQuoteAdapterBinanceSpot),
+		testExternalQuoteConfig("okx-public", "OKX", externalQuoteAdapterOKXSpot),
+		testExternalQuoteConfig("bybit-public", "BYBIT", externalQuoteAdapterBybitSpot),
+	}
+	configs = append(configs, configs[0])
+
+	_, err := newExternalQuoteRunner(
+		configs,
+		func(context.Context, types.ClientMessage, *types.QuotePayload) error { return nil },
+	)
+	if err == nil || err.Error() != "duplicate external quote source: authority=binance-public category=crypto market=BINANCE symbol=BTCUSDT" {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
 func TestExternalQuoteEndpointAllowlist(t *testing.T) {
 	t.Parallel()
 	config := testExternalQuoteConfig("binance-spot", "BINANCE", externalQuoteAdapterBinanceSpot)

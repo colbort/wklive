@@ -17,9 +17,11 @@ func TestSnapshotOutboxClaimAndCompletionAreOwnerFenced(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	model := &defaultTItickSnapshotOutboxModel{
-		CachedConn: sqlc.NewConnWithCache(sqlx.NewSqlConnFromDB(db), nil),
-		table:      "`t_itick_snapshot_outbox`",
+	model := &customTItickSnapshotOutboxModel{
+		defaultTItickSnapshotOutboxModel: &defaultTItickSnapshotOutboxModel{
+			CachedConn: sqlc.NewConnWithCache(sqlx.NewSqlConnFromDB(db), nil),
+			table:      "`t_itick_snapshot_outbox`",
+		},
 	}
 	mock.ExpectExec(`(?s)UPDATE t_itick_snapshot_outbox SET status=2,claimed_by=\?,claimed_at=\?,update_times=\?.*`).
 		WithArgs("worker-a", int64(100), int64(100), int64(7), int64(100), int64(40)).
