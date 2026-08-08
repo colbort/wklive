@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"wklive/common/pageutil"
+	"wklive/common/utils"
 	"wklive/proto/system"
 	"wklive/services/system/internal/svc"
 	"wklive/services/system/models"
@@ -26,9 +27,11 @@ func NewOpLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OpLogLi
 }
 
 func (l *OpLogListLogic) OpLogList(in *system.OpLogListReq) (*system.OpLogListResp, error) {
+	tenantID, _ := utils.GetTenantIdFromMd(l.ctx)
 	items, total, err := l.svcCtx.OpLogModel.FindPage(
 		l.ctx,
 		models.OpLogPageFilter{
+			TenantId: tenantID,
 			Username: in.Username,
 			Method:   requestMethodToString(in.Method),
 			Path:     in.Path,
@@ -49,8 +52,11 @@ func (l *OpLogListLogic) OpLogList(in *system.OpLogListReq) (*system.OpLogListRe
 	for _, item := range items {
 		data = append(data, &system.OpLogItem{
 			Id:          item.Id,
+			TenantId:    item.TenantId,
 			UserId:      item.UserId,
 			Username:    item.Username,
+			Module:      item.Module,
+			Action:      item.Action,
 			Method:      requestMethodToProto(item.Method),
 			Path:        item.Path,
 			Req:         item.Req.String,

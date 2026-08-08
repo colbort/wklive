@@ -21,6 +21,7 @@ type (
 	ChangeUserStatusReq                   = system.ChangeUserStatusReq
 	ClaimDueAdminNotificationsReq         = system.ClaimDueAdminNotificationsReq
 	ClaimDueAdminNotificationsResp        = system.ClaimDueAdminNotificationsResp
+	CreateOpLogReq                        = system.CreateOpLogReq
 	Empty                                 = system.Empty
 	Google2FABindReq                      = system.Google2FABindReq
 	Google2FADisableReq                   = system.Google2FADisableReq
@@ -156,6 +157,7 @@ type (
 		SysMenuList(ctx context.Context, in *SysMenuListReq, opts ...grpc.CallOption) (*SysMenuListResp, error)
 		LoginLogList(ctx context.Context, in *LoginLogListReq, opts ...grpc.CallOption) (*LoginLogListResp, error)
 		OpLogList(ctx context.Context, in *OpLogListReq, opts ...grpc.CallOption) (*OpLogListResp, error)
+		CreateOpLog(ctx context.Context, in *CreateOpLogReq, opts ...grpc.CallOption) (*RespBase, error)
 		SysConfigCreate(ctx context.Context, in *SysConfigCreateReq, opts ...grpc.CallOption) (*RespBase, error)
 		SysConfigUpdate(ctx context.Context, in *SysConfigUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
 		SysConfigDelete(ctx context.Context, in *SysConfigDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
@@ -348,6 +350,11 @@ func (m *defaultAdmin) LoginLogList(ctx context.Context, in *LoginLogListReq, op
 func (m *defaultAdmin) OpLogList(ctx context.Context, in *OpLogListReq, opts ...grpc.CallOption) (*OpLogListResp, error) {
 	client := system.NewAdminClient(m.cli.Conn())
 	return client.OpLogList(ctx, in, opts...)
+}
+
+func (m *defaultAdmin) CreateOpLog(ctx context.Context, in *CreateOpLogReq, opts ...grpc.CallOption) (*RespBase, error) {
+	client := system.NewAdminClient(m.cli.Conn())
+	return client.CreateOpLog(ctx, in, opts...)
 }
 
 func (m *defaultAdmin) SysConfigCreate(ctx context.Context, in *SysConfigCreateReq, opts ...grpc.CallOption) (*RespBase, error) {

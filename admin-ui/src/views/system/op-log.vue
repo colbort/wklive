@@ -121,7 +121,15 @@ onMounted(() => {
         style="margin-bottom: 16px"
       >
         <el-table-column prop="id" :label="t('common.id')" width="70" />
+        <el-table-column prop="tenantId" :label="t('common.tenantId')" width="100" />
         <el-table-column prop="username" :label="t('common.username')" min-width="120" />
+        <el-table-column
+          prop="module"
+          :label="t('common.module')"
+          min-width="130"
+          show-overflow-tooltip
+        />
+        <el-table-column prop="action" :label="t('common.action')" min-width="100" />
         <el-table-column prop="method" :label="t('common.method')" width="80">
           <template #default="{ row }">
             <el-tag>{{ row.method }}</el-tag>

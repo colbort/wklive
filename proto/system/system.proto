@@ -396,6 +396,9 @@ message OpLogItem {
   int64 cost_ms = 9;
   int64 create_times = 10;
   int64 update_times = 11;
+  int64 tenant_id = 12;
+  string module = 13;
+  string action = 14;
 }
 message OpLogListReq {
   common.PageReq page = 1;
@@ -406,6 +409,19 @@ message OpLogListReq {
 message OpLogListResp {
   common.RespBase base = 1;
   repeated OpLogItem data = 2;
+}
+message CreateOpLogReq {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  string username = 3;
+  string module = 4;
+  string action = 5;
+  system.RequestMethod method = 6;
+  string path = 7;
+  string req = 8;
+  string resp = 9;
+  string ip = 10;
+  int64 cost_ms = 11;
 }
 
 message SysConfigCreateReq {
@@ -845,6 +861,7 @@ service Admin {
   rpc SysMenuList(SysMenuListReq) returns (SysMenuListResp);
   rpc LoginLogList(LoginLogListReq) returns (LoginLogListResp);
   rpc OpLogList(OpLogListReq) returns (OpLogListResp);
+  rpc CreateOpLog(CreateOpLogReq) returns (RespBase);
   rpc SysConfigCreate(SysConfigCreateReq) returns (RespBase);
   rpc SysConfigUpdate(SysConfigUpdateReq) returns (RespBase);
   rpc SysConfigDelete(SysConfigDeleteReq) returns (RespBase);

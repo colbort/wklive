@@ -3215,8 +3215,11 @@ type MenuNode struct {
 
 type OpLogItem struct {
 	Id          int64  `json:"id"`
+	TenantId    int64  `json:"tenantId"`
 	UserId      int64  `json:"userId"`
 	Username    string `json:"username"`
+	Module      string `json:"module"`
+	Action      string `json:"action"`
 	Method      string `json:"method"`
 	Path        string `json:"path"`
 	Req         string `json:"req,optional"`

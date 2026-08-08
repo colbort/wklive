@@ -11,6 +11,7 @@ var _ SysOpLogModel = (*customSysOpLogModel)(nil)
 
 type (
 	OpLogPageFilter struct {
+		TenantId int64
 		Username string
 		Method   string
 		Path     string
@@ -46,6 +47,7 @@ func (m *defaultSysOpLogModel) FindPage(
 
 	// ---- WHERE 条件 ----
 	builder := sqlutil.NewPageQueryBuilder()
+	builder.EqInt64("tenant_id", filter.TenantId)
 	builder.LikeString("username", filter.Username)
 	builder.LikeString("method", filter.Method)
 	builder.LikeString("path", filter.Path)

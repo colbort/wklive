@@ -35,8 +35,11 @@ export interface LoginLogListResp {
 // 操作日志项
 export type OpLogItem = {
   id: number
+  tenantId: number
   userId: number
   username: string
+  module: string
+  action: string
   method: string
   path: string
   req?: string

@@ -173,6 +173,11 @@ func (s *AdminServer) OpLogList(ctx context.Context, in *system.OpLogListReq) (*
 	return l.OpLogList(in)
 }
 
+func (s *AdminServer) CreateOpLog(ctx context.Context, in *system.CreateOpLogReq) (*system.RespBase, error) {
+	l := adminlogic.NewCreateOpLogLogic(ctx, s.svcCtx)
+	return l.CreateOpLog(in)
+}
+
 func (s *AdminServer) SysConfigCreate(ctx context.Context, in *system.SysConfigCreateReq) (*system.RespBase, error) {
 	l := adminlogic.NewSysConfigCreateLogic(ctx, s.svcCtx)
 	return l.SysConfigCreate(in)

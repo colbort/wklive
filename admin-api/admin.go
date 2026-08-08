@@ -69,8 +69,8 @@ func main() {
 	).Handle)
 	requestLogMiddleware := um.NewRequestLogMiddleware("ADMIN-API")
 	server.Use(requestLogMiddleware.Handle)
-	headerMiddleware := um.NewHeaderMiddleware()
-	server.Use(headerMiddleware.Handle)
+	auditMiddleware := middleware.NewAuditMiddleware(ctx.SystemCli)
+	server.Use(auditMiddleware.Handle)
 	rbacMiddleware := middleware.NewRbacMiddleware(ctx)
 	server.Use(rbacMiddleware.Handle)
 

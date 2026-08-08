@@ -49,6 +49,7 @@ const (
 	Admin_SysMenuList_FullMethodName                        = "/system.Admin/SysMenuList"
 	Admin_LoginLogList_FullMethodName                       = "/system.Admin/LoginLogList"
 	Admin_OpLogList_FullMethodName                          = "/system.Admin/OpLogList"
+	Admin_CreateOpLog_FullMethodName                        = "/system.Admin/CreateOpLog"
 	Admin_SysConfigCreate_FullMethodName                    = "/system.Admin/SysConfigCreate"
 	Admin_SysConfigUpdate_FullMethodName                    = "/system.Admin/SysConfigUpdate"
 	Admin_SysConfigDelete_FullMethodName                    = "/system.Admin/SysConfigDelete"
@@ -120,6 +121,7 @@ type AdminClient interface {
 	SysMenuList(ctx context.Context, in *SysMenuListReq, opts ...grpc.CallOption) (*SysMenuListResp, error)
 	LoginLogList(ctx context.Context, in *LoginLogListReq, opts ...grpc.CallOption) (*LoginLogListResp, error)
 	OpLogList(ctx context.Context, in *OpLogListReq, opts ...grpc.CallOption) (*OpLogListResp, error)
+	CreateOpLog(ctx context.Context, in *CreateOpLogReq, opts ...grpc.CallOption) (*RespBase, error)
 	SysConfigCreate(ctx context.Context, in *SysConfigCreateReq, opts ...grpc.CallOption) (*RespBase, error)
 	SysConfigUpdate(ctx context.Context, in *SysConfigUpdateReq, opts ...grpc.CallOption) (*RespBase, error)
 	SysConfigDelete(ctx context.Context, in *SysConfigDeleteReq, opts ...grpc.CallOption) (*RespBase, error)
@@ -455,6 +457,16 @@ func (c *adminClient) OpLogList(ctx context.Context, in *OpLogListReq, opts ...g
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(OpLogListResp)
 	err := c.cc.Invoke(ctx, Admin_OpLogList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) CreateOpLog(ctx context.Context, in *CreateOpLogReq, opts ...grpc.CallOption) (*RespBase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RespBase)
+	err := c.cc.Invoke(ctx, Admin_CreateOpLog_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -809,6 +821,7 @@ type AdminServer interface {
 	SysMenuList(context.Context, *SysMenuListReq) (*SysMenuListResp, error)
 	LoginLogList(context.Context, *LoginLogListReq) (*LoginLogListResp, error)
 	OpLogList(context.Context, *OpLogListReq) (*OpLogListResp, error)
+	CreateOpLog(context.Context, *CreateOpLogReq) (*RespBase, error)
 	SysConfigCreate(context.Context, *SysConfigCreateReq) (*RespBase, error)
 	SysConfigUpdate(context.Context, *SysConfigUpdateReq) (*RespBase, error)
 	SysConfigDelete(context.Context, *SysConfigDeleteReq) (*RespBase, error)
@@ -939,6 +952,9 @@ func (UnimplementedAdminServer) LoginLogList(context.Context, *LoginLogListReq) 
 }
 func (UnimplementedAdminServer) OpLogList(context.Context, *OpLogListReq) (*OpLogListResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method OpLogList not implemented")
+}
+func (UnimplementedAdminServer) CreateOpLog(context.Context, *CreateOpLogReq) (*RespBase, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateOpLog not implemented")
 }
 func (UnimplementedAdminServer) SysConfigCreate(context.Context, *SysConfigCreateReq) (*RespBase, error) {
 	return nil, status.Error(codes.Unimplemented, "method SysConfigCreate not implemented")
@@ -1590,6 +1606,24 @@ func _Admin_OpLogList_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AdminServer).OpLogList(ctx, req.(*OpLogListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_CreateOpLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOpLogReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).CreateOpLog(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_CreateOpLog_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).CreateOpLog(ctx, req.(*CreateOpLogReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2278,6 +2312,10 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "OpLogList",
 			Handler:    _Admin_OpLogList_Handler,
+		},
+		{
+			MethodName: "CreateOpLog",
+			Handler:    _Admin_CreateOpLog_Handler,
 		},
 		{
 			MethodName: "SysConfigCreate",

@@ -21,6 +21,7 @@ type (
 	ChangeUserStatusReq                   = system.ChangeUserStatusReq
 	ClaimDueAdminNotificationsReq         = system.ClaimDueAdminNotificationsReq
 	ClaimDueAdminNotificationsResp        = system.ClaimDueAdminNotificationsResp
+	CreateOpLogReq                        = system.CreateOpLogReq
 	Empty                                 = system.Empty
 	Google2FABindReq                      = system.Google2FABindReq
 	Google2FADisableReq                   = system.Google2FADisableReq

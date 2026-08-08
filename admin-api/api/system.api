@@ -289,8 +289,11 @@ type LoginLogListResp {
 
 type OpLogItem {
 	id          int64  `json:"id"`
+	tenantId    int64  `json:"tenantId"`
 	userId      int64  `json:"userId"`
 	username    string `json:"username"`
+	module      string `json:"module"`
+	action      string `json:"action"`
 	method      string `json:"method"`
 	path        string `json:"path"`
 	req         string `json:"req,optional"`

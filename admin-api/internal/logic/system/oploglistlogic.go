@@ -7,9 +7,10 @@ import (
 	"context"
 
 	"wklive/admin-api/internal/logicutil"
-
 	"wklive/admin-api/internal/svc"
 	"wklive/admin-api/internal/types"
+	"wklive/proto/common"
+	systempb "wklive/proto/system"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,5 +30,54 @@ func NewOpLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OpLogLi
 }
 
 func (l *OpLogListLogic) OpLogList(req *types.OpLogListReq) (resp *types.OpLogListResp, err error) {
-	return logicutil.Proxy[types.OpLogListResp](l.ctx, req, l.svcCtx.SystemCli.OpLogList)
+	result, err := l.svcCtx.SystemCli.OpLogList(l.ctx, &systempb.OpLogListReq{
+		Page: &common.PageReq{
+			Cursor: req.Cursor,
+			Limit:  req.Limit,
+		},
+		Username: req.Username,
+		Method:   toRequestMethod(req.Method),
+		Path:     req.Path,
+	})
+	if err != nil {
+		return logicutil.SystemErrorResp[types.OpLogListResp](l.ctx, err)
+	}
+
+	resp = &types.OpLogListResp{Data: make([]types.OpLogItem, 0, len(result.Data))}
+	if result.Base != nil {
+		resp.Code = result.Base.Code
+		resp.Msg = result.Base.Msg
+		resp.Total = result.Base.Total
+		resp.HasNext = result.Base.HasNext
+		resp.HasPrev = result.Base.HasPrev
+		resp.NextCursor = result.Base.NextCursor
+		resp.PrevCursor = result.Base.PrevCursor
+	}
+	for _, item := range result.Data {
+		if item == nil {
+			continue
+		}
+		resp.Data = append(resp.Data, mapOpLogItem(item))
+	}
+
+	return resp, nil
+}
+
+func mapOpLogItem(item *systempb.OpLogItem) types.OpLogItem {
+	return types.OpLogItem{
+		Id:          item.Id,
+		TenantId:    item.TenantId,
+		UserId:      item.UserId,
+		Username:    item.Username,
+		Module:      item.Module,
+		Action:      item.Action,
+		Method:      fromRequestMethod(item.Method),
+		Path:        item.Path,
+		Req:         item.Req,
+		Resp:        item.Resp,
+		Ip:          item.Ip,
+		CostMs:      item.CostMs,
+		CreateTimes: item.CreateTimes,
+		UpdateTimes: item.UpdateTimes,
+	}
 }

@@ -140,6 +140,7 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
+		setAuditActor(r.Context(), userResp.Data.Id, userResp.Data.Username, userResp.Data.TenantId)
 
 		requiredPerm := m.requiredPermission(r.Context(), path, method)
 		if requiredPerm == "" {
@@ -147,6 +148,7 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 			return
 		}
+		setAuditPermission(r.Context(), requiredPerm)
 
 		enforcer, err := newUserPermEnforcer(fmt.Sprintf("%d", userId), resp.Perms)
 		if err != nil {
@@ -176,7 +178,10 @@ func (m *RbacMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), utils.CtxKeyTenantId, userResp.Data.TenantId)
+		// 登录身份只取 JWT 与数据库，覆盖所有同名请求头，避免伪造操作人或跨租户。
+		ctx := context.WithValue(r.Context(), utils.CtxKeyUid, userResp.Data.Id)
+		ctx = context.WithValue(ctx, utils.CtxKeyUsername, userResp.Data.Username)
+		ctx = context.WithValue(ctx, utils.CtxKeyTenantId, userResp.Data.TenantId)
 		ctx = context.WithValue(ctx, utils.CtxKeyUserType, int64(userResp.Data.UserType))
 		r = r.WithContext(ctx)
 
