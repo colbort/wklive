@@ -23,7 +23,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionContractSeriesStrikeBandModel) FindBySeries(
+func (m *customTOptionContractSeriesStrikeBandModel) FindBySeries(
 	ctx context.Context, tenantId, seriesId int64,
 ) ([]*TOptionContractSeriesStrikeBand, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND series_id=? ORDER BY sequence_no,id",

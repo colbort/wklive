@@ -42,7 +42,7 @@ func NewTItickQuoteModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Opt
 	}
 }
 
-func (m *defaultTItickQuoteModel) Upsert(ctx context.Context, data *TItickQuote) (sql.Result, error) {
+func (m *customTItickQuoteModel) Upsert(ctx context.Context, data *TItickQuote) (sql.Result, error) {
 	query := fmt.Sprintf(`
 		INSERT INTO %s (%s)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -84,7 +84,7 @@ func (m *defaultTItickQuoteModel) Upsert(ctx context.Context, data *TItickQuote)
 	}, marketQuoteMarketSymbolKey)
 }
 
-func (m *defaultTItickQuoteModel) FindPage(ctx context.Context, filter MarketQuotePageFilter, cursor int64, limit int64) ([]*TItickQuote, int64, error) {
+func (m *customTItickQuoteModel) FindPage(ctx context.Context, filter MarketQuotePageFilter, cursor int64, limit int64) ([]*TItickQuote, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -137,7 +137,7 @@ func (m *defaultTItickQuoteModel) FindPage(ctx context.Context, filter MarketQuo
 	return list, total, nil
 }
 
-func (m *defaultTItickQuoteModel) FindQuotes(ctx context.Context, data []*market.MarketSymbol) ([]*TItickQuote, error) {
+func (m *customTItickQuoteModel) FindQuotes(ctx context.Context, data []*market.MarketSymbol) ([]*TItickQuote, error) {
 	if len(data) == 0 {
 		return []*TItickQuote{}, nil
 	}

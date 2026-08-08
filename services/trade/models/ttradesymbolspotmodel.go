@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TTradeSymbolSpotModel = (*customTTradeSymbolSpotModel)(nil)
@@ -30,7 +31,7 @@ func NewTTradeSymbolSpotModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cach
 	}
 }
 
-func (m *defaultTTradeSymbolSpotModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TTradeSymbolSpot, int64, error) {
+func (m *customTTradeSymbolSpotModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TTradeSymbolSpot, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()

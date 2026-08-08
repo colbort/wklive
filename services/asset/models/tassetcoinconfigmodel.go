@@ -3,10 +3,11 @@ package models
 import (
 	"context"
 	"fmt"
-	"github.com/zeromicro/go-zero/core/stores/cache"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"sort"
 	"wklive/common/sqlutil"
+
+	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 var _ TAssetCoinConfigModel = (*customTAssetCoinConfigModel)(nil)
@@ -52,7 +53,7 @@ const (
 	assetCoinOperationTransfer = int64(3)
 )
 
-func (m *defaultTAssetCoinConfigModel) FindPage(ctx context.Context, filter AssetCoinConfigPageFilter, cursor int64, limit int64) ([]*TAssetCoinConfig, int64, error) {
+func (m *customTAssetCoinConfigModel) FindPage(ctx context.Context, filter AssetCoinConfigPageFilter, cursor int64, limit int64) ([]*TAssetCoinConfig, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -109,7 +110,7 @@ func (m *defaultTAssetCoinConfigModel) FindPage(ctx context.Context, filter Asse
 	return list, total, nil
 }
 
-func (m *defaultTAssetCoinConfigModel) FindVisibleByOperation(ctx context.Context, tenantId int64, walletType int64, operationType int64, coinType int64) ([]*TAssetCoinConfig, error) {
+func (m *customTAssetCoinConfigModel) FindVisibleByOperation(ctx context.Context, tenantId int64, walletType int64, operationType int64, coinType int64) ([]*TAssetCoinConfig, error) {
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", tenantId)
 	builder.EqInt64("wallet_type", walletType)

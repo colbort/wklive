@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TOptionBillModel = (*customTOptionBillModel)(nil)
@@ -40,7 +41,7 @@ func NewTOptionBillModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Opt
 	}
 }
 
-func (m *defaultTOptionBillModel) FindPage(ctx context.Context, filter OptionBillPageFilter, cursor int64, limit int64) ([]*TOptionBill, int64, error) {
+func (m *customTOptionBillModel) FindPage(ctx context.Context, filter OptionBillPageFilter, cursor int64, limit int64) ([]*TOptionBill, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)

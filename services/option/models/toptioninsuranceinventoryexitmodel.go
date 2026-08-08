@@ -43,7 +43,7 @@ type insuranceInventoryExitQuantityAggregate struct {
 // SumReservedQuantity counts every open request as a conservative reservation,
 // plus requests submitted during the current UTC day. Old open requests keep
 // consuming budget until they are explicitly rejected.
-func (m *defaultTOptionInsuranceInventoryExitModel) SumReservedQuantity(
+func (m *customTOptionInsuranceInventoryExitModel) SumReservedQuantity(
 	ctx context.Context, tenantId, contractId, utcDayStart int64,
 ) (decimal.Decimal, error) {
 	query := fmt.Sprintf(`SELECT COALESCE(SUM(quantity), 0) AS total FROM %s
@@ -58,7 +58,7 @@ WHERE tenant_id=? AND contract_id=? AND (
 	return aggregate.Total, nil
 }
 
-func (m *defaultTOptionInsuranceInventoryExitModel) FindOneForUpdate(
+func (m *customTOptionInsuranceInventoryExitModel) FindOneForUpdate(
 	ctx context.Context, id int64,
 ) (*TOptionInsuranceInventoryExit, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id=? LIMIT 1 FOR UPDATE",
@@ -70,7 +70,7 @@ func (m *defaultTOptionInsuranceInventoryExitModel) FindOneForUpdate(
 	return &item, nil
 }
 
-func (m *defaultTOptionInsuranceInventoryExitModel) FindOpenByPositionForUpdate(
+func (m *customTOptionInsuranceInventoryExitModel) FindOpenByPositionForUpdate(
 	ctx context.Context, tenantId, positionId int64,
 ) (*TOptionInsuranceInventoryExit, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -83,7 +83,7 @@ ORDER BY id DESC LIMIT 1 FOR UPDATE`, tOptionInsuranceInventoryExitRows, m.table
 	return &item, nil
 }
 
-func (m *defaultTOptionInsuranceInventoryExitModel) FindPage(
+func (m *customTOptionInsuranceInventoryExitModel) FindPage(
 	ctx context.Context,
 	filter OptionInsuranceInventoryExitPageFilter,
 	cursor, limit int64,

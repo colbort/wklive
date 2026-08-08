@@ -30,7 +30,7 @@ func NewGetTradeEventDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext
 
 // 获取交易事件详情
 func (l *GetTradeEventDetailLogic) GetTradeEventDetail(in *trade.GetTradeEventDetailReq) (*trade.GetTradeEventDetailResp, error) {
-	item, err := l.svcCtx.BizTradeEventModel.FindOne(l.ctx, in.Id)
+	item, err := l.svcCtx.TradeEventOutboxModel.FindOne(l.ctx, in.Id)
 	if errors.Is(err, models.ErrNotFound) || (err == nil && item.TenantId != in.TenantId) {
 		return &trade.GetTradeEventDetailResp{Base: helper.ErrResp(i18n.TradeNotFound, i18n.Translate(i18n.TradeNotFound, l.ctx))}, nil
 	}

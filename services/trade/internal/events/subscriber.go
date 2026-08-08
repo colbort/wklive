@@ -121,11 +121,11 @@ func handleEvent(ctx context.Context, svcCtx *svc.ServiceContext, event realtime
 	}
 }
 
-func findOutboxEvent(svcCtx *svc.ServiceContext, ctx context.Context, event realtime.Event) (*models.TBizTradeEvent, error) {
+func findOutboxEvent(svcCtx *svc.ServiceContext, ctx context.Context, event realtime.Event) (*models.TTradeEventOutbox, error) {
 	if event.EventNo == "" {
 		return nil, nil
 	}
-	item, err := svcCtx.BizTradeEventModel.FindOneByTenantIdEventNo(ctx, event.TenantID, event.EventNo)
+	item, err := svcCtx.TradeEventOutboxModel.FindOneByTenantIdEventNo(ctx, event.TenantID, event.EventNo)
 	if errors.Is(err, models.ErrNotFound) {
 		return nil, nil
 	}
@@ -137,7 +137,7 @@ func markEventSuccess(svcCtx *svc.ServiceContext, ctx context.Context, event rea
 	if err != nil || item == nil {
 		return err
 	}
-	_, err = svcCtx.BizTradeEventModel.MarkDelivered(ctx, item.Id, event.ClaimToken, utils.NowMillis())
+	_, err = svcCtx.TradeEventOutboxModel.MarkDelivered(ctx, item.Id, event.ClaimToken, utils.NowMillis())
 	return err
 }
 
@@ -156,6 +156,6 @@ func markEventFailed(svcCtx *svc.ServiceContext, ctx context.Context, event real
 		retry = 10
 	}
 	delay *= time.Duration(1 << (retry - 1))
-	_, err = svcCtx.BizTradeEventModel.MarkDeliveryFailed(ctx, item.Id, event.ClaimToken, now, now+delay.Milliseconds(), errorMessage)
+	_, err = svcCtx.TradeEventOutboxModel.MarkDeliveryFailed(ctx, item.Id, event.ClaimToken, now, now+delay.Milliseconds(), errorMessage)
 	return err
 }

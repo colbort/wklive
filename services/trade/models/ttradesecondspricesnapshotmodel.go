@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TTradeSecondsPriceSnapshotModel = (*customTTradeSecondsPriceSnapshotModel)(nil)
@@ -30,7 +31,7 @@ func NewTTradeSecondsPriceSnapshotModel(conn sqlx.SqlConn, c cache.CacheConf, op
 	}
 }
 
-func (m *defaultTTradeSecondsPriceSnapshotModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TTradeSecondsPriceSnapshot, int64, error) {
+func (m *customTTradeSecondsPriceSnapshotModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TTradeSecondsPriceSnapshot, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := adminPageBuilder(filter, "")
 	where, args := b.Where(), b.Args()

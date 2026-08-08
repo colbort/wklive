@@ -35,7 +35,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionCorporateActionModel) FindLatestVersionForUpdate(
+func (m *customTOptionCorporateActionModel) FindLatestVersionForUpdate(
 	ctx context.Context, tenantId int64, externalEventRef string,
 ) (*TOptionCorporateAction, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND external_event_ref=? ORDER BY version DESC LIMIT 1 FOR UPDATE",
@@ -47,7 +47,7 @@ func (m *defaultTOptionCorporateActionModel) FindLatestVersionForUpdate(
 	return &item, nil
 }
 
-func (m *defaultTOptionCorporateActionModel) FindOneForUpdate(
+func (m *customTOptionCorporateActionModel) FindOneForUpdate(
 	ctx context.Context, id int64,
 ) (*TOptionCorporateAction, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id=? LIMIT 1 FOR UPDATE", tOptionCorporateActionRows, m.table)
@@ -58,7 +58,7 @@ func (m *defaultTOptionCorporateActionModel) FindOneForUpdate(
 	return &item, nil
 }
 
-func (m *defaultTOptionCorporateActionModel) FindDue(
+func (m *customTOptionCorporateActionModel) FindDue(
 	ctx context.Context, tenantId, now, limit int64,
 ) ([]*TOptionCorporateAction, error) {
 	limit = sqlutil.NormalizeLimit(limit)
@@ -70,7 +70,7 @@ ORDER BY effective_time, id LIMIT ?`, tOptionCorporateActionRows, m.table)
 	return items, err
 }
 
-func (m *defaultTOptionCorporateActionModel) FindPage(
+func (m *customTOptionCorporateActionModel) FindPage(
 	ctx context.Context, filter OptionCorporateActionPageFilter, cursor, limit int64,
 ) ([]*TOptionCorporateAction, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)

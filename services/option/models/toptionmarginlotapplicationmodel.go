@@ -22,7 +22,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionMarginLotApplicationModel) InsertIgnore(
+func (m *customTOptionMarginLotApplicationModel) InsertIgnore(
 	ctx context.Context, item *TOptionMarginLotApplication,
 ) (bool, error) {
 	const query = `INSERT IGNORE INTO t_option_margin_lot_application

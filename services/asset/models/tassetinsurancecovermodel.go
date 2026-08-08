@@ -33,7 +33,7 @@ func NewTAssetInsuranceCoverModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...
 	}
 }
 
-func (m *defaultTAssetInsuranceCoverModel) FindOneForUpdate(ctx context.Context, t int64, n string) (*TAssetInsuranceCover, error) {
+func (m *customTAssetInsuranceCoverModel) FindOneForUpdate(ctx context.Context, t int64, n string) (*TAssetInsuranceCover, error) {
 	var r TAssetInsuranceCover
 	err := m.QueryRowNoCacheCtx(ctx, &r, "SELECT "+tAssetInsuranceCoverRows+" FROM t_asset_insurance_cover WHERE tenant_id=? AND liquidation_no=? FOR UPDATE", t, n)
 	if err != nil {
@@ -41,7 +41,7 @@ func (m *defaultTAssetInsuranceCoverModel) FindOneForUpdate(ctx context.Context,
 	}
 	return &r, nil
 }
-func (m *defaultTAssetInsuranceCoverModel) MarkReversed(ctx context.Context, id, now int64) error {
+func (m *customTAssetInsuranceCoverModel) MarkReversed(ctx context.Context, id, now int64) error {
 	var current TAssetInsuranceCover
 	if err := m.QueryRowNoCacheCtx(ctx, &current, "SELECT "+tAssetInsuranceCoverRows+" FROM t_asset_insurance_cover WHERE id=? FOR UPDATE", id); err != nil {
 		return err
@@ -61,7 +61,7 @@ func (m *defaultTAssetInsuranceCoverModel) MarkReversed(ctx context.Context, id,
 	return nil
 }
 
-func (m *defaultTAssetInsuranceCoverModel) FindOneByTenantLiquidationNo(ctx context.Context, t int64, n string) (*TAssetInsuranceCover, error) {
+func (m *customTAssetInsuranceCoverModel) FindOneByTenantLiquidationNo(ctx context.Context, t int64, n string) (*TAssetInsuranceCover, error) {
 	var r TAssetInsuranceCover
 	err := m.QueryRowNoCacheCtx(ctx, &r, "SELECT "+tAssetInsuranceCoverRows+" FROM t_asset_insurance_cover WHERE tenant_id=? AND liquidation_no=?", t, n)
 	if err != nil {

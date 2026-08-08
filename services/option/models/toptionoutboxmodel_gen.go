@@ -54,6 +54,8 @@ type (
 		Status        int64  `db:"status"`         // 状态：1待处理 2处理中 3成功 4失败 5人工处理
 		RetryCount    int64  `db:"retry_count"`    // 重试次数
 		NextRetryAt   int64  `db:"next_retry_at"`  // 下次重试时间
+		ClaimedBy     string `db:"claimed_by"`     // 当前领取实例
+		ClaimedAt     int64  `db:"claimed_at"`     // 领取时间（秒）
 		LastErrorMsg  string `db:"last_error_msg"` // 最后错误
 		CreateTimes   int64  `db:"create_times"`   // 创建时间
 		UpdateTimes   int64  `db:"update_times"`   // 更新时间
@@ -145,8 +147,8 @@ func (m *defaultTOptionOutboxModel) Insert(ctx context.Context, data *TOptionOut
 	tOptionOutboxTenantIdContractIdMatchSequenceEventTypeKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheTOptionOutboxTenantIdContractIdMatchSequenceEventTypePrefix, data.TenantId, data.ContractId, data.MatchSequence, data.EventType)
 	tOptionOutboxTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionOutboxTenantIdEventNoPrefix, data.TenantId, data.EventNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionOutboxRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.EventNo, data.EventType, data.ContractId, data.TradeId, data.MatchSequence, data.Status, data.RetryCount, data.NextRetryAt, data.LastErrorMsg, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tOptionOutboxRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.EventNo, data.EventType, data.ContractId, data.TradeId, data.MatchSequence, data.Status, data.RetryCount, data.NextRetryAt, data.ClaimedBy, data.ClaimedAt, data.LastErrorMsg, data.CreateTimes, data.UpdateTimes)
 	}, tOptionOutboxIdKey, tOptionOutboxTenantIdContractIdMatchSequenceEventTypeKey, tOptionOutboxTenantIdEventNoKey)
 	return ret, err
 }
@@ -162,7 +164,7 @@ func (m *defaultTOptionOutboxModel) Update(ctx context.Context, newData *TOption
 	tOptionOutboxTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTOptionOutboxTenantIdEventNoPrefix, data.TenantId, data.EventNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tOptionOutboxRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.EventNo, newData.EventType, newData.ContractId, newData.TradeId, newData.MatchSequence, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.EventNo, newData.EventType, newData.ContractId, newData.TradeId, newData.MatchSequence, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.ClaimedBy, newData.ClaimedAt, newData.LastErrorMsg, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tOptionOutboxIdKey, tOptionOutboxTenantIdContractIdMatchSequenceEventTypeKey, tOptionOutboxTenantIdEventNoKey)
 	return err
 }

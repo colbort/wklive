@@ -4,10 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/zeromicro/go-zero/core/stores/cache"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"strings"
 	"wklive/common/sqlutil"
+
+	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 var _ TTradeSettlementInstructionModel = (*customTTradeSettlementInstructionModel)(nil)
@@ -46,7 +47,7 @@ func NewTTradeSettlementInstructionModel(conn sqlx.SqlConn, c cache.CacheConf, o
 	}
 }
 
-func (m *defaultTTradeSettlementInstructionModel) FindSuccessUnreconciled(ctx context.Context, tenantID, cursor, limit int64) ([]*TTradeSettlementInstruction, error) {
+func (m *customTTradeSettlementInstructionModel) FindSuccessUnreconciled(ctx context.Context, tenantID, cursor, limit int64) ([]*TTradeSettlementInstruction, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE (?=0 OR tenant_id=?) AND status=3 AND reconciled_at=0 AND id>? ORDER BY id ASC LIMIT ?", tTradeSettlementInstructionRows, m.table)
 	var rows []*TTradeSettlementInstruction
@@ -56,7 +57,7 @@ func (m *defaultTTradeSettlementInstructionModel) FindSuccessUnreconciled(ctx co
 	return rows, nil
 }
 
-func (m *defaultTTradeSettlementInstructionModel) FindPendingBiz(ctx context.Context, tenantID int64, bizType string, now, limit int64) ([]*TTradeSettlementInstruction, error) {
+func (m *customTTradeSettlementInstructionModel) FindPendingBiz(ctx context.Context, tenantID int64, bizType string, now, limit int64) ([]*TTradeSettlementInstruction, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	query := fmt.Sprintf("SELECT %s FROM %s i WHERE (?=0 OR i.tenant_id=?) AND i.biz_type=? AND ((i.status IN (1,4) AND (i.next_retry_at=0 OR i.next_retry_at<=?)) OR (i.status=2 AND i.update_times<=?)) AND NOT EXISTS (SELECT 1 FROM %s p WHERE p.tenant_id=i.tenant_id AND p.biz_type=i.biz_type AND p.batch_no=i.batch_no AND p.step_no<i.step_no AND p.status<>3) ORDER BY i.id ASC LIMIT ?", prefixedSettlementInstructionRows("i"), m.table, m.table)
 	var rows []*TTradeSettlementInstruction
@@ -66,31 +67,31 @@ func (m *defaultTTradeSettlementInstructionModel) FindPendingBiz(ctx context.Con
 	return rows, nil
 }
 
-func (m *defaultTTradeSettlementInstructionModel) CountUnfinishedByBatch(ctx context.Context, tenantID int64, bizType, batchNo string) (int64, error) {
+func (m *customTTradeSettlementInstructionModel) CountUnfinishedByBatch(ctx context.Context, tenantID int64, bizType, batchNo string) (int64, error) {
 	var count int64
 	err := m.QueryRowNoCacheCtx(ctx, &count, fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id=? AND biz_type=? AND batch_no=? AND status<>3", m.table), tenantID, bizType, batchNo)
 	return count, err
 }
 
-func (m *defaultTTradeSettlementInstructionModel) CountUnreconciledByBatch(ctx context.Context, tenantID int64, bizType, batchNo string) (int64, error) {
+func (m *customTTradeSettlementInstructionModel) CountUnreconciledByBatch(ctx context.Context, tenantID int64, bizType, batchNo string) (int64, error) {
 	var count int64
 	err := m.QueryRowNoCacheCtx(ctx, &count, fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id=? AND biz_type=? AND batch_no=? AND status=3 AND reconciled_at=0", m.table), tenantID, bizType, batchNo)
 	return count, err
 }
 
-func (m *defaultTTradeSettlementInstructionModel) CountByBatchStatus(ctx context.Context, tenantID int64, bizType, batchNo string, status int64) (int64, error) {
+func (m *customTTradeSettlementInstructionModel) CountByBatchStatus(ctx context.Context, tenantID int64, bizType, batchNo string, status int64) (int64, error) {
 	var count int64
 	err := m.QueryRowNoCacheCtx(ctx, &count, fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id=? AND biz_type=? AND batch_no=? AND status=?", m.table), tenantID, bizType, batchNo, status)
 	return count, err
 }
 
-func (m *defaultTTradeSettlementInstructionModel) CountUnfinishedByBiz(ctx context.Context, tenantID int64, bizType, bizID string) (int64, error) {
+func (m *customTTradeSettlementInstructionModel) CountUnfinishedByBiz(ctx context.Context, tenantID int64, bizType, bizID string) (int64, error) {
 	var count int64
 	err := m.QueryRowNoCacheCtx(ctx, &count, fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id=? AND biz_type=? AND biz_id=? AND status<>3", m.table), tenantID, bizType, bizID)
 	return count, err
 }
 
-func (m *defaultTTradeSettlementInstructionModel) FindOneForUpdate(ctx context.Context, id int64) (*TTradeSettlementInstruction, error) {
+func (m *customTTradeSettlementInstructionModel) FindOneForUpdate(ctx context.Context, id int64) (*TTradeSettlementInstruction, error) {
 	var item TTradeSettlementInstruction
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1 FOR UPDATE", tTradeSettlementInstructionRows, m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &item, query, id); err != nil {
@@ -99,7 +100,7 @@ func (m *defaultTTradeSettlementInstructionModel) FindOneForUpdate(ctx context.C
 	return &item, nil
 }
 
-func (m *defaultTTradeSettlementInstructionModel) CountAllUnfinishedByOrder(ctx context.Context, tenantId, orderId int64) (int64, error) {
+func (m *customTTradeSettlementInstructionModel) CountAllUnfinishedByOrder(ctx context.Context, tenantId, orderId int64) (int64, error) {
 	var count int64
 	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id = ? AND order_id = ? AND status <> 3", m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &count, query, tenantId, orderId); err != nil {
@@ -108,7 +109,7 @@ func (m *defaultTTradeSettlementInstructionModel) CountAllUnfinishedByOrder(ctx 
 	return count, nil
 }
 
-func (m *defaultTTradeSettlementInstructionModel) FindPendingOrderReleases(ctx context.Context, tenantId, now, limit int64) ([]*TTradeSettlementInstruction, error) {
+func (m *customTTradeSettlementInstructionModel) FindPendingOrderReleases(ctx context.Context, tenantId, now, limit int64) ([]*TTradeSettlementInstruction, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE (? = 0 OR tenant_id = ?) AND biz_type = 'order' AND action = 2 AND ((status IN (1, 4) AND (next_retry_at = 0 OR next_retry_at <= ?)) OR (status = 2 AND update_times <= ?)) ORDER BY id ASC LIMIT ?", tTradeSettlementInstructionRows, m.table)
 	var list []*TTradeSettlementInstruction
@@ -118,7 +119,7 @@ func (m *defaultTTradeSettlementInstructionModel) FindPendingOrderReleases(ctx c
 	return list, nil
 }
 
-func (m *defaultTTradeSettlementInstructionModel) CountUnfinishedByOrder(ctx context.Context, tenantId, orderId int64) (int64, error) {
+func (m *customTTradeSettlementInstructionModel) CountUnfinishedByOrder(ctx context.Context, tenantId, orderId int64) (int64, error) {
 	var count int64
 	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id = ? AND order_id = ? AND status <> 3 AND action <> 2", m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &count, query, tenantId, orderId); err != nil {
@@ -127,7 +128,7 @@ func (m *defaultTTradeSettlementInstructionModel) CountUnfinishedByOrder(ctx con
 	return count, nil
 }
 
-func (m *defaultTTradeSettlementInstructionModel) FindPendingFillSettlements(ctx context.Context, tenantId, now, limit int64) ([]*TTradeSettlementInstruction, error) {
+func (m *customTTradeSettlementInstructionModel) FindPendingFillSettlements(ctx context.Context, tenantId, now, limit int64) ([]*TTradeSettlementInstruction, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	staleBefore := now - 60*1000
 	query := fmt.Sprintf("SELECT %s FROM %s i JOIN t_trade_fill f ON f.tenant_id = i.tenant_id AND f.id = i.fill_id WHERE (? = 0 OR i.tenant_id = ?) AND i.biz_type = 'fill' AND f.product_type IN (1, 2) AND ((i.status IN (1, 4) AND (i.next_retry_at = 0 OR i.next_retry_at <= ?)) OR (i.status = 2 AND i.update_times <= ?)) AND NOT EXISTS (SELECT 1 FROM %s p WHERE p.tenant_id = i.tenant_id AND p.fill_id = i.fill_id AND p.step_no < i.step_no AND p.status <> 3) ORDER BY i.id ASC LIMIT ?", prefixedSettlementInstructionRows("i"), m.table, m.table)
@@ -138,7 +139,7 @@ func (m *defaultTTradeSettlementInstructionModel) FindPendingFillSettlements(ctx
 	return list, nil
 }
 
-func (m *defaultTTradeSettlementInstructionModel) FindByFillId(ctx context.Context, tenantId, fillId int64) ([]*TTradeSettlementInstruction, error) {
+func (m *customTTradeSettlementInstructionModel) FindByFillId(ctx context.Context, tenantId, fillId int64) ([]*TTradeSettlementInstruction, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND fill_id = ? ORDER BY step_no ASC, id ASC", tTradeSettlementInstructionRows, m.table)
 	var list []*TTradeSettlementInstruction
 	if err := m.QueryRowsNoCacheCtx(ctx, &list, query, tenantId, fillId); err != nil {
@@ -147,12 +148,12 @@ func (m *defaultTTradeSettlementInstructionModel) FindByFillId(ctx context.Conte
 	return list, nil
 }
 
-func (m *defaultTTradeSettlementInstructionModel) Claim(ctx context.Context, id, now int64) (bool, error) {
+func (m *customTTradeSettlementInstructionModel) Claim(ctx context.Context, id, now int64) (bool, error) {
 	claimed, _, err := m.ClaimLease(ctx, id, now)
 	return claimed, err
 }
 
-func (m *defaultTTradeSettlementInstructionModel) ClaimLease(ctx context.Context, id, now int64) (bool, int64, error) {
+func (m *customTTradeSettlementInstructionModel) ClaimLease(ctx context.Context, id, now int64) (bool, int64, error) {
 	item, err := m.FindOne(ctx, id)
 	if err != nil {
 		return false, 0, err
@@ -181,7 +182,7 @@ func prefixedSettlementInstructionRows(alias string) string {
 	return strings.Join(rows, ",")
 }
 
-func (m *defaultTTradeSettlementInstructionModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TTradeSettlementInstruction, int64, error) {
+func (m *customTTradeSettlementInstructionModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TTradeSettlementInstruction, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := adminPageBuilder(filter, "")
 	where, args := b.Where(), b.Args()

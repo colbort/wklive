@@ -32,7 +32,7 @@ func NewTTradeUserControlAuditModel(conn sqlx.SqlConn, c cache.CacheConf, opts .
 	}
 }
 
-func (m *defaultTTradeUserControlAuditModel) FindPage(ctx context.Context, filter UserTradeControlFilter, cursor int64, limit int64) ([]*TTradeUserControlAudit, int64, error) {
+func (m *customTTradeUserControlAuditModel) FindPage(ctx context.Context, filter UserTradeControlFilter, cursor int64, limit int64) ([]*TTradeUserControlAudit, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := sqlutil.NewPageQueryBuilder()
 	b.EqInt64("tenant_id", filter.TenantId)

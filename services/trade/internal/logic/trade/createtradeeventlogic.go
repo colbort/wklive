@@ -33,7 +33,7 @@ func (l *CreateTradeEventLogic) CreateTradeEvent(in *trade.CreateTradeEventReq) 
 	if in.Event == nil {
 		return &trade.InternalCommonResp{Base: helper.OkResp()}, nil
 	}
-	exists, err := l.svcCtx.BizTradeEventModel.FindOneByTenantIdEventNo(l.ctx, in.Event.TenantId, in.Event.EventNo)
+	exists, err := l.svcCtx.TradeEventOutboxModel.FindOneByTenantIdEventNo(l.ctx, in.Event.TenantId, in.Event.EventNo)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (l *CreateTradeEventLogic) CreateTradeEvent(in *trade.CreateTradeEventReq) 
 		if payloadVersion <= 0 {
 			payloadVersion = helpers.TradeEventPayloadVersion
 		}
-		_, err = l.svcCtx.BizTradeEventModel.Insert(l.ctx, &models.TBizTradeEvent{
+		_, err = l.svcCtx.TradeEventOutboxModel.Insert(l.ctx, &models.TTradeEventOutbox{
 			TenantId:       in.Event.TenantId,
 			EventNo:        eventNo,
 			EventType:      in.Event.EventType,

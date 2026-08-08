@@ -22,7 +22,7 @@ type TransactionModel interface {
 }
 
 type TransactionModels struct {
-	BizTradeEvent                  TBizTradeEventModel
+	TradeEventOutbox               TTradeEventOutboxModel
 	ContractAccountLiquidation     TContractAccountLiquidationModel
 	ContractAccountLiquidationItem TContractAccountLiquidationItemModel
 	ContractAdlExecution           TContractAdlExecutionModel
@@ -98,7 +98,7 @@ func (m *transactionModel) TransactOnce(
 
 func newTransactionModels(conn sqlx.SqlConn, cacheConfig cache.CacheConf) *TransactionModels {
 	return &TransactionModels{
-		BizTradeEvent:                  NewTBizTradeEventModel(conn, cacheConfig),
+		TradeEventOutbox:               NewTTradeEventOutboxModel(conn, cacheConfig),
 		ContractAccountLiquidation:     NewTContractAccountLiquidationModel(conn, cacheConfig),
 		ContractAccountLiquidationItem: NewTContractAccountLiquidationItemModel(conn, cacheConfig),
 		ContractAdlExecution:           NewTContractAdlExecutionModel(conn, cacheConfig),

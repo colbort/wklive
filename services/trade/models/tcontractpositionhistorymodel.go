@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TContractPositionHistoryModel = (*customTContractPositionHistoryModel)(nil)
@@ -44,7 +45,7 @@ func NewTContractPositionHistoryModel(conn sqlx.SqlConn, c cache.CacheConf, opts
 	}
 }
 
-func (m *defaultTContractPositionHistoryModel) CountByRefFillId(ctx context.Context, tenantID, fillID int64) (int64, error) {
+func (m *customTContractPositionHistoryModel) CountByRefFillId(ctx context.Context, tenantID, fillID int64) (int64, error) {
 	var count int64
 	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id = ? AND ref_fill_id = ?", m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &count, query, tenantID, fillID); err != nil {
@@ -53,7 +54,7 @@ func (m *defaultTContractPositionHistoryModel) CountByRefFillId(ctx context.Cont
 	return count, nil
 }
 
-func (m *defaultTContractPositionHistoryModel) FindByRefFillId(ctx context.Context, tenantID, fillID int64) ([]*TContractPositionHistory, error) {
+func (m *customTContractPositionHistoryModel) FindByRefFillId(ctx context.Context, tenantID, fillID int64) ([]*TContractPositionHistory, error) {
 	var rows []*TContractPositionHistory
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND ref_fill_id=? ORDER BY id", tContractPositionHistoryRows, m.table)
 	if err := m.QueryRowsNoCacheCtx(ctx, &rows, query, tenantID, fillID); err != nil {
@@ -66,7 +67,7 @@ func (m *defaultTContractPositionHistoryModel) FindByRefFillId(ctx context.Conte
 // the requested business time. It deliberately orders by business_time first,
 // then id, so delayed event processing cannot move a fill into a later funding
 // period merely because its history row was inserted later.
-func (m *defaultTContractPositionHistoryModel) FindLatestBySymbolAt(ctx context.Context, tenantID, symbolID, businessTime int64) ([]*TContractPositionHistory, error) {
+func (m *customTContractPositionHistoryModel) FindLatestBySymbolAt(ctx context.Context, tenantID, symbolID, businessTime int64) ([]*TContractPositionHistory, error) {
 	query := fmt.Sprintf(`
 SELECT %s
 FROM %s AS h
@@ -94,7 +95,7 @@ ORDER BY h.position_id`, tContractPositionHistoryRows, m.table, m.table)
 	return list, nil
 }
 
-func (m *defaultTContractPositionHistoryModel) FindPage(ctx context.Context, filter ContractPositionHistoryPageFilter, cursor int64, limit int64) ([]*TContractPositionHistory, int64, error) {
+func (m *customTContractPositionHistoryModel) FindPage(ctx context.Context, filter ContractPositionHistoryPageFilter, cursor int64, limit int64) ([]*TContractPositionHistory, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)

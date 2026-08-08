@@ -48,6 +48,8 @@ type (
 		Status           int64  `db:"status"` // 1 pending 2 processing 3 success 4 failed 5 manual
 		RetryCount       int64  `db:"retry_count"`
 		NextRetryAt      int64  `db:"next_retry_at"`
+		ClaimedBy        string `db:"claimed_by"`         // 当前领取实例
+		ClaimedAt        int64  `db:"claimed_at"`         // 领取时间（毫秒）
 		RedisPublishedAt int64  `db:"redis_published_at"` // Redis权威快照发布完成时间
 		EventPublishedAt int64  `db:"event_published_at"` // 权威行情Kafka事件发布完成时间；无需发布时同样置完成
 		LastErrorMsg     string `db:"last_error_msg"`
@@ -119,8 +121,8 @@ func (m *defaultTItickSnapshotOutboxModel) Insert(ctx context.Context, data *TIt
 	tItickSnapshotOutboxIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotOutboxIdPrefix, data.Id)
 	tItickSnapshotOutboxSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotOutboxSnapshotIdPrefix, data.SnapshotId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickSnapshotOutboxRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.SnapshotId, data.Payload, data.Status, data.RetryCount, data.NextRetryAt, data.RedisPublishedAt, data.EventPublishedAt, data.LastErrorMsg, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tItickSnapshotOutboxRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.SnapshotId, data.Payload, data.Status, data.RetryCount, data.NextRetryAt, data.ClaimedBy, data.ClaimedAt, data.RedisPublishedAt, data.EventPublishedAt, data.LastErrorMsg, data.CreateTimes, data.UpdateTimes)
 	}, tItickSnapshotOutboxIdKey, tItickSnapshotOutboxSnapshotIdKey)
 	return ret, err
 }
@@ -135,7 +137,7 @@ func (m *defaultTItickSnapshotOutboxModel) Update(ctx context.Context, newData *
 	tItickSnapshotOutboxSnapshotIdKey := fmt.Sprintf("%s%v", cacheTItickSnapshotOutboxSnapshotIdPrefix, data.SnapshotId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickSnapshotOutboxRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.SnapshotId, newData.Payload, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.RedisPublishedAt, newData.EventPublishedAt, newData.LastErrorMsg, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.SnapshotId, newData.Payload, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.ClaimedBy, newData.ClaimedAt, newData.RedisPublishedAt, newData.EventPublishedAt, newData.LastErrorMsg, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tItickSnapshotOutboxIdKey, tItickSnapshotOutboxSnapshotIdKey)
 	return err
 }

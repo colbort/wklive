@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TCryptoRechargeAddressModel = (*customTCryptoRechargeAddressModel)(nil)
@@ -44,7 +45,7 @@ func NewTCryptoRechargeAddressModel(conn sqlx.SqlConn, c cache.CacheConf, opts .
 	}
 }
 
-func (m *defaultTCryptoRechargeAddressModel) FindPage(ctx context.Context, filter CryptoRechargeAddressPageFilter, cursor int64, limit int64) ([]*TCryptoRechargeAddress, int64, error) {
+func (m *customTCryptoRechargeAddressModel) FindPage(ctx context.Context, filter CryptoRechargeAddressPageFilter, cursor int64, limit int64) ([]*TCryptoRechargeAddress, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -89,7 +90,7 @@ func appendCryptoAddressStatusFilter(builder *sqlutil.PageQueryBuilder, status i
 	}
 }
 
-func (m *defaultTCryptoRechargeAddressModel) FindOneAssignable(ctx context.Context, tenantId int64, walletType int64, coin string, chainCode int64) (*TCryptoRechargeAddress, error) {
+func (m *customTCryptoRechargeAddressModel) FindOneAssignable(ctx context.Context, tenantId int64, walletType int64, coin string, chainCode int64) (*TCryptoRechargeAddress, error) {
 	query := fmt.Sprintf(
 		`SELECT %s FROM %s
 		WHERE tenant_id = ? AND user_id = 0 AND wallet_type = ? AND coin = ? AND chain_code = ? AND status = 2
@@ -106,7 +107,7 @@ func (m *defaultTCryptoRechargeAddressModel) FindOneAssignable(ctx context.Conte
 	return &item, nil
 }
 
-func (m *defaultTCryptoRechargeAddressModel) FindAssignableCandidates(ctx context.Context, tenantId int64, walletType int64, coin string, chainCode int64, reusableBefore int64, limit int64) ([]*TCryptoRechargeAddress, error) {
+func (m *customTCryptoRechargeAddressModel) FindAssignableCandidates(ctx context.Context, tenantId int64, walletType int64, coin string, chainCode int64, reusableBefore int64, limit int64) ([]*TCryptoRechargeAddress, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	query := fmt.Sprintf(
 		`SELECT %s FROM %s
@@ -125,7 +126,7 @@ func (m *defaultTCryptoRechargeAddressModel) FindAssignableCandidates(ctx contex
 	return list, nil
 }
 
-func (m *defaultTCryptoRechargeAddressModel) HasEnabledAddress(ctx context.Context, tenantId int64, walletType int64, coin string, chainCode int64) (bool, error) {
+func (m *customTCryptoRechargeAddressModel) HasEnabledAddress(ctx context.Context, tenantId int64, walletType int64, coin string, chainCode int64) (bool, error) {
 	query := fmt.Sprintf(
 		`SELECT COUNT(1) FROM %s
 		WHERE tenant_id = ? AND wallet_type = ? AND coin = ? AND chain_code = ? AND status = 2`,

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"wklive/common/worklease"
 	"wklive/proto/common"
 	"wklive/proto/option"
 	"wklive/services/option/internal/logic/helpers"
@@ -22,6 +23,7 @@ type ProcessTradeEventsLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 	logx.Logger
+	owner string
 }
 
 func NewProcessTradeEventsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ProcessTradeEventsLogic {
@@ -29,6 +31,7 @@ func NewProcessTradeEventsLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 		ctx:    ctx,
 		svcCtx: svcCtx,
 		Logger: logx.WithContext(ctx),
+		owner:  worklease.NewOwner("option-trade-outbox"),
 	}
 }
 
@@ -36,9 +39,6 @@ func NewProcessTradeEventsLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 func (l *ProcessTradeEventsLogic) ProcessTradeEvents(in *option.OptionTaskReq) (*option.OptionTaskResp, error) {
 	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_trade_events", func() (*option.OptionTaskResp, error) {
 		now := time.Now().Unix()
-		if err := l.svcCtx.OptionOutboxModel.RecoverStale(l.ctx, now-60, now); err != nil {
-			return nil, err
-		}
 		staleBarrierEvents, metricErr := l.svcCtx.OptionOutboxModel.
 			CountStaleComboDebitBarrierBlocked(l.ctx, in.TenantId, now-60)
 		if metricErr != nil {
@@ -55,7 +55,7 @@ func (l *ProcessTradeEventsLogic) ProcessTradeEvents(in *option.OptionTaskReq) (
 			l.Errorf("sample option operations metrics failed: %v", sampleErr)
 		}
 		for {
-			events, err := l.svcCtx.OptionOutboxModel.FindRunnable(l.ctx, in.TenantId, now, 100)
+			events, err := l.svcCtx.OptionOutboxModel.FindRunnable(l.ctx, in.TenantId, now, now-60, 100)
 			if err != nil {
 				return nil, err
 			}
@@ -77,7 +77,7 @@ func (l *ProcessTradeEventsLogic) ProcessTradeEvents(in *option.OptionTaskReq) (
 
 func (l *ProcessTradeEventsLogic) processOneTradeEvent(event *models.TOptionOutbox) error {
 	now := time.Now().Unix()
-	claimed, err := l.svcCtx.OptionOutboxModel.Claim(l.ctx, event.Id, now)
+	claimed, err := l.svcCtx.OptionOutboxModel.Claim(l.ctx, event.Id, l.owner, now, now-60)
 	if err != nil || !claimed {
 		return err
 	}
@@ -96,7 +96,7 @@ func (l *ProcessTradeEventsLogic) processOneTradeEvent(event *models.TOptionOutb
 		if err != nil {
 			return err
 		}
-		if current.Status != int64(option.OptionEventStatus_OPTION_EVENT_STATUS_PROCESSING) {
+		if current.Status != int64(option.OptionEventStatus_OPTION_EVENT_STATUS_PROCESSING) || current.ClaimedBy != l.owner {
 			return nil
 		}
 		if current.EventType != int64(option.OptionEventType_OPTION_EVENT_TYPE_TRADE_POSITION) {
@@ -107,6 +107,8 @@ func (l *ProcessTradeEventsLogic) processOneTradeEvent(event *models.TOptionOutb
 			current.Status = int64(option.OptionEventStatus_OPTION_EVENT_STATUS_SUCCESS)
 			current.LastErrorMsg = ""
 			current.NextRetryAt = 0
+			current.ClaimedBy = ""
+			current.ClaimedAt = 0
 			current.UpdateTimes = now
 			return outboxModel.Update(ctx, current)
 		}
@@ -226,6 +228,8 @@ func (l *ProcessTradeEventsLogic) processOneTradeEvent(event *models.TOptionOutb
 		current.Status = int64(option.OptionEventStatus_OPTION_EVENT_STATUS_SUCCESS)
 		current.LastErrorMsg = ""
 		current.NextRetryAt = 0
+		current.ClaimedBy = ""
+		current.ClaimedAt = 0
 		current.UpdateTimes = now
 		return outboxModel.Update(ctx, current)
 	})
@@ -298,20 +302,21 @@ func createCloseMarginReleaseInstructions(
 }
 
 func (l *ProcessTradeEventsLogic) markTradeEventFailed(event *models.TOptionOutbox, cause error) error {
-	current, err := l.svcCtx.OptionOutboxModel.FindOne(l.ctx, event.Id)
+	retryCount := event.RetryCount + 1
+	status := int64(option.OptionEventStatus_OPTION_EVENT_STATUS_FAILED)
+	if retryCount >= 20 {
+		status = int64(option.OptionEventStatus_OPTION_EVENT_STATUS_MANUAL_REVIEW)
+	}
+	now := time.Now()
+	updated, err := l.svcCtx.OptionOutboxModel.MarkFailed(
+		l.ctx, event.Id, l.owner, retryCount, status,
+		now.Add(optionAssetRetryDelay(retryCount)).Unix(), cause.Error(), now.Unix(),
+	)
 	if err != nil {
 		return err
 	}
-	current.RetryCount++
-	current.Status = int64(option.OptionEventStatus_OPTION_EVENT_STATUS_FAILED)
-	if current.RetryCount >= 20 {
-		current.Status = int64(option.OptionEventStatus_OPTION_EVENT_STATUS_MANUAL_REVIEW)
+	if !updated {
+		return errors.New("option outbox lease lost before marking failure")
 	}
-	current.NextRetryAt = time.Now().Add(optionAssetRetryDelay(current.RetryCount)).Unix()
-	current.LastErrorMsg = cause.Error()
-	if len(current.LastErrorMsg) > 500 {
-		current.LastErrorMsg = current.LastErrorMsg[:500]
-	}
-	current.UpdateTimes = time.Now().Unix()
-	return l.svcCtx.OptionOutboxModel.Update(l.ctx, current)
+	return nil
 }

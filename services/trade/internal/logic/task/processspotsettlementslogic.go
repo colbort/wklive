@@ -291,7 +291,7 @@ func (l *ProcessFillSettlementsLogic) markSucceeded(item *models.TTradeSettlemen
 		instructionModel := tx.TradeSettlementInstruction
 		fillModel := tx.TradeFill
 		reservationModel := tx.TradeAssetReservation
-		eventModel := tx.BizTradeEvent
+		eventModel := tx.TradeEventOutbox
 
 		current, err := instructionModel.FindOneForUpdate(ctx, item.Id)
 		if err != nil {
@@ -397,7 +397,7 @@ func (l *ProcessFillSettlementsLogic) settleFillIfReady(fill *models.TTradeFill)
 		fillModel := tx.TradeFill
 		orderModel := tx.TradeOrder
 		instructionModel := tx.TradeSettlementInstruction
-		eventModel := tx.BizTradeEvent
+		eventModel := tx.TradeEventOutbox
 		instructions, err := instructionModel.FindByFillId(ctx, fill.TenantId, fill.Id)
 		if err != nil {
 			return err

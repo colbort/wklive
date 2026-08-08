@@ -229,7 +229,7 @@ func NullableTradeEventJSON(raw string) sql.NullString {
 
 func CreateTaskEvent(ctx context.Context, svcCtx *svc.ServiceContext, tenantID int64, eventType, bizType string, bizID int64, userID, symbolID, productType int64, payload string) error {
 	bizIDText := strconv.FormatInt(bizID, 10)
-	exists, _, err := svcCtx.BizTradeEventModel.FindPage(ctx, models.BizTradeEventPageFilter{
+	exists, _, err := svcCtx.TradeEventOutboxModel.FindPage(ctx, models.TradeEventOutboxPageFilter{
 		TenantId:    tenantID,
 		EventType:   eventType,
 		BizType:     bizType,
@@ -247,7 +247,7 @@ func CreateTaskEvent(ctx context.Context, svcCtx *svc.ServiceContext, tenantID i
 		return err
 	}
 	now := utils.NowMillis()
-	_, err = svcCtx.BizTradeEventModel.Insert(ctx, &models.TBizTradeEvent{
+	_, err = svcCtx.TradeEventOutboxModel.Insert(ctx, &models.TTradeEventOutbox{
 		TenantId:       tenantID,
 		EventNo:        eventNo,
 		EventType:      eventType,

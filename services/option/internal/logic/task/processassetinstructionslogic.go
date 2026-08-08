@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"wklive/common/worklease"
 	"wklive/proto/asset"
 	"wklive/proto/common"
 	"wklive/proto/option"
@@ -23,6 +24,7 @@ import (
 type ProcessAssetInstructionsLogic struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
+	owner  string
 	logx.Logger
 }
 
@@ -30,6 +32,7 @@ func NewProcessAssetInstructionsLogic(ctx context.Context, svcCtx *svc.ServiceCo
 	return &ProcessAssetInstructionsLogic{
 		ctx:    ctx,
 		svcCtx: svcCtx,
+		owner:  worklease.NewOwner("option-asset-instruction"),
 		Logger: logx.WithContext(ctx),
 	}
 }
@@ -39,16 +42,13 @@ func (l *ProcessAssetInstructionsLogic) ProcessAssetInstructions(in *option.Opti
 	return helpers.RunTaskWithLock(l.ctx, l.svcCtx, "process_asset_instructions", func() (*option.OptionTaskResp, error) {
 		cursor := int64(0)
 		now := time.Now().Unix()
-		if _, err := l.svcCtx.OptionAssetInstructionModel.RecoverStale(
-			l.ctx, in.TenantId, now-60, now,
-		); err != nil {
-			return nil, err
-		}
 		if err := l.expirePhysicalDeliveryCures(in.TenantId, now); err != nil {
 			return nil, err
 		}
 		for {
-			items, err := l.svcCtx.OptionAssetInstructionModel.FindRunnable(l.ctx, in.TenantId, now, cursor, 100)
+			items, err := l.svcCtx.OptionAssetInstructionModel.FindRunnable(
+				l.ctx, in.TenantId, now, now-60, cursor, 100,
+			)
 			if err != nil {
 				return nil, err
 			}
@@ -70,7 +70,9 @@ func (l *ProcessAssetInstructionsLogic) ProcessAssetInstructions(in *option.Opti
 
 func (l *ProcessAssetInstructionsLogic) processOne(item *models.TOptionAssetInstruction) error {
 	item.UpdateTimes = time.Now().Unix()
-	claimed, err := l.svcCtx.OptionAssetInstructionModel.Claim(l.ctx, item.Id, item.UpdateTimes)
+	claimed, err := l.svcCtx.OptionAssetInstructionModel.Claim(
+		l.ctx, item.Id, l.owner, item.UpdateTimes, item.UpdateTimes-60,
+	)
 	if err != nil {
 		return err
 	}
@@ -78,6 +80,8 @@ func (l *ProcessAssetInstructionsLogic) processOne(item *models.TOptionAssetInst
 		return nil
 	}
 	item.Status = int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PROCESSING)
+	item.ClaimedBy = l.owner
+	item.ClaimedAt = item.UpdateTimes
 
 	err = l.execute(item)
 	if err != nil {
@@ -108,8 +112,14 @@ func (l *ProcessAssetInstructionsLogic) processOne(item *models.TOptionAssetInst
 	item.NextRetryAt = 0
 	item.LastErrorMsg = ""
 	item.UpdateTimes = time.Now().Unix()
-	if err := l.svcCtx.OptionAssetInstructionModel.Update(l.ctx, item); err != nil {
+	checkpointed, err := l.svcCtx.OptionAssetInstructionModel.CheckpointSuccess(
+		l.ctx, item, l.owner, item.UpdateTimes,
+	)
+	if err != nil {
 		return err
+	}
+	if !checkpointed {
+		return errors.New("option asset instruction lease lost before success checkpoint")
 	}
 	if err := l.runInstructionCompletion(item); err != nil {
 		if updateErr := l.markInstructionFailed(item, err); updateErr != nil {
@@ -117,6 +127,17 @@ func (l *ProcessAssetInstructionsLogic) processOne(item *models.TOptionAssetInst
 		}
 		return err
 	}
+	released, err := l.svcCtx.OptionAssetInstructionModel.ReleaseSuccess(
+		l.ctx, item.Id, l.owner, time.Now().Unix(),
+	)
+	if err != nil {
+		return err
+	}
+	if !released {
+		return errors.New("option asset instruction lease lost before success release")
+	}
+	item.ClaimedBy = ""
+	item.ClaimedAt = 0
 	return nil
 }
 
@@ -727,9 +748,17 @@ func (l *ProcessAssetInstructionsLogic) markInstructionFailed(item *models.TOpti
 	}
 	item.LastErrorMsg = cause.Error()
 	item.UpdateTimes = time.Now().Unix()
-	if err := l.svcCtx.OptionAssetInstructionModel.Update(l.ctx, item); err != nil {
+	updated, err := l.svcCtx.OptionAssetInstructionModel.MarkFailed(
+		l.ctx, item, l.owner, item.UpdateTimes,
+	)
+	if err != nil {
 		return err
 	}
+	if !updated {
+		return errors.New("option asset instruction lease lost before failure update")
+	}
+	item.ClaimedBy = ""
+	item.ClaimedAt = 0
 	if err := l.markPhysicalDeliveryUnitFailed(item, cause); err != nil {
 		return err
 	}

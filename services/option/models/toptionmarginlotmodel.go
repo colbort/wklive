@@ -43,7 +43,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionMarginLotModel) HasPendingPortfolioByWallet(
+func (m *customTOptionMarginLotModel) HasPendingPortfolioByWallet(
 	ctx context.Context, tenantId, userId int64, settleCoin string,
 ) (bool, error) {
 	var count int64
@@ -58,7 +58,7 @@ WHERE l.tenant_id = ? AND l.user_id = ? AND c.settle_coin = ?
 	return count > 0, err
 }
 
-func (m *defaultTOptionMarginLotModel) FindRemainingByPositionForUpdate(
+func (m *customTOptionMarginLotModel) FindRemainingByPositionForUpdate(
 	ctx context.Context, tenantId, positionId int64,
 ) ([]*TOptionMarginLot, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -69,7 +69,7 @@ ORDER BY id FOR UPDATE`, tOptionMarginLotRows, m.table)
 	return items, err
 }
 
-func (m *defaultTOptionMarginLotModel) FindPortfolioActiveByAccount(
+func (m *customTOptionMarginLotModel) FindPortfolioActiveByAccount(
 	ctx context.Context,
 	tenantId, userId, accountId int64,
 	settleCoin string,
@@ -97,7 +97,7 @@ ORDER BY l.id FOR UPDATE`, m.table, accountClause)
 	return list, err
 }
 
-func (m *defaultTOptionMarginLotModel) FindOneForUpdate(ctx context.Context, id int64) (*TOptionMarginLot, error) {
+func (m *customTOptionMarginLotModel) FindOneForUpdate(ctx context.Context, id int64) (*TOptionMarginLot, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1 FOR UPDATE", tOptionMarginLotRows, m.table)
 	var item TOptionMarginLot
 	if err := m.QueryRowNoCacheCtx(ctx, &item, query, id); err != nil {
@@ -106,7 +106,7 @@ func (m *defaultTOptionMarginLotModel) FindOneForUpdate(ctx context.Context, id 
 	return &item, nil
 }
 
-func (m *defaultTOptionMarginLotModel) FindClosableByPosition(ctx context.Context, tenantId, positionId int64) ([]*TOptionMarginLot, error) {
+func (m *customTOptionMarginLotModel) FindClosableByPosition(ctx context.Context, tenantId, positionId int64) ([]*TOptionMarginLot, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
 WHERE tenant_id = ? AND position_id = ? AND status IN (?, ?, ?)
   AND remaining_quantity > 0 AND remaining_margin > pending_margin
@@ -120,7 +120,7 @@ ORDER BY id FOR UPDATE`, tOptionMarginLotRows, m.table)
 	return list, err
 }
 
-func (m *defaultTOptionMarginLotModel) FindActiveByPosition(ctx context.Context, tenantId, positionId int64) ([]*TOptionMarginLot, error) {
+func (m *customTOptionMarginLotModel) FindActiveByPosition(ctx context.Context, tenantId, positionId int64) ([]*TOptionMarginLot, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
 WHERE tenant_id = ? AND position_id = ? AND status IN (?, ?) AND remaining_margin > pending_margin
 ORDER BY id FOR UPDATE`, tOptionMarginLotRows, m.table)

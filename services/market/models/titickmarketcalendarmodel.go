@@ -36,7 +36,7 @@ func NewTItickMarketCalendarModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...
 	}
 }
 
-func (m *defaultTItickMarketCalendarModel) Ensure(ctx context.Context, category, market, exchange, timezone string, now int64) (*TItickMarketCalendar, error) {
+func (m *customTItickMarketCalendarModel) Ensure(ctx context.Context, category, market, exchange, timezone string, now int64) (*TItickMarketCalendar, error) {
 	category = strings.ToLower(strings.TrimSpace(category))
 	market = strings.ToUpper(strings.TrimSpace(market))
 	exchange = strings.TrimSpace(exchange)
@@ -61,7 +61,7 @@ func (m *defaultTItickMarketCalendarModel) Ensure(ctx context.Context, category,
 // Resolve uses the exact exchange first and falls back to the market default
 // row (exchange=”). This query intentionally bypasses generated unique-key
 // cache because it can match two candidate keys.
-func (m *defaultTItickMarketCalendarModel) Resolve(ctx context.Context, category, market, exchange string) (*TItickMarketCalendar, error) {
+func (m *customTItickMarketCalendarModel) Resolve(ctx context.Context, category, market, exchange string) (*TItickMarketCalendar, error) {
 	category = strings.ToLower(strings.TrimSpace(category))
 	market = strings.ToUpper(strings.TrimSpace(market))
 	exchange = strings.TrimSpace(exchange)
@@ -75,14 +75,14 @@ func (m *defaultTItickMarketCalendarModel) Resolve(ctx context.Context, category
 	return &out, nil
 }
 
-func (m *defaultTItickMarketCalendarModel) FindSessions(ctx context.Context, calendarID int64) ([]*TItickMarketSession, error) {
+func (m *customTItickMarketCalendarModel) FindSessions(ctx context.Context, calendarID int64) ([]*TItickMarketSession, error) {
 	var out []*TItickMarketSession
 	err := m.QueryRowsNoCacheCtx(ctx, &out, `SELECT `+tItickMarketSessionRows+`
 		FROM t_itick_market_session WHERE calendar_id=? ORDER BY sort,id`, calendarID)
 	return out, err
 }
 
-func (m *defaultTItickMarketCalendarModel) FindHoliday(ctx context.Context, calendarID int64, date time.Time) (*TItickMarketHoliday, error) {
+func (m *customTItickMarketCalendarModel) FindHoliday(ctx context.Context, calendarID int64, date time.Time) (*TItickMarketHoliday, error) {
 	var out TItickMarketHoliday
 	err := m.QueryRowNoCacheCtx(ctx, &out, `SELECT `+tItickMarketHolidayRows+`
 		FROM t_itick_market_holiday WHERE calendar_id=? AND trade_date=? LIMIT 1`, calendarID, date.Format("2006-01-02"))

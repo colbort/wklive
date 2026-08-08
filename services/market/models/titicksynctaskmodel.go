@@ -33,7 +33,7 @@ func NewTItickSyncTaskModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.
 	}
 }
 
-func (m *defaultTItickSyncTaskModel) FindPage(ctx context.Context, cursor, limit int64) ([]*TItickSyncTask, int64, error) {
+func (m *customTItickSyncTaskModel) FindPage(ctx context.Context, cursor, limit int64) ([]*TItickSyncTask, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -84,7 +84,7 @@ func (m *defaultTItickSyncTaskModel) FindPage(ctx context.Context, cursor, limit
 	return list, total, nil
 }
 
-func (m *defaultTItickSyncTaskModel) UpdateStatusByTaskNo(ctx context.Context, taskNo string, status int64, message string, updatedAt int64) error {
+func (m *customTItickSyncTaskModel) UpdateStatusByTaskNo(ctx context.Context, taskNo string, status int64, message string, updatedAt int64) error {
 	query := fmt.Sprintf("update %s set status = ?, message = ?, update_times = ? where task_no = ?", m.table)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, query, status, message, updatedAt, taskNo)

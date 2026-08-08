@@ -92,6 +92,10 @@ func ExecuteSubscribeOperation(ctx context.Context, svcCtx *svc.ServiceContext, 
 		conn := sqlx.NewSqlConnFromSession(session)
 		orderModel := models.NewTStakeOrderModel(conn, svcCtx.Config.CacheRedis)
 		operationModel := models.NewTStakeOperationModel(conn, svcCtx.Config.CacheRedis)
+		currentOperation, err := lockOwnedStakeOperation(ctx, operationModel, operation)
+		if err != nil {
+			return err
+		}
 		current, err := orderModel.FindOneForUpdate(ctx, order.Id)
 		if err != nil {
 			return err
@@ -104,12 +108,7 @@ func ExecuteSubscribeOperation(ctx context.Context, svcCtx *svc.ServiceContext, 
 				return err
 			}
 		}
-		operation.Status = StakeOperationStatusSucceeded
-		operation.NextRetryAt = 0
-		operation.LastError = ""
-		operation.Version++
-		operation.UpdateTimes = now
-		return operationModel.Update(ctx, operation)
+		return completeStakeOperation(ctx, operationModel, currentOperation, operation, now)
 	})
 	if err != nil {
 		return err
@@ -226,6 +225,10 @@ func finalizeRewardOperation(ctx context.Context, svcCtx *svc.ServiceContext, op
 		orderModel := models.NewTStakeOrderModel(conn, svcCtx.Config.CacheRedis)
 		operationModel := models.NewTStakeOperationModel(conn, svcCtx.Config.CacheRedis)
 		rewardLogModel := models.NewTStakeRewardLogModel(conn, svcCtx.Config.CacheRedis)
+		currentOperation, err := lockOwnedStakeOperation(ctx, operationModel, operation)
+		if err != nil {
+			return err
+		}
 		order, err := orderModel.FindOneForUpdate(ctx, operation.OrderId)
 		if err != nil {
 			return err
@@ -256,12 +259,7 @@ func finalizeRewardOperation(ctx context.Context, svcCtx *svc.ServiceContext, op
 		if err := rewardLogModel.Update(ctx, rewardLog); err != nil {
 			return err
 		}
-		operation.Status = StakeOperationStatusSucceeded
-		operation.NextRetryAt = 0
-		operation.LastError = ""
-		operation.Version++
-		operation.UpdateTimes = now
-		return operationModel.Update(ctx, operation)
+		return completeStakeOperation(ctx, operationModel, currentOperation, operation, now)
 	})
 }
 
@@ -481,6 +479,10 @@ func finalizeRedeemOperation(ctx context.Context, svcCtx *svc.ServiceContext, op
 		positionModel := models.NewTStakeUserPositionModel(conn, svcCtx.Config.CacheRedis)
 		operationModel := models.NewTStakeOperationModel(conn, svcCtx.Config.CacheRedis)
 		redeemLogModel := models.NewTStakeRedeemLogModel(conn, svcCtx.Config.CacheRedis)
+		currentOperation, err := lockOwnedStakeOperation(ctx, operationModel, operation)
+		if err != nil {
+			return err
+		}
 
 		order, err := orderModel.FindOneForUpdate(ctx, operation.OrderId)
 		if err != nil {
@@ -535,12 +537,7 @@ func finalizeRedeemOperation(ctx context.Context, svcCtx *svc.ServiceContext, op
 		if !operation.RewardAmount.IsPositive() {
 			operation.RewardStatus = StakeOperationStepNotRequired
 		}
-		operation.Status = StakeOperationStatusSucceeded
-		operation.NextRetryAt = 0
-		operation.LastError = ""
-		operation.Version++
-		operation.UpdateTimes = now
-		return operationModel.Update(ctx, operation)
+		return completeStakeOperation(ctx, operationModel, currentOperation, operation, now)
 	})
 }
 
@@ -559,10 +556,18 @@ func stepStatus(amount decimal.Decimal) int64 {
 }
 
 func persistProcessingOperation(ctx context.Context, svcCtx *svc.ServiceContext, operation *models.TStakeOperation) error {
+	now := utils.NowMillis()
+	version, err := svcCtx.StakeOperationModel.CheckpointSteps(
+		ctx, operation.Id, operation.Version,
+		operation.PrincipalStatus, operation.RewardStatus, operation.FeeStatus, now,
+	)
+	if err != nil {
+		return err
+	}
 	operation.Status = StakeOperationStatusProcessing
-	operation.Version++
-	operation.UpdateTimes = utils.NowMillis()
-	return svcCtx.StakeOperationModel.Update(ctx, operation)
+	operation.Version = version
+	operation.UpdateTimes = now
+	return nil
 }
 
 func markRedeemOperationFailed(ctx context.Context, svcCtx *svc.ServiceContext, operation *models.TStakeOperation, cause error) error {
@@ -570,10 +575,40 @@ func markRedeemOperationFailed(ctx context.Context, svcCtx *svc.ServiceContext, 
 	now := utils.NowMillis()
 	status := StakeOperationRetryStatus(operation.RetryCount)
 	next := now + int64((30 * time.Second).Milliseconds())
-	if err := svcCtx.StakeOperationModel.MarkRetryable(ctx, operation.Id, operation.RetryCount, next, status, now, truncateOperationError(cause.Error())); err != nil {
+	if err := svcCtx.StakeOperationModel.MarkRetryable(ctx, operation.Id, operation.Version, operation.RetryCount, next, status, now, truncateOperationError(cause.Error())); err != nil {
 		return fmt.Errorf("%w; mark retry failed: %v", cause, err)
 	}
 	return cause
+}
+
+func lockOwnedStakeOperation(
+	ctx context.Context, model models.TStakeOperationModel, operation *models.TStakeOperation,
+) (*models.TStakeOperation, error) {
+	current, err := model.FindOneForUpdate(ctx, operation.Id)
+	if err != nil {
+		return nil, err
+	}
+	if current.Status != StakeOperationStatusProcessing || current.Version != operation.Version {
+		return nil, ErrStakeOperationProcessing
+	}
+	return current, nil
+}
+
+func completeStakeOperation(
+	ctx context.Context,
+	model models.TStakeOperationModel,
+	current, operation *models.TStakeOperation,
+	now int64,
+) error {
+	current.PrincipalStatus = operation.PrincipalStatus
+	current.RewardStatus = operation.RewardStatus
+	current.FeeStatus = operation.FeeStatus
+	current.Status = StakeOperationStatusSucceeded
+	current.NextRetryAt = 0
+	current.LastError = ""
+	current.Version++
+	current.UpdateTimes = now
+	return model.Update(ctx, current)
 }
 
 func requireAssetSuccess(base *common.RespBase) error {

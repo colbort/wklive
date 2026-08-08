@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TUserIdentityModel = (*customTUserIdentityModel)(nil)
@@ -33,7 +34,7 @@ func NewTUserIdentityModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.O
 	}
 }
 
-func (m *defaultTUserIdentityModel) FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUserIdentity, int64, error) {
+func (m *customTUserIdentityModel) FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUserIdentity, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -85,7 +86,7 @@ func (m *defaultTUserIdentityModel) FindPage(ctx context.Context, tenantId int64
 	return list, total, nil
 }
 
-func (m *defaultTUserIdentityModel) FindByEmail(ctx context.Context, tenantId int64, email string) (*TUserIdentity, error) {
+func (m *customTUserIdentityModel) FindByEmail(ctx context.Context, tenantId int64, email string) (*TUserIdentity, error) {
 	var resp TUserIdentity
 
 	query := fmt.Sprintf(`
@@ -107,7 +108,7 @@ func (m *defaultTUserIdentityModel) FindByEmail(ctx context.Context, tenantId in
 	return &resp, nil
 }
 
-func (m *defaultTUserIdentityModel) FindByPhone(ctx context.Context, tenantId int64, phone string) (*TUserIdentity, error) {
+func (m *customTUserIdentityModel) FindByPhone(ctx context.Context, tenantId int64, phone string) (*TUserIdentity, error) {
 	var resp TUserIdentity
 
 	query := fmt.Sprintf(`
@@ -129,7 +130,7 @@ func (m *defaultTUserIdentityModel) FindByPhone(ctx context.Context, tenantId in
 	return &resp, nil
 }
 
-func (m *defaultTUserIdentityModel) DeleteByUserId(ctx context.Context, userId int64) error {
+func (m *customTUserIdentityModel) DeleteByUserId(ctx context.Context, userId int64) error {
 	var resp TUserIdentity
 
 	query := fmt.Sprintf(`

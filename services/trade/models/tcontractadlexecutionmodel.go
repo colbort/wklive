@@ -32,23 +32,23 @@ func NewTContractAdlExecutionModel(conn sqlx.SqlConn, c cache.CacheConf, opts ..
 	}
 }
 
-func (m *defaultTContractAdlExecutionModel) FindByLiquidation(ctx context.Context, t, l int64) ([]*TContractAdlExecution, error) {
+func (m *customTContractAdlExecutionModel) FindByLiquidation(ctx context.Context, t, l int64) ([]*TContractAdlExecution, error) {
 	var rows []*TContractAdlExecution
 	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tContractAdlExecutionRows+" FROM t_contract_adl_execution WHERE tenant_id=? AND liquidation_id=? ORDER BY id", t, l)
 	return rows, err
 }
-func (m *defaultTContractAdlExecutionModel) FindOneByExecutionNo(ctx context.Context, t int64, n string) (*TContractAdlExecution, error) {
+func (m *customTContractAdlExecutionModel) FindOneByExecutionNo(ctx context.Context, t int64, n string) (*TContractAdlExecution, error) {
 	var r TContractAdlExecution
 	err := m.QueryRowNoCacheCtx(ctx, &r, "SELECT "+tContractAdlExecutionRows+" FROM t_contract_adl_execution WHERE tenant_id=? AND execution_no=?", t, n)
 	return &r, err
 }
-func (m *defaultTContractAdlExecutionModel) FindOneForUpdate(ctx context.Context, id int64) (*TContractAdlExecution, error) {
+func (m *customTContractAdlExecutionModel) FindOneForUpdate(ctx context.Context, id int64) (*TContractAdlExecution, error) {
 	var r TContractAdlExecution
 	err := m.QueryRowNoCacheCtx(ctx, &r, "SELECT "+tContractAdlExecutionRows+" FROM t_contract_adl_execution WHERE id=? FOR UPDATE", id)
 	return &r, err
 }
 
-func (m *defaultTContractAdlExecutionModel) FindRecoverable(ctx context.Context, limit int64) ([]*TContractAdlExecution, error) {
+func (m *customTContractAdlExecutionModel) FindRecoverable(ctx context.Context, limit int64) ([]*TContractAdlExecution, error) {
 	var rows []*TContractAdlExecution
 	err := m.QueryRowsNoCacheCtx(ctx, &rows, "SELECT "+tContractAdlExecutionRows+" FROM t_contract_adl_execution WHERE status IN (1,2,4) ORDER BY update_times,id LIMIT ?", limit)
 	return rows, err

@@ -24,7 +24,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionMatchSequenceModel) Next(ctx context.Context, tenantId, contractId int64) (int64, error) {
+func (m *customTOptionMatchSequenceModel) Next(ctx context.Context, tenantId, contractId int64) (int64, error) {
 	now := time.Now().Unix()
 	insert := fmt.Sprintf(`INSERT INTO %s (tenant_id, contract_id, next_sequence, update_times)
 VALUES (?, ?, 1, ?) ON DUPLICATE KEY UPDATE update_times = update_times`, m.table)

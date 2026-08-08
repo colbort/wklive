@@ -5,10 +5,11 @@ import (
 	"database/sql"
 	"fmt"
 
+	"wklive/common/sqlutil"
+
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TAssetLockModel = (*customTAssetLockModel)(nil)
@@ -48,7 +49,7 @@ func NewTAssetLockModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Opti
 	}
 }
 
-func (m *defaultTAssetLockModel) FindOneByTenantBizNo(ctx context.Context, tenantId int64, bizType, bizNo string) (*TAssetLock, error) {
+func (m *customTAssetLockModel) FindOneByTenantBizNo(ctx context.Context, tenantId int64, bizType, bizNo string) (*TAssetLock, error) {
 	var item TAssetLock
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND biz_type=? AND biz_no=? ORDER BY id DESC LIMIT 1", tAssetLockRows, m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &item, query, tenantId, bizType, bizNo); err != nil {
@@ -57,7 +58,7 @@ func (m *defaultTAssetLockModel) FindOneByTenantBizNo(ctx context.Context, tenan
 	return &item, nil
 }
 
-func (m *defaultTAssetLockModel) FindPage(ctx context.Context, filter AssetLockPageFilter, cursor int64, limit int64) ([]*TAssetLock, int64, error) {
+func (m *customTAssetLockModel) FindPage(ctx context.Context, filter AssetLockPageFilter, cursor int64, limit int64) ([]*TAssetLock, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -112,7 +113,7 @@ func (m *defaultTAssetLockModel) FindPage(ctx context.Context, filter AssetLockP
 
 // 解锁时更新锁仓记录：unlock_amount += amount，remain_amount -= amount
 // 当 remain_amount 为 0 时，状态改为 3（已解锁）；否则为 2（部分解锁）
-func (m *defaultTAssetLockModel) UpdateUnlock(ctx context.Context, lockNo string, amount decimal.Decimal, updateTimes int64) (bool, error) {
+func (m *customTAssetLockModel) UpdateUnlock(ctx context.Context, lockNo string, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	query := fmt.Sprintf(`
 		UPDATE %s
 		SET 
@@ -139,7 +140,7 @@ func (m *defaultTAssetLockModel) UpdateUnlock(ctx context.Context, lockNo string
 
 // 扣减锁仓记录：remain_amount -= amount
 // 当 remain_amount 为 0 时，状态改为 4（已关闭）；否则为 2（部分解锁）
-func (m *defaultTAssetLockModel) UpdateDeduct(ctx context.Context, lockNo string, amount decimal.Decimal, updateTimes int64) (bool, error) {
+func (m *customTAssetLockModel) UpdateDeduct(ctx context.Context, lockNo string, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	query := fmt.Sprintf(`
 		UPDATE %s
 		SET 

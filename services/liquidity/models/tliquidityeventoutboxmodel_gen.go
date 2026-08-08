@@ -54,6 +54,8 @@ type (
 		RetryCount    int64  `db:"retry_count"`     // 重试次数
 		MaxRetryCount int64  `db:"max_retry_count"` // 最大重试次数
 		NextRetryAt   int64  `db:"next_retry_at"`   // 下次重试时间
+		ClaimedBy     string `db:"claimed_by"`      // 当前领取实例
+		ClaimedAt     int64  `db:"claimed_at"`      // 领取时间（毫秒）
 		LastErrorMsg  string `db:"last_error_msg"`  // 最近错误
 		SentAt        int64  `db:"sent_at"`         // 发送成功时间
 		CreateTimes   int64  `db:"create_times"`    // 创建时间
@@ -124,8 +126,8 @@ func (m *defaultTLiquidityEventOutboxModel) Insert(ctx context.Context, data *TL
 	tLiquidityEventOutboxEventNoKey := fmt.Sprintf("%s%v", cacheTLiquidityEventOutboxEventNoPrefix, data.EventNo)
 	tLiquidityEventOutboxIdKey := fmt.Sprintf("%s%v", cacheTLiquidityEventOutboxIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityEventOutboxRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.EventNo, data.EventType, data.Topic, data.MessageKey, data.AggregateType, data.AggregateId, data.Payload, data.Status, data.RetryCount, data.MaxRetryCount, data.NextRetryAt, data.LastErrorMsg, data.SentAt, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tLiquidityEventOutboxRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.EventNo, data.EventType, data.Topic, data.MessageKey, data.AggregateType, data.AggregateId, data.Payload, data.Status, data.RetryCount, data.MaxRetryCount, data.NextRetryAt, data.ClaimedBy, data.ClaimedAt, data.LastErrorMsg, data.SentAt, data.CreateTimes, data.UpdateTimes)
 	}, tLiquidityEventOutboxEventNoKey, tLiquidityEventOutboxIdKey)
 	return ret, err
 }
@@ -140,7 +142,7 @@ func (m *defaultTLiquidityEventOutboxModel) Update(ctx context.Context, newData 
 	tLiquidityEventOutboxIdKey := fmt.Sprintf("%s%v", cacheTLiquidityEventOutboxIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tLiquidityEventOutboxRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.EventNo, newData.EventType, newData.Topic, newData.MessageKey, newData.AggregateType, newData.AggregateId, newData.Payload, newData.Status, newData.RetryCount, newData.MaxRetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.SentAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.EventNo, newData.EventType, newData.Topic, newData.MessageKey, newData.AggregateType, newData.AggregateId, newData.Payload, newData.Status, newData.RetryCount, newData.MaxRetryCount, newData.NextRetryAt, newData.ClaimedBy, newData.ClaimedAt, newData.LastErrorMsg, newData.SentAt, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tLiquidityEventOutboxEventNoKey, tLiquidityEventOutboxIdKey)
 	return err
 }

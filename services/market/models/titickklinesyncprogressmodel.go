@@ -38,7 +38,7 @@ func NewTItickKlineSyncProgressModel(conn sqlx.SqlConn, c cache.CacheConf, opts 
 	}
 }
 
-func (m *defaultTItickKlineSyncProgressModel) FindOrCreate(ctx context.Context, categoryCode, market, symbol, interval string) (*TItickKlineSyncProgress, error) {
+func (m *customTItickKlineSyncProgressModel) FindOrCreate(ctx context.Context, categoryCode, market, symbol, interval string) (*TItickKlineSyncProgress, error) {
 	exist, err := m.FindOneByCategoryCodeMarketSymbolInterval(ctx, categoryCode, market, symbol, interval)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
@@ -62,7 +62,7 @@ func (m *defaultTItickKlineSyncProgressModel) FindOrCreate(ctx context.Context, 
 	return m.FindOneByCategoryCodeMarketSymbolInterval(ctx, categoryCode, market, symbol, interval)
 }
 
-func (m *defaultTItickKlineSyncProgressModel) FindOneByCategoryCodeMarketSymbolIntervalNoCache(ctx context.Context, categoryCode, market, symbol, interval string) (*TItickKlineSyncProgress, error) {
+func (m *customTItickKlineSyncProgressModel) FindOneByCategoryCodeMarketSymbolIntervalNoCache(ctx context.Context, categoryCode, market, symbol, interval string) (*TItickKlineSyncProgress, error) {
 	var resp TItickKlineSyncProgress
 	query := fmt.Sprintf("select %s from %s where `category_code` = ? and `market` = ? and `symbol` = ? and `interval` = ? limit 1", tItickKlineSyncProgressRows, m.table)
 	err := m.QueryRowNoCacheCtx(ctx, &resp, query, categoryCode, market, symbol, interval)
@@ -76,7 +76,7 @@ func (m *defaultTItickKlineSyncProgressModel) FindOneByCategoryCodeMarketSymbolI
 	}
 }
 
-func (m *defaultTItickKlineSyncProgressModel) UpdateSyncStart(ctx context.Context, id int64, mode string, now int64) error {
+func (m *customTItickKlineSyncProgressModel) UpdateSyncStart(ctx context.Context, id int64, mode string, now int64) error {
 	query := fmt.Sprintf(`
 		update %s
 		set sync_status = 1,
@@ -92,7 +92,7 @@ func (m *defaultTItickKlineSyncProgressModel) UpdateSyncStart(ctx context.Contex
 	return err
 }
 
-func (m *defaultTItickKlineSyncProgressModel) UpdateSyncSuccess(ctx context.Context, id int64, mode string, latestTs, contiguousTs, recentCheckTs, oldestTs, fullSynced, now int64, message string) error {
+func (m *customTItickKlineSyncProgressModel) UpdateSyncSuccess(ctx context.Context, id int64, mode string, latestTs, contiguousTs, recentCheckTs, oldestTs, fullSynced, now int64, message string) error {
 	query := fmt.Sprintf(`
 		update %s
 		set sync_status = 2,
@@ -114,7 +114,7 @@ func (m *defaultTItickKlineSyncProgressModel) UpdateSyncSuccess(ctx context.Cont
 	return err
 }
 
-func (m *defaultTItickKlineSyncProgressModel) UpdateSyncFail(ctx context.Context, id int64, mode string, now int64, message string) error {
+func (m *customTItickKlineSyncProgressModel) UpdateSyncFail(ctx context.Context, id int64, mode string, now int64, message string) error {
 	query := fmt.Sprintf(`
 		update %s
 		set sync_status = 3,

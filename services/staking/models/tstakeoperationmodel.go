@@ -17,7 +17,9 @@ type (
 	TStakeOperationModel interface {
 		tStakeOperationModel
 		Claim(ctx context.Context, id, now int64) (bool, error)
-		MarkRetryable(ctx context.Context, id, retryCount, nextRetryAt, status, now int64, lastError string) error
+		CheckpointSteps(ctx context.Context, id, leaseVersion, principalStatus, rewardStatus, feeStatus, now int64) (int64, error)
+		MarkRetryable(ctx context.Context, id, leaseVersion, retryCount, nextRetryAt, status, now int64, lastError string) error
+		FindOneForUpdate(ctx context.Context, id int64) (*TStakeOperation, error)
 		FindRetryablePage(ctx context.Context, tenantId, now, cursor, limit int64) ([]*TStakeOperation, error)
 		FindAdminPage(ctx context.Context, filter StakeOperationPageFilter, cursor, limit int64) ([]*TStakeOperation, int64, error)
 		ResetForManualRetry(ctx context.Context, id, operatorID, now int64, reason string) (bool, error)
@@ -44,7 +46,7 @@ func NewTStakeOperationModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache
 	}
 }
 
-func (m *defaultTStakeOperationModel) Claim(ctx context.Context, id, now int64) (bool, error) {
+func (m *customTStakeOperationModel) Claim(ctx context.Context, id, now int64) (bool, error) {
 	staleBefore := now - 60_000
 	result, err := m.ExecNoCacheCtx(ctx, `UPDATE t_stake_operation
 		SET status=2,version=version+1,update_times=?
@@ -56,14 +58,54 @@ func (m *defaultTStakeOperationModel) Claim(ctx context.Context, id, now int64) 
 	return affected == 1, err
 }
 
-func (m *defaultTStakeOperationModel) MarkRetryable(ctx context.Context, id, retryCount, nextRetryAt, status, now int64, lastError string) error {
-	_, err := m.ExecNoCacheCtx(ctx, `UPDATE t_stake_operation
-		SET status=?,retry_count=?,next_retry_at=?,last_error=?,version=version+1,update_times=?
-		WHERE id=? AND status=2`, status, retryCount, nextRetryAt, lastError, now, id)
-	return err
+func (m *customTStakeOperationModel) CheckpointSteps(
+	ctx context.Context, id, leaseVersion, principalStatus, rewardStatus, feeStatus, now int64,
+) (int64, error) {
+	result, err := m.ExecNoCacheCtx(ctx, `UPDATE t_stake_operation
+		SET principal_status=?,reward_status=?,fee_status=?,version=version+1,update_times=?
+		WHERE id=? AND status=2 AND version=?`,
+		principalStatus, rewardStatus, feeStatus, now, id, leaseVersion)
+	if err != nil {
+		return 0, err
+	}
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	if affected != 1 {
+		return 0, sql.ErrNoRows
+	}
+	return leaseVersion + 1, nil
 }
 
-func (m *defaultTStakeOperationModel) FindRetryablePage(ctx context.Context, tenantId, now, cursor, limit int64) ([]*TStakeOperation, error) {
+func (m *customTStakeOperationModel) MarkRetryable(ctx context.Context, id, leaseVersion, retryCount, nextRetryAt, status, now int64, lastError string) error {
+	result, err := m.ExecNoCacheCtx(ctx, `UPDATE t_stake_operation
+		SET status=?,retry_count=?,next_retry_at=?,last_error=?,version=version+1,update_times=?
+		WHERE id=? AND status=2 AND version=?`, status, retryCount, nextRetryAt, lastError, now, id, leaseVersion)
+	if err != nil {
+		return err
+	}
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if affected != 1 {
+		return sql.ErrNoRows
+	}
+	return nil
+}
+
+func (m *customTStakeOperationModel) FindOneForUpdate(ctx context.Context, id int64) (*TStakeOperation, error) {
+	var item TStakeOperation
+	if err := m.QueryRowNoCacheCtx(ctx, &item,
+		fmt.Sprintf("SELECT %s FROM %s WHERE id=? LIMIT 1 FOR UPDATE", tStakeOperationRows, m.table), id,
+	); err != nil {
+		return nil, err
+	}
+	return &item, nil
+}
+
+func (m *customTStakeOperationModel) FindRetryablePage(ctx context.Context, tenantId, now, cursor, limit int64) ([]*TStakeOperation, error) {
 	if limit <= 0 || limit > 500 {
 		limit = 100
 	}
@@ -86,7 +128,7 @@ func (m *defaultTStakeOperationModel) FindRetryablePage(ctx context.Context, ten
 	return items, nil
 }
 
-func (m *defaultTStakeOperationModel) FindAdminPage(ctx context.Context, filter StakeOperationPageFilter, cursor, limit int64) ([]*TStakeOperation, int64, error) {
+func (m *customTStakeOperationModel) FindAdminPage(ctx context.Context, filter StakeOperationPageFilter, cursor, limit int64) ([]*TStakeOperation, int64, error) {
 	if limit <= 0 || limit > 100 {
 		limit = 20
 	}
@@ -136,7 +178,7 @@ func (m *defaultTStakeOperationModel) FindAdminPage(ctx context.Context, filter 
 	return items, total, nil
 }
 
-func (m *defaultTStakeOperationModel) ResetForManualRetry(ctx context.Context, id, operatorID, now int64, reason string) (bool, error) {
+func (m *customTStakeOperationModel) ResetForManualRetry(ctx context.Context, id, operatorID, now int64, reason string) (bool, error) {
 	item, err := m.FindOne(ctx, id)
 	if err != nil {
 		return false, err

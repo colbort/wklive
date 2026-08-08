@@ -23,7 +23,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionTradeCorrectionLegModel) FindByCorrection(
+func (m *customTOptionTradeCorrectionLegModel) FindByCorrection(
 	ctx context.Context, tenantId, correctionId int64,
 ) ([]*TOptionTradeCorrectionLeg, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s

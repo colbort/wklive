@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TTradeUserConfigModel = (*customTTradeUserConfigModel)(nil)
@@ -30,7 +31,7 @@ func NewTTradeUserConfigModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cach
 	}
 }
 
-func (m *defaultTTradeUserConfigModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TTradeUserConfig, int64, error) {
+func (m *customTTradeUserConfigModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TTradeUserConfig, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()

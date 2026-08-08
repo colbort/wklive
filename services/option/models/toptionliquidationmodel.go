@@ -102,7 +102,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionLiquidationModel) CancelStalePortfolio(
+func (m *customTOptionLiquidationModel) CancelStalePortfolio(
 	ctx context.Context, id, now int64, reason string,
 ) (bool, error) {
 	current, err := m.FindOne(ctx, id)
@@ -150,7 +150,7 @@ type OptionLiquidationPageFilter struct {
 	Status     int64
 }
 
-func (m *defaultTOptionLiquidationModel) ResetForManualRetry(ctx context.Context, id, now int64) (bool, error) {
+func (m *customTOptionLiquidationModel) ResetForManualRetry(ctx context.Context, id, now int64) (bool, error) {
 	result, err := m.ExecNoCacheCtx(ctx, `UPDATE t_option_liquidation
 SET status = ?, retry_count = 0, insurance_attempt = insurance_attempt + 1,
     remaining_deficit = 0, last_error_msg = '', update_times = ?
@@ -166,7 +166,7 @@ WHERE id = ? AND status IN (?, ?)`,
 	return rows == 1, err
 }
 
-func (m *defaultTOptionLiquidationModel) FindPage(ctx context.Context, filter OptionLiquidationPageFilter, cursor, limit int64) ([]*TOptionLiquidation, int64, error) {
+func (m *customTOptionLiquidationModel) FindPage(ctx context.Context, filter OptionLiquidationPageFilter, cursor, limit int64) ([]*TOptionLiquidation, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
@@ -193,7 +193,7 @@ func (m *defaultTOptionLiquidationModel) FindPage(ctx context.Context, filter Op
 	return list, total, err
 }
 
-func (m *defaultTOptionLiquidationModel) FindRunnable(ctx context.Context, tenantId int64, limit int64) ([]*TOptionLiquidation, error) {
+func (m *customTOptionLiquidationModel) FindRunnable(ctx context.Context, tenantId int64, limit int64) ([]*TOptionLiquidation, error) {
 	if limit <= 0 || limit > 500 {
 		limit = 100
 	}
@@ -214,7 +214,7 @@ func (m *defaultTOptionLiquidationModel) FindRunnable(ctx context.Context, tenan
 	return list, err
 }
 
-func (m *defaultTOptionLiquidationModel) FindOneForUpdate(ctx context.Context, id int64) (*TOptionLiquidation, error) {
+func (m *customTOptionLiquidationModel) FindOneForUpdate(ctx context.Context, id int64) (*TOptionLiquidation, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1 FOR UPDATE", tOptionLiquidationRows, m.table)
 	var item TOptionLiquidation
 	if err := m.QueryRowNoCacheCtx(ctx, &item, query, id); err != nil {
@@ -223,7 +223,7 @@ func (m *defaultTOptionLiquidationModel) FindOneForUpdate(ctx context.Context, i
 	return &item, nil
 }
 
-func (m *defaultTOptionLiquidationModel) Claim(ctx context.Context, id, now int64) (bool, error) {
+func (m *customTOptionLiquidationModel) Claim(ctx context.Context, id, now int64) (bool, error) {
 	result, err := m.ExecNoCacheCtx(ctx, `UPDATE t_option_liquidation
 SET status = ?, update_times = ?
 WHERE id = ? AND status IN (?, ?)`,
@@ -238,7 +238,7 @@ WHERE id = ? AND status IN (?, ?)`,
 	return rows == 1, err
 }
 
-func (m *defaultTOptionLiquidationModel) FindOpenByPosition(ctx context.Context, tenantId, positionId int64) (*TOptionLiquidation, error) {
+func (m *customTOptionLiquidationModel) FindOpenByPosition(ctx context.Context, tenantId, positionId int64) (*TOptionLiquidation, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
 WHERE tenant_id = ? AND position_id = ? AND status IN (?, ?, ?, ?)
 ORDER BY id DESC LIMIT 1`, tOptionLiquidationRows, m.table)
@@ -255,7 +255,7 @@ ORDER BY id DESC LIMIT 1`, tOptionLiquidationRows, m.table)
 	return &item, nil
 }
 
-func (m *defaultTOptionLiquidationModel) FindOpenByWallet(
+func (m *customTOptionLiquidationModel) FindOpenByWallet(
 	ctx context.Context, tenantId, userId int64, settleCoin string,
 ) (*TOptionLiquidation, error) {
 	query := fmt.Sprintf(`SELECT l.* FROM %s l
@@ -277,7 +277,7 @@ ORDER BY l.id DESC LIMIT 1`, m.table)
 	return &item, nil
 }
 
-func (m *defaultTOptionLiquidationModel) FindOpenPortfolioByWallet(
+func (m *customTOptionLiquidationModel) FindOpenPortfolioByWallet(
 	ctx context.Context, tenantId, userId int64, settleCoin string,
 ) (*TOptionLiquidation, error) {
 	query := fmt.Sprintf(`SELECT l.* FROM %s l

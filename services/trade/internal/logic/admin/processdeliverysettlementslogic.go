@@ -570,7 +570,7 @@ func (l *ProcessDeliverySettlementsLogic) archiveCompletedBatches(tenantID int64
 		now := utils.NowMillis()
 		if err = l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
 			batchModel := tx.ContractDeliveryBatch
-			eventModel := tx.BizTradeEvent
+			eventModel := tx.TradeEventOutbox
 			current, findErr := batchModel.FindOne(ctx, batch.Id)
 			if findErr != nil {
 				return findErr
@@ -584,7 +584,7 @@ func (l *ProcessDeliverySettlementsLogic) archiveCompletedBatches(tenantID int64
 			if updateErr := batchModel.Update(ctx, current); updateErr != nil {
 				return updateErr
 			}
-			_, insertErr := eventModel.Insert(ctx, &models.TBizTradeEvent{
+			_, insertErr := eventModel.Insert(ctx, &models.TTradeEventOutbox{
 				TenantId:      current.TenantId,
 				EventNo:       current.BatchNo + "-ARCHIVED",
 				EventType:     "CONTRACT_SETTLED",

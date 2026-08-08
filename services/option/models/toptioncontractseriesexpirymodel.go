@@ -23,7 +23,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionContractSeriesExpiryModel) FindBySeries(
+func (m *customTOptionContractSeriesExpiryModel) FindBySeries(
 	ctx context.Context, tenantId, seriesId int64,
 ) ([]*TOptionContractSeriesExpiry, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND series_id=? ORDER BY sequence_no,id",

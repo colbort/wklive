@@ -13,6 +13,7 @@ import (
 	"wklive/common/alert"
 	market "wklive/common/market"
 	"wklive/common/notify"
+	"wklive/common/worklease"
 	"wklive/services/market/internal/market/types"
 	"wklive/services/market/internal/svc"
 	"wklive/services/market/models"
@@ -273,7 +274,9 @@ func processSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, work
 		go func() {
 			defer workers.Done()
 			for row := range jobs {
-				claimed, claimErr := svcCtx.SnapshotOutboxModel.Claim(ctx, row.Id, time.Now().UnixMilli())
+				owner := worklease.NewOwner("market-snapshot-outbox")
+				now := time.Now()
+				claimed, claimErr := svcCtx.SnapshotOutboxModel.Claim(ctx, row.Id, owner, now.UnixMilli(), now.Add(-time.Minute).UnixMilli())
 				if claimErr != nil {
 					errs <- claimErr
 					continue
@@ -282,15 +285,15 @@ func processSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, work
 					continue
 				}
 				claimedCount.Add(1)
-				completed, publishErr := publishSnapshotOutbox(ctx, svcCtx, row)
+				completed, publishErr := publishSnapshotOutbox(ctx, svcCtx, owner, row)
 				if publishErr != nil {
-					if markErr := svcCtx.SnapshotOutboxModel.MarkFailure(ctx, row.Id, publishErr.Error(), time.Now().UnixMilli()); markErr != nil {
+					if markErr := svcCtx.SnapshotOutboxModel.MarkFailure(ctx, row.Id, owner, publishErr.Error(), time.Now().UnixMilli()); markErr != nil {
 						errs <- markErr
 					}
 					continue
 				}
 				if !completed {
-					if markErr := svcCtx.SnapshotOutboxModel.MarkSuccess(ctx, row.Id, time.Now().UnixMilli()); markErr != nil {
+					if markErr := svcCtx.SnapshotOutboxModel.MarkSuccess(ctx, row.Id, owner, time.Now().UnixMilli()); markErr != nil {
 						errs <- markErr
 					}
 				}
@@ -319,7 +322,7 @@ func processSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, work
 // publishSnapshotOutbox returns completed=true when it atomically moved the
 // row to success. completed=false means the caller must close a row whose
 // publication checkpoints were already present from an earlier attempt.
-func publishSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, row *models.TItickSnapshotOutbox) (bool, error) {
+func publishSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, owner string, row *models.TItickSnapshotOutbox) (bool, error) {
 	var payload snapshotOutboxPayload
 	if err := json.Unmarshal([]byte(row.Payload), &payload); err != nil {
 		return false, err
@@ -331,7 +334,7 @@ func publishSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, row 
 		if err := svcCtx.MarketDataCache.PublishAuthoritativeSnapshot(ctx, payload.Snapshot); err != nil {
 			return false, err
 		}
-		if err := svcCtx.SnapshotOutboxModel.MarkRedisPublished(ctx, row.Id, time.Now().UnixMilli()); err != nil {
+		if err := svcCtx.SnapshotOutboxModel.MarkRedisPublished(ctx, row.Id, owner, time.Now().UnixMilli()); err != nil {
 			return false, fmt.Errorf("checkpoint Redis snapshot publication: %w", err)
 		}
 		row.RedisPublishedAt = time.Now().UnixMilli()
@@ -340,7 +343,7 @@ func publishSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, row 
 	// is complete even though the original full quote is no longer available.
 	if payload.Quote == nil {
 		if row.EventPublishedAt == 0 {
-			if err := svcCtx.SnapshotOutboxModel.CompleteAfterEventPublished(ctx, row.Id, time.Now().UnixMilli()); err != nil {
+			if err := svcCtx.SnapshotOutboxModel.CompleteAfterEventPublished(ctx, row.Id, owner, time.Now().UnixMilli()); err != nil {
 				return false, fmt.Errorf("complete skipped market event publication: %w", err)
 			}
 			row.EventPublishedAt = time.Now().UnixMilli()
@@ -370,7 +373,7 @@ func publishSnapshotOutbox(ctx context.Context, svcCtx *svc.ServiceContext, row 
 	if err := svcCtx.SnapshotPublisher.PublishKey(ctx, market.AuthoritativeSnapshotTopic, []byte(strings.ToUpper(event.PartitionKey())), event); err != nil {
 		return false, err
 	}
-	if err := svcCtx.SnapshotOutboxModel.CompleteAfterEventPublished(ctx, row.Id, time.Now().UnixMilli()); err != nil {
+	if err := svcCtx.SnapshotOutboxModel.CompleteAfterEventPublished(ctx, row.Id, owner, time.Now().UnixMilli()); err != nil {
 		return false, fmt.Errorf("complete market event publication: %w", err)
 	}
 	row.EventPublishedAt = time.Now().UnixMilli()

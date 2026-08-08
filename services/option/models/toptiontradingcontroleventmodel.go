@@ -33,7 +33,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionTradingControlEventModel) FindPage(
+func (m *customTOptionTradingControlEventModel) FindPage(
 	ctx context.Context, filter OptionTradingControlEventPageFilter, cursor, limit int64,
 ) ([]*TOptionTradingControlEvent, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)

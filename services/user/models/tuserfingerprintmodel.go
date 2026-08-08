@@ -4,9 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TUserFingerprintModel = (*customTUserFingerprintModel)(nil)
@@ -38,7 +39,7 @@ func NewTUserFingerprintModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cach
 	}
 }
 
-func (m *defaultTUserFingerprintModel) UpsertSeen(ctx context.Context, data *TUserFingerprint) error {
+func (m *customTUserFingerprintModel) UpsertSeen(ctx context.Context, data *TUserFingerprint) error {
 	query := fmt.Sprintf(`
 		INSERT INTO %s (%s)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -56,7 +57,7 @@ func (m *defaultTUserFingerprintModel) UpsertSeen(ctx context.Context, data *TUs
 	return err
 }
 
-func (m *defaultTUserFingerprintModel) FindGuestFingerprintCandidates(ctx context.Context, tenantId int64, matchKey string, cursor int64, limit int64) ([]*UserFingerprintMatchRow, error) {
+func (m *customTUserFingerprintModel) FindGuestFingerprintCandidates(ctx context.Context, tenantId int64, matchKey string, cursor int64, limit int64) ([]*UserFingerprintMatchRow, error) {
 	if limit <= 0 || limit > 500 {
 		limit = 500
 	}

@@ -207,11 +207,14 @@ CREATE TABLE `t_itick_snapshot_outbox` (
   `id` BIGINT NOT NULL AUTO_INCREMENT, `snapshot_id` VARCHAR(64) NOT NULL,
   `payload` JSON NOT NULL, `status` TINYINT NOT NULL DEFAULT 1 COMMENT '1 pending 2 processing 3 success 4 failed 5 manual',
   `retry_count` INT NOT NULL DEFAULT 0, `next_retry_at` BIGINT NOT NULL DEFAULT 0,
+  `claimed_by` VARCHAR(128) NOT NULL DEFAULT '' COMMENT '当前领取实例',
+  `claimed_at` BIGINT NOT NULL DEFAULT 0 COMMENT '领取时间（毫秒）',
   `redis_published_at` BIGINT NOT NULL DEFAULT 0 COMMENT 'Redis权威快照发布完成时间',
   `event_published_at` BIGINT NOT NULL DEFAULT 0 COMMENT '权威行情Kafka事件发布完成时间；无需发布时同样置完成',
   `last_error_msg` VARCHAR(500) NOT NULL DEFAULT '', `create_times` BIGINT NOT NULL, `update_times` BIGINT NOT NULL,
   PRIMARY KEY (`id`), UNIQUE KEY `uk_snapshot_outbox` (`snapshot_id`),
   KEY `idx_snapshot_outbox_retry` (`status`,`next_retry_at`,`id`),
+  KEY `idx_snapshot_outbox_claim` (`status`,`claimed_at`,`id`),
   KEY `idx_snapshot_outbox_cleanup` (`status`,`update_times`,`id`),
   KEY `idx_snapshot_outbox_health` (`status`,`create_times`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权威行情异步发布与Redis修复任务';

@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TRiskOrderCheckLogModel = (*customTRiskOrderCheckLogModel)(nil)
@@ -41,7 +42,7 @@ func NewTRiskOrderCheckLogModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...ca
 	}
 }
 
-func (m *defaultTRiskOrderCheckLogModel) FindPage(ctx context.Context, filter RiskOrderCheckLogPageFilter, cursor int64, limit int64) ([]*TRiskOrderCheckLog, int64, error) {
+func (m *customTRiskOrderCheckLogModel) FindPage(ctx context.Context, filter RiskOrderCheckLogPageFilter, cursor int64, limit int64) ([]*TRiskOrderCheckLog, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)

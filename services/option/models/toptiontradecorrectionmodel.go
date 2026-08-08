@@ -35,7 +35,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionTradeCorrectionModel) FindOneForUpdate(
+func (m *customTOptionTradeCorrectionModel) FindOneForUpdate(
 	ctx context.Context, id int64,
 ) (*TOptionTradeCorrection, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1 FOR UPDATE", tOptionTradeCorrectionRows, m.table)
@@ -46,7 +46,7 @@ func (m *defaultTOptionTradeCorrectionModel) FindOneForUpdate(
 	return &item, nil
 }
 
-func (m *defaultTOptionTradeCorrectionModel) FindActiveByTradeForUpdate(
+func (m *customTOptionTradeCorrectionModel) FindActiveByTradeForUpdate(
 	ctx context.Context, tenantId, tradeId int64,
 ) (*TOptionTradeCorrection, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -64,7 +64,7 @@ ORDER BY id DESC LIMIT 1 FOR UPDATE`, tOptionTradeCorrectionRows, m.table)
 	return &item, nil
 }
 
-func (m *defaultTOptionTradeCorrectionModel) FindPage(
+func (m *customTOptionTradeCorrectionModel) FindPage(
 	ctx context.Context,
 	filter OptionTradeCorrectionPageFilter,
 	cursor, limit int64,

@@ -4,12 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/shopspring/decimal"
-	"github.com/zeromicro/go-zero/core/stores/cache"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"wklive/common/sqlutil"
 	"wklive/proto/common"
 	"wklive/proto/option"
+
+	"github.com/shopspring/decimal"
+	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 var _ TOptionOrderModel = (*customTOptionOrderModel)(nil)
@@ -70,7 +71,7 @@ type (
 // HasUnsafeContractResumeOrders includes cancellation and expiry transitions:
 // the contract must remain paused until the order reaches a terminal state,
 // because CANCELING/EXPIRING can still have an Asset release in flight.
-func (m *defaultTOptionOrderModel) HasUnsafeContractResumeOrders(
+func (m *customTOptionOrderModel) HasUnsafeContractResumeOrders(
 	ctx context.Context, tenantId, contractId int64,
 ) (bool, error) {
 	query := fmt.Sprintf(`SELECT COUNT(1) FROM %s
@@ -93,7 +94,7 @@ WHERE tenant_id=? AND contract_id=? AND status IN (?,?,?,?,?)`, m.table)
 // that can trade or whose cancellation/expiry funds have not reached a
 // terminal state. Callers serialize this check with the user's trading-control
 // row so no new order can pass admission while the kill switch is active.
-func (m *defaultTOptionOrderModel) HasUnsafeKillSwitchReleaseOrders(
+func (m *customTOptionOrderModel) HasUnsafeKillSwitchReleaseOrders(
 	ctx context.Context, tenantId, userId int64,
 ) (bool, error) {
 	query := fmt.Sprintf(`SELECT COUNT(1) FROM %s
@@ -112,7 +113,7 @@ WHERE tenant_id=? AND user_id=? AND status IN (?,?,?,?,?)`, m.table)
 	return count > 0, nil
 }
 
-func (m *defaultTOptionOrderModel) FindOrderBookLevels(
+func (m *customTOptionOrderModel) FindOrderBookLevels(
 	ctx context.Context, tenantId, contractId, side, limit int64,
 ) ([]*OptionOrderBookLevel, error) {
 	if limit <= 0 {
@@ -146,7 +147,7 @@ LIMIT ?`, m.table, orderBy)
 	return items, err
 }
 
-func (m *defaultTOptionOrderModel) HasActiveByContract(
+func (m *customTOptionOrderModel) HasActiveByContract(
 	ctx context.Context, tenantId, contractId int64,
 ) (bool, error) {
 	query := fmt.Sprintf(`SELECT COUNT(1) FROM %s
@@ -167,7 +168,7 @@ WHERE tenant_id=? AND contract_id=? AND status IN (?,?,?)`, m.table)
 // trade or whose cancellation/expiry funds have not reached a terminal state.
 // MMP recovery must serialize this check with the config row so the group
 // cannot be reactivated while Asset release is still pending.
-func (m *defaultTOptionOrderModel) FindFirstUnsafeMMPOrderForUpdate(
+func (m *customTOptionOrderModel) FindFirstUnsafeMMPOrderForUpdate(
 	ctx context.Context, tenantId, userId, contractId int64, groupCode string,
 ) (*TOptionOrder, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -189,7 +190,7 @@ ORDER BY id LIMIT 1 FOR UPDATE`, tOptionOrderRows, m.table)
 	return &item, nil
 }
 
-func (m *defaultTOptionOrderModel) FindActiveMMPOrders(
+func (m *customTOptionOrderModel) FindActiveMMPOrders(
 	ctx context.Context, tenantId, userId, contractId int64, groupCode string, cursor, limit int64,
 ) ([]*TOptionOrder, error) {
 	limit = sqlutil.NormalizeLimit(limit)
@@ -216,7 +217,7 @@ ORDER BY id DESC LIMIT ?`, tOptionOrderRows, m.table, cursorClause)
 	return items, nil
 }
 
-func (m *defaultTOptionOrderModel) SumActiveOpenQty(
+func (m *customTOptionOrderModel) SumActiveOpenQty(
 	ctx context.Context, tenantId, userId, contractId, side int64,
 ) (decimal.Decimal, error) {
 	userClause := ""
@@ -241,7 +242,7 @@ WHERE tenant_id = ? AND contract_id = ? AND side = ? AND position_effect = ?
 	return aggregate.Decimal()
 }
 
-func (m *defaultTOptionOrderModel) FindCrossingSelfOrders(
+func (m *customTOptionOrderModel) FindCrossingSelfOrders(
 	ctx context.Context, tenantId, userId, contractId, side int64, price decimal.Decimal,
 ) ([]*TOptionOrder, error) {
 	priceClause := "price <= ?"
@@ -265,7 +266,7 @@ ORDER BY %s FOR UPDATE`, tOptionOrderRows, m.table, priceClause, orderBy)
 	return list, err
 }
 
-func (m *defaultTOptionOrderModel) FindActiveCloseOrdersForUpdate(
+func (m *customTOptionOrderModel) FindActiveCloseOrdersForUpdate(
 	ctx context.Context,
 	tenantId, userId, accountId, contractId int64,
 ) ([]*TOptionOrder, error) {
@@ -286,7 +287,7 @@ ORDER BY id FOR UPDATE`, tOptionOrderRows, m.table)
 	return list, err
 }
 
-func (m *defaultTOptionOrderModel) FindPortfolioRiskOrders(
+func (m *customTOptionOrderModel) FindPortfolioRiskOrders(
 	ctx context.Context,
 	tenantId, userId, accountId int64,
 ) ([]*TOptionOrder, error) {
@@ -313,7 +314,7 @@ ORDER BY id FOR UPDATE`, tOptionOrderRows, m.table, accountClause)
 	return list, err
 }
 
-func (m *defaultTOptionOrderModel) FindOneForUpdate(ctx context.Context, id int64) (*TOptionOrder, error) {
+func (m *customTOptionOrderModel) FindOneForUpdate(ctx context.Context, id int64) (*TOptionOrder, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1 FOR UPDATE", tOptionOrderRows, m.table)
 	var item TOptionOrder
 	if err := m.QueryRowNoCacheCtx(ctx, &item, query, id); err != nil {
@@ -322,7 +323,7 @@ func (m *defaultTOptionOrderModel) FindOneForUpdate(ctx context.Context, id int6
 	return &item, nil
 }
 
-func (m *defaultTOptionOrderModel) FindComboChildren(
+func (m *customTOptionOrderModel) FindComboChildren(
 	ctx context.Context, tenantId, comboOrderId int64,
 ) ([]*TOptionOrder, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -335,7 +336,7 @@ ORDER BY combo_leg_no, id`, tOptionOrderRows, m.table)
 	return list, nil
 }
 
-func (m *defaultTOptionOrderModel) FindComboChildrenForUpdate(
+func (m *customTOptionOrderModel) FindComboChildrenForUpdate(
 	ctx context.Context, tenantId, comboOrderId int64,
 ) ([]*TOptionOrder, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -348,7 +349,7 @@ ORDER BY combo_leg_no, id FOR UPDATE`, tOptionOrderRows, m.table)
 	return list, nil
 }
 
-func (m *defaultTOptionOrderModel) FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId, userId int64, clientOrderId string) (*TOptionOrder, error) {
+func (m *customTOptionOrderModel) FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId, userId int64, clientOrderId string) (*TOptionOrder, error) {
 	if clientOrderId == "" {
 		return nil, ErrNotFound
 	}
@@ -367,7 +368,7 @@ func NewTOptionOrderModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Op
 	}
 }
 
-func (m *defaultTOptionOrderModel) FindPage(ctx context.Context, filter OptionOrderPageFilter, cursor int64, limit int64) ([]*TOptionOrder, int64, error) {
+func (m *customTOptionOrderModel) FindPage(ctx context.Context, filter OptionOrderPageFilter, cursor int64, limit int64) ([]*TOptionOrder, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
@@ -413,7 +414,7 @@ func (m *defaultTOptionOrderModel) FindPage(ctx context.Context, filter OptionOr
 	return list, total, nil
 }
 
-func (m *defaultTOptionOrderModel) FindMatchableOrders(ctx context.Context, tenantId, contractId, side, excludeUserId, excludeAccountId int64, price decimal.Decimal, limit int64) ([]*TOptionOrder, error) {
+func (m *customTOptionOrderModel) FindMatchableOrders(ctx context.Context, tenantId, contractId, side, excludeUserId, excludeAccountId int64, price decimal.Decimal, limit int64) ([]*TOptionOrder, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	priceClause := "price <= ?"
@@ -447,7 +448,7 @@ ORDER BY %s LIMIT ? FOR UPDATE`, tOptionOrderRows, m.table, priceClause, orderBy
 	return list, nil
 }
 
-func (m *defaultTOptionOrderModel) FindAllMatchableOrders(ctx context.Context, tenantId, contractId, side, excludeUserId, excludeAccountId int64, price decimal.Decimal) ([]*TOptionOrder, error) {
+func (m *customTOptionOrderModel) FindAllMatchableOrders(ctx context.Context, tenantId, contractId, side, excludeUserId, excludeAccountId int64, price decimal.Decimal) ([]*TOptionOrder, error) {
 	priceClause := "price <= ?"
 	orderBy := "price ASC, id ASC"
 	if side == int64(common.Side_SIDE_BUY) {

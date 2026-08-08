@@ -36,7 +36,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionSettlementPriceModel) FindLatest(
+func (m *customTOptionSettlementPriceModel) FindLatest(
 	ctx context.Context,
 	tenantId, contractId int64,
 ) (*TOptionSettlementPrice, error) {
@@ -51,7 +51,7 @@ func (m *defaultTOptionSettlementPriceModel) FindLatest(
 	return &item, nil
 }
 
-func (m *defaultTOptionSettlementPriceModel) FindLatestForUpdate(
+func (m *customTOptionSettlementPriceModel) FindLatestForUpdate(
 	ctx context.Context,
 	tenantId, contractId int64,
 ) (*TOptionSettlementPrice, error) {
@@ -66,7 +66,7 @@ func (m *defaultTOptionSettlementPriceModel) FindLatestForUpdate(
 	return &item, nil
 }
 
-func (m *defaultTOptionSettlementPriceModel) FindOneForUpdate(
+func (m *customTOptionSettlementPriceModel) FindOneForUpdate(
 	ctx context.Context,
 	id int64,
 ) (*TOptionSettlementPrice, error) {
@@ -78,7 +78,7 @@ func (m *defaultTOptionSettlementPriceModel) FindOneForUpdate(
 	return &item, nil
 }
 
-func (m *defaultTOptionSettlementPriceModel) FindLatestConfirmed(
+func (m *customTOptionSettlementPriceModel) FindLatestConfirmed(
 	ctx context.Context,
 	tenantId, contractId int64,
 ) (*TOptionSettlementPrice, error) {
@@ -96,7 +96,7 @@ func (m *defaultTOptionSettlementPriceModel) FindLatestConfirmed(
 	return &item, nil
 }
 
-func (m *defaultTOptionSettlementPriceModel) FindPage(
+func (m *customTOptionSettlementPriceModel) FindPage(
 	ctx context.Context,
 	filter OptionSettlementPricePageFilter,
 	cursor, limit int64,

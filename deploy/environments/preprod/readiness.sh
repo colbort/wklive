@@ -41,6 +41,11 @@ repository_checks() {
   if ! grep -qE -- '- \.\.:/workspace' "$PREPROD_COMPOSE"; then pass "pre-production does not mount the repository workspace"; else fail "pre-production does not mount the repository workspace"; fi
   require_contains "$DEPLOY_ROOT/common/docker/Dockerfile.db-init" 'COPY --from=database-release /release /release' "database SQL is bundled into the release image"
   require_contains "$PREPROD_COMPOSE" 'DB_INIT_PROFILE: preprod' "pre-production business seed profile is explicit"
+  require_contains "$REPO_ROOT/init.sql" 'INSERT INTO (`)?sys_menu(`)?' "management menus are part of initialization data"
+  require_contains "$DEPLOY_ROOT/common/dbinit/main.go" '"super_admin", "超级管理员"' "system super administrator is seeded from release credentials"
+  require_contains "$REPO_ROOT/services/system/system.sql" 'CREATE TABLE sys_job' "scheduled jobs are part of the System schema"
+  require_contains "$DEPLOY_ROOT/common/dbinit/main.go" '20260730_add_option_jobs.sql' "Option scheduled jobs are replayed during initialization"
+  require_contains "$DEPLOY_ROOT/common/dbinit/main.go" '20260803_add_staking_jobs.sql' "Staking scheduled jobs are replayed during initialization"
   require_contains "$SCRIPT_DIR/data/bootstrap.sql" "'BTCUSDT'.*'ETHUSDT'|'BTCUSDT'" "BTCUSDT baseline is versioned"
   require_contains "$SCRIPT_DIR/data/bootstrap.sql" "'ETHUSDT'" "ETHUSDT baseline is versioned"
   if ! grep -Eq "'([A-Z0-9]+USDT)'" "$SCRIPT_DIR/data/bootstrap.sql" ||
@@ -165,6 +170,53 @@ if [ "$baseline_counts" = "1|1|2|8|4|2|8|0" ]; then
   pass "pre-production tenant, Market, Trade, Option and Staking baseline data is complete"
 else
   fail "pre-production tenant, Market, Trade, Option and Staking baseline data is complete (counts=${baseline_counts:-unavailable})"
+fi
+
+system_seed_status=$(compose exec -T mysql sh -lc '
+mysql -N -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "
+SELECT CONCAT(
+  IF((SELECT COUNT(*)
+      FROM sys_user user_account
+      JOIN sys_user_role user_role ON user_role.tenant_id=user_account.tenant_id AND user_role.user_id=user_account.id
+      JOIN sys_role role_record ON role_record.tenant_id=user_role.tenant_id AND role_record.id=user_role.role_id
+      WHERE user_account.tenant_id=0 AND user_account.app_scope=1 AND user_account.enabled=1
+        AND role_record.code=0x73757065725F61646D696E AND role_record.enabled=1)=1,1,0), CHAR(124),
+  IF((SELECT COUNT(*) FROM sys_menu WHERE app_scope=1 AND enabled=1)>0,1,0), CHAR(124),
+  IF((SELECT COUNT(*)
+      FROM sys_menu menu_record
+      WHERE menu_record.app_scope=1 AND menu_record.enabled=1
+        AND NOT EXISTS (
+          SELECT 1 FROM sys_role role_record
+          JOIN sys_role_menu role_menu ON role_menu.tenant_id=role_record.tenant_id AND role_menu.role_id=role_record.id
+          WHERE role_record.tenant_id=0 AND role_record.app_scope=1
+            AND role_record.code=0x73757065725F61646D696E AND role_menu.menu_id=menu_record.id
+        ))=0,1,0), CHAR(124),
+  IF((SELECT COUNT(DISTINCT perms) FROM sys_menu
+      WHERE perms IN (0x7379733A6A6F623A6C697374,0x7379733A6A6F623A6C6F673A6C697374))=2,1,0), CHAR(124),
+  IF((SELECT COUNT(*) FROM sys_job WHERE invoke_target IN (
+        0x74726164652E50726F636573734F726465724D61746368696E67,
+        0x74726164652E50726F63657373506F736974696F6E73,
+        0x74726164652E50726F63657373436F6E7472616374536574746C656D656E7473,
+        0x74726164652E50726F6365737354726164654576656E7473,
+        0x74726164652E50726F636573735365636F6E6473536574746C656D656E7473))=5,1,0), CHAR(124),
+  IF((SELECT COUNT(*) FROM sys_job WHERE invoke_target IN (
+        0x6F7074696F6E2E50726F636573734173736574496E737472756374696F6E73,
+        0x6F7074696F6E2E50726F6365737354726164654576656E7473,
+        0x6F7074696F6E2E50726F636573735269736B4163636F756E7473,
+        0x6F7074696F6E2E50726F636573734C69717569646174696F6E73,
+        0x6F7074696F6E2E50726F63657373457865726369736573,
+        0x6F7074696F6E2E50726F63657373436F6E74726163744C6966656379636C65,
+        0x6F7074696F6E2E50726F636573734461696C795265636F6E63696C696174696F6E,
+        0x6F7074696F6E2E436C65616E4D61726B6574536E617073686F7473))=8,1,0), CHAR(124),
+  IF((SELECT COUNT(*) FROM sys_job WHERE invoke_target IN (
+        0x7374616B696E672E50726F6365737352657761726473416E64536574746C654F7264657273,
+        0x7374616B696E672E5265636F6E63696C655374616B696E67))=2,1,0)
+);" 2>/dev/null
+' 2>/dev/null || true)
+if [ "$system_seed_status" = "1|1|1|1|1|1|1" ]; then
+  pass "management menus, system super administrator and scheduled jobs are complete"
+else
+  fail "management menus, system super administrator and scheduled jobs are complete (status=${system_seed_status:-unavailable})"
 fi
 
 trade_config=$(compose exec -T etcd etcdctl --endpoints=http://127.0.0.1:2379 get /wklive/trade-rpc/config --print-value-only 2>/dev/null || true)

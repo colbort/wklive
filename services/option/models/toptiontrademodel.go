@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"strings"
 
+	"wklive/common/sqlutil"
+
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TOptionTradeModel = (*customTOptionTradeModel)(nil)
@@ -47,7 +48,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionTradeModel) FindStatisticsByContracts(
+func (m *customTOptionTradeModel) FindStatisticsByContracts(
 	ctx context.Context, tenantId int64, contractIDs []int64, startTime, endTime int64,
 ) ([]*OptionTradeStatistics, error) {
 	if len(contractIDs) == 0 {
@@ -72,7 +73,7 @@ GROUP BY contract_id`, m.table, placeholders)
 	return items, err
 }
 
-func (m *defaultTOptionTradeModel) FindLastMatchSequence(
+func (m *customTOptionTradeModel) FindLastMatchSequence(
 	ctx context.Context, tenantId, contractId int64,
 ) (int64, error) {
 	query := fmt.Sprintf(
@@ -84,7 +85,7 @@ func (m *defaultTOptionTradeModel) FindLastMatchSequence(
 	return sequence, err
 }
 
-func (m *defaultTOptionTradeModel) FindByComboOrderID(
+func (m *customTOptionTradeModel) FindByComboOrderID(
 	ctx context.Context, tenantId, comboOrderId, limit int64,
 ) ([]*TOptionTrade, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
@@ -119,7 +120,7 @@ func NewTOptionTradeModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Op
 	}
 }
 
-func (m *defaultTOptionTradeModel) FindPage(ctx context.Context, filter OptionTradePageFilter, cursor int64, limit int64) ([]*TOptionTrade, int64, error) {
+func (m *customTOptionTradeModel) FindPage(ctx context.Context, filter OptionTradePageFilter, cursor int64, limit int64) ([]*TOptionTrade, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)

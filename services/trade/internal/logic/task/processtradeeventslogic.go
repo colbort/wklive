@@ -115,7 +115,7 @@ func (l *ProcessTradeEventsLogic) dispatchPendingTradeEvents(in *trade.TradeTask
 	cursor := int64(0)
 	for {
 		now := utils.NowMillis()
-		items, err := l.svcCtx.BizTradeEventModel.FindDispatchable(l.ctx, in.GetTenantId(), now, now-realtime.ClaimLeaseMillis, cursor, 100, nil)
+		items, err := l.svcCtx.TradeEventOutboxModel.FindDispatchable(l.ctx, in.GetTenantId(), now, now-realtime.ClaimLeaseMillis, cursor, 100, nil)
 		if err != nil {
 			return err
 		}
@@ -323,7 +323,7 @@ func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPri
 	var eventNo string
 	err := l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
 		orderModel := tx.TradeOrder
-		eventModel := tx.BizTradeEvent
+		eventModel := tx.TradeEventOutbox
 		order, err := orderModel.FindOneForUpdate(ctx, orderID)
 		if err != nil {
 			return err
@@ -351,7 +351,7 @@ func (l *ProcessTradeEventsLogic) triggerOrderIfNeeded(orderID int64, triggerPri
 			return err
 		}
 		eventNo = derivedTradeBizNo(order.OrderNo, "TRIGGERED")
-		if _, err := eventModel.Insert(ctx, &models.TBizTradeEvent{
+		if _, err := eventModel.Insert(ctx, &models.TTradeEventOutbox{
 			TenantId: order.TenantId, EventNo: eventNo, EventType: realtime.EventOrderAccepted,
 			BizId: order.OrderNo, BizType: "order", UserId: order.UserId, SymbolId: order.SymbolId,
 			ProductType: order.ProductType, OperatorId: order.UserId, Source: int64(trade.SourceType_SOURCE_TYPE_SYSTEM),

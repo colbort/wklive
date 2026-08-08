@@ -29,7 +29,7 @@ func NewTItickSnapshotRevocationModel(conn sqlx.SqlConn, c cache.CacheConf, opts
 	}
 }
 
-func (m *defaultTItickSnapshotRevocationModel) FindAfterID(ctx context.Context, afterID, limit int64) ([]*TItickSnapshotRevocation, error) {
+func (m *customTItickSnapshotRevocationModel) FindAfterID(ctx context.Context, afterID, limit int64) ([]*TItickSnapshotRevocation, error) {
 	if limit <= 0 || limit > 1000 {
 		limit = 500
 	}

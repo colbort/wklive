@@ -36,7 +36,7 @@ func (l *GetTradeEventListLogic) GetTradeEventList(in *trade.GetTradeEventListRe
 		}
 	}
 	cursor, limit := pageutil.Input(in.Page)
-	data, total, err := l.svcCtx.BizTradeEventModel.FindPage(l.ctx, models.BizTradeEventPageFilter{
+	data, total, err := l.svcCtx.TradeEventOutboxModel.FindPage(l.ctx, models.TradeEventOutboxPageFilter{
 		TenantId:    in.TenantId,
 		EventType:   in.EventType,
 		BizType:     in.BizType,

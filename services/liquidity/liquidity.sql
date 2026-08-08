@@ -473,6 +473,8 @@ CREATE TABLE `t_liquidity_event_outbox` (
   `retry_count` INT NOT NULL DEFAULT 0 COMMENT '重试次数',
   `max_retry_count` INT NOT NULL DEFAULT 20 COMMENT '最大重试次数',
   `next_retry_at` BIGINT NOT NULL DEFAULT 0 COMMENT '下次重试时间',
+  `claimed_by` VARCHAR(128) NOT NULL DEFAULT '' COMMENT '当前领取实例',
+  `claimed_at` BIGINT NOT NULL DEFAULT 0 COMMENT '领取时间（毫秒）',
   `last_error_msg` VARCHAR(1000) NOT NULL DEFAULT '' COMMENT '最近错误',
   `sent_at` BIGINT NOT NULL DEFAULT 0 COMMENT '发送成功时间',
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
@@ -480,6 +482,7 @@ CREATE TABLE `t_liquidity_event_outbox` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_event_no` (`event_no`),
   KEY `idx_status_retry` (`status`, `next_retry_at`),
+  KEY `idx_status_claim` (`status`, `claimed_at`, `id`),
   KEY `idx_aggregate` (`aggregate_type`, `aggregate_id`),
   CONSTRAINT `chk_liquidity_outbox_status` CHECK (`status` IN (1, 2, 3, 4)),
   CONSTRAINT `chk_liquidity_outbox_retry` CHECK (`retry_count` >= 0 AND `max_retry_count` > 0)

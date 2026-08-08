@@ -24,7 +24,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionExerciseInstructionModel) FindLatestByPosition(
+func (m *customTOptionExerciseInstructionModel) FindLatestByPosition(
 	ctx context.Context,
 	tenantId, positionId int64,
 ) (*TOptionExerciseInstruction, error) {
@@ -39,7 +39,7 @@ func (m *defaultTOptionExerciseInstructionModel) FindLatestByPosition(
 	return &item, nil
 }
 
-func (m *defaultTOptionExerciseInstructionModel) FindLatestByPositionForUpdate(
+func (m *customTOptionExerciseInstructionModel) FindLatestByPositionForUpdate(
 	ctx context.Context,
 	tenantId, positionId int64,
 ) (*TOptionExerciseInstruction, error) {

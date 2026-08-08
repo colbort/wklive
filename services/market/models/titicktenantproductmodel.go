@@ -39,7 +39,7 @@ func NewTItickTenantProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...c
 	}
 }
 
-func (m *defaultTItickTenantProductModel) FindPage(ctx context.Context, filter TenantProductPageFilter, cursor int64, limit int64) ([]*TItickTenantProduct, int64, error) {
+func (m *customTItickTenantProductModel) FindPage(ctx context.Context, filter TenantProductPageFilter, cursor int64, limit int64) ([]*TItickTenantProduct, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()

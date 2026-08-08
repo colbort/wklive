@@ -32,14 +32,14 @@ func NewTStakeUserPositionModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...ca
 	}
 }
 
-func (m *defaultTStakeUserPositionModel) Ensure(ctx context.Context, tenantId, userId, productId, now int64) error {
+func (m *customTStakeUserPositionModel) Ensure(ctx context.Context, tenantId, userId, productId, now int64) error {
 	_, err := m.ExecNoCacheCtx(ctx, `INSERT INTO t_stake_user_position
 		(tenant_id,user_id,product_id,staked_amount,version,create_times,update_times)
 		VALUES (?,?,?,0,1,?,?) ON DUPLICATE KEY UPDATE id=id`, tenantId, userId, productId, now, now)
 	return err
 }
 
-func (m *defaultTStakeUserPositionModel) ReserveAmount(ctx context.Context, tenantId, userId, productId int64, amount, userLimit decimal.Decimal, now int64) (bool, error) {
+func (m *customTStakeUserPositionModel) ReserveAmount(ctx context.Context, tenantId, userId, productId int64, amount, userLimit decimal.Decimal, now int64) (bool, error) {
 	result, err := m.ExecNoCacheCtx(ctx, `UPDATE t_stake_user_position
 		SET staked_amount=staked_amount+?,version=version+1,update_times=?
 		WHERE tenant_id=? AND user_id=? AND product_id=?
@@ -51,7 +51,7 @@ func (m *defaultTStakeUserPositionModel) ReserveAmount(ctx context.Context, tena
 	return affected == 1, err
 }
 
-func (m *defaultTStakeUserPositionModel) ReleaseAmount(ctx context.Context, tenantId, userId, productId int64, amount decimal.Decimal, now int64) error {
+func (m *customTStakeUserPositionModel) ReleaseAmount(ctx context.Context, tenantId, userId, productId int64, amount decimal.Decimal, now int64) error {
 	_, err := m.ExecNoCacheCtx(ctx, `UPDATE t_stake_user_position
 		SET staked_amount=GREATEST(staked_amount-?,0),version=version+1,update_times=?
 		WHERE tenant_id=? AND user_id=? AND product_id=?`, amount, now, tenantId, userId, productId)

@@ -38,7 +38,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionPhysicalDeliveryUnitModel) FindOneForUpdate(
+func (m *customTOptionPhysicalDeliveryUnitModel) FindOneForUpdate(
 	ctx context.Context, id int64,
 ) (*TOptionPhysicalDeliveryUnit, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1 FOR UPDATE",
@@ -50,7 +50,7 @@ func (m *defaultTOptionPhysicalDeliveryUnitModel) FindOneForUpdate(
 	return &item, nil
 }
 
-func (m *defaultTOptionPhysicalDeliveryUnitModel) FindByBatch(
+func (m *customTOptionPhysicalDeliveryUnitModel) FindByBatch(
 	ctx context.Context, tenantId, batchId int64,
 ) ([]*TOptionPhysicalDeliveryUnit, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -62,7 +62,7 @@ WHERE tenant_id = ? AND batch_id = ? ORDER BY id`, tOptionPhysicalDeliveryUnitRo
 	return items, nil
 }
 
-func (m *defaultTOptionPhysicalDeliveryUnitModel) FindExceptionByBatch(
+func (m *customTOptionPhysicalDeliveryUnitModel) FindExceptionByBatch(
 	ctx context.Context, tenantId, batchId int64,
 ) (*TOptionPhysicalDeliveryUnit, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -79,7 +79,7 @@ ORDER BY id LIMIT 1`, tOptionPhysicalDeliveryUnitRows, m.table)
 	return &item, nil
 }
 
-func (m *defaultTOptionPhysicalDeliveryUnitModel) FindExpiredCure(
+func (m *customTOptionPhysicalDeliveryUnitModel) FindExpiredCure(
 	ctx context.Context, tenantId, now, limit int64,
 ) ([]*TOptionPhysicalDeliveryUnit, error) {
 	limit = sqlutil.NormalizeLimit(limit)
@@ -103,7 +103,7 @@ WHERE cure_deadline <= ? AND manual_retry_count = 0 AND status IN (?, ?)`, tOpti
 	return items, nil
 }
 
-func (m *defaultTOptionPhysicalDeliveryUnitModel) FindPage(
+func (m *customTOptionPhysicalDeliveryUnitModel) FindPage(
 	ctx context.Context, filter OptionPhysicalDeliveryUnitPageFilter, cursor, limit int64,
 ) ([]*TOptionPhysicalDeliveryUnit, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)

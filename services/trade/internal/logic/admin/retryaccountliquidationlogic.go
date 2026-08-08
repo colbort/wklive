@@ -87,7 +87,7 @@ func (l *RetryAccountLiquidationLogic) RetryAccountLiquidation(
 		if err = parentModel.Update(ctx, parent); err != nil {
 			return err
 		}
-		_, err = tx.BizTradeEvent.Insert(ctx, &models.TBizTradeEvent{
+		_, err = tx.TradeEventOutbox.Insert(ctx, &models.TTradeEventOutbox{
 			TenantId: tenantID, EventNo: eventNo,
 			EventType: "CROSS_ACCOUNT_LIQUIDATION_RETRY_REQUESTED",
 			BizId:     parent.LiquidationNo, BizType: accountLiquidationBizType,

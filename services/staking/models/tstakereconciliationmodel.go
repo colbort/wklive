@@ -39,7 +39,7 @@ func NewTStakeReconciliationModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...
 	}
 }
 
-func (m *defaultTStakeReconciliationModel) Upsert(ctx context.Context, data *TStakeReconciliation) error {
+func (m *customTStakeReconciliationModel) Upsert(ctx context.Context, data *TStakeReconciliation) error {
 	_, err := m.ExecNoCacheCtx(ctx, `INSERT INTO t_stake_reconciliation
 		(tenant_id,reconciliation_date,coin_symbol,active_principal,product_staked,position_staked,asset_locked,
 		 reward_log_amount,reward_platform_amount,fee_log_amount,fee_platform_amount,
@@ -60,7 +60,7 @@ func (m *defaultTStakeReconciliationModel) Upsert(ctx context.Context, data *TSt
 	return err
 }
 
-func (m *defaultTStakeReconciliationModel) FindAdminPage(ctx context.Context, filter StakeReconciliationPageFilter, cursor, limit int64) ([]*TStakeReconciliation, int64, error) {
+func (m *customTStakeReconciliationModel) FindAdminPage(ctx context.Context, filter StakeReconciliationPageFilter, cursor, limit int64) ([]*TStakeReconciliation, int64, error) {
 	if limit <= 0 || limit > 100 {
 		limit = 20
 	}

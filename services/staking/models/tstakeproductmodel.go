@@ -5,10 +5,11 @@ import (
 	"database/sql"
 	"fmt"
 
+	"wklive/common/sqlutil"
+
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TStakeProductModel = (*customTStakeProductModel)(nil)
@@ -44,7 +45,7 @@ func NewTStakeProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.O
 	}
 }
 
-func (m *defaultTStakeProductModel) ReserveStakeAmount(ctx context.Context, id int64, amount decimal.Decimal, updateTimes int64) (bool, error) {
+func (m *customTStakeProductModel) ReserveStakeAmount(ctx context.Context, id int64, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	key := fmt.Sprintf("%s%v", cacheTStakeProductIdPrefix, id)
 	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, `UPDATE t_stake_product
@@ -59,7 +60,7 @@ func (m *defaultTStakeProductModel) ReserveStakeAmount(ctx context.Context, id i
 	return affected == 1, err
 }
 
-func (m *defaultTStakeProductModel) ReleaseStakeAmount(ctx context.Context, id int64, amount decimal.Decimal, updateTimes int64) error {
+func (m *customTStakeProductModel) ReleaseStakeAmount(ctx context.Context, id int64, amount decimal.Decimal, updateTimes int64) error {
 	key := fmt.Sprintf("%s%v", cacheTStakeProductIdPrefix, id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 		return conn.ExecCtx(ctx, `UPDATE t_stake_product
@@ -68,7 +69,7 @@ func (m *defaultTStakeProductModel) ReleaseStakeAmount(ctx context.Context, id i
 	return err
 }
 
-func (m *defaultTStakeProductModel) FindPage(ctx context.Context, filter StakeProductPageFilter, cursor int64, limit int64) ([]*TStakeProduct, int64, error) {
+func (m *customTStakeProductModel) FindPage(ctx context.Context, filter StakeProductPageFilter, cursor int64, limit int64) ([]*TStakeProduct, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()

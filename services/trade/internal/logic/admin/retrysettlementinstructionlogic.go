@@ -74,6 +74,6 @@ func retrySettlementInstructionTx(ctx context.Context, tx *models.TransactionMod
 	if err = instructionModel.Update(ctx, item); err != nil {
 		return false, false, err
 	}
-	_, err = tx.BizTradeEvent.Insert(ctx, &models.TBizTradeEvent{TenantId: tenantID, EventNo: eventNo, EventType: "SETTLEMENT_INSTRUCTION_RETRY_REQUESTED", BizId: item.InstructionNo, BizType: "settlement_instruction", UserId: item.UserId, OperatorId: operatorID, Source: int64(trade.SourceType_SOURCE_TYPE_ADMIN), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: helpers.NormalizeTradeEventJSON(in.Reason), CreateTimes: now, UpdateTimes: now})
+	_, err = tx.TradeEventOutbox.Insert(ctx, &models.TTradeEventOutbox{TenantId: tenantID, EventNo: eventNo, EventType: "SETTLEMENT_INSTRUCTION_RETRY_REQUESTED", BizId: item.InstructionNo, BizType: "settlement_instruction", UserId: item.UserId, OperatorId: operatorID, Source: int64(trade.SourceType_SOURCE_TYPE_ADMIN), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: helpers.NormalizeTradeEventJSON(in.Reason), CreateTimes: now, UpdateTimes: now})
 	return false, false, err
 }

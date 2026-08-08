@@ -38,14 +38,14 @@ func NewTItickCategoryModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.
 	}
 }
 
-func (m *defaultTItickCategoryModel) FindAll(ctx context.Context) ([]*TItickCategory, error) {
+func (m *customTItickCategoryModel) FindAll(ctx context.Context) ([]*TItickCategory, error) {
 	query := fmt.Sprintf("select %s from %s", tItickCategoryRows, m.table)
 	var resp []*TItickCategory
 	err := m.QueryRowsNoCacheCtx(ctx, &resp, query)
 	return resp, err
 }
 
-func (m *defaultTItickCategoryModel) FindPage(ctx context.Context, filter MarketCategoryPageFilter, cursor int64, limit int64) ([]*TItickCategory, int64, error) {
+func (m *customTItickCategoryModel) FindPage(ctx context.Context, filter MarketCategoryPageFilter, cursor int64, limit int64) ([]*TItickCategory, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()

@@ -126,7 +126,7 @@ func (l *ProcessContractSettlementsLogic) disableExpiredSymbols(tenantID int64, 
 			if err != nil {
 				return err
 			}
-			if _, err := l.svcCtx.BizTradeEventModel.Insert(l.ctx, &models.TBizTradeEvent{
+			if _, err := l.svcCtx.TradeEventOutboxModel.Insert(l.ctx, &models.TTradeEventOutbox{
 				TenantId:      symbol.TenantId,
 				EventNo:       eventNo,
 				EventType:     "CONTRACT_SETTLED",

@@ -238,7 +238,7 @@ func (l *ProcessOrderMatchingLogic) executeOrderMatch(key models.TradeOrderMatch
 		fillModel := tx.TradeFill
 		orderModel := tx.TradeOrder
 		instructionModel := tx.TradeSettlementInstruction
-		eventModel := tx.BizTradeEvent
+		eventModel := tx.TradeEventOutbox
 		contractOrderModel := tx.TradeOrderContract
 
 		buy, err := orderModel.FindOneForUpdate(ctx, plan.BuyOrder.Id)

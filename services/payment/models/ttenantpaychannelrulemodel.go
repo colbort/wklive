@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TTenantPayChannelRuleModel = (*customTTenantPayChannelRuleModel)(nil)
@@ -30,7 +31,7 @@ func NewTTenantPayChannelRuleModel(conn sqlx.SqlConn, c cache.CacheConf, opts ..
 	}
 }
 
-func (m *defaultTTenantPayChannelRuleModel) FindPage(ctx context.Context, channelId int64, cursor int64, limit int64) ([]*TTenantPayChannelRule, int64, error) {
+func (m *customTTenantPayChannelRuleModel) FindPage(ctx context.Context, channelId int64, cursor int64, limit int64) ([]*TTenantPayChannelRule, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()

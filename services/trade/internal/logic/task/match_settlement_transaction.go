@@ -45,7 +45,7 @@ type settlementInstructionSpec struct {
 func createMatchSettlementRecords(
 	ctx context.Context,
 	instructionModel models.TTradeSettlementInstructionModel,
-	eventModel models.TBizTradeEventModel,
+	eventModel models.TTradeEventOutboxModel,
 	contractOrderModel models.TTradeOrderContractModel,
 	symbol *models.TTradeSymbol,
 	order *models.TTradeOrder,
@@ -155,7 +155,7 @@ func buildFillSettlementInstructions(_ context.Context, _ models.TTradeOrderCont
 	return specs, nil
 }
 
-func insertMatchOutboxEvent(ctx context.Context, eventModel models.TBizTradeEventModel, order *models.TTradeOrder, eventNo, eventType, bizID, bizType, payload string, now int64) error {
+func insertMatchOutboxEvent(ctx context.Context, eventModel models.TTradeEventOutboxModel, order *models.TTradeOrder, eventNo, eventType, bizID, bizType, payload string, now int64) error {
 	exists, err := eventModel.FindOneByTenantIdEventNo(ctx, order.TenantId, eventNo)
 	if err == nil {
 		if exists.EventType != eventType || exists.BizId != bizID || exists.BizType != bizType {
@@ -166,7 +166,7 @@ func insertMatchOutboxEvent(ctx context.Context, eventModel models.TBizTradeEven
 	if !errors.Is(err, models.ErrNotFound) {
 		return err
 	}
-	_, err = eventModel.Insert(ctx, &models.TBizTradeEvent{
+	_, err = eventModel.Insert(ctx, &models.TTradeEventOutbox{
 		TenantId: order.TenantId, EventNo: eventNo, EventType: eventType,
 		BizId: bizID, BizType: bizType, UserId: order.UserId, SymbolId: order.SymbolId,
 		ProductType: order.ProductType, OperatorId: 0, Source: int64(trade.SourceType_SOURCE_TYPE_SYSTEM),

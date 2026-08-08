@@ -53,7 +53,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionPositionModel) FindOpenInterestByContracts(
+func (m *customTOptionPositionModel) FindOpenInterestByContracts(
 	ctx context.Context, tenantId int64, contractIDs []int64,
 ) ([]*OptionOpenInterest, error) {
 	if len(contractIDs) == 0 {
@@ -82,7 +82,7 @@ GROUP BY contract_id`, m.table, placeholders)
 	return items, err
 }
 
-func (m *defaultTOptionPositionModel) CountHoldingByContract(
+func (m *customTOptionPositionModel) CountHoldingByContract(
 	ctx context.Context, tenantId, contractId int64,
 ) (int64, error) {
 	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id=? AND contract_id=? AND status=? AND position_qty>0",
@@ -93,7 +93,7 @@ func (m *defaultTOptionPositionModel) CountHoldingByContract(
 	return total, err
 }
 
-func (m *defaultTOptionPositionModel) FindHoldingBatch(
+func (m *customTOptionPositionModel) FindHoldingBatch(
 	ctx context.Context, tenantId, contractId, afterId, limit int64,
 ) ([]*TOptionPosition, error) {
 	limit = sqlutil.NormalizeLimit(limit)
@@ -106,7 +106,7 @@ ORDER BY id LIMIT ?`, tOptionPositionRows, m.table)
 	return items, err
 }
 
-func (m *defaultTOptionPositionModel) SumHoldingQty(
+func (m *customTOptionPositionModel) SumHoldingQty(
 	ctx context.Context, tenantId, userId, contractId, side int64,
 ) (decimal.Decimal, error) {
 	userClause := ""
@@ -124,7 +124,7 @@ WHERE tenant_id = ? AND contract_id = ? AND side = ? AND status = ?%s`, m.table,
 	return aggregate.Decimal()
 }
 
-func (m *defaultTOptionPositionModel) FindAssignableShortsPage(
+func (m *customTOptionPositionModel) FindAssignableShortsPage(
 	ctx context.Context,
 	tenantId, contractId, afterCreateTimes, afterId, limit int64,
 ) ([]*TOptionPosition, error) {
@@ -146,7 +146,7 @@ ORDER BY create_times ASC, id ASC LIMIT ?`, tOptionPositionRows, m.table)
 	return list, err
 }
 
-func (m *defaultTOptionPositionModel) FindOneForUpdate(ctx context.Context, id int64) (*TOptionPosition, error) {
+func (m *customTOptionPositionModel) FindOneForUpdate(ctx context.Context, id int64) (*TOptionPosition, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1 FOR UPDATE", tOptionPositionRows, m.table)
 	var item TOptionPosition
 	if err := m.QueryRowNoCacheCtx(ctx, &item, query, id); err != nil {
@@ -155,7 +155,7 @@ func (m *defaultTOptionPositionModel) FindOneForUpdate(ctx context.Context, id i
 	return &item, nil
 }
 
-func (m *defaultTOptionPositionModel) FindOneByTenantIdUserIdAccountIdContractIdSideForUpdate(
+func (m *customTOptionPositionModel) FindOneByTenantIdUserIdAccountIdContractIdSideForUpdate(
 	ctx context.Context, tenantId, userId, accountId, contractId, side int64,
 ) (*TOptionPosition, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -177,7 +177,7 @@ func NewTOptionPositionModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache
 	}
 }
 
-func (m *defaultTOptionPositionModel) FindPage(ctx context.Context, filter OptionPositionPageFilter, cursor int64, limit int64) ([]*TOptionPosition, int64, error) {
+func (m *customTOptionPositionModel) FindPage(ctx context.Context, filter OptionPositionPageFilter, cursor int64, limit int64) ([]*TOptionPosition, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)

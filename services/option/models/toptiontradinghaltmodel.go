@@ -33,7 +33,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionTradingHaltModel) FindActiveByContract(
+func (m *customTOptionTradingHaltModel) FindActiveByContract(
 	ctx context.Context, tenantId, contractId int64,
 ) (*TOptionTradingHalt, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -47,7 +47,7 @@ WHERE tenant_id=? AND active_key=? LIMIT 1`, tOptionTradingHaltRows, m.table)
 	return &item, nil
 }
 
-func (m *defaultTOptionTradingHaltModel) FindOneForUpdate(
+func (m *customTOptionTradingHaltModel) FindOneForUpdate(
 	ctx context.Context, id int64,
 ) (*TOptionTradingHalt, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id=? LIMIT 1 FOR UPDATE",
@@ -59,7 +59,7 @@ func (m *defaultTOptionTradingHaltModel) FindOneForUpdate(
 	return &item, nil
 }
 
-func (m *defaultTOptionTradingHaltModel) FindPage(
+func (m *customTOptionTradingHaltModel) FindPage(
 	ctx context.Context, filter OptionTradingHaltPageFilter, cursor, limit int64,
 ) ([]*TOptionTradingHalt, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)

@@ -18,30 +18,30 @@ import (
 )
 
 var (
-	tBizTradeEventFieldNames          = builder.RawFieldNames(&TBizTradeEvent{})
-	tBizTradeEventRows                = strings.Join(tBizTradeEventFieldNames, ",")
-	tBizTradeEventRowsExpectAutoSet   = strings.Join(stringx.Remove(tBizTradeEventFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	tBizTradeEventRowsWithPlaceHolder = strings.Join(stringx.Remove(tBizTradeEventFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	tTradeEventOutboxFieldNames          = builder.RawFieldNames(&TTradeEventOutbox{})
+	tTradeEventOutboxRows                = strings.Join(tTradeEventOutboxFieldNames, ",")
+	tTradeEventOutboxRowsExpectAutoSet   = strings.Join(stringx.Remove(tTradeEventOutboxFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
+	tTradeEventOutboxRowsWithPlaceHolder = strings.Join(stringx.Remove(tTradeEventOutboxFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheTBizTradeEventIdPrefix              = "cache:tBizTradeEvent:id:"
-	cacheTBizTradeEventTenantIdEventNoPrefix = "cache:tBizTradeEvent:tenantId:eventNo:"
+	cacheTTradeEventOutboxIdPrefix              = "cache:tTradeEventOutbox:id:"
+	cacheTTradeEventOutboxTenantIdEventNoPrefix = "cache:tTradeEventOutbox:tenantId:eventNo:"
 )
 
 type (
-	tBizTradeEventModel interface {
-		Insert(ctx context.Context, data *TBizTradeEvent) (sql.Result, error)
-		FindOne(ctx context.Context, id int64) (*TBizTradeEvent, error)
-		FindOneByTenantIdEventNo(ctx context.Context, tenantId int64, eventNo string) (*TBizTradeEvent, error)
-		Update(ctx context.Context, data *TBizTradeEvent) error
+	tTradeEventOutboxModel interface {
+		Insert(ctx context.Context, data *TTradeEventOutbox) (sql.Result, error)
+		FindOne(ctx context.Context, id int64) (*TTradeEventOutbox, error)
+		FindOneByTenantIdEventNo(ctx context.Context, tenantId int64, eventNo string) (*TTradeEventOutbox, error)
+		Update(ctx context.Context, data *TTradeEventOutbox) error
 		Delete(ctx context.Context, id int64) error
 	}
 
-	defaultTBizTradeEventModel struct {
+	defaultTTradeEventOutboxModel struct {
 		sqlc.CachedConn
 		table string
 	}
 
-	TBizTradeEvent struct {
+	TTradeEventOutbox struct {
 		Id             int64          `db:"id"`              // 主键ID
 		TenantId       int64          `db:"tenant_id"`       // 租户ID
 		EventNo        string         `db:"event_no"`        // 事件号
@@ -70,33 +70,33 @@ type (
 	}
 )
 
-func newTBizTradeEventModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTBizTradeEventModel {
-	return &defaultTBizTradeEventModel{
+func newTTradeEventOutboxModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultTTradeEventOutboxModel {
+	return &defaultTTradeEventOutboxModel{
 		CachedConn: sqlc.NewConn(conn, c, opts...),
-		table:      "`t_biz_trade_event`",
+		table:      "`t_trade_event_outbox`",
 	}
 }
 
-func (m *defaultTBizTradeEventModel) Delete(ctx context.Context, id int64) error {
+func (m *defaultTTradeEventOutboxModel) Delete(ctx context.Context, id int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	tBizTradeEventIdKey := fmt.Sprintf("%s%v", cacheTBizTradeEventIdPrefix, id)
-	tBizTradeEventTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTBizTradeEventTenantIdEventNoPrefix, data.TenantId, data.EventNo)
+	tTradeEventOutboxIdKey := fmt.Sprintf("%s%v", cacheTTradeEventOutboxIdPrefix, id)
+	tTradeEventOutboxTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeEventOutboxTenantIdEventNoPrefix, data.TenantId, data.EventNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, tBizTradeEventIdKey, tBizTradeEventTenantIdEventNoKey)
+	}, tTradeEventOutboxIdKey, tTradeEventOutboxTenantIdEventNoKey)
 	return err
 }
 
-func (m *defaultTBizTradeEventModel) FindOne(ctx context.Context, id int64) (*TBizTradeEvent, error) {
-	tBizTradeEventIdKey := fmt.Sprintf("%s%v", cacheTBizTradeEventIdPrefix, id)
-	var resp TBizTradeEvent
-	err := m.QueryRowCtx(ctx, &resp, tBizTradeEventIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
-		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tBizTradeEventRows, m.table)
+func (m *defaultTTradeEventOutboxModel) FindOne(ctx context.Context, id int64) (*TTradeEventOutbox, error) {
+	tTradeEventOutboxIdKey := fmt.Sprintf("%s%v", cacheTTradeEventOutboxIdPrefix, id)
+	var resp TTradeEventOutbox
+	err := m.QueryRowCtx(ctx, &resp, tTradeEventOutboxIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
+		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tTradeEventOutboxRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
 	switch err {
@@ -109,11 +109,11 @@ func (m *defaultTBizTradeEventModel) FindOne(ctx context.Context, id int64) (*TB
 	}
 }
 
-func (m *defaultTBizTradeEventModel) FindOneByTenantIdEventNo(ctx context.Context, tenantId int64, eventNo string) (*TBizTradeEvent, error) {
-	tBizTradeEventTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTBizTradeEventTenantIdEventNoPrefix, tenantId, eventNo)
-	var resp TBizTradeEvent
-	err := m.QueryRowIndexCtx(ctx, &resp, tBizTradeEventTenantIdEventNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `event_no` = ? limit 1", tBizTradeEventRows, m.table)
+func (m *defaultTTradeEventOutboxModel) FindOneByTenantIdEventNo(ctx context.Context, tenantId int64, eventNo string) (*TTradeEventOutbox, error) {
+	tTradeEventOutboxTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeEventOutboxTenantIdEventNoPrefix, tenantId, eventNo)
+	var resp TTradeEventOutbox
+	err := m.QueryRowIndexCtx(ctx, &resp, tTradeEventOutboxTenantIdEventNoKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `event_no` = ? limit 1", tTradeEventOutboxRows, m.table)
 		if err := conn.QueryRowCtx(ctx, &resp, query, tenantId, eventNo); err != nil {
 			return nil, err
 		}
@@ -129,40 +129,40 @@ func (m *defaultTBizTradeEventModel) FindOneByTenantIdEventNo(ctx context.Contex
 	}
 }
 
-func (m *defaultTBizTradeEventModel) Insert(ctx context.Context, data *TBizTradeEvent) (sql.Result, error) {
-	tBizTradeEventIdKey := fmt.Sprintf("%s%v", cacheTBizTradeEventIdPrefix, data.Id)
-	tBizTradeEventTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTBizTradeEventTenantIdEventNoPrefix, data.TenantId, data.EventNo)
+func (m *defaultTTradeEventOutboxModel) Insert(ctx context.Context, data *TTradeEventOutbox) (sql.Result, error) {
+	tTradeEventOutboxIdKey := fmt.Sprintf("%s%v", cacheTTradeEventOutboxIdPrefix, data.Id)
+	tTradeEventOutboxTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeEventOutboxTenantIdEventNoPrefix, data.TenantId, data.EventNo)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tBizTradeEventRowsExpectAutoSet)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeEventOutboxRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.TenantId, data.EventNo, data.EventType, data.BizId, data.BizType, data.UserId, data.SymbolId, data.ProductType, data.OperatorId, data.Source, data.Consumer, data.EventStatus, data.RetryCount, data.MaxRetryCount, data.NextRetryAt, data.LastErrorMsg, data.ClaimedBy, data.ClaimedAt, data.DeliveredAt, data.PayloadVersion, data.Payload, data.ExtData, data.CreateTimes, data.UpdateTimes)
-	}, tBizTradeEventIdKey, tBizTradeEventTenantIdEventNoKey)
+	}, tTradeEventOutboxIdKey, tTradeEventOutboxTenantIdEventNoKey)
 	return ret, err
 }
 
-func (m *defaultTBizTradeEventModel) Update(ctx context.Context, newData *TBizTradeEvent) error {
+func (m *defaultTTradeEventOutboxModel) Update(ctx context.Context, newData *TTradeEventOutbox) error {
 	data, err := m.FindOne(ctx, newData.Id)
 	if err != nil {
 		return err
 	}
 
-	tBizTradeEventIdKey := fmt.Sprintf("%s%v", cacheTBizTradeEventIdPrefix, data.Id)
-	tBizTradeEventTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTBizTradeEventTenantIdEventNoPrefix, data.TenantId, data.EventNo)
+	tTradeEventOutboxIdKey := fmt.Sprintf("%s%v", cacheTTradeEventOutboxIdPrefix, data.Id)
+	tTradeEventOutboxTenantIdEventNoKey := fmt.Sprintf("%s%v:%v", cacheTTradeEventOutboxTenantIdEventNoPrefix, data.TenantId, data.EventNo)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tBizTradeEventRowsWithPlaceHolder)
+		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTradeEventOutboxRowsWithPlaceHolder)
 		return conn.ExecCtx(ctx, query, newData.TenantId, newData.EventNo, newData.EventType, newData.BizId, newData.BizType, newData.UserId, newData.SymbolId, newData.ProductType, newData.OperatorId, newData.Source, newData.Consumer, newData.EventStatus, newData.RetryCount, newData.MaxRetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.ClaimedBy, newData.ClaimedAt, newData.DeliveredAt, newData.PayloadVersion, newData.Payload, newData.ExtData, newData.CreateTimes, newData.UpdateTimes, newData.Id)
-	}, tBizTradeEventIdKey, tBizTradeEventTenantIdEventNoKey)
+	}, tTradeEventOutboxIdKey, tTradeEventOutboxTenantIdEventNoKey)
 	return err
 }
 
-func (m *defaultTBizTradeEventModel) formatPrimary(primary any) string {
-	return fmt.Sprintf("%s%v", cacheTBizTradeEventIdPrefix, primary)
+func (m *defaultTTradeEventOutboxModel) formatPrimary(primary any) string {
+	return fmt.Sprintf("%s%v", cacheTTradeEventOutboxIdPrefix, primary)
 }
 
-func (m *defaultTBizTradeEventModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
-	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tBizTradeEventRows, m.table)
+func (m *defaultTTradeEventOutboxModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
+	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", tTradeEventOutboxRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
-func (m *defaultTBizTradeEventModel) tableName() string {
+func (m *defaultTTradeEventOutboxModel) tableName() string {
 	return m.table
 }

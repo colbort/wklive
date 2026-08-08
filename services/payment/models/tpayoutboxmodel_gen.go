@@ -50,6 +50,8 @@ type (
 		AggregateNo   string `db:"aggregate_no"`   // 聚合业务号
 		Payload       string `db:"payload"`        // 事件内容
 		Status        int64  `db:"status"`         // 状态：1待处理 2处理中 3成功 4失败
+		ClaimedBy     string `db:"claimed_by"`     // 当前处理实例的唯一领取标识
+		ClaimedAt     int64  `db:"claimed_at"`     // 领取时间；超过租约可由其他实例恢复
 		RetryCount    int64  `db:"retry_count"`    // 重试次数
 		NextRetryAt   int64  `db:"next_retry_at"`  // 下次重试时间
 		LastErrorMsg  string `db:"last_error_msg"` // 最近错误
@@ -121,8 +123,8 @@ func (m *defaultTPayOutboxModel) Insert(ctx context.Context, data *TPayOutbox) (
 	tPayOutboxEventNoKey := fmt.Sprintf("%s%v", cacheTPayOutboxEventNoPrefix, data.EventNo)
 	tPayOutboxIdKey := fmt.Sprintf("%s%v", cacheTPayOutboxIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tPayOutboxRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.EventNo, data.EventType, data.AggregateType, data.AggregateId, data.AggregateNo, data.Payload, data.Status, data.RetryCount, data.NextRetryAt, data.LastErrorMsg, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tPayOutboxRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.EventNo, data.EventType, data.AggregateType, data.AggregateId, data.AggregateNo, data.Payload, data.Status, data.ClaimedBy, data.ClaimedAt, data.RetryCount, data.NextRetryAt, data.LastErrorMsg, data.CreateTimes, data.UpdateTimes)
 	}, tPayOutboxEventNoKey, tPayOutboxIdKey)
 	return ret, err
 }
@@ -137,7 +139,7 @@ func (m *defaultTPayOutboxModel) Update(ctx context.Context, newData *TPayOutbox
 	tPayOutboxIdKey := fmt.Sprintf("%s%v", cacheTPayOutboxIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tPayOutboxRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.EventNo, newData.EventType, newData.AggregateType, newData.AggregateId, newData.AggregateNo, newData.Payload, newData.Status, newData.RetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.EventNo, newData.EventType, newData.AggregateType, newData.AggregateId, newData.AggregateNo, newData.Payload, newData.Status, newData.ClaimedBy, newData.ClaimedAt, newData.RetryCount, newData.NextRetryAt, newData.LastErrorMsg, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tPayOutboxEventNoKey, tPayOutboxIdKey)
 	return err
 }

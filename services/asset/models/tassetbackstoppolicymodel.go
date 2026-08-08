@@ -33,7 +33,7 @@ func NewTAssetBackstopPolicyModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...
 	}
 }
 
-func (m *defaultTAssetBackstopPolicyModel) FindOneByRequestNoForUpdate(
+func (m *customTAssetBackstopPolicyModel) FindOneByRequestNoForUpdate(
 	ctx context.Context,
 	tenantID int64,
 	requestNo string,
@@ -50,7 +50,7 @@ func (m *defaultTAssetBackstopPolicyModel) FindOneByRequestNoForUpdate(
 	return &row, nil
 }
 
-func (m *defaultTAssetBackstopPolicyModel) FindPage(
+func (m *customTAssetBackstopPolicyModel) FindPage(
 	ctx context.Context,
 	tenantID int64,
 	coin string,
@@ -91,7 +91,7 @@ func (m *defaultTAssetBackstopPolicyModel) FindPage(
 	return rows, total, nil
 }
 
-func (m *defaultTAssetBackstopPolicyModel) FindOneForUpdate(
+func (m *customTAssetBackstopPolicyModel) FindOneForUpdate(
 	ctx context.Context,
 	id int64,
 ) (*TAssetBackstopPolicy, error) {
@@ -106,7 +106,7 @@ func (m *defaultTAssetBackstopPolicyModel) FindOneForUpdate(
 	return &row, nil
 }
 
-func (m *defaultTAssetBackstopPolicyModel) FindEffectiveForUpdate(
+func (m *customTAssetBackstopPolicyModel) FindEffectiveForUpdate(
 	ctx context.Context,
 	tenantID int64,
 	coin string,
@@ -126,7 +126,7 @@ ORDER BY version DESC LIMIT 1 FOR UPDATE`, tAssetBackstopPolicyRows, m.table)
 	return &row, nil
 }
 
-func (m *defaultTAssetBackstopPolicyModel) NextVersion(
+func (m *customTAssetBackstopPolicyModel) NextVersion(
 	ctx context.Context,
 	tenantID int64,
 	coin string,

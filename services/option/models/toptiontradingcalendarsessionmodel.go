@@ -23,7 +23,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionTradingCalendarSessionModel) FindByCalendar(
+func (m *customTOptionTradingCalendarSessionModel) FindByCalendar(
 	ctx context.Context, tenantId, calendarId int64,
 ) ([]*TOptionTradingCalendarSession, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s

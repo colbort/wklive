@@ -36,7 +36,7 @@ func NewTContractReconciliationCursorModel(
 	}
 }
 
-func (m *defaultTContractReconciliationCursorModel) LoadReconciliationCursor(
+func (m *customTContractReconciliationCursorModel) LoadReconciliationCursor(
 	ctx context.Context, tenantID int64, checkType string, now int64,
 ) (int64, error) {
 	_, err := m.ExecNoCacheCtx(ctx, `INSERT INTO t_contract_reconciliation_cursor
@@ -53,7 +53,7 @@ ON DUPLICATE KEY UPDATE update_times=update_times`, tenantID, checkType, now, no
 	return cursor, err
 }
 
-func (m *defaultTContractReconciliationCursorModel) AdvanceReconciliationCursor(
+func (m *customTContractReconciliationCursorModel) AdvanceReconciliationCursor(
 	ctx context.Context, tenantID int64, checkType string, cursor, now int64,
 ) error {
 	_, err := m.ExecNoCacheCtx(ctx,
@@ -62,7 +62,7 @@ func (m *defaultTContractReconciliationCursorModel) AdvanceReconciliationCursor(
 	return err
 }
 
-func (m *defaultTContractReconciliationCursorModel) CompleteReconciliationCycle(
+func (m *customTContractReconciliationCursorModel) CompleteReconciliationCycle(
 	ctx context.Context, tenantID int64, checkType string, now int64,
 ) error {
 	_, err := m.ExecNoCacheCtx(ctx,
@@ -78,7 +78,7 @@ func reconciliationTenantClause(alias string, tenantID int64, args []any) (strin
 	return " AND " + alias + ".tenant_id=?", append(args, tenantID)
 }
 
-func (m *defaultTContractReconciliationCursorModel) FindContractOrderFillAudits(
+func (m *customTContractReconciliationCursorModel) FindContractOrderFillAudits(
 	ctx context.Context, dest any, tenantID, cursor, cutoff int64, limit int,
 ) error {
 	tenantClause, args := reconciliationTenantClause("o", tenantID, []any{int64(2), cursor, cutoff})
@@ -108,7 +108,7 @@ LIMIT ?`
 	return m.QueryRowsNoCacheCtx(ctx, dest, query, args...)
 }
 
-func (m *defaultTContractReconciliationCursorModel) FindContractFillPositionAudits(
+func (m *customTContractReconciliationCursorModel) FindContractFillPositionAudits(
 	ctx context.Context, dest any, tenantID, cursor, cutoff int64, limit int,
 ) error {
 	tenantClause, args := reconciliationTenantClause("f", tenantID, []any{int64(2), cursor, cutoff})
@@ -139,7 +139,7 @@ LIMIT ?`
 	return m.QueryRowsNoCacheCtx(ctx, dest, query, args...)
 }
 
-func (m *defaultTContractReconciliationCursorModel) FindContractReservationAudits(
+func (m *customTContractReconciliationCursorModel) FindContractReservationAudits(
 	ctx context.Context, dest any, tenantID, cursor, cutoff int64, limit int,
 ) error {
 	tenantClause, args := reconciliationTenantClause("r", tenantID, []any{int64(2), cursor, cutoff})
@@ -155,7 +155,7 @@ LIMIT ?`
 	return m.QueryRowsNoCacheCtx(ctx, dest, query, args...)
 }
 
-func (m *defaultTContractReconciliationCursorModel) FindContractPositionMarginAudits(
+func (m *customTContractReconciliationCursorModel) FindContractPositionMarginAudits(
 	ctx context.Context, dest any, tenantID, cursor, cutoff int64, limit int,
 ) error {
 	args := []any{6, 3, 7, 3, 3, 5, cursor, cutoff}
@@ -179,7 +179,7 @@ LIMIT ?`
 	return m.QueryRowsNoCacheCtx(ctx, dest, query, args...)
 }
 
-func (m *defaultTContractReconciliationCursorModel) FindContractLiquidationAudits(
+func (m *customTContractReconciliationCursorModel) FindContractLiquidationAudits(
 	ctx context.Context, dest any, tenantID, cursor, cutoff int64, limit int,
 ) error {
 	args := []any{5, 3, cursor, cutoff}
@@ -195,7 +195,7 @@ SELECT
   COALESCE((SELECT COUNT(1) FROM t_contract_position_history h
             WHERE h.tenant_id=q.tenant_id AND h.position_id=q.position_id
               AND h.action_key=q.liquidation_no AND h.action_type=?),0) AS liquidation_history,
-  COALESCE((SELECT COUNT(1) FROM t_biz_trade_event e
+  COALESCE((SELECT COUNT(1) FROM t_trade_event_outbox e
             WHERE e.tenant_id=q.tenant_id AND e.event_no=CONCAT(q.liquidation_no,'-COMPLETED')),0) AS completion_event,
   COALESCE((SELECT COUNT(1) FROM t_contract_adl_execution a
             WHERE a.tenant_id=q.tenant_id AND a.liquidation_id=q.id),0) AS adl_execution_count,
@@ -220,7 +220,7 @@ LIMIT ?`
 	return m.QueryRowsNoCacheCtx(ctx, dest, query, args...)
 }
 
-func (m *defaultTContractReconciliationCursorModel) FindCrossAccountLiquidationAudits(
+func (m *customTContractReconciliationCursorModel) FindCrossAccountLiquidationAudits(
 	ctx context.Context, dest any, tenantID, cursor, cutoff int64, limit int,
 ) error {
 	args := []any{2, 5, 5, 3, 3, 3, cursor, cutoff}
@@ -247,7 +247,7 @@ SELECT
              AND h.action_key=CONCAT(q.liquidation_no,'-',i.position_id)
              AND h.action_type=?
             WHERE i.tenant_id=q.tenant_id AND i.account_liquidation_id=q.id),0) AS history_count,
-  COALESCE((SELECT COUNT(1) FROM t_biz_trade_event e
+  COALESCE((SELECT COUNT(1) FROM t_trade_event_outbox e
             WHERE e.tenant_id=q.tenant_id
               AND e.event_no=CONCAT(q.liquidation_no,'-COMPLETED')),0) AS completion_event,
   COALESCE((SELECT SUM(i.position_margin) FROM t_contract_account_liquidation_item i

@@ -31,7 +31,7 @@ func NewTItickTenantCategoryModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...
 	}
 }
 
-func (m *defaultTItickTenantCategoryModel) FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TItickTenantCategory, int64, error) {
+func (m *customTItickTenantCategoryModel) FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TItickTenantCategory, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()

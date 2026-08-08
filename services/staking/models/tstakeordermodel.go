@@ -5,10 +5,11 @@ import (
 	"database/sql"
 	"fmt"
 
+	"wklive/common/sqlutil"
+
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TStakeOrderModel = (*customTStakeOrderModel)(nil)
@@ -52,7 +53,7 @@ func NewTStakeOrderModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Opt
 	}
 }
 
-func (m *defaultTStakeOrderModel) ClaimOperation(ctx context.Context, id int64, operationNo string, now int64, allowedStatuses []int64) (bool, error) {
+func (m *customTStakeOrderModel) ClaimOperation(ctx context.Context, id int64, operationNo string, now int64, allowedStatuses []int64) (bool, error) {
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.And("id = ?", id)
 	builder.And("active_operation_no = ''")
@@ -71,7 +72,7 @@ func (m *defaultTStakeOrderModel) ClaimOperation(ctx context.Context, id int64, 
 	return affected == 1, err
 }
 
-func (m *defaultTStakeOrderModel) FindOneForUpdate(ctx context.Context, id int64) (*TStakeOrder, error) {
+func (m *customTStakeOrderModel) FindOneForUpdate(ctx context.Context, id int64) (*TStakeOrder, error) {
 	var item TStakeOrder
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id=? FOR UPDATE", tStakeOrderRows, m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &item, query, id); err != nil {
@@ -80,7 +81,7 @@ func (m *defaultTStakeOrderModel) FindOneForUpdate(ctx context.Context, id int64
 	return &item, nil
 }
 
-func (m *defaultTStakeOrderModel) FindPage(ctx context.Context, filter StakeOrderPageFilter, cursor int64, limit int64) ([]*TStakeOrder, int64, error) {
+func (m *customTStakeOrderModel) FindPage(ctx context.Context, filter StakeOrderPageFilter, cursor int64, limit int64) ([]*TStakeOrder, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -132,7 +133,7 @@ func (m *defaultTStakeOrderModel) FindPage(ctx context.Context, filter StakeOrde
 	return list, total, nil
 }
 
-func (m *defaultTStakeOrderModel) SumStakeAmountByStatuses(ctx context.Context, tenantID, user_id, productID int64, statuses []int64) (decimal.Decimal, error) {
+func (m *customTStakeOrderModel) SumStakeAmountByStatuses(ctx context.Context, tenantID, user_id, productID int64, statuses []int64) (decimal.Decimal, error) {
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.And("tenant_id = ?", tenantID)
 	builder.And("user_id = ?", user_id)

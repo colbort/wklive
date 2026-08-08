@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TContractFundingSettlementModel = (*customTContractFundingSettlementModel)(nil)
@@ -32,7 +33,7 @@ func NewTContractFundingSettlementModel(conn sqlx.SqlConn, c cache.CacheConf, op
 	}
 }
 
-func (m *defaultTContractFundingSettlementModel) CountUnsettledPayers(ctx context.Context, tenantID, batchID, settledStatus int64) (int64, error) {
+func (m *customTContractFundingSettlementModel) CountUnsettledPayers(ctx context.Context, tenantID, batchID, settledStatus int64) (int64, error) {
 	var count int64
 	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id=? AND batch_id=? AND fee_amount<0 AND status<>?", m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &count, query, tenantID, batchID, settledStatus); err != nil {
@@ -41,7 +42,7 @@ func (m *defaultTContractFundingSettlementModel) CountUnsettledPayers(ctx contex
 	return count, nil
 }
 
-func (m *defaultTContractFundingSettlementModel) CountByBatchStatus(ctx context.Context, tenantID, batchID, status int64) (int64, error) {
+func (m *customTContractFundingSettlementModel) CountByBatchStatus(ctx context.Context, tenantID, batchID, status int64) (int64, error) {
 	var count int64
 	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id=? AND batch_id=? AND status=?", m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &count, query, tenantID, batchID, status); err != nil {
@@ -50,7 +51,7 @@ func (m *defaultTContractFundingSettlementModel) CountByBatchStatus(ctx context.
 	return count, nil
 }
 
-func (m *defaultTContractFundingSettlementModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractFundingSettlement, int64, error) {
+func (m *customTContractFundingSettlementModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractFundingSettlement, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := adminPageBuilder(filter, "")
 	where, args := b.Where(), b.Args()

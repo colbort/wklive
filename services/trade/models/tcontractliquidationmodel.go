@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TContractLiquidationModel = (*customTContractLiquidationModel)(nil)
@@ -33,7 +34,7 @@ func NewTContractLiquidationModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...
 	}
 }
 
-func (m *defaultTContractLiquidationModel) FindActiveByPosition(ctx context.Context, tenantID, positionID int64) (*TContractLiquidation, error) {
+func (m *customTContractLiquidationModel) FindActiveByPosition(ctx context.Context, tenantID, positionID int64) (*TContractLiquidation, error) {
 	var row TContractLiquidation
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND position_id = ? AND status IN (1,2,5,6,7) ORDER BY id DESC LIMIT 1", tContractLiquidationRows, m.table)
 	err := m.QueryRowNoCacheCtx(ctx, &row, query, tenantID, positionID)
@@ -47,7 +48,7 @@ func (m *defaultTContractLiquidationModel) FindActiveByPosition(ctx context.Cont
 	}
 }
 
-func (m *defaultTContractLiquidationModel) FindOneForUpdate(ctx context.Context, id int64) (*TContractLiquidation, error) {
+func (m *customTContractLiquidationModel) FindOneForUpdate(ctx context.Context, id int64) (*TContractLiquidation, error) {
 	var row TContractLiquidation
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id=? FOR UPDATE", tContractLiquidationRows, m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &row, query, id); err != nil {
@@ -56,7 +57,7 @@ func (m *defaultTContractLiquidationModel) FindOneForUpdate(ctx context.Context,
 	return &row, nil
 }
 
-func (m *defaultTContractLiquidationModel) FindRecoverable(ctx context.Context, limit int64) ([]*TContractLiquidation, error) {
+func (m *customTContractLiquidationModel) FindRecoverable(ctx context.Context, limit int64) ([]*TContractLiquidation, error) {
 	if limit <= 0 || limit > 1000 {
 		limit = 100
 	}
@@ -68,7 +69,7 @@ func (m *defaultTContractLiquidationModel) FindRecoverable(ctx context.Context, 
 	return rows, nil
 }
 
-func (m *defaultTContractLiquidationModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractLiquidation, int64, error) {
+func (m *customTContractLiquidationModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractLiquidation, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := adminPageBuilder(filter, "create_times")
 	where, args := b.Where(), b.Args()

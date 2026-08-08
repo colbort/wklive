@@ -35,7 +35,7 @@ func NewTAssetPlatformAccountModel(conn sqlx.SqlConn, c cache.CacheConf, opts ..
 	}
 }
 
-func (m *defaultTAssetPlatformAccountModel) SubAvailableWithFloor(
+func (m *customTAssetPlatformAccountModel) SubAvailableWithFloor(
 	ctx context.Context,
 	id int64,
 	amount decimal.Decimal,
@@ -62,7 +62,7 @@ WHERE id=? AND status=1 AND account_type='OPTION_BACKSTOP'
 	return affected == 1, err
 }
 
-func (m *defaultTAssetPlatformAccountModel) FindOneForUpdate(ctx context.Context, tenantID int64, accountType, coin string) (*TAssetPlatformAccount, error) {
+func (m *customTAssetPlatformAccountModel) FindOneForUpdate(ctx context.Context, tenantID int64, accountType, coin string) (*TAssetPlatformAccount, error) {
 	var row TAssetPlatformAccount
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND account_type=? AND coin=? AND status=1 FOR UPDATE", tAssetPlatformAccountRows, m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &row, query, tenantID, accountType, coin); err != nil {
@@ -71,7 +71,7 @@ func (m *defaultTAssetPlatformAccountModel) FindOneForUpdate(ctx context.Context
 	return &row, nil
 }
 
-func (m *defaultTAssetPlatformAccountModel) AddAvailable(ctx context.Context, id int64, amount decimal.Decimal, now int64) error {
+func (m *customTAssetPlatformAccountModel) AddAvailable(ctx context.Context, id int64, amount decimal.Decimal, now int64) error {
 	item, err := m.findOneNoCache(ctx, id)
 	if err != nil {
 		return err
@@ -84,7 +84,7 @@ func (m *defaultTAssetPlatformAccountModel) AddAvailable(ctx context.Context, id
 	return err
 }
 
-func (m *defaultTAssetPlatformAccountModel) SubAvailable(ctx context.Context, id int64, amount decimal.Decimal, now int64) (bool, error) {
+func (m *customTAssetPlatformAccountModel) SubAvailable(ctx context.Context, id int64, amount decimal.Decimal, now int64) (bool, error) {
 	item, err := m.findOneNoCache(ctx, id)
 	if err != nil {
 		return false, err
@@ -101,7 +101,7 @@ func (m *defaultTAssetPlatformAccountModel) SubAvailable(ctx context.Context, id
 	return affected == 1, err
 }
 
-func (m *defaultTAssetPlatformAccountModel) findOneNoCache(ctx context.Context, id int64) (*TAssetPlatformAccount, error) {
+func (m *customTAssetPlatformAccountModel) findOneNoCache(ctx context.Context, id int64) (*TAssetPlatformAccount, error) {
 	var item TAssetPlatformAccount
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id=? LIMIT 1", tAssetPlatformAccountRows, m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &item, query, id); err != nil {

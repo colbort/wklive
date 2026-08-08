@@ -431,7 +431,7 @@ func (l *PlaceOrderLogic) finalizeAcceptedOrder(order *models.TTradeOrder, freez
 		orderModel := tx.TradeOrder
 		reservationModel := tx.TradeAssetReservation
 		secondsModel := tx.TradeOrderSeconds
-		eventModel := tx.BizTradeEvent
+		eventModel := tx.TradeEventOutbox
 
 		order.BizExt = sql.NullString{String: extValue, Valid: extValue != ""}
 		order.Status = helpers.StatusAfterFreeze(triggerKind)
@@ -465,7 +465,7 @@ func (l *PlaceOrderLogic) finalizeAcceptedOrder(order *models.TTradeOrder, freez
 				return err
 			}
 		}
-		_, err := eventModel.Insert(ctx, &models.TBizTradeEvent{TenantId: order.TenantId, EventNo: derivedTradeBizNo(order.OrderNo, "ACCEPTED"), EventType: realtime.EventOrderAccepted, BizId: order.OrderNo, BizType: "order", UserId: order.UserId, SymbolId: order.SymbolId, ProductType: order.ProductType, OperatorId: order.UserId, Source: int64(trade.SourceType_SOURCE_TYPE_USER), Consumer: helpers.TradeEventConsumer(realtime.EventOrderAccepted), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, PayloadVersion: helpers.TradeEventPayloadVersion, Payload: "{}", CreateTimes: now, UpdateTimes: now})
+		_, err := eventModel.Insert(ctx, &models.TTradeEventOutbox{TenantId: order.TenantId, EventNo: derivedTradeBizNo(order.OrderNo, "ACCEPTED"), EventType: realtime.EventOrderAccepted, BizId: order.OrderNo, BizType: "order", UserId: order.UserId, SymbolId: order.SymbolId, ProductType: order.ProductType, OperatorId: order.UserId, Source: int64(trade.SourceType_SOURCE_TYPE_USER), Consumer: helpers.TradeEventConsumer(realtime.EventOrderAccepted), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, PayloadVersion: helpers.TradeEventPayloadVersion, Payload: "{}", CreateTimes: now, UpdateTimes: now})
 		return err
 	}); err != nil {
 		return err
@@ -520,7 +520,7 @@ func (l *PlaceOrderLogic) rejectOrderAfterFreezeFailure(order *models.TTradeOrde
 		orderModel := tx.TradeOrder
 		reservationModel := tx.TradeAssetReservation
 		positionModel := tx.ContractPosition
-		eventModel := tx.BizTradeEvent
+		eventModel := tx.TradeEventOutbox
 
 		order.Status = int64(trade.OrderStatus_ORDER_STATUS_REJECTED)
 		order.CancelReason = fmt.Sprintf("asset freeze rejected: %v", cause)
@@ -546,7 +546,7 @@ func (l *PlaceOrderLogic) rejectOrderAfterFreezeFailure(order *models.TTradeOrde
 				return err
 			}
 		}
-		_, err := eventModel.Insert(ctx, &models.TBizTradeEvent{TenantId: order.TenantId, EventNo: order.OrderNo + "-REJECTED", EventType: "ORDER_REJECTED", BizId: order.OrderNo, BizType: "order", UserId: order.UserId, SymbolId: order.SymbolId, ProductType: order.ProductType, OperatorId: order.UserId, Source: int64(trade.SourceType_SOURCE_TYPE_USER), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: "{}", CreateTimes: now, UpdateTimes: now})
+		_, err := eventModel.Insert(ctx, &models.TTradeEventOutbox{TenantId: order.TenantId, EventNo: order.OrderNo + "-REJECTED", EventType: "ORDER_REJECTED", BizId: order.OrderNo, BizType: "order", UserId: order.UserId, SymbolId: order.SymbolId, ProductType: order.ProductType, OperatorId: order.UserId, Source: int64(trade.SourceType_SOURCE_TYPE_USER), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: "{}", CreateTimes: now, UpdateTimes: now})
 		return err
 	})
 }

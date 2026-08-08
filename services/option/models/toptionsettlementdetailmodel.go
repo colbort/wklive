@@ -23,7 +23,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionSettlementDetailModel) FindByBatch(
+func (m *customTOptionSettlementDetailModel) FindByBatch(
 	ctx context.Context,
 	tenantId, batchId int64,
 ) ([]*TOptionSettlementDetail, error) {

@@ -31,7 +31,7 @@ func NewTAssetBackstopUsageDailyModel(conn sqlx.SqlConn, c cache.CacheConf, opts
 	}
 }
 
-func (m *defaultTAssetBackstopUsageDailyModel) FindOneForUpdate(
+func (m *customTAssetBackstopUsageDailyModel) FindOneForUpdate(
 	ctx context.Context,
 	tenantID int64,
 	coin string,
@@ -49,7 +49,7 @@ WHERE tenant_id=? AND coin=? AND usage_day=? FOR UPDATE`, tAssetBackstopUsageDai
 	return &row, nil
 }
 
-func (m *defaultTAssetBackstopUsageDailyModel) AddCovered(
+func (m *customTAssetBackstopUsageDailyModel) AddCovered(
 	ctx context.Context,
 	row *TAssetBackstopUsageDaily,
 	amount decimal.Decimal,

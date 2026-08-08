@@ -3,14 +3,15 @@ module wklive/services/liquidity
 go 1.26.4
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/shopspring/decimal v1.4.0
 	github.com/zeromicro/go-zero v1.10.2
 	google.golang.org/grpc v1.82.1
 	wklive/common v0.0.0-00010101000000-000000000000
 	wklive/proto/asset v0.0.0-00010101000000-000000000000
 	wklive/proto/common v0.0.0-00010101000000-000000000000
-	wklive/proto/market v0.0.0-00010101000000-000000000000
 	wklive/proto/liquidity v0.0.0-00010101000000-000000000000
+	wklive/proto/market v0.0.0-00010101000000-000000000000
 	wklive/proto/trade v0.0.0-00010101000000-000000000000
 	wklive/proto/user v0.0.0-00010101000000-000000000000
 )

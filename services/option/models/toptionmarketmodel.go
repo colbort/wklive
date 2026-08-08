@@ -26,7 +26,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionMarketModel) FindByContractIDs(
+func (m *customTOptionMarketModel) FindByContractIDs(
 	ctx context.Context, tenantId int64, contractIDs []int64,
 ) ([]*TOptionMarket, error) {
 	if len(contractIDs) == 0 {
@@ -47,7 +47,7 @@ func (m *defaultTOptionMarketModel) FindByContractIDs(
 	return items, err
 }
 
-func (m *defaultTOptionMarketModel) FindOneByTenantIdContractIdForUpdate(
+func (m *customTOptionMarketModel) FindOneByTenantIdContractIdForUpdate(
 	ctx context.Context, tenantId, contractId int64,
 ) (*TOptionMarket, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -66,7 +66,7 @@ func NewTOptionMarketModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.O
 	}
 }
 
-func (m *defaultTOptionMarketModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TOptionMarket, int64, error) {
+func (m *customTOptionMarketModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TOptionMarket, int64, error) {
 	if limit <= 0 {
 		limit = 10
 	}

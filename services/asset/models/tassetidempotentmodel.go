@@ -5,9 +5,10 @@ import (
 	"database/sql"
 	"fmt"
 
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TAssetIdempotentModel = (*customTAssetIdempotentModel)(nil)
@@ -37,7 +38,7 @@ func NewTAssetIdempotentModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cach
 // necessarily creates a negative cache entry; reading the same unique key in
 // the same SQL transaction can otherwise return sql.ErrNoRows and roll back a
 // valid asset mutation.
-func (m *defaultTAssetIdempotentModel) MarkSuccess(ctx context.Context, tenantId int64, bizType, sceneType, bizNo string, updateTimes int64) error {
+func (m *customTAssetIdempotentModel) MarkSuccess(ctx context.Context, tenantId int64, bizType, sceneType, bizNo string, updateTimes int64) error {
 	key := fmt.Sprintf("%s%v:%v:%v:%v", cacheTAssetIdempotentTenantIdBizTypeSceneTypeBizNoPrefix, tenantId, bizType, sceneType, bizNo)
 	query := fmt.Sprintf("UPDATE %s SET status=?, remark=?, update_times=? WHERE tenant_id=? AND biz_type=? AND scene_type=? AND biz_no=?", m.table)
 	result, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
@@ -56,7 +57,7 @@ func (m *defaultTAssetIdempotentModel) MarkSuccess(ctx context.Context, tenantId
 	return nil
 }
 
-func (m *defaultTAssetIdempotentModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TAssetIdempotent, int64, error) {
+func (m *customTAssetIdempotentModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TAssetIdempotent, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()

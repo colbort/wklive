@@ -3,11 +3,12 @@ package models
 import (
 	"context"
 	"fmt"
-	"github.com/zeromicro/go-zero/core/stores/cache"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"strings"
 	"time"
 	"wklive/common/sqlutil"
+
+	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 var _ TUserModel = (*customTUserModel)(nil)
@@ -67,7 +68,7 @@ func NewTUserModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) T
 	}
 }
 
-func (m *defaultTUserModel) GetGuestDomainMigrationStats(ctx context.Context, tenantId int64, sourceOrigin string, active7dAt, active30dAt, active90dAt int64) (*GuestDomainMigrationStats, error) {
+func (m *customTUserModel) GetGuestDomainMigrationStats(ctx context.Context, tenantId int64, sourceOrigin string, active7dAt, active30dAt, active90dAt int64) (*GuestDomainMigrationStats, error) {
 	var stats GuestDomainMigrationStats
 	query := fmt.Sprintf(`
 		SELECT
@@ -93,7 +94,7 @@ func (m *defaultTUserModel) GetGuestDomainMigrationStats(ctx context.Context, te
 	return &stats, err
 }
 
-func (m *defaultTUserModel) FindPage(ctx context.Context, filter UserPageFilter, cursor int64, limit int64) ([]*TUser, int64, error) {
+func (m *customTUserModel) FindPage(ctx context.Context, filter UserPageFilter, cursor int64, limit int64) ([]*TUser, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -190,7 +191,7 @@ func (m *defaultTUserModel) FindPage(ctx context.Context, filter UserPageFilter,
 	return list, total, nil
 }
 
-func (m *defaultTUserModel) FindByInviteCode(ctx context.Context, inviteCode string) (*TUser, error) {
+func (m *customTUserModel) FindByInviteCode(ctx context.Context, inviteCode string) (*TUser, error) {
 	var resp TUser
 
 	query := fmt.Sprintf(`
@@ -211,7 +212,7 @@ func (m *defaultTUserModel) FindByInviteCode(ctx context.Context, inviteCode str
 	return &resp, nil
 }
 
-func (m *defaultTUserModel) CountRecentNoRecharge(ctx context.Context, id int64) (int64, error) {
+func (m *customTUserModel) CountRecentNoRecharge(ctx context.Context, id int64) (int64, error) {
 	var count int64
 
 	query := fmt.Sprintf(`
@@ -233,7 +234,7 @@ func (m *defaultTUserModel) CountRecentNoRecharge(ctx context.Context, id int64)
 	return count, nil
 }
 
-func (m *defaultTUserModel) FindByUsername(ctx context.Context, tenantCode string, username string) (*TUser, error) {
+func (m *customTUserModel) FindByUsername(ctx context.Context, tenantCode string, username string) (*TUser, error) {
 	var resp TUser
 
 	query := fmt.Sprintf(`
@@ -255,7 +256,7 @@ func (m *defaultTUserModel) FindByUsername(ctx context.Context, tenantCode strin
 	return &resp, nil
 }
 
-func (m *defaultTUserModel) FindByDeviceIdOrFingerprint(ctx context.Context, deviceId string, fingerprint string) (*TUser, error) {
+func (m *customTUserModel) FindByDeviceIdOrFingerprint(ctx context.Context, deviceId string, fingerprint string) (*TUser, error) {
 	var resp TUser
 
 	query := fmt.Sprintf(`
@@ -278,7 +279,7 @@ func (m *defaultTUserModel) FindByDeviceIdOrFingerprint(ctx context.Context, dev
 	return &resp, nil
 }
 
-func (m *defaultTUserModel) FindGuestByDeviceId(ctx context.Context, tenantId int64, deviceId string) (*TUser, error) {
+func (m *customTUserModel) FindGuestByDeviceId(ctx context.Context, tenantId int64, deviceId string) (*TUser, error) {
 	var resp TUser
 
 	query := fmt.Sprintf(`
@@ -303,7 +304,7 @@ func (m *defaultTUserModel) FindGuestByDeviceId(ctx context.Context, tenantId in
 	return &resp, nil
 }
 
-func (m *defaultTUserModel) FindGuestFingerprintCandidates(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUser, error) {
+func (m *customTUserModel) FindGuestFingerprintCandidates(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUser, error) {
 	if limit <= 0 || limit > 500 {
 		limit = 500
 	}
@@ -337,7 +338,7 @@ func (m *defaultTUserModel) FindGuestFingerprintCandidates(ctx context.Context, 
 	return list, nil
 }
 
-func (m *defaultTUserModel) FindByTenantIdUserId(ctx context.Context, tenantId int64, userId int64) (*TUser, error) {
+func (m *customTUserModel) FindByTenantIdUserId(ctx context.Context, tenantId int64, userId int64) (*TUser, error) {
 	var resp TUser
 
 	query := fmt.Sprintf(`

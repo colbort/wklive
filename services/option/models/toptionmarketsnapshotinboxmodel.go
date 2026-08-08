@@ -33,7 +33,7 @@ func NewTOptionMarketSnapshotInboxModel(conn sqlx.SqlConn, c cache.CacheConf, op
 	}
 }
 
-func (m *defaultTOptionMarketSnapshotInboxModel) Claim(ctx context.Context, snapshotID string, tenantID, contractID, createTimes int64) (bool, error) {
+func (m *customTOptionMarketSnapshotInboxModel) Claim(ctx context.Context, snapshotID string, tenantID, contractID, createTimes int64) (bool, error) {
 	return resolveSnapshotInboxClaim(m.ExecNoCacheCtx(ctx, `INSERT INTO t_option_market_snapshot_inbox
 		(snapshot_id,tenant_id,contract_id,create_times) VALUES(?,?,?,?)`,
 		snapshotID, tenantID, contractID, createTimes))
@@ -58,7 +58,7 @@ func isDuplicateKeyError(err error) bool {
 	return errors.As(err, &mysqlErr) && mysqlErr.Number == 1062
 }
 
-func (m *defaultTOptionMarketSnapshotInboxModel) DeleteBefore(ctx context.Context, cutoff, limit int64) (int64, error) {
+func (m *customTOptionMarketSnapshotInboxModel) DeleteBefore(ctx context.Context, cutoff, limit int64) (int64, error) {
 	if limit <= 0 || limit > 10000 {
 		limit = 5000
 	}

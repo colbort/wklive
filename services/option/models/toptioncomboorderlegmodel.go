@@ -31,7 +31,7 @@ func NewTOptionComboOrderLegModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...
 	}
 }
 
-func (m *defaultTOptionComboOrderLegModel) FindByComboOrderID(
+func (m *customTOptionComboOrderLegModel) FindByComboOrderID(
 	ctx context.Context, tenantId, comboOrderId int64,
 ) ([]*TOptionComboOrderLeg, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -44,7 +44,7 @@ ORDER BY leg_no`, tOptionComboOrderLegRows, m.table)
 	return list, nil
 }
 
-func (m *defaultTOptionComboOrderLegModel) FindByComboOrderIDForUpdate(
+func (m *customTOptionComboOrderLegModel) FindByComboOrderIDForUpdate(
 	ctx context.Context, tenantId, comboOrderId int64,
 ) ([]*TOptionComboOrderLeg, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s

@@ -103,9 +103,11 @@ func TestComboIdempotencyLookupBypassesCache(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	model := &defaultTOptionComboOrderModel{
-		CachedConn: sqlc.NewConnWithCache(sqlx.NewSqlConnFromDB(db), nil),
-		table:      "`t_option_combo_order`",
+	model := &customTOptionComboOrderModel{
+		defaultTOptionComboOrderModel: &defaultTOptionComboOrderModel{
+			CachedConn: sqlc.NewConnWithCache(sqlx.NewSqlConnFromDB(db), nil),
+			table:      "`t_option_combo_order`",
+		},
 	}
 	mock.ExpectQuery(`SELECT .* FROM .* WHERE tenant_id=\? AND user_id=\? AND client_combo_id=\? LIMIT 1`).
 		WithArgs(int64(9), int64(10), "same-key").

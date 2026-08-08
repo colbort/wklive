@@ -39,12 +39,15 @@ type (
 	// and implement the added methods in customTOptionAssetInstructionModel.
 	TOptionAssetInstructionModel interface {
 		tOptionAssetInstructionModel
-		FindRunnable(ctx context.Context, tenantId, now, cursor, limit int64) ([]*TOptionAssetInstruction, error)
+		FindRunnable(ctx context.Context, tenantId, now, staleBefore, cursor, limit int64) ([]*TOptionAssetInstruction, error)
 		FindByBizNo(ctx context.Context, tenantId int64, bizNo string) ([]*TOptionAssetInstruction, error)
 		SummarizeByBizNo(ctx context.Context, tenantId int64, bizNo string) (total, success int64, err error)
 		AllSucceededByBizNo(ctx context.Context, tenantId int64, bizNo string) (bool, error)
 		FindOneForUpdate(ctx context.Context, id int64) (*TOptionAssetInstruction, error)
-		Claim(ctx context.Context, id, now int64) (bool, error)
+		Claim(ctx context.Context, id int64, owner string, now, staleBefore int64) (bool, error)
+		CheckpointSuccess(ctx context.Context, item *TOptionAssetInstruction, owner string, now int64) (bool, error)
+		ReleaseSuccess(ctx context.Context, id int64, owner string, now int64) (bool, error)
+		MarkFailed(ctx context.Context, item *TOptionAssetInstruction, owner string, now int64) (bool, error)
 		ResetForManualRetry(ctx context.Context, id, now int64) (bool, error)
 		ResetFailedByBizNo(ctx context.Context, tenantId int64, bizNo string, now int64) (int64, error)
 		HasIncompleteMarginForContract(ctx context.Context, tenantId, contractId int64) (bool, error)
@@ -54,7 +57,6 @@ type (
 		FindByComboOrderID(ctx context.Context, tenantId, comboOrderId, limit int64) ([]*TOptionAssetInstruction, int64, error)
 		ResetFailedByDeliveryUnit(ctx context.Context, tenantId, deliveryUnitId, now int64) (int64, error)
 		FindPage(ctx context.Context, filter OptionAssetInstructionPageFilter, cursor, limit int64) ([]*TOptionAssetInstruction, int64, error)
-		RecoverStale(ctx context.Context, tenantId, staleBefore, now int64) (int64, error)
 	}
 
 	customTOptionAssetInstructionModel struct {
@@ -107,30 +109,7 @@ WHERE tenant_id=? AND user_id=? AND coin=? AND status NOT IN (?, ?)`,
 	return count > 0, err
 }
 
-func (m *defaultTOptionAssetInstructionModel) RecoverStale(
-	ctx context.Context, tenantId, staleBefore, now int64,
-) (int64, error) {
-	query := `UPDATE t_option_asset_instruction
-SET status=?,next_retry_at=?,last_error_msg='STALE_PROCESSING_RECOVERED',update_times=?
-WHERE status=? AND update_times < ?`
-	args := []any{
-		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_FAILED),
-		now, now,
-		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PROCESSING),
-		staleBefore,
-	}
-	if tenantId > 0 {
-		query += " AND tenant_id = ?"
-		args = append(args, tenantId)
-	}
-	result, err := m.ExecNoCacheCtx(ctx, query, args...)
-	if err != nil {
-		return 0, err
-	}
-	return result.RowsAffected()
-}
-
-func (m *defaultTOptionAssetInstructionModel) FindPage(
+func (m *customTOptionAssetInstructionModel) FindPage(
 	ctx context.Context, filter OptionAssetInstructionPageFilter, cursor, limit int64,
 ) ([]*TOptionAssetInstruction, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
@@ -173,7 +152,7 @@ WHERE tenant_id = ? AND delivery_unit_id = ? ORDER BY step_no, id`,
 	return list, err
 }
 
-func (m *defaultTOptionAssetInstructionModel) FindByComboOrderID(
+func (m *customTOptionAssetInstructionModel) FindByComboOrderID(
 	ctx context.Context, tenantId, comboOrderId, limit int64,
 ) ([]*TOptionAssetInstruction, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
@@ -201,12 +180,12 @@ LIMIT ?`, tOptionAssetInstructionRows, m.table, where)
 	return list, total, nil
 }
 
-func (m *defaultTOptionAssetInstructionModel) ResetFailedByDeliveryUnit(
+func (m *customTOptionAssetInstructionModel) ResetFailedByDeliveryUnit(
 	ctx context.Context, tenantId, deliveryUnitId, now int64,
 ) (int64, error) {
 	result, err := m.ExecNoCacheCtx(ctx, `UPDATE t_option_asset_instruction
 SET status = ?, retry_count = 0, next_retry_at = ?, last_error_msg = '',
-    reconciliation_status = ?, update_times = ?
+	    reconciliation_status = ?, claimed_by = '', claimed_at = 0, update_times = ?
 WHERE tenant_id = ? AND delivery_unit_id = ? AND status IN (?, ?)`,
 		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING), now,
 		int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_PENDING), now,
@@ -239,10 +218,10 @@ WHERE i.tenant_id = ? AND l.contract_id = ? AND i.status <> ?`,
 	return count > 0, err
 }
 
-func (m *defaultTOptionAssetInstructionModel) ResetForManualRetry(ctx context.Context, id, now int64) (bool, error) {
+func (m *customTOptionAssetInstructionModel) ResetForManualRetry(ctx context.Context, id, now int64) (bool, error) {
 	result, err := m.ExecNoCacheCtx(ctx, `UPDATE t_option_asset_instruction
 SET status = ?, retry_count = 0, next_retry_at = ?, last_error_msg = '',
-    reconciliation_status = ?, update_times = ?
+	    reconciliation_status = ?, claimed_by = '', claimed_at = 0, update_times = ?
 WHERE id = ? AND status IN (?, ?)`,
 		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING), now,
 		int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_PENDING), now, id,
@@ -256,7 +235,7 @@ WHERE id = ? AND status IN (?, ?)`,
 	return rows == 1, err
 }
 
-func (m *defaultTOptionAssetInstructionModel) ResetFailedByBizNo(
+func (m *customTOptionAssetInstructionModel) ResetFailedByBizNo(
 	ctx context.Context,
 	tenantId int64,
 	bizNo string,
@@ -264,7 +243,7 @@ func (m *defaultTOptionAssetInstructionModel) ResetFailedByBizNo(
 ) (int64, error) {
 	result, err := m.ExecNoCacheCtx(ctx, `UPDATE t_option_asset_instruction
 SET status = ?, retry_count = 0, next_retry_at = ?, last_error_msg = '',
-    reconciliation_status = ?, update_times = ?
+	    reconciliation_status = ?, claimed_by = '', claimed_at = 0, update_times = ?
 WHERE tenant_id = ? AND biz_no = ? AND status IN (?, ?)`,
 		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING), now,
 		int64(option.AssetReconciliationStatus_ASSET_RECONCILIATION_STATUS_PENDING), now,
@@ -294,13 +273,75 @@ func (m *customTOptionAssetInstructionModel) FindOneForUpdate(ctx context.Contex
 	return &item, nil
 }
 
-func (m *customTOptionAssetInstructionModel) Claim(ctx context.Context, id, now int64) (bool, error) {
+func (m *customTOptionAssetInstructionModel) Claim(
+	ctx context.Context, id int64, owner string, now, staleBefore int64,
+) (bool, error) {
 	result, err := m.ExecNoCacheCtx(ctx, `UPDATE t_option_asset_instruction
-SET status=?,update_times=?
-WHERE id=? AND status IN (?,?)`,
-		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PROCESSING), now, id,
+SET status=?,claimed_by=?,claimed_at=?,update_times=?
+WHERE id=? AND (
+  (status IN (?,?) AND next_retry_at <= ?)
+  OR (status=? AND claimed_at < ?)
+  OR (status=? AND claimed_by <> '' AND claimed_at < ?)
+)`,
+		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PROCESSING), owner, now, now, id,
 		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING),
-		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_FAILED))
+		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_FAILED), now,
+		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PROCESSING), staleBefore,
+		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS), staleBefore)
+	if err != nil {
+		return false, err
+	}
+	affected, err := result.RowsAffected()
+	return affected == 1, err
+}
+
+func (m *customTOptionAssetInstructionModel) CheckpointSuccess(
+	ctx context.Context, item *TOptionAssetInstruction, owner string, now int64,
+) (bool, error) {
+	result, err := m.ExecNoCacheCtx(ctx, `UPDATE t_option_asset_instruction
+SET status=?,next_retry_at=0,last_error_msg='',asset_flow_no=?,
+    reconciliation_status=?,reconciled_at=?,update_times=?
+WHERE id=? AND status=? AND claimed_by=?`,
+		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS),
+		item.AssetFlowNo, item.ReconciliationStatus, item.ReconciledAt, now, item.Id,
+		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PROCESSING), owner)
+	if err != nil {
+		return false, err
+	}
+	affected, err := result.RowsAffected()
+	return affected == 1, err
+}
+
+func (m *customTOptionAssetInstructionModel) ReleaseSuccess(
+	ctx context.Context, id int64, owner string, now int64,
+) (bool, error) {
+	result, err := m.ExecNoCacheCtx(ctx, `UPDATE t_option_asset_instruction
+SET claimed_by='',claimed_at=0,update_times=?
+WHERE id=? AND status=? AND claimed_by=?`,
+		now, id, int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS), owner)
+	if err != nil {
+		return false, err
+	}
+	affected, err := result.RowsAffected()
+	return affected == 1, err
+}
+
+func (m *customTOptionAssetInstructionModel) MarkFailed(
+	ctx context.Context, item *TOptionAssetInstruction, owner string, now int64,
+) (bool, error) {
+	message := item.LastErrorMsg
+	runes := []rune(message)
+	if len(runes) > 500 {
+		message = string(runes[:500])
+	}
+	result, err := m.ExecNoCacheCtx(ctx, `UPDATE t_option_asset_instruction
+SET status=?,retry_count=?,next_retry_at=?,last_error_msg=?,asset_flow_no=?,
+    reconciliation_status=?,reconciled_at=?,claimed_by='',claimed_at=0,update_times=?
+WHERE id=? AND status IN (?,?) AND claimed_by=?`,
+		item.Status, item.RetryCount, item.NextRetryAt, message, item.AssetFlowNo,
+		item.ReconciliationStatus, item.ReconciledAt, now, item.Id,
+		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PROCESSING),
+		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS), owner)
 	if err != nil {
 		return false, err
 	}
@@ -317,19 +358,25 @@ func (m *customTOptionAssetInstructionModel) FindByBizNo(ctx context.Context, te
 	return items, nil
 }
 
-func (m *customTOptionAssetInstructionModel) FindRunnable(ctx context.Context, tenantId, now, cursor, limit int64) ([]*TOptionAssetInstruction, error) {
+func (m *customTOptionAssetInstructionModel) FindRunnable(
+	ctx context.Context, tenantId, now, staleBefore, cursor, limit int64,
+) ([]*TOptionAssetInstruction, error) {
 	if limit <= 0 || limit > 500 {
 		limit = 100
 	}
 	query := fmt.Sprintf(`SELECT %s FROM %s AS current
-WHERE current.status IN (?, ?) AND current.next_retry_at <= ? AND current.id > ?
+WHERE (
+    (current.status IN (?, ?) AND current.next_retry_at <= ?)
+    OR (current.status = ? AND current.claimed_at < ?)
+    OR (current.status = ? AND current.claimed_by <> '' AND current.claimed_at < ?)
+  ) AND current.id > ?
   AND NOT EXISTS (
     SELECT 1 FROM %s AS biz_previous
     WHERE biz_previous.tenant_id = current.tenant_id
       AND COALESCE(NULLIF(biz_previous.execution_group, ''), biz_previous.biz_no)
           = COALESCE(NULLIF(current.execution_group, ''), current.biz_no)
       AND biz_previous.step_no < current.step_no
-      AND biz_previous.status <> ?
+	  AND (biz_previous.status <> ? OR biz_previous.claimed_by <> '')
   )
   AND NOT EXISTS (
     SELECT 1 FROM %s AS previous
@@ -339,7 +386,7 @@ WHERE current.status IN (?, ?) AND current.next_retry_at <= ? AND current.id > ?
       AND previous.id < current.id
       AND previous.action IN (2, 3)
       AND current.action IN (2, 3)
-      AND previous.status <> ?
+	  AND (previous.status <> ? OR previous.claimed_by <> '')
   )
   AND (
     current.delivery_unit_id = 0
@@ -357,7 +404,10 @@ WHERE current.status IN (?, ?) AND current.next_retry_at <= ? AND current.id > ?
 	args := []any{
 		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING),
 		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_FAILED),
-		now, cursor,
+		now,
+		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PROCESSING), staleBefore,
+		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS), staleBefore,
+		cursor,
 		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS),
 		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS),
 		now,

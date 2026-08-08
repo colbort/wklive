@@ -26,7 +26,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionCorporateActionContractModel) IsContractMigrationActive(
+func (m *customTOptionCorporateActionContractModel) IsContractMigrationActive(
 	ctx context.Context, tenantId, contractId int64,
 ) (bool, error) {
 	query := fmt.Sprintf(`SELECT COUNT(1) FROM %s m
@@ -40,7 +40,7 @@ WHERE m.tenant_id=? AND (m.source_contract_id=? OR m.successor_contract_id=?)
 	return total > 0, nil
 }
 
-func (m *defaultTOptionCorporateActionContractModel) IsSuccessorBlocked(
+func (m *customTOptionCorporateActionContractModel) IsSuccessorBlocked(
 	ctx context.Context, tenantId, contractId int64,
 ) (bool, error) {
 	query := fmt.Sprintf(`SELECT COUNT(1) FROM %s m
@@ -53,7 +53,7 @@ WHERE m.tenant_id=? AND m.successor_contract_id=? AND a.status IN (1,2,4,6,7)`, 
 	return total > 0, nil
 }
 
-func (m *defaultTOptionCorporateActionContractModel) FindByAction(
+func (m *customTOptionCorporateActionContractModel) FindByAction(
 	ctx context.Context, tenantId, actionId int64,
 ) ([]*TOptionCorporateActionContract, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND action_id=? ORDER BY id",
@@ -63,7 +63,7 @@ func (m *defaultTOptionCorporateActionContractModel) FindByAction(
 	return items, err
 }
 
-func (m *defaultTOptionCorporateActionContractModel) FindOneForUpdate(
+func (m *customTOptionCorporateActionContractModel) FindOneForUpdate(
 	ctx context.Context, id int64,
 ) (*TOptionCorporateActionContract, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id=? LIMIT 1 FOR UPDATE",

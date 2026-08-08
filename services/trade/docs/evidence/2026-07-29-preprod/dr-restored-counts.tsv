@@ -21,7 +21,7 @@ t_asset_insurance_cover	0
 t_asset_lock	0
 t_asset_platform_account	1
 t_asset_platform_flow	0
-t_biz_trade_event	40379
+t_trade_event_outbox	40379
 t_chat_agent	6
 t_chat_assignment	65
 t_chat_category	5

@@ -34,12 +34,13 @@ type ServiceContext struct {
 	EventInboxModel        models.TLiquidityEventInboxModel
 	EventOutboxModel       models.TLiquidityEventOutboxModel
 	TradeClient            trade.TradeClient
-	MarketClient            market.MarketClient
+	MarketClient           market.MarketClient
 	UserClient             user.UserClient
 	AssetClient            asset.AssetClient
 	InternalMarketMaker    provider.InternalMarketMaker
 	ProviderAdapters       *provider.Registry
 	TaskSubscriber         *mq.Subscriber
+	OutboxPublisher        *mq.Publisher
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -75,11 +76,12 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		EventInboxModel:        models.NewTLiquidityEventInboxModel(conn, c.CacheRedis),
 		EventOutboxModel:       models.NewTLiquidityEventOutboxModel(conn, c.CacheRedis),
 		TradeClient:            trade.NewTradeClient(tradeClient.Conn()),
-		MarketClient:            market.NewMarketClient(marketClient.Conn()),
+		MarketClient:           market.NewMarketClient(marketClient.Conn()),
 		UserClient:             user.NewUserClient(userClient.Conn()),
 		AssetClient:            asset.NewAssetClient(assetClient.Conn()),
 		InternalMarketMaker:    provider.NewTradeInternalMarketMaker(trade.NewTradeClient(tradeClient.Conn())),
 		ProviderAdapters:       providerAdapters,
 		TaskSubscriber:         mq.MustNewSubscriber(mqConfig, "liquidity-tasks"),
+		OutboxPublisher:        mq.MustNewPublisher(mqConfig),
 	}
 }

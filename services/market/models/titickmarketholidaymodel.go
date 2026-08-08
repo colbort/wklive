@@ -30,7 +30,7 @@ func NewTItickMarketHolidayModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...c
 	}
 }
 
-func (m *defaultTItickMarketHolidayModel) UpsertByCalendarDate(ctx context.Context, data *TItickMarketHoliday) error {
+func (m *customTItickMarketHolidayModel) UpsertByCalendarDate(ctx context.Context, data *TItickMarketHoliday) error {
 	query := fmt.Sprintf(`INSERT INTO %s (calendar_id,trade_date,day_type,open_time,close_time,remark)
 		VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id),day_type=VALUES(day_type),
 		open_time=VALUES(open_time),close_time=VALUES(close_time),remark=VALUES(remark)`, m.table)

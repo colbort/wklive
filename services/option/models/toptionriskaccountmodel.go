@@ -28,7 +28,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionRiskAccountModel) EnsureAndFindOneForUpdate(
+func (m *customTOptionRiskAccountModel) EnsureAndFindOneForUpdate(
 	ctx context.Context,
 	tenantId, userId, accountId int64,
 	settleCoin string,
@@ -66,7 +66,7 @@ type OptionRiskAccountPageFilter struct {
 	Status     int64
 }
 
-func (m *defaultTOptionRiskAccountModel) FindPage(ctx context.Context, filter OptionRiskAccountPageFilter, cursor, limit int64) ([]*TOptionRiskAccount, int64, error) {
+func (m *customTOptionRiskAccountModel) FindPage(ctx context.Context, filter OptionRiskAccountPageFilter, cursor, limit int64) ([]*TOptionRiskAccount, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
@@ -92,7 +92,7 @@ func (m *defaultTOptionRiskAccountModel) FindPage(ctx context.Context, filter Op
 	return list, total, err
 }
 
-func (m *defaultTOptionRiskAccountModel) FindByTenant(ctx context.Context, tenantId int64) ([]*TOptionRiskAccount, error) {
+func (m *customTOptionRiskAccountModel) FindByTenant(ctx context.Context, tenantId int64) ([]*TOptionRiskAccount, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE (? = 0 OR tenant_id = ?) ORDER BY id", tOptionRiskAccountRows, m.table)
 	var list []*TOptionRiskAccount
 	err := m.QueryRowsNoCacheCtx(ctx, &list, query, tenantId, tenantId)

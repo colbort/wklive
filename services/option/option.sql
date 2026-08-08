@@ -531,13 +531,16 @@ CREATE TABLE `t_option_outbox` (
   `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1待处理 2处理中 3成功 4失败 5人工处理',
   `retry_count` INT NOT NULL DEFAULT 0 COMMENT '重试次数',
   `next_retry_at` BIGINT NOT NULL DEFAULT 0 COMMENT '下次重试时间',
+  `claimed_by` VARCHAR(128) NOT NULL DEFAULT '' COMMENT '当前领取实例',
+  `claimed_at` BIGINT NOT NULL DEFAULT 0 COMMENT '领取时间（秒）',
   `last_error_msg` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '最后错误',
   `create_times` BIGINT NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_times` BIGINT NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_event_no` (`tenant_id`, `event_no`),
   UNIQUE KEY `uk_tenant_contract_sequence_type` (`tenant_id`, `contract_id`, `match_sequence`, `event_type`),
-  KEY `idx_outbox_retry` (`status`, `next_retry_at`, `id`)
+  KEY `idx_outbox_retry` (`status`, `next_retry_at`, `id`),
+  KEY `idx_outbox_claim` (`status`, `claimed_at`, `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='期权事务事件发件箱';
 
 CREATE TABLE `t_option_inbox` (
@@ -1021,6 +1024,8 @@ CREATE TABLE `t_option_asset_instruction` (
   `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1待执行 2执行中 3成功 4失败 5人工处理 6未执行取消',
   `retry_count` INT NOT NULL DEFAULT 0 COMMENT '重试次数',
   `next_retry_at` BIGINT NOT NULL DEFAULT 0 COMMENT '下次重试时间',
+  `claimed_by` VARCHAR(128) NOT NULL DEFAULT '' COMMENT '当前领取实例',
+  `claimed_at` BIGINT NOT NULL DEFAULT 0 COMMENT '领取时间（秒）',
   `last_error_msg` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '最后错误',
   `asset_flow_no` VARCHAR(64) NOT NULL DEFAULT '' COMMENT 'Asset实际流水号',
   `reconciliation_status` TINYINT NOT NULL DEFAULT 1 COMMENT '对账状态：1待对账 2一致 3不一致',
@@ -1030,6 +1035,7 @@ CREATE TABLE `t_option_asset_instruction` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_instruction_no` (`tenant_id`, `instruction_no`),
   KEY `idx_instruction_retry` (`tenant_id`, `status`, `next_retry_at`, `id`),
+  KEY `idx_instruction_claim` (`status`, `claimed_at`, `id`),
   KEY `idx_instruction_biz_step` (`tenant_id`, `biz_no`, `step_no`, `status`, `id`),
   KEY `idx_instruction_order` (`tenant_id`, `order_id`),
   KEY `idx_instruction_trade` (`tenant_id`, `trade_id`),

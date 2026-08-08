@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TRechargeNotifyLogModel = (*customTRechargeNotifyLogModel)(nil)
@@ -43,7 +44,7 @@ func NewTRechargeNotifyLogModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...ca
 	}
 }
 
-func (m *defaultTRechargeNotifyLogModel) FindPage(ctx context.Context, filter RechargeNotifyLogPageFilter, cursor int64, limit int64) ([]*TRechargeNotifyLog, int64, error) {
+func (m *customTRechargeNotifyLogModel) FindPage(ctx context.Context, filter RechargeNotifyLogPageFilter, cursor int64, limit int64) ([]*TRechargeNotifyLog, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -83,7 +84,7 @@ func (m *defaultTRechargeNotifyLogModel) FindPage(ctx context.Context, filter Re
 	return list, total, nil
 }
 
-func (m *defaultTRechargeNotifyLogModel) FindOneByOrderId(ctx context.Context, orderId int64) (*TRechargeNotifyLog, error) {
+func (m *customTRechargeNotifyLogModel) FindOneByOrderId(ctx context.Context, orderId int64) (*TRechargeNotifyLog, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE order_id = ? ORDER BY id DESC LIMIT 1", tRechargeNotifyLogRows, m.table)
 
 	var resp TRechargeNotifyLog

@@ -30,7 +30,7 @@ func NewTContractInsuranceFundAccountModel(conn sqlx.SqlConn, c cache.CacheConf,
 	}
 }
 
-func (m *defaultTContractInsuranceFundAccountModel) FindPage(ctx context.Context, t, sym, status, cursor, limit int64, asset string) ([]*TContractInsuranceFundAccount, int64, error) {
+func (m *customTContractInsuranceFundAccountModel) FindPage(ctx context.Context, t, sym, status, cursor, limit int64, asset string) ([]*TContractInsuranceFundAccount, int64, error) {
 	where := "tenant_id=?"
 	args := []any{t}
 	if sym > 0 {
@@ -59,7 +59,7 @@ func (m *defaultTContractInsuranceFundAccountModel) FindPage(ctx context.Context
 	return rows, total, err
 }
 
-func (m *defaultTContractInsuranceFundAccountModel) FindEnabled(ctx context.Context, tenantID, symbolID int64, asset string) (*TContractInsuranceFundAccount, error) {
+func (m *customTContractInsuranceFundAccountModel) FindEnabled(ctx context.Context, tenantID, symbolID int64, asset string) (*TContractInsuranceFundAccount, error) {
 	var row TContractInsuranceFundAccount
 	q := "SELECT " + tContractInsuranceFundAccountRows + " FROM t_contract_insurance_fund_account WHERE tenant_id=? AND settle_asset=? AND status=1 AND symbol_id IN (?,0) ORDER BY symbol_id DESC LIMIT 1"
 	if err := m.QueryRowNoCacheCtx(ctx, &row, q, tenantID, asset, symbolID); err != nil {

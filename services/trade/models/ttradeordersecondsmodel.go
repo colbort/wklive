@@ -45,11 +45,11 @@ type (
 	}
 )
 
-func (m *defaultTTradeOrderSecondsModel) ClaimActivation(ctx context.Context, id, now, staleBefore int64) (bool, int64, error) {
+func (m *customTTradeOrderSecondsModel) ClaimActivation(ctx context.Context, id, now, staleBefore int64) (bool, int64, error) {
 	return m.claimWork(ctx, id, int64(1), now, "settlement_status = 1 AND (update_times = 0 OR update_times <= ?)", staleBefore)
 }
 
-func (m *defaultTTradeOrderSecondsModel) MarkWorkFailure(ctx context.Context, id, status, lease int64, message string, now int64) (bool, error) {
+func (m *customTTradeOrderSecondsModel) MarkWorkFailure(ctx context.Context, id, status, lease int64, message string, now int64) (bool, error) {
 	item, err := m.FindOne(ctx, id)
 	if err != nil {
 		return false, err
@@ -98,15 +98,15 @@ func NewTTradeOrderSecondsModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...ca
 	}
 }
 
-func (m *defaultTTradeOrderSecondsModel) ClaimSettlement(ctx context.Context, id, now, staleBefore int64) (bool, int64, error) {
+func (m *customTTradeOrderSecondsModel) ClaimSettlement(ctx context.Context, id, now, staleBefore int64) (bool, int64, error) {
 	return m.claimWork(ctx, id, int64(3), now, "settlement_status = 2 OR (settlement_status = 3 AND update_times <= ?)", staleBefore)
 }
 
-func (m *defaultTTradeOrderSecondsModel) ClaimRefund(ctx context.Context, id, now, staleBefore int64) (bool, int64, error) {
+func (m *customTTradeOrderSecondsModel) ClaimRefund(ctx context.Context, id, now, staleBefore int64) (bool, int64, error) {
 	return m.claimWork(ctx, id, int64(5), now, "settlement_status = 5 AND update_times <= ?", staleBefore)
 }
 
-func (m *defaultTTradeOrderSecondsModel) claimWork(ctx context.Context, id, targetStatus, now int64, condition string, args ...any) (bool, int64, error) {
+func (m *customTTradeOrderSecondsModel) claimWork(ctx context.Context, id, targetStatus, now int64, condition string, args ...any) (bool, int64, error) {
 	item, err := m.FindOne(ctx, id)
 	if err != nil {
 		return false, 0, err
@@ -129,7 +129,7 @@ func (m *defaultTTradeOrderSecondsModel) claimWork(ctx context.Context, id, targ
 	return true, now, nil
 }
 
-func (m *defaultTTradeOrderSecondsModel) FindOneForUpdate(ctx context.Context, id int64) (*TTradeOrderSeconds, error) {
+func (m *customTTradeOrderSecondsModel) FindOneForUpdate(ctx context.Context, id int64) (*TTradeOrderSeconds, error) {
 	var row TTradeOrderSeconds
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? FOR UPDATE", tTradeOrderSecondsRows, m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &row, query, id); err != nil {
@@ -138,7 +138,7 @@ func (m *defaultTTradeOrderSecondsModel) FindOneForUpdate(ctx context.Context, i
 	return &row, nil
 }
 
-func (m *defaultTTradeOrderSecondsModel) FindWork(ctx context.Context, tenantID, status, dueAt, cursor, limit int64) ([]*SecondsOrderWorkItem, error) {
+func (m *customTTradeOrderSecondsModel) FindWork(ctx context.Context, tenantID, status, dueAt, cursor, limit int64) ([]*SecondsOrderWorkItem, error) {
 	where := "s.settlement_status = ? AND s.id > ? AND (s.next_retry_at=0 OR s.next_retry_at<=?)"
 	args := []any{status, cursor, time.Now().UnixMilli()}
 	if tenantID > 0 {
@@ -158,7 +158,7 @@ func (m *defaultTTradeOrderSecondsModel) FindWork(ctx context.Context, tenantID,
 	return rows, nil
 }
 
-func (m *defaultTTradeOrderSecondsModel) SumExposure(ctx context.Context, tenantID, symbolID int64, statuses []int64) (decimal.Decimal, error) {
+func (m *customTTradeOrderSecondsModel) SumExposure(ctx context.Context, tenantID, symbolID int64, statuses []int64) (decimal.Decimal, error) {
 	if len(statuses) == 0 {
 		return decimal.Zero, nil
 	}

@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 
+	"wklive/common/sqlutil"
+
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TContractRiskLimitTierModel = (*customTContractRiskLimitTierModel)(nil)
@@ -27,7 +28,7 @@ type (
 	}
 )
 
-func (m *defaultTContractRiskLimitTierModel) CountOverlapping(
+func (m *customTContractRiskLimitTierModel) CountOverlapping(
 	ctx context.Context,
 	tenantID, symbolID, excludeID, excludeTierNo int64,
 	floor, capValue decimal.Decimal,
@@ -49,7 +50,7 @@ func NewTContractRiskLimitTierModel(conn sqlx.SqlConn, c cache.CacheConf, opts .
 	}
 }
 
-func (m *defaultTContractRiskLimitTierModel) FindByNotional(ctx context.Context, tenantId, symbolId int64, notional decimal.Decimal) (*TContractRiskLimitTier, error) {
+func (m *customTContractRiskLimitTierModel) FindByNotional(ctx context.Context, tenantId, symbolId int64, notional decimal.Decimal) (*TContractRiskLimitTier, error) {
 	var item TContractRiskLimitTier
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND symbol_id = ? AND enabled = 1 AND notional_floor <= ? AND (notional_cap = 0 OR notional_cap >= ?) ORDER BY tier_no ASC LIMIT 1", tContractRiskLimitTierRows, m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &item, query, tenantId, symbolId, notional, notional); err != nil {
@@ -61,7 +62,7 @@ func (m *defaultTContractRiskLimitTierModel) FindByNotional(ctx context.Context,
 	return &item, nil
 }
 
-func (m *defaultTContractRiskLimitTierModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractRiskLimitTier, int64, error) {
+func (m *customTContractRiskLimitTierModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractRiskLimitTier, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := adminPageBuilder(filter, "")
 	where, args := b.Where(), b.Args()

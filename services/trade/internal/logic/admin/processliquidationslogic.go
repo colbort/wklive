@@ -602,7 +602,7 @@ func (l *ProcessLiquidationsLogic) completeLiquidation(position *models.TContrac
 	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
 		pm := tx.ContractPosition
 		lm := tx.ContractLiquidation
-		em := tx.BizTradeEvent
+		em := tx.TradeEventOutbox
 		hm := tx.ContractPositionHistory
 		current, err := pm.FindOneForUpdateByTenantUserSymbolSideMode(ctx, position.TenantId, position.UserId, position.SymbolId, position.PositionSide, position.MarginMode)
 		if err != nil {
@@ -639,7 +639,7 @@ func (l *ProcessLiquidationsLogic) completeLiquidation(position *models.TContrac
 		if err := lm.Update(ctx, liq); err != nil {
 			return err
 		}
-		_, err = em.Insert(ctx, &models.TBizTradeEvent{TenantId: liq.TenantId, EventNo: liq.LiquidationNo + "-COMPLETED", EventType: "LIQUIDATION_COMPLETED", BizId: liq.LiquidationNo, BizType: "liquidation", UserId: liq.UserId, SymbolId: liq.SymbolId, ProductType: int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE), Source: int64(trade.SourceType_SOURCE_TYPE_TASK), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: "{}", CreateTimes: now, UpdateTimes: now})
+		_, err = em.Insert(ctx, &models.TTradeEventOutbox{TenantId: liq.TenantId, EventNo: liq.LiquidationNo + "-COMPLETED", EventType: "LIQUIDATION_COMPLETED", BizId: liq.LiquidationNo, BizType: "liquidation", UserId: liq.UserId, SymbolId: liq.SymbolId, ProductType: int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE), Source: int64(trade.SourceType_SOURCE_TYPE_TASK), EventStatus: int64(trade.EventStatus_EVENT_STATUS_PENDING), MaxRetryCount: 20, NextRetryAt: now, Payload: "{}", CreateTimes: now, UpdateTimes: now})
 		return err
 	})
 }

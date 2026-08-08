@@ -8,9 +8,10 @@ import (
 	"strings"
 	"time"
 
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TContractReconciliationIssueModel = (*customTContractReconciliationIssueModel)(nil)
@@ -47,7 +48,7 @@ func NewTContractReconciliationIssueModel(conn sqlx.SqlConn, c cache.CacheConf, 
 	}
 }
 
-func (m *defaultTContractReconciliationIssueModel) FindOneForUpdate(ctx context.Context, id int64) (*TContractReconciliationIssue, error) {
+func (m *customTContractReconciliationIssueModel) FindOneForUpdate(ctx context.Context, id int64) (*TContractReconciliationIssue, error) {
 	var row TContractReconciliationIssue
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id=? LIMIT 1 FOR UPDATE", tContractReconciliationIssueRows, m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &row, query, id); err != nil {
@@ -56,7 +57,7 @@ func (m *defaultTContractReconciliationIssueModel) FindOneForUpdate(ctx context.
 	return &row, nil
 }
 
-func (m *defaultTContractReconciliationIssueModel) FindPage(ctx context.Context, filter ContractReconciliationIssuePageFilter, cursor, limit int64) ([]*TContractReconciliationIssue, int64, error) {
+func (m *customTContractReconciliationIssueModel) FindPage(ctx context.Context, filter ContractReconciliationIssuePageFilter, cursor, limit int64) ([]*TContractReconciliationIssue, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
@@ -83,7 +84,7 @@ func (m *defaultTContractReconciliationIssueModel) FindPage(ctx context.Context,
 	return rows, total, nil
 }
 
-func (m *defaultTContractReconciliationIssueModel) RecordFinding(ctx context.Context, issue *TContractReconciliationIssue) error {
+func (m *customTContractReconciliationIssueModel) RecordFinding(ctx context.Context, issue *TContractReconciliationIssue) error {
 	query := `INSERT INTO t_contract_reconciliation_issue
 (tenant_id,issue_key,check_type,biz_type,biz_no,instruction_id,expected_value,actual_value,detail,status,occurrence_count,first_seen_at,last_seen_at,resolved_at,operator_id,resolution_reason,create_times,update_times)
 VALUES(?,?,?,?,?,?,?,?,?,1,1,?,?,0,0,'',?,?)
@@ -107,7 +108,7 @@ update_times=VALUES(update_times)`
 // only for a new/reopened/changed issue or a periodic unchanged reminder. The
 // decision and last_alert_at update share the issue row lock so multiple Trade
 // instances cannot emit the same alert window.
-func (m *defaultTContractReconciliationIssueModel) RecordFindingWithAlert(
+func (m *customTContractReconciliationIssueModel) RecordFindingWithAlert(
 	ctx context.Context,
 	issue *TContractReconciliationIssue,
 	minAlertIntervalMs int64,
@@ -183,7 +184,7 @@ WHERE id=?`,
 // ReleaseAlertReservation makes a synchronously failed notification eligible
 // for the next reconciliation pass. The reserved timestamp is a fencing token:
 // an older publisher cannot clear a newer instance's successful reservation.
-func (m *defaultTContractReconciliationIssueModel) ReleaseAlertReservation(
+func (m *customTContractReconciliationIssueModel) ReleaseAlertReservation(
 	ctx context.Context,
 	tenantID int64,
 	issueKey string,
@@ -224,7 +225,7 @@ func reconciliationFindingAlertDue(
 		now-existing.LastAlertAt >= minAlertIntervalMs
 }
 
-func (m *defaultTContractReconciliationIssueModel) ResolveByKey(ctx context.Context, tenantID int64, issueKey, reason string, now int64) error {
+func (m *customTContractReconciliationIssueModel) ResolveByKey(ctx context.Context, tenantID int64, issueKey, reason string, now int64) error {
 	_, err := m.ExecNoCacheCtx(ctx,
 		"UPDATE t_contract_reconciliation_issue SET status=2,resolved_at=?,resolution_reason=?,update_times=? WHERE tenant_id=? AND issue_key=? AND status=1",
 		now, reason, now, tenantID, issueKey)

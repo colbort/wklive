@@ -8,6 +8,7 @@ import (
 
 	"wklive/common/userevent"
 	"wklive/common/utils"
+	"wklive/common/worklease"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/realtime"
 	"wklive/services/trade/internal/svc"
@@ -21,7 +22,7 @@ const TradeEventPayloadVersion = realtime.PayloadVersionV1
 // so state changes and their notification cannot be committed independently.
 func InsertOrderChangedOutbox(
 	ctx context.Context,
-	eventModel models.TBizTradeEventModel,
+	eventModel models.TTradeEventOutboxModel,
 	order *models.TTradeOrder,
 	eventNo, eventType string,
 	now int64,
@@ -36,7 +37,7 @@ func InsertOrderChangedOutbox(
 	if !errors.Is(err, models.ErrNotFound) {
 		return err
 	}
-	_, err = eventModel.Insert(ctx, &models.TBizTradeEvent{
+	_, err = eventModel.Insert(ctx, &models.TTradeEventOutbox{
 		TenantId: order.TenantId, EventNo: eventNo, EventType: eventType,
 		BizId: order.OrderNo, BizType: "order", UserId: order.UserId, SymbolId: order.SymbolId,
 		ProductType: order.ProductType, Source: int64(trade.SourceType_SOURCE_TYPE_SYSTEM),
@@ -57,7 +58,7 @@ func TradeEventConsumer(eventType string) string {
 }
 
 func PublishTradeOutboxEvent(ctx context.Context, svcCtx *svc.ServiceContext, event realtime.Event) error {
-	item, err := svcCtx.BizTradeEventModel.FindOneByTenantIdEventNo(ctx, event.TenantID, event.EventNo)
+	item, err := svcCtx.TradeEventOutboxModel.FindOneByTenantIdEventNo(ctx, event.TenantID, event.EventNo)
 	if errors.Is(err, models.ErrNotFound) {
 		return errors.New("trade outbox event not found")
 	}
@@ -66,10 +67,11 @@ func PublishTradeOutboxEvent(ctx context.Context, svcCtx *svc.ServiceContext, ev
 	}
 	now := utils.NowMillis()
 	if item.EventStatus == 5 && item.ClaimedAt <= now-realtime.ClaimLeaseMillis && item.MaxRetryCount > 0 && item.RetryCount >= item.MaxRetryCount {
-		_, err = svcCtx.BizTradeEventModel.MarkDeliveryFailed(ctx, item.Id, item.ClaimedBy, now, 0, "delivery acknowledgement lease expired after maximum attempts")
+		_, err = svcCtx.TradeEventOutboxModel.MarkDeliveryFailed(ctx, item.Id, item.ClaimedBy, now, 0, "delivery acknowledgement lease expired after maximum attempts")
 		return err
 	}
-	claimed, err := svcCtx.BizTradeEventModel.ClaimDispatch(ctx, item.Id, svcCtx.TradeEventInstanceID, now, now-realtime.ClaimLeaseMillis)
+	claimToken := worklease.NewOwner("trade-event-outbox")
+	claimed, err := svcCtx.TradeEventOutboxModel.ClaimDispatch(ctx, item.Id, claimToken, now, now-realtime.ClaimLeaseMillis)
 	if err != nil || !claimed {
 		return err
 	}
@@ -82,12 +84,12 @@ func PublishTradeOutboxEvent(ctx context.Context, svcCtx *svc.ServiceContext, ev
 	if event.Payload == "" {
 		event.Payload = item.Payload
 	}
-	event.ClaimToken = svcCtx.TradeEventInstanceID
+	event.ClaimToken = claimToken
 	if event.Version == 0 {
 		event.Version = TradeEventPayloadVersion
 	}
 	if err := realtime.Publish(ctx, svcCtx.TradeEventPublisher, event); err != nil {
-		_, markErr := svcCtx.BizTradeEventModel.MarkDeliveryFailed(ctx, item.Id, svcCtx.TradeEventInstanceID, now, now+TradeEventRetryDelay(item.RetryCount+1).Milliseconds(), err.Error())
+		_, markErr := svcCtx.TradeEventOutboxModel.MarkDeliveryFailed(ctx, item.Id, claimToken, now, now+TradeEventRetryDelay(item.RetryCount+1).Milliseconds(), err.Error())
 		if markErr != nil {
 			return markErr
 		}

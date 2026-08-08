@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TPayProductModel = (*customTPayProductModel)(nil)
@@ -31,7 +32,7 @@ func NewTPayProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Opt
 	}
 }
 
-func (m *defaultTPayProductModel) FindByIDs(ctx context.Context, ids []int64) ([]*TPayProduct, error) {
+func (m *customTPayProductModel) FindByIDs(ctx context.Context, ids []int64) ([]*TPayProduct, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
@@ -45,7 +46,7 @@ func (m *defaultTPayProductModel) FindByIDs(ctx context.Context, ids []int64) ([
 	return list, nil
 }
 
-func (m *defaultTPayProductModel) FindPage(ctx context.Context, platformId int64, cursor int64, limit int64) ([]*TPayProduct, int64, error) {
+func (m *customTPayProductModel) FindPage(ctx context.Context, platformId int64, cursor int64, limit int64) ([]*TPayProduct, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()

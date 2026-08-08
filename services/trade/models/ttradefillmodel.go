@@ -6,11 +6,12 @@ import (
 	"fmt"
 	"strings"
 
+	"wklive/common/sqlutil"
+
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TTradeFillModel = (*customTTradeFillModel)(nil)
@@ -48,7 +49,7 @@ func NewTTradeFillModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Opti
 	}
 }
 
-func (m *defaultTTradeFillModel) CountUnsettledByOrder(ctx context.Context, tenantId, orderId int64) (int64, error) {
+func (m *customTTradeFillModel) CountUnsettledByOrder(ctx context.Context, tenantId, orderId int64) (int64, error) {
 	var count int64
 	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id = ? AND order_id = ? AND settlement_status <> 3", m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &count, query, tenantId, orderId); err != nil {
@@ -57,7 +58,7 @@ func (m *defaultTTradeFillModel) CountUnsettledByOrder(ctx context.Context, tena
 	return count, nil
 }
 
-func (m *defaultTTradeFillModel) UpdateRealizedPnl(ctx context.Context, id int64, realizedPnl decimal.Decimal) error {
+func (m *customTTradeFillModel) UpdateRealizedPnl(ctx context.Context, id int64, realizedPnl decimal.Decimal) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -76,7 +77,7 @@ func (m *defaultTTradeFillModel) UpdateRealizedPnl(ctx context.Context, id int64
 // succeeded but whose final fill/order state was not committed yet. This is
 // the recovery path for the race where the last Asset instruction succeeds
 // before a derivative POSITION_FILL_REQUIRED event is acknowledged.
-func (m *defaultTTradeFillModel) FindSettlementReady(ctx context.Context, tenantId, cursor, limit int64) ([]*TTradeFill, error) {
+func (m *customTTradeFillModel) FindSettlementReady(ctx context.Context, tenantId, cursor, limit int64) ([]*TTradeFill, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	tenantClause := ""
 	args := make([]any, 0, 3)
@@ -113,7 +114,7 @@ func prefixedColumns(columns, alias string) string {
 	return strings.Join(parts, ",")
 }
 
-func (m *defaultTTradeFillModel) FindPage(ctx context.Context, filter TradeFillPageFilter, cursor int64, limit int64) ([]*TTradeFill, int64, error) {
+func (m *customTTradeFillModel) FindPage(ctx context.Context, filter TradeFillPageFilter, cursor int64, limit int64) ([]*TTradeFill, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
@@ -148,7 +149,7 @@ func (m *defaultTTradeFillModel) FindPage(ctx context.Context, filter TradeFillP
 	return list, total, nil
 }
 
-func (m *defaultTTradeFillModel) FindLastPrice(ctx context.Context, tenantId, symbolId, productType int64) (decimal.Decimal, error) {
+func (m *customTTradeFillModel) FindLastPrice(ctx context.Context, tenantId, symbolId, productType int64) (decimal.Decimal, error) {
 	// decimal.Decimal is itself a struct. Passing it directly to go-zero's
 	// strict ORM scanner makes the single price column look like an
 	// incomplete multi-field destination and returns ErrNotMatchDestination.

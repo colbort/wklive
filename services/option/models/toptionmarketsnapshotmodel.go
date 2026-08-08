@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TOptionMarketSnapshotModel = (*customTOptionMarketSnapshotModel)(nil)
@@ -38,7 +39,7 @@ func NewTOptionMarketSnapshotModel(conn sqlx.SqlConn, c cache.CacheConf, opts ..
 	}
 }
 
-func (m *defaultTOptionMarketSnapshotModel) FindPage(ctx context.Context, filter OptionMarketSnapshotPageFilter, cursor int64, limit int64) ([]*TOptionMarketSnapshot, int64, error) {
+func (m *customTOptionMarketSnapshotModel) FindPage(ctx context.Context, filter OptionMarketSnapshotPageFilter, cursor int64, limit int64) ([]*TOptionMarketSnapshot, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)

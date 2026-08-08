@@ -44,7 +44,7 @@ func finalizeOrderTermination(ctx context.Context, tx *models.TransactionModels,
 	fillModel := tx.TradeFill
 	contractOrderModel := tx.TradeOrderContract
 	positionModel := tx.ContractPosition
-	eventModel := tx.BizTradeEvent
+	eventModel := tx.TradeEventOutbox
 
 	order, err := orderModel.FindOneForUpdate(ctx, orderID)
 	if err != nil {
@@ -123,7 +123,7 @@ func finalizeSettledOrder(ctx context.Context, tx *models.TransactionModels, ord
 	reservationModel := tx.TradeAssetReservation
 	instructionModel := tx.TradeSettlementInstruction
 	fillModel := tx.TradeFill
-	eventModel := tx.BizTradeEvent
+	eventModel := tx.TradeEventOutbox
 	order, err := orderModel.FindOneForUpdate(ctx, orderID)
 	if err != nil {
 		return err

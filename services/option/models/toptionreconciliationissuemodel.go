@@ -37,7 +37,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionReconciliationIssueModel) FindPage(
+func (m *customTOptionReconciliationIssueModel) FindPage(
 	ctx context.Context, filter OptionReconciliationIssuePageFilter, cursor, limit int64,
 ) ([]*TOptionReconciliationIssue, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)

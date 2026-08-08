@@ -3,6 +3,7 @@ module wklive/services/market
 go 1.26.4
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674
 	github.com/redis/go-redis/v9 v9.21.0
 	github.com/shopspring/decimal v1.4.0

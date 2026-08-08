@@ -24,7 +24,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionUserTradingControlModel) FindForUpdate(
+func (m *customTOptionUserTradingControlModel) FindForUpdate(
 	ctx context.Context, tenantId, userId int64,
 ) (*TOptionUserTradingControl, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -36,7 +36,7 @@ WHERE tenant_id = ? AND user_id = ? LIMIT 1 FOR UPDATE`, tOptionUserTradingContr
 	return &item, nil
 }
 
-func (m *defaultTOptionUserTradingControlModel) EnsureForUpdate(
+func (m *customTOptionUserTradingControlModel) EnsureForUpdate(
 	ctx context.Context, tenantId, userId, now int64,
 ) (*TOptionUserTradingControl, error) {
 	if _, err := m.ExecNoCacheCtx(ctx, `INSERT IGNORE INTO t_option_user_trading_control

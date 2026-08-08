@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TRiskUserSymbolLimitModel = (*customTRiskUserSymbolLimitModel)(nil)
@@ -32,7 +33,7 @@ func NewTRiskUserSymbolLimitModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...
 	}
 }
 
-func (m *defaultTRiskUserSymbolLimitModel) FindOneForUpdate(ctx context.Context, id int64) (*TRiskUserSymbolLimit, error) {
+func (m *customTRiskUserSymbolLimitModel) FindOneForUpdate(ctx context.Context, id int64) (*TRiskUserSymbolLimit, error) {
 	var row TRiskUserSymbolLimit
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? FOR UPDATE", tRiskUserSymbolLimitRows, m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &row, query, id); err != nil {
@@ -41,7 +42,7 @@ func (m *defaultTRiskUserSymbolLimitModel) FindOneForUpdate(ctx context.Context,
 	return &row, nil
 }
 
-func (m *defaultTRiskUserSymbolLimitModel) FindControlPage(ctx context.Context, filter UserTradeControlFilter, cursor int64, limit int64) ([]*TRiskUserSymbolLimit, int64, error) {
+func (m *customTRiskUserSymbolLimitModel) FindControlPage(ctx context.Context, filter UserTradeControlFilter, cursor int64, limit int64) ([]*TRiskUserSymbolLimit, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := sqlutil.NewPageQueryBuilder()
 	b.EqInt64("tenant_id", filter.TenantId)
@@ -68,7 +69,7 @@ func (m *defaultTRiskUserSymbolLimitModel) FindControlPage(ctx context.Context, 
 	return list, total, nil
 }
 
-func (m *defaultTRiskUserSymbolLimitModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TRiskUserSymbolLimit, int64, error) {
+func (m *customTRiskUserSymbolLimitModel) FindPage(ctx context.Context, cursor int64, limit int64) ([]*TRiskUserSymbolLimit, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()

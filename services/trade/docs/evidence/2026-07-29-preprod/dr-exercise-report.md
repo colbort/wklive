@@ -37,7 +37,7 @@
 | `t_trade_fill` | 28 | 28 | PASS |
 | `t_contract_position` | 0 | 0 | PASS |
 | `t_trade_settlement_instruction` | 20,219 | 20,219 | PASS |
-| `t_biz_trade_event` | 40,379 | 40,379 | PASS |
+| `t_trade_event_outbox` | 40,379 | 40,379 | PASS |
 | `t_trade_event_inbox` | 40,379 | 40,379 | PASS |
 | `t_contract_funding_batch` | 1 | 1 | PASS |
 | `t_contract_delivery_batch` | 1 | 1 | PASS |

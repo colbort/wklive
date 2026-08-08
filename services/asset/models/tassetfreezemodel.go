@@ -5,11 +5,12 @@ import (
 	"database/sql"
 	"fmt"
 
+	"wklive/common/sqlutil"
+
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TAssetFreezeModel = (*customTAssetFreezeModel)(nil)
@@ -49,7 +50,7 @@ func NewTAssetFreezeModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Op
 	}
 }
 
-func (m *defaultTAssetFreezeModel) FindPage(ctx context.Context, filter AssetFreezePageFilter, cursor int64, limit int64) ([]*TAssetFreeze, int64, error) {
+func (m *customTAssetFreezeModel) FindPage(ctx context.Context, filter AssetFreezePageFilter, cursor int64, limit int64) ([]*TAssetFreeze, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -103,7 +104,7 @@ func (m *defaultTAssetFreezeModel) FindPage(ctx context.Context, filter AssetFre
 	return list, total, nil
 }
 
-func (m *defaultTAssetFreezeModel) assetFreezeCacheKeys(ctx context.Context, freezeNo string) ([]string, error) {
+func (m *customTAssetFreezeModel) assetFreezeCacheKeys(ctx context.Context, freezeNo string) ([]string, error) {
 	tAssetFreezeFreezeNoKey := fmt.Sprintf("%s%v", cacheTAssetFreezeFreezeNoPrefix, freezeNo)
 	keys := []string{tAssetFreezeFreezeNoKey}
 
@@ -126,7 +127,7 @@ func (m *defaultTAssetFreezeModel) assetFreezeCacheKeys(ctx context.Context, fre
 // status=4 且 remain_amount>0 是旧版部分扣减留下的不一致状态；允许通过正常
 // 解冻事务恢复，确保用户资产、冻结明细和流水仍在同一事务内变化。
 // 当 remain_amount 为 0 时，纯解冻为 3（已解冻），混合扣减/解冻为 5（已关闭）；否则为 2（部分释放）
-func (m *defaultTAssetFreezeModel) UpdateUnfreeze(ctx context.Context, freezeNo string, amount decimal.Decimal, updateTimes int64) (bool, error) {
+func (m *customTAssetFreezeModel) UpdateUnfreeze(ctx context.Context, freezeNo string, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	query := fmt.Sprintf(`
 		UPDATE %s
 		SET 
@@ -159,7 +160,7 @@ func (m *defaultTAssetFreezeModel) UpdateUnfreeze(ctx context.Context, freezeNo 
 
 // 从冻结里扣减时更新冻结记录：used_amount += amount，remain_amount -= amount
 // 当 remain_amount 为 0 时，纯扣减为 4（已扣完），混合扣减/解冻为 5（已关闭）；否则为 2（部分释放）
-func (m *defaultTAssetFreezeModel) UpdateDeduct(ctx context.Context, freezeNo string, amount decimal.Decimal, updateTimes int64) (bool, error) {
+func (m *customTAssetFreezeModel) UpdateDeduct(ctx context.Context, freezeNo string, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	query := fmt.Sprintf(`
 		UPDATE %s
 		SET 

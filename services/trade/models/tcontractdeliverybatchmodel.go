@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TContractDeliveryBatchModel = (*customTContractDeliveryBatchModel)(nil)
@@ -24,7 +25,7 @@ type (
 	}
 )
 
-func (m *defaultTContractDeliveryBatchModel) FindOneForUpdateByTenantSymbolDelivery(ctx context.Context, tenantID, symbolID, deliveryTime int64) (*TContractDeliveryBatch, error) {
+func (m *customTContractDeliveryBatchModel) FindOneForUpdateByTenantSymbolDelivery(ctx context.Context, tenantID, symbolID, deliveryTime int64) (*TContractDeliveryBatch, error) {
 	var row TContractDeliveryBatch
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND symbol_id=? AND delivery_time=? LIMIT 1 FOR UPDATE", tContractDeliveryBatchRows, m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &row, query, tenantID, symbolID, deliveryTime); err != nil {
@@ -40,7 +41,7 @@ func NewTContractDeliveryBatchModel(conn sqlx.SqlConn, c cache.CacheConf, opts .
 	}
 }
 
-func (m *defaultTContractDeliveryBatchModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractDeliveryBatch, int64, error) {
+func (m *customTContractDeliveryBatchModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractDeliveryBatch, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := adminPageBuilder(filter, "delivery_time")
 	where, args := b.Where(), b.Args()

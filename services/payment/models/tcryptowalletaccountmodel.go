@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TCryptoWalletAccountModel = (*customTCryptoWalletAccountModel)(nil)
@@ -38,7 +39,7 @@ func NewTCryptoWalletAccountModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...
 	}
 }
 
-func (m *defaultTCryptoWalletAccountModel) FindPage(ctx context.Context, filter CryptoWalletAccountPageFilter, cursor int64, limit int64) ([]*TCryptoWalletAccount, int64, error) {
+func (m *customTCryptoWalletAccountModel) FindPage(ctx context.Context, filter CryptoWalletAccountPageFilter, cursor int64, limit int64) ([]*TCryptoWalletAccount, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()

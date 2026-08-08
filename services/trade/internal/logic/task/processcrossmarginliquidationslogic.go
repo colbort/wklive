@@ -981,7 +981,7 @@ func (l *ProcessCrossMarginLiquidationsLogic) completeTakeover(batch *models.TCo
 		bim := tx.ContractAccountLiquidationItem
 		pm := tx.ContractPosition
 		hm := tx.ContractPositionHistory
-		em := tx.BizTradeEvent
+		em := tx.TradeEventOutbox
 		current, err := bm.FindOneForUpdate(ctx, batch.Id)
 		if err != nil {
 			return err
@@ -1047,7 +1047,7 @@ func (l *ProcessCrossMarginLiquidationsLogic) completeTakeover(batch *models.TCo
 		if err = bm.Update(ctx, current); err != nil {
 			return err
 		}
-		_, err = em.Insert(ctx, &models.TBizTradeEvent{
+		_, err = em.Insert(ctx, &models.TTradeEventOutbox{
 			TenantId: current.TenantId, EventNo: current.LiquidationNo + "-COMPLETED",
 			EventType: "CROSS_ACCOUNT_LIQUIDATION_COMPLETED",
 			BizId:     current.LiquidationNo, BizType: crossAccountLiquidationBizType,

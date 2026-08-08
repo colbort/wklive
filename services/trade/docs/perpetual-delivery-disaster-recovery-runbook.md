@@ -22,7 +22,7 @@ FROM t_trade_settlement_instruction
 WHERE status IN (1,2,4,5);
 
 SELECT event_status, COUNT(*)
-FROM t_biz_trade_event
+FROM t_trade_event_outbox
 GROUP BY event_status;
 
 SELECT status, COUNT(*)
@@ -92,7 +92,7 @@ t_contract_position
 t_contract_position_history
 t_trade_asset_reservation
 t_trade_settlement_instruction
-t_biz_trade_event
+t_trade_event_outbox
 t_trade_event_inbox
 t_contract_funding_batch
 t_contract_funding_settlement

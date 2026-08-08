@@ -6,11 +6,12 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/zeromicro/go-zero/core/stores/cache"
-	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"wklive/common/sqlutil"
 	"wklive/proto/common"
 	"wklive/proto/option"
+
+	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 // Insert keeps legacy/internal callers compatible while the canonical schema
@@ -60,7 +61,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionContractModel) FindOneForPublicMarket(
+func (m *customTOptionContractModel) FindOneForPublicMarket(
 	ctx context.Context, tenantId, contractId int64,
 ) (*TOptionContract, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -76,7 +77,7 @@ WHERE tenant_id=? AND id=? AND is_deleted=? AND status IN (?,?) LIMIT 1`,
 	return &item, err
 }
 
-func (m *defaultTOptionContractModel) FindOptionChain(
+func (m *customTOptionContractModel) FindOptionChain(
 	ctx context.Context,
 	tenantId int64,
 	underlyingSymbol string,
@@ -102,7 +103,7 @@ ORDER BY strike_price ASC, option_type ASC, id ASC LIMIT ?`,
 	return items, err
 }
 
-func (m *defaultTOptionContractModel) FindOneForUpdate(ctx context.Context, id int64) (*TOptionContract, error) {
+func (m *customTOptionContractModel) FindOneForUpdate(ctx context.Context, id int64) (*TOptionContract, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1 FOR UPDATE", tOptionContractRows, m.table)
 	var item TOptionContract
 	if err := m.QueryRowNoCacheCtx(ctx, &item, query, id); err != nil {
@@ -118,7 +119,7 @@ func NewTOptionContractModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache
 	}
 }
 
-func (m *defaultTOptionContractModel) FindPage(ctx context.Context, filter OptionContractPageFilter, cursor int64, limit int64) ([]*TOptionContract, int64, error) {
+func (m *customTOptionContractModel) FindPage(ctx context.Context, filter OptionContractPageFilter, cursor int64, limit int64) ([]*TOptionContract, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)

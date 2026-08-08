@@ -69,7 +69,7 @@ func (l *IgnoreContractReconciliationIssueLogic) IgnoreContractReconciliationIss
 		if updateErr := issueModel.Update(ctx, issue); updateErr != nil {
 			return updateErr
 		}
-		_, insertErr := tx.BizTradeEvent.Insert(ctx, &models.TBizTradeEvent{
+		_, insertErr := tx.TradeEventOutbox.Insert(ctx, &models.TTradeEventOutbox{
 			TenantId:      tenantID,
 			EventNo:       eventNo,
 			EventType:     "CONTRACT_RECONCILIATION_ISSUE_IGNORED",

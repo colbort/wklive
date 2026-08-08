@@ -24,7 +24,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionTradingCalendarExceptionModel) FindByCalendar(
+func (m *customTOptionTradingCalendarExceptionModel) FindByCalendar(
 	ctx context.Context, tenantId, calendarId int64,
 ) ([]*TOptionTradingCalendarException, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -35,7 +35,7 @@ WHERE tenant_id=? AND calendar_id=? ORDER BY start_time,end_time,id`,
 	return items, err
 }
 
-func (m *defaultTOptionTradingCalendarExceptionModel) FindActiveAt(
+func (m *customTOptionTradingCalendarExceptionModel) FindActiveAt(
 	ctx context.Context, tenantId, calendarId, now int64,
 ) ([]*TOptionTradingCalendarException, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s

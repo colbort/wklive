@@ -5,10 +5,11 @@ import (
 	"database/sql"
 	"fmt"
 
+	"wklive/common/sqlutil"
+
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TTradeAssetReservationModel = (*customTTradeAssetReservationModel)(nil)
@@ -32,7 +33,7 @@ type (
 	}
 )
 
-func (m *defaultTTradeAssetReservationModel) CountUnsettledCrossMarginByRiskUnit(
+func (m *customTTradeAssetReservationModel) CountUnsettledCrossMarginByRiskUnit(
 	ctx context.Context, tenantID, userID int64, marginAsset string,
 ) (int64, error) {
 	var count int64
@@ -55,7 +56,7 @@ func NewTTradeAssetReservationModel(conn sqlx.SqlConn, c cache.CacheConf, opts .
 	}
 }
 
-func (m *defaultTTradeAssetReservationModel) FindOneByReservationNoForUpdate(ctx context.Context, tenantID int64, reservationNo string) (*TTradeAssetReservation, error) {
+func (m *customTTradeAssetReservationModel) FindOneByReservationNoForUpdate(ctx context.Context, tenantID int64, reservationNo string) (*TTradeAssetReservation, error) {
 	var item TTradeAssetReservation
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND reservation_no = ? LIMIT 1 FOR UPDATE", tTradeAssetReservationRows, m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &item, query, tenantID, reservationNo); err != nil {
@@ -64,7 +65,7 @@ func (m *defaultTTradeAssetReservationModel) FindOneByReservationNoForUpdate(ctx
 	return &item, nil
 }
 
-func (m *defaultTTradeAssetReservationModel) BeginRelease(ctx context.Context, id int64, updateTimes int64) (bool, error) {
+func (m *customTTradeAssetReservationModel) BeginRelease(ctx context.Context, id int64, updateTimes int64) (bool, error) {
 	item, err := m.FindOne(ctx, id)
 	if err != nil {
 		return false, err
@@ -82,7 +83,7 @@ func (m *defaultTTradeAssetReservationModel) BeginRelease(ctx context.Context, i
 	return rows == 1, err
 }
 
-func (m *defaultTTradeAssetReservationModel) MarkSettlementFailure(ctx context.Context, id, retryStatus int64, terminal bool, nextRetryAt int64, message string, updateTimes int64) error {
+func (m *customTTradeAssetReservationModel) MarkSettlementFailure(ctx context.Context, id, retryStatus int64, terminal bool, nextRetryAt int64, message string, updateTimes int64) error {
 	item, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -100,15 +101,15 @@ func (m *defaultTTradeAssetReservationModel) MarkSettlementFailure(ctx context.C
 	return m.Update(ctx, item)
 }
 
-func (m *defaultTTradeAssetReservationModel) AddConsumed(ctx context.Context, id int64, amount decimal.Decimal, updateTimes int64) (bool, error) {
+func (m *customTTradeAssetReservationModel) AddConsumed(ctx context.Context, id int64, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	return m.addSettledAmount(ctx, id, "consumed_amount", amount, updateTimes)
 }
 
-func (m *defaultTTradeAssetReservationModel) AddReleased(ctx context.Context, id int64, amount decimal.Decimal, updateTimes int64) (bool, error) {
+func (m *customTTradeAssetReservationModel) AddReleased(ctx context.Context, id int64, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	return m.addSettledAmount(ctx, id, "released_amount", amount, updateTimes)
 }
 
-func (m *defaultTTradeAssetReservationModel) addSettledAmount(ctx context.Context, id int64, column string, amount decimal.Decimal, updateTimes int64) (bool, error) {
+func (m *customTTradeAssetReservationModel) addSettledAmount(ctx context.Context, id int64, column string, amount decimal.Decimal, updateTimes int64) (bool, error) {
 	if id <= 0 || !amount.IsPositive() || (column != "consumed_amount" && column != "released_amount") {
 		return false, nil
 	}
@@ -140,7 +141,7 @@ func (m *defaultTTradeAssetReservationModel) addSettledAmount(ctx context.Contex
 	return rows == 1, err
 }
 
-func (m *defaultTTradeAssetReservationModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TTradeAssetReservation, int64, error) {
+func (m *customTTradeAssetReservationModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TTradeAssetReservation, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := adminPageBuilder(filter, "")
 	where, args := b.Where(), b.Args()

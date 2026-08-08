@@ -49,7 +49,7 @@ func (l *RecordOrderFillLogic) RecordOrderFill(in *trade.RecordOrderFillReq) (*t
 		fillModel := tx.TradeFill
 		orderModel := tx.TradeOrder
 		instructionModel := tx.TradeSettlementInstruction
-		eventModel := tx.BizTradeEvent
+		eventModel := tx.TradeEventOutbox
 		contractOrderModel := tx.TradeOrderContract
 		fill, order, err := recordOrderFillWithModels(ctx, fillModel, orderModel, in.Fill, now)
 		if err != nil || order == nil {

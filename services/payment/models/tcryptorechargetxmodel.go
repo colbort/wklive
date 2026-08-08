@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TCryptoRechargeTxModel = (*customTCryptoRechargeTxModel)(nil)
@@ -44,7 +45,7 @@ func NewTCryptoRechargeTxModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cac
 	}
 }
 
-func (m *defaultTCryptoRechargeTxModel) FindPage(ctx context.Context, filter CryptoRechargeTxPageFilter, cursor int64, limit int64) ([]*TCryptoRechargeTx, int64, error) {
+func (m *customTCryptoRechargeTxModel) FindPage(ctx context.Context, filter CryptoRechargeTxPageFilter, cursor int64, limit int64) ([]*TCryptoRechargeTx, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -85,7 +86,7 @@ func (m *defaultTCryptoRechargeTxModel) FindPage(ctx context.Context, filter Cry
 	return list, total, nil
 }
 
-func (m *defaultTCryptoRechargeTxModel) FindOneByIdOrHash(ctx context.Context, tenantId int64, id int64, chainCode int64, txHash string) (*TCryptoRechargeTx, error) {
+func (m *customTCryptoRechargeTxModel) FindOneByIdOrHash(ctx context.Context, tenantId int64, id int64, chainCode int64, txHash string) (*TCryptoRechargeTx, error) {
 	var item *TCryptoRechargeTx
 	var err error
 	if id > 0 {

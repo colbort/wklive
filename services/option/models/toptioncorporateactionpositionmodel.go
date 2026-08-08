@@ -25,7 +25,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionCorporateActionPositionModel) FindPage(
+func (m *customTOptionCorporateActionPositionModel) FindPage(
 	ctx context.Context, tenantId, actionId, actionContractId, status, cursor, limit int64,
 ) ([]*TOptionCorporateActionPosition, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)

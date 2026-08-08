@@ -19,12 +19,12 @@ type (
 	// and implement the added methods in customTOptionOutboxModel.
 	TOptionOutboxModel interface {
 		tOptionOutboxModel
-		FindRunnable(ctx context.Context, tenantId, now, limit int64) ([]*TOptionOutbox, error)
+		FindRunnable(ctx context.Context, tenantId, now, staleBefore, limit int64) ([]*TOptionOutbox, error)
 		ComboDebitBarrierReady(ctx context.Context, tenantId int64, comboMatchNo string) (bool, error)
 		CountStaleComboDebitBarrierBlocked(ctx context.Context, tenantId, staleBefore int64) (int64, error)
 		FindOneForUpdate(ctx context.Context, id int64) (*TOptionOutbox, error)
-		Claim(ctx context.Context, id, now int64) (bool, error)
-		RecoverStale(ctx context.Context, staleBefore, now int64) error
+		Claim(ctx context.Context, id int64, owner string, now, staleBefore int64) (bool, error)
+		MarkFailed(ctx context.Context, id int64, owner string, retryCount, status, nextRetryAt int64, message string, now int64) (bool, error)
 		HasIncomplete(ctx context.Context, tenantId, contractId int64) (bool, error)
 		HasIncompletePortfolioForWallet(ctx context.Context, tenantId, userId int64, settleCoin string) (bool, error)
 		ResetForManualRetry(ctx context.Context, id, now int64) (bool, error)
@@ -36,7 +36,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionOutboxModel) HasIncompletePortfolioForWallet(
+func (m *customTOptionOutboxModel) HasIncompletePortfolioForWallet(
 	ctx context.Context, tenantId, userId int64, settleCoin string,
 ) (bool, error) {
 	var count int64
@@ -68,7 +68,7 @@ type comboDebitBarrierState struct {
 // order.unfilled_qty and its outbox event updating the position. The position
 // update and outbox SUCCESS transition commit in one transaction, so exactly
 // one of the persisted position or this delta represents each fill.
-func (m *defaultTOptionOutboxModel) SumPendingPositionDelta(
+func (m *customTOptionOutboxModel) SumPendingPositionDelta(
 	ctx context.Context, tenantId, userId, contractId, positionSide int64,
 ) (decimal.Decimal, error) {
 	type participant struct {
@@ -125,13 +125,14 @@ WHERE e.tenant_id = ? AND e.contract_id = ? AND e.event_type = ?
 	return total, nil
 }
 
-func (m *defaultTOptionOutboxModel) FindRunnable(ctx context.Context, tenantId, now, limit int64) ([]*TOptionOutbox, error) {
+func (m *customTOptionOutboxModel) FindRunnable(ctx context.Context, tenantId, now, staleBefore, limit int64) ([]*TOptionOutbox, error) {
 	if limit <= 0 || limit > 100 {
 		limit = 100
 	}
 	query := fmt.Sprintf(`SELECT %s FROM %s AS current
 WHERE (? = 0 OR current.tenant_id = ?)
-AND current.status IN (?, ?) AND current.next_retry_at <= ?
+AND ((current.status IN (?, ?) AND current.next_retry_at <= ?)
+  OR (current.status = ? AND current.claimed_at <= ?))
 AND EXISTS (
   SELECT 1 FROM t_option_asset_instruction premium_debit
   WHERE premium_debit.tenant_id = current.tenant_id
@@ -173,6 +174,8 @@ ORDER BY current.id LIMIT ?`, tOptionOutboxRows, m.table, m.table)
 		int64(option.OptionEventStatus_OPTION_EVENT_STATUS_PENDING),
 		int64(option.OptionEventStatus_OPTION_EVENT_STATUS_FAILED),
 		now,
+		int64(option.OptionEventStatus_OPTION_EVENT_STATUS_PROCESSING),
+		staleBefore,
 		int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_DEDUCT_FROZEN),
 		int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS),
 		int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_DEDUCT_FROZEN),
@@ -183,7 +186,7 @@ ORDER BY current.id LIMIT ?`, tOptionOutboxRows, m.table, m.table)
 	return list, err
 }
 
-func (m *defaultTOptionOutboxModel) ComboDebitBarrierReady(
+func (m *customTOptionOutboxModel) ComboDebitBarrierReady(
 	ctx context.Context, tenantId int64, comboMatchNo string,
 ) (bool, error) {
 	if comboMatchNo == "" {
@@ -221,7 +224,7 @@ WHERE sibling.tenant_id=? AND sibling.combo_match_no=?`
 		state.MissingDebits == 0, nil
 }
 
-func (m *defaultTOptionOutboxModel) CountStaleComboDebitBarrierBlocked(
+func (m *customTOptionOutboxModel) CountStaleComboDebitBarrierBlocked(
 	ctx context.Context, tenantId, staleBefore int64,
 ) (int64, error) {
 	query := fmt.Sprintf(`SELECT COUNT(1)
@@ -265,7 +268,7 @@ WHERE (?=0 OR current.tenant_id=?)
 	return count, nil
 }
 
-func (m *defaultTOptionOutboxModel) FindOneForUpdate(ctx context.Context, id int64) (*TOptionOutbox, error) {
+func (m *customTOptionOutboxModel) FindOneForUpdate(ctx context.Context, id int64) (*TOptionOutbox, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1 FOR UPDATE", tOptionOutboxRows, m.table)
 	var item TOptionOutbox
 	if err := m.QueryRowNoCacheCtx(ctx, &item, query, id); err != nil {
@@ -274,12 +277,18 @@ func (m *defaultTOptionOutboxModel) FindOneForUpdate(ctx context.Context, id int
 	return &item, nil
 }
 
-func (m *defaultTOptionOutboxModel) Claim(ctx context.Context, id, now int64) (bool, error) {
-	query := fmt.Sprintf("UPDATE %s SET status = ?, update_times = ? WHERE id = ? AND status IN (?, ?)", m.table)
+func (m *customTOptionOutboxModel) Claim(ctx context.Context, id int64, owner string, now, staleBefore int64) (bool, error) {
+	if owner == "" {
+		return false, fmt.Errorf("option outbox lease owner is required")
+	}
+	query := fmt.Sprintf(`UPDATE %s SET status=?,claimed_by=?,claimed_at=?,update_times=?
+WHERE id=? AND ((status IN (?,?) AND next_retry_at<=?) OR (status=? AND claimed_at<=?))`, m.table)
 	result, err := m.ExecNoCacheCtx(ctx, query,
-		int64(option.OptionEventStatus_OPTION_EVENT_STATUS_PROCESSING), now, id,
+		int64(option.OptionEventStatus_OPTION_EVENT_STATUS_PROCESSING), owner, now, now, id,
 		int64(option.OptionEventStatus_OPTION_EVENT_STATUS_PENDING),
 		int64(option.OptionEventStatus_OPTION_EVENT_STATUS_FAILED),
+		now,
+		int64(option.OptionEventStatus_OPTION_EVENT_STATUS_PROCESSING), staleBefore,
 	)
 	if err != nil {
 		return false, err
@@ -288,18 +297,28 @@ func (m *defaultTOptionOutboxModel) Claim(ctx context.Context, id, now int64) (b
 	return rows == 1, err
 }
 
-func (m *defaultTOptionOutboxModel) RecoverStale(ctx context.Context, staleBefore, now int64) error {
-	query := fmt.Sprintf(`UPDATE %s SET status = ?, next_retry_at = ?, update_times = ?,
-last_error_msg = 'recovered stale processing event'
-WHERE status = ? AND update_times < ?`, m.table)
-	_, err := m.ExecNoCacheCtx(ctx, query,
-		int64(option.OptionEventStatus_OPTION_EVENT_STATUS_FAILED), now, now,
-		int64(option.OptionEventStatus_OPTION_EVENT_STATUS_PROCESSING), staleBefore,
+func (m *customTOptionOutboxModel) MarkFailed(
+	ctx context.Context, id int64, owner string, retryCount, status, nextRetryAt int64,
+	message string, now int64,
+) (bool, error) {
+	runes := []rune(message)
+	if len(runes) > 500 {
+		message = string(runes[:500])
+	}
+	result, err := m.ExecNoCacheCtx(ctx, fmt.Sprintf(`UPDATE %s
+SET status=?,retry_count=?,next_retry_at=?,last_error_msg=?,claimed_by='',claimed_at=0,update_times=?
+WHERE id=? AND status=? AND claimed_by=?`, m.table),
+		status, retryCount, nextRetryAt, message, now, id,
+		int64(option.OptionEventStatus_OPTION_EVENT_STATUS_PROCESSING), owner,
 	)
-	return err
+	if err != nil {
+		return false, err
+	}
+	rows, err := result.RowsAffected()
+	return rows == 1, err
 }
 
-func (m *defaultTOptionOutboxModel) HasIncomplete(ctx context.Context, tenantId, contractId int64) (bool, error) {
+func (m *customTOptionOutboxModel) HasIncomplete(ctx context.Context, tenantId, contractId int64) (bool, error) {
 	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id = ? AND contract_id = ? AND status <> ?", m.table)
 	var count int64
 	if err := m.QueryRowNoCacheCtx(ctx, &count, query, tenantId, contractId, int64(option.OptionEventStatus_OPTION_EVENT_STATUS_SUCCESS)); err != nil {
@@ -308,9 +327,9 @@ func (m *defaultTOptionOutboxModel) HasIncomplete(ctx context.Context, tenantId,
 	return count > 0, nil
 }
 
-func (m *defaultTOptionOutboxModel) ResetForManualRetry(ctx context.Context, id, now int64) (bool, error) {
+func (m *customTOptionOutboxModel) ResetForManualRetry(ctx context.Context, id, now int64) (bool, error) {
 	query := fmt.Sprintf(`UPDATE %s SET status = ?, retry_count = 0, next_retry_at = ?,
-last_error_msg = '', update_times = ? WHERE id = ? AND status IN (?, ?)`, m.table)
+last_error_msg = '', claimed_by='', claimed_at=0, update_times = ? WHERE id = ? AND status IN (?, ?)`, m.table)
 	result, err := m.ExecNoCacheCtx(ctx, query,
 		int64(option.OptionEventStatus_OPTION_EVENT_STATUS_PENDING), now, now, id,
 		int64(option.OptionEventStatus_OPTION_EVENT_STATUS_FAILED),

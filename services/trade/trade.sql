@@ -805,8 +805,8 @@ CREATE TABLE `t_risk_order_check_log` (
   CONSTRAINT `chk_risk_check_log` CHECK (`product_type` IN (1, 2, 3) AND `check_type` BETWEEN 1 AND 8 AND `check_result` IN (1, 2, 3) AND `request_price` >= 0 AND `request_qty` >= 0 AND `request_amount` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单风控检查日志表';
 
-DROP TABLE IF EXISTS `t_biz_trade_event`;
-CREATE TABLE `t_biz_trade_event` (
+DROP TABLE IF EXISTS `t_trade_event_outbox`;
+CREATE TABLE `t_trade_event_outbox` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
   `event_no` VARCHAR(64) NOT NULL COMMENT '事件号',
@@ -840,7 +840,7 @@ CREATE TABLE `t_biz_trade_event` (
   KEY `idx_tenant_biz_type_biz_id` (`tenant_id`, `biz_type`, `biz_id`),
   KEY `idx_tenant_user_created` (`tenant_id`, `user_id`, `create_times`),
   CONSTRAINT `chk_trade_event` CHECK (`product_type` IN (0, 1, 2, 3) AND `event_status` IN (1, 2, 3, 4, 5, 6) AND `retry_count` >= 0 AND `max_retry_count` >= 0 AND `payload_version` > 0)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交易业务事件表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='交易事件可靠发件箱';
 
 DROP TABLE IF EXISTS `t_trade_event_inbox`;
 CREATE TABLE `t_trade_event_inbox` (

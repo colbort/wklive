@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TContractDeliverySettlementModel = (*customTContractDeliverySettlementModel)(nil)
@@ -31,7 +32,7 @@ func NewTContractDeliverySettlementModel(conn sqlx.SqlConn, c cache.CacheConf, o
 	}
 }
 
-func (m *defaultTContractDeliverySettlementModel) CountByBatchStatus(ctx context.Context, tenantID, batchID, status int64) (int64, error) {
+func (m *customTContractDeliverySettlementModel) CountByBatchStatus(ctx context.Context, tenantID, batchID, status int64) (int64, error) {
 	var count int64
 	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id=? AND batch_id=? AND status=?", m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &count, query, tenantID, batchID, status); err != nil {
@@ -40,7 +41,7 @@ func (m *defaultTContractDeliverySettlementModel) CountByBatchStatus(ctx context
 	return count, nil
 }
 
-func (m *defaultTContractDeliverySettlementModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractDeliverySettlement, int64, error) {
+func (m *customTContractDeliverySettlementModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TContractDeliverySettlement, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := adminPageBuilder(filter, "")
 	where, args := b.Where(), b.Args()

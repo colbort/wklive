@@ -59,7 +59,7 @@ func (r *TItickAuthorityRegistry) Allows(kind string) bool {
 	return false
 }
 
-func (m *defaultTItickAuthorityRegistryModel) FindEnabled(ctx context.Context, authority string) (*TItickAuthorityRegistry, error) {
+func (m *customTItickAuthorityRegistryModel) FindEnabled(ctx context.Context, authority string) (*TItickAuthorityRegistry, error) {
 	var row TItickAuthorityRegistry
 	err := m.QueryRowNoCacheCtx(ctx, &row, `SELECT id,authority,provider_code,producer_type,allowed_kinds,status,version,create_times,update_times
 FROM t_itick_authority_registry WHERE authority=? AND status=1 LIMIT 1`, strings.ToLower(strings.TrimSpace(authority)))
@@ -72,7 +72,7 @@ FROM t_itick_authority_registry WHERE authority=? AND status=1 LIMIT 1`, strings
 	return &row, nil
 }
 
-func (m *defaultTItickAuthorityRegistryModel) Create(ctx context.Context, row *TItickAuthorityRegistry) (int64, error) {
+func (m *customTItickAuthorityRegistryModel) Create(ctx context.Context, row *TItickAuthorityRegistry) (int64, error) {
 	result, err := m.Insert(ctx, row)
 	if err != nil {
 		return 0, err
@@ -80,7 +80,7 @@ func (m *defaultTItickAuthorityRegistryModel) Create(ctx context.Context, row *T
 	return result.LastInsertId()
 }
 
-func (m *defaultTItickAuthorityRegistryModel) FindPage(
+func (m *customTItickAuthorityRegistryModel) FindPage(
 	ctx context.Context,
 	filter AuthorityRegistryFilter,
 	cursor, limit int64,
@@ -131,7 +131,7 @@ func (m *defaultTItickAuthorityRegistryModel) FindPage(
 	return rows, total, err
 }
 
-func (m *defaultTItickAuthorityRegistryModel) CountActiveFormulaReferences(
+func (m *customTItickAuthorityRegistryModel) CountActiveFormulaReferences(
 	ctx context.Context,
 	authority string,
 ) (int64, error) {
@@ -155,7 +155,7 @@ WHERE f.status=1
 	return count, err
 }
 
-func (m *defaultTItickAuthorityRegistryModel) UpdateConfigVersioned(
+func (m *customTItickAuthorityRegistryModel) UpdateConfigVersioned(
 	ctx context.Context,
 	id, expectedVersion int64,
 	allowedKinds string,

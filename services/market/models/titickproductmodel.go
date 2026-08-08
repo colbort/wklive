@@ -49,7 +49,7 @@ func NewTItickProductModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.O
 
 // FindActivePage returns enabled products referenced by at least one enabled
 // tenant. The EXISTS predicate naturally deduplicates products across tenants.
-func (m *defaultTItickProductModel) FindActivePage(ctx context.Context, cursor, limit int64) ([]*TItickProduct, error) {
+func (m *customTItickProductModel) FindActivePage(ctx context.Context, cursor, limit int64) ([]*TItickProduct, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	query := fmt.Sprintf(`SELECT %s FROM %s AS p
 		WHERE p.id > ? AND p.enabled = 1
@@ -65,7 +65,7 @@ func (m *defaultTItickProductModel) FindActivePage(ctx context.Context, cursor, 
 	return list, nil
 }
 
-func (m *defaultTItickProductModel) FindPage(ctx context.Context, filter MarketProductPageFilter, cursor int64, limit int64) ([]*TItickProduct, int64, error) {
+func (m *customTItickProductModel) FindPage(ctx context.Context, filter MarketProductPageFilter, cursor int64, limit int64) ([]*TItickProduct, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	queryLimit := limit + 1
 
@@ -124,7 +124,7 @@ func (m *defaultTItickProductModel) FindPage(ctx context.Context, filter MarketP
 	return list, 0, nil
 }
 
-func (m *defaultTItickProductModel) FindByIds(ctx context.Context, ids []int64) ([]*TItickProduct, error) {
+func (m *customTItickProductModel) FindByIds(ctx context.Context, ids []int64) ([]*TItickProduct, error) {
 	if len(ids) == 0 {
 		return []*TItickProduct{}, nil
 	}
@@ -147,7 +147,7 @@ func (m *defaultTItickProductModel) FindByIds(ctx context.Context, ids []int64) 
 	return list, nil
 }
 
-func (m *defaultTItickProductModel) Upsert(ctx context.Context, data *TItickProduct) (sql.Result, error) {
+func (m *customTItickProductModel) Upsert(ctx context.Context, data *TItickProduct) (sql.Result, error) {
 	tItickProductCategoryTypeMarketSymbolKey := fmt.Sprintf("%s%v:%v:%v",
 		cacheTItickProductCategoryTypeMarketSymbolPrefix,
 		data.CategoryType, data.Market, data.Symbol,

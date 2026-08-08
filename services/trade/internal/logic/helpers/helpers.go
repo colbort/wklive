@@ -761,7 +761,7 @@ func RiskOrderCheckLogToProto(item *models.TRiskOrderCheckLog) *trade.RiskOrderC
 	}
 }
 
-func TradeEventToProto(item *models.TBizTradeEvent) *trade.BizTradeEvent {
+func TradeEventToProto(item *models.TTradeEventOutbox) *trade.BizTradeEvent {
 	if item == nil {
 		return nil
 	}

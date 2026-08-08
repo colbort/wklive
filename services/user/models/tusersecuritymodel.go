@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TUserSecurityModel = (*customTUserSecurityModel)(nil)
@@ -31,7 +32,7 @@ func NewTUserSecurityModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.O
 	}
 }
 
-func (m *defaultTUserSecurityModel) FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUserSecurity, int64, error) {
+func (m *customTUserSecurityModel) FindPage(ctx context.Context, tenantId int64, cursor int64, limit int64) ([]*TUserSecurity, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -83,7 +84,7 @@ func (m *defaultTUserSecurityModel) FindPage(ctx context.Context, tenantId int64
 	return list, total, nil
 }
 
-func (m *defaultTUserSecurityModel) DeleteByUserId(ctx context.Context, userId int64) error {
+func (m *customTUserSecurityModel) DeleteByUserId(ctx context.Context, userId int64) error {
 	var resp TUserSecurity
 
 	query := fmt.Sprintf(`

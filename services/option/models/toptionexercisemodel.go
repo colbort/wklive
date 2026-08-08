@@ -42,7 +42,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionExerciseModel) FindPending(ctx context.Context, tenantId int64, limit int64) ([]*TOptionExercise, error) {
+func (m *customTOptionExerciseModel) FindPending(ctx context.Context, tenantId int64, limit int64) ([]*TOptionExercise, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE status = ?", tOptionExerciseRows, m.table)
 	args := []any{int64(option.ExerciseStatus_EXERCISE_STATUS_PENDING)}
@@ -57,14 +57,14 @@ func (m *defaultTOptionExerciseModel) FindPending(ctx context.Context, tenantId 
 	return list, err
 }
 
-func (m *defaultTOptionExerciseModel) FindOneForUpdate(ctx context.Context, id int64) (*TOptionExercise, error) {
+func (m *customTOptionExerciseModel) FindOneForUpdate(ctx context.Context, id int64) (*TOptionExercise, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1 FOR UPDATE", tOptionExerciseRows, m.table)
 	var item TOptionExercise
 	err := m.QueryRowNoCacheCtx(ctx, &item, query, id)
 	return &item, err
 }
 
-func (m *defaultTOptionExerciseModel) FindOneByClientExerciseId(
+func (m *customTOptionExerciseModel) FindOneByClientExerciseId(
 	ctx context.Context,
 	tenantId, userId int64,
 	clientExerciseId string,
@@ -80,7 +80,7 @@ func (m *defaultTOptionExerciseModel) FindOneByClientExerciseId(
 	return &item, nil
 }
 
-func (m *defaultTOptionExerciseModel) HasPendingByContract(ctx context.Context, tenantId, contractId int64) (bool, error) {
+func (m *customTOptionExerciseModel) HasPendingByContract(ctx context.Context, tenantId, contractId int64) (bool, error) {
 	query := fmt.Sprintf(
 		"SELECT COUNT(1) FROM %s WHERE tenant_id = ? AND contract_id = ? AND status = ?",
 		m.table,
@@ -104,7 +104,7 @@ func NewTOptionExerciseModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache
 	}
 }
 
-func (m *defaultTOptionExerciseModel) FindPage(ctx context.Context, filter OptionExercisePageFilter, cursor int64, limit int64) ([]*TOptionExercise, int64, error) {
+func (m *customTOptionExerciseModel) FindPage(ctx context.Context, filter OptionExercisePageFilter, cursor int64, limit int64) ([]*TOptionExercise, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)

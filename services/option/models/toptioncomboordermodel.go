@@ -4,11 +4,12 @@ import (
 	"context"
 	"fmt"
 
+	"wklive/common/sqlutil"
+	"wklive/proto/option"
+
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
-	"wklive/proto/option"
 )
 
 var _ TOptionComboOrderModel = (*customTOptionComboOrderModel)(nil)
@@ -50,7 +51,7 @@ func NewTOptionComboOrderModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cac
 // FindOneByTenantIdUserIdClientComboIdNoCache is the authoritative lookup for
 // idempotent create/replay. A cached miss must never hide a row committed by a
 // concurrent winner of uk_option_combo_client.
-func (m *defaultTOptionComboOrderModel) FindOneByTenantIdUserIdClientComboIdNoCache(
+func (m *customTOptionComboOrderModel) FindOneByTenantIdUserIdClientComboIdNoCache(
 	ctx context.Context, tenantId int64, userId int64, clientComboId string,
 ) (*TOptionComboOrder, error) {
 	query := fmt.Sprintf(
@@ -64,7 +65,7 @@ func (m *defaultTOptionComboOrderModel) FindOneByTenantIdUserIdClientComboIdNoCa
 	return &item, nil
 }
 
-func (m *defaultTOptionComboOrderModel) FindOneForUpdate(
+func (m *customTOptionComboOrderModel) FindOneForUpdate(
 	ctx context.Context, id int64,
 ) (*TOptionComboOrder, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id=? LIMIT 1 FOR UPDATE", tOptionComboOrderRows, m.table)
@@ -75,7 +76,7 @@ func (m *defaultTOptionComboOrderModel) FindOneForUpdate(
 	return &item, nil
 }
 
-func (m *defaultTOptionComboOrderModel) FindPage(
+func (m *customTOptionComboOrderModel) FindPage(
 	ctx context.Context, filter OptionComboOrderPageFilter, cursor, limit int64,
 ) ([]*TOptionComboOrder, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
@@ -111,7 +112,7 @@ func (m *defaultTOptionComboOrderModel) FindPage(
 	return list, total, nil
 }
 
-func (m *defaultTOptionComboOrderModel) FindMatchCandidates(
+func (m *customTOptionComboOrderModel) FindMatchCandidates(
 	ctx context.Context,
 	tenantId int64,
 	strategyKey string,

@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TStakeRedeemLogModel = (*customTStakeRedeemLogModel)(nil)
@@ -43,7 +44,7 @@ func NewTStakeRedeemLogModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache
 	}
 }
 
-func (m *defaultTStakeRedeemLogModel) FindPage(ctx context.Context, filter StakeRedeemLogPageFilter, cursor int64, limit int64) ([]*TStakeRedeemLog, int64, error) {
+func (m *customTStakeRedeemLogModel) FindPage(ctx context.Context, filter StakeRedeemLogPageFilter, cursor int64, limit int64) ([]*TStakeRedeemLog, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()

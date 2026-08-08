@@ -4,11 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"strings"
-	"wklive/common/sqlutil"
 )
 
 var _ TTradeOrderModel = (*customTTradeOrderModel)(nil)
@@ -64,7 +65,7 @@ type (
 	}
 )
 
-func (m *defaultTTradeOrderModel) CountByUserSymbolStatuses(
+func (m *customTTradeOrderModel) CountByUserSymbolStatuses(
 	ctx context.Context, tenantID, userID, symbolID int64, statuses []int64,
 ) (int64, error) {
 	if len(statuses) == 0 {
@@ -84,7 +85,7 @@ func (m *defaultTTradeOrderModel) CountByUserSymbolStatuses(
 	return total, nil
 }
 
-func (m *defaultTTradeOrderModel) CountCreatedSince(
+func (m *customTTradeOrderModel) CountCreatedSince(
 	ctx context.Context, tenantID, userID, productType, contractType, since int64,
 ) (int64, error) {
 	query := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE tenant_id=? AND user_id=? AND product_type=? AND create_times>=?", m.table)
@@ -100,7 +101,7 @@ func (m *defaultTTradeOrderModel) CountCreatedSince(
 	return total, nil
 }
 
-func (m *defaultTTradeOrderModel) CountCancelsSince(
+func (m *customTTradeOrderModel) CountCancelsSince(
 	ctx context.Context, tenantID, userID, productType, contractType, since int64,
 ) (int64, error) {
 	query := `SELECT COUNT(1)
@@ -119,7 +120,7 @@ WHERE c.tenant_id=? AND c.user_id=? AND o.product_type=? AND c.create_times>=?`
 	return total, nil
 }
 
-func (m *defaultTTradeOrderModel) CountOpenContractRiskUnit(
+func (m *customTTradeOrderModel) CountOpenContractRiskUnit(
 	ctx context.Context, tenantID, userID, symbolID int64,
 ) (int64, error) {
 	query := `SELECT COUNT(1) FROM t_trade_order
@@ -135,7 +136,7 @@ WHERE tenant_id=? AND user_id=? AND product_type=2
 	return count, err
 }
 
-func (m *defaultTTradeOrderModel) CountActiveIncompatibleContractMode(
+func (m *customTTradeOrderModel) CountActiveIncompatibleContractMode(
 	ctx context.Context, tenantID, userID, symbolID, marginMode, positionMode int64,
 ) (int64, error) {
 	var count int64
@@ -154,7 +155,7 @@ WHERE o.tenant_id=? AND o.user_id=? AND o.symbol_id=?
 	return count, err
 }
 
-func (m *defaultTTradeOrderModel) CountFreezingCrossMarginOpenings(
+func (m *customTTradeOrderModel) CountFreezingCrossMarginOpenings(
 	ctx context.Context, tenantID, userID int64, marginAsset string,
 ) (int64, error) {
 	var count int64
@@ -171,7 +172,7 @@ WHERE o.tenant_id=? AND o.user_id=? AND c.margin_asset=?
 	return count, err
 }
 
-func (m *defaultTTradeOrderModel) FindCrossMarginCancelableOrderIDs(
+func (m *customTTradeOrderModel) FindCrossMarginCancelableOrderIDs(
 	ctx context.Context, tenantID, userID int64, marginAsset string,
 ) ([]int64, error) {
 	type row struct {
@@ -198,7 +199,7 @@ ORDER BY o.id`, tenantID, userID, marginAsset); err != nil {
 // reservation still has a positive unsettled remainder. Scanning every
 // historical terminal order makes the event recovery task monopolize its
 // distributed lock after a large database import.
-func (m *defaultTTradeOrderModel) FindTerminalAssetRepairCandidates(
+func (m *customTTradeOrderModel) FindTerminalAssetRepairCandidates(
 	ctx context.Context,
 	tenantID, cursor, limit int64,
 	statuses []int64,
@@ -325,7 +326,7 @@ func (m *customTTradeOrderModel) ArchiveZeroFillLiquidityOrders(ctx context.Cont
 	return int64(len(rows)), nil
 }
 
-func (m *defaultTTradeOrderModel) CountBySymbolStatuses(ctx context.Context, tenantID, symbolID int64, statuses []int64) (int64, error) {
+func (m *customTTradeOrderModel) CountBySymbolStatuses(ctx context.Context, tenantID, symbolID int64, statuses []int64) (int64, error) {
 	if len(statuses) == 0 {
 		return 0, nil
 	}
@@ -343,7 +344,7 @@ func (m *defaultTTradeOrderModel) CountBySymbolStatuses(ctx context.Context, ten
 	return count, nil
 }
 
-func (m *defaultTTradeOrderModel) FindPage(ctx context.Context, filter TradeOrderPageFilter, cursor int64, limit int64) ([]*TTradeOrder, int64, error) {
+func (m *customTTradeOrderModel) FindPage(ctx context.Context, filter TradeOrderPageFilter, cursor int64, limit int64) ([]*TTradeOrder, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
@@ -404,7 +405,7 @@ func (m *defaultTTradeOrderModel) FindPage(ctx context.Context, filter TradeOrde
 	return list, total, nil
 }
 
-func (m *defaultTTradeOrderModel) CountByStatuses(ctx context.Context, tenantId, userId uint64, marketType int64, statuses []int64) (int64, error) {
+func (m *customTTradeOrderModel) CountByStatuses(ctx context.Context, tenantId, userId uint64, marketType int64, statuses []int64) (int64, error) {
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", int64(tenantId))
 	builder.EqInt64("user_id", int64(userId))
@@ -419,7 +420,7 @@ func (m *defaultTTradeOrderModel) CountByStatuses(ctx context.Context, tenantId,
 	return total, nil
 }
 
-func (m *defaultTTradeOrderModel) FindMatchKeys(ctx context.Context, tenantId int64, statuses []int64, limit int64) ([]TradeOrderMatchKey, error) {
+func (m *customTTradeOrderModel) FindMatchKeys(ctx context.Context, tenantId int64, statuses []int64, limit int64) ([]TradeOrderMatchKey, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	where, args := openOrderWhere(tenantId, 0, 0, 0, statuses)
 	sql := fmt.Sprintf("SELECT tenant_id, symbol_id, product_type FROM %s WHERE %s AND order_type IN (?, ?) GROUP BY tenant_id, symbol_id, product_type ORDER BY tenant_id ASC, symbol_id ASC, product_type ASC LIMIT ?", m.table, where)
@@ -432,7 +433,7 @@ func (m *defaultTTradeOrderModel) FindMatchKeys(ctx context.Context, tenantId in
 	return list, nil
 }
 
-func (m *defaultTTradeOrderModel) FindOpenMatchOrders(ctx context.Context, tenantId, symbolId, marketType, side int64, statuses []int64, marketOrderType int64, limit int64) ([]*TTradeOrder, error) {
+func (m *customTTradeOrderModel) FindOpenMatchOrders(ctx context.Context, tenantId, symbolId, marketType, side int64, statuses []int64, marketOrderType int64, limit int64) ([]*TTradeOrder, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	where, args := openOrderWhere(tenantId, symbolId, marketType, side, statuses)
 
@@ -456,7 +457,7 @@ func (m *defaultTTradeOrderModel) FindOpenMatchOrders(ctx context.Context, tenan
 	return list, nil
 }
 
-func (m *defaultTTradeOrderModel) FindOneForUpdate(ctx context.Context, id int64) (*TTradeOrder, error) {
+func (m *customTTradeOrderModel) FindOneForUpdate(ctx context.Context, id int64) (*TTradeOrder, error) {
 	var resp TTradeOrder
 	sql := fmt.Sprintf("SELECT %s FROM %s WHERE `id` = ? LIMIT 1 FOR UPDATE", tTradeOrderRows, m.table)
 	err := m.QueryRowNoCacheCtx(ctx, &resp, sql, id)
@@ -470,7 +471,7 @@ func (m *defaultTTradeOrderModel) FindOneForUpdate(ctx context.Context, id int64
 	}
 }
 
-func (m *defaultTTradeOrderModel) FindOneByTenantIdOrderNoForUpdate(ctx context.Context, tenantId int64, orderNo string) (*TTradeOrder, error) {
+func (m *customTTradeOrderModel) FindOneByTenantIdOrderNoForUpdate(ctx context.Context, tenantId int64, orderNo string) (*TTradeOrder, error) {
 	var resp TTradeOrder
 	sql := fmt.Sprintf("SELECT %s FROM %s WHERE `tenant_id` = ? AND `order_no` = ? LIMIT 1 FOR UPDATE", tTradeOrderRows, m.table)
 	err := m.QueryRowNoCacheCtx(ctx, &resp, sql, tenantId, orderNo)
@@ -487,7 +488,7 @@ func (m *defaultTTradeOrderModel) FindOneByTenantIdOrderNoForUpdate(ctx context.
 // FindOneByTenantIdUserIdClientOrderId supports endpoints that do not carry product_type,
 // such as cancel-by-client-order-id. New order idempotency checks should use the generated
 // product-scoped unique-key lookup.
-func (m *defaultTTradeOrderModel) FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId, userId int64, clientOrderId sql.NullString) (*TTradeOrder, error) {
+func (m *customTTradeOrderModel) FindOneByTenantIdUserIdClientOrderId(ctx context.Context, tenantId, userId int64, clientOrderId sql.NullString) (*TTradeOrder, error) {
 	var resp TTradeOrder
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE `tenant_id` = ? AND `user_id` = ? AND `client_order_id` = ? ORDER BY `id` DESC LIMIT 1", tTradeOrderRows, m.table)
 	err := m.QueryRowNoCacheCtx(ctx, &resp, query, tenantId, userId, clientOrderId)

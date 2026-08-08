@@ -36,7 +36,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionTradingCalendarModel) FindOneForUpdate(
+func (m *customTOptionTradingCalendarModel) FindOneForUpdate(
 	ctx context.Context, id int64,
 ) (*TOptionTradingCalendar, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id=? LIMIT 1 FOR UPDATE",
@@ -48,7 +48,7 @@ func (m *defaultTOptionTradingCalendarModel) FindOneForUpdate(
 	return &item, nil
 }
 
-func (m *defaultTOptionTradingCalendarModel) FindLatestForUpdate(
+func (m *customTOptionTradingCalendarModel) FindLatestForUpdate(
 	ctx context.Context, tenantId int64, calendarCode string,
 ) (*TOptionTradingCalendar, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -61,7 +61,7 @@ WHERE tenant_id=? AND calendar_code=? ORDER BY version DESC LIMIT 1 FOR UPDATE`,
 	return &item, nil
 }
 
-func (m *defaultTOptionTradingCalendarModel) FindOpenEndedApprovedForUpdate(
+func (m *customTOptionTradingCalendarModel) FindOpenEndedApprovedForUpdate(
 	ctx context.Context, tenantId int64, calendarCode string,
 ) (*TOptionTradingCalendar, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -77,7 +77,7 @@ ORDER BY version DESC LIMIT 1 FOR UPDATE`, tOptionTradingCalendarRows, m.table)
 	return &item, nil
 }
 
-func (m *defaultTOptionTradingCalendarModel) FindEffective(
+func (m *customTOptionTradingCalendarModel) FindEffective(
 	ctx context.Context, tenantId int64, calendarCode string, now int64,
 ) (*TOptionTradingCalendar, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -102,7 +102,7 @@ ORDER BY version DESC LIMIT 2`, tOptionTradingCalendarRows, m.table)
 	return items[0], nil
 }
 
-func (m *defaultTOptionTradingCalendarModel) FindPage(
+func (m *customTOptionTradingCalendarModel) FindPage(
 	ctx context.Context, filter OptionTradingCalendarPageFilter, cursor, limit int64,
 ) ([]*TOptionTradingCalendar, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)

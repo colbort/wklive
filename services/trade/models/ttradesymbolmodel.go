@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TTradeSymbolModel = (*customTTradeSymbolModel)(nil)
@@ -55,7 +56,7 @@ func (m *customTTradeSymbolModel) FindOne(ctx context.Context, id int64) (*TTrad
 	return m.defaultTTradeSymbolModel.FindOne(ctx, id)
 }
 
-func (m *defaultTTradeSymbolModel) FindPage(ctx context.Context, filter TradeSymbolPageFilter, cursor int64, limit int64) ([]*TTradeSymbol, int64, error) {
+func (m *customTTradeSymbolModel) FindPage(ctx context.Context, filter TradeSymbolPageFilter, cursor int64, limit int64) ([]*TTradeSymbol, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
@@ -91,7 +92,7 @@ func (m *defaultTTradeSymbolModel) FindPage(ctx context.Context, filter TradeSym
 	return list, total, nil
 }
 
-func (m *defaultTTradeSymbolModel) FindAll(ctx context.Context, filter TradeSymbolPageFilter) ([]*TTradeSymbol, error) {
+func (m *customTTradeSymbolModel) FindAll(ctx context.Context, filter TradeSymbolPageFilter) ([]*TTradeSymbol, error) {
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
 	builder.EqInt64("product_type", filter.ProductType)

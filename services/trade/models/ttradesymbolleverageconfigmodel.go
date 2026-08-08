@@ -110,7 +110,7 @@ func NewTTradeSymbolLeverageConfigModel(conn sqlx.SqlConn, c cache.CacheConf, op
 	}
 }
 
-func (m *defaultTTradeSymbolLeverageConfigModel) FindPage(ctx context.Context, filter TradeSymbolLeverageConfigPageFilter, cursor int64, limit int64) ([]*TTradeSymbolLeverageConfig, int64, error) {
+func (m *customTTradeSymbolLeverageConfigModel) FindPage(ctx context.Context, filter TradeSymbolLeverageConfigPageFilter, cursor int64, limit int64) ([]*TTradeSymbolLeverageConfig, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()

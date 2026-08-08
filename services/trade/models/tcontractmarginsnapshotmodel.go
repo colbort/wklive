@@ -4,10 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
+
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"strings"
 )
 
 var _ TContractMarginSnapshotModel = (*customTContractMarginSnapshotModel)(nil)
@@ -50,7 +51,7 @@ type (
 	}
 )
 
-func (m *defaultTContractMarginSnapshotModel) FindRiskProjectionAggregates(
+func (m *customTContractMarginSnapshotModel) FindRiskProjectionAggregates(
 	ctx context.Context, tenantID int64, cursor CrossMarginAggregateCursor, limit int,
 ) ([]*CrossMarginAggregate, error) {
 	where := "1=1"
@@ -139,7 +140,7 @@ LIMIT ?`
 // only advances its version when a risk input or result changed. ProcessPositions
 // is protected by a distributed task lock; the version predicate still prevents
 // a manual projection repair from being overwritten by a stale scan.
-func (m *defaultTContractMarginSnapshotModel) UpsertRiskProjection(ctx context.Context, data *TContractMarginSnapshot) (bool, error) {
+func (m *customTContractMarginSnapshotModel) UpsertRiskProjection(ctx context.Context, data *TContractMarginSnapshot) (bool, error) {
 	if data == nil {
 		return false, fmt.Errorf("cross margin risk projection is nil")
 	}
@@ -213,7 +214,7 @@ func NewTContractMarginSnapshotModel(conn sqlx.SqlConn, c cache.CacheConf, opts 
 	}
 }
 
-func (m *defaultTContractMarginSnapshotModel) FindPage(ctx context.Context, tenantId, userId int64, marginAsset string, cursor, limit int64) ([]*TContractMarginSnapshot, int64, error) {
+func (m *customTContractMarginSnapshotModel) FindPage(ctx context.Context, tenantId, userId int64, marginAsset string, cursor, limit int64) ([]*TContractMarginSnapshot, int64, error) {
 	where, args := []string{"1=1"}, []any{}
 	if tenantId > 0 {
 		where = append(where, "tenant_id = ?")

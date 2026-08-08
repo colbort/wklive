@@ -2,7 +2,7 @@ package models
 
 import "testing"
 
-func TestApplyBizTradeEventDefaults(t *testing.T) {
+func TestApplyTradeEventOutboxDefaults(t *testing.T) {
 	tests := []struct {
 		name string
 		in   int64
@@ -14,8 +14,8 @@ func TestApplyBizTradeEventDefaults(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			event := &TBizTradeEvent{PayloadVersion: tt.in}
-			applyBizTradeEventDefaults(event)
+			event := &TTradeEventOutbox{PayloadVersion: tt.in}
+			applyTradeEventOutboxDefaults(event)
 			if event.PayloadVersion != tt.want {
 				t.Fatalf("PayloadVersion = %d, want %d", event.PayloadVersion, tt.want)
 			}
@@ -23,6 +23,6 @@ func TestApplyBizTradeEventDefaults(t *testing.T) {
 	}
 }
 
-func TestApplyBizTradeEventDefaultsNil(t *testing.T) {
-	applyBizTradeEventDefaults(nil)
+func TestApplyTradeEventOutboxDefaultsNil(t *testing.T) {
+	applyTradeEventOutboxDefaults(nil)
 }

@@ -27,7 +27,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionExerciseAssignmentModel) FindByExercise(ctx context.Context, tenantId, exerciseId int64) ([]*TOptionExerciseAssignment, error) {
+func (m *customTOptionExerciseAssignmentModel) FindByExercise(ctx context.Context, tenantId, exerciseId int64) ([]*TOptionExerciseAssignment, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND exercise_id = ? ORDER BY id",
 		tOptionExerciseAssignmentRows, m.table)
 	var list []*TOptionExerciseAssignment
@@ -35,7 +35,7 @@ func (m *defaultTOptionExerciseAssignmentModel) FindByExercise(ctx context.Conte
 	return list, err
 }
 
-func (m *defaultTOptionExerciseAssignmentModel) ResetForRetry(
+func (m *customTOptionExerciseAssignmentModel) ResetForRetry(
 	ctx context.Context,
 	tenantId, exerciseId, now int64,
 ) error {
@@ -50,7 +50,7 @@ WHERE tenant_id = ? AND exercise_id = ? AND status IN (?, ?)`,
 	return err
 }
 
-func (m *defaultTOptionExerciseAssignmentModel) SetPendingStatus(
+func (m *customTOptionExerciseAssignmentModel) SetPendingStatus(
 	ctx context.Context,
 	tenantId, exerciseId, now int64,
 	status option.ExerciseAssignmentStatus,

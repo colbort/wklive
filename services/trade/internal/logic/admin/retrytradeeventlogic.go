@@ -31,7 +31,7 @@ func NewRetryTradeEventLogic(ctx context.Context, svcCtx *svc.ServiceContext) *R
 
 // 重试交易事件
 func (l *RetryTradeEventLogic) RetryTradeEvent(in *trade.RetryTradeEventReq) (*trade.CommonResp, error) {
-	item, err := l.svcCtx.BizTradeEventModel.FindOne(l.ctx, in.Id)
+	item, err := l.svcCtx.TradeEventOutboxModel.FindOne(l.ctx, in.Id)
 	if errors.Is(err, models.ErrNotFound) {
 		return &trade.CommonResp{Base: helper.ErrResp(i18n.TradeNotFound, i18n.Translate(i18n.TradeNotFound, l.ctx))}, nil
 	}
@@ -44,7 +44,7 @@ func (l *RetryTradeEventLogic) RetryTradeEvent(in *trade.RetryTradeEventReq) (*t
 		return &trade.CommonResp{Base: base}, nil
 	}
 	now := utils.NowMillis()
-	changed, err := l.svcCtx.BizTradeEventModel.ResetForManualRetry(l.ctx, item.Id, in.OperatorId, now)
+	changed, err := l.svcCtx.TradeEventOutboxModel.ResetForManualRetry(l.ctx, item.Id, in.OperatorId, now)
 	if err != nil {
 		return nil, err
 	}

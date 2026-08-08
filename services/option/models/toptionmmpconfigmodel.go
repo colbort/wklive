@@ -35,7 +35,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionMmpConfigModel) FindOneForUpdate(
+func (m *customTOptionMmpConfigModel) FindOneForUpdate(
 	ctx context.Context, id int64,
 ) (*TOptionMmpConfig, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1 FOR UPDATE", tOptionMmpConfigRows, m.table)
@@ -46,7 +46,7 @@ func (m *defaultTOptionMmpConfigModel) FindOneForUpdate(
 	return &item, nil
 }
 
-func (m *defaultTOptionMmpConfigModel) FindForUpdate(
+func (m *customTOptionMmpConfigModel) FindForUpdate(
 	ctx context.Context, tenantId, userId, contractId int64, groupCode string,
 ) (*TOptionMmpConfig, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -59,7 +59,7 @@ LIMIT 1 FOR UPDATE`, tOptionMmpConfigRows, m.table)
 	return &item, nil
 }
 
-func (m *defaultTOptionMmpConfigModel) FindPage(
+func (m *customTOptionMmpConfigModel) FindPage(
 	ctx context.Context, filter OptionMmpConfigPageFilter, cursor, limit int64,
 ) ([]*TOptionMmpConfig, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)

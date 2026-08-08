@@ -36,7 +36,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionPortfolioRiskConfigModel) FindOneForUpdate(
+func (m *customTOptionPortfolioRiskConfigModel) FindOneForUpdate(
 	ctx context.Context,
 	id int64,
 ) (*TOptionPortfolioRiskConfig, error) {
@@ -49,7 +49,7 @@ func (m *defaultTOptionPortfolioRiskConfigModel) FindOneForUpdate(
 	return &item, nil
 }
 
-func (m *defaultTOptionPortfolioRiskConfigModel) FindLatestForUpdate(
+func (m *customTOptionPortfolioRiskConfigModel) FindLatestForUpdate(
 	ctx context.Context,
 	tenantId int64,
 	settleCoin string,
@@ -65,7 +65,7 @@ func (m *defaultTOptionPortfolioRiskConfigModel) FindLatestForUpdate(
 	return &item, nil
 }
 
-func (m *defaultTOptionPortfolioRiskConfigModel) FindOpenEndedForUpdate(
+func (m *customTOptionPortfolioRiskConfigModel) FindOpenEndedForUpdate(
 	ctx context.Context,
 	tenantId int64,
 	settleCoin string,
@@ -86,7 +86,7 @@ func (m *defaultTOptionPortfolioRiskConfigModel) FindOpenEndedForUpdate(
 	return &item, nil
 }
 
-func (m *defaultTOptionPortfolioRiskConfigModel) FindActive(
+func (m *customTOptionPortfolioRiskConfigModel) FindActive(
 	ctx context.Context,
 	tenantId int64,
 	settleCoin string,
@@ -110,7 +110,7 @@ func (m *defaultTOptionPortfolioRiskConfigModel) FindActive(
 	return &item, nil
 }
 
-func (m *defaultTOptionPortfolioRiskConfigModel) FindPage(
+func (m *customTOptionPortfolioRiskConfigModel) FindPage(
 	ctx context.Context,
 	filter OptionPortfolioRiskConfigPageFilter,
 	cursor, limit int64,

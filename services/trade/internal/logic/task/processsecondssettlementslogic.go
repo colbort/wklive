@@ -205,7 +205,7 @@ func (l *ProcessSecondsSettlementsLogic) processSettlements(tenantID int64) erro
 			return l.svcCtx.TransactionModel.TransactOnce(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
 				secondsModel := tx.TradeOrderSeconds
 				orderModel := tx.TradeOrder
-				eventModel := tx.BizTradeEvent
+				eventModel := tx.TradeEventOutbox
 				current, err := secondsModel.FindOneForUpdate(ctx, item.Id)
 				if err != nil {
 					return err
@@ -286,7 +286,7 @@ func (l *ProcessSecondsSettlementsLogic) processRefunds(tenantID int64) error {
 			secondsModel := tx.TradeOrderSeconds
 			orderModel := tx.TradeOrder
 			reservationModel := tx.TradeAssetReservation
-			eventModel := tx.BizTradeEvent
+			eventModel := tx.TradeEventOutbox
 			current, err := secondsModel.FindOneForUpdate(ctx, item.Id)
 			if err != nil {
 				return err

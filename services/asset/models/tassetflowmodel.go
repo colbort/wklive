@@ -3,9 +3,10 @@ package models
 import (
 	"context"
 	"fmt"
+	"wklive/common/sqlutil"
+
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TAssetFlowModel = (*customTAssetFlowModel)(nil)
@@ -43,7 +44,7 @@ func NewTAssetFlowModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Opti
 	}
 }
 
-func (m *defaultTAssetFlowModel) FindOneByTenantBizNo(ctx context.Context, tenantID int64, bizNo string) (*TAssetFlow, error) {
+func (m *customTAssetFlowModel) FindOneByTenantBizNo(ctx context.Context, tenantID int64, bizNo string) (*TAssetFlow, error) {
 	var row TAssetFlow
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND biz_no=? ORDER BY id DESC LIMIT 1", tAssetFlowRows, m.table)
 	if err := m.QueryRowNoCacheCtx(ctx, &row, query, tenantID, bizNo); err != nil {
@@ -52,7 +53,7 @@ func (m *defaultTAssetFlowModel) FindOneByTenantBizNo(ctx context.Context, tenan
 	return &row, nil
 }
 
-func (m *defaultTAssetFlowModel) FindPage(ctx context.Context, filter AssetFlowPageFilter, cursor int64, limit int64) ([]*TAssetFlow, int64, error) {
+func (m *customTAssetFlowModel) FindPage(ctx context.Context, filter AssetFlowPageFilter, cursor int64, limit int64) ([]*TAssetFlow, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()

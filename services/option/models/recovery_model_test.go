@@ -188,19 +188,21 @@ func TestAllAssetInstructionsSucceededByBizNoUsesAggregate(t *testing.T) {
 	}
 }
 
-func TestRecoverStaleAssetInstructionsKeepsOriginalIdentity(t *testing.T) {
+func TestClaimStaleAssetInstructionUsesOwnerLease(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer db.Close()
 
-	mock.ExpectExec(`(?s)UPDATE t_option_asset_instruction.*SET status=\?,next_retry_at=\?,last_error_msg='STALE_PROCESSING_RECOVERED',update_times=\?.*WHERE status=\? AND update_times < \? AND tenant_id = \?`).
+	mock.ExpectExec(`(?s)UPDATE t_option_asset_instruction.*SET status=\?,claimed_by=\?,claimed_at=\?,update_times=\?.*status=\? AND claimed_at < \?`).
 		WithArgs(
-			int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_FAILED),
-			int64(200), int64(200),
 			int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PROCESSING),
-			int64(140), int64(9),
+			"worker-a", int64(200), int64(200), int64(9),
+			int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING),
+			int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_FAILED), int64(200),
+			int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PROCESSING), int64(140),
+			int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS), int64(140),
 		).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
@@ -210,12 +212,12 @@ func TestRecoverStaleAssetInstructionsKeepsOriginalIdentity(t *testing.T) {
 			table:      "`t_option_asset_instruction`",
 		},
 	}
-	affected, err := model.RecoverStale(context.Background(), 9, 140, 200)
+	claimed, err := model.Claim(context.Background(), 9, "worker-a", 200, 140)
 	if err != nil {
-		t.Fatalf("recover stale: %v", err)
+		t.Fatalf("claim stale: %v", err)
 	}
-	if affected != 1 {
-		t.Fatalf("affected=%d want=1", affected)
+	if !claimed {
+		t.Fatal("expected stale instruction to be claimed")
 	}
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Fatal(err)
@@ -229,11 +231,15 @@ func TestFindRunnableAssetInstructionsEnforcesBizStepBarrier(t *testing.T) {
 	}
 	defer db.Close()
 
-	mock.ExpectQuery(`(?s)SELECT .* FROM .* AS current.*NOT EXISTS \(.*biz_previous\.execution_group.*current\.execution_group.*biz_previous\.step_no < current\.step_no.*biz_previous\.status <> \?.*\).*delivery_unit_id.*cure_deadline > \?.*ORDER BY id ASC LIMIT \?`).
+	mock.ExpectQuery(`(?s)SELECT .* FROM .* AS current.*current\.claimed_at < \?.*NOT EXISTS \(.*biz_previous\.execution_group.*current\.execution_group.*biz_previous\.step_no < current\.step_no.*biz_previous\.claimed_by <> ''.*\).*delivery_unit_id.*cure_deadline > \?.*ORDER BY id ASC LIMIT \?`).
 		WithArgs(
 			int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PENDING),
 			int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_FAILED),
 			int64(1234),
+			int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_PROCESSING),
+			int64(1174),
+			int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS),
+			int64(1174),
 			int64(0),
 			int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS),
 			int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS),
@@ -249,7 +255,7 @@ func TestFindRunnableAssetInstructionsEnforcesBizStepBarrier(t *testing.T) {
 			table:      "`t_option_asset_instruction`",
 		},
 	}
-	items, err := model.FindRunnable(context.Background(), 9, 1234, 0, 100)
+	items, err := model.FindRunnable(context.Background(), 9, 1234, 1174, 0, 100)
 	if err != nil {
 		t.Fatalf("find runnable failed: %v", err)
 	}
@@ -275,6 +281,8 @@ func TestFindRunnableOutboxRequiresBuyerPremiumDebit(t *testing.T) {
 			int64(option.OptionEventStatus_OPTION_EVENT_STATUS_PENDING),
 			int64(option.OptionEventStatus_OPTION_EVENT_STATUS_FAILED),
 			int64(1234),
+			int64(option.OptionEventStatus_OPTION_EVENT_STATUS_PROCESSING),
+			int64(1174),
 			int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_DEDUCT_FROZEN),
 			int64(option.AssetInstructionStatus_ASSET_INSTRUCTION_STATUS_SUCCESS),
 			int64(option.AssetInstructionAction_ASSET_INSTRUCTION_ACTION_DEDUCT_FROZEN),
@@ -290,7 +298,7 @@ func TestFindRunnableOutboxRequiresBuyerPremiumDebit(t *testing.T) {
 			table:      "`t_option_outbox`",
 		},
 	}
-	items, err := model.FindRunnable(context.Background(), 9, 1234, 100)
+	items, err := model.FindRunnable(context.Background(), 9, 1234, 1174, 100)
 	if err != nil {
 		t.Fatalf("find runnable outbox failed: %v", err)
 	}

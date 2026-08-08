@@ -1,10 +1,6 @@
 package svc
 
 import (
-	"fmt"
-	"os"
-	"time"
-
 	"wklive/common/alert"
 	"wklive/common/alert/adminnotify"
 	cache "wklive/common/market"
@@ -30,7 +26,6 @@ type ServiceContext struct {
 	TradeEventPublisher          *mq.Publisher
 	OperationalAlertNotifier     alert.Notifier
 	TradeEventSubscriber         *mq.Subscriber
-	TradeEventInstanceID         string
 	TradeSymbolModel             models.TTradeSymbolModel
 	TradeSymbolSpotModel         models.TTradeSymbolSpotModel
 	TradeSymbolContractModel     models.TTradeSymbolContractModel
@@ -66,7 +61,7 @@ type ServiceContext struct {
 	RiskUserSymbolLimitModel     models.TRiskUserSymbolLimitModel
 	TradeUserControlAuditModel   models.TTradeUserControlAuditModel
 	RiskOrderCheckLogModel       models.TRiskOrderCheckLogModel
-	BizTradeEventModel           models.TBizTradeEventModel
+	TradeEventOutboxModel        models.TTradeEventOutboxModel
 	TradeEventInboxModel         models.TTradeEventInboxModel
 	TradeAssetReservationModel   models.TTradeAssetReservationModel
 	TradeSettlementInstrModel    models.TTradeSettlementInstructionModel
@@ -89,8 +84,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	taskSubscriber := mq.MustNewSubscriber(mqConfig, "trade-tasks")
 	tradeEventPublisher := mq.MustNewPublisher(mqConfig)
 	tradeEventSubscriber := mq.MustNewSubscriber(mqConfig, "trade-realtime")
-	hostname, _ := os.Hostname()
-	instanceID := fmt.Sprintf("%s:%d:%d", hostname, os.Getpid(), time.Now().UnixNano())
 	delayQueue, err := delayqueue.New(c.DelayQueue.Enabled, c.DelayQueue.Beanstalks, c.Redis.RedisConf)
 	if err != nil {
 		panic(err)
@@ -103,7 +96,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		TradeEventPublisher:          tradeEventPublisher,
 		OperationalAlertNotifier:     adminnotify.New(tradeEventPublisher),
 		TradeEventSubscriber:         tradeEventSubscriber,
-		TradeEventInstanceID:         instanceID,
 		TradeSymbolModel:             models.NewTTradeSymbolModel(conn, c.CacheRedis),
 		TradeSymbolSpotModel:         models.NewTTradeSymbolSpotModel(conn, c.CacheRedis),
 		TradeSymbolContractModel:     models.NewTTradeSymbolContractModel(conn, c.CacheRedis),
@@ -139,7 +131,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		RiskUserSymbolLimitModel:     models.NewTRiskUserSymbolLimitModel(conn, c.CacheRedis),
 		TradeUserControlAuditModel:   models.NewTTradeUserControlAuditModel(conn, c.CacheRedis),
 		RiskOrderCheckLogModel:       models.NewTRiskOrderCheckLogModel(conn, c.CacheRedis),
-		BizTradeEventModel:           models.NewTBizTradeEventModel(conn, c.CacheRedis),
+		TradeEventOutboxModel:        models.NewTTradeEventOutboxModel(conn, c.CacheRedis),
 		TradeEventInboxModel:         models.NewTTradeEventInboxModel(conn, c.CacheRedis),
 		TradeAssetReservationModel:   models.NewTTradeAssetReservationModel(conn, c.CacheRedis),
 		TradeSettlementInstrModel:    models.NewTTradeSettlementInstructionModel(conn, c.CacheRedis),

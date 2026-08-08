@@ -45,7 +45,7 @@ WHERE tenant_id = ? AND instruction_no = ?;
 
 SELECT event_no, event_type, event_status, retry_count, claimed_by,
        claimed_at, delivered_at, last_error_msg
-FROM t_biz_trade_event
+FROM t_trade_event_outbox
 WHERE tenant_id = ? AND event_no = ?;
 
 SELECT consumer, event_no, event_type, status, retry_count, last_error_msg

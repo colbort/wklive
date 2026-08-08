@@ -27,7 +27,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionContractSeriesDetailModel) FindBySeries(
+func (m *customTOptionContractSeriesDetailModel) FindBySeries(
 	ctx context.Context, tenantId, seriesId int64,
 ) ([]*TOptionContractSeriesDetail, error) {
 	query := fmt.Sprintf(`SELECT %s FROM %s
@@ -41,7 +41,7 @@ ORDER BY expiry_id,strike_price,option_type,id`,
 	return items, nil
 }
 
-func (m *defaultTOptionContractSeriesDetailModel) FindSeriesLaunchByContract(
+func (m *customTOptionContractSeriesDetailModel) FindSeriesLaunchByContract(
 	ctx context.Context, tenantId, contractId int64,
 ) (*TOptionContractSeries, error) {
 	query := fmt.Sprintf(`SELECT s.*
@@ -56,7 +56,7 @@ WHERE d.tenant_id=? AND d.contract_id=? LIMIT 1`,
 	return &item, nil
 }
 
-func (m *defaultTOptionContractSeriesDetailModel) FindPageBySeries(
+func (m *customTOptionContractSeriesDetailModel) FindPageBySeries(
 	ctx context.Context, tenantId, seriesId, cursor, limit int64,
 ) ([]*TOptionContractSeriesDetail, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)

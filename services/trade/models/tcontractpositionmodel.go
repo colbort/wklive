@@ -5,10 +5,11 @@ import (
 	"database/sql"
 	"fmt"
 
+	"wklive/common/sqlutil"
+
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
-	"wklive/common/sqlutil"
 )
 
 var _ TContractPositionModel = (*customTContractPositionModel)(nil)
@@ -52,7 +53,7 @@ type (
 	}
 )
 
-func (m *defaultTContractPositionModel) CountActiveIncompatibleMode(
+func (m *customTContractPositionModel) CountActiveIncompatibleMode(
 	ctx context.Context, tenantID, userID, symbolID, marginMode, positionMode int64,
 ) (int64, error) {
 	var count int64
@@ -65,7 +66,7 @@ WHERE tenant_id=? AND user_id=? AND symbol_id=? AND qty>0
 	return count, err
 }
 
-func (m *defaultTContractPositionModel) CountOpenRiskUnit(
+func (m *customTContractPositionModel) CountOpenRiskUnit(
 	ctx context.Context, tenantID, userID, symbolID int64,
 ) (int64, error) {
 	query := `SELECT COUNT(1) FROM t_contract_position
@@ -80,7 +81,7 @@ WHERE tenant_id=? AND user_id=? AND status IN (1,2,3,4,6) AND qty>0`
 	return count, err
 }
 
-func (m *defaultTContractPositionModel) FindCrossMarginOpeningAggregate(
+func (m *customTContractPositionModel) FindCrossMarginOpeningAggregate(
 	ctx context.Context, tenantID, userID int64, marginAsset string, minMarkTime int64,
 ) (*CrossMarginOpeningAggregate, error) {
 	var aggregate CrossMarginOpeningAggregate
@@ -119,7 +120,7 @@ func NewTContractPositionModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cac
 // UpdateMarkRiskCAS updates only mark-derived fields. It deliberately avoids
 // writing quantity, margin or realized PnL read by the scanner, and the version
 // predicate prevents a stale mark refresh from overwriting a concurrent Fill.
-func (m *defaultTContractPositionModel) UpdateMarkRiskCAS(ctx context.Context, data *TContractPosition, expectedVersion, updateTimes int64) (bool, error) {
+func (m *customTContractPositionModel) UpdateMarkRiskCAS(ctx context.Context, data *TContractPosition, expectedVersion, updateTimes int64) (bool, error) {
 	current, err := m.FindOne(ctx, data.Id)
 	if err != nil {
 		return false, err
@@ -145,7 +146,7 @@ func (m *defaultTContractPositionModel) UpdateMarkRiskCAS(ctx context.Context, d
 	return affected == 1, err
 }
 
-func (m *defaultTContractPositionModel) FindActiveListForUpdate(ctx context.Context, tenantID, symbolID int64) ([]*TContractPosition, error) {
+func (m *customTContractPositionModel) FindActiveListForUpdate(ctx context.Context, tenantID, symbolID int64) ([]*TContractPosition, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND symbol_id = ? AND status = 1 AND qty > 0 ORDER BY id FOR UPDATE", tContractPositionRows, m.table)
 	var positions []*TContractPosition
 	if err := m.QueryRowsNoCacheCtx(ctx, &positions, query, tenantID, symbolID); err != nil {
@@ -154,7 +155,7 @@ func (m *defaultTContractPositionModel) FindActiveListForUpdate(ctx context.Cont
 	return positions, nil
 }
 
-func (m *defaultTContractPositionModel) FindCrossRiskUnitForUpdate(ctx context.Context, tenantID, userID int64, marginAsset string) ([]*TContractPosition, error) {
+func (m *customTContractPositionModel) FindCrossRiskUnitForUpdate(ctx context.Context, tenantID, userID int64, marginAsset string) ([]*TContractPosition, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND user_id=? AND margin_asset=? AND margin_mode=1 AND status=1 AND qty>0 ORDER BY id FOR UPDATE", tContractPositionRows, m.table)
 	var positions []*TContractPosition
 	if err := m.QueryRowsNoCacheCtx(ctx, &positions, query, tenantID, userID, marginAsset); err != nil {
@@ -163,7 +164,7 @@ func (m *defaultTContractPositionModel) FindCrossRiskUnitForUpdate(ctx context.C
 	return positions, nil
 }
 
-func (m *defaultTContractPositionModel) FindOneForUpdate(ctx context.Context, id int64) (*TContractPosition, error) {
+func (m *customTContractPositionModel) FindOneForUpdate(ctx context.Context, id int64) (*TContractPosition, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ? LIMIT 1 FOR UPDATE", tContractPositionRows, m.table)
 	var position TContractPosition
 	if err := m.QueryRowNoCacheCtx(ctx, &position, query, id); err != nil {
@@ -172,7 +173,7 @@ func (m *defaultTContractPositionModel) FindOneForUpdate(ctx context.Context, id
 	return &position, nil
 }
 
-func (m *defaultTContractPositionModel) FindOneForUpdateByTenantUserSymbolSideMode(ctx context.Context, tenantID, userID, symbolID, positionSide, marginMode int64) (*TContractPosition, error) {
+func (m *customTContractPositionModel) FindOneForUpdateByTenantUserSymbolSideMode(ctx context.Context, tenantID, userID, symbolID, positionSide, marginMode int64) (*TContractPosition, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id = ? AND user_id = ? AND symbol_id = ? AND position_side = ? AND margin_mode = ? LIMIT 1 FOR UPDATE", tContractPositionRows, m.table)
 	var position TContractPosition
 	if err := m.QueryRowNoCacheCtx(ctx, &position, query, tenantID, userID, symbolID, positionSide, marginMode); err != nil {
@@ -181,7 +182,7 @@ func (m *defaultTContractPositionModel) FindOneForUpdateByTenantUserSymbolSideMo
 	return &position, nil
 }
 
-func (m *defaultTContractPositionModel) ReleaseCloseQty(ctx context.Context, id int64, qty decimal.Decimal, updateTimes int64) error {
+func (m *customTContractPositionModel) ReleaseCloseQty(ctx context.Context, id int64, qty decimal.Decimal, updateTimes int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -205,7 +206,7 @@ func (m *defaultTContractPositionModel) ReleaseCloseQty(ctx context.Context, id 
 	return nil
 }
 
-func (m *defaultTContractPositionModel) ReserveCloseQty(ctx context.Context, id, version int64, qty decimal.Decimal, updateTimes int64) error {
+func (m *customTContractPositionModel) ReserveCloseQty(ctx context.Context, id, version int64, qty decimal.Decimal, updateTimes int64) error {
 	data, err := m.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -229,7 +230,7 @@ func (m *defaultTContractPositionModel) ReserveCloseQty(ctx context.Context, id,
 	return nil
 }
 
-func (m *defaultTContractPositionModel) FindPage(ctx context.Context, filter ContractPositionPageFilter, cursor int64, limit int64) ([]*TContractPosition, int64, error) {
+func (m *customTContractPositionModel) FindPage(ctx context.Context, filter ContractPositionPageFilter, cursor int64, limit int64) ([]*TContractPosition, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
@@ -263,7 +264,7 @@ func (m *defaultTContractPositionModel) FindPage(ctx context.Context, filter Con
 	return list, total, nil
 }
 
-func (m *defaultTContractPositionModel) FindList(ctx context.Context, filter ContractPositionPageFilter) ([]*TContractPosition, error) {
+func (m *customTContractPositionModel) FindList(ctx context.Context, filter ContractPositionPageFilter) ([]*TContractPosition, error) {
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
 	builder.EqInt64("user_id", filter.UserId)

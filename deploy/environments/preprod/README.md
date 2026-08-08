@@ -240,6 +240,20 @@ docker compose \
 
 ### 预发布业务基线数据
 
+预发布初始化分为两层，不能只执行 `data/bootstrap.sql`：
+
+1. **系统管理基线**：发布镜像内的根 `init.sql` 初始化管理后台菜单、角色与权限；
+   `db-init` 使用 `.env` 中的 `ADMIN_USERNAME`、`ADMIN_PASSWORD` 创建或更新系统超级管理员，
+   并向 `super_admin` 角色授予当前全部后台菜单。密码不会写入 SQL 或镜像。
+2. **系统任务基线**：`services/system/system.sql` 创建 `sys_job`、`sys_job_log`，System
+   数据迁移幂等合并 Trade、Option、Staking 和 Liquidity 定时任务以及对应菜单权限。
+3. **预发布业务资料**：最后由 `preprod` Profile 加载 `data/bootstrap.sql`，创建租户和
+   BTCUSDT、ETHUSDT 的 Market、Trade、Option、Staking 配置。
+
+Readiness 会验证系统超级管理员有效且已绑定 `super_admin`、全部启用后台菜单已经授权、
+定时任务列表/日志菜单存在，并检查 Trade、Option、Staking 核心任务各自只有一条。任何
+一项缺失都会阻止预发布验收通过。
+
 `db-init` 的 `preprod` Profile 会幂等加载
 [`data/bootstrap.sql`](data/bootstrap.sql)。租户身份由 `.env` 的
 `PREPROD_TENANT_ID`、`PREPROD_TENANT_CODE` 和 `PREPROD_TENANT_NAME` 决定；首次初始化

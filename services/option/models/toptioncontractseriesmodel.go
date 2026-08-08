@@ -34,7 +34,7 @@ type (
 	}
 )
 
-func (m *defaultTOptionContractSeriesModel) FindOneByTenantIdRequestKeyNoCache(
+func (m *customTOptionContractSeriesModel) FindOneByTenantIdRequestKeyNoCache(
 	ctx context.Context, tenantId int64, requestKey string,
 ) (*TOptionContractSeries, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND request_key=? LIMIT 1",
@@ -46,7 +46,7 @@ func (m *defaultTOptionContractSeriesModel) FindOneByTenantIdRequestKeyNoCache(
 	return &item, nil
 }
 
-func (m *defaultTOptionContractSeriesModel) FindLatestForUpdate(
+func (m *customTOptionContractSeriesModel) FindLatestForUpdate(
 	ctx context.Context, tenantId int64, seriesCode string,
 ) (*TOptionContractSeries, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE tenant_id=? AND series_code=? ORDER BY version DESC LIMIT 1 FOR UPDATE",
@@ -58,7 +58,7 @@ func (m *defaultTOptionContractSeriesModel) FindLatestForUpdate(
 	return &item, nil
 }
 
-func (m *defaultTOptionContractSeriesModel) FindOneForUpdate(
+func (m *customTOptionContractSeriesModel) FindOneForUpdate(
 	ctx context.Context, id int64,
 ) (*TOptionContractSeries, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id=? LIMIT 1 FOR UPDATE", tOptionContractSeriesRows, m.table)
@@ -69,7 +69,7 @@ func (m *defaultTOptionContractSeriesModel) FindOneForUpdate(
 	return &item, nil
 }
 
-func (m *defaultTOptionContractSeriesModel) FindPage(
+func (m *customTOptionContractSeriesModel) FindPage(
 	ctx context.Context, filter OptionContractSeriesPageFilter, cursor, limit int64,
 ) ([]*TOptionContractSeries, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)

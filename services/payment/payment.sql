@@ -307,6 +307,8 @@ CREATE TABLE `t_pay_outbox` (
   `aggregate_no` varchar(64) NOT NULL COMMENT '聚合业务号',
   `payload` json NOT NULL COMMENT '事件内容',
   `status` tinyint NOT NULL DEFAULT 1 COMMENT '状态：1待处理 2处理中 3成功 4失败',
+  `claimed_by` varchar(128) NOT NULL DEFAULT '' COMMENT '当前处理实例的唯一领取标识',
+  `claimed_at` bigint NOT NULL DEFAULT 0 COMMENT '领取时间；超过租约可由其他实例恢复',
   `retry_count` int NOT NULL DEFAULT 0 COMMENT '重试次数',
   `next_retry_at` bigint NOT NULL DEFAULT 0 COMMENT '下次重试时间',
   `last_error_msg` varchar(1000) NOT NULL DEFAULT '' COMMENT '最近错误',
@@ -315,6 +317,7 @@ CREATE TABLE `t_pay_outbox` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_event_no` (`event_no`),
   KEY `idx_status_retry` (`status`, `next_retry_at`),
+  KEY `idx_status_claim` (`status`, `claimed_at`),
   KEY `idx_aggregate` (`aggregate_type`, `aggregate_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='支付可靠事件表';
 
