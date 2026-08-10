@@ -66,7 +66,9 @@ const addressCountdownText = computed(() => {
   const remainSeconds = String(seconds % 60).padStart(2, '0')
   return `${minutes}:${remainSeconds}`
 })
-const rechargeAddressExpired = computed(() => step.value === 'detail' && addressSecondsLeft.value <= 0)
+const rechargeAddressExpired = computed(
+  () => step.value === 'detail' && addressSecondsLeft.value <= 0,
+)
 const rechargeAddressHoldSeconds = 180
 
 function isSuccessCode(code: number) {

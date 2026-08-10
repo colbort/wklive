@@ -81,7 +81,8 @@ const selectedDisplaySymbol = computed(() => {
   const product = selectedProduct.value
   if (!product) return '--'
   if (product.displayName) return product.displayName
-  if (product.baseCoin && product.quoteCoin && product.symbol.endsWith('USDT')) return `${product.baseCoin}/USDT`
+  if (product.baseCoin && product.quoteCoin && product.symbol.endsWith('USDT'))
+    return `${product.baseCoin}/USDT`
 
   const quote = product.quoteCoin || 'USDT'
   if (product.symbol.toUpperCase().endsWith(quote.toUpperCase())) {
@@ -550,7 +551,6 @@ function formatTime(ts: number) {
     hour12: false,
   }).format(ts)
 }
-
 </script>
 
 <template>

@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 import BottomDrawer from '@/components/common/BottomDrawer.vue'
 import AppIcon from '@/components/common/AppIcon.vue'
 import QuoteRow from '@/components/markets/QuoteRow.vue'
+import type { TradeCategoryConfig, TradeMarketMode } from '@/features/trade/tradeModel'
 import { useI18n } from '@/i18n'
 import type { MarketTenantCategory, MarketTenantProduct } from '@/types/market'
 import type { TradeSymbol } from '@/types/trade'
@@ -18,15 +19,7 @@ type ProductSheetRow = {
   change: string
   direction: 'up' | 'down' | 'flat'
 }
-type TradeMarketMode =
-  | 'spot'
-  | 'seconds'
-  | 'delivery-linear'
-  | 'delivery-inverse'
-  | 'perpetual-linear'
-  | 'perpetual-inverse'
-
-defineProps<{
+const props = defineProps<{
   selectedCategory: MarketTenantCategory | null
   selectedProduct: MarketTenantProduct | null
   selectedTradeSymbol: TradeSymbol | null
@@ -34,7 +27,7 @@ defineProps<{
   tradeMarketMode: TradeMarketMode
   tradeMarketModeLabel: string
   tradeMarketModeOptions: Array<{ value: TradeMarketMode; label: string; available: boolean }>
-  tradeKind: 'stock' | 'option' | 'forex' | 'commodity' | 'crypto'
+  categoryConfig: TradeCategoryConfig
   priceTrend: 'up' | 'down' | 'flat'
   placeholderPrice: string
   placeholderChange: string
@@ -51,6 +44,9 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const marketModeMenuOpen = ref(false)
+const availableMarketModeCount = computed(
+  () => props.tradeMarketModeOptions.filter((item) => item.available).length,
+)
 
 function selectTradeMarketMode(mode: TradeMarketMode, available: boolean) {
   if (!available) return
@@ -66,15 +62,15 @@ function selectTradeMarketMode(mode: TradeMarketMode, available: boolean) {
         <button type="button" class="trade-symbol__main" @click="emit('open-product-menu')">
           <strong>{{
             selectedTradeSymbol?.displaySymbol ||
-            selectedProduct?.displayName ||
-            selectedTradeSymbol?.symbol ||
-            selectedProduct?.symbol ||
-            t('market.selectProduct')
+              selectedProduct?.displayName ||
+              selectedTradeSymbol?.symbol ||
+              selectedProduct?.symbol ||
+              t('market.selectProduct')
           }}</strong>
           <span />
         </button>
         <button
-          v-if="tradeKind === 'crypto'"
+          v-if="availableMarketModeCount > 1"
           type="button"
           class="trade-symbol__market-mode"
           @click="marketModeMenuOpen = true"
@@ -84,7 +80,7 @@ function selectTradeMarketMode(mode: TradeMarketMode, available: boolean) {
         </button>
       </div>
 
-      <div v-if="tradeKind === 'stock'" class="trade-symbol__sub">
+      <div v-if="categoryConfig.showProductSubtitle" class="trade-symbol__sub">
         {{ selectedProduct?.displayName || selectedProduct?.name || '--' }}
       </div>
       <div v-else class="trade-symbol__quote" :class="`trade-symbol__quote--${priceTrend}`">

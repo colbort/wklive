@@ -2,14 +2,8 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import {
-  apiGetCoreOptions,
-} from '@/api/core'
-import {
-  apiGetMyAssetSummary,
-  apiListAssetCoinConfigs,
-  apiTransferMyAsset,
-} from '@/api/asset'
+import { apiGetCoreOptions } from '@/api/core'
+import { apiGetMyAssetSummary, apiListAssetCoinConfigs, apiTransferMyAsset } from '@/api/asset'
 import AssetCoinIcon from '@/components/assets/AssetCoinIcon.vue'
 import AssetPrimaryButton from '@/components/assets/AssetPrimaryButton.vue'
 import AssetTransferSelectSheet from '@/components/assets/AssetTransferSelectSheet.vue'

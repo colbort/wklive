@@ -61,11 +61,7 @@ async function loadChatToken() {
 </script>
 
 <template>
-  <CommonPage
-    :title="t('userMenu.customerService')"
-    :nav-height="58"
-    @back="router.back()"
-  >
+  <CommonPage :title="t('userMenu.customerService')" :nav-height="58" @back="router.back()">
     <section class="customer-service-page">
       <iframe
         v-if="chatFrameUrl"
@@ -73,10 +69,7 @@ async function loadChatToken() {
         :src="chatFrameUrl"
         title="Customer support"
       />
-      <div
-        v-else
-        class="customer-service-page__empty"
-      >
+      <div v-else class="customer-service-page__empty">
         {{ loading ? '客服加载中' : loadError || '客服配置未完成' }}
       </div>
     </section>

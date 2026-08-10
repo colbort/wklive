@@ -18,6 +18,16 @@ import CommonPage from '@/components/common/CommonPage.vue'
 import TradeView from '@/components/trades/TradeView.vue'
 import { useTradingDesk } from '@/composables/useTradingDesk'
 import { useOrderEvents } from '@/composables/useOrderEvents'
+import {
+  PRODUCT_TYPE_DERIVATIVE,
+  PRODUCT_TYPE_SECONDS,
+  PRODUCT_TYPE_SPOT,
+  getTradeCategoryConfig,
+  matchesTradeMarketMode,
+  resolveTradeExperience,
+  type TradeMarketMode,
+  type TradeSymbolDetail,
+} from '@/features/trade/tradeModel'
 import { t } from '@/i18n'
 import type {
   ContractLeverageConfig,
@@ -25,38 +35,12 @@ import type {
   TradePlaceOrderReq,
   TradeOrder,
   TradeSymbol,
-  TradeSymbolContract,
-  TradeSymbolLeverageConfig,
-  TradeSymbolSeconds,
-  TradeSymbolSpot,
 } from '@/types/trade'
 import type { AssetUserAsset } from '@/types/asset'
 import { compareDecimalText, formatAssetDecimalAmount } from '@/utils/assetAmount'
 import { marketCategoryLabel } from '@/utils/marketCategory'
 
 type SubmitSide = 'buy' | 'sell'
-type TradeMarketMode =
-  | 'spot'
-  | 'seconds'
-  | 'delivery-linear'
-  | 'delivery-inverse'
-  | 'perpetual-linear'
-  | 'perpetual-inverse'
-type TradeSymbolDetail = {
-  symbol: TradeSymbol | null
-  spot: TradeSymbolSpot | null
-  contract: TradeSymbolContract | null
-  leverageConfigs: TradeSymbolLeverageConfig[]
-  secondsConfigs: TradeSymbolSeconds[]
-}
-
-const PRODUCT_TYPE_SPOT = 1
-const PRODUCT_TYPE_DERIVATIVE = 2
-const PRODUCT_TYPE_SECONDS = 3
-const CONTRACT_TYPE_PERPETUAL = 1
-const CONTRACT_TYPE_DELIVERY = 2
-const CONTRACT_VALUE_TYPE_LINEAR = 1
-const CONTRACT_VALUE_TYPE_INVERSE = 2
 const TRADE_SIDE_BUY = 1
 const TRADE_SIDE_SELL = 2
 const POSITION_SIDE_UNKNOWN = 0
@@ -139,16 +123,7 @@ const {
   detailVisible,
   tickLimit: 24,
 })
-const tradeKind = computed(() => {
-  const code = String(selectedCategory.value?.categoryCode || '').toLowerCase()
-  if (code === 'stock') return 'stock'
-  if (code === 'option') return 'option'
-  if (code === 'forex') return 'forex'
-  if (code === 'future' || code === 'indices' || code === 'fund' || code === 'commodity') {
-    return 'commodity'
-  }
-  return 'crypto'
-})
+const categoryConfig = computed(() => getTradeCategoryConfig(selectedCategory.value))
 const tradeMarketModeOptions = computed(() => {
   const options: Array<{ value: TradeMarketMode; label: string }> = [
     { value: 'spot', label: t('trade.marketModeSpot') },
@@ -171,6 +146,9 @@ const tradeMarketModeLabel = computed(
 )
 const isLoggedIn = computed(() => Boolean(authToken.value))
 const selectedTradeSymbol = computed(() => matchTradeSymbol())
+const tradeExperience = computed(() =>
+  resolveTradeExperience(selectedTradeSymbol.value, tradeMarketMode.value),
+)
 const selectedTradeSettleAsset = computed(() => {
   return (
     selectedTradeSymbol.value?.marginAsset ||
@@ -287,6 +265,13 @@ watch(
 watch(selectedProductKey, () => {
   productMenuOpen.value = false
 })
+watch(
+  [selectedCategoryType, () => selectedProduct.value?.id || 0, () => tradeSymbols.value],
+  () => {
+    ensureTradeMarketMode()
+  },
+  { immediate: true },
+)
 watch(
   () => selectedTradeSymbol.value?.id || 0,
   (symbolId) => {
@@ -418,23 +403,6 @@ function symbolCandidates(symbol: TradeSymbol) {
     .filter(Boolean)
 }
 
-function matchesTradeMarketMode(symbol: TradeSymbol, mode: TradeMarketMode) {
-  if (mode === 'spot') return symbol.productType === PRODUCT_TYPE_SPOT
-  if (mode === 'seconds') return symbol.productType === PRODUCT_TYPE_SECONDS
-  if (symbol.productType !== PRODUCT_TYPE_DERIVATIVE) return false
-
-  const contractType =
-    mode === 'delivery-linear' || mode === 'delivery-inverse'
-      ? CONTRACT_TYPE_DELIVERY
-      : CONTRACT_TYPE_PERPETUAL
-  const contractValueType =
-    mode === 'delivery-linear' || mode === 'perpetual-linear'
-      ? CONTRACT_VALUE_TYPE_LINEAR
-      : CONTRACT_VALUE_TYPE_INVERSE
-
-  return symbol.contractType === contractType && symbol.contractValueType === contractValueType
-}
-
 function matchesSelectedProduct(symbol: TradeSymbol) {
   // categoryType is the Market classification of a trade symbol. Keep 0 as
   // a legacy fallback so existing rows remain visible until they are backfilled.
@@ -463,6 +431,15 @@ function matchTradeSymbol() {
 function selectTradeMarketMode(mode: TradeMarketMode) {
   if (!matchingTradeSymbols(mode).length) return
   tradeMarketMode.value = mode
+}
+
+function ensureTradeMarketMode() {
+  if (matchingTradeSymbols(tradeMarketMode.value).length) return
+
+  const nextMode = categoryConfig.value.preferredModes.find(
+    (mode) => matchingTradeSymbols(mode).length > 0,
+  )
+  if (nextMode) tradeMarketMode.value = nextMode
 }
 
 function isPositiveDecimal(value: string) {
@@ -964,7 +941,8 @@ async function cancelTradeOrder(order: TradeOrder) {
         :trade-market-mode="tradeMarketMode"
         :trade-market-mode-label="tradeMarketModeLabel"
         :trade-market-mode-options="tradeMarketModeOptions"
-        :trade-kind="tradeKind"
+        :category-config="categoryConfig"
+        :trade-experience="tradeExperience"
         :price-trend="priceTrend"
         :placeholder-price="placeholderPrice"
         :placeholder-change="placeholderChange"
@@ -985,7 +963,6 @@ async function cancelTradeOrder(order: TradeOrder) {
         :margin-mode="marginMode"
         :leverage="leverage"
         :seconds-duration="secondsDuration"
-        :max-leverage="maxTradeLeverage"
         :leverage-values="tradeLeverageValues"
         :take-profit-price="takeProfitPrice"
         :stop-loss-price="stopLossPrice"

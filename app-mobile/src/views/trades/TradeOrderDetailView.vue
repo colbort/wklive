@@ -113,21 +113,43 @@ function handleDetailVisibilityChange() {
 
 function statusText(value: TradeOrder) {
   const display: Record<number, string> = {
-    1: t('trade.freezing'), 2: t('trade.activating'), 3: t('trade.active'),
-    4: t('trade.triggerWaiting'), 5: t('trade.pending'), 6: t('trade.partiallyFilled'),
-    7: t('trade.settling'), 8: t('trade.filled'), 9: t('trade.settled'),
-    10: t('trade.canceling'), 11: t('trade.orderCanceled'), 12: t('trade.expiring'),
-    13: t('trade.orderExpired'), 14: t('trade.refunding'), 15: t('trade.refunded'),
-    16: t('trade.rejected'), 17: t('trade.manualReview'),
+    1: t('trade.freezing'),
+    2: t('trade.activating'),
+    3: t('trade.active'),
+    4: t('trade.triggerWaiting'),
+    5: t('trade.pending'),
+    6: t('trade.partiallyFilled'),
+    7: t('trade.settling'),
+    8: t('trade.filled'),
+    9: t('trade.settled'),
+    10: t('trade.canceling'),
+    11: t('trade.orderCanceled'),
+    12: t('trade.expiring'),
+    13: t('trade.orderExpired'),
+    14: t('trade.refunding'),
+    15: t('trade.refunded'),
+    16: t('trade.rejected'),
+    17: t('trade.manualReview'),
   }
   let status = value.displayStatus
-  if (value.productType !== 3 && value.status === 4 && (Number(value.filledQty) > 0 || Number(value.filledAmount) > 0)) {
+  if (
+    value.productType !== 3 &&
+    value.status === 4 &&
+    (Number(value.filledQty) > 0 || Number(value.filledAmount) > 0)
+  ) {
     status = 6
   } else if (!status) {
     if (value.productType === 3 && value.status === 3) status = 9
     else if (value.productType === 3 && value.status === 4) status = 15
     else if (value.productType === 3 && value.status === 5) status = 16
-    else status = ({ 1: 5, 2: 6, 3: 8, 4: 11, 5: 16, 6: 13, 7: 1, 8: 4, 9: 10, 10: 12, 11: 7 } as Record<number, number>)[value.status] || 0
+    else
+      status =
+        (
+          { 1: 5, 2: 6, 3: 8, 4: 11, 5: 16, 6: 13, 7: 1, 8: 4, 9: 10, 10: 12, 11: 7 } as Record<
+            number,
+            number
+          >
+        )[value.status] || 0
   }
   return display[status] || t('trade.unknown')
 }
@@ -146,7 +168,14 @@ function effectiveDisplayStatus(value: TradeOrder) {
     if (value.status === 4) return 15
     if (value.status === 5) return 16
   }
-  return ({ 1: 5, 2: 6, 3: 8, 4: 11, 5: 16, 6: 13, 7: 1, 8: 4, 9: 10, 10: 12, 11: 7 } as Record<number, number>)[value.status] || 0
+  return (
+    (
+      { 1: 5, 2: 6, 3: 8, 4: 11, 5: 16, 6: 13, 7: 1, 8: 4, 9: 10, 10: 12, 11: 7 } as Record<
+        number,
+        number
+      >
+    )[value.status] || 0
+  )
 }
 
 function statusClass(value: TradeOrder) {
@@ -160,7 +189,7 @@ function statusClass(value: TradeOrder) {
 
 function productText(value: TradeOrder) {
   const category = marketCategoryTypeLabel(categoryType.value)
-  let product = ''
+  let product : string
   if (value.productType === 1) product = t('trade.marketModeSpot')
   else if (value.productType === 3) product = t('trade.marketModeSeconds')
   else {
@@ -198,9 +227,7 @@ function displayOrderQty(value: TradeOrder) {
     value.side === 1 &&
     Number(value.amount) > 0
   ) {
-    return Number(value.filledQty) > 0
-      ? formatTradeDecimal(value.filledQty, qtyScale.value)
-      : '--'
+    return Number(value.filledQty) > 0 ? formatTradeDecimal(value.filledQty, qtyScale.value) : '--'
   }
   return value.qty || '0'
 }
@@ -248,8 +275,12 @@ onBeforeUnmount(() => {
     @back="router.back()"
   >
     <main class="order-detail">
-      <p v-if="loading" class="order-detail__state">{{ t('common.loading') }}</p>
-      <p v-else-if="error" class="order-detail__state order-detail__state--error">{{ error }}</p>
+      <p v-if="loading" class="order-detail__state">
+        {{ t('common.loading') }}
+      </p>
+      <p v-else-if="error" class="order-detail__state order-detail__state--error">
+        {{ error }}
+      </p>
 
       <template v-else-if="order">
         <section class="order-detail__hero">
@@ -264,18 +295,49 @@ onBeforeUnmount(() => {
         <section class="order-detail__card">
           <h2>{{ t('trade.orderInfo') }}</h2>
           <dl>
-            <div><dt>{{ t('trade.orderNo') }}</dt><dd>{{ order.orderNo }}</dd></div>
-            <div v-if="order.productType !== 3"><dt>{{ t('trade.price') }}</dt><dd>{{ displayOrderPrice(order) }}</dd></div>
-            <div v-if="order.productType !== 3"><dt>{{ t('trade.qty') }}</dt><dd>{{ displayOrderQty(order) }}</dd></div>
-            <div><dt>{{ t('trade.orderAmount') }}</dt><dd>{{ order.amount || '0' }}</dd></div>
-            <div v-if="order.productType !== 3"><dt>{{ t('trade.filledQty') }}</dt><dd>{{ formatTradeDecimal(order.filledQty || '0', qtyScale) }}</dd></div>
-            <div v-if="order.productType !== 3"><dt>{{ t('trade.filledAmount') }}</dt><dd>{{ order.filledAmount || '0' }}</dd></div>
-            <div v-if="order.productType !== 3"><dt>{{ t('trade.avgPrice') }}</dt><dd>{{ formatTradeDecimal(order.avgPrice || '0', priceScale) }}</dd></div>
-            <div><dt>{{ t('trade.fee') }}</dt><dd>{{ order.fee || '0' }} {{ order.feeAsset }}</dd></div>
-            <div><dt>{{ t('trade.createTime') }}</dt><dd>{{ formatTime(order.createTimes) }}</dd></div>
-            <div><dt>{{ t('trade.updateTime') }}</dt><dd>{{ formatTime(order.updateTimes) }}</dd></div>
+            <div>
+              <dt>{{ t('trade.orderNo') }}</dt>
+              <dd>{{ order.orderNo }}</dd>
+            </div>
+            <div v-if="order.productType !== 3">
+              <dt>{{ t('trade.price') }}</dt>
+              <dd>{{ displayOrderPrice(order) }}</dd>
+            </div>
+            <div v-if="order.productType !== 3">
+              <dt>{{ t('trade.qty') }}</dt>
+              <dd>{{ displayOrderQty(order) }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('trade.orderAmount') }}</dt>
+              <dd>{{ order.amount || '0' }}</dd>
+            </div>
+            <div v-if="order.productType !== 3">
+              <dt>{{ t('trade.filledQty') }}</dt>
+              <dd>{{ formatTradeDecimal(order.filledQty || '0', qtyScale) }}</dd>
+            </div>
+            <div v-if="order.productType !== 3">
+              <dt>{{ t('trade.filledAmount') }}</dt>
+              <dd>{{ order.filledAmount || '0' }}</dd>
+            </div>
+            <div v-if="order.productType !== 3">
+              <dt>{{ t('trade.avgPrice') }}</dt>
+              <dd>{{ formatTradeDecimal(order.avgPrice || '0', priceScale) }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('trade.fee') }}</dt>
+              <dd>{{ order.fee || '0' }} {{ order.feeAsset }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('trade.createTime') }}</dt>
+              <dd>{{ formatTime(order.createTimes) }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('trade.updateTime') }}</dt>
+              <dd>{{ formatTime(order.updateTimes) }}</dd>
+            </div>
             <div v-if="order.cancelReason" class="wide">
-              <dt>{{ t('trade.cancelReason') }}</dt><dd>{{ order.cancelReason }}</dd>
+              <dt>{{ t('trade.cancelReason') }}</dt>
+              <dd>{{ order.cancelReason }}</dd>
             </div>
           </dl>
         </section>
@@ -283,36 +345,90 @@ onBeforeUnmount(() => {
         <section v-if="spot" class="order-detail__card">
           <h2>{{ t('trade.spotSettlement') }}</h2>
           <dl>
-            <div><dt>{{ t('trade.frozenAsset') }}</dt><dd>{{ spot.frozenAsset || '--' }}</dd></div>
-            <div><dt>{{ t('trade.frozenAmount') }}</dt><dd>{{ spot.frozenAmount || '0' }}</dd></div>
-            <div><dt>{{ t('trade.settleAsset') }}</dt><dd>{{ spot.settleAsset || '--' }}</dd></div>
-            <div><dt>{{ t('trade.settleAmount') }}</dt><dd>{{ spot.settleAmount || '0' }}</dd></div>
+            <div>
+              <dt>{{ t('trade.frozenAsset') }}</dt>
+              <dd>{{ spot.frozenAsset || '--' }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('trade.frozenAmount') }}</dt>
+              <dd>{{ spot.frozenAmount || '0' }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('trade.settleAsset') }}</dt>
+              <dd>{{ spot.settleAsset || '--' }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('trade.settleAmount') }}</dt>
+              <dd>{{ spot.settleAmount || '0' }}</dd>
+            </div>
           </dl>
         </section>
 
         <section v-if="contract" class="order-detail__card">
           <h2>{{ t('trade.contractInfo') }}</h2>
           <dl>
-            <div><dt>{{ t('trade.marginMode') }}</dt><dd>{{ contract.marginMode === 2 ? t('trade.isolated') : t('trade.cross') }}</dd></div>
-            <div><dt>{{ t('trade.leverage') }}</dt><dd>{{ contract.leverage }}x</dd></div>
-            <div><dt>{{ t('trade.margin') }}</dt><dd>{{ contract.marginAmount }} {{ contract.marginAsset }}</dd></div>
-            <div><dt>{{ t('trade.liquidationPrice') }}</dt><dd>{{ contract.liquidationPrice || '--' }}</dd></div>
-            <div><dt>{{ t('trade.takeProfitPrice') }}</dt><dd>{{ contract.takeProfitPrice || '--' }}</dd></div>
-            <div><dt>{{ t('trade.stopLossPrice') }}</dt><dd>{{ contract.stopLossPrice || '--' }}</dd></div>
+            <div>
+              <dt>{{ t('trade.marginMode') }}</dt>
+              <dd>{{ contract.marginMode === 2 ? t('trade.isolated') : t('trade.cross') }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('trade.leverage') }}</dt>
+              <dd>{{ contract.leverage }}x</dd>
+            </div>
+            <div>
+              <dt>{{ t('trade.margin') }}</dt>
+              <dd>{{ contract.marginAmount }} {{ contract.marginAsset }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('trade.liquidationPrice') }}</dt>
+              <dd>{{ contract.liquidationPrice || '--' }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('trade.takeProfitPrice') }}</dt>
+              <dd>{{ contract.takeProfitPrice || '--' }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('trade.stopLossPrice') }}</dt>
+              <dd>{{ contract.stopLossPrice || '--' }}</dd>
+            </div>
           </dl>
         </section>
 
         <section v-if="seconds" class="order-detail__card">
           <h2>{{ t('trade.secondsInfo') }}</h2>
           <dl>
-            <div><dt>{{ t('trade.direction') }}</dt><dd>{{ seconds.direction === 2 ? t('trade.buyDown') : t('trade.buyUp') }}</dd></div>
-            <div><dt>{{ t('trade.duration') }}</dt><dd>{{ seconds.durationSeconds }}s</dd></div>
-            <div><dt>{{ t('trade.investmentAmount') }}</dt><dd>{{ seconds.stakeAmount }} {{ seconds.stakeAsset }}</dd></div>
-            <div><dt>{{ t('trade.payoutRate') }}</dt><dd>{{ seconds.payoutRate }}</dd></div>
-            <div><dt>{{ t('trade.startPrice') }}</dt><dd>{{ seconds.startPrice || '--' }}</dd></div>
-            <div><dt>{{ t('trade.settlementPrice') }}</dt><dd>{{ seconds.settlementPrice || '--' }}</dd></div>
-            <div><dt>{{ t('trade.profitAmount') }}</dt><dd>{{ seconds.profitAmount || '0' }}</dd></div>
-            <div><dt>{{ t('trade.returnAmount') }}</dt><dd>{{ seconds.returnAmount || '0' }}</dd></div>
+            <div>
+              <dt>{{ t('trade.direction') }}</dt>
+              <dd>{{ seconds.direction === 2 ? t('trade.buyDown') : t('trade.buyUp') }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('trade.duration') }}</dt>
+              <dd>{{ seconds.durationSeconds }}s</dd>
+            </div>
+            <div>
+              <dt>{{ t('trade.investmentAmount') }}</dt>
+              <dd>{{ seconds.stakeAmount }} {{ seconds.stakeAsset }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('trade.payoutRate') }}</dt>
+              <dd>{{ seconds.payoutRate }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('trade.startPrice') }}</dt>
+              <dd>{{ seconds.startPrice || '--' }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('trade.settlementPrice') }}</dt>
+              <dd>{{ seconds.settlementPrice || '--' }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('trade.profitAmount') }}</dt>
+              <dd>{{ seconds.profitAmount || '0' }}</dd>
+            </div>
+            <div>
+              <dt>{{ t('trade.returnAmount') }}</dt>
+              <dd>{{ seconds.returnAmount || '0' }}</dd>
+            </div>
           </dl>
         </section>
       </template>

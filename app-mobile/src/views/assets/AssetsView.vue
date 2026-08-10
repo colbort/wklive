@@ -17,12 +17,7 @@ import { resolveSystemAssetUrl } from '@/utils/assetUrl'
 
 type AssetTopTab = 'assets' | 'orders' | 'profile'
 type AssetActionKey =
-  | 'cryptoRecharge'
-  | 'bankRecharge'
-  | 'cryptoWithdraw'
-  | 'bankWithdraw'
-  | 'transfer'
-  | 'flows'
+  'cryptoRecharge' | 'bankRecharge' | 'cryptoWithdraw' | 'bankWithdraw' | 'transfer' | 'flows'
 
 const ASSET_OPERATION_TYPES: Partial<Record<AssetActionKey, number>> = {
   cryptoRecharge: 1,

@@ -92,7 +92,8 @@ onMounted(() => {
     sessionStorage.setItem(pendingGuestTransferCodeKey, transferCode)
     window.history.replaceState(null, '', window.location.pathname + window.location.search)
   }
-  pendingGuestTransferCode.value = transferCode || sessionStorage.getItem(pendingGuestTransferCodeKey) || ''
+  pendingGuestTransferCode.value =
+    transferCode || sessionStorage.getItem(pendingGuestTransferCodeKey) || ''
   if (isLoggedIn.value) {
     loadProfile()
     tryAutoRedirectGuestTransfer().catch((error) => {

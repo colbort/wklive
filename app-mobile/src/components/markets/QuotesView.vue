@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { useI18n } from '@/i18n'
-import type { MarketTenantCategory, MarketTenantProduct, MarketWsConnectionState } from '@/types/market'
+import type {
+  MarketTenantCategory,
+  MarketTenantProduct,
+  MarketWsConnectionState,
+} from '@/types/market'
 import { marketCategoryCodeLabel, marketCategoryLabel } from '@/utils/marketCategory'
 import QuoteRow from './QuoteRow.vue'
 import type { MarketRow } from './types'
@@ -48,7 +52,7 @@ const { t } = useI18n()
       <span class="connection-dot" :class="`connection-dot--${wsState}`" />
       <span>{{
         marketCategoryCodeLabel(selectedCategoryCode, selectedCategoryName) ||
-        t('market.categoryLoading')
+          t('market.categoryLoading')
       }}</span>
       <strong>{{ wsError || selectedCategoryCode || t('market.waitingCategoryCode') }}</strong>
     </div>

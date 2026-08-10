@@ -4,10 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 
 import { apiGetCoreOptions } from '@/api/core'
 import { apiListAssetCoinConfigs } from '@/api/asset'
-import {
-  apiListMyRechargeOrders,
-  apiListMyWithdrawOrders,
-} from '@/api/payment'
+import { apiListMyRechargeOrders, apiListMyWithdrawOrders } from '@/api/payment'
 import CommonPage from '@/components/common/CommonPage.vue'
 import { useOptions } from '@/composables/useOptions'
 import { useI18n } from '@/i18n'

@@ -137,7 +137,7 @@ function formatTime(value: number) {
 
 function productText(order: TradeOrder) {
   const category = marketCategoryTypeLabel(props.selectedTradeSymbol?.categoryType)
-  let product = ''
+  let product: string
   if (order.productType === 1) product = t('trade.marketModeSpot')
   else if (order.productType === 3) product = t('trade.marketModeSeconds')
   else {
@@ -152,7 +152,8 @@ function productText(order: TradeOrder) {
 
 function primaryValue(order: TradeOrder) {
   if (order.productType === 3) return order.amount || '0'
-  if (order.orderType === 2) return order.avgPrice && order.avgPrice !== '0' ? order.avgPrice : t('trade.market')
+  if (order.orderType === 2)
+    return order.avgPrice && order.avgPrice !== '0' ? order.avgPrice : t('trade.market')
   return order.price || '--'
 }
 

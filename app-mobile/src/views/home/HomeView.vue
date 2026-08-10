@@ -134,7 +134,7 @@ function changeLanguage() {
             </RouterLink>
           </div>
 
-          <img class="ave-hero__portal" :src="heroPortalImage" alt="" />
+          <img class="ave-hero__portal" :src="heroPortalImage" alt="">
         </section>
 
         <section class="ave-section ave-section--smart">
@@ -142,11 +142,11 @@ function changeLanguage() {
             {{ t('home.smartTradingPrefix') }}<span>{{ t('home.smartTradingEmphasis') }}</span>{{ t('home.smartTradingSuffix') }}
           </h2>
           <p>{{ t('home.alwaysTrading') }}</p>
-          <img class="ave-section__phones" :src="smartPhonesImage" alt="" />
+          <img class="ave-section__phones" :src="smartPhonesImage" alt="">
 
           <div class="ave-feature-list">
             <article v-for="item in featureCards" :key="item.titleKey" class="ave-feature-card">
-              <img :src="item.icon" alt="" />
+              <img :src="item.icon" alt="">
               <div>
                 <h3>{{ t(item.titleKey) }}</h3>
                 <p>{{ t(item.descKey) }}</p>
@@ -162,13 +162,13 @@ function changeLanguage() {
           <p>{{ t('home.strategySub') }}</p>
 
           <div class="ave-strategy-scene">
-            <img class="ave-strategy-scene__orders" :src="strategyOrdersImage" alt="" />
-            <img class="ave-strategy-scene__chart" :src="strategyChartImage" alt="" />
+            <img class="ave-strategy-scene__orders" :src="strategyOrdersImage" alt="">
+            <img class="ave-strategy-scene__chart" :src="strategyChartImage" alt="">
           </div>
 
           <div class="ave-flat-list">
             <article v-for="item in strategyFeatures" :key="item.titleKey" class="ave-flat-item">
-              <img :src="item.icon" alt="" />
+              <img :src="item.icon" alt="">
               <div>
                 <h3>{{ t(item.titleKey) }}</h3>
                 <p>{{ t(item.descKey) }}</p>
@@ -179,7 +179,7 @@ function changeLanguage() {
 
         <section class="ave-section ave-section--contract">
           <h2>{{ t('home.contractTitle') }}</h2>
-          <img class="ave-contract__phones" :src="contractPhonesImage" alt="" />
+          <img class="ave-contract__phones" :src="contractPhonesImage" alt="">
 
           <div class="ave-toggle-card">
             <article v-for="item in contractFeatures" :key="item.titleKey" class="ave-toggle-item">
@@ -200,7 +200,7 @@ function changeLanguage() {
 
           <div class="ave-trust-card">
             <article v-for="item in trustFeatures" :key="item.titleKey" class="ave-trust-item">
-              <img :src="item.icon" alt="" />
+              <img :src="item.icon" alt="">
               <div>
                 <h3>{{ t(item.titleKey) }}</h3>
                 <p>{{ t(item.descKey) }}</p>
@@ -215,7 +215,7 @@ function changeLanguage() {
           <RouterLink to="/trades" class="ave-home__cta">
             {{ t('home.startTrading') }}
           </RouterLink>
-          <img class="ave-reward__image" :src="rewardImage" alt="" />
+          <img class="ave-reward__image" :src="rewardImage" alt="">
         </section>
       </section>
     </template>

@@ -115,7 +115,8 @@ function closeFromBackdrop(enabled: boolean) {
   flex-direction: column;
   width: var(--app-width, 100vw);
   max-height: var(--bottom-drawer-max-height);
-  padding: var(--page-padding-y) var(--page-padding-x) calc(var(--page-padding-y) + env(safe-area-inset-bottom));
+  padding: var(--page-padding-y) var(--page-padding-x)
+    calc(var(--page-padding-y) + env(safe-area-inset-bottom));
   overflow: hidden;
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   background: var(--sheet-bg);
@@ -129,7 +130,7 @@ function closeFromBackdrop(enabled: boolean) {
   display: block;
   flex: 0 0 auto;
   width: clamp(42px, 2.7rem, 62px);
-  height: clamp(4px, .25rem, 6px);
+  height: clamp(4px, 0.25rem, 6px);
   margin: 0 auto var(--space-lg);
   border-radius: 999px;
   background: var(--handle-bg);

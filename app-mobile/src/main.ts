@@ -15,9 +15,7 @@ const pinia = createPinia()
 
 configureApiClient({
   apiBaseUrl:
-    import.meta.env.VITE_APP_TARGET === 'capacitor'
-      ? import.meta.env.VITE_API_BASE_URL
-      : '',
+    import.meta.env.VITE_APP_TARGET === 'capacitor' ? import.meta.env.VITE_API_BASE_URL : '',
   translateApiError,
 })
 
