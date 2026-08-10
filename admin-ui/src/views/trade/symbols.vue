@@ -18,6 +18,17 @@
         </el-select>
       </el-form-item>
 
+      <el-form-item :label="t('market.categoryType')">
+        <el-select v-model="query.categoryType" clearable class="query-field">
+          <el-option
+            v-for="item in categoryTypeOptions"
+            :key="item.value"
+            :label="optionItemLabel(item)"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+
       <el-form-item :label="t('trade.status')">
         <el-select v-model="query.status" clearable class="query-field">
           <el-option
@@ -53,6 +64,15 @@
             <div class="symbol-cell">
               <span class="symbol-code">{{ row.symbol || '-' }}/{{ row.displaySymbol || '-' }}</span>
             </div>
+          </template>
+        </el-table-column>
+
+        <el-table-column :label="t('market.categoryType')" width="120">
+          <template #default="{ row }">
+            <el-tag v-if="row.categoryType" size="small" effect="light">
+              {{ optionLabel('categoryType', row.categoryType) }}
+            </el-tag>
+            <span v-else class="muted">-</span>
           </template>
         </el-table-column>
 
@@ -213,8 +233,23 @@
             <el-input v-model="symbolForm.displaySymbol" />
           </el-form-item>
 
+          <el-form-item :label="t('market.categoryType')">
+            <el-select
+              v-model="symbolForm.categoryType"
+              class="full-width"
+            >
+              <el-option
+                v-for="item in categoryTypeFormOptions"
+                :key="item.value"
+                :label="optionItemLabel(item)"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+
           <el-form-item :label="t('trade.productType')">
             <el-select
+              v-if="isCryptoCategory"
               v-model="symbolForm.productType"
               class="full-width"
               :disabled="Boolean(symbolForm.id)"
@@ -226,9 +261,15 @@
                 :value="item.value"
               />
             </el-select>
+            <el-input
+              v-else
+              :model-value="optionLabel('productType', fixedProductTypeValue)"
+              disabled
+              class="full-width"
+            />
           </el-form-item>
 
-          <el-form-item :label="t('trade.contractType')">
+          <el-form-item v-if="isDerivativeProduct" :label="t('trade.contractType')">
             <el-select
               v-model="symbolForm.contractType"
               class="full-width"
@@ -243,7 +284,7 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item :label="t('trade.contractValueType')">
+          <el-form-item v-if="isDerivativeProduct" :label="t('trade.contractValueType')">
             <el-select
               v-model="symbolForm.contractValueType"
               class="full-width"
@@ -1103,6 +1144,7 @@ type DatePickerValue = Date | string | number | null | undefined
 
 interface SymbolQuery {
   tenantId: number | undefined
+  categoryType: number | undefined
   productType: number | undefined
   keyword: string
   status: number | undefined
@@ -1111,6 +1153,7 @@ interface SymbolQuery {
 interface SymbolForm {
   id: number
   tenantId: number
+  categoryType: number
   symbol: string
   displaySymbol: string
   productType: number
@@ -1283,6 +1326,7 @@ const leverageValueFallbackOptions: OptionItem[] = [
 
 const query = reactive<SymbolQuery>({
   tenantId: undefined,
+  categoryType: undefined,
   productType: undefined,
   keyword: '',
   status: undefined,
@@ -1291,6 +1335,7 @@ const query = reactive<SymbolQuery>({
 const getDefaultSymbolForm = (): SymbolForm => ({
   id: 0,
   tenantId: 0,
+  categoryType: 2,
   symbol: '',
   displaySymbol: '',
   productType: 1,
@@ -1414,12 +1459,23 @@ const leverageForm = reactive<LeverageForm>(getDefaultLeverageForm())
 const optionGroupWithFallback = (key: string, fallback: OptionItem[]) =>
   computed(() => {
     const options = findOptionGroup(optionGroups.value, key)
-    return options.length ? options : fallback
+    if (!options.length) return fallback
+
+    // Keep the server-provided labels, but retain supported enum values when
+    // an older API response returns only a partial option group.
+    const merged = new Map(fallback.map((item) => [Number(item.value), item]))
+    for (const item of options) {
+      merged.set(Number(item.value), item)
+    }
+    return Array.from(merged.values()).sort((left, right) => left.value - right.value)
   })
 
 const withoutUnknown = (options: OptionItem[]) => options.filter((item) => item.value !== 0)
 
 const productTypeOptions = optionGroupWithFallback('productType', productTypeFallbackOptions)
+const categoryTypeOptions = computed(() =>
+  findOptionGroup(optionGroups.value, 'categoryType').filter((item) => Number(item.value) > 0),
+)
 const contractTypeOptions = optionGroupWithFallback('contractType', contractTypeFallbackOptions)
 const contractValueTypeOptions = optionGroupWithFallback(
   'contractValueType',
@@ -1430,6 +1486,9 @@ const enableStatusOptions = optionGroupWithFallback('enableStatus', enableStatus
 const marginModeOptions = optionGroupWithFallback('marginMode', marginModeFallbackOptions)
 const leverageValueOptions = optionGroupWithFallback('leverageValue', leverageValueFallbackOptions)
 const productTypeFormOptions = computed(() => withoutUnknown(productTypeOptions.value))
+const categoryTypeFormOptions = categoryTypeOptions
+const isCryptoCategory = computed(() => symbolForm.categoryType === 2)
+const isFutureCategory = computed(() => symbolForm.categoryType === 4)
 const isDerivativeProduct = computed(() => symbolForm.productType === 2)
 const contractTypeFormOptions = computed(() =>
   isDerivativeProduct.value
@@ -1456,6 +1515,9 @@ const optionValueByCode = (key: string, code: string, fallback: number) => {
   return Number(option?.value || fallback)
 }
 const spotMarketValue = computed(() => optionValueByCode('productType', 'PRODUCT_TYPE_SPOT', 1))
+const derivativeMarketValue = computed(() =>
+  optionValueByCode('productType', 'PRODUCT_TYPE_DERIVATIVE', 2),
+)
 const perpetualContractTypeValue = computed(() =>
   optionValueByCode('contractType', 'CONTRACT_TYPE_PERPETUAL', 1),
 )
@@ -1494,6 +1556,30 @@ const isolatedMarginModeValue = computed(() =>
 )
 const enabledStatusValue = computed(() =>
   optionValueByCode('enableStatus', 'ENABLE_STATUS_ENABLED', 1),
+)
+
+const fixedProductTypeValue = computed(() =>
+  isFutureCategory.value ? derivativeMarketValue.value : spotMarketValue.value,
+)
+
+watch(
+  () => symbolForm.categoryType,
+  (categoryType) => {
+    if (categoryType === 4) {
+      symbolForm.productType = derivativeMarketValue.value
+      if (symbolForm.contractType === 0) symbolForm.contractType = deliveryContractTypeValue.value
+      if (symbolForm.contractValueType === 0) {
+        symbolForm.contractValueType = linearContractValueType.value
+      }
+      return
+    }
+    if (categoryType !== 2) {
+      symbolForm.productType = spotMarketValue.value
+      symbolForm.contractType = 0
+      symbolForm.contractValueType = 0
+      symbolForm.marginAsset = ''
+    }
+  },
 )
 
 watch(
@@ -1753,6 +1839,7 @@ const loadList = async () => {
 
 const resetQuery = () => {
   query.tenantId = undefined
+  query.categoryType = undefined
   query.productType = undefined
   query.keyword = ''
   query.status = undefined
@@ -1771,6 +1858,10 @@ const openSymbolDialog = (row?: TradeSymbol) => {
 }
 
 const submitSymbol = async () => {
+  if (!categoryTypeFormOptions.value.some((item) => item.value === symbolForm.categoryType)) {
+    ElMessage.warning(t('market.pleaseInputCategoryType'))
+    return
+  }
   if (
     symbolForm.listingTime > 0 &&
     symbolForm.tradingStartTime > 0 &&

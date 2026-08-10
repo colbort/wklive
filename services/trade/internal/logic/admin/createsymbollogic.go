@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -33,6 +34,12 @@ func NewCreateSymbolLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Crea
 
 // 创建交易对
 func (l *CreateSymbolLogic) CreateSymbol(in *trade.CreateSymbolReq) (*trade.CommonResp, error) {
+	if in.CategoryType < 1 || in.CategoryType > 6 {
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, fmt.Sprintf("invalid category type: %d", in.CategoryType))}, nil
+	}
+	if err := validation.SymbolCategoryConfig(in.CategoryType, in.ProductType, in.ContractType, in.ContractValueType); err != nil {
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
+	}
 	if err := validation.SymbolTradingTimeline(in.ProductType, in.ContractType, in.ListingTime, in.TradingStartTime, in.TradingEndTime); err != nil {
 		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
 	}
@@ -46,6 +53,7 @@ func (l *CreateSymbolLogic) CreateSymbol(in *trade.CreateSymbolReq) (*trade.Comm
 	now := utils.NowMillis()
 	data := &models.TTradeSymbol{
 		TenantId:          in.TenantId,
+		CategoryType:      in.CategoryType,
 		Symbol:            in.Symbol,
 		DisplaySymbol:     in.DisplaySymbol,
 		ProductType:       int64(in.ProductType),

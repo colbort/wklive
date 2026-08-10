@@ -437,6 +437,7 @@ export type IgnoreContractReconciliationIssueReq = {
 export type TradeSymbol = {
   id: number // 主键ID
   tenantId: number // 租户ID
+  categoryType: number // Market分类：1外汇 2加密货币 3股票 4期货 5指数 6基金
   symbol: string // 交易对编码
   displaySymbol: string // 展示名称
   productType: number
@@ -989,6 +990,7 @@ export type CreateSymbolReq = Omit<TradeSymbol, 'id' | 'createTimes' | 'updateTi
 export type UpdateSymbolReq = {
   tenantId: number // 租户ID
   id: number // 交易对ID
+  categoryType?: number
   displaySymbol: string
   status: number
   priceScale: number
@@ -1015,6 +1017,7 @@ export type GetSymbolListAdminReq = {
   productType?: number
   status?: number // 状态
   keyword?: string // 关键字
+  categoryType?: number
 }
 
 export type GetSymbolDetailAdminReq = {

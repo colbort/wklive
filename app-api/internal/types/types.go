@@ -718,8 +718,9 @@ type GetSymbolDetailResp struct {
 }
 
 type GetSymbolListReq struct {
-	ProductType int64 `form:"productType,optional"`
-	Status      int64 `form:"status,optional"` // 状态
+	ProductType  int64 `form:"productType,optional"`
+	Status       int64 `form:"status,optional"` // 状态
+	CategoryType int64 `form:"categoryType,optional"`
 }
 
 type GetSymbolListResp struct {
@@ -2236,6 +2237,7 @@ type TradePlaceOrderResp struct {
 type TradeSymbol struct {
 	Id                int64  `json:"id"`            // 主键ID
 	TenantId          int64  `json:"tenantId"`      // 租户ID
+	CategoryType      int64  `json:"categoryType"`  // Market分类：1外汇 2加密货币 3股票 4期货 5指数 6基金
 	Symbol            string `json:"symbol"`        // 交易对编码
 	DisplaySymbol     string `json:"displaySymbol"` // 展示名称
 	ProductType       int64  `json:"productType"`

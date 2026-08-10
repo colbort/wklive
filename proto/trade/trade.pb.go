@@ -70,6 +70,7 @@ type GetSymbolListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ProductType   common.ProductType     `protobuf:"varint,1,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	Status        SymbolStatus           `protobuf:"varint,2,opt,name=status,proto3,enum=trade.SymbolStatus" json:"status,omitempty"`
+	CategoryType  int64                  `protobuf:"varint,3,opt,name=category_type,json=categoryType,proto3" json:"category_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -116,6 +117,13 @@ func (x *GetSymbolListReq) GetStatus() SymbolStatus {
 		return x.Status
 	}
 	return SymbolStatus_SYMBOL_STATUS_UNKNOWN
+}
+
+func (x *GetSymbolListReq) GetCategoryType() int64 {
+	if x != nil {
+		return x.CategoryType
+	}
+	return 0
 }
 
 type GetSymbolListResp struct {
@@ -1637,6 +1645,7 @@ type CreateSymbolReq struct {
 	Symbol            string                 `protobuf:"bytes,2,opt,name=symbol,proto3" json:"symbol,omitempty"`
 	DisplaySymbol     string                 `protobuf:"bytes,3,opt,name=display_symbol,json=displaySymbol,proto3" json:"display_symbol,omitempty"`
 	ProductType       common.ProductType     `protobuf:"varint,4,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
+	CategoryType      int64                  `protobuf:"varint,30,opt,name=category_type,json=categoryType,proto3" json:"category_type,omitempty"`
 	BaseAsset         string                 `protobuf:"bytes,5,opt,name=base_asset,json=baseAsset,proto3" json:"base_asset,omitempty"`
 	QuoteAsset        string                 `protobuf:"bytes,6,opt,name=quote_asset,json=quoteAsset,proto3" json:"quote_asset,omitempty"`
 	SettleAsset       string                 `protobuf:"bytes,7,opt,name=settle_asset,json=settleAsset,proto3" json:"settle_asset,omitempty"`
@@ -1719,6 +1728,13 @@ func (x *CreateSymbolReq) GetProductType() common.ProductType {
 		return x.ProductType
 	}
 	return common.ProductType(0)
+}
+
+func (x *CreateSymbolReq) GetCategoryType() int64 {
+	if x != nil {
+		return x.CategoryType
+	}
+	return 0
 }
 
 func (x *CreateSymbolReq) GetBaseAsset() string {
@@ -1879,6 +1895,7 @@ type UpdateSymbolReq struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	TenantId         int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	Id               int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	CategoryType     int64                  `protobuf:"varint,30,opt,name=category_type,json=categoryType,proto3" json:"category_type,omitempty"`
 	DisplaySymbol    string                 `protobuf:"bytes,3,opt,name=display_symbol,json=displaySymbol,proto3" json:"display_symbol,omitempty"`
 	Status           SymbolStatus           `protobuf:"varint,4,opt,name=status,proto3,enum=trade.SymbolStatus" json:"status,omitempty"`
 	PriceScale       int64                  `protobuf:"varint,5,opt,name=price_scale,json=priceScale,proto3" json:"price_scale,omitempty"`
@@ -1940,6 +1957,13 @@ func (x *UpdateSymbolReq) GetTenantId() int64 {
 func (x *UpdateSymbolReq) GetId() int64 {
 	if x != nil {
 		return x.Id
+	}
+	return 0
+}
+
+func (x *UpdateSymbolReq) GetCategoryType() int64 {
+	if x != nil {
+		return x.CategoryType
 	}
 	return 0
 }
@@ -2070,6 +2094,7 @@ type GetSymbolListAdminReq struct {
 	ProductType   common.ProductType     `protobuf:"varint,3,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	Status        SymbolStatus           `protobuf:"varint,4,opt,name=status,proto3,enum=trade.SymbolStatus" json:"status,omitempty"`
 	Keyword       string                 `protobuf:"bytes,5,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	CategoryType  int64                  `protobuf:"varint,6,opt,name=category_type,json=categoryType,proto3" json:"category_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2137,6 +2162,13 @@ func (x *GetSymbolListAdminReq) GetKeyword() string {
 		return x.Keyword
 	}
 	return ""
+}
+
+func (x *GetSymbolListAdminReq) GetCategoryType() int64 {
+	if x != nil {
+		return x.CategoryType
+	}
+	return 0
 }
 
 type GetSymbolListAdminResp struct {
@@ -11954,10 +11986,11 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\n" +
 	"\x17proto/trade/trade.proto\x12\x05trade\x1a\x19proto/common/common.proto\x1a\x16proto/trade/enum.proto\x1a\x17proto/trade/model.proto\"6\n" +
 	"\x0eUserCommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"w\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\x9c\x01\n" +
 	"\x10GetSymbolListReq\x126\n" +
 	"\fproduct_type\x18\x01 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12+\n" +
-	"\x06status\x18\x02 \x01(\x0e2\x13.trade.SymbolStatusR\x06status\"a\n" +
+	"\x06status\x18\x02 \x01(\x0e2\x13.trade.SymbolStatusR\x06status\x12#\n" +
+	"\rcategory_type\x18\x03 \x01(\x03R\fcategoryType\"a\n" +
 	"\x11GetSymbolListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
 	"\x04data\x18\x02 \x03(\v2\x12.trade.TradeSymbolR\x04data\"N\n" +
@@ -12070,12 +12103,13 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x0eshort_leverage\x18\x06 \x01(\x03R\rshortLeverageJ\x04\b\x02\x10\x03J\x04\b\x04\x10\x05\"2\n" +
 	"\n" +
 	"CommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xae\a\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xd3\a\n" +
 	"\x0fCreateSymbolReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x16\n" +
 	"\x06symbol\x18\x02 \x01(\tR\x06symbol\x12%\n" +
 	"\x0edisplay_symbol\x18\x03 \x01(\tR\rdisplaySymbol\x126\n" +
-	"\fproduct_type\x18\x04 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12\x1d\n" +
+	"\fproduct_type\x18\x04 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12#\n" +
+	"\rcategory_type\x18\x1e \x01(\x03R\fcategoryType\x12\x1d\n" +
 	"\n" +
 	"base_asset\x18\x05 \x01(\tR\tbaseAsset\x12\x1f\n" +
 	"\vquote_asset\x18\x06 \x01(\tR\n" +
@@ -12102,10 +12136,11 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x12trading_start_time\x18\x15 \x01(\x03R\x10tradingStartTime\x12\x12\n" +
 	"\x04sort\x18\x16 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x17 \x01(\tR\x06remark\x12(\n" +
-	"\x10trading_end_time\x18\x1a \x01(\x03R\x0etradingEndTime\"\xe3\x04\n" +
+	"\x10trading_end_time\x18\x1a \x01(\x03R\x0etradingEndTime\"\x88\x05\n" +
 	"\x0fUpdateSymbolReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\x12%\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\x12#\n" +
+	"\rcategory_type\x18\x1e \x01(\x03R\fcategoryType\x12%\n" +
 	"\x0edisplay_symbol\x18\x03 \x01(\tR\rdisplaySymbol\x12+\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x13.trade.SymbolStatusR\x06status\x12\x1f\n" +
 	"\vprice_scale\x18\x05 \x01(\x03R\n" +
@@ -12125,13 +12160,14 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x12trading_start_time\x18\x10 \x01(\x03R\x10tradingStartTime\x12\x12\n" +
 	"\x04sort\x18\x11 \x01(\x03R\x04sort\x12\x16\n" +
 	"\x06remark\x18\x12 \x01(\tR\x06remark\x12(\n" +
-	"\x10trading_end_time\x18\x13 \x01(\x03R\x0etradingEndTime\"\xd8\x01\n" +
+	"\x10trading_end_time\x18\x13 \x01(\x03R\x0etradingEndTime\"\xfd\x01\n" +
 	"\x15GetSymbolListAdminReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12#\n" +
 	"\x04page\x18\x02 \x01(\v2\x0f.common.PageReqR\x04page\x126\n" +
 	"\fproduct_type\x18\x03 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12+\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x13.trade.SymbolStatusR\x06status\x12\x18\n" +
-	"\akeyword\x18\x05 \x01(\tR\akeyword\"f\n" +
+	"\akeyword\x18\x05 \x01(\tR\akeyword\x12#\n" +
+	"\rcategory_type\x18\x06 \x01(\x03R\fcategoryType\"f\n" +
 	"\x16GetSymbolListAdminResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12&\n" +
 	"\x04data\x18\x02 \x03(\v2\x12.trade.TradeSymbolR\x04data\"F\n" +

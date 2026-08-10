@@ -916,6 +916,7 @@ type CreateSymbolReq struct {
 	Symbol            string `json:"symbol"`
 	DisplaySymbol     string `json:"displaySymbol"`
 	ProductType       int64  `json:"productType"`
+	CategoryType      int64  `json:"categoryType"`
 	BaseAsset         string `json:"baseAsset"`
 	QuoteAsset        string `json:"quoteAsset"`
 	SettleAsset       string `json:"settleAsset"`
@@ -1885,10 +1886,11 @@ type GetSymbolLeverageConfigResp struct {
 
 type GetSymbolListAdminReq struct {
 	PageReq
-	TenantId    int64  `form:"tenantId,optional"`
-	ProductType int64  `form:"productType,optional"`
-	Status      int64  `form:"status,optional"`
-	Keyword     string `form:"keyword,optional"`
+	TenantId     int64  `form:"tenantId,optional"`
+	ProductType  int64  `form:"productType,optional"`
+	Status       int64  `form:"status,optional"`
+	Keyword      string `form:"keyword,optional"`
+	CategoryType int64  `form:"categoryType,optional"`
 }
 
 type GetSymbolListAdminResp struct {
@@ -6351,6 +6353,7 @@ type TradeSettlementInstruction struct {
 type TradeSymbol struct {
 	Id                int64  `json:"id"`
 	TenantId          int64  `json:"tenantId"`
+	CategoryType      int64  `json:"categoryType"`
 	Symbol            string `json:"symbol"`
 	DisplaySymbol     string `json:"displaySymbol"`
 	ProductType       int64  `json:"productType"`
@@ -6737,6 +6740,7 @@ type UpdateRiskLevelReq struct {
 type UpdateSymbolReq struct {
 	TenantId         int64  `json:"tenantId"`
 	Id               int64  `json:"id"`
+	CategoryType     int64  `json:"categoryType,optional"`
 	DisplaySymbol    string `json:"displaySymbol"`
 	Status           int64  `json:"status"`
 	PriceScale       int64  `json:"priceScale"`

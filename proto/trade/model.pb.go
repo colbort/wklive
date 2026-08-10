@@ -311,36 +311,39 @@ func (x *Uint64Values) GetValues() []int64 {
 }
 
 type TradeSymbol struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	Id                int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId          int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
-	Symbol            string                 `protobuf:"bytes,3,opt,name=symbol,proto3" json:"symbol,omitempty"`
-	DisplaySymbol     string                 `protobuf:"bytes,4,opt,name=display_symbol,json=displaySymbol,proto3" json:"display_symbol,omitempty"`
-	ProductType       common.ProductType     `protobuf:"varint,5,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
-	BaseAsset         string                 `protobuf:"bytes,6,opt,name=base_asset,json=baseAsset,proto3" json:"base_asset,omitempty"`
-	QuoteAsset        string                 `protobuf:"bytes,7,opt,name=quote_asset,json=quoteAsset,proto3" json:"quote_asset,omitempty"`
-	SettleAsset       string                 `protobuf:"bytes,8,opt,name=settle_asset,json=settleAsset,proto3" json:"settle_asset,omitempty"`
-	ContractType      common.ContractType    `protobuf:"varint,9,opt,name=contract_type,json=contractType,proto3,enum=common.ContractType" json:"contract_type,omitempty"`
-	ContractValueType ContractValueType      `protobuf:"varint,27,opt,name=contract_value_type,json=contractValueType,proto3,enum=trade.ContractValueType" json:"contract_value_type,omitempty"`
-	MarginAsset       string                 `protobuf:"bytes,28,opt,name=margin_asset,json=marginAsset,proto3" json:"margin_asset,omitempty"`
-	Status            SymbolStatus           `protobuf:"varint,10,opt,name=status,proto3,enum=trade.SymbolStatus" json:"status,omitempty"`
-	PriceScale        int64                  `protobuf:"varint,11,opt,name=price_scale,json=priceScale,proto3" json:"price_scale,omitempty"`
-	QtyScale          int64                  `protobuf:"varint,12,opt,name=qty_scale,json=qtyScale,proto3" json:"qty_scale,omitempty"`
-	MinPrice          string                 `protobuf:"bytes,13,opt,name=min_price,json=minPrice,proto3" json:"min_price,omitempty"`
-	MaxPrice          string                 `protobuf:"bytes,14,opt,name=max_price,json=maxPrice,proto3" json:"max_price,omitempty"`
-	PriceTick         string                 `protobuf:"bytes,15,opt,name=price_tick,json=priceTick,proto3" json:"price_tick,omitempty"`
-	MinQty            string                 `protobuf:"bytes,16,opt,name=min_qty,json=minQty,proto3" json:"min_qty,omitempty"`
-	MaxQty            string                 `protobuf:"bytes,17,opt,name=max_qty,json=maxQty,proto3" json:"max_qty,omitempty"`
-	QtyStep           string                 `protobuf:"bytes,18,opt,name=qty_step,json=qtyStep,proto3" json:"qty_step,omitempty"`
-	MinNotional       string                 `protobuf:"bytes,19,opt,name=min_notional,json=minNotional,proto3" json:"min_notional,omitempty"`
-	MaxNotional       string                 `protobuf:"bytes,20,opt,name=max_notional,json=maxNotional,proto3" json:"max_notional,omitempty"`
-	ListingTime       int64                  `protobuf:"varint,21,opt,name=listing_time,json=listingTime,proto3" json:"listing_time,omitempty"`
-	TradingStartTime  int64                  `protobuf:"varint,22,opt,name=trading_start_time,json=tradingStartTime,proto3" json:"trading_start_time,omitempty"`
-	Sort              int64                  `protobuf:"varint,23,opt,name=sort,proto3" json:"sort,omitempty"`
-	Remark            string                 `protobuf:"bytes,24,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreateTimes       int64                  `protobuf:"varint,25,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes       int64                  `protobuf:"varint,26,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
-	TradingEndTime    int64                  `protobuf:"varint,29,opt,name=trading_end_time,json=tradingEndTime,proto3" json:"trading_end_time,omitempty"`
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	Id       int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	// Market category: forex/crypto/stock/future/indices/fund. 0 is retained
+	// for legacy rows created before category binding was introduced.
+	CategoryType      int64               `protobuf:"varint,30,opt,name=category_type,json=categoryType,proto3" json:"category_type,omitempty"`
+	Symbol            string              `protobuf:"bytes,3,opt,name=symbol,proto3" json:"symbol,omitempty"`
+	DisplaySymbol     string              `protobuf:"bytes,4,opt,name=display_symbol,json=displaySymbol,proto3" json:"display_symbol,omitempty"`
+	ProductType       common.ProductType  `protobuf:"varint,5,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
+	BaseAsset         string              `protobuf:"bytes,6,opt,name=base_asset,json=baseAsset,proto3" json:"base_asset,omitempty"`
+	QuoteAsset        string              `protobuf:"bytes,7,opt,name=quote_asset,json=quoteAsset,proto3" json:"quote_asset,omitempty"`
+	SettleAsset       string              `protobuf:"bytes,8,opt,name=settle_asset,json=settleAsset,proto3" json:"settle_asset,omitempty"`
+	ContractType      common.ContractType `protobuf:"varint,9,opt,name=contract_type,json=contractType,proto3,enum=common.ContractType" json:"contract_type,omitempty"`
+	ContractValueType ContractValueType   `protobuf:"varint,27,opt,name=contract_value_type,json=contractValueType,proto3,enum=trade.ContractValueType" json:"contract_value_type,omitempty"`
+	MarginAsset       string              `protobuf:"bytes,28,opt,name=margin_asset,json=marginAsset,proto3" json:"margin_asset,omitempty"`
+	Status            SymbolStatus        `protobuf:"varint,10,opt,name=status,proto3,enum=trade.SymbolStatus" json:"status,omitempty"`
+	PriceScale        int64               `protobuf:"varint,11,opt,name=price_scale,json=priceScale,proto3" json:"price_scale,omitempty"`
+	QtyScale          int64               `protobuf:"varint,12,opt,name=qty_scale,json=qtyScale,proto3" json:"qty_scale,omitempty"`
+	MinPrice          string              `protobuf:"bytes,13,opt,name=min_price,json=minPrice,proto3" json:"min_price,omitempty"`
+	MaxPrice          string              `protobuf:"bytes,14,opt,name=max_price,json=maxPrice,proto3" json:"max_price,omitempty"`
+	PriceTick         string              `protobuf:"bytes,15,opt,name=price_tick,json=priceTick,proto3" json:"price_tick,omitempty"`
+	MinQty            string              `protobuf:"bytes,16,opt,name=min_qty,json=minQty,proto3" json:"min_qty,omitempty"`
+	MaxQty            string              `protobuf:"bytes,17,opt,name=max_qty,json=maxQty,proto3" json:"max_qty,omitempty"`
+	QtyStep           string              `protobuf:"bytes,18,opt,name=qty_step,json=qtyStep,proto3" json:"qty_step,omitempty"`
+	MinNotional       string              `protobuf:"bytes,19,opt,name=min_notional,json=minNotional,proto3" json:"min_notional,omitempty"`
+	MaxNotional       string              `protobuf:"bytes,20,opt,name=max_notional,json=maxNotional,proto3" json:"max_notional,omitempty"`
+	ListingTime       int64               `protobuf:"varint,21,opt,name=listing_time,json=listingTime,proto3" json:"listing_time,omitempty"`
+	TradingStartTime  int64               `protobuf:"varint,22,opt,name=trading_start_time,json=tradingStartTime,proto3" json:"trading_start_time,omitempty"`
+	Sort              int64               `protobuf:"varint,23,opt,name=sort,proto3" json:"sort,omitempty"`
+	Remark            string              `protobuf:"bytes,24,opt,name=remark,proto3" json:"remark,omitempty"`
+	CreateTimes       int64               `protobuf:"varint,25,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	UpdateTimes       int64               `protobuf:"varint,26,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	TradingEndTime    int64               `protobuf:"varint,29,opt,name=trading_end_time,json=tradingEndTime,proto3" json:"trading_end_time,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -385,6 +388,13 @@ func (x *TradeSymbol) GetId() int64 {
 func (x *TradeSymbol) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
+	}
+	return 0
+}
+
+func (x *TradeSymbol) GetCategoryType() int64 {
+	if x != nil {
+		return x.CategoryType
 	}
 	return 0
 }
@@ -4922,10 +4932,11 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\fStringValues\x12\x16\n" +
 	"\x06values\x18\x01 \x03(\tR\x06values\"&\n" +
 	"\fUint64Values\x12\x16\n" +
-	"\x06values\x18\x01 \x03(\x03R\x06values\"\x80\b\n" +
+	"\x06values\x18\x01 \x03(\x03R\x06values\"\xa5\b\n" +
 	"\vTradeSymbol\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x16\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12#\n" +
+	"\rcategory_type\x18\x1e \x01(\x03R\fcategoryType\x12\x16\n" +
 	"\x06symbol\x18\x03 \x01(\tR\x06symbol\x12%\n" +
 	"\x0edisplay_symbol\x18\x04 \x01(\tR\rdisplaySymbol\x126\n" +
 	"\fproduct_type\x18\x05 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12\x1d\n" +

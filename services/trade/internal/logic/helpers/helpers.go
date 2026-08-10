@@ -56,6 +56,7 @@ func SymbolToProto(item *models.TTradeSymbol) *trade.TradeSymbol {
 	return &trade.TradeSymbol{
 		Id:                item.Id,
 		TenantId:          item.TenantId,
+		CategoryType:      item.CategoryType,
 		Symbol:            item.Symbol,
 		DisplaySymbol:     item.DisplaySymbol,
 		ProductType:       common.ProductType(item.ProductType),

@@ -3,6 +3,7 @@ import type { PageReq, TimeRange } from './api'
 export interface TradeSymbol {
   id: number
   tenantId: number
+  categoryType: number
   symbol: string
   displaySymbol: string
   productType: number
@@ -297,6 +298,7 @@ export interface TradeSymbolLeverageConfig {
 export interface GetSymbolListReq {
   productType?: number
   status?: number
+  categoryType?: number
 }
 
 export interface GetSymbolDetailReq {

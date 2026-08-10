@@ -3,6 +3,7 @@ import "common.api"
 type TradeSymbol {
 	id                int64  `json:"id"`
 	tenantId          int64  `json:"tenantId"`
+	categoryType      int64  `json:"categoryType"`
 	symbol            string `json:"symbol"`
 	displaySymbol     string `json:"displaySymbol"`
 	productType       int64  `json:"productType"`
@@ -554,6 +555,7 @@ type CreateSymbolReq {
 	symbol            string `json:"symbol"`
 	displaySymbol     string `json:"displaySymbol"`
 	productType       int64  `json:"productType"`
+	categoryType      int64  `json:"categoryType"`
 	baseAsset         string `json:"baseAsset"`
 	quoteAsset        string `json:"quoteAsset"`
 	settleAsset       string `json:"settleAsset"`
@@ -581,6 +583,7 @@ type CreateSymbolReq {
 type UpdateSymbolReq {
 	tenantId         int64  `json:"tenantId"`
 	id               int64  `json:"id"`
+	categoryType     int64  `json:"categoryType,optional"`
 	displaySymbol    string `json:"displaySymbol"`
 	status           int64  `json:"status"`
 	priceScale       int64  `json:"priceScale"`
@@ -605,7 +608,8 @@ type GetSymbolListAdminReq {
 	tenantId    int64  `form:"tenantId,optional"`
 	productType int64  `form:"productType,optional"`
 	status      int64  `form:"status,optional"`
-	keyword     string `form:"keyword,optional"`
+	keyword      string `form:"keyword,optional"`
+	categoryType int64  `form:"categoryType,optional"`
 }
 
 type GetSymbolListAdminResp {

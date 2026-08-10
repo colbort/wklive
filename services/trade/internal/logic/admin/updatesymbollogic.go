@@ -54,6 +54,17 @@ func (l *UpdateSymbolLogic) UpdateSymbol(in *trade.UpdateSymbolReq) (*trade.Comm
 	if allowTenantUpdate {
 		item.TenantId = in.TenantId
 	}
+	if in.CategoryType != 0 {
+		if in.CategoryType < 1 || in.CategoryType > 6 {
+			return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, "invalid category type")}, nil
+		}
+		item.CategoryType = in.CategoryType
+	}
+	if item.CategoryType != 0 {
+		if err := validation.SymbolCategoryConfig(item.CategoryType, common.ProductType(item.ProductType), common.ContractType(item.ContractType), trade.ContractValueType(item.ContractValueType)); err != nil {
+			return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
+		}
+	}
 	if in.DisplaySymbol != "" {
 		item.DisplaySymbol = in.DisplaySymbol
 	}

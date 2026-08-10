@@ -179,7 +179,7 @@
       :title="contractForm.id ? t('option.editContract') : t('option.createContract')"
       width="960px"
     >
-      <el-form class="compact-contract-form" label-width="92px">
+      <el-form class="compact-contract-form" label-width="132px">
         <div class="contract-form-grid">
           <el-form-item :label="t('option.tenantId')">
             <TenantSelect v-model="contractForm.tenantId" include-system />
@@ -468,7 +468,7 @@
     </el-dialog>
 
     <el-dialog v-model="marketVisible" :title="t('option.editMarket')" width="920px">
-      <el-form class="compact-market-form" label-width="92px">
+      <el-form class="compact-market-form" label-width="132px">
         <div class="market-form-grid">
           <el-form-item :label="t('option.tenantId')">
             <TenantSelect v-model="marketForm.tenantId" include-system />
@@ -1507,6 +1507,7 @@ onMounted(async () => {
 .compact-contract-form :deep(.el-form-item__label),
 .compact-market-form :deep(.el-form-item__label) {
   padding-right: 6px;
+  white-space: nowrap;
 }
 
 .compact-contract-form :deep(.el-input-number),

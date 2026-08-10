@@ -46,6 +46,7 @@ type (
 	TTradeSymbol struct {
 		Id                int64           `db:"id"`                  // 主键ID
 		TenantId          int64           `db:"tenant_id"`           // 租户ID
+		CategoryType      int64           `db:"category_type"`       // Market分类：1外汇 2加密货币 3股票 4期货 5指数 6基金，0表示历史数据未绑定
 		Symbol            string          `db:"symbol"`              // 统一交易标的代码，如BTCUSDT、ETHUSD-PERP
 		DisplaySymbol     string          `db:"display_symbol"`      // 前端展示名称
 		ProductType       int64           `db:"product_type"`        // 产品大类：1现货 2衍生品 3秒合约
@@ -139,8 +140,8 @@ func (m *defaultTTradeSymbolModel) Insert(ctx context.Context, data *TTradeSymbo
 	tTradeSymbolIdKey := fmt.Sprintf("%s%v", cacheTTradeSymbolIdPrefix, data.Id)
 	tTradeSymbolTenantIdSymbolProductTypeContractTypeContractValueTypeKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTTradeSymbolTenantIdSymbolProductTypeContractTypeContractValueTypePrefix, data.TenantId, data.Symbol, data.ProductType, data.ContractType, data.ContractValueType)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeSymbolRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.TenantId, data.Symbol, data.DisplaySymbol, data.ProductType, data.BaseAsset, data.QuoteAsset, data.SettleAsset, data.MarginAsset, data.ContractType, data.ContractValueType, data.Status, data.PriceScale, data.QtyScale, data.MinPrice, data.MaxPrice, data.PriceTick, data.MinQty, data.MaxQty, data.QtyStep, data.MinNotional, data.MaxNotional, data.ListingTime, data.TradingStartTime, data.TradingEndTime, data.Sort, data.Remark, data.CreateTimes, data.UpdateTimes)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, tTradeSymbolRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.TenantId, data.CategoryType, data.Symbol, data.DisplaySymbol, data.ProductType, data.BaseAsset, data.QuoteAsset, data.SettleAsset, data.MarginAsset, data.ContractType, data.ContractValueType, data.Status, data.PriceScale, data.QtyScale, data.MinPrice, data.MaxPrice, data.PriceTick, data.MinQty, data.MaxQty, data.QtyStep, data.MinNotional, data.MaxNotional, data.ListingTime, data.TradingStartTime, data.TradingEndTime, data.Sort, data.Remark, data.CreateTimes, data.UpdateTimes)
 	}, tTradeSymbolIdKey, tTradeSymbolTenantIdSymbolProductTypeContractTypeContractValueTypeKey)
 	return ret, err
 }
@@ -155,7 +156,7 @@ func (m *defaultTTradeSymbolModel) Update(ctx context.Context, newData *TTradeSy
 	tTradeSymbolTenantIdSymbolProductTypeContractTypeContractValueTypeKey := fmt.Sprintf("%s%v:%v:%v:%v:%v", cacheTTradeSymbolTenantIdSymbolProductTypeContractTypeContractValueTypePrefix, data.TenantId, data.Symbol, data.ProductType, data.ContractType, data.ContractValueType)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tTradeSymbolRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.TenantId, newData.Symbol, newData.DisplaySymbol, newData.ProductType, newData.BaseAsset, newData.QuoteAsset, newData.SettleAsset, newData.MarginAsset, newData.ContractType, newData.ContractValueType, newData.Status, newData.PriceScale, newData.QtyScale, newData.MinPrice, newData.MaxPrice, newData.PriceTick, newData.MinQty, newData.MaxQty, newData.QtyStep, newData.MinNotional, newData.MaxNotional, newData.ListingTime, newData.TradingStartTime, newData.TradingEndTime, newData.Sort, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.TenantId, newData.CategoryType, newData.Symbol, newData.DisplaySymbol, newData.ProductType, newData.BaseAsset, newData.QuoteAsset, newData.SettleAsset, newData.MarginAsset, newData.ContractType, newData.ContractValueType, newData.Status, newData.PriceScale, newData.QtyScale, newData.MinPrice, newData.MaxPrice, newData.PriceTick, newData.MinQty, newData.MaxQty, newData.QtyStep, newData.MinNotional, newData.MaxNotional, newData.ListingTime, newData.TradingStartTime, newData.TradingEndTime, newData.Sort, newData.Remark, newData.CreateTimes, newData.UpdateTimes, newData.Id)
 	}, tTradeSymbolIdKey, tTradeSymbolTenantIdSymbolProductTypeContractTypeContractValueTypeKey)
 	return err
 }

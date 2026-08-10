@@ -436,6 +436,11 @@ function matchesTradeMarketMode(symbol: TradeSymbol, mode: TradeMarketMode) {
 }
 
 function matchesSelectedProduct(symbol: TradeSymbol) {
+  // categoryType is the Market classification of a trade symbol. Keep 0 as
+  // a legacy fallback so existing rows remain visible until they are backfilled.
+  if (symbol.categoryType > 0 && symbol.categoryType !== selectedCategoryType.value) {
+    return false
+  }
   const candidates = productCandidates()
   if (!candidates.size) return false
   if (symbolCandidates(symbol).some((candidate) => candidates.has(candidate))) return true

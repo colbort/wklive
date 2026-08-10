@@ -35,9 +35,10 @@ func (l *GetSymbolListLogic) GetSymbolList(in *trade.GetSymbolListReq) (*trade.G
 		return nil, err
 	}
 	data, err := l.svcCtx.TradeSymbolModel.FindAll(l.ctx, models.TradeSymbolPageFilter{
-		TenantId:    tenantId,
-		ProductType: int64(in.ProductType),
-		Status:      int64(in.Status),
+		TenantId:     tenantId,
+		CategoryType: in.CategoryType,
+		ProductType:  int64(in.ProductType),
+		Status:       int64(in.Status),
 	})
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
