@@ -6,6 +6,8 @@
 !app-packages/**
 !app-web
 !app-web/**
+!app-mobile
+!app-mobile/**
 !chat-admin-ui
 !chat-admin-ui/**
 !liquidity-admin-ui

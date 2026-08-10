@@ -31,7 +31,9 @@ const configOptions = ref<ConfigOptions>({
 const query = reactive({ keyword: "", status: "", limit: 20, cursor: 0 });
 const page = reactive({ total: 0, nextCursor: 0, hasMore: false });
 const cursorHistory = ref<number[]>([]);
-const form = reactive({
+const defaultQuoteValidityMs = (categoryType?: number) =>
+  categoryType === 1 ? 300_000 : 3_000;
+const createDefaultForm = () => ({
   symbolId: undefined as number | undefined,
   liquidityMode: 1,
   internalProviderId: undefined as number | undefined,
@@ -59,6 +61,7 @@ const form = reactive({
   hedgeRatio: "1",
   selfTradePrevention: 1,
 });
+const form = reactive(createDefaultForm());
 
 const selectedSymbol = computed(() =>
   configOptions.value.symbols.find((item) => item.symbolId === form.symbolId),
@@ -111,6 +114,9 @@ watch(selectedSymbol, (symbol) => {
   form.referencePriceSource = symbol.referencePriceSource || "";
   form.referencePriceKind =
     symbol.productType === 1 && symbol.categoryType !== 2 ? "FINAL_QUOTE" : "MARK";
+  if (!editingId.value) {
+    form.quoteValidityMs = defaultQuoteValidityMs(symbol.categoryType);
+  }
 });
 
 function categoryTypeLabel(value: number) {
@@ -183,6 +189,7 @@ async function openCreate() {
   await loadConfigOptions();
   editingId.value = null;
   editingVersion.value = 0;
+  Object.assign(form, createDefaultForm());
   dialog.value = true;
 }
 
@@ -266,6 +273,17 @@ async function create() {
   }
   if (!Number.isFinite(maxQuoteNotional) || maxQuoteNotional < 0) {
     ElMessage.warning("单档最大名义金额不能小于 0");
+    return;
+  }
+  if (
+    !Number.isFinite(form.quoteValidityMs) ||
+    form.quoteValidityMs <= 0 ||
+    !Number.isFinite(form.refreshIntervalMs) ||
+    form.refreshIntervalMs <= 0 ||
+    !Number.isFinite(form.quoteTtlMs) ||
+    form.quoteTtlMs <= 0
+  ) {
+    ElMessage.warning("行情有效期、刷新间隔和报价存活时间必须大于 0");
     return;
   }
   if (editingId.value) {
@@ -579,6 +597,32 @@ onMounted(load);
           <el-form-item label="刷新间隔(ms)">
             <el-input-number v-model="form.refreshIntervalMs" :min="100" />
           </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="行情最大有效期(ms)">
+            <el-input-number
+              v-model="form.quoteValidityMs"
+              :min="100"
+              :step="1000"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="报价存活时间(ms)">
+            <el-input-number
+              v-model="form.quoteTtlMs"
+              :min="100"
+              :step="1000"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col v-if="selectedSymbol?.categoryType === 1" :span="24">
+          <el-alert
+            title="外汇行情可能按价格变化推送；行情最大有效期默认 300000 ms。设置过短时，做市会因找不到有效参考价而暂停报价。"
+            type="warning"
+            :closable="false"
+            show-icon
+          />
         </el-col>
         <el-col :span="8">
           <el-form-item label="单档报价数量">

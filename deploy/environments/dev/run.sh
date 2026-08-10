@@ -49,6 +49,11 @@ liquidity-rpc
 chat-api
 payment-api
 liquidity-admin-api
+admin-ui
+app-web
+app-mobile
+chat-admin-ui
+liquidity-admin-ui
 "
 
 docker_free_kb() {

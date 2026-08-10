@@ -1,5 +1,14 @@
 name: ${DEV_PROJECT_NAME:-wklive}
 
+x-dev-web: &dev-web
+  restart: unless-stopped
+  init: true
+  build:
+    context: ..
+    dockerfile: deploy/common/docker/Dockerfile.web
+  networks:
+    - backend
+
 services:
   etcd:
     ports:
@@ -72,6 +81,86 @@ services:
   liquidity-admin-api:
     ports:
       - "9999:9999"
+
+  admin-ui:
+    <<: *dev-web
+    build:
+      context: ..
+      dockerfile: deploy/common/docker/Dockerfile.web
+      args:
+        UI_DIR: admin-ui
+    environment:
+      API_PATH_PREFIX: /admin/
+      API_UPSTREAM: admin-api:8888
+    depends_on:
+      admin-api:
+        condition: service_healthy
+    ports:
+      - "${ADMIN_UI_PORT:-18080}:8080"
+
+  app-web:
+    <<: *dev-web
+    build:
+      context: ..
+      dockerfile: deploy/common/docker/Dockerfile.web
+      args:
+        UI_DIR: app-web
+    environment:
+      API_PATH_PREFIX: /app/
+      API_UPSTREAM: app-api:5555
+    depends_on:
+      app-api:
+        condition: service_healthy
+    ports:
+      - "${APP_WEB_PORT:-18081}:8080"
+
+  app-mobile:
+    <<: *dev-web
+    build:
+      context: ..
+      dockerfile: deploy/common/docker/Dockerfile.web
+      args:
+        UI_DIR: app-mobile
+    environment:
+      API_PATH_PREFIX: /app/
+      API_UPSTREAM: app-api:5555
+    depends_on:
+      app-api:
+        condition: service_healthy
+    ports:
+      - "${APP_MOBILE_PORT:-18084}:8080"
+
+  chat-admin-ui:
+    <<: *dev-web
+    build:
+      context: ..
+      dockerfile: deploy/common/docker/Dockerfile.web
+      args:
+        UI_DIR: chat-admin-ui
+    environment:
+      API_PATH_PREFIX: /chat/admin/
+      API_UPSTREAM: chat-admin-api:6666
+    depends_on:
+      chat-admin-api:
+        condition: service_healthy
+    ports:
+      - "${CHAT_ADMIN_UI_PORT:-18082}:8080"
+
+  liquidity-admin-ui:
+    <<: *dev-web
+    build:
+      context: ..
+      dockerfile: deploy/common/docker/Dockerfile.web
+      args:
+        UI_DIR: liquidity-admin-ui
+    environment:
+      API_PATH_PREFIX: /admin/liquidity/
+      API_UPSTREAM: liquidity-admin-api:9999
+    depends_on:
+      liquidity-admin-api:
+        condition: service_healthy
+    ports:
+      - "${LIQUIDITY_ADMIN_UI_PORT:-18083}:8080"
 
 secrets:
   itick_token:

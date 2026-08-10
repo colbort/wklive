@@ -4,6 +4,7 @@
 
 - 10 个 RPC 服务
 - 6 个 API 服务
+- Admin UI、App Web、App Mobile Web、Chat Admin UI、Liquidity Admin UI
 - Etcd、MySQL、Redis、MongoDB、Kafka
 - 两个 Beanstalkd 延迟队列实例
 - Kafka Topic、Etcd 配置、MySQL Schema、迁移和后台账号初始化
@@ -27,6 +28,18 @@ printf '%s\n' '从密钥系统取得的 iTick Token' > secrets/itick_token
 ```
 
 首次构建需要下载 Go 模块和容器镜像，耗时会比后续启动长。
+
+开发环境的 5 个 Web UI 也会由 Compose 构建并运行，默认访问地址为：
+
+| 页面 | 地址 |
+| --- | --- |
+| Admin UI | `http://localhost:18080` |
+| App Web | `http://localhost:18081` |
+| App Mobile Web | `http://localhost:18084` |
+| Chat Admin UI | `http://localhost:18082` |
+| Liquidity Admin UI | `http://localhost:18083` |
+
+执行 `./deploy.sh build` 会同时构建这些前端镜像；执行 `./deploy.sh start` 会在镜像变化后重新创建对应容器。`App Mobile Web` 是移动端 Vue 页面在浏览器中的构建，Android/iOS 原生包仍使用 Capacitor 命令构建。
 
 两个 Beanstalkd 实例由 `common/docker/Dockerfile.beanstalkd` 构建：基础 Alpine 多架构清单使用固定
 digest，Beanstalkd 固定为 `1.13-r0`，Compose 不设置主机专用 `platform`。因此 Apple Silicon

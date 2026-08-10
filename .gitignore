@@ -8,6 +8,7 @@ package-lock.json
 !liquidity-admin-ui/package-lock.json
 !app-web/package-lock.json
 !app-packages/package-lock.json
+!app-mobile/package-lock.json
 
 avatars/
 
