@@ -2,6 +2,7 @@ package svc
 
 import (
 	"context"
+	"strings"
 
 	"wklive/services/asset/internal/config"
 	"wklive/services/asset/models"
@@ -61,10 +62,16 @@ func assetBusinessErrorAcceptable(err error) bool {
 
 // 获取最新报价
 func (s *ServiceContext) LastPrice(ctx context.Context, symbol string) (decimal.Decimal, error) {
+	return s.LastMarketPrice(ctx, "crypto", "BA", symbol)
+}
+
+// LastMarketPrice reads the normalized quote cache for the requested market.
+// Use LastPrice only for legacy crypto/BA callers.
+func (s *ServiceContext) LastMarketPrice(ctx context.Context, categoryCode, market, symbol string) (decimal.Decimal, error) {
 	msg := cache.NormalizeClientMessage(cache.ClientMessage{
 		Topic:        cache.TopicQuote,
-		CategoryCode: "crypto",
-		Market:       "BA",
+		CategoryCode: categoryCode,
+		Market:       market,
 		Symbol:       symbol,
 	})
 	items, err := s.MarketDataCache.ReadMany(ctx, []cache.ClientMessage{msg})
@@ -78,5 +85,15 @@ func (s *ServiceContext) LastPrice(ctx context.Context, symbol string) (decimal.
 	if !ok || data == nil {
 		return decimal.NewFromInt(0), redis.Nil
 	}
-	return decimal.NewFromFloat(data.LastPrice), nil
+	if priceText := strings.TrimSpace(data.LastPriceText); priceText != "" {
+		price, err := decimal.NewFromString(priceText)
+		if err == nil && price.IsPositive() {
+			return price, nil
+		}
+	}
+	price := decimal.NewFromFloat(data.LastPrice)
+	if !price.IsPositive() {
+		return decimal.Zero, redis.Nil
+	}
+	return price, nil
 }

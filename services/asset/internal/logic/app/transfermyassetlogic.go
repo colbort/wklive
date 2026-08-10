@@ -2,6 +2,7 @@ package applogic
 
 import (
 	"context"
+	"errors"
 	"strings"
 	"wklive/services/asset/internal/logic/helpers"
 
@@ -17,8 +18,22 @@ import (
 
 	"github.com/shopspring/decimal"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
+
+const (
+	assetCoinTypeFiat   = int64(asset.AssetCoinType_ASSET_COIN_TYPE_FIAT)
+	assetCoinTypeCrypto = int64(asset.AssetCoinType_ASSET_COIN_TYPE_CRYPTO)
+	assetPriceScaleMax  = int64(18)
+)
+
+var (
+	errExchangeRateUnavailable = errors.New("exchange rate unavailable")
+	usdUSDTAccountingRate      = decimal.NewFromInt(1)
+)
+
+type marketQuoteReader func(ctx context.Context, categoryCode, market, symbol string) (decimal.Decimal, error)
 
 type TransferMyAssetLogic struct {
 	ctx    context.Context
@@ -50,7 +65,7 @@ func (l *TransferMyAssetLogic) TransferMyAsset(in *asset.TransferMyAssetReq) (*a
 	if fromCoin == "" || toCoin == "" {
 		return nil, i18n.StatusError(l.ctx, i18n.TransferCoinRequired)
 	}
-	if in.FromWalletType == common.WalletType_WALLET_TYPE_UNKNOWN || in.ToWalletType == common.WalletType_WALLET_TYPE_UNKNOWN {
+	if !validTransferWalletType(in.FromWalletType) || !validTransferWalletType(in.ToWalletType) {
 		return nil, i18n.StatusError(l.ctx, i18n.WalletTypeRequired)
 	}
 	if in.FromWalletType == in.ToWalletType && fromCoin == toCoin {
@@ -63,9 +78,35 @@ func (l *TransferMyAssetLogic) TransferMyAsset(in *asset.TransferMyAssetReq) (*a
 	if !fromAmount.IsPositive() {
 		return nil, i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 	}
-	toAmount, err := l.exchangeTransferAmount(fromCoin, toCoin, fromAmount)
+	fromConfig, err := l.findTransferCoinConfig(tenantId, in.FromWalletType, fromCoin)
 	if err != nil {
 		return nil, err
+	}
+	toConfig, err := l.findTransferCoinConfig(tenantId, in.ToWalletType, toCoin)
+	if err != nil {
+		return nil, err
+	}
+
+	toAmount, err := exchangeTransferAmount(
+		l.ctx,
+		fromConfig,
+		toConfig,
+		fromAmount,
+		l.svcCtx.LastMarketPrice,
+	)
+	if err != nil {
+		l.Errorf(
+			"TransferMyAsset resolve exchange rate failed, tenantId=%d fromWalletType=%d toWalletType=%d fromCoin=%s toCoin=%s fromCoinType=%d toCoinType=%d err=%v",
+			tenantId,
+			in.FromWalletType,
+			in.ToWalletType,
+			fromCoin,
+			toCoin,
+			fromConfig.CoinType,
+			toConfig.CoinType,
+			err,
+		)
+		return nil, i18n.StatusError(l.ctx, i18n.InvalidExchangeRate)
 	}
 
 	bizNo, err := generate.GenerateNo(l.svcCtx.Redis, l.ctx, "order_id", "TRANSFER", "")
@@ -86,36 +127,166 @@ func (l *TransferMyAssetLogic) TransferMyAsset(in *asset.TransferMyAssetReq) (*a
 	}, nil
 }
 
-func (l *TransferMyAssetLogic) exchangeTransferAmount(fromCoin, toCoin string, fromAmount decimal.Decimal) (decimal.Decimal, error) {
-	if fromCoin == toCoin {
+func validTransferWalletType(walletType common.WalletType) bool {
+	switch walletType {
+	case common.WalletType_WALLET_TYPE_SPOT,
+		common.WalletType_WALLET_TYPE_FUNDING,
+		common.WalletType_WALLET_TYPE_CONTRACT,
+		common.WalletType_WALLET_TYPE_EARN,
+		common.WalletType_WALLET_TYPE_OPTION:
+		return true
+	default:
+		return false
+	}
+}
+
+func (l *TransferMyAssetLogic) findTransferCoinConfig(tenantId int64, walletType common.WalletType, coin string) (*models.TAssetCoinConfig, error) {
+	config, err := l.svcCtx.AssetCoinConfigModel.FindTransferEnabled(l.ctx, tenantId, int64(walletType), coin)
+	if err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			return nil, i18n.StatusError(l.ctx, i18n.AssetCoinConfigNotFound)
+		}
+		return nil, err
+	}
+	if config.CoinType != assetCoinTypeFiat && config.CoinType != assetCoinTypeCrypto {
+		return nil, i18n.StatusError(l.ctx, i18n.AssetCoinConfigNotFound)
+	}
+	return config, nil
+}
+
+func exchangeTransferAmount(
+	ctx context.Context,
+	fromConfig, toConfig *models.TAssetCoinConfig,
+	fromAmount decimal.Decimal,
+	quote marketQuoteReader,
+) (decimal.Decimal, error) {
+	if fromConfig == nil || toConfig == nil || quote == nil {
+		return decimal.Zero, errExchangeRateUnavailable
+	}
+	if fromConfig.Coin == toConfig.Coin {
 		return fromAmount, nil
 	}
 
-	fromRate, err := l.usdtRate(fromCoin)
+	rate, err := resolveExchangeRate(ctx, fromConfig.Coin, fromConfig.CoinType, toConfig.Coin, toConfig.CoinType, quote)
 	if err != nil {
 		return decimal.Zero, err
 	}
-	toRate, err := l.usdtRate(toCoin)
+	toAmount := roundAssetAmount(fromAmount.Mul(rate), toConfig.DecimalPlaces)
+	if !toAmount.IsPositive() {
+		return decimal.Zero, errExchangeRateUnavailable
+	}
+	return toAmount, nil
+}
+
+func roundAssetAmount(amount decimal.Decimal, decimalPlaces int64) decimal.Decimal {
+	if decimalPlaces < 0 {
+		decimalPlaces = 0
+	}
+	if decimalPlaces > assetPriceScaleMax {
+		decimalPlaces = assetPriceScaleMax
+	}
+	return amount.Round(int32(decimalPlaces))
+}
+
+func resolveExchangeRate(
+	ctx context.Context,
+	fromCoin string,
+	fromCoinType int64,
+	toCoin string,
+	toCoinType int64,
+	quote marketQuoteReader,
+) (decimal.Decimal, error) {
+	fromCoin = strings.ToUpper(strings.TrimSpace(fromCoin))
+	toCoin = strings.ToUpper(strings.TrimSpace(toCoin))
+	if fromCoin == "" || toCoin == "" {
+		return decimal.Zero, errExchangeRateUnavailable
+	}
+	if fromCoin == toCoin {
+		return decimal.NewFromInt(1), nil
+	}
+
+	var categoryCode, market string
+	switch {
+	case fromCoinType == assetCoinTypeFiat && toCoinType == assetCoinTypeFiat:
+		categoryCode, market = "forex", "GB"
+	case fromCoinType == assetCoinTypeCrypto && toCoinType == assetCoinTypeCrypto:
+		categoryCode, market = "crypto", "BA"
+	case (fromCoinType == assetCoinTypeFiat && toCoinType == assetCoinTypeCrypto) ||
+		(fromCoinType == assetCoinTypeCrypto && toCoinType == assetCoinTypeFiat):
+		// Mixed fiat/crypto conversion uses USD and USDT as accounting anchors.
+	default:
+		return decimal.Zero, errExchangeRateUnavailable
+	}
+
+	if categoryCode != "" {
+		if rate, err := directOrInverseRate(ctx, categoryCode, market, fromCoin, toCoin, quote); err == nil {
+			return rate, nil
+		} else if !errors.Is(err, errExchangeRateUnavailable) {
+			return decimal.Zero, err
+		}
+	}
+
+	fromRate, err := assetUSDTAccountingRate(ctx, fromCoin, fromCoinType, quote)
+	if err != nil {
+		return decimal.Zero, err
+	}
+	toRate, err := assetUSDTAccountingRate(ctx, toCoin, toCoinType, quote)
 	if err != nil {
 		return decimal.Zero, err
 	}
 	if !fromRate.IsPositive() || !toRate.IsPositive() {
-		return decimal.Zero, i18n.StatusError(l.ctx, i18n.InvalidExchangeRate)
+		return decimal.Zero, errExchangeRateUnavailable
 	}
-
-	return fromAmount.Mul(fromRate).Div(toRate), nil
+	return fromRate.Div(toRate), nil
 }
 
-func (l *TransferMyAssetLogic) usdtRate(coin string) (decimal.Decimal, error) {
-	if coin == "USDT" {
-		return decimal.NewFromInt(1), nil
+func assetUSDTAccountingRate(
+	ctx context.Context,
+	coin string,
+	coinType int64,
+	quote marketQuoteReader,
+) (decimal.Decimal, error) {
+	switch coinType {
+	case assetCoinTypeCrypto:
+		if coin == "USDT" {
+			return decimal.NewFromInt(1), nil
+		}
+		return directOrInverseRate(ctx, "crypto", "BA", coin, "USDT", quote)
+	case assetCoinTypeFiat:
+		if coin == "USD" {
+			return usdUSDTAccountingRate, nil
+		}
+		usdPerCoin, err := directOrInverseRate(ctx, "forex", "GB", coin, "USD", quote)
+		if err != nil {
+			return decimal.Zero, err
+		}
+		return usdPerCoin.Mul(usdUSDTAccountingRate), nil
+	default:
+		return decimal.Zero, errExchangeRateUnavailable
 	}
-	rate, err := l.svcCtx.LastPrice(l.ctx, coin+"USDT")
-	if err != nil {
-		l.Errorf("TransferMyAsset get exchange rate failed, coin=%s err=%v", coin, err)
+}
+
+func directOrInverseRate(
+	ctx context.Context,
+	categoryCode, market, fromCoin, toCoin string,
+	quote marketQuoteReader,
+) (decimal.Decimal, error) {
+	direct, err := quote(ctx, categoryCode, market, fromCoin+toCoin)
+	if err == nil && direct.IsPositive() {
+		return direct, nil
+	}
+	if err != nil && !errors.Is(err, redis.Nil) {
 		return decimal.Zero, err
 	}
-	return rate, nil
+
+	inverse, inverseErr := quote(ctx, categoryCode, market, toCoin+fromCoin)
+	if inverseErr == nil && inverse.IsPositive() {
+		return decimal.NewFromInt(1).Div(inverse), nil
+	}
+	if inverseErr != nil && !errors.Is(inverseErr, redis.Nil) {
+		return decimal.Zero, inverseErr
+	}
+	return decimal.Zero, errExchangeRateUnavailable
 }
 
 func (l *TransferMyAssetLogic) transferAsset(tenantId, userId int64, fromWalletType, toWalletType common.WalletType, fromCoin, toCoin string, fromAmount, toAmount decimal.Decimal, bizNo, remark string) (*asset.TransferMyAssetResp, error) {

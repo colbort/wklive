@@ -2,6 +2,7 @@ package applogic
 
 import (
 	"context"
+	"strings"
 	"wklive/services/asset/internal/logic/helpers"
 
 	"wklive/common/conv"
@@ -54,25 +55,50 @@ func (l *GetMyAssetSummaryLogic) GetMyAssetSummary(in *asset.GetMyAssetSummaryRe
 	totalLocked := decimal.Zero
 	resp := &asset.GetMyAssetSummaryResp{Base: helper.OkResp(), Data: &asset.UserAssetSummary{TenantId: tenantId, UserId: userId}}
 	for _, item := range list {
-		// 总资产、可用资产、冻结资产、锁定资产，单位都是USDT
-		if item.Coin == "USDT" {
-			totalAsset = totalAsset.Add(item.TotalAmount)
-			totalAvailable = totalAvailable.Add(item.AvailableAmount)
-			totalFrozen = totalFrozen.Add(item.FrozenAmount)
-			totalLocked = totalLocked.Add(item.LockedAmount)
-		} else {
-			// 其他币种需要换算成USDT
-			exchangeRate, err := l.svcCtx.LastPrice(l.ctx, item.Coin+"USDT")
-			if err != nil {
-				logx.Errorf("GetExchangeRate error: tenantId=%d, coin=%s, err=%v", tenantId, item.Coin, err)
+		// 资产明细必须始终返回。某个币种暂时没有 USDT 行情时，只应影响
+		// 汇总折算，不能导致该币种从用户资产列表中消失。
+		resp.Data.Assets = append(resp.Data.Assets, helpers.ToUserAssetProto(item))
+
+		coin := strings.ToUpper(strings.TrimSpace(item.Coin))
+		exchangeRate := decimal.NewFromInt(1)
+		if coin != "USDT" {
+			coinConfig, configErr := l.svcCtx.AssetCoinConfigModel.FindEnabledByWalletCoin(
+				l.ctx,
+				tenantId,
+				item.WalletType,
+				coin,
+			)
+			if configErr != nil {
+				l.Errorf(
+					"GetMyAssetSummary get coin config failed: tenantId=%d, userId=%d, walletType=%d, coin=%s, err=%v",
+					tenantId,
+					userId,
+					item.WalletType,
+					coin,
+					configErr,
+				)
 				continue
 			}
-			totalAsset = totalAsset.Add(item.TotalAmount.Mul(exchangeRate))
-			totalAvailable = totalAvailable.Add(item.AvailableAmount.Mul(exchangeRate))
-			totalFrozen = totalFrozen.Add(item.FrozenAmount.Mul(exchangeRate))
-			totalLocked = totalLocked.Add(item.LockedAmount.Mul(exchangeRate))
+
+			exchangeRate, err = assetUSDTAccountingRate(l.ctx, coin, coinConfig.CoinType, l.svcCtx.LastMarketPrice)
+			if err != nil {
+				l.Errorf(
+					"GetMyAssetSummary get exchange rate failed: tenantId=%d, userId=%d, walletType=%d, coin=%s, coinType=%d, err=%v",
+					tenantId,
+					userId,
+					item.WalletType,
+					coin,
+					coinConfig.CoinType,
+					err,
+				)
+				continue
+			}
 		}
-		resp.Data.Assets = append(resp.Data.Assets, helpers.ToUserAssetProto(item))
+
+		totalAsset = totalAsset.Add(item.TotalAmount.Mul(exchangeRate))
+		totalAvailable = totalAvailable.Add(item.AvailableAmount.Mul(exchangeRate))
+		totalFrozen = totalFrozen.Add(item.FrozenAmount.Mul(exchangeRate))
+		totalLocked = totalLocked.Add(item.LockedAmount.Mul(exchangeRate))
 	}
 
 	resp.Data.TotalAssetUsdt = conv.FloatString(totalAsset)

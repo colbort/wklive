@@ -33,6 +33,8 @@ type (
 		tAssetCoinConfigModel
 		FindPage(ctx context.Context, filter AssetCoinConfigPageFilter, cursor int64, limit int64) ([]*TAssetCoinConfig, int64, error)
 		FindVisibleByOperation(ctx context.Context, tenantId int64, walletType int64, operationType int64, coinType int64) ([]*TAssetCoinConfig, error)
+		FindEnabledByWalletCoin(ctx context.Context, tenantId int64, walletType int64, coin string) (*TAssetCoinConfig, error)
+		FindTransferEnabled(ctx context.Context, tenantId int64, walletType int64, coin string) (*TAssetCoinConfig, error)
 	}
 
 	customTAssetCoinConfigModel struct {
@@ -174,6 +176,50 @@ func (m *customTAssetCoinConfigModel) FindVisibleByOperation(ctx context.Context
 	})
 
 	return list, nil
+}
+
+func (m *customTAssetCoinConfigModel) FindTransferEnabled(ctx context.Context, tenantId int64, walletType int64, coin string) (*TAssetCoinConfig, error) {
+	query := fmt.Sprintf(
+		`SELECT %s
+		FROM %s
+		WHERE tenant_id = ?
+		  AND wallet_type = ?
+		  AND coin = ?
+		  AND app_visible = 1
+		  AND transfer_enabled = 1
+		  AND enabled = 1
+		ORDER BY (chain_code = 0) DESC, sort ASC, id DESC
+		LIMIT 1`,
+		tAssetCoinConfigRows,
+		m.table,
+	)
+
+	var data TAssetCoinConfig
+	if err := m.QueryRowNoCacheCtx(ctx, &data, query, tenantId, walletType, coin); err != nil {
+		return nil, err
+	}
+	return &data, nil
+}
+
+func (m *customTAssetCoinConfigModel) FindEnabledByWalletCoin(ctx context.Context, tenantId int64, walletType int64, coin string) (*TAssetCoinConfig, error) {
+	query := fmt.Sprintf(
+		`SELECT %s
+		FROM %s
+		WHERE tenant_id = ?
+		  AND wallet_type = ?
+		  AND coin = ?
+		  AND enabled = 1
+		ORDER BY (chain_code = 0) DESC, sort ASC, id DESC
+		LIMIT 1`,
+		tAssetCoinConfigRows,
+		m.table,
+	)
+
+	var data TAssetCoinConfig
+	if err := m.QueryRowNoCacheCtx(ctx, &data, query, tenantId, walletType, coin); err != nil {
+		return nil, err
+	}
+	return &data, nil
 }
 
 func appendSwitchFilter(builder *sqlutil.PageQueryBuilder, column string, value int64) {
