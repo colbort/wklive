@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router'
 import LoginPrompt from '@/components/common/LoginPrompt.vue'
 import { useI18n } from '@/i18n'
 import type { TradeOrder, TradeSymbol } from '@/types/trade'
+import { marketCategoryTypeLabel } from '@/utils/marketCategory'
 
 type OrderTab = 'open' | 'history'
 
@@ -135,13 +136,18 @@ function formatTime(value: number) {
 }
 
 function productText(order: TradeOrder) {
-  if (order.productType === 1) return t('trade.marketModeSpot')
-  if (order.productType === 3) return t('trade.marketModeSeconds')
-  const contract =
-    order.contractType === 2 ? t('trade.contractDelivery') : t('trade.contractPerpetual')
-  const valueType =
-    order.contractValueType === 2 ? t('trade.contractInverse') : t('trade.contractLinear')
-  return `${contract} · ${valueType}`
+  const category = marketCategoryTypeLabel(props.selectedTradeSymbol?.categoryType)
+  let product = ''
+  if (order.productType === 1) product = t('trade.marketModeSpot')
+  else if (order.productType === 3) product = t('trade.marketModeSeconds')
+  else {
+    const contract =
+      order.contractType === 2 ? t('trade.contractDelivery') : t('trade.contractPerpetual')
+    const valueType =
+      order.contractValueType === 2 ? t('trade.contractInverse') : t('trade.contractLinear')
+    product = `${contract} · ${valueType}`
+  }
+  return category ? `${category} · ${product}` : product
 }
 
 function primaryValue(order: TradeOrder) {
@@ -168,6 +174,7 @@ function openOrderDetail(order: TradeOrder) {
       symbol: props.selectedTradeSymbol?.displaySymbol || props.selectedTradeSymbol?.symbol || '',
       priceScale: props.selectedTradeSymbol?.priceScale,
       qtyScale: props.selectedTradeSymbol?.qtyScale,
+      categoryType: props.selectedTradeSymbol?.categoryType,
     },
   })
 }

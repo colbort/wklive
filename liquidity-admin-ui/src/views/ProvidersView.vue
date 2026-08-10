@@ -15,6 +15,10 @@ const configOptions = ref<ConfigOptions>({
   providers: [],
   tradingUsers: [],
 });
+
+function categoryTypeLabel(value: number) {
+  return ["未知", "外汇", "加密货币", "股票", "期货", "指数", "基金"][value] || "未知";
+}
 const query = reactive({ keyword: "", status: "", limit: 20, cursor: 0 });
 const page = reactive({ total: 0, nextCursor: 0, hasMore: false });
 const cursorHistory = ref<number[]>([]);
@@ -297,7 +301,7 @@ onMounted(load);
                 )"
                 :key="item.symbolId"
                 :value="item.symbolId"
-                :label="`[现货] ${item.displaySymbol || item.symbol}（${item.symbol} · ID ${item.symbolId}）`"
+                :label="`[${categoryTypeLabel(item.categoryType)} · 现货] ${item.displaySymbol || item.symbol}（${item.symbol} · ID ${item.symbolId}）`"
               />
             </el-select>
           </el-form-item>

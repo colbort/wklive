@@ -13,6 +13,7 @@ import type {
   TradeOrderSpot,
 } from '@/types/trade'
 import { formatAssetDecimalAmount } from '@/utils/assetAmount'
+import { marketCategoryTypeLabel } from '@/utils/marketCategory'
 
 const route = useRoute()
 const router = useRouter()
@@ -39,6 +40,7 @@ const orderNo = computed(() => String(route.params.orderNo || ''))
 const symbol = computed(() => String(route.query.symbol || '--'))
 const priceScale = computed(() => normalizeScale(route.query.priceScale, 8))
 const qtyScale = computed(() => normalizeScale(route.query.qtyScale, 8))
+const categoryType = computed(() => Number(route.query.categoryType || 0))
 
 function normalizeScale(value: unknown, fallback: number) {
   const scale = Number(value)
@@ -157,13 +159,18 @@ function statusClass(value: TradeOrder) {
 }
 
 function productText(value: TradeOrder) {
-  if (value.productType === 1) return t('trade.marketModeSpot')
-  if (value.productType === 3) return t('trade.marketModeSeconds')
-  const kind =
-    value.contractType === 2 ? t('trade.contractDelivery') : t('trade.contractPerpetual')
-  const valueType =
-    value.contractValueType === 2 ? t('trade.contractInverse') : t('trade.contractLinear')
-  return `${kind} · ${valueType}`
+  const category = marketCategoryTypeLabel(categoryType.value)
+  let product = ''
+  if (value.productType === 1) product = t('trade.marketModeSpot')
+  else if (value.productType === 3) product = t('trade.marketModeSeconds')
+  else {
+    const kind =
+      value.contractType === 2 ? t('trade.contractDelivery') : t('trade.contractPerpetual')
+    const valueType =
+      value.contractValueType === 2 ? t('trade.contractInverse') : t('trade.contractLinear')
+    product = `${kind} · ${valueType}`
+  }
+  return category ? `${category} · ${product}` : product
 }
 
 function sideText(value: TradeOrder) {

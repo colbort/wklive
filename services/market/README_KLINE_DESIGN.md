@@ -509,8 +509,9 @@ App `SubscribeStream` 每 5 秒从 Redis `MGET`，当前服务端会重复推送
 - `GapRepairService` 按 `gapScanIntervalMinutes` 周期扫描活跃产品的 MongoDB `1m`；每个产品每轮最多读取 2000 根，并将分页游标保存到 `market:v1:kline:gap_scan:{productId}`，多轮后覆盖完整历史；
 - scanner 扫描到当前最后一个已闭合分钟，并使用市场时区、Session、周末和 Holiday 过滤非交易分钟；它不再跳过最近校准窗口，因此不依赖外部五分钟任务才能补最近缺口；非 crypto 市场没有日历或 Session 时保守跳过，避免把夜间休市误判为缺口；
 - 缺口任务持久化到 Redis ZSet `market:v1:kline:repair:queue` 和 Hash `market:v1:kline:repair:jobs`，多实例通过 Lua 原子领取；
-- repair worker 每批最多处理 `repairBatchSize` 个任务，使用单产品 `/kline?et=` 定点向后分页，只写缺口范围，并通过历史低优先级派生队列传播到高周期；
+- repair worker 每批最多处理 `repairBatchSize` 个任务，先从 MongoDB 重新计算任务区间内仍缺失的连续分钟段，再使用单产品 `/kline?et=` 分段定点回补，避免重试时重复拉取已修复的长区间；只写缺口范围，并通过历史低优先级派生队列传播到高周期；
 - repair 在请求 REST 前先查询 MongoDB，已被其他重叠任务或五分钟校准补齐的旧任务会直接清理；REST 写入后再次确认区间内每个应交易分钟都已存在；空响应或部分回补按分钟级指数退避重试，连续 5 次仍无法补齐时移入 Redis Hash `market:v1:kline:repair:dead`，scanner 不再重复创建同一任务；验证成功的任务保存 30 天完成标记。
+- 当 iTick 的 `crypto / BA / Binance` 历史接口本身缺少分钟数据时，repair 只对 MongoDB 中仍缺失的连续分钟段查询 Binance Spot Kline 公共接口；数据以 `exchange-rest` 来源写入，优先级低于 iTick `rest`，后续 iTick 修正可覆盖。其他分类或交易所不跨源补值，也不合成虚假平盘 K 线。
 
 仍需完善：
 

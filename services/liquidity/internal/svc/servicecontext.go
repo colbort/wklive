@@ -31,6 +31,7 @@ type ServiceContext struct {
 	RiskEventModel         models.TLiquidityRiskEventModel
 	ReconcileBatchModel    models.TLiquidityReconcileBatchModel
 	ReconcileDetailModel   models.TLiquidityReconcileDetailModel
+	MarketQuoteSourceModel models.MarketQuoteSourceModel
 	EventInboxModel        models.TLiquidityEventInboxModel
 	EventOutboxModel       models.TLiquidityEventOutboxModel
 	TradeClient            trade.TradeClient
@@ -73,6 +74,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		RiskEventModel:         models.NewTLiquidityRiskEventModel(conn, c.CacheRedis),
 		ReconcileBatchModel:    models.NewTLiquidityReconcileBatchModel(conn, c.CacheRedis),
 		ReconcileDetailModel:   models.NewTLiquidityReconcileDetailModel(conn, c.CacheRedis),
+		MarketQuoteSourceModel: models.NewMarketQuoteSourceModel(conn),
 		EventInboxModel:        models.NewTLiquidityEventInboxModel(conn, c.CacheRedis),
 		EventOutboxModel:       models.NewTLiquidityEventOutboxModel(conn, c.CacheRedis),
 		TradeClient:            trade.NewTradeClient(tradeClient.Conn()),

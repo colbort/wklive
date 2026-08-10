@@ -108,8 +108,14 @@ const quoteLimitHintType = computed(() => {
 watch(selectedSymbol, (symbol) => {
   if (!symbol) return;
   form.externalSymbol = symbol.symbol;
-  form.referencePriceSource = `crypto:BA:${symbol.symbol}`;
+  form.referencePriceSource = symbol.referencePriceSource || "";
+  form.referencePriceKind =
+    symbol.productType === 1 && symbol.categoryType !== 2 ? "FINAL_QUOTE" : "MARK";
 });
+
+function categoryTypeLabel(value: number) {
+  return ["未知", "外汇", "加密货币", "股票", "期货", "指数", "基金"][value] || "未知";
+}
 
 function providerLabel(item: ConfigProviderOption) {
   const user = item.tradeUserId ? ` / 用户 ${item.tradeUserId}` : "";
@@ -360,13 +366,13 @@ onMounted(load);
             {{ ["未知", "现货", "合约", "秒合约"][row.productType] }}
           </template>
         </el-table-column>
-        <el-table-column label="流动性模式" min-width="190">
+        <el-table-column label="流动性模式" min-width="120">
           <template #default="{ row }">{{ mode(row.liquidityMode) }}</template>
         </el-table-column>
         <el-table-column
           prop="referencePriceSource"
           label="参考价格源"
-          width="150"
+          width="180"
         />
         <el-table-column label="点差(BPS)" width="120">
           <template #default="{ row }">
@@ -473,7 +479,7 @@ onMounted(load);
                 :key="item.symbolId"
                 :value="item.symbolId"
                 :label="
-                  `[${symbolTypeLabel(item.productType, item.contractType, item.contractValueType)}] ${item.displaySymbol || item.symbol}（${item.symbol} · ID ${item.symbolId}）`
+                  `[${categoryTypeLabel(item.categoryType)} · ${symbolTypeLabel(item.productType, item.contractType, item.contractValueType)}] ${item.displaySymbol || item.symbol}（${item.symbol} · ID ${item.symbolId}）`
                 "
               />
             </el-select>
@@ -543,14 +549,14 @@ onMounted(load);
         </el-col>
         <el-col :span="12">
           <el-form-item label="外部交易对">
-            <el-input v-model="form.externalSymbol" placeholder="BTCUSDT" />
+            <el-input v-model="form.externalSymbol" placeholder="例如 USDCNY / BTCUSDT" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="参考价格源">
             <el-input
               v-model="form.referencePriceSource"
-              placeholder="crypto:BA:BTCUSDT"
+              placeholder="例如 forex:GB:USDCNY"
             />
           </el-form-item>
         </el-col>

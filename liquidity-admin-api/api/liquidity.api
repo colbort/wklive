@@ -96,6 +96,8 @@ type ConfigSymbolOption {
 	contractType      int32  `json:"contractType"`
 	walletType        int32  `json:"walletType"`
 	contractValueType int32  `json:"contractValueType"`
+	categoryType      int64  `json:"categoryType"`
+	referencePriceSource string `json:"referencePriceSource"`
 }
 
 type ConfigProviderOption {

@@ -53,6 +53,8 @@ export interface ConfigSymbolOption {
   contractType: number;
   walletType: number;
   contractValueType: number;
+  categoryType: number;
+  referencePriceSource: string;
 }
 
 export interface ConfigProviderOption {

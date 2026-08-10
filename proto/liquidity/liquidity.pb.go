@@ -111,16 +111,18 @@ func (x *GetConfigOptionsReq) GetKeyword() string {
 }
 
 type ConfigSymbolOption struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	SymbolId          int64                  `protobuf:"varint,1,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
-	Symbol            string                 `protobuf:"bytes,2,opt,name=symbol,proto3" json:"symbol,omitempty"`
-	DisplaySymbol     string                 `protobuf:"bytes,3,opt,name=display_symbol,json=displaySymbol,proto3" json:"display_symbol,omitempty"`
-	ProductType       common.ProductType     `protobuf:"varint,4,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
-	ContractType      common.ContractType    `protobuf:"varint,5,opt,name=contract_type,json=contractType,proto3,enum=common.ContractType" json:"contract_type,omitempty"`
-	WalletType        common.WalletType      `protobuf:"varint,6,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`
-	ContractValueType int32                  `protobuf:"varint,7,opt,name=contract_value_type,json=contractValueType,proto3" json:"contract_value_type,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	SymbolId             int64                  `protobuf:"varint,1,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
+	Symbol               string                 `protobuf:"bytes,2,opt,name=symbol,proto3" json:"symbol,omitempty"`
+	DisplaySymbol        string                 `protobuf:"bytes,3,opt,name=display_symbol,json=displaySymbol,proto3" json:"display_symbol,omitempty"`
+	ProductType          common.ProductType     `protobuf:"varint,4,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
+	ContractType         common.ContractType    `protobuf:"varint,5,opt,name=contract_type,json=contractType,proto3,enum=common.ContractType" json:"contract_type,omitempty"`
+	WalletType           common.WalletType      `protobuf:"varint,6,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"`
+	ContractValueType    int32                  `protobuf:"varint,7,opt,name=contract_value_type,json=contractValueType,proto3" json:"contract_value_type,omitempty"`
+	CategoryType         int64                  `protobuf:"varint,8,opt,name=category_type,json=categoryType,proto3" json:"category_type,omitempty"`
+	ReferencePriceSource string                 `protobuf:"bytes,9,opt,name=reference_price_source,json=referencePriceSource,proto3" json:"reference_price_source,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *ConfigSymbolOption) Reset() {
@@ -200,6 +202,20 @@ func (x *ConfigSymbolOption) GetContractValueType() int32 {
 		return x.ContractValueType
 	}
 	return 0
+}
+
+func (x *ConfigSymbolOption) GetCategoryType() int64 {
+	if x != nil {
+		return x.CategoryType
+	}
+	return 0
+}
+
+func (x *ConfigSymbolOption) GetReferencePriceSource() string {
+	if x != nil {
+		return x.ReferencePriceSource
+	}
+	return ""
 }
 
 type ConfigProviderOption struct {
@@ -4775,7 +4791,7 @@ const file_proto_liquidity_liquidity_proto_rawDesc = "" +
 	"CommonResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"/\n" +
 	"\x13GetConfigOptionsReq\x12\x18\n" +
-	"\akeyword\x18\x01 \x01(\tR\akeyword\"\xc8\x02\n" +
+	"\akeyword\x18\x01 \x01(\tR\akeyword\"\xa3\x03\n" +
 	"\x12ConfigSymbolOption\x12\x1b\n" +
 	"\tsymbol_id\x18\x01 \x01(\x03R\bsymbolId\x12\x16\n" +
 	"\x06symbol\x18\x02 \x01(\tR\x06symbol\x12%\n" +
@@ -4784,7 +4800,9 @@ const file_proto_liquidity_liquidity_proto_rawDesc = "" +
 	"\rcontract_type\x18\x05 \x01(\x0e2\x14.common.ContractTypeR\fcontractType\x123\n" +
 	"\vwallet_type\x18\x06 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12.\n" +
-	"\x13contract_value_type\x18\a \x01(\x05R\x11contractValueType\"\x96\x02\n" +
+	"\x13contract_value_type\x18\a \x01(\x05R\x11contractValueType\x12#\n" +
+	"\rcategory_type\x18\b \x01(\x03R\fcategoryType\x124\n" +
+	"\x16reference_price_source\x18\t \x01(\tR\x14referencePriceSource\"\x96\x02\n" +
 	"\x14ConfigProviderOption\x12\x1f\n" +
 	"\vprovider_id\x18\x01 \x01(\x03R\n" +
 	"providerId\x12#\n" +

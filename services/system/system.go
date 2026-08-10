@@ -3,7 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"strings"
+	"time"
 
 	pb "wklive/proto/system"
 	"wklive/services/system/internal/bootstrap"
@@ -45,8 +47,8 @@ func main() {
 	ctx := svc.NewServiceContext(c)
 
 	// 加载定时任务
-	if err := bootstrap.LoadJobs(ctx); err != nil {
-		logx.Errorf("load cron jobs failed: %v", err)
+	if err := bootstrap.LoadJobsWithRetry(ctx, 30, time.Second); err != nil {
+		log.Fatalf("load cron jobs failed: %v", err)
 	}
 
 	server := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {

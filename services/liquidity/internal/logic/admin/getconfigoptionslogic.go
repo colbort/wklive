@@ -101,10 +101,32 @@ func (l *GetConfigOptionsLogic) GetConfigOptions(in *liquidity.GetConfigOptionsR
 		if isSpot {
 			walletType = common.WalletType_WALLET_TYPE_SPOT
 		}
+		referencePriceSource := ""
+		if l.svcCtx.MarketQuoteSourceModel != nil {
+			source, sourceErr := l.svcCtx.MarketQuoteSourceModel.FindEnabledTenantProduct(
+				l.ctx,
+				symbol.TenantId,
+				symbol.CategoryType,
+				symbol.Symbol,
+			)
+			if sourceErr == nil {
+				referencePriceSource = source.Source()
+			} else {
+				l.Errorf(
+					"resolve liquidity reference price source failed: tenantId=%d, symbolId=%d, categoryType=%d, symbol=%s, err=%v",
+					symbol.TenantId,
+					symbol.Id,
+					symbol.CategoryType,
+					symbol.Symbol,
+					sourceErr,
+				)
+			}
+		}
 		resp.Symbols = append(resp.Symbols, &liquidity.ConfigSymbolOption{
 			SymbolId: symbol.Id, Symbol: symbol.Symbol, DisplaySymbol: symbol.DisplaySymbol,
 			ProductType: symbol.ProductType, ContractType: symbol.ContractType, WalletType: walletType,
-			ContractValueType: int32(symbol.ContractValueType),
+			ContractValueType: int32(symbol.ContractValueType), CategoryType: symbol.CategoryType,
+			ReferencePriceSource: referencePriceSource,
 		})
 	}
 	for _, provider := range providerRows {

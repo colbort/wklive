@@ -290,15 +290,24 @@ func (s *GapRepairService) repair(apiURL, token string, job *GapRepairJob) {
 		return
 	}
 
-	klineJob := KlineJob{ApiUrl: apiURL, Token: token, Category: job.Category, Market: job.Market,
-		Symbol: job.Symbol, KType: reconcileKType}
-	result, err := s.worker.syncBackwardAfter(klineJob, "1m", job.EndTs, job.StartTs-minuteMs, 500)
+	result, err := s.repairMissingFromITick(apiURL, token, job)
 	if err == nil {
 		err = s.verifyGapComplete(job)
 	}
 	if err == nil {
 		s.completeRepair(job, result.NewCount, "REST repair")
 		return
+	}
+	if supportsExchangeKlineFallback(job) {
+		fallbackCount, fallbackErr := s.repairMissingFromExchange(job)
+		if fallbackErr == nil {
+			fallbackErr = s.verifyGapComplete(job)
+		}
+		if fallbackErr == nil {
+			s.completeRepair(job, result.NewCount+fallbackCount, "REST repair with exchange fallback")
+			return
+		}
+		err = fmt.Errorf("iTick repair: %v; exchange fallback: %w", err, fallbackErr)
 	}
 	job.Attempts++
 	if job.Attempts >= gapMaxAttempts {
@@ -314,6 +323,24 @@ func (s *GapRepairService) repair(apiURL, token string, job *GapRepairJob) {
 	logx.Errorf("repair historical kline gap failed, id=%s category=%s market=%s exchange=%s symbol=%s start=%s end=%s fetched=%d attempts=%d retry=%s err=%v",
 		job.ID, job.Category, job.Market, job.Exchange, job.Symbol,
 		formatRepairTs(job.StartTs), formatRepairTs(job.EndTs), result.NewCount, job.Attempts, delay, err)
+}
+
+func (s *GapRepairService) repairMissingFromITick(apiURL, token string, job *GapRepairJob) (SyncResult, error) {
+	var result SyncResult
+	ranges, err := s.findMissingTradingRanges(job)
+	if err != nil {
+		return result, err
+	}
+	klineJob := KlineJob{ApiUrl: apiURL, Token: token, Category: job.Category, Market: job.Market,
+		Symbol: job.Symbol, KType: reconcileKType}
+	for _, missing := range ranges {
+		partial, repairErr := s.worker.syncBackwardAfter(klineJob, "1m", missing.end, missing.start-minuteMs, 500)
+		result.NewCount += partial.NewCount
+		if repairErr != nil {
+			return result, repairErr
+		}
+	}
+	return result, nil
 }
 
 func (s *GapRepairService) deadLetter(job *GapRepairJob, repairErr error) {

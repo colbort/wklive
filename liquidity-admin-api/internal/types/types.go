@@ -32,13 +32,15 @@ type ConfigProviderOption struct {
 }
 
 type ConfigSymbolOption struct {
-	SymbolId          int64  `json:"symbolId"`
-	Symbol            string `json:"symbol"`
-	DisplaySymbol     string `json:"displaySymbol"`
-	ProductType       int32  `json:"productType"`
-	ContractType      int32  `json:"contractType"`
-	WalletType        int32  `json:"walletType"`
-	ContractValueType int32  `json:"contractValueType"`
+	SymbolId             int64  `json:"symbolId"`
+	Symbol               string `json:"symbol"`
+	DisplaySymbol        string `json:"displaySymbol"`
+	ProductType          int32  `json:"productType"`
+	ContractType         int32  `json:"contractType"`
+	WalletType           int32  `json:"walletType"`
+	ContractValueType    int32  `json:"contractValueType"`
+	CategoryType         int64  `json:"categoryType"`
+	ReferencePriceSource string `json:"referencePriceSource"`
 }
 
 type ConfigTradingUserOption struct {

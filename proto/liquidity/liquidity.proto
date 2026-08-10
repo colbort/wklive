@@ -67,6 +67,8 @@ message ConfigSymbolOption {
   common.ContractType contract_type = 5;
   common.WalletType wallet_type = 6;
   int32 contract_value_type = 7;
+  int64 category_type = 8;
+  string reference_price_source = 9;
 }
 
 message ConfigProviderOption {

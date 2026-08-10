@@ -68,13 +68,19 @@ func (m *CoinKline) Normalize() {
 const (
 	KlineSourceRealtime = "realtime"
 	KlineSourceDerived  = "derived"
-	KlineSourceRest     = "rest"
+	// KlineSourceExchangeRest identifies a direct exchange REST fallback. It is
+	// intentionally lower priority than the configured iTick REST source so a
+	// later upstream correction can replace it.
+	KlineSourceExchangeRest = "exchange-rest"
+	KlineSourceRest         = "rest"
 )
 
 func KlineSourcePriority(source string) int32 {
 	switch strings.ToLower(strings.TrimSpace(source)) {
 	case KlineSourceRest:
 		return 300
+	case KlineSourceExchangeRest:
+		return 250
 	case KlineSourceDerived:
 		return 200
 	case KlineSourceRealtime:

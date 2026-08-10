@@ -72,6 +72,7 @@ type ServiceContext struct {
 	MarketClient                 market.MarketClient
 	MarketDataCache              *cache.MarketDataCache
 	TradeMarketSnapshotModel     models.TTradeMarketSnapshotModel
+	MarketQuoteSourceModel       models.MarketQuoteSourceModel
 	DelayQueue                   *delayqueue.Queue
 }
 
@@ -142,6 +143,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		MarketClient:                 market.NewMarketClient(marketCli.Conn()),
 		MarketDataCache:              cache.NewMarketDataCache(marketRedis),
 		TradeMarketSnapshotModel:     models.NewTTradeMarketSnapshotModel(conn, c.CacheRedis),
+		MarketQuoteSourceModel:       models.NewMarketQuoteSourceModel(conn),
 		DelayQueue:                   delayQueue,
 	}
 }

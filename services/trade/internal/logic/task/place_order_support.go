@@ -982,5 +982,24 @@ func (l *PlaceOrderLogic) spotReferencePriceSource(symbol *models.TTradeSymbol) 
 			}
 		}
 	}
+	if l.svcCtx.MarketQuoteSourceModel != nil {
+		quoteSource, sourceErr := l.svcCtx.MarketQuoteSourceModel.FindEnabledTenantProduct(
+			l.ctx,
+			symbol.TenantId,
+			symbol.CategoryType,
+			symbol.Symbol,
+		)
+		if sourceErr == nil {
+			return quoteSource.Source()
+		}
+		l.Errorf(
+			"resolve spot reference price source failed: tenantId=%d, symbolId=%d, categoryType=%d, symbol=%s, err=%v",
+			symbol.TenantId,
+			symbol.Id,
+			symbol.CategoryType,
+			symbol.Symbol,
+			sourceErr,
+		)
+	}
 	return ""
 }
