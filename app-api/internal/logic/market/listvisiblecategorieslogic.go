@@ -30,7 +30,12 @@ func NewListVisibleCategoriesLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *ListVisibleCategoriesLogic) ListVisibleCategories(req *types.ListVisibleCategoriesReq) (resp *types.ListVisibleCategoriesResp, err error) {
-	return logicutil.Proxy[types.ListVisibleCategoriesResp](l.ctx, &market.ListVisibleCategoriesReq{
+	ctx := l.ctx
+	if resolvedCtx, resolveErr := resolveTenantContext(l.ctx, l.svcCtx); resolveErr == nil {
+		ctx = resolvedCtx
+	}
+
+	return logicutil.Proxy[types.ListVisibleCategoriesResp](ctx, &market.ListVisibleCategoriesReq{
 		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,

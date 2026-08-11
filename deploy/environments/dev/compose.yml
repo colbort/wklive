@@ -15,6 +15,10 @@ services:
       - "2379:2379"
 
   mysql:
+    command: !override
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+      - --binlog-expire-logs-seconds=${DEV_MYSQL_BINLOG_EXPIRE_LOGS_SECONDS:-86400}
     ports:
       - "3306:3306"
 

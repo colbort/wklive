@@ -1991,12 +1991,13 @@ function markUpload(type: IdentityFileKey) {
 
 @media (min-width: 0) {
   .register-page {
-    padding: 14px 22px 28px;
+    padding: 0 22px 28px;
   }
 
   .register-topbar {
-    margin: -14px -22px 0;
-    padding: 14px 22px 8px;
+    margin: 0 -22px;
+    min-height: 58px;
+    padding: 0 22px;
   }
 
   .icon-button {

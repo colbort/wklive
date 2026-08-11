@@ -576,13 +576,14 @@ function submitReset() {
 
 @media (min-width: 0) {
   .auth-page {
-    padding: 16px 22px 28px;
+    padding: 0 22px 28px;
     background: var(--page-bg);
   }
 
   .auth-topbar {
-    margin: -16px -22px 0;
-    padding: 16px 22px 6px;
+    margin: 0 -22px;
+    min-height: 58px;
+    padding: 0 22px;
     background: var(--page-bg);
   }
 

@@ -30,7 +30,12 @@ func NewListVisibleProductsLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *ListVisibleProductsLogic) ListVisibleProducts(req *types.ListVisibleProductsReq) (resp *types.ListVisibleProductsResp, err error) {
-	return logicutil.Proxy[types.ListVisibleProductsResp](l.ctx, &market.ListVisibleProductsReq{
+	ctx := l.ctx
+	if resolvedCtx, resolveErr := resolveTenantContext(l.ctx, l.svcCtx); resolveErr == nil {
+		ctx = resolvedCtx
+	}
+
+	return logicutil.Proxy[types.ListVisibleProductsResp](ctx, &market.ListVisibleProductsReq{
 		CategoryType: market.CategoryType(req.CategoryType),
 		Market:       req.Market,
 		Keyword:      req.Keyword,

@@ -87,7 +87,7 @@ const CATEGORY_CONFIGS: Record<TradeCategoryCode, TradeCategoryConfig> = {
   stock: {
     code: 'stock',
     preferredModes: SPOT_FIRST_MODES,
-    showDepthPreview: false,
+    showDepthPreview: true,
     showPremarket: true,
     showProductSubtitle: true,
   },

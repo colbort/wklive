@@ -224,6 +224,11 @@ DOCKER_READINESS_MIN_FREE_KB=3145728 ./deploy.sh contract-readiness
 `com.docker.compose.project=wklive` 标签且已经悬空的旧镜像，不删除在用镜像、
 容器或 Volume。首次冷部署尚无运行容器时会明确跳过虚拟盘预检。
 
+开发环境的 MySQL binlog 默认只保留 1 天，避免长期开发后占满 Docker 虚拟盘。
+可通过 `DEV_MYSQL_BINLOG_EXPIRE_LOGS_SECONDS` 调整秒数；修改后执行
+`./deploy.sh start mysql` 让 Compose 重建 MySQL 容器。命名 Volume 不变，因此不会
+删除表数据，但过期 binlog 将不再可用于时间点恢复。
+
 已经记录的迁移文件不允许修改；校验和发生变化时初始化会失败，必须新增迁移文件。
 对于没有 `schema_migrations` 的既有数据库，初始化器会将仓库当前迁移记录为基线，
 不会盲目重复执行可能已经落库的 `ALTER TABLE`。

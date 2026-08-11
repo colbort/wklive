@@ -2054,12 +2054,13 @@ async function connectTronWallet(selectedProvider?: TronLinkProvider | null) {
 
 @media (min-width: 0) {
   .auth-page {
-    padding: 14px 22px 28px;
+    padding: 0 22px 28px;
   }
 
   .auth-topbar {
-    margin: -14px -22px 0;
-    padding: 14px 22px 4px;
+    margin: 0 -22px;
+    min-height: 58px;
+    padding: 0 22px;
   }
 
   .icon-button {
