@@ -320,6 +320,11 @@ function onRightClick() {
   bottom: 0;
 }
 
+.fixed-body-scroll .content {
+  height: 100%;
+  min-height: 0;
+}
+
 /* 默认 tabbar */
 .header-bar {
   width: 100%;

@@ -78,20 +78,23 @@ async function loadChatToken() {
 
 <style scoped>
 .customer-service-page {
-  min-height: calc(100vh - 58px);
+  height: 100%;
+  min-height: 0;
+  padding-bottom: var(--safe-area-bottom);
   background: #eef3f8;
 }
 
 .customer-service-page__frame {
   display: block;
   width: 100%;
-  height: calc(100vh - 58px);
+  height: 100%;
   border: 0;
   background: #fff;
 }
 
 .customer-service-page__empty {
-  min-height: calc(100vh - 58px);
+  height: 100%;
+  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
