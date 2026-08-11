@@ -438,6 +438,7 @@ export type TradeSymbol = {
   id: number // 主键ID
   tenantId: number // 租户ID
   categoryType: number // Market分类：1外汇 2加密货币 3股票 4期货 5指数 6基金
+  market: string // 行情市场代码，例如BA、SH、HK、US
   symbol: string // 交易对编码
   displaySymbol: string // 展示名称
   productType: number
@@ -1018,6 +1019,7 @@ export type GetSymbolListAdminReq = {
   status?: number // 状态
   keyword?: string // 关键字
   categoryType?: number
+  market?: string
 }
 
 export type GetSymbolDetailAdminReq = {

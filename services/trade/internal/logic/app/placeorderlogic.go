@@ -1002,8 +1002,8 @@ func (l *PlaceOrderLogic) bestOppositePrice(tenantID int64, symbol *models.TTrad
 }
 
 func (l *PlaceOrderLogic) spotReferencePriceSource(symbol *models.TTradeSymbol) string {
-	secondsSymbol, err := l.svcCtx.TradeSymbolModel.FindOneByTenantIdSymbolProductTypeContractTypeContractValueType(
-		l.ctx, symbol.TenantId, symbol.Symbol, int64(common.ProductType_PRODUCT_TYPE_SECONDS), 0, 0,
+	secondsSymbol, err := l.svcCtx.TradeSymbolModel.FindOneByTenantIdCategoryTypeMarketSymbolProductTypeContractTypeContractValueType(
+		l.ctx, symbol.TenantId, symbol.CategoryType, symbol.Market, symbol.Symbol, int64(common.ProductType_PRODUCT_TYPE_SECONDS), 0, 0,
 	)
 	if err == nil {
 		configs, configErr := l.svcCtx.TradeSymbolSecondsModel.FindAllByTenantIdSymbolId(l.ctx, symbol.TenantId, secondsSymbol.Id)
@@ -1019,8 +1019,8 @@ func (l *PlaceOrderLogic) spotReferencePriceSource(symbol *models.TTradeSymbol) 
 		}
 	}
 	for _, variant := range [][2]int64{{1, 1}, {1, 2}, {2, 1}, {2, 2}} {
-		contractSymbol, findErr := l.svcCtx.TradeSymbolModel.FindOneByTenantIdSymbolProductTypeContractTypeContractValueType(
-			l.ctx, symbol.TenantId, symbol.Symbol, int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE), variant[0], variant[1],
+		contractSymbol, findErr := l.svcCtx.TradeSymbolModel.FindOneByTenantIdCategoryTypeMarketSymbolProductTypeContractTypeContractValueType(
+			l.ctx, symbol.TenantId, symbol.CategoryType, symbol.Market, symbol.Symbol, int64(common.ProductType_PRODUCT_TYPE_DERIVATIVE), variant[0], variant[1],
 		)
 		if findErr != nil {
 			continue
@@ -1037,6 +1037,7 @@ func (l *PlaceOrderLogic) spotReferencePriceSource(symbol *models.TTradeSymbol) 
 			l.ctx,
 			symbol.TenantId,
 			symbol.CategoryType,
+			symbol.Market,
 			symbol.Symbol,
 		)
 		if sourceErr == nil {

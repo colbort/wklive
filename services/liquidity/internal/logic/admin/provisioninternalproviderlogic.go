@@ -66,6 +66,7 @@ func (l *ProvisionInternalProviderLogic) ProvisionInternalProvider(in *liquidity
 	if symbol.ProductType != common.ProductType_PRODUCT_TYPE_SPOT {
 		return nil, fmt.Errorf("account provisioning currently supports spot symbols")
 	}
+	walletType := walletTypeForLiquidity(symbol.ProductType, symbol.CategoryType)
 	account, err := l.svcCtx.UserClient.CreateInternalTradingUser(l.ctx, &user.CreateInternalTradingUserReq{
 		TenantId: symbol.TenantId, AccountKey: "liquidity:" + code,
 		Nickname: name, Source: "LIQUIDITY_ADMIN", Remark: strings.TrimSpace(in.Remark),
@@ -85,7 +86,7 @@ func (l *ProvisionInternalProviderLogic) ProvisionInternalProvider(in *liquidity
 		bizNo := fmt.Sprintf("LQ-PROVISION-%s-%s", code, strings.ToUpper(balance.coin))
 		resp, addErr := l.svcCtx.AssetClient.AddAvailable(l.ctx, &asset.AddAvailableReq{
 			TenantId: symbol.TenantId, UserId: account.Data.UserId,
-			WalletType: common.WalletType_WALLET_TYPE_SPOT,
+			WalletType: walletType,
 			Coin:       strings.ToUpper(balance.coin), Amount: balance.amount,
 			BizType: asset.BizType_BIZ_TYPE_SYSTEM, SceneType: asset.SceneType_SCENE_TYPE_SYSTEM_ADJUST,
 			BizNo: bizNo, Remark: strings.TrimSpace(in.Remark),

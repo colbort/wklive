@@ -39,10 +39,12 @@ func (l *ListVisibleProductsLogic) ListVisibleProducts(in *market.ListVisiblePro
 		}, nil
 	}
 	items, total, err := l.svcCtx.MarketTenantProductModel.FindPage(l.ctx, models.TenantProductPageFilter{
-		TenantId:     tenantID,
-		CategoryType: int64(in.CategoryType),
-		Enabled:      1,
-		AppVisible:   1,
+		TenantId:          tenantID,
+		CategoryType:      int64(in.CategoryType),
+		Enabled:           1,
+		AppVisible:        1,
+		ProductEnabled:    1,
+		ProductAppVisible: 1,
 	}, in.Page.Cursor, in.Page.Limit)
 	if err != nil {
 		return nil, err

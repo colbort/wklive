@@ -186,12 +186,18 @@ func (l *ProcessFillSettlementsLogic) processInstruction(item *models.TTradeSett
 }
 
 func (l *ProcessFillSettlementsLogic) executeAssetInstruction(item *models.TTradeSettlementInstruction, fill *models.TTradeFill, order *models.TTradeOrder) error {
-	walletType := helpers.WalletTypeForProduct(common.ProductType(fill.ProductType))
+	symbol, err := l.svcCtx.TradeSymbolModel.FindOne(l.ctx, fill.SymbolId)
+	if err != nil {
+		return err
+	}
+	if symbol.TenantId != fill.TenantId {
+		return fmt.Errorf("settlement symbol does not match fill tenant")
+	}
+	walletType := helpers.WalletTypeForTrade(common.ProductType(fill.ProductType), symbol.CategoryType)
 	matchReq := func(scene asset.SceneType) (asset.BizType, asset.SceneType, int64, string) {
 		return asset.BizType_BIZ_TYPE_TRADE, scene, fill.Id, item.InstructionNo
 	}
 	var resp *asset.ChangeAssetResp
-	var err error
 	switch trade.SettlementInstructionAction(item.Action) {
 	case trade.SettlementInstructionAction_SETTLEMENT_INSTRUCTION_ACTION_CONSUME_FROZEN:
 		bizType, scene, bizID, bizNo := matchReq(asset.SceneType_SCENE_TYPE_TRADE_MATCH)

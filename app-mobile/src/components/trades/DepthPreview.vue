@@ -16,6 +16,7 @@ const props = defineProps<{
   selectedQuote: QuotePayload | null
   tickSnapshot: TickPayload[]
   placeholderPrice: string
+  quoteAsset: string
 }>()
 
 const { t } = useI18n()
@@ -59,8 +60,8 @@ function formatDepthVolume(level: DepthLevel) {
 <template>
   <aside class="order-book-preview">
     <header>
-      <span>{{ t('market.price') }}<br>(USDT)</span>
-      <span>{{ t('market.qty') }}<br>({{ selectedProduct?.baseCoin || 'BTC' }})</span>
+      <span>{{ t('market.price') }}<br>({{ quoteAsset || '--' }})</span>
+      <span>{{ t('market.qty') }}<br>({{ selectedProduct?.baseCoin || selectedProduct?.symbol || '--' }})</span>
     </header>
     <div class="depth-tools" aria-hidden="true">
       <i class="depth-tools__bid" />

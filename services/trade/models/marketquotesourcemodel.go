@@ -27,7 +27,7 @@ func (s *MarketQuoteSource) Source() string {
 }
 
 type MarketQuoteSourceModel interface {
-	FindEnabledTenantProduct(ctx context.Context, tenantID, categoryType int64, symbol string) (*MarketQuoteSource, error)
+	FindEnabledTenantProduct(ctx context.Context, tenantID, categoryType int64, market, symbol string) (*MarketQuoteSource, error)
 }
 
 type marketQuoteSourceModel struct {
@@ -38,13 +38,14 @@ func NewMarketQuoteSourceModel(conn sqlx.SqlConn) MarketQuoteSourceModel {
 	return &marketQuoteSourceModel{conn: conn}
 }
 
-func (m *marketQuoteSourceModel) FindEnabledTenantProduct(ctx context.Context, tenantID, categoryType int64, symbol string) (*MarketQuoteSource, error) {
+func (m *marketQuoteSourceModel) FindEnabledTenantProduct(ctx context.Context, tenantID, categoryType int64, market, symbol string) (*MarketQuoteSource, error) {
 	const query = `
 		SELECT p.category_code, p.market, p.symbol
 		FROM t_itick_tenant_product AS tp
 		JOIN t_itick_product AS p ON p.id = tp.product_id
 		WHERE tp.tenant_id = ?
 		  AND p.category_type = ?
+		  AND p.market = ?
 		  AND p.symbol = ?
 		  AND tp.enabled = 1
 		  AND p.enabled = 1
@@ -52,7 +53,7 @@ func (m *marketQuoteSourceModel) FindEnabledTenantProduct(ctx context.Context, t
 		LIMIT 1`
 
 	var source MarketQuoteSource
-	err := m.conn.QueryRowCtx(ctx, &source, query, tenantID, categoryType, strings.ToUpper(strings.TrimSpace(symbol)))
+	err := m.conn.QueryRowCtx(ctx, &source, query, tenantID, categoryType, strings.ToUpper(strings.TrimSpace(market)), strings.ToUpper(strings.TrimSpace(symbol)))
 	if err != nil {
 		return nil, err
 	}

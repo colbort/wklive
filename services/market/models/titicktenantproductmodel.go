@@ -14,10 +14,12 @@ var _ TItickTenantProductModel = (*customTItickTenantProductModel)(nil)
 
 type (
 	TenantProductPageFilter struct {
-		TenantId     int64
-		CategoryType int64
-		Enabled      int64
-		AppVisible   int64
+		TenantId          int64
+		CategoryType      int64
+		Enabled           int64
+		AppVisible        int64
+		ProductEnabled    int64
+		ProductAppVisible int64
 	}
 
 	// TItickTenantProductModel is an interface to be customized, add more methods here,
@@ -47,6 +49,8 @@ func (m *customTItickTenantProductModel) FindPage(ctx context.Context, filter Te
 	builder.EqInt64("p.category_type", filter.CategoryType)
 	builder.EqInt64("tp.enabled", filter.Enabled)
 	builder.EqInt64("tp.app_visible", filter.AppVisible)
+	builder.EqInt64("p.enabled", filter.ProductEnabled)
+	builder.EqInt64("p.app_visible", filter.ProductAppVisible)
 
 	where := builder.Where()
 	args := builder.Args()

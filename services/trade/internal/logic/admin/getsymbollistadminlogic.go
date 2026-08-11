@@ -33,6 +33,7 @@ func (l *GetSymbolListAdminLogic) GetSymbolListAdmin(in *trade.GetSymbolListAdmi
 	data, total, err := l.svcCtx.TradeSymbolModel.FindPage(l.ctx, models.TradeSymbolPageFilter{
 		TenantId:     in.TenantId,
 		CategoryType: in.CategoryType,
+		Market:       in.Market,
 		ProductType:  int64(in.ProductType),
 		Status:       int64(in.Status),
 		Keyword:      in.Keyword,

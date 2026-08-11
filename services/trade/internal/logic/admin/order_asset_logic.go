@@ -43,11 +43,12 @@ func freezeOrderAsset(
 	if order == nil || symbol == nil || frozenAsset == "" || !frozenAmount.IsPositive() {
 		return "", nil
 	}
+	walletType := helpers.WalletTypeForTrade(common.ProductType(order.ProductType), symbol.CategoryType)
 
 	resp, err := svcCtx.AssetClient.FreezeAsset(ctx, &asset.FreezeAssetReq{
 		TenantId:   order.TenantId,
 		UserId:     order.UserId,
-		WalletType: helpers.WalletTypeForProduct(common.ProductType(order.ProductType)),
+		WalletType: walletType,
 		Coin:       frozenAsset,
 		Amount:     frozenAmount.String(),
 		BizType:    asset.BizType_BIZ_TYPE_TRADE,

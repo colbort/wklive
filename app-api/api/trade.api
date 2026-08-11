@@ -6,6 +6,7 @@ type TradeSymbol {
 	id                int64  `json:"id"` // 主键ID
 	tenantId          int64  `json:"tenantId"` // 租户ID
 	categoryType      int64  `json:"categoryType"` // Market分类：1外汇 2加密货币 3股票 4期货 5指数 6基金
+	market            string `json:"market"` // 行情市场代码，例如BA、SH、HK、US
 	symbol            string `json:"symbol"` // 交易对编码
 	displaySymbol     string `json:"displaySymbol"` // 展示名称
 	productType       int64  `json:"productType"`
@@ -336,6 +337,7 @@ type GetSymbolListReq {
 	productType int64 `form:"productType,optional"`
 	status      int64 `form:"status,optional"` // 状态
 	categoryType int64 `form:"categoryType,optional"`
+	market string `form:"market,optional"`
 }
 
 type GetSymbolListResp {

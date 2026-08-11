@@ -278,7 +278,7 @@ func evaluateSpotPositionLimits(
 	resp, err := svcCtx.AssetClient.GetAssetBalance(ctx, &asset.GetUserAssetDetailReq{
 		TenantId:   in.TenantId,
 		UserId:     in.UserId,
-		WalletType: common.WalletType_WALLET_TYPE_SPOT,
+		WalletType: WalletTypeForTrade(common.ProductType(symbol.ProductType), symbol.CategoryType),
 		Coin:       symbol.BaseAsset,
 	})
 	if err != nil {

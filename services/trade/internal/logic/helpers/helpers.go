@@ -12,6 +12,7 @@ import (
 	"wklive/common/conv"
 	"wklive/common/utils"
 	"wklive/proto/common"
+	marketpb "wklive/proto/market"
 	"wklive/proto/trade"
 	"wklive/services/trade/models"
 
@@ -57,6 +58,7 @@ func SymbolToProto(item *models.TTradeSymbol) *trade.TradeSymbol {
 		Id:                item.Id,
 		TenantId:          item.TenantId,
 		CategoryType:      item.CategoryType,
+		Market:            item.Market,
 		Symbol:            item.Symbol,
 		DisplaySymbol:     item.DisplaySymbol,
 		ProductType:       common.ProductType(item.ProductType),
@@ -1240,9 +1242,12 @@ func ShouldTriggerOrder(order *models.TTradeOrder, triggerPrice decimal.Decimal)
 	}
 }
 
-func WalletTypeForProduct(productType common.ProductType) common.WalletType {
+func WalletTypeForTrade(productType common.ProductType, categoryType int64) common.WalletType {
 	switch productType {
 	case common.ProductType_PRODUCT_TYPE_SPOT:
+		if categoryType == int64(marketpb.CategoryType_CATEGORY_TYPE_STOCK) {
+			return common.WalletType_WALLET_TYPE_FUNDING
+		}
 		return common.WalletType_WALLET_TYPE_SPOT
 	default:
 		return common.WalletType_WALLET_TYPE_CONTRACT

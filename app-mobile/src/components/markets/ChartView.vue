@@ -81,11 +81,8 @@ const selectedDisplaySymbol = computed(() => {
   const product = selectedProduct.value
   if (!product) return '--'
   if (product.displayName) return product.displayName
-  if (product.baseCoin && product.quoteCoin && product.symbol.endsWith('USDT'))
-    return `${product.baseCoin}/USDT`
-
-  const quote = product.quoteCoin || 'USDT'
-  if (product.symbol.toUpperCase().endsWith(quote.toUpperCase())) {
+  const quote = product.quoteCoin
+  if (quote && product.symbol.toUpperCase().endsWith(quote.toUpperCase())) {
     return `${product.symbol.slice(0, -quote.length)}/${quote}`
   }
 
@@ -703,7 +700,7 @@ function formatTime(ts: number) {
 
     <section v-else-if="activeDetailTab === 'depth'" class="depth-board">
       <header class="depth-board__head">
-        <span>{{ t('market.price') }}<br>({{ selectedProduct?.quoteCoin || 'USDT' }})</span>
+        <span>{{ t('market.price') }}<br>({{ selectedProduct?.quoteCoin || '--' }})</span>
         <span>{{ t('market.qty') }}<br>({{
           selectedProduct?.baseCoin || selectedProduct?.symbol || '--'
         }})</span>
@@ -745,7 +742,7 @@ function formatTime(ts: number) {
 
     <section v-else class="trade-board">
       <header class="trade-board__head">
-        <span>{{ t('market.price') }}({{ selectedProduct?.quoteCoin || 'USDT' }})</span>
+        <span>{{ t('market.price') }}({{ selectedProduct?.quoteCoin || '--' }})</span>
         <span>{{ t('market.qty') }}({{
           selectedProduct?.baseCoin || selectedProduct?.symbol || '--'
         }})</span>

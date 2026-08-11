@@ -129,7 +129,10 @@ function providerLabel(item: ConfigProviderOption) {
 }
 
 function walletLabel(value?: number) {
-  return value === 1 ? "现货钱包" : value === 3 ? "合约钱包" : "—";
+  if (value === 1) return "现货钱包";
+  if (value === 2) return "股票账户";
+  if (value === 3) return "合约钱包";
+  return "—";
 }
 
 function symbolTypeLabel(
@@ -330,6 +333,10 @@ const mode = (value: number) =>
 const status = (value: number) =>
   ["未知", "运行中", "已停用", "已暂停", "已熔断"][value] || "未知";
 
+const canStart = (value: number) => [2, 3, 4].includes(value);
+const canPause = (value: number) => value === 1;
+const canStop = (value: number) => [1, 3, 4].includes(value);
+
 onMounted(load);
 </script>
 
@@ -439,6 +446,7 @@ onMounted(load);
               v-if="auth.hasPerm('liquidity:strategy:start')"
               link
               type="success"
+              :disabled="!canStart(row.status)"
               @click="action(row, 'start')"
             >
               启动
@@ -447,6 +455,7 @@ onMounted(load);
               v-if="auth.hasPerm('liquidity:strategy:pause')"
               link
               type="warning"
+              :disabled="!canPause(row.status)"
               @click="action(row, 'pause')"
             >
               暂停
@@ -455,6 +464,7 @@ onMounted(load);
               v-if="auth.hasPerm('liquidity:strategy:stop')"
               link
               type="danger"
+              :disabled="!canStop(row.status)"
               @click="action(row, 'stop')"
             >
               停止

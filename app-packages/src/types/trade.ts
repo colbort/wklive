@@ -4,6 +4,7 @@ export interface TradeSymbol {
   id: number
   tenantId: number
   categoryType: number
+  market: string
   symbol: string
   displaySymbol: string
   productType: number
@@ -299,6 +300,7 @@ export interface GetSymbolListReq {
   productType?: number
   status?: number
   categoryType?: number
+  market?: string
 }
 
 export interface GetSymbolDetailReq {

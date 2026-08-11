@@ -164,11 +164,11 @@ INSERT INTO preprod_trade_instruments VALUES
 ('ETHUSDT','ETH',3,0,0,2,'ETH/USDT Seconds',23);
 
 INSERT INTO t_trade_symbol
-(tenant_id,symbol,display_symbol,product_type,base_asset,quote_asset,settle_asset,
+(tenant_id,category_type,market,symbol,display_symbol,product_type,base_asset,quote_asset,settle_asset,
  margin_asset,contract_type,contract_value_type,status,price_scale,qty_scale,
  min_price,max_price,price_tick,min_qty,max_qty,qty_step,min_notional,max_notional,
  listing_time,trading_start_time,trading_end_time,sort,remark,create_times,update_times)
-SELECT @preprod_tenant_id,instrument.symbol,instrument.display_symbol,
+SELECT @preprod_tenant_id,2,'BA',instrument.symbol,instrument.display_symbol,
        instrument.product_type,instrument.base_asset,'USDT','USDT',
        IF(instrument.product_type=2,'USDT',''),instrument.contract_type,
        instrument.contract_value_type,instrument.status,2,6,
@@ -183,6 +183,8 @@ SELECT @preprod_tenant_id,symbol_row.id,0.001,0.001,1,1,@preprod_now_ms,@preprod
 FROM preprod_trade_instruments instrument
 JOIN t_trade_symbol symbol_row
   ON symbol_row.tenant_id=@preprod_tenant_id
+ AND symbol_row.category_type=2
+ AND symbol_row.market='BA'
  AND symbol_row.symbol=instrument.symbol
  AND symbol_row.product_type=instrument.product_type
  AND symbol_row.contract_type=instrument.contract_type
@@ -213,6 +215,8 @@ SELECT @preprod_tenant_id,symbol_row.id,1,1,0.05,0.10,0.0002,0.0005,
 FROM preprod_trade_instruments instrument
 JOIN t_trade_symbol symbol_row
   ON symbol_row.tenant_id=@preprod_tenant_id
+ AND symbol_row.category_type=2
+ AND symbol_row.market='BA'
  AND symbol_row.symbol=instrument.symbol
  AND symbol_row.product_type=instrument.product_type
  AND symbol_row.contract_type=instrument.contract_type
@@ -232,6 +236,8 @@ SELECT @preprod_tenant_id,symbol_row.id,60,0.80,0,1,
 FROM preprod_trade_instruments instrument
 JOIN t_trade_symbol symbol_row
   ON symbol_row.tenant_id=@preprod_tenant_id
+ AND symbol_row.category_type=2
+ AND symbol_row.market='BA'
  AND symbol_row.symbol=instrument.symbol
  AND symbol_row.product_type=instrument.product_type
  AND symbol_row.contract_type=instrument.contract_type
@@ -247,6 +253,8 @@ FROM t_trade_symbol symbol_row
 JOIN (SELECT 1 day_no UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
       UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7) weekday
 WHERE symbol_row.tenant_id=@preprod_tenant_id
+  AND symbol_row.category_type=2
+  AND symbol_row.market='BA'
   AND symbol_row.symbol IN ('BTCUSDT','ETHUSDT')
   AND NOT EXISTS (
     SELECT 1 FROM t_trade_symbol_session session
@@ -261,6 +269,8 @@ SELECT @preprod_tenant_id,symbol_row.id,2,JSON_ARRAY(1,2,3,5,10),1,1,
        'PREPROD_BASELINE',@preprod_now_ms,@preprod_now_ms
 FROM t_trade_symbol symbol_row
 WHERE symbol_row.tenant_id=@preprod_tenant_id
+  AND symbol_row.category_type=2
+  AND symbol_row.market='BA'
   AND symbol_row.symbol IN ('BTCUSDT','ETHUSDT') AND symbol_row.product_type=2
 ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(t_trade_symbol_leverage_config.id);
 
@@ -269,6 +279,8 @@ INSERT INTO t_trade_symbol_leverage_default
 SELECT @preprod_tenant_id,symbol_row.id,2,3,@preprod_now_ms,@preprod_now_ms
 FROM t_trade_symbol symbol_row
 WHERE symbol_row.tenant_id=@preprod_tenant_id
+  AND symbol_row.category_type=2
+  AND symbol_row.market='BA'
   AND symbol_row.symbol IN ('BTCUSDT','ETHUSDT') AND symbol_row.product_type=2
 ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(t_trade_symbol_leverage_default.id);
 
@@ -280,6 +292,8 @@ SELECT @preprod_tenant_id,symbol_row.id,1,0,1000000,10,0.10,0.05,0,1,
        @preprod_now_ms,@preprod_now_ms
 FROM t_trade_symbol symbol_row
 WHERE symbol_row.tenant_id=@preprod_tenant_id
+  AND symbol_row.category_type=2
+  AND symbol_row.market='BA'
   AND symbol_row.symbol IN ('BTCUSDT','ETHUSDT') AND symbol_row.product_type=2
 ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(t_contract_risk_limit_tier.id);
 

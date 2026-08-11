@@ -153,18 +153,34 @@ func (w *SyncCategoryProductsWorker) syncMarketProducts(category *models.TItickC
 	if err != nil {
 		return err
 	}
+	if len(resp.Data) == 0 {
+		return fmt.Errorf("iTick returned no products for category=%s region=%s", category.CategoryCode, market)
+	}
+	syncStartedAt := cutils.NowMillis()
 	for _, item := range resp.Data {
+		baseCoin, quoteCoin := utils.DefaultProductAssets(category.CategoryCode, market, item.Code)
 		_, err := w.svcCtx.MarketProductModel.Upsert(w.ctx, &models.TItickProduct{
 			CategoryType: category.CategoryType, CategoryName: category.CategoryName, CategoryCode: category.CategoryCode,
 			Market: market, Symbol: item.Code, Code: item.Code, Name: item.Name, DisplayName: item.Name,
-			Exchange: item.Exchange, Sector: item.Sector, Lug: item.Lug, BaseCoin: "", QuoteCoin: "",
+			Exchange: item.Exchange, Sector: item.Sector, Lug: item.Lug, BaseCoin: baseCoin, QuoteCoin: quoteCoin,
 			Enabled: 1, AppVisible: 1, Sort: 0, Icon: "",
 			Remark:      fmt.Sprintf("同步自 iTick，分类：%s，地区：%s", category.CategoryCode, market),
-			CreateTimes: cutils.NowMillis(), UpdateTimes: cutils.NowMillis(),
+			CreateTimes: syncStartedAt, UpdateTimes: syncStartedAt,
 		})
 		if err != nil {
 			logx.Errorf("insert product failed, code=%s, err=%v", item.Code, err)
+			return err
 		}
+	}
+
+	result, err := w.svcCtx.MarketProductModel.DisableStaleSynced(
+		w.ctx, category.CategoryType, market, syncStartedAt, cutils.NowMillis(),
+	)
+	if err != nil {
+		return err
+	}
+	if affected, rowsErr := result.RowsAffected(); rowsErr == nil && affected > 0 {
+		logx.Infof("disabled stale iTick products, category=%s market=%s count=%d", category.CategoryCode, market, affected)
 	}
 	return nil
 }
@@ -188,7 +204,7 @@ type SymbolItem struct {
 // apiURL 例如: https://api.itick.org
 // token  : iTick token
 // category: stock/forex/indices/crypto/future/fund
-// market : HK/US/BA/GB/CN ...
+// market : HK/US/BA/GB/CN ... (sent to iTick as the region parameter)
 func (w *SyncCategoryProductsWorker) getSymbolList(ctx context.Context, apiURL, token, category, market string) (*SymbolListResponse, error) {
 	apiURL = strings.TrimSpace(apiURL)
 	token = strings.TrimSpace(token)
@@ -222,7 +238,7 @@ func (w *SyncCategoryProductsWorker) getSymbolList(ctx context.Context, apiURL, 
 
 	q := base.Query()
 	q.Set("type", category)
-	q.Set("market", market)
+	q.Set("region", market)
 
 	// iTick 文档里 code 是必填。
 	// 这里只做“按分类+地区”调用时，先给空字符串。

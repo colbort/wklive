@@ -97,10 +97,7 @@ func (l *GetConfigOptionsLogic) GetConfigOptions(in *liquidity.GetConfigOptionsR
 		if !isSpot && !isSupportedContract {
 			continue
 		}
-		walletType := common.WalletType_WALLET_TYPE_CONTRACT
-		if isSpot {
-			walletType = common.WalletType_WALLET_TYPE_SPOT
-		}
+		walletType := walletTypeForLiquidity(symbol.ProductType, symbol.CategoryType)
 		referencePriceSource := ""
 		if l.svcCtx.MarketQuoteSourceModel != nil {
 			source, sourceErr := l.svcCtx.MarketQuoteSourceModel.FindEnabledTenantProduct(

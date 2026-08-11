@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"wklive/common/conv"
 	"wklive/common/helper"
@@ -43,7 +44,15 @@ func (l *CreateSymbolLogic) CreateSymbol(in *trade.CreateSymbolReq) (*trade.Comm
 	if err := validation.SymbolTradingTimeline(in.ProductType, in.ContractType, in.ListingTime, in.TradingStartTime, in.TradingEndTime); err != nil {
 		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, err.Error())}, nil
 	}
-	exists, err := l.svcCtx.TradeSymbolModel.FindOneByTenantIdSymbolProductTypeContractTypeContractValueType(l.ctx, in.TenantId, in.Symbol, int64(in.ProductType), int64(in.ContractType), int64(in.ContractValueType))
+	market := strings.ToUpper(strings.TrimSpace(in.Market))
+	if market == "" {
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, "market is required")}, nil
+	}
+	symbol := strings.ToUpper(strings.TrimSpace(in.Symbol))
+	if symbol == "" {
+		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, "symbol is required")}, nil
+	}
+	exists, err := l.svcCtx.TradeSymbolModel.FindOneByTenantIdCategoryTypeMarketSymbolProductTypeContractTypeContractValueType(l.ctx, in.TenantId, in.CategoryType, market, symbol, int64(in.ProductType), int64(in.ContractType), int64(in.ContractValueType))
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}
@@ -54,7 +63,8 @@ func (l *CreateSymbolLogic) CreateSymbol(in *trade.CreateSymbolReq) (*trade.Comm
 	data := &models.TTradeSymbol{
 		TenantId:          in.TenantId,
 		CategoryType:      in.CategoryType,
-		Symbol:            in.Symbol,
+		Market:            market,
+		Symbol:            symbol,
 		DisplaySymbol:     in.DisplaySymbol,
 		ProductType:       int64(in.ProductType),
 		BaseAsset:         in.BaseAsset,

@@ -29,6 +29,10 @@
         </el-select>
       </el-form-item>
 
+      <el-form-item :label="t('market.market')">
+        <el-input v-model="query.market" clearable class="query-field" />
+      </el-form-item>
+
       <el-form-item :label="t('trade.status')">
         <el-select v-model="query.status" clearable class="query-field">
           <el-option
@@ -55,6 +59,10 @@
     <el-card shadow="never" class="table-card">
       <el-table v-loading="loading" :data="rows" stripe>
         <el-table-column prop="tenantId" :label="t('trade.tenantId')" width="100" />
+
+        <el-table-column prop="market" :label="t('market.market')" width="90">
+          <template #default="{ row }">{{ row.market || '-' }}</template>
+        </el-table-column>
 
         <el-table-column min-width="190" show-overflow-tooltip>
           <template #header>
@@ -227,6 +235,10 @@
 
           <el-form-item :label="t('trade.symbol')">
             <el-input v-model="symbolForm.symbol" :disabled="Boolean(symbolForm.id)" />
+          </el-form-item>
+
+          <el-form-item :label="t('market.market')">
+            <el-input v-model="symbolForm.market" :disabled="Boolean(symbolForm.id)" />
           </el-form-item>
 
           <el-form-item :label="t('trade.displaySymbol')">
@@ -1039,6 +1051,9 @@
         <el-descriptions-item :label="t('trade.symbol')">
           {{ detailData.symbol || '-' }}
         </el-descriptions-item>
+        <el-descriptions-item :label="t('market.market')">
+          {{ detailData.market || '-' }}
+        </el-descriptions-item>
         <el-descriptions-item :label="t('trade.displaySymbol')">
           {{ detailData.displaySymbol || '-' }}
         </el-descriptions-item>
@@ -1145,6 +1160,7 @@ type DatePickerValue = Date | string | number | null | undefined
 interface SymbolQuery {
   tenantId: number | undefined
   categoryType: number | undefined
+  market: string
   productType: number | undefined
   keyword: string
   status: number | undefined
@@ -1154,6 +1170,7 @@ interface SymbolForm {
   id: number
   tenantId: number
   categoryType: number
+  market: string
   symbol: string
   displaySymbol: string
   productType: number
@@ -1327,6 +1344,7 @@ const leverageValueFallbackOptions: OptionItem[] = [
 const query = reactive<SymbolQuery>({
   tenantId: undefined,
   categoryType: undefined,
+  market: '',
   productType: undefined,
   keyword: '',
   status: undefined,
@@ -1336,6 +1354,7 @@ const getDefaultSymbolForm = (): SymbolForm => ({
   id: 0,
   tenantId: 0,
   categoryType: 2,
+  market: 'BA',
   symbol: '',
   displaySymbol: '',
   productType: 1,
@@ -1840,6 +1859,7 @@ const loadList = async () => {
 const resetQuery = () => {
   query.tenantId = undefined
   query.categoryType = undefined
+  query.market = ''
   query.productType = undefined
   query.keyword = ''
   query.status = undefined
@@ -1860,6 +1880,11 @@ const openSymbolDialog = (row?: TradeSymbol) => {
 const submitSymbol = async () => {
   if (!categoryTypeFormOptions.value.some((item) => item.value === symbolForm.categoryType)) {
     ElMessage.warning(t('market.pleaseInputCategoryType'))
+    return
+  }
+  symbolForm.market = symbolForm.market.trim().toUpperCase()
+  if (!symbolForm.market) {
+    ElMessage.warning(t('market.pleaseInputMarket'))
     return
   }
   if (

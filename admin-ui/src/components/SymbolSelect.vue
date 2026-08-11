@@ -46,6 +46,7 @@
         @row-click="selectSymbol"
       >
         <el-table-column prop="id" :label="t('trade.symbolId')" width="90" />
+        <el-table-column prop="market" :label="t('market.market')" width="90" />
         <el-table-column prop="symbol" :label="t('trade.symbol')" min-width="140" />
         <el-table-column prop="displaySymbol" :label="t('trade.displaySymbol')" min-width="150" />
         <el-table-column prop="tenantId" :label="t('trade.tenantId')" width="100" />
@@ -111,7 +112,7 @@ const displayValue = computed(() => {
   if (!props.modelValue) return ''
   const symbol = selectedSymbol.value
   if (symbol && symbol.id === props.modelValue) {
-    return `${symbol.id} - ${symbol.displaySymbol || symbol.symbol}`
+    return `${symbol.id} - ${symbol.market || '-'} - ${symbol.displaySymbol || symbol.symbol}`
   }
   return String(props.modelValue)
 })

@@ -11,6 +11,11 @@ export const PRODUCT_TYPE_SPOT = 1
 export const PRODUCT_TYPE_DERIVATIVE = 2
 export const PRODUCT_TYPE_SECONDS = 3
 
+export const CATEGORY_TYPE_STOCK = 3
+export const WALLET_TYPE_CASH = 1
+export const WALLET_TYPE_STOCK = 2
+export const WALLET_TYPE_CONTRACT = 3
+
 export const CONTRACT_TYPE_PERPETUAL = 1
 export const CONTRACT_TYPE_DELIVERY = 2
 export const CONTRACT_VALUE_TYPE_LINEAR = 1
@@ -138,6 +143,14 @@ export function tradeExperienceForProductType(productType?: number): TradeExperi
   if (productType === PRODUCT_TYPE_DERIVATIVE) return 'contract'
   if (productType === PRODUCT_TYPE_SECONDS) return 'seconds'
   return 'spot'
+}
+
+export function walletTypeForTradeSymbol(
+  symbol: Pick<TradeSymbol, 'productType' | 'categoryType'> | null | undefined,
+) {
+  if (!symbol) return WALLET_TYPE_CASH
+  if (symbol.productType !== PRODUCT_TYPE_SPOT) return WALLET_TYPE_CONTRACT
+  return symbol.categoryType === CATEGORY_TYPE_STOCK ? WALLET_TYPE_STOCK : WALLET_TYPE_CASH
 }
 
 export function tradeExperienceForMode(mode: TradeMarketMode): TradeExperience {

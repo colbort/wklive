@@ -40,6 +40,7 @@ message TradeSymbol {
   // Market category: forex/crypto/stock/future/indices/fund. 0 is retained
   // for legacy rows created before category binding was introduced.
   int64 category_type = 30;
+  string market = 31;
   string symbol = 3;
   string display_symbol = 4;
   common.ProductType product_type = 5;

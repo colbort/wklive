@@ -317,6 +317,7 @@ type TradeSymbol struct {
 	// Market category: forex/crypto/stock/future/indices/fund. 0 is retained
 	// for legacy rows created before category binding was introduced.
 	CategoryType      int64               `protobuf:"varint,30,opt,name=category_type,json=categoryType,proto3" json:"category_type,omitempty"`
+	Market            string              `protobuf:"bytes,31,opt,name=market,proto3" json:"market,omitempty"`
 	Symbol            string              `protobuf:"bytes,3,opt,name=symbol,proto3" json:"symbol,omitempty"`
 	DisplaySymbol     string              `protobuf:"bytes,4,opt,name=display_symbol,json=displaySymbol,proto3" json:"display_symbol,omitempty"`
 	ProductType       common.ProductType  `protobuf:"varint,5,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
@@ -397,6 +398,13 @@ func (x *TradeSymbol) GetCategoryType() int64 {
 		return x.CategoryType
 	}
 	return 0
+}
+
+func (x *TradeSymbol) GetMarket() string {
+	if x != nil {
+		return x.Market
+	}
+	return ""
 }
 
 func (x *TradeSymbol) GetSymbol() string {
@@ -4932,11 +4940,12 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\fStringValues\x12\x16\n" +
 	"\x06values\x18\x01 \x03(\tR\x06values\"&\n" +
 	"\fUint64Values\x12\x16\n" +
-	"\x06values\x18\x01 \x03(\x03R\x06values\"\xa5\b\n" +
+	"\x06values\x18\x01 \x03(\x03R\x06values\"\xbd\b\n" +
 	"\vTradeSymbol\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12#\n" +
 	"\rcategory_type\x18\x1e \x01(\x03R\fcategoryType\x12\x16\n" +
+	"\x06market\x18\x1f \x01(\tR\x06market\x12\x16\n" +
 	"\x06symbol\x18\x03 \x01(\tR\x06symbol\x12%\n" +
 	"\x0edisplay_symbol\x18\x04 \x01(\tR\rdisplaySymbol\x126\n" +
 	"\fproduct_type\x18\x05 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12\x1d\n" +

@@ -25,6 +25,7 @@ import {
   getTradeCategoryConfig,
   matchesTradeMarketMode,
   resolveTradeExperience,
+  walletTypeForTradeSymbol,
   type TradeMarketMode,
   type TradeSymbolDetail,
 } from '@/features/trade/tradeModel'
@@ -146,6 +147,7 @@ const tradeMarketModeLabel = computed(
 )
 const isLoggedIn = computed(() => Boolean(authToken.value))
 const selectedTradeSymbol = computed(() => matchTradeSymbol())
+const selectedTradeWalletType = computed(() => walletTypeForTradeSymbol(selectedTradeSymbol.value))
 const tradeExperience = computed(() =>
   resolveTradeExperience(selectedTradeSymbol.value, tradeMarketMode.value),
 )
@@ -155,7 +157,7 @@ const selectedTradeSettleAsset = computed(() => {
     selectedTradeSymbol.value?.settleAsset ||
     selectedTradeSymbol.value?.quoteAsset ||
     selectedProduct.value?.quoteCoin ||
-    'USDT'
+    ''
   )
 })
 const displaySelectedTradeSymbol = computed(() => {
@@ -179,7 +181,7 @@ const walletAvailableBalance = (walletType: number, coin: string, decimalPlaces:
 const availableBalanceAmount = computed(() => {
   const symbol = selectedTradeSymbol.value
   if (!symbol) return '0'
-  const walletType = symbol.productType === PRODUCT_TYPE_SPOT ? 1 : 3
+  const walletType = selectedTradeWalletType.value
   const coin =
     symbol.productType === PRODUCT_TYPE_SPOT ? symbol.quoteAsset : selectedTradeSettleAsset.value
   return (
@@ -204,7 +206,7 @@ const longPositionQty = computed(() => {
 const shortPositionQty = computed(() => {
   if (selectedTradeSymbol.value?.productType === PRODUCT_TYPE_SPOT) {
     return walletAvailableBalance(
-      1,
+      selectedTradeWalletType.value,
       selectedTradeSymbol.value.baseAsset,
       selectedTradeSymbol.value.qtyScale,
     )
@@ -409,6 +411,13 @@ function matchesSelectedProduct(symbol: TradeSymbol) {
   if (symbol.categoryType > 0 && symbol.categoryType !== selectedCategoryType.value) {
     return false
   }
+
+  const productMarket = normalizeSymbolText(selectedProduct.value?.market || '')
+  const symbolMarket = normalizeSymbolText(symbol.market || '')
+  if (!productMarket || symbolMarket !== productMarket) {
+    return false
+  }
+
   const candidates = productCandidates()
   if (!candidates.size) return false
   if (symbolCandidates(symbol).some((candidate) => candidates.has(candidate))) return true

@@ -33,6 +33,7 @@ type (
 		FindByIds(ctx context.Context, ids []int64) ([]*TItickProduct, error)
 		FindActivePage(ctx context.Context, cursor, limit int64) ([]*TItickProduct, error)
 		Upsert(ctx context.Context, data *TItickProduct) (sql.Result, error)
+		DisableStaleSynced(ctx context.Context, categoryType int64, market string, syncStartedAt, updateTimes int64) (sql.Result, error)
 	}
 
 	customTItickProductModel struct {
@@ -167,14 +168,14 @@ func (m *customTItickProductModel) Upsert(ctx context.Context, data *TItickProdu
                 exchange = VALUES(exchange),
                 sector = VALUES(sector),
                 lug = VALUES(lug),
-                base_coin = VALUES(base_coin),
-                quote_coin = VALUES(quote_coin),
+                base_coin = CASE WHEN base_coin = '' THEN VALUES(base_coin) ELSE base_coin END,
+                quote_coin = CASE WHEN quote_coin = '' THEN VALUES(quote_coin) ELSE quote_coin END,
                 enabled = VALUES(enabled),
                 app_visible = VALUES(app_visible),
                 sort = VALUES(sort),
                 icon = VALUES(icon),
                 remark = VALUES(remark),
-                update_times = VALUES(update_times)
+                update_times = GREATEST(update_times, VALUES(update_times))
         `, m.table, feilds)
 
 		return conn.ExecCtx(ctx, query,
@@ -202,4 +203,18 @@ func (m *customTItickProductModel) Upsert(ctx context.Context, data *TItickProdu
 	}, tItickProductCategoryTypeMarketSymbolKey, tItickProductIdKey)
 
 	return ret, err
+}
+
+// DisableStaleSynced hides iTick rows that were not returned by the latest
+// successful region sync. It intentionally keeps the rows for auditability and
+// does not touch manually-created products.
+func (m *customTItickProductModel) DisableStaleSynced(ctx context.Context, categoryType int64, market string, syncStartedAt, updateTimes int64) (sql.Result, error) {
+	return m.ExecNoCacheCtx(ctx, `
+		UPDATE t_itick_product
+		SET enabled = 2, app_visible = 2, update_times = ?
+		WHERE category_type = ?
+		  AND market = ?
+		  AND remark LIKE '同步自 iTick%'
+		  AND update_times < ?
+	`, updateTimes, categoryType, market, syncStartedAt)
 }

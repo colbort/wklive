@@ -55,6 +55,7 @@ message GetSymbolListReq {
   common.ProductType product_type = 1;
   SymbolStatus status = 2;
   int64 category_type = 3;
+  string market = 4;
 }
 
 message GetSymbolListResp {
@@ -365,6 +366,7 @@ message CreateSymbolReq {
   string display_symbol = 3;
   common.ProductType product_type = 4;
   int64 category_type = 30;
+  string market = 31;
   string base_asset = 5;
   string quote_asset = 6;
   string settle_asset = 7;
@@ -419,6 +421,7 @@ message GetSymbolListAdminReq {
   SymbolStatus status = 4;
   string keyword = 5;
   int64 category_type = 6;
+  string market = 7;
 }
 
 message GetSymbolListAdminResp {

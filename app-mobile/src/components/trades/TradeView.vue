@@ -207,6 +207,7 @@ const emit = defineEmits<{
         :selected-quote="selectedQuote"
         :tick-snapshot="tickSnapshot"
         :placeholder-price="placeholderPrice"
+        :quote-asset="selectedTradeSymbol?.quoteAsset || selectedProduct?.quoteCoin || ''"
       />
     </section>
 

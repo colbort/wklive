@@ -913,6 +913,7 @@ type CreateSettlementPriceCorrectionReq struct {
 
 type CreateSymbolReq struct {
 	TenantId          int64  `json:"tenantId"`
+	Market            string `json:"market"`
 	Symbol            string `json:"symbol"`
 	DisplaySymbol     string `json:"displaySymbol"`
 	ProductType       int64  `json:"productType"`
@@ -1891,6 +1892,7 @@ type GetSymbolListAdminReq struct {
 	Status       int64  `form:"status,optional"`
 	Keyword      string `form:"keyword,optional"`
 	CategoryType int64  `form:"categoryType,optional"`
+	Market       string `form:"market,optional"`
 }
 
 type GetSymbolListAdminResp struct {
@@ -6354,6 +6356,7 @@ type TradeSymbol struct {
 	Id                int64  `json:"id"`
 	TenantId          int64  `json:"tenantId"`
 	CategoryType      int64  `json:"categoryType"`
+	Market            string `json:"market"`
 	Symbol            string `json:"symbol"`
 	DisplaySymbol     string `json:"displaySymbol"`
 	ProductType       int64  `json:"productType"`

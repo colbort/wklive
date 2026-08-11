@@ -15,6 +15,7 @@ type (
 	TradeSymbolPageFilter struct {
 		TenantId     int64
 		CategoryType int64
+		Market       string
 		ProductType  int64
 		Status       int64
 		Keyword      string
@@ -41,12 +42,11 @@ func NewTTradeSymbolModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Op
 }
 
 // FindOne evicts cache entries written by the legacy symbol model. Those
-// entries used fields such as MarketType instead of ProductType, so decoding
-// them into the current model silently produces PRODUCT_TYPE_UNKNOWN and can
-// route otherwise valid spot orders through derivative validation.
+// entries used fields such as MarketType instead of ProductType and predate
+// the market field. Decoding those entries can silently lose routing data.
 func (m *customTTradeSymbolModel) FindOne(ctx context.Context, id int64) (*TTradeSymbol, error) {
 	row, err := m.defaultTTradeSymbolModel.FindOne(ctx, id)
-	if err != nil || row.ProductType != 0 {
+	if err != nil || (row.ProductType != 0 && row.Market != "") {
 		return row, err
 	}
 
@@ -62,6 +62,7 @@ func (m *customTTradeSymbolModel) FindPage(ctx context.Context, filter TradeSymb
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
 	builder.EqInt64("category_type", filter.CategoryType)
+	builder.EqString("market", filter.Market)
 	builder.EqInt64("product_type", filter.ProductType)
 	builder.EqInt64("status", filter.Status)
 	if filter.Keyword != "" {
@@ -98,6 +99,7 @@ func (m *customTTradeSymbolModel) FindAll(ctx context.Context, filter TradeSymbo
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
 	builder.EqInt64("category_type", filter.CategoryType)
+	builder.EqString("market", filter.Market)
 	builder.EqInt64("product_type", filter.ProductType)
 	builder.EqInt64("status", filter.Status)
 	if filter.Keyword != "" {
