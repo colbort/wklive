@@ -1,0 +1,9 @@
+Name: chatAdmin
+Host: 0.0.0.0
+Port: 6666
+
+ChatRpc:
+  Endpoints:
+    - chat-rpc:8088
+
+ChatUploadDir: /app/chat_uploads

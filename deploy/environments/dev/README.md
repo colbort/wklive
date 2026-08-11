@@ -45,6 +45,9 @@ printf '%s\n' '从密钥系统取得的 iTick Token' > secrets/itick_token
 时不会依赖动态容器 IP。若该网段与宿主机已有 Docker 网络冲突，可在 `.env` 中修改
 `DEV_BACKEND_SUBNET`，配置种子会自动将同一网段写入客服 IP 白名单。
 
+Chat API 和 Chat Admin API 共享 Docker volume `chat-uploads`，并统一挂载到
+`/app/chat_uploads`，客服图片不会因为上传服务不同而只存在于某一个容器中。
+
 执行 `./deploy.sh build` 会同时构建这些前端镜像；执行 `./deploy.sh start` 会在镜像变化后重新创建对应容器。`App Mobile Web` 是移动端 Vue 页面在浏览器中的构建，Android/iOS 原生包仍使用 Capacitor 命令构建。
 
 两个 Beanstalkd 实例由 `common/docker/Dockerfile.beanstalkd` 构建：基础 Alpine 多架构清单使用固定

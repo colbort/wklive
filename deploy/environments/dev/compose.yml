@@ -51,6 +51,7 @@ services:
     environment:
       COMMON_CONFIG: /deploy-config/common.yaml
       CHAT_API_CONFIG: /deploy-config/chat.yaml
+      CHAT_ADMIN_API_CONFIG: /deploy-config/chatadmin.yaml
       DEV_BACKEND_SUBNET: ${DEV_BACKEND_SUBNET:-172.20.0.0/16}
       SERVICE_MODE: dev
     volumes: !override

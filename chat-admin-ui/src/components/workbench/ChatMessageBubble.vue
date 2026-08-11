@@ -67,6 +67,14 @@ onBeforeUnmount(() => {
 });
 
 function openMenu(event: MouseEvent) {
+  if (
+    event.target instanceof Element &&
+    event.target.closest("img.bubble-image")
+  ) {
+    event.preventDefault();
+    closeMenu();
+    return;
+  }
   if (!hasMenu()) return;
   event.preventDefault();
   menuLeft.value = event.clientX;
@@ -151,6 +159,11 @@ function clearObjectUrl() {
         class="bubble-image"
         :src="imageSrc"
         :alt="message.fileName || message.content || 'image'"
+        draggable="false"
+        @contextmenu.prevent
+        @copy.prevent
+        @selectstart.prevent
+        @dragstart.prevent
       >
       <video
         v-else-if="message.messageType === 4 && message.url"

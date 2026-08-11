@@ -6,6 +6,8 @@ ChatRpc:
   Endpoints:
     - chat-rpc:8088
 
+ChatUploadDir: /app/chat_uploads
+
 # app-api calls chat-api over the Docker backend network.
 ChatTokenIPWhitelist:
   - 127.0.0.1

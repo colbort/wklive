@@ -550,6 +550,11 @@ p {
   background: rgba(15, 23, 42, 0.08);
 }
 
+.bubble-image {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
 .bubble-audio {
   width: min(320px, 54vw);
 }

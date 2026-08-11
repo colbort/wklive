@@ -22,6 +22,8 @@ RUN apk add --no-cache busybox-extras ca-certificates tzdata \
 
 WORKDIR /app
 COPY --from=builder /out/service /app/service
+RUN mkdir -p /app/chat_uploads \
+    && chown -R wklive:wklive /app
 
 USER wklive
 ENTRYPOINT ["/app/service"]
