@@ -10,6 +10,8 @@
 !app-mobile/**
 !chat-admin-ui
 !chat-admin-ui/**
+!chat-ui
+!chat-ui/**
 !liquidity-admin-ui
 !liquidity-admin-ui/**
 !deploy

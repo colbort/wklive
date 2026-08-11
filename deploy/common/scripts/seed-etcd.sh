@@ -4,6 +4,8 @@ set -eu
 ETCD_ENDPOINT="${ETCD_ENDPOINT:-http://etcd:2379}"
 WORKSPACE="${WORKSPACE:-/workspace}"
 COMMON_CONFIG="${COMMON_CONFIG:-/deploy-config/common.yaml}"
+CHAT_API_CONFIG="${CHAT_API_CONFIG:-$WORKSPACE/chat-api/etc/chat.yaml}"
+DEV_BACKEND_SUBNET="${DEV_BACKEND_SUBNET:-172.20.0.0/16}"
 MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:-123456}"
 MYSQL_APP_USER="${MYSQL_APP_USER:-root}"
 MYSQL_APP_PASSWORD="${MYSQL_APP_PASSWORD:-$MYSQL_ROOT_PASSWORD}"
@@ -56,6 +58,7 @@ render_config() {
     -e 's#127\.0\.0\.1:27017#mongo:27017#g' \
     -e 's#127\.0\.0\.1:11300#beanstalk-primary:11300#g' \
     -e 's#127\.0\.0\.1:11301#beanstalk-secondary:11300#g' \
+    -e "s#__DEV_BACKEND_SUBNET__#${DEV_BACKEND_SUBNET}#g" \
     -e "s#123456#${MYSQL_ROOT_PASSWORD}#g" \
     -e "s#__MYSQL_APP_USER__#${MYSQL_APP_USER}#g" \
     -e "s#__MYSQL_APP_PASSWORD__#${MYSQL_APP_PASSWORD}#g" \
@@ -142,7 +145,7 @@ put_file /wklive/common/config "$COMMON_CONFIG"
 put_admin_file /wklive/admin-api/config "$WORKSPACE/admin-api/etc/admin.yaml"
 put_file /wklive/app-api/config "$WORKSPACE/app-api/etc/app.yaml"
 put_file /wklive/chat-admin-api/config "$WORKSPACE/chat-admin-api/etc/chatadmin.yaml"
-put_file /wklive/chat-api/config "$WORKSPACE/chat-api/etc/chat.yaml"
+put_file /wklive/chat-api/config "$CHAT_API_CONFIG"
 put_file /wklive/liquidity-admin-api/config "$WORKSPACE/liquidity-admin-api/etc/liquidityadmin.yaml"
 put_file /wklive/payment-api/config "$WORKSPACE/payment-api/etc/payment-api.yaml"
 put_file /wklive/asset-rpc/config "$WORKSPACE/services/asset/etc/asset.yaml"

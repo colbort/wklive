@@ -9,6 +9,7 @@ package-lock.json
 !app-web/package-lock.json
 !app-packages/package-lock.json
 !app-mobile/package-lock.json
+!chat-ui/package-lock.json
 
 avatars/
 

@@ -53,6 +53,7 @@ admin-ui
 app-web
 app-mobile
 chat-admin-ui
+chat-ui
 liquidity-admin-ui
 "
 

@@ -6,5 +6,7 @@ ChatRpc:
   Endpoints:
     - 127.0.0.1:8088
 ChatTokenIPWhitelist:
-  - 127.0.0.1
+  # 如果使用 docker 部署，建议将 docker 网段加入白名单
+  - 172.20.0.0/16
+  # 也可以加入局域网内的 IP 地址，或者公网 IP 地址
   - 192.168.10.246

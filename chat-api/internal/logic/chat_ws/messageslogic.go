@@ -394,6 +394,10 @@ func (l *MessagesLogic) handleCloseUserSession(ctx context.Context, conn *ws.Con
 	if err != nil {
 		logx.Errorf("close chat ws persistent session failed, merchantId=%d userId=%d sessionNo=%s err=%v", conn.MerchantId, conn.UserId, conn.SessionNo, err)
 	}
+	if resp == nil || resp.GetBase() == nil {
+		logx.Errorf("close chat ws persistent session returned empty response")
+		return
+	}
 	if resp.Base.Code != 200 {
 		logx.Errorf("close chat ws persistent session failed, merchantId=%d userId=%d sessionNo=%s msg=%v", conn.MerchantId, conn.UserId, conn.SessionNo, resp.Base.Msg)
 	}

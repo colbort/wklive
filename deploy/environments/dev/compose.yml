@@ -50,6 +50,8 @@ services:
   config-seed:
     environment:
       COMMON_CONFIG: /deploy-config/common.yaml
+      CHAT_API_CONFIG: /deploy-config/chat.yaml
+      DEV_BACKEND_SUBNET: ${DEV_BACKEND_SUBNET:-172.20.0.0/16}
       SERVICE_MODE: dev
     volumes: !override
       - ..:/workspace:ro
@@ -146,6 +148,22 @@ services:
     ports:
       - "${CHAT_ADMIN_UI_PORT:-18082}:8080"
 
+  chat-ui:
+    <<: *dev-web
+    build:
+      context: ..
+      dockerfile: deploy/common/docker/Dockerfile.web
+      args:
+        UI_DIR: chat-ui
+    environment:
+      API_PATH_PREFIX: /chat
+      API_UPSTREAM: chat-api:7777
+    depends_on:
+      chat-api:
+        condition: service_healthy
+    ports:
+      - "${CHAT_UI_PORT:-18085}:8080"
+
   liquidity-admin-ui:
     <<: *dev-web
     build:
@@ -165,3 +183,9 @@ services:
 secrets:
   itick_token:
     file: ./secrets/itick_token
+
+networks:
+  backend:
+    ipam:
+      config:
+        - subnet: ${DEV_BACKEND_SUBNET:-172.20.0.0/16}

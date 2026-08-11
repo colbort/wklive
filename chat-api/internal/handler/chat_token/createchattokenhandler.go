@@ -6,7 +6,6 @@ package chat_token
 import (
 	"fmt"
 	"net/http"
-	"slices"
 	"time"
 	"wklive/common/utils"
 
@@ -21,7 +20,7 @@ import (
 func CreateChatTokenHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ip := utils.GetClientIP(r)
-		if !slices.Contains(svcCtx.Config.ChatTokenIPWhitelist, ip) {
+		if !isIPAllowed(ip, svcCtx.Config.ChatTokenIPWhitelist) {
 			httpx.ErrorCtx(r.Context(), w, fmt.Errorf("%s is not in ip white list", ip))
 			return
 		}

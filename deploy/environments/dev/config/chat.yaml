@@ -1,0 +1,13 @@
+Name: chat
+Host: 0.0.0.0
+Port: 7777
+
+ChatRpc:
+  Endpoints:
+    - chat-rpc:8088
+
+# app-api calls chat-api over the Docker backend network.
+ChatTokenIPWhitelist:
+  - 127.0.0.1
+  - 192.168.10.246
+  - __DEV_BACKEND_SUBNET__
