@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"wklive/common/generate"
 	"wklive/common/utils"
@@ -14,7 +15,10 @@ import (
 	"wklive/services/chat/models"
 
 	"github.com/zeromicro/go-zero/core/errorx"
+	"github.com/zeromicro/go-zero/core/logx"
 )
+
+const chatMessageSlowStageThreshold = 100 * time.Millisecond
 
 type SendMessageOptions struct {
 	MerchantId     int64
@@ -41,23 +45,34 @@ func MessageNextCursor(list []*models.ChatMessage) int64 {
 }
 
 func SendMessage(ctx context.Context, svcCtx *svc.ServiceContext, opts SendMessageOptions) (*chat.ChatMessage, error) {
+	totalStarted := time.Now()
+	defer func() {
+		logChatMessageStage(ctx, "total", totalStarted, opts.MerchantId, opts.SessionNo, "", nil)
+	}()
+
+	stageStarted := time.Now()
 	var session *models.TChatSession
 	var err error
 	session, err = GetSession(ctx, svcCtx, opts.MerchantId, opts.SessionNo, opts.IsGuest)
+	logChatMessageStage(ctx, "get_session", stageStarted, opts.MerchantId, opts.SessionNo, "", err)
 	if err != nil {
 		return nil, err
 	}
 	if session.Status == int64(chat.ChatSessionStatus_CHAT_SESSION_STATUS_CLOSED) {
 		return nil, errors.New("chat session is closed")
 	}
+	stageStarted = time.Now()
 	mmg, err := buildMessage(ctx, svcCtx, session, opts)
+	logChatMessageStage(ctx, "build_message", stageStarted, opts.MerchantId, opts.SessionNo, "", err)
 	if err != nil {
 		return nil, err
 	}
 	var msg *chat.ChatMessage
 	if opts.IsGuest {
 		// 游客/临时会话
+		stageStarted = time.Now()
 		msg, err = AppendTransientMessage(ctx, svcCtx.Redis, opts.MerchantId, ToProtoMessage(mmg), session)
+		logChatMessageStage(ctx, "append_transient_message", stageStarted, opts.MerchantId, opts.SessionNo, mmg.MessageNo, err)
 		if err != nil {
 			return nil, err
 		}
@@ -66,17 +81,26 @@ func SendMessage(ctx context.Context, svcCtx *svc.ServiceContext, opts SendMessa
 		if opts.Sender == nil {
 			return nil, errors.New("sender is required")
 		}
+		stageStarted = time.Now()
 		mmg, err = sendPersistedMessage(ctx, svcCtx, session, mmg)
+		messageNo := ""
+		if mmg != nil {
+			messageNo = mmg.MessageNo
+		}
+		logChatMessageStage(ctx, "persist_message", stageStarted, opts.MerchantId, opts.SessionNo, messageNo, err)
 		if err != nil {
 			return nil, err
 		}
 		msg = ToProtoMessage(mmg)
 	}
 
+	stageStarted = time.Now()
 	err = PublishMessageEvent(ctx, svcCtx.MQPublisher, opts.ReceiveChannel, PublishEventMessage, &chat.ChatWsResponse_Message{Message: msg})
+	logChatMessageStage(ctx, "publish_message_event", stageStarted, opts.MerchantId, opts.SessionNo, msg.MessageNo, err)
 	if err != nil {
 		return nil, err
 	}
+	stageStarted = time.Now()
 	err = PublishMessageEvent(ctx, svcCtx.MQPublisher, opts.ReceiptChannel, PublishEventMessageDelivered, &chat.ChatWsResponse_Receipt{Receipt: &chat.ChatMessageReceiptPayload{
 		SessionNo:     msg.SessionNo,
 		MessageNo:     msg.MessageNo,
@@ -86,18 +110,34 @@ func SendMessage(ctx context.Context, svcCtx *svc.ServiceContext, opts SendMessa
 		MessageStatus: chat.ChatMessageStatus_CHAT_MESSAGE_STATUS_DELIVERED,
 		ReceiptTime:   utils.NowMillis(),
 	}})
+	logChatMessageStage(ctx, "publish_message_receipt", stageStarted, opts.MerchantId, opts.SessionNo, msg.MessageNo, err)
 	if err != nil {
 		return nil, err
 	}
 	return msg, nil
 }
 
+func logChatMessageStage(ctx context.Context, stage string, started time.Time, merchantID int64, sessionNo, messageNo string, err error) {
+	duration := time.Since(started)
+	if err == nil && duration < chatMessageSlowStageThreshold {
+		return
+	}
+	logx.WithContext(ctx).WithDuration(duration).Slowf(
+		"[CHAT_MESSAGE] stage=%s merchant_id=%d session_no=%s message_no=%s duration_ms=%d err=%v",
+		stage, merchantID, sessionNo, messageNo, duration.Milliseconds(), err,
+	)
+}
+
 func buildMessage(ctx context.Context, svcCtx *svc.ServiceContext, session *models.TChatSession, opts SendMessageOptions) (*models.ChatMessage, error) {
+	stageStarted := time.Now()
 	messageNo, err := generate.GenerateNo(svcCtx.Redis, ctx, "chat", "CM", "")
+	logChatMessageStage(ctx, "generate_message_no", stageStarted, opts.MerchantId, opts.SessionNo, messageNo, err)
 	if err != nil {
 		return nil, errorx.Wrapf(err, "generate message no error")
 	}
+	stageStarted = time.Now()
 	chatUser, err := svcCtx.ChatUserModel.FindOne(ctx, session.AgentUserId)
+	logChatMessageStage(ctx, "find_chat_user", stageStarted, opts.MerchantId, opts.SessionNo, messageNo, err)
 	if err != nil {
 		return nil, errorx.Wrapf(err, "chat user err: chat user id is %d", session.AgentUserId)
 	}
@@ -169,9 +209,12 @@ func sendPersistedMessage(ctx context.Context, svcCtx *svc.ServiceContext, sessi
 	if model == nil {
 		return nil, fmt.Errorf("invalid merchant_id: %d", session.MerchantId)
 	}
+	stageStarted := time.Now()
 	if err := model.Insert(ctx, msg); err != nil {
+		logChatMessageStage(ctx, "mongo_insert_message", stageStarted, session.MerchantId, session.SessionNo, msg.MessageNo, err)
 		return nil, err
 	}
+	logChatMessageStage(ctx, "mongo_insert_message", stageStarted, session.MerchantId, session.SessionNo, msg.MessageNo, nil)
 
 	now := msg.CreateTimes
 	session.LastMessageNo = msg.MessageNo
@@ -193,9 +236,12 @@ func sendPersistedMessage(ctx context.Context, svcCtx *svc.ServiceContext, sessi
 	case chat.ChatSenderType_CHAT_SENDER_TYPE_SYSTEM:
 		session.UserUnreadCount++
 	}
+	stageStarted = time.Now()
 	if err := svcCtx.ChatSessionModel.Update(ctx, session); err != nil {
+		logChatMessageStage(ctx, "mysql_update_session", stageStarted, session.MerchantId, session.SessionNo, msg.MessageNo, err)
 		return nil, err
 	}
+	logChatMessageStage(ctx, "mysql_update_session", stageStarted, session.MerchantId, session.SessionNo, msg.MessageNo, nil)
 
 	return msg, nil
 }

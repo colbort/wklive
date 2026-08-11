@@ -72,6 +72,10 @@ func NewPublisher(config Config) (*Publisher, error) {
 		Balancer:               &keyedBalancer{},
 		RequiredAcks:           kafka.RequireAll,
 		Async:                  false,
+		// Single business events are published synchronously. kafka-go defaults
+		// to a one-second batch wait, which would make two sequential publishes
+		// consume the default two-second RPC deadline.
+		BatchTimeout:           10 * time.Millisecond,
 		AllowAutoTopicCreation: false,
 		Transport:              &kafka.Transport{ClientID: strings.TrimSpace(config.ClientID)},
 	}}, nil
