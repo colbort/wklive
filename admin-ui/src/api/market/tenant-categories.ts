@@ -33,5 +33,5 @@ export function apiMarketTenantCategoryDetail(
   id: number,
   tenantId: number,
 ): Promise<RespBase<MarketTenantCategory>> {
-  return get<MarketTenantCategory>('/admin/market/tenant-categories/${id}', { tenantId })
+  return get<MarketTenantCategory>(`/admin/market/tenant-categories/${id}`, { tenantId })
 }
