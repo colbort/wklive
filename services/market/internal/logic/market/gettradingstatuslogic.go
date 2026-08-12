@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"wklive/common/helper"
@@ -18,6 +19,18 @@ type GetTradingStatusLogic struct {
 	svcCtx *svc.ServiceContext
 	logx.Logger
 }
+
+const tradingStatusLogInterval = 5 * time.Minute
+
+type tradingStatusLogEntry struct {
+	state    string
+	loggedAt time.Time
+}
+
+var tradingStatusLogs = struct {
+	sync.Mutex
+	entries map[string]tradingStatusLogEntry
+}{entries: make(map[string]tradingStatusLogEntry)}
 
 func NewGetTradingStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetTradingStatusLogic {
 	return &GetTradingStatusLogic{
@@ -63,6 +76,7 @@ func (l *GetTradingStatusLogic) GetTradingStatus(in *market.GetTradingStatusReq)
 	} else if isOpen {
 		reason = "market_open"
 	}
+	logTradingStatusDecision(l.ctx, category, marketCode, symbol, definition.ID, definition.Timezone, isOpen, reason)
 
 	return &market.GetTradingStatusResp{
 		Base: helper.OkResp(),
@@ -74,4 +88,25 @@ func (l *GetTradingStatusLogic) GetTradingStatus(in *market.GetTradingStatusReq)
 			Reason:          reason,
 		},
 	}, nil
+}
+
+func logTradingStatusDecision(ctx context.Context, category, marketCode, symbol string, calendarID int64, timezone string, open bool, reason string) {
+	key := category + ":" + marketCode + ":" + symbol
+	state := fmt.Sprintf("%t:%d:%s", open, calendarID, reason)
+	now := time.Now()
+	tradingStatusLogs.Lock()
+	previous, found := tradingStatusLogs.entries[key]
+	if found && previous.state == state && now.Sub(previous.loggedAt) < tradingStatusLogInterval {
+		tradingStatusLogs.Unlock()
+		return
+	}
+	tradingStatusLogs.entries[key] = tradingStatusLogEntry{state: state, loggedAt: now}
+	tradingStatusLogs.Unlock()
+
+	logger := logx.WithContext(ctx)
+	if !open {
+		logger.Errorf("[MARKET_TRADING_STATUS] product=%s calendar_id=%d timezone=%s open=false reason=%s", key, calendarID, timezone, reason)
+		return
+	}
+	logger.Infof("[MARKET_TRADING_STATUS] product=%s calendar_id=%d timezone=%s open=true reason=%s", key, calendarID, timezone, reason)
 }

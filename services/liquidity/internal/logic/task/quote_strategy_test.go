@@ -7,6 +7,7 @@ import (
 	"wklive/proto/common"
 	"wklive/proto/liquidity"
 	"wklive/proto/market"
+	"wklive/services/liquidity/internal/provider"
 	"wklive/services/liquidity/internal/svc"
 	"wklive/services/liquidity/models"
 
@@ -15,15 +16,47 @@ import (
 )
 
 type marketClientStub struct {
-	statusReq  *market.GetTradingStatusReq
-	statusResp *market.GetTradingStatusResp
-	statusErr  error
+	statusReq    *market.GetTradingStatusReq
+	statusResp   *market.GetTradingStatusResp
+	statusErr    error
+	snapshotResp *market.GetAuthoritativeSnapshotResp
+	snapshotErr  error
 }
 
 type quoteOrderModelStub struct {
 	models.TLiquidityQuoteOrderModel
 	rows    []*models.TLiquidityQuoteOrder
 	updated []*models.TLiquidityQuoteOrder
+}
+
+type providerModelStub struct {
+	models.TLiquidityProviderModel
+	row *models.TLiquidityProvider
+}
+
+func (s *providerModelStub) FindOne(context.Context, int64) (*models.TLiquidityProvider, error) {
+	return s.row, nil
+}
+
+type internalMarketMakerStub struct {
+	cancelResult *provider.QuoteResult
+	cancelErr    error
+}
+
+func (s *internalMarketMakerStub) Health(context.Context, *models.TLiquidityProvider) error {
+	return nil
+}
+
+func (s *internalMarketMakerStub) PlaceQuote(context.Context, *models.TLiquidityProvider, *models.TLiquidityQuoteOrder) (*provider.QuoteResult, error) {
+	return nil, nil
+}
+
+func (s *internalMarketMakerStub) CancelQuote(context.Context, *models.TLiquidityProvider, *models.TLiquidityQuoteOrder) (*provider.QuoteResult, error) {
+	return s.cancelResult, s.cancelErr
+}
+
+func (s *internalMarketMakerStub) QueryQuote(context.Context, *models.TLiquidityProvider, *models.TLiquidityQuoteOrder) (*provider.QuoteResult, error) {
+	return nil, nil
 }
 
 func (s *quoteOrderModelStub) FindActiveByConfig(context.Context, int64) ([]*models.TLiquidityQuoteOrder, error) {
@@ -36,7 +69,7 @@ func (s *quoteOrderModelStub) Update(_ context.Context, row *models.TLiquidityQu
 }
 
 func (s *marketClientStub) GetAuthoritativeSnapshot(context.Context, *market.GetAuthoritativeSnapshotReq, ...grpc.CallOption) (*market.GetAuthoritativeSnapshotResp, error) {
-	return nil, nil
+	return s.snapshotResp, s.snapshotErr
 }
 
 func (s *marketClientStub) GetTradingStatus(_ context.Context, in *market.GetTradingStatusReq, _ ...grpc.CallOption) (*market.GetTradingStatusResp, error) {
@@ -137,5 +170,47 @@ func TestEnsureMarketOpenCancelsPendingQuotesWhenClosed(t *testing.T) {
 	}
 	if len(orders.updated) != 1 || row.Status != int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_CANCELED) || row.CancelReason != "market_closed" {
 		t.Fatalf("pending quote was not canceled: %+v", row)
+	}
+}
+
+func TestLoadReferenceQuoteOrCancelCancelsPendingQuotesWhenReferenceUnavailable(t *testing.T) {
+	row := &models.TLiquidityQuoteOrder{
+		Id: 78, ConfigId: 8,
+		Status: int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_PENDING_SUBMIT),
+	}
+	orders := &quoteOrderModelStub{rows: []*models.TLiquidityQuoteOrder{row}}
+	config := &models.TLiquiditySymbolConfig{
+		Id: 8, Symbol: "USDCNY", ReferencePriceSource: "forex:GB:USDCNY",
+	}
+	_, err := loadReferenceQuoteOrCancel(context.Background(), &svc.ServiceContext{
+		MarketClient: &marketClientStub{}, QuoteOrderModel: orders,
+	}, config, 12345)
+	if err == nil {
+		t.Fatal("missing reference price must fail")
+	}
+	if len(orders.updated) != 1 || row.Status != int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_CANCELED) || row.CancelReason != "reference price unavailable" {
+		t.Fatalf("pending quote was not canceled after reference price failure: %+v", row)
+	}
+}
+
+func TestCancelActiveQuotesPreservesSystemReason(t *testing.T) {
+	row := &models.TLiquidityQuoteOrder{
+		Id: 79, ConfigId: 9, ProviderId: 3,
+		Status: int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_OPEN),
+	}
+	orders := &quoteOrderModelStub{rows: []*models.TLiquidityQuoteOrder{row}}
+	err := cancelActiveQuotes(context.Background(), &svc.ServiceContext{
+		QuoteOrderModel: orders,
+		ProviderModel:   &providerModelStub{row: &models.TLiquidityProvider{Id: 3}},
+		InternalMarketMaker: &internalMarketMakerStub{cancelResult: &provider.QuoteResult{
+			Status: int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_CANCELED),
+			Reason: "canceled by user",
+		}},
+	}, 9, "market_closed")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(orders.updated) != 1 || row.Status != int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_CANCELED) || row.CancelReason != "market_closed" {
+		t.Fatalf("system cancellation reason was not preserved: %+v", row)
 	}
 }

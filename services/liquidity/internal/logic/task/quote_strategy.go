@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"wklive/proto/common"
@@ -24,6 +25,18 @@ type referenceQuote struct {
 	snapshotID string
 	timestamp  int64
 }
+
+const tradingStatusLogInterval = 5 * time.Minute
+
+type tradingStatusLogEntry struct {
+	state    string
+	loggedAt time.Time
+}
+
+var tradingStatusLogs = struct {
+	sync.Mutex
+	entries map[int64]tradingStatusLogEntry
+}{entries: make(map[int64]tradingStatusLogEntry)}
 
 func prepareInternalQuoteCycles(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.LiquidityTaskReq) (int64, int64, error) {
 	limit := int64(in.BatchSize)
@@ -64,7 +77,7 @@ func prepareInternalQuoteCycle(ctx context.Context, svcCtx *svc.ServiceContext, 
 	if latest != nil && config.RefreshIntervalMs > 0 && now-latest.StartedAt < config.RefreshIntervalMs {
 		return false, nil
 	}
-	reference, err := loadReferenceQuote(ctx, svcCtx, config, now)
+	reference, err := loadReferenceQuoteOrCancel(ctx, svcCtx, config, now)
 	if err != nil {
 		return false, err
 	}
@@ -127,6 +140,18 @@ func prepareInternalQuoteCycle(ctx context.Context, svcCtx *svc.ServiceContext, 
 	return true, nil
 }
 
+func loadReferenceQuoteOrCancel(ctx context.Context, svcCtx *svc.ServiceContext, config *models.TLiquiditySymbolConfig, targetTime int64) (*referenceQuote, error) {
+	reference, err := loadReferenceQuote(ctx, svcCtx, config, targetTime)
+	if err == nil {
+		return reference, nil
+	}
+	cancelErr := cancelActiveQuotes(ctx, svcCtx, config.Id, "reference price unavailable")
+	if cancelErr != nil {
+		return nil, errors.Join(err, cancelErr)
+	}
+	return nil, err
+}
+
 func loadReferenceQuote(ctx context.Context, svcCtx *svc.ServiceContext, config *models.TLiquiditySymbolConfig, targetTime int64) (*referenceQuote, error) {
 	if svcCtx.MarketClient == nil {
 		return nil, errors.New("market client is not configured")
@@ -186,6 +211,7 @@ func referencePriceSources(value string) []string {
 func ensureMarketOpen(ctx context.Context, svcCtx *svc.ServiceContext, config *models.TLiquiditySymbolConfig, timestamp int64) (bool, error) {
 	open, reason, err := loadTradingStatus(ctx, svcCtx, config, timestamp)
 	if err != nil {
+		logTradingStatus(ctx, config, false, "market_status_unavailable", err)
 		cancelErr := cancelActiveQuotes(ctx, svcCtx, config.Id, "market status unavailable")
 		if cancelErr != nil {
 			return false, errors.Join(err, cancelErr)
@@ -193,15 +219,48 @@ func ensureMarketOpen(ctx context.Context, svcCtx *svc.ServiceContext, config *m
 		return false, err
 	}
 	if open {
+		logTradingStatus(ctx, config, true, reason, nil)
 		return true, nil
 	}
 	if reason == "" {
 		reason = "market_closed"
 	}
+	logTradingStatus(ctx, config, false, reason, nil)
 	if err := cancelActiveQuotes(ctx, svcCtx, config.Id, reason); err != nil {
 		return false, err
 	}
 	return false, nil
+}
+
+func logTradingStatus(ctx context.Context, config *models.TLiquiditySymbolConfig, open bool, reason string, statusErr error) {
+	if config == nil {
+		return
+	}
+	state := fmt.Sprintf("%t:%s", open, reason)
+	now := time.Now()
+	tradingStatusLogs.Lock()
+	previous, found := tradingStatusLogs.entries[config.Id]
+	if found && previous.state == state && now.Sub(previous.loggedAt) < tradingStatusLogInterval {
+		tradingStatusLogs.Unlock()
+		return
+	}
+	tradingStatusLogs.entries[config.Id] = tradingStatusLogEntry{state: state, loggedAt: now}
+	tradingStatusLogs.Unlock()
+
+	source := strings.TrimSpace(config.ReferencePriceSource)
+	if sources := referencePriceSources(source); len(sources) > 0 {
+		source = sources[0]
+	}
+	logger := logx.WithContext(ctx)
+	if statusErr != nil {
+		logger.Errorf("[LIQUIDITY_MARKET_STATUS] config_id=%d symbol=%s source=%s open=false reason=%s err=%v", config.Id, config.Symbol, source, reason, statusErr)
+		return
+	}
+	if !open {
+		logger.Errorf("[LIQUIDITY_MARKET_STATUS] config_id=%d symbol=%s source=%s open=false reason=%s", config.Id, config.Symbol, source, reason)
+		return
+	}
+	logger.Infof("[LIQUIDITY_MARKET_STATUS] config_id=%d symbol=%s source=%s open=%t reason=%s", config.Id, config.Symbol, source, open, reason)
 }
 
 func loadTradingStatus(ctx context.Context, svcCtx *svc.ServiceContext, config *models.TLiquiditySymbolConfig, timestamp int64) (bool, string, error) {
@@ -362,7 +421,8 @@ func cancelActiveQuotes(ctx context.Context, svcCtx *svc.ServiceContext, configI
 			return err
 		}
 		applyQuoteResult(row, result)
-		if row.CancelReason == "" {
+		if row.Status == int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_CANCELED) ||
+			row.Status == int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_CANCELING) {
 			row.CancelReason = reason
 		}
 		if err := svcCtx.QuoteOrderModel.Update(ctx, row); err != nil {
