@@ -2,10 +2,9 @@ package client
 
 import (
 	"context"
-	"crypto/sha1"
-	"encoding/hex"
 	"errors"
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -13,8 +12,8 @@ import (
 
 	"wklive/services/market/internal/market/cache"
 	"wklive/services/market/internal/market/calendar"
+	"wklive/services/market/internal/market/provider"
 	"wklive/services/market/internal/market/types"
-	"wklive/services/market/internal/pkg/itickrest"
 	"wklive/services/market/internal/pkg/utils"
 	"wklive/services/market/models"
 
@@ -23,21 +22,18 @@ import (
 )
 
 type MarketManager struct {
-	wsUrl string
-	token string
+	source provider.RealtimeProvider
 
 	model        models.TItickCategoryModel
 	productModel models.TItickProductModel
 
 	busRedis    *redis.Client
-	lockRedis   *redis.Client
 	marketCache *cache.MarketDataCache
-	preheater   *cache.MarketDataPreheater
 	calendar    *calendar.Resolver
 	staleConfig StaleQuoteRecoveryConfig
 
 	mu      sync.RWMutex
-	clients map[string]*ITickWsClient
+	clients map[string]provider.Stream
 
 	startMu   sync.Mutex
 	started   bool
@@ -111,12 +107,15 @@ func (m *MarketManager) refreshActiveProductSubscriptions(ctx context.Context, w
 	m.activeProducts = activeProducts
 	m.productsMu.Unlock()
 
+	if m.source == nil {
+		return errors.New("realtime market provider is not configured")
+	}
 	if warm {
-		m.preheater.Warm(ctx, msgs)
+		m.source.Warm(ctx, msgs)
 	}
 	byCategory := make(map[string]map[string]types.ClientMessage)
 	for _, msg := range normalizeUniqueMessages(msgs) {
-		if m.preheater.IsUnsupported(msg.CategoryCode) {
+		if !m.source.Supports(msg.CategoryCode) {
 			continue
 		}
 		if byCategory[msg.CategoryCode] == nil {
@@ -125,7 +124,7 @@ func (m *MarketManager) refreshActiveProductSubscriptions(ctx context.Context, w
 		byCategory[msg.CategoryCode][cache.BuildTopicKey(msg)] = msg
 	}
 	m.mu.RLock()
-	clients := make(map[string]*ITickWsClient, len(m.clients))
+	clients := make(map[string]provider.Stream, len(m.clients))
 	for category, cli := range m.clients {
 		clients[category] = cli
 	}
@@ -134,7 +133,7 @@ func (m *MarketManager) refreshActiveProductSubscriptions(ctx context.Context, w
 	var syncErrors []error
 	for category, cli := range clients {
 		items := byCategory[category]
-		if err := cli.replaceDesiredSubscriptions(items); err != nil && cli.IsLeader() {
+		if err := cli.ReplaceSubscriptions(subscriptionValues(items)); err != nil && cli.IsLeader() {
 			syncErr := fmt.Errorf("sync active subscriptions, category=%s: %w", category, err)
 			logx.Errorf("%v", syncErr)
 			syncErrors = append(syncErrors, syncErr)
@@ -199,30 +198,23 @@ func (m *MarketManager) rebuildActiveProducts(ctx context.Context) error {
 }
 
 func NewMarketManager(
-	wsUrl string,
-	apiURL string,
-	token string,
+	source provider.RealtimeProvider,
 	model models.TItickCategoryModel,
 	productModel models.TItickProductModel,
 	busRedis *redis.Client,
-	lockRedis *redis.Client,
 	marketCache *cache.MarketDataCache,
-	restClient *itickrest.Client,
 	calendarResolver *calendar.Resolver,
 	staleConfig StaleQuoteRecoveryConfig,
 ) *MarketManager {
 	return &MarketManager{
-		wsUrl:           wsUrl,
-		token:           token,
+		source:          source,
 		model:           model,
 		productModel:    productModel,
 		busRedis:        busRedis,
-		lockRedis:       lockRedis,
 		marketCache:     marketCache,
-		preheater:       cache.NewMarketDataPreheater(apiURL, marketCache, restClient),
 		calendar:        calendarResolver,
 		staleConfig:     staleConfig.withDefaults(),
-		clients:         make(map[string]*ITickWsClient),
+		clients:         make(map[string]provider.Stream),
 		activeProducts:  make(map[int64]activeProduct),
 		recoveryRunning: make(map[string]bool),
 		quoteRecoveryAt: make(map[string]time.Time),
@@ -230,35 +222,29 @@ func NewMarketManager(
 }
 
 func (m *MarketManager) Load(ctx context.Context) error {
+	if m.source == nil {
+		return errors.New("realtime market provider is not configured")
+	}
 	categories, err := m.model.FindAll(ctx)
 	if err != nil {
 		return err
 	}
 
-	newClients := make(map[string]*ITickWsClient)
-	connectLimiter := NewRedisConnectLimiter(m.lockRedis)
+	newClients := make(map[string]provider.Stream)
 
 	for _, item := range categories {
 		categoryCode := strings.ToLower(strings.TrimSpace(item.CategoryCode))
-		wsURL := strings.TrimSpace(m.wsUrl)
-
-		if categoryCode == "" || wsURL == "" {
-			logx.Errorf("skip invalid market category, code=%s, wsURL=%s", item.CategoryCode, m.wsUrl)
+		if categoryCode == "" || !m.source.Supports(categoryCode) {
+			logx.Errorf("skip unsupported market category, provider=%s code=%s", m.source.Code(), item.CategoryCode)
 			continue
 		}
-
-		upstreamURL := fmt.Sprintf("%s/%s", wsURL, categoryCode)
-		lockKey := "market:leader:" + sha1Hex(upstreamURL)
-
-		newClients[categoryCode] = NewMarketWsClient(
-			upstreamURL,
-			m.token,
-			categoryCode,
-			m.marketCache,
-			NewRedisLeaderLock(m.lockRedis, lockKey),
-			connectLimiter,
-		)
-		newClients[categoryCode].SetReconnectHandler(m.handleReconnect)
+		stream, err := m.source.NewStream(categoryCode)
+		if err != nil {
+			logx.Errorf("create market stream failed, provider=%s category=%s err=%v", m.source.Code(), categoryCode, err)
+			continue
+		}
+		stream.SetReconnectHandler(m.handleReconnect)
+		newClients[categoryCode] = stream
 	}
 
 	if len(newClients) == 0 {
@@ -269,7 +255,7 @@ func (m *MarketManager) Load(ctx context.Context) error {
 	m.clients = newClients
 	m.mu.Unlock()
 
-	logx.Infof("market manager loaded categories success, count=%d", len(newClients))
+	logx.Infof("market manager loaded categories success, provider=%s count=%d", m.source.Code(), len(newClients))
 	return nil
 }
 
@@ -308,7 +294,7 @@ func (m *MarketManager) Start(ctx context.Context) error {
 	m.startMu.Unlock()
 
 	m.mu.RLock()
-	clients := make([]*ITickWsClient, 0, len(m.clients))
+	clients := make([]provider.Stream, 0, len(m.clients))
 	for _, cli := range m.clients {
 		clients = append(clients, cli)
 	}
@@ -344,11 +330,6 @@ func (m *MarketManager) SetQuoteHandler(handler func(ctx context.Context, msg ty
 	m.marketCache.SetQuoteHandler(handler)
 }
 
-func sha1Hex(s string) string {
-	sum := sha1.Sum([]byte(s))
-	return hex.EncodeToString(sum[:])
-}
-
 func normalizeUniqueMessages(msgs []types.ClientMessage) []types.ClientMessage {
 	out := make([]types.ClientMessage, 0, len(msgs))
 	seen := make(map[string]struct{}, len(msgs))
@@ -364,5 +345,16 @@ func normalizeUniqueMessages(msgs []types.ClientMessage) []types.ClientMessage {
 		seen[key] = struct{}{}
 		out = append(out, msg)
 	}
+	return out
+}
+
+func subscriptionValues(items map[string]types.ClientMessage) []types.ClientMessage {
+	out := make([]types.ClientMessage, 0, len(items))
+	for _, msg := range items {
+		out = append(out, msg)
+	}
+	sort.Slice(out, func(i, j int) bool {
+		return cache.BuildTopicKey(out[i]) < cache.BuildTopicKey(out[j])
+	})
 	return out
 }

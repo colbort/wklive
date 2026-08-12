@@ -1,4 +1,4 @@
-package client
+package itick
 
 import (
 	"encoding/json"

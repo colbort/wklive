@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"wklive/services/market/internal/market/cache"
+	"wklive/services/market/internal/market/provider"
 	"wklive/services/market/internal/market/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -76,7 +77,7 @@ func (m *MarketManager) recoverStaleQuotes(ctx context.Context) {
 }
 
 func (m *MarketManager) checkStaleQuotes(ctx context.Context, now time.Time) {
-	if m.calendar == nil || m.preheater == nil || m.marketCache == nil {
+	if m.calendar == nil || m.source == nil || m.marketCache == nil {
 		return
 	}
 	m.startMu.Lock()
@@ -91,7 +92,7 @@ func (m *MarketManager) checkStaleQuotes(ctx context.Context, now time.Time) {
 	quoteMessages := make([]types.ClientMessage, 0, len(products))
 	for _, product := range products {
 		client := m.categoryClient(product.Category)
-		if client == nil || !client.IsLeader() || m.preheater.IsUnsupported(product.Category) {
+		if client == nil || !client.IsLeader() || !m.source.Supports(product.Category) {
 			continue
 		}
 		if !m.calendar.IsProductTradingMinute(ctx, product.ID, product.Category, product.Market, product.Symbol, product.Exchange, now.UnixMilli()) {
@@ -133,7 +134,7 @@ func (m *MarketManager) checkStaleQuotes(ctx context.Context, now time.Time) {
 
 func (m *MarketManager) recoverStaleQuote(ctx context.Context, now time.Time, product activeProduct, cached *types.QuotePayload) {
 	msg := product.quoteMessage()
-	restQuote, err := m.preheater.FetchQuote(ctx, msg)
+	restQuote, err := m.source.FetchQuote(ctx, msg)
 	if err != nil {
 		logx.Errorf("stale quote REST verification failed, product_id=%d category=%s market=%s symbol=%s err=%v",
 			product.ID, product.Category, product.Market, product.Symbol, err)
@@ -158,7 +159,7 @@ func (m *MarketManager) recoverStaleQuote(ctx context.Context, now time.Time, pr
 	if client == nil || !client.IsLeader() {
 		return
 	}
-	if err := client.resubscribeProduct(msg); err != nil {
+	if err := client.Resubscribe(msg); err != nil {
 		logx.Errorf("targeted market resubscribe failed, product_id=%d category=%s market=%s symbol=%s err=%v",
 			product.ID, product.Category, product.Market, product.Symbol, err)
 		return
@@ -198,7 +199,7 @@ func (m *MarketManager) claimQuoteRecovery(key string, now time.Time) bool {
 	return true
 }
 
-func (m *MarketManager) categoryClient(category string) *ITickWsClient {
+func (m *MarketManager) categoryClient(category string) provider.Stream {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 	return m.clients[strings.ToLower(strings.TrimSpace(category))]

@@ -14,6 +14,8 @@ import (
 	"wklive/services/market/internal/config"
 	"wklive/services/market/internal/market/calendar"
 	"wklive/services/market/internal/market/client"
+	"wklive/services/market/internal/market/provider"
+	"wklive/services/market/internal/market/provider/itick"
 	"wklive/services/market/internal/market/types"
 	"wklive/services/market/internal/pkg/itickrest"
 	"wklive/services/market/internal/pkg/klinewriter"
@@ -35,6 +37,7 @@ type ServiceContext struct {
 	Config                       config.Config
 	MarketRuntimeConfig          *config.MarketRuntimeConf
 	MarketManager                *client.MarketManager
+	RealtimeMarketProvider       provider.RealtimeProvider
 	MarketDataCache              *icache.MarketDataCache
 	DataCache                    *redis.Client
 	LockRedis                    *redis.Client
@@ -126,6 +129,14 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		DB:       0,
 	})
 	marketDataCache := icache.NewMarketDataCache(dataCache)
+	realtimeMarketProvider := itick.New(
+		c.Itick.WSUrl,
+		c.Itick.ApiUrl,
+		c.Itick.Token,
+		marketDataCache,
+		lockRedis,
+		iTickRestClient,
+	)
 	mqConfig := mq.ForService(c.MQ, c.Name)
 	taskSubscriber := mq.MustNewSubscriber(mqConfig, "market-tasks")
 	snapshotPublisher := mq.MustNewPublisher(mqConfig)
@@ -144,15 +155,11 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	)
 
 	marketManager := client.NewMarketManager(
-		c.Itick.WSUrl,
-		c.Itick.ApiUrl,
-		c.Itick.Token,
+		realtimeMarketProvider,
 		marketCategoryModel,
 		marketProductModel,
 		dataCache,
-		lockRedis,
 		marketDataCache,
-		iTickRestClient,
 		marketCalendarResolver,
 		client.StaleQuoteRecoveryConfig{
 			CheckInterval: time.Duration(c.Runtime.QuoteHealthCheckSeconds) * time.Second,
@@ -203,6 +210,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:                       c,
 		MarketManager:                marketManager,
+		RealtimeMarketProvider:       realtimeMarketProvider,
 		MarketDataCache:              marketDataCache,
 		DataCache:                    dataCache,
 		LockRedis:                    lockRedis,

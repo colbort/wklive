@@ -1,10 +1,8 @@
-package types
+package itick
 
 import (
 	"encoding/json"
 	"strings"
-
-	cache "wklive/common/market"
 )
 
 type SubscribeReq struct {
@@ -65,19 +63,3 @@ func (d *UpstreamData) UnmarshalJSON(data []byte) error {
 	d.LDText = raw
 	return nil
 }
-
-type DepthLevel = cache.DepthLevel
-type DepthPayload = cache.DepthPayload
-type QuotePayload = cache.QuotePayload
-type TickPayload = cache.TickPayload
-type KlinePayload = cache.KlinePayload
-type Topic = cache.Topic
-
-const (
-	TopicQuote = cache.TopicQuote
-	TopicDepth = cache.TopicDepth
-	TopicTick  = cache.TopicTick
-	TopicKline = cache.TopicKline
-)
-
-type ClientMessage = cache.ClientMessage

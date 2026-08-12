@@ -1,4 +1,4 @@
-package cache
+package itick
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 )
 
 func TestRestQuoteIsAuthoritativeAndExact(t *testing.T) {
-	payload, ok := restPayload(types.TopicQuote, types.UpstreamData{LD: 1.25, LDText: "1.250000000000000001", T: 100}).(*types.QuotePayload)
+	payload, ok := restPayload(types.TopicQuote, UpstreamData{LD: 1.25, LDText: "1.250000000000000001", T: 100}).(*types.QuotePayload)
 	if !ok {
 		t.Fatal("REST quote payload type mismatch")
 	}

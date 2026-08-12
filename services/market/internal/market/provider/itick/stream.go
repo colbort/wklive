@@ -1,4 +1,4 @@
-package client
+package itick
 
 import (
 	"context"
@@ -400,7 +400,7 @@ func (c *ITickWsClient) waitAuthenticated(ctx context.Context) error {
 			return err
 		}
 
-		var env types.UpstreamEnvelope
+		var env UpstreamEnvelope
 		if err := json.Unmarshal(data, &env); err != nil {
 			return fmt.Errorf("unmarshal auth message failed: %w", err)
 		}
@@ -435,7 +435,7 @@ func (c *ITickWsClient) waitAuthenticated(ctx context.Context) error {
 }
 
 func (c *ITickWsClient) handleUpstreamMessage(ctx context.Context, data []byte) {
-	var env types.UpstreamEnvelope
+	var env UpstreamEnvelope
 	if err := json.Unmarshal(data, &env); err != nil {
 		logx.Errorf("market ws unmarshal envelope failed: %v", err)
 		return
@@ -444,7 +444,7 @@ func (c *ITickWsClient) handleUpstreamMessage(ctx context.Context, data []byte) 
 	c.handleUpstreamEnvelope(ctx, env)
 }
 
-func (c *ITickWsClient) handleUpstreamEnvelope(ctx context.Context, env types.UpstreamEnvelope) {
+func (c *ITickWsClient) handleUpstreamEnvelope(ctx context.Context, env UpstreamEnvelope) {
 	if env.ResAc != "" {
 		switch env.ResAc {
 		case "auth", "subscribe", "unsubscribe":
@@ -463,7 +463,7 @@ func (c *ITickWsClient) handleUpstreamEnvelope(ctx context.Context, env types.Up
 		return
 	}
 
-	var d types.UpstreamData
+	var d UpstreamData
 	if err := json.Unmarshal(env.Data, &d); err != nil {
 		logx.Errorf("market ws unmarshal data failed: %v", err)
 		return
@@ -592,6 +592,19 @@ func (c *ITickWsClient) replaceDesiredSubscriptions(items map[string]types.Clien
 	return c.syncDesiredSubscriptions()
 }
 
+// ReplaceSubscriptions implements the vendor-neutral provider.Stream
+// contract while preserving iTick's keyed subscription reconciliation.
+func (c *ITickWsClient) ReplaceSubscriptions(items []types.ClientMessage) error {
+	desired := make(map[string]types.ClientMessage, len(items))
+	for _, msg := range items {
+		msg = cache.NormalizeClientMessage(msg)
+		if key := cache.BuildTopicKey(msg); key != "" {
+			desired[key] = msg
+		}
+	}
+	return c.replaceDesiredSubscriptions(desired)
+}
+
 func (c *ITickWsClient) syncDesiredSubscriptions() error {
 	c.subMu.Lock()
 	desired := make(map[string]types.ClientMessage, len(c.desiredSubs))
@@ -675,6 +688,12 @@ func (c *ITickWsClient) resubscribeProduct(msg types.ClientMessage) error {
 		return err
 	}
 	return c.subscribe(params, typesValue)
+}
+
+// Resubscribe implements provider.Stream without exposing iTick's wire-level
+// unsubscribe/subscribe sequence to MarketManager.
+func (c *ITickWsClient) Resubscribe(msg types.ClientMessage) error {
+	return c.resubscribeProduct(msg)
 }
 
 func appendSyntheticDepthLevels(levels []*types.DepthLevel, isAsk bool, count int) []*types.DepthLevel {
@@ -826,7 +845,7 @@ func (c *ITickWsClient) buildMarketSubscribe(msg types.ClientMessage) (string, s
 }
 
 func (c *ITickWsClient) subscribe(params string, tys string) error {
-	req := types.SubscribeReq{
+	req := SubscribeReq{
 		Ac:     "subscribe",
 		Params: params,
 		Types:  tys,
@@ -841,7 +860,7 @@ func (c *ITickWsClient) subscribe(params string, tys string) error {
 }
 
 func (c *ITickWsClient) unsubscribe(params string, tys string) error {
-	req := types.UnsubscribeReq{
+	req := UnsubscribeReq{
 		Ac:     "unsubscribe",
 		Params: params,
 		Types:  tys,
@@ -873,7 +892,7 @@ func (c *ITickWsClient) writeJSON(v any) error {
 
 func (c *ITickWsClient) writePing(conn *websocket.Conn) error {
 	ts := strconv.FormatInt(cutils.NowMillis(), 10)
-	req := types.PingReq{
+	req := PingReq{
 		Ac:     "ping",
 		Params: ts,
 	}

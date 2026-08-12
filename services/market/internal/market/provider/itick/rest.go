@@ -1,4 +1,4 @@
-package cache
+package itick
 
 import (
 	"context"
@@ -9,8 +9,7 @@ import (
 	"strings"
 	"sync"
 
-	// "wklive/services/market/internal/market/client"
-
+	"wklive/services/market/internal/market/cache"
 	"wklive/services/market/internal/market/types"
 	"wklive/services/market/internal/pkg/itickrest"
 
@@ -18,16 +17,16 @@ import (
 	"github.com/zeromicro/go-zero/core/mr"
 )
 
-type MarketDataPreheater struct {
+type Preheater struct {
 	apiURL      string
-	cache       *MarketDataCache
+	cache       *cache.MarketDataCache
 	restClient  *itickrest.Client
 	mu          sync.RWMutex
 	unsupported map[string]struct{}
 }
 
-func NewMarketDataPreheater(apiURL string, cache *MarketDataCache, restClient *itickrest.Client) *MarketDataPreheater {
-	return &MarketDataPreheater{
+func NewPreheater(apiURL string, cache *cache.MarketDataCache, restClient *itickrest.Client) *Preheater {
+	return &Preheater{
 		apiURL:      strings.TrimRight(strings.TrimSpace(apiURL), "/"),
 		cache:       cache,
 		restClient:  restClient,
@@ -46,15 +45,15 @@ type marketDataBatch struct {
 
 // Warm fetches REST snapshots through the batch quotes/ticks/depths endpoints.
 // Kline messages are ignored because their reconciliation has a separate flow.
-func (p *MarketDataPreheater) Warm(ctx context.Context, msgs []types.ClientMessage) {
+func (p *Preheater) Warm(ctx context.Context, msgs []types.ClientMessage) {
 	groups := make(map[string][]types.ClientMessage)
 	seen := make(map[string]struct{})
 	for _, msg := range msgs {
-		msg = NormalizeClientMessage(msg)
+		msg = cache.NormalizeClientMessage(msg)
 		if msg.Topic != types.TopicQuote && msg.Topic != types.TopicTick && msg.Topic != types.TopicDepth {
 			continue
 		}
-		topicKey := BuildTopicKey(msg)
+		topicKey := cache.BuildTopicKey(msg)
 		if _, ok := seen[topicKey]; ok {
 			continue
 		}
@@ -94,14 +93,14 @@ func (p *MarketDataPreheater) Warm(ctx context.Context, msgs []types.ClientMessa
 	}, mr.WithContext(ctx), mr.WithWorkers(8))
 }
 
-func (p *MarketDataPreheater) IsUnsupported(category string) bool {
+func (p *Preheater) IsUnsupported(category string) bool {
 	p.mu.RLock()
 	defer p.mu.RUnlock()
 	_, ok := p.unsupported[strings.ToLower(strings.TrimSpace(category))]
 	return ok
 }
 
-func (p *MarketDataPreheater) markUnsupported(category string) {
+func (p *Preheater) markUnsupported(category string) {
 	p.mu.Lock()
 	p.unsupported[strings.ToLower(strings.TrimSpace(category))] = struct{}{}
 	p.mu.Unlock()
@@ -111,7 +110,7 @@ func isPackageUnsupported(err error) bool {
 	return err != nil && strings.Contains(strings.ToLower(err.Error()), "package only supports subscribing")
 }
 
-func (p *MarketDataPreheater) fetchBatchAndCache(ctx context.Context, batch marketDataBatch) error {
+func (p *Preheater) fetchBatchAndCache(ctx context.Context, batch marketDataBatch) error {
 	result, err := p.fetchBatch(ctx, batch)
 	if err != nil {
 		return err
@@ -132,8 +131,8 @@ func (p *MarketDataPreheater) fetchBatchAndCache(ctx context.Context, batch mark
 
 // FetchQuote verifies one product through iTick REST without publishing it.
 // The stale-stream monitor publishes only after checking source freshness.
-func (p *MarketDataPreheater) FetchQuote(ctx context.Context, msg types.ClientMessage) (*types.QuotePayload, error) {
-	msg = NormalizeClientMessage(msg)
+func (p *Preheater) FetchQuote(ctx context.Context, msg types.ClientMessage) (*types.QuotePayload, error) {
+	msg = cache.NormalizeClientMessage(msg)
 	msg.Topic = types.TopicQuote
 	batch := marketDataBatch{category: msg.CategoryCode, market: msg.Market, topic: types.TopicQuote, msgs: []types.ClientMessage{msg}}
 	result, err := p.fetchBatch(ctx, batch)
@@ -151,7 +150,7 @@ func (p *MarketDataPreheater) FetchQuote(ctx context.Context, msg types.ClientMe
 	return payload, nil
 }
 
-func (p *MarketDataPreheater) fetchBatch(ctx context.Context, batch marketDataBatch) (map[string]types.UpstreamData, error) {
+func (p *Preheater) fetchBatch(ctx context.Context, batch marketDataBatch) (map[string]UpstreamData, error) {
 	if p.apiURL == "" || p.restClient == nil || p.cache == nil {
 		return nil, fmt.Errorf("REST preheater is not configured")
 	}
@@ -175,9 +174,9 @@ func (p *MarketDataPreheater) fetchBatch(ctx context.Context, batch marketDataBa
 	}
 	defer resp.Body.Close()
 	var result struct {
-		Code int                           `json:"code"`
-		Msg  string                        `json:"msg"`
-		Data map[string]types.UpstreamData `json:"data"`
+		Code int                     `json:"code"`
+		Msg  string                  `json:"msg"`
+		Data map[string]UpstreamData `json:"data"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return nil, err
@@ -188,7 +187,7 @@ func (p *MarketDataPreheater) fetchBatch(ctx context.Context, batch marketDataBa
 	return result.Data, nil
 }
 
-func findBatchData(data map[string]types.UpstreamData, symbol string) (types.UpstreamData, bool) {
+func findBatchData(data map[string]UpstreamData, symbol string) (UpstreamData, bool) {
 	if item, ok := data[symbol]; ok {
 		return item, true
 	}
@@ -197,10 +196,10 @@ func findBatchData(data map[string]types.UpstreamData, symbol string) (types.Ups
 			return item, true
 		}
 	}
-	return types.UpstreamData{}, false
+	return UpstreamData{}, false
 }
 
-func restPayload(topic types.Topic, data types.UpstreamData) any {
+func restPayload(topic types.Topic, data UpstreamData) any {
 	switch topic {
 	case types.TopicQuote:
 		return &types.QuotePayload{LastPrice: data.LD, LastPriceText: data.LDText, Open: data.O, High: data.H, Low: data.L,
