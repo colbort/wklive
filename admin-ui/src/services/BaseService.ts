@@ -11,6 +11,12 @@ export type RespBase<T = any> = {
   hasPrev?: boolean
 }
 
+export type PageReq = {
+  cursor?: number
+  limit?: number
+  count?: number
+}
+
 export interface BaseServiceOptions {
   baseURL?: string
   timeout?: number

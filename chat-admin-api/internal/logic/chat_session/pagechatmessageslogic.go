@@ -38,6 +38,7 @@ func (l *PageChatMessagesLogic) PageChatMessages(req *types.PageChatMessagesReq)
 		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
+			Count:  req.Count,
 		},
 	})
 	if err != nil {

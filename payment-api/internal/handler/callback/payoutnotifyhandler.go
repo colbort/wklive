@@ -26,7 +26,13 @@ func PayoutNotifyHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
+			if resp == nil {
+				httpx.OkJsonCtx(r.Context(), w, nil)
+				return
+			}
+			w.Header().Set("Content-Type", resp.ContentType)
+			w.WriteHeader(int(resp.HttpStatus))
+			_, _ = w.Write(resp.Body)
 		}
 	}
 }

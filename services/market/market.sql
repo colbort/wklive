@@ -55,6 +55,7 @@ CREATE TABLE `t_itick_product` (
   KEY `idx_category_type` (`category_type`),
   KEY `idx_region` (`market`),
   KEY `idx_enabled_visible_sort` (`enabled`, `app_visible`, `sort`),
+  KEY `idx_product_page_filter` (`category_type`, `market`, `enabled`, `app_visible`),
   KEY `idx_keyword_query` (`category_type`, `market`, `name`, `display_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='market产品表';
 

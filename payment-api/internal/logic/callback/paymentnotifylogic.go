@@ -27,8 +27,8 @@ func NewPaymentNotifyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pay
 	}
 }
 
-func (l *PaymentNotifyLogic) PaymentNotify(req *types.NotifyReq) (resp string, err error) {
-	l.svcCtx.PaymentCli.PaymentNotify(l.ctx, &payment.ThirdPartyNotifyReq{
+func (l *PaymentNotifyLogic) PaymentNotify(req *types.NotifyReq) (*types.ThirdPartyNotifyResp, error) {
+	resp, err := l.svcCtx.PaymentCli.PaymentNotify(l.ctx, &payment.ThirdPartyNotifyReq{
 		PlatformCode: req.PlatformCode,
 		TenantId:     req.TenantId,
 		AccountCode:  req.AccountCode,
@@ -37,5 +37,12 @@ func (l *PaymentNotifyLogic) PaymentNotify(req *types.NotifyReq) (resp string, e
 		Query:        req.Query,
 		Body:         req.Body,
 	})
-	return
+	if err != nil {
+		return nil, err
+	}
+	return &types.ThirdPartyNotifyResp{
+		HttpStatus:  resp.HttpStatus,
+		ContentType: resp.ContentType,
+		Body:        resp.Body,
+	}, nil
 }

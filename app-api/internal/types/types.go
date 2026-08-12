@@ -1703,6 +1703,7 @@ type OptionsItem struct {
 type PageReq struct {
 	Cursor int64 `form:"cursor,optional"`
 	Limit  int64 `form:"limit,optional"`
+	Count  int64 `form:"count,optional"` // 已知总数；<=0 时服务端按需重新统计
 }
 
 type PlaceOrderData struct {

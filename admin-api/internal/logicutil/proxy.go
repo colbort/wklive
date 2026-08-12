@@ -260,6 +260,11 @@ func setPageField(dst, src reflect.Value) {
 	if limitDst, ok := findField(pageField, "Limit"); ok {
 		_ = copyValue(limitDst, limitField)
 	}
+	if countField, ok := findField(src, "Count"); ok {
+		if countDst, ok := findField(pageField, "Count"); ok {
+			_ = copyValue(countDst, countField)
+		}
+	}
 }
 
 func findField(v reflect.Value, name string) (reflect.Value, bool) {

@@ -39,6 +39,7 @@ func (l *ListVisibleCategoriesLogic) ListVisibleCategories(req *types.ListVisibl
 		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
+			Count:  req.Count,
 		},
 	}, l.svcCtx.MarketCli.ListVisibleCategories)
 }

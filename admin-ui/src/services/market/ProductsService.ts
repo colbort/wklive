@@ -1,4 +1,4 @@
-import type { RespBase, BaseService, OptionGroup } from '@/services'
+import type { RespBase, BaseService, OptionGroup, PageReq } from '@/services'
 import { getCoreOptions } from '@/stores/core'
 
 import {
@@ -90,15 +90,13 @@ export type UpdateProductReq = {
   remark?: string
 }
 
-export type ListProductsReq = {
+export type ListProductsReq = PageReq & {
   categoryType?: number
   market?: string
   symbol?: string
   keyword?: string
   enabled?: number // 0全部 1启用 2禁用
   appVisible?: number // 0全部 1显示 2隐藏
-  cursor?: number
-  limit?: number
 }
 
 export type GetProductKlineReq = {

@@ -12,3 +12,9 @@ type NotifyReq struct {
 	Query        map[string]string `query:"query,optional"`
 	Body         []byte            `body:"body,optional"`
 }
+
+type ThirdPartyNotifyResp struct {
+	HttpStatus  int32
+	ContentType string
+	Body        []byte
+}

@@ -11,6 +11,7 @@ type RespBase {
 type PageReq {
 	cursor int64 `form:"cursor,optional"`
 	limit  int64 `form:"limit,optional"`
+	count  int64 `form:"count,optional"` // 已知总数；<=0 时服务端按需重新统计
 }
 
 type TimeRange {
@@ -34,4 +35,3 @@ type OptionsGroup {
 	label   string        `json:"label"`
 	options []OptionsItem `json:"options"`
 }
-

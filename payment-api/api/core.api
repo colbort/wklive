@@ -10,15 +10,21 @@ type NotifyReq {
 	body         []byte            `body:"body,optional"`
 }
 
+type ThirdPartyNotifyResp {
+	httpStatus  int32
+	contentType string
+	body        []byte
+}
+
 @server (
 	prefix: /callback
 	group:  callback
 )
 service payment-api {
 	@handler PaymentNotify
-	post /payment/:platformCode/:tenantId/:accountCode (NotifyReq) returns (string)
+	post /payment/:platformCode/:tenantId/:accountCode (NotifyReq) returns (ThirdPartyNotifyResp)
 
 	@handler PayoutNotify
-	post /payout/:platformCode/:tenantId/:accountCode (NotifyReq) returns (string)
+	post /payout/:platformCode/:tenantId/:accountCode (NotifyReq) returns (ThirdPartyNotifyResp)
 }
 

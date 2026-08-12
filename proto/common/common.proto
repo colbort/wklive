@@ -19,6 +19,7 @@ message RespBase {
 message PageReq {
   int64 cursor = 1;
   int64 limit = 2;
+  int64 count = 3; // 已知总数；<=0 时服务端按需重新统计
 }
 
 message TokenInfo {

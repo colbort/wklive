@@ -42,6 +42,7 @@ func (l *ListVisibleProductsLogic) ListVisibleProducts(req *types.ListVisiblePro
 		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
+			Count:  req.Count,
 		},
 	}, l.svcCtx.MarketCli.ListVisibleProducts)
 }

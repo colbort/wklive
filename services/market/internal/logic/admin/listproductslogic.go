@@ -38,7 +38,7 @@ func (l *ListProductsLogic) ListProducts(in *market.ListProductsReq) (*market.Li
 		Enabled:      int32(in.Enabled),
 		AppVisible:   int32(in.AppVisible),
 		Symbol:       in.Symbol,
-	}, cursor, limit)
+	}, cursor, limit, pageutil.Count(in.Page))
 	if err != nil {
 		return nil, err
 	}

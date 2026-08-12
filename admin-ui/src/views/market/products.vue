@@ -201,7 +201,6 @@
         :total="pagination.total"
         :has-prev="pagination.hasPrev"
         :has-next="pagination.hasNext"
-        :show-total="false"
         @prev="handlePrevPage"
         @next="handleNextPage"
         @limit-change="handleLimitChange"
@@ -895,6 +894,7 @@ const getList = async () => {
       const res = await productsService.getList({
         ...cleanedQueryParams.value,
         cursor: pagination.cursor,
+        count: pagination.total,
       })
       list.value = res?.data || []
       updateFromResponse(res)
@@ -1123,7 +1123,11 @@ const submitForm = async () => {
     }
 
     formDialogVisible.value = false
-    getList()
+    if (formMode.value === 'add') {
+      resetAndLoad(getList)
+    } else {
+      getList()
+    }
   } catch (_) {
     ElMessage.error(formMode.value === 'add' ? t('common.createFailed') : t('common.updateFailed'))
   } finally {

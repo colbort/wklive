@@ -34,6 +34,7 @@ func (l *OpLogListLogic) OpLogList(req *types.OpLogListReq) (resp *types.OpLogLi
 		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
+			Count:  req.Count,
 		},
 		Username: req.Username,
 		Method:   toRequestMethod(req.Method),

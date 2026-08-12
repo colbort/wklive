@@ -687,6 +687,7 @@ type PageReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Cursor        int64                  `protobuf:"varint,1,opt,name=cursor,proto3" json:"cursor,omitempty"`
 	Limit         int64                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Count         int64                  `protobuf:"varint,3,opt,name=count,proto3" json:"count,omitempty"` // 已知总数；<=0 时服务端按需重新统计
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -731,6 +732,13 @@ func (x *PageReq) GetCursor() int64 {
 func (x *PageReq) GetLimit() int64 {
 	if x != nil {
 		return x.Limit
+	}
+	return 0
+}
+
+func (x *PageReq) GetCount() int64 {
+	if x != nil {
+		return x.Count
 	}
 	return 0
 }
@@ -862,10 +870,11 @@ const file_proto_common_common_proto_rawDesc = "" +
 	"\vnext_cursor\x18\x06 \x01(\x03R\n" +
 	"nextCursor\x12\x1f\n" +
 	"\vprev_cursor\x18\a \x01(\x03R\n" +
-	"prevCursor\"7\n" +
+	"prevCursor\"M\n" +
 	"\aPageReq\x12\x16\n" +
 	"\x06cursor\x18\x01 \x01(\x03R\x06cursor\x12\x14\n" +
-	"\x05limit\x18\x02 \x01(\x03R\x05limit\"t\n" +
+	"\x05limit\x18\x02 \x01(\x03R\x05limit\x12\x14\n" +
+	"\x05count\x18\x03 \x01(\x03R\x05count\"t\n" +
 	"\tTokenInfo\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
 	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12\x1f\n" +

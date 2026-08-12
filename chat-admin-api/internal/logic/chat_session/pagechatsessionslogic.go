@@ -45,6 +45,7 @@ func (l *PageChatSessionsLogic) PageChatSessions(req *types.PageChatSessionsReq)
 		Page: &common.PageReq{
 			Cursor: req.Cursor,
 			Limit:  req.Limit,
+			Count:  req.Count,
 		},
 	})
 	if err != nil {

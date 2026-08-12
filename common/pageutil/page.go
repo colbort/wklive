@@ -12,12 +12,19 @@ func Input(page *common.PageReq) (int64, int64) {
 	return page.Cursor, NormalizeLimit(page.Limit)
 }
 
+func Count(page *common.PageReq) int64 {
+	if page == nil {
+		return 0
+	}
+	return page.Count
+}
+
 func Output(page *common.PageReq, limit int64) *common.PageReq {
 	cursor := int64(0)
 	if page != nil {
 		cursor = page.Cursor
 	}
-	return &common.PageReq{Cursor: cursor, Limit: NormalizeLimit(limit)}
+	return &common.PageReq{Cursor: cursor, Limit: NormalizeLimit(limit), Count: Count(page)}
 }
 
 func Base(cursor, limit int64, size int, total int64, lastID int64) *common.RespBase {
