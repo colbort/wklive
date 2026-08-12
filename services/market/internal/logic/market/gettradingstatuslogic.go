@@ -62,7 +62,7 @@ func (l *GetTradingStatusLogic) GetTradingStatus(in *market.GetTradingStatusReq)
 	if err != nil {
 		return nil, fmt.Errorf("resolve market calendar: %w", err)
 	}
-	isOpen, err := l.svcCtx.MarketCalendarResolver.EvaluateResolvedTradingMinute(l.ctx, definition, category, timestamp)
+	isOpen, sessionType, err := l.svcCtx.MarketCalendarResolver.EvaluateResolvedTradingSession(l.ctx, definition, category, timestamp)
 	if err != nil {
 		return nil, fmt.Errorf("evaluate market calendar: %w", err)
 	}
@@ -76,7 +76,7 @@ func (l *GetTradingStatusLogic) GetTradingStatus(in *market.GetTradingStatusReq)
 	} else if isOpen {
 		reason = "market_open"
 	}
-	logTradingStatusDecision(l.ctx, category, marketCode, symbol, definition.ID, definition.Timezone, isOpen, reason)
+	logTradingStatusDecision(l.ctx, category, marketCode, symbol, definition.ID, definition.Timezone, isOpen, reason, sessionType)
 
 	return &market.GetTradingStatusResp{
 		Base: helper.OkResp(),
@@ -86,13 +86,14 @@ func (l *GetTradingStatusLogic) GetTradingStatus(in *market.GetTradingStatusReq)
 			ProductSpecific: definition.ProductSpecific,
 			Timezone:        definition.Timezone,
 			Reason:          reason,
+			SessionType:     sessionType,
 		},
 	}, nil
 }
 
-func logTradingStatusDecision(ctx context.Context, category, marketCode, symbol string, calendarID int64, timezone string, open bool, reason string) {
+func logTradingStatusDecision(ctx context.Context, category, marketCode, symbol string, calendarID int64, timezone string, open bool, reason, sessionType string) {
 	key := category + ":" + marketCode + ":" + symbol
-	state := fmt.Sprintf("%t:%d:%s", open, calendarID, reason)
+	state := fmt.Sprintf("%t:%d:%s:%s", open, calendarID, reason, sessionType)
 	now := time.Now()
 	tradingStatusLogs.Lock()
 	previous, found := tradingStatusLogs.entries[key]
@@ -105,8 +106,8 @@ func logTradingStatusDecision(ctx context.Context, category, marketCode, symbol 
 
 	logger := logx.WithContext(ctx)
 	if !open {
-		logger.Errorf("[MARKET_TRADING_STATUS] product=%s calendar_id=%d timezone=%s open=false reason=%s", key, calendarID, timezone, reason)
+		logger.Errorf("[MARKET_TRADING_STATUS] product=%s calendar_id=%d timezone=%s open=false reason=%s session_type=%s", key, calendarID, timezone, reason, sessionType)
 		return
 	}
-	logger.Infof("[MARKET_TRADING_STATUS] product=%s calendar_id=%d timezone=%s open=true reason=%s", key, calendarID, timezone, reason)
+	logger.Infof("[MARKET_TRADING_STATUS] product=%s calendar_id=%d timezone=%s open=true reason=%s session_type=%s", key, calendarID, timezone, reason, sessionType)
 }

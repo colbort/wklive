@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"wklive/common/i18n"
 	"wklive/proto/common"
@@ -173,21 +174,77 @@ func TestStepRoundingRemovesFloatTail(t *testing.T) {
 func TestLoadTradingStatusUsesPrimaryReferenceSource(t *testing.T) {
 	client := &marketClientStub{statusResp: &market.GetTradingStatusResp{
 		Base: &common.RespBase{Code: 200},
-		Data: &market.GetTradingStatusData{IsOpen: true, Reason: "market_open"},
+		Data: &market.GetTradingStatusData{IsOpen: true, Reason: "market_open", SessionType: "regular"},
 	}}
 	config := &models.TLiquiditySymbolConfig{
 		Symbol:               "AAPL",
 		ReferencePriceSource: "stock:US:AAPL,crypto:BA:BTCUSDT",
 	}
-	open, reason, err := loadTradingStatus(context.Background(), &svc.ServiceContext{MarketClient: client}, config, 12345)
+	open, reason, sessionType, err := loadTradingStatus(context.Background(), &svc.ServiceContext{MarketClient: client}, config, 12345)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !open || reason != "market_open" {
-		t.Fatalf("unexpected trading status: open=%v reason=%s", open, reason)
+	if !open || reason != "market_open" || sessionType != "regular" {
+		t.Fatalf("unexpected trading status: open=%v reason=%s session=%s", open, reason, sessionType)
 	}
 	if client.statusReq.GetCategoryCode() != "stock" || client.statusReq.GetMarket() != "US" || client.statusReq.GetSymbol() != "AAPL" || client.statusReq.GetTimestamp() != 12345 {
 		t.Fatalf("unexpected trading status request: %+v", client.statusReq)
+	}
+}
+
+func TestEnsureMarketOpenRejectsStockExtendedSession(t *testing.T) {
+	client := &marketClientStub{statusResp: &market.GetTradingStatusResp{
+		Base: &common.RespBase{Code: 200},
+		Data: &market.GetTradingStatusData{IsOpen: true, Reason: "market_open", SessionType: "pre"},
+	}}
+	row := &models.TLiquidityQuoteOrder{
+		Id: 79, ConfigId: 7,
+		Status: int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_PENDING_SUBMIT),
+	}
+	orders := &quoteOrderModelStub{rows: []*models.TLiquidityQuoteOrder{row}}
+	config := &models.TLiquiditySymbolConfig{
+		Id: 7, Symbol: "AAPL", ReferencePriceSource: "stock:US:AAPL",
+	}
+	open, err := ensureMarketOpen(context.Background(), &svc.ServiceContext{
+		MarketClient: client, QuoteOrderModel: orders,
+	}, config, 12345)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if open {
+		t.Fatal("stock pre-market session must not allow liquidity quoting")
+	}
+	if len(client.snapshotReqs) != 0 {
+		t.Fatalf("reference price must not be requested during an extended session: %+v", client.snapshotReqs)
+	}
+	if len(orders.updated) != 1 || row.Status != int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_CANCELED) || row.CancelReason != "stock_extended_session_disabled:pre" {
+		t.Fatalf("pending quote was not canceled: %+v", row)
+	}
+}
+
+func TestReferenceFailureUsesBoundedBackoff(t *testing.T) {
+	const configID = int64(91)
+	clearReferenceRetry(configID)
+	t.Cleanup(func() { clearReferenceRetry(configID) })
+	config := &models.TLiquiditySymbolConfig{Id: configID, Symbol: "AAPL", ReferencePriceSource: "stock:US:AAPL"}
+	recordReferenceFailure(context.Background(), config, errors.New("missing reference"))
+	if referenceRetryAllowed(configID, time.Now()) {
+		t.Fatal("reference retry must be delayed after a failure")
+	}
+	referenceRetries.Lock()
+	entry := referenceRetries.entries[configID]
+	referenceRetries.Unlock()
+	if entry.failures != 1 || time.Until(entry.retryAt) > referenceRetryInitial || time.Until(entry.retryAt) < referenceRetryInitial-time.Second {
+		t.Fatalf("unexpected first retry state: %+v", entry)
+	}
+	for i := 0; i < 5; i++ {
+		recordReferenceFailure(context.Background(), config, errors.New("missing reference"))
+	}
+	referenceRetries.Lock()
+	entry = referenceRetries.entries[configID]
+	referenceRetries.Unlock()
+	if remaining := time.Until(entry.retryAt); remaining > referenceRetryMaximum || remaining < referenceRetryMaximum-time.Second {
+		t.Fatalf("reference retry was not capped: remaining=%v entry=%+v", remaining, entry)
 	}
 }
 

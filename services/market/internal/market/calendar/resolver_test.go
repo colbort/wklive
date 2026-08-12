@@ -58,13 +58,35 @@ func TestBucketFallsBackToUTC(t *testing.T) {
 
 func TestIsTradingMinuteUsesSession(t *testing.T) {
 	stub := calendarModelStub{row: &models.TItickMarketCalendar{Id: 1, Timezone: "America/New_York", WeekStart: 1}}
-	stub.sessions = []*models.TItickMarketSession{{StartTime: "09:30", EndTime: "16:00"}}
+	stub.sessions = []*models.TItickMarketSession{{SessionType: "regular", StartTime: "09:30", EndTime: "16:00"}}
 	r := NewResolver(stub, nil, time.Minute)
 	if !r.IsTradingMinute(context.Background(), "stock", "US", "", time.Date(2026, 7, 14, 14, 0, 0, 0, time.UTC).UnixMilli()) {
 		t.Fatal("expected regular session minute")
 	}
 	if r.IsTradingMinute(context.Background(), "stock", "US", "", time.Date(2026, 7, 14, 22, 0, 0, 0, time.UTC).UnixMilli()) {
 		t.Fatal("expected after-hours minute to be closed")
+	}
+}
+
+func TestEvaluateResolvedTradingSessionReturnsMatchedType(t *testing.T) {
+	stub := calendarModelStub{
+		row: &models.TItickMarketCalendar{Id: 1, Timezone: "America/New_York", WeekStart: 1},
+		sessions: []*models.TItickMarketSession{
+			{SessionType: "pre", StartTime: "04:00", EndTime: "09:30", WeekdayMask: 62},
+			{SessionType: "regular", StartTime: "09:30", EndTime: "16:00", WeekdayMask: 62},
+		},
+	}
+	r := NewResolver(stub, nil, time.Minute)
+	definition := r.Resolve(context.Background(), "stock", "US", "")
+	open, sessionType, err := r.EvaluateResolvedTradingSession(
+		context.Background(), definition, "stock",
+		time.Date(2026, 7, 14, 9, 0, 0, 0, time.FixedZone("EDT", -4*60*60)).UnixMilli(),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !open || sessionType != "pre" {
+		t.Fatalf("unexpected trading session: open=%v session=%q", open, sessionType)
 	}
 }
 

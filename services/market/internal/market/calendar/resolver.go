@@ -90,10 +90,17 @@ func (r *Resolver) IsResolvedTradingMinute(ctx context.Context, definition *Defi
 }
 
 func (r *Resolver) EvaluateResolvedTradingMinute(ctx context.Context, definition *Definition, category string, ts int64) (bool, error) {
+	open, _, err := r.EvaluateResolvedTradingSession(ctx, definition, category, ts)
+	return open, err
+}
+
+// EvaluateResolvedTradingSession reports whether the market is open and which
+// configured session matched the requested timestamp.
+func (r *Resolver) EvaluateResolvedTradingSession(ctx context.Context, definition *Definition, category string, ts int64) (bool, string, error) {
 	if definition == nil {
-		return false, errors.New("market calendar definition is unavailable")
+		return false, "", errors.New("market calendar definition is unavailable")
 	}
-	return r.evaluateTradingMinute(ctx, definition, category, ts)
+	return r.evaluateTradingSession(ctx, definition, category, ts)
 }
 
 func (r *Resolver) isTradingMinute(ctx context.Context, d *Definition, category string, ts int64) bool {
@@ -102,32 +109,46 @@ func (r *Resolver) isTradingMinute(ctx context.Context, d *Definition, category 
 }
 
 func (r *Resolver) evaluateTradingMinute(ctx context.Context, d *Definition, category string, ts int64) (bool, error) {
+	open, _, err := r.evaluateTradingSession(ctx, d, category, ts)
+	return open, err
+}
+
+func (r *Resolver) evaluateTradingSession(ctx context.Context, d *Definition, category string, ts int64) (bool, string, error) {
 	if d.ID == 0 {
-		return strings.EqualFold(category, "crypto"), nil
+		if strings.EqualFold(category, "crypto") {
+			return true, "24x7", nil
+		}
+		return false, "", nil
 	}
 	local := time.UnixMilli(ts).In(d.Location)
 	date := time.Date(local.Year(), local.Month(), local.Day(), 0, 0, 0, 0, d.Location)
 	holiday, err := r.holiday(ctx, d.ID, date)
 	if err != nil {
-		return false, err
+		return false, "", err
 	}
 	if holiday != nil {
 		if strings.EqualFold(holiday.DayType, "closed") {
-			return false, nil
+			return false, "", nil
 		}
 		if holiday.OpenTime != "" && holiday.CloseTime != "" {
-			return withinClock(local, holiday.OpenTime, holiday.CloseTime, false), nil
+			if withinClock(local, holiday.OpenTime, holiday.CloseTime, false) {
+				return true, "regular", nil
+			}
+			return false, "", nil
 		}
 	}
 	if len(d.Sessions) == 0 {
-		return strings.EqualFold(category, "crypto"), nil
+		if strings.EqualFold(category, "crypto") {
+			return true, "24x7", nil
+		}
+		return false, "", nil
 	}
 	for _, session := range d.Sessions {
 		if sessionActive(local, session) {
-			return true, nil
+			return true, strings.ToLower(strings.TrimSpace(session.SessionType)), nil
 		}
 	}
-	return false, nil
+	return false, "", nil
 }
 
 func sessionActive(local time.Time, session *models.TItickMarketSession) bool {

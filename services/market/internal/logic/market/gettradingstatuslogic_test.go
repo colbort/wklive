@@ -44,7 +44,7 @@ func TestGetTradingStatusUsesProductCalendar(t *testing.T) {
 	model := tradingCalendarModelStub{
 		row: row,
 		sessions: []*models.TItickMarketSession{{
-			Id: 1, StartTime: "09:30", EndTime: "16:00", WeekdayMask: 62,
+			Id: 1, SessionType: "regular", StartTime: "09:30", EndTime: "16:00", WeekdayMask: 62,
 		}},
 	}
 	resolver := calendar.NewResolver(model, tradingProductCalendarStub{row: row}, time.Minute)
@@ -57,7 +57,7 @@ func TestGetTradingStatusUsesProductCalendar(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !openResp.GetData().GetIsOpen() || !openResp.GetData().GetProductSpecific() || openResp.GetData().GetCalendarId() != 9 {
+	if !openResp.GetData().GetIsOpen() || !openResp.GetData().GetProductSpecific() || openResp.GetData().GetCalendarId() != 9 || openResp.GetData().GetSessionType() != "regular" {
 		t.Fatalf("unexpected open status: %+v", openResp.GetData())
 	}
 
@@ -83,7 +83,7 @@ func TestGetTradingStatusCryptoFallback(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !resp.GetData().GetIsOpen() || resp.GetData().GetReason() != "crypto_24x7" {
+	if !resp.GetData().GetIsOpen() || resp.GetData().GetReason() != "crypto_24x7" || resp.GetData().GetSessionType() != "24x7" {
 		t.Fatalf("unexpected crypto fallback: %+v", resp.GetData())
 	}
 }

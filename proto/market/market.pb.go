@@ -957,6 +957,7 @@ type GetTradingStatusData struct {
 	ProductSpecific bool                   `protobuf:"varint,3,opt,name=product_specific,json=productSpecific,proto3" json:"product_specific,omitempty"`
 	Timezone        string                 `protobuf:"bytes,4,opt,name=timezone,proto3" json:"timezone,omitempty"`
 	Reason          string                 `protobuf:"bytes,5,opt,name=reason,proto3" json:"reason,omitempty"`
+	SessionType     string                 `protobuf:"bytes,6,opt,name=session_type,json=sessionType,proto3" json:"session_type,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -1022,6 +1023,13 @@ func (x *GetTradingStatusData) GetTimezone() string {
 func (x *GetTradingStatusData) GetReason() string {
 	if x != nil {
 		return x.Reason
+	}
+	return ""
+}
+
+func (x *GetTradingStatusData) GetSessionType() string {
+	if x != nil {
+		return x.SessionType
 	}
 	return ""
 }
@@ -5895,14 +5903,15 @@ const file_proto_market_market_proto_rawDesc = "" +
 	"\rcategory_code\x18\x01 \x01(\tR\fcategoryCode\x12\x16\n" +
 	"\x06market\x18\x02 \x01(\tR\x06market\x12\x16\n" +
 	"\x06symbol\x18\x03 \x01(\tR\x06symbol\x12\x1c\n" +
-	"\ttimestamp\x18\x04 \x01(\x03R\ttimestamp\"\xaf\x01\n" +
+	"\ttimestamp\x18\x04 \x01(\x03R\ttimestamp\"\xd2\x01\n" +
 	"\x14GetTradingStatusData\x12\x17\n" +
 	"\ais_open\x18\x01 \x01(\bR\x06isOpen\x12\x1f\n" +
 	"\vcalendar_id\x18\x02 \x01(\x03R\n" +
 	"calendarId\x12)\n" +
 	"\x10product_specific\x18\x03 \x01(\bR\x0fproductSpecific\x12\x1a\n" +
 	"\btimezone\x18\x04 \x01(\tR\btimezone\x12\x16\n" +
-	"\x06reason\x18\x05 \x01(\tR\x06reason\"n\n" +
+	"\x06reason\x18\x05 \x01(\tR\x06reason\x12!\n" +
+	"\fsession_type\x18\x06 \x01(\tR\vsessionType\"n\n" +
 	"\x14GetTradingStatusResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
 	"\x04data\x18\x02 \x01(\v2\x1c.market.GetTradingStatusDataR\x04data\"B\n" +

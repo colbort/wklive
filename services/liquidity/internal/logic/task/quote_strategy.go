@@ -26,7 +26,12 @@ type referenceQuote struct {
 	timestamp  int64
 }
 
-const tradingStatusLogInterval = 5 * time.Minute
+const (
+	tradingStatusLogInterval    = 5 * time.Minute
+	referenceRetryInitial       = 5 * time.Second
+	referenceRetryMaximum       = 30 * time.Second
+	referenceFailureLogInterval = 5 * time.Minute
+)
 
 type tradingStatusLogEntry struct {
 	state    string
@@ -42,6 +47,17 @@ var uncertainQuoteLogs = struct {
 	sync.Mutex
 	entries map[int64]time.Time
 }{entries: make(map[int64]time.Time)}
+
+type referenceRetryEntry struct {
+	failures int
+	retryAt  time.Time
+	loggedAt time.Time
+}
+
+var referenceRetries = struct {
+	sync.Mutex
+	entries map[int64]referenceRetryEntry
+}{entries: make(map[int64]referenceRetryEntry)}
 
 func prepareInternalQuoteCycles(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.LiquidityTaskReq) (int64, int64, error) {
 	limit := int64(in.BatchSize)
@@ -73,6 +89,7 @@ func prepareInternalQuoteCycle(ctx context.Context, svcCtx *svc.ServiceContext, 
 		return false, err
 	}
 	if !open {
+		clearReferenceRetry(config.Id)
 		return false, nil
 	}
 	hasUncertain, err := svcCtx.QuoteOrderModel.HasUncertainByConfig(ctx, config.Id)
@@ -90,10 +107,15 @@ func prepareInternalQuoteCycle(ctx context.Context, svcCtx *svc.ServiceContext, 
 	if latest != nil && config.RefreshIntervalMs > 0 && now-latest.StartedAt < config.RefreshIntervalMs {
 		return false, nil
 	}
+	if !referenceRetryAllowed(config.Id, time.UnixMilli(now)) {
+		return false, nil
+	}
 	reference, err := loadReferenceQuoteOrCancel(ctx, svcCtx, config, now)
 	if err != nil {
+		recordReferenceFailure(ctx, config, err)
 		return false, err
 	}
+	clearReferenceRetry(config.Id)
 	if latest != nil && latest.ReferencePrice.IsPositive() && config.RepriceThresholdBps.IsPositive() &&
 		reference.price.Sub(latest.ReferencePrice).Abs().Div(latest.ReferencePrice).Mul(decimal.NewFromInt(10_000)).LessThan(config.RepriceThresholdBps) &&
 		(config.QuoteTtlMs <= 0 || now-latest.StartedAt < config.QuoteTtlMs) {
@@ -181,6 +203,49 @@ func loadReferenceQuoteOrCancel(ctx context.Context, svcCtx *svc.ServiceContext,
 	return nil, err
 }
 
+func referenceRetryAllowed(configID int64, now time.Time) bool {
+	referenceRetries.Lock()
+	entry, found := referenceRetries.entries[configID]
+	referenceRetries.Unlock()
+	return !found || !now.Before(entry.retryAt)
+}
+
+func recordReferenceFailure(ctx context.Context, config *models.TLiquiditySymbolConfig, referenceErr error) {
+	if config == nil {
+		return
+	}
+	now := time.Now()
+	referenceRetries.Lock()
+	entry := referenceRetries.entries[config.Id]
+	entry.failures++
+	delay := referenceRetryInitial
+	for i := 1; i < entry.failures && delay < referenceRetryMaximum; i++ {
+		delay *= 2
+		if delay > referenceRetryMaximum {
+			delay = referenceRetryMaximum
+		}
+	}
+	entry.retryAt = now.Add(delay)
+	shouldLog := entry.loggedAt.IsZero() || now.Sub(entry.loggedAt) >= referenceFailureLogInterval
+	if shouldLog {
+		entry.loggedAt = now
+	}
+	referenceRetries.entries[config.Id] = entry
+	referenceRetries.Unlock()
+	if shouldLog {
+		logx.WithContext(ctx).Errorf(
+			"[LIQUIDITY_REFERENCE_PRICE] config_id=%d symbol=%s source=%s unavailable=true failures=%d retry_in_ms=%d err=%v",
+			config.Id, config.Symbol, config.ReferencePriceSource, entry.failures, delay.Milliseconds(), referenceErr,
+		)
+	}
+}
+
+func clearReferenceRetry(configID int64) {
+	referenceRetries.Lock()
+	delete(referenceRetries.entries, configID)
+	referenceRetries.Unlock()
+}
+
 func loadReferenceQuote(ctx context.Context, svcCtx *svc.ServiceContext, config *models.TLiquiditySymbolConfig, targetTime int64) (*referenceQuote, error) {
 	if svcCtx.MarketClient == nil {
 		return nil, errors.New("market client is not configured")
@@ -262,34 +327,43 @@ func referencePriceSources(value string) []string {
 }
 
 func ensureMarketOpen(ctx context.Context, svcCtx *svc.ServiceContext, config *models.TLiquiditySymbolConfig, timestamp int64) (bool, error) {
-	open, reason, err := loadTradingStatus(ctx, svcCtx, config, timestamp)
+	open, reason, sessionType, err := loadTradingStatus(ctx, svcCtx, config, timestamp)
 	if err != nil {
-		logTradingStatus(ctx, config, false, "market_status_unavailable", err)
+		logTradingStatus(ctx, config, false, "market_status_unavailable", sessionType, err)
 		cancelErr := cancelActiveQuotes(ctx, svcCtx, config.Id, "market status unavailable")
 		if cancelErr != nil {
 			return false, errors.Join(err, cancelErr)
 		}
 		return false, err
 	}
+	category, _, _ := parseReferenceSource(config.ReferencePriceSource, config.Symbol)
+	if open && strings.EqualFold(category, "stock") && !strings.EqualFold(sessionType, "regular") {
+		open = false
+		if strings.TrimSpace(sessionType) == "" {
+			reason = "stock_session_type_unavailable"
+		} else {
+			reason = "stock_extended_session_disabled:" + strings.ToLower(strings.TrimSpace(sessionType))
+		}
+	}
 	if open {
-		logTradingStatus(ctx, config, true, reason, nil)
+		logTradingStatus(ctx, config, true, reason, sessionType, nil)
 		return true, nil
 	}
 	if reason == "" {
 		reason = "market_closed"
 	}
-	logTradingStatus(ctx, config, false, reason, nil)
+	logTradingStatus(ctx, config, false, reason, sessionType, nil)
 	if err := cancelActiveQuotes(ctx, svcCtx, config.Id, reason); err != nil {
 		return false, err
 	}
 	return false, nil
 }
 
-func logTradingStatus(ctx context.Context, config *models.TLiquiditySymbolConfig, open bool, reason string, statusErr error) {
+func logTradingStatus(ctx context.Context, config *models.TLiquiditySymbolConfig, open bool, reason, sessionType string, statusErr error) {
 	if config == nil {
 		return
 	}
-	state := fmt.Sprintf("%t:%s", open, reason)
+	state := fmt.Sprintf("%t:%s:%s", open, reason, sessionType)
 	now := time.Now()
 	tradingStatusLogs.Lock()
 	previous, found := tradingStatusLogs.entries[config.Id]
@@ -306,27 +380,27 @@ func logTradingStatus(ctx context.Context, config *models.TLiquiditySymbolConfig
 	}
 	logger := logx.WithContext(ctx)
 	if statusErr != nil {
-		logger.Errorf("[LIQUIDITY_MARKET_STATUS] config_id=%d symbol=%s source=%s open=false reason=%s err=%v", config.Id, config.Symbol, source, reason, statusErr)
+		logger.Errorf("[LIQUIDITY_MARKET_STATUS] config_id=%d symbol=%s source=%s open=false reason=%s session_type=%s err=%v", config.Id, config.Symbol, source, reason, sessionType, statusErr)
 		return
 	}
 	if !open {
-		logger.Errorf("[LIQUIDITY_MARKET_STATUS] config_id=%d symbol=%s source=%s open=false reason=%s", config.Id, config.Symbol, source, reason)
+		logger.Errorf("[LIQUIDITY_MARKET_STATUS] config_id=%d symbol=%s source=%s open=false reason=%s session_type=%s", config.Id, config.Symbol, source, reason, sessionType)
 		return
 	}
-	logger.Infof("[LIQUIDITY_MARKET_STATUS] config_id=%d symbol=%s source=%s open=%t reason=%s", config.Id, config.Symbol, source, open, reason)
+	logger.Infof("[LIQUIDITY_MARKET_STATUS] config_id=%d symbol=%s source=%s open=%t reason=%s session_type=%s", config.Id, config.Symbol, source, open, reason, sessionType)
 }
 
-func loadTradingStatus(ctx context.Context, svcCtx *svc.ServiceContext, config *models.TLiquiditySymbolConfig, timestamp int64) (bool, string, error) {
+func loadTradingStatus(ctx context.Context, svcCtx *svc.ServiceContext, config *models.TLiquiditySymbolConfig, timestamp int64) (bool, string, string, error) {
 	if svcCtx.MarketClient == nil {
-		return false, "", errors.New("market client is not configured")
+		return false, "", "", errors.New("market client is not configured")
 	}
 	sources := referencePriceSources(config.ReferencePriceSource)
 	if len(sources) == 0 {
-		return false, "", errors.New("reference price source is required for trading calendar")
+		return false, "", "", errors.New("reference price source is required for trading calendar")
 	}
 	category, marketCode, symbol := parseReferenceSource(sources[0], config.Symbol)
 	if category == "" || marketCode == "" || symbol == "" {
-		return false, "", fmt.Errorf("invalid trading calendar source: %s", sources[0])
+		return false, "", "", fmt.Errorf("invalid trading calendar source: %s", sources[0])
 	}
 	resp, err := svcCtx.MarketClient.GetTradingStatus(ctx, &pb.GetTradingStatusReq{
 		CategoryCode: category,
@@ -335,12 +409,12 @@ func loadTradingStatus(ctx context.Context, svcCtx *svc.ServiceContext, config *
 		Timestamp:    timestamp,
 	})
 	if err != nil {
-		return false, "", fmt.Errorf("get market trading status: %w", err)
+		return false, "", "", fmt.Errorf("get market trading status: %w", err)
 	}
 	if resp.GetBase().GetCode() != 200 || resp.GetData() == nil {
-		return false, "", fmt.Errorf("market trading status unavailable: %s", resp.GetBase().GetMsg())
+		return false, "", "", fmt.Errorf("market trading status unavailable: %s", resp.GetBase().GetMsg())
 	}
-	return resp.GetData().GetIsOpen(), resp.GetData().GetReason(), nil
+	return resp.GetData().GetIsOpen(), resp.GetData().GetReason(), resp.GetData().GetSessionType(), nil
 }
 
 func parseReferenceSource(source, fallbackSymbol string) (string, string, string) {

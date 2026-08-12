@@ -117,6 +117,7 @@ message GetTradingStatusData {
   bool product_specific = 3;
   string timezone = 4;
   string reason = 5;
+  string session_type = 6;
 }
 
 message GetTradingStatusResp {
