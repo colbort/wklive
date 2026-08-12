@@ -16,8 +16,10 @@ func TestLiquidityOutboxLeaseOwnerFencesTransitions(t *testing.T) {
 	}
 	defer db.Close()
 	model := &customTLiquidityEventOutboxModel{
-		CachedConn: sqlc.NewConnWithCache(sqlx.NewSqlConnFromDB(db), nil),
-		table:      "`t_liquidity_event_outbox`",
+		defaultTLiquidityEventOutboxModel: &defaultTLiquidityEventOutboxModel{
+			CachedConn: sqlc.NewConnWithCache(sqlx.NewSqlConnFromDB(db), nil),
+			table:      "`t_liquidity_event_outbox`",
+		},
 	}
 	mock.ExpectExec(`(?s)UPDATE .*SET status=2,claimed_by=\?,claimed_at=\?,update_times=\?`).
 		WithArgs("worker-a", int64(100), int64(100), int64(9), int64(100), int64(40)).

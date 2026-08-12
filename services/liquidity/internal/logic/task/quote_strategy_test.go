@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"wklive/proto/common"
+	"wklive/proto/liquidity"
 	"wklive/proto/market"
 	"wklive/services/liquidity/internal/svc"
 	"wklive/services/liquidity/models"
@@ -17,6 +18,21 @@ type marketClientStub struct {
 	statusReq  *market.GetTradingStatusReq
 	statusResp *market.GetTradingStatusResp
 	statusErr  error
+}
+
+type quoteOrderModelStub struct {
+	models.TLiquidityQuoteOrderModel
+	rows    []*models.TLiquidityQuoteOrder
+	updated []*models.TLiquidityQuoteOrder
+}
+
+func (s *quoteOrderModelStub) FindActiveByConfig(context.Context, int64) ([]*models.TLiquidityQuoteOrder, error) {
+	return s.rows, nil
+}
+
+func (s *quoteOrderModelStub) Update(_ context.Context, row *models.TLiquidityQuoteOrder) error {
+	s.updated = append(s.updated, row)
+	return nil
 }
 
 func (s *marketClientStub) GetAuthoritativeSnapshot(context.Context, *market.GetAuthoritativeSnapshotReq, ...grpc.CallOption) (*market.GetAuthoritativeSnapshotResp, error) {
@@ -94,5 +110,32 @@ func TestLoadTradingStatusUsesPrimaryReferenceSource(t *testing.T) {
 	}
 	if client.statusReq.GetCategoryCode() != "stock" || client.statusReq.GetMarket() != "US" || client.statusReq.GetSymbol() != "AAPL" || client.statusReq.GetTimestamp() != 12345 {
 		t.Fatalf("unexpected trading status request: %+v", client.statusReq)
+	}
+}
+
+func TestEnsureMarketOpenCancelsPendingQuotesWhenClosed(t *testing.T) {
+	client := &marketClientStub{statusResp: &market.GetTradingStatusResp{
+		Base: &common.RespBase{Code: 200},
+		Data: &market.GetTradingStatusData{IsOpen: false, Reason: "market_closed"},
+	}}
+	row := &models.TLiquidityQuoteOrder{
+		Id: 77, ConfigId: 7,
+		Status: int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_PENDING_SUBMIT),
+	}
+	orders := &quoteOrderModelStub{rows: []*models.TLiquidityQuoteOrder{row}}
+	config := &models.TLiquiditySymbolConfig{
+		Id: 7, Symbol: "AAPL", ReferencePriceSource: "stock:US:AAPL",
+	}
+	open, err := ensureMarketOpen(context.Background(), &svc.ServiceContext{
+		MarketClient: client, QuoteOrderModel: orders,
+	}, config, 12345)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if open {
+		t.Fatal("closed market must not allow liquidity quoting")
+	}
+	if len(orders.updated) != 1 || row.Status != int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_CANCELED) || row.CancelReason != "market_closed" {
+		t.Fatalf("pending quote was not canceled: %+v", row)
 	}
 }
