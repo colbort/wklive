@@ -15,7 +15,7 @@ func TestLiquidityOutboxLeaseOwnerFencesTransitions(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	model := &defaultTLiquidityEventOutboxModel{
+	model := &customTLiquidityEventOutboxModel{
 		CachedConn: sqlc.NewConnWithCache(sqlx.NewSqlConnFromDB(db), nil),
 		table:      "`t_liquidity_event_outbox`",
 	}

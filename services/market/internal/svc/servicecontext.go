@@ -61,6 +61,7 @@ type ServiceContext struct {
 	AuthorityRegistryAdminModel  AuthorityRegistryAdminStore
 	MarketKlineSyncProgressModel models.TItickKlineSyncProgressModel
 	MarketCalendarModel          models.TItickMarketCalendarModel
+	MarketProductCalendarModel   models.TItickProductCalendarModel
 	MarketHolidayModel           models.TItickMarketHolidayModel
 	MarketCalendarResolver       *calendar.Resolver
 	ITickRestClient              *itickrest.Client
@@ -107,8 +108,9 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	priceFormulaModel := models.NewTItickPriceFormulaModel(conn, c.CacheRedis)
 	marketKlineSyncProgressModel := models.NewTItickKlineSyncProgressModel(conn, c.CacheRedis)
 	marketCalendarModel := models.NewTItickMarketCalendarModel(conn, c.CacheRedis)
+	marketProductCalendarModel := models.NewTItickProductCalendarModel(conn, c.CacheRedis)
 	marketHolidayModel := models.NewTItickMarketHolidayModel(conn, c.CacheRedis)
-	marketCalendarResolver := calendar.NewResolver(marketCalendarModel, 10*time.Minute)
+	marketCalendarResolver := calendar.NewResolver(marketCalendarModel, marketProductCalendarModel, 10*time.Minute)
 
 	dataCache := redis.NewClient(&redis.Options{
 		Addr:     c.DataCache.Host,
@@ -151,6 +153,15 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		lockRedis,
 		marketDataCache,
 		iTickRestClient,
+		marketCalendarResolver,
+		client.StaleQuoteRecoveryConfig{
+			CheckInterval: time.Duration(c.Runtime.QuoteHealthCheckSeconds) * time.Second,
+			StaleAfter:    time.Duration(c.Runtime.QuoteStaleSeconds) * time.Second,
+			StartupGrace:  time.Duration(c.Runtime.QuoteRecoveryGraceSeconds) * time.Second,
+			RestMaxAge:    time.Duration(c.Runtime.QuoteRestMaxAgeSeconds) * time.Second,
+			Cooldown:      time.Duration(c.Runtime.QuoteRecoveryCooldownSeconds) * time.Second,
+			BatchSize:     c.Runtime.QuoteRecoveryBatchSize,
+		},
 	)
 	authoritativeQuoteHandler := func(_ context.Context, msg types.ClientMessage, payload *types.QuotePayload) error {
 		rpcCtx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -216,6 +227,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		AuthorityRegistryAdminModel:  authorityRegistryModel,
 		MarketKlineSyncProgressModel: marketKlineSyncProgressModel,
 		MarketCalendarModel:          marketCalendarModel,
+		MarketProductCalendarModel:   marketProductCalendarModel,
 		MarketHolidayModel:           marketHolidayModel,
 		MarketCalendarResolver:       marketCalendarResolver,
 		ITickRestClient:              iTickRestClient,

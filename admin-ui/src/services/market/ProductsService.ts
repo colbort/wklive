@@ -30,6 +30,30 @@ export type MarketProduct = {
   remark: string
   createTimes: number
   updateTimes: number
+  tradingCalendar?: MarketTradingCalendar
+}
+
+export type MarketTradingCalendar = {
+  id: number
+  categoryCode: string
+  market: string
+  exchange: string
+  timezone: string
+  tradingDayOffset: number
+  weekStart: number
+  productSpecific: boolean
+  remark: string
+  sessions: MarketTradingSession[]
+}
+
+export type MarketTradingSession = {
+  id: number
+  sessionType: string
+  startTime: string
+  endTime: string
+  crossDay: boolean
+  weekdayMask: number
+  sort: number
 }
 
 export type CreateProductReq = {

@@ -636,6 +636,47 @@ func (c *ITickWsClient) syncDesiredSubscriptions() error {
 	return nil
 }
 
+// resubscribeProduct refreshes one product on the existing category socket.
+// It intentionally does not create a connection and does not change subscribe
+// ACK handling; ACK validation is tracked as a separate rollout item.
+func (c *ITickWsClient) resubscribeProduct(msg types.ClientMessage) error {
+	msg = cache.NormalizeClientMessage(msg)
+	if !c.canSyncSubscriptions() {
+		return errors.New("market websocket is not ready for targeted resubscribe")
+	}
+
+	typeSet := make(map[string]struct{})
+	c.subMu.Lock()
+	for _, desired := range c.desiredSubs {
+		desired = cache.NormalizeClientMessage(desired)
+		if desired.Market != msg.Market || desired.Symbol != msg.Symbol {
+			continue
+		}
+		_, streamType, err := c.buildMarketSubscribe(desired)
+		if err != nil {
+			c.subMu.Unlock()
+			return err
+		}
+		typeSet[streamType] = struct{}{}
+	}
+	c.subMu.Unlock()
+	if len(typeSet) == 0 {
+		return fmt.Errorf("product is not in desired subscriptions: %s:%s", msg.Market, msg.Symbol)
+	}
+
+	streamTypes := make([]string, 0, len(typeSet))
+	for streamType := range typeSet {
+		streamTypes = append(streamTypes, streamType)
+	}
+	sort.Strings(streamTypes)
+	params := buildSymbolRegion(msg.Symbol, msg.Market)
+	typesValue := strings.Join(streamTypes, ",")
+	if err := c.unsubscribe(params, typesValue); err != nil {
+		return err
+	}
+	return c.subscribe(params, typesValue)
+}
+
 func appendSyntheticDepthLevels(levels []*types.DepthLevel, isAsk bool, count int) []*types.DepthLevel {
 	if count <= 0 {
 		return levels

@@ -28,3 +28,9 @@ func (s *MarketServer) GetAuthoritativeSnapshot(ctx context.Context, in *market.
 	l := marketlogic.NewGetAuthoritativeSnapshotLogic(ctx, s.svcCtx)
 	return l.GetAuthoritativeSnapshot(in)
 }
+
+// Resolves the product-specific or market-default calendar and reports
+func (s *MarketServer) GetTradingStatus(ctx context.Context, in *market.GetTradingStatusReq) (*market.GetTradingStatusResp, error) {
+	l := marketlogic.NewGetTradingStatusLogic(ctx, s.svcCtx)
+	return l.GetTradingStatus(in)
+}

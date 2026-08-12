@@ -14,6 +14,29 @@ type MarketCategory {
 	updateTimes  int64  `json:"updateTimes"`
 }
 
+type MarketTradingSession {
+	id          int64  `json:"id"`
+	sessionType string `json:"sessionType"`
+	startTime   string `json:"startTime"`
+	endTime     string `json:"endTime"`
+	crossDay    bool   `json:"crossDay"`
+	weekdayMask int64  `json:"weekdayMask"`
+	sort        int64  `json:"sort"`
+}
+
+type MarketTradingCalendar {
+	id               int64                  `json:"id"`
+	categoryCode     string                 `json:"categoryCode"`
+	market           string                 `json:"market"`
+	exchange         string                 `json:"exchange"`
+	timezone         string                 `json:"timezone"`
+	tradingDayOffset int64                  `json:"tradingDayOffset"`
+	weekStart        int64                  `json:"weekStart"`
+	productSpecific  bool                   `json:"productSpecific"`
+	remark           string                 `json:"remark"`
+	sessions         []MarketTradingSession `json:"sessions"`
+}
+
 // 产品
 type MarketProduct {
 	id           int64  `json:"id"`
@@ -35,6 +58,7 @@ type MarketProduct {
 	remark       string `json:"remark"`
 	createTimes  int64  `json:"createTimes"`
 	updateTimes  int64  `json:"updateTimes"`
+	tradingCalendar MarketTradingCalendar `json:"tradingCalendar,optional"`
 }
 
 // K线
@@ -700,4 +724,3 @@ service admin {
 	@handler RevokeAuthoritativeSnapshot
 	post /authoritative-snapshots/revoke (RevokeAuthoritativeSnapshotReq) returns (RespBase)
 }
-

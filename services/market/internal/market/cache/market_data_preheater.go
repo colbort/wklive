@@ -112,12 +112,52 @@ func isPackageUnsupported(err error) bool {
 }
 
 func (p *MarketDataPreheater) fetchBatchAndCache(ctx context.Context, batch marketDataBatch) error {
+	result, err := p.fetchBatch(ctx, batch)
+	if err != nil {
+		return err
+	}
+	for _, msg := range batch.msgs {
+		data, ok := findBatchData(result, msg.Symbol)
+		if !ok {
+			logx.Errorf("market batch response missing symbol, topic=%s category=%s market=%s symbol=%s",
+				batch.topic, batch.category, batch.market, msg.Symbol)
+			continue
+		}
+		if err := p.cache.Set(ctx, msg, restPayload(batch.topic, data)); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// FetchQuote verifies one product through iTick REST without publishing it.
+// The stale-stream monitor publishes only after checking source freshness.
+func (p *MarketDataPreheater) FetchQuote(ctx context.Context, msg types.ClientMessage) (*types.QuotePayload, error) {
+	msg = NormalizeClientMessage(msg)
+	msg.Topic = types.TopicQuote
+	batch := marketDataBatch{category: msg.CategoryCode, market: msg.Market, topic: types.TopicQuote, msgs: []types.ClientMessage{msg}}
+	result, err := p.fetchBatch(ctx, batch)
+	if err != nil {
+		return nil, err
+	}
+	data, ok := findBatchData(result, msg.Symbol)
+	if !ok {
+		return nil, fmt.Errorf("REST quote response missing symbol %s", msg.Symbol)
+	}
+	payload, ok := restPayload(types.TopicQuote, data).(*types.QuotePayload)
+	if !ok || payload == nil {
+		return nil, fmt.Errorf("REST quote response has invalid payload for %s", msg.Symbol)
+	}
+	return payload, nil
+}
+
+func (p *MarketDataPreheater) fetchBatch(ctx context.Context, batch marketDataBatch) (map[string]types.UpstreamData, error) {
 	if p.apiURL == "" || p.restClient == nil || p.cache == nil {
-		return fmt.Errorf("REST preheater is not configured")
+		return nil, fmt.Errorf("REST preheater is not configured")
 	}
 	base, err := url.Parse(p.apiURL)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	base.Path = path.Join(base.Path, batch.category, string(batch.topic)+"s")
 	query := base.Query()
@@ -131,7 +171,7 @@ func (p *MarketDataPreheater) fetchBatchAndCache(ctx context.Context, batch mark
 
 	resp, err := p.restClient.Get(ctx, base.String())
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer resp.Body.Close()
 	var result struct {
@@ -140,31 +180,24 @@ func (p *MarketDataPreheater) fetchBatchAndCache(ctx context.Context, batch mark
 		Data map[string]types.UpstreamData `json:"data"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return err
+		return nil, err
 	}
 	if result.Code != 0 {
-		return fmt.Errorf("REST rejected: code=%d msg=%s", result.Code, result.Msg)
+		return nil, fmt.Errorf("REST rejected: code=%d msg=%s", result.Code, result.Msg)
 	}
-	for _, msg := range batch.msgs {
-		data, ok := result.Data[msg.Symbol]
-		if !ok {
-			for symbol, item := range result.Data {
-				if strings.EqualFold(symbol, msg.Symbol) || strings.EqualFold(item.S, msg.Symbol) {
-					data, ok = item, true
-					break
-				}
-			}
-		}
-		if !ok {
-			logx.Errorf("market batch response missing symbol, topic=%s category=%s market=%s symbol=%s",
-				batch.topic, batch.category, batch.market, msg.Symbol)
-			continue
-		}
-		if err := p.cache.Set(ctx, msg, restPayload(batch.topic, data)); err != nil {
-			return err
+	return result.Data, nil
+}
+
+func findBatchData(data map[string]types.UpstreamData, symbol string) (types.UpstreamData, bool) {
+	if item, ok := data[symbol]; ok {
+		return item, true
+	}
+	for key, item := range data {
+		if strings.EqualFold(key, symbol) || strings.EqualFold(item.S, symbol) {
+			return item, true
 		}
 	}
-	return nil
+	return types.UpstreamData{}, false
 }
 
 func restPayload(topic types.Topic, data types.UpstreamData) any {

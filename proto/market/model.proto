@@ -44,6 +44,31 @@ message MarketProduct {
   string remark = 17;
   int64 create_times = 18;
   int64 update_times = 19;
+  MarketTradingCalendar trading_calendar = 20;
+}
+
+// 产品最终生效的交易日历。单品种映射优先于市场默认日历。
+message MarketTradingCalendar {
+  int64 id = 1;
+  string category_code = 2;
+  string market = 3;
+  string exchange = 4;
+  string timezone = 5;
+  int64 trading_day_offset = 6;
+  int64 week_start = 7;
+  bool product_specific = 8;
+  string remark = 9;
+  repeated MarketTradingSession sessions = 10;
+}
+
+message MarketTradingSession {
+  int64 id = 1;
+  string session_type = 2;
+  string start_time = 3;
+  string end_time = 4;
+  bool cross_day = 5;
+  int64 weekday_mask = 6; // bit0=Sunday ... bit6=Saturday
+  int64 sort = 7;
 }
 
 // K线

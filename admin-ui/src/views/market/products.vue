@@ -603,6 +603,57 @@
         </el-descriptions-item>
       </el-descriptions>
 
+      <el-divider content-position="left">
+        {{ t('market.tradingHours') }}
+      </el-divider>
+      <el-empty
+        v-if="!detail.tradingCalendar?.id"
+        :description="t('market.noTradingCalendar')"
+        :image-size="64"
+      />
+      <el-descriptions v-else :column="2" border>
+        <el-descriptions-item :label="t('market.calendarScope')">
+          {{
+            detail.tradingCalendar.productSpecific
+              ? t('market.productSpecificCalendar')
+              : t('market.marketDefaultCalendar')
+          }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('market.timezone')">
+          {{ detail.tradingCalendar.timezone || 'UTC' }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('market.market')">
+          {{ detail.tradingCalendar.market || '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('market.exchange')">
+          {{ detail.tradingCalendar.exchange || '-' }}
+        </el-descriptions-item>
+        <el-descriptions-item :label="t('market.weeklySessions')" :span="2">
+          <div v-if="detail.tradingCalendar.sessions?.length" class="trading-session-list">
+            <div
+              v-for="session in detail.tradingCalendar.sessions"
+              :key="session.id"
+              class="trading-session-item"
+            >
+              <el-tag size="small" effect="plain">
+                {{ formatWeekdayMask(session.weekdayMask) }}
+              </el-tag>
+              <span>{{ session.startTime }}–{{ session.endTime }}</span>
+              <el-tag
+                v-if="session.crossDay"
+                size="small"
+                type="warning"
+                effect="plain"
+              >
+                {{ t('market.crossDay') }}
+              </el-tag>
+              <span class="session-type">{{ session.sessionType }}</span>
+            </div>
+          </div>
+          <span v-else>-</span>
+        </el-descriptions-item>
+      </el-descriptions>
+
       <template #footer>
         <el-button type="primary" @click="detailDialogVisible = false">
           {{ t('common.close') }}
@@ -934,6 +985,20 @@ const handleDetail = async (row: MarketProduct) => {
   }
 }
 
+const formatWeekdayMask = (mask: number) => {
+  const names = [
+    t('market.weekdaySunday'),
+    t('market.weekdayMonday'),
+    t('market.weekdayTuesday'),
+    t('market.weekdayWednesday'),
+    t('market.weekdayThursday'),
+    t('market.weekdayFriday'),
+    t('market.weekdaySaturday'),
+  ]
+  const selected = names.filter((_, index) => (Number(mask) & (1 << index)) !== 0)
+  return selected.length ? selected.join('、') : '-'
+}
+
 const buildKlineRequest = () => {
   const product = klineProduct.value
   if (!product) return null
@@ -1127,5 +1192,22 @@ onMounted(() => {
 .kline-history-toolbar {
   flex-shrink: 0;
   padding-bottom: 16px;
+}
+
+.trading-session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.trading-session-item {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.session-type {
+  color: var(--el-text-color-secondary);
 }
 </style>

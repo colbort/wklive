@@ -25,6 +25,12 @@ Runtime:
   RepairBatchSize: 10
   BuildingBucketTtlMinutes: 120
   WsKlineStaleSeconds: 30
+  QuoteHealthCheckSeconds: 30
+  QuoteStaleSeconds: 90
+  QuoteRecoveryGraceSeconds: 60
+  QuoteRestMaxAgeSeconds: 300
+  QuoteRecoveryCooldownSeconds: 60
+  QuoteRecoveryBatchSize: 10
 
 # 三个独立交易所的公开现货成交价用于 INDEX/DELIVERY；Binance 永续成交价
 # 单独用于 MARK 基差。全部端点无需 API Key，但生产数据许可仍须单独审批。

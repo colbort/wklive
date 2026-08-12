@@ -157,28 +157,29 @@ func (x *MarketCategory) GetUpdateTimes() int64 {
 
 // 产品
 type MarketProduct struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CategoryType  CategoryType           `protobuf:"varint,2,opt,name=category_type,json=categoryType,proto3,enum=market.CategoryType" json:"category_type,omitempty"`
-	CategoryCode  string                 `protobuf:"bytes,3,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
-	CategoryName  string                 `protobuf:"bytes,4,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"`
-	Market        string                 `protobuf:"bytes,5,opt,name=market,proto3" json:"market,omitempty"` // binance / hk / us / forex ...
-	Symbol        string                 `protobuf:"bytes,6,opt,name=symbol,proto3" json:"symbol,omitempty"` // BTCUSDT / AAPL / EURUSD
-	Code          string                 `protobuf:"bytes,7,opt,name=code,proto3" json:"code,omitempty"`     // 第三方原始 code
-	Name          string                 `protobuf:"bytes,8,opt,name=name,proto3" json:"name,omitempty"`
-	DisplayName   string                 `protobuf:"bytes,9,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
-	BaseCoin      string                 `protobuf:"bytes,10,opt,name=base_coin,json=baseCoin,proto3" json:"base_coin,omitempty"`
-	QuoteCoin     string                 `protobuf:"bytes,11,opt,name=quote_coin,json=quoteCoin,proto3" json:"quote_coin,omitempty"`
-	Enabled       common.Enable          `protobuf:"varint,12,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                                          // 启用状态 0表示全部，1表示启用，2表示禁用
-	AppVisible    common.Switch          `protobuf:"varint,13,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"`                  // APP可见开关 0表示全部，1表示显示，2表示隐藏
-	SyncPriority  SyncKlinePriority      `protobuf:"varint,14,opt,name=sync_priority,json=syncPriority,proto3,enum=market.SyncKlinePriority" json:"sync_priority,omitempty"` // K线同步优先级
-	Sort          int64                  `protobuf:"varint,15,opt,name=sort,proto3" json:"sort,omitempty"`
-	Icon          string                 `protobuf:"bytes,16,opt,name=icon,proto3" json:"icon,omitempty"`
-	Remark        string                 `protobuf:"bytes,17,opt,name=remark,proto3" json:"remark,omitempty"`
-	CreateTimes   int64                  `protobuf:"varint,18,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
-	UpdateTimes   int64                  `protobuf:"varint,19,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CategoryType    CategoryType           `protobuf:"varint,2,opt,name=category_type,json=categoryType,proto3,enum=market.CategoryType" json:"category_type,omitempty"`
+	CategoryCode    string                 `protobuf:"bytes,3,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
+	CategoryName    string                 `protobuf:"bytes,4,opt,name=category_name,json=categoryName,proto3" json:"category_name,omitempty"`
+	Market          string                 `protobuf:"bytes,5,opt,name=market,proto3" json:"market,omitempty"` // binance / hk / us / forex ...
+	Symbol          string                 `protobuf:"bytes,6,opt,name=symbol,proto3" json:"symbol,omitempty"` // BTCUSDT / AAPL / EURUSD
+	Code            string                 `protobuf:"bytes,7,opt,name=code,proto3" json:"code,omitempty"`     // 第三方原始 code
+	Name            string                 `protobuf:"bytes,8,opt,name=name,proto3" json:"name,omitempty"`
+	DisplayName     string                 `protobuf:"bytes,9,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	BaseCoin        string                 `protobuf:"bytes,10,opt,name=base_coin,json=baseCoin,proto3" json:"base_coin,omitempty"`
+	QuoteCoin       string                 `protobuf:"bytes,11,opt,name=quote_coin,json=quoteCoin,proto3" json:"quote_coin,omitempty"`
+	Enabled         common.Enable          `protobuf:"varint,12,opt,name=enabled,proto3,enum=common.Enable" json:"enabled,omitempty"`                                          // 启用状态 0表示全部，1表示启用，2表示禁用
+	AppVisible      common.Switch          `protobuf:"varint,13,opt,name=app_visible,json=appVisible,proto3,enum=common.Switch" json:"app_visible,omitempty"`                  // APP可见开关 0表示全部，1表示显示，2表示隐藏
+	SyncPriority    SyncKlinePriority      `protobuf:"varint,14,opt,name=sync_priority,json=syncPriority,proto3,enum=market.SyncKlinePriority" json:"sync_priority,omitempty"` // K线同步优先级
+	Sort            int64                  `protobuf:"varint,15,opt,name=sort,proto3" json:"sort,omitempty"`
+	Icon            string                 `protobuf:"bytes,16,opt,name=icon,proto3" json:"icon,omitempty"`
+	Remark          string                 `protobuf:"bytes,17,opt,name=remark,proto3" json:"remark,omitempty"`
+	CreateTimes     int64                  `protobuf:"varint,18,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
+	UpdateTimes     int64                  `protobuf:"varint,19,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
+	TradingCalendar *MarketTradingCalendar `protobuf:"bytes,20,opt,name=trading_calendar,json=tradingCalendar,proto3" json:"trading_calendar,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *MarketProduct) Reset() {
@@ -344,6 +345,222 @@ func (x *MarketProduct) GetUpdateTimes() int64 {
 	return 0
 }
 
+func (x *MarketProduct) GetTradingCalendar() *MarketTradingCalendar {
+	if x != nil {
+		return x.TradingCalendar
+	}
+	return nil
+}
+
+// 产品最终生效的交易日历。单品种映射优先于市场默认日历。
+type MarketTradingCalendar struct {
+	state            protoimpl.MessageState  `protogen:"open.v1"`
+	Id               int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CategoryCode     string                  `protobuf:"bytes,2,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
+	Market           string                  `protobuf:"bytes,3,opt,name=market,proto3" json:"market,omitempty"`
+	Exchange         string                  `protobuf:"bytes,4,opt,name=exchange,proto3" json:"exchange,omitempty"`
+	Timezone         string                  `protobuf:"bytes,5,opt,name=timezone,proto3" json:"timezone,omitempty"`
+	TradingDayOffset int64                   `protobuf:"varint,6,opt,name=trading_day_offset,json=tradingDayOffset,proto3" json:"trading_day_offset,omitempty"`
+	WeekStart        int64                   `protobuf:"varint,7,opt,name=week_start,json=weekStart,proto3" json:"week_start,omitempty"`
+	ProductSpecific  bool                    `protobuf:"varint,8,opt,name=product_specific,json=productSpecific,proto3" json:"product_specific,omitempty"`
+	Remark           string                  `protobuf:"bytes,9,opt,name=remark,proto3" json:"remark,omitempty"`
+	Sessions         []*MarketTradingSession `protobuf:"bytes,10,rep,name=sessions,proto3" json:"sessions,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *MarketTradingCalendar) Reset() {
+	*x = MarketTradingCalendar{}
+	mi := &file_proto_market_model_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MarketTradingCalendar) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MarketTradingCalendar) ProtoMessage() {}
+
+func (x *MarketTradingCalendar) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_market_model_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MarketTradingCalendar.ProtoReflect.Descriptor instead.
+func (*MarketTradingCalendar) Descriptor() ([]byte, []int) {
+	return file_proto_market_model_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *MarketTradingCalendar) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *MarketTradingCalendar) GetCategoryCode() string {
+	if x != nil {
+		return x.CategoryCode
+	}
+	return ""
+}
+
+func (x *MarketTradingCalendar) GetMarket() string {
+	if x != nil {
+		return x.Market
+	}
+	return ""
+}
+
+func (x *MarketTradingCalendar) GetExchange() string {
+	if x != nil {
+		return x.Exchange
+	}
+	return ""
+}
+
+func (x *MarketTradingCalendar) GetTimezone() string {
+	if x != nil {
+		return x.Timezone
+	}
+	return ""
+}
+
+func (x *MarketTradingCalendar) GetTradingDayOffset() int64 {
+	if x != nil {
+		return x.TradingDayOffset
+	}
+	return 0
+}
+
+func (x *MarketTradingCalendar) GetWeekStart() int64 {
+	if x != nil {
+		return x.WeekStart
+	}
+	return 0
+}
+
+func (x *MarketTradingCalendar) GetProductSpecific() bool {
+	if x != nil {
+		return x.ProductSpecific
+	}
+	return false
+}
+
+func (x *MarketTradingCalendar) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
+func (x *MarketTradingCalendar) GetSessions() []*MarketTradingSession {
+	if x != nil {
+		return x.Sessions
+	}
+	return nil
+}
+
+type MarketTradingSession struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	SessionType   string                 `protobuf:"bytes,2,opt,name=session_type,json=sessionType,proto3" json:"session_type,omitempty"`
+	StartTime     string                 `protobuf:"bytes,3,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime       string                 `protobuf:"bytes,4,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	CrossDay      bool                   `protobuf:"varint,5,opt,name=cross_day,json=crossDay,proto3" json:"cross_day,omitempty"`
+	WeekdayMask   int64                  `protobuf:"varint,6,opt,name=weekday_mask,json=weekdayMask,proto3" json:"weekday_mask,omitempty"` // bit0=Sunday ... bit6=Saturday
+	Sort          int64                  `protobuf:"varint,7,opt,name=sort,proto3" json:"sort,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MarketTradingSession) Reset() {
+	*x = MarketTradingSession{}
+	mi := &file_proto_market_model_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MarketTradingSession) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MarketTradingSession) ProtoMessage() {}
+
+func (x *MarketTradingSession) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_market_model_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MarketTradingSession.ProtoReflect.Descriptor instead.
+func (*MarketTradingSession) Descriptor() ([]byte, []int) {
+	return file_proto_market_model_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *MarketTradingSession) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *MarketTradingSession) GetSessionType() string {
+	if x != nil {
+		return x.SessionType
+	}
+	return ""
+}
+
+func (x *MarketTradingSession) GetStartTime() string {
+	if x != nil {
+		return x.StartTime
+	}
+	return ""
+}
+
+func (x *MarketTradingSession) GetEndTime() string {
+	if x != nil {
+		return x.EndTime
+	}
+	return ""
+}
+
+func (x *MarketTradingSession) GetCrossDay() bool {
+	if x != nil {
+		return x.CrossDay
+	}
+	return false
+}
+
+func (x *MarketTradingSession) GetWeekdayMask() int64 {
+	if x != nil {
+		return x.WeekdayMask
+	}
+	return 0
+}
+
+func (x *MarketTradingSession) GetSort() int64 {
+	if x != nil {
+		return x.Sort
+	}
+	return 0
+}
+
 // K线
 type Kline struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -370,7 +587,7 @@ type Kline struct {
 
 func (x *Kline) Reset() {
 	*x = Kline{}
-	mi := &file_proto_market_model_proto_msgTypes[2]
+	mi := &file_proto_market_model_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -382,7 +599,7 @@ func (x *Kline) String() string {
 func (*Kline) ProtoMessage() {}
 
 func (x *Kline) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_model_proto_msgTypes[2]
+	mi := &file_proto_market_model_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -395,7 +612,7 @@ func (x *Kline) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Kline.ProtoReflect.Descriptor instead.
 func (*Kline) Descriptor() ([]byte, []int) {
-	return file_proto_market_model_proto_rawDescGZIP(), []int{2}
+	return file_proto_market_model_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Kline) GetCategoryCode() string {
@@ -540,7 +757,7 @@ type Quote struct {
 
 func (x *Quote) Reset() {
 	*x = Quote{}
-	mi := &file_proto_market_model_proto_msgTypes[3]
+	mi := &file_proto_market_model_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -552,7 +769,7 @@ func (x *Quote) String() string {
 func (*Quote) ProtoMessage() {}
 
 func (x *Quote) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_model_proto_msgTypes[3]
+	mi := &file_proto_market_model_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -565,7 +782,7 @@ func (x *Quote) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Quote.ProtoReflect.Descriptor instead.
 func (*Quote) Descriptor() ([]byte, []int) {
-	return file_proto_market_model_proto_rawDescGZIP(), []int{3}
+	return file_proto_market_model_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *Quote) GetCategoryCode() string {
@@ -688,7 +905,7 @@ type AuthoritativeSnapshot struct {
 
 func (x *AuthoritativeSnapshot) Reset() {
 	*x = AuthoritativeSnapshot{}
-	mi := &file_proto_market_model_proto_msgTypes[4]
+	mi := &file_proto_market_model_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -700,7 +917,7 @@ func (x *AuthoritativeSnapshot) String() string {
 func (*AuthoritativeSnapshot) ProtoMessage() {}
 
 func (x *AuthoritativeSnapshot) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_model_proto_msgTypes[4]
+	mi := &file_proto_market_model_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -713,7 +930,7 @@ func (x *AuthoritativeSnapshot) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AuthoritativeSnapshot.ProtoReflect.Descriptor instead.
 func (*AuthoritativeSnapshot) Descriptor() ([]byte, []int) {
-	return file_proto_market_model_proto_rawDescGZIP(), []int{4}
+	return file_proto_market_model_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *AuthoritativeSnapshot) GetSnapshotId() string {
@@ -822,7 +1039,7 @@ type MarketTenantCategory struct {
 
 func (x *MarketTenantCategory) Reset() {
 	*x = MarketTenantCategory{}
-	mi := &file_proto_market_model_proto_msgTypes[5]
+	mi := &file_proto_market_model_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -834,7 +1051,7 @@ func (x *MarketTenantCategory) String() string {
 func (*MarketTenantCategory) ProtoMessage() {}
 
 func (x *MarketTenantCategory) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_model_proto_msgTypes[5]
+	mi := &file_proto_market_model_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -847,7 +1064,7 @@ func (x *MarketTenantCategory) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MarketTenantCategory.ProtoReflect.Descriptor instead.
 func (*MarketTenantCategory) Descriptor() ([]byte, []int) {
-	return file_proto_market_model_proto_rawDescGZIP(), []int{5}
+	return file_proto_market_model_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *MarketTenantCategory) GetId() int64 {
@@ -970,7 +1187,7 @@ type MarketTenantProduct struct {
 
 func (x *MarketTenantProduct) Reset() {
 	*x = MarketTenantProduct{}
-	mi := &file_proto_market_model_proto_msgTypes[6]
+	mi := &file_proto_market_model_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -982,7 +1199,7 @@ func (x *MarketTenantProduct) String() string {
 func (*MarketTenantProduct) ProtoMessage() {}
 
 func (x *MarketTenantProduct) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_model_proto_msgTypes[6]
+	mi := &file_proto_market_model_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -995,7 +1212,7 @@ func (x *MarketTenantProduct) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MarketTenantProduct.ProtoReflect.Descriptor instead.
 func (*MarketTenantProduct) Descriptor() ([]byte, []int) {
-	return file_proto_market_model_proto_rawDescGZIP(), []int{6}
+	return file_proto_market_model_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *MarketTenantProduct) GetId() int64 {
@@ -1157,7 +1374,7 @@ const file_proto_market_model_proto_rawDesc = "" +
 	"\x06remark\x18\n" +
 	" \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\v \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\f \x01(\x03R\vupdateTimes\"\xfc\x04\n" +
+	"\fupdate_times\x18\f \x01(\x03R\vupdateTimes\"\xc6\x05\n" +
 	"\rMarketProduct\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x129\n" +
 	"\rcategory_type\x18\x02 \x01(\x0e2\x14.market.CategoryTypeR\fcategoryType\x12#\n" +
@@ -1180,7 +1397,30 @@ const file_proto_market_model_proto_rawDesc = "" +
 	"\x04icon\x18\x10 \x01(\tR\x04icon\x12\x16\n" +
 	"\x06remark\x18\x11 \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x12 \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\x13 \x01(\x03R\vupdateTimes\"\xd3\x03\n" +
+	"\fupdate_times\x18\x13 \x01(\x03R\vupdateTimes\x12H\n" +
+	"\x10trading_calendar\x18\x14 \x01(\v2\x1d.market.MarketTradingCalendarR\x0ftradingCalendar\"\xe6\x02\n" +
+	"\x15MarketTradingCalendar\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
+	"\rcategory_code\x18\x02 \x01(\tR\fcategoryCode\x12\x16\n" +
+	"\x06market\x18\x03 \x01(\tR\x06market\x12\x1a\n" +
+	"\bexchange\x18\x04 \x01(\tR\bexchange\x12\x1a\n" +
+	"\btimezone\x18\x05 \x01(\tR\btimezone\x12,\n" +
+	"\x12trading_day_offset\x18\x06 \x01(\x03R\x10tradingDayOffset\x12\x1d\n" +
+	"\n" +
+	"week_start\x18\a \x01(\x03R\tweekStart\x12)\n" +
+	"\x10product_specific\x18\b \x01(\bR\x0fproductSpecific\x12\x16\n" +
+	"\x06remark\x18\t \x01(\tR\x06remark\x128\n" +
+	"\bsessions\x18\n" +
+	" \x03(\v2\x1c.market.MarketTradingSessionR\bsessions\"\xd7\x01\n" +
+	"\x14MarketTradingSession\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12!\n" +
+	"\fsession_type\x18\x02 \x01(\tR\vsessionType\x12\x1d\n" +
+	"\n" +
+	"start_time\x18\x03 \x01(\tR\tstartTime\x12\x19\n" +
+	"\bend_time\x18\x04 \x01(\tR\aendTime\x12\x1b\n" +
+	"\tcross_day\x18\x05 \x01(\bR\bcrossDay\x12!\n" +
+	"\fweekday_mask\x18\x06 \x01(\x03R\vweekdayMask\x12\x12\n" +
+	"\x04sort\x18\a \x01(\x03R\x04sort\"\xd3\x03\n" +
 	"\x05Kline\x12#\n" +
 	"\rcategory_code\x18\x01 \x01(\tR\fcategoryCode\x12\x16\n" +
 	"\x06market\x18\x02 \x01(\tR\x06market\x12\x16\n" +
@@ -1291,42 +1531,46 @@ func file_proto_market_model_proto_rawDescGZIP() []byte {
 	return file_proto_market_model_proto_rawDescData
 }
 
-var file_proto_market_model_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_proto_market_model_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_proto_market_model_proto_goTypes = []any{
 	(*MarketCategory)(nil),        // 0: market.MarketCategory
 	(*MarketProduct)(nil),         // 1: market.MarketProduct
-	(*Kline)(nil),                 // 2: market.Kline
-	(*Quote)(nil),                 // 3: market.Quote
-	(*AuthoritativeSnapshot)(nil), // 4: market.AuthoritativeSnapshot
-	(*MarketTenantCategory)(nil),  // 5: market.MarketTenantCategory
-	(*MarketTenantProduct)(nil),   // 6: market.MarketTenantProduct
-	(CategoryType)(0),             // 7: market.CategoryType
-	(common.Enable)(0),            // 8: common.Enable
-	(common.Switch)(0),            // 9: common.Switch
-	(SyncKlinePriority)(0),        // 10: market.SyncKlinePriority
-	(KlineType)(0),                // 11: market.KlineType
+	(*MarketTradingCalendar)(nil), // 2: market.MarketTradingCalendar
+	(*MarketTradingSession)(nil),  // 3: market.MarketTradingSession
+	(*Kline)(nil),                 // 4: market.Kline
+	(*Quote)(nil),                 // 5: market.Quote
+	(*AuthoritativeSnapshot)(nil), // 6: market.AuthoritativeSnapshot
+	(*MarketTenantCategory)(nil),  // 7: market.MarketTenantCategory
+	(*MarketTenantProduct)(nil),   // 8: market.MarketTenantProduct
+	(CategoryType)(0),             // 9: market.CategoryType
+	(common.Enable)(0),            // 10: common.Enable
+	(common.Switch)(0),            // 11: common.Switch
+	(SyncKlinePriority)(0),        // 12: market.SyncKlinePriority
+	(KlineType)(0),                // 13: market.KlineType
 }
 var file_proto_market_model_proto_depIdxs = []int32{
-	7,  // 0: market.MarketCategory.category_type:type_name -> market.CategoryType
-	8,  // 1: market.MarketCategory.enabled:type_name -> common.Enable
-	9,  // 2: market.MarketCategory.app_visible:type_name -> common.Switch
-	10, // 3: market.MarketCategory.sync_priority:type_name -> market.SyncKlinePriority
-	7,  // 4: market.MarketProduct.category_type:type_name -> market.CategoryType
-	8,  // 5: market.MarketProduct.enabled:type_name -> common.Enable
-	9,  // 6: market.MarketProduct.app_visible:type_name -> common.Switch
-	10, // 7: market.MarketProduct.sync_priority:type_name -> market.SyncKlinePriority
-	11, // 8: market.Kline.k_type:type_name -> market.KlineType
-	8,  // 9: market.MarketTenantCategory.enabled:type_name -> common.Enable
-	9,  // 10: market.MarketTenantCategory.app_visible:type_name -> common.Switch
-	7,  // 11: market.MarketTenantCategory.category_type:type_name -> market.CategoryType
-	8,  // 12: market.MarketTenantProduct.enabled:type_name -> common.Enable
-	9,  // 13: market.MarketTenantProduct.app_visible:type_name -> common.Switch
-	7,  // 14: market.MarketTenantProduct.category_type:type_name -> market.CategoryType
-	15, // [15:15] is the sub-list for method output_type
-	15, // [15:15] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	9,  // 0: market.MarketCategory.category_type:type_name -> market.CategoryType
+	10, // 1: market.MarketCategory.enabled:type_name -> common.Enable
+	11, // 2: market.MarketCategory.app_visible:type_name -> common.Switch
+	12, // 3: market.MarketCategory.sync_priority:type_name -> market.SyncKlinePriority
+	9,  // 4: market.MarketProduct.category_type:type_name -> market.CategoryType
+	10, // 5: market.MarketProduct.enabled:type_name -> common.Enable
+	11, // 6: market.MarketProduct.app_visible:type_name -> common.Switch
+	12, // 7: market.MarketProduct.sync_priority:type_name -> market.SyncKlinePriority
+	2,  // 8: market.MarketProduct.trading_calendar:type_name -> market.MarketTradingCalendar
+	3,  // 9: market.MarketTradingCalendar.sessions:type_name -> market.MarketTradingSession
+	13, // 10: market.Kline.k_type:type_name -> market.KlineType
+	10, // 11: market.MarketTenantCategory.enabled:type_name -> common.Enable
+	11, // 12: market.MarketTenantCategory.app_visible:type_name -> common.Switch
+	9,  // 13: market.MarketTenantCategory.category_type:type_name -> market.CategoryType
+	10, // 14: market.MarketTenantProduct.enabled:type_name -> common.Enable
+	11, // 15: market.MarketTenantProduct.app_visible:type_name -> common.Switch
+	9,  // 16: market.MarketTenantProduct.category_type:type_name -> market.CategoryType
+	17, // [17:17] is the sub-list for method output_type
+	17, // [17:17] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_proto_market_model_proto_init() }
@@ -1341,7 +1585,7 @@ func file_proto_market_model_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_market_model_proto_rawDesc), len(file_proto_market_model_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

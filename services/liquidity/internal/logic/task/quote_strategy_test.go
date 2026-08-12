@@ -1,13 +1,32 @@
 package tasklogic
 
 import (
+	"context"
 	"testing"
 
 	"wklive/proto/common"
+	"wklive/proto/market"
+	"wklive/services/liquidity/internal/svc"
 	"wklive/services/liquidity/models"
 
 	"github.com/shopspring/decimal"
+	"google.golang.org/grpc"
 )
+
+type marketClientStub struct {
+	statusReq  *market.GetTradingStatusReq
+	statusResp *market.GetTradingStatusResp
+	statusErr  error
+}
+
+func (s *marketClientStub) GetAuthoritativeSnapshot(context.Context, *market.GetAuthoritativeSnapshotReq, ...grpc.CallOption) (*market.GetAuthoritativeSnapshotResp, error) {
+	return nil, nil
+}
+
+func (s *marketClientStub) GetTradingStatus(_ context.Context, in *market.GetTradingStatusReq, _ ...grpc.CallOption) (*market.GetTradingStatusResp, error) {
+	s.statusReq = in
+	return s.statusResp, s.statusErr
+}
 
 func TestBuildQuoteOrders(t *testing.T) {
 	config := &models.TLiquiditySymbolConfig{
@@ -54,5 +73,26 @@ func TestStepRoundingRemovesFloatTail(t *testing.T) {
 	bid := roundDown(decimal.RequireFromString("63956.139800000004"), decimal.RequireFromString("0.0001"))
 	if got := bid.String(); got != "63956.1398" {
 		t.Fatalf("unexpected normalized bid price: %s", got)
+	}
+}
+
+func TestLoadTradingStatusUsesPrimaryReferenceSource(t *testing.T) {
+	client := &marketClientStub{statusResp: &market.GetTradingStatusResp{
+		Base: &common.RespBase{Code: 200},
+		Data: &market.GetTradingStatusData{IsOpen: true, Reason: "market_open"},
+	}}
+	config := &models.TLiquiditySymbolConfig{
+		Symbol:               "AAPL",
+		ReferencePriceSource: "stock:US:AAPL,crypto:BA:BTCUSDT",
+	}
+	open, reason, err := loadTradingStatus(context.Background(), &svc.ServiceContext{MarketClient: client}, config, 12345)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !open || reason != "market_open" {
+		t.Fatalf("unexpected trading status: open=%v reason=%s", open, reason)
+	}
+	if client.statusReq.GetCategoryCode() != "stock" || client.statusReq.GetMarket() != "US" || client.statusReq.GetSymbol() != "AAPL" || client.statusReq.GetTimestamp() != 12345 {
+		t.Fatalf("unexpected trading status request: %+v", client.statusReq)
 	}
 }

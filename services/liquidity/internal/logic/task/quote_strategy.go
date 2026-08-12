@@ -15,6 +15,7 @@ import (
 	"wklive/services/liquidity/models"
 
 	"github.com/shopspring/decimal"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type referenceQuote struct {
@@ -49,6 +50,13 @@ func prepareInternalQuoteCycles(ctx context.Context, svcCtx *svc.ServiceContext,
 
 func prepareInternalQuoteCycle(ctx context.Context, svcCtx *svc.ServiceContext, config *models.TLiquiditySymbolConfig) (bool, error) {
 	now := time.Now().UnixMilli()
+	open, err := ensureMarketOpen(ctx, svcCtx, config, now)
+	if err != nil {
+		return false, err
+	}
+	if !open {
+		return false, nil
+	}
 	latest, err := svcCtx.QuoteCycleModel.FindLatestByConfig(ctx, config.Id)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return false, err
@@ -83,7 +91,7 @@ func prepareInternalQuoteCycle(ctx context.Context, svcCtx *svc.ServiceContext, 
 	if len(orders) == 0 {
 		return false, fmt.Errorf("no valid quote generated: config_id=%d", config.Id)
 	}
-	if err := cancelPreviousQuotes(ctx, svcCtx, config.Id); err != nil {
+	if err := cancelActiveQuotes(ctx, svcCtx, config.Id, "replaced by next quote cycle"); err != nil {
 		return false, err
 	}
 	cycleNo := fmt.Sprintf("LQC%d-%d", config.Id, now)
@@ -138,9 +146,7 @@ func loadReferenceQuote(ctx context.Context, svcCtx *svc.ServiceContext, config 
 	if validity <= 0 {
 		validity = 30_000
 	}
-	sources := strings.FieldsFunc(config.ReferencePriceSource, func(r rune) bool {
-		return r == ',' || r == '|' || r == ';'
-	})
+	sources := referencePriceSources(config.ReferencePriceSource)
 	if len(sources) == 0 {
 		sources = []string{config.ReferencePriceSource}
 	}
@@ -169,6 +175,60 @@ func loadReferenceQuote(ctx context.Context, svcCtx *svc.ServiceContext, config 
 	}
 	sort.Slice(candidates, func(i, j int) bool { return candidates[i].price.LessThan(candidates[j].price) })
 	return candidates[len(candidates)/2], nil
+}
+
+func referencePriceSources(value string) []string {
+	return strings.FieldsFunc(value, func(r rune) bool {
+		return r == ',' || r == '|' || r == ';'
+	})
+}
+
+func ensureMarketOpen(ctx context.Context, svcCtx *svc.ServiceContext, config *models.TLiquiditySymbolConfig, timestamp int64) (bool, error) {
+	open, reason, err := loadTradingStatus(ctx, svcCtx, config, timestamp)
+	if err != nil {
+		cancelErr := cancelActiveQuotes(ctx, svcCtx, config.Id, "market status unavailable")
+		if cancelErr != nil {
+			return false, errors.Join(err, cancelErr)
+		}
+		return false, err
+	}
+	if open {
+		return true, nil
+	}
+	if reason == "" {
+		reason = "market_closed"
+	}
+	if err := cancelActiveQuotes(ctx, svcCtx, config.Id, reason); err != nil {
+		return false, err
+	}
+	return false, nil
+}
+
+func loadTradingStatus(ctx context.Context, svcCtx *svc.ServiceContext, config *models.TLiquiditySymbolConfig, timestamp int64) (bool, string, error) {
+	if svcCtx.MarketClient == nil {
+		return false, "", errors.New("market client is not configured")
+	}
+	sources := referencePriceSources(config.ReferencePriceSource)
+	if len(sources) == 0 {
+		return false, "", errors.New("reference price source is required for trading calendar")
+	}
+	category, marketCode, symbol := parseReferenceSource(sources[0], config.Symbol)
+	if category == "" || marketCode == "" || symbol == "" {
+		return false, "", fmt.Errorf("invalid trading calendar source: %s", sources[0])
+	}
+	resp, err := svcCtx.MarketClient.GetTradingStatus(ctx, &pb.GetTradingStatusReq{
+		CategoryCode: category,
+		Market:       marketCode,
+		Symbol:       symbol,
+		Timestamp:    timestamp,
+	})
+	if err != nil {
+		return false, "", fmt.Errorf("get market trading status: %w", err)
+	}
+	if resp.GetBase().GetCode() != 200 || resp.GetData() == nil {
+		return false, "", fmt.Errorf("market trading status unavailable: %s", resp.GetBase().GetMsg())
+	}
+	return resp.GetData().GetIsOpen(), resp.GetData().GetReason(), nil
 }
 
 func parseReferenceSource(source, fallbackSymbol string) (string, string, string) {
@@ -274,15 +334,18 @@ func countSides(orders []*models.TLiquidityQuoteOrder) (int64, int64) {
 	return bids, asks
 }
 
-func cancelPreviousQuotes(ctx context.Context, svcCtx *svc.ServiceContext, configID int64) error {
+func cancelActiveQuotes(ctx context.Context, svcCtx *svc.ServiceContext, configID int64, reason string) error {
 	rows, err := svcCtx.QuoteOrderModel.FindActiveByConfig(ctx, configID)
 	if err != nil {
 		return err
 	}
+	if len(rows) > 0 {
+		logx.WithContext(ctx).Infof("cancel active liquidity quotes: config_id=%d count=%d reason=%s", configID, len(rows), reason)
+	}
 	for _, row := range rows {
 		if row.Status == int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_PENDING_SUBMIT) {
 			row.Status = int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_CANCELED)
-			row.CancelReason = "replaced by next quote cycle"
+			row.CancelReason = reason
 			row.Version++
 			row.UpdateTimes = time.Now().UnixMilli()
 			if err := svcCtx.QuoteOrderModel.Update(ctx, row); err != nil {
@@ -299,6 +362,9 @@ func cancelPreviousQuotes(ctx context.Context, svcCtx *svc.ServiceContext, confi
 			return err
 		}
 		applyQuoteResult(row, result)
+		if row.CancelReason == "" {
+			row.CancelReason = reason
+		}
 		if err := svcCtx.QuoteOrderModel.Update(ctx, row); err != nil {
 			return err
 		}

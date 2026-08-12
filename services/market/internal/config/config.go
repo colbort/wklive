@@ -99,12 +99,18 @@ type ExternalQuoteSourceConf struct {
 }
 
 type MarketRuntimeConf struct {
-	ReconcileIntervalMinutes int64
-	ReconcileWindowBars      int64
-	GapScanIntervalMinutes   int64
-	RepairBatchSize          int64
-	BuildingBucketTtlMinutes int64
-	WsKlineStaleSeconds      int64
+	ReconcileIntervalMinutes     int64
+	ReconcileWindowBars          int64
+	GapScanIntervalMinutes       int64
+	RepairBatchSize              int64
+	BuildingBucketTtlMinutes     int64
+	WsKlineStaleSeconds          int64
+	QuoteHealthCheckSeconds      int64 `json:",optional"`
+	QuoteStaleSeconds            int64 `json:",optional"`
+	QuoteRecoveryGraceSeconds    int64 `json:",optional"`
+	QuoteRestMaxAgeSeconds       int64 `json:",optional"`
+	QuoteRecoveryCooldownSeconds int64 `json:",optional"`
+	QuoteRecoveryBatchSize       int   `json:",optional"`
 }
 
 type ItickConf struct {

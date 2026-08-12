@@ -47,6 +47,9 @@ type (
 	GetTenantCategoryResp          = market.GetTenantCategoryResp
 	GetTenantProductReq            = market.GetTenantProductReq
 	GetTenantProductResp           = market.GetTenantProductResp
+	GetTradingStatusData           = market.GetTradingStatusData
+	GetTradingStatusReq            = market.GetTradingStatusReq
+	GetTradingStatusResp           = market.GetTradingStatusResp
 	InitTenantMarketDisplayData    = market.InitTenantMarketDisplayData
 	InitTenantMarketDisplayReq     = market.InitTenantMarketDisplayReq
 	InitTenantMarketDisplayResp    = market.InitTenantMarketDisplayResp

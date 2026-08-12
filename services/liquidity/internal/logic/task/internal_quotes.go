@@ -27,7 +27,31 @@ func processInternalQuotes(ctx context.Context, svcCtx *svc.ServiceContext, in *
 		return nil, err
 	}
 	resp := &liquidity.LiquidityTaskResp{Base: helper.OkResp(), ScannedCount: int64(len(rows))}
+	type tradingCheck struct {
+		open bool
+		err  error
+	}
+	tradingChecks := make(map[int64]tradingCheck)
 	for _, row := range rows {
+		if !recover {
+			check, ok := tradingChecks[row.ConfigId]
+			if !ok {
+				config, findErr := svcCtx.SymbolConfigModel.FindOne(ctx, row.ConfigId)
+				if findErr != nil {
+					check.err = findErr
+				} else {
+					check.open, check.err = ensureMarketOpen(ctx, svcCtx, config, time.Now().UnixMilli())
+				}
+				tradingChecks[row.ConfigId] = check
+			}
+			if check.err != nil {
+				resp.FailedCount++
+				continue
+			}
+			if !check.open {
+				continue
+			}
+		}
 		provider, findErr := svcCtx.ProviderModel.FindOne(ctx, row.ProviderId)
 		if findErr != nil {
 			markQuoteFailed(ctx, svcCtx, row, findErr)

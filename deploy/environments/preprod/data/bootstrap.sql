@@ -79,8 +79,8 @@ SET @preprod_market_calendar_id = (
   WHERE category_code='crypto' AND market='BA' AND exchange='BINANCE' LIMIT 1
 );
 INSERT INTO t_itick_market_session
-(calendar_id,session_type,start_time,end_time,cross_day,sort)
-SELECT @preprod_market_calendar_id,'regular','00:00:00','24:00:00',0,1
+(calendar_id,session_type,start_time,end_time,cross_day,weekday_mask,sort)
+SELECT @preprod_market_calendar_id,'regular','00:00:00','24:00:00',0,127,1
 WHERE NOT EXISTS (
   SELECT 1 FROM t_itick_market_session
   WHERE calendar_id=@preprod_market_calendar_id AND session_type='regular'

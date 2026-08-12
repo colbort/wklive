@@ -3142,25 +3142,26 @@ type MarketCategory struct {
 }
 
 type MarketProduct struct {
-	Id           int64  `json:"id"`
-	CategoryType int64  `json:"categoryType"`
-	CategoryCode string `json:"categoryCode"`
-	CategoryName string `json:"categoryName"`
-	Market       string `json:"market"` //
-	Symbol       string `json:"symbol"` //
-	Code         string `json:"code"`   // 第三方原始 code
-	Name         string `json:"name"`
-	DisplayName  string `json:"displayName"`
-	BaseCoin     string `json:"baseCoin"`
-	QuoteCoin    string `json:"quoteCoin"`
-	Enabled      int64  `json:"enabled"`
-	AppVisible   int64  `json:"appVisible"`
-	SyncPriority int64  `json:"syncPriority"`
-	Sort         int64  `json:"sort"`
-	Icon         string `json:"icon"`
-	Remark       string `json:"remark"`
-	CreateTimes  int64  `json:"createTimes"`
-	UpdateTimes  int64  `json:"updateTimes"`
+	Id              int64                 `json:"id"`
+	CategoryType    int64                 `json:"categoryType"`
+	CategoryCode    string                `json:"categoryCode"`
+	CategoryName    string                `json:"categoryName"`
+	Market          string                `json:"market"` //
+	Symbol          string                `json:"symbol"` //
+	Code            string                `json:"code"`   // 第三方原始 code
+	Name            string                `json:"name"`
+	DisplayName     string                `json:"displayName"`
+	BaseCoin        string                `json:"baseCoin"`
+	QuoteCoin       string                `json:"quoteCoin"`
+	Enabled         int64                 `json:"enabled"`
+	AppVisible      int64                 `json:"appVisible"`
+	SyncPriority    int64                 `json:"syncPriority"`
+	Sort            int64                 `json:"sort"`
+	Icon            string                `json:"icon"`
+	Remark          string                `json:"remark"`
+	CreateTimes     int64                 `json:"createTimes"`
+	UpdateTimes     int64                 `json:"updateTimes"`
+	TradingCalendar MarketTradingCalendar `json:"tradingCalendar,optional"`
 }
 
 type MarketTenantCategory struct {
@@ -3200,6 +3201,29 @@ type MarketTenantProduct struct {
 	QuoteCoin    string `json:"quoteCoin"`
 	Icon         string `json:"icon"`
 	TenantName   string `json:"tenantName"`
+}
+
+type MarketTradingCalendar struct {
+	Id               int64                  `json:"id"`
+	CategoryCode     string                 `json:"categoryCode"`
+	Market           string                 `json:"market"`
+	Exchange         string                 `json:"exchange"`
+	Timezone         string                 `json:"timezone"`
+	TradingDayOffset int64                  `json:"tradingDayOffset"`
+	WeekStart        int64                  `json:"weekStart"`
+	ProductSpecific  bool                   `json:"productSpecific"`
+	Remark           string                 `json:"remark"`
+	Sessions         []MarketTradingSession `json:"sessions"`
+}
+
+type MarketTradingSession struct {
+	Id          int64  `json:"id"`
+	SessionType string `json:"sessionType"`
+	StartTime   string `json:"startTime"`
+	EndTime     string `json:"endTime"`
+	CrossDay    bool   `json:"crossDay"`
+	WeekdayMask int64  `json:"weekdayMask"`
+	Sort        int64  `json:"sort"`
 }
 
 type MenuNode struct {

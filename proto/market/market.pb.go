@@ -882,6 +882,202 @@ func (x *GetAuthoritativeSnapshotResp) GetData() *AuthoritativeSnapshot {
 	return nil
 }
 
+type GetTradingStatusReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CategoryCode  string                 `protobuf:"bytes,1,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
+	Market        string                 `protobuf:"bytes,2,opt,name=market,proto3" json:"market,omitempty"`
+	Symbol        string                 `protobuf:"bytes,3,opt,name=symbol,proto3" json:"symbol,omitempty"`
+	Timestamp     int64                  `protobuf:"varint,4,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTradingStatusReq) Reset() {
+	*x = GetTradingStatusReq{}
+	mi := &file_proto_market_market_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTradingStatusReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTradingStatusReq) ProtoMessage() {}
+
+func (x *GetTradingStatusReq) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_market_market_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTradingStatusReq.ProtoReflect.Descriptor instead.
+func (*GetTradingStatusReq) Descriptor() ([]byte, []int) {
+	return file_proto_market_market_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *GetTradingStatusReq) GetCategoryCode() string {
+	if x != nil {
+		return x.CategoryCode
+	}
+	return ""
+}
+
+func (x *GetTradingStatusReq) GetMarket() string {
+	if x != nil {
+		return x.Market
+	}
+	return ""
+}
+
+func (x *GetTradingStatusReq) GetSymbol() string {
+	if x != nil {
+		return x.Symbol
+	}
+	return ""
+}
+
+func (x *GetTradingStatusReq) GetTimestamp() int64 {
+	if x != nil {
+		return x.Timestamp
+	}
+	return 0
+}
+
+type GetTradingStatusData struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	IsOpen          bool                   `protobuf:"varint,1,opt,name=is_open,json=isOpen,proto3" json:"is_open,omitempty"`
+	CalendarId      int64                  `protobuf:"varint,2,opt,name=calendar_id,json=calendarId,proto3" json:"calendar_id,omitempty"`
+	ProductSpecific bool                   `protobuf:"varint,3,opt,name=product_specific,json=productSpecific,proto3" json:"product_specific,omitempty"`
+	Timezone        string                 `protobuf:"bytes,4,opt,name=timezone,proto3" json:"timezone,omitempty"`
+	Reason          string                 `protobuf:"bytes,5,opt,name=reason,proto3" json:"reason,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *GetTradingStatusData) Reset() {
+	*x = GetTradingStatusData{}
+	mi := &file_proto_market_market_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTradingStatusData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTradingStatusData) ProtoMessage() {}
+
+func (x *GetTradingStatusData) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_market_market_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTradingStatusData.ProtoReflect.Descriptor instead.
+func (*GetTradingStatusData) Descriptor() ([]byte, []int) {
+	return file_proto_market_market_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *GetTradingStatusData) GetIsOpen() bool {
+	if x != nil {
+		return x.IsOpen
+	}
+	return false
+}
+
+func (x *GetTradingStatusData) GetCalendarId() int64 {
+	if x != nil {
+		return x.CalendarId
+	}
+	return 0
+}
+
+func (x *GetTradingStatusData) GetProductSpecific() bool {
+	if x != nil {
+		return x.ProductSpecific
+	}
+	return false
+}
+
+func (x *GetTradingStatusData) GetTimezone() string {
+	if x != nil {
+		return x.Timezone
+	}
+	return ""
+}
+
+func (x *GetTradingStatusData) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+type GetTradingStatusResp struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Data          *GetTradingStatusData  `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTradingStatusResp) Reset() {
+	*x = GetTradingStatusResp{}
+	mi := &file_proto_market_market_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTradingStatusResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTradingStatusResp) ProtoMessage() {}
+
+func (x *GetTradingStatusResp) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_market_market_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTradingStatusResp.ProtoReflect.Descriptor instead.
+func (*GetTradingStatusResp) Descriptor() ([]byte, []int) {
+	return file_proto_market_market_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *GetTradingStatusResp) GetBase() *common.RespBase {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *GetTradingStatusResp) GetData() *GetTradingStatusData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
 type SubscribeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Topics        []*SubscribeTopic      `protobuf:"bytes,1,rep,name=topics,proto3" json:"topics,omitempty"`
@@ -891,7 +1087,7 @@ type SubscribeRequest struct {
 
 func (x *SubscribeRequest) Reset() {
 	*x = SubscribeRequest{}
-	mi := &file_proto_market_market_proto_msgTypes[15]
+	mi := &file_proto_market_market_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -903,7 +1099,7 @@ func (x *SubscribeRequest) String() string {
 func (*SubscribeRequest) ProtoMessage() {}
 
 func (x *SubscribeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[15]
+	mi := &file_proto_market_market_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -916,7 +1112,7 @@ func (x *SubscribeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SubscribeRequest.ProtoReflect.Descriptor instead.
 func (*SubscribeRequest) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{15}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *SubscribeRequest) GetTopics() []*SubscribeTopic {
@@ -939,7 +1135,7 @@ type SubscribeTopic struct {
 
 func (x *SubscribeTopic) Reset() {
 	*x = SubscribeTopic{}
-	mi := &file_proto_market_market_proto_msgTypes[16]
+	mi := &file_proto_market_market_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -951,7 +1147,7 @@ func (x *SubscribeTopic) String() string {
 func (*SubscribeTopic) ProtoMessage() {}
 
 func (x *SubscribeTopic) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[16]
+	mi := &file_proto_market_market_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -964,7 +1160,7 @@ func (x *SubscribeTopic) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SubscribeTopic.ProtoReflect.Descriptor instead.
 func (*SubscribeTopic) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{16}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *SubscribeTopic) GetTopic() string {
@@ -1016,7 +1212,7 @@ type PushReply struct {
 
 func (x *PushReply) Reset() {
 	*x = PushReply{}
-	mi := &file_proto_market_market_proto_msgTypes[17]
+	mi := &file_proto_market_market_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1028,7 +1224,7 @@ func (x *PushReply) String() string {
 func (*PushReply) ProtoMessage() {}
 
 func (x *PushReply) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[17]
+	mi := &file_proto_market_market_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1041,7 +1237,7 @@ func (x *PushReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PushReply.ProtoReflect.Descriptor instead.
 func (*PushReply) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{17}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *PushReply) GetTopic() string {
@@ -1096,7 +1292,7 @@ type KlineInterval struct {
 
 func (x *KlineInterval) Reset() {
 	*x = KlineInterval{}
-	mi := &file_proto_market_market_proto_msgTypes[18]
+	mi := &file_proto_market_market_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1108,7 +1304,7 @@ func (x *KlineInterval) String() string {
 func (*KlineInterval) ProtoMessage() {}
 
 func (x *KlineInterval) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[18]
+	mi := &file_proto_market_market_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1121,7 +1317,7 @@ func (x *KlineInterval) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use KlineInterval.ProtoReflect.Descriptor instead.
 func (*KlineInterval) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{18}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *KlineInterval) GetName() string {
@@ -1147,7 +1343,7 @@ type KlineIntervalsResp struct {
 
 func (x *KlineIntervalsResp) Reset() {
 	*x = KlineIntervalsResp{}
-	mi := &file_proto_market_market_proto_msgTypes[19]
+	mi := &file_proto_market_market_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1159,7 +1355,7 @@ func (x *KlineIntervalsResp) String() string {
 func (*KlineIntervalsResp) ProtoMessage() {}
 
 func (x *KlineIntervalsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[19]
+	mi := &file_proto_market_market_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1172,7 +1368,7 @@ func (x *KlineIntervalsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use KlineIntervalsResp.ProtoReflect.Descriptor instead.
 func (*KlineIntervalsResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{19}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *KlineIntervalsResp) GetData() []*KlineInterval {
@@ -1191,7 +1387,7 @@ type CommonResp struct {
 
 func (x *CommonResp) Reset() {
 	*x = CommonResp{}
-	mi := &file_proto_market_market_proto_msgTypes[20]
+	mi := &file_proto_market_market_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1203,7 +1399,7 @@ func (x *CommonResp) String() string {
 func (*CommonResp) ProtoMessage() {}
 
 func (x *CommonResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[20]
+	mi := &file_proto_market_market_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1216,7 +1412,7 @@ func (x *CommonResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CommonResp.ProtoReflect.Descriptor instead.
 func (*CommonResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{20}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *CommonResp) GetBase() *common.RespBase {
@@ -1242,7 +1438,7 @@ type CreateCategoryReq struct {
 
 func (x *CreateCategoryReq) Reset() {
 	*x = CreateCategoryReq{}
-	mi := &file_proto_market_market_proto_msgTypes[21]
+	mi := &file_proto_market_market_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1254,7 +1450,7 @@ func (x *CreateCategoryReq) String() string {
 func (*CreateCategoryReq) ProtoMessage() {}
 
 func (x *CreateCategoryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[21]
+	mi := &file_proto_market_market_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1267,7 +1463,7 @@ func (x *CreateCategoryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCategoryReq.ProtoReflect.Descriptor instead.
 func (*CreateCategoryReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{21}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *CreateCategoryReq) GetCategoryType() CategoryType {
@@ -1342,7 +1538,7 @@ type UpdateCategoryReq struct {
 
 func (x *UpdateCategoryReq) Reset() {
 	*x = UpdateCategoryReq{}
-	mi := &file_proto_market_market_proto_msgTypes[22]
+	mi := &file_proto_market_market_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1354,7 +1550,7 @@ func (x *UpdateCategoryReq) String() string {
 func (*UpdateCategoryReq) ProtoMessage() {}
 
 func (x *UpdateCategoryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[22]
+	mi := &file_proto_market_market_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1367,7 +1563,7 @@ func (x *UpdateCategoryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateCategoryReq.ProtoReflect.Descriptor instead.
 func (*UpdateCategoryReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{22}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *UpdateCategoryReq) GetId() int64 {
@@ -1435,7 +1631,7 @@ type GetCategoryReq struct {
 
 func (x *GetCategoryReq) Reset() {
 	*x = GetCategoryReq{}
-	mi := &file_proto_market_market_proto_msgTypes[23]
+	mi := &file_proto_market_market_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1447,7 +1643,7 @@ func (x *GetCategoryReq) String() string {
 func (*GetCategoryReq) ProtoMessage() {}
 
 func (x *GetCategoryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[23]
+	mi := &file_proto_market_market_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1460,7 +1656,7 @@ func (x *GetCategoryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCategoryReq.ProtoReflect.Descriptor instead.
 func (*GetCategoryReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{23}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *GetCategoryReq) GetId() int64 {
@@ -1480,7 +1676,7 @@ type GetCategoryResp struct {
 
 func (x *GetCategoryResp) Reset() {
 	*x = GetCategoryResp{}
-	mi := &file_proto_market_market_proto_msgTypes[24]
+	mi := &file_proto_market_market_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1492,7 +1688,7 @@ func (x *GetCategoryResp) String() string {
 func (*GetCategoryResp) ProtoMessage() {}
 
 func (x *GetCategoryResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[24]
+	mi := &file_proto_market_market_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1505,7 +1701,7 @@ func (x *GetCategoryResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCategoryResp.ProtoReflect.Descriptor instead.
 func (*GetCategoryResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{24}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *GetCategoryResp) GetBase() *common.RespBase {
@@ -1534,7 +1730,7 @@ type ListCategoriesReq struct {
 
 func (x *ListCategoriesReq) Reset() {
 	*x = ListCategoriesReq{}
-	mi := &file_proto_market_market_proto_msgTypes[25]
+	mi := &file_proto_market_market_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1546,7 +1742,7 @@ func (x *ListCategoriesReq) String() string {
 func (*ListCategoriesReq) ProtoMessage() {}
 
 func (x *ListCategoriesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[25]
+	mi := &file_proto_market_market_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1559,7 +1755,7 @@ func (x *ListCategoriesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCategoriesReq.ProtoReflect.Descriptor instead.
 func (*ListCategoriesReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{25}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *ListCategoriesReq) GetPage() *common.PageReq {
@@ -1600,7 +1796,7 @@ type ListCategoriesResp struct {
 
 func (x *ListCategoriesResp) Reset() {
 	*x = ListCategoriesResp{}
-	mi := &file_proto_market_market_proto_msgTypes[26]
+	mi := &file_proto_market_market_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1612,7 +1808,7 @@ func (x *ListCategoriesResp) String() string {
 func (*ListCategoriesResp) ProtoMessage() {}
 
 func (x *ListCategoriesResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[26]
+	mi := &file_proto_market_market_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1625,7 +1821,7 @@ func (x *ListCategoriesResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCategoriesResp.ProtoReflect.Descriptor instead.
 func (*ListCategoriesResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{26}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *ListCategoriesResp) GetBase() *common.RespBase {
@@ -1651,7 +1847,7 @@ type SyncCategoryProductsReq struct {
 
 func (x *SyncCategoryProductsReq) Reset() {
 	*x = SyncCategoryProductsReq{}
-	mi := &file_proto_market_market_proto_msgTypes[27]
+	mi := &file_proto_market_market_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1663,7 +1859,7 @@ func (x *SyncCategoryProductsReq) String() string {
 func (*SyncCategoryProductsReq) ProtoMessage() {}
 
 func (x *SyncCategoryProductsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[27]
+	mi := &file_proto_market_market_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1676,7 +1872,7 @@ func (x *SyncCategoryProductsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncCategoryProductsReq.ProtoReflect.Descriptor instead.
 func (*SyncCategoryProductsReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{27}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *SyncCategoryProductsReq) GetId() int64 {
@@ -1696,7 +1892,7 @@ type SyncCategoryProductsResp struct {
 
 func (x *SyncCategoryProductsResp) Reset() {
 	*x = SyncCategoryProductsResp{}
-	mi := &file_proto_market_market_proto_msgTypes[28]
+	mi := &file_proto_market_market_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1708,7 +1904,7 @@ func (x *SyncCategoryProductsResp) String() string {
 func (*SyncCategoryProductsResp) ProtoMessage() {}
 
 func (x *SyncCategoryProductsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[28]
+	mi := &file_proto_market_market_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1721,7 +1917,7 @@ func (x *SyncCategoryProductsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncCategoryProductsResp.ProtoReflect.Descriptor instead.
 func (*SyncCategoryProductsResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{28}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *SyncCategoryProductsResp) GetBase() *common.RespBase {
@@ -1747,7 +1943,7 @@ type GetSyncTaskStatusReq struct {
 
 func (x *GetSyncTaskStatusReq) Reset() {
 	*x = GetSyncTaskStatusReq{}
-	mi := &file_proto_market_market_proto_msgTypes[29]
+	mi := &file_proto_market_market_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1759,7 +1955,7 @@ func (x *GetSyncTaskStatusReq) String() string {
 func (*GetSyncTaskStatusReq) ProtoMessage() {}
 
 func (x *GetSyncTaskStatusReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[29]
+	mi := &file_proto_market_market_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1772,7 +1968,7 @@ func (x *GetSyncTaskStatusReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSyncTaskStatusReq.ProtoReflect.Descriptor instead.
 func (*GetSyncTaskStatusReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{29}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *GetSyncTaskStatusReq) GetTaskNo() string {
@@ -1792,7 +1988,7 @@ type GetSyncTaskStatusResp struct {
 
 func (x *GetSyncTaskStatusResp) Reset() {
 	*x = GetSyncTaskStatusResp{}
-	mi := &file_proto_market_market_proto_msgTypes[30]
+	mi := &file_proto_market_market_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1804,7 +2000,7 @@ func (x *GetSyncTaskStatusResp) String() string {
 func (*GetSyncTaskStatusResp) ProtoMessage() {}
 
 func (x *GetSyncTaskStatusResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[30]
+	mi := &file_proto_market_market_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1817,7 +2013,7 @@ func (x *GetSyncTaskStatusResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSyncTaskStatusResp.ProtoReflect.Descriptor instead.
 func (*GetSyncTaskStatusResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{30}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *GetSyncTaskStatusResp) GetBase() *common.RespBase {
@@ -1845,7 +2041,7 @@ type GetSyncTaskStatusData struct {
 
 func (x *GetSyncTaskStatusData) Reset() {
 	*x = GetSyncTaskStatusData{}
-	mi := &file_proto_market_market_proto_msgTypes[31]
+	mi := &file_proto_market_market_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1857,7 +2053,7 @@ func (x *GetSyncTaskStatusData) String() string {
 func (*GetSyncTaskStatusData) ProtoMessage() {}
 
 func (x *GetSyncTaskStatusData) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[31]
+	mi := &file_proto_market_market_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1870,7 +2066,7 @@ func (x *GetSyncTaskStatusData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSyncTaskStatusData.ProtoReflect.Descriptor instead.
 func (*GetSyncTaskStatusData) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{31}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *GetSyncTaskStatusData) GetTaskNo() string {
@@ -1916,7 +2112,7 @@ type CreateProductReq struct {
 
 func (x *CreateProductReq) Reset() {
 	*x = CreateProductReq{}
-	mi := &file_proto_market_market_proto_msgTypes[32]
+	mi := &file_proto_market_market_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1928,7 +2124,7 @@ func (x *CreateProductReq) String() string {
 func (*CreateProductReq) ProtoMessage() {}
 
 func (x *CreateProductReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[32]
+	mi := &file_proto_market_market_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1941,7 +2137,7 @@ func (x *CreateProductReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateProductReq.ProtoReflect.Descriptor instead.
 func (*CreateProductReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{32}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *CreateProductReq) GetCategoryType() CategoryType {
@@ -2062,7 +2258,7 @@ type UpdateProductReq struct {
 
 func (x *UpdateProductReq) Reset() {
 	*x = UpdateProductReq{}
-	mi := &file_proto_market_market_proto_msgTypes[33]
+	mi := &file_proto_market_market_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2074,7 +2270,7 @@ func (x *UpdateProductReq) String() string {
 func (*UpdateProductReq) ProtoMessage() {}
 
 func (x *UpdateProductReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[33]
+	mi := &file_proto_market_market_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2087,7 +2283,7 @@ func (x *UpdateProductReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateProductReq.ProtoReflect.Descriptor instead.
 func (*UpdateProductReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{33}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *UpdateProductReq) GetId() int64 {
@@ -2183,7 +2379,7 @@ type GetProductReq struct {
 
 func (x *GetProductReq) Reset() {
 	*x = GetProductReq{}
-	mi := &file_proto_market_market_proto_msgTypes[34]
+	mi := &file_proto_market_market_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2195,7 +2391,7 @@ func (x *GetProductReq) String() string {
 func (*GetProductReq) ProtoMessage() {}
 
 func (x *GetProductReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[34]
+	mi := &file_proto_market_market_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2208,7 +2404,7 @@ func (x *GetProductReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProductReq.ProtoReflect.Descriptor instead.
 func (*GetProductReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{34}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *GetProductReq) GetId() int64 {
@@ -2228,7 +2424,7 @@ type GetProductResp struct {
 
 func (x *GetProductResp) Reset() {
 	*x = GetProductResp{}
-	mi := &file_proto_market_market_proto_msgTypes[35]
+	mi := &file_proto_market_market_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2240,7 +2436,7 @@ func (x *GetProductResp) String() string {
 func (*GetProductResp) ProtoMessage() {}
 
 func (x *GetProductResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[35]
+	mi := &file_proto_market_market_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2253,7 +2449,7 @@ func (x *GetProductResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProductResp.ProtoReflect.Descriptor instead.
 func (*GetProductResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{35}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *GetProductResp) GetBase() *common.RespBase {
@@ -2286,7 +2482,7 @@ type ListProductsReq struct {
 
 func (x *ListProductsReq) Reset() {
 	*x = ListProductsReq{}
-	mi := &file_proto_market_market_proto_msgTypes[36]
+	mi := &file_proto_market_market_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2298,7 +2494,7 @@ func (x *ListProductsReq) String() string {
 func (*ListProductsReq) ProtoMessage() {}
 
 func (x *ListProductsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[36]
+	mi := &file_proto_market_market_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2311,7 +2507,7 @@ func (x *ListProductsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListProductsReq.ProtoReflect.Descriptor instead.
 func (*ListProductsReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{36}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *ListProductsReq) GetPage() *common.PageReq {
@@ -2380,7 +2576,7 @@ type ListProductsResp struct {
 
 func (x *ListProductsResp) Reset() {
 	*x = ListProductsResp{}
-	mi := &file_proto_market_market_proto_msgTypes[37]
+	mi := &file_proto_market_market_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2392,7 +2588,7 @@ func (x *ListProductsResp) String() string {
 func (*ListProductsResp) ProtoMessage() {}
 
 func (x *ListProductsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[37]
+	mi := &file_proto_market_market_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2405,7 +2601,7 @@ func (x *ListProductsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListProductsResp.ProtoReflect.Descriptor instead.
 func (*ListProductsResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{37}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *ListProductsResp) GetBase() *common.RespBase {
@@ -2436,7 +2632,7 @@ type GetProductKlineReq struct {
 
 func (x *GetProductKlineReq) Reset() {
 	*x = GetProductKlineReq{}
-	mi := &file_proto_market_market_proto_msgTypes[38]
+	mi := &file_proto_market_market_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2448,7 +2644,7 @@ func (x *GetProductKlineReq) String() string {
 func (*GetProductKlineReq) ProtoMessage() {}
 
 func (x *GetProductKlineReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[38]
+	mi := &file_proto_market_market_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2461,7 +2657,7 @@ func (x *GetProductKlineReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProductKlineReq.ProtoReflect.Descriptor instead.
 func (*GetProductKlineReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{38}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *GetProductKlineReq) GetCategoryCode() string {
@@ -2516,7 +2712,7 @@ type GetProductKlineResp struct {
 
 func (x *GetProductKlineResp) Reset() {
 	*x = GetProductKlineResp{}
-	mi := &file_proto_market_market_proto_msgTypes[39]
+	mi := &file_proto_market_market_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2528,7 +2724,7 @@ func (x *GetProductKlineResp) String() string {
 func (*GetProductKlineResp) ProtoMessage() {}
 
 func (x *GetProductKlineResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[39]
+	mi := &file_proto_market_market_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2541,7 +2737,7 @@ func (x *GetProductKlineResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProductKlineResp.ProtoReflect.Descriptor instead.
 func (*GetProductKlineResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{39}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *GetProductKlineResp) GetBase() *common.RespBase {
@@ -2571,7 +2767,7 @@ type SyncProductKlineHistoryReq struct {
 
 func (x *SyncProductKlineHistoryReq) Reset() {
 	*x = SyncProductKlineHistoryReq{}
-	mi := &file_proto_market_market_proto_msgTypes[40]
+	mi := &file_proto_market_market_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2583,7 +2779,7 @@ func (x *SyncProductKlineHistoryReq) String() string {
 func (*SyncProductKlineHistoryReq) ProtoMessage() {}
 
 func (x *SyncProductKlineHistoryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[40]
+	mi := &file_proto_market_market_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2596,7 +2792,7 @@ func (x *SyncProductKlineHistoryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncProductKlineHistoryReq.ProtoReflect.Descriptor instead.
 func (*SyncProductKlineHistoryReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{40}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *SyncProductKlineHistoryReq) GetCategoryCode() string {
@@ -2644,7 +2840,7 @@ type SyncProductKlineHistoryResp struct {
 
 func (x *SyncProductKlineHistoryResp) Reset() {
 	*x = SyncProductKlineHistoryResp{}
-	mi := &file_proto_market_market_proto_msgTypes[41]
+	mi := &file_proto_market_market_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2656,7 +2852,7 @@ func (x *SyncProductKlineHistoryResp) String() string {
 func (*SyncProductKlineHistoryResp) ProtoMessage() {}
 
 func (x *SyncProductKlineHistoryResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[41]
+	mi := &file_proto_market_market_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2669,7 +2865,7 @@ func (x *SyncProductKlineHistoryResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncProductKlineHistoryResp.ProtoReflect.Descriptor instead.
 func (*SyncProductKlineHistoryResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{41}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *SyncProductKlineHistoryResp) GetBase() *common.RespBase {
@@ -2700,7 +2896,7 @@ type CreateTenantCategoryReq struct {
 
 func (x *CreateTenantCategoryReq) Reset() {
 	*x = CreateTenantCategoryReq{}
-	mi := &file_proto_market_market_proto_msgTypes[42]
+	mi := &file_proto_market_market_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2712,7 +2908,7 @@ func (x *CreateTenantCategoryReq) String() string {
 func (*CreateTenantCategoryReq) ProtoMessage() {}
 
 func (x *CreateTenantCategoryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[42]
+	mi := &file_proto_market_market_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2725,7 +2921,7 @@ func (x *CreateTenantCategoryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTenantCategoryReq.ProtoReflect.Descriptor instead.
 func (*CreateTenantCategoryReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{42}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *CreateTenantCategoryReq) GetTenantId() int64 {
@@ -2784,7 +2980,7 @@ type UpdateTenantCategoryReq struct {
 
 func (x *UpdateTenantCategoryReq) Reset() {
 	*x = UpdateTenantCategoryReq{}
-	mi := &file_proto_market_market_proto_msgTypes[43]
+	mi := &file_proto_market_market_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2796,7 +2992,7 @@ func (x *UpdateTenantCategoryReq) String() string {
 func (*UpdateTenantCategoryReq) ProtoMessage() {}
 
 func (x *UpdateTenantCategoryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[43]
+	mi := &file_proto_market_market_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2809,7 +3005,7 @@ func (x *UpdateTenantCategoryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTenantCategoryReq.ProtoReflect.Descriptor instead.
 func (*UpdateTenantCategoryReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{43}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *UpdateTenantCategoryReq) GetId() int64 {
@@ -2864,7 +3060,7 @@ type BatchUpsertTenantCategoriesReq struct {
 
 func (x *BatchUpsertTenantCategoriesReq) Reset() {
 	*x = BatchUpsertTenantCategoriesReq{}
-	mi := &file_proto_market_market_proto_msgTypes[44]
+	mi := &file_proto_market_market_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2876,7 +3072,7 @@ func (x *BatchUpsertTenantCategoriesReq) String() string {
 func (*BatchUpsertTenantCategoriesReq) ProtoMessage() {}
 
 func (x *BatchUpsertTenantCategoriesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[44]
+	mi := &file_proto_market_market_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2889,7 +3085,7 @@ func (x *BatchUpsertTenantCategoriesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchUpsertTenantCategoriesReq.ProtoReflect.Descriptor instead.
 func (*BatchUpsertTenantCategoriesReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{44}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *BatchUpsertTenantCategoriesReq) GetTenantId() int64 {
@@ -2920,7 +3116,7 @@ type TenantCategoryItem struct {
 
 func (x *TenantCategoryItem) Reset() {
 	*x = TenantCategoryItem{}
-	mi := &file_proto_market_market_proto_msgTypes[45]
+	mi := &file_proto_market_market_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2932,7 +3128,7 @@ func (x *TenantCategoryItem) String() string {
 func (*TenantCategoryItem) ProtoMessage() {}
 
 func (x *TenantCategoryItem) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[45]
+	mi := &file_proto_market_market_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2945,7 +3141,7 @@ func (x *TenantCategoryItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TenantCategoryItem.ProtoReflect.Descriptor instead.
 func (*TenantCategoryItem) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{45}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *TenantCategoryItem) GetId() int64 {
@@ -3000,7 +3196,7 @@ type GetTenantCategoryReq struct {
 
 func (x *GetTenantCategoryReq) Reset() {
 	*x = GetTenantCategoryReq{}
-	mi := &file_proto_market_market_proto_msgTypes[46]
+	mi := &file_proto_market_market_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3012,7 +3208,7 @@ func (x *GetTenantCategoryReq) String() string {
 func (*GetTenantCategoryReq) ProtoMessage() {}
 
 func (x *GetTenantCategoryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[46]
+	mi := &file_proto_market_market_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3025,7 +3221,7 @@ func (x *GetTenantCategoryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTenantCategoryReq.ProtoReflect.Descriptor instead.
 func (*GetTenantCategoryReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{46}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *GetTenantCategoryReq) GetId() int64 {
@@ -3052,7 +3248,7 @@ type GetTenantCategoryResp struct {
 
 func (x *GetTenantCategoryResp) Reset() {
 	*x = GetTenantCategoryResp{}
-	mi := &file_proto_market_market_proto_msgTypes[47]
+	mi := &file_proto_market_market_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3064,7 +3260,7 @@ func (x *GetTenantCategoryResp) String() string {
 func (*GetTenantCategoryResp) ProtoMessage() {}
 
 func (x *GetTenantCategoryResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[47]
+	mi := &file_proto_market_market_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3077,7 +3273,7 @@ func (x *GetTenantCategoryResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTenantCategoryResp.ProtoReflect.Descriptor instead.
 func (*GetTenantCategoryResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{47}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *GetTenantCategoryResp) GetBase() *common.RespBase {
@@ -3107,7 +3303,7 @@ type ListTenantCategoriesReq struct {
 
 func (x *ListTenantCategoriesReq) Reset() {
 	*x = ListTenantCategoriesReq{}
-	mi := &file_proto_market_market_proto_msgTypes[48]
+	mi := &file_proto_market_market_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3119,7 +3315,7 @@ func (x *ListTenantCategoriesReq) String() string {
 func (*ListTenantCategoriesReq) ProtoMessage() {}
 
 func (x *ListTenantCategoriesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[48]
+	mi := &file_proto_market_market_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3132,7 +3328,7 @@ func (x *ListTenantCategoriesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTenantCategoriesReq.ProtoReflect.Descriptor instead.
 func (*ListTenantCategoriesReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{48}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *ListTenantCategoriesReq) GetPage() *common.PageReq {
@@ -3180,7 +3376,7 @@ type ListTenantCategoriesResp struct {
 
 func (x *ListTenantCategoriesResp) Reset() {
 	*x = ListTenantCategoriesResp{}
-	mi := &file_proto_market_market_proto_msgTypes[49]
+	mi := &file_proto_market_market_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3192,7 +3388,7 @@ func (x *ListTenantCategoriesResp) String() string {
 func (*ListTenantCategoriesResp) ProtoMessage() {}
 
 func (x *ListTenantCategoriesResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[49]
+	mi := &file_proto_market_market_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3205,7 +3401,7 @@ func (x *ListTenantCategoriesResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTenantCategoriesResp.ProtoReflect.Descriptor instead.
 func (*ListTenantCategoriesResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{49}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *ListTenantCategoriesResp) GetBase() *common.RespBase {
@@ -3236,7 +3432,7 @@ type CreateTenantProductReq struct {
 
 func (x *CreateTenantProductReq) Reset() {
 	*x = CreateTenantProductReq{}
-	mi := &file_proto_market_market_proto_msgTypes[50]
+	mi := &file_proto_market_market_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3248,7 +3444,7 @@ func (x *CreateTenantProductReq) String() string {
 func (*CreateTenantProductReq) ProtoMessage() {}
 
 func (x *CreateTenantProductReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[50]
+	mi := &file_proto_market_market_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3261,7 +3457,7 @@ func (x *CreateTenantProductReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTenantProductReq.ProtoReflect.Descriptor instead.
 func (*CreateTenantProductReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{50}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *CreateTenantProductReq) GetTenantId() int64 {
@@ -3321,7 +3517,7 @@ type UpdateTenantProductReq struct {
 
 func (x *UpdateTenantProductReq) Reset() {
 	*x = UpdateTenantProductReq{}
-	mi := &file_proto_market_market_proto_msgTypes[51]
+	mi := &file_proto_market_market_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3333,7 +3529,7 @@ func (x *UpdateTenantProductReq) String() string {
 func (*UpdateTenantProductReq) ProtoMessage() {}
 
 func (x *UpdateTenantProductReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[51]
+	mi := &file_proto_market_market_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3346,7 +3542,7 @@ func (x *UpdateTenantProductReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTenantProductReq.ProtoReflect.Descriptor instead.
 func (*UpdateTenantProductReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{51}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *UpdateTenantProductReq) GetId() int64 {
@@ -3408,7 +3604,7 @@ type BatchUpsertTenantProductsReq struct {
 
 func (x *BatchUpsertTenantProductsReq) Reset() {
 	*x = BatchUpsertTenantProductsReq{}
-	mi := &file_proto_market_market_proto_msgTypes[52]
+	mi := &file_proto_market_market_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3420,7 +3616,7 @@ func (x *BatchUpsertTenantProductsReq) String() string {
 func (*BatchUpsertTenantProductsReq) ProtoMessage() {}
 
 func (x *BatchUpsertTenantProductsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[52]
+	mi := &file_proto_market_market_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3433,7 +3629,7 @@ func (x *BatchUpsertTenantProductsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchUpsertTenantProductsReq.ProtoReflect.Descriptor instead.
 func (*BatchUpsertTenantProductsReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{52}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *BatchUpsertTenantProductsReq) GetTenantId() int64 {
@@ -3464,7 +3660,7 @@ type TenantProductItem struct {
 
 func (x *TenantProductItem) Reset() {
 	*x = TenantProductItem{}
-	mi := &file_proto_market_market_proto_msgTypes[53]
+	mi := &file_proto_market_market_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3476,7 +3672,7 @@ func (x *TenantProductItem) String() string {
 func (*TenantProductItem) ProtoMessage() {}
 
 func (x *TenantProductItem) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[53]
+	mi := &file_proto_market_market_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3489,7 +3685,7 @@ func (x *TenantProductItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TenantProductItem.ProtoReflect.Descriptor instead.
 func (*TenantProductItem) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{53}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *TenantProductItem) GetId() int64 {
@@ -3544,7 +3740,7 @@ type GetTenantProductReq struct {
 
 func (x *GetTenantProductReq) Reset() {
 	*x = GetTenantProductReq{}
-	mi := &file_proto_market_market_proto_msgTypes[54]
+	mi := &file_proto_market_market_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3556,7 +3752,7 @@ func (x *GetTenantProductReq) String() string {
 func (*GetTenantProductReq) ProtoMessage() {}
 
 func (x *GetTenantProductReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[54]
+	mi := &file_proto_market_market_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3569,7 +3765,7 @@ func (x *GetTenantProductReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTenantProductReq.ProtoReflect.Descriptor instead.
 func (*GetTenantProductReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{54}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *GetTenantProductReq) GetId() int64 {
@@ -3596,7 +3792,7 @@ type GetTenantProductResp struct {
 
 func (x *GetTenantProductResp) Reset() {
 	*x = GetTenantProductResp{}
-	mi := &file_proto_market_market_proto_msgTypes[55]
+	mi := &file_proto_market_market_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3608,7 +3804,7 @@ func (x *GetTenantProductResp) String() string {
 func (*GetTenantProductResp) ProtoMessage() {}
 
 func (x *GetTenantProductResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[55]
+	mi := &file_proto_market_market_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3621,7 +3817,7 @@ func (x *GetTenantProductResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTenantProductResp.ProtoReflect.Descriptor instead.
 func (*GetTenantProductResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{55}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *GetTenantProductResp) GetBase() *common.RespBase {
@@ -3653,7 +3849,7 @@ type ListTenantProductsReq struct {
 
 func (x *ListTenantProductsReq) Reset() {
 	*x = ListTenantProductsReq{}
-	mi := &file_proto_market_market_proto_msgTypes[56]
+	mi := &file_proto_market_market_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3665,7 +3861,7 @@ func (x *ListTenantProductsReq) String() string {
 func (*ListTenantProductsReq) ProtoMessage() {}
 
 func (x *ListTenantProductsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[56]
+	mi := &file_proto_market_market_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3678,7 +3874,7 @@ func (x *ListTenantProductsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTenantProductsReq.ProtoReflect.Descriptor instead.
 func (*ListTenantProductsReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{56}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *ListTenantProductsReq) GetPage() *common.PageReq {
@@ -3740,7 +3936,7 @@ type ListTenantProductsResp struct {
 
 func (x *ListTenantProductsResp) Reset() {
 	*x = ListTenantProductsResp{}
-	mi := &file_proto_market_market_proto_msgTypes[57]
+	mi := &file_proto_market_market_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3752,7 +3948,7 @@ func (x *ListTenantProductsResp) String() string {
 func (*ListTenantProductsResp) ProtoMessage() {}
 
 func (x *ListTenantProductsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[57]
+	mi := &file_proto_market_market_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3765,7 +3961,7 @@ func (x *ListTenantProductsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTenantProductsResp.ProtoReflect.Descriptor instead.
 func (*ListTenantProductsResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{57}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *ListTenantProductsResp) GetBase() *common.RespBase {
@@ -3792,7 +3988,7 @@ type InitTenantMarketDisplayReq struct {
 
 func (x *InitTenantMarketDisplayReq) Reset() {
 	*x = InitTenantMarketDisplayReq{}
-	mi := &file_proto_market_market_proto_msgTypes[58]
+	mi := &file_proto_market_market_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3804,7 +4000,7 @@ func (x *InitTenantMarketDisplayReq) String() string {
 func (*InitTenantMarketDisplayReq) ProtoMessage() {}
 
 func (x *InitTenantMarketDisplayReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[58]
+	mi := &file_proto_market_market_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3817,7 +4013,7 @@ func (x *InitTenantMarketDisplayReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InitTenantMarketDisplayReq.ProtoReflect.Descriptor instead.
 func (*InitTenantMarketDisplayReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{58}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *InitTenantMarketDisplayReq) GetTenantId() int64 {
@@ -3844,7 +4040,7 @@ type InitTenantMarketDisplayResp struct {
 
 func (x *InitTenantMarketDisplayResp) Reset() {
 	*x = InitTenantMarketDisplayResp{}
-	mi := &file_proto_market_market_proto_msgTypes[59]
+	mi := &file_proto_market_market_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3856,7 +4052,7 @@ func (x *InitTenantMarketDisplayResp) String() string {
 func (*InitTenantMarketDisplayResp) ProtoMessage() {}
 
 func (x *InitTenantMarketDisplayResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[59]
+	mi := &file_proto_market_market_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3869,7 +4065,7 @@ func (x *InitTenantMarketDisplayResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InitTenantMarketDisplayResp.ProtoReflect.Descriptor instead.
 func (*InitTenantMarketDisplayResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{59}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *InitTenantMarketDisplayResp) GetBase() *common.RespBase {
@@ -3896,7 +4092,7 @@ type InitTenantMarketDisplayData struct {
 
 func (x *InitTenantMarketDisplayData) Reset() {
 	*x = InitTenantMarketDisplayData{}
-	mi := &file_proto_market_market_proto_msgTypes[60]
+	mi := &file_proto_market_market_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3908,7 +4104,7 @@ func (x *InitTenantMarketDisplayData) String() string {
 func (*InitTenantMarketDisplayData) ProtoMessage() {}
 
 func (x *InitTenantMarketDisplayData) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[60]
+	mi := &file_proto_market_market_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3921,7 +4117,7 @@ func (x *InitTenantMarketDisplayData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InitTenantMarketDisplayData.ProtoReflect.Descriptor instead.
 func (*InitTenantMarketDisplayData) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{60}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *InitTenantMarketDisplayData) GetCategoryCount() int64 {
@@ -3955,7 +4151,7 @@ type AuthorityRegistryData struct {
 
 func (x *AuthorityRegistryData) Reset() {
 	*x = AuthorityRegistryData{}
-	mi := &file_proto_market_market_proto_msgTypes[61]
+	mi := &file_proto_market_market_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3967,7 +4163,7 @@ func (x *AuthorityRegistryData) String() string {
 func (*AuthorityRegistryData) ProtoMessage() {}
 
 func (x *AuthorityRegistryData) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[61]
+	mi := &file_proto_market_market_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3980,7 +4176,7 @@ func (x *AuthorityRegistryData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AuthorityRegistryData.ProtoReflect.Descriptor instead.
 func (*AuthorityRegistryData) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{61}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{64}
 }
 
 func (x *AuthorityRegistryData) GetId() int64 {
@@ -4061,7 +4257,7 @@ type SetAuthorityRegistryReq struct {
 
 func (x *SetAuthorityRegistryReq) Reset() {
 	*x = SetAuthorityRegistryReq{}
-	mi := &file_proto_market_market_proto_msgTypes[62]
+	mi := &file_proto_market_market_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4073,7 +4269,7 @@ func (x *SetAuthorityRegistryReq) String() string {
 func (*SetAuthorityRegistryReq) ProtoMessage() {}
 
 func (x *SetAuthorityRegistryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[62]
+	mi := &file_proto_market_market_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4086,7 +4282,7 @@ func (x *SetAuthorityRegistryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetAuthorityRegistryReq.ProtoReflect.Descriptor instead.
 func (*SetAuthorityRegistryReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{62}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *SetAuthorityRegistryReq) GetId() int64 {
@@ -4148,7 +4344,7 @@ type AuthorityRegistryResp struct {
 
 func (x *AuthorityRegistryResp) Reset() {
 	*x = AuthorityRegistryResp{}
-	mi := &file_proto_market_market_proto_msgTypes[63]
+	mi := &file_proto_market_market_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4160,7 +4356,7 @@ func (x *AuthorityRegistryResp) String() string {
 func (*AuthorityRegistryResp) ProtoMessage() {}
 
 func (x *AuthorityRegistryResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[63]
+	mi := &file_proto_market_market_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4173,7 +4369,7 @@ func (x *AuthorityRegistryResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AuthorityRegistryResp.ProtoReflect.Descriptor instead.
 func (*AuthorityRegistryResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{63}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{66}
 }
 
 func (x *AuthorityRegistryResp) GetBase() *common.RespBase {
@@ -4204,7 +4400,7 @@ type ListAuthorityRegistriesReq struct {
 
 func (x *ListAuthorityRegistriesReq) Reset() {
 	*x = ListAuthorityRegistriesReq{}
-	mi := &file_proto_market_market_proto_msgTypes[64]
+	mi := &file_proto_market_market_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4216,7 +4412,7 @@ func (x *ListAuthorityRegistriesReq) String() string {
 func (*ListAuthorityRegistriesReq) ProtoMessage() {}
 
 func (x *ListAuthorityRegistriesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[64]
+	mi := &file_proto_market_market_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4229,7 +4425,7 @@ func (x *ListAuthorityRegistriesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAuthorityRegistriesReq.ProtoReflect.Descriptor instead.
 func (*ListAuthorityRegistriesReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{64}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{67}
 }
 
 func (x *ListAuthorityRegistriesReq) GetPage() *common.PageReq {
@@ -4284,7 +4480,7 @@ type ListAuthorityRegistriesResp struct {
 
 func (x *ListAuthorityRegistriesResp) Reset() {
 	*x = ListAuthorityRegistriesResp{}
-	mi := &file_proto_market_market_proto_msgTypes[65]
+	mi := &file_proto_market_market_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4296,7 +4492,7 @@ func (x *ListAuthorityRegistriesResp) String() string {
 func (*ListAuthorityRegistriesResp) ProtoMessage() {}
 
 func (x *ListAuthorityRegistriesResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[65]
+	mi := &file_proto_market_market_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4309,7 +4505,7 @@ func (x *ListAuthorityRegistriesResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAuthorityRegistriesResp.ProtoReflect.Descriptor instead.
 func (*ListAuthorityRegistriesResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{65}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{68}
 }
 
 func (x *ListAuthorityRegistriesResp) GetBase() *common.RespBase {
@@ -4340,7 +4536,7 @@ type PriceFormulaComponent struct {
 
 func (x *PriceFormulaComponent) Reset() {
 	*x = PriceFormulaComponent{}
-	mi := &file_proto_market_market_proto_msgTypes[66]
+	mi := &file_proto_market_market_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4352,7 +4548,7 @@ func (x *PriceFormulaComponent) String() string {
 func (*PriceFormulaComponent) ProtoMessage() {}
 
 func (x *PriceFormulaComponent) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[66]
+	mi := &file_proto_market_market_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4365,7 +4561,7 @@ func (x *PriceFormulaComponent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PriceFormulaComponent.ProtoReflect.Descriptor instead.
 func (*PriceFormulaComponent) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{66}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{69}
 }
 
 func (x *PriceFormulaComponent) GetAuthority() string {
@@ -4432,7 +4628,7 @@ type CreatePriceFormulaReq struct {
 
 func (x *CreatePriceFormulaReq) Reset() {
 	*x = CreatePriceFormulaReq{}
-	mi := &file_proto_market_market_proto_msgTypes[67]
+	mi := &file_proto_market_market_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4444,7 +4640,7 @@ func (x *CreatePriceFormulaReq) String() string {
 func (*CreatePriceFormulaReq) ProtoMessage() {}
 
 func (x *CreatePriceFormulaReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[67]
+	mi := &file_proto_market_market_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4457,7 +4653,7 @@ func (x *CreatePriceFormulaReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreatePriceFormulaReq.ProtoReflect.Descriptor instead.
 func (*CreatePriceFormulaReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{67}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *CreatePriceFormulaReq) GetFormulaNo() string {
@@ -4567,7 +4763,7 @@ type PriceFormulaReq struct {
 
 func (x *PriceFormulaReq) Reset() {
 	*x = PriceFormulaReq{}
-	mi := &file_proto_market_market_proto_msgTypes[68]
+	mi := &file_proto_market_market_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4579,7 +4775,7 @@ func (x *PriceFormulaReq) String() string {
 func (*PriceFormulaReq) ProtoMessage() {}
 
 func (x *PriceFormulaReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[68]
+	mi := &file_proto_market_market_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4592,7 +4788,7 @@ func (x *PriceFormulaReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PriceFormulaReq.ProtoReflect.Descriptor instead.
 func (*PriceFormulaReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{68}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{71}
 }
 
 func (x *PriceFormulaReq) GetId() int64 {
@@ -4612,7 +4808,7 @@ type ChangePriceFormulaStatusReq struct {
 
 func (x *ChangePriceFormulaStatusReq) Reset() {
 	*x = ChangePriceFormulaStatusReq{}
-	mi := &file_proto_market_market_proto_msgTypes[69]
+	mi := &file_proto_market_market_proto_msgTypes[72]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4624,7 +4820,7 @@ func (x *ChangePriceFormulaStatusReq) String() string {
 func (*ChangePriceFormulaStatusReq) ProtoMessage() {}
 
 func (x *ChangePriceFormulaStatusReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[69]
+	mi := &file_proto_market_market_proto_msgTypes[72]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4637,7 +4833,7 @@ func (x *ChangePriceFormulaStatusReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChangePriceFormulaStatusReq.ProtoReflect.Descriptor instead.
 func (*ChangePriceFormulaStatusReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{69}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{72}
 }
 
 func (x *ChangePriceFormulaStatusReq) GetId() int64 {
@@ -4669,7 +4865,7 @@ type ListPriceFormulasReq struct {
 
 func (x *ListPriceFormulasReq) Reset() {
 	*x = ListPriceFormulasReq{}
-	mi := &file_proto_market_market_proto_msgTypes[70]
+	mi := &file_proto_market_market_proto_msgTypes[73]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4681,7 +4877,7 @@ func (x *ListPriceFormulasReq) String() string {
 func (*ListPriceFormulasReq) ProtoMessage() {}
 
 func (x *ListPriceFormulasReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[70]
+	mi := &file_proto_market_market_proto_msgTypes[73]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4694,7 +4890,7 @@ func (x *ListPriceFormulasReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPriceFormulasReq.ProtoReflect.Descriptor instead.
 func (*ListPriceFormulasReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{70}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{73}
 }
 
 func (x *ListPriceFormulasReq) GetPage() *common.PageReq {
@@ -4773,7 +4969,7 @@ type PriceFormulaData struct {
 
 func (x *PriceFormulaData) Reset() {
 	*x = PriceFormulaData{}
-	mi := &file_proto_market_market_proto_msgTypes[71]
+	mi := &file_proto_market_market_proto_msgTypes[74]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4785,7 +4981,7 @@ func (x *PriceFormulaData) String() string {
 func (*PriceFormulaData) ProtoMessage() {}
 
 func (x *PriceFormulaData) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[71]
+	mi := &file_proto_market_market_proto_msgTypes[74]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4798,7 +4994,7 @@ func (x *PriceFormulaData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PriceFormulaData.ProtoReflect.Descriptor instead.
 func (*PriceFormulaData) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{71}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{74}
 }
 
 func (x *PriceFormulaData) GetId() int64 {
@@ -4944,7 +5140,7 @@ type PriceFormulaResp struct {
 
 func (x *PriceFormulaResp) Reset() {
 	*x = PriceFormulaResp{}
-	mi := &file_proto_market_market_proto_msgTypes[72]
+	mi := &file_proto_market_market_proto_msgTypes[75]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -4956,7 +5152,7 @@ func (x *PriceFormulaResp) String() string {
 func (*PriceFormulaResp) ProtoMessage() {}
 
 func (x *PriceFormulaResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[72]
+	mi := &file_proto_market_market_proto_msgTypes[75]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -4969,7 +5165,7 @@ func (x *PriceFormulaResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PriceFormulaResp.ProtoReflect.Descriptor instead.
 func (*PriceFormulaResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{72}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{75}
 }
 
 func (x *PriceFormulaResp) GetBase() *common.RespBase {
@@ -4996,7 +5192,7 @@ type ListPriceFormulasResp struct {
 
 func (x *ListPriceFormulasResp) Reset() {
 	*x = ListPriceFormulasResp{}
-	mi := &file_proto_market_market_proto_msgTypes[73]
+	mi := &file_proto_market_market_proto_msgTypes[76]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5008,7 +5204,7 @@ func (x *ListPriceFormulasResp) String() string {
 func (*ListPriceFormulasResp) ProtoMessage() {}
 
 func (x *ListPriceFormulasResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[73]
+	mi := &file_proto_market_market_proto_msgTypes[76]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5021,7 +5217,7 @@ func (x *ListPriceFormulasResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPriceFormulasResp.ProtoReflect.Descriptor instead.
 func (*ListPriceFormulasResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{73}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{76}
 }
 
 func (x *ListPriceFormulasResp) GetBase() *common.RespBase {
@@ -5049,7 +5245,7 @@ type ListSnapshotOutboxReq struct {
 
 func (x *ListSnapshotOutboxReq) Reset() {
 	*x = ListSnapshotOutboxReq{}
-	mi := &file_proto_market_market_proto_msgTypes[74]
+	mi := &file_proto_market_market_proto_msgTypes[77]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5061,7 +5257,7 @@ func (x *ListSnapshotOutboxReq) String() string {
 func (*ListSnapshotOutboxReq) ProtoMessage() {}
 
 func (x *ListSnapshotOutboxReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[74]
+	mi := &file_proto_market_market_proto_msgTypes[77]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5074,7 +5270,7 @@ func (x *ListSnapshotOutboxReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSnapshotOutboxReq.ProtoReflect.Descriptor instead.
 func (*ListSnapshotOutboxReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{74}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{77}
 }
 
 func (x *ListSnapshotOutboxReq) GetPage() *common.PageReq {
@@ -5116,7 +5312,7 @@ type SnapshotOutboxData struct {
 
 func (x *SnapshotOutboxData) Reset() {
 	*x = SnapshotOutboxData{}
-	mi := &file_proto_market_market_proto_msgTypes[75]
+	mi := &file_proto_market_market_proto_msgTypes[78]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5128,7 +5324,7 @@ func (x *SnapshotOutboxData) String() string {
 func (*SnapshotOutboxData) ProtoMessage() {}
 
 func (x *SnapshotOutboxData) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[75]
+	mi := &file_proto_market_market_proto_msgTypes[78]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5141,7 +5337,7 @@ func (x *SnapshotOutboxData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SnapshotOutboxData.ProtoReflect.Descriptor instead.
 func (*SnapshotOutboxData) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{75}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{78}
 }
 
 func (x *SnapshotOutboxData) GetId() int64 {
@@ -5224,7 +5420,7 @@ type ListSnapshotOutboxResp struct {
 
 func (x *ListSnapshotOutboxResp) Reset() {
 	*x = ListSnapshotOutboxResp{}
-	mi := &file_proto_market_market_proto_msgTypes[76]
+	mi := &file_proto_market_market_proto_msgTypes[79]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5236,7 +5432,7 @@ func (x *ListSnapshotOutboxResp) String() string {
 func (*ListSnapshotOutboxResp) ProtoMessage() {}
 
 func (x *ListSnapshotOutboxResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[76]
+	mi := &file_proto_market_market_proto_msgTypes[79]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5249,7 +5445,7 @@ func (x *ListSnapshotOutboxResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSnapshotOutboxResp.ProtoReflect.Descriptor instead.
 func (*ListSnapshotOutboxResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{76}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{79}
 }
 
 func (x *ListSnapshotOutboxResp) GetBase() *common.RespBase {
@@ -5275,7 +5471,7 @@ type RetrySnapshotOutboxReq struct {
 
 func (x *RetrySnapshotOutboxReq) Reset() {
 	*x = RetrySnapshotOutboxReq{}
-	mi := &file_proto_market_market_proto_msgTypes[77]
+	mi := &file_proto_market_market_proto_msgTypes[80]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5287,7 +5483,7 @@ func (x *RetrySnapshotOutboxReq) String() string {
 func (*RetrySnapshotOutboxReq) ProtoMessage() {}
 
 func (x *RetrySnapshotOutboxReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[77]
+	mi := &file_proto_market_market_proto_msgTypes[80]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5300,7 +5496,7 @@ func (x *RetrySnapshotOutboxReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RetrySnapshotOutboxReq.ProtoReflect.Descriptor instead.
 func (*RetrySnapshotOutboxReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{77}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{80}
 }
 
 func (x *RetrySnapshotOutboxReq) GetId() int64 {
@@ -5321,7 +5517,7 @@ type RevokeAuthoritativeSnapshotReq struct {
 
 func (x *RevokeAuthoritativeSnapshotReq) Reset() {
 	*x = RevokeAuthoritativeSnapshotReq{}
-	mi := &file_proto_market_market_proto_msgTypes[78]
+	mi := &file_proto_market_market_proto_msgTypes[81]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5333,7 +5529,7 @@ func (x *RevokeAuthoritativeSnapshotReq) String() string {
 func (*RevokeAuthoritativeSnapshotReq) ProtoMessage() {}
 
 func (x *RevokeAuthoritativeSnapshotReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[78]
+	mi := &file_proto_market_market_proto_msgTypes[81]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5346,7 +5542,7 @@ func (x *RevokeAuthoritativeSnapshotReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeAuthoritativeSnapshotReq.ProtoReflect.Descriptor instead.
 func (*RevokeAuthoritativeSnapshotReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{78}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{81}
 }
 
 func (x *RevokeAuthoritativeSnapshotReq) GetSnapshotId() string {
@@ -5378,7 +5574,7 @@ type SyncProductsReq struct {
 
 func (x *SyncProductsReq) Reset() {
 	*x = SyncProductsReq{}
-	mi := &file_proto_market_market_proto_msgTypes[79]
+	mi := &file_proto_market_market_proto_msgTypes[82]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5390,7 +5586,7 @@ func (x *SyncProductsReq) String() string {
 func (*SyncProductsReq) ProtoMessage() {}
 
 func (x *SyncProductsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[79]
+	mi := &file_proto_market_market_proto_msgTypes[82]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5403,7 +5599,7 @@ func (x *SyncProductsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncProductsReq.ProtoReflect.Descriptor instead.
 func (*SyncProductsReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{79}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{82}
 }
 
 type SyncProductsResp struct {
@@ -5415,7 +5611,7 @@ type SyncProductsResp struct {
 
 func (x *SyncProductsResp) Reset() {
 	*x = SyncProductsResp{}
-	mi := &file_proto_market_market_proto_msgTypes[80]
+	mi := &file_proto_market_market_proto_msgTypes[83]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5427,7 +5623,7 @@ func (x *SyncProductsResp) String() string {
 func (*SyncProductsResp) ProtoMessage() {}
 
 func (x *SyncProductsResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[80]
+	mi := &file_proto_market_market_proto_msgTypes[83]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5440,7 +5636,7 @@ func (x *SyncProductsResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncProductsResp.ProtoReflect.Descriptor instead.
 func (*SyncProductsResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{80}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{83}
 }
 
 func (x *SyncProductsResp) GetBase() *common.RespBase {
@@ -5458,7 +5654,7 @@ type SyncKlinesReq struct {
 
 func (x *SyncKlinesReq) Reset() {
 	*x = SyncKlinesReq{}
-	mi := &file_proto_market_market_proto_msgTypes[81]
+	mi := &file_proto_market_market_proto_msgTypes[84]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5470,7 +5666,7 @@ func (x *SyncKlinesReq) String() string {
 func (*SyncKlinesReq) ProtoMessage() {}
 
 func (x *SyncKlinesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[81]
+	mi := &file_proto_market_market_proto_msgTypes[84]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5483,7 +5679,7 @@ func (x *SyncKlinesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncKlinesReq.ProtoReflect.Descriptor instead.
 func (*SyncKlinesReq) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{81}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{84}
 }
 
 type SyncKlinesResp struct {
@@ -5495,7 +5691,7 @@ type SyncKlinesResp struct {
 
 func (x *SyncKlinesResp) Reset() {
 	*x = SyncKlinesResp{}
-	mi := &file_proto_market_market_proto_msgTypes[82]
+	mi := &file_proto_market_market_proto_msgTypes[85]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -5507,7 +5703,7 @@ func (x *SyncKlinesResp) String() string {
 func (*SyncKlinesResp) ProtoMessage() {}
 
 func (x *SyncKlinesResp) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_market_market_proto_msgTypes[82]
+	mi := &file_proto_market_market_proto_msgTypes[85]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5520,7 +5716,7 @@ func (x *SyncKlinesResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncKlinesResp.ProtoReflect.Descriptor instead.
 func (*SyncKlinesResp) Descriptor() ([]byte, []int) {
-	return file_proto_market_market_proto_rawDescGZIP(), []int{82}
+	return file_proto_market_market_proto_rawDescGZIP(), []int{85}
 }
 
 func (x *SyncKlinesResp) GetBase() *common.RespBase {
@@ -5590,7 +5786,22 @@ const file_proto_market_market_proto_rawDesc = "" +
 	"\rsnapshot_kind\x18\a \x01(\tR\fsnapshotKind\"w\n" +
 	"\x1cGetAuthoritativeSnapshotResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x121\n" +
-	"\x04data\x18\x02 \x01(\v2\x1d.market.AuthoritativeSnapshotR\x04data\"B\n" +
+	"\x04data\x18\x02 \x01(\v2\x1d.market.AuthoritativeSnapshotR\x04data\"\x88\x01\n" +
+	"\x13GetTradingStatusReq\x12#\n" +
+	"\rcategory_code\x18\x01 \x01(\tR\fcategoryCode\x12\x16\n" +
+	"\x06market\x18\x02 \x01(\tR\x06market\x12\x16\n" +
+	"\x06symbol\x18\x03 \x01(\tR\x06symbol\x12\x1c\n" +
+	"\ttimestamp\x18\x04 \x01(\x03R\ttimestamp\"\xaf\x01\n" +
+	"\x14GetTradingStatusData\x12\x17\n" +
+	"\ais_open\x18\x01 \x01(\bR\x06isOpen\x12\x1f\n" +
+	"\vcalendar_id\x18\x02 \x01(\x03R\n" +
+	"calendarId\x12)\n" +
+	"\x10product_specific\x18\x03 \x01(\bR\x0fproductSpecific\x12\x1a\n" +
+	"\btimezone\x18\x04 \x01(\tR\btimezone\x12\x16\n" +
+	"\x06reason\x18\x05 \x01(\tR\x06reason\"n\n" +
+	"\x14GetTradingStatusResp\x12$\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
+	"\x04data\x18\x02 \x01(\v2\x1c.market.GetTradingStatusDataR\x04data\"B\n" +
 	"\x10SubscribeRequest\x12.\n" +
 	"\x06topics\x18\x01 \x03(\v2\x16.market.SubscribeTopicR\x06topics\"\x97\x01\n" +
 	"\x0eSubscribeTopic\x12\x14\n" +
@@ -5979,9 +6190,10 @@ const file_proto_market_market_proto_rawDesc = "" +
 	"\rBatchGetQuote\x12\x18.market.BatchGetQuoteReq\x1a\x19.market.BatchGetQuoteResp\x12e\n" +
 	"\x18GetAuthoritativeSnapshot\x12#.market.GetAuthoritativeSnapshotReq\x1a$.market.GetAuthoritativeSnapshotResp\x12@\n" +
 	"\x0fSubscribeStream\x12\x18.market.SubscribeRequest\x1a\x11.market.PushReply0\x01\x12>\n" +
-	"\x11GetKlineIntervals\x12\r.market.Empty\x1a\x1a.market.KlineIntervalsResp2o\n" +
+	"\x11GetKlineIntervals\x12\r.market.Empty\x1a\x1a.market.KlineIntervalsResp2\xbe\x01\n" +
 	"\x06Market\x12e\n" +
-	"\x18GetAuthoritativeSnapshot\x12#.market.GetAuthoritativeSnapshotReq\x1a$.market.GetAuthoritativeSnapshotResp2\xf7\x13\n" +
+	"\x18GetAuthoritativeSnapshot\x12#.market.GetAuthoritativeSnapshotReq\x1a$.market.GetAuthoritativeSnapshotResp\x12M\n" +
+	"\x10GetTradingStatus\x12\x1b.market.GetTradingStatusReq\x1a\x1c.market.GetTradingStatusResp2\xf7\x13\n" +
 	"\x05Admin\x12G\n" +
 	"\x0eListCategories\x12\x19.market.ListCategoriesReq\x1a\x1a.market.ListCategoriesResp\x12?\n" +
 	"\x0eCreateCategory\x12\x19.market.CreateCategoryReq\x1a\x12.market.CommonResp\x12?\n" +
@@ -6033,7 +6245,7 @@ func file_proto_market_market_proto_rawDescGZIP() []byte {
 	return file_proto_market_market_proto_rawDescData
 }
 
-var file_proto_market_market_proto_msgTypes = make([]protoimpl.MessageInfo, 83)
+var file_proto_market_market_proto_msgTypes = make([]protoimpl.MessageInfo, 86)
 var file_proto_market_market_proto_goTypes = []any{
 	(*Empty)(nil),                          // 0: market.Empty
 	(*UserCommonResp)(nil),                 // 1: market.UserCommonResp
@@ -6050,295 +6262,302 @@ var file_proto_market_market_proto_goTypes = []any{
 	(*BatchGetQuoteResp)(nil),              // 12: market.BatchGetQuoteResp
 	(*GetAuthoritativeSnapshotReq)(nil),    // 13: market.GetAuthoritativeSnapshotReq
 	(*GetAuthoritativeSnapshotResp)(nil),   // 14: market.GetAuthoritativeSnapshotResp
-	(*SubscribeRequest)(nil),               // 15: market.SubscribeRequest
-	(*SubscribeTopic)(nil),                 // 16: market.SubscribeTopic
-	(*PushReply)(nil),                      // 17: market.PushReply
-	(*KlineInterval)(nil),                  // 18: market.KlineInterval
-	(*KlineIntervalsResp)(nil),             // 19: market.KlineIntervalsResp
-	(*CommonResp)(nil),                     // 20: market.CommonResp
-	(*CreateCategoryReq)(nil),              // 21: market.CreateCategoryReq
-	(*UpdateCategoryReq)(nil),              // 22: market.UpdateCategoryReq
-	(*GetCategoryReq)(nil),                 // 23: market.GetCategoryReq
-	(*GetCategoryResp)(nil),                // 24: market.GetCategoryResp
-	(*ListCategoriesReq)(nil),              // 25: market.ListCategoriesReq
-	(*ListCategoriesResp)(nil),             // 26: market.ListCategoriesResp
-	(*SyncCategoryProductsReq)(nil),        // 27: market.SyncCategoryProductsReq
-	(*SyncCategoryProductsResp)(nil),       // 28: market.SyncCategoryProductsResp
-	(*GetSyncTaskStatusReq)(nil),           // 29: market.GetSyncTaskStatusReq
-	(*GetSyncTaskStatusResp)(nil),          // 30: market.GetSyncTaskStatusResp
-	(*GetSyncTaskStatusData)(nil),          // 31: market.GetSyncTaskStatusData
-	(*CreateProductReq)(nil),               // 32: market.CreateProductReq
-	(*UpdateProductReq)(nil),               // 33: market.UpdateProductReq
-	(*GetProductReq)(nil),                  // 34: market.GetProductReq
-	(*GetProductResp)(nil),                 // 35: market.GetProductResp
-	(*ListProductsReq)(nil),                // 36: market.ListProductsReq
-	(*ListProductsResp)(nil),               // 37: market.ListProductsResp
-	(*GetProductKlineReq)(nil),             // 38: market.GetProductKlineReq
-	(*GetProductKlineResp)(nil),            // 39: market.GetProductKlineResp
-	(*SyncProductKlineHistoryReq)(nil),     // 40: market.SyncProductKlineHistoryReq
-	(*SyncProductKlineHistoryResp)(nil),    // 41: market.SyncProductKlineHistoryResp
-	(*CreateTenantCategoryReq)(nil),        // 42: market.CreateTenantCategoryReq
-	(*UpdateTenantCategoryReq)(nil),        // 43: market.UpdateTenantCategoryReq
-	(*BatchUpsertTenantCategoriesReq)(nil), // 44: market.BatchUpsertTenantCategoriesReq
-	(*TenantCategoryItem)(nil),             // 45: market.TenantCategoryItem
-	(*GetTenantCategoryReq)(nil),           // 46: market.GetTenantCategoryReq
-	(*GetTenantCategoryResp)(nil),          // 47: market.GetTenantCategoryResp
-	(*ListTenantCategoriesReq)(nil),        // 48: market.ListTenantCategoriesReq
-	(*ListTenantCategoriesResp)(nil),       // 49: market.ListTenantCategoriesResp
-	(*CreateTenantProductReq)(nil),         // 50: market.CreateTenantProductReq
-	(*UpdateTenantProductReq)(nil),         // 51: market.UpdateTenantProductReq
-	(*BatchUpsertTenantProductsReq)(nil),   // 52: market.BatchUpsertTenantProductsReq
-	(*TenantProductItem)(nil),              // 53: market.TenantProductItem
-	(*GetTenantProductReq)(nil),            // 54: market.GetTenantProductReq
-	(*GetTenantProductResp)(nil),           // 55: market.GetTenantProductResp
-	(*ListTenantProductsReq)(nil),          // 56: market.ListTenantProductsReq
-	(*ListTenantProductsResp)(nil),         // 57: market.ListTenantProductsResp
-	(*InitTenantMarketDisplayReq)(nil),     // 58: market.InitTenantMarketDisplayReq
-	(*InitTenantMarketDisplayResp)(nil),    // 59: market.InitTenantMarketDisplayResp
-	(*InitTenantMarketDisplayData)(nil),    // 60: market.InitTenantMarketDisplayData
-	(*AuthorityRegistryData)(nil),          // 61: market.AuthorityRegistryData
-	(*SetAuthorityRegistryReq)(nil),        // 62: market.SetAuthorityRegistryReq
-	(*AuthorityRegistryResp)(nil),          // 63: market.AuthorityRegistryResp
-	(*ListAuthorityRegistriesReq)(nil),     // 64: market.ListAuthorityRegistriesReq
-	(*ListAuthorityRegistriesResp)(nil),    // 65: market.ListAuthorityRegistriesResp
-	(*PriceFormulaComponent)(nil),          // 66: market.PriceFormulaComponent
-	(*CreatePriceFormulaReq)(nil),          // 67: market.CreatePriceFormulaReq
-	(*PriceFormulaReq)(nil),                // 68: market.PriceFormulaReq
-	(*ChangePriceFormulaStatusReq)(nil),    // 69: market.ChangePriceFormulaStatusReq
-	(*ListPriceFormulasReq)(nil),           // 70: market.ListPriceFormulasReq
-	(*PriceFormulaData)(nil),               // 71: market.PriceFormulaData
-	(*PriceFormulaResp)(nil),               // 72: market.PriceFormulaResp
-	(*ListPriceFormulasResp)(nil),          // 73: market.ListPriceFormulasResp
-	(*ListSnapshotOutboxReq)(nil),          // 74: market.ListSnapshotOutboxReq
-	(*SnapshotOutboxData)(nil),             // 75: market.SnapshotOutboxData
-	(*ListSnapshotOutboxResp)(nil),         // 76: market.ListSnapshotOutboxResp
-	(*RetrySnapshotOutboxReq)(nil),         // 77: market.RetrySnapshotOutboxReq
-	(*RevokeAuthoritativeSnapshotReq)(nil), // 78: market.RevokeAuthoritativeSnapshotReq
-	(*SyncProductsReq)(nil),                // 79: market.SyncProductsReq
-	(*SyncProductsResp)(nil),               // 80: market.SyncProductsResp
-	(*SyncKlinesReq)(nil),                  // 81: market.SyncKlinesReq
-	(*SyncKlinesResp)(nil),                 // 82: market.SyncKlinesResp
-	(*common.RespBase)(nil),                // 83: common.RespBase
-	(*common.PageReq)(nil),                 // 84: common.PageReq
-	(*MarketTenantCategory)(nil),           // 85: market.MarketTenantCategory
-	(CategoryType)(0),                      // 86: market.CategoryType
-	(*MarketTenantProduct)(nil),            // 87: market.MarketTenantProduct
-	(KlineType)(0),                         // 88: market.KlineType
-	(*Kline)(nil),                          // 89: market.Kline
-	(*Quote)(nil),                          // 90: market.Quote
-	(*AuthoritativeSnapshot)(nil),          // 91: market.AuthoritativeSnapshot
-	(common.Enable)(0),                     // 92: common.Enable
-	(common.Switch)(0),                     // 93: common.Switch
-	(SyncKlinePriority)(0),                 // 94: market.SyncKlinePriority
-	(*MarketCategory)(nil),                 // 95: market.MarketCategory
-	(*MarketProduct)(nil),                  // 96: market.MarketProduct
-	(PriceAlgorithm)(0),                    // 97: market.PriceAlgorithm
+	(*GetTradingStatusReq)(nil),            // 15: market.GetTradingStatusReq
+	(*GetTradingStatusData)(nil),           // 16: market.GetTradingStatusData
+	(*GetTradingStatusResp)(nil),           // 17: market.GetTradingStatusResp
+	(*SubscribeRequest)(nil),               // 18: market.SubscribeRequest
+	(*SubscribeTopic)(nil),                 // 19: market.SubscribeTopic
+	(*PushReply)(nil),                      // 20: market.PushReply
+	(*KlineInterval)(nil),                  // 21: market.KlineInterval
+	(*KlineIntervalsResp)(nil),             // 22: market.KlineIntervalsResp
+	(*CommonResp)(nil),                     // 23: market.CommonResp
+	(*CreateCategoryReq)(nil),              // 24: market.CreateCategoryReq
+	(*UpdateCategoryReq)(nil),              // 25: market.UpdateCategoryReq
+	(*GetCategoryReq)(nil),                 // 26: market.GetCategoryReq
+	(*GetCategoryResp)(nil),                // 27: market.GetCategoryResp
+	(*ListCategoriesReq)(nil),              // 28: market.ListCategoriesReq
+	(*ListCategoriesResp)(nil),             // 29: market.ListCategoriesResp
+	(*SyncCategoryProductsReq)(nil),        // 30: market.SyncCategoryProductsReq
+	(*SyncCategoryProductsResp)(nil),       // 31: market.SyncCategoryProductsResp
+	(*GetSyncTaskStatusReq)(nil),           // 32: market.GetSyncTaskStatusReq
+	(*GetSyncTaskStatusResp)(nil),          // 33: market.GetSyncTaskStatusResp
+	(*GetSyncTaskStatusData)(nil),          // 34: market.GetSyncTaskStatusData
+	(*CreateProductReq)(nil),               // 35: market.CreateProductReq
+	(*UpdateProductReq)(nil),               // 36: market.UpdateProductReq
+	(*GetProductReq)(nil),                  // 37: market.GetProductReq
+	(*GetProductResp)(nil),                 // 38: market.GetProductResp
+	(*ListProductsReq)(nil),                // 39: market.ListProductsReq
+	(*ListProductsResp)(nil),               // 40: market.ListProductsResp
+	(*GetProductKlineReq)(nil),             // 41: market.GetProductKlineReq
+	(*GetProductKlineResp)(nil),            // 42: market.GetProductKlineResp
+	(*SyncProductKlineHistoryReq)(nil),     // 43: market.SyncProductKlineHistoryReq
+	(*SyncProductKlineHistoryResp)(nil),    // 44: market.SyncProductKlineHistoryResp
+	(*CreateTenantCategoryReq)(nil),        // 45: market.CreateTenantCategoryReq
+	(*UpdateTenantCategoryReq)(nil),        // 46: market.UpdateTenantCategoryReq
+	(*BatchUpsertTenantCategoriesReq)(nil), // 47: market.BatchUpsertTenantCategoriesReq
+	(*TenantCategoryItem)(nil),             // 48: market.TenantCategoryItem
+	(*GetTenantCategoryReq)(nil),           // 49: market.GetTenantCategoryReq
+	(*GetTenantCategoryResp)(nil),          // 50: market.GetTenantCategoryResp
+	(*ListTenantCategoriesReq)(nil),        // 51: market.ListTenantCategoriesReq
+	(*ListTenantCategoriesResp)(nil),       // 52: market.ListTenantCategoriesResp
+	(*CreateTenantProductReq)(nil),         // 53: market.CreateTenantProductReq
+	(*UpdateTenantProductReq)(nil),         // 54: market.UpdateTenantProductReq
+	(*BatchUpsertTenantProductsReq)(nil),   // 55: market.BatchUpsertTenantProductsReq
+	(*TenantProductItem)(nil),              // 56: market.TenantProductItem
+	(*GetTenantProductReq)(nil),            // 57: market.GetTenantProductReq
+	(*GetTenantProductResp)(nil),           // 58: market.GetTenantProductResp
+	(*ListTenantProductsReq)(nil),          // 59: market.ListTenantProductsReq
+	(*ListTenantProductsResp)(nil),         // 60: market.ListTenantProductsResp
+	(*InitTenantMarketDisplayReq)(nil),     // 61: market.InitTenantMarketDisplayReq
+	(*InitTenantMarketDisplayResp)(nil),    // 62: market.InitTenantMarketDisplayResp
+	(*InitTenantMarketDisplayData)(nil),    // 63: market.InitTenantMarketDisplayData
+	(*AuthorityRegistryData)(nil),          // 64: market.AuthorityRegistryData
+	(*SetAuthorityRegistryReq)(nil),        // 65: market.SetAuthorityRegistryReq
+	(*AuthorityRegistryResp)(nil),          // 66: market.AuthorityRegistryResp
+	(*ListAuthorityRegistriesReq)(nil),     // 67: market.ListAuthorityRegistriesReq
+	(*ListAuthorityRegistriesResp)(nil),    // 68: market.ListAuthorityRegistriesResp
+	(*PriceFormulaComponent)(nil),          // 69: market.PriceFormulaComponent
+	(*CreatePriceFormulaReq)(nil),          // 70: market.CreatePriceFormulaReq
+	(*PriceFormulaReq)(nil),                // 71: market.PriceFormulaReq
+	(*ChangePriceFormulaStatusReq)(nil),    // 72: market.ChangePriceFormulaStatusReq
+	(*ListPriceFormulasReq)(nil),           // 73: market.ListPriceFormulasReq
+	(*PriceFormulaData)(nil),               // 74: market.PriceFormulaData
+	(*PriceFormulaResp)(nil),               // 75: market.PriceFormulaResp
+	(*ListPriceFormulasResp)(nil),          // 76: market.ListPriceFormulasResp
+	(*ListSnapshotOutboxReq)(nil),          // 77: market.ListSnapshotOutboxReq
+	(*SnapshotOutboxData)(nil),             // 78: market.SnapshotOutboxData
+	(*ListSnapshotOutboxResp)(nil),         // 79: market.ListSnapshotOutboxResp
+	(*RetrySnapshotOutboxReq)(nil),         // 80: market.RetrySnapshotOutboxReq
+	(*RevokeAuthoritativeSnapshotReq)(nil), // 81: market.RevokeAuthoritativeSnapshotReq
+	(*SyncProductsReq)(nil),                // 82: market.SyncProductsReq
+	(*SyncProductsResp)(nil),               // 83: market.SyncProductsResp
+	(*SyncKlinesReq)(nil),                  // 84: market.SyncKlinesReq
+	(*SyncKlinesResp)(nil),                 // 85: market.SyncKlinesResp
+	(*common.RespBase)(nil),                // 86: common.RespBase
+	(*common.PageReq)(nil),                 // 87: common.PageReq
+	(*MarketTenantCategory)(nil),           // 88: market.MarketTenantCategory
+	(CategoryType)(0),                      // 89: market.CategoryType
+	(*MarketTenantProduct)(nil),            // 90: market.MarketTenantProduct
+	(KlineType)(0),                         // 91: market.KlineType
+	(*Kline)(nil),                          // 92: market.Kline
+	(*Quote)(nil),                          // 93: market.Quote
+	(*AuthoritativeSnapshot)(nil),          // 94: market.AuthoritativeSnapshot
+	(common.Enable)(0),                     // 95: common.Enable
+	(common.Switch)(0),                     // 96: common.Switch
+	(SyncKlinePriority)(0),                 // 97: market.SyncKlinePriority
+	(*MarketCategory)(nil),                 // 98: market.MarketCategory
+	(*MarketProduct)(nil),                  // 99: market.MarketProduct
+	(PriceAlgorithm)(0),                    // 100: market.PriceAlgorithm
 }
 var file_proto_market_market_proto_depIdxs = []int32{
-	83,  // 0: market.UserCommonResp.base:type_name -> common.RespBase
-	84,  // 1: market.ListVisibleCategoriesReq.page:type_name -> common.PageReq
-	83,  // 2: market.ListVisibleCategoriesResp.base:type_name -> common.RespBase
-	85,  // 3: market.ListVisibleCategoriesResp.data:type_name -> market.MarketTenantCategory
-	86,  // 4: market.ListVisibleProductsReq.category_type:type_name -> market.CategoryType
-	84,  // 5: market.ListVisibleProductsReq.page:type_name -> common.PageReq
-	83,  // 6: market.ListVisibleProductsResp.base:type_name -> common.RespBase
-	87,  // 7: market.ListVisibleProductsResp.data:type_name -> market.MarketTenantProduct
-	88,  // 8: market.GetKlineReq.k_type:type_name -> market.KlineType
-	83,  // 9: market.GetKlineResp.base:type_name -> common.RespBase
-	89,  // 10: market.GetKlineResp.data:type_name -> market.Kline
-	83,  // 11: market.GetQuoteResp.base:type_name -> common.RespBase
-	90,  // 12: market.GetQuoteResp.data:type_name -> market.Quote
+	86,  // 0: market.UserCommonResp.base:type_name -> common.RespBase
+	87,  // 1: market.ListVisibleCategoriesReq.page:type_name -> common.PageReq
+	86,  // 2: market.ListVisibleCategoriesResp.base:type_name -> common.RespBase
+	88,  // 3: market.ListVisibleCategoriesResp.data:type_name -> market.MarketTenantCategory
+	89,  // 4: market.ListVisibleProductsReq.category_type:type_name -> market.CategoryType
+	87,  // 5: market.ListVisibleProductsReq.page:type_name -> common.PageReq
+	86,  // 6: market.ListVisibleProductsResp.base:type_name -> common.RespBase
+	90,  // 7: market.ListVisibleProductsResp.data:type_name -> market.MarketTenantProduct
+	91,  // 8: market.GetKlineReq.k_type:type_name -> market.KlineType
+	86,  // 9: market.GetKlineResp.base:type_name -> common.RespBase
+	92,  // 10: market.GetKlineResp.data:type_name -> market.Kline
+	86,  // 11: market.GetQuoteResp.base:type_name -> common.RespBase
+	93,  // 12: market.GetQuoteResp.data:type_name -> market.Quote
 	10,  // 13: market.BatchGetQuoteReq.data:type_name -> market.MarketSymbol
-	83,  // 14: market.BatchGetQuoteResp.base:type_name -> common.RespBase
-	90,  // 15: market.BatchGetQuoteResp.data:type_name -> market.Quote
-	83,  // 16: market.GetAuthoritativeSnapshotResp.base:type_name -> common.RespBase
-	91,  // 17: market.GetAuthoritativeSnapshotResp.data:type_name -> market.AuthoritativeSnapshot
-	16,  // 18: market.SubscribeRequest.topics:type_name -> market.SubscribeTopic
-	18,  // 19: market.KlineIntervalsResp.data:type_name -> market.KlineInterval
-	83,  // 20: market.CommonResp.base:type_name -> common.RespBase
-	86,  // 21: market.CreateCategoryReq.category_type:type_name -> market.CategoryType
-	92,  // 22: market.CreateCategoryReq.enabled:type_name -> common.Enable
-	93,  // 23: market.CreateCategoryReq.app_visible:type_name -> common.Switch
-	94,  // 24: market.CreateCategoryReq.sync_priority:type_name -> market.SyncKlinePriority
-	92,  // 25: market.UpdateCategoryReq.enabled:type_name -> common.Enable
-	93,  // 26: market.UpdateCategoryReq.app_visible:type_name -> common.Switch
-	94,  // 27: market.UpdateCategoryReq.sync_priority:type_name -> market.SyncKlinePriority
-	83,  // 28: market.GetCategoryResp.base:type_name -> common.RespBase
-	95,  // 29: market.GetCategoryResp.data:type_name -> market.MarketCategory
-	84,  // 30: market.ListCategoriesReq.page:type_name -> common.PageReq
-	86,  // 31: market.ListCategoriesReq.category_type:type_name -> market.CategoryType
-	92,  // 32: market.ListCategoriesReq.enabled:type_name -> common.Enable
-	93,  // 33: market.ListCategoriesReq.app_visible:type_name -> common.Switch
-	83,  // 34: market.ListCategoriesResp.base:type_name -> common.RespBase
-	95,  // 35: market.ListCategoriesResp.data:type_name -> market.MarketCategory
-	83,  // 36: market.SyncCategoryProductsResp.base:type_name -> common.RespBase
-	83,  // 37: market.GetSyncTaskStatusResp.base:type_name -> common.RespBase
-	31,  // 38: market.GetSyncTaskStatusResp.data:type_name -> market.GetSyncTaskStatusData
-	86,  // 39: market.CreateProductReq.category_type:type_name -> market.CategoryType
-	92,  // 40: market.CreateProductReq.enabled:type_name -> common.Enable
-	93,  // 41: market.CreateProductReq.app_visible:type_name -> common.Switch
-	94,  // 42: market.CreateProductReq.sync_priority:type_name -> market.SyncKlinePriority
-	92,  // 43: market.UpdateProductReq.enabled:type_name -> common.Enable
-	93,  // 44: market.UpdateProductReq.app_visible:type_name -> common.Switch
-	94,  // 45: market.UpdateProductReq.sync_priority:type_name -> market.SyncKlinePriority
-	83,  // 46: market.GetProductResp.base:type_name -> common.RespBase
-	96,  // 47: market.GetProductResp.data:type_name -> market.MarketProduct
-	84,  // 48: market.ListProductsReq.page:type_name -> common.PageReq
-	86,  // 49: market.ListProductsReq.category_type:type_name -> market.CategoryType
-	92,  // 50: market.ListProductsReq.enabled:type_name -> common.Enable
-	93,  // 51: market.ListProductsReq.app_visible:type_name -> common.Switch
-	83,  // 52: market.ListProductsResp.base:type_name -> common.RespBase
-	96,  // 53: market.ListProductsResp.data:type_name -> market.MarketProduct
-	88,  // 54: market.GetProductKlineReq.k_type:type_name -> market.KlineType
-	83,  // 55: market.GetProductKlineResp.base:type_name -> common.RespBase
-	89,  // 56: market.GetProductKlineResp.data:type_name -> market.Kline
-	88,  // 57: market.SyncProductKlineHistoryReq.k_type:type_name -> market.KlineType
-	83,  // 58: market.SyncProductKlineHistoryResp.base:type_name -> common.RespBase
-	92,  // 59: market.CreateTenantCategoryReq.enabled:type_name -> common.Enable
-	93,  // 60: market.CreateTenantCategoryReq.app_visible:type_name -> common.Switch
-	92,  // 61: market.UpdateTenantCategoryReq.enabled:type_name -> common.Enable
-	93,  // 62: market.UpdateTenantCategoryReq.app_visible:type_name -> common.Switch
-	45,  // 63: market.BatchUpsertTenantCategoriesReq.data:type_name -> market.TenantCategoryItem
-	92,  // 64: market.TenantCategoryItem.enabled:type_name -> common.Enable
-	93,  // 65: market.TenantCategoryItem.app_visible:type_name -> common.Switch
-	83,  // 66: market.GetTenantCategoryResp.base:type_name -> common.RespBase
-	85,  // 67: market.GetTenantCategoryResp.data:type_name -> market.MarketTenantCategory
-	84,  // 68: market.ListTenantCategoriesReq.page:type_name -> common.PageReq
-	86,  // 69: market.ListTenantCategoriesReq.category_type:type_name -> market.CategoryType
-	92,  // 70: market.ListTenantCategoriesReq.enabled:type_name -> common.Enable
-	93,  // 71: market.ListTenantCategoriesReq.visible_status:type_name -> common.Switch
-	83,  // 72: market.ListTenantCategoriesResp.base:type_name -> common.RespBase
-	85,  // 73: market.ListTenantCategoriesResp.data:type_name -> market.MarketTenantCategory
-	92,  // 74: market.CreateTenantProductReq.enabled:type_name -> common.Enable
-	93,  // 75: market.CreateTenantProductReq.app_visible:type_name -> common.Switch
-	92,  // 76: market.UpdateTenantProductReq.enabled:type_name -> common.Enable
-	93,  // 77: market.UpdateTenantProductReq.app_visible:type_name -> common.Switch
-	53,  // 78: market.BatchUpsertTenantProductsReq.data:type_name -> market.TenantProductItem
-	92,  // 79: market.TenantProductItem.enabled:type_name -> common.Enable
-	93,  // 80: market.TenantProductItem.app_visible:type_name -> common.Switch
-	83,  // 81: market.GetTenantProductResp.base:type_name -> common.RespBase
-	87,  // 82: market.GetTenantProductResp.data:type_name -> market.MarketTenantProduct
-	84,  // 83: market.ListTenantProductsReq.page:type_name -> common.PageReq
-	86,  // 84: market.ListTenantProductsReq.category_type:type_name -> market.CategoryType
-	92,  // 85: market.ListTenantProductsReq.enabled:type_name -> common.Enable
-	93,  // 86: market.ListTenantProductsReq.app_visible:type_name -> common.Switch
-	83,  // 87: market.ListTenantProductsResp.base:type_name -> common.RespBase
-	87,  // 88: market.ListTenantProductsResp.data:type_name -> market.MarketTenantProduct
-	83,  // 89: market.InitTenantMarketDisplayResp.base:type_name -> common.RespBase
-	60,  // 90: market.InitTenantMarketDisplayResp.data:type_name -> market.InitTenantMarketDisplayData
-	92,  // 91: market.AuthorityRegistryData.status:type_name -> common.Enable
-	92,  // 92: market.SetAuthorityRegistryReq.status:type_name -> common.Enable
-	83,  // 93: market.AuthorityRegistryResp.base:type_name -> common.RespBase
-	61,  // 94: market.AuthorityRegistryResp.data:type_name -> market.AuthorityRegistryData
-	84,  // 95: market.ListAuthorityRegistriesReq.page:type_name -> common.PageReq
-	92,  // 96: market.ListAuthorityRegistriesReq.status:type_name -> common.Enable
-	83,  // 97: market.ListAuthorityRegistriesResp.base:type_name -> common.RespBase
-	61,  // 98: market.ListAuthorityRegistriesResp.data:type_name -> market.AuthorityRegistryData
-	97,  // 99: market.CreatePriceFormulaReq.algorithm:type_name -> market.PriceAlgorithm
-	66,  // 100: market.CreatePriceFormulaReq.components:type_name -> market.PriceFormulaComponent
-	84,  // 101: market.ListPriceFormulasReq.page:type_name -> common.PageReq
-	97,  // 102: market.PriceFormulaData.algorithm:type_name -> market.PriceAlgorithm
-	66,  // 103: market.PriceFormulaData.components:type_name -> market.PriceFormulaComponent
-	83,  // 104: market.PriceFormulaResp.base:type_name -> common.RespBase
-	71,  // 105: market.PriceFormulaResp.data:type_name -> market.PriceFormulaData
-	83,  // 106: market.ListPriceFormulasResp.base:type_name -> common.RespBase
-	71,  // 107: market.ListPriceFormulasResp.data:type_name -> market.PriceFormulaData
-	84,  // 108: market.ListSnapshotOutboxReq.page:type_name -> common.PageReq
-	83,  // 109: market.ListSnapshotOutboxResp.base:type_name -> common.RespBase
-	75,  // 110: market.ListSnapshotOutboxResp.data:type_name -> market.SnapshotOutboxData
-	83,  // 111: market.SyncProductsResp.base:type_name -> common.RespBase
-	83,  // 112: market.SyncKlinesResp.base:type_name -> common.RespBase
-	2,   // 113: market.App.ListVisibleCategories:input_type -> market.ListVisibleCategoriesReq
-	4,   // 114: market.App.ListVisibleProducts:input_type -> market.ListVisibleProductsReq
-	6,   // 115: market.App.GetKline:input_type -> market.GetKlineReq
-	8,   // 116: market.App.GetQuote:input_type -> market.GetQuoteReq
-	11,  // 117: market.App.BatchGetQuote:input_type -> market.BatchGetQuoteReq
-	13,  // 118: market.App.GetAuthoritativeSnapshot:input_type -> market.GetAuthoritativeSnapshotReq
-	15,  // 119: market.App.SubscribeStream:input_type -> market.SubscribeRequest
-	0,   // 120: market.App.GetKlineIntervals:input_type -> market.Empty
-	13,  // 121: market.Market.GetAuthoritativeSnapshot:input_type -> market.GetAuthoritativeSnapshotReq
-	25,  // 122: market.Admin.ListCategories:input_type -> market.ListCategoriesReq
-	21,  // 123: market.Admin.CreateCategory:input_type -> market.CreateCategoryReq
-	22,  // 124: market.Admin.UpdateCategory:input_type -> market.UpdateCategoryReq
-	23,  // 125: market.Admin.GetCategory:input_type -> market.GetCategoryReq
-	27,  // 126: market.Admin.SyncCategoryProducts:input_type -> market.SyncCategoryProductsReq
-	29,  // 127: market.Admin.GetSyncTaskStatus:input_type -> market.GetSyncTaskStatusReq
-	36,  // 128: market.Admin.ListProducts:input_type -> market.ListProductsReq
-	32,  // 129: market.Admin.CreateProduct:input_type -> market.CreateProductReq
-	33,  // 130: market.Admin.UpdateProduct:input_type -> market.UpdateProductReq
-	34,  // 131: market.Admin.GetProduct:input_type -> market.GetProductReq
-	38,  // 132: market.Admin.GetProductKline:input_type -> market.GetProductKlineReq
-	40,  // 133: market.Admin.SyncProductKlineHistory:input_type -> market.SyncProductKlineHistoryReq
-	48,  // 134: market.Admin.ListTenantCategories:input_type -> market.ListTenantCategoriesReq
-	42,  // 135: market.Admin.CreateTenantCategory:input_type -> market.CreateTenantCategoryReq
-	43,  // 136: market.Admin.UpdateTenantCategory:input_type -> market.UpdateTenantCategoryReq
-	44,  // 137: market.Admin.BatchUpsertTenantCategories:input_type -> market.BatchUpsertTenantCategoriesReq
-	46,  // 138: market.Admin.GetTenantCategory:input_type -> market.GetTenantCategoryReq
-	56,  // 139: market.Admin.ListTenantProducts:input_type -> market.ListTenantProductsReq
-	50,  // 140: market.Admin.CreateTenantProduct:input_type -> market.CreateTenantProductReq
-	51,  // 141: market.Admin.UpdateTenantProduct:input_type -> market.UpdateTenantProductReq
-	52,  // 142: market.Admin.BatchUpsertTenantProducts:input_type -> market.BatchUpsertTenantProductsReq
-	54,  // 143: market.Admin.GetTenantProduct:input_type -> market.GetTenantProductReq
-	58,  // 144: market.Admin.InitTenantMarketDisplay:input_type -> market.InitTenantMarketDisplayReq
-	62,  // 145: market.Admin.SetAuthorityRegistry:input_type -> market.SetAuthorityRegistryReq
-	64,  // 146: market.Admin.ListAuthorityRegistries:input_type -> market.ListAuthorityRegistriesReq
-	67,  // 147: market.Admin.CreatePriceFormula:input_type -> market.CreatePriceFormulaReq
-	68,  // 148: market.Admin.GetPriceFormula:input_type -> market.PriceFormulaReq
-	70,  // 149: market.Admin.ListPriceFormulas:input_type -> market.ListPriceFormulasReq
-	69,  // 150: market.Admin.ChangePriceFormulaStatus:input_type -> market.ChangePriceFormulaStatusReq
-	74,  // 151: market.Admin.ListSnapshotOutbox:input_type -> market.ListSnapshotOutboxReq
-	77,  // 152: market.Admin.RetrySnapshotOutbox:input_type -> market.RetrySnapshotOutboxReq
-	78,  // 153: market.Admin.RevokeAuthoritativeSnapshot:input_type -> market.RevokeAuthoritativeSnapshotReq
-	79,  // 154: market.Task.SyncProducts:input_type -> market.SyncProductsReq
-	81,  // 155: market.Task.SyncKlines:input_type -> market.SyncKlinesReq
-	3,   // 156: market.App.ListVisibleCategories:output_type -> market.ListVisibleCategoriesResp
-	5,   // 157: market.App.ListVisibleProducts:output_type -> market.ListVisibleProductsResp
-	7,   // 158: market.App.GetKline:output_type -> market.GetKlineResp
-	9,   // 159: market.App.GetQuote:output_type -> market.GetQuoteResp
-	12,  // 160: market.App.BatchGetQuote:output_type -> market.BatchGetQuoteResp
-	14,  // 161: market.App.GetAuthoritativeSnapshot:output_type -> market.GetAuthoritativeSnapshotResp
-	17,  // 162: market.App.SubscribeStream:output_type -> market.PushReply
-	19,  // 163: market.App.GetKlineIntervals:output_type -> market.KlineIntervalsResp
-	14,  // 164: market.Market.GetAuthoritativeSnapshot:output_type -> market.GetAuthoritativeSnapshotResp
-	26,  // 165: market.Admin.ListCategories:output_type -> market.ListCategoriesResp
-	20,  // 166: market.Admin.CreateCategory:output_type -> market.CommonResp
-	20,  // 167: market.Admin.UpdateCategory:output_type -> market.CommonResp
-	24,  // 168: market.Admin.GetCategory:output_type -> market.GetCategoryResp
-	28,  // 169: market.Admin.SyncCategoryProducts:output_type -> market.SyncCategoryProductsResp
-	30,  // 170: market.Admin.GetSyncTaskStatus:output_type -> market.GetSyncTaskStatusResp
-	37,  // 171: market.Admin.ListProducts:output_type -> market.ListProductsResp
-	20,  // 172: market.Admin.CreateProduct:output_type -> market.CommonResp
-	20,  // 173: market.Admin.UpdateProduct:output_type -> market.CommonResp
-	35,  // 174: market.Admin.GetProduct:output_type -> market.GetProductResp
-	39,  // 175: market.Admin.GetProductKline:output_type -> market.GetProductKlineResp
-	41,  // 176: market.Admin.SyncProductKlineHistory:output_type -> market.SyncProductKlineHistoryResp
-	49,  // 177: market.Admin.ListTenantCategories:output_type -> market.ListTenantCategoriesResp
-	20,  // 178: market.Admin.CreateTenantCategory:output_type -> market.CommonResp
-	20,  // 179: market.Admin.UpdateTenantCategory:output_type -> market.CommonResp
-	20,  // 180: market.Admin.BatchUpsertTenantCategories:output_type -> market.CommonResp
-	47,  // 181: market.Admin.GetTenantCategory:output_type -> market.GetTenantCategoryResp
-	57,  // 182: market.Admin.ListTenantProducts:output_type -> market.ListTenantProductsResp
-	20,  // 183: market.Admin.CreateTenantProduct:output_type -> market.CommonResp
-	20,  // 184: market.Admin.UpdateTenantProduct:output_type -> market.CommonResp
-	20,  // 185: market.Admin.BatchUpsertTenantProducts:output_type -> market.CommonResp
-	55,  // 186: market.Admin.GetTenantProduct:output_type -> market.GetTenantProductResp
-	59,  // 187: market.Admin.InitTenantMarketDisplay:output_type -> market.InitTenantMarketDisplayResp
-	63,  // 188: market.Admin.SetAuthorityRegistry:output_type -> market.AuthorityRegistryResp
-	65,  // 189: market.Admin.ListAuthorityRegistries:output_type -> market.ListAuthorityRegistriesResp
-	72,  // 190: market.Admin.CreatePriceFormula:output_type -> market.PriceFormulaResp
-	72,  // 191: market.Admin.GetPriceFormula:output_type -> market.PriceFormulaResp
-	73,  // 192: market.Admin.ListPriceFormulas:output_type -> market.ListPriceFormulasResp
-	20,  // 193: market.Admin.ChangePriceFormulaStatus:output_type -> market.CommonResp
-	76,  // 194: market.Admin.ListSnapshotOutbox:output_type -> market.ListSnapshotOutboxResp
-	20,  // 195: market.Admin.RetrySnapshotOutbox:output_type -> market.CommonResp
-	20,  // 196: market.Admin.RevokeAuthoritativeSnapshot:output_type -> market.CommonResp
-	80,  // 197: market.Task.SyncProducts:output_type -> market.SyncProductsResp
-	82,  // 198: market.Task.SyncKlines:output_type -> market.SyncKlinesResp
-	156, // [156:199] is the sub-list for method output_type
-	113, // [113:156] is the sub-list for method input_type
-	113, // [113:113] is the sub-list for extension type_name
-	113, // [113:113] is the sub-list for extension extendee
-	0,   // [0:113] is the sub-list for field type_name
+	86,  // 14: market.BatchGetQuoteResp.base:type_name -> common.RespBase
+	93,  // 15: market.BatchGetQuoteResp.data:type_name -> market.Quote
+	86,  // 16: market.GetAuthoritativeSnapshotResp.base:type_name -> common.RespBase
+	94,  // 17: market.GetAuthoritativeSnapshotResp.data:type_name -> market.AuthoritativeSnapshot
+	86,  // 18: market.GetTradingStatusResp.base:type_name -> common.RespBase
+	16,  // 19: market.GetTradingStatusResp.data:type_name -> market.GetTradingStatusData
+	19,  // 20: market.SubscribeRequest.topics:type_name -> market.SubscribeTopic
+	21,  // 21: market.KlineIntervalsResp.data:type_name -> market.KlineInterval
+	86,  // 22: market.CommonResp.base:type_name -> common.RespBase
+	89,  // 23: market.CreateCategoryReq.category_type:type_name -> market.CategoryType
+	95,  // 24: market.CreateCategoryReq.enabled:type_name -> common.Enable
+	96,  // 25: market.CreateCategoryReq.app_visible:type_name -> common.Switch
+	97,  // 26: market.CreateCategoryReq.sync_priority:type_name -> market.SyncKlinePriority
+	95,  // 27: market.UpdateCategoryReq.enabled:type_name -> common.Enable
+	96,  // 28: market.UpdateCategoryReq.app_visible:type_name -> common.Switch
+	97,  // 29: market.UpdateCategoryReq.sync_priority:type_name -> market.SyncKlinePriority
+	86,  // 30: market.GetCategoryResp.base:type_name -> common.RespBase
+	98,  // 31: market.GetCategoryResp.data:type_name -> market.MarketCategory
+	87,  // 32: market.ListCategoriesReq.page:type_name -> common.PageReq
+	89,  // 33: market.ListCategoriesReq.category_type:type_name -> market.CategoryType
+	95,  // 34: market.ListCategoriesReq.enabled:type_name -> common.Enable
+	96,  // 35: market.ListCategoriesReq.app_visible:type_name -> common.Switch
+	86,  // 36: market.ListCategoriesResp.base:type_name -> common.RespBase
+	98,  // 37: market.ListCategoriesResp.data:type_name -> market.MarketCategory
+	86,  // 38: market.SyncCategoryProductsResp.base:type_name -> common.RespBase
+	86,  // 39: market.GetSyncTaskStatusResp.base:type_name -> common.RespBase
+	34,  // 40: market.GetSyncTaskStatusResp.data:type_name -> market.GetSyncTaskStatusData
+	89,  // 41: market.CreateProductReq.category_type:type_name -> market.CategoryType
+	95,  // 42: market.CreateProductReq.enabled:type_name -> common.Enable
+	96,  // 43: market.CreateProductReq.app_visible:type_name -> common.Switch
+	97,  // 44: market.CreateProductReq.sync_priority:type_name -> market.SyncKlinePriority
+	95,  // 45: market.UpdateProductReq.enabled:type_name -> common.Enable
+	96,  // 46: market.UpdateProductReq.app_visible:type_name -> common.Switch
+	97,  // 47: market.UpdateProductReq.sync_priority:type_name -> market.SyncKlinePriority
+	86,  // 48: market.GetProductResp.base:type_name -> common.RespBase
+	99,  // 49: market.GetProductResp.data:type_name -> market.MarketProduct
+	87,  // 50: market.ListProductsReq.page:type_name -> common.PageReq
+	89,  // 51: market.ListProductsReq.category_type:type_name -> market.CategoryType
+	95,  // 52: market.ListProductsReq.enabled:type_name -> common.Enable
+	96,  // 53: market.ListProductsReq.app_visible:type_name -> common.Switch
+	86,  // 54: market.ListProductsResp.base:type_name -> common.RespBase
+	99,  // 55: market.ListProductsResp.data:type_name -> market.MarketProduct
+	91,  // 56: market.GetProductKlineReq.k_type:type_name -> market.KlineType
+	86,  // 57: market.GetProductKlineResp.base:type_name -> common.RespBase
+	92,  // 58: market.GetProductKlineResp.data:type_name -> market.Kline
+	91,  // 59: market.SyncProductKlineHistoryReq.k_type:type_name -> market.KlineType
+	86,  // 60: market.SyncProductKlineHistoryResp.base:type_name -> common.RespBase
+	95,  // 61: market.CreateTenantCategoryReq.enabled:type_name -> common.Enable
+	96,  // 62: market.CreateTenantCategoryReq.app_visible:type_name -> common.Switch
+	95,  // 63: market.UpdateTenantCategoryReq.enabled:type_name -> common.Enable
+	96,  // 64: market.UpdateTenantCategoryReq.app_visible:type_name -> common.Switch
+	48,  // 65: market.BatchUpsertTenantCategoriesReq.data:type_name -> market.TenantCategoryItem
+	95,  // 66: market.TenantCategoryItem.enabled:type_name -> common.Enable
+	96,  // 67: market.TenantCategoryItem.app_visible:type_name -> common.Switch
+	86,  // 68: market.GetTenantCategoryResp.base:type_name -> common.RespBase
+	88,  // 69: market.GetTenantCategoryResp.data:type_name -> market.MarketTenantCategory
+	87,  // 70: market.ListTenantCategoriesReq.page:type_name -> common.PageReq
+	89,  // 71: market.ListTenantCategoriesReq.category_type:type_name -> market.CategoryType
+	95,  // 72: market.ListTenantCategoriesReq.enabled:type_name -> common.Enable
+	96,  // 73: market.ListTenantCategoriesReq.visible_status:type_name -> common.Switch
+	86,  // 74: market.ListTenantCategoriesResp.base:type_name -> common.RespBase
+	88,  // 75: market.ListTenantCategoriesResp.data:type_name -> market.MarketTenantCategory
+	95,  // 76: market.CreateTenantProductReq.enabled:type_name -> common.Enable
+	96,  // 77: market.CreateTenantProductReq.app_visible:type_name -> common.Switch
+	95,  // 78: market.UpdateTenantProductReq.enabled:type_name -> common.Enable
+	96,  // 79: market.UpdateTenantProductReq.app_visible:type_name -> common.Switch
+	56,  // 80: market.BatchUpsertTenantProductsReq.data:type_name -> market.TenantProductItem
+	95,  // 81: market.TenantProductItem.enabled:type_name -> common.Enable
+	96,  // 82: market.TenantProductItem.app_visible:type_name -> common.Switch
+	86,  // 83: market.GetTenantProductResp.base:type_name -> common.RespBase
+	90,  // 84: market.GetTenantProductResp.data:type_name -> market.MarketTenantProduct
+	87,  // 85: market.ListTenantProductsReq.page:type_name -> common.PageReq
+	89,  // 86: market.ListTenantProductsReq.category_type:type_name -> market.CategoryType
+	95,  // 87: market.ListTenantProductsReq.enabled:type_name -> common.Enable
+	96,  // 88: market.ListTenantProductsReq.app_visible:type_name -> common.Switch
+	86,  // 89: market.ListTenantProductsResp.base:type_name -> common.RespBase
+	90,  // 90: market.ListTenantProductsResp.data:type_name -> market.MarketTenantProduct
+	86,  // 91: market.InitTenantMarketDisplayResp.base:type_name -> common.RespBase
+	63,  // 92: market.InitTenantMarketDisplayResp.data:type_name -> market.InitTenantMarketDisplayData
+	95,  // 93: market.AuthorityRegistryData.status:type_name -> common.Enable
+	95,  // 94: market.SetAuthorityRegistryReq.status:type_name -> common.Enable
+	86,  // 95: market.AuthorityRegistryResp.base:type_name -> common.RespBase
+	64,  // 96: market.AuthorityRegistryResp.data:type_name -> market.AuthorityRegistryData
+	87,  // 97: market.ListAuthorityRegistriesReq.page:type_name -> common.PageReq
+	95,  // 98: market.ListAuthorityRegistriesReq.status:type_name -> common.Enable
+	86,  // 99: market.ListAuthorityRegistriesResp.base:type_name -> common.RespBase
+	64,  // 100: market.ListAuthorityRegistriesResp.data:type_name -> market.AuthorityRegistryData
+	100, // 101: market.CreatePriceFormulaReq.algorithm:type_name -> market.PriceAlgorithm
+	69,  // 102: market.CreatePriceFormulaReq.components:type_name -> market.PriceFormulaComponent
+	87,  // 103: market.ListPriceFormulasReq.page:type_name -> common.PageReq
+	100, // 104: market.PriceFormulaData.algorithm:type_name -> market.PriceAlgorithm
+	69,  // 105: market.PriceFormulaData.components:type_name -> market.PriceFormulaComponent
+	86,  // 106: market.PriceFormulaResp.base:type_name -> common.RespBase
+	74,  // 107: market.PriceFormulaResp.data:type_name -> market.PriceFormulaData
+	86,  // 108: market.ListPriceFormulasResp.base:type_name -> common.RespBase
+	74,  // 109: market.ListPriceFormulasResp.data:type_name -> market.PriceFormulaData
+	87,  // 110: market.ListSnapshotOutboxReq.page:type_name -> common.PageReq
+	86,  // 111: market.ListSnapshotOutboxResp.base:type_name -> common.RespBase
+	78,  // 112: market.ListSnapshotOutboxResp.data:type_name -> market.SnapshotOutboxData
+	86,  // 113: market.SyncProductsResp.base:type_name -> common.RespBase
+	86,  // 114: market.SyncKlinesResp.base:type_name -> common.RespBase
+	2,   // 115: market.App.ListVisibleCategories:input_type -> market.ListVisibleCategoriesReq
+	4,   // 116: market.App.ListVisibleProducts:input_type -> market.ListVisibleProductsReq
+	6,   // 117: market.App.GetKline:input_type -> market.GetKlineReq
+	8,   // 118: market.App.GetQuote:input_type -> market.GetQuoteReq
+	11,  // 119: market.App.BatchGetQuote:input_type -> market.BatchGetQuoteReq
+	13,  // 120: market.App.GetAuthoritativeSnapshot:input_type -> market.GetAuthoritativeSnapshotReq
+	18,  // 121: market.App.SubscribeStream:input_type -> market.SubscribeRequest
+	0,   // 122: market.App.GetKlineIntervals:input_type -> market.Empty
+	13,  // 123: market.Market.GetAuthoritativeSnapshot:input_type -> market.GetAuthoritativeSnapshotReq
+	15,  // 124: market.Market.GetTradingStatus:input_type -> market.GetTradingStatusReq
+	28,  // 125: market.Admin.ListCategories:input_type -> market.ListCategoriesReq
+	24,  // 126: market.Admin.CreateCategory:input_type -> market.CreateCategoryReq
+	25,  // 127: market.Admin.UpdateCategory:input_type -> market.UpdateCategoryReq
+	26,  // 128: market.Admin.GetCategory:input_type -> market.GetCategoryReq
+	30,  // 129: market.Admin.SyncCategoryProducts:input_type -> market.SyncCategoryProductsReq
+	32,  // 130: market.Admin.GetSyncTaskStatus:input_type -> market.GetSyncTaskStatusReq
+	39,  // 131: market.Admin.ListProducts:input_type -> market.ListProductsReq
+	35,  // 132: market.Admin.CreateProduct:input_type -> market.CreateProductReq
+	36,  // 133: market.Admin.UpdateProduct:input_type -> market.UpdateProductReq
+	37,  // 134: market.Admin.GetProduct:input_type -> market.GetProductReq
+	41,  // 135: market.Admin.GetProductKline:input_type -> market.GetProductKlineReq
+	43,  // 136: market.Admin.SyncProductKlineHistory:input_type -> market.SyncProductKlineHistoryReq
+	51,  // 137: market.Admin.ListTenantCategories:input_type -> market.ListTenantCategoriesReq
+	45,  // 138: market.Admin.CreateTenantCategory:input_type -> market.CreateTenantCategoryReq
+	46,  // 139: market.Admin.UpdateTenantCategory:input_type -> market.UpdateTenantCategoryReq
+	47,  // 140: market.Admin.BatchUpsertTenantCategories:input_type -> market.BatchUpsertTenantCategoriesReq
+	49,  // 141: market.Admin.GetTenantCategory:input_type -> market.GetTenantCategoryReq
+	59,  // 142: market.Admin.ListTenantProducts:input_type -> market.ListTenantProductsReq
+	53,  // 143: market.Admin.CreateTenantProduct:input_type -> market.CreateTenantProductReq
+	54,  // 144: market.Admin.UpdateTenantProduct:input_type -> market.UpdateTenantProductReq
+	55,  // 145: market.Admin.BatchUpsertTenantProducts:input_type -> market.BatchUpsertTenantProductsReq
+	57,  // 146: market.Admin.GetTenantProduct:input_type -> market.GetTenantProductReq
+	61,  // 147: market.Admin.InitTenantMarketDisplay:input_type -> market.InitTenantMarketDisplayReq
+	65,  // 148: market.Admin.SetAuthorityRegistry:input_type -> market.SetAuthorityRegistryReq
+	67,  // 149: market.Admin.ListAuthorityRegistries:input_type -> market.ListAuthorityRegistriesReq
+	70,  // 150: market.Admin.CreatePriceFormula:input_type -> market.CreatePriceFormulaReq
+	71,  // 151: market.Admin.GetPriceFormula:input_type -> market.PriceFormulaReq
+	73,  // 152: market.Admin.ListPriceFormulas:input_type -> market.ListPriceFormulasReq
+	72,  // 153: market.Admin.ChangePriceFormulaStatus:input_type -> market.ChangePriceFormulaStatusReq
+	77,  // 154: market.Admin.ListSnapshotOutbox:input_type -> market.ListSnapshotOutboxReq
+	80,  // 155: market.Admin.RetrySnapshotOutbox:input_type -> market.RetrySnapshotOutboxReq
+	81,  // 156: market.Admin.RevokeAuthoritativeSnapshot:input_type -> market.RevokeAuthoritativeSnapshotReq
+	82,  // 157: market.Task.SyncProducts:input_type -> market.SyncProductsReq
+	84,  // 158: market.Task.SyncKlines:input_type -> market.SyncKlinesReq
+	3,   // 159: market.App.ListVisibleCategories:output_type -> market.ListVisibleCategoriesResp
+	5,   // 160: market.App.ListVisibleProducts:output_type -> market.ListVisibleProductsResp
+	7,   // 161: market.App.GetKline:output_type -> market.GetKlineResp
+	9,   // 162: market.App.GetQuote:output_type -> market.GetQuoteResp
+	12,  // 163: market.App.BatchGetQuote:output_type -> market.BatchGetQuoteResp
+	14,  // 164: market.App.GetAuthoritativeSnapshot:output_type -> market.GetAuthoritativeSnapshotResp
+	20,  // 165: market.App.SubscribeStream:output_type -> market.PushReply
+	22,  // 166: market.App.GetKlineIntervals:output_type -> market.KlineIntervalsResp
+	14,  // 167: market.Market.GetAuthoritativeSnapshot:output_type -> market.GetAuthoritativeSnapshotResp
+	17,  // 168: market.Market.GetTradingStatus:output_type -> market.GetTradingStatusResp
+	29,  // 169: market.Admin.ListCategories:output_type -> market.ListCategoriesResp
+	23,  // 170: market.Admin.CreateCategory:output_type -> market.CommonResp
+	23,  // 171: market.Admin.UpdateCategory:output_type -> market.CommonResp
+	27,  // 172: market.Admin.GetCategory:output_type -> market.GetCategoryResp
+	31,  // 173: market.Admin.SyncCategoryProducts:output_type -> market.SyncCategoryProductsResp
+	33,  // 174: market.Admin.GetSyncTaskStatus:output_type -> market.GetSyncTaskStatusResp
+	40,  // 175: market.Admin.ListProducts:output_type -> market.ListProductsResp
+	23,  // 176: market.Admin.CreateProduct:output_type -> market.CommonResp
+	23,  // 177: market.Admin.UpdateProduct:output_type -> market.CommonResp
+	38,  // 178: market.Admin.GetProduct:output_type -> market.GetProductResp
+	42,  // 179: market.Admin.GetProductKline:output_type -> market.GetProductKlineResp
+	44,  // 180: market.Admin.SyncProductKlineHistory:output_type -> market.SyncProductKlineHistoryResp
+	52,  // 181: market.Admin.ListTenantCategories:output_type -> market.ListTenantCategoriesResp
+	23,  // 182: market.Admin.CreateTenantCategory:output_type -> market.CommonResp
+	23,  // 183: market.Admin.UpdateTenantCategory:output_type -> market.CommonResp
+	23,  // 184: market.Admin.BatchUpsertTenantCategories:output_type -> market.CommonResp
+	50,  // 185: market.Admin.GetTenantCategory:output_type -> market.GetTenantCategoryResp
+	60,  // 186: market.Admin.ListTenantProducts:output_type -> market.ListTenantProductsResp
+	23,  // 187: market.Admin.CreateTenantProduct:output_type -> market.CommonResp
+	23,  // 188: market.Admin.UpdateTenantProduct:output_type -> market.CommonResp
+	23,  // 189: market.Admin.BatchUpsertTenantProducts:output_type -> market.CommonResp
+	58,  // 190: market.Admin.GetTenantProduct:output_type -> market.GetTenantProductResp
+	62,  // 191: market.Admin.InitTenantMarketDisplay:output_type -> market.InitTenantMarketDisplayResp
+	66,  // 192: market.Admin.SetAuthorityRegistry:output_type -> market.AuthorityRegistryResp
+	68,  // 193: market.Admin.ListAuthorityRegistries:output_type -> market.ListAuthorityRegistriesResp
+	75,  // 194: market.Admin.CreatePriceFormula:output_type -> market.PriceFormulaResp
+	75,  // 195: market.Admin.GetPriceFormula:output_type -> market.PriceFormulaResp
+	76,  // 196: market.Admin.ListPriceFormulas:output_type -> market.ListPriceFormulasResp
+	23,  // 197: market.Admin.ChangePriceFormulaStatus:output_type -> market.CommonResp
+	79,  // 198: market.Admin.ListSnapshotOutbox:output_type -> market.ListSnapshotOutboxResp
+	23,  // 199: market.Admin.RetrySnapshotOutbox:output_type -> market.CommonResp
+	23,  // 200: market.Admin.RevokeAuthoritativeSnapshot:output_type -> market.CommonResp
+	83,  // 201: market.Task.SyncProducts:output_type -> market.SyncProductsResp
+	85,  // 202: market.Task.SyncKlines:output_type -> market.SyncKlinesResp
+	159, // [159:203] is the sub-list for method output_type
+	115, // [115:159] is the sub-list for method input_type
+	115, // [115:115] is the sub-list for extension type_name
+	115, // [115:115] is the sub-list for extension extendee
+	0,   // [0:115] is the sub-list for field type_name
 }
 
 func init() { file_proto_market_market_proto_init() }
@@ -6354,7 +6573,7 @@ func file_proto_market_market_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_market_market_proto_rawDesc), len(file_proto_market_market_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   83,
+			NumMessages:   86,
 			NumExtensions: 0,
 			NumServices:   4,
 		},

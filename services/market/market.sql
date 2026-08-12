@@ -311,10 +311,26 @@ CREATE TABLE `t_itick_market_session` (
   `start_time` varchar(8) NOT NULL DEFAULT '',
   `end_time` varchar(8) NOT NULL DEFAULT '',
   `cross_day` tinyint NOT NULL DEFAULT 0,
+	`weekday_mask` tinyint unsigned NOT NULL DEFAULT 62 COMMENT 'bit0=Sunday ... bit6=Saturday',
   `sort` int NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `idx_calendar_sort` (`calendar_id`,`sort`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='market市场交易时段';
+
+DROP TABLE IF EXISTS `t_itick_product_calendar`;
+CREATE TABLE `t_itick_product_calendar` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `category_code` varchar(32) NOT NULL DEFAULT '',
+  `market` varchar(32) NOT NULL DEFAULT '',
+  `symbol` varchar(64) NOT NULL DEFAULT '',
+  `calendar_id` bigint NOT NULL,
+  `source` varchar(64) NOT NULL DEFAULT 'itick-product-list',
+  `create_times` bigint NOT NULL DEFAULT 0,
+  `update_times` bigint NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_product_calendar_identity` (`category_code`,`market`,`symbol`),
+  KEY `idx_product_calendar_calendar` (`calendar_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='iTick产品交易日历映射';
 
 DROP TABLE IF EXISTS `t_itick_market_holiday`;
 CREATE TABLE `t_itick_market_holiday` (

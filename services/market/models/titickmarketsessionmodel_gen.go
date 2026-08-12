@@ -46,6 +46,7 @@ type (
 		StartTime   string `db:"start_time"`
 		EndTime     string `db:"end_time"`
 		CrossDay    int64  `db:"cross_day"`
+		WeekdayMask int64  `db:"weekday_mask"` // bit0=Sunday ... bit6=Saturday
 		Sort        int64  `db:"sort"`
 	}
 )
@@ -86,8 +87,8 @@ func (m *defaultTItickMarketSessionModel) FindOne(ctx context.Context, id int64)
 func (m *defaultTItickMarketSessionModel) Insert(ctx context.Context, data *TItickMarketSession) (sql.Result, error) {
 	tItickMarketSessionIdKey := fmt.Sprintf("%s%v", cacheTItickMarketSessionIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, tItickMarketSessionRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.CalendarId, data.SessionType, data.StartTime, data.EndTime, data.CrossDay, data.Sort)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, tItickMarketSessionRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.CalendarId, data.SessionType, data.StartTime, data.EndTime, data.CrossDay, data.WeekdayMask, data.Sort)
 	}, tItickMarketSessionIdKey)
 	return ret, err
 }
@@ -96,7 +97,7 @@ func (m *defaultTItickMarketSessionModel) Update(ctx context.Context, data *TIti
 	tItickMarketSessionIdKey := fmt.Sprintf("%s%v", cacheTItickMarketSessionIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, tItickMarketSessionRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.CalendarId, data.SessionType, data.StartTime, data.EndTime, data.CrossDay, data.Sort, data.Id)
+		return conn.ExecCtx(ctx, query, data.CalendarId, data.SessionType, data.StartTime, data.EndTime, data.CrossDay, data.WeekdayMask, data.Sort, data.Id)
 	}, tItickMarketSessionIdKey)
 	return err
 }

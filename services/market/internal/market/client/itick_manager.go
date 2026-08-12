@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"wklive/services/market/internal/market/cache"
+	"wklive/services/market/internal/market/calendar"
 	"wklive/services/market/internal/market/types"
 	"wklive/services/market/internal/pkg/itickrest"
 	"wklive/services/market/internal/pkg/utils"
@@ -32,16 +33,23 @@ type MarketManager struct {
 	lockRedis   *redis.Client
 	marketCache *cache.MarketDataCache
 	preheater   *cache.MarketDataPreheater
+	calendar    *calendar.Resolver
+	staleConfig StaleQuoteRecoveryConfig
 
 	mu      sync.RWMutex
 	clients map[string]*ITickWsClient
 
-	startMu sync.Mutex
-	started bool
-	runCtx  context.Context
+	startMu   sync.Mutex
+	started   bool
+	runCtx    context.Context
+	startedAt time.Time
+
+	productsMu     sync.RWMutex
+	activeProducts map[int64]activeProduct
 
 	recoveryMu      sync.Mutex
 	recoveryRunning map[string]bool
+	quoteRecoveryAt map[string]time.Time
 	onReconnect     func(string)
 }
 
@@ -66,6 +74,7 @@ func (m *MarketManager) refreshActiveProductSubscriptions(ctx context.Context, w
 	}
 
 	msgs := make([]types.ClientMessage, 0, len(ids)*(3+len(utils.KlineIntervals)))
+	activeProducts := make(map[int64]activeProduct, len(ids))
 	for _, rawID := range ids {
 		id, err := strconv.ParseInt(strings.TrimSpace(rawID), 10, 64)
 		if err != nil || id <= 0 {
@@ -79,9 +88,13 @@ func (m *MarketManager) refreshActiveProductSubscriptions(ctx context.Context, w
 		category := strings.ToLower(strings.TrimSpace(meta["category_code"]))
 		market := strings.ToUpper(strings.TrimSpace(meta["market"]))
 		symbol := strings.ToUpper(strings.TrimSpace(meta["symbol"]))
+		exchange := strings.TrimSpace(meta["exchange"])
 		if category == "" || market == "" || symbol == "" {
 			logx.Errorf("skip active market product without metadata, id=%d", id)
 			continue
+		}
+		activeProducts[id] = activeProduct{
+			ID: id, Category: category, Market: market, Symbol: symbol, Exchange: exchange,
 		}
 
 		for _, topic := range []types.Topic{types.TopicDepth, types.TopicTick, types.TopicQuote} {
@@ -94,6 +107,9 @@ func (m *MarketManager) refreshActiveProductSubscriptions(ctx context.Context, w
 			})
 		}
 	}
+	m.productsMu.Lock()
+	m.activeProducts = activeProducts
+	m.productsMu.Unlock()
 
 	if warm {
 		m.preheater.Warm(ctx, msgs)
@@ -192,6 +208,8 @@ func NewMarketManager(
 	lockRedis *redis.Client,
 	marketCache *cache.MarketDataCache,
 	restClient *itickrest.Client,
+	calendarResolver *calendar.Resolver,
+	staleConfig StaleQuoteRecoveryConfig,
 ) *MarketManager {
 	return &MarketManager{
 		wsUrl:           wsUrl,
@@ -202,8 +220,12 @@ func NewMarketManager(
 		lockRedis:       lockRedis,
 		marketCache:     marketCache,
 		preheater:       cache.NewMarketDataPreheater(apiURL, marketCache, restClient),
+		calendar:        calendarResolver,
+		staleConfig:     staleConfig.withDefaults(),
 		clients:         make(map[string]*ITickWsClient),
+		activeProducts:  make(map[int64]activeProduct),
 		recoveryRunning: make(map[string]bool),
+		quoteRecoveryAt: make(map[string]time.Time),
 	}
 }
 
@@ -282,6 +304,7 @@ func (m *MarketManager) Start(ctx context.Context) error {
 	}
 	m.started = true
 	m.runCtx = ctx
+	m.startedAt = time.Now()
 	m.startMu.Unlock()
 
 	m.mu.RLock()
@@ -297,6 +320,7 @@ func (m *MarketManager) Start(ctx context.Context) error {
 		}
 	}
 	go m.reconcileActiveProducts(ctx)
+	go m.recoverStaleQuotes(ctx)
 
 	return nil
 }

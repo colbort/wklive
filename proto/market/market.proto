@@ -104,6 +104,26 @@ message GetAuthoritativeSnapshotResp {
   AuthoritativeSnapshot data = 2;
 }
 
+message GetTradingStatusReq {
+  string category_code = 1;
+  string market = 2;
+  string symbol = 3;
+  int64 timestamp = 4;
+}
+
+message GetTradingStatusData {
+  bool is_open = 1;
+  int64 calendar_id = 2;
+  bool product_specific = 3;
+  string timezone = 4;
+  string reason = 5;
+}
+
+message GetTradingStatusResp {
+  common.RespBase base = 1;
+  GetTradingStatusData data = 2;
+}
+
 message SubscribeRequest {
   repeated SubscribeTopic topics = 1;
 }
@@ -169,6 +189,10 @@ service Market {
   // Reads an authoritative snapshot from the permanent archive at or before
   // the requested business timestamp.
   rpc GetAuthoritativeSnapshot(GetAuthoritativeSnapshotReq) returns (GetAuthoritativeSnapshotResp);
+
+  // Resolves the product-specific or market-default calendar and reports
+  // whether the product is open at the requested business timestamp.
+  rpc GetTradingStatus(GetTradingStatusReq) returns (GetTradingStatusResp);
 }
 
 message CommonResp {

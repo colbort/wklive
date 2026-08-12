@@ -47,6 +47,9 @@ type (
 	GetTenantCategoryResp          = market.GetTenantCategoryResp
 	GetTenantProductReq            = market.GetTenantProductReq
 	GetTenantProductResp           = market.GetTenantProductResp
+	GetTradingStatusData           = market.GetTradingStatusData
+	GetTradingStatusReq            = market.GetTradingStatusReq
+	GetTradingStatusResp           = market.GetTradingStatusResp
 	InitTenantMarketDisplayData    = market.InitTenantMarketDisplayData
 	InitTenantMarketDisplayReq     = market.InitTenantMarketDisplayReq
 	InitTenantMarketDisplayResp    = market.InitTenantMarketDisplayResp
@@ -101,6 +104,8 @@ type (
 	Market interface {
 		// Reads an authoritative snapshot from the permanent archive at or before
 		GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error)
+		// Resolves the product-specific or market-default calendar and reports
+		GetTradingStatus(ctx context.Context, in *GetTradingStatusReq, opts ...grpc.CallOption) (*GetTradingStatusResp, error)
 	}
 
 	defaultMarket struct {
@@ -118,4 +123,10 @@ func NewMarket(cli zrpc.Client) Market {
 func (m *defaultMarket) GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error) {
 	client := market.NewMarketClient(m.cli.Conn())
 	return client.GetAuthoritativeSnapshot(ctx, in, opts...)
+}
+
+// Resolves the product-specific or market-default calendar and reports
+func (m *defaultMarket) GetTradingStatus(ctx context.Context, in *GetTradingStatusReq, opts ...grpc.CallOption) (*GetTradingStatusResp, error) {
+	client := market.NewMarketClient(m.cli.Conn())
+	return client.GetTradingStatus(ctx, in, opts...)
 }

@@ -416,6 +416,7 @@ var App_ServiceDesc = grpc.ServiceDesc{
 
 const (
 	Market_GetAuthoritativeSnapshot_FullMethodName = "/market.Market/GetAuthoritativeSnapshot"
+	Market_GetTradingStatus_FullMethodName         = "/market.Market/GetTradingStatus"
 )
 
 // MarketClient is the client API for Market service.
@@ -428,6 +429,9 @@ type MarketClient interface {
 	// Reads an authoritative snapshot from the permanent archive at or before
 	// the requested business timestamp.
 	GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error)
+	// Resolves the product-specific or market-default calendar and reports
+	// whether the product is open at the requested business timestamp.
+	GetTradingStatus(ctx context.Context, in *GetTradingStatusReq, opts ...grpc.CallOption) (*GetTradingStatusResp, error)
 }
 
 type marketClient struct {
@@ -448,6 +452,16 @@ func (c *marketClient) GetAuthoritativeSnapshot(ctx context.Context, in *GetAuth
 	return out, nil
 }
 
+func (c *marketClient) GetTradingStatus(ctx context.Context, in *GetTradingStatusReq, opts ...grpc.CallOption) (*GetTradingStatusResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTradingStatusResp)
+	err := c.cc.Invoke(ctx, Market_GetTradingStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MarketServer is the server API for Market service.
 // All implementations must embed UnimplementedMarketServer
 // for forward compatibility.
@@ -458,6 +472,9 @@ type MarketServer interface {
 	// Reads an authoritative snapshot from the permanent archive at or before
 	// the requested business timestamp.
 	GetAuthoritativeSnapshot(context.Context, *GetAuthoritativeSnapshotReq) (*GetAuthoritativeSnapshotResp, error)
+	// Resolves the product-specific or market-default calendar and reports
+	// whether the product is open at the requested business timestamp.
+	GetTradingStatus(context.Context, *GetTradingStatusReq) (*GetTradingStatusResp, error)
 	mustEmbedUnimplementedMarketServer()
 }
 
@@ -470,6 +487,9 @@ type UnimplementedMarketServer struct{}
 
 func (UnimplementedMarketServer) GetAuthoritativeSnapshot(context.Context, *GetAuthoritativeSnapshotReq) (*GetAuthoritativeSnapshotResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetAuthoritativeSnapshot not implemented")
+}
+func (UnimplementedMarketServer) GetTradingStatus(context.Context, *GetTradingStatusReq) (*GetTradingStatusResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTradingStatus not implemented")
 }
 func (UnimplementedMarketServer) mustEmbedUnimplementedMarketServer() {}
 func (UnimplementedMarketServer) testEmbeddedByValue()                {}
@@ -510,6 +530,24 @@ func _Market_GetAuthoritativeSnapshot_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Market_GetTradingStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTradingStatusReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).GetTradingStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Market_GetTradingStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).GetTradingStatus(ctx, req.(*GetTradingStatusReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Market_ServiceDesc is the grpc.ServiceDesc for Market service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -520,6 +558,10 @@ var Market_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAuthoritativeSnapshot",
 			Handler:    _Market_GetAuthoritativeSnapshot_Handler,
+		},
+		{
+			MethodName: "GetTradingStatus",
+			Handler:    _Market_GetTradingStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
