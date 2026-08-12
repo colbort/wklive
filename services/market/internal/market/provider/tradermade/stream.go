@@ -38,6 +38,7 @@ type Stream struct {
 	enableLadder bool
 	categoryCode string
 	marketCache  *cache.MarketDataCache
+	catalog      *SymbolCatalog
 	locker       *redisLeaderLock
 	dialer       *websocket.Dialer
 
@@ -48,6 +49,7 @@ type Stream struct {
 	subMu       sync.Mutex
 	desired     map[string]provider.Subscription
 	sent        map[string]struct{}
+	requested   []provider.Subscription
 	symbolLimit int
 
 	leader        int32
@@ -56,13 +58,14 @@ type Stream struct {
 	onReconnect   func(string)
 }
 
-func newStream(url, key string, enableLadder bool, marketCache *cache.MarketDataCache, locker *redisLeaderLock) *Stream {
+func newStream(url, key string, enableLadder bool, marketCache *cache.MarketDataCache, catalog *SymbolCatalog, locker *redisLeaderLock) *Stream {
 	return &Stream{
 		url:          strings.TrimSpace(url),
 		key:          strings.TrimSpace(key),
 		enableLadder: enableLadder,
 		categoryCode: supportedCategory,
 		marketCache:  marketCache,
+		catalog:      catalog,
 		locker:       locker,
 		dialer:       &websocket.Dialer{HandshakeTimeout: 10 * time.Second},
 		desired:      make(map[string]provider.Subscription),
@@ -80,6 +83,11 @@ func (s *Stream) Start(ctx context.Context) {
 func (s *Stream) HasDesiredSubscriptions() bool {
 	s.subMu.Lock()
 	defer s.subMu.Unlock()
+	if !s.catalog.Loaded() {
+		// Preserve requested subscriptions after a transient directory failure;
+		// runAsLeader retries loading before opening the WebSocket.
+		return len(s.requested) > 0
+	}
 	return len(s.desired) > 0
 }
 
@@ -88,16 +96,32 @@ func (s *Stream) IsLeader() bool { return atomic.LoadInt32(&s.leader) == 1 }
 func (s *Stream) SetReconnectHandler(handler func(category string)) { s.onReconnect = handler }
 
 func (s *Stream) ReplaceSubscriptions(items []provider.Subscription) error {
+	s.subMu.Lock()
+	s.requested = append([]provider.Subscription(nil), items...)
+	s.subMu.Unlock()
+	if err := s.rebuildDesiredSubscriptions(); err != nil {
+		return err
+	}
+	if atomic.LoadInt32(&s.authenticated) == 1 {
+		return s.syncSubscriptions()
+	}
+	return nil
+}
+
+func (s *Stream) rebuildDesiredSubscriptions() error {
+	s.subMu.Lock()
+	items := append([]provider.Subscription(nil), s.requested...)
+	s.subMu.Unlock()
 	next := make(map[string]provider.Subscription)
 	for _, item := range items {
 		item = cache.NormalizeClientMessage(item)
 		if item.CategoryCode != supportedCategory {
 			continue
 		}
-		symbol := canonicalSymbol(item.Symbol)
-		if symbol == "" {
+		if _, err := s.catalog.Resolve(item.Symbol); err != nil {
 			continue
 		}
+		symbol := canonicalSymbol(item.Symbol)
 		// TraderMade QUOTE carries both best bid/ask and midpoint. The system's
 		// multiple internal topics therefore consume one upstream symbol slot.
 		if current, ok := next[symbol]; !ok || item.Topic == types.TopicQuote || current.Topic != types.TopicQuote {
@@ -108,14 +132,15 @@ func (s *Stream) ReplaceSubscriptions(items []provider.Subscription) error {
 	s.subMu.Lock()
 	s.desired = next
 	s.subMu.Unlock()
-	if atomic.LoadInt32(&s.authenticated) == 1 {
-		return s.syncSubscriptions()
-	}
 	return nil
 }
 
 func (s *Stream) Resubscribe(item provider.Subscription) error {
 	item = cache.NormalizeClientMessage(item)
+	upstream, err := s.catalog.Resolve(item.Symbol)
+	if err != nil {
+		return err
+	}
 	symbol := canonicalSymbol(item.Symbol)
 	s.subMu.Lock()
 	_, desired := s.desired[symbol]
@@ -126,7 +151,7 @@ func (s *Stream) Resubscribe(item provider.Subscription) error {
 	if atomic.LoadInt32(&s.authenticated) != 1 {
 		return errors.New("TraderMade websocket is not authenticated")
 	}
-	if err := s.writeJSON(map[string]any{"action": "unsubscribe", "symbols": []string{symbol + ":QUOTE"}}); err != nil {
+	if err := s.writeJSON(map[string]any{"action": "unsubscribe", "symbols": []string{upstream + ":QUOTE"}}); err != nil {
 		return err
 	}
 	s.subMu.Lock()
@@ -191,6 +216,21 @@ func (s *Stream) renewLoop(ctx context.Context, token string, lost chan<- struct
 func (s *Stream) runAsLeader(ctx context.Context) error {
 	delay := wsReconnectDelay
 	for ctx.Err() == nil {
+		if err := s.catalog.Load(ctx); err != nil {
+			logx.Errorf("load TraderMade streaming symbol catalog before websocket connect failed: %v", err)
+			if !waitContext(ctx, delay+time.Duration(rand.Int63n(int64(time.Second)))) {
+				return ctx.Err()
+			}
+			delay = min(delay*2, time.Minute)
+			continue
+		}
+		if err := s.rebuildDesiredSubscriptions(); err != nil {
+			logx.Errorf("build TraderMade subscriptions from streaming symbol catalog failed: %v", err)
+			if !waitContext(ctx, delay) {
+				return ctx.Err()
+			}
+			continue
+		}
 		if err := s.connectAndAuthenticate(); err != nil {
 			logx.Errorf("TraderMade websocket connect/auth failed: %v", err)
 			if !waitContext(ctx, delay+time.Duration(rand.Int63n(int64(time.Second)))) {
@@ -316,7 +356,12 @@ func (s *Stream) handleMessage(ctx context.Context, data []byte) {
 
 func (s *Stream) handleSubscriptionACK(message wsEnvelope) {
 	for _, item := range append(append([]string{}, message.Denied...), message.Invalid...) {
-		symbol := subscriptionSymbol(item)
+		upstream := subscriptionSymbol(item)
+		symbol, err := s.catalog.Internal(upstream)
+		if err != nil {
+			logx.Errorf("TraderMade subscription rejected for unknown upstream symbol=%s reason=%s", upstream, message.DeniedReasons[item])
+			continue
+		}
 		s.subMu.Lock()
 		delete(s.sent, symbol)
 		s.subMu.Unlock()
@@ -327,7 +372,11 @@ func (s *Stream) handleSubscriptionACK(message wsEnvelope) {
 }
 
 func (s *Stream) publishQuote(ctx context.Context, message wsEnvelope) {
-	symbol := canonicalSymbol(message.Symbol)
+	symbol, err := s.catalog.Internal(message.Symbol)
+	if err != nil {
+		logx.Errorf("TraderMade quote received for unknown upstream symbol=%s", message.Symbol)
+		return
+	}
 	s.subMu.Lock()
 	msg, ok := s.desired[symbol]
 	s.subMu.Unlock()
@@ -426,7 +475,10 @@ func (s *Stream) syncSubscriptions() error {
 	sort.Strings(toAdd)
 	for start := 0; start < len(toRemove); start += wsSubscribeBatch {
 		end := min(start+wsSubscribeBatch, len(toRemove))
-		items := quoteSymbols(toRemove[start:end])
+		items, err := s.quoteSymbols(toRemove[start:end])
+		if err != nil {
+			return err
+		}
 		if err := s.writeJSON(map[string]any{"action": "unsubscribe", "symbols": items}); err != nil {
 			return err
 		}
@@ -452,7 +504,11 @@ func (s *Stream) subscribe(symbols []string) error {
 	if len(symbols) == 0 {
 		return nil
 	}
-	if err := s.writeJSON(map[string]any{"action": "subscribe", "symbols": quoteSymbols(symbols), "send_last": true}); err != nil {
+	items, err := s.quoteSymbols(symbols)
+	if err != nil {
+		return err
+	}
+	if err := s.writeJSON(map[string]any{"action": "subscribe", "symbols": items, "send_last": true}); err != nil {
 		return err
 	}
 	s.subMu.Lock()
@@ -469,12 +525,16 @@ func (s *Stream) sentCount() int {
 	return len(s.sent)
 }
 
-func quoteSymbols(symbols []string) []string {
+func (s *Stream) quoteSymbols(symbols []string) ([]string, error) {
 	result := make([]string, 0, len(symbols))
 	for _, symbol := range symbols {
-		result = append(result, canonicalSymbol(symbol)+":QUOTE")
+		upstream, err := s.catalog.Resolve(symbol)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, upstream+":QUOTE")
 	}
-	return result
+	return result, nil
 }
 
 func subscriptionSymbol(value string) string {

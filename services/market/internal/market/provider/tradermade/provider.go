@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"wklive/services/market/internal/market/cache"
 	"wklive/services/market/internal/market/provider"
@@ -23,14 +24,15 @@ const (
 )
 
 type Provider struct {
-	wsURL        string
-	streamingKey string
-	enableLadder bool
-	marketCache  *cache.MarketDataCache
-	lockRedis    *redis.Client
-	restClient   *RESTClient
-	streamReady  bool
-	restReady    bool
+	wsURL         string
+	streamingKey  string
+	enableLadder  bool
+	marketCache   *cache.MarketDataCache
+	lockRedis     *redis.Client
+	restClient    *RESTClient
+	streamCatalog *SymbolCatalog
+	streamReady   bool
+	restReady     bool
 }
 
 func New(
@@ -49,17 +51,23 @@ func New(
 		logx.Errorf("TraderMade provider is not configured because APIKey or StreamingAPIKey is empty")
 		return nil
 	}
-	restClient := NewRESTClient(apiURL, apiKey, httpClient, marketCache)
+	if httpClient == nil {
+		httpClient = &http.Client{Timeout: 8 * time.Second}
+	}
+	restCatalog := newRESTSymbolCatalog(apiURL, apiKey, httpClient)
+	streamCatalog := newStreamSymbolCatalog(apiURL, apiKey, httpClient)
+	restClient := newRESTClient(apiURL, apiKey, httpClient, marketCache, restCatalog)
 	wsURL = strings.TrimSpace(wsURL)
 	return &Provider{
-		wsURL:        wsURL,
-		streamingKey: streamingKey,
-		enableLadder: enableLadder,
-		marketCache:  marketCache,
-		lockRedis:    lockRedis,
-		restClient:   restClient,
-		streamReady:  wsURL != "" && streamingKey != "" && marketCache != nil && lockRedis != nil,
-		restReady:    restClient.Ready() && marketCache != nil,
+		wsURL:         wsURL,
+		streamingKey:  streamingKey,
+		enableLadder:  enableLadder,
+		marketCache:   marketCache,
+		lockRedis:     lockRedis,
+		restClient:    restClient,
+		streamCatalog: streamCatalog,
+		streamReady:   wsURL != "" && streamingKey != "" && marketCache != nil && lockRedis != nil,
+		restReady:     restClient.Ready() && marketCache != nil,
 	}
 }
 
@@ -70,10 +78,19 @@ func (p *Provider) Supports(category string) bool {
 }
 
 func (p *Provider) Warm(ctx context.Context, subscriptions []provider.Subscription) {
-	if p == nil || !p.restReady {
+	if p == nil {
 		return
 	}
-	p.restClient.Warm(ctx, subscriptions)
+	if p.restReady {
+		p.restClient.Warm(ctx, subscriptions)
+	}
+	if p.streamReady {
+		if err := p.streamCatalog.Load(ctx); err != nil {
+			logx.Errorf("load TraderMade streaming symbol catalog failed: %v", err)
+		} else {
+			logx.Infof("loaded TraderMade streaming symbol catalog, count=%d", p.streamCatalog.Count())
+		}
+	}
 }
 
 func (p *Provider) FetchQuote(ctx context.Context, subscription provider.Subscription) (*provider.Quote, error) {
@@ -92,7 +109,7 @@ func (p *Provider) NewStream(category string) (provider.Stream, error) {
 	}
 	lockHash := sha1.Sum([]byte(p.wsURL + ":" + supportedCategory))
 	lockKey := "market:leader:" + hex.EncodeToString(lockHash[:])
-	return newStream(p.wsURL, p.streamingKey, p.enableLadder, p.marketCache, newRedisLeaderLock(p.lockRedis, lockKey)), nil
+	return newStream(p.wsURL, p.streamingKey, p.enableLadder, p.marketCache, p.streamCatalog, newRedisLeaderLock(p.lockRedis, lockKey)), nil
 }
 
 var _ provider.RealtimeProvider = (*Provider)(nil)

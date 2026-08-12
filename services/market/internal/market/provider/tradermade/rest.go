@@ -24,17 +24,24 @@ type RESTClient struct {
 	apiKey      string
 	httpClient  *http.Client
 	marketCache *cache.MarketDataCache
+	catalog     *SymbolCatalog
 }
 
 func NewRESTClient(baseURL, apiKey string, httpClient *http.Client, marketCache *cache.MarketDataCache) *RESTClient {
 	if httpClient == nil {
 		httpClient = &http.Client{Timeout: 8 * time.Second}
 	}
+	catalog := newRESTSymbolCatalog(baseURL, apiKey, httpClient)
+	return newRESTClient(baseURL, apiKey, httpClient, marketCache, catalog)
+}
+
+func newRESTClient(baseURL, apiKey string, httpClient *http.Client, marketCache *cache.MarketDataCache, catalog *SymbolCatalog) *RESTClient {
 	return &RESTClient{
 		baseURL:     strings.TrimRight(strings.TrimSpace(baseURL), "/"),
 		apiKey:      strings.TrimSpace(apiKey),
 		httpClient:  httpClient,
 		marketCache: marketCache,
+		catalog:     catalog,
 	}
 }
 
@@ -43,7 +50,12 @@ func (c *RESTClient) Ready() bool {
 }
 
 func (c *RESTClient) Warm(ctx context.Context, subscriptions []provider.Subscription) {
-	products := uniqueProducts(subscriptions)
+	if err := c.catalog.Load(ctx); err != nil {
+		logx.Errorf("load TraderMade REST symbol catalog failed: %v", err)
+		return
+	}
+	logx.Infof("loaded TraderMade REST symbol catalog, count=%d", c.catalog.Count())
+	products := uniqueProducts(subscriptions, c.catalog)
 	for start := 0; start < len(products); start += restBatchSize {
 		end := min(start+restBatchSize, len(products))
 		quotes, timestamp, err := c.fetch(ctx, products[start:end])
@@ -52,7 +64,11 @@ func (c *RESTClient) Warm(ctx context.Context, subscriptions []provider.Subscrip
 			continue
 		}
 		for _, msg := range products[start:end] {
-			quote, ok := quotes[canonicalSymbol(msg.Symbol)]
+			upstream, resolveErr := c.catalog.Resolve(msg.Symbol)
+			if resolveErr != nil {
+				continue
+			}
+			quote, ok := quotes[canonicalSymbol(upstream)]
 			if !ok {
 				logx.Errorf("TraderMade REST response missing symbol, market=%s symbol=%s", msg.Market, msg.Symbol)
 				continue
@@ -78,11 +94,18 @@ func (c *RESTClient) Warm(ctx context.Context, subscriptions []provider.Subscrip
 
 func (c *RESTClient) FetchQuote(ctx context.Context, subscription provider.Subscription) (*provider.Quote, error) {
 	msg := cache.NormalizeClientMessage(subscription)
+	if err := c.catalog.Load(ctx); err != nil {
+		return nil, err
+	}
+	upstream, err := c.catalog.Resolve(msg.Symbol)
+	if err != nil {
+		return nil, err
+	}
 	quotes, timestamp, err := c.fetch(ctx, []provider.Subscription{msg})
 	if err != nil {
 		return nil, err
 	}
-	quote, ok := quotes[canonicalSymbol(msg.Symbol)]
+	quote, ok := quotes[canonicalSymbol(upstream)]
 	if !ok {
 		return nil, fmt.Errorf("TraderMade REST response missing symbol %s", msg.Symbol)
 	}
@@ -95,9 +118,11 @@ func (c *RESTClient) fetch(ctx context.Context, subscriptions []provider.Subscri
 	}
 	symbols := make([]string, 0, len(subscriptions))
 	for _, msg := range subscriptions {
-		if symbol := canonicalSymbol(msg.Symbol); symbol != "" {
-			symbols = append(symbols, symbol)
+		symbol, err := c.catalog.Resolve(msg.Symbol)
+		if err != nil {
+			continue
 		}
+		symbols = append(symbols, symbol)
 	}
 	if len(symbols) == 0 {
 		return nil, 0, fmt.Errorf("TraderMade REST symbols are empty")
@@ -176,12 +201,15 @@ func restDepthPayload(quote restQuote) *types.DepthPayload {
 	return &types.DepthPayload{Asks: asks, Bids: bids}
 }
 
-func uniqueProducts(subscriptions []provider.Subscription) []provider.Subscription {
+func uniqueProducts(subscriptions []provider.Subscription, catalog *SymbolCatalog) []provider.Subscription {
 	seen := make(map[string]struct{})
 	result := make([]provider.Subscription, 0, len(subscriptions))
 	for _, item := range subscriptions {
 		item = cache.NormalizeClientMessage(item)
 		if item.CategoryCode != supportedCategory || item.Symbol == "" {
+			continue
+		}
+		if _, err := catalog.Resolve(item.Symbol); err != nil {
 			continue
 		}
 		key := item.CategoryCode + ":" + item.Market + ":" + canonicalSymbol(item.Symbol)

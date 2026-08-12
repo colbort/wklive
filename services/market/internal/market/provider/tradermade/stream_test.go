@@ -8,7 +8,7 @@ import (
 )
 
 func TestReplaceSubscriptionsDeduplicatesInternalTopics(t *testing.T) {
-	stream := newStream("wss://example.invalid", "key", false, nil, nil)
+	stream := newStream("wss://example.invalid", "key", false, nil, loadedStreamCatalog(map[string]string{"USDCNY": "USDCNY"}), nil)
 	base := provider.Subscription{CategoryCode: "forex", Market: "gb", Symbol: "usd/cny"}
 	items := make([]provider.Subscription, 0, 4)
 	for _, topic := range []types.Topic{types.TopicQuote, types.TopicDepth, types.TopicTick, types.TopicKline} {
@@ -28,7 +28,7 @@ func TestReplaceSubscriptionsDeduplicatesInternalTopics(t *testing.T) {
 }
 
 func TestSubscriptionACKRemovesRejectedSymbolFromSent(t *testing.T) {
-	stream := newStream("wss://example.invalid", "key", false, nil, nil)
+	stream := newStream("wss://example.invalid", "key", false, nil, loadedStreamCatalog(map[string]string{"USDCNY": "USDCNY"}), nil)
 	stream.sent["USDCNY"] = struct{}{}
 	stream.handleSubscriptionACK(wsEnvelope{
 		Type:          "sub_ack",
@@ -37,6 +37,19 @@ func TestSubscriptionACKRemovesRejectedSymbolFromSent(t *testing.T) {
 	})
 	if _, ok := stream.sent["USDCNY"]; ok {
 		t.Fatal("rejected subscription remained marked as sent")
+	}
+}
+
+func TestRequestedSubscriptionsSurviveTransientCatalogFailure(t *testing.T) {
+	stream := newStream("wss://example.invalid", "key", false, nil, newStreamSymbolCatalog("https://example.invalid", "key", nil), nil)
+	if err := stream.ReplaceSubscriptions([]provider.Subscription{{CategoryCode: "forex", Symbol: "USDCNY"}}); err != nil {
+		t.Fatal(err)
+	}
+	if !stream.HasDesiredSubscriptions() {
+		t.Fatal("stream should remain startable while its symbol catalog is unavailable")
+	}
+	if len(stream.desired) != 0 || len(stream.requested) != 1 {
+		t.Fatalf("desired=%d requested=%d", len(stream.desired), len(stream.requested))
 	}
 }
 
@@ -54,4 +67,13 @@ func TestWebsocketDepthUsesLadderWhenAvailable(t *testing.T) {
 	if len(payload.Bids) != 2 || payload.Bids[0].Price != 7.10 || payload.Bids[0].Volume != 300 {
 		t.Fatalf("unexpected bids: %+v", payload.Bids)
 	}
+}
+
+func loadedStreamCatalog(symbols map[string]string) *SymbolCatalog {
+	catalog := newStreamSymbolCatalog("https://example.invalid", "key", nil)
+	for internal, upstream := range symbols {
+		addSymbolMapping(catalog.forward, catalog.reverse, internal, upstream)
+	}
+	catalog.loaded = true
+	return catalog
 }

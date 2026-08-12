@@ -61,6 +61,19 @@ func TestReplaceSubscriptionsSkipsSymbolsMissingFromCatalog(t *testing.T) {
 	}
 }
 
+func TestStreamRemainsStartableWhenCatalogLoadInitiallyFailed(t *testing.T) {
+	catalog := &SymbolCatalog{symbols: make(map[string]string)}
+	stream := newStream("wss://example.invalid", "key", nil, catalog, nil)
+	if err := stream.ReplaceSubscriptions([]provider.Subscription{
+		{Topic: types.TopicQuote, CategoryCode: "forex", Symbol: "USDCNY"},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if !stream.HasDesiredSubscriptions() {
+		t.Fatal("stream would not start and retry an initially failed catalog load")
+	}
+}
+
 func testSymbolCatalog() *SymbolCatalog {
 	return &SymbolCatalog{loaded: true, symbols: map[string]string{"USDCNY": "USD/CNY"}}
 }

@@ -14,6 +14,12 @@ import (
 
 func TestRESTClientFetchQuote(t *testing.T) {
 	httpClient := &http.Client{Transport: roundTripFunc(func(request *http.Request) (*http.Response, error) {
+		switch request.URL.Path {
+		case "/api/v1/live_currencies_list":
+			return jsonHTTPResponse(`{"available_currencies":{"USD":"US Dollar","CNY":"Chinese Yuan"}}`), nil
+		case "/api/v1/cfd_list":
+			return jsonHTTPResponse(`{"available_cfds":{}}`), nil
+		}
 		if got := request.URL.Query().Get("currency"); got != "USDCNY" {
 			t.Errorf("currency = %q", got)
 		}
@@ -34,7 +40,13 @@ func TestRESTClientFetchQuote(t *testing.T) {
 }
 
 func TestRESTClientRejectsApplicationErrorWithHTTP200(t *testing.T) {
-	httpClient := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+	httpClient := &http.Client{Transport: roundTripFunc(func(request *http.Request) (*http.Response, error) {
+		if request.URL.Path == "/api/v1/live_currencies_list" {
+			return jsonHTTPResponse(`{"available_currencies":{"USD":"US Dollar","CNY":"Chinese Yuan"}}`), nil
+		}
+		if request.URL.Path == "/api/v1/cfd_list" {
+			return jsonHTTPResponse(`{"available_cfds":{}}`), nil
+		}
 		return jsonHTTPResponse(`{"code":401,"message":"api key invalid"}`), nil
 	})}
 	client := NewRESTClient("https://marketdata.example/api/v1", "bad-key", httpClient, nil)
