@@ -279,6 +279,12 @@ services:
 secrets:
   itick_token:
     file: ${PREPROD_ITICK_TOKEN_FILE:?PREPROD_ITICK_TOKEN_FILE is required}
+  tradermade_api_key:
+    file: ${PREPROD_TRADERMADE_API_KEY_FILE:-/dev/null}
+  tradermade_streaming_api_key:
+    file: ${PREPROD_TRADERMADE_STREAMING_API_KEY_FILE:-/dev/null}
+  twelvedata_api_key:
+    file: ${PREPROD_TWELVEDATA_API_KEY_FILE:-/dev/null}
   admin_api_private_key:
     file: ${PREPROD_ADMIN_RSA_PRIVATE_KEY_FILE:?PREPROD_ADMIN_RSA_PRIVATE_KEY_FILE is required}
 

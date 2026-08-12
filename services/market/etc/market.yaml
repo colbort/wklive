@@ -18,6 +18,25 @@ Itick:
   RestRateLimitPerMinute: 100
   RestRateLimitBurst: 1
 
+TraderMade:
+  ApiURL: https://marketdata.tradermade.com/api/v1
+  WSURL: wss://stream.tradermade.com/feedAdv
+  APIKey: "__TRADERMADE_API_KEY__"
+  StreamingAPIKey: "__TRADERMADE_STREAMING_API_KEY__"
+  # REST 与 Streaming Key 都配置后，TraderMade 会与 iTick 同时提供外汇行情。
+  # 仅账号套餐支持 ladder 时开启；关闭时仍会缓存最佳买一/卖一。
+  EnableLadder: false
+
+TwelveData:
+  ApiURL: https://api.twelvedata.com
+  WSURL: wss://ws.twelvedata.com/v1/quotes/price
+  APIKey: "__TWELVEDATA_API_KEY__"
+  # 配置 Key 后，Twelve Data 会与 iTick、TraderMade 同时提供外汇行情。
+  # REST 和 WebSocket 使用同一个 Key；WebSocket 对所有外汇交易对批量订阅。
+  RestRateLimitPerMinute: 8
+  RestRateLimitBurst: 8
+  RestWarmMaxSymbols: 8
+
 Runtime:
   ReconcileIntervalMinutes: 5
   ReconcileWindowBars: 30

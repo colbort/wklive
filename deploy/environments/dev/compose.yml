@@ -188,6 +188,12 @@ services:
 secrets:
   itick_token:
     file: ./secrets/itick_token
+  tradermade_api_key:
+    file: ${TRADERMADE_API_KEY_FILE:-/dev/null}
+  tradermade_streaming_api_key:
+    file: ${TRADERMADE_STREAMING_API_KEY_FILE:-/dev/null}
+  twelvedata_api_key:
+    file: ${TWELVEDATA_API_KEY_FILE:-/dev/null}
 
 networks:
   backend:

@@ -17,8 +17,10 @@ type Config struct {
 	Mysql      struct {
 		DataSource string
 	} `json:"Mysql" yaml:"Mysql"`
-	Itick   ItickConf
-	Runtime MarketRuntimeConf
+	Itick      ItickConf
+	TraderMade TraderMadeConf `json:",optional"`
+	TwelveData TwelveDataConf `json:",optional"`
+	Runtime    MarketRuntimeConf
 	// ExternalQuotes are independent public market-data producers used by the
 	// contract price engine. They publish only FINAL_QUOTE snapshots.
 	ExternalQuotes []ExternalQuoteSourceConf
@@ -119,4 +121,21 @@ type ItickConf struct {
 	Token                  string
 	RestRateLimitPerMinute int
 	RestRateLimitBurst     int
+}
+
+type TraderMadeConf struct {
+	ApiURL          string `json:",optional"`
+	WSURL           string `json:",optional"`
+	APIKey          string `json:",optional"`
+	StreamingAPIKey string `json:",optional"`
+	EnableLadder    bool   `json:",optional"`
+}
+
+type TwelveDataConf struct {
+	ApiURL                 string `json:",optional"`
+	WSURL                  string `json:",optional"`
+	APIKey                 string `json:",optional"`
+	RestRateLimitPerMinute int    `json:",optional"`
+	RestRateLimitBurst     int    `json:",optional"`
+	RestWarmMaxSymbols     int    `json:",optional"`
 }

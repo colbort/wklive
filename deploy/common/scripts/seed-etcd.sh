@@ -14,6 +14,9 @@ MONGO_ROOT_PASSWORD="${MONGO_ROOT_PASSWORD:-openIM123}"
 REDIS_PASSWORD="${REDIS_PASSWORD:-}"
 JWT_ACCESS_SECRET="${JWT_ACCESS_SECRET:-change-this-secret-before-production}"
 ITICK_TOKEN_FILE="${ITICK_TOKEN_FILE:-/run/secrets/itick_token}"
+TRADERMADE_API_KEY_FILE="${TRADERMADE_API_KEY_FILE:-/run/secrets/tradermade_api_key}"
+TRADERMADE_STREAMING_API_KEY_FILE="${TRADERMADE_STREAMING_API_KEY_FILE:-/run/secrets/tradermade_streaming_api_key}"
+TWELVEDATA_API_KEY_FILE="${TWELVEDATA_API_KEY_FILE:-/run/secrets/twelvedata_api_key}"
 SERVICE_MODE="${SERVICE_MODE:-}"
 ADMIN_ALLOWED_ORIGIN="${ADMIN_ALLOWED_ORIGIN:-}"
 ADMIN_REQUEST_ENCRYPTION_MODE="${ADMIN_REQUEST_ENCRYPTION_MODE:-}"
@@ -52,6 +55,22 @@ load_file_secret() {
   printf '%s' "$value"
 }
 
+load_optional_file_secret() {
+  name="$1"
+  file="$2"
+  if [ ! -r "$file" ]; then
+    printf ''
+    return
+  fi
+  value=$(sed -n '1p' "$file")
+  if [ -z "$value" ]; then
+    printf ''
+    return
+  fi
+  validate_secret "$name" "$value"
+  printf '%s' "$value"
+}
+
 render_config() {
   sed \
     -e 's#127\.0\.0\.1:2379#etcd:2379#g' \
@@ -67,6 +86,9 @@ render_config() {
     -e "s#__REDIS_PASSWORD__#${REDIS_PASSWORD}#g" \
     -e "s#change-this-secret-before-production#${JWT_ACCESS_SECRET}#g" \
     -e "s#__ITICK_TOKEN__#${ITICK_TOKEN}#g" \
+    -e "s#__TRADERMADE_API_KEY__#${TRADERMADE_API_KEY}#g" \
+    -e "s#__TRADERMADE_STREAMING_API_KEY__#${TRADERMADE_STREAMING_API_KEY}#g" \
+    -e "s#__TWELVEDATA_API_KEY__#${TWELVEDATA_API_KEY}#g" \
     "$1" |
     if [ -n "$SERVICE_MODE" ]; then
       sed \
@@ -140,6 +162,9 @@ if [ "$ADMIN_REQUEST_ENCRYPTION_MODE" != "" ] && [ "$ADMIN_REQUEST_ENCRYPTION_MO
   fi
 fi
 ITICK_TOKEN=$(load_file_secret ITICK_TOKEN "$ITICK_TOKEN_FILE")
+TRADERMADE_API_KEY=$(load_optional_file_secret TRADERMADE_API_KEY "$TRADERMADE_API_KEY_FILE")
+TRADERMADE_STREAMING_API_KEY=$(load_optional_file_secret TRADERMADE_STREAMING_API_KEY "$TRADERMADE_STREAMING_API_KEY_FILE")
+TWELVEDATA_API_KEY=$(load_optional_file_secret TWELVEDATA_API_KEY "$TWELVEDATA_API_KEY_FILE")
 check_etcd
 
 put_file /wklive/common/config "$COMMON_CONFIG"

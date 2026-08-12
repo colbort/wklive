@@ -1,0 +1,49 @@
+package twelvedata
+
+import (
+	"context"
+	"testing"
+
+	"wklive/services/market/internal/market/provider"
+	"wklive/services/market/internal/market/types"
+)
+
+func TestReplaceSubscriptionsDeduplicatesInternalTopics(t *testing.T) {
+	stream := newStream("wss://example.invalid", "key", nil, nil)
+	base := provider.Subscription{CategoryCode: "forex", Market: "GB", Symbol: "usd/cny"}
+	items := make([]provider.Subscription, 0, 4)
+	for _, topic := range []types.Topic{types.TopicQuote, types.TopicDepth, types.TopicTick, types.TopicKline} {
+		item := base
+		item.Topic = topic
+		items = append(items, item)
+	}
+	if err := stream.ReplaceSubscriptions(items); err != nil {
+		t.Fatal(err)
+	}
+	if len(stream.desired) != 1 {
+		t.Fatalf("desired subscriptions = %d, want 1", len(stream.desired))
+	}
+	if got := stream.desired["USDCNY"].Topic; got != types.TopicQuote {
+		t.Fatalf("preferred internal topic = %q", got)
+	}
+}
+
+func TestSubscriptionACKRemovesRejectedSymbolFromSent(t *testing.T) {
+	stream := newStream("wss://example.invalid", "key", nil, nil)
+	stream.sent["USDCNY"] = struct{}{}
+	stream.handleSubscriptionACK(wsEnvelope{
+		Event: "subscribe-status",
+		Fails: []wsStatusItem{{Symbol: "USD/CNY", Code: 400, Message: "symbol unavailable"}},
+	})
+	if _, ok := stream.sent["USDCNY"]; ok {
+		t.Fatal("rejected subscription remained marked as sent")
+	}
+}
+
+func TestPriceEventUsesSourceTimestamp(t *testing.T) {
+	stream := newStream("wss://example.invalid", "key", nil, nil)
+	stream.desired["USDCNY"] = provider.Subscription{CategoryCode: "forex", Market: "GB", Symbol: "USDCNY"}
+	// A nil cache would panic only if a known, valid message reaches publishing;
+	// malformed timestamps must be rejected before that point.
+	stream.publishPrice(context.Background(), wsEnvelope{Event: "price", Symbol: "USD/CNY", Timestamp: 0, Price: []byte(`7.18`)})
+}

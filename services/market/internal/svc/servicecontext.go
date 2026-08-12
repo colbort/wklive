@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"strings"
 	"time"
 
@@ -16,6 +17,8 @@ import (
 	"wklive/services/market/internal/market/client"
 	"wklive/services/market/internal/market/provider"
 	"wklive/services/market/internal/market/provider/itick"
+	"wklive/services/market/internal/market/provider/tradermade"
+	"wklive/services/market/internal/market/provider/twelvedata"
 	"wklive/services/market/internal/market/types"
 	"wklive/services/market/internal/pkg/itickrest"
 	"wklive/services/market/internal/pkg/klinewriter"
@@ -129,13 +132,50 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		DB:       0,
 	})
 	marketDataCache := icache.NewMarketDataCache(dataCache)
-	realtimeMarketProvider := itick.New(
+	iTickProvider := itick.New(
 		c.Itick.WSUrl,
 		c.Itick.ApiUrl,
 		c.Itick.Token,
 		marketDataCache,
 		lockRedis,
 		iTickRestClient,
+	)
+	traderMadeProvider := tradermade.New(
+		c.TraderMade.ApiURL,
+		c.TraderMade.WSURL,
+		c.TraderMade.APIKey,
+		c.TraderMade.StreamingAPIKey,
+		c.TraderMade.EnableLadder,
+		marketDataCache,
+		lockRedis,
+		&http.Client{Timeout: 8 * time.Second},
+	)
+	twelveDataRatePerMinute := c.TwelveData.RestRateLimitPerMinute
+	if twelveDataRatePerMinute <= 0 {
+		twelveDataRatePerMinute = 8
+	}
+	twelveDataRateBurst := c.TwelveData.RestRateLimitBurst
+	if twelveDataRateBurst <= 0 {
+		twelveDataRateBurst = min(twelveDataRatePerMinute, 8)
+	}
+	twelveDataWarmMaxSymbols := c.TwelveData.RestWarmMaxSymbols
+	if twelveDataWarmMaxSymbols <= 0 {
+		twelveDataWarmMaxSymbols = 8
+	}
+	twelveDataProvider := twelvedata.New(
+		c.TwelveData.ApiURL,
+		c.TwelveData.WSURL,
+		c.TwelveData.APIKey,
+		rate.NewLimiter(rate.Limit(float64(twelveDataRatePerMinute)/60.0), twelveDataRateBurst),
+		twelveDataWarmMaxSymbols,
+		marketDataCache,
+		lockRedis,
+		&http.Client{Timeout: 8 * time.Second},
+	)
+	realtimeMarketProvider := provider.NewComposite(
+		iTickProvider,
+		traderMadeProvider,
+		twelveDataProvider,
 	)
 	mqConfig := mq.ForService(c.MQ, c.Name)
 	taskSubscriber := mq.MustNewSubscriber(mqConfig, "market-tasks")
