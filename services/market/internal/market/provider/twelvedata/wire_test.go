@@ -36,18 +36,6 @@ func TestDecodeRESTQuoteRejectsClosedMarket(t *testing.T) {
 	}
 }
 
-func TestUpstreamSymbol(t *testing.T) {
-	for _, input := range []string{"USDCNY", "usd/cny", "usd-cny"} {
-		got, err := upstreamSymbol(input)
-		if err != nil {
-			t.Fatalf("upstreamSymbol(%q): %v", input, err)
-		}
-		if got != "USD/CNY" {
-			t.Fatalf("upstreamSymbol(%q) = %q", input, got)
-		}
-	}
-}
-
 func TestRawDecimalAcceptsNumberAndString(t *testing.T) {
 	for _, raw := range []string{`7.18500`, `"7.18500"`} {
 		text, value, err := rawDecimal([]byte(raw))

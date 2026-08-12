@@ -18,10 +18,18 @@ func TestRESTFetchQuoteUsesHeaderAuthenticationAndSourceTimestamp(t *testing.T) 
 		if request.URL.Query().Get("apikey") != "" {
 			t.Error("API key leaked into query")
 		}
-		if got := request.URL.Query().Get("symbol"); got != "USD/CNY" {
-			t.Errorf("symbol = %q", got)
+		switch request.URL.Path {
+		case "/forex_pairs":
+			return jsonResponse(`{"count":1,"data":[{"symbol":"USD/CNY"}],"status":"ok"}`), nil
+		case "/quote":
+			if got := request.URL.Query().Get("symbol"); got != "USD/CNY" {
+				t.Errorf("symbol = %q", got)
+			}
+			return jsonResponse(`{"symbol":"USD/CNY","timestamp":1786534320,"close":"7.18500","is_market_open":true}`), nil
+		default:
+			t.Fatalf("unexpected path: %s", request.URL.Path)
+			return nil, nil
 		}
-		return jsonResponse(`{"symbol":"USD/CNY","timestamp":1786534320,"close":"7.18500","is_market_open":true}`), nil
 	})}
 
 	client := NewRESTClient("https://api.example.invalid", "secret-key", nil, 8, httpClient, nil)
@@ -35,13 +43,30 @@ func TestRESTFetchQuoteUsesHeaderAuthenticationAndSourceTimestamp(t *testing.T) 
 }
 
 func TestRESTFetchQuoteRejectsMismatchedSymbol(t *testing.T) {
-	httpClient := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+	httpClient := &http.Client{Transport: roundTripFunc(func(request *http.Request) (*http.Response, error) {
+		if request.URL.Path == "/forex_pairs" {
+			return jsonResponse(`{"count":1,"data":[{"symbol":"USD/CNY"}],"status":"ok"}`), nil
+		}
 		return jsonResponse(`{"symbol":"EUR/USD","timestamp":1786534320,"close":"1.10","is_market_open":true}`), nil
 	})}
 	client := NewRESTClient("https://api.example.invalid", "secret-key", nil, 8, httpClient, nil)
 	_, err := client.FetchQuote(context.Background(), provider.Subscription{CategoryCode: "forex", Symbol: "USDCNY"})
 	if err == nil {
 		t.Fatal("mismatched response symbol was accepted")
+	}
+}
+
+func TestRESTFetchQuoteRejectsSymbolMissingFromForexCatalog(t *testing.T) {
+	httpClient := &http.Client{Transport: roundTripFunc(func(request *http.Request) (*http.Response, error) {
+		if request.URL.Path != "/forex_pairs" {
+			t.Fatalf("unsupported symbol must not reach quote endpoint: %s", request.URL.Path)
+		}
+		return jsonResponse(`{"count":1,"data":[{"symbol":"USD/CNY"}],"status":"ok"}`), nil
+	})}
+	client := NewRESTClient("https://api.example.invalid", "secret-key", nil, 8, httpClient, nil)
+	_, err := client.FetchQuote(context.Background(), provider.Subscription{CategoryCode: "forex", Symbol: "COFFEE"})
+	if err == nil {
+		t.Fatal("symbol missing from Twelve Data forex catalog was accepted")
 	}
 }
 

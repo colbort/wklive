@@ -25,12 +25,18 @@ type RESTClient struct {
 	warmMax     int
 	httpClient  *http.Client
 	marketCache *cache.MarketDataCache
+	catalog     *SymbolCatalog
 }
 
 func NewRESTClient(baseURL, apiKey string, limiter *rate.Limiter, warmMax int, httpClient *http.Client, marketCache *cache.MarketDataCache) *RESTClient {
 	if httpClient == nil {
 		httpClient = &http.Client{Timeout: 8 * time.Second}
 	}
+	catalog := newSymbolCatalog(baseURL, apiKey, limiter, httpClient)
+	return newRESTClient(baseURL, apiKey, limiter, warmMax, httpClient, marketCache, catalog)
+}
+
+func newRESTClient(baseURL, apiKey string, limiter *rate.Limiter, warmMax int, httpClient *http.Client, marketCache *cache.MarketDataCache, catalog *SymbolCatalog) *RESTClient {
 	return &RESTClient{
 		baseURL:     strings.TrimRight(strings.TrimSpace(baseURL), "/"),
 		apiKey:      strings.TrimSpace(apiKey),
@@ -38,6 +44,7 @@ func NewRESTClient(baseURL, apiKey string, limiter *rate.Limiter, warmMax int, h
 		warmMax:     warmMax,
 		httpClient:  httpClient,
 		marketCache: marketCache,
+		catalog:     catalog,
 	}
 }
 
@@ -46,7 +53,12 @@ func (c *RESTClient) Ready() bool {
 }
 
 func (c *RESTClient) Warm(ctx context.Context, subscriptions []provider.Subscription) {
-	products := uniqueProducts(subscriptions)
+	if err := c.catalog.Load(ctx); err != nil {
+		logx.Errorf("load Twelve Data forex symbol catalog failed: %v", err)
+		return
+	}
+	logx.Infof("loaded Twelve Data forex symbol catalog, count=%d", c.catalog.Count())
+	products := uniqueProducts(subscriptions, c.catalog)
 	if c.warmMax > 0 && len(products) > c.warmMax {
 		logx.Infof("Twelve Data REST warm limited, total=%d selected=%d", len(products), c.warmMax)
 		products = products[:c.warmMax]
@@ -69,7 +81,10 @@ func (c *RESTClient) FetchQuote(ctx context.Context, subscription provider.Subsc
 		return nil, fmt.Errorf("Twelve Data REST client is not configured")
 	}
 	msg := cache.NormalizeClientMessage(subscription)
-	symbol, err := upstreamSymbol(msg.Symbol)
+	if err := c.catalog.Load(ctx); err != nil {
+		return nil, err
+	}
+	symbol, err := c.catalog.Resolve(msg.Symbol)
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +153,7 @@ func sanitizedRequestError(err error, apiKey string) string {
 	return strings.ReplaceAll(current.Error(), apiKey, "[REDACTED]")
 }
 
-func uniqueProducts(subscriptions []provider.Subscription) []provider.Subscription {
+func uniqueProducts(subscriptions []provider.Subscription, catalog *SymbolCatalog) []provider.Subscription {
 	seen := make(map[string]struct{})
 	result := make([]provider.Subscription, 0, len(subscriptions))
 	for _, item := range subscriptions {
@@ -146,7 +161,7 @@ func uniqueProducts(subscriptions []provider.Subscription) []provider.Subscripti
 		if item.CategoryCode != supportedCategory || item.Symbol == "" {
 			continue
 		}
-		if _, err := upstreamSymbol(item.Symbol); err != nil {
+		if _, err := catalog.Resolve(item.Symbol); err != nil {
 			continue
 		}
 		key := item.CategoryCode + ":" + item.Market + ":" + canonicalSymbol(item.Symbol)

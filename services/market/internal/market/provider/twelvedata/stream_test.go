@@ -9,7 +9,7 @@ import (
 )
 
 func TestReplaceSubscriptionsDeduplicatesInternalTopics(t *testing.T) {
-	stream := newStream("wss://example.invalid", "key", nil, nil)
+	stream := newStream("wss://example.invalid", "key", nil, testSymbolCatalog(), nil)
 	base := provider.Subscription{CategoryCode: "forex", Market: "GB", Symbol: "usd/cny"}
 	items := make([]provider.Subscription, 0, 4)
 	for _, topic := range []types.Topic{types.TopicQuote, types.TopicDepth, types.TopicTick, types.TopicKline} {
@@ -29,7 +29,7 @@ func TestReplaceSubscriptionsDeduplicatesInternalTopics(t *testing.T) {
 }
 
 func TestSubscriptionACKRemovesRejectedSymbolFromSent(t *testing.T) {
-	stream := newStream("wss://example.invalid", "key", nil, nil)
+	stream := newStream("wss://example.invalid", "key", nil, testSymbolCatalog(), nil)
 	stream.sent["USDCNY"] = struct{}{}
 	stream.handleSubscriptionACK(wsEnvelope{
 		Event: "subscribe-status",
@@ -41,9 +41,26 @@ func TestSubscriptionACKRemovesRejectedSymbolFromSent(t *testing.T) {
 }
 
 func TestPriceEventUsesSourceTimestamp(t *testing.T) {
-	stream := newStream("wss://example.invalid", "key", nil, nil)
+	stream := newStream("wss://example.invalid", "key", nil, testSymbolCatalog(), nil)
 	stream.desired["USDCNY"] = provider.Subscription{CategoryCode: "forex", Market: "GB", Symbol: "USDCNY"}
 	// A nil cache would panic only if a known, valid message reaches publishing;
 	// malformed timestamps must be rejected before that point.
 	stream.publishPrice(context.Background(), wsEnvelope{Event: "price", Symbol: "USD/CNY", Timestamp: 0, Price: []byte(`7.18`)})
+}
+
+func TestReplaceSubscriptionsSkipsSymbolsMissingFromCatalog(t *testing.T) {
+	stream := newStream("wss://example.invalid", "key", nil, testSymbolCatalog(), nil)
+	if err := stream.ReplaceSubscriptions([]provider.Subscription{
+		{Topic: types.TopicQuote, CategoryCode: "forex", Symbol: "USDCNY"},
+		{Topic: types.TopicQuote, CategoryCode: "forex", Symbol: "COFFEE"},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if len(stream.desired) != 1 {
+		t.Fatalf("desired subscriptions = %d, want only catalog-supported USDCNY", len(stream.desired))
+	}
+}
+
+func testSymbolCatalog() *SymbolCatalog {
+	return &SymbolCatalog{loaded: true, symbols: map[string]string{"USDCNY": "USD/CNY"}}
 }

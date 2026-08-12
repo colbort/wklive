@@ -96,14 +96,6 @@ func canonicalSymbol(value string) string {
 	return strings.NewReplacer("/", "", "-", "", "_", "", ":", "").Replace(value)
 }
 
-func upstreamSymbol(value string) (string, error) {
-	value = canonicalSymbol(value)
-	if len(value) != 6 {
-		return "", fmt.Errorf("Twelve Data forex symbol must contain two 3-letter currencies: %q", value)
-	}
-	return value[:3] + "/" + value[3:], nil
-}
-
 func firstNonEmpty(values ...string) string {
 	for _, value := range values {
 		if value = strings.TrimSpace(value); value != "" {

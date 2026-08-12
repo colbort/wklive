@@ -39,6 +39,7 @@ type Stream struct {
 	apiKey       string
 	categoryCode string
 	marketCache  *cache.MarketDataCache
+	catalog      *SymbolCatalog
 	locker       *redisLeaderLock
 	dialer       *websocket.Dialer
 
@@ -46,9 +47,10 @@ type Stream struct {
 	conn    *websocket.Conn
 	writeMu sync.Mutex
 
-	subMu   sync.Mutex
-	desired map[string]provider.Subscription
-	sent    map[string]struct{}
+	subMu     sync.Mutex
+	desired   map[string]provider.Subscription
+	sent      map[string]struct{}
+	requested []provider.Subscription
 
 	leader      int32
 	started     int32
@@ -56,12 +58,13 @@ type Stream struct {
 	onReconnect func(string)
 }
 
-func newStream(rawURL, apiKey string, marketCache *cache.MarketDataCache, locker *redisLeaderLock) *Stream {
+func newStream(rawURL, apiKey string, marketCache *cache.MarketDataCache, catalog *SymbolCatalog, locker *redisLeaderLock) *Stream {
 	return &Stream{
 		url:          strings.TrimSpace(rawURL),
 		apiKey:       strings.TrimSpace(apiKey),
 		categoryCode: supportedCategory,
 		marketCache:  marketCache,
+		catalog:      catalog,
 		locker:       locker,
 		dialer:       &websocket.Dialer{HandshakeTimeout: 10 * time.Second},
 		desired:      make(map[string]provider.Subscription),
@@ -79,6 +82,11 @@ func (s *Stream) Start(ctx context.Context) {
 func (s *Stream) HasDesiredSubscriptions() bool {
 	s.subMu.Lock()
 	defer s.subMu.Unlock()
+	if !s.catalog.Loaded() {
+		// Keep the stream startable after a transient startup catalog failure;
+		// runAsLeader will retry loading before it opens the WebSocket.
+		return len(s.requested) > 0
+	}
 	return len(s.desired) > 0
 }
 
@@ -87,13 +95,29 @@ func (s *Stream) IsLeader() bool { return atomic.LoadInt32(&s.leader) == 1 }
 func (s *Stream) SetReconnectHandler(handler func(category string)) { s.onReconnect = handler }
 
 func (s *Stream) ReplaceSubscriptions(items []provider.Subscription) error {
+	s.subMu.Lock()
+	s.requested = append([]provider.Subscription(nil), items...)
+	s.subMu.Unlock()
+	if err := s.rebuildDesiredSubscriptions(); err != nil {
+		return err
+	}
+	if atomic.LoadInt32(&s.connected) == 1 {
+		return s.syncSubscriptions()
+	}
+	return nil
+}
+
+func (s *Stream) rebuildDesiredSubscriptions() error {
+	s.subMu.Lock()
+	items := append([]provider.Subscription(nil), s.requested...)
+	s.subMu.Unlock()
 	next := make(map[string]provider.Subscription)
 	for _, item := range items {
 		item = cache.NormalizeClientMessage(item)
 		if item.CategoryCode != supportedCategory {
 			continue
 		}
-		upstream, err := upstreamSymbol(item.Symbol)
+		upstream, err := s.catalog.Resolve(item.Symbol)
 		if err != nil {
 			continue
 		}
@@ -108,15 +132,12 @@ func (s *Stream) ReplaceSubscriptions(items []provider.Subscription) error {
 	s.subMu.Lock()
 	s.desired = next
 	s.subMu.Unlock()
-	if atomic.LoadInt32(&s.connected) == 1 {
-		return s.syncSubscriptions()
-	}
 	return nil
 }
 
 func (s *Stream) Resubscribe(item provider.Subscription) error {
 	item = cache.NormalizeClientMessage(item)
-	upstream, err := upstreamSymbol(item.Symbol)
+	upstream, err := s.catalog.Resolve(item.Symbol)
 	if err != nil {
 		return err
 	}
@@ -190,6 +211,21 @@ func (s *Stream) renewLoop(ctx context.Context, token string, cancel context.Can
 func (s *Stream) runAsLeader(ctx context.Context) error {
 	delay := wsReconnectDelay
 	for ctx.Err() == nil {
+		if err := s.catalog.Load(ctx); err != nil {
+			logx.Errorf("load Twelve Data forex symbol catalog before websocket connect failed: %v", err)
+			if !waitContext(ctx, delay+time.Duration(rand.Int63n(int64(time.Second)))) {
+				return ctx.Err()
+			}
+			delay = min(delay*2, time.Minute)
+			continue
+		}
+		if err := s.rebuildDesiredSubscriptions(); err != nil {
+			logx.Errorf("build Twelve Data subscriptions from forex symbol catalog failed: %v", err)
+			if !waitContext(ctx, delay) {
+				return ctx.Err()
+			}
+			continue
+		}
 		if err := s.connect(); err != nil {
 			logx.Errorf("Twelve Data websocket connect failed: %v", err)
 			if !waitContext(ctx, delay+time.Duration(rand.Int63n(int64(time.Second)))) {
@@ -384,7 +420,7 @@ func (s *Stream) subscribe(symbols []string) error {
 func (s *Stream) sendSymbolAction(action string, symbols []string) error {
 	values := make([]string, 0, len(symbols))
 	for _, symbol := range symbols {
-		value, err := upstreamSymbol(symbol)
+		value, err := s.catalog.Resolve(symbol)
 		if err != nil {
 			return err
 		}
