@@ -10,9 +10,10 @@ import (
 	"strings"
 
 	"wklive/common/conv"
+	"wklive/common/i18n"
 	"wklive/common/utils"
 	"wklive/proto/common"
-	marketpb "wklive/proto/market"
+	"wklive/proto/market"
 	"wklive/proto/trade"
 	"wklive/services/trade/models"
 
@@ -22,6 +23,13 @@ import (
 func MustParseFloat(v string) decimal.Decimal {
 	value, _ := conv.ParseDecimalField(v)
 	return value
+}
+
+// IsDefinitiveAssetFreezeRejection identifies an explicit business rejection
+// returned by Asset RPC. Transport and infrastructure failures remain
+// non-definitive because Trade cannot know whether the remote mutation ran.
+func IsDefinitiveAssetFreezeRejection(err error) bool {
+	return i18n.IsStatusError(err, i18n.InsufficientAvailableBalance)
 }
 
 func EnableToProto(value int64) common.Enable {
@@ -1246,7 +1254,7 @@ func ShouldTriggerOrder(order *models.TTradeOrder, triggerPrice decimal.Decimal)
 func WalletTypeForTrade(productType common.ProductType, categoryType int64) common.WalletType {
 	switch productType {
 	case common.ProductType_PRODUCT_TYPE_SPOT:
-		if categoryType == int64(marketpb.CategoryType_CATEGORY_TYPE_STOCK) {
+		if categoryType == int64(market.CategoryType_CATEGORY_TYPE_STOCK) {
 			return common.WalletType_WALLET_TYPE_FUNDING
 		}
 		return common.WalletType_WALLET_TYPE_SPOT

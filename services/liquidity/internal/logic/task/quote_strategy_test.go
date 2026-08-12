@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"wklive/common/i18n"
 	"wklive/proto/common"
 	"wklive/proto/liquidity"
 	"wklive/proto/market"
@@ -34,8 +35,16 @@ type snapshotResult struct {
 
 type quoteOrderModelStub struct {
 	models.TLiquidityQuoteOrderModel
-	rows    []*models.TLiquidityQuoteOrder
-	updated []*models.TLiquidityQuoteOrder
+	rows         []*models.TLiquidityQuoteOrder
+	pageRows     []*models.TLiquidityQuoteOrder
+	updated      []*models.TLiquidityQuoteOrder
+	hasUncertain bool
+}
+
+type symbolConfigModelStub struct {
+	models.TLiquiditySymbolConfigModel
+	row     *models.TLiquiditySymbolConfig
+	updated []*models.TLiquiditySymbolConfig
 }
 
 type providerModelStub struct {
@@ -50,6 +59,17 @@ func (s *providerModelStub) FindOne(context.Context, int64) (*models.TLiquidityP
 type internalMarketMakerStub struct {
 	cancelResult *provider.QuoteResult
 	cancelErr    error
+	placeResult  *provider.QuoteResult
+	placeErr     error
+}
+
+func (s *symbolConfigModelStub) FindOne(context.Context, int64) (*models.TLiquiditySymbolConfig, error) {
+	return s.row, nil
+}
+
+func (s *symbolConfigModelStub) Update(_ context.Context, row *models.TLiquiditySymbolConfig) error {
+	s.updated = append(s.updated, row)
+	return nil
 }
 
 func (s *internalMarketMakerStub) Health(context.Context, *models.TLiquidityProvider) error {
@@ -57,7 +77,7 @@ func (s *internalMarketMakerStub) Health(context.Context, *models.TLiquidityProv
 }
 
 func (s *internalMarketMakerStub) PlaceQuote(context.Context, *models.TLiquidityProvider, *models.TLiquidityQuoteOrder) (*provider.QuoteResult, error) {
-	return nil, nil
+	return s.placeResult, s.placeErr
 }
 
 func (s *internalMarketMakerStub) CancelQuote(context.Context, *models.TLiquidityProvider, *models.TLiquidityQuoteOrder) (*provider.QuoteResult, error) {
@@ -70,6 +90,14 @@ func (s *internalMarketMakerStub) QueryQuote(context.Context, *models.TLiquidity
 
 func (s *quoteOrderModelStub) FindActiveByConfig(context.Context, int64) ([]*models.TLiquidityQuoteOrder, error) {
 	return s.rows, nil
+}
+
+func (s *quoteOrderModelStub) HasUncertainByConfig(context.Context, int64) (bool, error) {
+	return s.hasUncertain, nil
+}
+
+func (s *quoteOrderModelStub) FindPage(context.Context, models.LiquidityQuoteOrderPageFilter, int64, int64, ...int64) ([]*models.TLiquidityQuoteOrder, int64, error) {
+	return s.pageRows, int64(len(s.pageRows)), nil
 }
 
 func (s *quoteOrderModelStub) Update(_ context.Context, row *models.TLiquidityQuoteOrder) error {
@@ -273,6 +301,95 @@ func TestLoadReferenceQuoteRejectsStaleRestFallback(t *testing.T) {
 	}, config, 10_000)
 	if err == nil {
 		t.Fatal("stale REST fallback must not be used")
+	}
+}
+
+func TestPrepareInternalQuoteCycleStopsWhenPriorQuoteIsUncertain(t *testing.T) {
+	client := &marketClientStub{statusResp: &market.GetTradingStatusResp{
+		Base: &common.RespBase{Code: 200},
+		Data: &market.GetTradingStatusData{IsOpen: true, Reason: "market_open"},
+	}}
+	orders := &quoteOrderModelStub{hasUncertain: true}
+	created, err := prepareInternalQuoteCycle(context.Background(), &svc.ServiceContext{
+		MarketClient:    client,
+		QuoteOrderModel: orders,
+	}, &models.TLiquiditySymbolConfig{
+		Id: 9, SymbolId: 11, Symbol: "USDCNY", ReferencePriceSource: "forex:GB:USDCNY",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if created {
+		t.Fatal("an unresolved quote must block the next quote cycle")
+	}
+}
+
+func TestProcessInternalQuotesTripsCircuitBreakerOnInsufficientBalance(t *testing.T) {
+	config := &models.TLiquiditySymbolConfig{
+		Id: 9, SymbolId: 11, Symbol: "USDCNY", ReferencePriceSource: "forex:GB:USDCNY",
+		Status: int64(liquidity.SymbolLiquidityStatus_SYMBOL_LIQUIDITY_STATUS_RUNNING),
+	}
+	configs := &symbolConfigModelStub{row: config}
+	quote := &models.TLiquidityQuoteOrder{
+		Id: 91, ConfigId: config.Id, ProviderId: 2, QuoteNo: "LQ91",
+		Status: int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_PENDING_SUBMIT),
+	}
+	orders := &quoteOrderModelStub{pageRows: []*models.TLiquidityQuoteOrder{quote}}
+	client := &marketClientStub{statusResp: &market.GetTradingStatusResp{
+		Base: &common.RespBase{Code: 200},
+		Data: &market.GetTradingStatusData{IsOpen: true, Reason: "market_open"},
+	}}
+	resp, err := processInternalQuotes(context.Background(), &svc.ServiceContext{
+		MarketClient:        client,
+		QuoteOrderModel:     orders,
+		SymbolConfigModel:   configs,
+		ProviderModel:       &providerModelStub{row: &models.TLiquidityProvider{Id: 2}},
+		InternalMarketMaker: &internalMarketMakerStub{placeErr: i18n.StatusError(context.Background(), i18n.InsufficientAvailableBalance)},
+	}, &liquidity.LiquidityTaskReq{BatchSize: 100}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if resp.FailedCount != 1 || quote.Status != int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_FAILED) {
+		t.Fatalf("quote should fail explicitly: resp=%+v quote=%+v", resp, quote)
+	}
+	if len(configs.updated) != 1 || config.Status != int64(liquidity.SymbolLiquidityStatus_SYMBOL_LIQUIDITY_STATUS_CIRCUIT_BREAKER) {
+		t.Fatalf("symbol configuration was not circuit-broken: %+v", config)
+	}
+}
+
+func TestProcessInternalQuotesTripsCircuitBreakerOnRejectedQuote(t *testing.T) {
+	config := &models.TLiquiditySymbolConfig{
+		Id: 10, SymbolId: 12, Symbol: "USDCNY", ReferencePriceSource: "forex:GB:USDCNY",
+		Status: int64(liquidity.SymbolLiquidityStatus_SYMBOL_LIQUIDITY_STATUS_RUNNING),
+	}
+	configs := &symbolConfigModelStub{row: config}
+	quote := &models.TLiquidityQuoteOrder{
+		Id: 101, ConfigId: config.Id, ProviderId: 2, QuoteNo: "LQ101",
+		Status: int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_PENDING_SUBMIT),
+	}
+	orders := &quoteOrderModelStub{pageRows: []*models.TLiquidityQuoteOrder{quote}}
+	client := &marketClientStub{statusResp: &market.GetTradingStatusResp{
+		Base: &common.RespBase{Code: 200},
+		Data: &market.GetTradingStatusData{IsOpen: true, Reason: "market_open"},
+	}}
+	resp, err := processInternalQuotes(context.Background(), &svc.ServiceContext{
+		MarketClient:      client,
+		QuoteOrderModel:   orders,
+		SymbolConfigModel: configs,
+		ProviderModel:     &providerModelStub{row: &models.TLiquidityProvider{Id: 2}},
+		InternalMarketMaker: &internalMarketMakerStub{placeResult: &provider.QuoteResult{
+			Status: int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_FAILED),
+			Reason: "asset freeze rejected: insufficient balance",
+		}},
+	}, &liquidity.LiquidityTaskReq{BatchSize: 100}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if resp.FailedCount != 1 || quote.Status != int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_FAILED) {
+		t.Fatalf("rejected quote should remain failed: resp=%+v quote=%+v", resp, quote)
+	}
+	if len(configs.updated) != 1 || config.Status != int64(liquidity.SymbolLiquidityStatus_SYMBOL_LIQUIDITY_STATUS_CIRCUIT_BREAKER) {
+		t.Fatalf("rejected quote did not circuit-break its configuration: %+v", config)
 	}
 }
 

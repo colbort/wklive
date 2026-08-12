@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"wklive/proto/common"
-	marketpb "wklive/proto/market"
+	"wklive/proto/market"
 )
 
 func TestWalletTypeForLiquidity(t *testing.T) {
@@ -17,19 +17,19 @@ func TestWalletTypeForLiquidity(t *testing.T) {
 		{
 			name:         "crypto spot uses spot wallet",
 			productType:  common.ProductType_PRODUCT_TYPE_SPOT,
-			categoryType: int64(marketpb.CategoryType_CATEGORY_TYPE_CRYPTO),
+			categoryType: int64(market.CategoryType_CATEGORY_TYPE_CRYPTO),
 			want:         common.WalletType_WALLET_TYPE_SPOT,
 		},
 		{
 			name:         "stock spot uses funding wallet",
 			productType:  common.ProductType_PRODUCT_TYPE_SPOT,
-			categoryType: int64(marketpb.CategoryType_CATEGORY_TYPE_STOCK),
+			categoryType: int64(market.CategoryType_CATEGORY_TYPE_STOCK),
 			want:         common.WalletType_WALLET_TYPE_FUNDING,
 		},
 		{
 			name:         "derivative uses contract wallet",
 			productType:  common.ProductType_PRODUCT_TYPE_DERIVATIVE,
-			categoryType: int64(marketpb.CategoryType_CATEGORY_TYPE_STOCK),
+			categoryType: int64(market.CategoryType_CATEGORY_TYPE_STOCK),
 			want:         common.WalletType_WALLET_TYPE_CONTRACT,
 		},
 	}

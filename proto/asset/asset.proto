@@ -502,7 +502,6 @@ message AddAssetReq {
   common.WalletType wallet_type = 3; // 钱包类型
   string coin = 4; // 币种
   string amount = 5; // 金额
-  string biz_no = 6; // 业务单号,建议传唯一值
   string remark = 7; // 备注
   int64 operator_id = 8; // 操作人ID
 }
@@ -513,7 +512,6 @@ message SubAssetReq {
   common.WalletType wallet_type = 3; // 钱包类型
   string coin = 4; // 币种
   string amount = 5; // 金额
-  string biz_no = 6; // 业务单号,建议传唯一值
   string remark = 7; // 备注
   int64 operator_id = 8; // 操作人ID
 }
@@ -524,7 +522,6 @@ message ManualFreezeAssetReq {
   common.WalletType wallet_type = 3; // 钱包类型
   string coin = 4; // 币种
   string amount = 5; // 金额
-  string biz_no = 6; // 业务单号
   string remark = 7; // 备注
   int64 operator_id = 8; // 操作人ID
 }
@@ -544,7 +541,6 @@ message ManualLockAssetReq {
   common.WalletType wallet_type = 3; // 钱包类型
   string coin = 4; // 币种
   string amount = 5; // 金额
-  string biz_no = 6; // 业务单号
   string remark = 7; // 备注
   int64 operator_id = 8; // 操作人ID
 }

@@ -276,7 +276,6 @@ type AddAssetReq {
 	walletType int64  `json:"walletType"`
 	coin       string `json:"coin"`
 	amount     string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"`
-	bizNo      string `json:"bizNo"`
 	remark     string `json:"remark,optional"`
 	operatorId int64  `json:"operatorId"`
 }
@@ -287,7 +286,6 @@ type SubAssetReq {
 	walletType int64  `json:"walletType"`
 	coin       string `json:"coin"`
 	amount     string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"`
-	bizNo      string `json:"bizNo"`
 	remark     string `json:"remark,optional"`
 	operatorId int64  `json:"operatorId"`
 }
@@ -298,7 +296,6 @@ type FreezeAssetReq {
 	walletType int64  `json:"walletType"`
 	coin       string `json:"coin"`
 	amount     string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"`
-	bizNo      string `json:"bizNo"`
 	remark     string `json:"remark,optional"`
 	operatorId int64  `json:"operatorId"`
 }
@@ -318,7 +315,6 @@ type LockAssetReq {
 	walletType int64  `json:"walletType"`
 	coin       string `json:"coin"`
 	amount     string `json:"amount" validate:"required,decimal_gt_zero,decimal_36_18"`
-	bizNo      string `json:"bizNo"`
 	remark     string `json:"remark,optional"`
 	operatorId int64  `json:"operatorId"`
 }

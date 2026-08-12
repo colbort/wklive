@@ -29,6 +29,8 @@ type (
 		FindByInternalIdentity(ctx context.Context, internalOrderID int64, internalOrderNo, clientOrderID string) (*TLiquidityQuoteOrder, error)
 		CancelActiveByConfig(ctx context.Context, configID int64, reason string, now, pendingStatus, canceledStatus, cancelingStatus int64) error
 		FindActiveByConfig(ctx context.Context, configID int64) ([]*TLiquidityQuoteOrder, error)
+		HasUncertainByConfig(ctx context.Context, configID int64) (bool, error)
+		FindRecoveryCandidates(ctx context.Context, filter LiquidityQuoteOrderPageFilter, limit int64) ([]*TLiquidityQuoteOrder, error)
 	}
 
 	customTLiquidityQuoteOrderModel struct {
@@ -53,6 +55,36 @@ func (m *customTLiquidityQuoteOrderModel) FindActiveByConfig(ctx context.Context
 		int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_PART_FILLED),
 		int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_CANCELING),
 	); err != nil {
+		return nil, err
+	}
+	return rows, nil
+}
+
+func (m *customTLiquidityQuoteOrderModel) HasUncertainByConfig(ctx context.Context, configID int64) (bool, error) {
+	var exists int64
+	query := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE config_id = ? AND status = ? LIMIT 1)", m.table)
+	if err := m.QueryRowNoCacheCtx(ctx, &exists, query,
+		configID,
+		int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_UNCERTAIN),
+	); err != nil {
+		return false, err
+	}
+	return exists == 1, nil
+}
+
+// FindRecoveryCandidates rotates unresolved orders by their last inspection
+// time. This prevents a permanently unresolved newest batch from starving older
+// rows on every scheduled recovery run.
+func (m *customTLiquidityQuoteOrderModel) FindRecoveryCandidates(ctx context.Context, filter LiquidityQuoteOrderPageFilter, limit int64) ([]*TLiquidityQuoteOrder, error) {
+	limit = sqlutil.NormalizeLimit(limit)
+	b := sqlutil.NewPageQueryBuilder()
+	b.EqInt64("config_id", filter.ConfigId)
+	b.EqInt64("provider_id", filter.ProviderId)
+	b.EqInt64("status", int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_UNCERTAIN))
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s ORDER BY update_times ASC, id ASC LIMIT ?", tLiquidityQuoteOrderRows, m.table, b.Where())
+	args := append(b.Args(), limit)
+	var rows []*TLiquidityQuoteOrder
+	if err := m.QueryRowsNoCacheCtx(ctx, &rows, query, args...); err != nil {
 		return nil, err
 	}
 	return rows, nil

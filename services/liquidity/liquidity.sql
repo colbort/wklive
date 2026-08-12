@@ -203,6 +203,7 @@ CREATE TABLE `t_liquidity_quote_order` (
   UNIQUE KEY `uk_quote_no` (`quote_no`),
   UNIQUE KEY `uk_client_order_id` (`client_order_id`),
   KEY `idx_status_id` (`status`, `id`),
+  KEY `idx_status_update_id` (`status`, `update_times`, `id`),
   KEY `idx_config_status_expire` (`config_id`, `status`, `expire_at`),
   KEY `idx_internal_order` (`internal_order_id`),
   KEY `idx_cycle_side_level` (`cycle_id`, `side`, `level_no`),

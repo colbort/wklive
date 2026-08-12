@@ -37,17 +37,20 @@ func (l *SubAssetLogic) SubAsset(in *asset.SubAssetReq) (*asset.ManualChangeAsse
 	} else if base != nil {
 		return &asset.ManualChangeAssetResp{Base: base}, nil
 	}
-
+	bizNo, err := generateManualAssetBizNo(l.ctx, l.svcCtx, manualSubBizNoPrefix)
+	if err != nil {
+		return nil, err
+	}
 	amount, err := conv.ParseDecimalField(in.Amount)
 	if err != nil {
 		l.Errorf("AdminSubAsset parse amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",
-			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizNo, err)
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, bizNo, err)
 		return nil, err
 	}
 	if !amount.IsPositive() {
 		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 		l.Errorf("AdminSubAsset validate amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",
-			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizNo, err)
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, bizNo, err)
 		return nil, err
 	}
 
@@ -76,7 +79,7 @@ func (l *SubAssetLogic) SubAsset(in *asset.SubAssetReq) (*asset.ManualChangeAsse
 			return err
 		}
 
-		flow := helpers.BuildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "manual_sub", "system", "manual_sub", 0, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_SUB, amount, before, after, in.Remark, ts)
+		flow := helpers.BuildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "manual_sub", "system", "manual_sub", 0, bizNo, asset.AssetOpType_ASSET_OP_TYPE_SUB, amount, before, after, in.Remark, ts)
 		if _, err := assetFlowModel.Insert(ctx, flow); err != nil {
 			return err
 		}
@@ -84,9 +87,9 @@ func (l *SubAssetLogic) SubAsset(in *asset.SubAssetReq) (*asset.ManualChangeAsse
 	})
 	if err != nil {
 		l.Errorf("AdminSubAsset transaction failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",
-			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizNo, err)
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, bizNo, err)
 		return nil, err
 	}
 
-	return &asset.ManualChangeAssetResp{Base: helper.OkResp(), Data: &asset.ManualChangeAssetData{BizNo: in.BizNo, Asset: helpers.ToUserAssetProto(after)}}, nil
+	return &asset.ManualChangeAssetResp{Base: helper.OkResp(), Data: &asset.ManualChangeAssetData{BizNo: bizNo, Asset: helpers.ToUserAssetProto(after)}}, nil
 }

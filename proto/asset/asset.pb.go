@@ -3753,7 +3753,6 @@ type AddAssetReq struct {
 	WalletType    common.WalletType      `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"` // 钱包类型
 	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`                                                       // 币种
 	Amount        string                 `protobuf:"bytes,5,opt,name=amount,proto3" json:"amount,omitempty"`                                                   // 金额
-	BizNo         string                 `protobuf:"bytes,6,opt,name=biz_no,json=bizNo,proto3" json:"biz_no,omitempty"`                                        // 业务单号,建议传唯一值
 	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`                                                   // 备注
 	OperatorId    int64                  `protobuf:"varint,8,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`                        // 操作人ID
 	unknownFields protoimpl.UnknownFields
@@ -3825,13 +3824,6 @@ func (x *AddAssetReq) GetAmount() string {
 	return ""
 }
 
-func (x *AddAssetReq) GetBizNo() string {
-	if x != nil {
-		return x.BizNo
-	}
-	return ""
-}
-
 func (x *AddAssetReq) GetRemark() string {
 	if x != nil {
 		return x.Remark
@@ -3853,7 +3845,6 @@ type SubAssetReq struct {
 	WalletType    common.WalletType      `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"` // 钱包类型
 	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`                                                       // 币种
 	Amount        string                 `protobuf:"bytes,5,opt,name=amount,proto3" json:"amount,omitempty"`                                                   // 金额
-	BizNo         string                 `protobuf:"bytes,6,opt,name=biz_no,json=bizNo,proto3" json:"biz_no,omitempty"`                                        // 业务单号,建议传唯一值
 	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`                                                   // 备注
 	OperatorId    int64                  `protobuf:"varint,8,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`                        // 操作人ID
 	unknownFields protoimpl.UnknownFields
@@ -3925,13 +3916,6 @@ func (x *SubAssetReq) GetAmount() string {
 	return ""
 }
 
-func (x *SubAssetReq) GetBizNo() string {
-	if x != nil {
-		return x.BizNo
-	}
-	return ""
-}
-
 func (x *SubAssetReq) GetRemark() string {
 	if x != nil {
 		return x.Remark
@@ -3953,7 +3937,6 @@ type ManualFreezeAssetReq struct {
 	WalletType    common.WalletType      `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"` // 钱包类型
 	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`                                                       // 币种
 	Amount        string                 `protobuf:"bytes,5,opt,name=amount,proto3" json:"amount,omitempty"`                                                   // 金额
-	BizNo         string                 `protobuf:"bytes,6,opt,name=biz_no,json=bizNo,proto3" json:"biz_no,omitempty"`                                        // 业务单号
 	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`                                                   // 备注
 	OperatorId    int64                  `protobuf:"varint,8,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`                        // 操作人ID
 	unknownFields protoimpl.UnknownFields
@@ -4021,13 +4004,6 @@ func (x *ManualFreezeAssetReq) GetCoin() string {
 func (x *ManualFreezeAssetReq) GetAmount() string {
 	if x != nil {
 		return x.Amount
-	}
-	return ""
-}
-
-func (x *ManualFreezeAssetReq) GetBizNo() string {
-	if x != nil {
-		return x.BizNo
 	}
 	return ""
 }
@@ -4137,7 +4113,6 @@ type ManualLockAssetReq struct {
 	WalletType    common.WalletType      `protobuf:"varint,3,opt,name=wallet_type,json=walletType,proto3,enum=common.WalletType" json:"wallet_type,omitempty"` // 钱包类型
 	Coin          string                 `protobuf:"bytes,4,opt,name=coin,proto3" json:"coin,omitempty"`                                                       // 币种
 	Amount        string                 `protobuf:"bytes,5,opt,name=amount,proto3" json:"amount,omitempty"`                                                   // 金额
-	BizNo         string                 `protobuf:"bytes,6,opt,name=biz_no,json=bizNo,proto3" json:"biz_no,omitempty"`                                        // 业务单号
 	Remark        string                 `protobuf:"bytes,7,opt,name=remark,proto3" json:"remark,omitempty"`                                                   // 备注
 	OperatorId    int64                  `protobuf:"varint,8,opt,name=operator_id,json=operatorId,proto3" json:"operator_id,omitempty"`                        // 操作人ID
 	unknownFields protoimpl.UnknownFields
@@ -4205,13 +4180,6 @@ func (x *ManualLockAssetReq) GetCoin() string {
 func (x *ManualLockAssetReq) GetAmount() string {
 	if x != nil {
 		return x.Amount
-	}
-	return ""
-}
-
-func (x *ManualLockAssetReq) GetBizNo() string {
-	if x != nil {
-		return x.BizNo
 	}
 	return ""
 }
@@ -7642,37 +7610,34 @@ const file_proto_asset_asset_proto_rawDesc = "" +
 	"\x04page\x18\b \x01(\v2\x0f.common.PageReqR\x04page\"`\n" +
 	"\x12PageAssetLocksResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x12$\n" +
-	"\x04data\x18\x02 \x03(\v2\x10.asset.AssetLockR\x04data\"\xf4\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x10.asset.AssetLockR\x04data\"\xdd\x01\n" +
 	"\vAddAssetReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x123\n" +
 	"\vwallet_type\x18\x03 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x04 \x01(\tR\x04coin\x12\x16\n" +
-	"\x06amount\x18\x05 \x01(\tR\x06amount\x12\x15\n" +
-	"\x06biz_no\x18\x06 \x01(\tR\x05bizNo\x12\x16\n" +
+	"\x06amount\x18\x05 \x01(\tR\x06amount\x12\x16\n" +
 	"\x06remark\x18\a \x01(\tR\x06remark\x12\x1f\n" +
 	"\voperator_id\x18\b \x01(\x03R\n" +
-	"operatorId\"\xf4\x01\n" +
+	"operatorId\"\xdd\x01\n" +
 	"\vSubAssetReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x123\n" +
 	"\vwallet_type\x18\x03 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x04 \x01(\tR\x04coin\x12\x16\n" +
-	"\x06amount\x18\x05 \x01(\tR\x06amount\x12\x15\n" +
-	"\x06biz_no\x18\x06 \x01(\tR\x05bizNo\x12\x16\n" +
+	"\x06amount\x18\x05 \x01(\tR\x06amount\x12\x16\n" +
 	"\x06remark\x18\a \x01(\tR\x06remark\x12\x1f\n" +
 	"\voperator_id\x18\b \x01(\x03R\n" +
-	"operatorId\"\xfd\x01\n" +
+	"operatorId\"\xe6\x01\n" +
 	"\x14ManualFreezeAssetReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x123\n" +
 	"\vwallet_type\x18\x03 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x04 \x01(\tR\x04coin\x12\x16\n" +
-	"\x06amount\x18\x05 \x01(\tR\x06amount\x12\x15\n" +
-	"\x06biz_no\x18\x06 \x01(\tR\x05bizNo\x12\x16\n" +
+	"\x06amount\x18\x05 \x01(\tR\x06amount\x12\x16\n" +
 	"\x06remark\x18\a \x01(\tR\x06remark\x12\x1f\n" +
 	"\voperator_id\x18\b \x01(\x03R\n" +
 	"operatorId\"\xba\x01\n" +
@@ -7683,15 +7648,14 @@ const file_proto_asset_asset_proto_rawDesc = "" +
 	"\x06biz_no\x18\x04 \x01(\tR\x05bizNo\x12\x16\n" +
 	"\x06remark\x18\x05 \x01(\tR\x06remark\x12\x1f\n" +
 	"\voperator_id\x18\x06 \x01(\x03R\n" +
-	"operatorId\"\xfb\x01\n" +
+	"operatorId\"\xe4\x01\n" +
 	"\x12ManualLockAssetReq\x12\x1b\n" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x03R\x06userId\x123\n" +
 	"\vwallet_type\x18\x03 \x01(\x0e2\x12.common.WalletTypeR\n" +
 	"walletType\x12\x12\n" +
 	"\x04coin\x18\x04 \x01(\tR\x04coin\x12\x16\n" +
-	"\x06amount\x18\x05 \x01(\tR\x06amount\x12\x15\n" +
-	"\x06biz_no\x18\x06 \x01(\tR\x05bizNo\x12\x16\n" +
+	"\x06amount\x18\x05 \x01(\tR\x06amount\x12\x16\n" +
 	"\x06remark\x18\a \x01(\tR\x06remark\x12\x1f\n" +
 	"\voperator_id\x18\b \x01(\x03R\n" +
 	"operatorId\"\xb4\x01\n" +

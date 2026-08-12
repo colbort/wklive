@@ -58,7 +58,7 @@ func freezeOrderAsset(
 		Remark:     "trade place order freeze",
 	})
 	if err != nil {
-		return "", &assetFreezeError{err: err}
+		return "", &assetFreezeError{err: err, definitive: helpers.IsDefinitiveAssetFreezeRejection(err)}
 	}
 	if resp == nil || resp.Base == nil {
 		return "", &assetFreezeError{err: i18n.StatusError(ctx, i18n.InternalServerError)}

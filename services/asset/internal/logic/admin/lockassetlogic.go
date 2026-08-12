@@ -37,17 +37,20 @@ func (l *LockAssetLogic) LockAsset(in *asset.ManualLockAssetReq) (*asset.ManualC
 	} else if base != nil {
 		return &asset.ManualChangeAssetResp{Base: base}, nil
 	}
-
+	bizNo, err := generateManualAssetBizNo(l.ctx, l.svcCtx, manualLockBizNoPrefix)
+	if err != nil {
+		return nil, err
+	}
 	amount, err := conv.ParseDecimalField(in.Amount)
 	if err != nil {
 		l.Errorf("AdminLockAsset parse amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",
-			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizNo, err)
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, bizNo, err)
 		return nil, err
 	}
 	if !amount.IsPositive() {
 		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 		l.Errorf("AdminLockAsset validate amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",
-			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizNo, err)
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, bizNo, err)
 		return nil, err
 	}
 
@@ -80,12 +83,12 @@ func (l *LockAssetLogic) LockAsset(in *asset.ManualLockAssetReq) (*asset.ManualC
 			return err
 		}
 
-		lock = helpers.BuildAssetLockRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "system", "manual_add", in.BizNo, in.Remark, amount, 0, 0, ts)
+		lock = helpers.BuildAssetLockRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "system", "manual_add", bizNo, in.Remark, amount, 0, 0, ts)
 		if _, err := assetLockModel.Insert(ctx, lock); err != nil {
 			return err
 		}
 
-		flow := helpers.BuildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "manual_add", "system", "manual_add", 0, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_LOCK, amount, before, after, in.Remark, ts)
+		flow := helpers.BuildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "manual_add", "system", "manual_add", 0, bizNo, asset.AssetOpType_ASSET_OP_TYPE_LOCK, amount, before, after, in.Remark, ts)
 		if _, err := assetFlowModel.Insert(ctx, flow); err != nil {
 			return err
 		}
@@ -93,9 +96,9 @@ func (l *LockAssetLogic) LockAsset(in *asset.ManualLockAssetReq) (*asset.ManualC
 	})
 	if err != nil {
 		l.Errorf("AdminLockAsset transaction failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",
-			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizNo, err)
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, bizNo, err)
 		return nil, err
 	}
 
-	return &asset.ManualChangeAssetResp{Base: helper.OkResp(), Data: &asset.ManualChangeAssetData{BizNo: in.BizNo, Asset: helpers.ToUserAssetProto(after)}}, nil
+	return &asset.ManualChangeAssetResp{Base: helper.OkResp(), Data: &asset.ManualChangeAssetData{BizNo: bizNo, Asset: helpers.ToUserAssetProto(after)}}, nil
 }

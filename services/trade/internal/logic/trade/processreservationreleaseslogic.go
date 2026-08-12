@@ -132,6 +132,9 @@ func (l *ProcessReservationReleasesLogic) executeClaimed(item *models.TTradeSett
 	}
 	resp, err := l.svcCtx.AssetClient.UnfreezeAssetByBizNo(l.ctx, &asset.UnfreezeAssetByBizNoReq{TenantId: item.TenantId, TargetBizType: asset.BizType_BIZ_TYPE_TRADE, TargetBizNo: item.ReservationNo, Amount: item.Amount.String(), BizType: asset.BizType_BIZ_TYPE_TRADE, SceneType: asset.SceneType_SCENE_TYPE_CANCEL_ORDER, BizId: item.OrderId, BizNo: item.InstructionNo, Remark: "trade order reservation release"})
 	if err != nil {
+		if i18n.IsStatusError(err, i18n.FreezeRecordNotFound) {
+			return l.markMissingFreezeSucceeded(item)
+		}
 		return err
 	}
 	if resp == nil || resp.Base == nil {
@@ -141,6 +144,49 @@ func (l *ProcessReservationReleasesLogic) executeClaimed(item *models.TTradeSett
 		return i18n.StatusError(l.ctx, resp.Base.Code)
 	}
 	return l.markSucceeded(item)
+}
+
+func (l *ProcessReservationReleasesLogic) markMissingFreezeSucceeded(item *models.TTradeSettlementInstruction) error {
+	now := utils.NowMillis()
+	return l.svcCtx.TransactionModel.Transact(l.ctx, func(ctx context.Context, tx *models.TransactionModels) error {
+		instructionModel := tx.TradeSettlementInstruction
+		reservationModel := tx.TradeAssetReservation
+		current, err := instructionModel.FindOneForUpdate(ctx, item.Id)
+		if err != nil {
+			return err
+		}
+		if current.Status == int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS) {
+			return nil
+		}
+		if !settlementInstructionLeaseOwned(current, item) {
+			return fmt.Errorf("reservation release instruction is not processing")
+		}
+		reservation, err := reservationModel.FindOneByReservationNoForUpdate(ctx, item.TenantId, item.ReservationNo)
+		if err != nil {
+			return err
+		}
+		if reservation.ConsumedAmount.IsPositive() {
+			return fmt.Errorf("asset freeze is missing after reservation consumption")
+		}
+		reservation.Status = int64(trade.AssetReservationStatus_ASSET_RESERVATION_STATUS_FAILED)
+		reservation.ReleasedAmount = reservation.ReservedAmount
+		reservation.NextRetryAt = 0
+		reservation.LastErrorMsg = "asset freeze record not found; no funds were frozen"
+		reservation.UpdateTimes = now
+		reservation.Version++
+		if err := reservationModel.Update(ctx, reservation); err != nil {
+			return err
+		}
+		current.Status = int64(trade.SettlementInstructionStatus_SETTLEMENT_INSTRUCTION_STATUS_SUCCESS)
+		current.NextRetryAt = 0
+		current.LastErrorMsg = "asset freeze record not found; treated as no-op release"
+		current.UpdateTimes = now
+		if err := instructionModel.Update(ctx, current); err != nil {
+			return err
+		}
+		_, err = finalizeOrderTermination(ctx, tx, item.OrderId, now)
+		return err
+	})
 }
 
 func (l *ProcessReservationReleasesLogic) markSucceeded(item *models.TTradeSettlementInstruction) error {

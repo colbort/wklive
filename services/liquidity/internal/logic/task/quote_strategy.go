@@ -38,6 +38,11 @@ var tradingStatusLogs = struct {
 	entries map[int64]tradingStatusLogEntry
 }{entries: make(map[int64]tradingStatusLogEntry)}
 
+var uncertainQuoteLogs = struct {
+	sync.Mutex
+	entries map[int64]time.Time
+}{entries: make(map[int64]time.Time)}
+
 func prepareInternalQuoteCycles(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.LiquidityTaskReq) (int64, int64, error) {
 	limit := int64(in.BatchSize)
 	if limit <= 0 {
@@ -68,6 +73,14 @@ func prepareInternalQuoteCycle(ctx context.Context, svcCtx *svc.ServiceContext, 
 		return false, err
 	}
 	if !open {
+		return false, nil
+	}
+	hasUncertain, err := svcCtx.QuoteOrderModel.HasUncertainByConfig(ctx, config.Id)
+	if err != nil {
+		return false, err
+	}
+	if hasUncertain {
+		logUncertainQuoteBackpressure(ctx, config)
 		return false, nil
 	}
 	latest, err := svcCtx.QuoteCycleModel.FindLatestByConfig(ctx, config.Id)
@@ -138,6 +151,22 @@ func prepareInternalQuoteCycle(ctx context.Context, svcCtx *svc.ServiceContext, 
 		}
 	}
 	return true, nil
+}
+
+func logUncertainQuoteBackpressure(ctx context.Context, config *models.TLiquiditySymbolConfig) {
+	now := time.Now()
+	uncertainQuoteLogs.Lock()
+	last := uncertainQuoteLogs.entries[config.Id]
+	if now.Sub(last) < tradingStatusLogInterval {
+		uncertainQuoteLogs.Unlock()
+		return
+	}
+	uncertainQuoteLogs.entries[config.Id] = now
+	uncertainQuoteLogs.Unlock()
+	logx.WithContext(ctx).Errorf(
+		"skip liquidity quote cycle while prior quote outcome is uncertain: config_id=%d symbol_id=%d symbol=%s",
+		config.Id, config.SymbolId, config.Symbol,
+	)
 }
 
 func loadReferenceQuoteOrCancel(ctx context.Context, svcCtx *svc.ServiceContext, config *models.TLiquiditySymbolConfig, targetTime int64) (*referenceQuote, error) {

@@ -42,20 +42,30 @@ func (l *ReportQuoteOrderStateLogic) ReportQuoteOrderState(in *liquidity.ReportQ
 		return nil, fmt.Errorf("filled_qty is invalid")
 	}
 	switch trade.OrderStatus(in.OrderStatus) {
+	case trade.OrderStatus_ORDER_STATUS_FREEZING:
+		row.Status = int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_UNCERTAIN)
+		row.LastErrorMsg = "trade order is still freezing assets"
 	case trade.OrderStatus_ORDER_STATUS_PENDING:
 		row.Status = int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_OPEN)
+		row.LastErrorMsg = ""
 	case trade.OrderStatus_ORDER_STATUS_PART_FILLED:
 		row.Status = int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_PART_FILLED)
+		row.LastErrorMsg = ""
 	case trade.OrderStatus_ORDER_STATUS_FILLED:
 		row.Status = int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_FILLED)
+		row.LastErrorMsg = ""
 	case trade.OrderStatus_ORDER_STATUS_CANCELING:
 		row.Status = int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_CANCELING)
+		row.LastErrorMsg = ""
 	case trade.OrderStatus_ORDER_STATUS_CANCELED, trade.OrderStatus_ORDER_STATUS_EXPIRED:
 		row.Status = int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_CANCELED)
+		row.LastErrorMsg = ""
 	case trade.OrderStatus_ORDER_STATUS_REJECTED:
 		row.Status = int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_FAILED)
+		row.LastErrorMsg = ""
 	default:
 		row.Status = int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_UNCERTAIN)
+		row.LastErrorMsg = fmt.Sprintf("unmapped trade order status: %s(%d)", trade.OrderStatus(in.OrderStatus).String(), in.OrderStatus)
 	}
 	row.InternalOrderId, row.InternalOrderNo = in.InternalOrderId, strings.TrimSpace(in.InternalOrderNo)
 	row.FilledQty, row.CancelReason = filled, strings.TrimSpace(in.Reason)

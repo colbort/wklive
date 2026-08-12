@@ -37,17 +37,20 @@ func (l *FreezeAssetLogic) FreezeAsset(in *asset.ManualFreezeAssetReq) (*asset.M
 	} else if base != nil {
 		return &asset.ManualChangeAssetResp{Base: base}, nil
 	}
-
+	bizNo, err := generateManualAssetBizNo(l.ctx, l.svcCtx, manualFreezeBizNoPrefix)
+	if err != nil {
+		return nil, err
+	}
 	amount, err := conv.ParseDecimalField(in.Amount)
 	if err != nil {
 		l.Errorf("AdminFreezeAsset parse amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",
-			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizNo, err)
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, bizNo, err)
 		return nil, err
 	}
 	if !amount.IsPositive() {
 		err := i18n.StatusError(l.ctx, i18n.AmountMustBePositive)
 		l.Errorf("AdminFreezeAsset validate amount failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",
-			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizNo, err)
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, bizNo, err)
 		return nil, err
 	}
 
@@ -80,12 +83,12 @@ func (l *FreezeAssetLogic) FreezeAsset(in *asset.ManualFreezeAssetReq) (*asset.M
 			return err
 		}
 
-		freeze = helpers.BuildAssetFreezeRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "system", "manual_add", in.BizNo, in.Remark, amount, 0, ts)
+		freeze = helpers.BuildAssetFreezeRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "system", "manual_add", bizNo, in.Remark, amount, 0, ts)
 		if _, err := assetFreezeModel.Insert(ctx, freeze); err != nil {
 			return err
 		}
 
-		flow := helpers.BuildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "manual_add", "system", "manual_add", 0, in.BizNo, asset.AssetOpType_ASSET_OP_TYPE_FREEZE, amount, before, after, in.Remark, ts)
+		flow := helpers.BuildAssetFlowRecord(l.svcCtx, ctx, in.TenantId, in.UserId, int64(in.WalletType), in.Coin, "manual_add", "system", "manual_add", 0, bizNo, asset.AssetOpType_ASSET_OP_TYPE_FREEZE, amount, before, after, in.Remark, ts)
 		if _, err := assetFlowModel.Insert(ctx, flow); err != nil {
 			return err
 		}
@@ -93,9 +96,9 @@ func (l *FreezeAssetLogic) FreezeAsset(in *asset.ManualFreezeAssetReq) (*asset.M
 	})
 	if err != nil {
 		l.Errorf("AdminFreezeAsset transaction failed, tenantId=%d userId=%d walletType=%d coin=%s amount=%s bizNo=%s err=%v",
-			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, in.BizNo, err)
+			in.TenantId, in.UserId, in.WalletType, in.Coin, in.Amount, bizNo, err)
 		return nil, err
 	}
 
-	return &asset.ManualChangeAssetResp{Base: helper.OkResp(), Data: &asset.ManualChangeAssetData{BizNo: in.BizNo, Asset: helpers.ToUserAssetProto(after)}}, nil
+	return &asset.ManualChangeAssetResp{Base: helper.OkResp(), Data: &asset.ManualChangeAssetData{BizNo: bizNo, Asset: helpers.ToUserAssetProto(after)}}, nil
 }

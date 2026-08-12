@@ -15,7 +15,7 @@ import (
 	"wklive/common/utils"
 	"wklive/proto/asset"
 	"wklive/proto/common"
-	marketpb "wklive/proto/market"
+	pb "wklive/proto/market"
 	"wklive/proto/trade"
 	"wklive/services/trade/internal/domain/contractmath"
 	"wklive/services/trade/internal/svc"
@@ -413,7 +413,7 @@ func (l *ProcessSecondsSettlementsLogic) findAuthoritativeSnapshotInArchive(auth
 	if l.svcCtx.MarketClient == nil {
 		return nil, errors.New("market archive client is not configured")
 	}
-	resp, err := l.svcCtx.MarketClient.GetAuthoritativeSnapshot(l.ctx, &marketpb.GetAuthoritativeSnapshotReq{
+	resp, err := l.svcCtx.MarketClient.GetAuthoritativeSnapshot(l.ctx, &pb.GetAuthoritativeSnapshotReq{
 		Authority:     authority,
 		SnapshotKind:  kind,
 		CategoryCode:  category,

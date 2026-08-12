@@ -34,20 +34,6 @@
         <el-button v-perm="'asset:user-asset:add'" type="primary" @click="openChangeDialog('add')">
           {{ t('common.add') }}
         </el-button>
-        <el-button v-perm="'asset:user-asset:sub'" type="warning" @click="openChangeDialog('sub')">
-          {{ t('asset.subAsset') }}
-        </el-button>
-        <el-button v-perm="'asset:freeze:add'" type="primary" @click="openChangeDialog('freeze')">
-          {{ t('asset.freezeAsset') }}
-        </el-button>
-        <el-button
-          v-perm="'asset:lock:add'"
-          type="primary"
-          plain
-          @click="openChangeDialog('lock')"
-        >
-          {{ t('asset.lockAsset') }}
-        </el-button>
       </template>
     </CrudQueryCard>
 
@@ -119,18 +105,38 @@
         <el-table-column
           :label="t('common.actions')"
           align="center"
-          width="120"
+          width="100"
           fixed="right"
         >
           <template #default="{ row }">
-            <el-button
-              v-perm="'asset:user-asset:detail'"
-              link
-              type="primary"
-              @click="showDetail(row)"
+            <el-dropdown
+              trigger="click"
+              @command="handleRowActionCommand($event, row)"
             >
-              {{ t('asset.detail') }}
-            </el-button>
+              <el-button link type="primary">
+                {{ t('common.actions') }}
+                <el-icon class="el-icon--right"><ArrowDown /></el-icon>
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item v-perm="'asset:user-asset:detail'" command="detail">
+                    {{ t('asset.detail') }}
+                  </el-dropdown-item>
+                  <el-dropdown-item v-perm="'asset:user-asset:add'" command="add">
+                    {{ t('asset.addAsset') }}
+                  </el-dropdown-item>
+                  <el-dropdown-item v-perm="'asset:user-asset:sub'" command="sub">
+                    {{ t('asset.subAsset') }}
+                  </el-dropdown-item>
+                  <el-dropdown-item v-perm="'asset:freeze:add'" command="freeze">
+                    {{ t('asset.freezeAsset') }}
+                  </el-dropdown-item>
+                  <el-dropdown-item v-perm="'asset:lock:add'" command="lock">
+                    {{ t('asset.lockAsset') }}
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
@@ -149,17 +155,36 @@
     <el-dialog v-model="changeVisible" :title="changeTitle" width="680px">
       <el-form label-width="100px">
         <el-form-item :label="t('asset.tenantId')" required>
+          <el-input
+            v-if="changeIdentityLocked"
+            :model-value="String(changeForm.tenantId)"
+            disabled
+          />
           <TenantSelect
+            v-else
             v-model="changeForm.tenantId"
             style="width: 100%"
             @change="changeForm.userId = 0"
           />
         </el-form-item>
         <el-form-item :label="t('asset.userId')">
-          <UserSelect v-model="changeForm.userId" :tenant-id="changeForm.tenantId || undefined" />
+          <el-input
+            v-if="changeIdentityLocked"
+            :model-value="String(changeForm.userId)"
+            disabled
+          />
+          <UserSelect
+            v-else
+            v-model="changeForm.userId"
+            :tenant-id="changeForm.tenantId || undefined"
+          />
         </el-form-item>
         <el-form-item :label="t('asset.walletType')">
-          <el-select v-model="changeForm.walletType" style="width: 100%">
+          <el-select
+            v-model="changeForm.walletType"
+            :disabled="changeIdentityLocked"
+            style="width: 100%"
+          >
             <el-option
               v-for="item in walletTypeFormOptions"
               :key="item.value"
@@ -169,13 +194,10 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="t('asset.coin')">
-          <el-input v-model="changeForm.coin" />
+          <el-input v-model="changeForm.coin" :disabled="changeIdentityLocked" />
         </el-form-item>
         <el-form-item :label="t('asset.amount')">
           <el-input v-model="changeForm.amount" />
-        </el-form-item>
-        <el-form-item :label="t('asset.bizNo')">
-          <el-input v-model="changeForm.bizNo" />
         </el-form-item>
         <el-form-item :label="t('asset.operatorId')">
           <el-input-number v-model="changeForm.operatorId" :min="0" :precision="0" />
@@ -251,6 +273,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import { ArrowDown } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
 import Decimal from 'decimal.js'
 import { useOptions, usePagination } from '@/composables'
@@ -272,6 +295,7 @@ const detailVisible = ref(false)
 const detailData = ref<AssetUserAsset | null>(null)
 const changeVisible = ref(false)
 const changeMode = ref<'add' | 'sub' | 'freeze' | 'lock'>('add')
+const changeIdentityLocked = ref(false)
 const { formOptionItems, optionItems, optionLabel } = useOptions(optionGroups)
 
 const query = reactive({
@@ -289,7 +313,6 @@ const changeForm = reactive({
   walletType: 1,
   coin: '',
   amount: '',
-  bizNo: '',
   operatorId: 0,
   remark: '',
 })
@@ -364,17 +387,45 @@ async function showDetail(row: AssetUserAsset) {
 
 function openChangeDialog(mode: typeof changeMode.value) {
   changeMode.value = mode
+  changeIdentityLocked.value = false
   Object.assign(changeForm, {
     tenantId: query.tenantId || 0,
     userId: query.userId || 0,
     walletType: query.walletType || 1,
     coin: query.coin || '',
     amount: '',
-    bizNo: '',
     operatorId: 0,
     remark: '',
   })
   changeVisible.value = true
+}
+
+function openRowChangeDialog(
+  mode: typeof changeMode.value,
+  row: AssetUserAsset,
+) {
+  changeMode.value = mode
+  changeIdentityLocked.value = true
+  Object.assign(changeForm, {
+    tenantId: Number(row.tenantId),
+    userId: Number(row.userId),
+    walletType: Number(row.walletType),
+    coin: String(row.coin || ''),
+    amount: '',
+    operatorId: 0,
+    remark: '',
+  })
+  changeVisible.value = true
+}
+
+function handleRowActionCommand(command: string | number | object, row: AssetUserAsset) {
+  const mode = String(command)
+  if (mode === 'detail') {
+    showDetail(row)
+    return
+  }
+  if (mode !== 'add' && mode !== 'sub' && mode !== 'freeze' && mode !== 'lock') return
+  openRowChangeDialog(mode, row)
 }
 
 async function submitChange() {

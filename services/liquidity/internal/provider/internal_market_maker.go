@@ -19,6 +19,7 @@ type QuoteResult struct {
 	Status          int64
 	FilledQty       decimal.Decimal
 	Reason          string
+	LastErrorMsg    string
 }
 
 type InternalMarketMaker interface {
@@ -100,7 +101,12 @@ func normalizeQuote(o *trade.TradeOrder) (*QuoteResult, error) {
 		return nil, fmt.Errorf("invalid filled quantity from trade service: %w", err)
 	}
 	status := liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_UNCERTAIN
+	lastErrorMsg := ""
 	switch o.Status {
+	case trade.OrderStatus_ORDER_STATUS_FREEZING:
+		// Trade has persisted the order but has not completed asset reservation yet.
+		// The outcome is unresolved, so it must not be submitted again.
+		lastErrorMsg = "trade order is still freezing assets"
 	case trade.OrderStatus_ORDER_STATUS_PENDING:
 		status = liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_OPEN
 	case trade.OrderStatus_ORDER_STATUS_PART_FILLED:
@@ -113,6 +119,16 @@ func normalizeQuote(o *trade.TradeOrder) (*QuoteResult, error) {
 		status = liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_CANCELED
 	case trade.OrderStatus_ORDER_STATUS_REJECTED:
 		status = liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_FAILED
+		lastErrorMsg = o.CancelReason
+	default:
+		lastErrorMsg = fmt.Sprintf("unmapped trade order status: %s(%d)", o.Status.String(), o.Status)
 	}
-	return &QuoteResult{InternalOrderID: o.Id, OrderNo: o.OrderNo, Status: int64(status), FilledQty: filled, Reason: o.CancelReason}, nil
+	return &QuoteResult{
+		InternalOrderID: o.Id,
+		OrderNo:         o.OrderNo,
+		Status:          int64(status),
+		FilledQty:       filled,
+		Reason:          o.CancelReason,
+		LastErrorMsg:    lastErrorMsg,
+	}, nil
 }

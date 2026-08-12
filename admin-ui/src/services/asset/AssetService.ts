@@ -343,7 +343,6 @@ export type AddAssetReq = {
   walletType: number // 钱包类型
   coin: string // 币种
   amount: string // 变更金额
-  bizNo: string // 业务单号
   remark?: string // 备注
   operatorId: number // 操作人ID
 }
