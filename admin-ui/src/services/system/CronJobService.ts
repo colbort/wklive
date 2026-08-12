@@ -96,6 +96,7 @@ export type SysCronJobLogItem = {
 export type SysCronJobLogListReq = {
   cursor?: number
   limit?: number
+  count?: number
   jobId?: number
   jobName?: string
   invokeTarget?: string

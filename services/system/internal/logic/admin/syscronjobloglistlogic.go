@@ -32,7 +32,7 @@ func (l *SysCronJobLogListLogic) SysCronJobLogList(in *system.SysCronJobLogListR
 		JobName:      in.JobName,
 		InvokeTarget: in.InvokeTarget,
 		Status:       in.Status,
-	}, in.Page.Cursor, in.Page.Limit)
+	}, in.Page.Cursor, in.Page.Limit, pageutil.Count(in.Page))
 	if err != nil {
 		return nil, err
 	}

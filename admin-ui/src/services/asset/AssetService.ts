@@ -255,6 +255,7 @@ export type GetUserAssetDetailReq = {
 export type PageAssetFlowsReq = {
   cursor?: number // 游标
   limit?: number // 每页条数
+  count?: number // 已知总数
   tenantId?: number // 租户ID
   userId?: number // 用户ID
   walletType?: number // 钱包类型
@@ -268,6 +269,7 @@ export type PageAssetFlowsReq = {
 export type PageAssetFreezesReq = {
   cursor?: number // 游标
   limit?: number // 每页条数
+  count?: number // 已知总数
   tenantId?: number // 租户ID
   userId?: number // 用户ID
   walletType?: number // 钱包类型

@@ -22,66 +22,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type PageMeta struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	NextCursor    int64                  `protobuf:"varint,1,opt,name=next_cursor,json=nextCursor,proto3" json:"next_cursor,omitempty"`
-	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
-	HasMore       bool                   `protobuf:"varint,3,opt,name=has_more,json=hasMore,proto3" json:"has_more,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *PageMeta) Reset() {
-	*x = PageMeta{}
-	mi := &file_proto_liquidity_model_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PageMeta) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PageMeta) ProtoMessage() {}
-
-func (x *PageMeta) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_model_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PageMeta.ProtoReflect.Descriptor instead.
-func (*PageMeta) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *PageMeta) GetNextCursor() int64 {
-	if x != nil {
-		return x.NextCursor
-	}
-	return 0
-}
-
-func (x *PageMeta) GetTotal() int64 {
-	if x != nil {
-		return x.Total
-	}
-	return 0
-}
-
-func (x *PageMeta) GetHasMore() bool {
-	if x != nil {
-		return x.HasMore
-	}
-	return false
-}
-
 type LiquidityProvider struct {
 	state                protoimpl.MessageState `protogen:"open.v1"`
 	Id                   int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -108,7 +48,7 @@ type LiquidityProvider struct {
 
 func (x *LiquidityProvider) Reset() {
 	*x = LiquidityProvider{}
-	mi := &file_proto_liquidity_model_proto_msgTypes[1]
+	mi := &file_proto_liquidity_model_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -120,7 +60,7 @@ func (x *LiquidityProvider) String() string {
 func (*LiquidityProvider) ProtoMessage() {}
 
 func (x *LiquidityProvider) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_model_proto_msgTypes[1]
+	mi := &file_proto_liquidity_model_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -133,7 +73,7 @@ func (x *LiquidityProvider) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LiquidityProvider.ProtoReflect.Descriptor instead.
 func (*LiquidityProvider) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{1}
+	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *LiquidityProvider) GetId() int64 {
@@ -307,7 +247,7 @@ type LiquiditySymbolConfig struct {
 
 func (x *LiquiditySymbolConfig) Reset() {
 	*x = LiquiditySymbolConfig{}
-	mi := &file_proto_liquidity_model_proto_msgTypes[2]
+	mi := &file_proto_liquidity_model_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -319,7 +259,7 @@ func (x *LiquiditySymbolConfig) String() string {
 func (*LiquiditySymbolConfig) ProtoMessage() {}
 
 func (x *LiquiditySymbolConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_model_proto_msgTypes[2]
+	mi := &file_proto_liquidity_model_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -332,7 +272,7 @@ func (x *LiquiditySymbolConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LiquiditySymbolConfig.ProtoReflect.Descriptor instead.
 func (*LiquiditySymbolConfig) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{2}
+	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *LiquiditySymbolConfig) GetId() int64 {
@@ -613,7 +553,7 @@ type LiquidityStrategyLevel struct {
 
 func (x *LiquidityStrategyLevel) Reset() {
 	*x = LiquidityStrategyLevel{}
-	mi := &file_proto_liquidity_model_proto_msgTypes[3]
+	mi := &file_proto_liquidity_model_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -625,7 +565,7 @@ func (x *LiquidityStrategyLevel) String() string {
 func (*LiquidityStrategyLevel) ProtoMessage() {}
 
 func (x *LiquidityStrategyLevel) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_model_proto_msgTypes[3]
+	mi := &file_proto_liquidity_model_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -638,7 +578,7 @@ func (x *LiquidityStrategyLevel) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LiquidityStrategyLevel.ProtoReflect.Descriptor instead.
 func (*LiquidityStrategyLevel) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{3}
+	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *LiquidityStrategyLevel) GetId() int64 {
@@ -744,7 +684,7 @@ type LiquidityQuoteCycle struct {
 
 func (x *LiquidityQuoteCycle) Reset() {
 	*x = LiquidityQuoteCycle{}
-	mi := &file_proto_liquidity_model_proto_msgTypes[4]
+	mi := &file_proto_liquidity_model_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -756,7 +696,7 @@ func (x *LiquidityQuoteCycle) String() string {
 func (*LiquidityQuoteCycle) ProtoMessage() {}
 
 func (x *LiquidityQuoteCycle) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_model_proto_msgTypes[4]
+	mi := &file_proto_liquidity_model_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -769,7 +709,7 @@ func (x *LiquidityQuoteCycle) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LiquidityQuoteCycle.ProtoReflect.Descriptor instead.
 func (*LiquidityQuoteCycle) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{4}
+	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *LiquidityQuoteCycle) GetId() int64 {
@@ -927,7 +867,7 @@ type LiquidityQuoteOrder struct {
 
 func (x *LiquidityQuoteOrder) Reset() {
 	*x = LiquidityQuoteOrder{}
-	mi := &file_proto_liquidity_model_proto_msgTypes[5]
+	mi := &file_proto_liquidity_model_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -939,7 +879,7 @@ func (x *LiquidityQuoteOrder) String() string {
 func (*LiquidityQuoteOrder) ProtoMessage() {}
 
 func (x *LiquidityQuoteOrder) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_model_proto_msgTypes[5]
+	mi := &file_proto_liquidity_model_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -952,7 +892,7 @@ func (x *LiquidityQuoteOrder) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LiquidityQuoteOrder.ProtoReflect.Descriptor instead.
 func (*LiquidityQuoteOrder) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{5}
+	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *LiquidityQuoteOrder) GetId() int64 {
@@ -1142,7 +1082,7 @@ type LiquidityExternalOrder struct {
 
 func (x *LiquidityExternalOrder) Reset() {
 	*x = LiquidityExternalOrder{}
-	mi := &file_proto_liquidity_model_proto_msgTypes[6]
+	mi := &file_proto_liquidity_model_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1154,7 +1094,7 @@ func (x *LiquidityExternalOrder) String() string {
 func (*LiquidityExternalOrder) ProtoMessage() {}
 
 func (x *LiquidityExternalOrder) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_model_proto_msgTypes[6]
+	mi := &file_proto_liquidity_model_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1167,7 +1107,7 @@ func (x *LiquidityExternalOrder) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LiquidityExternalOrder.ProtoReflect.Descriptor instead.
 func (*LiquidityExternalOrder) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{6}
+	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *LiquidityExternalOrder) GetId() int64 {
@@ -1422,7 +1362,7 @@ type LiquidityExternalFill struct {
 
 func (x *LiquidityExternalFill) Reset() {
 	*x = LiquidityExternalFill{}
-	mi := &file_proto_liquidity_model_proto_msgTypes[7]
+	mi := &file_proto_liquidity_model_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1434,7 +1374,7 @@ func (x *LiquidityExternalFill) String() string {
 func (*LiquidityExternalFill) ProtoMessage() {}
 
 func (x *LiquidityExternalFill) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_model_proto_msgTypes[7]
+	mi := &file_proto_liquidity_model_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1447,7 +1387,7 @@ func (x *LiquidityExternalFill) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LiquidityExternalFill.ProtoReflect.Descriptor instead.
 func (*LiquidityExternalFill) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{7}
+	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *LiquidityExternalFill) GetId() int64 {
@@ -1617,7 +1557,7 @@ type LiquidityHedgeTask struct {
 
 func (x *LiquidityHedgeTask) Reset() {
 	*x = LiquidityHedgeTask{}
-	mi := &file_proto_liquidity_model_proto_msgTypes[8]
+	mi := &file_proto_liquidity_model_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1629,7 +1569,7 @@ func (x *LiquidityHedgeTask) String() string {
 func (*LiquidityHedgeTask) ProtoMessage() {}
 
 func (x *LiquidityHedgeTask) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_model_proto_msgTypes[8]
+	mi := &file_proto_liquidity_model_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1642,7 +1582,7 @@ func (x *LiquidityHedgeTask) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LiquidityHedgeTask.ProtoReflect.Descriptor instead.
 func (*LiquidityHedgeTask) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{8}
+	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *LiquidityHedgeTask) GetId() int64 {
@@ -1809,7 +1749,7 @@ type LiquidityInventorySnapshot struct {
 
 func (x *LiquidityInventorySnapshot) Reset() {
 	*x = LiquidityInventorySnapshot{}
-	mi := &file_proto_liquidity_model_proto_msgTypes[9]
+	mi := &file_proto_liquidity_model_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1821,7 +1761,7 @@ func (x *LiquidityInventorySnapshot) String() string {
 func (*LiquidityInventorySnapshot) ProtoMessage() {}
 
 func (x *LiquidityInventorySnapshot) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_model_proto_msgTypes[9]
+	mi := &file_proto_liquidity_model_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1834,7 +1774,7 @@ func (x *LiquidityInventorySnapshot) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LiquidityInventorySnapshot.ProtoReflect.Descriptor instead.
 func (*LiquidityInventorySnapshot) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{9}
+	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *LiquidityInventorySnapshot) GetId() int64 {
@@ -2025,7 +1965,7 @@ type LiquidityRiskEvent struct {
 
 func (x *LiquidityRiskEvent) Reset() {
 	*x = LiquidityRiskEvent{}
-	mi := &file_proto_liquidity_model_proto_msgTypes[10]
+	mi := &file_proto_liquidity_model_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2037,7 +1977,7 @@ func (x *LiquidityRiskEvent) String() string {
 func (*LiquidityRiskEvent) ProtoMessage() {}
 
 func (x *LiquidityRiskEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_model_proto_msgTypes[10]
+	mi := &file_proto_liquidity_model_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2050,7 +1990,7 @@ func (x *LiquidityRiskEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LiquidityRiskEvent.ProtoReflect.Descriptor instead.
 func (*LiquidityRiskEvent) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{10}
+	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *LiquidityRiskEvent) GetId() int64 {
@@ -2210,7 +2150,7 @@ type LiquidityReconcileBatch struct {
 
 func (x *LiquidityReconcileBatch) Reset() {
 	*x = LiquidityReconcileBatch{}
-	mi := &file_proto_liquidity_model_proto_msgTypes[11]
+	mi := &file_proto_liquidity_model_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2222,7 +2162,7 @@ func (x *LiquidityReconcileBatch) String() string {
 func (*LiquidityReconcileBatch) ProtoMessage() {}
 
 func (x *LiquidityReconcileBatch) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_model_proto_msgTypes[11]
+	mi := &file_proto_liquidity_model_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2235,7 +2175,7 @@ func (x *LiquidityReconcileBatch) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LiquidityReconcileBatch.ProtoReflect.Descriptor instead.
 func (*LiquidityReconcileBatch) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{11}
+	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *LiquidityReconcileBatch) GetId() int64 {
@@ -2373,7 +2313,7 @@ type LiquidityReconcileDetail struct {
 
 func (x *LiquidityReconcileDetail) Reset() {
 	*x = LiquidityReconcileDetail{}
-	mi := &file_proto_liquidity_model_proto_msgTypes[12]
+	mi := &file_proto_liquidity_model_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2385,7 +2325,7 @@ func (x *LiquidityReconcileDetail) String() string {
 func (*LiquidityReconcileDetail) ProtoMessage() {}
 
 func (x *LiquidityReconcileDetail) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_liquidity_model_proto_msgTypes[12]
+	mi := &file_proto_liquidity_model_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2398,7 +2338,7 @@ func (x *LiquidityReconcileDetail) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LiquidityReconcileDetail.ProtoReflect.Descriptor instead.
 func (*LiquidityReconcileDetail) Descriptor() ([]byte, []int) {
-	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{12}
+	return file_proto_liquidity_model_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *LiquidityReconcileDetail) GetId() int64 {
@@ -2510,12 +2450,7 @@ var File_proto_liquidity_model_proto protoreflect.FileDescriptor
 
 const file_proto_liquidity_model_proto_rawDesc = "" +
 	"\n" +
-	"\x1bproto/liquidity/model.proto\x12\tliquidity\x1a\x19proto/common/common.proto\x1a\x1aproto/liquidity/enum.proto\"\\\n" +
-	"\bPageMeta\x12\x1f\n" +
-	"\vnext_cursor\x18\x01 \x01(\x03R\n" +
-	"nextCursor\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x03R\x05total\x12\x19\n" +
-	"\bhas_more\x18\x03 \x01(\bR\ahasMore\"\x83\x06\n" +
+	"\x1bproto/liquidity/model.proto\x12\tliquidity\x1a\x19proto/common/common.proto\x1a\x1aproto/liquidity/enum.proto\"\x83\x06\n" +
 	"\x11LiquidityProvider\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rprovider_code\x18\x03 \x01(\tR\fproviderCode\x12#\n" +
@@ -2849,82 +2784,81 @@ func file_proto_liquidity_model_proto_rawDescGZIP() []byte {
 	return file_proto_liquidity_model_proto_rawDescData
 }
 
-var file_proto_liquidity_model_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_proto_liquidity_model_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_proto_liquidity_model_proto_goTypes = []any{
-	(*PageMeta)(nil),                   // 0: liquidity.PageMeta
-	(*LiquidityProvider)(nil),          // 1: liquidity.LiquidityProvider
-	(*LiquiditySymbolConfig)(nil),      // 2: liquidity.LiquiditySymbolConfig
-	(*LiquidityStrategyLevel)(nil),     // 3: liquidity.LiquidityStrategyLevel
-	(*LiquidityQuoteCycle)(nil),        // 4: liquidity.LiquidityQuoteCycle
-	(*LiquidityQuoteOrder)(nil),        // 5: liquidity.LiquidityQuoteOrder
-	(*LiquidityExternalOrder)(nil),     // 6: liquidity.LiquidityExternalOrder
-	(*LiquidityExternalFill)(nil),      // 7: liquidity.LiquidityExternalFill
-	(*LiquidityHedgeTask)(nil),         // 8: liquidity.LiquidityHedgeTask
-	(*LiquidityInventorySnapshot)(nil), // 9: liquidity.LiquidityInventorySnapshot
-	(*LiquidityRiskEvent)(nil),         // 10: liquidity.LiquidityRiskEvent
-	(*LiquidityReconcileBatch)(nil),    // 11: liquidity.LiquidityReconcileBatch
-	(*LiquidityReconcileDetail)(nil),   // 12: liquidity.LiquidityReconcileDetail
-	(ProviderType)(0),                  // 13: liquidity.ProviderType
-	(ProviderEnvironment)(0),           // 14: liquidity.ProviderEnvironment
-	(ProviderStatus)(0),                // 15: liquidity.ProviderStatus
-	(HealthStatus)(0),                  // 16: liquidity.HealthStatus
-	(common.ProductType)(0),            // 17: common.ProductType
-	(common.ContractType)(0),           // 18: common.ContractType
-	(LiquidityMode)(0),                 // 19: liquidity.LiquidityMode
-	(common.YesNo)(0),                  // 20: common.YesNo
-	(SymbolLiquidityStatus)(0),         // 21: liquidity.SymbolLiquidityStatus
-	(common.Enable)(0),                 // 22: common.Enable
-	(QuoteCycleStatus)(0),              // 23: liquidity.QuoteCycleStatus
-	(common.Side)(0),                   // 24: common.Side
-	(QuoteOrderStatus)(0),              // 25: liquidity.QuoteOrderStatus
-	(ExternalOrderPurpose)(0),          // 26: liquidity.ExternalOrderPurpose
-	(ExternalOrderType)(0),             // 27: liquidity.ExternalOrderType
-	(ExternalTimeInForce)(0),           // 28: liquidity.ExternalTimeInForce
-	(ExternalOrderStatus)(0),           // 29: liquidity.ExternalOrderStatus
-	(ExternalFillSettlementStatus)(0),  // 30: liquidity.ExternalFillSettlementStatus
-	(HedgeTriggerType)(0),              // 31: liquidity.HedgeTriggerType
-	(HedgeStatus)(0),                   // 32: liquidity.HedgeStatus
-	(InventorySource)(0),               // 33: liquidity.InventorySource
-	(RiskLevel)(0),                     // 34: liquidity.RiskLevel
-	(RiskActionType)(0),                // 35: liquidity.RiskActionType
-	(RiskEventStatus)(0),               // 36: liquidity.RiskEventStatus
-	(ReconcileType)(0),                 // 37: liquidity.ReconcileType
-	(ReconcileStatus)(0),               // 38: liquidity.ReconcileStatus
-	(ReconcileDifferenceType)(0),       // 39: liquidity.ReconcileDifferenceType
-	(ReconcileDifferenceStatus)(0),     // 40: liquidity.ReconcileDifferenceStatus
+	(*LiquidityProvider)(nil),          // 0: liquidity.LiquidityProvider
+	(*LiquiditySymbolConfig)(nil),      // 1: liquidity.LiquiditySymbolConfig
+	(*LiquidityStrategyLevel)(nil),     // 2: liquidity.LiquidityStrategyLevel
+	(*LiquidityQuoteCycle)(nil),        // 3: liquidity.LiquidityQuoteCycle
+	(*LiquidityQuoteOrder)(nil),        // 4: liquidity.LiquidityQuoteOrder
+	(*LiquidityExternalOrder)(nil),     // 5: liquidity.LiquidityExternalOrder
+	(*LiquidityExternalFill)(nil),      // 6: liquidity.LiquidityExternalFill
+	(*LiquidityHedgeTask)(nil),         // 7: liquidity.LiquidityHedgeTask
+	(*LiquidityInventorySnapshot)(nil), // 8: liquidity.LiquidityInventorySnapshot
+	(*LiquidityRiskEvent)(nil),         // 9: liquidity.LiquidityRiskEvent
+	(*LiquidityReconcileBatch)(nil),    // 10: liquidity.LiquidityReconcileBatch
+	(*LiquidityReconcileDetail)(nil),   // 11: liquidity.LiquidityReconcileDetail
+	(ProviderType)(0),                  // 12: liquidity.ProviderType
+	(ProviderEnvironment)(0),           // 13: liquidity.ProviderEnvironment
+	(ProviderStatus)(0),                // 14: liquidity.ProviderStatus
+	(HealthStatus)(0),                  // 15: liquidity.HealthStatus
+	(common.ProductType)(0),            // 16: common.ProductType
+	(common.ContractType)(0),           // 17: common.ContractType
+	(LiquidityMode)(0),                 // 18: liquidity.LiquidityMode
+	(common.YesNo)(0),                  // 19: common.YesNo
+	(SymbolLiquidityStatus)(0),         // 20: liquidity.SymbolLiquidityStatus
+	(common.Enable)(0),                 // 21: common.Enable
+	(QuoteCycleStatus)(0),              // 22: liquidity.QuoteCycleStatus
+	(common.Side)(0),                   // 23: common.Side
+	(QuoteOrderStatus)(0),              // 24: liquidity.QuoteOrderStatus
+	(ExternalOrderPurpose)(0),          // 25: liquidity.ExternalOrderPurpose
+	(ExternalOrderType)(0),             // 26: liquidity.ExternalOrderType
+	(ExternalTimeInForce)(0),           // 27: liquidity.ExternalTimeInForce
+	(ExternalOrderStatus)(0),           // 28: liquidity.ExternalOrderStatus
+	(ExternalFillSettlementStatus)(0),  // 29: liquidity.ExternalFillSettlementStatus
+	(HedgeTriggerType)(0),              // 30: liquidity.HedgeTriggerType
+	(HedgeStatus)(0),                   // 31: liquidity.HedgeStatus
+	(InventorySource)(0),               // 32: liquidity.InventorySource
+	(RiskLevel)(0),                     // 33: liquidity.RiskLevel
+	(RiskActionType)(0),                // 34: liquidity.RiskActionType
+	(RiskEventStatus)(0),               // 35: liquidity.RiskEventStatus
+	(ReconcileType)(0),                 // 36: liquidity.ReconcileType
+	(ReconcileStatus)(0),               // 37: liquidity.ReconcileStatus
+	(ReconcileDifferenceType)(0),       // 38: liquidity.ReconcileDifferenceType
+	(ReconcileDifferenceStatus)(0),     // 39: liquidity.ReconcileDifferenceStatus
 }
 var file_proto_liquidity_model_proto_depIdxs = []int32{
-	13, // 0: liquidity.LiquidityProvider.provider_type:type_name -> liquidity.ProviderType
-	14, // 1: liquidity.LiquidityProvider.environment:type_name -> liquidity.ProviderEnvironment
-	15, // 2: liquidity.LiquidityProvider.status:type_name -> liquidity.ProviderStatus
-	16, // 3: liquidity.LiquidityProvider.last_health_status:type_name -> liquidity.HealthStatus
-	17, // 4: liquidity.LiquiditySymbolConfig.product_type:type_name -> common.ProductType
-	18, // 5: liquidity.LiquiditySymbolConfig.contract_type:type_name -> common.ContractType
-	19, // 6: liquidity.LiquiditySymbolConfig.liquidity_mode:type_name -> liquidity.LiquidityMode
-	20, // 7: liquidity.LiquiditySymbolConfig.self_trade_prevention:type_name -> common.YesNo
-	21, // 8: liquidity.LiquiditySymbolConfig.status:type_name -> liquidity.SymbolLiquidityStatus
-	22, // 9: liquidity.LiquidityStrategyLevel.enabled:type_name -> common.Enable
-	23, // 10: liquidity.LiquidityQuoteCycle.status:type_name -> liquidity.QuoteCycleStatus
-	24, // 11: liquidity.LiquidityQuoteOrder.side:type_name -> common.Side
-	25, // 12: liquidity.LiquidityQuoteOrder.status:type_name -> liquidity.QuoteOrderStatus
-	26, // 13: liquidity.LiquidityExternalOrder.purpose:type_name -> liquidity.ExternalOrderPurpose
-	24, // 14: liquidity.LiquidityExternalOrder.side:type_name -> common.Side
-	27, // 15: liquidity.LiquidityExternalOrder.order_type:type_name -> liquidity.ExternalOrderType
-	28, // 16: liquidity.LiquidityExternalOrder.time_in_force:type_name -> liquidity.ExternalTimeInForce
-	29, // 17: liquidity.LiquidityExternalOrder.status:type_name -> liquidity.ExternalOrderStatus
-	24, // 18: liquidity.LiquidityExternalFill.side:type_name -> common.Side
-	30, // 19: liquidity.LiquidityExternalFill.settlement_status:type_name -> liquidity.ExternalFillSettlementStatus
-	31, // 20: liquidity.LiquidityHedgeTask.trigger_type:type_name -> liquidity.HedgeTriggerType
-	24, // 21: liquidity.LiquidityHedgeTask.side:type_name -> common.Side
-	32, // 22: liquidity.LiquidityHedgeTask.status:type_name -> liquidity.HedgeStatus
-	33, // 23: liquidity.LiquidityInventorySnapshot.source:type_name -> liquidity.InventorySource
-	34, // 24: liquidity.LiquidityRiskEvent.risk_level:type_name -> liquidity.RiskLevel
-	35, // 25: liquidity.LiquidityRiskEvent.action_type:type_name -> liquidity.RiskActionType
-	36, // 26: liquidity.LiquidityRiskEvent.status:type_name -> liquidity.RiskEventStatus
-	37, // 27: liquidity.LiquidityReconcileBatch.reconcile_type:type_name -> liquidity.ReconcileType
-	38, // 28: liquidity.LiquidityReconcileBatch.status:type_name -> liquidity.ReconcileStatus
-	39, // 29: liquidity.LiquidityReconcileDetail.difference_type:type_name -> liquidity.ReconcileDifferenceType
-	40, // 30: liquidity.LiquidityReconcileDetail.status:type_name -> liquidity.ReconcileDifferenceStatus
+	12, // 0: liquidity.LiquidityProvider.provider_type:type_name -> liquidity.ProviderType
+	13, // 1: liquidity.LiquidityProvider.environment:type_name -> liquidity.ProviderEnvironment
+	14, // 2: liquidity.LiquidityProvider.status:type_name -> liquidity.ProviderStatus
+	15, // 3: liquidity.LiquidityProvider.last_health_status:type_name -> liquidity.HealthStatus
+	16, // 4: liquidity.LiquiditySymbolConfig.product_type:type_name -> common.ProductType
+	17, // 5: liquidity.LiquiditySymbolConfig.contract_type:type_name -> common.ContractType
+	18, // 6: liquidity.LiquiditySymbolConfig.liquidity_mode:type_name -> liquidity.LiquidityMode
+	19, // 7: liquidity.LiquiditySymbolConfig.self_trade_prevention:type_name -> common.YesNo
+	20, // 8: liquidity.LiquiditySymbolConfig.status:type_name -> liquidity.SymbolLiquidityStatus
+	21, // 9: liquidity.LiquidityStrategyLevel.enabled:type_name -> common.Enable
+	22, // 10: liquidity.LiquidityQuoteCycle.status:type_name -> liquidity.QuoteCycleStatus
+	23, // 11: liquidity.LiquidityQuoteOrder.side:type_name -> common.Side
+	24, // 12: liquidity.LiquidityQuoteOrder.status:type_name -> liquidity.QuoteOrderStatus
+	25, // 13: liquidity.LiquidityExternalOrder.purpose:type_name -> liquidity.ExternalOrderPurpose
+	23, // 14: liquidity.LiquidityExternalOrder.side:type_name -> common.Side
+	26, // 15: liquidity.LiquidityExternalOrder.order_type:type_name -> liquidity.ExternalOrderType
+	27, // 16: liquidity.LiquidityExternalOrder.time_in_force:type_name -> liquidity.ExternalTimeInForce
+	28, // 17: liquidity.LiquidityExternalOrder.status:type_name -> liquidity.ExternalOrderStatus
+	23, // 18: liquidity.LiquidityExternalFill.side:type_name -> common.Side
+	29, // 19: liquidity.LiquidityExternalFill.settlement_status:type_name -> liquidity.ExternalFillSettlementStatus
+	30, // 20: liquidity.LiquidityHedgeTask.trigger_type:type_name -> liquidity.HedgeTriggerType
+	23, // 21: liquidity.LiquidityHedgeTask.side:type_name -> common.Side
+	31, // 22: liquidity.LiquidityHedgeTask.status:type_name -> liquidity.HedgeStatus
+	32, // 23: liquidity.LiquidityInventorySnapshot.source:type_name -> liquidity.InventorySource
+	33, // 24: liquidity.LiquidityRiskEvent.risk_level:type_name -> liquidity.RiskLevel
+	34, // 25: liquidity.LiquidityRiskEvent.action_type:type_name -> liquidity.RiskActionType
+	35, // 26: liquidity.LiquidityRiskEvent.status:type_name -> liquidity.RiskEventStatus
+	36, // 27: liquidity.LiquidityReconcileBatch.reconcile_type:type_name -> liquidity.ReconcileType
+	37, // 28: liquidity.LiquidityReconcileBatch.status:type_name -> liquidity.ReconcileStatus
+	38, // 29: liquidity.LiquidityReconcileDetail.difference_type:type_name -> liquidity.ReconcileDifferenceType
+	39, // 30: liquidity.LiquidityReconcileDetail.status:type_name -> liquidity.ReconcileDifferenceStatus
 	31, // [31:31] is the sub-list for method output_type
 	31, // [31:31] is the sub-list for method input_type
 	31, // [31:31] is the sub-list for extension type_name
@@ -2944,7 +2878,7 @@ func file_proto_liquidity_model_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_liquidity_model_proto_rawDesc), len(file_proto_liquidity_model_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   13,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

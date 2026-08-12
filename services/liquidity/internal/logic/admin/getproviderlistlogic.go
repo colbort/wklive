@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"wklive/common/helper"
+	"wklive/common/pageutil"
 	"wklive/proto/liquidity"
 	"wklive/services/liquidity/internal/logic/helpers"
 	"wklive/services/liquidity/internal/svc"
@@ -28,10 +28,11 @@ func NewGetProviderListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 }
 
 func (l *GetProviderListLogic) GetProviderList(in *liquidity.GetProviderListReq) (*liquidity.GetProviderListResp, error) {
+	cursor, limit := pageutil.Input(in.Page)
 	rows, total, err := l.svcCtx.ProviderModel.FindPage(l.ctx, models.LiquidityProviderPageFilter{
 		ProviderType: int64(in.ProviderType),
 		Status:       int64(in.Status), Keyword: strings.TrimSpace(in.Keyword),
-	}, in.Cursor, int64(in.Limit))
+	}, cursor, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +42,6 @@ func (l *GetProviderListLogic) GetProviderList(in *liquidity.GetProviderListReq)
 	}
 	next := nextID(rows, func(row *models.TLiquidityProvider) int64 { return row.Id })
 	return &liquidity.GetProviderListResp{
-		Base: helper.OkResp(), Data: data,
-		Page: pageMeta(len(rows), total, next),
+		Base: pageutil.Base(cursor, limit, len(rows), total, next), Data: data,
 	}, nil
 }

@@ -25,7 +25,7 @@ type (
 	// and implement the added methods in customTLiquidityQuoteOrderModel.
 	TLiquidityQuoteOrderModel interface {
 		tLiquidityQuoteOrderModel
-		FindPage(ctx context.Context, filter LiquidityQuoteOrderPageFilter, cursor, limit int64) ([]*TLiquidityQuoteOrder, int64, error)
+		FindPage(ctx context.Context, filter LiquidityQuoteOrderPageFilter, cursor, limit int64, knownCounts ...int64) ([]*TLiquidityQuoteOrder, int64, error)
 		FindByInternalIdentity(ctx context.Context, internalOrderID int64, internalOrderNo, clientOrderID string) (*TLiquidityQuoteOrder, error)
 		CancelActiveByConfig(ctx context.Context, configID int64, reason string, now, pendingStatus, canceledStatus, cancelingStatus int64) error
 		FindActiveByConfig(ctx context.Context, configID int64) ([]*TLiquidityQuoteOrder, error)
@@ -81,7 +81,7 @@ func (m *customTLiquidityQuoteOrderModel) FindByInternalIdentity(ctx context.Con
 	return &row, nil
 }
 
-func (m *customTLiquidityQuoteOrderModel) FindPage(ctx context.Context, filter LiquidityQuoteOrderPageFilter, cursor, limit int64) ([]*TLiquidityQuoteOrder, int64, error) {
+func (m *customTLiquidityQuoteOrderModel) FindPage(ctx context.Context, filter LiquidityQuoteOrderPageFilter, cursor, limit int64, knownCounts ...int64) ([]*TLiquidityQuoteOrder, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := sqlutil.NewPageQueryBuilder()
 	b.EqInt64("config_id", filter.ConfigId)
@@ -96,9 +96,11 @@ func (m *customTLiquidityQuoteOrderModel) FindPage(ctx context.Context, filter L
 		b.And("(quote_no LIKE ? OR internal_order_no LIKE ? OR client_order_id LIKE ?)", kw, kw, kw)
 	}
 	where, args := b.Where(), b.Args()
-	var total int64
-	if err := m.QueryRowNoCacheCtx(ctx, &total, fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where), args...); err != nil {
-		return nil, 0, err
+	total := sqlutil.KnownCount(knownCounts...)
+	if total <= 0 {
+		if err := m.QueryRowNoCacheCtx(ctx, &total, fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where), args...); err != nil {
+			return nil, 0, err
+		}
 	}
 	queryArgs := append([]any{}, args...)
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s", tLiquidityQuoteOrderRows, m.table, where)

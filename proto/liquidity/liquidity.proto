@@ -172,12 +172,10 @@ message TestProviderConnectionReq {
 }
 
 message GetProviderListReq {
-  reserved 1;
+  common.PageReq page = 1;
   ProviderType provider_type = 2;
   ProviderStatus status = 3;
   string keyword = 4;
-  int64 cursor = 5;
-  int32 limit = 6;
 }
 
 message GetProviderDetailReq {
@@ -200,7 +198,6 @@ message ProviderHealthResp {
 message GetProviderListResp {
   common.RespBase base = 1;
   repeated LiquidityProvider data = 2;
-  PageMeta page = 3;
 }
 
 message SaveSymbolConfigReq {
@@ -237,15 +234,13 @@ message SaveSymbolConfigReq {
 }
 
 message GetSymbolConfigListReq {
-  reserved 1;
+  common.PageReq page = 1;
   int64 symbol_id = 2;
   common.ProductType product_type = 3;
   common.ContractType contract_type = 4;
   LiquidityMode liquidity_mode = 5;
   SymbolLiquidityStatus status = 6;
   string keyword = 7;
-  int64 cursor = 8;
-  int32 limit = 9;
 }
 
 message GetSymbolConfigDetailReq {
@@ -262,7 +257,6 @@ message SymbolConfigResp {
 message GetSymbolConfigListResp {
   common.RespBase base = 1;
   repeated LiquiditySymbolConfig data = 2;
-  PageMeta page = 3;
 }
 
 message GetSymbolConfigDetailResp {
@@ -298,24 +292,21 @@ message SymbolActionReq {
 }
 
 message GetQuoteCycleListReq {
-  reserved 1;
+  common.PageReq page = 1;
   int64 config_id = 2;
   int64 symbol_id = 3;
   QuoteCycleStatus status = 4;
   int64 start_time = 5;
   int64 end_time = 6;
-  int64 cursor = 7;
-  int32 limit = 8;
 }
 
 message GetQuoteCycleListResp {
   common.RespBase base = 1;
   repeated LiquidityQuoteCycle data = 2;
-  PageMeta page = 3;
 }
 
 message GetQuoteOrderListReq {
-  reserved 1;
+  common.PageReq page = 1;
   int64 config_id = 2;
   int64 provider_id = 3;
   int64 symbol_id = 4;
@@ -324,18 +315,15 @@ message GetQuoteOrderListReq {
   string keyword = 7;
   int64 start_time = 8;
   int64 end_time = 9;
-  int64 cursor = 10;
-  int32 limit = 11;
 }
 
 message GetQuoteOrderListResp {
   common.RespBase base = 1;
   repeated LiquidityQuoteOrder data = 2;
-  PageMeta page = 3;
 }
 
 message GetExternalOrderListReq {
-  reserved 1;
+  common.PageReq page = 1;
   int64 provider_id = 2;
   int64 config_id = 3;
   int64 symbol_id = 4;
@@ -345,31 +333,25 @@ message GetExternalOrderListReq {
   string keyword = 8;
   int64 start_time = 9;
   int64 end_time = 10;
-  int64 cursor = 11;
-  int32 limit = 12;
 }
 
 message GetExternalOrderListResp {
   common.RespBase base = 1;
   repeated LiquidityExternalOrder data = 2;
-  PageMeta page = 3;
 }
 
 message GetExternalFillListReq {
-  reserved 1;
+  common.PageReq page = 1;
   int64 provider_id = 2;
   int64 external_order_id = 3;
   ExternalFillSettlementStatus settlement_status = 4;
   int64 start_time = 5;
   int64 end_time = 6;
-  int64 cursor = 7;
-  int32 limit = 8;
 }
 
 message GetExternalFillListResp {
   common.RespBase base = 1;
   repeated LiquidityExternalFill data = 2;
-  PageMeta page = 3;
 }
 
 message CancelExternalOrderReq {
@@ -412,37 +394,31 @@ message HedgeTaskResp {
 }
 
 message GetHedgeTaskListReq {
-  reserved 1;
+  common.PageReq page = 1;
   int64 config_id = 2;
   int64 provider_id = 3;
   HedgeStatus status = 4;
   int64 start_time = 5;
   int64 end_time = 6;
-  int64 cursor = 7;
-  int32 limit = 8;
 }
 
 message GetHedgeTaskListResp {
   common.RespBase base = 1;
   repeated LiquidityHedgeTask data = 2;
-  PageMeta page = 3;
 }
 
 message GetInventorySnapshotListReq {
-  reserved 1;
+  common.PageReq page = 1;
   int64 config_id = 2;
   int64 provider_id = 3;
   InventorySource source = 4;
   int64 start_time = 5;
   int64 end_time = 6;
-  int64 cursor = 7;
-  int32 limit = 8;
 }
 
 message GetInventorySnapshotListResp {
   common.RespBase base = 1;
   repeated LiquidityInventorySnapshot data = 2;
-  PageMeta page = 3;
 }
 
 message GetLatestInventoryReq {
@@ -458,7 +434,7 @@ message InventorySnapshotResp {
 }
 
 message GetRiskEventListReq {
-  reserved 1;
+  common.PageReq page = 1;
   int64 config_id = 2;
   int64 provider_id = 3;
   string risk_type = 4;
@@ -466,14 +442,11 @@ message GetRiskEventListReq {
   RiskEventStatus status = 6;
   int64 start_time = 7;
   int64 end_time = 8;
-  int64 cursor = 9;
-  int32 limit = 10;
 }
 
 message GetRiskEventListResp {
   common.RespBase base = 1;
   repeated LiquidityRiskEvent data = 2;
-  PageMeta page = 3;
 }
 
 message ResolveRiskEventReq {
@@ -499,35 +472,29 @@ message ReconcileBatchResp {
 }
 
 message GetReconcileBatchListReq {
-  reserved 1;
+  common.PageReq page = 1;
   int64 provider_id = 2;
   ReconcileType reconcile_type = 3;
   ReconcileStatus status = 4;
   int64 start_time = 5;
   int64 end_time = 6;
-  int64 cursor = 7;
-  int32 limit = 8;
 }
 
 message GetReconcileBatchListResp {
   common.RespBase base = 1;
   repeated LiquidityReconcileBatch data = 2;
-  PageMeta page = 3;
 }
 
 message GetReconcileDetailListReq {
-  reserved 1;
+  common.PageReq page = 1;
   int64 batch_id = 2;
   ReconcileDifferenceType difference_type = 3;
   ReconcileDifferenceStatus status = 4;
-  int64 cursor = 5;
-  int32 limit = 6;
 }
 
 message GetReconcileDetailListResp {
   common.RespBase base = 1;
   repeated LiquidityReconcileDetail data = 2;
-  PageMeta page = 3;
 }
 
 message ResolveReconcileDifferenceReq {

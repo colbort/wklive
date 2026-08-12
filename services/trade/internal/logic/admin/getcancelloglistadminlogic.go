@@ -44,7 +44,7 @@ func (l *GetCancelLogListAdminLogic) GetCancelLogListAdmin(in *trade.GetCancelLo
 		CancelSource: int64(in.CancelSource),
 		TimeStart:    in.TimeRange.StartTime,
 		TimeEnd:      in.TimeRange.EndTime,
-	}, cursor, limit)
+	}, cursor, limit, pageutil.Count(in.Page))
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

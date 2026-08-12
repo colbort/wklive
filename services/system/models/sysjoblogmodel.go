@@ -22,7 +22,7 @@ type (
 	// and implement the added methods in customSysJobLogModel.
 	SysJobLogModel interface {
 		sysJobLogModel
-		FindPage(ctx context.Context, filter JobLogPageFilter, cursor int64, limit int64) ([]*SysJobLog, int64, error)
+		FindPage(ctx context.Context, filter JobLogPageFilter, cursor int64, limit int64, knownCounts ...int64) ([]*SysJobLog, int64, error)
 	}
 
 	customSysJobLogModel struct {
@@ -41,7 +41,7 @@ func NewSysJobLogModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Optio
 // versions:
 //  goctl version: 1.9.2
 
-func (m *customSysJobLogModel) FindPage(ctx context.Context, filter JobLogPageFilter, cursor int64, limit int64) ([]*SysJobLog, int64, error) {
+func (m *customSysJobLogModel) FindPage(ctx context.Context, filter JobLogPageFilter, cursor int64, limit int64, knownCounts ...int64) ([]*SysJobLog, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -54,10 +54,12 @@ func (m *customSysJobLogModel) FindPage(ctx context.Context, filter JobLogPageFi
 	args := builder.Args()
 
 	// ---- total ----
-	var total int64
-	countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
-	if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
-		return nil, 0, err
+	total := sqlutil.KnownCount(knownCounts...)
+	if total <= 0 {
+		countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
+		if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
+			return nil, 0, err
+		}
 	}
 
 	// ---- list ----

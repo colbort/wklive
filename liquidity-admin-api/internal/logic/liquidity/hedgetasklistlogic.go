@@ -30,7 +30,7 @@ func NewHedgeTaskListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Hed
 
 func (l *HedgeTaskListLogic) HedgeTaskList(req *types.PageQuery) (resp *types.HedgeListResp, err error) {
 	out, err := l.svcCtx.LiquidityCli.GetHedgeTaskList(l.ctx, &pb.GetHedgeTaskListReq{
-		Status: pb.HedgeStatus(req.Status), Cursor: req.Cursor, Limit: listLimit(req.Limit),
+		Status: pb.HedgeStatus(req.Status), Page: protoPage(req.Cursor, req.Limit, req.Count),
 	})
 	if err != nil {
 		return nil, err

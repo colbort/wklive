@@ -267,6 +267,7 @@ async function fetchList() {
       bizNo: query.bizNo || undefined,
       cursor: pagination.cursor,
       limit: pagination.limit,
+      count: pagination.total,
     })
     rows.value = res.data || []
     updateFromResponse(res)

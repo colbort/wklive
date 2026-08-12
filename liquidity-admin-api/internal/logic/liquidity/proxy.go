@@ -13,7 +13,7 @@ import (
 
 func providerList(ctx context.Context, svcCtx *svc.ServiceContext, req *types.PageQuery) (*types.ProviderListResp, error) {
 	out, err := svcCtx.LiquidityCli.GetProviderList(ctx, &pb.GetProviderListReq{
-		Status: pb.ProviderStatus(req.Status), Keyword: req.Keyword, Cursor: req.Cursor, Limit: req.Limit,
+		Status: pb.ProviderStatus(req.Status), Keyword: req.Keyword, Page: protoPage(req.Cursor, req.Limit, req.Count),
 	})
 	if err != nil {
 		return nil, err
@@ -23,7 +23,7 @@ func providerList(ctx context.Context, svcCtx *svc.ServiceContext, req *types.Pa
 
 func symbolConfigList(ctx context.Context, svcCtx *svc.ServiceContext, req *types.PageQuery) (*types.SymbolConfigListResp, error) {
 	out, err := svcCtx.LiquidityCli.GetSymbolConfigList(ctx, &pb.GetSymbolConfigListReq{
-		Status: pb.SymbolLiquidityStatus(req.Status), Keyword: req.Keyword, Cursor: req.Cursor, Limit: req.Limit,
+		Status: pb.SymbolLiquidityStatus(req.Status), Keyword: req.Keyword, Page: protoPage(req.Cursor, req.Limit, req.Count),
 	})
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func orderList(ctx context.Context, svcCtx *svc.ServiceContext, req *types.Order
 	if external {
 		out, callErr := svcCtx.LiquidityCli.GetExternalOrderList(ctx, &pb.GetExternalOrderListReq{
 			ProviderId: req.ProviderId, ConfigId: req.ConfigId, SymbolId: req.SymbolId,
-			Side: common.Side(req.Side), Status: pb.ExternalOrderStatus(req.Status), Keyword: req.Keyword, Cursor: req.Cursor, Limit: listLimit(req.Limit),
+			Side: common.Side(req.Side), Status: pb.ExternalOrderStatus(req.Status), Keyword: req.Keyword, Page: protoPage(req.Cursor, req.Limit, req.Count),
 		})
 		if callErr != nil {
 			return nil, callErr
@@ -44,7 +44,7 @@ func orderList(ctx context.Context, svcCtx *svc.ServiceContext, req *types.Order
 	}
 	out, err := svcCtx.LiquidityCli.GetQuoteOrderList(ctx, &pb.GetQuoteOrderListReq{
 		ProviderId: req.ProviderId, ConfigId: req.ConfigId, SymbolId: req.SymbolId,
-		Side: common.Side(req.Side), Status: pb.QuoteOrderStatus(req.Status), Keyword: req.Keyword, Cursor: req.Cursor, Limit: listLimit(req.Limit),
+		Side: common.Side(req.Side), Status: pb.QuoteOrderStatus(req.Status), Keyword: req.Keyword, Page: protoPage(req.Cursor, req.Limit, req.Count),
 	})
 	if err != nil {
 		return nil, err
@@ -52,7 +52,15 @@ func orderList(ctx context.Context, svcCtx *svc.ServiceContext, req *types.Order
 	return logicutil.Convert[types.OrderListResp](out), nil
 }
 
-func listLimit(limit int32) int32 {
+func protoPage(cursor int64, limit int64, count int64) *common.PageReq {
+	return &common.PageReq{
+		Cursor: cursor,
+		Limit:  listLimit(limit),
+		Count:  count,
+	}
+}
+
+func listLimit(limit int64) int64 {
 	if limit <= 0 {
 		return 20
 	}

@@ -28,7 +28,7 @@ type (
 	// and implement the added methods in customTAssetFlowModel.
 	TAssetFlowModel interface {
 		tAssetFlowModel
-		FindPage(ctx context.Context, filter AssetFlowPageFilter, cursor int64, limit int64) ([]*TAssetFlow, int64, error)
+		FindPage(ctx context.Context, filter AssetFlowPageFilter, cursor int64, limit int64, knownCounts ...int64) ([]*TAssetFlow, int64, error)
 		FindOneByTenantBizNo(ctx context.Context, tenantID int64, bizNo string) (*TAssetFlow, error)
 	}
 
@@ -53,7 +53,7 @@ func (m *customTAssetFlowModel) FindOneByTenantBizNo(ctx context.Context, tenant
 	return &row, nil
 }
 
-func (m *customTAssetFlowModel) FindPage(ctx context.Context, filter AssetFlowPageFilter, cursor int64, limit int64) ([]*TAssetFlow, int64, error) {
+func (m *customTAssetFlowModel) FindPage(ctx context.Context, filter AssetFlowPageFilter, cursor int64, limit int64, knownCounts ...int64) ([]*TAssetFlow, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -70,10 +70,12 @@ func (m *customTAssetFlowModel) FindPage(ctx context.Context, filter AssetFlowPa
 	where := builder.Where()
 	args := builder.Args()
 
-	var total int64
-	countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
-	if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
-		return nil, 0, err
+	total := sqlutil.KnownCount(knownCounts...)
+	if total <= 0 {
+		countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
+		if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
+			return nil, 0, err
+		}
 	}
 
 	listArgs := append([]any{}, args...)

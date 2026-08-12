@@ -29,7 +29,7 @@ func NewGetAssetReservationListLogic(ctx context.Context, svcCtx *svc.ServiceCon
 
 func (l *GetAssetReservationListLogic) GetAssetReservationList(in *trade.GetAssetReservationListReq) (*trade.GetAssetReservationListResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
-	d, total, err := l.svcCtx.TradeAssetReservationModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: helpers.AdminTenantID(l.ctx, in.TenantId), OrderId: in.OrderId, Status: int64(in.Status)}, cursor, limit)
+	d, total, err := l.svcCtx.TradeAssetReservationModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: helpers.AdminTenantID(l.ctx, in.TenantId), OrderId: in.OrderId, Status: int64(in.Status)}, cursor, limit, pageutil.Count(in.Page))
 	if err != nil {
 		return nil, err
 	}

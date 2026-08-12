@@ -27,18 +27,6 @@ func Limit(value int32) int64 {
 	return int64(value)
 }
 
-func TrimPage[T any](rows []*T, limit int64, id func(*T) int64) ([]*T, *liquidity.PageMeta) {
-	hasMore := int64(len(rows)) > limit
-	if hasMore {
-		rows = rows[:limit]
-	}
-	var next int64
-	if len(rows) > 0 {
-		next = id(rows[len(rows)-1])
-	}
-	return rows, &liquidity.PageMeta{NextCursor: next, HasMore: hasMore}
-}
-
 func RequireID(name string, id int64) error {
 	if id <= 0 {
 		return fmt.Errorf("%s is required", name)

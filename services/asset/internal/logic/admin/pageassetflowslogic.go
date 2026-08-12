@@ -45,7 +45,7 @@ func (l *PageAssetFlowsLogic) PageAssetFlows(in *asset.PageAssetFlowsReq) (*asse
 		BizNo:      in.BizNo,
 		StartTime:  startTime,
 		EndTime:    endTime,
-	}, in.Page.Cursor, in.Page.Limit)
+	}, in.Page.Cursor, in.Page.Limit, pageutil.Count(in.Page))
 	if err != nil {
 		return nil, err
 	}

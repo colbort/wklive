@@ -39,7 +39,7 @@ func (l *GetRiskOrderCheckLogListLogic) GetRiskOrderCheckLogList(in *trade.GetRi
 		CheckResult: int64(in.CheckResult),
 		TimeStart:   in.TimeRange.StartTime,
 		TimeEnd:     in.TimeRange.EndTime,
-	}, cursor, limit)
+	}, cursor, limit, pageutil.Count(in.Page))
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

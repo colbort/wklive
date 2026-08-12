@@ -23,7 +23,7 @@ type (
 	// and implement the added methods in customTLiquidityQuoteCycleModel.
 	TLiquidityQuoteCycleModel interface {
 		tLiquidityQuoteCycleModel
-		FindPage(ctx context.Context, filter LiquidityQuoteCyclePageFilter, cursor, limit int64) ([]*TLiquidityQuoteCycle, int64, error)
+		FindPage(ctx context.Context, filter LiquidityQuoteCyclePageFilter, cursor, limit int64, knownCounts ...int64) ([]*TLiquidityQuoteCycle, int64, error)
 		FindLatestByConfig(ctx context.Context, configID int64) (*TLiquidityQuoteCycle, error)
 		RefreshExecutionResults(ctx context.Context, configID, now int64) error
 	}
@@ -121,7 +121,7 @@ func (m *customTLiquidityQuoteCycleModel) FindLatestByConfig(ctx context.Context
 	return &row, nil
 }
 
-func (m *customTLiquidityQuoteCycleModel) FindPage(ctx context.Context, filter LiquidityQuoteCyclePageFilter, cursor, limit int64) ([]*TLiquidityQuoteCycle, int64, error) {
+func (m *customTLiquidityQuoteCycleModel) FindPage(ctx context.Context, filter LiquidityQuoteCyclePageFilter, cursor, limit int64, knownCounts ...int64) ([]*TLiquidityQuoteCycle, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := sqlutil.NewPageQueryBuilder()
 	b.EqInt64("config_id", filter.ConfigId)
@@ -130,9 +130,11 @@ func (m *customTLiquidityQuoteCycleModel) FindPage(ctx context.Context, filter L
 	b.GteInt64("create_times", filter.TimeStart)
 	b.LteInt64("create_times", filter.TimeEnd)
 	where, args := b.Where(), b.Args()
-	var total int64
-	if err := m.QueryRowNoCacheCtx(ctx, &total, fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where), args...); err != nil {
-		return nil, 0, err
+	total := sqlutil.KnownCount(knownCounts...)
+	if total <= 0 {
+		if err := m.QueryRowNoCacheCtx(ctx, &total, fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where), args...); err != nil {
+			return nil, 0, err
+		}
 	}
 	queryArgs := append([]any{}, args...)
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s", tLiquidityQuoteCycleRows, m.table, where)

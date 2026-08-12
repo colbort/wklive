@@ -29,7 +29,7 @@ type (
 	// and implement the added methods in customTItickProductModel.
 	TItickProductModel interface {
 		tItickProductModel
-		FindPage(ctx context.Context, filter MarketProductPageFilter, cursor int64, limit int64, count int64) ([]*TItickProduct, int64, error)
+		FindPage(ctx context.Context, filter MarketProductPageFilter, cursor int64, limit int64, knownCounts ...int64) ([]*TItickProduct, int64, error)
 		FindByIds(ctx context.Context, ids []int64) ([]*TItickProduct, error)
 		FindActivePage(ctx context.Context, cursor, limit int64) ([]*TItickProduct, error)
 		Upsert(ctx context.Context, data *TItickProduct) (sql.Result, error)
@@ -66,7 +66,7 @@ func (m *customTItickProductModel) FindActivePage(ctx context.Context, cursor, l
 	return list, nil
 }
 
-func (m *customTItickProductModel) FindPage(ctx context.Context, filter MarketProductPageFilter, cursor int64, limit int64, count int64) ([]*TItickProduct, int64, error) {
+func (m *customTItickProductModel) FindPage(ctx context.Context, filter MarketProductPageFilter, cursor int64, limit int64, knownCounts ...int64) ([]*TItickProduct, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	queryLimit := limit + 1
 
@@ -90,7 +90,7 @@ func (m *customTItickProductModel) FindPage(ctx context.Context, filter MarketPr
 	// The client carries a previously calculated total between cursor pages.
 	// A non-positive value means the filters changed (or this is the initial
 	// request), so refresh the exact count before returning the page.
-	total := count
+	total := sqlutil.KnownCount(knownCounts...)
 	if total <= 0 {
 		countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
 		if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {

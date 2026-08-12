@@ -156,14 +156,15 @@ async function load(reset = false) {
   if (reset) {
     query.cursor = 0;
     cursorHistory.value = [];
+    page.total = 0;
   }
   loading.value = true;
   try {
-    const response = await liquidityApi.symbolConfigs(query);
+    const response = await liquidityApi.symbolConfigs({ ...query, count: page.total });
     rows.value = (response.data || []) as unknown as SymbolConfig[];
-    page.total = Number(response.page?.total || 0);
-    page.nextCursor = Number(response.page?.nextCursor || 0);
-    page.hasMore = Boolean(response.page?.hasMore);
+    page.total = Number(response.total || 0);
+    page.nextCursor = Number(response.nextCursor || 0);
+    page.hasMore = Boolean(response.hasNext);
   } finally {
     loading.value = false;
   }

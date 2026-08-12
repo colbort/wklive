@@ -18,7 +18,7 @@ type (
 	// and implement the added methods in customTTradeSettlementInstructionModel.
 	TTradeSettlementInstructionModel interface {
 		tTradeSettlementInstructionModel
-		FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TTradeSettlementInstruction, int64, error)
+		FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64, knownCounts ...int64) ([]*TTradeSettlementInstruction, int64, error)
 		FindPendingFillSettlements(ctx context.Context, tenantId, now, limit int64) ([]*TTradeSettlementInstruction, error)
 		FindPendingOrderReleases(ctx context.Context, tenantId, now, limit int64) ([]*TTradeSettlementInstruction, error)
 		FindPendingBiz(ctx context.Context, tenantId int64, bizType string, now, limit int64) ([]*TTradeSettlementInstruction, error)
@@ -182,13 +182,15 @@ func prefixedSettlementInstructionRows(alias string) string {
 	return strings.Join(rows, ",")
 }
 
-func (m *customTTradeSettlementInstructionModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TTradeSettlementInstruction, int64, error) {
+func (m *customTTradeSettlementInstructionModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64, knownCounts ...int64) ([]*TTradeSettlementInstruction, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := adminPageBuilder(filter, "")
 	where, args := b.Where(), b.Args()
-	var total int64
-	if err := m.QueryRowNoCacheCtx(ctx, &total, fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where), args...); err != nil {
-		return nil, 0, err
+	total := sqlutil.KnownCount(knownCounts...)
+	if total <= 0 {
+		if err := m.QueryRowNoCacheCtx(ctx, &total, fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where), args...); err != nil {
+			return nil, 0, err
+		}
 	}
 	la := append([]any{}, args...)
 	q := fmt.Sprintf("SELECT %s FROM %s WHERE %s", tTradeSettlementInstructionRows, m.table, where)

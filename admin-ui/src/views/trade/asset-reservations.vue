@@ -73,6 +73,7 @@ async function load() {
       ...query,
       cursor: pagination.cursor,
       limit: pagination.limit,
+      count: pagination.total,
     })
     rows.value = res.data || []
     updateFromResponse(res)

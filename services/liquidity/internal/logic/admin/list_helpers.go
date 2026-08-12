@@ -4,16 +4,12 @@ import (
 	"context"
 	"strings"
 
-	"wklive/common/helper"
+	"wklive/common/pageutil"
 	"wklive/proto/liquidity"
 	"wklive/services/liquidity/internal/logic/helpers"
 	"wklive/services/liquidity/internal/svc"
 	"wklive/services/liquidity/models"
 )
-
-func pageMeta(rows int, total, next int64) *liquidity.PageMeta {
-	return &liquidity.PageMeta{NextCursor: next, Total: total, HasMore: rows > 0 && next > 0 && int64(rows) < total}
-}
 
 func nextID[T any](rows []*T, id func(*T) int64) int64 {
 	if len(rows) == 0 {
@@ -23,10 +19,11 @@ func nextID[T any](rows []*T, id func(*T) int64) int64 {
 }
 
 func listQuoteCycles(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.GetQuoteCycleListReq) (*liquidity.GetQuoteCycleListResp, error) {
+	cursor, limit := pageutil.Input(in.Page)
 	rows, total, err := svcCtx.QuoteCycleModel.FindPage(ctx, models.LiquidityQuoteCyclePageFilter{
 		ConfigId: in.ConfigId, SymbolId: in.SymbolId,
 		Status: int64(in.Status), TimeStart: in.StartTime, TimeEnd: in.EndTime,
-	}, in.Cursor, int64(in.Limit))
+	}, cursor, limit, pageutil.Count(in.Page))
 	if err != nil {
 		return nil, err
 	}
@@ -35,15 +32,16 @@ func listQuoteCycles(ctx context.Context, svcCtx *svc.ServiceContext, in *liquid
 		data = append(data, helpers.QuoteCycleToProto(row))
 	}
 	next := nextID(rows, func(row *models.TLiquidityQuoteCycle) int64 { return row.Id })
-	return &liquidity.GetQuoteCycleListResp{Base: helper.OkResp(), Data: data, Page: pageMeta(len(rows), total, next)}, nil
+	return &liquidity.GetQuoteCycleListResp{Base: pageutil.Base(cursor, limit, len(rows), total, next), Data: data}, nil
 }
 
 func listQuoteOrders(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.GetQuoteOrderListReq) (*liquidity.GetQuoteOrderListResp, error) {
+	cursor, limit := pageutil.Input(in.Page)
 	rows, total, err := svcCtx.QuoteOrderModel.FindPage(ctx, models.LiquidityQuoteOrderPageFilter{
 		ConfigId: in.ConfigId, ProviderId: in.ProviderId,
 		SymbolId: in.SymbolId, Side: int64(in.Side), Status: int64(in.Status),
 		Keyword: strings.TrimSpace(in.Keyword), TimeStart: in.StartTime, TimeEnd: in.EndTime,
-	}, in.Cursor, int64(in.Limit))
+	}, cursor, limit, pageutil.Count(in.Page))
 	if err != nil {
 		return nil, err
 	}
@@ -52,16 +50,17 @@ func listQuoteOrders(ctx context.Context, svcCtx *svc.ServiceContext, in *liquid
 		data = append(data, helpers.QuoteOrderToProto(row))
 	}
 	next := nextID(rows, func(row *models.TLiquidityQuoteOrder) int64 { return row.Id })
-	return &liquidity.GetQuoteOrderListResp{Base: helper.OkResp(), Data: data, Page: pageMeta(len(rows), total, next)}, nil
+	return &liquidity.GetQuoteOrderListResp{Base: pageutil.Base(cursor, limit, len(rows), total, next), Data: data}, nil
 }
 
 func listExternalOrders(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.GetExternalOrderListReq) (*liquidity.GetExternalOrderListResp, error) {
+	cursor, limit := pageutil.Input(in.Page)
 	rows, total, err := svcCtx.ExternalOrderModel.FindPage(ctx, models.LiquidityExternalOrderPageFilter{
 		ProviderId: in.ProviderId, ConfigId: in.ConfigId,
 		SymbolId: in.SymbolId, Purpose: int64(in.Purpose), Side: int64(in.Side),
 		Status: int64(in.Status), Keyword: strings.TrimSpace(in.Keyword),
 		TimeStart: in.StartTime, TimeEnd: in.EndTime,
-	}, in.Cursor, int64(in.Limit))
+	}, cursor, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -70,14 +69,15 @@ func listExternalOrders(ctx context.Context, svcCtx *svc.ServiceContext, in *liq
 		data = append(data, helpers.ExternalOrderToProto(row))
 	}
 	next := nextID(rows, func(row *models.TLiquidityExternalOrder) int64 { return row.Id })
-	return &liquidity.GetExternalOrderListResp{Base: helper.OkResp(), Data: data, Page: pageMeta(len(rows), total, next)}, nil
+	return &liquidity.GetExternalOrderListResp{Base: pageutil.Base(cursor, limit, len(rows), total, next), Data: data}, nil
 }
 
 func listExternalFills(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.GetExternalFillListReq) (*liquidity.GetExternalFillListResp, error) {
+	cursor, limit := pageutil.Input(in.Page)
 	rows, total, err := svcCtx.ExternalFillModel.FindPage(ctx, models.LiquidityExternalFillPageFilter{
 		ProviderId: in.ProviderId, ExternalOrderId: in.ExternalOrderId,
 		SettlementStatus: int64(in.SettlementStatus), TimeStart: in.StartTime, TimeEnd: in.EndTime,
-	}, in.Cursor, int64(in.Limit))
+	}, cursor, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -86,14 +86,15 @@ func listExternalFills(ctx context.Context, svcCtx *svc.ServiceContext, in *liqu
 		data = append(data, helpers.ExternalFillToProto(row))
 	}
 	next := nextID(rows, func(row *models.TLiquidityExternalFill) int64 { return row.Id })
-	return &liquidity.GetExternalFillListResp{Base: helper.OkResp(), Data: data, Page: pageMeta(len(rows), total, next)}, nil
+	return &liquidity.GetExternalFillListResp{Base: pageutil.Base(cursor, limit, len(rows), total, next), Data: data}, nil
 }
 
 func listHedgeTasks(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.GetHedgeTaskListReq) (*liquidity.GetHedgeTaskListResp, error) {
+	cursor, limit := pageutil.Input(in.Page)
 	rows, total, err := svcCtx.HedgeTaskModel.FindPage(ctx, models.LiquidityHedgeTaskPageFilter{
 		ConfigId: in.ConfigId, ProviderId: in.ProviderId,
 		Status: int64(in.Status), TimeStart: in.StartTime, TimeEnd: in.EndTime,
-	}, in.Cursor, int64(in.Limit))
+	}, cursor, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -102,14 +103,15 @@ func listHedgeTasks(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidi
 		data = append(data, helpers.HedgeTaskToProto(row))
 	}
 	next := nextID(rows, func(row *models.TLiquidityHedgeTask) int64 { return row.Id })
-	return &liquidity.GetHedgeTaskListResp{Base: helper.OkResp(), Data: data, Page: pageMeta(len(rows), total, next)}, nil
+	return &liquidity.GetHedgeTaskListResp{Base: pageutil.Base(cursor, limit, len(rows), total, next), Data: data}, nil
 }
 
 func listInventories(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.GetInventorySnapshotListReq) (*liquidity.GetInventorySnapshotListResp, error) {
+	cursor, limit := pageutil.Input(in.Page)
 	rows, total, err := svcCtx.InventorySnapshotModel.FindPage(ctx, models.LiquidityInventorySnapshotPageFilter{
 		ConfigId: in.ConfigId, ProviderId: in.ProviderId,
 		Source: int64(in.Source), TimeStart: in.StartTime, TimeEnd: in.EndTime,
-	}, in.Cursor, int64(in.Limit))
+	}, cursor, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -118,15 +120,16 @@ func listInventories(ctx context.Context, svcCtx *svc.ServiceContext, in *liquid
 		data = append(data, helpers.InventoryToProto(row))
 	}
 	next := nextID(rows, func(row *models.TLiquidityInventorySnapshot) int64 { return row.Id })
-	return &liquidity.GetInventorySnapshotListResp{Base: helper.OkResp(), Data: data, Page: pageMeta(len(rows), total, next)}, nil
+	return &liquidity.GetInventorySnapshotListResp{Base: pageutil.Base(cursor, limit, len(rows), total, next), Data: data}, nil
 }
 
 func listRiskEvents(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.GetRiskEventListReq) (*liquidity.GetRiskEventListResp, error) {
+	cursor, limit := pageutil.Input(in.Page)
 	rows, total, err := svcCtx.RiskEventModel.FindPage(ctx, models.LiquidityRiskEventPageFilter{
 		ConfigId: in.ConfigId, ProviderId: in.ProviderId,
 		RiskType: strings.TrimSpace(in.RiskType), RiskLevel: int64(in.RiskLevel),
 		Status: int64(in.Status), TimeStart: in.StartTime, TimeEnd: in.EndTime,
-	}, in.Cursor, int64(in.Limit))
+	}, cursor, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -135,14 +138,15 @@ func listRiskEvents(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidi
 		data = append(data, helpers.RiskEventToProto(row))
 	}
 	next := nextID(rows, func(row *models.TLiquidityRiskEvent) int64 { return row.Id })
-	return &liquidity.GetRiskEventListResp{Base: helper.OkResp(), Data: data, Page: pageMeta(len(rows), total, next)}, nil
+	return &liquidity.GetRiskEventListResp{Base: pageutil.Base(cursor, limit, len(rows), total, next), Data: data}, nil
 }
 
 func listReconcileBatches(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.GetReconcileBatchListReq) (*liquidity.GetReconcileBatchListResp, error) {
+	cursor, limit := pageutil.Input(in.Page)
 	rows, total, err := svcCtx.ReconcileBatchModel.FindPage(ctx, models.LiquidityReconcileBatchPageFilter{
 		ProviderId: in.ProviderId, ReconcileType: int64(in.ReconcileType),
 		Status: int64(in.Status), TimeStart: in.StartTime, TimeEnd: in.EndTime,
-	}, in.Cursor, int64(in.Limit))
+	}, cursor, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -151,14 +155,15 @@ func listReconcileBatches(ctx context.Context, svcCtx *svc.ServiceContext, in *l
 		data = append(data, helpers.ReconcileBatchToProto(row))
 	}
 	next := nextID(rows, func(row *models.TLiquidityReconcileBatch) int64 { return row.Id })
-	return &liquidity.GetReconcileBatchListResp{Base: helper.OkResp(), Data: data, Page: pageMeta(len(rows), total, next)}, nil
+	return &liquidity.GetReconcileBatchListResp{Base: pageutil.Base(cursor, limit, len(rows), total, next), Data: data}, nil
 }
 
 func listReconcileDetails(ctx context.Context, svcCtx *svc.ServiceContext, in *liquidity.GetReconcileDetailListReq) (*liquidity.GetReconcileDetailListResp, error) {
+	cursor, limit := pageutil.Input(in.Page)
 	rows, total, err := svcCtx.ReconcileDetailModel.FindPage(ctx, models.LiquidityReconcileDetailPageFilter{
 		BatchId:        in.BatchId,
 		DifferenceType: int64(in.DifferenceType), Status: int64(in.Status),
-	}, in.Cursor, int64(in.Limit))
+	}, cursor, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -167,5 +172,5 @@ func listReconcileDetails(ctx context.Context, svcCtx *svc.ServiceContext, in *l
 		data = append(data, helpers.ReconcileDetailToProto(row))
 	}
 	next := nextID(rows, func(row *models.TLiquidityReconcileDetail) int64 { return row.Id })
-	return &liquidity.GetReconcileDetailListResp{Base: helper.OkResp(), Data: data, Page: pageMeta(len(rows), total, next)}, nil
+	return &liquidity.GetReconcileDetailListResp{Base: pageutil.Base(cursor, limit, len(rows), total, next), Data: data}, nil
 }

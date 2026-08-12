@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"database/sql"
+	"wklive/common/sqlutil"
 
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -19,7 +20,7 @@ type (
 		FindOneBySnapshotID(ctx context.Context, id string) (*TTradeMarketSnapshot, error)
 		FindLatestConfirmed(ctx context.Context, tenantID, symbolID, minSourceTimestamp int64) (*TTradeMarketSnapshot, error)
 		FindLatestConfirmedKind(ctx context.Context, tenantID, symbolID int64, kind string, minSourceTimestamp int64) (*TTradeMarketSnapshot, error)
-		FindPage(ctx context.Context, tenantID, symbolID, cursor, limit, start, end int64, kind string) ([]*TTradeMarketSnapshot, int64, error)
+		FindPage(ctx context.Context, tenantID, symbolID, cursor, limit, start, end int64, kind string, knownCounts ...int64) ([]*TTradeMarketSnapshot, int64, error)
 	}
 
 	customTTradeMarketSnapshotModel struct {
@@ -64,7 +65,7 @@ func (m *customTTradeMarketSnapshotModel) FindLatestConfirmedKind(ctx context.Co
 	return &row, nil
 }
 
-func (m *customTTradeMarketSnapshotModel) FindPage(ctx context.Context, t, sym, cursor, limit, start, end int64, kind string) ([]*TTradeMarketSnapshot, int64, error) {
+func (m *customTTradeMarketSnapshotModel) FindPage(ctx context.Context, t, sym, cursor, limit, start, end int64, kind string, knownCounts ...int64) ([]*TTradeMarketSnapshot, int64, error) {
 	where := "tenant_id=?"
 	args := []any{t}
 	if sym > 0 {
@@ -83,9 +84,11 @@ func (m *customTTradeMarketSnapshotModel) FindPage(ctx context.Context, t, sym, 
 		where += " AND source_timestamp<=?"
 		args = append(args, end)
 	}
-	var total int64
-	if err := m.QueryRowNoCacheCtx(ctx, &total, "SELECT COUNT(1) FROM t_trade_market_snapshot WHERE "+where, args...); err != nil {
-		return nil, 0, err
+	total := sqlutil.KnownCount(knownCounts...)
+	if total <= 0 {
+		if err := m.QueryRowNoCacheCtx(ctx, &total, "SELECT COUNT(1) FROM t_trade_market_snapshot WHERE "+where, args...); err != nil {
+			return nil, 0, err
+		}
 	}
 	if cursor > 0 {
 		where += " AND id<?"

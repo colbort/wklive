@@ -36,7 +36,7 @@ func (l *PageAssetFreezesLogic) PageAssetFreezes(in *asset.PageAssetFreezesReq) 
 		BizType:    helpers.AssetBizType(in.BizType),
 		BizNo:      in.BizNo,
 		Status:     int64(in.Status),
-	}, in.Page.Cursor, in.Page.Limit)
+	}, in.Page.Cursor, in.Page.Limit, pageutil.Count(in.Page))
 	if err != nil {
 		return nil, err
 	}

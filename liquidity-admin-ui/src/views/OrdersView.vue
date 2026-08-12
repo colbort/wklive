@@ -22,18 +22,19 @@ async function load(reset = false) {
   if (reset) {
     query.cursor = 0;
     cursorHistory.value = [];
+    page.total = 0;
   }
   loading.value = true;
   try {
-    const request = { ...query, status: query.status || undefined };
+    const request = { ...query, status: query.status || undefined, count: page.total };
     const response =
       tab.value === "quotes"
         ? await liquidityApi.quoteOrders(request)
         : await liquidityApi.externalOrders(request);
     rows.value = response.data || [];
-    page.total = Number(response.page?.total || 0);
-    page.nextCursor = Number(response.page?.nextCursor || 0);
-    page.hasMore = Boolean(response.page?.hasMore);
+    page.total = Number(response.total || 0);
+    page.nextCursor = Number(response.nextCursor || 0);
+    page.hasMore = Boolean(response.hasNext);
   } finally {
     loading.value = false;
   }

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
+	"wklive/common/sqlutil"
 
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -32,7 +33,7 @@ type (
 		MarkRedisPublished(context.Context, int64, string, int64) error
 		MarkEventPublished(context.Context, int64, string, int64) error
 		CompleteAfterEventPublished(context.Context, int64, string, int64) error
-		FindPage(context.Context, int64, string, int64, int64) ([]*TItickSnapshotOutbox, int64, error)
+		FindPage(context.Context, int64, string, int64, int64, ...int64) ([]*TItickSnapshotOutbox, int64, error)
 		RetryFailed(context.Context, int64, int64) error
 		Health(context.Context) (*SnapshotOutboxHealth, error)
 		DeleteSucceededBefore(context.Context, int64, int64) (int64, error)
@@ -130,7 +131,7 @@ func (m *customTItickSnapshotOutboxModel) Health(ctx context.Context) (*Snapshot
 	return &health, nil
 }
 
-func (m *customTItickSnapshotOutboxModel) FindPage(ctx context.Context, status int64, snapshotID string, cursor, limit int64) ([]*TItickSnapshotOutbox, int64, error) {
+func (m *customTItickSnapshotOutboxModel) FindPage(ctx context.Context, status int64, snapshotID string, cursor, limit int64, knownCounts ...int64) ([]*TItickSnapshotOutbox, int64, error) {
 	if limit <= 0 || limit > 200 {
 		limit = 50
 	}
@@ -144,9 +145,11 @@ func (m *customTItickSnapshotOutboxModel) FindPage(ctx context.Context, status i
 		where, countWhere = where+" AND snapshot_id=?", countWhere+" AND snapshot_id=?"
 		args, countArgs = append(args, snapshotID), append(countArgs, snapshotID)
 	}
-	var total int64
-	if err := m.QueryRowNoCacheCtx(ctx, &total, "SELECT COUNT(1) FROM t_itick_snapshot_outbox WHERE "+countWhere, countArgs...); err != nil {
-		return nil, 0, err
+	total := sqlutil.KnownCount(knownCounts...)
+	if total <= 0 {
+		if err := m.QueryRowNoCacheCtx(ctx, &total, "SELECT COUNT(1) FROM t_itick_snapshot_outbox WHERE "+countWhere, countArgs...); err != nil {
+			return nil, 0, err
+		}
 	}
 	args = append(args, limit)
 	var rows []*TItickSnapshotOutbox

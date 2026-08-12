@@ -53,7 +53,7 @@ func cancelAllQuoteOrders(ctx context.Context, svcCtx *svc.ServiceContext, req *
 func quoteCycleList(ctx context.Context, svcCtx *svc.ServiceContext, req *types.QuoteCycleQuery) (*types.QuoteCycleListResp, error) {
 	out, err := svcCtx.LiquidityCli.GetQuoteCycleList(ctx, &pb.GetQuoteCycleListReq{
 		ConfigId: req.ConfigId, SymbolId: req.SymbolId, Status: pb.QuoteCycleStatus(req.Status),
-		StartTime: req.StartTime, EndTime: req.EndTime, Cursor: req.Cursor, Limit: listLimit(req.Limit),
+		StartTime: req.StartTime, EndTime: req.EndTime, Page: protoPage(req.Cursor, req.Limit, req.Count),
 	})
 	if err != nil {
 		return nil, err
@@ -65,7 +65,7 @@ func externalFillList(ctx context.Context, svcCtx *svc.ServiceContext, req *type
 	out, err := svcCtx.LiquidityCli.GetExternalFillList(ctx, &pb.GetExternalFillListReq{
 		ProviderId: req.ProviderId, ExternalOrderId: req.ExternalOrderId,
 		SettlementStatus: pb.ExternalFillSettlementStatus(req.SettlementStatus),
-		StartTime:        req.StartTime, EndTime: req.EndTime, Cursor: req.Cursor, Limit: listLimit(req.Limit),
+		StartTime:        req.StartTime, EndTime: req.EndTime, Page: protoPage(req.Cursor, req.Limit, req.Count),
 	})
 	if err != nil {
 		return nil, err
@@ -133,7 +133,7 @@ func retryHedgeTask(ctx context.Context, svcCtx *svc.ServiceContext, req *types.
 func inventorySnapshotList(ctx context.Context, svcCtx *svc.ServiceContext, req *types.InventoryQuery) (*types.InventoryListResp, error) {
 	out, err := svcCtx.LiquidityCli.GetInventorySnapshotList(ctx, &pb.GetInventorySnapshotListReq{
 		ConfigId: req.ConfigId, ProviderId: req.ProviderId, Source: pb.InventorySource(req.Source),
-		StartTime: req.StartTime, EndTime: req.EndTime, Cursor: req.Cursor, Limit: listLimit(req.Limit),
+		StartTime: req.StartTime, EndTime: req.EndTime, Page: protoPage(req.Cursor, req.Limit, req.Count),
 	})
 	if err != nil {
 		return nil, err
@@ -183,7 +183,7 @@ func runReconcile(ctx context.Context, svcCtx *svc.ServiceContext, req *types.Ru
 func reconcileDetailList(ctx context.Context, svcCtx *svc.ServiceContext, req *types.ReconcileDetailQuery) (*types.ReconcileDetailListResp, error) {
 	out, err := svcCtx.LiquidityCli.GetReconcileDetailList(ctx, &pb.GetReconcileDetailListReq{
 		BatchId: req.BatchId, DifferenceType: pb.ReconcileDifferenceType(req.DifferenceType),
-		Status: pb.ReconcileDifferenceStatus(req.Status), Cursor: req.Cursor, Limit: listLimit(req.Limit),
+		Status: pb.ReconcileDifferenceStatus(req.Status), Page: protoPage(req.Cursor, req.Limit, req.Count),
 	})
 	if err != nil {
 		return nil, err

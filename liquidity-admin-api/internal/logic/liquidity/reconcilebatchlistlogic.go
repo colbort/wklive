@@ -30,7 +30,7 @@ func NewReconcileBatchListLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 func (l *ReconcileBatchListLogic) ReconcileBatchList(req *types.PageQuery) (resp *types.ReconcileListResp, err error) {
 	out, err := l.svcCtx.LiquidityCli.GetReconcileBatchList(l.ctx, &pb.GetReconcileBatchListReq{
-		Status: pb.ReconcileStatus(req.Status), Cursor: req.Cursor, Limit: listLimit(req.Limit),
+		Status: pb.ReconcileStatus(req.Status), Page: protoPage(req.Cursor, req.Limit, req.Count),
 	})
 	if err != nil {
 		return nil, err

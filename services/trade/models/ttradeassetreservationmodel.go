@@ -19,7 +19,7 @@ type (
 	// and implement the added methods in customTTradeAssetReservationModel.
 	TTradeAssetReservationModel interface {
 		tTradeAssetReservationModel
-		FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TTradeAssetReservation, int64, error)
+		FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64, knownCounts ...int64) ([]*TTradeAssetReservation, int64, error)
 		AddConsumed(ctx context.Context, id int64, amount decimal.Decimal, updateTimes int64) (bool, error)
 		AddReleased(ctx context.Context, id int64, amount decimal.Decimal, updateTimes int64) (bool, error)
 		BeginRelease(ctx context.Context, id int64, updateTimes int64) (bool, error)
@@ -141,13 +141,15 @@ func (m *customTTradeAssetReservationModel) addSettledAmount(ctx context.Context
 	return rows == 1, err
 }
 
-func (m *customTTradeAssetReservationModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64) ([]*TTradeAssetReservation, int64, error) {
+func (m *customTTradeAssetReservationModel) FindPage(ctx context.Context, filter AdminPageFilter, cursor, limit int64, knownCounts ...int64) ([]*TTradeAssetReservation, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	b := adminPageBuilder(filter, "")
 	where, args := b.Where(), b.Args()
-	var total int64
-	if err := m.QueryRowNoCacheCtx(ctx, &total, fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where), args...); err != nil {
-		return nil, 0, err
+	total := sqlutil.KnownCount(knownCounts...)
+	if total <= 0 {
+		if err := m.QueryRowNoCacheCtx(ctx, &total, fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where), args...); err != nil {
+			return nil, 0, err
+		}
 	}
 	la := append([]any{}, args...)
 	q := fmt.Sprintf("SELECT %s FROM %s WHERE %s", tTradeAssetReservationRows, m.table, where)

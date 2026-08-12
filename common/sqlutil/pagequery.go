@@ -114,3 +114,12 @@ func NormalizeLimit(limit int64) int64 {
 	}
 	return limit
 }
+
+// KnownCount returns the first positive total supplied by a pagination client.
+// A non-positive result means the caller must calculate an exact count.
+func KnownCount(counts ...int64) int64 {
+	if len(counts) == 0 || counts[0] <= 0 {
+		return 0
+	}
+	return counts[0]
+}

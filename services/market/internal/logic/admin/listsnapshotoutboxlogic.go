@@ -30,7 +30,7 @@ func (l *ListSnapshotOutboxLogic) ListSnapshotOutbox(in *market.ListSnapshotOutb
 	if in == nil || in.Page == nil || in.Status < 0 || in.Status > 5 {
 		return nil, errors.New("invalid snapshot outbox query")
 	}
-	rows, count, err := l.svcCtx.SnapshotOutboxModel.FindPage(l.ctx, int64(in.Status), strings.TrimSpace(in.SnapshotId), in.Page.Cursor, in.Page.Limit)
+	rows, count, err := l.svcCtx.SnapshotOutboxModel.FindPage(l.ctx, int64(in.Status), strings.TrimSpace(in.SnapshotId), in.Page.Cursor, in.Page.Limit, pageutil.Count(in.Page))
 	if err != nil {
 		return nil, err
 	}

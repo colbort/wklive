@@ -27,7 +27,7 @@ type (
 	// and implement the added methods in customTRiskOrderCheckLogModel.
 	TRiskOrderCheckLogModel interface {
 		tRiskOrderCheckLogModel
-		FindPage(ctx context.Context, filter RiskOrderCheckLogPageFilter, cursor int64, limit int64) ([]*TRiskOrderCheckLog, int64, error)
+		FindPage(ctx context.Context, filter RiskOrderCheckLogPageFilter, cursor int64, limit int64, knownCounts ...int64) ([]*TRiskOrderCheckLog, int64, error)
 	}
 
 	customTRiskOrderCheckLogModel struct {
@@ -42,7 +42,7 @@ func NewTRiskOrderCheckLogModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...ca
 	}
 }
 
-func (m *customTRiskOrderCheckLogModel) FindPage(ctx context.Context, filter RiskOrderCheckLogPageFilter, cursor int64, limit int64) ([]*TRiskOrderCheckLog, int64, error) {
+func (m *customTRiskOrderCheckLogModel) FindPage(ctx context.Context, filter RiskOrderCheckLogPageFilter, cursor int64, limit int64, knownCounts ...int64) ([]*TRiskOrderCheckLog, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 	builder := sqlutil.NewPageQueryBuilder()
 	builder.EqInt64("tenant_id", filter.TenantId)
@@ -57,10 +57,12 @@ func (m *customTRiskOrderCheckLogModel) FindPage(ctx context.Context, filter Ris
 	where := builder.Where()
 	args := builder.Args()
 
-	var total int64
-	countSQL := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
-	if err := m.QueryRowNoCacheCtx(ctx, &total, countSQL, args...); err != nil {
-		return nil, 0, err
+	total := sqlutil.KnownCount(knownCounts...)
+	if total <= 0 {
+		countSQL := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
+		if err := m.QueryRowNoCacheCtx(ctx, &total, countSQL, args...); err != nil {
+			return nil, 0, err
+		}
 	}
 
 	listArgs := append([]any{}, args...)

@@ -100,17 +100,15 @@ type ExternalFillItem struct {
 type ExternalFillListResp struct {
 	RespBase
 	Data []ExternalFillItem `json:"data"`
-	Page PageMeta           `json:"page"`
 }
 
 type ExternalFillQuery struct {
+	PageReq
 	ProviderId       int64 `form:"providerId,optional"`
 	ExternalOrderId  int64 `form:"externalOrderId,optional"`
 	SettlementStatus int32 `form:"settlementStatus,optional"`
 	StartTime        int64 `form:"startTime,optional"`
 	EndTime          int64 `form:"endTime,optional"`
-	Cursor           int64 `form:"cursor,optional"`
-	Limit            int32 `form:"limit,optional"`
 }
 
 type HedgeItem struct {
@@ -131,7 +129,6 @@ type HedgeItem struct {
 type HedgeListResp struct {
 	RespBase
 	Data []HedgeItem `json:"data"`
-	Page PageMeta    `json:"page"`
 }
 
 type HedgeTaskActionReq struct {
@@ -172,17 +169,15 @@ type InventoryItem struct {
 type InventoryListResp struct {
 	RespBase
 	Data []InventoryItem `json:"data"`
-	Page PageMeta        `json:"page"`
 }
 
 type InventoryQuery struct {
+	PageReq
 	ConfigId   int64 `form:"configId,optional"`
 	ProviderId int64 `form:"providerId,optional"`
 	Source     int32 `form:"source,optional"`
 	StartTime  int64 `form:"startTime,optional"`
 	EndTime    int64 `form:"endTime,optional"`
-	Cursor     int64 `form:"cursor,optional"`
-	Limit      int32 `form:"limit,optional"`
 }
 
 type InventoryResp struct {
@@ -278,7 +273,6 @@ type OrderItem struct {
 type OrderListResp struct {
 	RespBase
 	Data []OrderItem `json:"data"`
-	Page PageMeta    `json:"page"`
 }
 
 type OrderQuery struct {
@@ -289,17 +283,10 @@ type OrderQuery struct {
 	Side       int32 `form:"side,optional"`
 }
 
-type PageMeta struct {
-	NextCursor int64 `json:"nextCursor"`
-	Total      int64 `json:"total"`
-	HasMore    bool  `json:"hasMore"`
-}
-
 type PageQuery struct {
+	PageReq
 	Keyword string `form:"keyword,optional"`
 	Status  int32  `form:"status,optional"`
-	Cursor  int64  `form:"cursor,optional"`
-	Limit   int32  `form:"limit,optional"`
 }
 
 type PageReq struct {
@@ -365,7 +352,6 @@ type ProviderItem struct {
 type ProviderListResp struct {
 	RespBase
 	Data []ProviderItem `json:"data"`
-	Page PageMeta       `json:"page"`
 }
 
 type ProviderStatusReq struct {
@@ -405,17 +391,15 @@ type QuoteCycleItem struct {
 type QuoteCycleListResp struct {
 	RespBase
 	Data []QuoteCycleItem `json:"data"`
-	Page PageMeta         `json:"page"`
 }
 
 type QuoteCycleQuery struct {
+	PageReq
 	ConfigId  int64 `form:"configId,optional"`
 	SymbolId  int64 `form:"symbolId,optional"`
 	Status    int32 `form:"status,optional"`
 	StartTime int64 `form:"startTime,optional"`
 	EndTime   int64 `form:"endTime,optional"`
-	Cursor    int64 `form:"cursor,optional"`
-	Limit     int32 `form:"limit,optional"`
 }
 
 type ReconcileDetailItem struct {
@@ -437,15 +421,13 @@ type ReconcileDetailItem struct {
 type ReconcileDetailListResp struct {
 	RespBase
 	Data []ReconcileDetailItem `json:"data"`
-	Page PageMeta              `json:"page"`
 }
 
 type ReconcileDetailQuery struct {
+	PageReq
 	BatchId        int64 `path:"batchId"`
 	DifferenceType int32 `form:"differenceType,optional"`
 	Status         int32 `form:"status,optional"`
-	Cursor         int64 `form:"cursor,optional"`
-	Limit          int32 `form:"limit,optional"`
 }
 
 type ReconcileItem struct {
@@ -462,7 +444,6 @@ type ReconcileItem struct {
 type ReconcileListResp struct {
 	RespBase
 	Data []ReconcileItem `json:"data"`
-	Page PageMeta        `json:"page"`
 }
 
 type ReconcileResp struct {
@@ -506,7 +487,6 @@ type RiskItem struct {
 type RiskListResp struct {
 	RespBase
 	Data []RiskItem `json:"data"`
-	Page PageMeta   `json:"page"`
 }
 
 type RunReconcileReq struct {
@@ -629,7 +609,6 @@ type SymbolConfigItem struct {
 type SymbolConfigListResp struct {
 	RespBase
 	Data []SymbolConfigItem `json:"data"`
-	Page PageMeta           `json:"page"`
 }
 
 type TimeRange struct {

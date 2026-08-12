@@ -1,14 +1,7 @@
-type PageMeta {
-	nextCursor int64 `json:"nextCursor"`
-	total      int64 `json:"total"`
-	hasMore    bool  `json:"hasMore"`
-}
-
 type PageQuery {
+	PageReq
 	keyword string `form:"keyword,optional"`
 	status  int32  `form:"status,optional"`
-	cursor  int64  `form:"cursor,optional"`
-	limit   int32  `form:"limit,optional"`
 }
 
 type DashboardResp {
@@ -40,7 +33,6 @@ type ProviderItem {
 type ProviderListResp {
 	RespBase
 	data []ProviderItem `json:"data"`
-	page PageMeta       `json:"page"`
 }
 
 type CreateProviderReq {
@@ -157,7 +149,6 @@ type SymbolConfigItem {
 type SymbolConfigListResp {
 	RespBase
 	data []SymbolConfigItem `json:"data"`
-	page PageMeta           `json:"page"`
 }
 
 type SymbolConfigDetailReq {
@@ -269,13 +260,12 @@ type CancelAllQuoteOrdersReq {
 }
 
 type QuoteCycleQuery {
+	PageReq
 	configId int64 `form:"configId,optional"`
 	symbolId int64 `form:"symbolId,optional"`
 	status   int32 `form:"status,optional"`
 	startTime int64 `form:"startTime,optional"`
 	endTime int64 `form:"endTime,optional"`
-	cursor int64 `form:"cursor,optional"`
-	limit int32 `form:"limit,optional"`
 }
 
 type QuoteCycleItem {
@@ -299,7 +289,6 @@ type QuoteCycleItem {
 type QuoteCycleListResp {
 	RespBase
 	data []QuoteCycleItem `json:"data"`
-	page PageMeta `json:"page"`
 }
 
 type OrderItem {
@@ -320,7 +309,6 @@ type OrderItem {
 type OrderListResp {
 	RespBase
 	data []OrderItem `json:"data"`
-	page PageMeta    `json:"page"`
 }
 
 type OrderQuery {
@@ -332,13 +320,12 @@ type OrderQuery {
 }
 
 type ExternalFillQuery {
+	PageReq
 	providerId int64 `form:"providerId,optional"`
 	externalOrderId int64 `form:"externalOrderId,optional"`
 	settlementStatus int32 `form:"settlementStatus,optional"`
 	startTime int64 `form:"startTime,optional"`
 	endTime int64 `form:"endTime,optional"`
-	cursor int64 `form:"cursor,optional"`
-	limit int32 `form:"limit,optional"`
 }
 
 type ExternalFillItem {
@@ -362,7 +349,6 @@ type ExternalFillItem {
 type ExternalFillListResp {
 	RespBase
 	data []ExternalFillItem `json:"data"`
-	page PageMeta `json:"page"`
 }
 
 type CancelExternalOrderReq {
@@ -389,7 +375,6 @@ type HedgeItem {
 type HedgeListResp {
 	RespBase
 	data []HedgeItem `json:"data"`
-	page PageMeta    `json:"page"`
 }
 
 type CreateManualHedgeReq {
@@ -413,13 +398,12 @@ type HedgeTaskActionReq {
 }
 
 type InventoryQuery {
+	PageReq
 	configId int64 `form:"configId,optional"`
 	providerId int64 `form:"providerId,optional"`
 	source int32 `form:"source,optional"`
 	startTime int64 `form:"startTime,optional"`
 	endTime int64 `form:"endTime,optional"`
-	cursor int64 `form:"cursor,optional"`
-	limit int32 `form:"limit,optional"`
 }
 
 type LatestInventoryReq {
@@ -455,7 +439,6 @@ type InventoryItem {
 type InventoryListResp {
 	RespBase
 	data []InventoryItem `json:"data"`
-	page PageMeta `json:"page"`
 }
 
 type InventoryResp {
@@ -477,7 +460,6 @@ type RiskItem {
 type RiskListResp {
 	RespBase
 	data []RiskItem `json:"data"`
-	page PageMeta   `json:"page"`
 }
 
 type ResolveRiskEventReq {
@@ -500,7 +482,6 @@ type ReconcileItem {
 type ReconcileListResp {
 	RespBase
 	data []ReconcileItem `json:"data"`
-	page PageMeta        `json:"page"`
 }
 
 type RunReconcileReq {
@@ -516,11 +497,10 @@ type ReconcileResp {
 }
 
 type ReconcileDetailQuery {
+	PageReq
 	batchId int64 `path:"batchId"`
 	differenceType int32 `form:"differenceType,optional"`
 	status int32 `form:"status,optional"`
-	cursor int64 `form:"cursor,optional"`
-	limit int32 `form:"limit,optional"`
 }
 
 type ReconcileDetailItem {
@@ -542,7 +522,6 @@ type ReconcileDetailItem {
 type ReconcileDetailListResp {
 	RespBase
 	data []ReconcileDetailItem `json:"data"`
-	page PageMeta `json:"page"`
 }
 
 type ResolveReconcileDifferenceReq {

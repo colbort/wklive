@@ -41,7 +41,7 @@ export type TimeRange = {
   endTime?: number // 结束时间
 }
 
-export type TradePageReq = { cursor?: number; limit?: number }
+export type TradePageReq = { cursor?: number; limit?: number; count?: number }
 export type ContractRiskLimitTier = {
   id: number
   tenantId: number
@@ -1063,6 +1063,7 @@ export type GetSymbolLeverageConfigListReq = {
 export type GetOrderListAdminReq = {
   cursor?: number
   limit?: number
+  count?: number
   tenantId?: number
   userId?: number
   productType?: number
@@ -1129,6 +1130,7 @@ export type GetMarginSnapshotListAdminReq = {
 export type GetCancelLogListAdminReq = {
   cursor?: number
   limit?: number
+  count?: number
   tenantId?: number
   userId?: number
   orderId?: number
@@ -1178,6 +1180,7 @@ export type GetUserTradeConfigReq = {
 export type GetRiskOrderCheckLogListReq = {
   cursor?: number
   limit?: number
+  count?: number
   tenantId?: number
   userId?: number
   symbolId?: number
@@ -1203,6 +1206,7 @@ export type GetUserLeverageConfigReq = {
 export type GetTradeEventListReq = {
   cursor?: number
   limit?: number
+  count?: number
   tenantId?: number
   eventType?: string
   bizType?: string

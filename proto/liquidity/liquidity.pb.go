@@ -900,11 +900,10 @@ func (x *TestProviderConnectionReq) GetOperatorId() int64 {
 
 type GetProviderListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	ProviderType  ProviderType           `protobuf:"varint,2,opt,name=provider_type,json=providerType,proto3,enum=liquidity.ProviderType" json:"provider_type,omitempty"`
 	Status        ProviderStatus         `protobuf:"varint,3,opt,name=status,proto3,enum=liquidity.ProviderStatus" json:"status,omitempty"`
 	Keyword       string                 `protobuf:"bytes,4,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	Cursor        int64                  `protobuf:"varint,5,opt,name=cursor,proto3" json:"cursor,omitempty"`
-	Limit         int32                  `protobuf:"varint,6,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -939,6 +938,13 @@ func (*GetProviderListReq) Descriptor() ([]byte, []int) {
 	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{11}
 }
 
+func (x *GetProviderListReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
 func (x *GetProviderListReq) GetProviderType() ProviderType {
 	if x != nil {
 		return x.ProviderType
@@ -958,20 +964,6 @@ func (x *GetProviderListReq) GetKeyword() string {
 		return x.Keyword
 	}
 	return ""
-}
-
-func (x *GetProviderListReq) GetCursor() int64 {
-	if x != nil {
-		return x.Cursor
-	}
-	return 0
-}
-
-func (x *GetProviderListReq) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
 }
 
 type GetProviderDetailReq struct {
@@ -1142,7 +1134,6 @@ type GetProviderListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*LiquidityProvider   `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
-	Page          *PageMeta              `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1187,13 +1178,6 @@ func (x *GetProviderListResp) GetBase() *common.RespBase {
 func (x *GetProviderListResp) GetData() []*LiquidityProvider {
 	if x != nil {
 		return x.Data
-	}
-	return nil
-}
-
-func (x *GetProviderListResp) GetPage() *PageMeta {
-	if x != nil {
-		return x.Page
 	}
 	return nil
 }
@@ -1468,14 +1452,13 @@ func (x *SaveSymbolConfigReq) GetOperatorId() int64 {
 
 type GetSymbolConfigListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,2,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	ProductType   common.ProductType     `protobuf:"varint,3,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
 	ContractType  common.ContractType    `protobuf:"varint,4,opt,name=contract_type,json=contractType,proto3,enum=common.ContractType" json:"contract_type,omitempty"`
 	LiquidityMode LiquidityMode          `protobuf:"varint,5,opt,name=liquidity_mode,json=liquidityMode,proto3,enum=liquidity.LiquidityMode" json:"liquidity_mode,omitempty"`
 	Status        SymbolLiquidityStatus  `protobuf:"varint,6,opt,name=status,proto3,enum=liquidity.SymbolLiquidityStatus" json:"status,omitempty"`
 	Keyword       string                 `protobuf:"bytes,7,opt,name=keyword,proto3" json:"keyword,omitempty"`
-	Cursor        int64                  `protobuf:"varint,8,opt,name=cursor,proto3" json:"cursor,omitempty"`
-	Limit         int32                  `protobuf:"varint,9,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1508,6 +1491,13 @@ func (x *GetSymbolConfigListReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetSymbolConfigListReq.ProtoReflect.Descriptor instead.
 func (*GetSymbolConfigListReq) Descriptor() ([]byte, []int) {
 	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *GetSymbolConfigListReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
 }
 
 func (x *GetSymbolConfigListReq) GetSymbolId() int64 {
@@ -1550,20 +1540,6 @@ func (x *GetSymbolConfigListReq) GetKeyword() string {
 		return x.Keyword
 	}
 	return ""
-}
-
-func (x *GetSymbolConfigListReq) GetCursor() int64 {
-	if x != nil {
-		return x.Cursor
-	}
-	return 0
-}
-
-func (x *GetSymbolConfigListReq) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
 }
 
 type GetSymbolConfigDetailReq struct {
@@ -1674,7 +1650,6 @@ type GetSymbolConfigListResp struct {
 	state         protoimpl.MessageState   `protogen:"open.v1"`
 	Base          *common.RespBase         `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*LiquiditySymbolConfig `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
-	Page          *PageMeta                `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1719,13 +1694,6 @@ func (x *GetSymbolConfigListResp) GetBase() *common.RespBase {
 func (x *GetSymbolConfigListResp) GetData() []*LiquiditySymbolConfig {
 	if x != nil {
 		return x.Data
-	}
-	return nil
-}
-
-func (x *GetSymbolConfigListResp) GetPage() *PageMeta {
-	if x != nil {
-		return x.Page
 	}
 	return nil
 }
@@ -2020,13 +1988,12 @@ func (x *SymbolActionReq) GetReason() string {
 
 type GetQuoteCycleListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	ConfigId      int64                  `protobuf:"varint,2,opt,name=config_id,json=configId,proto3" json:"config_id,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,3,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
 	Status        QuoteCycleStatus       `protobuf:"varint,4,opt,name=status,proto3,enum=liquidity.QuoteCycleStatus" json:"status,omitempty"`
 	StartTime     int64                  `protobuf:"varint,5,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
 	EndTime       int64                  `protobuf:"varint,6,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
-	Cursor        int64                  `protobuf:"varint,7,opt,name=cursor,proto3" json:"cursor,omitempty"`
-	Limit         int32                  `protobuf:"varint,8,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2059,6 +2026,13 @@ func (x *GetQuoteCycleListReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetQuoteCycleListReq.ProtoReflect.Descriptor instead.
 func (*GetQuoteCycleListReq) Descriptor() ([]byte, []int) {
 	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *GetQuoteCycleListReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
 }
 
 func (x *GetQuoteCycleListReq) GetConfigId() int64 {
@@ -2096,25 +2070,10 @@ func (x *GetQuoteCycleListReq) GetEndTime() int64 {
 	return 0
 }
 
-func (x *GetQuoteCycleListReq) GetCursor() int64 {
-	if x != nil {
-		return x.Cursor
-	}
-	return 0
-}
-
-func (x *GetQuoteCycleListReq) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
-}
-
 type GetQuoteCycleListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*LiquidityQuoteCycle `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
-	Page          *PageMeta              `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2163,15 +2122,9 @@ func (x *GetQuoteCycleListResp) GetData() []*LiquidityQuoteCycle {
 	return nil
 }
 
-func (x *GetQuoteCycleListResp) GetPage() *PageMeta {
-	if x != nil {
-		return x.Page
-	}
-	return nil
-}
-
 type GetQuoteOrderListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	ConfigId      int64                  `protobuf:"varint,2,opt,name=config_id,json=configId,proto3" json:"config_id,omitempty"`
 	ProviderId    int64                  `protobuf:"varint,3,opt,name=provider_id,json=providerId,proto3" json:"provider_id,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,4,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
@@ -2180,8 +2133,6 @@ type GetQuoteOrderListReq struct {
 	Keyword       string                 `protobuf:"bytes,7,opt,name=keyword,proto3" json:"keyword,omitempty"`
 	StartTime     int64                  `protobuf:"varint,8,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
 	EndTime       int64                  `protobuf:"varint,9,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
-	Cursor        int64                  `protobuf:"varint,10,opt,name=cursor,proto3" json:"cursor,omitempty"`
-	Limit         int32                  `protobuf:"varint,11,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2214,6 +2165,13 @@ func (x *GetQuoteOrderListReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetQuoteOrderListReq.ProtoReflect.Descriptor instead.
 func (*GetQuoteOrderListReq) Descriptor() ([]byte, []int) {
 	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *GetQuoteOrderListReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
 }
 
 func (x *GetQuoteOrderListReq) GetConfigId() int64 {
@@ -2272,25 +2230,10 @@ func (x *GetQuoteOrderListReq) GetEndTime() int64 {
 	return 0
 }
 
-func (x *GetQuoteOrderListReq) GetCursor() int64 {
-	if x != nil {
-		return x.Cursor
-	}
-	return 0
-}
-
-func (x *GetQuoteOrderListReq) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
-}
-
 type GetQuoteOrderListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*LiquidityQuoteOrder `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
-	Page          *PageMeta              `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2339,15 +2282,9 @@ func (x *GetQuoteOrderListResp) GetData() []*LiquidityQuoteOrder {
 	return nil
 }
 
-func (x *GetQuoteOrderListResp) GetPage() *PageMeta {
-	if x != nil {
-		return x.Page
-	}
-	return nil
-}
-
 type GetExternalOrderListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	ProviderId    int64                  `protobuf:"varint,2,opt,name=provider_id,json=providerId,proto3" json:"provider_id,omitempty"`
 	ConfigId      int64                  `protobuf:"varint,3,opt,name=config_id,json=configId,proto3" json:"config_id,omitempty"`
 	SymbolId      int64                  `protobuf:"varint,4,opt,name=symbol_id,json=symbolId,proto3" json:"symbol_id,omitempty"`
@@ -2357,8 +2294,6 @@ type GetExternalOrderListReq struct {
 	Keyword       string                 `protobuf:"bytes,8,opt,name=keyword,proto3" json:"keyword,omitempty"`
 	StartTime     int64                  `protobuf:"varint,9,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
 	EndTime       int64                  `protobuf:"varint,10,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
-	Cursor        int64                  `protobuf:"varint,11,opt,name=cursor,proto3" json:"cursor,omitempty"`
-	Limit         int32                  `protobuf:"varint,12,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2391,6 +2326,13 @@ func (x *GetExternalOrderListReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetExternalOrderListReq.ProtoReflect.Descriptor instead.
 func (*GetExternalOrderListReq) Descriptor() ([]byte, []int) {
 	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *GetExternalOrderListReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
 }
 
 func (x *GetExternalOrderListReq) GetProviderId() int64 {
@@ -2456,25 +2398,10 @@ func (x *GetExternalOrderListReq) GetEndTime() int64 {
 	return 0
 }
 
-func (x *GetExternalOrderListReq) GetCursor() int64 {
-	if x != nil {
-		return x.Cursor
-	}
-	return 0
-}
-
-func (x *GetExternalOrderListReq) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
-}
-
 type GetExternalOrderListResp struct {
 	state         protoimpl.MessageState    `protogen:"open.v1"`
 	Base          *common.RespBase          `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*LiquidityExternalOrder `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
-	Page          *PageMeta                 `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2523,22 +2450,14 @@ func (x *GetExternalOrderListResp) GetData() []*LiquidityExternalOrder {
 	return nil
 }
 
-func (x *GetExternalOrderListResp) GetPage() *PageMeta {
-	if x != nil {
-		return x.Page
-	}
-	return nil
-}
-
 type GetExternalFillListReq struct {
 	state            protoimpl.MessageState       `protogen:"open.v1"`
+	Page             *common.PageReq              `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	ProviderId       int64                        `protobuf:"varint,2,opt,name=provider_id,json=providerId,proto3" json:"provider_id,omitempty"`
 	ExternalOrderId  int64                        `protobuf:"varint,3,opt,name=external_order_id,json=externalOrderId,proto3" json:"external_order_id,omitempty"`
 	SettlementStatus ExternalFillSettlementStatus `protobuf:"varint,4,opt,name=settlement_status,json=settlementStatus,proto3,enum=liquidity.ExternalFillSettlementStatus" json:"settlement_status,omitempty"`
 	StartTime        int64                        `protobuf:"varint,5,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
 	EndTime          int64                        `protobuf:"varint,6,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
-	Cursor           int64                        `protobuf:"varint,7,opt,name=cursor,proto3" json:"cursor,omitempty"`
-	Limit            int32                        `protobuf:"varint,8,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -2571,6 +2490,13 @@ func (x *GetExternalFillListReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetExternalFillListReq.ProtoReflect.Descriptor instead.
 func (*GetExternalFillListReq) Descriptor() ([]byte, []int) {
 	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *GetExternalFillListReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
 }
 
 func (x *GetExternalFillListReq) GetProviderId() int64 {
@@ -2608,25 +2534,10 @@ func (x *GetExternalFillListReq) GetEndTime() int64 {
 	return 0
 }
 
-func (x *GetExternalFillListReq) GetCursor() int64 {
-	if x != nil {
-		return x.Cursor
-	}
-	return 0
-}
-
-func (x *GetExternalFillListReq) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
-}
-
 type GetExternalFillListResp struct {
 	state         protoimpl.MessageState   `protogen:"open.v1"`
 	Base          *common.RespBase         `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*LiquidityExternalFill `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
-	Page          *PageMeta                `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2671,13 +2582,6 @@ func (x *GetExternalFillListResp) GetBase() *common.RespBase {
 func (x *GetExternalFillListResp) GetData() []*LiquidityExternalFill {
 	if x != nil {
 		return x.Data
-	}
-	return nil
-}
-
-func (x *GetExternalFillListResp) GetPage() *PageMeta {
-	if x != nil {
-		return x.Page
 	}
 	return nil
 }
@@ -3024,13 +2928,12 @@ func (x *HedgeTaskResp) GetData() *LiquidityHedgeTask {
 
 type GetHedgeTaskListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	ConfigId      int64                  `protobuf:"varint,2,opt,name=config_id,json=configId,proto3" json:"config_id,omitempty"`
 	ProviderId    int64                  `protobuf:"varint,3,opt,name=provider_id,json=providerId,proto3" json:"provider_id,omitempty"`
 	Status        HedgeStatus            `protobuf:"varint,4,opt,name=status,proto3,enum=liquidity.HedgeStatus" json:"status,omitempty"`
 	StartTime     int64                  `protobuf:"varint,5,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
 	EndTime       int64                  `protobuf:"varint,6,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
-	Cursor        int64                  `protobuf:"varint,7,opt,name=cursor,proto3" json:"cursor,omitempty"`
-	Limit         int32                  `protobuf:"varint,8,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3063,6 +2966,13 @@ func (x *GetHedgeTaskListReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetHedgeTaskListReq.ProtoReflect.Descriptor instead.
 func (*GetHedgeTaskListReq) Descriptor() ([]byte, []int) {
 	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *GetHedgeTaskListReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
 }
 
 func (x *GetHedgeTaskListReq) GetConfigId() int64 {
@@ -3100,25 +3010,10 @@ func (x *GetHedgeTaskListReq) GetEndTime() int64 {
 	return 0
 }
 
-func (x *GetHedgeTaskListReq) GetCursor() int64 {
-	if x != nil {
-		return x.Cursor
-	}
-	return 0
-}
-
-func (x *GetHedgeTaskListReq) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
-}
-
 type GetHedgeTaskListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*LiquidityHedgeTask  `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
-	Page          *PageMeta              `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3167,22 +3062,14 @@ func (x *GetHedgeTaskListResp) GetData() []*LiquidityHedgeTask {
 	return nil
 }
 
-func (x *GetHedgeTaskListResp) GetPage() *PageMeta {
-	if x != nil {
-		return x.Page
-	}
-	return nil
-}
-
 type GetInventorySnapshotListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	ConfigId      int64                  `protobuf:"varint,2,opt,name=config_id,json=configId,proto3" json:"config_id,omitempty"`
 	ProviderId    int64                  `protobuf:"varint,3,opt,name=provider_id,json=providerId,proto3" json:"provider_id,omitempty"`
 	Source        InventorySource        `protobuf:"varint,4,opt,name=source,proto3,enum=liquidity.InventorySource" json:"source,omitempty"`
 	StartTime     int64                  `protobuf:"varint,5,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
 	EndTime       int64                  `protobuf:"varint,6,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
-	Cursor        int64                  `protobuf:"varint,7,opt,name=cursor,proto3" json:"cursor,omitempty"`
-	Limit         int32                  `protobuf:"varint,8,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3215,6 +3102,13 @@ func (x *GetInventorySnapshotListReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetInventorySnapshotListReq.ProtoReflect.Descriptor instead.
 func (*GetInventorySnapshotListReq) Descriptor() ([]byte, []int) {
 	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *GetInventorySnapshotListReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
 }
 
 func (x *GetInventorySnapshotListReq) GetConfigId() int64 {
@@ -3252,25 +3146,10 @@ func (x *GetInventorySnapshotListReq) GetEndTime() int64 {
 	return 0
 }
 
-func (x *GetInventorySnapshotListReq) GetCursor() int64 {
-	if x != nil {
-		return x.Cursor
-	}
-	return 0
-}
-
-func (x *GetInventorySnapshotListReq) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
-}
-
 type GetInventorySnapshotListResp struct {
 	state         protoimpl.MessageState        `protogen:"open.v1"`
 	Base          *common.RespBase              `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*LiquidityInventorySnapshot `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
-	Page          *PageMeta                     `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3315,13 +3194,6 @@ func (x *GetInventorySnapshotListResp) GetBase() *common.RespBase {
 func (x *GetInventorySnapshotListResp) GetData() []*LiquidityInventorySnapshot {
 	if x != nil {
 		return x.Data
-	}
-	return nil
-}
-
-func (x *GetInventorySnapshotListResp) GetPage() *PageMeta {
-	if x != nil {
-		return x.Page
 	}
 	return nil
 }
@@ -3440,6 +3312,7 @@ func (x *InventorySnapshotResp) GetData() *LiquidityInventorySnapshot {
 
 type GetRiskEventListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	ConfigId      int64                  `protobuf:"varint,2,opt,name=config_id,json=configId,proto3" json:"config_id,omitempty"`
 	ProviderId    int64                  `protobuf:"varint,3,opt,name=provider_id,json=providerId,proto3" json:"provider_id,omitempty"`
 	RiskType      string                 `protobuf:"bytes,4,opt,name=risk_type,json=riskType,proto3" json:"risk_type,omitempty"`
@@ -3447,8 +3320,6 @@ type GetRiskEventListReq struct {
 	Status        RiskEventStatus        `protobuf:"varint,6,opt,name=status,proto3,enum=liquidity.RiskEventStatus" json:"status,omitempty"`
 	StartTime     int64                  `protobuf:"varint,7,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
 	EndTime       int64                  `protobuf:"varint,8,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
-	Cursor        int64                  `protobuf:"varint,9,opt,name=cursor,proto3" json:"cursor,omitempty"`
-	Limit         int32                  `protobuf:"varint,10,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3481,6 +3352,13 @@ func (x *GetRiskEventListReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetRiskEventListReq.ProtoReflect.Descriptor instead.
 func (*GetRiskEventListReq) Descriptor() ([]byte, []int) {
 	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *GetRiskEventListReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
 }
 
 func (x *GetRiskEventListReq) GetConfigId() int64 {
@@ -3532,25 +3410,10 @@ func (x *GetRiskEventListReq) GetEndTime() int64 {
 	return 0
 }
 
-func (x *GetRiskEventListReq) GetCursor() int64 {
-	if x != nil {
-		return x.Cursor
-	}
-	return 0
-}
-
-func (x *GetRiskEventListReq) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
-}
-
 type GetRiskEventListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *common.RespBase       `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*LiquidityRiskEvent  `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
-	Page          *PageMeta              `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3595,13 +3458,6 @@ func (x *GetRiskEventListResp) GetBase() *common.RespBase {
 func (x *GetRiskEventListResp) GetData() []*LiquidityRiskEvent {
 	if x != nil {
 		return x.Data
-	}
-	return nil
-}
-
-func (x *GetRiskEventListResp) GetPage() *PageMeta {
-	if x != nil {
-		return x.Page
 	}
 	return nil
 }
@@ -3804,13 +3660,12 @@ func (x *ReconcileBatchResp) GetData() *LiquidityReconcileBatch {
 
 type GetReconcileBatchListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          *common.PageReq        `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	ProviderId    int64                  `protobuf:"varint,2,opt,name=provider_id,json=providerId,proto3" json:"provider_id,omitempty"`
 	ReconcileType ReconcileType          `protobuf:"varint,3,opt,name=reconcile_type,json=reconcileType,proto3,enum=liquidity.ReconcileType" json:"reconcile_type,omitempty"`
 	Status        ReconcileStatus        `protobuf:"varint,4,opt,name=status,proto3,enum=liquidity.ReconcileStatus" json:"status,omitempty"`
 	StartTime     int64                  `protobuf:"varint,5,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
 	EndTime       int64                  `protobuf:"varint,6,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
-	Cursor        int64                  `protobuf:"varint,7,opt,name=cursor,proto3" json:"cursor,omitempty"`
-	Limit         int32                  `protobuf:"varint,8,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3843,6 +3698,13 @@ func (x *GetReconcileBatchListReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetReconcileBatchListReq.ProtoReflect.Descriptor instead.
 func (*GetReconcileBatchListReq) Descriptor() ([]byte, []int) {
 	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{49}
+}
+
+func (x *GetReconcileBatchListReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
 }
 
 func (x *GetReconcileBatchListReq) GetProviderId() int64 {
@@ -3880,25 +3742,10 @@ func (x *GetReconcileBatchListReq) GetEndTime() int64 {
 	return 0
 }
 
-func (x *GetReconcileBatchListReq) GetCursor() int64 {
-	if x != nil {
-		return x.Cursor
-	}
-	return 0
-}
-
-func (x *GetReconcileBatchListReq) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
-}
-
 type GetReconcileBatchListResp struct {
 	state         protoimpl.MessageState     `protogen:"open.v1"`
 	Base          *common.RespBase           `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*LiquidityReconcileBatch `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
-	Page          *PageMeta                  `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3947,20 +3794,12 @@ func (x *GetReconcileBatchListResp) GetData() []*LiquidityReconcileBatch {
 	return nil
 }
 
-func (x *GetReconcileBatchListResp) GetPage() *PageMeta {
-	if x != nil {
-		return x.Page
-	}
-	return nil
-}
-
 type GetReconcileDetailListReq struct {
 	state          protoimpl.MessageState    `protogen:"open.v1"`
+	Page           *common.PageReq           `protobuf:"bytes,1,opt,name=page,proto3" json:"page,omitempty"`
 	BatchId        int64                     `protobuf:"varint,2,opt,name=batch_id,json=batchId,proto3" json:"batch_id,omitempty"`
 	DifferenceType ReconcileDifferenceType   `protobuf:"varint,3,opt,name=difference_type,json=differenceType,proto3,enum=liquidity.ReconcileDifferenceType" json:"difference_type,omitempty"`
 	Status         ReconcileDifferenceStatus `protobuf:"varint,4,opt,name=status,proto3,enum=liquidity.ReconcileDifferenceStatus" json:"status,omitempty"`
-	Cursor         int64                     `protobuf:"varint,5,opt,name=cursor,proto3" json:"cursor,omitempty"`
-	Limit          int32                     `protobuf:"varint,6,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -3995,6 +3834,13 @@ func (*GetReconcileDetailListReq) Descriptor() ([]byte, []int) {
 	return file_proto_liquidity_liquidity_proto_rawDescGZIP(), []int{51}
 }
 
+func (x *GetReconcileDetailListReq) GetPage() *common.PageReq {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
 func (x *GetReconcileDetailListReq) GetBatchId() int64 {
 	if x != nil {
 		return x.BatchId
@@ -4016,25 +3862,10 @@ func (x *GetReconcileDetailListReq) GetStatus() ReconcileDifferenceStatus {
 	return ReconcileDifferenceStatus_RECONCILE_DIFFERENCE_STATUS_UNKNOWN
 }
 
-func (x *GetReconcileDetailListReq) GetCursor() int64 {
-	if x != nil {
-		return x.Cursor
-	}
-	return 0
-}
-
-func (x *GetReconcileDetailListReq) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
-	}
-	return 0
-}
-
 type GetReconcileDetailListResp struct {
 	state         protoimpl.MessageState      `protogen:"open.v1"`
 	Base          *common.RespBase            `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	Data          []*LiquidityReconcileDetail `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
-	Page          *PageMeta                   `protobuf:"bytes,3,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4079,13 +3910,6 @@ func (x *GetReconcileDetailListResp) GetBase() *common.RespBase {
 func (x *GetReconcileDetailListResp) GetData() []*LiquidityReconcileDetail {
 	if x != nil {
 		return x.Data
-	}
-	return nil
-}
-
-func (x *GetReconcileDetailListResp) GetPage() *PageMeta {
-	if x != nil {
-		return x.Page
 	}
 	return nil
 }
@@ -4872,13 +4696,12 @@ const file_proto_liquidity_liquidity_proto_rawDesc = "" +
 	"\x19TestProviderConnectionReq\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x1f\n" +
 	"\voperator_id\x18\x03 \x01(\x03R\n" +
-	"operatorIdJ\x04\b\x01\x10\x02\"\xd3\x01\n" +
-	"\x12GetProviderListReq\x12<\n" +
+	"operatorIdJ\x04\b\x01\x10\x02\"\xc4\x01\n" +
+	"\x12GetProviderListReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12<\n" +
 	"\rprovider_type\x18\x02 \x01(\x0e2\x17.liquidity.ProviderTypeR\fproviderType\x121\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x19.liquidity.ProviderStatusR\x06status\x12\x18\n" +
-	"\akeyword\x18\x04 \x01(\tR\akeyword\x12\x16\n" +
-	"\x06cursor\x18\x05 \x01(\x03R\x06cursor\x12\x14\n" +
-	"\x05limit\x18\x06 \x01(\x05R\x05limitJ\x04\b\x01\x10\x02\",\n" +
+	"\akeyword\x18\x04 \x01(\tR\akeyword\",\n" +
 	"\x14GetProviderDetailReq\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02idJ\x04\b\x01\x10\x02\"f\n" +
 	"\fProviderResp\x12$\n" +
@@ -4889,11 +4712,10 @@ const file_proto_liquidity_liquidity_proto_rawDesc = "" +
 	"\rhealth_status\x18\x02 \x01(\x0e2\x17.liquidity.HealthStatusR\fhealthStatus\x12\x1d\n" +
 	"\n" +
 	"checked_at\x18\x03 \x01(\x03R\tcheckedAt\x12\x18\n" +
-	"\amessage\x18\x04 \x01(\tR\amessage\"\x96\x01\n" +
+	"\amessage\x18\x04 \x01(\tR\amessage\"m\n" +
 	"\x13GetProviderListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x120\n" +
-	"\x04data\x18\x02 \x03(\v2\x1c.liquidity.LiquidityProviderR\x04data\x12'\n" +
-	"\x04page\x18\x03 \x01(\v2\x13.liquidity.PageMetaR\x04page\"\x89\n" +
+	"\x04data\x18\x02 \x03(\v2\x1c.liquidity.LiquidityProviderR\x04data\"\x89\n" +
 	"\n" +
 	"\x13SaveSymbolConfigReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
@@ -4928,26 +4750,24 @@ const file_proto_liquidity_liquidity_proto_rawDesc = "" +
 	"\x15self_trade_prevention\x18\x1c \x01(\x0e2\r.common.YesNoR\x13selfTradePrevention\x12\x18\n" +
 	"\aversion\x18\x1d \x01(\x03R\aversion\x12\x1f\n" +
 	"\voperator_id\x18\x1e \x01(\x03R\n" +
-	"operatorIdJ\x04\b\x02\x10\x03\"\xf1\x02\n" +
-	"\x16GetSymbolConfigListReq\x12\x1b\n" +
+	"operatorIdJ\x04\b\x02\x10\x03\"\xe2\x02\n" +
+	"\x16GetSymbolConfigListReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\tsymbol_id\x18\x02 \x01(\x03R\bsymbolId\x126\n" +
 	"\fproduct_type\x18\x03 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x129\n" +
 	"\rcontract_type\x18\x04 \x01(\x0e2\x14.common.ContractTypeR\fcontractType\x12?\n" +
 	"\x0eliquidity_mode\x18\x05 \x01(\x0e2\x18.liquidity.LiquidityModeR\rliquidityMode\x128\n" +
 	"\x06status\x18\x06 \x01(\x0e2 .liquidity.SymbolLiquidityStatusR\x06status\x12\x18\n" +
-	"\akeyword\x18\a \x01(\tR\akeyword\x12\x16\n" +
-	"\x06cursor\x18\b \x01(\x03R\x06cursor\x12\x14\n" +
-	"\x05limit\x18\t \x01(\x05R\x05limitJ\x04\b\x01\x10\x02\"M\n" +
+	"\akeyword\x18\a \x01(\tR\akeyword\"M\n" +
 	"\x18GetSymbolConfigDetailReq\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolIdJ\x04\b\x01\x10\x02\"n\n" +
 	"\x10SymbolConfigResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x124\n" +
-	"\x04data\x18\x02 \x01(\v2 .liquidity.LiquiditySymbolConfigR\x04data\"\x9e\x01\n" +
+	"\x04data\x18\x02 \x01(\v2 .liquidity.LiquiditySymbolConfigR\x04data\"u\n" +
 	"\x17GetSymbolConfigListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x124\n" +
-	"\x04data\x18\x02 \x03(\v2 .liquidity.LiquiditySymbolConfigR\x04data\x12'\n" +
-	"\x04page\x18\x03 \x01(\v2\x13.liquidity.PageMetaR\x04page\"\x84\x02\n" +
+	"\x04data\x18\x02 \x03(\v2 .liquidity.LiquiditySymbolConfigR\x04data\"\x84\x02\n" +
 	"\x19GetSymbolConfigDetailResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x124\n" +
 	"\x04data\x18\x02 \x01(\v2 .liquidity.LiquiditySymbolConfigR\x04data\x129\n" +
@@ -4971,21 +4791,20 @@ const file_proto_liquidity_liquidity_proto_rawDesc = "" +
 	"\aversion\x18\x03 \x01(\x03R\aversion\x12\x1f\n" +
 	"\voperator_id\x18\x04 \x01(\x03R\n" +
 	"operatorId\x12\x16\n" +
-	"\x06reason\x18\x05 \x01(\tR\x06reasonJ\x04\b\x01\x10\x02\"\xf3\x01\n" +
-	"\x14GetQuoteCycleListReq\x12\x1b\n" +
+	"\x06reason\x18\x05 \x01(\tR\x06reasonJ\x04\b\x01\x10\x02\"\xe4\x01\n" +
+	"\x14GetQuoteCycleListReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\tconfig_id\x18\x02 \x01(\x03R\bconfigId\x12\x1b\n" +
 	"\tsymbol_id\x18\x03 \x01(\x03R\bsymbolId\x123\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x1b.liquidity.QuoteCycleStatusR\x06status\x12\x1d\n" +
 	"\n" +
 	"start_time\x18\x05 \x01(\x03R\tstartTime\x12\x19\n" +
-	"\bend_time\x18\x06 \x01(\x03R\aendTime\x12\x16\n" +
-	"\x06cursor\x18\a \x01(\x03R\x06cursor\x12\x14\n" +
-	"\x05limit\x18\b \x01(\x05R\x05limitJ\x04\b\x01\x10\x02\"\x9a\x01\n" +
+	"\bend_time\x18\x06 \x01(\x03R\aendTime\"q\n" +
 	"\x15GetQuoteCycleListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x122\n" +
-	"\x04data\x18\x02 \x03(\v2\x1e.liquidity.LiquidityQuoteCycleR\x04data\x12'\n" +
-	"\x04page\x18\x03 \x01(\v2\x13.liquidity.PageMetaR\x04page\"\xd0\x02\n" +
-	"\x14GetQuoteOrderListReq\x12\x1b\n" +
+	"\x04data\x18\x02 \x03(\v2\x1e.liquidity.LiquidityQuoteCycleR\x04data\"\xc1\x02\n" +
+	"\x14GetQuoteOrderListReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\tconfig_id\x18\x02 \x01(\x03R\bconfigId\x12\x1f\n" +
 	"\vprovider_id\x18\x03 \x01(\x03R\n" +
 	"providerId\x12\x1b\n" +
@@ -4995,15 +4814,12 @@ const file_proto_liquidity_liquidity_proto_rawDesc = "" +
 	"\akeyword\x18\a \x01(\tR\akeyword\x12\x1d\n" +
 	"\n" +
 	"start_time\x18\b \x01(\x03R\tstartTime\x12\x19\n" +
-	"\bend_time\x18\t \x01(\x03R\aendTime\x12\x16\n" +
-	"\x06cursor\x18\n" +
-	" \x01(\x03R\x06cursor\x12\x14\n" +
-	"\x05limit\x18\v \x01(\x05R\x05limitJ\x04\b\x01\x10\x02\"\x9a\x01\n" +
+	"\bend_time\x18\t \x01(\x03R\aendTime\"q\n" +
 	"\x15GetQuoteOrderListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x122\n" +
-	"\x04data\x18\x02 \x03(\v2\x1e.liquidity.LiquidityQuoteOrderR\x04data\x12'\n" +
-	"\x04page\x18\x03 \x01(\v2\x13.liquidity.PageMetaR\x04page\"\x91\x03\n" +
-	"\x17GetExternalOrderListReq\x12\x1f\n" +
+	"\x04data\x18\x02 \x03(\v2\x1e.liquidity.LiquidityQuoteOrderR\x04data\"\x82\x03\n" +
+	"\x17GetExternalOrderListReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1f\n" +
 	"\vprovider_id\x18\x02 \x01(\x03R\n" +
 	"providerId\x12\x1b\n" +
 	"\tconfig_id\x18\x03 \x01(\x03R\bconfigId\x12\x1b\n" +
@@ -5015,27 +4831,22 @@ const file_proto_liquidity_liquidity_proto_rawDesc = "" +
 	"\n" +
 	"start_time\x18\t \x01(\x03R\tstartTime\x12\x19\n" +
 	"\bend_time\x18\n" +
-	" \x01(\x03R\aendTime\x12\x16\n" +
-	"\x06cursor\x18\v \x01(\x03R\x06cursor\x12\x14\n" +
-	"\x05limit\x18\f \x01(\x05R\x05limitJ\x04\b\x01\x10\x02\"\xa0\x01\n" +
+	" \x01(\x03R\aendTime\"w\n" +
 	"\x18GetExternalOrderListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x125\n" +
-	"\x04data\x18\x02 \x03(\v2!.liquidity.LiquidityExternalOrderR\x04data\x12'\n" +
-	"\x04page\x18\x03 \x01(\v2\x13.liquidity.PageMetaR\x04page\"\xa9\x02\n" +
-	"\x16GetExternalFillListReq\x12\x1f\n" +
+	"\x04data\x18\x02 \x03(\v2!.liquidity.LiquidityExternalOrderR\x04data\"\x9a\x02\n" +
+	"\x16GetExternalFillListReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1f\n" +
 	"\vprovider_id\x18\x02 \x01(\x03R\n" +
 	"providerId\x12*\n" +
 	"\x11external_order_id\x18\x03 \x01(\x03R\x0fexternalOrderId\x12T\n" +
 	"\x11settlement_status\x18\x04 \x01(\x0e2'.liquidity.ExternalFillSettlementStatusR\x10settlementStatus\x12\x1d\n" +
 	"\n" +
 	"start_time\x18\x05 \x01(\x03R\tstartTime\x12\x19\n" +
-	"\bend_time\x18\x06 \x01(\x03R\aendTime\x12\x16\n" +
-	"\x06cursor\x18\a \x01(\x03R\x06cursor\x12\x14\n" +
-	"\x05limit\x18\b \x01(\x05R\x05limitJ\x04\b\x01\x10\x02\"\x9e\x01\n" +
+	"\bend_time\x18\x06 \x01(\x03R\aendTime\"u\n" +
 	"\x17GetExternalFillListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x124\n" +
-	"\x04data\x18\x02 \x03(\v2 .liquidity.LiquidityExternalFillR\x04data\x12'\n" +
-	"\x04page\x18\x03 \x01(\v2\x13.liquidity.PageMetaR\x04page\"\x8c\x01\n" +
+	"\x04data\x18\x02 \x03(\v2 .liquidity.LiquidityExternalFillR\x04data\"\x8c\x01\n" +
 	"\x16CancelExternalOrderReq\x12\x19\n" +
 	"\border_id\x18\x02 \x01(\x03R\aorderId\x12\x18\n" +
 	"\aversion\x18\x03 \x01(\x03R\aversion\x12\x1f\n" +
@@ -5065,35 +4876,31 @@ const file_proto_liquidity_liquidity_proto_rawDesc = "" +
 	"operatorIdJ\x04\b\x01\x10\x02\"h\n" +
 	"\rHedgeTaskResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x121\n" +
-	"\x04data\x18\x02 \x01(\v2\x1d.liquidity.LiquidityHedgeTaskR\x04data\"\xf1\x01\n" +
-	"\x13GetHedgeTaskListReq\x12\x1b\n" +
+	"\x04data\x18\x02 \x01(\v2\x1d.liquidity.LiquidityHedgeTaskR\x04data\"\xe2\x01\n" +
+	"\x13GetHedgeTaskListReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\tconfig_id\x18\x02 \x01(\x03R\bconfigId\x12\x1f\n" +
 	"\vprovider_id\x18\x03 \x01(\x03R\n" +
 	"providerId\x12.\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x16.liquidity.HedgeStatusR\x06status\x12\x1d\n" +
 	"\n" +
 	"start_time\x18\x05 \x01(\x03R\tstartTime\x12\x19\n" +
-	"\bend_time\x18\x06 \x01(\x03R\aendTime\x12\x16\n" +
-	"\x06cursor\x18\a \x01(\x03R\x06cursor\x12\x14\n" +
-	"\x05limit\x18\b \x01(\x05R\x05limitJ\x04\b\x01\x10\x02\"\x98\x01\n" +
+	"\bend_time\x18\x06 \x01(\x03R\aendTime\"o\n" +
 	"\x14GetHedgeTaskListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x121\n" +
-	"\x04data\x18\x02 \x03(\v2\x1d.liquidity.LiquidityHedgeTaskR\x04data\x12'\n" +
-	"\x04page\x18\x03 \x01(\v2\x13.liquidity.PageMetaR\x04page\"\xfd\x01\n" +
-	"\x1bGetInventorySnapshotListReq\x12\x1b\n" +
+	"\x04data\x18\x02 \x03(\v2\x1d.liquidity.LiquidityHedgeTaskR\x04data\"\xee\x01\n" +
+	"\x1bGetInventorySnapshotListReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\tconfig_id\x18\x02 \x01(\x03R\bconfigId\x12\x1f\n" +
 	"\vprovider_id\x18\x03 \x01(\x03R\n" +
 	"providerId\x122\n" +
 	"\x06source\x18\x04 \x01(\x0e2\x1a.liquidity.InventorySourceR\x06source\x12\x1d\n" +
 	"\n" +
 	"start_time\x18\x05 \x01(\x03R\tstartTime\x12\x19\n" +
-	"\bend_time\x18\x06 \x01(\x03R\aendTime\x12\x16\n" +
-	"\x06cursor\x18\a \x01(\x03R\x06cursor\x12\x14\n" +
-	"\x05limit\x18\b \x01(\x05R\x05limitJ\x04\b\x01\x10\x02\"\xa8\x01\n" +
+	"\bend_time\x18\x06 \x01(\x03R\aendTime\"\x7f\n" +
 	"\x1cGetInventorySnapshotListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x129\n" +
-	"\x04data\x18\x02 \x03(\v2%.liquidity.LiquidityInventorySnapshotR\x04data\x12'\n" +
-	"\x04page\x18\x03 \x01(\v2\x13.liquidity.PageMetaR\x04page\"\x8f\x01\n" +
+	"\x04data\x18\x02 \x03(\v2%.liquidity.LiquidityInventorySnapshotR\x04data\"\x8f\x01\n" +
 	"\x15GetLatestInventoryReq\x12\x1b\n" +
 	"\tconfig_id\x18\x02 \x01(\x03R\bconfigId\x12\x1f\n" +
 	"\vprovider_id\x18\x03 \x01(\x03R\n" +
@@ -5101,8 +4908,9 @@ const file_proto_liquidity_liquidity_proto_rawDesc = "" +
 	"\x06source\x18\x04 \x01(\x0e2\x1a.liquidity.InventorySourceR\x06sourceJ\x04\b\x01\x10\x02\"x\n" +
 	"\x15InventorySnapshotResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x129\n" +
-	"\x04data\x18\x02 \x01(\v2%.liquidity.LiquidityInventorySnapshotR\x04data\"\xc7\x02\n" +
-	"\x13GetRiskEventListReq\x12\x1b\n" +
+	"\x04data\x18\x02 \x01(\v2%.liquidity.LiquidityInventorySnapshotR\x04data\"\xb8\x02\n" +
+	"\x13GetRiskEventListReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1b\n" +
 	"\tconfig_id\x18\x02 \x01(\x03R\bconfigId\x12\x1f\n" +
 	"\vprovider_id\x18\x03 \x01(\x03R\n" +
 	"providerId\x12\x1b\n" +
@@ -5112,14 +4920,10 @@ const file_proto_liquidity_liquidity_proto_rawDesc = "" +
 	"\x06status\x18\x06 \x01(\x0e2\x1a.liquidity.RiskEventStatusR\x06status\x12\x1d\n" +
 	"\n" +
 	"start_time\x18\a \x01(\x03R\tstartTime\x12\x19\n" +
-	"\bend_time\x18\b \x01(\x03R\aendTime\x12\x16\n" +
-	"\x06cursor\x18\t \x01(\x03R\x06cursor\x12\x14\n" +
-	"\x05limit\x18\n" +
-	" \x01(\x05R\x05limitJ\x04\b\x01\x10\x02\"\x98\x01\n" +
+	"\bend_time\x18\b \x01(\x03R\aendTime\"o\n" +
 	"\x14GetRiskEventListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x121\n" +
-	"\x04data\x18\x02 \x03(\v2\x1d.liquidity.LiquidityRiskEventR\x04data\x12'\n" +
-	"\x04page\x18\x03 \x01(\v2\x13.liquidity.PageMetaR\x04page\"\xb4\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x1d.liquidity.LiquidityRiskEventR\x04data\"\xb4\x01\n" +
 	"\x13ResolveRiskEventReq\x12\"\n" +
 	"\rrisk_event_id\x18\x02 \x01(\x03R\vriskEventId\x122\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x1a.liquidity.RiskEventStatusR\x06status\x12\x1f\n" +
@@ -5139,31 +4943,27 @@ const file_proto_liquidity_liquidity_proto_rawDesc = "" +
 	"operatorIdJ\x04\b\x01\x10\x02\"r\n" +
 	"\x12ReconcileBatchResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x126\n" +
-	"\x04data\x18\x02 \x01(\v2\".liquidity.LiquidityReconcileBatchR\x04data\"\x9e\x02\n" +
-	"\x18GetReconcileBatchListReq\x12\x1f\n" +
+	"\x04data\x18\x02 \x01(\v2\".liquidity.LiquidityReconcileBatchR\x04data\"\x8f\x02\n" +
+	"\x18GetReconcileBatchListReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x1f\n" +
 	"\vprovider_id\x18\x02 \x01(\x03R\n" +
 	"providerId\x12?\n" +
 	"\x0ereconcile_type\x18\x03 \x01(\x0e2\x18.liquidity.ReconcileTypeR\rreconcileType\x122\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x1a.liquidity.ReconcileStatusR\x06status\x12\x1d\n" +
 	"\n" +
 	"start_time\x18\x05 \x01(\x03R\tstartTime\x12\x19\n" +
-	"\bend_time\x18\x06 \x01(\x03R\aendTime\x12\x16\n" +
-	"\x06cursor\x18\a \x01(\x03R\x06cursor\x12\x14\n" +
-	"\x05limit\x18\b \x01(\x05R\x05limitJ\x04\b\x01\x10\x02\"\xa2\x01\n" +
+	"\bend_time\x18\x06 \x01(\x03R\aendTime\"y\n" +
 	"\x19GetReconcileBatchListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x126\n" +
-	"\x04data\x18\x02 \x03(\v2\".liquidity.LiquidityReconcileBatchR\x04data\x12'\n" +
-	"\x04page\x18\x03 \x01(\v2\x13.liquidity.PageMetaR\x04page\"\xf5\x01\n" +
-	"\x19GetReconcileDetailListReq\x12\x19\n" +
+	"\x04data\x18\x02 \x03(\v2\".liquidity.LiquidityReconcileBatchR\x04data\"\xe6\x01\n" +
+	"\x19GetReconcileDetailListReq\x12#\n" +
+	"\x04page\x18\x01 \x01(\v2\x0f.common.PageReqR\x04page\x12\x19\n" +
 	"\bbatch_id\x18\x02 \x01(\x03R\abatchId\x12K\n" +
 	"\x0fdifference_type\x18\x03 \x01(\x0e2\".liquidity.ReconcileDifferenceTypeR\x0edifferenceType\x12<\n" +
-	"\x06status\x18\x04 \x01(\x0e2$.liquidity.ReconcileDifferenceStatusR\x06status\x12\x16\n" +
-	"\x06cursor\x18\x05 \x01(\x03R\x06cursor\x12\x14\n" +
-	"\x05limit\x18\x06 \x01(\x05R\x05limitJ\x04\b\x01\x10\x02\"\xa4\x01\n" +
+	"\x06status\x18\x04 \x01(\x0e2$.liquidity.ReconcileDifferenceStatusR\x06status\"{\n" +
 	"\x1aGetReconcileDetailListResp\x12$\n" +
 	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\x127\n" +
-	"\x04data\x18\x02 \x03(\v2#.liquidity.LiquidityReconcileDetailR\x04data\x12'\n" +
-	"\x04page\x18\x03 \x01(\v2\x13.liquidity.PageMetaR\x04page\"\xc9\x01\n" +
+	"\x04data\x18\x02 \x03(\v2#.liquidity.LiquidityReconcileDetailR\x04data\"\xc9\x01\n" +
 	"\x1dResolveReconcileDifferenceReq\x12#\n" +
 	"\rdifference_id\x18\x02 \x01(\x03R\fdifferenceId\x12<\n" +
 	"\x06status\x18\x03 \x01(\x0e2$.liquidity.ReconcileDifferenceStatusR\x06status\x12\x1f\n" +
@@ -5366,9 +5166,9 @@ var file_proto_liquidity_liquidity_proto_goTypes = []any{
 	(ProviderType)(0),                     // 66: liquidity.ProviderType
 	(ProviderStatus)(0),                   // 67: liquidity.ProviderStatus
 	(ProviderEnvironment)(0),              // 68: liquidity.ProviderEnvironment
-	(*LiquidityProvider)(nil),             // 69: liquidity.LiquidityProvider
-	(HealthStatus)(0),                     // 70: liquidity.HealthStatus
-	(*PageMeta)(nil),                      // 71: liquidity.PageMeta
+	(*common.PageReq)(nil),                // 69: common.PageReq
+	(*LiquidityProvider)(nil),             // 70: liquidity.LiquidityProvider
+	(HealthStatus)(0),                     // 71: liquidity.HealthStatus
 	(LiquidityMode)(0),                    // 72: liquidity.LiquidityMode
 	(common.YesNo)(0),                     // 73: common.YesNo
 	(SymbolLiquidityStatus)(0),            // 74: liquidity.SymbolLiquidityStatus
@@ -5417,84 +5217,84 @@ var file_proto_liquidity_liquidity_proto_depIdxs = []int32{
 	67,  // 12: liquidity.CreateProviderReq.status:type_name -> liquidity.ProviderStatus
 	68,  // 13: liquidity.UpdateProviderReq.environment:type_name -> liquidity.ProviderEnvironment
 	67,  // 14: liquidity.SetProviderStatusReq.status:type_name -> liquidity.ProviderStatus
-	66,  // 15: liquidity.GetProviderListReq.provider_type:type_name -> liquidity.ProviderType
-	67,  // 16: liquidity.GetProviderListReq.status:type_name -> liquidity.ProviderStatus
-	62,  // 17: liquidity.ProviderResp.base:type_name -> common.RespBase
-	69,  // 18: liquidity.ProviderResp.data:type_name -> liquidity.LiquidityProvider
-	62,  // 19: liquidity.ProviderHealthResp.base:type_name -> common.RespBase
-	70,  // 20: liquidity.ProviderHealthResp.health_status:type_name -> liquidity.HealthStatus
-	62,  // 21: liquidity.GetProviderListResp.base:type_name -> common.RespBase
-	69,  // 22: liquidity.GetProviderListResp.data:type_name -> liquidity.LiquidityProvider
-	71,  // 23: liquidity.GetProviderListResp.page:type_name -> liquidity.PageMeta
+	69,  // 15: liquidity.GetProviderListReq.page:type_name -> common.PageReq
+	66,  // 16: liquidity.GetProviderListReq.provider_type:type_name -> liquidity.ProviderType
+	67,  // 17: liquidity.GetProviderListReq.status:type_name -> liquidity.ProviderStatus
+	62,  // 18: liquidity.ProviderResp.base:type_name -> common.RespBase
+	70,  // 19: liquidity.ProviderResp.data:type_name -> liquidity.LiquidityProvider
+	62,  // 20: liquidity.ProviderHealthResp.base:type_name -> common.RespBase
+	71,  // 21: liquidity.ProviderHealthResp.health_status:type_name -> liquidity.HealthStatus
+	62,  // 22: liquidity.GetProviderListResp.base:type_name -> common.RespBase
+	70,  // 23: liquidity.GetProviderListResp.data:type_name -> liquidity.LiquidityProvider
 	72,  // 24: liquidity.SaveSymbolConfigReq.liquidity_mode:type_name -> liquidity.LiquidityMode
 	73,  // 25: liquidity.SaveSymbolConfigReq.self_trade_prevention:type_name -> common.YesNo
-	63,  // 26: liquidity.GetSymbolConfigListReq.product_type:type_name -> common.ProductType
-	64,  // 27: liquidity.GetSymbolConfigListReq.contract_type:type_name -> common.ContractType
-	72,  // 28: liquidity.GetSymbolConfigListReq.liquidity_mode:type_name -> liquidity.LiquidityMode
-	74,  // 29: liquidity.GetSymbolConfigListReq.status:type_name -> liquidity.SymbolLiquidityStatus
-	62,  // 30: liquidity.SymbolConfigResp.base:type_name -> common.RespBase
-	75,  // 31: liquidity.SymbolConfigResp.data:type_name -> liquidity.LiquiditySymbolConfig
-	62,  // 32: liquidity.GetSymbolConfigListResp.base:type_name -> common.RespBase
-	75,  // 33: liquidity.GetSymbolConfigListResp.data:type_name -> liquidity.LiquiditySymbolConfig
-	71,  // 34: liquidity.GetSymbolConfigListResp.page:type_name -> liquidity.PageMeta
+	69,  // 26: liquidity.GetSymbolConfigListReq.page:type_name -> common.PageReq
+	63,  // 27: liquidity.GetSymbolConfigListReq.product_type:type_name -> common.ProductType
+	64,  // 28: liquidity.GetSymbolConfigListReq.contract_type:type_name -> common.ContractType
+	72,  // 29: liquidity.GetSymbolConfigListReq.liquidity_mode:type_name -> liquidity.LiquidityMode
+	74,  // 30: liquidity.GetSymbolConfigListReq.status:type_name -> liquidity.SymbolLiquidityStatus
+	62,  // 31: liquidity.SymbolConfigResp.base:type_name -> common.RespBase
+	75,  // 32: liquidity.SymbolConfigResp.data:type_name -> liquidity.LiquiditySymbolConfig
+	62,  // 33: liquidity.GetSymbolConfigListResp.base:type_name -> common.RespBase
+	75,  // 34: liquidity.GetSymbolConfigListResp.data:type_name -> liquidity.LiquiditySymbolConfig
 	62,  // 35: liquidity.GetSymbolConfigDetailResp.base:type_name -> common.RespBase
 	75,  // 36: liquidity.GetSymbolConfigDetailResp.data:type_name -> liquidity.LiquiditySymbolConfig
 	76,  // 37: liquidity.GetSymbolConfigDetailResp.levels:type_name -> liquidity.LiquidityStrategyLevel
 	77,  // 38: liquidity.GetSymbolConfigDetailResp.latest_inventory:type_name -> liquidity.LiquidityInventorySnapshot
 	23,  // 39: liquidity.SetStrategyLevelsReq.levels:type_name -> liquidity.StrategyLevelInput
 	78,  // 40: liquidity.StrategyLevelInput.enabled:type_name -> common.Enable
-	79,  // 41: liquidity.GetQuoteCycleListReq.status:type_name -> liquidity.QuoteCycleStatus
-	62,  // 42: liquidity.GetQuoteCycleListResp.base:type_name -> common.RespBase
-	80,  // 43: liquidity.GetQuoteCycleListResp.data:type_name -> liquidity.LiquidityQuoteCycle
-	71,  // 44: liquidity.GetQuoteCycleListResp.page:type_name -> liquidity.PageMeta
-	81,  // 45: liquidity.GetQuoteOrderListReq.side:type_name -> common.Side
-	82,  // 46: liquidity.GetQuoteOrderListReq.status:type_name -> liquidity.QuoteOrderStatus
-	62,  // 47: liquidity.GetQuoteOrderListResp.base:type_name -> common.RespBase
-	83,  // 48: liquidity.GetQuoteOrderListResp.data:type_name -> liquidity.LiquidityQuoteOrder
-	71,  // 49: liquidity.GetQuoteOrderListResp.page:type_name -> liquidity.PageMeta
-	84,  // 50: liquidity.GetExternalOrderListReq.purpose:type_name -> liquidity.ExternalOrderPurpose
-	81,  // 51: liquidity.GetExternalOrderListReq.side:type_name -> common.Side
-	85,  // 52: liquidity.GetExternalOrderListReq.status:type_name -> liquidity.ExternalOrderStatus
-	62,  // 53: liquidity.GetExternalOrderListResp.base:type_name -> common.RespBase
-	86,  // 54: liquidity.GetExternalOrderListResp.data:type_name -> liquidity.LiquidityExternalOrder
-	71,  // 55: liquidity.GetExternalOrderListResp.page:type_name -> liquidity.PageMeta
-	87,  // 56: liquidity.GetExternalFillListReq.settlement_status:type_name -> liquidity.ExternalFillSettlementStatus
-	62,  // 57: liquidity.GetExternalFillListResp.base:type_name -> common.RespBase
-	88,  // 58: liquidity.GetExternalFillListResp.data:type_name -> liquidity.LiquidityExternalFill
-	71,  // 59: liquidity.GetExternalFillListResp.page:type_name -> liquidity.PageMeta
+	69,  // 41: liquidity.GetQuoteCycleListReq.page:type_name -> common.PageReq
+	79,  // 42: liquidity.GetQuoteCycleListReq.status:type_name -> liquidity.QuoteCycleStatus
+	62,  // 43: liquidity.GetQuoteCycleListResp.base:type_name -> common.RespBase
+	80,  // 44: liquidity.GetQuoteCycleListResp.data:type_name -> liquidity.LiquidityQuoteCycle
+	69,  // 45: liquidity.GetQuoteOrderListReq.page:type_name -> common.PageReq
+	81,  // 46: liquidity.GetQuoteOrderListReq.side:type_name -> common.Side
+	82,  // 47: liquidity.GetQuoteOrderListReq.status:type_name -> liquidity.QuoteOrderStatus
+	62,  // 48: liquidity.GetQuoteOrderListResp.base:type_name -> common.RespBase
+	83,  // 49: liquidity.GetQuoteOrderListResp.data:type_name -> liquidity.LiquidityQuoteOrder
+	69,  // 50: liquidity.GetExternalOrderListReq.page:type_name -> common.PageReq
+	84,  // 51: liquidity.GetExternalOrderListReq.purpose:type_name -> liquidity.ExternalOrderPurpose
+	81,  // 52: liquidity.GetExternalOrderListReq.side:type_name -> common.Side
+	85,  // 53: liquidity.GetExternalOrderListReq.status:type_name -> liquidity.ExternalOrderStatus
+	62,  // 54: liquidity.GetExternalOrderListResp.base:type_name -> common.RespBase
+	86,  // 55: liquidity.GetExternalOrderListResp.data:type_name -> liquidity.LiquidityExternalOrder
+	69,  // 56: liquidity.GetExternalFillListReq.page:type_name -> common.PageReq
+	87,  // 57: liquidity.GetExternalFillListReq.settlement_status:type_name -> liquidity.ExternalFillSettlementStatus
+	62,  // 58: liquidity.GetExternalFillListResp.base:type_name -> common.RespBase
+	88,  // 59: liquidity.GetExternalFillListResp.data:type_name -> liquidity.LiquidityExternalFill
 	81,  // 60: liquidity.CreateManualHedgeReq.side:type_name -> common.Side
 	62,  // 61: liquidity.HedgeTaskResp.base:type_name -> common.RespBase
 	89,  // 62: liquidity.HedgeTaskResp.data:type_name -> liquidity.LiquidityHedgeTask
-	90,  // 63: liquidity.GetHedgeTaskListReq.status:type_name -> liquidity.HedgeStatus
-	62,  // 64: liquidity.GetHedgeTaskListResp.base:type_name -> common.RespBase
-	89,  // 65: liquidity.GetHedgeTaskListResp.data:type_name -> liquidity.LiquidityHedgeTask
-	71,  // 66: liquidity.GetHedgeTaskListResp.page:type_name -> liquidity.PageMeta
-	91,  // 67: liquidity.GetInventorySnapshotListReq.source:type_name -> liquidity.InventorySource
-	62,  // 68: liquidity.GetInventorySnapshotListResp.base:type_name -> common.RespBase
-	77,  // 69: liquidity.GetInventorySnapshotListResp.data:type_name -> liquidity.LiquidityInventorySnapshot
-	71,  // 70: liquidity.GetInventorySnapshotListResp.page:type_name -> liquidity.PageMeta
+	69,  // 63: liquidity.GetHedgeTaskListReq.page:type_name -> common.PageReq
+	90,  // 64: liquidity.GetHedgeTaskListReq.status:type_name -> liquidity.HedgeStatus
+	62,  // 65: liquidity.GetHedgeTaskListResp.base:type_name -> common.RespBase
+	89,  // 66: liquidity.GetHedgeTaskListResp.data:type_name -> liquidity.LiquidityHedgeTask
+	69,  // 67: liquidity.GetInventorySnapshotListReq.page:type_name -> common.PageReq
+	91,  // 68: liquidity.GetInventorySnapshotListReq.source:type_name -> liquidity.InventorySource
+	62,  // 69: liquidity.GetInventorySnapshotListResp.base:type_name -> common.RespBase
+	77,  // 70: liquidity.GetInventorySnapshotListResp.data:type_name -> liquidity.LiquidityInventorySnapshot
 	91,  // 71: liquidity.GetLatestInventoryReq.source:type_name -> liquidity.InventorySource
 	62,  // 72: liquidity.InventorySnapshotResp.base:type_name -> common.RespBase
 	77,  // 73: liquidity.InventorySnapshotResp.data:type_name -> liquidity.LiquidityInventorySnapshot
-	92,  // 74: liquidity.GetRiskEventListReq.risk_level:type_name -> liquidity.RiskLevel
-	93,  // 75: liquidity.GetRiskEventListReq.status:type_name -> liquidity.RiskEventStatus
-	62,  // 76: liquidity.GetRiskEventListResp.base:type_name -> common.RespBase
-	94,  // 77: liquidity.GetRiskEventListResp.data:type_name -> liquidity.LiquidityRiskEvent
-	71,  // 78: liquidity.GetRiskEventListResp.page:type_name -> liquidity.PageMeta
+	69,  // 74: liquidity.GetRiskEventListReq.page:type_name -> common.PageReq
+	92,  // 75: liquidity.GetRiskEventListReq.risk_level:type_name -> liquidity.RiskLevel
+	93,  // 76: liquidity.GetRiskEventListReq.status:type_name -> liquidity.RiskEventStatus
+	62,  // 77: liquidity.GetRiskEventListResp.base:type_name -> common.RespBase
+	94,  // 78: liquidity.GetRiskEventListResp.data:type_name -> liquidity.LiquidityRiskEvent
 	93,  // 79: liquidity.ResolveRiskEventReq.status:type_name -> liquidity.RiskEventStatus
 	95,  // 80: liquidity.RunReconcileReq.reconcile_type:type_name -> liquidity.ReconcileType
 	62,  // 81: liquidity.ReconcileBatchResp.base:type_name -> common.RespBase
 	96,  // 82: liquidity.ReconcileBatchResp.data:type_name -> liquidity.LiquidityReconcileBatch
-	95,  // 83: liquidity.GetReconcileBatchListReq.reconcile_type:type_name -> liquidity.ReconcileType
-	97,  // 84: liquidity.GetReconcileBatchListReq.status:type_name -> liquidity.ReconcileStatus
-	62,  // 85: liquidity.GetReconcileBatchListResp.base:type_name -> common.RespBase
-	96,  // 86: liquidity.GetReconcileBatchListResp.data:type_name -> liquidity.LiquidityReconcileBatch
-	71,  // 87: liquidity.GetReconcileBatchListResp.page:type_name -> liquidity.PageMeta
-	98,  // 88: liquidity.GetReconcileDetailListReq.difference_type:type_name -> liquidity.ReconcileDifferenceType
-	99,  // 89: liquidity.GetReconcileDetailListReq.status:type_name -> liquidity.ReconcileDifferenceStatus
-	62,  // 90: liquidity.GetReconcileDetailListResp.base:type_name -> common.RespBase
-	100, // 91: liquidity.GetReconcileDetailListResp.data:type_name -> liquidity.LiquidityReconcileDetail
-	71,  // 92: liquidity.GetReconcileDetailListResp.page:type_name -> liquidity.PageMeta
+	69,  // 83: liquidity.GetReconcileBatchListReq.page:type_name -> common.PageReq
+	95,  // 84: liquidity.GetReconcileBatchListReq.reconcile_type:type_name -> liquidity.ReconcileType
+	97,  // 85: liquidity.GetReconcileBatchListReq.status:type_name -> liquidity.ReconcileStatus
+	62,  // 86: liquidity.GetReconcileBatchListResp.base:type_name -> common.RespBase
+	96,  // 87: liquidity.GetReconcileBatchListResp.data:type_name -> liquidity.LiquidityReconcileBatch
+	69,  // 88: liquidity.GetReconcileDetailListReq.page:type_name -> common.PageReq
+	98,  // 89: liquidity.GetReconcileDetailListReq.difference_type:type_name -> liquidity.ReconcileDifferenceType
+	99,  // 90: liquidity.GetReconcileDetailListReq.status:type_name -> liquidity.ReconcileDifferenceStatus
+	62,  // 91: liquidity.GetReconcileDetailListResp.base:type_name -> common.RespBase
+	100, // 92: liquidity.GetReconcileDetailListResp.data:type_name -> liquidity.LiquidityReconcileDetail
 	99,  // 93: liquidity.ResolveReconcileDifferenceReq.status:type_name -> liquidity.ReconcileDifferenceStatus
 	84,  // 94: liquidity.RouteExternalOrderReq.purpose:type_name -> liquidity.ExternalOrderPurpose
 	81,  // 95: liquidity.RouteExternalOrderReq.side:type_name -> common.Side

@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"wklive/common/helper"
+	"wklive/common/pageutil"
 	"wklive/proto/liquidity"
 	"wklive/services/liquidity/internal/logic/helpers"
 	"wklive/services/liquidity/internal/svc"
@@ -28,11 +28,12 @@ func NewGetSymbolConfigListLogic(ctx context.Context, svcCtx *svc.ServiceContext
 }
 
 func (l *GetSymbolConfigListLogic) GetSymbolConfigList(in *liquidity.GetSymbolConfigListReq) (*liquidity.GetSymbolConfigListResp, error) {
+	cursor, limit := pageutil.Input(in.Page)
 	rows, total, err := l.svcCtx.SymbolConfigModel.FindPage(l.ctx, models.LiquiditySymbolConfigPageFilter{
 		SymbolId: in.SymbolId, ProductType: int64(in.ProductType),
 		ContractType: int64(in.ContractType), LiquidityMode: int64(in.LiquidityMode),
 		Status: int64(in.Status), Keyword: strings.TrimSpace(in.Keyword),
-	}, in.Cursor, int64(in.Limit))
+	}, cursor, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -41,5 +42,5 @@ func (l *GetSymbolConfigListLogic) GetSymbolConfigList(in *liquidity.GetSymbolCo
 		data = append(data, helpers.SymbolConfigToProto(row))
 	}
 	next := nextID(rows, func(row *models.TLiquiditySymbolConfig) int64 { return row.Id })
-	return &liquidity.GetSymbolConfigListResp{Base: helper.OkResp(), Data: data, Page: pageMeta(len(rows), total, next)}, nil
+	return &liquidity.GetSymbolConfigListResp{Base: pageutil.Base(cursor, limit, len(rows), total, next), Data: data}, nil
 }

@@ -49,7 +49,7 @@ func (l *GetOrderListAdminLogic) GetOrderListAdmin(in *trade.GetOrderListAdminRe
 		ExcludeSources: []int64{
 			int64(trade.OrderSourceType_ORDER_SOURCE_TYPE_LIQUIDITY),
 		},
-	}, cursor, limit)
+	}, cursor, limit, pageutil.Count(in.Page))
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

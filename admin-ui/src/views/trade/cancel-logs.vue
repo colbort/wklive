@@ -163,6 +163,7 @@ const loadList = async () => {
       ...currentQuery,
       cursor: pagination.cursor,
       limit: pagination.limit,
+      count: pagination.total,
     })
     rows.value = res?.data || []
     updateFromResponse(res)

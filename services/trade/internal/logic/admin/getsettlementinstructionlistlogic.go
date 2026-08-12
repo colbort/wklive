@@ -29,7 +29,7 @@ func NewGetSettlementInstructionListLogic(ctx context.Context, svcCtx *svc.Servi
 
 func (l *GetSettlementInstructionListLogic) GetSettlementInstructionList(in *trade.GetSettlementInstructionListReq) (*trade.GetSettlementInstructionListResp, error) {
 	cursor, limit := pageutil.Input(in.Page)
-	d, total, err := l.svcCtx.TradeSettlementInstrModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: helpers.AdminTenantID(l.ctx, in.TenantId), BizType: in.BizType, BizId: in.BizId, OrderId: in.OrderId, Status: int64(in.Status)}, cursor, limit)
+	d, total, err := l.svcCtx.TradeSettlementInstrModel.FindPage(l.ctx, models.AdminPageFilter{TenantId: helpers.AdminTenantID(l.ctx, in.TenantId), BizType: in.BizType, BizId: in.BizId, OrderId: in.OrderId, Status: int64(in.Status)}, cursor, limit, pageutil.Count(in.Page))
 	if err != nil {
 		return nil, err
 	}

@@ -312,6 +312,7 @@ async function loadList() {
       ...query,
       cursor: pagination.cursor,
       limit: pagination.limit,
+      count: pagination.total,
     })
     if (resp.code !== 200) {
       ElMessage.error(resp.msg || t('common.loadFailed'))

@@ -3,12 +3,17 @@ export interface PageQuery {
   status?: number | string;
   cursor?: number;
   limit?: number;
+  count?: number;
   [key: string]: unknown;
 }
 
 export interface ListResponse<T = Record<string, unknown>> {
   data: T[];
-  page?: { total?: number; nextCursor?: number; hasMore?: boolean };
+  total?: number;
+  hasNext?: boolean;
+  hasPrev?: boolean;
+  nextCursor?: number;
+  prevCursor?: number;
 }
 
 export interface OptionItem {

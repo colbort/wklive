@@ -376,6 +376,7 @@ const loadList = async () => {
       timeRange: buildTimeRange(),
       cursor: pagination.cursor,
       limit: pagination.limit,
+      count: pagination.total,
     })
     rows.value = res?.data || []
     updateFromResponse(res)

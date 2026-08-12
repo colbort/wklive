@@ -44,7 +44,7 @@ func (l *GetTradeEventListLogic) GetTradeEventList(in *trade.GetTradeEventListRe
 		EventStatus: int64(in.EventStatus),
 		TimeStart:   in.TimeRange.StartTime,
 		TimeEnd:     in.TimeRange.EndTime,
-	}, cursor, limit)
+	}, cursor, limit, pageutil.Count(in.Page))
 	if err != nil && !errors.Is(err, models.ErrNotFound) {
 		return nil, err
 	}

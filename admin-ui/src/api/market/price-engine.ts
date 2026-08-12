@@ -97,6 +97,7 @@ export type ListSnapshotOutboxReq = {
   snapshotId?: string
   cursor?: number
   limit?: number
+  count?: number
 }
 
 export function apiListAuthorityRegistries(

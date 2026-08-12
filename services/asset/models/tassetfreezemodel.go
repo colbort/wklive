@@ -31,7 +31,7 @@ type (
 	// and implement the added methods in customTAssetFreezeModel.
 	TAssetFreezeModel interface {
 		tAssetFreezeModel
-		FindPage(ctx context.Context, filter AssetFreezePageFilter, cursor int64, limit int64) ([]*TAssetFreeze, int64, error)
+		FindPage(ctx context.Context, filter AssetFreezePageFilter, cursor int64, limit int64, knownCounts ...int64) ([]*TAssetFreeze, int64, error)
 		// 解冻时更新冻结记录
 		UpdateUnfreeze(ctx context.Context, freezeNo string, amount decimal.Decimal, updateTime int64) (bool, error)
 		// 从冻结里扣减时更新冻结记录
@@ -50,7 +50,7 @@ func NewTAssetFreezeModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Op
 	}
 }
 
-func (m *customTAssetFreezeModel) FindPage(ctx context.Context, filter AssetFreezePageFilter, cursor int64, limit int64) ([]*TAssetFreeze, int64, error) {
+func (m *customTAssetFreezeModel) FindPage(ctx context.Context, filter AssetFreezePageFilter, cursor int64, limit int64, knownCounts ...int64) ([]*TAssetFreeze, int64, error) {
 	limit = sqlutil.NormalizeLimit(limit)
 
 	builder := sqlutil.NewPageQueryBuilder()
@@ -66,10 +66,12 @@ func (m *customTAssetFreezeModel) FindPage(ctx context.Context, filter AssetFree
 	where := builder.Where()
 	args := builder.Args()
 
-	var total int64
-	countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
-	if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
-		return nil, 0, err
+	total := sqlutil.KnownCount(knownCounts...)
+	if total <= 0 {
+		countSql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s", m.table, where)
+		if err := m.QueryRowNoCacheCtx(ctx, &total, countSql, args...); err != nil {
+			return nil, 0, err
+		}
 	}
 
 	listArgs := append([]any{}, args...)

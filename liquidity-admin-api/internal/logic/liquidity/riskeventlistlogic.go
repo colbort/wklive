@@ -30,7 +30,7 @@ func NewRiskEventListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ris
 
 func (l *RiskEventListLogic) RiskEventList(req *types.PageQuery) (resp *types.RiskListResp, err error) {
 	out, err := l.svcCtx.LiquidityCli.GetRiskEventList(l.ctx, &pb.GetRiskEventListReq{
-		Status: pb.RiskEventStatus(req.Status), Cursor: req.Cursor, Limit: listLimit(req.Limit),
+		Status: pb.RiskEventStatus(req.Status), Page: protoPage(req.Cursor, req.Limit, req.Count),
 	})
 	if err != nil {
 		return nil, err

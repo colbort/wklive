@@ -659,6 +659,7 @@ const loadList = async () => {
       keyword: query.keyword || undefined,
       cursor: pagination.cursor,
       limit: pagination.limit,
+      count: pagination.total,
     })
     rows.value = res?.data || []
     updateFromResponse(res)

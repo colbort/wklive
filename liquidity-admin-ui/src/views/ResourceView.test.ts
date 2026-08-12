@@ -32,11 +32,15 @@ describe("ResourceView reconcile flow", () => {
     };
     api.reconcileBatches.mockResolvedValue({
       data: [batch],
-      page: { total: 1, nextCursor: 0, hasMore: false },
+      total: 1,
+      nextCursor: 0,
+      hasNext: false,
     });
     api.reconcileDetails.mockResolvedValue({
       data: [difference],
-      page: { total: 1, nextCursor: 0, hasMore: false },
+      total: 1,
+      nextCursor: 0,
+      hasNext: false,
     });
 
     const wrapper = mount(ResourceView, {
