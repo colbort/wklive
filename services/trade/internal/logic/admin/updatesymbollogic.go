@@ -3,6 +3,7 @@ package adminlogic
 import (
 	"context"
 	"errors"
+	"strings"
 	"wklive/proto/common"
 
 	"wklive/common/conv"
@@ -70,6 +71,18 @@ func (l *UpdateSymbolLogic) UpdateSymbol(in *trade.UpdateSymbolReq) (*trade.Comm
 	}
 	if in.Status != trade.SymbolStatus_SYMBOL_STATUS_UNKNOWN {
 		item.Status = int64(in.Status)
+	}
+	if item.CategoryType == stockCategoryType && item.Status != int64(trade.SymbolStatus_SYMBOL_STATUS_DISABLED) {
+		product, base, resolveErr := resolveStockTenantProduct(l.ctx, l.svcCtx.MarketClient, item.TenantId, item.TenantProductId)
+		if resolveErr != nil {
+			return nil, resolveErr
+		}
+		if base != nil {
+			return &trade.CommonResp{Base: base}, nil
+		}
+		if item.Market != strings.ToUpper(strings.TrimSpace(product.GetMarket())) || item.Symbol != strings.ToUpper(strings.TrimSpace(product.GetSymbol())) {
+			return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, stockProductMismatchMessage(product))}, nil
+		}
 	}
 	if in.PriceScale != 0 {
 		item.PriceScale = int64(in.PriceScale)

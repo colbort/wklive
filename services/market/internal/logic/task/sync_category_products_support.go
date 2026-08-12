@@ -156,6 +156,16 @@ func (w *SyncCategoryProductsWorker) syncMarketProducts(category *models.TItickC
 	if len(resp.Data) == 0 {
 		return fmt.Errorf("iTick returned no products for category=%s region=%s", category.CategoryCode, market)
 	}
+	if utils.NormalizeCategory(category.CategoryCode) == "stock" {
+		for _, item := range resp.Data {
+			if !utils.StockExchangeMatchesMarket(market, item.Exchange) {
+				return fmt.Errorf(
+					"iTick stock product region mismatch: region=%s symbol=%s exchange=%s",
+					market, item.Code, item.Exchange,
+				)
+			}
+		}
+	}
 	syncStartedAt := cutils.NowMillis()
 	for _, item := range resp.Data {
 		baseCoin, quoteCoin := utils.DefaultProductAssets(category.CategoryCode, market, item.Code)
@@ -240,10 +250,6 @@ func (w *SyncCategoryProductsWorker) getSymbolList(ctx context.Context, apiURL, 
 	q.Set("type", category)
 	q.Set("region", market)
 
-	// iTick 文档里 code 是必填。
-	// 这里只做“按分类+地区”调用时，先给空字符串。
-	// 如果你后面要精确搜索，建议把 code 作为方法参数补上。
-	q.Set("code", "")
 	base.RawQuery = q.Encode()
 
 	resp, err := w.svcCtx.ITickRestClient.Get(ctx, base.String())

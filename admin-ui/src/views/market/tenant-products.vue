@@ -565,6 +565,7 @@
         <el-table-column prop="id" label="ID" width="90" />
         <el-table-column prop="categoryName" :label="t('market.categoryName')" min-width="130" />
         <el-table-column prop="market" :label="t('market.market')" width="90" />
+        <el-table-column prop="exchange" :label="t('market.exchange')" width="110" />
         <el-table-column prop="symbol" :label="t('market.symbol')" min-width="130" />
         <el-table-column prop="name" :label="t('market.name')" min-width="150" />
         <el-table-column prop="displayName" :label="t('market.displayName')" min-width="150" />
@@ -840,6 +841,7 @@ const loadProductOptions = async (
     const res = await productsService.getList({
       limit: productOptionPagination.limit,
       cursor,
+      enabled: 1,
       categoryType: productOptionFilters.categoryType || undefined,
       market: productOptionFilters.market?.trim() || undefined,
       symbol: symbol.trim() || undefined,
@@ -967,7 +969,8 @@ const detachProductOptionsScroll = () => {
 
 const formatProductOption = (item: BaseMarketProduct) => {
   const title = item.name || item.displayName || item.symbol
-  return `${item.id} - ${title} (${item.market}/${item.symbol})`
+  const venue = item.exchange ? `${item.market} · ${item.exchange}` : item.market
+  return `${item.id} - [${venue}] ${item.symbol} - ${title}`
 }
 
 const openProductPicker = async (mode: 'single' | 'batch') => {

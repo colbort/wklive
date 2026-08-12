@@ -59,12 +59,14 @@ type MarketProduct {
 	createTimes  int64  `json:"createTimes"`
 	updateTimes  int64  `json:"updateTimes"`
 	tradingCalendar MarketTradingCalendar `json:"tradingCalendar,optional"`
+	exchange string `json:"exchange"`
 }
 
 // K线
 type Kline {
 	categoryCode string `json:"categoryCode"`
 	market       string `json:"market"`
+	exchange     string `json:"exchange"`
 	symbol       string `json:"symbol"`
 	kType        int64  `json:"kType"`
 	ts           int64  `json:"ts"`

@@ -193,6 +193,20 @@ service Market {
   // Resolves the product-specific or market-default calendar and reports
   // whether the product is open at the requested business timestamp.
   rpc GetTradingStatus(GetTradingStatusReq) returns (GetTradingStatusResp);
+
+  // Resolves an enabled, app-visible tenant product for downstream services.
+  // This is the authoritative validation used when binding trade symbols.
+  rpc ResolveTenantProduct(ResolveTenantProductReq) returns (ResolveTenantProductResp);
+}
+
+message ResolveTenantProductReq {
+  int64 tenant_id = 1;
+  int64 tenant_product_id = 2;
+}
+
+message ResolveTenantProductResp {
+  common.RespBase base = 1;
+  market.MarketTenantProduct data = 2;
 }
 
 message CommonResp {

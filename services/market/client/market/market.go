@@ -80,6 +80,8 @@ type (
 	PriceFormulaResp               = market.PriceFormulaResp
 	PushReply                      = market.PushReply
 	RetrySnapshotOutboxReq         = market.RetrySnapshotOutboxReq
+	ResolveTenantProductReq        = market.ResolveTenantProductReq
+	ResolveTenantProductResp       = market.ResolveTenantProductResp
 	RevokeAuthoritativeSnapshotReq = market.RevokeAuthoritativeSnapshotReq
 	SetAuthorityRegistryReq        = market.SetAuthorityRegistryReq
 	SnapshotOutboxData             = market.SnapshotOutboxData
@@ -106,6 +108,8 @@ type (
 		GetAuthoritativeSnapshot(ctx context.Context, in *GetAuthoritativeSnapshotReq, opts ...grpc.CallOption) (*GetAuthoritativeSnapshotResp, error)
 		// Resolves the product-specific or market-default calendar and reports
 		GetTradingStatus(ctx context.Context, in *GetTradingStatusReq, opts ...grpc.CallOption) (*GetTradingStatusResp, error)
+		// Resolves an enabled, app-visible tenant product for downstream services.
+		ResolveTenantProduct(ctx context.Context, in *ResolveTenantProductReq, opts ...grpc.CallOption) (*ResolveTenantProductResp, error)
 	}
 
 	defaultMarket struct {
@@ -129,4 +133,10 @@ func (m *defaultMarket) GetAuthoritativeSnapshot(ctx context.Context, in *GetAut
 func (m *defaultMarket) GetTradingStatus(ctx context.Context, in *GetTradingStatusReq, opts ...grpc.CallOption) (*GetTradingStatusResp, error) {
 	client := market.NewMarketClient(m.cli.Conn())
 	return client.GetTradingStatus(ctx, in, opts...)
+}
+
+// Resolves an enabled, app-visible tenant product for downstream services.
+func (m *defaultMarket) ResolveTenantProduct(ctx context.Context, in *ResolveTenantProductReq, opts ...grpc.CallOption) (*ResolveTenantProductResp, error) {
+	client := market.NewMarketClient(m.cli.Conn())
+	return client.ResolveTenantProduct(ctx, in, opts...)
 }

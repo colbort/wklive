@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS `t_trade_symbol`;
 CREATE TABLE `t_trade_symbol` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `tenant_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户ID',
+  `tenant_product_id` BIGINT NOT NULL DEFAULT 0 COMMENT '租户产品ID；股票交易对必须关联 t_itick_tenant_product.id',
   `category_type` TINYINT NOT NULL DEFAULT 0 COMMENT 'Market分类：1外汇 2加密货币 3股票 4期货 5指数 6基金，0表示历史数据未绑定',
   `market` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '行情市场代码，例如BA、SH、HK、US',
   `symbol` VARCHAR(64) NOT NULL COMMENT '统一交易标的代码，如BTCUSDT、ETHUSD-PERP',
@@ -34,6 +35,7 @@ CREATE TABLE `t_trade_symbol` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_tenant_market_symbol_product` (`tenant_id`, `category_type`, `market`, `symbol`, `product_type`, `contract_type`, `contract_value_type`),
   KEY `idx_tenant_product_status` (`tenant_id`, `product_type`, `status`),
+  KEY `idx_tenant_product_id` (`tenant_product_id`),
   CONSTRAINT `chk_symbol_product_contract` CHECK (
     (`product_type` IN (1, 3) AND `contract_type` = 0 AND `contract_value_type` = 0)
     OR (`product_type` = 2 AND `contract_type` IN (1, 2) AND `contract_value_type` IN (1, 2))

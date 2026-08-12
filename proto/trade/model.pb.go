@@ -311,9 +311,10 @@ func (x *Uint64Values) GetValues() []int64 {
 }
 
 type TradeSymbol struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Id       int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	TenantId int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	TenantId        int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	TenantProductId int64                  `protobuf:"varint,32,opt,name=tenant_product_id,json=tenantProductId,proto3" json:"tenant_product_id,omitempty"`
 	// Market category: forex/crypto/stock/future/indices/fund. 0 is retained
 	// for legacy rows created before category binding was introduced.
 	CategoryType      int64               `protobuf:"varint,30,opt,name=category_type,json=categoryType,proto3" json:"category_type,omitempty"`
@@ -389,6 +390,13 @@ func (x *TradeSymbol) GetId() int64 {
 func (x *TradeSymbol) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
+	}
+	return 0
+}
+
+func (x *TradeSymbol) GetTenantProductId() int64 {
+	if x != nil {
+		return x.TenantProductId
 	}
 	return 0
 }
@@ -4940,10 +4948,11 @@ const file_proto_trade_model_proto_rawDesc = "" +
 	"\fStringValues\x12\x16\n" +
 	"\x06values\x18\x01 \x03(\tR\x06values\"&\n" +
 	"\fUint64Values\x12\x16\n" +
-	"\x06values\x18\x01 \x03(\x03R\x06values\"\xbd\b\n" +
+	"\x06values\x18\x01 \x03(\x03R\x06values\"\xe9\b\n" +
 	"\vTradeSymbol\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12#\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12*\n" +
+	"\x11tenant_product_id\x18  \x01(\x03R\x0ftenantProductId\x12#\n" +
 	"\rcategory_type\x18\x1e \x01(\x03R\fcategoryType\x12\x16\n" +
 	"\x06market\x18\x1f \x01(\tR\x06market\x12\x16\n" +
 	"\x06symbol\x18\x03 \x01(\tR\x06symbol\x12%\n" +

@@ -913,6 +913,7 @@ type CreateSettlementPriceCorrectionReq struct {
 
 type CreateSymbolReq struct {
 	TenantId          int64  `json:"tenantId"`
+	TenantProductId   int64  `json:"tenantProductId"`
 	Market            string `json:"market"`
 	Symbol            string `json:"symbol"`
 	DisplaySymbol     string `json:"displaySymbol"`
@@ -2237,6 +2238,7 @@ type InsuranceFundAccount struct {
 type Kline struct {
 	CategoryCode string `json:"categoryCode"`
 	Market       string `json:"market"`
+	Exchange     string `json:"exchange"`
 	Symbol       string `json:"symbol"`
 	KType        int64  `json:"kType"`
 	Ts           int64  `json:"ts"`
@@ -3162,6 +3164,7 @@ type MarketProduct struct {
 	CreateTimes     int64                 `json:"createTimes"`
 	UpdateTimes     int64                 `json:"updateTimes"`
 	TradingCalendar MarketTradingCalendar `json:"tradingCalendar,optional"`
+	Exchange        string                `json:"exchange"`
 }
 
 type MarketTenantCategory struct {
@@ -6379,6 +6382,7 @@ type TradeSettlementInstruction struct {
 type TradeSymbol struct {
 	Id                int64  `json:"id"`
 	TenantId          int64  `json:"tenantId"`
+	TenantProductId   int64  `json:"tenantProductId"`
 	CategoryType      int64  `json:"categoryType"`
 	Market            string `json:"market"`
 	Symbol            string `json:"symbol"`

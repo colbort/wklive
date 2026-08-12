@@ -2,11 +2,13 @@ package tasklogic
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"wklive/proto/common"
 	"wklive/proto/liquidity"
 	"wklive/proto/market"
+	lc "wklive/services/liquidity/internal/config"
 	"wklive/services/liquidity/internal/provider"
 	"wklive/services/liquidity/internal/svc"
 	"wklive/services/liquidity/models"
@@ -19,8 +21,15 @@ type marketClientStub struct {
 	statusReq    *market.GetTradingStatusReq
 	statusResp   *market.GetTradingStatusResp
 	statusErr    error
+	snapshotReqs []*market.GetAuthoritativeSnapshotReq
+	snapshots    map[string]snapshotResult
 	snapshotResp *market.GetAuthoritativeSnapshotResp
 	snapshotErr  error
+}
+
+type snapshotResult struct {
+	resp *market.GetAuthoritativeSnapshotResp
+	err  error
 }
 
 type quoteOrderModelStub struct {
@@ -68,13 +77,21 @@ func (s *quoteOrderModelStub) Update(_ context.Context, row *models.TLiquidityQu
 	return nil
 }
 
-func (s *marketClientStub) GetAuthoritativeSnapshot(context.Context, *market.GetAuthoritativeSnapshotReq, ...grpc.CallOption) (*market.GetAuthoritativeSnapshotResp, error) {
+func (s *marketClientStub) GetAuthoritativeSnapshot(_ context.Context, in *market.GetAuthoritativeSnapshotReq, _ ...grpc.CallOption) (*market.GetAuthoritativeSnapshotResp, error) {
+	s.snapshotReqs = append(s.snapshotReqs, in)
+	if result, ok := s.snapshots[in.GetAuthority()]; ok {
+		return result.resp, result.err
+	}
 	return s.snapshotResp, s.snapshotErr
 }
 
 func (s *marketClientStub) GetTradingStatus(_ context.Context, in *market.GetTradingStatusReq, _ ...grpc.CallOption) (*market.GetTradingStatusResp, error) {
 	s.statusReq = in
 	return s.statusResp, s.statusErr
+}
+
+func (s *marketClientStub) ResolveTenantProduct(_ context.Context, _ *market.ResolveTenantProductReq, _ ...grpc.CallOption) (*market.ResolveTenantProductResp, error) {
+	return nil, nil
 }
 
 func TestBuildQuoteOrders(t *testing.T) {
@@ -190,6 +207,83 @@ func TestLoadReferenceQuoteOrCancelCancelsPendingQuotesWhenReferenceUnavailable(
 	}
 	if len(orders.updated) != 1 || row.Status != int64(liquidity.QuoteOrderStatus_QUOTE_ORDER_STATUS_CANCELED) || row.CancelReason != "reference price unavailable" {
 		t.Fatalf("pending quote was not canceled after reference price failure: %+v", row)
+	}
+}
+
+func TestLoadReferenceQuotePrefersWebsocketSnapshot(t *testing.T) {
+	client := &marketClientStub{snapshots: map[string]snapshotResult{
+		"itick-ws":   {resp: authoritativeSnapshotResponse("ws-1", "itick-ws", "6.7456", 9_500)},
+		"itick-rest": {resp: authoritativeSnapshotResponse("rest-1", "itick-rest", "6.7000", 9_800)},
+	}}
+	config := &models.TLiquiditySymbolConfig{
+		Symbol: "USDCNY", ReferencePriceSource: "forex:GB:USDCNY",
+		ReferencePriceKind: "FINAL_QUOTE", QuoteValidityMs: 5_000,
+	}
+	reference, err := loadReferenceQuote(context.Background(), &svc.ServiceContext{
+		Config:       lc.Config{MarketAuthority: "itick-ws"},
+		MarketClient: client,
+	}, config, 10_000)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reference.price.Equal(decimal.RequireFromString("6.7456")) || reference.snapshotID != "ws-1" {
+		t.Fatalf("unexpected websocket reference: %+v", reference)
+	}
+	if len(client.snapshotReqs) != 1 || client.snapshotReqs[0].GetAuthority() != "itick-ws" {
+		t.Fatalf("REST must not be queried when websocket snapshot is available: %+v", client.snapshotReqs)
+	}
+}
+
+func TestLoadReferenceQuoteFallsBackToFreshRestSnapshot(t *testing.T) {
+	client := &marketClientStub{snapshots: map[string]snapshotResult{
+		"itick-ws":   {err: errors.New("authoritative snapshot unavailable")},
+		"itick-rest": {resp: authoritativeSnapshotResponse("rest-1", "itick-rest", "6.7455", 9_000)},
+	}}
+	config := &models.TLiquiditySymbolConfig{
+		Symbol: "USDCNY", ReferencePriceSource: "forex:GB:USDCNY",
+		ReferencePriceKind: "FINAL_QUOTE", QuoteValidityMs: 5_000,
+	}
+	reference, err := loadReferenceQuote(context.Background(), &svc.ServiceContext{
+		Config:       lc.Config{MarketAuthority: "itick-ws"},
+		MarketClient: client,
+	}, config, 10_000)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reference.price.Equal(decimal.RequireFromString("6.7455")) || reference.snapshotID != "rest-1" {
+		t.Fatalf("unexpected REST reference: %+v", reference)
+	}
+	if len(client.snapshotReqs) != 2 || client.snapshotReqs[0].GetAuthority() != "itick-ws" || client.snapshotReqs[1].GetAuthority() != "itick-rest" {
+		t.Fatalf("unexpected authority fallback order: %+v", client.snapshotReqs)
+	}
+}
+
+func TestLoadReferenceQuoteRejectsStaleRestFallback(t *testing.T) {
+	client := &marketClientStub{snapshots: map[string]snapshotResult{
+		"itick-ws":   {err: errors.New("authoritative snapshot unavailable")},
+		"itick-rest": {resp: authoritativeSnapshotResponse("rest-stale", "itick-rest", "6.7455", 4_999)},
+	}}
+	config := &models.TLiquiditySymbolConfig{
+		Symbol: "USDCNY", ReferencePriceSource: "forex:GB:USDCNY",
+		ReferencePriceKind: "FINAL_QUOTE", QuoteValidityMs: 5_000,
+	}
+	_, err := loadReferenceQuote(context.Background(), &svc.ServiceContext{
+		Config:       lc.Config{MarketAuthority: "itick-ws"},
+		MarketClient: client,
+	}, config, 10_000)
+	if err == nil {
+		t.Fatal("stale REST fallback must not be used")
+	}
+}
+
+func authoritativeSnapshotResponse(id, authority, price string, sourceTimestamp int64) *market.GetAuthoritativeSnapshotResp {
+	return &market.GetAuthoritativeSnapshotResp{
+		Base: &common.RespBase{Code: 200},
+		Data: &market.AuthoritativeSnapshot{
+			SnapshotId: id, Authority: authority, SnapshotKind: "FINAL_QUOTE",
+			CategoryCode: "forex", Market: "GB", Symbol: "USDCNY",
+			Price: price, SourceTimestamp: sourceTimestamp,
+		},
 	}
 }
 

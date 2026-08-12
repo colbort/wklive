@@ -11,6 +11,7 @@ import (
 	"wklive/proto/common"
 	pb "wklive/proto/market"
 	"wklive/services/market/internal/market/types"
+	marketutils "wklive/services/market/internal/pkg/utils"
 	"wklive/services/market/models"
 )
 
@@ -72,6 +73,7 @@ func ToProductProto(item *models.TItickProduct) *pb.MarketProduct {
 		Remark:       item.Remark,
 		CreateTimes:  item.CreateTimes,
 		UpdateTimes:  item.UpdateTimes,
+		Exchange:     item.Exchange,
 	}
 }
 
@@ -197,6 +199,16 @@ func ToTenantProductProto(item *models.TItickTenantProduct, product *models.TIti
 		data.BaseCoin = product.BaseCoin
 		data.QuoteCoin = product.QuoteCoin
 		data.Icon = product.Icon
+		data.Exchange = product.Exchange
+		if data.BaseCoin == "" || data.QuoteCoin == "" {
+			base, quote := marketutils.DefaultProductAssets(product.CategoryCode, product.Market, product.Symbol)
+			if data.BaseCoin == "" {
+				data.BaseCoin = base
+			}
+			if data.QuoteCoin == "" {
+				data.QuoteCoin = quote
+			}
+		}
 	}
 	if item.DisplayName != "" {
 		data.DisplayName = item.DisplayName

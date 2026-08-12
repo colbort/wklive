@@ -39,6 +39,9 @@ func (l *CreateTenantProductLogic) CreateTenantProduct(in *market.CreateTenantPr
 			Base: helper.ErrResp(i18n.ProductNotFound, i18n.Translate(i18n.ProductNotFound, l.ctx)),
 		}, nil
 	}
+	if base := validateSelectableProduct(l.ctx, product); base != nil {
+		return &market.CommonResp{Base: base}, nil
+	}
 
 	exist, err := l.svcCtx.MarketTenantProductModel.FindOneByTenantIdProductId(l.ctx, in.TenantId, in.ProductId)
 	if err != nil && !errors.Is(err, models.ErrNotFound) {

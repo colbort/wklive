@@ -3,6 +3,7 @@ import "common.api"
 type TradeSymbol {
 	id                int64  `json:"id"`
 	tenantId          int64  `json:"tenantId"`
+	tenantProductId   int64  `json:"tenantProductId"`
 	categoryType      int64  `json:"categoryType"`
 	market            string `json:"market"`
 	symbol            string `json:"symbol"`
@@ -553,6 +554,7 @@ type CommonResp {
 
 type CreateSymbolReq {
 	tenantId          int64  `json:"tenantId"`
+	tenantProductId   int64  `json:"tenantProductId"`
 	market            string `json:"market"`
 	symbol            string `json:"symbol"`
 	displaySymbol     string `json:"displaySymbol"`

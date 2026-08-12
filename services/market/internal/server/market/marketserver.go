@@ -34,3 +34,9 @@ func (s *MarketServer) GetTradingStatus(ctx context.Context, in *market.GetTradi
 	l := marketlogic.NewGetTradingStatusLogic(ctx, s.svcCtx)
 	return l.GetTradingStatus(in)
 }
+
+// Resolves an enabled, app-visible tenant product for downstream services.
+func (s *MarketServer) ResolveTenantProduct(ctx context.Context, in *market.ResolveTenantProductReq) (*market.ResolveTenantProductResp, error) {
+	l := marketlogic.NewResolveTenantProductLogic(ctx, s.svcCtx)
+	return l.ResolveTenantProduct(in)
+}

@@ -362,6 +362,7 @@ message CommonResp {
 
 message CreateSymbolReq {
   int64 tenant_id = 1;
+  int64 tenant_product_id = 32;
   string symbol = 2;
   string display_symbol = 3;
   common.ProductType product_type = 4;

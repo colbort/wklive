@@ -35,6 +35,18 @@ func NewCreateSymbolLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Crea
 
 // 创建交易对
 func (l *CreateSymbolLogic) CreateSymbol(in *trade.CreateSymbolReq) (*trade.CommonResp, error) {
+	if in.CategoryType == stockCategoryType {
+		product, base, err := resolveStockTenantProduct(l.ctx, l.svcCtx.MarketClient, in.TenantId, in.TenantProductId)
+		if err != nil {
+			return nil, err
+		}
+		if base != nil {
+			return &trade.CommonResp{Base: base}, nil
+		}
+		applyStockTenantProduct(in, product)
+	} else {
+		in.TenantProductId = 0
+	}
 	if in.CategoryType < 1 || in.CategoryType > 6 {
 		return &trade.CommonResp{Base: helper.ErrResp(i18n.ParamError, fmt.Sprintf("invalid category type: %d", in.CategoryType))}, nil
 	}
@@ -62,6 +74,7 @@ func (l *CreateSymbolLogic) CreateSymbol(in *trade.CreateSymbolReq) (*trade.Comm
 	now := utils.NowMillis()
 	data := &models.TTradeSymbol{
 		TenantId:          in.TenantId,
+		TenantProductId:   in.TenantProductId,
 		CategoryType:      in.CategoryType,
 		Market:            market,
 		Symbol:            symbol,

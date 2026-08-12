@@ -178,6 +178,7 @@ type MarketProduct struct {
 	CreateTimes     int64                  `protobuf:"varint,18,opt,name=create_times,json=createTimes,proto3" json:"create_times,omitempty"`
 	UpdateTimes     int64                  `protobuf:"varint,19,opt,name=update_times,json=updateTimes,proto3" json:"update_times,omitempty"`
 	TradingCalendar *MarketTradingCalendar `protobuf:"bytes,20,opt,name=trading_calendar,json=tradingCalendar,proto3" json:"trading_calendar,omitempty"`
+	Exchange        string                 `protobuf:"bytes,21,opt,name=exchange,proto3" json:"exchange,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -350,6 +351,13 @@ func (x *MarketProduct) GetTradingCalendar() *MarketTradingCalendar {
 		return x.TradingCalendar
 	}
 	return nil
+}
+
+func (x *MarketProduct) GetExchange() string {
+	if x != nil {
+		return x.Exchange
+	}
+	return ""
 }
 
 // 产品最终生效的交易日历。单品种映射优先于市场默认日历。
@@ -1181,6 +1189,7 @@ type MarketTenantProduct struct {
 	QuoteCoin     string       `protobuf:"bytes,18,opt,name=quote_coin,json=quoteCoin,proto3" json:"quote_coin,omitempty"`
 	Icon          string       `protobuf:"bytes,19,opt,name=icon,proto3" json:"icon,omitempty"`
 	CategoryCode  string       `protobuf:"bytes,21,opt,name=category_code,json=categoryCode,proto3" json:"category_code,omitempty"`
+	Exchange      string       `protobuf:"bytes,22,opt,name=exchange,proto3" json:"exchange,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1355,6 +1364,13 @@ func (x *MarketTenantProduct) GetCategoryCode() string {
 	return ""
 }
 
+func (x *MarketTenantProduct) GetExchange() string {
+	if x != nil {
+		return x.Exchange
+	}
+	return ""
+}
+
 var File_proto_market_model_proto protoreflect.FileDescriptor
 
 const file_proto_market_model_proto_rawDesc = "" +
@@ -1374,7 +1390,7 @@ const file_proto_market_model_proto_rawDesc = "" +
 	"\x06remark\x18\n" +
 	" \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\v \x01(\x03R\vcreateTimes\x12!\n" +
-	"\fupdate_times\x18\f \x01(\x03R\vupdateTimes\"\xc6\x05\n" +
+	"\fupdate_times\x18\f \x01(\x03R\vupdateTimes\"\xe2\x05\n" +
 	"\rMarketProduct\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x129\n" +
 	"\rcategory_type\x18\x02 \x01(\x0e2\x14.market.CategoryTypeR\fcategoryType\x12#\n" +
@@ -1398,7 +1414,8 @@ const file_proto_market_model_proto_rawDesc = "" +
 	"\x06remark\x18\x11 \x01(\tR\x06remark\x12!\n" +
 	"\fcreate_times\x18\x12 \x01(\x03R\vcreateTimes\x12!\n" +
 	"\fupdate_times\x18\x13 \x01(\x03R\vupdateTimes\x12H\n" +
-	"\x10trading_calendar\x18\x14 \x01(\v2\x1d.market.MarketTradingCalendarR\x0ftradingCalendar\"\xe6\x02\n" +
+	"\x10trading_calendar\x18\x14 \x01(\v2\x1d.market.MarketTradingCalendarR\x0ftradingCalendar\x12\x1a\n" +
+	"\bexchange\x18\x15 \x01(\tR\bexchange\"\xe6\x02\n" +
 	"\x15MarketTradingCalendar\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
 	"\rcategory_code\x18\x02 \x01(\tR\fcategoryCode\x12\x16\n" +
@@ -1492,7 +1509,7 @@ const file_proto_market_model_proto_rawDesc = "" +
 	" \x01(\x0e2\x14.market.CategoryTypeR\fcategoryType\x12#\n" +
 	"\rcategory_name\x18\v \x01(\tR\fcategoryName\x12\x12\n" +
 	"\x04icon\x18\f \x01(\tR\x04icon\x12#\n" +
-	"\rcategory_code\x18\x0e \x01(\tR\fcategoryCodeJ\x04\b\r\x10\x0e\"\x84\x05\n" +
+	"\rcategory_code\x18\x0e \x01(\tR\fcategoryCodeJ\x04\b\r\x10\x0e\"\xa0\x05\n" +
 	"\x13MarketTenantProduct\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x1d\n" +
@@ -1517,7 +1534,8 @@ const file_proto_market_model_proto_rawDesc = "" +
 	"\n" +
 	"quote_coin\x18\x12 \x01(\tR\tquoteCoin\x12\x12\n" +
 	"\x04icon\x18\x13 \x01(\tR\x04icon\x12#\n" +
-	"\rcategory_code\x18\x15 \x01(\tR\fcategoryCodeJ\x04\b\x14\x10\x15B\x1cZ\x1awklive/proto/market;marketb\x06proto3"
+	"\rcategory_code\x18\x15 \x01(\tR\fcategoryCode\x12\x1a\n" +
+	"\bexchange\x18\x16 \x01(\tR\bexchangeJ\x04\b\x14\x10\x15B\x1cZ\x1awklive/proto/market;marketb\x06proto3"
 
 var (
 	file_proto_market_model_proto_rawDescOnce sync.Once

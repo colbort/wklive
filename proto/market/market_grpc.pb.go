@@ -417,6 +417,7 @@ var App_ServiceDesc = grpc.ServiceDesc{
 const (
 	Market_GetAuthoritativeSnapshot_FullMethodName = "/market.Market/GetAuthoritativeSnapshot"
 	Market_GetTradingStatus_FullMethodName         = "/market.Market/GetTradingStatus"
+	Market_ResolveTenantProduct_FullMethodName     = "/market.Market/ResolveTenantProduct"
 )
 
 // MarketClient is the client API for Market service.
@@ -432,6 +433,9 @@ type MarketClient interface {
 	// Resolves the product-specific or market-default calendar and reports
 	// whether the product is open at the requested business timestamp.
 	GetTradingStatus(ctx context.Context, in *GetTradingStatusReq, opts ...grpc.CallOption) (*GetTradingStatusResp, error)
+	// Resolves an enabled, app-visible tenant product for downstream services.
+	// This is the authoritative validation used when binding trade symbols.
+	ResolveTenantProduct(ctx context.Context, in *ResolveTenantProductReq, opts ...grpc.CallOption) (*ResolveTenantProductResp, error)
 }
 
 type marketClient struct {
@@ -462,6 +466,16 @@ func (c *marketClient) GetTradingStatus(ctx context.Context, in *GetTradingStatu
 	return out, nil
 }
 
+func (c *marketClient) ResolveTenantProduct(ctx context.Context, in *ResolveTenantProductReq, opts ...grpc.CallOption) (*ResolveTenantProductResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResolveTenantProductResp)
+	err := c.cc.Invoke(ctx, Market_ResolveTenantProduct_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MarketServer is the server API for Market service.
 // All implementations must embed UnimplementedMarketServer
 // for forward compatibility.
@@ -475,6 +489,9 @@ type MarketServer interface {
 	// Resolves the product-specific or market-default calendar and reports
 	// whether the product is open at the requested business timestamp.
 	GetTradingStatus(context.Context, *GetTradingStatusReq) (*GetTradingStatusResp, error)
+	// Resolves an enabled, app-visible tenant product for downstream services.
+	// This is the authoritative validation used when binding trade symbols.
+	ResolveTenantProduct(context.Context, *ResolveTenantProductReq) (*ResolveTenantProductResp, error)
 	mustEmbedUnimplementedMarketServer()
 }
 
@@ -490,6 +507,9 @@ func (UnimplementedMarketServer) GetAuthoritativeSnapshot(context.Context, *GetA
 }
 func (UnimplementedMarketServer) GetTradingStatus(context.Context, *GetTradingStatusReq) (*GetTradingStatusResp, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTradingStatus not implemented")
+}
+func (UnimplementedMarketServer) ResolveTenantProduct(context.Context, *ResolveTenantProductReq) (*ResolveTenantProductResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResolveTenantProduct not implemented")
 }
 func (UnimplementedMarketServer) mustEmbedUnimplementedMarketServer() {}
 func (UnimplementedMarketServer) testEmbeddedByValue()                {}
@@ -548,6 +568,24 @@ func _Market_GetTradingStatus_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Market_ResolveTenantProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResolveTenantProductReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketServer).ResolveTenantProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Market_ResolveTenantProduct_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketServer).ResolveTenantProduct(ctx, req.(*ResolveTenantProductReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Market_ServiceDesc is the grpc.ServiceDesc for Market service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -562,6 +600,10 @@ var Market_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTradingStatus",
 			Handler:    _Market_GetTradingStatus_Handler,
+		},
+		{
+			MethodName: "ResolveTenantProduct",
+			Handler:    _Market_ResolveTenantProduct_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

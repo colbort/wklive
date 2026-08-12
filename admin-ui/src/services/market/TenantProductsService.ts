@@ -23,6 +23,7 @@ export type MarketTenantProduct = {
   categoryType: number
   categoryName: string
   market: string
+  exchange: string
   symbol: string
   code: string
   name: string

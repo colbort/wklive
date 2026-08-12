@@ -36,6 +36,23 @@ func (l *BatchUpsertTenantProductsLogic) BatchUpsertTenantProducts(in *market.Ba
 	} else if base != nil {
 		return &market.CommonResp{Base: base}, nil
 	}
+	requested := make(map[int64]struct{}, len(in.Data))
+	for _, input := range in.Data {
+		if input == nil || input.ProductId <= 0 {
+			continue
+		}
+		if _, duplicate := requested[input.ProductId]; duplicate {
+			return nil, fmt.Errorf("duplicate product_id: %d", input.ProductId)
+		}
+		requested[input.ProductId] = struct{}{}
+		product, err := l.svcCtx.MarketProductModel.FindOne(l.ctx, input.ProductId)
+		if err != nil {
+			return nil, err
+		}
+		if base := validateSelectableProduct(l.ctx, product); base != nil {
+			return &market.CommonResp{Base: base}, nil
+		}
+	}
 
 	current := make([]*models.TItickTenantProduct, 0)
 	var cursor int64
@@ -56,16 +73,11 @@ func (l *BatchUpsertTenantProductsLogic) BatchUpsertTenantProducts(in *market.Ba
 	for _, item := range current {
 		byProduct[item.ProductId] = item
 	}
-	requested := make(map[int64]struct{}, len(in.Data))
 	now := cutils.NowMillis()
 	for _, input := range in.Data {
 		if input == nil || input.ProductId <= 0 {
 			continue
 		}
-		if _, duplicate := requested[input.ProductId]; duplicate {
-			return nil, fmt.Errorf("duplicate product_id: %d", input.ProductId)
-		}
-		requested[input.ProductId] = struct{}{}
 		item := byProduct[input.ProductId]
 		if item == nil {
 			_, err := l.svcCtx.MarketTenantProductModel.Insert(l.ctx, &models.TItickTenantProduct{

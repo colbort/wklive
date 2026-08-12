@@ -1650,6 +1650,7 @@ func (x *CommonResp) GetBase() *common.RespBase {
 type CreateSymbolReq struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	TenantId          int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	TenantProductId   int64                  `protobuf:"varint,32,opt,name=tenant_product_id,json=tenantProductId,proto3" json:"tenant_product_id,omitempty"`
 	Symbol            string                 `protobuf:"bytes,2,opt,name=symbol,proto3" json:"symbol,omitempty"`
 	DisplaySymbol     string                 `protobuf:"bytes,3,opt,name=display_symbol,json=displaySymbol,proto3" json:"display_symbol,omitempty"`
 	ProductType       common.ProductType     `protobuf:"varint,4,opt,name=product_type,json=productType,proto3,enum=common.ProductType" json:"product_type,omitempty"`
@@ -1714,6 +1715,13 @@ func (*CreateSymbolReq) Descriptor() ([]byte, []int) {
 func (x *CreateSymbolReq) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
+	}
+	return 0
+}
+
+func (x *CreateSymbolReq) GetTenantProductId() int64 {
+	if x != nil {
+		return x.TenantProductId
 	}
 	return 0
 }
@@ -12128,9 +12136,10 @@ const file_proto_trade_trade_proto_rawDesc = "" +
 	"\x0eshort_leverage\x18\x06 \x01(\x03R\rshortLeverageJ\x04\b\x02\x10\x03J\x04\b\x04\x10\x05\"2\n" +
 	"\n" +
 	"CommonResp\x12$\n" +
-	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\xeb\a\n" +
+	"\x04base\x18\x01 \x01(\v2\x10.common.RespBaseR\x04base\"\x97\b\n" +
 	"\x0fCreateSymbolReq\x12\x1b\n" +
-	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x16\n" +
+	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12*\n" +
+	"\x11tenant_product_id\x18  \x01(\x03R\x0ftenantProductId\x12\x16\n" +
 	"\x06symbol\x18\x02 \x01(\tR\x06symbol\x12%\n" +
 	"\x0edisplay_symbol\x18\x03 \x01(\tR\rdisplaySymbol\x126\n" +
 	"\fproduct_type\x18\x04 \x01(\x0e2\x13.common.ProductTypeR\vproductType\x12#\n" +

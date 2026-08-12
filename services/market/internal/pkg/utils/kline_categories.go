@@ -27,6 +27,50 @@ var StockHolidayRegionCodes = map[string]string{
 	"GB": "GB", "ID": "ID", "VN": "VN",
 }
 
+// stockMarketExchanges is the exchange set currently documented and returned
+// by iTick for each supported stock region. Product-list responses do not carry
+// the region on each item, so this mapping is also used as a guardrail against
+// an upstream response accidentally containing instruments from other regions.
+var stockMarketExchanges = map[string]map[string]struct{}{
+	"HK": exchangeSet("HKEX"),
+	"SZ": exchangeSet("SZSE"),
+	"SH": exchangeSet("SSE"),
+	"US": exchangeSet("AMEX", "CBOE", "NASDAQ", "NYSE", "OTC"),
+	"SG": exchangeSet("SGX"),
+	"JP": exchangeSet("FSE", "NAG", "SAPSE", "TSE"),
+	"TW": exchangeSet("TPEX", "TWSE"),
+	"IN": exchangeSet("BSE", "NSE"),
+	"TH": exchangeSet("SET"),
+	"DE": exchangeSet("FWB", "XETR"),
+	"MX": exchangeSet("BIVA", "BMV"),
+	"MY": exchangeSet("MYX"),
+	"TR": exchangeSet("BIST"),
+	"ES": exchangeSet("BME"),
+	"NL": exchangeSet("EURONEXT"),
+	"GB": exchangeSet("LSE", "LSIN"),
+	"ID": exchangeSet("IDX"),
+	"VN": exchangeSet("HNX", "HOSE", "UPCOM"),
+}
+
+func exchangeSet(exchanges ...string) map[string]struct{} {
+	result := make(map[string]struct{}, len(exchanges))
+	for _, exchange := range exchanges {
+		result[exchange] = struct{}{}
+	}
+	return result
+}
+
+// StockExchangeMatchesMarket reports whether an iTick exchange belongs to the
+// requested stock region. Unknown regions and blank exchanges fail closed.
+func StockExchangeMatchesMarket(market, exchange string) bool {
+	exchanges, ok := stockMarketExchanges[strings.ToUpper(strings.TrimSpace(market))]
+	if !ok {
+		return false
+	}
+	_, ok = exchanges[strings.ToUpper(strings.TrimSpace(exchange))]
+	return ok
+}
+
 func StockHolidayCode(market string) (string, bool) {
 	code, ok := StockHolidayRegionCodes[strings.ToUpper(strings.TrimSpace(market))]
 	return code, ok

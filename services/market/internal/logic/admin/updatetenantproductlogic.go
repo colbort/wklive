@@ -52,6 +52,13 @@ func (l *UpdateTenantProductLogic) UpdateTenantProduct(in *market.UpdateTenantPr
 			Base: helper.ErrResp(i18n.BusinessDataNotFound, i18n.Translate(i18n.BusinessDataNotFound, l.ctx)),
 		}, nil
 	}
+	product, err := l.svcCtx.MarketProductModel.FindOne(l.ctx, item.ProductId)
+	if err != nil {
+		return nil, err
+	}
+	if base := validateSelectableProduct(l.ctx, product); base != nil {
+		return &market.CommonResp{Base: base}, nil
+	}
 
 	if in.Enabled != 0 {
 		item.Enabled = int64(in.Enabled)

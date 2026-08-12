@@ -37,6 +37,7 @@ message Uint64Values {
 message TradeSymbol {
   int64 id = 1;
   int64 tenant_id = 2;
+  int64 tenant_product_id = 32;
   // Market category: forex/crypto/stock/future/indices/fund. 0 is retained
   // for legacy rows created before category binding was introduced.
   int64 category_type = 30;

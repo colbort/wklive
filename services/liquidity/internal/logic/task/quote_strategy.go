@@ -167,6 +167,7 @@ func loadReferenceQuote(ctx context.Context, svcCtx *svc.ServiceContext, config 
 	if authority == "" {
 		return nil, errors.New("reference price authority is not configured")
 	}
+	authorities := referencePriceAuthorities(kind, authority)
 	validity := config.QuoteValidityMs
 	if validity <= 0 {
 		validity = 30_000
@@ -178,28 +179,51 @@ func loadReferenceQuote(ctx context.Context, svcCtx *svc.ServiceContext, config 
 	candidates := make([]*referenceQuote, 0, len(sources))
 	for _, source := range sources {
 		category, market, symbol := parseReferenceSource(source, config.Symbol)
-		resp, err := svcCtx.MarketClient.GetAuthoritativeSnapshot(ctx, &pb.GetAuthoritativeSnapshotReq{
-			Authority: authority, CategoryCode: category, Market: market, Symbol: symbol,
-			TargetTime: targetTime, MaxLookbackMs: validity, SnapshotKind: kind,
-		})
-		if err != nil || resp.GetData() == nil {
-			continue
+		for _, candidateAuthority := range authorities {
+			resp, err := svcCtx.MarketClient.GetAuthoritativeSnapshot(ctx, &pb.GetAuthoritativeSnapshotReq{
+				Authority: candidateAuthority, CategoryCode: category, Market: market, Symbol: symbol,
+				TargetTime: targetTime, MaxLookbackMs: validity, SnapshotKind: kind,
+			})
+			if err != nil || resp.GetData() == nil {
+				continue
+			}
+			row := resp.GetData()
+			if !referenceSnapshotFresh(targetTime, row.GetSourceTimestamp(), validity) {
+				continue
+			}
+			price, parseErr := decimal.NewFromString(row.GetPrice())
+			if parseErr != nil || !price.IsPositive() {
+				continue
+			}
+			candidates = append(candidates, &referenceQuote{
+				price: price, source: strings.TrimSpace(source), snapshotID: row.GetSnapshotId(),
+				timestamp: row.GetSourceTimestamp(),
+			})
+			break
 		}
-		row := resp.GetData()
-		price, parseErr := decimal.NewFromString(row.GetPrice())
-		if parseErr != nil || !price.IsPositive() {
-			continue
-		}
-		candidates = append(candidates, &referenceQuote{
-			price: price, source: strings.TrimSpace(source), snapshotID: row.GetSnapshotId(),
-			timestamp: row.GetSourceTimestamp(),
-		})
 	}
 	if len(candidates) == 0 {
 		return nil, fmt.Errorf("no valid reference price: source=%s", config.ReferencePriceSource)
 	}
 	sort.Slice(candidates, func(i, j int) bool { return candidates[i].price.LessThan(candidates[j].price) })
 	return candidates[len(candidates)/2], nil
+}
+
+func referencePriceAuthorities(kind, primary string) []string {
+	primary = strings.TrimSpace(primary)
+	authorities := []string{primary}
+	if strings.EqualFold(strings.TrimSpace(kind), "FINAL_QUOTE") && strings.EqualFold(primary, "itick-ws") {
+		authorities = append(authorities, "itick-rest")
+	}
+	return authorities
+}
+
+func referenceSnapshotFresh(targetTime, sourceTimestamp, validity int64) bool {
+	if targetTime <= 0 || sourceTimestamp <= 0 || validity <= 0 {
+		return false
+	}
+	age := targetTime - sourceTimestamp
+	return age >= 0 && age <= validity
 }
 
 func referencePriceSources(value string) []string {

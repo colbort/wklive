@@ -56,6 +56,13 @@ func (l *ListTenantProductsLogic) ListTenantProducts(in *market.ListTenantProduc
 		if product == nil {
 			continue
 		}
+		// “启用/展示”用于下游配置选择时，同时要求租户关系和产品主档有效。
+		if in.Enabled == 1 && product.Enabled != 1 {
+			continue
+		}
+		if in.AppVisible == 1 && product.AppVisible != 1 {
+			continue
+		}
 		if in.CategoryType > 0 && int64(in.CategoryType) != product.CategoryType {
 			continue
 		}

@@ -45,6 +45,7 @@ message MarketProduct {
   int64 create_times = 18;
   int64 update_times = 19;
   MarketTradingCalendar trading_calendar = 20;
+  string exchange = 21;
 }
 
 // 产品最终生效的交易日历。单品种映射优先于市场默认日历。
@@ -170,4 +171,5 @@ message MarketTenantProduct {
   string icon = 19;
   reserved 20;
   string category_code = 21;
+  string exchange = 22;
 }

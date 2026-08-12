@@ -30,6 +30,7 @@ export type MarketProduct = {
   remark: string
   createTimes: number
   updateTimes: number
+  exchange: string
   tradingCalendar?: MarketTradingCalendar
 }
 

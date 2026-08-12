@@ -65,12 +65,12 @@
         </el-table-column>
 
         <el-table-column min-width="190" show-overflow-tooltip>
-          <template #header>
-            {{ t('trade.symbol') }} / {{ t('trade.displaySymbol') }}
-          </template>
+          <template #header> {{ t('trade.symbol') }} / {{ t('trade.displaySymbol') }} </template>
           <template #default="{ row }">
             <div class="symbol-cell">
-              <span class="symbol-code">{{ row.symbol || '-' }}/{{ row.displaySymbol || '-' }}</span>
+              <span class="symbol-code"
+                >{{ row.symbol || '-' }}/{{ row.displaySymbol || '-' }}</span
+              >
             </div>
           </template>
         </el-table-column>
@@ -148,19 +148,9 @@
             {{ row.sort || 0 }}
           </template>
         </el-table-column>
-        <el-table-column
-          :label="t('common.actions')"
-          align="center"
-          width="260"
-          fixed="right"
-        >
+        <el-table-column :label="t('common.actions')" align="center" width="260" fixed="right">
           <template #default="{ row }">
-            <el-button
-              v-perm="'trade:symbol:detail'"
-              link
-              type="primary"
-              @click="showDetail(row)"
-            >
+            <el-button v-perm="'trade:symbol:detail'" link type="primary" @click="showDetail(row)">
               {{ t('option.detail') }}
             </el-button>
             <el-button
@@ -233,12 +223,36 @@
             <TenantSelect v-model="symbolForm.tenantId" include-system />
           </el-form-item>
 
+          <el-form-item v-if="isStockCategory" :label="t('market.tenantProduct')">
+            <el-select
+              v-model="symbolForm.tenantProductId"
+              class="full-width"
+              filterable
+              :loading="stockProductsLoading"
+              :disabled="Boolean(symbolForm.id) || symbolForm.tenantId <= 0"
+              @change="applySelectedStockProduct"
+            >
+              <el-option
+                v-for="item in stockTenantProducts"
+                :key="item.id"
+                :label="stockProductLabel(item)"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+
           <el-form-item :label="t('trade.symbol')">
-            <el-input v-model="symbolForm.symbol" :disabled="Boolean(symbolForm.id)" />
+            <el-input
+              v-model="symbolForm.symbol"
+              :disabled="Boolean(symbolForm.id) || isStockCategory"
+            />
           </el-form-item>
 
           <el-form-item :label="t('market.market')">
-            <el-input v-model="symbolForm.market" :disabled="Boolean(symbolForm.id)" />
+            <el-input
+              v-model="symbolForm.market"
+              :disabled="Boolean(symbolForm.id) || isStockCategory"
+            />
           </el-form-item>
 
           <el-form-item :label="t('trade.displaySymbol')">
@@ -246,10 +260,7 @@
           </el-form-item>
 
           <el-form-item :label="t('market.categoryType')">
-            <el-select
-              v-model="symbolForm.categoryType"
-              class="full-width"
-            >
+            <el-select v-model="symbolForm.categoryType" class="full-width">
               <el-option
                 v-for="item in categoryTypeFormOptions"
                 :key="item.value"
@@ -323,15 +334,24 @@
           </el-form-item>
 
           <el-form-item :label="t('trade.baseAsset')">
-            <el-input v-model="symbolForm.baseAsset" :disabled="Boolean(symbolForm.id)" />
+            <el-input
+              v-model="symbolForm.baseAsset"
+              :disabled="Boolean(symbolForm.id) || isStockCategory"
+            />
           </el-form-item>
 
           <el-form-item :label="t('trade.quoteAsset')">
-            <el-input v-model="symbolForm.quoteAsset" :disabled="Boolean(symbolForm.id)" />
+            <el-input
+              v-model="symbolForm.quoteAsset"
+              :disabled="Boolean(symbolForm.id) || isStockCategory"
+            />
           </el-form-item>
 
           <el-form-item :label="t('trade.settleAsset')">
-            <el-input v-model="symbolForm.settleAsset" :disabled="Boolean(symbolForm.id)" />
+            <el-input
+              v-model="symbolForm.settleAsset"
+              :disabled="Boolean(symbolForm.id) || isStockCategory"
+            />
           </el-form-item>
 
           <el-form-item v-if="isDerivativeProduct" :label="t('trade.marginAsset')">
@@ -418,12 +438,7 @@
           </el-form-item>
 
           <el-form-item :label="t('common.sort')">
-            <el-input-number
-              v-model="symbolForm.sort"
-              :min="0"
-              :precision="0"
-              class="full-width"
-            />
+            <el-input-number v-model="symbolForm.sort" :min="0" :precision="0" class="full-width" />
           </el-form-item>
 
           <el-form-item :label="t('common.remark')" class="wide">
@@ -476,12 +491,7 @@
             <el-input v-model="secondsForm.feeRate" />
           </el-form-item>
           <el-form-item :label="t('trade.drawRule')">
-            <el-input-number
-              v-model="secondsForm.drawRule"
-              :min="1"
-              :max="2"
-              class="full-width"
-            />
+            <el-input-number v-model="secondsForm.drawRule" :min="1" :max="2" class="full-width" />
           </el-form-item>
           <el-form-item :label="t('trade.quoteValidityMs')">
             <el-input-number v-model="secondsForm.quoteValidityMs" :min="1" class="full-width" />
@@ -552,9 +562,7 @@
         <el-table-column prop="payoutRate" :label="t('trade.payoutRate')" width="110" />
         <el-table-column prop="feeRate" :label="t('trade.secondsFeeRate')" width="110" />
         <el-table-column :label="t('trade.stakeRange')" min-width="150">
-          <template #default="{ row }">
-            {{ row.minStake }} - {{ row.maxStake }}
-          </template>
+          <template #default="{ row }"> {{ row.minStake }} - {{ row.maxStake }} </template>
         </el-table-column>
         <el-table-column :label="t('trade.directionStatus')" min-width="150">
           <template #default="{ row }">
@@ -660,12 +668,7 @@
       width="900px"
       class="contract-config-dialog"
     >
-      <el-alert
-        :title="contractConfigSummary"
-        type="info"
-        :closable="false"
-        show-icon
-      />
+      <el-alert :title="contractConfigSummary" type="info" :closable="false" show-icon />
       <el-form label-width="126px" class="dialog-form">
         <div class="form-grid two">
           <el-form-item :label="t('trade.tenantId')">
@@ -973,12 +976,7 @@
         </el-button>
       </div>
 
-      <el-table
-        :data="leverageGroups"
-        size="small"
-        border
-        class="leverage-table"
-      >
+      <el-table :data="leverageGroups" size="small" border class="leverage-table">
         <el-table-column :label="t('trade.marginMode')" width="130">
           <template #default="{ row }">
             {{ optionLabel('marginMode', row.marginMode) }}
@@ -990,9 +988,7 @@
           </template>
         </el-table-column>
         <el-table-column :label="t('trade.defaultLeverage')" width="130">
-          <template #default="{ row }">
-            {{ row.defaultLeverage }}X
-          </template>
+          <template #default="{ row }"> {{ row.defaultLeverage }}X </template>
         </el-table-column>
         <el-table-column :label="t('trade.maxLeverage')" width="120">
           <template #default="{ row }">
@@ -1141,7 +1137,9 @@ import { Plus } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
 import { usePagination } from '@/composables'
 import {
+  tenantProductsService,
   tradeService,
+  type MarketTenantProduct,
   type OptionGroup,
   type OptionItem,
   type TradeSymbol,
@@ -1169,6 +1167,7 @@ interface SymbolQuery {
 interface SymbolForm {
   id: number
   tenantId: number
+  tenantProductId: number
   categoryType: number
   market: string
   symbol: string
@@ -1353,6 +1352,7 @@ const query = reactive<SymbolQuery>({
 const getDefaultSymbolForm = (): SymbolForm => ({
   id: 0,
   tenantId: 0,
+  tenantProductId: 0,
   categoryType: 2,
   market: 'BA',
   symbol: '',
@@ -1470,6 +1470,8 @@ const getDefaultLeverageForm = (
 }
 
 const symbolForm = reactive<SymbolForm>(getDefaultSymbolForm())
+const stockTenantProducts = ref<MarketTenantProduct[]>([])
+const stockProductsLoading = ref(false)
 const spotForm = reactive<SpotForm>(getDefaultSpotForm())
 const contractForm = reactive<ContractForm>(getDefaultContractForm())
 const secondsForm = reactive<SecondsForm>(getDefaultSecondsForm())
@@ -1507,6 +1509,7 @@ const leverageValueOptions = optionGroupWithFallback('leverageValue', leverageVa
 const productTypeFormOptions = computed(() => withoutUnknown(productTypeOptions.value))
 const categoryTypeFormOptions = categoryTypeOptions
 const isCryptoCategory = computed(() => symbolForm.categoryType === 2)
+const isStockCategory = computed(() => symbolForm.categoryType === 3)
 const isFutureCategory = computed(() => symbolForm.categoryType === 4)
 const isDerivativeProduct = computed(() => symbolForm.productType === 2)
 const contractTypeFormOptions = computed(() =>
@@ -1581,9 +1584,55 @@ const fixedProductTypeValue = computed(() =>
   isFutureCategory.value ? derivativeMarketValue.value : spotMarketValue.value,
 )
 
+const stockProductLabel = (item: MarketTenantProduct) => {
+  const venue = [item.market, item.exchange].filter(Boolean).join(' · ')
+  const name = item.displayName || item.name
+  return `[${venue}] ${item.symbol}${name && name !== item.symbol ? ` - ${name}` : ''}`
+}
+
+const applySelectedStockProduct = () => {
+  const product = stockTenantProducts.value.find((item) => item.id === symbolForm.tenantProductId)
+  if (!product) return
+  symbolForm.market = product.market.trim().toUpperCase()
+  symbolForm.symbol = product.symbol.trim().toUpperCase()
+  if (!symbolForm.id || !symbolForm.displaySymbol) symbolForm.displaySymbol = symbolForm.symbol
+  symbolForm.baseAsset = (product.baseCoin || symbolForm.symbol).trim().toUpperCase()
+  symbolForm.quoteAsset = product.quoteCoin.trim().toUpperCase()
+  symbolForm.settleAsset = symbolForm.quoteAsset
+  symbolForm.productType = spotMarketValue.value
+  symbolForm.contractType = 0
+  symbolForm.contractValueType = 0
+  symbolForm.marginAsset = ''
+}
+
+const loadStockTenantProducts = async () => {
+  stockTenantProducts.value = []
+  if (!isStockCategory.value || symbolForm.tenantId <= 0) return
+  stockProductsLoading.value = true
+  try {
+    const res = await tenantProductsService.getList({
+      tenantId: symbolForm.tenantId,
+      categoryType: 3,
+      enabled: 1,
+      appVisible: 1,
+      limit: 100,
+    })
+    stockTenantProducts.value = res.data || []
+    if (symbolForm.tenantProductId) applySelectedStockProduct()
+  } finally {
+    stockProductsLoading.value = false
+  }
+}
+
 watch(
   () => symbolForm.categoryType,
   (categoryType) => {
+    if (categoryType === 3) {
+      void loadStockTenantProducts()
+    } else {
+      symbolForm.tenantProductId = 0
+      stockTenantProducts.value = []
+    }
     if (categoryType === 4) {
       symbolForm.productType = derivativeMarketValue.value
       if (symbolForm.contractType === 0) symbolForm.contractType = deliveryContractTypeValue.value
@@ -1598,6 +1647,15 @@ watch(
       symbolForm.contractValueType = 0
       symbolForm.marginAsset = ''
     }
+  },
+)
+
+watch(
+  () => symbolForm.tenantId,
+  (tenantId, previousTenantId) => {
+    if (tenantId === previousTenantId || !isStockCategory.value) return
+    if (!symbolForm.id) symbolForm.tenantProductId = 0
+    void loadStockTenantProducts()
   },
 )
 
@@ -1875,11 +1933,20 @@ const showDetail = async (row: TradeSymbol) => {
 const openSymbolDialog = (row?: TradeSymbol) => {
   Object.assign(symbolForm, getDefaultSymbolForm(), row || {})
   symbolVisible.value = true
+  if (symbolForm.categoryType === 3) void loadStockTenantProducts()
 }
 
 const submitSymbol = async () => {
   if (!categoryTypeFormOptions.value.some((item) => item.value === symbolForm.categoryType)) {
     ElMessage.warning(t('market.pleaseInputCategoryType'))
+    return
+  }
+  if (
+    isStockCategory.value &&
+    symbolForm.status !== 2 &&
+    !symbolForm.tenantProductId
+  ) {
+    ElMessage.warning(t('market.tenantProduct'))
     return
   }
   symbolForm.market = symbolForm.market.trim().toUpperCase()
