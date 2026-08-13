@@ -18,6 +18,8 @@ import (
 
 const providerCode = "itick"
 
+var supportedCategories = []string{"forex", "crypto", "stock", "future", "indices", "fund"}
+
 type Provider struct {
 	wsURL          string
 	token          string
@@ -51,6 +53,10 @@ func New(
 }
 
 func (p *Provider) Code() string { return providerCode }
+
+func (p *Provider) Categories() []string {
+	return append([]string(nil), supportedCategories...)
+}
 
 func (p *Provider) Supports(category string) bool {
 	return p != nil && (p.streamReady || p.restReady) && p.preheater != nil && !p.preheater.IsUnsupported(category)

@@ -196,7 +196,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 	marketManager := client.NewMarketManager(
 		realtimeMarketProvider,
-		marketCategoryModel,
 		marketProductModel,
 		dataCache,
 		marketDataCache,

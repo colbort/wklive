@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -91,8 +92,7 @@ func (m *MarketManager) checkStaleQuotes(ctx context.Context, now time.Time) {
 	openProducts := make([]activeProduct, 0, len(products))
 	quoteMessages := make([]types.ClientMessage, 0, len(products))
 	for _, product := range products {
-		client := m.categoryClient(product.Category)
-		if client == nil || !client.IsLeader() || !m.source.Supports(product.Category) {
+		if !m.hasCategoryLeader(product.Category) || !m.source.Supports(product.Category) {
 			continue
 		}
 		if !m.calendar.IsProductTradingMinute(ctx, product.ID, product.Category, product.Market, product.Symbol, product.Exchange, now.UnixMilli()) {
@@ -155,11 +155,7 @@ func (m *MarketManager) recoverStaleQuote(ctx context.Context, now time.Time, pr
 			product.ID, product.Category, product.Market, product.Symbol, err)
 		return
 	}
-	client := m.categoryClient(product.Category)
-	if client == nil || !client.IsLeader() {
-		return
-	}
-	if err := client.Resubscribe(msg); err != nil {
+	if err := m.resubscribeCategory(msg); err != nil {
 		logx.Errorf("targeted market resubscribe failed, product_id=%d category=%s market=%s symbol=%s err=%v",
 			product.ID, product.Category, product.Market, product.Symbol, err)
 		return
@@ -199,10 +195,56 @@ func (m *MarketManager) claimQuoteRecovery(key string, now time.Time) bool {
 	return true
 }
 
-func (m *MarketManager) categoryClient(category string) provider.Stream {
+type providerStream struct {
+	key    streamKey
+	stream provider.Stream
+}
+
+func (m *MarketManager) categoryClients(category string) []providerStream {
+	category = strings.ToLower(strings.TrimSpace(category))
 	m.mu.RLock()
-	defer m.mu.RUnlock()
-	return m.clients[strings.ToLower(strings.TrimSpace(category))]
+	items := make([]providerStream, 0)
+	for key, stream := range m.clients {
+		if key.category == category {
+			items = append(items, providerStream{key: key, stream: stream})
+		}
+	}
+	m.mu.RUnlock()
+	sort.Slice(items, func(i, j int) bool { return items[i].key.provider < items[j].key.provider })
+	return items
+}
+
+func (m *MarketManager) hasCategoryLeader(category string) bool {
+	for _, item := range m.categoryClients(category) {
+		if item.stream.IsLeader() {
+			return true
+		}
+	}
+	return false
+}
+
+func (m *MarketManager) resubscribeCategory(msg provider.Subscription) error {
+	leaders := 0
+	succeeded := 0
+	providerErrors := make([]error, 0)
+	for _, item := range m.categoryClients(msg.CategoryCode) {
+		if !item.stream.IsLeader() {
+			continue
+		}
+		leaders++
+		if err := item.stream.Resubscribe(msg); err != nil {
+			providerErrors = append(providerErrors, fmt.Errorf("%s: %w", item.key.provider, err))
+			continue
+		}
+		succeeded++
+	}
+	if succeeded > 0 {
+		return nil
+	}
+	if leaders == 0 {
+		return fmt.Errorf("no leader stream for category %s", msg.CategoryCode)
+	}
+	return errors.Join(providerErrors...)
 }
 
 func (m *MarketManager) activeProductSnapshot() []activeProduct {

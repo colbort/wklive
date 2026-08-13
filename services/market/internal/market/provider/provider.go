@@ -29,8 +29,29 @@ type Stream interface {
 // common market payloads before writing to the shared market cache.
 type RealtimeProvider interface {
 	Code() string
+	// Categories returns the canonical business categories for which this
+	// provider can create streams. Stream discovery must not depend on another
+	// vendor's category table.
+	Categories() []string
 	Supports(category string) bool
 	Warm(context.Context, []Subscription)
 	FetchQuote(context.Context, Subscription) (*Quote, error)
 	NewStream(category string) (Stream, error)
+}
+
+// ProviderGroup exposes the independently managed providers inside an
+// aggregate quote source. MarketManager uses this to own one stream per
+// provider and category while the aggregate still handles REST selection.
+type ProviderGroup interface {
+	Providers() []RealtimeProvider
+}
+
+func Sources(source RealtimeProvider) []RealtimeProvider {
+	if source == nil {
+		return nil
+	}
+	if group, ok := source.(ProviderGroup); ok {
+		return group.Providers()
+	}
+	return []RealtimeProvider{source}
 }

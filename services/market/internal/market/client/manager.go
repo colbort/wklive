@@ -24,7 +24,6 @@ import (
 type MarketManager struct {
 	source provider.RealtimeProvider
 
-	model        models.TItickCategoryModel
 	productModel models.TItickProductModel
 
 	busRedis    *redis.Client
@@ -33,7 +32,7 @@ type MarketManager struct {
 	staleConfig StaleQuoteRecoveryConfig
 
 	mu      sync.RWMutex
-	clients map[string]provider.Stream
+	clients map[streamKey]provider.Stream
 
 	startMu   sync.Mutex
 	started   bool
@@ -44,9 +43,14 @@ type MarketManager struct {
 	activeProducts map[int64]activeProduct
 
 	recoveryMu      sync.Mutex
-	recoveryRunning map[string]bool
+	recoveryRunning map[streamKey]bool
 	quoteRecoveryAt map[string]time.Time
-	onReconnect     func(string)
+	onReconnect     func(providerCode, category string)
+}
+
+type streamKey struct {
+	provider string
+	category string
 }
 
 // LoadActiveProductSubscriptions loads the deduplicated product set maintained
@@ -124,17 +128,17 @@ func (m *MarketManager) refreshActiveProductSubscriptions(ctx context.Context, w
 		byCategory[msg.CategoryCode][cache.BuildTopicKey(msg)] = msg
 	}
 	m.mu.RLock()
-	clients := make(map[string]provider.Stream, len(m.clients))
-	for category, cli := range m.clients {
-		clients[category] = cli
+	clients := make(map[streamKey]provider.Stream, len(m.clients))
+	for key, cli := range m.clients {
+		clients[key] = cli
 	}
 	m.mu.RUnlock()
 
 	var syncErrors []error
-	for category, cli := range clients {
-		items := byCategory[category]
+	for key, cli := range clients {
+		items := byCategory[key.category]
 		if err := cli.ReplaceSubscriptions(subscriptionValues(items)); err != nil && cli.IsLeader() {
-			syncErr := fmt.Errorf("sync active subscriptions, category=%s: %w", category, err)
+			syncErr := fmt.Errorf("sync active subscriptions, provider=%s category=%s: %w", key.provider, key.category, err)
 			logx.Errorf("%v", syncErr)
 			syncErrors = append(syncErrors, syncErr)
 		}
@@ -199,7 +203,6 @@ func (m *MarketManager) rebuildActiveProducts(ctx context.Context) error {
 
 func NewMarketManager(
 	source provider.RealtimeProvider,
-	model models.TItickCategoryModel,
 	productModel models.TItickProductModel,
 	busRedis *redis.Client,
 	marketCache *cache.MarketDataCache,
@@ -208,15 +211,14 @@ func NewMarketManager(
 ) *MarketManager {
 	return &MarketManager{
 		source:          source,
-		model:           model,
 		productModel:    productModel,
 		busRedis:        busRedis,
 		marketCache:     marketCache,
 		calendar:        calendarResolver,
 		staleConfig:     staleConfig.withDefaults(),
-		clients:         make(map[string]provider.Stream),
+		clients:         make(map[streamKey]provider.Stream),
 		activeProducts:  make(map[int64]activeProduct),
-		recoveryRunning: make(map[string]bool),
+		recoveryRunning: make(map[streamKey]bool),
 		quoteRecoveryAt: make(map[string]time.Time),
 	}
 }
@@ -225,26 +227,36 @@ func (m *MarketManager) Load(ctx context.Context) error {
 	if m.source == nil {
 		return errors.New("realtime market provider is not configured")
 	}
-	categories, err := m.model.FindAll(ctx)
-	if err != nil {
-		return err
-	}
+	newClients := make(map[streamKey]provider.Stream)
 
-	newClients := make(map[string]provider.Stream)
-
-	for _, item := range categories {
-		categoryCode := strings.ToLower(strings.TrimSpace(item.CategoryCode))
-		if categoryCode == "" || !m.source.Supports(categoryCode) {
-			logx.Errorf("skip unsupported market category, provider=%s code=%s", m.source.Code(), item.CategoryCode)
+	for _, source := range provider.Sources(m.source) {
+		providerCode := strings.ToLower(strings.TrimSpace(source.Code()))
+		if providerCode == "" {
 			continue
 		}
-		stream, err := m.source.NewStream(categoryCode)
-		if err != nil {
-			logx.Errorf("create market stream failed, provider=%s category=%s err=%v", m.source.Code(), categoryCode, err)
-			continue
+		seenCategories := make(map[string]struct{})
+		for _, category := range source.Categories() {
+			category = strings.ToLower(strings.TrimSpace(category))
+			if category == "" {
+				continue
+			}
+			if _, exists := seenCategories[category]; exists {
+				continue
+			}
+			seenCategories[category] = struct{}{}
+			if !source.Supports(category) {
+				logx.Errorf("skip unsupported market category, provider=%s category=%s", providerCode, category)
+				continue
+			}
+			stream, err := source.NewStream(category)
+			if err != nil {
+				logx.Errorf("create market stream failed, provider=%s category=%s err=%v", providerCode, category, err)
+				continue
+			}
+			key := streamKey{provider: providerCode, category: category}
+			stream.SetReconnectHandler(func(string) { m.handleReconnect(key) })
+			newClients[key] = stream
 		}
-		stream.SetReconnectHandler(m.handleReconnect)
-		newClients[categoryCode] = stream
 	}
 
 	if len(newClients) == 0 {
@@ -255,31 +267,31 @@ func (m *MarketManager) Load(ctx context.Context) error {
 	m.clients = newClients
 	m.mu.Unlock()
 
-	logx.Infof("market manager loaded categories success, provider=%s count=%d", m.source.Code(), len(newClients))
+	logx.Infof("market manager loaded provider streams success, providers=%d streams=%d", len(provider.Sources(m.source)), len(newClients))
 	return nil
 }
 
-func (m *MarketManager) SetReconnectHandler(handler func(category string)) {
+func (m *MarketManager) SetReconnectHandler(handler func(providerCode, category string)) {
 	m.recoveryMu.Lock()
 	m.onReconnect = handler
 	m.recoveryMu.Unlock()
 }
 
-func (m *MarketManager) handleReconnect(category string) {
+func (m *MarketManager) handleReconnect(key streamKey) {
 	m.recoveryMu.Lock()
-	if m.recoveryRunning[category] || m.onReconnect == nil {
+	if m.recoveryRunning[key] || m.onReconnect == nil {
 		m.recoveryMu.Unlock()
 		return
 	}
-	m.recoveryRunning[category] = true
+	m.recoveryRunning[key] = true
 	handler := m.onReconnect
 	m.recoveryMu.Unlock()
 	defer func() {
 		m.recoveryMu.Lock()
-		delete(m.recoveryRunning, category)
+		delete(m.recoveryRunning, key)
 		m.recoveryMu.Unlock()
 	}()
-	handler(category)
+	handler(key.provider, key.category)
 }
 
 func (m *MarketManager) Start(ctx context.Context) error {

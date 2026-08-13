@@ -100,15 +100,19 @@ func main() {
 		int(svcCtx.MarketRuntimeConfig.RepairBatchSize))
 	gapRepair.Start(c.Itick.ApiUrl, c.Itick.Token)
 	defer gapRepair.Stop()
-	svcCtx.MarketManager.SetReconnectHandler(func(category string) {
+	svcCtx.MarketManager.SetReconnectHandler(func(providerCode, category string) {
+		if providerCode != "itick" {
+			log.Printf("skip iTick kline repair after non-iTick reconnect, provider=%s category=%s", providerCode, category)
+			return
+		}
 		repairCtx, repairCancel := context.WithTimeout(context.Background(), 30*time.Minute)
 		defer repairCancel()
 		worker := kline.NewSyncKlinesWorker(repairCtx, svcCtx, nil, "", "")
 		if err := worker.RepairAfterReconnect(c.Itick.ApiUrl, c.Itick.Token, category); err != nil {
-			log.Printf("repair market klines after ws reconnect failed, category=%s err=%v", category, err)
+			log.Printf("repair market klines after ws reconnect failed, provider=%s category=%s err=%v", providerCode, category, err)
 		}
 		if err := worker.ReconcileRecent(c.Itick.ApiUrl, c.Itick.Token, category); err != nil {
-			log.Printf("reconcile recent market klines after ws reconnect failed, category=%s err=%v", category, err)
+			log.Printf("reconcile recent market klines after ws reconnect failed, provider=%s category=%s err=%v", providerCode, category, err)
 		}
 	})
 	svcCtx.Writer.SetFlushHandler(derivedWorker.Enqueue)

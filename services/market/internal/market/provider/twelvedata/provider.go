@@ -70,6 +70,8 @@ func New(
 
 func (p *Provider) Code() string { return providerCode }
 
+func (p *Provider) Categories() []string { return []string{supportedCategory} }
+
 func (p *Provider) Supports(category string) bool {
 	return p != nil && strings.EqualFold(strings.TrimSpace(category), supportedCategory) && (p.streamReady || p.restReady)
 }

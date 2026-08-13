@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
 	"sync"
 )
@@ -36,6 +37,31 @@ func NewComposite(providers ...RealtimeProvider) *Composite {
 }
 
 func (c *Composite) Code() string { return "multi" }
+
+func (c *Composite) Categories() []string {
+	seen := make(map[string]struct{})
+	for _, item := range c.providers {
+		for _, category := range item.Categories() {
+			category = strings.ToLower(strings.TrimSpace(category))
+			if category != "" {
+				seen[category] = struct{}{}
+			}
+		}
+	}
+	items := make([]string, 0, len(seen))
+	for category := range seen {
+		items = append(items, category)
+	}
+	sort.Strings(items)
+	return items
+}
+
+func (c *Composite) Providers() []RealtimeProvider {
+	if c == nil {
+		return nil
+	}
+	return append([]RealtimeProvider(nil), c.providers...)
+}
 
 func (c *Composite) Supports(category string) bool {
 	return len(c.supporting(category)) > 0

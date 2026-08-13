@@ -15,6 +15,13 @@ type compositeTestProvider struct {
 }
 
 func (p *compositeTestProvider) Code() string { return p.code }
+func (p *compositeTestProvider) Categories() []string {
+	items := make([]string, 0, len(p.categories))
+	for category := range p.categories {
+		items = append(items, category)
+	}
+	return items
+}
 func (p *compositeTestProvider) Supports(category string) bool {
 	return p.categories[category]
 }
@@ -74,5 +81,17 @@ func TestCompositeFetchQuoteChoosesFreshestProvider(t *testing.T) {
 	}
 	if quote.Ts != 200 {
 		t.Fatalf("selected timestamp = %d", quote.Ts)
+	}
+}
+
+func TestCompositeExposesIndependentProvidersAndCategories(t *testing.T) {
+	first := &compositeTestProvider{code: "itick", categories: map[string]bool{"stock": true, "forex": true}}
+	second := &compositeTestProvider{code: "tradermade", categories: map[string]bool{"forex": true}}
+	composite := NewComposite(first, second)
+	if got := composite.Categories(); len(got) != 2 || got[0] != "forex" || got[1] != "stock" {
+		t.Fatalf("categories = %v", got)
+	}
+	if got := Sources(composite); len(got) != 2 || got[0].Code() != "itick" || got[1].Code() != "tradermade" {
+		t.Fatalf("sources = %v", got)
 	}
 }
