@@ -40,6 +40,23 @@ func TestSubscriptionACKRemovesRejectedSymbolFromSent(t *testing.T) {
 	}
 }
 
+func TestCFDAliasUsesUpstreamKeyAndPreservesInternalSymbol(t *testing.T) {
+	stream := newStream("wss://example.invalid", "key", false, nil, loadedStreamCatalog(map[string]string{
+		"AAPLUSD": "AAPLUSD",
+		"AAPL":    "AAPLUSD",
+	}), nil)
+	if err := stream.ReplaceSubscriptions([]provider.Subscription{{CategoryCode: "forex", Symbol: "AAPL"}}); err != nil {
+		t.Fatal(err)
+	}
+	item, ok := stream.desired["AAPLUSD"]
+	if !ok {
+		t.Fatal("CFD alias did not use exact upstream symbol as desired key")
+	}
+	if item.Symbol != "AAPL" {
+		t.Fatalf("internal cache symbol = %q, want AAPL", item.Symbol)
+	}
+}
+
 func TestRequestedSubscriptionsSurviveTransientCatalogFailure(t *testing.T) {
 	stream := newStream("wss://example.invalid", "key", false, nil, newStreamSymbolCatalog("https://example.invalid", "key", nil), nil)
 	if err := stream.ReplaceSubscriptions([]provider.Subscription{{CategoryCode: "forex", Symbol: "USDCNY"}}); err != nil {

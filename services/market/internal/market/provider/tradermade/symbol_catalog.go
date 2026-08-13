@@ -317,5 +317,9 @@ func addSymbolMapping(forward, reverse map[string]string, internal, upstream str
 		return
 	}
 	forward[internal] = upstream
-	reverse[upstreamKey] = internal
+	// Preserve the first (exact directory) reverse mapping. Aliases may share
+	// one upstream symbol and cannot safely replace its canonical identity.
+	if _, exists := reverse[upstreamKey]; !exists {
+		reverse[upstreamKey] = internal
+	}
 }

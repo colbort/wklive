@@ -118,14 +118,15 @@ func (s *Stream) rebuildDesiredSubscriptions() error {
 		if item.CategoryCode != supportedCategory {
 			continue
 		}
-		if _, err := s.catalog.Resolve(item.Symbol); err != nil {
+		upstream, err := s.catalog.Resolve(item.Symbol)
+		if err != nil {
 			continue
 		}
-		symbol := canonicalSymbol(item.Symbol)
+		symbol := canonicalSymbol(upstream)
 		// TraderMade QUOTE carries both best bid/ask and midpoint. The system's
 		// multiple internal topics therefore consume one upstream symbol slot.
 		if current, ok := next[symbol]; !ok || item.Topic == types.TopicQuote || current.Topic != types.TopicQuote {
-			item.Symbol = symbol
+			item.Symbol = canonicalSymbol(item.Symbol)
 			next[symbol] = item
 		}
 	}
@@ -141,7 +142,7 @@ func (s *Stream) Resubscribe(item provider.Subscription) error {
 	if err != nil {
 		return err
 	}
-	symbol := canonicalSymbol(item.Symbol)
+	symbol := canonicalSymbol(upstream)
 	s.subMu.Lock()
 	_, desired := s.desired[symbol]
 	s.subMu.Unlock()
@@ -356,12 +357,7 @@ func (s *Stream) handleMessage(ctx context.Context, data []byte) {
 
 func (s *Stream) handleSubscriptionACK(message wsEnvelope) {
 	for _, item := range append(append([]string{}, message.Denied...), message.Invalid...) {
-		upstream := subscriptionSymbol(item)
-		symbol, err := s.catalog.Internal(upstream)
-		if err != nil {
-			logx.Errorf("TraderMade subscription rejected for unknown upstream symbol=%s reason=%s", upstream, message.DeniedReasons[item])
-			continue
-		}
+		symbol := subscriptionSymbol(item)
 		s.subMu.Lock()
 		delete(s.sent, symbol)
 		s.subMu.Unlock()
@@ -372,11 +368,7 @@ func (s *Stream) handleSubscriptionACK(message wsEnvelope) {
 }
 
 func (s *Stream) publishQuote(ctx context.Context, message wsEnvelope) {
-	symbol, err := s.catalog.Internal(message.Symbol)
-	if err != nil {
-		logx.Errorf("TraderMade quote received for unknown upstream symbol=%s", message.Symbol)
-		return
-	}
+	symbol := canonicalSymbol(message.Symbol)
 	s.subMu.Lock()
 	msg, ok := s.desired[symbol]
 	s.subMu.Unlock()

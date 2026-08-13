@@ -55,7 +55,7 @@ func TestStreamSymbolCatalogUsesExactListAndVerifiedCFDAlias(t *testing.T) {
 	if actual, err := catalog.Resolve("AAPL"); err != nil || actual != "AAPLUSD" {
 		t.Fatalf("AAPL alias = %q, %v", actual, err)
 	}
-	if actual, err := catalog.Internal("AAPLUSD"); err != nil || actual != "AAPL" {
+	if actual, err := catalog.Internal("AAPLUSD"); err != nil || actual != "AAPLUSD" {
 		t.Fatalf("AAPLUSD reverse alias = %q, %v", actual, err)
 	}
 	if actual, err := catalog.Resolve("USD/CNY"); err != nil || actual != "USDCNY" {
