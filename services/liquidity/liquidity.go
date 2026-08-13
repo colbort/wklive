@@ -34,6 +34,9 @@ func main() {
 	if err := etcd.LoadFromEtcdAndMerge(strings.Split(*endpoints, ","), []string{*commonKey, *configKey}, &c); err != nil {
 		panic(err)
 	}
+	if err := c.Validate(); err != nil {
+		panic(err)
+	}
 
 	svcCtx := svc.NewServiceContext(c)
 	ctx, cancel := context.WithCancel(context.Background())

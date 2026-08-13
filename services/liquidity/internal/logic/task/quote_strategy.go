@@ -254,14 +254,18 @@ func loadReferenceQuote(ctx context.Context, svcCtx *svc.ServiceContext, config 
 	if kind == "" || kind == "MARK_PRICE" {
 		kind = "MARK"
 	}
-	authority := strings.TrimSpace(svcCtx.Config.PriceEngineAuthority)
+	var authorities []string
 	if kind == "FINAL_QUOTE" {
-		authority = strings.TrimSpace(svcCtx.Config.MarketAuthority)
+		authorities = normalizeAuthorities(svcCtx.Config.MarketAuthorities)
+	} else {
+		authority := strings.ToLower(strings.TrimSpace(svcCtx.Config.PriceEngineAuthority))
+		if authority != "" {
+			authorities = []string{authority}
+		}
 	}
-	if authority == "" {
+	if len(authorities) == 0 {
 		return nil, errors.New("reference price authority is not configured")
 	}
-	authorities := referencePriceAuthorities(kind, authority)
 	validity := config.QuoteValidityMs
 	if validity <= 0 {
 		validity = 30_000
@@ -303,11 +307,23 @@ func loadReferenceQuote(ctx context.Context, svcCtx *svc.ServiceContext, config 
 	return candidates[len(candidates)/2], nil
 }
 
-func referencePriceAuthorities(kind, primary string) []string {
-	primary = strings.TrimSpace(primary)
-	authorities := []string{primary}
-	if strings.EqualFold(strings.TrimSpace(kind), "FINAL_QUOTE") && strings.EqualFold(primary, "itick-ws") {
-		authorities = append(authorities, "itick-rest")
+func normalizeAuthorities(values []string) []string {
+	authorities := make([]string, 0, len(values))
+	seen := make(map[string]struct{}, len(values))
+	for _, value := range values {
+		for _, candidate := range strings.FieldsFunc(value, func(r rune) bool {
+			return r == ',' || r == '|' || r == ';'
+		}) {
+			candidate = strings.ToLower(strings.TrimSpace(candidate))
+			if candidate == "" {
+				continue
+			}
+			if _, ok := seen[candidate]; ok {
+				continue
+			}
+			seen[candidate] = struct{}{}
+			authorities = append(authorities, candidate)
+		}
 	}
 	return authorities
 }

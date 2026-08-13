@@ -1,6 +1,8 @@
 package config
 
 import (
+	"errors"
+	"strings"
 	mq "wklive/common/mq/kafka"
 
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -15,12 +17,12 @@ type Config struct {
 		DataSource string
 	} `json:"Mysql" yaml:"Mysql"`
 
-	TradeRpc zrpc.RpcClientConf
-	AssetRpc zrpc.RpcClientConf
+	TradeRpc  zrpc.RpcClientConf
+	AssetRpc  zrpc.RpcClientConf
 	MarketRpc zrpc.RpcClientConf
-	UserRpc  zrpc.RpcClientConf
+	UserRpc   zrpc.RpcClientConf
 
-	MarketAuthority      string
+	MarketAuthorities    []string
 	PriceEngineAuthority string
 
 	OKX struct {
@@ -28,4 +30,13 @@ type Config struct {
 		BaseURL   string
 		TimeoutMs int64
 	}
+}
+
+func (c Config) Validate() error {
+	for _, authority := range c.MarketAuthorities {
+		if strings.TrimSpace(authority) != "" {
+			return nil
+		}
+	}
+	return errors.New("MarketAuthorities must contain at least one authority")
 }

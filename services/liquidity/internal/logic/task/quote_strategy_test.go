@@ -305,7 +305,7 @@ func TestLoadReferenceQuotePrefersWebsocketSnapshot(t *testing.T) {
 		ReferencePriceKind: "FINAL_QUOTE", QuoteValidityMs: 5_000,
 	}
 	reference, err := loadReferenceQuote(context.Background(), &svc.ServiceContext{
-		Config:       lc.Config{MarketAuthority: "itick-ws"},
+		Config:       lc.Config{MarketAuthorities: []string{"itick-ws", "itick-rest"}},
 		MarketClient: client,
 	}, config, 10_000)
 	if err != nil {
@@ -329,7 +329,7 @@ func TestLoadReferenceQuoteFallsBackToFreshRestSnapshot(t *testing.T) {
 		ReferencePriceKind: "FINAL_QUOTE", QuoteValidityMs: 5_000,
 	}
 	reference, err := loadReferenceQuote(context.Background(), &svc.ServiceContext{
-		Config:       lc.Config{MarketAuthority: "itick-ws"},
+		Config:       lc.Config{MarketAuthorities: []string{"itick-ws", "itick-rest"}},
 		MarketClient: client,
 	}, config, 10_000)
 	if err != nil {
@@ -343,6 +343,53 @@ func TestLoadReferenceQuoteFallsBackToFreshRestSnapshot(t *testing.T) {
 	}
 }
 
+func TestLoadReferenceQuoteFallsBackAcrossMarketProviders(t *testing.T) {
+	client := &marketClientStub{snapshots: map[string]snapshotResult{
+		"itick-ws":        {err: errors.New("authoritative snapshot unavailable")},
+		"twelvedata-ws":   {err: errors.New("symbol is not available on websocket plan")},
+		"itick-rest":      {err: errors.New("authoritative snapshot unavailable")},
+		"twelvedata-rest": {resp: authoritativeSnapshotResponse("td-rest-1", "twelvedata-rest", "6.7457", 9_900)},
+	}}
+	config := &models.TLiquiditySymbolConfig{
+		Symbol: "USDCNY", ReferencePriceSource: "forex:GB:USDCNY",
+		ReferencePriceKind: "FINAL_QUOTE", QuoteValidityMs: 5_000,
+	}
+	reference, err := loadReferenceQuote(context.Background(), &svc.ServiceContext{
+		Config: lc.Config{
+			MarketAuthorities: []string{"itick-ws", "twelvedata-ws", "itick-rest", "twelvedata-rest"},
+		},
+		MarketClient: client,
+	}, config, 10_000)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reference.price.Equal(decimal.RequireFromString("6.7457")) || reference.snapshotID != "td-rest-1" {
+		t.Fatalf("unexpected cross-provider REST fallback: %+v", reference)
+	}
+	want := []string{"itick-ws", "twelvedata-ws", "itick-rest", "twelvedata-rest"}
+	if len(client.snapshotReqs) != len(want) {
+		t.Fatalf("unexpected authority request count: got=%d want=%d", len(client.snapshotReqs), len(want))
+	}
+	for i, authority := range want {
+		if client.snapshotReqs[i].GetAuthority() != authority {
+			t.Fatalf("unexpected authority fallback order at %d: got=%s want=%s", i, client.snapshotReqs[i].GetAuthority(), authority)
+		}
+	}
+}
+
+func TestNormalizeAuthorities(t *testing.T) {
+	got := normalizeAuthorities([]string{" itick-ws, TwelveData-WS ", "itick-ws", "itick-rest|twelvedata-rest"})
+	want := []string{"itick-ws", "twelvedata-ws", "itick-rest", "twelvedata-rest"}
+	if len(got) != len(want) {
+		t.Fatalf("unexpected normalized authorities: %#v", got)
+	}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Fatalf("unexpected normalized authority at %d: got=%s want=%s", i, got[i], want[i])
+		}
+	}
+}
+
 func TestLoadReferenceQuoteRejectsStaleRestFallback(t *testing.T) {
 	client := &marketClientStub{snapshots: map[string]snapshotResult{
 		"itick-ws":   {err: errors.New("authoritative snapshot unavailable")},
@@ -353,7 +400,7 @@ func TestLoadReferenceQuoteRejectsStaleRestFallback(t *testing.T) {
 		ReferencePriceKind: "FINAL_QUOTE", QuoteValidityMs: 5_000,
 	}
 	_, err := loadReferenceQuote(context.Background(), &svc.ServiceContext{
-		Config:       lc.Config{MarketAuthority: "itick-ws"},
+		Config:       lc.Config{MarketAuthorities: []string{"itick-ws", "itick-rest"}},
 		MarketClient: client,
 	}, config, 10_000)
 	if err == nil {

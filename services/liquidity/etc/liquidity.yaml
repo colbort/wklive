@@ -31,7 +31,11 @@ UserRpc:
     - 127.0.0.1:2379
     Key: user.rpc
 
-MarketAuthority: itick-ws
+MarketAuthorities:
+  - itick-ws
+  - twelvedata-ws
+  - itick-rest
+  - twelvedata-rest
 PriceEngineAuthority: price-engine
 
 OKX:
